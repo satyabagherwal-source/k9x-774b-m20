@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `93188d6b`  
+> **Source Version**: `689cbd4f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T03:37:08.158Z  
+> **Timestamp**: 2026-10-21T16:25:54.404Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T03:37:08.149Z  
+> **Harvest Timestamp**: 2026-10-21T16:25:53.870Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5955** (2026-10-21): **refactor(transport): add a transport-neutral IncomingStream to the boundary**
-  *Symptoms*: ## Problem  `PeerConnectionApi::pipe_stream_data` and `IncomingStreamRegistry::register_inbound_stream` took the UDP transport's reassembly handle, `StreamHandle`. Every layer above the transport that touched an inbound stream therefore named a UDP type: the orphan registry, the GET and PUT drivers, and the node's pipe events. A QUIC transport delivering native streams would have had to fake a fragment handle.  ## Approach  This is phase C step 2 from the #5952 plan. It adds a transport-neutral `IncomingStream` to `transport/boundary.rs`, with exactly the methods the operations and node layers use:  ```rust pub struct IncomingStream(/* private: today the UDP StreamHandle */); impl IncomingStream {     pub fn total_bytes(&self) -> u64;     pub async fn assemble(&self) -> Result<Vec<u8>, StreamError>;     pub fn fork(&self) -> Self;                 // independent reader     pub fn received_fragments(&self) -> usize;  // progress, in transport units     pub fn total_fragments(&self) -> usize;     pub(crate) fn cancel(&self);     pub(crate) fn is_cancelled(&self) -> bool;     pub(crate) fn shares_buffer(&self, &Weak<LockFreeStreamBuffer>) -> bool; // until C3     pub(in crate::transport) fn into_udp(self) -> StreamHandle; } ```  - **The representation is private.** A second transport can turn it into an enum or a trait object without changing the API. - **UDP is unchanged inside.** The UDP connection wraps each new operations stream before registering it. Its `pipe_stream_data` u
+- **Issue #5960** (2026-10-21): **fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test)**
+  *Symptoms*: ## Problem  `topology::tests::test_topology` failed once in CI with `Location(0.45) == Location(0.35)` and passed on 5 re-runs. The test draws 5,000 request locations from the unseeded `GlobalRng` (each thread falls back to OS entropy).  Why it can fail: requests are centred on 0.39. Each sample is attributed to its nearest neighbor (0.3, 0.4 or 0.5), giving counts c3, c4, c5. The candidate midpoints score c3 + c4 (0.35) and c4 + c5 (0.45), so 0.35 wins only when c3 > c5. That is true in expectation but not for every draw. (The old comment said the requests were "clustered around 0.35", which is not what the scenario does.)  A sibling in the same module, `small_world_rand::tests::chi_squared_test`, asserts `p_value > 0.001` on an unseeded draw. That fails about 1 in 1000 runs by construction.  ## Approach  - `test_topology` now runs under `GlobalRng::seed_guard(TOPOLOGY_TEST_SEED)`. The scenario moved into `run_topology_scenario()` unchanged, and the assertions and tolerances are unchanged. - New regression test `test_topology_scenario_is_deterministic_for_a_fixed_seed`: the scenario is a pure function of the seed, and seed 4069 (a seed that fails the unseeded test) reproduces `(0.45, 0.4)` exactly. - `chi_squared_test` is seeded (`0xC41_5EED`, p = 0.87). Threshold untouched. - The tie-break itself is a sound property of the code, so the assertion logic is not changed. With a fixed seed it is deterministic.  No tolerance loosening, retries or `#[ignore]`.  ## Testing  Failure
 
-- **Issue #5953** (2026-10-21): **feat(telemetry): tag NAT traversal attempts by origin and count stray intros**
-  *Symptoms*: ## Problem  Hole punching succeeds on about a quarter of attempts (#5940), and today's telemetry can't say why. `nat_traversal_attempts` lumps together dials that should almost always work, such as a CONNECT joiner dialling an acceptor that is already punching back, with dials that can't work by design, such as a re-dial to a non-gateway peer that isn't expecting us and drops our intro. Some failures are also probably timing or port-mapping misses that never show up as anything but `no_response`. The next fix depends on which of these slices is largest, so this PR measures before changing behaviour.  ## Approach  This PR adds telemetry only. Nothing changes on the wire or in behaviour.  - **Attempt origin.** A new internal `NatAttemptOrigin` (`connect_joiner`, `connect_acceptor`, `gateway`, `ring_peer_no_transport`) is set at each `NodeEvent::ConnectPeer` site. It travels through `HandshakeCommand::Connect`, `OutboundConnector::connect` and `ConnectionStart` to the listener. `transport_snapshot` gains per-period `nat_attempts_<origin>` and `nat_established_<origin>`, and each `nat_fail_samples` entry gets an `origin`. A dial to a configured gateway is always `gateway`, whichever path started it (`dial_origin` in `handle_connect_peer`). The event loop's dial for a message to a peer with no transport is `ring_peer_no_transport` (`unconnected_dial_origin`). Because `peek_target_peer` always returns `None` (since #4110), that dial only reaches configured gateways and peers the ri
+- **Issue #5959** (2026-10-21): **refactor(transport): hide the UDP transport's own errors behind TransportError::Udp**
+  *Symptoms*: ## Problem  `TransportError` mixed transport-neutral variants with four that only the UDP transport produces: - `SendFailed(SocketAddr, io::ErrorKind)`, a UDP `send_to` failure; - `IO`, socket I/O; - `PubKeyDecryptionError`, from its handshake crypto; - `Serialization`, its wire encoding.  Any layer could name and match these, and the network bridge itself built `Serialization` when it could not serialize a message. A second transport would have inherited UDP's error vocabulary.  ## Approach  This is phase C step 4 (the last step) from the #5952 plan, in two commits:  1. **The node reports its own serialization failure as `Other`.** The bridge's `serialization_failure` produces the same Display text (both are transparent over the bincode error) and the same classification (it closes the connection). 2. **The UDP-only variants move into an opaque wrapper.**     ```rust    pub enum TransportError { ..neutral variants.., Udp(UdpError) }    pub struct UdpError(pub(in crate::transport) UdpErrorKind);    pub(in crate::transport) enum UdpErrorKind { SendFailed(..), IO(..), PubKeyDecryptionError(..), Serialization(..) }    ```     - Above the transport, a UDP error can only be classified (`scope()`, `closes_connection()`) or printed; its kind cannot be named.    - **Display is byte-identical.** Debug gains a `Udp(..)` wrapper.    - The `From` impls build the wrapper, so `?` inside the transport is unchanged. `scope()` and every exhaustive match still name each kind explicitly.  **`Pr
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,986 +1759,382 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93188d6b` (2026-10-21)
-**Commit Message**: feat(telemetry): tag NAT traversal attempts by origin and count stray intros (#5953)
+### Incident Patch 1: `8021133a` (2026-10-21)
+**Commit Message**: fix(transport): fail truncated piped streams and size fragment #1 metadata exactly (#5958)
 
-**File**: `.claude/rules/transport.md` (modified, +19/-2)
+**File**: `crates/core/src/transport/boundary.rs` (modified, +5/-6)
 ```diff
-@@ -203,7 +203,23 @@ the listener-to-connection queue (`inbound_queue_depth_hwm`, `_drops`) and
- inbound stream refusals / evictions by reason (`inbound_stream_<label>`, one
- per `InboundStreamOutcome`; the never-reset twin feeds the opt-in OTel
- `freenet.transport.inbound_stream_limits`, which must not observe the period
--counters). Hot
-+counters), NAT traversals by why they were started (`nat_attempts_<label>`,
-+`nat_established_<label>`, one per `NatAttemptOrigin`, and `origin` on each
-+`nat_fail_samples` entry; the origin is threaded internally from each
-+`NodeEvent::ConnectPeer` through `OutboundConnector::connect` and
-+`ConnectionStart`, never on the wire; a dial to a configured gateway is
-+always `gateway`, and `ring_peer_no_transport` is the event loop's dial to a
-+ring peer whose transport was lost, since cached-peer joins never dial
-+(#5954)), intro packets a non-gateway drops as unknown (`stray_intro_<label>`:
-+the exact address's traversal timed out (no_response, undecryptable or
-+incomplete; not other failures) in the last 10 s,
-+a traversal to another port of the IP is running (endpoint-dependent mapping
-+OR another peer behind the same IP, e.g. CGNAT; it cannot tell them apart), or
-+neither; the recent failures are a listener-owned table bounded by count and
-+TTL, and early evictions are counted in `stray_intro_failures_evicted`) and CONNECT
-+joiner dial-queue waits (`dial_queue_wait_<label>`, coarse buckets around the
-+3 s punch window). Each label set is declared once in a `labelled_counters!`
-+list, so a new variant needs a snapshot field. Hot
- path writes are single relaxed atomics; `SentPacketTracker` keeps an
- `rto_expiries` count and a bounded per-stream final-ACK watch, both
- observation only.
-@@ -609,7 +625,8 @@ created from its declared length.
-     in TRANSPORT_METRICS (cumulative_inbound_stream_outcomes, OTel
-     freenet.transport.inbound_stream_limits) and per period in the
-     transport_snapshot inbound_stream_<label> fields. A new reason is added
--    once, in the inbound_stream_outcomes! list; it then needs a snapshot field.
-+    once, in the InboundStreamOutcome labelled_counters! list; it then needs a
-+    snapshot field.
-   - A complete operations stream is retired from streaming_handles and the
-     registry at once, so only its consumers hold the charge.
-   - LockFreeStreamBuffer::insert claims the slot BEFORE reserving bytes, so
+@@ -380,12 +380,11 @@ impl IncomingStream {
+ /// - It has **no inactivity timer**: if the sender stalls, it waits forever.
+ ///   A consumer must bring its own timeout (the UDP pipe uses
+ ///   `STREAM_INACTIVITY_TIMEOUT`).
+-/// - Its end does **not** guarantee the chunks add up to
+-///   [`IncomingStream::total_bytes`]. Under UDP one exit, taken once every
+-///   fragment slot has been read, is a fragment-count proxy that does not
+-///   check the byte total, so a sender that filled the slots short would end
+-///   it early with no error (#5445). A consumer that needs the whole stream
+-///   must count the bytes itself.
++/// - Under UDP it ends cleanly only once every declared byte was yielded: a
++///   sender that filled every fragment slot short gets an `Err` instead
++///   (#5445). A consumer should still count bytes against
++///   [`IncomingStream::total_bytes`] (the UDP pipe does), since that is the
++///   contract a second transport must also meet.
+ /// - Polling it again after dropping a `next()` future loses nothing, so it
+ ///   may be read inside `select!`.
+ pub struct IncomingChunks {
 ```
 
-**File**: `crates/core/src/message.rs` (modified, +3/-0)
+**File**: `crates/core/src/transport/peer_connection/outbound_stream.rs` (modified, +102/-6)
 ```diff
-@@ -878,6 +878,9 @@ pub(crate) enum NodeEvent {
-         tx: Transaction,
-         callback: tokio::sync::mpsc::Sender<ConnectResult>,
-         is_gw: bool,
-+        /// Why this dial is made (telemetry only; a configured gateway is
-+        /// tagged `Gateway` whatever is passed here).
-+        origin: crate::transport::NatAttemptOrigin,
-     },
-     Disconnect {
-         cause: Option<Cow<'static, str>>,
-```
-
-**File**: `crates/core/src/node/network_bridge/handshake.rs` (modified, +77/-6)
-```diff
-@@ -104,6 +104,8 @@ pub(crate) enum Command {
-         peer: PeerKeyLocation,
-         transaction: Transaction,
-         transient: bool,
-+        /// Why this dial is made (telemetry only).
-+        origin: crate::transport::NatAttemptOrigin,
-     },
-     /// Register expectation for an inbound connection from `peer`.
-     ExpectInbound {
-@@ -265,8 +267,8 @@ async fn run_driver(
-     loop {
-         select! {
-             command = commands_rx.recv() => match command {
--                Some(Command::Connect { peer, transaction, transient }) => {
--                    spawn_outbound(outbound.clone(), events_tx.clone(), peer, transaction, transient, peer_ready.clone());
-+                Some(Command::Connect { peer, transaction, transient, origin }) => {
-+                    spawn_outbound(outbound.clone(), events_tx.clone(), peer, transaction, transient, origin, peer_ready.clone());
-                 }
-             Some(Command::ExpectInbound { peer, transaction, transient }) => {
-                     expected_inbound.register(peer, transaction, transient /* transient */);
-@@ -379,6 +381,7 @@ fn spawn_outbound(
-     peer: PeerKeyLocation,
-     transaction: Transaction,
-     transient: bool,
-+    origin: crate::transport::NatAttemptOrigin,
-     peer_ready: Option<Arc<std::sync::atomic::AtomicBool>>,
- ) {
-     GlobalExecutor::spawn(async move {
-@@ -387,6 +390,7 @@ fn spawn_outbound(
-             peer,
-             transaction,
-             transient,
-+            origin,
-             peer_ready.as_deref(),
-         )
-         .await;
-@@ -414,12 +418,13 @@ async fn connect_outbound(
-     peer: PeerKeyLocation,
-     transaction: Transaction,
-     transient: bool,
-+    origin: crate::transport::NatAttemptOrigin,
-     peer_ready: Option<&std::sync::atomic::AtomicBool>,
- ) -> Event {
-     let addr = peer
-         .socket_addr()
-         .expect("Connect requires known peer address");
--    let connect_future = outbound.connect(peer.pub_key.clone(), addr).await;
-+    let connect_future = outbound.connect(peer.pub_key.clone(), addr, origin).await;
-     let result: Result<Box<dyn PeerConnectionApi>, ConnectionError> =
-         match tokio::time::timeout(OUTBOUND_CONNECT_TIMEOUT, connect_future).await {
-             Ok(res) => res.map_err(|err| err.into()),
-@@ -532,6 +537,43 @@ mod tests {
+@@ -962,10 +962,18 @@ where
+         // embedding and rely on the separate metadata message instead.
+         let metadata_bytes = if fragment_number == 1 {
+             if let Some(meta) = pending_metadata.take() {
+-                // Note: The 41-byte overhead already includes Option discriminant (1 byte)
+-                // and length prefix (8 bytes). Only add the metadata data length.
+-                let required_size = payload.len() + 41 + meta.len();
+-                if required_size <= packet_data::MAX_DATA_SIZE {
++                // The size of the fragment as it would be serialized with the
++                // metadata embedded, not an estimate: the old
++                // `payload + 41 + meta` left out the metadata's 8-byte length
++                // and could approve an embed that then failed to serialize.
++                let required_size = symmetric_message::SymmetricMessage::stream_fragment_size(
++                    outbound_stream_id,
++                    total_bytes,
++                    fragment_number,
++                    &payload,
++                    Some(&meta),
++                );
++                if required_size <= packet_data::MAX_DATA_SIZE as u64 {
+                     Some(meta)
+                 } else {
+                     tracing::debug!(
+@@ -1059,6 +1067,35 @@ where
          }
      }
  
-+    /// A `Connect` command reaches the connector with its origin.
-+    #[tokio::test(start_paused = true)]
-+    async fn run_driver_passes_the_connect_commands_origin_to_the_connector() {
-+        let (_conn_tx, conn_rx) = mpsc::channel(4);
-+        let (cmd_tx, cmd_rx) = mpsc::channel(4);
-+        let (event_tx, mut event_rx) = mpsc::channel(4);
-+        let connector = Arc::new(ScriptedConnector {
-+            enqueue: Duration::ZERO,
-+            handshake: Handshake::Succeeds,
-+            origins: Default::default(),
-+        });
-+        let driver = GlobalExecutor::spawn(run_driver(
-+            Box::new(ChannelAcceptor(conn_rx)),
-+            connector.clone(),
-+            cmd_rx,
-+            event_tx,
-+            None,
-+        ));
-+        cmd_tx
-+            .send(Command::Connect {
-+                peer: make_peer(4310),
-+                transaction: Transaction::new::<ConnectMsg>(),
-+                transient: false,
-+                origin: crate::transport::NatAttemptOrigin::Gateway,
-+            })
-+            .await
-+            .unwrap();
-+        let Some(Event::OutboundEstablished { .. }) = event_rx.recv().await else {
-+            panic!("expected OutboundEstablished");
-+        };
-+        assert_eq!(
-+            *connector.origins.lock(),
-+            vec![crate::transport::NatAttemptOrigin::Gateway]
++    // The inbound stream has ended. Forwarding fewer bytes than the stream
++    // declared is a failed pipe, however cleanly the input ended: the
++    // receiver would wait for the rest until its inactivity timeout. Like the
++    // other input failures above, it fails only this stream (#4345).
++    if sent_so_far != total_bytes {
++        let elapsed = time_source.now().saturating_sub(start_time);
++        tracing::warn!(
++            stream_id = %outbound_stream_id.0,
++            destination = %destination_addr,
++            sent_so_far,
++            total_bytes,
++            "pipe_stream input ended short of its declared total"
 +        );
-+        driver.abort();
++        emit_transfer_failed(
++            outbound_stream_id.0 as u64,
++            destination_addr,
++            sent_so_far,
++            format!("inbound stream ended short: forwarded {sent_so_far}/{total_bytes} bytes"),
++            elapsed.as_millis() as u64,
++            TransferDirection::Send,
++        );
++        release_aborted_stream_flightsize(
++            outbound_stream_id,
++            sent_packet_tracker.as_ref(),
++            congestion_controller.as_ref(),
++        );
++        return Err(TransportError::OutboundStreamFailed(destination_addr));
 +    }
 +
-     /// The accept loop, driven through `Box<dyn InboundAcceptor>`: an
-     /// expected connection is reported with its peer, transaction and
-     /// transient flag; an unexpected one with none of them; each accept marks
-@@ -547,6 +589,7 @@ mod tests {
-             Arc::new(ScriptedConnector {
-                 enqueue: Duration::ZERO,
-                 handshake: Handshake::Hangs,
-+                origins: Default::default(),
-             }),
-             cmd_rx,
-             event_tx,
-@@ -637,6 +680,8 @@ mod tests {
-     struct ScriptedConnector {
-         enqueue: Duration,
-         handshake: Handshake,
-+        /// The origin each `connect` was called with.
-+        origins: parking_lot::Mutex<Vec<crate::transport::NatAttemptOrigin>>,
-     }
+     let generic_stats = congestion_controller.stats();
+     let ledbat_stats = congestion_controller.ledbat_stats();
+     let elapsed = time_source.now().saturating_sub(start_time);
+@@ -1237,6 +1274,47 @@ mod tests {
+     use crate::transport::token_bucket::TokenBucket;
+     use tokio::sync::mpsc;
  
-     impl OutboundConnector for ScriptedConnector {
-@@ -646,9 +691,11 @@ mod tests {
-             &self,
-             _remote_public_key: crate::transport::TransportPublicKey,
-             remote_addr: SocketAddr,
-+            origin: crate::transport::NatAttemptOrigin,
-         ) -> Pin<
-             Box<dyn std::future::Future<Output = crate::transport::PendingConnection> + Send + '_>,
-         > {
-+            self.origins.lock().push(origin);
-             let (enqueue, handshake) = (self.enqueue
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +81/-26)
-```diff
-@@ -1896,6 +1896,7 @@ impl P2pConnManager {
-                                             tx,
-                                             callback,
-                                             is_gw,
-+                                            origin: unconnected_dial_origin(is_gw),
-                                         }),
-                                     ) {
-                                         // `err` owns the ConnectPeer event (and thus the
-@@ -2468,6 +2469,7 @@ impl P2pConnManager {
-                                 tx,
-                                 callback,
-                                 is_gw: transient,
-+                                origin,
-                             } => {
-                                 tracing::debug!(
-                                     tx = %tx,
-@@ -2484,6 +2486,7 @@ impl P2pConnManager {
-                                     &handshake_cmd_sender,
-                                     &mut state,
-                                     transient,
-+                                    origin,
-                                 )
-                                 .await?;
-                             }
-@@ -3082,6 +3085,21 @@ fn orphan_transaction(
-     live_tx_tracker.remove_finished_transaction(tx);
- }
- 
-+/// The origin of the event loop's dial for a message to a peer it has no
-+/// transport to. The target is a configured gateway or a peer the ring still
-+/// lists (`peek_target_peer` always returns `None` since #4110, so nothing
-+/// else reaches the dial), so a non-gateway target is a ring peer whose
-+/// transport was lost. The message may be from any op: a relayed request, a
-+/// reply, or our own CONNECT request routed through that peer (for example
-+/// by `acquire_new`). Cached-peer joins never reach this dial (#5954).
-+fn unconnected_dial_origin(is_gw: bool) -> crate::transport::NatAttemptOrigin {
-+    if is_gw {
-+        crate::transport::NatAttemptOrigin::Gateway
-+    } else {
-+        crate::transport::NatAttemptOrigin::RingPeerNoTransport
-+    }
-+}
-+
- /// What to tell the event loop when `msg`, waiting for a connection to
- /// `target_addr`, was dropped because the connection failed. Only this
- /// node's own CONNECT request as a joiner (`own`) is reported (#5858): its
-@@ -4143,9 +4161,37 @@ pub(crate) mod tests {
-     /// event loop, which has no harness here.
-     #[test]
-     fn the_resend_waiter_reports_only_a_message_it_did_not_send() {
-+        let code = event_loop_code();
-+        let own = "&ctx.bridge.op_manager.ring.connection_manager.pub_key,";
-+        let notice = code
-+            .find(&format!(
-+                "letunsent_notice=unsent_message_notice(&msg_clone,tx,target_addr,{own});"
-+            ))
-+            .expect("the waiter must work out the notice before msg_clone is moved");
-+        let sent = code[notice..]
-+            .find("iflet(false,Some(notice))=(resent,unsent_notice){ifletErr(e)=bridge_sender.send_timeout(P2pBridgeEvent::NodeAction(notice),UNSENT_NOTICE_SEND_TIMEOUT,).await")
-+            .expect("the notice must go out only when the message was not resent");
-+        let resent_ok = code[notice..]
-+            .find("\"Failedtoreschedulemessageafterconnectionestablished\");}true}")
-+            .expect("a resent message must count as sent");
-+        assert!(resent_ok < sent);
-+        let dropped = code
-+            .find("overwhelmingtheeventloop.\");")
-+            .expect("the ConnectPeer full/closed branch");
-+        let inline = code[dropped..]
-+            .find(&format!(
-+                "ifunsent_message_notice(&msg,tx,target_addr,{own}).is_some(){{orphan_transaction(&mutstate,&ctx.bridge.op_manager.ring.live_tx_tracker,tx,target_addr,);}}"
-+            ))
-+            .expect("the full/closed branch must end an unsent CONNECT's driver");
-+        let cont = code[dropped..].find("continue;").expect("the branch ends");
-+        assert!(inline < cont, "before the branch moves on");
-+    }
-+
-+    /// The event-loop function `run_event_listener_with_transport`, with all
-+    /// whitespace removed. Scoped to that function: a whole-file scrape could
-+    /// match a literal anywhere, including in these tests.
-+    fn event_loop_code() -> String {
-         const SOURCE: &str = include_str!("p2p_protoc.rs");
--        // Scoped to the event-loop function that holds both drop sites: a
--        // whole-file scrape could match these literals anywhere.
-         let signature = "async fn run_event_listener_with_transport(";
-         let start = SOURCE.find(signature).expect("event-loop function renamed");
-         let tests_at = SOURCE
-@@ -4169,30 +4215,39 @@ pub(crate) mod tests {
-             }
-         }
-         assert!(end > open && end < tests_at, "unbalanced body slice");
--        let code: String = SOURCE[open..end].split_whitespace().collect();
--        let own = "&ctx.bridge.op_manager.ring.connection_manager.pub_key,";
--        let notice = code
--            .find(&format!(
--                "letunsent_
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +123/-0)
-```diff
-@@ -204,6 +204,9 @@ impl P2pConnManager {
-         }
-     }
- 
-+    // `origin` is telemetry carried alongside the dial; bundling it with the
-+    // other arguments would only move them into a one-use struct.
-+    #[allow(clippy::too_many_arguments)]
-     pub(super) async fn handle_connect_peer(
-         &mut self,
-         peer: PeerKeyLocation,
-@@ -212,6 +215,7 @@ impl P2pConnManager {
-         handshake_commands: &HandshakeCommandSender,
-         state: &mut EventListenerState,
-         transient: bool,
-+        origin: crate::transport::NatAttemptOrigin,
-     ) -> anyhow::Result<()> {
-         // Periodic cleanup of expired backoff entries (every 60 seconds)
-         const BACKOFF_CLEANUP_INTERVAL: Duration = Duration::from_secs(60);
-@@ -602,10 +606,12 @@ impl P2pConnManager {
-         // parking. The connect op can retry on a later attempt; this failure is
-         // LOCAL channel contention, not a remote connection failure, so we do
-         // NOT record peer backoff.
-+        let origin = dial_origin(origin, transient, peer_addr, &self.gateways);
-         if !handshake_commands.try_send(HandshakeCommand::Connect {
-             peer: peer.clone(),
-             transaction: tx,
-             transient,
-+            origin,
-         }) {
-             tracing::warn!(
-                 tx = %tx,
-@@ -1597,3 +1603,120 @@ impl P2pConnManager {
-         }
-     }
- }
-+
-+/// The origin a dial is reported under: `Gateway` for any dial to a
-+/// configured gateway (or one the caller marked as a gateway dial), whichever
-+/// path started it, otherwise the caller's `origin`. A CONNECT joiner whose
-+/// acceptor is a gateway, for example, is still a gateway dial.
-+fn dial_origin(
-+    origin: crate::transport::NatAttemptOrigin,
-+    is_gw: bool,
-+    peer_addr: SocketAddr,
-+    gateways: &[PeerKeyLocation],
-+) -> crate::transport::NatAttemptOrigin {
-+    if is_gw
-+        || gateways
-+            .iter()
-+            .any(|gw| gw.socket_addr() == Some(peer_addr))
-+    {
-+        crate::transport::NatAttemptOrigin::Gateway
-+    } else {
-+        origin
-+    }
-+}
-+
-+#[cfg(test)]
-+mod dial_origin_tests {
-+    use super::*;
-+    use crate::transport::NatAttemptOrigin;
-+
-+    fn gateway() -> PeerKeyLocation {
-+        PeerKeyLocation::new(
-+            crate::transport::TransportKeypair::new().public().clone(),
-+            "192.0.2.1:31337".parse().unwrap(),
-+        )
-+    }
-+
-+    /// A dial to a configured gateway is `Gateway` whatever path started it.
-+    #[test]
-+    fn a_configured_gateway_is_always_a_gateway_dial() {
-+        let gw = gateway();
-+        let addr = gw.socket_addr().unwrap();
-+        for origin in NatAttemptOrigin::ALL {
-+            assert_eq!(
-+                dial_origin(origin, false, addr, std::slice::from_ref(&gw)),
-+                NatAttemptOrigin::Gateway,
-+                "{origin:?}"
-+            );
-+        }
-+    }
-+
-+    /// A dial the caller marked as a gateway dial is `Gateway` even before
-+    /// the gateway list knows the address.
-+    #[test]
-+    fn a_marked_gateway_dial_is_a_gateway_dial() {
-+        let addr: SocketAddr = "198.51.100.4:9".parse().unwrap();
-+        assert_eq!(
-+            dial_origin(NatAttemptOrigin::RingPeerNoTransport, true, addr, &[]),
-+            NatAttemptOrigin::Gateway
++    /// A stream that ends before reaching its declared total is a failed
++    /// pipe, not a successful one: the receiver would wait for the rest.
++    #[tokio::test]
++    async fn pipe_fails_a_stream_that_ends_short_of_its_total() {
++        use super::super::streaming_buffer::FRAGMENT_PAYLOAD_SIZE as F;
++        let chunks = futures::stream::iter(vec![
++            Ok(Bytes::from(vec![1u8; F])),
++            Ok(Bytes::from(vec![2u8; F])),
++        ]);
++        let (fragments, result) = pipe_and_capture_result(3 * F as u64, chunks, None).await;
++        assert_eq!(fragments.len(), 2, "premise: what arrived was forwarded");
++        assert!(
++            matches!(result, Err(TransportError::OutboundStreamFailed(_))),
++            "a short stream must fail the pipe: {result:?}"
 +        );
 +    }
 +
-+    /// Source pin: `handle_connect_peer` applies `dial_origin` to the
-+    /// origin it hands to the handshake driver (the event loop has no
-+    /// harness here).
-+    #[test]
-+    fn handle_connect_peer_applies_dial_origin() {
-+        const SOURCE: &str = include_str!("connection_lifecycle.rs");
-+        let tests_at = SOURCE
-+            .find("\n#[cfg(test)]\nmod dial_origin_tests")
-+            .expect("test module");
-+        let start = SOURCE
-+            .find("pub(super) async fn handle_connect_peer(")
-+            .expect("handle_connect_peer renamed");
-+        assert!(start < tests_at, "the anchor must be production code");
-+        let open = start
-+            + SOURCE[start..]
-+                .find(") -> anyhow::Result<()> {")
-+                .expect("body")
-+            + 24;
-+        let (mut depth, mut end) = (0i32, open);
-+        for (i, b) in SOURCE.bytes().enumerate().skip(open) {
-+            match b {
-+                b'{' => depth += 1,
-+                b'}' => {
-+                    depth -= 1;
-+                    if depth == 0 {
-+                        end = i;
-+                        break;
-+                    }
-+                }
-+                _ => {}
++    /// Metadata is embedded in a forwarded fragment #1 only when the real
++    /// serialized fragment fits. Here payload + metadata leaves 5 bytes by
++    /// the old `payload + 41 + meta` estimate, but the metadata's 8-byte
++    /// length prefix does not fit: the pipe must skip the embed, not fail.
++    #[tokio::test]
++    async fn pipe_skips_metadata_that_would_overflow_fragment_one() {
++        use super::super::streaming_buffer::FRAGMENT_PAYLOAD_SIZE as F;
++        let meta = Bytes::from(vec![9u8; 40]);
++        let first = F - meta.len() - 5;
++        let expected = payload_of(first + F);
++        let chunks = futures::stream::iter(vec![
++            Ok(Bytes::copy_from_slice(&expected[..first])),
++            Ok(Bytes::copy_from_slice(&expected[first..])),
++        ]);
++        let (fragments, result) =
++            pipe_and_capture_result(expected.len() as u64, chunks, Some(meta)).await;
++        assert!(result.is_ok(), "the pipe must not fail: {result:?}");
++        assert!(
++            !fragments[0].has_metadata,
++            "metadata that does not fit is skipped"
++        );
++        assert_receiver_accepts(&fragments, &expected);
++    }
++
+     /// Yields its chunks with a `Pending` before each one (waking itself),
+     /// so a reader that drops `next()` on `Pending` d
+```
+
+**File**: `crates/core/src/transport/peer_connection/streaming.rs` (modified, +53/-12)
+```diff
+@@ -744,8 +744,23 @@ impl Stream for StreamingInboundStream {
+         // Lock-free access to buffer
+         let total_fragments = self.handle.buffer.total_fragments() as u32;
+ 
+-        // Check if we've read all fragments
++        // Every fragment slot has been read. That is the end only if every
++        // declared byte was read too: a sender that filled the slots with
++        // short payloads leaves the stream short, and ending cleanly here
++        // would report a truncated stream as complete (#5445). Fail the
++        // stream instead. (`assemble()` never completes such a stream
++        // either: it waits for the missing bytes and ends in
++        // `InactivityTimeout`.)
+         if next_idx > total_fragments {
++            let declared = self.handle.buffer.total_bytes();
++            if self.bytes_read < declared {
++                return Poll::Ready(Some(Err(StreamError::InvalidFragment {
++                    message: format!(
++                        "stream ended after {} of its {declared} declared bytes",
++                        self.bytes_read
++                    ),
++                })));
 +            }
-+        }
-+        assert!(end > open && end < tests_at, "unbalanced body slice");
-+        let code: String = SOURCE[open..end].split_whitespace().collect();
-+        let applied = code
-+            .find("letorigin=dial_origin(origin,transient,peer_addr,&self.gateways);")
-+            .expect("handle_connect_peer must apply dial_origin");
-+        let sent = code
-+            .find("HandshakeCommand::Connect{peer:peer.clone(),transaction:tx,transient,ori
-```
-
-**File**: `crates/core/src/operations/connect.rs` (modified, +1/-0)
-```diff
-@@ -1459,6 +1459,7 @@ pub(super) async fn dispatch_expect_connection_from(
-             tx,
-             callback,
-             is_gw: false,
-+            origin: crate::transport::NatAttemptOrigin::ConnectAcceptor,
-         })
-         .await?;
- 
-```
-
-**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +167/-9)
-```diff
-@@ -424,7 +424,9 @@ async fn drive_client_connect(
-     // one unreachable acceptor cannot hold the next one past its hole-punch
-     // window (#5858). A peer that already has a connection keeps dialling
-     // one at a time, as before.
--    let mut dial_queue: AcceptorDialQueue<PeerKeyLocation> = AcceptorDialQueue::new(
-+    // Each acceptor carries when its Response arrived, so the dial can
-+    // report how long it waited in the queue (telemetry).
-+    let mut dial_queue: AcceptorDialQueue<(PeerKeyLocation, Instant)> = AcceptorDialQueue::new(
-         if bootstrapping {
-             MAX_CONCURRENT_ACCEPTOR_DIALS
-         } else {
-@@ -522,8 +524,8 @@ async fn drive_client_connect(
-                 acceptor_addr,
-                 result,
-             })) => {
--                if let Some(next) = dial_queue.finish() {
--                    dials.push(begin_acceptor_dial(op_manager, tx, next).await?);
-+                if let Some((next, answered_at)) = dial_queue.finish() {
-+                    dials.push(begin_acceptor_dial(op_manager, tx, next, answered_at).await?);
-                 }
-                 // The address the connection was made to, which can differ from
-                 // the advertised one when an existing transport is reused.
-@@ -766,10 +768,12 @@ async fn drive_client_connect(
- 
-                 // `accepted` only grows with what the queue takes, so both
-                 // stay within `acceptor_limit`.
--                match dial_queue.offer(payload.acceptor.clone()) {
--                    Offer::Dial(acceptor) => {
-+                match dial_queue.offer((payload.acceptor.clone(), Instant::now())) {
-+                    Offer::Dial((acceptor, answered_at)) => {
-                         accepted.insert(acceptor.clone());
--                        dials.push(begin_acceptor_dial(op_manager, tx, acceptor).await?);
-+                        dials.push(
-+                            begin_acceptor_dial(op_manager, tx, acceptor, answered_at).await?,
-+                        );
-                     }
-                     Offer::Queued => {
-                         accepted.insert(payload.acceptor.clone());
-@@ -925,12 +929,14 @@ struct AcceptorDial {
-     result: Option<crate::message::ConnectResult>,
- }
- 
--/// Starts the hole punch to `acceptor` and returns a future that resolves
--/// with its outcome, so several acceptors can be dialled at once.
-+/// Starts the hole punch to `acceptor`, whose Response arrived at
-+/// `answered_at`, and returns a future that resolves with its outcome, so
-+/// several acceptors can be dialled at once.
- async fn begin_acceptor_dial(
-     op_manager: &OpManager,
-     tx: Transaction,
-     acceptor: PeerKeyLocation,
-+    answered_at: Instant,
- ) -> Result<impl std::future::Future<Output = AcceptorDial> + Send + 'static, OpError> {
-     // The Response arm only queues acceptors that have a socket address.
-     let acceptor_addr = acceptor.socket_addr().ok_or(OpError::UnexpectedOpState)?;
-@@ -947,8 +953,16 @@ async fn begin_acceptor_dial(
-             tx,
-             callback,
-             is_gw: false,
-+            origin: crate::transport::NatAttemptOrigin::ConnectJoiner,
-         })
-         .await?;
-+    // The acceptor started punching when it accepted, before its Response
-+    // reached us; time spent queued here comes out of its 3 s window. Taken
-+    // only once the dial is handed to the event loop, so the wait includes
-+    // any time the two sends above were blocked, and a dial that was never
-+    // sent is not counted.
-+    crate::transport::TRANSPORT_METRICS
-+        .record_dial_queue_wait(acceptor_addr, answered_at.elapsed());
-     Ok(async move {
-         let result = rx.recv().await;
-         AcceptorDial {
-@@ -2826,6 +2840,8 @@ mod driver_timing_tests {
-         max_in_flight: usize,
-         /// Acceptors the driver reported to the gateway as failed.
-         connect_failed: Vec<SocketAddr>,
-+        /// The origin each dial was tagged with.
-+        origins: Vec<crate::transport::NatAttemptOrigin>,
-     }
- 
-     /// Plays the event loop: every dial takes the NAT traversal deadline and
-@@ -2842,12 +2858,18 @@ mod driver_timing_tests {
-             use std::sync::atomic::Ordering::SeqCst;
-             while let Some(event) = events.recv().await {
-                 match event {
--                    Either::Right(NodeEvent::ConnectPeer { peer, callback, .. }) => {
-+                    Either::Right(NodeEvent::ConnectPeer {
-+                        peer,
-+                        callback,
-+                        origin,
-+                        ..
-+                    }) => {
-                         let addr = peer.socket_addr().expect("acceptor address");
-                         let now_in_flight = in_flight.fetch_add(1, SeqCst) + 1;
-                         {
-                             let mut log = shared.lock();
-                             log.dials.push((addr, t0.elapsed()));
-+                            log.origins.push(origin);
-          
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +112/-0)
-```diff
-@@ -2809,6 +2809,70 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "inbound_stream_evicted_age".into(),
-                 serde_json::json!(snapshot.inbound_stream_evicted_age),
-             );
-+            m.insert(
-+                "nat_attempts_connect_joiner".into(),
-+                serde_json::json!(snapshot.nat_attempts_connect_joiner),
-+            );
-+            m.insert(
-+                "nat_attempts_connect_acceptor".into(),
-+                serde_json::json!(snapshot.nat_attempts_connect_acceptor),
-+            );
-+            m.insert(
-+                "nat_attempts_gateway".into(),
-+                serde_json::json!(snapshot.nat_attempts_gateway),
-+            );
-+            m.insert(
-+                "nat_attempts_ring_peer_no_transport".into(),
-+                serde_json::json!(snapshot.nat_attempts_ring_peer_no_transport),
-+            );
-+            m.insert(
-+                "nat_established_connect_joiner".into(),
-+                serde_json::json!(snapshot.nat_established_connect_joiner),
-+            );
-+            m.insert(
-+                "nat_established_connect_acceptor".into(),
-+                serde_json::json!(snapshot.nat_established_connect_acceptor),
-+            );
-+            m.insert(
-+                "nat_established_gateway".into(),
-+                serde_json::json!(snapshot.nat_established_gateway),
-+            );
-+            m.insert(
-+                "nat_established_ring_peer_no_transport".into(),
-+                serde_json::json!(snapshot.nat_established_ring_peer_no_transport),
-+            );
-+            m.insert(
-+                "stray_intro_after_deadline".into(),
-+                serde_json::json!(snapshot.stray_intro_after_deadline),
-+            );
-+            m.insert(
-+                "stray_intro_same_ip_other_port".into(),
-+                serde_json::json!(snapshot.stray_intro_same_ip_other_port),
-+            );
-+            m.insert(
-+                "stray_intro_other".into(),
-+                serde_json::json!(snapshot.stray_intro_other),
-+            );
-+            m.insert(
-+                "stray_intro_failures_evicted".into(),
-+                serde_json::json!(snapshot.stray_intro_failures_evicted),
-+            );
-+            m.insert(
-+                "dial_queue_wait_lt_100ms".into(),
-+                serde_json::json!(snapshot.dial_queue_wait_lt_100ms),
-+            );
-+            m.insert(
-+                "dial_queue_wait_lt_1s".into(),
-+                serde_json::json!(snapshot.dial_queue_wait_lt_1s),
-+            );
-+            m.insert(
-+                "dial_queue_wait_lt_3s".into(),
-+                serde_json::json!(snapshot.dial_queue_wait_lt_3s),
-+            );
-+            m.insert(
-+                "dial_queue_wait_ge_3s".into(),
-+                serde_json::json!(snapshot.dial_queue_wait_ge_3s),
-+            );
-             serde_json::Value::Object(m)
+             return Poll::Ready(None); // Stream complete
          }
-         EventKind::InterestSync(interest_sync_event) => {
-@@ -6450,6 +6514,54 @@ mod tests {
-         assert_eq!(actual, expected);
+ 
+@@ -768,17 +783,10 @@ impl Stream for StreamingInboundStream {
+         // short). They consume the same buffer and must reach the same
+         // conclusion about when a stream has ended.
+         //
+-        // Scope, precisely: this brings the two paths into agreement at THIS
+-        // exit. The `next_idx > total_fragments` exit above is still unguarded,
+-        // and a sender that filled every `base + 1` slot with short payloads
+-        // would leave through it with `bytes_read < total_bytes` — where
+-        // `assemble()` returns `None` (a failure) but this returns
+-        // `Ready(None)` (a success), and `pipe_stream` reports a successful
+-        // transfer with a short byte count. No conforming sender does that:
+-        // `send_stream` fragments `stream_to_send` exactly. Tracked as #5445,
+-        // which is where the guard that would make the agreement universal
+-        // belongs — it is a production behaviour change and wants its own
+-        // review rather than a late addition here.
++        // Both exits end on the byte count: the `next_idx > total_fragments`
++        // exit above returns an error when the slots ran out before the
++        // bytes did (#5445), so neither can report a truncated stream as
++        // complete.
+         if self.reached_end(next_idx) {
+             return Poll::Ready(None);
+         }
+@@ -1087,6 +1095,39 @@ mod tests {
+         }
      }
  
-+    /// As below, for the NAT-origin, stray-intro and dial-queue counts:
-+    /// each is distinct and non-zero, so a swapped or mis-keyed one is caught.
-+    #[test]
-+    fn transport_snapshot_json_carries_nat_origin_values() {
-+        let snapshot = crate::transport::metrics::TransportSnapshot {
-+            nat_attempts_connect_joiner: 1,
-+            nat_attempts_connect_acceptor: 2,
-+            nat_attempts_gateway: 3,
-+            nat_attempts_ring_peer_no_transport: 5,
-+            nat_established_connect_joiner: 6,
-+            nat_established_connect_acceptor: 7,
-+            nat_established_gateway: 8,
-+            nat_established_ring_peer_no_transport: 10,
-+            stray_intro_after_deadline: 11,
-+            stray_intro_same_ip_other_port: 12,
-+            stray_intro_other: 13,
-+            stray_intro_failures_evicted: 18,
-+            dial_queue_wait_lt_100ms: 14,
-+            dial_queue_wait_lt_1s: 15,
-+            dial_queue_wait_lt_3s: 16,
-+            dial_queue_wait_ge_3s: 17,
-+            ..Default::default()
++    /// A sender that fills every fragment slot with short payloads leaves
++    /// the stream short of its declared total. Reading it must end in an
++    /// error, not a clean end that looks like a complete stream (#5445).
++    #[tokio::test]
++    async fn stream_filled_short_ends_in_an_error_not_a_clean_end() {
++        use futures::StreamExt;
++        let total = 2 * super::super::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
++        let handle = StreamHandle::new(make_stream_id(), total as u64);
++        let slots = handle.total_fragments();
++        for n in 1..=slots {
++            handle
++                .push_fragment(n as u32, Bytes::from(vec![n as u8; 100]))
++                .unwrap();
++        }
++        let items: Vec<_> = tokio::time::timeout(
++            std::time::Duration::from_secs(5),
++            handle.stream().take(slots + 2).collect::<Vec<_>>(),
++        )
++        .await
++        .expect("the stream ends");
++        let read: usize = items
++            .iter()
++            .filter_map(|i| i.as_ref().ok())
++            .map(|b| b.len())
++            .sum();
++        assert!(read < total, "premise: the stream is short");
++        assert!(
++            items.iter().any(|i| i.is_err()),
++            "a short stream must end in an error, got {} chunks and a clean end",
++            items.len()
++        );
++    }
++
+     #[test]
+     fn test_rearmed_listener_spurious_notification_registers_waker() {
+         use std::sync::atomic::Ordering;
+```
+
+**File**: `crates/core/src/transport/symmetric_message.rs` (modified, +25/-0)
+```diff
+@@ -97,6 +97,31 @@ impl SymmetricMessage {
+         *OVERHEAD
+     }
+ 
++    /// Serialized size of a stream fragment as `packet_sending` sends it
++    /// (no piggybacked receipts), computed from the real serialization.
++    pub(crate) fn stream_fragment_size(
++        stream_id: StreamId,
++        total_length_bytes: u64,
++        fragment_number: u32,
++        payload: &Bytes,
++        metadata_bytes: Option<&Bytes>,
++    ) -> u64 {
++        let message = SymmetricMessage {
++            packet_id: 0,
++            confirm_receipt: vec![],
++            payload: SymmetricMessagePayload::StreamFragment {
++                stream_id,
++                total_length_bytes,
++                fragment_number,
++                payload: payload.clone(),
++                metadata_bytes: metadata_bytes.cloned(),
++            },
 +        };
-+        let reference = serde_json::to_value(&snapshot).unwrap();
-+        let json = event_kind_to_json(&super::super::EventKind::TransportSnapshot(snapshot));
-+        for (key, expected) in [
-+            ("nat_attempts_connect_joiner", 1),
-+            ("nat_attempts_connect_acceptor", 2),
-+            ("nat_attempts_gateway", 3),
-+            ("nat_attempts_ring_peer_no_transport", 5),
-+            ("nat_established_connect_joiner", 6),
-+            ("nat_established_connect_acceptor", 7),
-+            ("nat_established_gateway", 8),
-+            ("nat_established_ring_peer_no_transport", 10),
-+            ("stray_intro_after_deadline", 11),
-+            ("stray_intro_same_ip_other_port", 12),
-+            ("stray_intro_other", 13),
-+            ("stray_intro_failures_evicted", 18),
-+            ("dial_queue_wait_lt_100ms", 
++        // Serializing a fixed in-memory value cannot fail; treat a failure
++        // as "does not fit".
++        bincode::serialized_size(&message).unwrap_or(u64::MAX)
++    }
++
+     pub(crate) fn max_num_of_confirm_receipts_of_noop_message() -> usize {
+         static MAX_NUM_CONFIRM_RECEIPTS: LazyLock<usize> = LazyLock::new(|| {
+             let overhead = SymmetricMessage::noop_message_overhead() as u64;
 ```
 
 ---
 
-### Incident Patch 2: `2d27f0a1` (2026-10-21)
-**Commit Message**: refactor(transport): add a transport-neutral IncomingStream to the boundary (#5955)
+### Incident Patch 2: `689cbd4f` (2026-10-21)
+**Commit Message**: fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test) (#5960)
 
-**File**: `.claude/rules/transport.md` (modified, +9/-3)
+**File**: `crates/core/src/topology.rs` (modified, +46/-4)
 ```diff
-@@ -552,9 +552,15 @@ USE: LockFreeStreamBuffer (AtomicPtr<Bytes> slots, 256-slot chunks
-   - Lock-free insertion
-   - Ordered delivery to consumer
+@@ -1264,8 +1264,9 @@ pub(crate) enum ConnectionAcquisitionStrategy {
  
--Legacy (non-operations) streams use InboundStream only; operations streams
--use StreamHandle/StreamRegistry/orphan registry only. Never feed one stream
--to both.
-+Three stream types, never mixed:
-+  - inbound_stream::InboundStream: the UDP transport's reassembler for its
-+    OWN streams (oversized messages, StreamId::next_transport_internal).
-+    Transport-internal.
-+  - StreamHandle (with StreamRegistry): the UDP transport's handle for
-+    caller-named streams (StreamId::next). Transport-internal.
-+  - boundary::IncomingStream: what the registry, operations and node see.
-+    Above the transport, use only this; it wraps a StreamHandle today.
-+Never feed one stream to both reassembly paths.
- ```
+ #[cfg(test)]
+ mod tests {
+-    #[test]
+-    fn test_topology() {
++    /// Runs the clustered-requests scenario and returns
++    /// `(best_candidate_location, best_density_location)`.
++    fn run_topology_scenario() -> (Location, Location) {
+         const NUM_REQUESTS: usize = 5_000;
+         let mut topology_manager = TopologyManager::new(Limits {
+             max_upstream_bandwidth: Rate::new_per_second(1000.0),
+@@ -1304,8 +1305,6 @@ mod tests {
+         let best_candidate_location = topology_manager
+             .get_best_candidate_location(&this_peer_location)
+             .unwrap();
+-        // Should be half way between 0.3 and 0.4 as that is where the most requests were.
+-        assert_eq!(best_candidate_location, Location::new(0.35));
  
- ### WHEN admitting or sending a stream
-```
-
-**File**: `crates/core/src/node/network_bridge.rs` (modified, +2/-2)
-```diff
-@@ -85,15 +85,15 @@ pub(crate) trait NetworkBridge: Send + Sync {
-     /// Pipe an inbound stream to a peer, forwarding fragments as they arrive.
-     ///
-     /// Unlike `send_stream` which takes complete data and fragments it, this forwards
--    /// fragments from an existing `StreamHandle` incrementally without waiting for
-+    /// data from an existing `IncomingStream` incrementally without waiting for
-     /// full reassembly. This enables low-latency forwarding at intermediate nodes.
-     ///
-     /// The `outbound_stream_id` should be created via `StreamId::next()`.
-     fn pipe_stream(
-         &self,
-         target_addr: SocketAddr,
-         outbound_stream_id: crate::transport::StreamId,
--        inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+        inbound_handle: crate::transport::IncomingStream,
-         metadata: Option<bytes::Bytes>,
-     ) -> impl Future<Output = ConnResult<()>> + Send;
- }
-```
-
-**File**: `crates/core/src/node/network_bridge/handshake.rs` (modified, +1/-1)
-```diff
-@@ -513,7 +513,7 @@ mod tests {
-         fn pipe_stream_data(
-             &mut self,
-             _outbound_stream_id: crate::transport::StreamId,
--            _inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+            _inbound_handle: crate::transport::IncomingStream,
-             _metadata: Option<bytes::Bytes>,
-             _progress: Option<Arc<dyn crate::transport::StreamProgressObserver>>,
-         ) -> Pin<Box<dyn std::future::Future<Output = Result<(), TransportError>> + Send + '_>>
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +4/-4)
-```diff
-@@ -163,7 +163,7 @@ pub(crate) enum P2pBridgeEvent {
-     PipeStream {
-         target_addr: SocketAddr,
-         outbound_stream_id: StreamId,
--        inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+        inbound_handle: crate::transport::IncomingStream,
-         metadata: Option<bytes::Bytes>,
-     },
- }
-@@ -507,7 +507,7 @@ impl NetworkBridge for P2pBridge {
-         &self,
-         target_addr: SocketAddr,
-         outbound_stream_id: StreamId,
--        inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+        inbound_handle: crate::transport::IncomingStream,
-         metadata: Option<bytes::Bytes>,
-     ) -> super::ConnResult<()> {
-         self.ev_listener_tx
-@@ -3270,7 +3270,7 @@ pub(super) enum ConnEvent {
-     PipeStream {
-         target_addr: SocketAddr,
-         outbound_stream_id: StreamId,
--        inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+        inbound_handle: crate::transport::IncomingStream,
-         metadata: Option<bytes::Bytes>,
-     },
- }
-@@ -3999,7 +3999,7 @@ pub(crate) mod tests {
-         fn pipe_stream_data(
-             &mut self,
-             _outbound_stream_id: crate::transport::StreamId,
--            _inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+            _inbound_handle: crate::transport::IncomingStream,
-             _metadata: Option<bytes::Bytes>,
-             _progress: Option<Arc<dyn crate::transport::StreamProgressObserver>>,
-         ) -> std::pin::Pin<
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/zombie_sweep.rs` (modified, +1/-1)
-```diff
-@@ -2466,7 +2466,7 @@ mod tests {
-         fn pipe_stream_data(
-             &mut self,
-             _outbound_stream_id: StreamId,
--            _inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+            _inbound_handle: crate::transport::IncomingStream,
-             _metadata: Option<bytes::Bytes>,
-             _progress: Option<std::sync::Arc<dyn crate::transport::StreamProgressObserver>>,
-         ) -> Pin<Box<dyn Future<Output = Result<(), TransportError>> + Send + '_>> {
-```
-
-**File**: `crates/core/src/node/network_bridge/priority_select/tests.rs` (modified, +1/-1)
-```diff
-@@ -2852,7 +2852,7 @@ impl crate::transport::PeerConnectionApi for MockPeerConnection {
-     fn pipe_stream_data(
-         &mut self,
-         _outbound_stream_id: crate::transport::StreamId,
--        _inbound_handle: crate::transport::peer_connection::streaming::StreamHandle,
-+        _inbound_handle: crate::transport::IncomingStream,
-         _metadata: Option<bytes::Bytes>,
-         _progress: Option<std::sync::Arc<dyn crate::transport::StreamProgressObserver>>,
-     ) -> std::pin::Pin<
-```
-
-**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +16/-10)
-```diff
-@@ -9104,7 +9104,7 @@ mod route_attempt_driver_tests {
-             .expect("the fragment is accepted");
-         op_manager
-             .orphan_stream_registry()
--            .register_orphan(from, stream_id, handle);
-+            .register_test_orphan(from, stream_id, handle);
-     }
- 
-     fn streaming_header(
-@@ -9372,9 +9372,11 @@ mod route_attempt_driver_tests {
-             handle
-                 .push_fragment(1, bytes::Bytes::from(payload))
-                 .expect("fragment accepted");
--            op_manager
--                .orphan_stream_registry()
--                .register_orphan(addr(&peers[2]), stream_id, handle);
-+            op_manager.orphan_stream_registry().register_test_orphan(
-+                addr(&peers[2]),
-+                stream_id,
-+                handle,
-+            );
- 
-             let hop = peers[2].clone();
-             serve_attempts(
-@@ -10360,9 +10362,11 @@ mod route_attempt_driver_tests {
-         let handle =
-             crate::transport::peer_connection::streaming::StreamHandle::new(stream_id, 4096);
-         handle.cancel();
--        op_manager
--            .orphan_stream_registry()
--            .register_orphan(addr(&peers[0]), stream_id, handle);
-+        op_manager.orphan_stream_registry().register_test_orphan(
-+            addr(&peers[0]),
-+            stream_id,
-+            handle,
-+        );
-         let header_hop = peers[0].clone();
-         serve_attempts(
-             op_manager.clone(),
-@@ -12656,9 +12660,11 @@ mod route_attempt_driver_tests {
-         handle
-             .push_fragment(1, bytes::Bytes::from(payload))
-             .expect("fragment accepted");
--        op_manager
--            .orphan_stream_registry()
--            .register_orphan(addr(&peers[0]), stream_id, handle);
-+        op_manager.orphan_stream_registry().register_test_orphan(
-+            addr(&peers[0]),
-+            stream_id,
-+            handle,
-+        );
-         serve_attempts(
-             op_manager.clone(),
-             rx,
-```
-
-**File**: `crates/core/src/operations/orphan_streams.rs` (modified, +38/-24)
-```diff
-@@ -36,7 +36,9 @@ use tokio::time::Instant;
- use dashmap::DashMap;
- use tokio::sync::oneshot;
- 
-+use crate::transport::IncomingStream;
- use crate::transport::StreamId;
-+#[cfg(test)]
- use crate::transport::peer_connection::streaming::StreamHandle;
- use crate::transport::peer_connection::streaming_buffer::LockFreeStreamBuffer;
- 
-@@ -71,9 +73,9 @@ type StreamKey = (SocketAddr, StreamId);
- enum Slot {
-     /// The stream arrived before its metadata (RequestStreaming /
-     /// ResponseStreaming): the handle and when it was registered.
--    Orphan(StreamHandle, Instant),
-+    Orphan(IncomingStream, Instant),
-     /// The metadata arrived first: the claimant waiting for the stream.
--    Waiter(oneshot::Sender<StreamHandle>),
-+    Waiter(oneshot::Sender<IncomingStream>),
- }
- 
- pub struct OrphanStreamRegistry {
-@@ -113,7 +115,7 @@ impl OrphanStreamRegistry {
-         &self,
-         peer_addr: SocketAddr,
-         stream_id: StreamId,
--        handle: StreamHandle,
-+        handle: IncomingStream,
-     ) {
-         use dashmap::mapref::entry::Entry;
-         let key = (peer_addr, stream_id);
-@@ -188,7 +190,7 @@ impl OrphanStreamRegistry {
-         peer_addr: SocketAddr,
-         stream_id: StreamId,
-         timeout: Duration,
--    ) -> Result<StreamHandle, OrphanStreamError> {
-+    ) -> Result<IncomingStream, OrphanStreamError> {
-         use dashmap::mapref::entry::Entry;
-         let key = (peer_addr, stream_id);
-         // Atomic dedup: try to insert into claimed_streams. If already present,
-@@ -321,6 +323,18 @@ impl OrphanStreamRegistry {
-         );
-     }
- 
-+    /// [`Self::register_orphan`] for tests that build a UDP `StreamHandle`
-+    /// directly.
-+    #[cfg(test)]
-+    pub(crate) fn register_test_orphan(
-+        &self,
-+        peer_addr: SocketAddr,
-+        stream_id: StreamId,
-+        handle: impl Into<IncomingStream>,
-+    ) {
-+        self.register_orphan(peer_addr, stream_id, handle.into());
+         // Find the location with the highest density score across 0.0 to 1.0
+         let mut best_score = 0.0;
+@@ -1323,12 +1322,54 @@ mod tests {
+                 best_location = candidate_location;
+             }
+         }
++        (best_candidate_location, best_location)
 +    }
 +
-     /// Cancel the unclaimed orphans among `streams` from `peer_addr` when the
-     /// connection that received them is gone. Each is matched by buffer, so
-     /// a stream with the same key from another connection is left alone, as
-@@ -460,9 +474,9 @@ impl crate::transport::InboundStreamRegistry for OrphanStreamRegistry {
-         &self,
-         peer_addr: SocketAddr,
-         stream_id: StreamId,
--        handle: StreamHandle,
-+        stream: IncomingStream,
-     ) {
--        self.register_orphan(peer_addr, stream_id, handle);
-+        self.register_orphan(peer_addr, stream_id, stream);
++    /// Seed for `test_topology`. The scenario below is a statistical test over random
++    /// request locations, so it must run from a fixed seed to be deterministic.
++    const TOPOLOGY_TEST_SEED: u64 = 0x70B0_0001;
++
++    /// Seed that makes the unseeded version of `test_topology` fail (found by sweeping
++    /// seeds 0..40_000; 14 of them fail, ~0.035%).
++    const TOPOLOGY_TIE_BREAK_SEED: u64 = 4069;
++
++    #[test]
++    fn test_topology() {
++        // The requests are centred on 0.39, just below the 0.4 neighbor. A sample is
++        // attributed to its nearest neighbor, so the neighbors at 0.3, 0.4 and 0.5 get
++        // counts c3, c4, c5 and the two candidate midpoints score c3 + c4 (0.35) and
++        // c4 + c5 (0.45). 0.35 wins exactly when c3 > c5, i.e. when more samples fall
++        // more than 0.04 below the peer than more than 0.06 above it. That holds in
++        // expectation but not for every draw, so the RNG has to be seeded.
++        let _guard = GlobalRng::seed_guard(TOPOLOGY_TEST_SEED);
++        let (best_candidate_location, best_location) = run_topology_scenario();
++
++        // Should be half way between 0.3 and 0.4, the pair of neighbors that attracted
++        // the most requests.
++        assert_eq!(best_candidate_location, Location::new(0.35));
+ 
+         // Best location should be 0.4 as that is closest to 0.39 which is the peer's location and
+         // the request epicenter
+         assert_eq!(best_location, Location::new(0.4));
      }
  
-     fn cancel_unclaimed_streams(
-@@ -542,7 +556,7 @@ mod tests {
-         let addr = dummy_addr();
++    /// Regression test for the `test_topology` flake: the scenario must be a pure function
++    /// of the seed, and the tail draw that used to fail (c5 > c3, so the 0.45 midpoint
++    /// wins) must reproduce exactly instead of appearing at random.
++    #[test]
++    fn test_topology_scenario_is_deterministic_for_a_fixed_seed() {
++        for seed in [TOPOLOGY_TEST_SEED, TOPOLOGY_TIE_BREAK_SEED] {
++            let first = GlobalRng::scoped_seed(seed, run_topology_scenario);
++            let second = GlobalRng::scoped_seed(seed, run_topology_scenario);
++            assert_eq!(first, second, "scenario diverged for seed {seed}");
++        }
++        assert_eq!(
++            GlobalRng::scoped_seed(TOPOLOGY_TIE_BREAK_SEED, run_topology_scenario),
++            (Location::new(0.45), Location::new(0.4)),
++            "the seed that reproduces the original flake no longer does"
++        );
++    }
++
+     /// Generates a random location that is close to the current peer location with a small
+     /// world distribution.
+     fn random_location(this_peer_location: &Location) -> Location {
+@@ -1345,6 +1386,7 @@ mod tests {
+     }
  
-         // Register orphan
--        registry.register_orphan(addr, stream_id, handle);
-+        registry.register_test_orphan(addr, stream_id, handle);
-         assert_eq!(registry.orphan_count(), 1);
+     use super::*;
++    use crate::config::GlobalRng;
+     use crate::ring::Distance;
+     use std::time::Duration;
  
-         // Claim immediately
-@@ -573,7 +587,7 @@ mod tests {
+```
+
+**File**: `crates/core/src/topology/small_world_rand.rs` (modified, +3/-0)
+```diff
+@@ -566,6 +566,9 @@ mod tests {
  
-         // Register orphan (should deliver to waiter)
-         let handle = make_test_handle(stream_id);
--        registry.register_orphan(addr, stream_id, handle);
-+        registry.register_test_orphan(addr, stream_id, handle);
- 
-         // Waiter should succeed
-         let result = waiter.await.unwrap();
-@@ -589,7 +603,7 @@ mod tests {
-         let addr = dummy_addr();
- 
-         // Register and claim once
--        registry.register_orphan(addr, stream_id, handle);
-+        registry.register_test_orphan(addr, stream_id, handle);
-         let result = registry
-             .claim_or_wait(addr, stream_id, Duration::from_secs(1))
-             .await;
-@@ -630,7 +644,7 @@ mod tests {
-         // Insert with fake old timestamp by directly manipulating
-         registry.slots.insert(
-             (addr, stream_id),
--            Slot::Orphan(handle, Instant::now() - EXPIRED_ORPHAN_AGE),
-+            Slot::Orphan(handle.into(), Instant::now() - EXPIRED_ORPHAN_AGE),
-         );
- 
-         assert_eq!(registry.orphan_count(), 1);
-@@ -648,7 +662,7 @@ mod tests {
-         let addr = dummy_addr();
- 
-         // Register fresh orphan
--        registry.register_orphan(addr, stream_id, handle);
-+        registry.register_test_orphan(addr, stream_id, handle);
-         assert_eq!(registry.orphan_count(), 1);
- 
-         // GC should preserve fresh stream
-@@ -663,7 +677,7 @@ mod tests {
-         let registry = OrphanStreamRegistry::new();
-         let stream_id = StreamId::next();
-         let handle = make_test_handle(stream_id);
--        registry.register_orphan(dummy_addr(), stream_id, handle.clone());
-+        registry.register_test_orphan(dummy_addr(), stream_id, handle.clone());
-         handle.cancel();
-         registry.gc_expired();
-         assert_eq!(registry.orphan_count(), 0);
-@@ -681,20 +695,20 @@ mod tests {
- 
-         let mine = StreamId::next();
-         let mine_handle = make_test_handle(mine);
--        registry.register_orphan(dummy_addr(), mine, mine_handle.clone());
-+        registry.register_test_orphan(dummy_addr(), mine, mine_han
+     #[test]
+     fn chi_squared_test() {
++        // Seeded: the 0.001 significance threshold below rejects ~1 in 1000 unseeded runs
++        // by design, which made this test flaky.
++        let _guard = crate::config::GlobalRng::seed_guard(0xC41_5EED);
+         let d_min = D_MIN_TARGET;
+         let n = 10000;
+         let num_bins = 20;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5960** (2026-10-21): fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test) (@sanity)
+- **PR #5959** (2026-10-21): refactor(transport): hide the UDP transport's own errors behind TransportError::Udp (@sanity)
+- **PR #5958** (2026-10-21): fix(transport): fail truncated piped streams and size fragment #1 metadata exactly (@sanity)
+- **PR #5957** (2026-10-21): refactor(transport): decouple the stream registry from fragments and add a neutral chunk read (@sanity)
 - **PR #5955** (2026-10-21): refactor(transport): add a transport-neutral IncomingStream to the boundary (@sanity)
 - **PR #5953** (2026-10-21): feat(telemetry): tag NAT traversal attempts by origin and count stray intros (@sanity)
-- **PR #5952** (2026-10-21): refactor(transport): make StreamId a boundary-owned, sender-chosen id (@sanity)
-- **PR #5949** (2026-10-20): refactor(transport): move inbound accept, transport opening and liveness behind the boundary (@sanity)
-- **PR #5948** (2026-10-20): fix(test): make send_stream bandwidth-limit tests deterministic with VirtualTime (@sanity)
-- **PR #5946** (2026-10-20): refactor(transport): open outbound connections through an OutboundConnector trait (@sanity)
 
 ---
 
@@ -2758,45 +2154,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. telemetry): tag NAT traversal attempts by origin and count stray intros (#5953)
+## X. transport): fail truncated piped streams and size fragment #1 metadata exactly (
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/transport/boundary.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93188d6b`: telemetry): tag NAT traversal attempts by origin and count stray intros (#5953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8021133a`: transport): fail truncated piped streams and size fragment #1 metadata exactly (#5958). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/boundary.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-counters), NAT traversals by why they were started (`nat_attempts_<label>`,
-`nat_established_<label>`, one per `NatAttemptOrigin`, and `origin` on each
-`nat_fail_samples` entry; the origin is threaded internally from each
-`NodeEvent::ConnectPeer` through `OutboundConnector::connect` and
-`ConnectionStart`, never on the wire; a dial to a configured gateway is
-always `gateway`, and `ring_peer_no_transport` is the event loop's dial to a
-ring peer whose transport was lost, since cached-peer joins never dial
-(#5954)), intro packets a non-gateway drops as unknown (`stray_intro_<label>`:
-the exact address's traversal timed out (no_response, undecryptable or
-incomplete; not other failures) in the last 10 s,
-a traversal to another port of the IP is running (endpoint-dependent mapping
-OR another peer behind the same IP, e.g. CGNAT; it cannot tell them apart), or
-neither; the recent failures are a listener-owned table bounded by count and
-TTL, and early evictions are counted in `stray_intro_failures_evicted`) and CONNECT
-joiner dial-queue waits (`dial_queue_wait_<label>`, coarse buckets around the
-3 s punch window). Each label set is declared once in a `labelled_counters!`
-list, so a new varia
+/// - Under UDP it ends cleanly only once every declared byte was yielded: a
+///   sender that filled every fragment slot short gets an `Err` instead
+///   (#5445). A consumer should still count bytes against
+///   [`IncomingStream::total_bytes`] (the UDP pipe does), since that is the
+///   contract a second transport must also meet.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-counters). Hot
-    once, in the inbound_stream_outcomes! list; it then needs a snapshot field.
+/// - Its end does **not** guarantee the chunks add up to
+///   [`IncomingStream::total_bytes`]. Under UDP one exit, taken once every
+///   fragment slot has been read, is a fragment-count proxy that does not
+///   check the byte total, so a sender that filled the slots short would end
+///   it early with no error (#5445). A consumer that needs the whole stream
+///   must count the bytes itself.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93188d6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8021133a` are properly handled with clean fallback behavior.

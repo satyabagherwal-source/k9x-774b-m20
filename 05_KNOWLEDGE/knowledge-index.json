@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T16:19:25.831Z",
+  "last_updated": "2026-10-21T16:25:57.385Z",
   "total_verified_learnings": 1060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8147,8 +8147,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "22d5ff66",
-      "content_hash": "023987764ccc470904dfc254ce7e490b1d7fbfe7dc89a57f8cdcea6203cd9c9a",
+      "source_version": "303943fd",
+      "content_hash": "803df35c5fc5d7770691607002d761f5a86dc6d30f3717d7621ad5995c4ca2c9",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -8166,6 +8166,11 @@
           "number": 3254,
           "title": "deps): bump the rust-dependencies group with 2 updates (#696)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3558,
+          "title": "dpi/dns): recognize successful ANY answers (#690)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8173,7 +8178,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:15:01.303Z",
+      "verified_at": "2026-10-21T16:25:44.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10948,8 +10953,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "93188d6b",
-      "content_hash": "a6226b730cb859629e5e88471c1ca1844e9d76728d14184b395701f04bc8cd83",
+      "source_version": "689cbd4f",
+      "content_hash": "443b138495ee584c436410291b0b7d92313473a1c440ea0bc99cc5c9fe1dd791",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -11007,6 +11012,11 @@
           "number": 3509,
           "title": "telemetry): tag NAT traversal attempts by origin and count stray intros (#5953)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3559,
+          "title": "transport): fail truncated piped streams and size fragment #1 metadata exactly (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11014,7 +11024,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:37:08.504Z",
+      "verified_at": "2026-10-21T16:25:54.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31578,8 +31588,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "353baffd",
-      "content_hash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
+      "source_version": "5030c900",
+      "content_hash": "c28dd8ed1d1ba6db52354139ae3070afe2b5e9ad298431d39feec24fdc53d31b",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -31602,6 +31612,11 @@
           "number": 3307,
           "title": "docs: Bump self-managed to v26.46.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3560,
+          "title": "build(deps): bump pytimeparse from 1.1.9 to 1.1.10 in /misc/dbt-materialize in t",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31609,7 +31624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:12:52.078Z",
+      "verified_at": "2026-10-21T16:25:57.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108285,6 +108300,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T16:19:25.822Z"
+    },
+    "rule-3558": {
+      "learning_id": "rule-3558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3558,
+      "title": "dpi/dns): recognize successful ANY answers (#690)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "303943fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:25:44.335Z"
+    },
+    "rule-3559": {
+      "learning_id": "rule-3559",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3559,
+      "title": "transport): fail truncated piped streams and size fragment #1 metadata exactly (",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "689cbd4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:25:54.629Z"
+    },
+    "rule-3560": {
+      "learning_id": "rule-3560",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3560,
+      "title": "build(deps): bump pytimeparse from 1.1.9 to 1.1.10 in /misc/dbt-materialize in t",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "5030c900",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:25:57.376Z"
     }
   },
   "aliases": {

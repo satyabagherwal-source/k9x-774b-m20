@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "93188d6b",
+    "sourceVersion": "689cbd4f",
     "license": "NOASSERTION",
-    "contentHash": "a6226b730cb859629e5e88471c1ca1844e9d76728d14184b395701f04bc8cd83",
-    "lastHarvestedAt": "2026-10-21T03:37:08.578Z",
+    "contentHash": "443b138495ee584c436410291b0b7d92313473a1c440ea0bc99cc5c9fe1dd791",
+    "lastHarvestedAt": "2026-10-21T16:25:54.676Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "353baffd",
+    "sourceVersion": "5030c900",
     "license": "NOASSERTION",
-    "contentHash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
-    "lastHarvestedAt": "2026-10-20T18:12:52.141Z",
+    "contentHash": "c28dd8ed1d1ba6db52354139ae3070afe2b5e9ad298431d39feec24fdc53d31b",
+    "lastHarvestedAt": "2026-10-21T16:25:57.421Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "22d5ff66",
+    "sourceVersion": "303943fd",
     "license": "Apache-2.0",
-    "contentHash": "023987764ccc470904dfc254ce7e490b1d7fbfe7dc89a57f8cdcea6203cd9c9a",
-    "lastHarvestedAt": "2026-10-20T16:15:01.373Z",
+    "contentHash": "803df35c5fc5d7770691607002d761f5a86dc6d30f3717d7621ad5995c4ca2c9",
+    "lastHarvestedAt": "2026-10-21T16:25:44.382Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `353baffd`  
+> **Source Version**: `5030c900`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:12:51.835Z  
+> **Timestamp**: 2026-10-21T16:25:57.138Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:12:51.279Z  
+> **Harvest Timestamp**: 2026-10-21T16:25:56.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6386 stars
+- **Stars / Engagement**: 6385 stars
 
 ---
 
@@ -943,11 +943,13 @@ export default async function fetchStatementLoggingMaxSampleRate({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40033** (2026-10-20): **release: mark v26.46 as released**
-  *Symptoms*: Opened and merged by the Complete release workflow in MaterializeInc/release, which marks shipped releases as released in the user-facing docs.
+- **Issue #40064** (2026-10-21): **test: Reproduce upstream drop-and-re-add of constraints (SS-532)**
+  *Symptoms*: Reproduction for [SS-532](https://linear.app/materializeinc/issue/SS-532). Not meant to merge. The tests assert the current behavior so the issue has a runnable, verified baseline. Each outcome marked `SS-532` in the files is the behavior the issue is about.  Stacked on #39876, which adds the SQL Server constraint re-read that the SQL Server file exercises. Only the three `.td` files are new here.  ## What the tests show  A constraint dropped and re-added under the same name and columns:  | Postgres | MySQL | SQL Server | | --- | --- | --- | | Detected (new constraint oid). Permanent `was renamed or recreated upstream` error, no way back. | Invisible when the source processes the DDL event after the re-add (the schema check compares against the *current* upstream schema and keys have no identity beyond name and columns). Rows written in the window are ingested under a key that did not hold. | Invisible when it completes between two polls. Same consequence as MySQL. |  All three files were run locally and pass as written.  ## Files  - `test/pg-cdc/constraint-drop-recreate.td` - `test/mysql-cdc/constraint-drop-recreate.td` - `test/sql-server-cdc/constraint-drop-recreate.td`  Run with `bin/mzcompose --find <composition> run cdc constraint-drop-recreate.td` for `pg-cdc`, `mysql-cdc`, and `sql-server-cdc`.  Reproduction for [SS-532](https://linear.app/materializeinc/issue/SS-532).  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > Closing without merging. This PR exists as a verified reproduction for SS-532; the tests assert today's behavior, and the fix will flip the assertions marked SS-532.
 
-- **Issue #40029** (2026-10-20): **environmentd: restart halts within the container**
-  *Symptoms*: Restart exit code 166 without exiting the container so consecutive halts while catching up during zero-downtime upgrades avoid Kubernetes backoff. Keep clean exits asleep and propagate other failures. Forward shutdown signals to the process group and stop the wrapper on termination.  Closes: [SQL-807](https://linear.app/materializeinc/issue/SQL-807)
+- **Issue #40063** (2026-10-21): **mz-release-signoff: describe the per-shard panel fallback**
+  *Symptoms*: To address the metrics overhead issue, persist by default exports only aggregates in place of the per-shard series. The persist dashboard's per-shard panels fall back to `_topk`, `_sum`, or a process total labelled `(all shards)`.  Update the release skill to reflect this fact. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -964,49 +966,223 @@ export default async function fetchStatementLoggingMaxSampleRate({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `353baffd` (2026-10-20)
-**Commit Message**: docs: Bump self-managed to v26.46.1
+### Incident Patch 1: `5030c900` (2026-10-21)
+**Commit Message**: build(deps): bump pytimeparse from 1.1.9 to 1.1.10 in /misc/dbt-materialize in the simple group (#40047)
 
-**File**: `doc/user/data/self_managed/latest_versions.yml` (modified, +3/-3)
+Bumps the simple group in /misc/dbt-materialize with 1 update:
+[pytimeparse](https://github.com/wroberts/pytimeparse).
+
+Updates `pytimeparse` from 1.1.9 to 1.1.10
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/wroberts/pytimeparse/releases">pytimeparse's
+releases</a>.</em></p>
+<blockquote>
+<h2>pytimeparse 1.1.10</h2>
+<ul>
+<li><a
+href="https://redirect.github.com/wroberts/pytimeparse/issues/36">#36</a>
+<a
+href="https://redirect.github.com/wroberts/pytimeparse/pull/36">Handle
+multiline input during sign parsing</a></li>
+<li><a
+href="https://redirect.github.com/wroberts/pytimeparse/issues/38">#38</a>
+<a href="https://redirect.github.com/wroberts/pytimeparse/pull/38">Sum
+fractional units exactly so whole-second results are not
+truncated</a></li>
+<li><a
+href="https://redirect.github.com/wroberts/pytimeparse/issues/25">#25</a>
+<a href="https://redirect.github.com/wroberts/pytimeparse/pull/25">add
+type hints to make &quot;mypy&quot; happy about &quot;import
+pytimeparse&quot;</a></li>
+<li><a
+href="https://redirect.github.com/wroberts/pytimepa
+
+**File**: `misc/dbt-materialize/requirements.txt` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,3 @@
--operator_helm_chart_version: v26.46.0
--orchestratord_version: v26.46.0
--environmentd_version: v26.46.0
-+operator_helm_chart_version: v26.46.1
-+orchestratord_version: v26.46.1
-+environmentd_version: v26.46.1
+@@ -45,7 +45,7 @@ pytest==9.0.3
+ pytest-split==0.11.0
+ python-dateutil==2.9.0.post0
+ python-slugify==9.1.3
+-pytimeparse==1.1.9
++pytimeparse==1.1.10
+ pytz==2026.5
+ PyYAML==6.0.3
+ referencing==0.37.0
 ```
 
 ---
 
-### Incident Patch 2: `5c32007d` (2026-10-20)
-**Commit Message**: release: mark v26.46 as released (#40033)
+### Incident Patch 2: `5c8c79f7` (2026-10-21)
+**Commit Message**: Revert "environmentd: restart halts within the container (#40029)" (#40061)
 
-Opened and merged by the Complete release workflow in
-MaterializeInc/release, which marks shipped releases as released in the
-user-facing docs.
+This reverts #40029, because its in-container restart loop lets a fenced
+environmentd reboot inside a pod that Kubernetes has already replaced,
+take a new catalog epoch and fence out the live leader.
 
-**File**: `doc/user/content/releases/v26.46.md` (modified, +1/-1)
+### Motivation
+
+The nightly job `K8s recovery: envd on failing node` fails on main since
+#40029 ([SQL-807](https://linear.app/materializeinc/issue/SQL-807)).
+
+* Failing: [nightly
+#18553](https://buildkite.com/materialize/nightly/builds/18553#01a15ba6-bf60-4bb3-b6ff-db71cf56c89a)
+(main, all three attempts),
+[#18550](https://buildkite.com/materialize/nightly/builds/18550) and
+[#18551](https://buildkite.com/materialize/nightly/builds/18551)
+(branches that contain #40029).
+* Passing: every nightly without #40029
+([#18543](https://buildkite.com/materialize/nightly/builds/18543),
+[#18545](https://buildkite.com/materialize/nightly/builds/18545),
+[#18546](https://buildkite.com/materialize/nightly/builds/18546),
+[#18548](https://buildkite.com/materialize/nightly/builds/18548),
+[#18552](https://buildkite.com/materialize/nightly/builds/18552),
+[#18556](https://buildkite.com/materialize/nightly/builds/18556)). One
+branch
+
+**File**: `src/environmentd/ci/Dockerfile` (modified, +4/-4)
 ```diff
-@@ -2,7 +2,7 @@
- title: Materialize v26.46
- date: 2026-10-14
- released: true
--patch: 0
-+patch: 1
- publish_helm_chart: true
- build:
-   render: never
+@@ -14,7 +14,7 @@ MZFROM distroless-prod-base
+ COPY environmentd entrypoint.sh /usr/local/bin/
+ COPY --from=openssh /output/ssh /usr/bin/ssh
+ 
+-# tini reaps orphaned subprocesses and forwards signals to the whole process
+-# group, including environmentd. Run entrypoint.sh through busybox `sh`
+-# explicitly, as distroless has no /bin/sh.
+-ENTRYPOINT ["/usr/bin/tini", "-g", "--", "/busybox/sh", "/usr/local/bin/entrypoint.sh"]
++# tini (from distroless-prod-base) is PID 1 so ssh tunnel subprocesses get
++# reaped. entrypoint.sh runs environmentd, then sleeps on graceful exit. Run it
++# through busybox `sh` explicitly, as distroless has no /bin/sh.
++ENTRYPOINT ["/usr/bin/tini", "--", "/busybox/sh", "/usr/local/bin/entrypoint.sh"]
+```
+
+**File**: `src/environmentd/ci/entrypoint.sh` (modified, +6/-18)
+```diff
+@@ -17,21 +17,9 @@ else
+     export LD_PRELOAD=libeatmydata.so
+ fi
+ 
+-# tini -g forwards shutdown signals to both this shell and environmentd.
+-# Exit even if environmentd handles the signal by halting or exiting cleanly.
+-trap 'exit 143' TERM
+-trap 'exit 130' INT
+-
+-while true; do
+-    if environmentd "$@"; then
+-        echo "environmentd exited gracefully; sleeping forever" >&2
+-        exec sleep infinity
+-    else
+-        status=$?
+-        if [ "$status" -ne 166 ]; then
+-            exit "$status"
+-        fi
+-        # mz_ore::halt! requests a restart without Kubernetes crash backoff.
+-        echo "environmentd halted; restarting" >&2
+-    fi
+-done
++if environmentd "$@"; then
++    echo "environmentd exited gracefully; sleeping forever" >&2
++    sleep infinity
++else
++    exit $?
++fi
+```
+
+---
+
+### Incident Patch 3: `3626b89c` (2026-10-21)
+**Commit Message**: ci: build the docs on one Hugo worker to avoid a data race (#40028)
+
+Hugo 0.152.2 has a data race that can abort a docs build with `fatal
+error: concurrent map iteration and map write`. Since 2026-09-01 it
+failed `preview-docs` 11 times, and each retry passed. Details in
+[QAR-260](https://linear.app/materializeinc/issue/QAR-260).
+
+This sets `HUGO_NUMWORKERMULTIPLIER=1` in every script that builds the
+docs, so Hugo renders pages on one goroutine. A race-detector build of
+Hugo 0.152.2 then reports no races, and the output is byte-identical. On
+4 CPUs, the Markdown build takes 1.7 s instead of 0.7 s, and the HTML
+build 9.7 s instead of 3.7 s. Local development with `hugo server` is
+not affected. This PR's CI doesn't run `ci/deploy_website/website.sh`.
+
+Hugo 0.153.0 fixed the race, but upgrading needs config and content
+changes, listed in
+[QAR-260](https://linear.app/materializeinc/issue/QAR-260).
+
+Closes: [QAR-260](https://linear.app/materializeinc/issue/QAR-260)
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `bin/gen-claude-skill` (modified, +3/-0)
+```diff
+@@ -38,6 +38,9 @@ mkdir -p "$OUTPUT_DIR"
+ echo "Generating agent skill from documentation..."
+ echo "Output directory: $OUTPUT_DIR"
+ 
++# Works around a Hugo data race, see ci/test/preview-docs.sh.
++export HUGO_NUMWORKERMULTIPLIER=1
++
+ # Build documentation with skill output format
+ cd doc/user
+ hugo --config config.toml,config.skill.toml \
+```
+
+**File**: `ci/deploy_website/website.sh` (modified, +3/-0)
+```diff
+@@ -46,6 +46,9 @@ declare -A external_redirects=(
+     [docs/self-managed/v25.2/support/index.html]="https://materialize.com/support/"
+ )
+ 
++# Works around a Hugo data race, see ci/test/preview-docs.sh.
++export HUGO_NUMWORKERMULTIPLIER=1
++
+ cd doc/user
+ if [[ "$BUILDKITE_ORGANIZATION_SLUG" == "materialize" ]] && [[ "$BUILDKITE_BRANCH" == self-managed-docs/* ]]; then
+     VERSION=${BUILDKITE_BRANCH#self-managed-docs/}
+```
+
+**File**: `ci/test/lint-docs.sh` (modified, +3/-0)
+```diff
+@@ -15,6 +15,9 @@ set -euo pipefail
+ 
+ . misc/shlib/shlib.bash
+ 
++# Works around a Hugo data race, see ci/test/preview-docs.sh.
++export HUGO_NUMWORKERMULTIPLIER=1
++
+ git clean -ffdX ci/www/public ci/www/preview
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --destination ../../ci/www/public/docs
+ try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination ../../ci/www/public/docs/markdown-docs
+```
+
+**File**: `ci/test/preview-docs.sh` (modified, +7/-0)
+```diff
+@@ -18,6 +18,13 @@ if [[ "$BUILDKITE_PULL_REQUEST" = false ]]; then
+     exit 0
+ fi
+ 
++# Hugo 0.152.2 has a data race between pages that include the same headless
++# page, which aborts a build with "concurrent map iteration and map write"
++# (QAR-260). Rendering pages on one worker avoids it.
++# TODO: Remove this once ci/builder/Dockerfile installs Hugo 0.153.0 or later,
++# which fixed the race.
++export HUGO_NUMWORKERMULTIPLIER=1
++
+ cd doc/user
+ 
+ # Build main docs to public/
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40033** (2026-10-20): release: mark v26.46 as released (@materialize-bot)
-- **PR #40029** (2026-10-20): environmentd: restart halts within the container (@aljoscha)
-- **PR #40026** (2026-10-20): storage: create Kafka reader consumers only on workers that own partitions (@antiguru)
-- **PR #40025** (2026-10-20): deps: Bump k8s-controller to 0.14.1 (@antiguru)
-- **PR #40019** (closed): adapter: preserve catalog results at their DDL statement position (@aljoscha)
-- **PR #40005** (closed): test: verify atomic DDL across external preparation races (@aljoscha)
+- **PR #40064** (closed): test: Reproduce upstream drop-and-re-add of constraints (SS-532) (@peterdukelarsen)
+- **PR #40063** (2026-10-21): mz-release-signoff: describe the per-shard panel fallback (@mtabebe)
+- **PR #40062** (2026-10-21): persist: default persist_shard_metrics to summary (@mtabebe)
+- **PR #40061** (2026-10-21): Revert "environmentd: restart halts within the container (#40029)" (@bosconi)
+- **PR #40057** (2026-10-21): deny: restore mime_guess as unicase wrapper (@antiguru)
+- **PR #40056** (2026-10-21): AGENTS.md: state that the repository is squash-merge only (@antiguru)
 
 ---
 
@@ -1026,32 +1202,28 @@ user-facing docs.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Bump self-managed to v26.46.1
+## X. build(deps): bump pytimeparse from 1.1.9 to 1.1.10 in /misc/dbt-materialize in t
 
 **RULE**:
-When implementing operations in `doc/user/data/self_managed/latest_versions.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `misc/dbt-materialize/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `353baffd`: docs: Bump self-managed to v26.46.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5030c900`: build(deps): bump pytimeparse from 1.1.9 to 1.1.10 in /misc/dbt-materialize in the simple group (#40047). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc/user/data/self_managed/latest_versions.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/dbt-materialize/requirements.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-operator_helm_chart_version: v26.46.1
-orchestratord_version: v26.46.1
-environmentd_version: v26.46.1
+pytimeparse==1.1.10
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-operator_helm_chart_version: v26.46.0
-orchestratord_version: v26.46.0
-environmentd_version: v26.46.0
+pytimeparse==1.1.9
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `353baffd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5030c900` are properly handled with clean fallback behavior.

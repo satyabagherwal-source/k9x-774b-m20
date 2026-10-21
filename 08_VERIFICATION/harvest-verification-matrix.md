@@ -4241,3 +4241,6 @@
 | `CYCLE-20261021-PCVK` | `2026-10-21T15:29:13.328Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3555` | Yes (`7357303d...`) |
 | `CYCLE-20261021-PGK1` | `2026-10-21T15:29:18.097Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3556` | Yes (`ef32be53...`) |
 | `CYCLE-20261021-HXDO` | `2026-10-21T16:19:25.884Z` | `Ryder-Sun/Meldwork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3557` | Yes (`248bcf3a...`) |
+| `CYCLE-20261021-Q1FF` | `2026-10-21T16:25:44.379Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3558` | Yes (`803df35c...`) |
+| `CYCLE-20261021-Q9DE` | `2026-10-21T16:25:54.674Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3559` | Yes (`443b1384...`) |
+| `CYCLE-20261021-QBHN` | `2026-10-21T16:25:57.419Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3560` | Yes (`c28dd8ed...`) |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-6JOE",
-    "timestamp": "2026-10-20T06:07:02.942Z",
-    "repository": "tamagui/tamagui",
-    "learningId": "learn-github-tamagui-tamagui",
-    "contentHash": "abee0ee1500170461c56132696242ab124244ba9cdf551617b51127258490337",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-6NSK",
-    "timestamp": "2026-10-20T06:07:08.276Z",
-    "repository": "nitrojs/nitro",
-    "learningId": "learn-github-nitrojs-nitro",
-    "contentHash": "c1a466719ae76df9f8e6c55a73481b9a46538769fb8fad07319b3b3ea8ac461d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-6NZ4",
-    "timestamp": "2026-10-20T06:07:08.512Z",
-    "repository": "karakeep-app/karakeep",
-    "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "479cb9e0d28b8257e7946e46a22a3463c37a618c72b0d8229566b3e5d4d113d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-6Q9L",
     "timestamp": "2026-10-20T06:07:11.481Z",
     "repository": "k3s-io/k3s",
@@ -7490,6 +7445,51 @@
     "repository": "Ryder-Sun/Meldwork",
     "learningId": "learn-github-ryder-sun-meldwork",
     "contentHash": "248bcf3a1922365c987bfa117a1aadb2894db62b5c90c2bb4b74c576aad44d95",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-Q1FF",
+    "timestamp": "2026-10-21T16:25:44.379Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "803df35c5fc5d7770691607002d761f5a86dc6d30f3717d7621ad5995c4ca2c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-Q9DE",
+    "timestamp": "2026-10-21T16:25:54.674Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "443b138495ee584c436410291b0b7d92313473a1c440ea0bc99cc5c9fe1dd791",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-QBHN",
+    "timestamp": "2026-10-21T16:25:57.419Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "c28dd8ed1d1ba6db52354139ae3070afe2b5e9ad298431d39feec24fdc53d31b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4248,3 +4248,6 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `84bf9eaa` | Multi-dimensional audit evidence | 2026-10-21T15:29:13.331Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3ec03cb3` | Multi-dimensional audit evidence | 2026-10-21T15:29:18.100Z |
 | `learn-github-ryder-sun-meldwork` | `https://github.com/Ryder-Sun/Meldwork` | `a5017184` | Multi-dimensional audit evidence | 2026-10-21T16:19:25.887Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `303943fd` | Multi-dimensional audit evidence | 2026-10-21T16:25:44.382Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `689cbd4f` | Multi-dimensional audit evidence | 2026-10-21T16:25:54.676Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `5030c900` | Multi-dimensional audit evidence | 2026-10-21T16:25:57.421Z |

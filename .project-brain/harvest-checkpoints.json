@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T16:19:25.893Z",
+  "last_updated": "2026-10-21T16:25:57.427Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "a6226b730cb859629e5e88471c1ca1844e9d76728d14184b395701f04bc8cd83",
-      "verified_at": "2026-10-21T03:37:08.591Z",
+      "content_hash": "443b138495ee584c436410291b0b7d92313473a1c440ea0bc99cc5c9fe1dd791",
+      "verified_at": "2026-10-21T16:25:54.686Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:37:08.591Z"
+      "last_updated": "2026-10-21T16:25:54.686Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
-      "verified_at": "2026-10-20T18:12:52.149Z",
+      "content_hash": "c28dd8ed1d1ba6db52354139ae3070afe2b5e9ad298431d39feec24fdc53d31b",
+      "verified_at": "2026-10-21T16:25:57.427Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:12:52.149Z"
+      "last_updated": "2026-10-21T16:25:57.427Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "023987764ccc470904dfc254ce7e490b1d7fbfe7dc89a57f8cdcea6203cd9c9a",
-      "verified_at": "2026-10-20T16:15:01.381Z",
+      "content_hash": "803df35c5fc5d7770691607002d761f5a86dc6d30f3717d7621ad5995c4ca2c9",
+      "verified_at": "2026-10-21T16:25:44.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:15:01.381Z"
+      "last_updated": "2026-10-21T16:25:44.392Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",

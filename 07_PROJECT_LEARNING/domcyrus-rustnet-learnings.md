@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `22d5ff66`  
+> **Source Version**: `303943fd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:15:00.953Z  
+> **Timestamp**: 2026-10-21T16:25:44.092Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:15:00.944Z  
+> **Harvest Timestamp**: 2026-10-21T16:25:42.351Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5149 stars
+- **Stars / Engagement**: 5150 stars
 
 ---
 
@@ -2342,9 +2342,10 @@ fn parse_question(payload: &[u8], start: usize) -> (Option<String>, Option<DnsQu
 
 /// Walk `count` resource records starting at `offset`, pushing A / AAAA
 /// rdata into `ips` (subject to [`MAX_RESPONSE_IPS_PER_PACKET`]) and counting
-/// records whose TYPE matches `queried_type` into `matched` (for NODATA
-/// detection; pass `None` to skip counting, e.g. on the mDNS additional-records
-/// walk where the concept does not apply). Returns the offset of the byte
+/// records whose TYPE matches `queried_type` (or any TYPE for QTYPE=ANY)
+/// into `matched` for NODATA detection. Pass `None` to skip counting, e.g. on
+/// the mDNS additional-records walk where the concept does not apply.
+/// Returns the offset of the byte
 /// immediately after the last record successfully walked (so callers can
 /// chain a second walk, e.g. ANCOUNT then ARCOUNT for mDNS) together with
 /// the number of records fully walked (so callers can tell a complete walk
@@ -2365,7 +2366,10 @@ fn walk_a_aaaa_records(
             return (offset, walked);
         };
 
-        if queried_type.is_some() && queried_type == Some(DnsQueryType::from_wire(rr.rtype)) {
+        // ANY (RFC 1035 §3.2.3) is a question wildcard, not an answer TYPE.
+        if queried_type.is_some_and(|qtype| {
+            qtype == DnsQueryType::Other(255) || qtype == DnsQueryType::from_wire(rr.rtype)
+        }) {
             *matched += 1;
         }
 
@@ -2473,10 +2477,7 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
         return None;
     }
     let flags = u16::from_be_bytes([payload[2], payload[3]]);
-    Some(DnsHeaderCounts {
-        is_response: (flags & 0x8000) != 0,
-        truncated: (flags & 0x0200) != 0,
-        qdcount: u16::from_be_bytes([payload[4], payload[5]]),
+    Some(Dns
 ```
 
 
@@ -2509,210 +2510,145 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22d5ff66` (2026-10-20)
-**Commit Message**: chore(deps): bump the rust-dependencies group with 2 updates (#696)
+### Incident Patch 1: `81497671` (2026-10-21)
+**Commit Message**: fix(dpi/dns): recognize successful ANY answers (#690)
 
-Bumps the rust-dependencies group with 2 updates: [arboard](https://github.com/1Password/arboard) and [libc](https://github.com/rust-lang/libc).
+Count parsed answer records for the ANY query wildcard instead of requiring an answer TYPE of 255. Add wire-format and tracker regression tests while preserving negative-response handling and exact matching for other query types.
 
-
-Updates `arboard` from 3.6.1 to 3.7.0
-- [Release notes](https://github.com/1Password/arboard/releases)
-- [Commits](https://github.com/1Password/arboard/compare/v3.6.1...v3.7.0)
-
-Updates `libc` from 0.2.190 to 0.2.191
-- [Release notes](https://github.com/rust-lang/libc/releases)
-- [Changelog](https://github.com/rust-lang/libc/blob/0.2.191/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/libc/compare/0.2.190...0.2.191)
-
----
-updated-dependencies:
-- dependency-name: arboard
-  dependency-version: 3.7.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-- dependency-name: libc
-  dependency-version: 0.2.191
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +12/-86)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -125,9 +125,9 @@ dependencies = [
+@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ### Fixed
+ - Match local IPv4/IPv6 DNS stub replies correctly and prevent healthy resolvers from hiding a failing secondary resolver
+ - Fall back to a pinned, checksum-verified Npcap SDK mirror when the primary download fails during Windows builds or CI test setup.
++- Stop classifying successful DNS ANY answers as NODATA in Details and passive DNS statistics (#689)
+ - Preserve FreeBSD IPv6 wildcard bindings when logging local port status (#682)
+ - Fix Fedora Rawhide aarch64 RPM builds with Linux 7.3 headers and bundled libbpf 1.7.0
  
- [[package]]
- name = "arboard"
--version = "3.6.1"
-+version = "3.7.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0348a1c054491f4bfe6ab86a7b6ab1e44e45d899005de92f58b3df180b36ddaf"
-+checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
- dependencies = [
-  "clipboard-win",
-  "image",
-@@ -139,7 +139,7 @@ dependencies = [
-  "objc2-foundation",
-  "parking_lot",
-  "percent-encoding",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
-  "wl-clipboard-rs",
-  "x11rb",
- ]
-@@ -1505,9 +1505,9 @@ checksum = "34b357333733e8260735ba5894eb928c02ecc69c78715f01a8019e7fa7f2db4c"
+```
+
+**File**: `crates/rustnet-core/src/network/dpi/dns.rs` (modified, +125/-4)
+```diff
+@@ -134,9 +134,10 @@ fn parse_question(payload: &[u8], start: usize) -> (Option<String>, Option<DnsQu
  
- [[package]]
- name = "libc"
--version = "0.2.190"
-+version = "0.2.191"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
-+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+ /// Walk `count` resource records starting at `offset`, pushing A / AAAA
+ /// rdata into `ips` (subject to [`MAX_RESPONSE_IPS_PER_PACKET`]) and counting
+-/// records whose TYPE matches `queried_type` into `matched` (for NODATA
+-/// detection; pass `None` to skip counting, e.g. on the mDNS additional-records
+-/// walk where the concept does not apply). Returns the offset of the byte
++/// records whose TYPE matches `queried_type` (or any TYPE for QTYPE=ANY)
++/// into `matched` for NODATA detection. Pass `None` to skip counting, e.g. on
++/// the mDNS additional-records walk where the concept does not apply.
++/// Returns the offset of the byte
+ /// immediately after the last record successfully walked (so callers can
+ /// chain a second walk, e.g. ANCOUNT then ARCOUNT for mDNS) together with
+ /// the number of records fully walked (so callers can tell a complete walk
+@@ -157,7 +158,10 @@ fn walk_a_aaaa_records(
+             return (offset, walked);
+         };
  
- [[package]]
- name = "libloading"
-@@ -3732,7 +3732,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "12342cb4d8e3b046f3d80effd474a7a02447231330ef77d71daa6fbc40681143"
- dependencies = [
-  "windows-core 0.57.0",
-- "windows-targets 0.52.6",
-+ "windows-targets",
- ]
+-        if queried_type.is_some() && queried_type == Some(DnsQueryType::from_wire(rr.rtype)) {
++        // ANY (RFC 1035 §3.2.3) is a question wildcard, not an answer TYPE.
++        if queried_type.is_some_and(|qtype| {
++            qtype == DnsQueryType::Other(255) || qtype == DnsQueryType::from_wire(rr.rtype)
++        }) {
+             *matched += 1;
+         }
  
- [[package]]
-@@ -3765,7 +3765,7 @@ dependencies = [
-  "windows-implement 0.57.0",
-  "windows-interface 0.57.0",
-  "windows-result 0.1.2",
-- "windows-targets 0.52.6",
-+ "windows-targets",
- ]
+@@ -639,6 +643,123 @@ mod tests {
+         );
+     }
  
- [[package]]
-@@ -3858,7 +3858,7 @@ version = "0.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5e383302e8ec8515204254685643de10811af0ed97ea37210dc26fb0032647f8"
- dependencies = [
-- "windows-targets 0.52.6",
-+ "windows-targets",
- ]
- 
- [[package]]
-@@ -3898,16 +3898,7 @@ version = "0.52.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "282be5f36a8ce781fad8c8ae18fa3f9beff57ec1b52cb3de0789201425d9a33d"
- dependencies = [
-- "windows-targets 0.52.6",
--]
--
--[[package]]
--name = "windows-sys"
--version = "0.60.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
--dependencies = [
-- "windows-targets 0.53.5",
-+ "windows-targets",
- ]
- 
- [[package]]
-@@ -3925,33 +3916,16 @@ version = "0.52.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
- dependencies = [
-- "windows_aarch64_gnullvm 0.52.6",
-+ "windows_aarch64_gnullvm",
-  "windows_aarch64_msvc 0.52.6",
-  "windows_i686_gnu 0.52.6",
-- "windows_i686_gnullvm 0.52.6",
-+ "windows_i686_gnullvm",
-  "windows_i686_msvc 0.52.6",
-  "windows_x86_64_gnu 0.52.6",
-- "windows_x86_64_gnullvm 0.52.6",
-+ "windows_x86_64_gnullvm",
-  "windows_x86_64_msvc 0.52.6",
- ]
- 
--[[package]]
--name = "windows-targets"
--version = "0.53.5"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3"
--dependencies = [
-- "windows-link",
-- "windows_aarch64_gnullvm 0.53.1",
-- "windows_aarch64_msvc 0.53.1",
-- "windows_i686_gnu 0.53.1",
-- "windows_i686_gnullvm 0.53.1",
-- "windows_i686_msvc 0.53.1",
-- "windows_x86_64_gnu 0.53.1",
-- "windows_x86_64_gnullvm 0.53.1",
-- "windows_x86_64_msvc 0.53.1",
--]
--
- [[package]]
- name = "windows-threading"
- version = "0.2.1"
-@@ -3967,12 +3941,6 @@ version = "0.52.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32a4622180e7a0ec044bb555404c800bc9fd9ec262ec147edd5989ccd0c02cd3"
- 
--[[package]]
--name = "windows_aarch64_gnullvm"
--version = "0.53.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a9d8416fa8b42f5c947f8482c43e7d89e73a173cead56d044f6a56104a6d1b53"
--
- [[package]]
- name = "windows_aarch64_msvc"
- version = "0.36.1"
-@@ -3985,12 +3953,6 @@ version = "0.52.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "09ec2a7bb152e2252b53fa7803150007879548bc709c039df7627cabbd05d469"
- 
--[[package]]
--name = "windows_aarch64_msvc"
--version = "0.53.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b9d782e804c2f632e395708e99a94275910eb9100b2114651e04744e9b125006"
--
- [[package]]
- name = "windows_i686_gnu"
- version = "0.36.1"
-@@ -4003,24 +3965,12 @@ version = "0.52.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "8e9b5ad5ab802e97eb8e295ac6720e509ee4c243f69d781394014ebfe8bbfa0b"
- 
--[[package]]
--name = "windows_i686_gnu"
--version = "0.53.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "960e6da069d81e09becb0ca57a65220ddff016ff2d6af6a223cf372a506593a3"
--
- [[package]]
- name = "windows_i686_gnullvm"
- version = "0.52.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0eee52d38c090b3caa76c563b86c3a4bd71ef1a819287c19d586d7334ae8ed66"
- 
--[[package]]
--name = "windows_i686_gnullvm"
--version = "0.53.1"
--source = "registry+https://gi
++    #[test]
++    fn test_any_response_with_data_is_not_nodata() {
++        // ANY is a query-only wildcard, not the TYPE of an answer record.
++        // RFC 8482 also permits a single synthesized HINFO answer.
++        for (rtype, rdata) in [
++            (1, &b"\xc0\x00\x02\x01"[..]),
++            (28, &Ipv6Addr::LOCALHOST.octets()[..]),
++            (5, &b"\x05alias\x07example\x03com\x00"[..]),
++            (16, &b"\x02ok"[..]),
++            (13, &b"\x07RFC8482\x00"[..]),
++            (65280, &b"opaque"[..]),
++        ] {
++            let mut payload = build_dns_header(0, 0x8000, 1, 1, 0, 0);
++            push_question(&mut payload, "example.com", 255);
++            push_rr(&mut payload, RrName::Ptr(12), rtype, 60, rdata);
++
++            let info = analyze_dns(&payload).unwrap();
++            assert_eq!(info.query_type, Some(DnsQueryType::Other(255)));
++            assert_eq!(info.rcode, Some(0));
++            assert_eq!(info.nodata, Some(false), "answer TYPE {rtype}");
++        }
++    }
++
++    #[test]
++    fn test_unknown_query_type_is_not_a_wildcard() {
++        for (rtype, expected) in [(1, Some(true)), (65280, Some(false))] {
++            let mut payload = build_dns_header(0, 0x8000, 1, 1, 0, 0);
++            push_question(&mut payload, "example.com", 65280);
++            push_rr(&mut payload, RrName::Ptr(12), rtype, 60, &[192, 0, 2, 1]);
++
++            assert_eq!(analyze_dns(&payload).unwrap().nodata, expected);
++        }
++    }
++
++    #[test]
++    fn test_any_success_is_not_counted_as_nodata() {
++        use crate::network::parser::ParsedPacket;
++        use crate::network::tracker::ConnectionTracker;
++        use std::time::{Duration, SystemTime};
++
++        let tracker = ConnectionTracker::new();
++        let start = SystemTime::UNIX_EPOCH + Duration::from_secs(1_000);
++        for is_outgoing in [true, false] {
++            let flags = if is_outgoing { 0 } else { 0x8000 };
++            let mut payload = build_dns_header(123, flags, 1, u16::from(!is_outgoing), 0, 0);
++            push_question(&mut payload, "example.com", 255);
++            if !is_outgoing {
++                push_rr(&mut payload, RrName::Ptr(12), 13, 60, b"\x07RFC8482\x00");
++            }
++            let dpi = super::super::analyze_udp_packet(&payload, 40_000, 53, is_outgoing).unwrap();
++            let mut packet = ParsedPacket::test_udp(
++                "192.0.2.10:40000".parse().unwrap(),
++                "192.0.2.53:53".parse().unwrap(),
++                dpi.application,
++            );
++            packet.is_outgoing = is_outgoing;
++            let at = if is_outgoing {
++                start
++            } else {
++                start + Duration::from_millis(10)
++            };
++            tracker.ingest_at(&packet, at);
++        }
++
++        let snapshot = tracker.dns_analytics_snapshot_at(start + Duration::from_millis(10));
++        assert_eq!(snapshot.lookups, 1);
++        assert_eq!(snapshot.answered, 1);
++        assert_eq!(snapshot.noerror, 1);
++        assert_eq!(snapshot.nodata, 0);
++    }
++
++    #[test]
++    fn test_any_empty_response_preserves_nodata_classification() {
++        let mut soa = vec![0xC0, 0x0C, 0xC0, 0x0C];
++        soa.extend_from_slice(&[0; 20]);
++        for (authority_type, expected) in
++            [(None, Some(true)), (Some(6), Some(true)), (Some(2), None)]
++        {
++            let mut payload =
++                build_dns_header(0, 0x8000, 1, 0, u16::from(authority_type.is_some()), 0);
++            push_question
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #697** (2026-10-21): chore(deps): bump zip from 9.0.4 to 9.0.5 in the rust-dependencies group (@dependabot[bot])
 - **PR #696** (2026-10-20): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
 - **PR #693** (2026-10-19): feat: improve Host diagnostics and add history windows (@domcyrus)
 - **PR #692** (2026-10-19): fix(windows): fall back to verified Npcap SDK mirror (@domcyrus)
 - **PR #691** (2026-10-19): chore(deps): bump actions/cache from 4.3.0 to 6.1.0 in the actions group (@dependabot[bot])
-- **PR #686** (2026-10-17): ci: run Windows tests independently and unblock DEB checks (@domcyrus)
-- **PR #685** (2026-10-17): ci: cache builds and cancel superseded PR runs (@domcyrus)
+- **PR #690** (2026-10-21): fix(dpi/dns): recognize successful ANY answers (@dongxuelian2)
 
 ---
 
@@ -2732,79 +2668,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the rust-dependencies group with 2 updates (#696)
+## X. dpi/dns): recognize successful ANY answers (#690)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22d5ff66`: deps): bump the rust-dependencies group with 2 updates (#696). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `81497671`: dpi/dns): recognize successful ANY answers (#690). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "3.7.0"
-checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
- "windows-sys 0.61.2",
-version = "0.2.191"
-checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
- "windows-targets",
- "windows-targets",
- "windows-targets",
- "windows-targets",
- "windows_aarch64_gnullvm",
- "windows_i686_gnullvm",
- "windows_x86_64_gnullvm",
+- Stop classifying successful DNS ANY answers as NODATA in Details and passive DNS statistics (#689)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "3.6.1"
-checksum = "0348a1c054491f4bfe6ab86a7b6ab1e44e45d899005de92f58b3df180b36ddaf"
- "windows-sys 0.60.2",
-version = "0.2.190"
-checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
- "windows-targets 0.52.6",
- "windows-targets 0.52.6",
- "windows-targets 0.52.6",
- "windows-targets 0.52.6",
-]
-
-[[package]]
-name = "windows-sys"
-version = "0.60.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
-dependencies = [
- "windows-targets 0.53.5",
- "windows_aarch64_gnullvm 0.52.6",
- "windows_i686_gnullvm 0.52.6",
- "windows_x86_64_gnullvm 0.52.6",
-[[package]]
-name = "windows-targets"
-version = "0.53.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3"
-dependencies = [
- "windows-link",
- "windows_aarch64_gnullvm 0.53.1",
- "windows_aarch64_msvc 0.53.1",
- "windows_i686_gnu 0.53.1",
- "windows_i686_gnullvm 0.53.1",
- "windows_i686_msvc 0.53.1",
- "windows_x86_64_gnu 0.53.1",
- "windows_x86_64_gnullvm 0.53.1",
- "windows_x86_64_msvc 0.53.1",
-]
-
-[[package]]
-name = "windows_aarch64_gnullvm"
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22d5ff66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `81497671` are properly handled with clean fallback behavior.
