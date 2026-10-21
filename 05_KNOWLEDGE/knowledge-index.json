@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T03:56:53.764Z",
+  "last_updated": "2026-10-21T04:03:16.846Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17631,7 +17631,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "9bf64e2d481efc4203e7d02560a400acfb84c232f9edcd60ca4b803e3c813fc2",
+      "content_hash": "f23c4b9b11a66402a995e49a44938b9326a92b324bc5f5500dc7251b7a5e7062",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
@@ -17684,6 +17684,21 @@
           "number": 2641,
           "title": "Runtime-Configurable Thinking Mode for Latency-Accuracy Trade-off",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3512,
+          "title": "Agentic Precision Preservation in Quantized LLMs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3513,
+          "title": "Decoupled Vision Projection for Modular LLM Deployment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3514,
+          "title": "Jinja Template Enforcement for Tool Calling Syntax",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17702,7 +17717,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-19T14:59:09.488Z",
+      "verified_at": "2026-10-21T04:03:16.834Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107354,6 +107369,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T03:56:53.756Z"
+    },
+    "rule-3512": {
+      "learning_id": "rule-3512",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3512,
+      "title": "Agentic Precision Preservation in Quantized LLMs",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:03:16.834Z"
+    },
+    "rule-3513": {
+      "learning_id": "rule-3513",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3513,
+      "title": "Decoupled Vision Projection for Modular LLM Deployment",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:03:16.834Z"
+    },
+    "rule-3514": {
+      "learning_id": "rule-3514",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3514,
+      "title": "Jinja Template Enforcement for Tool Calling Syntax",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:03:16.834Z"
     }
   },
   "aliases": {

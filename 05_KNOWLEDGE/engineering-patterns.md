@@ -252184,3 +252184,155 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e24024e0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3512. Agentic Precision Preservation in Quantized LLMs (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Agentic Precision Preservation in Quantized LLMs",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-21T04:03:16.413Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing LLMs for agentic tasks (tool calling, function calling), you **MUST** use mixed-precision quantization (e.g., `IQ2-mix`, `Q4_K_M`) rather than uniform low-bit quantization (e.g., `Q2_K`, `Q3_K_S`). You **MUST NOT** assume that general benchmark scores (MMLU, HellaSwag) correlate with tool-calling reliability.
+**WHY**:
+Tool calling requires precise token generation for JSON structures, function names, and argument boundaries. Uniform low-bit quantization introduces high variance in the logits of these specific tokens, causing the model to hallucinate function names or break JSON syntax. Mixed-precision preserves the higher-bit weights in the attention heads and feed-forward layers responsible for structured output, while compressing less sensitive layers. The forensic evidence shows Saluki (7.89 GB, IQ2-mix) outperforms the full 54 GB model in parallel tool calls (42 vs 35), proving that quantization noise can be mitigated by preserving critical pathways.
+**WHEN TO APPLY**:
+Any deployment of LLMs < 10 GB VRAM that requires structured output (JSON, XML, YAML) or multi-step agent loops.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Correct: Use mixed-precision GGUF for agentic tasks
+llama-server -m model-IQ2-mix.gguf --jinja -ngl 99 -fa on -c 32768
+
+# Configuration for tool calling:
+# "chat_template_kwargs": {"enable_thinking": false}
+# "temperature": 0
+# "top_p": 1.0
+# "top_k": 1
+```
+**NEGATIVE CONSTRAINT**:
+```bash
+# WRONG: Using uniform Q2_K for tool calling
+# This will likely break JSON syntax and hallucinate function names
+llama-server -m model-Q2_K.gguf --jinja
+
+# WRONG: Using high temperature for tool calling
+# "temperature": 0.7  # Causes non-deterministic tool selection
+```
+**VERIFICATION METHOD**:
+Run a fixed set of 100 parallel tool-calling tasks (e.g., BFCL v4 subset) with `temperature=0`. Assert that 100% of responses are valid JSON and that the selected function names match the expected schema. If failure rate > 5%, reject the quantization scheme.
+
+
+---
+
+## 3513. Decoupled Vision Projection for Modular LLM Deployment (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Vision Projection for Modular LLM Deployment",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-21T04:03:16.572Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You **MUST** decouple vision projection matrices (`mmproj`) from the core LLM weights in multi-modal LLM deployments. You **MUST NOT** bake vision capabilities into the core model file if the vision module is optional.
+**WHY**:
+Baking vision into the core model forces users to download and load the entire multi-modal architecture even if they only need text generation. This increases memory footprint and load time. By decoupling, the core model remains lightweight (7.89 GB), and the vision module (928 MB) is only loaded when `--mmproj` is specified. This allows for flexible deployment scenarios (text-only vs. multi-modal) without re-downloading the core model.
+**WHEN TO APPLY**:
+Any multi-modal LLM deployment where vision is an optional feature.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Core model only (text)
+llama-server -m core-model.gguf
+
+# Core model + vision (multi-modal)
+llama-server -m core-model.gguf --mmproj mmproj-vision.gguf
+```
+**NEGATIVE CONSTRAINT**:
+```bash
+# WRONG: Single monolithic file containing both text and vision weights
+# Forces users to load 8.8 GB instead of 7.89 GB for text-only tasks
+llama-server -m monolithic-model.gguf
+```
+**VERIFICATION METHOD**:
+Verify that the core model file size is < 8 GB and that the vision module is a separate file. Test that `llama-server` starts successfully without `--mmproj` and that image inputs are rejected or ignored. Test that with `--mmproj`, image inputs are processed correctly.
+
+
+---
+
+## 3514. Jinja Template Enforcement for Tool Calling Syntax (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Jinja Template Enforcement for Tool Calling Syntax",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-21T04:03:16.741Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You **MUST** use the `--jinja` flag in `llama.cpp` when deploying models that rely on complex chat templates for tool calling. You **MUST NOT** rely on hardcoded prompt strings for tool calling in production.
+**WHY**:
+Hardcoded prompts are fragile and do not adapt to model-specific tokenization or template changes. The `--jinja` flag ensures that the chat template is dynamically rendered from the GGUF metadata, guaranteeing that tool call syntax (e.g., `<function=...>`) is correctly formatted. This is critical for models like Qwen3.8, which use specific Jinja templates for thinking and tool calling.
+**WHEN TO APPLY**:
+Any LLM deployment that uses tool calling or function calling.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Correct: Use --jinja to enable dynamic template rendering
+llama-server -m model.gguf --jinja
+```
+**NEGATIVE CONSTRAINT**:
+```bash
+# WRONG: Hardcoding tool call prompts in the application code
+# This will break if the model's template changes or if the tokenizer is different
+prompt = "Use the function: " + json.dumps(tool_call)
+```
+**VERIFICATION METHOD**:
+Inspect the GGUF metadata for the `chat_template` field. Verify that the template includes logic for `tool` messages. Test that the server correctly parses and renders tool call responses.
+
+---

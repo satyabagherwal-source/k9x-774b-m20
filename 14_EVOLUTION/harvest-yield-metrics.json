@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:56:53.809Z",
-  "total_cycles_completed": 4164,
-  "total_learnings_persisted": 4164,
-  "total_rules_promoted": 3348,
+  "last_updated": "2026-10-21T04:03:16.907Z",
+  "total_cycles_completed": 4165,
+  "total_learnings_persisted": 4165,
+  "total_rules_promoted": 3351,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:43:27.921Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:50:37.521Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1403,6 +1396,13 @@
       "repository": "clastix/kamaji",
       "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:03:16.907Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

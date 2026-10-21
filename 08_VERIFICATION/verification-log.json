@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-YFA1",
-    "timestamp": "2026-10-20T03:40:45.913Z",
-    "repository": "testing-library/dom-testing-library",
-    "learningId": "learn-github-testing-library-dom-testing-library",
-    "contentHash": "a6cc32bae9a837121646782d0c1cadfb9b176968c6d3b4833d7b0a2910828e4d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-61Z2",
     "timestamp": "2026-10-20T03:46:41.918Z",
     "repository": "fastapi/fastapi",
@@ -7492,6 +7477,21 @@
     "contentHash": "a8f0f13ef963a05c91a5d701e1fe66e47d6bec1d05c38dd648ce6c9b892fb534",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-78DB",
+    "timestamp": "2026-10-21T04:03:16.895Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "f23c4b9b11a66402a995e49a44938b9326a92b324bc5f5500dc7251b7a5e7062",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -4187,3 +4187,4 @@
 | `CYCLE-20261021-PBR8` | `2026-10-21T03:49:21.476Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`d8e8e356...`) |
 | `CYCLE-20261021-YT4L` | `2026-10-21T03:56:43.893Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`a6069f16...`) |
 | `CYCLE-20261021-Z0RS` | `2026-10-21T03:56:53.800Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3511` | Yes (`a8f0f13e...`) |
+| `CYCLE-20261021-78DB` | `2026-10-21T04:03:16.895Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3512, Rule 3513, Rule 3514` | Yes (`f23c4b9b...`) |
