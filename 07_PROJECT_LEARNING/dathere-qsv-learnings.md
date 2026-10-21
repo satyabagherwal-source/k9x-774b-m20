@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `06baec98`  
+> **Source Version**: `945b0ac1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T15:16:33.086Z  
+> **Timestamp**: 2026-10-21T16:51:49.333Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T15:16:32.626Z  
+> **Harvest Timestamp**: 2026-10-21T16:51:49.150Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,654 +2209,266 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5891c3d` (2026-10-21)
-**Commit Message**: fix(viz): drop stale qsv-clientd answers in live mode (#4863)
+### Incident Patch 1: `945b0ac1` (2026-10-21)
+**Commit Message**: perf(sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memory (#4865)
 
-* fix(viz): drop stale qsv-clientd answers in live mode
+* perf(sqlp): rechunk before writing, real --streaming output, honor OptFlags
 
-Query and drill-down replies are applied only while they answer the
-latest request (live.req), so a slow query can no longer overwrite a
-newer result, and its label uses the command that was submitted rather
-than the selector's value when the reply lands. Disconnect, a revoked
-token and a (re)connect orphan replies still in flight.
+Polars 2.0 changed how sqlp's options take effect:
 
-Cancel on the pairing dialog now invalidates an in-flight poll
-(live.pairGen): a late approval no longer connects the page and stores
-the token, and a stale reply can't close a dialog opened afterwards.
+- SQLContext defers a read-only query into a fresh LazyFrame with
+  OptFlags::default(), dropping the flags set on the registered tables, so
+  --no-optimizations did nothing and EXPLAIN showed a different plan from
+  the one that ran. Set the flags on the query result too, starting from
+  OptFlags::default().
+- collect() returns the result as many tiny chunks (~277k for a 600k-row
+  SELECT *), and every writer pays per chunk. Rechunk before writing:
+  SELECT * on a 72 MB CSV goes 6.8 s -> 3.1 s (CSV), 8.2 s -> 3.0 s
+  (Parquet), 48.9 s -> 3.2 s (Arrow).
+- --streaming had no effect (collect already uses the streaming engine).
+  It now writes csv/jsonl/parquet/arrow output batch by batch via
+  sink_batches + batched writers: peak RSS 6 GB -> 1.4 GB for the same
+  CSV query. A regular --output file is staged beside its target and
+  renamed into place only on success, keeping an existing file's mode.
+- --low-memory had no effect on the streaming engine; removed (
 
-Verified against a delayed mock qsv-clientd in Chrome: both races
-reproduce on the master bridge and are gone with the fix. Gallery
-regenerated (bridge-only diff in 23 pages).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #4863
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(viz): ignore a second Connect click while pairing starts
-
-The chip stays clickable until the pairing dialog exists, so a quick
-double-click sent two POST /v1/pair requests and opened two dialogs;
-Cancel then closed only the
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++### Changed
++- **`qsv-sqlp` drops `--low-memory` and redescribes `--streaming`** ([#4865](https://github.com/dathere/qsv/pull/4865)), following the `sqlp` change. `--low-memory` had no effect on Polars' streaming engine and was removed from `sqlp`, so a client that still sends it gets an unknown-flag error. `--streaming` now writes `csv`, `jsonl`, `parquet` and `arrow` results batch by batch instead of collecting them first; an `--output` file appears only once the query succeeds.
++
+ ## [26.0.0] - 2026-10-19
+ 
+ Companion release to qsv 26.0.0, "The New Angles Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 26.0.0 because the regenerated skill JSONs advertise subcommands and options that only exist in the new binary (`viz barpolar`, `ternary` and `parcoords`, `funnel --area`, `--degrees`, `--no-parcoords`, and `sqlp`'s `read_ndjson()` named options). The headline for MCP/Cowork users is **`qsv-viz`'s new chart types**: wind roses, ternary plots, parallel coordinates and funnel areas. The skill count stays at **57**. Update your qsv binary first.
+```
+
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-6)
+```diff
+@@ -78,11 +78,6 @@
+         "description": "The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow).",
+         "default": 10000
+       },
+-      {
+-        "flag": "--low-memory",
+-        "type": "flag",
+-        "description": "Use low memory mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors."
+-      },
+       {
+         "flag": "--no-optimizations",
+         "type": "flag",
+@@ -107,7 +102,7 @@
+       {
+         "flag": "--streaming",
+         "type": "flag",
+-        "description": "Use streaming mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors."
++        "description": "Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it."
+       },
+       {
+         "flag": "--time-format",
+```
+
+**File**: `CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`viz smart`: a "Skip to panels" button in the guided Tour** ([#4859](https://github.com/dathere/qsv/pull/4859)). Every Data Schematic's tour opens with the same general steps: the welcome step, the Data Dictionary drawer chapter and the data viewer chapter. A reader who has seen them before had to click through up to eleven steps to reach the part that is specific to this dataset. Those opening steps now show a **Skip to panels →** link on the progress row, apart from Back/Next. It jumps straight to the first chart-panel spotlight, closing whichever drawer the tour had opened. The full tour still runs by default and nothing is remembered. The link is left out when a page has neither chapter, because skipping would just be Next. It is localized in all eight UI languages and follows the Theme toggle.
+ 
+ ### Changed
++- **`sqlp --streaming` now writes the result as it is computed** ([#4865](https://github.com/dathere/qsv/pull/4865)) instead of collecting it all in memory first, for results too big for memory. It works with the `csv`, `jsonl`, `parquet` and `arrow` formats; `json` and `avro` still collect. On a 730 MB, 30-column CSV (release build), `SELECT *` peaks at 1.0 GB instead of 1.6 GB written as CSV, 1.3 GB instead of 3.1 GB as Parquet, and 1.0 GB instead of 1.7 GB as Arrow, at the same speed or slightly faster. An `--output` file is written beside its target and only moved into place if the query succeeds, so a query that fails part-way leaves the previous file untouched. An existing output (or the file a symlink points to) is then overwritten in place, as without `--streaming`, so it keeps its owner, group, mode and links. On stdout, rows go out as they are computed, so check the exit code before using the output. Before, `--streaming` had no effect: Polars runs every query on its streaming engine anyway.
+ - **deps: Polars bumped to upstream rev [`c7da28c`](https://github.com/pola-rs/polars/commit/c7da28c590a504bd9ad5dca124428c35af7202bd)** (from `b951cd7`, [#4864](https://github.com/dathere/qsv/pull/4864)). One `sqlp` result changes:
+   - **Casting a decimal to an integer now truncates toward zero** ([#30069](https://github.com/pola-rs/polars/pull/30069)). It used to round half to even, so `CAST(-1.7 AS INT)` now gives `-1` (was `-2`) and `CAST(1.99 AS INT)` gives `1` (was `2`). Exact numeric literals such as `1.99` are decimals, so literal casts change too. To round instead, use `CAST(ROUND(x) AS INT)`; note that `ROUND` takes halves away from zero (`2.5` → `3`), where the old cast rounded them to even (`2`).
+ 
+@@ -33,12 +34,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
  
  ### Fixed
-+- **`viz` live mode: late qsv-clientd answers no longer overwrite newer ones.** A slow query could land after a faster one sent later and replace its result. It was also labeled with whatever command the selector showed at that moment, not the one that ran. Only the latest query or drill-down now shows its answer, and answers still on their way at Disconnect are dropped. Separately, Cancel on the pairing dialog now also cancels a poll already in flight: before, an approval arriving just after Cancel still connected the page and stored the token. A quick double-click on Connect no longer opens a second pairing dialog that Cancel can't close. Found by roborev on the #4859 gallery regeneration ([#4863](https://github.com/dathere/qsv/pull/4863)).
- - **`util::write_json_record` no longer reads past the header list.** It indexed headers with `get_unchecked` by record position, which is only sound when every row has exactly as many fields as there are headers. Its one caller, `search --json`, uses a non-flexible reader that guarantees this, so no release was affected; a row wider than the headers now returns an `InvalidData` error instead of being undefined behavior. Flagged by Codacy/Semgrep during #4855 ([#4856](https://github.com/dathere/qsv/pull/4856)).
- - **`schema`: the 26.0.0 Unicode length pass made indexed runs 7× slower.** The character-length pass added in [#4827](https://github.com/dathere/qsv/pull/4827) read the whole file on one thread, decoding every field, whenever a String column had non-ASCII text. It now decodes only the columns it measures and, when the file is indexed, splits the rows across threads like `frequency`. On the 1M-row benchmark file, indexed `schema` drops from 442 ms to 93 ms (25.0.0, before the pass existed: 55 ms); the schema it writes is unchanged ([#4852](https://github.com/dathere/qsv/pull/4852)).
- - **Benchmark archive: 247 more invalid historical runs removed** ([#4851](https://github.com/dathere/qsv/pull/4851)). 237 runs timed a command that errored out at startup. 10 more were found by rerunning suspect windows with the original release binaries: `joinp`/`joinp_streaming` 14.0.0–15.0.1 fail with a Polars dtype error on `Incident Zip`, and `count`/`count_polars_lowmem` 2.0.0–2.1.0 print `0` instead of `1000000`. The other fast windows (`count` 0.125.0–1.0.0, the `sqlp` family 0.126.0–0.135.0, and the suite-wide 2.0.0–3.0.0 dip) reproduced and were kept.
++- **`sqlp --no-optimizations` works again, and `EXPLAIN` shows the plan that actually runs.** ([#4865](https://github.com/dathere/qsv/pull/4865)) Polars' `SQLContext` now hands back a fresh query plan with its default optimizations, dropping the ones `sqlp` set on each table. So `--no-optimizations` had no effect, while `EXPLAIN` still showed a plan built with sqlp's older, smaller set of optimizations. `sqlp` now sets them on the query itself and starts from Polars' defaults, which add join reordering, sort collapsing and order-aware optimizations to the list it used to set by hand. Query results are unchanged. Two benchmark series shift because of this and the `--streaming` change, and the shift is not a regression: `sqlp_nooptimizations` gets slower now that the flag works, and `sqlp_aggregations_expensive_streaming` now streams its last query's output.
+ - **`viz` live mode: late qsv-clientd answers no longer overwrite newer ones.** A slow query could land after a faster one sent later and replace its result. It was also labeled with whatever command the selector showed at that moment, not the one that ran. Only the latest query or drill-down now shows its answer, and answers still on their way at Disconnect are dropped. Separately, Cancel on the pairing dialog now also cancels a poll already in flight: before, an approval arriving just after Cancel still connected the page and stored the token. A quick double-click on Connect no longer opens a second pairing dialog that Cancel can't close. Found by roborev on the #4859 gallery regeneration ([#4863](https://github.com/dathere/qsv/pull/4863)).
+ - **`util::write_json_record` no longer reads past the header list.** It indexed headers with `get_unchecked` by record position, which is only sound when every row has exactly as many fields as ther
 ```
 
-**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +41/-21)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -941,7 +941,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
- <div class="qsv-dict-downloads">
- <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcGFydGljdWxhcmx5IGZvciBzcGF5ZWQgZmVtYWxlcyBhbmQgbmV1dGVyZWQgbWFsZXMuXG4qICoqRGF0YSBRdWFsaXR5OioqIFRoZSBkYXRhc2V0IGlzIGhpZ2hseSBjb21wbGV0ZSB3aXRoIHZlcnkgbG93IG51bGwgY291bnRzIGFjcm9zcyBhbGwgZmllbGRzOyBob3dldmVyLCB0aGUgYEJyZWVkYCBhbmQgYENvbG9yYCBmaWVsZHMgY29udGFpbiBtaW5vciBzcGFyc2l0eS5cbiogKipUZW1wb3JhbCBSYW5nZToqKiBUaGUgYFZhbGlkRGF0ZWAgZmllbGQgc2hvd3MgYSB0ZW1wb3JhbCBzcGFuIG9mIGFwcHJveGltYXRlbHkgMjMgeWVhcnMsIGZyb20gMjAwMyB0byAyMDI2LlxuXG5HZW5lcmF0ZWQgYnkgcXN2IHYyMS4xLjAgZGVzY3JpYmVncHRcbkNvbW1hbmQgbGluZTogdGFyZ2V0L2RlYnVnL3FzdiBkZXNjcmliZWdwdCAtLWRpY3Rpb25hcnkgLS1kZXNjcmlwdGlvbiBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ19saWNlbnNlcy5jc3YgLS1mb3JtYXQganNvbnNjaGVtYSAtbyBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ3NfZGljdC5zY2hlbWEuanNvbiAtLWZyZXNoIC0tdHdvLXBhc3MgLS1pbmZlci1jb250ZW50LXR5cGUgLS1pbmZlci1udWxsLXZhbHVlc1xuUHJvbXB0IGZpbGU6IERlZmF1bHQgdjcuMi4wXG5Nb2RlbDogZ29vZ2xlL2dlbW1hLTQtMjZiLWE0YlxuTExNIEFQSSBVUkw6IGh0dHA6Ly9sb2NhbGhvc3Q6MTIzNC92MVxuTGFuZ3VhZ2U6IFxuVGltZXN0YW1wOiAyMDI2LTA3LTE3VDEzOjQyOjE0LjE2ODUyNSswMDowMFxuXG5XQVJOSU5HOiBEZXNjcmlwdGlvbiBnZW5lcmF0ZWQgYnkgYW4gTExNIGFuZCBtYXkgY29udGFpbiBpbmFjY3VyYWNpZXMuIFZlcmlmeSBiZWZvcmUgdXNpbmchXG4iLAogICJ0eXBlIjogIm9iamVjdCIsCiAgInByb3BlcnRpZXMiOiB7CiAgICAiX2lkIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAiaW50ZWdlciIKICAgICAgXSwKICAgICAgInRpdGxlIjogIlJlY29yZCBJRCIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJBIHVuaXF1ZSBpbnRlZ2VyIGlkZW50aWZpZXIgZm9yIGVhY2ggcmVjb3JkIGluIHRoZSBkYXRhc2V0LiIsCiAgICAgICJtaW5pbXVtIjogMjk1ODUyMjcsCiAgICAgICJtYXhpbXVtIjogMjk2MzUyMzksCiAgICAgICJ4LXFzdiI6IHsKICAgICAgICAicXN2X3R5cGUiOiAiSW50ZWdlciIsCiAgICAgICAgImNhcmRpbmFsaXR5IjogNTAwMTMsCiAgICAgICAgIm51bGxfY291bnQiOiAwLAogICAgICAgICJjb250ZW50X3R5cGUiOiAidW5pcXVlX2lkIiwKICAgICAgICAicm9sZSI6ICJpZGVudGlmaWVyIiwKICAgICAgICAiY29uY2VwdCI6ICJpZC5zdXJyb2dhdGVfa2V5IiwKICAgICAgICAiZXhhbXBsZV9jb3VudHMiOiAiPEFMTF9VTklRVUU+IgogICAgICB9CiAgICB9LAogICAgIkxpY2Vuc2VUeXBlIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAic3RyaW5nIgogICAgICBdLAogICAgICAidGl0bGUiOiAiTGljZW5zZSBUeXBlIiwKICAgICAgImRlc2NyaXB0aW9uIjogIlRoZSBzcGVjaWZpYyBjbGFzc2lmaWNhdGlvbiBvZiB0aGUgZG9nIGxpY2Vuc2UgKGUuZy4sIGxpZmV0aW1lLCBzZW5pb3IpLiIsCiAgICAgICJleGFtcGxlcyI6IFsKICAgICAgICAiRG9nIExpZmV0aW1lIFNwYXllZCBGZW1hbGUiLAogICAgICAgICJEb2cgTGlmZXRpbWUgTmV1dGVyZWQgTWFsZSIsCiAgICAgICAgIkRvZyBMaWZldGltZSBNYWxlIiwKICAgICAgICAiRG9nIFNlbmlvciBMaWZldGltZSBTcGF5ZWQgRmVtYWxlIiwKICAgICAg
+@@ -7093,6 +7093,7 @@ dependencies = [
+  "phf 0.14.0",
+  "plotly",
+  "polars",
++ "polars-arrow",
+  "polars-readstat-rs",
+  "pragmastat",
+  "pyo3",
 ```
 
-**File**: `examples/viz/smart_cms_medicare.html` (modified, +39/-19)
+**File**: `Cargo.toml` (modified, +4/-1)
 ```diff
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -2456,7 +2456,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-   else setTimeout(init, 0);
- })();
- </script>
--<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"c6c47c0e-f936-48d5-abf6-6c938dfea7d7","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"132cee8c-c2c7-436c-a36f-6ac3719bb2dd","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
- <style id="qsv-live-style">
- .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
-   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
-@@ -2512,7 +2512,8 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-   } catch (e) { SRC = {}; }
-   var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
-   var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0,
-+    req: 0, pairGen: 0, pairing: false };
+@@ -333,6 +333,9 @@ plotly = { version = "0.15", default-features = false, optional = true }
+ rust-i18n = { version = "4.2.1", optional = true }
+ pragmastat = "14.0"
+ polars-readstat-rs = { version = "0.24.2", optional = true }
++# only for `default_ipc_fields`, which `sqlp --streaming --format arrow` needs to build a
++# batched IPC writer; it resolves to the same patched git rev as polars itself.
++polars-arrow = { version = "0.55", optional = true }
+ polars = { version = "0.55", features = [
+     # "approx_quantile" powers the APPROX_QUANTILE SQL aggregate in sqlp. It is
+     # NOT in any umbrella qsv enables (upstream keeps it in docs-selection/full
+@@ -726,7 +729,7 @@ geocode = [
+ luau     = ["mlua", "sanitize-filename", "flate2", "zstd"]
+ magika   = ["dep:magika", "dep:ort"]
+ mcp      = []
+-polars   = ["dep:polars", "bytemuck"]
++polars   = ["dep:polars", "dep:polars-arrow", "bytemuck"]
+ readstat = ["dep:polars-readstat-rs", "polars"]
  
-   function el(tag, cls, text) {
-     var e = document.createElement(tag);
-@@ -2617,6 +2618,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-     if (s && live.dataset) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
-     live.token = null;
-     live.dataset = null;
-+    live.req++;
-     if (live.panel) { live.panel.remove(); live.panel = null; }
-     toast("The qsv-clientd connection expired or was revoked. Connect again to continue.");
-     showChip();
-@@ -2661,16 +2663,23 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-     document.body.appendChild(c);
-     live.chip = c;
-   }
-+  // Cancel can land while a poll is in flight: pairGen makes its answer, even an approval, a no-op
-+  // (and keeps it off a pairing dialog opened afterwards)
-   function closeDialog() {
-+    live.pairGen++;
-     clearTimeout(live.pollTimer);
-     if (live.dialog) { live.dialog.remove(); live.dialog = null; }
-   }
-   function startPair() {
--    if (live.dialog) return;
-+    // the chip stays clickable until the dialog exists: a second click meanwhile would open a
-+    // second dialog that no Cancel can close
-+    if (live.dialog || live.pairing) return;
-+    live.pairing = true;
-     var body = {};
-     if (SRC.schematic_uuid) body.schematic_uuid = SRC.schematic_uuid;
-     if (DIGEST) body.digest = DIGEST;
-     call("POST", "/v1/pair", body, { anon: true }).then(function (j) {
-+      live.pairing = false;
-       if (!j || !j.request_id || !j.code) throw new Error("qsv-clientd sent an unexpected pairing reply");
-       var d = el("div", "qsv-live-dialog");
-       d.id = "qsv-live-dialog";
-@@ -2690,17 +2699,18 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-       d.appendChild(row);
-       document.body.appendChild(d);
-       live.dialog = d;
--      poll(j.request_id, Date.now(), st);
--    }).catch(fail);
-+      poll(j.request_id, Date.now(), st, live.pairGen);
-+    }).catch(function (e) { live.pairing = false; fail(e); });
-   }
--  function poll(id, t0, st) {
-+  function poll(id, t0, st, g) {
-     if (Date.now() - t0 > 300000) {
-       st.textContent = "The pairing code expired. Close this and connect again.";
-       return;
-     }
-     live.pollTimer = setTimeout(function () {
--      if (!live.dialog) return;
-+      if (g !== live.pairGen) return;
-       call("GET", "/v1/pair/" + encodeURIComponent(id), undef
+ prompt = ["rfd"]
 ```
 
-**File**: `examples/viz/smart_cpdb.html` (modified, +39/-19)
+**File**: `docs/help/sqlp.md` (modified, +1/-2)
 ```diff
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -2496,7 +2496,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-   else setTimeout(init, 0);
- })();
- </script>
--<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"157b8e05-9edb-4477-86f4-79fe6b50eb89","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"e207d874-8f3b-4030-b4e0-17d54bbbf8f0","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
- <style id="qsv-live-style">
- .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
-   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
-@@ -2552,7 +2552,8 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-   } catch (e) { SRC = {}; }
-   var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
-   var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0,
-+    req: 0, pairGen: 0, pairing: false };
- 
-   function el(tag, cls, text) {
-     var e = document.createElement(tag);
-@@ -2657,6 +2658,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-     if (s && live.dataset) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
-     live.token = null;
-     live.dataset = null;
-+    live.req++;
-     if (live.panel) { live.panel.remove(); live.panel = null; }
-     toast("The qsv-clientd connection expired or was revoked. Connect again to continue.");
-     showChip();
-@@ -2701,16 +2703,23 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-     document.body.appendChild(c);
-     live.chip = c;
-   }
-+  // Cancel can land while a poll is in flight: pairGen makes its answer, even an approval, a no-op
-+  // (and keeps it off a pairing dialog opened afterwards)
-   function closeDialog() {
-+    live.pairGen++;
-     clearTimeout(live.pollTimer);
-     if (live.dialog) { live.dialog.remove(); live.dialog = null; }
-   }
-   function startPair() {
--    if (live.dialog) return;
-+    // the chip stays clickable until the dialog exists: a second click meanwhile would open a
-+    // second dialog that no Cancel can close
-+    if (live.dialog || live.pairing) return;
-+    live.pairing = true;
-     var body = {};
-     if (SRC.schematic_uuid) body.schematic_uuid = SRC.schematic_uuid;
-     if (DIGEST) body.digest = DIGEST;
-     call("POST", "/v1/pair", body, { anon: true }).then(function (j) {
-+      live.pairing = false;
-       if (!j || !j.request_id || !j.code) throw new Error("qsv-clientd sent an unexpected pairing reply");
-       var d = el("div", "qsv-live-dialog");
-       d.id = "qsv-live-dialog";
-@@ -2730,17 +2739,18 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-       d.appendChild(row);
-       document.body.appendChild(d);
-       live.dialog = d;
--      poll(j.request_id, Date.now(), st);
--    }).catch(fail);
-+      poll(j.request_id, Date.now(), st, live.pairGen);
-+    }).catch(function (e) { live.pairing = false; fail(e); });
-   }
--  function poll(id, t0, st) {
-+  function poll(id, t0, st, g) {
-     if (Date.now() - t0 > 300000) {
-       st.textContent = "The pairing code expired. Close this and connect again.";
-       return;
-     }
-     live.pollTimer = setTimeout(function () {
--      i
+@@ -361,8 +361,7 @@ qsv sqlp --help
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension ".pschema.json" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+-| &nbsp;`‑‑streaming`&nbsp; | flag | Use streaming mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors. |  |
+-| &nbsp;`‑‑low‑memory`&nbsp; | flag | Use low memory mode when parsing CSVs. This will use less memory but will be slower. Only use this when you get out of memory errors. |  |
++| &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
+ | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default query optimizations. This will make queries slower. Use this when you get query errors or to force CSV parsing when there is only one input file, no CSV parsing options are used and its not a SQL script. |  |
+ | &nbsp;`‑‑truncate‑ragged‑lines`&nbsp; | flag | Truncate ragged lines when parsing CSVs. If set, rows with more columns than the header will be truncated. If not set, the query will fail. Use this only when you get an error about ragged lines. |  |
+ | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as Polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query. |  |
 ```
 
-**File**: `examples/viz/smart_dict_sunburst.html` (modified, +39/-19)
+**File**: `scripts/benchmarks.sh` (modified, +0/-1)
 ```diff
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -2504,7 +2504,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-   else setTimeout(init, 0);
- })();
- </script>
--<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"6506300f-827e-4bfd-825b-baa70a303ae1","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"rows":500,"viz_args":["--dictionary","infer","--hierarchy-style","sunburst","--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"939c6174-f82a-4bfe-86b2-7b2d18cc693c","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"rows":500,"viz_args":["--dictionary","infer","--hierarchy-style","sunburst","--preview-threshold","500"],"redacted":[],"pid":null}</script>
- <style id="qsv-live-style">
- .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
-   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
-@@ -2560,7 +2560,8 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-   } catch (e) { SRC = {}; }
-   var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
-   var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0,
-+    req: 0, pairGen: 0, pairing: false };
- 
-   function el(tag, cls, text) {
-     var e = document.createElement(tag);
-@@ -2665,6 +2666,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-     if (s && live.dataset) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
-     live.token = null;
-     live.dataset = null;
-+    live.req++;
-     if (live.panel) { live.panel.remove(); live.panel = null; }
-     toast("The qsv-clientd connection expired or was revoked. Connect again to continue.");
-     showChip();
-@@ -2709,16 +2711,23 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-     document.body.appendChild(c);
-     live.chip = c;
-   }
-+  // Cancel can land while a poll is in flight: pairGen makes its answer, even an approval, a no-op
-+  // (and keeps it off a pairing dialog opened afterwards)
-   function closeDialog() {
-+    live.pairGen++;
-     clearTimeout(live.pollTimer);
-     if (live.dialog) { live.dialog.remove(); live.dialog = null; }
-   }
-   function startPair() {
--    if (live.dialog) return;
-+    // the chip stays clickable until the dialog exists: a second click meanwhile would open a
-+    // second dialog that no Cancel can close
-+    if (live.dialog || live.pairing) return;
-+    live.pairing = true;
-     var body = {};
-     if (SRC.schematic_uuid) body.schematic_uuid = SRC.schematic_uuid;
-     if (DIGEST) body.digest = DIGEST;
-     call("POST", "/v1/pair", body, { anon: true }).then(function (j) {
-+      live.pairing = false;
-       if (!j || !j.request_id || !j.code) throw new Error("qsv-clientd sent an unexpected pairing reply");
-       var d = el("div", "qsv-live-dialog");
-       d.id = "qsv-live-dialog";
-@@ -2738,17 +2747,18 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-       d.appendChild(row);
-       document.body.appendChild(d);
-       live.dialog = d;
--      poll(j.request_id, Date.now(), st);
--    }).catch(fail);
-+      poll(j.request_id, Date.now(), st, live.pairGen);
-+    }).catch(function (e) { live.pairing = false; fail(e); });
-   }
--  function poll(id, t0, st) {
-+  function poll(id, t0, st, g) {
-     if (Date.now() - t0 > 300000) {
-       st.textContent = "The pairing code expired. Close this and connect again.";
-       return;
-     }
-     live.pollTimer = setTimeout(function () {
--      if (!live.dialog) return;
-+      if (g !== live.pairGen) return;
-       call("GET", "/v1/pair/" + encodeURICompo
+@@ -1202,7 +1202,6 @@ run sqlp_format_json "$qsv_bin" sqlp --format json "$data" -q --infer-len 100000
+ run sqlp_format_jsonl "$qsv_bin" sqlp --format jsonl "$data" -q --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
+ run sqlp_format_parquet "$qsv_bin" sqlp --format parquet "$data" -q --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
+ run sqlp_format_parquet_statistics "$qsv_bin" sqlp --format parquet --statistics "$data" -q --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
+-run sqlp_lowmemory "$qsv_bin" sqlp "$data" -q --low-memory --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
+ run sqlp_nooptimizations "$qsv_bin" sqlp "$data" -q --no-optimizations --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
+ run sqlp_tryparsedates "$qsv_bin" sqlp "$data" -q --try-parsedates --infer-len 100000 '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
+ run sqlp_tryparsedates_inferlen "$qsv_bin" sqlp "$data" -q --infer-len 10000 --try-parsedates '"select * from _t_1 where \"Complaint Type\"='\''Noise'\'' and Borough='\''BROOKLYN'\''"'
 ```
 
-**File**: `examples/viz/smart_dict_treemap.html` (modified, +39/-19)
+**File**: `src/cmd/sqlp.rs` (modified, +441/-239)
 ```diff
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -2440,7 +2440,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-   else setTimeout(init, 0);
- })();
- </script>
--<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"c8b9983a-1367-4c27-aa18-e22ee53034b4","fingerprint":{"algo":"blake3","digest":"d728107a915fc6a38617a25a28e52cbbe417d1698802bc0b8d9c031bdc731592","bytes":7934},"rows":300,"viz_args":["--dictionary","infer","--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"d24a8487-e824-467c-b85b-ae2b02727a6b","fingerprint":{"algo":"blake3","digest":"d728107a915fc6a38617a25a28e52cbbe417d1698802bc0b8d9c031bdc731592","bytes":7934},"rows":300,"viz_args":["--dictionary","infer","--preview-threshold","500"],"redacted":[],"pid":null}</script>
- <style id="qsv-live-style">
- .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
-   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
-@@ -2496,7 +2496,8 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-   } catch (e) { SRC = {}; }
-   var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
-   var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0,
-+    req: 0, pairGen: 0, pairing: false };
+@@ -241,10 +241,17 @@ sqlp options:
+                               `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`,
+                               `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`.
  
-   function el(tag, cls, text) {
-     var e = document.createElement(tag);
-@@ -2601,6 +2602,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-     if (s && live.dataset) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
-     live.token = null;
-     live.dataset = null;
-+    live.req++;
-     if (live.panel) { live.panel.remove(); live.panel = null; }
-     toast("The qsv-clientd connection expired or was revoked. Connect again to continue.");
-     showChip();
-@@ -2645,16 +2647,23 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-     document.body.appendChild(c);
-     live.chip = c;
-   }
-+  // Cancel can land while a poll is in flight: pairGen makes its answer, even an approval, a no-op
-+  // (and keeps it off a pairing dialog opened afterwards)
-   function closeDialog() {
-+    live.pairGen++;
-     clearTimeout(live.pollTimer);
-     if (live.dialog) { live.dialog.remove(); live.dialog = null; }
-   }
-   function startPair() {
--    if (live.dialog) return;
-+    // the chip stays clickable until the dialog exists: a second click meanwhile would open a
-+    // second dialog that no Cancel can close
-+    if (live.dialog || live.pairing) return;
-+    live.pairing = true;
-     var body = {};
-     if (SRC.schematic_uuid) body.schematic_uuid = SRC.schematic_uuid;
-     if (DIGEST) body.digest = DIGEST;
-     call("POST", "/v1/pair", body, { anon: true }).then(function (j) {
-+      live.pairing = false;
-       if (!j || !j.request_id || !j.code) throw new Error("qsv-clientd sent an unexpected pairing reply");
-       var d = el("div", "qsv-live-dialog");
-       d.id = "qsv-live-dialog";
-@@ -2674,17 +2683,18 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-       d.appendChild(row);
-       document.body.appendChild(d);
-       live.dialog = d;
--      poll(j.request_id, Date.now(), st);
--    }).catch(fail);
-+      poll(j.request_id, Date.now(), st, live.pairGen);
-+    }).catch(function (e) { live.pairing = false; fail(e); });
-   }
--  function poll(id, t0, st) {
-+  function poll(id, t0, st, g) {
-     if (Date.now() - t0 > 300000) {
-       st.textContent = "The pairing code expired. Close this and connect again.";
-       return;
-     }
-     live.pollTimer = setTimeout(function () {
--      if (!live.dialog) return;
-+      if (g !== live.pairGen) return;
-       call("GET", "/v1/pair/" + encodeURIComponent(id), undefined, { anon: true }).then(function (j
-```
-
-**File**: `examples/viz/smart_geo_outliers.html` (modified, +39/-19)
-```diff
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -2883,7 +2883,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
-   else setTimeout(init, 0);
- })();
- </script>
--<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"dff65f25-dd46-4e33-9d47-afe993652eb2","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"9535deeb-f2e0-430b-8d9d-c7ad11d7c1dc","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
- <style id="qsv-live-style">
- .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
-   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
-@@ -2939,7 +2939,8 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
-   } catch (e) { SRC = {}; }
-   var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
-   var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0,
-+    req: 0, pairGen: 0, pairing: false };
+-    --streaming               Use streaming mode when parsing CSVs. This will use less memory
+-                              but will be slower. Only use this when you get out of memory errors.
+-    --low-memory              Use low memory mode when parsing CSVs. This will use less memory
+-                              but will be slower. Only use this when you get out of memory errors.
++    --streaming               Write the query result as it is computed, batch by batch, instead
++                              of collecting the whole result in memory first. Use this when the
++                              result is too big for memory. Works with the csv, jsonl, parquet
++                              and arrow formats; json and avro output still collect the whole
++                              result. Queries already run on Polars' streaming engine either way.
++                              An --output file is written beside its target and only moved
++                              into place if the query succeeds. Overwriting an existing file
++                              copies the result into it, so it keeps its owner, group, mode
++                              and links; that briefly needs disk space for two copies. On stdout, rows are sent as
++                              they are computed, so a query that fails part-way leaves its
++                              output cut short; check sqlp's exit code before using it.
+     --no-optimizations        Disable non-default query optimizations. This will make queries slower.
+                               Use this when you get query errors or to force CSV parsing when there
+                               is only one input file, no CSV parsing options are used and its not
+@@ -311,8 +318,10 @@ use std::{
+     fs::File,
+     io,
+     io::{BufReader, BufWriter, Read, Write},
++    num::NonZeroUsize,
+     path::{Path, PathBuf},
+     str::FromStr,
++    sync::Mutex,
+     time::Instant,
+ };
  
-   function el(tag, cls, text) {
-     var e = document.createElement(tag);
-@@ -3044,6 +3045,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
-     if (s && live.dataset) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
-     live.token = null;
-     live.dataset = null;
-+    live.req++;
-     if (live.panel) { live.panel.remove(); live.panel = null; }
-     toast("The qsv-clientd connection expired or was revoked. Connect again to continue.");
-     showChip();
-@@ -3088,16 +3090,23 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
-     document.body.appendChild(c);
-     live.chip = c;
-   }
-+  // Cancel can land while a poll is in flight: pairGen makes its answer, even an approval, a no-op
-+  // (and keeps it off a pairing dialog opened afterwards)
-   function closeDialog() {
-+    live.pairGen++;
-     clearTimeout(live.pollTimer);
-     if (live.dialog) { live.dialog.remove(); live.dialog = null; }
-   }
-   function startPair() {
--    if (live.dialog) return;
-+    // the chip stays clickable until the dialog exists: a second click meanwhile would open a
-+    // second dialog that no Cancel can close
-+    if (live.dialog || live.pairing) return;
-+    live.pairing = true;
-     var body = {};
-     if (SRC.schematic_uuid) body.schematic_uuid = SRC.schematic_uuid;
-     if (DIGEST) body.digest = DIGEST;
-     call("POST", "/v1/pair", body, { anon: true }).then(function (j) {
-+      live.pairing = false;
-       if (!j || !j.request_id || !j.code) throw new Error("qsv-clientd sent an unexpected pairing reply");
-       var d = el("div", "qsv-live-dialog");
-       d.id = "qsv-live-dialog";
-@@ -3117,17 +3126,18 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
-       d.appendChild(row);
-       document.body.appendChild(d);
-       live.dialog = d;
--      poll(j.request_id, Date.now(), st);
--    }).catch(fail);
-+      poll(j.request_id, Date.now(), st, live.pairGen);
-+    }).catch(function (e) { live.pairing = false; fail(e); });
-   }
--  function poll(id, t0, st) {
-+  function poll(id, t0, st, g) {
-     if (Date.now() - t0 > 300000) {
-       st.textContent = "The pairing code expired. Close this and connect again.";
-       return;
-     }
-     live.pollTimer = setTimeout(function () {
--      if (!live.dialog) return;
-+      if (g !== live.pairGen) return;
-       call("GET", "/v1/pair/" + encodeURIComponent(id), undefined, { anon: true }).then(function (j) {
-+        if (g !== live.pairGen) return
-```
-
-**File**: `examples/viz/smart_geospatial.html` (modified, +39/-19)
-```diff
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>417 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>9</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 02:09 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -2988,7 +2988,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
-   else setTimeout(init, 0);
- })();
- </script>
--<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"27dc15bd-c6c7-4b95-a0b0-ba71e1a68707","fingerprint":{"algo":"blake3","digest":"c69ad599b9b476aa759a318cdea769b8332457ac8ae146929b9cbf60d274783b","bytes":24087},"rows":417,"viz_args":["--smarter","--bivariate","--theme","plotly_dark","--grid-cols","3","--geojson","japan_prefectures.geojson","--preview-threshold","500"],"redacted":["--geojson"],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"0b66ac51-073a-4d2a-b8a7-c7aeeb584fa5","fingerprint":{"algo":"blake3","digest":"c69ad599b9b476aa759a318cdea769b8332457ac8ae146929b9cbf60d274783b","bytes":24087},"rows":417,"viz_args":["--smarter","--bivariate","--theme","plotly_dark","--grid-cols","3","--geojson","japan_prefectures.geojson","--preview-threshold","500"],"redacted":["--geojson"],"pid":null}</script>
- <style id="qsv-live-style">
- .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
-   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
-@@ -3044,7 +3044,8 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
-   } catch (e) { SRC = {}; }
-   var DIGEST = (SRC.fingerprint && SRC.fingerprint.digest) || null;
-   var live = { token: null, dataset: null, chip: null, panel: null, out: null, status: null,
--    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0 };
-+    rerender: null, dialog: null, pollTimer: null, title: null, table: null, gen: 0,
-+    req: 0, pairGen: 0, pairing: false };
+@@ -323,6 +332,7 @@ use polars::{
+     prelude::*,
+     sql::SQLContext,
+ };
++use polars_arrow::io::ipc::write::default_ipc_fields;
+ use regex::Regex;
+ use serde::Deserialize;
  
-   function el(tag, cls, text) {
-     var e = document.createElement(tag);
-@@ -3149,6 +3150,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
-     if (s && live.dataset) { try { s.removeItem(KEY_PREFIX + live.dataset.id); } catch (e) {} }
-     live.token = null;
-     live.dataset = null;
-+    live.req++;
-     if (live.panel) { live.panel.remove(); live.panel = null; }
-     toast("The qsv-clientd connection expired or was revoked. Connect again to continue.");
-     showChip();
-@@ -3193,16 +3195,23 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
-     document.body.appendChild(c);
-     live.chip = c;
-   }
-+  // Cancel can land while a poll is in flight: pairGen makes its answer, even an approval, a no-op
-+  // (and keeps it off a pairing dialog opened afterwards)
-   function closeDialog() {
-+    live.pairGen++;
-     clearTimeout(live.pollTimer);
-     if (live.dialog) { live.dialog.remove(); live.dialog = null; }
-   }
-   function startPair() {
--    if (live.dialog) return;
-+    // the chip stays clickable until the dialog exists: a second click meanwhile would open a
-+    // second dialog that no Cancel can close
-+    if (live.dialog || live.pairing) return;
-+    live.pairing = true;
-     var body = {};
-     if (SRC.schematic_uuid) body.schematic_uuid = SRC.schematic_uuid;
-     if (DIGEST) body.digest = DIGEST;
-     call("POST", "/v1/pair", body, { anon: true }).then(function (j) {
-+      live.pairing = false;
-       if (!j || !j.request_id || !j.code) throw new Error("qsv-clientd sent an unexpected pairing reply");
-       var d = el("div", "qsv-live-dialog");
-       d.id = "qsv-live-dialog";
-@@ -3222,17 +3231,18 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
-       d.appendChild(row);
-       document.body.appendChild(d);
-       live.dialog = d;
--      poll(j.request_id, Date.now(), st);
--    }).catch(fail);
-+      poll(j.request_id, Date.now(), st, live.pairGen);
-+    }).catch(function (e) { live.pairing = false; fail(e); });
-   }
--  function poll(id, t0, st) {
-+  function poll(id, t0, st, g) {
-     if (Date.now() - t0 > 300000) {
-       st.textContent = "The pairing code expired. Close this and connect again.";
-       return;
-     }
-     live.pollTimer = set
-```
-
----
-
-### Incident Patch 2: `e1c1200c` (2026-10-21)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.252 to 1.0.253 (#4861)
-
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.252 to 1.0.253.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/v1.0.252...v1.0.253)
-
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.253
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
+@@ -335,6 +345,9 @@ use crate::{
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@v1.0.252
-+        uses: anthropics/claude-code-action@v1.0.253
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-```
-
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
+ static DEFAULT_GZIP_COMPRESSION_LEVEL: u8 = 6;
+ static DEFAULT_ZSTD_COMPRESSION_LEVEL: i32 = 3;
++const PARQUET_ROW_GROUP_SIZE: usize = 768 * 768;
++/// rows per batch `sqlp --streaming` writes for csv, jsonl and arrow output
++const STREAM_BATCH_ROWS: usize = 100_000;
  
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@v1.0.252
-+        uses: anthropics/claude-code-action@v1.0.253
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+ #[derive(Deserialize, Clone)]
+ struct Args {
+@@ -345,7 +358,6 @@ struct Args {
+     flag_infer_len:             usize,
+     flag_cache_schema:          bool,
+     flag_streaming:             bool,
+-    flag_low_memory:            bool,
+     flag_no_optimizations:      bool,
+     flag_ignore_errors:         bool,
+     flag_truncate_ragged_lines: bool,
+@@ -385,121 +397,40 @@ impl OutputMode {
+         query: &str,
+         ctx: &mut SQLContext,
+         mut delim: u8,
++        optflags: OptFlags,
+         args: &Args,
+     ) -> CliResult<(usize, usize)> {
+-        let mut df = DataFrame::default();
++        let mut shape = (0, 0);
+         let mut execute_inner = || -> CliResult<()> {
+-            df = ctx
+-                .execute(query)
+-                .and_then(polars::prelude::LazyFrame::collect)?;
++            // SQLContext defers a read-only query into a fresh LazyFrame with default OptFlags,
++            // dropping the flags set on the registered tables, so set them on the result too.
++            let lf = ctx.execute(query)?.with_optimizations(optflags);
++
++            if args.flag_streaming && self.is_streamable() {
++                shape = self.stream_query(lf, delim, args)?;
++                return Ok(());
++            }
++
++            let mut df = lf.collect()?;
++            shape = df.shape();
  
-```
-
----
-
-### Incident Patch 3: `20affd5d` (2026-10-21)
-**Commit Message**: build(deps): bump hono from 4.13.7 to 4.13.13 in /.claude/skills (#4862)
-
-Bumps [hono](https://github.com/honojs/hono) from 4.13.7 to 4.13.13.
-- [Release notes](https://github.com/honojs/hono/releases)
-- [Commits](https://github.com/honojs/hono/compare/v4.13.7...v4.13.13)
-
----
-updated-dependencies:
-- dependency-name: hono
-  dependency-version: 4.13.13
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.claude/skills/package-lock.json` (modified, +3/-3)
-```diff
-@@ -1238,9 +1238,9 @@
-       }
-     },
-     "node_modules/hono": {
--      "version": "4.13.7",
--      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.7.tgz",
--      "integrity": "sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==",
-+      "version": "4.13.13",
-+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
-+      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=16.9.0"
+             // we don't want to write anything if the output mode is None
+             if matches!(self, OutputMode::None) {
+                 return Ok(());
+             }
+ 
+-            let float_precision = std::env::var("QSV_POLARS_FLOAT_PRECISION")
+-                .ok()
+-                .and_then(|s| s.parse().ok())
+-                .or(args.flag_float_precision);
+-
+-            let w = match args.flag_output.as_ref() {
+-                Some(path) => {
+-                    delim = path_delim(path, args.flag_delimiter, delim);
+-                    Box::new(File::create(path)?) as Box<dyn Write>
+-                },
+-                None => Box::new(io::stdout()) as Box<dyn Write>,
+-            };
+-            let mut w = io::BufWriter::with_capacity(256_000, w);
++            let mut w = open_output(args, &mut delim)?;
+ 
+             let out_result = match self {
+-                OutputMode::Csv => CsvWriter::new(&mut w)
+-                    .with_separa
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4865** (2026-10-21): perf(sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memory (@jqnatividad)
 - **PR #4864** (2026-10-21): deps: bump polars to upstream rev c7da28c (@jqnatividad)
 - **PR #4863** (2026-10-21): fix(viz): drop stale qsv-clientd answers in live mode (@jqnatividad)
 - **PR #4862** (2026-10-21): build(deps): bump hono from 4.13.7 to 4.13.13 in /.claude/skills (@dependabot[bot])
 - **PR #4861** (2026-10-21): build(deps): bump anthropics/claude-code-action from 1.0.252 to 1.0.253 (@dependabot[bot])
 - **PR #4859** (2026-10-21): deps(viz): driver.js 1.10.2 + "Skip to panels" button in the Data Schematic Tour (@jqnatividad)
-- **PR #4858** (2026-10-20): feat(viz): page large live results from qsv-clientd (@jqnatividad)
 
 ---
 
@@ -2876,21 +2488,23 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viz): drop stale qsv-clientd answers in live mode (#4863)
+## X. sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memor
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5891c3d`: viz): drop stale qsv-clientd answers in live mode (#4863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `945b0ac1`: sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memory (#4865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`viz` live mode: late qsv-clientd answers no longer overwrite newer ones.** A slow query could land after a faster one sent later and replace its result. It was also labeled with whatever command the selector showed at that moment, not the one that ran. Only the latest query or drill-down now shows its answer, and answers still on their way at Disconnect are dropped. Separately, Cancel on the pairing dialog now also cancels a poll already in flight: before, an approval arriving just after Cancel still connected the page and stored the token. A quick double-click on Connect no longer opens a second pairing dialog that Cancel can't close. Found by roborev on the #4859 gallery regeneration ([#4863](https://github.com/dathere/qsv/pull/4863)).
+### Changed
+- **`qsv-sqlp` drops `--low-memory` and redescribes `--streaming`** ([#4865](https://github.com/dathere/qsv/pull/4865)), following the `sqlp` change. `--low-memory` had no effect on Polars' streaming engine and was removed from `sqlp`, so a client that still sends it gets an unknown-flag error. `--streaming` now writes `csv`, `jsonl`, `parquet` and `arrow` results batch by batch instead of collecting them first; an `--output` file appears only once the query succeeds.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2900,4 +2514,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5891c3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `945b0ac1` are properly handled with clean fallback behavior.

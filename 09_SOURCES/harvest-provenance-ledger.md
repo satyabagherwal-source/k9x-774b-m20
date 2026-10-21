@@ -4257,3 +4257,6 @@ Every entry in this ledger must capture:
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `83874206` | Multi-dimensional audit evidence | 2026-10-21T16:38:45.013Z |
 | `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `2eb4e0e9` | Multi-dimensional audit evidence | 2026-10-21T16:44:59.515Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `edd5d318` | Multi-dimensional audit evidence | 2026-10-21T16:45:01.309Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `dd1acfc3` | Multi-dimensional audit evidence | 2026-10-21T16:51:31.204Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `46c72f21` | Multi-dimensional audit evidence | 2026-10-21T16:51:35.096Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `945b0ac1` | Multi-dimensional audit evidence | 2026-10-21T16:51:49.653Z |

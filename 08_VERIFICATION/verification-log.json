@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-UPBD",
-    "timestamp": "2026-10-20T06:25:49.993Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "ca5898bf06b9d71707afb6220878afa42c33e327c09aa9ad9f9694cdf48f2522",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-USBV",
-    "timestamp": "2026-10-20T06:25:53.899Z",
-    "repository": "MariaDB/server",
-    "learningId": "learn-github-mariadb-server",
-    "contentHash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-47EU",
-    "timestamp": "2026-10-20T06:33:13.350Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "074e707592dc3a953682775321ab1941431487bfff7dbdbc44aa1846e9e9fd75",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-72M6",
     "timestamp": "2026-10-20T06:35:27.102Z",
     "repository": "autogluon/chronos-2",
@@ -7490,6 +7445,51 @@
     "repository": "restatedev/restate",
     "learningId": "learn-github-restatedev-restate",
     "contentHash": "880dce7bc51e3b54d3d0085bccbc87af2578cc0405c4cd0584ea0f2673701331",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-N6YP",
+    "timestamp": "2026-10-21T16:51:31.201Z",
+    "repository": "assistant-ui/assistant-ui",
+    "learningId": "learn-github-assistant-ui-assistant-ui",
+    "contentHash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-N9YT",
+    "timestamp": "2026-10-21T16:51:35.093Z",
+    "repository": "jhspetersson/fselect",
+    "learningId": "learn-github-jhspetersson-fselect",
+    "contentHash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-NL76",
+    "timestamp": "2026-10-21T16:51:49.650Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -917,14 +917,14 @@
     "officialUrl": "https://github.com/assistant-ui/assistant-ui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T20:35:06.244Z",
-    "lastVerified": "2026-10-20T20:35:06.244Z",
+    "lastChecked": "2026-10-21T16:51:29.815Z",
+    "lastVerified": "2026-10-21T16:51:29.815Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-assistant-ui-assistant-ui",
-    "contentHash": "63d05d42c96633030ca2da1b7e5cb85132865b09c06e5b67f5266a893812a706",
+    "contentHash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3167,8 +3167,8 @@
     "officialUrl": "https://github.com/build-trust/ockam",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T04:03:12.836Z",
-    "lastVerified": "2026-10-21T04:03:12.836Z",
+    "lastChecked": "2026-10-21T16:51:38.058Z",
+    "lastVerified": "2026-10-21T16:51:38.058Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-build-trust-ockam",
@@ -7865,8 +7865,8 @@
     "officialUrl": "https://github.com/gluesql/gluesql",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T18:43:24.264Z",
-    "lastVerified": "2026-10-20T18:43:24.264Z",
+    "lastChecked": "2026-10-21T16:51:40.455Z",
+    "lastVerified": "2026-10-21T16:51:40.455Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gluesql-gluesql",
@@ -10278,12 +10278,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "checkmarx-kics": {
-    "name": "Checkmarx/kics",
+    "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-10-20T19:37:02.829Z",
-    "lastVerified": "2026-10-20T19:37:02.829Z",
+    "lastChecked": "2026-10-21T16:51:35.524Z",
+    "lastVerified": "2026-10-21T16:51:35.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
@@ -10292,7 +10292,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1f05308b"
   },
   "snyk-driftctl": {
     "name": "snyk/driftctl",
@@ -14039,14 +14040,14 @@
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T16:44:21.496Z",
-    "lastVerified": "2026-10-20T16:44:21.496Z",
+    "lastChecked": "2026-10-21T16:51:34.342Z",
+    "lastVerified": "2026-10-21T16:51:34.342Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "b62b10f30203fe5e7e5c4985482a448c6658d45bf07c9e13c2ee4646a41fbdd1",
+    "contentHash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 22,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -18515,22 +18516,21 @@
     "revisionIdentifier": "82b00cf5"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T16:25:52.379Z",
-    "lastVerified": "2026-10-21T16:25:52.379Z",
+    "lastChecked": "2026-10-21T16:51:49.150Z",
+    "lastVerified": "2026-10-21T16:51:49.150Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
+    "contentHash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "06baec98"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -19033,12 +19033,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "realm-realm-kotlin": {
-    "name": "realm/realm-kotlin",
+    "name": "realm-kotlin",
     "officialUrl": "https://github.com/realm/realm-kotlin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-19T19:36:30.640Z",
-    "lastVerified": "2026-10-19T19:36:30.640Z",
+    "lastChecked": "2026-10-21T16:51:33.061Z",
+    "lastVerified": "2026-10-21T16:51:33.061Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-realm-realm-kotlin",
@@ -19047,7 +19047,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9cdc4556"
   },
   "icerockdev-moko-mvvm": {
     "name": "icerockdev/moko-mvvm",
@@ -25435,9 +25436,9 @@
   "yuripinto-xseo": {
     "name": "xseo",
     "officialUrl": "https://github.com/yuripinto/xseo",
-    "lastChecked": "2026-10-19T17:50:15.244Z",
+    "lastChecked": "2026-10-21T16:51:30.479Z",
     "revisionIdentifier": "d335452f68",
-    "lastVerified": "2026-10-19T17:50:15.244Z"
+    "lastVerified": "2026-10-21T16:51:30.479Z"
   },
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",
@@ -27368,8 +27369,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-21T16:45:10.303Z",
-    "lastVerified": "2026-10-21T16:45:10.303Z",
+    "lastChecked": "2026-10-21T16:51:52.198Z",
+    "lastVerified": "2026-10-21T16:51:52.198Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

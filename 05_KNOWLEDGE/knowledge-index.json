@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T16:45:01.255Z",
+  "last_updated": "2026-10-21T16:51:49.601Z",
   "total_verified_learnings": 1060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2973,8 +2973,8 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "706037a4",
-      "content_hash": "63d05d42c96633030ca2da1b7e5cb85132865b09c06e5b67f5266a893812a706",
+      "source_version": "dd1acfc3",
+      "content_hash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
@@ -3012,6 +3012,11 @@
           "number": 3367,
           "title": "react-ag-ui): rename the thread runtime core to AgUiThreadController (#9937)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3566,
+          "title": "core): skip unchanged remote thread resources on a host render (#9969)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3019,7 +3024,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:35:06.659Z",
+      "verified_at": "2026-10-21T16:51:31.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7192,8 +7197,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "06baec98",
-      "content_hash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
+      "source_version": "945b0ac1",
+      "content_hash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7306,6 +7311,11 @@
           "number": 3547,
           "title": "viz): drop stale qsv-clientd answers in live mode (#4863)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3568,
+          "title": "sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memor",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7313,7 +7323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:16:33.464Z",
+      "verified_at": "2026-10-21T16:51:49.591Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27782,8 +27792,8 @@
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "20a6e8cc",
-      "content_hash": "b62b10f30203fe5e7e5c4985482a448c6658d45bf07c9e13c2ee4646a41fbdd1",
+      "source_version": "46c72f21",
+      "content_hash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "promoted_rules": [
@@ -27806,6 +27816,11 @@
           "number": "EXISTING",
           "title": "regressions",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3567,
+          "title": "found regressions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27813,7 +27828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:44:21.741Z",
+      "verified_at": "2026-10-21T16:51:35.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108437,6 +108452,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T16:45:01.243Z"
+    },
+    "rule-3566": {
+      "learning_id": "rule-3566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3566,
+      "title": "core): skip unchanged remote thread resources on a host render (#9969)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "dd1acfc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:51:31.142Z"
+    },
+    "rule-3567": {
+      "learning_id": "rule-3567",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3567,
+      "title": "found regressions",
+      "source_url": "https://github.com/jhspetersson/fselect",
+      "source_version": "46c72f21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:51:35.011Z"
+    },
+    "rule-3568": {
+      "learning_id": "rule-3568",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3568,
+      "title": "sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memor",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "945b0ac1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:51:49.591Z"
     }
   },
   "aliases": {

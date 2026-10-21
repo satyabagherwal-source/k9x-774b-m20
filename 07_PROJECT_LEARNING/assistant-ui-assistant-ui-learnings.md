@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source**: github ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
-> **Source Version**: `706037a4`  
+> **Source Version**: `dd1acfc3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:35:06.503Z  
+> **Timestamp**: 2026-10-21T16:51:30.879Z  
 > **Learning ID**: `learn-github-assistant-ui-assistant-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:35:06.244Z  
+> **Harvest Timestamp**: 2026-10-21T16:51:29.815Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Typescript/React Library for AI Chat 💬🚀
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12644 stars
+- **Stars / Engagement**: 12659 stars
 
 ---
 
@@ -1391,11 +1391,11 @@ export function createAnonymousSessionFetch(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9847** (2026-10-19): **[assistant-stream] UI message stream decoder drops providerMetadata on text and reasoning parts**
-  *Symptoms*: ## Problem  The UI message stream decoder in `packages/assistant-stream/src/core/serialization/ui-message-stream/UIMessageStream.ts` ignores `providerMetadata` on `text-start`, `text-delta`, `text-end`, `reasoning-start`, `reasoning-delta`, and `reasoning-end` chunks. The decoded message parts carry no provider metadata, so anything a provider attaches there (for example reasoning signatures or cache details) is lost before it reaches the thread.  The AI SDK keeps it: `processUIMessageStream` in `ai` 7.0.130 copies `providerMetadata` from the start chunk onto the new part and updates it on delta and end (`src/ui/process-ui-message-stream.ts`, the `text-start` and `reasoning-start` cases).  ## Scope  Fixing this needs metadata support in the text and reasoning part types, their part controllers, and the accumulator, so it is outside the block identity fix in #9822, where the gap was found. It predates that PR.  <!-- rupic:badge:start --> <a href="https://rupic.dev/s/s2.qhOg5OnqGBG8bqLgA6n6RlM98PxwJaZe5XHApVftSQQU8-h17mp_l0bimXM?ref=github" target="_blank" rel="noopener noreferrer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://rupic.dev/badges/track-dark-v1.svg"><img alt="Track in Rupic" src="https://rupic.dev/badges/track-light-v1.svg"></picture></a> <!-- rupic:badge:end -->
+- **Issue #9977** (2026-10-21): **react-ag-ui: history round trip moves media after merged user text**
+  *Symptoms*: ### Environment info  `@assistant-ui/react-ag-ui` 0.0.71 on `main` (38d43fff7).  ### Affected area(s)  Runtime adapter: `packages/react-ag-ui` (`fromAgUiMessages` / `toAgUiMessages`)  ### Runtime adapter in use  `useAgUiRuntime` with a history adapter  ### Reproduction  ```js const msgs = [{ id: "u1", role: "user", content: [   { type: "text", text: "before" },   { type: "image", source: { type: "data", value: "aGk=", mimeType: "image/png" } },   { type: "text", text: "after" }, ] }]; toAgUiMessages(fromAgUiMessages(msgs))[0].content; ```  ### Steps to reproduce  1. Import a user message whose text and media parts interleave. 2. Export it again (every resumed run does this for history).  ### Expected vs actual behavior  Expected: `[text("before"), image, text("after")]`.  Actual: `[text("before\nafter"), image]`. Text parts are merged and media moves after them, so a replayed turn no longer says which instruction refers to which file. `url` and `file` sources behave the same.  ### Last version where this worked  Never.  ### How was this found?  Review of the `@ag-ui/client` 1.0 migration for #8517.  ### Was the reproduction run?  Yes, the snippet above against the built package.  ### Suspected cause or workaround  Import collapses user text into one part and turns media into attachments, and the export rebuilds text first, then attachments. Keeping the original part order (for example in the `custom.agui` metadata the adapter already uses for wire data it cannot render) would
 
-- **Issue #9844** (2026-10-18): **Pi model picker ignores models configured in a custom agent directory**
-  *Symptoms*: With `@assistant-ui/react-pi@0.0.31` and `@earendil-works/pi-coding-agent@1.0.4`, the model picker omits providers configured in a custom `agentDir/models.json`. Live sessions read that directory, but `getAvailableModels()` and `setModel()` use a separate runtime that overrides only `authPath`, leaving `modelsPath` at the global default.  Reproduction on Node 24 with those two versions installed:  ```js import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises"; import { tmpdir } from "node:os"; import { join } from "node:path"; import { PiThreadSupervisor } from "@assistant-ui/react-pi/node";  const root = await mkdtemp(join(tmpdir(), "pi-model-directory-")); const previousDirectory = process.env.PI_CODING_AGENT_DIR; const previousOffline = process.env.PI_OFFLINE; try {   const agentDir = join(root, "custom");   await mkdir(agentDir);   await writeFile(join(agentDir, "models.json"), JSON.stringify({     providers: { "local-fixture": {       baseUrl: "http://127.0.0.1:1/v1", api: "openai-completions",       apiKey: "unused-fixture-key", models: [{ id: "local-model" }]     } }   }));   process.env.PI_CODING_AGENT_DIR = join(root, "default");   process.env.PI_OFFLINE = "1";   const host = new PiThreadSupervisor({ agentDir, workspacePath: root });   const models = await host.getAvailableModels();   console.log(models.filter(model => model.provider === "local-fixture"));   // actual: []; expected: an entry with modelId "local-model"   await host.dispose(); } finally {   if 
+- **Issue #9976** (2026-10-21): **react-ag-ui: a tool call on an earlier message of a run is completed without its result**
+  *Symptoms*: ### Environment info  `@assistant-ui/react-ag-ui` 0.0.71 on `main` (38d43fff7), default `joinStrategy`. Same result on `@ag-ui/client` 0.0.59 and 1.0.3.  ### Affected area(s)  Runtime adapter: `packages/react-ag-ui`  ### Runtime adapter in use  `useAgUiRuntime`  ### Reproduction  A run whose first assistant message opens a frontend tool call and whose server then starts a second text message before `RUN_FINISHED`:  ```ts s.onTextMessageStartEvent({ event: { type: "TEXT_MESSAGE_START", messageId: "a", role: "assistant" } }); s.onTextMessageContentEvent({ event: { type: "TEXT_MESSAGE_CONTENT", messageId: "a", delta: "checking" } }); s.onToolCallStartEvent({ event: { type: "TOOL_CALL_START", toolCallId: "call-1", toolCallName: "lookup", parentMessageId: "a" } }); s.onToolCallEndEvent({ event: { type: "TOOL_CALL_END", toolCallId: "call-1" } }); s.onTextMessageStartEvent({ event: { type: "TEXT_MESSAGE_START", messageId: "b", role: "assistant" } }); s.onTextMessageContentEvent({ event: { type: "TEXT_MESSAGE_CONTENT", messageId: "b", delta: "waiting" } }); s.onRunFinishedEvent({ event: { type: "RUN_FINISHED", threadId: "t", runId, outcome: { type: "success", pendingToolCallIds: ["call-1"] } } }); ```  ### Steps to reproduce  1. Drive `AgUiThreadController.append` with an agent that emits the events above. 2. Read `getMessages()`.  ### Expected vs actual behavior  Expected: the run ends waiting on `call-1` (`requires-action` / `tool-calls`), `getPendingToolCalls()` returns it, and `a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1412,1392 +1412,344 @@ export function createAnonymousSessionFetch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42a7c084` (2026-10-20)
-**Commit Message**: refactor(react-ag-ui): rename the thread runtime core to AgUiThreadController (#9937)
+### Incident Patch 1: `9835bd98` (2026-10-21)
+**Commit Message**: perf(core): skip unchanged remote thread resources on a host render (#9969)
 
-**File**: `.changeset/agui-thread-controller.md` (added, +5/-0)
+**File**: `.changeset/remote-thread-elements-deps.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@assistant-ui/react-ag-ui": patch
++"@assistant-ui/core": patch
 +---
 +
-+rename the ag-ui thread runtime core to AgUiThreadController
++skip unchanged remote thread resources when the thread list host re-renders
 ```
 
-**File**: `packages/react-ag-ui/src/runtime/AgUiThreadController.interrupt-cancel.test.ts` (renamed, +4/-4)
+**File**: `packages/core/src/react/runtimes/RemoteThreadListHookInstanceManager.tsx` (modified, +11/-0)
 ```diff
-@@ -1,7 +1,7 @@
- import { describe, expect, it, vi } from "vitest";
- import type { AbstractAgent } from "@ag-ui/client";
- import type { AppendMessage, ThreadAssistantMessage } from "@assistant-ui/core";
--import { AgUiThreadRuntimeCore } from "./AgUiThreadRuntimeCore";
-+import { AgUiThreadController } from "./AgUiThreadController";
- import { makeLogger } from "./logger";
- 
- type EventSubscriber = {
-@@ -76,15 +76,15 @@ function createOpenRun(finishWithInterrupt: boolean) {
-     },
-   );
-   const abortRun = vi.fn(() => releaseFirst());
--  const core = new AgUiThreadRuntimeCore({
-+  const core = new AgUiThreadController({
-     agent: { runAgent, abortRun } as unknown as AbstractAgent,
-     logger: makeLogger(),
-     showThinking: false,
-   });
-   return { core, runAgent, abortRun };
- }
- 
--describe("AgUiThreadRuntimeCore Stop after an interrupt", () => {
-+describe("AgUiThreadController Stop after an interrupt", () => {
-   it("cancels a finished tool call when stopped before the stream closes", async () => {
-     let releaseFirst!: () => void;
-     const firstRunClosed = new Promise<void>((resolve) => {
-@@ -110,7 +110,7 @@ describe("AgUiThreadRuntimeCore Stop after an interrupt", () => {
-       },
-     );
-     const abortRun = vi.fn(() => releaseFirst());
--    const core = new AgUiThreadRuntimeCore({
-+    const core = new AgUiThreadController({
-       agent: { runAgent, abortRun } as unknown as AbstractAgent,
-       logger: makeLogger(),
-       showThinking: false,
-```
-
-**File**: `packages/react-ag-ui/src/runtime/AgUiThreadController.test.ts` (renamed, +7/-7)
-```diff
-@@ -6,7 +6,7 @@ import type {
-   ThreadHistoryAdapter,
-   ThreadMessage,
- } from "@assistant-ui/core";
--import { AgUiThreadRuntimeCore } from "./AgUiThreadRuntimeCore";
-+import { AgUiThreadController } from "./AgUiThreadController";
- import { makeLogger } from "./logger";
- 
- const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-@@ -15,7 +15,7 @@ function createCore(
-   history?: ThreadHistoryAdapter,
-   agent = {} as AbstractAgent,
- ) {
--  const core = new AgUiThreadRuntimeCore({
-+  const core = new AgUiThreadController({
-     agent,
-     logger: makeLogger(),
-     showThinking: true,
-@@ -141,7 +141,7 @@ function deferredHistory(messages: ThreadMessage[] = [storedUser]) {
-   };
- }
- 
--describe("AgUiThreadRuntimeCore late history loading", () => {
-+describe("AgUiThreadController late history loading", () => {
-   it("drops a queued send when loading is cancelled", async () => {
-     const { history, finish } = deferredHistory();
-     const runAgent = vi.fn(async () => {});
-@@ -479,7 +479,7 @@ describe("AgUiThreadRuntimeCore late history loading", () => {
-   });
- });
- 
--describe("AgUiThreadRuntimeCore steerAway parent selection", () => {
-+describe("AgUiThreadController steerAway parent selection", () => {
-   it("starts a root branch for an explicit null parent", async () => {
-     const { core } = createCore();
-     await core.append(userMessage("old"));
-@@ -497,7 +497,7 @@ describe("AgUiThreadRuntimeCore steerAway parent selection", () => {
-   });
- });
- 
--describe("AgUiThreadRuntimeCore activity deltas", () => {
-+describe("AgUiThreadController activity deltas", () => {
-   it("applies a delta to the snapshot the run streamed", async () => {
-     type Subscriber = Record<string, ((payload?: unknown) => void) | undefined>;
-     const runAgent = vi.fn(async (_input: unknown, subscriber: Subscriber) => {
-@@ -521,7 +521,7 @@ describe("AgUiThreadRuntimeCore activity deltas", () => {
-       subscriber.onRunFinalized?.();
+@@ -462,6 +462,17 @@ export class RemoteThreadListHookInstanceManager extends BaseSubscribable {
+           publishInCommit: this.publishInCommit,
+           destroySignal,
+         }),
++        [
++          id,
++          generation,
++          this.parent,
++          runtimeHook,
++          parentClient,
++          threadAdapters,
++          this._publish,
++          this.publishInCommit,
++          destroySignal,
++        ],
+       );
      });
-     const agent = { runAgent, abortRun: vi.fn() } as unknown as AbstractAgent;
--    const core = new AgUiThreadRuntimeCore({
-+    const core = new AgUiThreadController({
-       agent,
-       logger: makeLogger(),
-       showThinking: true,
-@@ -539,7 +539,7 @@ describe("AgUiThreadRuntimeCore activity deltas", () => {
-   });
- });
- 
--describe("AgUiThreadRuntimeCore setState", () => {
-+describe("AgUiThreadController setState", () => {
-   it("keeps a cancel the updater makes while a send waits for history", async () => {
-     const { history, finish } = deferredHistory();
-     const runAgent = vi.fn(async () => {});
+   }
 ```
 
-**File**: `packages/react-ag-ui/src/runtime/AgUiThreadController.ts` (renamed, +36/-31)
+**File**: `packages/core/src/react/runtimes/useRemoteThreadListRuntime.concurrent.test.tsx` (modified, +2/-2)
 ```diff
-@@ -41,6 +41,7 @@ import jsonpatch, { type Operation } from "fast-json-patch";
- import {
-   createAgUiThreadState,
-   reduceAgUiThreadState,
-+  type AgUiThreadAction,
-   type AgUiThreadState,
- } from "./agUiThreadState";
- import type { Logger } from "./logger";
-@@ -161,7 +162,7 @@ const mergeAgUiNamespace = (
-   return merged;
+@@ -161,7 +161,7 @@ describe("useRemoteThreadListRuntime concurrent options", () => {
+     expect(onNewB).toHaveBeenCalledTimes(1);
+   });
+ 
+-  it("costs two passes per provider commit in the documented shape", async () => {
++  it("costs one pass per provider commit in the documented shape", async () => {
+     // Fresh children on every render, as the AssistantRuntimeProvider JSDoc
+     // example does, so its memo does not block.
+     const { App, onNewA, renderThreadRuntime } = createHarness();
+@@ -174,7 +174,7 @@ describe("useRemoteThreadListRuntime concurrent options", () => {
+       view.rerender(<App onNew={onNewA} />);
+     });
+ 
+-    expect(renderThreadRuntime).toHaveBeenCalledTimes(2);
++    expect(renderThreadRuntime).toHaveBeenCalledTimes(1);
+   });
+ 
+   it("costs one pass when the provider memo blocks the host render", async () => {
+```
+
+---
+
+### Incident Patch 2: `49a5a2f6` (2026-10-21)
+**Commit Message**: feat(ui): add a ComposerExtra slot to the thread (#9972)
+
+Co-authored-by: Jesse M. Torres <[REDACTED_EMAIL]>
+
+**File**: `apps/docs/content/elements/thread.mdx` (modified, +1/-0)
+```diff
+@@ -171,6 +171,7 @@ See the [Suggestions guide](/docs/guides/suggestions) for the full configuration
+ | `ToolGroup` | `ComponentType<PropsWithChildren<{ group: ThreadGroupPart }>>` | Wraps a run of consecutive tool calls; receives the group's `indices` and `status`. |
+ | `ReasoningGroup` | `ComponentType<PropsWithChildren<{ group: ThreadGroupPart }>>` | Wraps a run of consecutive reasoning parts; receives the same shape. |
+ | `TaskGroup` | `ComponentType<{ group: ThreadGroupPart }>` | Opt in: once set, a run of tool calls that carry a nested conversation, have no registered UI, and are not MCP apps renders through it; it receives the group's `indices` and `counts` and mounts the lanes itself. `TaskGroup` from [Task card](/elements/task-card) is the kit's implementation. |
++| `ComposerExtra` | `ComponentType` | Renders in the composer's action row beside the attach button, for a control such as a mode toggle. |
+ 
+ ### Primitives
+ 
+```
+
+**File**: `packages/ui/src/components/react/assistant-ui/elements/thread.aui.test.tsx` (modified, +14/-0)
+```diff
+@@ -368,6 +368,20 @@ describe("Thread", () => {
+     expect(document.activeElement).toBe(pageControl);
+   });
+ 
++  it("renders ComposerExtra in the composer action row", () => {
++    const ModeToggle = () => <button type="button">Mode</button>;
++    render(<TestThread components={{ ComposerExtra: ModeToggle }} />);
++
++    const toggle = screen.getByRole("button", { name: "Mode" });
++    expect(toggle.closest(".aui-composer-action-wrapper")).not.toBeNull();
++  });
++
++  it("leaves the composer action row unchanged without ComposerExtra", () => {
++    const { container } = render(<TestThread />);
++
++    expect(container.querySelector(".aui-composer-action-start")).toBeNull();
++  });
++
+   it("hides the empty user attachment wrapper", async () => {
+     render(<UserMessageTestThread />);
+ 
+```
+
+**File**: `packages/ui/src/components/react/assistant-ui/elements/thread.aui.tsx` (modified, +12/-1)
+```diff
+@@ -91,6 +91,8 @@ const reasoningDuration = (timing: ThreadGroupPart["timing"]) =>
+  * `ToolFallback`. When `TaskGroup` is set, tool calls that carry a nested
+  * conversation and have no registered UI render through it instead of the
+  * tool group; without it they render like any other tool call.
++ * `ComposerExtra` renders in the composer's action row beside the attach
++ * button.
+  */
+ export type ThreadComponents = {
+   AssistantMessage?: ComponentType | undefined;
+@@ -103,6 +105,7 @@ export type ThreadComponents = {
+     | ComponentType<PropsWithChildren<{ group: ThreadGroupPart }>>
+     | undefined;
+   TaskGroup?: ComponentType<{ group: ThreadGroupPart }> | undefined;
++  ComposerExtra?: ComponentType | undefined;
  };
  
--export class AgUiThreadRuntimeCore {
-+export class AgUiThreadController {
-   private agent: AbstractAgent;
-   private logger: Logger;
-   private showThinking: boolean;
-@@ -240,6 +241,10 @@ export class AgUiThreadRuntimeCore {
-       state: this.state.stateSnapshot,
-     });
+ const messageGroupBy = groupPartByType({
+@@ -523,6 +526,7 @@ const Composer: FC<{ autoFocus: boolean }> = ({ autoFocus }) => {
+ };
  
-+  private dispatch(action: AgUiThreadAction): void {
-+    this.state = reduceAgUiThreadState(this.state, action);
-+  }
-+
-   private publishUpdate(): void {
-     this.snapshot = undefined;
-     for (const listener of this.listeners) listener();
-@@ -300,7 +305,7 @@ export class AgUiThreadRuntimeCore {
-   }
+ const ComposerAction: FC = () => {
++  const { ComposerExtra } = useContext(ThreadComponentsContext);
+   // The stop control only cancels the send while no run it could stop is going.
+   const isSending = useAuiState(
+     (s) =>
+@@ -532,7 +536,14 @@ const ComposerAction: FC = () => {
  
-   __internal_load(): Promise<void> {
--    this.state = reduceAgUiThreadState(this.state, { type: "loadRequested" });
-+    this.dispatch({ type: "loadRequested" });
-     if (this._loadPromise) return this._loadPromise;
-     if (!this.history) return Promise.resolve();
- 
-@@ -323,7 +328,7 @@ export class AgUiThreadRuntimeCore {
-       return repo;
-     });
- 
--    this.state = reduceAgUiThreadState(this.state, { type: "loadStarted" });
-+    this.dispatch({ type: "loadStarted" });
-     this._historyImportPromise = promise.then(
-       () => {
-         this._historyImportPromise = undefined;
-@@ -351,7 +356,7 @@ export class AgUiThreadRuntimeCore {
-         this.reportError(error);
-       })
-       .finally(() => {
--        this.state = reduceAgUiThreadState(this.state, {
-+        this.dispatch({
-           type: "loadFinished",
-         });
-         this.publishUpdate();
-@@ -470,7 +475,7 @@ export class AgUiThreadRuntimeCore {
-   }
- 
-   async cancel(): Promise<void> {
--    this.state = reduceAgUiThreadState(this.state, {
-+    this.dispatch({
-       type: "historyMutationAdvanced",
-     });
-     this.abortActiveRun();
-@@ -1091,14 +1096,14 @@ export class AgUiThreadRuntimeCore {
-     if (!("timestamp" in userAction)) {
-       userAction.timestamp = new Date().toISOString();
-     }
--    this.state = reduceAgUiThreadState(this.state, {
-+    this.dispatch({
-       type: "a2uiActionDeferred",
-       action: userAction,
-     });
- 
-     const owner = this.abortController;
-     if (owner) {
--      this.state = reduceAgUiThreadState(this.state, {
-+      this.dispatch({
-         type: "a2uiResumeDeferred",
-         owner,
-       });
-@@ -1117,7 +1122,7 @@ export class AgUiThreadRuntimeCore {
-     if (owner) {
-       // A run is still draining (RUN_FINISHED arrived but the stream has not
-       // closed). Defer until startRun's tail so we never start two runs.
--      this.state = reduceAgUiThreadState(this.state, {
-+      this.dispatch({
-         type: "resumeDeferred",
-         owner,
-         messageId,
-@@ -1178,7 +1183,7 @@ export class AgUiThreadRuntimeCore {
-         metadata: { ...message.metadata, modality },
-       } as ThreadMessage;
-     });
--    this.state = reduceAgUiThreadState(this.state, {
-+    this.dispatch({
-       type: "a2uiContinuationsCleared",
-     });
-     this.assistantHistoryParents.clear();
-@@ -1234,13 +1239,13 @@ export class AgUiThreadRuntimeCore {
-       resumeTarget !== undefined &&
-       !this.session.getMessages().some((message) => message.id === resumeTarget)
-     ) {
--      this.state = reduceAgUiThreadState(this.state, { type: "resumeCleared" });
-+      this.dispatch({ type: "resumeCleared" });
-     }
-     this.publishUpdate();
-   }
- 
-   loadExternalState(state: ReadonlyJSONValue): void {
--    this.state = reduceAgUiThreadState(this.state, {
-+    this.dispatch({
-       type: "stateSnapshot",
-       snapshot: state,
-     });
-@@ -1254,26 +1259,26 @@ export class AgUiThreadRuntimeCore {
-   ): void {
-     const snapshot =
-       typeof next === "function" ? next(this.state.stateSnapshot) : next;
--    this.state = reduceAgUiThreadState(this.state, {
-+    this.dispatch({
-       type: "stateSnapshot",
-       snapshot,
-     });
-     this.publishUpdate();
-   }
- 
-   resetState(): void {
--    this.state = reduceAgUiThreadState(this.state, { type: "resetState" });
-+    this.dispatch({ type: "resetState" });
-     this.publishUpdate();
-   }
- 
-   resetThreadState(): void {
--    this.state = reduceAgUiThreadState(this.state, {
-+    this.dispatch({
-       type: "historyMutationAdvanced",
-     });
-     const controller = this.abortController;
-     const activeRunAgent = this.activeRunAgent;
- 
--    this.state = reduceAgUiThreadState(this.state, { type: "resetThread" });
-+    this.dispatch({ type: "resetThread" });
- 
-     if (controller) {
-       this.abortController = null;
-@@ -1304,7 +1309,7 @@ export class AgUiThreadRuntimeCore {
-     if (!this.supersedeActiveRun()) return;
- 
-     const normalizedRunConfig = runConfig ?? {};
--    this.state = reduceAgUiThreadState(this.state, {
-+    this.dispatch({
-  
-```
-
-**File**: `packages/react-ag-ui/src/useAgUiRuntime.fast-refresh.test.tsx` (modified, +3/-3)
-```diff
-@@ -7,7 +7,7 @@ import type {
-   AssistantRuntime,
-   MessageQueueController,
- } from "@assistant-ui/core";
--import { AgUiThreadRuntimeCore } from "./runtime/AgUiThreadRuntimeCore";
-+import { AgUiThreadController } from "./runtime/AgUiThreadController";
- import type { UseAgUiRuntimeOptions } from "./runtime/types";
- import { useAgUiRuntime, type AgUiAssistantRuntime } from "./useAgUiRuntime";
- 
-@@ -230,8 +230,8 @@ const expectInFlightRunAcrossRefresh = async (
-     runAgent: vi.fn(() => run),
-     abortRun: vi.fn(),
-   } as unknown as HttpAgent;
--  const attach = vi.spyOn(AgUiThreadRuntimeCore.prototype, "attachRuntime");
--  const detach = vi.spyOn(AgUiThreadRuntimeCore.prototype, "detachRuntime");
-+  const attach = vi.spyOn(AgUiThreadController.prototype, "attachRuntime");
-+  const detach = vi.spyOn(AgUiThreadController.prototype, "detachRuntime");
-   options = { agent };
-   const { Before, After } = createProbe();
-   const Shell: ComponentType<{ mode: "visible" | "hidden" }> = inActivity
-```
-
-**File**: `packages/react-ag-ui/src/useAgUiRuntime.thread-switch.test.tsx` (modified, +4/-4)
-```diff
-@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
- import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
- import { HttpAgent } from "@ag-ui/client";
- import type { ThreadHistoryAdapter, ThreadMessage } from "@assistant-ui/core";
--import { AgUiThreadRuntimeCore } from "./runtime/AgUiThreadRuntimeCore";
-+import { AgUiThreadController } from "./runtime/AgUiThreadController";
- import type {
-   UseAgUiRuntimeOptions,
-   UseAgUiThreadListAdapter,
-@@ -661,7 +661,7 @@ describe("useAgUiRuntime thread switching", () => {
-     "ignores an older load and its resume request with state %j",
-     async (state) => {
-       const resume = vi
--        .spyOn(AgUiThreadRuntimeCore.prototype, "resumeInFlightRun")
-+        .spyOn(AgUiThreadController.prototype, "resumeInFlightRun")
-         .mockResolvedValue();
-       const first = deferred<ThreadLoad>();
-       const second = deferred<ThreadLoad>();
-@@ -778,7 +778,7 @@ describe("useAgUiRuntime thread switching", () => {
- 
-   it("ignores a load superseded by creating a new thread", async () => {
-     const resume = vi
--      .spyOn(AgUiThreadRuntimeCore.prototype, "resumeInFlightRun")
-+      .spyOn(AgUiThreadController.prototype, "resumeInFlightRun")
-       .mockResolvedValue();
-     const load = deferred<ThreadLoad>();
-     const { result } = renderRuntime(() => load.promise);
-@@ -839,7 +839,7 @@ describe("useAgUiRuntime thread switching", () => {
- 
-   it("applies the current load and resumes it", async () => {
-     const resume = vi
--      .spyOn(AgUiThreadRuntimeCore.prototype, "resumeInFlightRun")
-+      .spyOn(AgUiThreadController.prototype, "resumeInFlightRun")
-       .mockResolvedValue();
-     const messages = [message("thread-a")];
-     const { result } = renderRuntime(async () => ({
-```
-
-**File**: `packages/react-ag-ui/src/useAgUiRuntime.ts` (modified, +3/-3)
-```diff
-@@ -34,7 +34,7 @@ import type {
-   AgUiResumeEntry,
-   UseAgUiRuntimeOptions,
- } from "./runtime/types";
--import { AgUiThreadRuntimeCore } from "./runtime/AgUiThreadRuntimeCore";
-+import { AgUiThreadController } from "./runtime/AgUiThreadController";
- import { agUiExtras } from "./agUiExtras";
- import type { QueueItemState } from "@assistant-ui/core/store";
- 
-@@ -62,7 +62,7 @@ export function useAgUiRuntime(
-   options: UseAgUiRuntimeOptions,
- ): AgUiAssistantRuntime {
-   const logger = useMemo(() => makeLogger(options.logger), [options.logger]);
--  const coreRef = useRef<AgUiThreadRuntimeCore | null>(null);
-+  const coreRef = useRef<AgUiThreadController | null>(null);
-   const threadSwitchGenerationRef = useRef(0);
-   const switchingGenerationRef = useRef<number | null>(null);
-   const runtimeAdapters = useRuntimeAdapters();
-@@ -71,7 +71,7 @@ export function useAgUiRuntime(
-   const threadListAdapter = options.adapters?.threadList;
- 
-   if (!coreRef.current) {
--    coreRef.current = new AgUiThreadRuntimeCore({
-+    coreRef.current = new AgUiThreadController({
-       agent: options.agent,
-       logger,
-       showThinking: options.showThinking ?? true,
-```
-
-**File**: `packages/react-ag-ui/test/ag-ui-thread-controller.spec.ts` (renamed, +16/-16)
-```diff
-@@ -11,7 +11,7 @@ import type {
-   ThreadMessage,
- } from "@assistant-ui/core";
- import { EventType, HttpAgent, type AgentSubscriber } from "@ag-ui/client";
--import { AgUiThreadRuntimeCore } from "../src/runtime/AgUiThreadRuntimeCore";
-+import { AgUiThreadController } from "../src/runtime/AgUiThreadController";
- import { makeLogger, type Logger } from "../src/runtime/logger";
- import type {
-   AgUiResumeTranscript,
-@@ -39,7 +39,7 @@ describe("joinStrategy", () => {
-     snapshotOmitsFirst = false,
-   ) => {
-     let atSnapshot: readonly ThreadMessage[] = [];
--    let core: AgUiThreadRuntimeCore;
-+    let core: AgUiThreadController;
-     const agent = {
-       runAgent: vi.fn(async (_input, subscriber: AgentSubscriber) => {
-         const params = createAgentSubscriberParams();
-@@ -413,7 +413,7 @@ const createCore = (
-     joinStrategy?: UseAgUiRuntimeOptions["joinStrategy"];
-   } = {},
- ) =>
--  new AgUiThreadRuntimeCore({
-+  new AgUiThreadController({
-     agent,
-     logger: hooks.logger ?? noopLogger,
-     showThinking: true,
-@@ -528,7 +528,7 @@ describe("AGUIThreadRuntimeCore", () => {
- 
-   it("keeps streaming after a messages snapshot replaces run history", async () => {
-     const streamedText: Array<string | undefined> = [];
--    let core: AgUiThreadRuntimeCore;
-+    let core: AgUiThreadController;
-     const readAssistantText = () => {
-       const assistant = core
-         .getMessages()
-@@ -1189,7 +1189,7 @@ describe("AGUIThreadRuntimeCore", () => {
-   });
- 
-   it("keeps state on the assistant when a messages snapshot replaces", async () => {
--    let core: AgUiThreadRuntimeCore;
-+    let core: AgUiThreadController;
-     const agent = {
-       runAgent: vi.fn(async (_input, subscriber) => {
-         subscriber.onTextMessageContentEvent?.({
-@@ -1991,7 +1991,7 @@ describe("AGUIThreadRuntimeCore", () => {
-     // onCancel runs from the local abort listener and starts a replacement run,
-     // which takes over the agent's controller: abortRun has to have already
-     // happened, or it would cancel the replacement and leave this run live
--    let core!: AgUiThreadRuntimeCore;
-+    let core!: AgUiThreadController;
-     const onCancel = vi.fn(() => {
-       order.push("onCancel");
-       void core.append(createAppendMessage());
-@@ -2438,7 +2438,7 @@ describe("AGUIThreadRuntimeCore", () => {
- 
-   it("keeps a run started by onCancel when an append supersedes", async () => {
-     const resolveRuns: Array<() => void> = [];
--    let core!: AgUiThreadRuntimeCore;
-+    let core!: AgUiThreadController;
-     const onCancel = vi.fn(() => {
-       void core.append(createAppendMessage());
-     });
-@@ -2886,7 +2886,7 @@ describe("AGUIThreadRuntimeCore", () => {
-   it("auto-resumes when a tool result is added before RUN_FINISHED", async () => {
-     const runInputs: any[] = [];
-     let runCount = 0;
--    let core!: AgUiThreadRuntimeCore;
-+    let core!: AgUiThreadController;
- 
-     const agent = {
-       runAgent: vi.fn(async (input: any, subscriber: any) => {
-@@ -2973,7 +2973,7 @@ describe("AGUIThreadRuntimeCore", () => {
-   it("resumes once all parallel tool results arrive across the RUN_FINISHED boundary", async () => {
-     const runInputs: any[] = [];
-     let runCount = 0;
--    let core!: AgUiThreadRuntimeCore;
-+    let core!: AgUiThreadController;
- 
-     const agent = {
-       runAgent: vi.fn(async (input: any, subscriber: any) => {
-@@ -3066,7 +3066,7 @@ describe("AGUIThreadRuntimeCore", () => {
- 
-   it("does not leak a deferred resume into a later run when the run errors", async () => {
-     let runCount = 0;
--    let core!: AgUiThreadRuntimeCore;
-+    let core!: AgUiThreadController;
-     const onError = vi.fn();
- 
-     const agent = {
-@@ -5517,7 +5517,7 @@ describe("AGUIThreadRuntimeCore", () => {
-   });
- 
-   it("steerAway cancels only unresolved tool calls and preserves resolved ones", async () => {
--    let core: AgUiThreadRuntimeCore;
-+    let core: AgUiThreadController;
-     const runInputs: any[] = [];
-     let runCount = 0;
-     const runAgent = vi.fn(async (input: any, subscriber: any) => {
-@@ -8099,7 +8099,7 @@ describe("AGUIThreadRuntimeCore", () => {
-   it("keeps streaming when a pre-start snapshot ends with a prior-turn assistant", async () => {
-     const mid = "99999999-8888-7777-6666-555555555555";
-     const observed: string[] = [];
--    let core: AgUiThreadRuntimeCore;
-+    let core: AgUiThreadController;
-     const readText = () => {
-       const byId = core.getMessages().find((x) => x.id === mid);
-       const m =
-@@ -8303,7 +8303,7 @@ describe("AGUIThreadRuntimeCore", () => {
-     const runInputs: any[] = [];
-     let releaseRun!: () => void;
-     let postRunHead: string | undefined;
--    let core: AgUiThreadRuntimeCore;
-+    let core: AgUiThreadController;
-     const activeRun = new Promise<void>((resolve) => {
-       releaseRun = resolve;
-     });
-@@ -8741,7 +8741,7 @@ describe("AGUIThreadRuntimeCore", () => {
-       type: "function",
-       function: { name: "lookup", arguments: "{}" 
+   return (
+     <div className="aui-composer-action-wrapper relative flex items-center justify-between">
+-      <ComposerAddAttachment />
++      {ComposerExtra ? (
++        <div className="aui-composer-action-start flex items-center gap-1.5">
++          <ComposerAddAttachment />
++          <ComposerExtra />
++        </div>
++      ) : (
++        <ComposerAddAttachment />
++      )}
+       <div className="flex items-center gap-1.5">
+         <AuiIf condition={(s) => s.thread.capabilities.dictation}>
+           <AuiIf condition={(s) => s.composer.dictation == null}>
 ```
 
 ---
 
-### Incident Patch 2: `135ea67d` (2026-10-20)
-**Commit Message**: refactor(react-ag-ui): move adapter state into a pure reducer (#9932)
+### Incident Patch 3: `d14557b1` (2026-10-21)
+**Commit Message**: fix(react-ink): support standalone thread notifications (#9968)
 
-**File**: `.changeset/agui-thread-state.md` (added, +5/-0)
+**File**: `.changeset/ink-standalone-notifications.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@assistant-ui/react-ag-ui": patch
++"@assistant-ui/react-ink": patch
 +---
 +
-+extract ag-ui thread state into a reducer
++fix: allow useNotification in standalone thread scopes without a thread-list item. Custom notification callbacks receive "unknown" as the thread ID when no thread-list item is available.
 ```
 
-**File**: `packages/react-ag-ui/src/runtime/AgUiThreadRuntimeCore.test.ts` (modified, +29/-0)
+**File**: `apps/docs/content/docs/ink/hooks.mdx` (modified, +2/-0)
 ```diff
-@@ -538,3 +538,32 @@ describe("AgUiThreadRuntimeCore activity deltas", () => {
-     });
-   });
- });
+@@ -107,6 +107,8 @@ If a message settles while the thread is still running, completion and incomplet
+ 
+ Notifications are deduplicated per `thread:message:status:reason` tuple, so passing an inline config object does not produce duplicate fires. `ringBell` and `sendOSCNotification(title, body?, variant?)` are also exported for imperative use. OSC support depends on the terminal emulator.
+ 
++Custom callbacks receive the thread-list item's ID as `event.threadId`. For a standalone thread without a `threadListItem` scope, `event.threadId` is `"unknown"`.
 +
-+describe("AgUiThreadRuntimeCore setState", () => {
-+  it("keeps a cancel the updater makes while a send waits for history", async () => {
-+    const { history, finish } = deferredHistory();
-+    const runAgent = vi.fn(async () => {});
-+    const { core } = createCore(history, {
-+      runAgent,
-+      abortRun: vi.fn(),
-+    } as unknown as AbstractAgent);
-+    const loading = core.__internal_load();
-+    const sending = core.append({
-+      ...userMessage("cancelled"),
-+      startRun: true,
-+    });
-+
-+    core.setState(() => {
-+      void core.cancel();
-+      return { count: 1 };
-+    });
-+    finish();
-+    await Promise.all([loading, sending]);
-+
-+    expect(core.getState()).toEqual({ count: 1 });
-+    expect(core.getMessages().map((message) => message.id)).toEqual([
-+      "restored",
-+    ]);
-+    expect(runAgent).not.toHaveBeenCalled();
-+  });
-+});
+ ## Runtime Hooks
+ 
+ ### useLocalRuntime
 ```
 
-**File**: `packages/react-ag-ui/src/runtime/AgUiThreadRuntimeCore.ts` (modified, +117/-78)
+**File**: `packages/react-ink/src/hooks/useNotification.test.tsx` (modified, +88/-2)
 ```diff
-@@ -38,6 +38,11 @@ import type {
-   RunAgentResult,
- } from "@ag-ui/client";
- import jsonpatch, { type Operation } from "fast-json-patch";
-+import {
-+  createAgUiThreadState,
-+  reduceAgUiThreadState,
-+  type AgUiThreadState,
-+} from "./agUiThreadState";
- import type { Logger } from "./logger";
- import { readMcpAppResourceUri } from "./mcp-tool-result";
- import type {
-@@ -195,27 +200,18 @@ export class AgUiThreadRuntimeCore {
-       };
-     },
-   });
--  private isRunningFlag = false;
-+  private state: AgUiThreadState = createAgUiThreadState();
-   private abortController: AbortController | null = null;
-   // The agent that started the active run. updateOptions can swap this.agent
-   // mid-run, and cancelling has to reach the agent holding the live request.
-   private activeRunAgent: AbstractAgent | null = null;
--  private stateSnapshot: ReadonlyJSONValue | undefined;
-   private history: ThreadHistoryAdapter | undefined;
--  private lastRunConfig: RunConfig | undefined;
-   private readonly assistantHistoryParents = new Map<string, string | null>();
-   private readonly snapshotHistoryIds = new Set<string>();
-   private readonly persistedHistoryIds = new Set<string>();
-   private readonly historyWrites = createHistoryWriteChain();
--  private _isLoading = false;
-   private _historyImportPromise: Promise<void> | undefined;
--  private historyMutationGeneration = 0;
-   private _loadPromise: Promise<void> | undefined;
--  private _loadRequested = false;
--  private pendingResume: { owner: AbortController; messageId: string } | null =
--    null;
--  private pendingA2uiResumeOwner: AbortController | null = null;
--  private pendingA2uiAction: Record<string, unknown> | undefined;
- 
-   constructor(options: CoreOptions) {
-     this.agent = options.agent;
-@@ -238,10 +234,10 @@ export class AgUiThreadRuntimeCore {
- 
-   getSnapshot = () =>
-     (this.snapshot ??= {
--      isLoading: this._isLoading,
--      isRunning: this.isRunningFlag,
-+      isLoading: this.state.isLoading,
-+      isRunning: this.state.isRunning,
-       messageRepository: this.session.export(),
--      state: this.stateSnapshot,
-+      state: this.state.stateSnapshot,
-     });
- 
-   private publishUpdate(): void {
-@@ -262,7 +258,7 @@ export class AgUiThreadRuntimeCore {
-     const previousHistory = this.history;
-     this.history = options.history;
-     if (
--      this._loadRequested &&
-+      this.state.loadRequested &&
-       !this._loadPromise &&
-       !previousHistory &&
-       options.history &&
-@@ -292,19 +288,19 @@ export class AgUiThreadRuntimeCore {
-   }
- 
-   getState(): ReadonlyJSONValue | undefined {
--    return this.stateSnapshot;
-+    return this.state.stateSnapshot;
-   }
- 
-   isRunning(): boolean {
--    return this.isRunningFlag;
-+    return this.state.isRunning;
-   }
- 
-   get isLoading(): boolean {
--    return this._isLoading;
-+    return this.state.isLoading;
-   }
- 
-   __internal_load(): Promise<void> {
--    this._loadRequested = true;
-+    this.state = reduceAgUiThreadState(this.state, { type: "loadRequested" });
-     if (this._loadPromise) return this._loadPromise;
-     if (!this.history) return Promise.resolve();
- 
-@@ -327,7 +323,7 @@ export class AgUiThreadRuntimeCore {
-       return repo;
-     });
- 
--    this._isLoading = true;
-+    this.state = reduceAgUiThreadState(this.state, { type: "loadStarted" });
-     this._historyImportPromise = promise.then(
-       () => {
-         this._historyImportPromise = undefined;
-@@ -344,7 +340,7 @@ export class AgUiThreadRuntimeCore {
-           const resumeStream = this.history?.resume?.bind(this.history);
-           await this.startRun(
-             parentId,
--            this.lastRunConfig,
-+            this.state.lastRunConfig,
-             undefined,
-             resumeStream,
-           );
-@@ -355,7 +351,9 @@ export class AgUiThreadRuntimeCore {
-         this.reportError(error);
-       })
-       .finally(() => {
--        this._isLoading = false;
-+        this.state = reduceAgUiThreadState(this.state, {
-+          type: "loadFinished",
-+        });
-         this.publishUpdate();
-       });
- 
-@@ -366,21 +364,21 @@ export class AgUiThreadRuntimeCore {
-   private waitForHistoryImport(): Promise<boolean> | undefined {
-     const historyImport = this._historyImportPromise;
-     if (!historyImport) return undefined;
--    const generation = this.historyMutationGeneration;
-+    const generation = this.state.historyMutationGeneration;
-     return historyImport.then(
-       () =>
--        generation === this.historyMutationGeneration &&
-+        generation === this.state.historyMutationGeneration &&
-         !this.isThreadSwitching?.(),
-     );
-   }
- 
-   private deferUntilHistoryImported(callback: () => void): boolean {
-     const historyImport = this._historyImportPromise;
-     if (!historyImport) return false;
--    const generation = this.historyMutationGeneration;
-+    const generation = this.state.historyMutationGeneration;
-     void historyImport.then(() => {
-       if (
--        generation !== this.his
-```
-
-**File**: `packages/react-ag-ui/src/runtime/agUiThreadState.test.ts` (added, +205/-0)
-```diff
-@@ -0,0 +1,205 @@
-+import { describe, expect, it } from "vitest";
-+import {
-+  createAgUiThreadState,
-+  reduceAgUiThreadState,
-+} from "./agUiThreadState";
-+
-+describe("reduceAgUiThreadState", () => {
-+  it("tracks run and load phases without changing state for repeated phases", () => {
-+    const initial = createAgUiThreadState();
-+    expect(reduceAgUiThreadState(initial, { type: "runFinished" })).toBe(
-+      initial,
-+    );
-+    expect(reduceAgUiThreadState(initial, { type: "loadFinished" })).toBe(
-+      initial,
-+    );
-+
-+    const running = reduceAgUiThreadState(initial, { type: "runStarted" });
-+    const requested = reduceAgUiThreadState(running, { type: "loadRequested" });
-+    const loading = reduceAgUiThreadState(requested, { type: "loadStarted" });
-+    expect(loading).toMatchObject({
-+      isRunning: true,
-+      isLoading: true,
-+      loadRequested: true,
-+    });
-+    expect(reduceAgUiThreadState(running, { type: "runStarted" })).toBe(
-+      running,
-+    );
-+    expect(reduceAgUiThreadState(requested, { type: "loadRequested" })).toBe(
-+      requested,
-+    );
-+    expect(reduceAgUiThreadState(loading, { type: "loadStarted" })).toBe(
-+      loading,
-+    );
-+    expect(initial).toMatchObject({
-+      isRunning: false,
-+      isLoading: false,
-+      loadRequested: false,
-+    });
-+
-+    const stopped = reduceAgUiThreadState(loading, { type: "runFinished" });
-+    const loaded = reduceAgUiThreadState(stopped, { type: "loadFinished" });
-+    expect(loaded.isRunning).toBe(false);
-+    expect(loaded.isLoading).toBe(false);
-+    expect(loaded.loadRequested).toBe(true);
-+  });
-+
-+  it("advances history mutation generation across thread resets", () => {
-+    const initial = createAgUiThreadState();
-+    const first = reduceAgUiThreadState(initial, {
-+      type: "historyMutationAdvanced",
-+    });
-+    const reset = reduceAgUiThreadState(first, { type: "resetThread" });
-+    const second = reduceAgUiThreadState(reset, {
-+      type: "historyMutationAdvanced",
-+    });
-+    expect(initial.historyMutationGeneration).toBe(0);
-+    expect(reset.historyMutationGeneration).toBe(1);
-+    expect(second.historyMutationGeneration).toBe(2);
-+  });
-+
-+  it("replaces the state snapshot", () => {
-+    const initial = createAgUiThreadState();
-+    const snapshot = { count: 1 };
-+    const first = reduceAgUiThreadState(initial, {
-+      type: "stateSnapshot",
-+      snapshot,
-+    });
-+    expect(first.stateSnapshot).toBe(snapshot);
-+    expect(
-+      reduceAgUiThreadState(first, { type: "stateSnapshot", snapshot }),
-+    ).toBe(first);
-+  });
-+
-+  it("sets and resets state snapshots", () => {
-+    const initial = createAgUiThreadState();
-+    const first = reduceAgUiThreadState(initial, {
-+      type: "stateSnapshot",
-+      snapshot: { count: 1 },
-+    });
-+    const second = reduceAgUiThreadState(first, {
-+      type: "stateSnapshot",
-+      snapshot: { count: 2 },
-+    });
-+    expect(second.stateSnapshot).toEqual({ count: 2 });
-+    expect(first.stateSnapshot).toEqual({ count: 1 });
-+    expect(
-+      reduceAgUiThreadState(second, {
-+        type: "stateSnapshot",
-+        snapshot: second.stateSnapshot!,
-+      }),
-+    ).toBe(second);
-+    const reset = reduceAgUiThreadState(second, { type: "resetState" });
-+    expect(reset.stateSnapshot).toBeUndefined();
-+    expect(reduceAgUiThreadState(reset, { type: "resetState" })).toBe(reset);
-+  });
-+
-+  it("records run config and manages deferred continuations by owner", () => {
-+    const initial = createAgUiThreadState();
-+    const runConfig = {};
-+    const configured = reduceAgUiThreadState(initial, {
-+      type: "runConfigRecorded",
-+      runConfig,
-+    });
-+    expect(configured.lastRunConfig).toBe(runConfig);
-+    expect(
-+      reduceAgUiThreadState(configured, {
-+        type: "runConfigRecorded",
-+        runConfig,
-+      }),
-+    ).toBe(configured);
-+
-+    const owner = new AbortController();
-+    const withResume = reduceAgUiThreadState(configured, {
-+      type: "resumeDeferred",
-+      owner,
-+      messageId: "assistant",
-+    });
-+    expect(withResume.pendingResume).toEqual({ owner, messageId: "assistant" });
-+    expect(
-+      reduceAgUiThreadState(withResume, {
-+        type: "resumeDeferred",
-+        owner,
-+        messageId: "assistant",
-+      }),
-+    ).toBe(withResume);
-+    const withOwner = reduceAgUiThreadState(withResume, {
-+      type: "a2uiResumeDeferred",
-+      owner,
-+    });
-+    const action = { value: "submit" };
-+    const withAction = reduceAgUiThreadState(withOwner, {
-+      type: "a2uiActionDeferred",
-+      action,
-+    });
-+    expect(withAction.pendingA2uiResumeOwner).toBe(owner);
-+    expect(withAction.pendingA2uiAction).toBe(action);
-+    expect(
-+      reduceAgUiThreadState(withOwner, { type: "a2uiResumeDeferred", owner }),
-+    ).toBe(withOwner);
-+    expect(
-+      reduceAgUiThreadState(withAction, { type: "a2uiActionDeferred", action }),
-+    ).toBe(withAction);
-+
-+    const actionCleared = reduceAgU
-```
-
-**File**: `packages/react-ag-ui/src/runtime/agUiThreadState.ts` (added, +130/-0)
-```diff
-@@ -0,0 +1,130 @@
-+import type { RunConfig } from "@assistant-ui/core";
-+import type { ReadonlyJSONValue } from "assistant-stream/utils";
-+
-+export type AgUiThreadState = {
-+  isRunning: boolean;
-+  isLoading: boolean;
-+  loadRequested: boolean;
-+  historyMutationGeneration: number;
-+  stateSnapshot: ReadonlyJSONValue | undefined;
-+  lastRunConfig: RunConfig | undefined;
-+  pendingResume: { owner: AbortController; messageId: string } | null;
-+  pendingA2uiResumeOwner: AbortController | null;
-+  pendingA2uiAction: Record<string, unknown> | undefined;
-+};
-+
-+export type AgUiThreadAction =
-+  | { type: "runStarted" }
-+  | { type: "runFinished" }
-+  | { type: "loadRequested" }
-+  | { type: "loadStarted" }
-+  | { type: "loadFinished" }
-+  | { type: "historyMutationAdvanced" }
-+  | { type: "stateSnapshot"; snapshot: ReadonlyJSONValue }
-+  | { type: "resetState" }
-+  | { type: "runConfigRecorded"; runConfig: RunConfig }
-+  | { type: "resumeDeferred"; owner: AbortController; messageId: string }
-+  | { type: "resumeCleared" }
-+  | { type: "a2uiResumeDeferred"; owner: AbortController }
-+  | { type: "a2uiResumeCleared" }
-+  | { type: "a2uiActionDeferred"; action: Record<string, unknown> }
-+  | { type: "a2uiActionCleared" }
-+  | { type: "a2uiContinuationsCleared" }
-+  | { type: "resetThread" };
-+
-+export const createAgUiThreadState = (): AgUiThreadState => ({
-+  isRunning: false,
-+  isLoading: false,
-+  loadRequested: false,
-+  historyMutationGeneration: 0,
-+  stateSnapshot: undefined,
-+  lastRunConfig: undefined,
-+  pendingResume: null,
-+  pendingA2uiResumeOwner: null,
-+  pendingA2uiAction: undefined,
-+});
-+
-+export const reduceAgUiThreadState = (
-+  state: AgUiThreadState,
-+  action: AgUiThreadAction,
-+): AgUiThreadState => {
-+  switch (action.type) {
-+    case "runStarted":
-+      return state.isRunning ? state : { ...state, isRunning: true };
-+    case "runFinished":
-+      return !state.isRunning ? state : { ...state, isRunning: false };
-+    case "loadRequested":
-+      return state.loadRequested ? state : { ...state, loadRequested: true };
-+    case "loadStarted":
-+      return state.isLoading ? state : { ...state, isLoading: true };
-+    case "loadFinished":
-+      return !state.isLoading ? state : { ...state, isLoading: false };
-+    case "historyMutationAdvanced":
-+      return {
-+        ...state,
-+        historyMutationGeneration: state.historyMutationGeneration + 1,
-+      };
-+    case "stateSnapshot":
-+      return state.stateSnapshot === action.snapshot
-+        ? state
-+        : { ...state, stateSnapshot: action.snapshot };
-+    case "resetState":
-+      return state.stateSnapshot === undefined
-+        ? state
-+        : { ...state, stateSnapshot: undefined };
-+    case "runConfigRecorded":
-+      return state.lastRunConfig === action.runConfig
-+        ? state
-+        : { ...state, lastRunConfig: action.runConfig };
-+    case "resumeDeferred":
-+      return state.pendingResume?.owner === action.owner &&
-+        state.pendingResume.messageId === action.messageId
-+        ? state
-+        : {
-+            ...state,
-+            pendingResume: { owner: action.owner, messageId: action.messageId },
-+          };
-+    case "resumeCleared":
-+      return state.pendingResume === null
-+        ? state
-+        : { ...state, pendingResume: null };
-+    case "a2uiResumeDeferred":
-+      return state.pendingA2uiResumeOwner === action.owner
-+        ? state
-+        : { ...state, pendingA2uiResumeOwner: action.owner };
-+    case "a2uiResumeCleared":
-+      return state.pendingA2uiResumeOwner === null
-+        ? state
-+        : { ...state, pendingA2uiResumeOwner: null };
-+    case "a2uiActionDeferred":
-+      return state.pendingA2uiAction === action.action
-+        ? state
-+        : { ...state, pendingA2uiAction: action.action };
-+    case "a2uiActionCleared":
-+      return state.pendingA2uiAction === undefined
-+        ? state
-+        : { ...state, pendingA2uiAction: undefined };
-+    case "a2uiContinuationsCleared":
-+      return state.pendingA2uiResumeOwner === null &&
-+        state.pendingA2uiAction === undefined
-+        ? state
-+        : {
-+            ...state,
-+            pendingA2uiResumeOwner: null,
-+            pendingA2uiAction: undefined,
-+          };
-+    case "resetThread":
-+      return state.stateSnapshot === undefined &&
-+        state.pendingResume === null &&
-+        state.pendingA2uiResumeOwner === null &&
-+        state.pendingA2uiAction === undefined
-+        ? state
-+        : {
-+            ...state,
-+            stateSnapshot: undefined,
-+            pendingResume: null,
-+            pendingA2uiResumeOwner: null,
-+            pendingA2uiAction: undefined,
-+          };
-+  }
-+};
-```
-
----
-
-### Incident Patch 3: `da7318e9` (2026-10-20)
-**Commit Message**: refactor(ai-sdk): replace re-render epoch counters with immutable state (#9929)
-
-**File**: `.changeset/fresh-tool-maps.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@assistant-ui/ai-sdk": patch
-+---
-+
-+refresh tool metadata from immutable maps and react to remote thread ids
-```
-
-**File**: `packages/ai-sdk/src/runtime/useAISDKRuntime.test.ts` (modified, +13/-9)
-```diff
-@@ -803,7 +803,7 @@ describe("useAISDKRuntime", () => {
-     );
-     expect(chat.addToolResult).not.toHaveBeenCalled();
-     expect(
--      vi.mocked(useExternalHistory).mock.calls.at(-1)?.[5]?.get("tc-1"),
-+      vi.mocked(useExternalHistory).mock.calls.at(-1)?.[5]?.().get("tc-1"),
-     ).toEqual({ preview: "72°F and sunny" });
- 
-     chat.messages = chat.messages.map((message: UIMessage) => ({
-@@ -1051,16 +1051,19 @@ describe("useAISDKRuntime", () => {
-       expect(chat.addToolOutput).toHaveBeenCalledTimes(1);
-     });
- 
--    const toolArtifacts = vi.mocked(useExternalHistory).mock.calls.at(-1)?.[5];
--    expect(toolArtifacts?.get("tc-1")).toEqual({
-+    expect(
-+      vi.mocked(useExternalHistory).mock.calls.at(-1)?.[5]?.().get("tc-1"),
-+    ).toEqual({
-       preview: "72°F and sunny",
-     });
-     await act(async () => {
-       await result.current.thread.getMessageById("a1").delete();
-     });
- 
-     expect(deleteMessage).toHaveBeenCalledWith("a1");
--    expect(toolArtifacts?.has("tc-1")).toBe(false);
-+    expect(
-+      vi.mocked(useExternalHistory).mock.calls.at(-1)?.[5]?.().has("tc-1"),
-+    ).toBe(false);
-   });
- 
-   it("removes tool interactions with their deleted message", async () => {
-@@ -1102,17 +1105,18 @@ describe("useAISDKRuntime", () => {
-       });
-     });
- 
--    const toolInteractions = vi
--      .mocked(useExternalHistory)
--      .mock.calls.at(-1)?.[7];
--    expect(toolInteractions?.has("tc-1")).toBe(true);
-+    expect(
-+      vi.mocked(useExternalHistory).mock.calls.at(-1)?.[7]?.().has("tc-1"),
-+    ).toBe(true);
- 
-     await act(async () => {
-       await result.current.thread.getMessageById("a1").delete();
-     });
- 
-     expect(deleteMessage).toHaveBeenCalledWith("a1");
--    expect(toolInteractions?.has("tc-1")).toBe(false);
-+    expect(
-+      vi.mocked(useExternalHistory).mock.calls.at(-1)?.[7]?.().has("tc-1"),
-+    ).toBe(false);
-   });
- 
-   it("edit slices history to parentId and sends the edited message", async () => {
-```
-
-**File**: `packages/ai-sdk/src/runtime/useAISDKRuntime.ts` (modified, +50/-28)
-```diff
-@@ -581,8 +581,12 @@ export const useAISDKRuntime = <UI_MESSAGE extends UIMessage = UIMessage>(
-   const [toolApprovalResponses, setToolApprovalResponses] = useState<
-     ReadonlyMap<string, RespondToToolApprovalOptions>
-   >(() => toApprovalResponses(ownedApprovals));
--  const [toolArtifactEpoch, setToolArtifactEpoch] = useState(0);
--  const [toolInteractionEpoch, setToolInteractionEpoch] = useState(0);
-+  const [toolArtifacts, setToolArtifacts] = useState<
-+    ReadonlyMap<string, unknown>
-+  >(() => new Map());
-+  const [toolInteractions, setToolInteractions] = useState<
-+    ReadonlyMap<string, Unstable_ToolInteractionLog>
-+  >(() => new Map());
-   const toolApprovalResponsesRef = useRef(
-     new Map(toApprovalResponses(ownedApprovals)),
-   );
-@@ -646,12 +650,22 @@ export const useAISDKRuntime = <UI_MESSAGE extends UIMessage = UIMessage>(
-     new Map(),
-   );
-   const lastRunConfigRef = useRef<RunConfig | undefined>(undefined);
--  const markToolArtifactsChanged = useCallback(() => {
--    setToolArtifactEpoch((epoch) => epoch + 1);
--  }, []);
--  const markToolInteractionsChanged = useCallback(() => {
--    setToolInteractionEpoch((epoch) => epoch + 1);
-+  const restoreToolArtifacts = useCallback((next: Map<string, unknown>) => {
-+    toolArtifactsRef.current = next;
-+    setToolArtifacts(next);
-   }, []);
-+  const restoreToolInteractions = useCallback(
-+    (next: Map<string, Unstable_ToolInteractionLog>) => {
-+      toolInteractionsRef.current = next;
-+      setToolInteractions(next);
-+    },
-+    [],
-+  );
-+  const getToolArtifacts = useCallback(() => toolArtifactsRef.current, []);
-+  const getToolInteractions = useCallback(
-+    () => toolInteractionsRef.current,
-+    [],
-+  );
- 
-   const hasExecutingTools = Object.values(toolStatuses).some(
-     (s) => s?.type === "executing",
-@@ -775,8 +789,8 @@ export const useAISDKRuntime = <UI_MESSAGE extends UIMessage = UIMessage>(
-         toolArgsTextCache: toolArgsTextCacheRef.current,
-         toolLastInputCache: toolLastInputCacheRef.current,
-         mcpAppMetadataCache: mcpAppMetadataCacheRef.current,
--        toolArtifacts: toolArtifactsRef.current,
--        toolInteractions: toolInteractionsRef.current,
-+        toolArtifacts,
-+        toolInteractions,
-         supportsRichToolApprovalResponses,
-         cancelledToolApprovalIds: supersededApprovalProjection.approvalIds,
-         cancelledStatusMessageIds:
-@@ -797,8 +811,8 @@ export const useAISDKRuntime = <UI_MESSAGE extends UIMessage = UIMessage>(
-         toolApprovalResponses,
-         supportsRichToolApprovalResponses,
-         supersededApprovalProjection,
--        toolArtifactEpoch,
--        toolInteractionEpoch,
-+        toolArtifacts,
-+        toolInteractions,
-       ],
-     ),
-   });
-@@ -840,10 +854,10 @@ export const useAISDKRuntime = <UI_MESSAGE extends UIMessage = UIMessage>(
-     (messages) => {
-       chatHelpers.setMessages(messages);
-     },
--    toolArtifactsRef.current,
--    markToolArtifactsChanged,
--    toolInteractionsRef.current,
--    markToolInteractionsChanged,
-+    getToolArtifacts,
-+    restoreToolArtifacts,
-+    getToolInteractions,
-+    restoreToolInteractions,
-     toolApprovalResponsesRef.current,
-     () => {
-       for (const [id, entry] of ownedApprovals ?? []) {
-@@ -1219,13 +1233,14 @@ export const useAISDKRuntime = <UI_MESSAGE extends UIMessage = UIMessage>(
-       let removedToolInteractions = false;
-       let removedToolApprovalResponse = false;
-       let removedHostApprovalId = false;
-+      const nextToolArtifacts = new Map(toolArtifactsRef.current);
-+      const nextToolInteractions = new Map(toolInteractionsRef.current);
-       for (const part of threadMessages[messageIndex]!.content) {
-         if (part.type === "tool-call") {
-           removedToolArtifact =
--            toolArtifactsRef.current.delete(part.toolCallId) ||
--            removedToolArtifact;
-+            nextToolArtifacts.delete(part.toolCallId) || removedToolArtifact;
-           removedToolInteractions =
--            toolInteractionsRef.current.delete(part.toolCallId) ||
-+            nextToolInteractions.delete(part.toolCallId) ||
-             removedToolInteractions;
-           if (part.approval) {
-             ownedApprovals?.delete(part.approval.id);
-@@ -1238,8 +1253,14 @@ export const useAISDKRuntime = <UI_MESSAGE extends UIMessage = UIMessage>(
-           }
-         }
-       }
--      if (removedToolArtifact) markToolArtifactsChanged();
--      if (removedToolInteractions) markToolInteractionsChanged();
-+      if (removedToolArtifact) {
-+        toolArtifactsRef.current = nextToolArtifacts;
-+        setToolArtifacts(nextToolArtifacts);
-+      }
-+      if (removedToolInteractions) {
-+        toolInteractionsRef.current = nextToolInteractions;
-+        setToolInteractions(nextToolInteractions);
-+      }
-       if (removedToolApprovalResponse || removedHostApprovalId) {
-         if (approvalOwner) notifyChatRuntimeState(approvalOwner);
-         setToolApprovalResponses(new Map(toolApproval
-```
-
-**File**: `packages/ai-sdk/src/runtime/useExternalHistory.test.ts` (modified, +23/-8)
-```diff
-@@ -613,7 +613,11 @@ describe("useExternalHistory withFormat contract", () => {
-         () => {},
-         undefined,
-         undefined,
--        toolInteractions,
-+        () => toolInteractions,
-+        (next) => {
-+          toolInteractions.clear();
-+          for (const [id, log] of next) toolInteractions.set(id, log);
-+        },
-       ),
-     );
- 
-@@ -1152,9 +1156,11 @@ describe("useExternalHistory persistence", () => {
-       skipRemoteId?: boolean;
-       onSetMessages?: (messages: InnerMessage[]) => void;
-       toolArtifacts?: Map<string, unknown>;
--      onToolArtifactsRestored?: () => void;
-+      onToolArtifactsRestored?: (next: Map<string, unknown>) => void;
-       toolInteractions?: Map<string, Unstable_ToolInteractionLog>;
--      onToolInteractionsRestored?: () => void;
-+      onToolInteractionsRestored?: (
-+        next: Map<string, Unstable_ToolInteractionLog>,
-+      ) => void;
-       toolApprovalResponses?: Map<string, RespondToToolApprovalOptions>;
-       onToolApprovalResponsesRestored?: () => void;
-     },
-@@ -1218,10 +1224,19 @@ describe("useExternalHistory persistence", () => {
-         options?.toThreadMessages ?? (() => []),
-         persistenceStorageFormat,
-         options?.onSetMessages ?? (() => {}),
--        options?.toolArtifacts,
--        options?.onToolArtifactsRestored,
--        options?.toolInteractions,
--        options?.onToolInteractionsRestored,
-+        options?.toolArtifacts && (() => options.toolArtifacts!),
-+        (next) => {
-+          options?.toolArtifacts?.clear();
-+          for (const [id, artifact] of next)
-+            options?.toolArtifacts?.set(id, artifact);
-+          options?.onToolArtifactsRestored?.(next);
-+        },
-+        options?.toolInteractions && (() => options.toolInteractions!),
-+        (next) => {
-+          options?.toolInteractions?.clear();
-+          for (const [id, log] of next) options?.toolInteractions?.set(id, log);
-+          options?.onToolInteractionsRestored?.(next);
-+        },
-         options?.toolApprovalResponses,
-         options?.onToolApprovalResponsesRestored,
-       ),
-@@ -2599,7 +2614,7 @@ describe("useExternalHistory persistence", () => {
-           () => [],
-           persistenceStorageFormat,
-           () => {},
--          toolArtifacts,
-+          () => toolArtifacts,
-         ),
-       { initialProps: { toolArtifacts: new Map<string, unknown>() } },
-     );
-```
-
-**File**: `packages/ai-sdk/src/runtime/useExternalHistory.ts` (modified, +38/-29)
-```diff
-@@ -24,6 +24,7 @@ import {
-   type RefObject,
-   useCallback,
-   useMemo,
-+  useSyncExternalStore,
- } from "react";
+@@ -1,12 +1,17 @@
+-import { act } from "react";
++import { act, Component, type ReactNode } from "react";
+ import { Text } from "ink";
+ import { cleanup, render } from "ink-testing-library";
+ import { afterEach, expect, it, vi } from "vitest";
  import {
-   addToolData,
-@@ -95,21 +96,31 @@ export const useExternalHistory = <TMessage>(
-   toThreadMessages: (messages: TMessage[]) => ThreadMessage[],
-   storageFormatAdapter: MessageFormatAdapter<TMessage, any>,
-   onSetMessages: (messages: TMessage[]) => void,
--  toolArtifacts?: Map<string, unknown>,
--  onToolArtifactsRestored?: () => void,
--  toolInteractions?: Map<string, Unstable_ToolInteractionLog>,
--  onToolInteractionsRestored?: () => void,
-+  getToolArtifacts?: () => ReadonlyMap<string, unknown>,
-+  onToolArtifactsRestored?: (next: Map<string, unknown>) => void,
-+  getToolInteractions?: () => ReadonlyMap<string, Unstable_ToolInteractionLog>,
-+  onToolInteractionsRestored?: (
-+    next: Map<string, Unstable_ToolInteractionLog>,
-+  ) => void,
-   toolApprovalResponses?: Map<string, RespondToToolApprovalOptions>,
-   onToolApprovalResponsesRestored?: () => void,
- ) => {
-   const loadedRef = useRef(false);
--  const [itemEpoch, setItemEpoch] = useState(0);
+   AssistantRuntimeProvider,
+   useExternalStoreRuntime,
+ } from "@assistant-ui/core/react";
+-import { useAuiState } from "@assistant-ui/store";
++import { AuiConfig, AuiProvider, useAuiState } from "@assistant-ui/store";
++import { resource, useResource } from "@assistant-ui/tap";
++import {
++  ExternalThread,
++  type ExternalThreadProps,
++} from "@assistant-ui/core/store";
+ import type { ThreadMessageLike } from "@assistant-ui/core";
+ import { useNotification, type NotificationEvent } from "./useNotification";
  
-   const aui = useAui();
-   const optionalThreadListItem = useCallback(
-     () => (aui.threadListItem.source ? aui.threadListItem : null),
-     [aui],
+@@ -61,6 +66,31 @@ const Harness = ({
    );
-+  const getRemoteId = useCallback(
-+    () => optionalThreadListItem()?.getState().remoteId,
-+    [optionalThreadListItem],
+ };
+ 
++const StandaloneThread = resource(function useStandaloneThread(
++  props: ExternalThreadProps,
++) {
++  return useResource(ExternalThread(props));
++});
++
++class ErrorBoundary extends Component<
++  { children: ReactNode },
++  { error: Error | undefined }
++> {
++  override state = { error: undefined as Error | undefined };
++
++  static getDerivedStateFromError(error: Error) {
++    return { error };
++  }
++
++  override render() {
++    return this.state.error ? (
++      <Text>{this.state.error.message}</Text>
++    ) : (
++      this.props.children
++    );
++  }
++}
++
+ afterEach(async () => {
+   await act(async () => cleanup());
+ });
+@@ -96,3 +126,59 @@ it.each(["complete", "incomplete"] as const)(
+     );
+   },
+ );
++
++it("delivers one completion notification for a standalone thread", async () => {
++  const onNotify = vi.fn();
++  const renderThread = (props: ExternalThreadProps) => (
++    <AuiProvider config={AuiConfig({ thread: StandaloneThread(props) })}>
++      <ErrorBoundary>
++        <Notifier onNotify={onNotify} />
++      </ErrorBoundary>
++    </AuiProvider>
 +  );
-+  const remoteId = useSyncExternalStore(
-+    aui.subscribe,
-+    getRemoteId,
-+    getRemoteId,
-+  );
- 
-   const [hasLoaded, setHasLoaded] = useState(false);
-   const historyReadyRef = useRef(false);
-@@ -151,7 +162,6 @@ export const useExternalHistory = <TMessage>(
-   useEffect(() => {
-     if (!formatAdapter || loadedRef.current) return undefined;
- 
--    const remoteId = optionalThreadListItem()?.getState().remoteId;
-     const loadHistory = async () => {
-       try {
-         const repo = await formatAdapter.load();
-@@ -160,23 +170,27 @@ export const useExternalHistory = <TMessage>(
-         // the load was in flight. The history imports beneath that live tail
-         // so neither side of the race is dropped.
-         const liveMessages = runtimeRef.current.thread.getState().messages;
-+        const restoredArtifacts = new Map(
-+          liveMessages.length > 0 ? getToolArtifacts?.() : undefined,
-+        );
-+        const restoredInteractions = new Map(
-+          liveMessages.length > 0 ? getToolInteractions?.() : undefined,
-+        );
-         if (liveMessages.length === 0) {
--          toolArtifacts?.clear();
--          toolInteractions?.clear();
-           toolApprovalResponses?.clear();
-         }
-         const restoredMessages =
-           repo?.messages.map((item) => ({
-             ...item,
-             message: restoreToolData(
-               item.message,
--              toolArtifacts,
--              toolInteractions,
-+              restoredArtifacts,
-+              restoredInteractions,
-               toolApprovalResponses,
-             ),
-           })) ?? [];
--        onToolArtifactsRestored?.();
--        onToolInteractionsRestored?.();
-+        onToolArtifactsRestored?.(restoredArtifacts);
-+        onToolInteractionsRestored?.(restoredInteractions);
-         onToolApprovalResponsesRestored?.();
-         if (repo && restoredMessages.length > 0) {
-           const restoredRepo = { ...repo, messages: restoredMessages };
-@@ -248,11 +262,7 @@ export const useExternalHistory = <TMessage>(
-     if (!remoteId) {
-       // eslint-disable-next-line react-hooks/set-state-in-effect
-       setHasLoaded(true);
--      return aui.subscribe(() => {
--        if (optionalThreadListItem()?.getState().remoteId) {
--          setItemEpoch((n) => n + 1);
--        }
--      });
-+      return undefined;
-     }
- 
-     const threadState = runtimeRef.current.thread.getState();
-@@ -272,12 +282,11 @@ export const useExternalHistory = <TMessage>(
-     toThreadMessages,
-     runtimeRef,
-     optionalThreadListItem,
--    aui,
--    itemEpoch,
-+    remoteId,
-     storageFormatAdapter,
--    toolArtifacts,
-+    getToolArtifacts,
-     onToolArtifactsRestored,
--    toolInteractions,
-+    getToolInteractions,
-     onToolInteractionsRestored,
-     toolApprovalResponses,
-     onToolApprovalResponsesRestored,
-@@ -332,11 +341,11 @@ export const useExternalHistory = <TMessage>(
-           : null;
-         const storedToolArtifacts = collectToolArtifacts(
-           message,
--          toolArtifacts,
-+          getToolArtifacts?.(),
-         );
-         const storedToolInteractions = collectToolInteractions(
-           message,
--          toolInteractions,
-+          getToolInteractions?.(),
-         );
-         const storedToolApprovalResponses = collectToolApprovalResponses(
-           message,
-@@ -381,8 +390,8 @@ export const useExternalHistory = <TMessage>(
-       formatAdapter,
-       runtimeRef,
-       storageFormatAdapter,
--      toolArtifacts,
--      toolInteractions,
-+      getToolArtifacts,
-+      getToolInteractions,
-       toolApprovalResponses,
-     ],
++  const message: ExternalThreadProps["messages"][number] = {
++    id: "standalone-answer",
++    role: "assistant",
++    createdAt: new Date(0),
++    content: [{ type: "text", text: "Answer" }],
++    status: { type: "running" },
++    metadata: {
++      unstable_state: null,
++      unstable_annotations: [],
++      unstable_data: [],
++      steps: [],
++      custom: {},
++    },
++  };
++  let view!: ReturnType<typeof render>;
++  await act(async () => {
++    view = render(renderThread({ messages: [] }));
++  });
++  expect(view.lastFrame()).toBe("idle");
++
++  await act(async () => {
++    view.rerender(renderThread({ isRunning: true, messages: [message] }));
++  });
++  expect(view.lastFrame()).toBe("running");
++  expect(onNotify).not.toHaveBeenCalled();
++
++  const completed: ExternalThreadProps = {
++    isRunning: false,
++    messages: [{ ...message, status: { type: "complete", reason: "stop" } }],
++  };
++  await act(async () => {
++    view.rerender(renderThread(completed));
++  });
++  expect(view.lastFrame()).toBe("idle");
++  expect(onNotify).toHaveBeenCalledExactlyOnceWith({
++    type: "task-complete",
++    threadId: "unknown",
++    messageId: "standalone-answer",
++    title: "AI task complete",
++  });
++
++  await act(async () => {
++    view.rerender(renderThread(completed));
++  });
++  expect(onNotify).toHaveBeenCalledTimes(1);
++});
+```
+
+**File**: `packages/react-ink/src/hooks/useNotification.ts` (modified, +1/-1)
+```diff
+@@ -120,7 +120,7 @@ export const useNotification = (config: NotificationConfig = {}) => {
+       last?.status && "reason" in last.status ? last.status.reason : "";
+     return JSON.stringify({
+       isRunning: s.thread.isRunning,
+-      threadId: s.threadListItem.id,
++      threadId: s.optional.threadListItem?.id ?? "unknown",
+       messageId: last?.id ?? "",
+       statusType: last?.status?.type ?? "",
+       statusReason,
+```
+
+**File**: `packages/react-ink/src/tests/useNotification.test.tsx` (modified, +3/-0)
+```diff
+@@ -88,6 +88,7 @@ beforeEach(() => {
+     selector({
+       thread: snapshot,
+       threadListItem: { id: "thread-1" },
++      optional: { threadListItem: { id: "thread-1" } },
+     } as never),
    );
-@@
+ });
+@@ -394,6 +395,7 @@ describe("useNotification", () => {
+       selector({
+         thread: snapshot,
+         threadListItem: { id: "thread-A" },
++        optional: { threadListItem: { id: "thread-A" } },
+       } as never),
+     );
+     const w = spyStdout();
+@@ -411,6 +413,7 @@ describe("useNotification", () => {
+       selector({
+         thread: snapshot,
+         threadListItem: { id: "thread-B" },
++        optional: { threadListItem: { id: "thread-B" } },
+       } as never),
+     );
+     instance.rerender(<Notifier />);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9945** (2026-10-20): test(react-opencode): verify provider events reach subscribers (@Kinfe123)
-- **PR #9942** (2026-10-20): test(react-opencode): verify reconnect backoff and cap (@Kinfe123)
-- **PR #9941** (2026-10-20): feat(markdown): close the syntax left open at the end of a streaming message (@okisdev)
-- **PR #9940** (2026-10-20): chore: add knip with a baseline ratchet for unused code (@okisdev)
-- **PR #9939** (2026-10-20): chore(scripts): check adapter packages for banned state patterns (@okisdev)
-- **PR #9937** (2026-10-20): refactor(react-ag-ui): rename the thread runtime core to AgUiThreadController (@okisdev)
+- **PR #9990** (2026-10-21): feat: report composer text writes with their origin (@okisdev)
+- **PR #9988** (2026-10-21): fix(react-ag-ui): keep tool calls of a split message answerable (@okisdev)
+- **PR #9987** (2026-10-21): fix(react-ag-ui): keep user part order through a history round trip (@okisdev)
+- **PR #9986** (2026-10-21): test(flue): cover durable reload and cancellation (@okisdev)
+- **PR #9985** (2026-10-21): feat(markdown): render the document tree in the terminal with Ink (@okisdev)
+- **PR #9984** (2026-10-21): feat(markdown): render the document tree in React Native (@okisdev)
 
 ---
 
@@ -2817,25 +1769,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react-ag-ui): rename the thread runtime core to AgUiThreadController (#9937)
+## X. core): skip unchanged remote thread resources on a host render (#9969)
 
 **RULE**:
-When implementing operations in `.changeset/agui-thread-controller.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/remote-thread-elements-deps.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42a7c084`: react-ag-ui): rename the thread runtime core to AgUiThreadController (#9937). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9835bd98`: core): skip unchanged remote thread resources on a host render (#9969). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/agui-thread-controller.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/remote-thread-elements-deps.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-"@assistant-ui/react-ag-ui": patch
+"@assistant-ui/core": patch
 ---
 
-rename the ag-ui thread runtime core to AgUiThreadController
+skip unchanged remote thread resources when the thread list host re-renders
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2845,4 +1797,4 @@ rename the ag-ui thread runtime core to AgUiThreadController
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42a7c084` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9835bd98` are properly handled with clean fallback behavior.

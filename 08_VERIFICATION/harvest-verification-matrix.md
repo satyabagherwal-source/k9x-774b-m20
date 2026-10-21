@@ -4250,3 +4250,6 @@
 | `CYCLE-20261021-6RRM` | `2026-10-21T16:38:45.010Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3563` | Yes (`6b6e93d9...`) |
 | `CYCLE-20261021-ESQG` | `2026-10-21T16:44:59.512Z` | `adobe/react-spectrum` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3564` | Yes (`177e45d7...`) |
 | `CYCLE-20261021-EU4A` | `2026-10-21T16:45:01.306Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3565` | Yes (`880dce7b...`) |
+| `CYCLE-20261021-N6YP` | `2026-10-21T16:51:31.201Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3566` | Yes (`dd47af10...`) |
+| `CYCLE-20261021-N9YT` | `2026-10-21T16:51:35.093Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3567` | Yes (`d585bca6...`) |
+| `CYCLE-20261021-NL76` | `2026-10-21T16:51:49.650Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3568` | Yes (`21b146d8...`) |

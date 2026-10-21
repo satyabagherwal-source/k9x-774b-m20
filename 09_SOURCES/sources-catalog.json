@@ -2363,20 +2363,20 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "06baec98",
+    "sourceVersion": "945b0ac1",
     "license": "NOASSERTION",
-    "contentHash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
-    "lastHarvestedAt": "2026-10-21T15:16:33.541Z",
+    "contentHash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
+    "lastHarvestedAt": "2026-10-21T16:51:49.653Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "706037a4",
+    "sourceVersion": "dd1acfc3",
     "license": "MIT",
-    "contentHash": "63d05d42c96633030ca2da1b7e5cb85132865b09c06e5b67f5266a893812a706",
-    "lastHarvestedAt": "2026-10-20T20:35:06.692Z",
+    "contentHash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
+    "lastHarvestedAt": "2026-10-21T16:51:31.204Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "20a6e8cc",
+    "sourceVersion": "46c72f21",
     "license": "Apache-2.0",
-    "contentHash": "b62b10f30203fe5e7e5c4985482a448c6658d45bf07c9e13c2ee4646a41fbdd1",
-    "lastHarvestedAt": "2026-10-20T16:44:21.838Z",
+    "contentHash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
+    "lastHarvestedAt": "2026-10-21T16:51:35.096Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {

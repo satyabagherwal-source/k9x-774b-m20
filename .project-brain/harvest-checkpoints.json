@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T16:45:01.321Z",
+  "last_updated": "2026-10-21T16:51:49.666Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
-      "verified_at": "2026-10-21T15:16:33.556Z",
+      "content_hash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
+      "verified_at": "2026-10-21T16:51:49.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:16:33.556Z"
+      "last_updated": "2026-10-21T16:51:49.666Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3696,14 +3696,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-assistant-ui-assistant-ui",
-      "content_hash": "63d05d42c96633030ca2da1b7e5cb85132865b09c06e5b67f5266a893812a706",
-      "verified_at": "2026-10-20T20:35:06.697Z",
+      "content_hash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
+      "verified_at": "2026-10-21T16:51:31.215Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:35:06.697Z"
+      "last_updated": "2026-10-21T16:51:31.215Z"
     },
     "ducaale/xh": {
       "repository": "ducaale/xh",
@@ -10581,14 +10581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jhspetersson-fselect",
-      "content_hash": "b62b10f30203fe5e7e5c4985482a448c6658d45bf07c9e13c2ee4646a41fbdd1",
-      "verified_at": "2026-10-20T16:44:21.846Z",
+      "content_hash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
+      "verified_at": "2026-10-21T16:51:35.112Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:44:21.846Z"
+      "last_updated": "2026-10-21T16:51:35.112Z"
     },
     "mikepenz/AboutLibraries": {
       "repository": "mikepenz/AboutLibraries",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `20a6e8cc`  
+> **Source Version**: `46c72f21`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:44:21.505Z  
+> **Timestamp**: 2026-10-21T16:51:34.745Z  
 > **Learning ID**: `learn-github-jhspetersson-fselect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:44:21.496Z  
+> **Harvest Timestamp**: 2026-10-21T16:51:34.342Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1467,426 +1467,829 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20a6e8cc` (2026-10-20)
-**Commit Message**: fix regressions
+### Incident Patch 1: `46c72f21` (2026-10-20)
+**Commit Message**: fix found regressions
 
-**File**: `src/lexer.rs` (modified, +48/-22)
+**File**: `src/expr.rs` (modified, +22/-0)
 ```diff
-@@ -70,6 +70,7 @@ struct LexerState {
-     after_arithmetic: bool,
+@@ -1233,6 +1233,28 @@ enum Rendering {
+ }
+ 
+ impl Expr {
++    pub fn negated(&self) -> Expr {
++        let mut result = self.clone();
++        result.props.clear_file_types();
++
++        if let Some(op) = self.op {
++            result.op = Some(Op::negate(op));
++            return result;
++        }
++
++        if let Some(ref logical_op) = self.logical_op {
++            result.logical_op = Some(logical_op.negate());
++            if let Some(left) = &self.left {
++                result.left = Some(Box::new(left.negated()));
++            }
++            if let Some(right) = &self.right {
++                result.right = Some(Box::new(right.negated()));
++            }
++        }
++
++        result
++    }
++
+     pub fn cache_key(&self) -> String {
+         let mut key = String::new();
+         self.render(&mut key, Rendering::CacheKey).expect("writing to a String cannot fail");
+```
+
+**File**: `src/function.rs` (modified, +1/-0)
+```diff
+@@ -1960,6 +1960,7 @@ impl FieldAccumulator {
+ pub struct GroupAccumulator {
+     pub total_count: usize,
+     pub fields: HashMap<String, FieldAccumulator>,
++    pub key_types: Vec<Option<VariantType>>,
+     /// Absolute path and root depth of the first entry that joined the group.
+     /// Only recorded when the query drives an outer FROM-subselect, so each
+     /// group can stand in for one filesystem entry there.
+```
+
+**File**: `src/lexer.rs` (modified, +63/-1)
+```diff
+@@ -71,6 +71,7 @@ struct LexerState {
      in_value_set: bool,
      paren_depth: u32,
-+    after_as: bool,
+     after_as: bool,
++    after_value_end: bool,
  }
  
  impl LexerState {
-@@ -85,6 +86,7 @@ impl LexerState {
-             after_arithmetic: false,
+@@ -87,13 +88,18 @@ impl LexerState {
              in_value_set: false,
              paren_depth: 0,
-+            after_as: false,
+             after_as: false,
++            after_value_end: false,
          }
      }
  
-@@ -115,6 +117,7 @@ pub struct Lexer {
-     between_parts: bool,
-     state: LexerState,
-     state_history: Vec<LexerState>,
-+    root_aliases: Vec<String>,
- }
- 
- impl Lexer {
-@@ -127,6 +130,7 @@ impl Lexer {
-             between_parts: false,
-             state: LexerState::new(),
-             state_history: vec![],
-+            root_aliases: vec![],
-         }
+     fn in_fields(&self) -> bool {
+         self.clause == Clause::Fields
      }
  
-@@ -230,13 +234,13 @@ impl Lexer {
-                         && date_tail_follows(&s, &rest);
-                     if !is_date {
-                         if self.is_arithmetic_op_char(c) {
--                            let maybe_expr = looks_like_expression(&s);
-+                            let maybe_expr = looks_like_expression(&s, &self.root_aliases);
-                             if maybe_expr {
-                                 break;
-                             }
-                         } else if self.state.after_operator
-                             && is_arithmetic_char(c)
--                            && continues_arithmetic(&s, c, &rest, self.chars[self.input_index].get(self.char_index + 1).copied())
-+                            && continues_arithmetic(&s, c, &rest, self.chars[self.input_index].get(self.char_index + 1).copied(), &self.root_aliases)
-                         {
-                             // `size > 2*4`: after a comparison operator `*`, `/`, `%`,
-                             // `+` and `-` are literal characters (paths, LIKE patterns,
-@@ -342,6 +346,13 @@ impl Lexer {
-             _ => None,
-         };
- 
-+        if self.state.clause == Clause::Roots
-+            && self.state.after_as
-+            && let Some(Lexeme::RawString(ref alias)) = lexeme
-+        {
-+            self.root_aliases.push(alias.to_ascii_lowercase());
-+        }
-+        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
++    fn in_column_expression(&self) -> bool {
++        matches!(self.clause, Clause::Fields | Clause::GroupBy)
++    }
++
+     fn in_where(&self) -> bool {
+         self.clause == Clause::Where
+     }
+@@ -371,6 +377,13 @@ impl Lexer {
+                 "or" if self.state.in_where() && self.state.is_keyword_position(false) => Some(Lexeme::Or),
+                 "and" if self.state.in_where() && self.state.is_keyword_position(false) => Some(Lexeme::And),
+                 "not" if self.state.in_where() && !self.state.after_operator && !self.state.after_value_start => Some(Lexeme::Not),
++                "or" if self.state.in_column_expression() && self.state.after_value_end && self.value_follows() => Some(Lexeme::Or),
++                "and" if self.state.in_column_expression() && self.state.after_value_end && self.value_follows() => Some(Lexeme::And),
++                "not" if self.state.in_column_expression()
++                    && !self.state.after_value_end
++                    && !self.state.after_operator
++                    && !self.state.after_as
++                    && self.value_follows() => Some(Lexeme::Not),
+                 "group" if self.state.is_keyword_position(search_root_ctx) && self.next_word_is("by") => {
+                     self.state.clause = Clause::GroupBy;
+                     Some(Lexeme::Group)
+@@ -421,6 +434,11 @@ impl Lexer {
+             let scope = self.current_scope();
+             self.root_aliases.push((alias.to_ascii_lowercase(), scope));
+         }
++        self.state.after_value_end = match lexeme {
++            Some(Lexeme::RawString(ref s)) => !s.eq_ignore_ascii_case("as"),
++            Some(Lexeme::String(_)) | Some(Lexeme::Close) | Some(Lexeme::CurlyClose) => true,
++            _ => false,
++        };
+         self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
          self.state.possible_search_root = matches!(lexeme, Some(Lexeme::From))
                  || (matches!(lexeme, Some(Lexeme::Comma)) && self.state.clause == Clause::Roots);
-         self.state.in_value_set = matches!(lexeme, Some(Lexeme::CurlyOpen))
-@@ -450,40 +461,43 @@ fn date_tail_follows(s: &str, rest: &str) -> bool {
- 
- /// Does `s` + `c` + `rest` read as an arithmetic expression over numbers,
- /// fields and functions (`2*4`, `10-5*2`, `2*size`), or as `1+(`?
--fn continues_arithmetic(s: &str, c: char, rest: &str, next_char: Option<char>) -> bool {
-+fn continues_arithmetic(s: &str, c: char, rest: &str, next_char: Option<char>, root_aliases: &[String]) -> bool {
-     if rest.is_empty() {
-         return next_char == Some('(');
-     }
--    looks_like_expression(&format!("{}{}{}", s, c, rest))
-+    looks_like_expression(&format!("{}{}{}", s, c, rest), root_aliases)
- }
- 
- static DATE_ALIKE_REGEX: LazyLock<Regex> = LazyLock::new(|| {
-     Regex::new("^(\\d{4})-?(\\d{2})?").unwrap()
- });
- 
- /// Does the word read as arithmetic over operands (`t.size/2`, `line_count/2`,
--/// `10-5*2`)? Only operator characters separate operands, so a dotted alias
--/// reference or an underscored field name stays one operand; an empty operand
--/// (`-5`, `%size%`) means the word is a literal.
--fn looks_like_expression(s: &str) -> bool {
--    !s.split(['+', '-', '*', '/', '%', '(', ')']).any(|operand| !is_arithmetic_operand(operand))
-+/// `10-5*2`)? Only operator characters separate operands, so an underscored
-+/// field name stays one operand, and a dotted word is an operand only when it
-+/// is a number or starts with a root alias the query declared, so an unquoted
-+/// file name such as `report.txt-backup.bak` stays a literal. An empty operand
-+/// (`-5`, `%size%`) also means the word is a literal.
-+fn looks_like_expression(s: &str, root_aliases: &[String]) -> bool {
-+    !s.split(['+', '-', '*', '/', '%', '(', ')']).any(|operand| !is_arithmetic_operand(operand, root_aliases))
- }
- 
--fn is_arithmetic_operand(operand: &str) -> bool {
--    !operand.is_empty()
--        && (operand.parse::<i64>().is_ok()
--            || operand.parse::<f64>().is_ok()
--            || Field::parse_field(operand).is_ok()
--            || Function::from_str(operand).is_ok()
--            || is_alias_reference(operand))
-+fn is_arithmetic_operand(operand: &str, root_aliases: &[String]) -> bool {
-+    if operand.is_empty() {
-+        return false;
-+    }
-+    if operand.parse::<i64>().is_ok() || operand.parse::<f64>().is_ok() {
-+        return true;
-+    }
-+    match operand.split_once('.') {
-+        Some((alias, name)) => root_aliases.iter().any(|declared| declared.eq_ignore_ascii_case(alias)) && is_identifier(name),
-+        None => Field::parse_field(operand).is_ok() || Func
-```
-
-**File**: `src/searcher.rs` (modified, +110/-3)
-```diff
-@@ -162,6 +162,8 @@ pub struct Searcher<'a> {
-     canonical_root_cache: Option<(PathBuf, PathBuf)>,
- 
-     pub error_count: i32,
-+    suppress_row_errors: bool,
-+    suppressed_row_error: Option<SearchError>,
- }
- 
- macro_rules! try_output {
-@@ -232,8 +234,12 @@ impl Membership {
-             VariantType::Float => Membership::Floats(variants.filter_map(|v| v.to_float_opt()).collect()),
-             VariantType::Bool => {
-                 let mut bools = (false, false);
--                for variant in variants {
--                    if variant.to_bool() { bools.0 = true } else { bools.1 = true }
-+                for value in values {
-+                    match str_to_bool(value) {
-+                        Some(true) => bools.0 = true,
-+                        Some(false) => bools.1 = true,
-+                        None => {}
-+                    }
-                 }
-                 Membership::Bools { has_true: bools.0, has_false: bools.1 }
-             }
-@@ -449,6 +455,8 @@ impl<'a> Searcher<'a> {
-             canonical_root_cache: None,
- 
-             error_count: 0,
-+            suppress_row_errors: false,
-+            suppressed_row_error: None,
-         }
+@@ -472,6 +490,24 @@ impl Lexer {
+         false
      }
  
-@@ -1352,6 +1360,7 @@ impl<'a> Searcher<'a> {
-         sub_searcher.silent_mode = true;
-         sub_searcher.is_nested = true;
-         sub_searcher.alias_failures = Rc::clone(&self.alias_failures);
-+        sub_searcher.suppress_row_errors = self.suppress_row_errors;
-         sub_searcher.enclosing_aliases = self.enclosing_aliases.union(&self.query.own_root_aliases()).cloned().collect();
-         sub_searcher.root_depth_column = root_depth_column;
-         let shadowed: Vec<(String, Option<HashMap<String, Variant>>)> = {
-@@ -1373,6 +1382,9 @@ impl<'a> Searcher<'a> {
-             }
-         }
-         outcome?;
-+        if let Some(err) = sub_searcher.suppressed_row_error.take() {
-+            return Err(err);
-+        }
- 
-         // The buffer holds limit + offset rows; the offset rows are skipped
-         // only in the print path, so they must be skipped here as well.
-@@ -1803,6 +1815,16 @@ impl<'a> Searcher<'a> {
-     }
- 
-     fn handle_nonfatal_error(&mut self, mut err: SearchError, default_source: &Path) {
-+        // While a row alias is being bound, a row error inside its subquery
-+        // is the alias's failure: it is handed back to the binder instead of
-+        // being reported, and reported, against the outer row, only once the
-+        // alias is read.
-+        if self.suppress_row_errors {
-+            if self.suppressed_row_error.is_none() {
-+                self.suppressed_row_error = Some(err);
++    fn value_follows(&self) -> bool {
++        let mut input_index = self.input_index;
++        let mut char_index = self.char_index;
++        while let Some(part) = self.chars.get(input_index) {
++            if let Some(&c) = part.iter().skip(char_index).find(|c| !c.is_ascii_whitespace()) {
++                if matches!(c, ',' | ')' | '}') {
++                    return false;
++                }
++                return !["from", "into", "where", "group", "order", "limit", "offset", "having", "as"]
++                    .iter()
++                    .any(|keyword| self.next_word_is(keyword));
 +            }
-+            return;
++            input_index += 1;
++            char_index = 0;
 +        }
-         self.error_count += 1;
-         if err.source.is_empty() {
-             err.source = default_source.to_string_lossy().to_string();
-@@ -2296,6 +2318,20 @@ impl<'a> Searcher<'a> {
-         root_path: &Path,
-         current_alias: &str,
-         required_columns: &[(String, Expr)],
-+    ) -> Result<(), SearchError> {
-+        let previous = std::mem::replace(&mut self.suppress_row_errors, true);
-+        let outcome = self.bind_row_aliases_inner(entry, file_info, root_path, current_alias, required_columns);
-+        self.suppress_row_errors = previous;
-+        outcome
++        false
 +    }
 +
-+    fn bind_row_aliases_inner(
-+        &mut self,
-+        entry: &DirEntry,
-+        file_info: &Option<FileInfo>,
-+        root_path: &Path,
-+        current_alias: &str,
-+        required_columns: &[(String, Expr)],
-     ) -> Result<(), SearchError> {
-         let rounds = if required_columns.len() > 1 { required_columns.len() } else { 1 };
-         let mut failed: Vec<(usize, SearchError)> = Vec::new();
-@@ -2614,7 +2650,7 @@ impl<'a> Searcher<'a> {
-                 // not coerced to 0, like the DateTime arm below.
-                 VariantType::Int => arg_val.to_exact_int() == Some(field_value.to_int()),
-                 VariantType::Float => arg_val.to_float_opt() == Some(field_value.to_float()),
--                VariantType::Bool => arg_val.to_bool() == field_value.to_bool(),
-+                VariantType::Bool => str_to_bool(&arg_val.to_string()) == Some(field_value.to_bool()),
-                 VariantType::DateTime => {
-                     // Unparseable values: silently skip this arg (treat as a
-                     // non-match) instead of erroring per file scanned.
-@@ -5749,6 +5785,25 @@ mod tests {
-         assert_eq!(aliased, vec!["2\t-2\t-2", "3\t-3\t-3", "10\t-10\t-10"], "a negated alias keeps its sign");
+     fn is_arithmetic_op_char(&self, c: char) -> bool {
+         match c {
+             '+' | '-' => self.state.in_expression() && !self.state.after_operator,
+@@ -483,7 +519,7 @@ impl Lexer {
+     }
+ 
+     fn is_op_char(&self, c: char) -> bool {
+-        if !matches!(self.state.clause, Clause::Fields | Clause::Where) {
++        if !matches!(self.state.clause, Clause::Fields | Clause::Where | Clause::GroupBy) {
+             return false;
+         }
+ 
+@@ -2461,6 +2497,32 @@ c"))), "lexemes were {:?}", lexemes);
+         );
      }
  
 +    #[test]
-+    fn unquoted_file_names_with_dots_and_pluses_stay_literal() {
-+        let tmp = std::env::temp_dir().join("fselect_test_unquoted_dotted_names");
-+        let _ = fs::remove_dir_all(&tmp);
-+        fs::create_dir_all(&tmp).unwrap();
-+        for name in ["report.txt-backup.bak", "a+b.txt", "plain.txt"] {
-+            fs::write(tmp.join(name), "x").unwrap();
-+        }
++    fn logical_words_in_select_column_list_are_operators_between_values() {
++        let mut lexer = lexer!("select name, not is_file, is_dir and size > 2, coalesce(is_file or is_dir, 0) from .");
 +
-+        let dotted = run_query_against_dir("select name from __DIR__ where name=report.txt
++        let mut lexemes = vec![];
++        while let Some(lexeme) = lexer.next_lexeme() {
++            lexemes.push(lexeme);
++        }
++        assert!(lexemes.contains(&Lexeme::Not));
++        assert!(lexemes.contains(&Lexeme::And));
++        assert!(lexemes.contains(&Lexeme::Or));
++    }
++
++    #[test]
++    fn logical_words_without_an_operand_in_select_stay_column_names() {
++        for query in ["select not from .", "select name, not from .", "select name, and from .", "select name, size or from ."] {
++            let mut lexer = Lexer::new(vec![query.to_string()]);
++            while let Some(lexeme) = lexer.next_lexeme() {
++                assert!(
++                    !matches!(lexeme, Lexeme::Not | Lexeme::And | Lexeme::Or),
++                    "{query} produced {lexeme:?}"
++                );
++            }
++        }
++    }
++
+     #[test]
+     fn word_operator_in_select_column_list() {
+         let mut lexer = lexer!("select gt from .");
+```
+
+**File**: `src/parser.rs` (modified, +45/-27)
+```diff
+@@ -339,7 +339,7 @@ impl <'a> Parser<'a> {
+                         }
+                     }
+                 }
+-                Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) => {
++                Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) | Some(Lexeme::Not) => {
+                     self.drop_lexeme();
+                     match self.parse_expr() {
+                         Ok(Some(field)) => fields.push(field),
+@@ -785,7 +785,8 @@ impl <'a> Parser<'a> {
+         }
+     }
+ 
+-    fn fold_by_weight(&self, mut operands: Vec<Expr>, logical_op: LogicalOp) -> Result<Expr, String> {
++    fn fold_by_weight(&self, operands: Vec<Expr>, logical_op: LogicalOp) -> Result<Expr, String> {
++        let mut operands: Vec<Expr> = operands.into_iter().map(|operand| self.as_condition(operand)).collect();
+         operands.sort_by_key(|operand| operand.weight);
+         let mut operands = operands.into_iter();
+         let mut result = operands.next().expect("a chain has at least one operand");
+@@ -818,11 +819,18 @@ impl <'a> Parser<'a> {
+         self.negation_depth -= 1;
+ 
+         match result {
+-            Ok(Some(expr)) => Ok(Some(Self::negate_expr_op(&expr))),
++            Ok(Some(expr)) => Ok(Some(self.as_condition(expr).negated())),
+             other => other,
+         }
+     }
+ 
++    fn as_condition(&self, expr: Expr) -> Expr {
++        if self.wraps_bare_booleans() || expr.op.is_some() || expr.logical_op.is_some() {
++            return expr;
++        }
++        Expr::op(expr, Op::Eq, Expr::value(String::from("true")))
++    }
++
+     fn parse_comparison(&mut self) -> Result<Option<Expr>, String> {
+         let mut exists_present = false;
+ 
+@@ -1594,7 +1602,7 @@ impl <'a> Parser<'a> {
+                                 }
+                             }
+                         }
+-                        Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) => {
++                        Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) | Some(Lexeme::Not) => {
+                             self.drop_lexeme();
+                             match self.parse_expr()? {
+                                 Some(group_field) => group_by_fields.push(group_field),
+@@ -1895,29 +1903,6 @@ impl <'a> Parser<'a> {
+     fn drop_lexeme(&mut self) {
+         self.index -= 1;
+     }
+-
+-    fn negate_expr_op(expr: &Expr) -> Expr {
+-        let mut result = expr.clone();
+-        result.props.clear_file_types();
+-
+-        if let Some(left) = &expr.left {
+-            result.left = Some(Box::from(Self::negate_expr_op(left)));
+-        }
+-
+-        if let &Some(op) = &expr.op {
+-            result.op = Some(Op::negate(op));
+-        }
+-
+-        if let Some(ref logical_op) = expr.logical_op {
+-            result.logical_op = Some(logical_op.negate());
+-        }
+-
+-        if let Some(right) = &expr.right {
+-            result.right = Some(Box::from(Self::negate_expr_op(right)));
+-        }
+-
+-        result
+-    }
+ }
+ 
+ #[cfg(test)]
+@@ -1939,6 +1924,39 @@ mod tests {
+         p.parse(false).err().unwrap_or_else(|| panic!("{} should not parse", query))
+     }
+ 
++    #[test]
++    fn bare_booleans_under_not_and_or_inside_arguments_become_conditions() {
++        let expr = parse_where("select name from /test where coalesce(not is_file, 0) = false");
++        let negated = expr.left.as_ref().unwrap().left.as_ref().unwrap();
++        assert_eq!(negated.op, Some(Op::Ne));
++        assert_eq!(negated.left.as_ref().unwrap().field, Some(Field::IsFile));
++
++        let expr = parse_where("select name from /test where coalesce(is_file and size > 2, 0) = true");
++        let conjunction = expr.left.as_ref().unwrap().left.as_ref().unwrap();
++        assert_eq!(conjunction.logical_op, Some(LogicalOp::And));
++        for side in [&conjunction.left, &conjunction.right] {
++            assert!(side.as_ref().unwrap().op.is_some());
++        }
++    }
++
++    #[test]
++    fn select_columns_accept_not_and_or_conditions() {
++        let query = parse_query("select not is_file, coalesce(not is_file, 0), is_file and size > 2 as big from /test").unwrap();
++        assert_eq!(query.fields.len(), 3);
++        assert_eq!(query.fields[0].op, Some(Op::Ne));
++        assert_eq!(query.fields[0].left.as_ref().unwrap().field, Some(Field::IsFile));
++        assert_eq!(query.fields[1].left.as_ref().unwrap().op, Some(Op::Ne));
++        assert_eq!(query.fields[2].logical_op, Some(LogicalOp::And));
++        assert_eq!(query.fields[2].alias.as_deref(), Some("big"));
++    }
++
++    #[test]
++    fn not_flips_only_the_outer_comparison_of_a_nested_one() {
++        let expr = parse_where("select name from /test where not ((size > 2) = false)");
++        assert_eq!(expr.op, Some(Op::Ne));
++        assert_eq!(expr.left.as_ref().unwrap().op, Some(Op::Gt));
++    }
++
+     #[test]
+     fn operator_less_conditions_are_rejected() {
+         for (query, found) in [
+```
+
+**File**: `src/searcher.rs` (modified, +134/-40)
+```diff
+@@ -159,9 +159,8 @@ pub struct Searcher<'a> {
+     /// with, keyed by the value's text, cached alongside the rows: a row is
+     /// handed back as text, which alone cannot tell the file name "true"
+     /// from the boolean true.
+-    subquery_type_cache: HashMap<String, HashMap<String, VariantType>>,
+-    last_subquery_types: HashMap<String, VariantType>,
+-    first_column_types: HashMap<String, VariantType>,
++    subquery_type_cache: HashMap<String, Vec<Option<VariantType>>>,
++    last_subquery_types: Vec<Option<VariantType>>,
+     membership_cache: HashMap<(String, VariantType), Rc<Membership>>,
+     silent_mode: bool,
+     /// Runs a subquery on behalf of an enclosing searcher, whose aliases it
+@@ -328,25 +327,35 @@ impl AggregatePlan {
+ }
+ 
+ enum BufferedRow {
+-    Rendered(String),
++    Rendered(String, Option<VariantType>),
+     Pending(PendingRow),
+ }
+ 
++impl BufferedRow {
++    fn first_type(&self) -> Option<VariantType> {
++        match self {
++            BufferedRow::Rendered(_, first_type) => first_type.clone(),
++            BufferedRow::Pending(pending) => pending.first_type.clone(),
++        }
++    }
++}
++
+ struct PendingRow {
+     path: PathBuf,
+     root_path: PathBuf,
+     file_info: Option<FileInfo>,
+     follow_symlinks: bool,
+     items: Vec<(String, String)>,
+     deferred: Vec<usize>,
++    first_type: Option<VariantType>,
+ }
+ 
+ impl std::ops::Deref for BufferedRow {
+     type Target = str;
+ 
+     fn deref(&self) -> &str {
+         match self {
+-            BufferedRow::Rendered(text) => text,
++            BufferedRow::Rendered(text, _) => text,
+             BufferedRow::Pending(_) => "",
+         }
+     }
+@@ -475,8 +484,7 @@ impl<'a> Searcher<'a> {
+             conforms_map: HashMap::new(),
+             subquery_cache: HashMap::new(),
+             subquery_type_cache: HashMap::new(),
+-            last_subquery_types: HashMap::new(),
+-            first_column_types: HashMap::new(),
++            last_subquery_types: Vec::new(),
+             membership_cache: HashMap::new(),
+             silent_mode: false,
+             is_nested: false,
+@@ -922,7 +930,7 @@ impl<'a> Searcher<'a> {
+                     })
+                     .collect();
+ 
+-                let mut grouped_results: TopN<Criteria<String>, Vec<(String, String)>> =
++                let mut grouped_results: TopN<Criteria<String>, (Vec<(String, String)>, Option<VariantType>)> =
+                     if self.query.limit > 0 {
+                         TopN::new(self.query.limit.saturating_add(self.query.offset))
+                     } else {
+@@ -934,10 +942,19 @@ impl<'a> Searcher<'a> {
+                 for (group_key, group_acc) in &accumulators {
+                     let mut file_map = HashMap::new();
+                     for (i, k) in group_keys.iter().enumerate() {
+-                        file_map.insert(k.clone(), group_key.get(i).cloned().unwrap_or_default());
++                        let text = group_key.get(i).cloned().unwrap_or_default();
++                        match group_acc.key_types.get(i).and_then(Option::as_ref) {
++                            Some(value_type) => {
++                                self.cached_types.insert(k.clone(), (text.clone(), value_type.clone()));
++                            }
++                            None => {
++                                self.cached_types.remove(k);
++                            }
++                        }
++                        file_map.insert(k.clone(), text);
+                     }
+                     self.reset_alias_failures(&aliases);
+-                    self.bind_group_context(&aliases, group_key, &[]);
++                    self.bind_group_context(&aliases, group_key, &group_acc.key_types, &[]);
+                     if let Some(having_expr) = having_expr {
+                         if having_expr.has_correlated_subquery() {
+                             self.bind_aggregate_aliases(&aliases, group_key, &mut file_map, group_acc, true)?;
+@@ -950,11 +967,12 @@ impl<'a> Searcher<'a> {
+                     }
+                     self.bind_aggregate_aliases(&aliases, group_key, &mut file_map, group_acc, false)?;
+                     let mut items: Vec<(String, String)> = Vec::new();
++                    let mut first_type = None;
+                     for (index, column_expr) in self.query.fields.iter().enumerate() {
+                         let value = self.get_column_expr_value(
+                             None, &None, Path::new(""), &mut file_map, Some(group_acc), column_expr,
+                         )?;
+-                        self.note_first_column_type(index, &value);
++                        first_type = first_type.or(self.first_column_type(index, &value));
+                         items.push((column_expr.column_name(), value.to_string()));
+                     }
+                     if self.root_depth_column
+@@ -991,13 +1009,13 @@ impl<'a> Searcher<'a> {
+                     }
+                     grouped_results.insert(
+                         Criteria
+```
+
+**File**: `tests/grouping.rs` (modified, +114/-0)
+```diff
+@@ -32,3 +32,117 @@ fn computed_grouping_alias_keeps_its_numeric_type_in_correlated_subqueries() {
+     assert_eq!(grouped.0, Some(0), "{}", grouped.2);
+     assert_eq!(grouped.1, "4\t0\n6\t0\n12\t3\n");
+ }
++
++#[test]
++fn grouped_coalesce_alias_keeps_a_string_that_reads_as_boolean() {
++    let dir = std::env::temp_dir().join("fselect_it_grouping_coalesce_alias_type");
++    let _ = fs::remove_dir_all(&dir);
++    fs::create_dir_all(&dir).unwrap();
++    fs::write(dir.join("true"), "x").unwrap();
++    fs::write(dir.join("a.txt"), "yy").unwrap();
++    let root = dir.display();
++
++    let arithmetic = fselect(&format!(
++        "select coalesce(name, is_file) as n, t.n + 0 from {root} as t group by coalesce(name, is_file) order by n"
++    ));
++    let having = fselect(&format!(
++        "select coalesce(name, is_file) as n, count(*) from {root} as t group by coalesce(name, is_file) having t.n + 0 = 0 order by n"
++    ));
++    let boolean = fselect(&format!(
++        "select is_file as f, t.f + 0 from {root} as t group by is_file"
++    ));
++    let _ = fs::remove_dir_all(&dir);
++
++    assert_eq!(arithmetic.0, Some(0), "{}", arithmetic.2);
++    assert_eq!(arithmetic.1, "a.txt\t0\ntrue\t0\n");
++    assert_eq!(having.0, Some(0), "{}", having.2);
++    assert_eq!(having.1, "a.txt\t1\ntrue\t1\n");
++    assert_eq!(boolean.0, Some(0), "{}", boolean.2);
++    assert_eq!(boolean.1, "true\t1\n");
++}
++
++#[test]
++fn sorted_scalar_subquery_takes_the_type_of_the_row_it_returns() {
++    let dir = std::env::temp_dir().join("fselect_it_subquery_row_type");
++    let _ = fs::remove_dir_all(&dir);
++    for sub in ["strings", "flags", "other"] {
++        fs::create_dir_all(dir.join(sub)).unwrap();
++    }
++    fs::write(dir.join("strings").join("true"), "xx").unwrap();
++    fs::write(dir.join("flags").join("item.txt"), "xxx").unwrap();
++    fs::write(dir.join("other").join("o"), "x").unwrap();
++    let strings = dir.join("strings");
++    let flags = dir.join("flags");
++    let other = dir.join("other");
++    let (strings, flags, other) = (strings.display(), flags.display(), other.display());
++
++    let query = |order: &str| {
++        fselect(&format!(
++            "select (select coalesce(r.name, is_file) from {strings} as r, {flags} order by size {order}) + 0 from {other}"
++        ))
++    };
++    let boolean_first = query("desc");
++    let string_first = query("asc");
++    let _ = fs::remove_dir_all(&dir);
++
++    assert_eq!(boolean_first.0, Some(0), "{}", boolean_first.2);
++    assert_eq!(boolean_first.1, "1\n");
++    assert_eq!(string_first.0, Some(0), "{}", string_first.2);
++    assert_eq!(string_first.1, "0\n");
++}
++
++#[test]
++fn conditions_group_and_filter_in_having() {
++    let dir = std::env::temp_dir().join("fselect_it_grouping_conditions");
++    let _ = fs::remove_dir_all(&dir);
++    fs::create_dir_all(dir.join("sub")).unwrap();
++    fs::write(dir.join("f1"), "xx").unwrap();
++    fs::write(dir.join("f2"), "xxx").unwrap();
++    let root = dir.display();
++
++    let negated = fselect(&format!(
++        "select not is_file as d, count(*) from {root} group by not is_file order by d"
++    ));
++    let compared = fselect(&format!(
++        "select is_file and size > 2 as k, count(*) from {root} group by is_file and size > 2 order by k"
++    ));
++    let having = fselect(&format!(
++        "select size > 2 as big, count(*) from {root} group by size > 2 having size > 2"
++    ));
++    let having_not = fselect(&format!(
++        "select size > 2 as big, count(*) from {root} group by size > 2 having not big"
++    ));
++    let _ = fs::remove_dir_all(&dir);
++
++    for result in [&negated, &compared, &having, &having_not] {
++        assert_eq!(result.0, Some(0), "{}", result.2);
++    }
++    assert_eq!(negated.1, "false\t2\ntrue\t1\n");
++    assert_eq!(compared.1, "false\t2\ntrue\t1\n");
++    assert_eq!(having.1, "true\t1\n");
++    assert_eq!(having_not.1, "false\t2\n");
++}
++
++#[test]
++fn unary_minus_turns_a_condition_into_zero_or_minus_one() {
++    let dir = std::env::temp_dir().join("fselect_it_negated_condition");
++    let _ = fs::remove_dir_all(&dir);
++    fs::create_dir_all(&dir).unwrap();
++    fs::write(dir.join("f1"), "xx").unwrap();
++    fs::write(dir.join("f2"), "xxx").unwrap();
++    let root = dir.display();
++
++    let column = fselect(&format!("select name, -(size > 2) from {root} order by name"));
++    let filter = fselect(&format!("select name from {root} where -(size > 2) < 0"));
++    let having = fselect(&format!(
++        "select size > 2 as big, count(*) from {root} group by size > 2 having -(size > 2) < 0"
++    ));
++    let _ = fs::remove_dir_all(&dir);
++
++    for result in [&column, &filter, &having] {
++        assert_eq!(result.0, Some(0), "{}", result.2);
++    }
++    assert_eq!(column.1, "f1\t0\nf2\t-1\n");
++    assert_eq!(filter.1, "f2\n");
++    assert_eq!(having.1, "true\t1\n");
++}
 ```
 
 ---
 
-### Incident Patch 2: `c5cccc9f` (2026-10-20)
-**Commit Message**: fix regression
+### Incident Patch 2: `35999f04` (2026-10-20)
+**Commit Message**: fix found regressions
 
-**File**: `src/searcher.rs` (modified, +67/-5)
+**File**: `src/parser.rs` (modified, +19/-1)
 ```diff
-@@ -2324,12 +2324,44 @@ impl<'a> Searcher<'a> {
-                 break;
+@@ -35,6 +35,7 @@ pub struct Parser<'a> {
+     roots_parsed: bool,
+     where_parsed: bool,
+     in_having: bool,
++    args_depth: u32,
+     debug: bool,
+     /// Aliases declared on this query's own roots; any other alias in an
+     /// expression refers to an enclosing query's entry.
+@@ -54,6 +55,7 @@ impl <'a> Parser<'a> {
+             roots_parsed: false,
+             where_parsed: false,
+             in_having: false,
++            args_depth: 0,
+             debug: false,
+             root_aliases: vec![],
+             negation_depth: 0,
+@@ -986,8 +988,10 @@ impl <'a> Parser<'a> {
+         result
+     }
+ 
++    /// A bare boolean in WHERE or HAVING is a condition (`where is_file`),
++    /// but inside a function's argument list or an IN list it is a value.
+     fn wraps_bare_booleans(&self) -> bool {
+-        self.roots_parsed && (!self.where_parsed || self.in_having)
++        self.args_depth == 0 && self.roots_parsed && (!self.where_parsed || self.in_having)
+     }
+ 
+     fn ensure_boolean_conditions(mut expr: Expr, clause: &str) -> Result<Expr, String> {
+@@ -1224,6 +1228,13 @@ impl <'a> Parser<'a> {
+     }
+ 
+     fn parse_args(&mut self) -> Result<Vec<Expr>, String> {
++        self.args_depth += 1;
++        let args = self.parse_args_inner();
++        self.args_depth -= 1;
++        args
++    }
++
++    fn parse_args_inner(&mut self) -> Result<Vec<Expr>, String> {
+         let mut args = vec![];
+ 
+         loop {
+@@ -1389,6 +1400,13 @@ impl <'a> Parser<'a> {
+     }
+ 
+     fn parse_function(&mut self, function: Function) -> Result<Expr, String> {
++        self.args_depth += 1;
++        let parsed = self.parse_function_inner(function);
++        self.args_depth -= 1;
++        parsed
++    }
++
++    fn parse_function_inner(&mut self, function: Function) -> Result<Expr, String> {
+         let mut function_expr = Expr::function(function);
+ 
+         let mut curly_mode = false;
+```
+
+**File**: `src/searcher.rs` (modified, +128/-5)
+```diff
+@@ -155,6 +155,13 @@ pub struct Searcher<'a> {
+     cached_types: HashMap<String, (String, VariantType)>,
+     conforms_map: HashMap<String, String>,
+     subquery_cache: HashMap<String, Vec<String>>,
++    /// The type each first-column value of a subquery's rows was produced
++    /// with, keyed by the value's text, cached alongside the rows: a row is
++    /// handed back as text, which alone cannot tell the file name "true"
++    /// from the boolean true.
++    subquery_type_cache: HashMap<String, HashMap<String, VariantType>>,
++    last_subquery_types: HashMap<String, VariantType>,
++    first_column_types: HashMap<String, VariantType>,
+     membership_cache: HashMap<(String, VariantType), Rc<Membership>>,
+     silent_mode: bool,
+     /// Runs a subquery on behalf of an enclosing searcher, whose aliases it
+@@ -467,6 +474,9 @@ impl<'a> Searcher<'a> {
+             cached_types: HashMap::new(),
+             conforms_map: HashMap::new(),
+             subquery_cache: HashMap::new(),
++            subquery_type_cache: HashMap::new(),
++            last_subquery_types: HashMap::new(),
++            first_column_types: HashMap::new(),
+             membership_cache: HashMap::new(),
+             silent_mode: false,
+             is_nested: false,
+@@ -940,10 +950,11 @@ impl<'a> Searcher<'a> {
+                     }
+                     self.bind_aggregate_aliases(&aliases, group_key, &mut file_map, group_acc, false)?;
+                     let mut items: Vec<(String, String)> = Vec::new();
+-                    for column_expr in &self.query.fields {
++                    for (index, column_expr) in self.query.fields.iter().enumerate() {
+                         let value = self.get_column_expr_value(
+                             None, &None, Path::new(""), &mut file_map, Some(group_acc), column_expr,
+                         )?;
++                        self.note_first_column_type(index, &value);
+                         items.push((column_expr.column_name(), value.to_string()));
+                     }
+                     if self.root_depth_column
+@@ -1388,6 +1399,7 @@ impl<'a> Searcher<'a> {
+         let ok_to_cache = is_subquery_cacheable(&query);
+         if ok_to_cache
+             && let Some(cached) = self.subquery_cache.get(&query_str) {
++                self.last_subquery_types = self.subquery_type_cache.get(&query_str).cloned().unwrap_or_default();
+                 return Ok(cached.clone());
              }
+ 
+@@ -1460,13 +1472,21 @@ impl<'a> Searcher<'a> {
+             .map(|s| s.strip_suffix(terminator.as_str()).unwrap_or(s).to_string())
+             .collect::<Vec<String>>();
+ 
++        self.last_subquery_types = std::mem::take(&mut sub_searcher.first_column_types);
+         if ok_to_cache {
++            self.subquery_type_cache.insert(query_str.clone(), self.last_subquery_types.clone());
+             self.subquery_cache.insert(query_str, result_values.clone());
          }
-+        if failed.is_empty() {
-+            return Ok(());
+ 
+         Ok(result_values)
+     }
+ 
++    fn note_first_column_type(&mut self, index: usize, value: &Variant) {
++        if index == 0 && self.is_nested {
++            self.first_column_types.entry(value.to_string()).or_insert_with(|| value.get_type().clone());
 +        }
-         for (index, err) in failed {
--            let name = &required_columns[index].0;
--            self.record_context.borrow_mut().entry(current_alias.to_string()).or_default().remove(name);
--            self.alias_failures.borrow_mut().pending.entry(current_alias.to_string()).or_default().insert(name.clone(), err);
-+            self.mark_row_alias_failed(current_alias, &required_columns[index].0, err);
++    }
++
+     #[cfg(all(windows, feature = "everything"))]
+     fn try_visit_with_everything(&mut self, root_dir: &Path) -> Result<bool, SearchError> {
+         let abs = match canonical_path(&root_dir.to_path_buf()) {
+@@ -2049,7 +2069,13 @@ impl<'a> Searcher<'a> {
+         column: &Expr,
+     ) -> Result<Variant, SearchError> {
+         let value = self.get_column_expr_value(None, &None, Path::new(""), file_map, Some(accumulator), column)?;
+-        Ok(typed_variant(column, &value.to_string()))
++        // An aggregate is formatted as text and needs its type back; any
++        // other column already carries the type it was produced with.
++        if column.has_aggregate_function() {
++            Ok(typed_variant(column, &value.to_string()))
++        } else {
++            Ok(value)
++        }
+     }
+ 
+     fn upsert_alias_value(values: &mut Vec<(String, Variant)>, column: &Expr, value: Variant) {
+@@ -2250,7 +2276,13 @@ impl<'a> Searcher<'a> {
+             }
+             let list = self.get_list_from_subquery(*subquery)?;
+             return match list.first() {
+-                Some(result) => Ok(apply_minus(column_expr, typed_variant(column_expr, result))),
++                Some(result) => {
++                    let value = match self.last_subquery_types.get(result) {
++                        Some(value_type) => variant_of_type(column_expr, result, value_type),
++                        None => typed_variant(column_expr, result),
++                    };
++                    Ok(apply_minus(column_expr, value))
++                }
+                 None => Ok(Variant::empty(VariantType::String)),
+             };
          }
--        Ok(())
-+        // A column that read a failed alias was bound from an empty
-+        // placeholder; it inherits the failure so that reading it reports
-+        // the original error too.
-+        loop {
-+            let mut spread = false;
-+            for (name, column) in required_columns {
-+                if self.alias_failures.borrow().pending.get(current_alias).is_some_and(|keys| keys.contains_key(name)) {
+@@ -2282,7 +2314,7 @@ impl<'a> Searcher<'a> {
+                 };
+                 return Ok(result);
+             } else if let Some(val) = file_map.get(&fi
+```
+
+---
+
+### Incident Patch 3: `4cbc67c2` (2026-10-20)
+**Commit Message**: fix found regressions
+
+**File**: `src/parser.rs` (modified, +5/-4)
+```diff
+@@ -121,10 +121,11 @@ impl <'a> Parser<'a> {
+             clause.validate_format_size_modifiers()?;
+         }
+ 
+-        // A qualifier on the query's only root alias is redundant (`t.size`
+-        // is `size`), so it is dropped from cache keys; with several roots
+-        // the qualifier tells `t.size` and `u.size` apart and must stay.
+-        if self.root_aliases.len() == 1 {
++        // With a single root a qualifier is redundant (`t.size` is `size`),
++        // so it is dropped from cache keys; with several roots, named or
++        // not, `t.size` and `size` cover different entries and the qualifier
++        // must stay.
++        if roots.len() == 1 {
+             for clause in fields
+                 .iter_mut()
+                 .chain(expr.iter_mut())
+```
+
+**File**: `src/searcher.rs` (modified, +124/-4)
+```diff
+@@ -149,6 +149,10 @@ pub struct Searcher<'a> {
+     #[cfg(feature = "git")]
+     git_cache: crate::util::git::GitCache,
+     file_map: HashMap<String, String>,
++    /// The type each cached text was produced with, keyed by cache key and
++    /// stored with that text: a text alone cannot tell `coalesce(name,
++    /// is_file)` returning the file name "true" from the boolean true.
++    cached_types: HashMap<String, (String, VariantType)>,
+     conforms_map: HashMap<String, String>,
+     subquery_cache: HashMap<String, Vec<String>>,
+     membership_cache: HashMap<(String, VariantType), Rc<Membership>>,
+@@ -194,6 +198,24 @@ fn apply_minus(column_expr: &Expr, value: Variant) -> Variant {
+         .unwrap_or(value)
+ }
+ 
++/// Rebuilds a cached text with the type it was produced with.
++fn variant_of_type(expr: &Expr, text: &str, value_type: &VariantType) -> Variant {
++    let typed = match value_type {
++        VariantType::String => Some(Variant::from_string(&text.to_string())),
++        VariantType::Int | VariantType::Float => text
++            .parse::<i64>()
++            .map(Variant::from_int)
++            .or_else(|_| text.parse::<f64>().map(Variant::from_float))
++            .ok(),
++        VariantType::Bool => str_to_bool(text).map(Variant::from_bool),
++        VariantType::DateTime => parse_datetime(text).ok().map(|(from, to)| Variant::from_datetime_range(from, to)),
++    };
++    match typed {
++        Some(variant) => variant.with_text(text),
++        None => typed_variant(expr, text),
++    }
++}
++
+ /// Re-types a value that was rendered as text. The expression says which
+ /// types it can produce, the text says which one it did: `coalesce(is_file,
+ /// size)` may be numeric or boolean, and `true` is the boolean.
+@@ -252,7 +274,7 @@ impl Membership {
+             Membership::Floats(list) => list.contains(&field_value.to_float()),
+             Membership::Bools { has_true, has_false } => if field_value.to_bool() { *has_true } else { *has_false },
+             Membership::DateTimes(intervals) => match field_value.to_datetime() {
+-                Ok((dt, _)) => intervals.iter().any(|(start, finish)| dt >= *start && dt <= *finish),
++                Ok((from, to)) => intervals.iter().any(|(start, finish)| from <= *finish && *start <= to),
+                 Err(_) => false,
+             },
+         }
+@@ -442,6 +464,7 @@ impl<'a> Searcher<'a> {
+             #[cfg(feature = "git")]
+             git_cache: crate::util::git::GitCache::new(),
+             file_map: HashMap::new(),
++            cached_types: HashMap::new(),
+             conforms_map: HashMap::new(),
+             subquery_cache: HashMap::new(),
+             membership_cache: HashMap::new(),
+@@ -2046,6 +2069,13 @@ impl<'a> Searcher<'a> {
+                 entry.insert(alias_name.clone(), value.clone());
+             }
+             for (grouping_expr, text) in self.query.grouping_fields.iter().zip(group_key) {
++                if grouping_expr
++                    .root_alias
++                    .as_deref()
++                    .is_some_and(|owner| !owner.eq_ignore_ascii_case(alias))
++                {
 +                    continue;
 +                }
-+                self.alias_failures.borrow_mut().hit = None;
-+                let mut scratch = HashMap::new();
-+                let _ = self.get_column_expr_value(Some(entry), file_info, root_path, &mut scratch, None, column);
-+                let hit = self.alias_failures.borrow_mut().hit.take();
-+                if let Some((_, err)) = hit {
-+                    self.mark_row_alias_failed(current_alias, name, err);
-+                    spread = true;
-+                }
-+            }
-+            if !spread {
-+                return Ok(());
-+            }
-+        }
-+    }
-+
-+    fn mark_row_alias_failed(&self, current_alias: &str, name: &str, err: SearchError) {
-+        self.record_context.borrow_mut().entry(current_alias.to_string()).or_default().remove(name);
-+        self.alias_failures
-+            .borrow_mut()
-+            .pending
-+            .entry(current_alias.to_string())
-+            .or_default()
-+            .insert(name.to_string(), err);
-     }
- 
-     fn alias_read_failure(&self) -> Result<(), SearchError> {
-@@ -2353,7 +2385,9 @@ impl<'a> Searcher<'a> {
-             {
-                 let mut failures = self.alias_failures.borrow_mut();
-                 failures.pending.remove(current_alias.as_str());
--                failures.hit = None;
-+                if failures.hit.as_ref().is_some_and(|(alias, _)| alias == current_alias) {
-+                    failures.hit = None;
-+                }
-             }
- 
-             if let Some(required_fields) = std::mem::take(&mut self.subquery_required_fields) {
-@@ -5764,6 +5798,34 @@ mod tests {
-         assert_eq!(populated, vec!["a.txt", "b.txt"], "a populated subquery still compares");
-     }
- 
-+    #[test]
-+    fn deferred_alias_errors_survive_dependent_aliases_and_nested_rows() {
-+        let tmp = std::env::temp_dir().join("fselect_test_deferred_alias_errors");
-+        let _ = fs::remove_dir_all(&tmp);
-+        fs::create_dir_all(tmp.join("metrics")).unwrap();
-+        fs::create_dir_all(tmp.join("other")).unwrap();
-+        fs::write(tmp.join("metrics").join("a.txt"), "xxxx").unwrap();
-+        fs::write(tmp.join("metrics").join("zero.txt"), "").unwrap();
-+        fs::write(tmp.join("other").join("o1"), "x").unwrap();
-+        fs::write(tmp.join("other").join("o2"), "x").unwrap();
-+
-+        let rows_and_errors = |query: &str| {
-+            let searcher = search_dir(query, &tmp, Config::default(), true);
-+            let rows: Vec<String> = searcher.output_buffer.iter_values().map(|s| s.trim_end().to_string()).collect();
-+            (rows, searcher.error_count)
-+        };
-+        let through_copy = rows_and_errors(
-+            "select name, 100 / size as ratio, (select t.ratio from __DIR__/other limit 1) as copy from __DIR__/metrics as t where (select t.copy from __DIR__/other limit 1) > 0 order by name",
-+        );
-+        let across_inner_rows = rows_and_errors(
-+            "select name, 100 / size as ratio from __DIR__/metrics as t where exists(select name from __DIR__/other where t.ratio > 0) order by name",
-+        );
-+        let _ = fs::remove_dir_all(&tmp);
-+
-+        assert_eq!(through_copy, (vec!["a.txt\t25\t25".to_string()], 1), "error must follow the dependent alias");
-+        assert_eq!(across_inner_rows, (vec!["a.txt\t25".to_string()], 1), "a later inner row must not erase the hit");
-+    }
-+
-     #[test]
-     fn having_can_read_aggregate_aliases_through_correlated_subqueries() {
-         let tmp = std::env::temp_dir().join("fselect_test_having_aggregate_alias");
-```
-
----
-
-### Incident Patch 3: `66269233` (2026-10-20)
-**Commit Message**: fix regression
-
-**File**: `src/parser.rs` (modified, +15/-5)
-```diff
-@@ -210,18 +210,28 @@ impl <'a> Parser<'a> {
-             scope.push(AliasScope { alias, columns: Self::aliased_columns(&query.fields), own: true });
+                 let value = typed_variant(grouping_expr, text);
+                 if let Some(field) = grouping_expr.field
+                     && !grouping_expr.minus
+@@ -2178,6 +2208,7 @@ impl<'a> Searcher<'a> {
+                         return Ok(match ctx.get(&field_key) {
+                             Some(val) => {
+                                 let value = apply_minus(column_expr, val.clone());
++                                self.cached_types.insert(cache_key.clone(), (value.to_string(), value.get_type().clone()));
+                                 file_map.insert(cache_key, value.to_string());
+                                 value
+                             }
+@@ -2199,7 +2230,10 @@ impl<'a> Searcher<'a> {
          }
  
--        for expr in query.fields.iter_mut().chain(query.expr.iter_mut()) {
-+        // A column may reference an alias whose own column references yet
-+        // another alias, in any declaration order; each pass over the SELECT
-+        // list settles one more link, and WHERE is resolved only against the
-+        // settled columns so their recorded types are complete.
-+        let passes = query.fields.iter().filter(|column| column.alias.is_some()).count().max(1);
-+        for _ in 0..passes {
-+            for expr in query.fields.iter_mut() {
-+                Self::finalize_expr_references(expr, &scope, false);
-+            }
-+            let columns = Self::aliased_columns(&query.fields);
-+            for entry in &mut scope[own_start..] {
-+                entry.columns = columns.clone();
-+            }
-+        }
-+        for expr in query.expr.iter_mut() {
-             Self::finalize_expr_references(expr, &scope, false);
+         if let Some(cached) = file_map.get(&cache_key) {
+-            let value = typed_variant(column_expr, cached);
++            let value = match self.cached_types.get(&cache_key) {
++                Some((text, value_type)) if text == cached => variant_of_type(column_expr, cached, value_type),
++                _ => typed_variant(column_expr, cached),
++            };
+             if let Some(entry_key) = context_field {
+                 let mut context = self.record_context.borrow_mut();
+                 let context_key = self.current_alias.clone().unwrap_or_else(|| String::from(""));
+@@ -2225,6 +2259,7 @@ impl<'a> Searcher<'a> {
+             let result =
+                 self.get_function_value(entry, file_info, root_path, file_map, accumulator, column_expr)?;
+             let result = apply_minus(column_expr, result);
++            self.remember_type(&cache_key, &result);
+             file_map.insert(cache_key, result.to_string());
+             return Ok(result);
          }
-         for root in query.roots.iter_mut() {
-             if let Some(ref mut inner) = root.subquery {
-                 Self::finalize_alias_references(inner, &scope);
-             }
-         }
--        let columns = Self::aliased_columns(&query.fields);
--        for entry in &mut scope[own_start..] {
--            entry.columns = columns.clone();
--        }
-         let clauses = query
-             .grouping_fields
-             .iter_mut()
-```
-
-**File**: `src/searcher.rs` (modified, +30/-0)
-```diff
-@@ -5514,6 +5514,36 @@ mod tests {
-         assert_eq!(through_exists, direct, "exists on the alias");
-     }
- 
-+    #[test]
-+    fn alias_chains_keep_their_type_in_where() {
-+        let tmp = std::env::temp_dir().join("fselect_test_alias_chain_types");
-+        let _ = fs::remove_dir_all(&tmp);
-+        fs::create_dir_all(tmp.join("data")).unwrap();
-+        fs::create_dir_all(tmp.join("other")).unwrap();
-+        for (name, size) in [("a.txt", 2), ("b.txt", 10), ("c.txt", 3)] {
-+            fs::write(tmp.join("data").join(name), "x".repeat(size)).unwrap();
-+        }
-+        fs::write(tmp.join("other").join("o1"), "x").unwrap();
-+
-+        let numeric = run_query_against_dir(
-+            "select name, size as first, (select t.first from __DIR__/other limit 1) as second from __DIR__/data as t where (select t.second from __DIR__/other limit 1) > 5 order by name",
-+            &tmp,
-+        );
-+        let boolean = run_query_against_dir(
-+            "select name, is_file as f, (select t.f from __DIR__/other limit 1) as g from __DIR__/data as t where (select t.g from __DIR__/other limit 1) = TRUE order by name",
-+            &tmp,
-+        );
-+        let reversed = run_query_against_dir(
-+            "select name, (select t.second from __DIR__/other limit 1) as third, (select t.first from __DIR__/other limit 1) as second, size as first from __DIR__/data as t where (select t.third from __DIR__/other limit 1) > 5 order by name",
-+            &tmp,
-+        );
-+        let _ = fs::remove_dir_all(&tmp);
-+
-+        assert_eq!(numeric, vec!["b.txt\t10\t10"], "numeric chain");
-+        assert_eq!(boolean, vec!["a.txt\ttrue\ttrue", "b.txt\ttrue\ttrue", "c.txt\ttrue\ttrue"], "boolean chain");
-+        assert_eq!(reversed, vec!["b.txt\t10\t10\t10"], "reverse-declared chain");
-+    }
-+
-     #[test]
-     fn having_can_read_aggregate_aliases_through_correlated_subqueries() {
-         let tmp = std::env::temp_dir().join("fselect_test_having_aggregate_alias");
+@@ -2236,6 +2271,7 @@ impl<'a> Searcher<'a> {
+                 // field name it holds the raw value, unde
 ```
 
 #### Recent Merged Pull Requests:
@@ -1915,62 +2318,49 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. regressions
+## X. found regressions
 
 **RULE**:
-When implementing operations in `src/lexer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/expr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20a6e8cc`: regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46c72f21`: found regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lexer.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/expr.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    after_as: bool,
-            after_as: false,
-    root_aliases: Vec<String>,
-            root_aliases: vec![],
-                            let maybe_expr = looks_like_expression(&s, &self.root_aliases);
-                            && continues_arithmetic(&s, c, &rest, self.chars[self.input_index].get(self.char_index + 1).copied(), &self.root_aliases)
-        if self.state.clause == Clause::Roots
-            && self.state.after_as
-            && let Some(Lexeme::RawString(ref alias)) = lexeme
-        {
-            self.root_aliases.push(alias.to_ascii_lowercase());
+    pub fn negated(&self) -> Expr {
+        let mut result = self.clone();
+        result.props.clear_file_types();
+
+        if let Some(op) = self.op {
+            result.op = Some(Op::negate(op));
+            return result;
         }
-        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
-fn continues_arithmetic(s: &str, c: char, rest: &str, next_char: Option<char>, root_aliases: &[String]) -> bool {
-    looks_like_expression(&format!("{}{}{}", s, c, rest), root_aliases)
-/// `10-5*2`)? Only operator characters separate operands, so an underscored
-/// field name stays one operand, and a dotted word is an operand only when it
-/// is a number or starts with a root alias the query declared, so an unquoted
-/// file name such as `report.txt-backup.bak` stays a literal. An empty operand
-///
+
+        if let Some(ref logical_op) = self.logical_op {
+            result.logical_op = Some(logical_op.negate());
+            if let Some(left) = &self.left {
+                result.left = Some(Box::new(left.negated()));
+            }
+            if let Some(right) = &self.right {
+                result.right = Some(Box::new(right.negated()));
+            }
+        }
+
+        result
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                            let maybe_expr = looks_like_expression(&s);
-                            && continues_arithmetic(&s, c, &rest, self.chars[self.input_index].get(self.char_index + 1).copied())
-fn continues_arithmetic(s: &str, c: char, rest: &str, next_char: Option<char>) -> bool {
-    looks_like_expression(&format!("{}{}{}", s, c, rest))
-/// `10-5*2`)? Only operator characters separate operands, so a dotted alias
-/// reference or an underscored field name stays one operand; an empty operand
-/// (`-5`, `%size%`) means the word is a literal.
-fn looks_like_expression(s: &str) -> bool {
-    !s.split(['+', '-', '*', '/', '%', '(', ')']).any(|operand| !is_arithmetic_operand(operand))
-fn is_arithmetic_operand(operand: &str) -> bool {
-    !operand.is_empty()
-        && (operand.parse::<i64>().is_ok()
-            || operand.parse::<f64>().is_ok()
-            || Field::parse_field(operand).is_ok()
-            || Function::from_str(operand).is_ok()
-            || is_alias_reference(operand))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20a6e8cc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46c72f21` are properly handled with clean fallback behavior.
