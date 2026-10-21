@@ -4217,3 +4217,6 @@ Every entry in this ledger must capture:
 | `learn-github-istifano-seo-auditor` | `https://github.com/ISTIFANO/seo-auditor` | `87ba51e6` | Multi-dimensional audit evidence | 2026-10-21T05:02:53.639Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `04fe057b` | Multi-dimensional audit evidence | 2026-10-21T05:03:04.084Z |
 | `learn-github-code-forge-io-seo-tools` | `https://github.com/code-forge-io/seo-tools` | `e1e672b3` | Multi-dimensional audit evidence | 2026-10-21T05:09:19.753Z |
+| `learn-github-hartemyaakoub-seo-toolkit` | `https://github.com/hartemyaakoub/seo-toolkit` | `e1126c75` | Multi-dimensional audit evidence | 2026-10-21T05:15:21.389Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `2dfeb529` | Multi-dimensional audit evidence | 2026-10-21T05:15:26.466Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `928c4ef9` | Multi-dimensional audit evidence | 2026-10-21T05:15:30.482Z |

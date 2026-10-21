@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:09:19.690Z",
+  "last_updated": "2026-10-21T05:15:30.449Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8190,8 +8190,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "9e253c40",
-      "content_hash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
+      "source_version": "928c4ef9",
+      "content_hash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -8214,6 +8214,11 @@
           "number": 3278,
           "title": "per-agent rate limiting for MCP tool calls (fixes #1096) (#1593)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3533,
+          "title": "hermes): report an existing installation in --dry-run (#1611) (#1619)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8221,7 +8226,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:50:40.194Z",
+      "verified_at": "2026-10-21T05:15:30.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38565,8 +38570,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "4e1c620e",
-      "content_hash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
+      "source_version": "2dfeb529",
+      "content_hash": "88ae601050e590be002e1156c1583ea42e321263b893c461de32f048ebbb44e6",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -38589,6 +38594,11 @@
           "number": 3294,
           "title": "[sdk/python] Fix ty false positives on Output methods by using setattr in __sets",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3532,
+          "title": "`pulumi org audit-log` filter params and switch to V2 API (#24665)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38596,7 +38606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:35:54.007Z",
+      "verified_at": "2026-10-21T05:15:26.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58447,14 +58457,14 @@
       "platform": "github",
       "source_url": "https://github.com/hartemyaakoub/seo-toolkit",
       "source_version": "e1126c75",
-      "content_hash": "ecf4174a2c37867cb5ae7dbc64f3f3058135659066c0aae57923df8307fdcb5e",
+      "content_hash": "cedf0ad66619dd294faf7cfc2422f080b928c3468900c4fa8e610e869da9f1c2",
       "dossier_path": "07_PROJECT_LEARNING/hartemyaakoub-seo-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hartemyaakoub-seo-toolkit-learnings.md",
       "promoted_rules": [
         {
           "number": 2668,
           "title": "refresh TKAWEN ecosystem footer (2026-06-02)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58462,7 +58472,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:12:04.409Z",
+      "verified_at": "2026-10-21T05:15:21.336Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95054,7 +95064,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:12:04.409Z"
+      "verified_at": "2026-10-21T05:15:21.336Z"
     },
     "rule-2669": {
       "learning_id": "rule-2669",
@@ -107735,6 +107745,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T05:02:52.287Z"
+    },
+    "rule-3532": {
+      "learning_id": "rule-3532",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3532,
+      "title": "`pulumi org audit-log` filter params and switch to V2 API (#24665)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "2dfeb529",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:15:26.421Z"
+    },
+    "rule-3533": {
+      "learning_id": "rule-3533",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3533,
+      "title": "hermes): report an existing installation in --dry-run (#1611) (#1619)",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "928c4ef9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:15:30.442Z"
     }
   },
   "aliases": {

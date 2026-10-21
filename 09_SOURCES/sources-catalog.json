@@ -1795,8 +1795,8 @@
     "sourceUrl": "https://github.com/hartemyaakoub/seo-toolkit",
     "sourceVersion": "e1126c75",
     "license": "MIT",
-    "contentHash": "ecf4174a2c37867cb5ae7dbc64f3f3058135659066c0aae57923df8307fdcb5e",
-    "lastHarvestedAt": "2026-10-19T16:12:04.446Z",
+    "contentHash": "cedf0ad66619dd294faf7cfc2422f080b928c3468900c4fa8e610e869da9f1c2",
+    "lastHarvestedAt": "2026-10-21T05:15:21.389Z",
     "learningId": "learn-github-hartemyaakoub-seo-toolkit"
   },
   "maatify-seo": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "9e253c40",
+    "sourceVersion": "928c4ef9",
     "license": "Apache-2.0",
-    "contentHash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
-    "lastHarvestedAt": "2026-10-20T16:50:40.239Z",
+    "contentHash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
+    "lastHarvestedAt": "2026-10-21T05:15:30.482Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "4e1c620e",
+    "sourceVersion": "2dfeb529",
     "license": "Apache-2.0",
-    "contentHash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
-    "lastHarvestedAt": "2026-10-20T17:35:54.084Z",
+    "contentHash": "88ae601050e590be002e1156c1583ea42e321263b893c461de32f048ebbb44e6",
+    "lastHarvestedAt": "2026-10-21T05:15:26.466Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

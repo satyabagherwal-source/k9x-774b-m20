@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-XVRL",
-    "timestamp": "2026-10-20T04:36:19.857Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "d51d7a96f8c67f4042fc607b8ab5811819021ce0b86f2f675dbe038e40858fff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-5ULD",
-    "timestamp": "2026-10-20T04:42:31.585Z",
-    "repository": "rollup/rollup",
-    "learningId": "learn-github-rollup-rollup",
-    "contentHash": "3da70cb7d23148999bbbbb6a9b0ce46af3a04b52c8584ada472e875d15556101",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-5WWM",
-    "timestamp": "2026-10-20T04:42:34.582Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "9e776325450f983f7a4dd1cf3b5d7c66b106d64fe7ad88215e1b2942a6737f8f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-8YOY",
     "timestamp": "2026-10-20T04:44:56.866Z",
     "repository": "cosscom/ui",
@@ -7490,6 +7445,51 @@
     "repository": "code-forge-io/seo-tools",
     "learningId": "learn-github-code-forge-io-seo-tools",
     "contentHash": "46ad57498f9aad70bbf2d93de26d0f938722955604335994c74646769f45d3ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-RX62",
+    "timestamp": "2026-10-21T05:15:21.386Z",
+    "repository": "hartemyaakoub/seo-toolkit",
+    "learningId": "learn-github-hartemyaakoub-seo-toolkit",
+    "contentHash": "cedf0ad66619dd294faf7cfc2422f080b928c3468900c4fa8e610e869da9f1c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-S134",
+    "timestamp": "2026-10-21T05:15:26.464Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "88ae601050e590be002e1156c1583ea42e321263b893c461de32f048ebbb44e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-S46O",
+    "timestamp": "2026-10-21T05:15:30.480Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

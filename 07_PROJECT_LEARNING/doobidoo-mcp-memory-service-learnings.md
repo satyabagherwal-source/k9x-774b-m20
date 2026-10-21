@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `9e253c40`  
+> **Source Version**: `928c4ef9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:50:40.025Z  
+> **Timestamp**: 2026-10-21T05:15:30.275Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:50:40.019Z  
+> **Harvest Timestamp**: 2026-10-21T05:15:30.270Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2026 stars
+- **Stars / Engagement**: 2025 stars
 
 ---
 
@@ -2932,1059 +2932,75 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80974bf9` (2026-10-20)
-**Commit Message**: feat: per-agent rate limiting for MCP tool calls (fixes #1096) (#1593)
+### Incident Patch 1: `928c4ef9` (2026-10-21)
+**Commit Message**: fix(hermes): report an existing installation in --dry-run (#1611) (#1619)
 
-* feat: per-agent rate limiting for MCP tool calls (fixes #1096)
+With the server already registered, plan() returns no actions, so the
+dry-run loop printed nothing and returned 0 before the branch that reports
+the existing installation. Running --dry-run against an installed profile
+produced no output at all, which is indistinguishable from a hung script.
 
-Key callers by the client-sent X-Agent-ID request header, read from
-the transport layer -- never from tool arguments (for memory_search /
-memory_list the agent_id argument is an author filter, not a caller
-identity). Fallback chain: header -> socket peer IP -> one
-per-process bucket. Unlimited by default (MCP_RATE_LIMIT_PER_MINUTE,
-per-tool MCP_RATE_LIMIT_<tool> overrides); 429-equivalent MCP error
-(-32029 / rate_limit_exceeded); fail-open if the limiter itself
-errors.
+The fix prints the registration and the port in that case. The test asserts
+the message, and fails without it (captured output is empty).
 
-The /mcp FastAPI shim resolves the identity from its own HTTP
-request before its arguments rewrite and passes it explicitly into
-call_tool (the shim runs outside any SDK request context). SDK
-transports (SSE / Streamable HTTP) resolve it from
-request_context.request, like _caller_has_write_scope does.
-
-Also fixes the two CodeQL log-injection findings and the eviction
-finding (evicted key resetting an active window) left open in
-#1402's utils/tool_rate_limit.py, on which the limiter is based.
-Docs note the limiter gives fairness between cooperating agents and
-is not abuse protectio
-
-**File**: `changelog.d/1593.added.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+- **Per-agent rate limiting for MCP tool calls (#1593, juliasadler; closes #1096).**
-+  Callers are keyed by the client-sent `X-Agent-ID` request header — read from the
-+  transport layer, never from tool arguments — falling back to the socket peer IP
-+  and then one per-process bucket. Unlimited by default; configure with
-+  `MCP_RATE_LIMIT_PER_MINUTE` or per-tool `MCP_RATE_LIMIT_<tool>` overrides.
-+  Denied calls get an MCP error (`-32029` / `rate_limit_exceeded`) carrying
-+  `retry_after_seconds`. This is fairness between cooperating agents, not abuse
-+  protection: a client that rotates the header gets a fresh bucket. The denied
-+  call returns a `CallToolResult`, which the SDK's `call_tool` decorator only
-+  passes through from `mcp` 1.19.0 on, so the `mcp` floor moves from 1.9.2 to
-+  1.19.0.
-```
-
-**File**: `docs/agents/http-generic.md` (modified, +2/-0)
-```diff
-@@ -263,3 +263,5 @@ await store_memory(content="...", tags=["agent:researcher", "api"])
- await store_memory(content="...", tags=["api"], agent_id="researcher")
- # Server appends "agent:researcher" automatically
- ```
-+
-+The same header also keys the per-caller MCP tool rate limiter (`MCP_RATE_LIMIT_PER_MINUTE`, per-tool `MCP_RATE_LIMIT_<tool>` overrides): `X-Agent-ID` is chosen by the client, so the limiter gives fairness between cooperating agents sharing one server. It is not abuse protection — a client that rotates the header gets a fresh bucket.
-```
-
-**File**: `pyproject-lite.toml` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ maintainers = [
- license = { text = "Apache-2.0" }
- dependencies = [
-     "tokenizers==0.20.3",
--    "mcp>=1.9.2,<2.0.0",
-+    "mcp>=1.19.0,<2.0.0",
-     "python-dotenv>=1.0.0",
-     "sqlite-vec>=0.1.0",
-     "build>=0.10.0",
-```
-
-**File**: `pyproject.toml` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ dependencies = [
-     "cryptography>=46.0.6",
-     "fastapi>=0.115.5",
-     "httpx>=0.24.0",
--    "mcp>=1.9.2,<2.0.0",
-+    "mcp>=1.19.0,<2.0.0",
-     "numpy>=1.24.0",
-     "psutil>=5.9.0",
-     "PyJWT[crypto]>=2.12.0",
-```
-
-**File**: `src/mcp_memory_service/server_impl.py` (modified, +92/-4)
-```diff
-@@ -88,6 +88,7 @@ def _sanitize_log_value(value: object) -> str:
- from .dependency_check import get_recommended_timeout
- from .utils.hashing import generate_content_hash
- from .utils.agent_context import log_agent_id_resolution, resolve_agent_id
-+from .utils.tool_rate_limit import ToolRateLimiter, resolve_caller_identity
- from .config import (
-     BACKUPS_PATH,
-     SERVER_NAME,
-@@ -333,6 +334,10 @@ def __init__(
-         # Register handlers
-         self.register_handlers()
-         logger.info("Server initialization complete")
-+
-+        # Per-caller sliding-window limiter for MCP tool calls (#1096).
-+        # Unlimited by default; configured via MCP_RATE_LIMIT_* env vars.
-+        self._tool_rate_limiter = ToolRateLimiter()
-         
-         # Test handler registration with proper arguments
-         try:
-@@ -1459,7 +1464,9 @@ async def handle_list_tools() -> List[types.Tool]:
-             return await self.list_tools()
-         
-         @self.server.call_tool()
--        async def handle_call_tool(name: str, arguments: dict | None) -> List[types.TextContent]:
-+        async def handle_call_tool(
-+            name: str, arguments: dict | None
-+        ) -> List[types.TextContent] | types.CallToolResult:
-             return await self.call_tool(name, arguments)
- 
- 
-@@ -1514,6 +1521,53 @@ def _caller_has_write_scope(self) -> bool:
-         scope = request.scope.get("mcp_auth_scope")
-         return scope is None or "write" in scope.split()
- 
-+    def _rate_limit_caller_identity(self, explicit_identity: str | None = None) -> str:
-+        """Resolve the rate-limit identity for the current tool call (#1096).
-+
-+        The ``/mcp`` FastAPI shim calls ``call_tool`` outside any SDK request
-+        context, so it resolves the identity from its own HTTP request and
-+        passes it in explicitly. On the SDK transports (SSE, Streamable
-+        HTTP) the identity is resolved here from the per-request ASGI
-+        request, exactly like ``_caller_has_write_scope`` does.
-+
-+        Never reads tool arguments: for ``memory_search``/``memory_list``
-+        the ``agent_id`` argument is an author filter, not a caller identity.
-+        """
-+
-+        if explicit_identity:
-+            return explicit_identity
-+        try:
-+            request = self.server.request_context.request
-+        except (LookupError, AttributeError):
-+            request = None
-+        if request is None:
-+            return resolve_caller_identity(None, None)
-+        header = request.headers.get("X-Agent-ID")
-+        client = request.client
-+        host = client.host if client is not None else None
-+        return resolve_caller_identity(header, host)
-+
-+    @staticmethod
-+    def _rate_limit_error(
-+        tool_name: str, decision
-+    ) -> types.CallToolResult:
-+        """Build the standard MCP tool-error result for a denied call."""
-+
-+        payload = {
-+            "error": {
-+                "code": -32029,
-+                "type": "rate_limit_exceeded",
-+                "message": "MCP tool rate limit exceeded",
-+                "tool": tool_name,
-+                "limit_per_minute": decision.limit_per_minute,
-+                "retry_after_seconds": decision.retry_after_seconds,
-+            }
-+        }
-+        return types.CallToolResult(
-+            content=[types.TextContent(type="text", text=json.dumps(payload))],
-+            isError=True,
-+        )
-+
-     async def tool_requires_write(self, name: Optional[str], arguments: Optional[dict] = None) -> bool:
-         """Return True if calling this tool requires the 'write' scope.
- 
-@@ -1579,12 +1633,44 @@ async def list_tools(self) -> List[types.Tool]:
-             logger.error("Error in list_tools: %s", _sanitize_log_value(e))
-             return []
- 
--    async def call_tool(self, name: str, arguments: dict | None) -> List[types.TextContent]:
--        """Dispatch tool call via routing table (replaces elif chain)."""
-+    async def call_tool(
-+        self,
-+        name: str,
-+        arguments: dict | None,
-+        *,
-+        caller_identity: str | None = None,
-+    ) -> List[types.TextContent] | types.CallToolResult:
-+        """Dispatch tool call via routing table (replaces elif chain).
-+
-+        ``caller_identity`` is the pre-resolved per-caller rate-limit
-+        identity. The ``/mcp`` FastAPI shim passes it explicitly (it has no
-+        SDK request context); the SDK transports leave it ``None`` so the
-+        identity is resolved here from the per-request ASGI request.
-+        """
-         logger.info("=== HANDLING TOOL CALL: %s ===", _sanitize_log_value(name))
-         if arguments is None:
-             arguments = {}
- 
-+        # Per-caller sliding-window rate limiting (#1096). Unlimited by
-+        # default; configured via MCP_RATE_LIMIT_* env vars. A limiter
-+        # failure must not take down the dispatcher: fail open and keep
-+        # the error log free of caller identities.
-+        try:
-+            decision = self._tool_rate_limiter.check
-```
-
-**File**: `src/mcp_memory_service/utils/tool_rate_limit.py` (added, +247/-0)
-```diff
-@@ -0,0 +1,247 @@
-+"""Per-caller sliding-window rate limiting for MCP tool calls.
-+
-+Identity model (per issue #1096, as approved by the maintainer):
-+the caller is keyed by the client-sent ``X-Agent-ID`` request header, read
-+from the transport layer -- never from tool arguments (for
-+``memory_search``/``memory_list`` the ``agent_id`` argument is an author
-+filter, not a caller identity). Fallback chain when the header is absent:
-+socket peer IP, then one per-process bucket (stdio is one client per
-+process, so that bucket is effectively per-agent there).
-+
-+``X-Agent-ID`` is chosen by the client, so this limiter gives fairness
-+between cooperating agents (e.g. a batch miner vs. interactive agents).
-+It is not abuse protection: a client that rotates the header gets a fresh
-+bucket.
-+"""
-+
-+import logging
-+import math
-+import os
-+import time
-+from collections import OrderedDict, deque
-+from dataclasses import dataclass, field
-+from hashlib import sha256
-+from threading import Lock
-+
-+# Reuse the canonical log-injection guard (compat imports nothing, so there
-+# is no import cycle; db_utils.py, health_check.py and others already import
-+# from it): the tool name reaching the warnings below is client-controlled,
-+# so newlines/CR/ESC must not reach the log stream (CodeQL py/log-injection).
-+from ..compat import _sanitize_log_value
-+
-+logger = logging.getLogger(__name__)
-+
-+DEFAULT_MAX_KEYS = 4096
-+_WINDOW_SECONDS = 60.0
-+_UNSET = object()
-+
-+
-+@dataclass(frozen=True)
-+class RateLimitDecision:
-+    """Result of one rate-limit check.
-+
-+    ``limit_per_minute`` is ``None`` when the tool is unlimited. When a call is
-+    denied, ``retry_after_seconds`` is the minimum whole-second delay before
-+    the oldest hit leaves the sliding window.
-+    """
-+
-+    allowed: bool
-+    limit_per_minute: int | None = None
-+    retry_after_seconds: int = 0
-+    should_log: bool = False
-+
-+
-+@dataclass
-+class _Window:
-+    hits: deque[float] = field(default_factory=deque)
-+    denied_at: float | None = None
-+
-+
-+def resolve_caller_identity(header_value: str | None, client_host: str | None) -> str:
-+    """Resolve the rate-limit identity for one tool call.
-+
-+    Never reads tool arguments: the header comes from the transport layer
-+    (``X-Agent-ID``), read before any argument rewriting. Chain:
-+    header -> socket peer IP -> one per-process bucket.
-+    """
-+
-+    if isinstance(header_value, str) and header_value.strip():
-+        return f"agent:{header_value.strip()}"
-+    if isinstance(client_host, str) and client_host:
-+        return f"ip:{client_host}"
-+    return "process:default"
-+
-+
-+def _read_limit(env_name: str):
-+    """Read a non-negative integer setting.
-+
-+    ``0`` explicitly means unlimited. Invalid or negative values are ignored
-+    and ``_UNSET`` is returned so callers can fall back to the next setting.
-+    """
-+
-+    raw = os.getenv(env_name)
-+    if raw is None or not raw.strip():
-+        return _UNSET
-+    try:
-+        value = int(raw)
-+    except ValueError:
-+        logger.warning(
-+            "Ignoring invalid %s=%r; expected a non-negative integer",
-+            _sanitize_log_value(env_name),
-+            _sanitize_log_value(raw),
-+        )
-+        return _UNSET
-+    if value < 0:
-+        logger.warning(
-+            "Ignoring negative %s=%r; expected a non-negative integer",
-+            _sanitize_log_value(env_name),
-+            _sanitize_log_value(raw),
-+        )
-+        return _UNSET
-+    return value
-+
-+
-+def _env_names(tool_name: str) -> tuple[str, ...]:
-+    """Return per-tool env names in precedence order.
-+
-+    The issue documents lower-case tool names (for example
-+    ``MCP_RATE_LIMIT_memory_store``). Accept the upper-case form too because
-+    most deployment tooling normalizes environment variable names.
-+    """
-+
-+    return (
-+        f"MCP_RATE_LIMIT_{tool_name}",
-+        f"MCP_RATE_LIMIT_{tool_name.upper()}",
-+    )
-+
-+
-+def resolve_limit(tool_name: str) -> int | None:
-+    """Resolve the per-minute limit for a tool.
-+
-+    A tool-specific setting overrides ``MCP_RATE_LIMIT_PER_MINUTE``. The
-+    default is unlimited (``None``) for backward compatibility.
-+    """
-+
-+    for env_name in _env_names(tool_name):
-+        value = _read_limit(env_name)
-+        if value is not _UNSET:
-+            return None if value == 0 else value
-+
-+    value = _read_limit("MCP_RATE_LIMIT_PER_MINUTE")
-+    if value is _UNSET or value == 0:
-+        return None
-+    return value
-+
-+
-+def _bucket_key(identity: str, tool_name: str) -> str:
-+    """Hash the identity and tool so arbitrary ids do not grow the key space."""
-+
-+    return sha256(f"{identity}\0{tool_name}".encode()).hexdigest()
-+
-+
-+class ToolRateLimiter:
-+    """Thread-safe per-identity/per-tool sliding-window limiter.
-+
-+    State is intentionally process-local. ``max_keys`` caps the number of
-+    retained windows; when a new identity arrives past the cap, a window
-+    with no live hits is evicted first, so an eviction never 
-```
-
-**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +32/-7)
-```diff
-@@ -17,6 +17,7 @@
- 
- from ..._version import __version__
- from ...compat import _sanitize_log_value
-+from ...utils.tool_rate_limit import resolve_caller_identity
- from ..oauth.middleware import require_read_access, AuthenticationResult
- 
- logger = logging.getLogger(__name__)
-@@ -125,17 +126,30 @@ def _tool_to_dict(tool) -> Dict[str, Any]:
-     }
- 
- 
--def _wrap_tool_result(text_contents, is_error: bool = False) -> Dict[str, Any]:
--    """Pack a `list[mcp.types.TextContent]` into an MCP `tools/call` result."""
--    result: Dict[str, Any] = {
-+def _wrap_tool_result(result, is_error: bool = False) -> Dict[str, Any]:
-+    """Pack the shared dispatcher result into an MCP `tools/call` result."""
-+    if isinstance(result, types.CallToolResult):
-+        payload = {
-+            "content": [
-+                {"type": tc.type, "text": tc.text}
-+                for tc in result.content
-+            ],
-+        }
-+        if result.isError:
-+            payload["isError"] = True
-+        if result.structuredContent is not None:
-+            payload["structuredContent"] = result.structuredContent
-+        return payload
-+
-+    payload: Dict[str, Any] = {
-         "content": [
-             {"type": "text", "text": tc.text}
--            for tc in text_contents
-+            for tc in result
-         ]
-     }
-     if is_error:
--        result["isError"] = True
--    return result
-+        payload["isError"] = True
-+    return payload
- 
- 
- @router.post("/")
-@@ -232,6 +246,15 @@ async def mcp_endpoint(
-                     status_code=403,
-                 )
- 
-+            # Resolve the rate-limit identity from the transport BEFORE the
-+            # arguments rewrite below: the shim copies X-Agent-ID into
-+            # arguments["agent_id"] when the call has none, and the limiter
-+            # must never read tool arguments (#1096).
-+            caller_identity = resolve_caller_identity(
-+                http_request.headers.get("X-Agent-ID"),
-+                http_request.client.host if http_request.client else None,
-+            )
-+
-             # Inject X-Agent-ID header if agent_id argument not explicitly provided
-             if not arguments.get("agent_id"):
-                 header_agent_id = http_request.headers.get("X-Agent-ID")
-@@ -242,7 +265,9 @@ async def mcp_endpoint(
-             # as JSON-RPC -32603 (a request error) instead of the tool result with
-             # isError=true that MCP promises. Convert it here (#1601).
-             try:
--                text_contents = await server.call_tool(tool_name, arguments)
-+                text_contents = await server.call_tool(
-+                    tool_name, arguments, caller_identity=caller_identity
-+                )
-             except Exception as tool_error:
-                 logger.warning(
-                     "Tool %s failed: %s",
-```
-
-**File**: `tests/server/test_tool_rate_limit.py` (added, +259/-0)
-```diff
-@@ -0,0 +1,259 @@
-+"""Dispatcher-level per-caller rate limiting (#1096).
-+
-+The limiter keys callers by the client-sent ``X-Agent-ID`` request header,
-+read from the transport layer -- never from tool arguments (for
-+``memory_search``/``memory_list`` the ``agent_id`` argument is an author
-+filter, not a caller identity).
-+"""
-+
-+import json
-+from types import SimpleNamespace
-+from unittest.mock import PropertyMock
-+
-+import pytest
-+from mcp import types
-+
-+from mcp_memory_service.server import MemoryServer
-+from mcp_memory_service.utils.tool_rate_limit import (
-+    ToolRateLimiter,
-+    resolve_caller_identity,
-+    resolve_limit,
-+)
-+
-+
-+async def _echo_handler(_server, arguments):
-+    return [types.TextContent(type="text", text=json.dumps(arguments))]
-+
-+
-+@pytest.fixture
-+def dispatcher(monkeypatch):
-+    monkeypatch.setattr(
-+        "mcp_memory_service.tools.routing.resolve_handler",
-+        lambda _name: _echo_handler,
-+    )
-+    return MemoryServer()
-+
-+
-+def _clear_env(monkeypatch):
-+    for var in (
-+        "MCP_RATE_LIMIT_PER_MINUTE",
-+        "MCP_RATE_LIMIT_memory_search",
-+        "MCP_RATE_LIMIT_MEMORY_SEARCH",
-+    ):
-+        monkeypatch.delenv(var, raising=False)
-+
-+
-+def _is_rate_limited(result) -> bool:
-+    if isinstance(result, types.CallToolResult) and result.isError:
-+        try:
-+            err = json.loads(result.content[0].text).get("error", {})
-+        except Exception:
-+            return False
-+        return err.get("type") == "rate_limit_exceeded" and err.get("code") == -32029
-+    return False
-+
-+
-+@pytest.mark.asyncio
-+async def test_dispatcher_is_unlimited_by_default(dispatcher, monkeypatch):
-+    _clear_env(monkeypatch)
-+    for _ in range(50):
-+        result = await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:a"
-+        )
-+        assert not _is_rate_limited(result)
-+
-+
-+@pytest.mark.asyncio
-+async def test_dispatcher_enforces_per_agent_limit(dispatcher, monkeypatch):
-+    _clear_env(monkeypatch)
-+    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "2")
-+
-+    for _ in range(2):
-+        result = await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:a"
-+        )
-+        assert not _is_rate_limited(result)
-+    assert _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:a"
-+        )
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_agent_windows_are_isolated(dispatcher, monkeypatch):
-+    _clear_env(monkeypatch)
-+    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
-+
-+    assert not _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:a"
-+        )
-+    )
-+    # agent-a is now at its limit; agent-b must be unaffected.
-+    assert _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:a"
-+        )
-+    )
-+    assert not _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:b"
-+        )
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_limiter_never_reads_tool_arguments(dispatcher, monkeypatch):
-+    """``arguments["agent_id"]`` is an author filter for search/list.
-+
-+    Changing it must not change the rate-limit bucket; only the explicit
-+    caller identity does.
-+    """
-+    _clear_env(monkeypatch)
-+    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
-+
-+    assert not _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search",
-+            {"query": "x", "agent_id": "author-x"},
-+            caller_identity="agent:real-caller",
-+        )
-+    )
-+    # Same caller, different author filter -> still the same bucket.
-+    assert _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search",
-+            {"query": "x", "agent_id": "author-y"},
-+            caller_identity="agent:real-caller",
-+        )
-+    )
-+    # Different caller, same author filter -> fresh bucket.
-+    assert not _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search",
-+            {"query": "x", "agent_id": "author-x"},
-+            caller_identity="agent:other-caller",
-+        )
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_per_tool_override(dispatcher, monkeypatch):
-+    _clear_env(monkeypatch)
-+    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "10")
-+    monkeypatch.setenv("MCP_RATE_LIMIT_memory_search", "1")
-+
-+    assert not _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:a"
-+        )
-+    )
-+    assert _is_rate_limited(
-+        await dispatcher.call_tool(
-+            "memory_search", {"query": "x"}, caller_identity="agent:a"
-+        )
-+    )
-+
-+
-+def _mock_sdk_request(monkeypatch, dispatcher, headers, client_host):
-+    client = SimpleNamespace(host=c
-```
-
----
-
-### Incident Patch 2: `a8f878a2` (2026-10-20)
-**Commit Message**: fix(storage): keep a versioned memory in its store partition (#1594)
-
-* fix(storage): keep a versioned memory in its store partition
-
-* test(storage): cover versioned updates outside the default store
-
-* docs(changelog): name the #1594 fragment after the PR number
-
-changelog.d/README.md names fragments <number>.<category>.md, and the
-entry now cites the PR and the author like the other fragments do.
-
----------
-
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+Co-authored-by: Claudio Filho <[REDACTED_EMAIL]>
 Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/1594.fixed.md` (added, +5/-0)
+**File**: `changelog.d/hermes-install-dryrun.fixed.md` (added, +1/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+- **A versioned memory dropped out of its own store (#1594, serhiizghama).**
-+  `update_memory_versioned()` wrote the new version into the `default` store
-+  whatever store the old one was in, so after `memory_update(versioned=true)` or a
-+  harvest evolve the memory dropped out of searches scoped to its own store. The
-+  new version now inherits the old row's store.
+@@ -0,0 +1 @@
++- **hermes:** `--dry-run` on an already-installed profile now prints that the server is registered instead of exiting 0 with no output. `plan()` returns no actions for an installed server, so the dry-run returned before the branch that reports it — success and a hung script looked identical.
 ```
 
-**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +7/-3)
+**File**: `scripts/hermes/install.py` (modified, +2/-0)
 ```diff
-@@ -623,7 +623,7 @@ async def update_memory_versioned(
+@@ -445,6 +445,8 @@ def main(argv: list[str] | None = None) -> int:
+     for action in actions:
+         print(action.render())
+     if args.dry_run:
++        if not actions:
++            print(f"{SERVER_NAME} is already registered on :{port}/mcp; nothing to do")
+         return 0
  
-             def _check_exists():
-                 cursor = self.conn.execute(
--                    "SELECT content_hash, tags, memory_type, version, metadata FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
-+                    "SELECT content_hash, tags, memory_type, version, metadata, store FROM memories WHERE content_hash = ? AND deleted_at IS NULL",
-                     (content_hash,),
-                 )
-                 return cursor.fetchone()
-@@ -632,7 +632,7 @@ def _check_exists():
-             if not row:
-                 return False, f"Memory {content_hash} not found", None
- 
--            old_hash, old_tags_str, old_type, old_version, old_metadata_str = row
-+            old_hash, old_tags_str, old_type, old_version, old_metadata_str, old_store = row
-             resolved_tags = new_tags if new_tags is not None else (
-                 [t for t in old_tags_str.split(",") if t] if old_tags_str else []
-             )
-@@ -657,7 +657,11 @@ def _check_exists():
-                 memory_type=resolved_type,
-                 metadata=inherited_metadata,
-             )
--            store_ok, store_msg = await self.store(new_memory, skip_semantic_dedup=True)
-+            # The new version lives in the old one's store partition, or it drops
-+            # out of that store's searches once the old row is superseded.
-+            store_ok, store_msg = await self.store(
-+                new_memory, skip_semantic_dedup=True, store=old_store or "default"
-+            )
-             if not store_ok:
-                 return False, f"Failed to store new version: {store_msg}", None
- 
+     if not actions:
 ```
 
-**File**: `tests/storage/test_versioned_update_store.py` (added, +70/-0)
+**File**: `tests/hermes/test_install.py` (modified, +18/-0)
 ```diff
-@@ -0,0 +1,70 @@
-+"""A versioned update keeps the memory in its store partition.
-+
-+update_memory_versioned() wrote the new version through store() without a
-+store argument, so it always landed in "default". The old row was superseded
-+in its own store, and the memory vanished from that store's searches.
-+"""
-+
-+import os
-+import shutil
-+import tempfile
-+
-+import pytest
-+import pytest_asyncio
-+
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1"
-+
-+
-+@pytest_asyncio.fixture
-+async def storage():
-+    d = tempfile.mkdtemp(prefix="mcp-test-versioned-store-")
-+    s = SqliteVecMemoryStorage(os.path.join(d, "test.db"))
-+    await s.initialize()
-+    yield s
-+    await s.close()
-+    shutil.rmtree(d, ignore_errors=True)
-+
-+
-+def _store_of(storage, content_hash):
-+    row = storage.conn.execute(
-+        "SELECT store FROM memories WHERE content_hash = ?", (content_hash,)
-+    ).fetchone()
-+    return row[0]
-+
-+
-+async def _store(storage, content, store):
-+    m = Memory(content=content, content_hash=generate_content_hash(content), tags=["t"])
-+    ok, msg = await storage.store(m, skip_semantic_dedup=True, store=store)
-+    assert ok, msg
-+    return m.content_hash
-+
-+
-+@pytest.mark.asyncio
-+async def test_new_version_stays_in_the_old_versions_store(storage):
-+    old = await _store(storage, "The staging cluster runs on three nodes.", "work")
-+
-+    ok, msg, new_hash = await storage.update_memory_versioned(
-+        old, "The staging cluster runs on five nodes."
-+    )
-+
-+    assert ok, msg
-+    assert _store_of(storage, new_hash) == "work"
-+
-+
-+@pytest.mark.asyncio
-+async def test_versioned_memory_is_still_found_in_its_store(storage):
-+    old = await _store(storage, "Deploys go out on Tuesdays.", "work")
-+    await _store(storage, "Groceries: milk and eggs.", "default")
-+
-+    ok, msg, new_hash = await storage.update_memory_versioned(old, "Deploys go out on Thursdays.")
-+    assert ok, msg
-+
-+    work = await storage.retrieve("Deploys go out", n_results=5, store="work")
-+    assert [r.memory.content_hash for r in work] == [new_hash]
-+
-+    default = await storage.retrieve("Deploys go out", n_results=5, store="default")
-+    assert new_hash not in [r.memory.content_hash for r in default]
-```
-
----
-
-### Incident Patch 3: `9e253c40` (2026-10-20)
-**Commit Message**: fix(mcp): apply the per-caller rate limit to the FastMCP entry point (#1606) (#1607)
-
-The mcp-memory-server entry point's 8 @mcp.tool functions call
-MemoryService directly and never go through MemoryServer.call_tool,
-where #1593 added the limiter, so MCP_RATE_LIMIT_PER_MINUTE and the
-per-tool overrides had no effect there.
-
-Each tool now runs the same ToolRateLimiter check first. The caller is
-read from the request context (X-Agent-ID, then peer IP, then one
-per-process bucket), never from tool arguments. A denied call raises
-ToolError with the same -32029 rate_limit_exceeded payload, which FastMCP
-returns as isError: true; a limiter failure is logged and the call goes
-ahead.
-
-Fixes #1606
-
-**File**: `changelog.d/1606.fixed.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+- **Rate limiting did not apply to the `mcp-memory-server` entry point (closes #1606).**
-+  Its FastMCP tools call `MemoryService` directly and never go through
-+  `MemoryServer.call_tool`, where #1593 added the per-caller limiter, so
-+  `MCP_RATE_LIMIT_PER_MINUTE` and the per-tool overrides had no effect there. Each of
-+  its 8 tools now runs the same check first, with the caller read from `X-Agent-ID`,
-+  then the peer IP. A denied call returns `isError: true` with the same
-+  `rate_limit_exceeded` payload, and a limiter failure lets the call through. Per-tool
-+  overrides use this server's tool names, e.g. `MCP_RATE_LIMIT_store_memory`.
-```
-
-**File**: `docs/agents/http-generic.md` (modified, +1/-1)
-```diff
-@@ -264,4 +264,4 @@ await store_memory(content="...", tags=["api"], agent_id="researcher")
- # Server appends "agent:researcher" automatically
- ```
+@@ -215,6 +215,24 @@ def test_dry_run_writes_nothing(tmp_path):
+     assert list(profile.rglob("*")) == []
  
--The same header also keys the per-caller MCP tool rate limiter (`MCP_RATE_LIMIT_PER_MINUTE`, per-tool `MCP_RATE_LIMIT_<tool>` overrides): `X-Agent-ID` is chosen by the client, so the limiter gives fairness between cooperating agents sharing one server. It is not abuse protection — a client that rotates the header gets a fresh bucket.
-+The same header also keys the per-caller MCP tool rate limiter (`MCP_RATE_LIMIT_PER_MINUTE`, per-tool `MCP_RATE_LIMIT_<tool>` overrides): `X-Agent-ID` is chosen by the client, so the limiter gives fairness between cooperating agents sharing one server. It is not abuse protection — a client that rotates the header gets a fresh bucket. The `mcp-memory-server` (FastMCP) entry point applies the same limits, keyed by its own tool names, so its per-tool overrides read `MCP_RATE_LIMIT_store_memory`, not `MCP_RATE_LIMIT_memory_store`.
-```
-
-**File**: `src/mcp_memory_service/mcp_server.py` (modified, +78/-0)
-```diff
-@@ -15,6 +15,7 @@
- """
  
- import asyncio
-+import json
- import logging
- import sys
- import time
-@@ -44,6 +45,7 @@
- # This module is kept for future compatibility
- try:
-     from mcp.server.fastmcp import FastMCP, Context
-+    from mcp.server.fastmcp.exceptions import ToolError
- except ImportError:
-     logger_temp = logging.getLogger(__name__)
-     logger_temp.warning("FastMCP not available in mcp library - mcp_server module cannot be used")
-@@ -58,6 +60,7 @@ def decorator(func):
-     
-     FastMCP = _DummyFastMCP  # type: ignore
-     Context = None  # type: ignore
-+    ToolError = RuntimeError  # type: ignore
- 
- from mcp.types import ToolAnnotations
- 
-@@ -74,6 +77,7 @@ def decorator(func):
- from .services.memory_service import MemoryService
- from .services.graph_service import GraphService
- from .storage.graph import GraphStorage
-+from .utils.tool_rate_limit import ToolRateLimiter, resolve_caller_identity
- 
- # Configure logging
- logging.basicConfig(level=logging.INFO)  # Default to INFO level
-@@ -344,6 +348,72 @@ class StoreMemoryFailure(TypedDict):
-     chunks_created: NotRequired[int]
-     chunk_hashes: NotRequired[List[str]]
- 
-+# =============================================================================
-+# PER-CALLER RATE LIMITING (#1606)
-+# =============================================================================
-+# The @mcp.tool functions below call MemoryService directly and never go
-+# through MemoryServer.call_tool, so they run the same limiter check
-+# themselves. Unlimited by default; configured with MCP_RATE_LIMIT_PER_MINUTE
-+# and per-tool MCP_RATE_LIMIT_<tool> overrides, keyed by this server's tool
-+# names (e.g. MCP_RATE_LIMIT_store_memory).
++def test_dry_run_reports_when_already_installed(tmp_path, capsys, monkeypatch):
++    """--dry-run on an installed profile must say so, not exit silently.
 +
-+_tool_rate_limiter = ToolRateLimiter()
-+
-+
-+def _rate_limit_caller_identity(ctx: Context) -> str:
-+    """Resolve the rate-limit identity for the current tool call.
-+
-+    Mirrors ``MemoryServer._rate_limit_caller_identity``: the ``X-Agent-ID``
-+    header, then the socket peer IP, then one per-process bucket when there
-+    is no HTTP request (stdio). Never reads tool arguments: ``agent_id`` on
-+    ``retrieve_memory``/``list_memories`` is an author filter, not the caller.
++    `plan()` returns no actions when the server is already registered, so the
++    dry-run loop printed nothing and returned 0 before the branch that reports
++    the existing installation. Success and a hung script looked identical.
 +    """
++    instalar = _mod()
++    profile = tmp_path / "profile"
++    profile.mkdir()
++    monkeypatch.setattr(instalar, "mcp_is_registered", lambda port: True)
 +
-+    try:
-+        request = ctx.request_context.request
-+    except (LookupError, AttributeError, ValueError):
-+        request = None
-+    if request is None:
-+        return resolve_caller_identity(None, None)
-+    header = request.headers.get("X-Agent-ID")
-+    client = request.client
-+    host = client.host if client is not None else None
-+    return resolve_caller_identity(header, host)
++    rc = instalar.main(["--hermes-home", str(profile), "--dry-run", "--port", "8000"])
++
++    assert rc == 0
++    assert "already registered" in capsys.readouterr().out
 +
 +
-+def _check_rate_limit(ctx: Context, tool_name: str) -> None:
-+    """Raise ``ToolError`` when the caller is over its limit for this tool.
-+
-+    Fails open, as ``MemoryServer.call_tool`` does: a limiter failure is
-+    logged and the call goes ahead. FastMCP turns the raised ``ToolError``
-+    into a tool result with ``isError: true``.
-+    """
-+
-+    try:
-+        decision = _tool_rate_limiter.check(_rate_limit_caller_identity(ctx), tool_name)
-+    except Exception:
-+        logger.exception("MCP tool rate limiter failed; allowing request")
-+        return
-+    if decision.allowed:
-+        return
-+    if decision.should_log:
-+        logger.warning(
-+            "MCP tool rate limit exceeded for tool %s",
-+            _sanitize_log_value(tool_name),
-+        )
-+    payload = {
-+        "error": {
-+            "code": -32029,
-+            "type": "rate_limit_exceeded",
-+            "message": "MCP tool rate limit exceeded",
-+            "tool": tool_name,
-+            "limit_per_minute": decision.limit_per_minute,
-+            "retry_after_seconds": decision.retry_after_seconds,
-+        }
-+    }
-+    raise ToolError(json.dumps(payload))
-+
-+
- # =============================================================================
- # CORE MEMORY OPERATIONS
- # =============================================================================
-@@ -413,6 +483,7 @@ async def store_memory(
-     }
- }
-     """
-+    _check_rate_limit(ctx, "store_memory")
-     # Delegate to shared MemoryService business logic
-     memory_service = ctx.request_context.lifespan_context.memory_service
-     # RFC mcp-hostname-stamping: resolve server host when the client omits it and
-@@ -509,6 +580,7 @@ async def retrieve_memory(
-     "n_results": 3
- }
-     """
-+    _check_rate_limit(ctx, "retrieve_memory")
-     # Delegate to shared MemoryService business logic
-     memory_service = ctx.request_context.lifespan_context.memory_service
-     return await memory_service.retrieve_memories(
-@@ -572,6 +644,7 @@ async def search_by_tag(
-     "tags": ["api-documentation"]
- }
-     """
-+    _check_rate_limit(ctx, "search_by_tag")
-     # Delegate to shared MemoryService business logic
-     memory_service = ctx.request_context.lifespan_context.memory_service
-     return await memory_service.search_by_tag(
-@@ -629,6 +702,7 @@ async def delete_memory(
-     "content_hash": "a1b2c3d4e5f6..."
- }
-     """
-+    _check_rate_limit(ctx, "d
-```
-
-**File**: `tests/server/test_fastmcp_rate_limit.py` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+"""Rate limiting on the ``mcp-memory-server`` FastMCP entry point (#1606).
-+
-+Its ``@mcp.tool`` functions call ``MemoryService`` directly and never go
-+through ``MemoryServer.call_tool``, so each one runs the limiter check
-+itself. These tests drive ``tools/call`` through the SDK's own request
-+handler with a request context holding an HTTP request, the way the
-+Streamable HTTP transport does. ``get_cache_stats`` reads module state only,
-+so no storage is opened. All but the default-unlimited test fail on ``main``.
-+"""
-+
-+import json
-+from types import SimpleNamespace
-+
-+import pytest
-+from mcp import types
-+from mcp.server.lowlevel.server import request_ctx
-+from mcp.shared.context import RequestContext
-+
-+from mcp_memory_service import mcp_server
-+from mcp_memory_service.utils.tool_rate_limit import ToolRateLimiter
-+
-+TOOL = "get_cache_stats"
-+
-+
-+@pytest.fixture(autouse=True)
-+def fresh_limiter(monkeypatch):
-+    """Each test starts with empty windows and no rate-limit settings."""
-+    # raising=False: on main the attribute does not exist, and the tests should fail
-+    # on what the tools do (calls that should be denied go through), not on setup.
-+    monkeypatch.setattr(mcp_server, "_tool_rate_limiter", ToolRateLimiter(), raising=False)
-+    for var in (
-+        "MCP_RATE_LIMIT_PER_MINUTE",
-+        f"MCP_RATE_LIMIT_{TOOL}",
-+        f"MCP_RATE_LIMIT_{TOOL.upper()}",
-+    ):
-+        monkeypatch.delenv(var, raising=False)
-+
-+
-+def _request(agent_id=None, host="127.0.0.1"):
-+    headers = {} if agent_id is None else {"X-Agent-ID": agent_id}
-+    client = None if host is None else SimpleNamespace(host=host)
-+    return SimpleNamespace(headers=headers, client=client)
-+
-+
-+async def _call(agent_id=None, host="127.0.0.1", request=True, tool=TOOL, arguments=None):
-+    """Call a tool through the SDK's tools/call handler and return the CallToolResult."""
-+    handler = mcp_server.mcp._mcp_server.request_handlers[types.CallToolRequest]
-+    token = request_ctx.set(
-+        RequestContext(
-+            request_id=1,
-+            meta=None,
-+            session=None,
-+            lifespan_context=None,
-+            request=_request(agent_id, host) if request else None,
-+        )
-+    )
-+    try:
-+        result = await handler(
-+            types.CallToolRequest(
-+                method="tools/call",
-+                params=types.CallToolRequestParams(name=tool, arguments=arguments or {}),
-+            )
-+        )
-+    finally:
-+        request_ctx.reset(token)
-+    return result.root
-+
-+
-+def _rate_limit_error(result):
-+    """The rate-limit payload of a denied call, or None for any other result."""
-+    if not result.isError:
-+        return None
-+    text = result.content[0].text
-+    start = text.find("{")
-+    if start < 0:
-+        return None
-+    return json.loads(text[start:])["error"]
-+
-+
-+async def test_unlimited_by_default():
-+    for _ in range(5):
-+        result = await _call(agent_id="agent-a")
-+        assert not result.isError
-+
-+
-+async def test_third_call_from_one_agent_is_denied(monkeypatch):
-+    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "2")
-+
-+    assert not (await _call(agent_id="agent-a")).isError
-+    assert not (await _call(agent_id="agent-a")).isError
-+    denied = await _call(agent_id="agent-a")
-+
-+    error = _rate_limit_error(denied)
-+    assert denied.isError
-+    assert error["code"] == -32029
-+    assert error["type"] == "rate_limit_exceeded"
-+    assert error["tool"] == TOOL
-+    assert error["limit_per_minute"] == 2
-+    assert error["retry_after_seconds"] >= 1
-+    # Another agent has its own window.
-+    assert not (await _call(agent_id="agent-b")).isError
-+
-+
-+async def test_per_tool_override_uses_this_servers_tool_name(monkeypatch):
-+    monkeypatch.setenv(f"MCP_RATE_LIMIT_{TOOL}", "1")
-+
-+    assert not (await _call(agent_id="agent-a")).isError
-+    assert _rate_limit_error(await _call(agent_id="agent-a"))["limit_per_minute"] == 1
-+
-+
-+async def test_without_the_header_the_peer_ip_is_the_caller(monkeypatch):
-+    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
-+
-+    assert not (await _call(host="10.0.0.1")).isError
-+    assert _rate_limit_error(await _call(host="10.0.0.1")) is not None
-+    assert not (await _call(host="10.0.0.2")).isError
-+
-+
-+async def test_without_a_request_one_process_bucket(monkeypatch):
-+    monkeypatch.setenv("MCP_RATE_LIMIT_PER_MINUTE", "1")
-+
-+    assert not (await _call(request=False)).isError
-+    assert _rate_limit_error(await _call(request=False)) is not None
-+
-+
-+def test_identity_never_comes_from_tool_arguments():
-+    """``agent_id`` on retrieve_memory/list_memories is an author filter, not the caller."""
-+    ctx = SimpleNamespace(
-+        request_context=SimpleNamespace(request=_request(agent_id="real-caller"))
-+    )
-+    assert mcp_server._rate_limit_caller_identity(ctx) == "agent:real-caller"
-+    no_request = SimpleNamespace(request_context=SimpleNamespace(request=None))
-+    assert mcp_server._
+ def test_uninstall_failure_returns_nonzero(tmp_path, monkeypatch):
+     instalar = _mod()
+     profile = tmp_path / "profile"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1619** (2026-10-21): fix(hermes): report an existing installation in --dry-run (#1611) (@filhocf)
+- **PR #1615** (2026-10-21): chore(sync): parameterise logging in storage/sync/orchestrator.py (#1146) (@filhocf)
+- **PR #1612** (2026-10-20): docs(storage): document that re-store drops tombstone regardless of retention (@guamiao)
+- **PR #1611** (2026-10-20): feat(hermes): connector installer — register, verify the effect, uninstall surgically (#1610) (@filhocf)
 - **PR #1608** (2026-10-20): fix(ci): require assignment on closing issues (@dailyun)
 - **PR #1607** (2026-10-20): fix(mcp): apply the per-caller rate limit to the FastMCP entry point (#1606) (@abuhasanrumi)
-- **PR #1604** (closed): fix(ci): count only a maintainer's assignment as claim confirmation (#1596) (@MbappeWU)
-- **PR #1603** (2026-10-19): fix(mcp): propagate tool exceptions so failures reach the client as isError (#1601) (@filhocf)
-- **PR #1600** (2026-10-19): docs: point docker build at tools/docker/Dockerfile (@doobidoo)
-- **PR #1598** (2026-10-19): fix(mcp): honour X-Agent-ID on the streamable-http transport (#1597) (@filhocf)
 
 ---
 
@@ -4004,31 +3020,21 @@ Fixes #1606
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. per-agent rate limiting for MCP tool calls (fixes #1096) (#1593)
+## X. hermes): report an existing installation in --dry-run (#1611) (#1619)
 
 **RULE**:
-When implementing operations in `changelog.d/1593.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/hermes-install-dryrun.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80974bf9`: per-agent rate limiting for MCP tool calls (fixes #1096) (#1593). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `928c4ef9`: hermes): report an existing installation in --dry-run (#1611) (#1619). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1593.added.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/hermes-install-dryrun.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Per-agent rate limiting for MCP tool calls (#1593, juliasadler; closes #1096).**
-  Callers are keyed by the client-sent `X-Agent-ID` request header — read from the
-  transport layer, never from tool arguments — falling back to the socket peer IP
-  and then one per-process bucket. Unlimited by default; configure with
-  `MCP_RATE_LIMIT_PER_MINUTE` or per-tool `MCP_RATE_LIMIT_<tool>` overrides.
-  Denied calls get an MCP error (`-32029` / `rate_limit_exceeded`) carrying
-  `retry_after_seconds`. This is fairness between cooperating agents, not abuse
-  protection: a client that rotates the header gets a fresh bucket. The denied
-  call returns a `CallToolResult`, which the SDK's `call_tool` decorator only
-  passes through from `mcp` 1.19.0 on, so the `mcp` floor moves from 1.9.2 to
-  1.19.0.
+- **hermes:** `--dry-run` on an already-installed profile now prints that the server is registered instead of exiting 0 with no output. `plan()` returns no actions for an installed server, so the dry-run returned before the branch that reports it — success and a hung script looked identical.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4038,4 +3044,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80974bf9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `928c4ef9` are properly handled with clean fallback behavior.

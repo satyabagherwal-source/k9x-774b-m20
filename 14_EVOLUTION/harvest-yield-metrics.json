@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T05:09:19.763Z",
-  "total_cycles_completed": 4187,
-  "total_learnings_persisted": 4187,
-  "total_rules_promoted": 3370,
+  "last_updated": "2026-10-21T05:15:30.489Z",
+  "total_cycles_completed": 4190,
+  "total_learnings_persisted": 4190,
+  "total_rules_promoted": 3373,
   "history": [
-    {
-      "timestamp": "2026-10-20T20:35:16.233Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:35:21.242Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:41:33.504Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T20:41:33.713Z",
       "repository": "tamagui/tamagui",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-21T05:09:19.763Z",
       "repository": "code-forge-io/seo-tools",
       "learningId": "learn-github-code-forge-io-seo-tools",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T05:15:21.398Z",
+      "repository": "hartemyaakoub/seo-toolkit",
+      "learningId": "learn-github-hartemyaakoub-seo-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T05:15:26.474Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T05:15:30.489Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

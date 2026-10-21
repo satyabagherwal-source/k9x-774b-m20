@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `4e1c620e`  
+> **Source Version**: `2dfeb529`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:35:53.667Z  
+> **Timestamp**: 2026-10-21T05:15:26.261Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:35:53.659Z  
+> **Harvest Timestamp**: 2026-10-21T05:15:26.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1722,79 +1722,269 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb40091f` (2026-10-20)
-**Commit Message**: [sdk/python] Fix ty false positives on Output methods by using setattr in __setstate__ (#25181)
+### Incident Patch 1: `2dfeb529` (2026-10-20)
+**Commit Message**: Fix `pulumi org audit-log` filter params and switch to V2 API (#24665)
 
-`Output.__setstate__` replaces `get`, `apply`, `resources`, `future`,
-`is_known` and `is_secret` by assigning to `self` (`self.apply =
-error("apply")`). Type checkers that union these inferred instance
-attributes with the declared methods, like
-[ty](https://github.com/astral-sh/ty), resolve `x.apply` on any
-`Output[T]` to a union of the bound method and the plain function `def
-apply(self, func, ...)`. So every call reports a missing argument:
+Fixes https://github.com/pulumi/pulumi/issues/24664
 
-```python
-from pulumi import Output
+## Testing
 
-def check(x: Output[str]) -> None:
-    def f(s: str) -> None:
-        print(s)
+Tested user filter
+`pulumi org audit-log list --org <org> --user <user>`
 
-    x.apply(f)
+Tested event type filter
+`pulumi org audit-log list --org <org> --user <user> --event-type
+environment-read`
+
+Tested time range
+```
+DAY_AGO=$((NOW - 86400))
+TWO_DAYS_AGO=$((NOW - 172800))
+pulumi org audit-log list --org <org> --user <user> --start-time $TWO_DAYS_AGO --end-time $DAY_AGO
 ```
 
+Tested weith --output=json
 ```
-error[missing-argument] No argument provided for required parameter `func` of function `Output.apply`
+{
+  "events": [
+    {
+      "timestamp": 1791835386,
+      "event": "user-login",
+      "description": "User \"xxx\" logged into the Pulumi Console.",
+      "user": {
+        "name": "xxx",
+        "githubLogin": "xxx",
+        "avatarUrl": "xxx"
+      },
+      "sourceIP": "xxx"
+    },
+...
+ "count": 5
+}
 ```
 
-`get()`, `resources()`, `future()`, `is_known()` and `is_secret()`
-likewise report a missing `self` argument.
+Tested that export to csv with filters exported correctly
 
-This change performs the overwrites with `setattr`, which type checkers
-don't treat as declaring an attribute. `Output` defines no `__setattr__`
-or `__slots__`, so runtime behaviour is unchanged: after `__setstate__`,
-`get()` returns the deserialized value and the other five methods raise.
-The e
+<sub>Last updated: 2026-10-14 11:17 CDT</sub>
 
-**File**: `changelog/pending/sdk-python-fix-20261012-output-setattr.yaml` (added, +4/-0)
+---------
+
+Co-authored-by: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `changelog/pending/20261014--cli--audit-log-filters.yaml` (added, +3/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+component: sdk/python
+@@ -0,0 +1,3 @@
++component: cli
 +kind: fix
-+body: Fix false missing-argument errors from ty on Output.apply and other Output methods
-+time: 2026-10-12T00:00:00Z
++body: Fix `pulumi org audit-log` ignoring `--user` and `--event-type`, switch to the V2 audit log API, and add `--end-time`
 ```
 
-**File**: `sdk/python/lib/pulumi/output.py` (modified, +7/-6)
+**File**: `pkg/backend/httpstate/client/client.go` (modified, +22/-12)
 ```diff
-@@ -228,8 +228,12 @@ def __setstate__(self, state):
+@@ -1792,34 +1792,39 @@ type ListAuditLogsOptions struct {
+ 	// User filters the audit log to events triggered by a single user, by
+ 	// GitHub login. Empty means no filter.
+ 	User string
+-	// StartTime is the upper-bound timestamp of the time range to query, as
+-	// understood by the V1 endpoint. Empty means the service default.
++	// StartTime is the lower-bound Unix timestamp of the time range to query.
++	// Empty means the service default.
+ 	StartTime string
++	// EndTime is the upper-bound Unix timestamp of the time range to query.
++	// Empty means the service default.
++	EndTime string
+ 	// ContinuationToken pages through results; pass the ContinuationToken
+ 	// returned by a previous response to fetch the next page.
+ 	ContinuationToken string
+ }
  
-         value = state["value"]
+ // ListAuditLogs returns a single page of audit log events for the given
+ // organization, wrapping the `ListAuditLogEvents` Pulumi Cloud REST endpoint
+-// (GET /api/orgs/{orgName}/auditlogs).
++// (GET /api/orgs/{orgName}/auditlogs/v2).
+ func (pc *Client) ListAuditLogs(
+ 	ctx context.Context, orgName string, opts ListAuditLogsOptions,
+ ) (apitype.ListAuditLogEventsResponse, error) {
+ 	queryObj := struct {
+-		EventType         string `url:"eventType,omitempty"`
+-		User              string `url:"user,omitempty"`
++		EventType         string `url:"eventFilter,omitempty"`
++		User              string `url:"userFilter,omitempty"`
+ 		StartTime         string `url:"startTime,omitempty"`
++		EndTime           string `url:"endTime,omitempty"`
+ 		ContinuationToken string `url:"continuationToken,omitempty"`
+ 	}{
+ 		EventType:         opts.EventType,
+ 		User:              opts.User,
+ 		StartTime:         opts.StartTime,
++		EndTime:           opts.EndTime,
+ 		ContinuationToken: opts.ContinuationToken,
+ 	}
  
-+        # Overwrite methods with setattr rather than `self.x = ...`: some type checkers (e.g. ty,
-+        # see https://github.com/astral-sh/ty/issues/350) treat the assignment as declaring an
-+        # instance attribute and union it with the method, breaking every call to it.
+ 	var resp apitype.ListAuditLogEventsResponse
+-	path := fmt.Sprintf("/api/orgs/%s/auditlogs", url.PathEscape(orgName))
++	path := fmt.Sprintf("/api/orgs/%s/auditlogs/v2", url.PathEscape(orgName))
+ 	if err := pc.restCall(ctx, http.MethodGet, path, queryObj, nil, &resp); err != nil {
+ 		return resp, fmt.Errorf("listing audit logs: %w", err)
+ 	}
+@@ -1838,9 +1843,12 @@ type ExportAuditLogsOptions struct {
+ 	// User filters the audit log to events triggered by a single user, by
+ 	// GitHub login. Empty means no filter.
+ 	User string
+-	// StartTime is the upper-bound timestamp of the time range to query, as
+-	// understood by the V1 endpoint. Empty means the service default.
++	// StartTime is the lower-bound Unix timestamp of the time range to query.
++	// Empty means the service default.
+ 	StartTime string
++	// EndTime is the upper-bound Unix timestamp of the time range to query.
++	// Empty means the service default.
++	EndTime string
+ 	// ContinuationToken pages through results; pass the ContinuationToken
+ 	// returned by a previous response to fetch the next page.
+ 	ContinuationToken string
+@@ -1849,7 +1857,7 @@ type ExportAuditLogsOptions struct {
+ // ExportAuditLogs streams an export of audit log events for the given
+ // organization in the requested format (csv or cef), wrapping the
+ // `ExportAuditLogEvents` Pulumi Cloud REST endpoint
+-// (GET /api/orgs/{orgName}/auditlogs/export). Unlike ListAuditLogs, the
++// (GET /api/orgs/{orgName}/auditlogs/v2/export). Unlike ListAuditLogs, the
+ // response is plain text (CSV or CEF lines), not JSON; the caller is
+ // responsible for closing the returned ReadCloser.
+ func (pc *Client) ExportAuditLogs(
+@@ -1861,20 +1869,22 @@ func (pc *Client) ExportAuditLogs(
+ 	}
+ 	queryObj := struct {
+ 		Format            string `url:"format,omitempty"`
+-		EventType         string `url:"eventType,omitempty"`
+-		User              string `url:"user,omitempty"`
++		EventType         string `url:"eventFilter,omitempty"`
++		User              string `url:"userFilter,omitempty"`
+ 		StartTime         string `url:"startTime,omitempty"`
++		EndTime           string `url:"endTime,omitempty"`
+ 		ContinuationToken string `url:"continuationToken,omitempty"`
+ 	}{
+ 		Format:            format,
+ 		EventType:         opts.EventType,
+ 		User:              opts.User,
+ 		StartTime:         opts.StartTime,
++		EndTime:           opts.EndTime,
+ 		ContinuationToken: opts.ContinuationToken,
+ 	}
+ 
+ 	var body io.ReadCloser
+-	path := fmt.Sprintf("/api/orgs/%s/auditlogs/export", url.PathEscape(orgName))
++	path := fmt.Sprintf("/api/orgs/%s/auditlogs/v2/export", url.PathEscape(orgName))
+ 	if err := pc.restCall(ctx, http.MethodGet, path, queryObj, nil, &body); err != nil {
+ 		return nil, fmt.Errorf("exporting audit logs: %w", err)
+ 	}
+```
+
+**File**: `pkg/backend/httpstate/client/client_test.go` (modified, +30/-0)
+```diff
+@@ -2380,3 +2380,33 @@ func TestBatchUpdatePolicyGroup(t *testing.T) {
+ 		{"addInsightsAccount": {"name": "prod-aws"}}
+ 	]`, body)
+ }
 +
-         # Replace '.get' with a function that returns the value without raising an error.
--        self.get = lambda: value
-+        setattr(self, "get", lambda: value)
- 
-         def error(name: str):
-             def f(*args: Any, **kwargs: Any):
-@@ -241,11 +245,8 @@ def f(*args: Any, **kwargs: Any):
-             return f
- 
-         # Replace '.apply' and other methods on Output with implementations that raise an error.
--        self.apply = error("apply")
--        self.resources = error("resources")
--        self.future = error("future")
--        self.is_known = error("is_known")
--        self.is_secret = error("is_secret")
-+        for method in ("apply", "resources", "future", "is_known", "is_secret"):
-+            setattr(self, method, error(method))
- 
-     def get(self) -> T_co:
-         """
++func TestAuditLogsQueryParams(t *testing.T) {
++	t.Parallel()
++
++	var gotURLs []string
++	server := newMockServerRequestProcessor(http.StatusOK, func(req *http.Request) string {
++		gotURLs = append(gotURLs, req.URL.String())
++		return "{}"
++	})
++	defer server.Close()
++
++	client := NewClient(server.URL, "token", true, nil)
++	ctx := t.Context()
++
++	_, err := client.ListAuditLogs(ctx, "org", ListAuditLogsOptions{
++		EventType: "stack.create", User: "alice", StartTime: "1", EndTime: "2",
++	})
++	require.NoError(t, err)
++
++	body, err := client.ExportAuditLogs(ctx, "org", ExportAuditLogsOptions{
++		EventType: "stack.create", User: "alice", StartTime: "1", EndTime: "2",
++	})
++	require.NoError(t, err)
++	require.NoError(t, body.Close())
++
++	assert.Equal(t, []string{
++		"/api/orgs/org/auditlogs/v2?endTime=2&eventFilter=stack.create&startTime=1&userFilter=alice",
++		"/api/orgs/org/auditlogs/v2/export?endTime=2&eventFilter=stack.create&format=csv&startTime=1&userFilter=alice",
++	}, gotURLs)
++}
+```
+
+**File**: `pkg/cmd/pulumi/org/org_audit_log_export.go` (modified, +4/-2)
+```diff
+@@ -60,6 +60,7 @@ type orgAuditLogExportArgs struct {
+ 	eventType    string
+ 	user         string
+ 	startTime    string
++	endTime      string
+ 	count        int64
+ 	outputFormat outputflag.OutputFlag[orgAuditLogExportRenderFunc]
+ }
+@@ -112,8 +113,8 @@ func newOrgAuditLogExportCmdWith(factory orgAuditLogExportClientFactory) *cobra.
+ 	cmd.Flags().StringVar(&args.format, "format", "csv", "The export format. One of: csv, cef")
+ 	cmd.Flags().StringVar(&args.eventType, "event-type", "", "Filter by event type")
+ 	cmd.Flags().StringVar(&args.user, "user", "", "Filter by user login")
+-	cmd.Flags().StringVar(&args.startTime, "start-time", "",
+-		"The upper bound of the time range (V1 semantics)")
++	cmd.Flags().StringVar(&args.startTime, "start-time", "", "The lower bound of the time range, as a Unix timestamp")
++	cmd.Flags().StringVar(&args.endTime, "end-time", "", "The upper bound of the time range, as a Unix timestamp")
+ 	cmd.Flags().Int64Var(&args.count, "count", 0,
+ 		"Truncate the exported response to the given number of bytes (0 returns the full response)")
+ 	outputflag.VarP(cmd.Flags(), &args.outputFormat)
+@@ -190,6 +191,7 @@ func runOrgAuditLogExport(
+ 		EventType: args.eventType,
+ 		User:      args.user,
+ 		StartTime: args.startTime,
++		EndTime:   args.endTime,
+ 	})
+ 	if err != nil {
+ 		return err
+```
+
+**File**: `pkg/cmd/pulumi/org/org_audit_log_list.go` (modified, +5/-2)
+```diff
+@@ -60,6 +60,7 @@ type orgAuditLogListArgs struct {
+ 	eventType    string
+ 	user         string
+ 	startTime    string
++	endTime      string
+ 	count        int64
+ 	all          bool
+ 	outputFormat outputflag.OutputFlag[orgAuditLogListRenderFunc]
+@@ -107,8 +108,8 @@ func newOrgAuditLogListCmdWith(factory orgAuditLogListClientFactory) *cobra.Comm
+ 	cmd.Flags().StringVar(&args.org, "org", "", "The organization to list audit logs for")
+ 	cmd.Flags().StringVar(&args.eventType, "event-type", "", "Filter by event type")
+ 	cmd.Flags().StringVar(&args.user, "user", "", "Filter by user login")
+-	cmd.Flags().StringVar(&args.startTime, "start-time", "",
+-		"The upper bound of the time range (V1 semantics)")
++	cmd.Flags().StringVar(&args.startTime, "start-time", "", "The lower bound of the time range, as a Unix timestamp")
++	cmd.Flags().StringVar(&args.endTime, "end-time", "", "The upper bound of the time range, as a Unix timestamp")
+ 	cmd.Flags().Int64Var(&args.count, "count", 0,
+ 		"Maximum number of events to return. Defaults to the size of the first page; "+
+ 			"larger values auto-paginate")
+@@ -179,6 +180,7 @@ func runOrgAuditLogList(
+ 		EventType: args.eventType,
+ 		User:      args.user,
+ 		StartTime: args.startTime,
++		EndTime:   args.endTime,
+ 	})
+ 	if err != nil {
+ 		return err
+@@ -194,6 +196,7 @@ func runOrgAuditLogList(
+ 			EventType:         args.eventType,
+ 			User:              args.user,
+ 			StartTime:         args.startTime,
++			EndTime:           args.endTime,
+ 			ContinuationToken: token,
+ 		})
+ 		if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1823,24 +2013,23 @@ The e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [sdk/python] Fix ty false positives on Output methods by using setattr in __sets
+## X. `pulumi org audit-log` filter params and switch to V2 API (#24665)
 
 **RULE**:
-When implementing operations in `changelog/pending/sdk-python-fix-20261012-output-setattr.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261014--cli--audit-log-filters.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb40091f`: [sdk/python] Fix ty false positives on Output methods by using setattr in __setstate__ (#25181). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dfeb529`: `pulumi org audit-log` filter params and switch to V2 API (#24665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/sdk-python-fix-20261012-output-setattr.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261014--cli--audit-log-filters.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: sdk/python
+component: cli
 kind: fix
-body: Fix false missing-argument errors from ty on Output.apply and other Output methods
-time: 2026-10-12T00:00:00Z
+body: Fix `pulumi org audit-log` ignoring `--user` and `--event-type`, switch to the V2 audit log API, and add `--end-time`
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1850,4 +2039,4 @@ time: 2026-10-12T00:00:00Z
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb40091f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dfeb529` are properly handled with clean fallback behavior.

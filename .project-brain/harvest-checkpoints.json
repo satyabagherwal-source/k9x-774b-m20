@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T05:09:19.767Z",
+  "last_updated": "2026-10-21T05:15:30.492Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2826,14 +2826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hartemyaakoub-seo-toolkit",
-      "content_hash": "ecf4174a2c37867cb5ae7dbc64f3f3058135659066c0aae57923df8307fdcb5e",
-      "verified_at": "2026-10-19T16:12:04.451Z",
+      "content_hash": "cedf0ad66619dd294faf7cfc2422f080b928c3468900c4fa8e610e869da9f1c2",
+      "verified_at": "2026-10-21T05:15:21.401Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:12:04.451Z"
+      "last_updated": "2026-10-21T05:15:21.401Z"
     },
     "Maatify/seo": {
       "repository": "Maatify/seo",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
-      "verified_at": "2026-10-20T16:50:40.245Z",
+      "content_hash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
+      "verified_at": "2026-10-21T05:15:30.491Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:50:40.245Z"
+      "last_updated": "2026-10-21T05:15:30.491Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
-      "verified_at": "2026-10-20T17:35:54.110Z",
+      "content_hash": "88ae601050e590be002e1156c1583ea42e321263b893c461de32f048ebbb44e6",
+      "verified_at": "2026-10-21T05:15:26.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:35:54.110Z"
+      "last_updated": "2026-10-21T05:15:26.476Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
