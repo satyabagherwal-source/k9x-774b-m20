@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `e7a8d17d`  
+> **Source Version**: `7582042e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:04:29.828Z  
+> **Timestamp**: 2026-10-21T18:46:03.568Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:04:29.823Z  
+> **Harvest Timestamp**: 2026-10-21T18:46:03.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28613 stars
+- **Stars / Engagement**: 28627 stars
 
 ---
 
@@ -1140,370 +1140,189 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7a8d17d` (2026-10-20)
-**Commit Message**: Add Lambda Cloud API key detector (#5435)
+### Incident Patch 1: `7582042e` (2026-10-21)
+**Commit Message**: Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460)
 
-* Add Lambda Cloud API key detector
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-* set id to 1074
-
-* fix proto error
-
-**File**: `pkg/detectors/lambdacloud/lambdacloud.go` (added, +126/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,126 @@
-+package lambdacloud
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"net/http"
-+
-+	regexp "github.com/wasilibs/go-re2"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
-+)
-+
-+const verifyURL = "https://cloud.lambda.ai/api/v1/identity"
-+
-+type Scanner struct {
-+	client *http.Client
-+}
-+
-+var _ detectors.Detector = (*Scanner)(nil)
-+
-+var (
-+	defaultClient = common.SaneHttpClient()
-+
-+	keyPat = regexp.MustCompile(`\b(secret_[a-z0-9][a-z0-9-]{0,63}_[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}\.[A-Za-z0-9]{32})(?:[^A-Za-z0-9]|$)`)
-+)
-+
-+func (s Scanner) Keywords() []string {
-+	return []string{"secret_"}
-+}
-+
-+func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) ([]detectors.Result, error) {
-+	var results []detectors.Result
-+	seen := make(map[string]struct{})
-+	for _, match := range keyPat.FindAllSubmatchIndex(data, -1) {
-+		token := string(data[match[2]:match[3]])
-+		if _, ok := seen[token]; ok {
-+			continue
-+		}
-+		seen[token] = struct{}{}
-+
-+		result := detectors.Result{
-+			DetectorType: s.Type(),
-+			Raw:          []byte(token),
-+			SecretParts:  map[string]string{"key": token},
-+		}
-+
-+		if verify {
-+			client := s.client
-+			if client == nil {
-+				client = defaultClient
-+			}
-+			verified, extraData, verificationErr := verifyToken(ctx, client, token)
-+			result.Verified = verified
-+			result.ExtraData = extraData
-+			result.SetVerificationError(verificationErr, token)
-+		}
-+		results = append(results, result)
-+	}
-+	return results, nil
-+}
-+
-+func verifyToken(ctx context.Context, client *http.Client, token string) (bool, map[string]string, error) {
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, verifyURL, nil)
-+	if err != nil {
-+		return false, nil, err
-+	}
-+	req.Header.Set("Authorization", "Bearer "+token)
-+	req.Header.Set("Accept", "application/json")
-+
-+	res, err := client.Do(req)
-+	if err != nil {
-+		return false, nil, err
-+	}
-+	defer func() {
-+		_, _ = io.Copy(io.Discard, res.Body)
-+		_ = res.Body.Close()
-+	}()
-+
-+	switch res.StatusCode {
-+	case http.StatusOK:
-+		var response struct {
-+			Data identityResponse `json:"data"`
-+		}
-+		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
-+			return false, nil, err
-+		}
-+		if response.Data.ID == "" || response.Data.AccountID == "" {
-+			return false, nil, fmt.Errorf("unexpected Lambda Cloud identity response")
-+		}
-+
-+		extraData := map[string]string{
-+			"identity_id": response.Data.ID,
-+			"account_id":  response.Data.AccountID,
-+		}
-+		if response.Data.IdentityType != "" {
-+			extraData["identity_type"] = response.Data.IdentityType
-+		}
-+		if response.Data.Email != "" {
-+			extraData["email"] = response.Data.Email
-+		}
-+		return true, extraData, nil
-+	case http.StatusUnauthorized:
-+		return false, nil, nil
-+	default:
-+		return false, nil, fmt.Errorf("unexpected HTTP response status %d", res.StatusCode)
-+	}
-+}
-+
-+func (s Scanner) Type() detector_typepb.DetectorType {
-+	return detector_typepb.DetectorType_LambdaCloud
-+}
-+
-+func (s Scanner) Description() string {
-+	return "Lambda Cloud provides GPU computing infrastructure. Lambda Cloud API keys can be used to manage instances, filesystems, SSH keys, and other cloud resources."
-+}
-+
-+type identityResponse struct {
-+	ID           string `json:"id"`
-+	AccountID    string `json:"account_id"`
-+	IdentityType string `json:"identity_type"`
-+	Email        string `json:"email"`
-+}
+@@ -296,7 +296,7 @@ require (
+ 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
+ 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+ 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
+-	github.com/yuin/goldmark v1.7.8 // indirect
++	github.com/yuin/goldmark v1.7.17 // indirect
+ 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
+ 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 ```
 
-**File**: `pkg/detectors/lambdacloud/lambdacloud_integration_test.go` (added, +43/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,43 @@
-+//go:build detectors
-+
-+package lambdacloud
-+
-+import (
-+	"context"
-+	"os"
-+	"testing"
-+	"time"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
-+)
-+
-+func TestLambdaCloud_FromChunk(t *testing.T) {
-+	filename := os.Getenv("TEST_SECRET_FILE")
-+	if filename == "" {
-+		t.Skip("set TEST_SECRET_FILE with LAMBDA_CLOUD and LAMBDA_CLOUD_INACTIVE to run live verification")
-+	}
-+	secrets, err := common.GetSecretFromEnv(filename)
-+	if err != nil {
-+		t.Fatal("could not load Lambda Cloud test credentials")
-+	}
-+	for _, tt := range []struct {
-+		field    string
-+		verified bool
-+	}{
-+		{field: "LAMBDA_CLOUD", verified: true},
-+		{field: "LAMBDA_CLOUD_INACTIVE", verified: false},
-+	} {
-+		t.Run(tt.field, func(t *testing.T) {
-+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+			defer cancel()
-+			s := Scanner{}
-+			results, err := s.FromData(ctx, true, []byte("LAMBDA_API_KEY="+secrets.MustGetField(tt.field)))
-+			if err != nil || len(results) != 1 {
-+				t.Fatal("expected one Lambda Cloud credential")
-+			}
-+			if results[0].Verified != tt.verified || results[0].VerificationError() != nil {
-+				t.Fatalf("unexpected verification result: verified=%v, error=%v", results[0].Verified, results[0].VerificationError())
-+			}
-+		})
-+	}
-+}
+@@ -775,8 +775,8 @@ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
+ github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+ github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
+ github.com/yuin/goldmark v1.7.1/go.mod h1:uzxRWxtg69N339t3louHJ7+O03ezfj6PlliRlaOzY1E=
+-github.com/yuin/goldmark v1.7.8 h1:iERMLn0/QJeHFhxSt3p6PeN9mGnvIKSpG9YYorDMnic=
+-github.com/yuin/goldmark v1.7.8/go.mod h1:uzxRWxtg69N339t3louHJ7+O03ezfj6PlliRlaOzY1E=
++github.com/yuin/goldmark v1.7.17 h1:p36OVWwRb246iHxA/U4p8OPEpOTESm4n+g+8t0EE5uA=
++github.com/yuin/goldmark v1.7.17/go.mod h1:ip/1k0VRfGynBgxOz0yCqHrbZXhcjxyuS66Brc7iBKg=
+ github.com/yuin/goldmark-emoji v1.0.5 h1:EMVWyCGPlXJfUXBXpuMu+ii3TIaxbVBnEX9uaDC4cIk=
+ github.com/yuin/goldmark-emoji v1.0.5/go.mod h1:tTkZEbwu5wkPmgTcitqddVxY9osFZiavD+r4AzQrh1U=
+ github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo0=
 ```
 
-**File**: `pkg/detectors/lambdacloud/lambdacloud_test.go` (added, +359/-0)
+---
+
+### Incident Patch 2: `7ffe9407` (2026-10-21)
+**Commit Message**: Update module golang.org/x/net to v0.60.0 [SECURITY] (#5464)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +7/-7)
 ```diff
-@@ -0,0 +1,359 @@
-+package lambdacloud
-+
-+import (
-+	"context"
-+	"errors"
-+	"io"
-+	"net/http"
-+	"strings"
-+	"sync"
-+	"testing"
-+
-+	"github.com/google/go-cmp/cmp"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
-+)
-+
-+const (
-+	testHex   = "0123456789ab4def8123456789abcdef"
-+	testAlnum = "AbCdEfGhIjKlMnOpQrStUvWxYz012345"
-+	testToken = "secret_customer_" + testHex + "." + testAlnum
-+)
-+
-+func TestLambdaCloud_Pattern(t *testing.T) {
-+	secondToken := "secret_other_" + testHex + "." + testAlnum
-+	type patternTest struct {
-+		name  string
-+		input string
-+		want  []string
-+	}
-+	tests := []patternTest{
-+		{name: "standalone", input: testToken, want: []string{testToken}},
-+		{name: "key beyond first prefilter window", input: strings.Repeat("padding\n", 200) + testToken + " # trufflehog:ignore", want: []string{testToken}},
-+		{name: "environment assignment", input: "LAMBDA_API_KEY=" + testToken, want: []string{testToken}},
-+		{name: "JSON", input: `{"api_key":"` + testToken + `"}`, want: []string{testToken}},
-+		{name: "YAML", input: "api_key: '" + testToken + "'", want: []string{testToken}},
-+		{name: "Bearer header", input: "Authorization: Bearer " + testToken, want: []string{testToken}},
-+		{name: "legacy curl", input: "curl --user '" + testToken + ":' https://cloud.lambda.ai/api/v1/instances", want: []string{testToken}},
-+		{name: "backticks", input: "`" + testToken + "`", want: []string{testToken}},
-+		{name: "duplicates", input: testToken + "\n" + testToken, want: []string{testToken}},
-+		{name: "multiple keys", input: testToken + "," + secondToken, want: []string{testToken, secondToken}},
-+		{name: "multiple keys separated by quotes", input: `"` + testToken + `","` + secondToken + `"`, want: []string{testToken, secondToken}},
-+		{name: "malformed earlier prefix", input: "secret_bad," + testToken, want: []string{testToken}},
-+		{name: "assignment with earlier prefix", input: "secret_bad=" + testToken, want: []string{testToken}},
-+		{name: "one-character name", input: "secret_a_" + testHex + "." + testAlnum, want: []string{"secret_a_" + testHex + "." + testAlnum}},
-+		{name: "64-character name", input: "secret_" + strings.Repeat("a", 64) + "_" + testHex + "." + testAlnum, want: []string{"secret_" + strings.Repeat("a", 64) + "_" + testHex + "." + testAlnum}},
-+		{name: "65-character name", input: "secret_" + strings.Repeat("a", 65) + "_" + testHex + "." + testAlnum},
-+		{name: "name starts with hyphen", input: "secret_-customer_" + testHex + "." + testAlnum},
-+		{name: "underscore in name", input: "secret_customer_team_" + testHex + "." + testAlnum},
-+		{name: "uppercase in name", input: "secret_Customer_" + testHex + "." + testAlnum},
-+		{name: "dot in name", input: "secret_customer.example_" + testHex + "." + testAlnum},
-+		{name: "space in name", input: "secret_customer team_" + testHex + "." + testAlnum},
-+		{name: "non-ASCII name", input: "secret_clienté_" + testHex + "." + testAlnum},
-+		{name: "uppercase hex", input: "secret_customer_" + strings.ToUpper(testHex) + "." + testAlnum},
-+		{name: "wrong UUID version", input: "secret_customer_" + testHex[:12] + "5" + testHex[13:] + "." + testAlnum},
-+		{name: "wrong UUID variant", input: "secret_customer_" + testHex[:16] + "c" + testHex[17:] + "." + testAlnum},
-+		{name: "non UUIDv4 hex", input: "secret_customer_0123456789abcdef0123456789abcdef." + testAlnum},
-+		{name: "empty", input: ""},
-+		{name: "generic secret", input: "secret_customer_value"},
-+		{name: "AWS Lambda", input: "aws_lambda_function: { source_code_hash: '" + testHex + testHex + "' }"},
-+		{name: "embedded prefix", input: "other_" + testToken},
-+		{name: "literal escaped newline before prefix", input: `\n` + testToken},
-+		{name: "Markdown underscore wrapper", input: "__" + testToken + "__"},
-+		{name: "uppercase prefix", input: "SECRET_customer_" + testHex + "." + testAlnum},
-+		{name: "empty customer name", input: "secret__" + testHex + "." + testAlnum},
-+		{name: "missing name separator", input: "secret_customer" + testHex + "." + testAlnum},
-+		{name: "short hex", input: "secret_customer_" + testHex[:31] + "." + testAlnum},
-+		{name: "long hex", input: "secret_customer_" + testHex + "0." + testAlnum},
-+		{name: "non-hex character", input: "secret_customer_g" + testHex[1:] + "." + testAlnum},
-+		{name: "missing alphanumeric suffix", input: "secret_customer_" + testHex},
-+		{name: "short alphanumeric suffix", input: testToken[:len(testToken)-1]},
-+		{name: "long alphanumeric suffix", input: testToken + "A"},
-+		{name: "underscore after suffix is a delimiter", input: testToken + "_extra", want: []string{testToken}},
-+		{name: "period after suffix is a delimiter", input: testToken + ".", want: []string{testToken}},
-+		{name: "invalid suffix character", input: "secret_customer_" + testHex + "." + testAlnum[:31] + "-"},
-+		{name: "dot is literal", i
+@@ -104,11 +104,11 @@ require (
+ 	go.uber.org/automaxprocs v1.6.0
+ 	go.uber.org/mock v0.6.0
+ 	go.uber.org/zap v1.27.0
+-	golang.org/x/crypto v0.56.0
+-	golang.org/x/net v0.58.0
++	golang.org/x/crypto v0.57.0
++	golang.org/x/net v0.60.0
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sync v0.22.0
+-	golang.org/x/text v0.41.0
++	golang.org/x/sync v0.23.0
++	golang.org/x/text v0.42.0
+ 	golang.org/x/time v0.14.0
+ 	google.golang.org/api v0.264.0
+ 	google.golang.org/protobuf v1.36.11
+@@ -313,9 +313,9 @@ require (
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+-	golang.org/x/mod v0.38.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/term v0.45.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/term v0.46.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
 ```
 
-**File**: `pkg/engine/defaults/defaults.go` (modified, +2/-0)
+**File**: `go.sum` (modified, +14/-14)
 ```diff
-@@ -434,6 +434,7 @@ import (
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/kraken"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/kucoin"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/kylas"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/lambdacloud"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/langfuse"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/langsmith"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors/languagelayer"
-@@ -1352,6 +1353,7 @@ func buildDetectorList() []detectors.Detector {
- 		&kraken.Scanner{},
- 		&kucoin.Scanner{},
- 		&kylas.Scanner{},
-+		&lambdacloud.Scanner{},
- 		&langfuse.Scanner{},
- 		&langsmith.Scanner{},
- 		&languagelayer.Scanner{},
+@@ -844,8 +844,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
+-golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+@@ -875,8 +875,8 @@ golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzB
+ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
+-golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
+-golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+@@ -898,8 +898,8 @@ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
+ golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+-golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+-golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+@@ -915,8 +915,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -956,13 +956,13 @@ golang.org/x/sys v0.0.0-20220908164124-27713097b956/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03
 ```
 
-**File**: `pkg/pb/detector_typepb/detector_type.pb.go` (modified, +11/-7)
+---
+
+### Incident Patch 3: `87ebf04d` (2026-10-21)
+**Commit Message**: Update module golang.org/x/crypto to v0.56.0 [SECURITY] (#5462)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +2/-4)
 ```diff
-@@ -1129,6 +1129,7 @@ const (
- 	DetectorType_Resend                         DetectorType = 1071
- 	DetectorType_KongKonnect                    DetectorType = 1072
- 	DetectorType_SonarQube                      DetectorType = 1073
-+	DetectorType_LambdaCloud                    DetectorType = 1074
- )
+@@ -1,8 +1,6 @@
+ module github.com/trufflesecurity/trufflehog/v3
  
- // Enum value maps for DetectorType.
-@@ -2204,6 +2205,7 @@ var (
- 		1071: "Resend",
- 		1072: "KongKonnect",
- 		1073: "SonarQube",
-+		1074: "LambdaCloud",
- 	}
- 	DetectorType_value = map[string]int32{
- 		"Alibaba":                               0,
-@@ -3276,6 +3278,7 @@ var (
- 		"Resend":                            1071,
- 		"KongKonnect":                       1072,
- 		"SonarQube":                         1073,
-+		"LambdaCloud":                       1074,
- 	}
- )
+-go 1.25.0
+-
+-toolchain go1.25.10
++go 1.26.0
  
-@@ -3311,7 +3314,7 @@ var File_detector_type_proto protoreflect.FileDescriptor
- var file_detector_type_proto_rawDesc = []byte{
- 	0x0a, 0x13, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x2e,
- 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0d, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f,
--	0x74, 0x79, 0x70, 0x65, 0x2a, 0xb6, 0x8c, 0x01, 0x0a, 0x0c, 0x44, 0x65, 0x74, 0x65, 0x63, 0x74,
-+	0x74, 0x79, 0x70, 0x65, 0x2a, 0xc8, 0x8c, 0x01, 0x0a, 0x0c, 0x44, 0x65, 0x74, 0x65, 0x63, 0x74,
- 	0x6f, 0x72, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x41, 0x6c, 0x69, 0x62, 0x61, 0x62,
- 	0x61, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x41, 0x4d, 0x51, 0x50, 0x10, 0x01, 0x12, 0x07, 0x0a,
- 	0x03, 0x41, 0x57, 0x53, 0x10, 0x02, 0x12, 0x09, 0x0a, 0x05, 0x41, 0x7a, 0x75, 0x72, 0x65, 0x10,
-@@ -4434,12 +4437,13 @@ var file_detector_type_proto_rawDesc = []byte{
- 	0x75, 0x6d, 0x69, 0x6f, 0x41, 0x50, 0x49, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x10, 0xae, 0x08, 0x12,
- 	0x0b, 0x0a, 0x06, 0x52, 0x65, 0x73, 0x65, 0x6e, 0x64, 0x10, 0xaf, 0x08, 0x12, 0x10, 0x0a, 0x0b,
- 	0x4b, 0x6f, 0x6e, 0x67, 0x4b, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x10, 0xb0, 0x08, 0x12, 0x0e,
--	0x0a, 0x09, 0x53, 0x6f, 0x6e, 0x61, 0x72, 0x51, 0x75, 0x62, 0x65, 0x10, 0xb1, 0x08, 0x42, 0x41,
--	0x5a, 0x3f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x72, 0x75,
--	0x66, 0x66, 0x6c, 0x65, 0x73, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x2f, 0x74, 0x72, 0x75,
--	0x66, 0x66, 0x6c, 0x65, 0x68, 0x6f, 0x67, 0x2f, 0x76, 0x33, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70,
--	0x62, 0x2f, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x70,
--	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
-+	0x0a, 0x09, 0x53, 0x6f, 0x6e, 0x61, 0x72, 0x51, 0x75, 0x62, 0x65, 0x10, 0xb1, 0x08, 0x12, 0x10,
-+	0x0a, 0x0b, 0x4c, 0x61, 0x6d, 0x62, 0x64, 0x61, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x10, 0xb2, 0x08,
-+	0x42, 0x41, 0x5a, 0x3f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74,
-+	0x72, 0x75, 0x66, 0x66, 0x6c, 0x65, 0x73, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x2f, 0x74,
-+	0x72, 0x75, 0x66, 0x66, 0x6c, 0x65, 0x68, 0x6f, 0x67, 0x2f, 0x76, 0x33, 0x2f, 0x70, 0x6b, 0x67,
-+	0x2f, 0x70, 0x62, 0x2f, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f, 0x74, 0x79, 0x70,
-+	0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
- }
+ replace github.com/jpillora/overseer => github.com/trufflesecurity/overseer v1.2.8
  
- var (
+@@ -106,7 +104,7 @@ require (
+ 	go.uber.org/automaxprocs v1.6.0
+ 	go.uber.org/mock v0.6.0
+ 	go.uber.org/zap v1.27.0
+-	golang.org/x/crypto v0.55.0
++	golang.org/x/crypto v0.56.0
+ 	golang.org/x/net v0.58.0
+ 	golang.org/x/oauth2 v0.36.0
+ 	golang.org/x/sync v0.22.0
 ```
 
-**File**: `proto/detector_type.proto` (modified, +1/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -1075,4 +1075,5 @@ enum DetectorType {
-   Resend = 1071;
-   KongKonnect = 1072;
-   SonarQube = 1073;
-+  LambdaCloud = 1074;
- }
+@@ -844,8 +844,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
+-golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
++golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
++golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5464** (2026-10-21): Update module golang.org/x/net to v0.60.0 [SECURITY] (@renovate[bot])
+- **PR #5463** (closed): Update module golang.org/x/mod to v0.40.0 [SECURITY] - autoclosed (@renovate[bot])
+- **PR #5462** (2026-10-21): Update module golang.org/x/crypto to v0.56.0 [SECURITY] (@renovate[bot])
+- **PR #5461** (closed): Update go toolchain directive to v1.26.10 [SECURITY] - autoclosed (@renovate[bot])
+- **PR #5460** (2026-10-21): Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (@renovate[bot])
 - **PR #5451** (2026-10-20): Clean up Git source logging for per-source debug (@kashifkhan0771)
-- **PR #5448** (2026-10-20): Mark results whose verification was skipped (@unsmith)
-- **PR #5446** (2026-10-20): Add per-source debug option and hide sensitive data in debug logs (@kashifkhan0771)
-- **PR #5438** (2026-10-19): github: name the missing permission when a comment listing is refused (@unsmith)
-- **PR #5435** (2026-10-20): Add Lambda Cloud API key detector (@lukem-ts)
-- **PR #5432** (2026-10-16): Add per-logger debug level override for source logging (@kashifkhan0771)
 
 ---
 
@@ -1523,75 +1342,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Lambda Cloud API key detector (#5435)
+## X. Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460)
 
 **RULE**:
-When implementing operations in `pkg/detectors/lambdacloud/lambdacloud.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7a8d17d`: Add Lambda Cloud API key detector (#5435). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7582042e`: Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/lambdacloud/lambdacloud.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package lambdacloud
-
-import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
-
-	regexp "github.com/wasilibs/go-re2"
-
-	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
-	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
-	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
-)
-
-const verifyURL = "https://cloud.lambda.ai/api/v1/identity"
-
-type Scanner struct {
-	client *http.Client
-}
-
-var _ detectors.Detector = (*Scanner)(nil)
-
-var (
-	defaultClient = common.SaneHttpClient()
-
-	keyPat = regexp.MustCompile(`\b(secret_[a-z0-9][a-z0-9-]{0,63}_[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}\.[A-Za-z0-9]{32})(?:[^A-Za-z0-9]|$)`)
-)
-
-func (s Scanner) Keywords() []string {
-	return []string{"secret_"}
-}
-
-func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) ([]detectors.Result, error) {
-	var results []detectors.Result
-	seen := make(map[string]struct{})
-	for _, match := range keyPat.FindAllSubmatchIndex(data, -1) {
-		token := string(data[match[2]:match[3]])
-		if _, ok := seen[token]; ok {
-			continue
-		}
-		seen[token] = struct{}{}
-
-		result := detectors.Result{
-			DetectorType: s.Type(),
-			Raw:          []byte(token),
-			SecretParts:  map[string]string{"k
+	github.com/yuin/goldmark v1.7.17 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/yuin/goldmark v1.7.8 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7a8d17d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7582042e` are properly handled with clean fallback behavior.

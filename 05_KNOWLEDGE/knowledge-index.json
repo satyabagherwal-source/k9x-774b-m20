@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:39:51.999Z",
+  "last_updated": "2026-10-21T18:46:09.076Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7217,8 +7217,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6529e0c3",
-      "content_hash": "61761f2d1b4674315bab9a7e68dbe38f5578163c65b83645d32cdc2a6bd11226",
+      "source_version": "3f85d92b",
+      "content_hash": "df3e644f517054f6bfae3bf37450650e48293b5717f2dce5b3fb784f7e29d3b4",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7341,6 +7341,11 @@
           "number": 3583,
           "title": "joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3589,
+          "title": "completions): regenerate shell completions (#4868)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7348,7 +7353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:14:13.246Z",
+      "verified_at": "2026-10-21T18:46:09.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40306,8 +40311,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "ffe42f45",
-      "content_hash": "1cd8a113fba6b60403196ff8b94640d941d8ae6a48b9b49eb1eb77cead894bfa",
+      "source_version": "c9a56009",
+      "content_hash": "0f2c1743e1854a340469b42e5704e2694f6a4ca8bbe95f9127aed78013d17397",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -40320,6 +40325,11 @@
           "number": 3373,
           "title": "Merge pull request #18583 from cvas22/fix/18292-prometheus-scrape-interval",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3587,
+          "title": "Merge pull request #18424 from harshilv17/feature/monitoring-scrape-timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40327,7 +40337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:41:42.398Z",
+      "verified_at": "2026-10-21T18:46:00.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46301,8 +46311,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "e7a8d17d",
-      "content_hash": "648cd439abc11fb6a7975db412f7657c1690582a986d0c945552f2fafbe593af",
+      "source_version": "7582042e",
+      "content_hash": "da24f573c4ce2d19d137a54e7bb1194a37d1232afdf0bd702807479f09c1c3f9",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -46335,6 +46345,11 @@
           "number": 3426,
           "title": "Add Lambda Cloud API key detector (#5435)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3588,
+          "title": "Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46342,7 +46357,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:04:30.046Z",
+      "verified_at": "2026-10-21T18:46:03.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108892,6 +108907,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:39:51.988Z"
+    },
+    "rule-3587": {
+      "learning_id": "rule-3587",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3587,
+      "title": "Merge pull request #18424 from harshilv17/feature/monitoring-scrape-timeout",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "c9a56009",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:46:00.761Z"
+    },
+    "rule-3588": {
+      "learning_id": "rule-3588",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3588,
+      "title": "Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "7582042e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:46:03.746Z"
+    },
+    "rule-3589": {
+      "learning_id": "rule-3589",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3589,
+      "title": "completions): regenerate shell completions (#4868)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "3f85d92b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T18:46:09.071Z"
     }
   },
   "aliases": {

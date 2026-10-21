@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6529e0c3",
+    "sourceVersion": "3f85d92b",
     "license": "NOASSERTION",
-    "contentHash": "61761f2d1b4674315bab9a7e68dbe38f5578163c65b83645d32cdc2a6bd11226",
-    "lastHarvestedAt": "2026-10-21T18:14:13.287Z",
+    "contentHash": "df3e644f517054f6bfae3bf37450650e48293b5717f2dce5b3fb784f7e29d3b4",
+    "lastHarvestedAt": "2026-10-21T18:46:09.108Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "e7a8d17d",
+    "sourceVersion": "7582042e",
     "license": "AGPL-3.0",
-    "contentHash": "648cd439abc11fb6a7975db412f7657c1690582a986d0c945552f2fafbe593af",
-    "lastHarvestedAt": "2026-10-20T23:04:30.102Z",
+    "contentHash": "da24f573c4ce2d19d137a54e7bb1194a37d1232afdf0bd702807479f09c1c3f9",
+    "lastHarvestedAt": "2026-10-21T18:46:03.783Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "ffe42f45",
+    "sourceVersion": "c9a56009",
     "license": "Apache-2.0",
-    "contentHash": "1cd8a113fba6b60403196ff8b94640d941d8ae6a48b9b49eb1eb77cead894bfa",
-    "lastHarvestedAt": "2026-10-20T20:41:42.483Z",
+    "contentHash": "0f2c1743e1854a340469b42e5704e2694f6a4ca8bbe95f9127aed78013d17397",
+    "lastHarvestedAt": "2026-10-21T18:46:00.798Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {

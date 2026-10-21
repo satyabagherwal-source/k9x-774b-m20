@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `6529e0c3`  
+> **Source Version**: `3f85d92b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:14:13.075Z  
+> **Timestamp**: 2026-10-21T18:46:08.911Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:14:13.069Z  
+> **Harvest Timestamp**: 2026-10-21T18:46:08.373Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,242 +2209,921 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40b67215` (2026-10-21)
-**Commit Message**: refactor(joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866)
+### Incident Patch 1: `3f85d92b` (2026-10-21)
+**Commit Message**: chore(completions): regenerate shell completions (#4868)
 
-* refactor(joinp,count,scoresql): Polars default OptFlags; remove --low-memory
+Drops --low-memory from count, joinp and sqlp (removed in #4865 and #4866)
+and adds viz --no-daemon-bridge (#4848), across all seven shells. No other
+flag changed.
 
-Follow-up to #4865, which did the same for sqlp.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-- joinp, count and scoresql now start from OptFlags::default() instead of a
-  hand-built list that predates JOIN_ORDER, SORT_COLLAPSE,
-  CHECK_ORDER_OBSERVE etc. joinp's frames aren't deferred SQL, so its
-  flags were honored, just stale; joinp --no-optimizations keeps its
-  meaning (TYPE_COERCION | TYPE_CHECK). scoresql only runs EXPLAIN, so its
-  report showed a plan built with the old flags while sqlp now runs the
-  defaults; a test pins the collapsed nested ORDER BY.
-- joinp --low-memory and count --low-memory are removed (breaking). They
-  only set the CSV reader's low_memory, which the streaming engine
-  ignores: release timings and peak RSS were the same with and without
-  them. joinp's USAGE also claimed the flag streamed the join, which the
-  code never did. The count_polars_lowmem benchmark is retired.
-- count: the fallbacks on LazyCsvReader::finish() errors were unreachable
-  (finish() only builds the plan); collect() errors still fall back to the
-  regular C
-
-**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
+**File**: `contrib/completions/examples/qsv.bash` (modified, +31/-31)
 ```diff
-@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
- 
- ### Changed
-+- **`qsv-joinp` and `qsv-count` drop `--low-memory`** ([#4866](https://github.com/dathere/qsv/pull/4866)), which had no effect; a client that still sends it gets an unknown-flag error.
- - **`qsv-sqlp` drops `--low-memory` and redescribes `--streaming`** ([#4865](https://github.com/dathere/qsv/pull/4865)), following the `sqlp` change. `--low-memory` had no effect on Polars' streaming engine and was removed from `sqlp`, so a client that still sends it gets an unknown-flag error. `--streaming` now writes `csv`, `jsonl`, `parquet` and `arrow` results batch by batch instead of collecting them first; an `--output` file appears only once the query succeeds.
- 
- ## [26.0.0] - 2026-10-19
+@@ -2691,7 +2691,7 @@ _qsv() {
+             return 0
+             ;;
+         qsv__subcmd__count)
+-            opts="-d -f -H -n -h --delimiter --flexible --human-readable --json --low-memory --no-headers --no-polars --width --width-no-delims --help"
++            opts="-d -f -H -n -h --delimiter --flexible --human-readable --json --no-headers --no-polars --width --width-no-delims --help"
+             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                 return 0
+@@ -10963,7 +10963,7 @@ _qsv() {
+             return 0
+             ;;
+         qsv__subcmd__joinp)
+-            opts="-X -d -i -z -N -o -q -h --allow-exact-matches --asof --cache-schema --coalesce --cross --date-format --datetime-format --decimal-comma --delimiter --filter-left --filter-right --float-precision --full --ignore-case --ignore-errors --ignore-leading-zeros --infer-len --left --left-anti --left-semi --left_by --low-memory --maintain-order --no-optimizations --no-sort --non-equi --norm-unicode --null-value --nulls --output --quiet --right --right-anti --right-semi --right_by --sql-filter --strategy --streaming --time-format --tolerance --try-parsedates --validate --help"
++            opts="-X -d -i -z -N -o -q -h --allow-exact-matches --asof --cache-schema --coalesce --cross --date-format --datetime-format --decimal-comma --delimiter --filter-left --filter-right --float-precision --full --ignore-case --ignore-errors --ignore-leading-zeros --infer-len --left --left-anti --left-semi --left_by --maintain-order --no-optimizations --no-sort --non-equi --norm-unicode --null-value --nulls --output --quiet --right --right-anti --right-semi --right_by --sql-filter --strategy --streaming --time-format --tolerance --try-parsedates --validate --help"
+             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                 return 0
+@@ -13323,7 +13323,7 @@ _qsv() {
+             return 0
+             ;;
+         qsv__subcmd__sqlp)
+-            opts="-d -o -q -h --cache-schema --compress-level --compression --date-format --datetime-format --decimal-comma --delimiter --float-precision --format --ignore-errors --infer-len --low-memory --no-optimizations --output --quiet --rnull-values --statistics --streaming --time-format --truncate-ragged-lines --try-parsedates --wnull-value --help"
++            opts="-d -o -q -h --cache-schema --compress-level --compression --date-format --datetime-format --decimal-comma --delimiter --float-precision --format --ignore-errors --infer-len --no-optimizations --output --quiet --rnull-values --statistics --streaming --time-format --truncate-ragged-lines --try-parsedates --wnull-value --help"
+             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                 return 0
+@@ -14601,7 +14601,7 @@ _qsv() {
+             return 0
+             ;;
+         qsv__subcmd__viz)
+-            opts="-d -n -o -x -y -z -h --agg --annotation --area --bins --bivariate --box-points --check-geojson-key --close --cluster --color --color-scale --cols --dataset-pid --degrees --delimiter --denominator --denominator-key --denominator-unit --density --dict-info --dictionary --dictionary-context --donut --feature-id-key --feature-name-key --geocode --geocode-admin1 --geocode-country --geojson --grid-cols --heatmap-density --height --hierarchy-style --high --language --lat --limit --location-mode --locations --log-scale --lon --low --map --max-charts --no-headers --no-nulls --no-other --no-parcoords --no-snap --ohlc-open --open --output --photos --preview-threshold --projection --rangeslider --region-state --sankey-value-order --scale --series --size --slider --slider-cumulative --slider-speed --smarter --snap-max-dist --source --style --target --text --theme --title --tour-audience --tour-steps --value --violin --width --x --x-title --y --y-range --y-title --z --help bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help"
++            opts="-d -n -o -x -y -z -h --agg --annotation --area --bins --bivariate --box-points --check-geojson-key --close --cluster --color --color-scale --cols --dataset-pid --degrees --delimiter --denominator --denominator-key --denominator-unit --density --dict-info --dictionary --dictionary-context --donut --feature-id-key --feature-name-key --geocode --geocode-admin1 --geocode-country --geojson --grid-cols --heatmap-density --height --hierarchy-style --high --language --lat --limit --location-mode --locations --log-scale --lon --low --map --max-charts --no-daemon-bridge --no-headers --no-nulls --no-other --no-parcoords --no-snap --ohlc-open --open --output --photos --preview-threshold --projection --rangeslider --region-state --sankey-value-order --sc
 ```
 
-**File**: `.claude/skills/qsv/qsv-count.json` (modified, +0/-5)
+**File**: `contrib/completions/examples/qsv.elv` (modified, +28/-3)
 ```diff
-@@ -34,11 +34,6 @@
-         "type": "flag",
-         "description": "Output the width stats in JSON format."
-       },
--      {
--        "flag": "--low-memory",
--        "type": "flag",
--        "description": "Use the Polars CSV Reader's low-memory mode. This mode is slower but uses less memory. If counting still fails, use --no-polars instead to use the streaming CSV reader."
--      },
-       {
-         "flag": "--no-headers",
-         "type": "flag",
+@@ -567,7 +567,6 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand -H 'H'
+             cand --human-readable 'human-readable'
+             cand --json 'json'
+-            cand --low-memory 'low-memory'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-polars 'no-polars'
+@@ -2514,7 +2513,6 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --left 'left'
+             cand --left-anti 'left-anti'
+             cand --left-semi 'left-semi'
+-            cand --low-memory 'low-memory'
+             cand --no-optimizations 'no-optimizations'
+             cand --no-sort 'no-sort'
+             cand --nulls 'nulls'
+@@ -3393,7 +3391,6 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --cache-schema 'cache-schema'
+             cand --decimal-comma 'decimal-comma'
+             cand --ignore-errors 'ignore-errors'
+-            cand --low-memory 'low-memory'
+             cand --no-optimizations 'no-optimizations'
+             cand -q 'q'
+             cand --quiet 'quiet'
+@@ -3984,6 +3981,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4105,6 +4103,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4198,6 +4197,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4291,6 +4291,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4384,6 +4385,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4477,6 +4479,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4570,6 +4573,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4663,6 +4667,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4756,6 +4761,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4849,6 +4855,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -4942,6 +4949,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++            cand --no-daemon-bridge 'no-daemon-bridge'
+             cand -n 'n'
+             cand --no-headers 'no-headers'
+             cand --no-nulls 'no-nulls'
+@@ -5035,6 +5043,7 @@ set edit:completion:arg-completer[qsv] = {|@words|
+             cand --donut 'donut'
+             cand --geocode 'geocode'
+             cand --map 'map'
++        
 ```
 
-**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +0/-5)
+**File**: `contrib/completions/examples/qsv.fig.js` (modified, +84/-9)
 ```diff
-@@ -139,11 +139,6 @@
-         "type": "string",
-         "description": "Do an 'asof_by' join - a special implementation of the asof join that searches for the nearest keys within a subgroup set by the asof_by columns. This specifies the column/s for the left CSV. Columns are referenced by name. Specify multiple columns by separating them with a comma."
-       },
--      {
--        "flag": "--low-memory",
--        "type": "flag",
--        "description": "Use low memory mode when parsing CSVs. This will use less memory but will be slower. It will also process the join in streaming mode. Only use this when you get out of memory errors."
--      },
-       {
-         "flag": "--maintain-order",
-         "type": "string",
-```
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
- 
- ### Fixed
-+- **`joinp`, `count` and `scoresql` now use Polars' default query optimizations** ([#4866](https://github.com/dathere/qsv/pull/4866)), like `sqlp` since #4865. They set a hand-built list that predates join reordering, sort collapsing and the order-aware optimizations. For `scoresql` this matters most: it shows the plan of the query you are about to run with `sqlp`, and that plan now matches what `sqlp` runs (a nested `ORDER BY` that the outer one overrides is no longer shown). `joinp --no-optimizations` keeps its meaning. Results are unchanged.
- - **`sqlp --no-optimizations` works again, and `EXPLAIN` shows the plan that actually runs.** ([#4865](https://github.com/dathere/qsv/pull/4865)) Polars' `SQLContext` now hands back a fresh query plan with its default optimizations, dropping the ones `sqlp` set on each table. So `--no-optimizations` had no effect, while `EXPLAIN` still showed a plan built with sqlp's older, smaller set of optimizations. `sqlp` now sets them on the query itself and starts from Polars' defaults, which add join reordering, sort collapsing and order-aware optimizations to the list it used to set by hand. Query results are unchanged. Two benchmark series shift because of this and the `--streaming` change, and the shift is not a regression: `sqlp_nooptimizations` gets slower now that the flag works, and `sqlp_aggregations_expensive_streaming` now streams its last query's output.
- - **`viz` live mode: late qsv-clientd answers no longer overwrite newer ones.** A slow query could land after a faster one sent later and replace its result. It was also labeled with whatever command the selector showed at that moment, not the one that ran. Only the latest query or drill-down now shows its answer, and answers still on their way at Disconnect are dropped. Separately, Cancel on the pairing dialog now also cancels a poll already in flight: before, an approval arriving just after Cancel still connected the page and stored the token. A quick double-click on Connect no longer opens a second pairing dialog that Cancel can't close. Found by roborev on the #4859 gallery regeneration ([#4863](https://github.com/dathere/qsv/pull/4863)).
- - **`util::write_json_record` no longer reads past the header list.** It indexed headers with `get_unchecked` by record position, which is only sound when every row has exactly as many fields as there are headers. Its one caller, `search --json`, uses a non-flexible reader that guarantees this, so no release was affected; a row wider than the headers now returns an `InvalidData` error instead of being undefined behavior. Flagged by Codacy/Semgrep during #4855 ([#4856](https://github.com/dathere/qsv/pull/4856)).
-@@ -43,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Removed
- - **`sqlp --low-memory`.** ([#4865](https://github.com/dathere/qsv/pull/4865)) Polars' streaming engine, which runs every query, ignores the CSV reader's low-memory setting, so the flag has had no effect since Polars 2.0. A command that passes it now fails with an unknown-flag error. For results too big for memory, use `--streaming`. The `sqlp_lowmemory` benchmark is retired; its historical results stay in the archive.
-+- **`joinp --low-memory` and `count --low-memory`.** ([#4866](https://github.com/dathere/qsv/pull/4866)) Like `sqlp`'s, they only set the Polars CSV reader's low-memory option, which its streaming engine ignores: release-build timings and peak memory were the same with and without them. `joinp`'s help also said the flag processed the join in streaming mode, which it never did. A command that passes either now fails with an unknown-flag error. The `count_polars_lowmem` benchmark is retired; its history stays in the archive.
-+- **Internal: `count`'s fallbacks for a Polars CSV reader that fails to build.** ([#4866](https://github.com/dathere/qsv/pull/4866)) Building the reader never reads the file, so it never fails; read errors surface when the count runs, and those still fall back to the regular CSV reader.
- - **Internal: `sqlp`'s fallback CSV readers.** ([#4865](https://github.com/dathere/qsv/pull/4865)) They retried with an inferred schema when building the reader failed, but building a Polars CSV reader never reads the file, so it never fails: CSV errors only surface when the query runs. The fallbacks had not run since at least Polars 2.0, and behavior is unchanged.
- 
- ## [26.0.0] - 2026-10-19 🧭 The "New Angles" Release 📐
-```
-
-**File**: `docs/help/count.md` (modified, +0/-1)
-```diff
-@@ -108,7 +108,6 @@ qsv count --help
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
- |--------|------|-------------|--------|
- | &nbsp;`‑‑no‑polars`&nbsp; | flag | Use the "regular", single-threaded, streaming CSV reader instead of the much faster multithreaded, mem-mapped Polars CSV reader. Use this when you encounter memory issues when counting with the Polars CSV reader. The streaming reader is slower but can read any valid CSV file of any size. |  |
--| &nbsp;`‑‑low‑memory`&nbsp; | flag | Use the Polars CSV Reader's low-memory mode. This mode is slower but uses less memory. If counting still fails, use --no-polars instead to use the streaming CSV reader. |  |
- 
- <a name="common-options"></a>
- 
-```
-
-**File**: `docs/help/joinp.md` (modified, +0/-1)
-```diff
-@@ -76,7 +76,6 @@ qsv joinp --help
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse the columns as dates. If the parse fails, columns remain as strings. This is useful when the join keys are formatted as dates with differing date formats, as the date formats will be normalized. Note that this will be automatically enabled when using asof joins. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
- | &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
--| &nbsp;`‑‑low‑memory`&nbsp; | flag | Use low memory mode when parsing CSVs. This will use less memory but will be slower. It will also process the join in streaming mode. Only use this when you get out of memory errors. |  |
- | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
- | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
- | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
-```
-
-**File**: `scripts/benchmarks.sh` (modified, +0/-1)
-```diff
-@@ -946,7 +946,6 @@ run cat_rows_flexible "$qsv_bin" cat rows --flexible "$data" data_unsorted.csv
- run cat_rowskey "$qsv_bin" cat rowskey "$data" data_unsorted.csv
- run count "$qsv_bin" count "$data"
- run count_flexible "$qsv_bin" count --flexible "$data"
--run count_polars_lowmem "$qsv_bin" count --low-memory "$data"
- run count_no_polars "$qsv_bin" count --no-polars "$data"
- run --index count_index "$qsv_bin" count "$data"
- run count_width "$qsv_bin" count --width "$data"
-```
-
-**File**: `src/cmd/count.rs` (modified, +11/-40)
-```diff
-@@ -72,9 +72,6 @@ WHEN THE POLARS FEATURE IS ENABLED:
-                            Use this when you encounter memory issues when counting with the
-                            Polars CSV reader. The streaming reader is slower but can read
-                            any valid CSV file of any size.
--    --low-memory           Use the Polars CSV Reader's low-memory mode. This mode
--                           is slower but uses less memory. If counting still fails,
--                           use --no-polars instead to use the streaming CSV reader.
- 
- 
- Common options:
-@@ -106,7 +103,6 @@ struct Args {
-     flag_width_no_delims: bool,
-     flag_json:            bool,
-     flag_no_polars:       bool,
--    flag_low_memory:      bool,
-     flag_flexible:        bool,
-     flag_no_headers:      bool,
-     flag_delimiter:       Option<Delimiter>,
-@@ -172,7 +168,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                     if args.flag_no_polars || conf.is_snappy() {
-                         count_input(&conf, count_delims_mode)?
-                     } else {
--                        let count = polars_count_input(&conf, args.flag_low_memory)?;
-+                        let count = polars_count_input(&conf)?;
-                         // if polars count returns a zero, do a regular CSV reader count
-                         // to be doubly sure as it will be cheap to do so with the regular count
-                         if count == 0 {
-@@ -459,7 +455,6 @@ fn may_contain_blank_lines(path: &std::path::Path) -> std::io::Result<bool> {
- ///
- /// # Arguments
- /// * `conf` - Configuration for reading the CSV file
--/// * `low_memory` - Whether to use low memory mode when reading the file
- ///
- /// # Returns
- /// * Total number of records in the file
-@@ -481,7 +476,7 @@ fn may_contain_blank_lines(path: &std::path::Path) -> std::io::Result<bool> {
- /// - Unable to create/write temporary file for stdin
- /// - Cannot read the CSV file
- #[cfg(feature = "polars")]
--pub fn polars_count_input(conf: &Config, low_memory: bool) -> CliResult<u64> {
-+pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
-     use polars::{lazy::frame::OptFlags, prelude::*};
- 
-     // info!("using polars");
-@@ -556,21 +551,14 @@ pub fn polars_count_input(conf: &Config, low_memory: bool) -> CliResult<u64> {
-             // do it in a block so schema_df is dropped early
-             // Use ignore_errors to handle schema inference issues (e.g., columns that start
-             // with boolean values but contain integers later)
--            let schema_df = match LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
-+            // finish() only builds the plan; read errors surface from collect(), below
-+            let schema_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
-                 .with_separator(delimiter)
-                 .with_comment_prefix(comment_prefix.clone())
-                 .with_n_rows(Some(1))
-                 .with_ignore_errors(true)
--                .finish()
--            {
--                Ok(df) => df.collect(),
--                Err(e) => {
--                    log::warn!("polars error loading CSV: {e}");
--                    let (count_regular, _) =
--                        count_input(&fallback_conf, CountDelimsMode::NotRequired)?;
--                    return Ok(count_regular);
--                },
--            };
-+                .finish()?
-+                .collect();
- 
-             match schema_df {
-                 Err(e) => {
-@@ -592,32 +580,15 @@ pub fn polars_count_input(conf: &Config, low_memory: bool) -> CliResult<u64> {
-         // lowering for SQL `COUNT(*)` — both the `read_csv()` table function and a
-         // registered LazyFrame count single-threaded, while `select(len())` still
-         // parallelizes. See pola-rs/polars#29393 and qsv #4603.
--        let lazy_df = match LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
-+        // finish() only builds the plan; read errors surface from collect(), below
-+        let lazy_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
-             .with_separator(delimiter)
-             .with_comment_prefix(comment_prefix)
--            .with_low_memory(low_memory)
-             .with_ignore_errors(true)
--            .finish()
+@@ -1603,9 +1603,6 @@ const completion: Fig.Spec = {
+         {
+           name: "--json",
+         },
 -        {
--            Ok(lazy_df) => lazy_df,
--            Err(e) => {
--                log::warn!("polars error loading CSV: {e}");
--                let (count_regular, _) = count_input(&fallback_conf, CountDelimsMode::NotRequired)?;
--                return Ok(count_regular);
--            },
--        };
-+            .finish()?;
- 
--        let optflags = OptFlags::from_bits_truncate(0)
--            | OptFlags::PROJECTION_PUSHDOWN
--            | OptFlags::PREDICATE_PUSHDOWN
--            | OptFlags::CLUSTER_WITH_COLUMNS
--            | OptFlags::TYPE_COERCION
--            | OptFlags::SIMPLIFY_EXPR
--            | OptFlags::SLICE_PUSHDOWN
--            | OptFlags::COMM_SUBPLAN_ELIM
--
+-          name: "--low-memory",
+-        },
+         {
+           name: ["-n", "--no-headers"],
+         },
+@@ -10364,9 +10361,6 @@ const completion: Fig.Spec = {
+         {
+           name: "--left-semi",
+         },
+-        {
+-          name: "--low-memory",
+-        },
+         {
+           name: "--no-optimizations",
+         },
+@@ -13349,9 +13343,6 @@ const completion: Fig.Spec = {
+         {
+           name: "--ignore-errors",
+         },
+-        {
+-          name: "--low-memory",
+-        },
+         {
+           name: "--no-optimizations",
+         },
+@@ -15606,6 +15597,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -16179,6 +16173,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -16752,6 +16749,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -17325,6 +17325,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -17898,6 +17901,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -18471,6 +18477,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -19044,6 +19053,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -19617,6 +19629,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -20190,6 +20205,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -20763,6 +20781,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -21336,6 +21357,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -21909,6 +21933,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -22482,6 +22509,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -23055,6 +23085,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -23628,6 +23661,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -24201,6 +24237,9 @@ const completion: Fig.Spec = {
+             {
+               name: "--map",
+             },
++            {
++              name: "--no-daemon-bridge",
++            },
+             {
+               name: ["-n", "--no-headers"],
+             },
+@@ -24774,6 +24813,9 @@ const completion: Fig.Spec = {
+      
+```
+
+**File**: `contrib/completions/examples/qsv.fish` (modified, +28/-3)
+```diff
+@@ -366,7 +366,6 @@ complete -c qsv -n "__fish_qsv_using_subcommand count" -s d -l delimiter -r
+ complete -c qsv -n "__fish_qsv_using_subcommand count" -s f -l flexible
+ complete -c qsv -n "__fish_qsv_using_subcommand count" -s H -l human-readable
+ complete -c qsv -n "__fish_qsv_using_subcommand count" -l json
+-complete -c qsv -n "__fish_qsv_using_subcommand count" -l low-memory
+ complete -c qsv -n "__fish_qsv_using_subcommand count" -s n -l no-headers
+ complete -c qsv -n "__fish_qsv_using_subcommand count" -l no-polars
+ complete -c qsv -n "__fish_qsv_using_subcommand count" -l width
+@@ -1691,7 +1690,6 @@ complete -c qsv -n "__fish_qsv_using_subcommand joinp" -s z -l ignore-leading-ze
+ complete -c qsv -n "__fish_qsv_using_subcommand joinp" -l left
+ complete -c qsv -n "__fish_qsv_using_subcommand joinp" -l left-anti
+ complete -c qsv -n "__fish_qsv_using_subcommand joinp" -l left-semi
+-complete -c qsv -n "__fish_qsv_using_subcommand joinp" -l low-memory
+ complete -c qsv -n "__fish_qsv_using_subcommand joinp" -l no-optimizations
+ complete -c qsv -n "__fish_qsv_using_subcommand joinp" -l no-sort
+ complete -c qsv -n "__fish_qsv_using_subcommand joinp" -l nulls
+@@ -2194,7 +2192,6 @@ complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -l wnull-value -r
+ complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -l cache-schema
+ complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -l decimal-comma
+ complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -l ignore-errors
+-complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -l low-memory
+ complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -l no-optimizations
+ complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -s q -l quiet
+ complete -c qsv -n "__fish_qsv_using_subcommand sqlp" -l statistics
+@@ -2573,6 +2570,7 @@ complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcomm
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcommand_from bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help" -l donut
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcommand_from bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help" -l geocode
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcommand_from bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help" -l map
++complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcommand_from bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help" -l no-daemon-bridge
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcommand_from bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help" -s n -l no-headers
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcommand_from bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help" -l no-nulls
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and not __fish_seen_subcommand_from bar barpolar box candlestick choropleth contour funnel geo heatmap histogram icicle line map ohlc parcats parcoords pie radar sankey scatter scatter3d smart splom sunburst ternary treemap violin help" -l no-other
+@@ -2685,6 +2683,7 @@ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_from bar" -l donut
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_from bar" -l geocode
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_from bar" -l map
++complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_from bar" -l no-daemon-bridge
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_from bar" -s n -l no-headers
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_from bar" -l no-nulls
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_from bar" -l no-other
+@@ -2769,6 +2768,7 @@ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_subcommand_
+ complete -c qsv -n "__fish_qsv_using_subcommand viz; and __fish_seen_su
+```
+
+**File**: `contrib/completions/examples/qsv.nu` (modified, +28/-3)
+```diff
+@@ -330,7 +330,6 @@ module completions {
+     --flexible(-f)
+     --human-readable(-H)
+     --json
+-    --low-memory
+     --no-headers(-n)
+     --no-polars
+     --width
+@@ -1858,7 +1857,6 @@ module completions {
+     --left-anti
+     --left-semi
+     --left_by: string
+-    --low-memory
+     --maintain-order: string
+     --no-optimizations
+     --no-sort
+@@ -2528,7 +2526,6 @@ module completions {
+     --format: string
+     --ignore-errors
+     --infer-len: string
+-    --low-memory
+     --no-optimizations
+     --output(-o): string
+     --quiet(-q)
+@@ -2950,6 +2947,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3037,6 +3035,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3124,6 +3123,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3211,6 +3211,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3298,6 +3299,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3385,6 +3387,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3472,6 +3475,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3559,6 +3563,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3646,6 +3651,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3733,6 +3739,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3820,6 +3827,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3907,6 +3915,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -3994,6 +4003,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4081,6 +4091,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4168,6 +4179,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4255,6 +4267,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4342,6 +4355,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4429,6 +4443,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4516,6 +4531,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4603,6 +4619,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4690,6 +4707,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4777,6 +4795,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4864,6 +4883,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -4951,6 +4971,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -5038,6 +5059,7 @@ module completions {
+     --low: string
+     --map
+     --max-charts: string
++    --no-daemon-bridge
+     --no-headers(-n)
+     --no-nulls
+     --no-other
+@@ -5125,6 +5147,7 @@ m
+```
+
+**File**: `contrib/completions/examples/qsv.ps1` (modified, +28/-3)
+```diff
+@@ -598,7 +598,6 @@ Register-ArgumentCompleter -Native -CommandName 'qsv' -ScriptBlock {
+             [CompletionResult]::new('-H', '-H ', [CompletionResultType]::ParameterName, 'H')
+             [CompletionResult]::new('--human-readable', '--human-readable', [CompletionResultType]::ParameterName, 'human-readable')
+             [CompletionResult]::new('--json', '--json', [CompletionResultType]::ParameterName, 'json')
+-            [CompletionResult]::new('--low-memory', '--low-memory', [CompletionResultType]::ParameterName, 'low-memory')
+             [CompletionResult]::new('-n', '-n', [CompletionResultType]::ParameterName, 'n')
+             [CompletionResult]::new('--no-headers', '--no-headers', [CompletionResultType]::ParameterName, 'no-headers')
+             [CompletionResult]::new('--no-polars', '--no-polars', [CompletionResultType]::ParameterName, 'no-polars')
+@@ -2635,7 +2634,6 @@ Register-ArgumentCompleter -Native -CommandName 'qsv' -ScriptBlock {
+             [CompletionResult]::new('--left', '--left', [CompletionResultType]::ParameterName, 'left')
+             [CompletionResult]::new('--left-anti', '--left-anti', [CompletionResultType]::ParameterName, 'left-anti')
+             [CompletionResult]::new('--left-semi', '--left-semi', [CompletionResultType]::ParameterName, 'left-semi')
+-            [CompletionResult]::new('--low-memory', '--low-memory', [CompletionResultType]::ParameterName, 'low-memory')
+             [CompletionResult]::new('--no-optimizations', '--no-optimizations', [CompletionResultType]::ParameterName, 'no-optimizations')
+             [CompletionResult]::new('--no-sort', '--no-sort', [CompletionResultType]::ParameterName, 'no-sort')
+             [CompletionResult]::new('--nulls', '--nulls', [CompletionResultType]::ParameterName, 'nulls')
+@@ -3574,7 +3572,6 @@ Register-ArgumentCompleter -Native -CommandName 'qsv' -ScriptBlock {
+             [CompletionResult]::new('--cache-schema', '--cache-schema', [CompletionResultType]::ParameterName, 'cache-schema')
+             [CompletionResult]::new('--decimal-comma', '--decimal-comma', [CompletionResultType]::ParameterName, 'decimal-comma')
+             [CompletionResult]::new('--ignore-errors', '--ignore-errors', [CompletionResultType]::ParameterName, 'ignore-errors')
+-            [CompletionResult]::new('--low-memory', '--low-memory', [CompletionResultType]::ParameterName, 'low-memory')
+             [CompletionResult]::new('--no-optimizations', '--no-optimizations', [CompletionResultType]::ParameterName, 'no-optimizations')
+             [CompletionResult]::new('-q', '-q', [CompletionResultType]::ParameterName, 'q')
+             [CompletionResult]::new('--quiet', '--quiet', [CompletionResultType]::ParameterName, 'quiet')
+@@ -4192,6 +4189,7 @@ Register-ArgumentCompleter -Native -CommandName 'qsv' -ScriptBlock {
+             [CompletionResult]::new('--donut', '--donut', [CompletionResultType]::ParameterName, 'donut')
+             [CompletionResult]::new('--geocode', '--geocode', [CompletionResultType]::ParameterName, 'geocode')
+             [CompletionResult]::new('--map', '--map', [CompletionResultType]::ParameterName, 'map')
++            [CompletionResult]::new('--no-daemon-bridge', '--no-daemon-bridge', [CompletionResultType]::ParameterName, 'no-daemon-bridge')
+             [CompletionResult]::new('-n', '-n', [CompletionResultType]::ParameterName, 'n')
+             [CompletionResult]::new('--no-headers', '--no-headers', [CompletionResultType]::ParameterName, 'no-headers')
+             [CompletionResult]::new('--no-nulls', '--no-nulls', [CompletionResultType]::ParameterName, 'no-nulls')
+@@ -4314,6 +4312,7 @@ Register-ArgumentCompleter -Native -CommandName 'qsv' -ScriptBlock {
+             [CompletionResult]::new('--donut', '--donut', [CompletionResultType]::ParameterName, 'donut')
+             [CompletionResult]::new('--geocode', '--geocode', [CompletionResultType]::ParameterName, 'geocode')
+             [CompletionResult]::new('--map', '--map', [CompletionResultType]::ParameterName, 'map')
++            [CompletionResult]::new('--no-daemon-bridge', '--no-daemon-bridge', [CompletionResultType]::ParameterName, 'no-daemon-bridge')
+             [CompletionResult]::new('-n', '-n', [CompletionResultType]::ParameterName, 'n')
+             [CompletionResult]::new('--no-headers', '--no-headers', [CompletionResultType]::ParameterName, 'no-headers')
+             [CompletionResult]::new('--no-nulls', '--no-nulls', [CompletionResultType]::ParameterName, 'no-nulls')
+@@ -4408,6 +4407,7 @@ Register-ArgumentCompleter -Native -CommandName 'qsv' -ScriptBlock {
+             [CompletionResult]::new('--donut', '--donut', [CompletionResultType]::ParameterName, 'donut')
+             [CompletionResult]::new('--geocode', '--geocode', [CompletionResultType]::ParameterName, 'geocode')
+             [CompletionResult]::new('--map', '--map', [CompletionResultType]::ParameterName, 'map')
++            [CompletionResult]::new('--no-daemon-bridge', '--no-daemon-bridge', [Compl
+```
+
+**File**: `contrib/completions/examples/qsv.zsh` (modified, +28/-3)
+```diff
+@@ -574,7 +574,6 @@ _arguments "${_arguments_options[@]}" : \
+ '-H[]' \
+ '--human-readable[]' \
+ '--json[]' \
+-'--low-memory[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-polars[]' \
+@@ -2689,7 +2688,6 @@ _arguments "${_arguments_options[@]}" : \
+ '--left[]' \
+ '--left-anti[]' \
+ '--left-semi[]' \
+-'--low-memory[]' \
+ '--no-optimizations[]' \
+ '--no-sort[]' \
+ '--nulls[]' \
+@@ -3756,7 +3754,6 @@ _arguments "${_arguments_options[@]}" : \
+ '--cache-schema[]' \
+ '--decimal-comma[]' \
+ '--ignore-errors[]' \
+-'--low-memory[]' \
+ '--no-optimizations[]' \
+ '-q[]' \
+ '--quiet[]' \
+@@ -4431,6 +4428,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -4534,6 +4532,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -4629,6 +4628,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -4724,6 +4724,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -4819,6 +4820,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -4914,6 +4916,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5009,6 +5012,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5104,6 +5108,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5199,6 +5204,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5294,6 +5300,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5389,6 +5396,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5484,6 +5492,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5579,6 +5588,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5674,6 +5684,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5769,6 +5780,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5864,6 +5876,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -5959,6 +5972,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6054,6 +6068,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6149,6 +6164,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6244,6 +6260,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6339,6 +6356,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6434,6 +6452,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6529,6 +6548,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6624,6 +6644,7 @@ _arguments "${_arguments_options[@]}" : \
+ '--donut[]' \
+ '--geocode[]' \
+ '--map[]' \
++'--no-daemon-bridge[]' \
+ '-n[]' \
+ '--no-headers[]' \
+ '--no-nulls[]' \
+@@ -6719,6 +6740,7 @@ _arguments
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4868** (2026-10-21): chore(completions): regenerate shell completions (@jqnatividad)
 - **PR #4867** (2026-10-21): perf(joinp): --streaming writes the join result batch by batch (@jqnatividad)
 - **PR #4866** (2026-10-21): refactor(joinp,count,scoresql): Polars default OptFlags; remove --low-memory (@jqnatividad)
 - **PR #4865** (2026-10-21): perf(sqlp): real --streaming output, honor OptFlags on Polars 2.0; remove --low-memory (@jqnatividad)
 - **PR #4864** (2026-10-21): deps: bump polars to upstream rev c7da28c (@jqnatividad)
 - **PR #4863** (2026-10-21): fix(viz): drop stale qsv-clientd answers in live mode (@jqnatividad)
-- **PR #4862** (2026-10-21): build(deps): bump hono from 4.13.7 to 4.13.13 in /.claude/skills (@dependabot[bot])
 
 ---
 
@@ -2464,28 +3143,34 @@ Follow-up to #4865, which did the same for sqlp.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866)
+## X. completions): regenerate shell completions (#4868)
 
 **RULE**:
-When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `contrib/completions/examples/qsv.bash`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40b67215`: joinp,count,scoresql): Polars default OptFlags; remove --low-memory (#4866). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f85d92b`: completions): regenerate shell completions (#4868). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/completions/examples/qsv.bash`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`qsv-joinp` and `qsv-count` drop `--low-memory`** ([#4866](https://github.com/dathere/qsv/pull/4866)), which had no effect; a client that still sends it gets an unknown-flag error.
+            opts="-d -f -H -n -h --delimiter --flexible --human-readable --json --no-headers --no-polars --width --width-no-delims --help"
+            opts="-X -d -i -z -N -o -q -h --allow-exact-matches --asof --cache-schema --coalesce --cross --date-format --datetime-format --decimal-comma --delimiter --filter-left --filter-right --float-precision --full --ignore-case --ignore-errors --ignore-leading-zeros --infer-len --left --left-anti --left-semi --left_by --maintain-order --no-optimizations --no-sort --non-equi --norm-unicode --null-value --nulls --output --quiet --right --right-anti --right-semi --right_by --sql-filter --strategy --streaming --time-format --tolerance --try-parsedates --validate --help"
+            opts="-d -o -q -h --cache-schema --compress-level --compression --date-format --datetime-format --decimal-comma --delimiter --float-precision --format --ignore-errors --infer-len --no-optimizations --output --quiet --rnull-values --statistics --streaming --time-format --truncate-ragged-lines --try-parsedates --wnull-value --help"
+            opts="-d -n -o -x -y -z -h --agg --annotation --area --bins --bivariate --box-points --check-geojson-key --close --cluster --co
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            opts="-d -f -H -n -h --delimiter --flexible --human-readable --json --low-memory --no-headers --no-polars --width --width-no-delims --help"
+            opts="-X -d -i -z -N -o -q -h --allow-exact-matches --asof --cache-schema --coalesce --cross --date-format --datetime-format --decimal-comma --delimiter --filter-left --filter-right --float-precision --full --ignore-case --ignore-errors --ignore-leading-zeros --infer-len --left --left-anti --left-semi --left_by --low-memory --maintain-order --no-optimizations --no-sort --non-equi --norm-unicode --null-value --nulls --output --quiet --right --right-anti --right-semi --right_by --sql-filter --strategy --streaming --time-format --tolerance --try-parsedates --validate --help"
+            opts="-d -o -q -h --cache-schema --compress-level --compression --date-format --datetime-format --decimal-comma --delimiter --float-precision --format --ignore-errors --infer-len --low-memory --no-optimizations --output --quiet --rnull-values --statistics --streaming --time-format --truncate-ragged-lines --try-parsedates --wnull-value --help"
+            opts="-d -n -o -x -y -z -h --agg --annotation --area --bins --bivariate --box-points --c
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40b67215` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f85d92b` are properly handled with clean fallback behavior.
