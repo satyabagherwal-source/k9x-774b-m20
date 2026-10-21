@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-XUC1",
-    "timestamp": "2026-10-20T04:36:18.001Z",
-    "repository": "enaqx/awesome-react",
-    "learningId": "learn-github-enaqx-awesome-react",
-    "contentHash": "b34124a042c646af5321647228666270bac739d97f08bf43e9cf3999f12898f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-XVRL",
     "timestamp": "2026-10-20T04:36:19.857Z",
     "repository": "trinodb/trino",
@@ -7492,6 +7477,21 @@
     "contentHash": "4f6f195f94fef764b59400f274edcf4ce8d7fe8337a8c9f22837bb830b4b5d18",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-K64M",
+    "timestamp": "2026-10-21T05:09:19.750Z",
+    "repository": "code-forge-io/seo-tools",
+    "learningId": "learn-github-code-forge-io-seo-tools",
+    "contentHash": "46ad57498f9aad70bbf2d93de26d0f938722955604335994c74646769f45d3ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

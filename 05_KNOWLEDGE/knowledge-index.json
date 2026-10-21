@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:03:04.036Z",
+  "last_updated": "2026-10-21T05:09:19.690Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -58414,14 +58414,14 @@
       "platform": "github",
       "source_url": "https://github.com/code-forge-io/seo-tools",
       "source_version": "e1e672b3",
-      "content_hash": "77279cddabddb92cd9b86aa336c2aad5a83eb47ca2ec13d4f42cb832ecfa1bd9",
+      "content_hash": "46ad57498f9aad70bbf2d93de26d0f938722955604335994c74646769f45d3ef",
       "dossier_path": "07_PROJECT_LEARNING/code-forge-io-seo-tools-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/code-forge-io-seo-tools-learnings.md",
       "promoted_rules": [
         {
           "number": 2665,
           "title": "Merge pull request #10 from daguitosama/main",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58429,7 +58429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:06:08.251Z",
+      "verified_at": "2026-10-21T05:09:19.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95012,7 +95012,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:06:08.251Z"
+      "verified_at": "2026-10-21T05:09:19.677Z"
     },
     "rule-2666": {
       "learning_id": "rule-2666",
