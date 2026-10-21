@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `f186c41e`  
+> **Source Version**: `4f72cb02`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:01:56.021Z  
+> **Timestamp**: 2026-10-21T19:05:39.068Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:01:55.735Z  
+> **Harvest Timestamp**: 2026-10-21T19:05:37.317Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3369 stars
+- **Stars / Engagement**: 3373 stars
 
 ---
 
@@ -665,6 +665,9 @@ impl Session {
                 Some(ClientCmd::ResumeBackgroundTailing(launches)) => {
                     self.shared.resume_background_tailing(launches)
                 }
+                Some(ClientCmd::ResumeTaskTailing(task_ids)) => self
+                    .shared
+                    .resume_task_tailing(&self.acp_session_id.0, task_ids),
                 Some(ClientCmd::ResetSession {
                     text,
                     deadline,
@@ -715,11 +718,7 @@ impl Session {
             return false;
         }
         // The limit arrives as agent text with no prompt error; park like the
-        // prompt path so the reaper can resume after the reset (#4373).
-        let captured = take_rate_limit_from_captured_rejection(
-            &shared.rate_limit_rejections,
-            chrono::Utc::now(),
-
+        // prompt path so the reaper ca
 ```
 
 ### Core Architecture Module: `src/acp/acp_client/lifecycle.rs`
@@ -2396,11 +2395,11 @@ pub(super) fn codex_group_aoe_flags(group: &dyn TableLike) -> Vec<bool> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4682** (2026-10-19): **Serve probes can skip a due refresh when a result is already queued**
-  *Symptoms*: ### What happened?  Nonblocking P3 follow-up to [#4497's scheduling comment](https://github.com/agent-of-empires/agent-of-empires/pull/4497#discussion_r4282090182). The ordering remains on main in [`app.rs:1328-1332`](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/src/tui/app.rs#L1328-L1332).  Source-derived schedule, not reproduced locally:  1. A probe's result reaches the queue just before the two-second refresh tick, before the UI drains it. 2. The tick resets its timer and calls [`request_serve_probe`](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/src/tui/home/pollers.rs#L520-L532), which skips because the in-flight flag is still set. 3. The same iteration applies the result and clears the flag, but the next probe waits another polling interval.  Expected: consume completed work before scheduling the due probe. Actual: an unnecessary extra interval, currently two seconds, before observing later daemon-state changes. This is not a measured four-second UI stall.  Apply results before the timer block, preserving the one-in-flight invariant. Cover a queued result at a due tick with a deterministic regression, without sleeps. #4541 tracks synchronous dialog probes, not this scheduling order.  ### aoe version and OS  main `fb6c3e50e00de58e34024080aabb0818626a29d2`; Linux/macOS. Static trace only; no runtime frequency claim.  ### AI usage  Codex inspection and drafting, indep
+- **Issue #4698** (2026-10-21): **ACP: missing-adapter error gives daemon-PATH advice when a configured PATH is in effect**
+  *Symptoms*: ### What happened?  When `environment` (or the provider routing pick) sets `PATH`, that PATH replaces the daemon's for the adapter. If the adapter isn't on it, both spawn paths (`spawn_subprocess` on ENOENT, and the runner preflight added in #4654) return `missing_binary_spawn_error` (`src/acp/acp_client/errors.rs`), which says the binary is "not found on the daemon's PATH" and suggests restarting `aoe serve` from a shell where `which <cmd>` resolves. Neither helps: the daemon's PATH isn't the one searched.  Suggested fix: when a configured `PATH` is the effective one, say the adapter wasn't found on the configured `PATH` (naming where it was set) and suggest adding the adapter's directory there. Keep the install hint.  Raised in @Seluj78's review of #4654: https://github.com/agent-of-empires/agent-of-empires/pull/4654#pullrequestreview-5568263586  ### aoe version and OS  main at 1220f8db plus #4654, Linux. Checked against the code and the table-test row where the configured PATH lacks the adapter; not exercised live.  ### AI usage  Drafted by Claude Code (Claude Opus 5.5); klubrake reviewed it before filing.
 
-- **Issue #4679** (2026-10-19): **Read card range headers include one extra line**
-  *Symptoms*: ### What happened?  P3 follow-up found during #4678; the same calculation is present in its [pre-PR base](https://github.com/agent-of-empires/agent-of-empires/blob/702f5878e4d95145d4476fe9c3bcdc572ab4f200/web/src/components/acp/CoreToolCards.tsx#L88-L95).  **Source-derived reproduction (not run locally):** render a Read card with `offset: 2, limit: 2`. Its header says `L2–4`, although the requested inclusive range is lines 2–3. The fallback body correctly selects only those two lines.  On upstream main, [`formatRange`](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/web/src/components/acp/CoreToolCards.tsx#L92-L98) calculates the endpoint as `offset + limit`. The existing [header test](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/web/src/components/acp/ToolCards.render.test.tsx#L71-L77) also expects `L1–11` for ten lines starting at line 1.  **Expected:** display `offset + limit - 1` as the inclusive endpoint. **Impact:** misleading range metadata only; this does not cause an extra line to be read.  **Acceptance:** correct the endpoint and update the existing table-driven component test, including a one-line range and a non-default offset. Preserve offset-only and limit-only labels. No backend change is needed.  ### aoe version and OS  Upstream main at `fb6c3e50e00de58e34024080aabb0818626a29d2`; shared web rendering, no OS-specific reproduction claimed.  ### AI usage  Code
+- **Issue #4696** (2026-10-20): **ACP: tell "adapter not found" apart from "bundled adapter refused" in spawn errors**
+  *Symptoms*: ### What happened?  `resolve_agent_command` (`src/acp/acp_client/resolve_command.rs`) returns `None` for three different cases: the adapter isn't installed anywhere, the bundled copy is stale, or the bundled copy needs a newer Node (`runtime_too_old_for`). Both spawn paths then report `missing_binary_spawn_error` with an install hint: `spawn_subprocess` in-process, and `spawn_runner_detached` since #4654. When the real fix is to upgrade Node, "install the adapter" is the wrong advice.  Suggested fix: return a typed resolution (Resolved / NotBare / NotFound / Rejected { reason }) and map Rejected to its own user-facing error that names the reason.  Follow-up from @Seluj78's review of #4654: https://github.com/agent-of-empires/agent-of-empires/pull/4654#pullrequestreview-5553994786  ### aoe version and OS  main at 1220f8db (plus #4654), Linux. Found by reading the code; not reproduced live.  ### AI usage  Drafted by Claude Code (Claude Opus 5.5) from the maintainer's drafted follow-up; klubrake reviewed it before filing.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2417,1331 +2416,695 @@ pub(super) fn codex_group_aoe_flags(group: &dyn TableLike) -> Vec<bool> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f186c41e` (2026-10-20)
-**Commit Message**: fix(acp): announce context reset when a new conversation replaces the old one (#4742)
+### Incident Patch 1: `e869dfde` (2026-10-20)
+**Commit Message**: fix(daemon): retain runtime rows when profile enumeration fails (#4741)
 
-* fix(acp): announce context reset when a new conversation replaces the old one
+Motivation: load_all_instances returns an empty row set with
+enumeration_failed set when the profile directory cannot be listed, and
+reload_state_instances_from_disk then replaced the live rows (and the
+daemon-only overlay state on them) with that empty set. A failed
+inventory read was therefore treated as a successful empty inventory.
 
-A terminal to structured switch without a stored id went straight to
-session/new, a view round trip hid the session/load failure marker
-because the event store was cleared, and a runner resuming under a
-different id was only logged. Thread a prior_conversation flag into the
-worker so the first two emit SessionContextReset, and emit one from
-resume() when the runner id differs from the stored id.
+Approach: when the loaded cache reports a failed enumeration, the reload
+keeps the current rows and previous read cache, and only marks the cache
+enumeration_failed so health is published as degraded. The next
+successful reload replaces the cache wholesale, clearing the flag, and a
+successful empty inventory still removes rows.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Validation: added failed_enumeration_keeps_rows_until_a_successful_empty_inventory
+(failure retains a row plus its daemon-only last_error and reports
+degraded health; recovery clears the flag; a successful empty inventory
+removes the row). It fails with the reload.rs change reverted and passes
+with it. Replaced the tail of
+session_enumeration_failure_does_not_block_recovered_inventory, which
+asserted the old empty-on-failure result. Ran `cargo test --li
 
-* fix(acp): keep the resume idle grace doc on its function
-
-Addresses review comment from @cwrau on #4742.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* test(acp): assert the reset marker on a differing and a same runner id
-
-Addresses review comment from @cwrau on #4742.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(acp): keep prior-conversation evidence when a restart rebuilds the spawn request
-
-Addresses review comment from @jerome-benoit on #4742.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Sonnet 5
-
-**File**: `src/acp/acp_client/commands.rs` (modified, +2/-0)
+**File**: `src/server/reload.rs` (modified, +11/-0)
 ```diff
-@@ -79,6 +79,8 @@ pub(super) enum ConnectMode {
-         /// advertises the fork capability, the handshake sends
-         /// `session/fork` instead of `session/new` / `session/load`.
-         fork_from: Option<String>,
-+        /// A conversation existed before this launch, even without a stored id.
-+        prior_conversation: bool,
-     },
-     Resume {
-         acp_session_id: String,
-```
-
-**File**: `src/acp/acp_client/connection/establish.rs` (modified, +80/-8)
-```diff
-@@ -4,6 +4,7 @@
- use crate::acp::agent_compat::{self, ExpectedAgent};
- use crate::acp::mcp_config;
- use crate::acp::state::{Event, StartupErrorDetail};
-+use crate::acp::transcript::LOAD_FAILED_PREFIX;
- use agent_client_protocol::schema::v1::{
-     ForkSessionRequest, ForkSessionResponse, InitializeResponse, LoadSessionRequest,
-     LoadSessionResponse, McpServer, NewSessionRequest, NewSessionResponse, SessionConfigId,
-@@ -35,6 +36,35 @@ use crate::acp::acp_client::session_identity::ordered_session_request;
- /// Fully silent grace after reattaching to an in-flight turn.
- const RESUME_IDLE_GRACE_DEFAULT: Duration = Duration::from_secs(30);
+@@ -560,6 +560,17 @@ pub(crate) async fn reload_state_instances_from_disk(
+         return;
+     }
  
-+/// Announced when `session/new` replaces a conversation the user expects to
-+/// continue. `stored` is absent after a view switch that lost the id.
-+fn initial_reset_reason(
-+    stored: bool,
-+    load_session_capable: bool,
-+    fork_requested: bool,
-+    prior_conversation: bool,
-+) -> Option<String> {
-+    if fork_requested {
-+        return None;
++    // A failed enumeration is unknown, not empty: keep the accepted rows and overlay state.
++    if cache.health.enumeration_failed {
++        state
++            .runtime_read_cache
++            .write()
++            .unwrap_or_else(std::sync::PoisonError::into_inner)
++            .health
++            .enumeration_failed = true;
++        return;
 +    }
-+    if stored && !load_session_capable {
-+        return Some("session/load unavailable; started a new session with empty context".into());
-+    }
-+    (!stored && prior_conversation).then(|| {
-+        "Conversation context reset; the previous conversation could not be resumed.".into()
-+    })
-+}
 +
-+/// A prior conversation drops the prefix the transcript suppresses, since the
-+/// view switch cleared the history that suppression looks for.
-+fn load_failed_reason(prior_conversation: bool, error: &impl std::fmt::Display) -> String {
-+    if prior_conversation {
-+        format!("Conversation context reset; {LOAD_FAILED_PREFIX}: {error}")
-+    } else {
-+        format!("{LOAD_FAILED_PREFIX}: {error}")
+     let prior_by_id = PriorById::drain_from(&mut current);
+     let mut previous_cache = state
+         .runtime_read_cache
+```
+
+**File**: `src/server/runtime_ws.rs` (modified, +63/-12)
+```diff
+@@ -1716,7 +1716,6 @@ mod tests {
+         std::fs::write(&profiles, "not a directory").unwrap();
+         let state = test_support::build_test_app_state(Vec::new());
+         let failed = load_all_instances(&state.file_watch);
+-        let failed_health = failed.cache.health.clone();
+         reload_state_instances_from_disk(&state, failed, vec![], StatusSource::DiskOnly, 0).await;
+         let snapshot = cached_snapshot(&state).await;
+         assert!(!crate::cli::runtime_read::dto::component_healthy(
+@@ -1744,21 +1743,73 @@ mod tests {
+         )
+         .await;
+         assert!(cached_data_healthy(&cached_snapshot(&state).await, "main"));
+-        std::fs::remove_dir_all(profiles.join("main")).unwrap();
+-        let failed = crate::server::reload::LoadedInstances {
+-            instances: vec![],
+-            cache: super::super::reload::RuntimeReadCache {
+-                health: failed_health,
+-                ..Default::default()
+-            },
 +    }
-+}
 +
- /// Debug builds honor `AOE_RESUME_IDLE_GRACE_MS`, clamped to at least 100ms.
- fn resume_idle_grace() -> Duration {
-     #[cfg(debug_assertions)]
-@@ -199,6 +229,7 @@ pub(super) async fn establish(
-             stored_acp_session_id,
-             seed_history_replay,
-             fork_from,
-+            prior_conversation,
-         } => {
-             let fork_capable = init.agent_capabilities.session_capabilities.fork.is_some();
-             session
-@@ -209,6 +240,7 @@ pub(super) async fn establish(
-                     fork_capable,
-                     load_session_capable,
-                     mcp_servers,
-+                    prior_conversation,
-                 )
-                 .await?
-         }
-@@ -296,18 +328,29 @@ impl Session {
-     /// daemon's reset may commit after our registry snapshot, so a runner's
-     /// cached identity wins.
-     async fn resume(&self, stored: String) -> Result<SessionId, agent_client_protocol::Error> {
--        let stored = match self.control.as_ref() {
-+        let runner = match self.control.as_ref() {
-             Some(control) => control.resume_session().await?,
--            None => stored,
-+            None => stored.clone(),
-         };
-         info!(
-             target: "acp.protocol",
-             session = %self.shared.session_label,
-             stored_id = %stored,
-+            runner_id = %runner,
-             "resume mode: reusing runner session without agent load/new"
-         );
-+        if runner != stored {
-+            // Ahead of the assignment, so the reset's id clear is overwritten by the new id.
-+            self.shared
-+                .emit(Event::SessionContextReset {
-+                    reason:
-+                        "Conversation context reset; the agent resumed a different conversation."
-+                            .to_string(),
-+                })
-+                .await;
-+        }
-         // Clears a sticky startup error in the UI; same-id is a no-op server-side.
--        let id = SessionId::from(stored);
-+        let id = SessionId::from(runner);
-         self.shared.commit_session(id.clone()).await?;
-         Ok(id)
-     }
-@@ -329,6 +372,7 @@ impl Session {
-         result
-     }
- 
-+    #[allow(clippy::too_many_arguments)]
-     async fn fresh(
-         &mut self,
-         stored: Option<String>,
-@@ -337,14 +381,17 @@ impl Session {
-         fork_capable: bool,
-         load_session_capable: bool,
-         mcp_servers: Vec<McpServer>,
-+        prior_conversation: bool,
-     ) -> Result<SessionId, agent_client_protocol::Error> {
-         let label = self.shared.session_label.clone();
-         let fork_requested = fork_from.as_deref().is_some_and(|s| !s.is_empty());
-         // Lost resume context is announced only once a replacement succeeds.
--        let mut context_reset_reason =
--            (stored.is_some() && !load_session_capable && !fork_requested).then(|| {
--                "session/load unavailable; started a new session with empty context".to_string()
--            });
-+        let mut context_reset_reason = initial_reset_reason(
-+            stored.is_some(),
-+            load_session_capable,
-+            fork_requested,
-+            prior_conversation,
-+        );
- 
-         if should_fork(fork_from.as_deref(), fork_
-```
-
-**File**: `src/acp/acp_client/connection/tests.rs` (modified, +3/-0)
-```diff
-@@ -115,6 +115,7 @@ async fn cancel_under_flood() {
-         mode: ConnectMode::Fresh {
-             stored_acp_session_id: None,
-             seed_history_replay: false,
-+            prior_conversation: false,
-             fork_from: None,
-         },
-         ready_tx,
-@@ -205,6 +206,7 @@ async fn auth_status_is_cleared_per_adapter_process() {
-     let fresh = || ConnectMode::Fresh {
-         stored_acp_session_id: None,
-         seed_history_replay: false,
-+        prior_conversation: false,
-         fork_from: None,
-     };
-     let reattach = ConnectMode::Resume {
-@@ -343,6 +345,7 @@ async fn spawn_fake_connection(
-         mode: ConnectMode::Fresh {
-             stored_acp_session_id: None,
-             seed_history_replay: false,
-+            prior_conversation: false,
-             fork_from: None,
-         },
-         ready_tx,
-```
-
-**File**: `src/acp/acp_client/control.rs` (modified, +80/-1)
-```diff
-@@ -1467,15 +1467,20 @@ mod tests {
-             .await
-             .unwrap();
-             let mut chunks = Vec::new();
--            while chunks.len() < 204 {
-+            let mut resets = 0;
-+            let mut assigned = false;
-+            while chunks.len() < 204 || !assigned {
-                 match client.next_event().await.unwrap() {
-                     Event::AgentMessageChunk { text, .. } => chunks.push(text),
-+                    Event::SessionContextReset { .. } => resets += 1,
-+                    Event::AcpSessionAssigned { .. } => assigned = true,
-                     Event::AgentStartupError { message } => panic!("{message}"),
-                     _ => {}
-                 }
-             }
-             callbacks_ready.await.unwrap();
-             client.shutdown().await.unwrap();
-+            assert_eq!(resets, 1, "a different runner id announces one reset");
-             assert_eq!(
-                 chunks,
-                 (0..204)
-@@ -1491,6 +1496,80 @@ mod tests {
-         .await
-         .unwrap();
-     }
 +    #[tokio::test]
-+    async fn same_id_reattach_announces_no_reset() {
-+        use crate::acp::acp_client::AcpClient;
-+        use crate::acp::state::AcpSessionId;
-+        let temp = tempfile::tempdir().unwrap();
-+        let socket = temp.path().join("same-id.sock");
-+        let control = crate::process::worker::control_socket_sibling(&socket);
-+        let listener = tokio::net::UnixListener::bind(control).unwrap();
-+        let runner = async {
-+            let (mut peer, _) = listener.accept().await.unwrap();
-+            control_protocol::write_frame(
-+                &mut peer,
-+                &ControlBody::Hello {
-+                    control_protocol_version: control_protocol::CONTROL_PROTOCOL_VERSION,
-+                    session_id: "same-id".into(),
-+                },
-+            )
-+            .await
++    #[serial_test::serial]
++    async fn failed_enumeration_keeps_rows_until_a_successful_empty_inventory() {
++        use crate::server::{
++            reload::{load_all_instances, reload_state_instances_from_disk},
++            state::StatusSource,
++            test_support,
+         };
+-        reload_state_instances_from_disk(&state, failed, vec![], StatusSource::DiskOnly, 0).await;
++        let home = TempHome::new();
++        Storage::new_unwatched("main")
++            .unwrap()
++            .update(|rows, _| {
++                *rows = vec![named("kept", "main")];
++                Ok(())
++            })
 +            .unwrap();
-+            while let Some(frame) = control_protocol::read_frame(&mut peer).await.unwrap() {
-+                match frame {
-+                    ControlBody::Attach { .. } => {}
-+                    ControlBody::Initialize { .. } => {
-+                        control_protocol::write_frame(&mut peer, &ControlBody::Initialized {
-+                            result: serde_json::json!({"protocolVersion":1,"agentCapabilities":{}}),
-+                        }).await.unwrap();
-+                    }
-+                    ControlBody::ResumeSession => {
-+                        control_protocol::write_frame(
-+                            &mut peer,
-+                            &ControlBody::SessionReady {
-+                                acp_session_id: "actual".into(),
-+                                result: serde_json::json!({}),
-+                            },
-+                        )
-+                        .await
-+                        .unwrap();
-+                    }
-+                    other => panic!("unexpected frame {other:?}"),
-+                }
-+            }
++        let state = test_support::build_test_app_state(Vec::new());
++        let reload = |loaded| {
++            reload_state_instances_from_disk(&state, loaded, vec![], StatusSource::DiskOnly, 0)
 +        };
-+        let daemon = async {
-+            let mut client = AcpClient::attach(
-+                socket,
-+                temp.path().into(),
-+                vec![],
-+                "actual".into(),
-+                true,
-+                AcpSessionId("same-id".into()),
-+                None,
-+                "codex".into(),
-+                None,
-+            )
-+            .await
-+            .unwrap();
-+            // The reset, when emitted, precedes the assignment.
-+            loop {
-+                match client.next_event().await.unwrap() {
-+                    Event::SessionContextReset { .. } => panic!("same id must not reset"),
-+                    Event::AcpSessionAssigned { .. } => break,
-+                    Event::AgentStartupError { message } => panic!("{message}"),
-+                    _ => {}
-+                }
-+            }
-+            client.shutdown().await.unwrap();
-+        };
-+        tokio::time::timeout(std::time::Duration::from_secs(10), async {
-+            tokio::join!(runner, daemon);
-+        })
-+        .await
-+        .unwrap();
-+    }
++        reload(load_all_instances(&state.file_watch)).await;
++        state.instances.write().await[0].last_error = Some("daemon-only".into());
 +
-     #[tokio::test]
-     async fn native_identity_reattach_preserves_a_full_wire_byte_backlog() {
-         use crate::acp::acp_client::AcpClient;
-```
-
-**File**: `src/acp/acp_client/mod.rs` (modified, +1/-0)
-```diff
-@@ -401,6 +401,7 @@ impl AcpClient {
-                 stored_acp_session_id: config.stored_acp_session_id.clone(),
-                 seed_history_replay: config.seed_history_replay,
-                 fork_from: config.fork_from.clone(),
-+                prior_conversation: config.prior_conversation,
-             },
-             session_id: session_id.clone(),
-             cwd: config.cwd.clone(),
-```
-
-**File**: `src/acp/acp_client/spawn.rs` (modified, +2/-0)
-```diff
-@@ -53,6 +53,8 @@ pub struct SpawnConfig {
-     /// Seed an empty event store from the load replay instead of suppressing
-     /// it (first spawn of an imported session, #2276).
-     pub seed_history_replay: bool,
-+    /// A conversation existed before this launch, so replacing it must be announced.
-+    pub prior_conversation: bool,
-     /// Exported as `AOE_ARTIFACT_DIR` to host agents (#2587).
-     pub artifact_dir: Option<PathBuf>,
-     /// `(wrapper, base)` when an `agent_detect_as` wrapper runs its base
-```
-
-**File**: `src/acp/acp_client/test_helpers.rs` (modified, +2/-0)
-```diff
-@@ -62,6 +62,7 @@ pub(super) fn env_test_spawn_config(cwd: std::path::PathBuf) -> SpawnConfig {
-         stored_acp_session_id: None,
-         fork_from: None,
-         seed_history_replay: false,
-+        prior_conversation: false,
-         generation: 0,
-         artifact_dir: None,
-         sandbox_info: None,
-@@ -109,6 +110,7 @@ pub(super) fn reset_fake_spawn_config(
-         stored_acp_session_id: None,
-         fork_from: None,
-         seed_history_replay: false,
-+        prior_conversation: false,
-         generation: 0,
-         artifact_dir: None,
-         sandbox_info: None,
-```
-
-**File**: `src/acp/capability_probe.rs` (modified, +1/-0)
-```diff
-@@ -59,6 +59,7 @@ pub async fn probe_agent(agent: &str) -> anyhow::Result<bool> {
-         source_profile: None,
-         mcp_servers: Vec::new(),
-         seed_history_replay: false,
-+        prior_conversation: false,
-         generation: 0,
-         artifact_dir: None,
-         claude_store_pin: None,
++        let profiles = home.app_dir().join("profiles");
++        let stash = home.app_dir().join("profiles-stash");
++        std::fs::rename(&profiles, &stash).unwrap();
++        std::fs::write(&profiles, "not a directory").unwrap();
++        let failed = load_all_instances(&state.file_watch);
++        assert!(failed.cache.health.enumeration_failed);
++        reload(failed).await;
++        assert!(
++            state
++                .runtime_read_cache
++                .read()
++                .unwrap()
++                .health
++                .enumeration_failed
++        );
+         let snapshot = cached_snapshot(&state).await;
+-        assert!(crate::cli::runtime_read::dto::component_healthy(
++        assert!(!crate::cli::runtime_read::dto::component_healthy(
+             &snapshot.health.global_enumeration
+         ));
+-        assert!(snapshot.profiles.is_empty());
+-        assert!(snapshot.sessions.is_empty());
++        assert!(snapshot.sessions.iter().any(|row| row.id == "kept"));
++        assert_eq!(
++            state.instances.read().await[0].last_error.as_deref(),
++            Some("daemon-only")
++        );
++
++        std::fs::remove_file(&profiles).unwrap();
++        std::fs::rename(&stash, &profiles).unwrap();
++        reload(load_all_instances(&state.file_watch)).await;
++        assert!(
++            !state
++                .runtime_read_cache
++                .read()
++                .unwrap()
++                .health
++                .enumeration_failed
++        );
++        assert_eq!(state.instances.read().await.len(), 1);
++
++        std::fs::remove_dir_all(&profiles).unwrap();
++        reload(load_all_instances(&state.file_watch)).await;
++        assert!(state.instances.read().await.is_empty());
++        assert!(cached_snapshot(&state).await.sessions.is_empty());
+     }
+ 
+     /// Project and group registry errors degrade only their own components.
 ```
 
 ---
 
-### Incident Patch 2: `ed62428b` (2026-10-20)
-**Commit Message**: fix(serve): run daemon lifecycle controls before startup migrations (#4732)
+### Incident Patch 2: `cf7cd22f` (2026-10-21)
+**Commit Message**: feat(cli): auto-start a local daemon from the CLI and TUI (#4778)
 
-* fix(serve): dispatch daemon controls before startup migrations
+* feat(cli): auto-start a local daemon from the CLI and TUI
 
---stop, --status and --restart bypass serve.lock but still ran schema
-migrations first, so a failing migration blocked them and a pending one
-ran while the old daemon was alive. main now dispatches them before the
-lock and migrations; the restart child still locks and migrates itself.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* test(serve): exercise lifecycle verbs through run_control
+require_daemon now spawns a detached loopback daemon when none answers,
+serialized by serve.autostart.lock so racing clients start exactly one.
+AOE_DAEMON_URL never spawns, and --no-autostart / AOE_NO_AUTOSTART=1
+opt out. Background TUI pollers use the non-spawning locate_daemon, and
+the confirm-before-start prompt is removed.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* test(serve): drop inherited AOE_DAEMON_URL from the controls test
-
-Addresses review comment from @coderabbitai on #4732.
+* test(cli): cover daemon autostart race and opt-outs, update docs
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(serve): fail --restart when the replacement daemon exits during startup
+* fix(serve): recognize --no-autostart when verifying a daemon process
 
-The replacement child runs its own startup migrations and can exit
-before serving, leaving the daemon down after a reported success.
-restart now waits for the child to publish serve.url and errors if it
-exits first; migrations stay in the child.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Addresses review comment from @coderabbitai on #4732.
+* fix(cli): forget an occupied autostart port after a startup timeout
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACT
+The wrapper exits 0 before the detached child binds, so a port clash
+surfaces only through the startup timeout. Clear serve.last_port there
+too, so the next autostart picks a fresh port.
 
-**File**: `src/cli/serve.rs` (modified, +50/-38)
+Addresses review comments from @coderabbitai and @cwrau on #4778.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(tui): start the daemon for Auto-name now
+
+Auto-name no
+
+**File**: `docs/cli/reference.md` (modified, +3/-0)
 ```diff
-@@ -367,13 +367,10 @@ pub fn try_lock_serve() -> Result<Option<ServeLock>> {
- }
+@@ -186,6 +186,9 @@ Run without arguments to launch the TUI dashboard.
+ * `--daemon-url <DAEMON_URL>` — Select a daemon endpoint for read-only CLI commands or the TUI
  
- /// Taken in `main` before startup migrations, so no migration write by a starting
--/// server can overlap `aoe migrate`. Commands that do not start a server take none.
--pub fn lock_for_startup(args: &ServeArgs) -> Result<Option<ServeLock>> {
--    if args.stop || args.status || args.restart {
--        return Ok(None);
--    }
-+/// server can overlap `aoe migrate`.
-+pub fn lock_for_startup() -> Result<ServeLock> {
-     match try_lock_serve()? {
--        Some(lock) => Ok(Some(lock)),
-+        Some(lock) => Ok(lock),
-         None => match daemon_pid() {
-             Some(pid) if pid != std::process::id() => Err(daemon_running_error(pid)),
-             _ => bail!(
-@@ -817,20 +814,23 @@ pub fn daemon_pid() -> Option<u32> {
-     }
- }
+    Explicit CLI endpoints never fall back. `AOE_DAEMON_URL` discovery may fall back to local storage before reaching a TCP peer, with a notice. Authenticate CLI reads with `AOE_DAEMON_TOKEN` or `AOE_DAEMON_PASSPHRASE`; TUI session lists support bearer tokens only. An unauthenticated daemon needs neither. See the HTTP API reference for transport and fallback rules.
++* `--no-autostart` — Fail instead of starting a local daemon when none is running
++
++   Also read from `AOE_NO_AUTOSTART=1`. Has no effect with `--daemon-url` or `AOE_DAEMON_URL`, which never start a daemon.
  
--#[tracing::instrument(target = "cli.serve", skip_all, fields(profile = %profile))]
--pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLock>) -> Result<()> {
-+/// The daemon controls, dispatched by `main` before the startup lock and
-+/// migrations: they must work while a pending migration fails or the old
-+/// daemon still runs. `None` means `args` starts a server.
-+pub async fn run_control(args: &ServeArgs) -> Option<Result<()>> {
-     if args.stop {
--        return stop_daemon().await;
--    }
--
--    if args.status {
--        return print_status().await;
--    }
--
--    if args.restart {
--        return restart_daemon().await;
-+        Some(stop_daemon().await)
-+    } else if args.status {
-+        Some(print_status().await)
-+    } else if args.restart {
-+        Some(restart_daemon().await)
-+    } else {
-+        None
-     }
-+}
  
-+#[tracing::instrument(target = "cli.serve", skip_all, fields(profile = %profile))]
-+pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLock>) -> Result<()> {
-     crate::session::require_known_profile(profile)?;
  
-     args.cityhall = args.cityhall || std::env::var_os("AOE_CITYHALL_MODE").is_some();
-@@ -953,7 +953,7 @@ pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLoc
-     if args.daemon {
-         // The child takes its own lock before its own startup migrations.
-         drop(serve_lock);
--        return start_daemon(profile, &args);
-+        return start_daemon(profile, &args).map(|_| ());
-     }
-     let _serve_lock = serve_lock;
+```
+
+**File**: `docs/structured-view.md` (modified, +1/-1)
+```diff
+@@ -185,4 +185,4 @@ Every structured-view operation has a matching verb against the same daemon:
+ | `aoe acp recover <id> --confirm-worker-stopped` | Retire malformed or unattested legacy ownership after external shutdown confirmation |
+ | `aoe ps --acp` | List workers with their ACP columns; `--dead` includes dead and orphaned ones |
  
-@@ -1087,7 +1087,7 @@ async fn fetch_cityhall_bundle(url: &str, token: &str) -> Result<String> {
-     Ok(response.text().await?)
- }
+-Daemon-backed verbs need a running `aoe serve` and exit with a hint if none is found. The CLI never spawns a daemon on your behalf. Recovery operates on the local worker registry, so run it on the original worker host, using SSH for a remote host.
++Daemon-backed verbs start a detached local daemon (loopback only) when none answers and print `Started aoe daemon (pid N)` on stderr. They never start one with `AOE_DAEMON_URL`/`--daemon-url` set, or with `--no-autostart` / `AOE_NO_AUTOSTART=1`; then they exit with a hint. Recovery operates on the local worker registry, so run it on the original worker host, using SSH for a remote host.
+```
+
+**File**: `docs/structured-view/interface.md` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ The structured view renders in both the TUI and the web dashboard. This page cov
  
--fn start_daemon(profile: &str, args: &ServeArgs) -> Result<()> {
-+fn start_daemon(profile: &str, args: &ServeArgs) -> Result<std::process::Child> {
-     use std::process::{Command, Stdio};
+ Both surfaces consume the same `aoe serve` daemon over the same HTTP and WebSocket API, so the conversation log, pending approvals, and worker state stay in sync.
  
-     let _state_lock = lock_serve_state()?;
-@@ -1221,7 +1221,7 @@ fn start_daemon(profile: &str, args: &ServeArgs) -> Result<()> {
- 
-     println!("aoe serve started as daemon (PID {})", pid);
-     println!("Stop with: aoe serve --stop");
--    Ok(())
-+    Ok(child)
- }
- 
- #[tracing::instrument(target = "serve.lifecycle", skip_all)]
-@@ -1280,7 +1280,33 @@ pub async fn restart_daemon() -> Result<()> {
- 
-     println!("Restarting aoe serve daemon (PID {pid})…");
-     stop_daemon().await?;
--    start_daemon(&launch.profile, &args)
-+    let child = start_daemon(&launch.profile, &args)?;
-+    await_replacement_startup(child).await
+-- Structured sessions show a `[structured]` badge in the TUI session list, and Enter opens the native view. It needs a running daemon and says so, pointing at `aoe serve --daemon`, `--daemon --remote`, or `AOE_DAEMON_URL`; the TUI never starts one for you.
++- Structured sessions show a `[structured]` badge in the TUI session list, and Enter opens the native view. It starts a local daemon if none is running, unless `--no-autostart` / `AOE_NO_AUTOSTART=1` is set; for remote access run `aoe serve --daemon --remote` or set `AOE_DAEMON_URL`.
+ - Terminal sessions work in both surfaces: the TUI attaches to the pane and the dashboard streams it (see [Terminal view](../guides/web/terminal.md)).
+ - Switching views keeps the worktree, files, and commits. Claude can resume its native transcript in terminal view only when AoE can bind the ACP ID to a shared native store. An explicit [native-store assertion](../guides/session-resume.md#pinning-or-resetting-a-conversation) can name another store. An ACP ID alone is not store provenance: an unresolved or unshared store is refused before worker teardown. Switching back can reload the Claude transcript. Other agents start fresh under the new view.
+ - A healthy structured session shows Idle or Active in the session list, observed through the ACP event stream rather than tmux pane probing.
+```
+
+**File**: `src/acp/client/autostart.rs` (added, +187/-0)
+```diff
+@@ -0,0 +1,187 @@
++//! Start the shared local daemon when a client needs one and none answers.
++//!
++//! Clients serialize on `serve.autostart.lock` and re-probe once they hold it,
++//! so of several racing clients exactly one spawns and the rest connect to it.
++//! The spawn itself is `aoe serve --daemon`, which keeps its own
++//! `serve.state.lock` and pid checks against a concurrent manual start.
++
++use std::path::Path;
++use std::time::{Duration, Instant};
++
++use fs2::FileExt as _;
++use rand::RngExt;
++
++use super::{discovery::discover_local, DaemonEndpoint, HttpClient};
++use crate::cli::serve::daemon_pid;
++
++const LOG_TAIL_LINES: usize = 200;
++/// A warm start takes about 1s; this covers a cold start without hanging a caller forever.
++const STARTUP_TIMEOUT: Duration = Duration::from_secs(20);
++const POLL_INTERVAL: Duration = Duration::from_millis(300);
++
++/// The local daemon, if one is alive and answers a health check.
++pub(crate) async fn healthy_local() -> Option<DaemonEndpoint> {
++    let endpoint = discover_local().ok()?;
++    let client = HttpClient::new(endpoint.clone()).ok()?;
++    client.health_check().await.ok()?;
++    Some(endpoint)
 +}
 +
-+const REPLACEMENT_STARTUP_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
-+
-+/// The replacement child runs its own startup migrations, so it can exit
-+/// before serving. `serve.url` appears once it is bound; a child still
-+/// starting at the deadline is left to finish.
-+async fn await_replacement_startup(mut child: std::process::Child) -> Result<()> {
-+    let ready = crate::session::get_app_dir()?.join("serve.url");
-+    let deadline = std::time::Instant::now() + REPLACEMENT_STARTUP_TIMEOUT;
-+    while std::time::Instant::now() < deadline {
-+        if ready.exists() {
-+            return Ok(());
-+        }
-+        if let Some(status) = child.try_wait()? {
-+            let log = stdio_redirect_path()
-+                .map(|p| format!(" See {}.", p.display()))
-+                .unwrap_or_default();
-+            bail!(
-+                "The replacement daemon exited during startup ({status}); the old daemon is already stopped.{log}"
-+            );
-+        }
-+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
++/// Spawn the daemon unless a racing client already did. The pid is `Some` only
++/// for the caller that spawned it.
++pub(crate) async fn start_local() -> Result<(DaemonEndpoint, Option<u32>), String> {
++    let _lock = tokio::task::spawn_blocking(lock_autostart)
++        .await
++        .map_err(|e| format!("lock task failed: {e}"))??;
++    if let Some(endpoint) = healthy_local().await {
++        return Ok((endpoint, None));
 +    }
-+    Ok(())
- }
- 
- fn report_stale_cleanup(pid: i32) {
-@@ -1488,20 +1514,6 @@ mod tests {
-         }
-     }
- 
--    #[test]
--    fn only_a_server_start_takes_the_startup_lock() {
--        use crate::cli::{Cli, Commands};
--        use clap::Parser;
--        for flag in ["--stop", "--status", "--restart"] {
--            let Some(Commands::Serve(args)) =
--                Cli::try_parse_from(["aoe", "serve", flag]).unwrap().command
--            else {
--                panic!("expected serve");
--            };
--            assert!(lock_for_startup(&args).unwrap().i
-```
-
-**File**: `src/main.rs` (modified, +7/-1)
-```diff
-@@ -372,14 +372,20 @@ async fn run(
-         Some(Commands::Migrate) => return exit_zero(cli::migrate::run()),
- 
-         Some(Commands::Stop { .. }) => return exit_zero(cli::killall::stop_trap()),
-+        // Before the startup lock and migrations: see `cli::serve::run_control`.
-+        Some(Commands::Serve(ref args)) => {
-+            if let Some(result) = cli::serve::run_control(args).await {
-+                return exit_zero(result);
-+            }
++
++    let exe = std::env::current_exe().map_err(|e| format!("could not resolve aoe binary: {e}"))?;
++    let port = load_or_generate_port();
++    // The wrapper double-forks; the daemon's output lands in the log file.
++    let status = tokio::process::Command::new(exe)
++        .args(["serve", "--daemon", "--host", "127.0.0.1", "--port"])
++        .arg(port.to_string())
++        .stdin(std::process::Stdio::null())
++        .stdout(std::process::Stdio::null())
++        .stderr(std::process::Stdio::null())
++        .status()
++        .await
++        .map_err(|e| format!("failed to launch `aoe serve --daemon`: {e}"))?;
++    // A non-zero exit with a live daemon means a manual start won the race.
++    let spawned = status.success();
++    if !spawned && daemon_pid().is_none() {
++        return Err(spawn_failure(status.code(), port));
++    }
++
++    let deadline = Instant::now() + STARTUP_TIMEOUT;
++    loop {
++        if let Some(endpoint) = healthy_local().await {
++            return Ok((endpoint, daemon_pid().filter(|_| spawned)));
 +        }
-         _ => {}
-     }
- 
-     let profile_explicit = cli.profile.is_some();
-     let profile = cli.profile.unwrap_or_default();
- 
-     let serve_lock = match &cli.command {
--        Some(Commands::Serve(args)) => cli::serve::lock_for_startup(args)?,
-+        Some(Commands::Serve(_)) => Some(cli::serve::lock_for_startup()?),
-         _ => None,
-     };
- 
-```
-
-**File**: `tests/e2e/serve.rs` (modified, +64/-0)
-```diff
-@@ -653,3 +653,67 @@ fn cli_acp_tail_connects_to_behind_proxy_passphrase_daemon() {
-         }
-     }
- }
++        if Instant::now() >= deadline {
++            // The detached child binds after the wrapper exits 0, so a port clash lands here.
++            forget_port_if_in_use();
++            return Err(format!(
++                "the daemon was started but never became reachable.{}",
++                log_hint()
++            ));
++        }
++        tokio::time::sleep(POLL_INTERVAL).await;
++    }
++}
 +
-+/// Daemon controls reach their own handlers without running startup
-+/// migrations or taking the lifetime lock (#4671). v040 would fail on the
-+/// `acp-workers` file, so a migration run shows up as a different error.
-+#[test]
-+#[parallel]
-+fn cli_serve_controls_skip_migrations_and_lock() {
-+    use fs2::FileExt as _;
-+
-+    let mut h = TuiTestHarness::new("serve_controls_skip_migrations");
-+    h.remove_env("AOE_DAEMON_URL");
-+    let app = app_dir_in(h.home_path());
-+    std::fs::create_dir_all(&app).unwrap();
-+    let version = app.join(".schema_version");
-+    std::fs::write(&version, "39").unwrap();
-+    let workers = app.join("acp-workers");
-+    std::fs::write(&workers, "not a directory").unwrap();
-+    let lock = std::fs::OpenOptions::new()
++fn lock_autostart() -> Result<std::fs::File, String> {
++    let path = crate::session::get_app_dir()
++        .map_err(|e| format!("could not resolve the app directory: {e}"))?
++        .join("serve.autostart.lock");
++    let file = std::fs::OpenOptions::new()
++        .read(true)
++        .write(true)
 +        .create(true)
 +        .truncate(false)
-+        .write(true)
-+        .open(app.join("serve.lock"))
-+        .unwrap();
-+    lock.lock_exclusive().unwrap();
++        .open(&path)
++        .map_err(|e| format!("could not open {}: {e}", path.display()))?;
++    file.lock_exclusive()
++        .map_err(|e| format!("could not lock {}: {e}", path.display()))?;
++    Ok(file)
++}
 +
-+    let cases = [
-+        ("--status", "Daemon: not running"),
-+        ("--stop", "No running daemon found"),
-+        ("--restart", "No running aoe serve daemon to restart"),
-+    ];
-+    for (flag, expected) in cases {
-+        let stderr = h.run_cli_err(&["serve", flag]);
-+        assert!(stderr.contains(expected), "{flag}: {stderr}");
-+        assert_eq!(std::fs::read_to_string(&version).unwrap(), "39", "{flag}");
-+        assert_eq!(
-+            std::fs::read_to_string(&workers).unwrap(),
-+            "not a directory",
-+            "{flag}"
-+        );
++fn spawn_failure(code: Option<i32>, port: u16) -> String {
++    forget_port_if_in_use();
++    format!(
++        "`aoe serve --daemon` exited with {code:?}. Most likely port {port} is in use.{}",
++        log_hint()
++    )
++}
++
++/// Forget an occupied port so the next attempt picks a fresh one.
++fn forget_port_if_in_use() {
++    let tail = initial_log_tail().join("\n");
++    if tail.contains("EADDRINUSE") || tail.contains("Address already in use") {
++        if let Ok(dir) = crate::session::get_app_dir() {
++            let _ = std::fs::remove_file(dir.join("serve.last_port"));
++        }
 +    }
 +}
 +
-+/// A replacement daemon that fails its own startup migration makes
-+/// `--restart` fail instead of reporting a successful restart (#4671).
-+#[test]
-+#[parallel]
-+fn cli_serve_restart_reports_replacement_startup_failure() {
-+    let mut h = TuiTestHarness::new("serve_restart_child_fails");
-+    h.remove_env("AOE_DAEMON_URL");
-+    h.stop_daemon_on_drop();
-+    h.start_daemon();
-+
-+    let app = app_dir_in(h.home_path());
-+    std::fs::write(app.join(".schema_version"), "39").unwrap();
-+    let workers = app.join("acp-workers");
-+    let _ = std::fs::remove_dir_all(&workers);
-+    std::fs::write(&workers, "not a directory").unwrap();
-+
-+    let stderr = h.run_cli_err(&["serve", "--restart"]);
-+    assert!(
-+        stderr.contains("replacement daemon exited during startup"),
-+        "{stderr}"
-+    );
++fn log_hint() -> String {
++    let tail = initial_log_tail();
++    if tail.is_empty() {
++        String::new()
++    } else {
++        format!(" Last log lines:\n{}", tail.join("\n"))
++    }
 +}
++
++pub(crate) fn load_or_generate_port() -> u16 {
++    match crate::session::get_app_dir() {
++        Ok(dir) => load_or_generate_port_in(&dir),
++        Err(_) => random_port(),
++    }
++}
++
++fn load_or_generate_port_in(dir: &Path) -> u16 {
++    let path = dir.join("serve.last_port");
++    let saved = std::fs::read_to_string(&path)
++        .ok()
++        .and_then(|raw| raw.trim().parse::<u16>().ok())
++        .filter(|port| *port >= 49152);
++    saved.unwrap_or_else(|| {
++        let port = random_port();
++        let _ = std::fs::write(&path, port.to_strin
+```
+
+**File**: `src/acp/client/daemon_manager.rs` (modified, +44/-12)
+```diff
+@@ -7,21 +7,22 @@
+ //!    point of the env override is to attach to a *specific* daemon.
+ //! 2. If a live local daemon exists (`serve.pid` + reachable
+ //!    `serve.url`), use it.
+-//! 3. Otherwise return [`ManagerError::NoDaemonRunning`] with an
+-//!    actionable hint. Auto-spawn is intentionally not provided:
+-//!    starting a loopback daemon by side-effect hides the choice
+-//!    between localhost, Tailscale, and Cloudflare from the user and
+-//!    leaves an `aoe serve` process behind that they did not ask for.
+-//!    The caller is expected to render the hint and bail.
++//! 3. Otherwise start a detached loopback daemon, unless autostart is
++//!    disabled (`--no-autostart`, `AOE_NO_AUTOSTART=1`), in which case
++//!    return [`ManagerError::NoDaemonRunning`] with an actionable hint.
++//!    [`locate_daemon`] never spawns.
+ //!
+ //! Build-namespace discipline (debug vs release) is enforced by
+ //! `crate::session::get_app_dir`: discovery reads `serve.pid` /
+ //! `serve.url` from the same app dir an `aoe serve` of the same build
+ //! would have written, so a debug client never picks up a release
+ //! daemon (or vice versa).
+ 
++use std::sync::atomic::{AtomicBool, Ordering};
++
+ use thiserror::Error;
+ 
++use super::autostart;
+ use super::discovery::{discover, discover_env, DaemonEndpoint, DiscoveryError};
+ use super::http::HttpError;
+ 
+@@ -43,14 +44,21 @@ pub enum ManagerError {
+         "no structured view daemon is running.\n\nStart one with one of:\n  aoe serve --daemon                 (localhost only, recommended for solo dev)\n  aoe serve --daemon --remote        (Tailscale Funnel or Cloudflare quick tunnel)\n  aoe serve --daemon --tunnel-name … (named Cloudflare Tunnel)\n\nOr attach to an existing remote daemon with:\n  AOE_DAEMON_URL=<url> AOE_DAEMON_TOKEN=<token> aoe …"
+     )]
+     NoDaemonRunning(#[from] DiscoveryError),
++    #[error(
++        "could not start a local aoe daemon: {0}\n\nStart one by hand with `aoe serve --daemon`, or attach to an existing remote daemon with:\n  AOE_DAEMON_URL=<url> AOE_DAEMON_TOKEN=<token> aoe …"
++    )]
++    AutostartFailed(String),
+ }
+ 
+-/// Locate the daemon the caller should talk to. Does *not* spawn one;
+-/// returns [`ManagerError::NoDaemonRunning`] if neither the env
+-/// override nor a live local daemon resolves, so the caller can
+-/// surface the message and let the user decide how to start the
+-/// server.
+-pub async fn require_daemon() -> Result<DaemonEndpoint, ManagerError> {
++static AUTOSTART_DISABLED: AtomicBool = AtomicBool::new(false);
++
++/// Set once at startup from `--no-autostart` / `AOE_NO_AUTOSTART`.
++pub fn set_autostart_disabled(disabled: bool) {
++    AUTOSTART_DISABLED.store(disabled, Ordering::Relaxed);
++}
++
++/// Locate the daemon the caller should talk to. Never spawns one.
++pub async fn locate_daemon() -> Result<DaemonEndpoint, ManagerError> {
+     if discover_env().is_some() {
+         // Resolve through `discover()` so the parsing/redaction
+         // applied to local endpoints is also applied here, then
+@@ -67,3 +75,27 @@ pub async fn require_daemon() -> Result<DaemonEndpoint, ManagerError> {
+     }
+     discover().map_err(ManagerError::NoDaemonRunning)
+ }
++
++/// Like [`locate_daemon`], but starts a local daemon when none answers. The pid
++/// is `Some` only for the caller that spawned it, so each start is announced
++/// once. A TUI caller shows it in the status line; stderr would corrupt the screen.
++pub async fn ensure_daemon() -> Result<(DaemonEndpoint, Option<u32>), ManagerError> {
++    if discover_env().is_some() || AUTOSTART_DISABLED.load(Ordering::Relaxed) {
++        return locate_daemon().await.map(|endpoint| (endpoint, None));
++    }
++    if let Some(endpoint) = autostart::healthy_local().await {
++        return Ok((endpoint, None));
++    }
++    autostart::start_local()
++        .await
++        .map_err(ManagerError::AutostartFailed)
++}
++
++/// [`ensure_daemon`] for the CLI: announces a start on stderr, also under `--json`.
++pub async fn require_daemon() -> Result<DaemonEndpoint, ManagerError> {
++    let (endpoint, started) = ensure_daemon().await?;
++    if let Some(pid) = started {
++        eprintln!("Started aoe daemon (pid {pid})");
++    }
++    Ok(endpoint)
++}
+```
+
+**File**: `src/acp/client/mod.rs` (modified, +4/-6)
+```diff
+@@ -16,19 +16,17 @@
+ //! 1. `AOE_DAEMON_URL` (+ optional `AOE_DAEMON_TOKEN`).
+ //! 2. Local `<app_dir>/serve.url` paired with a live `serve.pid`.
+ //!
+-//! [`daemon_manager::require_daemon`] returns
+-//! [`daemon_manager::ManagerError::NoDaemonRunning`] when neither
+-//! resolves; callers render the contained hint and bail rather than
+-//! starting a daemon by side-effect, so the user keeps the choice
+-//! between localhost, Tailscale, and Cloudflare explicit.
++//! [`daemon_manager::require_daemon`] starts a local daemon when neither
++//! resolves, unless `AOE_DAEMON_URL` is set or autostart is disabled.
+ 
++pub(crate) mod autostart;
+ pub mod daemon_manager;
+ pub mod discovery;
+ pub mod http;
+ pub(crate) mod passphrase_session;
+ pub mod ws;
+ 
+-pub use daemon_manager::{require_daemon, ManagerError};
++pub use daemon_manager::{ensure_daemon, locate_daemon, require_daemon, ManagerError};
+ pub use discovery::{discover, DaemonEndpoint, DiscoveryError, Source};
+ pub use http::{HttpClient, HttpError, PluginCommandView, REPLAY_PAGE_SIZE};
+ pub use ws::{
+```
+
+**File**: `src/cli/definition.rs` (modified, +12/-0)
+```diff
+@@ -69,6 +69,18 @@ pub struct Cli {
+     #[arg(long, global = true)]
+     pub daemon_url: Option<String>,
+ 
++    /// Fail instead of starting a local daemon when none is running
++    ///
++    /// Also read from `AOE_NO_AUTOSTART=1`. Has no effect with `--daemon-url`
++    /// or `AOE_DAEMON_URL`, which never start a daemon.
++    #[arg(
++        long,
++        global = true,
++        env = "AOE_NO_AUTOSTART",
++        value_parser = clap::builder::BoolishValueParser::new()
++    )]
++    pub no_autostart: bool,
++
+     #[command(subcommand)]
+     pub command: Option<Commands>,
+ }
+```
+
+**File**: `src/cli/serve.rs` (modified, +4/-0)
+```diff
+@@ -646,7 +646,9 @@ fn command_is_aoe_serve(command: &[u8]) -> bool {
+                     return false;
+                 }
+             }
++            b"--no-autostart" => index += 1,
+             arg if arg.starts_with(b"--profile=")
++                || arg.starts_with(b"--no-autostart=")
+                 || arg.starts_with(b"--daemon-url=")
+                 || (arg.starts_with(b"-p") && arg.len() > 2) =>
+             {
+@@ -1503,6 +1505,7 @@ mod tests {
+             (b"agent-of-empires serve --daemon", true),
+             (b"aoe --profile work serve --daemon", true),
+             (b"aoe --profile=work serve --daemon", true),
++            (b"aoe --no-autostart serve --daemon", true),
+             (b"aoe update", false),
+             (b"aoe --profile serve update", false),
+             (b"aoe --some-option serve update", false),
+@@ -1691,6 +1694,7 @@ mod tests {
+             globals,
+             vec![
+                 ("daemon-url".to_string(), None),
++                ("no-autostart".to_string(), None),
+                 ("profile".to_string(), Some('p')),
+             ],
+             "a top-level global changed; teach command_is_aoe_serve about it before \
 ```
 
 ---
 
-### Incident Patch 3: `4b3c9a6b` (2026-10-20)
-**Commit Message**: perf(tui): defer blocking startup work (#4566)
+### Incident Patch 3: `b3141c8a` (2026-10-21)
+**Commit Message**: ci: run required checks for merge_group (#4788)
 
-* perf(tui): defer blocking work until after the first frame
+Trigger CI and Tests on merge_group so the merge queue receives every
+required check. Nix change detection diffs against the queue base sha,
+macOS follows the queued PR's ci-macos label, queue refs no longer save
+rust-cache entries, and Tests concurrency is scoped by event so a queue
+run and the push of its commit do not share a group.
 
-Install native file watches on a worker with catch-up refreshes, use a fast startup tool snapshot, and defer full detection and upgrade checks. Treat a missing tmux server as a known empty snapshot and publish startup identities on the reconciliation worker. Add deterministic regression coverage and an isolated PTY latency benchmark.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Jules Lasne <[REDACTED_EMAIL]>
 
-* fix(tui): supervise deferred probes and retry failed watches
-
-Cancel and reap startup discovery before the TUI exits, keep settings availability snapshots nonblocking, and propagate deferred watch failures through the existing warning and retry flow. Extend the benchmark to select the dev namespace and fail if a probe survives shutdown.
-
-* fix(tui): keep agent rechecks and stale discovery snapshots nonblocking
-
-Route onboarding rechecks through the owned background worker, preserve login-shell discoveries and configured choices while refreshing, and retain global watch errors when the first retry is already due.
-
-* fix(tui): clear removed-profile watch errors during pending installs
-
-* fix(tui): retain rechecks and scope watcher error recove
-
-**File**: `scripts/bench-startup.py` (added, +272/-0)
+**File**: `.github/workflows/ci.yml` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,272 @@
-+#!/usr/bin/env python3
-+"""Measure spawn-to-first-frame and first-frame-to-quit on an isolated PTY.
-+
-+Build with `cargo build --profile dev-release`, then run:
-+    python3 scripts/bench-startup.py --runs 20 --sessions 100 --profiles 4
-+    python3 scripts/bench-startup.py --upgrade --stall-updates --slow-probes
-+
-+For a build with debug assertions enabled, add `--namespace dev`.
-+
-+Requires Python 3.11+, Unix, and tmux. Uses synthetic data, a private HOME and
-+tmux socket, no telemetry, and optionally a local HTTP endpoint that never
-+responds. Every launch, including the first, counts against the budget.
-+"""
-+
-+import argparse
-+import fcntl
-+import json
-+import math
-+import os
-+from pathlib import Path
-+import pty
-+import re
-+import select
-+import signal
-+import socket
-+import statistics
-+import struct
-+import subprocess
-+import tempfile
-+import termios
-+import threading
-+import time
-+import tomllib
-+import uuid
-+
-+ROOT = Path(__file__).resolve().parent.parent
-+FRAME_END = b"\x1b[?2026l"
-+
-+
-+def positive(value):
-+    number = int(value)
-+    if number <= 0:
-+        raise argparse.ArgumentTypeError("must be positive")
-+    return number
-+
-+
-+def environment(home):
-+    env = os.environ.copy()
-+    for key in list(env):
-+        if key.startswith("AOE_") or key in {
-+            "AGENT_OF_EMPIRES_DEBUG", "TMUX", "TMUX_PANE", "MOSH_CONNECTION",
-+            "CLAUDE_CONFIG_DIR", "CODEX_HOME", "CURSOR_CONFIG_DIR",
-+            "GEMINI_CONFIG_DIR", "QWEN_CONFIG_DIR",
-+        }:
-+            env.pop(key)
-+    env.update(
-+        HOME=str(home), XDG_CONFIG_HOME=str(home / ".config"),
-+        XDG_DATA_HOME=str(home / ".local/share"),
-+        XDG_CACHE_HOME=str(home / ".cache"),
-+        AOE_TMUX_SOCKET=f"startup-bench-{uuid.uuid4().hex}",
-+        TERM="xterm-256color", NO_PROXY="127.0.0.1,localhost",
-+    )
-+    return env
-+
-+
-+def fixture(app, home, sessions, profiles, version, upgrade):
-+    app.mkdir(parents=True, exist_ok=True)
-+    schema = re.search(r"const CURRENT_VERSION: u32 = (\d+);",
-+                       (ROOT / "src/migrations/mod.rs").read_text())[1]
-+    (app / ".schema_version").write_text(schema)
-+    (app / "config.toml").write_text(
-+        '[telemetry]\nenabled = false\n[systemd]\nenabled = false\n'
-+        '[session]\nconfirm_before_quit = false\n'
-+        'custom_agents = { startup-bench = "/usr/bin/false" }\n'
-+    )
-+    previous = "0.0.0" if upgrade else version
-+    (app / "state.toml").write_text(
-+        f'has_seen_welcome = true\nlast_seen_version = "{previous}"\n'
-+        'has_responded_to_telemetry = true\n'
-+    )
-+    for index in range(profiles):
-+        profile = app / "profiles" / ("default" if index == 0 else f"bench-{index}")
-+        profile.mkdir(parents=True, exist_ok=True)
-+        rows = [dict(
-+            id=str(uuid.uuid5(uuid.NAMESPACE_OID, f"startup-bench-{row}")),
-+            title=f"Session {row}", project_path=str(home / "project"),
-+            tool="startup-bench", status="stopped", created_at="2026-01-01T00:00:00Z",
-+        ) for row in range(index, sessions, profiles)]
-+        (profile / "sessions.json").write_text(json.dumps(rows))
-+
-+
-+def terminate(process):
-+    if process.poll() is None:
-+        os.killpg(process.pid, signal.SIGTERM)
-+    try:
-+        process.wait(timeout=1)
-+    except subprocess.TimeoutExpired:
-+        os.killpg(process.pid, signal.SIGKILL)
-+        process.wait()
-+
-+
-+def run(binary, env, wait_for_background, timeout):
-+    master, slave = pty.openpty()
-+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
-+    process = None
-+    try:
-+        started = time.perf_counter()
-+        process = subprocess.Popen([str(binary)], stdin=slave, stdout=slave,
-+                                   stderr=slave, env=env, start_new_session=True)
-+        os.close(slave)
-+        slave = None
-+        output = b""
-+        deadline = started + timeout
-+        while FRAME_END not in output:
-+            remaining = deadline - time.perf_counter()
-+            if remaining <= 0 or not select.select([master], [], [], remaining)[0]:
-+                raise RuntimeError("first frame timed out")
-+            try:
-+                chunk = os.read(master, 65536)
-+            except OSError as error:
-+                raise RuntimeError("exited before first frame") from error
-+            if not chunk:
-+                raise RuntimeError("exited before first frame")
-+            output += chunk
-+            if b"\x1b[6n" in chunk:
-+                os.write(master, b"\x1b[1;1R")
-+        first_frame = (time.perf_counter() - started) * 1000
-+        wait_for_background()
-+        # Dismiss the upgrade changelog, then quit. Fixtures disable confirmation.
-+        quit_started = time.perf_counter()
-+        os.write(master, b"qq")
-+        deadline = quit_started + timeout
-+        while process.poll() is None:
-+            if time.perf_counter() >= deadline:
-+                raise RuntimeError("qu
+@@ -7,6 +7,7 @@ on:
+   # and a base filter would leave every PR but the bottom of the stack with no
+   # checks at all.
+   pull_request:
++  merge_group:
+ 
+ env:
+   CARGO_TERM_COLOR: always
+@@ -357,11 +358,14 @@ jobs:
+         env:
+           EVENT_NAME: ${{ github.event_name }}
+           BASE_REF: ${{ github.base_ref }}
++          QUEUE_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+           EVENT_BEFORE: ${{ github.event.before }}
+         run: |
+           set -euo pipefail
+           if [ "$EVENT_NAME" = "pull_request" ]; then
+             BASE="origin/$BASE_REF"
++          elif [ "$EVENT_NAME" = "merge_group" ]; then
++            BASE="$QUEUE_BASE_SHA"
+           else
+             # `before` is the pre-push SHA (covers multi-commit pushes); fall
+             # back to the empty tree on the initial push where it is all-zero.
+@@ -409,11 +413,14 @@ jobs:
+         env:
+           EVENT_NAME: ${{ github.event_name }}
+           BASE_REF: ${{ github.base_ref }}
++          QUEUE_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+           EVENT_BEFORE: ${{ github.event.before }}
+         run: |
+           set -euo pipefail
+           if [ "$EVENT_NAME" = "pull_request" ]; then
+             BASE="origin/$BASE_REF"
++          elif [ "$EVENT_NAME" = "merge_group" ]; then
++            BASE="$QUEUE_BASE_SHA"
+           else
+             # `github.event.before` is the SHA before the push, which
+             # covers multi-commit pushes correctly. Falls back to the
 ```
 
-**File**: `src/file_watch.rs` (modified, +357/-17)
+**File**: `.github/workflows/tests.yml` (modified, +37/-19)
 ```diff
-@@ -113,11 +113,20 @@ struct SubscriptionId(u64);
- #[derive(Debug)]
- struct DirState {
-     refcount: usize,
-+    pending: Option<u64>,
-+    failure: Option<WatchInstallFailure>,
-     /// Re-stat on every subscribe: a mismatch forces a rewatch, since NonRecursive watches do
-     /// not follow a same-path recreate. Cleared on rewatch failure.
-     installed_identity: Option<WatchIdentity>,
- }
+@@ -8,9 +8,11 @@ on:
+   # PR concurrency replaces in-flight runs; completed work still reruns.
+   pull_request:
+     types: [opened, synchronize, reopened, labeled]
++  merge_group:
  
-+#[derive(Debug, Clone)]
-+pub(crate) struct WatchInstallFailure {
-+    pub kind: WatchErrorKind,
-+    pub message: String,
-+    retry_after: Instant,
-+}
-+
- struct Subscription {
-     spec: WatchSpec,
-     sink: mpsc::Sender<FileEvent>,
-@@ -129,7 +138,7 @@ struct DebounceEntry {
- }
++# The event keeps a queue run and the push of its fast-forwarded commit apart.
+ concurrency:
+-  group: tests-${{ github.event.pull_request.number || github.sha }}
++  group: tests-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
  
- struct Inner {
--    watcher: Option<RecommendedWatcher>,
-+    watcher: Option<std::sync::mpsc::Sender<WatchRequest>>,
-     subscriptions: HashMap<SubscriptionId, Subscription>,
-     dirs: HashMap<PathBuf, DirState>,
-     next_id: u64,
-@@ -140,10 +149,61 @@ struct Inner {
- enum DispatchMsg {
-     Kernel(notify::Result<notify::Event>),
-     Local(PathBuf),
-+    WatchReady(PathBuf, u64, notify::Result<()>),
-     #[cfg(any(test, debug_assertions))]
-     Barrier(tokio::sync::oneshot::Sender<()>),
- }
+ env:
+@@ -51,7 +53,8 @@ jobs:
+           # Save on PRs too. Swatinem keys the cache on Cargo.lock +
+           # toolchain hash, so successive pushes to the same PR reuse
+           # the slot rather than thrashing the 10GB repo cache budget.
+-          save-if: true
++          # Queue refs are single-use, so their saves would only evict.
++          save-if: ${{ github.event_name != 'merge_group' }}
+       - uses: taiki-e/install-action@9983c65e42da123ff25d1f78505eb6de315aa172 # v2.87.20
+         if: matrix.leg != 'web-e2e'
+         with:
+@@ -221,8 +224,9 @@ jobs:
+           fi
  
-+enum WatchRequest {
-+    Watch {
-+        dir: PathBuf,
-+        generation: u64,
-+        reply: Option<std::sync::mpsc::Sender<notify::Result<()>>>,
-+    },
-+    Unwatch(PathBuf),
-+}
-+
-+fn watch_loop(
-+    mut watcher: RecommendedWatcher,
-+    requests: std::sync::mpsc::Receiver<WatchRequest>,
-+    dispatch: mpsc::UnboundedSender<DispatchMsg>,
-+) {
-+    while let Ok(first) = requests.recv() {
-+        let requests: Vec<_> = std::iter::once(first).chain(requests.try_iter()).collect();
-+        let mut paths = watcher.paths_mut();
-+        let mut results = Vec::new();
-+        for request in requests {
-+            match request {
-+                WatchRequest::Watch {
-+                    dir,
-+                    generation,
-+                    reply,
-+                } => {
-+                    let result = paths.add(&dir, RecursiveMode::NonRecursive);
-+                    results.push((dir, generation, reply, result));
-+                }
-+                WatchRequest::Unwatch(dir) => {
-+                    let _ = paths.remove(&dir);
-+                }
+   cargo-macos:
+-    # Keep the required context on all PRs; unlabeled PRs emit a skip notice.
+-    # Queued event payloads can predate ci-macos, so read current labels.
++    # Keep the required context on all PRs and queue entries; without
++    # ci-macos the job emits a skip notice. Read current labels: queued event
++    # payloads can predate the label, and merge_group carries no PR at all.
+     # Both Cargo steps share e2e-tests; no frontend build is needed on macOS.
+     name: Cargo Test (macos)
+     runs-on: macos-latest
+@@ -234,49 +238,62 @@ jobs:
+     steps:
+       - name: Read current macOS coverage
+         id: macos
+-        if: github.event_name == 'pull_request'
++        if: github.event_name != 'push'
+         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
++        env:
++          QUEUE_REF: ${{ github.event.merge_group.head_ref }}
+         with:
+           script: |
++            let number = context.payload.pull_request?.number;
++            if (!number) {
++              // refs/heads/gh-readonly-queue/<base>/pr-<number>-<base sha>
++              const match = /\/pr-(\d+)-[0-9a-f]+$/.exec(process.env.QUEUE_REF);
++              if (!match) {
++                core.warning(`No PR number in ${process.env.QUEUE_REF}; running macOS.`);
++                core.setOutput('run', true);
++                return;
++              }
++              number = Number(match[1]);
 +            }
-+        }
-+        let committed = paths.commit();
-+        for (dir, generation, reply, result) in results {
-+            let result = result.and_then(|()| {
-+                committed
-+                    .as_ref()
-+                    .copied()
-+                    .map_err(|error| notify::Error::generic(&error.to_string()))
-+            });
-+            if let Some(reply) = reply {
-+                let _ = reply.send(result);
-+            } else {
-+                let _ = dispatch.send(DispatchMsg::WatchReady(dir, generation, result));
-+            }
-+        }
-+    }
-+}
-+
- pub struct FileWatchService {
-     inner: Mutex<Inner>,
-     #[cfg(any(test, debug_assertions))]
-@@ -172,7 +232,7 @@ impl std::fmt::Debug for FileWatchService {
- 
- impl FileWatchService {
-     fn build(
--        watcher: Option<RecommendedWatcher>,
-+        watcher: Option<std::sync::mpsc::Sender<WatchRequest>>,
-         tokio_tx: mpsc::UnboundedSender<DispatchMsg>,
-     ) -> Arc<Self> {
-         Arc::new(FileWatchService {
-@@ -220,7 +280,17 @@ impl FileWatchService {
-         };
- 
-         let (tokio_tx, tokio_rx) = mpsc::unbounded_channel::<DispatchMsg>();
--        let svc = Self::build(Some(watcher), tokio_tx.clone());
-+        let (watch_tx, watch_rx) = std::sync::mpsc::channel();
-+        let watch_dispatch = tokio_tx.clone();
-+        std::thread::Builder::new()
-+            .name("file_watch_backend".into())
-+            .spawn(move || watch_loop(watcher, watch_rx, watch_dispatch))
-+            .map_err(|e| WatchError::Init {
-+                kind: WatchErrorKind::Other,
-+                message: format!("could not spawn file_watch_backend thread: {e}"),
-+                source: None,
-+            })?;
-+        let svc = Self::build(Some(watch_tx), tokio_tx.clone());
- 
-         // The drain thread holds the only kernel sender and a `Weak` service, so dropping the
-         // last `Arc` shuts it down.
-@@ -279,9 +349,28 @@ impl FileWatchService {
- 
-     /// Dropping the receiver does not unsubscribe; drop the handle.
-     pub fn subscribe_channel(
-+        self: &Arc<Self>,
-+        spec: WatchSpec,
-+        capacity: usize,
-+    ) -> Result<(mpsc::Receiver<FileEvent>, SubscriptionHandle), WatchError> {
-+        self.subscribe(spec, capacity, false)
-+    }
-+
-+    /// Register without waiting for native watch setup. A refresh after installation
-+    /// covers writes between the caller's initial read and the watch becoming live.
-+    pub(crate) fn subscribe_channel_deferred(
-+        self: &Arc<Self>,
-+        spec: WatchSpec,
-+        capacity: usize,
-+    ) -> Result<(mpsc::Receiver<FileEvent>, SubscriptionHandle), WatchError> {
-+        self.subscribe(spec, capacity, true)
-+    }
-+
-+    fn subs
-```
-
-**File**: `src/process/mod.rs` (modified, +14/-0)
-```diff
-@@ -395,6 +395,20 @@ pub fn run_with_timeout_process_group(
-     )
- }
- 
-+pub(crate) fn run_until_cancelled_process_group(
-+    cmd: &mut Command,
-+    timeout: Duration,
-+    cancel: &CancellationToken,
-+) -> std::io::Result<Option<Output>> {
-+    platform::configure_process_group(cmd);
-+    run_with_timeout_inner(
-+        cmd,
-+        timeout,
-+        cfg!(any(target_os = "linux", target_os = "macos")),
-+        Some(cancel),
-+    )
-+}
-+
- fn run_with_timeout_inner(
-     cmd: &mut Command,
-     timeout: Duration,
-```
-
-**File**: `src/session/instance/polling.rs` (modified, +1/-1)
-```diff
-@@ -931,7 +931,7 @@ mod tests {
-             None,
-         );
-         assert!(
--            inst.has_live_tmux_pane_in(&live),
-+            inst.tmux_env_session_name_in(&live).is_some(),
-             "fixture pane must read live"
-         );
-         assert!(inst.supports_session_poller());
-```
-
-**File**: `src/session/instance/tmux_session.rs` (modified, +0/-9)
-```diff
-@@ -111,15 +111,6 @@ impl Instance {
-         }
-     }
- 
--    /// Whether this instance has a live tmux pane, answered from a snapshot the caller already
--    /// holds.
--    pub(crate) fn has_live_tmux_pane_in(
--        &self,
--        snapshot: &crate::tmux::LiveSessionSnapshot,
--    ) -> bool {
--        self.tmux_env_session_name_in(snapshot).is_some()
--    }
--
-     /// Whether the AGENT pane specifically is live. Poller repair gates on this.
-     pub(crate) fn has_live_agent_pane_in(
-         &self,
-```
-
-**File**: `src/tmux/mod.rs` (modified, +204/-21)
-```diff
-@@ -767,12 +767,14 @@ impl LiveSessionSnapshot {
-         snapshot
-     }
- 
--    /// `None` when tmux is unreachable. Also warms the display cache.
-+    /// `None` for an unknown observation; a missing server is an empty list.
-     pub(crate) fn sessions(&self) -> Option<&[MarkedSessionName]> {
-         self.sessions
-             .get_or_init(|| {
--                if refresh_session_cache() != SessionCacheRefresh::Populated {
--                    return None;
-+                match refresh_session_cache() {
-+                    SessionCacheRefresh::NoServer => return Some(Vec::new()),
-+                    SessionCacheRefresh::Unknown => return None,
-+                    SessionCacheRefresh::Populated => {}
-                 }
-                 SESSION_CACHE.read().ok().and_then(|cache| {
-                     cache.data.as_ref().map(|sessions| {
-@@ -2223,15 +2225,23 @@ static PROBE_TIMEOUT_DIVISOR: std::sync::OnceLock<u32> = std::sync::OnceLock::ne
- fn agent_probe_output(
-     command: &mut Command,
-     timeout: std::time::Duration,
-+    cancel: Option<&tokio_util::sync::CancellationToken>,
- ) -> Option<std::process::Output> {
-     #[cfg(test)]
-     let timeout = timeout / PROBE_TIMEOUT_DIVISOR.get().copied().unwrap_or(1);
--    match crate::process::run_with_timeout_process_group(
--        command.stdin(std::process::Stdio::null()),
--        timeout,
--    ) {
-+    if cancel.is_some_and(tokio_util::sync::CancellationToken::is_cancelled) {
-+        return None;
-+    }
-+    command.stdin(std::process::Stdio::null());
-+    let result = match cancel {
-+        Some(cancel) => crate::process::run_until_cancelled_process_group(command, timeout, cancel),
-+        None => crate::process::run_with_timeout_process_group(command, timeout),
-+    };
-+    match result {
-         Ok(output) => {
--            if output.is_none() {
-+            if output.is_none()
-+                && !cancel.is_some_and(tokio_util::sync::CancellationToken::is_cancelled)
-+            {
-                 tracing::warn!(
-                     program = ?command.get_program(),
-                     timeout_s = timeout.as_secs(),
-@@ -2244,23 +2254,30 @@ fn agent_probe_output(
-     }
- }
- 
--fn agent_available_direct(agent: &crate::agents::AgentDef) -> Option<bool> {
-+fn agent_available_direct(
-+    agent: &crate::agents::AgentDef,
-+    cancel: Option<&tokio_util::sync::CancellationToken>,
-+) -> Option<bool> {
-     use crate::agents::DetectionMethod;
-     match &agent.detection {
-         DetectionMethod::Which(binary) => {
-             if binary.contains('/') || binary.contains('\\') {
-                 return Some(std::path::Path::new(binary).exists());
-             }
--            let found = agent_probe_output(Command::new("which").arg(binary), AGENT_PROBE_TIMEOUT)
--                .is_some_and(|output| output.status.success());
-+            let found = agent_probe_output(
-+                Command::new("which").arg(binary),
-+                AGENT_PROBE_TIMEOUT,
-+                cancel,
-+            )
-+            .is_some_and(|output| output.status.success());
-             if found {
-                 Some(true)
-             } else {
-                 None
-             }
-         }
-         DetectionMethod::RunWithArg(binary, arg) => {
--            let ok = agent_probe_output(Command::new(binary).arg(arg), AGENT_PROBE_TIMEOUT)
-+            let ok = agent_probe_output(Command::new(binary).arg(arg), AGENT_PROBE_TIMEOUT, cancel)
-                 .is_some_and(|output| output.status.success());
-             if ok {
-                 Some(true)
-@@ -2309,14 +2326,18 @@ fn parse_login_shell_probe(stdout: &str) -> std::collections::HashSet<String> {
- }
- 
- /// One login shell for all agents, since profile startup is slow.
--fn login_shell_probe(agents: &[&crate::agents::AgentDef]) -> std::collections::HashSet<String> {
-+fn login_shell_probe(
-+    agents: &[&crate::agents::AgentDef],
-+    cancel: Option<&tokio_util::sync::CancellationToken>,
-+) -> std::collections::HashSet<String> {
-     if agents.is_empty() {
-         return std::collections::HashSet::new();
-     }
-     let shell = crate::session::user_shell();
-     agent_probe_output(
-         Command::new(&shell).args(["-lc", &login_shell_probe_script(agents)]),
-         LOGIN_SHELL_PROBE_TIMEOUT,
-+        cancel,
-     )
-     .map(|o| parse_login_shell_probe(&String::from_utf8_lossy(&o.stdout)))
-     .unwrap_or_default()
-@@ -2340,6 +2361,7 @@ thread_local! {
-     static AGENT_PROBE_LOCK_CONTENDED: std::cell::RefCell<Option<std::sync::mpsc::Sender<()>>> = const { std::cell::RefCell::new(None) };
- }
- 
-+#[cfg(test)]
- fn lock_agent_probe() -> std::sync::MutexGuard<'static, ()> {
-     #[cfg(test)]
-     if let Some(contended) = AGENT_PROBE_LOCK_CONTENDED.with(|slot| slot.borrow_mut().take()) {
-@@ -2352,6 +2374,7 @@ fn lock_agent_probe() -> std::sync::MutexGuard<'static, ()> {
- }
- 
- /// Clear the memo after any in-flight probe finishes (probe lock, then memo).
-+#[cfg(test)]
- pub(crate) fn invalidate_agent_availability() 
-```
-
-**File**: `src/tui/app.rs` (modified, +532/-54)
-```diff
-@@ -17,6 +17,7 @@ use super::home::{HomeView, TerminalMode};
- use super::status_poller::StatusUpdate;
- use super::styles::Theme;
- use crate::containers::image_update::ImageUpdate;
-+use crate::session::config::AppStateConfig;
- use crate::session::{get_update_settings, update_app_state, Config};
- use crate::tmux::AvailableTools;
- use crate::update::{check_for_update, UpdateInfo};
-@@ -96,6 +97,12 @@ pub type TuiBackend = crate::tui::hyperlink::HyperlinkBackend<std::io::Stdout>;
- 
- pub struct App {
-     home: HomeView,
-+    tool_detection: Option<ToolDetection>,
-+    available_tools_rx: Option<tokio::sync::oneshot::Receiver<AvailableTools>>,
-+    pending_forced_tool_detection: bool,
-+    startup_dialogs_pending: bool,
-+    suppress_first_run_dialogs: bool,
-+    force_update_check: bool,
-     should_quit: bool,
-     theme: Theme,
-     /// Guards `set_theme`: the config watcher re-dispatches the theme on every
-@@ -141,17 +148,20 @@ pub struct App {
-     last_installed_version_in_session: Option<String>,
- }
- 
--/// Previous version when the changelog should be shown.
--pub fn check_version_change() -> Result<Option<String>> {
--    let config = Config::load_or_warn();
--    let current_version = env!("CARGO_PKG_VERSION");
-+struct ToolDetection {
-+    cancel: tokio_util::sync::CancellationToken,
-+    thread: Option<std::thread::JoinHandle<()>>,
-+}
- 
--    if config.app_state.has_seen_welcome
--        && config.app_state.last_seen_version.as_deref() != Some(current_version)
--    {
--        Ok(config.app_state.last_seen_version)
--    } else {
--        Ok(None)
-+impl Drop for ToolDetection {
-+    fn drop(&mut self) {
-+        self.cancel.cancel();
-+        // The worker reaps its independently grouped probe before the TUI can exit.
-+        if let Some(thread) = self.thread.take() {
-+            if thread.join().is_err() {
-+                tracing::warn!(target: "tui.startup", "agent detection worker panicked during shutdown");
-+            }
-+        }
-     }
- }
- 
-@@ -267,58 +277,35 @@ impl App {
-         mosh_active: bool,
-         file_watch: std::sync::Arc<crate::file_watch::FileWatchService>,
-     ) -> Result<Self> {
--        let no_agents = !available_tools.any_available();
-         let active_profile = if profile.is_empty() {
-             None
-         } else {
-             Some(profile.to_string())
-         };
--        let mut home = HomeView::new(active_profile, available_tools, file_watch)?;
-+        #[cfg(not(test))]
-+        let home = HomeView::new(active_profile, available_tools, file_watch)?;
-+        #[cfg(test)]
-+        let home = HomeView::new_for_test(active_profile, available_tools, file_watch)?;
- 
-         let config = Config::load_or_warn();
-         // Theme is a global preference, never profile-merged.
-         let theme_name = config.effective_theme_name();
-         let palette_mode = config.theme_palette_mode();
-         let theme = crate::tui::styles::load_theme_with_mode(&theme_name, palette_mode);
--        let current_version = env!("CARGO_PKG_VERSION").to_string();
--
--        if no_agents {
--            home.show_no_agents();
--        } else if suppress_first_run_dialogs {
--            // The caller shows a startup warning first.
--        } else if !config.app_state.has_seen_welcome {
--            home.show_intro(&theme_name);
--            if let Err(e) = update_app_state(|state| {
--                state.has_seen_welcome = true;
--                state.last_seen_version = Some(current_version.clone());
--            }) {
--                tracing::warn!(
--                    target: "tui.startup",
--                    error = %e,
--                    "failed to persist has_seen_welcome/last_seen_version"
--                );
--            }
--        } else if config.app_state.last_seen_version.as_deref() != Some(&current_version) {
--            home.show_changelog(config.app_state.last_seen_version.clone());
--            if let Err(e) = update_app_state(|state| {
--                state.last_seen_version = Some(current_version.clone());
--            }) {
--                tracing::warn!(
--                    target: "tui.startup",
--                    error = %e,
--                    "failed to persist last_seen_version"
--                );
--            }
--        } else if !config.app_state.has_responded_to_telemetry {
--            // One-time opt-in for users who finished onboarding before telemetry existed.
--            home.show_telemetry_consent();
--        }
-+        let force_update_check = config.app_state.has_seen_welcome
-+            && config.app_state.last_seen_version.as_deref() != Some(env!("CARGO_PKG_VERSION"));
- 
-         let dismissed_update_version = config.app_state.dismissed_update_version.clone();
-         let dismissed_image_digest = config.app_state.dismissed_image_digest.clone();
- 
--        Ok(Self {
-+        let mut app = Self {
-             home,
-+            tool_detection: None,
-+            available_tools_rx: None,
-+            pending_forced_tool_detection: false,
-+   
-```
-
-**File**: `src/tui/dialogs/changelog.rs` (modified, +43/-0)
-```diff
-@@ -24,6 +24,7 @@ use crate::tui::styles::Theme;
- use crate::update::{get_cached_releases, ReleaseInfo};
- 
- pub struct ChangelogDialog {
-+    from_version: Option<String>,
-     scroll_offset: usize,
-     display_lines: Vec<DisplayLine>,
-     dialog_area: Rect,
-@@ -93,6 +94,7 @@ impl ChangelogDialog {
-         let releases = get_cached_releases(from_version.as_deref());
-         let display_lines = build_display_lines(&releases);
-         Self {
-+            from_version,
-             scroll_offset: 0,
-             display_lines,
-             dialog_area: Rect::default(),
-@@ -101,6 +103,14 @@ impl ChangelogDialog {
-         }
-     }
- 
-+    pub fn refresh(&mut self) {
-+        self.display_lines =
-+            build_display_lines(&get_cached_releases(self.from_version.as_deref()));
-+        self.scroll_offset = self
-+            .scroll_offset
-+            .min(self.display_lines.len().saturating_sub(1));
-+    }
-+
-     /// A click anywhere inside dismisses, as any of Enter/Esc/q/Space does.
-     /// `None` outside, for the caller to decide.
-     pub fn handle_click(&self, col: u16, row: u16) -> Option<DialogResult<()>> {
-@@ -518,8 +528,41 @@ mod tests {
-     use super::*;
-     use crate::tui::dialogs::test_keys::key;
- 
-+    #[test]
-+    #[serial_test::serial]
-+    fn refresh_picks_up_background_release_notes_and_bounds_scroll() {
-+        let _guard = crate::session::test_support::isolate_app_dir();
-+        let mut dialog = ChangelogDialog::new(Some("1.18.0".into()));
-+        assert!(matches!(
-+            dialog.display_lines.as_slice(),
-+            [DisplayLine::NoReleases]
-+        ));
-+        let cache = serde_json::json!({
-+            "checked_at": chrono::Utc::now(),
-+            "latest_version": "1.19.0",
-+            "releases": [{"version": "1.19.0", "body": "### Performance\n- Faster startup", "published_at": null}]
-+        });
-+        std::fs::write(
-+            crate::session::get_app_dir()
-+                .unwrap()
-+                .join("update_cache.json"),
-+            cache.to_string(),
-+        )
-+        .unwrap();
-+        dialog.scroll_offset = usize::MAX;
-+        dialog.refresh();
-+        assert!(dialog.display_lines.iter().any(
-+            |line| matches!(line, DisplayLine::VersionHeader { version, .. } if version == "1.19.0")
-+        ));
-+        assert!(dialog.display_lines.iter().any(
-+            |line| matches!(line, DisplayLine::Item(item) if item.message == "Faster startup")
-+        ));
-+        assert!(dialog.scroll_offset < dialog.display_lines.len());
-+    }
-+
-     fn dialog_with(lines: Vec<DisplayLine>) -> ChangelogDialog {
-         ChangelogDialog {
-+            from_version: None,
-             scroll_offset: 0,
-             display_lines: lines,
-             dialog_area: Rect::default(),
+             const { data: pr } = await github.rest.pulls.get({
+-              ...context.repo, pull_number: context.payload.pull_request.number,
++              ...context.repo, pull_number: number,
+             });
+             core.setOutput('run', pr.labels.some(label => label.name === 'ci-macos'));
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+-        if: github.event_name != 'pull_request' || steps.macos.outputs.run == 'true'
++        if: github.event_name == 'push' || steps.macos.outputs.run == 'true'
+         with:
+           # These jobs run repository-controlled build/test code after checkout
+           # and never push, so the job token must not linger in .git/config
+           # (zizmor artipacked). Matches the hardened convention in ci.yml and
+           # release.yml.
+           persist-credentials: false
+       - uses: ./.github/actions/rust-toolchain
+-        if: github.event_name != 'pull_request' || steps.macos.outputs.run == 'true'
++        if: github.event_name == 'push' || steps.macos.outputs.run == 'true'
+       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+-        if: github.event_name != 'pull_request' || steps.macos.outputs.run == 'true'
++        if: github.event_name == 'push' || steps.macos.outputs.run == 'true'
+         with:
+           cache-bin: "true"
+-          save-if: true
++          save-if: ${{ github.event_name != 'merge_group' }}
+       - name: Install tmux
+-        if: github.event_name != 'pull_request' || steps.macos.outputs.run == 'true'
++        if: github.event_name == 'push' || steps.macos.outputs.run == 'true'
+         run: brew install tmux
+       - uses: taiki-e/install-action@9983c65e42da123ff25d1f78505eb6de315aa172 # v2.87.20
+-        if: github.event_name != 'pull_request' || steps.macos.outputs.run == 'true'
++        if: github.event_name == 'push' || steps.macos.outputs.run == 'true'
+         with:
+           tool: cargo-nextest
+       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+-        if: github.event_name != 'pull_request' || steps.macos.outputs.run == 'true'
++        if: github.event_name == 'push' || steps.macos.outputs.run == 'true'
+         with:
+           node-version: '22'
+       - name: Cargo test (macOS, lib + bins)
+-        if: github.event_name != 'pull_request' || steps.macos.outputs.run == 'true'
++        if: github.event_name == 'push' || steps.maco
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4746** (2026-10-20): fix(server): bound profile alias filesystem scans (@Seluj78)
-- **PR #4744** (2026-10-20): feat(worktree): pick an existing worktree in attach mode (web and TUI) (@Seluj78)
-- **PR #4742** (2026-10-20): fix(acp): announce context reset when a new conversation replaces the old one (@Seluj78)
-- **PR #4739** (2026-10-20): feat(acp): report whether a Worker is starting or resuming (@Seluj78)
-- **PR #4738** (2026-10-20): fix(ci): route unowned paths to maintainers via CODEOWNERS catch-all (@Seluj78)
-- **PR #4737** (2026-10-20): feat(cli): add aoe add --effort and aoe acp set-option (@Seluj78)
+- **PR #4810** (2026-10-21): chore(plugins): pin agent-of-empires.github 2.3.0 (@Seluj78)
+- **PR #4809** (2026-10-21): fix(server): drop the release-only unused Instance import (@njbrake)
+- **PR #4804** (closed): ci: let auto-merge callers work under a merge queue (@njbrake)
+- **PR #4801** (2026-10-21): fix(acp): name the configured agent PATH when its adapter is missing (@klubrake)
+- **PR #4796** (2026-10-21): chore: release v1.21.0 (@njbrake)
+- **PR #4795** (2026-10-21): perf(ci): fit each push into fewer runner slots (@Seluj78)
 
 ---
 
@@ -3761,22 +3124,31 @@ Route onboarding rechecks through the owned background worker, preserve login-sh
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. acp): announce context reset when a new conversation replaces the old one (#4742
+## X. daemon): retain runtime rows when profile enumeration fails (#4741)
 
 **RULE**:
-When implementing operations in `src/acp/acp_client/commands.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/reload.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f186c41e`: acp): announce context reset when a new conversation replaces the old one (#4742). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e869dfde`: daemon): retain runtime rows when profile enumeration fails (#4741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/acp/acp_client/commands.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/reload.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        /// A conversation existed before this launch, even without a stored id.
-        prior_conversation: bool,
+    // A failed enumeration is unknown, not empty: keep the accepted rows and overlay state.
+    if cache.health.enumeration_failed {
+        state
+            .runtime_read_cache
+            .write()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .health
+            .enumeration_failed = true;
+        return;
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3786,4 +3158,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f186c41e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e869dfde` are properly handled with clean fallback behavior.

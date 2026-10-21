@@ -4282,3 +4282,6 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `4ca8c58d` | Multi-dimensional audit evidence | 2026-10-21T18:52:40.000Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `79657a17` | Multi-dimensional audit evidence | 2026-10-21T18:59:11.387Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `cd3d7354` | Multi-dimensional audit evidence | 2026-10-21T18:59:13.134Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `4f72cb02` | Multi-dimensional audit evidence | 2026-10-21T19:05:39.426Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `9981dd1a` | Multi-dimensional audit evidence | 2026-10-21T19:05:45.253Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `8e51b1c3` | Multi-dimensional audit evidence | 2026-10-21T19:05:50.754Z |

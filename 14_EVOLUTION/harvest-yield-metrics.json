@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T18:59:13.145Z",
-  "total_cycles_completed": 4252,
-  "total_learnings_persisted": 4252,
-  "total_rules_promoted": 3437,
+  "last_updated": "2026-10-21T19:05:50.762Z",
+  "total_cycles_completed": 4255,
+  "total_learnings_persisted": 4255,
+  "total_rules_promoted": 3440,
   "history": [
-    {
-      "timestamp": "2026-10-20T22:51:59.449Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T22:57:59.868Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T22:58:14.547Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T23:04:18.376Z",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-21T18:59:13.145Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T19:05:39.434Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T19:05:45.257Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T19:05:50.762Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

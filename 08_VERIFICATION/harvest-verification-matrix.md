@@ -4275,3 +4275,6 @@
 | `CYCLE-20261021-YZLP` | `2026-10-21T18:52:39.997Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3590` | Yes (`596faf01...`) |
 | `CYCLE-20261021-7DLJ` | `2026-10-21T18:59:11.383Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3591` | Yes (`aaa36062...`) |
 | `CYCLE-20261021-7EY3` | `2026-10-21T18:59:13.131Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3592` | Yes (`d79e74e3...`) |
+| `CYCLE-20261021-FP0F` | `2026-10-21T19:05:39.423Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3593` | Yes (`9d4db0f7...`) |
+| `CYCLE-20261021-FTIA` | `2026-10-21T19:05:45.250Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3594` | Yes (`fab7ef7f...`) |
+| `CYCLE-20261021-FXR3` | `2026-10-21T19:05:50.751Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3595` | Yes (`6634606c...`) |

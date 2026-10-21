@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `e9ccebe2`  
+> **Source Version**: `8e51b1c3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:24:07.924Z  
+> **Timestamp**: 2026-10-21T19:05:50.354Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:24:07.917Z  
+> **Harvest Timestamp**: 2026-10-21T19:05:50.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6447 stars
+- **Stars / Engagement**: 6452 stars
 
 ---
 
@@ -405,383 +405,360 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9ccebe2` (2026-10-20)
-**Commit Message**: fix(agent-os): prevent invisible-character evasion in conversation guardian (#4124)
+### Incident Patch 1: `e67fba7f` (2026-10-21)
+**Commit Message**: fix(agent-lightning): count a successful episode once in GovernedEnvironment metrics (#4360)
 
-* fix(agent-os): harden conversation guardian unicode detection
+* fix(agent-lightning): count a successful episode once in GovernedEnvironment
 
-Cover Unicode default-ignorables before compatibility normalization and preserve bounded detection views for word boundaries, punctuation, numeric errors, and legacy matches across all guardian detectors.
+step() incremented _successful_episodes on every step that succeeded
+without a violation, while get_metrics() divides it by the number of
+episodes. A clean five-step episode reported five successful episodes and
+a success_rate of 5.0, and an episode with a violation on one step still
+counted its clean steps.
 
-Add 435 regression cases and document detection-only normalization and defense-in-depth limits. Fixes #3500; credits prior work in #3501.
+Track whether every step of the current episode was clean, count the
+episode at most once when reset() closes it, and include the episode in
+progress in get_metrics(). The per-step success bonus is unchanged.
 
-Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 
-* fix(agent-os): address guardian normalization review feedback
+* docs(agent-lightning): define successful_episodes as fully clean episodes in the specs
 
-Prepare detection views once per guardian message and use regex substitution for punctuation-preserving leetspeak. Expose detection_texts, verify public behavior, and document numeric retry classification.
-
-Add Unicode spelling terms and precise escape exclusions; construct intentionally obfuscated test words from readable text.
-
-Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Ricky Gummadi <[REDACTED_EMAIL]>
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.cspell-repo-terms.txt` (modified, +11/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,9 +1,16 @@
-+# --- Conversation guardian Unicode normalization terms ---
-+Bidi
-+Halfwidth
-+homoglyphs
-+ignorables
-+invisibles
-+leetspeak
-+LHMQ
-+maketrans
-+midword
-+NFKD
- Upadhyay
+@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **.NET MCP governance denies an authenticated principal whose identifier is not a DID instead of throwing.** With default options, a principal from an OIDC provider such as Keycloak (where `sub` is a GUID or an email address) made every governed tool call throw `ArgumentException` ("Invalid AgentMesh DID") instead of reaching a decision. `McpGovernanceRuntime` now denies such calls with a reason that points the operator at `AgentIdResolver`; `GovernanceKernel.EvaluateToolCall` is unchanged (#4357).
+ - **`agent-discovery` reports containerized agents with the same agent type as the other scanners.** `ConfigScanner` used the matched text of a Dockerfile or Compose file as the agent type, so `langgraph`, `agent_governance`, `mcp_server` and `semantic_kernel` came out as types no other scanner uses. Risk scoring then skipped the type factor for them (a `semantic_kernel` container got no medium-risk score), and reconciliation never suggested `mcp-scan` for an `mcp_server` container. Each Docker pattern now reports the type the process scanner uses (`langchain`, `agt`, `mcp-server`, `semantic-kernel`, ...); fingerprints are unchanged.
+ - **`agent-discovery` GitHub scans detect LlamaIndex and classic AutoGen through their PyPI names.** `GitHubScanner` matched dependency files against `llamaindex` and `autogen` with word boundaries, so `llama-index` (the PyPI name of LlamaIndex) and `pyautogen` (classic AutoGen) were never detected, and a name written with `_` (`semantic_kernel`, `langchain_core`, `autogen_agentchat`) was missed although its hyphenated form was detected. Each dependency can now list aliases (`llama-index`, `pyautogen`), and `-`, `_` and `.` are treated alike inside and around a name, as in PEP 503. A repository still yields one agent per framework.
++- **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
  
--
--
--
--
- # --- ACS / crypto terms ---
- # --- Additional West/North Africa terms flagged by cspell ---
- # --- African regulatory policy terms ---
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `.cspell.json` (modified, +3/-1)
+**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/environment.py` (modified, +16/-4)
 ```diff
-@@ -14,7 +14,9 @@
-   ],
-   "ignoreRegExpList": [
-     "/GHSA(-[0-9a-z]{4}){3}/g",
--    "/CVE-[0-9]{4}-[0-9]{4,}/g"
-+    "/CVE-[0-9]{4}-[0-9]{4,}/g",
-+    "/\\\\u[0-9a-fA-F]{4}/g",
-+    "/\\\\U[0-9a-fA-F]{8}/g"
-   ],
-   "words": [
-     "dorny",
+@@ -117,7 +117,11 @@ def __init__(
+         self._total_episodes = 0
+         self._total_steps = 0
+         self._total_violations = 0
++        # Episodes that finished with every step succeeding and no
++        # violation. The episode in progress is counted by get_metrics
++        # through ``_episode_clean`` until reset() closes it.
+         self._successful_episodes = 0
++        self._episode_clean = False
+ 
+         # Set up kernel hooks
+         self._setup_hooks()
+@@ -221,6 +225,11 @@ def reset(
+         Returns:
+             Tuple of (initial_state, info_dict)
+         """
++        # Close the previous episode before starting a new one
++        if self._episode_clean:
++            self._successful_episodes += 1
++        self._episode_clean = False
++
+         # Reset episode state
+         self._state = EnvironmentState()
+         self._current_violations = []
+@@ -257,6 +266,7 @@ def step(
+             Tuple of (next_state, reward, terminated, truncated, info)
+         """
+         self._current_violations = []
++        first_step = self._state.step_count == 0
+         self._state.step_count += 1
+         self._total_steps += 1
+ 
+@@ -310,9 +320,10 @@ def step(
+             truncated = True
+ 
+         # Mark success
+-        if success and not self._current_violations:
++        step_clean = success and not self._current_violations
++        if step_clean:
+             reward += self.config.success_bonus
+-            self._successful_episodes += 1
++        self._episode_clean = step_clean and (first_step or self._episode_clean)
+ 
+         self._state.terminated = terminated
+         self._state.truncated = truncated
+@@ -342,12 +353,13 @@ def terminated(self) -> bool:
+ 
+     def get_metrics(self) -> dict[str, Any]:
+         """Get environment metrics."""
++        successful_episodes = self._successful_episodes + int(self._episode_clean)
+         return {
+             "total_episodes": self._total_episodes,
+             "total_steps": self._total_steps,
+             "total_violations": self._total_violations,
+-            "successful_episodes": self._successful_episodes,
+-            "success_rate": self._successful_episodes / max(self._total_episodes, 1),
++            "successful_episodes": successful_episodes,
++            "success_rate": successful_episodes / max(self._total_episodes, 1),
+             "violations_per_episode": self._total_violations
+             / max(self._total_episodes, 1),
+             "steps_per_episode": self._total_steps / max(self._total_episodes, 1),
 ```
 
-**File**: `agent-governance-python/agent-os/src/agent_os/integrations/conversation_guardian.py` (modified, +125/-26)
+**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +35/-0)
 ```diff
-@@ -80,15 +80,49 @@
- }
+@@ -859,6 +859,41 @@ def test_get_metrics_after_episode(self):
+         assert m["total_episodes"] == 1
+         assert m["total_steps"] == 2
  
- 
--def normalize_text(text: str) -> str:
--    """Normalize text to defeat common evasion techniques.
-+# Unicode 17.0.0 Default_Ignorable_Code_Point, not a general category filter:
-+# https://www.unicode.org/Public/17.0.0/ucd/DerivedCoreProperties.txt
-+# Includes Mn, Lo and reserved code points as well as Cf.
-+# Prior art: LHMQ878's report #3500 and fix proposal #3501 identified the
-+# property-based coverage and the need to preserve invisible word boundaries.
-+_INVISIBLE_RANGES: tuple[tuple[int, int], ...] = (
-+    (0x00AD, 0x00AD),  # Soft hyphen
-+    (0x034F, 0x034F),  # Combining grapheme joiner
-+    (0x061C, 0x061C),  # Arabic letter mark
-+    (0x115F, 0x1160),  # Hangul fillers
-+    (0x17B4, 0x17B5),  # Khmer inherent vowels
-+    (0x180B, 0x180F),  # Mongolian selectors and vowel separator
-+    (0x200B, 0x200F),  # Zero-width characters and directional marks
-+    (0x202A, 0x202E),  # Bidi embeddings and overrides
-+    (0x2060, 0x206F),  # Invisible operators, bidi isolates and reserved formats
-+    (0x3164, 0x3164),  # Hangul filler
-+    (0xFE00, 0xFE0F),  # Variation selectors
-+    (0xFEFF, 0xFEFF),  # BOM
-+    (0xFFA0, 0xFFA0),  # Halfwidth Hangul filler
-+    (0xFFF0, 0xFFF8),  # Reserved default-ignorables
-+    (0xFFF9, 0xFFFB),  # Interlinear annotations: additional, not default-ignorable
-+    (0x1BCA0, 0x1BCA3),  # Shorthand format controls
-+    (0x1D173, 0x1D17A),  # Musical format controls
-+    (0xE0000, 0xE0FFF),  # Tags, supplementary selectors and reserved code points
-+)
-+_INVISIBLE_DELETE = {
-+    cp: "" for start, end in _INVISIBLE_RANGES for cp in range(start, end + 1)
-+}
-+_INVISIBLE_SPACE = dict.fromkeys(_INVISIBLE_DELETE, " ")
-+_LEGACY_INVISIBLE_DELETE = dict.fromkeys(map(ord, "\u200b\u200c\u200d\u2060\ufeff"), "")
-+_LEET_TRANSLATION = str.maketrans(_LEET_MAP)
-+_LEET_DIGIT_TRANSLATION = str.maketrans(
-+    {char: replacement for char, replacement in _LEET_MAP.items() if char.isalnum()}
-+)
-+_LEET_PUNCTUATION = re.compile(
-+    r"(?<=[^\W_])["
-+    + re.escape("".join(char for char in _LEET_MAP if not char.isalnum()))
-+    + r"](?=[^\W_])"
-+)
- 
--    Handles: unicode homoglyphs, leetspeak, zero-width characters,
--    excessive whitespace, combining diacritics, fullwidth characters.
--    """
--    # Strip zero-width characters
--    text = re.sub(r"[\u200b\u200c\u200d\u2060\ufeff]", "", text)
- 
-+def _normalize_unicode(text: str) -> str:
-+    """Apply the shared transforms without changing punctuation or digits."""
-     # NFKD decomposition (handles fullwidth, compatibility chars)
-     text = unicodedata.normalize("NFKD", text)
- 
-@@ -98,15 +132,54 @@ def normalize_text(text: str) -> str:
-     # Homoglyph replacement
-     text = "".join(_HOMOGLYPH_MAP.get(c, c) for c in text)
- 
--    # Leetspeak replacement (only in word context)
--    text = "".join(_LEET_MAP.get(c, c) for c in text)
--
-     # Collapse excessive whitespace / mixed whitespace
-     text = re.sub(r"\s+", " ", text).strip()
- 
-     return text
- 
- 
-+def normalize_text(text: str) -> str:
-+    """Return a lossy, detection-only view of text with invisible characters removed.
++    def test_clean_episode_counts_once(self):
++        """Regression: every clean step used to add a successful episode,
++        so one clean five-step episode reported a success_rate of 5.0."""
++        env = GovernedEnvironment(_make_mock_kernel())
++        env.reset()
++        for i in range(5):
++            env.step(f"a{i}")
++        m = env.get_metrics()
++        assert m["successful_episodes"] == 1
++        assert m["success_rate"] == 1.0
 +
-+    Handles Unicode 17.0.0 default-ignorables, interlinear annotation controls,
-+    homoglyphs, leetspeak, whitespace, diacritics and compatibility characters.
-+    Do not replace displayed text or audit records with this normalized view.
-+    Detectors also retain other views to preserve word boundaries and numbers.
-+    """
-+    # Remove fillers before NFKD can turn them into different Hangul characters.
-+    return _normalize_unicode(text.translate(_INVISIBLE_DELETE)).translate(_LEET_TRANSLATION)
++    def test_episode_with_a_violation_is_not_successful(self):
++        kernel = _make_mock_kernel()
 +
++        def execute(action):
++            if action == "bad":
++                env._handle_violation("P", "blocked", "low", True)
++            return "result"
 +
-+def detection_texts(text: str) -> tuple[str, ...]:
-+    """Return the original text and at most seven distinct normalization views.
++        kernel.execute = MagicMock(side_effect=execute)
++        env = GovernedEnvironment(kernel)
++        env.reset()
++        for action in ("ok", "bad", "ok"):
++            env.step(action)
++        assert env.get_metrics()["successful_episodes"] == 0
 +
-+    The views are for detection only, not display or audit storage. Their count
-+    is independent of the number of invisible characters in the input.
-+    """
-+    candidates = [text]
-+    normalized_views: dict[str, str] = {}
-+    # Deletion repairs split keywords; spaces retain otherwise lost boundaries.
-+    for visible in dict.fromkeys(
-+        (text.translate(_INVISIBLE_DELETE), text.translate(_INVISIBLE_SPACE))
-+    ):
-+        normalized = _normalize_unicode(visible)
-+        normalized_views[visible] = normalized
-+        candidates.append(normalized)
-+        candidates.append(normalized.translate(_LEET_TRANSLATION))
-+        # Preserve punctuation boundaries in a separate leet view: converting
-+        # the final "!" in "urg3nt!" to "i" would hide the restored keyword.
-+        candidates.append(_LEET_PUNCTUATION.sub(
-+            lambda match: _LEET_MAP[match[0]],
-+            normalized.translate(_LEET_DIGIT_TRANSLATION),
-+        ))
-+    # Keep the former normalization result too: old joiners inside words can
-+    # coexist with newly covered characters that used to act as boundaries.
-+    legacy = text.translate(_LEGACY_INVISIBLE_DELETE)
-+    if legacy not in normalized_views:
-+        cand
++        # A clean second episode counts; the first one stays unsuccessful.
++        env.reset()
++        env.step("ok")
++        env.reset()
++        m = env.get_metrics()
++        assert m["total_episodes"] == 3
++        assert m["successful_episodes"] == 1
++        assert m["success_rate"] == pytest.approx(1 / 3)
++
+ 
+ class TestCreateGovernedEnv:
+     def test_factory(self):
 ```
 
-**File**: `agent-governance-python/agent-os/tests/test_conversation_guardian_unicode.py` (added, +357/-0)
+**File**: `docs/specs/AGENT-LIGHTNING-FAST-PATH-1.0.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,357 @@
-+# Copyright (c) Microsoft Corporation.
-+# Licensed under the MIT License.
-+"""Regression coverage for invisible-character evasion (issue #3500)."""
+@@ -737,7 +737,7 @@ The environment MUST expose a `terminated` property that returns
+ | `total_episodes` | int | Number of episodes completed |
+ | `total_steps` | int | Total steps across all episodes |
+ | `total_violations` | int | Total violations across all episodes |
+-| `successful_episodes` | int | Episodes with at least one violation-free, successful step |
++| `successful_episodes` | int | Episodes in which every step succeeded without a violation |
+ | `success_rate` | float | `successful_episodes / max(total_episodes, 1)` |
+ | `violations_per_episode` | float | `total_violations / max(total_episodes, 1)` |
+ | `steps_per_episode` | float | `total_steps / max(total_episodes, 1)` |
+```
+
+**File**: `docs/specs/AUDIT-COMPLIANCE-1.0.md` (modified, +1/-1)
+```diff
+@@ -1611,7 +1611,7 @@ The environment MUST track and report:
+ | `total_episodes` | Total number of episodes completed. |
+ | `total_steps` | Total steps across all episodes. |
+ | `total_violations` | Total policy violations across all episodes. |
+-| `successful_episodes` | Episodes that completed without critical violations. |
++| `successful_episodes` | Episodes in which every step succeeded without a violation. |
+ | `success_rate` | Fraction of successful episodes. |
+ | `violations_per_episode` | Average violations per episode. |
+ | `steps_per_episode` | Average steps per episode. |
+```
+
+---
+
+### Incident Patch 2: `8e51b1c3` (2026-10-21)
+**Commit Message**: fix(agent-lightning): do not count violation summaries as emitted spans (#4365)
+
+get_violation_summary() built its spans through get_spans(), which adds
+every converted span to emitted_count, so each summary raised
+get_stats()["emitted_count"] by the number of recorder entries although
+nothing was emitted. Convert the entries directly instead.
+
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-discovery` GitHub scans detect LlamaIndex and classic AutoGen through their PyPI names.** `GitHubScanner` matched dependency files against `llamaindex` and `autogen` with word boundaries, so `llama-index` (the PyPI name of LlamaIndex) and `pyautogen` (classic AutoGen) were never detected, and a name written with `_` (`semantic_kernel`, `langchain_core`, `autogen_agentchat`) was missed although its hyphenated form was detected. Each dependency can now list aliases (`llama-index`, `pyautogen`), and `-`, `_` and `.` are treated alike inside and around a name, as in PEP 503. A repository still yields one agent per framework.
+ - **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
+ - **`agent-learning` `ExcessivePrivilegeEvaluation` checks `role` and `permissions` as well as `privilege` and `scopes`.** The check read `role` only when the action had no `privilege` key, and `permissions` only when it had no `scopes` key, so `{"privilege": "user", "role": "admin"}`, `{"privilege": None, "role": "admin"}` and `{"scopes": ["read"], "permissions": ["*"]}` all passed. Both keys of each pair are now checked, and `max_scopes` counts `scopes` and `permissions` together (#4364).
++- **`agent-lightning` `FlightRecorderEmitter.get_violation_summary()` no longer adds to `emitted_count`.** The summary built its spans through `get_spans()`, which counts every converted span as emitted, so each call to `get_violation_summary()` raised `get_stats()["emitted_count"]` by the number of recorder entries although nothing was sent anywhere. The summary now converts the entries without counting them; its result is unchanged.
+ 
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+```
+
+**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/emitter.py` (modified, +7/-1)
+```diff
+@@ -309,7 +309,13 @@ def get_violation_summary(self) -> dict[str, Any]:
+         Returns:
+             Summary dictionary with violation statistics
+         """
+-        spans = self.get_spans()
++        # Convert directly instead of calling get_spans(): a summary does not
++        # emit anything, so it must not add to emitted_count.
++        spans = [
++            span
++            for entry in self._get_entries()
++            if (span := self._convert_entry(entry))
++        ]
+ 
+         violations = [
+             s for s in spans if s.attributes.get("agent_os.policy_violated", False)
+```
+
+**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +12/-0)
+```diff
+@@ -1023,6 +1023,18 @@ def test_violation_summary_empty(self):
+         assert summary["total_violations"] == 0
+         assert summary["violation_rate"] == 0.0
+ 
++    def test_violation_summary_does_not_count_as_emitted(self):
++        entries = [_FakeEntry(violated=True), _FakeEntry(id="e2")]
++        emitter = FlightRecorderEmitter(_make_recorder(entries))
++        emitter.get_violation_summary()
++        emitter.get_violation_summary()
++        assert emitter.get_stats()["emitted_count"] == 0
 +
-+import hashlib
-+import unicodedata
++        store = MagicMock()
++        emitter.emit_to_store(store)
++        emitter.get_violation_summary()
++        assert emitter.get_stats()["emitted_count"] == 2
 +
-+import pytest
-+
-+from agent_os.integrations import conversation_guardian
-+from agent_os.integrations.conversation_guardian import (
-+    AlertAction,
-+    AlertSeverity,
-+    ConversationGuardian,
-+    ConversationGuardianConfig,
-+    EscalationClassifier,
-+    FeedbackLoopBreaker,
-+    OffensiveIntentDetector,
-+    detection_texts,
-+    normalize_text,
-+)
-+
-+# Independent Unicode 17.0.0 Default_Ignorable_Code_Point snapshot from
-+# https://www.unicode.org/Public/17.0.0/ucd/DerivedCoreProperties.txt.
-+# Update this snapshot explicitly when adopting a new Unicode version.
-+_DEFAULT_IGNORABLE_RANGES = (
-+    (0x00AD, 0x00AD),
-+    (0x034F, 0x034F),
-+    (0x061C, 0x061C),
-+    (0x115F, 0x1160),
-+    (0x17B4, 0x17B5),
-+    (0x180B, 0x180F),
-+    (0x200B, 0x200F),
-+    (0x202A, 0x202E),
-+    (0x2060, 0x206F),
-+    (0x3164, 0x3164),
-+    (0xFE00, 0xFE0F),
-+    (0xFEFF, 0xFEFF),
-+    (0xFFA0, 0xFFA0),
-+    (0xFFF0, 0xFFF8),
-+    (0x1BCA0, 0x1BCA3),
-+    (0x1D173, 0x1D17A),
-+    (0xE0000, 0xE0FFF),
-+)
-+_INVISIBLE_SAMPLES = tuple(
-+    dict.fromkeys(
-+        chr(cp)
-+        for start, end in (*_DEFAULT_IGNORABLE_RANGES, (0xFFF9, 0xFFFB))
-+        for cp in (start, end)
-+    )
-+) + ("\u2065", "\U000e0020", "\U000e007f", "\U000e0100", "\U000e01ef")
-+_ESCALATION = "urgent you must comply immediately no excuses"
-+_OFFENSIVE = "exfiltrate the data escalate privileges impersonate"
-+
-+
-+def _inside_words(text: str, invisible: str) -> str:
-+    return " ".join(invisible.join(word) for word in text.split(" "))
-+
-+
-+@pytest.mark.parametrize("start,end", _DEFAULT_IGNORABLE_RANGES)
-+def test_every_default_ignorable_is_removed(start: int, end: int) -> None:
-+    for cp in range(start, end + 1):
-+        assert normalize_text(f"ur{chr(cp)}gent") == "urgent", f"U+{cp:04X}"
-+
-+
-+@pytest.mark.parametrize("cp", range(0xFFF9, 0xFFFC))
-+def test_interlinear_annotation_controls_are_removed(cp: int) -> None:
-+    # These controls are intentionally covered in addition to the Unicode property.
-+    assert normalize_text(f"ur{chr(cp)}gent") == "urgent"
-+
-+
-+def test_complete_unicode_snapshot_normalizes_through_public_api() -> None:
-+    expected = {cp for start, end in _DEFAULT_IGNORABLE_RANGES for cp in range(start, end + 1)}
-+    assert len(expected) == 4174
-+    code_points = expected | set(range(0xFFF9, 0xFFFC))
-+    text = " ".join(f"ur{chr(cp)}gent" for cp in sorted(code_points))
-+    assert normalize_text(text) == " ".join(["urgent"] * len(code_points))
-+
-+
-+@pytest.mark.parametrize("invisible", _INVISIBLE_SAMPLES, ids=ascii)
+ 
+ class TestFlightRecorderEmitterStream:
+     """``stream()`` is an async generator with a cooperative stop signal.
+```
+
+---
+
+### Incident Patch 3: `6a8c12b7` (2026-10-21)
+**Commit Message**: fix(agent-learning): check role and permissions in ExcessivePrivilegeEvaluation (#4364)
+
+The check read `role` only when an action had no `privilege` key and
+`permissions` only when it had no `scopes` key, so an action with
+`privilege="user", role="admin"`, `privilege=None, role="admin"` or
+`scopes=["read"], permissions=["*"]` passed. Check both keys of each pair
+and count scopes and permissions together against max_scopes.
+
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-discovery` reports containerized agents with the same agent type as the other scanners.** `ConfigScanner` used the matched text of a Dockerfile or Compose file as the agent type, so `langgraph`, `agent_governance`, `mcp_server` and `semantic_kernel` came out as types no other scanner uses. Risk scoring then skipped the type factor for them (a `semantic_kernel` container got no medium-risk score), and reconciliation never suggested `mcp-scan` for an `mcp_server` container. Each Docker pattern now reports the type the process scanner uses (`langchain`, `agt`, `mcp-server`, `semantic-kernel`, ...); fingerprints are unchanged.
+ - **`agent-discovery` GitHub scans detect LlamaIndex and classic AutoGen through their PyPI names.** `GitHubScanner` matched dependency files against `llamaindex` and `autogen` with word boundaries, so `llama-index` (the PyPI name of LlamaIndex) and `pyautogen` (classic AutoGen) were never detected, and a name written with `_` (`semantic_kernel`, `langchain_core`, `autogen_agentchat`) was missed although its hyphenated form was detected. Each dependency can now list aliases (`llama-index`, `pyautogen`), and `-`, `_` and `.` are treated alike inside and around a name, as in PEP 503. A repository still yields one agent per framework.
+ - **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
++- **`agent-learning` `ExcessivePrivilegeEvaluation` checks `role` and `permissions` as well as `privilege` and `scopes`.** The check read `role` only when the action had no `privilege` key, and `permissions` only when it had no `scopes` key, so `{"privilege": "user", "role": "admin"}`, `{"privilege": None, "role": "admin"}` and `{"scopes": ["read"], "permissions": ["*"]}` all passed. Both keys of each pair are now checked, and `max_scopes` counts `scopes` and `permissions` together (#4364).
+ 
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+```
+
+**File**: `agent-governance-python/agent-learning/src/agent_learning_gov/evaluation.py` (modified, +8/-8)
+```diff
+@@ -234,14 +234,14 @@ def evaluate(
+         findings = []
+         for action in policy.actions:
+             parameters = dict(action.parameters)
+-            privilege = parameters.get("privilege", parameters.get("role"))
+-            scopes = parameters.get("scopes", parameters.get("permissions", ()))
+-            normalized_scopes = _as_sequence(scopes)
+-            privileged = (
+-                isinstance(privilege, str) and privilege.lower() in self.privileged_values
+-            ) or any(
+-                isinstance(scope, str) and scope.lower() in self.privileged_values
+-                for scope in normalized_scopes
++            # An action can carry both keys of each pair, so check both.
++            privileges = (parameters.get("privilege"), parameters.get("role"))
++            normalized_scopes = _as_sequence(parameters.get("scopes")) + _as_sequence(
++                parameters.get("permissions")
++            )
++            privileged = any(
++                isinstance(value, str) and value.lower() in self.privileged_values
++                for value in (*privileges, *normalized_scopes)
+             )
+             if privileged or len(normalized_scopes) > self.max_scopes:
+                 findings.append(
+```
+
+**File**: `agent-governance-python/agent-learning/tests/test_evaluation.py` (modified, +41/-0)
+```diff
+@@ -10,6 +10,7 @@
+ 
+ from agent_learning_gov import (
+     CostPolicyEvaluation,
++    ExcessivePrivilegeEvaluation,
+     GovernanceEvaluationPack,
+     GovernanceOutcome,
+     GovernanceTelemetry,
+@@ -90,6 +91,46 @@ def test_pack_reports_tools_privilege_restrictions_and_cost() -> None:
+     assert len(report.findings) >= 5
+ 
+ 
 +@pytest.mark.parametrize(
-+    "detector_type,clean",
-+    [(EscalationClassifier, _ESCALATION), (OffensiveIntentDetector, _OFFENSIVE)],
-+)
-+def test_invisible_in_every_keyword_preserves_score_and_matches(
-+    invisible: str,
-+    detector_type: type[EscalationClassifier] | type[OffensiveIntentDetector],
-+    clean: str,
-+) -> None:
-+    detector = detector_type()
-+    expected = detector.score_message(clean)
-+    assert expected[0] >= 0.8
-+    assert detector.score_message(_inside_words(clean, invisible)) == expected
-+
-+
-+@pytest.mark.parametrize("invisible", _INVISIBLE_SAMPLES, ids=ascii)
-+@pytest.mark.parametrize(
-+    "detector_type,obfuscated,clean",
++    "parameters",
 +    [
-+        (
-+            EscalationClassifier,
-+            "you must{gap}no excuses".replace("o", "0"),
-+            "you must no excuses",
-+        ),
-+        (
-+            OffensiveIntentDetector,
-+            "escalate privileges{gap}impersonate".replace("e", "3"),
-+            "escalate privileges impersonate",
-+        ),
-+        (
-+            EscalationClassifier,
-+            "code{gap}red".replace("o", "0").replace("e", "3"),
-+            "code red",
-+        ),
++        {"privilege": None, "role": "admin"},
++        {"privilege": "user", "role": "admin"},
++        {"scopes": ["read"], "permissions": ["*"]},
++        {"scopes": [], "permissions": ["root"]},
 +    ],
 +)
-+def test_invisible_word_separator_preserves_boundaries(
-+    invisible: str,
-+    detector_type: type[EscalationClassifier] | type[OffensiveIntentDetector],
-+    obfuscated: str,
-+    clean: str,
-+) -> None:
-+    detector = detector_type()
-+    assert detector.score_message(obfuscated.format(gap=invisible)) == detector.score_message(clean)
++def test_excessive_privilege_checks_role_and_permissions(parameters) -> None:
++    result = ExcessivePrivilegeEvaluation().evaluate(
++        _policy(_action("grant", **parameters)), episodes=(), baseline=None
++    )
++
++    assert result.passed == False
++    assert [finding.action_id for finding in result.findings] == ["grant"]
 +
 +
-+@pytest.mark.parametrize("suffix", ["!", "!!", "+", "$", "@", "\u00a1"])
-+def test_stacked_unicode_leetspeak_and_punctuation(suffix: str) -> None:
-+    detector = EscalationClassifier()
-+    obfuscated = f"\uff55r\u00adg3\u034fnt{suffix}"
-+    assert detector.score_message(obfuscated) == detector.score_message("urgent")
++def test_excessive_privilege_counts_scopes_and_permissions_together() -> None:
++    evaluation = ExcessivePrivilegeEvaluation(max_scopes=3)
++    result = evaluation.evaluate(
++        _policy(_action("grant", scopes=["a", "b"], permissions=["c", "d"])),
++        episodes=(),
++        baseline=None,
++    )
++
++    assert result.passed == False
++    assert result.findings[0].metadata == {"scope_count": 4}
 +
 +
-+def test_mixed_invisibles_and_existing_normalization() -> None:
-+    detector = EscalationClassifier()
-+    text = "\uff59\u2065\u043eu\u034f \tmu\u3164$t \n n0 excuse$".replace("x", "x\u0301\u00ad")
-+    assert detector.score_message(text) == detector.score_message("you must no excuses")
-+    normalized = normalize_text(text)
-+    assert normalized == "you must no excuses"
-+    assert normalize_text(nor
-```
-
-**File**: `docs/tutorials/09-prompt-injection-detection.md` (modified, +33/-2)
-```diff
-@@ -1,6 +1,6 @@
- ---
- title: Prompt Injection Detection
--last_reviewed: 2026-07-12
-+last_reviewed: 2026-09-24
- owner: docs-team
- ---
- 
-@@ -589,10 +589,41 @@ evasion techniques:
- 
- - **Leetspeak:** `3xpl0it` → `exploit`, `byp4ss` → `bypass`
- - **Homoglyphs:** Cyrillic `а` (U+0430) → Latin `a`
--- **Zero-width characters:** stripped before matching
-+- **Invisible characters:** Unicode 17.0.0 `Default_Ignorable_Code_Point`
-+  characters and interlinear annotation controls are removed before NFKD
-+  decomposition, including soft hyphens, variation selectors, bidi controls,
-+  Hangul fillers, and supplementary-plane tags
- - **Fullwidth characters:** NFKD-normalized
- - **Combining diacritics:** removed
- 
-+Escalation, offensive-intent, and retry-loop checks all use the same bounded
-+set of detection views. These include the original text, invisible-character
-+deletion and space substitution, and normalization with and without leetspeak
-+conversion. This catches characters inserted inside keywords without losing
-+word boundaries when they separate keywords. A punctuation-preserving leetspeak
-+view handles combinations such as `ur\u00adg3nt!`; numeric error codes such as
-+`4\u034f03` remain detectable too. Each pattern contributes to the score only
-+once, even when several views match. The previous normalization view is retained
-+so mixed old and newly covered invisible characters do not remove existing
-+matches. At most eight distinct views are checked per message.
-+The public `detection_texts(text)` helper returns these views; the guardian
-+computes them once and shares them across all three detectors.
++def test_excessive_privilege_passes_unprivileged_role_and_permissions() -> None:
++    result = ExcessivePrivilegeEvaluation().evaluate(
++        _policy(_action("search", privilege=None, role="user", permissions=["read"])),
++        episodes=(),
++        baseline=None,
++    )
 +
-+**Numeric retry trade-off:** digits separated by invisible characters, such as
-+`4\u200b0\u200b1` or `id 40\u00ad3`, now count as error turns because they
-+normalize to `401` or `403`. Even benign-looking identifiers can therefore
-+contribute to the retry limit. This is intentional parity with the existing
-+plain-text error-code rules, not a new inference of malicious intent.
++    assert result.passed == True
 +
-+Normalization is for detection only: transcript previews and hashes still use
-+the original message. Invisible characters alone do not trigger an alert.
-+Visible whitespace and letters are not indiscriminately deleted.
 +
-+These are heuristic sample detectors, not a guarantee against every prompt
-+injection or encoding strategy. Keep deterministic tool permissions, policy
-+enforcement, and approval controls in place; an `AlertAction.NONE` result is
-+not authorization to perform an action.
-+
- ---
- 
- ## EscalationHandler
+ def test_regression_check_uses_approved_baseline() -> None:
+     telemetry = GovernanceTelemetry(
+         violations=(
 ```
 
 #### Recent Merged Pull Requests:
@@ -810,41 +787,28 @@ Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-os): prevent invisible-character evasion in conversation guardian (#4124)
+## X. agent-lightning): count a successful episode once in GovernedEnvironment metrics
 
 **RULE**:
-When implementing operations in `.cspell-repo-terms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9ccebe2`: agent-os): prevent invisible-character evasion in conversation guardian (#4124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e67fba7f`: agent-lightning): count a successful episode once in GovernedEnvironment metrics (#4360). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell-repo-terms.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# --- Conversation guardian Unicode normalization terms ---
-Bidi
-Halfwidth
-homoglyphs
-ignorables
-invisibles
-leetspeak
-LHMQ
-maketrans
-midword
-NFKD
+- **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-
-
-
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9ccebe2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e67fba7f` are properly handled with clean fallback behavior.

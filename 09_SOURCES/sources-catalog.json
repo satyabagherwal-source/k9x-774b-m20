@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "e9ccebe2",
+    "sourceVersion": "8e51b1c3",
     "license": "MIT",
-    "contentHash": "f678b05cd97dda2a053997786ddbaeb988213ff3bceb83d39579dd8bc2937dfc",
-    "lastHarvestedAt": "2026-10-20T23:24:08.354Z",
+    "contentHash": "6634606c83a2b3b159b57057830121cfe13beab147dba818b2dc20492e41c8f6",
+    "lastHarvestedAt": "2026-10-21T19:05:50.754Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "cbc1b435",
+    "sourceVersion": "9981dd1a",
     "license": "Apache-2.0",
-    "contentHash": "5714395710075b7a29ccc3d6c0a5bacf78186b69696e5cd6e02a09da1364c4c8",
-    "lastHarvestedAt": "2026-10-20T21:01:34.739Z",
+    "contentHash": "fab7ef7f5b1a8ead94700c4c2ce6e51b574330af5f147530ed5da230ad323e01",
+    "lastHarvestedAt": "2026-10-21T19:05:45.253Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "f186c41e",
+    "sourceVersion": "4f72cb02",
     "license": "MIT",
-    "contentHash": "e9cfa02f62f16719324e2ea8bfd01963a361a110fb675e5d7bb678f22f8130cb",
-    "lastHarvestedAt": "2026-10-20T18:01:56.369Z",
+    "contentHash": "9d4db0f7119fbc768cef053a1c4e839bcc99f4ce100ec5705096de07a9ab5098",
+    "lastHarvestedAt": "2026-10-21T19:05:39.426Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

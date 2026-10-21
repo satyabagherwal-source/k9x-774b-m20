@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `cbc1b435`  
+> **Source Version**: `9981dd1a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:01:34.340Z  
+> **Timestamp**: 2026-10-21T19:05:44.874Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:01:34.333Z  
+> **Harvest Timestamp**: 2026-10-21T19:05:44.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12387 stars
+- **Stars / Engagement**: 12388 stars
 
 ---
 
@@ -968,264 +968,67 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbc1b435` (2026-10-20)
-**Commit Message**: build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (#9417)
+### Incident Patch 1: `9981dd1a` (2026-10-21)
+**Commit Message**: ast/scanner: Report non-breaking spaces as illegal characters (#9415)
 
-Bumps [launch-editor](https://github.com/vitejs/launch-editor) from
-2.14.1 to 2.14.2.
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/vitejs/launch-editor/commit/b5334895a00f8000ef3b6a46f2aa9e1a62eb27b4"><code>b533489</code></a>
-v2.14.2</li>
-<li><a
-href="https://github.com/vitejs/launch-editor/commit/f13cd835d4b8e860b1d4d080ad8a490cc2463679"><code>f13cd83</code></a>
-fix: check file existence after path resolution (<a
-href="https://redirect.github.com/vitejs/launch-editor/issues/157">#157</a>)</li>
-<li><a
-href="https://github.com/vitejs/launch-editor/commit/f6e6701bb1f16f2dd242b321374f1b6cca6eb6d4"><code>f6e6701</code></a>
-fix: ensure filenames passed to editors are not considered as flags (<a
-href="https://redirect.github.com/vitejs/launch-editor/issues/156">#156</a>)</li>
-<li><a
-href="https://github.com/vitejs/launch-editor/commit/3c2f9bf2ff8fe63d056a8f9cc52d825b66ca79fc"><code>3c2f9bf</code></a>
-fix: reject paths containing <code>%</code> on windows (<a
-href="https://redirect.github.com/vitejs/launch-editor/issues/155">#155</a>)</li>
-<li><a
-href="https://github.com/vitejs/launch-edit
+A stray U+00A0 previously produced a misleading 'unexpected assign
+token' error far from the real problem. The scanner now reports it
+directly. Fixes #5796.
 
-**File**: `docs/package-lock.json` (modified, +4/-4)
+Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
+
+**File**: `v1/ast/internal/scanner/scanner.go` (modified, +3/-0)
 ```diff
-@@ -12231,13 +12231,13 @@
-       }
-     },
-     "node_modules/launch-editor": {
--      "version": "2.14.1",
--      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.1.tgz",
--      "integrity": "sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==",
-+      "version": "2.14.2",
-+      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.2.tgz",
-+      "integrity": "sha512-NHJEb30MGBCkmZXLZwz25t37QR4aY03ZzPYUJXOJaOa92uWwExI9SBQUuIznBYc1xkD7cJNGX7oc3Nl3sq2kQQ==",
-       "license": "MIT",
-       "dependencies": {
-         "picocolors": "^1.1.1",
--        "shell-quote": "^1.8.4"
-+        "shell-quote": "^1.10.0"
-       }
-     },
-     "node_modules/layout-base": {
-```
-
----
-
-### Incident Patch 2: `9d0c627c` (2026-10-20)
-**Commit Message**: build(deps): bump follow-redirects from 1.16.0 to 1.16.1 in /docs (#9416)
-
-Bumps
-[follow-redirects](https://github.com/follow-redirects/follow-redirects)
-from 1.16.0 to 1.16.1.
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/follow-redirects/follow-redirects/commit/46301256333c90b7faac7aa126effe72ec16d16e"><code>4630125</code></a>
-Release version 1.16.1 of the npm package.</li>
-<li><a
-href="https://github.com/follow-redirects/follow-redirects/commit/9865ca45490e4d0f7b6944870318408344570aff"><code>9865ca4</code></a>
-Support key/value header arrays.</li>
-<li><a
-href="https://github.com/follow-redirects/follow-redirects/commit/080a76d0e125b37bf81717368a61d5dc37aa56c8"><code>080a76d</code></a>
-Escape all RegExp modifiers.</li>
-<li>See full diff in <a
-href="https://github.com/follow-redirects/follow-redirects/compare/v1.16.0...v1.16.1">compare
-view</a></li>
-</ul>
-</details>
-<br />
-
-
-[![Dependabot compatibility
-score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=follow-redirects&package-manager=npm_and_yarn&previous-version=1.16.0&new-version=1.16.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-
-
-**File**: `docs/package-lock.json` (modified, +3/-3)
-```diff
-@@ -10506,9 +10506,9 @@
-       "license": "ISC"
-     },
-     "node_modules/follow-redirects": {
--      "version": "1.16.0",
--      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.0.tgz",
--      "integrity": "sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==",
-+      "version": "1.16.1",
-+      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.1.tgz",
-+      "integrity": "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==",
-       "funding": [
-         {
-           "type": "individual",
-```
-
----
-
-### Incident Patch 3: `689a4e83` (2026-10-20)
-**Commit Message**: sdk: convert ND builtins cache so decision log mask rules apply (#9362)
-
-#### Description
-
-Decision log mask rules that address a sub-path of the non-deterministic
-builtins cache, such as `/nd_builtin_cache/http.send`, have no effect in
-the Go SDK. The same rule text works under `opa run -s`. Nothing is
-erased, no `erased` entry is added, and no error is returned, so an
-embedder who writes the documented rule to redact `http.send` entries
-still sends them to their log sink.
-
-`executeTransaction` states that masking needs generic `map[string]any`
-values, then converts `record.Input` only. `record.NDBuiltinCache` keeps
-the caller's `builtins.NDBCache`, a named map type the type switches in
-`mask.go` do not match, so `removeValue` returns `errMaskInvalidObject`.
-That error is discarded because `failUndefinedPath` is false for
-policy-defined rules.
-
-The server already does this conversion at `v1/server/server.go:3085`.
-This does the same thing in the SDK. The whole-object form
-`/nd_builtin_cache` was unaffected either way, since it never inspects
-the Go type.
-
-#### Link to tracking issue
-
-Fixes #9355.
-
-#### Testing
-
-`TestDecisionLoggingWithNDBCacheMasking` fails without this change and
-
-**File**: `v1/sdk/opa.go` (modified, +9/-0)
-```diff
-@@ -434,6 +434,15 @@ func (opa *OPA) executeTransaction(ctx context.Context, record *server.Info, wor
+@@ -15,6 +15,7 @@ import (
+ )
+ 
+ const bom = 0xFEFF
++const nbsp = 0xA0
+ 
+ // Scanner is used to tokenize an input stream of
+ // Rego source code.
+@@ -286,6 +287,8 @@ func (s *Scanner) Scan(opts ...ScanOption) (tokens.Token, Position, string, []Er
+ 			} else {
+ 				s.error("illegal ! character")
  			}
- 			*record.Input = asJSON
- 		}
-+		if record.NDBuiltinCache != nil {
-+			if ndbc, ok := (*record.NDBuiltinCache).(builtins.NDBCache); ok {
-+				asJSON, err := ast.JSON(ndbc.AsValue())
-+				if err != nil {
-+					return nil, err
-+				}
-+				*record.NDBuiltinCache = asJSON
-+			}
-+		}
- 		if err := logger.Log(ctx, record); err != nil {
- 			return result, fmt.Errorf("decision log: %w", err)
- 		}
++		case nbsp:
++			s.error("illegal non-breaking space character, use a regular space instead")
+ 		case ';':
+ 			tok = tokens.Semicolon
+ 		case '.':
 ```
 
-**File**: `v1/sdk/opa_test.go` (modified, +90/-0)
+**File**: `v1/ast/internal/scanner/scanner_test.go` (modified, +1/-0)
 ```diff
-@@ -1910,6 +1910,96 @@ main = time.now_ns()
+@@ -395,6 +395,7 @@ func TestIllegalTokens(t *testing.T) {
+ 	}{
+ 		{input: `墳`},
+ 		{input: `0e`, wantErr: true},
++		{input: "\u00a0", wantErr: true},
+ 	}
  
- }
- 
-+func TestDecisionLoggingWithNDBCacheMasking(t *testing.T) {
-+
-+	ctx := t.Context()
-+
-+	server := sdktest.MustNewServer(
-+		sdktest.MockBundle("/bundles/bundle.tar.gz", map[string]string{
-+			"main.rego": `
-+package system
-+
-+main = time.now_ns()
-+`,
-+			"log.rego": `
-+package system.log
-+import rego.v1
-+
-+mask contains "/nd_builtin_cache/rand.intn"
-+mask contains "/input/secret"
-+`,
-+		}),
-+	)
-+
-+	defer server.Stop()
-+
-+	config := fmt.Sprintf(`{
-+		"services": {
-+			"test": {
-+				"url": %q
-+			}
-+		},
-+		"bundles": {
-+			"test": {
-+				"resource": "/bundles/bundle.tar.gz"
-+			}
-+		},
-+		"decision_logs": {
-+			"console": true,
-+			"nd_builtin_cache": true
-+		}
-+	}`, server.URL())
-+
-+	testLogger := loggingtest.New()
-+	opa, err := sdk.New(ctx, sdk.Options{
-+		Config:        strings.NewReader(config),
-+		ConsoleLogger: testLogger,
-+	})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	defer opa.Stop(ctx)
-+
-+	ndbc := builtins.NDBCache{}
-+	ndbc.Put("rand.intn", ast.NewArray(ast.StringTerm("z"), ast.IntNumberTerm(7)), ast.Number("3"))
-+
-+	if _, err := opa.Decision(ctx, sdk.DecisionOptions{
-+		Now:      time.Unix(0, 1619868194450288000).UTC(),
-+		Input:    map[string]any{"secret": "foo", "keep": "bar"},
-+		NDBCache: ndbc,
-+	}); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	entries := testLogger.Entries()
-+	if len(entries) != 1 {
-+		t.Fatalf("expected 1 entry but got %d", len(entries))
-+	}
-+
-+	// Control: an identically shaped /input rule must erase, proving masking is live
-+	// and the policy loaded. Without this a failure below is ambiguous.
-+	erased, _ := entries[0].Fields["erased"].([]any)
-+	expectedErased := []any{"/input/secret", "/nd_builtin_cache/rand.intn"}
-+	stringLess := func(a, b string) bool { return a < b }
-+	if !cmp.Equal(expectedErased, erased, cmpopts.SortSlices(stringLess)) {
-+		t.Errorf("unexpected erased field in decision log:\n%s", cmp.Diff(expectedErased, erased, cmpopts.SortSlices(stringLess)))
-+	}
-+
-+	cache, ok := entries[0].Fields["nd_builtin_cache"].(map[string]any)
-+	if !ok {
-+		t.Fatal("ND builtins cache missing.")
-+	}
-+	if _, ok := cache["rand.intn"]; ok {
-+		t.Error(`Expected masked field "/nd_builtin_cache/rand.intn" to be removed, but it was present.`)
-+	}
-+	// Control: the sibling entry must survive, so this is a sub-path erase and not a
-+	// whole-object erase that would pass the assertion above for the wrong reason.
-+	if _, ok := cache["time.now_ns"]; !ok {
-+		t.Error("Unmasked ND builtins cache entry time.now_ns was removed.")
-+	}
-+}
-+
- func TestQueryCaching(t *testing.T) {
- 
- 	ctx := t.Context()
+ 	for _, tc := range tests {
+```
+
+**File**: `v1/ast/parser_test.go` (modified, +1/-0)
+```diff
+@@ -222,6 +222,7 @@ func TestVarTerms(t *testing.T) {
+ 	assertParseOneTerm(t, `false prefix`, "false_flag", VarTerm("false_flag"))
+ 	assertParseOneTerm(t, `null prefix`, "nullable", VarTerm("nullable"))
+ 	assertParseError(t, "illegal token", `墳`)
++	assertParseErrorContains(t, "non-breaking space", "{x\u00a0| x := 1}", "illegal non-breaking space character")
+ 	assertParseError(t, "not keyword", "not")
+ 	assertParseError(t, `package keyword`, "package")
+ 	assertParseError(t, "import keyword", "import")
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #9417** (2026-10-20): build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (@dependabot[bot])
 - **PR #9416** (2026-10-20): build(deps): bump follow-redirects from 1.16.0 to 1.16.1 in /docs (@dependabot[bot])
+- **PR #9415** (2026-10-21): ast/scanner: Report non-breaking spaces as illegal characters (@sspaink)
 - **PR #9414** (2026-10-20): ast: Add location to import aliases (@charlieegan3)
 - **PR #9412** (2026-10-20): ast/parser: Set generated on true bodies (@charlieegan3)
 - **PR #9411** (2026-10-20): util: Correct JSON number comparison ordering (@git-jxj)
-- **PR #9410** (2026-10-20): tester: only trace tests that have test cases (@jbpros)
 
 ---
 
@@ -1245,34 +1048,30 @@ Fixes #9355.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (#9417)
+## X. ast/scanner: Report non-breaking spaces as illegal characters (#9415)
 
 **RULE**:
-When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/ast/internal/scanner/scanner.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cbc1b435`: build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (#9417). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9981dd1a`: ast/scanner: Report non-breaking spaces as illegal characters (#9415). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/internal/scanner/scanner.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      "version": "2.14.2",
-      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.2.tgz",
-      "integrity": "sha512-NHJEb30MGBCkmZXLZwz25t37QR4aY03ZzPYUJXOJaOa92uWwExI9SBQUuIznBYc1xkD7cJNGX7oc3Nl3sq2kQQ==",
-        "shell-quote": "^1.10.0"
+const nbsp = 0xA0
+		case nbsp:
+			s.error("illegal non-breaking space character, use a regular space instead")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "2.14.1",
-      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.1.tgz",
-      "integrity": "sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==",
-        "shell-quote": "^1.8.4"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbc1b435` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9981dd1a` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T18:59:13.073Z",
+  "last_updated": "2026-10-21T19:05:50.661Z",
   "total_verified_learnings": 1062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -698,8 +698,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "f186c41e",
-      "content_hash": "e9cfa02f62f16719324e2ea8bfd01963a361a110fb675e5d7bb678f22f8130cb",
+      "source_version": "4f72cb02",
+      "content_hash": "9d4db0f7119fbc768cef053a1c4e839bcc99f4ce100ec5705096de07a9ab5098",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -717,6 +717,11 @@
           "number": 3304,
           "title": "acp): announce context reset when a new conversation replaces the old one (#4742",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3593,
+          "title": "daemon): retain runtime rows when profile enumeration fails (#4741)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -724,7 +729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:01:56.304Z",
+      "verified_at": "2026-10-21T19:05:39.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32647,8 +32652,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "e9ccebe2",
-      "content_hash": "f678b05cd97dda2a053997786ddbaeb988213ff3bceb83d39579dd8bc2937dfc",
+      "source_version": "8e51b1c3",
+      "content_hash": "6634606c83a2b3b159b57057830121cfe13beab147dba818b2dc20492e41c8f6",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -32681,6 +32686,11 @@
           "number": 3432,
           "title": "agent-os): prevent invisible-character evasion in conversation guardian (#4124)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3595,
+          "title": "agent-lightning): count a successful episode once in GovernedEnvironment metrics",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32688,7 +32698,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:24:08.274Z",
+      "verified_at": "2026-10-21T19:05:50.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36419,8 +36429,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "cbc1b435",
-      "content_hash": "5714395710075b7a29ccc3d6c0a5bacf78186b69696e5cd6e02a09da1364c4c8",
+      "source_version": "9981dd1a",
+      "content_hash": "fab7ef7f5b1a8ead94700c4c2ce6e51b574330af5f147530ed5da230ad323e01",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -36438,6 +36448,11 @@
           "number": 3379,
           "title": "build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (#9417)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3594,
+          "title": "ast/scanner: Report non-breaking spaces as illegal characters (#9415)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36445,7 +36460,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:01:34.664Z",
+      "verified_at": "2026-10-21T19:05:45.162Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109006,6 +109021,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T18:59:13.058Z"
+    },
+    "rule-3593": {
+      "learning_id": "rule-3593",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3593,
+      "title": "daemon): retain runtime rows when profile enumeration fails (#4741)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "4f72cb02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T19:05:39.364Z"
+    },
+    "rule-3594": {
+      "learning_id": "rule-3594",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3594,
+      "title": "ast/scanner: Report non-breaking spaces as illegal characters (#9415)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "9981dd1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T19:05:45.162Z"
+    },
+    "rule-3595": {
+      "learning_id": "rule-3595",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3595,
+      "title": "agent-lightning): count a successful episode once in GovernedEnvironment metrics",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "8e51b1c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T19:05:50.649Z"
     }
   },
   "aliases": {
