@@ -4150,3 +4150,5 @@ Every entry in this ledger must capture:
 | `learn-github-chakra-ui-ark` | `https://github.com/chakra-ui/ark` | `c7af88a5` | Multi-dimensional audit evidence | 2026-10-21T01:49:23.989Z |
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-21T01:49:24.737Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-21T01:55:44.501Z |
+| `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `2182a762` | Multi-dimensional audit evidence | 2026-10-21T02:02:08.497Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-21T02:02:15.105Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source**: github ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
-> **Source Version**: `b6fd7ac4`  
+> **Source Version**: `2182a762`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:33:30.074Z  
+> **Timestamp**: 2026-10-21T02:02:08.167Z  
 > **Learning ID**: `learn-github-vinceglb-filekit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:33:30.068Z  
+> **Harvest Timestamp**: 2026-10-21T02:02:08.020Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1146,748 +1146,105 @@ private fun mimeTypeFromUti(uti: String): String? {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba5bcc69` (2026-09-07)
-**Commit Message**: 🔀 Merge pull request #636 from Enaium/feature/linux-native-xdg-portal-picker
+### Incident Patch 1: `808aaa71` (2026-10-20)
+**Commit Message**: 📝 Use AGENTS.md as the single agent guide
 
-✨ Add Kotlin/Native Linux file picker via XDG desktop portal
+Remove CLAUDE.md: Claude Code reads AGENTS.md when no CLAUDE.md exists.
+Fold its still-relevant context into AGENTS.md and fix stale sample and
+docs paths.
 
-**File**: `.github/workflows/ci.yml` (modified, +41/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,9 @@ concurrency:
-   cancel-in-progress: true
+@@ -1,7 +1,7 @@
+ # Repository Guidelines
  
- jobs:
-+  linux-dbus-headers:
-+    uses: ./.github/workflows/linux-dbus-headers.yaml
-+
-   build-modules:
-     name: 🔨 Build ${{ matrix.name }}
-     strategy:
-@@ -33,6 +36,9 @@ jobs:
-       - name: 🛎️ Check out repository
-         uses: actions/checkout@v7
- 
-+      - name: 🔧 Install Linux dialog dependencies
-+        run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev
-+
-       - name: 🍉 Configure JDK 21
-         uses: actions/setup-java@v6
-         with:
-@@ -157,6 +163,9 @@ jobs:
-       - name: 🛎️ Check out repository
-         uses: actions/checkout@v7
- 
-+      - name: 🔧 Install Linux dialog dependencies
-+        run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev dbus
-+
-       - name: 🍉 Configure JDK 21
-         uses: actions/setup-java@v6
-         with:
-@@ -167,7 +176,38 @@ jobs:
-         uses: gradle/actions/setup-gradle@v6
- 
-       - name: 🧪 Run Linux Native Tests
--        run: ./gradlew linuxX64Test
-+        run: dbus-run-session -- ./gradlew linuxX64Test --no-daemon
-+
-+  test-linux-publications:
-+    name: Verify Linux publications on macOS
-+    needs: linux-dbus-headers
-+    runs-on: macos-26
-+    steps:
-+      - uses: actions/checkout@v6
-+      - uses: actions/setup-java@v5
-+        with:
-+          distribution: 'temurin'
-+          java-version: '21'
-+      - uses: gradle/actions/setup-gradle@v6
-+      - uses: actions/download-artifact@v4
-+        with:
-+          name: linux-dbus-headers
-+          path: build/dbus-headers
-+      - name: Build Linux artifacts and root metadata
-+        run: >-
-+          ./gradlew -Pfilekit.dbusHeaders=build/dbus-headers -PRELEASE_SIGNING_ENABLED=false
-+          :filekit-dialogs:publishLinuxX64PublicationToMavenLocal
-+          :filekit-dialogs:publishLinuxArm64PublicationToMavenLocal
-+          :filekit-dialogs:generateMetadataFileForKotlinMultiplatformPublication
-+      - name: Verify both Linux variants are advertised
-+        run: |
-+          python3 - <<'PYTHON'
-+          import json
-+          from pathlib import Path
-+          metadata = json.loads(Path("filekit-dialogs/build/publications/kotlinMultiplatform/module.json").read_text())
-+          targets = {v["attributes"].get("org.jetbrains.kotlin.native.target") for v in metadata["variants"]}
-+          assert {"linux_x64", "linux_arm64"} <= targets, targets
-+          PYTHON
- 
-   lint:
-     name: 🚨 Lint
-```
-
-**File**: `.github/workflows/linux-dbus-headers.yaml` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+name: Prepare Linux D-Bus headers
-+
-+on:
-+  workflow_call:
-+
-+jobs:
-+  headers:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - name: Install D-Bus development headers
-+        run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev
-+
-+      - name: Stage Linux headers for cross-compilation
-+        run: |
-+          mkdir -p dbus-headers/dbus
-+          cp /usr/include/dbus-1.0/dbus/*.h dbus-headers/dbus/
-+          cp "$(pkg-config --variable=libdir dbus-1)/dbus-1.0/include/dbus/dbus-arch-deps.h" dbus-headers/dbus/
-+
-+      - name: Upload Linux headers
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: linux-dbus-headers
-+          path: dbus-headers/
-+          if-no-files-found: error
-```
-
-**File**: `.github/workflows/publish-snapshot.yaml` (modified, +11/-2)
-```diff
-@@ -7,6 +7,9 @@ on:
-   workflow_dispatch:
- 
- jobs:
-+  linux-dbus-headers:
-+    uses: ./.github/workflows/linux-dbus-headers.yaml
-+
-   check-version:
-     runs-on: ubuntu-latest
-     outputs:
-@@ -28,7 +31,7 @@ jobs:
-   publish:
-     name: Publish to Snapshot
-     runs-on: macos-26
--    needs: check-version
-+    needs: [check-version, linux-dbus-headers]
-     if: ${{ needs.check-version.outputs.is_snapshot == 'true' }}
-     steps:
-       - name: Checkout
-@@ -43,8 +46,14 @@ jobs:
-       - name: Setup Gradle
-         uses: gradle/actions/setup-gradle@v6
- 
-+      - name: Download Linux D-Bus headers
-+        uses: actions/download-artifact@v4
-+        with:
-+          name: linux-dbus-headers
-+          path: build/dbus-headers
-+
-       - name: Upload Artifacts
--        run: ./gradlew publishAllPublicationsToMavenCentralRepository
-+        run: ./gradlew -Pfilekit.dbusHeaders=build/dbus-headers publishAllPublicationsToMavenCentralRepository
-         env:
-           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-```
-
-**File**: `.github/workflows/publish.yaml` (modified, +11/-1)
-```diff
-@@ -7,7 +7,11 @@ on:
-       - published
- 
- jobs:
-+  linux-dbus-headers:
-+    uses: ./.github/workflows/linux-dbus-headers.yaml
-+
-   publish:
-+    needs: linux-dbus-headers
-     name: Publish to Sonatype
-     runs-on: macos-26
-     steps:
-@@ -23,8 +27,14 @@ jobs:
-       - name: Setup Gradle
-         uses: gradle/actions/setup-gradle@v6
- 
-+      - name: Download Linux D-Bus headers
-+        uses: actions/download-artifact@v4
-+        with:
-+          name: linux-dbus-headers
-+          path: build/dbus-headers
-+
-       - name: Upload Artifacts
--        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
-+        run: ./gradlew -Pfilekit.dbusHeaders=build/dbus-headers publishAndReleaseToMavenCentral --no-configuration-cache
-         env:
-           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-```
-
-**File**: `build-logic/convention/src/main/kotlin/KotlinMultiplatformLibraryConventionPlugin.kt` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ class KotlinMultiplatformLibraryConventionPlugin : Plugin<Project> {
-                     addMacosTargets = true,
-                     addWatchosTargets = path == ":filekit-core",
-                     addMingwTargets = path == ":filekit-core" || path == ":filekit-dialogs",
--                    addLinuxTargets = path == ":filekit-core",
-+                    addLinuxTargets = path == ":filekit-core" || path == ":filekit-dialogs",
-                 )
-             }
-         }
-```
-
-**File**: `docs/dialogs/setup.mdx` (modified, +18/-0)
-```diff
-@@ -57,3 +57,21 @@ compose.desktop {
- ```
- 
- This prevents a `NoClassDefFoundError` in some cases. Read more about this issue in the [GitHub issue #107](https://github.com/vinceglb/FileKit/issues/107).
-+
-+If using the Kotlin/Native Linux target (`linuxX64` or `linuxArm64`), dialogs are provided out of the box through the GNOME XDG Desktop Portal. The portal file chooser is shown on systems running `xdg-desktop-portal` (default on GNOME and other modern desktops); the application binary links against the `libdbus-1` runtime library.
-+
-+Building an application that consumes FileKit Dialogs requires the target architecture's D-Bus development libraries (`libdbus-1-dev` on Debian/Ubuntu), including the unversioned `libdbus-1.so` linker file. If the library directory is outside Kotlin/Native's linker search paths, configure the corresponding target, for example:
-+
-+```kotlin
-+kotlin {
-+    linuxX64 {
-+        binaries.all {
-+            linkerOpts("-L/usr/lib/x86_64-linux-gnu")
-+        }
-+    }
-+}
-+```
-+
-+Use your target's library directory (reported by `pkg-config --variable=libdir dbus-1` on a native Linux build machine). Cross-compilation requires libraries for the target architecture. Running the finished application requires the runtime library, not the development package.
-+
-+Building `filekit-dialogs` from source for Linux native targets requires the Linux D-Bus development headers (`libdbus-1-dev` on Debian/Ubuntu). Linux builds discover them through `pkg-config`. For cross-compilation, pass `-Pfilekit.dbusHeaders=/path/to/include`, where `include/dbus/` contains both the public headers and the Linux `dbus-arch-deps.h`. Release and snapshot workflows supply these headers to the macOS build so both Linux artifacts and their multiplatform metadata are published together.
-```
-
-**File**: `docs/installation.mdx` (modified, +2/-2)
-```diff
-@@ -11,10 +11,10 @@ FileKit supports the following targets:
- - Android
- - iOS, macOS
- - JVM (Windows, macOS, Linux)
--- Kotlin/Native Linux (`linuxX64`, `linuxArm64`) in FileKit Core
-+- Kotlin/Native Linux (`linuxX64`, `linuxArm64`)
- - JS, WASM
- 
--FileKit Dialogs does not yet support Kotlin/Native Linux or Aurora OS. Those integrations are separate from the FileKit Core support described here.
-+FileKit Dialogs on Kotlin/Native Linux uses the GNOME XDG Desktop Portal (`xdg-desktop-portal-gnome`) file chooser, which renders the Nautilus-style GNOME file dialog. Aurora OS support remains separate from FileKit Core support described here.
- 
- ## FileKit Core
- 
-```
-
-**File**: `filekit-dialogs/build.gradle.kts` (modified, +65/-0)
-```diff
-@@ -1,4 +1,6 @@
- import org.gradle.api.tasks.testing.Test
-+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
-+import org.jetbrains.kotlin.konan.target.HostManager
- 
- plugins {
-     alias(libs.plugins.filekit.kotlinMultiplatformLibrary)
-@@ -17,6 +19,33 @@ val headlessAwtFilePickerTest = tasks.register<Test>("headlessAwtFilePickerTest"
-     systemProperty("java.awt.headless", "true")
- }
- 
-+// pkg-config resolution for the libdbus cinterop. The dbus-1 development package is required to
-+// build the library for Linux native targets, while consumers only need the runtime library.
-+fun resolvePkgConfigArgs(argument: String): Array<String> = runCatching {
-+    providers
-+        .exec {
-+            commandLine("pkg-config", argument, "dbus-1")
-+            isIgnoreExitValue = true
-+        }.standardOutput
-+        .asText
-+        .get()
-+}.getOrDefault("")
-+    .trim()
-+    .split(Regex("\\s+"))
-+    .filter(String::isNotBlank)
-+    .toTypedArray()
-+
-+fun resolvePkgConfigVariable(variable: String): String? = runCatching {
-+    providers
-+        .exec {
-+            commandLine("pkg-config", "--variable=$variable", "dbus-1")
-+            isIgnoreExitValue = true
-+        }.standardOutput
-+        .asText
-+        .get()
-+        .trim()
-+}.getOrNull()?.takeIf { it.isNotEmpty() }
-+
- jvmTest.configure {
-     dependsOn(headlessAwtFilePickerTest)
- }
-@@ -38,6 +67,42 @@ kotlin {
-         }
-     }
- 
-+    // Keep targets and cinterops identical on every host so publication metadata includes Linux.
-+    // Cross-compilation uses Linux headers staged by CI; native Linux builds use pkg-config.
-+    val dbusHeaders = providers.gradleProperty("filekit.dbusHeaders").orNull
-+    val dbusCompilerOpts = when {
-+        dbusHeaders != null -> arrayOf("-I${rootProject.file(dbusHeaders).absolutePath}")
-+        HostManager.hostIsLinux -> resolvePkgConfigArgs("--cflags")
-+        else -> emptyArray()
-+    }
-+    val dbusLibDir = if (HostManager.hostIsLinux) resolvePkgConfigVariable("libdir") else null
-+
-+    listOf(linuxX64(), linuxArm64()).forEach { target ->
-+        // Linux test executables need Linux runtime libraries and cannot run on other hosts.
-+        target.binaries.withType<TestExecutable>().configureEach {
-+            linkTaskProvider.configure { enabled = HostManager.hostIsLinux }
-+        }
-+        dbusLibDir?.let { libDir -> target.binaries.configureEach { linkerOpts("-L$libDir") } }
-+        // Tests reuse main's bindings; generating either interop twice duplicates native symbols.
-+        target.compilations.getByName("main") {
-+            cinterops {
-+                create("process") {
-+                    defFile(project.file("src/linuxMain/cinterop/process.def"))
-+                }
-+                create("dbus") {
-+                    defFile(project.file("src/linuxMain/cinterop/dbus.def"))
-+                    compilerOpts(*dbusCompilerOpts)
-+                }
-+            }
-+        }
-+    }
-+
-+    sourceSets {
-+        // Shared metadata cannot see target cinterop bindings.
-+        getByName("linuxX64Main") { kotlin.srcDir("src/linuxDbusMain/kotlin") }
-+        getByName("linuxArm64Main") { kotlin.srcDir("src/linuxDbusMain/kotlin") }
-+    }
-+
-     sourceSets {
-         commonMain.dependencies {
-             api(projects.filekitCore)
-```
-
----
-
-### Incident Patch 2: `9f34bef9` (2026-09-07)
-**Commit Message**: 🔀 Merge pull request #641 from anggrayudi/fix/640-delete-non-empty-folders
-
-✨ Add recursive delete for non-empty directories
-
-**File**: `AGENTS.md` (modified, +7/-3)
-```diff
-@@ -4,18 +4,22 @@
- FileKit is split across multiplatform modules: `filekit-core` contains platform-agnostic APIs, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Shared source sets live under `src/*Main`, with platform tests in sibling `src/*Test` directories. Sample apps under `samples/` (`sample-core`, `sample-compose`, `sample-file-explorer`) demonstrate integration patterns; update them alongside library changes when user-facing behaviour shifts. API docs and release notes are tracked in `docs/` and `documentation-v0.8.8.md`.
+ ## Project Structure & Module Organization
+-FileKit is split across multiplatform modules: `filekit-core` contains platform-agnostic APIs, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Shared source sets live under `src/*Main`, with platform tests in sibling `src/*Test` directories. Sample apps under `samples/` (`sample-core`, `sample-compose`, `sample-file-explorer`) demonstrate integration patterns; update them alongside library changes when user-facing behaviour shifts. API docs and release notes are tracked in `docs/` and `documentation-v0.8.8.md`.
++FileKit is split across multiplatform modules: `filekit-core` holds the `PlatformFile` abstraction and file operations, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Source sets follow a hierarchy of intermediate sets (`nonWebMain`, `jvmAndNativeMain`, `webMain`, `mobileMain`, `nonAndroidMain`, …) above the platform sets; put code in the widest set whose platforms share the implementation. Platform tests live in sibling `src/*Test` directories, with shared test fixtures in `src/nonWebTest/resources/`. The sample app lives under `sample/` (`shared` plus one app module per platform); update it alongside library changes when user-facing behaviour shifts. User documentation is the Mintlify site in `docs/`; `documentation-v0.8.8.md` is a legacy snapshot.
  
  ## Build, Test, and Development Commands
--Use `./gradlew assemble` to ensure all published artifacts compile before raising a PR. Run `./gradlew :filekit-core:check :filekit-dialogs:check` to execute the multiplatform test matrix for the primary modules. Sample apps can be exercised with `./gradlew :samples:sample-compose:composeApp:run` (desktop) or by opening the Gradle targets in Android Studio for mobile builds. For smoke testing local publishing, run `./gradlew publishToMavenLocal` and consume the artifacts from a sample project.
-+Keep local validation scoped to the changed module and one relevant target, with `--max-workers=1`; run checks sequentially. For example, use `./gradlew :filekit-core:jvmTest --tests '*PlatformFileDeletionTest*' --max-workers=1` for a deletion regression.
-+
-+**Never run repository-wide `./gradlew assemble`, `./gradlew check`, or `./gradlew build` locally**, alone or combined. They overload the maintainer's Mac. Leave broad builds and multiplatform test matrices, including module-level aggregate `check` tasks, to CI; do not use them as a fallback when a targeted check fails. Report the targeted checks run and any validation left to CI.
-+
-+Exercise sample apps only when needed for the change. For local publishing smoke tests, scope publishing to the required module and platform instead of publishing every artifact.
- 
- For Kotlin formatting/linting, run `ktlint '**/*.kt' '**/*.kts' '!**/build/**' -R ktlint-compose-0.4.28-all.jar`. To auto-fix issues, add `--format` to that command.
- 
- ## Coding Style & Naming Conventions
- Follow Kotlin official style: four-space indentation, trailing commas where helpful, and `UpperCamelCase` for public APIs. Keep expect/actual implementations mirrored across targets and group platform-specific helpers under the corresponding `src/<platform>Main` directory. Compose functions remain PascalCase and should take a `modifier` parameter when rendering UI. Prefer descriptive file names that match the primary type, and keep shared constants in `commonMain` to minimise duplication.
- 
- ## Testing Guidelines
--Add unit tests in the closest `src/<target>Test` directory; default to `commonTest` when behaviour is shared and mirror target-specific coverage otherwise. Test names follow the `Subject_action_expectation` convention (e.g., `FilePicker_openDirectory_returnsFolder`). Run `./gradlew check` locally before every push and ensure new features include regression coverage for at least one non-JVM target. When behaviour depends on native APIs, document manual verification steps in the PR description.
-+Add unit tests in the closest `src/<target>Test` directory; default to `commonTest` when behaviour is shared and mirror target-specific coverage otherwise. Test names follow the `Subject_action_expectation` convention (e.g., `FilePicker_openDirectory_returnsFolder`). Before pushing, run the relevant targeted checks under the local validation limits above, and ensure new features include regression coverage for at least one non-JVM target. When behaviour depends on native APIs, document manual verification steps in the PR description.
- 
- ## Commit & Pull Request Guidelines
--Commits are short, imperative statements and often begin with an emoji category (e.g., `✨ Add WASM picker`); keep related changes squashed together. Each PR should describe the change, note affected platforms, call out doc updates, and link issues or discussions when relevant. Attach screenshots or screen recordings when UI behaviour changes. Before requesting review, verify CI-critical tasks (`assemble`, `check`), update sample apps if behaviour shifts, and note any follow-up work in the description.
-+Commits are short, imperative statements and often begin with an emoji category (e.g., `✨ Add WASM picker`); keep related changes squashed together. Each PR should describe the change, note affected platforms, call out doc updates, and link issues or discussions when relevant. Attach screenshots or screen recordings when UI behaviour changes. Before requesting review, report targeted validation and CI status, update sample apps if behaviour shifts, and note any follow-up work in the description.
- 
- ## Agent skills
- 
+ Keep local validation scoped to the changed module and one relevant target, with `--max-workers=1`; run checks sequentially. For example, use `./gradlew :filekit-core:jvmTest --tests '*PlatformFileDeletionTest*' --max-workers=1` for a deletion regression.
 ```
 
-**File**: `docs/core/write-file.mdx` (modified, +13/-0)
+**File**: `CLAUDE.md` (removed, +0/-65)
 ```diff
-@@ -120,6 +120,19 @@ file.delete()
- file.delete(mustExist = false)
- ```
- 
-+To delete a directory and its contents, opt into recursive deletion:
-+
-+```kotlin
-+val directory = PlatformFile(FileKit.cacheDir, "temporary-downloads")
-+directory.delete(recursively = true)
-+```
-+
-+For filesystem paths, `recursively` defaults to `false`, so deleting a non-empty
-+directory fails unless you enable it. Symbolic links (including dangling links)
-+and Windows directory junctions are removed as links; their targets are left
-+untouched. Android document URIs continue to use the document provider's deletion
-+behavior.
-+
- ## Creating Directories
- 
- Before writing to a file, you may need to ensure its parent directory exists:
-```
-
-**File**: `filekit-core/src/androidHostTest/kotlin/io/github/vinceglb/filekit/PlatformFileDeletionTest.kt` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+@file:Suppress("ktlint:standard:function-naming", "TestFunctionName")
-+
-+package io.github.vinceglb.filekit
-+
-+import android.system.ErrnoException
-+import android.system.Os
-+import android.system.OsConstants
-+import android.system.StructStat
-+import kotlinx.coroutines.test.runTest
-+import org.junit.runner.RunWith
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.Config
-+import org.robolectric.annotation.Implementation
-+import org.robolectric.annotation.Implements
-+import java.nio.file.Files
-+import java.nio.file.LinkOption.NOFOLLOW_LINKS
-+import java.nio.file.NoSuchFileException
-+import java.nio.file.Paths
-+import java.nio.file.attribute.BasicFileAttributes
-+import kotlin.io.path.createDirectory
-+import kotlin.io.path.createTempDirectory
-+import kotlin.io.path.exists
-+import kotlin.io.path.readText
-+import kotlin.io.path.writeText
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+
-+@RunWith(RobolectricTestRunner::class)
-+@Config(sdk = [23, 36], shadows = [NoFollowOsShadow::class])
-+class PlatformFileDeletionTest {
-+    @Test
-+    fun PlatformFile_deleteRecursively_links_areUnlinkedWithoutFollowingTargets() = runTest {
-+        val root = createTempDirectory("filekit-delete-links")
-+        val outside = root.resolve("outside").createDirectory()
-+        val treasure = outside.resolve("treasure.txt")
-+        treasure.writeText("must survive")
-+        val doomed = root.resolve("doomed").createDirectory()
-+        val dangling = Files.createSymbolicLink(doomed.resolve("dangling"), doomed.resolve("missing"))
-+        val link = Files.createSymbolicLink(doomed.resolve("outside"), outside)
-+        try {
-+            PlatformFile(doomed.toFile()).delete(recursively = true)
-+
-+            assertFalse(doomed.exists(NOFOLLOW_LINKS))
-+            assertEquals("must survive", treasure.readText())
-+        } finally {
-+            Files.deleteIfExists(dangling)
-+            Files.deleteIfExists(link)
-+            root.toFile().deleteRecursively()
-+        }
-+    }
-+}
-+
-+// Robolectric's default lstat delegates to stat and follows directory links. Supply the native
-+// no-follow contract using the host filesystem so this test can catch traversal into a target.
-+@Implements(Os::class)
-+class NoFollowOsShadow {
-+    companion object {
-+        @JvmStatic
-+        @Implementation
-+        fun lstat(path: String): StructStat {
-+            val attributes = try {
-+                Files.readAttributes(Paths.get(path), BasicFileAttributes::class.java, NOFOLLOW_LINKS)
-+            } catch (error: NoSuchFileException) {
-+                throw ErrnoException("lstat", OsConstants.ENOENT, error)
-+            }
-+            val mode = when {
-+                attributes.isSymbolicLink -> OsConstants.S_IFLNK
-+                attributes.isDirectory -> OsConstants.S_IFDIR
-+                else -> OsConstants.S_IFREG
-+            }
-+            return StructStat(0, 0, mode, 0, 0, 0, 0, attributes.size(), 0, 0, 0, 0, 0)
-+        }
-+
-+        @JvmStatic
-+        @Implementation
-+        fun remove(path: String) {
-+            Files.delete(Paths.get(path))
-+        }
-+    }
-+}
-```
-
-**File**: `filekit-core/src/androidHostTest/kotlin/io/github/vinceglb/filekit/PlatformFileTestBase.kt` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+package io.github.vinceglb.filekit
-+
-+import org.junit.runner.RunWith
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.Config
-+
-+@RunWith(RobolectricTestRunner::class)
-+@Config(sdk = [36])
-+actual abstract class PlatformFileTestBase actual constructor()
-```
-
-**File**: `filekit-core/src/androidMain/kotlin/io/github/vinceglb/filekit/PlatformFile.android.kt` (modified, +33/-5)
-```diff
-@@ -8,6 +8,9 @@ import android.os.ParcelFileDescriptor
- import android.provider.DocumentsContract
- import android.provider.MediaStore
- import android.provider.OpenableColumns
-+import android.system.ErrnoException
-+import android.system.Os
-+import android.system.OsConstants
- import android.webkit.MimeTypeMap
- import androidx.documentfile.provider.DocumentFile
- import io.github.vinceglb.filekit.exceptions.FileKitException
-@@ -17,6 +20,7 @@ import io.github.vinceglb.filekit.utils.div
- import io.github.vinceglb.filekit.utils.toKotlinxPath
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.withContext
-+import kotlinx.io.IOException
- import kotlinx.io.RawSink
- import kotlinx.io.RawSource
- import kotlinx.io.asSink
-@@ -449,16 +453,21 @@ private fun PlatformFile.resolveAtomicMoveDestination(source: PlatformFile): Pla
-     return this
- }
- 
--public actual suspend fun PlatformFile.delete(mustExist: Boolean): Unit =
-+public actual suspend fun PlatformFile.delete(mustExist: Boolean, recursively: Boolean): Unit =
-     withContext(Dispatchers.IO) {
-         when (androidFile) {
-             is AndroidFile.FileWrapper -> {
--                SystemFileSystem.delete(
--                    path = toKotlinxIoPath(),
--                    mustExist = mustExist,
--                )
-+                if (!deleteIfSymbolicLink()) {
-+                    if (recursively) deleteChildren()
-+                    SystemFileSystem.delete(
-+                        path = toKotlinxIoPath(),
-+                        mustExist = mustExist,
-+                    )
-+                }
-             }
- 
-+            // No recursion here: SAF has no empty-directory rule to work around. Removing a
-+            // document is the provider's job, and DocumentsContract takes the subtree with it.
-             is AndroidFile.UriWrapper -> {
-                 val documentFile = DocumentFile.fromSingleUri(FileKit.context, androidFile.uri)
-                     ?: throw FileKitException("Could not access Uri as DocumentFile")
-@@ -1143,3 +1152,22 @@ private fun Uri.toFileOrNull(): File? {
-     val filePath = path ?: return null
-     return File(filePath)
- }
-+
-+// lstat/remove work on API 21 and operate on the link itself, including a dangling link.
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    val file = (androidFile as? AndroidFile.FileWrapper)?.file ?: return false
-+    val metadata = try {
-+        Os.lstat(file.absolutePath)
-+    } catch (error: ErrnoException) {
-+        if (error.errno == OsConstants.ENOENT || error.errno == OsConstants.ENOTDIR) return false
-+        throw IOException("Could not inspect ${file.absolutePath}", error)
-+    }
-+    if (!OsConstants.S_ISLNK(metadata.st_mode)) return false
-+
-+    try {
-+        Os.remove(file.absolutePath)
-+    } catch (error: ErrnoException) {
-+        throw IOException("Could not unlink ${file.absolutePath}", error)
-+    }
-+    return true
-+}
-```
-
-**File**: `filekit-core/src/appleMain/kotlin/io/github/vinceglb/filekit/PlatformFile.apple.kt` (modified, +21/-0)
-```diff
-@@ -24,6 +24,7 @@ import kotlinx.cinterop.value
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.IO
- import kotlinx.coroutines.withContext
-+import kotlinx.io.IOException
- import kotlinx.io.files.Path
- import kotlinx.io.files.SystemFileSystem
- import kotlinx.serialization.Serializable
-@@ -39,6 +40,9 @@ import platform.CoreServices.UTTypeCopyPreferredTagWithClass
- import platform.CoreServices.kUTTagClassMIMEType
- import platform.Foundation.NSDate
- import platform.Foundation.NSError
-+import platform.Foundation.NSFileManager
-+import platform.Foundation.NSFileType
-+import platform.Foundation.NSFileTypeSymbolicLink
- import platform.Foundation.NSLock
- import platform.Foundation.NSURL
- import platform.Foundation.NSURLContentModificationDateKey
-@@ -48,8 +52,11 @@ import platform.Foundation.NSURLResourceKey
- import platform.Foundation.NSURLTypeIdentifierKey
- import platform.Foundation.timeIntervalSince1970
- import platform.UniformTypeIdentifiers.UTType
-+import platform.posix.errno
- import platform.posix.free
- import platform.posix.realpath
-+import platform.posix.strerror
-+import platform.posix.unlink
- import kotlin.time.ExperimentalTime
- import kotlin.time.Instant
- 
-@@ -424,3 +431,17 @@ private fun NSError?.toBookmarkResolutionException(): BookmarkResolutionExceptio
-     reason = classifyAppleBookmarkResolutionError(this),
-     message = "Failed to resolve bookmark data: $this",
- )
-+
-+// attributesOfItemAtPath does not resolve the link, so a symlink reports its own type here rather
-+// than the type of whatever it points at.
-+@OptIn(ExperimentalForeignApi::class)
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    val path = nsUrl.path ?: return false
-+    val attributes = NSFileManager.defaultManager.attributesOfItemAtPath(path, error = null)
-+    if (attributes?.get(NSFileType) != NSFileTypeSymbolicLink) return false
-+
-+    if (unlink(path) != 0) {
-+        throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
-+    }
-+    return true
-+}
-```
-
-**File**: `filekit-core/src/appleTest/kotlin/io/github/vinceglb/filekit/PlatformFileDeletionTest.kt` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-+@file:Suppress("ktlint:standard:function-naming", "TestFunctionName")
-+
-+package io.github.vinceglb.filekit
-+
-+import kotlinx.coroutines.test.runTest
-+import kotlinx.io.files.SystemTemporaryDirectory
-+import platform.posix.symlink
-+import platform.posix.unlink
-+import kotlin.random.Random
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+
-+class PlatformFileDeletionTest {
-+    @Test
-+    fun PlatformFile_delete_danglingLink_isUnlinked() = runTest {
-+        val root = PlatformFile(SystemTemporaryDirectory) / "filekit-delete-link-${Random.nextInt(0, Int.MAX_VALUE)}"
-+        root.createDirectories()
-+        val link = root / "link"
-+        try {
-+            for (recursively in listOf(false, true)) {
-+                for (mustExist in listOf(false, true)) {
-+                    assertEquals(0, symlink("missing", link.path))
-+
-+                    link.delete(mustExist, recursively)
-+
-+                    assertEquals(emptyList(), root.list(), "The dangling link must be unlinked")
-+                }
-+            }
-+        } finally {
-+            unlink(link.path)
-+            root.delete(mustExist = false)
-+        }
-+    }
-+
-+    @Test
-+    fun PlatformFile_deleteRecursively_links_areUnlinkedWithoutFollowingTargets() = runTest {
-+        val root = PlatformFile(SystemTemporaryDirectory) / "filekit-delete-tree-${Random.nextInt(0, Int.MAX_VALUE)}"
-+        val outside = root / "outside"
-+        outside.createDirectories()
-+        val treasure = outside / "treasure.txt"
-+        treasure.writeString("must survive")
-+        val doomed = root / "doomed"
-+        doomed.createDirectories()
-+        val links = listOf(doomed / "dangling", doomed / "cycle", doomed / "outside")
-+        try {
-+            assertEquals(0, symlink("missing", links[0].path))
-+            assertEquals(0, symlink("cycle", links[1].path))
-+            assertEquals(0, symlink(outside.path, links[2].path))
-+
-+            doomed.delete(recursively = true)
-+
-+            assertFalse(doomed.exists())
-+            assertEquals("must survive", treasure.readString())
-+        } finally {
-+            links.forEach { unlink(it.path) }
-+            doomed.delete(mustExist = false)
-+            treasure.delete(mustExist = false)
-+            outside.delete(mustExist = false)
-+            root.delete(mustExist = false)
-+        }
-+    }
-+}
-```
-
-**File**: `filekit-core/src/jvmAndNativeMain/kotlin/io/github/vinceglb/filekit/PlatformFile.jvmAndNative.kt` (modified, +5/-2)
-```diff
-@@ -79,10 +79,13 @@ public actual fun PlatformFile.createDirectories(mustCreate: Boolean): Unit =
-         SystemFileSystem.createDirectories(toKotlinxIoPath(), mustCreate)
-     }
- 
--public actual suspend fun PlatformFile.delete(mustExist: Boolean): Unit =
-+public actual suspend fun PlatformFile.delete(mustExist: Boolean, recursively: Boolean): Unit =
-     withScopedAccess {
-         withContext(Dispatchers.IO) {
--            SystemFileSystem.delete(path = toKotlinxIoPath(), mustExist = mustExist)
-+            if (!deleteIfSymbolicLink()) {
-+                if (recursively) deleteChildren()
-+                SystemFileSystem.delete(path = toKotlinxIoPath(), mustExist = mustExist)
-+            }
-         }
-     }
- 
-```
-
----
-
-### Incident Patch 3: `c6e30c7e` (2026-09-07)
-**Commit Message**: 🐛 Reuse main D-Bus bindings in Linux tests
-
-**File**: `filekit-dialogs/build.gradle.kts` (modified, +9/-13)
-```diff
-@@ -83,19 +83,15 @@ kotlin {
-             linkTaskProvider.configure { enabled = HostManager.hostIsLinux }
-         }
-         dbusLibDir?.let { libDir -> target.binaries.configureEach { linkerOpts("-L$libDir") } }
--        listOf("main", "test").forEach { compilationName ->
--            target.compilations.getByName(compilationName) {
--                cinterops {
--                    // Tests call the Kotlin wrapper and must not link a second copy of the C helper.
--                    if (compilationName == "main") {
--                        create("process") {
--                            defFile(project.file("src/linuxMain/cinterop/process.def"))
--                        }
--                    }
--                    create("dbus") {
--                        defFile(project.file("src/linuxMain/cinterop/dbus.def"))
--                        compilerOpts(*dbusCompilerOpts)
--                    }
-+        // Tests reuse main's bindings; generating either interop twice duplicates native symbols.
-+        target.compilations.getByName("main") {
-+            cinterops {
-+                create("process") {
-+                    defFile(project.file("src/linuxMain/cinterop/process.def"))
-+                }
-+                create("dbus") {
-+                    defFile(project.file("src/linuxMain/cinterop/dbus.def"))
-+                    compilerOpts(*dbusCompilerOpts)
-                 }
-             }
-         }
+@@ -1,65 +0,0 @@
+-# CLAUDE.md
+-
+-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+-
+-## Build Commands
+-
+-```bash
+-# Build all modules
+-./gradlew build
+-
+-# Build specific module
+-./gradlew :filekit-core:build
+-
+-# Run tests
+-./gradlew test
+-
+-# Run specific platform tests
+-./gradlew :filekit-core:jvmTest
+-./gradlew :filekit-core:wasmJsTest
+-./gradlew :filekit-core:iosSimulatorArm64Test
+-
+-# Clean build
+-./gradlew clean
+-
+-# Publish to Maven Central
+-./gradlew publishToSonatype
+-```
+-
+-## Project Architecture
+-
+-FileKit is a Kotlin Multiplatform library for cross-platform file operations. The codebase is organized into several modules:
+-
+-### Core Modules
+-- **filekit-core**: Core file operations and PlatformFile abstraction
+-- **filekit-dialogs**: File picker and save dialogs 
+-- **filekit-dialogs-compose**: Compose Multiplatform integration
+-- **filekit-coil**: Coil image loading integration
+-
+-### Platform Structure
+-The library uses Kotlin Multiplatform's hierarchical structure:
+-- `commonMain`: Shared code across all platforms
+-- `webMain`: Web-specific implementations (JS/WASM)
+-- `nonWebMain`: Non-web platforms (Android, iOS, JVM)
+-- `jvmAndNativeMain`: JVM and native platforms
+-- Platform-specific: `androidMain`, `iosMain`, `jvmMain`, etc.
+-
+-### Key Concepts
+-- **PlatformFile**: Core abstraction for files across platforms, with platform-specific implementations
+-- **FileKit**: Main API class with platform-specific implementations
+-- **BookmarkData**: Persistent file access on non-web platforms
+-- Platform-specific exception handling and utilities
+-
+-### Testing
+-Tests are organized by platform with shared test resources in `nonWebTest/resources/`. iOS tests require copying test resources via the `copyTestResourcesToIos` task.
+-
+-## Development Notes
+-
+-- Uses explicit API mode (`explicitApi()`)
+-- Supports Android (minSdk 24), iOS, macOS, JVM, JS, and WASM
+-- Version managed in `gradle.properties` (VERSION_NAME=0.16.0)
+-- Uses Gradle version catalogs in `gradle/libs.versions.toml`
+-
+-## Shared agent guidance
+-
+-Read `AGENTS.md` before working in this repository. Its `## Agent skills` section is the shared source of truth for Codex and Claude.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #672** (2026-10-09): Fix iOS bookmark access for descendants after device restart (@vinceglb)
-- **PR #670** (2026-10-09): Bump nucleus from 2.5.16 to 2.5.18 (@dependabot[bot])
-- **PR #668** (2026-10-09): Bump dbus-java from 5.2.1 to 5.2.2 (@dependabot[bot])
-- **PR #664** (2026-09-30): Bump compose-multiplatform from 1.12.0 to 1.12.1 (@dependabot[bot])
-- **PR #663** (2026-09-30): Bump gradle-wrapper from 9.7.1 to 9.8.0 (@dependabot[bot])
-- **PR #661** (2026-09-30): Bump nucleus from 2.5.15 to 2.5.16 (@dependabot[bot])
+- **PR #682** (2026-10-20): 📝 Use AGENTS.md as the single agent guide (@vinceglb)
+- **PR #681** (2026-10-20): ⬆️ Update Android targetSdk to 37 and minSdk to 24 (@vinceglb)
+- **PR #680** (2026-10-20): ⬆️ Update GitHub Actions versions (@vinceglb)
+- **PR #679** (2026-10-20): ⬆️ Update Kotlin and Gradle dependencies (@vinceglb)
+- **PR #678** (closed): Bump compose-multiplatform from 1.12.1 to 1.12.2 (@dependabot[bot])
+- **PR #676** (closed): Bump org.jetbrains.compose.material3:material3 from 1.12.0-alpha03 to 1.13.0-alpha02 (@dependabot[bot])
 
 ---
 
@@ -1907,59 +1264,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🔀 Merge pull request #636 from Enaium/feature/linux-native-xdg-portal-picker
+## X. 📝 Use AGENTS.md as the single agent guide
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba5bcc69`: 🔀 Merge pull request #636 from Enaium/feature/linux-native-xdg-portal-picker. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `808aaa71`: 📝 Use AGENTS.md as the single agent guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-  linux-dbus-headers:
-    uses: ./.github/workflows/linux-dbus-headers.yaml
-
-      - name: 🔧 Install Linux dialog dependencies
-        run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev
-
-      - name: 🔧 Install Linux dialog dependencies
-        run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev dbus
-
-        run: dbus-run-session -- ./gradlew linuxX64Test --no-daemon
-
-  test-linux-publications:
-    name: Verify Linux publications on macOS
-    needs: linux-dbus-headers
-    runs-on: macos-26
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-      - uses: gradle/actions/setup-gradle@v6
-      - uses: actions/download-artifact@v4
-        with:
-          name: linux-dbus-headers
-          path: build/dbus-headers
-      - name: Build Linux artifacts and root metadata
-        run: >-
-          ./gradlew -Pfilekit.dbusHeaders=build/dbus-headers -PRELEASE_SIGNING_ENABLED=false
-          :filekit-dialogs:publishLinuxX64PublicationToMavenLocal
-          :filekit-dialogs:publishLinuxArm64PublicationToMavenLocal
-          :filekit-dialogs:generateMetadataFil
+FileKit is split across multiplatform modules: `filekit-core` holds the `PlatformFile` abstraction and file operations, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Source sets follow a hierarchy of intermediate sets (`nonWebMain`, `jvmAndNativeMain`, `webMain`, `mobileMain`, `nonAndroidMain`, …) above the platform sets; put code in the widest set whose platforms share the implementation. Platform tests live in sibling `src/*Test` directories, with shared test fixtures in `src/nonWebTest/resources/`. The sample app lives under `sample/` (`shared` plus one app module per platform); update it alongside library changes when user-facing behaviour shifts. User documentation is the Mintlify site in `docs/`; `documentation-v0.8.8.md` is a legacy snapshot.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        run: ./gradlew linuxX64Test
+FileKit is split across multiplatform modules: `filekit-core` contains platform-agnostic APIs, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Shared source sets live under `src/*Main`, with platform tests in sibling `src/*Test` directories. Sample apps under `samples/` (`sample-core`, `sample-compose`, `sample-file-explorer`) demonstrate integration patterns; update them alongside library changes when user-facing behaviour shifts. API docs and release notes are tracked in `docs/` and `documentation-v0.8.8.md`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba5bcc69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `808aaa71` are properly handled with clean fallback behavior.

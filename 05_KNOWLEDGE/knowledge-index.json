@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T01:55:44.450Z",
+  "last_updated": "2026-10-21T02:02:15.045Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19787,10 +19787,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "5bcec07517b256f20b566953c7bbbf72012e0835f2204581f1fbd111e4ea591d",
+      "content_hash": "14d743bef1300c4b29c3443da17f3deec32c0420b9b31765849a5715f034ae07",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "promoted_rules": [
+        {
+          "number": 850,
+          "title": "Schema-Aware Tool Argument Parsing",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1434,
           "title": "Schema-Informed Agentic Parameter Extraction",
@@ -19804,6 +19809,16 @@
         {
           "number": 1436,
           "title": "Exhaustive Multi-EOS Token Generation Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3481,
+          "title": "Heterogeneous Quantization Fidelity Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3482,
+          "title": "Speculative Decoding with MTP Layers",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -19824,7 +19839,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-19T13:00:15.398Z",
+      "verified_at": "2026-10-21T02:02:15.034Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47134,14 +47149,19 @@
       "slug": "vinceglb-filekit",
       "platform": "github",
       "source_url": "https://github.com/vinceglb/FileKit",
-      "source_version": "b6fd7ac4",
-      "content_hash": "45424590ea360dcb7b7b7695f35a20147b8552e1028a8b9bd5a1188cfc70e29d",
+      "source_version": "2182a762",
+      "content_hash": "cbe8e6436ec7eb024fb171250035f661e450ae0aa229f87aba1bf8eb3b56aa84",
       "dossier_path": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "promoted_rules": [
         {
           "number": 2630,
           "title": "🔀 Merge pull request #636 from Enaium/feature/linux-native-xdg-portal-picker",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3480,
+          "title": "📝 Use AGENTS.md as the single agent guide",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -47150,7 +47170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:33:30.255Z",
+      "verified_at": "2026-10-21T02:02:08.429Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68992,15 +69012,15 @@
       "learning_id": "rule-850",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 850,
-      "title": "Schema-Aware Tool Argument Parsing for LLM Agents (Harvested from Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Schema-Aware Tool Argument Parsing",
+      "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.814Z"
+      "verified_at": "2026-10-21T02:02:15.034Z"
     },
     "rule-851": {
       "learning_id": "rule-851",
@@ -106707,6 +106727,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T01:49:23.925Z"
+    },
+    "rule-3480": {
+      "learning_id": "rule-3480",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3480,
+      "title": "📝 Use AGENTS.md as the single agent guide",
+      "source_url": "https://github.com/vinceglb/FileKit",
+      "source_version": "2182a762",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:02:08.429Z"
+    },
+    "rule-3481": {
+      "learning_id": "rule-3481",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3481,
+      "title": "Heterogeneous Quantization Fidelity Allocation",
+      "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:02:15.034Z"
+    },
+    "rule-3482": {
+      "learning_id": "rule-3482",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3482,
+      "title": "Speculative Decoding with MTP Layers",
+      "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T02:02:15.034Z"
     }
   },
   "aliases": {

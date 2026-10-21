@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "5bcec07517b256f20b566953c7bbbf72012e0835f2204581f1fbd111e4ea591d",
-    "lastHarvestedAt": "2026-10-19T13:00:15.450Z",
+    "contentHash": "14d743bef1300c4b29c3443da17f3deec32c0420b9b31765849a5715f034ae07",
+    "lastHarvestedAt": "2026-10-21T02:02:15.105Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -8183,10 +8183,10 @@
     "repository": "vinceglb/FileKit",
     "platform": "github",
     "sourceUrl": "https://github.com/vinceglb/FileKit",
-    "sourceVersion": "b6fd7ac4",
+    "sourceVersion": "2182a762",
     "license": "MIT",
-    "contentHash": "45424590ea360dcb7b7b7695f35a20147b8552e1028a8b9bd5a1188cfc70e29d",
-    "lastHarvestedAt": "2026-10-19T14:33:30.310Z",
+    "contentHash": "cbe8e6436ec7eb024fb171250035f661e450ae0aa229f87aba1bf8eb3b56aa84",
+    "lastHarvestedAt": "2026-10-21T02:02:08.497Z",
     "learningId": "learn-github-vinceglb-filekit"
   },
   "nsh07-tomato": {

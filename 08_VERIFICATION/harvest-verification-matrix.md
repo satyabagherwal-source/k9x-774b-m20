@@ -4143,3 +4143,5 @@
 | `CYCLE-20261021-F24U` | `2026-10-21T01:49:23.982Z` | `chakra-ui/ark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3479` | Yes (`82474586...`) |
 | `CYCLE-20261021-F2PP` | `2026-10-21T01:49:24.733Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`8336330e...`) |
 | `CYCLE-20261021-N7QQ` | `2026-10-21T01:55:44.498Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`afcfeaa2...`) |
+| `CYCLE-20261021-VG15` | `2026-10-21T02:02:08.489Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3480` | Yes (`cbe8e643...`) |
+| `CYCLE-20261021-VL4P` | `2026-10-21T02:02:15.097Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3481, Rule 850, Rule 3482` | Yes (`14d743be...`) |
