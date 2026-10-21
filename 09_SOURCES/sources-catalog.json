@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "b0c3496ffc085cda31ba49ea1067cbd5961fdec2c1d52bbd5f0306ea6611d00d",
-    "lastHarvestedAt": "2026-10-19T15:31:42.864Z",
+    "contentHash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
+    "lastHarvestedAt": "2026-10-21T04:42:53.802Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "7ceecd48",
+    "sourceVersion": "6385f214",
     "license": "NOASSERTION",
-    "contentHash": "d14460bd698fa461ef7b3baad2df326bec97dbe37b2ce30193818631e975032e",
-    "lastHarvestedAt": "2026-10-20T16:15:15.484Z",
+    "contentHash": "5f9cb8aab1593bc52590e95f2577c6ac5beea9f4de1cde84680fa5169efd3bf6",
+    "lastHarvestedAt": "2026-10-21T04:43:06.840Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "bf616d60",
+    "sourceVersion": "be55273c",
     "license": "Apache-2.0",
-    "contentHash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
-    "lastHarvestedAt": "2026-10-20T17:03:59.622Z",
+    "contentHash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
+    "lastHarvestedAt": "2026-10-21T04:43:03.341Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -6273,10 +6273,10 @@
     "repository": "carbon-design-system/carbon",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon",
-    "sourceVersion": "c3d6496e",
+    "sourceVersion": "f33b1dbe",
     "license": "Apache-2.0",
-    "contentHash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
-    "lastHarvestedAt": "2026-10-20T18:20:36.727Z",
+    "contentHash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
+    "lastHarvestedAt": "2026-10-21T04:42:52.979Z",
     "learningId": "learn-github-carbon-design-system-carbon"
   },
   "emilkowalski-vaul": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "360d1da1",
+    "sourceVersion": "30db5188",
     "license": "MIT",
-    "contentHash": "99576aab8dedc8f7b9e8b53797a01cd8ea759739cf177aa3ffadaa2333f42076",
-    "lastHarvestedAt": "2026-10-19T17:18:29.118Z",
+    "contentHash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
+    "lastHarvestedAt": "2026-10-21T04:43:00.586Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {

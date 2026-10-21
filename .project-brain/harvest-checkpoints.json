@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T04:36:16.579Z",
+  "last_updated": "2026-10-21T04:43:06.851Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,14 +1625,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "b0c3496ffc085cda31ba49ea1067cbd5961fdec2c1d52bbd5f0306ea6611d00d",
-      "verified_at": "2026-10-19T15:31:42.871Z",
+      "content_hash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
+      "verified_at": "2026-10-21T04:42:53.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T15:31:42.871Z"
+      "last_updated": "2026-10-21T04:42:53.809Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "d14460bd698fa461ef7b3baad2df326bec97dbe37b2ce30193818631e975032e",
-      "verified_at": "2026-10-20T16:15:15.498Z",
+      "content_hash": "5f9cb8aab1593bc52590e95f2577c6ac5beea9f4de1cde84680fa5169efd3bf6",
+      "verified_at": "2026-10-21T04:43:06.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:15:15.498Z"
+      "last_updated": "2026-10-21T04:43:06.851Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
-      "verified_at": "2026-10-20T17:03:59.630Z",
+      "content_hash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
+      "verified_at": "2026-10-21T04:43:03.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:03:59.630Z"
+      "last_updated": "2026-10-21T04:43:03.349Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -9531,14 +9531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon",
-      "content_hash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
-      "verified_at": "2026-10-20T18:20:36.735Z",
+      "content_hash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
+      "verified_at": "2026-10-21T04:42:52.991Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:20:36.735Z"
+      "last_updated": "2026-10-21T04:42:52.991Z"
     },
     "emilkowalski/vaul": {
       "repository": "emilkowalski/vaul",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "99576aab8dedc8f7b9e8b53797a01cd8ea759739cf177aa3ffadaa2333f42076",
-      "verified_at": "2026-10-19T17:18:29.124Z",
+      "content_hash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
+      "verified_at": "2026-10-21T04:43:00.593Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:18:29.124Z"
+      "last_updated": "2026-10-21T04:43:00.593Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `7ceecd48`  
+> **Source Version**: `6385f214`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:15:15.290Z  
+> **Timestamp**: 2026-10-21T04:43:06.676Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:15:15.283Z  
+> **Harvest Timestamp**: 2026-10-21T04:43:06.668Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2379 stars
+- **Stars / Engagement**: 2385 stars
 
 ---
 
@@ -1806,321 +1806,392 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ceecd48` (2026-10-20)
-**Commit Message**: fix
+### Incident Patch 1: `6385f214` (2026-10-20)
+**Commit Message**: 新增mossgen
 
-**File**: `docs/vcp-whitepaper.md` (modified, +285/-149)
+**File**: `Plugin/ComfyUIGen/moss文生图.json` (added, +589/-0)
 ```diff
-@@ -1,21 +1,30 @@
- ---
--title: VCP 全景技术白皮书 V5
--summary: 全面介绍 VCP 全栈运行时、Jev 决策与自然语言调用管网、Agent 工业级软件工程体系、前端应用群、共享 IPC 管网、Loom 与共笔文坊协作系统的工作原理和系统交互，是理解迈向 VCP 2.0 正式版全景生态的重要读物。
--updatedAt: 2026-09-30
-+title: VCP 全景技术白皮书 V6
-+summary: VCP 2.0 全景架构：以 VexusMemo / Vexus-Lite 原生一体化数据库、TDB 2-bit 自研检索、AGS 与 RiverMemo V2 统一记忆内核为数据底座，以 MoonAST 纯几何代码检索、V工程与 VChat 工作台组织 Agent 工程协作，贯通协议、上下文、前端应用群与长期自治。
-+updatedAt: 2026-10-20
- category: guide
- ---
- 
--# VCP 全景技术白皮书 V5：全栈自研的 Agent 运行时与前端生态
-+# VCP 全景技术白皮书 V6：原生一体化数据库、MoonAST 与 Agent 全栈运行时
- 
--**版本：迈向 VCP 2.0 正式版 · 2026 年初秋**
-+**版本：VCP 2.0 正式版 · 架构更新截至 2026-10-20**
-+
-+> **阅读口径**：本文说明当前架构，并在必要处保留演进背景。VCP 2.0 已于 2026-10-01 发布；TagMemo 已退出生产运行，USearch 已由 TDB 2-bit 检索体系替代，MoonAST 已不再以 Tree-sitter 为主要解析依赖。RiverMemo V2 是查询实现的发布阶段，Topology V3 是仍沿用的统一排序构型，两者不是同一版本序列。
-+>
-+> **“自研”的边界**：VCP 自主实现原生数据运行时、TDB 检索、记忆数学与工程协作体系，但仍使用 SQLite、Rust、Electron 等基础设施。“一体化数据库”不意味着 SQLite 也由 VCP 编写，也不意味着取消所有外部依赖。
- 
- ---
- 
- ## 序言
- 
--VCP 已经走过三个完整的版本周期，并在 2026 年秋季完成了从“全栈 AGI 运行时”向“全栈 Agent 生态操作系统与软件工程自治中枢”的架构大收敛，正式迈向 **VCP 2.0** 时代。
-+VCP 已经走过多个版本周期，于 2026-10-01 发布 **VCP 2.0 正式版**，并在随后完成数据库、记忆数学和代码工程底座的新一轮收敛。从“全栈 AGI 运行时”到“全栈 Agent 生态操作系统与软件工程自治中枢”，变化不只是应用数量增加，而是核心数据与工程能力的所有权进一步下沉到自主实现的原生内核。
-+
-+早期，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。今天，VCP 的两条主线已经延伸至更底层：
-+
-+- **数据与记忆主线**：VexusMemo 统一持有记忆与知识数据库业务，Vexus-Lite 原生模块将 SQLite 事实事务、TDB 2-bit 导航与筛选、AGS 背景几何、Spike 有界传播、RiverMemo 双场与拓扑排序组织为同一条读、写、搜链。USearch 与旧 JS 数据库业务退出该生产路径，TagMemo 的独立运行时退役，其已验证机制由新内核继承和重构。
-+- **软件工程主线**：MoonAST 从 C / Rust 与 Tree-sitter 双擎阶段演进为纯几何逻辑门驱动的自研代码识别与检索核心；ProjectForge、V工程轻量 IDE、Git、施工 Trace、操作回退与 VChat 工作台把代码理解、修改、验证和人工介入连接成持续工作流。
- 
--V2 时代，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。但从 V2 演进至今，VCP 沿着一条异常陡峭且坚定的全栈自研路径生长：自研向量数据库 Vexus、自研图数据库 TDB、由 TagMemo V9 与 RiverMemo Topology V3 构成的统一记忆寻址底座、RiverMemo 与 RagDiary 全链路单次 Rust 内存融合重构、基于扩散架构的低延迟概率决策公共服务 JevRuntime、近乎通用的自然语言工具编译器 JEV-TOOL-call 与 JevCallBridgeEXP 分布式导航桥、闭源旗舰插件 VCPCode 入驻 VChat 带来的极致能效工程标杆、VCPProjectForge 协同工程模组与 ProjectModule 可视化编程子前端、流式渲染器 VCPMessageRenderer V4 极端内容防御体系、自研底层 WebGL/WebGPU Shader 合成管线驱动的 VMusic 3D 沉浸式太空歌剧演出、自研桌面运行时 VCPDesktop 与 V图表、AI 原生邮件协议 VCPSuperMail、DXGI 与纯数学窗口操控算法 VCP-SOM……
-+围绕这两条主线，JevRuntime 概率决策、JEV-TOOL-call 自然语言编译、OneRing 跨端事实时间线、V4 流式渲染、共享 IPC、共笔文坊、Loom、VMusic、V图表、VGame 与 VPet 共同构成 Agent 可使用、用户可观察和介入的应用环境。
- 
- 到今天，"中间层"这个词早已装不下 VCP 了。VCP 不仅运行 Agent，也运行 Agent 所处的界面、应用、文档、代码工程、网页、文件、视听演出、媒体和协作过程。
- 
-@@ -32,16 +41,16 @@ VCP 不再只是一个中间层组件，而是一套**面向 Agent 的运行时
- - [三、系统整体架构](#三系统整体架构)
- - [四、指令协议、自然语言编译与安检双轨隔离](#四指令协议自然语言编译与安检双轨隔离)
- - [五、变量系统与上下文工程](#五变量系统与上下文工程)
--- [六、插件系统与 Jev 声明式生态](#六插件系统与-jev-声明式生态)
-+- [六、插件系统](#六插件系统)
- - [七、工具调用记录与可审计运行时](#七工具调用记录与可审计运行时)
--- [八、记忆系统：TagMemo V9、RiverMemo 全链路 Rust 融合与双栈交互](#八记忆系统tagmemo-v9rivermemo-全链路-rust-融合与双栈交互)
-+- [八、原生记忆与数据库：VexusMemo、AGS 与 RiverMemo V2](#八原生记忆与数据库vexusmemoags-与-rivermemo-v2)
- - [九、OneRing V2：统一上下文、OneRingMemo 与连续意识](#九onering-v2统一上下文oneringmemo-与连续意识)
- - [十、VCPModel：智能模型路由](#十vcpmodel智能模型路由)
- - [十一、Agent 主观能动性与自治生命周期](#十一agent-主观能动性与自治生命周期)
- - [十二、Agent 情感与认知量化](#十二agent-情感与认知量化)
- - [十三、前端运行时：V4 流式渲染、自研着色器与多媒体引擎](#十三前端运行时v4-流式渲染自研着色器与多媒体引擎)
- - [十四、前端应用群、即时附件协议与跨应用协作](#十四前端应用群即时附件协议与跨应用协作)
--- [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcode-projectforge-与可视化中枢)
-+- [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcodeprojectforge-与可视化中枢)
- - [十六、Agent 原生生态](#十六agent-原生生态)
- - [十七、容灾、安全与数据保障](#十七容灾安全与数据保障)
- - [十八、自研引擎矩阵](#十八自研引擎矩阵)
-@@ -151,7 +160,9 @@ VCP 的上下文语义引力场会实时计算当前对话的逻辑深度、信
- 
- **VCP 范式**:记忆像人类的直觉一样**自然浮现**。
- 
--TagMemo V9 与 RiverMemo Topology V3 通过同一套查询诱导动力学，在每一次对话中根据完整上下文**自动激活并审计**相关记忆。AI 不需要"决定回忆"，记忆就出现在它的视野里。系统并非只寻找文本近邻，而是先以 EPA、Residual Pyramid 与有界 Spike 传播形成查询信息源和请求级河网，再由 RiverMemo 在同一传输几何上验证候选为何值得被想起。
-+当前 RiverMemo V2 在 AGS 统一背景上，通过语境观测、有界 Spike 与动态虫洞形成请求级河网，再由双场与 Topology V3 验证候选为何值得被想起。核心被动入口 RAGDiary 在模型生成前完成记忆唤起，Agent 不必先“决定回忆”。
-+
-+这种“自然浮现”以配置为前提：只有声明了相关占位符、满足日记本作用域和门控条件的请求，才进入对应记忆管线；没有声明的普通请求直接跳过。它不是无条件读取全库，也不是后台持续运行模型。
- 
- 具体实现在第八章详述。
- 
-@@ -208,12 +219,14 @@ OneRing 系统为每个 Agent 维护唯一的事实时间线——每条消息
- │  决策层:  JevRuntime 公共服务 (扩散架构低延迟概率决策, 255/300ms)│
- │          JEVRerank (记忆/提示词/上下文折叠/群聊发言动态裁决)    │
- │  工程层:  VCPCode 核心工程移植 · VCPProjectForge 协同模组      │
--│          MoonASTSearch C/Rust 双擎 · RustCodeSearch AST 强化   │
-+│          MoonAST 纯几何检索 · 全链路 Trace · Git / 轻量 IDE   │
- │          脉络署名责任制 · 代际分支仲裁 · 操作级虚拟快照树      │
- │  上下文层:引力场 · 折叠 V2 · OneRing · OneRingMemo · 占位符精控│
- │  工具层:  300+ 插件 · 6 大插件协议 · 声明式 Jev 接入规范        │
--│  记忆层:  RiverMemo 拓扑V3 与 RagDiary 全链路单次 Rust 内存融合 │
--│          TagMemo 局部图计算 · 元思维 Rust 一体化 · Vexus / TDB │
-+│  数据层:  VexusMemo / Vexus-Lite 原生读写搜 · SQLite 事实事务   │
-+│          TDB 2-bit 派生路由 · 双槽代际快照 · 有界写入与背压     │
-+│  记忆层:  AGS 背景 · Spike 动态虫洞 · RiverMemo V2 双场 / Ω   │
-+│          RAGDiary 被动背景 · LightMemo 主动回忆 · 同代观测复用   │
- │  路由层:  VCPModel 语义模型路由 · 容灾规则                     │
- │  Agent层: GroupChatEngine 2.0 · FlowInvite · AgentAssistantV2通讯协议 · 梦系统 │
- │  情感层:  OpenHer 情绪拓扑 · 池月 1 号注意力指针               │
-```
-
----
-
-### Incident Patch 2: `df3b023f` (2026-10-20)
-**Commit Message**: fix
-
-**File**: `rust-vexus-lite/README.md` (modified, +72/-10)
-```diff
-@@ -1,8 +1,8 @@
- # Vexus-Lite：读、写、搜一体化的原生记忆数据库
- 
--> **SQLite 权威事实层 × TDB 2-bit 冲程检索 × AGS 统一背景场 × Spike 有界传播 × RiverMemo 双场统一泛函**
-+> **SQLite 权威事实层 × TDB 2-bit 冲程检索 × AGS 统一背景场 × Spike 有界传播与请求级动态虫洞 × RiverMemo 共享预算双场投影与统一泛函**
- >
--> 更新日期：2026-10-19。本文面向当前仓库实现；性能部分解释可核对的工程机制，不虚构吞吐、延迟、召回率或跨产品排名。
-+> 更新日期：2026-10-20。本次同步双场投影预算与请求级向量复用、请求级动态虫洞两个技术节点。本文面向当前仓库实现；性能部分解释可核对的工程机制，不虚构吞吐、延迟、召回率或跨产品排名。
- 
- Vexus-Lite 已不只是一个“由 JavaScript 调用的向量索引”。它是 VCPToolBox 的嵌入式原生知识与记忆数据引擎：从事实事务、向量路由、几何预计算、传播观测，到候选精排和结果回填，在同一个 Rust 原生模块中协作完成。
- 
-@@ -32,8 +32,8 @@ Vexus-Lite 已不只是一个“由 JavaScript 调用的向量索引”。它是
- | SQLite 权威事实层 | 现在真正存在哪些内容与向量？ | 保存正文、原始 FP32 向量、有序 Tag 事实、版本、操作回执与派生资产元数据 |
- | TDB 2-bit 冲程检索 | 从大量向量中，先看哪些候选？ | 以紧凑位码进行图导航或全局扫描，再读取原始向量精排 |
- | AGS 统一背景场 | 哪些语义是重复解释，哪些是独立方向？ | 同一锚定正交化框架生成局部残差/锚增益与全局星团主题面 |
--| Spike 有界传播 | 本次查询实际激活了哪些关系？ | 沿共享传输图传播，形成带节点势与实际边流的请求级河网 |
--| RiverMemo 双场与统一泛函 | 相似、关系、正文和直接事实如何共同排序？ | 读取局部场/迁移场、有序 Tag 曲线与相对拓扑，以有界评分统一裁决 |
-+| Spike 有界传播与动态虫洞 | 本次查询实际激活了哪些关系？ | 沿共享传输图传播，以更深层残差为已有历史边提供请求级动态席位，形成带节点势与实际边流的河网 |
-+| RiverMemo 双场与统一泛函 | 相似、关系、正文和直接事实如何共同排序？ | 求解局部场/迁移场，在共享选点预算下投影，结合有序 Tag 曲线与相对拓扑统一裁决 |
- 
- 这五部分不是五个互相同步的独立服务，而是共享事实来源、版本约束和原生执行边界的协作层。
- 
-@@ -223,7 +223,8 @@ Spike 同时约束：
- - 普通边与虫洞边的衰减；
- - 前驱敏感的立即回流抑制；
- - 每轮保留的传播状态数；
--- 可选逐跳转移记录的硬上限。
-+- 可选逐跳转移记录的硬上限；
-+- 动态虫洞在原邻居名额内的保留席位，以及请求内不同目标的评估预算。
- 
- Rust 默认配置包括最大 4 跳、每节点 20 个邻居、传播状态保留上限 2000；生产调用可以覆盖这些默认值。状态上限约束每轮保留集合，并非保证临时生成容器永远不超过该数；输出节点/边的默认值 0 表示不额外截断。
- 
-@@ -251,6 +252,30 @@ a_h=\frac{\gamma^h}{\sum_{r=0}^{H}\gamma^r},
- 
- 这让传播既是召回增强过程，也是可诊断的观测过程：可查看到达节点、活跃边、回流抑制量、状态截断与耗时。传播截断或逐跳记录截断时，不能宣称拥有完整逻辑链。
- 
-+### 5.4 请求级动态虫洞：让较弱历史边获得语境相关的通行机会
-+
-+静态背景决定“历史上有哪些路”，动态虫洞决定“本次语境下，哪些已有路值得优先尝试”。它**不新增历史边，不写回图资产，也不要求重建图**。
-+
-+金字塔分析保留各实际分析层投影前的残差。种子以首次出现层级为来源层，传播时继承它；只有比来源层更深的残差可以支持动态共鸣。单层分析或最后一层来源没有后续残差，因而不会产生动态支持。合并状态保留最早来源层级，这是来源策略，不是完整多源血缘跟踪。
-+
-+动态判定检查源节点的**完整 CSR 历史出边行**，不只看静态 Top-K；目标必须有正权重历史出边连接、达到共鸣阈值，并在考虑立即回流惩罚后达到最低注入电流。共鸣取可用后续残差与目标原始向量的最大正余弦，动态排名使用：
-+
-+\[
-+\text{动态排名}=\text{历史导电率}\times\text{共鸣}^{4}
-+\]
-+
-+默认最多保留 2 个动态席位，**包含在原有邻居名额内**，再按静态权重顺序补齐剩余名额；不是增加邻居总数，也不是将所有出边统一重排。静态虫洞仍沿用原有判定。
-+
-+动态边不消耗动量，但电流仍按“源能量 × 历史导电率 × 虫洞衰减 × 回流惩罚”计算，没有电流保底、重新归一化或额外能量增益；源状态仍须满足发火阈值和非负动量，并受最大跳数、最低注入电流和状态保留上限约束。高共鸣不能把任意弱边变成强证据。
-+
-+原生默认启用动态判定，共鸣阈值为 0.2，请求内不同目标评估预算为 4096。目标批量加载并复用请求级 FP32 向量池；各层共鸣、已有相似度和缺失向量结果在请求内复用。超出目标预算后仅跳过相应目标的动态判定，静态路径仍有效。**该预算独立于双场投影预算**：3072 维下，4096 个 FP32 向量载荷约 48 MiB，尚不含已有向量、容器和其他状态；不能用双场的 256 个选点上限估算整个请求内存。
-+
-+CSR 普通传播热路径另有内存预处理：行内按权重降序、同权按目标 ID 升序排列，直接读取前 K 条正权重边；节点锚增益和显式虫洞标记使用紧凑数组，避免每个脉冲状态重复分配邻居列表和排序。数组由构建或冷加载派生，不改变持久化格式，也不将请求阈值固化进图资产；动态判定仍需检查完整历史行，不能把普通 Top-K 快路径的成本外推到动态阶段。
-+
-+诊断区分动态候选、入选、成功注入和静态 Top-K 外提升，并记录目标评估、SQL 读取、点积、缓存复用及分项计时。这些是按传播状态和跳累计的事件，**不是唯一边数、语义正确率或每次查询的固定触发次数**；注入后仍可能被状态上限裁剪。
-+
-+实现与配置边界见 [`memo_sensing.rs`](src/memo_sensing.rs)、[`memo_pipeline.rs`](src/memo_pipeline.rs)；完整契约、诊断及部署说明见 [`MEMO_DYNAMIC_WORMHOLES.md`](../docs/MEMO_DYNAMIC_WORMHOLES.md)。
-+
- ---
- 
- ## 6. RiverMemo：同一传输算子，双场响应，一个统一泛函
-@@ -280,7 +305,28 @@ u_\alpha=(1-\alpha)(I-\alpha T)^{-1}S
- 
- 场的主解释权按累计质量保留有效支持域，默认局部 80%、迁移 90%，避免正值长尾到处产生微弱但貌似有效的路径。
- 
--实现见 [`solve_dual_fields()`](src/memo_pipeline.rs:1161)。
-+实现见 [`memo_pipeline.rs`](src/memo_pipeline.rs)。
-+
-+#### 双场投影：共享预算，不截断标量求解
-+
-+**全图 CSR 标量迭代、有效域判定与高维向量投影是三个不同阶段。** 管线先求质量场与有效域，再选择用于高维投影的节点；默认预算 K = 256，约束的是**两场选点的去重并集，包含全部核心骨架**，不是每场各 256，更不是整个请求最多读取 256 个向量。
-+
-+选点采用“种子流域内圈复用 + 共享预算动态扩展”：
-+
-+1. 以本次 Spike 活跃河网为保留骨架，复用 hop-0 种子与代表来源，在真实正流量观测边上构造确定性的多源 BFS 森林；无法分配的骨架节点独立保留。不重新聚类，也不额外读取向量寻找质心。
-+2. 每个“流域 × 场”从自身内圈边界维护独立最短路前沿，以负对数传输率为边代价，只沿真实出边扩展。外圈节点必须有同场已选前驱，不跳过低质量桥接点直接摘取远处高峰；核心允许多个分量，不强行跨主题连通。
-+3. 每个活动前沿先轮转获得最多 8 个不按收益竞争的外圈接纳机会，之后按流域重要性、近期新增归一化质量和已接纳规模动态分配预算。这是受可达性、剩余预算、质量目标与工作限额约束的机会，不是每个流域保证得到 8 个不同新向量。
-+4. 节点在全局只扣一次席位，但两场独立接纳、独立累计质量；另一场已读取该向量，不等于本场自动取得投影资格。核心节点两场均保留，缺失向量不做全图补位，因此路径保证针对选点支持集，不保证有效向量子集连通。
-+
-+正预算小于核心骨架时显式返回预算冲突，不静默裁剪路径或突破上限。K = 0 **只取消节点数量上限**，不恢复全正支撑投影：质量目标与搜索限额仍有效，搜索最多处理 8192 个出队状态、发现 8192 个流域—场—节点状态、扫描 65536 条边；达到限额会保留已选支持集并报告截断。
-+
-+各场以原有效域实际累计质量为扩展目标，允许域外桥接计入预算和投影质量，但**不改写原有效域**，候选路径解释仍消费原有效域。共享预算满后不再接纳新 ID，仍可在剩余工作限额内补全已有 ID 的独立场资格。选点交汇本身不放大质量，也不改写 Sense、Ω 或河网形态评分。
-+
-+金字塔、融合、动态虫洞、双场投影及候选读出共享请求级原始 FP32 向量池。投影与候选阶段只按差集补查，SQL 每批最多 128 个 ID；候选先读取标签关系、位置和名称，不重复搬运已加载的向量 BLOB。观测持有共享池，候选读出克隆共享引用而不是复制高维载荷；跨事务读取校验数据库代际，事实变化时明确报过期观测错误。
-+
-+标量保留不由 K 决定：仅过滤低于该场最大质量 1e-12 倍的数值尾流，并强制保留两场有效域并集及河网节点。这仍涉及标量裁剪语义，需要通过真实检索结果观察；**预算约束高维读取与投影，不意味着全图标量求解或整条查询变为 O(1)**。
-+
-+选点实现见 [`memo_projection.rs`](src/memo_projection.rs)，读取与共享池见 [`storage.rs`](src/storage.rs)，完整预算、停止原因、质量覆盖与内存诊断见 [`MEMO_FIELD_PROJECTION_BUDGET.md`](../docs/MEMO_FIELD_PROJECTION_BUDGET.md)。
- 
- ### 6.2 候选是穿过场的有序曲线
- 
-@@ -342,6 +388,9 @@ S(c)=\Pi_{[0,1]}
- | 2-bit 路由与有界候选池 | 对所有向量执行完整高维精排 |
- | 实例持有共享图快照 | 每个候选或每个阶段重新装载、复制 CSR |
- | 原生观测句柄复用 | Sense、双场与拓扑阶段各自重复传播 |
-+| 请求级 FP32 向量池与差集补查 | 金字塔、动态共鸣、投影和候选重复读取相同向量 BLOB |
-+| 共享预算双场投影 | 对全部正支撑节点执行高维读取与投影；不省略全图标量求解 |
-+| CSR 邻接顺序与紧凑属性预处理 | 普通传播中每个脉冲状态重复分配邻居列表和排序 |
- | Rust 联合候选处理 | 中间向量、候选和图反复跨越 N-API |
- | Rayon 候选级并行 | 在 JavaScript 主线程逐候选执行数学计算 |
- | 独立 checkpoint 调度 | 搜索时顺便序列化整库索引 |
-@@ -356,7 +405,9 @@ S(c)=\Pi_{[0,1]}
- - 几何工作区是构建期资源，
-```
-
----
-
-### Incident Patch 3: `afa5ee82` (2026-10-20)
-**Commit Message**: Merge pull request #508 from MrSeven590/fix/semantic-router-preview-upstream
-
-fix(admin): 修复语义模型路由器预览未代理到主进程及提示框不可见
-
-**File**: `AdminPanel-Vue/src/components/feedback/FeedbackHost.vue` (modified, +0/-1)
-```diff
-@@ -152,7 +152,6 @@ function onInputValueChange(value: string): void {
-   visibility: hidden;
-   transform: translateX(20px);
-   transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
--  position: relative;
- }
- 
- .message-popup::before {
-```
-
-**File**: `adminServer.js` (modified, +79/-0)
-```diff
-@@ -660,6 +660,85 @@ app.post("/admin_api/rag-active-full-training", async (req, res) => {
-   trainingReq.end();
- });
- 
-+// ============================================================
-+// 🧠 语义模型路由器匹配预览必须代理到主服务
-+// 本地 semanticRouter 模块仅具备配置读写与上游模型拉取能力，
-+// 预览依赖主进程中的 semanticModelRouter / RAG 插件运行态。
-+// 若由本地路由处理会直接返回 503，且不会再进入兜底代理。
-+// ============================================================
-+function proxySemanticRouterPreviewRequest(req, res) {
-+  const targetPath = "/admin_api/semantic-router/preview";
-+  console.log(
-+    "[AdminServer] Semantic router preview request received — forwarding to main process..."
-+  );
-+
-+  const proxyReq = http.request(
-+    `http://127.0.0.1:${MAIN_PORT}${targetPath}`,
+@@ -0,0 +1,589 @@
++{
++  "id": "577ff5b8-789b-44bd-850c-b191411e9e75",
++  "revision": 0,
++  "last_node_id": 12,
++  "last_link_id": 13,
++  "nodes": [
 +    {
-+      method: "POST",
-+      headers: {
-+        "Content-Type": "application/json",
-+        Authorization: req.headers.authorization || "",
-+        Cookie: req.headers.cookie || "",
-+      },
-+      timeout: 60 * 1000,
-+    },
-+    (proxyRes) => {
-+      let body = "";
-+      proxyRes.on("data", (chunk) => {
-+        body += chunk;
-+      });
-+      proxyRes.on("end", () => {
-+        if (res.headersSent) return;
-+        res.status(proxyRes.statusCode || 200);
-+        res.setHeader(
-+          "Content-Type",
-+          proxyRes.headers["content-type"] || "application/json"
-+        );
-+        try {
-+          res.json(body ? JSON.parse(body) : {});
-+        } catch (_) {
-+          res.send(body || "");
++      "id": 2,
++      "type": "UNETLoader",
++      "pos": [
++        176.90764084504917,
++        -908.0649728009181
++      ],
++      "size": [
++        270,
++        82
++      ],
++      "flags": {},
++      "order": 0,
++      "mode": 0,
++      "inputs": [],
++      "outputs": [
++        {
++          "name": "MODEL",
++          "type": "MODEL",
++          "links": [
++            12
++          ]
 +        }
-+      });
-+    }
-+  );
++      ],
++      "properties": {
++        "Node name for S&R": "UNETLoader"
++      },
++      "widgets_values": [
++        "moss_image_sft_int8_convrot.safetensors",
++        "default"
++      ],
++      "widgets_values_named": {
++        "unet_name": "moss_image_sft_int8_convrot.safetensors",
++        "weight_dtype": "default"
++      }
++    },
++    {
++      "id": 3,
++      "type": "CLIPLoader",
++      "pos": [
++        159.87085709260742,
++        -745.1505606152492
++      ],
++      "size": [
++        270,
++        106
++      ],
++      "flags": {},
++      "order": 1,
++      "mode": 0,
++      "inputs": [],
++      "outputs": [
++        {
++          "name": "CLIP",
++          "type": "CLIP",
++          "links": [
++            5,
++            7
++          ]
++        }
++      ],
++      "properties": {
++        "Node name for S&R": "CLIPLoader"
++      },
++      "widgets_values": [
++        "qwen3.5_9b_w4a8_gptq.safetensors",
++        "stable_diffusion",
++        "default"
++      ],
++      "widgets_values_named": {
++        "clip_name": "qwen3.5_9b_w4a8_gptq.safetensors",
++        "type": "stable_diffusion",
++        "device": "default"
++      }
++    },
++    {
++      "id": 4,
++      "type": "VAELoader",
++      "pos": [
++        138.57485709260772,
++        -535.3849524914705
++      ],
++      "size": [
++        270,
++        58
++      ],
++      "flags": {},
++      "order": 2,
++      "mode": 0,
++      "inputs": [],
++      "outputs": [
++        {
++          "name": "VAE",
++          "type": "VAE",
++          "links": [
++            2,
++            10
++          ]
++        }
++      ],
++      "properties": {
++        "Node name for S&R": "VAELoader"
++      },
++      "widgets_values": [
++        "flux2-vae.safetensors"
++      ],
++      "widgets_values_named": {
++        "vae_name": "flux2-vae.safetensors"
++      }
++    },
++    {
++      "id": 5,
++      "type": "VAEDecode",
++      "pos": [
++        1003.239681463945,
++        -743.0209931103664
++      ],
++      "size": [
++        140,
++        46
++      ],
++      "flags": {},
++      "order": 9,
++      "mode": 0,
++      "inputs": [
++        {
++          "name": "samples",
++          "type": "LATENT",
++          "link": 9
++        },
++        {
++          "name": "vae",
++          "type": "VAE",
++          "link": 10
++        }
++      ],
++      "outputs": [
++        {
++          "name": "IMAGE",
++          "type": "IMAGE",
++          "links": [
++            11
++          ]
++        }
++      ],
++      "properties": {
++        "Node name for S&R": "VAEDecode"
++      }
++    },
++    {
++      "id": 6,
++      "type": "VAEEncode",
++      "pos": [
++        613.5228164737109,
++        -951.7217768628078
++      ],
++      "size": [
++        140,
++        46
++      ],
++      "flags": {},
++      "order": 7,
++      "mode": 0,
++      "inputs": [
++        {
++          "name": "pixels",
++          "type": "IMAGE",
++          "link": 1
++        },
++        {
++          "name": "vae",
++          "type": "VAE",
++          "link": 2
++        }
++      ],
++      "outputs": [
++        {
++          "name": "LATENT",
++          "type": "LATENT",
++          "links": [
++            3
++          ]
++        }
++      ],
++      "properties": {
++        "Node name for S&R": "VAEEncode"
++      }
++    },
++    {
++      "id": 7,
++      "type": "EmptyImage",
++      "pos": [
++        213.11085709260763,
++        -1134.867384986587
++      ],
++      "size": [
++        270,
++        130
++      ],
++      "flags": {},
++      "order": 3,
++      "mode": 0,
++      "inputs": [],
++      "outputs": [
++        {
++          "name": "IMAGE",
++          "type": "IMAGE",
++          "links": [
++            1
++          ]
++        }
++      ],
++      "properties": {
++        "Node name for S&R": "EmptyImage"
++      },
++      "widgets_values": [
++        896,
++        1344,
++        1,
++        0
++      ],
++      "widgets_values_named": {
++        "width": 896,
++        "height": 1344,
++        "batch_size": 1,
++        "color": 0
++      }
++    },
++    {
++      "id": 8,
++      "type": "KSampler",
++      "pos": [
++        1018.583681463945,
++        -428.32419828004464
++      ],
++      "size": [
++        270,
++        474
++      ],
++      "flags": {},
++      "order": 8,
++      "mode": 0,
++      "inputs": [
++        {
++          "name": "model",
++          "type": "MODEL",
++          "link": 13
++        },
++        {
++          "name": "positive",
++          "type": "CONDITIONING",
 +
-+  proxyReq.on("error", (error) => {
-+    console.error(
-+      `[AdminServer] Failed to forward semantic router preview request to main process: ${
-+        error.code || error.message
-+      }`
-+    );
-+    if (!res.headersSent) {
-+      res.status(502).json({
-+        error: "Bad Gateway",
-+        message:
-+          "无法将语义路由预览请求转发给主服务。主服务可能未启动或正在重启中。",
-+        details: error.message,
-+      });
+```
+
+**File**: `Plugin/ComfyUIGen/workflows/MossGen.json` (added, +116/-0)
+```diff
+@@ -0,0 +1,116 @@
++{
++  "displayName": "Moss 文生图",
++  "description": "由 moss文生图 原始工作流转换。模型及特殊采样参数固定：50 步、CFG 3、Euler、sgm_uniform、denoise 1；跳过 single layer 22，生效区间 0–0.5。正面提示词使用用户原文，负面提示词保持为空。",
++  "version": "1.0",
++  "defaults": {
++    "defaultWidth": 896,
++    "defaultHeight": 1344,
++    "defaultBatchSize": 1
++  },
++  "workflow": {
++    "2": {
++      "inputs": {
++        "unet_name": "moss_image_sft_int8_convrot.safetensors",
++        "weight_dtype": "default"
++      },
++      "class_type": "UNETLoader",
++      "_meta": { "title": "加载 Moss UNet（保持原样）" }
++    },
++    "3": {
++      "inputs": {
++        "clip_name": "qwen3.5_9b_w4a8_gptq.safetensors",
++        "type": "stable_diffusion",
++        "device": "default"
++      },
++      "class_type": "CLIPLoader",
++      "_meta": { "title": "加载 Moss 文本编码器（保持原样）" }
++    },
++    "4": {
++      "inputs": {
++        "vae_name": "flux2-vae.safetensors"
++      },
++      "class_type": "VAELoader",
++      "_meta": { "title": "加载 Flux2 VAE（保持原样）" }
++    },
++    "5": {
++      "inputs": {
++        "samples": ["8", 0],
++        "vae": ["4", 0]
++      },
++      "class_type": "VAEDecode",
++      "_meta": { "title": "VAE 解码" }
++    },
++    "6": {
++      "inputs": {
++        "pixels": ["7", 0],
++        "vae": ["4", 0]
++      },
++      "class_type": "VAEEncode",
++      "_meta": { "title": "空白图像 VAE 编码（保持原样）" }
++    },
++    "7": {
++      "inputs": {
++        "width": "{{WIDTH}}",
++        "height": "{{HEIGHT}}",
++        "batch_size": "{{BATCH_SIZE}}",
++        "color": 0
++      },
++      "class_type": "EmptyImage",
++      "_meta": { "title": "空白图像" }
++    },
++    "8": {
++      "inputs": {
++        "seed": "{{SEED}}",
++        "steps": 50,
++        "cfg": 3,
++        "sampler_name": "euler",
++        "scheduler": "sgm_uniform",
++        "denoise": 1,
++        "model": ["12", 0],
++        "positive": ["9", 0],
++        "negative": ["10", 0],
++        "latent_image": ["6", 0]
++      },
++      "class_type": "KSampler",
++      "_meta": { "title": "Moss 采样（步数、CFG、采样设置保持原样）" }
++    },
++    "9": {
++      "inputs": {
++        "text": "{{USER_PROMPT}}",
++        "clip": ["3", 0]
++      },
++      "class_type": "CLIPTextEncode",
++      "_meta": { "title": "用户提示词（不追加质量词或 LoRA token）" }
++    },
++    "10": {
++      "inputs": {
++        "text": "",
++        "clip": ["3", 0]
++      },
++      "class_type": "CLIPTextEncode",
++      "_meta": { "title": "空负面提示词（保持原样）" }
++    },
++    "11": {
++      "inputs": {
++        "filename_prefix": "ComfyUI",
++        "format": "png",
++        "format.bit_depth": "8-bit",
++        "format.input_color_space": "sRGB",
++        "images": ["5", 0]
++      },
++      "class_type": "SaveImageAdvanced",
++      "_meta": { "title": "保存图像（保持原样）" }
++    },
++    "12": {
++      "inputs": {
++        "double_layers": "",
++        "single_layers": "22",
++        "start_percent": 0,
++        "end_percent": 0.5,
++        "model": ["2", 0]
++      },
++      "class_type": "SkipLayerGuidanceDiTSimple",
++      "_meta": { "title": "Moss 跳过层引导（保持原样）" }
 +    }
-+  });
-+
-+  proxyReq.on("timeout", () => {
-+    proxyReq.destroy();
-+    if (!res.headersSent) {
-+      res.status(504).json({
-+        error: "Gateway Timeout",
-+        message: "主服务语义路由预览接口响应超时。",
-+      });
-+    }
-+  });
-+
-+  proxyReq.write(JSON.stringify(req.body || {}));
-+  proxyReq.end();
++  }
 +}
-+
-+app.post(
-+  "/admin_api/semantic-router/preview",
-+  proxySemanticRouterPreviewRequest
-+);
-+
- // ============================================================
- // 🔑 关键覆盖：重启主服务（必须在本地路由之前挂载）
- // 本地 routes/admin/server.js 的 /server/restart 会 process.exit(1) 杀死当前进程
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
@@ -2149,52 +2220,89 @@ fix(admin): 修复语义模型路由器预览未代理到主进程及提示框�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in vcp-whitepaper.md
+## X. Empirical Invariant Guard in moss文生图.json
 
 **RULE**:
-When implementing operations in `docs/vcp-whitepaper.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/ComfyUIGen/moss文生图.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ceecd48`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6385f214`: 新增mossgen. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/vcp-whitepaper.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ComfyUIGen/moss文生图.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-title: VCP 全景技术白皮书 V6
-summary: VCP 2.0 全景架构：以 VexusMemo / Vexus-Lite 原生一体化数据库、TDB 2-bit 自研检索、AGS 与 RiverMemo V2 统一记忆内核为数据底座，以 MoonAST 纯几何代码检索、V工程与 VChat 工作台组织 Agent 工程协作，贯通协议、上下文、前端应用群与长期自治。
-updatedAt: 2026-10-20
-# VCP 全景技术白皮书 V6：原生一体化数据库、MoonAST 与 Agent 全栈运行时
-**版本：VCP 2.0 正式版 · 架构更新截至 2026-10-20**
-
-> **阅读口径**：本文说明当前架构，并在必要处保留演进背景。VCP 2.0 已于 2026-10-01 发布；TagMemo 已退出生产运行，USearch 已由 TDB 2-bit 检索体系替代，MoonAST 已不再以 Tree-sitter 为主要解析依赖。RiverMemo V2 是查询实现的发布阶段，Topology V3 是仍沿用的统一排序构型，两者不是同一版本序列。
->
-> **“自研”的边界**：VCP 自主实现原生数据运行时、TDB 检索、记忆数学与工程协作体系，但仍使用 SQLite、Rust、Electron 等基础设施。“一体化数据库”不意味着 SQLite 也由 VCP 编写，也不意味着取消所有外部依赖。
-VCP 已经走过多个版本周期，于 2026-10-01 发布 **VCP 2.0 正式版**，并在随后完成数据库、记忆数学和代码工程底座的新一轮收敛。从“全栈 AGI 运行时”到“全栈 Agent 生态操作系统与软件工程自治中枢”，变化不只是应用数量增加，而是核心数据与工程能力的所有权进一步下沉到自主实现的原生内核。
-
-早期，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。今天，VCP 的两条主线已经延伸至更底层：
-
-- **数据与记忆主线**：VexusMemo 统一持有记忆与知识数据库业务，Vexus-Lite 原生模块将 SQLite 事实事务、TDB 2-bit 导航与筛选、AGS 背景几何、Spike 有界传播、RiverMemo 双场与拓扑排序组织为同一条读、写、搜链。USearch 与旧 JS 数据库业务退出该生产路径，TagMemo 的独立运行时退役，其已验证机制由新内核继承和重构。
-- **软件工程主线**：MoonAST 从 C / Rust 与 Tree-sitter 双擎阶段演进为纯几何逻辑门驱动的自研代码识别与检索核心；ProjectForge、V工程轻量 IDE、Git、施工 Trace、操作回退与 VChat 工作台把代码理解、修改、验证和人工介入
+{
+  "id": "577ff5b8-789b-44bd-850c-b191411e9e75",
+  "revision": 0,
+  "last_node_id": 12,
+  "last_link_id": 13,
+  "nodes": [
+    {
+      "id": 2,
+      "type": "UNETLoader",
+      "pos": [
+        176.90764084504917,
+        -908.0649728009181
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            12
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "moss_image_sft_int8_convrot.safetensors",
+        "default"
+      ],
+      "widgets_values_named": {
+        "unet_name": "moss_image_sft_int8_convrot.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        159.87085709260742,
+        -745.1505606152492
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-title: VCP 全景技术白皮书 V5
-summary: 全面介绍 VCP 全栈运行时、Jev 决策与自然语言调用管网、Agent 工业级软件工程体系、前端应用群、共享 IPC 管网、Loom 与共笔文坊协作系统的工作原理和系统交互，是理解迈向 VCP 2.0 正式版全景生态的重要读物。
-updatedAt: 2026-09-30
-# VCP 全景技术白皮书 V5：全栈自研的 Agent 运行时与前端生态
-**版本：迈向 VCP 2.0 正式版 · 2026 年初秋**
-VCP 已经走过三个完整的版本周期，并在 2026 年秋季完成了从“全栈 AGI 运行时”向“全栈 Agent 生态操作系统与软件工程自治中枢”的架构大收敛，正式迈向 **VCP 2.0** 时代。
-V2 时代，我们把 VCP 描述为「部署在 AI 模型 API 与前端应用之间的中间层服务器」——这个定义曾经是准确的。但从 V2 演进至今，VCP 沿着一条异常陡峭且坚定的全栈自研路径生长：自研向量数据库 Vexus、自研图数据库 TDB、由 TagMemo V9 与 RiverMemo Topology V3 构成的统一记忆寻址底座、RiverMemo 与 RagDiary 全链路单次 Rust 内存融合重构、基于扩散架构的低延迟概率决策公共服务 JevRuntime、近乎通用的自然语言工具编译器 JEV-TOOL-call 与 JevCallBridgeEXP 分布式导航桥、闭源旗舰插件 VCPCode 入驻 VChat 带来的极致能效工程标杆、VCPProjectForge 协同工程模组与 ProjectModule 可视化编程子前端、流式渲染器 VCPMessageRenderer V4 极端内容防御体系、自研底层 WebGL/WebGPU Shader 合成管线驱动的 VMusic 3D 沉浸式太空歌剧演出、自研桌面运行时 VCPDesktop 与 V图表、AI 原生邮件协议 VCPSuperMail、DXGI 与纯数学窗口操控算法 VCP-SOM……
-- [六、插件系统与 Jev 声明式生态](#六插件系统与-jev-声明式生态)
-- [八、记忆系统：TagMemo V9、RiverMemo 全链路 Rust 融合与双栈交互](#八记忆系统tagmemo-v9rivermemo-全链路-rust-融合与双栈交互)
-- [十五、Agent 工业级软件工程体系：VCPCode、ProjectForge 与可视化中枢](#十五agent-工业级软件工程体系vcpcode-projectforge-与可视化中枢)
-TagMemo V9 与 RiverMemo Topology V3 通过同一套查询诱导动力学，在每一次对话中根据完整上下文**自动激活并审计**相关记忆。AI 不需要"决定
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ceecd48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6385f214` are properly handled with clean fallback behavior.

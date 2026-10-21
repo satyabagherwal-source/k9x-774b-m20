@@ -4204,3 +4204,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-21T04:21:58.196Z |
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-21T04:27:57.726Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-21T04:36:16.566Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `f33b1dbe` | Multi-dimensional audit evidence | 2026-10-21T04:42:52.979Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-21T04:42:53.802Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `30db5188` | Multi-dimensional audit evidence | 2026-10-21T04:43:00.586Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `be55273c` | Multi-dimensional audit evidence | 2026-10-21T04:43:03.341Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `6385f214` | Multi-dimensional audit evidence | 2026-10-21T04:43:06.840Z |

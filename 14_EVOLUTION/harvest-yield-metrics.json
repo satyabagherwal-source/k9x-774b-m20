@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T04:36:16.575Z",
-  "total_cycles_completed": 4174,
-  "total_learnings_persisted": 4174,
-  "total_rules_promoted": 3358,
+  "last_updated": "2026-10-21T04:43:06.847Z",
+  "total_cycles_completed": 4179,
+  "total_learnings_persisted": 4179,
+  "total_rules_promoted": 3361,
   "history": [
-    {
-      "timestamp": "2026-10-20T20:00:48.051Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:07:00.463Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:07:00.485Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:14:14.140Z",
-      "repository": "sxyazi/yazi",
-      "learningId": "learn-github-sxyazi-yazi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T20:14:21.097Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T20:14:21.757Z",
       "repository": "Tencent-TDS/KuiklyUI",
@@ -1403,6 +1368,41 @@
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:42:52.988Z",
+      "repository": "carbon-design-system/carbon",
+      "learningId": "learn-github-carbon-design-system-carbon",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:42:53.806Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-google-vit-base-patch16-224",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:43:00.590Z",
+      "repository": "electron/electron",
+      "learningId": "learn-github-electron-electron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:43:03.346Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T04:43:06.847Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/electron-electron-learnings.md`  
 > **Source**: github ([https://github.com/electron/electron](https://github.com/electron/electron))  
-> **Source Version**: `360d1da1`  
+> **Source Version**: `30db5188`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:18:28.844Z  
+> **Timestamp**: 2026-10-21T04:43:00.249Z  
 > **Learning ID**: `learn-github-electron-electron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/electron-electron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/electron/electron](https://github.com/electron/electron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:18:28.668Z  
+> **Harvest Timestamp**: 2026-10-21T04:43:00.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :electron: Build cross-platform desktop apps with JavaScript, HTML, and CSS
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 123409 stars
+- **Stars / Engagement**: 123436 stars
 
 ---
 
@@ -327,11 +327,13 @@ export default sharedTexture;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55108** (2026-10-19): **docs: remove never-emitted aborted event on IncomingMessage**
-  *Symptoms*: #### Description of Change  `docs/api/incoming-message.md` documents an `Event: 'aborted'`, and `docs/api/client-request.md` claims that `request.abort()` makes an ongoing response "emit the `aborted` event". No code path ever emits it: `IncomingMessage` is implemented in `lib/common/api/net-client-request.ts`, and the only events it can raise are the `Readable` stream events (`data`, `end`, `close`) plus `error` via `destroy(error)` in `ClientRequest._die()` — there is no `emit('aborted')` or `Emit("aborted")` anywhere in `lib/`, `shell/`, or `spec/`, and the same is true of the v12 and v20 trees. Because the docs drive the generated typings, the stale section also produces phantom `on/once(event: 'aborted')` overloads in `electron.d.ts`.  This removes the stale event section, the false sentence under `request.abort()`, and the matching `response.on('aborted')` listeners in `spec/ts-smoke/electron/main.ts` and `spec/ts-smoke/electron/utility.ts` so the generated-definitions smoke check compiles.  Validation: `yarn create-typescript-definitions` failed before this change with `error TS2769: Argument of type '"aborted"' is not assignable to parameter of type '"error"'` (spec/ts-smoke/electron/main.ts) and passes after; `yarn lint:markdown` reports 0 errors.  Disclosure: this PR was prepared with AI assistance and reviewed by me.  #### Checklist  - [x] I have filled out the PR description - [x] [I have reviewed and verified the changes](https://github.com/electron/governance/bl
+- **Issue #55157** (2026-10-21): **build: update PGO profiles**
+  *Symptoms*: Updates the PGO profile state files to the profiles generated and uploaded by [this workflow run](https://github.com/electron/electron/actions/runs/39531709395).  Notes: none
+  **Post-Mortem & Fix Analysis**:
+  > **No Release Notes**
 
-- **Issue #55106** (2026-10-19): **Loading an extension with `webRequest` or `declarativeNetRequest` into `session.defaultSession` makes every main-process `net.fetch`/`net.request` fail with `net::ERR_FAILED`**
-  *Symptoms*: Electron version: 44.7.2 OS: macOS 26, arm64  Repro: 1. main.js: in app.whenReady(), `await net.fetch('https://example.com/')` -> 200. 2. `await session.defaultSession.extensions.loadExtension(dir)` where dir/manifest.json is    {"manifest_version":3,"name":"bare","version":"1.0","permissions":["webRequest"],"host_permissions":["<all_urls>"]} 3. The same net.fetch now rejects with net::ERR_FAILED.  Also: - session.defaultSession.fetch and net.request (with or without session) fail the same way. - removeExtension does not restore networking. - session.fromPartition('persist:y').fetch keeps working. - Loading the extension into fromPartition('persist:x') instead leaves defaultSession working. - declarativeNetRequest alone triggers it; webRequestBlocking alone does not. - With session.webRequest listeners registered, net.fetch hangs instead of rejecting. - No webRequest.onErrorOccurred event fires.  Expected: main-process requests go through, and the extension's webRequest listeners see (or skip) them, as in Chrome.  Possibly related: #53294 (fixed a crash on this path in 44.1.0). 
+- **Issue #55149** (2026-10-21): **chore: cherry-pick 69 changes from angle, chromium, pdfium, skia and v8**
+  *Symptoms*: #### Description of Change  > [!WARNING] > **Changes outside `patches/`** — besides the cherry-picks below, this PR edits Electron source directly. These edits were written by the backport automation as ports of upstream fixes (they are not upstream cherry-picks), so review them line by line: > > * `shell/browser/file_system_access/file_system_access_permission_context.cc` (modified) — `fix: port upstream file system access fix for third-party frame permission requests to Electron's permission context`  Backports the following changes:  * [`0b43596f5117`](https://chromium-review.googlesource.com/c/angle/angle/+/8451922) from angle — D3D11: Expand 3D texture depth in MakeValidSize * [`1efffc95e07e`](https://chromium-review.googlesource.com/c/angle/angle/+/8446121) from angle — Vulkan: Fix content-defined tracking for 3D images * [`2c5e2a5229a7`](https://chromium-review.googlesource.com/c/angle/angle/+/8446101) from angle — Vulkan: Allow staged clears of 3D image slices * [`386bb0e11d39`](https://chromium-review.googlesource.com/c/angle/angle/+/8427087) from angle — MSL: Correctly identify uint >= 0 condition as an infinite loop * [`3adcc064145b`](https://chromium-review.googlesource.com/c/angle/angle/+/8427126) from angle — HLSL: Fix name collision due to lack of delimiter * [`3b30b49c041f`](https://chromium-review.googlesource.com/c/angle/angle/+/8452365) from angle — Vulkan: Pass vk::LevelIndex to ImageHelper::onWrite * [`48a16bd63d2d`](https://chromium-review.googlesource.c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -348,622 +350,643 @@ export default sharedTexture;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03461bac` (2026-10-16)
-**Commit Message**: build: stop overriding node GN declare_args defaults in patch (#55042)
+### Incident Patch 1: `44fdb9fe` (2026-10-20)
+**Commit Message**: fix: apply the certificate SPKI blocklist to Node and add entries (#55126)
 
-The build_add_gn_build_files node patch changed several defaults in
-node.gni's declare_args() and hardcoded BoringSSL in unofficial.gni, even
-though those are build args meant to be set by the embedder.
+Chromium carries a compiled-in list of SubjectPublicKeyInfo hashes that
+must never appear in a verified chain. Electron's Node had no equivalent,
+so the same chain could fail in a renderer and succeed in tls/https/fetch
+from the main or a utility process.
 
-- Set node_v8_path and node_use_v8_platform from build/args/all.gn and
-  restore upstream's defaults in the patch.
-- Restore upstream's node_use_node_snapshot default; the later startup
-  snapshot patch replaces it anyway, so the end result is unchanged.
-- Drop the unofficial.gni hunk replacing $node_openssl_path with
-  //third_party/boringssl, since all.gn already sets node_openssl_path to
-  that value.
+- Node: wrap X509_verify_cert on every SecureContext and report
+  CERT_REVOKED when a chain contains a blocked SPKI.
+- Chromium: add entries that Chrome distributes via CRLSet, which Electron
+  does not consume, to the compiled-in list; Node's list mirrors them.
+- Testing binding hooks let the new spec extend Node's list at runtime and
+  exercise the hook against the fixture chain.
 
-node_path stays patched: node_module_version's default in the same
-declare_args() block runs exec_script() on $node_path, and GN evaluates it
-against node_path's default even when it is overridden, so gn gen fails if
-it only comes from args.
+**File**: `patches/chromium/.patches` (modified, +1/-0)
+```diff
+@@ -139,3 +139,4 @@ build_drop_the_unused_chrome_browser_win_dep_from_color_mixers.patch
+ fix_plumb_the_requesting_frame_through_pointer_lock_requests.patch
+ fix_avoid_misaligned_char16_t_reads_in_crdtp_string_deserialization.patch
+ feat_let_the_host_of_a_remote_nswindow_set_more_of_its_behavior.patch
++add_entries_to_the_spki_blocklist.patch
+```
 
+**File**: `patches/chromium/add_entries_to_the_spki_blocklist.patch` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
++From: Sam Attard <sattard@anthropic.com>
++Date: Tue, 20 Oct 2026 00:00:20 +0000
++Subject: Add entries to the SPKI blocklist
++
++Adds public key hashes that Chrome ships to its users through the CRLSet
++component, which Electron does not consume, so they are carried in the
++compiled-in list instead. The comment above each entry is the SHA-256
++fingerprint of the corresponding certificate.
++
++This patch can be removed once the hashes land in the upstream blocklist.
++
++diff --git a/net/cert/cert_verify_proc_blocklist.inc b/net/cert/cert_verify_proc_blocklist.inc
++index b00fc5124ba8c70d71d1a0bc535d6db3c3f121cf..fb7920b263780b8e58cdce9018732723e80f73eb 100644
++--- a/net/cert/cert_verify_proc_blocklist.inc
+++++ b/net/cert/cert_verify_proc_blocklist.inc
++@@ -418,7 +418,39 @@ static constexpr uint8_t
++         // 289ed1676f42b679f2b665bb5a3f25610d9d19ac017beafa46787f1d6022986a.pem
++         {0x36, 0xce, 0x75, 0xed, 0xea, 0x80, 0x6f, 0x09, 0x85, 0x14, 0x56,
++         0x83, 0x29, 0x4e, 0x54, 0xdb, 0xdf, 0xf0, 0x2f, 0xc8, 0x21, 0x87,
++-        0x0c, 0xf5, 0x06, 0x7a, 0x30, 0x8d, 0x15, 0x04, 0xbe, 0x3a}
+++        0x0c, 0xf5, 0x06, 0x7a, 0x30, 0x8d, 0x15, 0x04, 0xbe, 0x3a},
+++        // 0164d7ceae5bb909c272af151ff44b1177ae9b47d9424b94f1d9558c30934d19.pem
+++        {0x49, 0xdd, 0x35, 0x3d, 0xc2, 0xb9, 0x19, 0xa3, 0x77, 0x06, 0x45,
+++         0x11, 0x7d, 0x0e, 0x60, 0xc1, 0x61, 0x15, 0xe7, 0xd1, 0xbc, 0x25,
+++         0x9e, 0xef, 0xe7, 0x34, 0xb0, 0x0e, 0xa4, 0x34, 0xfe, 0x5f},
+++        // 432ec25f0d28de9006d97bf752f17bbb2cd41f669933fcb072d9a1148d0261f3.pem
+++        {0x5c, 0x06, 0x60, 0xa2, 0xb1, 0x64, 0x91, 0x0d, 0x8f, 0xf5, 0x89,
+++         0xc1, 0x8e, 0x14, 0x55, 0x2e, 0x9e, 0x0e, 0xc2, 0x37, 0xdc, 0xef,
+++         0xe2, 0xcb, 0x73, 0x6d, 0x41, 0xa4, 0x81, 0x1f, 0x81, 0xa0},
+++        // cb6e15165ac802e9b3f993f16c25d41f4e81c21ebde71ae1b012ac00bf9c7c3f.pem
+++        {0x63, 0xec, 0xef, 0xee, 0x43, 0x1d, 0x49, 0x52, 0x3b, 0xc1, 0x13,
+++         0x6c, 0x4e, 0x72, 0xd0, 0x20, 0x6a, 0x47, 0x70, 0x86, 0xca, 0xf6,
+++         0x06, 0xcd, 0x5c, 0xf0, 0x25, 0x68, 0x6c, 0x10, 0x9c, 0xf8},
+++        // 4b2460a466f95fd40113bcdcca2ceb29b3b093921de45474da7df48874c630b1.pem
+++        {0x92, 0xc0, 0x63, 0xd6, 0x7e, 0x8f, 0x14, 0xdb, 0x71, 0xd2, 0x88,
+++         0xe1, 0x12, 0x66, 0xff, 0xda, 0xf6, 0x9c, 0xbf, 0x11, 0x5f, 0x7b,
+++         0xab, 0x14, 0xf3, 0xbc, 0x2f, 0x68, 0xd2, 0x5e, 0x0e, 0x30},
+++        // 42c4accd12c4f59597925e1a08a7a90102608543809308d50ec427e118ba1493.pem
+++        {0xeb, 0xed, 0x64, 0x75, 0xc2, 0xc2, 0xd8, 0x0f, 0xcb, 0x19, 0x9f,
+++         0x3f, 0xe8, 0xdd, 0x6e, 0x6b, 0x3c, 0xe6, 0x0b, 0x77, 0xeb, 0x15,
+++         0xd4, 0xe4, 0x2c, 0x3d, 0xec, 0x0c, 0x6f, 0x5b, 0x51, 0x05},
+++        // 9e39de2881273acc225a149c72ba3e0f51424963669ab633ee1dc7df5db067b4.pem
+++        {0xec, 0x4f, 0xfa, 0x1a, 0xd0, 0xac, 0x88, 0x08, 0x13, 0x14, 0xb7,
+++         0xaa, 0xff, 0xef, 0x6a, 0x91, 0xf9, 0x7c, 0xd5, 0x72, 0x91, 0xbb,
+++         0x5b, 0xa6, 0x86, 0xc5, 0x41, 0x5f, 0x5e, 0xb4, 0xf6, 0xb6},
+++        // 98b896625c0c230adeec3eb2cf6aad5001ecf9156a68644e82374ce5833bc25b.pem
+++        {0x43, 0xbf, 0xfa, 0x19, 0xd6, 0xef, 0x65, 0x14, 0x51, 0xf6, 0x84,
+++         0x1e, 0x01, 0x99, 0x31, 0xe9, 0x6f, 0x6f, 0x2e, 0xae, 0xff, 0x28,
+++         0xab, 0x4b, 0x6f, 0x1c, 0xe4, 0x57, 0x6d, 0xe2, 0x71, 0x7b},
+++        // e7568fe6e12331f4fd7de61da4c7559d0f8eb192a218d4741a3ba75184333838.pem
+++        {0xe0, 0x25, 0x4c, 0x7f, 0xcd, 0xc2, 0x65, 0xe2, 0xf0, 0xf8, 0xa4,
+++         0x28, 0xda, 0xbb, 0x75, 0xab, 0x4a, 0xe0, 0x39, 0xb4, 0x87, 0x2d,
+++         0x62, 0xf5, 0xee, 0x57, 0xf0, 0x87, 0x7d, 0x5a, 0x8a, 0x41}
++ };
++ 
++ // Hashes of SubjectPublicKeyInfos known to be used for interception by a
+```
 
-Claude-Session: https://claude.ai/code/session_01E1JKPsp6CSJJNzT5UKpfJ1
+**File**: `patches/node/.patches` (modified, +1/-0)
+```diff
+@@ -51,3 +51,4 @@ deps_add_missing_standard_library_includes_to_simdjson.patch
+ test_drop_removed_wasm_rab_integration_flag.patch
+ test_skip_rmsync_permission_error_test_when_running_as_root.patch
+ test_skip_openssl_config_test_under_boringssl.patch
++tls_reject_chains_containing_blocked_public_keys.patch
+```
+
+**File**: `patches/node/tls_reject_chains_containing_blocked_public_keys.patch` (added, +167/-0)
+```diff
+@@ -0,0 +1,167 @@
++From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
++From: Sam Attard <sattard@anthropic.com>
++Date: Tue, 20 Oct 2026 00:10:09 +0000
++Subject: tls: reject chains containing blocked public keys
++
++Node has no equivalent of Chromium's SPKI blocklist, so a chain through a
++key on that list still verifies in Node as long as it reaches a trusted
++root. Wrap X509_verify_cert for every SecureContext and report
++X509_V_ERR_CERT_REVOKED when any certificate in the verified chain (or,
++if no chain could be built, any certificate the peer sent) has a
++SubjectPublicKeyInfo hash on a small compiled-in list. The list mirrors
++the entries Electron adds to Chromium's net blocklist. Test-only hooks
++allow the spec suite to extend the list at runtime.
++
++diff --git a/src/crypto/crypto_context.cc b/src/crypto/crypto_context.cc
++index 4d6d9accd1970eca3ab065884e445d662e9f0c5a..13313c07f02b5846e4a3bc7b2fa32dcc63d73c99 100644
++--- a/src/crypto/crypto_context.cc
+++++ b/src/crypto/crypto_context.cc
++@@ -17,6 +17,7 @@
++ #include <openssl/comp.h>
++ #endif
++ #include <openssl/rand.h>
+++#include <openssl/sha.h>
++ #include <openssl/x509.h>
++ #ifdef __APPLE__
++ #include <Security/Security.h>
++@@ -27,7 +28,10 @@
++ #include <wincrypt.h>
++ #endif
++ 
+++#include <array>
+++#include <cstring>
++ #include <set>
+++#include <vector>
++ 
++ namespace node {
++ 
++@@ -75,6 +79,105 @@ using v8::String;
++ using v8::Value;
++ 
++ namespace crypto {
+++
+++namespace {
+++
+++// SHA-256 hashes of SubjectPublicKeyInfos that must never appear in a
+++// verified chain, regardless of what the trust store says.
+++constexpr uint8_t kBlockedSPKIs[][SHA256_DIGEST_LENGTH] = {
+++    // 0164d7ceae5bb909c272af151ff44b1177ae9b47d9424b94f1d9558c30934d19
+++    {0x49, 0xdd, 0x35, 0x3d, 0xc2, 0xb9, 0x19, 0xa3, 0x77, 0x06, 0x45,
+++     0x11, 0x7d, 0x0e, 0x60, 0xc1, 0x61, 0x15, 0xe7, 0xd1, 0xbc, 0x25,
+++     0x9e, 0xef, 0xe7, 0x34, 0xb0, 0x0e, 0xa4, 0x34, 0xfe, 0x5f},
+++    // 432ec25f0d28de9006d97bf752f17bbb2cd41f669933fcb072d9a1148d0261f3
+++    {0x5c, 0x06, 0x60, 0xa2, 0xb1, 0x64, 0x91, 0x0d, 0x8f, 0xf5, 0x89,
+++     0xc1, 0x8e, 0x14, 0x55, 0x2e, 0x9e, 0x0e, 0xc2, 0x37, 0xdc, 0xef,
+++     0xe2, 0xcb, 0x73, 0x6d, 0x41, 0xa4, 0x81, 0x1f, 0x81, 0xa0},
+++    // cb6e15165ac802e9b3f993f16c25d41f4e81c21ebde71ae1b012ac00bf9c7c3f
+++    {0x63, 0xec, 0xef, 0xee, 0x43, 0x1d, 0x49, 0x52, 0x3b, 0xc1, 0x13,
+++     0x6c, 0x4e, 0x72, 0xd0, 0x20, 0x6a, 0x47, 0x70, 0x86, 0xca, 0xf6,
+++     0x06, 0xcd, 0x5c, 0xf0, 0x25, 0x68, 0x6c, 0x10, 0x9c, 0xf8},
+++    // 4b2460a466f95fd40113bcdcca2ceb29b3b093921de45474da7df48874c630b1
+++    {0x92, 0xc0, 0x63, 0xd6, 0x7e, 0x8f, 0x14, 0xdb, 0x71, 0xd2, 0x88,
+++     0xe1, 0x12, 0x66, 0xff, 0xda, 0xf6, 0x9c, 0xbf, 0x11, 0x5f, 0x7b,
+++     0xab, 0x14, 0xf3, 0xbc, 0x2f, 0x68, 0xd2, 0x5e, 0x0e, 0x30},
+++    // 42c4accd12c4f59597925e1a08a7a90102608543809308d50ec427e118ba1493
+++    {0xeb, 0xed, 0x64, 0x75, 0xc2, 0xc2, 0xd8, 0x0f, 0xcb, 0x19, 0x9f,
+++     0x3f, 0xe8, 0xdd, 0x6e, 0x6b, 0x3c, 0xe6, 0x0b, 0x77, 0xeb, 0x15,
+++     0xd4, 0xe4, 0x2c, 0x3d, 0xec, 0x0c, 0x6f, 0x5b, 0x51, 0x05},
+++    // 9e39de2881273acc225a149c72ba3e0f51424963669ab633ee1dc7df5db067b4
+++    {0xec, 0x4f, 0xfa, 0x1a, 0xd0, 0xac, 0x88, 0x08, 0x13, 0x14, 0xb7,
+++     0xaa, 0xff, 0xef, 0x6a, 0x91, 0xf9, 0x7c, 0xd5, 0x72, 0x91, 0xbb,
+++     0x5b, 0xa6, 0x86, 0xc5, 0x41, 0x5f, 0x5e, 0xb4, 0xf6, 0xb6},
+++    // 98b896625c0c230adeec3eb2cf6aad5001ecf9156a68644e82374ce5833bc25b
+++    {0x43, 0xbf, 0xfa, 0x19, 0xd6, 0xef, 0x65, 0x14, 0x51, 0xf6, 0x84,
+++     0x1e, 0x01, 0x99, 0x31, 0xe9, 0x6f, 0x6f, 0x2e, 0xae, 0xff, 0x28,
+++     0xab, 0x4b, 0x6f, 0x1c, 0xe4, 0x57, 0x6d, 0xe2, 0x71, 0x7b},
+++    // e7568fe6e12331f4fd7de61da4c7559d0f8eb192a218d4741a3ba75184333838
+++    {0xe0, 0x25, 0x4c, 0x7f, 0xcd, 0xc2, 0x65, 0xe2, 0xf0, 0xf8, 0xa4,
+++     0x28, 0xda, 0xbb, 0x75, 0xab, 0x4a, 0xe0, 0x39, 0xb4, 0x87, 0x2d,
+++     0x62, 0xf5, 0xee, 0x57, 0xf0, 0x87, 0x7d, 0x5a, 0x8a, 0x41},
+++};
+++
+++std::vector<std::array<uint8_t, SHA256_DIGEST_LENGTH>>&
+++BlockedSPKIsForTesting() {
+++  static std::vector<std::array<uint8_t, SHA256_DIGEST_LENGTH>> list;
+++  return list;
+++}
+++
+++bool IsBlockedSPKI(const X509* cert) {
+++  if (cert == nullptr) return false;
+++  uint8_t* spki = nullptr;
+++  int spki_len = i2d_X509_PUBKEY(X509_get_X509_PUBKEY(cert), &spki);
+++  if (spki_len <= 0) return false;
+++  uint8_t digest[SHA256_DIGEST_LENGTH];
+++  SHA256(spki, spki_len, digest);
+++  OPENSSL_free(spki);
+++  for (const auto& blocked : kBlockedSPKIs) {
+++    if (memcmp(digest, blocked, sizeof(digest)) == 0) return true;
+++  }
+++  for (const auto& blocked : BlockedSPKIsForTesting()) {
+++    if (memcmp(digest, blocked.data(), sizeof(digest)) == 0) return true;
+++  }
+++  return false;
+++}
+++
+++bool ContainsBlockedSPKI(const STACK_OF(X509)* certs) {
+++  if (certs == nullptr) return false;
+++  for (size_t i = 0; i < sk_X509_num(certs); i++) {
+++    if (IsBlockedSPKI(sk_X509_value(certs, i))) return true;
+++  }
++
+```
+
+**File**: `shell/common/api/electron_api_testing.cc` (modified, +22/-0)
+```diff
+@@ -18,6 +18,7 @@
+ #include "base/memory/ptr_util.h"
+ #include "base/no_destructor.h"
+ #include "base/power_monitor/power_monitor_source.h"
++#include "base/strings/string_number_conversions.h"
+ #include "base/task/sequenced_task_runner.h"
+ #include "build/build_config.h"
+ #include "chrome/browser/browser_process.h"
+@@ -57,6 +58,11 @@
+ #include <windows.h>
+ #endif
+ 
++namespace node::crypto {
++NODE_EXTERN void AddBlockedSPKIForTesting(const uint8_t* sha256_hash);
++NODE_EXTERN void ClearBlockedSPKIsForTesting();
++}  // namespace node::crypto
++
+ namespace {
+ 
+ std::atomic<int> live_callback_holder_probes{0};
+@@ -292,6 +298,20 @@ v8::Local<v8::Promise> SimulateNetworkServiceCrash(v8::Isolate* isolate) {
+   return handle;
+ }
+ 
++void AddNodeBlockedSPKIForTesting(gin_helper::ErrorThrower thrower,
++                                  const std::string& hex) {
++  std::vector<uint8_t> hash;
++  if (!base::HexStringToBytes(hex, &hash) || hash.size() != 32) {
++    thrower.ThrowTypeError("expected a 64 character hex SHA-256");
++    return;
++  }
++  node::crypto::AddBlockedSPKIForTesting(hash.data());
++}
++
++void ClearNodeBlockedSPKIsForTesting() {
++  node::crypto::ClearBlockedSPKIsForTesting();
++}
++
+ void HoldRepeatingCallbackForTesting(const base::RepeatingClosure& callback) {
+   GetCallbackTestingHelper().HoldRepeatingCallback(callback);
+ }
+@@ -560,6 +580,8 @@ void Initialize(v8::Local<v8::Object> exports,
+   dict.SetMethod<&IsPlatformCaretBrowsingEnabled>(
+       "isPlatformCaretBrowsingEnabled");
+   dict.SetMethod<&SimulateNetworkServiceCrash>("simulateNetworkServiceCrash");
++  dict.SetMethod<&AddNodeBlockedSPKIForTesting>("addNodeBlockedSPKI");
++  dict.SetMethod<&ClearNodeBlockedSPKIsForTesting>("clearNodeBlockedSPKIs");
+   dict.SetMethod<&SimulatePowerEvent>("simulatePowerEvent");
+   dict.SetMethod<&SimulateWebAuthnUvLockedPinSecurityKey>(
+       "simulateWebAuthnUvLockedPinSecurityKey");
+```
+
+**File**: `spec/cert-revocation.spec.ts` (added, +95/-0)
+```diff
+@@ -0,0 +1,95 @@
++import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
++
++import * as crypto from 'node:crypto';
++import { once } from 'node:events';
++import * as fs from 'node:fs';
++import * as https from 'node:https';
++import * as path from 'node:path';
++import * as tls from 'node:tls';
++
++import { ifdescribe, isTestingBindingAvailable, listen } from './lib/spec-helpers.ts';
++
++const certPath = path.resolve(import.meta.dirname, 'fixtures', 'certificates');
++const rootCA = fs.readFileSync(path.join(certPath, 'rootCA.pem'), 'utf8');
++const intermediateCA = fs.readFileSync(path.join(certPath, 'intermediateCA.pem'), 'utf8');
++const serverCert = fs.readFileSync(path.join(certPath, 'server.pem'), 'utf8');
++const serverKey = fs.readFileSync(path.join(certPath, 'server.key'), 'utf8');
++
++const spkiHash = (pem: string) =>
++  crypto
++    .createHash('sha256')
++    .update(new crypto.X509Certificate(pem).publicKey.export({ type: 'spki', format: 'der' }))
++    .digest();
++
++ifdescribe(isTestingBindingAvailable())('certificate revocation', () => {
++  const testing = process._linkedBinding('electron_common_testing');
++  let server: https.Server;
++  let port: number;
++
++  beforeAll(async () => {
++    server = https.createServer({ key: serverKey, cert: serverCert + intermediateCA }, (req, res) => {
++      res.setHeader('Connection', 'close');
++      res.end('ok');
++    });
++    port = (await listen(server)).port;
++  });
++  afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
++
++  describe('Node.js TLS', () => {
++    afterEach(() => testing.clearNodeBlockedSPKIs());
++
++    const connect = async (options: Partial<tls.ConnectionOptions> = {}) => {
++      const socket = tls.connect({
++        host: '127.0.0.1',
++        port,
++        servername: 'localhost',
++        ca: [rootCA],
++        rejectUnauthorized: false,
++        ...options
++      });
++      try {
++        await once(socket, 'secureConnect');
++        return socket.authorizationError ? String(socket.authorizationError) : null;
++      } finally {
++        socket.destroy();
++      }
++    };
++
++    it('reports a chain through a blocked intermediate key as revoked', async () => {
++      await expect(connect(), 'before').resolves.not.toBe('CERT_REVOKED');
++      testing.addNodeBlockedSPKI(spkiHash(intermediateCA).toString('hex'));
++      await expect(connect(), 'after').resolves.toBe('CERT_REVOKED');
++    });
++
++    it('reports a blocked leaf key as revoked', async () => {
++      testing.addNodeBlockedSPKI(spkiHash(serverCert).toString('hex'));
++      await expect(connect()).resolves.toBe('CERT_REVOKED');
++    });
++
++    it('fails the handshake when rejectUnauthorized is set', async () => {
++      testing.addNodeBlockedSPKI(spkiHash(intermediateCA).toString('hex'));
++      const socket = tls.connect({
++        host: '127.0.0.1',
++        port,
++        servername: 'localhost',
++        ca: [rootCA],
++        rejectUnauthorized: true
++      });
++      const [err] = await once(socket, 'error');
++      socket.destroy();
++      expect((err as NodeJS.ErrnoException).code).toBe('CERT_REVOKED');
++    });
++
++    it('applies to https.request', async () => {
++      testing.addNodeBlockedSPKI(spkiHash(intermediateCA).toString('hex'));
++      const req = https.get({ host: '127.0.0.1', port, servername: 'localhost', ca: [rootCA] });
++      const [err] = await once(req, 'error');
++      expect((err as NodeJS.ErrnoException).code).toBe('CERT_REVOKED');
++    });
++
++    it('does not affect chains without a blocked key', async () => {
++      testing.addNodeBlockedSPKI(crypto.randomBytes(32).toString('hex'));
++      await expect(connect()).resolves.not.toBe('CERT_REVOKED');
++    });
++  });
++});
+```
+
+---
+
+### Incident Patch 2: `efd4495c` (2026-10-20)
+**Commit Message**: test: fix unload-IPC and protocol.handle 'is fast' flakes (#55083)
+
+* test: fix unload-IPC and protocol.handle 'is fast' flakes
+
+Keep renderers at foreground priority in the two tests that wait for an
+IPC sent from an unload handler after a cross-site navigation, so the
+backgrounded old renderer does not miss Chromium's 500 ms unload timeout
+under parallel spec load.
+
+Rework protocol.handle 'is fast' to compare the native relay path against
+both a direct fetch and the JS-pumped path, with a looser bound against
+direct fetches and timings in the failure message.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LPMvJBQiyP6b7QjatACmnS
+
+* test: fix lint
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LPMvJBQiyP6b7QjatACmnS
+
+---------
 
 Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-**File**: `build/args/all.gn` (modified, +6/-0)
+**File**: `spec/api-ipc.spec.ts` (modified, +20/-1)
 ```diff
-@@ -7,6 +7,12 @@ node_module_version = 150
- # Build Node.js against Chromium's BoringSSL instead of node's bundled OpenSSL.
- node_openssl_path = "//third_party/boringssl"
+@@ -1,5 +1,12 @@
+ import { nativeImage } from 'electron/common';
+-import { BrowserWindow, ipcMain, type IpcMainInvokeEvent, MessageChannelMain, type WebContents } from 'electron/main';
++import {
++  app,
++  BrowserWindow,
++  ipcMain,
++  type IpcMainInvokeEvent,
++  MessageChannelMain,
++  type WebContents
++} from 'electron/main';
  
-+# Build Node.js against Chromium's V8 instead of node's bundled copy.
-+node_v8_path = "//v8"
+ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+ 
+@@ -1197,6 +1204,18 @@ describe('ipc module', () => {
+       defer(() => {
+         server.close();
+       });
++      // Content gives the old frame's unload handlers 500 ms (kUnloadTimeout)
++      // before it deletes the frame and drops its IPC, and once the new page
++      // commits the old process hosts no active page, so Chromium drops it to
++      // background priority (on macOS, darwinbg with CPU and timer
++      // suppression). With other spec workers busy, the unload handler then
++      // misses that window and the IPC never arrives. Keep renderers at
++      // foreground priority for this test; the switch is read on every
++      // priority update.
++      if (!app.commandLine.hasSwitch('disable-renderer-backgrounding')) {
++        app.commandLine.appendSwitch('disable-renderer-backgrounding');
++        defer(() => app.commandLine.removeSwitch('disable-renderer-backgrounding'));
++      }
+       const w = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: true, contextIsolation: false } });
+       await w.loadURL(`http://localhost:${port}`);
+       await w.webContents.executeJavaScript(
+```
+
+**File**: `spec/api-protocol.spec.ts` (modified, +42/-25)
+```diff
+@@ -2853,10 +2853,16 @@ describe('protocol module', () => {
+         return elapsed;
+       };
+ 
+-      const measureInterceptedPayload = async () => {
++      // `relayed` returns net.fetch's Response untouched, which protocol.handle
++      // relays natively; `piped` re-wraps the body so every chunk is pumped
++      // through JS, the path relaying replaced.
++      type Path = 'direct' | 'relayed' | 'piped';
++      const measure = async (path: Path) => {
++        if (path === 'direct') return fetchPayload();
+         protocol.handle('http', async (req) => {
+           handlerCalls++;
+-          return net.fetch(req, { bypassCustomProtocolHandlers: true });
++          const response = await net.fetch(req, { bypassCustomProtocolHandlers: true });
++          return path === 'relayed' ? response : new Response(response.body, response);
+         });
+         try {
+           return await fetchPayload(true);
+@@ -2865,30 +2871,41 @@ describe('protocol module', () => {
+         }
+       };
+ 
+-      await fetchPayload(); // Warm the direct network path.
+-      await measureInterceptedPayload(); // Warm the protocol handler path.
+-
+-      // Fetching through an intercepted handler should not be too much slower
+-      // than it would be if the protocol hadn't been intercepted.
+-      const samples = [];
+-      for (const directFirst of [true, false, true, false]) {
+-        let directTime: number;
+-        let interceptedTime: number;
+-        if (directFirst) {
+-          directTime = await fetchPayload();
+-          interceptedTime = await measureInterceptedPayload();
+-        } else {
+-          interceptedTime = await measureInterceptedPayload();
+-          directTime = await fetchPayload();
+-        }
+-        samples.push({ directTime, interceptedTime, ratio: interceptedTime / directTime });
++      // Warm every path.
++      for (const path of ['direct', 'relayed', 'piped'] as const) await measure(path);
 +
-+# Electron owns V8 platform initialization, so Node.js must not set up its own.
-+node_use_v8_platform = false
-+
- v8_promise_internal_field_count = 1
++      // Run every order of the three paths once so drift and per-position
++      // effects hit each path equally, then compare medians of per-round ratios.
++      const orders: Path[][] = [
++        ['direct', 'relayed', 'piped'],
++        ['relayed', 'piped', 'direct'],
++        ['piped', 'direct', 'relayed'],
++        ['direct', 'piped', 'relayed'],
++        ['piped', 'relayed', 'direct'],
++        ['relayed', 'direct', 'piped']
++      ];
++      const samples: Record<Path, number>[] = [];
++      for (const order of orders) {
++        const sample = {} as Record<Path, number>;
++        for (const path of order) sample[path] = await measure(path);
++        samples.push(sample);
++      }
++      const median = (values: number[]) => {
++        const sorted = [...values].sort((a, b) => a - b);
++        return (sorted[2] + sorted[3]) / 2;
++      };
++      const relayedVsDirect = median(samples.map((s) => s.relayed / s.direct));
++      const relayedVsPiped = median(samples.map((s) => s.relayed / s.piped));
++      const details = `timings: ${JSON.stringify({ relayedVsDirect, relayedVsPiped, samples })}`;
++      // Interception adds another response body pipeline. Its cost relative to
++      // a direct fetch depends on the machine: about 1.4-1.8x on Linux, but
++      // 3.0-3.9x on Windows CI runners, so this only catches gross regressions.
++      expect(relayedVsDirect, details).toBeLessThan(5);
++      // Relaying should beat pumping the body through JS on the same machine
++      // (about 0.5x on Linux). Only Linux has been measured so far.
++      if (process.platform === 'linux') {
++        expect(relayedVsPiped, details).toBeLessThan(0.8);
+       }
+-
+-      const ratios = samples.map(({ ratio }) => ratio).sort((a, b) => a - b);
+-      const medianRatio = (ratios[1] + ratios[2]) / 2;
+-      // Balance pair order to reduce drift and use the median to limit isolated outliers.
+-      // Interception adds another response body pipeline; allow headroom above its expected ~2x cost.
+-      expect(medianRatio, `timings: ${JSON.stringify(samples)}`).toBeLessThan(3);
+     });
+   });
+ });
+```
+
+**File**: `spec/api-web-frame-main.spec.ts` (modified, +8/-0)
+```diff
+@@ -448,6 +448,14 @@ describe('webFrameMain module', () => {
+     });
  
- # Args are evaluated before GN installs its script interpreter. Invoke the
-```
-
-**File**: `patches/node/build_add_gn_build_files.patch` (modified, +12/-32)
-```diff
-@@ -14,6 +14,13 @@ src/inspector/unofficial.gni - The node_protocol_generated_sources action
- was missing gypi_values.node_pdl_files from its inputs, causing Ninja to skip
- regeneration when PDL domain files changed. Should be upstreamed.
- 
-+node.gni - The node_* declare_args() are configured from Electron's build
-+args (//electron/build/args/all.gn) rather than by changing their defaults
-+here. The exception is node_path: node_module_version's default in the same
-+declare_args() block runs exec_script() on $node_path, and GN evaluates it
-+against node_path's default even when both are overridden, so gn gen fails
-+unless the default points at the real checkout.
-+
- diff --git a/configure.py b/configure.py
- index b826e24e3f474f4ec89bafd0a6db3081fadfbef8..1b35f195f7ee7547544cc954baf95c725afa8d0b 100755
- --- a/configure.py
-@@ -28,37 +35,19 @@ index b826e24e3f474f4ec89bafd0a6db3081fadfbef8..1b35f195f7ee7547544cc954baf95c72
-    o['variables']['v8_enable_external_code_space'] = 1 if options.enable_pointer_compression else 0
-    o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0
- diff --git a/node.gni b/node.gni
--index 28ef444b72c139eb9253122dfaf8b14c8108eac6..0d0438ba8f478a08949ea07cad6c349d15060be9 100644
-+index 28ef444b72c139eb9253122dfaf8b14c8108eac6..757a0b2a75643322b3339a45e991ad5622ffc29e 100644
- --- a/node.gni
- +++ b/node.gni
--@@ -5,10 +5,10 @@
-+@@ -5,7 +5,7 @@
-  # Embedder options.
-  declare_args() {
-    # The location of Node.js in source code tree.
- -  node_path = "//node"
- +  node_path = "//third_party/electron_node"
-  
-    # The location of V8 - use the one from node's deps by default.
---  node_v8_path = "$node_path/deps/v8"
--+  node_v8_path = "//v8"
-- 
--   # The location of OpenSSL - use the one from node's deps by default.
--   node_openssl_path = "$node_path/deps/openssl"
--@@ -48,7 +48,7 @@ declare_args() {
--   node_openssl_system_ca_path = ""
-- 
--   # Initialize v8 platform during node.js startup.
---  node_use_v8_platform = true
--+  node_use_v8_platform = false
-- 
--   # Custom build tag.
--   node_tag = ""
--@@ -68,10 +68,16 @@ declare_args() {
--   # TODO(zcbenz): There are few broken things for now:
--   #   1. cross-os compilation is not supported.
--   #   2. node_mksnapshot crashes when cross-compiling for x64 from arm64.
---  node_use_node_snapshot = (host_os == target_os) && !(host_cpu == "arm64" && target_cpu == "x64")
--+  node_use_node_snapshot = false
-+   node_v8_path = "$node_path/deps/v8"
-+@@ -72,6 +72,12 @@ declare_args() {
-  
-    # Build with Amaro (TypeScript utils).
-    node_use_amaro = true
-@@ -309,7 +298,7 @@ index 856878c33681a73d41016729dabe48b0a6a80589..91a11852d206b65485fe90fd037a0bd1
-      if sys.platform == 'win32':
-        files = [ x.replace('\\', '/') for x in files ]
- diff --git a/unofficial.gni b/unofficial.gni
--index aa35cd4664e9ed43b46e1ad62eaabcf1cfe40135..7265e09bf7601afe76463f528ffb385db796e093 100644
-+index aa35cd4664e9ed43b46e1ad62eaabcf1cfe40135..5fe998f97e2465162bde97cdae758bc7ab8243ba 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -147,32 +147,42 @@ template("node_gn_build") {
-@@ -358,15 +347,6 @@ index aa35cd4664e9ed43b46e1ad62eaabcf1cfe40135..7265e09bf7601afe76463f528ffb385d
-        "$target_gen_dir/node_javascript.cc",
-      ] + gypi_values.node_sources
-  
--@@ -195,7 +205,7 @@ template("node_gn_build") {
--     }
--     if (node_use_openssl) {
--       deps += [ "deps/ncrypto" ]
---      public_deps += [ "$node_openssl_path" ]
--+      public_deps += [ "//third_party/boringssl" ]
--       sources += gypi_values.node_crypto_sources
--     }
--     if (node_use_sqlite) {
- @@ -224,6 +234,10 @@ template("node_gn_build") {
-      }
-    }
-```
-
-**File**: `patches/node/build_allow_unbundling_of_node_js_dependencies.patch` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ We don't need to do this for zlib, as the existing gn workflow uses the same
- Upstreamed at https://github.com/nodejs/node/pull/55903
- 
- diff --git a/unofficial.gni b/unofficial.gni
--index 7265e09bf7601afe76463f528ffb385db796e093..ca6fab3f2fa162c5292687e4218f7ea2c8bd4b46 100644
-+index 5fe998f97e2465162bde97cdae758bc7ab8243ba..87eb30961cfb44c31995f9768b3c81585bcc8736 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -199,7 +199,17 @@ template("node_gn_build") {
-```
-
-**File**: `patches/node/chore_exclude_electron_node_folder_from_exit-time-destructors.patch` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ index dad4fbbf16f060a76bc7842135506f30aed7ffc0..d874d4b1e4079b392ba7652ea6bfc7de
-        "NCRYPTO_ENGINE_COMPAT=1",
-        "OPENSSL_SUPPRESS_DEPRECATED",
- diff --git a/unofficial.gni b/unofficial.gni
--index ca6fab3f2fa162c5292687e4218f7ea2c8bd4b46..1ccb4f3274b50f74e4ea5c309db155d7e0027560 100644
-+index 87eb30961cfb44c31995f9768b3c81585bcc8736..16ca92f90e5c08f35cc806e952229cd8a35fd725 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -143,7 +143,10 @@ template("node_gn_build") {
-```
-
-**File**: `patches/node/electron_build-time_v8_code_cache_for_the_electron_js2c_bundles.patch` (modified, +1/-1)
-```diff
-@@ -213,7 +213,7 @@ index 65b49b3469b83639a8b37469f24cd9208c70f47a..53bd0f168ba13deb58eb15a82450dad6
-  
-  }  // namespace node
- diff --git a/unofficial.gni b/unofficial.gni
--index 1ccb4f3274b50f74e4ea5c309db155d7e0027560..fdb258adabea6607f617e374026562366c8bac0e 100644
-+index 16ca92f90e5c08f35cc806e952229cd8a35fd725..8846cb83ed2949b81095883d99d9f0a7a7e04dc2 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -158,6 +158,11 @@ template("node_gn_build") {
-```
-
-**File**: `patches/node/electron_enable_node_startup_snapshot_generation_in_chromium_s_v8.patch` (modified, +3/-3)
-```diff
-@@ -62,7 +62,7 @@ eliminating the Node bootstrap recompile.
-   config following https://chromium-review.googlesource.com/c/v8/v8/+/7808546.
- 
- diff --git a/node.gni b/node.gni
--index 0d0438ba8f478a08949ea07cad6c349d15060be9..55f35c4c376e66be291631cff8b1acf266ff41a3 100644
-+index 757a0b2a75643322b3339a45e991ad5622ffc29e..c7159731d790a76f20c7c678494a3969eccba5e9 100644
- --- a/node.gni
- +++ b/node.gni
- @@ -31,6 +31,13 @@ declare_args() {
-@@ -90,7 +90,7 @@ index 0d0438ba8f478a08949ea07cad6c349d15060be9..55f35c4c376e66be291631cff8b1acf2
- -  # TODO(zcbenz): There are few broken things for now:
- -  #   1. cross-os compilation is not supported.
- -  #   2. node_mksnapshot crashes when cross-compiling for x64 from arm64.
---  node_use_node_snapshot = false
-+-  node_use_node_snapshot = (host_os == target_os) && !(host_cpu == "arm64" && target_cpu == "x64")
- +  # Embed a startup snapshot of the bootstrapped Node.js environment, and the
- +  # V8 code cache for the builtins that complements it, to speed up startup.
- +  # Neither contains machine code, so cross-arch builds can generate them, but
-@@ -318,7 +318,7 @@ index 0842cba257d0ca36e07c97736e5b24cc77f2a053..0ee1bd02a03b6d303861cd0f8353db6c
-        node::InitializeOncePerProcess(
-            std::vector<std::string>(argv, argv + argc),
- diff --git a/unofficial.gni b/unofficial.gni
--index fdb258adabea6607f617e374026562366c8bac0e..d55f69133a3ba870c4b1dd23b6580c82ee590c77 100644
-+index 8846cb83ed2949b81095883d99d9f0a7a7e04dc2..1b95224d0555fd5d3ea2396535967d87631e0f91 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -32,7 +32,22 @@ template("node_gn_build") {
-```
-
-**File**: `patches/node/fix_use_a_dedicated_cppheappointertag_for_cppgc_wrappables.patch` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ index f86232b125d9967f3021348cf88f132c391b2e0e..f72aafe07c039c6d63b74c80cd252f83
-  
-  void IsolateData::MemoryInfo(MemoryTracker* tracker) const {
- diff --git a/unofficial.gni b/unofficial.gni
--index d55f69133a3ba870c4b1dd23b6580c82ee590c77..ceeed26dfaeace32e9ef761a68062ce93e9277b6 100644
-+index 1b95224d0555fd5d3ea2396535967d87631e0f91..a4cfd7fe8d80c96b11e33daff90e95b7581772be 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -73,6 +73,12 @@ template("node_gn_build") {
-```
-
-**File**: `patches/node/fix_use_embedder_perfetto_client_when_available.patch` (modified, +3/-3)
-```diff
-@@ -20,12 +20,12 @@ allowing contentTracing to remain the sole owner of category filtering,
- recording sessions, output, and lifecycle.
- 
- diff --git a/node.gni b/node.gni
--index 55f35c4c376e66be291631cff8b1acf266ff41a3..102e27726b7bd7f4adb290c43ceadc1559b27e54 100644
-+index c7159731d790a76f20c7c678494a3969eccba5e9..3903e8c27294403de12a91bd33f5380ac4640507 100644
- --- a/node.gni
- +++ b/node.gni
- @@ -57,6 +57,10 @@ declare_args() {
-    # Initialize v8 platform during node.js startup.
--   node_use_v8_platform = false
-+   node_use_v8_platform = true
-  
- +  # Include Node's standalone Perfetto client. Electron retains it for
- +  # ELECTRON_RUN_AS_NODE while regular Electron processes use Chromium's client.
-@@ -379,7 +379,7 @@ index 3765d931f8e17b33e2201ff3a0e4be84a3216356..17b990455e7d6a791998ab304418c256
- +
-  #endif  // SRC_TRACING_TRACE_EVENT_PERFETTO_H_
- diff --git a/unofficial.gni b/unofficial.gni
--index dd32e6d940d50f3091a45ef2977251c0d773e5d7..76f01b364feaffeaf64cf4451dcf93ef352e0909 100644
-+index dd88a03c352910760e5e5d8eeb0eb6f0dbbdfe42..198855083ee151a0033ce2c558d94d9f107b7e66 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -52,6 +52,11 @@ template("node_gn_build") {
+     it('is detached when unload handler sends IPC', async () => {
++      // The old renderer is backgrounded once the cross-origin page commits,
++      // and under parallel spec load it can miss the 500 ms unload timeout, so
++      // the IPC is dropped. Keep renderers at foreground priority for this test
++      // (see 'receives ipcs from unloading frames' in api-ipc.spec.ts).
++      if (!app.commandLine.hasSwitch('disable-renderer-backgrounding')) {
++        app.commandLine.appendSwitch('disable-renderer-backgrounding');
++        defer(() => app.commandLine.removeSwitch('disable-renderer-backgrounding'));
++      }
+       w = new BrowserWindow({
+         show: false,
+         webPreferences: {
 ```
 
 ---
 
-### Incident Patch 2: `40ebdcc3` (2026-10-19)
-**Commit Message**: docs: fix code block line highlighting after docs reformats (#55097)
+### Incident Patch 3: `30db5188` (2026-10-21)
+**Commit Message**: fix: deliver extension events to service workers (#55146)
 
-* docs: fix code block line highlighting after lint reformats
+Extension service workers register their event listeners with the
+browser over the extensions EventRouter interface, which was only bound
+for frames. Listeners added in a worker were never registered, so events
+such as storage.onChanged and alarms.onAlarm never reached it.
 
-Several highlighted code blocks in the IPC and preload tutorials had their
-line-highlight ranges drift when the docs code blocks were auto-formatted
-(the `import/order` blank line added in #42113, and the if/else collapse in
-#38260), so the highlights now land one line off from the code they were
-meant to call out. Update the ranges to point back at the originally
-highlighted code without changing the code blocks themselves.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01A9enZ3jn8BveASiB5p9G1E
-
-* docs: fix code block line highlighting that drifted from content edits
-
-The Playwright examples in automated-testing.md lost a line when their two
-`require` statements were merged, leaving the highlights one line late, and
-the code signing examples replaced a two-line certificate option with a
-`windowsSign` object while keeping the old two-line ranges. Point the
-highlights back at the intended code and cover the whole `windowsSign`
-object.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACT
-
-**File**: `docs/tutorial/automated-testing.md` (modified, +2/-2)
+**File**: `shell/browser/electron_browser_client.cc` (modified, +5/-0)
 ```diff
-@@ -195,7 +195,7 @@ Playwright launches your app in development mode through the `_electron.launch`
- To point this API to your Electron app, you can pass the path to your main process
- entry point (here, it is `main.js`).
- 
--```js {5} @ts-nocheck
-+```js {4} @ts-nocheck
- import { test, _electron as electron } from '@playwright/test'
- 
- test('launch app', async () => {
-@@ -227,7 +227,7 @@ test('get isPackaged', async () => {
- It can also create individual [Page][playwright-page] objects from Electron BrowserWindow instances.
- For example, to grab the first BrowserWindow and save a screenshot:
- 
--```js {6-7} @ts-nocheck
-+```js {5-6} @ts-nocheck
- import { test, _electron as electron } from '@playwright/test'
- 
- test('save screenshot', async () => {
-```
-
-**File**: `docs/tutorial/code-signing.md` (modified, +2/-2)
-```diff
-@@ -208,7 +208,7 @@ Electron app. This is the tool used under the hood by Electron Forge's
- [`@electron/windows-sign`][] under the hood and supports the same `windowsSign`
- options.
- 
--```js {10-11} @ts-nocheck
-+```js {10-14} @ts-nocheck
- const electronInstaller = require('electron-winstaller')
- // NB: Use this syntax within an async function, Node does not have support for
- //     top-level await as of Node 12.
-@@ -239,7 +239,7 @@ Electron app. This is the tool used under the hood by Electron Forge's [MSI Make
- Just like `@electron/packager`, it uses [`@electron/windows-sign`][] under the hood
- and supports the same `windowsSign` options.
- 
--```js {12-13} @ts-nocheck
-+```js {12-16} @ts-nocheck
- import { MSICreator } from 'electron-wix-msi'
- 
- // Step 1: Instantiate the MSICreator
-```
-
-**File**: `docs/tutorial/ipc.md` (modified, +2/-2)
-```diff
-@@ -182,7 +182,7 @@ provided to the renderer process. Please refer to
- [#24427](https://github.com/electron/electron/issues/24427) for details.
- :::
- 
--```js {6-13,25} title='main.js (Main Process)'
-+```js {7-12,24} title='main.js (Main Process)'
- const { app, BrowserWindow, dialog, ipcMain } = require('electron')
- 
- const path = require('node:path')
-@@ -379,7 +379,7 @@ For this demo, we'll need to first build a custom menu in the main process using
- module that uses the `webContents.send` API to send an IPC message from the main process to the
- target renderer.
- 
--```js {11-26} title='main.js (Main Process)'
-+```js {12-27} title='main.js (Main Process)'
- const { app, BrowserWindow, Menu, ipcMain } = require('electron')
- 
- const path = require('node:path')
-```
-
-**File**: `docs/tutorial/tutorial-3-preload.md` (modified, +2/-2)
-```diff
-@@ -77,7 +77,7 @@ contextBridge.exposeInMainWorld('versions', {
- To attach this script to your renderer process, pass its path to the
- `webPreferences.preload` option in the BrowserWindow constructor:
- 
--```js {2,8-10} title="main.js"
-+```js {3,9-11} title="main.js"
- const { app, BrowserWindow } = require('electron')
- 
- const path = require('node:path')
-@@ -199,7 +199,7 @@ Then, set up your `handle` listener in the main process. We do this _before_
- loading the HTML file so that the handler is guaranteed to be ready before
- you send out the `invoke` call from the renderer.
- 
--```js {1,15} title="main.js"
-+```js {1,16} title="main.js"
- const { app, BrowserWindow, ipcMain } = require('electron/main')
- 
- const path = require('node:path')
-```
-
----
-
-### Incident Patch 3: `4565cf72` (2026-10-15)
-**Commit Message**: build: update v8_embedder_string from net patch effects (#54618)
-
-* fix: derive V8 cache compatibility from net patch effects
-
-Replace the custom V8 cache salt and Wasm embedded blob guard
-from #54234 with embedder string version hashing.
-
-Generate -electron.<16-hex fingerprint> during GN configuration from
-the net committed changes between Chromium's pinned V8 revision and
-patched HEAD. This requires no release time bookkeeping and preserves
-cache identities across packaging only changes to the patch series.
-
-* build: fix metadata generation and restoration
-
-* build: address review follow-ups
-
-- Keep code cache hash checks free of process global mutation
-- Limit the helper to DCHECK enabled builds
-- Make the fingerprint algorithm self contained and include it
-in the source cache key
-- Allow an explicit packager identity
-- Skip Wasm tests without generated assets
-- Correct the documentation structure
-
-* build: simplify V8 fingerprint regeneration tracking
-
-Track Git HEAD and the exported V8 patch series instead of symbolic
-branch refs, packed-refs, or Git directories. Detached checkout updates
-and patch exports trigger regeneration, while equivalent re-exports
-preserve the committe
-
-**File**: `.github/actions/checkout/action.yml` (modified, +4/-0)
-```diff
-@@ -162,6 +162,10 @@ runs:
-     shell: bash
-     run: |
-       node src/electron/script/patches-stats.mjs --upload-stats || true
-+  - name: Record V8 patch fingerprint for the source cache
-+    if: ${{ steps.check-cache.outputs.cache_exists == 'false' && inputs.use-cache == 'true' }}
-+    shell: bash
-+    run: python3 src/electron/script/v8-patch-fingerprint.py --write-ci-cache
-   # delete all .git directories under src/ except for
-   # third_party/angle/ and third_party/dawn/ because of build time generation of files
-   # gen/angle/commit.h depends on third_party/angle/.git/HEAD
-```
-
-**File**: `.github/workflows/pipeline-electron-lint.yml` (modified, +5/-0)
-```diff
-@@ -107,6 +107,11 @@ jobs:
-         cd src/electron
-         node script/yarn.js install --immutable
-         node script/yarn.js lint
-+    - name: Run V8 Fingerprint Tests
-+      shell: bash
-+      run: |
-+        cd src/electron
-+        python3 script/v8-patch-fingerprint-test.py
-     - name: Run Script Typechecker
-       shell: bash
-       run: |
-```
-
-**File**: `BUILD.gn` (modified, +21/-0)
-```diff
-@@ -648,6 +648,10 @@ source_set("electron_lib") {
-   if (!is_mac) {
-     sources += filenames.lib_sources_views
-   }
-+  if (is_debug || dcheck_always_on) {
-+    sources += [ "shell/common/api/electron_api_testing.cc" ]
-+    deps += [ "shell/common:v8_code_cache_test_helpers" ]
-+  }
- 
-   if (electron_generate_js2c_code_cache) {
-     sources += [
-@@ -2049,8 +2053,22 @@ action("libcxx_objects_zip") {
-   args = rebase_path(outputs)
+@@ -1694,6 +1694,11 @@ void ElectronBrowserClient::RegisterAssociatedInterfaceBindersForServiceWorker(
+   associated_registry.AddInterface<extensions::mojom::ServiceWorkerHost>(
+       base::BindRepeating(&extensions::ServiceWorkerHost::BindReceiver,
+                           service_worker_version_info.process_id));
++  // Service workers register their extension event listeners over this
++  // interface; without it the browser never dispatches events to them.
++  associated_registry.AddInterface<extensions::mojom::EventRouter>(
++      base::BindRepeating(&extensions::EventRouter::BindForRenderer,
++                          service_worker_version_info.process_id));
+ #endif
  }
  
-+if (is_debug || dcheck_always_on) {
-+  # Test runners receive these assets rather than a full V8 checkout.
-+  copy("v8_code_cache_spec_assets") {
-+    sources = [
-+      "//v8/LICENSE",
-+      "//v8/test/mjsunit/wasm/wasm-module-builder.js",
-+    ]
-+    outputs = [ "$root_gen_dir/electron/v8-code-cache/{{source_file_part}}" ]
-+  }
+```
+
+**File**: `spec/extensions.spec.ts` (modified, +15/-0)
+```diff
+@@ -437,6 +437,21 @@ describe('chrome extensions', () => {
+         w.destroy();
+       }
+     });
++
++    it('emits onChanged in a service worker', async () => {
++      const customSession = session.fromPartition(`persist:${randomUUID()}`);
++      const extension = await customSession.extensions.loadExtension(
++        path.join(fixtures, 'extensions', 'chrome-storage-service-worker')
++      );
++      const w = new BrowserWindow({ show: false, webPreferences: { session: customSession } });
++      try {
++        await w.loadURL(`${extension.url}page.html`);
++        const change = await w.webContents.executeJavaScript("chrome.runtime.sendMessage('set-and-wait-for-change')");
++        expect(change).toEqual({ changes: { key: { newValue: 'value' } }, areaName: 'local' });
++      } finally {
++        w.destroy();
++      }
++    });
+   });
+ 
+   describe('chrome.webRequest', () => {
+```
+
+**File**: `spec/fixtures/extensions/chrome-storage-service-worker/background.js` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++/* global chrome */
++const waiting = [];
++
++chrome.storage.onChanged.addListener((changes, areaName) => {
++  for (const resolve of waiting.splice(0)) resolve({ changes, areaName });
++});
++
++chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
++  if (message !== 'set-and-wait-for-change') return;
++  const changed = new Promise((resolve) => waiting.push(resolve));
++  chrome.storage.local
++    .set({ key: 'value' })
++    .then(() => changed)
++    .then(sendResponse);
++  return true;
++});
+```
+
+**File**: `spec/fixtures/extensions/chrome-storage-service-worker/manifest.json` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++{
++  "name": "chrome-storage-service-worker",
++  "version": "1.0",
++  "permissions": ["storage"],
++  "background": {
++    "service_worker": "background.js"
++  },
++  "manifest_version": 3
 +}
-+
- group("electron") {
-   public_deps = [ ":electron_app" ]
-+  if (is_debug || dcheck_always_on) {
-+    data_deps = [ ":v8_code_cache_spec_assets" ]
-+  }
- }
- 
- ##### node_headers
-@@ -2122,6 +2140,9 @@ group("testing_build") {
-     ":electron_mksnapshot_zip",
-     ":node_headers",
-   ]
-+  if (is_debug || dcheck_always_on) {
-+    data_deps = [ ":v8_code_cache_spec_assets" ]
-+  }
-   if (!is_mas_build) {
-     public_deps += [ ":electron_xcache_zip" ]
-   }
 ```
 
-**File**: `build/args/all.gn` (modified, +23/-13)
+**File**: `spec/fixtures/extensions/chrome-storage-service-worker/page.html` (added, +2/-0)
 ```diff
-@@ -8,20 +8,30 @@ node_module_version = 150
- node_openssl_path = "//third_party/boringssl"
- 
- v8_promise_internal_field_count = 1
--v8_embedder_string = "-electron.0"
--
--# Salt the hash V8 uses to key code caches and serialized wasm modules with a
--# fingerprint of the patches we apply on top of the V8 release. Release
--# branches cherry-pick V8 fixes without changing V8's own version number, so
--# without this a build with a different patch set would still accept (and
--# mis-link) serialized code written by the previous release. V8 hashes these
--# files at `gn gen` time and re-runs gn whenever one of them changes.
--_v8_patch_dir = "//electron/patches/v8"
--v8_version_hash_salt_files = [ "$_v8_patch_dir/.patches" ]
--foreach(_patch, read_file("$_v8_patch_dir/.patches", "list lines")) {
--  if (_patch != "") {
--    v8_version_hash_salt_files += [ "$_v8_patch_dir/$_patch" ]
-+
-+# Args are evaluated before GN installs its script interpreter. Invoke the
-+# hermetic Python executable directly to generate the ordinary V8 argument.
-+_v8_embedder_override = getenv("ELECTRON_V8_EMBEDDER_STRING")
-+if (_v8_embedder_override != "") {
-+  v8_embedder_string = _v8_embedder_override
-+} else {
-+  _v8_fingerprint_python = "//third_party/cpython3/host/bin/python3"
-+  if (getenv("OS") == "Windows_NT") {
-+    _v8_fingerprint_python += ".exe"
-   }
-+  _v8_fingerprint_script = "//electron/script/v8-patch-fingerprint.py"
-+  _v8_fingerprint_inputs = exec_script(_v8_fingerprint_python,
-+                                       [
-+                                         rebase_path(_v8_fingerprint_script),
-+                                         "--inputs",
-+                                       ],
-+                                       "json",
-+                                       [ _v8_fingerprint_script ])
-+  v8_embedder_string =
-+      exec_script(_v8_fingerprint_python,
-+                  [ rebase_path(_v8_fingerprint_script) ],
-+                  "trim string",
-+                  _v8_fingerprint_inputs + [ _v8_fingerprint_script ])
- }
- 
- # TODO: this breaks mksnapshot
-```
-
-**File**: `docs/development/patches.md` (modified, +39/-0)
-```diff
-@@ -94,3 +94,42 @@ $ ../../electron/script/git-import-patches -3 ../../electron/patches/node
- ```
- 
- If `git-import-patches -3` encounters a merge conflict that it can't resolve automatically, it will pause and allow you to resolve the conflict manually. Once you have resolved the conflict, `git add` the resolved files and continue to apply the rest of the patches by running `git am --continue`.
-+
-+### V8 serialized bytecode compatibility
-+
-+V8 includes its embedder string in the version hash used to validate JavaScript
-+code caches and serialized WebAssembly modules. Electron's common GN arguments
-+automatically set `v8_embedder_string` to `-electron.<fingerprint>`. No release time bump is required.
-+
-+The fingerprint identifies the net committed source changes between the patched
-+V8 `HEAD` produced by sync and the revision pinned by Chromium's `DEPS`. It
-+includes changed paths, Git normalized content
-+identities and file modes, including additions and deletions. Patch filenames,
-+descriptions, authors and commit history are not inputs. Reordering, splitting or
-+re-exporting patches preserves the fingerprint when the resulting source is
-+identical. Actual source changes invalidate caches conservatively, even when
-+they are ABI-compatible.
-+
-+Uncommitted local edits do not change the fingerprint. Compatibility between
-+cached code from differently modified development builds is outside this
-+mechanism's scope, clear local caches when testing such changes.
-+
-+Local builds derive the fingerprint directly from the synced V8 Git checkout
-+without writing sidecar files. CI source caches deliberately omit V8 Git
-+metadata, so cache creation records the same Git derived fingerprint in
-+`v8/.electron-patch-fingerprint.json` before stripping it. Restored caches verify
-+the pinned V8 revision, patch series provenance and fingerprint schema before
-+using that identity. Missing or stale metadata fails generation rather than
-+substituting a weaker cache key.
-+
-+The source cache key in `script/generate-deps-hash.js` hashes
-+`script/v8-patch-fingerprint.py`, which contains the fingerprint algorithm and
-+Git input handling. Changes to the algorithm or metadata schema invalidate
-+existing source caches automatically.
-+
-+Packagers building source trees without V8 Git metadata or CI fingerprint
-+metadata can explicitly set `ELECTRON_V8_EMBEDDER_STRING` before GN generation
-+to supply their own compatibility identity. This bypasses automatic fingerprint
-+generation and validation; the packager must change the identity whenever V8
-+cache compatibility changes. GN does not track environment variable changes,
-+so changing or removing this override requires rerunning `gn gen` explicitly.
-```
-
-**File**: `filenames.gni` (modified, +0/-1)
-```diff
-@@ -619,7 +619,6 @@ filenames = {
-     "shell/common/api/electron_api_net.cc",
-     "shell/common/api/electron_api_shared_texture.cc",
-     "shell/common/api/electron_api_shell.cc",
--    "shell/common/api/electron_api_testing.cc",
-     "shell/common/api/electron_api_url_loader.cc",
-     "shell/common/api/electron_api_url_loader.h",
-     "shell/common/api/electron_api_v8_util.cc",
-```
-
-**File**: `patches/chromium/build_allow_electron_to_use_exec_script.patch` (modified, +2/-5)
-```diff
-@@ -5,11 +5,8 @@ Subject: build: allow electron to use exec_script
- 
- This is similar to the //build usecase so we're OK adding ourselves here.
- 
--//v8/gni/version_hash_salt.gni comes from our V8 patch that derives the
--code-cache salt from patches/v8 at gen time.
--
- diff --git a/.gn b/.gn
--index 3af2022171dbdebf4d1d2564f8f159124cb68c7c..e35f9ed26b0c9451c3f8f010c1940f3a19727f74 100644
-+index 3af2022171dbdebf4d1d2564f8f159124cb68c7c..f2ab0a1711b94dd03ec5474e6d383161d0032a88 100644
- --- a/.gn
- +++ b/.gn
- @@ -462,6 +462,31 @@ exec_script_allowlist =
-@@ -18,7 +15,7 @@ index 3af2022171dbdebf4d1d2564f8f159124cb68c7c..e35f9ed26b0c9451c3f8f010c1940f3a
-        "//third_party/dawn/third_party/meson/meson_target.gni",
- +
- +      "//electron/BUILD.gn",
--+      "//v8/gni/version_hash_salt.gni",
-++      "//electron/build/args/all.gn",
- +      "//third_party/electron_node/deps/ada/unofficial.gni",
- +      "//third_party/electron_node/deps/base64/BUILD.gn",
- +      "//third_party/electron_node/deps/base64/unofficial.gni",
-```
-
-**File**: `patches/v8/.patches` (modified, +0/-1)
-```diff
-@@ -1,4 +1,3 @@
- build_warn_instead_of_abort_on_builtin_pgo_profile_mismatch.patch
- src_use_legacy_trace_macros_in_perfetto_to_support_all_phases.patch
--feat_key_code_caches_to_the_patch_set_and_the_embedded_blob.patch
- fix_allow_embedder_slots_of_non-api_objects_in_snapshot.patch
+@@ -0,0 +1,2 @@
++<!doctype html>
++<title>chrome.storage</title>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55108** (closed): docs: remove never-emitted aborted event on IncomingMessage (@RXVEN-1907)
-- **PR #55105** (2026-10-19): docs: fix code block line highlighting after docs reformats (@trop[bot])
-- **PR #55097** (2026-10-19): docs: fix code block line highlighting after docs reformats (@claude[bot])
-- **PR #55096** (2026-10-19): test: re-enable Node.js tests that now pass with BoringSSL (@claude[bot])
-- **PR #55095** (2026-10-19): test: re-enable Node.js tests that now pass with BoringSSL (@claude[bot])
-- **PR #55094** (2026-10-19): test: re-enable Node.js tests that now pass with BoringSSL (@claude[bot])
+- **PR #55157** (2026-10-21): build: update PGO profiles (@electron-pgo-updater[bot])
+- **PR #55149** (2026-10-21): chore: cherry-pick 69 changes from angle, chromium, pdfium, skia and v8 (@electron-security-backports[bot])
+- **PR #55148** (2026-10-21): chore: cherry-pick 58 changes from angle, chromium, pdfium, skia and v8 (@electron-security-backports[bot])
+- **PR #55147** (2026-10-21): chore: cherry-pick 64 changes from angle, chromium, pdfium, skia and v8 (@electron-security-backports[bot])
+- **PR #55146** (2026-10-21): fix: deliver extension events to service workers (@samuelmaddock)
+- **PR #55145** (2026-10-21): chore: cherry-pick 29 changes from chromium, pdfium, skia and v8 (@electron-security-backports[bot])
 
 ---
 
@@ -983,26 +1006,21 @@ preserve the committe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: stop overriding node GN declare_args defaults in patch (#55042)
+## X. apply the certificate SPKI blocklist to Node and add entries (#55126)
 
 **RULE**:
-When implementing operations in `build/args/all.gn`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `patches/chromium/.patches`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03461bac`: build: stop overriding node GN declare_args defaults in patch (#55042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44fdb9fe`: apply the certificate SPKI blocklist to Node and add entries (#55126). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/args/all.gn`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `patches/chromium/.patches`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# Build Node.js against Chromium's V8 instead of node's bundled copy.
-node_v8_path = "//v8"
-
-# Electron owns V8 platform initialization, so Node.js must not set up its own.
-node_use_v8_platform = false
-
+add_entries_to_the_spki_blocklist.patch
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1012,4 +1030,4 @@ node_use_v8_platform = false
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03461bac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44fdb9fe` are properly handled with clean fallback behavior.

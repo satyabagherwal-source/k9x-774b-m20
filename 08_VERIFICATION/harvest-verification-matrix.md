@@ -4197,3 +4197,8 @@
 | `CYCLE-20261021-V9KI` | `2026-10-21T04:21:58.194Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`5d960ed2...`) |
 | `CYCLE-20261021-2YZG` | `2026-10-21T04:27:57.724Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`912edbbb...`) |
 | `CYCLE-20261021-DNW2` | `2026-10-21T04:36:16.562Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3519, Rule 3520, Rule 3521` | Yes (`55147421...`) |
+| `CYCLE-20261021-M5RK` | `2026-10-21T04:42:52.976Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3522` | Yes (`e36d5845...`) |
+| `CYCLE-20261021-M6EF` | `2026-10-21T04:42:53.799Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`22a26985...`) |
+| `CYCLE-20261021-MBMV` | `2026-10-21T04:43:00.583Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3523` | Yes (`e9e869ec...`) |
+| `CYCLE-20261021-MDRE` | `2026-10-21T04:43:03.338Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3524` | Yes (`147b8475...`) |
+| `CYCLE-20261021-MGGL` | `2026-10-21T04:43:06.837Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`5f9cb8aa...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T04:36:16.505Z",
+  "last_updated": "2026-10-21T04:43:06.781Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4874,8 +4874,8 @@
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "c3d6496e",
-      "content_hash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
+      "source_version": "f33b1dbe",
+      "content_hash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "promoted_rules": [
@@ -4903,6 +4903,11 @@
           "number": 3020,
           "title": "deps): bump chromaui/action from 18.12.2 to 18.13.0 (#23776)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3522,
+          "title": "Menu): correct keyboard navigation under StrictMode and away from items with sub",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4910,7 +4915,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:20:36.660Z",
+      "verified_at": "2026-10-21T04:42:52.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8902,14 +8907,19 @@
       "slug": "electron-electron",
       "platform": "github",
       "source_url": "https://github.com/electron/electron",
-      "source_version": "360d1da1",
-      "content_hash": "99576aab8dedc8f7b9e8b53797a01cd8ea759739cf177aa3ffadaa2333f42076",
+      "source_version": "30db5188",
+      "content_hash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
       "dossier_path": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "promoted_rules": [
         {
           "number": 2705,
           "title": "build: stop overriding node GN declare_args defaults in patch (#55042)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3523,
+          "title": "apply the certificate SPKI blocklist to Node and add entries (#55126)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8918,7 +8928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:18:29.061Z",
+      "verified_at": "2026-10-21T04:43:00.510Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19652,7 +19662,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "b0c3496ffc085cda31ba49ea1067cbd5961fdec2c1d52bbd5f0306ea6611d00d",
+      "content_hash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -19694,7 +19704,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-19T15:31:42.810Z",
+      "verified_at": "2026-10-21T04:42:53.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30610,8 +30620,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "7ceecd48",
-      "content_hash": "d14460bd698fa461ef7b3baad2df326bec97dbe37b2ce30193818631e975032e",
+      "source_version": "6385f214",
+      "content_hash": "5f9cb8aab1593bc52590e95f2577c6ac5beea9f4de1cde84680fa5169efd3bf6",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -30626,7 +30636,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:15:15.392Z",
+      "verified_at": "2026-10-21T04:43:06.765Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49021,8 +49031,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "bf616d60",
-      "content_hash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
+      "source_version": "be55273c",
+      "content_hash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -49040,6 +49050,11 @@
           "number": 3282,
           "title": "catch and handle empty digests (#5501)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3524,
+          "title": "oci): support custom credential providers (#5502)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49047,7 +49062,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:03:59.531Z",
+      "verified_at": "2026-10-21T04:43:03.279Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107545,6 +107560,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T04:36:16.491Z"
+    },
+    "rule-3522": {
+      "learning_id": "rule-3522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3522,
+      "title": "Menu): correct keyboard navigation under StrictMode and away from items with sub",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "f33b1dbe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:42:52.918Z"
+    },
+    "rule-3523": {
+      "learning_id": "rule-3523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3523,
+      "title": "apply the certificate SPKI blocklist to Node and add entries (#55126)",
+      "source_url": "https://github.com/electron/electron",
+      "source_version": "30db5188",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:43:00.511Z"
+    },
+    "rule-3524": {
+      "learning_id": "rule-3524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3524,
+      "title": "oci): support custom credential providers (#5502)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "be55273c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T04:43:03.279Z"
     }
   },
   "aliases": {

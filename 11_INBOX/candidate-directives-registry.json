@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T01:10:52.023Z",
+  "last_updated": "2026-10-21T04:43:06.845Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2389,6 +2389,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
+    },
+    {
+      "id": "CD-MGGT",
+      "directive_title": "Empirical Invariant Guard in moss文生图.json",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "6385f214",
+      "date_staged": "2026-10-21",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-lioensky-vcptoolbox"
     }
   ]
 }

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MOIZ",
-    "timestamp": "2026-10-20T03:59:37.643Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "030d6a048f81735f3fd48836baf52ced92a73eba39db50e34d970df50776a253",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-U7FK",
-    "timestamp": "2026-10-20T04:05:28.736Z",
-    "repository": "dubzzz/fast-check",
-    "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "5caf3fdb8f76c497e465211d260faedb748695bb35234d765ef66510ad476669",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-U8WE",
-    "timestamp": "2026-10-20T04:05:30.638Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-7IO7",
-    "timestamp": "2026-10-20T04:15:49.831Z",
-    "repository": "iliyami/MacSai",
-    "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "42ecc369d69eb31367b9e2038fc53ac469be7e61d3ce17085c6fd9b689131a8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-7JVA",
-    "timestamp": "2026-10-20T04:15:51.382Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "8f9d58acdd2aeaf6a8e10628adf592a9dc41fdd30793b05fa07fefd4bb7f0e24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-7MK8",
     "timestamp": "2026-10-20T04:15:54.872Z",
     "repository": "apple/foundationdb",
@@ -7492,6 +7417,81 @@
     "contentHash": "5514742189d58e8fa8218d0a6ce427e5a8da9373362a50a1adc026143fec34b9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-M5RK",
+    "timestamp": "2026-10-21T04:42:52.976Z",
+    "repository": "carbon-design-system/carbon",
+    "learningId": "learn-github-carbon-design-system-carbon",
+    "contentHash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-M6EF",
+    "timestamp": "2026-10-21T04:42:53.799Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-MBMV",
+    "timestamp": "2026-10-21T04:43:00.583Z",
+    "repository": "electron/electron",
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-MDRE",
+    "timestamp": "2026-10-21T04:43:03.338Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-MGGL",
+    "timestamp": "2026-10-21T04:43:06.837Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "5f9cb8aab1593bc52590e95f2577c6ac5beea9f4de1cde84680fa5169efd3bf6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

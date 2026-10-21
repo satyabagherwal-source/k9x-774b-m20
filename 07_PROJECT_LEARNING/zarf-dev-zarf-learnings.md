@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `bf616d60`  
+> **Source Version**: `be55273c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:03:59.216Z  
+> **Timestamp**: 2026-10-21T04:43:03.008Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:03:59.208Z  
+> **Harvest Timestamp**: 2026-10-21T04:43:03.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1459,14 +1459,14 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5502** (2026-10-21): **feat(oci): support custom credential providers**
+  *Symptoms*: ## Description  Applications supplying their own registry credentials still initialize Docker's credential store when constructing an OCI client. Missing or malformed Docker configuration can therefore prevent client creation.  Add `oci.WithCredentialFunc` and `zoci.RemoteClientOptions.CredentialFunc` so callers can provide the credential lookup directly. A nil function preserves the Docker credential store; a supplied function is the only credential source. Tests cover both APIs, Docker defaults, registry shortcuts, and credential lookup failures.  Validation with Go 1.26.9:  - `make test-unit` passed for all 48 packages with tests, including race detection and coverage. - `golangci-lint run ./src/pkg/oci/... ./src/pkg/zoci/...` passed. - Formatting and the remaining applicable pre-commit checks passed.  Full-repository lint reports nine existing `staticcheck` deprecation warnings in unchanged files. The same nine warnings were reproduced on the unchanged base. The full lint hook was run and then skipped for the commit because of those existing failures.  ## Related Issue  No linked issue.  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed (package tests and Go API comments; no CLI or schema changes). - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed (verified signed commit and DCO sign-off; lint limitation noted above). 
+
 - **Issue #5501** (2026-10-20): **fix: catch and handle empty digests**
   *Symptoms*: ## Description  Fixes issue described in #5499 where checksums with empty digests and silently skipped. This PR fixes IsSet on FileChecksums to not skip those empty digests and then updates ValidateComponents to produce an error in cases where the digest is empty.  ## Related Issue  Fixes #5499   ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
   > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 7e8106d2742d25007680744e745dc410db1e616f | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6ad694eed1357a83bd5dafd0 |
   > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Coverage Δ | | |---|---|---| | [src/api/package.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?src=pr&el=tree&filepath=src%2Fapi%2Fpackage.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2FwaS9wYWNrYWdlLmdv) | `87.09% <100.00%> (ø)` | | | [src/internal/api/v1beta1/validate.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5501?src=pr&el=tree&filepath=src%2Finternal%2Fapi%2Fv1beta1%2Fvalidate.go&utm_medium=referral&utm_source=githu
-
-- **Issue #5499** (2026-10-20): **FileChecksum IsSet() ignores empty digests**
-  *Symptoms*: ### Environment Device and OS: all App version: v0.88.0 Kubernetes distro being used: n/a Other: n/a  ### Steps to reproduce 1. Create a zarfapi.FileChecksum with the value `"sha256:"` 2. Call and print output of IsSet on the FileChecksum  ### Expected result  Should be `true` as there is a checksum, just that there is an empty digest. Ideally this should not silently fail and should be reported to user as the checksum fails verification.  ### Actual Result  Returns `false` as to the function the just checks if the digest is empty.   ### Visual Proof (screenshots, videos, text, etc)  I threw together a small script to reproduce this  ``` package main  import ( 	"fmt" 	"strings"  	zarfapi "github.com/zarf-dev/zarf/src/api" )  func main() { 	for _, value := range []string{"", "sha256:", "sha256:" + strings.Repeat("0", 64)} { 		checksum := zarfapi.ParseFileChecksum(value) 		verification := "skipped" 		if checksum.IsSet() { // Same condition used by Zarf's file deployment path. 			verification = "attempted" 		} 		fmt.Printf("input=%q algorithm=%q digest=%q IsSet=%t verification=%s\n", 			value, checksum.Algorithm, checksum.Digest, checksum.IsSet(), verification) 	} } ```  Which produced  ``` input="" algorithm="" digest="" IsSet=false verification=skipped input="sha256:" algorithm="sha256" digest="" IsSet=false verification=skipped input="sha256:0000000000000000000000000000000000000000000000000000000000000000" algorithm="sha256" digest="0000000000000000000000000000000000000000000
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1483,136 +1483,357 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf616d60` (2026-10-20)
-**Commit Message**: fix: catch and handle empty digests (#5501)
+### Incident Patch 1: `be55273c` (2026-10-20)
+**Commit Message**: feat(oci): support custom credential providers (#5502)
 
-Signed-off-by: eoghanriley <[REDACTED_EMAIL]>
+Signed-off-by: Sergiusz Urbaniak <[REDACTED_EMAIL]>
 
-**File**: `src/api/api_test.go` (modified, +22/-0)
+**File**: `src/pkg/oci/auth_test.go` (added, +242/-0)
 ```diff
-@@ -39,6 +39,28 @@ func TestPackageGetAPIVersion(t *testing.T) {
- 	}
- }
- 
-+func TestFileChecksumIsSet(t *testing.T) {
-+	t.Parallel()
+@@ -0,0 +1,242 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: 2021-Present The Zarf Authors
 +
-+	tests := []struct {
-+		name     string
-+		checksum api.FileChecksum
-+		want     bool
-+	}{
-+		{name: "omitted checksum"},
-+		{name: "algorithm without digest", checksum: api.ParseFileChecksum("sha256:"), want: true},
-+		{name: "digest without algorithm", checksum: api.FileChecksum{Digest: "abc123"}, want: true},
-+		{name: "algorithm and digest", checksum: api.FileChecksum{Algorithm: api.ChecksumSHA512, Digest: "abc123"}, want: true},
++package oci
++
++import (
++	"context"
++	"encoding/base64"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"net"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"strconv"
++	"strings"
++	"testing"
++
++	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
++	"github.com/stretchr/testify/require"
++	"oras.land/oras-go/v2/content"
++	"oras.land/oras-go/v2/registry/remote/auth"
++)
++
++func TestNewOrasRemoteCredentialFunc(t *testing.T) {
++	credential := auth.Credential{Username: "registry-user", Password: "registry-password"}
++	providerErr := errors.New("credential provider unavailable")
++	basicCredential := func(_ context.Context, _ string) (auth.Credential, error) {
++		return credential, nil
 +	}
++	emptyCredential := func(_ context.Context, _ string) (auth.Credential, error) {
++		return auth.EmptyCredential, nil
++	}
++	withoutHome := func(t *testing.T, _ string) {
++		t.Helper()
++		for _, name := range []string{"HOME", "USERPROFILE", "DOCKER_CONFIG"} {
++			t.Setenv(name, "")
++			require.NoError(t, os.Unsetenv(name))
++		}
++	}
++	withDockerCredentials := func(t *testing.T, host string) {
++		t.Helper()
++		config, err := json.Marshal(map[string]any{
++			"auths": map[string]any{
++				host: map[string]string{
++					"auth": base64.StdEncoding.EncodeToString([]byte(credential.Username + ":" + credential.Password)),
++				},
++			},
++		})
++		require.NoError(t, err)
++		writeCredentialTestDockerConfig(t, config)
++	}
++	tests := []struct {
++		name      string
++		setup     func(*testing.T, string)
++		modifiers []Modifier
++		anonymous bool
++		wantErr   error
++	}{
++		{
++			name:      "uses explicit credentials without a home directory",
++			setup:     withoutHome,
++			modifiers: []Modifier{WithCredentialFunc(basicCredential)},
++		},
++		{
++			name:      "acquires an anonymous bearer token without a home directory",
++			setup:     withoutHome,
++			modifiers: []Modifier{WithCredentialFunc(emptyCredential)},
++			anonymous: true,
++		},
++		{
++			name: "ignores malformed Docker configuration for explicit credentials",
++			setup: func(t *testing.T, _ string) {
++				writeCredentialTestDockerConfig(t, []byte("{invalid Docker configuration"))
++			},
++			modifiers: []Modifier{WithCredentialFunc(basicCredential)},
++		},
++		{
++			name: "ignores an unavailable Docker credential helper for anonymous access",
++			setup: func(t *testing.T, _ string) {
++				writeCredentialTestDockerConfig(t, []byte(`{"credsStore":"zarf-test-helper-does-not-exist"}`))
++			},
++			modifiers: []Modifier{WithCredentialFunc(emptyCredential)},
++			anonymous: true,
++		},
++		{
++			name:  "uses Docker credentials when no provider is supplied",
++			setup: withDockerCredentials,
++		},
++		{
++			name:      "uses Docker credentials when the provider is nil",
++			setup:     withDockerCredentials,
++			modifiers: []Modifier{WithCredentialFunc(nil)},
++		},
++		{
++			name:      "does not fall back to Docker when the provider returns empty credentials",
++			setup:     withDockerCredentials,
++			modifiers: []Modifier{WithCredentialFunc(emptyCredential)},
++			wantErr:   auth.ErrBasicCredentialNotFound,
++		},
++		{
++			name:  "does not fall back to Docker when the provider fails",
++			setup: withDockerCredentials,
++			modifiers: []Modifier{WithCredentialFunc(func(_ context.Context, _ string) (auth.Credential, error) {
++				return auth.EmptyCredential, providerErr
++			})},
++			wantErr: providerErr,
++		},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			server, descriptor := newCredentialTestRegistry(t, credential, tc.anonymous)
++			host := strings.TrimPrefix(server.URL, "http://")
++			tc.setup(t, host)
++			modifiers := append([]Modifier{WithPlainHTTP(true)}, tc.modifiers...)
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+			require.Equal(t, tt.want, tt.checksum.IsSet())
++			remote, err := NewOrasRemote(host+"/credential-tests:latest", ocispec.Platform{}, modifiers...)
++			require.NoError(t, err)
++			resolved, err := remote.Repo().Resolve(context.Background(), "latest")
++			if tc.wantErr != nil {
++				require.ErrorIs(t, err, tc.wantErr)
++				return
++			}
++			require.NoError(t, err)
++			require.Equal(t, descriptor, resolved)
 +		})
 +	}
 +}
 +
- func TestPackageHasImages(t *testing.T) {
- 	t.Parallel()
- 
++func TestNewOrasRemoteCredentialFuncUsesNormalizedRegistry(t *testing.T) {
++	t.Parallel()
++
++	credential := auth.Credential{Username: "registry-user", Password: "registry-password"}
++	for _, tc := range []struct {
++		name       string
++		alias      string
++		registry   string
++		repository string
++	}{
++		{
++			name:       "resolves Docker Hub credentials against its canonical host",
++			alias:      "docker.io",
++			registry:   "registry-1.docker.io",
++			repository: "credential-tests",
++		},
++		{
++			name:       "resolves unicorn alias credentials against GitHub Container Registry",
++			alias:      "🦄",
++			registry:   "ghcr.io",
++			repository: "defenseunicorns/packages/credential-tests",
++		},
++		{
++			name:       "resolves Defense Unicorns alias credentials against GitHub Container Registry",
++			alias: 
 ```
 
-**File**: `src/api/package.go` (modified, +1/-1)
+**File**: `src/pkg/oci/common.go` (modified, +20/-8)
 ```diff
-@@ -317,7 +317,7 @@ func (c FileChecksum) GetAlgorithm() ChecksumAlgorithm {
+@@ -30,6 +30,7 @@ const (
+ type OrasRemote struct {
+ 	repo               *remote.Repository
+ 	cache              *orasOCI.Store
++	credentialFunc     auth.CredentialFunc
+ 	root               *Manifest
+ 	progTransport      *retry.Transport
+ 	targetPlatform     *ocispec.Platform
+@@ -40,6 +41,12 @@ type OrasRemote struct {
+ // Modifier is a function that modifies an OrasRemote
+ type Modifier func(*OrasRemote)
  
- // IsSet reports whether a file checksum was provided.
- func (c FileChecksum) IsSet() bool {
--	return c.Digest != ""
-+	return c.Algorithm != "" || c.Digest != ""
++// WithCredentialFunc sets fn as the source of registry credentials.
++// If fn is nil, the Docker credential store is used instead.
++func WithCredentialFunc(fn auth.CredentialFunc) Modifier {
++	return func(o *OrasRemote) { o.credentialFunc = fn }
++}
++
+ // WithPlainHTTP sets the plain HTTP flag for the remote
+ func WithPlainHTTP(plainHTTP bool) Modifier {
+ 	return func(o *OrasRemote) { o.repo.PlainHTTP = plainHTTP }
+@@ -111,7 +118,8 @@ func PlatformForArch(arch string) ocispec.Platform {
+ 
+ // NewOrasRemote returns an oras remote repository client and context for the given url.
+ //
+-// Registry auth is handled by the Docker CLI's credential store and checked before returning the client
++// Registry credentials come from the Docker credential store by default.
++// Use WithCredentialFunc to provide a different credential source.
+ func NewOrasRemote(url string, platform ocispec.Platform, modifiers ...Modifier) (*OrasRemote, error) {
+ 	ref, err := registry.ParseReference(strings.TrimPrefix(url, helpers.OCIURLPrefix))
+ 	if err != nil {
+@@ -165,22 +173,26 @@ func (o *OrasRemote) setRepository(ref registry.Reference) error {
+ 		ref.Registry = "ghcr.io"
+ 		ref.Repository = "defenseunicorns/packages/" + ref.Repository
+ 	}
+-	storeOpts := credentials.StoreOptions{}
+-	credStore, err := credentials.NewStoreFromDocker(storeOpts)
+-	if err != nil {
+-		return fmt.Errorf("failed to get credentials: %w", err)
+-	}
+ 	client, ok := o.repo.Client.(*auth.Client)
+ 	if !ok {
+ 		return fmt.Errorf("repository client is not an auth client")
+ 	}
++	o.repo.Reference = ref
++
++	if o.credentialFunc != nil {
++		client.Credential = o.credentialFunc
++		return nil
++	}
++
++	credStore, err := credentials.NewStoreFromDocker(credentials.StoreOptions{})
++	if err != nil {
++		return fmt.Errorf("failed to get credentials: %w", err)
++	}
+ 	client.Credential = credentials.Credential(credStore)
+ 	if o.log != nil {
+ 		o.log.Debug("gathering credentials from default Docker config file", "credentialsConfigured", credStore.IsAuthConfigured())
+ 	}
+ 
+-	o.repo.Reference = ref
+-
+ 	return nil
  }
  
- // String returns the checksum in the package definition's wire format.
 ```
 
-**File**: `src/internal/api/v1beta1/validate.go` (modified, +8/-2)
+**File**: `src/pkg/zoci/common.go` (modified, +8/-1)
 ```diff
-@@ -45,6 +45,7 @@ const (
- 	PkgValidateErrServiceRequiresInit       = "component %q declares service %q, but only ZarfInitConfig packages may declare services"
- 	PkgValidateErrServiceNotUnique          = "service %q is declared by multiple components (%q, %q)"
- 	PkgValidateErrFileChecksumAlgorithm     = "component %q file %q has unsupported checksum algorithm %q (expected sha256 or sha512)"
-+	PkgValidateErrFileChecksumDigest        = "component %q file %q has an empty checksum digest"
- 	PkgValidateErrImageConflictingSources   = "image %q has conflicting sources %q and %q"
+@@ -20,6 +20,7 @@ import (
+ 	"github.com/zarf-dev/zarf/src/pkg/ocischeme"
+ 	"github.com/zarf-dev/zarf/src/types"
+ 	ociDirectory "oras.land/oras-go/v2/content/oci"
++	"oras.land/oras-go/v2/registry/remote/auth"
  )
  
-@@ -133,9 +134,14 @@ func ValidatePackage(pkg v1beta1.Package) ValidationErrors {
- func ValidateComponent(component v1beta1.Component) ValidationErrors {
- 	var errs ValidationErrors
- 	for _, file := range component.Files {
--		if algorithm, _, hasPrefix := strings.Cut(file.Checksum, ":"); hasPrefix &&
--			algorithm != string(api.ChecksumSHA256) && algorithm != string(api.ChecksumSHA512) {
-+		algorithm, digest, hasPrefix := strings.Cut(file.Checksum, ":")
-+		if !hasPrefix {
-+			continue
-+		}
-+		if algorithm != string(api.ChecksumSHA256) && algorithm != string(api.ChecksumSHA512) {
- 			errs = append(errs, fmt.Errorf(PkgValidateErrFileChecksumAlgorithm, component.Name, file.Source, algorithm))
-+		} else if digest == "" {
-+			errs = append(errs, fmt.Errorf(PkgValidateErrFileChecksumDigest, component.Name, file.Source))
- 		}
- 	}
- 	for _, repository := range component.Repositories {
-```
-
-**File**: `src/internal/api/v1beta1/validate_test.go` (modified, +8/-6)
-```diff
-@@ -149,20 +149,22 @@ func TestValidatePackage(t *testing.T) {
- 	}
+ // LayerType specifies a category of layers in a Zarf OCI package.
+@@ -68,6 +69,9 @@ type PublishOptions struct {
+ type RemoteClientOptions struct {
+ 	// CachePath stores OCI layers locally when non-empty.
+ 	CachePath string
++	// CredentialFunc supplies registry credentials.
++	// If nil, the Docker credential store is used instead.
++	CredentialFunc auth.CredentialFunc
+ 	// Transport configures HTTP transport behavior such as proxies and mTLS.
+ 	// It is cloned before use and is never modified.
+ 	Transport *http.Transport
+@@ -87,11 +91,14 @@ func NewRemote(ctx context.Context, url string, platform ocispec.Platform, mods
  }
  
--func TestValidatePackageFileChecksumAlgorithm(t *testing.T) {
-+func TestValidatePackageFileChecksum(t *testing.T) {
- 	t.Parallel()
- 
- 	tests := []struct {
- 		name      string
- 		checksum  string
--		wantError bool
-+		wantError string
- 	}{
- 		{name: "omitted checksum"},
- 		{name: "checksum without prefix", checksum: "abc123"},
- 		{name: "sha256 prefix", checksum: "sha256:abc123"},
- 		{name: "sha512 prefix", checksum: "sha512:abc123"},
--		{name: "unsupported prefix", checksum: "sha384:abc123", wantError: true},
--		{name: "empty prefix", checksum: ":abc123", wantError: true},
-+		{name: "unsupported prefix", checksum: "sha384:abc123", wantError: "sha256 or sha512"},
-+		{name: "empty prefix", checksum: ":abc123", wantError: "sha256 or sha512"},
-+		{name: "sha256 empty digest", checksum: "sha256:", wantError: "empty checksum digest"},
-+		{name: "sha512 empty digest", checksum: "sha512:", wantError: "empty checksum digest"},
+ // NewRemoteWithOptions returns an ORAS remote repository configured with Zarf's
+-// cache and transport options.
++// cache, credential, and transport options.
+ func NewRemoteWithOptions(ctx context.Context, url string, platform ocispec.Platform, options RemoteClientOptions) (*Remote, error) {
+ 	modifiers := []oci.Modifier{
+ 		oci.WithInsecureSkipVerify(options.InsecureSkipTLSVerify),
  	}
- 
- 	for _, tt := range tests {
-@@ -176,9 +178,9 @@ func TestValidatePackageFileChecksumAlgorithm(t *testing.T) {
- 			}}}
- 
- 			errs := ValidatePackage(pkg)
--			if tt.wantError {
-+			if tt.wantError != "" {
- 				require.ErrorContains(t, errs, "file.txt")
--				require.ErrorContains(t, errs, "sha256 or sha512")
-+				require.ErrorContains(t, errs, tt.wantError)
- 			} else {
- 				require.Empty(t, errs)
- 			}
++	if options.CredentialFunc != nil {
++		modifiers = append(modifiers, oci.WithCredentialFunc(options.CredentialFunc))
++	}
+ 	if options.Transport != nil {
+ 		modifiers = append(modifiers, oci.WithTransport(options.Transport))
+ 	}
+```
+
+**File**: `src/pkg/zoci/credential_test.go` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: 2021-Present The Zarf Authors
++
++package zoci
++
++import (
++	"context"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strconv"
++	"strings"
++	"testing"
++
++	"github.com/opencontainers/go-digest"
++	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
++	"github.com/stretchr/testify/require"
++	"github.com/zarf-dev/zarf/src/pkg/oci"
++	"oras.land/oras-go/v2/registry/remote/auth"
++)
++
++func TestNewRemoteWithOptionsCredentialFunc(t *testing.T) {
++	t.Parallel()
++
++	credential := auth.Credential{Username: "registry-user", Password: "registry-password"}
++	manifest := []byte(`{"schemaVersion":2,"mediaType":"application/vnd.oci.image.index.v1+json","manifests":[]}`)
++	manifestDigest := digest.FromBytes(manifest)
++	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.URL.Path != "/v2/test/manifests/latest" {
++			http.NotFound(w, r)
++			return
++		}
++		username, password, ok := r.BasicAuth()
++		if !ok || username != credential.Username || password != credential.Password {
++			w.Header().Set("WWW-Authenticate", `Basic realm="test-registry"`)
++			w.WriteHeader(http.StatusUnauthorized)
++			return
++		}
++		w.Header().Set("Content-Type", ocispec.MediaTypeImageIndex)
++		w.Header().Set("Content-Length", strconv.Itoa(len(manifest)))
++		w.Header().Set("Docker-Content-Digest", manifestDigest.String())
++		if r.Method == http.MethodGet {
++			if _, err := w.Write(manifest); err != nil {
++				t.Error(err)
++			}
++		}
++	}))
++	t.Cleanup(server.Close)
++	host := strings.TrimPrefix(server.URL, "https://")
++	transport, ok := server.Client().Transport.(*http.Transport)
++	require.True(t, ok)
++
++	remote, err := NewRemoteWithOptions(context.Background(), host+"/test:latest", oci.PlatformForArch("amd64"), RemoteClientOptions{
++		CredentialFunc: auth.StaticCredential(host, credential),
++		Transport:      transport,
++	})
++	require.NoError(t, err)
++
++	descriptor, reader, err := remote.Repo().FetchReference(context.Background(), "latest")
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, reader.Close()) })
++	content, err := io.ReadAll(reader)
++	require.NoError(t, err)
++	require.Equal(t, manifest, content)
++	require.Equal(t, manifestDigest, descriptor.Digest)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5502** (2026-10-21): feat(oci): support custom credential providers (@s-urbaniak)
 - **PR #5501** (2026-10-20): fix: catch and handle empty digests (@eoghanriley)
 - **PR #5488** (2026-10-19): chore(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
 - **PR #5487** (2026-10-19): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
 - **PR #5486** (2026-10-19): chore(deps): bump the actions-organization group with 3 updates (@dependabot[bot])
 - **PR #5485** (2026-10-19): chore: goreleaser signed commits and dco bot bypass (@brandtkeller)
-- **PR #5482** (2026-10-16): chore: migrate homebrew tap repo target (@brandtkeller)
 
 ---
 
@@ -1632,42 +1853,65 @@ Signed-off-by: eoghanriley <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. catch and handle empty digests (#5501)
+## X. oci): support custom credential providers (#5502)
 
 **RULE**:
-When implementing operations in `src/api/api_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pkg/oci/auth_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf616d60`: catch and handle empty digests (#5501). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be55273c`: oci): support custom credential providers (#5502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/api/api_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/oci/auth_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func TestFileChecksumIsSet(t *testing.T) {
-	t.Parallel()
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2021-Present The Zarf Authors
 
-	tests := []struct {
-		name     string
-		checksum api.FileChecksum
-		want     bool
-	}{
-		{name: "omitted checksum"},
-		{name: "algorithm without digest", checksum: api.ParseFileChecksum("sha256:"), want: true},
-		{name: "digest without algorithm", checksum: api.FileChecksum{Digest: "abc123"}, want: true},
-		{name: "algorithm and digest", checksum: api.FileChecksum{Algorithm: api.ChecksumSHA512, Digest: "abc123"}, want: true},
+package oci
+
+import (
+	"context"
+	"encoding/base64"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"testing"
+
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
+	"github.com/stretchr/testify/require"
+	"oras.land/oras-go/v2/content"
+	"oras.land/oras-go/v2/registry/remote/auth"
+)
+
+func TestNewOrasRemoteCredentialFunc(t *testing.T) {
+	credential := auth.Credential{Username: "registry-user", Password: "registry-password"}
+	providerErr := errors.New("credential provider unavailable")
+	basicCredential := func(_ context.Context, _ string) (auth.Credential, error) {
+		return credential, nil
 	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			require.Equal(t, tt.want, tt.checksum.IsSet())
-		})
+	emptyCredential := func(_ context.Context, _ string) (auth.Credential, error) {
+		return auth.EmptyCredential, nil
 	}
-}
-
+	withoutHome := func(t *testing.T, _ string) {
+		t.Helper()
+		for _, name := range []string{"HOME", "USERPROFILE", "DOCKER_CONFIG"} {
+			t.Setenv(name, "")
+			require.NoError(t, os.Unsetenv(name))
+		}
+	}
+	withDockerCredentials := func(t *testing.T, host string) {
+		t.Helper()
+		config, err := json.Marshal(ma
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1677,4 +1921,4 @@ func TestFileChecksumIsSet(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf616d60` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be55273c` are properly handled with clean fallback behavior.
