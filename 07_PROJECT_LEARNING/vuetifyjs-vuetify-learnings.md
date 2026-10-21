@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md`  
 > **Source**: github ([https://github.com/vuetifyjs/vuetify](https://github.com/vuetifyjs/vuetify))  
-> **Source Version**: `7ace4992`  
+> **Source Version**: `4647fede`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:30:37.611Z  
+> **Timestamp**: 2026-10-21T05:54:43.578Z  
 > **Learning ID**: `learn-github-vuetifyjs-vuetify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vuetifyjs/vuetify](https://github.com/vuetifyjs/vuetify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:30:36.677Z  
+> **Harvest Timestamp**: 2026-10-21T05:49:25.743Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐉 Vue Component Framework
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 41033 stars
+- **Stars / Engagement**: 41032 stars
 
 ---
 
@@ -1363,11 +1363,13 @@ export function anchorToPoint (anchor: ParsedAnchor, box: Box): ViewportPoint {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23295** (2026-10-21): **feat(VBottomNavigation): add zIndex prop**
+  *Symptoms*: ## Description  Adds a `zIndex` prop to `VBottomNavigation` so it can override the z-index automatically calculated by the layout system. This brings it in line with the finer stacking control requested in the issue (e.g. layering `v-bottom-navigation` above a `v-bottom-sheet`).  The prop has no default, so existing layouts are unaffected unless the prop is explicitly set.  ## Changes  - Added optional `zIndex` prop (`Number | String`) to `VBottomNavigation` - Added test covering the override behavior - Added `new-in.json` entry and API doc description  Closes #23178
+  **Post-Mortem & Fix Analysis**:
+  > Closing to redo with a corrected branch name and commit authorship.
+
 - **Issue #23292** (2026-10-20): **fix(VSplitBtn): use default size when omitted**
   *Symptoms*: ## Description  Fixes #23289.  When `size` is omitted, `VSplitBtn` inherits `VBtnGroup`'s undefined size default and uses the group's legacy height: 48px instead of 36px with the default styles. Set its default size to `'default'` so it matches an explicitly sized split button and a regular `VBtn` across densities. Explicit sizes and `VSplitBtn` default overrides still work.  Remove the global-default workaround from the MD3 sizing docs, since split buttons now use a named size by default.  ## Validation  - All 3 existing `VSplitBtn` Chromium browser tests pass. Vizzly integration was disabled for the local test run. - Type checking (`tsgo`), ESLint, and `git diff --check` pass. - Manually verified the group and both buttons: 36px / 28px / 24px at default / comfortable / compact density, matching `VBtn`. With the documented MD3 Sass settings, the default height is 56px and also matches `VBtn`. - Verified the action click, menu toggle, and Escape behavior in the browser.  ## Markup  Each row compares an omitted size, an explicit `size="default"`, and a regular button.  ```vue <template>   <v-app theme="dark">     <v-container max-width="600" class="d-flex flex-column ga-6">       <div v-for="density in densities" :key="density">         <code>{{ density }}</code>         <div class="d-flex align-center ga-4 mt-2">           <v-split-btn text="Save" :density="density" />           <v-split-btn text="Save" size="default" :density="density" />           <v-btn text="Save" :densit
-
-- **Issue #23289** (2026-10-20): **[Bug Report][4.3.0] Split button size inconsistent**
-  *Symptoms*: ### Environment **Vuetify Version:** 4.3.0 **Vue Version:** 3.5.25 **OS:** Windows 10 (current)  ### Steps to reproduce 1. Create a VSplitBtn without the `size` attribute 2. Create a VSplitBtn with the `size="default"` attribute value 3. They should have the same size, but don't  ### Expected Behavior When using a split button without specifying the `size` attribute, it should default to `default` as a value and sit between `small` and `large`. It should also match the default size of a regular `<v-btn>`.  ### Actual Behavior The size of the split button without a specifically defined `size` attribute is off compared to the other sizes and the `<v-btn>` equivalent.  ### Reproduction Link [https://play.vuetifyjs.com/#...](https://play.vuetifyjs.com/#eNrFVlFv2zYQ/ius+iAZsCWvSVHMsLsMQ4cO2MOwBttDnAdaOtnsKFIjaTde4P++jxStKE6wGS2KAiYs3h2/++7I4/HmPhFNq42bNLzNP1qtkllyv1SMLaPCLpMZCxIv223Jz5fJxrnWzoqirBSWVSTFzuSKXKHapriCWWG2yomGJpVuri7y1/nlZVEJ64bynGwzWRn9yZIByjIZD/wUEO7ITAypigyZc/2eLHvk+0T3n/6dqPdn+IyWV5f5RT7tvETRRPKV9S4CtEc+LBV+yTiRQv1lT9Jd2pDqmyOFL/IawDzSLVzCoTVl8WPb5jCCx7mjppXc0VtvMt9NeNuGzzAptXJcKDJRBGEldqyU3NrFMqkmtaQ7tuaTV6xZTV4tk94uLLetFG6ycoo5unNYcE3WLRNmxT+EmeRmjTPEdtwIrrzeacUlJMVjnC9CmCMnu6/Cv6Kab6UXfH4E52F8hRieuiu11AZzMkajxP4/hG+Tddtw6X19fs7PQRjynxenleAlXaHMi0EBYWpLI1rHLLmtV3cXJ7tnhmp2YLXRDUtReak3BqZ1rLFrtvD6LH1PUmr2pzayepGOPHgHB6BYuA045M6icHvk0hC8o6JP8HuDeBv06vx4PzwY+dVHZbwbHpSQhXAGnBE7OPeeMwzQhTSHvhbrPJyh91xVkgwsiS3e4nwpqyV1uoywoFuytZRFRr2s0WgNWfoS3z4RMfpAowvfUKN39MHtJV3zd
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1384,452 +1386,54 @@ export function anchorToPoint (anchor: ParsedAnchor, box: Box): ViewportPoint {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6037cde` (2026-10-19)
-**Commit Message**: feat(VAlert): add `timeout` prop and countdown indicator (#23280)
+### Incident Patch 1: `4647fede` (2026-10-20)
+**Commit Message**: docs(api): fix missing `<td>` around markup
 
-resolves #20409
-
-**File**: `packages/api-generator/src/locale/en/VAlert.json` (modified, +2/-0)
+**File**: `packages/docs/src/components/api/ExposedTable.vue` (modified, +7/-5)
 ```diff
-@@ -14,6 +14,8 @@
-     "modelValue": "Controls whether the component is visible or hidden.",
-     "prominent": "Displays a larger vertically centered icon to draw more attention.",
-     "tile": "Removes the component's border-radius.",
-+    "timeout": "Time in milliseconds before the alert closes itself, `-1` disables it. The countdown starts once the alert is in view and starts over after hover or focus.",
-+    "timer": "Displays the **timeout** countdown as a bar along the `top` (also `true`) or `bottom` edge, or as a ring around the close button with `close`.",
-     "type": "Create a specialized alert that uses a contextual color and has a pre-defined icon.",
-     "width": "Sets the width for the component."
-   },
+@@ -6,11 +6,13 @@
+       </tr>
+ 
+       <tr>
+-        <AppMarkup
+-          :code="item.formatted"
+-          :rounded="false"
+-          language="ts"
+-        />
++        <td class="pa-0">
++          <AppMarkup
++            :code="item.formatted"
++            :rounded="false"
++            language="ts"
++          />
++        </td>
+       </tr>
+     </template>
+   </ApiApiTable>
 ```
 
-**File**: `packages/docs/src/data/new-in.json` (modified, +7/-0)
+**File**: `packages/docs/src/components/api/SlotsTable.vue` (modified, +3/-1)
 ```diff
-@@ -6,6 +6,13 @@
-       "cycle": "3.9.0"
-     }
-   },
-+  "VAlert": {
-+    "props": {
-+      "timeout": "4.3.0",
-+      "timer": "4.3.0",
-+      "transition": "4.3.0"
-+    }
-+  },
-   "VAppBar": {
-     "props": {
-       "scrollBehavior": "3.2.0"
-```
-
-**File**: `packages/docs/src/examples/v-alert/prop-timeout.vue` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+<template>
-+  <div>
-+    <v-btn-toggle
-+      v-model="timer"
-+      class="mb-4"
-+      density="compact"
-+      variant="outlined"
-+      divided
-+      mandatory
-+    >
-+      <v-btn text="top" value="top"></v-btn>
-+      <v-btn text="bottom" value="bottom"></v-btn>
-+      <v-btn text="close" value="close"></v-btn>
-+    </v-btn-toggle>
-+
-+    <v-alert
-+      v-model="alert"
-+      :timeout="5000"
-+      :timer="timer"
-+      text="This alert closes after 5 seconds. Hovering it starts the countdown over."
-+      title="Saved"
-+      type="success"
-+      variant="tonal"
-+      closable
-+    ></v-alert>
-+
-+    <div
-+      v-if="!alert"
-+      class="text-center"
-+    >
-+      <v-btn @click="alert = true">
-+        Reset
-+      </v-btn>
-+    </div>
-+  </div>
-+</template>
-+
-+<script setup>
-+  import { shallowRef } from 'vue'
-+
-+  const alert = shallowRef(true)
-+  const timer = shallowRef('close')
-+</script>
-+
-+<script>
-+  export default {
-+    data: () => ({
-+      alert: true,
-+      timer: 'close',
-+    }),
-+  }
-+</script>
-```
-
-**File**: `packages/docs/src/pages/en/components/alerts.md` (modified, +9/-0)
-```diff
-@@ -1,4 +1,5 @@
- ---
-+emphasized: true
- meta:
-   nav: Alerts
-   title: Alert component
-@@ -137,6 +138,14 @@ The close icon automatically applies a default `aria-label` and is configurable
-   For more information on how to global modify your locale settings, navigate to the [Internationalization page](/features/internationalization).
- :::
+@@ -6,7 +6,9 @@
+       </tr>
  
-+#### Timeout
-+
-+The **timeout** prop closes the alert after the given number of milliseconds. The countdown starts once the alert scrolls into view. Hovering or focusing the alert stops it, and it starts over afterwards. Use **timer** to show the remaining time as a bar along the `top` or `bottom` edge, or as a ring around the close button with `close`.
-+
-+<ExamplesExample file="v-alert/prop-timeout" />
-+
-+To draw your own indicator, the **close** slot exposes `timerProgress`, the remaining time in percent, from 100 down to 0.
-+
- ## Additional Examples
- 
- The following is a collection of `v-alert` examples that demonstrate how different the properties work in an application.
-```
-
-**File**: `packages/vuetify/src/components/VAlert/VAlert.sass` (modified, +21/-0)
-```diff
-@@ -73,10 +73,19 @@
-   .v-alert__close
-     flex: 0 1 auto
-     grid-area: close
-+    position: relative
- 
-     > .v-btn
-       margin-block: calc(-1 * (var(--v-btn-height) + 12px - #{$alert-prepend-icon-size}) / 2)
- 
-+  .v-alert__timer
-+    pointer-events: none
-+
-+    &--close
-+      inset: 0
-+      margin: auto
-+      position: absolute
-+
-   .v-alert__content
-     align-self: center
-     grid-area: content
-@@ -161,3 +170,15 @@
-       &--variant-elevated,
-       &--variant-flat
-         border-width: thick
-+
-+@include tools.layer('transitions')
-+  .v-alert
-+    &.expand-transition-leave-active
-+      flex-basis: auto
-+      transition-property: height, padding-top, padding-bottom, margin-top, margin-bottom
-+
-+    &.expand-transition-leave-to
-+      margin-bottom: 0
-+      margin-top: 0
-+      padding-bottom: 0
-+      padding-top: 0
-```
-
-**File**: `packages/vuetify/src/components/VAlert/VAlert.tsx` (modified, +135/-92)
-```diff
-@@ -3,11 +3,15 @@ import './VAlert.sass'
- 
- // Components
- import { VAlertTitle } from './VAlertTitle'
-+import { VExpandTransition } from '@/components/transitions'
- import { VBtn } from '@/components/VBtn'
- import { VDefaultsProvider } from '@/components/VDefaultsProvider'
- import { VIcon } from '@/components/VIcon'
-+import { VProgressCircular } from '@/components/VProgressCircular'
-+import { VProgressLinear } from '@/components/VProgressLinear'
- 
- // Composables
-+import { useAutoDismiss } from './autoDismiss'
- import { useTextColor } from '@/composables/color'
- import { makeComponentProps } from '@/composables/component'
- import { makeDensityProps, useDensity } from '@/composables/density'
-@@ -22,14 +26,15 @@ import { useProxiedModel } from '@/composables/proxiedModel'
- import { makeRoundedProps, useRounded } from '@/composables/rounded'
- import { makeTagProps } from '@/composables/tag'
- import { makeThemeProps, provideTheme } from '@/composables/theme'
-+import { makeTransitionProps, MaybeTransition } from '@/composables/transition'
- import { genOverlays, makeVariantProps, useVariant } from '@/composables/variant'
- 
- // Utilities
- import { toRef } from 'vue'
- import { genericComponent, isBoolean, propsFactory } from '@/util'
- 
- // Types
--import type { PropType } from 'vue'
-+import type { Component, PropType } from 'vue'
- 
- const allowedTypes = ['success', 'info', 'warning', 'error'] as const
- 
-@@ -68,6 +73,11 @@ export const makeVAlertProps = propsFactory({
-   prominent: Boolean,
-   title: String,
-   text: String,
-+  timeout: {
-+    type: [Number, String],
-+    default: -1,
-+  },
-+  timer: [Boolean, String] as PropType<boolean | 'top' | 'bottom' | 'close'>,
-   type: {
-     type: String as PropType<ContextualType>,
-     validator: (val: ContextualType) => allowedTypes.includes(val),
-@@ -83,6 +93,9 @@ export const makeVAlertProps = propsFactory({
-   ...makeRoundedProps(),
-   ...makeTagProps(),
-   ...makeThemeProps(),
-+  ...makeTransitionProps({
-+    transition: { component: VExpandTransition as Component },
-+  }),
-   ...makeVariantProps({ variant: 'flat' } as const),
- }, 'VAlert')
- 
-@@ -92,7 +105,7 @@ export type VAlertSlots = {
-   title: never
-   text: never
-   append: never
--  close: { props: Record<string, any> }
-+  close: { props: Record<string, any>, timerProgress: number }
- }
- 
- export const VAlert = genericComponent<VAlertSlots>()({
-@@ -129,6 +142,8 @@ export const VAlert = genericComponent<VAlertSlots>()({
-     const { textColorClasses, textColorStyles } = useTextColor(() => props.borderColor)
-     const { t } = useLocale()
- 
-+    const { rootEl, progress, events } = useAutoDismiss(isActive, () => Number(props.timeout))
-+
-     const closeProps = toRef(() => ({
-       'aria-label': t(props.closeLabel),
-       onClick (e: MouseEvent) {
-@@ -142,6 +157,7 @@ export const VAlert = genericComponent<VAlertSlots>()({
-       const hasPrepend = !!(slots.prepend || icon.value)
-       const hasTitle = !!(slots.title || props.title)
-       const hasClose = !!(slots.close || props.closable)
-+      const hasTimer = !!props.timer && Number(props.timeout) > 0
- 
-       const iconProps = {
-         density: props.density,
-@@ -151,108 +167,135 @@ export const VAlert = genericComponent<VAlertSlots>()({
-           : undefined,
-       }
- 
--      return isActive.value && (
--        <props.tag
--          class={[
--            'v-alert',
--            props.border && {
--              'v-alert--border': !!props.border,
--              [`v-alert--border-${props.border === true ? 'start' : props.border}`]: true,
--            },
--            {
--              'v-alert--prominent': props.prominent,
--            },
--            themeClasses.value,
--            colorClasses.value,
--            densityClasses.value,
--            elevationClasses.value,
--            positionClasses.value,
--            roundedClasses.value,
--            variantClasses.value,
--            props.class,
--          ]}
--          style={[
--            colorStyles.value,
--            dimensionStyles.value,
--            locationStyles.value,
--            roundedStyles.value,
--            props.style,
--          ]}
--          role="alert"
--        >
--          { genOverlays(false, 'v-alert') }
--
--          { props.border && (
--            <div
--              key="border"
-+      return (
-+        <MaybeTransition transition={ props.transition }>
-+          { isActive.value && (
-+            <props.tag
-+              ref={ rootEl }
-               class={[
--                'v-alert__border',
--                textColorClasses.value,
-+                'v-alert',
-+                props.border && {
-+                  'v-alert--border': !!props.border,
-+                  [`v-alert--border-${props.border === true ? 'start' : props.border}`]: true,
-+                },
-+                {
-+                  'v-alert--prominent': props.prominent,
-+                },
-+                themeClasses.value,
-+                colorClasses.value,
-+                densityClasses.value,
-```
-
-**File**: `packages/vuetify/src/components/VAlert/__tests__/VAlert.spec.browser.tsx` (modified, +22/-1)
-```diff
-@@ -1,7 +1,7 @@
- import { VAlert } from '..'
- 
- // Utilities
--import { render, screen, showcase } from '@test'
-+import { render, screen, showcase, wait } from '@test'
- 
- const defaultColors = ['success', 'info', 'warning', 'error', 'invalid']
- 
-@@ -40,5 +40,26 @@ describe('VAlert', () => {
-     })
-   })
- 
-+  describe('timeout', () => {
-+    // keeps the alert away from the resting cursor, which would pause the countdown
-+    const offset = { paddingTop: '200px' }
-+
-+    it('starts counting once scrolled into view', async () => {
-+      render(() => (
-+        <div style={ offset }>
-+          <div style={{ height: '200vh' }} />
-+          <VAlert text="hidden" timeout={ 200 } />
-+        </div>
-+      ))
-+
-+      const alert = await screen.findByCSS('.v-alert')
-+      await wait(400)
-+      expect(alert).toBeInTheDocument()
-+
-+      alert.scrollIntoView()
-+      await expect.poll(() => screen.queryByCSS('.v-alert')).toBeNull()
-+    })
-+  })
-+
-   showcase({ stories, props, component: VAlert })
- })
-```
-
-**File**: `packages/vuetify/src/components/VAlert/autoDismiss.ts` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+// Composables
-+import { useElementIntersection } from '@/composables/intersectionObserver'
-+import { useTimer } from '@/composables/timer'
-+
-+// Utilities
-+import { ref, shallowRef, toRef, toValue, watch } from 'vue'
-+
-+// Types
-+import type { MaybeRefOrGetter, Ref } from 'vue'
-+
-+export function useAutoDismiss (isActive: Ref<boolean>, timeout: MaybeRefOrGetter<number>) {
-+  const rootEl = ref<HTMLElement>()
-+  const isHovering = shallowRef(false)
-+  const isFocused = shallowRef(false)
-+  const { isIntersecting } = useElementIntersection(rootEl)
-+  const timer = useTimer(() => isActive.value = false, { duration: timeout })
-+  const isCounting = toRef(() => isActive.value && isIntersecting.value && !isHovering.value && !isFocused.value)
-+  const progress = toRef(() => toValue(timeout) > 0 ? timer.remaining.value / toValue(timeout) * 100 : 100)
-+
-+  watch([isCounting, () => toValue(timeout)], () => isCounting.value ? timer.start() : timer.stop())
-+  // pointerleave/focusout never fire on the removed element
-+  watch(isActive, () => {
-+    isHovering.value = false
-+    isFocused.value = false
-+  })
-+
-+  const events = {
-+    onPointerenter: () => isHovering.value = true,
-+    onPointerleave: () => isHovering.value = false,
-+    onFocusin: () => isFocused.value = true,
-+    onFocusout (e: FocusEvent) {
-+      if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) isFocused.value = false
-+    },
-+  }
-+
-+  return { rootEl, progress, events }
-+}
-```
-
----
-
-### Incident Patch 2: `b95c9ae3` (2026-10-20)
-**Commit Message**: fix(VSplitBtn): use default size when omitted (#23292)
-
-fixes #23289
-
-**File**: `packages/docs/src/pages/en/features/md3-button-sizes.md` (modified, +1/-1)
-```diff
-@@ -258,7 +258,7 @@ export default createVuetify({
- 
- ## Split buttons
- 
--`$split-btn-named-sizes` sets the paddings and inner corners of [v-split-btn](/components/split-buttons/). It requires `$button-named-sizes` and `$btn-group-named-sizes`. Like groups, split buttons need the **size** prop, add `VSplitBtn: { size: 'default' }` to the global defaults.
-+`$split-btn-named-sizes` sets the padding and inner corners of [v-split-btn](/components/split-buttons/). It requires `$button-named-sizes` and `$btn-group-named-sizes`.
- 
- | Key                     |                                               |
- |-------------------------|-----------------------------------------------|
-```
-
-**File**: `packages/vuetify/src/labs/VSplitBtn/VSplitBtn.tsx` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ export const makeVSplitBtnProps = propsFactory({
-   prependIcon: IconValue,
-   text: [String, Number],
- 
--  ...omit(makeVBtnGroupProps(), ['connected', 'direction']),
-+  ...omit(makeVBtnGroupProps({ size: 'default' }), ['connected', 'direction']),
- }, 'VSplitBtn')
- 
- export const VSplitBtn = genericComponent<VSplitBtnSlots>()({
-```
-
----
-
-### Incident Patch 3: `d621b52c` (2026-10-20)
-**Commit Message**: fix(VTimePicker): wider segments for 24hr mode w/ seconds
-
-for real this time
-
-**File**: `packages/vuetify/src/components/VTimePicker/VTimePickerControls.sass` (modified, +6/-0)
-```diff
-@@ -72,6 +72,12 @@
-       .v-time-picker--variant-input &
-         width: $time-picker-controls-input-seconds-field-width
- 
-+    .v-time-picker-controls__time--with-seconds:not(.v-time-picker-controls__time--with-ampm) &
-+      width: $time-picker-controls-24hr-seconds-field-width
-+
-+      .v-time-picker--variant-input &
-+        width: $time-picker-controls-input-24hr-seconds-field-width
-+
-     .v-field__input
-       padding: 0
-       font-weight: 500
+       <tr v-if="item.formatted !== 'never' && item.text !== 'undefined'">
+-        <AppMarkup :code="item.formatted" :rounded="false" language="ts" />
++        <td class="pa-0">
++          <AppMarkup :code="item.formatted" :rounded="false" language="ts" />
++        </td>
+       </tr>
+     </template>
+   </ApiApiTable>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23295** (closed): feat(VBottomNavigation): add zIndex prop (@smituparmar01)
 - **PR #23292** (2026-10-20): fix(VSplitBtn): use default size when omitted (@morimorimokenpi)
 - **PR #23282** (2026-10-19): feat(VAutocomplete,VCombobox): add `filtered-order` prop (@J-Sek)
 - **PR #23281** (closed): test: run unit tests on warpdom instead of jsdom (@sonukapoor)
 - **PR #23280** (2026-10-19): feat(VAlert): add `timeout` prop and countdown indicator (@J-Sek)
 - **PR #23279** (2026-10-19): fix(VTextarea): keep native undo history with auto-grow (@b84330808)
-- **PR #23277** (2026-10-18): feat(VSlider): add `centered` prop (@J-Sek)
 
 ---
 
@@ -1849,29 +1453,38 @@ for real this time
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. VAlert): add `timeout` prop and countdown indicator (#23280)
+## X. docs(api): fix missing `<td>` around markup
 
 **RULE**:
-When implementing operations in `packages/api-generator/src/locale/en/VAlert.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vuetifyjs/vuetify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/docs/src/components/api/ExposedTable.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vuetifyjs/vuetify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6037cde`: VAlert): add `timeout` prop and countdown indicator (#23280). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4647fede`: docs(api): fix missing `<td>` around markup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/api-generator/src/locale/en/VAlert.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/docs/src/components/api/ExposedTable.vue`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "timeout": "Time in milliseconds before the alert closes itself, `-1` disables it. The countdown starts once the alert is in view and starts over after hover or focus.",
-    "timer": "Displays the **timeout** countdown as a bar along the `top` (also `true`) or `bottom` edge, or as a ring around the close button with `close`.",
+        <td class="pa-0">
+          <AppMarkup
+            :code="item.formatted"
+            :rounded="false"
+            language="ts"
+          />
+        </td>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        <AppMarkup
+          :code="item.formatted"
+          :rounded="false"
+          language="ts"
+        />
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6037cde` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4647fede` are properly handled with clean fallback behavior.

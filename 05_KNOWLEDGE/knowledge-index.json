@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:40:28.389Z",
+  "last_updated": "2026-10-21T05:54:43.943Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47564,8 +47564,8 @@
       "slug": "vuetifyjs-vuetify",
       "platform": "github",
       "source_url": "https://github.com/vuetifyjs/vuetify",
-      "source_version": "7ace4992",
-      "content_hash": "8b80dd84c1fa0e88f169ad2157481fe2c041b9dc59f33cdfa1e56227d5992ac0",
+      "source_version": "4647fede",
+      "content_hash": "da2caaebd5c189fd82e0fc6ad0df80e202cf1db5fdd303afe8fbc6980e2345a0",
       "dossier_path": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "promoted_rules": [
@@ -47593,6 +47593,11 @@
           "number": 3056,
           "title": "VAlert): add `timeout` prop and countdown indicator (#23280)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3539,
+          "title": "docs(api): fix missing `<td>` around markup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47600,7 +47605,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:30:37.832Z",
+      "verified_at": "2026-10-21T05:54:43.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107868,6 +107873,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T05:40:25.242Z"
+    },
+    "rule-3539": {
+      "learning_id": "rule-3539",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3539,
+      "title": "docs(api): fix missing `<td>` around markup",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "4647fede",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T05:54:43.930Z"
     }
   },
   "aliases": {

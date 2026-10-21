@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-5SDM",
-    "timestamp": "2026-10-20T05:10:28.330Z",
-    "repository": "vercel/swr",
-    "learningId": "learn-github-vercel-swr",
-    "contentHash": "256f79d4706aed57c763727178c0f5a0a314711edfe5ac5b189785a53a47b253",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-5U4S",
     "timestamp": "2026-10-20T05:10:30.604Z",
     "repository": "rook/rook",
@@ -7490,6 +7475,21 @@
     "repository": "serpapi/google-search-results-python",
     "learningId": "learn-github-serpapi-google-search-results-python",
     "contentHash": "ebf8d80f10b3949bc800de20980724816c80a6cbb238a49d3980d4fd8a2d0b15",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-6K66",
+    "timestamp": "2026-10-21T05:54:43.998Z",
+    "repository": "vuetifyjs/vuetify",
+    "learningId": "learn-github-vuetifyjs-vuetify",
+    "contentHash": "da2caaebd5c189fd82e0fc6ad0df80e202cf1db5fdd303afe8fbc6980e2345a0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
