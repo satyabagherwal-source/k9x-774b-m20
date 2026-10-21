@@ -24,3 +24,23 @@ When an application organizes translations into multiple separate store files (e
 ## Pattern 2: Progressive Disclosure vs Component Bloat
 1. **Tool Embedding Trap**: Embedding complete standalone tools into the homepage causes massive page weight, DOM bloat, and poor mobile LCP/CLS scores.
 2. **Directory Card Pattern**: The homepage acts as a centralized navigational showcase featuring clean directory cards linking directly to standalone tool pages (`/stencil-studio/`, `/generator/`, `/alphabet/`, `/translator/`, etc.), while preserving 100% of the interactive functionality on the dedicated routes.
+
+---
+
+## Pattern 3: Canonical Font Licensing Registry & Zero-Budget Expansion
+1. **Separation of Registry and Public View**:
+   - Maintain a comprehensive cryptographic registry (`fonts-registry.json`) holding provenance, upstream commits, SHA-256 hashes, reserved font names (RFN), and license IDs.
+   - The public catalog (`fonts.json`) must be derived strictly as a projection of entries with `APPROVED_FOR_PUBLICATION` status.
+2. **Flagship Offline Packaging**:
+   - For historic/revival typefaces outside major CDNs (e.g., `Chomsky` from GitHub releases), bundle verified WOFF2/OTF binaries locally with their associated `OFL.txt` license files.
+   - Pave a zero-dependency local `@font-face` pipeline ensuring instant offline rendering without external third-party network blocking.
+
+---
+
+## Pattern 4: Evidence-Backed Legal Transparency vs Absolute Claims
+1. **The Anti-Pattern of Absolute Promises**:
+   - Promising "100% Zero-Copyright-Penalty Guarantee" or "Guaranteed Immunity" creates legal risk because all open-source licenses (including SIL OFL 1.1 Section 5) explicitly disclaim all warranties.
+2. **The Compliance Transparency Standard**:
+   - Frame legal messaging around verifiable evidence: "Individually reviewed against documented open-source licenses", "Evidence-Based Licensing & Compliance Transparency", "SIL OFL 1.1".
+   - Distinguish transparently between rights to use in commercial artwork, rights to redistribute font software, rights to modify, and attribution/naming obligations.
+
