@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-5U4S",
-    "timestamp": "2026-10-20T05:10:30.604Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "6db4ad2c1bab94252bfbe94d1574e9f924bf4cabbc985a0b2926f56377f47d65",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-5YFG",
-    "timestamp": "2026-10-20T05:10:36.172Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "b7f1896bc0e31f7bfb6313f55030e6a0d025f107db18e522384e8d9258c3da3d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-8TKO",
     "timestamp": "2026-10-20T05:12:49.848Z",
     "repository": "ratatui/ratatui",
@@ -7490,6 +7460,36 @@
     "repository": "vuetifyjs/vuetify",
     "learningId": "learn-github-vuetifyjs-vuetify",
     "contentHash": "da2caaebd5c189fd82e0fc6ad0df80e202cf1db5fdd303afe8fbc6980e2345a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-EKMM",
+    "timestamp": "2026-10-21T06:00:57.838Z",
+    "repository": "JeffLi1993/seo-audit-skill",
+    "learningId": "learn-github-jeffli1993-seo-audit-skill",
+    "contentHash": "a34599761919690ead621ce199babd7e6fb3d9be52571e71409d346d7b8143bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-EOEZ",
+    "timestamp": "2026-10-21T06:01:02.747Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "5ea54301aec2ec1569fcf31141873075308be39e9399752ea49ecf656ff2eff3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

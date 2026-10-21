@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T05:54:43.943Z",
+  "last_updated": "2026-10-21T06:01:02.693Z",
   "total_verified_learnings": 1058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32229,8 +32229,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "82fccd26",
-      "content_hash": "1f188b09d55710b6dc8368d36119f93fb0bf24c517812d3695bc3a1fd0f83748",
+      "source_version": "d59f9c4d",
+      "content_hash": "5ea54301aec2ec1569fcf31141873075308be39e9399752ea49ecf656ff2eff3",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -32248,6 +32248,11 @@
           "number": 3318,
           "title": "Merge pull request #21973 from tejaswiverma121-byte/fix/docs-summary-nested-link",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3540,
+          "title": "server): open each extension plugin at most once",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32255,7 +32260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:27:33.634Z",
+      "verified_at": "2026-10-21T06:01:02.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58724,14 +58729,14 @@
       "platform": "github",
       "source_url": "https://github.com/JeffLi1993/seo-audit-skill",
       "source_version": "523bdfb2",
-      "content_hash": "9f8a8b6475d3ced469f953275afdfa6d96c328f801dbf849dc77a75cad7057a1",
+      "content_hash": "a34599761919690ead621ce199babd7e6fb3d9be52571e71409d346d7b8143bd",
       "dossier_path": "07_PROJECT_LEARNING/jeffli1993-seo-audit-skill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jeffli1993-seo-audit-skill-learnings.md",
       "promoted_rules": [
         {
           "number": 2690,
           "title": "V2.0 fix report template css",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58739,7 +58744,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:49:48.721Z",
+      "verified_at": "2026-10-21T06:00:57.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95445,7 +95450,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:49:48.721Z"
+      "verified_at": "2026-10-21T06:00:57.762Z"
     },
     "rule-2691": {
       "learning_id": "rule-2691",
@@ -107887,6 +107892,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T05:54:43.930Z"
+    },
+    "rule-3540": {
+      "learning_id": "rule-3540",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3540,
+      "title": "server): open each extension plugin at most once",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "d59f9c4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T06:01:02.679Z"
     }
   },
   "aliases": {

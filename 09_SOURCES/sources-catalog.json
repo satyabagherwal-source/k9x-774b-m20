@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "82fccd26",
+    "sourceVersion": "d59f9c4d",
     "license": "Apache-2.0",
-    "contentHash": "1f188b09d55710b6dc8368d36119f93fb0bf24c517812d3695bc3a1fd0f83748",
-    "lastHarvestedAt": "2026-10-20T18:27:33.714Z",
+    "contentHash": "5ea54301aec2ec1569fcf31141873075308be39e9399752ea49ecf656ff2eff3",
+    "lastHarvestedAt": "2026-10-21T06:01:02.750Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -8395,8 +8395,8 @@
     "sourceUrl": "https://github.com/JeffLi1993/seo-audit-skill",
     "sourceVersion": "523bdfb2",
     "license": "MIT",
-    "contentHash": "9f8a8b6475d3ced469f953275afdfa6d96c328f801dbf849dc77a75cad7057a1",
-    "lastHarvestedAt": "2026-10-19T16:49:48.774Z",
+    "contentHash": "a34599761919690ead621ce199babd7e6fb3d9be52571e71409d346d7b8143bd",
+    "lastHarvestedAt": "2026-10-21T06:00:57.841Z",
     "learningId": "learn-github-jeffli1993-seo-audit-skill"
   },
   "dimillian-redditos": {
