@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T16:32:15.411Z",
-  "total_cycles_completed": 4223,
-  "total_learnings_persisted": 4223,
-  "total_rules_promoted": 3406,
+  "last_updated": "2026-10-21T16:38:45.022Z",
+  "total_cycles_completed": 4225,
+  "total_learnings_persisted": 4225,
+  "total_rules_promoted": 3408,
   "history": [
-    {
-      "timestamp": "2026-10-20T21:40:59.735Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T21:47:04.922Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T21:47:14.981Z",
       "repository": "temporalio/temporal",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-21T16:32:15.411Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T16:38:42.725Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T16:38:45.022Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

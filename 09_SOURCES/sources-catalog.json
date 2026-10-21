@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "c5b932db",
+    "sourceVersion": "83874206",
     "license": "OSL-3.0",
-    "contentHash": "f9f028eb240ed677fff67616f7bd159386faebeff116462c078c9caf73b5781c",
-    "lastHarvestedAt": "2026-10-19T13:37:22.184Z",
+    "contentHash": "6b6e93d98496ecdb63b67cca1641eaffbec44d92442eee5c75a6f4dcd2018f87",
+    "lastHarvestedAt": "2026-10-21T16:38:45.013Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "cc579285",
+    "sourceVersion": "eb029724",
     "license": "MIT",
-    "contentHash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
-    "lastHarvestedAt": "2026-10-20T19:23:38.091Z",
+    "contentHash": "b8764a4dde5fc44514971efa781d4e090f20991ee830e6567198aea90da4d1f3",
+    "lastHarvestedAt": "2026-10-21T16:38:42.709Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {

@@ -4253,3 +4253,5 @@ Every entry in this ledger must capture:
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `5030c900` | Multi-dimensional audit evidence | 2026-10-21T16:25:57.421Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `4336b7e2` | Multi-dimensional audit evidence | 2026-10-21T16:32:03.401Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `7c1d25a1` | Multi-dimensional audit evidence | 2026-10-21T16:32:15.404Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `eb029724` | Multi-dimensional audit evidence | 2026-10-21T16:38:42.709Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `83874206` | Multi-dimensional audit evidence | 2026-10-21T16:38:45.013Z |

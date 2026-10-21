@@ -4246,3 +4246,5 @@
 | `CYCLE-20261021-QBHN` | `2026-10-21T16:25:57.419Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3560` | Yes (`c28dd8ed...`) |
 | `CYCLE-20261021-Y5VR` | `2026-10-21T16:32:03.399Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md` | Yes (`2361fc95...`) |
 | `CYCLE-20261021-YF56` | `2026-10-21T16:32:15.402Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3561` | Yes (`22bde341...`) |
+| `CYCLE-20261021-6PZM` | `2026-10-21T16:38:42.706Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3562` | Yes (`b8764a4d...`) |
+| `CYCLE-20261021-6RRM` | `2026-10-21T16:38:45.010Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3563` | Yes (`6b6e93d9...`) |

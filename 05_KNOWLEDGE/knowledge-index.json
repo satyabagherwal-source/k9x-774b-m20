@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T16:32:15.354Z",
+  "last_updated": "2026-10-21T16:38:44.960Z",
   "total_verified_learnings": 1060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7973,8 +7973,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "cc579285",
-      "content_hash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
+      "source_version": "eb029724",
+      "content_hash": "b8764a4dde5fc44514971efa781d4e090f20991ee830e6567198aea90da4d1f3",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -7987,6 +7987,11 @@
           "number": 3342,
           "title": "ci: fix harden-runner pin SHA in fuzzing workflow (#5016)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3562,
+          "title": "make IGNORE_TARGET match HTTPS and SVCB targets (#5028)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7994,7 +7999,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:23:38.027Z",
+      "verified_at": "2026-10-21T16:38:42.646Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45949,14 +45954,19 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "c5b932db",
-      "content_hash": "f9f028eb240ed677fff67616f7bd159386faebeff116462c078c9caf73b5781c",
+      "source_version": "83874206",
+      "content_hash": "6b6e93d98496ecdb63b67cca1641eaffbec44d92442eee5c75a6f4dcd2018f87",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
         {
           "number": 1914,
           "title": "Update Rust dependencies to address Wasmtime security advisory.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3563,
+          "title": "Update Rust dependencies to address Wasmtime security advisories.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45965,7 +45975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:37:22.123Z",
+      "verified_at": "2026-10-21T16:38:44.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108361,6 +108371,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T16:32:15.348Z"
+    },
+    "rule-3562": {
+      "learning_id": "rule-3562",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3562,
+      "title": "make IGNORE_TARGET match HTTPS and SVCB targets (#5028)",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "eb029724",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:38:42.646Z"
+    },
+    "rule-3563": {
+      "learning_id": "rule-3563",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3563,
+      "title": "Update Rust dependencies to address Wasmtime security advisories.",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "83874206",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T16:38:44.950Z"
     }
   },
   "aliases": {

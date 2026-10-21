@@ -805,8 +805,8 @@
     "officialUrl": "https://github.com/tusen-ai/naive-ui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T20:20:07.810Z",
-    "lastVerified": "2026-10-20T20:20:07.810Z",
+    "lastChecked": "2026-10-21T16:38:25.124Z",
+    "lastVerified": "2026-10-21T16:38:25.124Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tusen-ai-naive-ui",
@@ -2284,8 +2284,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T03:49:27.591Z",
-    "lastVerified": "2026-10-21T03:49:27.591Z",
+    "lastChecked": "2026-10-21T16:38:37.558Z",
+    "lastVerified": "2026-10-21T16:38:37.558Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -7431,22 +7431,21 @@
     "revisionIdentifier": "f366493a"
   },
   "trailbaseio-trailbase": {
-    "name": "trailbase",
+    "name": "trailbaseio/trailbase",
     "officialUrl": "https://github.com/trailbaseio/trailbase",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T18:27:30.395Z",
-    "lastVerified": "2026-10-20T18:27:30.395Z",
+    "lastChecked": "2026-10-21T16:38:44.256Z",
+    "lastVerified": "2026-10-21T16:38:44.256Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "f9f028eb240ed677fff67616f7bd159386faebeff116462c078c9caf73b5781c",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "6b6e93d98496ecdb63b67cca1641eaffbec44d92442eee5c75a6f4dcd2018f87",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c5b932db"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hypit-ai-hypit": {
     "name": "hypit-ai/hypit",
@@ -10149,14 +10148,14 @@
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T19:23:37.543Z",
-    "lastVerified": "2026-10-20T19:23:37.543Z",
+    "lastChecked": "2026-10-21T16:38:41.097Z",
+    "lastVerified": "2026-10-21T16:38:41.097Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
+    "contentHash": "b8764a4dde5fc44514971efa781d4e090f20991ee830e6567198aea90da4d1f3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13954,12 +13953,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "medialab-xan": {
-    "name": "medialab/xan",
+    "name": "xan",
     "officialUrl": "https://github.com/medialab/xan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T16:27:44.660Z",
-    "lastVerified": "2026-10-20T16:27:44.660Z",
+    "lastChecked": "2026-10-21T16:38:27.771Z",
+    "lastVerified": "2026-10-21T16:38:27.772Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-medialab-xan",
@@ -13968,7 +13967,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "15b46b5a"
   },
   "restatedev-restate": {
     "name": "restatedev/restate",
@@ -18552,12 +18552,12 @@
     "revisionIdentifier": "092970a5"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T15:29:17.463Z",
-    "lastVerified": "2026-10-21T15:29:17.463Z",
+    "lastChecked": "2026-10-21T16:38:42.559Z",
+    "lastVerified": "2026-10-21T16:38:42.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -18566,7 +18566,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3ec03cb3"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -18949,12 +18950,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "touchlab-droidconkotlin": {
-    "name": "touchlab/DroidconKotlin",
+    "name": "DroidconKotlin",
     "officialUrl": "https://github.com/touchlab/DroidconKotlin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-10-19T19:22:23.967Z",
-    "lastVerified": "2026-10-19T19:22:23.967Z",
+    "lastChecked": "2026-10-21T16:38:32.548Z",
+    "lastVerified": "2026-10-21T16:38:32.548Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-touchlab-droidconkotlin",
@@ -18963,7 +18964,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "27f3e87c"
   },
   "lucasastorian-llmwiki": {
     "name": "lucasastorian/llmwiki",
@@ -25419,9 +25421,9 @@
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
     "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
-    "lastChecked": "2026-10-19T17:37:33.211Z",
+    "lastChecked": "2026-10-21T16:38:30.040Z",
     "revisionIdentifier": "e5394ed024",
-    "lastVerified": "2026-10-19T17:37:33.211Z"
+    "lastVerified": "2026-10-21T16:38:30.040Z"
   },
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",
@@ -27366,8 +27368,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-21T16:32:17.938Z",
-    "lastVerified": "2026-10-21T16:32:17.938Z",
+    "lastChecked": "2026-10-21T16:38:47.559Z",
+    "lastVerified": "2026-10-21T16:38:47.559Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

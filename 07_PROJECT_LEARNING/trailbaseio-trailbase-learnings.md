@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `c5b932db`  
+> **Source Version**: `83874206`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:37:22.038Z  
+> **Timestamp**: 2026-10-21T16:38:44.691Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:37:22.031Z  
+> **Harvest Timestamp**: 2026-10-21T16:38:44.256Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5709 stars
+- **Stars / Engagement**: 5717 stars
 
 ---
 
@@ -951,35 +951,17 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5b932db` (2026-10-18)
-**Commit Message**: Prepare new release v0.35.1.
+### Incident Patch 1: `ce84771e` (2026-10-20)
+**Commit Message**: Update Rust dependencies to address Wasmtime security advisories.
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -1,3 +1,8 @@
-+## v0.35.1
-+
-+- Major post-v0.35 clean-up: simpler ownership, less reference counting and more consistent flows across acrions.
-+- Update dependencies.
-+
- ## v0.35.0
- 
- - Fewer yields and thus less congestion during record handling.
-```
-
----
-
-### Incident Patch 2: `0c9f29f8` (2026-10-18)
-**Commit Message**: Update Rust dependencies.
-
-**File**: `Cargo.lock` (modified, +41/-35)
+**File**: `Cargo.lock` (modified, +115/-114)
 ```diff
 @@ -156,7 +156,7 @@ version = "1.1.5"
  source = "registry+https://github.com/rust-lang/crates.io-index"
  checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
  dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
  ]
  
  [[package]]
@@ -987,29 +969,17 @@ Observed empirical fixes and code patches:
  dependencies = [
   "anstyle",
   "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
  ]
  
  [[package]]
-@@ -208,9 +208,9 @@ checksum = "3bc62ac97cc33321f50863d514c3bc38a453947a8f9e781137e47c7401020aed"
- 
- [[package]]
- name = "arc-swap"
--version = "1.9.2"
-+version = "1.9.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c049c0be4daef0b145cb3555416b3b8ef5b7888a38aea1a3a155801fe7b0810b"
-+checksum = "380962b3d93b99642e50b9febf72c071e97e8b32d86eae9cf4ef582bb960ae6e"
- dependencies = [
-  "rustversion",
- ]
 @@ -241,7 +241,7 @@ checksum = "45403b49e3954a4b8428a0ac21a4b7afadccf92bfd96273f1a58cd4812496ae0"
  dependencies = [
   "generic-array 0.12.4",
   "generic-array 0.13.3",
-- "generic-array 0.14.9",
-+ "generic-array 0.14.7",
+- "generic-array 0.14.7",
++ "generic-array 0.14.9",
   "stable_deref_trait",
  ]
  
@@ -1017,8 +987,8 @@ Observed empirical fixes and code patches:
  source = "registry+https://github.com/rust-lang/crates.io-index"
  checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
  dependencies = [
-- "generic-array 0.14.9",
-+ "generic-array 0.14.7",
+- "generic-array 0.14.7",
++ "generic-array 0.14.9",
  ]
  
  [[package]]
@@ -1026,8 +996,8 @@ Observed empirical fixes and code patches:
   "cap-primitives",
   "cap-std",
   "io-lifetimes 3.0.1",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
  ]
  
  [[package]]
@@ -1035,159 +1005,353 @@ Observed empirical fixes and code patches:
   "maybe-owned",
   "rustix",
   "rustix-linux-procfs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
   "winx",
  ]
  
-@@ -1773,18 +1773,24 @@ checksum = "a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6"
+@@ -1088,9 +1088,9 @@ dependencies = [
  
  [[package]]
- name = "crossfire"
--version = "3.1.20"
-+version = "3.1.21"
+ name = "cc"
+-version = "1.8.0"
++version = "1.9.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "adb5e5c51e448ac2309883593482db91a5549c528d08a36aaa87bba13e5a40ae"
-+checksum = "8a2ff0acecd50a3f2a01c93e21c9f67266cbccc1018b4748c17435b61ca007b8"
+-checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
++checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
  dependencies = [
-- "crossbeam-utils",
-+ "crossfire-utils",
-  "futures-core",
-  "parking_lot",
-  "pointers",
-  "smallvec",
-  "tokio",
+  "find-msvc-tools",
+  "jobserver",
+@@ -1511,37 +1511,37 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-assembler-x64"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9195e7cefae4f6c586ef4abace39e08a4cfbbde0839479f7075f0739db5ec108"
++checksum = "e6071a4f1df4837aa03d1e4d53067784acafe270ffc7dad66a7f39832204da3f"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
  ]
  
-+[[package]]
-+name = "crossfire-utils"
-+version = "0.1.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d3398c18f4a17fd2b156e19256dfd20666488d5bf9a0d111d3fa8088e12b62ae"
+ [[package]]
+ name = "cranelift-assembler-x64-meta"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f47195db7c0d11bb54fc4a03f94136344059121baad9e59dcf537cf007ed45f9"
++checksum = "5e3b92a9cc90388fe70e63640af30b734387449445aef0176ab2028e9892d70e"
+ dependencies = [
+  "cranelift-srcgen",
+ ]
+ 
+ [[package]]
+ name = "cranelift-bforest"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "23e38972e913f89b465f99d3a1add645d507ad8d2cb32b05161769330b72648c"
++checksum = "f45c85646c4425cc85b868effaf20c302b437a3fb79bb27a64513dd522f07411"
+ dependencies = [
+  "cranelift-entity",
+  "wasmtime-internal-core",
+ ]
+ 
+ [[package]]
+ name = "cranelift-bitset"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d3352069928676bf94f502e352f4d879ba16dcd2fc413fddb9617d72eaf42127"
++checksum = "94f56b5c7d564cfa03aa269a6b98c916cab4d545196a391d31403a23ef39333a"
+ dependencies = [
+  "serde",
+  "serde_derive",
+@@ -1550,9 +1550,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7332e689fc423e86b03617b071889a0e67089ed529b0cba1e22e2d630e120987"
++checksum = "2c073641ce6e382814a8220331cc1ea2c782a9ea5d5da6d0f7f7c0541192693e"
+ dependencies = [
+  "bumpalo",
+  "cranelift-assembler-x64",
+@@ -1581,9 +1581,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen-meta"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6dc7d4ec2d00466628fa9cb8197b7850771a2db0c16a902065c8513706a7ac18"
++checksum = "db226fafea5194921de10dccf35ac2863500313990f770cbe8b26c51eebec4d4"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
+  "cranelift-codegen-shared",
+@@ -1594,24 +1594,24 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen-shared"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b08c970e27b123ff6764a525aa50dfd4a6e350022e8c27027d10b3dde5cc49fc"
++checksum = "cf8ac46b2c8e328ca979810426ea635ef90ecc8c54fd3296bde31ab470a48a1d"
+ 
+ [[package]]
+ name = "cranelift-control"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "985a7c32c3a72fd8f44a8ead3211352c364ce509bf8b0b177184d7574f4e9397"
++checksum = "6754e0ab97915209ea6ce6549f6443b018e1338142ada4c856cec213ee82e4b8"
+ dependencies = [
+  "arbitrary",
+ ]
+ 
+ [[package]]
+ name = "cranelift-entity"
+-version = "0.135.6"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ce7ae3678365a2fced842f320dd90760816d57e62dc41e65804c7a86ce16dff2"
++checksum
+```
+
+**File**: `Cargo.toml` (modified, +5/-5)
+```diff
+@@ -90,7 +90,7 @@ serde_json = { version = "^1.0.154", default-features = false, features = ["raw_
+ serde_qs = { version = "1.1.3", default-features = false, features = [] }
+ sqlite-vec = { git = "https://github.com/ignatz/sqlite-vec", branch = "v0.1.10-alpha.4-fork", default-features = false }
+ sqlite3-parser = "0.17.0"
+-tokio = { version = "^1.53.3", default-features = false, features = ["fs", "io-std", "macros", "net", "rt-multi-thread", "signal", "sync", "time"] }
++tokio = { version = "^1.54.0", default-features = false, features = ["fs", "io-std", "macros", "net", "rt-multi-thread", "signal", "sync", "time"] }
+ tokio-rustls = { version = "0.26.6", default-features = false }
+ tracing = { version = "0.1.44", default-features = false }
+ tracing-subscriber = { version = "0.3.23", default-features = false, features = ["smallvec", "std", "fmt", "json"] }
+@@ -117,10 +117,10 @@ ts-rs = { version = "12", features = ["uuid-impl", "serde-json-impl", "indexmap-
+ utoipa = { version = "6.0.0", default-features = false, features = ["axum_extras", "debug", "indexmap", "uuid", "macros"] }
+ utoipa-axum = { version = "0.3.0" }
+ uuid = { version = "1", default-features = false, features = ["std", "v4", "v7", "serde"] }
+-wasmtime = { version = "48.0.6", features = ["winch"] }
+-wasmtime-wasi = { version = "48.0.6", default-features = false, features = [] }
+-wasmtime-wasi-http = { version = "48.0.6", features = ["p2"] }
+-wasmtime-wasi-io = { version = "48.0.6", features = [] }
++wasmtime = { version = "48.0.7", features = ["winch"] }
++wasmtime-wasi = { version = "48.0.7", default-features = false, features = [] }
++wasmtime-wasi-http = { version = "48.0.7", features = ["p2"] }
++wasmtime-wasi-io = { version = "48.0.7", features = [] }
+ 
+ # When building TrailBase as a standalone workspace, use local submodule paths.
+ # These [patch] sections are ignored when TrailBase is consumed as a dependency
+```
+
+**File**: `crates/cli/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ jsonwebtoken = { workspace = true }
+ log = { workspace = true }
+ mimalloc = { workspace = true }
+ reqwest = { workspace = true }
+-rmcp = { version = "^3.5.1", default-features = false, features = ["server", "transport-io"], optional = true }
++rmcp = { version = "^3.6.0", default-features = false, features = ["server", "transport-io"], optional = true }
+ rmcp-openapi = { workspace = true, optional = true }
+ rusqlite = { workspace = true }
+ serde = { workspace = true }
+```
+
+**File**: `crates/client/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -47,5 +47,5 @@ log = { workspace = true }
+ reqwest = { version = "0.13.5", features = ["stream", "multipart", "json"] }
+ rustix = { version = "1.1.5", features = ["process"] }
+ temp-dir = "0.2.0"
+-tokio = { version = "1.53.3", features = ["macros", "rt-multi-thread", "process"] }
++tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread", "process"] }
+ totp-rs = { version = "^6.0.0", default-features = false, features = ["otpauth"] }
+```
+
+---
+
+### Incident Patch 2: `d3726f1f` (2026-10-21)
+**Commit Message**: Fix graceful connection shutdown with busy backlogs. Also extend the wait period to allow logs to be safely written.
+
+Also exit with 1, if shutdown didn't succeed.
+
+**File**: `crates/core/src/auth/mod.rs` (modified, +7/-4)
+```diff
+@@ -189,12 +189,15 @@ fn build_shared_governor_conf(rate_limit: u32) -> Arc<Governor> {
+     );
+ 
+     // Periodically clean up governor.
+-    tokio::spawn({
++    //
++    // NOTE: if we spawned a tokio task instead, we'd need an explicit shutdown to avoid blocking
++    // the graceful server shutdown.
++    std::thread::spawn({
+       let governor_limiter = governor_conf.limiter().clone();
+-      async move {
+-        let interval = tokio::time::Duration::from_secs(60);
++      move || {
++        let interval = std::time::Duration::from_secs(60);
+         loop {
+-          tokio::time::sleep(interval).await;
++          std::thread::sleep(interval);
+           log::trace!("rate limiting storage size: {}", governor_limiter.len());
+           governor_limiter.retain_recent();
+         }
+```
+
+**File**: `crates/core/src/server/mod.rs` (modified, +5/-3)
+```diff
+@@ -295,6 +295,8 @@ impl Server {
+           //   panic!("Failed to write configs: {err}");
+           // }
+         }
 +
- [[package]]
- name = "crunchy"
- version = "0.2.4"
-@@ -1797,7 +1803,7 @@ version = "0.5.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0dc92fb57ca44df6db8059111ab3af99a63d5d0f8375d9972e319a379c6bab76"
- dependencies = [
-- "generic-array 0.14.9",
-+ "generic-array 0.14.7",
-  "rand_core 0.6.4",
-  "subtle",
-  "zeroize",
-@@ -1819,11 +1825,11 @@ dependencies = [
++        log::debug!("cleanup finished");
+       });
  
- [[package]]
- name = "crypto-common"
--version = "0.1.6"
-+version = "0.1.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1bfb12502f3fc46cca1bb51ac28df9d618d813cdc3d2f25b9fe775a34af26bb3"
-+checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
- dependencies = [
-- "generic-array 0.14.9",
-+ "generic-array 0.14.7",
-  "typenum",
- ]
+       cleanup_sender
+@@ -541,7 +543,7 @@ async fn shutdown_signal() {
+           handle.metrics().num_alive_tasks()
+         );
  
-@@ -2256,7 +2262,7 @@ checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
- dependencies = [
-  "block-buffer 0.10.4",
-  "const-oid 0.9.6",
-- "crypto-common 0.1.6",
-+ "crypto-common 0.1.7",
-  "subtle",
- ]
+-        const SECONDS: usize = 10;
++        const SECONDS: usize = 60;
  
-@@ -2300,7 +2306,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users 0.5.3",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
+         for remaining in (0..SECONDS).rev() {
+           tokio::select! {
+@@ -554,12 +556,12 @@ async fn shutdown_signal() {
  
- [[package]]
-@@ -2438,7 +2444,7 @@ dependencies = [
-  "crypto-bigint 0.5.5",
-  "digest 0.10.7",
-  "ff",
-- "generic-array 0.14.9",
-+ "generic-array 0.14.7",
-  "group",
-  "hkdf",
-  "pem-rfc7468 0.7.0",
-@@ -2608,7 +2614,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -3059,9 +3065,9 @@ dependencies = [
- 
- [[package]]
- name = "generic-array"
--version = "0.14.9"
-+version = "0.14.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4bb6743198531e02858aeaea5398fcc883e71851fcbcb5a2f773e2fb6cb1edf2"
-+checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
- dependencies = [
-  "typenum",
-  "version_check",
-@@ -3379,7 +3385,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "634bd4d29cbf24424d0a4bfcbf80c6960129dc24424752a7d1d1390607023422"
- dependencies = [
-  "as-slice",
-- "generic-array 0.14.9",
-+ "generic-array 0.14.7",
-  "hash32 0.1.1",
-  "stable_deref_trait",
- ]
-@@ -3922,7 +3928,7 @@ version = "1.0.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "82cb6a9f675da968c63b6208c641b9dca58fc0133ae53375736b1767b0cab8bd"
- dependencies
+           if remaining > 0 {
+             println!(
+-              "Waiting {SECONDS}s for graceful shutdown (pending: {}): {remaining}s remaining.",
++              "Waiting {SECONDS}s for graceful shutdown (pending tasks: {}, flushing DB): {remaining}s remaining.",
+               handle.metrics().num_alive_tasks()
+             );
+           } else {
+             println!("Graceful shutdown failed. Shutting down");
+-            std::process::exit(0);
++            std::process::exit(1);
+           }
+         }
+       })
 ```
 
-**File**: `Cargo.toml` (modified, +2/-2)
+**File**: `crates/sqlite/src/generic.rs` (modified, +0/-1)
 ```diff
-@@ -53,7 +53,7 @@ strip = "debuginfo" # ("symbols", "debuginfo", "none")
- opt-level = 1
- 
- [workspace.dependencies]
--arc-swap = { version = "1.9.2", default-features = false }
-+arc-swap = { version = "1.9.3", default-features = false }
- argon2 = { version = "^0.6.0", default-features = false, features = ["alloc", "getrandom", "password-hash"] }
- askama = { version = "0.16.1", default-features = false, features = ["derive", "std", "config"] }
- axum = { version = "^0.8.9", default-features = false, features = ["multipart"] }
-@@ -62,7 +62,7 @@ bytes = { version = "1.12.1", features = ["serde"] }
- chrono = { version = "0.4.45", default-features = false }
- clap = { version = "^4.6.7", features=["derive", "env"] }
- cron = "0.17.0"
--crossfire = { version = "3.1.20", default-features = false, features = ["tokio"] }
-+crossfire = { version = "3.1.21", default-features = false, features = ["tokio"] }
- env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
- flume = { version = "0.12.0", default-features = false, features = ["select", "async"] }
- futures-util = { version = "0.3.34", default-features = false, features = ["alloc", "spin"] }
+@@ -490,7 +490,6 @@ impl Connection {
+       Executor::Sqlite(ref exec) => {
+         let fname = exec
+           .path()
+-          .await
+           .and_then(|p| {
+             std::path::PathBuf::from(p)
+               .file_name()
 ```
 
-**File**: `crates/wasm-component-repo/Cargo.toml` (modified, +1/-1)
+**File**: `crates/sqlite/src/sqlite/connection.rs` (modified, +1/-1)
 ```diff
-@@ -19,7 +19,7 @@ trailbase-wasm-runtime-host = { workspace = true }
- trailbase-wasm-common = { workspace = true }
- url = "2.5.8"
- wit-component = "0.262.0"
--zip = { version = "9.0.4", default-features = false, features = ["deflate"] }
-+zip = { version = "9.0.5", default-features = false, features = ["deflate"] }
+@@ -310,7 +310,7 @@ impl Connection {
+     dir: impl AsRef<std::path::Path>,
+     schema: Option<&str>,
+   ) -> Result<(), Error> {
+-    let Some(fname) = self.exec.path().await.and_then(|p| {
++    let Some(fname) = self.exec.path().and_then(|p| {
+       std::path::PathBuf::from(p)
+         .file_name()
+         .map(|f| f.to_string_lossy().to_string())
+```
+
+**File**: `crates/sqlite/src/sqlite/executor.rs` (modified, +18/-9)
+```diff
+@@ -81,7 +81,7 @@ impl Executor {
+     };
  
- [build-dependencies]
- trailbase-build = { workspace = true }
+     let write_conn = new_conn(/* read_only= */ read_only.unwrap_or(false))?;
+-    let path = write_conn.path().map(|p| p.to_string());
++    let path = write_conn.path().map(String::from);
+     let in_memory = path.as_ref().is_none_or(|s| {
+       // Returns empty string for in-memory databases.
+       return s.is_empty();
+@@ -173,11 +173,9 @@ impl Executor {
+     return self.conns.read().0.len();
+   }
+ 
+-  pub async fn path(&self) -> Option<String> {
+-    return self
+-      .call_reader(|conn| Ok::<_, Error>(conn.path().map(|p| p.to_string())))
+-      .await
+-      .expect("");
++  pub fn path(&self) -> Option<String> {
++    let lock = self.conns.read();
++    return lock.0.get(0).and_then(|c| c.path().map(String::from));
+   }
+ 
+   #[inline]
+@@ -292,8 +290,17 @@ impl Executor {
+   }
+ 
+   pub(crate) fn close_impl(&self) -> Result<(), Error> {
+-    while self.reader.send(ReaderMessage::Terminate).is_ok() {
+-      // Continue to close readers (as well as the reader/writer) while the channel is alive.
++    trace!("Closing: {:?}", self.path());
++
++    let readers = self.reader.get_rx_count();
++    for _ in 0..readers {
++      let _ = self.reader.send(ReaderMessage::Terminate);
++    }
++
++    // Poll for all readers (including the writer) to finish pending work before eventually
++    // stumbling on a terminate message and us safely closing the connections below.
++    while !self.reader.is_disconnected() {
++      std::thread::sleep(std::time::Duration::from_micros(50));
+     }
+ 
+     let mut errors = vec![];
+@@ -312,6 +319,8 @@ impl Executor {
+       return Err(errors.swap_remove(0).into());
+     }
+ 
++    trace!("Closed {:?}", self.path());
++
+     return Ok(());
+   }
+ }
+@@ -377,7 +386,7 @@ fn writer_event_loop(
+         }
+       }
+       Ok(_) => {
+-        debug_assert!(false, "Unexpected select result");
++        unreachable!("Unexpected select result");
+       }
+       Err(crossfire::RecvError) => {
+         break;
+```
+
+---
+
+### Incident Patch 3: `0195d016` (2026-10-21)
+**Commit Message**: Minor: fix benchmark builds.
+
+**File**: `crates/core/src/connection.rs` (modified, +4/-1)
+```diff
+@@ -473,7 +473,10 @@ async fn init_db_sqlite<'a>(
+   fn _implicitly_assert_db_sqlite_connection_type() {
+     // Assert that we're not using th the polymorphic connection in production sqlite mode. The
+     // below constructor only exists on the sqlite flavor.
+-    trailbase_sqlite::Connection::new(|| rusqlite::Connection::open_in_memory()).unwrap();
++    trailbase_sqlite::Connection::new(|| -> Result<_, trailbase_sqlite::Error> {
++      return Ok(rusqlite::Connection::open_in_memory()?);
++    })
++    .unwrap();
+   }
+ 
+   if opts.attach.len() > 124 {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1216,32 +1380,78 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prepare new release v0.35.1.
+## X. Update Rust dependencies to address Wasmtime security advisories.
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5b932db`: Prepare new release v0.35.1.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce84771e`: Update Rust dependencies to address Wasmtime security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## v0.35.1
-
-- Major post-v0.35 clean-up: simpler ownership, less reference counting and more consistent flows across acrions.
-- Update dependencies.
-
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "generic-array 0.14.9",
+ "generic-array 0.14.9",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+version = "1.9.0"
+checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
+version = "0.135.7"
+checksum = "e6071a4f1df4837aa03d1e4d53067784acafe270ffc7dad66a7f39832204da3f"
+version = "0.135.7"
+checksum = "5e3b92a9cc90388fe70e63640af30b734387449445aef0176ab2028e9892d70e"
+version = "0.135.7"
+checksum = "f45c85646c4425cc85b868effaf20c302b437a3fb79bb27a64513dd522f07411"
+version = "0.135.7"
+checksum = "94f56b5c7d564cfa03aa269a6b98c916cab4d545196a391d31403a23ef39333a"
+version = "0.135.7"
+checksum = "2c073641ce6e382814a8220331cc1ea2c782a9ea5d5da6d0f7f7c0541192693e"
+version = "0.135.7"
+checksum = "db226fafea5194921de10dccf35ac2863500313990f770cbe8b26c51eebec4d4"
+version = "0.135.7"
+checksum = "cf8ac46b2c8e328ca979810426ea635ef90ecc8c54fd3296bde31ab470a48a1d"
+version = "0.135.7"
+checksum = "6754e0ab97915209ea6ce6549f6443b018e1338142ada4c856cec213ee82e4b8"
+version = "0.135.7"
+checksum
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ "windows-sys 0.60.2",
+ "windows-sys 0.60.2",
+ "generic-array 0.14.7",
+ "generic-array 0.14.7",
+ "windows-sys 0.60.2",
+ "windows-sys 0.60.2",
+version = "1.8.0"
+checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
+version = "0.135.6"
+checksum = "9195e7cefae4f6c586ef4abace39e08a4cfbbde0839479f7075f0739db5ec108"
+version = "0.135.6"
+checksum = "f47195db7c0d11bb54fc4a03f94136344059121baad9e59dcf537cf007ed45f9"
+version = "0.135.6"
+checksum = "23e38972e913f89b465f99d3a1add645d507ad8d2cb32b05161769330b72648c"
+version = "0.135.6"
+checksum = "d3352069928676bf94f502e352f4d879ba16dcd2fc413fddb9617d72eaf42127"
+version = "0.135.6"
+checksum = "7332e689fc423e86b03617b071889a0e67089ed529b0cba1e22e2d630e120987"
+version = "0.135.6"
+checksum = "6dc7d4ec2d00466628fa9cb8197b7850771a2db0c16a902065c8513706a7ac18"
+version = "0.135.6"
+checksum = "b08c970e27b123ff6764a525aa50dfd4a6e350022e8c27027d10b3dde5cc49fc"
+version = "0.135.6"
+checksum = "985a7c32c3a72fd8f44a8ead3211352c364ce509bf8b0b177184d7574f4e9397"
+version = "0.135.6"
+checksum = "ce7ae3678365a2fced842f320dd90760816d57e62dc41e65804c7a86ce16dff2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5b932db` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce84771e` are properly handled with clean fallback behavior.

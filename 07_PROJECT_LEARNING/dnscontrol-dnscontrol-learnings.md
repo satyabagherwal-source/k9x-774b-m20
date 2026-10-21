@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `cc579285`  
+> **Source Version**: `eb029724`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:23:37.777Z  
+> **Timestamp**: 2026-10-21T16:38:42.382Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:23:37.543Z  
+> **Harvest Timestamp**: 2026-10-21T16:38:41.097Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3977 stars
+- **Stars / Engagement**: 3978 stars
 
 ---
 
@@ -688,11 +688,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5023** (2026-10-20): **chore: go fix and linting**
-  *Symptoms*: 
+- **Issue #5031** (2026-10-21): **chore: update dependencies**
+  *Symptoms*: <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
 
-- **Issue #5021** (2026-10-20): **chore(p/CLOUDFLAREAPI): upgrade to SDK v7**
-  *Symptoms*: * Upgrade to SDK v7 * Add cfapi wrappers that allow the old functions to be emulated with the new SDK
+- **Issue #5030** (2026-10-21): **fix(diff2): MODIFY messages not showing provider-specific fields**
+  *Symptoms*: Fixes #5019  `humanDiff()` prints only the record's RDATA. Fields that a provider adds through its `ComparableFunc` (for example the Cloudflare proxy setting) are not part of the RDATA, so when only such a field changed the MODIFY line showed identical old and new sides, even though the change was applied.  When the provider-added part of the comparable string differs, `humanDiff()` now prints the full `(old) -> (new)` form including those fields, e.g.      ± MODIFY www.example.com CNAME (target.example.net. proxy=false ttl=1) -> (target.example.net. proxy=true ttl=1)  Tests: added `Test_humanDiff_providerFields` (fails without the change); `go test ./pkg/diff2/` passes. I did not run the Cloudflare provider against a live account. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -709,732 +709,271 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce655251` (2026-10-20)
-**Commit Message**: ci: fix harden-runner pin SHA in fuzzing workflow (#5016)
+### Incident Patch 1: `10292165` (2026-10-21)
+**Commit Message**: fix: make IGNORE_TARGET match HTTPS and SVCB targets (#5028)
 
-## Problem
+`IGNORE_TARGET` does not match the target of existing HTTPS or SVCB
+records, so `dnscontrol preview` can propose deleting a record that the
+config says to ignore.
 
-The scheduled `Fuzzing` workflow (added in #5006) fails immediately —
-both matrix jobs (`FuzzConfigJSON`, `FuzzTXTQuoted`) die at the very
-first step:
-
-> Unable to resolve action
-`step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2f25`,
-unable to find version `ccd8616d44fd3846e67624a50d5aad6d37bf2f25`
-
-(Example failed run: chicks-net/dnscontrol run
-[39257215203](https://github.com/chicks-net/dnscontrol/actions/runs/39257215203),
-and the scheduled run in this repo will hit the same wall since the file
-is identical.)
-
-## Root cause
-
-A one-character typo in the pinned commit SHA for
-`step-security/harden-runner` v2.22.1 — character 38 is `f` where it
-must be `d`:
-
-```text
-upstream v2.22.1 tag:  ccd8616d44fd3846e67624a50d5aad6d37bf2d25
-pinned in fuzzing.yml: ccd8616d44fd3846e67624a50d5aad6d37bf2f25  ← does not exist
+```js
+D("example.com", REG_NONE, DnsProvider(DSP_BIND),
+    IGNORE_TARGET("svc.example.net.", "HTTPS")
+);
 ```
 
-Because the SHA does not resolve, the jobs never reach the checkout, so
-no fuzzing has actually run since the workflow landed.
+With `svc IN HTTPS 1 svc.example.net. alpn=h2` already at the provider,
+`dnscontrol preview` prints `- DELETE svc.example.com HTTPS 1
+svc.example.net. alpn="h2" ttl=300`. It should leave the record
+unchanged and report `0 corrections`.
 
-## Fix
+Cause:
+[`GetTargetField`](https://github.com/DNSControl/dnscontrol/blob/d1823f78f3d066f21016c7497e9a100d9da9f03a/models/target.go#L12-L34)
+falls back to the last RDATA field. For HTTPS and SVCB that field is the
+service parameters, not the target.
 
-Correct the single character so the pin points at the real v2.22.1
-commit — the same SHA already pinned correctly in `scorecard.yml` (from
-#4993):
+Fix: return the SVCB target field for both record types. A table test
+covers HTTPS and SVCB:
 
-``
+```
+go test -p 1 -count=1 -run '^Test_ignore_target_svcb$' ./pkg/diff2/
+```
 
-**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
+Both subtests fail in each of 3 runs before the fix and pass in each of
+3 runs after it. `go test -p 1 -count=1 ./models ./pkg/diff2/` also
+passes.
+
+**File**: `models/target.go` (modified, +2/-0)
 ```diff
-@@ -27,7 +27,7 @@ jobs:
-         target: [FuzzConfigJSON, FuzzTXTQuoted]
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
--        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2f25 # v2.22.1
-+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
-         with:
-           egress-policy: audit
+@@ -20,6 +20,8 @@ func (rc *RecordConfig) GetTargetField() string {
+ 	case "R53_ALIAS":
+ 		// R53_ALIAS's target (DNSName) is not the last field of the RDATA.
+ 		return rc.AsR53ALIAS().Target
++	case "HTTPS", "SVCB":
++		return rc.AsSVCB().Target
+ 	}
  
+ 	// Return the last field. Not perfect, but good enough until we get rid of this function.
+```
+
+**File**: `pkg/diff2/handsoff_test.go` (modified, +18/-0)
+```diff
+@@ -243,6 +243,24 @@ FOREIGN:
+ 	`)
+ }
+ 
++func Test_ignore_target_svcb(t *testing.T) {
++	for _, rtype := range []string{"HTTPS", "SVCB"} {
++		t.Run(rtype, func(t *testing.T) {
++			existingZone := fmt.Sprintf("svc IN %s 1 svc.example.net. alpn=h2\n", rtype)
++			desiredJs := fmt.Sprintf(`
++D("f.com", "none",
++	IGNORE_TARGET("svc.example.net.", %q),
++{})
++`, rtype)
++			handsoffHelper(t, existingZone, desiredJs, false, fmt.Sprintf(`
++IGNORED:
++svc %s 1 svc.example.net. alpn="h2"
++FOREIGN:
++`, rtype))
++		})
++	}
++}
++
+ // Test_ignore_external_dns tests the IGNORE_EXTERNAL_DNS feature
+ // using the full handsoff() function.
+ func Test_ignore_external_dns(t *testing.T) {
 ```
 
 ---
 
-### Incident Patch 2: `0b8bc546` (2026-10-20)
-**Commit Message**: feat(FORSALE_BUILDER): add a builder for RFC 10023 "_for-sale" records (#5014)
+### Incident Patch 2: `d392e6e9` (2026-10-21)
+**Commit Message**: fix(diff2): MODIFY messages no showing provider-specific fields (#5030)
 
-Closes #4793
+Fixes #5019
 
-## What this adds
+`humanDiff()` prints only the record's RDATA. Fields that a provider
+adds through its `ComparableFunc` (for example the Cloudflare proxy
+setting) are not part of the RDATA, so when only such a field changed
+the MODIFY line showed identical old and new sides, even though the
+change was applied.
 
-`FORSALE_BUILDER()` creates the `_for-sale` TXT records of [RFC
-10023](https://www.rfc-editor.org/rfc/rfc10023), written as a Go builder
-(`models/b_forsale.go`), the same way as `M365_BUILDER`.
+When the provider-added part of the comparable string differs,
+`humanDiff()` now prints the full `(old) -> (new)` form including those
+fields, e.g.
 
-```javascript
-D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-  FORSALE_BUILDER("@", {
-      furi: "https://example.com/buy",
-      fval: "EUR999",
-  }, TTL("1h")),
-);
-```
+± MODIFY www.example.com CNAME (target.example.net. proxy=false ttl=1)
+-> (target.example.net. proxy=true ttl=1)
 
-```text
-_for-sale  IN  TXT  "v=FORSALE1;furi=https://example.com/buy"
-_for-sale  IN  TXT  "v=FORSALE1;fval=EUR999"
-```
+Tests: added `Test_humanDiff_providerFields` (fails without the change);
+`go test ./pkg/diff2/` passes. I did not run the Cloudflare provider
+against a live account.
 
-- The first argument is the label of the name that is for sale. The
-records go at `_for-sale` below it. `D_EXTEND()` works the same way as
-in `M365_BUILDER`.
-- The options are the RFC's four content tags, `fcod`, `ftxt`, `furi`
-and `fval`. Each one takes a string or a list of strings. The RFC allows
-one tag-value pair per record, so there is one record per value, in tag
-order and then in list order. With no options, the builder creates the
-bare `"v=FORSALE1;"` record, which the RFC allows.
-- Checks, all taken from the RFC:
-- each value is 1 to 239 octets, so the record fits in
+Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
 
-**File**: `commands/types/dnscontrol.d.ts` (modified, +59/-0)
+**File**: `pkg/diff2/analyze.go` (modified, +23/-0)
 ```diff
-@@ -1295,6 +1295,65 @@ declare function DefaultTTL(ttl: Duration): DomainModifier;
-  */
- declare function DnsProvider(name: string, nsCount?: number): DomainModifier;
- 
-+/**
-+ * `FORSALE_BUILDER` creates the `_for-sale` [`TXT`](TXT.md) records of
-+ * [RFC 10023](https://www.rfc-editor.org/rfc/rfc10023), which signal that a
-+ * registered domain name is available for purchase.
-+ *
-+ * The first parameter is the label of the name that is for sale, usually `"@"`.
-+ * The records are created at `_for-sale` below that label.
-+ *
-+ * ## Example
-+ *
-+ * ```javascript
-+ * D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-+ *   FORSALE_BUILDER("@", {
-+ *       furi: "https://example.com/buy",
-+ *       fval: "EUR999",
-+ *   }, TTL("1h")),
-+ * );
-+ * ```
-+ *
-+ * This yields the following records:
-+ *
-+ * ```text
-+ * _for-sale  IN  TXT  "v=FORSALE1;furi=https://example.com/buy"
-+ * _for-sale  IN  TXT  "v=FORSALE1;fval=EUR999"
-+ * ```
-+ *
-+ * Without options, `FORSALE_BUILDER("@")` creates the single record
-+ * `"v=FORSALE1;"`, which says that the domain name is for sale without saying
-+ * anything else. RFC 10023 recommends giving at least one content tag.
-+ *
-+ * ## Parameters
-+ *
-+ * Each option is a string or a list of strings. The RFC allows only one content
-+ * tag per record, so the builder creates one record per value, in the order
-+ * `fcod`, `ftxt`, `furi`, `fval`, and within an option in the order given.
-+ *
-+ * | Option | Description |
-+ * |---|---|
-+ * | `fcod` | A code that only parties who agreed on its meaning understand, for example a registry and its registrars: `"EXCO-S2lscm95IHdhcyBoZXJl"`. |
-+ * | `ftxt` | A short text for people: `"Call for info."`. |
-+ * | `furi` | One absolute URI (or IRI) with more information, preferably `https:`, `mailto:` or `tel:`: `"https://example.com/buy"`. Spaces must be percent-encoded (`%20`). |
-+ * | `fval` | An asking price: an upper case currency code followed by the amount, with an optional decimal point and no separators: `"USD750"`, `"BTC0.000010"`. |
-+ *
-+ * Every value must be at least one and at most 239 octets long, so that the record
-+ * fits in a single TXT string of 255 octets as the RFC requires. The same value
-+ * may not be given twice for one option.
-+ *
-+ * The builder refuses names below `.arpa` and wildcards, where the RFC says the
-+ * records have no meaning.
-+ *
-+ * RFC 10023 recommends a TTL of one hour or less, so that a domain name that is no
-+ * longer for sale, or a changed price, does not stay in caches for long.
-+ *
-+ * When the domain name is no longer for sale, remove the `FORSALE_BUILDER` call.
-+ *
-+ * @see https://docs.dnscontrol.org/language-reference/domain-modifiers/forsale_builder
-+ */
-+declare function FORSALE_BUILDER(label: string, opts?: { fcod?: string | string[]; ftxt?: string | string[]; furi?: string | string[]; fval?: string | string[] }, ...modifiers: RecordModifier[]): DomainModifier;
-+
- /**
-  * This is provider specific type of record and not a DNS standard. It may behave differently for each provider that handles it.
-  *
-```
-
-**File**: `documentation/SUMMARY.md` (modified, +1/-0)
-```diff
-@@ -49,6 +49,7 @@
-     * [DS](language-reference/domain-modifiers/DS.md)
-     * [DefaultTTL](language-reference/domain-modifiers/DefaultTTL.md)
-     * [DnsProvider](language-reference/domain-modifiers/DnsProvider.md)
-+    * [FORSALE_BUILDER](language-reference/domain-modifiers/FORSALE_BUILDER.md)
-     * [FRAME](language-reference/domain-modifiers/FRAME.md)
-     * [HTTPS](language-reference/domain-modifiers/HTTPS.md)
-     * [IGNORE](language-reference/domain-modifiers/IGNORE.md)
-```
-
-**File**: `documentation/advanced-features/code-tricks.md` (modified, +1/-0)
-```diff
-@@ -12,6 +12,7 @@ Solution: Use a "builder" to construct it for you.
- - [CAA_BUILDER](../language-reference/domain-modifiers/CAA_BUILDER.md)
- - [DKIM_BUILDER](../language-reference/domain-modifiers/DKIM_BUILDER.md)
- - [DMARC_BUILDER](../language-reference/domain-modifiers/DMARC_BUILDER.md)
-+- [FORSALE_BUILDER](../language-reference/domain-modifiers/FORSALE_BUILDER.md)
- - [M365_BUILDER](../language-reference/domain-modifiers/M365_BUILDER.md)
- - [SPF_BUILDER](../language-reference/domain-modifiers/SPF_BUILDER.md)
- 
-```
-
-**File**: `documentation/developer-info/cookbook.md` (modified, +28/-5)
-```diff
-@@ -218,12 +218,11 @@ records.
- 
- Assume the builder is named "robert" and appears in `dnsconfig.js` as `ROBERT(label, data)`
- 
--- Create the builder in `models/b_robert.go`
--. Register the builder:
-+- Create the builder in `models/b_robert.go` and register it:
- 
- ```go
- func init() {
--        RegisterBuilder("LOC", BuilderLOC)
-+        RegisterBuilder("ROBERT", BuilderROBERT)
+@@ -225,10 +225,33 @@ func filterBy(s []targetConfig, m map[string]*targetConfig) []targetConfig {
+ 	return s
  }
- ```
  
-@@ -249,11 +248,35 @@ func BuilderROBERT(dc *DomainConfig, ttl uint32, args []any, subdomain string) (
- A builder does not receive the `{foo: "foo"}` (Javascript objects) passed to the
- function in `dnsconfig.js`: `RecordBuilderFn` has no metadata parameter. A
- builder that needs an object has to move it into `args` in `pkg/js/helpers.js`
--(see `m365Options()`).
-+(see `m365Options()` and `forsaleOptions()`).
- 
- The builder function can do basically anything and generate as many records as it wants. `SPF_BUILDER()` returns many records. `LOC()` returns just one record.
- 
--All builders must have unit tests.
-+- Make the function available in `dnsconfig.js`
-+
-+Add it to the alphabetical list of `rawrecordBuilder()` calls in
-+`pkg/js/helpers.js`, for example `var ROBERT = rawrecordBuilder("ROBERT");`.
-+The name must be the one passed to `RegisterBuilder()`.
-+
-+- Document it
-+
-+Create `documentation/language-reference/domain-modifiers/ROBERT.md`. Its front
-+matter (`parameters` and `parameter_types`) is what `go generate` turns into
-+the TypeScript declaration in `commands/types/dnscontrol.d.ts`, so run
-+`bin/generate-all.sh` afterwards. Add the page to `documentation/SUMMARY.md`
-+and to the list of builders in `documentation/advanced-features/code-tricks.md`.
-+
-+- Test it
-+
-+All builders must have unit tests:
-+
-+- `models/b_robert_test.go` calls `BuilderROBERT()` directly, which is the
-+  easiest place to test every option and every error message.
-+- A test in `pkg/js/parse_tests/` (a `.js` file and the `.json` it is expected
-+  to produce, optionally with a zone file per domain in a directory of the same
-+  name) checks that `dnsconfig.js` reaches the builder, including `TTL()` and
-+  `D_EXTEND()`. See `073-forsalebuilder.js`.
-+- Calls that must fail can be added to `TestErrors` in `pkg/js/js_test.go`.
- 
- ## How to manipulate domain/zone names
- 
-```
-
-**File**: `documentation/language-reference/domain-modifiers/FORSALE_BUILDER.md` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+---
-+name: FORSALE_BUILDER
-+parameters:
-+  - label
-+  - opts
-+  - modifiers...
-+parameter_types:
-+  label: string
-+  opts: "{ fcod?: string | string[]; ftxt?: string | string[]; furi?: string | string[]; fval?: string | string[] }?"
-+  "modifiers...": RecordModifier[]
-+---
-+
-+`FORSALE_BUILDER` creates the `_for-sale` [`TXT`](TXT.md) records of
-+[RFC 10023](https://www.rfc-editor.org/rfc/rfc10023), which signal that a
-+registered domain name is available for purchase.
-+
-+The first parameter is the label of the name that is for sale, usually `"@"`.
-+The records are created at `_for-sale` below that label.
-+
-+## Example
-+
-+{% code title="dnsconfig.js" %}
-+```javascript
-+D("example.com", REG_MY_PROVIDER, DnsProvider(DSP_MY_PROVIDER),
-+  FORSALE_BUILDER("@", {
-+      furi: "https://example.com/buy",
-+      fval: "EUR999",
-+  }, TTL("1h")),
-+);
-+```
-+{% endcode %}
-+
-+This yields the following records:
-+
-+```text
-+_for-sale  IN  TXT  "v=FORSALE1;furi=https://example.com/buy"
-+_for-sale  IN  TXT  "v=FORSALE1;fval=EUR999"
-+```
-+
-+Without options, `FORSALE_BUILDER("@")` creates the single record
-+`"v=FORSALE1;"`, which says that the domain name is for sale without saying
-+anything else. RFC 10023 recommends giving at least one content tag.
-+
-+## Parameters
-+
-+Each option is a string or a list of strings. The RFC allows only one content
-+tag per record, so the builder creates one record per value, in the order
-+`fcod`, `ftxt`, `furi`, `fval`, and within an option in the order given.
-+
-+| Option | Description |
-+|---|---|
-+| `fcod` | A code that only parties who agreed on its meaning understand, for example a registry and its registrars: `"EXCO-S2lscm95IHdhcyBoZXJl"`. |
-+| `ftxt` | A short text for people: `"Call for info."`. |
-+| `furi` | One absolute URI (or IRI) with more information, preferably `https:`, `mailto:` or `tel:`: `"https://example.com/buy"`. Spaces must be percent-encoded (`%20`). |
-+| `fval` | An asking price: an upper case currency code followed by the amount, with an optional decimal point and no separators: `"USD750"`, `"BTC0.000010"`. |
-+
-+Every value must be at least one and at most 239 octets long, so that the record
-+fits in a single TXT string of 255 octets as the RFC requires. The same value
-+may not be given twice for one option.
-+
-+The builder refuses names below `.arpa` and wildcards, where the RFC says the
-+records have no meaning.
-+
-+RFC 10023 recommends a TTL of one hour or less, so that a domain name that is no
-+longer for sale, or a changed price, does not stay in caches for long.
-+
-+When the domain name is no longer for sale, remove the `FORSALE_BUILDER` call.
-```
-
-**File**: `models/b_forsale.go` (added, +211/-0)
-```diff
-@@ -0,0 +1,211 @@
-+package models
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"maps"
-+	"net/url"
-+	"regexp"
-+	"slices"
-+	"strings"
-+	"unicode"
-+
-+	dnsv2 "codeberg.org/miekg/dns"
-+	"golang.org/x/net/idna"
-+)
-+
-+func init() {
-+	RegisterBuilder("FORSALE_BUILDER", BuilderFORSALE)
++// providerExtra returns the part of t.comparableNoTTL that was added by the
++// provider's ComparableFunc (if any), i.e. everything after the record's
++// ComparableV3.
++func providerExtra(t targetConfig) string {
++	return strings.TrimSpace(strings.TrimPrefix(t.comparableNoTTL, t.rec.ComparableV3))
 +}
 +
-+// RFC 10023: the "_for-sale" TXT records signal that a registered domain name
-+// is available for purchase.
-+// https://www.rfc-editor.org/rfc/rfc10023
-+const (
-+	forSaleLabel   = "_for-sale"
-+	forSaleVersion = "v=FORSALE1;"
-+
-+	// Each record is one character-string of at most 255 octets (Section
-+	// 2.4), which leaves 239 octets for the content value after the version
-+	// tag and a content tag such as "fcod=". The ABNF in Section 2.1 gives
-+	// the same limit.
-+	forSaleMaxValueLength = 255 - len(forSaleVersion) - len("fcod=")
-+)
-+
-+// forSaleTags lists the content tags of Section 2.2, sorted. It is also the
-+// order in which the records are created.
-+var forSaleTags = []string{"fcod", "ftxt", "furi", "fval"}
-+
-+// fval-value = fval-currency fval-amount (Section 2.1).
-+var forSaleValueRE = regexp.MustCompile(`^[A-Z]+[0-9]+(\.[0-9]+)?$`)
-+
-+// BuilderFORSALE implements FORSALE_BUILDER(), which generates the "_for-sale"
-+// TXT records of RFC 10023 below a label.
-+//
-+// args is [label, options]. The options object is moved from the metadata list
-+// into the argument list by forsaleOptions() (pkg/js/helpers.js), so its
-+// values arrive as the JSON types dnsconfig.js produces.
-+//
-+// Without options a single "v=FORSALE1;" record is created, which the RFC
-+// allows. Otherwise there is one record per content value, because a record
-+// must not carry more than one tag-value pair.
-+func BuilderFORSALE(dc *DomainConfig, ttl uint32, args []any, subdomain string) (Records, error) {
-+	var label string
-+	if len(args) > 0 {
-+		if s, ok := args[0].(string); ok {
-+			label = strings.TrimSpace(s)
-+		}
++func joinNonEmpty(s, extra string) string {
++	if extra == "" {
++		return s
 +	}
-+	if label == "" {
-+		return nil, errors.New(`FORSALE_BUILDER: the first argument must be the label of the domain name that is for sale, for example FORSALE_BUILDER("@", { furi: "https://example.com/buy" })`)
-+	}
-+	errPrefix := fmt.Sprintf("FORSALE_BUILDER(%q): ", label)
-+
-+	if len(args) > 2 {
-+		return nil, fmt.Errorf("%sexpected the label and one options object, got %d arguments", errPrefix, len(args))
-+	}
-+	rawOpts := map[string]any{}
-+	if len(args) == 2 {
-+		o, ok := args[1].(map[string]any)
-+		if !ok {
-+			return nil, fmt.Errorf("%sthe second argument must be an options object, got %s", errPrefix, m365JSONType(args[1]))
-+		}
-+		rawOpts = o
-+	}
-+
-+	// Section 2.6, Note 2: processors MUST ignore "_for-sale" names below
-+	// .arpa, so such a record could only ever be a mistake.
-+	if dc.Name == "arpa" || strings.HasSuffix(dc.Name, ".arpa") {
-+		return nil, fmt.Errorf("%sRFC 10023 does not apply to names below .arpa (%q)", errPrefix, dc.Name)
-+	}
-+
-+	contents, err := forSaleParseOptions(errPrefix, rawOpts)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	// See BuilderM365: the D_EXTEND() subdomain arrives unconverted.
-+	subdomainASCII := subdomain
-+	if subdomainASCII != "" {
-+		subdomainASCII, err = idna.ToASCII(subdomainASCII)
-+		if err != nil {
-+			return nil, fmt.Errorf("%sthe D_EXTEND() subdomain %q is not a valid IDNA name: %w", errPrefix, subdomain, err)
-+		}
-+		subdomainASCII = strings.ToLower(subdomainASCII)
-+	}
-+
-+	name, err := dc.LabelFromDnsconfigjs(label, subdomainASCII)
-+	if err != nil {
-+		return nil, fmt.Errorf("%s%w", errPrefix, err)
-+	}
-+	// Section 2.5: "_for-sale.*.example." is not a wildcard, so it does not
-+	// put every name below example. up for sale.
-+	if name == "*" || strings.HasPrefix(name, "*.") {
-+		return nil, fmt.Errorf("%sa wildcard cannot be put up for sale; RFC 10023 only allows \"_for-sale\" below a name that exists", errPrefix)
-+	}
-+	recordName := forSaleLabel
-+	if name != "@" {
-+		recordName = forSaleLabel + "." + name
-+	}
-+
-+	if len(contents) == 0 {
-+		contents = []string{""}
-+	}
-+	records := make(Records, 0, len(contents))
-+	for _, content := range contents {
-+		rec, err := dc.NewRecordConfig(recordName, ttl, dnsv2.TypeTXT, forSaleVersion+content)
-+		if err != nil {
-+			return nil, fmt.Errorf("%scannot create the TXT record %q: %w", errPrefix, forSaleVersion+content, err)
-+		}
-+		rec.SubDomain = subdomainASCII
-+		records = append(records, rec)
-+	}
-+	return records, nil
++	return s + " " + extra
 +}
 +
-+// forSaleParseOptions validates the options object and returns the tag-value
-+// pairs ("furi=https://...") in the order the records are created: by tag,
-+// then in the order they were written.
-+func forSaleParseOptions(errPrefix string, rawOpts map[string]any) ([]string, error) {
-+	names := slices.Sorted(maps.Keys(rawOpts))
-+	for _, name := range names {
-+		if !slices.Contains(forSaleTags, name) {
-+			return nil, fmt.Errorf("%sunknown option %q; valid options are %s", errPrefix, name, strings.Join(forSaleTags, ", "))
+ // humanDiff returns a human-friendly string showing what changed
+ // between a and b.
+ func humanDiff(a, b targetConfig) string {
+ 	if a.comparableNoTTL != b.comparableNoTTL {
++		// The provider's ComparableFunc may add fields that are not part of
++		// the RDATA (such as Cloudflare's proxy setting). If those differ,
++		// the RDATA-based output below would hide the change, so show them.
++		if aExtra, bExtra := providerExtra(a), providerExtra(b); aExtra != bExtra {
++			return fmt.Sprintf("(%s ttl=%d) -> (%s ttl=%d)",
++				joinNonEmpty(a.rec.GetRDATA().String(), aExtra), a.rec.TTL,
++				joinNonEmpty(b.rec.GetRDATA().String(), bExtra), b.rec.TTL)
 +		}
-+	}
 +
-+	var contents []string
-+	for _, tag := range names {
-+		values, err := forSaleStrings(errPrefix, tag, rawOpt
+ 		// The recorddata is different. If possible, show just the fields that changed:
+ 		if fields, ok := fieldDiff(a.rec.GetRDATA(), b.rec.GetRDATA()); ok {
+ 			if a.rec.TTL != b.rec.TTL {
 ```
 
-**File**: `models/b_forsale_test.go` (added, +285/-0)
+**File**: `pkg/diff2/analyze_test.go` (modified, +31/-0)
 ```diff
-@@ -0,0 +1,285 @@
-+package models
-+
-+import (
-+	"strings"
-+	"testing"
-+)
-+
-+// The options object arrives from dnsconfig.js as JSON (see b_m365_test.go), so
-+// lists are []any.
-+
-+func TestBuilderFORSALE(t *testing.T) {
+@@ -596,6 +596,37 @@ func mkTargetConfigMap(x ...*models.RecordConfig) map[string]*targetConfig {
+ 	return m
+ }
+ 
++func Test_humanDiff_providerFields(t *testing.T) {
++	a := makeRec("laba", "CNAME", "target.f.com.")
++	b := makeRec("laba", "CNAME", "target.f.com.")
++	mk := func(r *models.RecordConfig, extra string) targetConfig {
++		ct, cf := mkCompareBlobs(r, func(*models.RecordConfig) string { return extra })
++		return targetConfig{comparableNoTTL: ct, comparableFull: cf, rec: r}
++	}
 +	tests := []struct {
-+		name          string
-+		zone          string
-+		subdomain     string
-+		wantSubDomain string
-+		args          []any
-+		want          []string
++		name   string
++		ae, be string
++		a, b   *models.RecordConfig
++		want   string
 +	}{
-+		{
-+			name: "no options",
-+			zone: "example.com",
-+			args: []any{"@"},
-+			want: []string{`_for-sale 300 IN TXT "v=FORSALE1;"`},
-+		},
-+		{
-+			name: "empty options",
-+			zone: "example.com",
-+			args: []any{"@", map[string]any{}},
-+			want: []string{`_for-sale 300 IN TXT "v=FORSALE1;"`},
-+		},
-+		{
-+			// RFC 10023, Appendix A.5, in the builder's order.
-+			name: "every content tag",
-+			zone: "example.com",
-+			args: []any{"@", map[string]any{
-+				"furi": "https://fs.example.com/",
-+				"ftxt": "This domain name is for sale",
-+				"fval": "EUR500",
-+				"fcod": []any{"EXCO-ZGVhZGJlZWYx", "XYZ1-MTExLTIyMi0zMzMtNDQ0"},
-+			}},
-+			want: []string{
-+				`_for-sale 300 IN TXT "v=FORSALE1;fcod=EXCO-ZGVhZGJlZWYx"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;fcod=XYZ1-MTExLTIyMi0zMzMtNDQ0"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;ftxt=This domain name is for sale"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;furi=https://fs.example.com/"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;fval=EUR500"`,
-+			},
-+		},
-+		{
-+			// RFC 10023, Appendix A.3 and A.4.
-+			name: "URI schemes and prices",
-+			zone: "example.com",
-+			args: []any{"@", map[string]any{
-+				"furi": []any{"mailto:hq@example.com?subject=foo", "tel:+1-201-555-0123", "https://example.com/foo%20bar"},
-+				"fval": []any{"BTC0.000010", "USD750"},
-+			}},
-+			want: []string{
-+				`_for-sale 300 IN TXT "v=FORSALE1;furi=mailto:hq@example.com?subject=foo"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;furi=tel:+1-201-555-0123"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;furi=https://example.com/foo%20bar"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;fval=BTC0.000010"`,
-+				`_for-sale 300 IN TXT "v=FORSALE1;fval=USD750"`,
-+			},
-+		},
-+		{
-+			// The value is published as written, including characters that
-+			// need quoting in a zone file.
-+			name: "free text is not altered",
-+			zone: "example.com",
-+			args: []any{"@", map[string]any{
-+				"ftxt": ` Only "$99" at ExCo; call `,
-+			}},
-+			want: []string{`_for-sale 300 IN TXT "v=FORSALE1;ftxt= Only \"$99\" at ExCo; call "`},
-+		},
-+		{
-+			name: "below a label",
-+			zone: "example.com",
-+			args: []any{"exco", map[string]any{"furi": "https://example.com/buy"}},
-+			want: []string{`_for-sale.exco 300 IN TXT "v=FORSALE1;furi=https://example.com/buy"`},
-+		},
-+		{
-+			name:          "D_EXTEND",
-+			zone:          "example.com",
-+			subdomain:     "SUB",
-+			wantSubDomain: "sub",
-+			args:          []any{"@", map[string]any{"fval": "EUR999"}},
-+			want:          []string{`_for-sale.sub 300 IN TXT "v=FORSALE1;fval=EUR999"`},
-+		},
-+		{
-+			name:          "D_EXTEND, below a label",
-+			zone:          "example.com",
-+			subdomain:     "sub",
-+			wantSubDomain: "sub",
-+			args:          []any{"www", map[string]any{"fval": "EUR999"}},
-+			want:          []string{`_for-sale.www.sub 300 IN TXT "v=FORSALE1;fval=EUR999"`},
-+		},
-+		{
-+			// 255 octets in total: the longest value that fits in one
-+			// character-string.
-+			name: "longest value",
-+			zone: "example.com",
-+			args: []any{"@", map[string]any{"fcod": strings.Repeat("a", 239)}},
-+			want: []string{`_for-sale 300 IN TXT "v=FORSALE1;fcod=` + strings.Repeat("a", 239) + `"`},
-+		},
++		{"only provider field changed", "proxy=false", "proxy=true", a, b,
++			"(target.f.com. proxy=false ttl=300) -> (target.f.com. proxy=true ttl=300)"},
++		{"provider field added", "", "proxy=true", a, b,
++			"(target.f.com. ttl=300) -> (target.f.com. proxy=true ttl=300)"},
++		{"provider field and ttl changed", "proxy=false", "proxy=true", a, makeRecTTL("laba", "CNAME", "target.f.com.", 1),
++			"(target.f.com. proxy=false ttl=300) -> (target.f.com. proxy=true ttl=1)"},
++		{"provider field and rdata changed", "proxy=false", "proxy=true", a, makeRec("laba", "CNAME", "other.f.com."),
++			"(target.f.com. proxy=false ttl=300) -> (other.f.com. proxy=true ttl=300)"},
 +	}
-+
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			records, err := BuilderFORSALE(MustNewDomainConfig(tt.zone), 300, tt.args, tt.subdomain)
-+			if err != nil {
-+				t.Fatalf("BuilderFORSALE() error = %v, want none", err)
++			if got := humanDiff(mk(tt.a, tt.ae), mk(tt.b, tt.be)); got != tt.want {
++				t.Errorf("humanDiff() = %q, want %q", got, tt.want)
 +			}
++		})
++	}
++}
 +
-+			var got []string
-+			for _, rec := range records {
-+				got = append(got, rec.LineString())
-+			}
-+			if len(got) != len(tt.want) {
-+				t.Fatalf("BuilderFORSALE() created %d records, want %d:\ngot:  %q\nwant: %q", len(got), len(tt.want), got, tt.want)
-+			}
-+			for i := range got {
-+				if got[i] != tt.want[i] {
-+					t.Errorf("record %d = %q, want %q", i, got[i], tt.want[i])
-+				}
-+				if records[i].SubDomain != tt.wantSubDomain {
-+					t.Errorf("record %d SubDomain = %q, want %q", i, records[i].SubDomain, tt.wantSubDomain)
-+				}
-+				// Section 2.4: one character-string per record.
-+				if n := len(records[i].GetTargetTXTSegmented()); n != 1 {
-+					t.Errorf("record %d has %d TXT strings, want 1", i, n)
+ func Test_humanDiff(t *testing.T) {
+ 	tests := []struct {
+ 		name string
+```
+
+---
+
+### Incident Patch 3: `3322ff15` (2026-10-21)
+**Commit Message**: fix(LOC_BUILDER_DD): accept zero and reject missing coordinates (#5027)
+
+`LOC_BUILDER_DD({label: "site", x: 51.5, alt: 0})` passes `dnscontrol
+check` and `print-ir` emits a LOC record at longitude zero, although `y`
+is required. Conversely, `{label: "origin", x: 0, y: 0, alt: 0}` stops
+with `LOC_BUILDER_DD requires x and y elements`; it should produce the
+zero-coordinate LOC record.
+
+The [guard treats coordinates as
+booleans](https://github.com/DNSControl/dnscontrol/blob/d1823f78f3d066f21016c7497e9a100d9da9f03a/pkg/js/helpers.js#L1282-L1285),
+and uses `&&`, so it rejects two zero values while accepting either
+missing property.
+
+The fix checks each property for `undefined`.
+`TestLOCBuilderDDCoordinates` covers the valid zero pair and each
+missing property.
+
+```
+go test -p 1 -count=1 -run '^TestLOCBuilderDDCoordinates$' ./pkg/js/
+go test -p 1 -count=1 ./pkg/js/
+```
+
+On the base commit all three regression rows fail. On the final tree the
+focused test passed three of three runs, and the package passed.
+
+**File**: `pkg/js/helpers.js` (modified, +1/-1)
+```diff
+@@ -1280,7 +1280,7 @@ function GIDINET_PREMIUM_NS() {
+ // ttl: The time for TTL, integer or string. (default: not defined, using DefaultTTL)
+ 
+ function LOC_BUILDER_DD(value) {
+-    if (!value.x && !value.y) {
++    if (value.x === undefined || value.y === undefined) {
+         throw "LOC_BUILDER_DD requires x and y elements";
+     }
+ 
+```
+
+**File**: `pkg/js/js_test.go` (modified, +24/-0)
+```diff
+@@ -232,6 +232,30 @@ func TestDMARCBuilderValues(t *testing.T) {
+ 	}
+ }
+ 
++func TestLOCBuilderDDCoordinates(t *testing.T) {
++	tests := []struct{ desc, opts, want, wantErr string }{
++		{"zero coordinates", `{label:"origin",x:0,y:0,alt:0}`, "00 00 0.000 S 00 00 0.000 W 0m 0.00m 0.00m 0.00m", ""},
++		{"missing x", `{label:"site",y:1,alt:0}`, "", "LOC_BUILDER_DD requires x and y elements"},
++		{"missing y", `{label:"site",x:1,alt:0}`, "", "LOC_BUILDER_DD requires x and y elements"},
++	}
++	for _, tst := range tests {
++		t.Run(tst.desc, func(t *testing.T) {
++			script := `D("example.com","none",LOC_BUILDER_DD(` + tst.opts + `))`
++			conf, err := ExecuteJavascriptString([]byte(script), true, nil)
++			switch {
++			case tst.wantErr == "" && err != nil:
++				t.Fatalf("Expected no error but found: %v", err)
++			case tst.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tst.wantErr)):
++				t.Fatalf("Expected error %q but found: %v", tst.wantErr, err)
++			case tst.wantErr == "":
++				if got := conf.Domains[0].Records[0].ComparableV3; got != tst.want {
++					t.Fatalf("Expected %q but found %q", tst.want, got)
 +				}
 +			}
 +		})
 +	}
 +}
 +
-+func TestBuilderFORSALEErrors(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		zone    string
-+		args    []any
-+		wantErr string
-+	}{
-+		{
-+			name:    "no label",
-+			zone:    "example.com",
-+			args:    []any{},
-+			wantErr: "the first argument must be the label",
-+		},
-+		{
-+			name:    "options object instead of the label",
-+			zone:    "example.com",
-+			args:    []any{map[string]any{"furi": "https://example.com/
-```
-
-**File**: `pkg/js/helpers.js` (modified, +21/-0)
-```diff
-@@ -2051,6 +2051,22 @@ function M365_BUILDER() {
-     return [m365Record.apply(null, arguments)];
- }
- 
-+// RFC 10023 "_for-sale" records. The builder itself is models.BuilderFORSALE;
-+// forsaleOptions moves the options object into the argument list for the same
-+// reason as m365Options().
-+function forsaleOptions(record, processedArgs, processedMetas) {
-+    if (processedMetas.length > 1) {
-+        throw (
-+            "FORSALE_BUILDER takes one options object; record modifiers that are objects, such as CF_PROXY_OFF, are not supported: " +
-+            processedArgs[0]
-+        );
-+    }
-+    var args = processedArgs.concat(processedMetas);
-+    // The options object is an argument, not metadata.
-+    processedMetas.length = 0;
-+    return args;
-+}
-+
- // This is a no-op.  Long TXT records are handled natively now.
- function DKIM(arr) {
-     return arr;
-@@ -2275,6 +2291,11 @@ var DHCID = rawrecordBuilder("DHCID");
- var DNAME = rawrecordBuilder("DNAME");
- var DNSKEY = rawrecordBuilder("DNSKEY");
- var DS = rawrecordBuilder("DS");
-+var FORSALE_BUILDER = rawrecordBuilder(
-+    "FORSALE_BUILDER",
-+    false,
-+    forsaleOptions
-+);
- var FRAME = rawrecordBuilder("FRAME");
- var HTTPS = rawrecordBuilder("HTTPS");
- var LOC = rawrecordBuilder("LOC");
-```
-
----
-
-### Incident Patch 3: `da2bfcd3` (2026-10-20)
-**Commit Message**: fix: make get-zones js output load for HTTPS, SVCB and DNSKEY records (#5015)
-
-`dnscontrol get-zones --format=js` (and `djs`) writes HTTPS, SVCB and
-DNSKEY records in a form `dnsconfig.js` cannot load, so one such record
-breaks the whole file.
-
-A BIND zone `example.net` with `svc IN HTTPS 1 . alpn=h2,h3 port=8443
-ipv4hint=192.0.2.1,192.0.2.2` is written as
-
-```js
-HTTPS("svc", 1, ".", [h2,h3 8443 192.0.2.1,192.0.2.2]),
-```
-
-which fails with `Unexpected number`. A DNSKEY is written with a fifth
-argument, `DNSKEY("k1", 257, 3, 13, "<key>", 0)`, and fails with
-`MakeDNSKEY expects exactly 4 arguments, got 5`.
-
-Cause: `formatDsl` [joins the RDATA
-fields](https://github.com/DNSControl/dnscontrol/blob/62f353da0598a27e94dc95ff217a56222f430e91/commands/getZones.go#L511)
-for these types. [`RDtoFieldsJS` prints a slice with
-`%v`](https://github.com/DNSControl/dnscontrol/blob/62f353da0598a27e94dc95ff217a56222f430e91/models/rdfields.go#L113),
-and the `Value` of HTTPS and SVCB is a `[]svcbv2.Pair`. DNSKEY has a
-trailing `Tag` field that [`DNSKEY()` does not
-take](https://github.com/DNSControl/dnscontrol/blob/62f353da0598a27e94dc95ff217a56222f430e91/models/makers.go#L154).
-
-Fix: write the params w
-
-**File**: `commands/getZones.go` (modified, +7/-0)
-```diff
-@@ -503,6 +503,13 @@ func formatDsl(rec *models.RecordConfig, defaultTTL uint32) string {
- 				target += ", {" + strings.Join(fwdParts, ", ") + "}"
- 			}
- 		}
-+	case "DNSKEY":
-+		// The last field is the key tag, which is not an argument of DNSKEY().
-+		target = strings.Join(fj[:4], ", ")
-+	case "HTTPS", "SVCB":
-+		// The params are a single string such as "alpn=h2,h3 port=8443".
-+		f := rec.AsSVCB()
-+		target = fmt.Sprintf("%d, %s, %s", f.Priority, jsonQuoted(f.Target), jsonQuoted(models.Svcbv2ValueToString(f.Value)))
- 	case "R53_ALIAS":
- 		return makeR53alias(rec, ttl)
- 	case "UNKNOWN":
-```
-
-**File**: `commands/gz_test.go` (modified, +4/-0)
-```diff
-@@ -95,6 +95,10 @@ func TestFormatDslEscaping(t *testing.T) {
- 		{"apex ns", "@", "NS", []any{"ns1.example.net.\n" + hostile}},
- 		{"caa", "@", "CAA", []any{0, "issue", hostile}},
- 		{"caa critical", "@", "CAA", []any{128, "issue", hostile}},
-+		{"https", "svc", "HTTPS", []any{1, ".", "alpn=h2,h3 port=8443 ipv4hint=192.0.2.1,192.0.2.2"}},
-+		{"svcb", "svc", "SVCB", []any{1, "svc.example.net.", "alpn=h2 no-default-alpn"}},
-+		{"svcb alias", "svc", "SVCB", []any{0, "pool.example.net.", ""}},
-+		{"dnskey", "key", "DNSKEY", []any{257, 3, 13, "AABBCCDD"}},
- 	}
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
+ // TestDKIMBuilderNote checks that a non-ASCII note is written as UTF-8 octets.
+ func TestDKIMBuilderNote(t *testing.T) {
+ 	tests := []struct{ desc, note, want string }{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5023** (2026-10-20): chore: go fix and linting (@TomOnTime)
-- **PR #5021** (2026-10-20): chore(p/CLOUDFLAREAPI): upgrade to SDK v7 (@TomOnTime)
-- **PR #5020** (2026-10-20): chore(p/NAMEDOTCOM): upgrade to SDK v4 (#5020) (@TomOnTime)
-- **PR #5018** (2026-10-20): chore: change to go 1.27.3 and upgrade some deps (@TomOnTime)
-- **PR #5016** (2026-10-20): ci: fix harden-runner pin SHA in fuzzing workflow (@chicks-net)
-- **PR #5015** (2026-10-20): fix: make get-zones js output load for HTTPS, SVCB and DNSKEY records (@spicysharkco)
+- **PR #5031** (2026-10-21): chore: update dependencies (@TomOnTime)
+- **PR #5030** (2026-10-21): fix(diff2): MODIFY messages not showing provider-specific fields (@cvas22)
+- **PR #5029** (2026-10-21): feat(p/CONSTELLIX): add Constellix DNS provider (@ZeroClover)
+- **PR #5028** (2026-10-21): fix: make IGNORE_TARGET match HTTPS and SVCB targets (@spicysharkco)
+- **PR #5027** (2026-10-21): fix(LOC_BUILDER_DD): accept zero and reject missing coordinates (@spicysharkco)
+- **PR #5026** (2026-10-20): fix(p/BIND): Improve GetZones when filenameformat includes %f or %F (@spicysharkco)
 
 ---
 
@@ -1454,28 +993,29 @@ Fix: write the params w
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: fix harden-runner pin SHA in fuzzing workflow (#5016)
+## X. make IGNORE_TARGET match HTTPS and SVCB targets (#5028)
 
 **RULE**:
-When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `models/target.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce655251`: ci: fix harden-runner pin SHA in fuzzing workflow (#5016). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10292165`: make IGNORE_TARGET match HTTPS and SVCB targets (#5028). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `models/target.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+	case "HTTPS", "SVCB":
+		return rc.AsSVCB().Target
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2f25 # v2.22.1
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce655251` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10292165` are properly handled with clean fallback behavior.
