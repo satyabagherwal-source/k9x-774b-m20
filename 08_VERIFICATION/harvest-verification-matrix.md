@@ -4265,3 +4265,4 @@
 | `CYCLE-20261021-LF1B` | `2026-10-21T18:14:07.199Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3581` | Yes (`ee6d54aa...`) |
 | `CYCLE-20261021-LGF2` | `2026-10-21T18:14:08.990Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3582` | Yes (`1931a228...`) |
 | `CYCLE-20261021-LJQA` | `2026-10-21T18:14:13.282Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3583` | Yes (`61761f2d...`) |
+| `CYCLE-20261021-TT1D` | `2026-10-21T18:20:38.593Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3584` | Yes (`a0bc6e56...`) |

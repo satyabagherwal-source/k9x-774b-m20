@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T18:14:13.295Z",
+  "last_updated": "2026-10-21T18:20:38.609Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "fca8014c8489355a2153651ac1a80a410eab1497a6a8ddca445d0c2b6f64bae8",
-      "verified_at": "2026-10-20T16:21:38.466Z",
+      "content_hash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
+      "verified_at": "2026-10-21T18:20:38.609Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:21:38.466Z"
+      "last_updated": "2026-10-21T18:20:38.609Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",

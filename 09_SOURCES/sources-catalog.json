@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "6c2ea185",
+    "sourceVersion": "c2c5b4ed",
     "license": "MIT",
-    "contentHash": "fca8014c8489355a2153651ac1a80a410eab1497a6a8ddca445d0c2b6f64bae8",
-    "lastHarvestedAt": "2026-10-20T16:21:38.458Z",
+    "contentHash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
+    "lastHarvestedAt": "2026-10-21T18:20:38.596Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {

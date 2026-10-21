@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `6c2ea185`  
+> **Source Version**: `c2c5b4ed`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:21:38.132Z  
+> **Timestamp**: 2026-10-21T18:20:38.180Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:21:37.962Z  
+> **Harvest Timestamp**: 2026-10-21T18:20:36.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 45776 stars
+- **Stars / Engagement**: 45810 stars
 
 ---
 
@@ -1307,11 +1307,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8499** (2026-10-21): **Bump Certifi**
+  *Symptoms*: 
+
 - **Issue #8495** (2026-10-20): **Fix KeyError for unknown tags in the WBXML contentview**
   *Symptoms*: #### Description  When the WBXML decoder meets a tag token that its code page doesn't define, it builds a placeholder name with `"UNKNOWN_TAG_{0,2:X}".format(token)`. `{0,2:X}` isn't a valid replacement field: `0,2` is read as a keyword argument name, so the call raises `KeyError: '0,2'` and the whole contentview fails with `ValueError: Error: '0,2'` instead of showing the message.  The format is now `{0:02X}` (two-digit uppercase hex), which is what the original seems to have meant, so an unknown token `0x3F` renders as `<UNKNOWN_TAG_3F/>`.  Added `test_wbxml_unknown_tag`, which decodes a minimal document whose only tag is token `0x3F` in the AirSync code page. It fails on `main` with the `KeyError` and passes with the fix. `test/mitmproxy/contentviews` passes locally (118 passed), and `ruff check` / `ruff format --check` are clean on the test file.  *Note: I found this with a static check (ruff F523/F524) and used Claude (an AI assistant) to help write the fix and test; I reviewed and ran them as described.*  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG.
-
-- **Issue #8494** (2026-10-20): **Fix typos in option help, docstrings and docs**
-  *Symptoms*: #### Description  Fixes a bunch of spelling mistakes I found with codespell. The one users actually see is "formating" in the `save_stream_file` option help. The rest are in docstrings, comments, two examples and the docs (negotation, reponsible, offests, handeled, loosing, "can be be installed" and so on).  Also `test_commander.py` called `pytest.faied(...)`, which would raise AttributeError instead of failing the test if that branch ever ran. Changed it to `pytest.fail`.  No behaviour changes.  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1328,10 +1328,10 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c2ea185` (2026-10-20)
-**Commit Message**: Fix KeyError for unknown tags in the WBXML contentview (#8495)
+### Incident Patch 1: `c2c5b4ed` (2026-10-21)
+**Commit Message**: Bump Certifi (#8499)
 
-* Fix KeyError for unknown tags in the WBXML contentview
+* bump certifi
 
 * [autofix.ci] apply automated fixes
 
@@ -1339,56 +1339,67 @@ Observed empirical fixes and code patches:
 
 Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -7,6 +7,9 @@
+@@ -7,6 +7,8 @@
  
  ## Unreleased: mitmproxy next
  
-+- Fix the WBXML contentview raising a `KeyError` on tags that are missing from the code page,
-+  instead of showing them as `UNKNOWN_TAG_XX`.
-+  ([#8495](https://github.com/mitmproxy/mitmproxy/pull/8495), @kayaal34)
- - Fix `Set-Cookie` attribute parsing: prevent subsequent attributes (such as `Secure` or `HttpOnly`) from being swallowed into `Expires` when `Expires` contains non-date or short values (e.g. `Expires=0`), and correctly parse RFC 850 dates with full weekday names.
-   ([#8489](https://github.com/mitmproxy/mitmproxy/pull/8489), @7-Bala)
- - Fix typos in the `save_stream_file` option help, docstrings and examples.
++- Update `certifi` dependency to remove eMudhra CAs from precompiled binaries.
++  ([#8499](https://github.com/mitmproxy/mitmproxy/pull/8499), @mhils) 
+ - Fix the WBXML contentview raising a `KeyError` on tags that are missing from the code page,
+   instead of showing them as `UNKNOWN_TAG_XX`.
+   ([#8495](https://github.com/mitmproxy/mitmproxy/pull/8495), @kayaal34)
 ```
 
-**File**: `mitmproxy/contrib/wbxml/ASWBXML.py` (modified, +1/-1)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -889,7 +889,7 @@ def loadBytes(self, byteWBXML):
- 
- 				strTag = self.codePages[self.currentCodePage].getTag(token)
- 				if (strTag == None):
--					strTag = "UNKNOWN_TAG_{0,2:X}".format(token)
-+					strTag = "UNKNOWN_TAG_{0:02X}".format(token)
- 
- 				newNode = self.xmlDoc.createElement(strTag)
- 				# not sure if this should be set on every node or not
+@@ -37,7 +37,7 @@ dependencies = [
+     "backports.zstd>=1.7.0,<=1.7.0 ; python_version<'3.14'",
+     "bcrypt>=5.0.0,<=5.0.0",
+     "Brotli>=1.0,<=1.2.0",
+-    "certifi>=2019.9.11",  # no upper bound here to get latest CA bundle
++    "certifi>=2026.10.19",  # no upper bound here to get latest CA bundle
+     "cryptography>=42.0,<=50.0.2",  # relaxed upper bound here to get security fixes
+     "flask>=3.0,<=3.1.3",
+     "h11>=0.16.0,<=0.16.0",
 ```
 
-**File**: `test/mitmproxy/contentviews/test__view_wbxml.py` (modified, +5/-0)
+**File**: `uv.lock` (modified, +4/-4)
 ```diff
-@@ -21,6 +21,11 @@ def test_wbxml(tdata):
-     assert wbxml.prettify(input, Metadata()) == expected
+@@ -302,11 +302,11 @@ wheels = [
  
+ [[package]]
+ name = "certifi"
+-version = "2026.1.4"
++version = "2026.10.19"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/e0/2d/a891ca51311197f6ad14a7ef42e2399f36cf2f9bd44752b3dc4eab60fdc5/certifi-2026.1.4.tar.gz", hash = "sha256:ac726dd470482006e014ad384921ed6438c457018f4b3d204aea4281258b2120", size = 154268, upload-time = "2026-01-04T02:42:41.825Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/e6/ad/3cc14f097111b4de0040c83a525973216457bbeeb63739ef1ed275c1c021/certifi-2026.1.4-py3-none-any.whl", hash = "sha256:9943707519e4add1115f44c2bc244f782c0249876bf51b6599fee1ffbedd685c", size = 152900, upload-time = "2026-01-04T02:42:40.15Z" },
++    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
+ ]
  
-+def test_wbxml_unknown_tag():
-+    # Token 0x3F is not defined in the AirSync code page (0).
-+    assert "<UNKNOWN_TAG_3F/>" in wbxml.prettify(b"\x03\x01\x6a\x00\x3f", Metadata())
-+
-+
- def test_render_priority():
-     assert wbxml.render_priority(
-         b"data", Metadata(content_type="application/vnd.wap.wbxml")
+ [[package]]
+@@ -1077,7 +1077,7 @@ requires-dist = [
+     { name = "backports-zstd", marker = "python_full_version < '3.14'", specifier = "<=1.7.0,>=1.7.0" },
+     { name = "bcrypt", specifier = "<=5.0.0,>=5.0.0" },
+     { name = "brotli", specifier = ">=1.0,<=1.2.0" },
+-    { name = "certifi", specifier = ">=2019.9.11" },
++    { name = "certifi", specifier = ">=2026.10.19" },
+     { name = "cryptography", specifier = ">=42.0,<=50.0.2" },
+     { name = "flask", specifier = ">=3.0,<=3.1.3" },
+     { name = "h11", specifier = "<=0.16.0,>=0.16.0" },
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8499** (2026-10-21): Bump Certifi (@mhils)
 - **PR #8495** (2026-10-20): Fix KeyError for unknown tags in the WBXML contentview (@kayaal34)
 - **PR #8494** (2026-10-20): Fix typos in option help, docstrings and docs (@qodelicious)
 - **PR #8493** (closed): Fix Set-Cookie parsing of short Expires values and RFC 850 dates (@qodelicious)
 - **PR #8492** (2026-10-19): Web: fix and improve the flow details splitter (@lups2000)
-- **PR #8489** (2026-10-20): Fix Set-Cookie attribute parsing for short Expires values (@7-Bala)
-- **PR #8473** (2026-10-05): Do not add empty SAN extensions (@mhils)
+- **PR #8491** (closed): mitmweb: Update web port to actual value if set to 0 (@george-hopkins)
 
 ---
 
@@ -1408,13 +1419,13 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. KeyError for unknown tags in the WBXML contentview (#8495)
+## X. Bump Certifi (#8499)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c2ea185`: KeyError for unknown tags in the WBXML contentview (#8495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2c5b4ed`: Bump Certifi (#8499). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1422,9 +1433,8 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Fix the WBXML contentview raising a `KeyError` on tags that are missing from the code page,
-  instead of showing them as `UNKNOWN_TAG_XX`.
-  ([#8495](https://github.com/mitmproxy/mitmproxy/pull/8495), @kayaal34)
+- Update `certifi` dependency to remove eMudhra CAs from precompiled binaries.
+  ([#8499](https://github.com/mitmproxy/mitmproxy/pull/8499), @mhils) 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1434,4 +1444,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c2ea185` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2c5b4ed` are properly handled with clean fallback behavior.

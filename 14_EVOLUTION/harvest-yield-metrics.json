@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T18:14:13.293Z",
-  "total_cycles_completed": 4242,
-  "total_learnings_persisted": 4242,
-  "total_rules_promoted": 3428,
+  "last_updated": "2026-10-21T18:20:38.606Z",
+  "total_cycles_completed": 4243,
+  "total_learnings_persisted": 4243,
+  "total_rules_promoted": 3429,
   "history": [
-    {
-      "timestamp": "2026-10-20T22:32:56.158Z",
-      "repository": "meshtastic/Meshtastic-Android",
-      "learningId": "learn-github-meshtastic-meshtastic-android",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T22:32:59.053Z",
       "repository": "projectcontour/contour",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-21T18:14:13.293Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T18:20:38.606Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

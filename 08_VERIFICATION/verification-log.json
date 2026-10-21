@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-US9H",
-    "timestamp": "2026-10-20T08:45:51.893Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "b046902777b1dab37e1fa4d52f9b9d425ed1e80e895fda6e20b9e67b94ad479d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-14W3",
     "timestamp": "2026-10-20T08:50:48.195Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "61761f2d1b4674315bab9a7e68dbe38f5578163c65b83645d32cdc2a6bd11226",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261021-TT1D",
+    "timestamp": "2026-10-21T18:20:38.593Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
