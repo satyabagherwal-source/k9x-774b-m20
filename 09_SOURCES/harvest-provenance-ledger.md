@@ -4168,3 +4168,4 @@ Every entry in this ledger must capture:
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `9c05f5c1` | Multi-dimensional audit evidence | 2026-10-21T02:33:51.904Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `38d782fa` | Multi-dimensional audit evidence | 2026-10-21T02:33:54.648Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `18cb553c` | Multi-dimensional audit evidence | 2026-10-21T02:33:58.820Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-21T02:43:32.886Z |

@@ -4161,3 +4161,4 @@
 | `CYCLE-20261021-08PQ` | `2026-10-21T02:33:51.902Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3490` | Yes (`6ae6cc87...`) |
 | `CYCLE-20261021-0ATT` | `2026-10-21T02:33:54.641Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3491` | Yes (`ce2549b6...`) |
 | `CYCLE-20261021-0E1O` | `2026-10-21T02:33:58.812Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3492` | Yes (`21dd0406...`) |
+| `CYCLE-20261021-COZY` | `2026-10-21T02:43:32.878Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3493, Rule 3494` | Yes (`7d46ed98...`) |

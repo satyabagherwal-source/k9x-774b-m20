@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T02:33:58.823Z",
-  "total_cycles_completed": 4138,
-  "total_learnings_persisted": 4138,
-  "total_rules_promoted": 3327,
+  "last_updated": "2026-10-21T02:43:32.891Z",
+  "total_cycles_completed": 4139,
+  "total_learnings_persisted": 4139,
+  "total_rules_promoted": 3329,
   "history": [
-    {
-      "timestamp": "2026-10-20T18:51:35.340Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T18:51:43.528Z",
       "repository": "gocd/gocd",
@@ -1403,6 +1396,13 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T02:43:32.891Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

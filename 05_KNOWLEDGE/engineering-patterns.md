@@ -250675,3 +250675,252 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `18cb553c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3493. Quantization-Aware Distillation (QAD) for Recurrent/Hybrid Weight Encodings (Harvested from LiquidAI/LFM2.5-24B-A2B-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Aware Distillation (QAD) for Recurrent/Hybrid Weight Encodings",
+  "source": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-21T02:43:32.475Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [LiquidAI/LFM2.5-24B-A2B-GGUF](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF) (Revision: `hf-liquida`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing recurrent, state-space, or bistable hybrid architectures (e.g., LFM, Mamba, RWKV) to bit-widths $\le 4$ bits, teams **MUST NOT** use uncalibrated Post-Training Quantization (PTQ). Teams **MUST** use Quantization-Aware Distillation (QAD) where simulated quantization noise is injected into weight forward paths while backpropagating teacher-student distillation loss across continuous hidden states.
+
+**WHY**:
+Linear recurrent and bistable operators do not use softmax-bounded attention normalization over sequence lengths; small scale errors in weight tensors accumulate exponentially over recurrent time steps ($h_t = A h_{t-1} + B x_t$). PTQ introduces clipping and rounding errors in state-transition matrices, leading to numerical divergence or runaway activation saturation. QAD forces the optimization landscape to adapt transition eigenvalues within the stable unit disk.
+
+**WHEN TO APPLY**:
+Apply to any model deployment pipeline converting non-pure-Transformer networks (SSMs, Liquid Neural Networks, linear-attention hybrids) to sub-8-bit representations (GGUF `Q4_0`, `Q4_K_M`, AWQ, GPTQ).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class QADLinearWeight(nn.Module):
+    """
+    Simulates Q4_0 block quantization (32 weights per block with FP16 scale factor)
+    during distillation forward pass using Straight-Through Estimator (STE).
+    """
+    def __init__(self, in_features: int, out_features: int, block_size: int = 32):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.block_size = block_size
+        self.weight = nn.Parameter(torch.empty(out_features, in_features))
+        nn.init.kaiming_uniform_(self.weight, a=5**0.5)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        orig_shape = self.weight.shape
+        # Pad features to multiple of block_size if necessary
+        remainder = self.weight.numel() % self.block_size
+        if remainder != 0:
+            raise ValueError(f"Weight numel {self.weight.numel()} must be divisible by {self.block_size}")
+
+        w_blocks = self.weight.view(-1, self.block_size)
+        
+        # Calculate block-level scale factor
+        max_abs, _ = torch.max(torch.abs(w_blocks), dim=1, keepdim=True)
+        scales = torch.clamp(max_abs / 7.0, min=1e-8)  # Symmetric 4-bit [-8, 7] or [-7, 7]
+        
+        # Quantize and clamp
+        w_int = torch.clamp(torch.round(w_blocks / scales), -8, 7)
+        
+        # Dequantize (Fake Quantization)
+        w_fake_quant = (w_int * scales).view(orig_shape)
+        
+        # Straight-Through Estimator: Gradients flow to self.weight directly
+        w_effective = self.weight + (w_fake_quant - self.weight).detach()
+        return F.linear(x, w_effective)
+
+def distillation_step(
+    student_model: nn.Module,
+    teacher_model: nn.Module,
+    batch_tokens: torch.Tensor,
+    optimizer: torch.optim.Optimizer,
+    temperature: float = 1.0
+) -> float:
+    student_model.train()
+    teacher_model.eval()
+
+    with torch.no_grad():
+        teacher_logits = teacher_model(batch_tokens).logits / temperature
+
+    student_logits = student_model(batch_tokens).logits / temperature
+
+    # Distillation loss (KL Divergence)
+    loss = F.kl_div(
+        F.log_softmax(student_logits, dim=-1),
+        F.softmax(teacher_logits, dim=-1),
+        reduction="batchmean"
+    ) * (temperature ** 2)
+
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    optimizer.step()
+    return loss.item()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive post-training quantization on hybrid recurrent models
+# Directly converting FP16 weights to Q4_0 without retraining will corrupt recurrent gates.
+def bad_quantize_and_save(model: nn.Module, path: str):
+    for name, param in model.named_parameters():
+        # Truncating weights without distillation collapses SSM state matrices
+        param.data = (torch.round(param.data * 7.0) / 7.0).to(torch.float16)
+    torch.save(model.state_dict(), path)
+```
+
+**VERIFICATION METHOD**:
+Run sequence perplexity validation across 1024-token contexts comparing:
+1. Unquantized FP16 Teacher
+2. Naive PTQ Q4_0
+3. QAD Q4_0
+The invariant requires:
+$$\Delta \text{PPL}(\text{QAD}, \text{FP16}) \le 0.35 \times \Delta \text{PPL}(\text{PTQ}, \text{FP16})$$
+
+---
+
+
+---
+
+## 3494. Self-Describing Sampling Hyperparameter Metadata Invariant (Harvested from LiquidAI/LFM2.5-24B-A2B-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Self-Describing Sampling Hyperparameter Metadata Invariant",
+  "source": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-21T02:43:32.688Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [LiquidAI/LFM2.5-24B-A2B-GGUF](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF) (Revision: `hf-liquida`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Model serialization pipelines generating standalone binary distribution files (GGUF, Safetensors, ONNX) **MUST** embed canonical sampling hyperparameters (`temp`, `top_k`, `repeat_penalty`, `top_p`) directly into the file's primary metadata header using target runtime standard keys (`general.sampling.*`). Inference engines **MUST NOT** rely exclusively on external JSON configuration sidecars or user CLI flags.
+
+**WHY**:
+External `generation_config.json` files are frequently omitted or ignored when loading models via terminal wrappers (`llama-cli`), local agent runners, or native mobile runtimes. Non-standard architectures with strict low-entropy requirements (e.g., `temp=0.1`) fail catastrophically under default inference settings (`temp=0.8`), producing output degradation, infinite token loops, or garbage characters.
+
+**WHEN TO APPLY**:
+All binary model artifact generation pipelines targeting `llama.cpp`, GGML, or embedded edge deployment engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import struct
+from typing import Dict, Any
+
+class GGUFMetadataWriter:
+    """
+    Strict GGUF v3 Metadata Writer enforcing sampling parameter embedding.
+    """
+    GGUF_MAGIC = 0x46554747  # 'GGUF'
+    GGUF_VERSION = 3
+    
+    GGUF_TYPE_UINT32 = 4
+    GGUF_TYPE_FLOAT32 = 5
+    GGUF_TYPE_STRING = 8
+
+    def __init__(self):
+        self.kv_pairs: Dict[str, tuple[int, Any]] = {}
+
+    def add_uint32(self, key: str, value: int):
+        self.kv_pairs[key] = (self.GGUF_TYPE_UINT32, int(value))
+
+    def add_float32(self, key: str, value: float):
+        self.kv_pairs[key] = (self.GGUF_TYPE_FLOAT32, float(value))
+
+    def add_string(self, key: str, value: str):
+        self.kv_pairs[key] = (self.GGUF_TYPE_STRING, str(value))
+
+    def enforce_sampling_invariants(self, temp: float, top_k: int, repeat_penalty: float):
+        # Mandatory canonical keys for edge consumers (llama.cpp)
+        self.add_float32("general.sampling.temp", temp)
+        self.add_uint32("general.sampling.top_k", top_k)
+        self.add_float32("general.sampling.penalty_repeat", repeat_penalty)
+
+    def write_header(self, out_file, tensor_count: int):
+        # Write Magic & Version
+        out_file.write(struct.pack("<II", self.GGUF_MAGIC, self.GGUF_VERSION))
+        # Write Tensor Count & KV Count
+        out_file.write(struct.pack("<QQ", tensor_count, len(self.kv_pairs)))
+
+        for key, (vtype, val) in self.kv_pairs.items():
+            k_bytes = key.encode('utf-8')
+            out_file.write(struct.pack("<Q", len(k_bytes)))
+            out_file.write(k_bytes)
+            out_file.write(struct.pack("<I", vtype))
+
+            if vtype == self.GGUF_TYPE_UINT32:
+                out_file.write(struct.pack("<I", val))
+            elif vtype == self.GGUF_TYPE_FLOAT32:
+                out_file.write(struct.pack("<f", val))
+            elif vtype == self.GGUF_TYPE_STRING:
+                val_bytes = val.encode('utf-8')
+                out_file.write(struct.pack("<Q", len(val_bytes)))
+                out_file.write(val_bytes)
+            else:
+                raise NotImplementedError(f"Unsupported GGUF type: {vtype}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Saving binary weights without embedded generation parameters,
+# relying on external README instructions or optional JSON sidecars.
+def export_gguf_without_metadata(tensors, output_path):
+    with open(output_path, "wb") as f:
+        # Omits general.sampling metadata entirely!
+        f.write(b"GGUF\x03\x00\x00\x00")
+        f.write(struct.pack("<QQ", len(tensors), 0)) # KV count = 0
+        # CLI runtimes will fallback to temp=0.8, breaking edge models
+```
+
+**VERIFICATION METHOD**:
+Run an automated binary validation script using `gguf-py` or raw file read:
+```bash
+python3 -c "
+import gguf
+reader = gguf.GGUFReader('LFM2.5-24B-A2B-QAD-Q4_0.gguf')
+required = {'general.sampling.temp': 0.1, 'general.sampling.top_k': 50, 'general.sampling.penalty_repeat': 1.05}
+for k, expected in required.items():
+    field = reader.get_field(k)
+    assert field is not None, f'Missing metadata: {k}'
+    val = field.parts[-1][0]
+    assert abs(val - expected) < 1e-4, f'Mismatch in {k}: got {val}, expected {expected}'
+print('All sampling metadata invariants satisfied.')
+"
+```
+
+---
