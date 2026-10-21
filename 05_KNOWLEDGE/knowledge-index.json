@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-21T03:11:40.955Z",
+  "last_updated": "2026-10-21T03:18:14.792Z",
   "total_verified_learnings": 1057,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6408,8 +6408,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "c8550922",
-      "content_hash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
+      "source_version": "a2e5070d",
+      "content_hash": "f16e5801f878966f95558d0624ac2f67c01519647cc75a78d49b9e06b45d686c",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -6432,6 +6432,11 @@
           "number": 3234,
           "title": "partition narrowing if closed partitions are hit",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3504,
+          "title": "Push down inner join conditions that reference only one side",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6439,7 +6444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:51:16.548Z",
+      "verified_at": "2026-10-21T03:18:14.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8973,8 +8978,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "951736ef",
-      "content_hash": "a00d26e1f2615fb7a48cb549157126188d49f7a6905cf02679bb2beab408e1f8",
+      "source_version": "7915b85a",
+      "content_hash": "d2ce7b1d1b6707cfa49b77f1a588bb4c03b7ea35f5b8bde5f2da923a06e8246f",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -8987,6 +8992,11 @@
           "number": 3165,
           "title": "make panic handlers consistent.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3503,
+          "title": "nrf/tests: increase rng timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8994,7 +9004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:40:40.854Z",
+      "verified_at": "2026-10-21T03:18:03.985Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20244,7 +20254,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "a5bf58263d7fc4bea8b58f0ad9a33484ae9e3c5e5375009236ff37ed835c953d",
+      "content_hash": "3c4a0b137d2a85f928d498609ba5634e4e237f8622059ef0f06b5470f34b9039",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -20291,7 +20301,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-19T14:14:55.123Z",
+      "verified_at": "2026-10-21T03:18:02.492Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107155,6 +107165,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-21T02:57:48.903Z"
+    },
+    "rule-3503": {
+      "learning_id": "rule-3503",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3503,
+      "title": "nrf/tests: increase rng timeout",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "7915b85a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:18:03.985Z"
+    },
+    "rule-3504": {
+      "learning_id": "rule-3504",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3504,
+      "title": "Push down inner join conditions that reference only one side",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "a2e5070d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-21T03:18:14.779Z"
     }
   },
   "aliases": {

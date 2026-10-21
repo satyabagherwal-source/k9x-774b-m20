@@ -4177,3 +4177,7 @@ Every entry in this ledger must capture:
 | `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `de29c9f1` | Multi-dimensional audit evidence | 2026-10-21T02:57:48.971Z |
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-21T03:05:20.355Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-21T03:11:41.022Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-21T03:18:02.566Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-21T03:18:02.576Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `7915b85a` | Multi-dimensional audit evidence | 2026-10-21T03:18:04.056Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `a2e5070d` | Multi-dimensional audit evidence | 2026-10-21T03:18:14.856Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T03:11:41.031Z",
+  "last_updated": "2026-10-21T03:18:14.865Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1490,14 +1490,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "a5bf58263d7fc4bea8b58f0ad9a33484ae9e3c5e5375009236ff37ed835c953d",
-      "verified_at": "2026-10-19T14:14:55.181Z",
+      "content_hash": "3c4a0b137d2a85f928d498609ba5634e4e237f8622059ef0f06b5470f34b9039",
+      "verified_at": "2026-10-21T03:18:02.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:14:55.181Z"
+      "last_updated": "2026-10-21T03:18:02.585Z"
     },
     "FacebookAI/xlm-roberta-base": {
       "repository": "FacebookAI/xlm-roberta-base",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
-      "verified_at": "2026-10-20T14:51:16.600Z",
+      "content_hash": "f16e5801f878966f95558d0624ac2f67c01519647cc75a78d49b9e06b45d686c",
+      "verified_at": "2026-10-21T03:18:14.864Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:51:16.600Z"
+      "last_updated": "2026-10-21T03:18:14.864Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "a00d26e1f2615fb7a48cb549157126188d49f7a6905cf02679bb2beab408e1f8",
-      "verified_at": "2026-10-20T12:40:40.936Z",
+      "content_hash": "d2ce7b1d1b6707cfa49b77f1a588bb4c03b7ea35f5b8bde5f2da923a06e8246f",
+      "verified_at": "2026-10-21T03:18:04.065Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:40:40.936Z"
+      "last_updated": "2026-10-21T03:18:04.065Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -8571,14 +8571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
-      "verified_at": "2026-10-20T16:50:26.314Z",
+      "content_hash": "d1c53b8c93450ae1cb0a7a2fbf33ca2aa34801034c87596086e363ff1f62aa17",
+      "verified_at": "2026-10-21T03:18:02.574Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:50:26.314Z"
+      "last_updated": "2026-10-21T03:18:02.574Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",

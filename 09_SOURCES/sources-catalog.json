@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "a5bf58263d7fc4bea8b58f0ad9a33484ae9e3c5e5375009236ff37ed835c953d",
-    "lastHarvestedAt": "2026-10-19T14:14:55.175Z",
+    "contentHash": "3c4a0b137d2a85f928d498609ba5634e4e237f8622059ef0f06b5470f34b9039",
+    "lastHarvestedAt": "2026-10-21T03:18:02.576Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "c8550922",
+    "sourceVersion": "a2e5070d",
     "license": "Apache-2.0",
-    "contentHash": "574608ade50e0984f217e341d5a63470ebbf8d303d82401adf197b5f52ac3b60",
-    "lastHarvestedAt": "2026-10-20T14:51:16.594Z",
+    "contentHash": "f16e5801f878966f95558d0624ac2f67c01519647cc75a78d49b9e06b45d686c",
+    "lastHarvestedAt": "2026-10-21T03:18:14.856Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "951736ef",
+    "sourceVersion": "7915b85a",
     "license": "Apache-2.0",
-    "contentHash": "a00d26e1f2615fb7a48cb549157126188d49f7a6905cf02679bb2beab408e1f8",
-    "lastHarvestedAt": "2026-10-20T12:40:40.929Z",
+    "contentHash": "d2ce7b1d1b6707cfa49b77f1a588bb4c03b7ea35f5b8bde5f2da923a06e8246f",
+    "lastHarvestedAt": "2026-10-21T03:18:04.056Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
-    "lastHarvestedAt": "2026-10-20T16:50:26.309Z",
+    "contentHash": "d1c53b8c93450ae1cb0a7a2fbf33ca2aa34801034c87596086e363ff1f62aa17",
+    "lastHarvestedAt": "2026-10-21T03:18:02.566Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {

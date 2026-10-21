@@ -4170,3 +4170,7 @@
 | `CYCLE-20261021-V1K3` | `2026-10-21T02:57:48.963Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3500, Rule 3501, Rule 3502` | Yes (`cd8732dd...`) |
 | `CYCLE-20261021-4PUO` | `2026-10-21T03:05:20.352Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`9550dce7...`) |
 | `CYCLE-20261021-CVKQ` | `2026-10-21T03:11:41.018Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`f0fdab9f...`) |
+| `CYCLE-20261021-L1Z1` | `2026-10-21T03:18:02.557Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`d1c53b8c...`) |
+| `CYCLE-20261021-L1ZH` | `2026-10-21T03:18:02.573Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`3c4a0b13...`) |
+| `CYCLE-20261021-L34L` | `2026-10-21T03:18:04.053Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3503` | Yes (`d2ce7b1d...`) |
+| `CYCLE-20261021-LBGG` | `2026-10-21T03:18:14.848Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3504` | Yes (`f16e5801...`) |

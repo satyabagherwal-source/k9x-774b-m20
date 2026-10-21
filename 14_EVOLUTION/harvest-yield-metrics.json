@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T03:11:41.027Z",
-  "total_cycles_completed": 4147,
-  "total_learnings_persisted": 4147,
-  "total_rules_promoted": 3338,
+  "last_updated": "2026-10-21T03:18:14.861Z",
+  "total_cycles_completed": 4151,
+  "total_learnings_persisted": 4151,
+  "total_rules_promoted": 3341,
   "history": [
-    {
-      "timestamp": "2026-10-20T19:10:44.873Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:17:05.764Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:17:06.129Z",
-      "repository": "ionic-team/ionic-framework",
-      "learningId": "learn-github-ionic-team-ionic-framework",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T19:17:08.163Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T19:23:28.537Z",
       "repository": "cosscom/ui",
@@ -1403,6 +1375,34 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:18:02.571Z",
+      "repository": "franken-ui/ui",
+      "learningId": "learn-github-franken-ui-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:18:02.581Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:18:04.061Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-21T03:18:14.861Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

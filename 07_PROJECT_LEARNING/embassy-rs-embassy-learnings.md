@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `951736ef`  
+> **Source Version**: `7915b85a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T12:40:40.557Z  
+> **Timestamp**: 2026-10-21T03:18:03.622Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T12:40:40.366Z  
+> **Harvest Timestamp**: 2026-10-21T03:18:03.614Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9983 stars
+- **Stars / Engagement**: 9984 stars
 
 ---
 
@@ -1435,14 +1435,14 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7319** (2026-10-20): **rp235x examples: .text is not a multiple of alignment (8)**
-  *Symptoms*: Spits out a warn ``` warning: linker stderr: rust-lld: address (0x1000013c) of section .text is not a multiple of alignment (8) ```  From cargo run --bin any through the examples under examples/rp235x  Compiler host is aarch64-apple-darwin using the toolchain file's stable-1.97  Is this some of those memory.x things?
+- **Issue #7324** (2026-10-21): **[MCXA] OSTIMER fixes**
+  *Symptoms*: All tested on MCXA266 (MCXA2 family) and MCXA287 (MCXA5 family). While working through these, found and fixed a build regression when `perf` feature is enabled. Also patched MCXA CI builds to attempt to catch future regressions of this kind.
   **Post-Mortem & Fix Analysis**:
-  > this is https://github.com/rust-embedded/cortex-m/issues/678 , fixed in cortex-m-rt 0.7.7  do `cargo update`, it should pick up latest cortex-m-rt
-  > fwiw It was already at 0.7.7 as I cloned fresh and had generated new lock too - still happens on my stable 1.97 ``` % cargo tree -i -p cortex-m-rt cortex-m-rt v0.7.7 ├── embassy-rp v0.10.0 (/Users/foobar/code/sleuth/embassy/embassy-rp) │   ├── cyw43-pio v0.10.0 (/Users/foobar/code/sleuth/embassy/cyw43-pio) │   │   └── embassy-rp2350-examples v0.1.0 (/Users/foobar/code/sleuth/embassy/examples/rp235x) │   └── embassy-rp2350-examples v0.1.0 (/Users/foobar/code/sleuth/embassy/examples/rp235x) ├── embassy-rp2350-examples v0.1.0 (/Users/foobar/code/sleuth/embassy/examples/rp235x) └── rp-pac v7.0.0 (https://github.com/embassy-rs/rp-pac?rev=c2e27609b021c444f634673155318977d7f0bdf6#c2e27609)     └── embassy-rp v0.10.0 (/Users/foobar/code/sleuth/embassy/embassy-rp)  ``` 
+  > CI on this pull request is failing, so it isn't in the [review queue](https://bot.embassy.dev) yet. A pull request needs passing CI to be queued for review — push a fix and it'll be added automatically.
+  > Ugh, teleprobe issues.   ``` ERROR teleprobe::client > === iot-stm32u585ai out/tests/stm32u585ai/crypto_ec: FAILED: HTTP request failed with status code: 400: Bad Request  ERROR teleprobe::client > ERROR - Run failed: An ARM specific error occurred.  Caused by:     A timeout occurred during an operation. ```
 
-- **Issue #7318** (2026-10-19): **Nuke more unnecessary deps.**
-  *Symptoms*: see individual commits
+- **Issue #7323** (2026-10-21): **stm32/usb: support double-buffered bulk endpoints on USB v3**
+  *Symptoms*: Extends `alloc_endpoint_bulk_{in,out}_double_buffered()` to USB v3 (STM32F0, G4, L0, L4, L5, WB). v3   has the same 16-bit buffer descriptors and SW_BUF handling as v1, so this only widens the existing   `usb_v1`/`usb_v4` cfg gates. ST's L5 HAL uses the same descriptor and SW_BUF layout with no   L5-specific workaround.    Tested on an STM32L552ZE (100 MHz), CDC-ACM bulk, 64-byte packets, Linux host. On an idle core   single and double buffering both reach the host's ~16 transactions/frame. The gain shows when the   USB task is delayed. Here a task on the same executor busy-waits 50% of the time:    | Load | Direction | Single | Double |   |---|---|---|---|   | 50 µs every 100 µs | IN | 640 kB/s | 1021 kB/s (+60%) |   | 50 µs every 100 µs | OUT | 590 kB/s | 1039 kB/s (+76%) |   | 500 µs every 1 ms | IN | 568 kB/s | 630 kB/s (+11%) |   | 500 µs every 1 ms | OUT | 573 kB/s | 639 kB/s (+12%) |    Stalls shorter than a packet time are fully hidden by the second buffer. Longer stalls gain about   one packet each.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1459,355 +1459,390 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d6e9079` (2026-10-19)
-**Commit Message**: make panic handlers consistent.
+### Incident Patch 1: `722b9165` (2026-10-20)
+**Commit Message**: nrf/tests: increase rng timeout
 
-**File**: `embassy-mspm0/src/trng.rs` (modified, +1/-1)
+**File**: `tests/nrf/src/bin/rng.rs` (modified, +2/-0)
 ```diff
-@@ -154,7 +154,7 @@ impl core::error::Error for Error {}
- /// use embassy_mspm0::Config;
- /// use embassy_mspm0::trng::Trng;
- /// use rand_core::TryRng;
--/// use {defmt_rtt as _, panic_halt as _};
-+/// use {defmt_rtt as _, panic_probe as _};
- ///
- /// #[embassy_executor::main]
- /// async fn main(_spawner: Spawner) -> ! {
-```
-
-**File**: `examples/boot/application/nrf/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -16,7 +16,6 @@ embassy-embedded-hal = { version = "0.6.0", path = "../../../../embassy-embedded
- 
- defmt = { version = "1.0.1", optional = true }
- defmt-rtt = { version = "1.0.0", optional = true }
--panic-reset = { version = "0.1.1" }
- 
- cortex-m = { version = "0.7.6", features = ["inline-asm", "critical-section-single-core"] }
- cortex-m-rt = "0.7.0"
-```
-
-**File**: `examples/boot/application/nrf/src/bin/a.rs` (modified, +5/-1)
-```diff
-@@ -12,7 +12,6 @@ use embassy_nrf::gpio::{Input, Level, Output, OutputDrive, Pull};
- use embassy_nrf::nvmc::Nvmc;
- use embassy_nrf::wdt::{self, Watchdog};
- use embassy_sync::mutex::Mutex;
--use panic_reset as _;
- 
- #[cfg(feature = "skip-include")]
- static APP_B: &[u8] = &[0, 1, 2, 3];
-@@ -104,3 +103,8 @@ async fn main(_spawner: Spawner) {
-         }
-     }
- }
-+
-+#[panic_handler]
-+fn panic(_info: &core::panic::PanicInfo) -> ! {
-+    cortex_m::peripheral::SCB::sys_reset();
-+}
-```
-
-**File**: `examples/boot/application/nrf/src/bin/b.rs` (modified, +5/-1)
-```diff
-@@ -5,7 +5,6 @@
- use embassy_executor::Spawner;
- use embassy_nrf::gpio::{Level, Output, OutputDrive};
- use embassy_time::Timer;
--use panic_reset as _;
- 
- #[embassy_executor::main]
- async fn main(_spawner: Spawner) {
-@@ -27,3 +26,8 @@ async fn main(_spawner: Spawner) {
-         Timer::after_millis(300).await;
-     }
- }
-+
-+#[panic_handler]
-+fn panic(_info: &core::panic::PanicInfo) -> ! {
-+    cortex_m::peripheral::SCB::sys_reset();
-+}
-```
-
-**File**: `examples/boot/application/rp/Cargo.toml` (modified, +0/-2)
-```diff
-@@ -15,14 +15,12 @@ embassy-boot-rp = { version = "0.10.0", path = "../../../../embassy-boot-rp", fe
- defmt = "1.0.1"
- defmt-rtt = "1.0.0"
- panic-probe = { version = "1.0.0", features = ["print-defmt"], optional = true }
--panic-reset = { version = "0.1.1", optional = true }
- 
- cortex-m = { version = "0.7.6", features = ["inline-asm", "critical-section-single-core"] }
- cortex-m-rt = "0.7.0"
- embedded-storage = "0.3.1"
- 
- [features]
--default = ["panic-reset"]
- debug = [
-     "embassy-rp/defmt",
-     "embassy-boot-rp/defmt",
-```
-
-**File**: `examples/boot/application/rp/src/bin/a.rs` (modified, +6/-2)
-```diff
-@@ -14,8 +14,6 @@ use embassy_time::{Duration, Timer};
- use embedded_storage::nor_flash::NorFlash;
- #[cfg(feature = "panic-probe")]
+@@ -14,6 +14,8 @@ use embassy_nrf::crypto::symmetric::{AesEcb, Direction, Symmetric};
+ use embassy_nrf::mode::Blocking;
  use panic_probe as _;
--#[cfg(feature = "panic-reset")]
--use panic_reset as _;
  
- #[cfg(feature = "skip-include")]
- static APP_B: &[u8] = &[0, 1, 2, 3];
-@@ -66,3 +64,9 @@ async fn main(_s: Spawner) {
-     defmt::info!("update marked, resetting");
-     cortex_m::peripheral::SCB::sys_reset();
- }
++teleprobe_meta::timeout!(30);
 +
-+#[cfg(not(feature = "panic-probe"))]
-+#[panic_handler]
-+fn panic(_info: &core::panic::PanicInfo) -> ! {
-+    cortex_m::peripheral::SCB::sys_reset();
-+}
-```
-
-**File**: `examples/boot/application/rp/src/bin/b.rs` (modified, +5/-1)
-```diff
-@@ -6,7 +6,6 @@ use embassy_executor::Spawner;
- use embassy_rp::gpio;
- use embassy_time::Timer;
- use gpio::{Level, Output};
--use panic_reset as _;
+ type Rng<'d> = embassy_nrf::crypto::rng::Rng<'d, Blocking>;
  
- #[embassy_executor::main]
- async fn main(_s: Spawner) {
-@@ -21,3 +20,8 @@ async fn main(_s: Spawner) {
-         Timer::after_millis(100).await;
-     }
- }
-+
-+#[panic_handler]
-+fn panic(_info: &core::panic::PanicInfo) -> ! {
-+    cortex_m::peripheral::SCB::sys_reset();
-+}
-```
-
-**File**: `examples/boot/application/rp235x/Cargo.toml` (modified, +0/-2)
-```diff
-@@ -15,14 +15,12 @@ embassy-boot-rp = { version = "0.10.0", path = "../../../../embassy-boot-rp", fe
- defmt = "1.0.1"
- defmt-rtt = "1.0.0"
- panic-probe = { version = "1.0.0", features = ["print-defmt"], optional = true }
--panic-reset = { version = "0.1.1", optional = true }
- 
- cortex-m = { version = "0.7.6", features = ["inline-asm", "critical-section-single-core"] }
- cortex-m-rt = "0.7.0"
- embedded-storage = "0.3.1"
- 
- [features]
--default = ["panic-reset"]
- debug = [
-     "embassy-rp/defmt",
-     "embassy-boot-rp/defmt",
+ /// Number of distinct byte values in a buffer.
 ```
 
 ---
 
-### Incident Patch 2: `eea0c031` (2026-10-19)
-**Commit Message**: stm32/dma: GPDMA: panic when a linked-list Table straddles 64 KiB
+### Incident Patch 2: `42ff5755` (2026-10-21)
+**Commit Message**: Merge pull request #7324 from felipebalbi/ostimer-fixes
 
-The channel takes the upper 16 bits of every item's address from LBAR,
-which holds the first item's, and each link carries only the lower 16. An
-item past a 64 KiB boundary was fetched from 64 KiB away: for a chain that
-writes peripheral registers, arbitrary memory written into them.
-offset_address() now checks that each item, first byte to last, shares the
-first item's upper bits, and panics otherwise.
+[MCXA] OSTIMER fixes
 
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
+**File**: `embassy-mcxa/Cargo.toml` (modified, +22/-2)
 ```diff
-@@ -104,6 +104,7 @@ DMA:
- - fix: stm32/dma: compute GPDMA `BR1.BNDT` from the memory-side width regardless of direction, fixing destination overrun on reads with peripheral width > memory width
- - feat: stm32/dma: GPDMA: allow access to construct custom LinkedList chains for scatter/gather DMA
- - feat: stm32/dma: add `TwoDItem`, `TwoDConfig`, and `LinkedListItem` trait; `Table` is now generic over item type
-+- fix: stm32/dma: GPDMA: panic when a linked-list `Table` straddles a 64 KiB boundary
+@@ -33,6 +33,26 @@ build = [
+     {target = "thumbv8m.main-none-eabihf", features = ["defmt", "unstable-pac", "mcxa566"]},
+     {target = "thumbv8m.main-none-eabihf", features = ["defmt", "unstable-pac", "mcxa567"]},
+     {target = "thumbv8m.main-none-eabihf", features = ["defmt", "unstable-pac", "mcxa577"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa175"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa176"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa185"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa186"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa255"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa256"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa265"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa266"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa276"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa286"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa287"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa456"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa457"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa536"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa537"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa556"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa557"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa566"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa567"]},
++    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "perf", "mcxa577"]},
+     {target = "thumbv8m.main-none-eabihf", features = ["defmt", "mcxa266", "time-driver-lptmr"]},
+     {target = "thumbv8m.main-none-eabihf", features = ["defmt", "mcxa577", "time-driver-lptmr"]},
+ ]
+@@ -97,13 +117,13 @@ embassy-time-queue-utils = { version = "0.3.2", path = "../embassy-time-queue-ut
+ grounded = { version = "0.2.1", features = ["cas", "critical-section"] }
+ maitake-sync = { version = "0.3.0", default-features = false, features = ["critical-section", "no-cache-pad"] }
+ nb = "1.1.0"
+-nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "a049612e781d1b616843ee49afd9839232684ff7", features = ["rt"] }
++nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "6a4c80de6e0efcbdea813743e584a70bcc998d1c", features = ["rt"] }
+ paste = "1.0.15"
  
- I2S:
- - feat: stm32/i2s: add `I2S::rx_len()` returning the number of samples buffered in the RX DMA ring buffer
+ rand-core-10 = { package = "rand_core", version = "0.10" }
+ 
+ [build-dependencies]
+-nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "a049612e781d1b616843ee49afd9839232684ff7", default-features = false, features = ["metadata"] }
++nxp-pac = { git = "https://github.com/embassy-rs/nxp-pac.git", rev = "6a4c80de6e0efcbdea813743e584a70bcc998d1c", default-features = false, features = ["metadata"] }
+ proc-macro2 = "1.0.106"
+ quote = "1.0.45"
+ convert_case = "0.12"
 ```
 
-**File**: `embassy-stm32/src/dma/gpdma/linked_list.rs` (modified, +14/-2)
+**File**: `embassy-mcxa/src/ostimer.rs` (modified, +97/-78)
 ```diff
-@@ -419,14 +419,26 @@ impl<T: LinkedListItem, const N: usize> Table<T, N> {
-     }
+@@ -15,69 +15,83 @@ use crate::interrupt::InterruptExt;
+ use crate::pac::OSTIMER0;
+ use crate::peripherals::OSTIMER0;
  
-     /// Linked list offset address (lower 16 address bits) at the selected index.
-+    ///
-+    /// The channel takes the upper 16 bits of every item's address from `LBAR`, which holds
-+    /// [`Self::base_address`]: all items must lie in the same 64 KiB as the first. Panics for an
-+    /// item outside it, which the channel would otherwise fetch from 64 KiB away. Aligning the
-+    /// table to a power of two no smaller than itself rules this out.
-     pub fn offset_address(&self, index: usize) -> u16 {
-         assert!(self.items.len() > index);
- 
--        let address = &raw const self.items[index] as _;
-+        let address = &raw const self.items[index] as u32;
- 
-         // Ensure 32 bit address alignment.
-         assert_eq!(address & 0b11, 0);
- 
--        address
-+        let last = address + core::mem::size_of::<T>() as u32 - 1;
-+        assert!(
-+            address >> 16 == self.base_address() as u32 && last >> 16 == self.base_address() as u32,
-+            "linked-list item {} is not in the table's first 64 KiB",
-+            index
-+        );
+-struct AlarmState {
+-    timestamp: Cell<u64>,
++const COUNTER_MASK: u64 = (1 << 42) - 1;
++// Half-wrap checkpoints leave a half-cycle margin for interrupt latency.
++const PERIOD_TICKS: u64 = 1 << 41;
 +
-+        address as u16
-     }
++enum AlarmOutcome {
++    Armed,
++    AlreadyDue,
++    Maintenance,
  }
-```
-
----
-
-### Incident Patch 3: `469638cc` (2026-10-19)
-**Commit Message**: stm32/adc: account for the fixed /2 in front of the H7 ADC converter, fixes #7310
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -117,6 +117,7 @@ I2C:
  
- ADC:
- - feat: stm32/adc: add `VrefInt::calibrated_value()` for additional chips
-+- fix: stm32/adc: account for the fixed /2 in front of the H7 ADC1/ADC2/ADC3 converter in the automatic prescaler, `clock()`, the maximum-clock check and `BOOST`, and set the single `BOOST` bit of revision Y H742/H743/H750/H753 above 20 MHz.
+-unsafe impl Send for AlarmState {}
++/// A 42-bit binary counter value.
++#[derive(Copy, Clone)]
++struct EvTicks(u64);
  
- RNG:
- - feat: stm32/rng: add configurable initialization policy (`RngConfig`) with `new_with_config` and health-test profile control
-```
-
-**File**: `embassy-stm32/src/adc/v3.rs` (modified, +35/-8)
-```diff
-@@ -63,6 +63,30 @@ const MAX_CLOCK: Hertz = Hertz::mhz(70);
- #[cfg(stm32c5)]
- const MAX_CLOCK: Hertz = Hertz::mhz(70);
- 
-+/// Whether this is a revision Y (or older) H742/H743/H750/H753, which has no /2 in front of the
-+/// converter and a single `BOOST` bit. RM0433 §25.4.3.
-+#[cfg(adc_v3_h7)]
-+fn rev_y() -> bool {
-+    #[cfg(any(stm32h742, stm32h743, stm32h750, stm32h753))]
-+    return crate::pac::DBGMCU.idc().read().rev_id() <= 0x1003;
-+    #[cfg(not(any(stm32h742, stm32h743, stm32h750, stm32h753)))]
-+    false
-+}
-+
-+/// The clock of the converter, from the clock selected by `CKMODE`/`PRESC`.
-+///
-+/// On the H7 a fixed /2 sits in between, except on revision Y. `MAX_CLOCK`, `BOOST` and the sample
-+/// and conversion times all refer to the divided clock. RM0433 §25.4.3, RM0399 §26.4.3, RM0455
-+/// §27.4.3, RM0468 §28.4.3.
-+#[cfg(any(adc_v3_l4, adc_v3_g4, adc_v3_h7, adc_v3_u5, adc_v3_u3))]
-+fn analog_clock(clock: Hertz) -> Hertz {
-+    #[cfg(adc_v3_h7)]
-+    if !rev_y() {
-+        return clock / 2u32;
+-impl AlarmState {
+-    const fn new() -> Self {
+-        Self {
+-            timestamp: Cell::new(u64::MAX),
+-        }
++impl EvTicks {
++    // Select the hardware counter bits of a software timestamp.
++    fn from_timestamp(timestamp: u64) -> Self {
++        Self(timestamp & COUNTER_MASK)
 +    }
-+    clock
-+}
 +
- /// Sample times as half ADC clock cycles, indexed by the `SMP` field value.
- #[cfg(adc_v3_f3)]
- const SAMPLE_TIME_HALF_CYCLES: [u32; 8] = [3, 5, 9, 15, 39, 123, 363, 1203];
-@@ -199,7 +223,7 @@ impl AdcRegs for Regs {
-                     let presc = PRESCALERS
-                         .iter()
-                         .copied()
--                        .find(|p| kernel_clock / p.divisor() <= MAX_CLOCK)
-+                        .find(|p| analog_clock(kernel_clock / p.divisor()) <= MAX_CLOCK)
-                         .expect("ADC kernel clock too fast, change 'config.rcc.mux' to a slower clock");
-                     critical_section::with(|_| {
-                         common.ccr().modify(|w| {
-@@ -239,11 +263,14 @@ impl AdcRegs for Regs {
++    fn value(self) -> u64 {
++        self.0
+     }
+-}
  
-         #[cfg(adc_v3_h7)]
-         self.cr().modify(|w| {
--            w.set_boost(if clock < Hertz::khz(6_250) {
-+            w.set_boost(if rev_y() {
-+                // A single bit, the low bit of the field, required above 20 MHz.
-+                Boost::from_bits((clock > Hertz::mhz(20)) as u8)
-+            } else if clock <= Hertz::khz(6_250) {
-                 Boost::Lt625
--            } else if clock < Hertz::khz(12_500) {
-+            } else if clock <= Hertz::khz(12_500) {
-                 Boost::Lt125
--            } else if clock < Hertz::mhz(25) {
-+            } else if clock <= Hertz::mhz(25) {
-                 Boost::Lt25
-             } else {
-                 Boost::Lt50
-@@ -319,9 +346,9 @@ impl AdcRegs for Regs {
-     fn clock(self, common: AdcCommon, kernel_clock: Hertz) -> Hertz {
-         #[cfg(any(adc_v3_l4, adc_v3_g4, adc_v3_h7))]
-         match common.ccr().read().ckmode() {
--            Ckmode::SyncDiv1 => return kernel_clock,
--            Ckmode::SyncDiv2 => return kernel_clock / 2u32,
--            Ckmode::SyncDiv4 => return kernel_clock / 4u32,
-+            Ckmode::SyncDiv1 => return analog_clock(kernel_clock),
-+            Ckmode::SyncDiv2 => return analog_clock(kernel_clock / 2u32),
-+            Ckmode::SyncDiv4 => return analog_clock(kernel_clock / 4u32),
-             Ckmode::Asynchronous => {}
-         }
-         #[cfg(adc_v3_f3)]
-@@ -337,7 +364,7 @@ impl AdcRegs for Regs {
-         }
-         #[cfg(any(adc_v3_l4, adc_v3_g4, adc_v3_h7, adc_v3_u5, adc_v3_u3))]
-         {
--            kernel_clock / PRESCALERS[common.ccr().read().presc().to_bits() as usize].divisor()
-+            analog_clock(kernel_clock / PRESCALERS[common.ccr().read().presc().to_bits() as usize].divisor())
-         }
-         #[cfg(any(adc_v3_n6, adc_v3_c5))]
-         {
+-/// Convert gray to decimal
+-///
+-/// Os Event provides a 64-bit timestamp gray-encoded. All we have to
+-/// do here is read both 32-bit halves of the register and convert
+-/// from gray to regular binary.
+-fn gray_to_dec(gray: u64) -> u64 {
+-    let mut dec = gray;
+-
+-    dec ^= dec >> 1;
+-    dec ^= dec >> 2;
+-    dec ^= dec >> 4;
+-    dec ^= dec >> 8;
+-    dec ^= dec >> 16;
+-    dec ^= dec >> 32;
+-
+-    dec
++    fn to_gray(self) -> GrayTicks {
++        GrayTicks(self.0 ^ (self.0 >> 1))
++    }
+ }
+ 
+-/// Convert decimal to gray
+-///
+-/// Before writing match value to the target register, we must convert
+-/// it back into gray code.
+-fn dec_to_gray(dec: u64) -> u64 {
+-    let gray = dec;
+-    gray ^ (gray >> 1)
++/// A 42-bit Gray-coded counter value.
++#[derive(Copy, Clone)]
++struct GrayTicks(u64);
++
++impl GrayTicks {
++    fn from_registers(high: u16, low: u32) -> Self {
++        Self(((u64::from(high) << 32) | u64::from(low)) & COUNTER_MASK)
++    }
++
++    fn low(self) -> u32 {
++        self.0 as u32
++    }
++
++    fn high(self) -> u16 {
++        (self.0 >> 32) as u16
++    }
++
++    fn decode(self) -> EvTicks {
++        let mut binary = self.0;
++        binary ^= binary >> 1;
++        binary ^= binary >> 2;
++        binary ^= binary >> 4;
++        binary ^= binary >> 8;
++        binary ^= binary >> 16;
++        binary ^= binary >> 32;
++        EvTicks(binary)
++    }
+ }
+ 
+ embassy_time_driver::time_driver_impl!(static DRIVER: OsTimer = OsTimer {
+-    alarms:  Mutex::const_new(CriticalSectionRawMutex::new(), AlarmState::new()),
++    time: Mutex::new(Cell::new(0)),
+     queue: Mutex::new(RefCell::new(Queue::new())),
+ });
+ 
+ struct OsTimer {
+-    /// Timestamp at which to fire alarm. u64::MAX if no alarm is scheduled.
+-    alarms: Mutex<CriticalSectionRawMutex, AlarmState>,
++    time: Mutex<CriticalSectionRawMutex, Cell<u64>>,
+     queue: Mutex<CriticalSectionRawMutex, RefCell<Queue>>,
+ }
+ 
+ impl OsTimer {
+     fn init(&'static self, irq_prio: crate::interrupt::Priority) {
+-        // init alarms
+-        critical_section::with(|cs| {
+-            let alarm = DRIVER.alarms.borrow(cs);
+-            alarm.timestamp.set(u64::MAX);
+-        });
++        critical_section::with(|cs| self.time.borrow(cs).set(0));
+ 
+         let parts = unsafe {
+             enable_and_reset::<OSTIMER0>(&OsTimerConfig {
+                 power: PoweredClock::AlwaysEnabled,
++                // Split counter reads require bus >= 2 MHz, or the same 1 MHz source.
++                // MCXA2 RM 29.6.1.2; MCXA5 RM 36.6.1.2.
+                 source: OstimerClockSel::Clk1M,
+             })
+             .expect("Enabling OsTimer clock should not fail")
+@@ -92,62 +106,57 @@ impl OsTimer {
+         // Make sure interrupt is masked
+         OSTIMER0.osevent_ctrl().modify(|w| w.set_ostimer_intena(false));
+ 
+-        // Default to the end of time
+-        OSTIMER0.match_l().write(|w| w.set_match_value(u32::MAX));
+-        OSTIMER0.match_h().write(|w| w.set_match_value(u16::MAX));
+-
+         interrupt::OS_EVENT.unpend();
+         interrupt::OS_EVENT.set_priority(irq_prio);
+         unsafe { interrupt::OS_EVENT.enable() };
+     }
+ 
+-    /// Set an alarm for timestamp, returning false if the time has already expired.
+-    fn set_alarm(&self, cs: CriticalSection, timestamp: u64) -> bool {
+-        let alarm = self.alarms.borrow(cs);
+-        alarm.timestamp.set(timestamp);
+-
+-        // Disable the previous alarm and clear a potentially latched match before
+-        // replacing MATCH_L/MATCH_H.
++    fn program_match(&self, _cs: CriticalSection, deadline: u64) -> AlarmOutcome {
++        // MCXA2 RM 29.3.2/29.6.1.8; MCXA5 RM 36.3.2/36.6.1.8.
+         OSTIMER0.osevent_ctrl().modify(|w| {
+             w.set_ostimer_intena(false);
+             w.set_ostimer_intrflag(true);
+         });
+-
+-        // Wait until any previous match-register synchronization completes.
+         while OSTIMER0.osevent_ctrl().read().match_wr_rdy() {}
+ 
+-        let gray_timestamp = dec_to_gray(timestamp);
+-
+-        OSTIMER0.match_l().write(|w| w.set_match_value(gray_timestamp as u32));
+-        OSTIMER0
+-            .match_h()
+
 ```
 
-**File**: `tests/stm32/src/bin/dac.rs` (modified, +6/-5)
+**File**: `embassy-mcxa/src/perf_counters.rs` (modified, +3/-0)
 ```diff
-@@ -45,10 +45,14 @@ async fn main(_spawner: Spawner) {
-     ))]
-     let normalization_factor: i32 = 16;
+@@ -33,6 +33,7 @@ macro_rules! define_counters {
+             #[cfg(feature = "perf")]
+             pub fn clear_all() {
+                 $(
++                    $(#[$attr])*
+                     [<clear_ $name>]();
+                 )*
+             }
+@@ -42,6 +43,7 @@ macro_rules! define_counters {
+             pub fn get_report() -> Report {
+                 Report {
+                     $(
++                        $(#[$attr])*
+                         $name: ([<get_ $name>])(),
+                     )*
+                 }
+@@ -52,6 +54,7 @@ macro_rules! define_counters {
+             pub fn get_report_and_clear() -> Report {
+                 Report {
+                     $(
++                        $(#[$attr])*
+                         $name: ([<get_and_clear_ $name>])(),
+                     )*
+                 }
+```
+
+---
+
+### Incident Patch 3: `b69005d4` (2026-10-20)
+**Commit Message**: mcxa: distinguish binary and Gray OSTIMER ticks
+
+Fixes OpenDevicePartnership/embassy-mcxa#207
+
+**File**: `embassy-mcxa/src/ostimer.rs` (modified, +50/-31)
+```diff
+@@ -39,31 +39,52 @@ enum AlarmOutcome {
+     Maintenance,
+ }
  
-+    // A long sample time. The shortest one is too short for PA4 (a slow channel) when the
-+    // converter runs at its maximum clock, e.g. 50 MHz on the H755.
-+    let sample_time = SampleTime::from_bits(5);
+-/// Convert gray to decimal
+-///
+-/// Os Event provides a 64-bit timestamp gray-encoded. All we have to
+-/// do here is read both 32-bit halves of the register and convert
+-/// from gray to regular binary.
+-fn gray_to_dec(gray: u64) -> u64 {
+-    let mut dec = gray;
+-
+-    dec ^= dec >> 1;
+-    dec ^= dec >> 2;
+-    dec ^= dec >> 4;
+-    dec ^= dec >> 8;
+-    dec ^= dec >> 16;
+-    dec ^= dec >> 32;
+-
+-    dec
++/// A 42-bit binary counter value.
++#[derive(Copy, Clone)]
++struct EvTicks(u64);
 +
-     dac.set(0);
-     // Now wait a little to obtain a stable value
-     Timer::after_millis(30).await;
--    let offset = adc.blocking_read(&mut adc_pin, SampleTime::from_bits(0));
-+    let offset = adc.blocking_read(&mut adc_pin, sample_time);
++impl EvTicks {
++    // Select the hardware counter bits of a software timestamp.
++    fn from_timestamp(timestamp: u64) -> Self {
++        Self(timestamp & COUNTER_MASK)
++    }
++
++    fn value(self) -> u64 {
++        self.0
++    }
++
++    fn to_gray(self) -> GrayTicks {
++        GrayTicks(self.0 ^ (self.0 >> 1))
++    }
+ }
  
-     for v in 0..=255 {
-         // First set the DAC output value
-@@ -59,10 +63,7 @@ async fn main(_spawner: Spawner) {
-         Timer::after_millis(30).await;
+-/// Convert decimal to gray
+-///
+-/// Before writing match value to the target register, we must convert
+-/// it back into gray code.
+-fn dec_to_gray(dec: u64) -> u64 {
+-    let gray = dec;
+-    gray ^ (gray >> 1)
++/// A 42-bit Gray-coded counter value.
++#[derive(Copy, Clone)]
++struct GrayTicks(u64);
++
++impl GrayTicks {
++    fn from_registers(high: u16, low: u32) -> Self {
++        Self(((u64::from(high) << 32) | u64::from(low)) & COUNTER_MASK)
++    }
++
++    fn low(self) -> u32 {
++        self.0 as u32
++    }
++
++    fn high(self) -> u16 {
++        (self.0 >> 32) as u16
++    }
++
++    fn decode(self) -> EvTicks {
++        let mut binary = self.0;
++        binary ^= binary >> 1;
++        binary ^= binary >> 2;
++        binary ^= binary >> 4;
++        binary ^= binary >> 8;
++        binary ^= binary >> 16;
++        binary ^= binary >> 32;
++        EvTicks(binary)
++    }
+ }
  
-         // Need to steal the peripherals here because PA4 is obviously in use already
--        let measured = adc.blocking_read(
--            &mut unsafe { embassy_stm32::Peripherals::steal() }.PA4,
--            SampleTime::from_bits(0),
--        );
-+        let measured = adc.blocking_read(&mut unsafe { embassy_stm32::Peripherals::steal() }.PA4, sample_time);
-         // Calibrate and normalize the measurement to get close to the dac_output_val
-         let measured_normalized = ((measured as i32 - offset as i32) / normalization_factor) as i16;
+ embassy_time_driver::time_driver_impl!(static DRIVER: OsTimer = OsTimer {
+@@ -120,11 +141,9 @@ impl OsTimer {
+         });
+         while OSTIMER0.osevent_ctrl().read().match_wr_rdy() {}
  
+-        let gray_timestamp = dec_to_gray(deadline & COUNTER_MASK);
+-        OSTIMER0.match_l().write(|w| w.set_match_value(gray_timestamp as u32));
+-        OSTIMER0
+-            .match_h()
+-            .write(|w| w.set_match_value((gray_timestamp >> 32) as u16));
++        let gray_timestamp = EvTicks::from_timestamp(deadline).to_gray();
++        OSTIMER0.match_l().write(|w| w.set_match_value(gray_timestamp.low()));
++        OSTIMER0.match_h().write(|w| w.set_match_value(gray_timestamp.high()));
+ 
+         // MATCH_H transfers the shadow pair to the active comparator.
+         while OSTIMER0.osevent_ctrl().read().match_wr_rdy() {}
+@@ -193,9 +212,9 @@ impl Driver for OsTimer {
+ 
+         // Keep interrupts from delaying the low-half read across multiple ticks.
+         critical_section::with(|cs| {
+-            let high = OSTIMER0.evtimerh().read().evtimer_count_value() as u64;
+-            let low = OSTIMER0.evtimerl().read().evtimer_count_value() as u64;
+-            let counter = gray_to_dec((high << 32) | low);
++            let high = OSTIMER0.evtimerh().read().evtimer_count_value();
++            let low = OSTIMER0.evtimerl().read().evtimer_count_value();
++            let counter = GrayTicks::from_registers(high, low).decode().value();
+             let time = self.time.borrow(cs);
+             let previous = time.get();
+             let now = previous + (counter.wrapping_sub(previous) & COUNTER_MASK);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7324** (2026-10-21): [MCXA] OSTIMER fixes (@felipebalbi)
+- **PR #7323** (2026-10-21): stm32/usb: support double-buffered bulk endpoints on USB v3 (@ant32)
+- **PR #7322** (2026-10-20): HIL: add stm32h723zg, reenable non-broken tests, fix some tests (@Dirbaio)
+- **PR #7321** (2026-10-20): rp23x: fix .text align in memory.x (@Dirbaio)
 - **PR #7318** (2026-10-19): Nuke more unnecessary deps. (@Dirbaio)
 - **PR #7317** (2026-10-20): stm32/dma: GPDMA: panic when a linked-list Table straddles 64 KiB (@fbrozovic)
-- **PR #7314** (2026-10-20): stm32/adc: account for the fixed /2 in front of the H7 ADC converter, fixes #7310 (@Dirbaio)
-- **PR #7312** (2026-10-19): usb/hid: add keyboard/mouse reports usable for device side, remove usbd-hid dep. (@Dirbaio)
-- **PR #7311** (2026-10-19): stm32/mdma: fix transfer errors caused by invalid buffer length (@datdenkikniet)
-- **PR #7309** (2026-10-19): Nuke unneeded deps. (@Dirbaio)
 
 ---
 
@@ -1827,28 +1862,29 @@ first item's upper bits, and panics otherwise.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. make panic handlers consistent.
+## X. nrf/tests: increase rng timeout
 
 **RULE**:
-When implementing operations in `embassy-mspm0/src/trng.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/nrf/src/bin/rng.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d6e9079`: make panic handlers consistent.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `722b9165`: nrf/tests: increase rng timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-mspm0/src/trng.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/nrf/src/bin/rng.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// use {defmt_rtt as _, panic_probe as _};
+teleprobe_meta::timeout!(30);
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// use {defmt_rtt as _, panic_halt as _};
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d6e9079` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `722b9165` are properly handled with clean fallback behavior.

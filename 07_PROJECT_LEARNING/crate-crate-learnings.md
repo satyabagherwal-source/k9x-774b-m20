@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `c8550922`  
+> **Source Version**: `a2e5070d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:51:16.305Z  
+> **Timestamp**: 2026-10-21T03:18:14.442Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:51:16.301Z  
+> **Harvest Timestamp**: 2026-10-21T03:18:14.435Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -537,8 +537,8 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 - **Issue #20438** (2026-10-20): **[Regression] Range query returns 0 rows when a CLOSED partition is included (5.10.16 vs 6.4.5)**
   *Symptoms*: ### CrateDB version  6.4.5 (also reproduced on 6.2.8; works as expected on 5.10.16)  ### CrateDB setup information  Number of nodes: 3  Node configuration: - 1 node with stage=bigeye - 2 nodes with stage=hot - Heap size: 5 GB per node  CRATE_HEAP_SIZE: 5g (each node) CRATE_JAVA_OPTS: Not specified  Test table configuration: - 1 primary shard - 0 replicas - Daily partitioning using a generated TIMESTAMP column  The issue was also reproduced using a newly created minimal test table without custom shard allocation settings.  The full crate.yml configuration can be provided if required.  ### Problem description  <html> <body> <!--StartFragment--><html><head></head><body><h3><span>Description</span></h3><p><span>We found a regression in CrateDB 6.x when querying a partitioned table containing CLOSED partitions.</span></p><p><span>In CrateDB 5.10.16, range queries spanning both OPEN and CLOSED partitions correctly return records from OPEN partitions.</span></p><p><span>However, in CrateDB 6.2.8 and 6.4.5, the same queries return 0 records, even when matching records exist in OPEN partitions.</span></p><p><span>This behavior was reproduced using a newly created test table.</span></p><h3><span>Steps to Reproduce</span></h3><p><strong><span>1. Create a partitioned table</span></strong></p><pre><code><span>CREATE TABLE IF NOT EXISTS doc.test_closed_partition (     ts TIMESTAMP WITHOUT TIME ZONE,     pdate TIMESTAMP WITHOUT TIME ZONE         GENERATED ALWAYS AS date_trunc('day', ts) ) P
 
-- **Issue #20350** (2026-10-16): **Duplicate conditions in a join not eliminated**
-  *Symptoms*: ### CrateDB version  6.4.5  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description  When there are duplicate conditions in a join query (e.g. the same condition is in the join condition and the `where` clause), they are not de-duplicated in the logical plan.  ### Steps to Reproduce  ```sql DROP TABLE IF EXISTS t1; DROP TABLE IF EXISTS t2; DROP TABLE IF EXISTS t3; DROP TABLE IF EXISTS t4;  -----------------------------  CREATE TABLE t1 (c1 INTEGER); CREATE TABLE t2 (c2 INTEGER); CREATE TABLE t3 (c3 INTEGER); CREATE TABLE t4 (c4 INTEGER);  -----------------------------  EXPLAIN SELECT * FROM t1 JOIN t2 ON t1.c1 = t2.c2 CROSS JOIN t3 WHERE t1.c1 = t2.c2  AND t2.c2 = t3.c3; ```  ### Actual Result  ``` +------------------------------------------------------------+ | QUERY PLAN                                                 | +------------------------------------------------------------+ | HashJoin[INNER | ((c1 = c2) AND (c2 = c3))] (rows=unknown) | |   ├ HashJoin[INNER | (c1 = c2)] (rows=unknown)             | |   │  ├ Collect[doc.t1 | [c1] | true] (rows=unknown)        | |   │  └ Collect[doc.t2 | [c2] | true] (rows=unknown)        | |   └ Collect[doc.t3 | [c3] | true] (rows=unknown)           | +------------------------------------------------------------+ ```  ### Expected Result  `c1 = c2` exists only on the inner join that's on the bottom, not on both.  ``` +---------------------------------------
+- **Issue #20414** (2026-10-20): **Failing query with left join inside cross join**
+  *Symptoms*: Originally found by @matriv while reviewing a PR. This was failing with `optimizer_eliminate_cross_join` enabled and disabled.  However, with https://github.com/crate/crate/pull/20305 merged, the query below fails only when `optimizer_eliminate_cross_join` is disabled.  ### CrateDB version  6.4.6  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description  The query below fails instead of returning expected results.  ### Steps to Reproduce  ```sql CREATE TABLE t1 (a INT, x INT); CREATE TABLE t2 (b INT, y INT); CREATE TABLE t3 (z INT); CREATE TABLE t4 (id INT);  INSERT INTO t1 (a, x) VALUES (1, 1); INSERT INTO t2 (b, y) VALUES (1, 1), (1, 2); INSERT INTO t3 (z) VALUES (1); INSERT INTO t4 (id) VALUES (1);  REFRESH TABLE t1, t2, t3, t4;  SELECT t1.x, t2.y, t3.z, t4.id FROM t1 LEFT JOIN t2 ON t1.a = t2.b CROSS JOIN t3 JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id; ```  ### Actual Result  ``` SQLParseException[Couldn't create execution plan from logical plan because of: Index 1 out of bounds for length 1: Eval[x, y, z, id] (rows=unknown)   └ HashJoin[INNER | ((z = id) AND (a = b))] (rows=unknown)     ├ HashJoin[INNER | (x = z)] (rows=unknown)     │  ├ HashJoin[INNER | (x = y)] (rows=unknown)     │  │  ├ Collect[doc.t1 | [x, a] | true] (rows=unknown)     │  │  └ Collect[doc.t2 | [y, b] | true] (rows=unknown)     │  └ Collect[doc.t3 | [z] | true] (rows=unknown)     └ Collect[doc.t4 | [id] | true] (
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -555,418 +555,373 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39a18d46` (2026-10-20)
-**Commit Message**: Fix partition narrowing if closed partitions are hit
+### Incident Patch 1: `a2e5070d` (2026-10-17)
+**Commit Message**: Push down inner join conditions that reference only one side
 
-`concreteOpenIndices` included `null` entries for closed partitions,
-which led to incorrect partition narrowing.
-
-Fixes https://github.com/crate/crate/issues/20438
-
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +5/-0)
+**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +10/-0)
 ```diff
-@@ -46,6 +46,11 @@ series.
- Fixes
- =====
- 
-+- Fixed an issue that caused queries on partitioned tables to exclude matching
-+  partitions if it had a partitioned column derived via a generated expression,
-+  and if that generated expression was included within the query via range
-+  filter.
+@@ -133,3 +133,13 @@ Fixes
+ - Fixed an issue where double quotes and backslashes in array elements (e.g.
+   ``TEXT[]``) weren't escaped when sent over the PostgreSQL wire protocol in
+   text format. This caused clients to parse the elements incorrectly.
 +
- - Added missing support for the :ref:`UUID <type-uuid>` type to the
-   :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
- 
++- Fixed an issue that caused inner join queries to fail when a join condition
++  referenced multiple tables that are all on one side of the join, e.g.::
++
++    SELECT t1.x, t2.y, t3.z
++    FROM t1
++    JOIN t2 ON t1.a = t2.b
++    JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
++
++  A query like this used to fail with ``Index 1 out of bounds for length 1``.
 ```
 
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +5/-0)
+**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +10/-0)
 ```diff
-@@ -51,6 +51,11 @@ series.
- Fixes
- =====
- 
-+- Fixed an issue that caused queries on partitioned tables to exclude matching
-+  partitions if it had a partitioned column derived via a generated expression,
-+  and if that generated expression was included within the query via range
-+  filter.
+@@ -138,3 +138,13 @@ Fixes
+ - Fixed an issue where double quotes and backslashes in array elements (e.g.
+   ``TEXT[]``) weren't escaped when sent over the PostgreSQL wire protocol in
+   text format. This caused clients to parse the elements incorrectly.
 +
- - Added missing support for the :ref:`UUID <type-uuid>` type to the
-   :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
- 
++- Fixed an issue that caused inner join queries to fail when a join condition
++  referenced multiple tables that are all on one side of the join, e.g.::
++
++    SELECT t1.x, t2.y, t3.z
++    FROM t1
++    JOIN t2 ON t1.a = t2.b
++    JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
++
++  A query like this used to fail with ``Index 1 out of bounds for length 1``.
 ```
 
-**File**: `server/src/main/java/io/crate/metadata/DocTableInfo.java` (modified, +3/-5)
+**File**: `server/src/main/java/io/crate/planner/operators/LogicalPlanner.java` (modified, +69/-2)
 ```diff
-@@ -509,7 +509,7 @@ public String[] concreteOpenIndices(Metadata metadata, List<PartitionName> parti
-         if (partitions.isEmpty()) {
-             return new String[0];
+@@ -21,8 +21,10 @@
+ 
+ package io.crate.planner.operators;
+ 
++import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Collections;
++import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.LinkedHashSet;
+ import java.util.List;
+@@ -38,6 +40,7 @@
+ import org.elasticsearch.Version;
+ import org.elasticsearch.cluster.ClusterState;
+ import org.elasticsearch.cluster.metadata.Metadata;
++import org.jspecify.annotations.Nullable;
+ 
+ import io.crate.analyze.AnalyzedInsertStatement;
+ import io.crate.analyze.AnalyzedStatement;
+@@ -53,6 +56,7 @@
+ import io.crate.analyze.relations.AnalyzedRelationVisitor;
+ import io.crate.analyze.relations.AnalyzedView;
+ import io.crate.analyze.relations.DocTableRelation;
++import io.crate.analyze.relations.QuerySplitter;
+ import io.crate.analyze.relations.TableFunctionRelation;
+ import io.crate.analyze.relations.TableRelation;
+ import io.crate.analyze.relations.UnionSelect;
+@@ -392,14 +396,14 @@ public LogicalPlan visitJoinRelation(JoinRelation joinRelation, List<Symbol> out
+ 
+             var correlatedSubQueries = CorrelatedSubQueries.of(joinCondition);
+             if (correlatedSubQueries.correlatedSubQueries().isEmpty()) {
+-                return new JoinPlan(
++                return createJoinPlan(
+                     joinRelation.left().accept(this, lhsOutputs),
+                     joinRelation.right().accept(this, rhsOutputs),
+                     joinRelation.joinType(),
+                     joinCondition
+                 );
+             } else {
+-                LogicalPlan source = new JoinPlan(
++                LogicalPlan source = createJoinPlan(
+                     joinRelation.left().accept(this, lhsOutputs),
+                     joinRelation.right().accept(this, rhsOutputs),
+                     joinRelation.joinType(),
+@@ -412,6 +416,69 @@ public LogicalPlan visitJoinRelation(JoinRelation joinRelation, List<Symbol> out
+             }
          }
--        String[] uuids = new String[partitions.size()];
-+        ArrayList<String> uuids = new ArrayList<>(partitions.size());
-         for (int i = 0; i < partitions.size(); i++) {
-             List<String> partitionValues = partitions.get(i).values();
-             List<String> indexUUIDS = metadata.getIndices(
-@@ -518,11 +518,9 @@ public String[] concreteOpenIndices(Metadata metadata, List<PartitionName> parti
-                 false,
-                 imd -> imd.getState() == State.OPEN ? imd.getIndex().uuid() : null
-             );
--            if (!indexUUIDS.isEmpty()) {
--                uuids[i] = indexUUIDS.getFirst();
--            }
-+            uuids.addAll(indexUUIDS);
-         }
--        return uuids;
-+        return uuids.toArray(String[]::new);
+ 
++        /// For inner joins, conditions which reference relations of only one side of the join
++        /// are moved to that side as a [Filter].
++        private static LogicalPlan createJoinPlan(LogicalPlan lhs,
++                                                  LogicalPlan rhs,
++                                                  JoinType joinType,
++                                                  @Nullable Symbol joinCondition) {
++            if (joinType != JoinType.INNER) {
++                return new JoinPlan(lhs, rhs, joinType, joinCondition);
++            }
++            var split = splitJoinCondition(joinCondition, lhs.relationNames(), rhs.relationNames());
++            return new JoinPlan(
++                Filter.create(lhs, split.left()),
++                Filter.create(rhs, split.right()),
++                split.remaining() == null ? JoinType.CROSS : JoinType.INNER,
++                split.remaining()
++            );
++        }
++
++        /// @param remaining conditions referencing both sides, and non-deterministic conditions without any relation.
++        ///                  `null` if there are none.
++        /// @param left      conditions referencing only relations of the left side. `null` if there are none.
++        /// @param right     conditions referencing only relations of the right side. `null` if there are none.
++        private record SplitJoinCondition(@Nullable Symbol remaining, @Nullable Symbol left, @Nullable Symbol right) {
++        }
++
++        /// Splits a join condition into the conditions that reference relations of only one side of the join,
++        /// and the remaining conditions.
++        /// Deterministic conditions without any relation are assigned to the left side.
++        /// Non-deterministic conditions without any relation remain in the join condition.
++        private static SplitJoinCondition splitJoinCondition(@Nullable Symbol condition,
++                                                             Collection<RelationName> leftRelations,
++                                                             Collection<RelationName> rightRelations) {
++            if (condition == null) {
++                return new SplitJoinCondition(null, null, null);
++            }
++            
++            Set<RelationName> lhsRelations = new HashSet<>(leftRelations);
++            Set<RelationName> rhsRelations = new HashSet<>(rightRelations);
++            List<Symbol> lhsConditions = new ArrayList<>();
++            List<Symbol> rhsConditions = new ArrayList<>();
++            List<Symbol> remainingConditions = new ArrayList<>();
++
++            for (var entry : QuerySplitter.split(condition).entrySet()) {
++                Set<RelationName> relations = entry.getKey();
++                Symbol part = entry.getValue();
++                if (relations.isEmpty() && !part.isDeterministic()) {
++                    remainingConditions.add(part);
++                } else if (lhsRelations.containsAll(relations)) {
++                    lhsConditions.add(part);
++                } else 
+```
+
+**File**: `server/src/test/java/io/crate/integrationtests/JoinIntegrationTest.java` (modified, +24/-20)
+```diff
+@@ -1609,10 +1609,8 @@ public void test_eliminate_cross_joins_and_reorder_tables() throws Exception {
+     @UseHashJoins(1)
+     @UseRandomizedSchema(random = false)
+     @UseRandomizedOptimizerRules(0)
+-    public void test_cross_join_elimination_keeps_condition_between_both_sides_of_outer_join() throws Exception {
++    public void test_join_condition_referencing_multiple_tables_on_one_side_of_join() throws Exception {
+         // See: https://github.com/crate/crate/issues/20414
+-        execute("SET optimizer_eliminate_cross_join = TRUE;");
+-
+         execute("CREATE TABLE t1 (a INT, x INT)");
+         execute("CREATE TABLE t2 (b INT, y INT)");
+         execute("CREATE TABLE t3 (z INT)");
+@@ -1631,23 +1629,29 @@ public void test_cross_join_elimination_keeps_condition_between_both_sides_of_ou
+             JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
+             """;
+ 
+-        execute("EXPLAIN (COSTS FALSE) " + stmt);
+-        assertThat(response).hasLines(
+-            "Eval[x, y, z, id]",
+-            "  └ HashJoin[INNER | (z = id)]",
+-            "    ├ HashJoin[INNER | (x = z)]",
+-            "    │  ├ Filter[(x = y)]",
+-            "    │  │  └ HashJoin[LEFT | (a = b)]",
+-            "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
+-            "    │  │    └ Collect[doc.t2 | [y, b] | true]",
+-            "    │  └ Collect[doc.t3 | [z] | true]",
+-            "    └ Collect[doc.t4 | [id] | true]"
+-        );
+-
+-        execute(stmt);
+-        assertThat(response).hasRowsInAnyOrder(
+-            "1| 1| 1| 1"
+-        );
++        for (String eliminateCrossJoin : new String[] {"TRUE", "FALSE"}) {
++            try (var session = sqlExecutor.newSession()) {
++                execute("SET optimizer_eliminate_cross_join = " + eliminateCrossJoin, session);
++
++                execute("EXPLAIN (COSTS FALSE) " + stmt, session);
++                assertThat(response).hasLines(
++                    "Eval[x, y, z, id]",
++                    "  └ HashJoin[INNER | (z = id)]",
++                    "    ├ HashJoin[INNER | (x = z)]",
++                    "    │  ├ Filter[(x = y)]",
++                    "    │  │  └ HashJoin[LEFT | (a = b)]",
++                    "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
++                    "    │  │    └ Collect[doc.t2 | [y, b] | true]",
++                    "    │  └ Collect[doc.t3 | [z] | true]",
++                    "    └ Collect[doc.t4 | [id] | true]"
++                );
++
++                execute(stmt, session);
++                assertThat(response).hasRowsInAnyOrder(
++                    "1| 1| 1| 1"
++                );
++            }
++        }
      }
  
      /**
 ```
 
-**File**: `server/src/test/java/io/crate/integrationtests/PartitionedTableIntegrationTest.java` (modified, +29/-0)
+**File**: `server/src/test/java/io/crate/planner/operators/JoinTest.java` (modified, +203/-0)
 ```diff
-@@ -2323,4 +2323,33 @@ public void test_partitioned_by_boolean_column() {
-             "1| true| 11",
-             "1| true| 111");
+@@ -1912,4 +1912,207 @@ public void test_eliminate_cross_join_keeps_non_deterministic_filter_in_subquery
+             "  └ Collect[doc.t3 | [z] | true]"
+         );
      }
 +
 +    @Test
-+    public void test_partition_narrowing_with_closed_partitions() throws Exception {
-+        execute(
-+            """
-+            CREATE TABLE IF NOT EXISTS tbl (
-+                ts TIMESTAMP WITHOUT TIME ZONE,
-+                pdate TIMESTAMP WITHOUT TIME ZONE GENERATED ALWAYS AS date_trunc('day', ts)
-+            )
-+            PARTITIONED BY (pdate)
-+            CLUSTERED INTO 1 SHARDS WITH (number_of_replicas = 0)
-+            """
-+        );
-+        execute(
-+            """
-+            INSERT INTO tbl (ts) VALUES
-+                ('2026-10-13 10:00:00'),
-+                ('2026-10-13 11:00:00'),
-+                ('2026-10-14 10:00:00'),
-+                ('2026-10-14 11:00:00'),
-+                ('2026-10-15 10:00:00'),
-+                ('2026-10-15 11:00:00')
-+            """
-+        );
-+        execute("refresh table tbl");
-+        execute("alter table tbl partition (pdate = '2026-10-14') close");
-+        execute("select count(*) from tbl where pdate >= '2026-10-14'");
-+        assertThat(response).hasRows("2");
++    public void test_join_condition_referencing_one_side_is_pushed_below_join() {
++        String stmt = """
++            SELECT t1.x, t2.y, t3.z, t4.id
++            FROM t1
++            LEFT JOIN t2 ON t1.a = t2.b
++            CROSS JOIN t3
++            JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
++            """;
++        String[] expectedPlan = {
++            "Eval[x, y, z, id]",
++            "  └ HashJoin[INNER | (z = id)]",
++            "    ├ HashJoin[INNER | (x = z)]",
++            "    │  ├ Filter[(x = y)]",
++            "    │  │  └ HashJoin[LEFT | (a = b)]",
++            "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
++            "    │  │    └ Collect[doc.t2 | [y, b] | true]",
++            "    │  └ Collect[doc.t3 | [z] | true]",
++            "    └ Collect[doc.t4 | [id] | true]"
++        };
++
++        LogicalPlan plan = e.logicalPlan(stmt);
++        assertThat(plan).hasOperators(expectedPlan);
++
++        e.getSessionSettings().excludedOptimizerRules().add(EliminateCrossJoin.class);
++
++        plan = e.logicalPlan(stmt);
++        assertThat(plan).hasOperators(expectedPlan);
 +    }
- }
++
++    @Test
++    public void test_join_condition_referencing_one_side_is_pushed_below_join_without_cross_join() {
++        // Without a cross join, EliminateCrossJoin doesn't apply
++        LogicalPlan plan = e.logicalPlan("""
++            SELECT t1.x, t2.y, t3.z
++            FROM t1
++            JOIN t2 ON t1.a = t2.b
++            JOIN t3 ON t1.x = t2.y AND t1.x = t3.z
++            """);
++
++        assertThat(plan).hasOperators(
++            "Eval[x, y, z]",
++            "  └ HashJoin[INNER | (x = z)]",
++            "    ├ HashJoin[INNER | ((a = b) AND (x = y))]",
++            "    │  ├ Collect[doc.t1 | [x, a] | true]",
++            "    │  └ Collect[doc.t2 | [y, b] | true]",
++            "    └ Collect[doc.t3 | [z] | true]"
++        );
++    }
++
++    @Test
++    public void test_join_condition_referencing_one_side_is_pushed_above_right_join() {
++        String stmt = """
++            SELECT t1.x, t2.y, t3.z, t4.id
++            FROM t1
++            RIGHT JOIN t2 ON t1.a = t2.b
++            CROSS JOIN t3
++            JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
++            """;
++        String[] expectedPlan = {
++            "HashJoin[INNER | (z = id)]",
++            "  ├ HashJoin[INNER | (x = z)]",
++            "  │  ├ Eval[x, y]",
++            "  │  │  └ Filter[(x = y)]",
++            "  │  │    └ HashJoin[LEFT | (a = b)]",
++            "  │  │      ├ Collect[doc.t2 | [y, b] | true]",
++            "  │  │      └ Collect[doc.t1 | [x, a] | true]",
++            "  │  └ Collect[doc.t3 | [z] | true]",
++            "  └ Collect[doc.t4 | [id] | true]"
++        };
++
++        LogicalPlan plan = e.logicalPlan(stmt);
++        assertThat(plan).hasOperators(expectedPlan);
++
++        e.getSessionSettings().excludedOptimizerRules().add(EliminateCrossJoin.class);
++
++        plan = e.logicalPlan(stmt);
++        assertThat(plan).hasOperators(expectedPlan);
++    }
++
++    @Test
++    public void test_join_condition_referencing_one_side_is_pushed_above_full_join() {
++        String stmt = """
++            SELECT t1.x, t2.y, t3.z, t4.id
++            FROM t1
++            FULL JOIN t2 ON t1.a = t2.b
++            CROSS JOIN t3
++            JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
++            """;
++        String[] expectedPlan = {
++            "Eval[x, y, z, id]",
++            "  └ HashJoin[INNER | (z = id)]",
++            "    ├ HashJoin[INNER | (x = z)]",
++            "    │  ├ Filter[(x = y)]",
++            "    │  │  └ NestedLoopJoin[FULL | (a = b)]",
++            "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
++            "    │  │    └ Collect[doc.t2 | [y, b] | true]",
++            "    │  └ Collect[doc.t3 | [z] | true]",
++            "    └ Collect[doc.t4 | [id] | true]"
++        };
++
++        LogicalPlan plan = e.logicalPlan(stmt);
++        assertThat(plan).hasOperators(expectedPlan);
++
++        e.getSessionSettings().excludedOptimizerRules().add(EliminateCrossJoin.class);
++
++        plan = e.logicalPlan(stmt);
++        assertThat(plan).hasOperators(expectedPlan);
++    }
++
++    @Test
++    public void test_join_condition_without_relations_is_pushed_down() {
++        // A parameter is used, because constant expressions are normalized away by the analyzer
++        LogicalPlan plan = e.logicalPlan("""
++            SELECT t1.x, t2.y
++            FROM t1
++            JOIN t2 ON t1.x = t2.y AND $1::int = 1
++            """);
++
++        assertThat(plan).hasOperators(
++            "HashJoin[INNER | (x = y)]",
++            "  ├ Collect[doc.t1 | [x] | ($1 = 1)]",
++            "  └ Collect[doc.t2 | [y] | true]"
++        );
++    }
++
++    @Test
++    public void test_inner_join_becomes_cross_join_if_all_conditions_are_pushed_
 ```
 
 ---
 
-### Incident Patch 2: `d4e75946` (2026-10-20)
-**Commit Message**: Add support for casting uuid to text
+### Incident Patch 2: `2517f2b3` (2026-10-20)
+**Commit Message**: Skip publish test reports for GitHub actions for forks
 
-Required for https://github.com/crate/crate-benchmarks/pull/374
-
-**File**: `server/src/main/java/io/crate/types/DataTypes.java` (modified, +2/-1)
+**File**: `.github/workflows/main.yml` (modified, +3/-0)
 ```diff
-@@ -251,7 +251,8 @@ private static List<NumberType<?>> numberTypes() {
-         entry(GEO_SHAPE.id(), Set.of(ObjectType.ID)),
-         entry(ObjectType.ID, Set.of(GEO_SHAPE.id(), JsonType.ID)),
-         entry(BitStringType.ID, Set.of(BitStringType.ID)),
--        entry(JsonType.ID, Set.of(ObjectType.ID))
-+        entry(JsonType.ID, Set.of(ObjectType.ID)),
-+        entry(UUIDType.ID, Set.of(StringType.ID))
-     );
+@@ -75,6 +75,9 @@ jobs:
+       - name: Publish Test Report
+         if: needs.changes.outputs.java == 'true' && (success() || failure())
+         uses: ScalableCapital/action-surefire-report@1e92f48016e566e4eed2d81560edbfe0f524cfb7 #v2.0.3
++        with:
++          # GITHUB_TOKEN is read-only for PRs from forks, so the step fails with 403
++          skip_publishing: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
  
-     public static boolean isArray(DataType<?> type) {
-```
-
-**File**: `server/src/test/java/io/crate/types/StringTypeTest.java` (modified, +9/-0)
-```diff
-@@ -25,6 +25,7 @@
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- 
- import java.util.List;
-+import java.util.UUID;
- 
- import org.junit.Test;
- 
-@@ -56,6 +57,14 @@ public void test_implicit_cast_long_to_text() {
-         assertThat(DataTypes.STRING.implicitCast(123L)).isEqualTo("123");
-     }
- 
-+    @Test
-+    public void test_cast_uuid_to_text() throws Exception {
-+        UUID uuid = UUID.randomUUID();
-+        assertThat(DataTypes.STRING.implicitCast(uuid)).isEqualTo(uuid.toString());
-+        assertThat(UUIDType.INSTANCE.isConvertableTo(DataTypes.STRING, true)).isTrue();
-+        assertThat(UUIDType.INSTANCE.isConvertableTo(DataTypes.STRING, false)).isTrue();
-+    }
-+
-     @Test
-     public void test_create_text_type_with_length_limit() {
-         var stringDataType = StringType.of(10);
-```
-
----
-
-### Incident Patch 3: `f365c729` (2026-10-19)
-**Commit Message**: Add uuid support to hyperloglog_distinct
-
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +3/-0)
-```diff
-@@ -46,6 +46,9 @@ series.
- Fixes
- =====
- 
-+- Added missing support for the :ref:`UUID <type-uuid>` type to the
-+  :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
-+
- - Fixed an issue where a logical replication subscription's active connection
-   could be unexpectedly closed when an earlier connection attempt for a
-   subscription with the same name failed afterwards. As a consequence, both
-```
-
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +3/-0)
-```diff
-@@ -51,6 +51,9 @@ series.
- Fixes
- =====
- 
-+- Added missing support for the :ref:`UUID <type-uuid>` type to the
-+  :ref:`hyperloglog_distinct <aggregation-hyperloglog-distinct>` aggregation.
-+
- - Fixed an issue where a logical replication subscription's active connection
-   could be unexpectedly closed when an earlier connection attempt for a
-   subscription with the same name failed afterwards. As a consequence, both
-```
-
-**File**: `extensions/functions/src/main/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregation.java` (modified, +44/-22)
-```diff
-@@ -26,6 +26,7 @@
- import java.io.IOException;
- import java.nio.charset.StandardCharsets;
- import java.util.List;
-+import java.util.UUID;
- 
- import org.apache.lucene.index.DocValues;
- import org.apache.lucene.index.LeafReaderContext;
-@@ -75,6 +76,7 @@
- import io.crate.types.ShortType;
- import io.crate.types.StringType;
- import io.crate.types.TimestampType;
-+import io.crate.types.UUIDType;
- 
- public class HyperLogLogDistinctAggregation extends AggregationFunction<HyperLogLogDistinctAggregation.HllState, Long> {
- 
-@@ -84,38 +86,42 @@ public class HyperLogLogDistinctAggregation extends AggregationFunction<HyperLog
-         DataTypes.register(HllStateType.ID, _ -> HllStateType.INSTANCE);
-     }
- 
-+
-+    /// register hyperloglog_distinct(type[, precision::int])
-+    private static <T> void register(Functions.Builder builder, DataType<T> type) {
-+        builder.add(
-+            Signature.builder(NAME, FunctionType.AGGREGATE)
-+                .argumentTypes(type.getTypeSignature())
-+                .returnType(DataTypes.LONG.getTypeSignature())
-+                .features(Feature.DETERMINISTIC)
-+                .build(),
-+            (signature, boundSignature) -> new HyperLogLogDistinctAggregation(signature, boundSignature, type)
-+        );
-+        builder.add(
-+            Signature.builder(NAME, FunctionType.AGGREGATE)
-+                .argumentTypes(
-+                    type.getTypeSignature(),
-+                    DataTypes.INTEGER.getTypeSignature())
-+                .returnType(DataTypes.LONG.getTypeSignature())
-+                .features(Feature.DETERMINISTIC)
-+                .build(),
-+            (signature, boundSignature) -> new HyperLogLogDistinctAggregation(signature, boundSignature, type)
-+        );
-+    }
-+
-     public static void register(Functions.Builder builder) {
-         for (var supportedType : DataTypes.PRIMITIVE_TYPES) {
--            builder.add(
--                Signature.builder(NAME, FunctionType.AGGREGATE)
--                    .argumentTypes(supportedType.getTypeSignature())
--                    .returnType(DataTypes.LONG.getTypeSignature())
--                    .features(Feature.DETERMINISTIC)
--                    .build(),
--                (signature, boundSignature) ->
--                    new HyperLogLogDistinctAggregation(signature, boundSignature, supportedType)
--            );
--            builder.add(
--                Signature.builder(NAME, FunctionType.AGGREGATE)
--                    .argumentTypes(supportedType.getTypeSignature(),
--                        DataTypes.INTEGER.getTypeSignature())
--                    .returnType(DataTypes.LONG.getTypeSignature())
--                    .features(Feature.DETERMINISTIC)
--                    .build(),
--                (signature, boundSignature) ->
--                    new HyperLogLogDistinctAggregation(signature, boundSignature, supportedType)
--            );
-+            register(builder, supportedType);
-         }
-+        register(builder, UUIDType.INSTANCE);
-     }
- 
-     private final Signature signature;
-     private final BoundSignature boundSignature;
-     private final Murmur3Hash murmur;
-     private final DataType<?> dataType;
- 
--    private HyperLogLogDistinctAggregation(Signature signature,
--                                           BoundSignature boundSignature,
--                                           DataType<?> dataType) {
-+    private HyperLogLogDistinctAggregation(Signature signature, BoundSignature boundSignature, DataType<?> dataType) {
-         this.signature = signature;
-         this.boundSignature = boundSignature;
-         this.dataType = dataType;
-@@ -254,6 +260,7 @@ public DocValueAggregator<?> getDocValueAggregator(LuceneReferenceResolver refer
-                 );
-             case StringType.ID:
-             case CharacterType.ID:
-+            case UUIDType.ID:
-                 return new HllAggregator(reference.storageIdent(), valueType, precision) {
-                     @Override
-                     public HllState apply(RamAccounting ramAccounting, int doc, HllState state) throws IOException {
-@@ -279,6 +286,7 @@ public HllState apply(RamAccounting ramAccounting, int doc, HllState state) thro
-                         return state;
-                     }
-                 };
-+
-             default:
-                 return null;
-         }
-@@ -512,6 +520,8 @@ static Murmur3Hash getForType(DataType<?> dataType) {
-                 case IpType.ID:
-                 case CharacterType.ID:
-                     return Bytes64.INSTANCE;
-+                case UUIDType.ID:
-+                    return UUIDMurmur.INSTANCE;
-                 default:
-                     throw new IllegalArgumentException("data type \"" + dataType + "\" is not supported");
-             }
-@@ -550,5 +560,17 @@ long hash(Object val) {
-                 return MurmurHash3.hash64(bytes,0, bytes.length);
-             }
-         }
-+
-+        static class UUIDMurmur extends Murmur3Hash {
-+
-+            static final UUIDMurmur INSTA
-```
-
-**File**: `extensions/functions/src/test/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregationTest.java` (modified, +19/-12)
-```diff
-@@ -26,6 +26,7 @@
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- 
- import java.util.List;
-+import java.util.UUID;
- import java.util.function.Function;
- import java.util.stream.Collectors;
- 
-@@ -40,6 +41,7 @@
- import com.carrotsearch.randomizedtesting.generators.RandomPicks;
- 
- import io.crate.Streamer;
-+import io.crate.common.collections.Lists;
- import io.crate.data.breaker.RamAccounting;
- import io.crate.execution.engine.aggregation.AggregationFunction;
- import io.crate.execution.engine.aggregation.impl.HyperLogLogPlusPlus;
-@@ -54,6 +56,7 @@
- import io.crate.testing.TestingHelpers;
- import io.crate.types.DataType;
- import io.crate.types.DataTypes;
-+import io.crate.types.UUIDType;
- 
- public class HyperLogLogDistinctAggregationTest extends AggregationTestCase {
- 
-@@ -171,7 +174,7 @@ public void test_without_precision_long() throws Exception {
- 
-     @Test
-     public void test_random_type_random_values() throws Exception {
--        var validTypes = DataTypes.PRIMITIVE_TYPES.stream()
-+        var validTypes = Lists.concat(DataTypes.PRIMITIVE_TYPES, UUIDType.INSTANCE).stream()
-             .filter(x -> x.storageSupport() != null)
-             .collect(Collectors.toList());
-         var type = RandomPicks.randomFrom(RandomizedContext.current().getRandom(), validTypes);
-@@ -201,35 +204,39 @@ public void testWithPrecision() throws Exception {
-     @Test
-     public void testMurmur3HashCalculationsForAllTypes() {
-         // double types
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.DOUBLE).hash(1.3d))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.DOUBLE).hash(1.3d))
-             .isEqualTo(3706823019612663850L);
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.FLOAT).hash(1.3f))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.FLOAT).hash(1.3f))
-             .isEqualTo(1386670595997310747L);
- 
-         // long types
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.LONG).hash(1L))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.LONG).hash(1L))
-             .isEqualTo(-2508561340476696217L);
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.INTEGER).hash(1))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.INTEGER).hash(1))
-             .isEqualTo(-2508561340476696217L);
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.SHORT).hash(Short.valueOf("1")))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.SHORT).hash(Short.valueOf("1")))
-             .isEqualTo(-2508561340476696217L);
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.BYTE).hash(Byte.valueOf("1")))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.BYTE).hash(Byte.valueOf("1")))
-             .isEqualTo(-2508561340476696217L);
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.TIMESTAMPZ).hash(1512569562000L))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.TIMESTAMPZ).hash(1512569562000L))
-             .isEqualTo(-3066297687939346384L);
- 
-         // bytes types
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.STRING).hash("foo"))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.STRING).hash("foo"))
-             .isEqualTo(1208210750032620489L);
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.BOOLEAN).hash(true))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.BOOLEAN).hash(true))
-             .isEqualTo(4312328700069294139L);
- 
-         // ip type
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.IP).hash("127.0.0.1"))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.IP).hash("127.0.0.1"))
-             .isEqualTo(6044143379282500354L);
- 
--        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType((DataType<?>) DataTypes.DATE).hash(DataTypes.DATE.implicitCast("2020-11-28")))
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(DataTypes.DATE).hash(DataTypes.DATE.implicitCast("2020-11-28")))
-             .isEqualTo(1653417147958603178L);
-+
-+        UUID uuid = UUID.fromString("85f39f41-c438-4043-9192-8b18419caf21");
-+        assertThat(HyperLogLogDistinctAggregation.Murmur3Hash.getForType(UUIDType.INSTANCE).hash(uuid))
-+            .isEqualTo(-6882910959831981196L);
-     }
- 
-     @Test
-```
-
-**File**: `server/src/main/java/io/crate/types/UUIDType.java` (modified, +1/-1)
-```diff
-@@ -112,7 +112,7 @@ private static UUID decode(byte[] bytes) {
-         return new UUID(mostSigBits, leastSigBits);
-     }
- 
--    private static byte[] encode(UUID value) {
-+    public static byte[] encode(UUID value) {
-         byte[] bytes = new byte[STORAGE_BYTE_SIZE];
-         final long mostSigBits = value.getMostSignificantBits();
-         final long leastSigBits = value.getLeastSignificantBits();
+   forbiddenApis:
+     name: forbiddenApis
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20456** (2026-10-20): Push down inner join conditions that reference only one side (backport #20430) (@mergify[bot])
+- **PR #20455** (2026-10-20): Push down inner join conditions that reference only one side (backport #20430) (@mergify[bot])
 - **PR #20454** (2026-10-20): Skip publishing test reports for GitHub actions for forks (@matriv)
 - **PR #20452** (2026-10-20): Avoid list->array copy to resolve concrete indices for tables (@mfussenegger)
 - **PR #20449** (2026-10-20): Fix partition narrowing if closed partitions are hit (backport #20440) (@mergify[bot])
 - **PR #20448** (2026-10-20): Fix partition narrowing if closed partitions are hit (backport #20440) (@mergify[bot])
-- **PR #20444** (2026-10-20): Add uuid support to hyperloglog_distinct (backport #20437) (@mergify[bot])
-- **PR #20443** (2026-10-20): Add uuid support to hyperloglog_distinct (backport #20437) (@mergify[bot])
 
 ---
 
@@ -986,13 +941,13 @@ Required for https://github.com/crate/crate-benchmarks/pull/374
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. partition narrowing if closed partitions are hit
+## X. Push down inner join conditions that reference only one side
 
 **RULE**:
 When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39a18d46`: partition narrowing if closed partitions are hit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2e5070d`: Push down inner join conditions that reference only one side. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
@@ -1000,11 +955,16 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed an issue that caused queries on partitioned tables to exclude matching
-  partitions if it had a partitioned column derived via a generated expression,
-  and if that generated expression was included within the query via range
-  filter.
 
+- Fixed an issue that caused inner join queries to fail when a join condition
+  referenced multiple tables that are all on one side of the join, e.g.::
+
+    SELECT t1.x, t2.y, t3.z
+    FROM t1
+    JOIN t2 ON t1.a = t2.b
+    JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
+
+  A query like this used to fail with ``Index 1 out of bounds for length 1``.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1014,4 +974,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39a18d46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2e5070d` are properly handled with clean fallback behavior.
