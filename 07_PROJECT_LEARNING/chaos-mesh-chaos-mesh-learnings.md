@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `99c44018`  
+> **Source Version**: `24e5e1e7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T12:31:13.125Z  
+> **Timestamp**: 2026-10-22T18:30:42.469Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T12:31:13.116Z  
+> **Harvest Timestamp**: 2026-10-22T18:30:42.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -63,14 +63,14 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
-type fieldCallback func(path *field.Path, obj interface{}, field *reflect.StructField) bool
+type fieldCallback func(path *field.Path, obj any, field *reflect.StructField) bool
 
 type FieldWalker struct {
-	obj      interface{}
+	obj      any
 	callback fieldCallback
 }
 
-func NewFieldWalker(obj interface{}, callback fieldCallback) *FieldWalker {
+func NewFieldWalker(obj any, callback fieldCallback) *FieldWalker {
 	return &FieldWalker{
 		obj:      obj,
 		callback: callback,
@@ -105,7 +105,7 @@ func (w *FieldWalker) Walk() {
 		// we need to iterate its children.
 		if node.Path != nil {
 			val := node.Val
-			if val.Kind() != reflect.Ptr {
+			if val.Kind() != reflect.Pointer {
 				// If it's not a pointer or a slice, then we need to
 				// take the address of it, to be able to modify it.
 				val = val.Addr()
@@ -115,7 +115,7 @@ func (w *FieldWalker) Walk() {
 			}
 		}
 
-		if node.Val.Kind() == reflect.Ptr && node.Val.IsZero() {
+		if node.Val.Kind() == reflect.Pointer && node.Val.IsZero() {
 			continue
 		}
 		objVal = reflect.Indirect(node.Val)
@@ -177,7 +177,7 @@ import (
 )
 
 type Defaulter interface {
-	Default(root interface{}, field *reflect.StructField)
+	Default(root any, field *reflect.StructField)
 }
 
 // Default would walk through all the fields of target struct recursively, and set the default value which declared with struct tag "default".
@@ -185,12 +185,12 @@ type Defaulter interface {
 // Parameter obj should be a pointer to a data struct.
 //
 // Default should return an empty field.ErrorList.
-func Default(obj interface{}) field.ErrorList {
+func Default(obj any) field.ErrorList {
 	// TODO: how to resolve invalid input, for example: obj is a pointer to pointer
 	errorList := field.ErrorList{}
 
 	root := obj
-	walker := NewFieldWalker(obj, func(_ *field.Path, obj interface{}, field *reflect.StructField) bool {
+	walker := NewFieldWalker(obj, func(_ *field.Path, obj any, field *reflect.StructField) bool {
 		webhookAttr := ""
 		if field != nil {
 			webhookAttr = field.Tag.Get("webhook")
@@ -218,7 +218,7 @@ func Default(obj interface{}) field.ErrorList {
 	return errorList
 }
 
-func getDefaulter(obj interface{}, webhook string, nilable bool) Defaulter {
+func getDefaulter(obj any, webhook string, nilable bool) Defaulter {
 	// There are two possible situations:
 	// 1. The field is a value (int, string, normal struct, etc), and the obj is the reference of it.
 	// 2. The field is a pointer to a value or a slice, then the obj is itself.
@@ -275,7 +275,7 @@ import (
 )
 
 type FieldValidator interface {
-	Validate(root interface{}, path *field.Path) field.ErrorList
+	Validate(root any, path *field.Path) field.ErrorList
 }
 
 // Validate would walk through all the fields of target struct recursively, and validate the value with validator declared with struct tag "webhook".
@@ -283,12 +283,12 @@ type FieldValidator interface {
 // Parameter obj should be a pointer to a data struct.
 //
 // Validate should return an empty field.ErrorList if all the fields are valid, or return each field.Error for every invalid values.
-func Validate(obj interface{}) field.ErrorList {
+func Validate(obj any) field.ErrorList {
 	// TODO: how to resolve invalid input, for example: obj is a pointer to pointer
 	errorList := field.ErrorList{}
 
 	root := obj
-	walker := NewFieldWalker(obj, func(path *field.Path, obj interface{}, field *reflect.StructField) bool {
+	walker := NewFieldWalker(obj, func(path *field.Path, obj any, field *reflect.StructField) bool {
 		webhookAttr := ""
 		if field != nil {
 			webhookAttr = field.Tag.Get("webhook")
@@ -326,7 +326,7 @@ func Aggregate(errs field.ErrorList) error {
 	return errors.New(errs.ToAggregate().Error())
 }
 
-func getValidator(obj interface{}, webhook string, nilable bool) FieldValidator {
+func getValidator(obj any, webhook string, nilable bool) FieldValidator {
 	// There are two possible situations:
 	// 1. The field is a value (int, string, normal struct, etc), and the obj is the reference of it.
 	// 2. The field is a pointer to a value or a slice, then the obj is itself.
@@ -416,7 +416,7 @@ import (
 type EbsVolume string
 type AWSDeviceName string
 
-func (in *EbsVolume) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *EbsVolume) Validate(root any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	awsChaos := root.(*AWSChaos)
@@ -430,7 +430,7 @@ func (in *EbsVolume) Validate(root interface{}, path *field.Path) field.ErrorLis
 	return allErrs
 }
 
-func (in *AWSDeviceName) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *AWSDeviceName) Validate(root any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	awsChaos := root.(*AWSChaos)
@@ -445,7 +445,7 @@ func (in *AWSDeviceName) Validate(root interface{}, path *field.Path) field.Erro
 }
 
 // Validate validates aws chaos actions
-func (in *AWSChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (in *AWSChaosAction) Validate(_ any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	// in cannot be nil
@@ -462,8 +462,8 @@ func (in *AWSChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorL
 }
 
 func init() {
-	genericwebhook.Register("EbsVolume", reflect.PtrTo(reflect.TypeOf(EbsVolume(""))))
-	genericwebhook.Register("AWSDeviceName", reflect.PtrTo(reflect.TypeOf(AWSDeviceName(""))))
+	genericwebhook.Register("EbsVolume", reflect.PointerTo(reflect.TypeFor[EbsVolume]()))
+	genericwebhook.Register("AWSDeviceName", reflect.PointerTo(reflect.TypeFor[AWSDeviceName]()))
 }
 
 ```
@@ -499,7 +499,7 @@ import (
 type DiskName string
 type LUN int
 
-func (in *DiskName) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *DiskName) Validate(root any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	azurechaos := root.(*AzureChaos)
@@ -513,7 +513,7 @@ func (in *DiskName) Validate(root interface{}, path *field.Path) field.ErrorList
 	return allErrs
 }
 
-func (in *LUN) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *LUN) Validate(root any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	azurechaos := root.(*AzureChaos)
@@ -528,7 +528,7 @@ func (in *LUN) Validate(root interface{}, path *field.Path) field.ErrorList {
 }
 
 // Validate validates the azure chaos actions
-func (in *AzureChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (in *AzureChaosAction) Validate(_ any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	// in cannot be nil
@@ -545,8 +545,8 @@ func (in *AzureChaosAction) Validate(_ interface{}, path *field.Path) field.Erro
 }
 
 func init() {
-	genericwebhook.Register("DiskName", reflect.PtrTo(reflect.TypeOf(DiskName(""))))
-	genericwebhook.Register("LUN", reflect.PtrTo(reflect.TypeOf(LUN(0))))
+	genericwebhook.Register("DiskName", reflect.PointerTo(reflect.TypeFor[DiskName]()))
+	genericwebhook.Register("LUN", reflect.PointerTo(reflect.TypeFor[LUN]()))
 }
 
 ```
@@ -575,7 +575,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
-func (in *BlockChaosSpec) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (in *BlockChaosSpec) Validate(_ any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	if in.Action == BlockDelay {
 		if in.Delay == nil {
@@ -634,7 +634,7 @@ type ContainsDuration interface {
 
 type Duration string
 
-func (d *Duration) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (d *Duration) Validate(_ any, path *field.Path) field.ErrorList {
 	if d == nil {
 		return nil
 	}
@@ -655,7 +655,7 @@ func (d *Duration) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	return nil
 }
 
-func (d *Duration) Default(_ interface{}, field *reflect.StructField) {
+func (d *Duration) Default(_ any, field *reflect.StructField) {
 	if d == nil {
 		return
 	}
@@ -666,7 +666,7 @@ func (d *Duration) Default(_ interface{}, field *reflect.StructField) {
 	}
 }
 
-func (p *PodSelector) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (p *PodSelector) Validate(_ any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if p == nil {
@@ -709,7 +709,7 @@ func (p *PodSelector) Validate(_ interface{}, path *field.Path) field.ErrorList 
 	return allErrs
 }
 
-func (p *PodSelector) Default(root interface{}, _ *reflect.StructField) {
+func (p *PodSelector) Default(root any, _ *reflect.StructField) {
 	if p == nil {
 		return
 	}
@@ -728,7 +728,7 @@ type Percent int
 
 type FloatStr string
 
-func (p *Percent) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (p *Percent) Validate(_ any, path *field.Path) field.ErrorList {
 	if p == nil {
 		return nil
 	}
@@ -743,7 +743,7 @@ func (p *Percent) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	return allErrs
 }
 
-func (f *FloatStr) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (f *FloatStr) Validate(_ any, path *field.Path) field.ErrorList {
 	if f == nil {
 		return nil
 	}
@@ -759,7 +759,7 @@ func (f *FloatStr) Validate(_ interface{}, path *field.Path) field.ErrorList {
 	return nil
 }
 
-func (f *FloatStr) Default(_ interface{}, field *reflect.StructField) {
+func (f *FloatStr) Default(_ any, field *reflect.StructField) {
 	// f cannot be nil
 	if len(*f) == 0 && field != nil {
 		*f = FloatStr(field.Tag.Get("default"))
@@ -767,9 +767,81 @@ func (f *FloatStr) Default(_ interface{}, field *reflect.StructField) {
 }
 
 func init() {
-	genericwebhook.Register("Duration", reflect.PtrTo(reflect.TypeOf(Duration(""))))
-	genericwebhook.Register("Percent", reflect.PtrTo(reflect.TypeOf(Percent(0))))
-	genericwebhook.Register("FloatStr", reflect.PtrTo(reflect.TypeOf(FloatStr(""))))
+	genericwebhook.Register("Duration", reflect.PointerTo(reflect.TypeFor[Duration]()))
+	genericwebhook.Register("Percent", reflect.PointerTo(reflect.TypeFor[Percent]()))
+	genericwebhook.Register("FloatStr", reflect.PointerTo(reflect.TypeFor[FloatStr]()))
+}
+
+```
+
+### Core Architecture Module: `api/v1alpha1/dnschaos_webhook.go`
+```
+// Copyright 2021 Chaos Mesh Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+package v1alpha1
+
+import (
+	"fmt"
+	"net/netip"
+	"strings"
+
+	"k8s.io/apimachinery/pkg/util/validation"
+	"k8s.io/apimachinery/pkg/util/validation/field"
+)
+
+func (in *DNSChaosSpec) Validate(_ any, path *field.Path) field.ErrorList {
+	if in.Action != StaticAction {
+		return nil
+	}
+	if _, err := ParseDNSDomainIPMappings(in.DomainIPMappingList); err != nil {
+		return field.ErrorList{field.Invalid(path.Child("domainIpMapping"), in.DomainIPMappingList, err.Error())}
+	}
+	return nil
+}
+
+// ParseDNSDomainIPMappings validates static mappings and normalizes their domain names and IP addresses.
+func ParseDNSDomainIPMappings(entries []string) (map[string]string, error) {
+	if len(entries) == 0 {
+		return nil, fmt.Errorf("at least one domain=IP mapping is required for the static action")
+	}
+	mappings := make(map[string]string, len(entries))
+	for i, entry := range entries {
+		domain, address, found := strings.Cut(entry, "=")
+		if !found {
+			return nil, fmt.Errorf("mapping %d must have the form domain=IP", i)
+		}
+		domain = strings.TrimSuffix(strings.ToLower(domain), ".")
+		if problems := validation.IsDNS1123Subdomain(domain); len(problems) > 0 {
+			return nil, fmt.Errorf("mapping %d has invalid domain %q: %s", i, domain, strings.Join(problems, "; "))
+		}
+		for label := range strings.SplitSeq(domain, ".") {
+			if len(label) > 63 {
+				return nil, fmt.Errorf("mapping %d has a domain label longer than 63 characters", i)
+			}
+		}
+		ip, err := netip.ParseAddr(address)
+		if err != nil || ip.Zone() != "" {
+			return nil, fmt.Errorf("mapping %d has invalid IP address %q", i, address)
+		}
+		if _, exists := mappings[domain]; exists {
+			return nil, fmt.Errorf("mapping %d repeats domain %q", i, domain)
+		}
+		mappings[domain] = ip.Unmap().String()
+	}
+	return mappings, nil
 }
 
 ```
@@ -803,7 +875,7 @@ import (
 )
 
 // Validate checks that the action is node-stop, node-reset, or disk-loss.
-func (in GCPChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorList {
+func (in GCPChaosAction) Validate(_ any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	switch in {
@@ -821,7 +893,7 @@ func (in GCPChaosAction) Validate(_ interface{}, path *field.Path) field.ErrorLi
 type GCPDeviceNames []string
 
 // Validate rejects a nil device-name slice for the disk-loss action.
-func (in *GCPDeviceNames) Validate(root interface{}, path *field.Path) field.ErrorList {
+func (in *GCPDeviceNames) Validate(root any, path *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	obj := root.(*GCPChaos)
 	if obj.Spec.Action == DiskLoss {
@@ -834,103 +906,7 @@ func (in *GCPDeviceNames) Validate(root interface{}, path *field.Path) field.Err
 }
 
 func init() {
-	genericwebhook.Register("GCPDeviceNames", reflect.PtrTo(reflect.TypeOf(GCPDeviceNames{})))
-}
-
-```
-
-### Core Architecture Module: `api/v1alpha1/httpchaos_webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"fmt"
-	"net/http"
-	"reflect"
-	"time"
-
-	"k8s.io/apimachinery/pkg/util/validation/field"
-
-	"github.com/chaos-mesh/chaos-mesh/api/genericwebhook"
-)
-
-type Delay string
-
-func (in *Delay) Validate(_ interface{}, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-	if in != nil {
-		_, err := time.ParseDuration(string(*in))
-		if err != nil {
-			allErrs = append(allErrs, field.Invalid(path, in, fmt.Sprintf("invalid duration %s", *in)))
-		}
-	}
-	return allErrs
-}
-
-type Port int32
-
-func (in *Port) Validate(_ interface{}, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-	// in cannot be zero or negative
-	if *in <= 0 {
-		allErrs = append(allErrs, field.Invalid(path, in, fmt.Sprintf("port %d is not supported", *in)))
-	}
-	return allErrs
-}
-
-type HTTPMethod string
-
-func (in *HTTPMethod) Validate(root interface{}, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-	if in != nil && root.(*HTTPChaos).Spec.Target == PodHttpRequest {
-		switch *in {
-		case http.MethodGet:
-		case http.MethodPost:
-		case http.MethodPut:
-		case http.MethodDelete:
-		case http.MethodPatch:
-		case http.MethodHead:
-		case http.MethodOptions:
-		case http.MethodTrace:
-		case http.MethodConnect:
-		default:
-			allErrs = append(allErrs, field.Invalid(path, in, fmt.Sprintf("method %s is not supported", *in)))
-		}
-	}
-	return allErrs
-}
-
-func (in *PodHttpChaosTarget) Validate(_ interface{}, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-	switch *in {
-	case PodHttpRequest:
-	case PodHttpResponse:
-	default:
-		allErrs = append(allErrs, field.Invalid(path, in, fmt.Sprintf("target %s is not supported", *in)))
-	}
-	return allErrs
-}
-
-func init() {
-	genericwebhook.Register("Delay", reflect.PtrTo(reflect.TypeOf(Delay(""))))
-	genericwebhook.Register("Port", reflect.PtrTo(reflect.TypeOf(Port(0))))
-	genericwebhook.Register("HTTPMethod", reflect.PtrTo(reflect.TypeOf(HTTPMethod(""))))
-	genericwebhook.Register("PodHttpChaosTarget", reflect.PtrTo(reflect.TypeOf(PodHttpChaosTarget(""))))
+	genericwebhook.Register("GCPDeviceNames", reflect.PointerTo(reflect.TypeFor[GCPDeviceNames]()))
 }
 
 ```
@@ -941,14 +917,14 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5145** (2026-10-20): **chore: upgrade Go to 1.27.3**
-  *Symptoms*: ## Why  Use Go 1.27.3 across Chaos Mesh modules and build environments.  ## What changed  - Update all four modules and the production, development, E2E helper and debugger builders. - Update the repository guide and changelog.  ## Scope  - Go toolchain declarations and their documentation only.  ## Verification  - `go mod tidy -diff` passes in all four modules with Go 1.27.3. API tests and Helm race tests pass on Linux arm64. - Independent checks build and run controller/dashboard binaries. The same 12 behavior tests pass on the parent with Go 1.26.9 and the PR with Go 1.27.3. The debugger Alpine image also builds. - All GitHub CI checks pass, including amd64/arm64 verification, builds and tests, integration tests, and the Kubernetes E2E matrix. 
-  **Post-Mortem & Fix Analysis**:
-  > PASS+NOTES for `2ac681df0f4ebdac1a365cdfe8d47fd1786dad54` against `4e14c83456688213f451151c70d8d18968f25a1d`.  No introduced blocker found. The diff only updates four Go module directives, four builder pins, the guide and changelog. Dependency requirements and checksums are unchanged.  Independently built the controller and dashboard with the repository's local Make targets using Linux arm64 Go 1.27.3. Both binaries passed version/help and invalid-flag checks. Dashboard also rejected invalid port and TTL settings correctly. Compared the same 12 database, validation and configuration tests on the parent with Go 1.26.9 and this head with Go 1.27.3. Both passed, including real SQLite read/write/lifecycle checks.  Safe to merge once required CI passes for this head. This verification did not run live-cluster E2E or the complete CI suite. 
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5145?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 31.74%. Comparing base ([`4e14c83`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/4e14c83456688213f451151c70d8d18968f25a1d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2ac681d`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/2ac681df0f4ebdac1a365cdfe8d47fd1786dad54?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##           master    #5145      +/-   #
+- **Issue #5157** (2026-10-22): **fix(remotecluster): reconcile the Ready condition**
+  *Symptoms*: ## What problem does this PR solve?  RemoteCluster never sets Ready=True after successful setup and can retain stale readiness after failures or deletion.  ## What's changed and how does it work?  - Update Ready after successful setup, on setup failures, and during deletion. Use stable failure reasons and preserve the last successful installation status. - Guard status and finalizer writes against changed object identity or generation. Avoid repeated status writes. - Add lifecycle, recovery, conflict, and stale-result regression tests.  Ready describes the latest configuration reconciliation and manager registration. It does not continuously probe remote workloads or API connectivity.  ## Verification  - Focused unit tests and multicluster race tests, go vet, revive, and goimports passed. - On two disposable Kubernetes 1.37 clusters, reproduced Ready=False with healthy remote components, then verified the same object becomes Ready=True without another Helm revision. - Verified fresh creation, credential and chart failures with recovery, upgrade, controller restart without another Helm revision, live remote monitoring, and Ready=False during blocked deletion and after uninstall.  ## Related changes  - [ ] This change also requires further updates to the website - [ ] This change also requires further updates to the UI interface  ## Checklist  ### CHANGELOG  - [x] I have updated the CHANGELOG.md  ### Tests  - [x] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [
 
-- **Issue #5143** (2026-10-20): **fix(physicalmachinechaos): handle process signals without recovery**
-  *Symptoms*: ## Why  Chaosd cannot restore a process after a non-SIGSTOP signal when no recovery command was supplied. PhysicalMachineChaos still tries to recover it, so deletion can remain blocked.  ## What changed  - Treat these process experiments as one-shot actions using the existing lifecycle. - Reuse recorded successful injections instead of sending another signal. End management locally on cleanup without sending Chaosd DELETE. - Preserve real recovery and its failures for SIGSTOP and command-backed experiments. Document cleanup and counter semantics.  ## Scope  This changes only physical-machine process lifecycle handling. It adds no API fields or common-controller behavior.  ## Blast Radius  Commandless non-SIGSTOP actions now follow the existing one-shot pause and duration behavior. Deleting their experiment does not restart the process or mark Chaosd history recovered.  ## Verification  - Baseline regression tests fail for one-shot classification, pause, historical migration, and deletion. The fix passes. - Independent fake-client and HTTP tests cover persisted reload, partial failures, zero repeated requests, missing targets, and finalizer cleanup. Real recovery errors remain failures. - Fresh full API tests, related controller checks, and focused vet pass after rebasing onto master with Linux Go 1.26.9. 
+- **Issue #5156** (2026-10-22): **chore(helm): upgrade tooling and SDK to Helm 4.3.1**
+  *Symptoms*: ## What problem does this PR solve?  Move repository tooling and the embedded Go SDK to Helm 4.3.1. Keep existing Helm 3 releases manageable through the new SDK.  ## What's changed and how does it work?  - Pin Helm 4.3.1 in development and E2E images, helper scripts, CI, and chart publishing. Pin the schema plugin and adapt its installation. Remove obsolete Helm CLI cleanup flags. - Migrate the SDK types, logging, and wait strategies. Preserve existing apply modes and use the Helm CLI field manager when upgrading server-side applied releases. - Align Kubernetes dependencies to 0.37.1 and controller-runtime to 0.25.2. Adapt client and webhook registration APIs, remove obsolete E2E flags, and regenerate clients, CRDs, and Swagger.  The chart remains API v2. Repository tooling and exported SDK types change. Fault injection behavior is outside this change.  ## Verification  - `make check`, `make helm-check`, and `make test` passed. Added legacy release, field ownership, and HTTP webhook regression tests. - Built arm64 and amd64 development images and the amd64 E2E image. Verified the Helm helper and E2E binary startup. - On disposable Kubernetes 1.37, verified SDK lifecycle and apply modes, full chart install, Helm 3 upgrade, rollback, uninstall, and admission requests against the rebuilt controller.  - On two disposable Kubernetes 1.37 clusters, verified RemoteCluster creation, chart and values upgrade, workload readiness, stable revisions on repeated reconciliation, manager shu
+  **Post-Mortem & Fix Analysis**:
+  > **Review the following changes in direct dependencies.** Learn more about [Socket for GitHub](https://socket.dev?utm_medium=gh).  <table> <thead> <tr> <th>Diff</th> <th width="200px">Package</th> <th align="left" width="100px">Supply Chain<br/>Security</th> <th align="left" width="100px">Vulnerability</th> <th align="left" width="100px">Quality</th> <th align="left" width="100px">Maintenance</th> <th align="left" width="100px">License</th> </tr> </thead> <tbody> <tr><td align="center"><a href="https://socket.dev/dashboard/org/chaos-mesh/diff-scan/666c638b-d688-4f1a-8cc5-e116e8e02517?tab=dependencies&dependency_item_key=101918854004"><img src="https://github-app-statics.socket.dev/diff-updated.svg" title="Updated" alt="Updated" width="20" height="20"></a></td><td><a href="https://socket.dev/dashboard/org/chaos-mesh/diff-scan/666c638b-d688-4f1a-8cc5-e116e8e02517?tab=dependencies&dependency_item_key=101918854004">golang/​github.com/​onsi/​gomega@​v1.39.1 ⏵ v1.42.1</a></td><td align="left"
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5156?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `3.37553%` with `458 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 31.71%. Comparing base ([`025d0f4`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/025d0f42cbbb5341c2d7b24c9f74038d446c359a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`7529008`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/75290083b2e91b89c55b30b36a70dfeb0efd0ad7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -965,199 +941,425 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e14c834` (2026-10-20)
-**Commit Message**: fix(physicalmachinechaos): handle process signals without recovery (#5143)
-
-* test(physicalmachinechaos): cover process lifecycle and cleanup
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* fix(physicalmachinechaos): treat irreversible process signals as one-shot
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* docs: add license header to process lifecycle guide
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
----------
+### Incident Patch 1: `09197d2d` (2026-10-21)
+**Commit Message**: fix(physicalmachinechaos): reject empty UID before injection (#5148)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -60,6 +60,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+@@ -62,6 +62,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
  
  ### Fixed
  
-+- Treat physical machine process signals without recovery as one-shot actions to prevent repeated injection and blocked deletion
++- Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
+ - Treat physical machine process signals without recovery as one-shot actions to prevent repeated injection and blocked deletion
  - Allow PhysicalMachineChaos HTTP actions in standalone experiments, schedules, and workflows
  - Accept valid Redis expiration options and percentage-only cache limits in PhysicalMachineChaos [#5141](https://github.com/chaos-mesh/chaos-mesh/pull/5141)
- - Isolate remote-cluster API outages and retry remote chaos forwarding and deletion after recovery [#5134](https://github.com/chaos-mesh/chaos-mesh/pull/5134)
 ```
 
-**File**: `api/v1alpha1/physical_machine_chaos_types.go` (modified, +8/-0)
+**File**: `controllers/chaosimpl/physicalmachinechaos/impl.go` (modified, +3/-0)
 ```diff
-@@ -72,6 +72,7 @@ var (
- // +kubebuilder:printcolumn:name="action",type=string,JSONPath=`.spec.action`
- // +kubebuilder:printcolumn:name="duration",type=string,JSONPath=`.spec.duration`
- // +chaos-mesh:experiment
-+// +chaos-mesh:oneshot=in.Spec.isOneShot()
- 
- // PhysicalMachineChaos is the Schema for the physical machine chaos API
- type PhysicalMachineChaos struct {
-@@ -105,6 +106,13 @@ type PhysicalMachineChaosSpec struct {
- 	RemoteCluster string `json:"remoteCluster,omitempty"`
- }
- 
-+func (spec *PhysicalMachineChaosSpec) isOneShot() bool {
-+	// Chaosd targets Linux amd64/arm64, where SIGSTOP is 19.
-+	const linuxSIGSTOP = 19
-+	return spec != nil && spec.Action == PMProcessAction && spec.Process != nil &&
-+		spec.Process.Signal != 0 && spec.Process.Signal != linuxSIGSTOP && spec.Process.RecoverCmd == ""
-+}
-+
- // PhysicalMachineChaosStatus defines the observed state of PhysicalMachineChaos
- type PhysicalMachineChaosStatus struct {
- 	ChaosStatus `json:",inline"`
-```
-
-**File**: `api/v1alpha1/physical_machine_process_test.go` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+// Copyright 2026 Chaos Mesh Authors.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+//
-+
-+package v1alpha1
-+
-+import "testing"
-+
-+func TestPhysicalMachineProcessIsOneShot(t *testing.T) {
-+	cases := []struct {
-+		name    string
-+		action  PhysicalMachineChaosAction
-+		process *ProcessSpec
-+		want    bool
-+	}{
-+		{"kill", PMProcessAction, &ProcessSpec{Signal: 9}, true},
-+		{"terminate", PMProcessAction, &ProcessSpec{Signal: 15}, true},
-+		{"other signal", PMProcessAction, &ProcessSpec{Signal: 10}, true},
-+		{"continue", PMProcessAction, &ProcessSpec{Signal: 18}, true},
-+		{"linux stop", PMProcessAction, &ProcessSpec{Signal: 19}, false},
-+		{"kill with recovery", PMProcessAction, &ProcessSpec{Signal: 9, RecoverCmd: "start-service"}, false},
-+		{"terminate with recovery", PMProcessAction, &ProcessSpec{Signal: 15, RecoverCmd: "start-service"}, false},
-+		{"stop with recovery", PMProcessAction, &ProcessSpec{Signal: 19, RecoverCmd: "start-service"}, false},
-+		{"whitespace recovery", PMProcessAction, &ProcessSpec{Signal: 9, RecoverCmd: " "}, false},
-+		{"zero signal", PMProcessAction, &ProcessSpec{}, false},
-+		{"missing process", PMProcessAction, nil, false},
-+		{"other action", PMStressCPUAction, &ProcessSpec{Signal: 9}, false},
-+	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			obj := &PhysicalMachineChaos{Spec: PhysicalMachineChaosSpec{Action: tc.action, ExpInfo: ExpInfo{Process: tc.process}}}
-+			if got := obj.IsOneShot(); got != tc.want {
-+				t.Fatalf("IsOneShot() = %v, want %v", got, tc.want)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `api/v1alpha1/zz_generated.chaosmesh.go` (modified, +4/-0)
-```diff
-@@ -1726,6 +1726,10 @@ func (in *PhysicalMachineChaos) DurationExceeded(now time.Time) (bool, time.Dura
- }
- 
- func (in *PhysicalMachineChaos) IsOneShot() bool {
-+	if in.Spec.isOneShot() {
-+		return true
-+	}
-+
- 	return false
- }
- 
-```
-
-**File**: `controllers/chaosimpl/physicalmachinechaos/README.md` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+<!--
-+Copyright 2026 Chaos Mesh Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+-->
-+
-+# Physical machine process lifecycle
-+
-+A `process` experiment is a one-shot action when its signal is nonzero, differs
-+from Linux `SIGSTOP` (`19`), and `recoverCmd` is empty. A completed one-shot
-+experiment stays complete when paused, when its duration expires, or when the
-+controller restarts. `SIGSTOP` and experiments with a recovery command keep the
-+normal recovery lifecycle.
-+
-+The controller uses each target record's persisted `InjectedCount` to avoid
-+sending another POST after a recorded success, including older records that
-+have returned to `NotInjected`. Targets without a recorded success still retry.
-+This does not guarantee exactly-once delivery when an HTTP response or the
-+status write is lost.
-+
-+Deleting a one-shot experiment ends its management in Chaos Mesh. Cleanup does
-+not restart or restore the process, send a Chaosd DELETE request, or mark the
-+Chaosd experiment history as recovered. Cleanup also works after the target
-+`PhysicalMachine` is deleted. Mesh record events and counters continue to track
-+management transitions, including migration and cleanup, rather than count
-+HTTP requests or prove that a process was restored.
-```
-
-**File**: `controllers/chaosimpl/physicalmachinechaos/impl.go` (modified, +6/-0)
-```diff
-@@ -50,6 +50,9 @@ func (impl *Impl) Apply(ctx context.Context, index int, records []*v1alpha1.Reco
- 	impl.Log.Info("apply physical machine chaos")
- 
- 	physicalMachineChaos := obj.(*v1alpha1.PhysicalMachineChaos)
-+	if physicalMachineChaos.IsOneShot() && records[index].InjectedCount > 0 {
-+		return v1alpha1.Injected, nil
+@@ -53,6 +53,9 @@ func (impl *Impl) Apply(ctx context.Context, index int, records []*v1alpha1.Reco
+ 	if physicalMachineChaos.IsOneShot() && records[index].InjectedCount > 0 {
+ 		return v1alpha1.Injected, nil
+ 	}
++	if physicalMachineChaos.Spec.UID == "" {
++		return v1alpha1.NotInjected, errors.New("spec.uid is empty; check the PhysicalMachineChaos mutating webhook")
 +	}
  	var address string
  	// For compatibility with older versions, we now have two ways to select the address
  	// of the physical machine, so there will be two possible values for the records:
-@@ -143,6 +146,9 @@ func (impl *Impl) Recover(ctx context.Context, index int, records []*v1alpha1.Re
- 	impl.Log.Info("recover physical machine chaos")
- 
- 	physicalMachineChaos := obj.(*v1alpha1.PhysicalMachineChaos)
-+	if physicalMachineChaos.IsOneShot() {
-+		return v1alpha1.NotInjected, nil
-+	}
- 	var address string
- 	if len(physicalMachineChaos.Spec.Address) > 0 {
- 		address = records[index].Id
 ```
 
-**File**: `controllers/chaosimpl/physicalmachinechaos/impl_test.go` (added, +333/-0)
+**File**: `controllers/chaosimpl/physicalmachinechaos/impl_test.go` (modified, +54/-0)
 ```diff
-@@ -0,0 +1,333 @@
+@@ -150,6 +150,60 @@ func cleanProcessFinalizer(t *testing.T, c client.Client) {
+ 	require.NoError(t, err)
+ }
+ 
++func TestProcessApplyMissingUID(t *testing.T) {
++	for _, tc := range []struct {
++		name          string
++		signal        int
++		injectedCount int
++		useSelector   bool
++	}{
++		{"first one-shot", 9, 0, false},
++		{"first recoverable", 19, 0, false},
++		{"reapply recoverable", 19, 1, false},
++		{"missing machine", 19, 0, true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			endpoint := newProcessEndpoint(t, http.StatusOK)
++			obj := processChaos(endpoint.server.URL, tc.useSelector)
++			obj.Spec.UID = ""
++			obj.Spec.Process.Signal = tc.signal
++			obj.Status.Experiment.Records[0].InjectedCount = tc.injectedCount
++			c := processClient(t, obj)
++
++			result := reconcileProcess(t, c)
++			require.Zero(t, endpoint.posts.Load())
++			require.Zero(t, endpoint.deletes.Load())
++			require.True(t, result.Requeue)
++			obj = fetchProcess(t, c)
++			require.Empty(t, obj.Spec.UID)
++			record := obj.Status.Experiment.Records[0]
++			require.Equal(t, v1alpha1.NotInjected, record.Phase)
++			require.Equal(t, tc.injectedCount, record.InjectedCount)
++			require.NotEmpty(t, record.Events)
++			event := record.Events[len(record.Events)-1]
++			require.Equal(t, v1alpha1.TypeFailed, event.Type)
++			require.Equal(t, v1alpha1.Apply, event.Operation)
++			require.Contains(t, event.Message, "spec.uid is empty")
++			require.Contains(t, event.Message, "mutating webhook")
++		})
++	}
++}
++
++func TestProcessOneShotMissingUIDAlreadyInjected(t *testing.T) {
++	endpoint := newProcessEndpoint(t, http.StatusOK)
++	obj := processChaos(endpoint.server.URL, true)
++	obj.Spec.UID = ""
++	obj.Status.Experiment.Records[0].InjectedCount = 1
++	c := processClient(t, obj)
++
++	require.False(t, reconcileProcess(t, c).Requeue)
++	require.Zero(t, endpoint.posts.Load())
++	require.Zero(t, endpoint.deletes.Load())
++	obj = fetchProcess(t, c)
++	require.Empty(t, obj.Spec.UID)
++	require.Equal(t, v1alpha1.Injected, obj.Status.Experiment.Records[0].Phase)
++}
++
+ func TestProcessOneShotLifecycle(t *testing.T) {
+ 	for _, useSelector := range []bool{false, true} {
+ 		name := "address"
+```
+
+---
+
+### Incident Patch 2: `24e5e1e7` (2026-10-22)
+**Commit Message**: fix(remotecluster): reconcile the Ready condition (#5157)
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -64,6 +64,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+ 
+ ### Fixed
+ 
++- Fix `RemoteCluster` readiness to reflect successful setup, reconciliation failures, and deletion [#5157](https://github.com/chaos-mesh/chaos-mesh/pull/5157)
+ - Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
+ - Preserve `spec.uid` when importing PhysicalMachineChaos YAML into the Dashboard and submitting the form [#5149](https://github.com/chaos-mesh/chaos-mesh/pull/5149)
+ - Treat physical machine process signals without recovery as one-shot actions to prevent repeated injection and blocked deletion [#5143](https://github.com/chaos-mesh/chaos-mesh/pull/5143)
+```
+
+**File**: `controllers/multicluster/clusterregistry/README.md` (modified, +2/-0)
+```diff
+@@ -24,6 +24,8 @@ Starting or stopping entries reject `Ensure`, `Spawn`, and client callbacks with
+ 
+ The registry is provided from `controllers.Module`. The `remotecluster` reconciler ensures its cleanup finalizer before external operations and calls `Ensure` for every live resource, rebuilding missing managers after a management-controller restart. Helm install/upgrade runs only for an unobserved `RemoteCluster` generation. Referenced Secret changes enqueue reconciliation and refresh the connection; changing a Secret endpoint alone does not migrate a Helm installation. Deletion stops the manager before reading credentials for Helm cleanup and removes only the owned finalizer after cleanup succeeds.
+ 
++`RemoteCluster` reports `Ready=True` after setup for the current generation and manager registration succeed. Setup failures set `Ready=False` with a stable reason while preserving the last successful installation status and observed generation. Deletion sets `Ready=False` before stopping the manager, including when cleanup is blocked. `Ready` records the latest reconciliation result; it does not track continuous API connectivity, cache synchronization, or remote workload health.
++
+ ## Remote Fx application
+ 
+ The shared startup path constructs a separate Fx application for the remote cluster. It supplies:
+```
+
+**File**: `controllers/multicluster/remotecluster/condition.go` (modified, +3/-3)
+```diff
+@@ -23,13 +23,13 @@ import (
+ 	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
+ )
+ 
+-func setRemoteClusterCondition(obj *v1alpha1.RemoteCluster, typ v1alpha1.RemoteClusterConditionType, status corev1.ConditionStatus, reason string) {
++func setRemoteClusterCondition(clusterStatus *v1alpha1.RemoteClusterStatus, typ v1alpha1.RemoteClusterConditionType, status corev1.ConditionStatus, reason string) {
+ 	conditionMap := map[v1alpha1.RemoteClusterConditionType]v1alpha1.RemoteClusterCondition{
+ 		v1alpha1.RemoteClusterConditionInstalled: {Type: v1alpha1.RemoteClusterConditionInstalled, Status: corev1.ConditionFalse},
+ 		v1alpha1.RemoteClusterConditionReady:     {Type: v1alpha1.RemoteClusterConditionReady, Status: corev1.ConditionFalse},
+ 	}
+ 
+-	for _, condition := range obj.Status.Conditions {
++	for _, condition := range clusterStatus.Conditions {
+ 		conditionMap[condition.Type] = condition
+ 	}
+ 
+@@ -41,5 +41,5 @@ func setRemoteClusterCondition(obj *v1alpha1.RemoteCluster, typ v1alpha1.RemoteC
+ 	}
+ 
+ 	sort.Slice(conditions, func(i, j int) bool { return conditions[i].Type < conditions[j].Type })
+-	obj.Status.Conditions = conditions
++	clusterStatus.Conditions = conditions
+ }
+```
+
+**File**: `controllers/multicluster/remotecluster/condition_test.go` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ func TestSetRemoteClusterCondition(t *testing.T) {
+ 	RegisterTestingT(t)
+ 
+ 	obj := &v1alpha1.RemoteCluster{}
+-	setRemoteClusterCondition(obj, v1alpha1.RemoteClusterConditionInstalled, corev1.ConditionTrue, "test")
++	setRemoteClusterCondition(&obj.Status, v1alpha1.RemoteClusterConditionInstalled, corev1.ConditionTrue, "test")
+ 
+ 	Expect(len(obj.Status.Conditions)).To(Equal(2))
+ 	haveConditionInstalled := false
+```
+
+**File**: `controllers/multicluster/remotecluster/controller.go` (modified, +65/-28)
+```diff
+@@ -89,27 +89,27 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
+ 		r.Log.Error(err, "unable to get remote cluster", "name", req.Name)
+ 		return ctrl.Result{Requeue: true}, nil
+ 	}
++	snapshot := obj.DeepCopy()
+ 	if !obj.DeletionTimestamp.IsZero() {
+-		return r.reconcileDelete(ctx, &obj)
++		return r.reconcileDelete(ctx, snapshot)
+ 	}
+ 
+ 	kubeconfig, err := r.getKubeConfig(ctx, obj.Spec.KubeConfig.SecretRef)
+ 	if err != nil {
+ 		r.Log.Error(err, "fail to get kubeconfig from secret")
+-		return ctrl.Result{Requeue: true}, nil
++		return r.requeueNotReady(ctx, snapshot, "KubeConfigUnavailable")
+ 	}
+ 
+ 	if !controllerutil.ContainsFinalizer(&obj, remoteClusterControllerFinalizer) {
+ 		if _, err := clientcmd.NewDefaultClientConfig(*kubeconfig.DeepCopy(), nil).ClientConfig(); err != nil {
+ 			r.Log.Error(err, "invalid initial kubeconfig")
+-			return ctrl.Result{Requeue: true}, nil
++			return r.requeueNotReady(ctx, snapshot, "InvalidKubeConfig")
+ 		}
+-		generation, uid := obj.Generation, obj.UID
+ 		err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+ 			if err := r.Client.Get(ctx, req.NamespacedName, &obj); err != nil {
+ 				return err
+ 			}
+-			if !obj.DeletionTimestamp.IsZero() || obj.Generation != generation || obj.UID != uid {
++			if !obj.DeletionTimestamp.IsZero() || obj.Generation != snapshot.Generation || obj.UID != snapshot.UID {
+ 				return nil
+ 			}
+ 			if !controllerutil.AddFinalizer(&obj, remoteClusterControllerFinalizer) {
+@@ -119,9 +119,9 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
+ 		})
+ 		if err != nil {
+ 			r.Log.Error(err, "fail to add finalizer", "name", obj.Name)
+-			return ctrl.Result{Requeue: true}, nil
++			return r.requeueNotReady(ctx, snapshot, "FinalizerUpdateFailed")
+ 		}
+-		if !obj.DeletionTimestamp.IsZero() || obj.Generation != generation || obj.UID != uid {
++		if !obj.DeletionTimestamp.IsZero() || obj.Generation != snapshot.Generation || obj.UID != snapshot.UID {
+ 			return ctrl.Result{Requeue: true}, nil
+ 		}
+ 	}
+@@ -135,45 +135,75 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
+ 		currentVersion, err = ensureHelm(ctx, &obj, clientcmd.NewDefaultClientConfig(*kubeconfig.DeepCopy(), nil))
+ 		if err != nil {
+ 			r.Log.Error(err, "fail to list or install remote helm release")
+-			return ctrl.Result{Requeue: true}, nil
++			return r.requeueNotReady(ctx, snapshot, "HelmReconcileFailed")
+ 		}
+ 	}
+ 	if err := r.registry.Ensure(ctx, obj.Name, kubeconfig); err != nil {
+ 		r.Log.Error(err, "fail to ensure remote cluster controller manager")
+-		return ctrl.Result{Requeue: true}, nil
++		return r.requeueNotReady(ctx, snapshot, "ManagerReconcileFailed")
+ 	}
+ 
+-	err = retry.RetryOnConflict(retry.DefaultRetry, func() error {
++	matched, err := r.updateStatus(ctx, snapshot, func(status *v1alpha1.RemoteClusterStatus) {
++		status.CurrentVersion = currentVersion
++		status.ObservedGeneration = snapshot.Generation
++		setRemoteClusterCondition(status, v1alpha1.RemoteClusterConditionInstalled, corev1.ConditionTrue, "")
++		setRemoteClusterCondition(status, v1alpha1.RemoteClusterConditionReady, corev1.ConditionTrue, "")
++	})
++	if err != nil {
++		r.Log.Error(err, "fail to update remote cluster status", "name", snapshot.Name)
++	}
++	return ctrl.Result{Requeue: err != nil || !matched}, nil
++}
++
++func (r *Reconciler) updateStatus(ctx context.Context, snapshot *v1alpha1.RemoteCluster, mutate func(*v1alpha1.RemoteClusterStatus)) (bool, error) {
++	matched := false
++	err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
++		matched = false
+ 		var latest v1alpha1.RemoteCluster
+-		if err := r.Client.Get(ctx, req.NamespacedName, &latest); err != nil {
+-			return err
++		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(snapshot), &latest); err != nil {
++			return client.IgnoreNotFound(err)
+ 		}
+-		if !latest.DeletionTimestamp.IsZero() || latest.Status.ObservedGeneration > obj.Generation {
++		if latest.UID != snapshot.UID || latest.Generation != snapshot.Generation ||
++			latest.DeletionTimestamp.IsZero() != snapshot.DeletionTimestamp.IsZero() ||
++			latest.Status.ObservedGeneration > snapshot.Generation {
+ 			return nil
+ 		}
++		matched = true
+ 		before := latest.DeepCopy()
+-		latest.Status.CurrentVersion = currentVersion
+-		latest.Status.ObservedGeneration = obj.Generation
+-		setRemoteClusterCondition(&latest, v1alpha1.RemoteClusterConditionInstalled, corev1.ConditionTrue, "")
++		mutate(&latest.Status)
+ 		if reflect.DeepEqual(before.Status, latest.Status) {
+ 			return nil
+ 		}
+ 		return r.Client.Status().Update(ctx, &latest)
+ 	})
++	return matched, err
++}
++
++func (r *Reconciler) requeueNotReady(ctx context.Context, snapshot *v1alpha1.RemoteCluster, reason string) (ctrl.Result, error) {
++	_, err := r.updateStatus(ctx, snapshot, func(status *v1alpha1.RemoteClusterStatus) {
++		setRemoteClusterCondition(status, v1alpha1.RemoteClusterConditionReady, corev1.ConditionFalse, reason)
++	})
+ 	if err != nil
+```
+
+**File**: `controllers/multicluster/remotecluster/controller_test.go` (modified, +198/-3)
+```diff
+@@ -18,6 +18,8 @@ package remotecluster
+ import (
+ 	"context"
+ 	"errors"
++	"reflect"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/go-logr/logr"
+@@ -78,13 +80,22 @@ func TestReconcileManagerAndStatus(t *testing.T) {
+ 		name     string
+ 		observed int64
+ 		fail     bool
++		ready    corev1.ConditionStatus
+ 	}{
+-		{"restart", 2, false}, {"new generation", 1, false}, {"replacement fails", 1, true},
++		{"restart", 2, false, corev1.ConditionTrue},
++		{"restart without Ready", 2, false, ""},
++		{"new generation without Ready", 1, false, ""},
++		{"new generation with Ready False", 1, false, corev1.ConditionFalse},
++		{"replacement fails", 1, true, corev1.ConditionTrue},
+ 	} {
+ 		t.Run(test.name, func(t *testing.T) {
+ 			ctx := context.Background()
+ 			c, obj := fixture(t)
+ 			obj.Status.ObservedGeneration = test.observed
++			obj.Status.Conditions = nil
++			if test.ready != "" {
++				obj.Status.Conditions = []v1alpha1.RemoteClusterCondition{{Type: v1alpha1.RemoteClusterConditionReady, Status: test.ready}}
++			}
+ 			if err := c.Status().Update(ctx, obj); err != nil {
+ 				t.Fatal(err)
+ 			}
+@@ -191,6 +202,7 @@ func TestDeletionStopsBeforeReadingSecret(t *testing.T) {
+ 	if !controllerutil.ContainsFinalizer(&latest, remoteClusterControllerFinalizer) {
+ 		t.Fatal("cleanup finalizer removed before uninstall")
+ 	}
++	assertReadyCondition(t, &latest, corev1.ConditionFalse)
+ }
+ 
+ func TestSecretRequests(t *testing.T) {
+@@ -252,8 +264,8 @@ func TestDeletionPreservesOtherFinalizers(t *testing.T) {
+ 		if cond.Type == v1alpha1.RemoteClusterConditionInstalled && cond.Status != corev1.ConditionFalse {
+ 			t.Fatal("Installed remained true")
+ 		}
+-		if cond.Type == v1alpha1.RemoteClusterConditionReady && cond.Status != corev1.ConditionTrue {
+-			t.Fatal("Ready changed")
++		if cond.Type == v1alpha1.RemoteClusterConditionReady && cond.Status != corev1.ConditionFalse {
++			t.Fatal("Ready remained true during deletion")
+ 		}
+ 	}
+ }
+@@ -296,3 +308,186 @@ func TestInvalidInitialCredentialsDoNotAddFinalizer(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func assertReadyCondition(t *testing.T, obj *v1alpha1.RemoteCluster, status corev1.ConditionStatus) v1alpha1.RemoteClusterCondition {
++	t.Helper()
++	for _, condition := range obj.Status.Conditions {
++		if condition.Type == v1alpha1.RemoteClusterConditionReady {
++			if condition.Status != status {
++				t.Fatalf("Ready=%s, want %s", condition.Status, status)
++			}
++			return condition
++		}
++	}
++	t.Fatal("Ready condition missing")
++	return v1alpha1.RemoteClusterCondition{}
++}
++
++func TestSetupFailureClearsReadyAndRecovers(t *testing.T) {
++	for _, failure := range []string{"missing secret", "missing key", "malformed kubeconfig", "invalid context", "helm", "manager"} {
++		t.Run(failure, func(t *testing.T) {
++			ctx := context.Background()
++			c, obj := fixture(t)
++			obj.Status.ObservedGeneration = 1
++			foreign := v1alpha1.RemoteClusterCondition{Type: "ExternalCheck", Status: corev1.ConditionTrue, Reason: "OtherOwner"}
++			installed := v1alpha1.RemoteClusterCondition{Type: v1alpha1.RemoteClusterConditionInstalled, Status: corev1.ConditionTrue}
++			obj.Status.Conditions = append(obj.Status.Conditions, installed, foreign)
++			if err := c.Status().Update(ctx, obj); err != nil {
++				t.Fatal(err)
++			}
++			var secret corev1.Secret
++			if err := c.Get(ctx, types.NamespacedName{Namespace: "ns", Name: "config"}, &secret); err != nil {
++				t.Fatal(err)
++			}
++			validData := secret.DeepCopy().Data
++			switch failure {
++			case "missing secret":
++				if err := c.Delete(ctx, &secret); err != nil {
++					t.Fatal(err)
++				}
++			case "missing key", "malformed kubeconfig", "invalid context":
++				switch failure {
++				case "missing key":
++					secret.Data = nil
++				case "malformed kubeconfig":
++					secret.Data["kubeconfig"] = []byte("clusters: [")
++				case "invalid context":
++					secret.Data["kubeconfig"] = []byte("apiVersion: v1\nkind: Config\ncurrent-context: missing\n")
++				}
++				if err := c.Update(ctx, &secret); err != nil {
++					t.Fatal(err)
++				}
++			}
++			failed := true
++			helmCalls, ensureCalls := 0, 0
++			r := Reconciler{Client: c, Log: logr.Discard(),
++				ensureHelm: func(context.Context, *v1alpha1.RemoteCluster, clientcmd.ClientConfig) (string, error) {
++					helmCalls++
++					if failed && failure == "helm" {
++						return "new-version", errors.New("helm failure with private-value")
++					}
++					return "new-version", nil
++				},
++				registry: registryStub{ensure: func(context.Context, string, *clientcmdapi.Config) error {
++					ensureCalls++
++					if failed && failure == "manager" {
++						return errors.New("manager failure with private-value")
++					}
++					return nil
++				}},
++			}
++			req := ctrl.Request{NamespacedName: client.ObjectKeyFromObject(obj)}
++			var previous v1alpha1.RemoteClusterStatus
++			var previousVersion string
++			for attempt := range 2 {
++				result, err := r.Reconcile(ctx, req)
++				if err != nil || !result.Requeue {
++					t.Fatalf("result=%v err=%v", result, err)
++				}
++				if er
+```
+
+**File**: `controllers/multicluster/remotecluster/readiness_test.go` (added, +363/-0)
+```diff
+@@ -0,0 +1,363 @@
 +// Copyright 2026 Chaos Mesh Authors.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -1173,509 +1375,180 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 +// limitations under the License.
 +//
 +
-+package physicalmachinechaos
++package remotecluster
 +
 +import (
 +	"context"
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
++	"errors"
++	"reflect"
 +	"testing"
-+	"time"
 +
 +	"github.com/go-logr/logr"
-+	"github.com/stretchr/testify/require"
++	corev1 "k8s.io/api/core/v1"
 +	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/client-go/tools/clientcmd"
++	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 +	ctrl "sigs.k8s.io/controller-runtime"
 +	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
++	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 +
 +	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/common/desiredphase"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/common/finalizers"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/common/records"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/config"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/utils/controller"
-+	"github.com/chaos-mesh/chaos-mesh/controllers/utils/recorder"
 +)
 +
-+type processEndpoint struct {
-+	server       *httptest.Server
-+	posts        atomic.Int32
-+	deletes      atomic.Int32
-+	failures     atomic.Int32
-+	deleteStatus int
-+}
-+
-+func newProcessEndpoint(t *testing.T, deleteStatus int) *processEndpoint {
++func changeRemoteCluster(t *testing.T, c client.Client, key client.ObjectKey, change string) *v1alpha1.RemoteCluster {
 +	t.Helper()
-+	endpoint := &processEndpoint{deleteStatus: deleteStatus}
-+	endpoint.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		switch r.Method {
-+		case http.MethodPost:
-+			endpoint.posts.Add(1)
-+			if r.URL.Path != "/api/attack/process" {
-+				t.Errorf("unexpected POST path %q", r.URL.Path)
-+			}
-+			var request struct {
-+				UID     string `json:"uid"`
-+				Signal  int    `json:"signal"`
-+				Process string `json:"process"`
-+			}
-+			if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-+				t.Errorf("decode POST: %v", err)
-+			}
-+			if request.UID != "process-uid" || request.Signal == 0 || request.Process != "1234" {
-+				t.Errorf("unexpected POST body %+v", request)
-+			}
-+			if endpoint.failures.Add(-1) >= 0 {
-+				w.WriteHeader(http.StatusInternalServerError)
-+				return
-+			}
-+			w.WriteHeader(http.StatusOK)
-+		case http.MethodDelete:
-+			endpoint.deletes.Add(1)
-+			if r.URL.Path != "/api/attack/process-uid" {
-+				t.Errorf("unexpected DELETE path %q", r.URL.Path)
-+			}
-+			w.WriteHeader(endpoint.deleteStatus)
-+		default:
-+			t.Errorf("unexpected HTTP method %s", r.Method)
-+			w.WriteHeader(http.StatusMethodNotAllowed)
++	ctx := context.Background()
++	var latest v1alpha1.RemoteCluster
++	if err := c.Get(ctx, key, &latest); err != nil {
++		t.Fatal(err)
++	}
++	switch change {
++	case "replacement":
++		replacement := latest.DeepCopy()
++		latest.Finalizers = nil
++		if err := c.Update(ctx, &latest); err != nil {
++			t.Fatal(err)
 +		}
-+	}))
-+	t.Cleanup(endpoint.server.Close)
-+	return endpoint
++		if err := c.Delete(ctx, &latest); client.IgnoreNotFound(err) != nil {
++			t.Fatal(err)
++		}
++		replacement.UID = "replacement"
++		replacement.ResourceVersion = ""
++		replacement.DeletionTimestamp = nil
++		if err := c.Create(ctx, replacement); err != nil {
++			t.Fatal(err)
++		}
++	case "generation":
++		latest.Generation++
++		if err := c.Update(ctx, &latest); err != nil {
++			t.Fatal(err)
++		}
++	case "deletion":
++		if err := c.Delete(ctx, &latest); err != nil {
++			t.Fatal(err)
++		}
++	case "observed generation":
++		latest.Status.ObservedGeneration = latest.Generation + 1
++		if err := c.Status().Update(ctx, &latest); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if err := c.Get(ctx, key, &latest); err != nil {
++		t.Fatal(err)
++	}
++	return &latest
 +}
 +
-+func processChaos(address string, selector bool) *v1alpha1.PhysicalMachineChaos {
-+	obj := &v1alpha1.PhysicalMachineChaos{
-+		ObjectMeta: metav1.ObjectMeta{Name: "process", Namespace: "default", CreationTimestamp: metav1.Now(), Finalizers: []string{finalizers.RecordFinalizer}},
-+		Spec: v1alpha1.PhysicalMachineChaosSpec{
-+			Action:                  v1alpha1.PMProcessAction,
-+			PhysicalMachineSelector: v1alpha1.PhysicalMachineSelector{Address: []string{address}, Mode: v1alpha1.AllMode},
-+			ExpInfo:                 v1alpha1.ExpInfo{UID: "process-uid", Process: &v1alpha1.ProcessSpec{Process: "1234", Signal: 9}},
++func TestStaleSetupDoesNotPublishStatus(t *testing.T) {
++	for _, change := range []string{"replacement", "generation", "deletion", "observed generation"} {
++		for _, failed := range []bool{false, true} {
++			t.Run(change+map[bool]string{false: "/success", true: "/failure"}[failed], func(t *testing.T) {
++				ctx := context.Background()
++				c, obj := fixture(t)
++				key := client.ObjectKeyFromObject(obj)
++				var changed *v1alpha1.RemoteCluster
++				r := Reconciler{Client: c, Log: logr.Discard(),
++					ensureHelm: func(context.Context, *v1alpha1.RemoteCluster, clientcmd.ClientConfig) (string, error) {
++						return "new-version", nil
++					},
++					registry: registryStub{ensure: func(context.Context, string, *clientcmdapi.Config) error {
++						changed = changeRemoteCluster(t, c, key, change)
++						if failed {
++							return errors.New("manager failed")
++						}
++						return nil
++					}},
++				}
++				result, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: key})
++				if err != nil || !result.Requeue {
++					t.Fatalf("result=%v err=%v", result, err)
++				}
++				if err := c.Get(ctx, key, obj); err != nil {
++					t.Fatal(err)
++				}
++				if !reflect.DeepEqual(obj.Status, changed.Status) || obj.ResourceVersion != changed.ResourceVersion {
++					t.Fatalf("stale setup changed newer object: %+v", obj.Status)
++				}
++			})
++		}
++	}
++}
++
++func TestStatusConflictPreservesConcurrentCondition(t *testing.T) {
++	ctx := context.Background()
++	c, obj := fixture(t)
++	writes := 0
++	foreign := v1alpha1.RemoteClusterCondition{Type: "ExternalCheck", Status: corev1.ConditionTrue, Reason: "ConcurrentWriter"}
++	wrapped := interceptor.NewClient(c.(client.WithWatch), interceptor.Funcs{
++		SubResourceUpdate: func(ctx context.Context, c client.Client, subresource string, object client.Object, opts ...client.SubResourceUpdateOption) error {
++			writes++
++			if writes == 1 {
++				var latest v1alpha1.RemoteCluster
++				if err := c.Get(ctx, client.ObjectKeyFromObject(object), &latest); err != nil {
++					t.Fatal(err)
++				}
++				latest.Status.Conditions = append(latest.Status.Conditions, foreign)
++				if err := c.Status().Update(ctx, &latest); err != nil {
++					t.Fatal(err)
++				}
++				return apierrors.NewConflict(schema.GroupResource{Resource: "remoteclusters"}, object.GetName(), errors.New("concurrent status update"))
++			}
++			return c.SubResource(subresource).Update(ctx, object, opts...)
 +		},
-+	}
-+	id := address
-+	if selector {
-+		obj.Spec.Address = nil
-+		id = "default/machine"
-+	}
-+	obj.Status.Experiment.Records = []*v1alpha1.Record{{Id: id, Phase: v1alpha1.NotInjected}}
-+	return obj
-+}
-+
-+func processClient(t *testing.T, objects ...client.Object) client.Client {
-+	t.Helper()
-+	security, maxEvents := config.ControllerCfg.ChaosdSecurityMode, config.ControllerCfg.MaxEvents
-+	config.ControllerCfg.ChaosdSecurityMode = false
-+	config.ControllerCfg.MaxEvents = 100
-+	t.Cleanup(func() { config.ControllerCfg.ChaosdSecurityMode = security; config.ControllerCfg.MaxEvents = maxEvents })
-+	scheme := runtime.NewScheme()
-+	require.NoError(t, v1alpha1.AddToScheme(scheme))
-+	return fake.NewClientBuilder().WithScheme(scheme).WithObjects(objects...).Build()
-+}
-+
-+func fetchProcess(t *testing.T, c client.Client) *v1alpha1.PhysicalMachineChaos {
-+	t.Helper()
-+	obj := &v1alpha1.PhysicalMachineChaos{}
-+	require.NoError(t, c.Get(context.Background(), client.ObjectKey{Namespace: "default", Name: "process"}, obj))
-+	return obj
-+}
-+
-+func reconcileProcessRecords(t *testing.T, c client.Client) ctrl.Result {
-+	t.Helper()
-+	r := &records.Reconciler{Client: c, Reader: c, Object: &v1alpha1.PhysicalMachineChaos{}, Recorder: recorder.NewDebugRecorder(), Log: logr.Discard(), Impl: &Impl{Client:
-```
-
----
-
-### Incident Patch 2: `a1a86c89` (2026-10-20)
-**Commit Message**: fix(api): accept valid physical-machine Redis settings (#5141)
-
-* test(api): cover physical-machine Redis validation
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* fix(api): accept valid physical-machine Redis settings
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* docs(changelog): record physical-machine Redis validation fix
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Fixed
- 
-+- Accept valid Redis expiration options and percentage-only cache limits in PhysicalMachineChaos [#5141](https://github.com/chaos-mesh/chaos-mesh/pull/5141)
- - Isolate remote-cluster API outages and retry remote chaos forwarding and deletion after recovery [#5134](https://github.com/chaos-mesh/chaos-mesh/pull/5134)
- - Restore remote cluster managers after controller restarts, refresh changed kubeconfig connections, and register all enabled remote controllers [#5132](https://github.com/chaos-mesh/chaos-mesh/pull/5132)
- - Preserve native remote experiments and isolate multi-cluster status and deletion by experiment ownership [#5131](https://github.com/chaos-mesh/chaos-mesh/pull/5131)
-```
-
-**File**: `api/v1alpha1/physical_machine_chaos_webhook.go` (modified, +2/-2)
-```diff
-@@ -585,7 +585,7 @@ func validateRedisExpirationAction(spec *RedisExpirationSpec) error {
- 		return err
- 	}
- 
--	if _, ok := ValidOptions[spec.Option]; ok {
-+	if spec.Option != "" && !ValidOptions[spec.Option] {
- 		return errors.New("option invalid")
- 	}
- 
-@@ -597,7 +597,7 @@ func validateRedisCacheLimitAction(spec *RedisCacheLimitSpec) error {
- 		return err
- 	}
- 
--	if spec.Size != "0" && spec.Percent != "" {
-+	if spec.Size != "" && spec.Size != "0" && spec.Percent != "" {
- 		return errors.New("only one of size and percent can be set")
- 	}
- 
-```
-
-**File**: `api/v1alpha1/physical_machine_chaos_webhook_test.go` (modified, +63/-0)
-```diff
-@@ -18,6 +18,7 @@ package v1alpha1
- import (
- 	"context"
- 	"strings"
-+	"testing"
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-@@ -1090,3 +1091,65 @@ var _ = Describe("physicalmachinechaos_webhook", func() {
- 		})
- 	})
- })
-+
-+func TestPhysicalMachineRedisExpirationValidation(t *testing.T) {
-+	for _, tc := range []struct {
-+		name    string
-+		option  string
-+		wantErr bool
-+	}{
-+		{name: "omitted option"},
-+		{name: "XX", option: "XX"},
-+		{name: "NX", option: "NX"},
-+		{name: "GT", option: "GT"},
-+		{name: "LT", option: "LT"},
-+		{name: "unknown option", option: "invalid", wantErr: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			chaos := PhysicalMachineChaos{Spec: PhysicalMachineChaosSpec{
-+				PhysicalMachineSelector: PhysicalMachineSelector{Address: []string{"http://127.0.0.1:31767"}},
-+				Action:                  PMRedisExpirationAction,
-+				ExpInfo: ExpInfo{RedisExpiration: &RedisExpirationSpec{
-+					RedisCommonSpec: RedisCommonSpec{Addr: "127.0.0.1:6379"},
-+					Key:             "test-key",
-+					Expiration:      "60",
-+					Option:          tc.option,
-+				}},
-+			}}
-+			_, err := chaos.ValidateCreate(context.Background(), &chaos)
-+			if (err != nil) != tc.wantErr {
-+				t.Fatalf("ValidateCreate() error = %v, want error %t", err, tc.wantErr)
-+			}
-+		})
-+	}
-+}
-+
-+func TestPhysicalMachineRedisCacheLimitValidation(t *testing.T) {
-+	for _, tc := range []struct {
-+		name    string
-+		size    string
-+		percent string
-+		wantErr bool
-+	}{
-+		{name: "percent with omitted size", percent: "50"},
-+		{name: "percent with zero size", size: "0", percent: "50"},
-+		{name: "size only", size: "100mb"},
-+		{name: "size and percent", size: "100mb", percent: "50", wantErr: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			chaos := PhysicalMachineChaos{Spec: PhysicalMachineChaosSpec{
-+				PhysicalMachineSelector: PhysicalMachineSelector{Address: []string{"http://127.0.0.1:31767"}},
-+				Action:                  PMRedisCacheLimitAction,
-+				ExpInfo: ExpInfo{RedisCacheLimit: &RedisCacheLimitSpec{
-+					RedisCommonSpec: RedisCommonSpec{Addr: "127.0.0.1:6379"},
-+					Size:            tc.size,
-+					Percent:         tc.percent,
-+				}},
-+			}}
-+			_, err := chaos.ValidateCreate(context.Background(), &chaos)
-+			if (err != nil) != tc.wantErr {
-+				t.Fatalf("ValidateCreate() error = %v, want error %t", err, tc.wantErr)
-+			}
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `1344f5ed` (2026-10-20)
-**Commit Message**: fix(api): allow physical-machine HTTP actions in CRDs (#5142)
-
-* test(api): cover physical-machine HTTP action admission
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* fix(api): allow physical-machine HTTP actions in CRDs
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* docs: regenerate physical machine HTTP action descriptions
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Fixed
- 
-+- Allow PhysicalMachineChaos HTTP actions in standalone experiments, schedules, and workflows
- - Accept valid Redis expiration options and percentage-only cache limits in PhysicalMachineChaos [#5141](https://github.com/chaos-mesh/chaos-mesh/pull/5141)
- - Isolate remote-cluster API outages and retry remote chaos forwarding and deletion after recovery [#5134](https://github.com/chaos-mesh/chaos-mesh/pull/5134)
- - Restore remote cluster managers after controller restarts, refresh changed kubeconfig connections, and register all enabled remote controllers [#5132](https://github.com/chaos-mesh/chaos-mesh/pull/5132)
-```
-
-**File**: `api/v1alpha1/physical_machine_chaos_types.go` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ type PhysicalMachineChaos struct {
- 
- // PhysicalMachineChaosSpec defines the desired state of PhysicalMachineChaos
- type PhysicalMachineChaosSpec struct {
--	// +kubebuilder:validation:Enum=stress-cpu;stress-mem;disk-read-payload;disk-write-payload;disk-fill;network-corrupt;network-duplicate;network-loss;network-delay;network-partition;network-dns;network-bandwidth;network-flood;network-down;process;jvm-exception;jvm-gc;jvm-latency;jvm-return;jvm-stress;jvm-rule-data;jvm-mysql;clock;redis-expiration;redis-penetration;redis-cacheLimit;redis-restart;redis-stop;kafka-fill;kafka-flood;kafka-io;file-create;file-modify;file-delete;file-rename;file-append;file-replace;vm;user_defined
-+	// +kubebuilder:validation:Enum=stress-cpu;stress-mem;disk-read-payload;disk-write-payload;disk-fill;network-corrupt;network-duplicate;network-loss;network-delay;network-partition;network-dns;network-bandwidth;network-flood;network-down;process;jvm-exception;jvm-gc;jvm-latency;jvm-return;jvm-stress;jvm-rule-data;jvm-mysql;clock;redis-expiration;redis-penetration;redis-cacheLimit;redis-restart;redis-stop;kafka-fill;kafka-flood;kafka-io;file-create;file-modify;file-delete;file-rename;file-append;file-replace;vm;http-abort;http-delay;http-config;http-request;user_defined
- 	Action PhysicalMachineChaosAction `json:"action"`
- 
- 	PhysicalMachineSelector `json:",inline"`
-```
-
-**File**: `api/v1alpha1/physical_machine_chaos_types_test.go` (modified, +42/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- )
-@@ -112,3 +113,44 @@ var _ = Describe("PhysicalMachineChaos", func() {
- 		})
- 	})
- })
-+
-+var _ = Describe("PhysicalMachineChaos HTTP action admission", func() {
-+	DescribeTable("accepts supported HTTP actions", func(action PhysicalMachineChaosAction, expInfo ExpInfo) {
-+		created := &PhysicalMachineChaos{
-+			ObjectMeta: metav1.ObjectMeta{GenerateName: "http-action-", Namespace: "default"},
-+			Spec: PhysicalMachineChaosSpec{
-+				Action:                  action,
-+				PhysicalMachineSelector: PhysicalMachineSelector{Address: []string{"127.0.0.1"}, Mode: OneMode},
-+				ExpInfo:                 expInfo,
-+			},
-+		}
-+		Expect(k8sClient.Create(context.TODO(), created)).To(Succeed())
-+		DeferCleanup(func() {
-+			Expect(k8sClient.Delete(context.TODO(), created)).To(Succeed())
-+		})
-+		fetched := &PhysicalMachineChaos{}
-+		Expect(k8sClient.Get(context.TODO(), types.NamespacedName{Name: created.Name, Namespace: created.Namespace}, fetched)).To(Succeed())
-+		Expect(fetched.Spec).To(Equal(created.Spec))
-+	},
-+		Entry("http-abort", PMHTTPAbortAction, ExpInfo{HTTPAbort: &HTTPAbortSpec{HTTPCommonSpec: HTTPCommonSpec{ProxyPorts: []uint{8080}, Target: "Request"}}}),
-+		Entry("http-delay", PMHTTPDelayAction, ExpInfo{HTTPDelay: &HTTPDelaySpec{HTTPCommonSpec: HTTPCommonSpec{ProxyPorts: []uint{8080}, Target: "Request"}, Delay: "1s"}}),
-+		Entry("http-config", PMHTTPConfigAction, ExpInfo{HTTPConfig: &HTTPConfigSpec{FilePath: "/tmp/http-config.json"}}),
-+		Entry("http-request", PMHTTPRequestAction, ExpInfo{HTTPRequest: &HTTPRequestSpec{URL: "http://127.0.0.1:8080", Count: 1}}),
-+	)
-+
-+	It("rejects an unknown action", func() {
-+		created := &PhysicalMachineChaos{
-+			ObjectMeta: metav1.ObjectMeta{GenerateName: "http-action-", Namespace: "default"},
-+			Spec: PhysicalMachineChaosSpec{
-+				Action:                  "http-unknown",
-+				PhysicalMachineSelector: PhysicalMachineSelector{Address: []string{"127.0.0.1"}, Mode: OneMode},
-+			},
-+		}
-+		err := k8sClient.Create(context.TODO(), created)
-+		Expect(apierrors.IsInvalid(err)).To(BeTrue(), "%v", err)
-+		Expect(err.(*apierrors.StatusError).ErrStatus.Details.Causes).To(ContainElement(And(
-+			HaveField("Field", "spec.action"),
-+			HaveField("Type", metav1.CauseTypeFieldValueNotSupported),
-+		)))
 +	})
-+})
++	r := Reconciler{Client: wrapped, Log: logr.Discard(),
++		ensureHelm: func(context.Context, *v1alpha1.RemoteCluster, clientcmd.ClientConfig) (string, error) 
 ```
 
-**File**: `config/crd/bases/chaos-mesh.org_physicalmachinechaos.yaml` (modified, +4/-0)
-```diff
-@@ -88,6 +88,10 @@ spec:
-                 - file-append
-                 - file-replace
-                 - vm
-+                - http-abort
-+                - http-delay
-+                - http-config
-+                - http-request
-                 - user_defined
-                 type: string
-               address:
-```
+---
 
-**File**: `config/crd/bases/chaos-mesh.org_schedules.yaml` (modified, +12/-0)
-```diff
-@@ -1942,6 +1942,10 @@ spec:
-                     - file-append
-                     - file-replace
-                     - vm
-+                    - http-abort
-+                    - http-delay
-+                    - http-config
-+                    - http-request
-                     - user_defined
-                     type: string
-                   address:
-@@ -5361,6 +5365,10 @@ spec:
-                               - file-append
-                               - file-replace
-                               - vm
-+                              - http-abort
-+                              - http-delay
-+                              - http-config
-+                              - http-request
-                               - user_defined
-                               type: string
-                             address:
-@@ -8431,6 +8439,10 @@ spec:
-                                   - file-append
-                                   - file-replace
-                                   - vm
-+                                  - http-abort
-+                                  - http-delay
-+                                  - http-config
-+                                  - http-request
-                                   - user_defined
-                                   type: string
-                                 address:
-```
+### Incident Patch 3: `5f7641c5` (2026-10-21)
+**Commit Message**: fix(ui): update markdown-it to 14.3.3 (#5152)
 
-**File**: `config/crd/bases/chaos-mesh.org_workflownodes.yaml` (modified, +16/-0)
-```diff
-@@ -1964,6 +1964,10 @@ spec:
-                     - file-append
-                     - file-replace
-                     - vm
-+                    - http-abort
-+                    - http-delay
-+                    - http-config
-+                    - http-request
-                     - user_defined
-                     type: string
-                   address:
-@@ -4968,6 +4972,10 @@ spec:
-                         - file-append
-                         - file-replace
-                         - vm
-+                        - http-abort
-+                        - http-delay
-+                        - http-config
-+                        - http-request
-                         - user_defined
-                         type: string
-                       address:
-@@ -8413,6 +8421,10 @@ spec:
-                                   - file-append
-                                   - file-replace
-                                   - vm
-+                                  - http-abort
-+                                  - http-delay
-+                                  - http-config
-+                                  - http-request
-                                   - user_defined
-                                   type: string
-                                 address:
-@@ -11526,6 +11538,10 @@ spec:
-                                       - file-append
-                                       - file-replace
-                                       - vm
-+                                      - http-abort
-+                                      - http-delay
-+                                      - http-config
-+                                      - http-request
-                                       - user_defined
-                                       type: string
-                                     address:
-```
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `config/crd/bases/chaos-mesh.org_workflows.yaml` (modified, +8/-0)
+**File**: `ui/pnpm-lock.yaml` (modified, +4/-4)
 ```diff
-@@ -1998,6 +1998,10 @@ spec:
-                           - file-append
-                           - file-replace
-                           - vm
-+                          - http-abort
-+                          - http-delay
-+                          - http-config
-+                          - http-request
-                           - user_defined
-                           type: string
-                         address:
-@@ -5050,6 +5054,10 @@ spec:
-                               - file-append
-                               - file-replace
-                               - vm
-+                              - http-abort
-+                              - http-delay
-+                              - http-config
-+                              - http-request
-                               - user_defined
-                               type: string
-                             address:
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_physicalmachinechaos.yaml` (modified, +4/-0)
-```diff
-@@ -88,6 +88,10 @@ spec:
-                 - file-append
-                 - file-replace
-                 - vm
-+                - http-abort
-+                - http-delay
-+                - http-config
-+                - http-request
-                 - user_defined
-                 type: string
-               address:
+@@ -3926,8 +3926,8 @@ packages:
+   makeerror@1.0.12:
+     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
+ 
+-  markdown-it@14.3.2:
+-    resolution: {integrity: sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==}
++  markdown-it@14.3.3:
++    resolution: {integrity: sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==}
+     hasBin: true
+ 
+   math-intrinsics@1.1.0:
+@@ -9021,7 +9021,7 @@ snapshots:
+     dependencies:
+       tmpl: 1.0.5
+ 
+-  markdown-it@14.3.2:
++  markdown-it@14.3.3:
+     dependencies:
+       argparse: 2.0.1
+       entities: 4.5.0
+@@ -9778,7 +9778,7 @@ snapshots:
+     dependencies:
+       '@gerrit0/mini-shiki': 3.23.0
+       lunr: 2.3.9
+-      markdown-it: 14.3.2
++      markdown-it: 14.3.3
+       minimatch: 9.0.9
+       typescript: 5.8.3
+       yaml: 2.9.1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5145** (2026-10-20): chore: upgrade Go to 1.27.3 (@g1eny0ung)
-- **PR #5143** (2026-10-20): fix(physicalmachinechaos): handle process signals without recovery (@g1eny0ung)
-- **PR #5142** (2026-10-20): fix(api): allow physical-machine HTTP actions in CRDs (@g1eny0ung)
-- **PR #5141** (2026-10-20): fix(api): accept valid physical-machine Redis settings (@g1eny0ung)
-- **PR #5138** (2026-10-16): fix(iochaos): upgrade toda to v0.3.0 (@g1eny0ung)
-- **PR #5137** (2026-10-16): fix(dashboard): handle failures and add Go regression tests (@g1eny0ung)
+- **PR #5157** (2026-10-22): fix(remotecluster): reconcile the Ready condition (@g1eny0ung)
+- **PR #5156** (2026-10-22): chore(helm): upgrade tooling and SDK to Helm 4.3.1 (@g1eny0ung)
+- **PR #5155** (2026-10-22): refactor(go): modernize code for Go 1.27 (@g1eny0ung)
+- **PR #5153** (2026-10-21): chore: ready for v2.8.6 (@g1eny0ung)
+- **PR #5152** (2026-10-21): fix(ui): update markdown-it to 14.3.3 (@g1eny0ung)
+- **PR #5151** (2026-10-21): chore: tidy changelog and development tooling (@g1eny0ung)
 
 ---
 
@@ -1695,13 +1568,13 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. physicalmachinechaos): handle process signals without recovery (#5143)
+## X. physicalmachinechaos): reject empty UID before injection (#5148)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e14c834`: physicalmachinechaos): handle process signals without recovery (#5143). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09197d2d`: physicalmachinechaos): reject empty UID before injection (#5148). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1709,7 +1582,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Treat physical machine process signals without recovery as one-shot actions to prevent repeated injection and blocked deletion
+- Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1719,4 +1592,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e14c834` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09197d2d` are properly handled with clean fallback behavior.

@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "99c44018",
+    "sourceVersion": "24e5e1e7",
     "license": "Apache-2.0",
-    "contentHash": "3d4692956a873cb88cf2ed9775c74f1012306faa289450fc8a01c15ebb23cb33",
-    "lastHarvestedAt": "2026-10-20T12:31:13.447Z",
+    "contentHash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
+    "lastHarvestedAt": "2026-10-22T18:30:42.767Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "e1339771",
+    "sourceVersion": "877d0136",
     "license": "MIT",
-    "contentHash": "fcb246e2b1b80a06d1c7b7dbaeb77e17fe2c5de8cb6bd92628947923799bc058",
-    "lastHarvestedAt": "2026-10-20T21:40:46.536Z",
+    "contentHash": "5ca2e518c42f9d597e331e84efeb51bcad6f01da63e216f88477080dc7ad3ee6",
+    "lastHarvestedAt": "2026-10-22T18:30:34.587Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {

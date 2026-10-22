@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T18:24:22.941Z",
+  "last_updated": "2026-10-22T18:30:42.774Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "3d4692956a873cb88cf2ed9775c74f1012306faa289450fc8a01c15ebb23cb33",
-      "verified_at": "2026-10-20T12:31:13.455Z",
+      "content_hash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
+      "verified_at": "2026-10-22T18:30:42.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:31:13.455Z"
+      "last_updated": "2026-10-22T18:30:42.773Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
-      "verified_at": "2026-10-22T16:45:08.588Z",
+      "content_hash": "5ca2e518c42f9d597e331e84efeb51bcad6f01da63e216f88477080dc7ad3ee6",
+      "verified_at": "2026-10-22T18:30:34.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:45:08.588Z"
+      "last_updated": "2026-10-22T18:30:34.594Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",

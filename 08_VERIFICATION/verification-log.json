@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-WDKL",
-    "timestamp": "2026-10-20T16:15:00.021Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "d7caec617c6997c5838ad0680458872169c898ca69eb8a4d176a476376ae2e8a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WDVH",
-    "timestamp": "2026-10-20T16:15:00.413Z",
-    "repository": "heroui-inc/heroui-native",
-    "learningId": "learn-github-heroui-inc-heroui-native",
-    "contentHash": "d927b91fc81b54dec1bb3c5d3e5f50762aba186f555eba66c8c71dea3bb65c31",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-WEM2",
     "timestamp": "2026-10-20T16:15:01.370Z",
     "repository": "domcyrus/rustnet",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-MFKO",
+    "timestamp": "2026-10-22T18:30:34.584Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "5ca2e518c42f9d597e331e84efeb51bcad6f01da63e216f88477080dc7ad3ee6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-MLVW",
+    "timestamp": "2026-10-22T18:30:42.765Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

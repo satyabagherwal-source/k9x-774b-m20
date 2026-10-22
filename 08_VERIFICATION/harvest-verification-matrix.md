@@ -4383,3 +4383,5 @@
 | `CYCLE-20261022-E8CS` | `2026-10-22T18:24:11.980Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3690` | Yes (`4fb5f493...`) |
 | `CYCLE-20261022-EBJA` | `2026-10-22T18:24:16.102Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3691` | Yes (`3e46e18e...`) |
 | `CYCLE-20261022-EGSU` | `2026-10-22T18:24:22.926Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3692` | Yes (`a44f1dec...`) |
+| `CYCLE-20261022-MFKO` | `2026-10-22T18:30:34.584Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3644` | Yes (`5ca2e518...`) |
+| `CYCLE-20261022-MLVW` | `2026-10-22T18:30:42.765Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3693` | Yes (`5da1aa4c...`) |

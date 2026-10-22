@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:24:22.877Z",
+  "last_updated": "2026-10-22T18:30:42.705Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5241,8 +5241,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "99c44018",
-      "content_hash": "3d4692956a873cb88cf2ed9775c74f1012306faa289450fc8a01c15ebb23cb33",
+      "source_version": "24e5e1e7",
+      "content_hash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -5255,6 +5255,11 @@
           "number": 3163,
           "title": "physicalmachinechaos): handle process signals without recovery (#5143)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3693,
+          "title": "physicalmachinechaos): reject empty UID before injection (#5148)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5262,7 +5267,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:31:13.374Z",
+      "verified_at": "2026-10-22T18:30:42.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6228,13 +6233,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "4f1d7ab5",
-      "content_hash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "877d0136",
+      "content_hash": "5ca2e518c42f9d597e331e84efeb51bcad6f01da63e216f88477080dc7ad3ee6",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -6264,7 +6269,7 @@
         {
           "number": 3644,
           "title": "CW-7503): the committed secret scrubber did not compile; own the block type",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6272,7 +6277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:45:08.514Z",
+      "verified_at": "2026-10-22T18:30:34.533Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110399,14 +110404,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3644,
       "title": "CW-7503): the committed secret scrubber did not compile; own the block type",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "4f1d7ab5",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "877d0136",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T16:45:08.514Z"
+      "verified_at": "2026-10-22T18:30:34.533Z"
     },
     "rule-3645": {
       "learning_id": "rule-3645",
@@ -111079,6 +111084,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:24:22.866Z"
+    },
+    "rule-3693": {
+      "learning_id": "rule-3693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3693,
+      "title": "physicalmachinechaos): reject empty UID before injection (#5148)",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "24e5e1e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:30:42.696Z"
     }
   },
   "aliases": {
