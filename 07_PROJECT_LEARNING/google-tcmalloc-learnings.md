@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `5168dd63`  
+> **Source Version**: `66e1a4d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:10:44.449Z  
+> **Timestamp**: 2026-10-22T16:09:56.947Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:10:44.443Z  
+> **Harvest Timestamp**: 2026-10-22T16:09:56.473Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5383 stars
+- **Stars / Engagement**: 5388 stars
 
 ---
 
@@ -297,49 +297,29 @@ class GwpAsanState {
     minimum_ = minimum;
     maximum_ = maximum;
 
-    if (allocation_stack.has_value()) {
-      size_t allocation_stack_depth =
-          std::min<size_t>(kMaxStackDepth, allocation_stack->size());
-      memcpy(allocation_stack_, allocation_stack->data(),
-             sizeof(void*) * allocation_stack_depth);
-      allocation_stack_depth_ = allocation_stack_depth;
-    } else {
-      allocation_stack_depth_ = std::nullopt;
-    }
-
-    if (deallocation_stack.has_value()) {
-      size_t deallocation_stack_depth =
-          std::min<size_t>(kMaxStackDepth, deallocation_stack->size());
-      memcpy(deallocation_stack_, deallocation_stack->data(),
-             sizeof(void*) * deallocation_stack_depth);
-      deallocation_stack_depth_ = deallocation_stack_depth;
-    } else {
-      deallocation_stack_depth_ = std::nullopt;
-    }
+    CopyStack(allocation_stack, allocation_stack_, allocation_stack_depth_);
+    CopyStack(deallocation_stack, deallocation_stack_,
+              deallocation_stack_depth_);
   }
 
   void RecordDoubleFree(const void* ptr,
                         absl::Span<void* const> deallocation_stack) {
     ptr_ = ptr;
     type_ = Type::kDoubleFree;
-
-    size_t deallocation_stack_depth =
-        std::min<size_t>(kMaxStackDepth, deallocation_stack.size());
-    memcpy(deallocation_stack_, deallocation_stack.data(),
-           sizeof(void*) * deallocation_stack_depth);
-    deallocation_stack_depth_ = deallocation_stack_depth;
+    allocation_stack_depth_ = std::nullopt;
+    CopyStack(deallocation_stack, deallocation_stack_,
+              deallocation_stack_depth_);
   }
 
   void RecordInvalidFree(const void* ptr,
                          absl::Span<void* const> deallocation_stack) {
     ptr_ = ptr;
     type_ = Type::kInvalidFree;
-
-    size_t deallocation_stack_depth =
-        std::min<size_t>(kMaxStackDepth, deallocation_stack.size());
-    memcpy(deallocation_stack_, deallocation_stack.data(),
-           sizeof(void*) * deallocation_stack_depth);
-    deallocation_stack_depth_ = deallocation_stack_depth;
+    actual_alignment_ = std::nullopt;
+    expected_alignment_ = std::nullopt;
+    allocation_stack_depth_ = std::nullopt;
+    CopyStack(deallocation_stack, deallocation_stack_,
+              deallocation_stack_depth_);
   }
 
   void RecordInvalidFree(
@@ -349,48 +329,22 @@ class GwpAsanState {
       absl::Span<void* const> deallocation_stack) {
     ptr_ = ptr;
     type_ = Type::kInvalidFree;
-
     actual_alignment_ = actual_alignment;
     expected_alignment_ = expected_alignment;
 
-    if (allocation_stack.has_value()) {
-      size_t allocation_stack_depth =
-          std::min<size_t>(kMaxStackDepth, allocation_stack->size());
-      memcpy(allocation_stack_, allocation_stack->data(),
-             sizeof(void*) * allocation_stack_depth);
-      allocation_stack_depth_ = allocation_stack_depth;
-    } else {
-      allocation_stack_depth_ = std::nullopt;
-    }
-
-    size_t deallocation_stack_depth =
-        std::min<size_t>(kMaxStackDepth, deallocation_stack.size());
-    memcpy(deallocation_stack_, deallocation_stack.data(),
-           sizeof(void*) * deallocation_stack_depth);
-    deallocation_stack_depth_ = deallocation_stack_depth;
+    CopyStack(allocation_stack, allocation_stack_, allocation_stack_depth_);
+    CopyStack(deallocation_stack, deallocation_stack_,
+              deallocation_stack_depth_);
   }
 
   void RecordInvalidFree(const void* ptr, std::align_val_t actual_alignment,
                          std::align_val_t expected_alignment,
                          absl::Span<void* const> allocation_stack,
                          absl::Span<void* const> deallocation_stack) {
-    ptr_ = ptr;
-    type_ = Type::kInvalidFree;
-
-    actual_alignment_ = actual_alignment;
-    expected_alignment_ = expected_alignment;
-
-    size_t allocation_stack_depth =
-        std::min<size_t>(kMaxStackDepth, allocation_stack.size());
-    memcpy(allocation_stack_, allocation_stack.data(),
-           sizeof(void*) * allocation_stack_depth);
-    allocation_stack_depth_ = allocation_stack_depth;
-
-    size_t deallocation_stack_depth =
-        std::min<size_t>(kMaxStackDepth, deallocation_stack.size());
-    memcpy(deallocation_stack_, deallocation_stack.data(),
-           sizeof(void*) * deallocation_stack_depth);
-    deallocation_stack_depth_ = deallocation_stack_depth;
+    RecordInvalidFree(ptr, std::optional<std::align_val_t>(actual_alignment),
+                      std::optional<std::align_val_t>(expected_alignment),
+                      std::optional<absl::Span<void* const>>(allocation_stack),
+                      deallocation_stack);
   }
 
   void RecordMismatchedFree(const void* ptr, AllocationType alloc_type,
@@ -399,24 +353,29 @@ class GwpAsanState {
                             absl::Span<void* const> deallocation_stack) {
     ptr_ = ptr;
     type_ = Type::kMismatchedFree;
-
     alloc_type_ = alloc_type;
     dealloc_type_ = dealloc_type;
 
-    const size_t allocation_stack_depth =
-        std::min<size_t>(kMaxStackDepth, allocation_stack.size());
-    memcpy(allocation_stack_, allocation_stack.data(),
-           sizeof(void*) * allocation_stack_depth);
-    allocation_stack_depth_ = allocation_stack_depth;
-
-    const size_t deallocation_stack_depth =
-        std::min<size_t>(kMaxStackDepth, deallocation_stack.size());
-    memcpy(deallocation_stack_, deallocation_stack.data(),
-           sizeof(void*) * deallocation_stack_depth);
-    deallocation_stack_depth_ = deallocation_stack_depth;
+    CopyStack(allocation_stack, allocation_stack_, allocation_stack_depth_);
+    CopyStack(deallocation_stack, deallocation_stack_,
+              deallocation_stack_depth_);
   }
 
  private:
+  static void CopyStack(std::optional<absl::Span<void* const>> src,
+                        void* (&dst)[kMaxStackDepth],
+                        std::optional<size_t>& dst_depth) {
+    if (!src.has_value()) {
+      dst_depth = std::nullopt;
+      return;
+    }
+    const size_t depth = std::min<size_t>(kMaxStackDepth, src->size());
+    if (depth > 0) {
+      memcpy(dst, src->data(), sizeof(void*) * depth);
+    }
+    dst_depth = depth;
+  }
+
   Type type_ = Type::kNone;
   const void* ptr_ = nullptr;
   size_t provided_min_ = 0, provided_max_ = 0, minimum_ = 0, maximum_ = 0;
@@ -1263,11 +1222,7 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1620** (2026-10-20): **Switch RBE cluster**
-  *Symptoms*: Switch RBE cluster 
-
-- **Issue #1618** (2026-10-20): **Slightly better comments on PerClassMissType.**
-  *Symptoms*: Slightly better comments on PerClassMissType. 
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1284,188 +1239,293 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5168dd63` (2026-10-20)
-**Commit Message**: Clamp nallocx_slow large-allocation size estimate to at least one page.
+### Incident Patch 1: `f3e34acd` (2026-10-21)
+**Commit Message**: Use ScopedAlwaysSample for GWP-ASan death tests in memory_errors_test.
 
-When size == 0 and alignment exceeds kPageSize, do_malloc_pages and SampleLargeAllocation clamp the allocation length to Length(1) while nallocx_slow returned BytesToLengthCeil(0).in_bytes() == 0.
+Several GWP-ASan death tests in `memory_errors_test` (`UnderflowDetected`, `OverflowDetected`, `ZeroByteAccessDetected`, `UseAfterFreeDetected`, `DoubleFreeDetected`, `OverflowWriteDetectedAtFree`, `StackTraceCorrect`, and `OffsetAndLength`) previously allocated in a loop under the fixture's default sampling rates (`GuardedSamplingInterval = 10 * ProfileSamplingInterval`) until an allocation happened to be guarded.
 
-PiperOrigin-RevId: 1003289424
+Hold `ScopedGuardedSamplingInterval` at -1 in the outer scope of each death-test lambda and wrap the target allocation in a block-scoped `ScopedAlwaysSample`. Scoping `ScopedAlwaysSample` strictly around the target allocation triggers a guarded allocation immediately while restoring `GuardedSamplingInterval` to -1 before `Deallocate` (`FreeSlot`) and the faulting access run, preventing concurrent background-thread allocations from reusing the freed guarded slot before the SEGV handler inspects it.
 
-**File**: `tcmalloc/tcmalloc.cc` (modified, +1/-1)
+Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1003649754
+
+**File**: `tcmalloc/testing/memory_errors_test.cc` (modified, +42/-7)
 ```diff
-@@ -387,7 +387,7 @@ static ABSL_ATTRIBUTE_NOINLINE size_t nallocx_slow(size_t size, int flags) {
-     TC_ASSERT_NE(size_class, 0);
-     return tc_globals.sizemap().class_to_size(size_class);
-   } else {
--    return BytesToLengthCeil(size).in_bytes();
-+    return std::max<Length>(BytesToLengthCeil(size), Length(1)).in_bytes();
-   }
- }
+@@ -207,8 +207,13 @@ TEST_P(ReadWriteTcMallocTest, UnderflowDetected) {
  
-```
-
-**File**: `tcmalloc/testing/tcmalloc_fuzzer.cc` (modified, +12/-2)
-```diff
-@@ -193,6 +193,7 @@ FUZZ_TEST(TCMalloc, AlignedNewSizedDelete)
+   const bool write_test = GetParam();
+   auto RepeatUnderflow = [&]() {
++    ScopedGuardedSamplingInterval gs(-1);
+     for (int i = 0; i < 1000000; i++) {
+-      auto buf = std::make_unique<char[]>(kPageSize / 2);
++      std::unique_ptr<char[]> buf;
++      {
++        ScopedAlwaysSample always_sample;
++        buf = std::make_unique<char[]>(kPageSize / 2);
++      }
+       volatile char* buf_minus_1 = buf.get() - 1;
+       benchmark::DoNotOptimize(buf_minus_1);
+       // TCMalloc may crash without a GWP-ASan report if we underflow a regular
+@@ -242,8 +247,13 @@ TEST_P(ReadWriteTcMallocTest, OverflowDetected) {
  
- void SizeReturningNewDeleteAllocatedSize(size_t size) {
-   const auto ptr = TCMallocInternalSizeReturningNew(size);
-+  ASSERT_GE(nallocx(size, 0), ptr.n);
-   TCMallocInternalDeleteSized(ptr.p, ptr.n);
- }
+   const bool write_test = GetParam();
+   auto RepeatOverflow = [&]() {
++    ScopedGuardedSamplingInterval gs(-1);
+     for (int i = 0; i < 1000000; i++) {
+-      auto buf = std::make_unique<char[]>(kPageSize / 2);
++      std::unique_ptr<char[]> buf;
++      {
++        ScopedAlwaysSample always_sample;
++        buf = std::make_unique<char[]>(kPageSize / 2);
++      }
+       benchmark::DoNotOptimize(buf);
+       // TCMalloc may crash without a GWP-ASan report if we overflow a regular
+       // allocation.  Make sure we have a guarded allocation.
+@@ -277,8 +287,13 @@ TEST_P(ReadWriteTcMallocTest, ZeroByteAccessDetected) {
  
-@@ -222,6 +223,8 @@ void SizeReturningNewAlignedDeleteAllocatedSizeAligned(size_t alignment_log2,
-   const size_t alignment = size_t{1} << static_cast<int>(alignment_log2);
-   const auto ptr = TCMallocInternalSizeReturningNewAligned(
-       size, static_cast<std::align_val_t>(alignment));
-+  ASSERT_GE(nallocx(size, MALLOCX_LG_ALIGN(static_cast<int>(alignment_log2))),
-+            ptr.n);
-   TCMallocInternalDeleteSizedAligned(ptr.p, ptr.n,
-                                      static_cast<std::align_val_t>(alignment));
- }
-@@ -516,11 +519,18 @@ FUZZ_TEST(TCMalloc, AlignedAllocSdallocx)
-                  fuzztest::InRange(size_t{0}, kFuzzingMaxSize));
+   const bool write_test = GetParam();
+   auto RepeatZeroByteAccess = [&]() {
++    ScopedGuardedSamplingInterval gs(-1);
+     for (int i = 0; i < 100000000; i++) {
+-      auto buf = std::make_unique<char[]>(0);
++      std::unique_ptr<char[]> buf;
++      {
++        ScopedAlwaysSample always_sample;
++        buf = std::make_unique<char[]>(0);
++      }
+       benchmark::DoNotOptimize(buf);
  
- void NallocxIsMonotonic(size_t alignment_log2, size_t a, size_t b) {
-+  const size_t alignment =
-+      std::min(size_t{1} << static_cast<int>(alignment_log2), kPageSize);
-   const int flags = MALLOCX_LG_ALIGN(static_cast<int>(alignment_log2));
-   const size_t lo = std::min(a, b);
-   const size_t hi = std::max(a, b);
--  ASSERT_GE(nallocx(lo, flags), lo);
--  ASSERT_LE(nallocx(lo, flags), nallocx(hi, flags));
-+  const size_t rounded_lo = nallocx(lo, flags);
-+  const size_t rounded_hi = nallocx(hi, flags);
-+  ASSERT_GT(rounded_lo, 0);
-+  ASSERT_GE(rounded_lo, lo);
-+  ASSERT_EQ(rounded_lo % alignment, 0);
-+  ASSERT_LE(rounded_lo, rounded_hi);
-+  ASSERT_EQ(rounded_hi % alignment, 0);
- }
+       // Ensure it's a GWP-ASan guarded allocation.
+@@ -313,8 +328,13 @@ TEST_P(ReadWriteTcMallocTest, ZeroByteAccessDetected) {
+ TEST_P(ReadWriteTcMallocTest, UseAfterFreeDetected) {
+   const bool write_test = GetParam();
+   auto RepeatUseAfterFree = [&]() {
++    ScopedGuardedSamplingInterval gs(-1);
+     for (int i = 0; i < 1000000; i++) {
+-      char* sink_buf = new char[kPageSize];
++      char* sink_buf;
++      {
++        ScopedAlwaysSample always_sample;
++        sink_buf = new char[kPageSize];
++      }
+       benchmark::DoNotOptimize(sink_buf);
+       delete[] sink_buf;
+       if (write_test) {
+@@ -390,8 +410,13 @@ TEST_F(TcMallocTest, DoubleFreeDetected) {
+ #endif
  
- FUZZ_TEST(TCMalloc, NallocxIsMonotonic)
-```
-
-**File**: `tcmalloc/testing/tcmalloc_test.cc` (modified, +16/-0)
-```diff
-@@ -823,6 +823,22 @@ TEST(TCMallocTest, nallocx_alignment) {
-   }
- }
+   auto RepeatDoubleFree = []() {
++    ScopedGuardedSamplingInterval gs(-1);
+     for (int i = 0; i < 1000000; i++) {
+-      void* buf = ::operator new(kPageSize);
++      void* buf;
++      {
++        ScopedAlwaysSample always_sample;
++        buf = ::operator new(kPageSize);
++      }
+       ::operator delete(buf);
+       benchmark::DoNotOptimize(buf);
+       // TCMalloc often SEGVs on double free (without GWP-ASan report). Make
+@@ -410,11 +435,16 @@ TEST_F(TcMallocTest, DoubleFreeDetected) {
  
-+TEST(TCMallocTest, NallocxZeroSizeLargeAlignment) {
-+  ScopedGuardedSamplingInterval gs(-1);
-+  constexpr int kLgAlign = kPageShift + 1;
-+  constexpr size_t kAlign = size_t{1} << kLgAlign;
-+  size_t rounded = nallocx(0, MALLOCX_LG_ALIGN(kLgAlign));
-+  void* ptr = memalign(kAlign, 0);
-+  ASSERT_NE(ptr, nullptr);
-+#if defined(ABSL_HAVE_ADDRESS_SANITIZER) || \
-+    defined(ABSL_HAVE_THREAD_SANITIZER) ||  \
-+    defined(ABSL_HAVE_HWADDRESS_SANITIZER)
-+  rounded = std::max<size_t>(rounded, 1u);
-+#endif
-+  EXPECT_EQ(rounded, MallocExtension::GetAllocatedSize(ptr));
-+  free(ptr);
-+}
-+
- TEST(TCMallocTest, sdallocx) {
-   for (size_t size = 0; size <= 4096; size += 7) {
-     void* ptr = malloc(size);
+ TEST_F(TcMallocTest, OverflowWriteDetectedAtFree) {
+   auto RepeatOverflowWrite = [&]() {
++    ScopedGuardedSamplingInterval gs(-1);
+     for (int i = 0; i < 1000000; i++) {
+       // Make buffer smaller than kPageSize to test detection-at-free of write
+       // overflows.
+       constexpr size_t kSize = kPageSize - 1;
+-      auto sink_buf = std::make_unique<char[]>(kSize);
++      std::unique_ptr<char[]> sink_buf;
++      {
++        ScopedAlwaysSample always_sample;
++        sink_buf = std::make_unique<char[]>(kSize);
++      }
+       benchmark::DoNotOptimize(sink_buf);
+       sink_buf[kSize] = '\0';
+       benchmark::DoNotOptimize(sink_buf[kSize]);
+@@ -445,8 +475,13 @@ TEST_F(TcMallocTest, OffsetAndLength) {
+ #endif  // ABSL_HAVE_ADDRESS_SANITIZER || ABSL_HAVE_HWADDRESS_SANITIZER
+ 
+   auto RepeatUseAfterFree = [&](size_t buffer_len, off_t access_offset) {
++    ScopedGuardedSamplingInterval gs(-1);
+     for (int i = 0; i < 1000000; i++) {
+-      void* buf = ::operator new(buffer_len);
++      void* buf;
++      {
++        ScopedAlwaysSample always_sample;
++        buf = ::operator new(buffer_len);
++      }
+       ::operator delete(buf);
+       // TCMalloc may crash without a GWP-ASan report if we overflow a regular
+       // allocation.  Make sure we have a guarded allocation.
 ```
 
 ---
 
-### Incident Patch 2: `e48785ce` (2026-10-20)
-**Commit Message**: Use absl::bit_width in CpuCache::PartitionShift.
+### Incident Patch 2: `a3ad260c` (2026-10-20)
+**Commit Message**: Prune redundant hot_cold and misalignment EXPECT_DEATH cross-products in memory_errors_test.
 
-Root Cause: CpuCache::PartitionShift computed the log2 shift for
-forwarder_.active_partitions() using absl::bit_ceil(active_partitions - 1)
-instead of absl::bit_width(active_partitions - 1). For active_partitions >= 4,
-absl::bit_ceil returned a power of two (4, 8, ...) rather than the bit width
-(2, 3, ...), causing shift_bounds_.max_shift to exceed kMaxPerCpuShift and abort
-in subtle::percpu::ToShiftType.
-PiperOrigin-RevId: 1003274058
+`memory_errors_test` is the largest consumer of executor-seconds in the test suite because every `EXPECT_DEATH` forks a subprocess, triggers a fatal check, and symbolizes a crash stack. Three parameterized death-test suites previously multiplied their `EXPECT_DEATH` loops across redundant `hot_cold_t` and intra-alignment offset values that take the exact same allocator partition and error-reporting branch:
 
-**File**: `tcmalloc/cpu_cache.h` (modified, +1/-1)
+- `MismatchedSampledTest.MismatchedSampled` and `MismatchedDeleteTooLargeTest.MismatchedDeleteTooLarge`: Both swept `hot_cold_set` over `{std::nullopt, hot_cold_t{0}, hot_cold_t{128}, hot_cold_t{255}}` across 3 sizes and 2 `size_returning` modes (24 `EXPECT_DEATH` forks per suite). Retaining `{std::nullopt, hot_cold_t{0}, hot_cold_t{255}}` (matching `CorruptedPointerTest`) tests the unhinted entry point (`std::nullopt`), the `hot_cold` entry point on the cold partition (`hot_cold_t{0}`), and the `hot_cold` entry point on the hot partition (`hot_cold_t{255}`), while dropping `hot_cold_t{128}` (which takes the same `>= Parameters::min_hot_access_hint()` hot branch as `hot_cold_t{255}`), s
+
+**File**: `tcmalloc/testing/memory_errors_test.cc` (modified, +0/-3)
 ```diff
-@@ -2865,7 +2865,7 @@ inline uint8_t CpuCache<Forwarder>::PartitionShift() const {
-               forwarder_.multiple_non_numa_partitions()),
-             "NUMA-awareness should never be enabled with non-NUMA partitions.");
-   if (forwarder_.active_partitions() > 1) {
--    return absl::bit_ceil(forwarder_.active_partitions() - 1);
-+    return absl::bit_width(forwarder_.active_partitions() - 1);
-   }
-   return 0;
- }
+@@ -651,7 +651,6 @@ TEST_P(MismatchedSampledTest, MismatchedSampled) {
+     constexpr std::optional<hot_cold_t> hot_cold_set[] = {
+         std::nullopt,
+         hot_cold_t{0},
+-        hot_cold_t{128},
+         hot_cold_t{255},
+     };
+ 
+@@ -748,7 +747,6 @@ TEST_P(MismatchedDeleteTooLargeTest, MismatchedDeleteTooLarge) {
+     constexpr std::optional<hot_cold_t> hot_cold_set[] = {
+         std::nullopt,
+         hot_cold_t{0},
+-        hot_cold_t{128},
+         hot_cold_t{255},
+     };
+ 
+@@ -920,7 +918,6 @@ TEST_P(CorruptedPointerTest, CorruptedPointer) {
+ 
+   constexpr size_t kMisalignment[] = {
+       1,
+-      static_cast<size_t>(tcmalloc_internal::kAlignment) - 1,
+ #ifdef NDEBUG
+ #if !defined(ABSL_HAVE_ADDRESS_SANITIZER)
+       tcmalloc_internal::kPageSize / 2,
 ```
 
-**File**: `tcmalloc/cpu_cache_test.cc` (modified, +24/-4)
+---
+
+### Incident Patch 3: `85ae53c9` (2026-10-20)
+**Commit Message**: Change event_trace_memory_limit to size_t.
+
+Root Cause: DeallocationSample converted a signed int64_t
+event_trace_memory_limit to size_t, causing negative flag values to wrap around
+to a huge unsigned limit instead of clamping at 0.
+
+PiperOrigin-RevId: 1003452875
+
+**File**: `tcmalloc/internal/parameter_accessors.h` (modified, +2/-2)
 ```diff
-@@ -170,6 +170,11 @@ class CpuCachePeer {
-     cpu_cache.resize_[cpu].available.fetch_add(available,
-                                                std::memory_order_relaxed);
-   }
-+
-+  template <typename CpuCache>
-+  static uint8_t PartitionShift(const CpuCache& cpu_cache) {
-+    return cpu_cache.PartitionShift();
-+  }
- };
- 
- namespace {
-@@ -378,10 +383,7 @@ class TestStaticForwarder : private Parameters {
-     return false;
-   }
- 
--  size_t active_partitions() const {
--    // TODO(b/446814339): Test other states.
--    return 1u;
--  }
-+  size_t active_partitions() const { return active_partitions_; }
- 
-   bool multiple_non_numa_partitions() const {
-     // TODO(b/446814339): Test other states.
-@@ -401,6 +403,7 @@ class TestStaticForwarder : private Parameters {
-   DynamicSlab dynamic_slab_ = DynamicSlab::kNoop;
-   std::optional<SizeMap> size_map_;
-   bool release_drained_slab_metadata_ = false;
-+  size_t active_partitions_ = 1u;
- 
-  private:
-   NumaTopology<kNumaPartitions, kNumBaseClasses> numa_topology_;
-@@ -2913,6 +2916,23 @@ TEST(CpuCacheTest, NamedVma) {
-   cache.Deactivate();
+@@ -117,9 +117,9 @@ ABSL_ATTRIBUTE_WEAK void TCMalloc_Internal_SetMadviseColdRegionsNoHugepage(
+     TCMalloc_Internal_GetMadviseSampledAllocations();
+ ABSL_ATTRIBUTE_WEAK void TCMalloc_Internal_SetMadviseSampledAllocations(
+     tcmalloc::tcmalloc_internal::MadviseSampledAllocations v);
+-[[nodiscard]] ABSL_ATTRIBUTE_WEAK int64_t
++[[nodiscard]] ABSL_ATTRIBUTE_WEAK size_t
+ TCMalloc_Internal_GetEventTraceMemoryLimit();
+-ABSL_ATTRIBUTE_WEAK void TCMalloc_Internal_SetEventTraceMemoryLimit(int64_t v);
++ABSL_ATTRIBUTE_WEAK void TCMalloc_Internal_SetEventTraceMemoryLimit(size_t v);
+ [[nodiscard]] ABSL_ATTRIBUTE_WEAK uint8_t
+ TCMalloc_Internal_GetMinHotAccessHint();
+ ABSL_ATTRIBUTE_WEAK void TCMalloc_Internal_SetMinHotAccessHint(uint8_t v);
+```
+
+**File**: `tcmalloc/parameters.cc` (modified, +3/-3)
+```diff
+@@ -351,7 +351,7 @@ ABSL_CONST_INIT std::atomic<EnableUnfilteredCollapse>
+ ABSL_CONST_INIT std::atomic<MadviseSampledAllocations>
+     Parameters::madvise_sampled_allocations_(
+         MadviseSampledAllocations::kDisabled);
+-ABSL_CONST_INIT std::atomic<int64_t> Parameters::event_trace_memory_limit_(
++ABSL_CONST_INIT std::atomic<size_t> Parameters::event_trace_memory_limit_(
+     16 << 20);
+ ABSL_CONST_INIT
+ std::atomic<bool> Parameters::release_drained_slab_metadata_(true);
+@@ -945,11 +945,11 @@ void TCMalloc_Internal_SetMadviseSampledAllocations(
+   Parameters::madvise_sampled_allocations_.store(v, std::memory_order_relaxed);
  }
  
-+TEST(CpuCacheTest, PartitionShift) {
-+  CpuCache cache;
-+  TestStaticForwarder& forwarder = cache.forwarder();
-+
-+  forwarder.active_partitions_ = 1;
-+  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 0);
-+
-+  forwarder.active_partitions_ = 2;
-+  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 1);
-+
-+  forwarder.active_partitions_ = 3;
-+  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 2);
-+
-+  forwarder.active_partitions_ = 4;
-+  EXPECT_EQ(CpuCachePeer::PartitionShift(cache), 2);
-+}
-+
- }  // namespace
- }  // namespace tcmalloc_internal
- }  // namespace tcmalloc
+-int64_t TCMalloc_Internal_GetEventTraceMemoryLimit() {
++size_t TCMalloc_Internal_GetEventTraceMemoryLimit() {
+   return Parameters::event_trace_memory_limit();
+ }
+ 
+-void TCMalloc_Internal_SetEventTraceMemoryLimit(int64_t v) {
++void TCMalloc_Internal_SetEventTraceMemoryLimit(size_t v) {
+   Parameters::event_trace_memory_limit_.store(v, std::memory_order_relaxed);
+ }
+ 
+```
+
+**File**: `tcmalloc/parameters.h` (modified, +4/-4)
+```diff
+@@ -170,11 +170,11 @@ class Parameters {
+     TCMalloc_Internal_SetMadviseSampledAllocations(value);
+   }
+ 
+-  [[nodiscard]] static int64_t event_trace_memory_limit() {
++  [[nodiscard]] static size_t event_trace_memory_limit() {
+     return event_trace_memory_limit_.load(std::memory_order_relaxed);
+   }
+ 
+-  static void set_event_trace_memory_limit(int64_t value) {
++  static void set_event_trace_memory_limit(size_t value) {
+     TCMalloc_Internal_SetEventTraceMemoryLimit(value);
+   }
+ 
+@@ -306,7 +306,7 @@ class Parameters {
+   friend void ::TCMalloc_Internal_SetHugeRegionAdaptiveReleaseEnabled(bool v);
+   friend void ::TCMalloc_Internal_SetMadviseSampledAllocations(
+       tcmalloc::tcmalloc_internal::MadviseSampledAllocations v);
+-  friend void ::TCMalloc_Internal_SetEventTraceMemoryLimit(int64_t v);
++  friend void ::TCMalloc_Internal_SetEventTraceMemoryLimit(size_t v);
+   friend void ::TCMalloc_Internal_SetReleaseDrainedSlabMetadata(bool v);
+ 
+   static std::atomic<int64_t> guarded_sampling_interval_;
+@@ -326,7 +326,7 @@ class Parameters {
+   static std::atomic<int32_t> back_size_threshold_bytes_;
+   static std::atomic<EnableUnfilteredCollapse> enable_unfiltered_collapse_;
+   static std::atomic<MadviseSampledAllocations> madvise_sampled_allocations_;
+-  static std::atomic<int64_t> event_trace_memory_limit_;
++  static std::atomic<size_t> event_trace_memory_limit_;
+   static std::atomic<bool> release_drained_slab_metadata_;
+   static std::atomic<bool> huge_region_adaptive_release_;
+ };
+```
+
+**File**: `tcmalloc/testing/profile_test.cc` (modified, +3/-3)
+```diff
+@@ -540,7 +540,7 @@ TEST(ProfileTest, HeapProfile) {
+ 
+ class ScopedEventTraceMemoryLimit {
+  public:
+-  explicit ScopedEventTraceMemoryLimit(int64_t limit)
++  explicit ScopedEventTraceMemoryLimit(size_t limit)
+       : previous_(TCMalloc_Internal_GetEventTraceMemoryLimit()) {
+     TCMalloc_Internal_SetEventTraceMemoryLimit(limit);
+   }
+@@ -550,7 +550,7 @@ class ScopedEventTraceMemoryLimit {
+   }
+ 
+  private:
+-  int64_t previous_;
++  size_t previous_;
+ };
+ 
+ TEST(ProfileTest, EventTraceTruncation) {
+@@ -567,7 +567,7 @@ TEST(ProfileTest, EventTraceTruncation) {
+   // each ~600B. A limit of 8192 allows initial allocations (including any
+   // background activity) to be recorded while ensuring late allocations are
+   // truncated by filler allocations.
+-  constexpr int64_t kEventTraceMemoryLimit = 8192;
++  constexpr size_t kEventTraceMemoryLimit = 8192;
+   constexpr size_t kApproximateDeallocationSampleRecordSize = 600;
+   constexpr int kExpectedSampleCount =
+       kEventTraceMemoryLimit / kApproximateDeallocationSampleRecordSize;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1620** (2026-10-20): Switch RBE cluster (@copybara-service[bot])
-- **PR #1618** (2026-10-20): Slightly better comments on PerClassMissType. (@copybara-service[bot])
-- **PR #1617** (2026-10-20): Defer stack element construction in hugepage tracker treatments. (@copybara-service[bot])
-- **PR #1616** (closed): No public description (@copybara-service[bot])
-- **PR #1614** (2026-10-20): Reject alignments exceeding kPagesPerHugePage in do_malloc_pages. (@copybara-service[bot])
-- **PR #1613** (2026-10-20): Report incompressible space in heap profiles. (@copybara-service[bot])
+- **PR #1668** (2026-10-22): Remove MallocExtension::GetSkipSubreleaseInterval, tcmalloc_size_returning_operator_new_hot_cold, and tcmalloc_size_returning_operator_new_aligned_hot_cold, which are marked with ABSL_DEPRECATE_AND_INLINE() and have no remaining callers. (@copybara-service[bot])
+- **PR #1664** (2026-10-22): Avoid a RAW hazard on AArch64 where we load a 16-byte pair and which has previously been updated by an 8-byte store. (@copybara-service[bot])
+- **PR #1663** (closed): Report experiment-adjusted parameter defaults before TCMalloc initializes. (@copybara-service[bot])
+- **PR #1661** (2026-10-22): Flip inverted experiments off in randomized test experiment selection. (@copybara-service[bot])
+- **PR #1657** (2026-10-22): Define TCMalloc_Internal_GetBackSmallAllocations with C linkage. (@copybara-service[bot])
+- **PR #1656** (2026-10-22): Remove uncalled Parameters setters. (@copybara-service[bot])
 
 ---
 
@@ -1485,28 +1545,74 @@ PiperOrigin-RevId: 1003274058
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clamp nallocx_slow large-allocation size estimate to at least one page.
+## X. Use ScopedAlwaysSample for GWP-ASan death tests in memory_errors_test.
 
 **RULE**:
-When implementing operations in `tcmalloc/tcmalloc.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/testing/memory_errors_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5168dd63`: Clamp nallocx_slow large-allocation size estimate to at least one page.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3e34acd`: Use ScopedAlwaysSample for GWP-ASan death tests in memory_errors_test.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/tcmalloc.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/testing/memory_errors_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    return std::max<Length>(BytesToLengthCeil(size), Length(1)).in_bytes();
+    ScopedGuardedSamplingInterval gs(-1);
+      std::unique_ptr<char[]> buf;
+      {
+        ScopedAlwaysSample always_sample;
+        buf = std::make_unique<char[]>(kPageSize / 2);
+      }
+    ScopedGuardedSamplingInterval gs(-1);
+      std::unique_ptr<char[]> buf;
+      {
+        ScopedAlwaysSample always_sample;
+        buf = std::make_unique<char[]>(kPageSize / 2);
+      }
+    ScopedGuardedSamplingInterval gs(-1);
+      std::unique_ptr<char[]> buf;
+      {
+        ScopedAlwaysSample always_sample;
+        buf = std::make_unique<char[]>(0);
+      }
+    ScopedGuardedSamplingInterval gs(-1);
+      char* sink_buf;
+      {
+        ScopedAlwaysSample always_sample;
+        sink_buf = new char[kPageSize];
+      }
+    ScopedGuardedSamplingInterval gs(-1);
+      void* buf;
+      {
+        ScopedAlwaysSample always_sample;
+        buf = ::operator new(kPageSize);
+      }
+    ScopedGuardedSamplingInterval gs(-1);
+      std::unique_ptr<char[]> sink_buf;
+      {
+        ScopedAlwaysSample always_sample;
+        sink_buf = std::make_unique<char[]>(kSize);
+      }
+    ScopedGuardedSamplingInterval gs(-1);
+      void* buf;
+      {
+        ScopedAlwaysSample always_sample;
+        buf = ::opera
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    return BytesToLengthCeil(size).in_bytes();
+      auto buf = std::make_unique<char[]>(kPageSize / 2);
+      auto buf = std::make_unique<char[]>(kPageSize / 2);
+      auto buf = std::make_unique<char[]>(0);
+      char* sink_buf = new char[kPageSize];
+      void* buf = ::operator new(kPageSize);
+      auto sink_buf = std::make_unique<char[]>(kSize);
+      void* buf = ::operator new(buffer_len);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5168dd63` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3e34acd` are properly handled with clean fallback behavior.

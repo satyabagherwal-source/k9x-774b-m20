@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T16:03:31.695Z",
+  "last_updated": "2026-10-22T16:10:10.074Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5346,14 +5346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chakra-ui-zag",
-      "content_hash": "932260b5f2290f880c688714e1b72b6dcb34ceb4969f491e73591ff14a401aa7",
-      "verified_at": "2026-10-18T23:26:44.646Z",
+      "content_hash": "e621f5677d6443ed875b5059055c60ef0f1fd06ca22d5af96fd6773bc12f68d4",
+      "verified_at": "2026-10-22T16:10:00.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:26:44.646Z"
+      "last_updated": "2026-10-22T16:10:00.336Z"
     },
     "sharkdp/hyperfine": {
       "repository": "sharkdp/hyperfine",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "7a1c3d3e051ecd4bf28d7cc3a438b672ee780a70b7e05a3e3246f1c812a7b0a9",
-      "verified_at": "2026-10-20T21:15:06.863Z",
+      "content_hash": "fca4718fa02069d0dd067b946e9c1a19a5754dffd23f998d054dfd00bea1cacf",
+      "verified_at": "2026-10-22T16:10:10.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:15:06.863Z"
+      "last_updated": "2026-10-22T16:10:10.073Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -9981,14 +9981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actions-actions-runner-controller",
-      "content_hash": "a5439a607bb0d3e4a9631d753b72d80b8def00799cea9b078661531a288c5d15",
-      "verified_at": "2026-10-20T22:06:46.033Z",
+      "content_hash": "9b296cb345141b6d1b974c1ae927613630eaae147067e712a7f9fc52eda0437e",
+      "verified_at": "2026-10-22T16:10:03.916Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:06:46.033Z"
+      "last_updated": "2026-10-22T16:10:03.916Z"
     },
     "VectifyAI/PageIndex": {
       "repository": "VectifyAI/PageIndex",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "5943f83da338c430da6f6cd835c3d1d52169cef835cc1756d229afa2b3ed593f",
-      "verified_at": "2026-10-20T19:10:44.875Z",
+      "content_hash": "d3939490257d8634aef44fbeed60fa2070aed2799c128a22baa185f35d94e98b",
+      "verified_at": "2026-10-22T16:09:57.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:10:44.875Z"
+      "last_updated": "2026-10-22T16:09:57.310Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -13866,14 +13866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-revenuecat-purchases-ios",
-      "content_hash": "9b510e3a514cec586e6e678a850ed9ac0b91cee0630f35587c1012d25dc5a61c",
-      "verified_at": "2026-10-19T21:59:31.805Z",
+      "content_hash": "6e808ec9d095441ad1e606239807aa339ce26ebe893204bfa1159c5866fe3d53",
+      "verified_at": "2026-10-22T16:10:02.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:59:31.805Z"
+      "last_updated": "2026-10-22T16:10:02.417Z"
     },
     "reflection/Beam-1.0-501B-A23B": {
       "repository": "reflection/Beam-1.0-501B-A23B",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T16:03:31.631Z",
+  "last_updated": "2026-10-22T16:10:10.005Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -305,8 +305,8 @@
       "slug": "actions-actions-runner-controller",
       "platform": "github",
       "source_url": "https://github.com/actions/actions-runner-controller",
-      "source_version": "6f9df34c",
-      "content_hash": "a5439a607bb0d3e4a9631d753b72d80b8def00799cea9b078661531a288c5d15",
+      "source_version": "ce75c0a1",
+      "content_hash": "9b296cb345141b6d1b974c1ae927613630eaae147067e712a7f9fc52eda0437e",
       "dossier_path": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "promoted_rules": [
@@ -319,6 +319,11 @@
           "number": 3403,
           "title": "inconsistent guards for scale set metrics registration and publishing (#4566)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3627,
+          "title": "Updates: runner to v2.338.0 (#4708)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -326,7 +331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:06:45.936Z",
+      "verified_at": "2026-10-22T16:10:03.835Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5182,14 +5187,19 @@
       "slug": "chakra-ui-zag",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/zag",
-      "source_version": "ab6c43b9",
-      "content_hash": "932260b5f2290f880c688714e1b72b6dcb34ceb4969f491e73591ff14a401aa7",
+      "source_version": "b44a5dec",
+      "content_hash": "e621f5677d6443ed875b5059055c60ef0f1fd06ca22d5af96fd6773bc12f68d4",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "promoted_rules": [
         {
           "number": 1845,
           "title": "drawer): only block text selection once a swipe has started",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3625,
+          "title": "combobox): scroll the list to the top when the input changes (#3482)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5198,7 +5208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:26:44.595Z",
+      "verified_at": "2026-10-22T16:10:00.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12399,8 +12409,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "5168dd63",
-      "content_hash": "5943f83da338c430da6f6cd835c3d1d52169cef835cc1756d229afa2b3ed593f",
+      "source_version": "66e1a4d2",
+      "content_hash": "d3939490257d8634aef44fbeed60fa2070aed2799c128a22baa185f35d94e98b",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -12413,6 +12423,11 @@
           "number": 3336,
           "title": "Clamp nallocx_slow large-allocation size estimate to at least one page.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3624,
+          "title": "Use ScopedAlwaysSample for GWP-ASan death tests in memory_errors_test.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12420,7 +12435,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:10:44.802Z",
+      "verified_at": "2026-10-22T16:09:57.228Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40151,14 +40166,19 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "f93701d2",
-      "content_hash": "9b510e3a514cec586e6e678a850ed9ac0b91cee0630f35587c1012d25dc5a61c",
+      "source_version": "79b80d06",
+      "content_hash": "6e808ec9d095441ad1e606239807aa339ce26ebe893204bfa1159c5866fe3d53",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
         {
           "number": 2838,
           "title": "Paywalls) Intro Offer Eligibility checks were not resumable and sometimes slow (",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3626,
+          "title": "of 6: Show native paywall buttons in UIKit (#8024)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40167,7 +40187,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:59:31.719Z",
+      "verified_at": "2026-10-22T16:10:02.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43526,8 +43546,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "5d9f2d4b",
-      "content_hash": "7a1c3d3e051ecd4bf28d7cc3a438b672ee780a70b7e05a3e3246f1c812a7b0a9",
+      "source_version": "5ffe1485",
+      "content_hash": "fca4718fa02069d0dd067b946e9c1a19a5754dffd23f998d054dfd00bea1cacf",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -43550,6 +43570,11 @@
           "number": 3386,
           "title": "[Feature] Read a security integration user's groups from a claim of the verified",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3628,
+          "title": "[BugFix][CVE] Bump pprof to release/20261022 (#81300)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43557,7 +43582,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:15:06.793Z",
+      "verified_at": "2026-10-22T16:10:09.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109762,6 +109787,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T16:03:31.621Z"
+    },
+    "rule-3624": {
+      "learning_id": "rule-3624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3624,
+      "title": "Use ScopedAlwaysSample for GWP-ASan death tests in memory_errors_test.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "66e1a4d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:09:57.228Z"
+    },
+    "rule-3625": {
+      "learning_id": "rule-3625",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3625,
+      "title": "combobox): scroll the list to the top when the input changes (#3482)",
+      "source_url": "https://github.com/chakra-ui/zag",
+      "source_version": "b44a5dec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:10:00.259Z"
+    },
+    "rule-3626": {
+      "learning_id": "rule-3626",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3626,
+      "title": "of 6: Show native paywall buttons in UIKit (#8024)",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "79b80d06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:10:02.328Z"
+    },
+    "rule-3627": {
+      "learning_id": "rule-3627",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3627,
+      "title": "Updates: runner to v2.338.0 (#4708)",
+      "source_url": "https://github.com/actions/actions-runner-controller",
+      "source_version": "ce75c0a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:10:03.835Z"
+    },
+    "rule-3628": {
+      "learning_id": "rule-3628",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3628,
+      "title": "[BugFix][CVE] Bump pprof to release/20261022 (#81300)",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "5ffe1485",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:10:09.993Z"
     }
   },
   "aliases": {

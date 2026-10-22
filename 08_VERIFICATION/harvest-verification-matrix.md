@@ -4310,3 +4310,8 @@
 | `CYCLE-20261022-4X9C` | `2026-10-22T15:56:59.616Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3621` | Yes (`f3394aa9...`) |
 | `CYCLE-20261022-D85H` | `2026-10-22T16:03:26.981Z` | `facebook/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3622` | Yes (`085a287e...`) |
 | `CYCLE-20261022-DBRZ` | `2026-10-22T16:03:31.679Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3623` | Yes (`ef006d5c...`) |
+| `CYCLE-20261022-LLBH` | `2026-10-22T16:09:57.293Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3624` | Yes (`d3939490...`) |
+| `CYCLE-20261022-LNNL` | `2026-10-22T16:10:00.321Z` | `chakra-ui/zag` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3625` | Yes (`e621f567...`) |
+| `CYCLE-20261022-LP9H` | `2026-10-22T16:10:02.405Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3626` | Yes (`6e808ec9...`) |
+| `CYCLE-20261022-LQEZ` | `2026-10-22T16:10:03.899Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3627` | Yes (`9b296cb3...`) |
+| `CYCLE-20261022-LV60` | `2026-10-22T16:10:10.056Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3628` | Yes (`fca4718f...`) |

@@ -4317,3 +4317,8 @@ Every entry in this ledger must capture:
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `777b3723` | Multi-dimensional audit evidence | 2026-10-22T15:56:59.618Z |
 | `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `1dc7fac0` | Multi-dimensional audit evidence | 2026-10-22T16:03:26.984Z |
 | `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `41e2c244` | Multi-dimensional audit evidence | 2026-10-22T16:03:31.682Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `66e1a4d2` | Multi-dimensional audit evidence | 2026-10-22T16:09:57.297Z |
+| `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `b44a5dec` | Multi-dimensional audit evidence | 2026-10-22T16:10:00.324Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `79b80d06` | Multi-dimensional audit evidence | 2026-10-22T16:10:02.409Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `ce75c0a1` | Multi-dimensional audit evidence | 2026-10-22T16:10:03.903Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5ffe1485` | Multi-dimensional audit evidence | 2026-10-22T16:10:10.060Z |

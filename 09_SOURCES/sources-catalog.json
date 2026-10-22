@@ -3483,10 +3483,10 @@
     "repository": "chakra-ui/zag",
     "platform": "github",
     "sourceUrl": "https://github.com/chakra-ui/zag",
-    "sourceVersion": "ab6c43b9",
+    "sourceVersion": "b44a5dec",
     "license": "MIT",
-    "contentHash": "932260b5f2290f880c688714e1b72b6dcb34ceb4969f491e73591ff14a401aa7",
-    "lastHarvestedAt": "2026-10-18T23:26:44.638Z",
+    "contentHash": "e621f5677d6443ed875b5059055c60ef0f1fd06ca22d5af96fd6773bc12f68d4",
+    "lastHarvestedAt": "2026-10-22T16:10:00.324Z",
     "learningId": "learn-github-chakra-ui-zag"
   },
   "sharkdp-hyperfine": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "5d9f2d4b",
+    "sourceVersion": "5ffe1485",
     "license": "Apache-2.0",
-    "contentHash": "7a1c3d3e051ecd4bf28d7cc3a438b672ee780a70b7e05a3e3246f1c812a7b0a9",
-    "lastHarvestedAt": "2026-10-20T21:15:06.856Z",
+    "contentHash": "fca4718fa02069d0dd067b946e9c1a19a5754dffd23f998d054dfd00bea1cacf",
+    "lastHarvestedAt": "2026-10-22T16:10:10.060Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -6603,10 +6603,10 @@
     "repository": "actions/actions-runner-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/actions/actions-runner-controller",
-    "sourceVersion": "6f9df34c",
+    "sourceVersion": "ce75c0a1",
     "license": "Apache-2.0",
-    "contentHash": "a5439a607bb0d3e4a9631d753b72d80b8def00799cea9b078661531a288c5d15",
-    "lastHarvestedAt": "2026-10-20T22:06:46.025Z",
+    "contentHash": "9b296cb345141b6d1b974c1ae927613630eaae147067e712a7f9fc52eda0437e",
+    "lastHarvestedAt": "2026-10-22T16:10:03.903Z",
     "learningId": "learn-github-actions-actions-runner-controller"
   },
   "vectifyai-pageindex": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "5168dd63",
+    "sourceVersion": "66e1a4d2",
     "license": "Apache-2.0",
-    "contentHash": "5943f83da338c430da6f6cd835c3d1d52169cef835cc1756d229afa2b3ed593f",
-    "lastHarvestedAt": "2026-10-20T19:10:44.869Z",
+    "contentHash": "d3939490257d8634aef44fbeed60fa2070aed2799c128a22baa185f35d94e98b",
+    "lastHarvestedAt": "2026-10-22T16:09:57.297Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -9213,10 +9213,10 @@
     "repository": "RevenueCat/purchases-ios",
     "platform": "github",
     "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
-    "sourceVersion": "f93701d2",
+    "sourceVersion": "79b80d06",
     "license": "MIT",
-    "contentHash": "9b510e3a514cec586e6e678a850ed9ac0b91cee0630f35587c1012d25dc5a61c",
-    "lastHarvestedAt": "2026-10-19T21:59:31.798Z",
+    "contentHash": "6e808ec9d095441ad1e606239807aa339ce26ebe893204bfa1159c5866fe3d53",
+    "lastHarvestedAt": "2026-10-22T16:10:02.409Z",
     "learningId": "learn-github-revenuecat-purchases-ios"
   },
   "hf-reflection-beam-1.0-501b-a23b": {

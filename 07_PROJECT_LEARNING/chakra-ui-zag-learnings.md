@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chakra-ui-zag-learnings.md`  
 > **Source**: github ([https://github.com/chakra-ui/zag](https://github.com/chakra-ui/zag))  
-> **Source Version**: `ab6c43b9`  
+> **Source Version**: `b44a5dec`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:26:44.437Z  
+> **Timestamp**: 2026-10-22T16:09:59.980Z  
 > **Learning ID**: `learn-github-chakra-ui-zag`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chakra-ui-zag-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chakra-ui/zag](https://github.com/chakra-ui/zag))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:26:42.946Z  
+> **Harvest Timestamp**: 2026-10-22T16:09:55.414Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build your design system in React, Solid, Vue, Svelte or Vanilla. Powered by finite state machines
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5234 stars
+- **Stars / Engagement**: 5237 stars
 
 ---
 
@@ -985,568 +985,288 @@ export function useSentinelObserver(options: UseSentinelObserverOptions) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `541950b5` (2026-10-17)
-**Commit Message**: fix(drawer): only block text selection once a swipe has started
+### Incident Patch 1: `22339967` (2026-10-21)
+**Commit Message**: fix(combobox): scroll the list to the top when the input changes (#3482)
 
-**File**: `.changeset/drawer-text-selection.md` (added, +5/-0)
+**File**: `.changeset/combobox-scroll-top-on-input.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@zag-js/drawer": patch
++"@zag-js/combobox": patch
 +---
 +
-+- Fix text in an open drawer not being selectable with the mouse after the pointer moved over it.
++- Scroll the list back to the top when typing or clearing the input while the combobox is open.
 ```
 
-**File**: `e2e/drawer.e2e.ts` (modified, +22/-0)
+**File**: `e2e/combobox.e2e.ts` (modified, +12/-0)
 ```diff
-@@ -169,13 +169,35 @@ test.describe("drawer", () => {
-     expect(await I.getContentVisibleHeight()).toBe(initialHeight)
-     await page.mouse.up()
- 
-+    // The blocked drag selects text, which would stop the next drag from starting
-+    await page.evaluate(() => getSelection()?.removeAllRanges())
-+
-     await I.setNoDragAxis("x")
-     await I.dragNoDragArea("down", 100, 500, false)
-     await I.waitForSnapComplete()
-     expect(await I.getContentVisibleHeight()).toBeLessThan(initialHeight)
-     await page.mouse.up()
+@@ -48,6 +48,18 @@ test.describe("combobox", () => {
+     await I.dontSeeDropdown()
    })
  
-+  test("should allow selecting text with the mouse", async ({ page }) => {
++  test("[keyboard] typing scrolls the list back to the top", async ({ page }) => {
 +    await I.clickTrigger()
-+    await I.seeContent()
-+    await I.waitForOpenState()
++    await I.seeDropdown()
 +
-+    const item = page.getByText("Item 3", { exact: true })
-+    const box = (await item.boundingBox())!
-+    const y = box.y + box.height / 2
++    const content = page.getByTestId("combobox-content")
++    await content.evaluate((el) => (el.scrollTop = el.scrollHeight))
++    await expect.poll(() => content.evaluate((el) => el.scrollTop)).toBeGreaterThan(0)
 +
-+    // Hovering first must not leave text selection disabled
-+    await page.mouse.move(box.x + box.width + 40, y, { steps: 5 })
-+    await page.mouse.move(box.x + 1, y)
-+    await page.mouse.down()
-+    await page.mouse.move(box.x + box.width - 1, y, { steps: 8 })
-+    await page.mouse.up()
-+
-+    expect(await page.evaluate(() => getSelection()?.toString())).toBe("Item 3")
++    await I.type("a")
++    await expect.poll(() => content.evaluate((el) => el.scrollTop)).toBe(0)
 +  })
 +
-   test("should not start dragging when text is selected in content", async () => {
-     await I.clickTrigger()
-     await I.seeContent()
+   test("[keyboard] should open combobox menu when typing", async () => {
+     await I.focusInput()
+     await I.type("c")
 ```
 
-**File**: `packages/machines/drawer/src/utils/session.ts` (modified, +4/-1)
+**File**: `packages/machines/combobox/src/combobox.machine.ts` (modified, +4/-4)
 ```diff
-@@ -312,11 +312,14 @@ export class SwipeSession {
-       restoreSelection = undefined
-     }
- 
-+    // Moves are tracked while the drawer is open, but only a started swipe may block text selection
-+    const isSwiping = () => this.startPoint !== null
-+
-     function onPointerMove(event: PointerEvent) {
-       if (event.pointerType === "touch" && usingTouchEvents) return
-       const point = getEventPoint(event)
-       const target = getEventTarget<Element>(event)
--      startSelectionGuard()
-+      if (isSwiping()) startSelectionGuard()
-       trackPoint(point)
-       onMove({
-         point,
-```
-
----
-
-### Incident Patch 2: `1d4728d0` (2026-10-17)
-**Commit Message**: fix(react, preact): track controlled prop changes made while effects are disconnected (#3475)
-
-Co-authored-by: Segun Adebayo <[REDACTED_EMAIL]>
-
-**File**: `.changeset/react-track-activity.md` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+---
-+"@zag-js/react": patch
-+"@zag-js/preact": patch
-+---
-+
-+- Fix controlled prop changes being missed when a component's effects reconnect, e.g. after a hidden `<Activity>` is
-+  shown again.
-```
-
-**File**: `packages/frameworks/preact/src/track.ts` (modified, +9/-13)
-```diff
-@@ -1,20 +1,16 @@
- import { useEffect, useRef } from "preact/hooks"
- 
- export const useTrack = (deps: any[], effect: VoidFunction) => {
--  const render = useRef(false)
--  const called = useRef(false)
-+  const values = (deps ?? []).map((d) => (typeof d === "function" ? d() : d))
-+  const previous = useRef<any[] | null>(null)
- 
-+  // Compare against the last run, not a mounted flag, so remounted effects don't drop changes
-   useEffect(() => {
--    const mounted = render.current
--    const run = mounted && called.current
--    if (run) return effect()
--    called.current = true
--  }, [...(deps ?? []).map((d) => (typeof d === "function" ? d() : d))])
-+    const prev = previous.current
-+    previous.current = values
-+    if (prev === null) return
- 
--  useEffect(() => {
--    render.current = true
--    return () => {
--      render.current = false
--    }
--  }, [])
-+    const changed = prev.length !== values.length || values.some((value, index) => !Object.is(value, prev[index]))
-+    if (changed) return effect()
-+  }, values)
- }
-```
-
-**File**: `packages/frameworks/react/src/track.ts` (modified, +10/-13)
-```diff
-@@ -3,20 +3,17 @@
- import { useEffect, useRef } from "react"
- 
- export const useTrack = (deps: any[], effect: VoidFunction) => {
--  const render = useRef(false)
--  const called = useRef(false)
-+  const values = (deps ?? []).map((d) => (typeof d === "function" ? d() : d))
-+  const previous = useRef<any[] | null>(null)
- 
-+  // Compare against the last run, not a mounted flag, so effects reconnecting after
-+  // a hidden <Activity> still see changes made while hidden
-   useEffect(() => {
--    const mounted = render.current
--    const run = mounted && called.current
--    if (run) return effect()
--    called.current = true
--  }, [...(deps ?? []).map((d) => (typeof d === "function" ? d() : d))])
-+    const prev = previous.current
-+    previous.current = values
-+    if (prev === null) return
- 
--  useEffect(() => {
--    render.current = true
--    return () => {
--      render.current = false
--    }
--  }, [])
-+    const changed = prev.length !== values.length || values.some((value, index) => !Object.is(value, prev[index]))
-+    if (changed) return effect()
-+  }, values)
- }
-```
-
-**File**: `packages/frameworks/react/tests/activity.test.tsx` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+import { render } from "@testing-library/react"
-+import { createMachine, type Machine } from "@zag-js/core"
-+import { Activity } from "react"
-+import { useMachine } from "../src"
-+
-+const watchMachine = (notify: (open: boolean) => void) =>
-+  createMachine<any>({
-+    props({ props }) {
-+      return { open: false, ...props }
-+    },
-+    initialState() {
-+      return "idle"
-+    },
-+    states: {
-+      idle: {},
-+    },
-+    watch({ track, prop, action }) {
-+      track([() => prop("open")], () => {
-+        action(["notify"])
-+      })
-+    },
-+    implementations: {
-+      actions: {
-+        notify: ({ prop }) => notify(prop("open")),
-+      },
-+    },
-+  })
-+
-+function TestRig({ machine, open }: { machine: Machine<any>; open: boolean }) {
-+  useMachine<any>(machine, { open })
-+  return null
-+}
-+
-+function renderInActivity(machine: Machine<any>) {
-+  const utils = render(
-+    <Activity mode="visible">
-+      <TestRig machine={machine} open={false} />
-+    </Activity>,
-+  )
-+  const update = (mode: "visible" | "hidden", open: boolean) =>
-+    utils.rerender(
-+      <Activity mode={mode}>
-+        <TestRig machine={machine} open={open} />
-+      </Activity>,
-+    )
-+  return { ...utils, update }
-+}
-+
-+describe("React Activity", () => {
-+  test("a prop changed while hidden is tracked once the Activity is visible again", () => {
-+    // Hiding an Activity disconnects effects; the first run after reconnecting must see the change
-+    const notify = vi.fn()
-+    const { update } = renderInActivity(watchMachine(notify))
-+
-+    update("hidden", false)
-+    update("hidden", true)
-+    expect(notify).not.toHaveBeenCalled()
-+
-+    update("visible", true)
-+    expect(notify).toHaveBeenCalledOnce()
-+    expect(notify).toHaveBeenCalledWith(true)
-+  })
-+
-+  test("showing the Activity again without a prop change does not run track", () => {
-+    const notify = vi.fn()
-+    const { update } = renderInActivity(watchMachine(notify))
-+
-+    update("hidden", false)
-+    update("visible", false)
-+
-+    expect(notify).not.toHaveBeenCalled()
-+  })
-+
-+  test("a prop changed while visible is tracked once", () => {
-+    const notify = vi.fn()
-+    const { update } = renderInActivity(watchMachine(notify))
-+
-+    update("visible", true)
-+    update("visible", true)
-+
-+    expect(notify).toHaveBeenCalledOnce()
-+  })
-+})
-```
-
-**File**: `packages/frameworks/react/tests/strict-mode.test.tsx` (modified, +31/-0)
-```diff
-@@ -201,4 +201,35 @@ describe("React Strict Mode", () => {
- 
-     expect(cleanupSpy).toHaveBeenCalledTimes(2)
-   })
-+
-+  test("watch does not track the double mount as a change", async () => {
-+    const notify = vi.fn()
-+
-+    const machine = createMachine<any>({
-+      initialState() {
-+        return "idle"
-+      },
-+      states: {
-+        idle: {},
-+      },
-+      context({ bindable }) {
-+        return { value: bindable(() => ({ defaultValue: "foo" })) }
-+      },
-+      watch({ track, context, action }) {
-+        track([() => context.get("value")], () => {
-+          action(["notify"])
-+        })
-+      },
-+      implementations: {
-+        actions: {
-+          notify,
-+        },
-+      },
-+    })
-+
-+    renderStrict(machine)
-+    await flushMicrotasks()
-+
-+    expect(notify).not.toHaveBeenCalled()
-+  })
- })
+@@ -490,7 +490,7 @@ export const machine = createMachine({
+         "VALUE.CLEAR": [
+           {
+             guard: "isOpenControlled",
+-            actions: ["clearInputValue", "clearSelectedItems", "invokeOnClose"],
++            actions: ["clearInputValue", "clearSelectedItems", "invokeOnClose", "scrollContentToTop"],
+           },
+           {
+             target: "closed.focused",
+@@ -543,11 +543,11 @@ export const machine = createMachine({
+               {
+                 guard: "autoComplete",
+                 target: "suggesting",
+-                actions: ["setInputValue"],
++                actions: ["setInputValue", "scrollContentToTop"],
+               },
+               {
+                 target: "suggesting",
+-                actions: ["clearHighlightedValue", "setInputValue"],
++                actions: ["clearHighlightedValue", "setInputValue", "scrollContentToTop"],
+               },
+             ],
+             "ITEM.POINTER_MOVE": {
+@@ -611,7 +611,7 @@ export const machine = createMachine({
+               actions: ["highlightLastItem"],
+             },
+             "INPUT.CHANGE": {
+-              actions: ["setInputValue"],
++              actions: ["setInputValue", "scrollContentToTop"],
+             },
+             "LAYER.ESCAPE": [
+               {
 ```
 
 ---
 
-### Incident Patch 3: `e3e5334a` (2026-10-17)
-**Commit Message**: fix(toast): remeasure height when the toast width changes (#3455)
+### Incident Patch 2: `519feb99` (2026-10-21)
+**Commit Message**: fix(carousel): don't let a snap refresh revert a pending page change (#3515)
 
-Co-authored-by: Segun Adebayo <[REDACTED_EMAIL]>
-
-**File**: `.changeset/toast-height-resize.md` (added, +7/-0)
+**File**: `.changeset/carousel-snap-refresh-page.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,5 @@
 +---
-+"@zag-js/toast": patch
-+"@zag-js/dom-query": patch
++"@zag-js/carousel": patch
 +---
 +
-+- Fix toast height not updating when its content resizes, such as text rewrapping after a window resize.
-+- Fix the shared resize observers throwing when `ResizeObserver` is unavailable, such as in jsdom.
++- Fix a snap point refresh reverting a page change that hadn't rendered yet.
 ```
 
-**File**: `e2e/models/toast.model.ts` (modified, +13/-0)
+**File**: `packages/machines/carousel/src/carousel.machine.ts` (modified, +4/-2)
 ```diff
-@@ -32,6 +32,15 @@ export class ToastModel extends Model {
-     return box?.height ?? 0
-   }
+@@ -497,9 +497,11 @@ export const machine = createMachine<CarouselSchema>({
+         const pageSnapPoints = computed("isHorizontal") ? scrollSnapPoints.x : scrollSnapPoints.y
+         context.set("pageSnapPoints", pageSnapPoints)
  
-+  // Grows the content without changing the toast's width, like a late font load
-+  async enlargeTitle(num = 0) {
-+    await this.getToast(num)
-+      .locator("[data-part=title]")
-+      .evaluate((el) => {
-+        ;(el as HTMLElement).style.fontSize = "2em"
-+      })
-+  }
-+
-   seeAccessibleName(value: string, num = 0) {
-     return expect(this.getToast(num)).toHaveAccessibleName(value)
-   }
-@@ -60,6 +69,10 @@ export class ToastModel extends Model {
-     return await repeat(times, () => this.page.getByRole("button", { name: "Notify (Error)" }).click())
-   }
- 
-+  async appendToLatestToast(times = 1) {
-+    return await repeat(times, () => this.page.getByRole("button", { name: "Append to Latest" }).click())
-+  }
-+
-   openDialog() {
-     return this.page.getByText("Open Dialog").click()
-   }
-```
-
-**File**: `e2e/toast.e2e.ts` (modified, +38/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { test } from "@playwright/test"
-+import { expect, test } from "@playwright/test"
- import { ToastModel } from "./models/toast.model"
- 
- let I: ToastModel
-@@ -64,6 +64,43 @@ test.describe("toast / stacked", () => {
-     await I.seeDialog()
-     await I.seeNumOfToasts(0)
-   })
-+
-+  test("should update the toast height when its content wraps onto more lines", async () => {
-+    await I.clickLoadingToast()
-+    await expect.poll(() => I.getToastHeight()).toBeGreaterThan(0)
-+    const initialHeight = await I.getToastHeight()
-+
-+    await I.resizeWindow({ width: 200, height: 720 })
-+    await expect.poll(() => I.getToastHeight()).toBeGreaterThan(initialHeight)
-+  })
-+
-+  test("should update the toast height when its content wraps onto fewer lines", async () => {
-+    await I.resizeWindow({ width: 200, height: 720 })
-+    await I.clickLoadingToast()
-+    await expect.poll(() => I.getToastHeight()).toBeGreaterThan(0)
-+    const initialHeight = await I.getToastHeight()
-+
-+    await I.resizeWindow({ width: 1024, height: 720 })
-+    await expect.poll(() => I.getToastHeight()).toBeLessThan(initialHeight)
-+  })
-+
-+  test("should update the toast height when its text changes", async () => {
-+    await I.clickErrorToast()
-+    await expect.poll(() => I.getToastHeight()).toBeGreaterThan(0)
-+    const initialHeight = await I.getToastHeight()
-+
-+    await I.appendToLatestToast(2)
-+    await expect.poll(() => I.getToastHeight()).toBeGreaterThan(initialHeight)
-+  })
-+
-+  test("should update the toast height when its content grows without a resize", async () => {
-+    await I.clickLoadingToast()
-+    await expect.poll(() => I.getToastHeight()).toBeGreaterThan(0)
-+    const initialHeight = await I.getToastHeight()
-+
-+    await I.enlargeTitle()
-+    await expect.poll(() => I.getToastHeight()).toBeGreaterThan(initialHeight)
-+  })
- })
- 
- test.describe("toast / overlapping", () => {
-```
-
-**File**: `packages/machines/toast/src/toast.dom.ts` (modified, +47/-1)
-```diff
-@@ -1,5 +1,6 @@
- import type { Scope } from "@zag-js/core"
--import { queryAll } from "@zag-js/dom-query"
-+import { AnimationFrame, getWindow, queryAll, resizeObserverBorderBox } from "@zag-js/dom-query"
-+import { callAll } from "@zag-js/utils"
- import type { Placement } from "./toast.types"
- 
- export const getRegionId = (placement: Placement) => `toast-group:${placement}`
-@@ -13,3 +14,48 @@ export const getDescriptionId = (ctx: Scope) => `toast:${ctx.id}:description`
- export const getTitleEl = (ctx: Scope) => ctx.getById(getTitleId(ctx))
- export const getDescriptionEl = (ctx: Scope) => ctx.getById(getDescriptionId(ctx))
- export const getCloseTriggerId = (ctx: Scope) => `toast${ctx.id}:close`
-+
-+interface ObserveContentOptions {
-+  filter?: ((el: Element) => boolean) | undefined
-+  /** Called when the content's size may have changed */
-+  onChange: VoidFunction
-+  /** Called when the content's DOM changes */
-+  onMutate?: VoidFunction | undefined
-+}
-+
-+// The root's height is set by CSS, so watch its children, which size freely with the content
-+export function observeContent(rootEl: HTMLElement, options: ObserveContentOptions) {
-+  const { filter = () => true, onChange, onMutate } = options
-+
-+  const win = getWindow(rootEl)
-+  const frame = AnimationFrame.create()
-+
-+  const notify = () => frame.request(onChange)
-+
-+  let stopObservingChildren: VoidFunction | undefined
-+
-+  const observeChildren = () => {
-+    stopObservingChildren?.()
-+
-+    const children = Array.from(rootEl.children).filter(filter)
-+    stopObservingChildren = callAll(...children.map((child) => resizeObserverBorderBox.observe(child, notify)))
-+  }
-+
-+  observeChildren()
-+
-+  // Content changes run before paint, so report them right away; resizes are deferred to avoid loops
-+  const mutationObserver = new win.MutationObserver(() => {
-+    frame.cancel()
-+    onChange()
-+    onMutate?.()
-+    observeChildren()
-+  })
-+
-+  mutationObserver.observe(rootEl, { childList: true, subtree: true, characterData: true })
-+
-+  return () => {
-+    mutationObserver.disconnect()
-+    stopObservingChildren?.()
-+    frame.cancel()
-+  }
-+}
-```
-
-**File**: `packages/machines/toast/src/toast.machine.ts` (modified, +10/-17)
-```diff
-@@ -197,15 +197,16 @@ export const machine = createMachine<ToastSchema>({
-         }, 0)
++        // Write only when out of range, since `page` can lag a render and writing it back would revert a change
+         if (!pageSnapPoints.length) return
+-        const index = clampValue(context.get("page"), 0, pageSnapPoints.length - 1)
+-        context.set("page", index)
++        const page = context.get("page")
++        const index = clampValue(page, 0, pageSnapPoints.length - 1)
++        if (index !== page) context.set("page", index)
        },
+       scrollSlides({ scope, event }) {
+         const el = dom.getItemGroupEl(scope)
+```
+
+---
+
+### Incident Patch 3: `1cdcb6a3` (2026-10-21)
+**Commit Message**: feat(tour): add data-instant to animate step changes with CSS (#3518)
+
+**File**: `.changeset/tour-step-animation.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++---
++"@zag-js/tour": patch
++---
++
++- Add `data-instant` to the backdrop, spotlight and positioner when a step change shouldn't animate, so step transitions
++  can be styled with CSS.
+```
+
+**File**: `packages/machines/tour/src/tour.connect.ts` (modified, +7/-3)
+```diff
+@@ -36,7 +36,8 @@ export function connect<T extends PropTypes>(service: TourService, normalize: No
+   const placement = context.get("currentPlacement")
+   const placementSide = isTooltipPlacement(placement) ? getPlacementSide(placement) : undefined
+   const targetRect = context.get("targetRect")
+-  const suppressTransition = context.get("suppressSpotlightTransition")
++  // No visible previous step to move from (first open, reopen, same step), so parts should snap instead of animate
++  const instant = context.get("suppressSpotlightTransition")
+   const floatingOffset = context.get("floatingOffset")
+   const tooltipPositioned = isTooltipStep(step) && floatingOffset != null
  
--      trackContent({ scope, prop, context }) {
-+      trackContent({ scope, prop, context, state }) {
-         return raf(() => {
-           const rootEl = dom.getRootEl(scope)
-           if (!rootEl) return
- 
-           const syncHeight = () => {
-+            // A closing toast must not re-add its height after it's removed
-+            if (!state.hasTag("visible") || !rootEl.isConnected) return
-             const height = measureLayoutHeight(rootEl)
--            const item = { id: prop("id"), height }
--            setHeight(prop("parent"), item)
-+            setHeight(prop("parent"), { id: prop("id"), height })
-           }
- 
-           const syncRenderedElements = () => {
-@@ -217,19 +218,11 @@ export const machine = createMachine<ToastSchema>({
- 
-           syncRenderedElements()
- 
--          const win = scope.getWin()
--
--          const observer = new win.MutationObserver(() => {
--            syncHeight()
--            syncRenderedElements()
--          })
--          observer.observe(rootEl, {
--            childList: true,
--            subtree: true,
--            characterData: true,
-+          return dom.observeContent(rootEl, {
-+            filter: (el) => !el.hasAttribute("data-ghost"),
-+            onChange: syncHeight,
-+            onMutate: syncRenderedElements,
-           })
--
--          return () => observer.disconnect()
-         })
-       },
+@@ -133,6 +134,7 @@ export function connect<T extends PropTypes>(service: TourService, normalize: No
+         hidden: !open,
+         "data-state": open ? "open" : "closed",
+         "data-type": step?.type,
++        "data-instant": dataAttr(instant),
+         style: {
+           "--tour-layer": 0,
+           clipPath: isTooltipStep(step) ? `path("${clipPath}")` : undefined,
+@@ -147,6 +149,7 @@ export function connect<T extends PropTypes>(service: TourService, normalize: No
+       return normalize.element({
+         ...parts.spotlight.attrs,
+         hidden: !open || !step?.target?.(),
++        "data-instant": dataAttr(instant),
+         style: {
+           "--tour-layer": 1,
+           "--spotlight-x": toPx(targetRect.x),
+@@ -160,8 +163,8 @@ export function connect<T extends PropTypes>(service: TourService, normalize: No
+           top: "var(--spotlight-y)",
+           borderRadius: toPx(prop("spotlightRadius")),
+           pointerEvents: "none",
+-          transitionDuration: suppressTransition ? "0ms" : undefined,
+-          transitionDelay: suppressTransition ? "0ms" : undefined,
++          transitionDuration: instant ? "0ms" : undefined,
++          transitionDelay: instant ? "0ms" : undefined,
+         },
+       })
      },
-@@ -317,8 +310,8 @@ function setHeight(parent: Service<ToastGroupSchema>, item: ToastHeight) {
-     const alreadyExists = prev.find((i) => i.id === id)
-     if (!alreadyExists) {
-       return [{ id, height }, ...prev]
--    } else {
--      return prev.map((i) => (i.id === id ? { ...i, height } : i))
-     }
-+    if (alreadyExists.height === height) return prev
-+    return prev.map((i) => (i.id === id ? { ...i, height } : i))
-   })
+@@ -180,6 +183,7 @@ export function connect<T extends PropTypes>(service: TourService, normalize: No
+         "data-type": step?.type,
+         "data-placement": placement,
+         "data-side": placementSide,
++        "data-instant": dataAttr(instant),
+         style: {
+           "--tour-layer": 2,
+           ...(isTooltipStep(step) && {
+```
+
+**File**: `shared/src/css/tour.css` (modified, +23/-0)
+```diff
+@@ -144,13 +144,36 @@
+ 
+ [data-scope="tour"][data-part="spotlight"] {
+   border: 3px solid pink;
++}
++
++/* Step changes: the cutout, spotlight and tooltip move together */
++[data-scope="tour"][data-part="backdrop"] {
++  transition: clip-path 0.2s ease;
++}
++
++[data-scope="tour"][data-part="spotlight"] {
+   transition:
+     left 0.2s ease,
+     top 0.2s ease,
+     width 0.2s ease,
+     height 0.2s ease;
  }
+ 
++[data-scope="tour"][data-part="positioner"] {
++  transition: transform 0.2s ease;
++}
++
++/* Snap into place when there's no visible previous step to move from */
++[data-scope="tour"][data-instant] {
++  transition: none !important;
++}
++
++@media (prefers-reduced-motion: reduce) {
++  [data-scope="tour"] {
++    transition: none !important;
++  }
++}
++
+ [data-scope="tour"][data-part="close-trigger"] {
+   font-family: inherit;
+   height: 25px;
 ```
 
-**File**: `packages/utilities/dom-query/src/resize-observer.ts` (modified, +5/-1)
+**File**: `website/data/components/tour.mdx` (modified, +32/-3)
 ```diff
-@@ -1,4 +1,5 @@
- import { getWindow } from "./node"
-+import { noop } from "./shared"
- 
- type Subscriber<T> = (entry: T) => void
- 
-@@ -32,12 +33,15 @@ function createSharedResizeObserver(options?: ResizeObserverOptions): SharedResi
-   }
- 
-   const observe = (element: Element, listener: Subscriber<ResizeObserverEntry>) => {
-+    const win = getWindow(element)
-+    // e.g. jsdom
-+    if (typeof win.ResizeObserver !== "function") return noop
+@@ -441,6 +441,10 @@ DOM.
+ [data-scope="tour"][data-part="backdrop"] {
+   /* styles for the backdrop part */
+ }
 +
-     let elementListeners = listeners.get(element) || new Set()
-     elementListeners.add(listener)
++[data-scope="tour"][data-part="spotlight"] {
++  /* styles for the spotlight part */
++}
+ ```
  
-     listeners.set(element, elementListeners)
+ ### Step types
+@@ -491,20 +495,45 @@ backdrop:
  
--    const win = getWindow(element)
-     getObserver(win).observe(element, options)
+ ### Spotlight
  
-     return () => {
-```
-
-**File**: `packages/utilities/dom-query/tests/resize-observer.test.ts` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+// @vitest-environment jsdom
+-The spotlight exposes CSS variables you can transition between steps:
++The spotlight exposes CSS variables for the target's position and size:
++`--spotlight-x`, `--spotlight-y`, `--spotlight-width`, `--spotlight-height`.
 +
-+import { expect, test } from "vitest"
-+import { resizeObserverBorderBox } from "../src/resize-observer"
++### Animating step changes
 +
-+test("observe is a no-op when ResizeObserver is unavailable", () => {
-+  const el = document.createElement("div")
-+  const stop = resizeObserverBorderBox.observe(el, () => {})
-+  expect(() => stop()).not.toThrow()
-+})
++Transition the backdrop cutout, the spotlight and the positioner together so the
++highlight and the tooltip glide to the next step.
+ 
+ ```css
++[data-scope="tour"][data-part="backdrop"] {
++  transition: clip-path 0.2s ease;
++}
++
+ [data-scope="tour"][data-part="spotlight"] {
+   transition:
+     left 0.2s ease,
+     top 0.2s ease,
+     width 0.2s ease,
+     height 0.2s ease;
+ }
++
++[data-scope="tour"][data-part="positioner"] {
++  transition: transform 0.2s ease;
++}
++
++[data-scope="tour"][data-instant] {
++  transition: none !important;
++}
++
++@media (prefers-reduced-motion: reduce) {
++  [data-scope="tour"] {
++    transition: none !important;
++  }
++}
+ ```
+ 
+-Variables: `--spotlight-x`, `--spotlight-y`, `--spotlight-width`,
+-`--spotlight-height`.
++These parts get `data-instant` when there's no visible previous step to move
++from (open, reopen, or after a step without a target). Turning transitions off
++for it makes them snap into place instead of animating from their last position.
+ 
+ ### Placement Styles
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3481** (closed): fix(menu): select and close on Enter for link items (@segunadebayo)
-- **PR #3475** (2026-10-17): fix(react, preact): track controlled prop changes made while effects are disconnected (@mattd-tg)
-- **PR #3473** (2026-10-16): fix(combobox): mark unselected options with aria-selected="false" (@jsabutis)
-- **PR #3471** (2026-10-16): fix(menu): let the aria-label prop name the menu (@jsabutis)
-- **PR #3469** (2026-10-16): fix(dom-query): match typeahead text that starts with non-ASCII characters (@jsabutis)
-- **PR #3467** (2026-10-16): fix(tooltip): keep the content id when aria-label is set (@jsabutis)
+- **PR #3518** (2026-10-21): feat(tour): add data-instant to animate step changes with CSS (@segunadebayo)
+- **PR #3517** (2026-10-21): feat(tour): add scrollToTargetFn and fix keyboard and role issues (@segunadebayo)
+- **PR #3516** (2026-10-21): fix(website): use v2 api names in docs demos (@Adebesin-Cell)
+- **PR #3515** (2026-10-21): fix(carousel): don't let a snap refresh revert a pending page change (@segunadebayo)
+- **PR #3513** (2026-10-21): fix(radio-group): sync disabled inputs with the controlled value (@aose-yuu)
+- **PR #3512** (2026-10-21): fix(editable): restore the previous value on cancel (@aose-yuu)
 
 ---
 
@@ -1566,25 +1286,25 @@ Co-authored-by: Segun Adebayo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. drawer): only block text selection once a swipe has started
+## X. combobox): scroll the list to the top when the input changes (#3482)
 
 **RULE**:
-When implementing operations in `.changeset/drawer-text-selection.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chakra-ui/zag. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/combobox-scroll-top-on-input.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chakra-ui/zag. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `541950b5`: drawer): only block text selection once a swipe has started. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22339967`: combobox): scroll the list to the top when the input changes (#3482). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/drawer-text-selection.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/combobox-scroll-top-on-input.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-"@zag-js/drawer": patch
+"@zag-js/combobox": patch
 ---
 
-- Fix text in an open drawer not being selectable with the mouse after the pointer moved over it.
+- Scroll the list back to the top when typing or clearing the input while the combobox is open.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1594,4 +1314,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `541950b5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22339967` are properly handled with clean fallback behavior.

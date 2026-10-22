@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source**: github ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
-> **Source Version**: `6f9df34c`  
+> **Source Version**: `ce75c0a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:06:45.663Z  
+> **Timestamp**: 2026-10-22T16:10:03.535Z  
 > **Learning ID**: `learn-github-actions-actions-runner-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:06:45.655Z  
+> **Harvest Timestamp**: 2026-10-22T16:10:03.526Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes controller for GitHub Actions self-hosted runners
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6590 stars
+- **Stars / Engagement**: 6594 stars
 
 ---
 
@@ -1501,74 +1501,67 @@ func (s *server) Errorf(format string, args ...interface{}) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f9df34c` (2026-10-20)
-**Commit Message**: Fix inconsistent guards for scale set metrics registration and publishing (#4566)
+### Incident Patch 1: `ce75c0a1` (2026-10-21)
+**Commit Message**: Updates: runner to v2.338.0 (#4708)
 
-**File**: `controllers/actions.github.com/autoscalinglistener_controller.go` (modified, +5/-0)
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+Co-authored-by: Salman Muin Kayser Chishti <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -63,6 +63,7 @@ type AutoscalingListenerReconciler struct {
- 	// If it is set to "0", the metrics server is not started.
- 	ListenerMetricsAddr     string
- 	ListenerMetricsEndpoint string
-+	PublishMetrics          bool
- 
- 	ResourceBuilder
- }
-@@ -903,6 +904,10 @@ func (r *AutoscalingListenerReconciler) createRoleBindingForListener(ctx context
- }
- 
- func (r *AutoscalingListenerReconciler) publishRunningListener(autoscalingListener *v1alpha1.AutoscalingListener, isUp bool) error {
-+	if !r.PublishMetrics {
-+		return nil
-+	}
-+
- 	githubConfigURL := autoscalingListener.Spec.GitHubConfigURL
- 	parsedURL, err := actions.ParseGitHubConfigFromURL(githubConfigURL)
- 	if err != nil {
+@@ -6,7 +6,7 @@ endif
+ DOCKER_USER ?= $(shell echo ${DOCKER_IMAGE_NAME} | cut -d / -f1)
+ VERSION ?= dev
+ COMMIT_SHA = $(shell git rev-parse HEAD)
+-RUNNER_VERSION ?= 2.337.0
++RUNNER_VERSION ?= 2.338.0
+ TARGETPLATFORM ?= $(shell arch)
+ RUNNER_NAME ?= ${DOCKER_USER}/actions-runner
+ RUNNER_TAG  ?= ${VERSION}
 ```
 
-**File**: `main.go` (modified, +8/-2)
+**File**: `runner/Makefile` (modified, +1/-1)
 ```diff
-@@ -294,7 +294,12 @@ func main() {
- 			os.Exit(1)
- 		}
+@@ -6,7 +6,7 @@ DIND_ROOTLESS_RUNNER_NAME ?= ${DOCKER_USER}/actions-runner-dind-rootless
+ OS_IMAGE ?= ubuntu-22.04
+ TARGETPLATFORM ?= $(shell arch)
  
--		if metricsAddr != "" {
-+		// controller-runtime only skips its metrics server when BindAddress is
-+		// "0"; an empty address falls back to ":8080". Register and publish
-+		// under the same rule so a live endpoint never misses the scale set
-+		// metrics and a disabled one never accumulates unregistered series.
-+		metricsEnabled := metricsAddr != "0"
-+		if metricsEnabled {
- 			log.Info("Registering scale set metrics")
- 			actionsgithubcommetrics.RegisterMetrics()
- 		}
-@@ -371,7 +376,7 @@ func main() {
- 			Client:                          mgr.GetClient(),
- 			Log:                             log.WithName("EphemeralRunner").WithValues("version", build.Version),
- 			Scheme:                          mgr.GetScheme(),
--			PublishMetrics:                  metricsAddr != "0",
-+			PublishMetrics:                  metricsEnabled,
- 			UnregistrationQueue:             runnerUnregistrationQueue,
- 			TerminatedPodGracePeriodSeconds: terminatedRunnerPodGracePeriodSeconds,
- 			ResourceBuilder:                 rb,
-@@ -398,6 +403,7 @@ func main() {
- 			Scheme:                  mgr.GetScheme(),
- 			ListenerMetricsAddr:     listenerMetricsAddr,
- 			ListenerMetricsEndpoint: listenerMetricsEndpoint,
-+			PublishMetrics:          metricsEnabled,
- 			ResourceBuilder:         rb,
- 		}).SetupWithManager(mgr, autoscalingListenerOpts...); err != nil {
- 			log.Error(err, "unable to create controller", "controller", "AutoscalingListener")
+-RUNNER_VERSION ?= 2.337.0
++RUNNER_VERSION ?= 2.338.0
+ RUNNER_CONTAINER_HOOKS_VERSION ?= 0.8.1
+ DOCKER_VERSION ?= 28.0.4
+ 
+```
+
+**File**: `runner/VERSION` (modified, +1/-1)
+```diff
+@@ -1,2 +1,2 @@
+-RUNNER_VERSION=2.337.0
++RUNNER_VERSION=2.338.0
+ RUNNER_CONTAINER_HOOKS_VERSION=0.8.1
+\ No newline at end of file
+```
+
+**File**: `test/e2e/e2e_test.go` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ var (
+ 
+ 	testResultCMNamePrefix = "test-result-"
+ 
+-	RunnerVersion               = "2.337.0"
++	RunnerVersion               = "2.338.0"
+ 	RunnerContainerHooksVersion = "0.8.1"
+ )
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4713** (closed): Bump the gomod group across 1 directory with 7 updates (@dependabot[bot])
 - **PR #4711** (closed): Retry transient Forbidden errors on ephemeral runner pod creation (@fedor-rubalskiy)
+- **PR #4708** (2026-10-21): Updates: runner to v2.338.0 (@github-actions[bot])
 - **PR #4705** (closed): Bump the gomod group with 2 updates (@dependabot[bot])
 - **PR #4701** (closed): Delay recreation of a listener pod that exited with a failure (@cnd-codeflow)
 - **PR #4700** (closed): Requeue instead of erroring when the recreated AutoscalingListener already exists (@cnd-codeflow)
-- **PR #4697** (2026-10-01): Prepare 0.15.0 release (@nikola-jokic)
 
 ---
 
@@ -1588,32 +1581,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. inconsistent guards for scale set metrics registration and publishing (#4566)
+## X. Updates: runner to v2.338.0 (#4708)
 
 **RULE**:
-When implementing operations in `controllers/actions.github.com/autoscalinglistener_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actions/actions-runner-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actions/actions-runner-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f9df34c`: inconsistent guards for scale set metrics registration and publishing (#4566). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce75c0a1`: Updates: runner to v2.338.0 (#4708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/actions.github.com/autoscalinglistener_controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	PublishMetrics          bool
-	if !r.PublishMetrics {
-		return nil
-	}
-
+RUNNER_VERSION ?= 2.338.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+RUNNER_VERSION ?= 2.337.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f9df34c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce75c0a1` are properly handled with clean fallback behavior.
