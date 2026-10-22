@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MCGG",
-    "timestamp": "2026-10-20T13:47:13.936Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "a3fd483974061d09299c6afe9fa7c18344535de300c60745ede711d50a0aba79",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-UKVC",
-    "timestamp": "2026-10-20T13:53:38.088Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "f2e52659c6626a2e1816640781c8d714d16a6ff37fe7a1dbc8fa2701ee29e126",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-UQKO",
     "timestamp": "2026-10-20T13:53:45.480Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7460,36 @@
     "repository": "kube-rs/kube",
     "learningId": "learn-github-kube-rs-kube",
     "contentHash": "41071bc2595239251c0e5d21ef6ba8ebfe09f8257de87bde97a0eda6e22ae87a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-UUE5",
+    "timestamp": "2026-10-22T16:45:08.573Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-V0MP",
+    "timestamp": "2026-10-22T16:45:16.657Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

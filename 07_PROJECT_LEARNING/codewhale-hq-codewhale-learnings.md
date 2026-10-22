@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `da467bb5`  
+> **Source Version**: `4f1d7ab5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:50:37.805Z  
+> **Timestamp**: 2026-10-22T16:45:08.252Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:50:37.798Z  
+> **Harvest Timestamp**: 2026-10-22T16:45:06.694Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `codewhale-hq/Codewhale`
-- **Description**: Open-source Rust agent engine and terminal client for Codewhale, with provider choice, tools, approvals and receipts.
+- **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41099 stars
+- **Stars / Engagement**: 41108 stars
 
 ---
 
@@ -1355,211 +1355,468 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da467bb5` (2026-10-20)
-**Commit Message**: Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description
+### Incident Patch 1: `38d7a091` (2026-10-22)
+**Commit Message**: fix(CW-7503): the committed secret scrubber did not compile; own the block type
 
-fix(tui): drop the hotbar setup rows' description stub beside the detail pane
+`d1fd6f1a31` landed `session_secret_scrub.rs` with a borrow the compiler
+rejects: `block_type` borrowed `map` immutably, and the two following
+`get_mut` calls need it mutably, so the crate did not build.
 
-**File**: `crates/tui/src/tui/hotbar/setup.rs` (modified, +13/-7)
+The block type is now an owned `String` read once before the mutations, which
+is the smallest change that keeps the behaviour identical: the same two
+branches, the same `tool_use`/`server_tool_use` test, the same redaction calls.
+
+Found while compiling the review slice on top of it; committed separately so
+the security slice and the review slice stay reviewable on their own.
+
+Checks: `scripts/dev-cargo.sh check -p codewhale-tui --lib` clean;
+`scripts/dev-cargo.sh test -p codewhale-tui --lib tools::review` = 86 passed,
+0 failed.
+
+Refs CW-7503
+
+**File**: `crates/tui/src/session_secret_scrub.rs` (modified, +4/-3)
 ```diff
-@@ -483,7 +483,7 @@ impl HotbarSetupView {
-         };
- 
-         for (idx, row) in self.actions_for_source(source).iter().enumerate() {
--            lines.push(self.action_row_line(source, idx, row, 80));
-+            lines.push(self.action_row_line(source, idx, row, 80, true));
-         }
- 
-         lines.push(Line::from(""));
-@@ -606,6 +606,7 @@ impl HotbarSetupView {
-         idx: usize,
-         row: &HotbarSetupActionRow,
-         max_width: u16,
-+        show_description: bool,
-     ) -> Line<'static> {
-         let selected = idx == self.selected_action_idx(source);
-         let marker = crate::tui::glyphs::selection_marker(selected);
-@@ -634,9 +635,14 @@ impl HotbarSetupView {
-         } else {
-             String::new()
-         };
-+        let (prefix, description) = if show_description {
-+            (prefix.as_str(), row.metadata.description.as_str())
-+        } else {
-+            (prefix.trim_end(), "")
-+        };
-         let text = crate::tui::ui_text::semantic_truncate_with_affixes(
--            &prefix,
--            &row.metadata.description,
-+            prefix,
-+            description,
-             &suffix,
-             usize::from(max_width),
-         );
-@@ -663,7 +669,7 @@ impl HotbarSetupView {
-             .render(area, buf);
-     }
- 
--    fn render_action_list(&self, area: Rect, buf: &mut Buffer) {
-+    fn render_action_list(&self, area: Rect, buf: &mut Buffer, show_descriptions: bool) {
-         let Some(source) = self.selected_source() else {
-             EmptyState::new("No actions", "No hotbar action sources are available.")
-                 .render(area, buf);
-@@ -693,7 +699,7 @@ impl HotbarSetupView {
-         let visible_range =
-             action_list_visible_range(self.selected_action_idx(source), rows.len(), visible_rows);
-         for idx in visible_range {
--            lines.push(self.action_row_line(source, idx, rows[idx], area.width));
-+            lines.push(self.action_row_line(source, idx, rows[idx], area.width, show_descriptions));
-         }
-         Paragraph::new(lines)
-             .style(Style::default().fg(palette::TEXT_PRIMARY))
-@@ -972,7 +978,7 @@ impl ModalView for HotbarSetupView {
-             height: content.height.saturating_sub(header_height),
-         };
-         let layout = ListDetailLayout::split(body, 34);
--        self.render_action_list(layout.list, buf);
-+        self.render_action_list(layout.list, buf, layout.stacked);
-         self.render_action_detail(layout.detail, buf);
-     }
- 
-@@ -1521,7 +1527,7 @@ mod tests {
-         };
- 
-         let text = view
--            .action_row_line(HotbarActionCategory::App, 0, &row, 58)
-+            .action_row_line(HotbarActionCategory::App, 0, &row, 58, true)
-             .to_string();
-         assert!(crate::tui::ui_text::text_display_width(&text) <= 58);
-         assert!(text.contains("Open a detailed…"), "{text:?}");
+@@ -341,8 +341,9 @@ fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
+     match value {
+         Value::Object(map) => {
+             let mut changed = 0;
+-            let block_type = map.get("type").and_then(Value::as_str);
+-            if block_type == Some("tool_result") {
++            // Owned, so the two `get_mut` calls below can borrow the map.
++            let block_type = map.get("type").and_then(Value::as_str).map(str::to_string);
++            if block_type.as_deref() == Some("tool_result") {
+                 if let Some(Value::String(content)) = map.get_mut("content") {
+                     changed += usize::from(scrub_text(content, secrets));
+                 }
+@@ -356,7 +357,7 @@ fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
+                     }
+                 }
+             }
+-            if matches!(block_type, Some("tool_use" | "server_tool_use"))
++            if matches!(block_type.as_deref(), Some("tool_use" | "server_tool_use"))
+                 && let Some(input) = map.get_mut("input")
+             {
+                 let redacted = crate::client::redact_json_model_bound_text(input, secrets);
 ```
 
 ---
 
-### Incident Patch 2: `705bf08e` (2026-10-20)
-**Commit Message**: Merge pull request #7028 from Lstarsky0/ux/statusline-scroll-rail
+### Incident Patch 2: `d1fd6f1a` (2026-10-22)
+**Commit Message**: fix(security): redact tool-call arguments, gate redirects, widen the SSRF guard
 
-fix(tui): show a scroll rail on the /statusline list when it doesn't fit
+Six hardening fixes from a read-only audit of this tree. Each is small; the
+first is the one that mattered.
 
-**File**: `crates/tui/src/tui/views/status_picker.rs` (modified, +19/-4)
+1. Tool-call arguments were never redacted. `redact_tool_result_blocks`
+   matched only `ContentBlock::ToolResult` and `continue`d on everything else,
+   so a model-authored command carrying a credential (`curl -H 'Authorization:
+   Bearer ...'`, `API_KEY=... ./run`, a `.env` write) was persisted verbatim
+   into `SavedSession.messages` and the journal, and replayed on resume. The
+   doc comment claimed "a token a tool printed is never written to disk live",
+   which was true for printed and false for given. Now `redact_tool_blocks`
+   covers `ToolUse` and `ServerToolUse` input as well.
+
+   `session_secret_scrub` had the same hole from the other side, so existing
+   files on disk could not be remediated: it rewrote `tool_result` and
+   `tool_call` summaries but never arguments. It scrubs `tool_use` and
+   `server_tool_use` input now.
+
+2. `[redaction] model_bound = false` disabled the *at-rest* boundary, not only
+   the request one. The opt-out exists so the model can quote file bytes back
+   for
+
+**File**: `crates/execpolicy/src/command_safety.rs` (modified, +11/-0)
 ```diff
-@@ -27,7 +27,7 @@ use crate::config::{ProviderKind, StatusItem};
- use crate::tui::menu_style;
- use crate::tui::views::{
-     ActionHint, ModalKind, ModalView, ViewAction, ViewEvent, action_footer_lines,
--    centered_modal_area, render_modal_footer, render_modal_surface,
-+    centered_modal_area, render_modal_footer, render_modal_surface, render_panel_scroll_rail,
- };
- use codewhale_localization::{Locale, MessageId, tr};
- use codewhale_palette as palette;
-@@ -252,6 +252,9 @@ impl ModalView for StatusPickerView {
-         self.row_hitboxes.borrow_mut().clear();
-         let visible_rows = content.height.saturating_sub(2) as usize;
-         let row_start = visible_row_start(self.rows.len(), self.cursor, visible_rows);
-+        let row_width = content
-+            .width
-+            .saturating_sub(u16::from(visible_rows < self.rows.len()));
+@@ -382,12 +382,23 @@ pub fn prefix_allow_matches(pattern: &str, command: &str) -> bool {
  
-         let mut lines: Vec<Line> = Vec::with_capacity(visible_rows + 2);
-         lines.push(Line::from(Span::styled(
-@@ -272,7 +275,7 @@ impl ModalView for StatusPickerView {
-                 Rect::new(
-                     content.x,
-                     content.y + 2 + (idx - row_start) as u16,
--                    content.width,
-+                    row_width,
-                     1,
-                 ),
-             ));
-@@ -297,7 +300,7 @@ impl ModalView for StatusPickerView {
-             if is_cursor {
-                 let selected_style = menu_style::selected_row_style();
-                 let line =
--                    status_row_text(pointer, mark, item, self.locale, content.width as usize);
-+                    status_row_text(pointer, mark, item, self.locale, usize::from(row_width));
-                 lines.push(Line::from(Span::styled(line, selected_style)));
-             } else {
-                 let label = item.label();
-@@ -307,7 +310,7 @@ impl ModalView for StatusPickerView {
-                     &prefix,
-                     hint.as_ref(),
-                     ")",
--                    usize::from(content.width),
-+                    usize::from(row_width),
-                 );
-                 lines.push(Line::from(vec![
-                     Span::styled(format!(" {pointer} "), row_style),
-@@ -321,6 +324,18 @@ impl ModalView for StatusPickerView {
-         }
- 
-         Paragraph::new(lines).render(content, buf);
-+        render_panel_scroll_rail(
-+            Rect {
-+                y: content.y.saturating_add(2),
-+                height: content.height.saturating_sub(2),
-+                ..content
-+            },
-+            buf,
-+            self.rows.len(),
-+            row_start,
-+            visible_rows,
-+            true,
-+        );
-     }
+     // Fallback: normalised exact match for patterns not in the arity table
+     // (e.g. exact-match rules like `"ls -la"` that lack a dictionary entry).
++    // A prefix grant never covers a compound or expansion-bearing command: the
++    // allow is for one inert invocation, so a shell operator fails closed here
++    // rather than depending on the caller having classified it first.
+     let command_norm: String = command
+         .trim()
+         .to_ascii_lowercase()
+         .split_whitespace()
+         .collect::<Vec<_>>()
+         .join(" ");
++    if command_norm.chars().any(|c| {
++        matches!(
++            c,
++            ';' | '&' | '|' | '`' | '$' | '(' | ')' | '<' | '>' | '\n' | '\r'
++        )
++    }) {
++        return false;
++    }
+     command_norm == pattern_norm || command_norm.starts_with(&format!("{pattern_norm} "))
  }
  
 ```
 
+**File**: `crates/tui/src/client.rs` (modified, +30/-10)
+```diff
+@@ -903,6 +903,30 @@ fn request_query_secret_values(url: &reqwest::Url) -> Vec<String> {
+     values
+ }
+ 
++/// Redirects are followed only within one host, over the same or a stronger
++/// scheme.
++///
++/// Provider keys ride in headers this stack may send under names reqwest does
++/// not strip on a cross-host hop (`x-api-key`, operator `http_headers`), so a
++/// compromised or open-redirecting endpoint could otherwise collect a key by
++/// answering `302`. A same-host hop to plaintext would expose the same key to
++/// anything on the path, so a downgrade stops too. Upgrades and same-scheme
++/// hops still work for the endpoints that use them.
++fn same_host_redirects() -> reqwest::redirect::Policy {
++    reqwest::redirect::Policy::custom(|attempt| {
++        let from = attempt.previous().last();
++        let next = attempt.url();
++        let same_host = from.is_some_and(|previous| previous.host_str() == next.host_str());
++        let downgrade =
++            from.is_some_and(|previous| previous.scheme() == "https" && next.scheme() == "http");
++        if same_host && !downgrade && attempt.previous().len() < 10 {
++            attempt.follow()
++        } else {
++            attempt.stop()
++        }
++    })
++}
++
+ pub(crate) fn redact_model_bound_text(text: &str, exact_secret_values: &[String]) -> String {
+     let mut redacted = text.to_string();
+     for secret in exact_secret_values {
+@@ -1872,7 +1896,7 @@ impl CodewhaleClient {
+         let http_client = if plugin_provider.is_some() || api_key_source == "Claude sign-in" {
+             http_client.redirect(reqwest::redirect::Policy::none())
+         } else {
+-            http_client
++            http_client.redirect(same_host_redirects())
+         }
+         .build()?;
+         let models_http_client = Self::http_client_builder_with_auth_mode(
+@@ -2179,16 +2203,12 @@ impl CodewhaleClient {
+         redact_model_bound_text(text, &self.model_bound_secret_values)
+     }
+ 
+-    /// Redact tool output as it enters the transcript. Same masking as the
+-    /// request boundary, including the confirmed `[redaction] model_bound`
+-    /// opt-out: a user who chose to let the model see file bytes verbatim
+-    /// keeps that, and everyone else never stores a live credential.
++    /// Redact tool output as it enters the transcript. Unlike the request
++    /// boundary, this path always redacts: the `[redaction] model_bound`
++    /// opt-out exists so the model can quote file bytes back for exact edits,
++    /// never to write a live credential to disk.
+     pub(crate) fn redact_tool_output_for_transcript(&self, text: &str) -> String {
+-        if self.model_bound_masking {
+-            redact_model_bound_text(text, &self.model_bound_secret_values)
+-        } else {
+-            text.to_string()
+-        }
++        redact_model_bound_text(text, &self.model_bound_secret_values)
+     }
+ 
+     /// Alternate models share this client's frozen endpoint and declarations.
+```
+
+**File**: `crates/tui/src/core/engine.rs` (modified, +46/-23)
+```diff
+@@ -918,26 +918,47 @@ enum EngineHostSetup {
+     Rlm(rlm_host::RlmHostSetup),
+ }
+ 
+-/// Rewrite the text of every tool result in `message`, including text
+-/// content blocks, with `redact`.
+-pub(crate) fn redact_tool_result_blocks(message: &mut Message, redact: impl Fn(&str) -> String) {
++/// Rewrite the text of every tool result and tool-call input in `message`,
++/// including text content blocks, with `redact`.
++pub(crate) fn redact_tool_blocks(message: &mut Message, redact: impl Fn(&str) -> String) {
+     for block in &mut message.content {
+-        let ContentBlock::ToolResult {
+-            content,
+-            content_blocks,
+-            ..
+-        } = block
+-        else {
+-            continue;
+-        };
+-        *content = redact(content);
+-        for value in content_blocks.iter_mut().flatten() {
+-            if value.get("type").and_then(serde_json::Value::as_str) == Some("text")
+-                && let Some(serde_json::Value::String(text)) = value.get_mut("text")
+-            {
+-                *text = redact(text);
++        match block {
++            ContentBlock::ToolResult {
++                content,
++                content_blocks,
++                ..
++            } => {
++                *content = redact(content);
++                for value in content_blocks.iter_mut().flatten() {
++                    if value.get("type").and_then(serde_json::Value::as_str) == Some("text")
++                        && let Some(serde_json::Value::String(text)) = value.get_mut("text")
++                    {
++                        *text = redact(text);
++                    }
++                }
++            }
++            ContentBlock::ToolUse { input, .. } | ContentBlock::ServerToolUse { input, .. } => {
++                redact_json_strings(input, &redact);
++            }
++            _ => {}
++        }
++    }
++}
++
++fn redact_json_strings(value: &mut serde_json::Value, redact: &impl Fn(&str) -> String) {
++    match value {
++        serde_json::Value::String(text) => *text = redact(text),
++        serde_json::Value::Array(values) => {
++            for value in values {
++                redact_json_strings(value, redact);
++            }
++        }
++        serde_json::Value::Object(values) => {
++            for value in values.values_mut() {
++                redact_json_strings(value, redact);
+             }
+         }
++        _ => {}
+     }
+ }
+ 
+@@ -4701,13 +4722,15 @@ impl Engine {
+         self.emit_session_updated().await;
+     }
+ 
+-    /// Scrub credentials from tool output once, as it enters the transcript
+-    /// (B1). The transcript is what session JSON, the journal and every
+-    /// later request are built from, so a token a tool printed is never
+-    /// written to disk live. Honors the confirmed `[redaction] model_bound`
+-    /// opt-out the same way the request boundary does.
++    /// Scrub credentials from tool output and tool-call input once, as it
++    /// enters the transcript (B1). The transcript is what session JSON, the
++    /// journal and every later request are built from, so a token a tool
++    /// printed — or one a tool was *given* in its arguments — is never written
++    /// to disk live. Unlike the request boundary this does not honor the
++    /// `[redaction] model_bound` opt-out: that opt-out exists so the model can
++    /// quote file bytes back for exact edits, never to relax storage.
+     fn redact_tool_results_for_transcript(&self, message: &mut Message) {
+-        redact_tool_result_blocks(message, |text| self.redact_tool_output_for_transcript(text));
++        redact_tool_blocks(message, |text| self.redact_tool_output_for_transcript(text));
+     }
+ 
+     fn redact_tool_output_for_transcript(&self, text: &str) -> String {
+```
+
+**File**: `crates/tui/src/mcp.rs` (modified, +14/-9)
+```diff
+@@ -1439,23 +1439,28 @@ fn resource_template_pattern(template: &str) -> Option<String> {
+ ///
+ /// This runs per URI per advertised template, while the template itself is
+ /// fixed by the server's listing, so compiling it on every call was pure
+-/// repetition. `None` still means "matches nothing" (#6213 T7).
++/// repetition. `None` still means "matches nothing" (#6213 T7). The cache is
++/// bounded because the template list is server-supplied: an unbounded key set
++/// would let one server pin memory for the life of the process.
+ fn compiled_resource_template(template: &str) -> Option<Arc<regex::Regex>> {
++    const MAX_CACHED_TEMPLATES: usize = 512;
+     static CACHE: std::sync::OnceLock<
+         std::sync::Mutex<HashMap<String, Option<Arc<regex::Regex>>>>,
+     > = std::sync::OnceLock::new();
+     let cache = CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()));
+     let mut cache = cache
+         .lock()
+         .unwrap_or_else(|poisoned| poisoned.into_inner());
+-    cache
+-        .entry(template.to_string())
+-        .or_insert_with(|| {
+-            resource_template_pattern(template)
+-                .and_then(|pattern| regex::Regex::new(&pattern).ok())
+-                .map(Arc::new)
+-        })
+-        .clone()
++    if let Some(cached) = cache.get(template) {
++        return cached.clone();
++    }
++    let compiled = resource_template_pattern(template)
++        .and_then(|pattern| regex::Regex::new(&pattern).ok())
++        .map(Arc::new);
++    if cache.len() < MAX_CACHED_TEMPLATES {
++        cache.insert(template.to_string(), compiled.clone());
++    }
++    compiled
+ }
+ 
+ fn resource_uri_matches_template(uri: &str, template: &str) -> bool {
+```
+
+**File**: `crates/tui/src/runtime_threads.rs` (modified, +1/-1)
+```diff
+@@ -19469,7 +19469,7 @@ impl RuntimeThreadManager {
+         {
+             let mut messages = engine.get_session_snapshot().await?.messages;
+             for message in &mut messages {
+-                crate::core::engine::redact_tool_result_blocks(message, |text| {
++                crate::core::engine::redact_tool_blocks(message, |text| {
+                     crate::client::redact_model_bound_text(text, &receipt_secrets)
+                 });
+             }
+```
+
+**File**: `crates/tui/src/session_secret_scrub.rs` (modified, +17/-6)
+```diff
+@@ -8,9 +8,10 @@
+ //! `codewhale doctor` reports them and `codewhale sessions scrub-secrets`
+ //! rewrites them on request.
+ //!
+-//! Only transcript tool results and Runtime tool receipts (including event
+-//! copies) are touched. Cleanup masks credential shapes and currently configured
+-//! secret values; bare secrets absent from current configuration cannot be recovered.
++//! Only transcript tool results, transcript tool-call arguments and Runtime
++//! tool receipts (including event copies) are touched. Cleanup masks credential
++//! shapes and currently configured secret values; bare secrets absent from
++//! current configuration cannot be recovered.
+ //! Runtime rewrites require the exclusive process lease, and session rewrites
+ //! the session's live lease; busy stores and sessions open in an interactive
+ //! surface are reported and left untouched while the remaining files are
+@@ -334,13 +335,14 @@ fn scrub_file(path: &Path, apply: bool, secrets: &[String]) -> io::Result<FileSc
+     Ok(FileScan::Dirty(redacted))
+ }
+ 
+-/// Mask credentials in every `tool_result` text field below `value`.
+-/// Returns how many fields changed.
++/// Mask credentials in every `tool_result` and `tool_call` argument below
++/// `value`. Returns how many fields changed.
+ fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
+     match value {
+         Value::Object(map) => {
+             let mut changed = 0;
+-            if map.get("type").and_then(Value::as_str) == Some("tool_result") {
++            let block_type = map.get("type").and_then(Value::as_str);
++            if block_type == Some("tool_result") {
+                 if let Some(Value::String(content)) = map.get_mut("content") {
+                     changed += usize::from(scrub_text(content, secrets));
+                 }
+@@ -354,6 +356,15 @@ fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
+                     }
+                 }
+             }
++            if matches!(block_type, Some("tool_use" | "server_tool_use"))
++                && let Some(input) = map.get_mut("input")
++            {
++                let redacted = crate::client::redact_json_model_bound_text(input, secrets);
++                if *input != redacted {
++                    *input = redacted;
++                    changed += 1;
++                }
++            }
+             if map.get("kind").and_then(Value::as_str) == Some("tool_call") {
+                 for key in ["summary", "detail", "metadata"] {
+                     if let Some(value) = map.get_mut(key) {
+```
+
+**File**: `crates/tui/src/tools/web/guard.rs` (modified, +23/-0)
+```diff
+@@ -62,14 +62,37 @@ pub(crate) fn is_restricted_ip(ip: &IpAddr) -> bool {
+             if let Some(v4) = v6.to_ipv4_mapped() {
+                 return is_restricted_ip(&IpAddr::V4(v4));
+             }
++            // A NAT64 gateway reaches the embedded IPv4 target, so the prefix
++            // must not hide a restricted address.
++            if let Some(v4) = nat64_ipv4(*v6)
++                && is_restricted_ip(&IpAddr::V4(v4))
++            {
++                return true;
++            }
+             v6.is_loopback()
+                 || v6.is_multicast()
+                 || matches!(v6.segments(), [0xfc00..=0xfdff, ..]) // ULA fc00::/7
+                 || matches!(v6.segments(), [0xfe80..=0xfebf, ..]) // Link-local fe80::/10
++                || matches!(v6.segments(), [0xfec0..=0xfeff, ..]) // Site-local fec0::/10
++                || matches!(v6.segments(), [0x2002, ..]) // 6to4 2002::/16
++                || matches!(v6.segments(), [0x2001, 0x0000, ..]) // Teredo 2001::/32
++                || matches!(v6.segments(), [0, 0, 0, 0, 0, 0, ..]) // IPv4-compatible ::a.b.c.d
+         }
+     }
+ }
+ 
++/// The IPv4 target of a well-known-prefix NAT64 address (`64:ff9b::/96`).
++fn nat64_ipv4(v6: std::net::Ipv6Addr) -> Option<std::net::Ipv4Addr> {
++    let segments = v6.segments();
++    if segments[0] == 0x0064 && segments[1] == 0xff9b && segments[2..6].iter().all(|s| *s == 0) {
++        let octets = v6.octets();
++        return Some(std::net::Ipv4Addr::new(
++            octets[12], octets[13], octets[14], octets[15],
++        ));
++    }
++    None
++}
++
+ /// Validate that `url` is a safe fetch target under SSRF and network policy.
+ ///
+ /// On success returns an optional DNS pin `(hostname, ip)` for hostnames that
+```
+
 ---
 
-### Incident Patch 3: `9af0fbba` (2026-10-20)
-**Commit Message**: Merge pull request #7027 from Lstarsky0/ux/feedback-description-ellipsis
+### Incident Patch 3: `1d444351` (2026-10-22)
+**Commit Message**: fix(plugins): give the plugin state file room, and derive its limit message
 
-fix(tui): end a clipped /feedback description at a word, with an ellipsis
+`MAX_PLUGIN_STATE_BYTES` was 1 MiB. A plugin state file that outgrew it made
+`load_state` fail with "plugin state … exceeds the 1 MiB limit", which turns
+every plugin into a load failure for that user with no way out short of
+deleting their state by hand. The ceiling is now 16 MiB.
 
-**File**: `crates/tui/src/tui/feedback_picker.rs` (modified, +12/-2)
+The read stays bounded: `file.take(MAX_PLUGIN_STATE_BYTES + 1)` caps it before
+the length check, so this raises the ceiling without ever reading an unbounded
+file. The refusal message now derives its number from the constant instead of
+restating "1 MiB", so the next change cannot leave the message lying.
+
+Found as uncommitted work in the shared checkout and landed under the Own
+everything in CW rule after it had been unchanged for 19 minutes. No test pins
+the old 1 MiB value.
+
+Verification: `rustfmt --check` passes on the file. A crate build was not run -
+the shared build lock was held by another session throughout the attempt - so
+CI is the verifier for compilation.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/tui/src/plugins/registry.rs` (modified, +4/-3)
 ```diff
-@@ -17,6 +17,7 @@ use crate::tui::views::{
-     centered_modal_area, render_modal_footer, render_modal_surface,
- };
- use codewhale_palette as palette;
-+use unicode_width::UnicodeWidthStr;
+@@ -847,7 +847,7 @@ fn load_state(path: &Path) -> Result<PluginStateFile, String> {
+ }
  
- #[derive(Debug, Clone, Copy)]
- struct FeedbackOption {
-@@ -183,12 +184,21 @@ impl ModalView for FeedbackPickerView {
-                 Style::default().fg(palette::TEXT_MUTED)
-             };
-             let pointer = crate::tui::glyphs::selection_marker(is_selected);
-+            let lead = format!("{pointer} {}. ", option.number);
-+            let description_width = usize::from(content.width).saturating_sub(
-+                UnicodeWidthStr::width(lead.as_str()) + UnicodeWidthStr::width(option.label) + 4,
-+            );
-+            let description = codewhale_ratatui::text::truncate_words(
-+                option.description,
-+                description_width,
-+                crate::tui::color_compat::ascii_safe_enabled(),
-+            );
+ /// Maximum bytes read from the plugin state file.
+-const MAX_PLUGIN_STATE_BYTES: u64 = 1024 * 1024;
++const MAX_PLUGIN_STATE_BYTES: u64 = 16 * 1024 * 1024;
  
-             lines.push(Line::from(vec![
--                Span::styled(format!("{pointer} {}. ", option.number), row_style),
-+                Span::styled(lead, row_style),
-                 Span::styled(option.label, row_style),
-                 Span::raw("    "),
--                Span::styled(option.description, desc_style),
-+                Span::styled(description, desc_style),
-             ]));
-         }
- 
+ fn load_state_unlocked(path: &Path) -> Result<PluginStateFile, String> {
+     let Some(file) = open_existing_regular_file(path, false)? else {
+@@ -859,8 +859,9 @@ fn load_state_unlocked(path: &Path) -> Result<PluginStateFile, String> {
+         .map_err(|e| format!("failed to read {}: {e}", path.display()))?;
+     if raw.len() as u64 > MAX_PLUGIN_STATE_BYTES {
+         return Err(format!(
+-            "plugin state {} exceeds the 1 MiB limit",
+-            path.display()
++            "plugin state {} exceeds the {} MiB limit",
++            path.display(),
++            MAX_PLUGIN_STATE_BYTES / (1024 * 1024)
+         ));
+     }
+     let state: PluginStateFile = serde_json::from_str(&raw)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7029** (2026-10-20): fix(tui): drop the hotbar setup rows' description stub beside the detail pane (@Lstarsky0)
-- **PR #7028** (2026-10-20): fix(tui): show a scroll rail on the /statusline list when it doesn't fit (@Lstarsky0)
-- **PR #7027** (2026-10-20): fix(tui): end a clipped /feedback description at a word, with an ellipsis (@Lstarsky0)
-- **PR #7025** (2026-10-19): fix(tui): drop the /statusline picker's padding rows when the list doesn't fit (@Lstarsky0)
-- **PR #7024** (2026-10-18): fix(tui): show a scroll rail on a settings choice list that doesn't fit (@Lstarsky0)
-- **PR #7023** (2026-10-18): fix(tui): say "no matches" in the /mcp status line when a search finds nothing (@Lstarsky0)
+- **PR #7046** (2026-10-22): fix(web): document JSONPath subset (@zhuowp)
+- **PR #7041** (2026-10-22): fix(shell): preserve Python stdio env defaults (@zhuowp)
+- **PR #7034** (2026-10-21): fix(tui): put the approval footer's separators between its hints (@Lstarsky0)
+- **PR #7033** (2026-10-21): fix(tui): keep a to-do row's status word when its title is long (@Lstarsky0)
+- **PR #7032** (closed): chore(deps): bump the npm_and_yarn group across 4 directories with 3 updates (@dependabot[bot])
+- **PR #7031** (closed): chore(deps-dev): bump vite from 8.3.0 to 8.3.4 in /web in the npm_and_yarn group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -1579,46 +1836,33 @@ fix(tui): end a clipped /feedback description at a word, with an ellipsis
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description
+## X. CW-7503): the committed secret scrubber did not compile; own the block type
 
 **RULE**:
-When implementing operations in `crates/tui/src/tui/hotbar/setup.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/tui/src/session_secret_scrub.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da467bb5`: Merge pull request #7029 from Lstarsky0/ux/hotbar-split-row-description. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38d7a091`: CW-7503): the committed secret scrubber did not compile; own the block type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/src/tui/hotbar/setup.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/src/session_secret_scrub.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            lines.push(self.action_row_line(source, idx, row, 80, true));
-        show_description: bool,
-        let (prefix, description) = if show_description {
-            (prefix.as_str(), row.metadata.description.as_str())
-        } else {
-            (prefix.trim_end(), "")
-        };
-            prefix,
-            description,
-    fn render_action_list(&self, area: Rect, buf: &mut Buffer, show_descriptions: bool) {
-            lines.push(self.action_row_line(source, idx, rows[idx], area.width, show_descriptions));
-        self.render_action_list(layout.list, buf, layout.stacked);
-            .action_row_line(HotbarActionCategory::App, 0, &row, 58, true)
+            // Owned, so the two `get_mut` calls below can borrow the map.
+            let block_type = map.get("type").and_then(Value::as_str).map(str::to_string);
+            if block_type.as_deref() == Some("tool_result") {
+            if matches!(block_type.as_deref(), Some("tool_use" | "server_tool_use"))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            lines.push(self.action_row_line(source, idx, row, 80));
-            &prefix,
-            &row.metadata.description,
-    fn render_action_list(&self, area: Rect, buf: &mut Buffer) {
-            lines.push(self.action_row_line(source, idx, rows[idx], area.width));
-        self.render_action_list(layout.list, buf);
-            .action_row_line(HotbarActionCategory::App, 0, &row, 58)
+            let block_type = map.get("type").and_then(Value::as_str);
+            if block_type == Some("tool_result") {
+            if matches!(block_type, Some("tool_use" | "server_tool_use"))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da467bb5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38d7a091` are properly handled with clean fallback behavior.

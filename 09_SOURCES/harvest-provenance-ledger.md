@@ -4338,3 +4338,5 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `0a8f26c4` | Multi-dimensional audit evidence | 2026-10-22T16:32:30.417Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `c18e71c7` | Multi-dimensional audit evidence | 2026-10-22T16:38:41.695Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `3995dc6d` | Multi-dimensional audit evidence | 2026-10-22T16:38:47.363Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `4f1d7ab5` | Multi-dimensional audit evidence | 2026-10-22T16:45:08.576Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `7d70e57f` | Multi-dimensional audit evidence | 2026-10-22T16:45:16.660Z |

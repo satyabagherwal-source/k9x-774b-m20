@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T16:38:47.320Z",
+  "last_updated": "2026-10-22T16:45:16.607Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6208,13 +6208,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "e1339771",
-      "content_hash": "fcb246e2b1b80a06d1c7b7dbaeb77e17fe2c5de8cb6bd92628947923799bc058",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "4f1d7ab5",
+      "content_hash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -6240,6 +6240,11 @@
           "number": 3397,
           "title": "vision): send MiMo V2.6 ids for retired V2.5 vision models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3644,
+          "title": "CW-7503): the committed secret scrubber did not compile; own the block type",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6247,7 +6252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:40:46.461Z",
+      "verified_at": "2026-10-22T16:45:08.514Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11326,8 +11331,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "a9cb3768",
-      "content_hash": "9e826bc9ba08416025824515724892979892d3d7e800ac4b236c658d853aa6b2",
+      "source_version": "7d70e57f",
+      "content_hash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -11350,6 +11355,11 @@
           "number": 3419,
           "title": "dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIP",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3645,
+          "title": "stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11357,7 +11367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:45:48.336Z",
+      "verified_at": "2026-10-22T16:45:16.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110143,6 +110153,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T16:38:47.311Z"
+    },
+    "rule-3644": {
+      "learning_id": "rule-3644",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3644,
+      "title": "CW-7503): the committed secret scrubber did not compile; own the block type",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "4f1d7ab5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:45:08.514Z"
+    },
+    "rule-3645": {
+      "learning_id": "rule-3645",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3645,
+      "title": "stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "7d70e57f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:45:16.596Z"
     }
   },
   "aliases": {

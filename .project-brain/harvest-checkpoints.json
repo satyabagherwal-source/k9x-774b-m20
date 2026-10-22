@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T16:38:47.370Z",
+  "last_updated": "2026-10-22T16:45:16.673Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "fcb246e2b1b80a06d1c7b7dbaeb77e17fe2c5de8cb6bd92628947923799bc058",
-      "verified_at": "2026-10-20T21:40:46.544Z",
+      "content_hash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
+      "verified_at": "2026-10-22T16:45:08.588Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:40:46.544Z"
+      "last_updated": "2026-10-22T16:45:08.588Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "9e826bc9ba08416025824515724892979892d3d7e800ac4b236c658d853aa6b2",
-      "verified_at": "2026-10-20T22:45:48.396Z",
+      "content_hash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
+      "verified_at": "2026-10-22T16:45:16.672Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:45:48.396Z"
+      "last_updated": "2026-10-22T16:45:16.672Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

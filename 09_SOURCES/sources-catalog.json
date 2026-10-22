@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "a9cb3768",
+    "sourceVersion": "7d70e57f",
     "license": "Apache-2.0",
-    "contentHash": "9e826bc9ba08416025824515724892979892d3d7e800ac4b236c658d853aa6b2",
-    "lastHarvestedAt": "2026-10-20T22:45:48.389Z",
+    "contentHash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
+    "lastHarvestedAt": "2026-10-22T16:45:16.660Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "da467bb5",
+    "sourceVersion": "4f1d7ab5",
     "license": "MIT",
-    "contentHash": "9553d8a4b1348cd723ab2fac532586850bd877730e92e6b03b17ec6c4081a31c",
-    "lastHarvestedAt": "2026-10-20T19:50:38.223Z",
+    "contentHash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
+    "lastHarvestedAt": "2026-10-22T16:45:08.576Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

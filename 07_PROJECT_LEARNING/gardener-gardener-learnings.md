@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `a9cb3768`  
+> **Source Version**: `7d70e57f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:45:48.128Z  
+> **Timestamp**: 2026-10-22T16:45:16.333Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:45:48.122Z  
+> **Harvest Timestamp**: 2026-10-22T16:45:15.534Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3477 stars
+- **Stars / Engagement**: 3478 stars
 
 ---
 
@@ -726,17 +726,14 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16052** (2026-10-20): **[release-v1.152] Move project canonicalization to `PrepareFor(Create|Update)` methods**
-  *Symptoms*: This is an automated cherry-pick of #15994  /assign vpnachev  ```bugfix operator github.com/gardener/gardener #16052 @vpnachev The `owner` role assignment to the owner as project member is moved to `PrepareFor(Create|Update)` strategy methods because `Canonicalize` should not add or remove data. ```  /kind bug
+- **Issue #16084** (2026-10-22): **Update nginx Docker tag to v1.31.8**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) | patch | `1.31.7` → `1.31.8` |  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (nginx)</summary>  ### [`v1.31.8`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.7...1.31.8)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.7...1.31.8)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzYuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjE3Ni4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16052#pullrequestreview-5588900910" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.152/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
-  > LGTM label has been added.  <details>Git tree hash: a740942c4ba11450f34ff08593e7a0b7ea9943c7</details>
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timebertt](https://github.com/timebertt) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timebertt"]} -->
 
-- **Issue #16050** (2026-10-20): **[release-v1.151] Move project canonicalization to `PrepareFor(Create|Update)` methods**
-  *Symptoms*: This is an automated cherry-pick of #15994  /assign vpnachev  ```bugfix operator github.com/gardener/gardener #16050 @vpnachev The `owner` role assignment to the owner as project member is moved to `PrepareFor(Create|Update)` strategy methods because `Canonicalize` should not add or remove data. ```  /kind bug
-  **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16050#pullrequestreview-5588903929" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.151/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
-  > LGTM label has been added.  <details>Git tree hash: de4c98bfc9cfe9eba3729e87cc8a7f41421735ab</details>
+- **Issue #16078** (2026-10-22): **Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS**
+  *Symptoms*: ## What does this PR do?  Fixes a stale API doc comment on `NodeLocalDNS.ForceTCPToUpstreamDNS`. The comment incorrectly stated the default was `force_tcp` (enforce TCP). The implementation was changed in August 2025 (commit `7b071a0cfd`) to default to `prefer_udp` instead, but the comment was never updated.  ## Why?  Many infrastructure DNS resolvers (AWS Route53, GCP, Azure, ConvergedCloud) rate-limit or struggle with large numbers of TCP connections, which can cause connection timeouts under load.  ## How was this tested?  Documentation-only change — no behaviour change, no test needed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,404 +750,265 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b88e17f3` (2026-10-20)
-**Commit Message**: Fix dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIPv6 from actual pod CIDR (#15943)
+### Incident Patch 1: `4df3a9a5` (2026-10-22)
+**Commit Message**: Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078)
 
-* remove fixed NodeCIDRMaskSizeIPv6 default, derive from actual pod CIDR instead
+* Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS
 
-Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
+The implementation was changed in August 2025 to default to prefer_udp
+for upstream DNS (infrastructure/cloud provider resolvers) to avoid TCP
+connection rate-limiting issues seen across multiple cloud providers. The
+API type comment was never updated and still claimed the default was TCP.
 
-* derive NodeCIDRMaskSizeIPv6 from pod CIDR for IPv6
+Signed-off-by: docktofuture <[REDACTED_EMAIL]>
 
-Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
+* address feedback
 
-* Address review comments.
-
-Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
+Signed-off-by: docktofuture <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
+Signed-off-by: docktofuture <[REDACTED_EMAIL]>
 
-**File**: `docs/usage/networking/dual-stack-networking-migration.md` (modified, +15/-0)
+**File**: `docs/api-reference/core.md` (modified, +1/-1)
 ```diff
-@@ -22,6 +22,21 @@ Dual-stack networking allows clusters to operate with both IPv4 and IPv6 protoco
- - A dual-stack cluster cannot be migrated to single-stack. Migration from single-stack to dual-stack is a one-way process and cannot be undone.
- - Migration involves multiple reconciliation runs to ensure a smooth transition without disruptions.
- 
-+### IPv6 node CIDR mask size
-+
-+The relevance of `spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6` depends on the infrastructure:
-+
-+- **Infrastructure-managed prefix delegation** (e.g. AWS, GCP): The infrastructure delegates a per-node IPv6 prefix directly to each node. Kubernetes' node-ipam in `kube-controller-manager` is bypassed; `nodeCIDRMaskSizeIPv6` is ignored and does not need to be set.
-+- **Kubernetes-managed CIDR allocation**: `kube-controller-manager` carves per-node subnets out of the IPv6 pod network. `nodeCIDRMaskSizeIPv6` controls the size of these per-node subnets and matters for cluster capacity.
-+
-+For the second case, this value is **not** defaulted to a fixed number, because the usable range depends on the infrastructure-allocated IPv6 pod CIDR. For example, if the infrastructure hands out a `/64` pod network, a mask of `/64` would only allow a single node.
-+
-+If you are on a Kubernetes-managed CIDR allocation infrastructure and leave `nodeCIDRMaskSizeIPv6` unset (the recommended default), Gardener derives the effective per-node mask from the actual IPv6 pod CIDR as `podCIDRMaskSize + 16` (capped at `/124`). For a `/64` pod CIDR this yields `/80`, i.e. up to 65,536 nodes with an ample address space per node. `+16` is the largest difference Kubernetes' node-ipam allows for IPv6.
-+
-+The derived value is not written to the spec. You can determine it from the IPv6 pod CIDR reported in `.status.networking.pods` by applying the formula above.
-+
-+> :warning: `nodeCIDRMaskSizeIPv6` can only be set in the update that adds IPv6 to `spec.networking.ipFamilies` (i.e. the migration step below) or at shoot creation. Once the cluster is already dual-stack, the field is immutable, because IPv6 pod CIDRs are already allocated to nodes and changing the mask would break those allocations.
-+
- ## Preconditions
- 
- Gardener supports multiple different network configurations, including running with pod overlay network or native routing. Currently, there is only native routing as supported operating mode for dual-stack networking in Gardener. This means that the pod overlay network needs to be disabled before starting the dual-stack migration. Otherwise, pod-to-pod cross-node communication may not work as expected after the migration.
+@@ -9048,7 +9048,7 @@ boolean
+ </td>
+ <td>
+ <em>(Optional)</em>
+-<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to enforce TCP.</p>
++<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to prefer UDP.</p>
+ </td>
+ </tr>
+ <tr>
 ```
 
-**File**: `docs/usage/networking/shoot_networking.md` (modified, +25/-0)
+**File**: `pkg/apis/core/types_shoot.go` (modified, +1/-1)
 ```diff
-@@ -75,6 +75,31 @@ spec:
- 
- > :warning: The `nodeCIDRMaskSize` configuration is immutable and cannot be changed afterwards.
- 
-+For IPv6 (both dual-stack and IPv6 single-stack clusters), the equivalent setting is `nodeCIDRMaskSizeIPv6`.
-+Whether this field has any effect depends on the infrastructure: On infrastructures that perform per-node IPv6 prefix delegation, the infrastructure assigns node prefixes directly and kube-controller-manager's node-ipam is
-+bypassed, so `nodeCIDRMaskSizeIPv6` is ignored. On infrastructures where kube-controller-manager manages CIDR allocation,
-+the field controls the per-node subnet size and matters for cluster capacity.
-+
-+For the latter case, Gardener does **not** default `nodeCIDRMaskSizeIPv6` to a fixed value, because the usable range depends on
-+the infrastructure-allocated IPv6 pod CIDR. If the field is left unset, Gardener derives the effective per-node mask from the
-+actual IPv6 pod CIDR as `podCIDRMaskSize + 16` (capped at `/124`). For a `/64` pod CIDR this results in `/80`, i.e. up to
-+65,536 nodes. The `+16` is the maximum difference Kubernetes' node-ipam allows for IPv6, so this choice maximizes the possible
-+node count while still leaving an enormous address space per node.
-+
-+```yaml
-+apiVersion: core.gardener.cloud/v1beta1
-+kind: Shoot
-+spec:
-+  kubernetes:
-+    kubeControllerManager:
-+      nodeCIDRMaskSizeIPv6: 80 # optional; derived from the IPv6 pod CIDR when unset
-+```
-+
-+The derived value is not written back to the spec. You can see the input it is derived from in `.status.networking.pods`.
-+Like `nodeCIDRMaskSize`, `nodeCIDRMaskSizeIPv6` is immutable: it can only be set at shoot creation or in the update that migrates
-+a cluster to dual-stack (see [Dual-Stack Network Migration](./dual-stack-networking-migration.md)). Once the cluster is already
-+dual-stack, the field can no longer be changed.
-+
- _**Example 3**_
- ```
- Pod network: 100.96.0.0/20
+@@ -1663,7 +1663,7 @@ type NodeLocalDNS struct {
+ 	// Default, if unspecified, is to enforce TCP.
+ 	ForceTCPToClusterDNS *bool
+ 	// ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.
+-	// Default, if unspecified, is to enforce TCP.
++	// Default, if unspecified, is to prefer UDP.
+ 	ForceTCPToUpstreamDNS *bool
+ 	// DisableForwardToUpstreamDNS indicates whether requests from node local DNS to upstream DNS should be disabled.
+ 	// Default, if unspecified, is to forward requests for external domains to upstream DNS
 ```
 
-**File**: `pkg/api/core/validation/shoot.go` (modified, +7/-4)
+**File**: `pkg/apis/core/v1beta1/generated.proto` (modified, +1/-1)
 ```diff
-@@ -452,7 +452,8 @@ func ValidateShootSpecUpdate(newSpec, oldSpec *core.ShootSpec, newObjectMeta met
- 	allErrs = append(allErrs, validateDNSUpdate(newSpec.DNS, oldSpec.DNS, newSpec.SeedName != nil, fldPath.Child("dns"))...)
- 	allErrs = append(allErrs, ValidateKubernetesVersionUpdate(newSpec.Kubernetes.Version, oldSpec.Kubernetes.Version, false, fldPath.Child("kubernetes", "version"))...)
+@@ -2523,7 +2523,7 @@ message NodeLocalDNS {
+   optional bool forceTCPToClusterDNS = 2;
  
--	allErrs = append(allErrs, validateKubeControllerManagerUpdate(newSpec.Kubernetes.KubeControllerManager, oldSpec.Kubernetes.KubeControllerManager, fldPath.Child("kubernetes", "kubeControllerManager"))...)
-+	oldHasIPv6 := oldSpec.Networking != nil && (core.IsDualStack(oldSpec.Networking.IPFamilies) || core.IsIPv6SingleStack(oldSpec.Networking.IPFamilies))
-+	allErrs = append(allErrs, validateKubeControllerManagerUpdate(newSpec.Kubernetes.KubeControllerManager, oldSpec.Kubernetes.KubeControllerManager, oldHasIPv6, fldPath.Child("kubernetes", "kubeControllerManager"))...)
+   // ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.
+-  // Default, if unspecified, is to enforce TCP.
++  // Default, if unspecified, is to prefer UDP.
+   // +optional
+   optional bool forceTCPToUpstreamDNS = 3;
  
- 	if err := validateWorkerUpdate(len(newSpec.Provider.Workers) > 0, len(oldSpec.Provider.Workers) > 0, fldPath.Child("provider", "workers")); err != nil {
- 		allErrs = append(allErrs, err)
-@@ -820,7 +821,7 @@ func ValidateEncryptionConfigUpdate(newConfig, oldConfig *core.EncryptionConfig,
- 	return allErrs
- }
+```
+
+**File**: `pkg/apis/core/v1beta1/types_shoot.go` (modified, +1/-1)
+```diff
+@@ -2153,7 +2153,7 @@ type NodeLocalDNS struct {
+ 	// +optional
+ 	ForceTCPToClusterDNS *bool `json:"forceTCPToClusterDNS,omitempty" protobuf:"varint,2,opt,name=forceTCPToClusterDNS"`
+ 	// ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.
+-	// Default, if unspecified, is to enforce TCP.
++	// Default, if unspecified, is to prefer UDP.
+ 	// +optional
+ 	ForceTCPToUpstreamDNS *bool `json:"forceTCPToUpstreamDNS,omitempty" protobuf:"varint,3,opt,name=forceTCPToUpstreamDNS"`
+ 	// DisableForwardToUpstreamDNS indicates whether requests from node local DNS to upstream DNS should be disabled.
+```
+
+**File**: `pkg/apiserver/openapi/openapi_generated.go` (modified, +1/-1)
+```diff
+@@ -7352,7 +7352,7 @@ func schema_pkg_apis_core_v1beta1_NodeLocalDNS(ref common.ReferenceCallback) com
+ 					},
+ 					"forceTCPToUpstreamDNS": {
+ 						SchemaProps: spec.SchemaProps{
+-							Description: "ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not. Default, if unspecified, is to enforce TCP.",
++							Description: "ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not. Default, if unspecified, is to prefer UDP.",
+ 							Type:        []string{"boolean"},
+ 							Format:      "",
+ 						},
+```
+
+---
+
+### Incident Patch 2: `4617b2ee` (2026-10-22)
+**Commit Message**: Fix flaky integration tests failing with 503 on first Gardener API request (#16063)
+
+* Wait until all Gardener API GroupVersions are served in envtest
+
+Signed-off-by: Gledis Lami <[REDACTED_EMAIL]>
+
+* Retry if no listable resource is found yet
+
+Signed-off-by: Gledis Lami <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Gledis Lami <[REDACTED_EMAIL]>
+
+**File**: `test/envtest/apiserver.go` (modified, +35/-16)
+```diff
+@@ -18,7 +18,9 @@ import (
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
++	"slices"
+ 	"strconv"
++	"strings"
+ 	"time"
  
--func validateKubeControllerManagerUpdate(newConfig, oldConfig *core.KubeControllerManagerConfig, fldPath *field.Path) field.ErrorList {
-+func validateKubeControllerManagerUpdate(newConfig, oldConfig *core.KubeControllerManagerConfig, oldHasIPv6 bool, fldPath *field.Path) field.ErrorList {
- 	allErrs := field.ErrorList{}
+ 	"github.com/onsi/gomega/gexec"
+@@ -36,9 +38,6 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/envtest"
  
- 	var (
-@@ -840,8 +841,10 @@ func validateKubeControllerManagerUpdate(newConfig, oldConfig *core.KubeControll
+ 	apiserverapp "github.com/gardener/gardener/cmd/gardener-apiserver/app"
+-	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
+-	operationsv1alpha1 "github.com/gardener/gardener/pkg/apis/operations/v1alpha1"
+-	seedmanagementv1alpha1 "github.com/gardener/gardener/pkg/apis/seedmanagement/v1alpha1"
+ 	"github.com/gardener/gardener/pkg/apiserver"
+ 	"github.com/gardener/gardener/pkg/apiserver/features"
+ 	"github.com/gardener/gardener/pkg/client/kubernetes"
+@@ -387,29 +386,49 @@ func (g *GardenerAPIServer) registerGardenerAPIs(ctx context.Context) error {
+ 		return err
  	}
  
- 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(nodeCIDRMaskNew, nodeCIDRMaskOld, fldPath.Child("nodeCIDRMaskSize"))...)
--	// allow nodeCIDRMaskSizeIPv6 to be added if it was not set before for migration to dual-stack.
--	if nodeCIDRMaskIPv6Old != nil {
-+	// nodeCIDRMaskSizeIPv6 may be set in the update that migrates an IPv4-only shoot to dual-stack
-+	// (oldHasIPv6 == false, nodeCIDRMaskIPv6Old == nil). Once the shoot has IPv6 (dual-stack or IPv6-only),
-+	// it is immutable because IPv6 pod CIDRs are already allocated to nodes.
-+	if oldHasIPv6 || nodeCIDRMaskIPv6Old != nil {
- 		allErrs = append(allErrs, apivalidation.ValidateImmutableField(nodeCIDRMaskIPv6New, nodeCIDRMaskIPv6Old, fldPath.Child("nodeCIDRMaskSizeIPv6"))...)
- 	}
- 
-```
-
-**File**: `pkg/api/core/validation/shoot_test.go` (modified, +63/-0)
-```diff
-@@ -4022,6 +4022,69 @@ var _ = Describe("Shoot Validation Tests", func() {
- 					}))
- 				})
- 
-+				It("should allow setting NodeCIDRMaskSizeIPv6 while migrating from IPv4 to dual-stack", func() {
-+					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv4}
-+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = nil
+-	// ensure that we can really list objects in the Gardener API
+-	// after https://github.com/kubernetes/kubernetes/pull/119824 (first available in v0.28.3), we have seen that GAPI
+-	// sometimes fails to communicate with etcd even if we have passed all prior checks here, see
+-	// https://github.com/gardener/gardener/pull/8666
+-	// TODO: Revisit this once sigs.k8s.io/controller-runtime has upgraded their envtest version to v1.28.3+ (currently,
+-	//  only v1.28.0 is used, hence the kube-apiserver does not yet suffer from the same issue).
++	// Ensure that every Gardener API GroupVersion is really served via the kube-apiserver and that we can list objects
++	// in it.
++	// An APIService being available does not mean that the kube-aggregator already proxies requests for it. It updates
++	// its proxy handler for the APIService asynchronously. Until then, requests for this GroupVersion fail with
++	// 503 ServiceUnavailable or 404 NotFound. Hence, we need to check every GroupVersion. Otherwise, tests might fail with
++	// "the server is currently unable to handle the request" when creating their first object.
++	// Listing objects also ensures that gardener-apiserver can communicate with etcd. After
++	// https://github.com/kubernetes/kubernetes/pull/119824, we have seen that it sometimes fails to do so even if we have
++	// passed all prior checks here. This check was added with the dependency update in
++	// https://github.com/gardener/gardener/pull/8666.
+ 	return retry.Until(ctx, waitPollInterval, func(ctx context.Context) (bool, error) {
+-		for _, gvk := range []schema.GroupVersionKind{
+-			gardencorev1beta1.SchemeGroupVersion.WithKind("ShootList"),
+-			operationsv1alpha1.SchemeGroupVersion.WithKind("BastionList"),
+-			seedmanagementv1alpha1.SchemeGroupVersion.WithKind("ManagedSeedList"),
+-		} {
++		for _, gv := range apiserver.AllGardenerAPIGroupVersions {
++			resourceList, err := discoveryClient.ServerResourcesForGroupVersion(gv.String())
++			if err != nil {
++				return retry.MinorError(fmt.Errorf("failed discovering resources of %s: %w", gv, err))
++			}
 +
-+					newShoot := prepareShootForUpdate(shoot)
-+					newShoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv4, core.IPFamilyIPv6}
-+					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
++			kind := listableKind(resourceList)
++			if kind == "" {
++				return retry.MinorError(fmt.Errorf("no listable resource found in %s", gv))
++			}
 +
-+					errorList := ValidateShootUpdate(newShoot, shoot)
-+
-+					Expect(errorList).To(BeEmpty())
-+				})
-+
-+				It("should fail setting NodeCIDRMaskSizeIPv6 once the cluster is already dual-stack", func() {
-+					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv4, core.IPFamilyIPv6}
-+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = nil
-+
-+					newShoot := prepareShootForUpdate(shoot)
-+					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
-+
-+					errorList := ValidateShootUpdate(newShoot, shoot)
-+
-+					Expect(errorList).To(ConsistOfFields(Fields{
-+						"Type":   Equal(field.ErrorTypeInvalid),
-+						"Field":  Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6"),
-+						"Detail": ContainSubstring(`field is immutable`),
-+					}))
-+				})
-+
-+				It("should fail changing NodeCIDRMaskSizeIPv6 on a single-stack IPv6 cluster where it was already set", func() {
-+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = nil
-+					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv6}
-+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
-+
-+					newShoot := prepareShootForUpdate(shoot)
-+					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(72))
-+
-+					errorList := ValidateShootUpdate(newShoot, shoot)
-+
-+					Expect(errorList).To(ConsistOfFields(Fields{
-+						"Type":   Equal(field.ErrorTypeInvalid),
-+						"Field":  Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6"),
-+						"Detail": ContainSubstring(`field is immutable`),
-+					}))
-+				})
-+
-+				It("should fail setting NodeCIDRMaskSizeIPv6 on an existing single-stack IPv6 cluster where it was not set before", func() {
-+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = nil
-+					shoot.Spec.Networking.IPFamilies = []core.IPFamily{core.IPFamilyIPv6}
-+					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = nil
-+
-+					newShoot := prepareShootForUpdate(shoot)
-+					newShoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(80))
-+
-+					errorList := ValidateShootUpdate(newShoot, shoot)
-+
-+					Expect(errorList).To(ConsistOfFields(Fields{
-+						"Type":   Equal(field.ErrorTypeInvalid),
-+						"Field":  Equal("spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6"),
-+						"Detail": ContainSubstring(`field is immutable`),
-+					}))
-+				})
-+
- 				It("should fail when nodeCIDRMaskSize is out of upper boundary", func() {
- 					shoot.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = new(int32(32))
- 
-```
-
-**File**: `pkg/apis/core/v1beta1/defaults_shoot.go` (modified, +7/-16)
-```diff
-@@ -100,27 +100,18 @@ func SetDefaults_Shoot(obj *Shoot) {
- 			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = calculateDefaultNodeCIDRMaskSize(&obj.Spec)
- 		}
- 
--		if IsIPv6SingleStack(obj.Spec.Networking.IPFamilies) &&
--			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize == nil &&
--			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 == nil {
--			// For IPv6 don't be stingy and allocate larger pod CIDRs per node.
--			// The default is mostly only relevant for the local setup.
--			// For most providers, the values is dependent on the infrastructure.
--			// Either this value is ignored or should be set explicitly by the user.
--			obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = new(int32(64))
--		}
-+		// For IPv6 single-stack, NodeCIDRMaskSize and NodeCIDRMaskSizeIPv6 are intentionally not defaulted
-+		// here: the usable value depends on the infrastructure-allocated pod CIDR. Gardenlet derives a
-+		// suitable value from the actual pod CIDR at deploy time.
- 
- 		if IsDualStack(obj.Spec.Networking.IPFamilies) {
- 			if obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize == nil {
- 				obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize = calculateDefaultNodeCIDRMaskSize(&obj.Spec)
+ 			objList := &metav1.PartialObjectMetadataList{}
+-			objList.SetGroupVersionKind(gvk)
++			objList.SetGroupVersionKind(gv.WithKind(kind + "List"))
+ 			if err := c.List(ctx, objList, client.Limit(1)); err != nil {
+ 				return retry.MinorError(err)
  			}
--			if obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 == nil {
--				// For IPv6 don't be stingy and allocate larger pod CIDRs per node.
--				// The default is mostly only relevant for the local setup.
--				// For most providers, the values is dependent on the infrastructure.
--				// Either this value is ignored or should be set explicitly by the user.
--				obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6 = new(int32(64))
--			}
-+			// NodeCIDRMaskSizeIPv6 is intentionally not defaulted here: for most providers the usable value
-+			// depends on the infrastructure-allocated pod CIDR (e.g. OpenStack hands out a /64, for which a
-+			// mask of 64 would only allow a single node). When the user does not set it, gardenlet derives a
-+			// suitable value from the actual pod CIDR at deploy time.
+-			log.V(1).Info("Listing resources is possible", "gvk", gvk)
++			log.V(1).Info("Listing resources is possible", "gvk", objList.GroupVersionKind())
  		}
- 
- 		if obj.Spec.Kubernetes.KubeControllerManager.NodeMonitorGracePeriod == nil {
-```
-
-**File**: `pkg/apis/core/v1beta1/defaults_shoot_test.go` (modified, +13/-4)
-```diff
-@@ -94,11 +94,11 @@ var _ = Describe("Shoot defaulting", func() {
- 						obj.Spec.Networking.IPFamilies = []IPFamily{IPFamilyIPv6}
- 					})
- 
--					It("should default nodeCIDRMaskSize to 64", func() {
-+					It("should not default NodeCIDRMaskSize or NodeCIDRMaskSizeIPv6 for IPv6 single-stack", func() {
- 						SetObjectDefaults_Shoot(obj)
- 
- 						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(BeNil())
--						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(PointTo(Equal(int32(64))))
-+						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(BeNil())
- 					})
- 
- 					It("should not default NodeCIDRMaskSize if NodeCIDRMaskSizeIPv6 is set by user for IPv6 single stack", func() {
-@@ -118,10 +118,19 @@ var _ = Describe("Shoot defaulting", func() {
- 						obj.Spec.Networking.IPFamilies = []IPFamily{IPFamilyIPv4, IPFamilyIPv6}
- 					})
- 
--					It("should default both NodeCIDRMaskSize and NodeCIDRMaskSizeIPv6", func() {
-+					It("should default NodeCIDRMaskSize but not NodeCIDRMaskSizeIPv6", func() {
-+						SetObjectDefaults_Shoot(obj)
-+						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(PointTo(Equal(int32(24))))
-+						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(BeNil())
-+					})
-+
-+					It("should not overwrite a user-provided NodeCIDRMaskSizeIPv6", func() {
-+						obj.Spec.Kubernetes.KubeControllerManager = &KubeControllerManagerConfig{
-+							NodeCIDRMaskSizeIPv6: new(int32(80)),
-+						}
- 						SetObjectDefaults_Shoot(obj)
- 						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSize).To(PointTo(Equal(int32(24))))
--						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(PointTo(Equal(int32(64))))
-+						Expect(obj.Spec.Kubernetes.KubeControllerManager.NodeCIDRMaskSizeIPv6).To(PointTo(Equal(int32(80))))
- 					})
- 				})
- 			})
-```
-
-**File**: `pkg/component/kubernetes/controllermanager/controllermanager.go` (modified, +23/-4)
-```diff
-@@ -655,6 +655,25 @@ func (k *kubeControllerManager) isDualStack() bool {
- 	return false
+ 		return retry.Ok()
+ 	})
  }
  
-+// nodeCIDRMaskSizeIPv6 returns the IPv6 node CIDR mask size to pass to the kube-controller-manager.
-+// A user-provided value takes precedence. Otherwise it is derived from the actual IPv6 pod CIDR (which
-+// is infrastructure-dependent, e.g. a /64 on OpenStack), because defaulting it in the shoot spec cannot
-+// know the real pod CIDR. Returns nil if no IPv6 pod network is present.
-+func (k *kubeControllerManager) nodeCIDRMaskSizeIPv6() *int32 {
-+	if k.values.Config != nil && k.values.Config.NodeCIDRMaskSizeIPv6 != nil {
-+		return k.values.Config.NodeCIDRMaskSizeIPv6
-+	}
-+
-+	for _, podNetwork := range k.values.PodNetworks {
-+		if podNetwork.IP.To4() != nil {
-+			continue
++// listableKind returns the kind of the first top-level resource in the given list that supports the list verb.
++func listableKind(resourceList *metav1.APIResourceList) string {
++	for _, resource := range resourceList.APIResources {
++		if !strings.Contains(resource.Name, "/") && slices.Contains(resource.Verbs, "list") {
++			return resource.Kind
 +		}
-+		podCIDRMaskSize, _ := podNetwork.Mask.Size()
-+		return new(netutils.DefaultNodeCIDRMaskSizeIPv6(podCIDRMaskSize))
 +	}
-+	return nil
++	return ""
 +}
 +
- func (k *kubeControllerManager) computeCommand(port int32) []string {
- 	var (
- 		defaultHorizontalPodAutoscalerConfig = k.getHorizontalPodAutoscalerConfig()
-@@ -682,12 +701,12 @@ func (k *kubeControllerManager) computeCommand(port int32) []string {
- 			if k.values.Config.NodeCIDRMaskSize != nil {
- 				command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv4=%d", *k.values.Config.NodeCIDRMaskSize))
- 			}
--			if k.values.Config.NodeCIDRMaskSizeIPv6 != nil {
--				command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv6=%d", *k.values.Config.NodeCIDRMaskSizeIPv6))
-+			if nodeCIDRMaskSizeIPv6 := k.nodeCIDRMaskSizeIPv6(); nodeCIDRMaskSizeIPv6 != nil {
-+				command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv6=%d", *nodeCIDRMaskSizeIPv6))
- 			}
- 		} else {
--			// Single-stack: use generic flag (works for both IPv4 and IPv6)
--			var maskSize *int32
-+			// Single-stack: use the generic flag (valid for both IPv4 and IPv6).
-+			maskSize := k.nodeCIDRMaskSizeIPv6()
- 			if k.values.Config.NodeCIDRMaskSize != nil {
- 				maskSize = k.values.Config.NodeCIDRMaskSize
- 			}
+ func (g *GardenerAPIServer) apiServiceForSchemeGroupVersion(svc *corev1.Service, gv schema.GroupVersion) *apiregistrationv1.APIService {
+ 	port := int32(g.SecurePort) // #nosec G115 -- Test code.
+ 	return &apiregistrationv1.APIService{
 ```
 
-**File**: `pkg/component/kubernetes/controllermanager/controllermanager_test.go` (modified, +55/-1)
+---
+
+### Incident Patch 3: `65419062` (2026-10-21)
+**Commit Message**: Preserve gardener user UID/GID across /etc-wipe in-place OS upgrade (#16038)
+
+Signed-off-by: acumino <[REDACTED_EMAIL]>
+
+**File**: `pkg/component/extensions/operatingsystemconfig/original/components/gardeneruser/component_test.go` (modified, +14/-1)
 ```diff
-@@ -982,6 +982,50 @@ namespace: kube-system
- 		})
- 	})
+@@ -95,9 +95,22 @@ DIR_SSH="/home/gardener/.ssh"
+ PATH_AUTHORIZED_KEYS="$DIR_SSH/authorized_keys"
+ PATH_SUDOERS="/etc/sudoers.d/99-gardener-user"
+ USERNAME="gardener"
++HOME_DIR="/home/$USERNAME"
  
-+	Describe("single-stack IPv6 node CIDR mask derivation", func() {
-+		It("should derive --node-cidr-mask-size from the IPv6 pod CIDR when NodeCIDRMaskSizeIPv6 is unset", func() {
-+			_, ipv6Only, _ := net.ParseCIDR("2001:db8::/64")
-+			values = Values{
-+				RuntimeVersion:    runtimeKubernetesVersion,
-+				TargetVersion:     semverVersion,
-+				Image:             image,
-+				Config:            &gardencorev1beta1.KubeControllerManagerConfig{},
-+				PriorityClassName: priorityClassName,
-+				IsWorkerless:      false,
-+				PodNetworks:       []net.IPNet{*ipv6Only},
-+				ServiceNetworks:   serviceCIDRs,
-+			}
-+			kubeControllerManager = New(testLogger, fakeInterface, namespace, sm, values)
-+
-+			Expect(kubeControllerManager.Deploy(ctx)).To(Succeed())
-+
-+			actualDeployment := &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "kube-controller-manager", Namespace: namespace}}
-+			Expect(c.Get(ctx, client.ObjectKeyFromObject(actualDeployment), actualDeployment)).To(Succeed())
-+			Expect(actualDeployment.Spec.Template.Spec.Containers[0].Command).To(ContainElement("--node-cidr-mask-size=80"))
-+		})
-+
-+		It("should use NodeCIDRMaskSizeIPv6 when explicitly set for single-stack IPv6", func() {
-+			_, ipv6Only, _ := net.ParseCIDR("2001:db8::/64")
-+			values = Values{
-+				RuntimeVersion:    runtimeKubernetesVersion,
-+				TargetVersion:     semverVersion,
-+				Image:             image,
-+				Config:            &gardencorev1beta1.KubeControllerManagerConfig{NodeCIDRMaskSizeIPv6: new(int32(96))},
-+				PriorityClassName: priorityClassName,
-+				IsWorkerless:      false,
-+				PodNetworks:       []net.IPNet{*ipv6Only},
-+				ServiceNetworks:   serviceCIDRs,
-+			}
-+			kubeControllerManager = New(testLogger, fakeInterface, namespace, sm, values)
-+
-+			Expect(kubeControllerManager.Deploy(ctx)).To(Succeed())
-+
-+			actualDeployment := &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "kube-controller-manager", Namespace: namespace}}
-+			Expect(c.Get(ctx, client.ObjectKeyFromObject(actualDeployment), actualDeployment)).To(Succeed())
-+			Expect(actualDeployment.Spec.Template.Spec.Containers[0].Command).To(ContainElement("--node-cidr-mask-size=96"))
-+		})
-+	})
-+
- 	Describe("#WaitCleanup", func() {
- 		It("should return nil as it's not implemented as of now", func() {
- 			Expect(kubeControllerManager.WaitCleanup(ctx)).To(Succeed())
-@@ -1030,7 +1074,17 @@ func commandForKubernetesVersion(
- 		if nodeCIDRMaskSize != nil {
- 			command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv4=%d", *nodeCIDRMaskSize))
- 		}
--		// Only add IPv6 flag if explicitly set (dual-stack or IPv6 single-stack)
-+		// Use the user-provided IPv6 mask or, when unset, derive it from the IPv6 pod CIDR.
-+		if nodeCIDRMaskSizeIPv6 == nil {
-+			for _, podNet := range podNetwork {
-+				if podNet.IP.To4() != nil {
-+					continue
-+				}
-+				podCIDRMaskSize, _ := podNet.Mask.Size()
-+				nodeCIDRMaskSizeIPv6 = new(netutils.DefaultNodeCIDRMaskSizeIPv6(podCIDRMaskSize))
-+				break
-+			}
-+		}
- 		if nodeCIDRMaskSizeIPv6 != nil {
- 			command = append(command, fmt.Sprintf("--node-cidr-mask-size-ipv6=%d", *nodeCIDRMaskSizeIPv6))
- 		}
+ # create user if missing
+-id $USERNAME || useradd $USERNAME -mU
++if ! id "$USERNAME" >/dev/null 2>&1; then
++  if [ -d "$HOME_DIR" ]; then
++    # The home directory survived an /etc wipe (e.g. GardenLinux wipe-based in-place OS upgrade) while the
++    # passwd/group entries did not. Recreate the user/group with the UID/GID that still own the home directory
++    # so its files (and anything else owned by the gardener user) keep their owner instead of being orphaned.
++    GARDENER_UID="$(stat -c %u "$HOME_DIR")"
++    GARDENER_GID="$(stat -c %g "$HOME_DIR")"
++    getent group "$GARDENER_GID" >/dev/null 2>&1 || groupadd -g "$GARDENER_GID" "$USERNAME"
++    useradd "$USERNAME" -m -u "$GARDENER_UID" -g "$GARDENER_GID"
++  else
++    useradd "$USERNAME" -mU
++  fi
++fi
+ 
+ # copy authorized_keys file
+ mkdir -p $DIR_SSH
+```
+
+**File**: `pkg/component/extensions/operatingsystemconfig/original/components/gardeneruser/templates/scripts/reconcile.tpl.sh` (modified, +14/-1)
+```diff
+@@ -4,9 +4,22 @@ DIR_SSH="/home/gardener/.ssh"
+ PATH_AUTHORIZED_KEYS="$DIR_SSH/authorized_keys"
+ PATH_SUDOERS="/etc/sudoers.d/99-gardener-user"
+ USERNAME="gardener"
++HOME_DIR="/home/$USERNAME"
+ 
+ # create user if missing
+-id $USERNAME || useradd $USERNAME -mU
++if ! id "$USERNAME" >/dev/null 2>&1; then
++  if [ -d "$HOME_DIR" ]; then
++    # The home directory survived an /etc wipe (e.g. GardenLinux wipe-based in-place OS upgrade) while the
++    # passwd/group entries did not. Recreate the user/group with the UID/GID that still own the home directory
++    # so its files (and anything else owned by the gardener user) keep their owner instead of being orphaned.
++    GARDENER_UID="$(stat -c %u "$HOME_DIR")"
++    GARDENER_GID="$(stat -c %g "$HOME_DIR")"
++    getent group "$GARDENER_GID" >/dev/null 2>&1 || groupadd -g "$GARDENER_GID" "$USERNAME"
++    useradd "$USERNAME" -m -u "$GARDENER_UID" -g "$GARDENER_GID"
++  else
++    useradd "$USERNAME" -mU
++  fi
++fi
+ 
+ # copy authorized_keys file
+ mkdir -p $DIR_SSH
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16052** (2026-10-20): [release-v1.152] Move project canonicalization to `PrepareFor(Create|Update)` methods (@gardener-ci-robot)
-- **PR #16050** (2026-10-20): [release-v1.151] Move project canonicalization to `PrepareFor(Create|Update)` methods (@gardener-ci-robot)
-- **PR #16049** (closed): Update go to v1.27.3 (@renovate[bot])
-- **PR #16048** (closed): Prevent MCM from Breaking ETCD Quorum (@DobromirNPeev)
-- **PR #16045** (closed): Update go (minor) (@renovate[bot])
-- **PR #16042** (2026-10-20): Update go (patch) (@renovate[bot])
+- **PR #16084** (2026-10-22): Update nginx Docker tag to v1.31.8 (@renovate[bot])
+- **PR #16078** (2026-10-22): Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (@DockToFuture)
+- **PR #16077** (2026-10-22): [release-v1.151] Update dependency gardener/dashboard to v1.85.2 (@marc1404)
+- **PR #16076** (2026-10-22): [release-v1.152] Update dependency gardener/dashboard to v1.85.2 (@petersutter)
+- **PR #16075** (2026-10-22): [release-v1.153] Automated cherry pick of #16072: Update dependency gardener/dashboard to v1.86.2 (@ialidzhikov)
+- **PR #16074** (2026-10-22): [release-v1.154] Update dependency gardener/dashboard to v1.86.2 (@gardener-ci-robot)
 
 ---
 
@@ -1170,37 +1028,28 @@ Signed-off-by: Axel Siebenborn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIP
+## X. stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078)
 
 **RULE**:
-When implementing operations in `docs/usage/networking/dual-stack-networking-migration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/api-reference/core.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b88e17f3`: dual-stack node capacity on /64 IPv6 pod networks by deriving NodeCIDRMaskSizeIPv6 from actual pod CIDR (#15943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4df3a9a5`: stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/usage/networking/dual-stack-networking-migration.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/api-reference/core.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-### IPv6 node CIDR mask size
-
-The relevance of `spec.kubernetes.kubeControllerManager.nodeCIDRMaskSizeIPv6` depends on the infrastructure:
-
-- **Infrastructure-managed prefix delegation** (e.g. AWS, GCP): The infrastructure delegates a per-node IPv6 prefix directly to each node. Kubernetes' node-ipam in `kube-controller-manager` is bypassed; `nodeCIDRMaskSizeIPv6` is ignored and does not need to be set.
-- **Kubernetes-managed CIDR allocation**: `kube-controller-manager` carves per-node subnets out of the IPv6 pod network. `nodeCIDRMaskSizeIPv6` controls the size of these per-node subnets and matters for cluster capacity.
-
-For the second case, this value is **not** defaulted to a fixed number, because the usable range depends on the infrastructure-allocated IPv6 pod CIDR. For example, if the infrastructure hands out a `/64` pod network, a mask of `/64` would only allow a single node.
-
-If you are on a Kubernetes-managed CIDR allocation infrastructure and leave `nodeCIDRMaskSizeIPv6` unset (the recommended default), Gardener derives the effective per-node mask from the actual IPv6 pod CIDR as `podCIDRMaskSize + 16` (capped at `/124`). For a `/64` pod CIDR this yields `/80`, i.e. up to 
+<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to prefer UDP.</p>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to enforce TCP.</p>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b88e17f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4df3a9a5` are properly handled with clean fallback behavior.

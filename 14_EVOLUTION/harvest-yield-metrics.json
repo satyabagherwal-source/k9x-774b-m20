@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T16:38:47.367Z",
-  "total_cycles_completed": 4308,
-  "total_learnings_persisted": 4308,
-  "total_rules_promoted": 3489,
+  "last_updated": "2026-10-22T16:45:16.669Z",
+  "total_cycles_completed": 4310,
+  "total_learnings_persisted": 4310,
+  "total_rules_promoted": 3491,
   "history": [
-    {
-      "timestamp": "2026-10-21T01:23:39.506Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T01:23:53.426Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T01:30:05.918Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-22T16:38:47.367Z",
       "repository": "kube-rs/kube",
       "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:45:08.585Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:45:16.669Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
