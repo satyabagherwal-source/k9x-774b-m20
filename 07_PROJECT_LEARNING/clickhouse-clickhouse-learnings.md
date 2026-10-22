@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `acf33af3`  
+> **Source Version**: `2211c107`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:04:34.910Z  
+> **Timestamp**: 2026-10-22T17:58:25.146Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:04:34.904Z  
+> **Harvest Timestamp**: 2026-10-22T17:58:24.957Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50509 stars
+- **Stars / Engagement**: 50541 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #126739** (2026-10-19): **Bad cast from type DB::ColumnBLOB to DB::ColumnAggregateFunction. (LOGICAL_ERROR) due to dictionary creating**
-  *Symptoms*: ### Company or project name  XWAY   ### Describe what's wrong  Query: ```SQL SELECT entity_id,        argMaxIf(bucket, date, warehouse_type = 'FBS') as col1,        argMaxIf(bucket, date, warehouse_type = 'FBO') as col2 FROM distributed_table WHERE date >= yesterday() GROUP BY entity_id; ``` works fine but if you use it as query in dictionary you gonna get an error `DB::Exception: Bad cast from type DB::ColumnBLOB to DB::ColumnAggregateFunction. (LOGICAL_ERROR) (version 26.3.12.3 (official))` TABLE IS DISTRIBUTED tmp fix is to add SETTINGS enable_parallel_blocks_marshalling=0 @nickitat   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  use query from subj all fields are UInt32 try to create dictionary out of it  ### Expected behavior  dictionary creates without additional settings  ### Error message and/or stacktrace  _No response_  ### Related issues and pull requests  _No response_  ### Additional context  _No response_
+- **Issue #127270** (2026-10-22): **Wrong result: `DateTime64 < DateTime` skips parts and granules whose rows lie in the boundary second**
+  *Symptoms*: ### Describe what's wrong  When a `DateTime64` column in the partition key or sorting key is compared with a strict `<` against a `DateTime` value, the min-max and primary-key analysis rounds the bound to whole seconds and turns `ts < X` into `ts in (-Inf, X-1]`. A part or granule whose rows all lie in the second `[X-1, X)` (for example `23:59:59.250`) is then skipped, though every row in it satisfies the predicate. The query returns fewer rows without any error. The same filter with a `DateTime64` bound, or with index analysis disabled, returns the right rows. `>` against a `DateTime` bound behaves the same way at the low end.  ### Does it reproduce on the most recent release?  Yes: 26.8.1.1184 (clickhouse-local, official build) and 26.3.17.4 (server).  ### How to reproduce  ```sql CREATE TABLE t (ts DateTime64(3, 'UTC'), k UInt8) ENGINE = MergeTree PARTITION BY toYYYYMMDD(ts) ORDER BY (k, ts);  SYSTEM STOP MERGES t; INSERT INTO t VALUES ('2026-10-10 12:00:00.000', 1); INSERT INTO t VALUES ('2026-10-10 23:59:59.250', 1), ('2026-10-10 23:59:59.750', 1);  -- Every row is before 2026-10-11 00:00:00, so each query should return 3. SELECT count() FROM t WHERE ts < toDateTime('2026-10-11 00:00:00', 'UTC');            -- 1 SELECT count() FROM t WHERE ts < toDateTime64('2026-10-11 00:00:00', 3, 'UTC');        -- 3 SELECT count() FROM t WHERE ts < toDateTime('2026-10-11 00:00:00', 'UTC') SETTINGS use_primary_key = 0, use_partition_pruning = 0;                               -- 3 SELEC
 
-- **Issue #126609** (2026-10-20): **Hive partitioning: if the sampled path's partition value is the text `NULL`, the column is inferred as `Nullable(Nothing)` and every partition reads as NULL**
-  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   The type of a Hive partition column (when it is not declared) is inferred from a single sample path. When that path's value is the text `NULL` (a directory `p0=NULL`), schema inference returns `Nullable(Nothing)`. The values of all other paths are then converted to `Nullable(Nothing)` as well, so `x` and `y` are returned as NULL, without any error. With `s3()`, `WHERE p0 = 'x'` returns no rows, and `INSERT ... SELECT` stores NULLs. A lowercase `null` sample (pyarrow, DuckDB and Polars write `p0=null` for the string value `'null'`) is inferred as `Nullable(Nothing)` in the same way.  The sample is the first path of the listing. With `s3()` and other object storages the listing is lexicographic, so `p0=NULL` is sampled whenever the other values sort after `NULL`, e.g. all lowercase values. pyarrow, DuckDB and Polars write `p0=NULL` for the string value `'NULL'` (they write a real NULL as `__HIVE_DEFAULT_PARTITION__`). With `file()` the result depends on the order in which the glob lists the directories, so the same dataset can return correct values in one query and all NULLs in another.  Other inferred types fail loudly in the same situation: a sample `p=1` followed by `p=x` gives `Cannot convert string 'x' to type Int64 (TYPE_MISMATCH)`. Only `Nullable(Nothing)` silently turns every value into NULL.  ### Does it reproduce on the most recent release?  Yes  ### How to reproduce   `clickhouse local` (the serv
+- **Issue #126856** (2026-10-20): **`count() WHERE date32_col = toDate32('1900-01-01')` returns the number of `1970-01-01` rows (sparsity trivial-count rewrite uses the wrong Date32 default)**
+  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   With default settings, `SELECT count() FROM t WHERE d = toDate32('1900-01-01')` on a MergeTree `Date32` column is answered by the "trivial count with sparsity filter" optimization from the part's `num_defaults` counter. That counter counts rows whose stored value is bitwise zero, i.e. `1970-01-01`. `1900-01-01`, however, is what `DataTypeDate32::getDefault()` returns. So:  - `count() WHERE d = toDate32('1900-01-01')` returns the number of `1970-01-01` rows; - `count() WHERE d != toDate32('1900-01-01')` returns the number of `1900-01-01` rows (it should be all other rows).  The rows themselves are intact: `SELECT ... WHERE d = toDate32('1900-01-01')`, `count(d)`, `countIf(d = toDate32('1900-01-01'))` and the same query with `optimize_trivial_count_with_sparsity_filter = 0` all return the right number. `INSERT ... SELECT count()` is rewritten too, so the wrong count gets persisted: `INSERT INTO s SELECT count() FROM t WHERE d = toDate32('1900-01-01')` stores 980 (master 26.11.1.144, 39618113). The column doesn't have to be sparse: on a table holding just `1900-01-01` and `2000-02-29` the count is 0. Typed constants trigger it (`toDate32('1900-01-01')`, `CAST('1900-01-01' AS Date32)`, `defaultValueOfTypeName('Date32')`); a plain string literal `d = '1900-01-01'` isn't rewritten and is correct.  `1900-01-01` is the minimum and default value of `Date32`, so it's a common "unknown date" sentinel, and `count() W
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,604 +1338,171 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `acf33af3` (2026-10-20)
-**Commit Message**: Merge pull request #127029 from mpanichella/add-dbine
+### Incident Patch 1: `a65d0fa6` (2026-10-22)
+**Commit Message**: Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock
 
-Docs: add DBine to GUI tools
+Fix a macOS hang between jemalloc heap profile dumps and starting a child process
 
-**File**: `docs/integrations/connectors/tools/gui.mdx` (modified, +17/-0)
+**File**: `contrib/jemalloc` (modified, +1/-1)
 ```diff
-@@ -546,6 +546,23 @@ Features:
- 
- </Accordion>
- 
-+<Accordion title="DBine">
-+
-+[DBine](https://github.com/addlayer-io/dbine) is a free, open-source (MIT) desktop database manager for Windows, macOS, and Linux. It connects to ClickHouse over the HTTP interface (`8123`, or `8443` with TLS), next to 130+ databases and cloud services in the same window.
-+
-+Features:
-+
-+- SQL editor with the ClickHouse dialect, table and column autocompletion, and query cancellation with `KILL QUERY`.
-+- Database, table, view, and column browsing, with result grids, charts, and export to CSV, JSON, XLSX, and SQL.
-+- Table designer with `ENGINE`, `ORDER BY`, `PARTITION BY`, TTL, and codecs; cell edits are generated as `ALTER TABLE ... UPDATE` mutations that you review before running.
-+- Query plans from `EXPLAIN json = 1, indexes = 1`, a process list from `system.processes`, and a profiler built on `system.query_log`.
-+- Schema compare, data compare, and notebooks that query several databases and join the results with DuckDB.
-+- SSH tunnels, passwords from secret managers, read-only connections, an MCP server, and an AI assistant that proposes queries and runs nothing until you approve it.
-+
-+[Website](https://dbine.com) · [Download](https://github.com/addlayer-io/dbine/releases)
-+
-+</Accordion>
-+
- ## Commercial {#commercial}
- 
- <Accordion title="ADQM Notebook">
+@@ -1 +1 @@
+-Subproject commit d21c86122de12135a951e6057fcdc8412d3ca740
++Subproject commit 06adceacf1e1b7dcd67f83cb99083e4baf1d5401
 ```
 
 ---
 
-### Incident Patch 2: `37f76feb` (2026-10-20)
-**Commit Message**: Merge pull request #119916 from groeneai/fix-max-waiting-queries-118663
+### Incident Patch 2: `406082d3` (2026-10-22)
+**Commit Message**: Merge pull request #113673 from groeneai/groeneai/fix-refresh-randomize-for-overflow
 
-Enforce the max_waiting_queries server setting
+Fix signed integer overflow in refreshable materialized view `RANDOMIZE FOR`
 
-**File**: `src/Common/AsyncLoader.cpp` (modified, +17/-18)
+**File**: `src/Storages/MaterializedView/RefreshSchedule.cpp` (modified, +6/-1)
 ```diff
-@@ -149,11 +149,6 @@ void LoadJob::finish()
-     finish_time = std::chrono::system_clock::now();
-     if (waiters > 0)
-         finished.notify_all();
--    else
--    {
--        on_waiters_increment = {};
--        on_waiters_decrement = {};
--    }
- }
+@@ -2,6 +2,8 @@
  
- void LoadJob::scheduled(UInt64 job_id_)
-@@ -248,6 +243,12 @@ AsyncLoader::~AsyncLoader()
-     shutdown();
- }
+ #include <Common/thread_local_rng.h>
  
-+void AsyncLoader::setWaiterCallbacks(WaiterCallback on_increment, WaiterCallback on_decrement)
-+{
-+    on_waiters_increment = std::move(on_increment);
-+    on_waiters_decrement = std::move(on_decrement);
-+}
++#include <algorithm>
 +
- void AsyncLoader::wait()
+ namespace DB
  {
-     // Because job can create new jobs in other pools we have to recheck in cycle.
-@@ -472,7 +473,7 @@ void AsyncLoader::prioritize(const LoadJobPtr & job, size_t new_pool)
- void AsyncLoader::wait(const LoadJobPtr & job, bool no_throw)
+ 
+@@ -70,7 +72,10 @@ std::chrono::sys_seconds RefreshSchedule::advance(std::chrono::sys_seconds last_
+ 
+ std::chrono::system_clock::time_point RefreshSchedule::addRandomSpread(std::chrono::system_clock::time_point when, Int64 randomness) const
  {
-     std::unique_lock job_lock{job->mutex};
--    wait(job_lock, job);
-+    wait(job_lock, job, /* run_waiter_callbacks = */ true);
-     if (!no_throw && job->load_exception)
-         throw Exception(ErrorCodes::ASYNC_LOAD_WAIT_FAILED, "Waited job failed: {}", getExceptionMessage(job->load_exception, /* with_stacktrace = */ false));
- }
-@@ -507,7 +508,11 @@ void AsyncLoader::remove(const LoadJobSet & jobs)
-             ALLOW_ALLOCATIONS_IN_SCOPE;
-             chassert(info->second.isExecuting());
-             lock.unlock();
--            wait(job, /* no_throw = */ true); // Wait for job to finish
-+            {
-+                // Wait for job to finish
-+                std::unique_lock job_lock{job->mutex};
-+                wait(job_lock, job, /* run_waiter_callbacks = */ false);
-+            }
-             lock.lock();
-         }
-     }
-@@ -779,7 +784,7 @@ bool static detectWaitDependentDeadlock(const LoadJobPtr & waited)
-     return false;
+-    return when + std::chrono::milliseconds(Int64(static_cast<double>(spread.minSeconds()) * 1e3 / 2 * static_cast<double>(randomness) / 1e9));
++    /// RANDOMIZE FOR is unbounded, so compute in Int128 and cap the offset at about 95 years.
++    constexpr Int64 max_offset_ms = 3'000'000'000'000;
++    const Int128 offset_ms = Int128(spread.minSeconds()) * randomness / 2'000'000;
++    return when + std::chrono::milliseconds(Int64(std::clamp<Int128>(offset_ms, -max_offset_ms, max_offset_ms)));
  }
  
--void AsyncLoader::wait(std::unique_lock<std::mutex> & job_lock, const LoadJobPtr & job)
-+void AsyncLoader::wait(std::unique_lock<std::mutex> & job_lock, const LoadJobPtr & job, bool run_waiter_callbacks)
- {
-     // Ensure job we are going to wait was scheduled to avoid "wait not scheduled" deadlocks
-     if (job->job_id == 0)
-@@ -847,8 +852,8 @@ void AsyncLoader::wait(std::unique_lock<std::mutex> & job_lock, const LoadJobPtr
-     if (log_events)
-         LOG_DEBUG(log, "Wait load job '{}' in {}", job->name, getPoolName(job->pool_id));
- 
--    if (job->on_waiters_increment)
--        job->on_waiters_increment(job);
-+    if (run_waiter_callbacks && on_waiters_increment)
-+        on_waiters_increment(job);
- 
-     // WARNING: it is important not to throw below this point to avoid `on_waiters_increment` call w/o matching `on_waiters_decrement` call
- 
-@@ -858,14 +863,8 @@ void AsyncLoader::wait(std::unique_lock<std::mutex> & job_lock, const LoadJobPtr
-     job->waiters--;
-     ProfileEvents::increment(ProfileEvents::AsyncLoaderWaitMicroseconds, watch.elapsedMicroseconds());
- 
--    if (job->on_waiters_decrement)
--        job->on_waiters_decrement(job);
--
--    if (job->waiters == 0)
--    {
--        job->on_waiters_increment = {};
--        job->on_waiters_decrement = {};
--    }
-+    if (run_waiter_callbacks && on_waiters_decrement)
-+        on_waiters_decrement(job);
  }
- 
- bool AsyncLoader::canSpawnWorker(Pool & pool, std::unique_lock<std::mutex> &)
 ```
 
-**File**: `src/Common/AsyncLoader.h` (modified, +15/-63)
+**File**: `tests/queries/0_stateless/04757_refreshable_mv_randomize_for_overflow.reference` (added, +1/-0)
 ```diff
-@@ -72,19 +72,6 @@ class LoadJob : private boost::noncopyable
-         , func(std::forward<Func>(func_))
-     {}
- 
--    // NOTE: makeLoadJob() helper should be used instead of direct ctor call
--    template <class LoadJobSetType, class WIFunc, class WDFunc, class DFFunc, class Func>
--    LoadJob(LoadJobSetType && dependencies_, String name_, size_t pool_id_, WIFunc && on_waiters_increment_, WDFunc && on_waiters_decrement_, DFFunc && dependency_failure_, Func && func_)
--        : dependencies(std::forward<LoadJobSetType>(dependencies_))
--        , name(std::move(name_))
--        , execution_pool_id(pool_id_)
--        , pool_id(pool_id_)
--        , on_waiters_increment(std::forward<WIFunc>(on_waiters_increment_))
--        , on_waiters_decrement(std::forward<WDFunc>(on_waiters_decrement_))
--        , dependency_failure(std::forward<DFFunc>(dependency_failure_))
--        , func(std::forward<Func>(func_))
--    {}
--
-     // Current job status.
-     LoadStatus status() const;
-     std::exception_ptr exception() const;
-@@ -128,13 +115,6 @@ class LoadJob : private boost::noncopyable
-     std::atomic<size_t> execution_pool_id;
-     std::atomic<size_t> pool_id;
- 
--    // Handlers that is called by every new waiting thread, just before going to sleep.
--    // If `on_waiters_increment` throws, then wait is canceled, and corresponding `on_waiters_decrement` will never be called.
--    // It can be used for counting and limits on number of waiters.
--    // Note that implementations are called under `LoadJob::mutex` and should be fast.
--    std::function<void(const LoadJobPtr & self)> on_waiters_increment;
--    std::function<void(const LoadJobPtr & self)> on_waiters_decrement;
--
-     // Handler for failed or canceled dependencies.
-     // If job needs to be canceled on `dependency` failure, then function should set `cancel` to a specific reason.
-     // Note that implementation should be fast and cannot use AsyncLoader, because it is called under `AsyncLoader::mutex`.
-@@ -163,50 +143,8 @@ void cancelOnDependencyFailure(const LoadJobPtr & self, const LoadJobPtr & depen
- void ignoreDependencyFailure(const LoadJobPtr & self, const LoadJobPtr & dependency, std::exception_ptr & cancel);
- 
- template <class F> concept LoadJobDependencyFailure = std::invocable<F, const LoadJobPtr &, const LoadJobPtr &, std::exception_ptr &>;
--template <class F> concept LoadJobOnWaiters = std::invocable<F, const LoadJobPtr &>;
- template <class F> concept LoadJobFunc = std::invocable<F, AsyncLoader &, const LoadJobPtr &>;
- 
--LoadJobPtr makeLoadJob(LoadJobSet && dependencies, String name, LoadJobOnWaiters auto && on_waiters_increment, LoadJobOnWaiters auto && on_waiters_decrement, LoadJobDependencyFailure auto && dependency_failure, LoadJobFunc auto && func)
--{
--    return std::make_shared<LoadJob>(std::move(dependencies), std::move(name), 0, on_waiters_increment, on_waiters_decrement, std::forward<decltype(dependency_failure)>(dependency_failure), std::forward<decltype(func)>(func));
--}
--
--LoadJobPtr makeLoadJob(const LoadJobSet & dependencies, String name, LoadJobOnWaiters auto && on_waiters_increment, LoadJobOnWaiters auto && on_waiters_decrement, LoadJobDependencyFailure auto && dependency_failure, LoadJobFunc auto && func)
--{
--    return std::make_shared<LoadJob>(dependencies, std::move(name), 0, on_waiters_increment, on_waiters_decrement, std::forward<decltype(dependency_failure)>(dependency_failure), std::forward<decltype(func)>(func));
--}
--
--LoadJobPtr makeLoadJob(LoadJobSet && dependencies, size_t pool_id, String name, LoadJobOnWaiters auto && on_waiters_increment, LoadJobOnWaiters auto && on_waiters_decrement, LoadJobDependencyFailure auto && dependency_failure, LoadJobFunc auto && func)
--{
--    return std::make_shared<LoadJob>(std::move(dependencies), std::move(name), pool_id, on_waiters_increment, on_waiters_decrement, std::forward<decltype(dependency_failure)>(dependency_failure), std::forward<decltype(func)>(func));
--}
--
--LoadJobPtr makeLoadJob(const LoadJobSet & dependencies, size_t pool_id, String name, LoadJobOnWaiters auto && on_waiters_increment, LoadJobOnWaiters auto && on_waiters_decrement, LoadJobDependencyFailure auto && dependency_failure, LoadJobFunc auto && func)
--{
--    return std::make_shared<LoadJob>(dependencies, std::move(name), pool_id, on_waiters_increment, on_waiters_decrement, std::forward<decltype(dependency_failure)>(dependency_failure), std::forward<decltype(func)>(func));
--}
--
--LoadJobPtr makeLoadJob(LoadJobSet && dependencies, String name, LoadJobOnWaiters auto && on_waiters_increment, LoadJobOnWaiters auto && on_waiters_decrement, LoadJobFunc auto && func)
--{
--    return std::make_shared<LoadJob>(std::move(dependencies), std::move(name), 0, on_waiters_increment, on_waiters_decrement, cancelOnDependencyFailure, std::forward<decltype(func)>(func));
--}
--
--LoadJobPtr makeLoadJob(const LoadJobSet & dependencies, String name, LoadJobOnWaiters auto && on_waiters_increment, LoadJobOnWaiters auto && on_waiters_decrement
+@@ -0,0 +1 @@
++1
 ```
 
-**File**: `src/Common/CurrentMetrics.cpp` (modified, +1/-0)
+**File**: `tests/queries/0_stateless/04757_refreshable_mv_randomize_for_overflow.sh` (added, +25/-0)
 ```diff
-@@ -9,6 +9,7 @@
-     M(Query, "Number of executing queries") \
-     M(ASTFuzzerAccumulatedFragments, "Number of AST fragments accumulated by the server-side AST fuzzer for use in future mutations.") \
-     M(QueryNonInternal, "Number of executing non-internal queries (queries initiated by users, excluding internal queries from ClickHouse)") \
-+    M(WaitingQuery, "Number of queries waiting for asynchronous loading or startup to finish, limited by the 'max_waiting_queries' server setting") \
-     M(Merge, "Number of executing background merges") \
-     M(MergeParts, "Number of source parts participating in current background merges") \
-     M(Move, "Number of currently executing moves") \
-```
-
-**File**: `src/Common/tests/gtest_async_loader.cpp` (modified, +185/-1)
-```diff
-@@ -695,6 +695,7 @@ TEST(AsyncLoader, WaitersLimit)
-     auto waiters_dec = [&] (const LoadJobPtr &) {
-         waiters_total.fetch_sub(1);
-     };
-+    t.loader.setWaiterCallbacks(waiters_inc, waiters_dec);
- 
-     std::barrier<std::__empty_completion> sync(2);
-     t.loader.unpause();
-@@ -703,7 +704,7 @@ TEST(AsyncLoader, WaitersLimit)
-         sync.arrive_and_wait(); // (A)
-     };
- 
--    auto job = makeLoadJob({}, "job", waiters_inc, waiters_dec, job_func);
-+    auto job = makeLoadJob({}, "job", job_func);
-     auto task = t.schedule({job});
- 
-     std::atomic<int> failure{0};
-@@ -742,6 +743,189 @@ TEST(AsyncLoader, WaitersLimit)
-     t.loader.wait();
- }
- 
-+TEST(AsyncLoader, RemoveDoesNotNotifyWaiters)
-+{
-+    AsyncLoaderTest t(1);
-+    t.loader.unpause();
+@@ -0,0 +1,25 @@
++#!/usr/bin/env bash
++# Tags: memory-engine, atomic-database
 +
-+    // A real waiter increment callback may throw to refuse the wait (that is how `ProcessList` enforces
-+    // `max_waiting_queries`), and the cleanup wait in `remove` runs in the noexcept `~LoadTask`,
-+    // where a throw terminates the process. Counting is enough to pin down that the callbacks are not called.
-+    std::atomic<int> increments{0};
-+    std::atomic<int> decrements{0};
-+    t.loader.setWaiterCallbacks(
-+        [&] (const LoadJobPtr &) { increments.fetch_add(1); },
-+        [&] (const LoadJobPtr &) { decrements.fetch_add(1); });
++CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CUR_DIR"/../shell_config.sh
 +
-+    std::barrier<std::__empty_completion> sync(2);
-+    auto job_func = [&] (AsyncLoader &, const LoadJobPtr &) {
-+        sync.arrive_and_wait(); // (A)
-+    };
++# An absurd RANDOMIZE FOR caps the offset at 3e9 seconds. The first timeslot is 2170-01-01, so both
++# signs of the offset stay in the future and the view is scheduled without refreshing.
++$CLICKHOUSE_CLIENT -q "
++    create materialized view rmv refresh every 200 year randomize for 10000000000000000000 second
++        (x Int64) engine Memory as select 1 as x;"
 +
-+    auto job = makeLoadJob({}, "job", job_func);
-+    auto task = t.schedule({job});
++# next_refresh_time is a UInt32 DateTime, so the expected instants are compared modulo 2^32.
++query="
++    with toInt64(toDateTime64('2170-01-01 00:00:00', 0, 'UTC')) as slot
++    select status = 'Scheduled' and last_refresh_time is null
++        and toUInt32(next_refresh_time) in ((slot - 3000000000) % 4294967296, (slot + 3000000000) % 4294967296)
++    from system.view_refreshes where database = currentDatabase() and view = 'rmv'"
 +
-+    // Removal only waits for a job that is already executing, so let it get there. It cannot finish
-+    // meanwhile: (A) needs this thread too.
-+    auto executing = [&] {
-+        for (const auto & state : t.loader.getJobStates())
-+            if (state.job == job)
-+                return state.is_executing;
-+        return false;
-+    };
-+    while (!executing())
-+        std::this_thread::yield();
-+
-+    // Dropping the last reference reaches `AsyncLoader::remove` through `~LoadTask`.
-+    std::thread remover([&] { task.reset(); });
-+
-+    // The cleanup wait counts itself in `waiters`, which is the point where a callback would run.
-+    // Without this the job could finish before `remove` sees it, and nothing would wait at all.
-+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(60);
-+    while (job->waitersCount() == 0 && std::chrono::steady_clock::now() < deadline)
-+        std::this_thread::yield();
-+    EXPECT_EQ(job->waitersCount(), 1);
-+
-+    sync.arrive_and_wait(); // (A)
-+    remover.join();
-+
-+    EXPECT_EQ(increments.load(), 0);
-+    EXPECT_EQ(decrements.load(), 0);
-+    EXPECT_EQ(job->status(), LoadStatus::OK);
-+
-+    t.loader.wait();
-+}
-+
-+TEST(AsyncLoader, WaiterCallbacksBalanceOnFailedJob)
-+{
-+    AsyncLoaderTest t(1);
-+    t.loader.unpause();
-+
-+    // The callbacks balance on every terminal status, not only on OK. A wait entered after the job
-+    // has already failed returns early and calls neither, so this waiter has to park while pending.
-+    std::atomic<int> increments{0};
-+    std::atomic<int> decrements{0};
-+    t.loader.setWaiterCallbacks(
-+        [&] (const LoadJobPtr &) { increments.fetch_add(1); },
-+        [&] (const LoadJobPtr &) { decrements.fetch_add(1); });
-+
-+    std::string error_message = "test job failure";
-+    std::barrier<std::__empty_completion> sync(2);
-+    auto job_func = [&] (AsyncLoader &, const LoadJobPtr &) {
-+        sync.arrive_and_wait(); // (A)
-+        throw Exception(ErrorCodes::ASYNC_LOAD_FAILED, "{}", error_message);
-+    };
-+
-+    auto job = makeLoadJob({}, "job", job_func);
-+    auto task = t.schedule({job});
-+
-+    std::atomic<int> caught_code{0};
-+    std::thread waiter([&] {
-+        try
-+        {
-+            t.loader.wait(job);
-+        }
-+        catch (Exception & e)
-+        {
-+            caught_code.store(e.code());
-+        }
-+    });
-+
-+    while (job->waitersCount() == 0)
-+        std::this_thread::yield();
-+
-+    sync.arrive_and_wait(); // (A)
-+    waiter.join();
-+
-+    ASSERT_EQ(caught_code.load(), ErrorCodes::ASYNC_LOAD_WAIT_FAILED);
-+    ASSERT_EQ(job->status(), LoadStatus::FAILED);
-+    ASSERT_EQ(increments.load(), 1);
-+    ASSERT_EQ(decrements.load(), 1);
-+
-+    t.loader.wait();
-+}
-+
-+TEST(AsyncLoader, LoaderWaiterCallbacks)
-+{
-+    AsyncLoaderTest t(1);
-+
-+    std::atomic<int> increments{0};
-+    std::atomic<int> decrements{0};
-+    t.loader.setWaiterCallbacks(
-+        [&] (const LoadJobPtr &) { increments.fetch_add(1); },
-+        [&] (const LoadJobPtr &) { decrements.fetch_add(1); });
-+    t.loader.unpause();
-+
-+    std::barrier<std::__empty_completion> sync(2);
-+    auto job_func = [&] (AsyncLoader &, const LoadJobPtr &) {
-+        sync.arrive_and_wait(); // (A)
-+    };
-+
-+    auto job = makeLoadJob({}, "job", job_func);
-+    auto task = t.schedule({job});
-+
-+    std::thread waiter([&] { t.loader.wait(job); });
-+
-+    while (job->waiter
-```
-
-**File**: `src/Core/ServerSettings.cpp` (modified, +6/-15)
-```diff
-@@ -612,26 +612,17 @@ This setting can be modified at runtime and will take effect immediately. Querie
- </Note>
- )", 0) \
-     DECLARE(UInt64, max_waiting_queries, 0, R"(
--Limit on total number of concurrently waiting queries.
--Execution of a waiting query is blocked while required tables are loading asynchronously (see [`async_load_databases`](/reference/settings/server-settings/settings/async-load#async_load_databases).
--
--<Note>
--Waiting queries are not counted when limits controlled by the following settings are checked:
--
--- [`max_concurrent_queries`](/reference/settings/server-settings/settings/max-concurrent#max_concurrent_queries)
--- [`max_concurrent_insert_queries`](/reference/settings/server-settings/settings/max-concurrent#max_concurrent_insert_queries)
--- [`max_concurrent_select_queries`](/reference/settings/server-settings/settings/max-concurrent#max_concurrent_select_queries)
--- [`max_concurrent_queries_for_user`](/reference/settings/session-settings/max-concurrent#max_concurrent_queries_for_user)
--- [`max_concurrent_queries_for_all_users`](/reference/settings/session-settings/max-concurrent#max_concurrent_queries_for_all_users)
--
--This correction is done to avoid hitting these limits just after server startup.
--</Note>
-+Limit on the number of queries that are waiting to start executing because an asynchronous load or startup job
-+they need is still running: loading a table, starting up a table or a database, or starting up the distributed
-+DDL worker (see [`async_load_databases`](/reference/settings/server-settings/settings/async-load#async_load_databases)).
-+Internal queries are not counted.
- 
- <Note>
- 
- A value of `0` (default) means unlimited.
- 
--This setting can be modified at runtime and will take effect immediately. Queries that are already running will remain unchanged.
-+This setting can be modified at runtime and will take effect immediately. The limit is checked when a query
-+starts to wait, so lowering it refuses new queries and leaves queries that are already waiting in place.
- </Note>
- )", 0) \
-     \
-```
-
-**File**: `src/Interpreters/Context.cpp` (modified, +1/-0)
-```diff
-@@ -4522,6 +4522,7 @@ AsyncLoader & Context::getAsyncLoader() const
-             /* log_failures = */ true,
-             /* log_progress = */ true,
-             /* log_events = */ true);
-+        shared->async_loader->setWaiterCallbacks(onLoadJobWaitersIncrement, onLoadJobWaitersDecrement);
-     });
- 
-     return *shared->async_loader;
-```
-
-**File**: `src/Interpreters/InterpreterDropQuery.cpp` (modified, +16/-0)
-```diff
-@@ -62,6 +62,8 @@ namespace ErrorCodes
-     extern const int INCORRECT_QUERY;
-     extern const int TABLE_IS_PERMANENTLY_READ_ONLY;
-     extern const int TABLE_NOT_EMPTY;
-+    extern const int TOO_MANY_SIMULTANEOUS_QUERIES;
-+    extern const int ASYNC_LOAD_CANCELED;
- }
- 
- namespace ActionLocks
-@@ -522,6 +524,20 @@ BlockIO InterpreterDropQuery::executeToDatabaseImpl(const ASTDropQuery & query,
-     if (query.if_empty)
-         throw Exception(ErrorCodes::NOT_IMPLEMENTED, "DROP IF EMPTY is not implemented for databases");
- 
-+    /// The later waits for the database to start cannot be refused: the last of them runs in the
-+    /// noexcept `~LoadTask`. A startup that failed for another reason must still leave it droppable.
-+    try
-+    {
-+        database->waitDatabaseStarted();
-+    }
-+    catch (const Exception & e)
-+    {
-+        if (e.code() == ErrorCodes::TOO_MANY_SIMULTANEOUS_QUERIES)
-+            throw;
-+        if (e.code() != ErrorCodes::ASYNC_LOAD_CANCELED)
-+            tryLogCurrentException("InterpreterDropQuery", "Async loading failed", LogsLevel::warning);
-+    }
-+
-     if (!truncate && database->hasReplicationThread())
-         database->stopReplication();
- 
-```
-
-**File**: `src/Interpreters/ProcessList.cpp` (modified, +80/-0)
-```diff
-@@ -28,6 +28,7 @@ namespace CurrentMetrics
- {
-     extern const Metric Query;
-     extern const Metric QueryNonInternal;
-+    extern const Metric WaitingQuery;
- }
- 
- namespace ProfileEvents
-@@ -1176,4 +1177,83 @@ ProcessList::QueryAmount ProcessList::getQueryKindAmount(const IAST::QueryKind &
-     return found->second;
- }
- 
-+void ProcessList::increaseWaitingQueryAmount()
-+{
-+    const UInt64 limit = max_waiting_queries_amount.load();
-+    UInt64 value = waiting_queries_amount.load();
-+    while (true)
-+    {
-+        if (limit && value >= limit)
-+            throw Exception(ErrorCodes::TOO_MANY_SIMULTANEOUS_QUERIES,
-+                            "Too many simultaneous waiting queries. Maximum: {}, waiting: {}",
-+                            limit, value);
-+        if (waiting_queries_amount.compare_exchange_weak(value, value + 1))
-+            break;
-+    }
-+
-+    /// WARNING: do not throw below this point, or the matching `decreaseWaitingQueryAmount` is never called.
-+
-+    CurrentMetrics::add(CurrentMetrics::WaitingQuery);
-+}
-+
-+void ProcessList::decreaseWaitingQueryAmount()
-+{
-+    UInt64 value = waiting_queries_amount.load();
-+    while (true)
-+    {
-+        if (value == 0)
-+            throw Exception(ErrorCodes::LOGICAL_ERROR, "Wrong waiting query amount: decrease to negative");
-+        if (waiting_queries_amount.compare_exchange_weak(value, value - 1))
-+            break;
-+    }
-+
-+    CurrentMetrics::sub(CurrentMetrics::WaitingQuery);
-+}
-+
-+void ProcessList::incrementWaiters(const QueryStatusPtr & status)
-+{
-+    std::lock_guard lock(status->waiting_mutex);
-+    if (status->waiting_threads == 0)
-+        increaseWaitingQueryAmount();
-+    ++status->waiting_threads;
-+}
-+
-+void ProcessList::decrementWaiters(const QueryStatusPtr & status)
-+{
-+    std::lock_guard lock(status->waiting_mutex);
-+    if (status->waiting_threads == 0)
-+        throw Exception(ErrorCodes::LOGICAL_ERROR, "Wrong waiting thread amount: decrease to negative");
-+
-+    if (--status->waiting_threads == 0)
-+        decreaseWaitingQueryAmount();
-+}
-+
-+/// Process list and the query to account for, or nullptr when the waiter is not a counted query:
-+/// server or `clickhouse-local` startup, an AsyncLoader worker, or an internal query. A query's
-+/// process list element does not change, so one wait's increment and decrement always agree.
-+static ProcessList * getProcessListForWaitingQuery(QueryStatusPtr & status)
-+{
-+    auto query_context = CurrentThread::tryGetQueryContext();
-+    if (!query_context)
-+        return nullptr;
-+    status = query_context->getProcessListElementSafe();
-+    if (!status || status->isInternal())
-+        return nullptr;
-+    return &query_context->getGlobalContext()->getProcessList();
-+}
-+
-+void onLoadJobWaitersIncrement(const LoadJobPtr &)
-+{
-+    QueryStatusPtr status;
-+    if (auto * process_list = getProcessListForWaitingQuery(status))
-+        process_list->incrementWaiters(status);
-+}
-+
-+void onLoadJobWaitersDecrement(const LoadJobPtr &)
-+{
-+    QueryStatusPtr status;
-+    if (auto * process_list = getProcessListForWaitingQuery(status))
-+        process_list->decrementWaiters(status);
-+}
-+
- }
++for _ in {1..100}; do
++    [ "$($CLICKHOUSE_CLIENT -q "$query")" = 1 ] && break
++    sleep 0.1
++done
++$CLICKHOUSE_CLIENT -q "$query"
 ```
 
 ---
 
-### Incident Patch 3: `865b18dc` (2026-10-20)
-**Commit Message**: Merge pull request #126261 from groeneai/fix-timeslots-size-wider-than-uint32
+### Incident Patch 3: `e7f8720c` (2026-10-22)
+**Commit Message**: Merge pull request #127070 from ClickHouse/fix-05136-text-log-time-bound
 
-Fix `timeSlots` reducing a `Size` wider than `UInt32` modulo 2^32
+Bound the text_log queries of 05136_no_blob_threads_on_plain_disks by time
 
-**File**: `src/Functions/timeSlots.cpp` (modified, +7/-1)
+**File**: `tests/queries/0_stateless/05136_no_blob_threads_on_plain_disks.sh` (modified, +21/-11)
 ```diff
-@@ -21,6 +21,7 @@ namespace ErrorCodes
-     extern const int ILLEGAL_TYPE_OF_ARGUMENT;
-     extern const int ILLEGAL_COLUMN;
-     extern const int BAD_ARGUMENTS;
-+    extern const int ARGUMENT_OUT_OF_BOUND;
- }
+@@ -9,45 +9,55 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ # shellcheck source=../shell_config.sh
+ . "$CUR_DIR"/../shell_config.sh
  
- namespace
-@@ -318,7 +319,12 @@ class FunctionTimeSlots final : public IFunction
-                 if (!time_slot_column)
-                     throw Exception(ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT, "Third argument for function {} must be constant UInt32", getName());
- 
--                if (time_slot_size = time_slot_column->getValue<UInt32>(); time_slot_size <= 0)
-+                const UInt64 size_value = time_slot_column->getValue<UInt64>();
-+                if (size_value > std::numeric_limits<UInt32>::max())
-+                    throw Exception(ErrorCodes::ARGUMENT_OUT_OF_BOUND, "Third argument for function {} must not exceed {}, got {}",
-+                        getName(), std::numeric_limits<UInt32>::max(), size_value);
++# Custom disks stay registered until the server restarts, so each run uses its own disk names to start the
++# threads again and write fresh log lines.
++LOCAL_DISK="05136_local_metadata_${CLICKHOUSE_DATABASE}"
++PLAIN_DISK="05136_plain_rewritable_${CLICKHOUSE_DATABASE}"
 +
-+                if (time_slot_size = static_cast<UInt32>(size_value); time_slot_size <= 0)
-                     throw Exception(ErrorCodes::ILLEGAL_COLUMN, "Third argument for function {} must be greater than zero", getName());
-             }
+ ${CLICKHOUSE_CLIENT} --multiline -q "
+ -- The \`local\` metadata of a disk lives in \`disks/<disk name>/\`, and a \`local\` object storage deletes its
+--- own root directory once it becomes empty, so \`path\` must not be \`disks/05136_local_metadata/\` here.
++-- own root directory once it becomes empty, so \`path\` must not be \`disks/<disk name>/\` here.
+ CREATE TABLE t_local_metadata (a Int32) ENGINE = MergeTree ORDER BY a
+ SETTINGS disk = disk(
+-    name = '05136_local_metadata',
++    name = '${LOCAL_DISK}',
+     type = 'object_storage',
+     object_storage_type = 'local',
+     metadata_type = 'local',
+-    path = '${CLICKHOUSE_DISKS_FILES}/05136_local_metadata_blobs/');
++    path = '${CLICKHOUSE_DISKS_FILES}/${LOCAL_DISK}_blobs/');
  
-```
-
-**File**: `tests/queries/0_stateless/05404_time_slots_size_out_of_uint32_range.reference` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+['1970-01-01 00:00:00']
-+['2000-01-02 03:00:00','2000-01-02 03:10:00']
-```
-
-**File**: `tests/queries/0_stateless/05404_time_slots_size_out_of_uint32_range.sql` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+-- A Size wider than UInt32 must be rejected instead of being reduced modulo 2^32.
-+SELECT timeSlots(toDateTime('2000-01-02 03:04:05', 'UTC'), toUInt32(10000), 4294967896); -- { serverError ARGUMENT_OUT_OF_BOUND }
-+SELECT timeSlots(toDateTime('2000-01-02 03:04:05', 'UTC'), toUInt32(10000), 4294967296); -- { serverError ARGUMENT_OUT_OF_BOUND }
-+SELECT timeSlots(materialize(toDateTime('2000-01-02 03:04:05', 'UTC')), toUInt32(10000), toUInt64(18446744073709551615)); -- { serverError ARGUMENT_OUT_OF_BOUND }
-+-- Sizes that fit in UInt32 are still accepted at any integer width.
-+SELECT timeSlots(toDateTime('2000-01-02 03:04:05', 'UTC'), toUInt32(10000), 4294967295);
-+SELECT timeSlots(toDateTime('2000-01-02 03:04:05', 'UTC'), toUInt32(600), toUInt64(600));
+ CREATE TABLE t_plain_rewritable (a Int32) ENGINE = MergeTree ORDER BY a
+ SETTINGS disk = disk(
+-    name = '05136_plain_rewritable',
++    name = '${PLAIN_DISK}',
+     type = 'object_storage',
+     object_storage_type = 'local',
+     metadata_type = 'plain_rewritable',
+-    path = '${CLICKHOUSE_DISKS_FILES}/05136_plain_rewritable/');
++    path = '${CLICKHOUSE_DISKS_FILES}/${PLAIN_DISK}/');
+ 
+ SYSTEM FLUSH LOGS text_log;
+ 
+ SELECT 'local metadata, blob killer started', count() > 0 FROM system.text_log
+-WHERE logger_name = '05136_local_metadata::BlobKillerThread' AND message LIKE 'Execution started%';
++WHERE logger_name = '${LOCAL_DISK}::BlobKillerThread' AND message LIKE 'Execution started%'
++    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
+ 
+ -- The copier reports this at startup even when \`data_background_replication\` is not enabled.
+ SELECT 'local metadata, blob copier not needed', count() > 0 FROM system.text_log
+-WHERE logger_name = '05136_local_metadata::BlobCopierThread' AND message LIKE 'Execution is not needed%';
++WHERE logger_name = '${LOCAL_DISK}::BlobCopierThread' AND message LIKE 'Execution is not needed%'
++    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
+ 
+ SELECT 'plain_rewritable, blob killer started', count() FROM system.text_log
+-WHERE logger_name = '05136_plain_rewritable::BlobKillerThread' AND message LIKE 'Execution started%';
++WHERE logger_name = '${PLAIN_DISK}::BlobKillerThread' AND message LIKE 'Execution started%'
++    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
+ 
+ SELECT 'plain_rewritable, blob killer not needed', count() > 0 FROM system.text_log
+-WHERE logger_name = '05136_plain_rewritable::BlobKillerThread' AND message LIKE 'Execution is not needed%';
++WHERE logger_name = '${PLAIN_DISK}::BlobKillerThread' AND message LIKE 'Execution is not needed%'
++    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
+ 
+ SELECT 'plain_rewritable, blob copier not needed', count() > 0 FROM system.text_log
+-WHERE logger_name = '05136_plain_rewritable::BlobCopierThread' AND message LIKE 'Execution is not needed%';
++WHERE logger_name = '${PLAIN_DISK}::BlobCopierThread' AND message LIKE 'Execution is not needed%'
++    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
+ 
+ -- Nothing is deferred on such a disk, so waiting for the cleanup returns immediately instead of hanging.
+-SYSTEM WAIT BLOBS CLEANUP '05136_plain_rewritable';
++SYSTEM WAIT BLOBS CLEANUP '${PLAIN_DISK}';
+ 
+ DROP TABLE t_local_metadata;
+ DROP TABLE t_plain_rewritable;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #127029** (2026-10-20): Docs: add DBine to GUI tools (@mpanichella)
-- **PR #127025** (2026-10-20): Backport #126553 to 26.10: Fix use-after-free and reading of long values in complex key `ssd_cache` dictionaries (@robot-clickhouse-ci-2)
-- **PR #127024** (2026-10-20): Backport #126553 to 26.9: Fix use-after-free and reading of long values in complex key `ssd_cache` dictionaries (@robot-clickhouse-ci-2)
-- **PR #127023** (2026-10-20): Backport #126553 to 26.8: Fix use-after-free and reading of long values in complex key `ssd_cache` dictionaries (@robot-clickhouse-ci-2)
-- **PR #127022** (2026-10-20): Backport #126553 to 26.7: Fix use-after-free and reading of long values in complex key `ssd_cache` dictionaries (@robot-clickhouse-ci-2)
-- **PR #127019** (2026-10-20): Move the `PCO` codec from beta to experimental in 26.10 (@alexey-milovidov)
+- **PR #127424** (2026-10-22): Backport #126954 to 26.10: Evaluate followers' read-time skip indexes over the ranges analyzed on the initiator (@robot-ch-test-poll)
+- **PR #127398** (closed): Revert "Query condition cache for TopK reads of data lakes" (@nikitamikhaylov)
+- **PR #127395** (2026-10-22): Backport #123999 to 26.9: Fix rows skipped when a sub-second `DateTime64` key is compared with an integer by `>` or `<` (@robot-clickhouse)
+- **PR #127394** (2026-10-22): Backport #123999 to 26.8: Fix rows skipped when a sub-second `DateTime64` key is compared with an integer by `>` or `<` (@robot-clickhouse)
+- **PR #127393** (2026-10-22): Backport #123999 to 26.7: Fix rows skipped when a sub-second `DateTime64` key is compared with an integer by `>` or `<` (@robot-clickhouse)
+- **PR #127390** (2026-10-22): Make `04413_documentation_no_indented_lines` linear in the number of lines (@cv4g)
 
 ---
 
@@ -1955,41 +1522,28 @@ Fix `timeSlots` reducing a `Size` wider than `UInt32` modulo 2^32
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #127029 from mpanichella/add-dbine
+## X. Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock
 
 **RULE**:
-When implementing operations in `docs/integrations/connectors/tools/gui.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `contrib/jemalloc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `acf33af3`: Merge pull request #127029 from mpanichella/add-dbine. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a65d0fa6`: Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/integrations/connectors/tools/gui.mdx`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/jemalloc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-<Accordion title="DBine">
-
-[DBine](https://github.com/addlayer-io/dbine) is a free, open-source (MIT) desktop database manager for Windows, macOS, and Linux. It connects to ClickHouse over the HTTP interface (`8123`, or `8443` with TLS), next to 130+ databases and cloud services in the same window.
-
-Features:
-
-- SQL editor with the ClickHouse dialect, table and column autocompletion, and query cancellation with `KILL QUERY`.
-- Database, table, view, and column browsing, with result grids, charts, and export to CSV, JSON, XLSX, and SQL.
-- Table designer with `ENGINE`, `ORDER BY`, `PARTITION BY`, TTL, and codecs; cell edits are generated as `ALTER TABLE ... UPDATE` mutations that you review before running.
-- Query plans from `EXPLAIN json = 1, indexes = 1`, a process list from `system.processes`, and a profiler built on `system.query_log`.
-- Schema compare, data compare, and notebooks that query several databases and join the results with DuckDB.
-- SSH tunnels, passwords from secret managers, read-only connections, an MCP server, and an AI assistant that proposes queries and runs nothing until you approve it.
-
-[Website](https://dbine.com) · [Download](https://github.com/addlayer-io/d
+Subproject commit 06adceacf1e1b7dcd67f83cb99083e4baf1d5401
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Subproject commit d21c86122de12135a951e6057fcdc8412d3ca740
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `acf33af3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a65d0fa6` are properly handled with clean fallback behavior.

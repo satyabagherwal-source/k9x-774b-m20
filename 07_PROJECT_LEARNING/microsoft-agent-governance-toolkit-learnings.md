@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `8e51b1c3`  
+> **Source Version**: `7b22c59c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T19:05:50.354Z  
+> **Timestamp**: 2026-10-22T17:58:21.748Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T19:05:50.011Z  
+> **Harvest Timestamp**: 2026-10-22T17:58:21.258Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6452 stars
+- **Stars / Engagement**: 6455 stars
 
 ---
 
@@ -405,25 +405,414 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e67fba7f` (2026-10-21)
-**Commit Message**: fix(agent-lightning): count a successful episode once in GovernedEnvironment metrics (#4360)
+### Incident Patch 1: `7b22c59c` (2026-10-22)
+**Commit Message**: fix(agent-sandbox): give Docker checkpoints a valid repository for any agent id (#4370)
 
-* fix(agent-lightning): count a successful episode once in GovernedEnvironment
+* fix(agent-sandbox): give Docker checkpoints a valid repository for any agent id
 
-step() incremented _successful_episodes on every step that succeeded
-without a violation, while get_metrics() divides it by the number of
-episodes. A clean five-step episode reported five successful episodes and
-a success_rate of 5.0, and an episode with a violation on one step still
-counted its clean steps.
+create_session accepts agent ids with uppercase letters and leading,
+trailing or repeated separators, but SandboxStateManager committed
+checkpoints to agent-sandbox-<agent_id>, which docker commit rejects
+for such ids (repository names must be lowercase and each component
+must start and end with an alphanumeric). Those sessions could not be
+checkpointed.
 
-Track whether every step of the current episode was clean, count the
-episode at most once when reset() closes it, and include the episode in
-progress in get_metrics(). The per-step success bonus is unchanged.
+Ids that already form a valid repository name keep it. Other ids get a
+repository under agent-sandbox/ named by a digest of the exact id, so
+ids that differ only in case do not share a repository and overwrite
+each other's checkpoints.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 
-* docs(agent-lightning): define successful_episodes as fully clean episodes in the specs
+* docs(changelog): add PR number for the sandbox checkpoint repository fix
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+
+* fix(agent-sandbox): name checkpoint repositories with a reversible escape instead of a digest
+
+The Quality Gates crypto check rejects a new hashlib import 
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-lightning` `FlightRecorderEmitter.get_violation_summary()` no longer adds to `emitted_count`.** The summary built its spans through `get_spans()`, which counts every converted span as emitted, so each call to `get_violation_summary()` raised `get_stats()["emitted_count"]` by the number of recorder entries although nothing was sent anywhere. The summary now converts the entries without counting them; its result is unchanged.
+ - **`a2a-protocol` `TaskEnvelope.from_dict` keeps each message's content type and accepts a message without parts.** It rebuilt every message as `text/plain`, so a round trip through `to_dict` turned an `application/json` message into plain text, and a message with an empty `parts` list raised `IndexError`. The part's `type` is now restored, and a message with no parts becomes empty `text/plain` content (#4408).
+ - **`agent-sandbox` code scanner flags `os.posix_spawn` and asyncio subprocesses.** The pre-execution scanner listed `subprocess`, `os.system`, `os.popen`, the `os.exec*` and `os.spawn*` families and `pty.spawn`, but not `os.posix_spawn`, `os.posix_spawnp`, `asyncio.create_subprocess_exec` or `asyncio.create_subprocess_shell`, so code that started a process through them reached the sandbox. They are now flagged, including through `asyncio.subprocess` and `from asyncio import subprocess` (#4369).
++- **`agent-sandbox` Docker checkpoints work for agent ids with uppercase letters or edge separators.** `save_state` committed the checkpoint to the image repository `agent-sandbox-<agent_id>`, but repository names must be lowercase and cannot start or end with a separator or repeat `.` or `_`, so for an id such as `Analyst-001`, `agent-` or `a..b` (all accepted by `create_session`) `docker commit` rejected the name and the session could not be checkpointed. Such ids now get the repository `agent-sandbox/id<escaped>`, where lowercase letters, digits and a single `-` or `.` between them are kept and every other character is written as `_` and two hex digits (`A-1` -> `agent-sandbox/id_41-1`); the encoding is reversible, so `Agent` and `agent` do not share a repository. Ids that already formed a valid name keep their repository and existing checkpoints, and an id whose escaped name would exceed Docker's 255-character limit raises `ValueError` before `docker commit` (#4370).
+ 
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+```
+
+**File**: `agent-governance-python/agent-sandbox/src/agent_sandbox/docker_provider/state.py` (modified, +63/-1)
+```diff
+@@ -5,6 +5,7 @@
+ from __future__ import annotations
+ 
+ import logging
++import re
+ from dataclasses import dataclass, field
+ from datetime import datetime, timezone
+ from typing import TYPE_CHECKING, Any
+@@ -14,6 +15,12 @@
+ 
+ logger = logging.getLogger(__name__)
+ 
++# One path component of a Docker image repository name (distribution
++# reference grammar): lowercase alphanumerics, joined by ``.``, ``_``,
++# ``__`` or runs of ``-``.
++_REPO_COMPONENT_RE = re.compile(r"^[a-z0-9]+(?:(?:[._]|__|-+)[a-z0-9]+)*$")
++# Docker's limit on the length of a whole repository name.
++_REPO_NAME_MAX = 255
+ 
+ @dataclass
+ class SandboxCheckpoint:
+@@ -40,7 +47,62 @@ def __init__(self, provider: DockerSandboxProvider) -> None:
+ 
+     @staticmethod
+     def _repo_name(agent_id: str) -> str:
+-        return f"agent-sandbox-{agent_id}"
++        """Return the image repository that holds *agent_id*'s checkpoints.
++
++        ``agent_id`` may contain uppercase letters and leading, trailing or
++        repeated separators, which a repository name cannot, so
++        ``docker commit`` would reject ``agent-sandbox-<agent_id>``. Such an
++        id gets the repository ``agent-sandbox/id<escaped>``, where
++        ``<escaped>`` keeps lowercase letters and digits, keeps a single
++        ``-`` or ``.`` that sits between two kept characters, and writes
++        every other character as ``_`` and its code point in two lowercase
++        hex digits (``A`` -> ``_41``, ``_`` -> ``_5f``). ``_`` appears only
++        as the start of an escape and every escape has the same width, so
++        the id can be read back from the name and two ids never share a
++        repository; ``Agent`` and ``agent`` stay apart, which lowercasing
++        would not do. The ``id`` prefix keeps the component starting with
++        an alphanumeric when the id starts with an escaped character.
++
++        Ids that already form a valid name keep ``agent-sandbox-<agent_id>``,
++        so existing checkpoints are unaffected, and as such a name contains
++        no ``/`` it never collides with one under ``agent-sandbox/``.
++
++        Raises ``ValueError`` if the escaped name would exceed Docker's
++        255-character repository limit (a long id with many uppercase
++        letters), or if *agent_id* contains a character outside ASCII,
++        which ``create_session`` does not accept.
++        """
++        repo = f"agent-sandbox-{agent_id}"
++        if _REPO_COMPONENT_RE.match(repo):
++            return repo
++        if not agent_id.isascii():
++            raise ValueError(f"agent_id {agent_id!r} contains non-ASCII characters")
++
++        def kept(char: str) -> bool:
++            return char.isascii() and (char.islower() or char.isdigit())
++
++        escaped = []
++        for index, char in enumerate(agent_id):
++            if kept(char):
++                escaped.append(char)
++            elif (
++                char in "-."
++                and index > 0
++                and kept(agent_id[index - 1])
++                and index + 1 < len(agent_id)
++                and kept(agent_id[index + 1])
++            ):
++                escaped.append(char)
++            else:
++                escaped.append(f"_{ord(char):02x}")
++        repo = "agent-sandbox/id" + "".join(escaped)
++        if len(repo) > _REPO_NAME_MAX:
++            raise ValueError(
++                f"agent_id {agent_id!r} cannot be checkpointed: its image "
++                f"repository name would be {len(repo)} characters, over "
++                f"Docker's limit of {_REPO_NAME_MAX}"
++            )
++        return repo
+ 
+     def save(
+         self,
+```
+
+**File**: `agent-governance-python/agent-sandbox/tests/test_docker_sandbox.py` (modified, +88/-0)
+```diff
+@@ -13,8 +13,10 @@
+ 
+ import asyncio
+ import ntpath
++import random
+ import re
+ import shutil
++import string
+ import subprocess
+ import threading
+ from pathlib import Path
+@@ -815,6 +817,92 @@ def test_restore_passes_checkpoint_image_to_create_container(self, provider_with
+         last_call = provider._create_container.call_args
+         assert last_call.kwargs.get('image') == 'agent-sandbox-a1:cp1'
+ 
++    # Repository name grammar from the distribution reference spec: lowercase
++    # path components joined by "/", each made of alphanumerics joined by
++    # ".", "_", "__" or runs of "-".
++    _REPO_RE = re.compile(r'^[a-z0-9]+(?:(?:[._]|__|-+)[a-z0-9]+)*(?:/[a-z0-9]+(?:(?:[._]|__|-+)[a-z0-9]+)*)*$')
++
++    @pytest.mark.parametrize('agent_id', ['Agent-1', 'agent-', 'agent_', 'a..b', 'a.-b', 'A'])
++    def test_checkpoint_repository_is_valid_for_any_agent_id(self, docker_provider, agent_id):
++        """agent_id accepts uppercase letters and leading, trailing or repeated
++        separators, which an image repository cannot hold, so the checkpoint
++        repository used to be agent-sandbox-<agent_id> and docker commit
++        rejected it."""
++        h = docker_provider.create_session(agent_id)
++        cp = docker_provider.save_state(agent_id, h.session_id, 'cp1')
++        repo = docker_provider._containers[agent_id, h.session_id].commit.call_args[1]['repository']
++        assert self._REPO_RE.match(repo), repo
++        assert len(repo) <= 255
++        assert cp.image_tag == f'{repo}:cp1'
++
++        docker_provider._client.images.get.return_value = MagicMock()
++        docker_provider.restore_state(agent_id, h.session_id, 'cp1')
++        assert docker_provider._create_container.call_args.kwargs.get('image') == f'{repo}:cp1'
++
++        docker_provider.list_checkpoints(agent_id)
++        assert docker_provider._client.images.list.call_args.kwargs == {'name': repo}
++        docker_provider.delete_checkpoint(agent_id, 'cp1')
++        docker_provider._client.images.remove.assert_called_with(image=f'{repo}:cp1', force=True)
++
++    def test_checkpoint_repositories_differ_for_ids_differing_in_case(self, docker_provider):
++        repos = set()
++        for agent_id in ('agent', 'Agent', 'AGENT'):
++            h = docker_provider.create_session(agent_id)
++            docker_provider.save_state(agent_id, h.session_id, 'cp1')
++            repos.add(docker_provider._containers[agent_id, h.session_id].commit.call_args[1]['repository'])
++        assert 'agent-sandbox-agent' in repos
++        assert len(repos) == 3
++
++    def test_checkpoint_repository_for_long_agent_id(self, docker_provider):
++        # 55 escaped characters is the most a 128-character id can carry
++        # within Docker's 255-character repository limit.
++        agent_id = 'A' * 55 + 'a' * 73
++        h = docker_provider.create_session(agent_id)
++        docker_provider.save_state(agent_id, h.session_id, 'cp1')
++        repo = docker_provider._containers[agent_id, h.session_id].commit.call_args[1]['repository']
++        assert self._REPO_RE.match(repo), repo
++        assert len(repo) <= 255
++
++    def test_checkpoint_repository_too_long_raises_before_commit(self, docker_provider):
++        agent_id = 'A' * 128
++        h = docker_provider.create_session(agent_id)
++        with pytest.raises(ValueError, match="limit of 255"):
++            docker_provider.save_state(agent_id, h.session_id, 'cp1')
++        docker_provider._containers[agent_id, h.session_id].commit.assert_not_called()
++
++    @staticmethod
++    def _decode_repo(repo):
++        """Read the agent id back from a checkpoint repository name."""
++        if not repo.startswith('agent-sandbox/id'):
++            return repo[len('agent-sandbox-'):]
++        encoded = repo[len('agent-sandbox/id'):]
++        chars, i = [], 0
++        while i < len(encoded):
++            if encoded[i] == '_':
++                chars.append(chr(int(encoded[i + 1:i + 3], 16)))
++                i += 3
++            else:
++                chars.append(encoded[i])
++                i += 1
++        return ''.join(chars)
++
++    def test_checkpoint_repository_encoding_is_reversible(self):
++        from agent_sandbox.docker_provider.state import SandboxStateManager
++
++        rng = random.Random(4370)
++        alphabet = string.ascii_letters + string.digits + '_.-'
++        ids = {'agent', 'Agent', 'AGENT', 'a-b', 'a_b', 'a.b', 'a--b', 'a-.b', 'a._b', 'agent-', 'id', 'Id', '_5f', 'a_41'}
++        for _ in range(5000):
++            length = rng.randint(1, 40)
++            ids.add(rng.choice(string.ascii_letters + string.digits) + ''.join(rng.choice(alphabet) for _ in range(length - 1)))
++        repos = {}
++        for agent_id in ids:
++            repo = SandboxStateManager._repo_name(agent_id)
++            assert self._REPO_RE.match(repo), (agent_id, repo)
++            assert self._decode_repo(repo) == agent_id, (agent_id, repo)
++            assert repo not in repos, (agent_id, repos.get(repo), repo)
++            repos[repo]
+```
+
+---
+
+### Incident Patch 2: `7e937e6e` (2026-10-22)
+**Commit Message**: fix(agent-sandbox): flag os.posix_spawn and asyncio subprocesses in the code scanner (#4369)
+
+* fix(agent-sandbox): flag os.posix_spawn and asyncio subprocesses in the code scanner
+
+The pre-execution scanner listed subprocess, os.system, os.popen, the
+os.exec* and os.spawn* families and pty.spawn, but not os.posix_spawn,
+os.posix_spawnp, asyncio.create_subprocess_exec or
+asyncio.create_subprocess_shell, so sandboxed code that started a
+process through them passed the scan.
+
+Flag them, including when reached through the asyncio.subprocess
+submodule (import asyncio.subprocess, from asyncio import subprocess).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+
+* docs(changelog): add PR number for the sandbox code scanner fix
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.cspell-repo-terms.txt` (modified, +1/-0)
+```diff
+@@ -1065,6 +1065,7 @@ socsec
+ softmax
+ spacy
+ spanid
++spawnp
+ specversion
+ spellcheck
+ spellchecking
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-learning` `ExcessivePrivilegeEvaluation` checks `role` and `permissions` as well as `privilege` and `scopes`.** The check read `role` only when the action had no `privilege` key, and `permissions` only when it had no `scopes` key, so `{"privilege": "user", "role": "admin"}`, `{"privilege": None, "role": "admin"}` and `{"scopes": ["read"], "permissions": ["*"]}` all passed. Both keys of each pair are now checked, and `max_scopes` counts `scopes` and `permissions` together (#4364).
+ - **`agent-lightning` `FlightRecorderEmitter.get_violation_summary()` no longer adds to `emitted_count`.** The summary built its spans through `get_spans()`, which counts every converted span as emitted, so each call to `get_violation_summary()` raised `get_stats()["emitted_count"]` by the number of recorder entries although nothing was sent anywhere. The summary now converts the entries without counting them; its result is unchanged.
+ - **`a2a-protocol` `TaskEnvelope.from_dict` keeps each message's content type and accepts a message without parts.** It rebuilt every message as `text/plain`, so a round trip through `to_dict` turned an `application/json` message into plain text, and a message with an empty `parts` list raised `IndexError`. The part's `type` is now restored, and a message with no parts becomes empty `text/plain` content (#4408).
++- **`agent-sandbox` code scanner flags `os.posix_spawn` and asyncio subprocesses.** The pre-execution scanner listed `subprocess`, `os.system`, `os.popen`, the `os.exec*` and `os.spawn*` families and `pty.spawn`, but not `os.posix_spawn`, `os.posix_spawnp`, `asyncio.create_subprocess_exec` or `asyncio.create_subprocess_shell`, so code that started a process through them reached the sandbox. They are now flagged, including through `asyncio.subprocess` and `from asyncio import subprocess` (#4369).
+ 
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+```
+
+**File**: `agent-governance-python/agent-sandbox/src/agent_sandbox/code_scanner.py` (modified, +19/-0)
+```diff
+@@ -32,6 +32,8 @@
+         "execvp",
+         "execvpe",
+         "popen",
++        "posix_spawn",
++        "posix_spawnp",
+         "spawnl",
+         "spawnle",
+         "spawnlp",
+@@ -44,6 +46,14 @@
+     },
+     "pty": {"spawn"},
+     "shutil": {"which"},
++    "asyncio": {"create_subprocess_exec", "create_subprocess_shell"},
++}
++
++# Submodules whose process-spawning functions are listed under their parent
++# module above: ``asyncio.subprocess`` defines the functions that
++# ``asyncio`` re-exports.
++_DANGEROUS_SUBMODULES: dict[tuple[str, str], str] = {
++    ("asyncio", "subprocess"): "asyncio",
+ }
+ 
+ 
+@@ -113,6 +123,10 @@ def visit_ImportFrom(self, node: ast.ImportFrom) -> None:  # noqa: N802
+             return
+ 
+         for alias in node.names:
++            submodule = _DANGEROUS_SUBMODULES.get((node.module, alias.name))
++            if submodule is not None:
++                self._module_aliases[alias.asname or alias.name] = submodule
++                continue
+             if alias.name == "*":
+                 self._add_violation(
+                     node,
+@@ -158,6 +172,11 @@ def _resolve_call_pattern(self, func: ast.expr) -> str | None:
+     def _resolve_module_name(self, node: ast.expr) -> str | None:
+         if isinstance(node, ast.Name):
+             return self._module_aliases.get(node.id, node.id)
++        if isinstance(node, ast.Attribute):
++            parent = self._resolve_module_name(node.value)
++            if parent is None:
++                return None
++            return _DANGEROUS_SUBMODULES.get((parent, node.attr))
+         if isinstance(node, ast.Call):
+             return self._resolve_dynamic_import(node)
+         return None
+```
+
+**File**: `agent-governance-python/agent-sandbox/tests/test_code_scanner.py` (modified, +46/-0)
+```diff
+@@ -53,3 +53,49 @@ def test_enforce_raises_with_violation_details(self):
+             enforce_no_subprocess_execution("import subprocess\nsubprocess.run(['ls'])")
+ 
+         assert exc.value.violations[0].line == 2
++
++    @pytest.mark.parametrize(
++        ("code", "pattern"),
++        [
++            ("import os\nos.posix_spawn('/bin/sh', ['sh'], {})", "os.posix_spawn"),
++            ("from os import posix_spawnp\nposix_spawnp('sh', ['sh'], {})", "os.posix_spawnp"),
++            (
++                "import asyncio\nasyncio.create_subprocess_exec('ls')",
++                "asyncio.create_subprocess_exec",
++            ),
++            (
++                "from asyncio import create_subprocess_shell as sh\nsh('id')",
++                "asyncio.create_subprocess_shell",
++            ),
++            (
++                "import asyncio.subprocess\nasyncio.subprocess.create_subprocess_exec('ls')",
++                "asyncio.create_subprocess_exec",
++            ),
++            (
++                "from asyncio import subprocess\nsubprocess.create_subprocess_shell('id')",
++                "asyncio.create_subprocess_shell",
++            ),
++            (
++                "from asyncio import subprocess as asp\nasp.create_subprocess_exec('ls')",
++                "asyncio.create_subprocess_exec",
++            ),
++            (
++                "from asyncio.subprocess import create_subprocess_exec\n"
++                "create_subprocess_exec('ls')",
++                "asyncio.create_subprocess_exec",
++            ),
++        ],
++    )
++    def test_detects_posix_spawn_and_asyncio_subprocesses(self, code, pattern):
++        assert pattern in _patterns(code)
++
++    def test_does_not_flag_other_asyncio_or_os_calls(self):
++        code = """
++import asyncio
++import os
++asyncio.run(main())
++asyncio.subprocess.PIPE
++os.path.join('a', 'b')
++os.cpu_count()
++"""
++        assert scan_code_for_subprocesses(code) == []
+```
+
+---
+
+### Incident Patch 3: `9c856465` (2026-10-21)
+**Commit Message**: fix(a2a-protocol): keep message content types in TaskEnvelope.from_dict (#4408)
+
+* fix(a2a-protocol): keep message content types in TaskEnvelope.from_dict
+
+from_dict rebuilt every message with the default text/plain content type,
+so a to_dict/from_dict round trip lost a message's type, and a message
+whose parts list was empty raised IndexError. Restore the part's type and
+treat a message without parts as empty text/plain content.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+
+* docs(changelog): reference #4408
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
@@ -435,339 +824,79 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **.NET MCP governance denies an authenticated principal whose identifier is not a DID instead of throwing.** With default options, a principal from an OIDC provider such as Keycloak (where `sub` is a GUID or an email address) made every governed tool call throw `ArgumentException` ("Invalid AgentMesh DID") instead of reaching a decision. `McpGovernanceRuntime` now denies such calls with a reason that points the operator at `AgentIdResolver`; `GovernanceKernel.EvaluateToolCall` is unchanged (#4357).
- - **`agent-discovery` reports containerized agents with the same agent type as the other scanners.** `ConfigScanner` used the matched text of a Dockerfile or Compose file as the agent type, so `langgraph`, `agent_governance`, `mcp_server` and `semantic_kernel` came out as types no other scanner uses. Risk scoring then skipped the type factor for them (a `semantic_kernel` container got no medium-risk score), and reconciliation never suggested `mcp-scan` for an `mcp_server` container. Each Docker pattern now reports the type the process scanner uses (`langchain`, `agt`, `mcp-server`, `semantic-kernel`, ...); fingerprints are unchanged.
- - **`agent-discovery` GitHub scans detect LlamaIndex and classic AutoGen through their PyPI names.** `GitHubScanner` matched dependency files against `llamaindex` and `autogen` with word boundaries, so `llama-index` (the PyPI name of LlamaIndex) and `pyautogen` (classic AutoGen) were never detected, and a name written with `_` (`semantic_kernel`, `langchain_core`, `autogen_agentchat`) was missed although its hyphenated form was detected. Each dependency can now list aliases (`llama-index`, `pyautogen`), and `-`, `_` and `.` are treated alike inside and around a name, as in PEP 503. A repository still yields one agent per framework.
-+- **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
-```
-
-**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/environment.py` (modified, +16/-4)
-```diff
-@@ -117,7 +117,11 @@ def __init__(
-         self._total_episodes = 0
-         self._total_steps = 0
-         self._total_violations = 0
-+        # Episodes that finished with every step succeeding and no
-+        # violation. The episode in progress is counted by get_metrics
-+        # through ``_episode_clean`` until reset() closes it.
-         self._successful_episodes = 0
-+        self._episode_clean = False
- 
-         # Set up kernel hooks
-         self._setup_hooks()
-@@ -221,6 +225,11 @@ def reset(
-         Returns:
-             Tuple of (initial_state, info_dict)
-         """
-+        # Close the previous episode before starting a new one
-+        if self._episode_clean:
-+            self._successful_episodes += 1
-+        self._episode_clean = False
-+
-         # Reset episode state
-         self._state = EnvironmentState()
-         self._current_violations = []
-@@ -257,6 +266,7 @@ def step(
-             Tuple of (next_state, reward, terminated, truncated, info)
-         """
-         self._current_violations = []
-+        first_step = self._state.step_count == 0
-         self._state.step_count += 1
-         self._total_steps += 1
- 
-@@ -310,9 +320,10 @@ def step(
-             truncated = True
- 
-         # Mark success
--        if success and not self._current_violations:
-+        step_clean = success and not self._current_violations
-+        if step_clean:
-             reward += self.config.success_bonus
--            self._successful_episodes += 1
-+        self._episode_clean = step_clean and (first_step or self._episode_clean)
- 
-         self._state.terminated = terminated
-         self._state.truncated = truncated
-@@ -342,12 +353,13 @@ def terminated(self) -> bool:
- 
-     def get_metrics(self) -> dict[str, Any]:
-         """Get environment metrics."""
-+        successful_episodes = self._successful_episodes + int(self._episode_clean)
-         return {
-             "total_episodes": self._total_episodes,
-             "total_steps": self._total_steps,
-             "total_violations": self._total_violations,
--            "successful_episodes": self._successful_episodes,
--            "success_rate": self._successful_episodes / max(self._total_episodes, 1),
-+            "successful_episodes": successful_episodes,
-+            "success_rate": successful_episodes / max(self._total_episodes, 1),
-             "violations_per_episode": self._total_violations
-             / max(self._total_episodes, 1),
-             "steps_per_episode": self._total_steps / max(self._total_episodes, 1),
-```
-
-**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +35/-0)
-```diff
-@@ -859,6 +859,41 @@ def test_get_metrics_after_episode(self):
-         assert m["total_episodes"] == 1
-         assert m["total_steps"] == 2
- 
-+    def test_clean_episode_counts_once(self):
-+        """Regression: every clean step used to add a successful episode,
-+        so one clean five-step episode reported a success_rate of 5.0."""
-+        env = GovernedEnvironment(_make_mock_kernel())
-+        env.reset()
-+        for i in range(5):
-+            env.step(f"a{i}")
-+        m = env.get_metrics()
-+        assert m["successful_episodes"] == 1
-+        assert m["success_rate"] == 1.0
-+
-+    def test_episode_with_a_violation_is_not_successful(self):
-+        kernel = _make_mock_kernel()
-+
-+        def execute(action):
-+            if action == "bad":
-+                env._handle_violation("P", "blocked", "low", True)
-+            return "result"
-+
-+        kernel.execute = MagicMock(side_effect=execute)
-+        env = GovernedEnvironment(kernel)
-+        env.reset()
-+        for action in ("ok", "bad", "ok"):
-+            env.step(action)
-+        assert env.get_metrics()["successful_episodes"] == 0
-+
-+        # A clean second episode counts; the first one stays unsuccessful.
-+        env.reset()
-+        env.step("ok")
-+        env.reset()
-+        m = env.get_metrics()
-+        assert m["total_episodes"] == 3
-+        assert m["successful_episodes"] == 1
-+        assert m["success_rate"] == pytest.approx(1 / 3)
-+
- 
- class TestCreateGovernedEnv:
-     def test_factory(self):
-```
-
-**File**: `docs/specs/AGENT-LIGHTNING-FAST-PATH-1.0.md` (modified, +1/-1)
-```diff
-@@ -737,7 +737,7 @@ The environment MUST expose a `terminated` property that returns
- | `total_episodes` | int | Number of episodes completed |
- | `total_steps` | int | Total steps across all episodes |
- | `total_violations` | int | Total violations across all episodes |
--| `successful_episodes` | int | Episodes with at least one violation-free, successful step |
-+| `successful_episodes` | int | Episodes in which every step succeeded without a violation |
- | `success_rate` | float | `successful_episodes / max(total_episodes, 1)` |
- | `violations_per_episode` | float | `total_violations / max(total_episodes, 1)` |
- | `steps_per_episode` | float | `total_steps / max(total_episodes, 1)` |
-```
-
-**File**: `docs/specs/AUDIT-COMPLIANCE-1.0.md` (modified, +1/-1)
-```diff
-@@ -1611,7 +1611,7 @@ The environment MUST track and report:
- | `total_episodes` | Total number of episodes completed. |
- | `total_steps` | Total steps across all episodes. |
- | `total_violations` | Total policy violations across all episodes. |
--| `successful_episodes` | Episodes that completed without critical violations. |
-+| `successful_episodes` | Episodes in which every step succeeded without a violation. |
- | `success_rate` | Fraction of successful episodes. |
- | `violations_per_episode` | Average violations per episode. |
- | `steps_per_episode` | Average steps per episode. |
-```
-
----
-
-### Incident Patch 2: `8e51b1c3` (2026-10-21)
-**Commit Message**: fix(agent-lightning): do not count violation summaries as emitted spans (#4365)
-
-get_violation_summary() built its spans through get_spans(), which adds
-every converted span to emitted_count, so each summary raised
-get_stats()["emitted_count"] by the number of recorder entries although
-nothing was emitted. Convert the entries directly instead.
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-discovery` GitHub scans detect LlamaIndex and classic AutoGen through their PyPI names.** `GitHubScanner` matched dependency files against `llamaindex` and `autogen` with word boundaries, so `llama-index` (the PyPI name of LlamaIndex) and `pyautogen` (classic AutoGen) were never detected, and a name written with `_` (`semantic_kernel`, `langchain_core`, `autogen_agentchat`) was missed although its hyphenated form was detected. Each dependency can now list aliases (`llama-index`, `pyautogen`), and `-`, `_` and `.` are treated alike inside and around a name, as in PEP 503. A repository still yields one agent per framework.
+@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
  - **`agent-learning` `ExcessivePrivilegeEvaluation` checks `role` and `permissions` as well as `privilege` and `scopes`.** The check read `role` only when the action had no `privilege` key, and `permissions` only when it had no `scopes` key, so `{"privilege": "user", "role": "admin"}`, `{"privilege": None, "role": "admin"}` and `{"scopes": ["read"], "permissions": ["*"]}` all passed. Both keys of each pair are now checked, and `max_scopes` counts `scopes` and `permissions` together (#4364).
-+- **`agent-lightning` `FlightRecorderEmitter.get_violation_summary()` no longer adds to `emitted_count`.** The summary built its spans through `get_spans()`, which counts every converted span as emitted, so each call to `get_violation_summary()` raised `get_stats()["emitted_count"]` by the number of recorder entries although nothing was sent anywhere. The summary now converts the entries without counting them; its result is unchanged.
+ - **`agent-lightning` `FlightRecorderEmitter.get_violation_summary()` no longer adds to `emitted_count`.** The summary built its spans through `get_spans()`, which counts every converted span as emitted, so each call to `get_violation_summary()` raised `get_stats()["emitted_count"]` by the number of recorder entries although nothing was sent anywhere. The summary now converts the entries without counting them; its result is unchanged.
++- **`a2a-protocol` `TaskEnvelope.from_dict` keeps each message's content type and accepts a message without parts.** It rebuilt every message as `text/plain`, so a round trip through `to_dict` turned an `application/json` message into plain text, and a message with an empty `parts` list raised `IndexError`. The part's `type` is now restored, and a message with no parts becomes empty `text/plain` content (#4408).
  
  ### Added
  - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/emitter.py` (modified, +7/-1)
+**File**: `agent-governance-python/agentmesh-integrations/a2a-protocol/a2a_agentmesh/task.py` (modified, +5/-4)
 ```diff
-@@ -309,7 +309,13 @@ def get_violation_summary(self) -> dict[str, Any]:
-         Returns:
-             Summary dictionary with violation statistics
-         """
--        spans = self.get_spans()
-+        # Convert directly instead of calling get_spans(): a summary does not
-+        # emit anything, so it must not add to emitted_count.
-+        spans = [
-+            span
-+            for entry in self._get_entries()
-+            if (span := self._convert_entry(entry))
-+        ]
- 
-         violations = [
-             s for s in spans if s.attributes.get("agent_os.policy_violated", False)
-```
-
-**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +12/-0)
-```diff
-@@ -1023,6 +1023,18 @@ def test_violation_summary_empty(self):
-         assert summary["total_violations"] == 0
-         assert summary["violation_rate"] == 0.0
- 
-+    def test_violation_summary_does_not_count_as_emitted(self):
-+        entries = [_FakeEntry(violated=True), _FakeEntry(id="e2")]
-+        emitter = FlightRecorderEmitter(_make_recorder(entries))
-+        emitter.get_violation_summary()
-+        emitter.get_violation_summary()
-+        assert emitter.get_stats()["emitted_count"] == 0
-+
-+        store = MagicMock()
-+        emitter.emit_to_store(store)
-+        emitter.get_violation_summary()
-+        assert emitter.get_stats()["emitted_count"] == 2
-+
- 
- class TestFlightRecorderEmitterStream:
-     """``stream()`` is an async generator with a cooperative stop signal.
-```
-
----
-
-### Incident Patch 3: `6a8c12b7` (2026-10-21)
-**Commit Message**: fix(agent-learning): check role and permissions in ExcessivePrivilegeEvaluation (#4364)
-
-The check read `role` only when an action had no `privilege` key and
-`permissions` only when it had no `scopes` key, so an action with
-`privilege="user", role="admin"`, `privilege=None, role="admin"` or
-`scopes=["read"], permissions=["*"]` passed. Check both keys of each pair
-and count scopes and permissions together against max_scopes.
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-discovery` reports containerized agents with the same agent type as the other scanners.** `ConfigScanner` used the matched text of a Dockerfile or Compose file as the agent type, so `langgraph`, `agent_governance`, `mcp_server` and `semantic_kernel` came out as types no other scanner uses. Risk scoring then skipped the type factor for them (a `semantic_kernel` container got no medium-risk score), and reconciliation never suggested `mcp-scan` for an `mcp_server` container. Each Docker pattern now reports the type the process scanner uses (`langchain`, `agt`, `mcp-server`, `semantic-kernel`, ...); fingerprints are unchanged.
- - **`agent-discovery` GitHub scans detect LlamaIndex and classic AutoGen through their PyPI names.** `GitHubScanner` matched dependency files against `llamaindex` and `autogen` with word boundaries, so `llama-index` (the PyPI name of LlamaIndex) and `pyautogen` (classic AutoGen) were never detected, and a name written with `_` (`semantic_kernel`, `langchain_core`, `autogen_agentchat`) was missed although its hyphenated form was detected. Each dependency can now list aliases (`llama-index`, `pyautogen`), and `-`, `_` and `.` are treated alike inside and around a name, as in PEP 503. A repository still yields one agent per framework.
- - **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
-+- **`agent-learning` `ExcessivePrivilegeEvaluation` checks `role` and `permissions` as well as `privilege` and `scopes`.** The check read `role` only when the action had no `privilege` key, and `permissions` only when it had no `scopes` key, so `{"privilege": "user", "role": "admin"}`, `{"privilege": None, "role": "admin"}` and `{"scopes": ["read"], "permissions": ["*"]}` all passed. Both keys of each pair are now checked, and `max_scopes` counts `scopes` and `permissions` together (#4364).
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
-```
-
-**File**: `agent-governance-python/agent-learning/src/agent_learning_gov/evaluation.py` (modified, +8/-8)
-```diff
-@@ -234,14 +234,14 @@ def evaluate(
-         findings = []
-         for action in policy.actions:
-             parameters = dict(action.parameters)
--            privilege = parameters.get("privilege", parameters.get("role"))
--            scopes = parameters.get("scopes", parameters.get("permissions", ()))
--            normalized_scopes = _as_sequence(scopes)
--            privileged = (
--                isinstance(privilege, str) and privilege.lower() in self.privileged_values
--            ) or any(
--                isinstance(scope, str) and scope.lower() in self.privileged_values
--                for scope in normalized_scopes
-+            # An action can carry both keys of each pair, so check both.
-+            privileges = (parameters.get("privilege"), parameters.get("role"))
-+            normalized_scopes = _as_sequence(parameters.get("scopes")) + _as_sequence(
-+                parameters.get("permissions")
-+            )
-+            privileged = any(
-+                isinstance(value, str) and value.lower() in self.privileged_values
-+                for value in (*privileges, *normalized_scopes)
+@@ -212,13 +212,14 @@ def from_dict(cls, data: Dict[str, Any]) -> "TaskEnvelope":
+         trust = data.get("x-agentmesh-trust", {})
+         messages = []
+         for m in data.get("messages", []):
+-            text = ""
+-            if "parts" in m:
+-                text = m["parts"][0].get("text", "")
++            # to_dict writes one part; a message may also arrive with none.
++            parts = m.get("parts") or [{}]
++            part = parts[0]
+             messages.append(
+                 TaskMessage(
+                     role=m["role"],
+-                    content=text,
++                    content=part.get("text", ""),
++                    content_type=part.get("type", "text/plain"),
+                     metadata=m.get("metadata", {}),
+                 )
              )
-             if privileged or len(normalized_scopes) > self.max_scopes:
-                 findings.append(
 ```
 
-**File**: `agent-governance-python/agent-learning/tests/test_evaluation.py` (modified, +41/-0)
+**File**: `agent-governance-python/agentmesh-integrations/a2a-protocol/tests/test_a2a.py` (modified, +22/-0)
 ```diff
-@@ -10,6 +10,7 @@
+@@ -279,6 +279,28 @@ def test_roundtrip_serialisation(self):
+         assert restored.source_trust_score == 900
+         assert len(restored.messages) == 1
  
- from agent_learning_gov import (
-     CostPolicyEvaluation,
-+    ExcessivePrivilegeEvaluation,
-     GovernanceEvaluationPack,
-     GovernanceOutcome,
-     GovernanceTelemetry,
-@@ -90,6 +91,46 @@ def test_pack_reports_tools_privilege_restrictions_and_cost() -> None:
-     assert len(report.findings) >= 5
- 
- 
-+@pytest.mark.parametrize(
-+    "parameters",
-+    [
-+        {"privilege": None, "role": "admin"},
-+        {"privilege": "user", "role": "admin"},
-+        {"scopes": ["read"], "permissions": ["*"]},
-+        {"scopes": [], "permissions": ["root"]},
-+    ],
-+)
-+def test_excessive_privilege_checks_role_and_permissions(parameters) -> None:
-+    result = ExcessivePrivilegeEvaluation().evaluate(
-+        _policy(_action("grant", **parameters)), episodes=(), baseline=None
-+    )
++    def test_roundtrip_keeps_message_content_type(self):
++        original = TaskEnvelope.create(skill_id="x", source_did="did:mesh:a")
++        original.messages.append(
++            TaskMessage(role="agent", content='{"ok": true}', content_type="application/json")
++        )
++        restored = TaskEnvelope.from_dict(original.to_dict())
++        assert restored.messages[0].content_type == "application/json"
++        assert restored.messages[0].content == '{"ok": true}'
 +
-+    assert result.passed == False
-+    assert [finding.action_id for finding in result.findings] == ["grant"]
++    def test_from_dict_message_without_parts(self):
++        d = {
++            "id": "t1",
++            "status": {"state": "submitted"},
++            "messages": [
++                {"role": "user", "parts": []},
++                {"role": "agent"},
++            ],
++        }
++        restored = TaskEnvelope.from_dict(d)
++        assert [m.content for m in restored.messages] == ["", ""]
++        assert [m.content_type for m in restored.messages] == ["text/plain", "text/plain"]
 +
-+
-+def test_excessive_privilege_counts_scopes_and_permissions_together() -> None:
-+    evaluation = ExcessivePrivilegeEvaluation(max_scopes=3)
-+    result = evaluation.evaluate(
-+        _policy(_action("grant", scopes=["a", "b"], permissions=["c", "d"])),
-+        episodes=(),
-+        baseline=None,
-+    )
-+
-+    assert result.passed == False
-+    assert result.findings[0].metadata == {"scope_count": 4}
-+
-+
-+def test_excessive_privilege_passes_unprivileged_role_and_permissions() -> None:
-+    result = ExcessivePrivilegeEvaluation().evaluate(
-+        _policy(_action("search", privilege=None, role="user", permissions=["read"])),
-+        episodes=(),
-+        baseline=None,
-+    )
-+
-+    assert result.passed == True
-+
-+
- def test_regression_check_uses_approved_baseline() -> None:
-     telemetry = GovernanceTelemetry(
-         violations=(
+     def test_is_terminal_for_non_terminal(self):
+         t = TaskEnvelope.create(skill_id="x", source_did="did:mesh:a")
+         assert not t.is_terminal
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4410** (2026-10-22): fix(agent-runtime): report paused Docker containers as stopped, not failed (@ShivamSharma43)
+- **PR #4408** (2026-10-21): fix(a2a-protocol): keep message content types in TaskEnvelope.from_dict (@ShivamSharma43)
 - **PR #4405** (2026-10-20): chore(deps-dev): Bump hono from 4.13.7 to 4.13.13 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
 - **PR #4404** (2026-10-20): chore(deps): Bump hono from 4.13.7 to 4.13.13 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
 - **PR #4403** (2026-10-20): chore(deps): Bump rustls from 0.23.40 to 0.23.46 in /policy-engine/examples/coding_agent/app (@dependabot[bot])
 - **PR #4399** (2026-10-20): chore(deps): Bump aiohttp from 3.14.3 to 3.14.4 in /agent-governance-python/agent-hypervisor (@dependabot[bot])
-- **PR #4397** (2026-10-20): chore(deps-dev): Update fastapi requirement from <1.0,>=0.142.2 to >=0.143.0,<1.0 in /agent-governance-python/agent-sre (@dependabot[bot])
-- **PR #4396** (2026-10-20): chore(deps-dev): Update pydantic requirement from <3.0,>=2.13.5 to >=2.14.1,<3.0 in /agent-governance-python/agent-sre (@dependabot[bot])
 
 ---
 
@@ -787,13 +916,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-lightning): count a successful episode once in GovernedEnvironment metrics
+## X. agent-sandbox): give Docker checkpoints a valid repository for any agent id (#43
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e67fba7f`: agent-lightning): count a successful episode once in GovernedEnvironment metrics (#4360). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b22c59c`: agent-sandbox): give Docker checkpoints a valid repository for any agent id (#4370). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -801,7 +930,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-lightning` `GovernedEnvironment` counts a successful episode once.** `step` added one to `successful_episodes` for every step that succeeded without a violation, so `get_metrics()` reported a clean five-step episode as five successful episodes and a `success_rate` of 5.0, and an episode with a violation on one step still counted its clean steps. An episode now counts as successful when every step in it succeeded without a violation, at most once, so `success_rate` stays between 0 and 1. The per-step success bonus is unchanged.
+- **`agent-sandbox` Docker checkpoints work for agent ids with uppercase letters or edge separators.** `save_state` committed the checkpoint to the image repository `agent-sandbox-<agent_id>`, but repository names must be lowercase and cannot start or end with a separator or repeat `.` or `_`, so for an id such as `Analyst-001`, `agent-` or `a..b` (all accepted by `create_session`) `docker commit` rejected the name and the session could not be checkpointed. Such ids now get the repository `agent-sandbox/id<escaped>`, where lowercase letters, digits and a single `-` or `.` between them are kept and every other character is written as `_` and two hex digits (`A-1` -> `agent-sandbox/id_41-1`); the encoding is reversible, so `Agent` and `agent` do not share a repository. Ids that already formed a valid name keep their repository and existing checkpoints, and an id whose escaped name would exceed Docker's 255-character limit raises `ValueError` before `docker commit` (#4370).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -811,4 +940,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e67fba7f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b22c59c` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `625fb470`  
+> **Source Version**: `753b9357`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:55:53.126Z  
+> **Timestamp**: 2026-10-22T17:58:18.708Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:55:53.122Z  
+> **Harvest Timestamp**: 2026-10-22T17:58:18.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11351 stars
+- **Stars / Engagement**: 11352 stars
 
 ---
 
@@ -1465,59 +1465,38 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `625fb470` (2026-10-20)
-**Commit Message**: ci: authenticate private go modules with a credential helper (#2602)
+### Incident Patch 1: `753b9357` (2026-10-22)
+**Commit Message**: chore(deps): bump go to 1.26.10 (#2610)
 
-Verify vendor started failing on PR branches with "could not read
-Username for 'https://github.com'" while fetching the private
-loft-sh/e2e-framework module. Reruns passed or failed at random.
+Go 1.26.10 rejects certificate chains through the compromised eMudhra
+intermediate CAs (CVE-2026-111943). Both modules move together, and
+vendor/modules.txt records the replaced staging module's go directive, so
+it is regenerated with just vendor.
 
-GitHub's ubuntu-24.04 runner image 20261018.339, rolling out since
-2026-10-19, moves curl to 8.5.0-2ubuntu10.16. Its CVE-2026-94266 patch
-strips credentials from CURLINFO_EFFECTIVE_URL. Git compares that URL
-with the one it requested, which carries GH_ACCESS_TOKEN through our
-url.<token>@github.com insteadOf rewrite, reads the difference as a
-redirect, drops the token, and the next request gets a 401. Every
-failing run landed on the new image and every passing run on the old
-one, so this will hit every PR once the rollout completes.
+The golang:1.26 builder tags already resolve to a patched release and are
+left as they are.
 
-A credential helper scoped to github.com hands git the same token on
-the 401 without putting it in the URL. lint.yaml, the staged OSS
-lint.yaml and release-bump-vcluster.yaml carry the same rewrite and
-fail the same way whenever they fetch a private module, so they change
-too.
+Monorepo-Commit: 40844c3ea99f687e53c963b4b5702628c2bd2207
 
-Closes DEVOPS-1702
-
-Claude-Session: https://claude.ai/code/session_01M22ZidnDY26LgZ2dyECNTv
-Monorepo-Commit: dc05a5cd
-
-**File**: `.github/workflows/lint.yaml` (modified, +5/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -38,9 +38,13 @@ jobs:
-           go-version-file: ./go.mod
-           cache: false
+@@ -1,6 +1,6 @@
+ module github.com/loft-sh/vcluster
  
-+      # A credential helper rather than a token in the URL: curl 8.5.0-2ubuntu10.16
-+      # strips credentials from the effective URL, so git reads an insteadOf URL that
-+      # carries the token as a redirect, drops the token, and private modules fail
-+      # with "could not read Username" (DEVOPS-1702).
-       - name: Configure git
-         if: github.event.pull_request.head.repo.full_name == github.repository
--        run: git config --global url.https://"$GH_ACCESS_TOKEN"@github.com/.insteadOf https://github.com/
-+        run: git config --global credential.https://github.com.helper "!f() { echo username=x-access-token; echo password=${GH_ACCESS_TOKEN}; }; f"
-         env:
-           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+-go 1.26.3
++go 1.26.10
  
+ require (
+ 	github.com/blang/semver v3.5.1+incompatible
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4217** (2026-10-20): fix(cli): drop string-form image tag handling in the docker driver (v0.36) (@c2ndev)
-- **PR #4216** (2026-10-20): fix(cli): drop string-form image tag handling in the docker driver (v0.35) (@c2ndev)
-- **PR #4215** (2026-10-20): fix(cli): drop string-form image tag handling in the docker driver (v0.34) (@c2ndev)
-- **PR #4210** (2026-10-19): [v0.34] chore: bump minimum platform version to v4.9.6 (@deniseschannon)
-- **PR #4209** (closed): [v0.37] chore: bump minimum platform version to v4.12.3 (@deniseschannon)
-- **PR #4207** (closed): docs: document Apple container as a Docker-free local dev option (@balx)
+- **PR #4237** (2026-10-22): chore(deps): bump go to 1.26.10 (backport v0.34 oss) (@loft-bot)
+- **PR #4234** (2026-10-22): fix(snapshot): keep the kine revision bump when restoring an embedded database (backport v0.36 oss) (@loft-bot)
+- **PR #4233** (closed): chore(deps): bump go to 1.26.10 (v0.34) (@c2ndev)
+- **PR #4230** (2026-10-21): ci: authenticate private go modules with a credential helper (backport v0.36 oss) (@Piotr1215)
+- **PR #4229** (2026-10-21): ci: authenticate private go modules with a credential helper (backport v0.35 oss) (@Piotr1215)
+- **PR #4228** (2026-10-21): ci: authenticate private go modules with a credential helper (backport v0.34 oss) (@Piotr1215)
 
 ---
 
@@ -1537,32 +1516,28 @@ Monorepo-Commit: dc05a5cd
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: authenticate private go modules with a credential helper (#2602)
+## X. deps): bump go to 1.26.10 (#2610)
 
 **RULE**:
-When implementing operations in `.github/workflows/lint.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `625fb470`: ci: authenticate private go modules with a credential helper (#2602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `753b9357`: deps): bump go to 1.26.10 (#2610). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      # A credential helper rather than a token in the URL: curl 8.5.0-2ubuntu10.16
-      # strips credentials from the effective URL, so git reads an insteadOf URL that
-      # carries the token as a redirect, drops the token, and private modules fail
-      # with "could not read Username" (DEVOPS-1702).
-        run: git config --global credential.https://github.com.helper "!f() { echo username=x-access-token; echo password=${GH_ACCESS_TOKEN}; }; f"
+go 1.26.10
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        run: git config --global url.https://"$GH_ACCESS_TOKEN"@github.com/.insteadOf https://github.com/
+go 1.26.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `625fb470` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `753b9357` are properly handled with clean fallback behavior.

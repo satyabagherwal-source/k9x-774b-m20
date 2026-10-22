@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:51:54.151Z",
+  "last_updated": "2026-10-22T17:58:25.525Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5839,8 +5839,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "acf33af3",
-      "content_hash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
+      "source_version": "2211c107",
+      "content_hash": "c5dbbdf58d8c91ea6191198bfb16b0f4af0c3a38fe57a668a4b70c470922a6b2",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -5873,6 +5873,11 @@
           "number": 3427,
           "title": "Merge pull request #127029 from mpanichella/add-dbine",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3682,
+          "title": "Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5880,7 +5885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:04:35.120Z",
+      "verified_at": "2026-10-22T17:58:25.510Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31173,8 +31178,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "625fb470",
-      "content_hash": "65c38e5d40658b6c5d8e3ff9dbe4e91a4bab723e8f95624baa4352b25e3a72c5",
+      "source_version": "753b9357",
+      "content_hash": "57666b6032b18c7ca193ad988e88a76e15bdcd88b57d500971762a94d7d64da8",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -31197,6 +31202,11 @@
           "number": 3445,
           "title": "ci: authenticate private go modules with a credential helper (#2602)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3678,
+          "title": "deps): bump go to 1.26.10 (#2610)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31204,7 +31214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:55:53.348Z",
+      "verified_at": "2026-10-22T17:58:19.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31980,8 +31990,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "a4a3063c",
-      "content_hash": "b648c15c3bb7c43d7635fe1d852fd123606b71f5606afbaf48258c3887933498",
+      "source_version": "f117827b",
+      "content_hash": "54f016882a78b878c43fd694ca1201416d412dc295b9838342ca75f606da592e",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -31999,6 +32009,11 @@
           "number": 3381,
           "title": "remove): drain the trash with one background process per repository (#4516)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3677,
+          "title": "demo command tracking and simplify Try it copy (#4546)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32006,7 +32021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:07:59.036Z",
+      "verified_at": "2026-10-22T17:58:13.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32850,8 +32865,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "8e51b1c3",
-      "content_hash": "6634606c83a2b3b159b57057830121cfe13beab147dba818b2dc20492e41c8f6",
+      "source_version": "7b22c59c",
+      "content_hash": "0421010b209e0ad47503fa0869becd004182720c13fc62c752417c5fc20b86da",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -32889,6 +32904,11 @@
           "number": 3595,
           "title": "agent-lightning): count a successful episode once in GovernedEnvironment metrics",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3681,
+          "title": "agent-sandbox): give Docker checkpoints a valid repository for any agent id (#43",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32896,7 +32916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T19:05:50.649Z",
+      "verified_at": "2026-10-22T17:58:22.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71563,14 +71583,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
-      "source_version": "hf-google-gemma-4-31b-it",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T12:03:42.374Z"
+      "verified_at": "2026-10-22T17:58:21.235Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -98345,10 +98365,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
       "source_version": "hf-reflection-beam-1.0-501b-a23b",
-      "content_hash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
+      "content_hash": "eb70879f4fce90ee5e1e314b051f4cdd4f49c1cda2c6da53e3fd311f24f9b14d",
       "dossier_path": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "promoted_rules": [
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 2841,
           "title": "Invariant Top-K Normalization in Ultra-Sparse MoE Routing",
@@ -98363,6 +98388,16 @@
           "number": 2843,
           "title": "Asymmetric Hybrid RoPE Theta Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3679,
+          "title": "MoE Dense-Sparse Layer Heterogeneity Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3680,
+          "title": "Harmony XML Structured Reasoning Protocol",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -98370,7 +98405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:00:48.847Z",
+      "verified_at": "2026-10-22T17:58:21.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110770,6 +110805,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:51:54.140Z"
+    },
+    "rule-3677": {
+      "learning_id": "rule-3677",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3677,
+      "title": "demo command tracking and simplify Try it copy (#4546)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "f117827b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:58:13.428Z"
+    },
+    "rule-3678": {
+      "learning_id": "rule-3678",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3678,
+      "title": "deps): bump go to 1.26.10 (#2610)",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "753b9357",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:58:19.073Z"
+    },
+    "rule-3679": {
+      "learning_id": "rule-3679",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3679,
+      "title": "MoE Dense-Sparse Layer Heterogeneity Rule",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:58:21.235Z"
+    },
+    "rule-3680": {
+      "learning_id": "rule-3680",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3680,
+      "title": "Harmony XML Structured Reasoning Protocol",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:58:21.235Z"
+    },
+    "rule-3681": {
+      "learning_id": "rule-3681",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3681,
+      "title": "agent-sandbox): give Docker checkpoints a valid repository for any agent id (#43",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "7b22c59c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:58:22.132Z"
+    },
+    "rule-3682": {
+      "learning_id": "rule-3682",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3682,
+      "title": "Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "2211c107",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:58:25.510Z"
     }
   },
   "aliases": {

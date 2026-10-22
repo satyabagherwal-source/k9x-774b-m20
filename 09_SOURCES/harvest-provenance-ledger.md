@@ -4374,3 +4374,8 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `760378b7` | Multi-dimensional audit evidence | 2026-10-22T17:51:42.221Z |
 | `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `d28d2ecc` | Multi-dimensional audit evidence | 2026-10-22T17:51:45.643Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `724e39f0` | Multi-dimensional audit evidence | 2026-10-22T17:51:54.204Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `f117827b` | Multi-dimensional audit evidence | 2026-10-22T17:58:13.506Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `753b9357` | Multi-dimensional audit evidence | 2026-10-22T17:58:19.148Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-22T17:58:21.318Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `7b22c59c` | Multi-dimensional audit evidence | 2026-10-22T17:58:22.210Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `2211c107` | Multi-dimensional audit evidence | 2026-10-22T17:58:25.585Z |

@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "8e51b1c3",
+    "sourceVersion": "7b22c59c",
     "license": "MIT",
-    "contentHash": "6634606c83a2b3b159b57057830121cfe13beab147dba818b2dc20492e41c8f6",
-    "lastHarvestedAt": "2026-10-21T19:05:50.754Z",
+    "contentHash": "0421010b209e0ad47503fa0869becd004182720c13fc62c752417c5fc20b86da",
+    "lastHarvestedAt": "2026-10-22T17:58:22.210Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "a4a3063c",
+    "sourceVersion": "f117827b",
     "license": "NOASSERTION",
-    "contentHash": "b648c15c3bb7c43d7635fe1d852fd123606b71f5606afbaf48258c3887933498",
-    "lastHarvestedAt": "2026-10-20T21:07:59.111Z",
+    "contentHash": "54f016882a78b878c43fd694ca1201416d412dc295b9838342ca75f606da592e",
+    "lastHarvestedAt": "2026-10-22T17:58:13.506Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "acf33af3",
+    "sourceVersion": "2211c107",
     "license": "Apache-2.0",
-    "contentHash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
-    "lastHarvestedAt": "2026-10-20T23:04:35.185Z",
+    "contentHash": "c5dbbdf58d8c91ea6191198bfb16b0f4af0c3a38fe57a668a4b70c470922a6b2",
+    "lastHarvestedAt": "2026-10-22T17:58:25.585Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "625fb470",
+    "sourceVersion": "753b9357",
     "license": "Apache-2.0",
-    "contentHash": "65c38e5d40658b6c5d8e3ff9dbe4e91a4bab723e8f95624baa4352b25e3a72c5",
-    "lastHarvestedAt": "2026-10-20T23:55:53.395Z",
+    "contentHash": "57666b6032b18c7ca193ad988e88a76e15bdcd88b57d500971762a94d7d64da8",
+    "lastHarvestedAt": "2026-10-22T17:58:19.148Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -9225,8 +9225,8 @@
     "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
     "license": "Open-Source",
-    "contentHash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
-    "lastHarvestedAt": "2026-10-19T22:00:48.918Z",
+    "contentHash": "eb70879f4fce90ee5e1e314b051f4cdd4f49c1cda2c6da53e3fd311f24f9b14d",
+    "lastHarvestedAt": "2026-10-22T17:58:21.318Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   },
   "webrecorder-pywb": {
