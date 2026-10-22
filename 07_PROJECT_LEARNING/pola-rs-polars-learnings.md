@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `8512c7e3`  
+> **Source Version**: `5b6eae3d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:30:39.276Z  
+> **Timestamp**: 2026-10-22T16:26:12.359Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:30:39.269Z  
+> **Harvest Timestamp**: 2026-10-22T16:26:01.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40134 stars
+- **Stars / Engagement**: 40154 stars
 
 ---
 
@@ -1668,11 +1668,13 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30078** (2026-10-20): **Strict `cast(pl.Datetime("ns"))` expression on a `Datetime("us"/"ms")` column returns null for out-of-range values instead of raising (regression in 1.43.0)**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example   ```python from datetime import datetime import polars as pl  df = pl.DataFrame({"ts": [datetime(2024, 5, 1), datetime(9999, 12, 31), datetime(1500, 1, 1)]})  # datetime[μs]  lf = df.lazy().select(pl.col("ts").cast(pl.Datetime("ns"), strict=True)) print(lf.explain()) print(lf.collect())                          # no error, out-of-range values are null print(df.select(pl.col("ts").cast(pl.Datetime("ns"), strict=True)))  # eager: same  df["ts"].cast(pl.Datetime("ns"), strict=True)  # Series: InvalidOperationError ```  Output:  ``` SELECT [col("ts").cast(Datetime('ns'))]   DF ["ts"]; PROJECT */1 COLUMNS shape: (3, 1) ┌─────────────────────┐ │ ts                  │ │ ---                 │ │ datetime[ns]        │ ╞═════════════════════╡ │ 2024-05-01 00:00:00 │ │ null                │ │ null                │ └─────────────────────┘ shape: (3, 1) ┌─────────────────────┐ │ ts                  │ │ ---                 │ │ datetime[ns]        │ ╞═════════════════════╡ │ 2024-05-01 00:00:00 │ │ null                │ │ null                │ └─────────────────────┘ Traceback (most recent call last):   ... polars.exceptions.InvalidOperationError: conversion from `datetime[μs]` to `datetime[ns]` failed in column 'ts' for 2 out of 3 values: [9999-12-31 00:00:00, 1500-01-01 00:00:00
+- **Issue #30242** (2026-10-22): **`unique()` changes negative zero to positive zero in distinct rows while using the `streaming` engine**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  t0 = pl.DataFrame({"c0": [-0.0, -0.0], "c1": [0, 1]})  result = t0.unique().sort("c1")  print("Eager Result:") print(result)  t0 = t0.lazy()  result = t0.unique().sort("c1")  print("Lazy In-memory Result:") print(result.collect(engine="in-memory"))  print("Lazy Streaming Result:") print(result.collect(engine="streaming")) ```   ### Log output  ```shell Eager Result: shape: (2, 2) ┌──────┬─────┐ │ c0   ┆ c1  │ │ ---  ┆ --- │ │ f64  ┆ i64 │ ╞══════╪═════╡ │ -0.0 ┆ 0   │ │ -0.0 ┆ 1   │ └──────┴─────┘ Lazy In-memory Result: shape: (2, 2) ┌──────┬─────┐ │ c0   ┆ c1  │ │ ---  ┆ --- │ │ f64  ┆ i64 │ ╞══════╪═════╡ │ -0.0 ┆ 0   │ │ -0.0 ┆ 1   │ └──────┴─────┘ Lazy Streaming Result: shape: (2, 2) ┌─────┬─────┐ │ c0  ┆ c1  │ │ --- ┆ --- │ │ f64 ┆ i64 │ ╞═════╪═════╡ │ 0.0 ┆ 0   │ │ 0.0 ┆ 1   │ └─────┴─────┘ ```  ### Issue description  The `streaming` engine changes the sign of a floating-point zero while executing a multi-column `unique()`.  The input rows are `(-0.0, 0)` and `(-0.0, 1)`. They are already distinct because their `c1` values differ, and both input values in `c0` are negative zero. Eager execution and lazy collection with `engine="in-memory"` preserve `-0.0`. The streaming engine returns `+0.0` in both rows. Sorting by `c1` remove
 
-- **Issue #29995** (2026-10-16): **Parquet files with empty row groups cannot be read**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import tempfile import pyarrow as pa import pyarrow.parquet as pq import polars as pl  schema = pa.schema([    ("a", pa.int64()),    ("b", pa.bool_()),    ("c", pa.bool_()), ])  with tempfile.NamedTemporaryFile(suffix=".parquet") as f:    with pq.ParquetWriter(f.name, schema) as writer:        writer.write_table(pa.Table.from_pydict(            {"a": [], "b": [], "c": []}, schema=schema        ))        writer.write_table(pa.Table.from_pydict(            {"a": [1], "b": [True], "c": [False]}, schema=schema        ))     pl.read_parquet(f.name) ```  ``` polars.exceptions.ComputeError: duplicate range start 0 in read request (0..0 and 0..0) ```  ### Log output  Omitted because it involved lots of my local filepaths  ### Issue description  I discovered this after upgrading from 1.39.0 to 2.0.0. DuckDB and pyarrow handle these just fine.  ### Expected behavior  ```python import tempfile import pyarrow as pa import pyarrow.parquet as pq import polars as pl  schema = pa.schema([    ("a", pa.int64()),    ("b", pa.bool_()),    ("c", pa.bool_()), ])  with tempfile.NamedTemporaryFile(suffix=".parquet") as f:    with pq.ParquetWriter(f.name, schema) as writer:        writer.write_table(pa.Table.from_pydict(            {"a": [], "b": [], "c": []}, schema=schema      
+- **Issue #30239** (2026-10-22): **Singleton-group covariance with `ddof=1` returns inconsistent results between `in-memory` and `streaming` engines**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  t0 = pl.DataFrame({"c0": [0, 1]})  result = t0.group_by("c0").agg(pl.cov("c0", "c0", ddof=1).alias("c1")).sort("c0")  print("Eager Result:") print(result)  t0 = t0.lazy()  result = t0.group_by("c0").agg(pl.cov("c0", "c0", ddof=1).alias("c1")).sort("c0")  print("Lazy In-memory Result:") print(result.collect(engine="in-memory"))  print("Lazy Streaming Result:") print(result.collect(engine="streaming")) ```   ### Log output  ```shell Eager Result: shape: (2, 2) ┌─────┬─────┐ │ c0  ┆ c1  │ │ --- ┆ --- │ │ i64 ┆ f64 │ ╞═════╪═════╡ │ 0   ┆ 0.0 │ │ 1   ┆ 0.0 │ └─────┴─────┘ Lazy In-memory Result: shape: (2, 2) ┌─────┬─────┐ │ c0  ┆ c1  │ │ --- ┆ --- │ │ i64 ┆ f64 │ ╞═════╪═════╡ │ 0   ┆ 0.0 │ │ 1   ┆ 0.0 │ └─────┴─────┘ Lazy Streaming Result: shape: (2, 2) ┌─────┬──────┐ │ c0  ┆ c1   │ │ --- ┆ ---  │ │ i64 ┆ f64  │ ╞═════╪══════╡ │ 0   ┆ null │ │ 1   ┆ null │ └─────┴──────┘ ```  ### Issue description  The same grouped covariance produces different values depending on the execution engine. The input contains two distinct group keys, so each group contains exactly one valid observation. The aggregation computes `pl.cov("c0", "c0", ddof=1)` within each group.  Eager execution and lazy collection with `engine="in-memory"` both return `0.0` for 
+  **Post-Mortem & Fix Analysis**:
+  > Already fixed in #29754.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1689,330 +1691,477 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45ee46ad` (2026-10-20)
-**Commit Message**: fix: Raise error instead of panic when a sink is used as input of another operation (#29945)
-
-**File**: `crates/polars-plan/src/plans/conversion/dsl_to_ir/mod.rs` (modified, +2/-2)
-```diff
-@@ -43,7 +43,7 @@ pub(crate) use expr_expansion::needs_expansion;
- pub use expr_expansion::{expand_expression, is_regex_projection, prepare_projection};
- pub use expr_to_ir::{ExprToIRContext, to_expr_ir};
- use expr_to_ir::{to_expr_ir_materialized_lit, to_expr_irs};
--use sinks::ensure_sinks_not_scanned;
-+use sinks::validate_sinks;
- use utils::DslConversionContext;
- 
- macro_rules! failed_here {
-@@ -80,7 +80,7 @@ pub fn to_alp(
- 
-     match to_alp_impl(lp, &mut ctxt) {
-         Ok(root) => {
--            ensure_sinks_not_scanned(root, ctxt.lp_arena)?;
-+            validate_sinks(root, ctxt.lp_arena)?;
-             Ok(root)
-         },
-         Err(err) => {
-```
-
-**File**: `crates/polars-plan/src/plans/conversion/dsl_to_ir/sinks.rs` (modified, +21/-8)
-```diff
-@@ -3,10 +3,10 @@ use polars_utils::aliases::{PlIndexMap, PlIndexSet};
- 
- use super::*;
- 
--/// Raise an error if a file sink at `root` (a sink or multiple sinks) writes to a
--/// local file that the query also scans, as the sink would overwrite the file while
--/// it is being read.
--pub(super) fn ensure_sinks_not_scanned(root: Node, lp_arena: &Arena<IR>) -> PolarsResult<()> {
-+/// Raise an error if a sink is used as the input of another operation, or if a file sink at
-+/// `root` (a sink or multiple sinks) writes to a local file that the query also scans, as the
-+/// sink would overwrite the file while it is being read.
-+pub(super) fn validate_sinks(root: Node, lp_arena: &Arena<IR>) -> PolarsResult<()> {
-     let sink_nodes = match lp_arena.get(root) {
-         IR::SinkMultiple { inputs } => inputs.as_slice(),
-         _ => std::slice::from_ref(&root),
-@@ -39,9 +39,6 @@ pub(super) fn ensure_sinks_not_scanned(root: Node, lp_arena: &Arena<IR>) -> Pola
-             .or_default()
-             .push((canonical, sink_path));
-     }
--    if sinks.is_empty() {
--        return Ok(());
--    }
- 
-     let mut stack = vec![root];
-     let mut visited = PlIndexSet::default();
-@@ -50,7 +47,23 @@ pub(super) fn ensure_sinks_not_scanned(root: Node, lp_arena: &Arena<IR>) -> Pola
-             continue;
-         }
-         let ir = lp_arena.get(node);
--        ir.copy_inputs(&mut stack);
-+        let is_sink_multiple = matches!(ir, IR::SinkMultiple { .. });
-+        for input in ir.inputs() {
-+            let is_valid_input = match lp_arena.get(input) {
-+                IR::Sink { .. } => is_sink_multiple,
-+                IR::SinkMultiple { .. } => false,
-+                _ => true,
-+            };
-+            polars_ensure!(
-+                is_valid_input,
-+                InvalidOperation: "a sink cannot be used as the input of another operation"
-+            );
-+            stack.push(input);
-+        }
-+
-+        if sinks.is_empty() {
-+            continue;
-+        }
-         let IR::Scan {
-             sources: ScanSources::Paths(paths),
-             ..
-```
-
-**File**: `crates/polars-plan/src/plans/optimizer/call_dsl_resolvers.rs` (modified, +8/-0)
-```diff
-@@ -260,6 +260,14 @@ pub(super) fn call_dsl_resolvers(
-                     to_alp(dsl, expr_arena, ir_arena, &mut opt_flags)?
-                 };
- 
-+                polars_ensure!(
-+                    !matches!(
-+                        ir_arena.get(ir_node),
-+                        IR::Sink { .. } | IR::SinkMultiple { .. }
-+                    ),
-+                    InvalidOperation: "LazyFrame resolver cannot return a sink"
-+                );
-+
-                 let ir_node_schema = ir_arena.get(ir_node).schema(ir_arena).into_owned();
- 
-                 // The resolver is only handed a `limit` (= offset + len), never the
-```
-
-**File**: `py-polars/tests/unit/io/test_sink.py` (modified, +56/-0)
-```diff
-@@ -188,6 +188,62 @@ def test_double_lazy_error(sink: Any) -> None:
-         sink(sink(df.lazy(), "a", lazy=True), "b")
- 
- 
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_lazy_sink_as_input_error_29910(engine: EngineType) -> None:
-+    df = pl.DataFrame({"a": [1, 2, 3]})
-+    sink = df.lazy().sink_parquet("a.parquet", lazy=True)
-+
-+    for q in [
-+        sink.select(pl.len()),
-+        sink.cache().select(pl.len()),
-+        pl.concat([sink, sink]),
-+        sink.join(df.lazy(), how="cross"),
-+        sink.join(df.lazy(), left_on=pl.lit(1), right_on="a", how="left"),
-+        sink.join_where(df.lazy(), pl.col("a") > 0),
-+        sink.unique(subset=pl.lit(1)),
-+    ]:
-+        with pytest.raises(
-+            pl.exceptions.InvalidOperationError,
-+            match="a sink cannot be used as the input of another operation",
-+        ):
-+            q.collect(engine=engine)
-+
-+    sink.collect_schema()
-+    with pytest.raises(pl.exceptions.InvalidOperationError):
-+        sink.select(pl.len()).collect(engine=engine)
-+
-+    for q in [
-+        df.lazy()
-+        .pipe_with_schema(lambda q, _: q.sink_parquet("a.parquet", lazy=True))
-+        .select(pl.len()),
-+        pl.collect_all(
-+            [df.lazy().sink_parquet("a.parquet", lazy=True)], lazy=True
-+        ).select(pl.len()),
-+    ]:
-+        with pytest.raises(pl.exceptions.InvalidOperationError):
-+            q.collect(engine=engine)
-+
-+    group = pl.collect_all([df.lazy().sink_parquet("a.parquet", lazy=True)], lazy=True)
-+    with pytest.raises(pl.exceptions.InvalidOperationError):
-+        pl.collect_all([group], engine=engine)
-+
-+    out = (
-+        pl.SQLContext(t=sink)
-+        .execute("WITH t AS (SELECT 1 AS a) SELECT * FROM t")
-+        .collect(engine=engine)
-+    )
-+    assert_frame_equal(out, pl.DataFrame({"a": [1]}), check_dtypes=False)
-+
-+
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+@pytest.mark.write_disk
-+def test_lazy_sink_pipe_with_schema_29910(tmp_path: Path, engine: EngineType) -> None:
-+    df = pl.DataFrame({"a": [1, 2, 3]})
-+    sink = df.lazy().sink_parquet(tmp_path / "a.parquet", lazy=True)
-+    sink.pipe_with_schema(lambda q, _: q).collect(engine=engine)
-+    assert_frame_equal(pl.read_parquet(tmp_path / "a.parquet"), df)
-+
-+
- @pytest.mark.parametrize(("scan", "sink"), SINKS)
- def test_sink_to_memory(sink: Any, scan: Any) -> None:
-     df = pl.DataFrame(
-```
-
-**File**: `py-polars/tests/unit/lazyframe/test_lazyframe_resolver.py` (modified, +19/-0)
-```diff
-@@ -534,3 +534,22 @@ def resolve_lazyframe(
-     )
- 
-     assert q.collect().shape == (1, 0)
-+
-+
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_lazyframe_resolver_returns_sink_29910(engine: Any) -> None:
-+    sink = pl.LazyFrame({"a": [1]}).sink_parquet("a.parquet", lazy=True)
-+
-+    class SinkResolver(LazyFrameResolver):
-+        def schema(self) -> SchemaDict:
-+            return {}
-+
-+        def resolve_lazyframe(self, **kwargs: Any) -> pl.LazyFrame:
-+            return sink
-+
-+    for q in [SinkResolver().lazy(), SinkResolver().lazy().select(pl.len())]:
-+        with pytest.raises(
-+            pl.exceptions.InvalidOperationError,
-+            match="resolver cannot return a sink",
-+        ):
-+            q.collect(engine=engine)
-```
-
----
-
-### Incident Patch 2: `f8ed85f1` (2026-10-20)
-**Commit Message**: fix: Make ternary schema agree with type coercion (#29940)
+### Incident Patch 1: `5b6eae3d` (2026-10-22)
+**Commit Message**: fix: Widen truncated timestamp max statistics in `scan_delta` file skipping (#30194)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/polars-plan/src/plans/aexpr/schema.rs` (modified, +13/-3)
+**File**: `py-polars/src/polars/io/delta/_utils.py` (modified, +38/-0)
 ```diff
-@@ -262,13 +262,23 @@ impl AExpr {
-                 // left: col(foo):              list<T>         nesting: 1
-                 // right; col(foo).first():     T               nesting: 0
-                 // col(foo) + col(foo).first() will have nesting 1 as we still maintain the groups list.
--                let mut truthy = ctx.arena.get(*truthy).to_field_impl(ctx)?;
--                let falsy = ctx.arena.get(*falsy).to_field_impl(ctx)?;
-+                let truthy_ae = ctx.arena.get(*truthy);
-+                let falsy_ae = ctx.arena.get(*falsy);
-+                let mut truthy = truthy_ae.to_field_impl(ctx)?;
-+                let falsy = falsy_ae.to_field_impl(ctx)?;
+@@ -109,6 +109,40 @@ def _check_for_unsupported_types(dtypes: list[DataType]) -> None:
+         raise TypeError(msg)
  
-                 let st = if let DataType::Null = *truthy.dtype() {
-                     falsy.dtype().clone()
-                 } else {
--                    try_get_supertype(truthy.dtype(), falsy.dtype())?
-+                    let st = try_get_supertype(truthy.dtype(), falsy.dtype())?;
-+                    // Must match the output dtype chosen by type coercion.
-+                    crate::plans::conversion::type_coercion::modify_supertype(
-+                        st,
-+                        truthy_ae,
-+                        falsy_ae,
-+                        truthy.dtype(),
-+                        falsy.dtype(),
-+                    )
-                 };
  
-                 truthy.set_dtype(st);
-```
-
-**File**: `crates/polars-plan/src/plans/conversion/type_coercion/mod.rs` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ pub(super) use unpack;
- 
- /// determine if we use the supertype or not. For instance when we have a column Int64 and we compare with literal UInt32
- /// it would be wasteful to cast the column instead of the literal.
--fn modify_supertype(
-+pub(crate) fn modify_supertype(
-     mut st: DataType,
-     left: &AExpr,
-     right: &AExpr,
-```
-
-**File**: `py-polars/tests/unit/functions/test_when_then.py` (modified, +14/-0)
-```diff
-@@ -987,3 +987,17 @@ def test_when_then_masks_multichunk_struct_29799(engine: EngineType) -> None:
-         .collect(engine=engine)
-     )
-     assert out["x"].to_list() == [1] * 17
++def _widen_truncated_timestamp_max(s: Series) -> Series:
++    """
++    Widen the max statistics of timestamp columns (including struct fields) by 1ms.
++
++    The Delta protocol truncates timestamp min/max statistics down to milliseconds,
++    so the real max of a file can lie up to (but excluding) 1ms above the recorded max.
++    """
++    import polars as pl
++
++    dtype = s.dtype
++
++    if isinstance(dtype, pl.Datetime):
++        # Add in physical units to keep the time unit (adding a `timedelta` turns ns
++        # into us) and map overflow to null (unknown) rather than wrapping around.
++        one_ms = {"ms": 1, "us": 1_000, "ns": 1_000_000}[dtype.time_unit]
++        phys = s.to_physical()
++        return pl.select(
++            pl.when(phys <= 2**63 - 1 - one_ms)
++            .then(phys + one_ms)
++            .cast(dtype)
++            .alias(s.name)
++        ).to_series()
++
++    if isinstance(dtype, pl.Struct) and dtype.fields:
++        fields = [
++            _widen_truncated_timestamp_max(f) for f in s.struct.unnest().iter_columns()
++        ]
++        return pl.select(
++            pl.when(s.is_not_null()).then(pl.struct(fields)).alias(s.name)
++        ).to_series()
++
++    return s
 +
 +
-+def test_when_then_string_literal_categorical_join_29816() -> None:
-+    lf = pl.LazyFrame(
-+        {"k": [0, 1], "c": ["a", "b"]}, schema_overrides={"c": pl.Categorical}
+ def _extract_table_statistics_from_delta_add_actions(
+     add_actions_df: DataFrame,
+     *,
+@@ -184,6 +218,10 @@ def column_statistics(col_name: str) -> dict[str, Series]:
+                 col_max if col_max is not None else null_col(dtype)
+             )
+ 
++        stats[f"{col_name}_max"] = _widen_truncated_timestamp_max(
++            stats[f"{col_name}_max"]
++        )
++
+         return stats
+ 
+     def best_effort_column_statistics(col_name: str) -> dict[str, Series]:
+```
+
+**File**: `py-polars/tests/unit/io/test_delta.py` (modified, +62/-2)
+```diff
+@@ -28,13 +28,17 @@
+     _source_sizes,
+     _table_root,
+ )
+-from polars.io.delta._utils import _extract_table_statistics_from_delta_add_actions
++from polars.io.delta._utils import (
++    _extract_table_statistics_from_delta_add_actions,
++    _widen_truncated_timestamp_max,
++)
+ from polars.meta import get_index_type
+ from polars.testing import assert_frame_equal, assert_frame_not_equal
+ 
+ if TYPE_CHECKING:
+     from collections.abc import Callable
+ 
++    from polars._typing import TimeUnit
+     from tests.conftest import PlMonkeyPatch
+ 
+ 
+@@ -1092,7 +1096,7 @@ def test_scan_delta_extract_table_statistics_df(tmp_path: Path) -> None:
+                 pl.Series('date_max', [datetime.date(2020, 1, 2), datetime.date(2020, 1, 6), datetime.date(2020, 1, 4)], dtype=pl.Date),
+                 pl.Series('datetime_nc', [0, 0, 0], dtype=get_index_type()),
+                 pl.Series('datetime_min', [datetime.datetime(2020, 1, 1, 0, 0), datetime.datetime(2020, 1, 5, 0, 0), datetime.datetime(2020, 1, 3, 0, 0)], dtype=pl.Datetime(time_unit='us', time_zone=None)),
+-                pl.Series('datetime_max', [datetime.datetime(2020, 1, 2, 0, 0), datetime.datetime(2020, 1, 6, 0, 0), datetime.datetime(2020, 1, 4, 0, 0)], dtype=pl.Datetime(time_unit='us', time_zone=None)),
++                pl.Series('datetime_max', [datetime.datetime(2020, 1, 2, 0, 0, 0, 1000), datetime.datetime(2020, 1, 6, 0, 0, 0, 1000), datetime.datetime(2020, 1, 4, 0, 0, 0, 1000)], dtype=pl.Datetime(time_unit='us', time_zone=None)),
+             ]
+         ),
+         check_row_order=False
+@@ -1465,6 +1469,62 @@ def test_scan_delta_predicate_pushdown_struct_column_27857(tmp_path: Path) -> No
+     assert_frame_equal(out, expected)
+ 
+ 
++@pytest.mark.write_disk
++def test_scan_delta_filter_truncated_timestamp_max_statistics_30147(
++    tmp_path: Path,
++) -> None:
++    # The Delta protocol truncates timestamp min/max statistics to milliseconds, so
++    # the max in the log can be below the real max of the file.
++    first = datetime(2026, 1, 1, 0, 0, 0, 999)
++    second = datetime(2026, 1, 1, 1, 0, 0)
++
++    pl.DataFrame({"ts": [first], "s": [{"ts": first}]}).write_delta(tmp_path)
++    pl.DataFrame({"ts": [second], "s": [{"ts": second}]}).write_delta(
++        tmp_path, mode="append"
 +    )
-+    q = lf.with_columns(
-+        pl.when(pl.col("c") == "a").then(pl.lit("z")).otherwise(pl.col("c")).alias("c")
-+    ).join(pl.LazyFrame({"k": [0, 1]}), on="k")
-+    assert q.collect_schema()["c"] == pl.Categorical
-+    expected = pl.DataFrame(
-+        {"k": [0, 1], "c": ["z", "b"]}, schema_overrides={"c": pl.Categorical}
-+    )
-+    assert_frame_equal(q.collect(), expected, check_row_order=False)
++
++    q = pl.scan_delta(tmp_path)
++    ts = pl.col("ts")
++    s_ts = pl.col("s").struct.field("ts")
++
++    assert q.filter(ts == first).collect().height == 1
++    assert q.filter(ts >= first).collect().height == 2
++    assert q.filter(ts > first).collect().height == 1
++    assert q.filter(ts.is_in([first])).collect().height == 1
++    assert q.filter(s_ts == first).collect().height == 1
++    assert q.filter(s_ts >= first).collect().height == 2
++
++
++@pytest.mark.parametrize("time_unit", ["ms", "us", "ns"])
++def test_widen_truncated_timestamp_max(time_unit: TimeUnit) -> None:
++    one_ms = {"ms": 1, "us": 1_000, "ns": 1_000_000}[time_unit]
++    dtype = pl.Datetime(time_unit, "UTC")
++    i64_max = 2**63 - 1
++
++    s = pl.Series("a", [0, i64_max - one_ms, i64_max, None]).cast(dtype)
++    out = _widen_truncated_timestamp_max(s)
++
++    # Keeps the time unit and maps overflow to null (unknown) instead of wrapping.
++    assert out.dtype == dtype
++    assert out.to_physical().to_list() == [one_ms, i64_max, None, None]
++
++    struct_dtype = pl.Struct({"x": pl.Struct({"ts": dtype}), "y": pl.Int64})
++    s = pl.Series(
++        "s",
++        [{"x": {"ts": 0}, "y": 0}, None, {"x": None, "y": None}],
++        dtype=pl.Struct({"x": pl.Struct({"ts": pl.Int64}), "y": pl.Int64}),
++    ).cast(struct_dtype)
++    out = _widen_truncated_timestamp_max(s)
++
++    assert out.dtype == struct_dtype
++    assert out.struct.field("x").struct.field("ts").to_physical().to_list() == [
++        one_ms,
++        None,
++        None,
++    ]
++    assert out.is_null().to_list() == [False, True, False]
++
++
+ @pytest.mark.write_disk
+ def test_scan_delta_predicate_pushdown_struct_is_not_null(
+     tmp_path: Path,
 ```
 
 ---
 
-### Incident Patch 3: `626659f0` (2026-10-20)
-**Commit Message**: fix: Reject `String` operands before float arms in true division type resolution (#30018)
+### Incident Patch 2: `20ac2a85` (2026-10-22)
+**Commit Message**: fix: Fix wrong JSON output for `Struct` and `Array` inside list (#30200)
 
-**File**: `crates/polars-plan/src/plans/aexpr/schema.rs` (modified, +3/-3)
+**File**: `crates/polars-json/src/json/write/serialize.rs` (modified, +45/-45)
 ```diff
-@@ -881,6 +881,9 @@ fn get_truediv_dtype(left_dtype: &DataType, right_dtype: &DataType) -> PolarsRes
-     // TODO: Re-investigate this. A lot of "_" is being used on the RHS match because this code
-     // originally (mostly) only looked at the LHS dtype.
-     let out_type = match (left_dtype, right_dtype) {
-+        (String, _) | (_, String) => polars_bail!(
-+            InvalidOperation: "division with 'String' datatypes is not allowed"
-+        ),
-         #[cfg(feature = "dtype-struct")]
-         (Struct(a), Struct(b)) => {
-             polars_ensure!(a.len() == b.len() || b.len() == 1,
-@@ -955,9 +958,6 @@ fn get_truediv_dtype(left_dtype: &DataType, right_dtype: &DataType) -> PolarsRes
-         (Float32, other) if other.is_integer() => Float64,
-         (Float32, Float64) => Float64,
-         (Float32, _) => Float32,
--        (String, _) | (_, String) => polars_bail!(
--            InvalidOperation: "division with 'String' datatypes is not allowed"
--        ),
-         #[cfg(feature = "dtype-decimal")]
-         (Decimal(_, scale_left), Decimal(_, scale_right)) => {
-             Decimal(DEC128_MAX_PREC, *scale_left.max(scale_right))
+@@ -243,29 +243,29 @@ fn struct_serializer<'a>(
+         .map(|arr| new_serializer(arr, offset, take))
+         .collect::<Vec<_>>();
+ 
+-    Box::new(BufStreamingIterator::new(
+-        ZipValidity::new_with_validity(0..array.len(), array.validity()),
+-        move |maybe, buf| {
+-            if maybe.is_some() {
+-                let names = array.fields().iter().map(|f| f.name.as_str());
+-                serialize_item(
+-                    buf,
+-                    names.zip(
+-                        serializers
+-                            .iter_mut()
+-                            .map(|serializer| serializer.next().unwrap()),
+-                    ),
+-                    true,
+-                );
+-            } else {
+-                serializers.iter_mut().for_each(|iter| {
+-                    let _ = iter.next();
+-                });
+-                buf.extend(b"null");
+-            }
+-        },
+-        vec![],
+-    ))
++    let f = move |maybe: Option<usize>, buf: &mut Vec<u8>| {
++        if maybe.is_some() {
++            let names = array.fields().iter().map(|f| f.name.as_str());
++            serialize_item(
++                buf,
++                names.zip(
++                    serializers
++                        .iter_mut()
++                        .map(|serializer| serializer.next().unwrap()),
++                ),
++                true,
++            );
++        } else {
++            serializers.iter_mut().for_each(|iter| {
++                let _ = iter.next();
++            });
++            buf.extend(b"null");
++        }
++    };
++
++    // The field serializers skip `offset` rows, so the validity must skip them too.
++    let iter = ZipValidity::new_with_validity(0..array.len(), array.validity());
++    materialize_serializer(f, iter, offset, take)
+ }
+ 
+ fn list_serializer<'a, O: Offset>(
+@@ -378,30 +378,30 @@ fn fixed_size_list_serializer<'a>(
+         take.saturating_mul(array.size()),
+     );
+ 
+-    Box::new(BufStreamingIterator::new(
+-        ZipValidity::new(0..array.len(), array.validity().map(|x| x.iter())),
+-        move |ix, buf| {
+-            let length = array.size();
+-            if ix.is_some() {
+-                buf.push(b'[');
+-                let mut is_first_row = true;
+-                for _ in 0..length {
+-                    if !is_first_row {
+-                        buf.push(b',');
+-                    }
+-                    is_first_row = false;
+-                    buf.extend(serializer.next().unwrap());
+-                }
+-                buf.push(b']');
+-            } else {
+-                buf.extend(b"null");
+-                for _ in 0..length {
+-                    serializer.next();
++    let f = move |ix: Option<usize>, buf: &mut Vec<u8>| {
++        let length = array.size();
++        if ix.is_some() {
++            buf.push(b'[');
++            let mut is_first_row = true;
++            for _ in 0..length {
++                if !is_first_row {
++                    buf.push(b',');
+                 }
++                is_first_row = false;
++                buf.extend(serializer.next().unwrap());
+             }
+-        },
+-        vec![],
+-    ))
++            buf.push(b']');
++        } else {
++            buf.extend(b"null");
++            for _ in 0..length {
++                serializer.next();
++            }
++        }
++    };
++
++    // The values serializer skips `offset` rows, so the validity must skip them too.
++    let iter = ZipValidity::new_with_validity(0..array.len(), array.validity());
++    materialize_serializer(f, iter, offset, take)
+ }
+ 
+ fn date_serializer<'a, T, F>(
 ```
 
-**File**: `py-polars/tests/unit/operations/arithmetic/test_arithmetic.py` (modified, +12/-0)
+**File**: `py-polars/tests/unit/io/test_json.py` (modified, +102/-1)
 ```diff
-@@ -1027,6 +1027,18 @@ def test_float_truediv_output_type() -> None:
-     )
+@@ -10,7 +10,7 @@
+ from datetime import UTC, datetime
+ from decimal import Decimal as D
+ from io import BytesIO
+-from typing import TYPE_CHECKING
++from typing import TYPE_CHECKING, Any
+ 
+ import zstandard
+ from hypothesis import given
+@@ -21,6 +21,7 @@
+     from pathlib import Path
+ 
+     from polars._typing import TimeUnit
++    from tests.conftest import PlMonkeyPatch
+ 
+ import orjson
+ import pytest
+@@ -327,6 +328,106 @@ def test_ndjson_sliced_list_serialization() -> None:
+     assert f.getvalue() == b'{"col1":2,"col2":[6,7,8]}\n'
  
  
-+@pytest.mark.parametrize("dtype", [pl.Float16, pl.Float32, pl.Float64])
-+@pytest.mark.parametrize("swap", [False, True])
-+def test_truediv_float_string_raises(dtype: pl.DataType, swap: bool) -> None:
-+    lf = pl.LazyFrame(schema={"f": dtype, "s": pl.String})
-+    a, b = ("s", "f") if swap else ("f", "s")
-+    with pytest.raises(
-+        pl.exceptions.InvalidOperationError,
-+        match="division with 'String' datatypes is not allowed",
-+    ):
-+        lf.select(pl.col(a) / pl.col(b)).collect_schema()
++def test_write_ndjson_sliced_list_of_structs_30178() -> None:
++    df = pl.DataFrame(
++        {"a": [[{"x": 1}, None], [None, {"x": 2}], [{"x": 3}]]},
++        schema={"a": pl.List(pl.Struct({"x": pl.Int64}))},
++    )
++    assert df.tail(2).write_ndjson() == '{"a":[null,{"x":2}]}\n{"a":[{"x":3}]}\n'
 +
 +
- @pytest.mark.parametrize(
-     "dtype",
-     [
++@pytest.mark.parametrize(
++    ("values", "dtype"),
++    [
++        (
++            [[{"x": 1}, None], [None, {"x": 2}], [{"x": 3}], None, [{"x": 4}, None]],
++            pl.List(pl.Struct({"x": pl.Int64})),
++        ),
++        (
++            [[{"x": 1}, {"x": 2}], [{"x": 3}], [], [{"x": 4}, {"x": 5}]],
++            pl.List(pl.Struct({"x": pl.Int64})),
++        ),
++        (
++            [[[1, 2], None], [None, [3, 4]], [[5, 6]], None, [[7, 8], None]],
++            pl.List(pl.Array(pl.Int64, 2)),
++        ),
++        (
++            [
++                [{"y": {"x": 1}}, None],
++                [None, {"y": None}],
++                [{"y": {"x": 3}}],
++                [{"y": {"x": 4}}, None],
++            ],
++            pl.List(pl.Struct({"y": pl.Struct({"x": pl.Int64})})),
++        ),
++        (
++            [
++                [[{"x": 1}, None], None],
++                [None, [None, {"x": 2}]],
++                [[{"x": 3}, None]],
++                [[{"x": 4}, {"x": 5}], None],
++            ],
++            pl.List(pl.Array(pl.Struct({"x": pl.Int64}), 2)),
++        ),
++        (
++            [
++                [{"a": [1, 2]}, None],
++                [None, {"a": None}],
++                [{"a": [3, 4]}],
++                [{"a": [5, 6]}, None],
++            ],
++            pl.List(pl.Struct({"a": pl.Array(pl.Int64, 2)})),
++        ),
++        (
++            [
++                [{"l": [1]}, None],
++                [None, {"l": [2, 3]}],
++                [{"l": None}],
++                [{"l": [4]}, None],
++            ],
++            pl.List(pl.Struct({"l": pl.List(pl.Int64)})),
++        ),
++    ],
++)
++@pytest.mark.parametrize(("offset", "length"), [(1, None), (1, 1), (2, None)])
++def test_write_json_sliced_nested_30178(
++    values: list[Any], dtype: pl.DataType, offset: int, length: int | None
++) -> None:
++    df = pl.DataFrame({"a": values}, schema={"a": dtype}).slice(offset, length)
++    rows = [json.dumps(row, separators=(",", ":")) for row in df.rows(named=True)]
++
++    assert df.write_ndjson() == "".join(f"{row}\n" for row in rows)
++    assert df.write_json() == f"[{','.join(rows)}]"
++    assert df.select(pl.struct("a").struct.json_encode())["a"].to_list() == rows
++
++
++def test_sink_ndjson_nested_multiple_morsels_30178(
++    plmonkeypatch: PlMonkeyPatch,
++) -> None:
++    # Every morsel after the first is a slice, so its lists start at an offset.
++    plmonkeypatch.setenv("POLARS_IDEAL_SINK_MORSEL_SIZE_ROWS", "100")
++    n = 1000
++    df = pl.DataFrame(
++        {
++            "s": [[None, {"x": i}] if i % 3 == 0 else [{"x": i}] for i in range(n)],
++            "a": [[None, [i, i]] if i % 3 == 0 else [[i, i]] for i in range(n)],
++        },
++        schema={
++            "s": pl.List(pl.Struct({"x": pl.Int64})),
++            "a": pl.List(pl.Array(pl.Int64, 2)),
++        },
++    )
++    expected = "".join(
++        f"{json.dumps(row, separators=(',', ':'))}\n" for row in df.rows(named=True)
++    )
++
++    assert df.write_ndjson() == expected
++
++    f = io.BytesIO()
++    df.lazy().sink_ndjson(f)
++    assert f.getvalue().decode() == expected
++
++
+ def test_json_deserialize_9687() -> None:
+     response = {
+         "volume": [0.0, 0.0, 0.0],
+```
+
+---
+
+### Incident Patch 3: `0e7104a7` (2026-10-22)
+**Commit Message**: build: Allow choosing the Python interpreter for the dev venv with `PYTHON` (#30142)
+
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +5/-4)
+```diff
+@@ -5,6 +5,7 @@ SHELL=bash
+ ifeq ($(VENV),)
+ VENV := .venv
+ endif
++PYTHON ?= python3
+ 
+ RUNTIME_CARGO_TOML=py-polars/runtime/polars-runtime-32/Cargo.toml
+ 
+@@ -75,7 +76,7 @@ FILTER_PIP_WARNINGS=| grep -v "don't match your environment"; test $${PIPESTATUS
+ # directory; checking bin/python allows Make to better-detect/rebuild a broken venv
+ $(VENV_BIN)/python:
+ 	@unset CONDA_PREFIX \
+-	&& python3 -m venv $(VENV) \
++	&& $(PYTHON) -m venv $(VENV) \
+ 	&& $(MAKE) requirements
+ 
+ .PHONY: .venv
+@@ -86,7 +87,7 @@ $(VENV_BIN)/python:
+ .PHONY: requirements
+ requirements:  ## Install/refresh Python project requirements
+ 	@unset CONDA_PREFIX \
+-	&& python3 -m venv $(VENV) --clear \
++	&& $(PYTHON) -m venv $(VENV) --clear \
+ 	&& $(VENV_BIN)/python -m pip install --upgrade uv \
+ 	$(if $(EXTRA_REQUIREMENTS),&& $(VENV_BIN)/uv pip install --upgrade --compile-bytecode -r $(EXTRA_REQUIREMENTS)) \
+ 	&& $(VENV_BIN)/uv pip install --upgrade --compile-bytecode --no-build \
+@@ -164,11 +165,11 @@ check: update-cargo-env ## Run cargo check with all features
+ 
+ .PHONY: clippy
+ clippy: update-cargo-env ## Run clippy with all features
+-	python3 tools/cargo-fail-warning.py clippy --workspace --all-targets --all-features --locked -- -W clippy::dbg_macro
++	$(PYTHON) tools/cargo-fail-warning.py clippy --workspace --all-targets --all-features --locked -- -W clippy::dbg_macro
+ 
+ .PHONY: clippy-default
+ clippy-default: update-cargo-env ## Run clippy with default features
+-	python3 tools/cargo-fail-warning.py clippy --all-targets --locked -- -W clippy::dbg_macro
++	$(PYTHON) tools/cargo-fail-warning.py clippy --all-targets --locked -- -W clippy::dbg_macro
+ 
+ .PHONY: fmt
+ fmt: update-cargo-env ## Run autoformatting and linting
+```
+
+**File**: `docs/source/development/contributing/index.md` (modified, +2/-1)
+```diff
+@@ -122,7 +122,8 @@ make test
+ 
+ This will do a number of things:
+ 
+-- Use Python to create a virtual environment in the `.venv` folder.
++- Use Python to create a virtual environment in the `.venv` folder. This uses `python3` from your
++  `PATH`; set `PYTHON` to use another interpreter, e.g. `PYTHON=python3.13 make test`.
+ - Use [pip](https://pip.pypa.io/) and [uv](https://github.com/astral-sh/uv) to install all Python
+   dependencies for development, linting, and building documentation.
+ - Use Rust to compile and install Polars in your virtual environment. _At least 8GB of RAM is
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30103** (2026-10-20): feat(rust): Add BinaryOffset support to streaming last reduction (@orlp)
-- **PR #30101** (closed): perf: Let the cloud read rate limiter follow demand before the first throttle (@kdn36)
-- **PR #30086** (2026-10-20): chore: Mark test as slow (@orlp)
-- **PR #30071** (2026-10-19): fix!: Disallow mixed string <=> numeric arithmetic in eager (@orlp)
-- **PR #30069** (2026-10-19): fix: Decimal cast to int should truncate (@orlp)
-- **PR #30068** (2026-10-19): fix: Casting far future dates shouldn't silently wrap (@orlp)
+- **PR #30231** (2026-10-22): perf: Remove repeated and scalar ordering keys before the sort rewrites (@dancsi)
+- **PR #30206** (2026-10-22): feat: Support SQL `JOIN ... ON` subqueries that read only one input (@ritchie46)
+- **PR #30201** (2026-10-22): chore: Fix Excel pyrefly lint (@orlp)
+- **PR #30200** (2026-10-22): fix: Fix wrong JSON output for `Struct` and `Array` inside list (@kdn36)
+- **PR #30198** (closed): fix: Handle additional NDJSON schema data types (@Wannn-Dev)
+- **PR #30196** (closed): fix: Fix pyrefly error in `write_excel` with xlsxwriter 3.3.0 (@gab23r)
 
 ---
 
@@ -2032,30 +2181,62 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Raise error instead of panic when a sink is used as input of another operation (
+## X. Widen truncated timestamp max statistics in `scan_delta` file skipping (#30194)
 
 **RULE**:
-When implementing operations in `crates/polars-plan/src/plans/conversion/dsl_to_ir/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `py-polars/src/polars/io/delta/_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45ee46ad`: Raise error instead of panic when a sink is used as input of another operation (#29945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b6eae3d`: Widen truncated timestamp max statistics in `scan_delta` file skipping (#30194). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-plan/src/plans/conversion/dsl_to_ir/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/src/polars/io/delta/_utils.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use sinks::validate_sinks;
-            validate_sinks(root, ctxt.lp_arena)?;
+def _widen_truncated_timestamp_max(s: Series) -> Series:
+    """
+    Widen the max statistics of timestamp columns (including struct fields) by 1ms.
+
+    The Delta protocol truncates timestamp min/max statistics down to milliseconds,
+    so the real max of a file can lie up to (but excluding) 1ms above the recorded max.
+    """
+    import polars as pl
+
+    dtype = s.dtype
+
+    if isinstance(dtype, pl.Datetime):
+        # Add in physical units to keep the time unit (adding a `timedelta` turns ns
+        # into us) and map overflow to null (unknown) rather than wrapping around.
+        one_ms = {"ms": 1, "us": 1_000, "ns": 1_000_000}[dtype.time_unit]
+        phys = s.to_physical()
+        return pl.select(
+            pl.when(phys <= 2**63 - 1 - one_ms)
+            .then(phys + one_ms)
+            .cast(dtype)
+            .alias(s.name)
+        ).to_series()
+
+    if isinstance(dtype, pl.Struct) and dtype.fields:
+        fields = [
+            _widen_truncated_timestamp_max(f) for f in s.struct.unnest().iter_columns()
+        ]
+        return pl.select(
+            pl.when(s.is_not_null()).then(pl.struct(fields)).alias(s.name)
+        ).to_series()
+
+    return s
+
+
+        stats[f"{col
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use sinks::ensure_sinks_not_scanned;
-            ensure_sinks_not_scanned(root, ctxt.lp_arena)?;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45ee46ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b6eae3d` are properly handled with clean fallback behavior.

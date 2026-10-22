@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `9a2ac7f9`  
+> **Source Version**: `2eff52c7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:34:07.785Z  
+> **Timestamp**: 2026-10-22T16:26:16.168Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:34:07.777Z  
+> **Harvest Timestamp**: 2026-10-22T16:26:15.170Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6750 stars
+- **Stars / Engagement**: 6757 stars
 
 ---
 
@@ -1651,11 +1651,7 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9795** (2026-10-20): **fix: backport suggested independent fixes to release/5e02efa9**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Backport of #9142, #9163, #9178, #9032, #9134, #9254, #9339, #9340, #9368, #9431, #9461, #9437, #9464, #9478, #9332, #9451, and #9521 to `release/5e02efa9`.  ## What's changed and what's your intention?  This PR backports the "suggested" fixes from the `release/5e02efa9` triage against `v1.3.0-beta.2` (wrong results, panics, wasted resources) that are independent and cherry-pick cleanly onto the release branch. Each fix is a separate `cherry-pick -x` commit, in upstream merge order, with no conflict resolution:  | Upstream | Area | Fix | |---|---|---| | #9142 | servers | The port was not resolved from IPv6 bind addresses, so the advertised address became `host:`. | | #9163 | meta | Region migration returned the procedure ID before registering the procedure, so an immediate status query found nothing. | | #9178 | promql | `SeriesDivide` underflowed and panicked when the first input batch was empty. | | #9032 | prometheus | Remote read returned duplicate timeseries when one series spanned several RecordBatches. | | #9134 | prometheus | `__name__` values queries ignored label matchers. | | #9254 | mito2 | Range-cache construction kept running and holding memory permits after a scan was cancelled or failed. | | #9339 | query | `geo_path` / `json_encode_path` merged only the first state row, dropping other regions on par
-
-- **Issue #9789** (2026-10-20): **fix(mito): backport bulk memtable version ordering fix to release/5e02efa9**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Backport of #9517 (fixes #9428) to `release/5e02efa9`, with its prerequisite #9169 (refs #9146, fixes #9157).  ## What's changed and what's your intention?  This PR backports #9517, a must-have fix from the `release/5e02efa9` triage against `v1.3.0-beta.2`. Bulk memtable merges and flushes could combine nonconsecutive row versions and normalize their sequences during flush, so an older value could override a newer write or delete. With `last_non_null`, fields could also be folded across an omitted intermediate version, or a delete beneath a newer Put could be dropped, restoring stale fields. The release branch ships the bulk memtable, so it is affected.  Each upstream change is a separate `cherry-pick -x` commit:  | Upstream | Fix | |---|---| | #9169 | Prerequisite. Compaction of partially overlapping SSTs in `last_non_null` mode could lose or misfill fields; it adds a dedicated `LastNonNullPicker` and guards compaction against pending memtable writes. It also adds the memtable sequence lower-bound plumbing (`min_sequence` on memtables, bulk parts, and `MemtableStats`) that #9517 builds on. | | #9517 | Preserves delete barriers in flat last-non-null dedup, tracks conservative sequence bounds across raw, merged, and encoded bulk parts, merges only consecutive overlap groups, and stops normalizing sequences across ove
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,1016 +1668,1310 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7230f7a` (2026-10-20)
-**Commit Message**: fix(partition): coerce partition exprs against the batch schema before routing (#9752)
+### Incident Patch 1: `bb3f07b4` (2026-10-22)
+**Commit Message**: fix(mito2): pick TWCS L1 merges by closed units so compaction terminates (#9741)
 
-* fix(partition): coerce partition exprs against the batch schema before routing
+* refactor(mito2): pick TWCS L1 merges by closed units
 
-Batch partition routing (MultiDimPartitionRule::split_record_batch) builds
-physical expressions via PartitionExpr::try_as_physical_expr, which did no
-type coercion. After widening the time index unit (e.g. ms -> ns via
-ALTER TABLE ... MODIFY COLUMN ts TIMESTAMP_NS), the persisted partition
-bounds keep their original unit, so evaluating the bounds against the batch
-failed with:
+TWCS could keep rewriting L1 files without new writes. Overlap-only picks
+could split their inputs into one more file than they read, and L1 file
+reduction then rewrote up to 16 files to remove that single file. The
+outputs, split by key, created new overlaps and the cycle repeated.
 
-  Invalid comparison operation: Timestamp(ns) < Timestamp(ms)
+Replace the three global pick phases with one pick per window, scheduled by
+class across windows. Every pick now decreases a termination measure when the
+window receives no writes.
 
-Row inserts were unaffected because find_region compares Values and
-Timestamp::cmp converts units; scans were unaffected because
-PredicateGroup::new coerces the region partition expr against the region
-schema first.
+- Active windows only take merges that remove files. L1 files are grouped by
+  conflicts and merged in key order, so size-split tails are merged together.
+  A reduction rewrites at most 4 output files' worth of bytes per removed file.
+- Inactive windows absorb L0 files, then take closed merges: no other file
+  intrudes on the inputs' bounding box, so outputs cannot add overlaps. Each
+  merge resolves conflicts or removes files, decreasing (conflicts, files).
+  Files that do not take part in an overlap are not rewritten.
+- Overlaps that only share a boundary key no longer count as conflict
 
-Coerce the logical partition expression against the evaluation schema in
-try_as_physical_expr before creating the physical expression, the same way
-PredicateGroup does. This also covers the region partition filter built for
-SST pruning (src/mito2/src/sst/parquet/reader.rs), which shares this
-conversion.
-
-Fixes #9747
-
-Signed-off-by: Ning Sun <[REDACTED_EMAIL]>
-
-* test
-
-**File**: `Cargo.lock` (modified, +2/-0)
+**File**: `src/mito2/src/compaction/last_non_null.rs` (modified, +5/-2)
 ```diff
-@@ -10489,9 +10489,11 @@ dependencies = [
-  "common-error",
-  "common-macro",
-  "common-meta",
-+ "common-time",
-  "criterion 0.7.0",
-  "datafusion-common",
-  "datafusion-expr",
-+ "datafusion-optimizer",
-  "datafusion-physical-expr",
-  "datatypes",
-  "moka",
+@@ -293,7 +293,7 @@ mod tests {
+             .unwrap()
+             .set_compacting(busy);
+         let request = compact_request::Options::Regular(Default::default());
+-        let picker = new_picker(&request, &region.region_options, limit, None);
++        let picker = new_picker(&request, &region.region_options, limit, None, false);
+ 
+         let picked = picker.pick(&region).await.unwrap().unwrap();
+         assert_eq!(expected_windows.len(), picked.outputs.len());
+@@ -312,7 +312,7 @@ mod tests {
+ 
+         // The LastRow picker must retain its original seed cap and priority.
+         region.region_options.merge_mode = Some(MergeMode::LastRow);
+-        let picker = new_picker(&request, &region.region_options, limit, None);
++        let picker = new_picker(&request, &region.region_options, limit, None, false);
+         let picked = picker.pick(&region).await.unwrap().unwrap();
+         assert_eq!(limit.unwrap_or(3).min(3), picked.outputs.len());
+         for (output, window) in picked.outputs.iter().rev().zip(windows.iter().rev()) {
+@@ -487,6 +487,7 @@ mod tests {
+             &region.region_options,
+             Some(1),
+             TimestampRange::new(Timestamp::new_second(0), Timestamp::new_second(3600)),
++            false,
+         );
+ 
+         let picked = picker.pick(&region).await.unwrap();
+@@ -543,6 +544,7 @@ mod tests {
+             &region.region_options,
+             Some(1),
+             TimestampRange::new(Timestamp::new_second(10), Timestamp::new_second(20)),
++            false,
+         );
+ 
+         let picked = picker.pick(&region).await.unwrap().unwrap();
+@@ -590,6 +592,7 @@ mod tests {
+             &region.region_options,
+             Some(1),
+             None,
++            false,
+         );
+         let picked = picker.pick(&region).await.unwrap().unwrap();
+         assert!(picked.outputs.is_empty());
 ```
 
-**File**: `src/partition/Cargo.toml` (modified, +2/-0)
+**File**: `src/mito2/src/compaction/picker.rs` (modified, +3/-0)
 ```diff
-@@ -15,6 +15,7 @@ common-macro.workspace = true
- common-meta.workspace = true
- datafusion-common.workspace = true
- datafusion-expr.workspace = true
-+datafusion-optimizer.workspace = true
- datafusion-physical-expr.workspace = true
- datatypes.workspace = true
- moka = { workspace = true, features = ["future"] }
-@@ -27,6 +28,7 @@ store-api.workspace = true
- table.workspace = true
- 
- [dev-dependencies]
-+common-time.workspace = true
- criterion.workspace = true
- rand = "0.8"
- 
+@@ -128,6 +128,7 @@ pub fn new_picker(
+     region_options: &RegionOptions,
+     max_background_tasks: Option<usize>,
+     time_range: Option<TimestampRange>,
++    manual: bool,
+ ) -> Arc<dyn Picker> {
+     if let compact_request::Options::StrictWindow(window) = compact_request_options {
+         let window = if window.window_seconds == 0 {
+@@ -148,8 +149,10 @@ pub fn new_picker(
+                 time_window_seconds: twcs_opts.time_window_seconds(),
+                 max_output_file_size: twcs_opts.max_output_file_size.map(|r| r.as_bytes()),
+                 append_mode: region_options.append_mode,
++                merge_mode: region_options.merge_mode(),
+                 max_background_tasks,
+                 time_range,
++                all_windows_inactive: manual,
+             },
+         };
+         if region_options.merge_mode() == MergeMode::LastNonNull {
 ```
 
-**File**: `src/partition/src/error.rs` (modified, +9/-0)
+**File**: `src/mito2/src/compaction/scheduler.rs` (modified, +9/-2)
 ```diff
-@@ -206,6 +206,14 @@ pub enum Error {
+@@ -571,7 +571,7 @@ impl CompactionScheduler {
+             max_parallelism,
+         );
+         status.merge_waiter(waiter);
+-        self.dispatch_compaction_planning(plan_id, request, compact_options, time_range);
++        self.dispatch_compaction_planning(plan_id, request, compact_options, time_range, trigger);
+         self.listener.on_compaction_scheduled(region_id);
+         Ok(true)
+     }
+@@ -617,7 +617,13 @@ impl CompactionScheduler {
+         // was fetched above.
+         let plan_id = Self::next_plan_id(&mut self.next_plan_id);
+         status.start_picking_with_trigger(plan_id, CompactionTrigger::Manual);
+-        self.dispatch_compaction_planning(plan_id, request, options, time_range);
++        self.dispatch_compaction_planning(
++            plan_id,
++            request,
++            options,
++            time_range,
++            CompactionTrigger::Manual,
++        );
+         debug!(
+             "Successfully scheduled manual compaction planning for region id: {}",
+             region_id
+@@ -703,6 +709,7 @@ impl CompactionScheduler {
+             request,
+             compact_request::Options::Regular(Default::default()),
+             None,
++            CompactionTrigger::Automatic,
+         );
+         debug!(
+             "Successfully scheduled next compaction planning for region id: {}",
+```
+
+**File**: `src/mito2/src/compaction/scheduler/planning.rs` (modified, +7/-1)
+```diff
+@@ -32,7 +32,9 @@ use crate::access_layer::AccessLayerRef;
+ use crate::cache::CacheManagerRef;
+ use crate::compaction::compactor::{CompactionRegion, CompactionVersion};
+ use crate::compaction::picker::{PickerOutput, new_picker};
+-use crate::compaction::scheduler::state::{CompactingFiles, CompactionExecution, CompactionPhase};
++use crate::compaction::scheduler::state::{
++    CompactingFiles, CompactionExecution, CompactionPhase, CompactionTrigger,
++};
+ use crate::compaction::scheduler::{CompactionScheduler, CompactionTransition};
+ use crate::compaction::unit::CompactionUnit;
+ use crate::compaction::{CompactionOutput, find_dynamic_options, format_panic_reason};
+@@ -115,6 +117,7 @@ impl CompactionScheduler {
+         request: CompactionRequest,
+         options: compact_request::Options,
+         time_range: Option<TimestampRange>,
++        trigger: CompactionTrigger,
+     ) {
+         let plugins = self.plugins.clone();
+         let max_background_compactions = self.engine_config.max_background_compactions;
+@@ -127,6 +130,7 @@ impl CompactionScheduler {
+                 plugins,
+                 max_background_compactions,
+                 time_range,
++                trigger,
+             );
+             Self::notify_planning_result(region_id, plan_id, request_sender, planning).await;
+         });
+@@ -180,6 +184,7 @@ impl CompactionScheduler {
+         plugins: Plugins,
+         max_background_compactions: usize,
+         time_range: Option<TimestampRange>,
++        trigger: CompactionTrigger,
+     ) -> CompactionPlanningResult {
+         let region_id = request.region_id();
+         let (dynamic_compaction_opts, ttl) = find_dynamic_options(
+@@ -208,6 +213,7 @@ impl CompactionScheduler {
+             &region_options,
+             Some(max_picker_outputs),
+             time_range,
++            trigger == CompactionTrigger::Manual,
+         );
+         let region_id = request.region_id();
+         let CompactionRequest {
+```
+
+**File**: `src/mito2/src/compaction/twcs.rs` (modified, +1110/-372)
+```diff
+@@ -12,6 +12,8 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++mod units;
++
+ use std::collections::hash_map::Entry;
+ use std::collections::{BTreeMap, HashMap, HashSet};
+ use std::fmt::Debug;
+@@ -34,43 +36,36 @@ use crate::compaction::run::{
+     Ranged, SortedRun, files_overlap, files_overlap_inclusive, find_sorted_runs,
+     find_sorted_runs_by_time_range, merge_primary_key_ranges, primary_key_ranges_overlap,
+ };
++use crate::compaction::twcs::units::{ClosedMergeOptions, PickLimits};
+ use crate::error::{JoinSnafu, Result};
++use crate::region::options::MergeMode;
+ use crate::sst::file::{FileHandle, Level, overlaps};
+ use crate::sst::primary_key::PrimaryKeyRangeMapper;
+ use crate::sst::version::LevelMeta;
+ 
+ const LEVEL_COMPACTED: Level = 1;
+ 
+-#[derive(Clone, Copy, Debug)]
+-enum PickPhase {
+-    HasL0,
+-    L1FileReduction,
+-    L1OverlapOnly,
+-}
+-
+-impl PickPhase {
+-    fn applies_to(self, window: &Window) -> bool {
+-        match self {
+-            Self::HasL0 => window.files().any(|file| file.level() == 0),
+-            Self::L1FileReduction | Self::L1OverlapOnly => {
+-                window.files().any(|file| file.level() != 0)
+-            }
+-        }
+-    }
++/// Scheduling priority of a window's pick. Earlier classes are scheduled first,
++/// and newer windows first within a class.
++#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
++enum PickClass {
++    /// Merges L0 files, which also absorbs late data of inactive windows.
++    L0Merge,
++    /// Merges files to reduce the window's file count.
++    FileReduction,
++    /// Merges files of an inactive window to resolve their overlaps.
++    OverlapResolution,
+ }
+ 
+-const PICK_PHASES: [PickPhase; 3] = [
+-    PickPhase::HasL0,
+-    PickPhase::L1FileReduction,
+-    PickPhase::L1OverlapOnly,
+-];
+-
+-struct WindowPickContext<'a> {
+-    active_window: Option<i64>,
+-    files: &'a Window,
+-    windows: &'a BTreeMap<i64, Window>,
+-    phase: PickPhase,
+-    primary_key_mapper: &'a PrimaryKeyRangeMapper,
++/// Compaction inputs picked for one window.
++#[derive(Debug)]
++struct WindowPick {
++    class: PickClass,
++    /// Name of the strategy that picked the inputs, for logs.
++    branch: &'static str,
++    inputs: Vec<FileHandle>,
++    /// Number of sorted runs or units the strategy considered, for logs.
++    found_runs: usize,
+ }
+ 
+ struct WindowOutputContext {
+@@ -95,6 +90,11 @@ static MAX_INPUT_FILES: LazyLock<usize> = LazyLock::new(|| {
+     parse_max_input_files(env_value.as_deref())
+ });
+ 
++/// A closed merge in an inactive window may take this many times
++/// [`MAX_INPUT_FILES`]. Resolving overlaps across a whole window needs all of
++/// its overlapping files at once, and each byte is rewritten once per window.
++const CLOSED_MERGE_INPUT_FACTOR: usize = 4;
++
+ fn parse_max_input_files(env_value: Option<&str>) -> usize {
+     env_value
+         .and_then(|env_value| env_value.parse().ok())
+@@ -121,13 +121,22 @@ pub struct TwcsPicker {
+     pub max_output_file_size: Option<u64>,
+     /// Whether the target region is in append mode.
+     pub append_mode: bool,
++    /// LastNonNull picks expand to an overlap closure, so cannot use partial
++    /// small-file reductions that must leave large peers untouched.
++    pub(crate) merge_mode: MergeMode,
+     /// Max background compaction tasks.
+     pub max_background_tasks: Option<usize>,
+     /// Optional time range that constrains candidate compaction windows.
+     pub(crate) time_range: Option<TimestampRange>,
++    /// Picks the active window like an inactive one. Manual compactions set it,
++    /// so a window that stopped receiving writes still gets its overlaps
++    /// resolved.
++    pub(crate) all_windows_inactive: bool,
+ }
+ 
+ impl TwcsPicker {
++    /// Picks at most one compaction input per window and schedules them across
++    /// windows by [`PickClass`], newer windows first within a class.
+     async fn build_output(
+         &self,
+         region_id: RegionId,
+@@ -140,7 +149,13 @@ impl TwcsPicker {
+             max_outputs,
+             primary_key_mapper,
+         } = context;
+-        let mut output = vec![];
++        let region_sequence = time_windows
++            .values()
++            .flat_map(|window| window.files())
++            .filter_map(|file| file.meta_ref().sequence)
++            .map(|sequence| sequence.get())
++            .max()
++            .unwrap_or(0);
+         let windows = time_windows
+             .values()
+             .rev()
+@@ -159,278 +174,330 @@ impl TwcsPicker {
+             .map(|window| window.time_window)
+             .collect::<Vec<_>>();
+         let time_windows = Arc::new(time_windows);
++        let max_outputs = max_outputs.unwrap_or(usize::MAX);
+         // Enumerating all LastNonNull seeds must not increase the number of
+         // concurrently planned windows along with the output limit.
+         let chunk_size = self.max_background_tasks.unwrap_or(windows.len()).max(1);
+-        let mut sel
+```
+
+**File**: `src/mito2/src/compaction/twcs/units.rs` (added, +2073/-0)
+```diff
+@@ -0,0 +1,2073 @@
++// Copyright 2023 Greptime Team
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//! Unit-based compaction picks for one TWCS window.
++//!
++//! Picks select a contiguous interval of *units* in a fixed order. Grouping
++//! prefers rewriting related files together, but input limits and fallback
++//! paths may split groups or use single-file units. Separate admission checks
++//! preserve each pick's progress guarantees under the assumptions below.
++//!
++//! - [`pick_active_l1`] reduces the L1 file count of the active window.
++//! - [`pick_small_l1`] reduces small L1 files without rewriting large peers.
++//! - [`pick_closed_merge`] only merges intervals of an inactive window whose
++//!   outputs cannot add conflicts. Compaction outputs stay inside the bounding
++//!   box of the inputs, so they can only overlap files intruding on that box.
++//!
++//! When a window's split-unit conflict graph is too dense to materialize,
++//! [`pick_closed_merge`] falls back to a bounded file reduction and admits it
++//! only when the same conflict bound holds.
++//!
++//! # Termination
++//!
++//! Let `P` be the number of conflicting file pairs ([`Extent::conflicts`]) in an
++//! inactive window and `N` its file count. A merge removes every pair among its
++//! inputs. Its outputs are one sorted run with no internal conflicts,
++//! so they only conflict with the `I` files intruding on the inputs' box, at
++//! most `outputs · I` pairs. An inactive pick only merges inputs that had at
++//! least as many pairs with other files, so `P` does not grow; without
++//! intruders the inputs are closed and add no pairs. Every inactive pick either
++//! resolves a pair (`P` drops) or removes a file (`P` does not grow and `N`
++//! drops), so `(P, N)` strictly decreases in lexicographic order until the
++//! window receives new writes. Active-window picks may add conflicts, so each
++//! of them must remove a file: `N` strictly decreases.
++//!
++//! The argument relies on how the compactor writes outputs:
++//!
++//! - Outputs hold a subset of the input rows, so each output's time and key
++//!   bounds lie inside the inputs' bounding box.
++//! - Outputs are one stream in (key, time) order. For regions with a primary
++//!   key, the writer only splits between complete series, so output key ranges
++//!   are disjoint. Without a primary key, outputs have disjoint or touching
++//!   time ranges. Neither is an [`Extent::conflicts`] pair.
++//! - A split only starts a new file once the current one reaches the size
++//!   threshold, and outputs are not larger than inputs in total, so
++//!   [`PickLimits::predicted_outputs`] bounds the output count.
++//!
++//! `test_closed_merges_terminate` and `test_active_l1_picks_terminate` replay
++//! random windows with outputs written under these rules.
++
++use std::cmp::Reverse;
++use std::ops::Range;
++
++use bytes::Bytes;
++use common_time::Timestamp;
++
++use crate::sst::file::FileHandle;
++use crate::sst::primary_key::PrimaryKeyRangeMapper;
++
++/// An L1 file reduction may rewrite at most this many output files' worth of
++/// bytes per SST it removes.
++const MAX_REWRITE_FILES_PER_REDUCED_FILE: u64 = 4;
++
++/// A small L1 file occupies at most one quarter of the output size budget.
++const SMALL_L1_SIZE_FACTOR: u64 = 4;
++
++/// Maximum number of index nodes visited while building conflict structures for
++/// a pick. Above this, the picker falls back to a bounded file reduction instead
++/// of materializing an unbounded conflict graph.
++const CONFLICT_GRAPH_BUDGET: usize = 1 << 20;
++
++/// Output size limits and input limits shared by both picks.
++#[derive(Debug, Clone, Copy)]
++pub(crate) struct PickLimits {
++    /// Split threshold of compaction outputs; `None` writes a single output.
++    pub(crate) max_output_file_size: Option<u64>,
++    /// Maximum number of input files of one compaction.
++    pub(crate) max_input_files: usize,
++}
++
++impl PickLimits {
++    /// Upper bound of the outputs of compacting an interval: the writer only
++    /// starts a new file after the current one reaches the threshold, and never
++    /// splits a series, so files of a single primary key compact into one file.
++    fn predicted_outputs(&self, stats: &IntervalStats) -> usize {
++        match self.max_output_file_size {
++            Some(max) if max > 0 && stats.single_key.is_none() => {
++                stats.size.div_ceil(max).max(1) as usize
++            }
++            _ => 1,
++        }
++    }
++
++    /// Whether rewrit
+```
+
+**File**: `src/mito2/src/engine/compaction_test.rs` (modified, +204/-2)
+```diff
+@@ -212,6 +212,7 @@ async fn test_strict_window_output_file_size(
+     assert!(version.ssts.levels()[0].files.is_empty());
+     let primary_key_mapper = version.ssts.primary_key_mapper();
+     let files = version.ssts.levels()[1].files().collect::<Vec<_>>();
++    let max_output_size = files.iter().map(|file| file.size()).max().unwrap();
+     assert_eq!(
+         6000,
+         files
+@@ -229,6 +230,14 @@ async fn test_strict_window_output_file_size(
+             .collect::<Vec<_>>();
+         if expect_split {
+             assert!(window_files.len() > 1, "each window must split by size");
++            assert_eq!(
++                window_files.len() as u64,
++                window_files
++                    .iter()
++                    .map(|file| file.size())
++                    .sum::<u64>()
++                    .div_ceil(max_output_size)
++            );
+         } else {
+             assert_eq!(1, window_files.len(), "zero must disable size splitting");
+         }
+@@ -253,6 +262,35 @@ async fn test_strict_window_output_file_size(
+         sort_batches_and_print(&before, &["tag_0", "ts"]),
+         sort_batches_and_print(&after, &["tag_0", "ts"])
+     );
++
++    // Fresh size-split outputs have disjoint series and must not look like
++    // independently written files sharing a boundary key to the TWCS picker.
++    // Raise the tiny split threshold so an overlap merge would be eligible by
++    // size; otherwise the output-count guard alone would reject these files.
++    engine
++        .handle_request(
++            region_id,
++            RegionRequest::Alter(RegionAlterRequest {
++                kind: SetRegionOptions {
++                    options: vec![SetRegionOption::Twsc(
++                        "compaction.twcs.max_output_file_size".into(),
++                        format!("{max_output_size}B"),
++                    )],
++                },
++            }),
++        )
++        .await
++        .unwrap();
++    let output_ids: HashSet<_> = files.iter().map(|file| file.file_id()).collect();
++    compact(&engine, region_id).await;
++    let version = engine.get_region(region_id).unwrap().version();
++    assert_eq!(
++        output_ids,
++        version.ssts.levels()[1]
++            .files()
++            .map(|file| file.file_id())
++            .collect()
++    );
+ }
+ 
+ /// Flush may collapse versions within one file, but compaction must not promote
+@@ -544,6 +582,169 @@ async fn assert_partial_compaction_preserves_delete_order(flat_format: bool) {
+     );
+ }
+ 
++/// Exercise the small-L1 fallback with real SST sizes, preserved tombstones,
++/// and both layouts. No fabricated file metadata or hand-picked merge inputs.
++#[rstest::rstest]
++#[tokio::test]
++async fn test_inactive_small_l1_compaction_preserves_large_peer(
++    #[values(false, true)] flat_format: bool,
++    #[values(3600, 7200)] active_ts: usize,
++) {
++    let mut env = TestEnv::new().await;
++    let region_id = RegionId::new(1, 1);
++    let (engine, columns) = env_for_manual_compaction(&mut env, region_id, flat_format).await;
++    let mut rng = <rand::rngs::StdRng as rand::SeedableRng>::seed_from_u64(41);
++    let mut old_rows = build_rows_for_key("m", 10, 16, 0);
++    for _ in 0..30_000 {
++        old_rows.extend(build_rows_for_key(
++            &format!("a{:032x}", rand::Rng::random::<u128>(&mut rng)),
++            1,
++            2,
++            0,
++        ));
++    }
++    for _ in 0..2 {
++        put_rows(
++            &engine,
++            region_id,
++            Rows {
++                schema: columns.clone(),
++                rows: old_rows.clone(),
++            },
++        )
++        .await;
++        flush(&engine, region_id).await;
++    }
++    compact(&engine, region_id).await;
++    let region = engine.get_region(region_id).unwrap();
++    let table_dir = region.table_dir().to_string();
++    let large = region.version().ssts.levels()[1]
++        .files()
++        .next()
++        .unwrap()
++        .clone();
++    const OUTPUT_SIZE: u64 = 64 * 1024;
++    assert!(large.size() > 8 * OUTPUT_SIZE);
++    engine
++        .handle_request(
++            region_id,
++            RegionRequest::Alter(RegionAlterRequest {
++                kind: SetRegionOptions {
++                    options: vec![
++                        SetRegionOption::Twsc(
++                            "compaction.twcs.max_output_file_size".into(),
++                            "64KiB".into(),
++                        ),
++                        SetRegionOption::Twsc(
++                            "compaction.twcs.inactive_window.l1_merge_trigger".into(),
++                            "2".into(),
++                        ),
++                    ],
++                },
++            }),
++        )
++        .await
++        .unwrap();
++
++    // Each pair of L0 files becomes one small L1. The first contains a Delete
++    // masking the large SST; later pairs update other rows in its key/time box.
++    for ts in 10..14 {
++        for _ in 0..2 {
++            let rows = Rows {
++             
+```
+
+**File**: `src/mito2/src/gc/worker_test.rs` (modified, +11/-3)
+```diff
+@@ -399,7 +399,13 @@ async fn test_gc_worker_basic_compact() {
+ 
+     let region = engine.get_region(region_id).unwrap();
+     let manifest = region.manifest_ctx.manifest().await;
+-    let removed_file_num = manifest.removed_files.removed_files[0].files.len();
++    // A manual compaction may take several rounds, each recording its removals.
++    let removed_file_num: usize = manifest
++        .removed_files
++        .removed_files
++        .iter()
++        .map(|removed| removed.files.len())
++        .sum();
+     assert!(removed_file_num > 0);
+ 
+     let version = manifest.manifest_version;
+@@ -488,9 +494,11 @@ async fn test_gc_worker_compact_with_ref() {
+     let file_ref_manifest = FileRefsManifest {
+         file_refs: HashMap::from([(
+             region_id,
+-            manifest.removed_files.removed_files[0]
+-                .files
++            manifest
++                .removed_files
++                .removed_files
+                 .iter()
++                .flat_map(|removed| removed.files.iter())
+                 .map(|removed_file| match removed_file {
+                     RemovedFile::File(file_id, v) => FileRef::new(region_id, *file_id, *v),
+                     RemovedFile::Index(file_id, v) => FileRef::new(region_id, *file_id, Some(*v)),
+```
+
+---
+
+### Incident Patch 2: `436d07bf` (2026-10-21)
+**Commit Message**: fix(mito): return from manual index builds only after the index is published (#9643)
+
+* fix(mito): return from manual index builds only after the index is published
+
+A manual build_index could report success while the index was missing:
+the request was rejected or coalesced behind another build, the manifest
+commit failed, the indexer dropped an error, or the region was staging.
+Manual builds now wait for active builds of the same SST, keep their
+waiters across coalescing and schema-change retries, are notified after
+the worker applies the edit, and verify the files against the manifest
+before returning.
+
+The consistency check also honors inverted_index.ignore_column_ids and a
+zero segment row count, so such SSTs are no longer rebuilt on every call.
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* test(mito): cover manual index build waiting for a schema-change retry
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* fix(mito): select manual index build files by the applied version
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* chore(mito): log why index builds are skipped or aborted
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* refactor(mito): split IndexBuildTask::
+
+**File**: `src/mito2/src/engine/index_build_test.rs` (modified, +376/-34)
+```diff
+@@ -1147,7 +1147,10 @@ async fn test_consecutive_schema_changes_publish_latest_index_generation() {
+     let files = current_file_metas(&engine, region_id).await;
+     assert_eq!(files.len(), 1);
+     assert!(
+-        files[0].is_index_consistent_with_region(&version.metadata.column_metadatas),
++        files[0].is_index_consistent_with_region(
++            &version.metadata.column_metadatas,
++            &version.options.index_options,
++        ),
+         "the published index must match the latest schema generation, file: {:?}, metadata: {:?}",
+         files[0],
+         version.metadata
+@@ -1166,10 +1169,10 @@ async fn test_consecutive_schema_changes_publish_latest_index_generation() {
+     let reopened = engine.get_region(region_id).unwrap();
+     let reopened_files = current_file_metas(&engine, region_id).await;
+     assert_eq!(reopened_files.len(), 1);
+-    assert!(
+-        reopened_files[0]
+-            .is_index_consistent_with_region(&reopened.version().metadata.column_metadatas)
+-    );
++    assert!(reopened_files[0].is_index_consistent_with_region(
++        &reopened.version().metadata.column_metadatas,
++        &reopened.version().options.index_options,
++    ));
+ }
+ 
+ #[tokio::test]
+@@ -1250,7 +1253,184 @@ async fn test_unrelated_schema_change_retries_stale_flush_index_build() {
+     let region = engine.get_region(region_id).unwrap();
+     let files = current_file_metas(&engine, region_id).await;
+     assert_eq!(files.len(), 1);
+-    assert!(files[0].is_index_consistent_with_region(&region.version().metadata.column_metadatas));
++    let version = region.version();
++    assert!(files[0].is_index_consistent_with_region(
++        &version.metadata.column_metadatas,
++        &version.options.index_options,
++    ));
++    let scanner = engine
++        .scanner(region_id, ScanRequest::default())
++        .await
++        .unwrap();
++    assert_eq!(num_of_index_files(&engine, &scanner, region_id).await, 1);
++}
++
++#[tokio::test]
++async fn test_manual_build_waits_for_committed_publication_to_apply() {
++    let mut env =
++        TestEnv::with_prefix("test_manual_build_waits_for_committed_publication_to_apply_").await;
++    let gate = Arc::new(IndexPublicationGate::new(
++        IndexPublicationPhase::AfterManifestCommit,
++    ));
++    let engine = Arc::new(
++        env.create_engine_with(
++            async_build_mode_config(true),
++            None,
++            Some(gate.clone()),
++            None,
++        )
++        .await,
++    );
++
++    let region_id = RegionId::new(1, 1);
++    env.get_schema_metadata_manager()
++        .register_region_table_info(
++            region_id.table_id(),
++            "test_table",
++            "test_catalog",
++            "test_schema",
++            None,
++            env.get_kv_backend(),
++        )
++        .await;
++
++    let request = CreateRequestBuilder::new().build_with_index();
++    let column_schemas = rows_schema(&request);
++    engine
++        .handle_request(region_id, RegionRequest::Create(request))
++        .await
++        .unwrap();
++    put_and_flush(&engine, region_id, &column_schemas, 0..20).await;
++    // The flush build has committed its index to the manifest, but the worker
++    // has not applied it to the version.
++    tokio::time::timeout(Duration::from_secs(10), gate.wait_entered(1))
++        .await
++        .expect("flush index build did not commit the manifest");
++
++    let engine_for_build = engine.clone();
++    let mut manual_build = tokio::spawn(async move {
++        engine_for_build
++            .handle_request(
++                region_id,
++                RegionRequest::BuildIndex(RegionBuildIndexRequest::default()),
++            )
++            .await
++    });
++    assert!(
++        tokio::time::timeout(Duration::from_millis(300), &mut manual_build)
++            .await
++            .is_err(),
++        "manual build returned before the committed index was applied"
++    );
++
++    gate.release(1);
++    tokio::time::timeout(Duration::from_secs(10), manual_build)
++        .await
++        .expect("manual index build request did not finish")
++        .expect("manual index build task panicked")
++        .unwrap();
++
++    let version = engine.get_region(region_id).unwrap().version();
++    let files = version
++        .ssts
++        .levels()
++        .iter()
++        .flat_map(|level| level.files.values())
++        .collect::<Vec<_>>();
++    assert_eq!(files.len(), 1);
++    assert!(files[0].meta_ref().is_index_consistent_with_region(
++        &version.metadata.column_metadatas,
++        &version.options.index_options,
++    ));
++}
++
++#[tokio::test]
++async fn test_manual_build_waits_for_schema_change_retry() {
++    let mut env = TestEnv::with_prefix("test_manual_build_waits_for_schema_change_retry_").await;
++    let gate = Arc::new(IndexPublicationGate::new(
++        IndexPublicationPhase::BeforeManifestCommit,
++    ));
++    let engine = Arc::new(
++        env.create_engine_with(
++            async_build_mode_config(false),
++            None,
++   
+```
+
+**File**: `src/mito2/src/error.rs` (modified, +13/-0)
+```diff
+@@ -775,6 +775,18 @@ pub enum Error {
          location: Location,
      },
  
-+    #[snafu(display("Failed to coerce partition expr against the schema"))]
-+    CoercePartitionExpr {
-+        #[snafu(source)]
-+        error: datafusion_common::error::DataFusionError,
++    #[snafu(display(
++        "Index build did not complete for files {:?} in region {}",
++        file_ids,
++        region_id
++    ))]
++    IndexBuildIncomplete {
++        region_id: RegionId,
++        file_ids: Vec<FileId>,
 +        #[snafu(implicit)]
 +        location: Location,
 +    },
 +
-     #[snafu(display("Partition expr value is not supported: {:?}", value))]
-     UnsupportedPartitionExprValue {
-         value: Value,
-@@ -275,6 +283,7 @@ impl ErrorExt for Error {
-             Error::UnexpectedColumnType { .. } => StatusCode::Internal,
-             Error::ToDFSchema { .. } => StatusCode::Internal,
-             Error::CreatePhysicalExpr { .. } => StatusCode::Internal,
-+            Error::CoercePartitionExpr { .. } => StatusCode::Internal,
-             Error::UnsupportedPartitionExprValue { .. } => StatusCode::InvalidArguments,
-             Error::ConvertPartitionExprValue { .. } => StatusCode::InvalidArguments,
-         }
+     #[snafu(display("Failed to convert value"))]
+     ConvertValue {
+         source: datatypes::error::Error,
+@@ -1561,6 +1573,7 @@ impl ErrorExt for Error {
+                 StatusCode::StorageUnavailable
+             }
+             FlushRegion { source, .. } | BuildIndexAsync { source, .. } => source.status_code(),
++            IndexBuildIncomplete { .. } => StatusCode::IllegalState,
+             RegionDropped { .. } => StatusCode::Cancelled,
+             RegionClosed { .. } => StatusCode::Cancelled,
+             StaleCompactionExecution { .. } => StatusCode::Cancelled,
 ```
 
-**File**: `src/partition/src/expr.rs` (modified, +16/-1)
+**File**: `src/mito2/src/request.rs` (modified, +5/-9)
 ```diff
-@@ -21,6 +21,8 @@ use datafusion_common::{ScalarValue, ToDFSchema};
- use datafusion_expr::Expr;
- use datafusion_expr::execution_props::ExecutionProps;
- use datafusion_expr::physical_planning_context::PhysicalPlanningContext;
-+use datafusion_expr::simplify::SimplifyContext;
-+use datafusion_optimizer::simplify_expressions::ExprSimplifier;
- use datafusion_physical_expr::{PhysicalExpr, create_physical_expr};
- use datatypes::arrow;
- use datatypes::value::{
-@@ -357,8 +359,21 @@ impl PartitionExpr {
-             .clone()
-             .to_dfschema_ref()
-             .context(error::ToDFSchemaSnafu)?;
--        let execution_props = &ExecutionProps::default();
-         let expr = self.try_as_logical_expr()?;
-+        // Persisted partition bounds keep the unit (and type) they were created
-+        // with, so after a schema change like widening the time index unit the
-+        // expression may mix types with the columns it is evaluated against.
-+        // Coerce it against the schema so comparisons share a common type, the
-+        // same way `PredicateGroup` does for region partition filters.
-+        let simplifier = ExprSimplifier::new(
-+            SimplifyContext::builder()
-+                .with_schema(df_schema.clone())
-+                .build(),
-+        );
-+        let expr = simplifier
-+            .coerce(expr, &df_schema)
-+            .context(error::CoercePartitionExprSnafu)?;
-+        let execution_props = &ExecutionProps::default();
-         create_physical_expr(
-             &expr,
-             &df_schema,
+@@ -65,7 +65,7 @@ use crate::metrics::COMPACTION_ELAPSED_TOTAL;
+ use crate::region::MitoRegionRef;
+ use crate::region::options::RegionOptions;
+ use crate::sst::file::FileMeta;
+-use crate::sst::index::IndexBuildType;
++use crate::sst::index::{IndexBuildType, ResultMpscSender};
+ use crate::wal::EntryId;
+ use crate::wal::entry_distributor::WalEntryReceiver;
+ 
+@@ -1113,8 +1113,6 @@ pub(crate) enum BackgroundNotify {
+     IndexBuildFinished(IndexBuildFinished),
+     /// Index build has been stopped (aborted or succeeded).
+     IndexBuildStopped(IndexBuildStopped),
+-    /// Index build has failed.
+-    IndexBuildFailed(IndexBuildFailed),
+     /// An index build must be retried against the latest schema generation.
+     IndexBuildRetry(BuildIndexRequest),
+     /// Compaction has finished.
+@@ -1196,6 +1194,8 @@ impl FlushFailed {
+ pub(crate) struct IndexBuildFinished {
+     pub(crate) manifest_version: ManifestVersion,
+     pub(crate) file_meta: FileMeta,
++    /// Waiters of the build, notified after the worker applies the edit.
++    pub(crate) result_senders: Vec<ResultMpscSender>,
+ }
+ 
+ /// Notifies an index build job has been stopped.
+@@ -1204,12 +1204,6 @@ pub(crate) struct IndexBuildStopped {
+     pub(crate) file_id: FileId,
+ }
+ 
+-/// Notifies an index build job has failed.
+-#[derive(Debug)]
+-pub(crate) struct IndexBuildFailed {
+-    pub(crate) err: Arc<Error>,
+-}
+-
+ /// A local unit event carries only identity, never an input reservation lease.
+ #[derive(Debug)]
+ pub(crate) enum CompactionUnitNotification {
+@@ -1419,6 +1413,8 @@ pub(crate) struct BuildIndexRequest {
+     pub(crate) build_type: IndexBuildType,
+     /// files need to build index, empty means all.
+     pub(crate) file_metas: Vec<FileMeta>,
++    /// Waiters carried over from a previous build of the same files.
++    pub(crate) result_senders: Vec<ResultMpscSender>,
+ }
+ 
+ #[derive(Debug)]
 ```
 
-**File**: `src/partition/src/multi_dim.rs` (modified, +42/-2)
+**File**: `src/mito2/src/sst/file.rs` (modified, +82/-51)
 ```diff
-@@ -798,9 +798,10 @@ mod tests {
- mod test_split_record_batch {
-     use std::sync::Arc;
- 
-+    use common_time::timestamp::Timestamp;
-     use datafusion_common::ScalarValue;
--    use datatypes::arrow::array::{Int64Array, StringArray};
--    use datatypes::arrow::datatypes::{DataType, Field, Schema};
-+    use datatypes::arrow::array::{Int64Array, StringArray, TimestampNanosecondArray};
-+    use datatypes::arrow::datatypes::{DataType, Field, Schema, TimeUnit};
-     use datatypes::arrow::record_batch::RecordBatch;
-     use rand::Rng;
- 
-@@ -857,6 +858,45 @@ mod test_split_record_batch {
-         }
+@@ -37,6 +37,7 @@ use store_api::storage::{ColumnId, FileId, IndexVersion, RegionId};
+ use crate::access_layer::AccessLayerRef;
+ use crate::cache::CacheManagerRef;
+ use crate::cache::file_cache::{FileType, IndexKey};
++use crate::region::options::IndexOptions;
+ use crate::sst::file_purger::FilePurgerRef;
+ use crate::sst::index::fulltext_index::FULLTEXT_BLOOM_VERSION;
+ use crate::sst::location;
+@@ -456,56 +457,73 @@ impl FileMeta {
+         self.index_file_size
      }
  
-+    #[test]
-+    fn test_split_record_batch_widened_time_index_unit() {
-+        // https://github.com/GreptimeTeam/greptimedb/issues/9747
-+        // The partition bounds keep the unit they were created with (millisecond)
-+        // after the time index column is widened to nanosecond, so the batch
-+        // schema and the bound values mix timestamp units.
-+        let bound = Value::from(Timestamp::new_millisecond(1_000));
-+        let rule = MultiDimPartitionRule::try_new(
-+            vec!["ts".to_string()],
-+            vec![0, 1],
-+            vec![col("ts").lt(bound.clone()), col("ts").gt_eq(bound)],
-+            true,
-+        )
-+        .unwrap();
+-    /// Check whether the file index is consistent with the given region metadata.
+-    pub fn is_index_consistent_with_region(&self, metadata: &[ColumnMetadata]) -> bool {
++    /// Check whether the file index is consistent with the given region metadata
++    /// and index options.
++    pub fn is_index_consistent_with_region(
++        &self,
++        metadata: &[ColumnMetadata],
++        index_options: &IndexOptions,
++    ) -> bool {
+         let id_to_indexes = self
+             .indexes
+             .iter()
+             .map(|index| (index.column_id, index))
+             .collect::<std::collections::HashMap<_, _>>();
++        let inverted_options = &index_options.inverted_index;
+         for column in metadata {
+-            if !column.column_schema.is_indexed() {
++            let schema = &column.column_schema;
++            // The index builder never creates these inverted indexes, so expecting
++            // them would make every manual build rebuild the file again.
++            let expects_inverted = schema.is_inverted_indexed()
++                && inverted_options.segment_row_count > 0
++                && !inverted_options
++                    .ignore_column_ids
++                    .contains(&column.column_id);
++            let expects_fulltext = schema.is_fulltext_indexed();
++            let expects_skipping = schema.is_skipping_indexed();
++            if !expects_inverted && !expects_fulltext && !expects_skipping {
+                 continue;
+             }
+-            if let Some(index) = id_to_indexes.get(&column.column_id) {
+-                let indexes = &index.created_indexes;
+-                if column.column_schema.is_inverted_indexed()
+-                    && !indexes.contains(&IndexType::InvertedIndex)
+-                {
+-                    return false;
+-                }
+-                if column.column_schema.is_fulltext_indexed()
+-                    && !indexes.contains(&IndexType::FulltextIndex)
+-                {
+-                    return false;
+-                }
+-                if column
+-                    .column_schema
+-                    .fulltext_options()
+-                    .ok()
+-                    .flatten()
+-                    .is_some_and(|options| {
+-                        options.enable && options.backend == FulltextBackend::Bloom
+-                    })
+-                    && index.fulltext_bloom_version < FULLTEXT_BLOOM_VERSION
+-                {
+-                    debug!(
+-                        "Fulltext bloom index is outdated, region_id: {}, file_id: {}, column_id: {}, version: {}, current: {}",
+-                        self.region_id,
+-                        self.file_id,
+-                        column.column_id,
+-                        index.fulltext_bloom_version,
+-                        FULLTEXT_BLOOM_VERSION
+-                    );
+-                    return false;
+-                }
+-                if column.column_schema.is_skipping_indexed()
+-                    && !indexes.contains(&IndexType::BloomFilterIndex)
+-                {
+-                    return false;
+-                }
+-            } else {
++            let missing_index = |index_type: IndexType| {
++                debug!(
++                    "File index is missing, region_id: {}, file_id: {}, column_id: {}, index_type: {:?}",
++                    self.region_id, self.file_id, column.column_id, index_type
++                );
++                false
++            };
++            let Some(index) = id_to_indexes.get(&column.column_id) else {
++                debug!(
++                    "File has no index for column, region_id: {}, file_id: {}, column_id: {}",
++                    self.region_id, self.file_id, column.column_id
++                );
+                 return false;
++            };
++            let indexes = &index.created_indexes;
++            if expects_inverted && !indexes.contains(&IndexType::InvertedIndex) {
++                return missing_index(IndexType::InvertedIndex);
++            }
++            if expects_fulltext && !indexes.contains(&IndexType::FulltextIndex) {
++                return missing_index(IndexType::FulltextIndex);
++            }
++            if schema
++                .fulltext_options()
++                .ok()
++                .flatten()
++                .is_some_and(|options| options.enable && options.backend == FulltextBackend::Bloom)
++                && index.fulltext_bloom_version < FULLTEXT_BLOOM_VERSION
++            {
++                debug!(
++                    "Fu
+```
+
+**File**: `src/mito2/src/sst/index.rs` (modified, +331/-339)
+```diff
+@@ -30,6 +30,7 @@ pub(crate) mod store;
+ use std::cmp::Ordering;
+ use std::collections::{HashMap, HashSet};
+ use std::num::NonZeroUsize;
++use std::ops::ControlFlow;
+ use std::sync::Arc;
+ 
+ use bloom_filter::creator::BloomFilterIndexer;
+@@ -66,8 +67,8 @@ use crate::region::{
+     IndexBuildSource, IndexPublication, IndexPublicationStale, ManifestContextRef,
+ };
+ use crate::request::{
+-    BackgroundNotify, BuildIndexRequest, IndexBuildFailed, IndexBuildFinished, IndexBuildStopped,
+-    WorkerRequest, WorkerRequestWithTime,
++    BackgroundNotify, BuildIndexRequest, IndexBuildFinished, IndexBuildStopped, WorkerRequest,
++    WorkerRequestWithTime,
+ };
+ use crate::schedule::scheduler::{Job, SchedulerRef};
+ use crate::sst::file::{
+@@ -649,6 +650,15 @@ pub enum IndexBuildOutcome {
+     Aborted(String),
+ }
+ 
++/// How an index build task reports its result.
++enum IndexBuildReport {
++    /// The task sends the outcome to its waiters.
++    Done(IndexBuildOutcome),
++    /// The worker or a retry task owns the waiters, so the task must not
++    /// report to them.
++    Deferred,
++}
 +
-+        let schema = Arc::new(Schema::new(vec![Field::new(
-+            "ts",
-+            DataType::Timestamp(TimeUnit::Nanosecond, None),
-+            false,
-+        )]));
-+        let batch = RecordBatch::try_new(
-+            schema,
-+            vec![Arc::new(TimestampNanosecondArray::from(vec![
-+                500_000_000,
-+                2_000_000_000,
-+            ]))],
-+        )
-+        .unwrap();
-+
-+        // 500_000_000ns < 1000ms and 2_000_000_000ns >= 1000ms: one row per region.
-+        let expected = rule.split_record_batch_naive(&batch).unwrap();
-+        assert_eq!(expected.len(), 2);
-+        let result = rule.split_record_batch(&batch).unwrap();
-+        assert_eq!(result.len(), expected.len());
-+        for (region, value) in &result {
-+            assert_eq!(value.array(), expected.get(region).unwrap());
+ /// Mpsc output result sender.
+ pub type ResultMpscSender = Sender<Result<IndexBuildOutcome>>;
+ 
+@@ -668,6 +678,8 @@ pub struct IndexBuildTask {
+     pub(crate) target_region_metadata: RegionMetadataRef,
+     /// The manifest state this build is based on.
+     pub(crate) source: IndexBuildSource,
++    /// Index options of the target region when the task was created.
++    pub(crate) index_options: IndexOptions,
+     pub reason: IndexBuildType,
+     pub access_layer: AccessLayerRef,
+     pub(crate) listener: WorkerListener,
+@@ -680,8 +692,9 @@ pub struct IndexBuildTask {
+     pub indexer_builder: Arc<dyn IndexerBuilder + Send + Sync>,
+     /// Request sender to notify the region worker.
+     pub(crate) request_sender: Sender<WorkerRequestWithTime>,
+-    /// Index build result sender.
+-    pub(crate) result_sender: ResultMpscSender,
++    /// Senders of callers waiting for this build. Coalesced tasks and
++    /// schema-change retries hand their senders over to the surviving task.
++    pub(crate) result_senders: Vec<ResultMpscSender>,
+ }
+ 
+ impl std::fmt::Debug for IndexBuildTask {
+@@ -699,17 +712,20 @@ impl std::fmt::Debug for IndexBuildTask {
+ impl IndexBuildTask {
+     /// Notify the caller the job is success.
+     pub async fn on_success(&self, outcome: IndexBuildOutcome) {
+-        let _ = self.result_sender.send(Ok(outcome)).await;
++        for sender in &self.result_senders {
++            let _ = sender.send(Ok(outcome.clone())).await;
 +        }
-+    }
-+
-     #[test]
-     fn test_split_record_batch_empty() {
-         // Create a simple MultiDimPartitionRule
-```
-
-**File**: `tests-integration/src/grpc/flight.rs` (modified, +109/-3)
-```diff
-@@ -52,7 +52,9 @@ mod test {
-     };
-     use datatypes::prelude::{ConcreteDataType, ScalarVector, VectorRef};
-     use datatypes::schema::{ColumnSchema, Schema};
--    use datatypes::vectors::{Int32Vector, StringVector, TimestampMillisecondVector};
-+    use datatypes::vectors::{
-+        Int32Vector, StringVector, TimestampMillisecondVector, TimestampNanosecondVector,
-+    };
-     use futures_util::{Stream, StreamExt};
-     use hyper_util::rt::TokioIo;
-     use itertools::Itertools;
-@@ -837,6 +839,82 @@ mod test {
-         );
      }
  
-+    #[tokio::test(flavor = "multi_thread")]
-+    async fn test_flight_bulk_widen_partitioned_time_index() {
-+        // https://github.com/GreptimeTeam/greptimedb/issues/9747
-+        // Bulk writes route through `MultiDimPartitionRule::split_record_batch`,
-+        // which evaluates the persisted partition bounds against the batch. The
-+        // bounds keep the unit they were created with, so widening the time
-+        // index unit must not mix timestamp units during that evaluation.
-+        common_telemetry::init_default_ut_logging();
-+
-+        let (db, server) = setup_grpc_server(
-+            StorageType::File,
-+            "test_flight_bulk_widen_partitioned_time_index",
-+        )
+     /// Send index build error to waiter.
+     pub async fn on_failure(&self, err: Arc<Error>) {
+-        let _ = self
+-            .result_sender
+-            .send(Err(err.clone()).context(BuildIndexAsyncSnafu {
+-                region_id: self.region_id,
+-            }))
+-            .await;
++        for sender in &self.result_senders {
++            let _ = sender
++                .send(Err(err.clone()).context(BuildIndexAsyncSnafu {
++                    region_id: self.region_id,
++                }))
++                .await;
++        }
+     }
+ 
+     fn into_index_build_job(mut self, version_control: VersionControlRef) -> Job {
+@@ -720,10 +736,7 @@ impl IndexBuildTask {
+ 
+     async fn do_index_build(&mut self, version_control: VersionControlRef) {
+         self.listener
+-            .on_index_build_begin(RegionFileId::new(
+-                self.source.file_meta.region_id,
+-                self.source.file_meta.file_id,
+-            ))
++            .on_index_build_begin(self.region_file_id())
+             .await;
+         let result = if self.reason == IndexBuildType::Compact {
+             let mut task = self.clone();
+@@ -740,7 +753,13 @@ impl IndexBuildTask {
+             self.index_build(version_control).await
+         };
+         match result {
+-            Ok(outcome) => self.on_success(outcome).await,
++            Ok(IndexBuildReport::Done(outcome)) => {
++                if let IndexBuildOutcome::Aborted(reason) = &outcome {
++                    debug!("Index build aborted: {}", reason);
++                }
++                self.on_success(outcome).await
++            }
++            Ok(IndexBuildReport::Deferred) => {}
+             Err(e) => {
+                 warn!(
+                     e; "Index build task failed, region: {}, file_id: {}",
+@@ -749,18 +768,49 @@ impl IndexBuildTask {
+                 self.on_failure(e.into()).await
+             }
+         }
++        self.notify_worker(BackgroundNotify::IndexBuildStopped(IndexBuildStopped {
++            file_id: self.source.file_meta.file_id,
++        }))
 +        .await;
-+        let addr = server.bind_addr().unwrap().to_string();
++    }
 +
-+        let client = Client::with_urls(vec![addr]);
-+        let client = Database::new_with_dbname("greptime-public", client);
-+
-+        client
-+            .sql(
-+                "CREATE TABLE widen_ts (host STRING, ts TIMESTAMP TIME INDEX) \
-+                 PARTITION ON COLUMNS (ts) (\
-+                   ts < '2024-01-02 00:00:00', \
-+                   ts >= '2024-01-02 00:00:00'\
-+                 )",
-+            )
-+            .await
-+            .unwrap();
-+        client
-+            .sql("ALTER TABLE widen_ts MODIFY COLUMN ts TIMESTAMP_NS")
-+            .await
-+            .unwrap();
-+
-+        // 2024-01-02 00:00:00 UTC == 1704153600000 ms; rows below and above the
-+        // bound, expressed in the widened nanosecond unit ("c" only exists in ns).
-+        let schema = Arc::new(Schema::new(vec![
-+            ColumnSchema::new("host", ConcreteDataType::string_datatype(), true),
-+            ColumnSchema::new(
-+                "ts",
-+                ConcreteDataType::timestamp_nanosecond_datatype(),
-+                false,
-+            )
-+            .with_time_index(true),
-+        ]));
-+        let batch = RecordBatch::new(
-+            schema,
-+            vec![
-+                Arc::new(StringVector::from_vec(vec![
-+                    "a".to_string(),
-+                    "b".to_string(),
-+                    "c".to_string(),
-+                ])) as VectorRef,
-+                Arc::new(TimestampNanosecondVector::from_vec(vec![
-+                    1_704_153_599_500_000_000,
-+                    1_704_153_600_000_000_000,
-+                    1_704_153_600_000_000_001,
-+                ])) as VectorRef,
-+            ],
++    fn region_file_id(&self) -> RegionFileId {
++        RegionFileId::new(
++            self.source.file_meta.region_id,
++            self.source.file_meta.file_id,
 +        )
++    }
++
++    async fn notify_worker(&self, notify: BackgroundNotify) {
+         let worker_request = WorkerRequest::Background {
+             region_id: self.region_id,
+-     
+```
+
+**File**: `src/mito2/src/worker.rs` (modified, +0/-3)
+```diff
+@@ -1435,9 +1435,6 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+             BackgroundNotify::IndexBuildStopped(req) => {
+                 self.handle_index_build_stopped(region_id, req).await
+             }
+-            BackgroundNotify::IndexBuildFailed(req) => {
+-                self.handle_index_build_failed(region_id, req).await
+-            }
+             BackgroundNotify::IndexBuildRetry(req) => {
+                 self.handle_rebuild_index(req, OptionOutputTx::new(None))
+                     .await
+```
+
+**File**: `src/mito2/src/worker/handle_compaction.rs` (modified, +2/-0)
+```diff
+@@ -79,6 +79,7 @@ impl<S> RegionWorkerLoop<S> {
+                                     region_id,
+                                     build_type: IndexBuildType::Compact,
+                                     file_metas: edit.files_to_add,
++                                    result_senders: Vec::new(),
+                                 },
+                                 OptionOutputTx::new(None),
+                             )
+@@ -245,6 +246,7 @@ impl<S> RegionWorkerLoop<S> {
+                     region_id,
+                     build_type: IndexBuildType::Compact,
+                     file_metas: index_build_file_metas,
++                    result_senders: Vec::new(),
+                 },
+                 OptionOutputTx::new(None),
+             )
+```
+
+**File**: `src/mito2/src/worker/handle_flush.rs` (modified, +6/-2)
+```diff
+@@ -443,10 +443,13 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+         if self.config.index.build_mode == IndexBuildMode::Sync {
+             // Sync flush builds indexes while writing SSTs, except for encoded bulk parts,
+             // which are uploaded as-is. Build the missing indexes for those files here.
+-            let metadata = region.metadata();
++            let version = region.version();
+             index_build_file_metas.retain(|meta| {
+                 request.unindexed_files.contains(&meta.file_id)
+-                    && !meta.is_index_consistent_with_region(&metadata.column_metadatas)
++                    && !meta.is_index_consistent_with_region(
++                        &version.metadata.column_metadatas,
++                        &version.options.index_options,
++                    )
+             });
+         }
+ 
+@@ -456,6 +459,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+                     region_id,
+                     build_type: IndexBuildType::Flush,
+                     file_metas: index_build_file_metas,
++                    result_senders: Vec::new(),
+                 },
+                 OptionOutputTx::new(None),
+             )
+```
+
+---
+
+### Incident Patch 3: `b4aae2f7` (2026-10-22)
+**Commit Message**: fix(meta): release all PostgreSQL election advisory locks on step-down (#9864)
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+**File**: `src/common/meta/src/election/rds/postgres.rs` (modified, +201/-2)
+```diff
+@@ -122,7 +122,9 @@ impl<'a> ElectionSqlFactory<'a> {
+     }
+ 
+     fn step_down_sql(&self) -> String {
+-        format!("SELECT pg_advisory_unlock({})", self.lock_id)
++        // Campaigning repeatedly acquires the same session-level lock. Release
++        // every acquisition when stepping down, not just the most recent one.
++        "SELECT pg_advisory_unlock_all()".to_string()
+     }
+ 
+     fn put_value_with_lease_sql(&self) -> String {
+@@ -179,6 +181,9 @@ impl<'a> ElectionSqlFactory<'a> {
+ }
+ 
+ /// PgClient for election.
++///
++/// The session is dedicated to election and candidate registration. It must not
++/// hold unrelated advisory locks, as stepping down releases all session locks.
+ pub struct ElectionPgClient {
+     current: Option<deadpool::managed::Object<Manager>>,
+     pool: Pool,
+@@ -1280,6 +1285,24 @@ mod tests {
+             _ => panic!("Expected LeaderChangeMessage::Elected"),
+         }
+ 
++        // Lease timestamps have millisecond precision. Wait for the database
++        // clock to advance before checking that renewal extends the lease.
++        tokio::time::timeout(Duration::from_secs(1), async {
++            loop {
++                let current = leader_pg_election
++                    .get_value_with_lease(&leader_pg_election.election_key())
++                    .await
++                    .unwrap()
++                    .unwrap();
++                if current.current > lease.current {
++                    break;
++                }
++                tokio::time::sleep(Duration::from_millis(1)).await;
++            }
++        })
++        .await
 +        .unwrap();
 +
-+        test_put_record_batches_to_table(&client, "widen_ts", vec![batch]).await;
-+
-+        let sql = "select host, ts from widen_ts order by ts";
-+        let expected = "\
-++------+-------------------------------+
-+| host | ts                            |
-++------+-------------------------------+
-+| a    | 2024-01-01T23:59:59.500       |
-+| b    | 2024-01-02T00:00:00           |
-+| c    | 2024-01-02T00:00:00.000000001 |
-++------+-------------------------------+";
-+        query_and_expect(db.frontend().as_ref(), sql, expected).await;
-+    }
-+
-     #[tokio::test(flavor = "multi_thread")]
-     async fn test_standalone_flight_do_put_missing_nullable_columns() {
-         common_telemetry::init_default_ut_logging();
-@@ -1124,15 +1202,36 @@ mod test {
-         test_put_record_batches_with_hints(client, record_batches, &[]).await;
-     }
- 
-+    async fn test_put_record_batches_to_table(
-+        client: &Database,
-+        table: &str,
-+        record_batches: Vec<RecordBatch>,
-+    ) {
-+        test_put_record_batches_with_hints_and_table(client, table, record_batches, &[]).await;
-+    }
-+
-     async fn test_put_record_batches_with_hints(
-         client: &Database,
-         record_batches: Vec<RecordBatch>,
-         hints: &[(&str, &str)],
-     ) {
-+        test_put_record_batches_with_hints_and_table(client, "foo", record_batches, hints).await
-+    }
-+
-+    async fn test_put_record_batches_with_hints_and_table(
-+        client: &Database,
-+        table: &str,
-+        record_batches: Vec<RecordBatch>,
-+        hints: &[(&str, &str)],
-+    ) {
-+        let table = table.to_string();
-         let requests_count = record_batches.len();
-         let schema = record_batches[0].schema.arrow_schema().clone();
- 
--        let stream = futures::stream::once(async move { encode_put_schema(schema.as_ref()) })
-+        let stream =
-+            futures::stream::once(
-+                async move { encode_put_schema_for_table(schema.as_ref(), &table) },
-+  
-```
-
-**File**: `tests/cases/standalone/common/alter/change_col_type.result` (modified, +35/-0)
-```diff
-@@ -341,6 +341,41 @@ SELECT * FROM ts_widen_part ORDER BY ts;
- | b    | 2.0 | 2024-01-02T00:00:00.000250 |
- +------+-----+----------------------------+
- 
-+-- force the rows into SSTs so scans read old-unit data through the widened
-+-- schema of a time-index-partitioned table (https://github.com/GreptimeTeam/greptimedb/issues/9747)
-+ADMIN FLUSH_TABLE('ts_widen_part');
-+
-++------------------------------------+
-+| ADMIN FLUSH_TABLE('ts_widen_part') |
-++------------------------------------+
-+| 0                                  |
-++------------------------------------+
-+
-+SELECT * FROM ts_widen_part ORDER BY ts;
-+
-++------+-----+----------------------------+
-+| host | val | ts                         |
-++------+-----+----------------------------+
-+| a    | 1.0 | 2024-01-01T23:59:59.500    |
-+| b    | 2.0 | 2024-01-02T00:00:00.000250 |
-++------+-----+----------------------------+
-+
-+SELECT * FROM ts_widen_part WHERE ts >= '2024-01-02 00:00:00' ORDER BY ts;
-+
-++------+-----+----------------------------+
-+| host | val | ts                         |
-++------+-----+----------------------------+
-+| b    | 2.0 | 2024-01-02T00:00:00.000250 |
-++------+-----+----------------------------+
-+
-+SELECT * FROM ts_widen_part WHERE ts < '2024-01-02 00:00:00' ORDER BY ts;
-+
-++------+-----+-------------------------+
-+| host | val | ts                      |
-++------+-----+-------------------------+
-+| a    | 1.0 | 2024-01-01T23:59:59.500 |
-++------+-----+-------------------------+
-+
- DROP TABLE ts_widen_part;
- 
- Affected Rows: 0
-```
-
-**File**: `tests/cases/standalone/common/alter/change_col_type.sql` (modified, +10/-0)
-```diff
-@@ -119,6 +119,16 @@ SELECT * FROM ts_widen_part ORDER BY ts;
- INSERT INTO ts_widen_part VALUES ("b", 2, "2024-01-02 00:00:00.000250");
- SELECT * FROM ts_widen_part ORDER BY ts;
- 
-+-- force the rows into SSTs so scans read old-unit data through the widened
-+-- schema of a time-index-partitioned table (https://github.com/GreptimeTeam/greptimedb/issues/9747)
-+ADMIN FLUSH_TABLE('ts_widen_part');
-+
-+SELECT * FROM ts_widen_part ORDER BY ts;
-+
-+SELECT * FROM ts_widen_part WHERE ts >= '2024-01-02 00:00:00' ORDER BY ts;
-+
-+SELECT * FROM ts_widen_part WHERE ts < '2024-01-02 00:00:00' ORDER BY ts;
-+
- DROP TABLE ts_widen_part;
- 
- CREATE TABLE ts_overflow (host STRING, ts TIMESTAMP TIME INDEX);
-```
-
----
-
-### Incident Patch 2: `b9aa6271` (2026-10-20)
-**Commit Message**: fix(query): forward scalar subquery filters to region scans (#9738)
-
-* fix(query): forward scalar subquery filters to region scans
-
-Since DataFusion 55, uncorrelated scalar subqueries run in ScalarSubqueryExec
-instead of being rewritten into joins, so filters such as
-ts = (SELECT ts ... ORDER BY ts DESC LIMIT 1) no longer reach region scans
-through a join dynamic filter. MergeScanExec now captures such filters as
-remote dynamic filters, keeps them in the parent FilterExec, and replaces the
-subquery with its result before querying regions.
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* fix(query): check the remote dyn filter budget across pushdown phases
-
-Filters captured in the Pre and Post phases are sent in one request, but each
-phase validated the initial registration budget alone. When their sum exceeded
-the budget, serialization dropped every registration, including join and TopK
-filters. Validate the combined set and keep filters accepted by the other phase.
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* fix(query): keep IN-bearing scalar subquery filters at the parent
-
-Oversized remote dyn filter payloads replace IN lists with true. That only
-widens a conjunction o
-
-**File**: `src/query/AGENTS.md` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@ side effects live in `operator`.
- - Optimizer or `MergeScan` changes usually touch rule ordering, physical
-   planning, serialization, and distributed-plan tests together.
- - User-visible SQL/PromQL/log behavior needs planner coverage and a sqlness case.
-+- `MergeScanExec` sends remote dyn filters captured in every filter pushdown
-+  phase in one request; the initial registration budget applies to all of them
-+  together (`dist_plan/dyn_filter_bridge.rs`).
- - `RegionQueryHandler` changes require the frontend implementation to move with
-   it.
- - DataFusion dependency changes follow the pinned-fork rule in the repo-wide
-```
-
-**File**: `src/query/src/dist_plan/dyn_filter_bridge.rs` (modified, +347/-28)
-```diff
-@@ -19,9 +19,16 @@ use common_query::request::{
-     DynFilterPayload, INITIAL_REMOTE_DYN_FILTER_REGISTRATIONS_EXTENSION_KEY, InitialDynFilterReg,
-     InitialDynFilterRegs, InitialDynFilterSnapshot, REMOTE_DYN_FILTER_PAYLOAD_MAX_BYTES,
- };
-+use datafusion::physical_plan::filter_pushdown::PushedDown;
- use datafusion_common::Result;
-+use datafusion_common::tree_node::{Transformed, TreeNode, TreeNodeRecursion};
-+use datafusion_expr::ColumnarValue;
- use datafusion_physical_expr::PhysicalExpr;
--use datafusion_physical_expr::expressions::DynamicFilterPhysicalExpr;
-+use datafusion_physical_expr::expressions::{
-+    Column, DynamicFilterPhysicalExpr, InListExpr, Literal, lit,
-+};
-+use datafusion_physical_expr::scalar_subquery::ScalarSubqueryExpr;
-+use datafusion_physical_expr::utils::collect_columns;
- use session::context::{QueryContext, QueryContextRef};
- use store_api::storage::RegionId;
- 
-@@ -36,49 +43,82 @@ pub(crate) struct CapturedDynFilter {
-     filter_id: FilterId,
-     initial_registration: InitialDynFilterReg,
-     pub(crate) alive_dyn_filter: Arc<DynamicFilterPhysicalExpr>,
-+    /// A parent filter that references uncorrelated scalar subqueries. Its value is only
-+    /// known once `ScalarSubqueryExec` has run the subqueries, so `alive_dyn_filter`
-+    /// starts as `true` and is replaced by the resolved filter before regions are queried.
-+    // TODO(discord9): temporary bridge. DataFusion fills the scalar subquery results in
-+    // `ScalarSubqueryExec` but does not expose predicates using them as
-+    // `DynamicFilterPhysicalExpr`, so we keep the predicate and bind it ourselves. Once
-+    // upstream does and the pinned DataFusion includes it, remove this field and the
-+    // scalar subquery capture/resolve path in favor of the regular dyn filter capture.
-+    // Keep the per-phase bookkeeping in `MergeScanExec`.
-+    scalar_subquery_filter: Option<Arc<dyn PhysicalExpr>>,
- }
- 
- #[derive(Debug, Clone)]
- pub(crate) struct RemoteDynFilterPushdown {
-     pub(crate) captured_dyn_filters: Vec<CapturedDynFilter>,
-     /// Preflight result per parent filter.
--    pub(crate) pushed_down: Vec<bool>,
-+    pub(crate) pushed_down: Vec<PushedDown>,
- }
- 
-+/// Captures `parent_filters` as remote dyn filters. `accepted` holds filters captured by
-+/// another pushdown phase; they are sent in the same request, so the initial registration
-+/// budget is checked against both and they are kept if the new filters do not fit.
- pub(crate) fn capture_remote_dyn_filters_for_pushdown(
-     remote_dyn_filter_producer_id: RemoteDynFilterProducerId,
-+    first_producer_local_ordinal: usize,
-+    accepted: &[CapturedDynFilter],
-     parent_filters: Vec<Arc<dyn datafusion::physical_plan::PhysicalExpr>>,
- ) -> RemoteDynFilterPushdown {
-     let mut pushed_down = Vec::with_capacity(parent_filters.len());
-     let mut captured_dyn_filters = Vec::new();
- 
--    for (producer_local_ordinal, filter) in parent_filters.into_iter().enumerate() {
--        let Some(alive_dyn_filter) = downcast_dynamic_filter(filter) else {
--            pushed_down.push(false);
-+    for (index, filter) in parent_filters.into_iter().enumerate() {
-+        let producer_local_ordinal = first_producer_local_ordinal + index;
-+        let captured = if let Some(alive_dyn_filter) = downcast_dynamic_filter(filter.clone()) {
-+            build_captured_dyn_filter(
-+                remote_dyn_filter_producer_id,
-+                producer_local_ordinal,
-+                alive_dyn_filter,
-+            )
-+            .map(|captured| (captured, PushedDown::Yes))
-+        } else if is_scalar_subquery_filter(&filter) {
-+            // The filter is only forwarded to regions for pruning; the parent keeps
-+            // evaluating it, so report it as not pushed down.
-+            build_scalar_subquery_dyn_filter(
-+                remote_dyn_filter_producer_id,
-+                producer_local_ordinal,
-+                filter,
-+            )
-+            .map(|captured| (captured, PushedDown::No))
-+        } else {
-+            pushed_down.push(PushedDown::No);
-             continue;
-         };
- 
--        match build_captured_dyn_filter(
--            remote_dyn_filter_producer_id,
--            producer_local_ordinal,
--            alive_dyn_filter,
--        ) {
--            Ok(captured_dyn_filter) => {
--                pushed_down.push(true);
-+        match captured {
-+            Ok((captured_dyn_filter, pushdown)) => {
-+                pushed_down.push(pushdown);
-                 captured_dyn_filters.push(captured_dyn_filter);
-             }
-             Err(error) => {
-                 common_telemetry::warn!(error; "Remote dyn filter is not pushed down because initial registration cannot be built");
--                pushed_down.push(false);
-+                pushed_down.push(PushedDown::No);
-             }
-         }
-     }
- 
--    if let Err(error) = validate_initial_registrations_for_pushdown(&captured_dyn_filters) {
-+    let combined = accepted
-+        .iter()
-+        .
-```
-
-**File**: `src/query/src/dist_plan/merge_scan.rs` (modified, +39/-20)
-```diff
-@@ -68,6 +68,7 @@ use crate::dist_plan::dyn_filter_bridge::{
-     CapturedDynFilter, capture_remote_dyn_filters_for_pushdown,
-     query_context_with_refreshed_initial_dyn_filter_regs,
-     register_dyn_filter_subscribers_for_region, register_remote_dyn_filters,
-+    resolve_scalar_subquery_dyn_filters,
- };
- use crate::dist_plan::{
-     FilterId, RemoteDynFilterProducerId, RemoteDynFilterRegistryLease, Subscriber,
-@@ -126,6 +127,22 @@ fn remote_plan_row_bound(plan: &LogicalPlan) -> Option<usize> {
-     }
- }
- 
-+fn pushdown_phase_slot(phase: FilterPushdownPhase) -> usize {
-+    match phase {
-+        FilterPushdownPhase::Pre => 0,
-+        FilterPushdownPhase::Post => 1,
-+    }
-+}
-+
-+/// Producer-local ordinals must be unique across phases because they are part of the
-+/// remote filter id; pre-phase filters use the upper half of the `u32` ordinal space.
-+fn first_producer_local_ordinal(phase: FilterPushdownPhase) -> usize {
-+    match phase {
-+        FilterPushdownPhase::Pre => 1 << 31,
-+        FilterPushdownPhase::Post => 0,
-+    }
-+}
-+
- fn remote_dyn_filter_enabled(query_ctx: &QueryContextRef) -> Result<bool> {
-     remote_dyn_filter_pushdown_enabled_from_extensions(&query_ctx.extensions())
-         .map_err(|err| DataFusionError::External(Box::new(err)))
-@@ -483,7 +500,10 @@ pub struct MergeScanExec {
-     query_ctx: QueryContextRef,
-     /// Optional because RDF must fail open: missing ids skip RDF but keep normal query execution.
-     remote_dyn_filter_producer_id: Option<RemoteDynFilterProducerId>,
--    captured_remote_dyn_filters: Arc<Mutex<Vec<CapturedDynFilter>>>,
-+    /// Filters captured by each filter pushdown phase, indexed by [`pushdown_phase_slot`].
-+    /// The pre-optimization phase carries `FilterExec` predicates (e.g. scalar subquery
-+    /// filters) and the post-optimization phase carries dynamic filters from joins and TopK.
-+    captured_remote_dyn_filters: Arc<Mutex<[Vec<CapturedDynFilter>; 2]>>,
-     target_partition: usize,
-     enable_per_region_metrics: bool,
- }
-@@ -616,6 +636,7 @@ impl MergeScanExec {
-         } else {
-             Vec::new()
-         };
-+        resolve_scalar_subquery_dyn_filters(&captured_remote_dyn_filters);
-         let dbname = context.task_id().unwrap_or_default();
-         let tracing_context = TracingContext::from_json(context.session_id().as_str());
-         let current_channel = self.query_ctx.channel();
-@@ -890,7 +911,7 @@ impl MergeScanExec {
-     }
- 
-     fn captured_remote_dyn_filters(&self) -> Vec<CapturedDynFilter> {
--        self.captured_remote_dyn_filters.lock().unwrap().clone()
-+        self.captured_remote_dyn_filters.lock().unwrap().concat()
-     }
- 
-     pub fn sub_stage_metrics(&self) -> Vec<RecordBatchMetrics> {
-@@ -1092,7 +1113,7 @@ impl ExecutionPlan for MergeScanExec {
- 
-     fn handle_child_pushdown_result(
-         &self,
--        _phase: FilterPushdownPhase,
-+        phase: FilterPushdownPhase,
-         child_pushdown_result: ChildPushdownResult,
-         _config: &datafusion::config::ConfigOptions,
-     ) -> Result<FilterPushdownPropagation<Arc<dyn ExecutionPlan>>> {
-@@ -1106,7 +1127,7 @@ impl ExecutionPlan for MergeScanExec {
-             // Reject remote pushdown instead of pretending success: this keeps
-             // DataFusion/local dynamic filter semantics intact while disabling
-             // only FE -> DN remote dynamic filter propagation.
--            self.captured_remote_dyn_filters.lock().unwrap().clear();
-+            self.captured_remote_dyn_filters.lock().unwrap()[pushdown_phase_slot(phase)].clear();
-             let new_self = Arc::new(self.clone());
- 
-             return Ok(FilterPushdownPropagation {
-@@ -1120,32 +1141,28 @@ impl ExecutionPlan for MergeScanExec {
-             common_telemetry::warn!(
-                 "MergeScan remote dynamic filter producer id is not assigned; skipping remote dynamic filter pushdown"
-             );
--            self.captured_remote_dyn_filters.lock().unwrap().clear();
-+            self.captured_remote_dyn_filters.lock().unwrap()[pushdown_phase_slot(phase)].clear();
-             let new_self = Arc::new(self.clone());
- 
-             return Ok(FilterPushdownPropagation {
-                 filters: parent_filters.into_iter().map(|_| PushedDown::No).collect(),
-                 updated_node: Some(new_self),
-             });
-         };
--        let remote_dyn_filter_pushdown =
--            capture_remote_dyn_filters_for_pushdown(remote_dyn_filter_producer_id, parent_filters);
--        *self.captured_remote_dyn_filters.lock().unwrap() =
--            remote_dyn_filter_pushdown.captured_dyn_filters;
-+        let slot = pushdown_phase_slot(phase);
-+        let mut captured_remote_dyn_filters = self.captured_remote_dyn_filters.lock().unwrap();
-+        let remote_dyn_filter_pushdown = capture_remote_dyn_filters_for_pushdown(
-+            remote_dyn_filter_producer_id,
-+            first_producer_local_ordinal(phase),
-+            &captured_remote_dyn_filters[1 - slot],
-+            parent
-```
-
-**File**: `tests/cases/distributed/optimizer/time_index_filter_pushdown.result` (modified, +82/-0)
-```diff
-@@ -160,6 +160,88 @@ WHERE
- | 8    | windows | 2023-06-12T02:10:00 |
- +------+---------+---------------------+
- 
-+-- The resolved scalar subquery reaches the region scans as a dynamic filter.
-+-- SQLNESS REPLACE (-+) -
-+-- SQLNESS REPLACE (\s\s+) _
-+-- SQLNESS REPLACE (metrics.*) REDACTED
-+-- SQLNESS REPLACE (peers.*) REDACTED
-+-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
-+-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
-+-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
-+-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
-+-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
-+-- SQLNESS REPLACE "files":\s\[.*?\],\s
-+-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
-+-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
-+-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
-+-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
-+EXPLAIN ANALYZE VERBOSE SELECT
-+    rack,
-+    os,
-+    greptime_timestamp
-+FROM
-+    cpu
-+WHERE
-+    greptime_timestamp = (
-+        SELECT
-+            greptime_timestamp
-+        FROM
-+            cpu
-+        ORDER BY
-+            greptime_timestamp DESC
-+        LIMIT
-+            1
-+    );
-+
-++-+-+-+
-+| stage | node | plan_|
-++-+-+-+
-+| 0_| 0_|_ScalarSubqueryExec REDACTED
-+|_|_|_FilterExec: greptime_timestamp@2 = scalar_subquery(1686535800000000000) REDACTED
-+|_|_|_ProjectionExec: expr=[rack@0 as rack, os@1 as os, greptime_timestamp@3 as greptime_timestamp] REDACTED
-+|_|_|_CooperativeExec REDACTED
-+|_|_|_MergeScanExec: REDACTED
-+|_|_|_MergeSortExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_MergeScanExec: REDACTED
-+|_|_|_|
-+| 1_| 0_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 1_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 2_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 3_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 4_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@3 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 0_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 1_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 2_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 3_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 4_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+|_|_| Total rows: REDACTED_|
-++-+-+-+
-+
- drop table cpu;
- 
- Affected Rows: 0
-```
-
-**File**: `tests/cases/distributed/optimizer/time_index_filter_pushdown.sql` (modified, +33/-0)
-```diff
-@@ -102,4 +102,37 @@ WHERE
-             1
-     );
- 
-+-- The resolved scalar subquery reaches the region scans as a dynamic filter.
-+-- SQLNESS REPLACE (-+) -
-+-- SQLNESS REPLACE (\s\s+) _
-+-- SQLNESS REPLACE (metrics.*) REDACTED
-+-- SQLNESS REPLACE (peers.*) REDACTED
-+-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
-+-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
-+-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
-+-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
-+-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
-+-- SQLNESS REPLACE "files":\s\[.*?\],\s
-+-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
-+-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
-+-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
-+-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
-+EXPLAIN ANALYZE VERBOSE SELECT
-+    rack,
-+    os,
-+    greptime_timestamp
-+FROM
-+    cpu
-+WHERE
-+    greptime_timestamp = (
-+        SELECT
-+            greptime_timestamp
-+        FROM
-+            cpu
-+        ORDER BY
-+            greptime_timestamp DESC
-+        LIMIT
-+            1
-+    );
-+
- drop table cpu;
-```
-
-**File**: `tests/cases/standalone/optimizer/time_index_filter_pushdown.result` (modified, +82/-0)
-```diff
-@@ -223,6 +223,88 @@ WHERE
- | 8    | windows | 2023-06-12T02:10:00 |
- +------+---------+---------------------+
- 
-+-- The resolved scalar subquery reaches the region scans as a dynamic filter.
-+-- SQLNESS REPLACE (-+) -
-+-- SQLNESS REPLACE (\s\s+) _
-+-- SQLNESS REPLACE (metrics.*) REDACTED
-+-- SQLNESS REPLACE (peers.*) REDACTED
-+-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
-+-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
-+-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
-+-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
-+-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
-+-- SQLNESS REPLACE "files":\s\[.*?\],\s
-+-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
-+-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
-+-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
-+-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
-+EXPLAIN ANALYZE VERBOSE SELECT
-+    rack,
-+    os,
-+    greptime_timestamp
-+FROM
-+    cpu
-+WHERE
-+    greptime_timestamp = (
-+        SELECT
-+            greptime_timestamp
-+        FROM
-+            cpu
-+        ORDER BY
-+            greptime_timestamp DESC
-+        LIMIT
-+            1
-+    );
-+
-++-+-+-+
-+| stage | node | plan_|
-++-+-+-+
-+| 0_| 0_|_ScalarSubqueryExec REDACTED
-+|_|_|_FilterExec: greptime_timestamp@2 = scalar_subquery(1686535800000000000) REDACTED
-+|_|_|_ProjectionExec: expr=[rack@0 as rack, os@1 as os, greptime_timestamp@4 as greptime_timestamp] REDACTED
-+|_|_|_CooperativeExec REDACTED
-+|_|_|_MergeScanExec: REDACTED
-+|_|_|_MergeSortExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_MergeScanExec: REDACTED
-+|_|_|_|
-+| 1_| 0_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 1_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 2_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 3_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 4_|_CooperativeExec REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@4 = 1686535800000000000 ]"]
-+|_|_|_|
-+| 1_| 0_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 1_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 2_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 3_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+| 1_| 4_|_FilterExec: DynamicFilter [ REDACTED ] REDACTED
-+|_|_|_SortPreservingMergeExec: [greptime_timestamp@0 DESC], fetch=1 REDACTED
-+|_|_|_UnorderedScan: REDACTED, "dyn_filters": ["DynamicFilter [ greptime_timestamp@0 IS NULL OR greptime_timestamp@0 > REDACTED ]"]
-+|_|_|_|
-+|_|_| Total rows: REDACTED_|
-++-+-+-+
-+
- drop table cpu;
- 
- Affected Rows: 0
-```
-
-**File**: `tests/cases/standalone/optimizer/time_index_filter_pushdown.sql` (modified, +33/-0)
-```diff
-@@ -140,4 +140,37 @@ WHERE
-             1
-     );
- 
-+-- The resolved scalar subquery reaches the region scans as a dynamic filter.
-+-- SQLNESS REPLACE (-+) -
-+-- SQLNESS REPLACE (\s\s+) _
-+-- SQLNESS REPLACE (metrics.*) REDACTED
-+-- SQLNESS REPLACE (peers.*) REDACTED
-+-- SQLNESS REPLACE region=\d+\(\d+,\s+\d+\) region=REDACTED
-+-- SQLNESS REPLACE "partition_count":\{(.*?)\} "partition_count":REDACTED
-+-- SQLNESS REPLACE "flat_format":\s\w+, "flat_format": REDACTED,
-+-- SQLNESS REPLACE (?m)^\|_\|_\|_SortExec:.*\n
-+-- SQLNESS REPLACE FilterExec:\sDynamicFilter\s\[[^\]]*\] FilterExec: DynamicFilter [ REDACTED ]
-+-- SQLNESS REPLACE "files":\s\[.*?\],\s
-+-- SQLNESS REPLACE IS\sNULL\sOR\sgreptime_timestamp@0\s>\s\d+ IS NULL OR greptime_timestamp@0 > REDACTED
-+-- SQLNESS REPLACE (RoundRobinBatch.*) REDACTED
-+-- SQLNESS REPLACE Total\s+rows:\s+\d+ Total rows: REDACTED
-+-- SQLNESS REPLACE UnorderedScan:.*"dyn_filters":\s(\["DynamicFilter\s\[[^\]]*\]"\]).* UnorderedScan: REDACTED, "dyn_filters": $1
-+EXPLAIN ANALYZE VERBOSE SELECT
-+    rack,
-+    os,
-+    greptime_timestamp
-+FROM
-+    cpu
-+WHERE
-+    greptime_timestamp = (
-+        SELECT
-+            greptime_timestamp
-+        FROM
-+            cpu
-+        ORDER BY
-+            greptime_timestamp DESC
-+        LIMIT
-+            1
-+    );
-+
- drop table cpu;
-```
-
----
-
-### Incident Patch 3: `6f53d57d` (2026-10-20)
-**Commit Message**: fix: avoid exact scan row counts for SSTs with unknown counts (#9759)
-
-fix: avoid exact scan row counts for legacy SSTs
-
-Treat selected SSTs with unknown row counts as non-exact before checking region partition visibility. Preserve exact statistics for known counts and cover legacy metadata mixed with known-count files.
-
-Fixes GreptimeTeam/greptimedb#9718
-
-Signed-off-by: Aumnertic <[REDACTED_EMAIL]>
-
-**File**: `src/mito2/src/read/scan_region.rs` (modified, +41/-2)
-```diff
-@@ -1703,9 +1703,14 @@ impl ScanInput {
-         );
-     }
- 
--    /// Whether physical source row counts equal the rows visible to this region,
--    /// before applying query predicates.
-+    /// Whether physical source row counts are known and equal the rows visible
-+    /// to this region, before applying query predicates.
-     pub(crate) fn total_rows_is_exact(&self) -> bool {
-+        // Legacy SST metadata uses zero for unknown row counts.
-+        if self.files.iter().any(|file| file.num_rows() == 0) {
-+            return false;
-+        }
-+
-         if self.region_partition_expr.is_none() {
-             return true;
-         }
-@@ -2542,6 +2547,39 @@ mod tests {
-         );
+         // Step 2: As a leader, renew the lease.
+         let res = leader_pg_election
+             .pg_client
+@@ -1481,6 +1504,145 @@ mod tests {
+         drop_table(&leader_pg_election, table_name).await;
      }
  
 +    #[tokio::test]
-+    async fn test_total_rows_is_exact_with_legacy_file() {
-+        let file_meta = FileMeta {
-+            num_rows: 10,
-+            ..Default::default()
-+        };
-+        let mut json = serde_json::to_value(&file_meta).unwrap();
-+        json.as_object_mut().unwrap().remove("num_rows");
-+        let legacy_meta = serde_json::from_value::<FileMeta>(json).unwrap();
-+        assert_eq!(legacy_meta.num_rows, 0);
-+
-+        let metadata = Arc::new(metadata_with_primary_key(vec![0, 1], false));
-+        for (file_metas, expected_rows, exact) in [
-+            (vec![file_meta.clone()], 10, true),
-+            (vec![legacy_meta.clone()], 0, false),
-+            (vec![file_meta, legacy_meta], 10, false),
-+        ] {
-+            let files = file_metas
-+                .into_iter()
-+                .map(|meta| {
-+                    FileHandle::new(meta, Arc::new(crate::sst::file_purger::NoopFilePurger))
-+                })
-+                .collect();
-+            let input = new_scan_input(metadata.clone(), vec![])
++    async fn test_step_down_releases_reentrant_lock() {
++        maybe_skip_postgres_integration_test!();
++        let table_name = "test_step_down_reentrant_lock_greptime_metakv";
++        let store_key_prefix = uuid::Uuid::new_v4().to_string();
++        let lock_id = 28323;
++        let other_lock_id = 28324;
++        let timeout = Duration::from_secs(10);
++        let mut elections = Vec::new();
++        for leader_value in ["leader", "follower"] {
++            // Keep both sessions alive so idle timeout cannot hide a leaked lock.
++            let client = create_postgres_client(Some(table_name), timeout, Duration::ZERO, timeout)
 +                .await
-+                .with_append_mode(true)
-+                .with_files(files)
-+                .build();
-+            assert_eq!(input.total_rows(), expected_rows);
-+            assert_eq!(input.total_rows_is_exact(), exact);
++                .unwrap();
++            let (tx, _) = broadcast::channel(100);
++            elections.push(PgElection {
++                leader_value: leader_value.to_string(),
++                pg_client: RwLock::new(client),
++                is_leader: AtomicBool::new(false),
++                leader_infancy: AtomicBool::new(false),
++                leader_watcher: tx,
++                store_key_prefix: store_key_prefix.clone(),
++                candidate_lease_ttl: timeout,
++                meta_lease_ttl: timeout,
++                sql_set: ElectionSqlFactory::new(lock_id, None, table_name).build(),
++            });
 +        }
-+    }
++        let leader = &elections[0];
++        let follower = &elections[1];
++        let mut leader_changes = leader.subscribe_leader_change();
++        let other_lock_sql = format!("SELECT pg_try_advisory_lock({other_lock_id})");
++        let other_unlock_sql = format!("SELECT pg_advisory_unlock({other_lock_id})");
++        let leader_pid: i32 = leader
++            .pg_client
++            .read()
++            .await
++            .query("SELECT pg_backend_pid()", &[])
++            .await
++            .unwrap()[0]
++            .get(0);
 +
-     #[tokio::test]
-     async fn test_total_rows_is_exact_after_partition_filter() {
-         let expr = partition_col("k0").gt_eq(Value::String("foo".into()));
-@@ -2564,6 +2602,7 @@ mod tests {
-                 .map(|partition_expr| {
-                     FileHandle::new(
-                         FileMeta {
-+                            num_rows: 1,
-                             partition_expr,
-                             ..Default::default()
-                         },
++        for acquisitions in [1, 3, 1000] {
++            // Repeat the same acquisition performed on every campaign iteration.
++            for _ in 0..acquisitions {
++                let rows = leader
++                    .pg_client
++                    .read()
++                    .await
++                    .query(&leader.sql_set.campaign, &[])
++                    .await
++                    .unwrap();
++                assert!(rows[0].get::<_, bool>(0));
++            }
++            leader.leader_action().await.unwrap();
++            assert_matches!(
++                leader_changes.try_recv().unwrap(),
++                LeaderChangeMessage::Elected(_)
++            );
++            let rows = follower
++                .pg_client
++                .read()
++                .await
++                .query(&follower.sql_set.campaign, &[])
++                .await
++                .unwrap();
++            assert!(!rows[0].get::<_, bool>(0));
++            follower.follower_action().await.unwrap();
++
++            // An unrelated lock in another session must survive the demotion.
++            let rows = follower
++                .pg_client
++                .read()
++                .await
++                .query(&other_lock_sql, &[])
++                .await
++                .unwrap();
++         
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9795** (2026-10-20): fix: backport suggested independent fixes to release/5e02efa9 (@v0y4g3r)
-- **PR #9789** (2026-10-20): fix(mito): backport bulk memtable version ordering fix to release/5e02efa9 (@v0y4g3r)
-- **PR #9787** (closed): feat(promql): evaluate a range function and its maps over raw series in one node (@discord9)
-- **PR #9784** (2026-10-20): fix: backport disabling v2 series scan by default to release/5e02efa9 (@v0y4g3r)
-- **PR #9783** (2026-10-20): fix: backport scan statistics and partitioning fixes to release/5e02efa9 (@v0y4g3r)
-- **PR #9778** (closed): perf(promql): run a compiled native tree over fused raw series (@discord9)
+- **PR #9887** (2026-10-22): feat(mito): implement columnar samples format (@evenyag)
+- **PR #9877** (2026-10-22): fix(test): avoid MinIO connection reuse after conditional writes (@WenyXu)
+- **PR #9872** (2026-10-22): fix(mito): return from manual index builds only after the index is published [Backport release/v1.3] (@killme2008)
+- **PR #9865** (2026-10-22): ci: allow independent Linux release architecture selection (@WenyXu)
+- **PR #9864** (2026-10-22): fix(meta): release all PostgreSQL election advisory locks on step-down (@WenyXu)
+- **PR #9863** (2026-10-22): feat(mito): add an environment switch to disable compaction (@WenyXu)
 
 ---
 
@@ -2701,29 +2991,33 @@ Signed-off-by: Aumnertic <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. partition): coerce partition exprs against the batch schema before routing (#975
+## X. mito2): pick TWCS L1 merges by closed units so compaction terminates (#9741)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/mito2/src/compaction/last_non_null.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7230f7a`: partition): coerce partition exprs against the batch schema before routing (#9752). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bb3f07b4`: mito2): pick TWCS L1 merges by closed units so compaction terminates (#9741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/compaction/last_non_null.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "common-time",
- "datafusion-optimizer",
+        let picker = new_picker(&request, &region.region_options, limit, None, false);
+        let picker = new_picker(&request, &region.region_options, limit, None, false);
+            false,
+            false,
+            false,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        let picker = new_picker(&request, &region.region_options, limit, None);
+        let picker = new_picker(&request, &region.region_options, limit, None);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7230f7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bb3f07b4` are properly handled with clean fallback behavior.

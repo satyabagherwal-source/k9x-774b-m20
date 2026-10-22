@@ -4322,3 +4322,7 @@
 | `CYCLE-20261022-1KL5` | `2026-10-22T16:22:22.841Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3633` | Yes (`85e942ba...`) |
 | `CYCLE-20261022-1NFE` | `2026-10-22T16:22:26.522Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3634` | Yes (`8e885ab0...`) |
 | `CYCLE-20261022-1S0L` | `2026-10-22T16:22:32.469Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3635` | Yes (`9ae35682...`) |
+| `CYCLE-20261022-6ERC` | `2026-10-22T16:26:08.568Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3636` | Yes (`de8a26ff...`) |
+| `CYCLE-20261022-6GGF` | `2026-10-22T16:26:10.767Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3637` | Yes (`077d972e...`) |
+| `CYCLE-20261022-6I1G` | `2026-10-22T16:26:12.820Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3638` | Yes (`92219e9d...`) |
+| `CYCLE-20261022-6KXX` | `2026-10-22T16:26:16.581Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3639` | Yes (`016d9fc2...`) |

@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "9a2ac7f9",
+    "sourceVersion": "2eff52c7",
     "license": "Apache-2.0",
-    "contentHash": "5fe61dfdfd1a96802da3a7249600ac879a7e1d6526ddf9fb14a42eec4571260e",
-    "lastHarvestedAt": "2026-10-20T21:34:08.189Z",
+    "contentHash": "016d9fc21292e5bb443b96edff1c8cd8275fcb68158efab0423dc87a53712f44",
+    "lastHarvestedAt": "2026-10-22T16:26:16.585Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "180cc830",
+    "sourceVersion": "c691e1b3",
     "license": "Apache-2.0",
-    "contentHash": "753b5f8f12346aa1dfcca38f50b75b0e8c834f1a0f12b6bbf40cfb1adcd5b17c",
-    "lastHarvestedAt": "2026-10-19T06:38:42.029Z",
+    "contentHash": "077d972e06d00ac5a9a6689865f9cbd28b88625029b4423cfe2f2dd9baca9b5a",
+    "lastHarvestedAt": "2026-10-22T16:26:10.770Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "8512c7e3",
+    "sourceVersion": "5b6eae3d",
     "license": "MIT",
-    "contentHash": "fd6e894b66c51428f426fb8c0fe8ad4391a66e18afc93c6c084d210d60c97ae1",
-    "lastHarvestedAt": "2026-10-20T19:30:39.610Z",
+    "contentHash": "92219e9d7f5205453d06f32a4805b5c836f406ceeb580ddce226666ba12990f0",
+    "lastHarvestedAt": "2026-10-22T16:26:12.824Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "d525614e",
+    "sourceVersion": "3b85896c",
     "license": "GPL-3.0",
-    "contentHash": "ea5824d9200956071c2581faa1121f71f2e14fe3fe81cb91720e033aded6e50e",
-    "lastHarvestedAt": "2026-10-19T22:19:23.019Z",
+    "contentHash": "de8a26ff6e1fdba3393e20b0d0a186e7ebdf9d349d42914052e64fc8105556cf",
+    "lastHarvestedAt": "2026-10-22T16:26:08.572Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {

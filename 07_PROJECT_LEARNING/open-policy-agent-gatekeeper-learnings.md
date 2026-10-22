@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
-> **Source Version**: `180cc830`  
+> **Source Version**: `c691e1b3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:38:41.866Z  
+> **Timestamp**: 2026-10-22T16:26:10.309Z  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:38:41.860Z  
+> **Harvest Timestamp**: 2026-10-22T16:26:09.869Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -894,20 +894,21 @@ func (r *ReconcileWebhookConfig) Reconcile(ctx context.Context, request reconcil
 
 		if gatekeeperWebhook == nil {
 			logger.Info("webhook not found", "name", webhook.ValidatingWebhookName)
-			return reconcile.Result{}, nil
-		}
-
-		newConfig := webhookconfigcache.WebhookMatchingConfig{
-			NamespaceSelector: gatekeeperWebhook.NamespaceSelector,
-			ObjectSelector:    gatekeeperWebhook.ObjectSelector,
-			Rules:             gatekeeperWebhook.Rules,
-			MatchPolicy:       gatekeeperWebhook.MatchPolicy,
-			MatchConditions:   gatekeeperWebhook.MatchConditions,
-		}
-
-		if r.cache.UpsertConfig(request.Name, newConfig) {
-			logger.Info("ValidatingWebhookConfiguration matching fields changed", "storedKey", request.Name)
+			r.cache.RemoveConfig(request.Name)
 			configChanged = true
+		} else {
+			newConfig := webhookconfigcache.WebhookMatchingConfig{
+				NamespaceSelector: gatekeeperWebhook.NamespaceSelector,
+				ObjectSelector:    gatekeeperWebhook.ObjectSelector,
+				Rules:             gatekeeperWebhook.Rules,
+				MatchPolicy:       gatekeeperWebhook.MatchPolicy,
+				MatchConditions:   gatekeeperWebhook.MatchConditions,
+			}
+
+			if r.cache.UpsertConfig(request.Name, newConfig) {
+				logger.Info("ValidatingWebhookConfiguration matching fields changed", "storedKey", request.Name)
+				configChanged = true
+			}
 		}
 	}
 
@@ -918,8 +919,7 @@ func (r *ReconcileWebhookConfig) Reconcile(ctx context.Context, request reconcil
 			return reconcile.Result{}, err
 		}
 	} else {
-		// No config change: reconcile only dirty templates
-		if err := r.triggerDirtyTemplateRec
+		// No config change: reconcile only dirt
 ```
 
 ### Core Architecture Module: `pkg/controller/webhookconfig/webhookconfigcache/webhookconfigcache.go`
@@ -1267,690 +1267,459 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `180cc830` (2026-10-12)
-**Commit Message**: fix: scope expansion ingestion controller to audit and webhook operations (#4778)
+### Incident Patch 1: `ace88c8a` (2026-10-20)
+**Commit Message**: fix: reject path integers that overflow int64 and wrap to a positive value (#4873)
 
-Signed-off-by: Pujitha Paladugu <[REDACTED_EMAIL]>
-Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Pujitha Paladugu <[REDACTED_EMAIL]>
-Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Signed-off-by: Ogulcan Aydogan <[REDACTED_EMAIL]>
 
-**File**: `main.go` (modified, +15/-2)
+**File**: `pkg/mutation/path/parser/parser.go` (modified, +4/-2)
 ```diff
-@@ -327,7 +327,7 @@ func innerMain() int {
- 	}
- 
- 	// Setup tracker and register readiness probe.
--	tracker, err := readiness.SetupTracker(mgr, mutation.Enabled(), *externaldata.ExternalDataEnabled, *expansion.ExpansionEnabled)
-+	tracker, err := readiness.SetupTracker(mgr, mutation.Enabled(), *externaldata.ExternalDataEnabled, *expansion.ExpansionEnabled && operations.HasValidationOperations())
- 	if err != nil {
- 		setupLog.Error(err, "unable to register readiness tracker")
- 		return 1
-@@ -530,7 +530,7 @@ func setupControllers(ctx context.Context, mgr ctrl.Manager, tracker *readiness.
- 	}
- 
- 	mutationSystem := newMutationSystem(mutationOpts)
--	expansionSystem := expansion.NewSystem(mutationSystem)
-+	expansionSystem := newExpansionSystem(mutationSystem)
- 	exportSystem := newExportSystem()
- 
- 	c := mgr.GetCache()
-@@ -676,6 +676,19 @@ func newExportSystem() *export.System {
- 	return nil
- }
- 
-+// newExpansionSystem constructs an expansion.System only for processes with
-+// validation operations (audit and the validating webhook), the only callers
-+// of Expand. They invoke Expand unconditionally, independent of whether
-+// expansion is enabled, so they still get a non-nil (possibly empty) system;
-+// other processes, such as status-only or generate-only pods, have no use for
-+// one.
-+func newExpansionSystem(mutationSystem *mutation.System) *expansion.System {
-+	if !operations.HasValidationOperations() {
-+		return nil
-+	}
-+	return expansion.NewSystem(mutationSystem)
-+}
-+
- func setLoggerForProduction(encoder zapcore.LevelEncoder, dest io.Writer) {
- 	sink := zapcore.AddSync(os.Stderr)
- 	if dest != nil {
-```
-
-**File**: `main_test.go` (modified, +35/-0)
-```diff
-@@ -338,3 +338,38 @@ func TestNewMutationSystemEnabledWhenMutationOperationAssigned(t *testing.T) {
- 		t.Fatalf("mutation-webhook-only subprocess failed: %v\n%s", err, out)
- 	}
- }
-+
-+// Validates that newExpansionSystem only constructs a real expansion.System
-+// for processes that evaluate expanded resources (audit and webhook), per
-+// operations.HasValidationOperations. Other processes have no use for
-+// one, so setupControllers should not pay for its construction.
-+func Test_newExpansionSystem(t *testing.T) {
-+	tests := map[string]struct {
-+		assigned []operations.Operation
-+		wantNil  bool
-+	}{
-+		"audit only":            {assigned: []operations.Operation{operations.Audit}, wantNil: false},
-+		"webhook only":          {assigned: []operations.Operation{operations.Webhook}, wantNil: false},
-+		"audit and webhook":     {assigned: []operations.Operation{operations.Audit, operations.Webhook}, wantNil: false},
-+		"status only":           {assigned: []operations.Operation{operations.Status}, wantNil: true},
-+		"generate only":         {assigned: []operations.Operation{operations.Generate}, wantNil: true},
-+		"mutation-webhook only": {assigned: []operations.Operation{operations.MutationWebhook}, wantNil: true},
-+	}
-+
-+	mutationSystem := mutation.NewSystem(mutation.SystemOpts{})
-+
-+	for name, tc := range tests {
-+		t.Run(name, func(t *testing.T) {
-+			restore, err := operations.SetForTest(tc.assigned...)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			defer restore()
-+
-+			got := newExpansionSystem(mutationSystem)
-+			if (got == nil) != tc.wantNil {
-+				t.Errorf("newExpansionSystem() = %v, wantNil %v", got, tc.wantNil)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/controller/expansion/expansion_controller.go` (modified, +8/-0)
-```diff
-@@ -11,6 +11,7 @@ import (
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/expansion"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/logging"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/metrics"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/readiness"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/watch"
-@@ -47,6 +48,13 @@ func (a *Adder) Add(mgr manager.Manager) error {
- 	if !*expansion.ExpansionEnabled {
- 		return nil
- 	}
-+	// Only validation operations (audit and the validating webhook) evaluate
-+	// expanded resources. Other processes, such as status-only or
-+	// generate-only pods, must not register the ingestion controller solely
-+	// because expansion defaults to enabled.
-+	if !operations.HasValidationOperations() {
-+		return nil
-+	}
- 	r := newReconciler(mgr, a.ExpansionSystem, a.GetPod, a.Tracker)
- 	return add(mgr, r)
- }
-```
-
-**File**: `pkg/controller/expansion/expansion_controller_test.go` (modified, +23/-0)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/fakes"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/match"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/readiness"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
- 	testclient "github.com/open-policy-agent/gatekeeper/v3/test/clients"
-@@ -37,6 +38,28 @@ func TestMain(m *testing.M) {
- 	testutils.StartControlPlane(m, &cfg, 3)
- }
- 
-+// TestAdd_RequiresValidationOperation verifies that the expansion ingestion
-+// controller is skipped for processes without validation operations (e.g.
-+// status-only), even though expansion defaults to enabled.
-+// This fails if the old feature-flag-only gating in Add is restored, since a
-+// nil manager would then be dereferenced while registering the controller.
-+func TestAdd_RequiresValidationOperation(t *testing.T) {
-+	if !*expansion.ExpansionEnabled {
-+		t.Fatal("expected expansion to be enabled by default for this test")
-+	}
-+
-+	restore, err := operations.SetForTest(operations.Status)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer restore()
-+
-+	a := &Adder{}
-+	if err := a.Add(nil); err != nil {
-+		t.Errorf("Add() error = %v, want nil", err)
-+	}
-+}
-+
- func TestReconcile(t *testing.T) {
- 	// Uncommenting the below enables logging of K8s internals like watch.
- 	// fs := flag.NewFlagSet("", flag.PanicOnError)
-```
-
-**File**: `pkg/operations/operations_test.go` (modified, +10/-6)
-```diff
-@@ -61,12 +61,16 @@ func TestHasValidationOperations(t *testing.T) {
- 		assigned []Operation
- 		want     bool
- 	}{
--		"status only":         {assigned: []Operation{Status}},
--		"generate only":       {assigned: []Operation{Generate}},
--		"audit":               {assigned: []Operation{Audit}, want: true},
--		"webhook":             {assigned: []Operation{Webhook}, want: true},
--		"status with audit":   {assigned: []Operation{Status, Audit}, want: true},
--		"status with webhook": {assigned: []Operation{Status, Webhook}, want: true},
-+		"status only":              {assigned: []Operation{Status}},
-+		"generate only":            {assigned: []Operation{Generate}},
-+		"audit":                    {assigned: []Operation{Audit}, want: true},
-+		"webhook":                  {assigned: []Operation{Webhook}, want: true},
-+		"status with audit":        {assigned: []Operation{Status, Audit}, want: true},
-+		"status with webhook":      {assigned: []Operation{Status, Webhook}, want: true},
-+		"mutation-controller only": {assigned: []Operation{MutationController}},
-+		"mutation-status only":     {assigned: []Operation{MutationStatus}},
-+		"mutation-webhook only":    {assigned: []Operation{MutationWebhook}},
-+		"none assigned":            {assigned: []Operation{}},
- 	}
- 
- 	for name, tc := range tests {
-```
-
----
-
-### Incident Patch 2: `244673b4` (2026-10-12)
-**Commit Message**: chore: bump brace-expansion from 1.1.18 to 1.1.21 in /website (#4863)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `website/yarn.lock` (modified, +3/-3)
-```diff
-@@ -3166,9 +3166,9 @@ boxen@^6.2.1:
-     wrap-ansi "^8.0.1"
- 
- brace-expansion@^1.1.7:
--  version "1.1.18"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
--  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
-+  version "1.1.21"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz#edf4fab5c64d051aea5a8def49aba1c7522279f3"
-+  integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==
-   dependencies:
-     balanced-match "^1.0.0"
-     concat-map "0.0.1"
-```
-
----
-
-### Incident Patch 3: `1c9f9b6e` (2026-10-09)
-**Commit Message**: fix(#4770): Fix status-only startup without initializing the constraint client (#4780)
-
-Signed-off-by: 7487 <[REDACTED_EMAIL]>
-Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `main_test.go` (modified, +210/-0)
-```diff
-@@ -16,16 +16,226 @@ limitations under the License.
- package main
+@@ -17,6 +17,7 @@ package parser
  
  import (
-+	"context"
- 	"flag"
-+	"fmt"
- 	"os"
- 	"os/exec"
- 	"testing"
-+	"time"
+ 	"fmt"
++	"math"
  
-+	templatesv1beta1 "github.com/open-policy-agent/frameworks/constraint/pkg/apis/templates/v1beta1"
-+	statusv1beta1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
- 	exportutil "github.com/open-policy-agent/gatekeeper/v3/pkg/export/util"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/externaldata"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/readiness"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
-+	"github.com/open-policy-agent/gatekeeper/v3/test/testutils"
-+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/rest"
-+	"k8s.io/client-go/util/retry"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
-+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/path/token"
  )
- 
-+var testConfig *rest.Config
-+
-+func TestMain(m *testing.M) {
-+	testutils.StartControlPlane(m, &testConfig, 0)
-+}
-+
-+func TestSetupControllersStatusOnly(t *testing.T) {
-+	restoreOperations, err := operations.SetForTest(operations.Status)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(restoreOperations)
-+	if got := operations.AssignedStringList(); len(got) != 1 || got[0] != string(operations.Status) {
-+		t.Fatalf("assigned operations = %v, want [%s]", got, operations.Status)
-+	}
-+	originalExternalDataEnabled := *externaldata.ExternalDataEnabled
-+	*externaldata.ExternalDataEnabled = false
-+	t.Cleanup(func() { *externaldata.ExternalDataEnabled = originalExternalDataEnabled })
-+
-+	mgr, err := ctrl.NewManager(testConfig, ctrl.Options{
-+		Scheme:                 scheme,
-+		Metrics:                metricsserver.Options{BindAddress: "0"},
-+		HealthProbeBindAddress: "0",
-+		MapperProvider:         apiutil.NewDynamicRESTMapper,
-+		Logger:                 testutils.NewLogger(t),
-+	})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := testutils.CreateGatekeeperNamespace(testConfig); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	ctx := context.Background()
-+	constraintGVK := schema.GroupVersionKind{
-+		Group:   statusv1beta1.ConstraintsGroup,
-+		Version: "v1beta1",
-+		Kind:    "StatusOnlyConstraint",
-+	}
-+	constraintCRD := testConstraintCRD(constraintGVK)
-+	if err := mgr.GetClient().Create(ctx, constraintCRD); err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() {
-+		if err := client.IgnoreNotFound(mgr.GetClient().Delete(context.Background(), constraintCRD)); err != nil {
-+			t.Error(err)
-+		}
-+	})
-+	constraintList := &unstructured.UnstructuredList{}
-+	constraintList.SetGroupVersionKind(constraintGVK.GroupVersion().WithKind(constraintGVK.Kind + "List"))
-+	if err := retry.OnError(testutils.ConstantRetry, func(error) bool { return true }, func() error {
-+		return mgr.GetClient().List(ctx, constraintList)
-+	}); err != nil {
-+		t.Fatalf("waiting for constraint CRD: %v", err)
-+	}
-+
-+	tracker, err := readiness.SetupTrackerNoReadyz(mgr, false, false, false)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	setupFinished := make(chan struct{})
-+	close(setupFinished)
-+	if err := setupControllers(ctx, mgr, tracker, setupFinished); err != nil {
-+		t.Fatalf("setupControllers() = %v, want nil", err)
-+	}
-+	testutils.StartManager(ctx, t, mgr)
-+	waitCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
-+	t.Cleanup(cancel)
-+	if !mgr.GetCache().WaitForCacheSync(waitCtx) {
-+		t.Fatal("waiting for manager cache sync")
-+	}
-+
-+	const templateName = "statusonlyconstraint"
-+	template := &templatesv1beta1.ConstraintTemplate{
-+		ObjectMeta: metav1.ObjectMeta{Name: templateName},
-+		Spec: templatesv1beta1.ConstraintTemplateSpec{
-+			CRD: templatesv1beta1.CRD{Spec: templatesv1beta1.CRDSpec{
-+				Names: templatesv1beta1.Names{Kind: constraintGVK.Kind},
-+			}},
-+		},
-+	}
-+	if err := mgr.GetClient().Create(ctx, template); err != nil {
-+		t.Fatal(err)
-+	}
-+	constraint := &unstructured.Unstructured{}
-+	constraint.SetGroupVersionKind(constraintGVK)
-+	constraint.SetName("status-only")
-+	if err := mgr.GetClient().Create(ctx, constraint); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	templateStatus := &statusv1beta1.ConstraintTemplatePodStatus{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "status-only-template",
-+			Namespace: util.GetNamespace(),
-+			Labels: map[string]string{
-+				statusv1beta1.ConstraintTemplateNameLabel: templateName,
-+			},
-+		},
-+		Status: statusv1beta1.ConstraintTemplatePodStatusStatus{
-+			ID:          "status-only-pod",
-+			TemplateUID: template.GetUID(),
-+		},
-+	}
-+	if err := mgr.GetClient().Create(ctx, templateStatus); err != nil {
-+		t.Fatal(err)
-+	}
-+	constraintStatus := &sta
-```
-
-**File**: `pkg/controller/constraintstatus/constraintstatus_controller.go` (modified, +8/-2)
-```diff
-@@ -58,6 +58,9 @@ func (a *Adder) Add(mgr manager.Manager) error {
- 		return nil
- 	}
- 	r := newReconciler(mgr)
-+	if a.Events == nil {
-+		r.reader = mgr.GetClient()
-+	}
- 	if a.IfWatching != nil {
- 		r.ifWatching = a.IfWatching
- 	}
-@@ -135,9 +138,12 @@ func add(mgr manager.Manager, r reconcile.Reconciler, events <-chan event.Generi
- 		return err
- 	}
- 
-+	if events == nil {
-+		return nil
-+	}
-+
- 	// Watch for changes to the provided constraint
--	return c.Watch(
--		source.Channel(events, handler.EnqueueRequestsFromMapFunc(util.EventPackerMapFunc())))
-+	return c.Watch(source.Channel(events, handler.EnqueueRequestsFromMapFunc(util.EventPackerMapFunc())))
- }
- 
- func indexStatusLabel(ctx context.Context, mgr manager.Manager, obj client.Object, field string) error {
-```
-
-**File**: `pkg/controller/constrainttemplate/constrainttemplate_controller.go` (modified, +23/-19)
-```diff
-@@ -95,7 +95,7 @@ type Adder struct {
- // and Start it when the Manager is Started.
- func (a *Adder) Add(mgr manager.Manager) error {
- 	if !operations.HasValidationOperations() {
--		return nil
-+		return addStatusControllers(mgr, nil, nil)
- 	}
- 	// constraintEvents will be used to receive events from dynamic watches registered for constraint controller
- 	constraintEvents := make(chan event.GenericEvent, 1024)
-@@ -146,11 +146,6 @@ func newReconciler(mgr manager.Manager, cfClient *constraintclient.Client, wm *w
- 	if err != nil {
- 		return nil, err
- 	}
--	statusW, err := wm.NewRegistrar(ctrlName+"-status", regEvents)
--	if err != nil {
--		return nil, err
--	}
--
- 	// via the registrar below.
- 
- 	constraintAdder := constraint.Adder{
-@@ -167,25 +162,16 @@ func newReconciler(mgr manager.Manager, cfClient *constraintclient.Client, wm *w
- 		return nil, fmt.Errorf("registering constraint controller: %w", err)
- 	}
- 
-+	var statusW *watch.Registrar
- 	if operations.IsAssigned(operations.Status) {
- 		// statusEvents will be used to receive events from dynamic watches registered
- 		// via the registrar below.
- 		statusEvents := make(chan event.GenericEvent, 1024)
--		csAdder := constraintstatus.Adder{
--			CFClient:     cfClient,
--			WatchManager: wm,
--			Events:       statusEvents,
--			IfWatching:   statusW.IfWatching,
--		}
--		if err := csAdder.Add(mgr); err != nil {
-+		statusW, err = wm.NewRegistrar(ctrlName+"-status", statusEvents)
-+		if err != nil {
- 			return nil, err
+@@ -176,10 +177,11 @@ func parseInt64(s string) (int64, error) {
+ 		if d < '0' || d > '9' {
+ 			return 0, invalidIntegerError{s: fmt.Sprintf("unexpected digit: %c", d)}
  		}
--
--		ctsAdder := constrainttemplatestatus.Adder{
--			CfClient:     cfClient,
--			WatchManager: wm,
--		}
--		if err := ctsAdder.Add(mgr); err != nil {
-+		if err := addStatusControllers(mgr, statusEvents, statusW.IfWatching); err != nil {
- 			return nil, err
+-		result = result*10 + int64(d-'0')
+-		if result < 0 {
++		digit := int64(d - '0')
++		if result > (math.MaxInt64-digit)/10 {
+ 			return 0, invalidIntegerError{s: fmt.Sprintf("overflow in integer string: %s", s)}
  		}
++		result = result*10 + digit
  	}
-@@ -211,6 +197,18 @@ func newReconciler(mgr manager.Manager, cfClient *constraintclient.Client, wm *w
- 	return reconciler, nil
+ 	return result, nil
  }
- 
-+func addStatusControllers(mgr manager.Manager, events <-chan event.GenericEvent, ifWatching func(schema.GroupVersionKind, func() error) (bool, error)) error {
-+	csAdder := constraintstatus.Adder{
-+		Events:     events,
-+		IfWatching: ifWatching,
-+	}
-+	if err := csAdder.Add(mgr); err != nil {
-+		return err
-+	}
-+
-+	return (&constrainttemplatestatus.Adder{}).Add(mgr)
-+}
-+
- // add adds a new Controller to mgr with r as the reconcile.Reconciler.
- func add(mgr manager.Manager, r reconcile.Reconciler, events <-chan event.GenericEvent) error {
- 	// Create a new controller
-@@ -661,13 +659,19 @@ func (r *ReconcileConstraintTemplate) addWatch(ctx context.Context, kind schema.
- 	if err := r.watcher.AddWatch(ctx, kind); err != nil {
- 		return err
- 	}
-+	if r.statusWatcher == nil {
-+		return nil
-+	}
- 	return r.statusWatcher.AddWatch(ctx, kind)
- }
- 
- func (r *ReconcileConstraintTemplate) removeWatch(ctx context.Context, kind schema.GroupVersionKind) error {
- 	if err := r.watcher.RemoveWatch(ctx, kind); err != nil {
- 		return err
- 	}
-+	if r.statusWatcher == nil {
-+		return nil
-+	}
- 	return r.statusWatcher.RemoveWatch(ctx, kind)
- }
- 
 ```
 
-**File**: `pkg/controller/constrainttemplate/status_controllers_test.go` (added, +73/-0)
+**File**: `pkg/mutation/path/parser/parser_test.go` (modified, +10/-0)
 ```diff
-@@ -0,0 +1,73 @@
-+/*
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package constrainttemplate
+@@ -229,6 +229,16 @@ func TestParser(t *testing.T) {
+ 			input:   `spec[bignum: 9223372036854775808]`,
+ 			wantErr: ErrInvalidInteger,
+ 		},
++		{
++			// Integer overflow that wraps around to zero
++			input:   `spec[bignum: 18446744073709551616]`,
++			wantErr: ErrInvalidInteger,
++		},
++		{
++			// Integer overflow that wraps around to a small positive number
++			input:   `spec[bignum: 18446744073709551621]`,
++			wantErr: ErrInvalidInteger,
++		},
+ 		{
+ 			// Quoted integers are parsed as strings
+ 			input: `spec[quoted: "123"]`,
+```
+
+---
+
+### Incident Patch 2: `c691e1b3` (2026-10-22)
+**Commit Message**: fix(gator): preserve YAML block scalar content (#4828)
+
+Signed-off-by: Hanabi <[REDACTED_EMAIL]>
+Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `pkg/gator/reader/block_scalar_test.go` (added, +135/-0)
+```diff
+@@ -0,0 +1,135 @@
++package reader
 +
 +import (
++	"fmt"
++	"strings"
 +	"testing"
 +
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
-+	"github.com/open-policy-agent/gatekeeper/v3/test/testutils"
-+	"sigs.k8s.io/controller-runtime/pkg/manager"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 +)
 +
-+// runnableCounter counts the runnables, such as controllers, registered with
-+// the wrapped manager.
-+type runnableCounter struct {
-+	manager.Manager
-+	added int
-+}
-+
-+func (m *runnableCounter) Add(r manager.Runnable) error {
-+	m.added++
-+	return m.Manager.Add(r)
-+}
-+
-+// Pods without audit or webhook skip template ingestion and only call
-+// addStatusControllers, which relies on each status controller checking for
-+// the status operation itself.
-+func TestAddRegistersStatusControllersOnlyWithStatusOperation(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		ops  []operations.Operation
-+		want int
++func TestReadUnstructuredsPreservesDocumentEnd(t *testing.T) {
++	for _, tc := range []struct {
++		name, scalar, ending, want string
 +	}{
-+		{name: "generate only", ops: []operations.Operation{operations.Generate}, want: 0},
-+		{name: "mutation-status only", ops: []operations.Operation{operations.MutationStatus}, want: 0},
-+		{name: "status only", ops: []operations.Operation{operations.Status}, want: 2},
-+	}
-+
-+	for _, tc := range tests {
++		{"clip", "|", "\n", "value\n"},
++		{"keep", "|+", "\n\n", "value\n\n"},
++		{"strip", "|-", "\n\n", "value"},
++		{"no final newline", "|+", "", "value"},
++	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			globalTestMu.Lock()
-+			defer globalTestMu.Unlock()
-+
-+			restore, err := operations.SetForTest(tc.ops...)
-+			if err != nil {
-+				t.Fatalf("setting operations %v: %v", tc.ops, err)
++			input := fmt.Sprintf("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: example\ndata:\n  script: %s\n    value%s", tc.scalar, tc.ending)
++			inputs := []string{input}
++			if tc.ending != "" {
++				inputs = append(inputs, input+"---\n# trailing document\n")
 +			}
-+			defer restore()
-+
-+			mgr, _ := testutils.SetupManager(t, cfg)
-+			counter := &runnableCounter{Manager: mgr}
-+			if err := (&Adder{}).Add(counter); err != nil {
-+				t.Fatalf("Add() = %v, want nil", err)
-+			}
-+			if counter.added != tc.want {
-+				t.Errorf("Add() registered %d controllers with operations %v, want %d", counter.added, tc.ops, tc.want)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/operations/operations.go` (modified, +26/-1)
-```diff
-@@ -88,6 +88,31 @@ func init() {
- 	flag.Var(operations, "operation", "The operation to be performed by this instance. e.g. audit, webhook. This flag can be declared more than once. Omitting will default to supporting all operations.")
- }
- 
-+// SetForTest replaces the assigned operations until the returned restore
-+// function is called.
-+func SetForTest(assigned ...Operation) (func(), error) {
-+	replacement := newOperationSet()
-+	replacement.assignedOperations = make(map[Operation]bool, len(assigned))
-+	replacement.initialized = true
-+	for _, op := range assigned {
-+		if !replacement.validOperations[op] {
-+			return nil, fmt.Errorf("operation %s is not a valid operation: %v", op, replacement.validOperations)
-+		}
-+		replacement.assignedOperations[op] = true
-+	}
-+
-+	operationsMtx.Lock()
-+	original := operations
-+	operations = replacement
-+	operationsMtx.Unlock()
-+
-+	return func() {
-+		operationsMtx.Lock()
-+		operations = original
-+		operationsMtx.Unlock()
-+	}, nil
-+}
-+
- // IsAssigned returns true when the provided operation is assigned to the pod.
- func IsAssigned(op Operation) bool {
- 	operationsMtx.RLock()
-@@ -129,5 +154,5 @@ func AssignedStringList() []string {
- // are any operations that would require a constraint or template controller
- // or a sync controller.
- func HasValidationOperations() bool {
--	return IsAssigned(Audit) || IsAssigned(Status) || IsAssigned(Webhook)
-+	return IsAssigned(Audit) || IsAssigned(Webhook)
- }
-```
-
-**File**: `pkg/operations/operations_test.go` (modified, +55/-0)
-```diff
-@@ -48,3 +48,58 @@ func Test_Flags(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestHasValidationOperations(t *testing.T) {
-+	original := operations
-+	t.Cleanup(func() {
-+		operationsMtx.Lock()
-+		defer operationsMtx.Unlock()
-+		operations = original
-+	})
-+
-+	tests := map[string]struct {
-+		assigned []Operation
-+		want     bool
-+	}{
-+		"status only":         {assigned: []Operation{Status}},
-+		"generate only":       {assigned: []Operation{Generate}},
-+		"audit":               {assigned: []Operation{Audit}, want: true},
-+		"webhook":             {assigned: []Operation{Webhook}, want: true},
-+		"status with audit":   {assigned: []Operation{Status, Audit}, want: true},
-+		"status with webhook": {assigned: []Operation{Status, Webhook}, want: true},
-+	}
-+
-+	for name, tc := range tests {
-+		t.Run(name, func(t *testing.T) {
-+			assigned := newOperationSet()
-+			assigned.assignedOperations = make(map[Operation]bool)
-+			for _, op := range tc.assigned {
-+				assigned.assignedOperations[op] = true
-+			}
-+
-+			operationsMtx.Lock()
-+			operations = assigned
-+			operationsMtx.Unlock()
-+
-+			if got := HasValidationOperations(); got != tc.want {
-+				t.Errorf("HasValidationOperations() = %t, want %t", got, tc.want)
++			for _, input := range inputs {
++				objects, err := ReadUnstructureds([]byte(input))
++				if err != nil {
++					t.Fatal(err)
++				}
++				if len(objects) != 1 {
++					t.Fatalf("got %d objects, want 1", len(objects))
++				}
++				got, found, err := unstructured.NestedString(objects[0].Object, "data", "script")
++				if err != nil || !found {
++					t.Fatalf("reading script: found=%v, err=%v", found, err)
++				}
++				if got != tc.want {
++					t.Fatalf("block scalar = %q, want %q", got, tc.want)
++				}
 +			}
 +		})
 +	}
 +}
 +
-+func TestSetForTest(t *testing.T) {
-+	original := operations
-+	restore, err := SetForTest(Status)
++func TestReadUnstructuredsPreservesBlockScalar(t *testing.T) {
++	input := []byte("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: example\ndata:\n  script: |\n    first\n\n    # literal content\n    last\n")
++	objects, err := ReadUnstructureds(input)
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	if got := AssignedStringList(); len(got) != 1 || got[0] != string(Status) {
-+		t.Fatalf("AssignedStringList() = %v, want [%s]", got, Status)
++	if len(objects) != 1 {
++		t.Fatalf("got %d objects, want 1", len(objects))
 +	}
-+
-+	restore()
-+	if operations != original {
-+		t.Fatal("SetForTest restore did not restore the original operations")
++	got, found, err := unstructured.NestedString(objects[0].Object, "data", "script")
++	if err != nil || !found {
++		t.Fatalf("reading script: found=%v, err=%v", found, err)
++	}
++	want := "first\n\n# literal content\nlast\n"
++	if got != want {
++		t.Fatalf("block scalar = %q, want %q", got, want)
 +	}
 +}
++
++func TestReadUnstructuredsSkipsEmptyDocuments(t *testing.T) {
++	input := []byte("# comment only\n\n---\n\n# another comment\n---\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: example\ndata:\n  script: |+\n    # literal content\n\n\n---\n# trailing comment\n")
++	objects, err := ReadUnstructureds(input)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(objects) != 1 {
++		t.Fatalf("got %d objects, want 1", len(objects))
++	}
++	got, found, err := unstructured.NestedString(objects[0].Object, "data", "script")
++	if err != nil || !found {
++		t.Fatalf("reading script: found=%v, err=%v", found, err)
++	}
++	if want := "# literal content\n\n\n"; got != want {
++		t.Fatalf("block scalar = %q, want %q", got, want)
++	}
++}
++
++func TestReadUnstructuredsSeparatorWhitespace(t *testing.T) {
++	const first = "apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: first\ndata:\n  script: |+\n    first\n\n    # literal content\n    last\n\n"
++	const second = "apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: second\ndata:\n  script: |-\n    tail"
++	for _, separator := range []string{"---", "--- ", "---\t", "--- \t", "--- # comment", "---\t# comment", "--- \t # comment"} {
++		for _, newline := range []string{"\n", "\r\n"} {
++			t.Run(fmt.Sprintf("separator_%q_newline_%q", separator, newline), func(t *testing.T) {
++				inputs := []string{
++					first + separator + "\n" + second,
++					"# leading empty document\n" + separator + "\n" + first + separator +
++						"\n# middle empty document\n" + separator + "\n" + second + "\n" + separator,
++				}
++				for _, input := range inputs {
++					objects, err := ReadUnstructureds([]byte(strings.ReplaceAll(input, "\n", newline)))
++					if err != nil {
++						t.Fatal(err)
++					}
++					if len(objects) != 2 {
++						t.Fatalf("got %d objects, want 2", len(objects))
++					}
++					for i, want := range []string{"first\n\n# literal content\nlast\n\n", "tail"} {
++						got, found, err := unstructured.NestedString(objects[i].Object, "data", "script")
++						if err != nil || !found {
++							t.Fatalf("reading script %d: found=%v, err=%v", i, found, err)
++						}
++						if got != want {
++							t.Fatalf("block scalar %d = %q, want %q", i, got, want)
++						}
++					}
++				}
++			})
++		}
++	}
++}
++
++func TestReadUnstructuredsRejectsTabIndentation(t *testing.T) {
++	const invalid = "\tapiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: invalid\n"
++	for _, input := range []string{invalid, "# empty document\n---\t# separator\n" + invalid} {
++		if _, err := ReadUnstructureds([]byte(input)); err == nil {
++			t.Fatal("expected invalid tab indentation to be rejected")
++		}
++	}
++}
++
++func TestReadUnstructuredsRejectsInvalidSeparatorCharacters(t *testing.T) {
++	for _, suffix := range []string{"\v", "\f", "\x00", "\u00a0", "\t# comment\v", "\t# comment\f"} {
++		t.Run(fmt.Sprintf("suffix_%q", suffix), func(t *testing.T) {
++			input := "# empty document\n---" + suffix + "\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: invalid\n"
++			if _, err := ReadUnstructureds([]byte(input)); err == nil {
++				t.Fa
+```
+
+**File**: `pkg/gator/reader/read_resources.go` (modified, +17/-3)
+```diff
+@@ -55,9 +55,23 @@ func ReadUnstructureds(bytes []byte) ([]*unstructured.Unstructured, error) {
+ 	splits := strings.Split(string(bytes), "\n---")
+ 	var result []*unstructured.Unstructured
+ 
+-	for _, split := range splits {
+-		split = clean(split)
+-		if len(split) == 0 {
++	for i, split := range splits {
++		if i > 0 {
++			// Tabs after "---" are separator whitespace, not document indentation.
++			line, rest, hasNewline := strings.Cut(split, "\n")
++			line = strings.TrimLeft(line, " \t")
++			if line == "" || line == "\r" || strings.HasPrefix(line, "#") {
++				split = line
++				if hasNewline {
++					split += "\n" + rest
++				}
++			}
++		}
++		if i < len(splits)-1 {
++			// Restore the newline consumed by the document separator.
++			split += "\n"
++		}
++		if len(clean(split)) == 0 {
+ 			continue
+ 		}
+ 
+```
+
+---
+
+### Incident Patch 3: `1a95399f` (2026-10-21)
+**Commit Message**: fix: prevent cache manager hot-loop when synced GVK cannot be listed (#4881)
+
+Signed-off-by: yusheng.wang <[REDACTED_EMAIL]>
+Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `pkg/cachemanager/cachemanager.go` (modified, +21/-3)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/syncutil"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/target"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/watch"
++	"k8s.io/apimachinery/pkg/api/meta"
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apimachinery/pkg/util/wait"
+@@ -522,18 +523,35 @@ func (c *CacheManager) replayGVKs(ctx context.Context, gvksToRelist []schema.Gro
+ 			case <-relistCtx.Done():
+ 				return
+ 			default:
++				var lastErr error
+ 				operation := func(ctx context.Context) (bool, error) {
+ 					if err := c.syncGVK(ctx, gvk); err != nil {
+-						return false, err
++						lastErr = err
++						if meta.IsNoMatchError(err) {
++							return false, err
++						}
++						if ctx.Err() != nil {
++							return false, ctx.Err()
++						}
++						return false, nil
+ 					}
++					lastErr = nil
+ 					return true, nil
+ 				}
+ 
+ 				if err := wait.ExponentialBackoffWithContext(relistCtx, backoff, operation); err != nil {
+-					if errors.Is(err, context.Canceled) {
++					if errors.Is(err, context.Canceled) || relistCtx.Err() != nil {
+ 						return
+ 					}
+-					log.Error(err, "internal: error listings gvk cache data", "gvk", gvk)
++					logErr := lastErr
++					if logErr == nil {
++						logErr = err
++					}
++					log.Error(logErr, "internal: error listings gvk cache data", "gvk", gvk)
++					// Retain transient failures so backoff exhaustion does not abandon wiped inventory.
++					if meta.IsNoMatchError(err) {
++						gvksSet.Remove(gvk)
++					}
+ 				} else {
+ 					gvksSet.Remove(gvk)
+ 				}
+```
+
+**File**: `pkg/cachemanager/cachemanager_test.go` (modified, +139/-0)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	testclient "github.com/open-policy-agent/gatekeeper/v3/test/clients"
+ 	"github.com/open-policy-agent/gatekeeper/v3/test/testutils"
+ 	"github.com/stretchr/testify/require"
++	"k8s.io/apimachinery/pkg/api/meta"
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+@@ -833,6 +834,144 @@ func TestCacheManagerReplayGVKsCancelsInFlightListOnStop(t *testing.T) {
+ 	}
+ }
+ 
++type errorReader struct {
++	err       error
++	listCalls int
++	mu        sync.Mutex
++}
++
++func (r *errorReader) Get(context.Context, client.ObjectKey, client.Object, ...client.GetOption) error {
++	return r.err
++}
++
++func (r *errorReader) List(context.Context, client.ObjectList, ...client.ListOption) error {
++	r.mu.Lock()
++	defer r.mu.Unlock()
++	r.listCalls++
++	return r.err
++}
++
++func TestCacheManagerReplayGVKsExitsOnNoMatchError(t *testing.T) {
++	gvk := schema.GroupVersionKind{Group: "example.com", Version: "v1", Kind: "Custom"}
++	reader := &errorReader{
++		err: &meta.NoKindMatchError{GroupKind: gvk.GroupKind()},
++	}
++	cm := newSyncGVKContentionCacheManager(gvk, reader)
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	stopCh := make(chan struct{})
++
++	replayDone := make(chan struct{})
++	go func() {
++		cm.replayGVKs(ctx, []schema.GroupVersionKind{gvk}, stopCh)
++		close(replayDone)
++	}()
++
++	select {
++	case <-replayDone:
++	case <-time.After(2 * time.Second):
++		t.Fatal("replayGVKs did not exit cleanly on NoKindMatchError and may be looping indefinitely")
++	}
++
++	reader.mu.Lock()
++	defer reader.mu.Unlock()
++	require.Equal(t, 1, reader.listCalls, "List should only be called once when NoKindMatchError is returned")
++}
++
++func TestCacheManagerReplayGVKsRetriesAfterBackoffExhaustion(t *testing.T) {
++	for _, failures := range []int{0, backoff.Steps - 1, backoff.Steps, 2*backoff.Steps - 1} {
++		t.Run(fmt.Sprintf("%d_failures", failures), func(t *testing.T) {
++			item := fakes.UnstructuredFor(configMapGVK, "default", "replayed")
++			key, err := fakes.KeyFor(item)
++			require.NoError(t, err)
++			var attempts []time.Time
++			reader := fakes.SpyReader{
++				ListFunc: func(_ context.Context, list client.ObjectList, _ ...client.ListOption) error {
++					attempts = append(attempts, time.Now())
++					if len(attempts) <= failures {
++						return errors.New("temporary list failure")
++					}
++					result, ok := list.(*unstructured.UnstructuredList)
++					if !ok {
++						return fmt.Errorf("expected *unstructured.UnstructuredList, got %T", list)
++					}
++					result.Items = []unstructured.Unstructured{*item}
++					return nil
++				},
++			}
++			cm := newSyncGVKContentionCacheManager(configMapGVK, reader)
++			cfClient := &fakes.FakeCfClient{}
++			cm.cfClient = cfClient
++			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
++			defer cancel()
++
++			cm.replayGVKs(ctx, []schema.GroupVersionKind{configMapGVK}, make(chan struct{}))
++
++			require.NoError(t, ctx.Err())
++			require.Len(t, attempts, failures+1)
++			require.Equal(t, 1, cfClient.Len())
++			require.True(t, cfClient.Contains(map[fakes.CfDataKey]interface{}{key: nil}),
++				"inventory must recover without an object or source event")
++			for i := 1; i < len(attempts); i++ {
++				if i%backoff.Steps != 0 {
++					require.GreaterOrEqual(t, attempts[i].Sub(attempts[i-1]), backoff.Duration,
++						"transient retries must retain backoff pacing")
++				}
++			}
++		})
++	}
++}
++
++func TestCacheManagerReplayGVKsCancelsBackoffAfterExhaustion(t *testing.T) {
++	for _, stopReplay := range []bool{false, true} {
++		t.Run(fmt.Sprintf("stop_channel_%t", stopReplay), func(t *testing.T) {
++			attempts := make(chan struct{}, 1)
++			reader := fakes.SpyReader{
++				ListFunc: func(ctx context.Context, _ client.ObjectList, _ ...client.ListOption) error {
++					select {
++					case attempts <- struct{}{}:
++						return errors.New("temporary list failure")
++					case <-ctx.Done():
++						return ctx.Err()
++					}
++				},
++			}
++			cm := newSyncGVKContentionCacheManager(configMapGVK, reader)
++			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
++			stopCh := make(chan struct{})
++			replayDone := make(chan struct{})
++			go func() {
++				defer close(replayDone)
++				cm.replayGVKs(ctx, []schema.GroupVersionKind{configMapGVK}, stopCh)
++			}()
++			t.Cleanup(func() {
++				cancel()
++				<-replayDone
++			})
++
++			for i := 0; i <= backoff.Steps; i++ {
++				select {
++				case <-attempts:
++				case <-replayDone:
++					t.Fatal("replay stopped retrying a recoverable GVK")
++				case <-ctx.Done():
++					t.Fatal("replay did not continue after backoff exhaustion")
++				}
++			}
++			if stopReplay {
++				close(stopCh)
++			} else {
++				cancel()
++			}
++			select {
++			case <-replayDone:
++			case <-time.After(2 * time.Second):
++				t.Fatal("replay did not cancel its retry backoff")
++			}
++		})
++	}
++}
++
+ func TestCacheManagerManageCacheStopsRelistBeforeWipeWithoutHoldingLock(t *testing.T) {
+ 	reader
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4867** (2026-10-12): chore: bump compression from 1.7.4 to 1.8.2 in /website (@dependabot[bot])
-- **PR #4863** (2026-10-12): chore: bump brace-expansion from 1.1.18 to 1.1.21 in /website (@dependabot[bot])
-- **PR #4862** (2026-10-09): chore: bump golang.org/x/net to v0.60.0 and golang to 1.27.2 (@JaydipGabani)
-- **PR #4861** (closed): chore: bump golang from `433790e` to `3b77fc6` in /test/export/fake-reader (@dependabot[bot])
-- **PR #4860** (closed): chore: bump golang from `433790e` to `3b77fc6` in /test/export/fake-subscriber (@dependabot[bot])
-- **PR #4859** (closed): chore: bump golang from `433790e` to `3b77fc6` in /test/image (@dependabot[bot])
+- **PR #4882** (2026-10-21): chore: bump follow-redirects from 1.16.0 to 1.16.1 in /website (@dependabot[bot])
+- **PR #4881** (2026-10-21): fix: prevent cache manager hot-loop when synced GVK cannot be listed (@wangyusheng1985)
+- **PR #4879** (2026-10-21): chore: bump the all group across 1 directory with 9 updates (@dependabot[bot])
+- **PR #4877** (closed): chore: bump golang from `2f84bc9` to `4766793` in /build/tooling (@dependabot[bot])
+- **PR #4873** (2026-10-20): fix: reject path integers that overflow int64 and wrap to a positive value (@ogulcanaydogan)
+- **PR #4869** (closed): chore: bump the all group with 8 updates (@dependabot[bot])
 
 ---
 
@@ -1970,43 +1739,32 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. scope expansion ingestion controller to audit and webhook operations (#4778)
+## X. reject path integers that overflow int64 and wrap to a positive value (#4873)
 
 **RULE**:
-When implementing operations in `main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/mutation/path/parser/parser.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `180cc830`: scope expansion ingestion controller to audit and webhook operations (#4778). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ace88c8a`: reject path integers that overflow int64 and wrap to a positive value (#4873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `main.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/mutation/path/parser/parser.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	tracker, err := readiness.SetupTracker(mgr, mutation.Enabled(), *externaldata.ExternalDataEnabled, *expansion.ExpansionEnabled && operations.HasValidationOperations())
-	expansionSystem := newExpansionSystem(mutationSystem)
-// newExpansionSystem constructs an expansion.System only for processes with
-// validation operations (audit and the validating webhook), the only callers
-// of Expand. They invoke Expand unconditionally, independent of whether
-// expansion is enabled, so they still get a non-nil (possibly empty) system;
-// other processes, such as status-only or generate-only pods, have no use for
-// one.
-func newExpansionSystem(mutationSystem *mutation.System) *expansion.System {
-	if !operations.HasValidationOperations() {
-		return nil
-	}
-	return expansion.NewSystem(mutationSystem)
-}
-
+	"math"
+		digit := int64(d - '0')
+		if result > (math.MaxInt64-digit)/10 {
+		result = result*10 + digit
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	tracker, err := readiness.SetupTracker(mgr, mutation.Enabled(), *externaldata.ExternalDataEnabled, *expansion.ExpansionEnabled)
-	expansionSystem := expansion.NewSystem(mutationSystem)
+		result = result*10 + int64(d-'0')
+		if result < 0 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `180cc830` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ace88c8a` are properly handled with clean fallback behavior.
