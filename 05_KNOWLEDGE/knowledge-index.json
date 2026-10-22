@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T20:30:28.044Z",
+  "last_updated": "2026-10-22T20:38:54.897Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35892,8 +35892,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "51115a16",
-      "content_hash": "c2deffd64dab79fad523991104714d2bb4e2c68d1fadf4333662fbc3b4345ef3",
+      "source_version": "9e5b606c",
+      "content_hash": "9d02336f5d9ee9c6be4c3668d61cf0fc469e776d1b9a4530fbdfd8a40612bdfe",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -35921,6 +35921,11 @@
           "number": 3667,
           "title": "Rename ARC instance input_code to implementation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3726,
+          "title": "Add debug output and remove unused core datasets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35928,7 +35933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:32:02.630Z",
+      "verified_at": "2026-10-22T20:37:03.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46969,13 +46974,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "22a275d2",
-      "content_hash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "0687b18d",
+      "content_hash": "280f5c0db1199b1f2b36c4c70701d23accb689a22707d72b52aef46295432d00",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -47015,7 +47020,7 @@
         {
           "number": 3692,
           "title": "Merge 'fix Linux panics when opening connections during active reads' from Domen",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47023,7 +47028,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:24:22.866Z",
+      "verified_at": "2026-10-22T20:37:02.718Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62046,14 +62051,29 @@
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "8d8e8440",
-      "content_hash": "33eeb998efe695dfad1497dfb660dfe51ac0a6323f1068a94a621189964b7575",
+      "source_version": "e6b79d9c",
+      "content_hash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "promoted_rules": [
         {
           "number": 2908,
           "title": "hr): avoid main-thread jank from cookie reads (#11166)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3727,
+          "title": "Non-Enumerable Wrap and Stack Splicing for Error Envelopes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3728,
+          "title": "Prototype-Pollution-Proof Dictionary Allocation & Slot Re-Routing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3729,
+          "title": "Asynchronous Safe Interceptor Lifecycle with Re-Entrancy and Compaction Guarding",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -62062,7 +62082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:06:13.784Z",
+      "verified_at": "2026-10-22T20:38:54.885Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111236,14 +111256,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3692,
       "title": "Merge 'fix Linux panics when opening connections during active reads' from Domen",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "22a275d2",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "0687b18d",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T18:24:22.866Z"
+      "verified_at": "2026-10-22T20:37:02.718Z"
     },
     "rule-3693": {
       "learning_id": "rule-3693",
@@ -111739,6 +111759,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T20:30:28.037Z"
+    },
+    "rule-3726": {
+      "learning_id": "rule-3726",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3726,
+      "title": "Add debug output and remove unused core datasets",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "9e5b606c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:37:03.383Z"
+    },
+    "rule-3727": {
+      "learning_id": "rule-3727",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3727,
+      "title": "Non-Enumerable Wrap and Stack Splicing for Error Envelopes",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "e6b79d9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:38:54.885Z"
+    },
+    "rule-3728": {
+      "learning_id": "rule-3728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3728,
+      "title": "Prototype-Pollution-Proof Dictionary Allocation & Slot Re-Routing",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "e6b79d9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:38:54.885Z"
+    },
+    "rule-3729": {
+      "learning_id": "rule-3729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3729,
+      "title": "Asynchronous Safe Interceptor Lifecycle with Re-Entrancy and Compaction Guarding",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "e6b79d9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:38:54.885Z"
     }
   },
   "aliases": {

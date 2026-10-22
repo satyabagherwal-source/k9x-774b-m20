@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-NDRW",
-    "timestamp": "2026-10-20T17:03:59.612Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "b39691c10535d2c1846141138845e29eb8b0f9ff85e44e90bba06ea85eef72a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-NJS8",
-    "timestamp": "2026-10-20T17:04:07.400Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "129f667fb7806976c2971b3799538a486abc19b4a854baa965e9246398bd84ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-VJ50",
-    "timestamp": "2026-10-20T17:10:19.812Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "a1d2bc347be6b6aa4ea653de0b2c8b765e2638f702ed5d06d24b5e2d65024265",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-VO0E",
     "timestamp": "2026-10-20T17:10:26.126Z",
     "repository": "shoutem/ui",
@@ -7492,6 +7447,51 @@
     "contentHash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-52O2",
+    "timestamp": "2026-10-22T20:37:02.786Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "280f5c0db1199b1f2b36c4c70701d23accb689a22707d72b52aef46295432d00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-536K",
+    "timestamp": "2026-10-22T20:37:03.452Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "9d02336f5d9ee9c6be4c3668d61cf0fc469e776d1b9a4530fbdfd8a40612bdfe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-7H7T",
+    "timestamp": "2026-10-22T20:38:54.953Z",
+    "repository": "axios/axios",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

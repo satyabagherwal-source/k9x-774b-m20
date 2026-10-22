@@ -4426,3 +4426,6 @@ Every entry in this ledger must capture:
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `1f452240` | Multi-dimensional audit evidence | 2026-10-22T20:30:17.145Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `28b8d3eb` | Multi-dimensional audit evidence | 2026-10-22T20:30:27.282Z |
 | `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `52ce8448` | Multi-dimensional audit evidence | 2026-10-22T20:30:28.077Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `0687b18d` | Multi-dimensional audit evidence | 2026-10-22T20:37:02.790Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9e5b606c` | Multi-dimensional audit evidence | 2026-10-22T20:37:03.456Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `e6b79d9c` | Multi-dimensional audit evidence | 2026-10-22T20:38:54.956Z |

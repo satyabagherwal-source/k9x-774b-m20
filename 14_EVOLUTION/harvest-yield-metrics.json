@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T20:30:28.081Z",
-  "total_cycles_completed": 4396,
-  "total_learnings_persisted": 4396,
-  "total_rules_promoted": 3575,
+  "last_updated": "2026-10-22T20:38:54.967Z",
+  "total_cycles_completed": 4399,
+  "total_learnings_persisted": 4399,
+  "total_rules_promoted": 3580,
   "history": [
-    {
-      "timestamp": "2026-10-21T05:40:25.090Z",
-      "repository": "cosscom/ui",
-      "learningId": "learn-github-cosscom-ui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T05:40:25.301Z",
-      "repository": "graphprotocol/graph-node",
-      "learningId": "learn-github-graphprotocol-graph-node",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T05:40:28.449Z",
-      "repository": "serpapi/google-search-results-python",
-      "learningId": "learn-github-serpapi-google-search-results-python",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T05:54:44.011Z",
       "repository": "vuetifyjs/vuetify",
@@ -1403,6 +1382,27 @@
       "repository": "chroma-core/chroma",
       "learningId": "learn-github-chroma-core-chroma",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:37:02.803Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:37:03.468Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:38:54.967Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

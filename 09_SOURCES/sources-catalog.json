@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "51115a16",
+    "sourceVersion": "9e5b606c",
     "license": "Apache-2.0",
-    "contentHash": "c2deffd64dab79fad523991104714d2bb4e2c68d1fadf4333662fbc3b4345ef3",
-    "lastHarvestedAt": "2026-10-22T17:32:02.671Z",
+    "contentHash": "9d02336f5d9ee9c6be4c3668d61cf0fc469e776d1b9a4530fbdfd8a40612bdfe",
+    "lastHarvestedAt": "2026-10-22T20:37:03.456Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "76edc7d4",
+    "sourceVersion": "0687b18d",
     "license": "MIT",
-    "contentHash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
-    "lastHarvestedAt": "2026-10-21T01:17:47.754Z",
+    "contentHash": "280f5c0db1199b1f2b36c4c70701d23accb689a22707d72b52aef46295432d00",
+    "lastHarvestedAt": "2026-10-22T20:37:02.790Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "8d8e8440",
+    "sourceVersion": "e6b79d9c",
     "license": "MIT",
-    "contentHash": "33eeb998efe695dfad1497dfb660dfe51ac0a6323f1068a94a621189964b7575",
-    "lastHarvestedAt": "2026-10-20T00:06:13.841Z",
+    "contentHash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
+    "lastHarvestedAt": "2026-10-22T20:38:54.956Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {

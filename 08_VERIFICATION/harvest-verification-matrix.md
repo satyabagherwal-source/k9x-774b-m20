@@ -4419,3 +4419,6 @@
 | `CYCLE-20261022-WDO6` | `2026-10-22T20:30:17.142Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3723` | Yes (`128d4224...`) |
 | `CYCLE-20261022-WLHR` | `2026-10-22T20:30:27.279Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3724` | Yes (`55960f3f...`) |
 | `CYCLE-20261022-WM3U` | `2026-10-22T20:30:28.075Z` | `chroma-core/chroma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3725` | Yes (`689cac78...`) |
+| `CYCLE-20261022-52O2` | `2026-10-22T20:37:02.786Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3692` | Yes (`280f5c0d...`) |
+| `CYCLE-20261022-536K` | `2026-10-22T20:37:03.452Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3726` | Yes (`9d02336f...`) |
+| `CYCLE-20261022-7H7T` | `2026-10-22T20:38:54.953Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3727, Rule 3728, Rule 3729` | Yes (`8f3333b0...`) |

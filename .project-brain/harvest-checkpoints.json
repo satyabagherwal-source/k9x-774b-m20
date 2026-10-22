@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T20:30:28.083Z",
+  "last_updated": "2026-10-22T20:38:54.971Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "c2deffd64dab79fad523991104714d2bb4e2c68d1fadf4333662fbc3b4345ef3",
-      "verified_at": "2026-10-22T17:32:02.680Z",
+      "content_hash": "9d02336f5d9ee9c6be4c3668d61cf0fc469e776d1b9a4530fbdfd8a40612bdfe",
+      "verified_at": "2026-10-22T20:37:03.471Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:32:02.680Z"
+      "last_updated": "2026-10-22T20:37:03.471Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
-      "verified_at": "2026-10-22T18:24:22.941Z",
+      "content_hash": "280f5c0db1199b1f2b36c4c70701d23accb689a22707d72b52aef46295432d00",
+      "verified_at": "2026-10-22T20:37:02.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:24:22.941Z"
+      "last_updated": "2026-10-22T20:37:02.806Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -14436,14 +14436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-axios-axios",
-      "content_hash": "33eeb998efe695dfad1497dfb660dfe51ac0a6323f1068a94a621189964b7575",
-      "verified_at": "2026-10-20T00:06:13.848Z",
+      "content_hash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
+      "verified_at": "2026-10-22T20:38:54.971Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:06:13.848Z"
+      "last_updated": "2026-10-22T20:38:54.971Z"
     },
     "jasonjmcghee/rem": {
       "repository": "jasonjmcghee/rem",
