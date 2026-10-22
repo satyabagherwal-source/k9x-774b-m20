@@ -178,3 +178,31 @@ All rules codified in `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.
    - Scaling the catalogue from 47 to 57 fonts expanded the static page generation tree from 1,010 to **1,150 production HTML pages** across all 14 supported locales.
    - Full TypeScript compile and Astro static build completed in 38.05s with 0 errors and 100% i18n parity.
 
+---
+
+## 12. Milestone v3.0: Autonomous Font Collection Factory Engine (Continuous Execution Mode)
+
+1. **Continuous Multi-Batch Orchestration Architecture**:
+   - Eliminates manual prompt repetition between batches of 10.
+   - Orchestrated via `scripts/font-factory-engine.mjs` and wired to `npm run fonts:factory`.
+   - Internal batches (default 10) operate as atomic recovery checkpoints. Each completed batch validates invariants, updates durable checkpoints, and automatically continues to the next batch without waiting for operator input.
+2. **Transactional Snapshot and Rollback Pattern**:
+   - Pre-batch snapshots capture `fonts.json`, `fonts-registry.json`, `global.css`, `font-translations.ts`, and `downloaded-hashes.json`.
+   - If any automated quality gate fails (e.g., missing translations, corrupted binary, hash mismatch), `TransactionManager.rollback()` restores the exact known-good baseline automatically.
+   - Lock file mechanism (`scripts/factory.lock`) prevents race conditions and concurrent execution hazards.
+3. **Automated Source Resolution, Quarantine & Substitution**:
+   - Upstream asset resolver targets official Google Fonts / GitHub raw repositories with exponential backoff.
+   - Format validation via magic byte headers rejects corrupted or truncated fonts (`00 01 00 00` for TTF, `OTTO` for OTF).
+   - Routine failures (HTTP 404s, missing upstream endpoints) are quarantined with error reasons while the engine seamlessly selects the next eligible candidate until the batch quota is satisfied.
+4. **Idempotency & Resumption**:
+   - Progress is durably recorded in `FONT_COLLECTION_CHECKPOINT.json` with execution timestamps, run IDs, and candidate statuses.
+   - Running the command repeatedly never duplicates font IDs, translations, `@font-face` rules, or registry entries.
+5. **Empirical Verification Evidence (57 -> 72 Fonts)**:
+   - `test:expansion`: 163/163 checks passed (100%).
+   - `test:factory`: 13/13 unit and failure-injection tests passed (100%).
+   - `test:i18n`: 1,261 localized production pages verified with 0 English leaks (100%).
+   - `test:seo`: 8/8 automated SEO gates passed (100%).
+   - `npm run build`: 1,360 static pages compiled in 49.74s with 0 errors.
+   - Live Dev Server: 26/26 binary assets return HTTP 200 OK.
+
+
