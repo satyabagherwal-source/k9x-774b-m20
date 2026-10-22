@@ -144,4 +144,21 @@ All rules codified in `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.
 5. **Commercial Paywalls in Celtic & Gaelic Type**:
    - Rejected Michael Everson's `Ceanannas` and `Doire` due to $45/seat commercial paywalls on Evertype/MyFonts, protecting catalog integrity.
 
+---
 
+## 10. Milestone v3.0: 404 Autopsy, Vite Cache Invalidation & Controlled Publication (37 -> 47 Fonts)
+
+1. **Vite In-Memory Directory Map Caching on Windows**:
+   - *Failure Mode*: A long-running local development server (`npm run dev`) that boots before new folders are created under `public/` will return HTTP 404 for files inside those newly created folders, even when the files physically exist on disk.
+   - *Root Cause*: Vite static asset middleware builds an in-memory index of `public/` directory trees at startup on Windows. Newly created subtrees do not automatically register in the running file watcher's static router.
+   - *Non-Destructive Fix*: Touching `astro.config.mjs` triggers an instant reload of the Vite server configuration without killing the long-running terminal process, re-indexing `public/` and instantly resolving the 404s to HTTP 200 OK.
+2. **Catalog Publication Gate Invariants**:
+   - Previous prompts explicitly prohibited publishing during discovery phases ("Do not publish fonts in this batch"). The discrepancy between 227 canonical assets and "Showing 6 of 37" on the website was an intentional staging boundary, not a data loss bug.
+   - Promoting candidates from research staging to production requires 5 concurrent synchronization steps:
+     1. Local binary download and cryptographic SHA-256 hash pinning.
+     2. Registration in authoritative ledger (`src/data/fonts-registry.json`).
+     3. Publication entry in `src/data/fonts.json`.
+     4. Complete 14-language i18n metadata (`FONT_SUBSTYLE_NAMES`, `FONT_TAGLINES`, `FONT_DESCRIPTIONS`).
+     5. Self-hosted `@font-face` CSS declarations in `src/styles/global.css`.
+3. **Dynamic Verification vs Hardcoded Invariants**:
+   - Verification scripts must never hardcode asset counts (e.g. `catalog.length === 37`). Tests must dynamically validate that `catalog.length === registry.length`, assert that all local binaries and license files exist on disk, match cryptographic hashes, and verify 100% translation key coverage across all supported locales.
