@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-VO0E",
-    "timestamp": "2026-10-20T17:10:26.126Z",
-    "repository": "shoutem/ui",
-    "learningId": "learn-github-shoutem-ui",
-    "contentHash": "d71b11a1ed87ea22e95263b963a48bad9fb9c0da34a723534091c05dfe4283d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-VRXA",
-    "timestamp": "2026-10-20T17:10:31.198Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "381e66eec612e4583cecb8ee9760c0515ef40f46009f50b53caae661d771576c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-3WV1",
     "timestamp": "2026-10-20T17:16:50.845Z",
     "repository": "callstack/agent-device",
@@ -7492,6 +7462,36 @@
     "contentHash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-FUML",
+    "timestamp": "2026-10-22T20:45:25.581Z",
+    "repository": "ratatui/ratatui",
+    "learningId": "learn-github-ratatui-ratatui",
+    "contentHash": "5aa8bfb2751338124c1111c158e597b5142b9bf29924f99adcba9e42301e2a44",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-G3FA",
+    "timestamp": "2026-10-22T20:45:36.982Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "c72f6b4d9054b943a0674804f18936a48c8d8c547c33773140f1eb8e299811d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `ec3695c6`  
+> **Source Version**: `18cebee8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T01:23:53.225Z  
+> **Timestamp**: 2026-10-22T20:45:36.556Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T01:23:53.221Z  
+> **Harvest Timestamp**: 2026-10-22T20:45:36.549Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25321 stars
+- **Stars / Engagement**: 25328 stars
 
 ---
 
@@ -810,729 +810,373 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b0ac514` (2026-10-20)
-**Commit Message**: LLM Benchmarks: Use stable model IDs and clean up build outputs (#6034)
+### Incident Patch 1: `18cebee8` (2026-10-22)
+**Commit Message**: View docs updated for the current args feature (#6353)
 
 # Description of Changes
 
-Use stable API model IDs for benchmark results and uploads. Display-name
-changes will no longer create separate entries for the same model.
-
-Remove task-local Rust, C#, and TypeScript build outputs after
-publishing, including failed attempts. Preserve source files and shared
-caches. Add disk-usage logs before and after benchmarks.
+Small docs update for #6324 to lay out the current usage and
+limitations.
 
 # API and ABI breaking changes
 
-No public API or ABI changes. Benchmark result keys now contain model
-IDs instead of display names.
+None
 
 # Rollback safety impact
 
 n/a
 
-No database schema changes. Reverting restores display-name keys and can
-create duplicate model entries on subsequent uploads.
-
 # Expected complexity level and risk
 
-2/5. Changes are limited to the benchmark tool and workflow. Cleanup
-only targets task-local build directories.
-
-The C# server SIGKILL remains unresolved; this PR does not claim to fix
-it.
+1 - Light docs update
 
 # Testing
 
-- [x] All 54 benchmark library unit tests passed, including model-ID
-upload and cleanup regression tests.
-- [x] Formatting and whitespace checks passed.
-- [x] Rust and TypeScript benchmark jobs completed successfully.
-- [x] All nine C# 
+- [x] Each code block was tested in a small throwaway
 
-**File**: `.github/workflows/llm-benchmark-periodic.yml` (modified, +16/-0)
-```diff
-@@ -161,6 +161,11 @@ jobs:
-           ln -sf "$GITHUB_WORKSPACE/target/release/spacetimedb-cli" "$HOME/.local/bin/spacetime"
-           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
- 
-+      - name: Check disk usage before benchmarks
-+        run: |
-+          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
-+          du -sh "$CARGO_TARGET_DIR"
-+
-       - name: Run benchmarks
-         env:
-           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-@@ -245,6 +250,17 @@ jobs:
-             llm_benchmark run --lang "$LANG" --modes "$MODES" --models "${MODEL_ARGS[@]}" "${EXTRA_ARGS[@]}"
-           fi
- 
-+      - name: Check disk usage after benchmarks
-+        if: always()
-+        run: |
-+          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
-+          if [ -d "$CARGO_TARGET_DIR" ]; then
-+            du -sh "$CARGO_TARGET_DIR"
-+          fi
-+          if [ -d "$CARGO_TARGET_DIR/llm-runs" ]; then
-+            du -sh "$CARGO_TARGET_DIR/llm-runs"
-+          fi
-+
-       - name: Upload analysis reports
-         if: always()
-         uses: actions/upload-artifact@v4
-```
+---------
 
-**File**: `tools/xtask-llm-benchmark/src/api/client.rs` (modified, +83/-18)
-```diff
-@@ -1,7 +1,7 @@
- use anyhow::{anyhow, Context, Result};
- use serde_json::json;
- 
--use crate::bench::normalize::{canonical_mode, normalize_model_names};
-+use crate::bench::normalize::{canonical_mode, ensure_lang, ensure_mode, ensure_model};
- use crate::bench::types::{Results, RunOutcome};
- use crate::llm::types::Vendor;
- use crate::llm::ModelRoute;
-@@ -126,7 +126,7 @@ impl ApiClient {
-     }
- 
-     /// Upload a batch of run outcomes for a single (lang, mode) combination.
--    /// Normalizes model names and sanitizes volatile fields before upload.
-+    /// Preserves model IDs and sanitizes volatile fields before upload.
-     /// If `analysis` is provided, it is stored in the `llm_benchmark_analysis` table.
-     pub fn upload_batch(&self, mode: &str, outcomes: &[RunOutcome], analysis: Option<&str>) -> Result<usize> {
-         if outcomes.is_empty() {
-@@ -135,24 +135,17 @@ impl ApiClient {
- 
-         let mode = canonical_mode(mode);
- 
--        // Build in-memory Results so we can normalize model names
-         let mut results = Results::default();
--        {
--            use crate::bench::normalize::{canonical_model_name, ensure_lang, ensure_mode, ensure_model};
--
--            for r in outcomes {
--                let lang_v = ensure_lang(&mut results, &r.lang);
--                let mode_v = ensure_mode(lang_v, mode, Some(r.hash.clone()));
--                let canonical_name = canonical_model_name(&r.model_name);
--                let model_v = ensure_model(mode_v, &canonical_name);
--                model_v.route_api_model = r.route_api_model.clone();
--
--                let mut sanitized = r.clone();
--                sanitized.sanitize_for_commit();
--                model_v.tasks.insert(r.task.clone(), sanitized);
--            }
-+        for r in outcomes {
-+            let lang_v = ensure_lang(&mut results, &r.lang);
-+            let mode_v = ensure_mode(lang_v, mode, Some(r.hash.clone()));
-+            let model_v = ensure_model(mode_v, &r.model_name);
-+            model_v.route_api_model = r.route_api_model.clone();
-+
-+            let mut sanitized = r.clone();
-+            sanitized.sanitize_for_commit();
-+            model_v.tasks.insert(r.task.clone(), sanitized);
-         }
--        normalize_model_names(&mut results);
- 
-         let url = format!("{}/api/llm-benchmark-upload", self.base_url);
-         let client = self.client()?;
-@@ -444,6 +437,78 @@ impl ApiClient {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn uploads_api_ids_without_converting_them_to_display_names() {
-+        use std::io::{BufRead, BufReader, Read, Write};
-+        use std::net::TcpListener;
-+        use std::time::{Duration, Instant};
-+
-+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-+        let url = format!("http://{}", listener.local_addr().unwrap());
-+        listener.set_nonblocking(true).unwrap();
-+        let server = std::thread::spawn(move || {
-+            let deadline = Instant::now() + Duration::from_secs(10);
-+            let mut stream = loop {
-+                match listener.accept() {
-+                    Ok((stream, _)) => break stream,
-+                    Err(e) if e.kind() == std::io::ErrorKind::WouldBlock && Instant::now() < deadline => {
-+                        std::thread::sleep(Duration::from_millis(10));
-+                    }
-+                    Err(e) => panic!("upload request was not received: {e}"),
-+                }
-+            };
-+            stream.set_read_timeout(Some(Duration::from_secs(10))).unwrap();
-+            stream.set_write_timeout(Some(Duration::from_secs(10))).unwrap();
-+            let mut reader = BufReader::new(&stream);
-+            let mut line = String::new();
-+            reader.read_line(&mut line).unwrap();
-+            assert_eq!(line, "POST /api/llm-benchmark-upload HTTP/1.1\r\n");
-+            let mut length = 0;
-+            loop {
-+                line.clear();
-+                assert_ne!(reader.read_line(&mut line).unwrap(), 0);
-+                if line == "\r\n" {
-+                    break;
-+                }
-+                if let Some(value) = line.to_ascii_lowercase().strip_prefix("content-length:") {
-+                    length = value.trim().parse().unwrap();
-+                }
-+            }
-+            let mut body = vec![0; length];
-+            reader.read_exact(&mut body).unwrap();
-+            stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 14\r\nConnection: close\r\n\r\n{\"inserted\":2}").unwrap();
-+            serde_json::from_slice::<serde_json::Value>(&body).unwrap()
-+        });
-+
-+        let outcomes: Vec<RunOutcome> = ["t_001", "t_002"]
-+            .into_iter()
-+            .map(|task| {
-+                serde_json::from_value(json!({
-+                    "hash": "test", "task": task, "lang": "rust", "golden_published": true,
-+                    "model_name": "openai/gpt-5.5", "route_api_model": "gpt-5.5",
-+                    "total_tests": 1, "passed_tests": 1,
-+             
-```
+Signed-off-by: Jason Larabie <[REDACTED_EMAIL]>
+Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
 
-**File**: `tools/xtask-llm-benchmark/src/bench/normalize.rs` (modified, +0/-49)
+**File**: `docs/docs/00200-core-concepts/00200-functions/00500-views.md` (modified, +73/-2)
 ```diff
-@@ -1,30 +1,5 @@
- use crate::bench::types::{LangEntry, ModeEntry, ModelEntry, Results};
+@@ -21,7 +21,7 @@ Views provide several benefits:
  
--/// Normalize all model names in loaded results and merge duplicates.
--pub fn normalize_model_names(root: &mut Results) {
--    for lang in &mut root.languages {
--        for mode in &mut lang.modes {
--            let mut merged: Vec<ModelEntry> = Vec::new();
--            for mut model in mode.models.drain(..) {
--                let canonical = canonical_model_name(&model.name);
--                model.name = canonical;
--                if let Some(existing) = merged.iter_mut().find(|m| m.name == model.name) {
--                    // Merge tasks from duplicate into existing entry
--                    for (task_id, outcome) in model.tasks {
--                        existing.tasks.insert(task_id, outcome);
--                    }
--                    if existing.route_api_model.is_none() {
--                        existing.route_api_model = model.route_api_model;
--                    }
--                } else {
--                    merged.push(model);
--                }
--            }
--            mode.models = merged;
--        }
--    }
--}
--
- pub fn ensure_lang<'a>(root: &'a mut Results, lang: &str) -> &'a mut LangEntry {
-     if let Some(i) = root.languages.iter().position(|x| x.lang == lang) {
-         return &mut root.languages[i];
-@@ -70,27 +45,3 @@ pub fn canonical_mode(mode: &str) -> &str {
-         other => other,
-     }
- }
--
--/// Normalize model names so that OpenRouter-style IDs and case variants
--/// resolve to the canonical display name from model_routes.
--pub fn canonical_model_name(name: &str) -> String {
--    use crate::llm::model_routes::default_model_routes;
--    let lower = name.to_ascii_lowercase();
--    for route in default_model_routes() {
--        // Match by openrouter model id (e.g. "anthropic/claude-sonnet-4.6")
--        if let Some(ref or) = route.openrouter_model
--            && lower == or.to_ascii_lowercase()
--        {
--            return route.display_name.to_string();
--        }
--        // Match by api model id (e.g. "claude-sonnet-4-6")
--        if lower == route.api_model.to_ascii_lowercase() {
--            return route.display_name.to_string();
--        }
--        // Match by case-insensitive display name (e.g. "claude sonnet 4.6")
--        if lower == route.display_name.to_ascii_lowercase() {
--            return route.display_name.to_string();
--        }
--    }
--    name.to_string()
--}
-```
-
-**File**: `tools/xtask-llm-benchmark/src/bench/runner.rs` (modified, +90/-25)
-```diff
-@@ -69,32 +69,37 @@ pub async fn ensure_goldens_built_once(
-     build_goldens_only_for_lang(host, bench_root, lang, selectors, golden_scope).await
- }
+ ## Defining Views
  
--async fn publish_rust_async(
--    publisher: SpacetimeRustPublisher,
--    host_url: String,
--    wdir: PathBuf,
--    db: String,
--    clear_database: bool,
--) -> Result<PublishedDatabase> {
--    task::spawn_blocking(move || publisher.publish(&host_url, &wdir, &db, clear_database)).await?
--}
--async fn publish_cs_async(
--    publisher: DotnetPublisher,
--    host_url: String,
--    wdir: PathBuf,
--    db: String,
--    clear_database: bool,
--) -> Result<PublishedDatabase> {
--    task::spawn_blocking(move || publisher.publish(&host_url, &wdir, &db, clear_database)).await?
-+fn with_build_cleanup<T>(project: &Path, lang: Lang, publish: impl FnOnce() -> Result<T>) -> Result<T> {
-+    let result = publish();
-+    // Only task-local outputs: never follow the shared Cargo target override or shared caches.
-+    let directories: &[&str] = match lang {
-+        Lang::Rust => &["target"],
-+        Lang::CSharp => &["bin", "obj", ".nuget"],
-+        Lang::TypeScript => &["node_modules", "dist"],
-+    };
-+    for directory in directories {
-+        let path = project.join(directory);
-+        if let Err(error) = fs::remove_dir_all(&path)
-+            && error.kind() != std::io::ErrorKind::NotFound
-+        {
-+            eprintln!("[cleanup] failed to remove build output {}: {error}", path.display());
-+        }
-+    }
-+    result
- }
--async fn publish_ts_async(
--    publisher: TypeScriptPublisher,
+-Views must be declared as `public` with an explicit `name`, and they accept only a context parameter - no user-defined arguments beyond the context type.
++Views must be declared as `public` with an explicit `name`. They take a context parameter and can also accept [user-defined arguments](#views-with-arguments) in TypeScript, C#, and Rust.
+ 
+ <Tabs groupId="server-language" queryString>
+ <TabItem value="typescript" label="TypeScript">
+@@ -84,7 +84,7 @@ export const playersForLevel = spacetimedb.anonymousView(
+ );
+ ```
+ 
+-The handler signature is `(ctx) => rows`, where `rows` must be either an array or option of product values.
++The handler signature is `(ctx) => rows`, or `(ctx, args) => rows` for [views with arguments](#views-with-arguments), where `rows` must be either an array or option of product values.
+ 
+ </TabItem>
+ <TabItem value="csharp" label="C#">
+@@ -812,6 +812,77 @@ SELECT * FROM players_for_level;
+ 
+ When subscribed to, views automatically update when their underlying tables change, providing real-time updates to clients.
+ 
++### Views with Arguments
 +
-+async fn publish_async(
-+    publisher: impl Publisher + 'static,
-+    lang: Lang,
-     host_url: String,
-     wdir: PathBuf,
-     db: String,
-     clear_database: bool,
- ) -> Result<PublishedDatabase> {
--    task::spawn_blocking(move || publisher.publish(&host_url, &wdir, &db, clear_database)).await?
-+    task::spawn_blocking(move || {
-+        with_build_cleanup(&wdir, lang, || publisher.publish(&host_url, &wdir, &db, clear_database))
-+    })
-+    .await?
- }
- 
- async fn delete_database_async(database: PublishedDatabase) -> Result<()> {
-@@ -177,8 +182,9 @@ impl TaskRunner {
-         let host_url = params.host.unwrap_or_else(|| "local".to_owned());
-         let database = match params.lang {
-             Lang::Rust => {
--                publish_rust_async(
-+                publish_async(
-                     self.rust_publisher,
-+                    params.lang,
-                     host_url,
-                     wdir,
-                     params.db_name,
-@@ -187,10 +193,26 @@ impl TaskRunner {
-                 .await?
-             }
-             Lang::CSharp => {
--                publish_cs_async(self.cs_publisher, host_url, wdir, params.db_name, params.clear_database).await?
-+                publish_async(
-+                    self.cs_publisher,
-+                    params.lang,
-+                    host_url,
-+                    wdir,
-+                    params.db_name,
-+                    params.clear_database,
-+                )
-+                .await?
-             }
-             Lang::TypeScript => {
--                publish_ts_async(self.ts_publisher, host_url, wdir, params.db_name, params.clear_database).await?
-+                publish_async(
-+                    self.ts_publisher,
-+                    params.lang,
-+                    host_url,
-+                    wdir,
-+                    params.db_name,
-+                    params.clear_database,
-+                )
-+                .await?
-             }
-         };
- 
-@@ -428,7 +450,7 @@ impl TaskRunner {
-             hash: cfg.hash.to_string(),
-             task: task_id.clone(),
-             lang: cfg.lang_name.to_string(),
--            model_name: cfg.route.display_name.to_string(),
-+            model_name: cfg.route.model_id(),
-             vendor: cfg.route.vendor.slug().to_string(),
-             golden_published: publish_error.is_none(),
-             total_tests: total_tasks as u32,
-@@ -1261,7 +1283,7 @@ fn build_fail_outcome(
-         golden_published: false,
-         category: Some(category),
- 
--        model_name: route.display_name.to_string(),
-+        model_name: route.model_id(),
-         total_tests: 1,
-         passed_tests: 0,
- 
-@@ -1354,3 +1376,46 @@ fn normalize_task_selector(raw: &str) -> Result<String> {
-     }
-     bail!("invalid task selector: {raw}")
- }
++Views can accept arguments to select which data to return. For example, using the player level table defined above, this view returns player level rows at the requested level:
 +
-+#[cfg(test)]
-+mod build_cleanup_tests {
-+    use super::*;
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
 +
-+    #[test]
-+    fn preserves_sources_and_shared_files_after_success_and_failure() {
-+        let root = std::env::temp_dir().join(format!("llm-build-cleanup-{}", std::process::id()));
-+        for (lang, directories) in [
-+            (Lang::Rust, vec!["target"]),
-+            (Lang::CSharp, vec!["bin", "obj", ".nuget"]),
-+            (Lang::TypeScript, vec!["node_modules", "dist"]),
-+        ] {
-+            for succeeds in [true, false] {
-+                let project = root.join("project");
-+                fs::create_dir_all(&project).unwrap();
-+                fs::write(p
-```
-
-**File**: `tools/xtask-llm-benchmark/src/llm/model_routes.rs` (modified, +48/-0)
-```diff
-@@ -63,6 +63,22 @@ static DEFAULT_ROUTES: LazyLock<Vec<ModelRoute>> = LazyLock::new(|| {
- });
- 
- impl ModelRoute {
-+    /// Stable result key shared by direct and OpenRouter routes, independent of display labels.
-+    pub fn model_id(&self) -> String {
-+        if let Some(id) = &self.openrouter_model {
-+            return id.clone();
-+        }
-+        if self.api_model.contains('/') {
-+            return self.api_model.clone();
-+        }
-+        let prefix = match self.vendor {
-+            Vendor::Xai => "x-ai",
-+            Vendor::Meta | Vendor::OpenRouter => return self.api_model.clone(),
-+            vendor => vendor.slug(),
-+        };
-+        format!("{prefix}/{}", self.api_model)
-+    }
++Pass a parameter object before the return type. The handler receives the arguments as an object after the context:
 +
-     pub fn new(display_name: &str, vendor: Vendor, api_model: &str, openrouter_model: Option<&str>) -> Self {
-         Self {
-             display_name: display_name.to_string(),
-@@ -76,3 +92,35 @@ impl ModelRoute {
- pub fn default_model_routes() -> &'static [ModelRoute] {
-     &DEFAULT_ROUTES
- }
++```typescript
++export const playersAtLevel = spacetimedb.anonymousView(
++  { name: 'players_at_level', public: true },
++  { level: t.u64() },
++  t.array(playerLevels.rowType),
++  (ctx, { level }) => Array.from(ctx.db.playerLevels.level.filter(level))
++);
++```
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
++</TabItem>
++<TabItem value="csharp" label="C#">
 +
-+    #[test]
-+    fn model_identity_is_independent_of_labels_and_route_source() {
-+        let mut routes = vec![
-+            ModelRoute::new("GPT-5.5", Vendor::OpenAi, "gpt-5.5", Some("openai/gpt-5.5")),
-+            ModelRoute::new("openai/gpt-5.5", Vendor::OpenRouter, "openai/gpt-5.5", None),
-+            ModelRoute::new("OpenAI: GPT-5.5", Vendor::OpenRouter, "openai/gpt-5.5", None),
-+            ModelRoute::new("Direct model", Vendor::OpenAi, "gpt-5.5", None),
-+        ];
-+        for route in &mut routes {
-+            assert_eq!(route.model_id(), "openai/gpt-5.5");
-+            route.display_name = "Changed label".into();
-+            assert_eq!(route.model_id(), "openai/gpt-5.5");
-+        }
-+        assert_ne!(
-+            ModelRoute::new("Same label", Vendor::OpenAi, "test", None).model_id(),
-+            ModelRoute::new("Same label", Vendor::Anthropic, "test", None).model_id(),
-+        );
-+        assert_eq!(
-+            ModelRoute::new("Grok", Vendor::Xai, "grok-test", None).model_id(),
-+            "x-ai/grok-test"
-+        );
-+        assert_eq!(
-+            ModelRoute::new("Llama", Vendor::Meta, "meta-llama/test", None).model_id(),
-+            "meta-llama/test"
-+        );
-+    }
++Add parameters after the context:
++
++```csharp
++[SpacetimeDB.View(Accessor = "PlayersAtLevel", Name = "players_at_level", Public = true)]
++public static List<PlayerLevel> PlayersAtLevel(AnonymousViewContext ctx, ulong level)
++{
++    return ctx.Db.PlayerLevel.Level.Filter(level).ToList();
 +}
++```
++
++</TabItem>
++<TabItem value="rust" label="Rust">
++
++Add parameters after the context:
++
++```rust
++#[view(accessor = players_at_level, public)]
++fn players_at_level(ctx: &AnonymousViewContext, level: u64) -> Vec<PlayerLevel> {
++    ctx.db.player_level().level().filter(level).collect()
++}
++```
++
++</TabItem>
++<TabItem value="cpp" label="C++">
++
++C++ modules do not yet support views with arguments.
++
++</TabItem>
++</Tabs>
++
++Query or subscribe to the view by passing positional SQL literals in parameter order:
++
++```sql
++SELECT * FROM players_at_level(2);
++```
++> NOTE: When you subscribe to the same view with different arguments the client cache contains the union of the results, and the row callbacks for that view report changes from all subscribed arguments without identifying which arguments produced each row.
++
++Views that return a [query builder](#query-builder-in-views) can also take arguments. Anonymous views are shared among all subscribers that pass the same argument values.
++
++:::note Client query builders
++TypeScript and C# client query builders do not yet support views with arguments. Use SQL strings instead. In the Rust client query builder, a view's accessor takes its arguments directly.
++:::
++
++#### Limitations
++
++- **SQL**: Only `SELECT * FROM view_name(args)` is supported. Queries cannot add `WHERE` clauses, column lists, aggregates, or joins, so put any filtering inside the view.
++- **Arguments**: Arguments must be positional SQL literals that match the declared types. From SQL, parameters can be booleans, integers, strings, byte arrays, `Identity`, `ConnectionId`, `Timestamp`, or `Uuid`. Floating-point parameters, named arguments, and expressions are not supported.
++- **Primary keys**: Views with arguments cannot have a primary key. In TypeScript, primary-key metadata is automatically omitted from the returned row type.
++- **Subscriptions**: Subscribe to each view and set of arguments explicitly. Subscribe-all helpers such as `subscribeToAllTables`, `SubscribeToAllTables`, and `subscribe_to_all_tables` skip views with arguments.
++
+ ## Why Views Cannot Use `.iter()`
+ 
+ You may notice that views can only access table data through indexed lookups (`.find()` and `.filter()` on indexed columns) and table-level metadata lookups like `count()`, not through `.iter()` which scans all rows. This is a deliberate design choice for performance.
 ```
 
-**File**: `tools/xtask-llm-benchmark/src/llm/provider.rs` (modified, +2/-26)
+**File**: `docs/docs/00250-how-to/00800-migrating-from-convex.md` (modified, +8/-5)
 ```diff
-@@ -118,10 +118,7 @@ impl LlmProvider for RouterProvider {
- impl RouterProvider {
-     fn resolve_client<'a>(&'a self, route: &ModelRoute, search_enabled: bool) -> Result<ResolvedClient<'a>> {
-         if search_enabled {
--            let base_model = route
--                .openrouter_model
--                .clone()
--                .unwrap_or_else(|| openrouter_model_id(route.vendor, &route.api_model));
-+            let base_model = route.model_id();
-             return self.resolve_openrouter(format!("{base_model}:online"), None, true);
-         }
+@@ -43,7 +43,7 @@ tables. Use procedures only when you need side effects such as outbound HTTP.
+ | Action                                    | Procedure                                                                 | Use a [procedure](/docs/functions/procedures) when the function needs side effects, especially outbound HTTP. If it only updates database state, migrate it to a reducer.                             |
+ | HTTP Action                               | HTTP handler                                                              | Use an [HTTP handler](/docs/functions/http-handlers) for inbound HTTP routes such as webhooks or public HTTP APIs. Use a procedure for callable side-effecting functions that are not HTTP endpoints. |
+ | Internal query / mutation / action        | Private reducer, private procedure, helper function, or private table     | Keep helper logic unexported when it should not be callable by clients. Use private tables for server-only data.                                                                                      |
+-| Function args                             | Reducer, procedure, or view arguments                                     | Reducers and procedures accept typed arguments. Views currently do not accept user-defined arguments beyond the context.                                                                              |
++| Function args                             | Reducer, procedure, or view arguments                                     | Reducers, procedures, and views accept typed arguments. Views have [argument limitations](/docs/functions/views#limitations).                                                                         |
+ | Function return value                     | Procedure return value, view result, subscribed rows, or event table row  | Reducers should not return data. Put durable state in tables, derived read results in views, one-shot notifications in event tables, and side-effect results in procedure returns.                    |
+ | `ctx.db`                                  | `ctx.db` / `ctx.Db` / `ctx.db.*()`                                        | Reducers and views get transactional database access through their context. Procedures must open a transaction explicitly with `withTx` / `WithTx`.                                                   |
+ | `ctx.auth.getUserIdentity()`              | `ctx.sender`, `ctx.Sender`, `ctx.sender()` and `senderAuth` claims        | Use the caller's `Identity` for authorization. Use auth claims when you need issuer, subject, audience, or custom claims.                                                                             |
+@@ -306,10 +306,13 @@ export const messagesWithAuthors = spacetimeDb.anonymousView(
+ );
+ ```
  
-@@ -152,10 +149,7 @@ impl RouterProvider {
-             });
-         }
+-Views currently do not take arbitrary client arguments. If a Convex query takes
+-arguments, either subscribe with a parameterized SQL/query-builder expression
+-from the client, model the argument as part of the subscribed table data, or
+-create a view whose result can be filtered by the client's subscription.
++If a Convex query takes arguments, define a
++[view with arguments](/docs/functions/views#views-with-arguments) and subscribe
++with `SELECT * FROM view_name(args)`. Arguments must be SQL literals, and the
++subscription cannot add filters, column lists, or joins to the view call. If you
++need filters or argument types that views don't support, you can model the
++arguments as part of the subscribed table data, or create a view whose result
++can be filtered by the client's subscription.
  
--        let model = route
--            .openrouter_model
--            .clone()
--            .unwrap_or_else(|| openrouter_model_id(route.vendor, &route.api_model));
-+        let model = route.model_id();
-         self.resolve_openrouter(model, Some(vendor.display_name()), false)
-     }
+ ### 5. Split actions into reducers and procedures
  
-@@ -180,21 +174,3 @@ impl RouterProvider {
-         })
-     }
- }
--
--/// Map a vendor + bare model id to the `vendor/model` namespace that OpenRouter requires.
--/// If the model id already contains `/` it is returned as-is (e.g. `google/gemini-3.1-pro-preview`).
--fn openrouter_model_id(vendor: Vendor, api_model: &str) -> String {
--    if api_model.contains('/') {
--        return api_model.to_string();
--    }
--    let prefix = match vendor {
--        Vendor::Anthropic => "anthropic",
--        Vendor::OpenAi => "openai",
--        Vendor::Xai => "x-ai",
--        Vendor::DeepSeek => "deepseek",
--        Vendor::Google => "google",
--        // Meta rows already carry a full `vendor/model` id (caught by the `/` check above).
--        Vendor::Meta | Vendor::OpenRouter => return api_model.to_string(),
--    };
--    format!("{}/{}", prefix, api_model)
--}
 ```
 
 ---
 
-### Incident Patch 2: `09dd8e1d` (2026-10-20)
-**Commit Message**: Promoting our "How To Guides" to top-level documentation. (#6343)
+### Incident Patch 2: `8d51670a` (2026-10-22)
+**Commit Message**: CI - check and refresh outdated rustup (#6351)
 
-Let's make these important recipes easier to find. They shouldn't be
-hidden behind menu-diving.
+# Description of Changes
 
-(As part of this, "Developer Resources -> Resources -> *" becomes just
-"Developer Resources -> *".)
+Updates the CI to install updated rustup, where necessary.
 
-<img width="316" height="715" alt="Screenshot 2026-10-20 at 11 53 57"
-src="https://github.com/user-attachments/assets/88800106-b86c-4958-9606-43790c2909d9"
-/>
+# API and ABI breaking changes
 
-
+None.
 
 # Rollback safety impact
 
 n/a
 
-**File**: `docs/docs/00100-intro/00100-getting-started/00400-key-architecture.md` (modified, +1/-1)
+# Expected complexity level and risk
+
+1
+
+# Testing
+If the existing CI passes, I'm happy.
+
+Spot-checked the rustup step to ensure that it's installing 1.29.2.
+
+---------
+
+Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
+
+**File**: `.github/actions/ensure-rustup/action.yml` (added, +48/-0)
 ```diff
-@@ -19,7 +19,7 @@ A database exports [tables](#table), which store data, and [reducers](#reducer),
- 
- A database's schema and business logic is specified by a piece of software called a **module**. Modules can be written in C#, C++, Rust or TypeScript.
- 
--(Technically, a SpacetimeDB module is a [WebAssembly module](https://developer.mozilla.org/en-US/docs/WebAssembly) or JavaScript bundle, that imports a specific low-level [WebAssembly ABI](../../00300-resources/00200-reference/00300-internals/00100-module-abi-reference.md) and exports a small number of special functions. However, the SpacetimeDB [server-side libraries](../../00200-core-concepts/00100-databases.md) hide these low-level details. As a developer, writing a module is mostly like writing any other application, except for the fact that a [special CLI tool](https://spacetimedb.com/install) is used to deploy the application.)
-+(Technically, a SpacetimeDB module is a [WebAssembly module](https://developer.mozilla.org/en-US/docs/WebAssembly) or JavaScript bundle, that imports a specific low-level [WebAssembly ABI](../../00300-resources/00300-internals/00100-module-abi-reference.md) and exports a small number of special functions. However, the SpacetimeDB [server-side libraries](../../00200-core-concepts/00100-databases.md) hide these low-level details. As a developer, writing a module is mostly like writing any other application, except for the fact that a [special CLI tool](https://spacetimedb.com/install) is used to deploy the application.)
- 
- ## Table
- 
+@@ -0,0 +1,48 @@
++name: Ensure updated rustup
++description: Update or install rustup and print its version, preserving Rust toolchains
++runs:
++  using: composite
++  steps:
++    - name: Check whether rustup is installed
++      id: rustup
++      shell: bash
++      run: |
++        if which rustup; then
++          echo "installed=true" >> "$GITHUB_OUTPUT"
++        else
++          echo "installed=false" >> "$GITHUB_OUTPUT"
++        fi
++
++    - name: Update rustup
++      id: update
++      continue-on-error: true # Package-managed rustup may disable self-update.
++      if: steps.rustup.outputs.installed == 'true'
++      shell: bash
++      run: rustup self update
++
++    - name: Install rustup on Linux or macOS if needed
++      if: (steps.rustup.outputs.installed == 'false' || steps.update.outcome == 'failure') && runner.os != 'Windows'
++      shell: bash
++      run: |
++        curl --proto '=https' --tlsv1.2 --retry 3 -fsSL https://sh.rustup.rs \
++          | sh -s -- -y --no-modify-path --default-toolchain none
++        echo "${CARGO_HOME:-$HOME/.cargo}/bin" >> "$GITHUB_PATH"
++
++    - name: Install rustup on Windows if needed
++      if: (steps.rustup.outputs.installed == 'false' || steps.update.outcome == 'failure') && runner.os == 'Windows'
++      shell: bash
++      run: |
++        case "$RUNNER_ARCH" in
++          X64) host_arch=x86_64 ;;
++          ARM64) host_arch=aarch64 ;;
++          *) echo "Unsupported Windows architecture: $RUNNER_ARCH" >&2; exit 1 ;;
++        esac
++        installer="$(mktemp -d)/rustup-init.exe"
++        curl --proto '=https' --tlsv1.2 --retry 3 -fsSL \
++          "https://win.rustup.rs/$host_arch" -o "$installer"
++        "$installer" -y --no-modify-path --default-toolchain none
++        echo "$(cygpath -u "${CARGO_HOME:-$USERPROFILE/.cargo}")/bin" >> "$GITHUB_PATH"
++
++    - name: Print updated rustup version
++      shell: bash
++      run: rustup --version
 ```
 
-**File**: `docs/docs/00100-intro/00100-getting-started/00500-faq.md` (modified, +1/-1)
+**File**: `.github/workflows/benchmarks.yml` (modified, +21/-2)
 ```diff
-@@ -199,7 +199,7 @@ This is not recommended. While SpacetimeDB 2.0 no longer exposes reducer argumen
+@@ -68,6 +68,14 @@ jobs:
+         if: ${{ env.PR_NUMBER }}
+         run: echo "PR_REF=$(gh pr view $PR_NUMBER --json headRefName --jq .headRefName)" >>"$GITHUB_ENV"
  
- ### How do I create a new localhost identity?
++      - name: Checkout trusted rustup action
++        uses: actions/checkout@v4
++        with:
++          ref: ${{ github.sha }}
++
++      - name: Check and update rustup
++        uses: ./.github/actions/ensure-rustup
++
+       - name: Checkout sources
+         uses: actions/checkout@v4
+         with:
+@@ -200,11 +208,10 @@ jobs:
+         run: |
+           rm -fr /stdb/*
  
--Send a `POST /v1/identity` request to your SpacetimeDB instance. The response includes a new identity and token. See the [HTTP API reference](../../00300-resources/00200-reference/00200-http-api/00200-identity.md#post-v1identity) for details.
-+Send a `POST /v1/identity` request to your SpacetimeDB instance. The response includes a new identity and token. See the [HTTP API reference](../../00300-resources/00200-http-api/00200-identity.md#post-v1identity) for details.
+-      - name: Install valgrind & iai-callgrind-runner
++      - name: Install benchmark system dependencies
+         run: |
+           apt-get update
+           apt-get install -y valgrind protobuf-compiler bash sudo curl gh
+-          cargo install --git https://github.com/clockworklabs/iai-callgrind.git --branch main iai-callgrind-runner
+           git config --global --add safe.directory /__w/SpacetimeDB/SpacetimeDB
  
- :::warning
- Identities issued by SpacetimeDB acting as its own identity provider are tied to a single token that does not expire. If that token is lost, there is no way to recover or re-authenticate as that identity. This approach is recommended for **development only**. For production applications, use an external OIDC provider (SpacetimeAuth, Auth0, Clerk, etc.) which provides proper token lifecycle management.
+       # can't do this off self hosted:
+@@ -231,6 +238,18 @@ jobs:
+         shell: bash
+         run: echo "PR_REF=$(gh pr view $PR_NUMBER --json headRefName --jq .headRefName)" >>"$GITHUB_ENV"
+ 
++      - name: Checkout trusted rustup action
++        uses: actions/checkout@v4
++        with:
++          ref: ${{ github.sha }}
++
++      # Rustup comes from the job container, so updating the fleet VM image does not update it.
++      - name: Check and update rustup
++        uses: ./.github/actions/ensure-rustup
++
++      - name: Install iai-callgrind-runner
++        run: cargo install --git https://github.com/clockworklabs/iai-callgrind.git --branch main iai-callgrind-runner
++
+       - name: Checkout sources
+         uses: actions/checkout@v3
+         with:
 ```
 
-**File**: `docs/docs/00100-intro/00200-quickstarts/00400-typescript.md` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +7/-0)
 ```diff
-@@ -128,6 +128,6 @@ See [automatic reconnection](../../00200-core-concepts/00600-clients/00700-types
+@@ -1577,6 +1577,10 @@ jobs:
+       - *find-git-ref
+       - *checkout-sources
  
- ## Next steps
- 
--- [Unit test your module](../../00300-resources/00100-how-to/00900-unit-testing.md) without starting a server
-+- [Unit test your module](../../00250-how-to/00900-unit-testing.md) without starting a server
- - See the [Chat App Tutorial](../00300-tutorials/00100-chat-app.md) for a complete example
- - Read the [TypeScript SDK Reference](../../00200-core-concepts/00600-clients/00700-typescript-reference.md) for detailed API docs
++      # Fleet VM images maintain rustup; only update it here for the other runners in this matrix.
++      - name: Check and update rustup
++        if: ${{ matrix.runner != 'spacetimedb-linux-small' }}
++        uses: ./.github/actions/ensure-rustup
+       - name: Install Rust
+         uses: dsherret/rust-toolchain-file@v1
+       - name: Set default rust toolchain
+@@ -1666,6 +1670,9 @@ jobs:
+         uses: actions/checkout@v4
+         with:
+           ref: ${{ env.GIT_REF }}
++      # Rustup comes from the job container, so updating the fleet VM image does not update it.
++      - name: Check and update rustup
++        uses: ./.github/actions/ensure-rustup
+       - uses: dsherret/rust-toolchain-file@v1
+       - name: Set default rust toolchain
+         run: rustup default $(rustup show active-toolchain | cut -d' ' -f1)
 ```
 
-**File**: `docs/docs/00100-intro/00200-quickstarts/00500-rust.md` (modified, +1/-1)
+**File**: `.github/workflows/llm-benchmark-periodic.yml` (modified, +2/-0)
 ```diff
-@@ -118,6 +118,6 @@ spacetime logs
+@@ -280,6 +280,8 @@ jobs:
+       - name: Checkout repository
+         uses: actions/checkout@v4
  
- ## Next steps
++      - name: Check and update rustup
++        uses: ./.github/actions/ensure-rustup
+       - uses: dsherret/rust-toolchain-file@v1
  
--- [Unit test your module](../../00300-resources/00100-how-to/00900-unit-testing.md) without starting a server
-+- [Unit test your module](../../00250-how-to/00900-unit-testing.md) without starting a server
- - See the [Chat App Tutorial](../00300-tutorials/00100-chat-app.md) for a complete example
- - Read the [Rust SDK Reference](../../00200-core-concepts/00600-clients/00500-rust-reference.md) for detailed API docs
+       - name: Download analysis reports
 ```
 
-**File**: `docs/docs/00100-intro/00300-tutorials/00400-unreal-tutorial/00300-part-2.md` (modified, +2/-2)
+**File**: `.github/workflows/package.yml` (modified, +4/-0)
 ```diff
-@@ -875,7 +875,7 @@ void AGameManager::HandleSubscriptionApplied(FSubscriptionEventContext& Context)
+@@ -56,6 +56,10 @@ jobs:
+           echo "CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++"                 >> $GITHUB_ENV
+           echo "AR_aarch64_unknown_linux_gnu=aarch64-linux-gnu-ar"                   >> $GITHUB_ENV
  
- Here we configure the connection to the database, by passing it some callbacks in addition to providing the `ServerUri` and `DatabaseName` to the connection. When the client connects, the SpacetimeDB SDK will call the `HandleConnect` method, allowing us to start up the game.
- 
--In our `HandleConnect` callback we build a subscription and are calling `Subscribe` and subscribing to all data in the database. This will cause SpacetimeDB to synchronize the state of all your tables with your Unreal client's SpacetimeDB SDK's "client cache". You can also subscribe to specific tables using SQL syntax, e.g. `SELECT * FROM my_table`. Our [SQL documentation](../../../00300-resources/00200-reference/00400-sql-reference.md) enumerates the operations that are accepted in our SQL syntax.
-+In our `HandleConnect` callback we build a subscription and are calling `Subscribe` and subscribing to all data in the database. This will cause SpacetimeDB to synchronize the state of all your tables with your Unreal client's SpacetimeDB SDK's "client cache". You can also subscribe to specific tables using SQL syntax, e.g. `SELECT * FROM my_table`. Our [SQL documentation](../../../00300-resources/00400-sql-reference.md) enumerates the operations that are accepted in our SQL syntax.
- </TabItem>
- <TabItem value="blueprint" label="Blueprint">
- 
-@@ -957,7 +957,7 @@ Update the **OnConnect_Event**:
- 
- Here we configure the connection to the database, by passing it some callbacks in addition to providing the `ServerUri` and `DatabaseName` to the connection. When the client connects, the SpacetimeDB SDK will call the `OnConnect_Event` method, allowing us to start up the game.
- 
--In our `OnConnect_Event` callback we build a subscription and are calling `Subscribe` and subscribing to all data in the database. This will cause SpacetimeDB to synchronize the state of all your tables with your Unreal client's SpacetimeDB SDK's "client cache". You can also subscribe to specific tables using SQL syntax, e.g. `SELECT * FROM my_table`. Our [SQL documentation](../../../00300-resources/00200-reference/00400-sql-reference.md) enumerates the operations that are accepted in our SQL syntax.
-+In our `OnConnect_Event` callback we build a subscription and are calling `Subscribe` and subscribing to all data in the database. This will cause SpacetimeDB to synchronize the state of all your tables with your Unreal client's SpacetimeDB SDK's "client cache". You can also subscribe to specific tables using SQL syntax, e.g. `SELECT * FROM my_table`. Our [SQL documentation](../../../00300-resources/00400-sql-reference.md) enumerates the operations that are accepted in our SQL syntax.
- </TabItem>
- </Tabs>
- 
++      # Fleet VM images maintain rustup; only update it here for the other runners in this matrix.
++      - name: Check and update rustup
++        if: ${{ matrix.runner != 'spacetimedb-windows-runner' }}
++        uses: ./.github/actions/ensure-rustup
+       - name: Install Rust
+         uses: dsherret/rust-toolchain-file@v1
+       - name: Set default rust toolchain
 ```
 
-**File**: `docs/docs/00200-core-concepts/00100-databases.md` (modified, +10/-10)
+**File**: `.github/workflows/release.yml` (modified, +2/-0)
 ```diff
-@@ -98,11 +98,11 @@ See [`spacetime publish`](./00100-databases/00300-spacetime-publish.md) for deta
+@@ -318,6 +318,8 @@ jobs:
  
- When you republish to an existing database, SpacetimeDB attempts to automatically migrate the schema. For details on what changes are supported and migration strategies:
- 
--- [1.x to 2.0 Upgrade Notes](../00300-resources/00100-how-to/00600-migrating-to-2.0.md) - Required reading before major-version upgrades.
-+- [1.x to 2.0 Upgrade Notes](../00250-how-to/00600-migrating-to-2.0.md) - Required reading before major-version upgrades.
- - [Automatic Migrations](./00100-databases/00500-migrations/00200-automatic-migrations.md) - Learn which schema changes are safe, breaking, or forbidden.
- - [Incremental Migrations](./00100-databases/00500-migrations/00300-incremental-migrations.md) - Advanced pattern for complex schema changes.
- 
--For all available publish options, see the [`spacetime publish` CLI reference](../00300-resources/00200-reference/00100-cli-reference/00100-cli-reference.md#spacetime-publish).
-+For all available publish options, see the [`spacetime publish` CLI reference](../00300-resources/00100-cli-reference/00100-cli-reference.md#spacetime-publish).
- 
- ### Deleting a Database
- 
-@@ -118,7 +118,7 @@ You'll be prompted to confirm the deletion. Use `--yes` to skip the confirmation
- Deleting a database is permanent and cannot be undone. All data will be lost.
- :::
- 
--For more options, see the [`spacetime delete` CLI reference](../00300-resources/00200-reference/00100-cli-reference/00100-cli-reference.md#spacetime-delete).
-+For more options, see the [`spacetime delete` CLI reference](../00300-resources/00100-cli-reference/00100-cli-reference.md#spacetime-delete).
- 
- ### Querying with SQL
- 
-@@ -140,7 +140,7 @@ spacetime sql --anonymous <DATABASE_NAME> "SELECT * FROM user"
- 
- This executes the query as an anonymous client, respecting table visibility rules.
- 
--For more SQL options, see the [`spacetime sql` CLI reference](../00300-resources/00200-reference/00100-cli-reference/00100-cli-reference.md#spacetime-sql).
-+For more SQL options, see the [`spacetime sql` CLI reference](../00300-resources/00100-cli-reference/00100-cli-reference.md#spacetime-sql).
- 
- ### Viewing Logs
- 
-@@ -166,7 +166,7 @@ To view only the last N lines:
- spacetime logs --num-lines 100 <DATABASE_NAME>
- ```
- 
--For more logging options, see the [`spacetime logs` CLI reference](../00300-resources/00200-reference/00100-cli-reference/00100-cli-reference.md#spacetime-logs).
-+For more logging options, see the [`spacetime logs` CLI reference](../00300-resources/00100-cli-reference/00100-cli-reference.md#spacetime-logs).
- 
- ### Listing Your Databases
- 
-@@ -219,7 +219,7 @@ Once you have the basics down, explore these essential topics:
- - **[Error Handling](./00200-functions/00300-reducers/00600-error-handling.md)** - Handle errors gracefully in reducers
- - **[Lifecycle Reducers](./00200-functions/00300-reducers/00500-lifecycle.md)** - Respond to system events like initialization and client connections
- - **[Automatic Migrations](./00100-databases/00500-migrations/00200-automatic-migrations.md)** - Understand how schema changes work
--- **[Logging](../00300-resources/00100-how-to/00300-logging.md)** - Debug and monitor your module with logging
-+- **[Logging](../00250-how-to/00300-logging.md)** - Debug and monitor your module with logging
- 
- ### Advanced Features
- 
-@@ -229,18 +229,18 @@ Ready to level up? Dive into these advanced capabilities:
- - **[Views](./00200-functions/00500-views.md)** - Create computed, subscribable queries
- - **[Schedule Tables](./00300-tables/00500-schedule-tables.md)** - Schedule reducers to run at specific times
- - **[Incremental Migrations](./00100-databases/00500-migrations/00300-incremental-migrations.md)** - Handle complex schema changes
--- **[SQL Queries](../00300-resources/00200-reference/00400-sql-reference.md)** - Query your database with SQL
-+- **[SQL Queries](../00300-resources/00400-sql-reference.md)** - Query your database with SQL
- 
- ### Deployment
- 
- When you're ready to go live:
- 
--- **[Deploy to MainCloud](../00300-resources/00100-how-to/00100-deploy/00100-maincloud.md)** - Host your database on SpacetimeDB's managed service
--- **[Self-Hosting](../00300-resources/00100-how-to/00100-deploy/00200-self-hosting.md)** - Run your own SpacetimeDB instance
-+- **[Deploy to MainCloud](../00250-how-to/00100-deploy/00100-maincloud.md)** - Host your database on SpacetimeDB's managed service
-+- **[Self-Hosting](../00250-how-to/00100-deploy/00200-self-hosting.md)** - Run your own SpacetimeDB instance
- 
- ## Next Steps
- 
- - Learn about [Tables](./00300-tables.md) to define your database schema
- - Create [Reducers](./00200-functions/00300-reducers/00300-reducers.md) to modify database state
- - Understand [Subscriptions](./00400-subscriptions.md) for real-time data sync
--- Review the [CLI Reference](../00300-resources/00200-reference/00100-cli-reference/00100-cli-reference.md) for all available commands
-+- Review the [CLI Re
-```
-
-**File**: `docs/docs/00200-core-concepts/00100-databases/00300-spacetime-publish.md` (modified, +3/-3)
-```diff
-@@ -29,7 +29,7 @@ This compiles your module and validates its structure.
- If you're publishing your module, you don't need to run `spacetime build` separately - `spacetime publish` will automatically build your module if needed.
- :::
- 
--For all build options, see the [`spacetime build` CLI reference](../../00300-resources/00200-reference/00100-cli-reference/00100-cli-reference.md#spacetime-build).
-+For all build options, see the [`spacetime build` CLI reference](../../00300-resources/00100-cli-reference/00100-cli-reference.md#spacetime-build).
- 
- ## Publishing Modules
- 
-@@ -88,7 +88,7 @@ spacetime publish --break-clients <DATABASE_NAME>
- 
- ⚠️ **Warning:** This will break existing clients that haven't been updated to match your new schema.
- 
--If this publish is a major upgrade from 1.x to 2.0, read [1.x to 2.0 Upgrade Notes](../../00300-resources/00100-how-to/00600-migrating-to-2.0.md) first.
-+If this publish is a major upgrade from 1.x to 2.0, read [1.x to 2.0 Upgrade Notes](../../00250-how-to/00600-migrating-to-2.0.md) first.
- 
- #### Clearing Data
- 
-@@ -102,7 +102,7 @@ spacetime publish <DATABASE_NAME> --delete-data
- 
- ### Publishing Options
- 
--For all available publishing options and flags, see the [`spacetime publish` CLI reference](../../00300-resources/00200-reference/00100-cli-reference/00100-cli-reference.md#spacetime-publish).
-+For all available publishing options and flags, see the [`spacetime publish` CLI reference](../../00300-resources/00100-cli-reference/00100-cli-reference.md#spacetime-publish).
- 
- ### Environment Variables
- 
-```
-
-**File**: `docs/docs/00200-core-concepts/00100-databases/00500-migrations/00200-automatic-migrations.md` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ The "schema" refers to the collection of tables, reducers, procedures, views, an
- :::
- 
- :::warning
--If you are upgrading an existing 1.x database to 2.0, review [1.x to 2.0 Upgrade Notes](../../../00300-resources/00100-how-to/00600-migrating-to-2.0.md) before publishing.
-+If you are upgrading an existing 1.x database to 2.0, review [1.x to 2.0 Upgrade Notes](../../../00250-how-to/00600-migrating-to-2.0.md) before publishing.
- :::
- 
- ## ✅ Safe Changes (Always Allowed)
+       # The TypeScript package's prepublish hook builds the portable datastore
+       # Wasm from source, so npm publishing needs Rust and wasm-bindgen.
++      - name: Check and update rustup
++        uses: ./.github/actions/ensure-rustup
+       - name: Install Rust toolchain
+         uses: dsherret/rust-toolchain-file@v1
+       - name: Set default rust toolchain
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6354** (2026-10-22): Release - Work around crates.io ratelimiting (@bfops)
+- **PR #6353** (2026-10-22): View docs updated for the current args feature (@JasonAtClockwork)
+- **PR #6351** (2026-10-22): CI - check and refresh outdated rustup (@bfops)
 - **PR #6345** (closed): ci: qualify Linux and Windows staging runners (@bfops)
 - **PR #6343** (2026-10-20): Promoting our "How To Guides" to top-level documentation. (@krisajenkins)
 - **PR #6324** (2026-10-19): Enable simplified arguments for views (@JasonAtClockwork)
-- **PR #6312** (2026-10-16): zip crate version bump. (@Shubham8287)
-- **PR #6311** (2026-10-16): Restore direct page storage for resident tables (@joshua-spacetime)
-- **PR #6309** (2026-10-15): Make the TypeScript submodules installable with SpacetimeDB 2.12 (@bradleyshep)
 
 ---
 
@@ -1552,43 +1196,55 @@ n/a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. LLM Benchmarks: Use stable model IDs and clean up build outputs (#6034)
+## X. View docs updated for the current args feature (#6353)
 
 **RULE**:
-When implementing operations in `.github/workflows/llm-benchmark-periodic.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/00200-core-concepts/00200-functions/00500-views.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b0ac514`: LLM Benchmarks: Use stable model IDs and clean up build outputs (#6034). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18cebee8`: View docs updated for the current args feature (#6353). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/llm-benchmark-periodic.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/00200-core-concepts/00200-functions/00500-views.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Check disk usage before benchmarks
-        run: |
-          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
-          du -sh "$CARGO_TARGET_DIR"
+Views must be declared as `public` with an explicit `name`. They take a context parameter and can also accept [user-defined arguments](#views-with-arguments) in TypeScript, C#, and Rust.
+The handler signature is `(ctx) => rows`, or `(ctx, args) => rows` for [views with arguments](#views-with-arguments), where `rows` must be either an array or option of product values.
+### Views with Arguments
 
-      - name: Check disk usage after benchmarks
-        if: always()
-        run: |
-          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
-          if [ -d "$CARGO_TARGET_DIR" ]; then
-            du -sh "$CARGO_TARGET_DIR"
-          fi
-          if [ -d "$CARGO_TARGET_DIR/llm-runs" ]; then
-            du -sh "$CARGO_TARGET_DIR/llm-runs"
-          fi
+Views can accept arguments to select which data to return. For example, using the player level table defined above, this view returns player level rows at the requested level:
 
+<Tabs groupId="server-language" queryString>
+<TabItem value="typescript" label="TypeScript">
+
+Pass a parameter object before the return type. The handler receives the arguments as an object after the context:
+
+```typescript
+export const playersAtLevel = spacetimedb.anonymousView(
+  { name: 'players_at_level', public: true },
+  { level: t.u64() },
+  t.array(playerLevels.rowType),
+  (ctx, { level }) => Array.from(ctx.db.playerLevels.level.filter(level))
+);
+```
+
+</TabItem>
+<TabItem value="csharp" label="C#">
+
+Add parameters after the context:
+
+```csharp
+[SpacetimeDB.View(Accessor = "PlayersAtLevel", Name = "players_at_lev
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Views must be declared as `public` with an explicit `name`, and they accept only a context parameter - no user-defined arguments beyond the context type.
+The handler signature is `(ctx) => rows`, where `rows` must be either an array or option of product values.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b0ac514` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18cebee8` are properly handled with clean fallback behavior.

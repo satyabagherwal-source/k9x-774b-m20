@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `9e6e1e34`  
+> **Source Version**: `f57b06ff`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:23:59.073Z  
+> **Timestamp**: 2026-10-22T20:45:25.128Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:23:58.145Z  
+> **Harvest Timestamp**: 2026-10-22T20:45:23.985Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23028 stars
+- **Stars / Engagement**: 23049 stars
 
 ---
 
@@ -940,11 +940,11 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2850** (2026-10-21): **fix(buffer): guard set_stringn against out-of-area coordinates (#2810)**
+  *Symptoms*: ### Problem In #2810, `Buffer::set_stringn` panicked when called with coordinates outside the buffer's area (e.g., in a 57x1 terminal split inside tmux where a multi-row layout writes to row `y = 1`).  `Buffer::set_stringn` computed `remaining_width` from `self.area.right().saturating_sub(x)`, but did not verify whether `y` fell within `[area.top(), area.bottom())` or whether `x` was already outside the area. Writing to `self[(x, y)]` subsequently panicked in `Buffer::index_of`.  ### Solution Add an early-return guard at the start of `Buffer::set_stringn`: ```rust if y < self.area.top() || y >= self.area.bottom() || x >= self.area.right() {     return (x, y); } ```  If coordinates fall outside the buffer area, it safely early returns without mutating buffer contents or panicking, mirroring the safe behavior in `Buffer::set_style`.  Added unit test `set_stringn_does_not_panic_when_out_of_area` in `ratatui-core/src/buffer/buffer.rs`.  Fixes #2810.
+
 - **Issue #2849** (2026-10-20): **chore(ci): restrict release workflow to main**
   *Symptoms*: <!-- Please read CONTRIBUTING.md before submitting any pull request. --> 
-
-- **Issue #2847** (2026-10-19): **build(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1**
-  *Symptoms*: Bumps [zizmorcore/zizmor-action](https://github.com/zizmorcore/zizmor-action) from 0.6.4 to 0.7.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/zizmorcore/zizmor-action/releases">zizmorcore/zizmor-action's releases</a>.</em></p> <blockquote> <h2>v0.7.1</h2> <h1>zizmor changes</h1> <h2>Bug Fixes 🐛🔗</h2> <ul> <li>Fixed a regression in 1.31.0 where some ignore comments/configurations would no longer apply to the dangerous-triggers audit</li> </ul> <h1>action changes</h1> <p>The default version of zizmor is now 1.31.1.</p> <h2>What's Changed</h2> <ul> <li>Sync zizmor versions by <a href="https://github.com/github-actions"><code>@​github-actions</code></a>[bot] in <a href="https://redirect.github.com/zizmorcore/zizmor-action/pull/178">zizmorcore/zizmor-action#178</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/zizmorcore/zizmor-action/compare/v0.7.0...v0.7.1">https://github.com/zizmorcore/zizmor-action/compare/v0.7.0...v0.7.1</a></p> <h2>v0.7.0</h2> <p><a href="https://github.com/sponsors/woodruffw/">Sponsorship is appreciated!</a></p> <h1>zizmor notes</h1> <h2>Enhancements 🌱<a href="https://docs.zizmor.sh/release-notes/#enhancements">🔗</a></h2> <ul> <li> <p>The <a href="https://docs.zizmor.sh/audits/#typosquat-uses">typosquat-uses</a> audit now supports pre-commit config inputs (<a href="https://redirect.github.com/zizmorcore/zizmor/issues/2437">#2437</a>)</p> </li> <li> <p>The <a href="https://docs.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -961,48 +961,74 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e6e1e34` (2026-10-20)
-**Commit Message**: chore(ci): restrict release workflow to main (#2849)
+### Incident Patch 1: `f57b06ff` (2026-10-21)
+**Commit Message**: fix(buffer): guard set_stringn against out-of-area coordinates (#2850)
 
-<!-- Please read CONTRIBUTING.md before submitting any pull request. -->
+`Buffer::set_stringn` panicked when called with a position outside the
+buffer's area, e.g. writing to row 1 of a one-row terminal. The guard
+only bounded the width against `area.right()`. It never checked `y`, or
+an `x` left of the area.
 
-**File**: `.github/workflows/release-plz.yml` (modified, +3/-2)
+`set_stringn` now returns early when `(x, y)` is outside the area, using
+`Rect::contains`. It writes nothing and returns `(x, y)`. `set_string`,
+`set_span`, `set_line` and `with_lines` get the same behavior.
+Indexing a buffer with `buf[(x, y)]` still panics on out-of-area
+positions, as before.
+
+Fixes #2810
+
+Co-authored-by: Josh McKinney <[REDACTED_EMAIL]>
+
+**File**: `ratatui-core/src/buffer/buffer.rs` (modified, +18/-0)
 ```diff
-@@ -8,6 +8,7 @@ on:
-   push:
-     branches:
-       - main
-+  # The privileged jobs below also require refs/heads/main for manual runs.
-   workflow_dispatch:
+@@ -333,6 +333,8 @@ impl Buffer {
+     /// until the end of the line. Skips zero-width graphemes and control characters.
+     ///
+     /// Use [`Buffer::set_string`] when the maximum amount of characters can be printed.
++    ///
++    /// If `(x, y)` is outside the buffer's area, nothing is written and `(x, y)` is returned.
+     pub fn set_stringn<T, S>(
+         &mut self,
+         mut x: u16,
+@@ -346,6 +348,9 @@ impl Buffer {
+         S: Into<Style>,
+     {
+         let max_width = max_width.try_into().unwrap_or(u16::MAX);
++        if !self.area.contains(Position::new(x, y)) {
++            return (x, y);
++        }
+         let mut remaining_width = self.area.right().saturating_sub(x).min(max_width);
+         let graphemes = UnicodeSegmentation::graphemes(string.as_ref(), true)
+             .filter(|symbol| !symbol.contains(char::is_control))
+@@ -1075,6 +1080,19 @@ mod tests {
+         assert_eq!(buffer, expected);
+     }
  
- jobs:
-@@ -20,7 +21,7 @@ jobs:
-       contents: write
-       id-token: write
-     runs-on: ubuntu-latest
--    if: ${{ github.repository_owner == 'ratatui' }}
-+    if: ${{ github.repository_owner == 'ratatui' && github.ref == 'refs/heads/main' }}
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -48,7 +49,7 @@ jobs:
-       pull-requests: write
-       contents: write
-     runs-on: ubuntu-latest
--    if: ${{ github.repository_owner == 'ratatui' }}
-+    if: ${{ github.repository_owner == 'ratatui' && github.ref == 'refs/heads/main' }}
-     concurrency:
-       group: release-plz-${{ github.ref }}
-       cancel-in-progress: false
++    #[rstest]
++    #[case::left(5, 1)]
++    #[case::right(30, 1)]
++    #[case::above(15, 0)]
++    #[case::below(15, 2)]
++    fn set_stringn_out_of_area_is_noop(#[case] x: u16, #[case] y: u16) {
++        let area = Rect::new(10, 1, 20, 1);
++        let mut buffer = Buffer::empty(area);
++        let pos = buffer.set_stringn(x, y, "hello", 10, Style::default());
++        assert_eq!(pos, (x, y));
++        assert_eq!(buffer, Buffer::empty(area));
++    }
++
+     #[test]
+     fn with_lines() {
+         #[rustfmt::skip]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2850** (2026-10-21): fix(buffer): guard set_stringn against out-of-area coordinates (#2810) (@ronitgupta138)
 - **PR #2849** (2026-10-20): chore(ci): restrict release workflow to main (@orhun)
 - **PR #2847** (2026-10-19): build(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
 - **PR #2846** (2026-10-19): build(deps): bump tombi-toml/setup-tombi from 1.8.0 to 1.8.5 (@dependabot[bot])
 - **PR #2845** (2026-10-19): build(deps): bump taiki-e/install-action from 2.87.27 to 2.87.29 (@dependabot[bot])
 - **PR #2844** (2026-10-19): build(deps): bump kasuari from 0.4.12 to 0.4.13 (@dependabot[bot])
-- **PR #2843** (2026-10-19): build(deps): bump release-plz/action from 0.5.141 to 0.5.142 (@dependabot[bot])
 
 ---
 
@@ -1022,31 +1048,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): restrict release workflow to main (#2849)
+## X. buffer): guard set_stringn against out-of-area coordinates (#2850)
 
 **RULE**:
-When implementing operations in `.github/workflows/release-plz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ratatui-core/src/buffer/buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e6e1e34`: ci): restrict release workflow to main (#2849). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f57b06ff`: buffer): guard set_stringn against out-of-area coordinates (#2850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-plz.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-core/src/buffer/buffer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # The privileged jobs below also require refs/heads/main for manual runs.
-    if: ${{ github.repository_owner == 'ratatui' && github.ref == 'refs/heads/main' }}
-    if: ${{ github.repository_owner == 'ratatui' && github.ref == 'refs/heads/main' }}
+    ///
+    /// If `(x, y)` is outside the buffer's area, nothing is written and `(x, y)` is returned.
+        if !self.area.contains(Position::new(x, y)) {
+            return (x, y);
+        }
+    #[rstest]
+    #[case::left(5, 1)]
+    #[case::right(30, 1)]
+    #[case::above(15, 0)]
+    #[case::below(15, 2)]
+    fn set_stringn_out_of_area_is_noop(#[case] x: u16, #[case] y: u16) {
+        let area = Rect::new(10, 1, 20, 1);
+        let mut buffer = Buffer::empty(area);
+        let pos = buffer.set_stringn(x, y, "hello", 10, Style::default());
+        assert_eq!(pos, (x, y));
+        assert_eq!(buffer, Buffer::empty(area));
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    if: ${{ github.repository_owner == 'ratatui' }}
-    if: ${{ github.repository_owner == 'ratatui' }}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e6e1e34` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f57b06ff` are properly handled with clean fallback behavior.

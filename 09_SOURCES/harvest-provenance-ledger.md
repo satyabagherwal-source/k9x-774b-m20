@@ -4429,3 +4429,5 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `0687b18d` | Multi-dimensional audit evidence | 2026-10-22T20:37:02.790Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9e5b606c` | Multi-dimensional audit evidence | 2026-10-22T20:37:03.456Z |
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `e6b79d9c` | Multi-dimensional audit evidence | 2026-10-22T20:38:54.956Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `f57b06ff` | Multi-dimensional audit evidence | 2026-10-22T20:45:25.584Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `18cebee8` | Multi-dimensional audit evidence | 2026-10-22T20:45:36.986Z |

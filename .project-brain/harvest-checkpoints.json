@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T20:38:54.971Z",
+  "last_updated": "2026-10-22T20:45:37.000Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "0058cadf27a197cae3874d229921d2a2ca4707582062caf1a67925037e3c64d9",
-      "verified_at": "2026-10-20T23:23:59.522Z",
+      "content_hash": "5aa8bfb2751338124c1111c158e597b5142b9bf29924f99adcba9e42301e2a44",
+      "verified_at": "2026-10-22T20:45:25.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:23:59.522Z"
+      "last_updated": "2026-10-22T20:45:25.599Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "74b9996f3f873689219fcf470d30e47e446495be2bbe8c9468e29ae81df26cb8",
-      "verified_at": "2026-10-21T01:23:53.428Z",
+      "content_hash": "c72f6b4d9054b943a0674804f18936a48c8d8c547c33773140f1eb8e299811d6",
+      "verified_at": "2026-10-22T20:45:37.000Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:23:53.428Z"
+      "last_updated": "2026-10-22T20:45:37.000Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

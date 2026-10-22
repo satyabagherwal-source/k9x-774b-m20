@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T20:38:54.897Z",
+  "last_updated": "2026-10-22T20:45:36.923Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5972,8 +5972,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "ec3695c6",
-      "content_hash": "74b9996f3f873689219fcf470d30e47e446495be2bbe8c9468e29ae81df26cb8",
+      "source_version": "18cebee8",
+      "content_hash": "c72f6b4d9054b943a0674804f18936a48c8d8c547c33773140f1eb8e299811d6",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -6006,6 +6006,11 @@
           "number": 3474,
           "title": "LLM Benchmarks: Use stable model IDs and clean up build outputs (#6034)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3731,
+          "title": "View docs updated for the current args feature (#6353)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6013,7 +6018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:23:53.380Z",
+      "verified_at": "2026-10-22T20:45:36.909Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39559,8 +39564,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "9e6e1e34",
-      "content_hash": "0058cadf27a197cae3874d229921d2a2ca4707582062caf1a67925037e3c64d9",
+      "source_version": "f57b06ff",
+      "content_hash": "5aa8bfb2751338124c1111c158e597b5142b9bf29924f99adcba9e42301e2a44",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -39583,6 +39588,11 @@
           "number": 3431,
           "title": "ci): restrict release workflow to main (#2849)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3730,
+          "title": "buffer): guard set_stringn against out-of-area coordinates (#2850)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39590,7 +39600,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:23:59.434Z",
+      "verified_at": "2026-10-22T20:45:25.505Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111815,6 +111825,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T20:38:54.885Z"
+    },
+    "rule-3730": {
+      "learning_id": "rule-3730",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3730,
+      "title": "buffer): guard set_stringn against out-of-area coordinates (#2850)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "f57b06ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:45:25.505Z"
+    },
+    "rule-3731": {
+      "learning_id": "rule-3731",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3731,
+      "title": "View docs updated for the current args feature (#6353)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "18cebee8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:45:36.909Z"
     }
   },
   "aliases": {

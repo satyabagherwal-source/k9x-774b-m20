@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T20:38:54.967Z",
-  "total_cycles_completed": 4399,
-  "total_learnings_persisted": 4399,
-  "total_rules_promoted": 3580,
+  "last_updated": "2026-10-22T20:45:36.997Z",
+  "total_cycles_completed": 4401,
+  "total_learnings_persisted": 4401,
+  "total_rules_promoted": 3582,
   "history": [
-    {
-      "timestamp": "2026-10-21T05:54:44.011Z",
-      "repository": "vuetifyjs/vuetify",
-      "learningId": "learn-github-vuetifyjs-vuetify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T06:00:57.854Z",
-      "repository": "JeffLi1993/seo-audit-skill",
-      "learningId": "learn-github-jeffli1993-seo-audit-skill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T06:01:02.762Z",
       "repository": "meshery/meshery",
@@ -1403,6 +1389,20 @@
       "repository": "axios/axios",
       "learningId": "learn-github-axios-axios",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:45:25.596Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:45:36.997Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -4422,3 +4422,5 @@
 | `CYCLE-20261022-52O2` | `2026-10-22T20:37:02.786Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3692` | Yes (`280f5c0d...`) |
 | `CYCLE-20261022-536K` | `2026-10-22T20:37:03.452Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3726` | Yes (`9d02336f...`) |
 | `CYCLE-20261022-7H7T` | `2026-10-22T20:38:54.953Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3727, Rule 3728, Rule 3729` | Yes (`8f3333b0...`) |
+| `CYCLE-20261022-FUML` | `2026-10-22T20:45:25.581Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3730` | Yes (`5aa8bfb2...`) |
+| `CYCLE-20261022-G3FA` | `2026-10-22T20:45:36.982Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3731` | Yes (`c72f6b4d...`) |
