@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:04:42.085Z",
+  "last_updated": "2026-10-22T18:11:15.093Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8650,8 +8650,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "a2353736",
-      "content_hash": "fce7457ab75c117a0b89d671bba007131d8dda0d84c5776fbae7237c87fba601",
+      "source_version": "7db3803a",
+      "content_hash": "246924596d592be6c597431afb361dba74fa3563621c62a459ef16c380ce2644",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -8674,6 +8674,11 @@
           "number": 3430,
           "title": "Parser compatibility fixes (#27483)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3687,
+          "title": "CSV sniffer with comment character, buffer boundary column check and piped read",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8681,7 +8686,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:17:34.906Z",
+      "verified_at": "2026-10-22T18:11:15.083Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33795,8 +33800,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "647a85c3",
-      "content_hash": "3ea50f39f4efee4ec565299895261b640c674479158deb25a91f3ed4b8a51395",
+      "source_version": "1d3897ae",
+      "content_hash": "ba0bce382dd6340b9f463af75a3ed47feb9145a7e757a301db402dadd88eca03",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -33814,6 +33819,11 @@
           "number": 3449,
           "title": "Merge pull request #7297 from moby/dependabot/github_actions/github/codeql-actio",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3686,
+          "title": "Merge pull request #7284 from tonistiigi/req-close-hang-workaround",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33821,7 +33831,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:08:42.369Z",
+      "verified_at": "2026-10-22T18:11:09.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61138,14 +61148,19 @@
       "slug": "webrecorder-pywb",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/pywb",
-      "source_version": "2b310902",
-      "content_hash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
+      "source_version": "5fcffb27",
+      "content_hash": "62f8659edffd679f1eb7ed7c8f35bcf0772bb7bc5e72ce9c8c60c59b5b951734",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "promoted_rules": [
         {
           "number": 2845,
           "title": "test_timeouts failing after slow tests (#1051)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3685,
+          "title": "Merge pull request #1058 from arquivo/igobranco/1671/closest-aggregated-sources",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -61154,7 +61169,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:06:42.773Z",
+      "verified_at": "2026-10-22T18:11:04.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110927,6 +110942,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:04:42.076Z"
+    },
+    "rule-3685": {
+      "learning_id": "rule-3685",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3685,
+      "title": "Merge pull request #1058 from arquivo/igobranco/1671/closest-aggregated-sources",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "5fcffb27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:11:04.227Z"
+    },
+    "rule-3686": {
+      "learning_id": "rule-3686",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3686,
+      "title": "Merge pull request #7284 from tonistiigi/req-close-hang-workaround",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "1d3897ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:11:09.468Z"
+    },
+    "rule-3687": {
+      "learning_id": "rule-3687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3687,
+      "title": "CSV sniffer with comment character, buffer boundary column check and piped read",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "7db3803a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:11:15.083Z"
     }
   },
   "aliases": {

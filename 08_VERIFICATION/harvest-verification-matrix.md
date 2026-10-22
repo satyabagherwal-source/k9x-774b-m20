@@ -4375,3 +4375,6 @@
 | `CYCLE-20261022-OVTE` | `2026-10-22T18:04:29.330Z` | `ducaale/xh` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ducaale-xh-learnings.md` | Yes (`f27d21df...`) |
 | `CYCLE-20261022-P2JU` | `2026-10-22T18:04:38.058Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3683` | Yes (`746cdf66...`) |
 | `CYCLE-20261022-P5OV` | `2026-10-22T18:04:42.127Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3684` | Yes (`be26f657...`) |
+| `CYCLE-20261022-XCKF` | `2026-10-22T18:11:04.287Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3685` | Yes (`62f8659e...`) |
+| `CYCLE-20261022-XGM1` | `2026-10-22T18:11:09.529Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3686` | Yes (`ba0bce38...`) |
+| `CYCLE-20261022-XKXY` | `2026-10-22T18:11:15.142Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3687` | Yes (`24692459...`) |

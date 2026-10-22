@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T18:04:42.139Z",
+  "last_updated": "2026-10-22T18:11:15.157Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "3ea50f39f4efee4ec565299895261b640c674479158deb25a91f3ed4b8a51395",
-      "verified_at": "2026-10-21T00:08:42.450Z",
+      "content_hash": "ba0bce382dd6340b9f463af75a3ed47feb9145a7e757a301db402dadd88eca03",
+      "verified_at": "2026-10-22T18:11:09.543Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:08:42.450Z"
+      "last_updated": "2026-10-22T18:11:09.543Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "fce7457ab75c117a0b89d671bba007131d8dda0d84c5776fbae7237c87fba601",
-      "verified_at": "2026-10-20T23:17:34.987Z",
+      "content_hash": "246924596d592be6c597431afb361dba74fa3563621c62a459ef16c380ce2644",
+      "verified_at": "2026-10-22T18:11:15.156Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:17:34.987Z"
+      "last_updated": "2026-10-22T18:11:15.156Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -13896,14 +13896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-pywb",
-      "content_hash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
-      "verified_at": "2026-10-19T22:06:42.894Z",
+      "content_hash": "62f8659edffd679f1eb7ed7c8f35bcf0772bb7bc5e72ce9c8c60c59b5b951734",
+      "verified_at": "2026-10-22T18:11:04.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:06:42.894Z"
+      "last_updated": "2026-10-22T18:11:04.302Z"
     },
     "Kruszoneq/macUSB": {
       "repository": "Kruszoneq/macUSB",

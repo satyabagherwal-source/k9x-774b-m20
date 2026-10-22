@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
-> **Source Version**: `2b310902`  
+> **Source Version**: `5fcffb27`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:06:42.623Z  
+> **Timestamp**: 2026-10-22T18:11:03.964Z  
 > **Learning ID**: `learn-github-webrecorder-pywb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:06:42.187Z  
+> **Harvest Timestamp**: 2026-10-22T18:11:01.905Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Core Python Web Archiving Toolkit for replay and recording of web archives
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: Dockerfile
-- **Stars / Engagement**: 1708 stars
+- **Stars / Engagement**: 1710 stars
 
 ---
 
@@ -634,8 +634,8 @@ if six.PY3:
         return (a > b) - (a < b)
 
 
-# Buffer size for opening the sorted files searched here (CDX, CDXJ and ZipNum
-# summary files). Each binary search step seeks and reads a single line, so
+# Buffer size for opening the sorted files searched here (CDX, CDXJ, ZipNum
+# summary and path index files). Each binary search step seeks and reads a single line, so
 # the whole buffer is read at each step: with the default buffer size (128 KiB
 # since Python 3.14, 8 KiB before), a lookup reads 16 times more data.
 INDEX_FILE_BUFFER_SIZE = 8192
@@ -743,6 +743,57 @@ def search(reader, key, prev_size=0, compare_func=cmp, block_size=8192):
                          key, prev_size=prev_size,
                          compare_func=compare_func)
     return iter_
+
+
+#=================================================================
+def search_offset(reader, key, compare_func=cmp, block_size=8192):
+    """
+    Return the offset of the first line >= key, or the size of the file if
+    there is none. Unlike search(), the result can be used to read the lines
+    before the match as well, with iter_prev_lines().
+    """
+    offset = binsearch_offset(reader, key, compare_func, block_size)
+
+    reader.seek(offset)
+
+    if offset > 0:
+        reader.readline()  # skip partial line
+
+    while True:
+        offset = reader.tell()
+        line = reader.readline()
+        if not line or compare_func(line.rstrip(), key) >= 0:
+            return offset
+
+
+#=================================================================
+def iter_prev_lines(reader, offset, block_size=8192):
+    """
+    Iterate backwards over the lines before 'offset', which must be the start
+    of a line (or the end of the file), nearest first.
+    Yields (offset, line) tuples, reading the file in 'block_size' blocks.
+    """
+    buff = b''
+
+    while offset > 0:
+        start = max(0, offset - block_size)
+        reader.seek(start)
+        buff = reader.read(offset - start) + buff
+        offset = start
+
+        # the last byte is the newline ending the last line
+        end = len(buff)
+        nl = buff.rfind(b'\n', 0, end - 1)
+        while nl >= 0:
+            yield offset + nl + 1, buff[nl + 1:end].rstrip()
+            end = nl + 1
+            nl = buff.rfind(b'\n', 0, end - 1)
+
+        # keep the partial line for the next block
+        buff = buff[:end]
+
+    if buff:
+        yield 0, buff.rstrip()
 
 
 #=================================================================
@@ -1354,287 +1405,901 @@ class StreamClosingReader(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `985a000b` (2026-10-16)
-**Commit Message**: Fix test_timeouts failing after slow tests (#1051)
+### Incident Patch 1: `7d7ae75d` (2026-10-21)
+**Commit Message**: Merge pull request #1058 from arquivo/igobranco/1671/closest-aggregated-sources
 
-gevent timers start from the loop's cached time, which is only updated
-when the hub runs. When the previous tests block for a while without
-running the hub, the joinall timeout of GeventTimeoutAggregator is
-shortened by that time, eg. the 0.5s source times out with timeout=1.0
-and the test fails depending on the tests that run before it.
+Merge the sources of exact closest queries by timestamp
 
-Refresh the loop time before each test.
-
-Generated-with: Claude Opus 5.5 (claude-opus-5-5)
-
-**File**: `pywb/warcserver/index/test/test_timeouts.py` (modified, +7/-0)
+**File**: `pywb/warcserver/index/aggregator.py` (modified, +9/-0)
 ```diff
-@@ -1,5 +1,6 @@
- from gevent import monkey; monkey.patch_all(thread=False)
- import time
-+import gevent
- from pywb.warcserver.index.indexsource import FileIndexSource
+@@ -15,6 +15,7 @@
+ from pywb.utils.format import ParamFormatter, res_template
  
- from pywb.warcserver.index.aggregator import SimpleAggregator, TimeoutMixin
-@@ -28,6 +29,12 @@ def setup_class(cls):
-                        'slower': TimeoutFileSource(TEST_CDX_PATH + 'dupes.cdxj', 0.5)
-                       }
+ from pywb.warcserver.index.indexsource import FileIndexSource, RedisIndexSource
++from pywb.warcserver.index.cdxobject import TIMESTAMP
+ from pywb.warcserver.index.cdxops import process_cdx
+ from pywb.warcserver.index.query import CDXQuery
+ from pywb.warcserver.index.zipnum import ZipNumIndexSource
+@@ -100,6 +101,8 @@ def load_index(self, params):
+         #optimization: if only a single entry (or empty) just load directly
+         if len(iter_list) <= 1:
+             cdx_iter = iter_list[0] if iter_list else iter([])
++        elif params.get('closest') and params.get('matchType', 'exact') == 'exact':
++            cdx_iter = self._merge_by_timestamp(iter_list)
+         else:
+             cdx_iter = self._merge(iter_list)
  
-+    def setup_method(self):
-+        # gevent timers start from the loop's cached time, which is stale if
-+        # the previous tests blocked without running the hub. Refresh it so
-+        # the timeouts are not shortened.
-+        gevent.get_hub().loop.update_now()
+@@ -108,6 +111,12 @@ def load_index(self, params):
+     def _merge(self, iter_list):
+         return merge(*(iter_list))
+ 
++    def _merge_by_timestamp(self, iter_list):
++        # cdx_sort_closest() expects the captures of an exact query in
++        # ascending timestamp order. A source may encode the urlkey of the
++        # url differently, eg. a remote index, so don't group by urlkey first
++        return merge(*(iter_list), key=lambda cdx: (cdx[TIMESTAMP], cdx))
 +
-     def test_timeout_long_all_pass(self):
-         agg = GeventTimeoutAggregator(self.sources, timeout=1.0)
+     def _on_source_error(self, name):  #pragma: no cover
+         pass
  
+```
+
+**File**: `pywb/warcserver/index/test/test_cdxops.py` (modified, +52/-0)
+```diff
+@@ -196,6 +196,8 @@
+ 
+ #=================================================================
+ from pywb.warcserver.warcserver import init_index_agg
++from pywb.warcserver.index.aggregator import SimpleAggregator
++from pywb.warcserver.index.indexsource import BaseIndexSource
+ from pywb.warcserver.index.cdxobject import CDXObject
+ from pywb.warcserver.index.cdxops import cdx_sort_closest, process_cdx, CLOSEST_WARN_CAPTURES
+ from pywb.warcserver.index.query import CDXQuery
+@@ -466,6 +468,56 @@ def test_process_cdx_closest_exact_stops_early():
+     assert cdx_iter.count == 4
+ 
+ 
++class FixedIndexSource(BaseIndexSource):
++    def __init__(self, captures):
++        self.captures = captures
++
++    def load_index(self, params):
++        return iter(make_cdx_objects(self.captures))
++
++
++def test_aggregator_closest_exact_sources_with_other_urlkey():
++    # a source may encode the urlkey of the same url differently, eg. a remote
++    # index: the closest capture is in the source whose urlkey sorts last
++    agg = SimpleAggregator({'local': FixedIndexSource([('com,example)/', '20100101000000'),
++                                                       ('com,example)/', '20200101000000')]),
++                            'remote': FixedIndexSource([('example.com/', '20150101000000')])})
++
++    res, errs = agg(dict(url='http://example.com/', closest='20140101000000', limit=1))
++    assert [(cdx['source'], cdx['timestamp']) for cdx in list(res)] == [('remote', '20150101000000')]
++    assert errs == {}
++
++
++def test_aggregator_closest_exact_sources_with_other_urlkey_random():
++    # ascending local sources, and a remote source with another urlkey that
++    # returns its captures nearest first (sort=closest)
++    rng = random.Random(1671)
++    for _ in range(100):
++        count = rng.randint(1, 40)
++        timestamps = random_timestamps(rng, count)
++        closest = random_closest(rng, timestamps)
++        closest_sec = timestamp_to_sec(closest)
++
++        splits = sorted(rng.randint(0, count) for _ in range(2))
++        local_a = sorted(timestamps[:splits[0]])
++        local_b = sorted(timestamps[splits[0]:splits[1]])
++        remote = sorted(timestamps[splits[1]:],
++                        key=lambda ts: abs(closest_sec - timestamp_to_sec(ts)))
++
++        agg = SimpleAggregator({'a': FixedIndexSource([('com,example)/', ts) for ts in local_a]),
++                                'b': FixedIndexSource([('com,example)/', ts) for ts in local_b]),
++                                'remote': FixedIndexSource([('example.com/', ts) for ts in remote])})
++
++        def distances(cdx_list):
++            return [abs(closest_sec - timestamp_to_sec(cdx['timestamp'])) for cdx in cdx_list]
++
++        all_cdx = make_captures(timestamps)
++        for limit in random_limits(rng, count):
++            res, errs = agg(dict(url='http://example.com/', closest=closest, limit=limit))
++            expected = distances(closest_reference(closest, all_cdx, limit))
++            assert distances(res) == expected, (closest, local_a, local_b, remote, limit)
++
++
+ def test_closest_prefix_query_same_as_reference():
+     all_cdx = cdx_ops_test_data(url='http://iana.org/_css/', matchType='prefix')
+     assert len(set(cdx['urlkey'] for cdx in all_cdx)) > 1
 ```
 
 ---
 
-### Incident Patch 2: `0cbbd103` (2026-10-09)
-**Commit Message**: Merge pull request #1042 from arquivo/igobranco/tests-block-live-web
+### Incident Patch 2: `5c0bcf09` (2026-10-20)
+**Commit Message**: Merge pull request #1052 from arquivo/igobranco/1671/index-cache
 
-Fail tests that reach the live web
+Add an index cache, shared by the uWSGI workers
 
-**File**: `CONTRIBUTING.md` (modified, +6/-0)
+**File**: `docs/manual/configuring.rst` (modified, +66/-0)
 ```diff
-@@ -66,3 +66,9 @@ To stop the container:
- ```bash
- docker compose down
- ```
+@@ -641,6 +641,8 @@ For more information on custom certificate authority (CA) installation, the `mit
+ Compatibility: Redirects, Memento, Flash video overrides
+ --------------------------------------------------------
+ 
++.. _redirect-to-exact:
 +
-+### Running tests
+ Exact Timestamp Redirects
+ ^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+@@ -659,6 +661,70 @@ However, if the classic redirect behavior is desired, it can be enable by adding
+ 
+ to the config. This will force any url to be redirected to the exact url, and is consistent with previous behavior and other "wayback machine" implementations.
+ 
++With ``redirect_to_exact``, the index is read twice for the same url: for the redirect, and again for the redirected url.
++When running with uWSGI, the :ref:`index-cache` avoids the second read.
 +
-+To run tests, we recommend installing `pip install tox tox-current-env` and then running `tox --current-env` to test in your current Python environment.
 +
-+Tests must not reach the live web: any resolve or connect to a host other than localhost fails the test. Use a local server (e.g. the `HttpBinLiveTests` mixin or a `GeventServer`) or a mock instead. Tests that really need the network must be marked with `@pytest.mark.live`; they are skipped unless pytest is run with `--live`.
++.. _index-cache:
++
++Index Cache (uWSGI)
++^^^^^^^^^^^^^^^^^^^
++
++When pywb runs in `uWSGI <https://uwsgi-docs.readthedocs.io/>`_, the captures read from the index for a url can be kept for a short time
++in a `uWSGI cache <https://uwsgi-docs.readthedocs.io/en/latest/Caching.html>`_, shared by all the uWSGI workers.
++The next queries for the same url, in any worker, then don't read the index. For example:
++
++* the redirected request after an :ref:`exact timestamp redirect <redirect-to-exact>`, and the redirect requests of other users for the same url
++* the lookup of the original record of a revisit
++* the cdx and timemap queries for the url
++
++The cache is enabled when a uWSGI cache named ``pywb-index`` is configured in the uWSGI config, eg. in ``uwsgi.ini``::
++
++  cache2 = name=pywb-index,items=20000,keysize=64,blocksize=4096,blocks=32768,bitmap=1,purge_lru=1,ignore_full=1
++
++The size of the cache is set in uWSGI, as it is allocated before pywb is loaded:
++
++* ``items``: the maximum number of urls in the cache. With ``purge_lru=1``, the least recently used url is removed when it is full.
++* ``blocks`` and ``blocksize``: the memory for the captures, here 32768 blocks of 4 KB, 128 MB. Each capture takes about 400 bytes.
++  With ``bitmap=1``, an entry can use more than one block. If there are not enough free blocks, the captures are not stored until older entries expire.
++* ``keysize=64``: the keys are 64 characters (a sha256 hex digest). The default key size uses 2 KB per item.
++* ``ignore_full=1``: does not log a message each time an item is removed or can't be stored.
++
++The cache is configured in pywb with the ``index_cache`` option. These are the defaults::
++
++  index_cache:
++    # seconds a url is kept in the cache
++    ttl: 60
++
++    # urls with more captures are not cached
++    max_captures: 1000
++
++    # the name of the uWSGI cache
++    uwsgi_cache: pywb-index
++
++Use ``index_cache: false`` to disable it.
++
++Only exact url queries to local indexes (CDX(J) files, directories of them and :ref:`zipnum` indexes) are cached, not prefix or domain queries.
++Collections with other index sources, eg. live web, remote or Redis indexes, are not cached.
++
++The captures of a url are only stored if they were all read, so if there are fewer than the ``limit`` of the query.
++Replay lookups keep only the 100 closest captures (``ResourceHandler.CLOSEST_LIMIT``), so they store the urls with fewer than 100 captures.
++
++Captures added to an index can take up to ``ttl`` seconds to be found, if the url is in the cache.
++The captures are stored with Python's ``pickle`` module, so the uWSGI cache must not be writable by anyone else, eg. through a uWSGI cache server (``cache-server``).
++
++The uWSGI stats server (eg. ``stats = 127.0.0.1:1717`` with ``uwsgitop``) shows the items, hits, misses and full counters of the cache.
++
++Custom Index Cache
++""""""""""""""""""
++
++Other stores can be used by setting ``class`` to a ``module:Class`` subclass of :class:`pywb.warcserver.index.indexcache.IndexCache`
++that implements ``get(key)`` and ``set(key, value)``. Its config is the ``index_cache`` dict::
++
++  index_cache:
++    class: mypackage.cache:MyIndexCache
++    ttl: 30
++
+ 
+ Memento Protocol
+ ^^^^^^^^^^^^^^^^
 ```
 
-**File**: `conftest.py` (added, +117/-0)
+**File**: `docs/manual/usage.rst` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,117 @@
-+import ipaddress
-+import socket
-+import sys
+@@ -231,6 +231,8 @@ Installation of uswgi in a virtualenv will avoid known issues with installing uw
+     source pywbenv/bin/activate
+     pip install wheel uwsgi pywb
+ 
++When running in uwsgi, pywb can cache the index lookups in a uwsgi cache shared by all processes. See :ref:`index-cache`.
 +
-+import pytest
+ Although uwsgi does not provide a way to specify command line, all command line options can alternatively be configured via ``config.yaml``. See :ref:`configuring-pywb` for more info on available configuration options.
+ 
+ Docker Deployment
+```
+
+**File**: `pywb/warcserver/index/aggregator.py` (modified, +10/-1)
+```diff
+@@ -25,6 +25,10 @@
+ 
+ #=============================================================================
+ class BaseAggregator(object):
++    # set by IndexCache.enable_for(), to cache the results of load_index()
++    index_cache = None
++    index_cache_name = ''
++
+     def __call__(self, params):
+         if params.get('closest') == 'now':
+             params['closest'] = timestamp_now()
+@@ -35,7 +39,12 @@ def __call__(self, params):
+ 
+         query = CDXQuery(params)
+ 
+-        cdx_iter, errs = self.load_index(query.params)
++        if self.index_cache:
++            cdx_iter, errs = self.index_cache.load_index(self.index_cache_name,
++                                                         self.load_index,
++                                                         query)
++        else:
++            cdx_iter, errs = self.load_index(query.params)
+ 
+         if not query.page_count:
+             cdx_iter = process_cdx(cdx_iter, query)
+```
+
+**File**: `pywb/warcserver/index/indexcache.py` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++import hashlib
++import io
++import logging
++import pickle
++
++from pywb.utils.format import to_bool
++from pywb.utils.loaders import load_py_name
++from pywb.warcserver.index.aggregator import BaseDirectoryIndexSource, BaseSourceListAggregator
++from pywb.warcserver.index.indexsource import FileIndexSource
++from pywb.warcserver.index.zipnum import ZipNumIndexSource
 +
 +
-+# ============================================================================
-+# Tests must not reach the live web: it makes them flaky, and they break when
-+# a remote site changes. Use a local server (e.g. HttpBinLiveTests, GeventServer)
-+# or a mock instead.
-+#
-+# Tests that really need the network must be marked with @pytest.mark.live;
-+# they are skipped unless pytest is run with --live.
-+#
-+# Every other test is blocked from resolving or connecting to any host except
-+# loopback, and fails if it tries to. Hosts under the reserved .invalid TLD
-+# (RFC 6761) never resolve, so they fail to resolve without reaching DNS.
-+
-+class LiveWebBlocked(OSError):
-+    pass
++logger = logging.getLogger('warcserver')
 +
 +
-+class _State(object):
-+    allow = False
-+    hits = []
++# =============================================================================
++def init_index_cache(cache_config):
++    """Create the index cache for the top-level ``index_cache`` config.
++
++    - not set: a :class:`UwsgiIndexCache` with the default settings, if pywb
++      runs in uWSGI and the uWSGI cache ``pywb-index`` is configured
++    - ``false``: no index cache
++    - a dict: the settings of the cache, with an optional ``class`` set to a
++      ``module:Class`` string, a subclass of :class:`IndexCache`
++
++    :return: the index cache, or None if it is disabled
++    """
++    if cache_config is False:
++        return None
++
++    explicit = cache_config is not None
++
++    if cache_config is None or cache_config is True:
++        cache_config = {}
++
++    if not isinstance(cache_config, dict):
++        raise Exception('"index_cache" config must be false or a dict')
++
++    name = cache_config.get('class')
++    cls = load_py_name(name) if name else UwsgiIndexCache
++
++    index_cache = cls(cache_config)
++    if not index_cache.enabled:
++        if explicit:
++            logger.warning('index_cache: {0} is not available, the index cache is disabled'.format(index_cache))
++        return None
++
++    return index_cache
 +
 +
-+def _host_str(host):
-+    return host.decode('utf-8', 'replace') if isinstance(host, bytes) else str(host)
++# =============================================================================
++class IndexCache(object):
++    """Cache of the captures that the index sources of a collection return
++    for a url, before they are sorted, filtered and limited.
 +
++    With ``redirect_to_exact``, a request for a url at a timestamp that isn't
++    the timestamp of a capture is redirected to the closest capture, and the
++    browser then requests the url again at that timestamp. Both requests read
++    the same captures from the index. With this cache, the second request
++    doesn't read the index again. Other requests for the same url within
++    ``ttl`` seconds don't either.
 +
-+def _is_local(host):
-+    if host in ('', 'localhost') or host.endswith('.localhost'):
++    Only exact url queries to local indexes (CDX(J) files, directories of them
++    and ZipNum indexes) are cached. An entry is kept for ``ttl`` seconds, so
++    captures added to an index may not be found during that time.
++
++    This is an extension point: subclasses store the entries, implementing
++    :meth:`get` and :meth:`set`, and may override :meth:`can_cache`.
++    """
++    DEFAULT_TTL = 60
++
++    DEFAULT_MAX_CAPTURES = 1000
++
++    # query params not used to read the index sources, so not part of the key:
++    # used by process_cdx() or to format the output, or the warcserver mode,
++    # so that the lookup of the original of a revisit and the cdx api share
++    # the entry. The key and end_key params, from the url, are part of it.
++    IGNORED_PARAMS = frozenset(('url', 'alt_url', 'closest', 'sort', 'limit',
++                                'filter', 'content_type', 'from', 'from_ts', 'to',
++                                'collapseTime', 'resolveRevisits', 'reverse',
++                                'fl', 'fields', 'output', 'memento_format', 'mode'))
++
++    # first byte of an entry, for the format of the entry
++    ENTRY_FORMAT = b'\x01'
++
++    def __init__(self, config):
++        self.ttl = int(config.get('ttl', self.DEFAULT_TTL))
++        self.max_captures = int(config.get('max_captures', self.DEFAULT_MAX_CAPTURES))
++        self.enabled = True
++
++    def get(self, key):  # pragma: no cover
++        """Return the entry for this key, as bytes, or None"""
++        raise NotImplementedError()
++
++    def set(self, key, value):  # pragma: no cover
++        """Store the entry (bytes) for this key, for ``self.ttl`` seconds"""
++        raise NotImplementedError()
++
++    def can_cache(self, source):
++        """Return True if the captures of this index source can be cached"""
++        if isinstance(source, BaseSourceListAggregator):
++            return all(self.can_cache(child) for child in source.sources.values())
++
++        return isinstance(source, (FileIndexSource, ZipNumIndexSource, BaseDirectoryIndexSource))
++
++    def enable_for(self, agg, name):
++        """Use this cache for the aggregator of a collection, if it can be
++        cached. ``name`` must be different for each aggregator.
++        """
++        if not self.can_cache(agg):
++            logger.info('index_cache: not used for {0}, it has non-local index sources'.format(name))
++            return False
++
++        agg.index_cache = self
++        agg.index_cache_name = name
 +        return True
 +
-+    try:
-+        ip = ipaddress.ip_address(host.split('%')[0])
-+        return ip.is_loopback or ip.is_unspecified
-+    except ValueError:
-+        return False
++    def is_cacheable_query(self, params):
++        if params.get('matchType', 'exact') != 'exact':
++            return False
++
++        for name i
+```
+
+**File**: `pywb/warcserver/index/test/test_index_cache.py` (added, +432/-0)
+```diff
+@@ -0,0 +1,432 @@
++import os
++import sys
++import time
++import types
++
++import pytest
++from mock import patch
++
++from pywb.warcserver.index.aggregator import SimpleAggregator, DirectoryIndexSource
++from pywb.warcserver.index.cdxops import cdx_sort_closest
++from pywb.warcserver.index.indexcache import IndexCache, UwsgiIndexCache, init_index_cache
++from pywb.warcserver.index.indexsource import FileIndexSource, LiveIndexSource
++from pywb.warcserver.index.zipnum import ZipNumIndexSource
++from pywb.warcserver.test.testutils import TEST_CDX_PATH, to_path, get_test_dir
++from pywb.warcserver.warcserver import WarcServer
 +
 +
-+def _block_live_web(event, args):
-+    if event == 'socket.getaddrinfo':
-+        host = args[0]
-+    elif event == 'socket.connect':
-+        addr = args[1]
-+        # AF_UNIX and other non-inet addresses
-+        if not isinstance(addr, tuple) or not addr:
-+            return
-+        host = addr[0]
-+    else:
-+        return
-+
-+    if host is None:
-+        return
-+
-+    host = _host_str(host).rstrip('.').lower()
-+    if _is_local(host):
-+        return
-+
-+    if host == 'invalid' or host.endswith('.invalid'):
-+        raise socket.gaierror(socket.EAI_NONAME, 'Name or service not known')
-+
-+    if _State.allow:
-+        return
-+
-+    _State.hits.append(host)
-+    raise LiveWebBlocked('live web access blocked in tests: ' + host)
-+
-+
-+sys.addaudithook(_block_live_web)
++TEST_ZIPNUM_PATH = to_path(get_test_dir() + '/zipcdx/zipnum-sample.idx')
 +
 +
 +# ============================================================================
-+def pytest_addoption(parser):
-+    parser.addoption('--live', action='store_true', default=False,
-+                     help='run tests marked as live, which reach the live web')
++class DictIndexCache(IndexCache):
++    def __init__(self, config):
++        super(DictIndexCache, self).__init__(config)
++        self.store = {}
++        self.gets = 0
++        self.sets = 0
++
++    def get(self, key):
++        self.gets += 1
++        return self.store.get(key)
++
++    def set(self, key, value):
++        self.sets += 1
++        self.store[key] = value
 +
 +
-+def pytest_configure(config):
-+    config.addinivalue_line('markers', 'live: test reaches the live web, skipped unless --live is given')
++# ============================================================================
++class FakeUwsgi(types.ModuleType):
++    def __init__(self, cache2):
++        super(FakeUwsgi, self).__init__('uwsgi')
++        self.opt = {'cache2': cache2} if cache2 else {}
++        self.caches = {}
++
++    def cache_get(self, key, cache):
++        value, expires = self.caches.get((cache, key), (None, 0))
++        return value if expires > time.time() else None
++
++    def cache_update(self, key, value, expires, cache):
++        self.caches[(cache, key)] = (value, time.time() + expires)
++        return True
 +
 +
-+def pytest_collection_modifyitems(config, items):
-+    if config.getoption('--live'):
-+        return
++@pytest.fixture
++def fake_uwsgi():
++    def install(cache2=b'name=pywb-index,items=100,keysize=64,bitmap=1'):
++        uwsgi = FakeUwsgi(cache2)
++        patcher = patch.dict(sys.modules, {'uwsgi': uwsgi})
++        patcher.start()
++        patchers.append(patcher)
++        return uwsgi
 +
-+    skip_live = pytest.mark.skip(reason='reaches the live web, use --live to run')
-+    for item in items:
-+        if item.get_closest_marker('live'):
-+            item.add_marker(skip_live)
-+
-+
-+@pytest.fixture(scope='session', autouse=True)
-+def bundled_public_suffix_list():
-+    # tldextract downloads the Public Suffix List on first use, unless already cached:
-+    # use the snapshot bundled with it instead. Imported here, not at the top, so that
-+    # the test modules can gevent monkey patch ssl before requests imports it
-+    import tldextract
-+    tldextract.tldextract.TLD_EXTRACTOR = tldextract.TLDExtract(suffix_list_urls=(), cache_dir=None)
++    patchers = []
++    yield install
++    for patcher in patchers:
++        patcher.stop()
 +
 +
-+@pytest.fixture(autouse=True)
-+def block_live_web(request):
-+    _State.allow = request.node.get_closest_marker('live') is not None
-+    yield
-+    _State.allow = False
++# ============================================================================
++def file_source(name='iana.cdxj'):
++    return FileIndexSource(os.path.join(TEST_CDX_PATH, name))
 +
-+    # also reports hits from class setup, which runs before this fixture
-+    hits = sorted(set(_State.hits))
-+    del _State.hits[:]
-+    if hits:
-+        pytest.fail('test tried to reach the live web: {0}. Use a local server '
-+                    'or a mock, or mark it with @pytest.mark.live'.format(', '.join(hits)),
-+                    pytrace=False)
++
++class ClosestWindowSource(FileIndexSource):
++    """Reads only the captures closest to 'closest', up to the limit of the
++    query, like an index source that seeks to 'closest'
++    """
++    def load_index(self, params):
++        cdx_iter = super(ClosestWindowSource, self).load_index(params)
++        window = params.get('limit') or params.get('_closest_limit')
++        if not params.get('closest') or not window:
++            return cdx_iter
++
++        cdx_list = cdx_sort_closest(params['closest'], cdx_iter, limit=int(window))
++        return iter(sorted(cdx_list, key=lambda cdx: cdx['timestamp']))
++
++
++def new_agg(index_cache, sources=None, name=('coll',)):
++    agg = SimpleAggregator(sources or {'iana': file_source()})
++    if index_cache:
++        assert index_cache.enable_for(agg, name)
++    return agg
++
++
++def query(agg, url, **params):
++    params['url'] = url
++    cdx_iter, errs = agg(params)
++    return [(cdx['urlkey'], cdx['timestamp'], cdx['source'], cdx.to_json()) for cdx in cdx_iter], errs
++
++
++def count_reads():
++    return patch.object(FileIndexSource, 'load_index', autospec=True,
++                        side_effect=FileIndexSource.load_index)
++
++
++QUERIES = [
++    ('http://www.iana.org/_js/2013.1/jquery.js', {}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'closest': '20140126201000'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'closest': '20140126201000', 'limit': '1'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'closest': '20140126201000', 'limit': '2'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'from': '20140126200700', 'to': '20140126201000'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'reverse': 'true', 'limit': '3'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'filter': '!status:200'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'content_type': 'application/x-javascript'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'fl': 'timestamp,status'}),
++    ('http://www.iana.org/_js/2013.1/jquery.js', {'collapseTime': '10'}),
++    ('http://www.iana.org/', {'closest': '20140126200624'}),
++    ('http://www.iana.org/not-archived', {}),
++]
++
++
++# ============================================================================
++class TestIndexCache(object):
++    @pytest.mark.parametrize('url, params', QUERIES)
++    def test_same_results(self, url, params):
++        no_cache = new_agg(None)
++        index_cache = DictIndexCache({})
++        agg = new_agg(index_cache)
++
++        expected = query(no_cache, url, **params)
++        assert query(agg, url, **params) == expected
++
++        # the captures may not all be read with a limit
++        if 'limit' in params
 ```
 
-**File**: `pywb/utils/test/test_loaders.py` (modified, +2/-0)
+**File**: `pywb/warcserver/warcserver.py` (modified, +25/-5)
 ```diff
-@@ -106,6 +106,7 @@ def s3_authenticated_access_verification(bucket):
-     except botocore.exceptions.NoCredentialsError:
-         pytest.skip("Skipping S3Loader test for authenticated reads: no credentials configured")
+@@ -8,6 +8,7 @@
  
-+@pytest.mark.live
- def test_s3_read_authenticated_1():
-     pytest.importorskip('boto3')
-     pytest.skip("credentials issue, to fix later")
-@@ -123,6 +124,7 @@ def test_s3_read_authenticated_1():
-     assert reader.readline() == b'WARC/1.0\r\n'
-     assert reader.readline() == b'WARC-Type: response\r\n'
+ from pywb.warcserver.index.aggregator import CacheDirectoryIndexSource, RedisMultiKeyIndexSource
+ from pywb.warcserver.index.aggregator import GeventTimeoutAggregator, SimpleAggregator
++from pywb.warcserver.index.indexcache import init_index_cache
  
-+@pytest.mark.live
- def test_s3_read_authenticated_2():
-     pytest.importorskip('boto3')
-     pytest.skip("credentials issue, to fix later")
+ from pywb.warcserver.handlers import DefaultResourceHandler, HandlerSeq
+ 
+@@ -105,6 +106,8 @@ def __init__(self, config_file='./config.yaml', custom_config=None):
+ 
+         LiveUrlFilter.init(self.config.get('live_url_filter'))
+ 
++        self.index_cache = init_index_cache(self.config.get('index_cache'))
++
+         self.auto_handler = None
+ 
+         if self.config.get('enable_auto_colls', True):
+@@ -157,6 +160,8 @@ def load_auto_colls(self):
+         else:
+             source = dir_source
+ 
++        self.enable_index_cache(source, ())
++
+         return DefaultResourceHandler(source, self.archive_paths,
+                                       rules_file=self.rules_file,
+                                       access_checker=access_checker)
+@@ -204,7 +209,17 @@ def load_colls(self):
+ 
+         return routes
+ 
+-    def load_coll(self, name, coll_config):
++    def enable_index_cache(self, agg, cache_name):
++        if self.index_cache:
++            self.index_cache.enable_for(agg, cache_name)
++
++    def load_coll(self, name, coll_config, cache_name=None):
++        # the index cache needs a different name for each aggregator:
++        # () for the auto collections, (name,) for a collection, and
++        # the name of the collection plus the position in a sequence
++        if cache_name is None:
++            cache_name = (name,)
++
+         if coll_config == '$all' and self.auto_handler:
+             return self.auto_handler
+ 
+@@ -235,7 +250,7 @@ def load_coll(self, name, coll_config):
+ 
+             sequence = coll_config.get('sequence')
+             if sequence:
+-                return self.init_sequence(name, sequence)
++                return self.init_sequence(name, sequence, cache_name)
+ 
+             index_group = coll_config.get('index_group')
+             if not index_group:
+@@ -244,6 +259,8 @@ def load_coll(self, name, coll_config):
+             timeout = int(coll_config.get('timeout', 0))
+             agg = init_index_agg(index_group, True, timeout)
+ 
++        self.enable_index_cache(agg, cache_name)
++
+         # ARCHIVE CONFIG
+         if not archive_paths:
+             archive_paths = self.config.get('archive_paths')
+@@ -261,18 +278,21 @@ def load_coll(self, name, coll_config):
+                                       access_checker=access_checker,
+                                       use_local_file_load=use_local_file_load)
+ 
+-    def init_sequence(self, coll_name, seq_config):
++    def init_sequence(self, coll_name, seq_config, cache_name=None):
+         if not isinstance(seq_config, list):
+             raise Exception('"sequence" config must be a list')
+ 
++        if cache_name is None:
++            cache_name = (coll_name,)
++
+         handlers = []
+ 
+-        for entry in seq_config:
++        for i, entry in enumerate(seq_config):
+             if not isinstance(entry, dict):
+                 raise Exception('"sequence" entry must be a dict')
+ 
+             name = entry.get('name', '')
+-            handler = self.load_coll(name, entry)
++            handler = self.load_coll(name, entry, cache_name + (i,))
+             handlers.append(handler)
+ 
+         return HandlerSeq(handlers)
 ```
 
-**File**: `pywb/warcserver/index/test/test_indexsource.py` (modified, +1/-0)
+**File**: `uwsgi.ini` (modified, +4/-0)
 ```diff
-@@ -270,6 +270,7 @@ def test_file_not_found(self):
-         assert(key_ts_res(res) == expected)
-         assert(errs['source'] == "NotFoundException('testdata/not-found-x',)"), errs
+@@ -14,6 +14,10 @@ endif =
  
-+    @pytest.mark.live
-     def test_ait_filters(self):
-         pytest.skip("ait issue, may not work anymore")
+ gevent = 100
  
-```
-
-**File**: `pywb/warcserver/test/test_handlers.py` (modified, +3/-3)
-```diff
-@@ -519,10 +519,10 @@ def test_error_redis_file_not_found(self):
- 
- 
-     def test_error_fallback_live_not_found(self):
--        resp = self.testapp.get('/fallback/resource?url=http://invalid.url-not-found', status=400)
-+        resp = self.testapp.get('/fallback/resource?url=http://url-not-found.invalid', status=400)
- 
--        assert resp.json == {'message': 'http://invalid.url-not-found/',
--                             'errors': {'LiveWebLoader': 'http://invalid.url-not-found/'}}
-+        assert resp.json == {'message': 'http://url-not-found.invalid/',
-+                             'errors': {'LiveWebLoader': 'http://url-not-found.invalid/'}}
- 
-         assert resp.text == resp.headers['ResErrors']
- 
-```
-
-**File**: `tests/test_live_rewriter.py` (modified, +1/-1)
-```diff
-@@ -164,7 +164,7 @@ def test_live_live_frame(self):
-         assert '"http://httpbin.org/html"' in resp.text, resp.text
- 
-     def test_live_invalid(self, fmod_sl):
--        resp = self.get('/live/{0}http://abcdef', fmod_sl, status=307)
-+        resp = self.get('/live/{0}http://abcdef.invalid', fmod_sl, status=307)
-         resp = resp.follow(status=400)
-         assert resp.status_int == 400
- 
++# cache the index lookups, shared by all processes
++# see "Index Cache (uWSGI)" in the docs
++#cache2 = name=pywb-index,items=20000,keysize=64,blocksize=4096,blocks=32768,bitmap=1,purge_lru=1,ignore_full=1
++
+ #Not available until uwsgi 2.1
+ #monkey-patching manually in pywb.apps.wayback
+ #gevent-early-monkey-patch =
 ```
 
 ---
 
-### Incident Patch 3: `a02b5eab` (2026-10-09)
-**Commit Message**: Use the bundled Public Suffix List in tests
+### Incident Patch 3: `0ffe86e9` (2026-10-20)
+**Commit Message**: Make cdx_sort_closest O(n log limit) and fix its early exit (#1045)
 
-tldextract downloads the Public Suffix List from publicsuffix.org or
-GitHub on first use, unless already cached, which the live web block
-caught on CI.
+cdx_sort_closest kept every capture's distance in a sorted list that was
+never trimmed, with an O(n) list.insert per capture, so a closest lookup
+was O(n^2) in the number of captures of the url. Its early exit could
+never fire either: the key just inserted can't be larger than the largest
+one. A url with a few hundred thousand captures took about 20 seconds
+of CPU per lookup, and replay looks up the closest capture of every
+embedded resource, so a few popular embeds were enough to saturate all
+the workers.
 
-Generated-with: Claude Opus 5.5 (claude-opus-5-5)
+Keep the nearest captures in a heap bounded to `limit` instead. The
+result is the same, in the same order: nearest first and, on equal
+distance, earliest input first. The heap entries carry the input
+position, so CDX objects are never compared.
 
-**File**: `conftest.py` (modified, +9/-0)
+Stopping early is only correct when the input is in ascending timestamp
+order. That holds for an exact query, but not for prefix, host or domain
+queries, nor for the fuzzy match query, whose results span several
+urlkeys. So it is now opt-in with a sorted_input argument, which
+process_cdx sets only for exact queries, and it turns itself off if a
+capture arrives out of or
+
+**File**: `pywb/warcserver/index/cdxops.py` (modified, +41/-22)
 ```diff
-@@ -93,6 +93,15 @@ def pytest_collection_modifyitems(config, items):
-             item.add_marker(skip_live)
+@@ -7,13 +7,12 @@
+ from warcio.timeutils import timestamp_to_sec, sec_to_timestamp, pad_timestamp
+ from warcio.timeutils import PAD_14_DOWN, PAD_14_UP
+ 
+-import bisect
+ import logging
+ 
+ from six.moves import zip, range, map
+ import re
+ 
+-from heapq import merge
++from heapq import merge, heappush, heapreplace
+ from collections import deque
  
  
-+@pytest.fixture(scope='session', autouse=True)
-+def bundled_public_suffix_list():
-+    # tldextract downloads the Public Suffix List on first use, unless already cached:
-+    # use the snapshot bundled with it instead. Imported here, not at the top, so that
-+    # the test modules can gevent monkey patch ssl before requests imports it
-+    import tldextract
-+    tldextract.tldextract.TLD_EXTRACTOR = tldextract.TLDExtract(suffix_list_urls=(), cache_dir=None)
+@@ -90,7 +89,10 @@ def process_cdx(cdx_iter, query):
+     limit = query.limit
+ 
+     if closest:
+-        cdx_iter = cdx_sort_closest(closest, cdx_iter, limit)
++        # an exact query yields the captures of a single url, merged from the
++        # sources in ascending timestamp order
++        cdx_iter = cdx_sort_closest(closest, cdx_iter, limit,
++                                    sorted_input=query.is_exact)
+ 
+     elif reverse:
+         cdx_iter = cdx_reverse(cdx_iter, limit)
+@@ -281,45 +283,62 @@ def cdx_collapse_time_status(cdx_iter, timelen=10):
+ 
+ 
+ #=================================================================
+-def cdx_sort_closest(closest, cdx_iter, limit=10):
++def cdx_sort_closest(closest, cdx_iter, limit=10, sorted_input=False):
+     """
+     sort CDXCaptureResult by closest to timestamp.
++
++    yield the `limit` captures nearest to `closest`, nearest first.
++    on equal distance, the capture that came first in `cdx_iter` comes first.
++
++    if `sorted_input` is set, `cdx_iter` should be in ascending timestamp
++    order, as the captures of a single url are. the scan then stops at the
++    first capture after `closest` that is not nearer than the captures kept,
++    as no later capture can be nearer. if a capture is found out of order,
++    the whole input is scanned.
+     """
+-    closest_cdx = []
+-    closest_keys = []
+     closest_sec = timestamp_to_sec(closest)
++
++    # bounded max-heap of the nearest captures so far, the farthest on top:
++    # (-distance, -position, cdx). position is unique, so cdx is never compared
++    heap = []
++    last_sec = None
+     scanned = 0
+ 
+-    for cdx in cdx_iter:
++    for pos, cdx in enumerate(cdx_iter):
+         scanned += 1
+         sec = timestamp_to_sec(cdx[TIMESTAMP])
+         key = abs(closest_sec - sec)
+ 
+-        # create tuple to sort by key
+-        #bisect.insort(closest_cdx, (key, cdx))
++        if sorted_input:
++            if last_sec is not None and sec < last_sec:
++                sorted_input = False
++            last_sec = sec
+ 
+-        i = bisect.bisect_right(closest_keys, key)
+-        closest_keys.insert(i, key)
+-        closest_cdx.insert(i, cdx)
++        if len(heap) < limit:
++            heappush(heap, (-key, -pos, cdx))
+ 
+-        if len(closest_cdx) == limit:
+-            # assuming cdx in ascending order and keys have started increasing
+-            if key > closest_keys[-1]:
+-                break
++        elif not heap:
++            # limit <= 0: keep nothing, but still read the whole input
++            continue
++
++        elif key < -heap[0][0]:
++            heapreplace(heap, (-key, -pos, cdx))
+ 
+-        if len(closest_cdx) > limit:
+-            closest_cdx.pop()
++        elif sorted_input and sec > closest_sec:
++            # after closest and not nearer than any capture kept: every
++            # later capture is even farther away
++            break
+ 
+     if scanned >= CLOSEST_WARN_CAPTURES:
+         # closest may be any string, log the timestamp parsed from it
+         logger.warning('Closest lookup read %d captures: key=%s closest=%s limit=%s',
+                        scanned, cdx.get(URLKEY), sec_to_timestamp(closest_sec), limit)
+ 
+-    for cdx in closest_cdx:
+-        yield cdx
++    # nearest first, then earliest position first
++    heap.sort(reverse=True)
+ 
+-    #for cdx in map(lambda x: x[1], closest_cdx):
+-    #    yield cdx
++    for _, _, cdx in heap:
++        yield cdx
+ 
+ 
+ #=================================================================
+```
+
+**File**: `pywb/warcserver/index/test/test_cdxops.py` (modified, +251/-1)
+```diff
+@@ -196,10 +196,19 @@
+ 
+ #=================================================================
+ from pywb.warcserver.warcserver import init_index_agg
+-from pywb.warcserver.index.cdxops import CLOSEST_WARN_CAPTURES
++from pywb.warcserver.index.cdxobject import CDXObject
++from pywb.warcserver.index.cdxops import cdx_sort_closest, process_cdx, CLOSEST_WARN_CAPTURES
++from pywb.warcserver.index.query import CDXQuery
+ 
++from warcio.timeutils import timestamp_to_sec
++
++import datetime
++import heapq
+ import os
++import random
++import re
+ import sys
++import time
+ import six
+ import logging
+ 
+@@ -266,6 +275,234 @@ def test_cdxj_resolve_revisit_2():
+     assert(dict(results[1]) == {"urlkey": "com,example)/?example=1", "timestamp": "20140103030341", "url": "http://example.com?example=1", "length": "553", "filename": "example.warc.gz", "mime": "warc/revisit", "offset": "1864", "orig.length": "-", "orig.offset": "-", "orig.filename": "-"})
+ 
+ 
++#=================================================================
++# cdx_sort_closest
++def closest_reference(closest, cdx_list, limit):
++    """ Brute force cdx_sort_closest: the `limit` captures nearest to
++    `closest`, by distance, and by input order on equal distance.
++    """
++    closest_sec = timestamp_to_sec(closest)
++
++    def sort_key(pos_cdx):
++        pos, cdx = pos_cdx
++        return (abs(closest_sec - timestamp_to_sec(cdx['timestamp'])), pos)
++
++    ordered = sorted(enumerate(cdx_list), key=sort_key)
++    return [cdx for pos, cdx in ordered[:max(limit, 0)]]
 +
 +
- @pytest.fixture(autouse=True)
- def block_live_web(request):
-     _State.allow = request.node.get_closest_marker('live') is not None
++def make_captures(timestamps, urlkey='com,example)/'):
++    # plain dicts are not orderable: comparing two of them raises TypeError
++    return [{'urlkey': urlkey, 'timestamp': ts, 'pos': pos}
++            for pos, ts in enumerate(timestamps)]
++
++
++def positions(cdx_iter):
++    return [cdx['pos'] for cdx in cdx_iter]
++
++
++class CountingIter(object):
++    def __init__(self, items):
++        self.items = iter(items)
++        self.count = 0
++
++    def __iter__(self):
++        return self
++
++    def __next__(self):
++        item = next(self.items)
++        self.count += 1
++        return item
++
++
++def random_timestamps(rng, count):
++    # few distinct values within a short span: many duplicates and equal distances
++    base = datetime.datetime(2014, 1, 26, 20, 0, 0)
++    span = rng.choice([10, 600, 3 * 86400])
++    return [(base + datetime.timedelta(seconds=rng.randint(0, span))).strftime('%Y%m%d%H%M%S')
++            for _ in range(count)]
++
++
++def random_closest(rng, timestamps):
++    # before, inside and after the captures, padded and unpadded
++    choices = ['19990101000000', '2013', '2014', '201401', '20140126', '20140126200005', '2015']
++    if timestamps:
++        choices.extend([timestamps[0], timestamps[-1], rng.choice(timestamps),
++                        rng.choice(timestamps)[:12]])
++
++    return rng.choice(choices)
++
++
++def random_limits(rng, count):
++    return [1, 2, 3, 10, count, count + 5, rng.randint(1, count + 1)]
++
++
++def test_sort_closest_same_as_reference_random():
++    rng = random.Random(1671)
++    for _ in range(200):
++        count = rng.randint(0, 60)
++        timestamps = random_timestamps(rng, count)
++        closest = random_closest(rng, timestamps)
++
++        unsorted_cdx = make_captures(timestamps)
++        sorted_cdx = make_captures(sorted(timestamps))
++
++        for limit in random_limits(rng, count):
++            expected = positions(closest_reference(closest, unsorted_cdx, limit))
++            res = cdx_sort_closest(closest, iter(unsorted_cdx), limit)
++            assert positions(res) == expected, (closest, timestamps, limit)
++
++            expected = positions(closest_reference(closest, sorted_cdx, limit))
++            res = cdx_sort_closest(closest, iter(sorted_cdx), limit)
++            assert positions(res) == expected, (closest, sorted(timestamps), limit)
++
++            res = cdx_sort_closest(closest, iter(sorted_cdx), limit, sorted_input=True)
++            assert positions(res) == expected, (closest, sorted(timestamps), limit)
++
++
++def test_sort_closest_sorted_input_merged_sources_random():
++    # the sources of an exact query are merged in ascending timestamp order, but
++    # a remote source may return its captures nearest first (sort=closest)
++    rng = random.Random(1504)
++    for _ in range(200):
++        count = rng.randint(1, 60)
++        timestamps = random_timestamps(rng, count)
++        closest = random_closest(rng, timestamps)
++        closest_sec = timestamp_to_sec(closest)
++
++        split = rng.randint(0, count)
++        local = sorted(timestamps[:split])
++        remote = sorted(timestamps[split:],
++                        key=lambda ts: abs(closest_sec - timestamp_to_sec(ts)))
++
++        for sources in ([remote], [local, remote]):
++            cdx_list = make_captures(heapq.merge(*sources))
++            for limit in random_limits(rng, count):
++                expected = positions(closest_reference(closest, cdx_list, limit))
++                res = cdx_sort_clo
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1062** (2026-10-22): Open the path index file with a small read buffer (@igobranco)
+- **PR #1058** (2026-10-21): Merge the sources of exact closest queries by timestamp (@igobranco)
 - **PR #1055** (closed): warcserver: cache path index lookups in uWSGI, read it with a small buffer (@igobranco)
 - **PR #1054** (2026-10-17): Log a warning for closest lookups that read many captures (@igobranco)
 - **PR #1053** (2026-10-17): Limit replay closest lookups to the 100 closest captures (@igobranco)
-- **PR #1051** (2026-10-16): Fix test_timeouts failing after slow tests (@igobranco)
-- **PR #1050** (2026-10-16): Use isal for ZipNum block decompression if installed (@igobranco)
-- **PR #1049** (2026-10-16): Open index files with a small read buffer (@igobranco)
+- **PR #1052** (2026-10-20): Add an index cache, shared by the uWSGI workers (@igobranco)
 
 ---
 
@@ -1654,26 +2319,28 @@ Generated-with: Claude Opus 5.5 (claude-opus-5-5)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test_timeouts failing after slow tests (#1051)
+## X. Merge pull request #1058 from arquivo/igobranco/1671/closest-aggregated-sources
 
 **RULE**:
-When implementing operations in `pywb/warcserver/index/test/test_timeouts.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pywb/warcserver/index/aggregator.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `985a000b`: test_timeouts failing after slow tests (#1051). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d7ae75d`: Merge pull request #1058 from arquivo/igobranco/1671/closest-aggregated-sources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/warcserver/index/test/test_timeouts.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/warcserver/index/aggregator.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import gevent
-    def setup_method(self):
-        # gevent timers start from the loop's cached time, which is stale if
-        # the previous tests blocked without running the hub. Refresh it so
-        # the timeouts are not shortened.
-        gevent.get_hub().loop.update_now()
+from pywb.warcserver.index.cdxobject import TIMESTAMP
+        elif params.get('closest') and params.get('matchType', 'exact') == 'exact':
+            cdx_iter = self._merge_by_timestamp(iter_list)
+    def _merge_by_timestamp(self, iter_list):
+        # cdx_sort_closest() expects the captures of an exact query in
+        # ascending timestamp order. A source may encode the urlkey of the
+        # url differently, eg. a remote index, so don't group by urlkey first
+        return merge(*(iter_list), key=lambda cdx: (cdx[TIMESTAMP], cdx))
 
 ```
 
@@ -1684,4 +2351,4 @@ import gevent
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `985a000b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d7ae75d` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-057M",
-    "timestamp": "2026-10-20T15:49:56.194Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-    "contentHash": "b91713bdc26fe9405563b96d2ba17b09a8ee4d3cb1630af52be4cd7521c8877b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-0HKG",
-    "timestamp": "2026-10-20T15:50:12.208Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "eef8c0ca7fefb5b7f517552760a8ee70a8da02dd879cc3f3345063e8fa18d77f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-8HQQ",
-    "timestamp": "2026-10-20T15:56:25.682Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "c6c639bbf463088642e32c31976390c10b99c803a112ffa7aea85c393d4866bb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-8LC1",
     "timestamp": "2026-10-20T15:56:30.337Z",
     "repository": "react/metro",
@@ -7490,6 +7445,51 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-XCKF",
+    "timestamp": "2026-10-22T18:11:04.287Z",
+    "repository": "webrecorder/pywb",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "62f8659edffd679f1eb7ed7c8f35bcf0772bb7bc5e72ce9c8c60c59b5b951734",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-XGM1",
+    "timestamp": "2026-10-22T18:11:09.529Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "ba0bce382dd6340b9f463af75a3ed47feb9145a7e757a301db402dadd88eca03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-XKXY",
+    "timestamp": "2026-10-22T18:11:15.142Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "246924596d592be6c597431afb361dba74fa3563621c62a459ef16c380ce2644",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

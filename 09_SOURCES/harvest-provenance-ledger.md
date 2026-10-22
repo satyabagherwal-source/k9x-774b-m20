@@ -4382,3 +4382,6 @@ Every entry in this ledger must capture:
 | `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `319d39c2` | Multi-dimensional audit evidence | 2026-10-22T18:04:29.332Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `7c40a452` | Multi-dimensional audit evidence | 2026-10-22T18:04:38.060Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `6ca67f43` | Multi-dimensional audit evidence | 2026-10-22T18:04:42.129Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `5fcffb27` | Multi-dimensional audit evidence | 2026-10-22T18:11:04.290Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `1d3897ae` | Multi-dimensional audit evidence | 2026-10-22T18:11:09.532Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `7db3803a` | Multi-dimensional audit evidence | 2026-10-22T18:11:15.145Z |

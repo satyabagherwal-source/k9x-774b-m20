@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "647a85c3",
+    "sourceVersion": "1d3897ae",
     "license": "Apache-2.0",
-    "contentHash": "3ea50f39f4efee4ec565299895261b640c674479158deb25a91f3ed4b8a51395",
-    "lastHarvestedAt": "2026-10-21T00:08:42.443Z",
+    "contentHash": "ba0bce382dd6340b9f463af75a3ed47feb9145a7e757a301db402dadd88eca03",
+    "lastHarvestedAt": "2026-10-22T18:11:09.532Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "a2353736",
+    "sourceVersion": "7db3803a",
     "license": "MIT",
-    "contentHash": "fce7457ab75c117a0b89d671bba007131d8dda0d84c5776fbae7237c87fba601",
-    "lastHarvestedAt": "2026-10-20T23:17:34.979Z",
+    "contentHash": "246924596d592be6c597431afb361dba74fa3563621c62a459ef16c380ce2644",
+    "lastHarvestedAt": "2026-10-22T18:11:15.145Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "2b310902",
+    "sourceVersion": "5fcffb27",
     "license": "GPL-3.0",
-    "contentHash": "b2095c3084284ece448a72eec72e3c0177239e85cd4d3160c543934d2030c814",
-    "lastHarvestedAt": "2026-10-19T22:06:42.888Z",
+    "contentHash": "62f8659edffd679f1eb7ed7c8f35bcf0772bb7bc5e72ce9c8c60c59b5b951734",
+    "lastHarvestedAt": "2026-10-22T18:11:04.290Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {
