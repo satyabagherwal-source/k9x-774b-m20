@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "8397071d",
+    "sourceVersion": "8d499692",
     "license": "Apache-2.0",
-    "contentHash": "e60c315a40b0cb958460158bb9ab14c23c9a0161dcab0a563c34b3d37ae12b0e",
-    "lastHarvestedAt": "2026-10-20T13:33:47.873Z",
+    "contentHash": "b7455f2d9e1b7a0740597258124a9388b1d5d3d27993ccb5281287e2815592a0",
+    "lastHarvestedAt": "2026-10-22T21:28:57.948Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -9733,10 +9733,10 @@
     "repository": "RDFLib/rdflib",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/rdflib",
-    "sourceVersion": "62bf240a",
+    "sourceVersion": "764c2fa8",
     "license": "BSD-3-Clause",
-    "contentHash": "ed04ee6f9569ae5d5b157d79ab1cc67bde016b01bf9d288334424fb574740708",
-    "lastHarvestedAt": "2026-10-20T00:51:38.228Z",
+    "contentHash": "869fd9c1ca1921e296b867e82790ef89c46e237b7ac3fa1a117fe071defbc884",
+    "lastHarvestedAt": "2026-10-22T21:28:50.103Z",
     "learningId": "learn-github-rdflib-rdflib"
   },
   "kartiklabhshetwar-better-shot": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "eed8ee2f",
+    "sourceVersion": "efcfb72c",
     "license": "GPL-3.0",
-    "contentHash": "fa563e7d81ce64f9201f5d3d97d27e48d46af4c42f86212d62a97d88079170dd",
-    "lastHarvestedAt": "2026-10-20T02:55:43.858Z",
+    "contentHash": "3f9676ed555b31d171a2f366ec769bcc24e9b63dd59d2b23128c6673de633d5f",
+    "lastHarvestedAt": "2026-10-22T21:28:51.618Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {

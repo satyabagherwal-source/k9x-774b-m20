@@ -4443,3 +4443,6 @@
 | `CYCLE-20261022-R53L` | `2026-10-22T21:22:11.985Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`79ba0afd...`) |
 | `CYCLE-20261022-RCEO` | `2026-10-22T21:22:21.456Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3748` | Yes (`4726ed22...`) |
 | `CYCLE-20261022-RHB1` | `2026-10-22T21:22:27.805Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3749` | Yes (`b6fd6d0b...`) |
+| `CYCLE-20261022-ZOAC` | `2026-10-22T21:28:50.100Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3750` | Yes (`869fd9c1...`) |
+| `CYCLE-20261022-ZPGF` | `2026-10-22T21:28:51.615Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3751` | Yes (`3f9676ed...`) |
+| `CYCLE-20261022-ZUC9` | `2026-10-22T21:28:57.945Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3752` | Yes (`b7455f2d...`) |

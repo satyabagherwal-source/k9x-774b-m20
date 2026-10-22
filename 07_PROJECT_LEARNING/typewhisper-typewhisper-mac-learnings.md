@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source**: github ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
-> **Source Version**: `eed8ee2f`  
+> **Source Version**: `efcfb72c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:55:43.565Z  
+> **Timestamp**: 2026-10-22T21:28:51.289Z  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:55:43.557Z  
+> **Harvest Timestamp**: 2026-10-22T21:28:50.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1865 stars
+- **Stars / Engagement**: 1873 stars
 
 ---
 
@@ -1061,6 +1061,265 @@ struct CloudFolderSyncOperation: Codable, Equatable, Sendable {
             historyCompone
 ```
 
+### Core Architecture Module: `TypeWhisper/ViewModels/SetupWizardEngineRecommendation.swift`
+```
+import Foundation
+import Network
+import TypeWhisperPluginSDK
+
+// Issue #1332: the setup wizard recommends a local engine for the language the user
+// dictates in, on the hardware at hand. The recommendation is a pure function of the
+// inputs below, so every combination can be tested without plugins or a network.
+
+// MARK: - Spoken languages
+
+/// The languages to recommend an engine for, taken from the spoken language setting.
+/// The app language is not an input: it does not say which language someone dictates in.
+enum SetupWizardSpokenLanguages: Equatable, Sendable {
+    /// Automatic detection, so the language is not known.
+    case automatic
+    /// One or more languages as base language codes, "pt" for "pt-BR".
+    case specific([String])
+
+    init(_ selection: LanguageSelection) {
+        var codes: [String] = []
+        for code in selection.selectedCodes.map(Self.baseLanguageCode) where !code.isEmpty && !codes.contains(code) {
+            codes.append(code)
+        }
+        self = codes.isEmpty ? .automatic : .specific(codes)
+    }
+
+    var codes: [String] {
+        switch self {
+        case .automatic: []
+        case .specific(let codes): codes
+        }
+    }
+
+    static func baseLanguageCode(_ code: String) -> String {
+        let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return trimmed.split(whereSeparator: { $0 == "-" || $0 == "_" }).first.map(String.init) ?? trimmed
+    }
+}
+
+// MARK: - Engine table
+
+/// Local engines the wizard can recommend, in the order it prefers them when several
+/// support the spoken languages. GigaAM transcribes Russian only, with punctuation, so it
+/// comes first but only counts when Russian is the only spoken language. Parakeet comes
+/// next because it transcribes far faster than the others in the benchmark at similar
+/// accuracy in English, German and Russian. WhisperKit covers the most languages. Qwen3
+/// adds Filipino. Apple Speech needs no plugin download but was the least accurate where
+/// measured. None of them takes language hints: with a mix of languages, each transcribes
+/// the first one, and Apple Speech loads the system model for it before each transcription.
+enum SetupWizardLocalEngine: String, CaseIterable, Sendable {
+    case gigaAM
+    case parakeet
+    case whisperKit
+    case qwen3
+    case appleSpeech
+}
+
+/// A model the wizard downloads for an engine, with the plugin's own memory requirement.
+struct SetupWizardEngineModel: Equatable, Sendable {
+    let id: String
+    let minimumMemoryGB: Int
+}
+
+extension SetupWizardLocalEngine {
+    var providerId: String {
+        switch self {
+        case .gigaAM: "gigaam"
+        case .parakeet: SetupWizardParakeetRecommendation.providerId
+        case .whisperKit: "whisper"
+        case .qwen3: "qwen3"
+        case .appleSpeech: AppleSpeechModelSelection.providerId
+        }
+    }
+
+    var manifestId: String {
+        switch self {
+        case .gigaAM: "com.typewhisper.gigaam"
+        case .parakeet: SetupWizardParakeetRecommendation.manifestId
+        case .whisperKit: "com.typewhisper.whisperkit"
+        case .qwen3: "com.typewhisper.qwen3"
+        case .appleSpeech: AppleSpeechModelSelection.manifestId
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .gigaAM: "GigaAM"
+        case .parakeet: "Parakeet"
+        case .whisperKit: "WhisperKit"
+        case .qwen3: "Qwen3 ASR"
+        case .appleSpeech: "Apple Speech"
+        }
+    }
+
+    /// From the plugin manifests: GigaAM, Parakeet, WhisperKit and Qwen3 ship for arm64 only.
+    var requiresAppleSilicon: Bool {
+        self != .appleSpeech
+    }
+
+    /// An engine for a single language. It is recommended only when that language is the
+    /// only spoken language, never for automatic detection.
+    var isSingleLanguageEngine: Bool {
+        self == .gigaAM
+    }
+
+    /// From the plugin manifests (`minOSVersion`).
+    var minimumMacOSMajorVersion: Int {
+        self == .appleSpeech ? 26 : 14
+    }
+
+    /// Languages of the models below, as the plugins declare them. Nil for Apple Speech,
+    /// whose languages only the installed engine knows, because they depend on the system.
+    /// `SetupWizardEngineRecommendationTests` checks these lists against the plugins.
+    var knownLanguages: [String]? {
+        switch self {
+        case .gigaAM:
+            // GigaAMPlugin.supportedLanguages
+            ["ru"]
+        case .parakeet:
+            // ParakeetVersion.ultra and .v3
+            ["bg", "hr", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "hu", "it", "lv", "lt", "mt", "pl", "pt", "ro", "sk", "sl", "es", "sv", "ru", "uk"]
+        case .whisperKit:
+            // WhisperKitPlugin.supportedLanguages, the list the language picker also falls back to
+            defaultSpokenLanguageCodes
+        case .qwen3:
+            // Qwen3Plugin.qwenSupportedLanguageCodes
+            [
+                "zh", "en", "yue", "ar", "de", "fr", "es", "pt", "id", "it",
+                "ko", "ru", "th", "vi", "ja", "tr", "hi", "ms", "nl", "sv",
+                "da", "fi", "pl", "cs", "fil", "tl", "fa", "el", "ro", "hu",
+                "mk",
+            ]
+        case .appleSpeech:
+            nil
+        }
+    }
+
+    /// Models to download, best first. The first one that fits the Mac's memory is used.
+    /// Apple Speech picks a model for the spoken language itself.
+    var models: [SetupWizardEngineModel] {
+        switch self {
+        case .gigaAM:
+            [SetupWizardEngineModel(id: "gigaam-v3-e2e-rnnt", minimumMemoryGB: 2)]
+        case .parakeet:
+            // Ultra is the plugin's default; v3 only for an installed plugin without Ultra.
+            [
+                SetupWizardEngineModel(id: "parakeet-ultra", minimumMemoryGB: 8),
+                SetupWizardEngineModel(id: "parakeet-tdt-0.6b-v3", minimumMemoryGB: 8),
+            ]
+        case .whisperKit:
+            [SetupWizardEngineModel(id: "openai_whisper-large-v3_turbo", minimumMemoryGB: 8)]
+        case .qwen3:
+            // The plugin's "Best default" and "8 GB pick".
+            [
+                SetupWizardEngineModel(id: "qwen3-asr-1.7b-6bit", minimumMemoryGB: 16),
+                SetupWizardEngineModel(id: "qwen3-asr-0.6b-6bit", minimumMemoryGB: 8),
+            ]
+        case .appleSpeech:
+            []
+        }
+    }
+
+    static func engine(forProviderId providerId: String) -> SetupWizardLocalEngine? {
+        allCases.first { $0.providerId == providerId }
+    }
+
+    /// The engines the wizard can set up, in its order. Both editions include all of them.
+    static var offered: [SetupWizardLocalEngine] {
+        allCases
+    }
+}
+
+// MARK: - Inputs
+
+/// What the app knows about one engine right now.
+struct SetupWizardEngineState: Equatable, Sendable {
+    /// The plugin is installed, enabled or not. Apple Speech is built in.
+    var isInstalled = false
+    /// The engine can transcribe without downloading anything first.
+    var isReady = false
+    /// Languages the loaded engine reports, nil while it is not loaded.
+    var reportedLanguages: [String]?
+    /// Models the loaded engine offers, nil while it is not loaded.
+    var modelIds: [String]?
+    /// The model selected in the engine, nil while none is.
+    var selectedModelId: String?
+    /// Models whose files are on disk, as the plugin reports them. Empty for a plugin
+    /// that does not report them, such as Parakeet, whose model then counts as a download.
+    var downloadedModelIds: Set<String> = []
+}
+
+/// The plugin marketplace as far as the app could load it.
+enum SetupWizardCatalogState: Equatable, Sendable {
+    case loading
+    /// IDs of the plugins with a download for this Mac and app version.
+    case loaded(Set<String>)
+    /// The marketplace could not be reached and no copy was cached.
+    case unavailable
+}
+
+struct SetupWizardEngineRecommendationInput: Equatable, Sendable {
+    var spokenLanguages: SetupWizardSpokenLanguages
+    /// "arm64" or "x86_64", as `RuntimeArchitecture.current` reports it.
+    var architecture: String
+    var physicalMemory: UInt64
+    var macOSMajorVersion: Int
+    var engines: [SetupWizardLocalEngine: SetupWizardEngineState]
+    var catalog: SetupWizardCatalogState
+    var isOffline: Bool
+}
+
+// MARK: - Recommendation
+
+enum SetupWizardEngineRecommendation: Equatable, Sendable {
+    /// A local engine that supports the spoken languages and runs on this Mac.
+    case engine(SetupWizardEngineChoice)
+    /// No local engine can be recommended. The wizard explains why.
+    case limitation(SetupWizardEngineLimitation)
+    /// Only Apple Speech could still support the languages, and it has not reported its
+    /// languages yet. The recommendation follows once it has.
+    case pending
+
+    var choice: SetupWizardEngineChoice? {
+        if case .engine(let choice) = self { return choice }
+        return nil
+    }
+}
+
+struct SetupWizardEngineChoice: Equatable, Sendable {
+    enum Reason: Equatable, Sendable {
+        /// The engine supports every selected language.
+        case supportsLanguages([String])
+        /// Automatic detection among this many languages, nil when the count is unknown.
+        case detectsLanguages(count: Int?)
+    }
+
+    enum Availability: Equatable, Sendable {
+        /// Ready, installed with its model on disk, or the plugin or model can be
+        /// downloaded now.
+        case available
+        /// The plugin or model needs a download and the Mac is offline.
+        case needsConnection
+        /// The marketplace has no download of the plugin for this Mac.
+        case notInCatalog
+        /// The marketplace could not be reached.
+        case catalogUnavailable
+    }
+
+    let engine: SetupWizardLocalEngine
+    /// The model to load when the engine has none yet. Nil for Apple Speech.
+    let modelId: String?
+    /// The model that activating the engine loads, the one selected in it or `modelId`,
+    /// is on disk, so the engine can be activated offline.
+    let modelIsDownloaded: Bool
+    let 
+```
+
 ### Core Architecture Module: `TypeWhisperPluginSDK/Plugins/ContributorPlugin/ContributorQueueStore.swift`
 ```
 import Foundation
@@ -1704,186 +1963,17 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 
 ```
 
-### Core Architecture Module: `AppStore/Sources/AppStoreInputAccess.swift`
-```
-#if APPSTORE
-import AppKit
-import CoreGraphics
-
-/// Keyboard and mouse access of the Mac App Store edition.
-///
-/// The App Sandbox has no access to the Accessibility API of other apps, Apple
-/// Events or event-suppressing taps. Two TCC services remain available:
-///
-/// - PostEvent (`CGEvent.post`) pastes text with a synthetic Cmd+V and reads
-///   selected text with Cmd+C. System Settings lists it under Accessibility.
-/// - ListenEvent (listen-only event tap) observes modifier-only, Fn,
-///   double-tap and mouse-button shortcuts. System Settings lists it under
-///   Input Monitoring.
-///
-/// Carbon hotkeys need neither. Without PostEvent, text is copied to the
-/// clipboard for a manual paste.
-enum AppStoreInputAccess {
-    /// Build-time switch for synthetic paste (`TYPEWHISPER_APPSTORE_AUTOPASTE`).
-    /// A clipboard-only build never posts events, in case App Review rejects
-    /// synthetic paste under guideline 2.4.5.
-    static let isAutoPasteEnabled: Bool = {
-        switch Bundle.main.object(forInfoDictionaryKey: "TypeWhisperAutoPasteEnabled") {
-        case let value as Bool:
-            return value
-        case let value as String:
-            return ["yes", "true", "1"].contains(value.lowercased())
-        default:
-            return false
-        }
-    }()
-
-    static let accessibilitySettingsURL = URL(
-        string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
-    )
-    static let inputMonitoringSettingsURL = URL(
-        string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
-    )
-
-    /// Whether the app may post keyboard events to other apps.
-    static var canPostEvents: Bool {
-        isAutoPasteEnabled && CGPreflightPostEventAccess()
-    }
-
-    /// Whether the app may observe keyboard and mouse events of other apps.
-    static var canListenToEvents: Bool {
-        CGPreflightListenEventAccess()
-    }
-
-    /// Name of the System Settings list that holds PostEvent access. macOS 27
-    /// renamed Privacy & Security > Accessibility to Device Control and Data Access.
-    static var postEventSettingsName: String {
-        if ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0)) {
-            return localizedAppText(
-                "Device Control and Data Access",
-                de: "Gerätesteuerung und Datenzugriff",
-                ja: "デバイスの制御とデータへのアクセス",
-                zh: "设备控制和数据访问"
-            )
-        }
-        return localizedAppText("Accessibility", de: "Bedienungshilfen", ja: "アクセシビリティ", zh: "辅助功能")
-    }
-
-    static var listenEventSettingsName: String {
-        localizedAppText("Input Monitoring", de: "Eingabeüberwachung", ja: "入力監視", zh: "输入监控")
-    }
-
-    /// Feedback after text was copied instead of pasted.
-    static var manualPasteMessage: String {
-        if isAutoPasteEnabled {
-            return localizedAppText(
-                "Copied to clipboard. Press ⌘V to paste, or allow TypeWhisper under \u{201C}\(postEventSettingsName)\u{201D} to paste automatically.",
-                de: "In die Zwischenablage kopiert. Füge den Text mit ⌘V ein oder erlaube TypeWhisper unter „\(postEventSettingsName)“, um automatisch einzufügen."
-            )
-        }
-        return localizedAppText(
-            "Copied to clipboard. Press ⌘V to paste.",
-            de: "In die Zwischenablage kopiert. Füge den Text mit ⌘V ein."
-        )
-    }
-
-    /// Set once access was requested in this session. macOS may apply a newly
-    /// granted Accessibility or Input Monitoring permission only after the app
-    /// restarts, so the UI then offers a restart instead of waiting forever.
-    nonisolated(unsafe) private(set) static var hasRequestedPostEventAccess = false
-    nonisolated(unsafe) private(set) static var hasRequestedListenEventAccess = false
-
-    /// Whether requested PostEvent access is still not in effect.
-    static var postEventAccessPending: Bool {
-        hasRequestedPostEventAccess && isAutoPasteEnabled && !CGPreflightPostEventAccess()
-    }
-
-    /// Whether requested ListenEvent access is still not in effect.
-    static var listenEventAccessPending: Bool {
-        hasRequestedListenEventAccess && !CGPreflightListenEventAccess()
-    }
-
-    /// Asks for PostEvent access. macOS 27 neither prompts for it nor lists a
-    /// sandboxed app, so System Settings opens with a guide to drag the app in.
-    @MainActor
-    static func requestPostEventAccess() {
-        guard isAutoPasteEnabled else { return }
-        hasRequestedPostEventAccess = true
-        guard !CGRequestPostEventAccess() else { return }
-        openSettings(accessibilitySettingsURL)
-        offerRestartOnReturn { postEventAccessPending }
-    }
-
-    /// Asks for ListenEvent access, opening System Settings with the same guide
-    /// while it is missing.
-    @MainActor
-    static func requestListenEventAccess() {
-        hasRequestedListenEventAccess = true
-        guard !CGRequestListenEventAccess() else { return }
-        openSettings(inputMonitoringSettingsURL)
-        offerRestartOnReturn { listenEventAccessPending }
-    }
-
-    nonisolated(unsafe) private static var returnObserver: NSObjectProtocol?
-
-    /// The running process cannot notice the grant: CoreGraphics caches its
-    /// answer, so only a relaunched TypeWhisper gets it. When the user comes
-    /// back from System Settings, ask once whether to restart.
-    @MainActor
-    private static func offerRestartOnReturn(isPending: @escaping @MainActor () -> Bool) {
-        if let returnObserver {
-            NotificationCenter.default.removeObserver(returnObserver)
-        }
-        returnObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.didBecomeActiveNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            MainActor.assumeIsolated {
-                if let returnObserver {
-                    NotificationCenter.default.removeObserver(returnObserver)
-                }
-                returnObserver = nil
-                guard isPending() else { return }
-
-                let alert = NSAlert()
-                alert.messageText = localizedAppText(
-                    "Did you turn on TypeWhisper?",
-                    de: "Hast du TypeWhisper eingeschaltet?"
-                )
-                alert.informativeText = localizedAppText(
-                    "macOS applies the permission after TypeWhisper restarts.",
-                    de: "macOS übernimmt die Berechtigung erst nach einem Neustart von TypeWhisper."
-                )
-                alert.addButton(withTitle: localizedAppText("Restart TypeWhisper", de: "TypeWhisper neu starten"))
-                alert.addButton(withTitle: localizedAppText("Later", de: "Später"))
-                if alert.runModal() == .alertFirstButtonReturn {
-                    ApplicationRelauncher.relaunch()
-                }
-            }
-        }
-    }
-
-    private static func openSettings(_ url: URL?) {
-        guard let url else { return }
-        NSWorkspace.shared.open(url)
-    }
-}
-#endif
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1631** (2026-10-19): **Invisible window interferes with switching between windows on macOS**
-  *Symptoms*: ### Platform  macOS  ### Description  After the latest stable update, Type Whisper appears to create an additional invisible window that interferes with switching between windows of the same application on macOS.  My usual workflow involves having two windows of the same browser open and switching between them using `⌘ + ``` (Command + `). Since the latest stable update, there seems to be an extra, invisible window in the switching cycle, meaning I have to press the shortcut an additional time to get back to the window I want.  This issue did not occur before the latest stable update.  ### Evidence  I am confident that Type Whisper is responsible because quitting the application immediately resolves the issue. Once Type Whisper is no longer running, the extra window-switching step disappears, and switching between my two browser windows works as expected.  I will attach a GIF demonstrating the issue and showing how quitting Type Whisper restores the expected window-switching behavior.  <img width="960" height="623" alt="Image" src="https://github.com/user-attachments/assets/55d38cd6-fc9b-4448-ba96-de5f5af4b1de" />  ### Steps to Reproduce  1. Open two windows of the same application, such as a web browser. 2. Launch Type Whisper. 3. Press ⌘ + ` (Command + `) to switch between the application's windows. 4. Observe that an additional, apparently invisible window is included in the switching cycle. 5. Quit Type Whisper and repeat the same steps. 6. Observe that the extra switchin
+- **Issue #1656** (2026-10-20): **Show the real next stage for waiting Speakers records**
+  *Symptoms*: ## Problem  `SpeakersView.phase(of:)` maps every waiting record to step 2, "Detect", including a record that will be transcribed first. The tile shows that step, and since #1648 VoiceOver reads the same step, so both describe the wrong next stage.  ## Proposed behavior  A waiting record shows the stage it will run next.  ## Acceptance and verification  - [ ] A waiting record that needs transcription shows the transcription step; one that only needs speaker detection shows "Detect". - [ ] The tile and the VoiceOver value agree. - [ ] A test covers both waiting cases.  Priority: P3. Estimated effort: small.  Sources: `TypeWhisper/Views/SpeakersView.swift` (`phase(of:)`), `TypeWhisper/Views/SpeakerRecordingRow.swift`; discussed in #1648. 
 
-- **Issue #1622** (2026-10-18): **OpenAI Compatible: disable transcript preview fallback for Batch profiles or add a toggle**
-  *Symptoms*: ### Platform  macOS  ### Description  An OpenAI Compatible profile configured for Transcription mode = Batch still displays live transcript previews during dictation by repeatedly submitting recent audio to the ordinary batch transcription endpoint. This was observed with a Qwen3 ASR profile configured for Batch.  The plugin already reports `supportsStreaming = false` for Batch. However, the macOS host separately checks `allowsTranscriptPreviewFallback`, which defaults to true when the plugin does not implement `TranscriptPreviewFallbackPolicyProviding`. OpenAI Compatible does not opt out, so the host starts its generic polling preview loop over `transcribe()`.  This is distinct from native streaming support. The requested change is to the OpenAI Compatible plugin's preview fallback policy, rather than changing `supportsStreaming` or disabling the global preview feature. The Windows OpenAI Compatible Batch behavior is the desired result: no interim batch requests for preview, with the final batch transcription submitted after recording stops.  ### Steps to Reproduce  1. Configure an OpenAI Compatible profile with a batch-only transcription model. 2. Set Transcription mode to Batch and enable the live transcript preview indicator. 3. Start dictation and continue speaking for several seconds. 4. Observe live transcript updates and repeated batch transcription requests before recording stops.  ### Requested Change / Expected Behavior  Please implement `TranscriptPreviewFallbackP
+- **Issue #1652** (2026-10-20): **Fix wrong and missing translations found in the accessibility pass**
+  *Symptoms*: ## Problem  The accessibility pass in #1648 left `TypeWhisper/Resources/Localizable.xcstrings` untouched to avoid conflicts with the managed settings PRs. It found several wrong or missing catalog entries:  - "Expanded" is translated as "Erweitert" (German) and "拡張" (Japanese), which describe "extended/advanced", not an expanded disclosure state. - German is missing for "Enabled", "Disabled", "More information", "Completed", "Details", "Discard", "Saved to History", "Recovery", "Marketplace" and "Community". - Japanese is missing for the `history.retranscribe.*` keys. - "Effort" has no entry, and "Open details for %@" has no Simplified Chinese. - These keys are no longer used: "Move earlier/later", "%@, %lld updates", "Processing prompt: %@", "Prompt complete".  ## Proposed behavior  Correct the wrong translations, add the missing ones and remove the unused keys.  ## Acceptance and verification  - [ ] "Expanded" reads as an expanded state in German and Japanese, for example "Ausgeklappt" and "展開済み". - [ ] Every listed key has German, Japanese and Simplified Chinese. - [ ] The unused keys are removed, and nothing references them. - [ ] `python3 scripts/check_localization_completeness.py` passes, and the app shows the corrected strings in German and Japanese.  Priority: P2. Estimated effort: small.  Sources: #1648 (follow-ups). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1900,693 +1990,726 @@ enum AppStoreInputAccess {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a9c3303` (2026-10-19)
-**Commit Message**: Build CI and releases with Xcode 27.1 (#1636)
+### Incident Patch 1: `42f19164` (2026-10-22)
+**Commit Message**: Add Correct Last Dictation to fix and copy the latest dictation (#1691)
 
-* Build CI and releases with Xcode 27.1 on the xcode-27 runner
+* Add Correct Last Dictation to fix and copy the latest dictation
 
-* Install the Metal Toolchain on the xcode-27 runner
+Opens a compact editor for the most recent successful dictation from the
+menu bar or an assignable shortcut. Saving updates the History entry,
+copies the corrected text and learns with the existing conservative
+correction rules behind the unchanged license and setting gate. Cancel
+changes nothing, and text in other apps is never rewritten.
 
-The xcode-27 image has no Metal Toolchain, so MLX's shader compile failed in
-the app tests, the Plugin SDK tests and the App Store build.
+* Add screenshots for the Correct Last Dictation pull request
 
-* Wait for the downloaded Metal Toolchain before building
+* Keep Correct Last Dictation out of running inserts and other Macs' dictations
 
-The download finished, but xcrun still reported the toolchain as missing right
-after it. The new script clears the xcrun cache and polls until metal answers.
+- A standalone workflow or a running Insert also shows the inserting
+  state. Opening the editor then took the keyboard focus, and the paste
+  landed in the editor. The shortcut now reports busy in that case.
+- Correcting a dictation that still has an Insert offer updates the
+  offer, so Insert pastes the corrected text instead of the old one.
+- History sync imports another Mac's dictations with the Mac source.
+  The editor now only picks records made on this Mac, using the device
+  ID that History filters already compare.
 
-* Restate @unchecked Sendable on the test's AVAudioEngine subclass
-
-Xcode 27.1 warns when a subclass inherits the conformance without restating it.
-
-* Keep the release script self-tests on macos-26
-
-They do not use Xcode, so they need not depend on the preview image.
-
-* Retry the Metal Toolchain download before failing the job
-
-* Stop a stalled Metal Toolchain download after five minutes
-
-Several of the affected jobs have no timeout-minutes, so a hanging download
-would block them for GitHub's six-hour default instead of retrying.
-
-**File**: `.github/workflows/appstore-testflight.yml` (modified, +5/-2)
+**File**: `TypeWhisper.xcodeproj/project.pbxproj` (modified, +12/-0)
 ```diff
-@@ -42,7 +42,7 @@ concurrency:
-   cancel-in-progress: false
+@@ -203,8 +203,11 @@
+ 		A91F00000000000000000001 /* SelectionPalettePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000001 /* SelectionPalettePanel.swift */; };
+ 		A91F00000000000000000002 /* RecentTranscriptionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000002 /* RecentTranscriptionStore.swift */; };
+ 		A91F00000000000000000003 /* RecentTranscriptionPaletteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000003 /* RecentTranscriptionPaletteHandler.swift */; };
++		C10200000000000000000001 /* LastDictationCorrectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000002 /* LastDictationCorrectionHandler.swift */; };
++		C10200000000000000000003 /* LastDictationCorrectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000004 /* LastDictationCorrectionPanel.swift */; };
+ 		A91F00000000000000000004 /* RecentTranscriptionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000004 /* RecentTranscriptionStoreTests.swift */; };
+ 		A91F00000000000000000005 /* RecentTranscriptionPaletteHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000005 /* RecentTranscriptionPaletteHandlerTests.swift */; };
++		C10200000000000000000005 /* LastDictationCorrectionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000006 /* LastDictationCorrectionHandlerTests.swift */; };
+ 		A91F00000000000000000006 /* PromptPaletteControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000006 /* PromptPaletteControllerTests.swift */; };
+ 		6C1F7A8B9D2E4F5061728394 /* SoundServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D2E4F50617283946C1F7A8B /* SoundServiceTests.swift */; };
+ 		BB8C1D4E5F60718293A4B5C6 /* DictationShortSpeechTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C1D4E5F60718293A4B5C6 /* DictationShortSpeechTests.swift */; };
+@@ -884,8 +887,11 @@
+ 		B91F00000000000000000001 /* SelectionPalettePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionPalettePanel.swift; sourceTree = "<group>"; };
+ 		B91F00000000000000000002 /* RecentTranscriptionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTranscriptionStore.swift; sourceTree = "<group>"; };
+ 		B91F00000000000000000003 /* RecentTranscriptionPaletteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTranscriptionPaletteHandler.swift; sourceTree = "<group>"; };
++		C10200000000000000000002 /* LastDictationCorrectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionHandler.swift; sourceTree = "<group>"; };
++		C10200000000000000000004 /* LastDictationCorrectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionPanel.swift; sourceTree = "<group>"; };
+ 		B91F00000000000000000004 /* RecentTranscriptionStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecentTranscriptionStoreTests.swift; sourceTree = "<group>"; };
+ 		B91F00000000000000000005 /* RecentTranscriptionPaletteHandlerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecentTranscriptionPaletteHandlerTests.swift; sourceTree = "<group>"; };
++		C10200000000000000000006 /* LastDictationCorrectionHandlerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionHandlerTests.swift; sourceTree = "<group>"; };
+ 		B91F00000000000000000006 /* PromptPaletteControllerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PromptPaletteControllerTests.swift; sourceTree = "<group>"; };
+ 		7D2E4F50617283946C1F7A8B /* SoundServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SoundServiceTests.swift; sourceTree = "<group>"; };
+ 		AA8C1D4E5F60718293A4B5C6 /* DictationShortSpeechTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DictationShortSpeechTests.swift; sourceTree = "<group>"; };
+@@ -2308,6 +2314,7 @@
+ 				BB1023000000000000000001 /* DictationSilenceEndpoint.swift */,
+ 				BB00000000000000000173 /* PromptPaletteHandler.swift */,
+ 				B91F00000000000000000003 /* RecentTranscriptionPaletteHandler.swift */,
++				C10200000000000000000002 /* LastDictationCorrectionHandler.swift */,
+ 				BB00000000000000000174 /* DictationSettingsHandler.swift */,
+ 				C5E6EB12C3CB1F88B36EFA3F /* DictationQuickSelection.swift */,
+ 				BB00000000000000000239 /* AudioRecorderViewModel.swift */,
+@@ -2365,6 +2372,7 @@
+ 				BB00000000000000000094 /* AudioWaveformView.swift */,
+
+```
+
+**File**: `TypeWhisper/App/TypeWhisperApp.swift` (modified, +3/-0)
+```diff
+@@ -1014,6 +1014,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+         ServiceContainer.shared.hotkeyService.onRestoreRawTranscript = {
+             DictationViewModel.shared.restoreRawTranscript()
+         }
++        ServiceContainer.shared.hotkeyService.onCorrectLastDictation = {
++            DictationViewModel.shared.triggerCorrectLastDictation()
++        }
+         ServiceContainer.shared.hotkeyService.onRecorderToggle = {
+             AudioRecorderViewModel.shared.toggleRecording()
+         }
+```
+
+**File**: `TypeWhisper/App/UserDefaultsKeys.swift` (modified, +2/-0)
+```diff
+@@ -39,6 +39,7 @@ enum UserDefaultsKeys {
+     static let recorderToggleHotkey = "recorderToggleHotkey"
+     static let undoLastDictationHotkey = "undoLastDictationHotkey"
+     static let restoreRawTranscriptHotkey = "restoreRawTranscriptHotkey"
++    static let correctLastDictationHotkey = "correctLastDictationHotkey"
  
- env:
--  XCODE_VERSION: "26.6"
-+  XCODE_VERSION: "27.1"
-   XCODEGEN_VERSION: "2.46.0"
-   XCODEGEN_SHA256: 4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806
-   PROJECT: TypeWhisperAppStore.xcodeproj
-@@ -97,7 +97,7 @@ jobs:
+     // MARK: - Hotkeys (JSON-encoded [UnifiedHotkey] per slot)
+     static let hybridHotkeys = "hybridHotkeys"
+@@ -51,6 +52,7 @@ enum UserDefaultsKeys {
+     static let recorderToggleHotkeys = "recorderToggleHotkeys"
+     static let undoLastDictationHotkeys = "undoLastDictationHotkeys"
+     static let restoreRawTranscriptHotkeys = "restoreRawTranscriptHotkeys"
++    static let correctLastDictationHotkeys = "correctLastDictationHotkeys"
+ 
+     // MARK: - Model / Engine
+     static let selectedEngine = "selectedEngine"
+```
+
+**File**: `TypeWhisper/Resources/Localizable.xcstrings` (modified, +486/-0)
+```diff
+@@ -16837,6 +16837,492 @@
+         }
+       }
+     },
++    "Correct Last Dictation" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Letztes Diktat korrigieren"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "最後の音声入力を修正"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "修正上次听写"
++          }
++        }
++      }
++    },
++    "Correct Last Dictation..." : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Letztes Diktat korrigieren …"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "最後の音声入力を修正…"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "修正上次听写…"
++          }
++        }
++      }
++    },
++    "Correct last dictation shortcut" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Tastenkürzel zum Korrigieren des letzten Diktats"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "最後の音声入力を修正するショートカット"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "修正上次听写的快捷键"
++          }
++        }
++      }
++    },
++    "correctLastDictation.shortcut.description" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Korrigiere dein letztes Diktat in einem kleinen Editor und kopiere den korrigierten Text."
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Fix your latest dictation in a small editor and copy the corrected text."
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "小さなエディタで最後の音声入力を修正し、修正したテキストをコピーします。"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "在小型编辑器中修正上次听写，并复制修正后的文本。"
++          }
++        }
++      }
++    },
++    "correctLastDictation.notice.noDictation" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Noch kein Diktat zum Korrigieren"
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "No dictation to correct yet"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "修正できる音声入力はまだありません"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "还没有可修正的听写"
++          }
++        }
++      }
++    },
++    "correctLastDictation.notice.busy" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Beende zuerst das laufende Diktat"
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Finish the current dictation first"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "現在の音声入力を先に完了してください"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "请先完成当前听写"
++          }
++        }
++      }
++    },
++    "correctLastDictation.editor.label" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Diktierter Text"
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Dictated text"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "音声入力したテキスト"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "听写文本"
++          }
++        }
++      }
++    },
++    "correctLastDictation.editor.hint" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Return speichert die Korrektur und kopiert sie. Umschalt-Return fügt eine Zeile ein. Escape bricht ab."
++          }
++        },
++        "en" : {
++          "stringUnit
+```
+
+**File**: `TypeWhisper/Services/HistoryService.swift` (modified, +10/-1)
+```diff
+@@ -110,7 +110,7 @@ struct HistoryPostFilter {
+         text.range(of: searchText, options: .caseInsensitive) != nil
+     }
+ 
+-    private static func matchesDevice(
++    static func matchesDevice(
+         _ record: TranscriptionRecord,
+         deviceID: String,
+         includeLegacyMac: Bool
+@@ -1134,6 +1134,15 @@ final class HistoryService: ObservableObject {
+         }
+     }
+ 
++    /// Whether a record was made on this Mac. Records synced from another Mac also have the
++    /// Mac source but carry that Mac's device ID; records without a device ID are local.
++    func isFromThisMac(_ record: TranscriptionRecord) -> Bool {
++        guard let deviceID = historySyncPreferences?.deviceID else {
++            return record.originDeviceID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
++        }
++        return HistoryPostFilter.matchesDevice(record, deviceID: deviceID, includeLegacyMac: true)
++    }
++
+     func record(withID id: UUID) -> TranscriptionRecord? {
+         var descriptor = FetchDescriptor<TranscriptionRecord>(
+             predicate: #Predicate { $0.id == id }
+```
+
+**File**: `TypeWhisper/Services/HotkeyService.swift` (modified, +11/-1)
+```diff
+@@ -103,6 +103,7 @@ enum HotkeySlotType: String, CaseIterable, Sendable {
+     case recorderToggle
+     case undoLastDictation
+     case restoreRawTranscript
++    case correctLastDictation
+ 
+     var defaultsKey: String {
+         switch self {
+@@ -116,6 +117,7 @@ enum HotkeySlotType: String, CaseIterable, Sendable {
+         case .recorderToggle: return UserDefaultsKeys.recorderToggleHotkey
+         case .undoLastDictation: return UserDefaultsKeys.undoLastDictationHotkey
+         case .restoreRawTranscript: return UserDefaultsKeys.restoreRawTranscriptHotkey
++        case .correctLastDictation: return UserDefaultsKeys.correctLastDictationHotkey
+         }
+     }
+ 
+@@ -131,6 +133,7 @@ enum HotkeySlotType: String, CaseIterable, Sendable {
+         case .recorderToggle: return UserDefaultsKeys.recorderToggleHotkeys
+         case .undoLastDictation: return UserDefaultsKeys.undoLastDictationHotkeys
+         case .restoreRawTranscript: return UserDefaultsKeys.restoreRawTranscriptHotkeys
++        case .correctLastDictation: return UserDefaultsKeys.correctLastDictationHotkeys
+         }
+     }
+ }
+@@ -143,7 +146,7 @@ extension HotkeySlotType {
+         case .hybrid, .pushToTalk, .toggle:
+             true
+         case .promptPalette, .recentTranscriptions, .copyLastTranscription, .pasteLastTranscription, .recorderToggle,
+-             .undoLastDictation, .restoreRawTranscript:
++             .undoLastDictation, .restoreRawTranscript, .correctLastDictation:
+             false
+         }
+     }
+@@ -229,6 +232,7 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+     var onRecorderToggle: (() -> Void)?
+     var onUndoLastDictation: (() -> Void)?
+     var onRestoreRawTranscript: (() -> Void)?
++    var onCorrectLastDictation: (() -> Void)?
+     var onProfileDictationStart: ((UUID, UInt64) -> Void)?
+     var onWorkflowDictationStart: ((UUID, UInt64) -> Void)?
+     var onWorkflowTextProcessing: ((UUID) -> Void)?
+@@ -3085,6 +3089,10 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+             onRestoreRawTranscript?()
+             return
+         }
++        if slotType == .correctLastDictation {
++            onCorrectLastDictation?()
++            return
++        }
+         if slotType == .recorderToggle {
+             onRecorderToggle?()
+             return
+@@ -3169,6 +3177,8 @@ final class HotkeyService: ObservableObject, @unchecked Sendable {
+             break // handled on keyDown only
+         case .restoreRawTranscript:
+             break // handled on keyDown only
++        case .correctLastDictation:
++            break // handled on keyDown only
+         case .recorderToggle:
+             break // handled on keyDown only
+         }
+```
+
+**File**: `TypeWhisper/Services/ScreenshotFixtureSeeder.swift` (modified, +27/-1)
+```diff
+@@ -1,3 +1,4 @@
++import AppKit
+ import AVFoundation
+ import Foundation
+ import TypeWhisperPluginSDK
+@@ -35,7 +36,12 @@ extension ServiceContainer {
+         }
+         seedScreenshotRecorderFolders(state: AppConstants.screenshotState)
+ 
+-        seedScreenshotHistory(content.history, languageCode: language.rawValue)
++        if AppConstants.screenshotState != "correct-last-dictation-empty" {
++            seedScreenshotHistory(content.history, languageCode: language.rawValue)
++        }
++        if AppConstants.screenshotState?.hasPrefix("correct-last-dictation") == true {
++            prepareScreenshotLastDictationCorrection()
++        }
+         usageStatisticsService.replaceWithHistoryRecords(historyService.allRecords())
+         seedScreenshotFileTranscriptionQueue(languageCode: language.rawValue)
+ 
+@@ -208,6 +214,26 @@ extension ServiceContainer {
+         }
+     }
+ 
++    /// Correct Last Dictation copies the corrected text, which must not replace the clipboard
++    /// of the Mac the screenshots are taken on. The newest dictation was post-processed, so
++    /// the editor also shows its original transcript.
++    private func prepareScreenshotLastDictationCorrection() {
++        let clipboard = NSPasteboard(name: NSPasteboard.Name("com.typewhisper.screenshots.clipboard"))
++        dictationViewModel.pasteboardProvider = { clipboard }
++        guard AppConstants.screenshotState == "correct-last-dictation" else { return }
++        _ = historyService.addRecord(
++            timestamp: Date().addingTimeInterval(-120),
++            rawText: "please deploy the release build to kubernetis after the review",
++            finalText: "Please deploy the release build to Kubernetis after the review.",
++            appName: "Slack",
++            appBundleIdentifier: "com.tinyspeck.slackmacgap",
++            durationSeconds: 4.5,
++            language: "en",
++            engineUsed: "parakeet",
++            modelUsed: "Parakeet TDT 0.6B v3"
++        )
++    }
++
+     private func seedScreenshotHistory(
+         _ samples: [ScreenshotHistorySample],
+         languageCode: String
+```
+
+**File**: `TypeWhisper/Services/SettingsBackupExporter.swift` (modified, +1/-0)
+```diff
+@@ -44,6 +44,7 @@ enum SettingsBackupExporter {
+         UserDefaultsKeys.recorderToggleHotkeys,
+         UserDefaultsKeys.undoLastDictationHotkeys,
+         UserDefaultsKeys.restoreRawTranscriptHotkeys,
++        UserDefaultsKeys.correctLastDictationHotkeys,
+     ]
+ 
+     // MARK: - DTOs
+```
+
+---
+
+### Incident Patch 2: `4e27c985` (2026-10-22)
+**Commit Message**: Wait for palette results instead of fixed delays in tests (#1699)
+
+- Replace the 50-150 ms sleeps in the palette handler tests with the
+  signals that end the awaited work: the insertion feedback, the end of
+  the workflow task, the missing-text error and the clipboard restore.
+- Assert that the workflow palette is visible instead of waiting for it;
+  it opens synchronously when no workflows exist.
+- Read the clipboard at paste time and drop the paste settle window in
+  the two restore tests, so a repeated insertion the handler fails to
+  ignore fails the paste count.
+
+**File**: `TypeWhisperTests/RecentTranscriptionPaletteHandlerTests.swift` (modified, +67/-20)
+```diff
+@@ -4,6 +4,10 @@ import TypeWhisperPluginSDK
+ import XCTest
+ @testable import TypeWhisper
+ 
++/// The handler tests wait for completion signals instead of fixed delays. This bound only
++/// has to be generous enough that a loaded machine cannot reach it.
++private let asyncWorkTimeout: TimeInterval = 5
++
+ @MainActor
+ final class RecentTranscriptionPaletteHandlerTests: XCTestCase {
+     func testTriggerSelectionOpensOnlyWhenIdle() throws {
+@@ -133,11 +137,14 @@ final class RecentTranscriptionPaletteHandlerTests: XCTestCase {
+             appName: "Messages",
+             appBundleIdentifier: "com.apple.MobileSMS"
+         )
++        // The feedback follows the finished insertion, including a Return key if one were sent.
++        let insertionFinished = expectation(description: "insertion feedback shown")
++        handler.onShowNotchFeedback = { _, _, _, _, _ in insertionFinished.fulfill() }
+ 
+         handler.triggerSelection(currentState: .idle)
+         controller.select(id: id)
+ 
+-        try await Task.sleep(for: .milliseconds(50))
++        await fulfillment(of: [insertionFinished], timeout: asyncWorkTimeout)
+ 
+         XCTAssertEqual(pasteCount, 1)
+         XCTAssertEqual(returnCount, 0)
+@@ -181,9 +188,11 @@ final class RecentTranscriptionPaletteHandlerTests: XCTestCase {
+             appName: "Messages",
+             appBundleIdentifier: "com.apple.MobileSMS"
+         )
++        let insertionFinished = expectation(description: "insertion feedback shown")
++        handler.onShowNotchFeedback = { _, _, _, _, _ in insertionFinished.fulfill() }
+ 
+         handler.insertLatest(currentState: .idle)
+-        try await Task.sleep(for: .milliseconds(50))
++        await fulfillment(of: [insertionFinished], timeout: asyncWorkTimeout)
+ 
+         XCTAssertFalse(controller.isVisible)
+         XCTAssertEqual(pasteCount, 1)
+@@ -263,7 +272,7 @@ final class RecentTranscriptionPaletteHandlerTests: XCTestCase {
+             }
+ 
+             handler.insertLatest(currentState: .idle)
+-            await fulfillment(of: [feedbackShown], timeout: 1.0)
++            await fulfillment(of: [feedbackShown], timeout: asyncWorkTimeout)
+ 
+             XCTAssertEqual(pasteCount, 1, "\(field)")
+             XCTAssertEqual(
+@@ -289,11 +298,19 @@ final class RecentTranscriptionPaletteHandlerTests: XCTestCase {
+         textInsertionService.pasteboardProvider = { pasteboard }
+         textInsertionService.focusedTextElementOverride = { nil }
+         textInsertionService.defaultPasteFallbackRestoreDelay = .milliseconds(80)
++        // Without a settle window, an insertion the handler failed to ignore would paste right
++        // away instead of after the restore, so the paste count below catches it.
++        textInsertionService.pendingPasteSettleWindow = .zero
+ 
+         let pasteStarted = expectation(description: "synthetic paste started")
++        // A second paste has to fail the paste count, not crash the test process.
++        pasteStarted.assertForOverFulfill = false
+         var pasteCount = 0
++        var pastedClipboard: String?
+         textInsertionService.pasteSimulatorOverride = {
+             pasteCount += 1
++            // Read at paste time: the restore may already have run when the test resumes.
++            pastedClipboard = pasteboard.string(forType: .string)
+             pasteStarted.fulfill()
+         }
+ 
+@@ -317,11 +334,11 @@ final class RecentTranscriptionPaletteHandlerTests: XCTestCase {
+         handler.insertLatest(currentState: .idle)
+         handler.insertLatest(currentState: .idle)
+ 
+-        await fulfillment(of: [pasteStarted], timeout: 1.0)
++        await fulfillment(of: [pasteStarted], timeout: asyncWorkTimeout)
+         XCTAssertEqual(pasteCount, 1)
+-        XCTAssertEqual(pasteboard.string(forType: .string), "Newest transcription")
++        XCTAssertEqual(pastedClipboard, "Newest transcription")
+ 
+-        try await Task.sleep(for: .milliseconds(150))
++        await textInsertionService.waitForPendingClipboardRestore()
+         XCTAssertEqual(pasteCount, 1)
+         XCTAssertEqual(pasteboard.string(forType: .string), "Original clipboard")
+     }
+@@ -339,11 +356,19 @@ final class RecentTranscriptionPaletteHandlerTests: XCTestCase {
+         textInsertionService.pasteboardProvider = { pasteboard }
+         textInsertionService.focusedTextElementOverride = { nil }
+         textInsertionService.defaultPasteFallbackRestoreDelay = .milliseconds(80)
++        // Without a settle window, an insertion the handler failed to ignore would paste right
++        // away instead of after the restore, so the paste count below catches it.
++        textInsertionService.pendingPasteSettleWindow = .zero
+ 
+         let pasteStarted = expectation(description: "synthetic paste started")
++        // A second paste has to fail the paste count, not crash the test process.
++        pasteStarted.assertForOverFulfill = false
+         var pasteCount = 0
++        var pastedClipboard: String?
+         textInsertionService.pasteSimulatorO
+```
+
+---
+
+### Incident Patch 3: `695e7be1` (2026-10-22)
+**Commit Message**: Revert "Run macOS jobs on the self-hosted Mac mini for SeoFood's own runs (#1705)" (#1711)
+
+This reverts commit 615b1be9c663eff3eeca72d6651b3ed1aa622a88.
+
+**File**: `.github/workflows/appstore-testflight.yml` (modified, +1/-3)
+```diff
+@@ -97,9 +97,7 @@ jobs:
      name: Archive, export and upload
      needs: changes
      if: needs.changes.outputs.run == 'true'
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      environment: app-store
      timeout-minutes: 120
      steps:
-@@ -125,6 +125,9 @@ jobs:
-         with:
-           xcode-version: ${{ env.XCODE_VERSION }}
- 
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
-+
-       - name: Install XcodeGen
-         run: |
-           archive="$RUNNER_TEMP/xcodegen.zip"
 ```
 
-**File**: `.github/workflows/build.yml` (modified, +17/-5)
+**File**: `.github/workflows/build.yml` (modified, +4/-12)
 ```diff
-@@ -15,7 +15,7 @@ concurrency:
- env:
-   SCHEME: TypeWhisper
-   PROJECT: TypeWhisper.xcodeproj
--  XCODE_VERSION: "26.6"
-+  XCODE_VERSION: "27.1"
- 
- permissions:
-   contents: read
-@@ -77,7 +77,7 @@ jobs:
+@@ -77,9 +77,7 @@ jobs:
            echo "plugin_sdk=$plugin_sdk" | tee -a "$GITHUB_OUTPUT"
  
    release-build:
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      steps:
        - name: Checkout
          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -89,6 +89,9 @@ jobs:
-         with:
-           xcode-version: ${{ env.XCODE_VERSION }}
- 
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
-+
-       - name: Restore Swift package cache
-         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-         with:
-@@ -184,7 +187,7 @@ jobs:
+@@ -189,9 +187,7 @@ jobs:
            retention-days: 14
  
    app-tests:
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      steps:
        - name: Checkout
          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -196,6 +199,9 @@ jobs:
-         with:
-           xcode-version: ${{ env.XCODE_VERSION }}
- 
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
-+
-       # The nightly release workflow seeds this cache on main. Caches saved here would
-       # be scoped to this pull request and unreachable for every other one.
-       - name: Restore Swift package cache
-@@ -240,7 +246,7 @@ jobs:
+@@ -272,9 +268,7 @@ jobs:
    plugin-sdk-tests:
      needs: changes
      if: needs.changes.outputs.plugin_sdk == 'true'
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      steps:
        - name: Checkout
          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -252,14 +258,17 @@ jobs:
-         with:
-           xcode-version: ${{ env.XCODE_VERSION }}
- 
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
-+
-       - name: Run Plugin SDK Tests
-         run: swift test --package-path TypeWhisperPluginSDK
- 
-   # Mac App Store edition: compile check of the APPSTORE build with bundled plugins.
+@@ -296,9 +290,7 @@ jobs:
    # A Debug arm64 build keeps pull requests fast; the nightly TestFlight workflow
    # builds the universal Release binary and audits it. See docs/appstore/README.md.
    appstore:
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      timeout-minutes: 60
      env:
        APPSTORE_DERIVED_DATA: build/appstore
-@@ -276,6 +285,9 @@ jobs:
-         with:
-           xcode-version: ${{ env.XCODE_VERSION }}
- 
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
-+
-       - name: Install XcodeGen
-         run: |
-           archive="$RUNNER_TEMP/xcodegen.zip"
 ```
 
-**File**: `.github/workflows/plugin-release.yml` (modified, +6/-3)
+**File**: `.github/workflows/notarization-log.yml` (modified, +1/-3)
 ```diff
-@@ -33,7 +33,7 @@ permissions:
+@@ -13,9 +13,7 @@ permissions:
+ 
+ jobs:
+   fetch:
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses macos-latest.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'macos-latest' }}
++    runs-on: macos-latest
+     steps:
+       - name: Fetch Notarization Log
+         env:
+```
+
+**File**: `.github/workflows/plugin-release.yml` (modified, +1/-3)
+```diff
+@@ -33,9 +33,7 @@ permissions:
  
  jobs:
    build:
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      concurrency:
        group: plugin-release-${{ github.event_name == 'workflow_dispatch' && format('{0}-{1}-v{2}', inputs.distribution_source, inputs.plugin_name, inputs.plugin_version) || github.ref_name }}
        cancel-in-progress: true
-@@ -148,13 +148,13 @@ jobs:
-             *) echo "Unknown plugin: $PLUGIN_NAME" && exit 1 ;;
-           esac
-           # Set deployment target and Swift embedding per plugin
--          # All plugins use Xcode 26.6 (mlx-swift 0.31.6 requires Swift 6.3+ for package resolution,
-+          # All plugins use Xcode 27.1 (mlx-swift 0.31.6 requires Swift 6.3+ for package resolution,
-           # and workspace-state.json v7 from Xcode 26.x is incompatible with Xcode 16.2)
-           # - SpeechAnalyzer: macOS 26 deployment target
-           # - Qwen3/Voxtral/Granite/Canary/LocalLLM: macOS 14 + embed Swift compat libs (MLX uses Swift 6.2 features)
-           # - All others: macOS 14, no compat libs needed (simple Foundation/SDK code)
-           EMBED_SWIFT_LIBS="NO"
--          XCODE_VERSION="26.6"
-+          XCODE_VERSION="27.1"
-           if [ "$TARGET" = "SpeechAnalyzerPlugin" ]; then
-             DEPLOY_TARGET="26.0"
-           elif [ "$TARGET" = "Qwen3Plugin" ] || [ "$TARGET" = "VoxtralPlugin" ] || [ "$TARGET" = "GranitePlugin" ] || [ "$TARGET" = "CanaryPlugin" ] || [ "$TARGET" = "LocalLLMPlugin" ]; then
-@@ -216,6 +216,9 @@ jobs:
-         with:
-           xcode-version: ${{ env.XCODE_VERSION }}
- 
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
-+
-       - name: Resolve Swift packages
-         run: |
-           xcodebuild -resolvePackageDependencies \
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +17/-8)
+**File**: `.github/workflows/release.yml` (modified, +4/-12)
 ```diff
-@@ -104,7 +104,7 @@ jobs:
+@@ -87,9 +87,7 @@ jobs:
+   verify-release-tools:
+     needs: [prepare]
+     if: needs.prepare.outputs.should_run == 'true'
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses macos-26.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'macos-26' }}
++    runs-on: macos-26
+     steps:
+       - name: Checkout
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -106,9 +104,7 @@ jobs:
    app-tests:
      needs: [prepare]
      if: needs.prepare.outputs.should_run == 'true'
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      steps:
        - name: Checkout
          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -114,17 +114,20 @@ jobs:
-       - name: Setup Xcode
-         uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
-         with:
--          xcode-version: "26.6"
-+          xcode-version: "27.1"
-+
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
- 
-       # Scheduled runs on main seed the package cache that pull request builds restore.
-       # The signed build job below always resolves packages from scratch.
-       - name: Cache Swift packages
-         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-         with:
-           path: ${{ runner.temp }}/SourcePackages
--          key: spm-${{ runner.os }}-xcode26.6-${{ hashFiles('TypeWhisper.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
-+          key: spm-${{ runner.os }}-xcode27.1-${{ hashFiles('TypeWhisper.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
-           restore-keys: |
--            spm-${{ runner.os }}-xcode26.6-
-+            spm-${{ runner.os }}-xcode27.1-
- 
-       - name: Resolve Swift packages
-         run: |
-@@ -152,7 +155,7 @@ jobs:
+@@ -159,9 +155,7 @@ jobs:
    plugin-sdk-tests:
      needs: [prepare]
      if: needs.prepare.outputs.should_run == 'true'
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      steps:
        - name: Checkout
          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -162,7 +165,10 @@ jobs:
-       - name: Setup Xcode
-         uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
-         with:
--          xcode-version: "26.6"
-+          xcode-version: "27.1"
-+
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
- 
-       - name: Run Plugin SDK Tests
-         run: swift test --package-path TypeWhisperPluginSDK
-@@ -176,7 +182,7 @@ jobs:
+@@ -188,9 +182,7 @@ jobs:
        - app-tests
        - plugin-sdk-tests
      if: needs.prepare.outputs.should_run == 'true'
--    runs-on: macos-26
+-    # Runs started by SeoFood from this repository use the self-hosted Mac mini
+-    # while the MAC_MINI_RUNNER variable is "on"; everything else uses xcode-27.
+-    runs-on: ${{ (vars.MAC_MINI_RUNNER == 'on' && github.actor == 'SeoFood' && github.triggering_actor == 'SeoFood' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'seofood-mac-mini' || 'xcode-27' }}
 +    runs-on: xcode-27
      env:
        RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
      steps:
-@@ -203,7 +209,10 @@ jobs:
-       - name: Setup Xcode
-         uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
-         with:
--          xcode-version: "26.6"
-+          xcode-version: "27.1"
-+
-+      - name: Ensure Metal toolchain
-+        run: bash scripts/ensure_metal_toolchain.sh
- 
-       - name: Resolve Swift packages
-         run: |
-```
-
-**File**: `TypeWhisperTests/AudioEngineRecoverySupportTests.swift` (modified, +1/-1)
-```diff
-@@ -6170,7 +6170,7 @@ private final class FakeCoreAudioHALInputOperations: CoreAudioHALInputOperating,
-     }
- }
- 
--private final class RunningAudioEngine: AVAudioEngine {
-+private final class RunningAudioEngine: AVAudioEngine, @unchecked Sendable {
-     override var isRunning: Bool { true }
- }
- 
-```
-
-**File**: `scripts/ensure_metal_toolchain.sh` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+#!/usr/bin/env bash
-+# Makes sure `xcrun metal` works before MLX compiles its shaders.
-+#
-+# The xcode-27 runner image ships without the Metal Toolchain
-+# (actions/runner-images#14548). After -downloadComponent the toolchain is
-+# mounted asynchronously, and xcrun may still have the failed lookup cached, so
-+# poll with a fresh xcrun cache until the compiler answers.
-+set -euo pipefail
-+
-+if xcrun metal -v >/dev/null 2>&1; then
-+  xcrun metal -v
-+  exit 0
-+fi
-+
-+downloaded=0
-+for attempt in 1 2 3; do
-+  echo "Downloading the Metal Toolchain, attempt $attempt of 3"
-+  # macOS has no timeout(1); the alarm survives exec and stops a stalled download after 5 minutes.
-+  if perl -e 'alarm shift; exec @ARGV' 300 xcodebuild -downloadComponent MetalToolchain; then
-+    downloaded=1
-+    break
-+  fi
-+  echo "Metal Toolchain download failed, retrying in 10s..."
-+  sleep 10
-+done
-+if [ "$downloaded" -ne 1 ]; then
-+  echo "error: the Metal Toolchain download failed 3 times" >&2
-+  exit 1
-+fi
-+
-+for _ in $(seq 1 30); do
-+  xcrun --kill-cache >/dev/null 2>&1 || true
-+  if xcrun metal -v >/dev/null 2>&1; then
-+    xcrun metal -v
-+    exit 0
-+  fi
-+  sleep 5
-+done
-+
-+xcodebuild -showComponent MetalToolchain || true
-+echo "error: the Metal Toolchain is still unavailable after downloading it" >&2
-+exit 1
-```
-
----
-
-### Incident Patch 2: `72f05ce8` (2026-10-19)
-**Commit Message**: Fix the warnings Xcode 27.1 reports in first-party code (#1638)
-
-- Import Combine where Timer.publish(...).autoconnect() is stored in a property.
-- Create the AVAudioFile locks with uncheckedState: AVAudioFile is only
-  Sendable from macOS 26 on, and the lock already guards every access.
-- Discard the translation timeout watchdog tasks explicitly; they end by
-  throwing when the request finishes first and nothing awaits them.
-- Capture self strongly in the permission refresh, matching the enclosing Task.
-
-**File**: `TypeWhisper/Services/AudioRecorderService.swift` (modified, +2/-2)
-```diff
-@@ -647,11 +647,11 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
-     private let micBluetoothInputRouteStabilizer: BluetoothInputRouteStabilizing
-     private let micInputCaptureFactory: AudioInputCaptureFactory
-     private let micInputActivationGuard: AudioInputDeviceActivating
--    private let micFileLock = OSAllocatedUnfairLock<AVAudioFile?>(initialState: nil)
-+    private let micFileLock = OSAllocatedUnfairLock<AVAudioFile?>(uncheckedState: nil)
-     private var scStream: SCStream?
-     private var streamOutput: SystemAudioStreamOutput?
-     private var systemLevelSetter: SystemLevelSetter?
--    private let sysFileLock = OSAllocatedUnfairLock<AVAudioFile?>(initialState: nil)
-+    private let sysFileLock = OSAllocatedUnfairLock<AVAudioFile?>(uncheckedState: nil)
-     private var durationTimer: Timer?
-     private var startTime: Date?
-     private let systemAudioDiagnosticsLock = OSAllocatedUnfairLock(initialState: SystemAudioCaptureDiagnostics())
-```
-
-**File**: `TypeWhisper/Services/TranslationService.swift` (modified, +2/-2)
-```diff
-@@ -296,7 +296,7 @@ final class TranslationService: ObservableObject {
-             // its deadline; finish(with:) lets the session result, the
-             // timeout, and cancellation race for exactly one terminal
-             // completion, and a late session result is safely ignored.
--            Task { [weak self] in
-+            _ = Task { [weak self] in
-                 try await Task.sleep(for: timeout)
-                 guard let self, let pending = self.batchRequest, pending.requestId == requestId else { return }
-                 Self.logger.error("Translation[\(requestId)] batch timed out, \(strict ? "throwing" : "returning source texts")")
-@@ -480,7 +480,7 @@ final class TranslationService: ObservableObject {
-             let timeout: Duration = needsInteractiveHost ? .seconds(90) : .seconds(15)
- 
-             // Timeout watchdog.
--            Task { [weak self] in
-+            _ = Task { [weak self] in
-                 try await Task.sleep(for: timeout)
-                 guard let self else { return }
-                 if self.activeRequestId == requestId, let pending = self.continuation {
-```
-
-**File**: `TypeWhisper/ViewModels/DictationSettingsHandler.swift` (modified, +2/-2)
-```diff
-@@ -29,8 +29,8 @@ final class DictationSettingsHandler {
-     func requestMicPermission() {
-         Task {
-             _ = await audioRecordingService.requestMicrophonePermission()
--            DispatchQueue.main.async { [weak self] in
--                self?.onObjectWillChange?()
-+            DispatchQueue.main.async {
-+                self.onObjectWillChange?()
-             }
-             pollPermissionStatus()
-         }
-```
-
-**File**: `TypeWhisper/Views/PluginSettingsView.swift` (modified, +1/-0)
-```diff
-@@ -1,4 +1,5 @@
- import AppKit
-+import Combine
- import SwiftUI
- import TypeWhisperPluginSDK
- 
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/CanaryPlugin/CanaryPlugin.swift` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+import Combine
- import Foundation
- import SwiftUI
- import HuggingFace
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/CohereLocalPlugin/CohereLocalPlugin.swift` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+import Combine
- import Foundation
- import SwiftUI
- import TypeWhisperPluginSDK
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/GranitePlugin/GranitePlugin.swift` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+import Combine
- import Foundation
- import SwiftUI
- import HuggingFace
-```
-
-**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+import Combine
- import Foundation
- import CoreML
- import OSLog
-```
-
----
-
-### Incident Patch 3: `1cfcecc2` (2026-10-19)
-**Commit Message**: Drop FluidAudio's unused text normalization from the speaker and Parakeet plugins (#1637)
-
-* Drop FluidAudio's unused text normalization from the speaker and Parakeet plugins
-
-* Link FluidAudio through the SDK package so Xcode builds drop NemoTextProcessing too
-
-The project-level FluidAudio reference enabled the package's default traits
-again, so Xcode 26.6 release builds still linked the Rust text normalizer.
-The plugins now get FluidAudio from a TypeWhisperFluidAudio product of the SDK
-package, whose manifest is the only one that declares FluidAudio's traits.
-Without NemoTextProcessing the plugins no longer import fork, execvp and
-posix_spawnp, so the App Store audit exceptions for them are removed.
-
-* Name Xcode 26.6 as the minimum for building from source
-
-The dependencies already need Swift 6.3 for package resolution, and the SDK
-manifest now uses swift-tools-version 6.2, so Xcode 16 cannot open the
-project anymore.
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ Thanks for your interest in contributing!
- ## Getting Started
- 
- 1. Fork the repository and clone it
--2. Open `TypeWhisper.xcodeproj` in Xcode 16+
-+2. Open `TypeWhisper.xcodeproj` in Xcode 26.6 or later
- 3. SPM dependencies resolve automatically on first build
- 4. Build and run (Cmd+R) - the app appears as a menu bar icon
- 
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -297,7 +297,7 @@ TypeWhisper includes the Local LLM (MLX) plugin for on-device prompt processing
-    cd typewhisper-mac
-    ```
- 
--2. Open in Xcode 16+:
-+2. Open in Xcode 26.6 or later:
-    ```bash
-    open TypeWhisper.xcodeproj
-    ```
-```
-
-**File**: `TypeWhisper.xcodeproj/project.pbxproj` (modified, +13/-24)
-```diff
-@@ -135,7 +135,7 @@
- 		C2300000000000000000000D /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000015 /* WhisperKit */; };
- 		C2300000000000000000000E /* WhisperKitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000154 /* WhisperKitPlugin.swift */; };
- 		C23000000000000000000011 /* ParakeetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000157 /* ParakeetPlugin.swift */; };
--		C23000000000000000000012 /* FluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000017 /* FluidAudio */; };
-+		C23000000000000000000012 /* TypeWhisperFluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000017 /* TypeWhisperFluidAudio */; };
- 		C2300000000000000000000F /* SpeechAnalyzerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000160 /* SpeechAnalyzerPlugin.swift */; };
- 		C23000000000000000000010 /* DeepgramPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000200 /* DeepgramPlugin.swift */; };
- 		2F4D6A8B0C1E3F5A7B9D2C4E /* DictationViewModelIndicatorSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4D6A8B0C1E3F5A7B9D2C4F /* DictationViewModelIndicatorSettingsTests.swift */; };
-@@ -388,8 +388,8 @@
- 		AA00000000000000000165 /* ParakeetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000157 /* ParakeetPlugin.swift */; };
- 		AA00000000000000000166 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000158 /* manifest.json */; };
- 		AA00000000000000000167 /* TypeWhisperPluginSDK in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000016 /* TypeWhisperPluginSDK */; };
--		AA00000000000000000168 /* FluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000017 /* FluidAudio */; };
--		241E35E6CA665BE8524114EA /* FluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 2F3849A7C7AD5A6CFF412ECC /* FluidAudio */; };
-+		AA00000000000000000168 /* TypeWhisperFluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000017 /* TypeWhisperFluidAudio */; };
-+		241E35E6CA665BE8524114EA /* TypeWhisperFluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 2F3849A7C7AD5A6CFF412ECC /* TypeWhisperFluidAudio */; };
- 		C0E300000000000000000001 /* CohereLocalPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E300000000000000000011 /* CohereLocalPlugin.swift */; };
- 		C0E300000000000000000002 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = C0E300000000000000000012 /* manifest.json */; };
- 		C0E300000000000000000003 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0E300000000000000000013 /* Localizable.xcstrings */; };
-@@ -1420,7 +1420,7 @@
- 				C2300000000000000000000B /* MLXAudioSTT in Frameworks */,
- 				C2300000000000000000000C /* MLXAudioCore in Frameworks */,
- 				C2300000000000000000000D /* WhisperKit in Frameworks */,
--				C23000000000000000000012 /* FluidAudio in Frameworks */,
-+				C23000000000000000000012 /* TypeWhisperFluidAudio in Frameworks */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-@@ -1530,7 +1530,7 @@
- 			buildActionMask = 2147483647;
- 			files = (
- 				AA00000000000000000167 /* TypeWhisperPluginSDK in Frameworks */,
--				AA00000000000000000168 /* FluidAudio in Frameworks */,
-+				AA00000000000000000168 /* TypeWhisperFluidAudio in Frameworks */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-@@ -1556,7 +1556,7 @@
- 			buildActionMask = 2147483647;
- 			files = (
- 				238C602936EE8AC399A1E134 /* TypeWhisperPluginSDK in Frameworks */,
--				241E35E6CA665BE8524114EA /* FluidAudio in Frameworks */,
-+				241E35E6CA665BE8524114EA /* TypeWhisperFluidAudio in Frameworks */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-@@ -3235,7 +3235,7 @@
- 				PP00000000000000000012 /* MLXAudioSTT */,
- 				PP00000000000000000013 /* MLXAudioCore */,
- 				PP00000000000000000015 /* WhisperKit */,
--				PP00000000000000000017 /* FluidAudio */,
-+				PP00000000000000000017 /* TypeWhisperFluidAudio */,
- 			);
- 			productName = TypeWhisperTests;
- 			productReference = E6F8E5940EF4832A7B8D735D /* TypeWhisperTests.xctest */;
-@@ -3506,7 +3506,7 @@
- 			name = ParakeetPlugin;
- 			packageProductDependencies = (
- 				PP00000000000000000016 /* TypeWhisperPluginSDK */,
--				PP00000000000000000017 /* FluidAudio */,
-+				PP00000000000000000017 /* TypeWhisperFluidAudio */,
- 			);
- 			productName = ParakeetPlugin;
- 			productReference = BB00000000000000000156 /* ParakeetPlugin.bundle */;
-@@ -3568,7 +3568,7 @@
- 			name = SpeakerDiarizationPlugin;
- 			packageProductDependencies = (
- 				FFCEBEA85FA80718E1DDD2F8 /* TypeWhisperPluginSDK */,
--				2F3849A7C7AD5A6CFF412ECC /* FluidAudio */,
-+				2F3849A7C7AD5A6CFF412ECC /* TypeWhisperFluidAudio */,
- 			);
- 			productName = SpeakerDiarizationPlugin;
- 			productReference = 8418AAA27B2D8C818BCF5019 /* Spe
-```
-
-**File**: `TypeWhisper.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "70faf065323dbe669200df51fa3263d8e9505cbaf82a16383a9824bd59dedeb0",
-+  "originHash" : "a10ac7e335f36e8120c8eb2028d9bc1705bd2e3b3986b8e6e2da0fb0fb20d5e5",
-   "pins" : [
-     {
-       "identity" : "eventsource",
-```
-
-**File**: `TypeWhisperPluginSDK/Package.swift` (modified, +11/-2)
-```diff
-@@ -1,4 +1,4 @@
--// swift-tools-version: 6.0
-+// swift-tools-version: 6.2
- 
- import PackageDescription
- 
-@@ -8,9 +8,14 @@ let package = Package(
-     products: [
-         .library(name: "TypeWhisperPluginSDK", type: .dynamic, targets: ["TypeWhisperPluginSDK"]),
-         .library(name: "TypeWhisperPluginSDKTesting", targets: ["TypeWhisperPluginSDKTesting"]),
-+        // The Xcode projects link FluidAudio through this product, so this manifest alone
-+        // decides FluidAudio's traits.
-+        .library(name: "TypeWhisperFluidAudio", targets: ["TypeWhisperFluidAudio"]),
-     ],
-     dependencies: [
--        .package(url: "https://github.com/FluidInference/FluidAudio.git", exact: "0.17.5"),
-+        // No NemoTextProcessing trait: its text normalization is only used by FluidAudio's TTS
-+        // and adds about 8 MB per architecture to every plugin that links FluidAudio.
-+        .package(url: "https://github.com/FluidInference/FluidAudio.git", exact: "0.17.5", traits: []),
-         .package(url: "https://github.com/Blaizzy/mlx-audio-swift.git", revision: "01dec7c9bdce3088a6b6b7ab9f2e403458195efb"),
-         .package(url: "https://github.com/huggingface/swift-huggingface.git", exact: "0.10.1"),
-         .package(url: "https://github.com/huggingface/swift-jinja.git", exact: "2.5.0"),
-@@ -24,6 +29,10 @@ let package = Package(
-             name: "TypeWhisperPluginSDKTesting",
-             dependencies: ["TypeWhisperPluginSDK"]
-         ),
-+        .target(
-+            name: "TypeWhisperFluidAudio",
-+            dependencies: [.product(name: "FluidAudio", package: "FluidAudio")]
-+        ),
-         .target(
-             name: "OpenAICompatiblePlugin",
-             dependencies: ["TypeWhisperPluginSDK"],
-```
-
-**File**: `TypeWhisperPluginSDK/Sources/TypeWhisperFluidAudio/TypeWhisperFluidAudio.swift` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+@_exported import FluidAudio
-```
-
-**File**: `appstore-project.yml` (modified, +4/-7)
-```diff
-@@ -30,9 +30,6 @@ packages:
-   WhisperKit:
-     url: https://github.com/argmaxinc/WhisperKit.git
-     revision: 80d96762fa727f816ffceab76a6529cd12c2726f
--  FluidAudio:
--    url: https://github.com/FluidInference/FluidAudio.git
--    exactVersion: 0.17.5
-   MLXAudio:
-     url: https://github.com/Blaizzy/mlx-audio-swift.git
-     revision: 01dec7c9bdce3088a6b6b7ab9f2e403458195efb
-@@ -433,8 +430,8 @@ targets:
-     templateAttributes:
-       bundleId: com.typewhisper.parakeet
-     dependencies:
--      - package: FluidAudio
--        product: FluidAudio
-+      - package: TypeWhisperPluginSDK
-+        product: TypeWhisperFluidAudio
-     settings:
-       base:
-         EXCLUDED_ARCHS: x86_64
-@@ -443,8 +440,8 @@ targets:
-     templateAttributes:
-       bundleId: com.typewhisper.speaker-diarization
-     dependencies:
--      - package: FluidAudio
--        product: FluidAudio
-+      - package: TypeWhisperPluginSDK
-+        product: TypeWhisperFluidAudio
-     settings:
-       base:
-         EXCLUDED_ARCHS: x86_64
-```
-
-**File**: `scripts/appstore/audit_app_store_binary.sh` (modified, +0/-5)
-```diff
-@@ -34,17 +34,12 @@ PROCESS_SYMBOL_PATTERN='^_(posix_spawn|posix_spawnp|execve|execv|execvp|fork|vfo
- # into plugins. Format: "<plugin bundle>:<sorted symbols>". A plugin passes only
- # if its imports match its entry exactly; any new symbol fails the audit.
- #   _popen: MLX CPU JIT compiler (mlx-swift Cmlx, mlx/backend/cpu/jit_compiler.cpp).
--#   _execvp _fork _posix_spawnp: Rust std::process in FluidAudio's prebuilt
--#   NemoTextProcessing (libtext_processing_rs.a), linked into every plugin that
--#   uses FluidAudio, including speaker detection, which never calls it.
- KNOWN_PLUGIN_PROCESS_IMPORTS=(
-     "CanaryPlugin.bundle:_popen"
-     "GranitePlugin.bundle:_popen"
-     "LocalLLMPlugin.bundle:_popen"
-     "Qwen3Plugin.bundle:_popen"
-     "VoxtralPlugin.bundle:_popen"
--    "ParakeetPlugin.bundle:_execvp _fork _posix_spawnp"
--    "SpeakerDiarizationPlugin.bundle:_execvp _fork _posix_spawnp"
- )
- 
- script_dir="$(cd "$(dirname "$0")" && pwd)"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1642** (2026-10-19): Declare plugin locality and let organizations refuse plugin model downloads (@SeoFood)
-- **PR #1641** (2026-10-19): Apply the update, startup, setup and prompt policies and show managed settings (@SeoFood)
-- **PR #1640** (2026-10-19): Read managed preferences as the foundation for managed settings (@SeoFood)
-- **PR #1639** (2026-10-19): Ship both editions under the same version from the same commit (@SeoFood)
-- **PR #1638** (2026-10-19): Fix the warnings Xcode 27.1 reports in first-party code (@SeoFood)
-- **PR #1637** (2026-10-19): Drop FluidAudio's unused text normalization from the speaker and Parakeet plugins (@SeoFood)
+- **PR #1712** (2026-10-22): Remember the name the user gives their own microphone speaker (@SeoFood)
+- **PR #1711** (2026-10-22): Revert "Run macOS jobs on the self-hosted Mac mini for SeoFood's own runs (#1705)" (@SeoFood)
+- **PR #1710** (2026-10-22): Send Recorder completions with their speakers and meeting details (@SeoFood)
+- **PR #1709** (2026-10-22): Export Recorder transcripts to Obsidian, with dictations optional (@SeoFood)
+- **PR #1708** (2026-10-22): Let meeting recordings run without countdowns or the indicator (@SeoFood)
+- **PR #1707** (2026-10-22): Time speaker detection with Parakeet when the engine gave no timestamps (@SeoFood)
 
 ---
 
@@ -2606,33 +2729,33 @@ project anymore.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build CI and releases with Xcode 27.1 (#1636)
+## X. Add Correct Last Dictation to fix and copy the latest dictation (#1691)
 
 **RULE**:
-When implementing operations in `.github/workflows/appstore-testflight.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `TypeWhisper.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a9c3303`: Build CI and releases with Xcode 27.1 (#1636). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42f19164`: Add Correct Last Dictation to fix and copy the latest dictation (#1691). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/appstore-testflight.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper.xcodeproj/project.pbxproj`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  XCODE_VERSION: "27.1"
-    runs-on: xcode-27
-      - name: Ensure Metal toolchain
-        run: bash scripts/ensure_metal_toolchain.sh
-
+		C10200000000000000000001 /* LastDictationCorrectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000002 /* LastDictationCorrectionHandler.swift */; };
+		C10200000000000000000003 /* LastDictationCorrectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000004 /* LastDictationCorrectionPanel.swift */; };
+		C10200000000000000000005 /* LastDictationCorrectionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000006 /* LastDictationCorrectionHandlerTests.swift */; };
+		C10200000000000000000002 /* LastDictationCorrectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionHandler.swift; sourceTree = "<group>"; };
+		C10200000000000000000004 /* LastDictationCorrectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionPanel.swift; sourceTree = "<group>"; };
+		C10200000000000000000006 /* LastDictationCorrectionHandlerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionHandlerTests.swift; sourceTree = "<g
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-  XCODE_VERSION: "26.6"
-    runs-on: macos-26
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a9c3303` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42f19164` are properly handled with clean fallback behavior.

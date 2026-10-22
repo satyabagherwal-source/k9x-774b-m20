@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T21:22:27.819Z",
-  "total_cycles_completed": 4420,
-  "total_learnings_persisted": 4420,
-  "total_rules_promoted": 3601,
+  "last_updated": "2026-10-22T21:28:57.957Z",
+  "total_cycles_completed": 4423,
+  "total_learnings_persisted": 4423,
+  "total_rules_promoted": 3604,
   "history": [
-    {
-      "timestamp": "2026-10-21T16:25:57.424Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:32:03.404Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:32:15.411Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T16:38:42.725Z",
       "repository": "DNSControl/dnscontrol",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T21:22:27.819Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:28:50.112Z",
+      "repository": "RDFLib/rdflib",
+      "learningId": "learn-github-rdflib-rdflib",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:28:51.628Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:28:57.957Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

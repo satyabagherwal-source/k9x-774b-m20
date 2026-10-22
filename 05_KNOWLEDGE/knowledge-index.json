@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T21:22:27.747Z",
+  "last_updated": "2026-10-22T21:28:57.895Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1400,8 +1400,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "8397071d",
-      "content_hash": "e60c315a40b0cb958460158bb9ab14c23c9a0161dcab0a563c34b3d37ae12b0e",
+      "source_version": "8d499692",
+      "content_hash": "b7455f2d9e1b7a0740597258124a9388b1d5d3d27993ccb5281287e2815592a0",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1429,6 +1429,11 @@
           "number": 3197,
           "title": "sqlengine): keep the exact FLOAT and DOUBLE bound in a forward filter (#818)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3752,
+          "title": "core): preserve index bytes on read-only close (#834)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1436,7 +1441,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:33:47.814Z",
+      "verified_at": "2026-10-22T21:28:57.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47361,14 +47366,19 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "eed8ee2f",
-      "content_hash": "fa563e7d81ce64f9201f5d3d97d27e48d46af4c42f86212d62a97d88079170dd",
+      "source_version": "efcfb72c",
+      "content_hash": "3f9676ed555b31d171a2f366ec769bcc24e9b63dd59d2b23128c6673de633d5f",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
         {
           "number": 3012,
           "title": "Build CI and releases with Xcode 27.1 (#1636)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3751,
+          "title": "Add Correct Last Dictation to fix and copy the latest dictation (#1691)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -47377,7 +47387,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:55:43.797Z",
+      "verified_at": "2026-10-22T21:28:51.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62373,8 +62383,8 @@
       "slug": "rdflib-rdflib",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/rdflib",
-      "source_version": "62bf240a",
-      "content_hash": "ed04ee6f9569ae5d5b157d79ab1cc67bde016b01bf9d288334424fb574740708",
+      "source_version": "764c2fa8",
+      "content_hash": "869fd9c1ca1921e296b867e82790ef89c46e237b7ac3fa1a117fe071defbc884",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "promoted_rules": [
@@ -62393,6 +62403,11 @@
           "number": 2938,
           "title": "Generator Resource Destruction Protection via Deterministic Cleanup Wrappers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3750,
+          "title": "SPARQL SERVICE evaluation skipped or misrouted many valid patterns (#3608)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62400,7 +62415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:51:38.169Z",
+      "verified_at": "2026-10-22T21:28:50.039Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112197,6 +112212,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T21:22:27.733Z"
+    },
+    "rule-3750": {
+      "learning_id": "rule-3750",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3750,
+      "title": "SPARQL SERVICE evaluation skipped or misrouted many valid patterns (#3608)",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "764c2fa8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:28:50.039Z"
+    },
+    "rule-3751": {
+      "learning_id": "rule-3751",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3751,
+      "title": "Add Correct Last Dictation to fix and copy the latest dictation (#1691)",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "efcfb72c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:28:51.555Z"
+    },
+    "rule-3752": {
+      "learning_id": "rule-3752",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3752,
+      "title": "core): preserve index bytes on read-only close (#834)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "8d499692",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:28:57.884Z"
     }
   },
   "aliases": {

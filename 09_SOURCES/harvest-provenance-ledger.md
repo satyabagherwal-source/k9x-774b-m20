@@ -4450,3 +4450,6 @@ Every entry in this ledger must capture:
 | `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-22T21:22:11.988Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `dec84ad2` | Multi-dimensional audit evidence | 2026-10-22T21:22:21.459Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c61bb71f` | Multi-dimensional audit evidence | 2026-10-22T21:22:27.808Z |
+| `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `764c2fa8` | Multi-dimensional audit evidence | 2026-10-22T21:28:50.103Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `efcfb72c` | Multi-dimensional audit evidence | 2026-10-22T21:28:51.618Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `8d499692` | Multi-dimensional audit evidence | 2026-10-22T21:28:57.948Z |
