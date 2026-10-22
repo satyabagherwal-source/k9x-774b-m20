@@ -1185,12 +1185,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-22T15:29:00.563Z",
-    "lastVerified": "2026-10-22T15:29:00.563Z",
+    "lastChecked": "2026-10-22T18:17:41.429Z",
+    "lastVerified": "2026-10-22T18:17:41.429Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1199,7 +1199,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "07ffbf88"
   },
   "laurent22-joplin": {
     "name": "laurent22/joplin",
@@ -1460,12 +1461,12 @@
     "revisionIdentifier": "37f788bd"
   },
   "sharkdp-bat": {
-    "name": "sharkdp/bat",
+    "name": "bat",
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T21:27:32.227Z",
-    "lastVerified": "2026-10-20T21:27:32.227Z",
+    "lastChecked": "2026-10-22T18:17:31.492Z",
+    "lastVerified": "2026-10-22T18:17:31.492Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
@@ -1474,7 +1475,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a9aa73d2"
   },
   "defguard-defguard": {
     "name": "DefGuard/defguard",
@@ -4100,22 +4102,21 @@
     "revisionIdentifier": "c8a6b6c6"
   },
   "higress-group-higress": {
-    "name": "higress",
+    "name": "higress-group/higress",
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T00:14:42.065Z",
-    "lastVerified": "2026-10-21T00:14:42.065Z",
+    "lastChecked": "2026-10-22T18:17:44.415Z",
+    "lastVerified": "2026-10-22T18:17:44.415Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
-    "contentHash": "c4197a90401efcf13be97f07e14de60d0d716abc5072c06569902de2af16bd20",
+    "contentHash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "43ad04ee"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "fission-fission": {
     "name": "fission",
@@ -6089,8 +6090,8 @@
     "officialUrl": "https://github.com/keenthemes/reui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-21T00:42:15.363Z",
-    "lastVerified": "2026-10-21T00:42:15.363Z",
+    "lastChecked": "2026-10-22T18:17:28.939Z",
+    "lastVerified": "2026-10-22T18:17:28.939Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-keenthemes-reui",
@@ -18521,8 +18522,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-22T17:51:51.604Z",
-    "lastVerified": "2026-10-22T17:51:51.604Z",
+    "lastChecked": "2026-10-22T18:17:46.387Z",
+    "lastVerified": "2026-10-22T18:17:46.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -20510,12 +20511,12 @@
     "revisionIdentifier": "f4f68049"
   },
   "williewangwei-swiftui-tutorials": {
-    "name": "WillieWangWei/SwiftUI-Tutorials",
+    "name": "SwiftUI-Tutorials",
     "officialUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-20T00:12:44.838Z",
-    "lastVerified": "2026-10-20T00:12:44.838Z",
+    "lastChecked": "2026-10-22T18:17:36.448Z",
+    "lastVerified": "2026-10-22T18:17:36.448Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-williewangwei-swiftui-tutorials",
@@ -20524,7 +20525,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0ced68b2"
   },
   "simibac-confettiswiftui": {
     "name": "simibac/ConfettiSwiftUI",
@@ -21847,8 +21849,8 @@
     "officialUrl": "https://github.com/libsql/libsql",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-10-20T23:24:07.592Z",
-    "lastVerified": "2026-10-20T23:24:07.592Z",
+    "lastChecked": "2026-10-22T18:17:44.197Z",
+    "lastVerified": "2026-10-22T18:17:44.197Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-libsql",
@@ -26231,12 +26233,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "webrecorder-browsertrix-crawler": {
-    "name": "webrecorder/browsertrix-crawler",
+    "name": "browsertrix-crawler",
     "officialUrl": "https://github.com/webrecorder/browsertrix-crawler",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T22:12:59.374Z",
-    "lastVerified": "2026-10-19T22:12:59.374Z",
+    "lastChecked": "2026-10-22T18:17:33.958Z",
+    "lastVerified": "2026-10-22T18:17:33.958Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webrecorder-browsertrix-crawler",
@@ -26245,7 +26247,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2cbb827e"
   },
   "archivebox-archivebox": {
     "name": "ArchiveBox/ArchiveBox",
@@ -27409,8 +27412,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-22T18:11:17.689Z",
-    "lastVerified": "2026-10-22T18:11:17.689Z",
+    "lastChecked": "2026-10-22T18:17:51.823Z",
+    "lastVerified": "2026-10-22T18:17:51.823Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

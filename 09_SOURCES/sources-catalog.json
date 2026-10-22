@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "43ad04ee",
+    "sourceVersion": "36f2f1ac",
     "license": "Apache-2.0",
-    "contentHash": "c4197a90401efcf13be97f07e14de60d0d716abc5072c06569902de2af16bd20",
-    "lastHarvestedAt": "2026-10-18T21:07:45.143Z",
+    "contentHash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
+    "lastHarvestedAt": "2026-10-22T18:17:49.279Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {

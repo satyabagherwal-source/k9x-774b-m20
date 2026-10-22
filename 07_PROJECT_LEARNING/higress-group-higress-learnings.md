@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `43ad04ee`  
+> **Source Version**: `36f2f1ac`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:07:44.918Z  
+> **Timestamp**: 2026-10-22T18:17:48.850Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:07:44.367Z  
+> **Harvest Timestamp**: 2026-10-22T18:17:44.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9584 stars
+- **Stars / Engagement**: 9624 stars
 
 ---
 
@@ -1736,15 +1736,14 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5125** (2026-10-17): **refactor(ingress): assemble mcp-server filter config with typed structs**
-  *Symptoms*: ## I. Describe what this PR did  Replace the raw `fmt.Sprintf` JSON-text assembly in the mcp-server controller path with typed-struct marshaling, and tighten the render pipeline:  - The match-rule JSON for the mcp-session filter (assembled from Ingress annotation-derived rules plus ConfigMap `MatchList`) is now built from typed structs and marshaled with `encoding/json`, so field values are escaped by the encoder. Output schema (field names, nesting, value types) is unchanged for all existing valid configs — the new round-trip tests compare parsed JSON trees. - Annotation values flow through the same parse-time validation as other rule sources: non-empty domain/path and rejection of control characters, so malformed annotation values are rejected at parse instead of flowing into the filter config. - `util.BuildPatchStruct` now propagates marshal errors instead of returning an empty struct; per-rule render failures are logged and skipped, and no failure path can silently emit a degenerate patch. - Sibling sites found by the survey (`annotations/mcpserver.go`, `model.go`, and `BuildPatchStruct` call sites incl. `registry/`) follow the same pattern.  ## II. Why is this change needed  Assembling JSON by interpolating operator-controlled strings into raw text makes the produced configuration depend on the textual shape of those values rather than their meaning. Struct-based marshaling makes the produced document a pure function of the typed data, keeps the escaping responsibility w
-  **Post-Mortem & Fix Analysis**:
-  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/higress-group/higress/pull/5125?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None) Report :x: Patch coverage is `38.49057%` with `163 lines` in your changes missing coverage. Please review. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`main@1e51187`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None#section-missing-base-commit) about missing BASE report.  | [Files with missing lines](https://app.codecov.io/gh/higress-group/higress/pull/5125?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=
+- **Issue #5239** (2026-10-22): **ci: use the full commit SHA for the translate action pin**
+  *Symptoms*: Follow-up to #5211: the pinned action ref used a shortened commit SHA, which GitHub does not resolve as an action ref — the translate step failed on every PR. This replaces it with the full 40-character commit SHA of the same commit (no other change).
 
-- **Issue #5124** (2026-10-17): **fix(ai): reject request bodies with a duplicated top-level model member**
-  *Symptoms*: ## I. Describe what this PR did  Make interpretation of the OpenAI-compatible request body deterministic when the `model` member is declared more than once at the top level: such bodies are now rejected with 400 before any model-based routing, authorization, or mapping decision.  - New shared helper `plugins/wasm-go/pkg/jsonbody`: `DuplicateTopLevelMember(body, name)` — a single-pass structural scan that counts top-level occurrences of a member name without decoding the body. It tracks container nesting and string literals only (a mention of "model" inside a prompt string or a nested object is never counted) and short-circuits on the second occurrence. - Wired into the AI plugin family's body handling (ai-proxy, model-router, and the other extraction sites listed in the diff) ahead of the first model read. - Truncated/unbalanced input reports `ErrMalformedJSON` so callers fall through to their existing malformed-body handling.  ## II. Why is this change needed  The gateway reads `model` with gjson (first-wins) while sjson-based rewrites preserve later duplicates and mainstream upstream parsers (Go `encoding/json`, Python `json.loads`, Node `JSON.parse` — i.e. vLLM/OpenAI/DashScope backends) are last-wins. A body with two `model` members is therefore interpreted differently by the gateway and the upstream, which is a consistency hazard for model mapping, model-based routing, and endpoint selection. Rejecting the ambiguous shape at the edge makes every downstream consumer agree
+- **Issue #5238** (2026-10-22): **docs(ip-restriction): normalize x-real-ip example**
+  *Symptoms*: Normalize the mixed-case x-real-iP value in both localized configuration examples to x-real-ip.  Closes #5061
   **Post-Mortem & Fix Analysis**:
-  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/higress-group/higress/pull/5124?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None) Report :x: Patch coverage is `92.85714%` with `6 lines` in your changes missing coverage. Please review. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`main@1e51187`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None#section-missing-base-commit) about missing BASE report.  | [Files with missing lines](https://app.codecov.io/gh/higress-group/higress/pull/5124?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=gi
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/higress-group/higress?pullRequest=5238) <br/>All committers have signed the CLA.
+  > Closing as duplicate of #4782. I found the earlier implementation while re-checking open PR coverage; keeping both would add review noise.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1761,162 +1760,725 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c74d7e2d` (2026-10-08)
-**Commit Message**: fix(geo-ip): do not panic on a malformed real-IP header value (#4948)
+### Incident Patch 1: `829006d3` (2026-10-22)
+**Commit Message**: docs: fix spelling errors in plugin READMEs and comments (#5054)
 
-Signed-off-by: yyqdbngt <[REDACTED_EMAIL]>
+Signed-off-by: dusk5-Surtr <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/geo-ip/main.go` (modified, +4/-1)
+**File**: `plugins/wasm-cpp/extensions/jwt_auth/README.md` (modified, +1/-1)
 ```diff
-@@ -165,7 +165,10 @@ func parseIP(source string) string {
- 	}
- 	//parse ipv6
- 	if strings.Contains(source, "]") {
--		return strings.Split(source, "]")[0][1:]
-+		// strings.Split always yields at least one element, but a value such as
-+		// "]" or "]:80" leaves an empty first element, so the leading bracket
-+		// must be removed with TrimPrefix instead of slicing.
-+		return strings.TrimPrefix(strings.Split(source, "]")[0], "[")
- 	}
- 	return source
- }
+@@ -278,7 +278,7 @@ consumers:
+ 
+ ##### 1.3.1 简介
+ 
+-Json Web Toke（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
++Json Web Token（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
+ 
+ ##### 1.3.2 JWT的构成
+ 
 ```
 
-**File**: `plugins/wasm-go/extensions/geo-ip/parse_ip_test.go` (added, +23/-0)
+**File**: `plugins/wasm-cpp/extensions/oauth/README.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,23 @@
-+package main
-+
-+import "testing"
-+
-+func TestParseIPMalformedHeaderDoesNotPanic(t *testing.T) {
-+	// X-Forwarded-For is attacker controlled when ip_source_type is "header".
-+	for _, tc := range []struct {
-+		source string
-+		want   string
-+	}{
-+		{source: "]", want: ""},
-+		{source: "]:80", want: ""},
-+		{source: "[::1]", want: "::1"},
-+		{source: "[fe80::14d5:8aff:fed9:2114]:123", want: "fe80::14d5:8aff:fed9:2114"},
-+		{source: "127.0.0.1", want: "127.0.0.1"},
-+	} {
-+		t.Run(tc.source, func(t *testing.T) {
-+			if got := parseIP(tc.source); got != tc.want {
-+				t.Errorf("parseIP(%q) = %q, want %q", tc.source, got, tc.want)
-+			}
-+		})
-+	}
-+}
+@@ -21,11 +21,11 @@ description: OAuth2 认证插件配置参考
+ | `consumers`          | array of object | 必填                                        | -               | 配置服务的调用者，用于对请求进行认证                                                                                                                                          |
+ | `issuer`             | string          | 选填                                        | Higress-Gateway | 用于填充JWT中的issuer                                                                                                                                                         |
+ | `auth_path`          | string          | 选填                                        | /oauth2/token   | 指定路径后缀用于签发Token，路由级配置时，要确保首先能匹配对应的路由, 使用 API 管理时，需要创建相同路径的接口                                                                  |
+-| `global_credentials` | bool            | 选填                                        | ture            | 在通过 consumer 认证的前提下，允许任意路由签发的凭证访问                                                                                                                      |
++| `global_credentials` | bool            | 选填                                        | true            | 在通过 consumer 认证的前提下，允许任意路由签发的凭证访问                                                                                                                      |
+ | `auth_header_name`   | string          | 选填                                        | Authorization   | 用于指定从哪个请求头获取JWT                                                                                                                                                   |
+ | `token_ttl`          | number          | 选填                                        | 7200            | token从签发后多久内有效，单位为秒                                                                                                                                             |
+ | `clock_skew_seconds` | number          | 选填                                        | 60              | 校验JWT的exp和iat字段时允许的时钟偏移量，单位为秒                                                                                                                             |
+-| `keep_token`         | bool            | 选填                                        | ture            | 转发给后端时是否保留JWT                                                                                                                                                       |
++| `keep_token`         | bool            | 选填                                        | true            | 转发给后端时是否保留JWT                                                                                                                                                       |
+ | `global_auth`        | array of string | 选填(**仅实例级别配置**)                    | -               | 只能在实例级别配置，若配置为true，则全局生效认证机制; 若配置为false，则只对做了配置的域名和路由生效认证机制; 若不配置则仅当没有域名和路由配置时全局 生效（兼容老用户使用习惯） |
+ 
+ `consumers`中每一项的配置字段说明如下：
 ```
 
----
-
-### Incident Patch 2: `ef452b55` (2026-10-08)
-**Commit Message**: fix(cluster-key-rate-limit): do not panic on a malformed real-IP header value (#4950)
-
-Signed-off-by: yyqdbngt <[REDACTED_EMAIL]>
-
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/util/utils.go` (modified, +4/-1)
+**File**: `test/e2e/conformance/tests/go-wasm-geo-ip.go` (modified, +1/-1)
 ```diff
-@@ -26,7 +26,10 @@ func ParseIP(source string) string {
- 	}
- 	// parse ipv6
- 	if strings.Contains(source, "]") {
--		return strings.Split(source, "]")[0][1:]
-+		// strings.Split always yields at least one element, but a value such as
-+		// "]" or "]:80" leaves an empty first element, so the leading bracket
-+		// must be removed with TrimPrefix instead of slicing.
-+		return strings.TrimPrefix(strings.Split(source, "]")[0], "[")
- 	}
- 	return source
- }
+@@ -28,7 +28,7 @@ func init() {
+ 
+ var WasmPluginsGeoIPPlugin = suite.ConformanceTest{
+ 	ShortName:   "WasmPluginsGeoIPPlugin",
+-	Description: "The geo-ip wasm pluin finds the client's geographic information according to the client's ip address.",
++	Description: "The geo-ip wasm plugin finds the client's geographic information according to the client's ip address.",
+ 	Manifests:   []string{"tests/go-wasm-geo-ip.yaml"},
+ 	Features:    []suite.SupportedFeature{suite.WASMGoConformanceFeature},
+ 	Test: func(t *testing.T, suite *suite.ConformanceTestSuite) {
 ```
 
-**File**: `plugins/wasm-go/extensions/cluster-key-rate-limit/util/utils_test.go` (modified, +26/-0)
+**File**: `test/e2e/conformance/utils/kubernetes/helpers.go` (modified, +1/-1)
 ```diff
-@@ -37,3 +37,29 @@ func TestExtractCookieValueByKey(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestParseIPMalformedValueDoesNotPanic(t *testing.T) {
-+	// The value comes from the configured real-IP header when
-+	// limit_by_per_ip.source_type is "header", so it is client controlled.
-+	tests := []struct {
-+		name   string
-+		source string
-+		want   string
-+	}{
-+		{name: "closing bracket only", source: "]", want: ""},
-+		{name: "closing bracket with port", source: "]:80", want: ""},
-+		{name: "bracketed ipv6", source: "[::1]", want: "::1"},
-+		{name: "bracketed ipv6 with port", source: "[fe80::14d5:8aff:fed9:2114]:123", want: "fe80::14d5:8aff:fed9:2114"},
-+		{name: "ipv4", source: "127.0.0.1", want: "127.0.0.1"},
-+		{name: "ipv4 with port", source: "127.0.0.1:12", want: "127.0.0.1"},
-+		{name: "bare ipv6", source: "fe80::14d5:8aff:fed9:2114", want: "fe80::14d5:8aff:fed9:2114"},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			if got := ParseIP(tt.source); got != tt.want {
-+				t.Fatalf("ParseIP(%q) = %q, want %q", tt.source, got, tt.want)
-+			}
-+		})
-+	}
-+}
+@@ -30,7 +30,7 @@ import (
+ 	"github.com/alibaba/higress/v2/test/e2e/conformance/utils/config"
+ )
+ 
+-// FilterStaleConditions returns the list of status condition whos observedGeneration does not
++// FilterStaleConditions returns the list of status condition whose observedGeneration does not
+ // match the objects metadata.Generation
+ func FilterStaleConditions(obj metav1.Object, conditions []metav1.Condition) []metav1.Condition {
+ 	stale := make([]metav1.Condition, 0, len(conditions))
 ```
 
 ---
 
-### Incident Patch 3: `551e3b7b` (2026-10-08)
-**Commit Message**: fix(ip-restriction): do not panic on a malformed real-IP header value (#4944)
+### Incident Patch 2: `485b5623` (2026-10-22)
+**Commit Message**: fix(ai-data-masking): 修复流式工具调用内容丢失 || fix(ai-data-masking): Fix the loss of streaming tool call content (#5209)
 
-Signed-off-by: btlqql <[REDACTED_EMAIL]>
+Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
+Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
+Co-authored-by: 澄潭 <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/ip-restriction/utils.go` (modified, +4/-1)
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/ai_data_masking.rs` (modified, +56/-27)
 ```diff
-@@ -46,7 +46,10 @@ func parseIP(source string, fromHeader bool) string {
- 	}
- 	//parse ipv6
- 	if strings.Contains(source, "]") {
--		return strings.Split(source, "]")[0][1:]
-+		// strings.Split always yields at least one element, but a value such as
-+		// "]" or "]:80" leaves an empty first element, so the leading bracket
-+		// must be removed with TrimPrefix instead of slicing.
-+		return strings.TrimPrefix(strings.Split(source, "]")[0], "[")
- 	}
- 	return source
- }
+@@ -790,52 +790,81 @@ impl HttpContext for AiDataMasking {
+         _end_of_stream: bool,
+     ) -> HeaderAction {
+         self.set_http_response_header("Content-Length", None);
++        // The first body callback may contain only part of the data: prefix.
++        if self.is_openai
++            && self
++                .get_http_response_header("content-type")
++                .is_some_and(|value| {
++                    value.split(';').next().is_some_and(|media_type| {
++                        media_type.trim().eq_ignore_ascii_case("text/event-stream")
++                    })
++                })
++        {
++            self.is_openai_stream = Some(true);
++        }
+         HeaderAction::Continue
+     }
+ 
+     fn on_http_response_body(&mut self, body_size: usize, end_of_stream: bool) -> DataAction {
+         if !self.stream {
+             return DataAction::Continue;
+         }
+-        if body_size > 0 {
+-            if let Some(body) = self.get_http_response_body(0, body_size) {
+-                if self.is_openai && self.is_openai_stream.is_none() {
+-                    self.is_openai_stream = Some(body.starts_with(b"data:"));
+-                }
+-                self.msg_window
+-                    .push(&body, self.is_openai_stream.unwrap_or_default());
+-                let mut deny = false;
+-                let log = Log::new(PLUGIN_NAME.to_string());
+-                let mask_restore = self.mask_restore.as_ref();
+-                for message in self.msg_window.messages_iter_mut() {
+-                    if let Ok(mut msg) = String::from_utf8(message.clone()) {
+-                        if let Some(config) = &self.config {
+-                            if config.check_message(&msg, &log) {
+-                                deny = true;
+-                                break;
+-                            }
+-                        }
+-                        if let Some(mask_restore) = mask_restore {
+-                            msg = mask_restore.restore(&msg);
+-                        }
+-                        message.clear();
+-                        message.extend_from_slice(msg.as_bytes());
++        let body = if body_size > 0 {
++            self.get_http_response_body(0, body_size)
++        } else {
++            None
++        };
++        if let Some(body) = &body {
++            if self.is_openai && self.is_openai_stream.is_none() {
++                self.is_openai_stream = Some(body.starts_with(b"data:"));
++            }
++        }
++        let is_openai_stream = self.is_openai_stream.unwrap_or_default();
++        let mut deny = false;
++        let log = Log::new(PLUGIN_NAME.to_string());
++        let config = self.config.as_ref();
++        let mask_restore = self.mask_restore.as_ref();
++        let mut inspect = |message: &mut Vec<u8>| {
++            if deny {
++                return false;
++            }
++            if let Ok(mut msg) = String::from_utf8(message.clone()) {
++                if let Some(config) = config {
++                    if config.check_message(&msg, &log) {
++                        deny = true;
++                        return false;
+                     }
+                 }
+-                if deny {
+-                    return self.deny(true);
++                if let Some(mask_restore) = mask_restore {
++                    msg = mask_restore.restore(&msg);
+                 }
++                message.clear();
++                message.extend_from_slice(msg.as_bytes());
+             }
++            true
++        };
++        if let Some(body) = body {
++            self.msg_window.push(
++                &body,
++                is_openai_stream,
++                self.char_window_size * 2,
++                self.byte_window_size * 2,
++                &mut inspect,
++            );
+         }
+         let new_body = if end_of_stream {
+-            self.msg_window.finish(self.is_openai_stream.unwrap())
++            // Parse and inspect the final event before flushing buffered text.
++            self.msg_window.finish(is_openai_stream, &mut inspect)
+         } else {
+             self.msg_window.pop(
+                 self.char_window_size * 2,
+                 self.byte_window_size * 2,
+-                self.is_openai_stream.unwrap(),
++                is_openai_stream,
+             )
+         };
++        if deny {
++            return self.deny(true);
++        }
+         self.replace_http_response_body(&new_body);
+         DataAction::Continue
+     }
 ```
 
-**File**: `plugins/wasm-go/extensions/ip-restriction/utils_test.go` (modified, +12/-0)
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/lib.rs` (modified, +0/-1)
 ```diff
-@@ -135,3 +135,15 @@ func Test_parseIP(t *testing.T) {
- 		})
- 	}
+@@ -16,4 +16,3 @@ mod ai_data_masking;
+ mod deny_word;
+ mod msg_win_openai;
+ mod msg_window;
+-mod number_merge;
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/msg_win_openai.rs` (modified, +999/-122)
+```diff
+@@ -12,14 +12,14 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-use std::collections::HashMap;
++use std::collections::BTreeMap;
+ 
+ use higress_wasm_rust::event_stream::EventStream;
++#[cfg(test)]
+ use serde::Deserialize;
+ use serde_json::Value;
+ 
+ use crate::msg_window::MessageWindow;
+-use crate::number_merge::NumberMerge;
+ 
+ #[derive(PartialEq, Eq, Clone, Copy)]
+ enum MsgFlag {
+@@ -32,64 +32,91 @@ impl Default for MsgFlag {
+         Self::None
+     }
  }
++#[cfg(test)]
+ #[derive(Deserialize)]
+ struct Delta {
+     #[serde(default)]
+     content: Option<String>,
+     #[serde(default)]
+     reasoning_content: Option<String>,
+ }
++#[cfg(test)]
+ #[derive(Deserialize)]
+ struct Choices {
+-    #[serde(default)]
+-    index: i64,
+     #[serde(default)]
+     delta: Option<Delta>,
+-    #[serde(default)]
+-    finish_reason: Option<String>,
+ }
+ 
+-impl Delta {
+-    fn get_flag_msg(&self, default_flag: &MsgFlag) -> (MsgFlag, &[u8]) {
+-        if let Some(msg) = &self.content {
+-            if !msg.is_empty() {
+-                return (MsgFlag::Content, msg.as_bytes());
+-            }
++const CHOICES_PATH: &str = "choices";
 +
-+func TestParseIPMalformedHeaderDoesNotPanic(t *testing.T) {
-+	// X-Forwarded-For is attacker controlled when ip_source_type is "header".
-+	for _, source := range []string{"]", "]:80", "]:80, 127.0.0.1", "[::1]"} {
-+		t.Run(source, func(t *testing.T) {
-+			got := parseIP(source, true)
-+			if source == "[::1]" && got != "::1" {
-+				t.Errorf("parseIP(%q, true) = %q, want %q", source, got, "::1")
-+			}
-+		})
-+	}
++type MessageLine = Vec<(MsgFlag, Vec<u8>)>;
++
++#[derive(Clone, Default)]
++struct FrameMetadata {
++    id: Option<Value>,
++    object: Option<Value>,
++    created: Option<Value>,
++    model: Option<Value>,
++    system_fingerprint: Option<Value>,
 +}
++
++impl FrameMetadata {
++    fn from_value(value: &Value) -> Self {
++        Self {
++            id: value.get("id").cloned(),
++            object: value.get("object").cloned(),
++            created: value.get("created").cloned(),
++            model: value.get("model").cloned(),
++            system_fingerprint: value.get("system_fingerprint").cloned(),
+         }
+-        if let Some(msg) = &self.reasoning_content {
+-            if !msg.is_empty() {
+-                return (MsgFlag::ReasoningContent, msg.as_bytes());
++    }
++
++    fn frame(&self, choice: Value) -> Value {
++        let mut frame = serde_json::Map::new();
++        for (key, value) in [
++            ("id", &self.id),
++            ("object", &self.object),
++            ("created", &self.created),
++            ("model", &self.model),
++            ("system_fingerprint", &self.system_fingerprint),
++        ] {
++            if let Some(value) = value {
++                frame.insert(key.to_string(), value.clone());
+             }
+         }
+-        (*default_flag, &[])
++        frame.insert(CHOICES_PATH.to_string(), Value::Array(vec![choice]));
++        Value::Object(frame)
+     }
+ }
+-const USAGE_PATH: &str = "usage";
+-const CHOICES_PATH: &str = "choices";
+-
+-type MessageLine = Vec<(MsgFlag, Vec<u8>)>;
+ 
+ #[derive(Default)]
+ struct MessageWindowOpenAi {
+     message_window: MessageWindow,
+     ret_messages: MessageLine,
+     flag: MsgFlag,
+-    last_value: Value,
+-    finish_reason: Option<String>,
++    index: i64,
++    metadata: FrameMetadata,
++    role: Option<Value>,
++    needs_check: bool,
+ }
+ 
+ impl MessageWindowOpenAi {
+     fn update(
+         &mut self,
+         data: &[u8],
+         flag: MsgFlag,
+-        value: &Value,
+-        finish_reason: &Option<String>,
++        index: i64,
++        metadata: &FrameMetadata,
++        role: Option<Value>,
+     ) {
+-        self.last_value = value.clone();
+         if data.is_empty() {
+             return;
+         }
++        self.index = index;
++        self.metadata = metadata.clone();
++        if let Some(role) = role {
++            self.role = Some(role);
++        }
+         if self.flag == MsgFlag::None {
+             self.flag = flag;
+         }
+@@ -99,64 +126,85 @@ impl MessageWindowOpenAi {
+             self.ret_messages.push((last_flag, msg));
+         }
+         self.message_window.update(data);
+-        if let Some(fr) = finish_reason {
+-            self.finish_reason = Some(fr.clone());
++        self.needs_check = true;
++    }
++
++    fn check(&mut self, inspect: &mut impl FnMut(&mut Vec<u8>) -> bool) {
++        if self.needs_check {
++            let accepted = self.iter_mut().all(inspect);
++            // A rejected tail must be checked again before a later flush.
++            self.needs_check = !accepted;
+         }
+     }
+ 
+-    fn gen_value(&self, flag: &MsgFlag, msg: &[u8], finish: bool) -> Value {
+-        let mut ret = self.last_value.clone();
++    fn gen_value(&mut self, flag: MsgFlag, msg: &[u8]) -> Value {
++        let mut delta = serde_json::Map::new();
++        if let Some(role) = self.role.take() {
++            delta.insert("role".to_string(), role);
++        }
++        let text = Value::String(String::from_utf8_lossy(msg).to_string());
+         match flag {
+             MsgFlag::Content => {
+-                ret["delta"]["content"] = Value::String(String::from_utf8_lossy(msg).to_string());
+-                if let Some(m) = ret["delta"].as_object_mut() {
+-                    m.remove("reasoning_content");
+-                }
++                delta.insert("content".to_
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/number_merge.rs` (removed, +0/-59)
+```diff
+@@ -1,59 +0,0 @@
+-// Copyright (c) 2025 Alibaba Group Holding Ltd.
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//      http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-use serde_json::{json, Number, Value};
+-
+-fn merge_number(target: &mut Value, add: &Value) {
+-    if target.is_null() {
+-        if add.is_object() {
+-            *target = json!({});
+-        } else if add.is_number() {
+-            *target = Value::from(0i64);
+-        } else {
+-            return;
+-        }
+-    }
+-    match (target, add) {
+-        (Value::Object(t), Value::Object(a)) => {
+-            for (key, value) in a.iter() {
+-                if let Some(v) = t.get_mut(key) {
+-                    merge_number(v, value);
+-                } else {
+-                    t.insert(key.clone(), value.clone());
+-                }
+-            }
+-        }
+-        (Value::Number(t), Value::Number(a)) => {
+-            *t = Number::from(
+-                t.as_i64()
+-                    .unwrap_or_default()
+-                    .saturating_add(a.as_i64().unwrap_or_default()),
+-            );
+-        }
+-        _ => {}
+-    }
+-}
+-#[derive(Default, Clone)]
+-pub(crate) struct NumberMerge {
+-    value: Value,
+-}
+-
+-impl NumberMerge {
+-    pub(crate) fn add(&mut self, number: &Value) {
+-        merge_number(&mut self.value, number);
+-    }
+-    pub(crate) fn finish(&mut self) -> Value {
+-        core::mem::replace(&mut self.value, Value::Null)
+-    }
+-}
+```
+
+---
+
+### Incident Patch 3: `3212ed76` (2026-10-22)
+**Commit Message**: fix(mcp-server): restore main-route proxy compatibility (#5029)
+
+Signed-off-by: sunxiao <[REDACTED_EMAIL]>
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
+Co-authored-by: johnlanni <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/wasm-plugin-unit-test.yml` (modified, +1/-0)
+```diff
+@@ -247,6 +247,7 @@ jobs:
+       working-directory: plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification
+       run: |
+         python3 auto_self_test.py
++        python3 routing_self_test.py
+         python3 orchestration_self_test.py
+         bash lifecycle_self_test.sh
+ 
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +28/-0)
+```diff
+@@ -104,6 +104,9 @@ x-envoy-allow-mcp-tools: tool1,tool2,tool3
+ 
+ **使用场景示例**：
+ 
++<<<<<<< HEAD
++出站头基于现有认证处理后的请求继承：`Cookie`、租户头、自定义业务头和前置插件添加的普通头默认保留，无需新增配置。已被认证逻辑移除的凭据不会恢复；`Authorization` 继续遵循 `downstreamSecurity`、`passthroughAuthHeader` 和显式上游凭据规则。下游 session、`Last-Event-ID` 和内部控制头按操作清理；MCP 协议头重新生成。格式合法的 `Mcp-Param-*` 仅透传到当前 modern tools/call，不进入 discover、initialize 或 legacy RPC。
++=======
+ 1. **基于用户角色的权限控制**
+    ```yaml
+    # 配置中定义所有可用工具
+@@ -113,6 +116,7 @@ x-envoy-allow-mcp-tools: tool1,tool2,tool3
+    - delete-user-info
+    - admin-operation
+    ```
++>>>>>>> origin/main
+ 
+    前置认证插件可以根据用户角色设置不同的工具权限：
+    - 普通用户：`x-envoy-allow-mcp-tools: get-user-info`
+@@ -274,7 +278,11 @@ server:
+     probeTimeoutMs: 1000
+ ```
+ 
++<<<<<<< HEAD
++`autoDetection.probeTimeoutMs` 仅在 `auto + http` 下解析：缺省 1000 ms，必须是可表示为 uint32 的正整数，实际探测超时取它与有效 `timeout` 的较小值。单独配置 autoDetection 不启用 auto；插件 `timeout` 约束探测/握手等独立子请求（缺省 5000ms），最终 HTTP 业务请求由原路由的 timeout 控制，整条链路总耗时可能更长。
++=======
+ 使用时注意：
++>>>>>>> origin/main
+ 
+ - MCP `2026-07-28` 客户端可以通过插件访问旧版后端；旧版客户端不能通过插件访问仅支持 MCP `2026-07-28` 的后端。
+ - `auto` 的自动探测仅用于 MCP `2026-07-28` 客户端请求；旧版客户端请求仍按旧版流程处理。
+@@ -288,11 +296,31 @@ server:
+ 
+ `defaultDownstreamSecurity` 和工具级 `security` 定义从客户端请求中提取凭证的方式，不负责校验凭证有效性。客户端身份校验和访问授权需要通过 Higress 的认证、鉴权插件配置。
+ 
++<<<<<<< HEAD
++同一上游池实例必须提供一致协议能力；探测与业务仍可能落到不同实例。HTTP JSON/SSE 在完整业务响应后解析，不提供实时进度或订阅。1 MiB 限制在复制探测 body 到 Wasm 前检查，不限制 Envoy 已接收的全部缓冲，也不限制 Tool 结果大小。取消阻止后续阶段，不宣称能撤回已提交的工具副作用。取消后的有效连接明确终止响应，断连后的回调不再访问流。
++=======
+ `defaultUpstreamSecurity` 和工具级 `requestTemplate.security` 定义访问后端时使用的认证方案。
++>>>>>>> origin/main
+ 
+ ### 定义认证方案 (`server.securitySchemes`)
+ 
++<<<<<<< HEAD
++### 主请求转发兼容性
++
++HTTP `legacy`、`modern`、`auto` 的最终 `tools/list` / `tools/call` 使用当前 SDK 的 `RouteCall` 继续原请求，后置请求插件和原路由的 header/path rewrite、timeout、retry、hash policy 因此生效。继续保留 `DisableReroute`：本插件修改 host/path 不主动重新匹配路由。插件只提交一次业务请求；Envoy 路由重试可能产生多次后端尝试，不承诺工具恰好执行一次。
++
++initialize、initialized、auto discover 仍是独立子请求，不经过后置插件；后置插件添加的凭据不能反向作用于已完成的握手。旧 SSE 仍使用主请求 GET 建立通道和独立 POST RPC，同时恢复普通头继承。上游协议识别要求后续插件不把最终业务改到另一个逻辑服务。
++
++同步 modern 通过 Continue 放行，异步握手成功才 Resume 一次。响应转换和取消清理在 RouteCall 回调及 stream-done 中完成，覆盖无 body 的响应头阶段和完整 body 的响应体阶段。插件使用 wasm-go v1.1.1，并在启动时固定启用 SafeLog：SDK 的请求及异步响应载荷日志由 INFO 降为 DEBUG，无需新增配置。SafeLog 不脱敏或删除 DEBUG 报文，也不自动过滤普通 Infof；开启 DEBUG 时仍可能看到完整凭据、参数和结果。RouteCall 内部改写操作未逐项检查返回错误的既有行为保持。
++
++安全兼容性调整：客户端 `Proxy-Authorization` 不再默认继承到 HTTP 控制/业务请求或旧 SSE GET/POST，以免把代理认证凭据发送到 MCP 源站。显式配置的上游鉴权仍按原优先级生成凭据；普通多值业务头和 Cookie 的继承不受影响。
++
++旧配置无需迁移。回滚时将 WasmPlugin 的 `url` 恢复为之前记录的插件镜像 digest（本地挂载环境恢复原 Wasm 文件并重新加载），保留原路由配置；回滚后最终业务的 sidecall 差异与普通头限制也会恢复。真实数据面三版本验证入口见 [runtime-verification](testdata/runtime-verification/README.md#routing-compatibility-4597)。
++
++### 明确暂缓范围
++=======
+ 您可以在服务器级别定义一组可重用的认证方案。这些方案之后可以被各个工具引用，用于配置 MCP Server 向后端 REST API 发起请求时的认证方式。
++>>>>>>> origin/main
+ 
+ **配置字段 (`server.securitySchemes[]`)**:
+ 
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +20/-0)
+```diff
+@@ -117,6 +117,8 @@ x-envoy-allow-mcp-tools: tool1,tool2,tool3
+    Upstream authentication plugin can set different tool permissions based on user roles:
+    - Regular users: `x-envoy-allow-mcp-tools: get-user-info`
+    - Advanced users: `x-envoy-allow-mcp-tools: get-user-info,update-user-info`
++Outbound headers inherit the request after existing authentication processing. Cookies, tenant/custom headers and ordinary headers added by earlier filters are forwarded by default without new configuration. Removed credentials are never restored. Authorization retains the existing downstreamSecurity, passthroughAuthHeader and explicit upstream credential rules. Downstream sessions, Last-Event-ID and internal control headers are removed or rebuilt for the operation. Valid Mcp-Param-* headers are forwarded only on modern tools/call, never discover, initialize or legacy RPCs.
++
+    - Administrators: Don't set header (allow all configured tools)
+ 
+ 2. **Multi-Tenant Scenario**
+@@ -274,13 +276,17 @@ To detect the backend protocol automatically, change the corresponding settings
+     probeTimeoutMs: 1000
+ ```
+ 
++`autoDetection.probeTimeoutMs` is consumed only by `auto + http`. It defaults to 1000 ms and must be a positive uint32 integer. The probe uses the smaller of this value and the effective timeout. This section alone does not enable auto. Plugin timeout still applies to control callouts (5000 ms by default); the original route controls the final HTTP business timeout. Total exchange latency may exceed either timeout.
++
+ Keep the following in mind:
+ 
+ - MCP `2026-07-28` clients can access legacy backends through the plugin. Legacy clients cannot access backends that support only MCP `2026-07-28` through the plugin.
+ - Automatic detection with `auto` applies only to MCP `2026-07-28` client requests. Legacy client requests still follow the legacy flow.
+ - Detection adds backend requests. If the backend protocol is known, configure `legacy` or `modern` directly.
+ - Detection requests use the configured backend credentials. The backend must allow those credentials to access its discovery interface. Backend instances behind the same route should have consistent protocol capabilities.
+ - `transport: sse` enables access to legacy SSE backends; it does not provide a general real-time subscription or push service to clients.
++Upstream pool instances must have consistent protocol capabilities because probe and business calls may reach different instances. HTTP JSON/SSE is parsed after the complete business response, without live progress or subscriptions. The 1 MiB probe guard prevents copying oversized bodies into Wasm; it does not bound all Envoy receive buffers or Tool results. Cancellation prevents later phases but cannot retract submitted tool effects. A cancelled live response is explicitly terminated; callbacks after stream closure do not access the stream.
++
+ 
+ ## Authentication and Security
+ 
+@@ -454,6 +460,20 @@ When passthrough is enabled and a non-empty credential is successfully extracted
+ - REST-to-MCP: Uses `credential` from the selected upstream security configuration, falling back to the referenced scheme's `defaultCredential`.
+ - MCP proxy: Uses the scheme's `defaultCredential`. If tools need different fixed credentials, define separate schemes and reference them from the tools.
+ 
++### Main-request forwarding compatibility
++
++Final HTTP tools/list and tools/call requests use the existing SDK RouteCall for legacy, modern and auto. Later request filters and the original route's header/path rewrite, timeout, retry and hash policies apply. DisableReroute remains enabled: this plugin's host/path changes do not trigger route rematching. One plugin submission can produce multiple backend attempts under route retries; this is not an exactly-once guarantee.
++
++Initialize, initialized and auto discover remain independent callouts and do not traverse later filters. Credentials added by later filters cannot affect earlier control requests. Legacy SSE retains its main GET channel and POST callouts, with ordinary headers inherited again. Auto assumes later filters do not redirect business to another logical service.
++
++Synchronous modern requests continue directly; asynchronous handshakes resume the request once on success. RouteCall response callbacks and stream-done own response conversion and cancellation cleanup, including empty-body header responses and buffered body responses. The plugin uses wasm-go v1.1.1 and enables SafeLog once at startup: SDK request and asynchronous response payload logs are downgraded from INFO to DEBUG without new user configuration. SafeLog does not redact or remove DEBUG payloads, or automatically filter ordinary Infof calls; enabling DEBUG may still expose full credentials, arguments and results. Existing unchecked internal RouteCall rewrite errors remain.
++
++Security compatibility change: client `Proxy-Authorization` is no longer inherited by default in HTTP control/business requests or 
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/VERSION` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-2.0.3
++2.0.4-alpha
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/go.mod` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ require (
+ 	amap-tools v0.0.0-00010101000000-000000000000
+ 	github.com/alibaba/higress/plugins/wasm-go/pkg/mcp v0.0.0
+ 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2
+-	github.com/higress-group/wasm-go v1.0.10-0.20260115123534-84ef43c39dc9
++	github.com/higress-group/wasm-go v1.1.1
+ 	github.com/stretchr/testify v1.9.0
+ 	quark-search v0.0.0-00010101000000-000000000000
+ )
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/go.sum` (modified, +2/-0)
+```diff
+@@ -24,6 +24,8 @@ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2 h1
+ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
+ github.com/higress-group/wasm-go v1.0.10-0.20260115123534-84ef43c39dc9 h1:sUuUXZwr50l3W1St7MESlFmxmUAu+QUNNfJXx4P6bas=
+ github.com/higress-group/wasm-go v1.0.10-0.20260115123534-84ef43c39dc9/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
++github.com/higress-group/wasm-go v1.1.1 h1:mkqwusf+4jk28FIq5OFyWbSxkEV9MWmaDF/1JHAPHjs=
++github.com/higress-group/wasm-go v1.1.1/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
+ github.com/huandu/xstrings v1.5.0 h1:2ag3IFq9ZDANvthTwTiqSSZLjDc+BedvHPAp5tJy2TI=
+ github.com/huandu/xstrings v1.5.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
+ github.com/invopop/jsonschema v0.13.0 h1:KvpoAJWEjR3uD9Kbm2HWJmqsEaHt8lBUpd0qHcIi21E=
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/main.go` (modified, +3/-0)
+```diff
+@@ -19,11 +19,14 @@ import (
+ 	quark "quark-search/tools"
+ 
+ 	"github.com/alibaba/higress/plugins/wasm-go/pkg/mcp"
++	sdklog "github.com/higress-group/wasm-go/pkg/log"
+ )
+ 
+ func main() {}
+ 
+ func init() {
++	// Keep payload logs at DEBUG for the entire VM, including async responses.
++	sdklog.SetSafeLogEnabled(true)
+ 	mcp.LoadMCPServer(mcp.AddMCPServer("quark-search",
+ 		quark.LoadTools(mcp.NewMCPServer())))
+ 	mcp.LoadMCPServer(mcp.AddMCPServer("amap-tools",
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +78/-48)
+```diff
+@@ -17,6 +17,7 @@ package main
+ import (
+ 	"encoding/json"
+ 	"fmt"
++	"strconv"
+ 	"strings"
+ 	"testing"
+ 
+@@ -237,9 +238,38 @@ func calloutAt(t *testing.T, host test.TestHost, index int) proxytest.HttpCallou
+ 	return callouts[index]
+ }
+ 
++func routedRequest(t *testing.T, host test.TestHost) proxytest.HttpCalloutAttribute {
++	t.Helper()
++	require.Empty(t, host.GetHttpCalloutAttributes())
++	require.Equal(t, types.ActionContinue, host.GetHttpStreamAction())
++	return proxytest.HttpCalloutAttribute{CalloutID: ^uint32(0), Headers: host.GetRequestHeaders(), Body: host.GetRequestBody()}
++}
++
++func proxyTestResponse(host test.TestHost) *proxytest.LocalHttpResponse {
++	if local := host.GetLocalResponse(); local != nil {
++		return local
++	}
++	headers := host.GetResponseHeaders()
++	if len(headers) == 0 {
++		return nil
++	}
++	code := 0
++	for _, header := range headers {
++		if header[0] == ":status" {
++			code, _ = strconv.Atoi(header[1])
++		}
++	}
++	return &proxytest.LocalHttpResponse{StatusCode: uint32(code), Headers: headers, Data: host.GetResponseBody()}
++}
++
+ func completeCallout(host test.TestHost, callout proxytest.HttpCalloutAttribute, status string, headers [][2]string, body []byte) {
+ 	allHeaders := append([][2]string{{":status", status}}, headers...)
+-	host.CallOnHttpCallResponse(callout.CalloutID, allHeaders, nil, body)
++	if callout.CalloutID == ^uint32(0) {
++		host.CallOnHttpResponseHeaders(allHeaders)
++		host.CallOnHttpResponseBody(body)
++	} else {
++		host.CallOnHttpCallResponse(callout.CalloutID, allHeaders, nil, body)
++	}
+ }
+ 
+ // TestRestMCPServerConfig 测试REST MCP服务器配置解析
+@@ -307,7 +337,7 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
+ 			require.Equal(t, types.HeaderStopIteration, action)
+ 			body := []byte(`{"jsonrpc":"2.0","id":"list","method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
+ 			require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
+-			response := host.GetLocalResponse()
++			response := proxyTestResponse(host)
+ 			require.NotNil(t, response)
+ 			var envelope map[string]interface{}
+ 			require.NoError(t, json.Unmarshal(response.Data, &envelope))
+@@ -337,7 +367,7 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
+ 			require.Equal(t, types.HeaderStopIteration, action)
+ 			body := []byte(`{"jsonrpc":"2.0","id":"blocked","method":"tools/call","params":{"name":"getTransactionRecordListV2","arguments":{"businessType":["SALE"]},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
+ 			require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
+-			response := host.GetLocalResponse()
++			response := proxyTestResponse(host)
+ 			require.NotNil(t, response)
+ 			require.Equal(t, uint32(200), response.StatusCode)
+ 			var envelope map[string]interface{}
+@@ -365,7 +395,7 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
+ 			require.Equal(t, types.HeaderStopIteration, action)
+ 			body := []byte(`{"jsonrpc":"2.0","id":"valid","method":"tools/call","params":{"name":"health","arguments":{},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
+ 			require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
+-			require.Nil(t, host.GetLocalResponse(), "valid tool must not be rejected before routing")
++			require.Nil(t, proxyTestResponse(host), "valid tool must not be rejected before routing")
+ 			host.CompleteHttp()
+ 		})
+ 	})
+@@ -406,7 +436,7 @@ func TestSchemaCompatibilityMetricsGlobalAndRuleLevel(t *testing.T) {
+ 					require.Equal(t, types.HeaderStopIteration, action)
+ 					body := []byte(fmt.Sprintf(`{"jsonrpc":"2.0","id":"blocked-%d","method":"tools/call","params":{"name":"getTransactionRecordListV2","arguments":{"businessType":["SALE"]},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`, call))
+ 					require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
+-					require.NotNil(t, host.GetLocalResponse())
++					require.NotNil(t, proxyTestResponse(host))
+ 					require.Empty(t, host.GetHttpCalloutAttributes())
+ 					host.CompleteHttp()
+ 					blocked, err = host.GetCounterMetric(blockedMetric)
+@@ -465,7 +495,7 @@ func TestRestMCPServerBasicFlow(t *testing.T) {
+ 			action = host.CallOnHttpRequestBody([]byte(initializeRequest))
+ 			require.Equal(t, types.ActionContinue, action)
+ 
+-			localResponse := host.GetLocalResponse()
++			localResponse := proxyTestResponse(host)
+ 			require.NotNil(t, localResponse)
+ 			require.NotEmpty(t, localResponse.Data)
+ 
+@@ -512,7 +542,7 @@ func TestRestMCPServerBasicFlow(t *testing.T) {
+ 			require.Equal(t, types.ActionContinue, action)
+ 
+ 			// 验证响应
+-			localResponse := host.GetLocalResponse()
++			localResponse := proxyTestResponse(host)
+ 			if localResponse != nil && len(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5125** (2026-10-17): refactor(ingress): assemble mcp-server filter config with typed structs (@johnlanni)
-- **PR #5124** (2026-10-17): fix(ai): reject request bodies with a duplicated top-level model member (@johnlanni)
-- **PR #5123** (2026-10-17): chore(controller): reduce exposure of the xDS config-push gRPC listener (@johnlanni)
-- **PR #5122** (2026-10-17): fix(mcp-server): require basic auth credentials for the database MCP server (@johnlanni)
-- **PR #5080** (2026-10-16): fix(ai-token-ratelimit): 修复非流式 JSON 响应的 token 漏记和少记 || fix(ai-token-ratelimit): Fix missing and under-recorded tokens in non-streaming JSON responses (@zhihao-yuan)
-- **PR #5035** (closed): fix(basic-auth): allow colons in passwords and reject duplicate usernames (@huang-zirun)
+- **PR #5239** (2026-10-22): ci: use the full commit SHA for the translate action pin (@johnlanni)
+- **PR #5238** (closed): docs(ip-restriction): normalize x-real-ip example (@purplellllll)
+- **PR #5237** (closed): docs(ai-proxy): correct Vertex safety setting name (@purplellllll)
+- **PR #5236** (closed): docs(ai-security-guard): document securityToken (@purplellllll)
+- **PR #5211** (2026-10-21): ci: harden the content-translation workflow against upstream flakiness (@johnlanni)
+- **PR #5209** (2026-10-22): fix(ai-data-masking): 修复流式工具调用内容丢失 || fix(ai-data-masking): Fix the loss of streaming tool call content (@zhihao-yuan)
 
 ---
 
@@ -1936,31 +2498,28 @@ Signed-off-by: btlqql <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. geo-ip): do not panic on a malformed real-IP header value (#4948)
+## X. docs: fix spelling errors in plugin READMEs and comments (#5054)
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/geo-ip/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-cpp/extensions/jwt_auth/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c74d7e2d`: geo-ip): do not panic on a malformed real-IP header value (#4948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `829006d3`: docs: fix spelling errors in plugin READMEs and comments (#5054). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/geo-ip/main.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-cpp/extensions/jwt_auth/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// strings.Split always yields at least one element, but a value such as
-		// "]" or "]:80" leaves an empty first element, so the leading bracket
-		// must be removed with TrimPrefix instead of slicing.
-		return strings.TrimPrefix(strings.Split(source, "]")[0], "[")
+Json Web Token（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		return strings.Split(source, "]")[0][1:]
+Json Web Toke（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c74d7e2d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `829006d3` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T18:11:15.157Z",
+  "last_updated": "2026-10-22T18:17:49.293Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "c4197a90401efcf13be97f07e14de60d0d716abc5072c06569902de2af16bd20",
-      "verified_at": "2026-10-18T21:07:45.146Z",
+      "content_hash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
+      "verified_at": "2026-10-22T18:17:49.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:07:45.147Z"
+      "last_updated": "2026-10-22T18:17:49.292Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",

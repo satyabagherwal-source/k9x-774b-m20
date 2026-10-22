@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:11:15.093Z",
+  "last_updated": "2026-10-22T18:17:49.217Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26254,14 +26254,19 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "43ad04ee",
-      "content_hash": "c4197a90401efcf13be97f07e14de60d0d716abc5072c06569902de2af16bd20",
+      "source_version": "36f2f1ac",
+      "content_hash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
         {
           "number": 1705,
           "title": "geo-ip): do not panic on a malformed real-IP header value (#4948)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3688,
+          "title": "docs: fix spelling errors in plugin READMEs and comments (#5054)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26270,7 +26275,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:07:45.099Z",
+      "verified_at": "2026-10-22T18:17:49.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110984,6 +110989,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:11:15.083Z"
+    },
+    "rule-3688": {
+      "learning_id": "rule-3688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3688,
+      "title": "docs: fix spelling errors in plugin READMEs and comments (#5054)",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "36f2f1ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:17:49.198Z"
     }
   },
   "aliases": {
