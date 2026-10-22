@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "aff8ebad",
+    "sourceVersion": "8f32a2fd",
     "license": "Apache-2.0",
-    "contentHash": "19371259a4fbdb4f0451b58c2bd7073d0441d1f1ff1c31bf3c468b6ea88ba1da",
-    "lastHarvestedAt": "2026-10-20T13:40:48.822Z",
+    "contentHash": "296fe9a3fd17270a17d706406644921c75d13d85626be595521bff05441b8b74",
+    "lastHarvestedAt": "2026-10-22T21:35:25.930Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -9753,10 +9753,10 @@
     "repository": "RDFLib/pySHACL",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/pySHACL",
-    "sourceVersion": "469cca7a",
+    "sourceVersion": "a8ed01e8",
     "license": "Apache-2.0",
-    "contentHash": "4da0545ca8390d5a948031fc84e0e7c8558d269596b627b36b12bf251181151c",
-    "lastHarvestedAt": "2026-10-20T00:58:02.267Z",
+    "contentHash": "a3d57cb6f1f986b281eefc5a16a6031fa8530e2753a103fa84951bbd6254d5ae",
+    "lastHarvestedAt": "2026-10-22T21:35:16.109Z",
     "learningId": "learn-github-rdflib-pyshacl"
   },
   "mikelikesdesign-swiftui-experiments": {
@@ -10538,5 +10538,15 @@
     "contentHash": "365a2e089c1754de7eb7d5c47e5a469af9c64720c423195ed40827b2910dd472",
     "lastHarvestedAt": "2026-10-22T18:50:12.371Z",
     "learningId": "learn-github-solaceproducts-solace-agent-mesh"
+  },
+  "hf-comfy-org-z-image-turbo": {
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+    "sourceVersion": "hf-comfy-org-z-image-turbo",
+    "license": "Open-Source",
+    "contentHash": "f6d9511e888b789348c4b6a1014711b6622bdcb0901e26f201be1b275c05910a",
+    "lastHarvestedAt": "2026-10-22T21:35:20.211Z",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   }
 }

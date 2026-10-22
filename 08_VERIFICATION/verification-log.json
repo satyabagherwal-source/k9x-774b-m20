@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-3YG6",
-    "timestamp": "2026-10-20T18:12:52.134Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "854fe669526acaec278bd1f199eed0193dc82db5235acd69895ad331ecb73d7c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-5IK5",
-    "timestamp": "2026-10-20T18:14:04.853Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "4e6c66fb303a927c206d28cc3d2072ef9fd2b18d8abdb4b1dd4a92a3492e067a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-5YCE",
-    "timestamp": "2026-10-20T18:14:25.310Z",
-    "repository": "encoredev/encore",
-    "learningId": "learn-github-encoredev-encore",
-    "contentHash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-DWXG",
     "timestamp": "2026-10-20T18:20:36.724Z",
     "repository": "carbon-design-system/carbon",
@@ -7490,6 +7445,51 @@
     "repository": "alibaba/zvec",
     "learningId": "learn-github-alibaba-zvec",
     "contentHash": "b7455f2d9e1b7a0740597258124a9388b1d5d3d27993ccb5281287e2815592a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-7Y4Q",
+    "timestamp": "2026-10-22T21:35:16.106Z",
+    "repository": "RDFLib/pySHACL",
+    "learningId": "learn-github-rdflib-pyshacl",
+    "contentHash": "a3d57cb6f1f986b281eefc5a16a6031fa8530e2753a103fa84951bbd6254d5ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-81AO",
+    "timestamp": "2026-10-22T21:35:20.208Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+    "contentHash": "f6d9511e888b789348c4b6a1014711b6622bdcb0901e26f201be1b275c05910a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-85PJ",
+    "timestamp": "2026-10-22T21:35:25.927Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "296fe9a3fd17270a17d706406644921c75d13d85626be595521bff05441b8b74",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

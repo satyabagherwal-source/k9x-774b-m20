@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md`  
 > **Source**: github ([https://github.com/RDFLib/pySHACL](https://github.com/RDFLib/pySHACL))  
-> **Source Version**: `469cca7a`  
+> **Source Version**: `a8ed01e8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:58:01.868Z  
+> **Timestamp**: 2026-10-22T21:35:15.778Z  
 > **Learning ID**: `learn-github-rdflib-pyshacl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RDFLib/pySHACL](https://github.com/RDFLib/pySHACL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:58:00.824Z  
+> **Harvest Timestamp**: 2026-10-22T21:35:15.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Python validator for SHACL
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 362 stars
+- **Stars / Engagement**: 365 stars
 
 ---
 
@@ -1968,586 +1968,454 @@ from .stringify import stringify_blank_node, stringify_graph, stringify_literal,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68e07f80` (2026-07-08)
-**Commit Message**: Merge pull request #322 from gaoflow/fix-319-httpresponse-close
+### Incident Patch 1: `a8ed01e8` (2026-10-20)
+**Commit Message**: Merge pull request #335 from lepy/fix/oxigraph-len-and-xsd-string
 
-Fix HTTPResponse cleanup for owl imports
+Fix slow and incorrect validation on Oxigraph-backed data graphs
 
-**File**: `pyshacl/rdfutil/load.py` (modified, +2/-3)
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -251,7 +251,7 @@ def load_from_source(
-             _maybe_id = source
-             base_uri = source
-             try:
--                resp, resp_filename, web_format, raw_fp = get_rdf_from_web(source)
-+                resp, resp_filename, web_format, _raw_fp = get_rdf_from_web(source)
-             except HTTPError:
-                 if is_imported_graph:
-                     return g
-@@ -268,9 +268,8 @@ def load_from_source(
-             else:
-                 rdf_format = web_format
-                 filename = resp_filename
--                fp = resp.fp if raw_fp else resp
-                 source_was_open = False
--                source = open_source = fp
-+                source = open_source = resp
-         else:
-             first_char = source[0]
-             if is_windows and (first_char == '\\' or (len(source) > 3 and source[1:3] == ":\\")):
+@@ -6,6 +6,13 @@ and this project adheres to [Python PEP 440 Versioning](https://www.python.org/d
+ 
+ ## [Unreleased]
+ 
++### Fixed
++
++- Oxigraph-backed validation no longer computes `len()` of the whole data graph for every validation result.
++  - `datagraph or sg` evaluated the truthiness of the DataGraph, which on Oxigraph runs a `COUNT` query over the entire store.
++- Plain string literals read from an Oxigraph store now compare equal to plain literals in the shapes graph.
++  - Oxigraph reports them as `xsd:string`; they are now mapped back to plain RDFLib literals, which fixes false violations of `sh:in`, `sh:hasValue` and similar constraints.
++
+ ## [0.40.1] - 2026-07-28
+ 
+ ### Fixed
 ```
 
-**File**: `test/issues/test_319.py` (added, +70/-0)
+**File**: `pyshacl/constraints/constraint_component.py` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,70 @@
-+# -*- coding: utf-8 -*-
-+#
-+"""
-+https://github.com/RDFLib/pySHACL/issues/319
-+"""
-+
-+import gc
-+import io
-+import threading
-+from contextlib import redirect_stderr
-+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-+
-+from rdflib import OWL, RDF, URIRef
-+
-+from pyshacl.rdfutil.load import load_from_source
-+
-+
-+ROOT_TTL = b"""\
-+@prefix owl: <http://www.w3.org/2002/07/owl#> .
-+<http://example.test/root> a owl:Ontology ;
-+    owl:imports <IMPORT_URL> .
-+"""
-+
-+IMPORTED_TTL = b"""\
-+@prefix owl: <http://www.w3.org/2002/07/owl#> .
-+<http://example.test/imported> a owl:Ontology .
-+"""
-+
-+
-+class Issue319Handler(BaseHTTPRequestHandler):
-+    def do_GET(self):
-+        if self.path == "/root.ttl":
-+            body = self.server.root_body
-+        elif self.path == "/import.ttl":
-+            body = IMPORTED_TTL
-+        else:
-+            self.send_error(404)
-+            return
-+        self.send_response(200)
-+        self.send_header("Content-Type", "text/turtle")
-+        self.send_header("Content-Length", str(len(body)))
-+        self.end_headers()
-+        self.wfile.write(body)
-+
-+    def log_message(self, *args):
-+        pass
-+
-+
-+def test_319_http_owl_imports_do_not_leave_closed_response_finalizers():
-+    server = ThreadingHTTPServer(("127.0.0.1", 0), Issue319Handler)
-+    host, port = server.server_address
-+    root_url = f"http://{host}:{port}/root.ttl"
-+    import_url = f"http://{host}:{port}/import.ttl"
-+    server.root_body = ROOT_TTL.replace(b"IMPORT_URL", import_url.encode("ascii"))
-+    thread = threading.Thread(target=server.serve_forever, daemon=True)
-+    thread.start()
-+    stderr = io.StringIO()
-+    try:
-+        with redirect_stderr(stderr):
-+            graph = load_from_source(root_url, do_owl_imports=True)
-+            assert (URIRef("http://example.test/imported"), RDF.type, OWL.Ontology) in graph
-+            del graph
-+            gc.collect()
-+    finally:
-+        server.shutdown()
-+        server.server_close()
-+        thread.join()
-+    stderr_text = stderr.getvalue()
-+    assert "Exception ignored while finalizing file" not in stderr_text
-+    assert "I/O operation on closed file" not in stderr_text
-```
-
----
-
-### Incident Patch 2: `361f8e7d` (2026-06-19)
-**Commit Message**: Fix HTTPResponse cleanup for owl imports
-
-**File**: `pyshacl/rdfutil/load.py` (modified, +2/-3)
-```diff
-@@ -251,7 +251,7 @@ def load_from_source(
-             _maybe_id = source
-             base_uri = source
-             try:
--                resp, resp_filename, web_format, raw_fp = get_rdf_from_web(source)
-+                resp, resp_filename, web_format, _raw_fp = get_rdf_from_web(source)
-             except HTTPError:
-                 if is_imported_graph:
-                     return g
-@@ -268,9 +268,8 @@ def load_from_source(
-             else:
-                 rdf_format = web_format
-                 filename = resp_filename
--                fp = resp.fp if raw_fp else resp
-                 source_was_open = False
--                source = open_source = fp
-+                source = open_source = resp
-         else:
-             first_char = source[0]
-             if is_windows and (first_char == '\\' or (len(source) > 3 and source[1:3] == ":\\")):
-```
-
-**File**: `test/issues/test_319.py` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+# -*- coding: utf-8 -*-
-+#
-+"""
-+https://github.com/RDFLib/pySHACL/issues/319
-+"""
-+
-+import gc
-+import io
-+import threading
-+from contextlib import redirect_stderr
-+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-+
-+from rdflib import OWL, RDF, URIRef
-+
-+from pyshacl.rdfutil.load import load_from_source
-+
-+
-+ROOT_TTL = b"""\
-+@prefix owl: <http://www.w3.org/2002/07/owl#> .
-+<http://example.test/root> a owl:Ontology ;
-+    owl:imports <IMPORT_URL> .
-+"""
-+
-+IMPORTED_TTL = b"""\
-+@prefix owl: <http://www.w3.org/2002/07/owl#> .
-+<http://example.test/imported> a owl:Ontology .
-+"""
-+
-+
-+class Issue319Handler(BaseHTTPRequestHandler):
-+    def do_GET(self):
-+        if self.path == "/root.ttl":
-+            body = self.server.root_body
-+        elif self.path == "/import.ttl":
-+            body = IMPORTED_TTL
-+        else:
-+            self.send_error(404)
-+            return
-+        self.send_response(200)
-+        self.send_header("Content-Type", "text/turtle")
-+        self.send_header("Content-Length", str(len(body)))
-+        self.end_headers()
-+        self.wfile.write(body)
-+
-+    def log_message(self, *args):
-+        pass
-+
-+
-+def test_319_http_owl_imports_do_not_leave_closed_response_finalizers():
-+    server = ThreadingHTTPServer(("127.0.0.1", 0), Issue319Handler)
-+    host, port = server.server_address
-+    root_url = f"http://{host}:{port}/root.ttl"
-+    import_url = f"http://{host}:{port}/import.ttl"
-+    server.root_body = ROOT_TTL.replace(b"IMPORT_URL", import_url.encode("ascii"))
-+    thread = threading.Thread(target=server.serve_forever, daemon=True)
-+    thread.start()
-+    stderr = io.StringIO()
-+    try:
-+        with redirect_stderr(stderr):
-+            graph = load_from_source(root_url, do_owl_imports=True)
-+            assert (URIRef("http://example.test/imported"), RDF.type, OWL.Ontology) in graph
-+            del graph
-+            gc.collect()
-+    finally:
-+        server.shutdown()
-+        server.server_close()
-+        thread.join()
-+    stderr_text = stderr.getvalue()
-+    assert "Exception ignored while finalizing file" not in stderr_text
-+    assert "I/O operation on closed file" not in stderr_text
-```
-
----
-
-### Incident Patch 3: `d129e89b` (2026-01-16)
-**Commit Message**: Merge pull request #311 from RDFLib/fix_298
-
-Enhance shape filtering logic to prevent failures when omitted Shapes
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -17,6 +17,8 @@ and this project adheres to [Python PEP 440 Versioning](https://www.python.org/d
-   - Fixes #301
- - Validation report text output is now deterministic.
-   - Fixes #304
-+- `use_shapes` filtering no longer fails when omitted PropertyShapes are referenced by included shapes.
-+  - Fixes #298
- 
- ## [0.30.1] - 2025-03-15
- 
-```
-
-**File**: `pyshacl/constraints/core/logical_constraints.py` (modified, +20/-4)
-```diff
-@@ -82,6 +82,8 @@ def evaluate(self, executor: SHACLExecutor, datagraph: GraphLike, focus_value_no
-         potentially_recursive = self.recursion_triggers(_evaluation_path)
- 
-         for not_c in self.not_list:
-+            if self.shape.sg.is_filtered_out_shape(not_c):
-+                continue
-             _nc, _r = self._evaluate_not_constraint(
-                 executor, not_c, datagraph, focus_value_nodes, potentially_recursive, _evaluation_path
-             )
-@@ -101,19 +103,20 @@ def _evaluate_not_constraint(
-         """
-         _reports = []
-         _non_conformant = False
--        not_shape = self.shape.get_other_shape(not_c)
--        if not not_shape:
-+        found_not_shape = self.shape.get_other_shape(not_c)
-+        if not found_not_shape:
-             raise ReportableRuntimeError(
-                 "Shape pointed to by sh:not does not exist or is not a well-formed SHACL Shape."
-+                f"Please check if the shape '{not_c}' is defined."
-             )
--        if potentially_recursive and not_shape in potentially_recursive:
-+        if potentially_recursive and found_not_shape in potentially_recursive:
-             warn(ShapeRecursionWarning(_evaluation_path))
-             return _non_conformant, _reports
-         upstream_reports = []
-         for f, value_nodes in focus_value_nodes.items():
-             for v in value_nodes:
-                 try:
--                    _is_conform, _r = not_shape.validate(
-+                    _is_conform, _r = found_not_shape.validate(
-                         executor, datagraph, focus=v, _evaluation_path=_evaluation_path[:]
-                     )
-                 except ValidationFailure as e:
-@@ -213,12 +216,17 @@ def _evaluate_and_constraint(self, executor, and_c, target_graph, focus_value_no
-             raise ReportableRuntimeError("The list associated with sh:and is not a valid RDF list.")
-         and_shapes = set()
-         for a in and_list:
-+            if self.shape.sg.is_filtered_out_shape(a):
-+                continue
-             and_shape = self.shape.get_other_shape(a)
-             if not and_shape:
-                 raise ReportableRuntimeError(
-                     "Shape pointed to by sh:and does not exist or is not a well-formed SHACL Shape."
-                 )
-             and_shapes.add(and_shape)
-+        if not and_shapes:
-+            # All filtered out, no reports to send
-+            return _non_conformant, _reports
-         upstream_reports = []
-         for f, value_nodes in focus_value_nodes.items():
-             for v in value_nodes:
-@@ -323,12 +331,16 @@ def _evaluate_or_constraint(self, executor, or_c, target_graph, focus_value_node
-             raise ReportableRuntimeError("The list associated with sh:or is not a valid RDF list.")
-         or_shapes = set()
-         for o in or_list:
-+            if self.shape.sg.is_filtered_out_shape(o):
-+                continue
-             or_shape = self.shape.get_other_shape(o)
-             if not or_shape:
-                 raise ReportableRuntimeError(
-                     "Shape pointed to by sh:or does not exist or is not a well-formed SHACL Shape."
-                 )
-             or_shapes.add(or_shape)
-+        if not or_shapes:
-+            return _non_conformant, _reports
-         upstream_reports = []
-         for f, value_nodes in focus_value_nodes.items():
-             for v in value_nodes:
-@@ -435,12 +447,16 @@ def _evaluate_xone_constraint(self, executor, xone_c, target_graph, focus_value_
-             raise ReportableRuntimeError("The list associated with sh:xone is not a valid RDF list.")
-         xone_shapes = list()
-         for x in xone_list:
-+            if self.shape.sg.is_filtered_out_shape(x):
-+                continue
-             xone_shape = self.shape.get_other_shape(x)
-             if not xone_shape:
-                 raise ReportableRuntimeError(
-                     "Shape pointed to by sh:xone does not exist or is not a well-formed SHACL Shape."
-                 )
-             xone_shapes.append(xone_shape)
-+        if not xone_shapes:
-+            return _non_conformant, _reports
-         upstream_reports = []
-         for f, value_nodes in focus_value_nodes.items():
-             for v in value_nodes:
-```
-
-**File**: `pyshacl/constraints/core/other_constraints.py` (modified, +2/-0)
-```diff
-@@ -177,6 +177,8 @@ def evaluate(
- 
-         working_shapes = set()
-         for p_shape in self.property_shapes:
-+            if self.shape.sg.is_filtered_out_shape(p_shape):
-+                continue
-             property_shape = self.shape.get_other_shape(p_shape)
-             if not property_shape or not property_shape.is_property_shape:
-                 raise ReportableRuntimeError(
-```
-
-**File**: `pyshacl/constraints/core/shape_based_constraints.py` (modified, +20/-10)
-```diff
-@@ -96,6 +96,8 @@ def evaluate(
-         potentially_recursive = self.recursion_triggers(_evaluation_path)
- 
-         for p_shape in self.property_shapes:
-+            if self.shape.sg.is_filtered_out_shape(p_shape):
-+                continue
-             _nc, _r = self._evaluate_property_shape(
-                 executor, p_shape, target_graph, focus_value_nodes, potentially_recursive, _evaluation_path
-             )
-@@ -108,24 +110,24 @@ def _evaluate_property_shape(
-     ):
-         _reports = []
-         _non_conformant = False
--        prop_shape = self.shape.get_other_shape(prop_shape)
--        if potentially_recursive and prop_shape in potentially_recursive:
-+        found_prop_shape = self.shape.get_other_shape(prop_shape)
-+        if potentially_recursive and found_prop_shape in potentially_recursive:
-             warn(ShapeRecursionWarning(_evaluation_path))
-             return _non_conformant, _reports
--        if not prop_shape:
-+        if not found_prop_shape:
-             raise ReportableRuntimeError(
-                 f"SHACL PropertyShape not found: The shape referenced by sh:property does not exist. "
-                 f"Please check if the shape '{prop_shape}' is defined."
-             )
--        elif not prop_shape.is_property_shape:
-+        elif not found_prop_shape.is_property_shape:
-             raise ReportableRuntimeError(
-                 f"'{prop_shape}' exists but is not a well-formed SHACL PropertyShape. "
-                 f"Ensure it has the correct type (sh:PropertyShape) and all required properties."
-             )
- 
-         for f, value_nodes in focus_value_nodes.items():
-             for v in value_nodes:
--                _is_conform, _r = prop_shape.validate(
-+                _is_conform, _r = found_prop_shape.validate(
-                     executor, target_graph, focus=v, _evaluation_path=_evaluation_path[:]
-                 )
-                 _non_conformant = _non_conformant or (not _is_conform)
-@@ -195,6 +197,8 @@ def evaluate(
-         potentially_recursive = self.recursion_triggers(_evaluation_path)
- 
-         for n_shape in self.node_shapes:
-+            if self.shape.sg.is_filtered_out_shape(n_shape):
-+                continue
-             _nc, _r = self._evaluate_node_shape(
-                 executor, n_shape, target_graph, focus_value_nodes, potentially_recursive, _evaluation_path
-             )
-@@ -207,17 +211,20 @@ def _evaluate_node_shape(
-     ):
-         _reports = []
-         _non_conformant = False
--        node_shape = self.shape.get_other_shape(node_shape)
--        if potentially_recursive and node_shape in potentially_recursive:
-+        found_node_shape = self.shape.get_other_shape(node_shape)
-+        if potentially_recursive and found_node_shape in potentially_recursive:
-             warn(ShapeRecursionWarning(_evaluation_path))
-             return _non_conformant, _reports
--        if not node_shape or node_shape.is_property_shape:
-+        if not found_node_shape:
-             raise ReportableRuntimeError(
--                "Shape pointed to by sh:node does not exist or is not a well-formed SHACL NodeShape."
-+                f"SHACL Shape not found: The shape referenced by sh:node does not exist. "
-+                f"Please check if the shape '{node_shape}' is defined."
-             )
-+        elif found_node_shape.is_property_shape:
-+            raise ReportableRuntimeError("Shape pointed to by sh:node is not a well-formed SHACL NodeShape.")
-         for f, value_nodes in focus_value_nodes.items():
-             for v in value_nodes:
--                _is_conform, _r = node_shape.validate(
-+                _is_conform, _r = found_node_shape.validate(
-                     executor, target_graph, focus=v, _evaluation_path=_evaluation_path[:]
-                 )
-                 # Create a failure for this constraint component if any failures exist
-@@ -363,6 +370,8 @@ def evaluate(
-         potentially_recursive = self.recursion_triggers(_evaluation_path)
- 
-         for v_shape in self.value_shapes:
-+            if self.shape.sg.is_filtered_out_shape(v_shape):
-+                continue
-             _nc, _r = self._evaluate_value_shape(
-                 executor, v_shape, target_graph, focus_value_nodes, potentially_recursive, _evaluation_path
-             )
-@@ -398,6 +407,7 @@ def _evaluate_value_shape(
-                         sibling_shapes.add(sibling)
- 
-             sibling_shapes = set(self.shape.get_other_shape(s) for s in sibling_shapes)
-+            sibling_shapes = {s for s in sibling_shapes if s is not None}
-         else:
-             sibling_shapes = set()
-         upstream_reports = []
-```
-
-**File**: `pyshacl/shape.py` (modified, +2/-0)
-```diff
-@@ -130,6 +130,8 @@ def set_advanced(self, val):
-         self._advanced = bool(val)
- 
-     def get_other_shape(self, shape_node):
-+        if self.sg.is_filtered_out_shape(shape_node):
-+            return None
+@@ -168,7 +168,7 @@ def make_v_result_description(
+         source_shape_text = stringify_node(sg, self.shape.node)
+         severity_node_text = stringify_node(sg, severity)
          try:
-             return self.sg.lookup_shape_from_node(shape_node)
-         except (KeyError, AttributeError):
+-            focus_node_text = stringify_node(datagraph or sg, focus_node)
++            focus_node_text = stringify_node(sg if datagraph is None else datagraph, focus_node)
+         except (LookupError, ValueError):
+             # focus node doesn't exist in the datagraph. We can deal.
+             focus_node_text = str(focus_node)
+@@ -182,7 +182,7 @@ def make_v_result_description(
+         )
+         if value_node is not None:
+             try:
+-                val_node_string = stringify_node(datagraph or sg, value_node)
++                val_node_string = stringify_node(sg if datagraph is None else datagraph, value_node)
+             except (LookupError, ValueError):
+                 # value node doesn't exist in the datagraph.
+                 val_node_string = str(value_node)
+@@ -254,7 +254,7 @@ def make_v_result(
+         r_triples.append((r_node, SH_sourceConstraintComponent, (sg, constraint_component)))
+         r_triples.append((r_node, SH_sourceShape, (sg, self.shape.node)))
+         r_triples.append((r_node, SH_resultSeverity, severity))
+-        r_triples.append((r_node, SH_focusNode, (datagraph or sg, focus_node)))
++        r_triples.append((r_node, SH_focusNode, (sg if datagraph is None else datagraph, focus_node)))
+         if value_node is not None:
+             r_triples.append((r_node, SH_value, (datagraph, value_node)))
+         if result_path is None and self.shape.is_property_shape:
 ```
 
-**File**: `pyshacl/shapes_graph.py` (modified, +17/-0)
+**File**: `pyshacl/graph_abstraction.py` (modified, +18/-20)
 ```diff
-@@ -60,6 +60,7 @@ def __init__(self, graph, debug: Optional[Union[bool, int]] = False, logger: Opt
-         self._custom_constraints = None
-         self._shacl_functions: Dict[str, tuple] = {}
-         self._shacl_target_types: Dict[str, 'RDFNode'] = {}
-+        self._filtered_out_shapes: set = set()
-         self._use_js = False
-         self._add_system_triples()
+@@ -1297,16 +1297,26 @@ def to_rdf(
+     elif isinstance(term, ox_BlankNode):
+         return rdf_BNode(term.value)
+     elif isinstance(term, ox_Literal):
+-        if term.language is not None:
+-            return rdf_Literal(term.value, lang=term.language)
+-        data_type = term.datatype
+-        if data_type is not None:
+-            data_type = rdf_URIRef(data_type.value)
+-        return rdf_Literal(term.value, datatype=data_type)
++        return _ox_literal_to_rdf(term)
+     else:
+         return rdf_URIRef(term.value)
  
-@@ -182,6 +183,9 @@ def shapes_from_uris(self, shapes_uris: List[rdflib.URIRef]):
-             self._build_node_shape_cache_from_list(shapes_uris)
-         return [self._node_shape_cache[s] for s in shapes_uris]
  
-+    def is_filtered_out_shape(self, node) -> bool:
-+        return isinstance(node, rdflib.URIRef) and node in self._filtered_out_shapes
++XSD_STRING_IRI = "http://www.w3.org/2001/XMLSchema#string"
 +
-     def lookup_shape_from_node(self, node) -> Shape:
-         # This will throw a KeyError if it is not found. This is intentionally not caught here.
-         return self._node_shape_cache[node]
-@@ -201,6 +205,7 @@ def _build_node_shape_cache(self):
-         :rtype: NoneType
-         """
-         g = self.graph
-+        self._filtered_out_shapes = set()
-         defined_node_shapes = set(g.subjects(RDF_type, SH_NodeShape))
-         if self.debug:
-             self.logger.debug(f"Found {len(defined_node_shapes)} SHACL Shapes defined with type sh:NodeShape.")
-@@ -428,6 +433,18 @@ def _gather_shapes(shapes_nodes: Sequence[Union[rdflib.URIRef, rdflib.BNode]], r
- 
-         _gather_shapes(shapes_list)
- 
-+        allowed_shapes = set(gathered_node_shapes).union(set(gathered_prop_shapes))
-+        allowed_shape_uris = {s for s in allowed_shapes if isinstance(s, rdflib.URIRef)}
-+        referenced_shape_uris = set()
-+        for _p in (SH_property, SH_node, SH_not, SH_qualifiedValueShape):
-+            referenced_shape_uris.update(o for o in g.objects(None, _p) if isinstance(o, rdflib.URIRef))
-+        for _p in (SH_and, SH_or, SH_xone):
-+            for list_node in g.objects(None, _p):
-+                for item in g.items(list_node):
-+                    if isinstance(item, rdflib.URIRef):
-+                        referenced_shape_uris.add(item)
-+        self._filtered_out_shapes = referenced_shape_uris.difference(allowed_shape_uris)
 +
-         for s in gathered_node_shapes:
-             path_vals = list(g.objects(s, SH_path))
-             if len(path_vals) > 0:
++def _ox_literal_to_rdf(term: ox_Literal) -> rdf_Literal:
++    if term.language is not None:
++        return rdf_Literal(term.value, lang=term.language)
++    data_type = term.datatype
++    # Oxigraph reports simple literals with their RDF 1.1 datatype xsd:string, but RDFLib
++    # treats Literal("x") and Literal("x", datatype=XSD.string) as unequal. Map them back to
++    # plain literals so they compare equal to the literals in the shapes graph.
++    if data_type is None or data_type.value == XSD_STRING_IRI:
++        return rdf_Literal(term.value)
++    return rdf_Literal(term.value, datatype=rdf_URIRef(data_type.value))
++
++
+ def convert_quad_to_rdflib(quad: ox_Quad):
+     s, p, o, g = quad
+     if s is None:
+@@ -1316,13 +1326,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
+     elif isinstance(s, ox_Literal):
+         # Technically a subject can never be a Literal
+         # in Oxigraph, but this is here for completeness
+-        if s.language is not None:
+-            out_s = rdf_Literal(s.value, lang=s.language)
+-        else:
+-            data_type = s.datatype
+-            if data_type is not None:
+-                data_type = rdf_URIRef(data_type.value)
+-            out_s = rdf_Literal(s.value, datatype=data_type)
++        out_s = _ox_literal_to_rdf(s)
+     else:
+         out_s = rdf_URIRef(s.value)
+     if p is None:
+@@ -1334,13 +1338,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
+     if o is None:
+         out_o = None
+     elif isinstance(o, ox_Literal):
+-        if o.language is not None:
+-            out_o = rdf_Literal(o.value, lang=o.language)
+-        else:
+-            data_type = o.datatype
+-            if data_type is not None:
+-                data_type = rdf_URIRef(data_type.value)
+-            out_o = rdf_Literal(o.value, datatype=data_type)
++        out_o = _ox_literal_to_rdf(o)
+     elif isinstance(o, ox_BlankNode):
+         out_o = rdf_BNode(o.value)
+     else:
 ```
 
-**File**: `test/issues/test_298.py` (added, +70/-0)
+**File**: `test/test_oxigraph_parity.py` (added, +91/-0)
 ```diff
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,91 @@
 +# -*- coding: utf-8 -*-
-+#
-+"""
-+https://github.com/RDFLib/pySHACL/issues/298
-+"""
-+import sys
++"""\
++Parity and performance regressions for validation against an Oxigraph-backed DataGraph.
 +
-+from rdflib import Graph
-+from rdflib.plugins.parsers.jsonld import to_rdf
++1. Plain string literals coming back from Oxigraph carry an explicit xsd:string datatype
++   (RDF 1.1). They must compare equal to the plain literals in the shapes graph, otherwise
++   constraints such as sh:in and sh:hasValue report false violations.
++2. Building a validation result must not compute len() of the whole data graph. The
++   expressions `datagraph or sg` triggered DataGraph.__len__, which on Oxigraph is a
++   COUNT query over the entire store, once per validation result.
++"""
++
++import pytest
++from rdflib import XSD, Graph, Literal
 +
 +import pyshacl
++from pyshacl.graph_abstraction import has_oxigraph
++
++pytestmark = pytest.mark.skipif(not has_oxigraph, reason="pyoxigraph is not installed")
++
++SHAPES = """\
++@prefix sh: <http://www.w3.org/ns/shacl#> .
++@prefix ex: <http://example.org/> .
++
++ex:OpShape a sh:NodeShape ;
++    sh:targetClass ex:Comparison ;
++    sh:property [
++        sh:path ex:operator ;
++        sh:in ( "=" "<" ">" ) ;
++    ] ;
++    sh:property [
++        sh:path ex:kind ;
++        sh:hasValue "atomic" ;
++    ] .
++"""
++
++DATA = """\
++@prefix ex: <http://example.org/> .
++
++ex:c1 a ex:Comparison ; ex:operator "=" ; ex:kind "atomic" .
++ex:c2 a ex:Comparison ; ex:operator "<" ; ex:kind "atomic" .
++"""
 +
 +
-+def test_298():
-+    shapes_graph = to_rdf(
-+        {
-+            "@context": {
-+                "ex": "http://example.org/",
-+                "sh": "http://www.w3.org/ns/shacl#",
-+            },
-+            "@graph": [
-+                {
-+                    "@id": "ex:PersonShape",
-+                    "@type": "sh:NodeShape",
-+                    "sh:targetClass": {"@id": "ex:Person"},
-+                    "sh:property": [
-+                        {
-+                            "@id": "ex:NameProperty",
-+                            "sh:path": {"@id": "ex:name"},
-+                            "sh:minCount": 1,
-+                        },
-+                        {
-+                            "@id": "ex:AgeProperty",
-+                            "sh:path": {"@id": "ex:age"},
-+                            "sh:minInclusive": 18,
-+                        },
-+                    ],
-+                }
-+            ],
-+        },
-+        Graph(),
++def _ox_store(ttl: str):
++    from pyoxigraph import RdfFormat, Store
++
++    store = Store()
++    store.bulk_load(ttl.encode("utf-8"), format=RdfFormat.TURTLE)
++    return store
++
++
++def test_plain_string_literals_match_shapes_on_oxigraph():
++    shapes = Graph().parse(data=SHAPES, format="turtle")
++    conforms_rdflib, _, _ = pyshacl.validate(
++        Graph().parse(data=DATA, format="turtle"), shacl_graph=shapes
 +    )
-+
-+    data_graph = to_rdf(
-+        {
-+            "@context": {
-+                "ex": "http://example.org/",
-+            },
-+            "@id": "ex:person1",
-+            "@type": "ex:Person",
-+            "ex:name": "John Doe",
-+            "ex:age": 25,
-+        },
-+        Graph(),
-+    )
-+
-+    conforms, report_graph, results_text = pyshacl.validate(
-+        data_graph,
-+        shacl_graph=shapes_graph,
-+        use_shapes=[
-+            "http://example.org/PersonShape",
-+            "http://example.org/NameProperty",
-+        ],
-+    )
-+    assert conforms
-+    assert "Validation Report" in results_text
++    conforms_ox, _, text = pyshacl.validate(_ox_store(DATA), shacl_graph=shapes)
++    assert conforms_rdflib
++    assert conforms_ox, text
 +
 +
-+if __name__ == "__main__":
-+    sys.exit(test_298())
++def test_to_rdf_maps_xsd_string_to_plain_literal():
++    from pyoxigraph import Literal as OxLiteral
++    from pyoxigraph import NamedNode as OxNamedNode
++
++    from pyshacl.graph_abstraction import to_rdf
++
++    converted = to_rdf(OxLiteral("="))
++    assert converted == Literal("=")
++    assert converted.datatype is None
++    typed = to_rdf(OxLiteral("1", datatype=OxNamedNode(str(XSD.integer))))
++    assert typed.datatype == XSD.integer
++
++
++def test_validation_results_do_not_compute_data_graph_length(monkeypatch):
++    from pyshacl import graph_abstraction
++
++    calls = []
++    original_len = graph_abstraction.OxigraphDataGraph.__len__
++
++    def counting_len(self, *args, **kwargs):
++        calls.append(1)
++        return original_len(self, *args, **kwargs)
++
++    monkeypatch.setattr(graph_abstraction.OxigraphDataGraph, "__len__", counting_len)
++    shapes = Graph().parse(data=SHAPES, format="turtle")
++    bad = DATA.replace('ex:operator "<"', 'ex:operator "!="')
++    conforms, results, _ = pyshacl.validate(_ox_store(bad), shacl_graph=shapes)
++    assert not conforms
++    assert calls == []
 ```
 
-**File**: `test/issues/test_301.py` (modified, +0/-1)
+---
+
+### Incident Patch 2: `718cfb65` (2026-10-20)
+**Commit Message**: Fix slow and incorrect validation on Oxigraph-backed data graphs
+
+- Replace `datagraph or sg` with an explicit None check. The truthiness
+  test called DataGraph.__len__, which on Oxigraph runs a COUNT query over
+  the whole store, once per validation result.
+- Map Oxigraph literals with datatype xsd:string back to plain RDFLib
+  literals so they compare equal to plain literals in the shapes graph.
+  This removes false violations of sh:in, sh:hasValue and similar.
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -59,5 +59,4 @@ def test_301():
+@@ -6,6 +6,13 @@ and this project adheres to [Python PEP 440 Versioning](https://www.python.org/d
+ 
+ ## [Unreleased]
+ 
++### Fixed
++
++- Oxigraph-backed validation no longer computes `len()` of the whole data graph for every validation result.
++  - `datagraph or sg` evaluated the truthiness of the DataGraph, which on Oxigraph runs a `COUNT` query over the entire store.
++- Plain string literals read from an Oxigraph store now compare equal to plain literals in the shapes graph.
++  - Oxigraph reports them as `xsd:string`; they are now mapped back to plain RDFLib literals, which fixes false violations of `sh:in`, `sh:hasValue` and similar constraints.
++
+ ## [0.40.1] - 2026-07-28
+ 
+ ### Fixed
+```
+
+**File**: `pyshacl/constraints/constraint_component.py` (modified, +3/-3)
+```diff
+@@ -168,7 +168,7 @@ def make_v_result_description(
+         source_shape_text = stringify_node(sg, self.shape.node)
+         severity_node_text = stringify_node(sg, severity)
+         try:
+-            focus_node_text = stringify_node(datagraph or sg, focus_node)
++            focus_node_text = stringify_node(sg if datagraph is None else datagraph, focus_node)
+         except (LookupError, ValueError):
+             # focus node doesn't exist in the datagraph. We can deal.
+             focus_node_text = str(focus_node)
+@@ -182,7 +182,7 @@ def make_v_result_description(
+         )
+         if value_node is not None:
+             try:
+-                val_node_string = stringify_node(datagraph or sg, value_node)
++                val_node_string = stringify_node(sg if datagraph is None else datagraph, value_node)
+             except (LookupError, ValueError):
+                 # value node doesn't exist in the datagraph.
+                 val_node_string = str(value_node)
+@@ -254,7 +254,7 @@ def make_v_result(
+         r_triples.append((r_node, SH_sourceConstraintComponent, (sg, constraint_component)))
+         r_triples.append((r_node, SH_sourceShape, (sg, self.shape.node)))
+         r_triples.append((r_node, SH_resultSeverity, severity))
+-        r_triples.append((r_node, SH_focusNode, (datagraph or sg, focus_node)))
++        r_triples.append((r_node, SH_focusNode, (sg if datagraph is None else datagraph, focus_node)))
+         if value_node is not None:
+             r_triples.append((r_node, SH_value, (datagraph, value_node)))
+         if result_path is None and self.shape.is_property_shape:
+```
+
+**File**: `pyshacl/graph_abstraction.py` (modified, +18/-20)
+```diff
+@@ -1297,16 +1297,26 @@ def to_rdf(
+     elif isinstance(term, ox_BlankNode):
+         return rdf_BNode(term.value)
+     elif isinstance(term, ox_Literal):
+-        if term.language is not None:
+-            return rdf_Literal(term.value, lang=term.language)
+-        data_type = term.datatype
+-        if data_type is not None:
+-            data_type = rdf_URIRef(data_type.value)
+-        return rdf_Literal(term.value, datatype=data_type)
++        return _ox_literal_to_rdf(term)
+     else:
+         return rdf_URIRef(term.value)
  
  
- if __name__ == "__main__":
--    test_301()
-     sys.exit(test_301())
++XSD_STRING_IRI = "http://www.w3.org/2001/XMLSchema#string"
++
++
++def _ox_literal_to_rdf(term: ox_Literal) -> rdf_Literal:
++    if term.language is not None:
++        return rdf_Literal(term.value, lang=term.language)
++    data_type = term.datatype
++    # Oxigraph reports simple literals with their RDF 1.1 datatype xsd:string, but RDFLib
++    # treats Literal("x") and Literal("x", datatype=XSD.string) as unequal. Map them back to
++    # plain literals so they compare equal to the literals in the shapes graph.
++    if data_type is None or data_type.value == XSD_STRING_IRI:
++        return rdf_Literal(term.value)
++    return rdf_Literal(term.value, datatype=rdf_URIRef(data_type.value))
++
++
+ def convert_quad_to_rdflib(quad: ox_Quad):
+     s, p, o, g = quad
+     if s is None:
+@@ -1316,13 +1326,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
+     elif isinstance(s, ox_Literal):
+         # Technically a subject can never be a Literal
+         # in Oxigraph, but this is here for completeness
+-        if s.language is not None:
+-            out_s = rdf_Literal(s.value, lang=s.language)
+-        else:
+-            data_type = s.datatype
+-            if data_type is not None:
+-                data_type = rdf_URIRef(data_type.value)
+-            out_s = rdf_Literal(s.value, datatype=data_type)
++        out_s = _ox_literal_to_rdf(s)
+     else:
+         out_s = rdf_URIRef(s.value)
+     if p is None:
+@@ -1334,13 +1338,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
+     if o is None:
+         out_o = None
+     elif isinstance(o, ox_Literal):
+-        if o.language is not None:
+-            out_o = rdf_Literal(o.value, lang=o.language)
+-        else:
+-            data_type = o.datatype
+-            if data_type is not None:
+-                data_type = rdf_URIRef(data_type.value)
+-            out_o = rdf_Literal(o.value, datatype=data_type)
++        out_o = _ox_literal_to_rdf(o)
+     elif isinstance(o, ox_BlankNode):
+         out_o = rdf_BNode(o.value)
+     else:
+```
+
+**File**: `test/test_oxigraph_parity.py` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++# -*- coding: utf-8 -*-
++"""\
++Parity and performance regressions for validation against an Oxigraph-backed DataGraph.
++
++1. Plain string literals coming back from Oxigraph carry an explicit xsd:string datatype
++   (RDF 1.1). They must compare equal to the plain literals in the shapes graph, otherwise
++   constraints such as sh:in and sh:hasValue report false violations.
++2. Building a validation result must not compute len() of the whole data graph. The
++   expressions `datagraph or sg` triggered DataGraph.__len__, which on Oxigraph is a
++   COUNT query over the entire store, once per validation result.
++"""
++
++import pytest
++from rdflib import XSD, Graph, Literal
++
++import pyshacl
++from pyshacl.graph_abstraction import has_oxigraph
++
++pytestmark = pytest.mark.skipif(not has_oxigraph, reason="pyoxigraph is not installed")
++
++SHAPES = """\
++@prefix sh: <http://www.w3.org/ns/shacl#> .
++@prefix ex: <http://example.org/> .
++
++ex:OpShape a sh:NodeShape ;
++    sh:targetClass ex:Comparison ;
++    sh:property [
++        sh:path ex:operator ;
++        sh:in ( "=" "<" ">" ) ;
++    ] ;
++    sh:property [
++        sh:path ex:kind ;
++        sh:hasValue "atomic" ;
++    ] .
++"""
++
++DATA = """\
++@prefix ex: <http://example.org/> .
++
++ex:c1 a ex:Comparison ; ex:operator "=" ; ex:kind "atomic" .
++ex:c2 a ex:Comparison ; ex:operator "<" ; ex:kind "atomic" .
++"""
++
++
++def _ox_store(ttl: str):
++    from pyoxigraph import RdfFormat, Store
++
++    store = Store()
++    store.bulk_load(ttl.encode("utf-8"), format=RdfFormat.TURTLE)
++    return store
++
++
++def test_plain_string_literals_match_shapes_on_oxigraph():
++    shapes = Graph().parse(data=SHAPES, format="turtle")
++    conforms_rdflib, _, _ = pyshacl.validate(
++        Graph().parse(data=DATA, format="turtle"), shacl_graph=shapes
++    )
++    conforms_ox, _, text = pyshacl.validate(_ox_store(DATA), shacl_graph=shapes)
++    assert conforms_rdflib
++    assert conforms_ox, text
++
++
++def test_to_rdf_maps_xsd_string_to_plain_literal():
++    from pyoxigraph import Literal as OxLiteral
++    from pyoxigraph import NamedNode as OxNamedNode
++
++    from pyshacl.graph_abstraction import to_rdf
++
++    converted = to_rdf(OxLiteral("="))
++    assert converted == Literal("=")
++    assert converted.datatype is None
++    typed = to_rdf(OxLiteral("1", datatype=OxNamedNode(str(XSD.integer))))
++    assert typed.datatype == XSD.integer
++
++
++def test_validation_results_do_not_compute_data_graph_length(monkeypatch):
++    from pyshacl import graph_abstraction
++
++    calls = []
++    original_len = graph_abstraction.OxigraphDataGraph.__len__
++
++    def counting_len(self, *args, **kwargs):
++        calls.append(1)
++        return original_len(self, *args, **kwargs)
++
++    monkeypatch.setattr(graph_abstraction.OxigraphDataGraph, "__len__", counting_len)
++    shapes = Graph().parse(data=SHAPES, format="turtle")
++    bad = DATA.replace('ex:operator "<"', 'ex:operator "!="')
++    conforms, results, _ = pyshacl.validate(_ox_store(bad), shacl_graph=shapes)
++    assert not conforms
++    assert calls == []
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #335** (2026-10-20): Fix slow and incorrect validation on Oxigraph-backed data graphs (@lepy)
 - **PR #328** (2026-07-28): Fixes rollup for v0.40.1 release (@ashleysommer)
 - **PR #325** (2026-07-28): Add future annotations to keep Python 3.9 support (@bact)
 - **PR #324** (2026-07-08): Big updates (@ashleysommer)
 - **PR #322** (2026-07-08): Fix HTTPResponse cleanup for owl imports (@binggao1230)
 - **PR #317** (closed): fix(rdflib): adapt pySHACL to Dataset API deprecations in RDFLib 7.3+ (@torsknod2)
-- **PR #312** (2026-01-16): Update version to 0.31.0  (@ashleysommer)
 
 ---
 
@@ -2567,31 +2435,34 @@ Enhance shape filtering logic to prevent failures when omitted Shapes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #322 from gaoflow/fix-319-httpresponse-close
+## X. Merge pull request #335 from lepy/fix/oxigraph-len-and-xsd-string
 
 **RULE**:
-When implementing operations in `pyshacl/rdfutil/load.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/pySHACL. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/pySHACL. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68e07f80`: Merge pull request #322 from gaoflow/fix-319-httpresponse-close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8ed01e8`: Merge pull request #335 from lepy/fix/oxigraph-len-and-xsd-string. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyshacl/rdfutil/load.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                resp, resp_filename, web_format, _raw_fp = get_rdf_from_web(source)
-                source = open_source = resp
+### Fixed
+
+- Oxigraph-backed validation no longer computes `len()` of the whole data graph for every validation result.
+  - `datagraph or sg` evaluated the truthiness of the DataGraph, which on Oxigraph runs a `COUNT` query over the entire store.
+- Plain string literals read from an Oxigraph store now compare equal to plain literals in the shapes graph.
+  - Oxigraph reports them as `xsd:string`; they are now mapped back to plain RDFLib literals, which fixes false violations of `sh:in`, `sh:hasValue` and similar constraints.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-                resp, resp_filename, web_format, raw_fp = get_rdf_from_web(source)
-                fp = resp.fp if raw_fp else resp
-                source = open_source = fp
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68e07f80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8ed01e8` are properly handled with clean fallback behavior.

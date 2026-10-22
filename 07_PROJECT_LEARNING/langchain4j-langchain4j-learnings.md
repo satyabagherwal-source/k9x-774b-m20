@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `aff8ebad`  
+> **Source Version**: `8f32a2fd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:40:48.439Z  
+> **Timestamp**: 2026-10-22T21:35:25.583Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:40:48.430Z  
+> **Harvest Timestamp**: 2026-10-22T21:35:25.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13267 stars
+- **Stars / Engagement**: 13281 stars
 
 ---
 
@@ -817,11 +817,11 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6665** (2026-10-15): **[BUG] Untyped A2A client agent with a missing input fails with a NullPointerException instead of MissingArgumentException**
-  *Symptoms*: ### Describe the bug  An untyped A2A client agent invoked without one of its declared input keys fails with a bare NullPointerException raised inside `DefaultA2AClientBuilder`:      java.lang.NullPointerException: Cannot invoke "Object.toString()" because the return value of "java.util.Map.get(Object)" is null  The other untyped agent implementations report the offending argument name instead: `UntypedAgentInvoker` and `McpClientAgentInvoker` both throw `MissingArgumentException`, and `McpAgentTest` pins that behaviour:      assertThatThrownBy(() -> pipeline.invoke(Map.of("optional", "value")))             .isInstanceOf(MissingArgumentException.class)             .hasMessageContaining("required");  ### To Reproduce      DefaultA2AClientBuilder<UntypedAgent> builder =             new DefaultA2AClientBuilder<>(agentCard, UntypedAgent.class, mock(Client.class));     builder.inputKeys("first", "second");     UntypedAgent agent = builder.build();      agent.invoke(Map.of("first", "hello"));   // "second" is missing  Result: `NullPointerException: Cannot invoke "Object.toString()" because the return value of "java.util.Map.get(Object)" is null`.  `A2AClientAgentInvoker.toInvocationArguments()` does not validate the untyped arguments: it delegates to `AgentUtil.untypedAgentInvocationArguments()`, which only copies the state entries that are present, so the declared key is simply absent. The typed path is fine because the shared `AgentUtil.agentInvocationArguments()` validates throug
+- **Issue #6763** (2026-10-21): **[BUG] Non-AI agents that are direct sub-agents of the root monitored agentic pattern are missing in the html execution report**
+  *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  Non-AI agents that are direct sub-agents of the root monitored agentic pattern are missing in the generated html execution report. This happens because the monitor is an AgentListener on the root that sub-agents inherit when their parent is set. Three classes implement `setParent`: `AgentInvocationHandler` for AI agents and `PlannerBasedInvocationHandler` for composed agents both call `registerInheritedParentListener(parent.listener());` while `NonAiAgentInstance.setParent` only stores the parent. So a non-AI agent directly under the root never receives the root's monitor, and its invocations are never recorded. Nested non-AI agents are saved by a different path: when a composed agent receives an inherited listener, it propagates it to all its sub-agents. The root has no parent, so its direct children depend on `setParent` alone. The same applies to every inherited listener: the reviewer's progress listener never sees those agents either.  **Log and Stack trace** <!-- Please provide a log and a stack trace (with exception), if applicable. -->  **To Reproduce** <!-- Please provide a relevant code snippets to reproduce this bug. -->  **Expected behavior** <!-- A clear and concise description of what you expected to happen. -->  **Please complete the following information:** - LangChain4j version: main - LLM(s) used: any - Java version: J
 
-- **Issue #6656** (2026-10-12): **[BUG] Anthropic publisher cancellation test can fail after the client connection has closed**
-  *Symptoms*: **Describe the bug**  `AnthropicStreamingChatModelPublisherCancellationTest#cancelling_subscription_mid_stream_aborts_the_upstream_stream` intermittently fails on JDK 25 at the `serverObservedDisconnect` assertion (line 159), even when the client has cancelled the subscription and closed its connection.  The fixture sends 50 small SSE content chunks using `HttpServer` and only records a disconnect when a response write throws `IOException`. In a reproduced failing run, the client closed its channel, but all 50 server writes still completed successfully. The write-failure flag therefore does not reliably establish whether cancellation aborted the client connection.  **Log and Stack trace**  Failing CI: [Java CI / compile_and_unit_test (25)](https://github.com/langchain4j/langchain4j/actions/runs/38203959925/job/114663220420).  ```text java.lang.AssertionError: [server never saw the client disconnect — the upstream stream was not aborted] Expecting AtomicBoolean(false) to have value:   true but did not.     at dev.langchain4j.model.anthropic.AnthropicStreamingChatModelPublisherCancellationTest.cancelling_subscription_mid_stream_aborts_the_upstream_stream(AnthropicStreamingChatModelPublisherCancellationTest.java:159) ```  JDK HTTP client logging in a separate local run that failed at the same assertion showed `java.io.IOException: subscription cancelled`, `Closing channel`, `connection closed locally`, and stopped channel reads. A diagnostic runner invoking the unchanged compile
+- **Issue #6746** (2026-10-22): **Async and reactive AI Service failures before the model call don't fire AiServiceErrorEvent**
+  *Symptoms*: Related to #4207 / #5048.  Every AI Service invocation fires an `AiServiceStartedEvent`, and is expected to end with either an `AiServiceCompletedEvent` or an `AiServiceErrorEvent` (see the [AI Service observability docs](https://docs.langchain4j.dev/tutorials/observability#ai-service-observability)). For async (`CompletableFuture`/`CompletionStage`) and reactive (`Flow.Publisher` and adapted types) AI Service methods, several failure paths fail the invocation **without** firing an `AiServiceErrorEvent`, so listeners see an invocation that started but never ended.  ### Async path (`DefaultAiServices`) The returned future is completed exceptionally via `completeExceptionallyAsFailure(result, ...)`, but no `AiServiceErrorEvent` is fired, when: - RAG augmentation fails ([L426](https://github.com/langchain4j/langchain4j/blob/670cf15a5b3291bfb39c803f8515ad6044e6540d/langchain4j/src/main/java/dev/langchain4j/service/DefaultAiServices.java#L426)) - input guardrails fail ([L456](https://github.com/langchain4j/langchain4j/blob/670cf15a5b3291bfb39c803f8515ad6044e6540d/langchain4j/src/main/java/dev/langchain4j/service/DefaultAiServices.java#L456)) - assembling the messages (e.g. reading chat memory) fails ([L466](https://github.com/langchain4j/langchain4j/blob/670cf15a5b3291bfb39c803f8515ad6044e6540d/langchain4j/src/main/java/dev/langchain4j/service/DefaultAiServices.java#L466)) - building/dispatching the request throws ([L486](https://github.com/langchain4j/langchain4j/blob/670cf15a5b3
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -838,648 +838,567 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aff8ebad` (2026-10-20)
-**Commit Message**: Add model name to generated agentic execution html report (#6761)
+### Incident Patch 1: `2d715774` (2026-10-22)
+**Commit Message**: Fix flaky nightly tests and make nightly builds more robust
+
+- Gemini (Vertex AI, Google GenAI) streaming ITs: do not require more than
+  one partial response after a tool call, and disable the parallel tool calls
+  test, as already done for Google AI Gemini
+- JSON schema enum ITs: make the input texts unambiguous
+- concurrent tool execution ITs: make both tools overlap in time, so that they
+  cannot run on the same pooled thread; fail after 10 s instead of hanging
+- immediate tool memory ITs: ask explicitly to use the tool in the second turn
+- Google GenAI ITs: disable thinking in the shared models (tiny maxOutputTokens
+  budgets were used up by thinking) and do not depend on how the generated code
+  formats its output
+- nightly workflows: retry the install step once, so that a transient Maven
+  Central failure does not skip all tests of a job
+- nightly workflows: shift the clock used for the Jackson 3 rotation, so that
+  exactly one nightly runs on Jackson 3 each night
+
+**File**: `.github/workflows/nightly_jdk17.yaml` (modified, +5/-3)
+```diff
+@@ -82,9 +82,10 @@ jobs:
+         # format. One of the three nightlies runs the integration tests on Jackson 3 instead of
+         # Jackson 2, so every night exactly one does and each JDK takes its turn every third day.
+         # Deterministic rather than random: given the date you can tell which ran, and re-running
+-        # the same day reproduces it.
++        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
++        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
+         run: |
+-          if [ $(( 10#$(date -u +%j) % 3 )) -eq 0 ]; then
++          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 0 ]; then
+             echo "profile=-Pjackson3" >> "$GITHUB_OUTPUT"
+             echo "label=Jackson 3" >> "$GITHUB_OUTPUT"
+             echo "::notice title=JSON codec::Integration tests are running on Jackson 3 tonight (JDK 17)."
+@@ -103,7 +104,8 @@ jobs:
+           echo "Building modules: $modules"
+           
+           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
+-          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
++          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
++          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
+ 
+           mvn -B -U verify ${{ steps.jackson3.outputs.profile }} \
+             -pl "${modules}" \
+```
+
+**File**: `.github/workflows/nightly_jdk21.yaml` (modified, +5/-3)
+```diff
+@@ -82,9 +82,10 @@ jobs:
+         # format. One of the three nightlies runs the integration tests on Jackson 3 instead of
+         # Jackson 2, so every night exactly one does and each JDK takes its turn every third day.
+         # Deterministic rather than random: given the date you can tell which ran, and re-running
+-        # the same day reproduces it.
++        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
++        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
+         run: |
+-          if [ $(( 10#$(date -u +%j) % 3 )) -eq 1 ]; then
++          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 1 ]; then
+             echo "profile=-Pjackson3" >> "$GITHUB_OUTPUT"
+             echo "label=Jackson 3" >> "$GITHUB_OUTPUT"
+             echo "::notice title=JSON codec::Integration tests are running on Jackson 3 tonight (JDK 21)."
+@@ -103,7 +104,8 @@ jobs:
+           echo "Building modules: $modules"
+           
+           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
+-          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
++          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
++          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
+ 
+           mvn -B -U verify ${{ steps.jackson3.outputs.profile }} \
+             -pl "${modules}" \
+```
+
+**File**: `.github/workflows/nightly_jdk25.yaml` (modified, +5/-3)
+```diff
+@@ -82,9 +82,10 @@ jobs:
+         # format. One of the three nightlies runs the integration tests on Jackson 3 instead of
+         # Jackson 2, so every night exactly one does and each JDK takes its turn every third day.
+         # Deterministic rather than random: given the date you can tell which ran, and re-running
+-        # the same day reproduces it.
++        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
++        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
+         run: |
+-          if [ $(( 10#$(date -u +%j) % 3 )) -eq 2 ]; then
++          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 2 ]; then
+             echo "profile=-Pjackson3" >> "$GITHUB_OUTPUT"
+             echo "label=Jackson 3" >> "$GITHUB_OUTPUT"
+             echo "::notice title=JSON codec::Integration tests are running on Jackson 3 tonight (JDK 25)."
+@@ -99,7 +100,8 @@ jobs:
+           echo "Building modules: $modules"
+           
+           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
+-          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
++          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
++          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
+ 
+           mvn -B -U verify ${{ steps.jackson3.outputs.profile }} \
+             -pl "${modules}" \
+```
+
+**File**: `.github/workflows/nightly_oracle.yaml` (modified, +2/-1)
+```diff
+@@ -31,7 +31,8 @@ jobs:
+       - name: Build with JDK 17
+         run: |
+           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
+-          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
++          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
++          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
+ 
+           mvn -B -U verify \
+             -pl langchain4j-oracle \
+```
+
+**File**: `langchain4j-google-genai/src/test/java/dev/langchain4j/model/google/genai/GoogleGenAiChatModelIT.java` (modified, +2/-1)
+```diff
+@@ -27,6 +27,7 @@ class GoogleGenAiChatModelIT extends AbstractChatModelIT {
+     static final GoogleGenAiChatModel GOOGLE_GEN_AI_CHAT_MODEL = GoogleGenAiChatModel.builder()
+             .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
+             .modelName("gemini-3.8-flash")
++            .thinkingBudget(0)
+             .build();
+ 
+     @Override
+@@ -169,7 +170,7 @@ void should_run_code_with_code_execution_tool() {
+ 
+         assertThat(answer)
+                 .contains("Code executed:\n```python\n")
+-                .contains("Output:\n```\n1267650600228229401496703205376");
++                .containsPattern("Output:\\n```\\n[^`]*1267650600228229401496703205376");
+     }
+ 
+     @Override
+```
+
+**File**: `langchain4j-google-genai/src/test/java/dev/langchain4j/model/google/genai/GoogleGenAiStreamingChatModelIT.java` (modified, +12/-1)
+```diff
+@@ -14,6 +14,7 @@
+ import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
+ import dev.langchain4j.model.output.TokenUsage;
+ import java.util.List;
++import org.junit.jupiter.api.Disabled;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+ import org.mockito.InOrder;
+@@ -25,6 +26,7 @@ class GoogleGenAiStreamingChatModelIT extends AbstractStreamingChatModelIT {
+             GoogleGenAiStreamingChatModel.builder()
+                     .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
+                     .modelName("gemini-3.8-flash")
++                    .thinkingBudget(0)
+                     .build();
+ 
+     @Override
+@@ -80,6 +82,15 @@ protected void verifyToolCallbacks(StreamingChatResponseHandler handler, InOrder
+         io.verify(handler).onCompleteToolCall(complete(1, id2, "getTime", "{\"country\":\"France\"}"));
+     }
+ 
++    @Override
++    protected boolean assertTimesOnPartialResponseWasCalled() {
++        return false; // after a tool call, Gemini often streams the final (short) answer in a single chunk
++    }
++
++    @Disabled("Gemini cannot do it reliably")
++    @Override
++    protected void should_execute_multiple_tools_in_parallel_then_answer(StreamingChatModel model) {}
++
+     @Override
+     protected Class<? extends ChatResponseMetadata> chatResponseMetadataType(StreamingChatModel model) {
+         return GoogleGenAiChatResponseMetadata.class;
+@@ -145,7 +156,7 @@ void should_stream_code_run_with_code_execution_tool() {
+ 
+         assertThat(handler.get().aiMessage().text())
+                 .contains("Code executed:\n```python\n")
+-                .contains("Output:\n```\n1267650600228229401496703205376");
++                .containsPattern("Output:\\n```\\n[^`]*1267650600228229401496703205376");
+     }
+ 
+     @Override
+```
+
+**File**: `langchain4j-vertex-ai-gemini/src/test/java/dev/langchain4j/model/vertexai/gemini/common/VertexAiGeminiStreamingChatModelIT.java` (modified, +10/-0)
+```diff
+@@ -6,6 +6,7 @@
+ import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
+ import dev.langchain4j.model.vertexai.gemini.VertexAiGeminiStreamingChatModel;
+ import org.junit.jupiter.api.AfterEach;
++import org.junit.jupiter.api.Disabled;
+ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+ import org.mockito.InOrder;
+ 
+@@ -92,6 +93,15 @@ protected boolean assertTokenUsage() {
+         return false; // TODO thinking tokens are not reported correctly
+     }
+ 
++    @Override
++    protected boolean assertTimesOnPartialResponseWasCalled() {
++        return false; // after a tool call, Gemini often streams the final (short) answer in a single chunk
++    }
++
++    @Disabled("Gemini cannot do it reliably")
++    @Override
++    protected void should_execute_multiple_tools_in_parallel_then_answer(StreamingChatModel model) {}
++
+     @Override
+     public StreamingChatModel createModelWith(ChatModelListener listener) {
+         return null; // TODO implement
+```
+
+**File**: `langchain4j/src/test/java/dev/langchain4j/service/AiServicesWithToolsIT.java` (modified, +18/-5)
+```diff
+@@ -71,6 +71,7 @@
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.ConcurrentLinkedQueue;
++import java.util.concurrent.CountDownLatch;
+ import java.util.concurrent.Executor;
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.atomic.AtomicInteger;
+@@ -415,15 +416,21 @@ class Tools {
+             final Queue<Thread> getCurrentTimeThreads = new ConcurrentLinkedQueue<>();
+             final Queue<Thread> getCurrentTemperatureThreads = new ConcurrentLinkedQueue<>();
+ 
++            final CountDownLatch latch = new CountDownLatch(2);
++
+             @Tool
+-            String getCurrentTime(String city) {
++            String getCurrentTime(String city) throws InterruptedException {
+                 getCurrentTimeThreads.add(Thread.currentThread());
++                latch.countDown();
++                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
+                 return CURRENT_TIME;
+             }
+ 
+             @Tool
+-            String getCurrentTemperature(String city) {
++            String getCurrentTemperature(String city) throws InterruptedException {
+                 getCurrentTemperatureThreads.add(Thread.currentThread());
++                latch.countDown();
++                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
+                 return CURRENT_TEMPERATURE;
+             }
+         }
+@@ -641,7 +648,7 @@ void should_execute_multiple_tools_in_parallel_then_answer(ChatModel chatModel)
+     @ParameterizedTest
+     @NullSource
+     @MethodSource("executors")
+-    void should_execute_multiple_tools_in_parallel_concurrently_then_answer(Executor executor) {
++    void should_execute_multiple_tools_in_parallel_concurrently_then_answer(Executor executor) throws Exception {
+ 
+         // given
+         class Tools {
+@@ -652,15 +659,21 @@ class Tools {
+             final Queue<Thread> getCurrentTimeThreads = new ConcurrentLinkedQueue<>();
+             final Queue<Thread> getCurrentTemperatureThreads = new ConcurrentLinkedQueue<>();
+ 
++            final CountDownLatch latch = new CountDownLatch(2);
++
+             @Tool
+-            String getCurrentTime(String city) {
++            String getCurrentTime(String city) throws InterruptedException {
+                 getCurrentTimeThreads.add(Thread.currentThread());
++                latch.countDown();
++                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
+                 return CURRENT_TIME;
+             }
+ 
+             @Tool
+-            String getCurrentTemperature(String city) {
++            String getCurrentTemperature(String city) throws InterruptedException {
+                 getCurrentTemperatureThreads.add(Thread.currentThread());
++                latch.countDown();
++                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
+                 return CURRENT_TEMPERATURE;
+             }
+         }
+```
+
+---
+
+### Incident Patch 2: `035ee132` (2026-10-21)
+**Commit Message**: fix(agentic): throw a clear error when a planner agent has no Planner (#6781)
+
+## Problem
+
+A declarative planner agent built via `@PlannerAgent` but **without** a
+`@PlannerSupplier` method fails with an opaque `NullPointerException`
+instead of a clear configuration error:
+
+```
+java.lang.NullPointerException: Cannot invoke "java.util.function.Supplier.get()"
+    because "plannerSupplier" is null
+    at dev.langchain4j.agentic.internal.AbstractServiceBuilder.build(AbstractServiceBuilder.java:183)
+```
+
+`PlannerBasedServiceImpl.configurePlanner()` constructed an
+`IllegalArgumentException` in the `ifPresentOrElse(...)` else branch but
+never threw it, so `plannerSupplier` stayed `null` and the failure only
+surfaced later as an NPE in `PlannerBasedInvocationHandler`'s
+constructor (`plannerSupplier.get()`), losing the intended message.
+
+Closes #6779.
+
+## Root cause
+
+It is tempting to "just add the missing `throw`" in that else branch,
+but that breaks the **programmatic** builder path. `configurePlanner()`
+runs in the constructor and is shared by both ways of building a planner
+agent:
+
+- **Declarative**: `@PlannerAgent` + a `@PlannerSupplier` method.
+- **Programmatic**:
+`AgenticServices.pla
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/planner/PlannerBasedServiceImpl.java` (modified, +13/-11)
+```diff
+@@ -7,12 +7,13 @@
+ import static dev.langchain4j.agentic.internal.AgentUtil.getAnnotatedMethodOnClass;
+ import static dev.langchain4j.agentic.internal.AgentUtil.validateAgentClass;
+ 
+-import java.lang.reflect.Method;
+-import java.util.function.Supplier;
+ import dev.langchain4j.agentic.declarative.PlannerSupplier;
+ import dev.langchain4j.agentic.internal.AbstractServiceBuilder;
++import java.lang.reflect.Method;
++import java.util.function.Supplier;
+ 
+-public class PlannerBasedServiceImpl<T> extends AbstractServiceBuilder<T, PlannerBasedService<T>> implements PlannerBasedService<T> {
++public class PlannerBasedServiceImpl<T> extends AbstractServiceBuilder<T, PlannerBasedService<T>>
++        implements PlannerBasedService<T> {
+ 
+     private Supplier<Planner> plannerSupplier;
+ 
+@@ -38,20 +39,21 @@ public PlannerBasedService<T> planner(Supplier<Planner> plannerSupplier) {
+ 
+     @Override
+     public T build() {
++        if (plannerSupplier == null) {
++            throw new IllegalArgumentException(
++                    "A planner agent requires a Planner, provided either via planner(...) or, for declarative agents, "
++                            + "a method annotated with @PlannerSupplier that returns the Planner instance.");
++        }
+         return build(plannerSupplier);
+     }
+ 
+     private void configurePlanner(Class<T> agentServiceClass) {
+         configureOutput(agentServiceClass, this);
+         buildAgentFeatures(agentServiceClass, this);
+ 
+-        getAnnotatedMethodOnClass(agentServiceClass, PlannerSupplier.class)
+-                .ifPresentOrElse(
+-                        method -> {
+-                            checkReturnType(method, Planner.class);
+-                            planner(() -> invokeStatic(method));
+-                        },
+-                        () -> new IllegalArgumentException(
+-                                "A planner agent requires a method annotated with @PlannerSupplier that returns the Planner instance."));
++        getAnnotatedMethodOnClass(agentServiceClass, PlannerSupplier.class).ifPresent(method -> {
++            checkReturnType(method, Planner.class);
++            planner(() -> invokeStatic(method));
++        });
+     }
+ }
+```
+
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/PlannerSupplierMissingTest.java` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++package dev.langchain4j.agentic;
++
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++
++import dev.langchain4j.agentic.declarative.PlannerAgent;
++import dev.langchain4j.service.V;
++import org.junit.jupiter.api.Test;
++
++class PlannerSupplierMissingTest {
++
++    public interface MissingSupplierPlannerAgent {
++
++        @PlannerAgent(
++                outputKey = "result",
++                subAgents = {})
++        String run(@V("input") String input);
++
++        // Intentionally no method annotated with @PlannerSupplier.
++    }
++
++    @Test
++    void missing_planner_supplier_throws_clear_exception() {
++        assertThatThrownBy(() -> AgenticServices.createAgenticSystem(MissingSupplierPlannerAgent.class))
++                .isInstanceOf(IllegalArgumentException.class)
++                .hasMessageContaining("@PlannerSupplier");
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `f315628b` (2026-10-21)
+**Commit Message**: Fix registration of inherited listeners for non-AI agents (#6764)
+
+<!--
+Thank you so much for your contribution!
+
+Please fill in all the sections below.
+Please open the PR as ready for review (not as a draft), with tests and
+documentation already included.
+Please note that PRs with breaking changes, or without tests and
+documentation, will be rejected.
+
+Please note that PRs will be reviewed based on the priority of the
+issues they address.
+We ask for your patience. We are doing our best to review your PR as
+quickly as possible.
+Please refrain from pinging and asking when it will be reviewed. Thank
+you for understanding!
+-->
 
 ## Issue
-No issue
+<!-- Please specify the ID of the issue this PR is addressing. For
+example: "Closes #1234" or "Fixes #1234" -->
+Closes #6763
 
 ## Change
+<!-- Please describe the changes you made. -->
 
-Since the agents participating to the same agentic system can be
-configured to use different models (either statically or dynamically) it
-is useful to also add the name of the model used by a specific agent
-invocation to the generated html report.
-
-- New `AgentInvocation.modelName()`: the name of the model that answered
-the last LLM call of the invocation, as reported by the provider in the
-response metadata. It is empty for workflow and non-AI agents, for
-skipped agents, and for providers not reporting it.
-- New "Model" column in the execution table of the HTML report (empty
-for workflow, non-AI agent and tool rows).
-- Agents tutorial and the `agent-monitor.png` screenshot updated.
-- `ChatModelMock` (core test-jar) gets `withModelNames(String...)` to
-report one model name per call, used by the new test to check that the
-model of the last LLM call is shown.
 
 ## General checklist
 <!-- Please double-check the following points and mark them like this:
 [X] -->
 - [X] There are no breaking changes (API, behaviour)
 - [X] I have added unit and/or integration tests for my change
-- [X] The tests 
+- [ ] The tests cover both positive and negative cases
+- [X] I have manually run all the unit and integration tests in the
+module I have added/changed, and t
 
-**File**: `docs/docs/tutorials/agents.md` (modified, +1/-1)
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/NonAiAgentInstance.java` (modified, +15/-1)
 ```diff
-@@ -972,7 +972,7 @@ Map<String, Object> input = Map.of(
- String story = styledWriter.invoke(input);
- ```
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.agentic.internal;
  
--the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
-+the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. For an AI agent, the `modelName()` method of its `AgentInvocation` also returns the name of the model that answered its last LLM call, as reported by the provider in the response metadata, so it is empty for workflow and non-AI agents, and for providers not reporting it. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
- 
- ```java
- MonitoredExecution execution = monitor.successfulExecutions().get(0);
-```
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/observability/AgentInvocation.java` (modified, +14/-0)
-```diff
-@@ -123,6 +123,20 @@ public Optional<TokenUsage> tokenUsage() {
-                 .map(ChatResponseMetadata::tokenUsage);
-     }
- 
-+    /**
-+     * Returns the name of the model that answered the last LLM call of this invocation, as reported by the provider
-+     * in the response metadata. It is empty if the agent didn't call any LLM, like a workflow or a non-AI agent,
-+     * if it was skipped, or if the provider didn't report the model name.
-+     */
-+    public Optional<String> modelName() {
-+        if (!done()) {
-+            throw new IllegalStateException("Agent call is not finished yet");
-+        }
-+        return Optional.ofNullable(agentResponse.chatResponse())
-+                .map(ChatResponse::metadata)
-+                .map(ChatResponseMetadata::modelName);
-+    }
-+
-     /**
-      * Returns the zero-based iteration index when this invocation is part of a loop, or -1 otherwise.
-      */
-```
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/observability/HtmlReportGenerator.java` (modified, +11/-1)
-```diff
-@@ -507,7 +507,7 @@ private void appendExecution(StringBuilder html, MonitoredExecution exec) {
-                     : Math.max(1, Duration.between(base, LocalDateTime.now()).toMillis());
- 
-             html.append("<table class=\"wf-table\">\n");
--            html.append("<thead><tr><th>Agent</th><th>Duration</th><th>Tokens</th><th class=\"wf-timeline-col\">Timeline</th><th>Input</th><th>Output</th></tr></thead>\n");
-+            html.append("<thead><tr><th>Agent</th><th>Duration</th><th>Model</th><th>Tokens</th><th class=\"wf-timeline-col\">Timeline</th><th>Input</th><th>Output</th></tr></thead>\n");
-             html.append("<tbody>\n");
-             int[] rowCounter = {0};
-             appendWfRow(html, top, 0, base, totalMs, rowCounter, -1);
-@@ -565,6 +565,13 @@ private void appendWfRow(StringBuilder html, AgentInvocation inv, int depth,
-         }
-         html.append("</td>");
- 
-+        // Model column
-+        html.append("<td class=\"wf-dur\">");
-+        if (inv.done()) {
-+            inv.modelName().ifPresent(modelName -> html.append(esc(modelName)));
-+        }
-+        html.append("</td>");
-+
-         // Tokens column
-         html.append("<td class=\"wf-dur\">");
-         if (inv.done() && inv.totalTokenCount() > 0) {
-@@ -649,6 +656,9 @@ private void appendToolWfRow(StringBuilder html, ToolExecution toolExec, int dep
-         }
-         html.append("</td>");
- 
-+        // Model column (empty for tools)
-+        html.append("<td></td>");
-+
-         // Tokens column (empty for tools)
-         html.append("<td></td>");
- 
-```
-
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/observability/HtmlReportGeneratorTest.java` (modified, +65/-0)
-```diff
-@@ -2,6 +2,8 @@
- 
- import static org.assertj.core.api.Assertions.assertThat;
- 
-+import dev.langchain4j.agent.tool.Tool;
-+import dev.langchain4j.agent.tool.ToolExecutionRequest;
- import dev.langchain4j.agentic.Agent;
- import dev.langchain4j.agentic.AgenticServices;
- import dev.langchain4j.agentic.UntypedAgent;
-@@ -11,6 +13,9 @@
- import dev.langchain4j.agentic.planner.InitPlanningContext;
- import dev.langchain4j.agentic.planner.Planner;
- import dev.langchain4j.agentic.planner.PlanningContext;
-+import dev.langchain4j.data.message.AiMessage;
-+import dev.langchain4j.model.chat.mock.ChatModelMock;
-+import dev.langchain4j.service.UserMessage;
- import dev.langchain4j.service.V;
- import java.util.List;
- import java.util.Locale;
-@@ -162,6 +167,66 @@ void generates_execution_timeline_bars_in_a_locale_independent_way() {
-         }
-     }
- 
-+    public interface Assistant {
-+
-+        @UserMessage("Answer {{question}}")
-+        @Agent(outputKey = "answer")
-+        String answer(@V("question") String question);
-+    }
-+
-+    public interface Workflow {
-+
-+        @Agent
-+        String run(@V("question") String question);
-+    }
-+
-+    public static class Clock {
-+
-+        @Tool
-+        public String time() {
-+            return "noon";
-+        }
-+    }
-+
-+    @Test
-+    void generates_execution_with_the_model_of_each_ai_agent() {
-+        Assistant assistant = AgenticServices.agentBuilder(
-+                        Assistant.class)
-+                .chatModel(ChatModelMock.thatAlwaysResponds(
-+                                AiMessage.from(ToolExecutionRequest.builder()
-+                                        .id("1")
-+                                        .name("time")
-+                                        .arguments("{}")
-+                                        .build()),
-+                                AiMessage.from("It is noon"))
-+                        .withModelNames("tool-calling-model", "answering-model"))
-+                .tools(new Clock())
-+                .build();
-+        AgentMonitor monitor = new AgentMonitor();
-+        AgenticServices.sequenceBuilder(Workflow.class)
-+                .subAgents(assistant)
-+                .outputKey("answer")
-+                .listener(monitor)
-+                .build()
-+                .run("what time is it?");
-+
-+        String html = HtmlReportGenerator.generateExecution(monitor);
-+
-+        assertThat(html).contains("<th>Duration</th><th>Model</th><th>Tokens</th>");
-+        // only the AI agent row shows a model, the one of its last LLM call, not the sequence or the tool rows
-+        assertThat(countMatches(html, Pattern.quote("<td class=\"wf-dur\">answering-model</td>")))
-+                .isEqualTo(1);
-+        assertThat(html).doesNotContain("tool-calling-model");
-+
-+        // the rows of the sequence, of the AI agent and of its tool execution all have a cell per column
-+        String body = html.substring(html.indexOf("<tbody>"), html.indexOf("</tbody>"));
-+        String[] rows = body.split("<tr");
-+        assertThat(rows).hasSize(4);
-+        for (int i = 1; i < rows.length; i++) {
-+            assertThat(countMatches(rows[i], "<td")).isEqualTo(7);
-+        }
-+    }
-+
-     private static int countMatches(String html, String regex) {
-         Matcher matcher = Pattern.compile(regex).matcher(html);
-         int count = 0;
-```
-
-**File**: `langchain4j-core/src/test/java/dev/langchain4j/model/chat/mock/ChatModelMock.java` (modified, +13/-1)
-```diff
-@@ -45,6 +45,7 @@ public class ChatModelMock implements ChatModel {
-     private RetryUtils.RetryPolicy retryPolicy = DEFAULT_NO_RETRY_POLICY;
-     private Set<Capability> supportedCapabilities = Set.of();
-     private List<ChatModelListener> listeners = List.of();
-+    private Queue<String> modelNames = new ConcurrentLinkedQueue<>();
- 
-     public ChatModelMock(String staticResponse) {
-         this.staticResponse = ensureNotBlank(staticResponse, "staticResponse");
-@@ -74,6 +75,15 @@ public ChatModelMock withSupportedCapabilities(Capability... supportedCapabiliti
-         return this;
-     }
- 
-+    /**
-+     * Sets the model name reported in the response metadata, one name per call, in the given order.
-+     * Once all names are used, the model name is {@code null}.
-+     */
-+    public ChatModelMock withModelNames(String... modelNames) {
-+        this.modelNames = new ConcurrentLinkedQueue<>(asList(modelNames));
-+        return this;
-+    }
-+
-     public ChatModelMock withListeners(ChatModelListener... listeners) {
-         this.listeners = List.of(listeners);
-         return this;
-@@ -115,7 +125,9 @@ private ChatResponse respond(ChatRequest chatRequest) {
- 
-         return ChatResponse.builder()
-                 .aiMessage(aiMessage)
--                .metadata(ChatResponseMetadata.builder().build())
-+                .metadata(ChatResponseMetadata.builder()
-+                        .modelName(modelNames.poll())
-+                        .build())
-                 .build();
-     }
- 
-```
-
----
-
-### Incident Patch 2: `68d517d8` (2026-10-20)
-**Commit Message**: Fail fast when a BlackboardPlanner or GoalOrientedPlanner has no output key (#6720)
-
-## Issue
-Closes #6719
-
-Rebased onto `main` at `7fcb12d4c`, which now includes #6731. The
-conflicts in `BlackboardPlanner` and `GoalOrientedPlanner` are resolved
-by keeping #6731's activation-condition and skipped-invocation handling,
-and layering the output-key check in `init()` on top of it.
-
-This also fixes the GOAP pattern, which the review pointed out has the
-same problem: `GoalOrientedPlanner` reads its goal from the planner
-agent's output key without checking it, so a missing key surfaces as a
-`NullPointerException` from deep inside the graph search instead of as a
-configuration error.
-
-## Change
-
-Both planners derive their goal from the planner agent's output key and
-handed it straight to the scope:
-
-```java
-// BlackboardPlanner.init
-this.goalPredicate = scope -> scope.hasState(outputKey);      // NPE when outputKey is null
-
-// GoalOrientedPlanner.init
-this.goal = initPlanningContext.plannerAgent().outputKey();   // null goal -> NPE in the graph search
-```
-
-A blackboard or a goal-oriented plan without a goal has no reason to run
-at all, so the two are now rejected in `init()` with an
-`Agenti
-
-**File**: `langchain4j-agentic-patterns/src/main/java/dev/langchain4j/agentic/patterns/blackboard/BlackboardPlanner.java` (modified, +37/-16)
-```diff
-@@ -1,23 +1,24 @@
- package dev.langchain4j.agentic.patterns.blackboard;
- 
-+import static dev.langchain4j.internal.Utils.isNullOrBlank;
-+import static java.util.stream.Collectors.toMap;
-+
- import dev.langchain4j.agentic.planner.Action;
+ import dev.langchain4j.agentic.observability.AgentListener;
++import dev.langchain4j.agentic.observability.ComposedAgentListener;
  import dev.langchain4j.agentic.planner.AgentArgument;
+ import dev.langchain4j.agentic.planner.AgentCondition;
  import dev.langchain4j.agentic.planner.AgentInstance;
-+import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
- import dev.langchain4j.agentic.planner.AgenticSystemTopology;
- import dev.langchain4j.agentic.planner.InitPlanningContext;
--import dev.langchain4j.agentic.planner.PlanningContext;
- import dev.langchain4j.agentic.planner.Planner;
-+import dev.langchain4j.agentic.planner.PlanningContext;
- import dev.langchain4j.agentic.scope.AgentInvocation;
- import dev.langchain4j.agentic.scope.AgenticScope;
--import org.slf4j.Logger;
--import org.slf4j.LoggerFactory;
--
- import java.util.LinkedHashMap;
- import java.util.List;
- import java.util.Map;
- import java.util.function.Predicate;
--
--import static java.util.stream.Collectors.toMap;
-+import org.slf4j.Logger;
-+import org.slf4j.LoggerFactory;
+@@ -121,11 +122,21 @@ public AgentListener listener() {
  
- /**
-  * A blackboard planner that activates agents based on data availability in the shared scope.
-@@ -27,6 +28,12 @@
-  * can contribute next. When multiple agents are ready, a {@link ConflictResolutionStrategy} determines
-  * which one fires; if no strategy is provided, declaration order is used.
-  * <p>
-+ * The planner needs a goal to know when the work is over. The goal is either the
-+ * {@link Predicate goal predicate} passed to the constructor, or, when none is given, the output key of
-+ * the planner agent: the goal is then considered reached once that key is present in the scope. A
-+ * blackboard without an output key has no goal and no reason to run, so configuring neither is rejected
-+ * with an {@link AgenticSystemConfigurationException}.
-+ * <p>
-  * The planner terminates successfully when:
-  * <ul>
-  *   <li>The goal predicate is satisfied (by default, when the planner's outputKey is present in scope)</li>
-@@ -64,11 +71,15 @@ public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, int maxInvocatio
-         this(goalPredicate, maxInvocations, ConflictResolutionStrategy.DECLARATION_ORDER);
+     @Override
+     public void registerInheritedParentListener(AgentListener parentListener) {
+-        if (parentListener != null && parentListener.inheritedBySubagents()) {
++        if (parentListener != null && parentListener.inheritedBySubagents() && isNewListener(listener, parentListener)) {
+             listener = composeWithInherited(listener(), parentListener);
+         }
      }
  
--    public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, ConflictResolutionStrategy conflictResolutionStrategy) {
-+    public BlackboardPlanner(
-+            Predicate<AgenticScope> goalPredicate, ConflictResolutionStrategy conflictResolutionStrategy) {
-         this(goalPredicate, DEFAULT_MAX_INVOCATIONS, conflictResolutionStrategy);
++    private static boolean isNewListener(AgentListener currentListener, AgentListener newListener) {
++        if (newListener == currentListener) {
++            return false;
++        }
++        if (currentListener instanceof ComposedAgentListener composed) {
++            return !composed.contains(newListener);
++        }
++        return true;
++    }
++
+     @Override
+     public boolean equals(Object obj) {
+         if (obj == this) return true;
+@@ -164,6 +175,9 @@ public String toString() {
+     @Override
+     public void setParent(InternalAgent parent) {
+         this.parent = parent;
++        if (parent != null) {
++            registerInheritedParentListener(parent.listener());
++        }
      }
  
--    public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, int maxInvocations, ConflictResolutionStrategy conflictResolutionStrategy) {
-+    public BlackboardPlanner(
-+            Predicate<AgenticScope> goalPredicate,
-+            int maxInvocations,
-+            ConflictResolutionStrategy conflictResolutionStrategy) {
-         this.goalPredicate = goalPredicate;
-         this.maxInvocations = maxInvocations;
-         this.conflictResolutionStrategy = conflictResolutionStrategy;
-@@ -78,6 +89,14 @@ public BlackboardPlanner(Predicate<AgenticScope> goalPredicate, int maxInvocatio
-     public void init(InitPlanningContext initPlanningContext) {
-         if (goalPredicate == null) {
-             String outputKey = initPlanningContext.plannerAgent().outputKey();
-+            if (isNullOrBlank(outputKey)) {
-+                throw new AgenticSystemConfigurationException("A BlackboardPlanner needs a goal to know when to"
-+                        + " stop, but the agent '"
-+                        + initPlanningContext.plannerAgent().name()
-+                        + "' declares no output key. Either set an output key on the planner agent, so that the"
-+                        + " goal is considered reached once that key is present in the scope, or pass an explicit"
-+                        + " goal predicate to a BlackboardPlanner constructor that accepts one.");
-+            }
-             this.goalPredicate = scope -> scope.hasState(outputKey);
-         }
-         this.agentActivators = initPlanningContext.subagents().stream()
-@@ -110,9 +129,8 @@ public Action nextAction(PlanningContext planningContext) {
-         }
- 
-         if (invocationCounter >= maxInvocations) {
--            throw new IllegalStateException(
--                    "Maximum invocations (" + maxInvocations + ") reached without satisfying goal. " +
--                    "Increase maxInvocations or check goal predicate.");
-+            throw new IllegalStateException("Maximum invocations (" + maxInvocations
-+                    + ") reached without satisfying goal. " + "Increase maxInvocations or check goal predicate.");
-         }
- 
-         return selectAndCall(planningContext);
-@@ -144,10 +162,12 @@ private Action selectAndCall(PlanningContext planningContext) {
-     private AgentActivator selectActivator(List<AgentActivator> ready, AgenticScope scope) {
-         List<AgentInstance> c
+     @Override
 ```
 
-**File**: `langchain4j-agentic-patterns/src/main/java/dev/langchain4j/agentic/patterns/goap/GoalOrientedPlanner.java` (modified, +19/-3)
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/observability/NonAiAgentListenerInheritanceTest.java` (added, +69/-0)
 ```diff
-@@ -1,14 +1,24 @@
- package dev.langchain4j.agentic.patterns.goap;
- 
--import java.util.List;
--import java.util.Map;
-+import static dev.langchain4j.internal.Utils.isNullOrBlank;
+@@ -0,0 +1,69 @@
++package dev.langchain4j.agentic.observability;
 +
- import dev.langchain4j.agentic.planner.Action;
- import dev.langchain4j.agentic.planner.AgentInstance;
-+import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
- import dev.langchain4j.agentic.planner.AgenticSystemTopology;
- import dev.langchain4j.agentic.planner.InitPlanningContext;
--import dev.langchain4j.agentic.planner.PlanningContext;
- import dev.langchain4j.agentic.planner.Planner;
-+import dev.langchain4j.agentic.planner.PlanningContext;
++import static org.assertj.core.api.Assertions.assertThat;
++
++import dev.langchain4j.agentic.AgenticServices;
++import dev.langchain4j.agentic.AgenticServices.AgenticScopeFunction;
++import dev.langchain4j.agentic.UntypedAgent;
 +import java.util.List;
 +import java.util.Map;
- 
++import org.junit.jupiter.api.Test;
++
 +/**
-+ * A planner that computes the shortest sequence of agents leading from the current scope state to a goal.
-+ * <p>
-+ * The goal is the output key of the planner agent. A goal-oriented system without a goal has nothing to
-+ * plan towards, so configuring the planner agent without an output key is rejected with an
-+ * {@link AgenticSystemConfigurationException}.
++ * A non-AI agent inherits the listener of its parent when the parent is set, like AI and composed agents do: a
++ * non-AI agent that is a direct sub-agent of the monitored root used to be missing from the monitor, while one
++ * nested under a composed sub-agent received the monitor through that sub-agent.
 + */
- public class GoalOrientedPlanner implements Planner {
- 
-     private String goal;
-@@ -21,6 +31,12 @@ public class GoalOrientedPlanner implements Planner {
-     @Override
-     public void init(InitPlanningContext initPlanningContext) {
-         this.goal = initPlanningContext.plannerAgent().outputKey();
-+        if (isNullOrBlank(this.goal)) {
-+            throw new AgenticSystemConfigurationException("A GoalOrientedPlanner needs a goal to plan towards, but"
-+                    + " the agent '" + initPlanningContext.plannerAgent().name()
-+                    + "' declares no output key. Set an output key on the planner agent to the state that the plan"
-+                    + " should produce.");
-+        }
-         this.subagents = initPlanningContext.subagents();
-     }
- 
-```
-
-**File**: `langchain4j-agentic-patterns/src/test/java/dev/langchain4j/agentic/patterns/blackboard/BlackboardPlannerWithoutOutputKeyTest.java` (added, +109/-0)
-```diff
-@@ -0,0 +1,109 @@
-+package dev.langchain4j.agentic.patterns.blackboard;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatCode;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+import dev.langchain4j.agentic.Agent;
-+import dev.langchain4j.agentic.AgenticServices;
-+import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
-+import dev.langchain4j.data.message.AiMessage;
-+import dev.langchain4j.model.chat.ChatModel;
-+import dev.langchain4j.model.chat.request.ChatRequest;
-+import dev.langchain4j.model.chat.response.ChatResponse;
-+import dev.langchain4j.service.UserMessage;
-+import dev.langchain4j.service.V;
-+import java.util.concurrent.atomic.AtomicInteger;
-+import org.junit.jupiter.api.BeforeEach;
-+import org.junit.jupiter.api.Test;
-+
-+class BlackboardPlannerWithoutOutputKeyTest {
-+
-+    static final AtomicInteger WORKER_INVOCATIONS = new AtomicInteger();
-+
-+    static final ChatModel MODEL = new ChatModel() {
-+
-+        @Override
-+        public ChatResponse chat(ChatRequest request) {
-+            WORKER_INVOCATIONS.incrementAndGet();
-+            return ChatResponse.builder().aiMessage(AiMessage.from("done")).build();
-+        }
-+    };
-+
-+    public interface Worker {
-+
-+        @Agent(description = "Does the work", outputKey = "work")
-+        @UserMessage("Do the work")
-+        String work();
-+    }
-+
-+    public interface Board {
-+
-+        @Agent(description = "Coordinates the workers")
-+        @UserMessage("Solve {{question}}")
-+        String solve(@V("question") String question);
-+    }
-+
-+    @BeforeEach
-+    void resetInvocations() {
-+        WORKER_INVOCATIONS.set(0);
-+    }
++class NonAiAgentListenerInheritanceTest {
 +
 +    @Test
-+    void blackboard_planner_without_a_goal_predicate_or_output_key_fails_fast() {
-+        Board board = AgenticServices.plannerBuilder(Board.class)
-+                .subAgents(worker())
-+                .planner(BlackboardPlanner::new)
++    void non_ai_agent_directly_under_the_monitored_root_is_recorded() {
++        AgentMonitor monitor = new AgentMonitor();
++        AgenticScopeFunction<String> fetch = AgenticServices.nonAiAgentBuilder(scope -> "fetched")
++                .name("fetch")
++                .outputKey("data")
++                .build();
++        UntypedAgent root = AgenticServices.sequenceBuilder()
++                .subAgents(fetch)
++                .outputKey("data")
++                .listener(monitor)
 +                .build();
 +
-+        assertThatThrownBy(() -> board.solve("hello"))
-+                .isInstanceOf(AgenticSystemConfigurationException.class)
-+                .hasMessageContaining("needs a goal")
-+                .hasMessageContaining("no output key");
-+        assertThat(WORKER_INVOCATIONS).hasValue(0);
++        root.invoke(Map.of());
++
++        assertThat(monitor.successfulExecutions()).hasSize(1);
++        List<AgentInvocation> nested =
++                monitor.successfulExecutions().get(0).topLevelInvocations().nestedInvocations();
++        assertThat(nested).extracting(invocation -> invocation.agent().name()).containsExactly("fetch");
 +    }
 +
 +    @Test
-+    void blackboard_planner_with_a_blank_output_key_fails_fast() {
-+        for (String blank : new String[] {"", "   "}) {
-+            Board board = AgenticServices.plannerBuilder(Board.class)
-+                    .subAgents(worker())
-+                    .planner(BlackboardPlanner::new)
-+                    .outputKey(blank)
-+                    .build();
-+
-+            assertThatThrownBy(() -> board.solve("hello"))
-+                    .as("output key [%s] must be treated as absent", blank)
-+                    .isInstanceOf(AgenticSystemConfigurationException.class)
-+                    .hasMessageContaining("needs a goal");
-+        }
-+        assertThat(WORKER_INVOCATIONS).hasValue(0);
-+    }
-+
-+    @Test
-+    void blackboard_planner_without_a_goal_predicate_still_uses_the_output_key_when_there_is_one() {
-+        Board board = AgenticServices.plannerBuilder(Board.class)
-+                .subAgents(worker())
-+                .planner(BlackboardPlanner::new)
-+                .outputKey("goal")
++    void non_ai_agent_under_a_nested_sequence_is_recorded() {
++        AgentMonitor monitor = new AgentMonitor();
++        AgenticScopeFunction<String> fetch = AgenticServices.nonAiAgentBuilder(scope -> "fetched")
++                .name("fetch")
++                .outputKey("data")
++                .build();
++        UntypedAgent inner = AgenticServices.sequenceBuilder()
++                .subAgents(fetch)
++                .outputKey("data")
++                .build();
++        UntypedAgent root = AgenticServices.sequenceBuilder()
++                .subAgents(inner)
++                .outputKey("data")
++                .listener(monitor)
 +                .build();
 +
-+        assertThatCode(() -> board.solve("hello")).doesNotThrowAnyException();
-+        assertThat(WORKER_INVOCATIONS).hasPositiveValue();
-+    }
++        root.invoke(Map.of());
 +
-+    @Test
-+    void blackboard_planner_without_an_output_key_still_works_with_an_explicit_goal_predicate() {
-+        Board board = AgenticServices.plannerBuilder(Board.class)
-+                .subAgents(worker())
-+                .planner(() -> new BlackboardPlanner(scope -> scope.hasState("work")))
-+                .build();
-+
-+        assertThatCode(() -> board.solve("hello")).doesNotThrowAnyException();
-+        assertThat(WORKER_INVOCATIONS).hasPositiveValue();
-+    }
-+
-+    private static Worker worker() {
-+        return AgenticServices.agentBuilder(Worker.class).chatModel(MODEL).build();
-+    }
-+}
-```
-
-**File**: `langchain4j-agentic-patterns/src/test/java/dev/langchain4j/agentic/patterns/goap/GoalOrientedPlannerWithoutOutputKeyTest.java` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+package dev.langchain4j.agentic.patterns.goap;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatCode;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+import dev.langchain4j.agentic.Agent;
-+import dev.langchain4j.agentic.AgenticServices;
-+import dev.langchain4j.agentic.planner.AgenticSystemConfigurationException;
-+import dev.langchain4j.data.message.AiMessage;
-+import dev.langchain4j.model.chat.ChatModel;
-+import dev.langchain4j.model.chat.request.ChatRequest;
-+import dev.langchain4j.model.chat.response.ChatResponse;
-+import dev.langchain4j.service.UserMessage;
-+import dev.langchain4j.service.V;
-+import java.util.concurrent.atomic.AtomicInteger;
-+import org.junit.jupiter.api.BeforeEach;
-+import org.junit.jupiter.api.Test;
-+
-+class GoalOrientedPlannerWithoutOutputKeyTest {
-+
-+    static final AtomicInteger WRITER_INVOCATIONS = new AtomicInteger();
-+
-+    static final ChatModel MODEL = new ChatModel() {
-+
-+        @Override
-+        public ChatResponse chat(ChatRequest request) {
-+            WRITER_INVOCATIONS.incrementAndGet();
-+            return ChatResponse.builder().aiMessage(AiMessage.from("done")).build();
-+        }
-+    };
-+
-+    public interface Writer {
-+
-+        @Agent(description = "Writes the article", outputKey = "article")
-+        @UserMessage("Write the article about {{topic}}")
-+        String write(@V("topic") String topic);
-+    }
-+
-+    public interface NoGoal {
-+
-+        @Agent(description = "Coordinates the writers")
-+        @UserMessage("Write about {{topic}}")
-+        String write(@V("topic") String topic);
-+    }
-+
-+    public interface WithGoal {
-+
-+        @Agent(description = "Coordinates the writers", outputKey = "article")
-+        @UserMessage("Write about {{topic}}")
-+        String write(@V("topic") String topic);
-+    }
-+
-+    @BeforeEach
-+    void resetInvocations() {
-+        WRITER_INVOCATIONS.set(0);
-+    }
-+
-+    @Test
-+    void goal_oriented_planner_without_an_output_key_fails_fast() {
-+        NoGoal noGoal = AgenticServices.plannerBuilder(NoGoal.class)
-+                .subAgents(writer())
-+                .planner(GoalOrientedPlanner::new)
-+                .build();
-+
-+        assertThatThrownBy(() -> noGoal.write("mars"))
-+                .isInstanceOf(AgenticSystemConfigurationException.class)
-+                .hasMessageContaining("needs a goal")
-+                .hasMessageContaining("no output key");
-+        assertThat(WRITER_INVOCATIONS).hasValue(0);
-+    }
-+
-+    @Test
-+    void goal_oriented_planner_with_a_blank_output_key_fails_fast() {
-+        for (String blank : new String[] {"", "   "}) {
-+            NoGoal noGoal = AgenticServices.plannerBuilder(NoGoal.class)
-+                    .subAgents(writer())
-+                    .planner(GoalOrientedPlanner::new)
-+                    .outputKey(blank)
-+                    .build();
-+
-+            assertThatThrownBy(() -> noGoal.write("mars"))
-+                    .as("output key [%s] must be treated as absent", blank)
-+                    .isInstanceOf(AgenticSystemConfigurationException.class)
-+                    .hasMessageContaining("needs a goal");
-+        }
-+        assertThat(WRITER_INVOCATIONS).hasValue(0);
-+    }
-+
-+    @Test
-+    void goal_oriented_planner_with_an_output_key_still_plans_towards_it() {
-+        WithGoal withGoal = AgenticServices.plannerBuilder(WithGoal.class)
-+                .subAgents(writer())
-+                .planner(GoalOrientedPlanner::new)
-+                .build();
-+
-+        assertThatCode(() -> withGoal.write("mars")).doesNotThrowAnyException();
-+        assertThat(WRITER_INVOCATIONS).hasPositiveValue();
-+    }
-+
-+    private static Writer writer() {
-+        return AgenticServices.agentBuilder(Writer.class).chatModel(MODEL).build();
++        List<AgentInvocation> innerInvocations = monitor.successfulExecutions()
++                .get(0)
++                .topLevelInvocations()
++                .nestedInvocations()
++                .get(0)
++                .nestedInvocations();
++        assertThat(innerInvocations)
++                .extracting(invocation -> invocation.agent().name())
++                .containsExactly("fetch");
 +    }
 +}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6761** (2026-10-20): Add model name to generated agentic execution html report (@mariofusco)
-- **PR #6741** (2026-10-16): Decision models: conversations for all providers, and conversation context for routers, tool filtering and output guardrails (@dliubarskyi)
-- **PR #6740** (2026-10-16): Docs: Spring Boot's HTTP client settings in the Spring Boot starters (@dliubarskyi)
-- **PR #6739** (2026-10-16): Decision models: conversation input for OpenAI and a typed DecisionInput (@dliubarskyi)
-- **PR #6731** (2026-10-19): Allow any agent or agentic pattern to declare an activation condition (@mariofusco)
-- **PR #6729** (2026-10-15): Docs: fix ClassPathSkillLoader snippet types and custom patterns count (@dliubarskyi)
+- **PR #6803** (2026-10-22): Decision models: add `from(...)` factories, deprecate `of(...)` (@dliubarskyi)
+- **PR #6786** (2026-10-22): AI Services: complete and consistent observability events (@dliubarskyi)
+- **PR #6781** (2026-10-21): fix(agentic): throw a clear error when a planner agent has no Planner (@zxc210)
+- **PR #6778** (2026-10-22): Resolve SupplierParameterResolver parameters on every static method of declarative agents (@mariofusco)
+- **PR #6777** (2026-10-22): chore(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (@dependabot[bot])
+- **PR #6770** (2026-10-21): chore(deps): bump follow-redirects from 1.16.0 to 1.16.1 in /docs (@dependabot[bot])
 
 ---
 
@@ -1499,28 +1418,34 @@ at all, so the two are now rejected in `init()` with an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add model name to generated agentic execution html report (#6761)
+## X. flaky nightly tests and make nightly builds more robust
 
 **RULE**:
-When implementing operations in `docs/docs/tutorials/agents.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/nightly_jdk17.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aff8ebad`: Add model name to generated agentic execution html report (#6761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d715774`: flaky nightly tests and make nightly builds more robust. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/agents.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_jdk17.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. For an AI agent, the `modelName()` method of its `AgentInvocation` also returns the name of the model that answered its last LLM call, as reported by the provider in the response metadata, so it is empty for workflow and non-AI agents, and for providers not reporting it. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
+        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
+        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
+          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 0 ]; then
+          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
+          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-the `AgentMonitor` records all agents invocations in a tree structure that also keeps track of the start time, finish time, duration, tokens, inputs and output of each agent invocation. At this point it is possible to retrieve the recorded executions from the monitor and for instance print it to the console for inspection.
+        # the same day reproduces it.
+          if [ $(( 10#$(date -u +%j) % 3 )) -eq 0 ]; then
+          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aff8ebad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d715774` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T21:28:57.957Z",
-  "total_cycles_completed": 4423,
-  "total_learnings_persisted": 4423,
-  "total_rules_promoted": 3604,
+  "last_updated": "2026-10-22T21:35:25.939Z",
+  "total_cycles_completed": 4426,
+  "total_learnings_persisted": 4426,
+  "total_rules_promoted": 3608,
   "history": [
-    {
-      "timestamp": "2026-10-21T16:38:42.725Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:38:45.022Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:44:59.519Z",
-      "repository": "adobe/react-spectrum",
-      "learningId": "learn-github-adobe-react-spectrum",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T16:45:01.317Z",
       "repository": "restatedev/restate",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T21:28:57.957Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:35:16.118Z",
+      "repository": "RDFLib/pySHACL",
+      "learningId": "learn-github-rdflib-pyshacl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:35:20.220Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:35:25.939Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

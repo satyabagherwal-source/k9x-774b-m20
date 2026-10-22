@@ -4453,3 +4453,6 @@ Every entry in this ledger must capture:
 | `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `764c2fa8` | Multi-dimensional audit evidence | 2026-10-22T21:28:50.103Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `efcfb72c` | Multi-dimensional audit evidence | 2026-10-22T21:28:51.618Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `8d499692` | Multi-dimensional audit evidence | 2026-10-22T21:28:57.948Z |
+| `learn-github-rdflib-pyshacl` | `https://github.com/RDFLib/pySHACL` | `a8ed01e8` | Multi-dimensional audit evidence | 2026-10-22T21:35:16.109Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-22T21:35:20.211Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `8f32a2fd` | Multi-dimensional audit evidence | 2026-10-22T21:35:25.930Z |

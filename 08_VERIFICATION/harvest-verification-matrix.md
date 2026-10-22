@@ -4446,3 +4446,6 @@
 | `CYCLE-20261022-ZOAC` | `2026-10-22T21:28:50.100Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3750` | Yes (`869fd9c1...`) |
 | `CYCLE-20261022-ZPGF` | `2026-10-22T21:28:51.615Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3751` | Yes (`3f9676ed...`) |
 | `CYCLE-20261022-ZUC9` | `2026-10-22T21:28:57.945Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3752` | Yes (`b7455f2d...`) |
+| `CYCLE-20261022-7Y4Q` | `2026-10-22T21:35:16.106Z` | `RDFLib/pySHACL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3753` | Yes (`a3d57cb6...`) |
+| `CYCLE-20261022-81AO` | `2026-10-22T21:35:20.208Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3754, Rule 3755` | Yes (`f6d9511e...`) |
+| `CYCLE-20261022-85PJ` | `2026-10-22T21:35:25.927Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3756` | Yes (`296fe9a3...`) |

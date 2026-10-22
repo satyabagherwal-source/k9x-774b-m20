@@ -18433,5 +18433,17 @@
     "qualityScore": 2789,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-22T18:46:23.922Z"
+  },
+  {
+    "name": "Comfy-Org/Z-Image-Turbo",
+    "fullName": "Comfy-Org/Z-Image-Turbo",
+    "url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Comfy-Org/Z-Image-Turbo (990 likes, 9173397 downloads)",
+    "likes": 990,
+    "downloads": 9173397,
+    "qualityScore": 11900,
+    "discoveredAt": "2026-10-22T21:32:55.718Z"
   }
 ]
