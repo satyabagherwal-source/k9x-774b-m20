@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `ea6a2c7b`  
+> **Source Version**: `38afee6c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:17:07.775Z  
+> **Timestamp**: 2026-10-22T16:15:33.839Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:17:07.766Z  
+> **Harvest Timestamp**: 2026-10-22T16:15:32.811Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96320 stars
+- **Stars / Engagement**: 96345 stars
 
 ---
 
@@ -978,11 +978,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #45831** (2026-10-19): **minimumReleaseAge is not enforced when the package manifest is already in the install cache**
-  *Symptoms*: ### What version of Bun is running?  1.4.3 (also reproduces on 1.4.1)  ### What platform is your computer?  Darwin 25.2.0 arm64  ### What steps can reproduce the bug?  `install.minimumReleaseAge` is not enforced when the package's manifest is already in the install cache. It is enforced with `--no-cache` or a cold cache.  ```sh export BUN_INSTALL_CACHE_DIR="$(mktemp -d)" mkdir a b c for d in a b c; do echo '{ "name": "repro", "private": true, "dependencies": { "happy-dom": "21.0.3" } }' > $d/package.json; done printf '[install]\nminimumReleaseAge = 604800\n' > b/bunfig.toml cp b/bunfig.toml c/  (cd a && bun install)              # warms the cache; no age setting here (cd b && bun install)              # age setting on, warm cache (cd c && bun install --no-cache)   # age setting on, cache bypassed ```  happy-dom 21.0.3 was published 2026-10-15T23:32:07Z, less than 7 days before the run (2026-10-18).  ### What is the expected behavior?  Step `b` fails the same way as step `c`:  ``` error: No version matching "happy-dom" found for specifier "21.0.3" (blocked by minimum-release-age: 604800 seconds) error: happy-dom@21.0.3 failed to resolve ```  ### What do you see instead?  Step `b` installs the version the setting should block:  ``` + happy-dom@21.0.3 9 packages installed [657.00ms] ```  Step `c`, and step `b` with an empty cache, both block it as expected.  ### Additional information  `minimumReleaseAge` is a supply-chain safeguard, so a warm cache that silently bypasses it def
+- **Issue #46435** (2026-10-22): **bun check freezes on Array.map	over generic builder with mapped types (macOS, Bun 1.4.3)**
+  *Symptoms*: ### What version of Bun is running?  1.4.3  ### What platform is your computer?  Darwin 27.0.0 arm64 arm  ### What steps can reproduce the bug?   `bun check` hangs indefinitely at `Checking 0 / 1 files` when type checking generic array methods (`Array.prototype.map`, `forEach`) over the result of an object builder that accumulates properties via homomorphic mapped types (`{ [P in K]: ... }`). It consumes 100% of a single CPU core without output or error diagnostics.  `tsc --noEmit` checks the same file in ~0.2s with exit code 0. At runtime, `bun repro.ts` executes in 25ms and prints `[ 1 ]`. Inside `bun check`, direct property access (`arr[0].f`) or `for...of` loops pass in 22ms; only generic array callback methods trigger the hang.  `repro.ts`:  ```ts type Schema = {   a?: number;   b?: number;   c?: number;   d?: number;   e?: number;   f?: number; };  export class Builder<D extends Schema = {}> {   constructor(private readonly context: D = {} as D) {}    a() { return this.#set('a', 1); }   b() { return this.a().#set('b', 1); }   c() { return this.b().a().#set('c', 1); }   d() { return this.c().b().#set('d', 1); }   e() { return this.d().c().#set('e', 1); }   f() { return this.e().d().#set('f', 1); }    build(): D {     return this.context;   }    #set<const K extends keyof Schema>(key: K, value: NonNullable<Schema[K]>) {     return new Builder(Object.assign(this.context, { [key]: value }) as D & { [P in K]: NonNullable<Schema[K]> });   } }  const arr = [new Builder().a().f
 
-- **Issue #45733** (2026-10-19): **bun check: false TS2321 "Excessive stack depth" with --threads >= 2, clean with --threads=1 and in tsc 7.0.2**
-  *Symptoms*: ### What version of Bun is running?  1.4.3+c6da4a4d3 (also reproduces on canary 1.4.4-canary.1+5f5799ed1)  ### What platform is your computer?  Linux 6.18.40.1-microsoft-standard-WSL2 x86_64 (16 cores)  ### What steps can reproduce the bug?  Save the script below as `repro.sh` and run `bash repro.sh ./repro` (creates a 10-file project, installs `@sinclair/typebox@0.34.38` and `typescript@7.0.2`, runs both checkers).  ```bash #!/usr/bin/env bash set -euo pipefail dir="${1:?usage: repro.sh <empty-dir>}" mkdir -p "$dir/src/e" && cd "$dir"  cat > package.json <<'EOF' { "name": "bun-check-threads-repro", "private": true, "type": "module" } EOF  cat > tsconfig.json <<'EOF' {   "compilerOptions": {     "target": "ES2023",     "module": "es2022",     "moduleResolution": "Bundler",     "strict": true,     "skipLibCheck": true,     "noEmit": true,     "types": []   },   "include": ["src"] } EOF  cat > src/a.ts <<'EOF' import './c.js'; EOF  cat > src/b.ts <<'EOF' import { Type } from '@sinclair/typebox'; import { KindSchema } from './d-schema.js';  export function routes(register: (schema: unknown) => void) {   register({     query: Type.Object({       kind: Type.Exclude(KindSchema, Type.Literal('default')),     }),   }); } EOF  cat > src/c.ts <<'EOF' import { Type } from '@sinclair/typebox'; import { KindSchema } from './d-schema.js'; import './f.js';  export function routes(register: (schema: unknown) => void) {   register({     body: Type.Object({       kind: Type.Optional(Type.Exclu
+- **Issue #46166** (2026-10-21): **Bun.SQL: pg_terminate_backend on a live event loop wedges the pool ("connection must be a PostgresSQLConnection") and close() hangs**
+  *Symptoms*: ### What version of Bun is running?  1.4.2+744846f84  `bun-v1.4.3` (2026-10-10) is also before the pool rewrite that closed #45039. That rewrite is #45304, merged 2026-10-17, and it is not in a release.  ### What platform is your computer?  Linux 6.12.94+ x86_64. PostgreSQL 15.19.  ### What steps can reproduce the bug?  One pool does not show it. Four pools, each killed by its own connection, do. The event loop is never blocked (`spawnSync` is not used).  1. Start Postgres 15:     ```sh    docker run -d --name bun-sql-kill -e POSTGRES_PASSWORD=postgres -p 54329:5432 postgres:15    ```  2. Save this as `repro.ts`:     ```ts    import { SQL } from "bun";     const url = process.env.DATABASE_URL ?? "postgres://postgres:postgres@127.0.0.1:54329/postgres";     async function storm(wave: number, slot: number): Promise<boolean> {      const name = `repro-${wave}-${slot}-${Date.now() % 100000}`;      const admin = new SQL(url, { max: 1, connection: { application_name: `killer-${name}` } });      const sql = new SQL(url, {        max: 4,        idleTimeout: 0,        maxLifetime: 0,        connectionTimeout: 5,        connection: { application_name: name },      });      let stop = false;      const killer = (async () => {        while (!stop) {          try {            await admin.unsafe(              `select pg_terminate_backend(pid) from pg_stat_activity where application_name = '${name}'`,            );          } catch {            // the admin connection can blip; the pool unde
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -999,638 +999,962 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6673b8eb` (2026-10-20)
-**Commit Message**: test: fix 20 flaky tests (#45873)
+### Incident Patch 1: `2a5cbbcb` (2026-10-22)
+**Commit Message**: Fix regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update brotli (#46392)
 
 ### What does this PR do?
 
-Fixes 20 causes of flaky tests, found in the annotations of the last 400
-CI builds. Only files under `test/` change. No limit or deadline is
-raised, and no assertion is dropped except where the table says on which
-platform.
+Fixes regressions since 1.4.3 that are still on `main` (none of them was
+released), and updates brotli.
 
-Each row was first its own PR. That PR has the CI sightings, the cause
-and the numbers in full.
+Fixes #46352
 
-| test file | what went wrong | what changes | write-up |
-|---|---|---|---|
-| `cli/install/bun-install-streaming-extract.test.ts` | the line taken
-for the error could be one of the verbose extract log | those lines are
-removed before the `error:` line is looked for | #45842 |
-| `cli/install/bun-install-streaming-extract.test.ts` | a body that is
-all there at the client's first read is not streamed, so `Streamed ` is
-not printed | the fixture is larger than one read of the client holds |
-#45844 |
-| `js/bun/shell/yield.test.ts` | Windows keeps the working directory of
-a killed process busy for a while (`EBUSY` on `rm`); the pid file exists
-before the pid is in it | the pid file is named by its full path and
-nothing has the directory as its cwd; the waiter waits for the file's
-content | #45846 |
-| `internal/
+- **`bun install --frozen-lockfile` and `bun ci` refused lockfiles that
+1.4.3 wrote**, so CI went red on the upgrade with nothing else changed:
+- a project with `overrides` whose lockfile has a version that an
+override doesn't allow. A frozen install installs what the lockfile says
+again. A plain `bun install` still applies the override. (from #45307)
+- a monorepo whose root names one of its own workspaces a second time:
+through an `npm:` alias, as an optional peer, by a dist-tag with
+`bun.lockb`, in two dependency groups, or by `file:` under another name.
+In one of these shapes a plain `bun install` also exited 1, or swapped
+the package.
+- **`bun update --interactive` could panic** (`index out of bounds`)
+after it had rewritten `package.json` and before it saved the lockfile,
+most often in a workspace with a `catalog`. (from #45307)
+- **`npx --quiet`, `-q`, `--no` and npx's other flags in a
+`package.json` script exited 1** under `bun run
 
-**File**: `test/cli/install/bun-install-streaming-extract.test.ts` (modified, +5/-4)
+**File**: `docs/pm/overrides.mdx` (modified, +1/-1)
 ```diff
-@@ -1049,8 +1049,9 @@ test.concurrent.each([
-   const wideMode = Buffer.from([0x80, 0, 0, 0, 0x80, 0, 0x01, 0xed]);
-   const root = "owner-repo-abc1234";
-   const index = Buffer.from("module.exports = 'ok';\n");
--  // So the body spans many reads and streaming commits.
--  const bulk = incompressible(256 * 1024, 1);
-+  // More than one read of the client holds (LIBUS_RECV_BUFFER_LENGTH): a body that is all there at the first read is
-+  // not streamed.
-+  const bulk = incompressible(1024 * 1024, 1);
-   const tgz = gzipSync(
-     Buffer.concat([
-       tarHeader(`${root}/`, 0, "5"),
-@@ -1608,8 +1609,8 @@ async function installStreamPkg(
-       ...(path === "buffered" ? { BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL: "1" } : {}),
-     });
-     results.push({
--      // A line of the verbose log, from another thread, can come before the end of this one.
--      error: stderr.match(/^error: .*$/m)?.[0].replace(/\[stream-pkg\] Extract .*$/, ""),
-+      // What another thread writes to the verbose log can come anywhere in this line.
-+      error: stderr.replace(/\[stream-pkg\] Extract .*\n(libarchive error: .*\n)?/g, "").match(/^error: .*$/m)?.[0],
-       streamed: stderr.includes("Streamed "),
-       installed: existsSync(join(String(dir), "node_modules", "stream-pkg")),
-       cached: readdirSync(join(String(dir), ".cache")).filter(name => /^(stream-pkg@|@T@)/.test(name)).length,
+@@ -60,7 +60,7 @@ Add `bar` to the `"overrides"` field in `package.json`. Bun defers to the specif
+ 
+ Bun only reads overrides from the root `package.json`, not from workspace packages. Overrides apply to `peerDependencies` as well.
+ 
+-Every install also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again, and `bun install --frozen-lockfile` fails and names it. The check leaves these entries as they are:
++`bun install` also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again. `bun install --frozen-lockfile` installs the version in the lockfile. The check leaves these entries as they are:
+ 
+ - a bundled dependency and an optional peer dependency
+ - a peer or optional dependency that shares its version with a dependency the override does not apply to
 ```
 
-**File**: `test/cli/run/transpiler-cache.test.ts` (modified, +2/-4)
+**File**: `packages/bun-usockets/src/node_quic_shim.c` (modified, +4/-3)
 ```diff
-@@ -140,7 +140,8 @@ describe("transpiler cache", () => {
-     writeFileSync(join(temp_dir, "a.js"), dummyFile(50 * 1024, "1", "b"));
-     writeFileSync(join(temp_dir, "b.js"), dummyFile(50 * 1024, "2", "b"));
- 
--    const remover = Bun.spawn({
-+    // Its working directory is temp_dir, which Windows does not let the next test remove while it is alive.
-+    await using remover = Bun.spawn({
-       cmd: [bunExe(), join(import.meta.dir, "transpiler-cache-aggressive-remover.js"), cache_dir],
-       env,
-       cwd: temp_dir,
-@@ -158,7 +159,6 @@ describe("transpiler cache", () => {
-             if (exitCode != 0 && !killing) {
-               killing = true;
-               processes.forEach(x => x.kill(9));
--              remover.kill(9);
-             }
-           },
-         }),
-@@ -169,8 +169,6 @@ describe("transpiler cache", () => {
- 
-     expect(!killing).toBeTrue();
- 
--    remover.kill(9);
--
-     for (const proc of processes) {
-       expect(proc.exitCode).toBe(0);
-       expect(await proc.stdout.text()).toBe("b\n");
+@@ -318,10 +318,11 @@ int us_nq_stream_send_headers(lsquic_stream_t *s, const char *buf, size_t len,
+         if (i >= len) break;
+         i++;
+         unsigned char flags = (i < len) ? (unsigned char) buf[i++] : 0;
+-        if (name_len > LSXPACK_MAX_STRLEN || val_len > LSXPACK_MAX_STRLEN)
++        if (name_len >= LSXPACK_MAX_STRLEN || val_len > LSXPACK_MAX_STRLEN)
+             return -1;
+-        lsxpack_header_set_offset2(&hdrs[count], buf, name_off, name_len,
+-                                   val_off, val_len);
++        /* lsxpack asserts that offsets fit lsxpack_strlen_t, so they count from this pair's start. */
++        lsxpack_header_set_offset2(&hdrs[count], buf + name_off, 0, name_len,
++                                   val_off - name_off, val_len);
+         if (flags & 1) {
+             hdrs[count].flags = LSXPACK_NEVER_INDEX;
+             hdrs[count].indexed_type = 2;
 ```
 
-**File**: `test/internal/harness-max-rss.test.ts` (modified, +5/-3)
+**File**: `packages/bun-usockets/src/quic.c` (modified, +76/-19)
 ```diff
-@@ -1,5 +1,5 @@
- import { expect, test } from "bun:test";
--import { bunExe, runCommandMaxRSS } from "harness";
-+import { bunExe, isLinux, runCommandMaxRSS } from "harness";
+@@ -32,7 +32,14 @@ extern int us_ssl_ctx_set_verify_signature_algorithms(SSL_CTX *ctx);
+ extern int us_x509_verify_cert(X509_STORE_CTX *ctx, int purpose);
+ extern struct us_bun_verify_error_t us_ssl_socket_verify_error_from_ssl(SSL *ssl);
  
- const MiB = 1024 * 1024;
- 
-@@ -9,11 +9,13 @@ test("runCommandMaxRSS measures the command, not the test runner", async () => {
-   // stays that high even if the buffer is collected.
-   const ballast = Buffer.alloc(256 * MiB, 1);
-   const runnerRSS = process.memoryUsage.rss();
--  expect(runnerRSS).toBeGreaterThan(ballast.length);
-+  // Elsewhere a child inherits nothing, and a busy macOS machine no longer
-+  // keeps all of the buffer resident by now.
-+  if (isLinux) expect(runnerRSS).toBeGreaterThan(ballast.length);
- 
-   const idle = await runCommandMaxRSS({ cmd: [bunExe(), "-e", "0"] });
-   expect(idle).toMatchObject({ stdout: "", stderr: "", exitCode: 0, signalCode: null });
--  expect(idle.maxRSS).toBeLessThan(runnerRSS);
-+  if (isLinux) expect(idle.maxRSS).toBeLessThan(runnerRSS);
- 
-   const busy = await runCommandMaxRSS({
-     cmd: [bunExe(), "-e", `console.log(Buffer.alloc(${256 * MiB}, 1).length)`],
-```
-
-**File**: `test/js/bun/gc/gc-controller-cadence.test.ts` (modified, +9/-4)
-```diff
-@@ -228,8 +228,9 @@ describe("idle release", () => {
-             const full = resident();
-             const deadline = performance.now() + 8000;
-             const timer = setInterval(() => {
--              if (resident() > full - 80 && performance.now() < deadline) return;
--              console.log(JSON.stringify({ full, now: resident() }));
-+              const now = resident();
-+              if (now >= full - 80 && performance.now() < deadline) return;
-+              console.log(JSON.stringify({ full, now }));
-               process.exit(0);
-             }, 100);
-           };
-@@ -328,8 +329,12 @@ describe("idle release", () => {
-       const full = resident();
-       expect(full).toBeGreaterThan(330);
-       const deadline = performance.now() + 6000;
--      while (resident() > full - 250 && performance.now() < deadline) await Bun.sleep(100);
--      expect(resident()).toBeLessThan(full - 250);
-+      let now = resident();
-+      while (now >= full - 250 && performance.now() < deadline) {
-+        await Bun.sleep(100);
-+        now = resident();
-+      }
-+      expect(now).toBeLessThan(full - 250);
-       proc.stdin.write("exit\n");
-       await proc.stdin.flush();
-       expect(await proc.exited).toBe(0);
-```
-
-**File**: `test/js/bun/jsc/bun-jsc.test.ts` (modified, +15/-3)
-```diff
-@@ -282,23 +282,35 @@ describe("bun:jsc", () => {
-       return acc;
-     };
- 
-+    // On a busy machine the sampler thread may still not get to run in that
-+    // window, so profile again until it has. A profiler that no longer samples
-+    // uses up the time limit, which has to be here: this never yields.
-+    const deadline = performance.now() + 5000;
-+    const profileUntilSampled = () => {
-+      let result;
-+      do {
-+        result = profile(work, sampleInterval);
-+      } while (result.stackTraces.traces.length === 0 && performance.now() < deadline);
-+      return result;
-+    };
++extern size_t BUN_DEFAULT_MAX_HTTP_HEADER_SIZE;
 +
-     // First profile call
--    const result1 = profile(work, sampleInterval);
-+    const result1 = profileUntilSampled();
-     expect(result1).toBeDefined();
-     expect(result1.functions).toBeDefined();
-     expect(result1.stackTraces).toBeDefined();
-     expect(result1.stackTraces.traces.length).toBeGreaterThan(0);
+ #define US_QUIC_READ_BUF (16 * 1024)
++/* A header set over max_size or max_fields fails its stream. One over this
++ * multiple of either closes the connection, as in Http2Context.h, which has
++ * the same floor for the size. */
++#define US_QUIC_HSET_HARD_CAP_FACTOR 2
++#define US_QUIC_HSET_HARD_CAP_FLOOR (16 * 1024)
  
-     // Second profile call - should work after first one completed
-     // This verifies that shutdown() -> pause() fix works
--    const result2 = profile(work, sampleInterval);
-+    const result2 = profileUntilSampled();
-     expect(result2).toBeDefined();
-     expect(result2.functions).toBeDefined();
-     expect(result2.stackTraces).toBeDefined();
-     expect(result2.stackTraces.traces.length).toBeGreaterThan(0);
+ /* Incoming header set: contiguous storage + index. Created before the
+  * stream object exists (lsquic decodes headers ahead of on_new_stream),
+@@ -44,6 +51,11 @@ struct us_quic_hset {
+     struct us_quic_header_t *headers;
+     unsigned int count, hcap;
+     int is_server;
++    /* Size as RFC 9114 §4.2.2 counts it, and the context's max_header_set_size. */
++    size_t size, max_size;
++    /* Fields decoded so far, pseudo-headers and dropped ones included. */
++    size_t fields, max_fields;
++    int too_large;
+ };
  
-     // Third profile call - verify profiler can be reused multiple times
--    const result3 = profile(work, sampleInterval);
-+    const result3 = profileUntilSampled();
-     expect(result3).toBeDefined();
-     expect(result3.functions).toBeDefined();
-     expect(result3.stackTraces).toBeDefined();
-```
-
-**File**: `test/js/bun/module-graph/module-graph-io.test.ts` (modified, +12/-8)
-```diff
-@@ -885,12 +885,12 @@ describe.concurrent("ModuleGraph: an error in what a graph opened is the graph's
-       dropRedisConnections() {
-         for (const socket of host.redisConnections.splice(0)) socket.end();
-       },
--      async closedUdpPort() {
-+      // Taken until close(): a socket made for sending to the port cannot be given that very port
-+      // as its own, which would leave it hearing itself and never refused.
-+      async udpPortToClose() {
-         const s = dgram.createSocket("udp4");
-         await new Promise(r => s.bind(0, "127.0.0.1", r));
--        const port = s.address().port;
--        await new Promise(r => s.close(r));
--        return port;
-+        return { port: s.address().port, close: () => new Promise(r => s.close(r)) };
-       },
-     };
-   `;
-@@ -968,8 +968,11 @@ describe.concurrent("ModuleGraph: an error in what a graph opened is the graph's
-           "fs.watch listener": boom => {
-             const dir = path.join(import.meta.dirname, "watched");
-             fs.mkdirSync(dir);
--            const w = fs.watch(dir, () => { w.close(); boom(); });
--            fs.writeFileSync(path.join(dir, "f"), "x");
-+            const w = fs.watch(dir, () => { clearInterval(again); w.close(); boom(); });
-+            // macOS starts watching on another thread after fs.watch() returns, and reports nothing written before that.
-+            const write = () => fs.writeFileSync(path.join(dir, "f"), "x");
-+            write();
-+            const again = setInterval(write, 5);
-           },
-           "a read stream's 'data'": boom => { fs.createReadStream(import.meta.filename).on("data", boom); },
-           "a zlib stream's 'data'": boom => { const z = zlib.createGzip(); z.on("data", boom); z.end("hello"); },
-@@ -1052,8 +1055,9 @@ describe.concurrent("ModuleGraph: an error in what a graph opened is the graph's
-         import { host } from "./host.mjs";
-         const { promise, resolve } = Promise.withResolvers();
-         process.on("uncaughtException", error => resolve("host: " + error.code));
--        const graph = new Bun.ModuleGraph({ globals: { closedPort: await host.closedUdpPort() }, onError: error => resolve("graph: " + error.code) });
--        const { stop } = await graph.import(import.meta.dir + "/tenant.mjs");
-+        const { port, close } = await host.udpPortToClose();
-+        const graph = new Bun.ModuleGraph({ globals: { closedPort: port }, onError: error => resolve("graph: " + error.code) });
-+        const { stop } = await graph.import(import.meta.dir + "/tenant.mjs").finally(close);
-         console.log(await promise);
-         stop();
-         process.exit(0);
-```
-
-**File**: `test/js/bun/shell/yield.test.ts` (modified, +8/-7)
-```diff
-@@ -330,17 +330,18 @@ describe("yield", async () => {
-       test.concurrent("the killed member is gone after the rejection", async () => {
-         using dir = tempDir("shell-failed-pipeline-pid", {});
-         const bun = process.execPath;
--        const writePid = 'require("fs").writeFileSync("pid", String(process.pid)); setTimeout(() => {}, 100_000)';
--        const waitForPid =
--          'while (!require("fs").existsSync("pid")) Bun.sleepSync(5); process.stdout.write("--version")';
-+        // By its full path: `dir` is nobody's working directory, which Windows does not let go of until some time
-+        // after `kill(pid, 0)` stops finding the process.
-+        const pidFile = join(String(dir), "pid");
-+        const writePid = `require("fs").writeFileSync(${JSON.stringify(pidFile)}, String(process.pid)); setTimeout(() => {}, 100_000)`;
-+        // For its content: the file is there before the pid is in it.
-+        const waitForPid = `const pid = () => { try { return require("fs").readFileSync(${JSON.stringify(pidFile)}, "utf8"); } catch { return ""; } }; while (!pid()) Bun.sleepSync(5); process.stdout.write("--version")`;
-         expect(
-           await rejectionOf(
--            $`${bun} -e ${writePid} | ${bun} $(${bun} -e ${waitForPid}) > ${new Response("r")}`
--              .cwd(String(dir))
--              .quiet(),
-+            $`${bun} -e ${writePid} | ${bun} $(${bun} -e ${waitForPid}) > ${new Response("r")}`.quiet(),
-           ),
-         ).toMatchObject({ message: "Blobs are immutable, and cannot be used for stdout/stderr" });
--        const pid = Number(await Bun.file(join(String(dir), "pid")).text());
-+        const pid = Number(await Bun.file(pidFile).text());
-         expect(pid).toBeGreaterThan(0);
-         // The kill is sent before the promise rejects. The shell reaps the
-         // child when its exit reaches the event loop, so poll for that.
-```
-
-**File**: `test/js/bun/spawn/spawn-stdin-destroy.test.ts` (modified, +2/-1)
-```diff
-@@ -11,7 +11,8 @@ test("stdin destroy after exit crash", async () => {
-       stdin: "pipe",
-     });
+ struct us_quic_socket_context_s {
+@@ -59,6 +71,8 @@ struct us_quic_socket_context_s {
+      * us_quic_engine_leave finishes it. */
+     int shutdown_pending;
+     int is_client;
++    /* lsquic only advertises es_max_header_list_size. This is what us_quic_hsi_process enforces. */
++    unsigned int max_header_set_size;
+     unsigned int conn_count;
+     unsigned int conn_ext_size;
+     /* Stream bytes written since the last process_conns. Once this exceeds
+@@ -468,10 +482,19 @@ static int us_quic_alpn_select(SSL *ssl, const unsigned char **out, unsigned cha
  
--    await Bun.sleep(80);
-+    // The crash was in the first read of `child.stdin` after the exit.
-+    await child.exited;
-     await child.stdin.write("dylan\n");
-     await child.stdin.write("999\n");
-     await child.stdin.flush();
-```
-
----
-
-### Incident Patch 2: `b4c02f03` (2026-10-20)
-**Commit Message**: test: fix bake.test.ts cleanup and the --check URL on Windows (#46135)
-
-`test/cli/bake/bake.test.ts` fails on Windows CI on unrelated PRs, in
-two ways. Both are in the tests.
-
-- `EBUSY` when `tempDir` removes its folder, after the test passed. On
-Windows `bun bake` is a manager process with a child in a job object.
-Killing the manager ends the child a moment later, so the child can
-still hold the folder when the manager's exit resolves. `tempDir`'s
-`using` cleanup now retries on `EBUSY` on Windows, for up to 5 seconds.
-It loops because `fs.rmSync` parses `maxRetries` and does not act on it.
-- `ECONNRESET` or `ECONNREFUSED` in `bun bake --check starts the server
-once the type errors are fixed`. The likely cause is that one save
-starts the process twice on Windows, and with `--port=0` each start has
-its own port, so the first URL stops working. This is inferred from the
-errors; I have not reproduced it. The test now uses the last URL
-printed, and tries until a deadline.
-
-Not checked on Windows locally: Windows CI on this PR is the check.
-
-**File**: `test/cli/bake/bake.test.ts` (modified, +12/-1)
-```diff
-@@ -450,7 +450,18 @@ test.concurrent.each([
-   );
-   const [, url] = await output.waitFor(/url: (http:\/\/\S+)/);
+ /* ───── header-set interface ───── */
  
--  expect(await get(url, "/missing")).toBe("200 1");
-+  // One save can start the process twice on Windows, and each start prints its own port.
-+  if (!isWindows) {
-+    expect(await get(url, "/missing")).toBe("200 1");
-+    return;
-+  }
-+  const deadline = Date.now() + 10_000;
-+  let response = "";
-+  while (response !== "200 1" && Date.now() < deadline) {
-+    const latest = [...output.text.matchAll(/url: (http:\/\/\S+)/g)].at(-1)![1];
-+    response = await get(latest, "/missing").catch(String);
-+  }
-+  expect(response).toBe("200 1");
- });
++static size_t us_quic_hset_hard_cap(const struct us_quic_hset *h) {
++    size_t cap = US_QUIC_HSET_HARD_CAP_FACTOR * h->max_size;
++    return cap > US_QUIC_HSET_HARD_CAP_FLOOR ? cap : US_QUIC_HSET_HARD_CAP_FLOOR;
++}
++
+ static void *us_quic_hsi_create(void *hsi_ctx, lsquic_stream_t *s, int is_push) {
+     (void) s; (void) is_push;
+     struct us_quic_hset *h = (struct us_quic_hset *) us_calloc(1, sizeof(struct us_quic_hset));
+-    if (h) h->is_server = !((us_quic_socket_context_t *) hsi_ctx)->is_client;
++    if (!h) return NULL;
++    h->is_server = !((us_quic_socket_context_t *) hsi_ctx)->is_client;
++    h->max_size = ((us_quic_socket_context_t *) hsi_ctx)->max_header_set_size;
++    /* Only max_size bounds the fields of a response, as in the HTTP/2 client. */
++    h->max_fields = h->is_server ? US_QUIC_MAX_REQUEST_FIELDS : h->max_size;
+     return h;
+ }
  
- // Creating a symlink on Windows needs a privilege that CI does not have.
-```
-
-**File**: `test/harness.ts` (modified, +22/-3)
-```diff
-@@ -611,10 +611,29 @@ export function tempDirWithFiles(
+@@ -499,24 +522,26 @@ static int us_quic_field_is_malformed(const struct lsxpack_header *hdr) {
  
- class DisposableString extends String {
-   [Symbol.dispose]() {
--    fs.rmSync(this + "", { recursive: true, force: true });
-+    // On Windows a process that was just killed can hold the folder for a moment: a child that a job
-+    // object ends after its parent, for one. `rmSync` does not act on `maxRetries`.
-+    const deadline = Date.now() + 5000;
-+    while (true) {
-+      try {
-+        fs.rmSync(this + "", { recursive: true, force: true });
-+        return;
-+      } catch (error: any) {
-+        if (!isWindows || error?.code !== "EBUSY" || Date.now() > deadline) throw error;
-+        sleepSync(50);
-+      }
+ static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_header *hdr, size_t space) {
+     struct us_quic_hset *h = (struct us_quic_hset *) hset_p;
+-    if (space > 64 * 1024) return NULL;
+-    unsigned int need = h->len + (unsigned int) space;
++    /* `space` is lsqpack's estimate and can exceed what the field decodes to. */
++    size_t need = h->len + space;
++    if (space > LSXPACK_MAX_STRLEN || need > us_quic_hset_hard_cap(h)) return NULL;
+     if (need > h->cap) {
+-        unsigned int ncap = h->cap ? h->cap : 512;
++        size_t ncap = h->cap ? h->cap : 512;
+         while (ncap < need) ncap *= 2;
+         char *nb = (char *) us_realloc(h->buf, ncap);
+         if (!nb) return NULL;
+         h->buf = nb;
+-        h->cap = ncap;
++        h->cap = (unsigned int) ncap;
+     }
+     if (hdr == NULL) {
+         hdr = &h->scratch;
+-        lsxpack_header_prepare_decode(hdr, h->buf, h->len, space);
++        /* Offsets count from this field's start: lsxpack asserts that they fit lsxpack_strlen_t. */
++        lsxpack_header_prepare_decode(hdr, h->buf + h->len, 0, space);
+     } else {
+         /* Resize: lsqpack already wrote part of name/value into the previous
+          * buffer; only the storage may move. Preserve offsets, repoint buf,
+          * and report the larger window via val_len. */
+-        hdr->buf = h->buf;
++        hdr->buf = h->buf + h->len;
+         hdr->val_len = (lsxpack_strlen_t) space;
+     }
+     return hdr;
+@@ -525,6 +550,15 @@ static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_h
+ static int us_quic_hsi_process(void *hset_p, struct lsxpack_header *hdr) {
+     struct us_quic_hset *h = (struct us_quic_hset *) hset_p;
+     if (hdr == NULL) return 0; /* end of headers */
++    h->size += (size_t) hdr->name_len + hdr->val_len + 32;
++    h->fields++;
++    if (h->size > h->max_size || h->fields > h->max_fields) {
++        /* Drop the field but let lsqpack finish the block, so that it still
++         * acknowledges the block and the connection stays usable. */
++        h->too_large = 1;
++        return h->size > us_quic_hset_hard_cap(h) ||
++            h->fields > US_QUIC_HSET_HARD_CAP_FACTOR * h->max_fields ? -1 : 0;
 +    }
-   }
--  [Symbol.asyncDispose]() {
--    return fs.promises.rm(this + "", { recursive: true, force: true });
-+  async [Symbol.asyncDispose]() {
-+    const deadline = Date.now() + 5000;
-+    while (true) {
-+      try {
-+        return await fs.promises.rm(this + "", { recursive: true, force: true });
-+      } catch (error: any) {
-+        if (!isWindows || error?.code !== "EBUSY" || Date.now() > deadline) throw error;
-+        await Bun.sleep(50);
-+      }
-+    }
-   }
- }
- 
+     if (h->is_server && us_quic_field_is_malformed(hdr)) return 1
 ```
 
----
-
-### Incident Patch 3: `eb807b77` (2026-10-20)
-**Commit Message**: bun bake: require() of a built-in, and a route whose import threw (#46017)
-
-bake: require() of a built-in returns its CommonJS export; a failed
-route load no longer null-derefs
-
-### What
-
-Two dev server bugs, seen with `jsonwebtoken` (through `jws`) in a
-page's server code.
-
-**1. `require()` of a built-in module returned the ESM namespace.**
-
-The dev server printed `require("stream")` as `hmr.builtin("stream")`.
-That is the lowering for `import`, and it returns the module namespace
-(`{ Duplex, PassThrough, Readable, ... }`), not the `Stream` function.
-So `util.inherits(DataStream, require("stream"))` threw `The
-"superCtor.prototype" property must be of type object`.
-
-`require()` of a built-in now prints `hmr.requireBuiltin("stream")`,
-which calls `import.meta.require(id)`: the same value Bun's `require()`
-gives. `.default` of the namespace is not the same for every module (it
-differs for `bun:sqlite`), so the fix does not use it. `import` of a
-built-in still uses `hmr.builtin()` and still gets the namespace.
-
-**2. After a route module failed to load, the next request threw `null
-is not an object (evaluating 'pageModule.mode')`.**
-
-When a dependency of an ES module threw while it lo
-
-**File**: `src/js_printer/lib.rs` (modified, +1/-1)
+**File**: `packages/bun-usockets/src/quic.h` (modified, +8/-0)
 ```diff
-@@ -2920,7 +2920,7 @@ pub(crate) mod __gated_printer {
-                     self.print_space_before_identifier();
-                     self.print_symbol(self.options.hmr_ref);
-                     if record.tag == ImportRecordTag::Builtin {
--                        self.print(b".builtin(");
-+                        self.print(b".requireBuiltin(");
-                     } else {
-                         self.print(b".require(");
-                     }
+@@ -144,7 +144,11 @@ void us_quic_stream_flush(us_quic_stream_t *s);
+ void us_quic_stream_shutdown_read(us_quic_stream_t *s);
+ void us_quic_stream_close(us_quic_stream_t *s);
+ void us_quic_stream_reset(us_quic_stream_t *s);
++void us_quic_stream_reset_internal_error(us_quic_stream_t *s);
+ int us_quic_stream_has_unacked(us_quic_stream_t *s);
++/* The code of the last RESET_STREAM or STOP_SENDING on the stream, 0 without one.
++ * on_stream_close can still read it. */
++uint64_t us_quic_stream_reset_code(us_quic_stream_t *s);
+ 
+ void *us_quic_stream_ext(us_quic_stream_t *s);
+ us_quic_socket_t *us_quic_stream_socket(us_quic_stream_t *s);
+@@ -160,6 +164,10 @@ void us_quic_loop_flush_if_pending(struct us_loop_t *loop);
+ /* Incoming headers — valid from on_stream_headers until on_stream_close. */
+ unsigned int us_quic_stream_header_count(us_quic_stream_t *s);
+ const struct us_quic_header_t *us_quic_stream_header(us_quic_stream_t *s, unsigned int i);
++/* Fields a request may have, pseudo-headers included. */
++#define US_QUIC_MAX_REQUEST_FIELDS 200
++/* The header set exceeds the size or the field count this endpoint accepts and is incomplete. */
++int us_quic_stream_headers_too_large(us_quic_stream_t *s);
+ 
+ /* Connection accessors */
+ void *us_quic_socket_ext(us_quic_socket_t *s);
 ```
 
-**File**: `src/runtime/bake/hmr-module.ts` (modified, +42/-13)
+**File**: `packages/bun-uws/src/Http3Context.h` (modified, +7/-0)
 ```diff
-@@ -252,13 +252,16 @@ export class HMRModule {
+@@ -10,6 +10,8 @@
  
-   declare indirectHot: any;
+ namespace uWS {
  
--  /** Server-only */
-+  /** Server-only. Lowered from an `import` of a built-in module: the ESM namespace. */
-   declare builtin: (id: string) => any;
-+  /** Server-only. Lowered from a `require()` of a built-in module: what Bun's `require()` returns. */
-+  declare requireBuiltin: (id: string) => any;
- }
- if (side === "server") {
-   HMRModule.prototype.builtin = (id: string) =>
-     // @ts-expect-error
-     import.meta.bakeBuiltin(import.meta.resolve(id));
-+  HMRModule.prototype.requireBuiltin = (id: string) => import.meta.require(id);
- }
++static_assert(US_QUIC_MAX_REQUEST_FIELDS == UWS_HTTP_MAX_HEADERS_COUNT, "HTTP/3 has the field limit of HTTP/1 and HTTP/2");
++
+ struct Http3Context {
+ 
+     static Http3Context *create(Loop *loop, us_bun_socket_context_options_t options, unsigned idleTimeoutSecs = 0) {
+@@ -34,6 +36,11 @@ struct Http3Context {
+             if (rd->state != 0) return;
+             rd->reset();
+ 
++            if (us_quic_stream_headers_too_large(s)) {
++                res->writeStatus("431 Request Header Fields Too Large")->end();
++                return;
++            }
++
+             Http3Request req(s);
+             if (req.getHeader("expect") == "100-continue") res->writeContinue();
+             cd->router.getUserData() = {res, &req};
+```
+
+**File**: `packages/bun-uws/src/Http3Response.h` (modified, +5/-2)
+```diff
+@@ -209,8 +209,11 @@ struct Http3Response {
+             h.name = base + (uintptr_t) h.name;
+             h.value = base + (uintptr_t) h.value;
+         }
+-        us_quic_stream_send_headers((us_quic_stream_t *) this,
+-            d->hdrs.mutableSpan().data(), (unsigned) d->hdrs.size(), endStream);
++        if (us_quic_stream_send_headers((us_quic_stream_t *) this,
++                d->hdrs.mutableSpan().data(), (unsigned) d->hdrs.size(), endStream) != 0) {
++            /* Later writes fail, and on_stream_close reports the abort as it does for a reset by the peer. */
++            us_quic_stream_reset_internal_error((us_quic_stream_t *) this);
++        }
+         d->hdrBuf.shrink(0);
+         d->hdrs.shrink(0);
+     }
+```
+
+**File**: `scripts/build/deps/brotli.ts` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+ 
+ import type { Dependency, DirectBuild } from "../source.ts";
+ 
+-const BROTLI_COMMIT = "028fb5a23661f123017c060daa546b55cf4bde29"; // v1.2.0
++const BROTLI_COMMIT = "db24a98aed38a16de78cc05ca15cdd8dc2a0d92d"; // v1.2.1
+ 
  // prettier-ignore
- HMRModule.prototype.indirectHot = new Proxy({}, {
-@@ -346,10 +349,23 @@ export function loadModuleSync(id: Id, isUserDynamic: boolean, importer: HMRModu
-       mod.importers.add(importer);
-     }
- 
--    const { list: depsList } = parseEsmDependencies(mod, deps, loadModuleSync);
-+    let depsList: HMRModule[];
-+    try {
-+      depsList = parseEsmDependencies(mod, deps, loadModuleSync).list;
-+    } catch (e) {
-+      // A dependency threw before this module's body ran, so the next load evaluates it again.
-+      mod.state = State.Stale;
-+      throw e;
-+    }
-     const exportsBefore = mod.exports;
-     mod.imports = depsList.map(getEsmExports);
--    load(mod);
-+    try {
-+      load(mod);
-+    } catch (e) {
-+      mod.state = State.Error;
-+      mod.failure = e;
-+      throw e;
-+    }
-     mod.imports = depsList;
-     if (mod.exports === exportsBefore) mod.exports = {};
-     mod.cjs = null;
-@@ -445,7 +461,14 @@ export function loadModuleAsync<IsUserDynamic extends boolean>(
-       mod.importers.add(importer);
-     }
- 
--    const { list, isAsync } = parseEsmDependencies(mod, deps, loadModuleAsync<false>);
-+    let list: (HMRModule | Promise<HMRModule>)[], isAsync: boolean;
-+    try {
-+      ({ list, isAsync } = parseEsmDependencies(mod, deps, loadModuleAsync<false>));
-+    } catch (e) {
-+      // A dependency threw before this module's body ran, so the next load evaluates it again.
-+      mod.state = State.Stale;
-+      throw e;
-+    }
-     DEBUG.ASSERT(
-       isAsync //
-         ? list.some(x => x instanceof Promise)
-@@ -458,8 +481,7 @@ export function loadModuleAsync<IsUserDynamic extends boolean>(
-       ? Promise.all(list).then(
-           list => finishLoadModuleAsync(mod, load, list),
-           e => {
--            mod.state = State.Error;
--            mod.failure = e;
-+            mod.state = State.Stale;
-             throw e;
-           },
-         )
-@@ -479,13 +501,20 @@ function finishLoadModuleAsync(mod: HMRModule, load: UnloadedESM[3], modules: HM
-     const p = load(mod);
-     mod.imports = modules;
-     if (p) {
--      return p.then(() => {
--        mod.state = State.Loaded;
--        if (mod.exports === exportsBefore) mod.exports = {};
--        mod.cjs = null;
--        if (shouldPatchImporters) patchImporters(mod);
--        return mod;
--      });
-+      return p.then(
-+        () => {
-+          mod.state = State.Loaded;
-+          if (mod.exports === exportsBefore) mod.exports = {};
-+          mod.cjs = null;
-+          if (shouldPatchImporters) patchImporters(mod);
-+          return mod;
-+        },
-+        e => {
-+          mod.state = State.Error;
-+          mod.failure = e;
-+          throw e;
-+        },
-+      );
-     }
-     if (mod.exports === exportsBefore) mod.exports = {};
-     mod.cjs = null;
+ const SOURCES = [
 ```
 
-**File**: `test/bake/dev/bundle.test.ts` (modified, +107/-0)
+**File**: `src/brotli_sys/brotli_c.rs` (modified, +1/-0)
 ```diff
-@@ -1169,3 +1169,110 @@ devTest("a render() that does not return a Response is reported as that", {
-     }).toEqual({ status: 500, saysWhatIsWrong: true, referenceError: false });
-   },
- });
-+devTest("require() of a built-in module in server code returns what require() returns", {
-+  framework: minimalFramework,
-+  files: {
-+    "node_modules/cjsdep/package.json": JSON.stringify({ name: "cjsdep", main: "index.js" }),
-+    "node_modules/cjsdep/index.js": `
-+      var Stream = require("stream");
-+      var EventEmitter = require("events");
-+      var util = require("util");
-+      function DataStream() {}
-+      util.inherits(DataStream, Stream);
-+      module.exports = {
-+        stream: typeof Stream + ":" + typeof Stream.prototype,
-+        events: typeof EventEmitter + ":" + typeof EventEmitter.prototype,
-+        inherits: new DataStream() instanceof Stream,
-+      };
-+    `,
-+    "routes/index.ts": `
-+      import info from "cjsdep";
-+      import * as streamNamespace from "stream";
-+      export default function () {
-+        return new Response(JSON.stringify({ ...info, importReadable: typeof streamNamespace.Readable }));
-+      }
-+    `,
-+  },
-+  async test(dev) {
-+    await dev.fetch("/").equals({
-+      stream: "function:object",
-+      events: "function:object",
-+      inherits: true,
-+      importReadable: "function",
-+    });
-+  },
-+});
-+devTest("a route whose import throws on load throws that error again on the next request", {
-+  framework: minimalFramework,
-+  files: {
-+    "dep.cjs": `throw new Error("dep.cjs failed to load");`,
-+    "esm-dep.ts": `throw new Error("esm-dep.ts failed to load"); export const value = 1;`,
-+    // A top-level await that rejects, after the module started.
-+    "tla-dep.ts": `await Promise.resolve(); throw new Error("tla-dep.ts failed to load"); export const value = 1;`,
-+    // Reached through require(), so through the synchronous loader: a body that throws, and an import that throws.
-+    "sync-body.ts": `throw new Error("sync-body.ts failed to load"); export const value = 1;`,
-+    "sync-body.cjs": `module.exports = require("./sync-body.ts").value;`,
-+    "sync-import-dep.ts": `throw new Error("sync-import-dep.ts failed to load"); export const value = 1;`,
-+    "sync-import.ts": `export { value } from "./sync-import-dep.ts";`,
-+    "sync-import.cjs": `module.exports = require("./sync-import.ts").value;`,
-+    "routes/index.ts": `
-+      import dep from "../dep.cjs";
-+      export default function () {
-+        return new Response("dep: " + dep);
-+      }
-+    `,
-+    "routes/esm.ts": `
-+      import { value } from "../esm-dep.ts";
-+      export default function () {
-+        return new Response("esm-dep: " + value);
-+      }
-+    `,
-+    "routes/tla.ts": `
-+      import { value } from "../tla-dep.ts";
-+      export default function () {
-+        return new Response("tla-dep: " + value);
-+      }
-+    `,
-+    "routes/sync-body.ts": `
-+      import value from "../sync-body.cjs";
-+      export default function () {
-+        return new Response("sync-body: " + value);
-+      }
-+    `,
-+    "routes/sync-import.ts": `
-+      import value from "../sync-import.cjs";
-+      export default function () {
-+        return new Response("sync-import: " + value);
-+      }
-+    `,
-+  },
-+  async test(dev) {
-+    for (const [url, message] of [
-+      ["/", "dep.cjs failed to load"],
-+      ["/esm", "esm-dep.ts failed to load"],
-+      ["/tla", "tla-dep.ts failed to load"],
-+      ["/sync-body", "sync-body.ts failed to load"],
-+      ["/sync-import", "sync-import-dep.ts failed to load"],
-+    ]) {
-+      for (let i = 0; i < 2; i++) {
-+        const response = await dev.fetch(url);
-+        const text = await response.text();
-+        expect({ url, status: response.status, hasMessage: text.includes(message) }).toEqual({
-+          url,
-+          status: 500,
-+          hasMessage: true,
-+        });
-+      }
+@@ -154,6 +154,7 @@ pub enum BrotliDecoderErrorCode2 {
+     ERROR_FORMAT_PADDING_1 = -14,
+     ERROR_FORMAT_PADDING_2 = -15,
+     ERROR_FORMAT_DISTANCE = -16,
++    ERROR_FORMAT_BLOCK_SWITCH = -17,
+     ERROR_COMPOUND_DICTIONARY = -18,
+     ERROR_DICTIONARY_NOT_SET = -19,
+     ERROR_INVALID_ARGUMENTS = -20,
+```
+
+---
+
+### Incident Patch 2: `7a748413` (2026-10-22)
+**Commit Message**: http3: lift lsquic's limits on header sizes, and honor the stream ID of a GOAWAY (#46436)
+
+### What does this PR do?
+
+Follow-up to #46392. It lifts limits of the HTTP/3 layer (`Bun.serve({
+http3: true })` and `fetch` with `protocol: "http3"`) that come from
+lsquic. Each change to lsquic is a patch file of its own in
+`patches/lsquic/`.
+
+- **Header blocks of more than 64 KB are sent.** lsquic encoded a header
+block into a fixed 64 KB buffer and failed above that, so such a
+response was reset and such a request was rejected with
+`HTTP3HeaderEncodingError`. A larger block now gets a buffer sized from
+the header list. The common case keeps the stack buffer.
+- **A header name or value of more than 65,535 bytes is sent and
+received.** lsxpack held string lengths in 16 bits, so sending one was
+refused and receiving one closed the connection. lsquic, ls-qpack,
+ls-hpack and Bun's own code are now built with
+`LSXPACK_MAX_STRLEN=UINT32_MAX`, set in one place in the build scripts,
+and every file of ours that touches the struct has a `static_assert` on
+its layout. What bounds a field now are the limits from #46392. HTTP/2
+keeps its 65,535-byte limit per string, by an explicit constant. `fetch`
+a
+
+**File**: `packages/bun-usockets/src/node_quic_shim.c` (modified, +10/-2)
+```diff
+@@ -184,6 +184,10 @@ static void nq_on_path_switch(lsquic_conn_t *c, int validated, int is_preferred,
+     }
+ }
+ 
++/* lsquic is built with the same width, see lsxpackDefines in scripts/build/deps/lshpack.ts. */
++_Static_assert(sizeof(lsxpack_strlen_t) == 4 && offsetof(struct lsxpack_header, chain_next_idx) == sizeof(char *) + 24,
++    "LSXPACK_MAX_STRLEN must be UINT32_MAX");
++
+ #define US_NQ_HSET_MIN_BUF 256
+ 
+ struct nq_hset {
+@@ -216,10 +220,14 @@ static struct lsxpack_header *nq_hsi_prepare_decode(void *hset,
+                                                     struct lsxpack_header *hdr,
+                                                     size_t space) {
+     struct nq_hset *h = hset;
+-    if (space > LSXPACK_MAX_STRLEN)
++    /* `space` covers the bytes lsqpack has in hand (patches/lsqpack/decode-room-for-bytes-in-hand.patch).
++     * It is an estimate and can exceed what they decode to. A field over
++     * max_bytes is decoded and dropped, so it needs room as well. */
++    if (space > (h->max_bytes > UINT16_MAX / 2 ? 2 * (size_t) h->max_bytes : UINT16_MAX))
+         return NULL;
+     if (space > h->decode_cap) {
+-        size_t want = space < US_NQ_HSET_MIN_BUF ? US_NQ_HSET_MIN_BUF : space;
++        size_t want = h->decode_cap ? h->decode_cap : US_NQ_HSET_MIN_BUF;
++        while (want < space) want *= 2;
+         char *nb = realloc(h->decode_buf, want);
+         if (!nb) return NULL;
+         h->decode_buf = nb;
+```
+
+**File**: `packages/bun-usockets/src/quic.c` (modified, +27/-13)
+```diff
+@@ -34,6 +34,10 @@ extern struct us_bun_verify_error_t us_ssl_socket_verify_error_from_ssl(SSL *ssl
+ 
+ extern size_t BUN_DEFAULT_MAX_HTTP_HEADER_SIZE;
+ 
++/* lsquic is built with the same width, see lsxpackDefines in scripts/build/deps/lshpack.ts. */
++_Static_assert(sizeof(lsxpack_strlen_t) == 4 && offsetof(struct lsxpack_header, chain_next_idx) == sizeof(char *) + 24,
++    "LSXPACK_MAX_STRLEN must be UINT32_MAX");
++
+ #define US_QUIC_READ_BUF (16 * 1024)
+ /* A header set over max_size or max_fields fails its stream. One over this
+  * multiple of either closes the connection, as in Http2Context.h, which has
+@@ -522,9 +526,10 @@ static int us_quic_field_is_malformed(const struct lsxpack_header *hdr) {
+ 
+ static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_header *hdr, size_t space) {
+     struct us_quic_hset *h = (struct us_quic_hset *) hset_p;
+-    /* `space` is lsqpack's estimate and can exceed what the field decodes to. */
+-    size_t need = h->len + space;
+-    if (space > LSXPACK_MAX_STRLEN || need > us_quic_hset_hard_cap(h)) return NULL;
++    /* `space` covers the bytes lsqpack has in hand (patches/lsqpack/decode-room-for-bytes-in-hand.patch),
++     * so the buffer grows with what the peer has sent. It is an estimate and can exceed what they decode to. */
++    size_t need = h->len + space, hard_cap = us_quic_hset_hard_cap(h);
++    if (need > hard_cap) return NULL;
+     if (need > h->cap) {
+         size_t ncap = h->cap ? h->cap : 512;
+         while (ncap < need) ncap *= 2;
+@@ -533,16 +538,18 @@ static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_h
+         h->buf = nb;
+         h->cap = (unsigned int) ncap;
+     }
++    /* The whole buffer, so that lsqpack doesn't come back for every few bytes. */
++    size_t room = (h->cap < hard_cap ? h->cap : hard_cap) - h->len;
+     if (hdr == NULL) {
+         hdr = &h->scratch;
+         /* Offsets count from this field's start: lsxpack asserts that they fit lsxpack_strlen_t. */
+-        lsxpack_header_prepare_decode(hdr, h->buf + h->len, 0, space);
++        lsxpack_header_prepare_decode(hdr, h->buf + h->len, 0, room);
+     } else {
+         /* Resize: lsqpack already wrote part of name/value into the previous
+          * buffer; only the storage may move. Preserve offsets, repoint buf,
+          * and report the larger window via val_len. */
+         hdr->buf = h->buf + h->len;
+-        hdr->val_len = (lsxpack_strlen_t) space;
++        hdr->val_len = (lsxpack_strlen_t) room;
+     }
+     return hdr;
+ }
+@@ -740,6 +747,10 @@ static void us_quic_on_read(lsquic_stream_t *stream, lsquic_stream_ctx_t *h) {
+         lsquic_stream_wantread(stream, 0);
+         lsquic_stream_shutdown(stream, 0);
+         if (ctx->on_stream_data) ctx->on_stream_data(s, ctx->read_buf, 0, 1);
++    } else if (r < 0 && errno == ECONNRESET) {
++        /* lsquic resets a request above the id of a GOAWAY without on_reset,
++         * and calls on_read on every tick until the stream is closed. */
++        lsquic_stream_close(stream);
+     }
+ }
+ 
+@@ -772,8 +783,9 @@ static void us_quic_on_reset(lsquic_stream_t *stream, lsquic_stream_ctx_t *h, in
+      *         lsquic already queues RESET_STREAM for our send side; the
+      *         read half stays open so the response/request that arrived
+      *         alongside STOP_SENDING is still delivered. Closing here
+-     *         would drop it. */
+-    if (h && stream && how == 0) lsquic_stream_close(stream);
++     *         would drop it. H3_REQUEST_REJECTED comes with no response. */
++    if (h && stream && (how == 0 || lsquic_stream_get_error_code(stream) == US_QUIC_H3_REQUEST_REJECTED))
++        lsquic_stream_close(stream);
+ }
+ 
+ /* ───── public API ───── */
+@@ -1186,10 +1198,8 @@ int us_quic_stream_send_headers(us_quic_stream_t *s,
+      * so each pair has to be contiguous. The caller hands us arbitrary
+      * pointers, so flatten here. */
+     size_t total = 0;
+-    for (unsigned int i = 0; i < count; i++) {
+-        if (headers[i].name_len > LSXPACK_MAX_STRLEN || headers[i].value_len > LSXPACK_MAX_STRLEN) return -1;
++    for (unsigned int i = 0; i < count; i++)
+         total += headers[i].name_len + headers[i].value_len;
+-    }
+ 
+     char stackbuf[1024];
+     char *buf = total <= sizeof(stackbuf) ? stackbuf : (char *) us_malloc(total);
+@@ -1285,6 +1295,11 @@ uint64_t us_quic_stream_reset_code(us_quic_stream_t *s) {
+     return s->stream ? lsquic_stream_get_error_code(s->stream) : 0;
+ }
+ 
++int us_quic_stream_refused_by_goaway(us_quic_stream_t *s) {
++    return s->stream &&
++        lsquic_stream_id(s->stream) > lsquic_conn_goaway_stream_id(lsquic_stream_conn(s->stream));
++}
++
+ void *us_quic_stream_ext(us_quic_stream_t *s) { return s + 1; }
+ 
+ us_quic_socket_t *us_quic_stream_socket(us_quic_stream_t *s) {
+@@ -1406,10 +1421,9 @@ us_quic_socket_context_t *us_create_quic_client_context(
+     lsquic_engine_init_settings(&ctx->settings, LSENG_HTTP);
+     ctx->settings.es_versions = (1u << LSQVER_I00
+```
+
+**File**: `packages/bun-usockets/src/quic.h` (modified, +6/-0)
+```diff
+@@ -146,9 +146,15 @@ void us_quic_stream_close(us_quic_stream_t *s);
+ void us_quic_stream_reset(us_quic_stream_t *s);
+ void us_quic_stream_reset_internal_error(us_quic_stream_t *s);
+ int us_quic_stream_has_unacked(us_quic_stream_t *s);
++/* RFC 9114 §8.1: the server did no application processing. */
++#define US_QUIC_H3_REQUEST_REJECTED 0x10B
+ /* The code of the last RESET_STREAM or STOP_SENDING on the stream, 0 without one.
+  * on_stream_close can still read it. */
+ uint64_t us_quic_stream_reset_code(us_quic_stream_t *s);
++/* The server did not process a request above the id in its GOAWAY (RFC 9114 §5.2).
++ * The RFC says the same of the request at the id, but servers on stock lsquic name
++ * the last request they accepted. on_stream_close can still read it. */
++int us_quic_stream_refused_by_goaway(us_quic_stream_t *s);
+ 
+ void *us_quic_stream_ext(us_quic_stream_t *s);
+ us_quic_socket_t *us_quic_stream_socket(us_quic_stream_t *s);
+```
+
+**File**: `packages/bun-uws/src/Http2Context.h` (modified, +9/-4)
+```diff
+@@ -91,6 +91,11 @@ static constexpr uint32_t LOCAL_MAX_CONCURRENT_STREAMS = 256;
+ /* Same cap as the HTTP/1 parser (UWS_HTTP_MAX_HEADERS_COUNT). */
+ static constexpr size_t MAX_HEADER_FIELDS = 200;
+ static constexpr unsigned MAX_SETTINGS_PER_FRAME = 32;
++/* ls-hpack refuses to decode a longer name or value. */
++static constexpr size_t MAX_STRING_LENGTH = UINT16_MAX;
++/* ls-hpack is built with the same width, see lsxpackDefines in scripts/build/deps/lshpack.ts. */
++static_assert(sizeof(lsxpack_strlen_t) == 4 && offsetof(lsxpack_header_t, chain_next_idx) == sizeof(char *) + 24,
++    "LSXPACK_MAX_STRLEN must be UINT32_MAX");
+ /* A header block may span this many CONTINUATION frames (the byte cap alone
+  * doesn't bound a flood of empty ones). */
+ static constexpr unsigned MAX_CONTINUATION_FRAMES = 32;
+@@ -1090,8 +1095,8 @@ inline void Http2Connection::writeHeaderBlock(Http2Response *stream, bool endStr
+             p = buf.data() + used;
+             end = buf.data() + buf.size();
+         }
+-        if (h.nameLen > LSXPACK_MAX_STRLEN / 2 || h.valueLen > LSXPACK_MAX_STRLEN / 2) {
+-            /* Beyond ls-hpack's 16-bit lengths: literal without indexing, no Huffman. */
++        if (h.nameLen > http2::MAX_STRING_LENGTH / 2 || h.valueLen > http2::MAX_STRING_LENGTH / 2) {
++            /* Literal without indexing, no Huffman. */
+             *p++ = 0x00;
+             p = http2::hpackEncodeInteger(p, 0x00, 7, h.nameLen);
+             memcpy(p, base + h.nameOff, h.nameLen); p += h.nameLen;
+@@ -1568,11 +1573,11 @@ inline bool Http2Connection::handleHeaderBlock(uint32_t streamId, uint8_t flags,
+     while (p < end) {
+         lsxpack_header_t x;
+         size_t room = buf.size() - used;
+-        lsxpack_header_prepare_decode(&x, buf.data() + used, 0, room > LSXPACK_MAX_STRLEN ? LSXPACK_MAX_STRLEN : room);
++        lsxpack_header_prepare_decode(&x, buf.data() + used, 0, room > http2::MAX_STRING_LENGTH ? http2::MAX_STRING_LENGTH : room);
+         int rc = lshpack_dec_decode(&dec, &p, end, &x);
+         if (rc == LSHPACK_ERR_MORE_BUF) {
+             size_t need = used + x.val_len + 64;
+-            if (x.val_len > LSXPACK_MAX_STRLEN || buf.size() >= hardCap || room >= LSXPACK_MAX_STRLEN) {
++            if (x.val_len > http2::MAX_STRING_LENGTH || buf.size() >= hardCap || room >= http2::MAX_STRING_LENGTH) {
+                 return connectionError(http2::ERR_ENHANCE_YOUR_CALM);
+             }
+             buf.resize(std::min(hardCap, std::max(buf.size() * 2, need)));
+```
+
+**File**: `packages/h3blast/Makefile` (modified, +2/-0)
+```diff
+@@ -8,7 +8,9 @@ OBJ       := $(ROOT)/build/$(PROFILE)/obj/vendor
+ VENDOR    := $(ROOT)/vendor
+ 
+ CC        ?= clang
++# LSXPACK_MAX_STRLEN: as in scripts/build/deps/lshpack.ts, which built the objects.
+ CFLAGS    := -std=c11 -O3 -g -Wall -Wextra -Wno-unused-parameter \
++             -DLSXPACK_MAX_STRLEN=UINT32_MAX \
+              -I$(VENDOR)/lsquic/include \
+              -I$(VENDOR)/hdrhistogram/include \
+              -I$(VENDOR)/boringssl/include
+```
+
+**File**: `packages/h3blast/src/h3blast.c` (modified, +2/-0)
+```diff
+@@ -33,6 +33,8 @@
+ 
+ #include <lsquic.h>
+ #include <lsxpack_header.h>
++
++_Static_assert(sizeof(lsxpack_strlen_t) == 4, "LSXPACK_MAX_STRLEN must be UINT32_MAX, as in the objects this links");
+ #include <openssl/ssl.h>
+ #include <hdr/hdr_histogram.h>
+ 
+```
+
+**File**: `patches/lsqpack/decode-room-for-bytes-in-hand.patch` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++--- a/lsqpack.c
+++++ b/lsqpack.c
++@@ -3383,10 +3383,10 @@ guarantee_out_bytes (struct lsqpack_dec
++     unsigned off;
++ 
++     assert(read_ctx->hbrc_out.xhdr);
++-    assert(read_ctx->hbrc_out.state == XOUT_VALUE);
++-    assert(read_ctx->hbrc_out.xhdr->val_offset
++-                                    >= read_ctx->hbrc_out.xhdr->name_offset);
++-    off = read_ctx->hbrc_out.xhdr->val_offset
+++    if (read_ctx->hbrc_out.state == XOUT_NAME)
+++        off = read_ctx->hbrc_out.off;
+++    else
+++        off = read_ctx->hbrc_out.xhdr->val_offset
++             - read_ctx->hbrc_out.xhdr->name_offset + read_ctx->hbrc_out.off;
++ 
++     assert(read_ctx->hbrc_out.xhdr->val_len >= off);
++@@ -3693,22 +3693,18 @@ parse_header_data (struct lsqpack_dec *d
++                 if (DATA.left > LSXPACK_MAX_STRLEN)
++                     RETURN_ERROR();
++ #endif
+++                /* bun: the states that read the string ask for room, each time
+++                 * for the bytes they have in hand.
+++                 */
++                 if (DATA.left)
++                 {
++                     if (DATA.is_huffman)
++                     {
++-                        if (0 != guarantee_out_bytes(dec, read_ctx,
++-                                                    DATA.left + DATA.left / 2))
++-                            RETURN_ERROR();
++                         DATA.dec_huff_state.resume = 0;
++                         DATA.state = DATA_STATE_READ_VAL_HUFFMAN;
++                     }
++                     else
++-                    {
++-                        if (0 != guarantee_out_bytes(dec, read_ctx, DATA.left))
++-                            RETURN_ERROR();
++                         DATA.state = DATA_STATE_READ_VAL_PLAIN;
++-                    }
++                 }
++                 else if (0 == header_out_write_value(dec, read_ctx, 0, 1))
++                     DATA.state = DATA_STATE_NEXT_INSTRUCTION;
++@@ -3724,6 +3720,8 @@ parse_header_data (struct lsqpack_dec *d
++             size = MIN((unsigned) (end - buf), DATA.left);
++             if (size == 0)
++                 RETURN_ERROR();
+++            if (0 != guarantee_out_bytes(dec, read_ctx, size + size / 2))
+++                RETURN_ERROR();
++             dst = get_dst(dec, read_ctx, &dst_size);
++             hdr = lsqpack_huff_decode(buf, (int)size, dst, (int)dst_size,
++                     &DATA.dec_huff_state, DATA.left == size);
++@@ -3758,6 +3756,8 @@ parse_header_data (struct lsqpack_dec *d
++             size = MIN((unsigned) (end - buf), DATA.left);
++             if (size == 0)
++                 RETURN_ERROR();
+++            if (0 != guarantee_out_bytes(dec, read_ctx, size))
+++                RETURN_ERROR();
++             dst = get_dst(dec, read_ctx, &dst_size);
++             if (size > dst_size)
++                 RETURN_ERROR();
++@@ -3780,7 +3780,10 @@ parse_header_data (struct lsqpack_dec *d
++                 if (DATA.left > LSXPACK_MAX_STRLEN)
++                     RETURN_ERROR();
++ #endif
++-                size = DATA.is_huffman ? DATA.left + DATA.left / 2 : DATA.left;
+++                /* bun: room for the bytes at hand, see READ_VAL_LEN */
+++                size = MIN((unsigned) (end - buf), DATA.left);
+++                if (DATA.is_huffman)
+++                    size += size / 2;
++                 if (0 != header_out_begin_literal(dec, read_ctx, size,
++                                                             DATA.is_never))
++                     RETURN_ERROR();
++@@ -3801,6 +3804,8 @@ parse_header_data (struct lsqpack_dec *d
++             size = MIN((unsigned) (end - buf), DATA.left);
++             if (size == 0)
++                 RETURN_ERROR();
+++            if (0 != guarantee_out_bytes(dec, read_ctx, size + size / 2))
+++                RETURN_ERROR();
++             dst = get_dst(dec, read_ctx, &dst_size);
++             hdr = lsqpack_huff_decode(buf, (int)size, dst, (int)dst_size,
++                     &DATA.dec_huff_state, DATA.left == size);
++@@ -3835,6 +3840,8 @@ parse_header_data (struct lsqpack_dec *d
++             size = MIN((unsigned) (end - buf), DATA.left);
++             if (size == 0)
++                 RETURN_ERROR();
+++            if (0 != guarantee_out_bytes(dec, read_ctx, size))
+++                RETURN_ERROR();
++             dst = get_dst(dec, read_ctx, &dst_size);
++             if (size > dst_size)
++                 RETURN_ERROR();
+```
+
+**File**: `patches/lsquic/goaway-first-rejected-id.patch` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++--- a/src/liblsquic/lsquic_full_conn_ietf.c
+++++ b/src/liblsquic/lsquic_full_conn_ietf.c
++@@ -3364,8 +3364,10 @@ ietf_full_conn_ci_going_away (struct lsq
++     {
++         LSQ_INFO("connection marked as going away, last stream: %" PRIu64,
++                  conn->ifc_max_req_id);
+++        /* bun: the frame names the first request that is not processed, not
+++         * the last one that is (RFC 9114, Section 5.2). */
++         if (valid_stream_id(conn->ifc_max_req_id + N_SITS))
++-            stream_id = conn->ifc_max_req_id;
+++            stream_id = conn->ifc_max_req_id + N_SITS;
++         else
++             goto end;
++     }
+```
+
+---
+
+### Incident Patch 3: `9c2dd6b6` (2026-10-22)
+**Commit Message**: react-compiler: fix a throw on each render and stale values for a `let` that a memo block reassigns (#42482)
+
+### What does this PR do?
+
+Fixes `bun build --react-compiler` for a `let` that is declared before a
+memo block and reassigned in it.
+
+#### Problem
+
+```jsx
+const D = new Set([1]);
+function C(p) { let v = p.v; const o = []; if (v == null) v = D; o.push(v.size); return <div o={o} />; }
+function List({ items, filter }) { let shown; const rows = []; if (filter) { shown = items.filter(filter); } else { shown = items; } rows.push(shown.length); return <ul rows={rows} />; }
+function Label(p) { let label = p.count; const list = []; if (p.flag) label = "flagged"; else list.push(p.b); return <div label={label} list={list} />; }
+```
+
+| | 1.4.3 | main | this PR |
+| --- | --- | --- | --- |
+| `C({})`, three renders | renders | `TypeError: undefined is not an
+object (evaluating 'v.size')` on each render | renders |
+| `List({ items })`, three renders | throws from the second render |
+throws on each render | renders |
+| `Label`, `count` 1 then 2 | `1 1` | `1 1` | `1 2` |
+
+`C` is a regression on main since #44805. It is in no release. The other
+two are also wrong on 1.4.3. `Label` is facebook
+
+**File**: `src/react_compiler/inference/infer_reactive_places.rs` (modified, +6/-29)
+```diff
+@@ -81,39 +81,24 @@ pub(crate) fn infer_reactive_places(
+         control_tests.of_block[block_id.0 as usize] = (start, tests.len() as u32);
+     }
+ 
+-    // Track phi operand reactive flags during fixpoint.
+-    // In TS, isReactive() sets place.reactive as a side effect. But when a phi
+-    // is already reactive, the TS `continue`s and skips operand processing.
+-    // We track which phi operand Places should be marked reactive: one flag
+-    // for each operand of each phi, in the order of the blocks.
+-    let phi_operand_count = func.body.blocks.values().flat_map(|block| &block.phis);
+-    let phi_operand_count = phi_operand_count.map(|phi| phi.operands.len()).sum();
+-    let mut phi_operand_reactive = vec![false; phi_operand_count];
+-
+     // Fixpoint iteration — compute reactive set
+     let mut is_settled = false;
+     loop {
+         reactive_map.start_round();
+         stable_sidemap.start_round();
+-        let mut next_phi_operand = 0;
+         for (block_id, block) in &func.body.blocks {
+             let has_reactive_control = control_tests.any_is_reactive(*block_id, &mut reactive_map);
+ 
+             // Process phi nodes
+             for phi in &block.phis {
+-                let first_operand = next_phi_operand;
+-                next_phi_operand += phi.operands.len();
+                 if reactive_map.is_reactive(phi.place.identifier) {
+-                    // TS does `continue` here — skips operand isReactive calls.
+-                    // phi operand reactive flags stay as they were from last visit.
+                     continue;
+                 }
+                 let mut is_phi_reactive = false;
+-                for (op_idx, (_pred, operand)) in phi.operands.iter().enumerate() {
++                for operand in phi.operands.values() {
+                     if reactive_map.is_reactive(operand.identifier) {
+-                        phi_operand_reactive[first_operand + op_idx] = true;
+                         is_phi_reactive = true;
+-                        break; // TS breaks here — remaining operands NOT visited
++                        break;
+                     }
+                 }
+                 if is_phi_reactive {
+@@ -229,13 +214,7 @@ pub(crate) fn infer_reactive_places(
+     }
+ 
+     // Now apply reactive flags by replaying the traversal pattern.
+-    apply_reactive_flags_replay(
+-        func,
+-        env,
+-        &reactive_map.reactive_ids(),
+-        &stable_sidemap,
+-        &phi_operand_reactive,
+-    );
++    apply_reactive_flags_replay(func, env, &reactive_map.reactive_ids(), &stable_sidemap);
+ 
+     Ok(())
+ }
+@@ -555,7 +534,6 @@ fn apply_reactive_flags_replay(
+     env: &mut Environment,
+     reactive_ids: &[bool],
+     stable_sidemap: &StableSidemap,
+-    phi_operand_reactive: &[bool],
+ ) {
+     // 1. Mark params
+     for param in &mut func.params {
+@@ -564,17 +542,16 @@ fn apply_reactive_flags_replay(
+     }
+ 
+     // 2. Walk blocks
+-    let mut phi_operand_reactive = phi_operand_reactive.iter();
+     for block in func.body.blocks.values_mut() {
+         // 2a. Phi nodes
+         for phi in &mut block.phis {
+             if reactive_ids[phi.place.identifier.0 as usize] {
+                 phi.place.reactive = true;
+             }
+ 
+-            for (operand, &is_reactive) in phi.operands.values_mut().zip(&mut phi_operand_reactive)
+-            {
+-                if is_reactive {
++            // Not in upstream, which flags no operand behind the first reactive one. `visit_phi` reads the flag.
++            for operand in phi.operands.values_mut() {
++                if reactive_ids[operand.identifier.0 as usize] {
+                     operand.reactive = true;
+                 }
+             }
+```
+
+**File**: `src/react_compiler/inference/propagate_scope_dependencies_hir.rs` (modified, +24/-6)
+```diff
+@@ -24,7 +24,7 @@ use crate::hir::visitors::{ScopeBlockInfo, ScopeBlockTraversal};
+ use crate::hir::{
+     AstAlloc, BasicBlock, BlockId, DeclarationId, DependencyPathEntry, EvaluationOrder, FunctionId,
+     GotoVariant, HirFunction, HirVec, IdentifierId, Instruction, InstructionKind, InstructionValue,
+-    MutableRange, ParamPattern, Place, PlaceOrSpread, PropertyLiteral, ReactFunctionType,
++    MutableRange, ParamPattern, Phi, Place, PlaceOrSpread, PropertyLiteral, ReactFunctionType,
+     ReactiveScopeDependency, ScopeId, Terminal, Type, hir_vec, visitors,
+ };
+ use crate::optimization::dead_code_elimination::find_semantic_only_caught_instructions;
+@@ -1915,6 +1915,20 @@ impl<'a> DependencyCollectionContext<'a> {
+         Ok(())
+     }
+ 
++    /// Not in upstream (facebook/react#37224): a scope gives back a variable on a path that did not assign it too.
++    fn visit_phi(&mut self, phi: &Phi, before_block: EvaluationOrder, env: &mut Environment) {
++        for operand in phi.operands.values() {
++            // What is not declared yet comes from a loop back edge, later in the scope.
++            if self.temporaries.contains_key(operand.identifier)
++                || self.reassignments.contains_key(operand.identifier)
++            {
++                self.visit_operand(operand, env);
++            }
++        }
++        // Codegen reads a dependency by name before the scope, where the variable does not hold this phi yet.
++        self.declare(phi.place.identifier, before_block, env);
 +    }
-+    await dev.write("dep.cjs", `module.exports = "fixed";`);
-+    await dev.fetch("/").equals("dep: fixed");
-+    await dev.write("esm-dep.ts", `export const value = "fixed";`);
-+    await dev.fetch("/esm").equals("esm-dep: fixed");
-+    await dev.write("tla-dep.ts", `await Promise.resolve(); export const value = "fixed";`);
-+    await dev.fetch("/tla").equals("tla-dep: fixed");
-+    await dev.write("sync-body.ts", `export const value = "fixed";`);
-+    await dev.fetch("/sync-body").equals("sync-body: fixed");
-+    await dev.write("sync-import-dep.ts", `export const value = "fixed";`);
-+    await dev.fetch("/sync-import").equals("sync-import: fixed");
-+  },
-+});
++
+     fn current_scope(&self) -> Option<ScopeId> {
+         self.scope_stack.last().copied()
+     }
+@@ -2318,11 +2332,15 @@ fn handle_function_deps(
+         }
+ 
+         // Record phi operands
+-        for phi in &block.phis {
+-            for (_pred_id, operand) in &phi.operands {
+-                if let Some(maybe_optional_chain) = ctx.temporaries.get(operand.identifier) {
+-                    ctx.visit_dependency(maybe_optional_chain.clone(), env);
+-                }
++        if !block.phis.is_empty() {
++            let first = match block.instructions.first() {
++                Some(instr_id) => func.instructions[instr_id.0 as usize].id,
++                None => block.terminal.evaluation_order(),
++            };
++            // A scope starts at the id of its terminal, and the phis of the block of that terminal are before it.
++            let before_block = EvaluationOrder(first.0.saturating_sub(1));
++            for phi in &block.phis {
++                ctx.visit_phi(phi, before_block, env);
+             }
+         }
+ 
+```
+
+**File**: `src/react_compiler/reactive_scopes/promote_used_temporaries.rs` (modified, +2/-8)
+```diff
+@@ -700,14 +700,8 @@ fn promote_interposed_block(
+                 promote_interposed_instruction(instr, state, inter_state, consts, globals, env);
+             }
+             ReactiveStatement::Scope(scope) => {
+-                // The memo block compares its dependencies before anything inside it runs.
+-                let dependencies = &env.scopes[scope.scope.0 as usize].dependencies;
+-                if dependencies.iter().any(|dependency| {
+-                    !dependency.path.is_empty()
+-                        || is_reassignable(dependency.identifier, consts, env)
+-                }) {
+-                    inter_state.statement(Effect::Read);
+-                }
++                // The memo block compares its dependencies first, and what writes must not print in it: it may not run.
++                inter_state.statement(Effect::Read);
+                 promote_interposed_block(
+                     &scope.instructions,
+                     state,
+```
+
+**File**: `src/react_compiler/reactive_scopes/prune_non_reactive_dependencies.rs` (modified, +2/-1)
+```diff
+@@ -216,9 +216,10 @@ impl<'a> ReactiveFunctionTransform for PruneVisitor<'a> {
+         let scope_data = &mut self.env.scopes[scope_id.0 as usize];
+ 
+         // Remove non-reactive dependencies
++        // Not in upstream: `|| dep.reactive`, for a value that only a phi reads. No place in `state` has its identifier.
+         scope_data
+             .dependencies
+-            .retain(|dep| state.contains(dep.identifier));
++            .retain(|dep| state.contains(dep.identifier) || dep.reactive);
+ 
+         // If any deps remain, mark all declarations and reassignments as reactive
+         if !scope_data.dependencies.is_empty() {
+```
+
+**File**: `test/bundler/transpiler/react-compiler.test.ts` (modified, +410/-0)
+```diff
+@@ -3349,6 +3349,416 @@ describe("bundler", () => {
+     });
+   }
+ 
++  // A memo block saves each `let` that it assigns and gives it back when its cache hits. Each component renders several
++  // times on one memo cache and has to render what the plain build renders. `*` marks a render that got the `list` of
++  // the render before it, so each line also shows that the block still hits its cache.
++  const reassignedLocalOutput = `
++    DefaultThenProp [1,[1]] [1,[1]]* [2,[2]]
++    EitherArmThenProp [3,[3]] [3,[3]]* [1,[1]]
++    NullableEntryThenProp ["anon",["anon"]] ["anon",["anon"]]* ["ann",["ann"]] ["ann",["ann"]]*
++    BothArmsThenProp ["b",["b"]] ["b",["b"]]* ["c",["c"]]
++    DependencyPath ["b",["a","b"]] ["b",["b","b"]] ["b",["b","b"]]*
++    ConditionalReassign [1,["x"]] [2,["x"]] [2,["x"]]* ["flagged",[]]
++    LoopReassign ["i",[1,2]] ["j",[1,2]] ["j",[1,2]]* [3,[3]]
++    PrunedNestedScope [true,[{"v":3,"w":1}]] [true,[{"v":3,"w":1}]] [true,[{"v":3,"w":1}]]* ["k",[{"v":1,"w":1},{"v":2,"w":1}]]
++    NestedScope ["a",[3]] ["b",[3]] ["b",[3]]* ["off",[3]] ["off",[3]]*
++    LoopInsideScopeOfSibling ["a",{}] ["b",{}] ["b",{}]* ["off",{}] ["off",{}]*
++    JoinBeforeScope ["a1",["x"]] ["a2",["x"]] ["base",["x"]] ["base",["x"]]*
++    ChainedScopes ["1two",[[0],[]]] ["2two",[[0],[]]] ["2two",[[0],[]]]* ["onetwo",[[],[]]]
++    ForOfOnly ["5,1,2",[5,1,2]] ["6,1,2",[6,1,2]] ["6,1,2",[6,1,2]]* ["none",null]
++    ForWithContinue ["5,1,2",[5,1,2]] ["6,1,2",[6,1,2]] ["6,1,2",[6,1,2]]*
++    useFormErrors [false,[[],[]]] [true,[["That name is already taken"],[]]] [true,[["That name is already taken"],[]]]* [true,[[],["Pick an X variable"]]] [true,[["That name is already taken"],["Pick an X variable"]]]
++    useBareParam [1,["b"]] [2,["b"]] [2,["b"]]* ["X",[]]
++    UpdateInFrontOfInnerBlock ["c1:2",[{"b":1},{"b":1}]] ["c2:2",[{"b":1},{"b":1}]] ["c2:2",[{"b":1},{"b":1}]]*
++    UpdateInFrontOfInnerBlockNoJoin [1,["c1",{"b":1}]] [1,["c2",{"b":1}]] [1,["c2",{"b":1}]]*
++    ReadThenReassign [2,["x"]] [3,["x"]] [3,["x"]]*
++    CounterInLoop [1,[3]] [1,[3]]* [0,[1,2]]
++    AssignedBeforeLoop ["i:b",[1,2]] ["j:b",[1,2]]* ["j:3",[3]]
++  `;
++  for (const reactCompiler of [false, true]) {
++    itBundled(`react-compiler/ReassignedLocalDeclaredBeforeMemoBlock-${reactCompiler ? "compiled" : "plain"}`, {
++      files: {
++        "/entry.jsx": /* jsx */ `
++          import { render } from "react";
++
++          // The first four read a property after the join. Before the block the variable has the value that it came
++          // in with, which can be null, so nothing may read that property there.
++          const defaults = new Set([1]);
++          function DefaultThenProp(p) {
++            let v = p.v;
++            const list = [];
++            if (v == null) v = defaults;
++            list.push(v.size);
++            return <div label={v.size} list={list} />;
++          }
++
++          function EitherArmThenProp({ items, filter }) {
++            let shown;
++            const list = [];
++            if (filter) {
++              shown = items.filter(filter);
++            } else {
++              shown = items;
++            }
++            list.push(shown.length);
++            return <div label={shown.length} list={list} />;
++          }
++
++          function NullableEntryThenProp({ user, fallbackUser }) {
++            let u = user;
++            const list = [];
++            if (!u) u = fallbackUser;
++            list.push(u.profile.name);
++            return <div label={u.profile.name} list={list} />;
++          }
++
++          function BothArmsThenProp(p) {
++            let object = p.a;
++            const list = [];
++            if (p.kind) object = p.b;
++            else object = p.c;
++            list.push(object.v.w);
++            return <div label={object.v.w} list={list} />;
++          }
++
++          // The first read is of the value that object came in with, so it stays an input of the block.
++          function DependencyPath(p) {
++            let object = p.o;
++            const list = [];
++            list.push(object.x);
++            if (p.flag) object = p.o2;
++            list.push(object.x);
++            return <div label={object.x} list={list} />;
++          }
++
++          // In the next eleven a path through the block leaves the variable as it came in, so that value is an input
++          // of the block.
++          function ConditionalReassign(p) {
++            let label = p.count;
++            const list = [];
++            if (p.flag) {
++              label = "flagged";
++            } else {
++              list.push(p.b);
++            }
++            return <div label={label} list={list} />;
++          }
++
++          function LoopReassign(p) {
++            let found = p.initial;
++            const list = [];
++            for (const item of p.items) {
++              if (item.ok) found = item.v;
++              list.push(item.v);
++            }
++            return <div label={found} list={list} />;
++          }
++
++          /
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #46159** (2026-10-20): crypto: update root certificates (@Jarred-Sumner)
-- **PR #46136** (closed): bun install: peers with ranges that no version satisfies share the same version whatever the packages are called (@dylan-conway)
-- **PR #46135** (2026-10-20): test: fix bake.test.ts cleanup and the --check URL on Windows (@alii)
-- **PR #46125** (closed): Honour inspect.custom in expect diff output (@robobun)
-- **PR #46017** (2026-10-20): bun bake: require() of a built-in, and a route whose import threw (@alii)
-- **PR #45996** (2026-10-20): bun bake: the framework names the server-only exports of its pages (@alii)
+- **PR #46480** (2026-10-22): install: fall back to copyfile only when the hard link itself fails (@robobun)
+- **PR #46468** (2026-10-22): bunx: run the platform binary of a native dependency, not its stub (@Jarred-Sumner)
+- **PR #46462** (2026-10-22): ci: fix the Windows sign step on the Build Tools image (@dylan-conway)
+- **PR #46461** (2026-10-22): compile: revert the startup check of every module graph offset (@dylan-conway)
+- **PR #46456** (2026-10-22): node:http, node:http2: refuse the malformed requests that Node refuses (@Jarred-Sumner)
+- **PR #46455** (2026-10-22): Fix 7 regressions since 1.4.3 in bun install, bunx, bun patch, bun pm pack and bun: imports (@Jarred-Sumner)
 
 ---
 
@@ -1650,35 +1974,28 @@ When a dependency of an ES module threw while it lo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: fix 20 flaky tests (#45873)
+## X. regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update
 
 **RULE**:
-When implementing operations in `test/cli/install/bun-install-streaming-extract.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/pm/overrides.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6673b8eb`: test: fix 20 flaky tests (#45873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a5cbbcb`: regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update brotli (#46392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/cli/install/bun-install-streaming-extract.test.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pm/overrides.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  // More than one read of the client holds (LIBUS_RECV_BUFFER_LENGTH): a body that is all there at the first read is
-  // not streamed.
-  const bulk = incompressible(1024 * 1024, 1);
-      // What another thread writes to the verbose log can come anywhere in this line.
-      error: stderr.replace(/\[stream-pkg\] Extract .*\n(libarchive error: .*\n)?/g, "").match(/^error: .*$/m)?.[0],
+`bun install` also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again. `bun install --frozen-lockfile` installs the version in the lockfile. The check leaves these entries as they are:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  // So the body spans many reads and streaming commits.
-  const bulk = incompressible(256 * 1024, 1);
-      // A line of the verbose log, from another thread, can come before the end of this one.
-      error: stderr.match(/^error: .*$/m)?.[0].replace(/\[stream-pkg\] Extract .*$/, ""),
+Every install also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again, and `bun install --frozen-lockfile` fails and names it. The check leaves these entries as they are:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6673b8eb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a5cbbcb` are properly handled with clean fallback behavior.

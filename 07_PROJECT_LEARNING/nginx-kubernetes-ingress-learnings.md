@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `3d58f2c3`  
+> **Source Version**: `073065dc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:13:13.750Z  
+> **Timestamp**: 2026-10-22T16:15:40.213Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:13:13.743Z  
+> **Harvest Timestamp**: 2026-10-22T16:15:40.205Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5087 stars
+- **Stars / Engagement**: 5088 stars
 
 ---
 
@@ -805,9 +805,11 @@ import (
 	configurationv1 "github.com/nginx/kubernetes-ingress/pkg/apis/configuration/v1"
 	v1beta1 "github.com/nginx/kubernetes-ingress/pkg/apis/dos/v1beta1"
 	v1 "github.com/nginx/kubernetes-ingress/pkg/apis/externaldns/v1"
+	v1alpha1 "github.com/nginx/kubernetes-ingress/pkg/apis/externaldnsk8s/v1alpha1"
 	applyconfigurationconfigurationv1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/configuration/v1"
 	dosv1beta1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/dos/v1beta1"
 	externaldnsv1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/externaldns/v1"
+	externaldnsk8sv1alpha1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/externaldnsk8s/v1alpha1"
 	internal "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/internal"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -829,6 +831,18 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &dosv1beta1.DosProtectedResourceSpecApplyConfiguration{}
 	case v1beta1.SchemeGroupVersion.WithKind("DosSecurityLog"):
 		return &dosv1beta1.DosSecurityLogApplyConfiguration{}
+
+		// Group=externaldns.k8s.io, Version=v1alpha1
+	case v1alpha1.SchemeGroupVersion.WithKind("DNSEndpoint"):
+		return &externaldnsk8sv1alpha1.DNSEndpointApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("DNSEndpointSpec"):
+		return &externaldnsk8sv1alpha1.DNSEndpointSpecApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("DNSEndpointStatus"):
+		return &externaldnsk8sv1alpha1.DNSEndpointStatusApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("Endpoint"):
+		return &externaldnsk8sv1alpha1.EndpointApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("ProviderSpecificProperty"):
+		return &externaldnsk8sv1alpha1.ProviderSpecificPropertyApplyConfiguration{}
 
 		// Group=externaldns.nginx.org, Version=v1
 	case v1.SchemeGroupVersion.WithKind("DNSEndpoint"):
@@ -936,20 +950,7 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 	case configurationv1.SchemeGroupVersion.WithKind("SecurityLog"):
 		return &applyconfigurationconfigurationv1.SecurityLogApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("SessionCookie"):
-		return &applyconfigurationconfigurationv1.SessionCookieApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("SessionParameters"):
-		return &applyconfigurationconfigurationv1.SessionParametersApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Split"):
-		return &applyconfigurationconfigurationv1.SplitApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("SuppliedIn"):
-		return &applyconfigurationconfigurationv1.SuppliedInApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("TLS"):
-		return &applyconfigurationconfigurationv1.TLSApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("TLSRedirect"):
-		return &applyconfigurationconfigurationv1.TLSRedirectApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("TransportServer"):
-		return &applyconfigurationconfigurationv1.TransportServerApplyConfiguration{}
-	case configurationv1.SchemeGroupVer
+		return &applyconfigurationconfigurationv1.Sessio
 ```
 
 ### Core Architecture Module: `cmd/nginx-ingress/aws.go`
@@ -1109,6 +1110,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/validation"
 
+	"github.com/nginx/kubernetes-ingress/internal/externaldns"
 	nl "github.com/nginx/kubernetes-ingress/internal/logger"
 )
 
@@ -1250,7 +1252,7 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 	leaderElectionLockName = flag.String("leader-election-lock-name", "nginx-ingress-leader-election",
 		`Specifies the name of the ConfigMap, within the same namespace as the controller, used as the lock for leader election. Requires -enable-leader-election.`)
 
-	nginxStatusAllowCIDRs = flag.String("nginx-status-allow-cidrs", "127.0.0.1,::1", `Add IP/CIDR blocks to the allow list for NGINX stub_status or the NGINX Plus API. Separa
+	nginxStatusAllowCIDRs = flag.String("nginx-status-allow-cidrs", "127.0.0.1,::1", `Add IP/CIDR blocks to the al
 ```
 
 
@@ -1285,121 +1287,233 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d58f2c3` (2026-10-20)
-**Commit Message**: Allow tests to use a custom LoadBalancer IP (#10987)
+### Incident Patch 1: `073065dc` (2026-10-22)
+**Commit Message**: Update AWS SDK v2 (main) (#11198)
 
-* add lb-ip argument for pytestn
+Update AWS SDK v2
 
-* Make --lb-ip description generic
+| datasource | package                                                  | from     | to       |
+| ---------- | -------------------------------------------------------- | -------- | -------- |
+| go         | github.com/aws/aws-sdk-go-v2/service/marketplacemetering | v1.46.2  | v1.46.3  |
+| go         | github.com/aws/aws-sdk-go-v2/service/s3                  | v1.114.3 | v1.114.4 |
 
-* Add --lb-ip to run-tests Makefile target
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-* Allow environment variables to be used to override LB_IP
-
-Co-authored-by: Paul Abel <[REDACTED_EMAIL]>
-Signed-off-by: Haywood Shannon <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Haywood Shannon <[REDACTED_EMAIL]>
-Co-authored-by: Paul Abel <[REDACTED_EMAIL]>
-
-**File**: `tests/Makefile` (modified, +3/-0)
+**File**: `go.mod` (modified, +3/-3)
 ```diff
-@@ -5,6 +5,7 @@ PULL_POLICY                 ?= IfNotPresent
- DEPLOYMENT_TYPE             = deployment
- SERVICE                     ?= nodeport
- NODE_IP                     =
-+LB_IP                       ?=
- TEST_PREFIX                 = test-runner
- KUBE_CONFIG_FOLDER          = ${HOME}/.kube
- KIND_KUBE_CONFIG_FOLDER     = $(KUBE_CONFIG_FOLDER)/kind
-@@ -98,6 +99,7 @@ run-local-tests: secrets ## Run tests
- 		--ic-type=$(IC_TYPE) \
- 		--service=$(SERVICE) \
- 		--node-ip=$(NODE_IP) \
-+		--lb-ip=$(LB_IP) \
- 		--show-ic-logs=$(SHOW_IC_LOGS) \
- 		--plus-jwt=$(PLUS_JWT) \
- 		-sv \
-@@ -115,6 +117,7 @@ run-tests: secrets ## Run tests
- 		--ic-type=$(IC_TYPE) \
- 		--service=$(SERVICE) \
- 		--node-ip=$(NODE_IP) \
-+		--lb-ip=$(LB_IP) \
- 		--show-ic-logs=$(SHOW_IC_LOGS) \
- 		--plus-jwt=$(PLUS_JWT) \
- 		$(PYTEST_ARGS)
+@@ -6,8 +6,8 @@ require (
+ 	github.com/aws/aws-sdk-go-v2 v1.47.3
+ 	github.com/aws/aws-sdk-go-v2/config v1.33.9
+ 	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
+-	github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.2
+-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
++	github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.3
++	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4
+ 	github.com/cert-manager/cert-manager v1.21.2
+ 	github.com/dlclark/regexp2/v2 v2.9.1
+ 	github.com/gkampitakis/go-snaps v0.5.23
+@@ -37,7 +37,7 @@ require (
+ 	cel.dev/expr v0.25.2 // indirect
+ 	github.com/Azure/go-ntlmssp v0.1.1 // indirect
+ 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
+-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 // indirect
+ 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
 ```
 
-**File**: `tests/README.md` (modified, +2/-1)
+**File**: `go.sum` (modified, +6/-6)
 ```diff
-@@ -131,7 +131,8 @@ The table below shows various configuration options for the tests. If you use Py
- | `--deployment-type` | `DEPLOYMENT_TYPE` | The type of the IC deployment: deployment, daemon-set or stateful-set. | `deployment` |
- | `--ic-type` | `IC_TYPE` | The type of the Ingress Controller: nginx-ingress or nginx-plus-ingress. | `nginx-ingress` |
- | `--service` | `SERVICE`, not supported by `run-tests-in-kind` target. | The type of the Ingress Controller service: nodeport or loadbalancer. | `nodeport` |
--| `--node-ip` | `NODE_IP`, not supported by `run-tests-in-kind` target. | The public IP of a cluster node. Not required if you use the loadbalancer service (see --service argument). | `""` |
-+| `--node-ip` | `NODE_IP`, not supported by `run-tests-in-kind` target. | The public IP of a cluster node. Required when using nodeport service. | `""` |
-+| `--lb-ip` | `LB_IP` | The public IP of the LoadBalancer. If not provided, waits for external IP from cluster. | `""` |
- | `--kubeconfig` | `N/A` | An absolute path to a kubeconfig file. | `~/.kube/config` or the value of the `KUBECONFIG` env variable |
- | `N/A` | `KUBE_CONFIG_FOLDER`, not supported by `run-tests-in-kind` target. | A path to a folder with a kubeconfig file. | `~/.kube/` |
- | `--show-ic-logs` | `SHOW_IC_LOGS` | A flag to control accumulating IC logs in stdout. | `no` |
+@@ -10,8 +10,8 @@ github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYW
+ github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
+ github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
+ github.com/aws/aws-sdk-go-v2 v1.47.3/go.mod h1:xSl+OSI5ZUw6bSMupWc218zE5Pl+65MCCu3ySWFY99A=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 h1:oiEmPz/YMMeh/JvAE8xSxNCIsvWE6lpFe4ZPlyFykQI=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 h1:/fGPpKrXTjzkhsDXExBgNT2cGwxiF9rLrQXh8RlXMhI=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
+ github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
+ github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
+ github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
+@@ -32,10 +32,10 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 h1:LHHdobjo5
+ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6/go.mod h1:CBGB0evAiaMD3Lk4wPO7LQCcCZLuhzL5Qf/wfEUHQ5w=
+ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 h1:mYViDr2azcgxOpRrObZOl631bvavqILoE/L+Kxgbwys=
+ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6/go.mod h1:OXVdAo9jNhggB+hJRGOyy7WolGTKB6Rg7IIulDeSzPM=
+-github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.2 h1:bYcDlzrqYLzUONG2ZGHOS6zTXS/thQw5O93XkenmDco=
+-github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.2/go.mod h1:Fmb0SDxdIK+wBPIFlE5xs2YTHbiO+wHuel7quzzdQzk=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3 h1:NyeuyXkZL476uoAowNActm4XJO1QPKf7aassgXHpiqA=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3/go.mod h1:GfoBeKMDJecgRUsGf/0RGdx0NJAh81ObTd922h8pQys=
++github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.3 h1:m/kDAZp6j3xmi0Di+V0Eg1l5sIModtBrnPpHA0pLTZ0=
++github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.3/go.mod h1:Fmb0SDxdIK+wBPIFlE5xs2YTHbiO+wHuel7quzzdQzk=
++github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4 h1:MrkWRB58Qw5TEkb51QVooVLjlM3IevO2iVXEz74B8pg=
++github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4/go.mod h1:yfIxaKRHasvfy6tNEm3/LpqKsupMzQjMaWj9Y0jMVbo=
+ github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 h1:tvpDjuUvgKURf3Yk4hOaGbZ4QdY+070OWcA5d6LUv2A=
+ github.com/aws/aws-sdk-go-v2/service/signin v1.10.4/go.mod h1:3ibVKg5Ng82Zby8++jELTD2nHxiPk2DJRLEeW/LKp8M=
+ github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 h1:ChCtagixSFOxltv0o6E3NT8F7ksvZtZGPwUBynO5Nmk=
 ```
 
-**File**: `tests/conftest.py` (modified, +5/-0)
-```diff
-@@ -83,6 +83,11 @@ def pytest_addoption(parser) -> None:
-         action="store",
-         help="The public IP of a cluster node. Not required if you use the loadbalancer service (see --service argument).",
-     )
-+    parser.addoption(
-+        "--lb-ip",
-+        action="store",
-+        help="The public IP of the LoadBalancer. If not provided, waits for external IP from cluster.",
-+    )
-     parser.addoption(
-         "--kubeconfig",
-         action="store",
-```
+---
 
-**File**: `tests/suite/fixtures/fixtures.py` (modified, +11/-2)
+### Incident Patch 2: `22464ec8` (2026-10-22)
+**Commit Message**: Selectable ExternalDNS CRD APIVersion (#11121)
+
+* Support external-dns v0.21.0 upstream DNSEndpoint CRD
+
+external-dns v0.21.0 migrated the CRD source to a controller-runtime
+cache and its docs, tutorials, and community chart standardise on the
+upstream externaldns.k8s.io/v1alpha1 DNSEndpoint API. NIC's ExternalDNS
+integration writes externaldns.nginx.org/v1, so DNSEndpoints are no
+longer picked up in a fresh v0.21.0 install.
+
+Add an explicit toggle so operators can pick which API group NIC writes:
+
+- New CLI flag: -external-dns-group-version
+  (accepts externaldns.nginx.org/v1 or externaldns.k8s.io/v1alpha1;
+  defaults to the existing nginx.org group for backwards compatibility)
+- New Helm value: controller.externalDNSGroupVersion, wired through
+  args, RBAC (apiGroups derived via trimSuffix), values.schema.json,
+  and helmunit snapshot coverage for both toggle values
+
+Add a new pkg/apis/externaldnsk8s/v1alpha1 API package (marked with
++groupGoName=ExternaldnsK8s to avoid clashing with the existing
+Externaldns factory method) plus generated clientset/informer/lister
+code. Ship the upstream CRD under config/crd/upstream/ so the Helm
+chart symlink does not pick it up automatically.
+
+
+
+**File**: `.github/copilot-instructions.md` (modified, +1/-1)
 ```diff
-@@ -230,8 +230,12 @@ def ingress_controller_endpoint(cli_arguments, kube_apis, ingress_controller_pre
-             namespace,
-             f"{TEST_DATA}/common/service/loadbalancer-with-additional-ports.yaml",
-         )
--        public_ip = wait_for_public_ip(kube_apis.v1, namespace)
--        print(f"The Public IP: {public_ip}")
-+        if cli_arguments.get("lb-ip"):
-+            public_ip = cli_arguments["lb-ip"]
-+            print(f"Using provided lb-ip: {public_ip}")
-+        else:
-+            public_ip = wait_for_public_ip(kube_apis.v1, namespace)
-+            print(f"The Public IP: {public_ip}")
-         return PublicEndpoint(public_ip)
+@@ -45,7 +45,7 @@ Always use `make test` over raw `go test`. Run `make test-update-snaps` when tem
+ After changing `types.go`, always run `make update-codegen` then `make update-crds`.
  
+ CI (`verify-codegen` in `ci.yml`) re-runs the generators and diffs a fixed set of paths, so commit the regenerated output:
+-`go mod tidy` -> `go.mod`/`go.sum`, `make update-crds` -> `config/crd/bases`, `make update-codegen` -> `pkg/**`, `make telemetry-schema` -> `internal/telemetry`.
++`go mod tidy` -> `go.mod`/`go.sum`, `make update-crds` -> `config/crd/bases` + `config/crd/upstream`, `make update-codegen` -> `pkg/**`, `make telemetry-schema` -> `internal/telemetry`.
+ The check is path-scoped: `deploy/crds*.yaml` and `docs/crd/` are regenerated by `make update-crds` but are never diffed, so verify them by hand.
  
-@@ -366,6 +370,11 @@ def cli_arguments(request) -> {}:
-         assert node_ip is not None and node_ip != "", f"Service 'nodeport' requires a node-ip"
-         result["node-ip"] = node_ip
-         print(f"Tests will use the node-ip: {result['node-ip']}")
-+    if result["service"] == "loadbalancer":
-+        lb_ip = request.config.getoption("--lb-ip", None)
-+        if lb_ip is not None and lb_ip != "":
-+            result["lb-ip"] = lb_ip
-+            print(f"Tests will use the lb-ip: {result['lb-ip']}")
-     result["skip-fixture-teardown"] = request.config.getoption("--skip-fixture-teardown")
-     assert result["skip-fixture-teardown"] == "yes" or result["skip-fixture-teardown"] == "no"
-     print(
+ ---
+```
+
+**File**: `.github/skills/nic-ci-pipelines/SKILL.md` (modified, +1/-1)
+```diff
+@@ -222,7 +222,7 @@ The `verify-codegen` job in `ci.yml` regenerates and then diffs a **specific pat
+ | Command | Path diffed |
+ | --- | --- |
+ | `go mod tidy` | `go.mod`, `go.sum` |
+-| `make update-crds` | `config/crd/bases` |
++| `make update-crds` | `config/crd/bases`, `config/crd/upstream` |
+ | `make update-codegen` | `pkg/**` |
+ | `make telemetry-schema` | `internal/telemetry` |
+ 
+```
+
+**File**: `.github/skills/nic-structure/SKILL.md` (modified, +2/-1)
+```diff
+@@ -88,6 +88,7 @@ Every entry below is produced by a command. Regenerate and commit the output aft
+ | --- | --- | --- | --- |
+ | `pkg/apis/**/zz_generated.deepcopy.go`, `pkg/client/**` | `pkg/apis/**/types.go` | `make update-codegen` | yes (`pkg/**`) |
+ | `config/crd/bases/*.yaml` | kubebuilder markers in `pkg/apis/**` | `make update-crds` | yes |
++| `config/crd/upstream/*.yaml` | kubebuilder markers in `pkg/apis/externaldnsk8s/**` | `make update-crds` | yes |
+ | `deploy/crds.yaml`, `deploy/crds-nap-*.yaml` | `config/crd/**` via kustomize | `make update-crds` | **no** |
+ | `docs/crd/*.md` | `config/crd/bases` via `hack/generate-crd-docs.go` | `make update-crds` (runs `update-crd-docs`) | **no** |
+ | `charts/nginx-ingress/crds` | **symlink** to `config/crd/bases/` | nothing — never edit | n/a |
+@@ -98,7 +99,7 @@ Every entry below is produced by a command. Regenerate and commit the output aft
+ 
+ Two traps:
+ 
+-- `verify-codegen` diffs only `config/crd/bases` after `make update-crds`. Uncommitted `deploy/crds*.yaml` or `docs/crd/` changes pass CI silently.
++- `verify-codegen` diffs only `config/crd/bases` and `config/crd/upstream` after `make update-crds`. Uncommitted `deploy/crds*.yaml` or `docs/crd/` changes pass CI silently.
+ - Snapshot files only re-record the *existing* fixtures. A template change with no matching fixture produces an empty diff and zero coverage — see `nic-testing` for the required sequence.
+ 
+ ---
+```
+
+**File**: `.github/skills/nic-testing/SKILL.md` (modified, +1/-1)
+```diff
+@@ -228,7 +228,7 @@ The `verify-codegen` job in `ci.yml` re-runs each generator and diffs a **specif
+ | You changed | Run | Path CI diffs |
+ | --- | --- | --- |
+ | `pkg/apis/**/types.go` | `make update-codegen` | `pkg/**` |
+-| `pkg/apis/**` kubebuilder markers | `make update-crds` | `config/crd/bases` only |
++| `pkg/apis/**` kubebuilder markers | `make update-crds` | `config/crd/bases` and `config/crd/upstream` only |
+ | Telemetry `Data` / `NICResourceCounts` in `internal/telemetry/exporter.go` | `make telemetry-schema` | `internal/telemetry` |
+ | Any import / dependency | `go mod tidy` | `go.mod`, `go.sum` |
+ | Any `.tmpl` or template struct | `make test-update-snaps` | not checked by `verify-codegen` -- fails in `unit-tests` instead |
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+```diff
+@@ -218,7 +218,7 @@ jobs:
+         run: go mod tidy && git diff --exit-code -- go.mod go.sum
+ 
+       - name: Check if CRDs changed
+-        run: make update-crds && git diff --name-only --exit-code config/crd/bases
++        run: make update-crds && git diff --name-only --exit-code config/crd/bases config/crd/upstream
+ 
+       - name: Check if Codegen changed
+         run: |
+```
+
+**File**: `Makefile` (modified, +2/-1)
+```diff
+@@ -150,7 +150,8 @@ update-codegen: ## Generate code
+ 
+ .PHONY: update-crds
+ update-crds: ## Update CRDs
+-	go run sigs.k8s.io/controller-tools/cmd/controller-gen crd paths=./pkg/apis/... output:crd:artifacts:config=config/crd/bases
++	go run sigs.k8s.io/controller-tools/cmd/controller-gen crd paths=./pkg/apis/configuration/... paths=./pkg/apis/dos/... paths=./pkg/apis/externaldns/... output:crd:artifacts:config=config/crd/bases
++	go run sigs.k8s.io/controller-tools/cmd/controller-gen crd paths=./pkg/apis/externaldnsk8s/... output:crd:artifacts:config=config/crd/upstream
+ 	@kustomize version || (code=$$?; printf "\033[0;31mError\033[0m: there was a problem with kustomize, use 'brew install kustomize' to install it\n"; exit $$code)
+ 	kustomize build config/crd >deploy/crds.yaml
+ 	kustomize build config/crd/app-protect-dos --load-restrictor='LoadRestrictionsNone' >deploy/crds-nap-dos.yaml
+```
+
+**File**: `charts/nginx-ingress/templates/_helpers.tpl` (modified, +3/-0)
+```diff
+@@ -424,6 +424,9 @@ Build the args for the service binary.
+ - -enable-cert-manager={{ .Values.controller.enableCertManager }}
+ - -enable-oidc={{ .Values.controller.enableOIDC }}
+ - -enable-external-dns={{ .Values.controller.enableExternalDNS }}
++{{- if .Values.controller.enableExternalDNS }}
++- -external-dns-group-version={{ .Values.controller.externalDNSGroupVersion }}
++{{- end }}
+ {{- if and .Values.controller.globalConfiguration.create (not .Values.controller.globalConfiguration.customName) }}
+ - -global-configuration=$(POD_NAMESPACE)/{{ include "nginx-ingress.controller.fullname" . }}
+ {{- else if .Values.controller.globalConfiguration.customName }}
+```
+
+**File**: `charts/nginx-ingress/templates/clusterrole.yaml` (modified, +2/-2)
+```diff
+@@ -161,7 +161,7 @@ rules:
+ {{- end }}
+ {{- if .Values.controller.enableExternalDNS }}
+ - apiGroups:
+-    - externaldns.nginx.org
++    - {{ index (splitList "/" .Values.controller.externalDNSGroupVersion) 0 }}
+   resources:
+     - dnsendpoints
+   verbs:
+@@ -172,7 +172,7 @@ rules:
+     - create
+     - delete
+ - apiGroups:
+-  - externaldns.nginx.org
++  - {{ index (splitList "/" .Values.controller.externalDNSGroupVersion) 0 }}
+   resources:
+   - dnsendpoints/status
+   verbs:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11186** (closed): Update module sigs.k8s.io/structured-merge-diff/v6 to v7 (main) (@renovate[bot])
-- **PR #11185** (2026-10-19): Update python:3.15-trixie Docker digest to a07fc5d (main) (@renovate[bot])
-- **PR #11183** (2026-10-19): Update module github.com/dlclark/regexp2/v2 to v2.9.1 (release-2026-lts) (@renovate[bot])
-- **PR #11182** (2026-10-19): Update dependency golangci/golangci-lint to v2.15.0 (release-2026-lts) (@renovate[bot])
-- **PR #11181** (2026-10-19): Update dependency wrapt to v2.5.1 (release-2026-lts) (@renovate[bot])
-- **PR #11180** (2026-10-19): Update module github.com/dlclark/regexp2/v2 to v2.9.1 (release-5.7) (@renovate[bot])
+- **PR #11214** (2026-10-22): Update dependency certifi to v2026.10.18 (release-2026-lts) (@renovate[bot])
+- **PR #11213** (2026-10-22): Update reviewdog/action-actionlint action to v1.80.4 (release-2026-lts) (@renovate[bot])
+- **PR #11212** (2026-10-22): Update Go toolchain to v1.27.3 (release-2026-lts) (@renovate[bot])
+- **PR #11210** (2026-10-22): Update dependency certifi to v2026.10.18 (release-5.7) (@renovate[bot])
+- **PR #11209** (2026-10-22): Update reviewdog/action-actionlint action to v1.80.4 (release-5.7) (@renovate[bot])
+- **PR #11208** (2026-10-22): Update Go toolchain to v1.27.3 (release-5.7) (@renovate[bot])
 
 ---
 
@@ -1419,30 +1533,32 @@ Co-authored-by: Paul Abel <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow tests to use a custom LoadBalancer IP (#10987)
+## X. Update AWS SDK v2 (main) (#11198)
 
 **RULE**:
-When implementing operations in `tests/Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d58f2c3`: Allow tests to use a custom LoadBalancer IP (#10987). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `073065dc`: Update AWS SDK v2 (main) (#11198). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-LB_IP                       ?=
-		--lb-ip=$(LB_IP) \
-		--lb-ip=$(LB_IP) \
+	github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.3
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/aws/aws-sdk-go-v2/service/marketplacemetering v1.46.2
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d58f2c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `073065dc` are properly handled with clean fallback behavior.

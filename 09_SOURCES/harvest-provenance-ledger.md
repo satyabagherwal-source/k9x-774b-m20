@@ -4322,3 +4322,6 @@ Every entry in this ledger must capture:
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `79b80d06` | Multi-dimensional audit evidence | 2026-10-22T16:10:02.409Z |
 | `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `ce75c0a1` | Multi-dimensional audit evidence | 2026-10-22T16:10:03.903Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5ffe1485` | Multi-dimensional audit evidence | 2026-10-22T16:10:10.060Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `38afee6c` | Multi-dimensional audit evidence | 2026-10-22T16:15:34.337Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `073065dc` | Multi-dimensional audit evidence | 2026-10-22T16:15:40.730Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0ca03385` | Multi-dimensional audit evidence | 2026-10-22T16:15:44.652Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T16:10:10.005Z",
+  "last_updated": "2026-10-22T16:15:44.588Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11094,8 +11094,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "689cbd4f",
-      "content_hash": "443b138495ee584c436410291b0b7d92313473a1c440ea0bc99cc5c9fe1dd791",
+      "source_version": "0ca03385",
+      "content_hash": "41b8cf7ee5fb689c35dbed0728051289cd4f651a523bc006a076b44ff31e34d7",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -11158,6 +11158,11 @@
           "number": 3559,
           "title": "transport): fail truncated piped streams and size fragment #1 metadata exactly (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3631,
+          "title": "transport): stop malformed peer packets from panicking the receive path (#5963)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11165,7 +11170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:25:54.629Z",
+      "verified_at": "2026-10-22T16:15:44.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35185,8 +35190,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "3d58f2c3",
-      "content_hash": "1c93e115e58942f812052142b90feefe5e0133c13a62c436de1ee35648f61b66",
+      "source_version": "073065dc",
+      "content_hash": "f5e6c8c955adeb6ad0009795753fbf275763df108b3892a9e22a13dde0a755df",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -35199,6 +35204,11 @@
           "number": 3406,
           "title": "Allow tests to use a custom LoadBalancer IP (#10987)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3630,
+          "title": "Update AWS SDK v2 (main) (#11198)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35206,7 +35216,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:13:13.996Z",
+      "verified_at": "2026-10-22T16:15:40.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37326,8 +37336,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "ea6a2c7b",
-      "content_hash": "b5a96ce2c09e7af0f23e8de1b5c18309b5fd78911fdc2ce97b6cef9501c4ec09",
+      "source_version": "38afee6c",
+      "content_hash": "f717ce9c34e1ffb8be1ce9ef44365e10147b4bf3fcb7390ac0400b4edc63c3e6",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -37345,6 +37355,11 @@
           "number": 3338,
           "title": "test: fix 20 flaky tests (#45873)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3629,
+          "title": "regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37352,7 +37367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:17:08.085Z",
+      "verified_at": "2026-10-22T16:15:34.247Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109857,6 +109872,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T16:10:09.993Z"
+    },
+    "rule-3629": {
+      "learning_id": "rule-3629",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3629,
+      "title": "regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "38afee6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:15:34.247Z"
+    },
+    "rule-3630": {
+      "learning_id": "rule-3630",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3630,
+      "title": "Update AWS SDK v2 (main) (#11198)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "073065dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:15:40.641Z"
+    },
+    "rule-3631": {
+      "learning_id": "rule-3631",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3631,
+      "title": "transport): stop malformed peer packets from panicking the receive path (#5963)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "0ca03385",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:15:44.565Z"
     }
   },
   "aliases": {

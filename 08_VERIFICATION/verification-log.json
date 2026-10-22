@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-LQQ9",
-    "timestamp": "2026-10-20T13:18:46.161Z",
-    "repository": "mui/base-ui",
-    "learningId": "learn-github-mui-base-ui",
-    "contentHash": "c3eaf0b39fd56c745a446e64df5c62e41e3fc55949191867d81cf1b990fb308e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-MWQJ",
-    "timestamp": "2026-10-20T13:19:40.603Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "bb848b47ac781a1ea4c4ae1d1681c037c5ee304c9073db949d9e1c7aa51bb083",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-OWUB",
-    "timestamp": "2026-10-20T13:21:14.051Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "1c3a5f3981e605fd53d91b978de2bbe4283d06496279cade509c81eb0c226de1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-X0QK",
     "timestamp": "2026-10-20T13:27:32.348Z",
     "repository": "keybase/client",
@@ -7490,6 +7445,51 @@
     "repository": "StarRocks/starrocks",
     "learningId": "learn-github-starrocks-starrocks",
     "contentHash": "fca4718fa02069d0dd067b946e9c1a19a5754dffd23f998d054dfd00bea1cacf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-STDQ",
+    "timestamp": "2026-10-22T16:15:34.334Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "f717ce9c34e1ffb8be1ce9ef44365e10147b4bf3fcb7390ac0400b4edc63c3e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-SYB1",
+    "timestamp": "2026-10-22T16:15:40.717Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "f5e6c8c955adeb6ad0009795753fbf275763df108b3892a9e22a13dde0a755df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-T1C9",
+    "timestamp": "2026-10-22T16:15:44.649Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "41b8cf7ee5fb689c35dbed0728051289cd4f651a523bc006a076b44ff31e34d7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

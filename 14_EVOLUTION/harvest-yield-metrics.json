@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T16:10:10.069Z",
-  "total_cycles_completed": 4292,
-  "total_learnings_persisted": 4292,
-  "total_rules_promoted": 3474,
+  "last_updated": "2026-10-22T16:15:44.657Z",
+  "total_cycles_completed": 4295,
+  "total_learnings_persisted": 4295,
+  "total_rules_promoted": 3477,
   "history": [
-    {
-      "timestamp": "2026-10-21T00:36:21.426Z",
-      "repository": "twostraws/ControlRoom",
-      "learningId": "learn-github-twostraws-controlroom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T00:36:26.632Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T00:42:28.628Z",
-      "repository": "jacklandrin/OnlySwitch",
-      "learningId": "learn-github-jacklandrin-onlyswitch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T00:42:32.706Z",
       "repository": "bigscience/bloom",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T16:10:10.069Z",
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:15:34.347Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:15:40.735Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:15:44.657Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

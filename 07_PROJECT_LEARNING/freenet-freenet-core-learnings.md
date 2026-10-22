@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `689cbd4f`  
+> **Source Version**: `0ca03385`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:25:54.404Z  
+> **Timestamp**: 2026-10-22T16:15:44.128Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:25:53.870Z  
+> **Harvest Timestamp**: 2026-10-22T16:15:44.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3110 stars
+- **Stars / Engagement**: 3109 stars
 
 ---
 
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5960** (2026-10-21): **fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test)**
-  *Symptoms*: ## Problem  `topology::tests::test_topology` failed once in CI with `Location(0.45) == Location(0.35)` and passed on 5 re-runs. The test draws 5,000 request locations from the unseeded `GlobalRng` (each thread falls back to OS entropy).  Why it can fail: requests are centred on 0.39. Each sample is attributed to its nearest neighbor (0.3, 0.4 or 0.5), giving counts c3, c4, c5. The candidate midpoints score c3 + c4 (0.35) and c4 + c5 (0.45), so 0.35 wins only when c3 > c5. That is true in expectation but not for every draw. (The old comment said the requests were "clustered around 0.35", which is not what the scenario does.)  A sibling in the same module, `small_world_rand::tests::chi_squared_test`, asserts `p_value > 0.001` on an unseeded draw. That fails about 1 in 1000 runs by construction.  ## Approach  - `test_topology` now runs under `GlobalRng::seed_guard(TOPOLOGY_TEST_SEED)`. The scenario moved into `run_topology_scenario()` unchanged, and the assertions and tolerances are unchanged. - New regression test `test_topology_scenario_is_deterministic_for_a_fixed_seed`: the scenario is a pure function of the seed, and seed 4069 (a seed that fails the unseeded test) reproduces `(0.45, 0.4)` exactly. - `chi_squared_test` is seeded (`0xC41_5EED`, p = 0.87). Threshold untouched. - The tie-break itself is a sound property of the code, so the assertion logic is not changed. With a fixed seed it is deterministic.  No tolerance loosening, retries or `#[ignore]`.  ## Testing  Failure
+- **Issue #5964** (2026-10-22): **feat(transport): make total-bandwidth-limit a node-wide egress cap**
+  *Symptoms*: ## Problem  `total-bandwidth-limit` is not a cap on what a node sends: - it only divides a per-connection pacing rate, and `min-bandwidth-per-connection` raises every connection's rate whatever the total, so 50 connections at the 1 MB/s minimum exceed any total below 50 MB/s; - handshakes, ACKs, keepalives, Pongs, short messages and retransmissions are never metered at all.  Decision 3 of the QUIC rollout (#5940) makes this setting a node-wide cap on everything the node sends on its socket. The cap covers both transports, so it lives in the socket wrapper added in #5961.  ## Approach  When `total-bandwidth-limit` is set, `DemuxSocket` owns one `EgressCap` (`transport/egress_cap.rs`) and charges every datagram it sends. `EgressCap` is a token bucket held in one atomic: rate `R` is the total, and burst `B` is the larger of 25 ms at `R` and 4 datagrams. Without the setting, nothing is built and each send costs one `Option` check. Uncapped nodes keep their existing pacing path unchanged.  - **Stream fragments are the only sends that wait.** Admission for each fragment goes cwnd check, then the per-connection bucket, then the node-wide bucket. The two bucket takes happen back to back with no await before the send. If either bucket is short, nothing is kept: the per-connection bytes are given back, and the task sleeps the deficit with random jitter (`deficit × U[1.0, 1.4) + U[0, 2 ms)`, via `GlobalRng`) and starts again from the cwnd check. Nothing is reserved while waiting, so a w
 
-- **Issue #5959** (2026-10-21): **refactor(transport): hide the UDP transport's own errors behind TransportError::Udp**
-  *Symptoms*: ## Problem  `TransportError` mixed transport-neutral variants with four that only the UDP transport produces: - `SendFailed(SocketAddr, io::ErrorKind)`, a UDP `send_to` failure; - `IO`, socket I/O; - `PubKeyDecryptionError`, from its handshake crypto; - `Serialization`, its wire encoding.  Any layer could name and match these, and the network bridge itself built `Serialization` when it could not serialize a message. A second transport would have inherited UDP's error vocabulary.  ## Approach  This is phase C step 4 (the last step) from the #5952 plan, in two commits:  1. **The node reports its own serialization failure as `Other`.** The bridge's `serialization_failure` produces the same Display text (both are transparent over the bincode error) and the same classification (it closes the connection). 2. **The UDP-only variants move into an opaque wrapper.**     ```rust    pub enum TransportError { ..neutral variants.., Udp(UdpError) }    pub struct UdpError(pub(in crate::transport) UdpErrorKind);    pub(in crate::transport) enum UdpErrorKind { SendFailed(..), IO(..), PubKeyDecryptionError(..), Serialization(..) }    ```     - Above the transport, a UDP error can only be classified (`scope()`, `closes_connection()`) or printed; its kind cannot be named.    - **Display is byte-identical.** Debug gains a `Udp(..)` wrapper.    - The `From` impls build the wrapper, so `?` inside the transport is unchanged. `scope()` and every exhaustive match still name each kind explicitly.  **`Pr
+- **Issue #5963** (2026-10-22): **fix(transport): stop malformed peer packets from panicking the receive path**
+  *Symptoms*: ## Problem  Two places in the UDP transport's receive path could panic on bytes a peer controls:  1. `internal_sym_decryption` (`transport/packet_data.rs`) sliced the nonce, ciphertext and tag out of a received packet by its received length without checking it. Its only guard was a `debug_assert!` on the length of the whole fixed-size receive buffer, which is always large enough. A datagram with the symmetric type byte (`0x02`) and fewer than 29 bytes (type byte + 12-byte nonce + 16-byte tag) panicked on a slice index instead of failing to decrypt. 2. `PeerConnection::recv` decoded every successfully decrypted packet with `SymmetricMessage::deser(..).unwrap()`. Decryption only shows the sender holds the session key; the plaintext can still fail to decode, for example a payload variant added by a newer compatible release. The unwrap then panicked the connection's receive task.  ## Approach  1. Check the received length before slicing and return the same error as any other packet that does not decrypt; the receive path already drops those. The intro path (`TransportSecretKey::decrypt`) already checks its length. 2. Drop a decrypted packet that does not decode, with a debug log. It is not counted as a decryption failure, so a peer on a newer release cannot get its connection closed this way.  Reviewers checked the other places that parse received bytes before and after decryption (intro handling, stream fragment parsing, receipt tracking) and found them already bounded.  ## Test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,382 +1759,167 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8021133a` (2026-10-21)
-**Commit Message**: fix(transport): fail truncated piped streams and size fragment #1 metadata exactly (#5958)
+### Incident Patch 1: `be519b42` (2026-10-22)
+**Commit Message**: fix(transport): stop malformed peer packets from panicking the receive path (#5963)
 
-**File**: `crates/core/src/transport/boundary.rs` (modified, +5/-6)
+**File**: `crates/core/src/transport/packet_data.rs` (modified, +33/-1)
 ```diff
-@@ -380,12 +380,11 @@ impl IncomingStream {
- /// - It has **no inactivity timer**: if the sender stalls, it waits forever.
- ///   A consumer must bring its own timeout (the UDP pipe uses
- ///   `STREAM_INACTIVITY_TIMEOUT`).
--/// - Its end does **not** guarantee the chunks add up to
--///   [`IncomingStream::total_bytes`]. Under UDP one exit, taken once every
--///   fragment slot has been read, is a fragment-count proxy that does not
--///   check the byte total, so a sender that filled the slots short would end
--///   it early with no error (#5445). A consumer that needs the whole stream
--///   must count the bytes itself.
-+/// - Under UDP it ends cleanly only once every declared byte was yielded: a
-+///   sender that filled every fragment slot short gets an `Err` instead
-+///   (#5445). A consumer should still count bytes against
-+///   [`IncomingStream::total_bytes`] (the UDP pipe does), since that is the
-+///   contract a second transport must also meet.
- /// - Polling it again after dropping a `next()` future loses nothing, so it
- ///   may be read inside `select!`.
- pub struct IncomingChunks {
-```
-
-**File**: `crates/core/src/transport/peer_connection/outbound_stream.rs` (modified, +102/-6)
-```diff
-@@ -962,10 +962,18 @@ where
-         // embedding and rely on the separate metadata message instead.
-         let metadata_bytes = if fragment_number == 1 {
-             if let Some(meta) = pending_metadata.take() {
--                // Note: The 41-byte overhead already includes Option discriminant (1 byte)
--                // and length prefix (8 bytes). Only add the metadata data length.
--                let required_size = payload.len() + 41 + meta.len();
--                if required_size <= packet_data::MAX_DATA_SIZE {
-+                // The size of the fragment as it would be serialized with the
-+                // metadata embedded, not an estimate: the old
-+                // `payload + 41 + meta` left out the metadata's 8-byte length
-+                // and could approve an embed that then failed to serialize.
-+                let required_size = symmetric_message::SymmetricMessage::stream_fragment_size(
-+                    outbound_stream_id,
-+                    total_bytes,
-+                    fragment_number,
-+                    &payload,
-+                    Some(&meta),
-+                );
-+                if required_size <= packet_data::MAX_DATA_SIZE as u64 {
-                     Some(meta)
-                 } else {
-                     tracing::debug!(
-@@ -1059,6 +1067,35 @@ where
-         }
+@@ -155,7 +155,13 @@ fn internal_sym_decryption<const N: usize>(
+     size: usize,
+     inbound_sym_key: &Aes128Gcm,
+ ) -> Result<([u8; N], usize), aes_gcm::Error> {
+-    debug_assert!(data.len() >= PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE);
++    // `size` is the received length; `data` is the whole fixed-size buffer, so
++    // only `size` says whether the type byte, nonce and tag are all present.
++    // Slicing by `size` below would panic on a shorter packet. `size` above
++    // `data.len()` cannot come from `from_buf`; that half is defensive.
++    if size < PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE || size > data.len() {
++        return Err(aes_gcm::Error);
++    }
+ 
+     // Check packet type (first byte should be PACKET_TYPE_SYMMETRIC)
+     if data[0] != PACKET_TYPE_SYMMETRIC {
+@@ -367,6 +373,32 @@ mod tests {
+         test_decryption(encrypted_packet, &cipher, unencrypted_packet);
      }
  
-+    // The inbound stream has ended. Forwarding fewer bytes than the stream
-+    // declared is a failed pipe, however cleanly the input ended: the
-+    // receiver would wait for the rest until its inactivity timeout. Like the
-+    // other input failures above, it fails only this stream (#4345).
-+    if sent_so_far != total_bytes {
-+        let elapsed = time_source.now().saturating_sub(start_time);
-+        tracing::warn!(
-+            stream_id = %outbound_stream_id.0,
-+            destination = %destination_addr,
-+            sent_so_far,
-+            total_bytes,
-+            "pipe_stream input ended short of its declared total"
-+        );
-+        emit_transfer_failed(
-+            outbound_stream_id.0 as u64,
-+            destination_addr,
-+            sent_so_far,
-+            format!("inbound stream ended short: forwarded {sent_so_far}/{total_bytes} bytes"),
-+            elapsed.as_millis() as u64,
-+            TransferDirection::Send,
-+        );
-+        release_aborted_stream_flightsize(
-+            outbound_stream_id,
-+            sent_packet_tracker.as_ref(),
-+            congestion_controller.as_ref(),
-+        );
-+        return Err(TransportError::OutboundStreamFailed(destination_addr));
-+    }
-+
-     let generic_stats = congestion_controller.stats();
-     let ledbat_stats = congestion_controller.ledbat_stats();
-     let elapsed = time_source.now().saturating_sub(start_time);
-@@ -1237,6 +1274,47 @@ mod tests {
-     use crate::transport::token_bucket::TokenBucket;
-     use tokio::sync::mpsc;
- 
-+    /// A stream that ends before reaching its declared total is a failed
-+    /// pipe, not a successful one: the receiver would wait for the rest.
-+    #[tokio::test]
-+    async fn pipe_fails_a_stream_that_ends_short_of_its_total() {
-+        use super::super::streaming_buffer::FRAGMENT_PAYLOAD_SIZE as F;
-+        let chunks = futures::stream::iter(vec![
-+            Ok(Bytes::from(vec![1u8; F])),
-+            Ok(Bytes::from(vec![2u8; F])),
-+        ]);
-+        let (fragments, result) = pipe_and_capture_result(3 * F as u64, chunks, None).await;
-+        assert_eq!(fragments.len(), 2, "premise: what arrived was forwarded");
-+        assert!(
-+            matches!(result, Err(TransportError::OutboundStreamFailed(_))),
-+            "a short stream must fail the pipe: {result:?}"
-+        );
-+    }
-+
-+    /// Metadata is embedded in a forwarded fragment #1 only when the real
-+    /// serialized fragment fits. Here payload + metadata leaves 5 bytes by
-+    /// the old `payload + 41 + meta` estimate, but the metadata's 8-byte
-+    /// length prefix does not fit: the pipe must skip the embed, not fail.
-+    #[tokio::test]
-+    async fn pipe_skips_metadata_that_would_overflow_fragment_one() {
-+        use super::super::streaming_buffer::FRAGMENT_PAYLOAD_SIZE as F;
-+        let meta = Bytes::from(vec![9u8; 40]);
-+        let first = F - meta.len() - 5;
-+        let expected = payload_of(first + F);
-+        let chunks = futures::stream::iter(vec![
-+            Ok(Bytes::copy_from_slice(&expected[..first])),
-+            Ok(Bytes::copy_from_slice(&expected[first..])),
-+        ]);
-+        let (fragments, result) =
-+            pipe_and_capture_result(expected.len() as u64, chunks, Some(meta)).await;
-+        assert!(result.is_ok(), "the pipe must not fail: {result:?}");
-+        assert!(
-+            !fragments[0].has_metadata,
-+            "metadata that does not fit is skipped"
-+        );
-+        assert_receiver_accepts(&fragments, &expected);
-+    }
-+
-     /// Yields its chunks with a `Pending` before each one (waking itself),
-     /// so a reader that drops `next()` on `Pending` d
-```
-
-**File**: `crates/core/src/transport/peer_connection/streaming.rs` (modified, +53/-12)
-```diff
-@@ -744,8 +744,23 @@ impl Stream for StreamingInboundStream {
-         // Lock-free access to buffer
-         let total_fragments = self.handle.buffer.total_fragments() as u32;
- 
--        // Check if we've read all fragments
-+        // Every fragment slot has been read. That is the end only if every
-+        // declared byte was read too: a sender that filled the slots with
-+        // short payloads leaves the stream short, and ending cleanly here
-+        // would report a truncated stream as complete (#5445). Fail the
-+        // stream instead. (`assemble()` never completes such a stream
-+        // either: it waits for the missing bytes and ends in
-+        // `InactivityTimeout`.)
-         if next_idx > total_fragments {
-+            let declared = self.handle.buffer.total_bytes();
-+            if self.bytes_read < declared {
-+                return Poll::Ready(Some(Err(StreamError::InvalidFragment {
-+                    message: format!(
-+                        "stream ended after {} of its {declared} declared bytes",
-+                        self.bytes_read
-+                    ),
-+                })));
++    /// A symmetric-type packet too short to hold the type byte, nonce and tag
++    /// is rejected with an error at every length, rather than panicking while
++    /// slicing out the tag. A packet of exactly that length (an empty payload)
++    /// is the shortest that can decrypt, and it still does.
++    #[test]
++    fn short_symmetric_packets_are_rejected_without_panicking() {
++        let cipher = Aes128Gcm::new(&[7u8; 16].into());
++        let min = PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE;
++        for len in 0..min {
++            let mut buf = vec![0xAAu8; len];
++            if let Some(first) = buf.first_mut() {
++                *first = PACKET_TYPE_SYMMETRIC;
 +            }
-             return Poll::Ready(None); // Stream complete
-         }
- 
-@@ -768,17 +783,10 @@ impl Stream for StreamingInboundStream {
-         // short). They consume the same buffer and must reach the same
-         // conclusion about when a stream has ended.
-         //
--        // Scope, precisely: this brings the two paths into agreement at THIS
--        // exit. The `next_idx > total_fragments` exit above is still unguarded,
--        // and a sender that filled every `base + 1` slot with short payloads
--        // would leave through it with `bytes_read < total_bytes` — where
--        // `assemble()` returns `None` (a failure) but this returns
--        // `Ready(None)` (a success), and `pipe_stream` reports a successful
--        // transfer with a short byte count. No conforming sender does that:
--        // `send_stream` fragments `stream_to_send` exactly. Tracked as #5445,
--        // which is where the guard that would make the agreement universal
--        // belongs — it is a production behaviour change and wants its own
--        // review rather than a late addition here.
-+        // Both exits end on the byte count: the `next_idx > total_fragments`
-+        // exit above returns an error when the slots ran out before the
-+        // bytes did (#5445), so neither can report a truncated stream as
-+        // complete.
-         if self.reached_end(next_idx) {
-             return Poll::Ready(None);
-         }
-@@ -1087,6 +1095,39 @@ mod tests {
-         }
-     }
- 
-+    /// A sender that fills every fragment slot with short payloads leaves
-+    /// the stream short of its declared total. Reading it must end in an
-+    /// error, not a clean end that looks like a complete stream (#5445).
-+    #[tokio::test]
-+    async fn stream_filled_short_ends_in_an_error_not_a_clean_end() {
-+        use futures::StreamExt;
-+        let total = 2 * super::super::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
-+        let handle = StreamHandle::new(make_stream_id(), total as u64);
-+        let slots = handle.total_fragments();
-+        for n in 1..=slots {
-+            handle
-+                .push_fragment(n as u32, Bytes::from(vec![n as u8; 100]))
-+                .unwrap();
++            let packet = PacketData::<UnknownEncryption, MAX_PACKET_SIZE>::from_buf(&buf);
++            assert!(packet.try_decrypt_sym(&cipher).is_err(), "length {len}");
 +        }
-+        let items: Vec<_> = tokio::time::timeout(
-+            std::time::Duration::from_secs(5),
-+            handle.stream().take(slots + 2).collect::<Vec<_>>(),
-+        )
++
++        let empty = PacketData::<_, MAX_PACKET_SIZE>::from_buf_plain([]).encrypt_symmetric(&cipher);
++        assert_eq!(empty.data().len(), min);
++        let received = PacketData::<UnknownEncryption, MAX_PACKET_SIZE>::from_buf(empty.data());
++        let decrypted = received
++            .try_decrypt_sym(&cipher)
++            .expect("an empty payload decrypts");
++        assert!(decrypted.data().is_empty());
++    }
++
+     // Test detection of packet corruption
+     #[test]
+     fn test_encryption_decryption_corrupted() {
+```
+
+**File**: `crates/core/src/transport/peer_connection.rs` (modified, +33/-1)
+```diff
+@@ -218,6 +218,9 @@ pub struct PeerConnection<S = super::UdpSocket, T: TimeSource = RealTime> {
+         FuturesUnordered<JoinHandle<(InboundStreamResult, Arc<inbound_budget::LegacyStreamToken>)>>,
+     outbound_stream_futures: FuturesUnordered<JoinHandle<OutboundStreamResult>>,
+     failure_count: usize,
++    /// Packets that decrypted but did not decode, over this connection's life.
++    /// The first one is logged at WARN so it is visible in release builds.
++    undecodable_count: u64,
+     /// First failure time as nanoseconds since time_source epoch
+     first_failure_time_nanos: Option<u64>,
+     /// Last packet report time as nanoseconds since time_source epoch
+@@ -1042,6 +1045,7 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
+             inbound_stream_futures: FuturesUnordered::new(),
+             outbound_stream_futures: FuturesUnordered::new(),
+             failure_count: 0,
++            undecodable_count: 0,
+             first_failure_time_nanos: None,
+             last_packet_report_time_nanos: now_nanos,
+             last_rate_update_nanos: None,
+@@ -1334,7 +1338,35 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
+                     );
+                     self.last_inbound_nanos
+                         .store(self.last_received_nanos, std::sync::atomic::Ordering::Release);
+-                    let msg = SymmetricMessage::deser(decrypted.data()).unwrap();
++                    // The remote holds the session key, but it can still send
++                    // bytes this node cannot decode: a payload variant from a
++                    // newer release, or a faulty or hostile peer. Drop such a
++                    // packet. It is not a decryption failure, so it does not
++                    // count toward closing the connection.
++                    let msg = match SymmetricMessage::deser(decrypted.data()) {
++                        Ok(msg) => msg,
++                        Err(error) => {
++                            self.undecodable_count += 1;
++                            if self.undecodable_count == 1 {
++                                tracing::warn!(
++                                    peer_addr = %self.remote_conn.remote_addr,
++                                    remote_version = ?self.remote_conn.remote_protoc_version,
++                                    error = %error,
++                                    payload_len = decrypted.data().len(),
++                                    "Dropping authenticated packet that does not decode; later ones on this connection log at debug"
++                                );
++                            } else {
++                                tracing::debug!(
++                                    peer_addr = %self.remote_conn.remote_addr,
++                                    error = %error,
++                                    payload_len = decrypted.data().len(),
++                                    undecodable_count = self.undecodable_count,
++                                    "Dropping authenticated packet that does not decode"
++                                );
++                            }
++                            continue;
++                        }
++                    };
+                     let SymmetricMessage {
+                         packet_id,
+                         confirm_receipt,
+```
+
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests.rs` (modified, +32/-0)
+```diff
+@@ -2744,3 +2744,35 @@ async fn an_out_of_order_legacy_stream_completes_within_its_charge() {
+         Some(&data[..])
+     );
+ }
++
++/// A packet that decrypts under the session key but whose plaintext does not
++/// decode as a `SymmetricMessage` (for example a payload variant from a newer
++/// release) is dropped. `recv()` keeps running, delivers the next valid
++/// message, and does not count the dropped packet as a decryption failure.
++#[tokio::test(start_paused = true)]
++async fn undecodable_authenticated_packet_is_dropped_not_fatal() {
++    let mut e = single(CAPABLE);
++    // Three bytes cannot hold the leading `u32` packet id, so this fails to
++    // decode whatever the payload layout is. A payload variant from a newer
++    // release fails later in decoding but takes the same error arm.
++    let undecodable =
++        PacketData::<_, { crate::transport::packet_data::MAX_PACKET_SIZE }>::from_buf_plain([
++            0xFF, 0xFF, 0xFF,
++        ])
++        .encrypt_symmetric(&e.inbound_key);
++    assert!(SymmetricMessage::deser(&[0xFF, 0xFF, 0xFF]).is_err());
++    e.inbound
++        .send(PacketData::<UnknownEncryption>::from_buf(
++            undecodable.data(),
++        ))
 +        .await
-+        .expect("the stream ends");
-+        let read: usize = items
-+            .iter()
-+            .filter_map(|i| i.as_ref().ok())
-+            .map(|b| b.len())
-+            .sum();
-+        assert!(read < total, "premise: the stream is short");
-+        assert!(
-+            items.iter().any(|i| i.is_err()),
-+            "a short stream must end in an error, got {} chunks and a clean end",
-+            items.len()
-+        );
-+    }
++        .expect("deliver");
++    e.deliver(0, short(b"after"), vec![]).await;
 +
-     #[test]
-     fn test_rearmed_listener_spurious_notification_registers_waker() {
-         use std::sync::atomic::Ordering;
-```
-
-**File**: `crates/core/src/transport/symmetric_message.rs` (modified, +25/-0)
-```diff
-@@ -97,6 +97,31 @@ impl SymmetricMessage {
-         *OVERHEAD
-     }
- 
-+    /// Serialized size of a stream fragment as `packet_sending` sends it
-+    /// (no piggybacked receipts), computed from the real serialization.
-+    pub(crate) fn stream_fragment_size(
-+        stream_id: StreamId,
-+        total_length_bytes: u64,
-+        fragment_number: u32,
-+        payload: &Bytes,
-+        metadata_bytes: Option<&Bytes>,
-+    ) -> u64 {
-+        let message = SymmetricMessage {
-+            packet_id: 0,
-+            confirm_receipt: vec![],
-+            payload: SymmetricMessagePayload::StreamFragment {
-+                stream_id,
-+                total_length_bytes,
-+                fragment_number,
-+                payload: payload.clone(),
-+                metadata_bytes: metadata_bytes.cloned(),
-+            },
-+        };
-+        // Serializing a fixed in-memory value cannot fail; treat a failure
-+        // as "does not fit".
-+        bincode::serialized_size(&message).unwrap_or(u64::MAX)
-+    }
-+
-     pub(crate) fn max_num_of_confirm_receipts_of_noop_message() -> usize {
-         static MAX_NUM_CONFIRM_RECEIPTS: LazyLock<usize> = LazyLock::new(|| {
-             let overhead = SymmetricMessage::noop_message_overhead() as u64;
-```
-
----
-
-### Incident Patch 2: `689cbd4f` (2026-10-21)
-**Commit Message**: fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test) (#5960)
-
-**File**: `crates/core/src/topology.rs` (modified, +46/-4)
-```diff
-@@ -1264,8 +1264,9 @@ pub(crate) enum ConnectionAcquisitionStrategy {
- 
- #[cfg(test)]
- mod tests {
--    #[test]
--    fn test_topology() {
-+    /// Runs the clustered-requests scenario and returns
-+    /// `(best_candidate_location, best_density_location)`.
-+    fn run_topology_scenario() -> (Location, Location) {
-         const NUM_REQUESTS: usize = 5_000;
-         let mut topology_manager = TopologyManager::new(Limits {
-             max_upstream_bandwidth: Rate::new_per_second(1000.0),
-@@ -1304,8 +1305,6 @@ mod tests {
-         let best_candidate_location = topology_manager
-             .get_best_candidate_location(&this_peer_location)
-             .unwrap();
--        // Should be half way between 0.3 and 0.4 as that is where the most requests were.
--        assert_eq!(best_candidate_location, Location::new(0.35));
- 
-         // Find the location with the highest density score across 0.0 to 1.0
-         let mut best_score = 0.0;
-@@ -1323,12 +1322,54 @@ mod tests {
-                 best_location = candidate_location;
-             }
-         }
-+        (best_candidate_location, best_location)
-+    }
-+
-+    /// Seed for `test_topology`. The scenario below is a statistical test over random
-+    /// request locations, so it must run from a fixed seed to be deterministic.
-+    const TOPOLOGY_TEST_SEED: u64 = 0x70B0_0001;
-+
-+    /// Seed that makes the unseeded version of `test_topology` fail (found by sweeping
-+    /// seeds 0..40_000; 14 of them fail, ~0.035%).
-+    const TOPOLOGY_TIE_BREAK_SEED: u64 = 4069;
-+
-+    #[test]
-+    fn test_topology() {
-+        // The requests are centred on 0.39, just below the 0.4 neighbor. A sample is
-+        // attributed to its nearest neighbor, so the neighbors at 0.3, 0.4 and 0.5 get
-+        // counts c3, c4, c5 and the two candidate midpoints score c3 + c4 (0.35) and
-+        // c4 + c5 (0.45). 0.35 wins exactly when c3 > c5, i.e. when more samples fall
-+        // more than 0.04 below the peer than more than 0.06 above it. That holds in
-+        // expectation but not for every draw, so the RNG has to be seeded.
-+        let _guard = GlobalRng::seed_guard(TOPOLOGY_TEST_SEED);
-+        let (best_candidate_location, best_location) = run_topology_scenario();
-+
-+        // Should be half way between 0.3 and 0.4, the pair of neighbors that attracted
-+        // the most requests.
-+        assert_eq!(best_candidate_location, Location::new(0.35));
- 
-         // Best location should be 0.4 as that is closest to 0.39 which is the peer's location and
-         // the request epicenter
-         assert_eq!(best_location, Location::new(0.4));
-     }
- 
-+    /// Regression test for the `test_topology` flake: the scenario must be a pure function
-+    /// of the seed, and the tail draw that used to fail (c5 > c3, so the 0.45 midpoint
-+    /// wins) must reproduce exactly instead of appearing at random.
-+    #[test]
-+    fn test_topology_scenario_is_deterministic_for_a_fixed_seed() {
-+        for seed in [TOPOLOGY_TEST_SEED, TOPOLOGY_TIE_BREAK_SEED] {
-+            let first = GlobalRng::scoped_seed(seed, run_topology_scenario);
-+            let second = GlobalRng::scoped_seed(seed, run_topology_scenario);
-+            assert_eq!(first, second, "scenario diverged for seed {seed}");
-+        }
-+        assert_eq!(
-+            GlobalRng::scoped_seed(TOPOLOGY_TIE_BREAK_SEED, run_topology_scenario),
-+            (Location::new(0.45), Location::new(0.4)),
-+            "the seed that reproduces the original flake no longer does"
-+        );
-+    }
-+
-     /// Generates a random location that is close to the current peer location with a small
-     /// world distribution.
-     fn random_location(this_peer_location: &Location) -> Location {
-@@ -1345,6 +1386,7 @@ mod tests {
-     }
- 
-     use super::*;
-+    use crate::config::GlobalRng;
-     use crate::ring::Distance;
-     use std::time::Duration;
- 
-```
-
-**File**: `crates/core/src/topology/small_world_rand.rs` (modified, +3/-0)
-```diff
-@@ -566,6 +566,9 @@ mod tests {
- 
-     #[test]
-     fn chi_squared_test() {
-+        // Seeded: the 0.001 significance threshold below rejects ~1 in 1000 unseeded runs
-+        // by design, which made this test flaky.
-+        let _guard = crate::config::GlobalRng::seed_guard(0xC41_5EED);
-         let d_min = D_MIN_TARGET;
-         let n = 10000;
-         let num_bins = 20;
++    assert_eq!(
++        e.pump(Duration::from_millis(10)).await.as_deref(),
++        Some(&b"after"[..])
++    );
++    assert_eq!(e.conn.failure_count, 0);
++    assert_eq!(e.conn.undecodable_count, 1);
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5964** (2026-10-22): feat(transport): make total-bandwidth-limit a node-wide egress cap (@sanity)
+- **PR #5963** (2026-10-22): fix(transport): stop malformed peer packets from panicking the receive path (@sanity)
+- **PR #5962** (2026-10-21): test: give the dial-queue-wait test addresses no other test dials (@sanity)
+- **PR #5961** (2026-10-22): feat(transport): demultiplex inbound packets by first byte (@sanity)
 - **PR #5960** (2026-10-21): fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test) (@sanity)
 - **PR #5959** (2026-10-21): refactor(transport): hide the UDP transport's own errors behind TransportError::Udp (@sanity)
-- **PR #5958** (2026-10-21): fix(transport): fail truncated piped streams and size fragment #1 metadata exactly (@sanity)
-- **PR #5957** (2026-10-21): refactor(transport): decouple the stream registry from fragments and add a neutral chunk read (@sanity)
-- **PR #5955** (2026-10-21): refactor(transport): add a transport-neutral IncomingStream to the boundary (@sanity)
-- **PR #5953** (2026-10-21): feat(telemetry): tag NAT traversal attempts by origin and count stray intros (@sanity)
 
 ---
 
@@ -2154,37 +1939,49 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): fail truncated piped streams and size fragment #1 metadata exactly (
+## X. transport): stop malformed peer packets from panicking the receive path (#5963)
 
 **RULE**:
-When implementing operations in `crates/core/src/transport/boundary.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/transport/packet_data.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8021133a`: transport): fail truncated piped streams and size fragment #1 metadata exactly (#5958). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be519b42`: transport): stop malformed peer packets from panicking the receive path (#5963). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/boundary.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/packet_data.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// - Under UDP it ends cleanly only once every declared byte was yielded: a
-///   sender that filled every fragment slot short gets an `Err` instead
-///   (#5445). A consumer should still count bytes against
-///   [`IncomingStream::total_bytes`] (the UDP pipe does), since that is the
-///   contract a second transport must also meet.
+    // `size` is the received length; `data` is the whole fixed-size buffer, so
+    // only `size` says whether the type byte, nonce and tag are all present.
+    // Slicing by `size` below would panic on a shorter packet. `size` above
+    // `data.len()` cannot come from `from_buf`; that half is defensive.
+    if size < PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE || size > data.len() {
+        return Err(aes_gcm::Error);
+    }
+    /// A symmetric-type packet too short to hold the type byte, nonce and tag
+    /// is rejected with an error at every length, rather than panicking while
+    /// slicing out the tag. A packet of exactly that length (an empty payload)
+    /// is the shortest that can decrypt, and it still does.
+    #[test]
+    fn short_symmetric_packets_are_rejected_without_panicking() {
+        let cipher = Aes128Gcm::new(&[7u8; 16].into());
+        let min = PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE;
+        for len in 0..min {
+            let mut buf = vec![0xAAu8; len];
+            if let Some(first) = buf.first_mut() {
+                *first = PACKET_TYPE_SYMMETRIC;
+            }
+            let packet = PacketData::<UnknownEncryption, MAX_PACKET_SIZE>::from_buf(&buf);
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// - Its end does **not** guarantee the chunks add up to
-///   [`IncomingStream::total_bytes`]. Under UDP one exit, taken once every
-///   fragment slot has been read, is a fragment-count proxy that does not
-///   check the byte total, so a sender that filled the slots short would end
-///   it early with no error (#5445). A consumer that needs the whole stream
-///   must count the bytes itself.
+    debug_assert!(data.len() >= PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8021133a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be519b42` are properly handled with clean fallback behavior.

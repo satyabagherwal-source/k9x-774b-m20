@@ -4315,3 +4315,6 @@
 | `CYCLE-20261022-LP9H` | `2026-10-22T16:10:02.405Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3626` | Yes (`6e808ec9...`) |
 | `CYCLE-20261022-LQEZ` | `2026-10-22T16:10:03.899Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3627` | Yes (`9b296cb3...`) |
 | `CYCLE-20261022-LV60` | `2026-10-22T16:10:10.056Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3628` | Yes (`fca4718f...`) |
+| `CYCLE-20261022-STDQ` | `2026-10-22T16:15:34.334Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3629` | Yes (`f717ce9c...`) |
+| `CYCLE-20261022-SYB1` | `2026-10-22T16:15:40.717Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3630` | Yes (`f5e6c8c9...`) |
+| `CYCLE-20261022-T1C9` | `2026-10-22T16:15:44.649Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3631` | Yes (`41b8cf7e...`) |
