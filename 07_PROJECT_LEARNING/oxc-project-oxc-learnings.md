@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `4c0fa90a`  
+> **Source Version**: `f1d90329`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:23:32.034Z  
+> **Timestamp**: 2026-10-22T16:22:17.908Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:23:32.024Z  
+> **Harvest Timestamp**: 2026-10-22T16:22:15.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23132 stars
+- **Stars / Engagement**: 23183 stars
 
 ---
 
@@ -1229,17 +1229,7 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #27990** (2026-10-20): **fix(minifier,linter): keep `delete` of constant members and later JSX keys**
-  *Symptoms*: `delete "a"[0]`, `delete "a".length`, `delete [1].length` and `delete Number.NaN` delete a non-configurable property, so they are `false`, or a `TypeError` in strict mode. The minifier folded the member to its value first, and deleting a value is `true`:  ```js console.log(delete "😀"[0]); // false; minified to `console.log(!0)` ```  #27096 extended the string index fold to every string, so `delete "😀"[0]` became `!0` in 0.155.0. `delete "abc"[0]` and `delete "abc".length` were already wrong in 0.154.0. The member folds, the `Number.*` constant replacement and the `Number.NaN` normalization now skip the operand of `delete`. `delete obj["x"]` still becomes `delete obj.x`, and `delete Number["NaN"]` now minifies the same way every time.  `react/jsx-key` with `warnOnDuplicates` stopped at a template key with a substitution, `` key={`${a}`} ``, instead of reading the element's next `key`. Since #26717 the duplicate in `[<li key={`${a}`} key="dup" />, <li key={`${a}`} key="dup" />]` went unreported. The rule now falls through to the next `key` as 0.154.0 did.  Found by comparing 0.154.0 and 0.155.0 builds. Part of #26242.  Implemented with AI assistance.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 82` untouched benchmarks   `⏩ 14` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>claude/fix-delete-index-and-jsx-key</code> (526d208) with <code>main</code> (aa7642a)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/claude%2Ffix-delete-index-and-jsx-key?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 14 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive them to remove them
-  > ### Merge activity  * **Oct 20, 7:49 AM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Oct 20, 7:49 AM UTC**: `Dunqing` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Oct 20, 7:54 AM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
-
-- **Issue #27989** (2026-10-20): **fix(formatter): keep an arrow signature that exactly fills the line for any body**
-  *Symptoms*: Revert #24440 and reclassify DIVERGENCES.md#arrow-exact-fill-signature as "uniform-rule".  ---  > It seems like oxc is correct here and Prettier has a bug? > https://github.com/oxc-project/oxc/issues/24416  Having the opportunity to revisit the details..., I found that this is indeed the truth.
-  **Post-Mortem & Fix Analysis**:
-  > * **#27989** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27989?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> 👈 <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27989?utm_source=stack-comment-view-in-graphite" target="_blank">(View in Graphite)</a> * **#27988** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27988?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> * **#27987** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/27987?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> * `main` <hr />  ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</k
-  > ## [Oxfmt Ecosystem CI]([Open](https://github.com//oxc-project/oxc-ecosystem-ci/actions/runs/39376112401)) | suite | oxfmt@latest | main | refs/pull/27989/head branch | |-------|:---:|:---:|:---:| | [formatjs/formatjs](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522120) | :white_check_mark: | :white_check_mark: | :white_check_mark: | | [vercel/turborepo](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522179) | :x: | :white_check_mark: | :white_check_mark: | | [getsentry/sentry-javascript](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522181) | :x: | :white_check_mark: | :white_check_mark: | | [huggingface/huggingface.js](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522197) | :x: | :white_check_mark: | :white_check_mark: | | [vuejs/pinia](https://github.com/oxc-project/oxc-ecosystem-ci/actions/runs/39376112401/job/118475522203) | :x: | :wh
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1256,558 +1246,587 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa7642ad` (2026-10-20)
-**Commit Message**: fix(react-compiler): let branches inside `try` control reactivity (#27817)
+### Incident Patch 1: `e0f8937a` (2026-10-22)
+**Commit Message**: fix(react-compiler): compile a `try` whose `catch` is unreachable instead of panicking (#28066)
 
-Fixes #27400
-Fixes #27808
-
-When a ternary, `if` or `switch` inside `try` picks a value based on a prop, the compiler treated that value as a constant, so anything built from it was cached once per mount.
+Fixes #27404
 
 ```jsx
-function Component({ cond }) {
-  let value;
+export function Component() {
+  let x = 0;
   try {
-    if (cond) {
-      value = "a";
-    } else {
-      value = "b";
-    }
+    const unused = 1;
   } catch {
-    value = "c";
+    x = 2;
   }
-  return <div>{value}</div>;
+  return <div>{x}</div>;
 }
 ```
 
-```diff
--  if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-+  if ($[0] !== value) {
-     t1 = <div>{value}</div>;
-```
-
-Before this PR, changing `cond` from `true` to `false` still rendered `a`.
+Before: `assertion failed: Found a block with a single predecessor but where a phi has multiple (2) operands`, which aborts the process in release builds (Vite with `oxc-transform-react`, oxlint `react/*` rules).
+After: compiles, with `x` folded to the constant `0`.
 
 ## Cause
 
-Inside `try`, every assignment ends its block with a "may throw" edge to the `catch`. When `infer_reactive_places` looked for the branch that decides a value, it stopped at that edge and never reached `if (cond)`.
+Once dead-code elimination empties the `try` body, `prune_maybe_throws` removes the edge to the `catch`, and the catch blocks become unreachable. Two references to them were left behind:
 
-The same logic in Babel's React Compiler (facebook/react main, `098d2e87`):
+- The phi at the join after the `try` kept an operand for the catch path, so `merge_consecutive_blocks` hit its `assert_eq!`.
+- The join's `preds` still counted the removed blocks, so it was not merged into its real predecessor. When the `catch` had more than one block, the code after the `try` was silently dropped: `try { const u = 1 } catch { if (c) a(); else b(); } return <div />` compiled to `function Component(props) {}`.
 
-- [`HIRBuilder.push`](https://github.com/facebook/react/blob/098d2e87a1f7142947418d15f63f975b58c4685b/compiler/packages/babel-plugin-react-compiler/src/HIR/HIRBuilder.ts#L164-L181) ends the block after each instru
+Babel's React Compiler (1.0.0 and upstream main at `
 
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js` (added, +17/-0)
+**File**: `crates/oxc_linter/src/rules/react/invariant.rs` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,17 @@
-+// A let assigned from a ternary with constant branches inside `try` is reactive
-+// through the ternary's test, so the JSX that reads it must depend on it.
-+function Component({kind}) {
-+  let label = 'init';
+@@ -47,6 +47,19 @@ fn test() {
+         // A named function expression can capture its private name in a callback.
+         "export const ExportedName = function Node() { return <Tree renderItem={() => <Node />} />; };",
+         "export const ExportedName = function Node({ value }) { return <Tree renderItem={() => () => <Node value={value} />} />; };",
++        // A `try` that cannot throw, with a `catch` that reassigns an outer variable.
++        // https://github.com/oxc-project/oxc/issues/27404
++        "
++export function Component() {
++  let x = 0;
 +  try {
-+    label = kind === 1 ? 'one' : 'other';
++    const unused = 1;
 +  } catch {
-+    label = 'caught';
++    x = 2;
 +  }
-+  return <div>{label}</div>;
++  return <div>{x}</div>;
++}
++",
+         // ---- PluginTest-test.ts ----
+         // [Invariant] Defined after use
+         // (OK because invariants are only meant for the compiler team's consumption)
+```
+
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-in-loop.js` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++// A `try` that cannot throw inside a loop: the `catch` is pruned on every iteration.
++function Component(props) {
++  let x = 0;
++  for (let i = 0; i < props.count; i++) {
++    try {
++      const unused = 1;
++    } catch {
++      x = i;
++    }
++  }
++  return <div>{x}</div>;
 +}
 +
 +export const FIXTURE_ENTRYPOINT = {
 +  fn: Component,
-+  params: [{kind: 1}],
-+  sequentialRenders: [{kind: 1}, {kind: 2}, {kind: 1}],
++  params: [{count: 3}],
++  sequentialRenders: [{count: 3}, {count: 0}],
 +};
 ```
 
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-if-statement-reactive-test.js` (added, +21/-0)
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-reassigns-outer.js` (added, +15/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+// Constant assignments in the branches of an `if` inside `try` make the
-+// variable reactive through the `if`'s test.
-+function Component({cond}) {
-+  let value;
+@@ -0,0 +1,15 @@
++// The `try` body cannot throw, so the `catch` is pruned and `x` is always `0`.
++export function Component() {
++  let x = 0;
 +  try {
-+    if (cond) {
-+      value = 'a';
++    const unused = 1;
++  } catch {
++    x = 2;
++  }
++  return <div>{x}</div>;
++}
++
++export const FIXTURE_ENTRYPOINT = {
++  fn: Component,
++  params: [{}],
++};
+```
+
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-with-if.js` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++// The `try` body cannot throw, so the `catch` (and the `if` inside it) is pruned.
++function Component(props) {
++  let x = props.value;
++  try {
++    const unused = 1;
++  } catch {
++    if (props.cond) {
++      x = 1;
 +    } else {
-+      value = 'b';
++      x = 2;
 +    }
-+  } catch {
-+    value = 'c';
 +  }
-+  return <div>{value}</div>;
++  return <div>{x}</div>;
 +}
 +
 +export const FIXTURE_ENTRYPOINT = {
 +  fn: Component,
-+  params: [{cond: true}],
-+  sequentialRenders: [{cond: true}, {cond: false}, {cond: true}],
-+};
-```
-
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-switch-reactive-test.js` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+// Constant assignments in the cases of a `switch` inside `try` make the
-+// variable reactive through the `switch`'s test.
-+function Component({kind}) {
-+  let value;
-+  try {
-+    switch (kind) {
-+      case 1:
-+        value = 'one';
-+        break;
-+      default:
-+        value = 'other';
-+    }
-+  } catch {
-+    value = 'caught';
-+  }
-+  return <div>{value}</div>;
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [{kind: 1}],
-+  sequentialRenders: [{kind: 1}, {kind: 2}, {kind: 1}],
-+};
-```
-
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-ternary-reactive-test.js` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+// The ternary's branches are constants, so only its reactive test makes the
-+// result change; the object built from it must depend on that result.
-+function Component({dark, items}) {
-+  let style;
-+  try {
-+    style = {color: dark ? 'white' : 'black', count: items.length};
-+  } catch {
-+    style = {};
-+  }
-+  return <span style={style}>x</span>;
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [{dark: true, items: ['a']}],
++  params: [{value: 0, cond: true}],
 +  sequentialRenders: [
-+    {dark: true, items: ['a']},
-+    {dark: false, items: ['a']},
-+    {dark: false, items: ['a', 'b']},
-+    {dark: true, items: ['a', 'b']},
++    {value: 0, cond: true},
++    {value: 1, cond: false},
++    {value: 1, cond: true},
 +  ],
 +};
 ```
 
-**File**: `crates/oxc_react_compiler/src/react_compiler_hir/dominator.rs` (modified, +83/-9)
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-without-reassignment.js` (added, +23/-0)
 ```diff
-@@ -15,7 +15,7 @@ use oxc_diagnostics::OxcDiagnostic;
- use oxc_index::{IndexSlice, IndexVec};
- 
- use crate::diagnostics;
--use crate::react_compiler_hir::visitors::each_terminal_successor;
-+use crate::react_compiler_hir::visitors::{TerminalBlockList, each_terminal_successor};
- use crate::react_compiler_hir::{BlockId, HirFunction, Terminal};
- 
- // =============================================================================
-@@ -40,6 +40,13 @@ impl PostDominatorFrontiers {
-     pub fn iter(&self, id: BlockId) -> impl Iterator<Item = BlockId> + '_ {
-         self.frontiers.get(&id).into_iter().flatten().copied()
-     }
-+
-+    /// Adds every block in `other`'s frontiers to the frontiers of `self`.
-+    pub fn extend(&mut self, other: Self) {
-+        for (id, frontier) in other.frontiers {
-+            self.frontiers.entry(id).or_default().extend(frontier);
-+        }
+@@ -0,0 +1,23 @@
++// The `try` body cannot throw, so the `catch` is pruned. The code after the `try`
++// must survive even though no variable needs a phi at the join.
++function Component(props) {
++  try {
++    const unused = 1;
++  } catch {
++    if (props.cond) {
++      props.onError();
++    } else {
++      props.onFallback();
 +    }
- }
- 
- impl PostDominator {
-@@ -95,7 +102,22 @@ pub fn compute_post_dominator_tree(
-     next_block_id_counter: u32,
-     include_throws_as_exit_node: bool,
- ) -> Result<PostDominator, OxcDiagnostic> {
--    let graph = build_reverse_graph(func, next_block_id_counter, include_throws_as_exit_node);
-+    post_dominator_tree(func, next_block_id_counter, include_throws_as_exit_node, true)
++  }
++  return <div>{props.value}</div>;
 +}
 +
-+/// Compute the post-dominator tree, optionally ignoring `MaybeThrow` handler edges.
-+fn post_dominator_tree(
-+    func: &HirFunction,
-+    next_block_id_counter: u32,
-+    include_throws_as_exit_node: bool,
-+    include_exception_edges: bool,
-+) -> Result<PostDominator, OxcDiagnostic> {
-+    let graph = build_reverse_graph(
-+        func,
-+        next_block_id_counter,
-+        include_throws_as_exit_node,
-+        include_exception_edges,
-+    );
-     let mut nodes = compute_immediate_dominators(&graph)?;
- 
-     // When include_throws_as_exit_node is false, nodes that flow into a throw
-@@ -110,14 +132,27 @@ pub fn compute_post_dominator_tree(
-     Ok(PostDominator { exit: graph.entry, nodes })
- }
- 
-+/// Returns the successors of `terminal`, without a `MaybeThrow`'s edge to its exception
-+/// handler unless `include_exception_edges` is set.
-+fn terminal_successors(terminal: &Terminal, include_exception_edges: bool) -> TerminalBlockList {
-+    match terminal {
-+        Terminal::MaybeThrow { continuation, .. } if !include_exception_edges => {
-+            TerminalBlockList::from_slice(&[*continuation])
-+        }
-+        _ => each_terminal_successor(terminal),
-+    }
-+}
-+
- /// Build the reverse graph from the HIR function.
- ///
--/// Reverses all edges and adds a synthetic exit node that receives edges from
--/// return (and optionally throw) terminals. The result is put into RPO order.
-+/// Reverses all edges (optionally except `MaybeThrow` handler edges) and adds a
-+/// synthetic exit node that receives edges from return (and optionally throw)
-+/// terminals. The result is put into RPO order.
- fn build_reverse_graph(
-     func: &HirFunction,
-     next_block_id_counter: u32,
-     include_throws_as_exit_node: bool,
-+    include_exception_edges: bool,
- ) -> Graph {
-     let exit_id = BlockId::from_usize(next_block_id_counter as usize);
-     // All block ids are below `next_block_id_counter`; add one slot for the exit node.
-@@ -136,9 +171,20 @@ fn build_reverse_graph(
-     });
- 
-     for (id, block) in &func.body.blocks {
--        let successors = each_terminal_successor(&block.terminal);
-+        let successors = terminal_successors(&block.terminal, include_exception_edges);
-         let mut preds_set: FxHashSet<BlockId> = successors.into_iter().collect();
--        let succs_set: FxHashSet<BlockId> = block.preds.iter().copied().collect();
-+        let succs_set: FxHashSet<BlockId> = block
-+            .preds
-+            .iter()
-+            .copied()
-+            .filter(|pred| {
-+                include_exception_edges
-+                    || !matches!(
-+                        func.body.blocks.get(pred).map(|pred| &pred.terminal),
-+                        Some(Terminal::MaybeThrow { continuation, .. }) if continuation != id
-+                    )
-+            })
-+            .collect();
- 
-         let is_return = matches!(&block.terminal, Terminal::Return { .. });
-         let is_throw = matches!(&block.terminal, Terminal::Throw { .. });
-@@ -276,16 +322,44 @@ pub fn compute_post_dominator_frontiers(
-     next_block_id_counter: u32,
-     include_throws_as_exit_node: bool,
- ) -> Result<PostDominatorFrontiers, OxcDiagnostic> {
--    let post_dominators =
--        compute_post_dominator_tree(func, next_block_id_counter, include_throws_as_exit_node)?;
-+    post_dominator_frontiers(func, next_block_id_counter, include_throws_as_exit_node, true)
-+}
-+
-+/// Like [`compute_post_dominator_frontiers`], but over normal control flow only: the edge
-+/// from each `MaybeThrow` terminal to its exception handler is ignored.
-+///
-+/// Inside `try`, the handler edge of a `MaybeThrow` lets execution bypass everything after
-+/// it, so with that edge the frontiers stop at the n
-```
-
-**File**: `crates/oxc_react_compiler/src/react_compiler_inference/infer_reactive_places.rs` (modified, +17/-3)
-```diff
-@@ -21,7 +21,8 @@ use rustc_hash::FxHashMap;
- 
- use crate::diagnostics;
- use crate::react_compiler_hir::dominator::{
--    PostDominatorFrontiers, compute_post_dominator_frontiers,
-+    PostDominatorFrontiers, compute_normal_flow_post_dominator_frontiers,
-+    compute_post_dominator_frontiers,
- };
- use crate::react_compiler_hir::environment::Environment;
- use crate::react_compiler_hir::object_shape::HookKind;
-@@ -63,8 +64,21 @@ pub fn infer_reactive_places(
-     // Collect block IDs for iteration
-     let block_ids: Vec<BlockId> = func.body.blocks.keys().copied().collect();
- 
--    let frontiers =
--        compute_post_dominator_frontiers(func, env.next_block_id().index() as u32, false)?;
-+    let next_block_id = env.next_block_id().index() as u32;
-+    let mut frontiers = compute_post_dominator_frontiers(func, next_block_id, false)?;
-+    // Inside `try`, a store ends its block with a `MaybeThrow` whose handler edge skips
-+    // the rest of the `try`, so the frontiers above stop at that `MaybeThrow` and miss
-+    // the `If`/`Branch`/`Switch` that chose which store ran: a phi over the stores of
-+    // a ternary or of `if`/`switch` branches would never become reactive. Also add the
-+    // frontiers of normal control flow, keeping those through handler edges.
-+    if func
-+        .body
-+        .blocks
-+        .values()
-+        .any(|block| matches!(block.terminal, Terminal::MaybeThrow { handler: Some(_), .. }))
-+    {
-+        frontiers.extend(compute_normal_flow_post_dominator_frontiers(func, next_block_id, false)?);
-+    }
- 
-     // Track phi operand reactive flags during fixpoint.
-     // In TS, isReactive() sets place.reactive as a side effect. But when a phi
-```
-
-**File**: `crates/oxc_react_compiler/tests/snapshots/try-catch-conditional-assignment-reactive-test.snap` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+---
-+source: crates/oxc_react_compiler/tests/snapshot.rs
-+input_file: crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js
-+---
-+import { c as _c } from "react/compiler-runtime";
-+// A let assigned from a ternary with constant branches inside `try` is reactive
-+// through the ternary's test, so the JSX that reads it must depend on it.
-+function Component(t0) {
-+	const $ = _c(2);
-+	const { kind } = t0;
-+	let label;
-+	try {
-+		label = kind === 1 ? "one" : "other";
-+	} catch {
-+		label = "caught";
-+	}
-+	let t1;
-+	if ($[0] !== label) {
-+		t1 = <div>{label}</div>;
-+		$[0] = label;
-+		$[1] = t1;
-+	} else {
-+		t1 = $[1];
-+	}
-+	return t1;
-+}
 +export const FIXTURE_ENTRYPOINT = {
-+	fn: Component,
-+	params: [{ kind: 1 }],
-+	sequentialRenders: [
-+		{ kind: 1 },
-+		{ kind: 2 },
-+		{ kind: 1 }
-+	]
++  fn: Component,
++  params: [{value: 'a', cond: true}],
++  sequentialRenders: [
++    {value: 'a', cond: true},
++    {value: 'b', cond: false},
++  ],
 +};
 ```
 
-**File**: `crates/oxc_react_compiler/tests/snapshots/try-catch-if-statement-reactive-test.snap` (added, +39/-0)
+**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-nested-catch.js` (added, +20/-0)
 ```diff
-@@ -0,0 +1,39 @@
-+---
-+source: crates/oxc_react_compiler/tests/snapshot.rs
-+input_file: crates/oxc_react_compiler/fixtures/try-catch-if-statement-reactive-test.js
-+---
-+import { c as _c } from "react/compiler-runtime";
-+// Constant assignments in the branches of an `if` inside `try` make the
-+// variable reactive through the `if`'s test.
-+function Component(t0) {
-+	const $ = _c(2);
-+	const { cond } = t0;
-+	let value;
-+	try {
-+		if (cond) {
-+			value = "a";
-+		} else {
-+			value = "b";
-+		}
-+	} catch {
-+		value = "c";
-+	}
-+	let t1;
-+	if ($[0] !== value) {
-+		t1 = <div>{value}</div>;
-+		$[0] = value;
-+		$[1] = t1;
-+	} else {
-+		t1 = $[1];
-+	}
-+	return t1;
+@@ -0,0 +1,20 @@
++// Neither `try` body can throw, so both `catch` blocks are pruned.
++function Component(props) {
++  let x = props.value;
++  try {
++    try {
++      const unused = 1;
++    } catch {
++      x = 1;
++    }
++  } catch {
++    x = 2;
++  }
++  return <div>{x}</div>;
 +}
++
 +export const FIXTURE_ENTRYPOINT = {
-+	fn: Component,
-+	params: [{ cond: true }],
-+	sequentialRenders: [
-+		{ cond: true },
-+		{ cond: false },
-+		{ cond: true }
-+	]
++  fn: Component,
++  params: [{value: 0}],
++  sequentialRenders: [{value: 0}, {value: 3}],
 +};
 ```
 
----
-
-### Incident Patch 2: `32443217` (2026-10-20)
-**Commit Message**: refactor(formatter_core): check width via `overflows()` in `fits_text()` (#27988)
-
-Now it uses `overflows()` everywhere.
-
-**File**: `crates/oxc_formatter_core/src/printer/mod.rs` (modified, +7/-12)
+**File**: `crates/oxc_react_compiler/src/diagnostics.rs` (modified, +12/-0)
 ```diff
-@@ -1195,7 +1195,8 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
-         Ok(!self.overflows())
+@@ -1482,6 +1482,18 @@ where
+         }))
+ }
+ 
++#[cold]
++pub fn invariant_single_predecessor_phi_has_multiple_operands(
++    operands: impl Display,
++) -> OxcDiagnostic {
++    diagnostic(
++        ErrorCategory::Invariant,
++        format!(
++            "Found a block with a single predecessor but where a phi has multiple ({operands}) operands"
++        ),
++    )
++}
++
+ #[cold]
+ pub fn missing_phi_predecessor_mapping(
+     predecessor: impl Display,
+```
+
+**File**: `crates/oxc_react_compiler/src/react_compiler/entrypoint/pipeline.rs` (modified, +4/-4)
+```diff
+@@ -132,7 +132,7 @@ pub fn compile_fn<'a, const EMIT: bool>(
+         return Ok(None);
      }
  
--    /// Like Prettier's `fits` loop head (`remainingWidth >= 0`), checked at every `Fits::Yes` exit:
-+    /// Like Prettier's `fits` loop head (`remainingWidth >= 0`),
-+    /// checked at every `Fits::Yes` exit except a fill entry boundary (see `fits`):
-     /// a line that already overflows never fits, even if no text was measured.
-     /// A pending `Space` counts, a pending `line` space does not.
-     fn overflows(&self) -> bool {
-@@ -1535,22 +1536,16 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
-                 self.state.line_width += text.len();
-             }
-             Text::Text { text: _, width } => {
-+                self.state.line_width += width.value() as usize;
-+
-+                // The width is checked at the `Fits::Yes` exit, see `overflows`
-                 if width.is_multiline() {
--                    return if self.must_be_flat
--                        || self.state.line_width + width.value() as usize
--                            > usize::from(self.options().print_width)
--                    {
--                        Fits::No
--                    } else {
--                        Fits::Yes
--                    };
-+                    return Fits::from(!self.must_be_flat);
-                 }
--
--                self.state.line_width += width.value() as usize;
-             }
-         }
+-    prune_maybe_throws(&mut hir, &mut env.functions, &env.identifiers, env.allocator)?;
++    prune_maybe_throws(&mut hir, &mut env)?;
  
--        if self.state.line_width > usize::from(self.options().print_width) {
-+        if self.overflows() {
-             return Fits::No;
-         }
+     validate_context_variable_lvalues(&hir, &mut env)?;
+ 
+@@ -141,9 +141,9 @@ pub fn compile_fn<'a, const EMIT: bool>(
+ 
+     drop_manual_memoization(&mut hir, &mut env)?;
+ 
+-    inline_immediately_invoked_function_expressions(&mut hir, &mut env);
++    inline_immediately_invoked_function_expressions(&mut hir, &mut env)?;
+ 
+-    merge_consecutive_blocks(&mut hir, &mut env.functions, env.allocator);
++    merge_consecutive_blocks(&mut hir, &mut env.functions, env.allocator)?;
+ 
+     assert_consistent_identifiers(&hir, &env.identifiers)?;
+     assert_terminal_successors_exist(&hir)?;
+@@ -184,7 +184,7 @@ pub fn compile_fn<'a, const EMIT: bool>(
+ 
+     dead_code_elimination(&mut hir, &env);
+ 
+-    prune_maybe_throws(&mut hir, &mut env.functions, &env.identifiers, env.allocator)?;
++    prune_maybe_throws(&mut hir, &mut env)?;
+ 
+     infer_mutation_aliasing_ranges(&mut hir, &mut env, false)?;
  
 ```
 
 ---
 
-### Incident Patch 3: `eb1d9f95` (2026-10-20)
-**Commit Message**: fix(formatter_core): count a flat `line` space in `fits` only when text follows (#27987)
+### Incident Patch 2: `999496e4` (2026-10-22)
+**Commit Message**: fix(formatter): measure a short key by its display width (#28026)
 
-Check overflow at every `Fits::Yes` exit like Prettier's loop head, replacing the expanded-line pending space resolution.
+`js/object-prop-break-in/short-keys.js` is in the "Not idempotent" list
+of the Prettier conformance report. The cause is how a property key's
+width is measured for the short-key check (`width < indent_width +
+MIN_OVERLAP_FOR_BREAK`):
 
-Seems a side effect of #20954.
+- a quoted key goes through `FormatLiteralStringToken::width()`, its
+display width (`'古体诗'` -> 6)
+- an unquoted key goes through `SourceText::span_width()`, its `char`
+count (`古体诗` -> 3)
 
-**File**: `crates/oxc_formatter_core/src/printer/mod.rs` (modified, +23/-18)
+So the first pass breaks after `'古体诗':` like Prettier, unquotes the key,
+and the second pass sees a 3-wide key and joins the line again:
+
+```js
+// pass 1 (same as Prettier)
+  古体诗:
+    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
+// pass 2
+  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
+```
+
+An unquoted wide key (`古体诗: ...` in the input) never breaks at all,
+unlike Prettier, whose `isObjectPropertyWithShortKey` uses
+`getStringWidth`.
+
+This makes `span_width` return the display width
+(`UnicodeWidthStr::width`). Its only callers are these key-width checks
+(object/binding/assignment-target properties, plain and computed), so
+nothing e
+
+**File**: `crates/oxc_formatter/tests/fixtures/js/unicode/wide-char-short-key.js` (added, +11/-0)
 ```diff
-@@ -1147,7 +1147,9 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
- 
-         let fits_state = FitsState {
-             pending_indent: printer.state.pending_indent,
-+            // Already printed, so it counts like Prettier's `pos` even if it came from a `line`
-             pending_space: printer.state.pending_space,
-+            pending_line_space: false,
-             line_width: printer.state.line_width,
-             has_line_suffix: printer.state.line_suffixes.has_pending(),
-             sorted_tailwind_classes: printer.state.sorted_tailwind_classes,
-@@ -1177,17 +1179,28 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
-     {
-         while let Some(element) = self.queue.pop() {
-             match self.fits_element(element)? {
--                Fits::Yes => return Ok(true),
-+                Fits::Yes => return Ok(!self.overflows()),
-                 Fits::No => return Ok(false),
-                 Fits::Maybe => {
-+                    // A fill entry ends but the line goes on: the measurement of the next entry
-+                    // counts a pending `Space` once text follows, like Prettier measuring
-+                    // `[content, separator, next content]` together
-                     if predicate.is_end(element)? {
--                        break;
-+                        return Ok(self.state.line_width <= usize::from(self.options().print_width));
-                     }
-                 }
-             }
-         }
- 
--        Ok(true)
-+        Ok(!self.overflows())
-+    }
+@@ -0,0 +1,11 @@
++// A key is short by its display width (wide characters count as 2), quoted or not.
++// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
++x = {
++  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  "古体诗": "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  [古体]: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  abcdef: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
++};
++var { 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x;
++({ 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x);
+```
+
+**File**: `crates/oxc_formatter/tests/fixtures/js/unicode/wide-char-short-key.js.snap` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++---
++source: crates/oxc_formatter/tests/fixtures/mod.rs
++---
++==================== Input ====================
++// A key is short by its display width (wide characters count as 2), quoted or not.
++// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
++x = {
++  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  "古体诗": "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  [古体]: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  abcdef: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
++};
++var { 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x;
++({ 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x);
 +
-+    /// Like Prettier's `fits` loop head (`remainingWidth >= 0`), checked at every `Fits::Yes` exit:
-+    /// a line that already overflows never fits, even if no text was measured.
-+    /// A pending `Space` counts, a pending `line` space does not.
-+    fn overflows(&self) -> bool {
-+        self.state.line_width + usize::from(self.state.pending_space)
-+            > usize::from(self.options().print_width)
++==================== Output ====================
++------------------
++{ printWidth: 80 }
++------------------
++// A key is short by its display width (wide characters count as 2), quoted or not.
++// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
++x = {
++  古体诗:
++    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  古体诗:
++    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  [古体]:
++    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  abcdef:
++    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
++};
++var {
++  古体诗:
++    古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned",
++} = x;
++({
++  古体诗:
++    古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned",
++} = x);
++
++-------------------
++{ printWidth: 100 }
++-------------------
++// A key is short by its display width (wide characters count as 2), quoted or not.
++// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
++x = {
++  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  [古体]: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  abcdef: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
++  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
++};
++var { 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x;
++({ 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x);
++
++===================== End =====================
+```
+
+**File**: `crates/oxc_formatter/tests/snapshots/conformance__prettier-js.snap` (modified, +0/-1)
+```diff
+@@ -92,6 +92,5 @@ js compatibility: 1033/1123 (91.99%), 23 files skipped
+ - js/comments/first-argument/first-argument.js
+ - js/for/continue-and-break-comment-without-blocks.js
+ - js/function/issue-12967.js
+-- js/object-prop-break-in/short-keys.js
+ - jsx/comments/in-attributes.js
+ - jsx/spread/child.js
+```
+
+**File**: `crates/oxc_formatter_core/src/source/text.rs` (modified, +4/-2)
+```diff
+@@ -1,5 +1,7 @@
+ use std::ops::Deref;
+ 
++use unicode_width::UnicodeWidthStr;
++
+ use oxc_span::{GetSpan, Span};
+ 
+ /// Source text wrapper providing mechanical byte/offset access for the formatter.
+@@ -110,8 +112,8 @@ impl<'a> SourceText<'a> {
      }
  
-     /// Tests if the content of a `Fill` item fits in [PrintMode::Flat].
-@@ -1254,7 +1267,7 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
-                 if args.mode().is_flat() {
-                     match line_mode {
-                         LineMode::SoftOrSpace => {
--                            self.state.pending_space = true;
-+                            self.state.pending_line_space = true;
-                         }
-                         LineMode::Soft => {}
-                         LineMode::Hard
-@@ -1311,17 +1324,6 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
-                     // is what the mode's initialized to by default
-                     // This means, the printer is outside of the current element at this point and any
-                     // line break should be printed as regular line break -> Fits
--                    //
--                    // Before returning, resolve any pending space so the width check is accurate.
--                    // Without this, a deferred `Space` before a group boundary can be lost when
--                    // the fits measurer exits early via an expanded-mode line break, causing the
--                    // measured width to be off by one.
--                    if self.state.pending_space {
--                        self.state.line_width += 1;
--                        if self.state.line_width > usize::from(self.options().print_width) {
--                            return Ok(Fits::No);
--                        }
--                    }
-                     return Ok(Fits::Yes);
-                 }
-             }
-@@ -1522,7 +1524,9 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
-         self.state.line_width +=
-             indent.width(&self.printer.state.prefix_nodes, self.options().indent_width());
- 
--        if self.state.pending_space {
-+        if std::mem::take(&mut self.state.pending_space)
-+            | std::mem::take(&mut self.state.pending_line_space)
-+        {
-             self.state.line_width += 1;
-         }
- 
-@@ -1550,8 +1554,6 @@ impl<'a, 'print> FitsMeasurer<'a, 'print> {
-             return Fits::No;
-         }
- 
--        self.state.pending_space = false;
--
-         Fits::Maybe
+     // Utility methods
+-    /// Get character count of span
++    /// Get the display width of span, the same measure as a printed string's width (wide characters count as 2)
+     pub fn span_width(&self, span: Span) -> usize {
+-        self.text_for(&span).chars().count()
++        self.text_for(&span).width()
      }
+ }
+```
+
+---
+
+### Incident Patch 3: `7e9aa449` (2026-10-22)
+**Commit Message**: fix(formatter): keep parens around a looser operand of an instantiation expression (#28025)
+
+When the operand of an instantiation expression binds looser than the
+type arguments, the formatter drops its parentheses:
+
+```ts
+// input
+x = (c ? a : b)<T>;
+x = (y++)<T>;
+x = (a as B)<T>;
+
+// before
+x = c ? a : b<T>;   // instantiates only `b`
+x = y++<T>;         // does not parse
+x = a as B<T>;      // `B<T>` is now the type
+
+// after: unchanged from the input
+```
+
+The same happens for binary/logical operands, `++y`, unary operators
+(`!`, `typeof`, `void`, `delete`, `-`), `satisfies` and `<B>x`. Found by
+formatting Biome's `ts/expression/instantiation_expression.ts` fixture
+twice: the second pass failed to parse.
+
+`<T>` binds like a non-null `!`, so this adds
+`TSInstantiationExpression` next to `TSNonNullExpression` in the three
+helpers that decide those parens (`type_cast_like_needs_parens`,
+`binary_like_needs_parens`, `update_or_lower_expression_needs_parens`).
+Operands that don't need them (`(a.b)<T>`, `(a())<T>`, `` (a`x`)<T> ``)
+still lose them.
+
+Prettier (pinned version and 3.9.10) prints the broken form too, so I
+extended `DIVERGENCES.md#instantiation-expression-parens` and its pi
+
+**File**: `crates/oxc_formatter/DIVERGENCES.md` (modified, +14/-1)
+```diff
+@@ -850,7 +850,7 @@ Before an optional call's `?.`, Prettier moves an own-line comment into the argu
  
-@@ -1638,7 +1640,10 @@ impl From<bool> for Fits {
- #[derive(Debug)]
- struct FitsState<'print> {
-     pending_indent: Indention,
-+    /// A `Space`: like Prettier's `" "`, it counts even if no text follows it.
-     pending_space: bool,
-+    /// A flat `soft_line_break_or_space`: like Prettier's `line`, it counts only once text follows it.
-+    pending_line_space: bool,
-     has_line_suffix: bool,
-     line_width: usize,
-     sorted_tailwind_classes: &'print [String],
+ ## instantiation-expression-parens
+ 
+-- Why: semantics (Prettier's output no longer parses; prettier/prettier#20177)
++- Why: semantics (Prettier's output no longer parses or changes structure; prettier/prettier#20177, prettier/prettier#20345)
+ - Pin: `tests/fixtures/ts/parenthesis/instantiation-expression-parens.ts`
+ 
+ ```ts
+@@ -860,20 +860,29 @@ const a = (make<T>)!;
+ x = (make<T>) + y;
+ export default (class {})<string>;
+ (class {})<string>;
++x = (c ? a : b)<T>;
++x = (y++)<T>;
++x = (a as B)<T>;
+ 
+ // ours
+ const a = (make<T>)!;
+ (make<T>)<U>();
+ x = (make<T>) + y;
+ export default (class {})<string>;
+ (class {})<string>;
++x = (c ? a : b)<T>;
++x = (y++)<T>;
++x = (a as B)<T>;
+ 
+ // prettier
+ const a = make<T>!;
+ make<T><U>();
+ x = make<T> + y;
+ export default class {}<string>;
+ class {}<string>;
++x = c ? a : b<T>;
++x = y++<T>;
++x = a as B<T>;
+ ```
+ 
+ Prettier drops the parens around an instantiation expression before `!`,
+@@ -884,6 +893,10 @@ Prettier `main` still drops them before type arguments (`make<T><U>()` does not
+ and before a binary `+`, `-`, `<` or `>`-led operator, also when `make<T>` only ends the left operand
+ (`make<T> + y` and `a + make<T> - y` parse as `make < T > +y`).
+ 
++Prettier also drops the parens around an operand that binds looser than the type arguments.
++The type arguments then attach to its last piece only (`c ? a : b<T>`, `a as B<T>`), or the output no longer parses (`y++<T>`).
++Fixed in Prettier `main` by prettier/prettier#20345, which we follow.
++
+ ## export-default-leftmost-parens
+ 
+ - Why: uniform-rule (same construct, same output: expression statement)
+```
+
+**File**: `crates/oxc_formatter/src/parentheses/expression.rs` (modified, +3/-0)
+```diff
+@@ -844,6 +844,7 @@ fn type_cast_like_needs_parens(span: Span, parent: &AstNodes<'_, '_>) -> bool {
+         | AstNodes::UnaryExpression(_)
+         | AstNodes::AwaitExpression(_)
+         | AstNodes::TSNonNullExpression(_)
++        | AstNodes::TSInstantiationExpression(_)
+         // template tag
+         | AstNodes::TaggedTemplateExpression(_)
+         // in spread
+@@ -978,6 +979,7 @@ fn binary_like_needs_parens(
+         | AstNodes::TSTypeAssertion(_)
+         | AstNodes::AwaitExpression(_)
+         | AstNodes::TSNonNullExpression(_)
++        | AstNodes::TSInstantiationExpression(_)
+         | AstNodes::SpreadElement(_)
+         | AstNodes::JSXSpreadAttribute(_)
+         | AstNodes::ChainExpression(_)
+@@ -1081,6 +1083,7 @@ fn unary_like_expression_needs_parens(node: UnaryLike<'_, '_>) -> bool {
+ fn update_or_lower_expression_needs_parens(span: Span, parent: &AstNodes<'_, '_>) -> bool {
+     match parent {
+         AstNodes::TSNonNullExpression(_)
++        | AstNodes::TSInstantiationExpression(_)
+         | AstNodes::StaticMemberExpression(_)
+         | AstNodes::PrivateFieldExpression(_)
+         | AstNodes::TaggedTemplateExpression(_) => return true,
+```
+
+**File**: `crates/oxc_formatter/tests/fixtures/ts/parenthesis/instantiation-expression-parens.ts` (modified, +10/-0)
+```diff
+@@ -15,3 +15,13 @@ export default (function () {})<string>;
+ export default (class {})<string> as A;
+ (class {})<string>;
+ (function () {})<string>;
++x = (c ? a : b)<T>;
++x = (y++)<T>;
++x = (++y)<T>;
++x = (a + b)<T>;
++x = (a ?? b)<T>;
++x = (!a)<T>;
++x = (typeof a)<T>;
++x = (a as B)<T>;
++x = (a satisfies B)<T>;
++x = (<B>a)<T>;
+```
+
+**File**: `crates/oxc_formatter/tests/fixtures/ts/parenthesis/instantiation-expression-parens.ts.snap` (modified, +30/-0)
+```diff
+@@ -19,6 +19,16 @@ export default (function () {})<string>;
+ export default (class {})<string> as A;
+ (class {})<string>;
+ (function () {})<string>;
++x = (c ? a : b)<T>;
++x = (y++)<T>;
++x = (++y)<T>;
++x = (a + b)<T>;
++x = (a ?? b)<T>;
++x = (!a)<T>;
++x = (typeof a)<T>;
++x = (a as B)<T>;
++x = (a satisfies B)<T>;
++x = (<B>a)<T>;
+ 
+ ==================== Output ====================
+ ------------------
+@@ -41,6 +51,16 @@ export default (function () {})<string>;
+ export default (class {})<string> as A;
+ (class {})<string>;
+ (function () {})<string>;
++x = (c ? a : b)<T>;
++x = (y++)<T>;
++x = (++y)<T>;
++x = (a + b)<T>;
++x = (a ?? b)<T>;
++x = (!a)<T>;
++x = (typeof a)<T>;
++x = (a as B)<T>;
++x = (a satisfies B)<T>;
++x = (<B>a)<T>;
+ 
+ -------------------
+ { printWidth: 100 }
+@@ -62,5 +82,15 @@ export default (function () {})<string>;
+ export default (class {})<string> as A;
+ (class {})<string>;
+ (function () {})<string>;
++x = (c ? a : b)<T>;
++x = (y++)<T>;
++x = (++y)<T>;
++x = (a + b)<T>;
++x = (a ?? b)<T>;
++x = (!a)<T>;
++x = (typeof a)<T>;
++x = (a as B)<T>;
++x = (a satisfies B)<T>;
++x = (<B>a)<T>;
+ 
+ ===================== End =====================
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27990** (2026-10-20): fix(minifier,linter): keep `delete` of constant members and later JSX keys (@Dunqing)
-- **PR #27989** (2026-10-20): fix(formatter): keep an arrow signature that exactly fills the line for any body (@leaysgur)
-- **PR #27988** (2026-10-20): refactor(formatter_core): check width via `overflows()` in `fits_text()` (@leaysgur)
-- **PR #27987** (2026-10-20): fix(formatter_core): count a flat `line` space in `fits` only when text follows (@leaysgur)
-- **PR #27983** (2026-10-20): refactor(minifier): share string concat size estimation (@Dunqing)
-- **PR #27980** (2026-10-19): chore(deps): update dependency oxlint to v1.89.0 (@renovate[bot])
+- **PR #28099** (2026-10-22): refactor(formatter_core): remove JS-only method (@leaysgur)
+- **PR #28098** (2026-10-22): fix(formatter): measure width heuristics by display width (@leaysgur)
+- **PR #28097** (2026-10-22): refactor(formatter): add `AstNodes::is_binary_like` for parent paren checks (@leaysgur)
+- **PR #28096** (2026-10-22): fix(formatter): keep parens around private `in` expressions (@leaysgur)
+- **PR #28095** (2026-10-22): docs(formatter_core): document text width divergence (@leaysgur)
+- **PR #28093** (2026-10-22): test(oxfmt): skip entries under symlinked dirs in snapshot (@leaysgur)
 
 ---
 
@@ -1827,37 +1846,33 @@ Seems a side effect of #20954.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react-compiler): let branches inside `try` control reactivity (#27817)
+## X. react-compiler): compile a `try` whose `catch` is unreachable instead of panicki
 
 **RULE**:
-When implementing operations in `crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/react/invariant.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa7642ad`: react-compiler): let branches inside `try` control reactivity (#27817). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0f8937a`: react-compiler): compile a `try` whose `catch` is unreachable instead of panicking (#28066). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_react_compiler/fixtures/try-catch-conditional-assignment-reactive-test.js`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/react/invariant.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// A let assigned from a ternary with constant branches inside `try` is reactive
-// through the ternary's test, so the JSX that reads it must depend on it.
-function Component({kind}) {
-  let label = 'init';
+        // A `try` that cannot throw, with a `catch` that reassigns an outer variable.
+        // https://github.com/oxc-project/oxc/issues/27404
+        "
+export function Component() {
+  let x = 0;
   try {
-    label = kind === 1 ? 'one' : 'other';
+    const unused = 1;
   } catch {
-    label = 'caught';
+    x = 2;
   }
-  return <div>{label}</div>;
+  return <div>{x}</div>;
 }
-
-export const FIXTURE_ENTRYPOINT = {
-  fn: Component,
-  params: [{kind: 1}],
-  sequentialRenders: [{kind: 1}, {kind: 2}, {kind: 1}],
-};
+",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1867,4 +1882,4 @@ export const FIXTURE_ENTRYPOINT = {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa7642ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0f8937a` are properly handled with clean fallback behavior.

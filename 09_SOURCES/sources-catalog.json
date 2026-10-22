@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "7c1d25a1",
+    "sourceVersion": "a7796e20",
     "license": "Apache-2.0",
-    "contentHash": "22bde341112729ccd7f4bd83f776ef11b5ce3681e4da8dfa4138d4cca22f0ebb",
-    "lastHarvestedAt": "2026-10-21T16:32:15.404Z",
+    "contentHash": "8e885ab0268bc697e3d3e86b5b9769d4add02e7fccd277e43cbf5f9749962cce",
+    "lastHarvestedAt": "2026-10-22T16:22:26.524Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "d7a619c7",
+    "sourceVersion": "730f9fab",
     "license": "NOASSERTION",
-    "contentHash": "33c7b96f439d70556464ee3d34e001e31d56fe59e5577ada8f68de36d8ae4d0a",
-    "lastHarvestedAt": "2026-10-20T21:27:45.208Z",
+    "contentHash": "9ae356823ee232e2d2cf74632da90d871f98e37e4de5fca08e9efe1130b26660",
+    "lastHarvestedAt": "2026-10-22T16:22:32.472Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "e52fe542",
+    "sourceVersion": "cce96f2c",
     "license": "Apache-2.0",
-    "contentHash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
-    "lastHarvestedAt": "2026-10-20T22:20:23.205Z",
+    "contentHash": "85e942ba49606646b416d161223a357c7af81c3e6f912bdeba69e113a6bb8def",
+    "lastHarvestedAt": "2026-10-22T16:22:22.847Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "4c0fa90a",
+    "sourceVersion": "f1d90329",
     "license": "MIT",
-    "contentHash": "5af41427b79a21cf3a7816cd54157d5880907cbb33835b886b65e4c8d1d47f3b",
-    "lastHarvestedAt": "2026-10-20T19:23:32.378Z",
+    "contentHash": "703b7f8aea7dd86d75184700d118b44b3c320ccdeb50ce87e7f0956dc1f00352",
+    "lastHarvestedAt": "2026-10-22T16:22:18.348Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

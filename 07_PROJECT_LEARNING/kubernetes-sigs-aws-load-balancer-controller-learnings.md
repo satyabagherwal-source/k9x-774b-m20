@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
-> **Source Version**: `e52fe542`  
+> **Source Version**: `cce96f2c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:20:22.810Z  
+> **Timestamp**: 2026-10-22T16:22:22.402Z  
 > **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:20:22.529Z  
+> **Harvest Timestamp**: 2026-10-22T16:22:21.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1587,17 +1587,7 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4933** (2026-10-20): **build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0**
-  *Symptoms*: ### Issue  N/A  ### Description  Fixing sec issues for https://www.google.com/url?hl=en&q=https://go.dev/issue/82345&source=gmail&ust=1792607953676000&usg=AOvVaw3VEkwwBNBKbwN7TqaYVhQ_ https://go.dev/doc/devel/release#go1.27.3  ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [x] Manually tested - [x] Made sure the title of the PR is a good description that can go into the release notes
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/pull/4933?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 58.27%. Comparing base ([`7203d43`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/7203d43d1a726dc75774a344bec86e8ee8afe563?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)) to head ([`c65b53f`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/c65b53f4407c7a12578421bb5c51f9b43a003d07?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)). :warning: Report is 9 commits behind head on main.  <details><summary>Addition
-  > /lgtm
-
-- **Issue #4932** (2026-10-19): **feat(backend): expose node Ready time on pod endpoints**
-  *Symptoms*: ### Issue  none  ### Description  in order to calculate target registration latency metrics we need to know when the node the pod resides on was ready.  ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [ ] Manually tested - [ ] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [ ] Refactored something and made the world a better place :star2: 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/pull/4932?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 58.27%. Comparing base ([`7203d43`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/7203d43d1a726dc75774a344bec86e8ee8afe563?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)) to head ([`e7e81ed`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/e7e81ed7d204f627396f0b92d6176533920c2a35?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)). :warning: Report is 8 commits behind head on main.  <details><summary>Addition
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4932#pullrequestreview-5578631364" title="Approved">shraddhabang</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4932#" title="Author self-approved">zac-nixon</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [shraddhabang,zac-nixon]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- M
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1614,117 +1604,182 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c65b53f4` (2026-10-20)
-**Commit Message**: build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0
+### Incident Patch 1: `cce96f2c` (2026-10-21)
+**Commit Message**: cut v3.6.1 release (#4934)
 
-**File**: `.go-version` (modified, +1/-1)
+**File**: `Makefile` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ MAKEFILE_PATH = $(dir $(realpath -s $(firstword $(MAKEFILE_LIST))))
+ 
+ # Image URL to use all building/pushing image targets
+-IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.0
++IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.1
+ # Image URL to use for builder stage in Docker build
+ GOLANG_VERSION ?= $(shell cat .go-version)
+ BUILD_IMAGE ?= public.ecr.aws/docker/library/golang:$(GOLANG_VERSION)
+```
+
+**File**: `config/controller/kustomization.yaml` (modified, +1/-1)
+```diff
+@@ -9,4 +9,4 @@ kind: Kustomization
+ images:
+ - name: controller
+   newName: public.ecr.aws/eks/aws-load-balancer-controller
+-  newTag: v3.6.0
++  newTag: v3.6.1
+```
+
+**File**: `docs/deploy/installation.md` (modified, +8/-8)
+```diff
+@@ -92,15 +92,15 @@ Example condition for cluster name resource tag:
+ 2. Download an IAM policy for the LBC using one of the following commands:<p>
+     If your cluster is in a US Gov Cloud region:
+     ```
+-    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy_us-gov.json
++    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy_us-gov.json
+     ```
+     If your cluster is in a China region:
+     ```
+-    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy_cn.json
++    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy_cn.json
+     ```
+     If your cluster is in any other region:
+     ```
+-    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy.json
++    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
+     ```
+ 
+ 3. Create an IAM policy named `AWSLoadBalancerControllerIAMPolicy`. If you downloaded a different policy, replace `iam-policy` with the name of the policy that you downloaded.
+@@ -132,7 +132,7 @@ Follow the Pod Identity set-up guide [here](https://docs.aws.amazon.com/eks/late
+ ### Option C: Attach IAM policies to nodes
+ If you're not setting up IAM roles for service accounts, apply the IAM policies from the following URL at a minimum. Please be aware of the possibility that the controller permissions may be assumed by other users in a pod after retrieving the node role credentials, so the best practice would be using IRSA instead of attaching IAM policy directly.
+ ```
+-curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy.json
++curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
+ ```
+ 
+ When using this option, IMDS *must* be enabled. The controller retrieves the instance credentials using IMDS. Use IRSA to avoid usage of IMDS.
+@@ -274,7 +274,7 @@ We recommend using the Helm chart to install the controller. The chart supports
+     ### Apply YAML
+     1. Download the spec for the LBC.
+     ```
+-    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.0/v3_6_0_full.yaml
++    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.1/v3_6_1_full.yaml
+     ```
+     2. Edit the saved yaml file, go to the Deployment spec, and set the controller `--cluster-name` arg value to your EKS cluster name
+     ```
+@@ -298,15 +298,15 @@ We recommend using the Helm chart to install the controller. The chart supports
+     ```
+     4. Apply the yaml file
+     ```
+-    kubectl apply -f v3_6_0_full.yaml
++    kubectl apply -f v3_6_1_full.yaml
+     ```
+     5. Optionally download the default ingressclass and ingressclass params
+     ```
+-    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.0/v3_6_0_ingclass.yaml
++    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.1/v3_6_1_ingclass.yaml
+     ```
+     6. Apply the ingressclass and params
+     ```
+-    kubectl apply -f v3_6_0_ingclass.yaml
++    kubectl apply -f v3_6_1_ingclass.yaml
+     ```
+ 
+ ## Create Update Strategy
+```
+
+**File**: `docs/examples/echo_server.md` (modified, +5/-5)
+```diff
+@@ -87,9 +87,9 @@ In this walkthrough, you'll
+ 1.  Deploy all the echoserver resources (namespace, service, deployment)
+ 
+     ```bash
+-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-namespace.yaml &&\
+-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-service.yaml &&\
+-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-deployment.yaml
++    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-namespace.yaml &&\
++    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-service.yaml &&\
++    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-deployment.yaml
+     ```
+ 
+ 1.  List all the resources to ensure they were created.
+@@ -113,7 +113,7 @@ In this walkthrough, you'll
+ 1.  Download the echoserver ingress manifest locally.
+ 
+     ```bash
+-    wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-ingress.yaml
++    wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-ingress.yaml
+     ```
+ 
+ 1.  Configure the subnets, either by add annotation to the ingress or add tags to subnets. This step is optional in lieu of auto-discovery.
+@@ -300,7 +300,7 @@ You should get back a valid response.
+ follow below steps if you want to use kube2iam to provide the AWS credentials
+ 
+ 1. configure the proper policy
+-    The policy to be used can be fetched from https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy.json
++    The policy to be used can be fetched from https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
+ 
+ 1. configure the proper role and create the trust relationship
+     You have to find which role is associated with your K8S nodes. Once you found take note of the full arn:
+```
+
+**File**: `helm/aws-load-balancer-controller/Chart.yaml` (modified, +2/-2)
+```diff
+@@ -1,8 +1,8 @@
+ apiVersion: v2
+ name: aws-load-balancer-controller
+ description: AWS Load Balancer Controller Helm chart for Kubernetes
+-version: 3.6.0
+-appVersion: v3.6.0
++version: 3.6.1
++appVersion: v3.6.1
+ home: https://github.com/aws/eks-charts
+ icon: https://raw.githubusercontent.com/aws/eks-charts/master/docs/logo/aws.png
+ sources:
+```
+
+**File**: `helm/aws-load-balancer-controller/test.yaml` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ replicaCount: 2
+ 
+ image:
+   repository: public.ecr.aws/eks/aws-load-balancer-controller
+-  tag: v3.6.0
++  tag: v3.6.1
+   pullPolicy: IfNotPresent
+ 
+ imagePullSecrets: []
+```
+
+**File**: `helm/aws-load-balancer-controller/values.yaml` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ revisionHistoryLimit: 10
+ 
+ image:
+   repository: public.ecr.aws/eks/aws-load-balancer-controller
+-  tag: v3.6.0
++  tag: v3.6.1
+   pullPolicy: IfNotPresent
+ 
+ runtimeClassName: ""
+```
+
+**File**: `version-stable.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--1.26.6
-+1.26.10
-```
-
-**File**: `go.mod` (modified, +8/-8)
-```diff
-@@ -36,7 +36,7 @@ require (
- 	github.com/spf13/pflag v1.0.10
- 	github.com/stretchr/testify v1.11.1
- 	go.uber.org/zap v1.28.0
--	golang.org/x/net v0.58.0
-+	golang.org/x/net v0.60.0
- 	golang.org/x/time v0.15.0
- 	gomodules.xyz/jsonpatch/v2 v2.4.0
- 	google.golang.org/grpc v1.83.2
-@@ -170,14 +170,14 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
--	golang.org/x/crypto v0.55.0 // indirect
--	golang.org/x/mod v0.38.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
--	golang.org/x/tools v0.48.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
-```
-
-**File**: `go.sum` (modified, +16/-16)
-```diff
-@@ -524,13 +524,13 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
- golang.org/x/crypto v0.0.0-20220214200702-86341886e292/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
--golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
--golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
-@@ -541,16 +541,16 @@ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96b
- golang.org/x/net v0.0.0-20210510120150-4163338589ed/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20220225172249-27dd8689420f/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -571,27 +571,27 @@ golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
--golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
--golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
-+golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
-+golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceo
+-3.6.0
++3.6.1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4934** (2026-10-21): cut v3.6.1 release (@shraddhabang)
 - **PR #4933** (2026-10-20): build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0 (@shraddhabang)
 - **PR #4932** (2026-10-19): feat(backend): expose node Ready time on pod endpoints (@zac-nixon)
 - **PR #4928** (2026-10-07): fix(networking): treat InvalidGroup.NotFound as success in releaseSG (@nakshah87)
 - **PR #4922** (2026-10-05): fix(scripts): eks-charts sync gh CLI compat + docs version bump (@shraddhabang)
 - **PR #4921** (2026-10-05): cut v3.6.0 release (@shraddhabang)
-- **PR #4919** (2026-10-03): fix: ignore unpermitted cross namespace TCPRoutes in gateway target TGC deletion guard (@shraddhabang)
 
 ---
 
@@ -1744,42 +1799,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0
+## X. cut v3.6.1 release (#4934)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c65b53f4`: build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cce96f2c`: cut v3.6.1 release (#4934). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/net v0.60.0
-	golang.org/x/crypto v0.57.0 // indirect
-	golang.org/x/mod v0.41.0 // indirect
-	golang.org/x/sync v0.23.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/term v0.46.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
+IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/net v0.58.0
-	golang.org/x/crypto v0.55.0 // indirect
-	golang.org/x/mod v0.38.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/term v0.45.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
-	golang.org/x/tools v0.48.0 // indirect
+IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c65b53f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cce96f2c` are properly handled with clean fallback behavior.

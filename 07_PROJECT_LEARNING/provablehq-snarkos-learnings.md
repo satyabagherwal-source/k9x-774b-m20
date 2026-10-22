@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `7c1d25a1`  
+> **Source Version**: `a7796e20`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:32:15.179Z  
+> **Timestamp**: 2026-10-22T16:22:26.068Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:32:15.174Z  
+> **Harvest Timestamp**: 2026-10-22T16:22:25.001Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4532 stars
+- **Stars / Engagement**: 4531 stars
 
 ---
 
@@ -1943,16 +1943,7 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4466** (2026-09-29): **[Bug] Spurious ERROR log: Attempted to decrease GC round from 36 to 34**
-  *Symptoms*: ## 🐛 Bug Report  Link to testrun: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4270/workflows/6fe7a02c-9a65-48f9-86f1-b2438b7f6616/jobs/90558?utm_campaign=vcs-integration-link&utm_medium=referral&utm_source=github-checks-link  [ci-runner] 2026-09-17T17:42:01Z ❌ Test failed! Validator #1 logs contain errors. 2026-09-17T17:41:13.258841Z ERROR Block synchronization failed — Failed to garbage collect certificates — Attempted to decrease GC round from 36 to 34 
-  **Post-Mortem & Fix Analysis**:
-  > Likely already solved by 67810a9.
-
-- **Issue #4407** (2026-09-02): **[Bug] There are 1 surplus live tasks**
-  *Symptoms*: ## 🐛 Bug Report  Our good old friend has returned.  Example failure: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4133/workflows/4789b13b-832a-46b2-a997-5109a89c889a/jobs/86849 
-  **Post-Mortem & Fix Analysis**:
-  > From what I can tell, this is fixed in `staging,` and it's the nature of this specific test script that caused (and will keep causing until the next release) the failure, as it involves a node upgrade, and the version being upgraded doesn't have the fix just yet.
-  > Closing per @ljedrz's diagnosis above: this is fixed in `staging`, and the remaining CI failures are an artifact of the test script upgrading from a release that predates the fix.
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1969,211 +1960,370 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c1d25a1` (2026-10-21)
-**Commit Message**: Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify
+### Incident Patch 1: `08c70174` (2026-10-21)
+**Commit Message**: Merge pull request #4562 from aleo-labs-protocol/ci/merge-fixup
 
-bench: rename cache-hit REST verification benches to cached_verify
+ci: keep staging's snarkVM pin when merging release branches into staging
 
-**File**: `node/rest/Cargo.toml` (modified, +2/-0)
+**File**: `.github/merge-fixup.sh` (added, +155/-0)
 ```diff
-@@ -30,6 +30,8 @@ locktick = [
-   "snarkos-node-router/locktick",
-   "snarkvm/locktick"
- ]
-+# Lets benches advance a test ledger to the latest consensus version.
-+test_consensus_heights = [ "snarkvm/test_consensus_heights" ]
- serial = [
-   "snarkos-node-router/serial",
-   "snarkos-node-consensus/serial"
-```
-
-**File**: `node/rest/benches/handlers.rs` (modified, +47/-5)
-```diff
-@@ -317,23 +317,59 @@ fn bench_mapping_lookups(c: &mut Criterion) {
-     group.finish();
- }
- 
-+/// Advances `ledger` to the latest consensus version with empty blocks.
-+///
-+/// A ledger at genesis is at `ConsensusVersion::V1`, which verifies with Varuna V1, a verifier the
-+/// network no longer runs. Under `test_consensus_heights` each version from V2 onward lasts one
-+/// block, so only the latest version stays put across the blocks a benchmark adds.
-+#[cfg(feature = "test_consensus_heights")]
-+fn advance_to_latest(
-+    ledger: &Ledger<CurrentNetwork, CurrentStorage>,
-+    private_key: &PrivateKey<CurrentNetwork>,
-+    rng: &mut TestRng,
-+) {
-+    let latest = ConsensusVersion::latest();
-+    let target = CurrentNetwork::CONSENSUS_HEIGHT(latest).unwrap();
-+    while ledger.latest_height() < target {
-+        let block = ledger.prepare_advance_to_next_beacon_block(private_key, vec![], vec![], vec![], rng).unwrap();
-+        ledger.advance_to_next_block(&block).unwrap();
-+    }
-+    let consensus_version = CurrentNetwork::CONSENSUS_VERSION(ledger.latest_height()).unwrap();
-+    assert_eq!(consensus_version, latest, "height {} is {consensus_version:?}", ledger.latest_height());
-+    eprintln!(
-+        "transaction_verification: height {}, {consensus_version:?}, Varuna {:?}",
-+        ledger.latest_height(),
-+        snarkvm::console::network::varuna_version_from_consensus(consensus_version)
-+    );
+@@ -0,0 +1,155 @@
++#!/usr/bin/env bash
++# The post-merge hook of merge-into-staging.yml. It runs with the merge in
++# progress, and its arguments are the unmerged paths. See "Merging branches" in
++# aleo-labs-protocol/gh-actions for the contract.
++#
++# Release branches pin snarkVM by version or by a release revision, and staging
++# pins it by a staging revision. So:
++#   - The root manifest keeps the [workspace.dependencies.snarkvm] table of the
++#     target as HEAD forked from it, whichever side changed it. HEAD is the open
++#     pull request's branch when there is one, and the target can move on after
++#     that branch forks. The rest of the manifest merges as usual.
++#   - Cargo.lock keeps git's merge without the source's snarkVM entries. It is
++#     left unmerged for people when the source changed both snarkVM and other
++#     packages, or when HEAD's pin differs from the target's.
++# Other paths stay as git merged them.
++#
++# The hook must not run cargo: the merged tree's cargo and rustup configuration
++# would pick the programs it runs, on the runner the push step shares.
++#
++# The hook reads blobs that the workflow's partial clone may not hold yet, and it
++# runs without a token, so it relies on the repository being public.
++set -euo pipefail
++
++manifest=Cargo.toml
++lockfile=Cargo.lock
++header='[workspace.dependencies.snarkvm]'
++
++tmp=$(mktemp -d)
++trap 'rm -rf "$tmp"' EXIT
++
++# Prints the table: its header and the lines up to the next header. Blank and
++# comment lines just before the next header belong to the next header.
++table() {
++  awk -v h="$header" '
++    $0 == h { on = 1; print; next }
++    on && /^\[/ { exit }
++    on && /^[[:space:]]*(#|$)/ { held = held $0 "\n"; next }
++    on { printf "%s", held; held = ""; print }'
 +}
 +
- /// Benchmarks `check_transaction_basic` (called from `transaction_broadcast`) for a deploy and an
--/// execute transaction, mirroring what snarkVM's own `ledger/benches/transaction.rs` measures for
--/// `vm.check_transaction` -- `Ledger::check_transaction_basic` just forwards to it.
-+/// execute transaction, mirroring snarkVM's `cached_verify` benches in `ledger/benches/transaction.rs`
-+/// -- `Ledger::check_transaction_basic` forwards to `vm.check_transaction`. Each ledger is first
-+/// advanced to the latest consensus version, so the verifier is the one the network runs.
-+///
-+/// `vm.check_transaction` caches each transaction it accepts and skips proof verification on a
-+/// repeat, so after the first iteration these benches time a cache hit, not verification. snarkVM's
-+/// `ledger/benches/verify_transaction.rs` times verification itself.
- ///
- /// Each transaction is built fresh, checked, but never applied to its ledger. Both pay with a
- /// public fee, not a fee record -- see the comment on the equivalent deploy in
- /// `build_chain_fixture` for why.
-+#[cfg(feature = "test_consensus_heights")]
- fn bench_transaction_verification(c: &mut Criterion) {
-     let mut group = c.benchmark_group("transaction_verification");
- 
-     {
-         let rng = &mut TestRng::default();
-         let (ledger, private_key, _records) = fresh_ledger(rng);
-+        advance_to_latest(&ledger, &private_key, rng);
-         let program = Program::<CurrentNetwork>::from_str(
-             r"
- program rest_bench_verify_deploy.aleo;
- 
-+constructor:
-+    assert.eq edition 0u16;
++# Prints the input with its table replaced by the target's. An input without
++# the table is printed unchanged.
++with_target_table() {
++  awk -v h="$header" -v t="$tmp/table" '
++    $0 == h { while ((getline l < t) > 0) print l; skip = 1; next }
++    skip && /^\[/ { printf "%s", held; held = ""; skip = 0 }
++    skip && /^[[:space:]]*(#|$)/ { held = held $0 "\n"; next }
++    skip { held = ""; next }
++    { print }
++    END { printf "%s", held }'
++}
 +
- function hello:
-     input r0 as u32.private;
-     input r1 as u32.private;
-@@ -344,14 +380,15 @@ function hello:
-         .unwrap();
-         let deploy_tx = ledger.vm().deploy(&private_key, &program, None, 600_000, None, rng).unwrap();
- 
--        group.bench_function("check_transaction_basic(deploy)", |b| {
-+        group.bench_function("check_transaction_basic(deploy) - cached_verify", |b| {
-             b.iter(|| ledger.check_transaction_basic(&deploy_tx, None, rng).unwrap())
-         });
-     }
- 
-     {
-         let rng = &mut TestRng::default();
-         let (ledger, private_key, _records) = fresh_ledger(rng);
-+        advance_to_latest(&ledger, &private_key, rng);
-         let address = Address::try_from(&private_key).unwrap();
- 
-         let inputs = [
-@@ -369,7 +406,7 @@ function hello:
-             .execute_authorization(execute_authorization.replicate(), Some(fee_authorization.replicate()), None, rng)
-             .unwrap();
- 
--        group.bench_function("check_transaction_basic(execute transfer_public)", |b| {
-+        group.bench_function("check_transaction_basic(execute transfer_public) - cached_verify", |b| {
-             b.iter(|| ledger.check_transaction_basic(&execute_tx, None, rng).unwrap())
-         });
-     }
-@@ -413,7 +450,12 @@ criterion_group!(
-     bench_program_lookups,
-     bench_state_path_lookups,
-     bench_mapping_lookups,
--    bench_transaction_verification,
-     bench_db_backup,
- );
-+#[cfg(feature = "test_consensus_heights")]
-+criterion_group!(verification, bench_transaction_verification);
++unmerged() {
++  [ -n "$(git ls-files -u -- "$@")" ]
++}
 +
-+#[cfg(feature = "test_consensus_heights")]
-+criterion_main!(handlers, verification);
-+#[cfg(not(feature = "test_consensus_heights"))]
- criterion_main!(handlers);
++# Prints one line per package of the lockfile: its name, a tab, and the entry to
++# compare. A snarkVM pin change also rewrites the dependency lists of packages
++# that share dependencies with snarkVM, so a package from a registry or git is
++# compared by its name, version and source alone. A workspace package is
++# compared whole, so a dependency added to it shows.
++packages() {
++  awk '
++    function flush() { if (n != "") print n "\t" (src ? key : all); n = key = all = ""; src = 0 }
++    /^\[/ { flush(); on = $0 == "[[package]]"; next }
++    on && /^name = / { n = $3; gsub(/"/, "", n) }
++    on && /^source = / { src = 1 }
++    on && /^(name|version|source) = / { key = key " " $0 }
++    on && NF { all = all " " $0 }
++    END { flush() }'
++}
++
++has_lockfile() {
++  [ -n "$(git ls-tree "$1" -- "$lockfile")" ]
++}
++
++# Prints ls-tree lines as update-index lines at the given stage.
++at_stage() {
++  awk -v n="$1" -F '\t' '{ split($1, a, " "); print a[1] " " a[3] " " n "\t" $2 }'
++}
++
++# Leaves the path unmerged, with the merge base, HEAD and the source as its
++# stages. The working tree keeps git's merge.
++leave_unmerged() {
++  local base
++  unmerged "$1" && return
++  base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
++  {
++    printf '0 %s\t%s\n' "$(git rev-parse HEAD | tr 0-9a-f 0)" "$1"
++    git ls-tree "$base" -- "$1" | at_stage 1
++    git ls-tree HEAD -- "$1" | at_stage 2
++    git ls-tree MERGE_HEAD -- "$1" | at_stage 3
++  } | git update-index --index-info
++}
++
++fork=$(git merge-base HEAD "origin/$TARGET")
++git show "$fork:$manifest" | table > "$tmp/table"
++if [ ! -s "$tmp/table" ]; then
++  echo "::error::$manifest on $TARGET has no $header table" >&2
++  exit 1
++fi
++
++if unmerged "$manifest"; then
++  # Merges again with the table made equal on all three sides. A side without
++  # the manifest leaves the conflict to people.
++  if git show ":1:$manifest" > "$tmp/base" 2> /dev/null && git show ":3:$manifest" > "$tmp/theirs" 2> /dev/null; then
++    git show ":2:$manifest" | with_target_table > "$tmp/ours"
++    with_target_table < "$tmp/base" > "$tmp/base.fixed"
++    with_target_table < "$tmp/theirs" > "$tmp/theirs.fixed"
++    if git merge-file -L "$TARGET" -L "merge base" -L "$SOURCE" "$tmp/ours" "$tmp/base.fixed" "$tmp/theirs.fixed"; then
++      cp "$tmp/ours" "$manifest"
++      git add "$manifest"
++      echo "$manifest: resolved, keeping the snarkVM pin of $TARGET"
++    else
++      # Fewer markers for people to resolve. The path stays unmerged.
++      cp "$tmp/ours" "$manifest"
++      echo "$manifest: conflicts outside the snarkVM table remain"
++    fi
++  fi
++elif [ -f "$manifest" ]; then
++  with_target_table < "$manifest" > "$tmp/merged"
++  if ! cmp -s "$tmp/merg
 ```
 
----
-
-### Incident Patch 2: `a8b5c148` (2026-10-21)
-**Commit Message**: Merge pull request #4552 from 14MR/perf/swap-inclusion-latency
-
-fix(consensus): refill workers after local proposals
-
-**File**: `node/bft/src/primary.rs` (modified, +12/-0)
+**File**: `.github/merge-fixup.test.sh` (added, +313/-0)
 ```diff
-@@ -198,6 +198,8 @@ pub struct Primary<N: Network> {
-     /// This is used, so the timeout for round advancement is reset on every round increment.
-     round_increment_notify: Arc<Notify>,
- 
-+    /// Wakes the mempool refill task after a new proposal has drained the workers.
-+    proposal_notify: Arc<Notify>,
-     /// Factor applied to the batch spend limit while this primary builds a proposal.
-     proposal_spent_limit_multiplier: u64,
- }
-@@ -252,6 +254,7 @@ impl<N: Network> Primary<N> {
-             handles: Default::default(),
-             proposal_task: Default::default(),
-             round_increment_notify: Default::default(),
-+            proposal_notify: Default::default(),
-             proposal_spent_limit_multiplier,
-         })
-     }
-@@ -399,6 +402,14 @@ impl<N: Network> Primary<N> {
-         self.workers().iter().map(|worker| worker.num_transmissions()).sum()
-     }
- 
-+    /// Waits for a new local proposal so the mempool can refill the workers.
-+    ///
-+    /// This has a single consumer. Proposals made while that consumer is busy are coalesced
-+    /// into one pending notification. Rebroadcasts do not notify the consumer.
-+    pub async fn wait_for_proposal(&self) {
-+        self.proposal_notify.notified().await;
-+    }
+@@ -0,0 +1,313 @@
++#!/usr/bin/env bash
++# Tests merge-fixup.sh against throwaway repositories.
++set -euo pipefail
 +
-     /// Returns the number of unconfirmed ratifications.
-     pub fn num_unconfirmed_ratifications(&self) -> usize {
-         self.workers().iter().map(|worker| worker.num_ratifications()).sum()
-@@ -849,6 +860,7 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-         );
-         // Store the proposal in memory.
-         *self.proposed_batch.write() = ProposedBatchState::Certifying(Box::new(proposal));
-+        self.proposal_notify.notify_one();
-         // Record the wall-clock time at which the batch was proposed.
-         #[cfg(feature = "metrics")]
-         {
++hook=$(realpath "$(dirname "$0")/merge-fixup.sh")
++work=$(mktemp -d)
++trap 'rm -rf "$work"' EXIT
++pass=0
++fail=0
++
++ck() {
++  local name=$1
++  shift
++  if "$@"; then
++    pass=$((pass + 1))
++  else
++    fail=$((fail + 1))
++    echo "FAIL: $name" >&2
++  fi
++}
++
++manifest() { # pin, anyhow version, line above the anyhow table
++  cat <<EOF
++[workspace]
++members = [ "a" ]
++
++[workspace.dependencies.snarkvm]
++#path = "../snarkVM"
++${1}
++default-features = false
++${3:-}
++[workspace.dependencies.anyhow]
++version = "${2:-1.0}"
++EOF
++}
++
++lockfile() { # pin, anyhow version, foo version, another dependency of a
++  local dep=
++  if [ -n "${4:-}" ]; then
++    dep=$'\n'" \"$4\","
++  fi
++  cat <<EOF
++version = 4
++
++[[package]]
++name = "a"
++version = "0.1.0"
++dependencies = [${dep}
++ "foo",
++ "snarkvm",
++]
++
++[[package]]
++name = "anyhow"
++version = "${2:-1.0}"
++
++[[package]]
++name = "foo"
++version = "${3:-1.0.0}"
++
++[[package]]
++name = "snarkvm"
++version = "4.12.0"
++source = "$(cksum <<< "$1" | cut -d' ' -f1)"
++EOF
++}
++
++staging_pin='git = "https://github.com/ProvableHQ/snarkVM.git"
++rev = "1111111" #staging'
++staging_bump='git = "https://github.com/ProvableHQ/snarkVM.git"
++rev = "3333333" #staging'
++release_pin='#git = "https://github.com/ProvableHQ/snarkVM.git"
++version = "=4.12.0"'
++release_rev='git = "https://github.com/ProvableHQ/snarkVM.git"
++rev = "2222222" #test_net_v4120'
++
++# Makes a repository at $repo whose branches staging and release start at a
++# common base with the given pin.
++setup() {
++  repo=$(mktemp -d -p "$work")
++  git -C "$repo" init -q -b staging
++  git -C "$repo" config user.name t
++  git -C "$repo" config user.email t@t
++  mkdir "$repo/a"
++  echo '[package]' > "$repo/a/Cargo.toml"
++  manifest "$1" > "$repo/Cargo.toml"
++  lockfile "$1" > "$repo/Cargo.lock"
++  git -C "$repo" add -A
++  git -C "$repo" commit -qm base
++  git -C "$repo" branch release
++}
++
++edit() { # branch, pin, anyhow version, foo version, line above the anyhow table, another dependency of a
++  git -C "$repo" checkout -q "$1"
++  manifest "$2" "${3:-}" "${5:-}" > "$repo/Cargo.toml"
++  lockfile "$2" "${3:-}" "${4:-}" "${6:-}" > "$repo/Cargo.lock"
++  git -C "$repo" commit -qam "$1"
++}
++
++# Starts merging release into the branch, by default staging, as the workflow
++# does: origin/staging is the target, and the branch is HEAD.
++merge_into() {
++  git -C "$repo" update-ref refs/remotes/origin/staging staging
++  git -C "$repo" checkout -q "${1:-staging}"
++  git -C "$repo" merge -q --no-ff --no-commit release > /dev/null 2>&1 || true
++}
++
++# Runs the hook as the workflow does, with the unmerged paths as arguments.
++hook() {
++  local paths
++  mapfile -t paths < <(git -C "$repo" -c core.quotePath=false diff --name-only --diff-filter=U)
++  (cd "$repo" && TARGET=staging SOURCE=release "$hook" "${paths[@]}") > "$repo.out" 2> "$repo.err"
++}
++
++run_hook() {
++  if ! hook; then
++    fail=$((fail + 1))
++    echo "FAIL: the hook failed:" >&2
++    cat "$repo.err" >&2
++  fi
++}
++
++fails() { ! "$@"; }
++
++# What the workflow's push step reads as unresolved.
++unmerged_paths() { git -C "$repo" -c core.quotePath=false diff --name-only --diff-filter=U; }
++
++unmerged_are() { [ "$(unmerged_paths)" = "$1" ]; }
++
++is_unmerged() { unmerged_paths | grep -qxF "$1"; }
++
++same_as_head() { # path
++  git -C "$repo" diff --cached --quiet HEAD -- "$1" && fails is_unmerged "$1" && git -C "$repo" diff --quiet -- "$1"
++}
++
++staged_has() { git -C "$repo" show ":$1" | grep -qxF "$2"; }
++
++after_marker() { grep -A1 '^<<<<<<<' "$repo/$1" | grep -qxF "$2"; }
++
++near_line_no_markers() { grep -B1 -A2 -xF "$2" "$repo/$1" | fails grep -q '^[<=>]\{7\}'; }
++
++silent() { ! [ -s "$repo.out" ]; }
++
++index_is() { [ "$(git -C "$repo" ls-files -s)" = "$1" ]; }
++
++echo "both sides moved the pin"
++setup "$release_rev"
++edit staging "$staging_pin"
++edit release "$release_pin"
++merge_into
++ck "the manifest conflicts before the hook" is_unmerged Cargo.toml
++run_hook
++ck "the manifest is the target's" same_as_head Cargo.toml
++ck "the lockfile is the target's" same_as_head Cargo.lock
++ck "nothing is left for people" unmerged_are ''
++
++echo "only the source moved the pin"
++setup "$staging_pin"
++edit release "$release_pin"
++merge_into
++ck "git merges everything cleanly" unmerged_are ''
++run_hook
++ck "the pin is restored" same_as_head Cargo.toml
++ck "the lockfile is restored" same_as_head Cargo.lock
++
++echo "the source also changed another table"
++setup "$release_rev"
++edit staging "$staging_pin"
++edit release "$release_pin" 1.1
++merge_into
++run_hook
++ck "the manifest is resolved" fails is_unmerged Cargo.toml
++ck "the pin is the target's" staged_has Cargo.toml 'rev = "1111111" #staging'
++ck "the other change is kept" staged_has Cargo.toml 'version = "1.1"'
++ck "the lockfile is left for people" unmerged_are Cargo.lock
++
++echo "the source moved the pin and changed another table, and git m
 ```
 
-**File**: `node/consensus/src/lib.rs` (modified, +2/-5)
+**File**: `.github/workflows/ci.yml` (modified, +11/-2)
 ```diff
-@@ -550,16 +550,13 @@ impl<N: Network> Consensus<N> {
+@@ -79,7 +79,16 @@ jobs:
+       - run: |
+           curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" \
+             | tar -xJ -C "$RUNNER_TEMP"
+-          "$RUNNER_TEMP/shellcheck-${SHELLCHECK_VERSION}/shellcheck" -x .ci/*.sh scripts/*.sh
++          "$RUNNER_TEMP/shellcheck-${SHELLCHECK_VERSION}/shellcheck" -x .ci/*.sh scripts/*.sh .github/*.sh
++
++  # The shallow checkout lacks the history the replays of real merges need, so
++  # those are skipped here and run locally.
++  merge-fixup:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v7
++        with: { persist-credentials: false }
++      - run: .github/merge-fixup.test.sh
  
-         // Process the unconfirmed transactions in the memory pool.
-         //
--        // This loop wakes up either when a block is committed (signaled via notify) or after a timeout.
--        // When a block is committed, the BFT workers have freed capacity for more transmissions.
-+        // Local proposals and block commits wake this loop to refill available worker capacity.
-         // The timeout serves as a fallback for startup or idle periods when blocks are not being produced.
--        //
--        // TODO(kaimast): wake up the loop after a proposal is created, not only when a block commits.
-         let self_ = self.clone();
-         self.spawn(async move {
-             loop {
--                // Wait for either a block commit notification or timeout.
-                 tokio::select! {
-+                    _ = self_.bft.primary().wait_for_proposal() => {}
-                     _ = self_.block_commit_notify.notified() => {}
-                     _ = tokio::time::sleep(MAX_BATCH_DELAY) => {}
-                 }
+   lint:
+     needs: start-cpu-runners
+@@ -359,7 +368,7 @@ jobs:
+   # for a required check, so each job a pull request runs must succeed here.
+   ci-ok:
+     if: always()
+-    needs: [check-shared-refs, fmt, deny, shellcheck, machete, lint, test-hosted, test, build-snarkos, devnet]
++    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, lint, test-hosted, test, build-snarkos, devnet]
+     runs-on: ubuntu-latest
+     steps:
+       - env:
+```
+
+**File**: `.github/workflows/merge-into-staging.yml` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@ jobs:
+     with:
+       target: staging
+       sources: testnet mainnet
++      post-merge: .github/merge-fixup.sh
+     # Lives in the merge-bot environment, which admits only staging. The called
+     # workflow's merge job sets that environment and receives the value.
+     secrets:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4572** (2026-10-22): Merge testnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4571** (2026-10-21): chore(deps): bump webpki-roots and webpki-root-certs to 1.0.10 (@awatts73)
 - **PR #4570** (2026-10-21): bench: rename cache-hit REST verification benches to cached_verify (@cbeck88)
+- **PR #4568** (2026-10-21): [Release] Testnet v4.12.1 (@vicsn)
 - **PR #4567** (2026-10-19): chore(deps): bump mockall from 0.13.1 to 0.15.0 (@dependabot[bot])
 - **PR #4566** (2026-10-19): chore(deps): bump itertools from 0.14.0 to 0.15.0 (@dependabot[bot])
-- **PR #4565** (2026-10-19): chore(deps): bump nix from 0.30.1 to 0.31.3 (@dependabot[bot])
-- **PR #4564** (2026-10-19): ci: check advisories nightly instead of on every pull request (@cbeck88)
-- **PR #4563** (2026-10-19): Bump self_update to 1.3.1 for zip 9 (RUSTSEC-2026-0367, -0368, -0369) (@cbeck88)
 
 ---
 
@@ -2193,22 +2343,41 @@ fix(consensus): refill workers after local proposals
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify
+## X. Merge pull request #4562 from aleo-labs-protocol/ci/merge-fixup
 
 **RULE**:
-When implementing operations in `node/rest/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/merge-fixup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c1d25a1`: Merge pull request #4570 from aleo-labs-protocol/bench/rest-cached-verify. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08c70174`: Merge pull request #4562 from aleo-labs-protocol/ci/merge-fixup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/merge-fixup.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Lets benches advance a test ledger to the latest consensus version.
-test_consensus_heights = [ "snarkvm/test_consensus_heights" ]
+#!/usr/bin/env bash
+# The post-merge hook of merge-into-staging.yml. It runs with the merge in
+# progress, and its arguments are the unmerged paths. See "Merging branches" in
+# aleo-labs-protocol/gh-actions for the contract.
+#
+# Release branches pin snarkVM by version or by a release revision, and staging
+# pins it by a staging revision. So:
+#   - The root manifest keeps the [workspace.dependencies.snarkvm] table of the
+#     target as HEAD forked from it, whichever side changed it. HEAD is the open
+#     pull request's branch when there is one, and the target can move on after
+#     that branch forks. The rest of the manifest merges as usual.
+#   - Cargo.lock keeps git's merge without the source's snarkVM entries. It is
+#     left unmerged for people when the source changed both snarkVM and other
+#     packages, or when HEAD's pin differs from the target's.
+# Other paths stay as git merged them.
+#
+# The hook must not run cargo: the merged tree's cargo and rustup configuration
+# would pick the programs it runs, on the runner the push step shares.
+#
+# The hook reads blobs that the workflow's partial clone may not hold yet, and it
+# runs without a token, so it relies on the repositor
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2218,4 +2387,4 @@ test_consensus_heights = [ "snarkvm/test_consensus_heights" ]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c1d25a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08c70174` are properly handled with clean fallback behavior.

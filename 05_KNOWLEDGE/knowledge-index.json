@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T16:15:44.588Z",
+  "last_updated": "2026-10-22T16:22:32.422Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29678,8 +29678,8 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "e52fe542",
-      "content_hash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
+      "source_version": "cce96f2c",
+      "content_hash": "85e942ba49606646b416d161223a357c7af81c3e6f912bdeba69e113a6bb8def",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
@@ -29707,6 +29707,11 @@
           "number": 3412,
           "title": "build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3633,
+          "title": "cut v3.6.1 release (#4934)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29714,7 +29719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:20:23.126Z",
+      "verified_at": "2026-10-22T16:22:22.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37384,8 +37389,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "4c0fa90a",
-      "content_hash": "5af41427b79a21cf3a7816cd54157d5880907cbb33835b886b65e4c8d1d47f3b",
+      "source_version": "f1d90329",
+      "content_hash": "703b7f8aea7dd86d75184700d118b44b3c320ccdeb50ce87e7f0956dc1f00352",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -37403,6 +37408,11 @@
           "number": 3339,
           "title": "react-compiler): let branches inside `try` control reactivity (#27817)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3632,
+          "title": "react-compiler): compile a `try` whose `catch` is unreachable instead of panicki",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37410,7 +37420,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:23:32.320Z",
+      "verified_at": "2026-10-22T16:22:18.280Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49266,8 +49276,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "d7a619c7",
-      "content_hash": "33c7b96f439d70556464ee3d34e001e31d56fe59e5577ada8f68de36d8ae4d0a",
+      "source_version": "730f9fab",
+      "content_hash": "9ae356823ee232e2d2cf74632da90d871f98e37e4de5fca08e9efe1130b26660",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -49290,6 +49300,11 @@
           "number": 3393,
           "title": "[#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryT",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3635,
+          "title": "[#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row conte",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49297,7 +49312,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:27:45.088Z",
+      "verified_at": "2026-10-22T16:22:32.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58031,13 +58046,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "a7796e20",
-      "content_hash": "b3e275ff6266e4bd2f7a17b6076850bcaff2ff8b1d70bd277539884be5297163",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "8e885ab0268bc697e3d3e86b5b9769d4add02e7fccd277e43cbf5f9749962cce",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -58068,6 +58083,11 @@
           "number": 3606,
           "title": "merge-fixup: compare workspace packages whole, and stop when a lockfile is unrea",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3634,
+          "title": "Merge pull request #4562 from aleo-labs-protocol/ci/merge-fixup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58075,7 +58095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:35:33.998Z",
+      "verified_at": "2026-10-22T16:22:26.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109914,6 +109934,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T16:15:44.565Z"
+    },
+    "rule-3632": {
+      "learning_id": "rule-3632",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3632,
+      "title": "react-compiler): compile a `try` whose `catch` is unreachable instead of panicki",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "f1d90329",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:22:18.280Z"
+    },
+    "rule-3633": {
+      "learning_id": "rule-3633",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3633,
+      "title": "cut v3.6.1 release (#4934)",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "cce96f2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:22:22.770Z"
+    },
+    "rule-3634": {
+      "learning_id": "rule-3634",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3634,
+      "title": "Merge pull request #4562 from aleo-labs-protocol/ci/merge-fixup",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "a7796e20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:22:26.451Z"
+    },
+    "rule-3635": {
+      "learning_id": "rule-3635",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3635,
+      "title": "[#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row conte",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "730f9fab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:22:32.403Z"
     }
   },
   "aliases": {

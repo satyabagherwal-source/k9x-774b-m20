@@ -4325,3 +4325,7 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `38afee6c` | Multi-dimensional audit evidence | 2026-10-22T16:15:34.337Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `073065dc` | Multi-dimensional audit evidence | 2026-10-22T16:15:40.730Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0ca03385` | Multi-dimensional audit evidence | 2026-10-22T16:15:44.652Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `f1d90329` | Multi-dimensional audit evidence | 2026-10-22T16:22:18.348Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `cce96f2c` | Multi-dimensional audit evidence | 2026-10-22T16:22:22.847Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `a7796e20` | Multi-dimensional audit evidence | 2026-10-22T16:22:26.524Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `730f9fab` | Multi-dimensional audit evidence | 2026-10-22T16:22:32.472Z |

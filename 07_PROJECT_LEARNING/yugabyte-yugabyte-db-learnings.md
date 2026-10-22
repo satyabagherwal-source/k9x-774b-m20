@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `d7a619c7`  
+> **Source Version**: `730f9fab`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:27:44.814Z  
+> **Timestamp**: 2026-10-22T16:22:32.030Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:27:44.807Z  
+> **Harvest Timestamp**: 2026-10-22T16:22:30.056Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10613 stars
+- **Stars / Engagement**: 10616 stars
 
 ---
 
@@ -2249,14 +2249,7 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35482** (2026-10-20): **[YSQL] Build b76eff1c on master: arm-mac15-clang21-release broken**
-  *Symptoms*: Jira Link: [DB-24866](https://yugabyte.atlassian.net/browse/DB-24866) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at b76eff1c has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `arm-mac15-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `arm-mac15-clang21-release`: reported 1207 results, expected >= 6636 ([CSI launch 181771](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/181771))   - 5 x `java`: org.yb.pgsql.TestYbBackup.txt =====   - 4 x `java`: org.yb.pgsql.TestPgReplicationSlot.txt =====   - 3 x `java`: org.yb.pgsql.TestPgSequencesWithCacheFlag.txt =====   - 3 x `java`: org.yb.pgsql.TestPgSequencesWithServerCacheFlag.txt =====   - 2 x `java`: org.yb.cdc.ysql.TestArrayTypes.txt =====  ## Frequency and origin  The previous scheduled build on `master` was a2825c67; the change is in `(a2825c67, b76eff1c]` (1 commit): https://github.com/yugabyte/yugabyte-db/compare/a28
-  **Post-Mortem & Fix Analysis**:
-  > Grissom: **the commit that broke this build**. The range between the previous scheduled build and this one holds exactly one commit, so it is named without ranking.  Range [`(a2825c67, b76eff1c]`](https://github.com/yugabyte/yugabyte-db/compare/a2825c67...b76eff1c): 1 commit. A build-level break: 1 lane(s) broken in this build, so the onset is this build; the range starts at the previous scheduled build.  The range holds one commit; nothing to rank.  Assigned to @arpit-saxena as the author of the top candidate (the broken build's range is exactly one commit). To change it: `/grissom reassign @someone` or `/grissom unassign` in a comment, or set the assignee here; Grissom never re-assigns on its own after that.  <!-- grissom-attribution -->
-  > @arpit-saxena this was assigned to you by mistake; unassigning. b76eff1c is not the cause:  - The `arm-mac15-clang21-release` run was cut short at the test harness's failure cap (201 failures, 1207 of >= 6636 results), and the tests listed above are just the first ones that failed before the run stopped. None of them is a Connection Manager test. - The same short run has hit this lane before: 5dadd9f7 (2026-10-12, 1228 results, 200 failures), a2debe00 and 81222a45 (2026-10-18, 1192 and 8433 results), with full runs of about 12,300 results in between. It is intermittent and mac-only, so the one-commit range bounds nothing.  Assigning to @svarnau, as an environment or harness issue on the mac host. 
-
-- **Issue #35478** (2026-10-20): **[DocDB][xCluster] Automatic-mode DDL replication pauses for good when CREATE INDEX on a partitioned table adopts a source-only INVALID partition index**
-  *Symptoms*: Jira Link: [DB-24864](https://yugabyte.atlassian.net/browse/DB-24864) ### Description  ### Description  Version - 2025.2.8.0-b60. Source universe and target universe of 3 nodes each, transactional xCluster in automatic DDL mode, default gflags. The same pause also happened twice in long stress runs on 2026.1.2.0-b137, where the target named `acct2_p0_bal_idx` and `skewacct_p0_bal_idx`. Not tried on master.  When `CREATE INDEX` on a partition fails on the source, the failed DDL is never replicated, so its INVALID index exists on the source only. A later `CREATE INDEX` on the partitioned parent then diverges between the two universes: - **Source:** reuses that existing INVALID child index instead of building a new one (PostgreSQL `DefineIndex` attaches a matching child index). - **Target:** has no such child, so it builds a new one under the default name `p0_v_idx`.  The source's DDL queue records the relations of the parent `CREATE INDEX` as `p_v` and `p0_v`. `p0_v_idx` matches neither, so the target master refuses it ("lacks source table ID"). The DDL handler retries 5 times and then pauses DDL replication for the database. The database's safe time stops, and nothing written on the source afterwards reaches the target until someone fixes it by hand.  **Repro.** Set up automatic-mode replication of database `db`, then run on the source: ```sql create table p (k int, v int, primary key (k, v)) partition by list (v); create table p0 partition of p for values in (7); insert into
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2273,522 +2266,681 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9066cefc` (2026-10-20)
-**Commit Message**: [#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryTexts concurrent modification
+### Incident Patch 1: `029efa15` (2026-10-22)
+**Commit Message**: [#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row context guards
 
 Summary:
-Each tserver's log printer thread appends lines to `logBackendMemoryContextsResults`, which is a `Collections.synchronizedList`. The test iterated over that list with a for-each loop without holding its lock, so a log line arriving mid-scan threw `ConcurrentModificationException`. The test now copies the list into a new `ArrayList` inside `synchronized (logBackendMemoryContextsResults)` and checks the copy. Log lines can still arrive after the query returns, so the check is retried with `TestUtils.waitFor` for up to 1s.
+This diff removes YB's 2020 per-row context guards from `CopyFrom()`, so COPY's per-row loop switches memory contexts as upstream does again, and adds a switch to the per-tuple context around the YB insert and its index inserts. The YB guards caused a crash with row triggers whose functions are declared with SET or SECURITY DEFINER (#34610), memory growth with COPY ... WHERE (#34829), and memory growth when COPY's input switches from a foreign partition to a YB one (#35049).
+
+**Problem**
+
+- **Crash (#34610).** COPY crashes the backend when a row trigger's function is declared with a SET clause (`CREATE/ALTER FUNCTION ... SET`) or SECURITY DEFINER, a common pattern for audit triggers.
+  - **BEFORE ROW** triggers crash on any YB table, with or without batching: the trigger's second call uses freed memory. On a partitioned table, each partition's trigger is looked up separately, so the second call needs a second row in the same partition.
+  - **AFTER ROW** triggers crash only when COPY loads in batches and the trigger is on a partition of the table COPY runs on, for example a trigger on
+
+**File**: `src/postgres/src/backend/commands/copyfrom.c` (modified, +24/-33)
+```diff
+@@ -1033,22 +1033,16 @@ CopyFrom(CopyFromState cstate)
+ 	 */
+ 	for (int i = 0; cstate->opts.batch_size == 0 || i < cstate->opts.batch_size; i++)
+ 	{
+-		if (IsYBRelation(resultRelInfo->ri_RelationDesc))
+-			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
+-
+ 		TupleTableSlot *myslot;
+ 		bool		skip_tuple;
+ 
+ 		CHECK_FOR_INTERRUPTS();
+ 
+-		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
+-		{
+-			/*
+-			 * Reset the per-tuple exprcontext. We do this after every tuple, to
+-			 * clean-up after expression evaluations etc.
+-			 */
+-			ResetPerTupleExprContext(estate);
+-		}
++		/*
++		 * Reset the per-tuple exprcontext. We do this after every tuple, to
++		 * clean-up after expression evaluations etc.
++		 */
++		ResetPerTupleExprContext(estate);
+ 
+ 		/* select slot to (initially) load row into */
+ 		if (insertMethod == CIM_SINGLE || proute)
+@@ -1069,8 +1063,7 @@ CopyFrom(CopyFromState cstate)
+ 		 * Switch to per-tuple context before calling NextCopyFrom, which does
+ 		 * evaluate default expressions etc. and requires per-tuple context.
+ 		 */
+-		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
+-			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
++		MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
+ 
+ 		ExecClearTuple(myslot);
+ 
+@@ -1090,8 +1083,7 @@ CopyFrom(CopyFromState cstate)
+ 		myslot->tts_tableOid = RelationGetRelid(target_resultRelInfo->ri_RelationDesc);
+ 
+ 		/* Triggers and stuff need to be invoked in query context. */
+-		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
+-			MemoryContextSwitchTo(oldcontext);
++		MemoryContextSwitchTo(oldcontext);
+ 
+ 		if (cstate->whereClause)
+ 		{
+@@ -1220,14 +1212,6 @@ CopyFrom(CopyFromState cstate)
+ 				}
+ 			}
+ 
+-			/*
+-			 * Tuple memory will be allocated to per row memory context
+-			 * which will be cleaned up after every row gets processed.
+-			 * Thus there is no need to clean the tuple memory.
+-			 */
+-			if (IsYBRelation(resultRelInfo->ri_RelationDesc))
+-				myslot->tts_flags &= ~TTS_FLAG_SHOULDFREE;
+-
+ 			/* ensure that triggers etc see the right relation  */
+ 			myslot->tts_tableOid = RelationGetRelid(resultRelInfo->ri_RelationDesc);
+ 		}
+@@ -1307,6 +1291,14 @@ CopyFrom(CopyFromState cstate)
+ 					/* OK, store the tuple */
+ 					if (IsYBRelation(resultRelInfo->ri_RelationDesc))
+ 					{
++						/*
++						 * YB: the insert path allocates per-row temporaries
++						 * (e.g. the ybctid) in the current context; run it in
++						 * the per-tuple context so they are freed every row.
++						 */
++						MemoryContext yb_saved_cxt =
++							MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
++
+ 						/* Update the tuple with table oid */
+ 						myslot->tts_tableOid =
+ 							RelationGetRelid(resultRelInfo->ri_RelationDesc);
+@@ -1332,18 +1324,15 @@ CopyFrom(CopyFromState cstate)
+ 																   false,
+ 																   NULL,
+ 																   NIL);
++						MemoryContextSwitchTo(yb_saved_cxt);
+ 					}
+ 					else if (resultRelInfo->ri_FdwRoutine != NULL)
+ 					{
+-						MemoryContext saved_context;
+-
+-						saved_context = MemoryContextSwitchTo(estate->es_query_cxt);
+ 						myslot = resultRelInfo->ri_FdwRoutine->ExecForeignInsert(estate,
+ 																				 resultRelInfo,
+ 																				 myslot,
+ 																				 NULL);
+ 
+-						MemoryContextSwitchTo(saved_context);
+ 						if (myslot == NULL) /* "do nothing" */
+ 							continue;	/* next tuple please */
+ 
+@@ -1386,16 +1375,18 @@ CopyFrom(CopyFromState cstate)
+ 			 */
+ 			++processed;
+ 		}
+-
+-		/*
+-		 * Free context per row.
+-		 */
+-		if (IsYBRelation(cstate->rel))
+-			ResetPerTupleExprContext(estate);
+ 	}
+ 
+ 	if (cstate->opts.batch_size > 0)
+ 	{
++		/*
++		 * YB: Fire AFTER triggers in the query context, as upstream does
++		 * before AfterTriggerEndQuery() at the end of CopyFrom(). The last
++		 * batch gets here in the per-tuple context, from the break after
++		 * NextCopyFrom().
++		 */
++		MemoryContextSwitchTo(oldcontext);
++
+ 		/*
+ 		 * Handle queued AFTER triggers before committing. If there are errors,
+ 		 * do not commit the current batch.
+```
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.feature_copy.out` (modified, +162/-0)
+```diff
+@@ -527,6 +527,160 @@ select * from v ORDER BY a,b;
+  1 | 10
+ (6 rows)
+ 
++-- Row triggers whose function is declared with SET or SECURITY DEFINER (#34610):
++-- BEFORE ROW and AFTER ROW, with each kind of function, in two setups:
++--   copy_trig_*        a plain table, with the trigger on it; no partition
++--                      involved.
++--   copy_trig_*_part   a partitioned table; COPY loads this table.
++--   copy_trig_*_part1  copy_trig_*_part's only partition, with the trigger.
++-- Every COPY loads 3 rows with rows_per_transaction 2. In the plain setup, the
++-- table's own trigger turns batching off (hence the WARNING); in the
++-- partitioned setup, the 3 rows take 2 batches. Keep the 3 rows: the bug needs
++-- a trigger's function to run again after the per-row reset freed its cached
++-- state. That takes a second row for a BEFORE ROW trigger and a later batch for
++-- an AFTER ROW trigger.
++create or replace function copy_trig_set_fn() returns trigger
++  language plpgsql set work_mem = '64MB'
++  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
++create or replace function copy_trig_secdef_fn() returns trigger
++  language plpgsql security definer
++  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
++create table copy_trig_before_set (a int, b int);
++create trigger copy_trig_before_set_trig before insert on copy_trig_before_set
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_before_set from stdin with (rows_per_transaction 2);
++WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
++DETAIL:  Defaulting to using one transaction for the entire copy.
++HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
++NOTICE:  BEFORE copy_trig_before_set: a = 1
++NOTICE:  BEFORE copy_trig_before_set: a = 2
++NOTICE:  BEFORE copy_trig_before_set: a = 3
++select * from copy_trig_before_set ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_before_set_part (a int, b int) partition by list (b);
++create table copy_trig_before_set_part1 partition of copy_trig_before_set_part for values in (1);
++create trigger copy_trig_before_set_part1_trig before insert on copy_trig_before_set_part1
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_before_set_part from stdin with (rows_per_transaction 2);
++NOTICE:  BEFORE copy_trig_before_set_part1: a = 1
++NOTICE:  BEFORE copy_trig_before_set_part1: a = 2
++NOTICE:  BEFORE copy_trig_before_set_part1: a = 3
++select * from copy_trig_before_set_part ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_before_secdef (a int, b int);
++create trigger copy_trig_before_secdef_trig before insert on copy_trig_before_secdef
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_before_secdef from stdin with (rows_per_transaction 2);
++WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
++DETAIL:  Defaulting to using one transaction for the entire copy.
++HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
++NOTICE:  BEFORE copy_trig_before_secdef: a = 1
++NOTICE:  BEFORE copy_trig_before_secdef: a = 2
++NOTICE:  BEFORE copy_trig_before_secdef: a = 3
++select * from copy_trig_before_secdef ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_before_secdef_part (a int, b int) partition by list (b);
++create table copy_trig_before_secdef_part1 partition of copy_trig_before_secdef_part for values in (1);
++create trigger copy_trig_before_secdef_part1_trig before insert on copy_trig_before_secdef_part1
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_before_secdef_part from stdin with (rows_per_transaction 2);
++NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 1
++NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 2
++NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 3
++select * from copy_trig_before_secdef_part ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_after_set (a int, b int);
++create trigger copy_trig_after_set_trig after insert on copy_trig_after_set
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_after_set from stdin with (rows_per_transaction 2);
++WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
++DETAIL:  Defaulting to using one transaction for the entire copy.
++HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
++NOTICE:  AFTER copy_trig_after_set: a = 1
++NOTICE:  AFTER copy_trig_after_set: a = 2
++NOTICE:  AFTER copy_trig_after_set: a = 3
++select * from copy_trig_after_set ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_after_set_part (a int, b int) partition by list (b);
++create table copy_trig_after_set_part1 partition of copy_trig_after_set_part f
+```
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.feature_copy_1.out` (modified, +162/-0)
+```diff
+@@ -530,6 +530,160 @@ select * from v ORDER BY a,b;
+  1 | 10
+ (6 rows)
+ 
++-- Row triggers whose function is declared with SET or SECURITY DEFINER (#34610):
++-- BEFORE ROW and AFTER ROW, with each kind of function, in two setups:
++--   copy_trig_*        a plain table, with the trigger on it; no partition
++--                      involved.
++--   copy_trig_*_part   a partitioned table; COPY loads this table.
++--   copy_trig_*_part1  copy_trig_*_part's only partition, with the trigger.
++-- Every COPY loads 3 rows with rows_per_transaction 2. In the plain setup, the
++-- table's own trigger turns batching off (hence the WARNING); in the
++-- partitioned setup, the 3 rows take 2 batches. Keep the 3 rows: the bug needs
++-- a trigger's function to run again after the per-row reset freed its cached
++-- state. That takes a second row for a BEFORE ROW trigger and a later batch for
++-- an AFTER ROW trigger.
++create or replace function copy_trig_set_fn() returns trigger
++  language plpgsql set work_mem = '64MB'
++  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
++create or replace function copy_trig_secdef_fn() returns trigger
++  language plpgsql security definer
++  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
++create table copy_trig_before_set (a int, b int);
++create trigger copy_trig_before_set_trig before insert on copy_trig_before_set
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_before_set from stdin with (rows_per_transaction 2);
++WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
++DETAIL:  Defaulting to using one transaction for the entire copy.
++HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
++NOTICE:  BEFORE copy_trig_before_set: a = 1
++NOTICE:  BEFORE copy_trig_before_set: a = 2
++NOTICE:  BEFORE copy_trig_before_set: a = 3
++select * from copy_trig_before_set ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_before_set_part (a int, b int) partition by list (b);
++create table copy_trig_before_set_part1 partition of copy_trig_before_set_part for values in (1);
++create trigger copy_trig_before_set_part1_trig before insert on copy_trig_before_set_part1
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_before_set_part from stdin with (rows_per_transaction 2);
++NOTICE:  BEFORE copy_trig_before_set_part1: a = 1
++NOTICE:  BEFORE copy_trig_before_set_part1: a = 2
++NOTICE:  BEFORE copy_trig_before_set_part1: a = 3
++select * from copy_trig_before_set_part ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_before_secdef (a int, b int);
++create trigger copy_trig_before_secdef_trig before insert on copy_trig_before_secdef
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_before_secdef from stdin with (rows_per_transaction 2);
++WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
++DETAIL:  Defaulting to using one transaction for the entire copy.
++HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
++NOTICE:  BEFORE copy_trig_before_secdef: a = 1
++NOTICE:  BEFORE copy_trig_before_secdef: a = 2
++NOTICE:  BEFORE copy_trig_before_secdef: a = 3
++select * from copy_trig_before_secdef ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_before_secdef_part (a int, b int) partition by list (b);
++create table copy_trig_before_secdef_part1 partition of copy_trig_before_secdef_part for values in (1);
++create trigger copy_trig_before_secdef_part1_trig before insert on copy_trig_before_secdef_part1
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_before_secdef_part from stdin with (rows_per_transaction 2);
++NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 1
++NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 2
++NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 3
++select * from copy_trig_before_secdef_part ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_after_set (a int, b int);
++create trigger copy_trig_after_set_trig after insert on copy_trig_after_set
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_after_set from stdin with (rows_per_transaction 2);
++WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
++DETAIL:  Defaulting to using one transaction for the entire copy.
++HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
++NOTICE:  AFTER copy_trig_after_set: a = 1
++NOTICE:  AFTER copy_trig_after_set: a = 2
++NOTICE:  AFTER copy_trig_after_set: a = 3
++select * from copy_trig_after_set ORDER BY a;
++ a | b 
++---+---
++ 1 | 1
++ 2 | 1
++ 3 | 1
++(3 rows)
++
++create table copy_trig_after_set_part (a int, b int) partition by list (b);
++create table copy_trig_after_set_part1 partition of copy_trig_after_set_part f
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.feature_copy.sql` (modified, +119/-0)
+```diff
+@@ -399,6 +399,117 @@ copy v (b) from stdin;
+ 
+ select * from v ORDER BY a,b;
+ 
++-- Row triggers whose function is declared with SET or SECURITY DEFINER (#34610):
++-- BEFORE ROW and AFTER ROW, with each kind of function, in two setups:
++--   copy_trig_*        a plain table, with the trigger on it; no partition
++--                      involved.
++--   copy_trig_*_part   a partitioned table; COPY loads this table.
++--   copy_trig_*_part1  copy_trig_*_part's only partition, with the trigger.
++-- Every COPY loads 3 rows with rows_per_transaction 2. In the plain setup, the
++-- table's own trigger turns batching off (hence the WARNING); in the
++-- partitioned setup, the 3 rows take 2 batches. Keep the 3 rows: the bug needs
++-- a trigger's function to run again after the per-row reset freed its cached
++-- state. That takes a second row for a BEFORE ROW trigger and a later batch for
++-- an AFTER ROW trigger.
++create or replace function copy_trig_set_fn() returns trigger
++  language plpgsql set work_mem = '64MB'
++  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
++create or replace function copy_trig_secdef_fn() returns trigger
++  language plpgsql security definer
++  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
++
++create table copy_trig_before_set (a int, b int);
++create trigger copy_trig_before_set_trig before insert on copy_trig_before_set
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_before_set from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_before_set ORDER BY a;
++
++create table copy_trig_before_set_part (a int, b int) partition by list (b);
++create table copy_trig_before_set_part1 partition of copy_trig_before_set_part for values in (1);
++create trigger copy_trig_before_set_part1_trig before insert on copy_trig_before_set_part1
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_before_set_part from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_before_set_part ORDER BY a;
++
++create table copy_trig_before_secdef (a int, b int);
++create trigger copy_trig_before_secdef_trig before insert on copy_trig_before_secdef
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_before_secdef from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_before_secdef ORDER BY a;
++
++create table copy_trig_before_secdef_part (a int, b int) partition by list (b);
++create table copy_trig_before_secdef_part1 partition of copy_trig_before_secdef_part for values in (1);
++create trigger copy_trig_before_secdef_part1_trig before insert on copy_trig_before_secdef_part1
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_before_secdef_part from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_before_secdef_part ORDER BY a;
++
++create table copy_trig_after_set (a int, b int);
++create trigger copy_trig_after_set_trig after insert on copy_trig_after_set
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_after_set from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_after_set ORDER BY a;
++
++create table copy_trig_after_set_part (a int, b int) partition by list (b);
++create table copy_trig_after_set_part1 partition of copy_trig_after_set_part for values in (1);
++create trigger copy_trig_after_set_part1_trig after insert on copy_trig_after_set_part1
++  for each row execute procedure copy_trig_set_fn();
++copy copy_trig_after_set_part from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_after_set_part ORDER BY a;
++
++create table copy_trig_after_secdef (a int, b int);
++create trigger copy_trig_after_secdef_trig after insert on copy_trig_after_secdef
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_after_secdef from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_after_secdef ORDER BY a;
++
++create table copy_trig_after_secdef_part (a int, b int) partition by list (b);
++create table copy_trig_after_secdef_part1 partition of copy_trig_after_secdef_part for values in (1);
++create trigger copy_trig_after_secdef_part1_trig after insert on copy_trig_after_secdef_part1
++  for each row execute procedure copy_trig_secdef_fn();
++copy copy_trig_after_secdef_part from stdin with (rows_per_transaction 2);
++1	1
++2	1
++3	1
++\.
++
++select * from copy_trig_after_secdef_part ORDER BY a;
++
+ -- Test various copy options
+ create table copy_options (a int primary key, b int);
+ 
+@@ -533,3 +644,11 @@ DROP TABLE v;
+ DROP TABLE copy_options;
+ DROP TABLE main_table;
+ DROP TABLE ref_table;
++DROP TABLE copy_trig_before_set;
++DROP TABLE copy_trig_before_set_part;
++DROP TABLE copy_trig_before_secdef;
++DROP TABLE copy_trig_before_secdef_part;
++DROP TABLE copy_trig_after_set;
++DROP TABLE copy_trig_after_set_part;
++DROP TABLE copy_trig_after
+```
 
 ---
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
 
-Test Plan:
-./yb_build.sh fastdebug --gcc15 --java-test 'org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryTexts' -n 180 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
+### Incident Patch 2: `c88cb2cd` (2026-10-21)
+**Commit Message**: [#35262] YSQL: Fix log waiter race in PgGlobalViewsTest.TestJoinsAreNotPushedDown (#35531)
+
+## Summary
+
+`VerifyQueryPushdowns` created each tserver's `LogWaiter` inside the
+thread it spawned, but it returned right away and the caller then ran
+the query. A tserver could therefore log the pushed-down query before
+its waiter was listening; in the failing run ts-3 logged it about 2ms
+too early, so the waiter missed it and timed out after `30s`. The fix
+creates each `LogWaiter` as a `std::shared_ptr` on the calling thread
+before `VerifyQueryPushdowns` returns, and the thread only calls
+`WaitFor(30s)`.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
+
+## Test plan
+
+./yb_build.sh fastdebug --gcc15 --cxx-test pg_global_views-test
+--gtest-filter PgGlobalViewsTest.TestJoinsAreNotPushedDown -n 180
+YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true
+--stop-at-failure -- -p 6
 Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for ref
+Before the fix, this test reproduced locally (same test command and -p /
+env as above, without --stop-at-failure) -- with the CSI dashboard rate
+for reference:
+- gcc15-fastdebug: 
 
-**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgBackendMemoryContext.java` (modified, +17/-15)
+**File**: `src/yb/yql/pgwrapper/pg_global_views-test.cc` (modified, +5/-2)
 ```diff
-@@ -13,7 +13,6 @@
- package org.yb.pgsql;
- 
- import static org.yb.AssertionWrappers.assertEquals;
--import static org.yb.AssertionWrappers.assertTrue;
- 
- import java.sql.Statement;
- import java.util.ArrayList;
-@@ -25,6 +24,7 @@
- import org.junit.Before;
- import org.junit.Test;
- import org.junit.runner.RunWith;
-+import org.yb.client.TestUtils;
- import org.yb.minicluster.LogErrorListener;
- import org.yb.minicluster.MiniYBDaemon;
- import org.yb.minicluster.MiniYBClusterBuilder;
-@@ -86,9 +86,6 @@ public void testLogBackendMemoryTexts() throws Exception {
-     try (Statement stmt = connection.createStatement()) {
-       stmt.execute("SELECT pg_log_backend_memory_contexts(pg_backend_pid());");
- 
--      assertTrue("pg_log_backend_memory_contexts should output logs",
--                !logBackendMemoryContextsResults.isEmpty());
--
-       // With connection manager, getPgBackendPid can return the PID of any
-       // backend process out of pool of physical connections it is maintaining.
-       // Therefore running the test in NONE mode of connection manager to return
-@@ -107,19 +104,24 @@ public void testLogBackendMemoryTexts() throws Exception {
-       expectedMessages.add("YB TCMalloc pageheap unmapped bytes: ");
-       expectedMessages.add("YB PGGate bytes: ");
- 
--      for (String result : logBackendMemoryContextsResults) {
--        if (expectedMessages.isEmpty()) {
--          // If we have already found all expected messages, we can skip further checks.
--          break;
-+      // Log lines may still arrive after the query returns, and log printer threads append
-+      // concurrently, so poll over a snapshot taken under the list's lock.
-+      TestUtils.waitFor(() -> {
-+        List<String> results;
-+        synchronized (logBackendMemoryContextsResults) {
-+          results = new ArrayList<>(logBackendMemoryContextsResults);
-         }
--        if (result.contains(expectedMessages.get(0))) {
--          expectedMessages.remove(0);
-+        int next = 0;
-+        for (String result : results) {
-+          if (next == expectedMessages.size()) {
-+            break;
-+          }
-+          if (result.contains(expectedMessages.get(next))) {
-+            next++;
-+          }
-         }
--      }
--
--      assertTrue(String.format("Expected to find all messages in pg_log_backend_memory_contexts %s",
--                               expectedMessages.toString()),
--                 expectedMessages.isEmpty());
-+        return next == expectedMessages.size();
-+      }, 1000 /* timeoutMs */);
+@@ -204,8 +204,11 @@ class PgGlobalViewsTest : public LibPqTestBase {
+     // exact suffix of the log line, i.e. the complete pushed-down query.
+     auto exact_wait_string = Format("$0\n", wait_string);
+     for (int i = 0; i < GetNumTabletServers(); ++i) {
+-      thread_holder->AddThreadFunctor([this, exact_wait_string, i]() {
+-        ASSERT_OK(LogWaiter(cluster_->tablet_server(i), exact_wait_string).WaitFor(30s));
++      // Register the waiter before returning, so log lines emitted by the query the caller
++      // runs next are not missed.
++      auto waiter = std::make_shared<LogWaiter>(cluster_->tablet_server(i), exact_wait_string);
++      thread_holder->AddThreadFunctor([waiter]() {
++        ASSERT_OK(waiter->WaitFor(30s));
+       });
      }
    }
- 
 ```
 
 ---
 
-### Incident Patch 2: `79afc37d` (2026-10-16)
-**Commit Message**: [#34485] YSQL: Fix stale function after rollback of a function replacement
+### Incident Patch 3: `3719beea` (2026-10-20)
+**Commit Message**: [#34328] DocDB: Skip rows with NULL vectors in intents during vector index search
 
 Summary:
-Background: how cached functions are validated
+A ybhnsw search failed with `Vector column (N) missing in row`, crashing debug builds, when a row with intents had a NULL vector, e.g. one written by a transaction that is not applied yet.
+`ReplaceIntentRows` now skips such a row, since a row without a vector is not a search result.
+A row whose vector the transaction set to NULL was also returned at the distance of its old vector, which the index keeps until the transaction is applied.
+`ReadIntentRowKeys` reads rows from intents only, where such a row reads as missing, as does a deleted row, so the filter kept its index entry.
+`DocRowwiseIterator` now returns every row with intents in this mode.
 
-PL/pgSQL keeps compiled functions in plpgsql_HashTable. In PG, each entry stores the
-xmin and TID of the pg_proc tuple it was compiled from. On every call, these are
-compared with the current tuple, and a mismatch causes a recompile.
-CREATE OR REPLACE FUNCTION writes a new tuple version, so the entry stops matching.
-ROLLBACK TO SAVEPOINT restores the old tuple, so it stops matching again. Savepoints
-need no extra handling.
+Jira: DB-23876
 
-YB catalog tuples have no meaningful xmin/TID. Instead, each cached function stores
-yb_catalog_version at compile time and is valid only while that equals
-YBGetActiveCatalogCacheVersion(). The C function cache (fmgr.c), plpython and plperl
-use the same check. Without transactional DDL this is enough: every DDL commits on
-its own and bumps the catalog version, so everything compiled earlier stops matching.
-
-With transactional DDL (ysql_yb_ddl_transaction_block_enabled), the catalog version
-only moves at commit. Inside the block, YBGetActiveCatalogCacheVersion() has to be
-adjusted by hand. #29424 and #29881 did that by adding counter
-
-**File**: `src/postgres/src/backend/utils/misc/pg_yb_utils.c` (modified, +67/-44)
-```diff
-@@ -199,10 +199,28 @@ typedef struct YbSkipIntentsTxnState
- static YbSkipIntentsTxnState skip_intents_txn_state = {0};
- 
- static bool YbHasDdlMadeChanges();
--static int YbGetNumCreateFunctionStmts();
--static int YbGetNumRollbackToSavepointStmts();
- static bool YBIsCurrentStmtCreateFunction();
- 
-+/*
-+ * Added to the catalog version in YBGetActiveCatalogCacheVersion to
-+ * invalidate cached functions (plpgsql_HashTable and the like) when a DDL
-+ * transaction block changes a function definition that the catalog version
-+ * does not yet reflect: each CREATE (OR REPLACE) FUNCTION/PROCEDURE in the
-+ * block, and each rollback of a subtransaction or transaction that may undo
-+ * one.  It is not reset at transaction end; the only decrement offsets this
-+ * backend's own catalog version increment at commit.  So the active version
-+ * never goes back, and a version a function was compiled at cannot recur
-+ * after one of these events.
-+ */
-+static uint64_t function_cache_generation = 0;
-+
-+/*
-+ * Set while YBCommitTransactionContainingDDL commits a transaction block that
-+ * ran DDL. The DDL transaction state is cleared before the commit RPC, so this
-+ * is what tells YBCAbortTransaction that a failed commit rolled back DDL.
-+ */
-+static bool ddl_txn_block_commit_in_progress = false;
-+
- static void yb_maybe_test_fail_ddl(void);
- static YbcPgSkipIntentsOptimizationInfo YbGetSkipIntentsOptimizationInfoRead(Relation rel);
- 
-@@ -216,15 +234,8 @@ YBGetActiveCatalogCacheVersion()
- 		 * FUNCTION and CREATE (OR REPLACE) PROCEDURE.
- 		 */
- 		if (YBGetDdlNestingLevel() > 0 && YBIsCurrentStmtCreateFunction())
--			return yb_catalog_cache_version + 1;
--		if (YBIsDdlTransactionBlockEnabled())
--		{
--			uint64_t active_catalog_version = yb_catalog_cache_version +
--											  YbGetNumRollbackToSavepointStmts();
--			if (YBIsCurrentStmtCreateFunction())
--				active_catalog_version += YbGetNumCreateFunctionStmts();
--			return active_catalog_version;
--		}
-+			return yb_catalog_cache_version + function_cache_generation + 1;
-+		return yb_catalog_cache_version + function_cache_generation;
- 	}
- 	return yb_catalog_cache_version;
- }
-@@ -1302,17 +1313,9 @@ typedef struct
- 	CommandTag	breaking_ddl_command_tag;
- 	Oid			database_oid;
- 	int			num_committed_pg_txns;
-+	/* Whether this transaction incremented function_cache_generation. */
-+	bool		function_cache_generation_bumped;
- 
--	/*
--	 * Number of create function or procedure statements in the current ddl
--	 * transaction block. Only used when ddl transaction block is enabled.
--	 */
--	int			num_create_function_stmts;
--	/*
--	 * Number of rollback to savepoint statements in the current ddl
--	 * transaction block. Only used when ddl transaction block is enabled.
--	 */
--	int			num_rollback_to_savepoint_stmts;
- 	/*
- 	 * This indicates whether we need to increment logical client version at
- 	 * commit. This is needed by Connection Manager to handle `ALTER ... SET`
-@@ -1411,6 +1414,12 @@ YBCAbortTransaction()
- 	if (!IsYugaByteEnabled() || !YBTransactionsEnabled())
- 		return;
- 
-+	/* The abort may undo a function definition change. */
-+	if (ddl_transaction_state.use_regular_txn_block ||
-+		ddl_txn_block_commit_in_progress)
-+		++function_cache_generation;
-+	ddl_txn_block_commit_in_progress = false;
-+
- 	if (ddl_transaction_state.use_regular_txn_block)
- 		YBResetDdlState();
- 
-@@ -1503,6 +1512,13 @@ YBCRollbackToSubTransaction(SubTransactionId id)
- 			 id, YBCMessageAsCString(status));
- 
- 	YbInvalidateTableCacheForAlteredTables();
-+
-+	/* The rollback may undo a function definition change. */
-+	if (ddl_transaction_state.use_regular_txn_block)
-+	{
-+		++function_cache_generation;
-+		ddl_transaction_state.function_cache_generation_bumped = true;
-+	}
- }
- 
- static bool yb_connected_to_template_db = false;
-@@ -2809,13 +2825,6 @@ YBAddDdlTxnState(YbDdlMode mode)
- 		 */
- 		ddl_transaction_state.catalog_modification_aspects.pending |= mode;
- 
--		/*
--		 * Note that T_CreateFunctionStmt is for both CREATE (OR REPLACE) FUNCTION
--		 * and CREATE (OR REPLACE) PROCEDURE.
--		 */
--		ddl_transaction_state.num_create_function_stmts +=
--			ddl_transaction_state.current_stmt_node_tag == T_CreateFunctionStmt ? 1 : 0;
--
- 		/*
- 		 * On a transaction restart, we need call YBCPgSetDdlStateInPlainTransaction()
- 		 * again because it has been reset.
-@@ -2833,8 +2842,6 @@ YBAddDdlTxnState(YbDdlMode mode)
- 	 * this YB DDL transaction.
- 	 */
- 	ddl_transaction_state.num_committed_pg_txns = 0;
--	ddl_transaction_state.num_create_function_stmts =
--		ddl_transaction_state.current_stmt_node_tag == T_CreateFunctionStmt ? 1 : 0;
- 	Assert(TopTransactionContext != NULL);
- 	ddl_transaction_state.mem_context =
- 		AllocSetContextCreate(TopTransactionContext,
-@@ -3026,18 +3033,6 @@ YbIncrementPgTxnsCommitted()
- 	++ddl_transaction_state.num_committed_pg_txns;
- }
- 
--static int
--YbGetNumCreateFunctionStmts()
--{
--	return ddl_transaction_state.num_create_function_stmts;
--}
--
--static int
--YbGetNumRollbackToSavepointStmts()
--{
--	return ddl_transaction_state.n
-```
-
-**File**: `src/postgres/src/pl/plpgsql/src/pl_comp.c` (modified, +1/-32)
-```diff
-@@ -175,49 +175,18 @@ plpgsql_compile(FunctionCallInfo fcinfo, bool forValidator)
- 	{
- 		/* We have a compiled function, but is it still valid? */
- 		if (IsYugaByteEnabled() ?
--			(!function->yb_invalid && function->yb_catalog_version == YBGetActiveCatalogCacheVersion()) :
-+			function->yb_catalog_version == YBGetActiveCatalogCacheVersion() :
- 			(function->fn_xmin == HeapTupleHeaderGetRawXmin(procTup->t_data) &&
- 			 ItemPointerEquals(&function->fn_tid, &procTup->t_self)))
- 			function_valid = true;
- 		else
- 		{
--			/*
--			 * A Trigger Function (a function that RETURNS TRIGGER) is like a template, when first
--			 * time created it is inserted into plpgsql_HashTable. Later when a trigger is fired,
--			 * a second entry will be inserted into plpgsql_HashTable. In a sense, this second entry
--			 * is like an "instantiation" of this trigger function so that its OLD/NEW are bound to
--			 * the table on which the trigger is fired. The condition function->yb_catalog_version <
--			 * YBGetActiveCatalogCacheVersion() indicates that the function is being replaced. When
--			 * ddl transaction block is enabled, during the CREATE (OR REPLACE) statement
--			 * YBGetActiveCatalogCacheVersion() will return the current catalog version + 1. After
--			 * the CREATE (OR REPLACE) statement YBGetActiveCatalogCacheVersion() will return the
--			 * current catalog version. If the current catalog version is equal to the value of
--			 * yb_catalog_version of those secondary entries, we would incorrectly accept them as
--			 * still valid. Therefore we need to also invalidate all those secondary entries of this
--			 * function in case it is a Trigger Function.
--			 */
--			bool yb_invalidate_trigger_fns =
--				function->fn_is_trigger != PLPGSQL_NOT_TRIGGER &&
--				IsYugaByteEnabled() && YBIsDdlTransactionBlockEnabled() &&
--				!function->yb_invalid &&
--				function->yb_catalog_version < YBGetActiveCatalogCacheVersion();
--
- 			/*
- 			 * Nope, so remove it from hashtable and try to drop associated
- 			 * storage (if not done already).
- 			 */
- 			delete_function(function);
- 
--			if (yb_invalidate_trigger_fns)
--			{
--				HASH_SEQ_STATUS status;
--				plpgsql_HashEnt *hentry;
--				hash_seq_init(&status, plpgsql_HashTable);
--				while ((hentry = hash_seq_search(&status)) != NULL)
--					if (hentry->function->fn_oid == funcOid)
--						hentry->function->yb_invalid = true;
--			}
--
- 			/*
- 			 * If the function isn't in active use then we can overwrite the
- 			 * func struct with new data, allowing any other existing fn_extra
-```
-
-**File**: `src/postgres/src/pl/plpgsql/src/plpgsql.h` (modified, +0/-1)
-```diff
-@@ -1022,7 +1022,6 @@ typedef struct PLpgSQL_function
- 	/* YB */
- 	uint64		yb_catalog_version; /* Catalog version when this function was
- 									 * compiled */
--	bool		yb_invalid; /* this function is now invalid */
- } PLpgSQL_function;
- 
- /*
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_savepoint.out` (modified, +95/-0)
-```diff
-@@ -577,3 +577,98 @@ SELECT COUNT(*) FROM users3;
- ERROR:  relation "users3" does not exist
- LINE 1: SELECT COUNT(*) FROM users3;
-                              ^
-+-- #34485: a function replaced after a savepoint must run its old definition
-+-- after ROLLBACK TO.
-+BEGIN;
-+CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
-+SELECT f_34485_a();
-+ f_34485_a 
-+-----------
-+       401
-+(1 row)
-+
-+SAVEPOINT sp1;
-+CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
-+SELECT f_34485_a();
-+ f_34485_a 
-+-----------
-+       402
-+(1 row)
-+
-+ROLLBACK TO SAVEPOINT sp1;
-+SELECT f_34485_a();
-+ f_34485_a 
-+-----------
-+       401
-+(1 row)
-+
-+ROLLBACK;
-+-- Same, with the function created before the transaction.
-+CREATE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
-+CREATE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 1; END $$;
-+SELECT f_34485_b();
-+ f_34485_b 
-+-----------
-+       401
-+(1 row)
-+
-+BEGIN;
-+SAVEPOINT sp1;
-+CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
-+CREATE OR REPLACE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 2; END $$;
-+SELECT f_34485_b();
-+ f_34485_b 
-+-----------
-+       402
-+(1 row)
-+
-+ROLLBACK TO SAVEPOINT sp1;
-+SELECT f_34485_b();
-+ f_34485_b 
-+-----------
-+       401
-+(1 row)
-+
-+ROLLBACK;
-+SELECT f_34485_b();
-+ f_34485_b 
-+-----------
-+       401
-+(1 row)
-+
-+-- Same, with the replacement undone by an exception block instead of
-+-- ROLLBACK TO.
-+BEGIN;
-+DO $d$
-+BEGIN
-+  CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 403; END $$;
-+  RAISE NOTICE 'inside block: %', f_34485_b();
-+  RAISE EXCEPTION 'undo';
-+EXCEPTION WHEN raise_exception THEN
-+  RAISE NOTICE 'after block: %', f_34485_b();
-+END $d$;
-+NOTICE:  inside block: 403
-+NOTICE:  after block: 401
-+SELECT f_34485_b();
-+ f_34485_b 
-+-----------
-+       401
-+(1 row)
-+
-+ROLLBACK;
-+-- Same, with the replacement undone by aborting the whole transaction.
-+BEGIN;
-+CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 404; END $$;
-+SELECT f_34485_b();
-+ f_34485_b 
-+-----------
-+       404
-+(1 row)
-+
-+ROLLBACK;
-+SELECT f_34485_b();
-+ f_34485_b 
-+-----------
-+       401
-+(1 row)
-+
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_savepoint.sql` (modified, +47/-0)
-```diff
-@@ -360,3 +360,50 @@ SELECT process_work3();
- -- Check the final state of the table
- SELECT * FROM audit_log3 ORDER BY id;
- SELECT COUNT(*) FROM users3;
-+
-+-- #34485: a function replaced after a savepoint must run its old definition
-+-- after ROLLBACK TO.
-+BEGIN;
-+CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
-+SELECT f_34485_a();
-+SAVEPOINT sp1;
-+CREATE OR REPLACE FUNCTION f_34485_a() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
-+SELECT f_34485_a();
-+ROLLBACK TO SAVEPOINT sp1;
-+SELECT f_34485_a();
-+ROLLBACK;
-+
-+-- Same, with the function created before the transaction.
-+CREATE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 401; END $$;
-+CREATE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 1; END $$;
-+SELECT f_34485_b();
-+BEGIN;
-+SAVEPOINT sp1;
-+CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 402; END $$;
-+CREATE OR REPLACE FUNCTION f_34485_b_other() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 2; END $$;
-+SELECT f_34485_b();
-+ROLLBACK TO SAVEPOINT sp1;
-+SELECT f_34485_b();
-+ROLLBACK;
-+SELECT f_34485_b();
-+
-+-- Same, with the replacement undone by an exception block instead of
-+-- ROLLBACK TO.
-+BEGIN;
-+DO $d$
-+BEGIN
-+  CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 403; END $$;
-+  RAISE NOTICE 'inside block: %', f_34485_b();
-+  RAISE EXCEPTION 'undo';
-+EXCEPTION WHEN raise_exception THEN
-+  RAISE NOTICE 'after block: %', f_34485_b();
-+END $d$;
-+SELECT f_34485_b();
-+ROLLBACK;
-+
-+-- Same, with the replacement undone by aborting the whole transaction.
-+BEGIN;
-+CREATE OR REPLACE FUNCTION f_34485_b() RETURNS int LANGUAGE plpgsql AS $$ BEGIN RETURN 404; END $$;
-+SELECT f_34485_b();
-+ROLLBACK;
-+SELECT f_34485_b();
-```
-
----
-
-### Incident Patch 3: `172a2d87` (2026-10-10)
-**Commit Message**: [#34937] DocDB: Fix QLTabletTest.LeaderLease by stepping down each leader once
-
-Summary:
-`StepDownAllTablets` went through the tablet servers one at a time and stepped down whichever peer was leader when it reached that server, so it could also step down a leader that an earlier step-down in the same loop had just elected. That new leader had not committed its no-op yet and so held no lease, which let the original leader win the next term and serve the write immediately, since a leader ignores its own old lease; the test expected the write to time out but got `Status: OK`. The helper now takes a snapshot of the current leaders with `ListTabletPeers(cluster, ListPeersFilter::kLeaders, UserTabletsOnly::kFalse)` and steps down only those, so each tablet's leader is stepped down exactly once.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
+_automated · Claude Code (Opus 5.5)_
 
 Test Plan:
-./yb_build.sh fastdebug --gcc15 --cxx-test ql-tablet-test --gtest-filter QLTabletTest.LeaderLease -n 100 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the 
+./yb_build.sh --cxx-test pgwrapper_pg_vector_index-test --gtest_filter PgVectorIndexTest.NullVectorsInIntents/DistributedYbHnswUsearch
+./yb_build.sh --cxx-test pgwrapper_pg_vector_index-test --gtest_filter PgVectorIndexTest.NullVectorsInNotAppliedIntents/ColocatedYbHnswHnswlib
+New tests search inside the writing transaction, and from another session while the transaction is committed b
 
-**File**: `src/yb/integration-tests/mini_cluster.cc` (modified, +8/-7)
+**File**: `src/yb/docdb/doc_rowwise_iterator.cc` (modified, +8/-0)
 ```diff
-@@ -1067,13 +1067,14 @@ std::vector<server::SkewedClockDeltaChanger> JumpClocks(
+@@ -860,6 +860,14 @@ Result<bool> DocRowwiseIterator::FetchNextImpl(TableRow table_row) {
+       break;
+     }
+ 
++    // Intents alone are not the whole row, e.g. a column set to NULL reads as not found. So this
++    // mode returns every row with intents.
++    if (seek_filter_ == SeekFilter::kIntentsOnly) {
++      RETURN_NOT_OK(FillRow(table_row));
++      prev_doc_found_ = DocReaderResult::kFoundNotFinished;
++      break;
++    }
++
+     RETURN_NOT_OK(AdvanceIteratorToNextDesiredRow(/* row_finished= */ false,
+                                                   /* current_fetched_row_skipped */ true));
+   }
+```
+
+**File**: `src/yb/docdb/pgsql_operation.cc` (modified, +4/-2)
+```diff
+@@ -1014,8 +1014,10 @@ class VectorIndexKeyProvider {
+         continue;
+       }
+       auto vector_value = table_row.GetValueByIndex(indexed_column_index);
+-      RSTATUS_DCHECK(vector_value, Corruption, "Vector column ($0) missing in row: $1",
+-                     vector_index_.column_id(), table_row.ToString());
++      if (!vector_value) {
++        // A row with a NULL vector is not a search result.
++        continue;
++      }
+       auto encoded_value = dockv::EncodedDocVectorValue::FromSlice(vector_value->binary_value());
+       result_entries_.push_back(DocVectorIndexSearchResultEntry {
+         // TODO(vector_index) Avoid decoding vector_slice for each vector
+```
+
+**File**: `src/yb/yql/pgwrapper/pg_vector_index-test.cc` (modified, +43/-0)
+```diff
+@@ -893,6 +893,7 @@ class PgVectorIndexTest : public PgVectorIndexTestParamsDecorator<PgVectorIndexT
+       NonTransactionalWrites non_transactional_writes = NonTransactionalWrites::kFalse);
+   void TestMetric(const std::string& expected);
+   void TestRandom();
++  void TestNullVectorsInIntents(bool commit);
+ };
+ 
+ MAKE_VECTOR_INDEX_PARAM_TEST_SUITE(PgVectorIndexTest);
+@@ -1531,6 +1532,48 @@ TEST_P(PgVectorIndexTest, DeleteAndUpdate) {
+   ASSERT_NO_FATALS(VerifyRows(conn, AddFilter::kTrue, expected_filtered));
  }
  
- void StepDownAllTablets(MiniCluster* cluster) {
--  for (size_t i = 0; i != cluster->num_tablet_servers(); ++i) {
--    for (const auto& peer : cluster->GetTabletPeers(i)) {
--      consensus::LeaderStepDownRequestPB req;
--      req.set_tablet_id(peer->tablet_id());
--      consensus::LeaderStepDownResponsePB resp;
--      ASSERT_OK(ASSERT_RESULT(peer->GetConsensus())->StepDown(&req, &resp));
--    }
-+  // Snapshot leaders first, so a leader elected by an earlier step down in this loop is not
-+  // stepped down again before it acquires a lease.
-+  auto leaders = ListTabletPeers(cluster, ListPeersFilter::kLeaders, UserTabletsOnly::kFalse);
-+  for (const auto& peer : leaders) {
-+    consensus::LeaderStepDownRequestPB req;
-+    req.set_tablet_id(peer->tablet_id());
-+    consensus::LeaderStepDownResponsePB resp;
-+    ASSERT_OK(ASSERT_RESULT(peer->GetConsensus())->StepDown(&req, &resp));
-   }
- }
++// The search merges rows from intents with the index results. A row without a vector there must
++// be skipped, and must hide its old vector, which is still in the index.
++void PgVectorIndexTest::TestNullVectorsInIntents(bool commit) {
++  constexpr size_t kNumRows = 64;
++  const std::string kCloseVector = "[0.125, 0.25, 0.375]";
++
++  auto conn = ASSERT_RESULT(MakeIndexAndFill(kNumRows));
++  // So the search finds the filled rows in the index, not in intents.
++  ASSERT_OK(WaitNoBackgroundInserts(WaitForIntents::kTrue, 30s * kTimeMultiplier));
++  if (commit) {
++    // Keep the committed rows in intents.
++    ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_transaction_ignore_applying_probability) = 1.0;
++  }
++
++  ASSERT_OK(conn.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
++  ASSERT_OK(conn.Execute("INSERT INTO test VALUES (1000, NULL), (1001, NULL)"));
++  ASSERT_OK(conn.Execute("UPDATE test SET embedding = NULL WHERE id = 1"));
++  ASSERT_OK(conn.Execute("UPDATE test SET embedding = NULL WHERE id = 3"));
++  ASSERT_OK(conn.ExecuteFormat("UPDATE test SET embedding = '$0' WHERE id = 10", kCloseVector));
++  if (commit) {
++    ASSERT_OK(conn.CommitTransaction());
++  }
++
++  std::vector<std::string> expected = {
++    BuildRow(10, kCloseVector),
++    ExpectedRow(2),
++    ExpectedRow(4),
++    ExpectedRow(5),
++    ExpectedRow(6),
++  };
++  ASSERT_NO_FATALS(VerifyRows(conn, AddFilter::kFalse, expected));
++  ASSERT_NO_FATALS(VerifyRows(conn, AddFilter::kTrue, {ExpectedRow(2)}));
++}
++
++TEST_P(PgVectorIndexTest, NullVectorsInIntents) {
++  TestNullVectorsInIntents(/* commit= */ false);
++}
++
++TEST_P(PgVectorIndexTest, NullVectorsInNotAppliedIntents) {
++  TestNullVectorsInIntents(/* commit= */ true);
++}
++
+ TEST_P(PgVectorIndexTest, IndexCheck) {
+   constexpr size_t kNumRows = 64;
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35442** (2026-10-20): [PLAT-23184] YBA: Keep PITR schedules on a Kubernetes upgrade that needs no finalize (@vipul-yb)
-- **PR #35391** (2026-10-20): [PLAT-23111] YBA: Capture the rollback checkpoint on a retry after an auto-rollback (@vipul-yb)
-- **PR #35389** (2026-10-19): [PLAT-23142] YBA: Pre-fill runtime-config dev user tags in v2 create universe (@haikarthikssk)
-- **PR #35309** (2026-10-18): [BACKPORT 2025.2][#34805] DocDB: Remove non-block-based vector index backends (#34806) (@yb-agentk-dev[bot])
-- **PR #35304** (2026-10-19): [#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCHECK on promotion race (@csi-fix)
-- **PR #35296** (2026-10-20): [#35283] DocDB: Track vector deletions of tables without reverse mapping (@spolitov)
+- **PR #35631** (2026-10-22): [PLAT-23249] YBA: Promote itest-covered yba CLI commands and flags from preview to GA (@Deepti-yb)
+- **PR #35622** (2026-10-22): [BACKPORT 2026.1][PLAT-21847] YBA: Skip OTEL metrics scrape targets for servers a node does not run (#35192) (@Deepti-yb)
+- **PR #35554** (2026-10-22): [PLAT-23200] YBA: Target read replica releases in K8s YSQL major compatibility-flag step (@vipul-yb)
+- **PR #35532** (closed): [#35164] DocDB: DO NOT MERGE - benchmark build of #35175 with a runtime flag for the old wakeups (@kai-franz)
+- **PR #35531** (2026-10-21): [#35262] YSQL: Fix log waiter race in PgGlobalViewsTest.TestJoinsAreNotPushedDown (@csi-fix)
+- **PR #35486** (2026-10-22): [BACKPORT 2025.2][PLAT-23184] YBA: Keep PITR schedules on a Kubernetes upgrade that needs no finalize (#35442) (@vipul-yb)
 
 ---
 
@@ -2808,58 +2960,83 @@ Before the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryT
+## X. [#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row conte
 
 **RULE**:
-When implementing operations in `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgBackendMemoryContext.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/postgres/src/backend/commands/copyfrom.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9066cefc`: [#35191] YSQL: Fix org.yb.pgsql.TestPgBackendMemoryContext#testLogBackendMemoryTexts concurrent modification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `029efa15`: [#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row context guards. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgBackendMemoryContext.java`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/commands/copyfrom.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-import org.yb.client.TestUtils;
-      // Log lines may still arrive after the query returns, and log printer threads append
-      // concurrently, so poll over a snapshot taken under the list's lock.
-      TestUtils.waitFor(() -> {
-        List<String> results;
-        synchronized (logBackendMemoryContextsResults) {
-          results = new ArrayList<>(logBackendMemoryContextsResults);
-        int next = 0;
-        for (String result : results) {
-          if (next == expectedMessages.size()) {
-            break;
-          }
-          if (result.contains(expectedMessages.get(next))) {
-            next++;
-          }
-        return next == expectedMessages.size();
-      }, 1000 /* timeoutMs */);
+		/*
+		 * Reset the per-tuple exprcontext. We do this after every tuple, to
+		 * clean-up after expression evaluations etc.
+		 */
+		ResetPerTupleExprContext(estate);
+		MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
+		MemoryContextSwitchTo(oldcontext);
+						/*
+						 * YB: the insert path allocates per-row temporaries
+						 * (e.g. the ybctid) in the current context; run it in
+						 * the per-tuple context so they are freed every row.
+						 */
+						MemoryContext yb_saved_cxt =
+							MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
+
+						MemoryContextSwitchTo(yb_saved_cxt);
+		/*
+		 * YB: Fire AFTER triggers in the query context, as upstream does
+		 * before AfterTriggerEndQuery() at the end of CopyFrom(). The last
+		 * batch gets here in the per-tuple context, from the break after
+		 * NextCopyFrom().
+		 */
+		MemoryContextSwitchTo(oldcontext);
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-import static org.yb.AssertionWrappers.assertTrue;
-      assertTrue("pg_log_backend_memory_contexts should output logs",
-                !logBackendMemoryContextsResults.isEmpty());
+		if (IsYBRelation(resultRelInfo->ri_RelationDesc))
+			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
 
-      for (String result : logBackendMemoryContextsResults) {
-        if (expectedMessages.isEmpty()) {
-          // If we have already found all expected messages, we can skip further checks.
-          break;
-        if (result.contains(expectedMessages.get(0))) {
-          expectedMessages.remove(0);
-      }
+		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
+		{
+			/*
+			 * Reset the per-tuple exprcontext. We do this after every tuple, to
+			 * clean-up after expression evaluations etc.
+			 */
+			ResetPerTupleExprContext(estate);
+		}
+		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
+			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
+		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
+			MemoryContextSwitchTo(oldcontext);
+			/*
+			 * Tuple memory will be allocated to per row memory context
+			 * which will be cleaned up after every row gets processed.
+			 * Thus there is no need to clean the tuple memory.
+			 */
+			if (IsYBRelation(resultRelInfo->ri_RelationDesc))
+				myslot->tts_flags &= ~TTS_FLAG_SHOULDFREE;
 
-      assertTrue(String.format("Expected to find all messages in pg_log_backend_memory_contexts %s",
-                               expectedMessages.toString()),
-                 expectedMessages.isEmpty());
+						MemoryContext saved_context;
+
+						saved_context = MemoryContextSwitchTo(estate->es_query_cxt);
+						MemoryContextSwitchTo(saved_context);
+
+		/*
+		 * Free context per row.
+		 */
+		if (IsYBRelation(cstate->rel))
+			ResetPerTupleExprContext(estate);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9066cefc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `029efa15` are properly handled with clean fallback behavior.

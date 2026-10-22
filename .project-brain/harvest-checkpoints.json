@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T16:15:44.661Z",
+  "last_updated": "2026-10-22T16:22:32.479Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "b3e275ff6266e4bd2f7a17b6076850bcaff2ff8b1d70bd277539884be5297163",
-      "verified_at": "2026-10-22T15:35:34.073Z",
+      "content_hash": "8e885ab0268bc697e3d3e86b5b9769d4add02e7fccd277e43cbf5f9749962cce",
+      "verified_at": "2026-10-22T16:22:26.535Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:35:34.073Z"
+      "last_updated": "2026-10-22T16:22:26.535Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "33c7b96f439d70556464ee3d34e001e31d56fe59e5577ada8f68de36d8ae4d0a",
-      "verified_at": "2026-10-20T21:27:45.234Z",
+      "content_hash": "9ae356823ee232e2d2cf74632da90d871f98e37e4de5fca08e9efe1130b26660",
+      "verified_at": "2026-10-22T16:22:32.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:27:45.234Z"
+      "last_updated": "2026-10-22T16:22:32.478Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -10116,14 +10116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "content_hash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
-      "verified_at": "2026-10-20T22:20:23.212Z",
+      "content_hash": "85e942ba49606646b416d161223a357c7af81c3e6f912bdeba69e113a6bb8def",
+      "verified_at": "2026-10-22T16:22:22.857Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:20:23.212Z"
+      "last_updated": "2026-10-22T16:22:22.857Z"
     },
     "qdrant/qdrant": {
       "repository": "qdrant/qdrant",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "5af41427b79a21cf3a7816cd54157d5880907cbb33835b886b65e4c8d1d47f3b",
-      "verified_at": "2026-10-20T19:23:32.385Z",
+      "content_hash": "703b7f8aea7dd86d75184700d118b44b3c320ccdeb50ce87e7f0956dc1f00352",
+      "verified_at": "2026-10-22T16:22:18.354Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:23:32.385Z"
+      "last_updated": "2026-10-22T16:22:18.354Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

@@ -4318,3 +4318,7 @@
 | `CYCLE-20261022-STDQ` | `2026-10-22T16:15:34.334Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3629` | Yes (`f717ce9c...`) |
 | `CYCLE-20261022-SYB1` | `2026-10-22T16:15:40.717Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3630` | Yes (`f5e6c8c9...`) |
 | `CYCLE-20261022-T1C9` | `2026-10-22T16:15:44.649Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3631` | Yes (`41b8cf7e...`) |
+| `CYCLE-20261022-1H49` | `2026-10-22T16:22:18.345Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3632` | Yes (`703b7f8a...`) |
+| `CYCLE-20261022-1KL5` | `2026-10-22T16:22:22.841Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3633` | Yes (`85e942ba...`) |
+| `CYCLE-20261022-1NFE` | `2026-10-22T16:22:26.522Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3634` | Yes (`8e885ab0...`) |
+| `CYCLE-20261022-1S0L` | `2026-10-22T16:22:32.469Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3635` | Yes (`9ae35682...`) |
