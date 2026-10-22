@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T21:35:25.942Z",
+  "last_updated": "2026-10-22T21:41:46.198Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8766,14 +8766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vikejs-vike",
-      "content_hash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
-      "verified_at": "2026-10-20T17:03:50.319Z",
+      "content_hash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
+      "verified_at": "2026-10-22T21:41:46.197Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:03:50.319Z"
+      "last_updated": "2026-10-22T21:41:46.197Z"
     },
     "NVIDIA/cuda-rust": {
       "repository": "NVIDIA/cuda-rust",

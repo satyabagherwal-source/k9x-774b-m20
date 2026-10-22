@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T21:35:25.875Z",
+  "last_updated": "2026-10-22T21:41:46.132Z",
   "total_verified_learnings": 1070,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48104,8 +48104,8 @@
       "slug": "vikejs-vike",
       "platform": "github",
       "source_url": "https://github.com/vikejs/vike",
-      "source_version": "a46b8cf7",
-      "content_hash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
+      "source_version": "c8c53e6f",
+      "content_hash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
       "dossier_path": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "promoted_rules": [
@@ -48138,6 +48138,11 @@
           "number": 3281,
           "title": "`pageContext.previousPageContext` no longer keeps all past pageContexts in memor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3757,
+          "title": "docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48145,7 +48150,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:03:50.230Z",
+      "verified_at": "2026-10-22T21:41:46.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112358,6 +112363,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T21:35:25.861Z"
+    },
+    "rule-3757": {
+      "learning_id": "rule-3757",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3757,
+      "title": "docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links (",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "c8c53e6f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:41:46.121Z"
     }
   },
   "aliases": {

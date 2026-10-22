@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-DWXG",
-    "timestamp": "2026-10-20T18:20:36.724Z",
-    "repository": "carbon-design-system/carbon",
-    "learningId": "learn-github-carbon-design-system-carbon",
-    "contentHash": "1bedacc1b44bbfefb34e786d4ce751d5552e0269374ef23472253fe88e2fa172",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-E2YV",
     "timestamp": "2026-10-20T18:20:44.551Z",
     "repository": "crossplane/crossplane",
@@ -7490,6 +7475,21 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "296fe9a3fd17270a17d706406644921c75d13d85626be595521bff05441b8b74",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-GB46",
+    "timestamp": "2026-10-22T21:41:46.182Z",
+    "repository": "vikejs/vike",
+    "learningId": "learn-github-vikejs-vike",
+    "contentHash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

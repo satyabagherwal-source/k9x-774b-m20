@@ -5763,10 +5763,10 @@
     "repository": "vikejs/vike",
     "platform": "github",
     "sourceUrl": "https://github.com/vikejs/vike",
-    "sourceVersion": "a46b8cf7",
+    "sourceVersion": "c8c53e6f",
     "license": "MIT",
-    "contentHash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
-    "lastHarvestedAt": "2026-10-20T17:03:50.311Z",
+    "contentHash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
+    "lastHarvestedAt": "2026-10-22T21:41:46.185Z",
     "learningId": "learn-github-vikejs-vike"
   },
   "nvidia-cuda-rust": {

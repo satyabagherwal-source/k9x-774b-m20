@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T21:35:25.939Z",
-  "total_cycles_completed": 4426,
-  "total_learnings_persisted": 4426,
-  "total_rules_promoted": 3608,
+  "last_updated": "2026-10-22T21:41:46.194Z",
+  "total_cycles_completed": 4427,
+  "total_learnings_persisted": 4427,
+  "total_rules_promoted": 3609,
   "history": [
-    {
-      "timestamp": "2026-10-21T16:45:01.317Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T16:51:31.212Z",
       "repository": "assistant-ui/assistant-ui",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-22T21:35:25.939Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:41:46.194Z",
+      "repository": "vikejs/vike",
+      "learningId": "learn-github-vikejs-vike",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

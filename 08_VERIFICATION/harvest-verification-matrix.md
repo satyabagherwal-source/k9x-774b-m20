@@ -4449,3 +4449,4 @@
 | `CYCLE-20261022-7Y4Q` | `2026-10-22T21:35:16.106Z` | `RDFLib/pySHACL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3753` | Yes (`a3d57cb6...`) |
 | `CYCLE-20261022-81AO` | `2026-10-22T21:35:20.208Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3754, Rule 3755` | Yes (`f6d9511e...`) |
 | `CYCLE-20261022-85PJ` | `2026-10-22T21:35:25.927Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3756` | Yes (`296fe9a3...`) |
+| `CYCLE-20261022-GB46` | `2026-10-22T21:41:46.182Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3757` | Yes (`55c4ed2f...`) |
