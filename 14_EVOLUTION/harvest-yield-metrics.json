@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T15:22:11.926Z",
-  "total_cycles_completed": 4259,
-  "total_learnings_persisted": 4259,
-  "total_rules_promoted": 3443,
+  "last_updated": "2026-10-22T15:29:05.378Z",
+  "total_cycles_completed": 4266,
+  "total_learnings_persisted": 4266,
+  "total_rules_promoted": 3449,
   "history": [
-    {
-      "timestamp": "2026-10-20T23:11:01.788Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:17:19.074Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:17:27.293Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:17:34.984Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:23:59.519Z",
-      "repository": "ratatui/ratatui",
-      "learningId": "learn-github-ratatui-ratatui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:24:08.359Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:25:14.209Z",
-      "repository": "vllm-sr/d3",
-      "learningId": "learn-huggingface-vllm-sr-d3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T23:31:27.900Z",
       "repository": "openai/whisper-large-v3",
@@ -1402,6 +1353,55 @@
       "timestamp": "2026-10-22T15:22:11.926Z",
       "repository": "SolaceLabs/solace-agent-mesh",
       "learningId": "learn-github-solacelabs-solace-agent-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:28:46.927Z",
+      "repository": "sandbox-quantum/switch",
+      "learningId": "learn-github-sandbox-quantum-switch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:28:47.487Z",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:28:49.824Z",
+      "repository": "InternScience/Sage-A1.5",
+      "learningId": "learn-huggingface-internscience-sage-a1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:28:55.855Z",
+      "repository": "RecursiveSI/flint",
+      "learningId": "learn-huggingface-recursivesi-flint",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:28:59.933Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:29:02.875Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:29:05.378Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

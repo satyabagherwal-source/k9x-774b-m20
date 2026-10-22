@@ -4374,3 +4374,13 @@ https://github.com/ai-job-search-dev/ai-job-search
 # --- Automatically Discovered by AI Scout Engine [2026-10-22T15:22:05.174Z] ---
 # [AI-AGENTS] SolaceLabs/solace-agent-mesh (2789 score) - Platform for building and running AI agents across the full lifecycle — build, t
 https://github.com/SolaceLabs/solace-agent-mesh
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-22T15:28:38.970Z] ---
+# [AI-AGENTS] sandbox-quantum/switch (1073 score) - Open-source AI teammates in Slack, Teams, Discord, Telegram and Mattermost. Self
+https://github.com/sandbox-quantum/switch
+# [HUGGINGFACE-AI-MODELS] RecursiveSI/flint (4830 score) - Verified Hugging Face Model: RecursiveSI/flint (441 likes, 420 downloads)
+https://huggingface.co/RecursiveSI/flint
+# [HUGGINGFACE-AI-MODELS] XHToken/Spark-X2.6-4B (2772 score) - Verified Hugging Face Model: XHToken/Spark-X2.6-4B (229 likes, 482 downloads)
+https://huggingface.co/XHToken/Spark-X2.6-4B
+# [HUGGINGFACE-AI-MODELS] InternScience/Sage-A1.5 (2456 score) - Verified Hugging Face Model: InternScience/Sage-A1.5 (206 likes, 396 downloads)
+https://huggingface.co/InternScience/Sage-A1.5

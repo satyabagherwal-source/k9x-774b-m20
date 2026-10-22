@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `10acebc0`  
+> **Source Version**: `7834210a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:21:25.930Z  
+> **Timestamp**: 2026-10-22T15:28:59.523Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:21:25.399Z  
+> **Harvest Timestamp**: 2026-10-22T15:28:58.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29099 stars
+- **Stars / Engagement**: 29108 stars
 
 ---
 
@@ -500,9 +500,11 @@ public:
     Buffer::OwnedImpl data_to_write;
     doDataList.moveOut(data_to_write);
 
-    ENVOY_LOG(debug, "golang filter injecting data to filter chain, end_stream: {}",
-              do_end_stream_);
-    injectDataToFilterChain(data_to_write, do_end_stream_);
+    // Data followed by trailers never ends the stream. do_end_stream_ is true while processing
+    // the trailers, when buffered data can still be pending.
+    const bool end_stream = do_end_stream_ && trailers == nullptr;
+    ENVOY_LOG(debug, "golang filter injecting data to filter chain, end_stream: {}", end_stream);
+    injectDataToFilterChain(data_to_write, end_stream);
   }
 
   void processHeader(bool end_stream) {
@@ -1062,1353 +1064,611 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f6040e4` (2026-10-20)
-**Commit Message**: QUIC eBPF hot restart part 0 (#45504)
-
-Commit Message: quic: Defer CID generator factory and socket option init
-to `initializeWorkerRouting` (QUIC eBPF hot restart part 0)
-
-Additional Description:
-
-Adds `ActiveUdpListenerFactory::initializeWorkerRouting`, called once
-when a listener is added or updated, after the listen sockets are
-created and before the listener starts warming.
-
-`EnvoyQuicConnectionIdGeneratorFactory` creation is deferred to
-`initializeWorkerRouting`. Creating it in the
-`ActiveQuicListenerFactory` constructor would be too early for upcoming
-eBPF hot restart support, which will receive the eBPF program fd via the
-hot restart RPC and create a factory per reuseport group from the listen
-sockets.
-
-The listener init target is now registered with the server init manager
-after `initializeWorkerRouting` instead of at the end of the
-`ListenerImpl` constructor, so that connection ID generator factories
-can register init targets with the listener's init manager.
-
-Factory-specific UDP socket options were previously gathered via
-`ActiveUdpListenerFactory::socketOptions()`. They are now created and
-applied in `initializeWorkerRouting`.
-
-`createCompatibleLinuxBpfSocketOption` no
-
-**File**: `changelogs/current/minor_behavior_changes/quic__defer-worker-routing-init.rst` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+QUIC listeners now create the connection ID generator factory and apply its worker-routing socket
-+option when the socket factory config is loaded, instead of when the listener config is loaded.
-+This behavior can be reverted by setting runtime guard
-+``envoy.restart_features.defer_worker_routing_init`` to ``false``.
-```
-
-**File**: `envoy/network/connection_handler.h` (modified, +13/-0)
-```diff
-@@ -16,6 +16,8 @@
- 
- #include "source/common/common/interval_value.h"
- 
-+#include "absl/types/span.h"
-+
- namespace Envoy {
- namespace Network {
- 
-@@ -349,6 +351,17 @@ class ActiveUdpListenerFactory {
-    * @return socket options specific to this factory that should be applied to all sockets.
-    */
-   virtual const Network::Socket::OptionsSharedPtr& socketOptions() const PURE;
-+
-+  /**
-+   * Initializes routing of UDP packets to the correct worker. Called once when a listener is added
-+   * or updated, after the listen sockets are created. Implementations may register init targets
-+   * with the listener's init manager.
-+   * Only called if envoy.restart_features.defer_worker_routing_init is enabled.
-+   * @param listen_socket_factories the listener's socket factories, one per address.
-+   * @return a status indicating if an error occurred.
-+   */
-+  virtual absl::Status initializeWorkerRouting(
-+      absl::Span<const Network::ListenSocketFactoryPtr> listen_socket_factories) PURE;
- };
- 
- using ActiveUdpListenerFactoryPtr = std::unique_ptr<ActiveUdpListenerFactory>;
-```
-
-**File**: `source/common/listener_manager/active_raw_udp_listener_config.h` (modified, +3/-0)
-```diff
-@@ -16,6 +16,9 @@ class ActiveRawUdpListenerFactory : public Network::ActiveUdpListenerFactory {
-                           Event::Dispatcher& disptacher, Network::ListenerConfig& config) override;
-   bool isTransportConnectionless() const override { return true; }
-   const Network::Socket::OptionsSharedPtr& socketOptions() const override { return options_; }
-+  absl::Status initializeWorkerRouting(absl::Span<const Network::ListenSocketFactoryPtr>) override {
-+    return absl::OkStatus();
-+  }
- 
- private:
-   const uint32_t concurrency_;
-```
-
-**File**: `source/common/listener_manager/listener_impl.cc` (modified, +14/-7)
-```diff
-@@ -508,12 +508,11 @@ ListenerImpl::ListenerImpl(const envoy::config::listener::v3::Listener& config,
-     buildProxyProtocolListenerFilter(config);
-     SET_AND_RETURN_IF_NOT_OK(buildInternalListener(config), creation_status);
-   }
--  if (!workers_started_) {
--    // Initialize dynamic_init_manager_ from Server's init manager if it's not initialized.
--    // NOTE: listener_init_target_ should be added to parent's initManager at the end of the
--    // listener constructor so that this listener's children entities could register their targets
--    // with their parent's initManager.
--    parent_.server_.initManager().add(listener_init_target_);
-+  if (!Runtime::runtimeFeatureEnabled("envoy.restart_features.defer_worker_routing_init")) {
-+    // QUIC listeners register targets in initializeWorkerRouting(), which runs after the
-+    // constructor, so with the runtime flag enabled registration is deferred to
-+    // ListenerManagerImpl::addOrUpdateListenerInternal instead.
-+    registerInitTargetIfWorkersNotStarted();
-   }
- }
- 
-@@ -761,9 +760,11 @@ ListenerImpl::buildUdpListenerFactory(const envoy::config::listener::v3::Listene
-           "connection_balance_config is configured for QUIC listener which "
-           "doesn't work with connection balancer.");
-     }
-+    absl::Status creation_status = absl::OkStatus();
-     udp_listener_config_->listener_factory_ = std::make_unique<Quic::ActiveQuicListenerFactory>(
-         config.udp_listener_config().quic_options(), concurrency, quic_stat_names_,
--        validation_visitor_, *listener_factory_context_);
-+        validation_visitor_, *listener_factory_context_, creation_status);
-+    RETURN_IF_NOT_OK(creation_status);
- 
-     if (config.udp_listener_config().has_udp_packet_packet_writer_config()) {
-       auto* quic_packet_writer_factory_factory =
-@@ -1364,6 +1365,12 @@ bool ListenerImpl::hasDuplicatedAddress(const ListenerImpl& other) const {
-   return false;
- }
- 
-+void ListenerImpl::registerInitTargetIfWorkersNotStarted() {
-+  if (!workers_started_) {
-+    parent_.server_.initManager().add(listener_init_target_);
-+  }
-+}
-+
- absl::Status ListenerImpl::cloneSocketFactoryFrom(const ListenerImpl& other) {
-   for (auto& socket_factory : other.getSocketFactories()) {
-     // Clone the existing socket factory but override tcp_backlog_size with the new listener's
-```
-
-**File**: `source/common/listener_manager/listener_impl.h` (modified, +6/-0)
-```diff
-@@ -296,6 +296,12 @@ class ListenerImpl final : public Network::ListenerConfig,
-   // Check whether a new listener has duplicated listening address this listener.
-   bool hasDuplicatedAddress(const ListenerImpl& other) const;
- 
-+  // Initialize dynamic_init_manager_ from Server's init manager if it's not initialized.
-+  // Must be called only after this listener's children entities registered their targets with their
-+  // parent's initManager, which happens either during construction or in
-+  // ListenerManagerImpl::addOrUpdateListenerInternal.
-+  void registerInitTargetIfWorkersNotStarted();
-+
-   // Network::ListenerConfig
-   Network::FilterChainManager& filterChainManager() override { return *filter_chain_manager_; }
-   Network::FilterChainFactory& filterChainFactory() override { return *this; }
-```
-
-**File**: `source/common/listener_manager/listener_manager_impl.cc` (modified, +34/-5)
-```diff
-@@ -615,9 +615,8 @@ ListenerManagerImpl::addOrUpdateListener(const envoy::config::listener::v3::List
-   return add_or_update_status;
- }
- 
--absl::Status
--ListenerManagerImpl::setupSocketFactoryForListener(ListenerImpl& new_listener,
--                                                   const ListenerImpl& existing_listener) {
-+absl::Status ListenerManagerImpl::setupSocketFactoryForListener(
-+    ListenerImpl& new_listener, const ListenerImpl& existing_listener, bool in_place_update) {
-   if (new_listener.reusePort() != existing_listener.reusePort()) {
-     return absl::InvalidArgumentError(fmt::format(
-         "Listener {}: reuse port cannot be changed during an update", new_listener.name()));
-@@ -628,6 +627,22 @@ ListenerManagerImpl::setupSocketFactoryForListener(ListenerImpl& new_listener,
-   } else {
-     RETURN_IF_NOT_OK(new_listener.cloneSocketFactoryFrom(existing_listener));
-   }
-+
-+  return initializeWorkerRoutingForUdpListener(new_listener, in_place_update);
-+}
-+
-+absl::Status ListenerManagerImpl::initializeWorkerRoutingForUdpListener(ListenerImpl& new_listener,
-+                                                                        bool in_place_update) {
-+  if (in_place_update ||
-+      !Runtime::runtimeFeatureEnabled("envoy.restart_features.defer_worker_routing_init")) {
-+    return absl::OkStatus();
-+  }
-+
-+  if (auto udp_listener_config = new_listener.udpListenerConfig()) {
-+    RETURN_IF_NOT_OK(udp_listener_config->listenerFactory().initializeWorkerRouting(
-+        new_listener.listenSocketFactories()));
-+  }
-+
-   return absl::OkStatus();
- }
- 
-@@ -671,10 +686,12 @@ absl::StatusOr<bool> ListenerManagerImpl::addOrUpdateListenerInternal(
-   }
- 
-   ListenerImplPtr new_listener = nullptr;
-+  bool in_place_update = false;
- 
-   // In place filter chain update depends on the active listener at worker.
-   if (existing_active_listener != active_listeners_.end() &&
-       (*existing_active_listener)->supportUpdateFilterChain(config, workers_started_)) {
-+    in_place_update = true;
-     ENVOY_LOG(debug, "use in place update filter chain update path for listener name={} hash={}",
-               name, hash);
-     auto listener_or_error =
-@@ -696,11 +713,13 @@ absl::StatusOr<bool> ListenerManagerImpl::addOrUpdateListenerInternal(
-   if (existing_warming_listener != warming_listeners_.end()) {
-     ASSERT(workers_started_);
-     new_listener->debugLog("update warming listener");
--    RETURN_IF_NOT_OK(setupSocketFactoryForListener(*new_listener, **existing_warming_listener));
-+    RETURN_IF_NOT_OK(
-+        setupSocketFactoryForListener(*new_listener, **existing_warming_listener, in_place_update));
-     // In this case we can just replace inline.
-     *existing_warming_listener = std::move(new_listener);
-   } else if (existing_active_listener != active_listeners_.end()) {
--    RETURN_IF_NOT_OK(setupSocketFactoryForListener(*new_listener, **existing_active_listener));
-+    RETURN_IF_NOT_OK(
-+        setupSocketFactoryForListener(*new_listener, **existing_active_listener, in_place_update));
-     // In this case we have no warming listener, so what we do depends on whether workers
-     // have been started or not.
-     if (workers_started_) {
-@@ -714,6 +733,9 @@ absl::StatusOr<bool> ListenerManagerImpl::addOrUpdateListenerInternal(
-     // We have no warming or active listener so we need to make a new one. What we do depends on
-     // whether workers have been started or not.
-     RETURN_IF_NOT_OK(setNewOrDrainingSocketFactory(name, *new_listener));
-+    // This can never be an in-place update
-+    RETURN_IF_NOT_OK(
-+        initializeWorkerRoutingForUdpListener(*new_listener, /*in_place_update=*/false));
-     if (workers_started_) {
-       new_listener->debugLog("add warming listener");
-       warming_listeners_.emplace_back(std::move(new_listener));
-@@ -725,6 +747,13 @@ absl::StatusOr<bool> ListenerManagerImpl::addOrUpdateListenerInternal(
-     added = true;
-   }
- 
-+  if (Runtime::runtimeFeatureEnabled("envoy.restart_features.defer_worker_routing_init")) {
-+    // The listener init target must be registered with the server init manager after all of the
-+    // listener's children have registered their targets with the listener's init manager. QUIC
-+    // listeners also register targets in initializeWorkerRoutingForUdpListener().
-+    new_listener_ref.registerInitTargetIfWorkersNotStarted();
-+  }
-+
-   updateWarmingActiveGauges();
-   if (added) {
-     stats_.listener_added_.inc();
-```
-
-**File**: `source/common/listener_manager/listener_manager_impl.h` (modified, +5/-1)
-```diff
-@@ -401,7 +401,11 @@ class ListenerManagerImpl : public ListenerManager, Logger::Loggable<Logger::Id:
- 
-   void maybeCloseSocketsForListener(ListenerImpl& listener);
-   absl::Status setupSocketFactoryForListener(ListenerImpl& new_listener,
--                                             const ListenerImpl& existing_listener);
-+                                             const ListenerImpl& existing_listener,
-+                                             bool in_place_update);
-+
-+  absl::Status initializeWorkerRoutingForUdpListener(ListenerImpl& new_listener,
-+                                                     bool in_place_update);
- 
-   ApiListenerPtr api_listener_;
-   // Active listeners are listeners that are currently accepting new connections on the workers.
-```
-
-**File**: `source/common/quic/active_quic_listener.cc` (modified, +71/-32)
-```diff
-@@ -316,7 +316,7 @@ void ActiveQuicListener::onCloseIdleHttpConnections(bool is_saturated) {
- ActiveQuicListenerFactory::ActiveQuicListenerFactory(
-     const envoy::config::listener::v3::QuicProtocolOptions& config, uint32_t concurrency,
-     QuicStatNames& quic_stat_names, ProtobufMessage::ValidationVisitor& validation_visitor,
--    Server::Configuration::ListenerFactoryContext& context)
-+    Server::Configuration::ListenerFactoryContext& context, absl::Status& creation_status)
-     : concurrency_(concurrency), enabled_(config.enabled()), quic_stat_names_(quic_stat_names),
-       packets_to_read_to_connection_count_ratio_(
-           PROTOBUF_GET_WRAPPED_OR_DEFAULT(config, packets_to_read_to_connection_count_ratio,
-@@ -376,24 +376,16 @@ ActiveQuicListenerFactory::ActiveQuicListenerFactory(
-     connection_debug_visitor_factory_ = factory.createFactory(*message, context_);
-   }
- 
--  // Initialize connection ID generator factory.
--  envoy::config::core::v3::TypedExtensionConfig cid_generator_config;
-+  // Initialize connection ID generator factory config for `initializeCidGeneratorAndWorkerRouting`.
-   if (!config.has_connection_id_generator_config()) {
--    cid_generator_config.set_name("envoy.quic.deterministic_connection_id_generator");
-+    cid_generator_config_.set_name("envoy.quic.deterministic_connection_id_generator");
-     envoy::extensions::quic::connection_id_generator::v3::DeterministicConnectionIdGeneratorConfig
-         empty_connection_id_generator_config;
--    std::ignore =
--        cid_generator_config.mutable_typed_config()->PackFrom(empty_connection_id_generator_config);
-+    std::ignore = cid_generator_config_.mutable_typed_config()->PackFrom(
-+        empty_connection_id_generator_config);
-   } else {
--    cid_generator_config = config.connection_id_generator_config();
-+    cid_generator_config_ = config.connection_id_generator_config();
-   }
--  auto& cid_generator_config_factory =
--      Config::Utility::getAndCheckFactory<EnvoyQuicConnectionIdGeneratorConfigFactory>(
--          cid_generator_config);
--  quic_cid_generator_factory_ = cid_generator_config_factory.createQuicConnectionIdGeneratorFactory(
--      *Config::Utility::translateToFactoryConfig(cid_generator_config, validation_visitor,
--                                                 cid_generator_config_factory),
--      validation_visitor, context_);
- 
-   if (config.has_server_preferred_address_config()) {
-     const envoy::config::core::v3::TypedExtensionConfig& server_preferred_address_config =
-@@ -409,33 +401,39 @@ ActiveQuicListenerFactory::ActiveQuicListenerFactory(
-             validation_visitor, context_.serverFactoryContext());
-   }
- 
--  worker_selector_ =
--      quic_cid_generator_factory_->getCompatibleConnectionIdWorkerSelector(concurrency_);
--  if (!disable_kernel_bpf_packet_routing_for_test_) {
--    if (concurrency_ > 1) {
--      Network::Socket::OptionConstSharedPtr opt =
--          quic_cid_generator_factory_->createCompatibleLinuxBpfSocketOption(concurrency_);
--      if (opt != nullptr) {
--        options_->push_back(opt);
--        kernel_worker_routing_ = true;
--      } else {
--        ENVOY_LOG(warn,
--                  "Efficient routing of QUIC packets to the correct worker is not supported or "
--                  "not implemented by Envoy on this platform or by the configured "
--                  "connection_id_generator. QUIC performance may be degraded.");
-+  if (!Runtime::runtimeFeatureEnabled("envoy.restart_features.defer_worker_routing_init")) {
-+    creation_status = initializeCidGeneratorAndWorkerRouting();
-+  }
-+}
-+
-+absl::Status ActiveQuicListenerFactory::initializeWorkerRouting(
-+    absl::Span<const Network::ListenSocketFactoryPtr> socket_factories) {
-+  // Already initialized in the constructor, options were applied via socketOptions().
-+  ASSERT(Runtime::runtimeFeatureEnabled("envoy.restart_features.defer_worker_routing_init"));
-+
-+  RETURN_IF_NOT_OK(initializeCidGeneratorAndWorkerRouting());
-+
-+  for (const auto& factory : socket_factories) {
-+    for (uint32_t i = 0; i < concurrency_; i++) {
-+      auto socket = factory->getListenSocket(i);
-+      if (!Network::Socket::applyOptions(options_, *socket,
-+                                         envoy::config::core::v3::SocketOption::STATE_BOUND)) {
-+        return absl::InvalidArgumentError(
-+            fmt::format("cannot apply listener factory socket options on socket: {}",
-+                        socket->connectionInfoProvider().localAddress()->asString()));
-       }
--    } else {
--      ENVOY_LOG(info, "Not applying BPF because concurrency is 1");
--      kernel_worker_routing_ = true;
-     }
--  };
-+  }
-+
-+  return absl::OkStatus();
- }
- 
- Network::ConnectionHandler::ActiveUdpListenerPtr ActiveQuicListenerFactory::createActiveUdpListener(
-     Runtime::Loader& runtime, uint32_t worker_index, Network::UdpConnectionHandler& parent,
-     Network::SocketSharedPtr&& listen_socket_ptr, Event::Dispatcher& dispatcher,
-     Network::ListenerConfig& c
-```
-
----
-
-### Incident Patch 2: `c3c3d857` (2026-10-20)
-**Commit Message**: Revert "ext_proc: add config option to cap body chunk size in STREAMED and FULL_DUPLEX_STREAMED modes (#48239)" (#48474)
-
-https://github.com/envoyproxy/envoy/pull/48239 introduced some breaking
-changes for HTTP ext_proc.
-Let's revert it first.
-
-Signed-off-by: Yanjun Xiang <[REDACTED_EMAIL]>
-
-**File**: `api/envoy/extensions/filters/http/ext_proc/v3/ext_proc.proto` (modified, +2/-16)
-```diff
-@@ -98,7 +98,7 @@ option (udpa.annotations.file_status).package_version_status = ACTIVE;
- // <arch_overview_advanced_filter_state_sharing>` object in a namespace matching the filter
- // name.
- //
--// [#next-free-field: 29]
-+// [#next-free-field: 28]
- message ExternalProcessor {
-   // Describes the route cache action to be taken when an external processor response
-   // is received in response to request headers.
-@@ -393,12 +393,6 @@ message ExternalProcessor {
-   //
-   // If unset, defaults to ``true``.
-   google.protobuf.BoolValue emit_client_span = 27;
--
--  // Maximum size of a body chunk sent to the external processor in ``STREAMED`` or
--  // ``FULL_DUPLEX_STREAMED`` mode. Must be at least 1024 bytes.
--  // If not specified, all body data passed in a given encodeData() or decodeData() call will be sent in a single chunk.
--  google.protobuf.UInt32Value max_streamed_body_chunk_size = 28
--      [(validate.rules).uint32 = {gte: 1024}];
- }
- 
- // ExtProcHttpService is used for HTTP communication between the filter and the external processing service.
-@@ -480,7 +474,7 @@ message ExtProcPerRoute {
- }
- 
- // Overrides that may be set on a per-route basis
--// [#next-free-field: 12]
-+// [#next-free-field: 11]
- message ExtProcOverrides {
-   // Set a different processing mode for this route than the default.
-   ProcessingMode processing_mode = 1;
-@@ -530,12 +524,4 @@ message ExtProcOverrides {
- 
-   // Overrides the filter-level ``emit_client_span`` setting for this route.
-   google.protobuf.BoolValue emit_client_span = 10;
--
--  // Maximum size of a body chunk sent to the external processor in ``STREAMED`` or
--  // ``FULL_DUPLEX_STREAMED`` mode. Must be at least 1024 bytes.
--  // If not specified, all body data passed in a given encodeData() or decodeData() call will be sent in a single chunk.
--  // This is a per-route override of
--  // :ref:`max_streamed_body_chunk_size <envoy_v3_api_field_extensions.filters.http.ext_proc.v3.ExternalProcessor.max_streamed_body_chunk_size>`.
--  google.protobuf.UInt32Value max_streamed_body_chunk_size = 11
--      [(validate.rules).uint32 = {gte: 1024}];
- }
-```
-
-**File**: `changelogs/current/new_features/ext_proc__max_streamed_body_chunk_size.rst` (removed, +0/-6)
-```diff
-@@ -1,6 +0,0 @@
--Added :ref:`max_streamed_body_chunk_size
--<envoy_v3_api_field_extensions.filters.http.ext_proc.v3.ExternalProcessor.max_streamed_body_chunk_size>`
--and per-route :ref:`max_streamed_body_chunk_size
--<envoy_v3_api_field_extensions.filters.http.ext_proc.v3.ExtProcOverrides.max_streamed_body_chunk_size>`
--to limit the body payload size of individual ``ProcessingRequest`` messages sent in ``STREAMED`` and
--``FULL_DUPLEX_STREAMED`` body processing modes.
-```
-
-**File**: `source/extensions/filters/http/ext_proc/ext_proc.cc` (modified, +13/-55)
-```diff
-@@ -1,7 +1,5 @@
- #include "source/extensions/filters/http/ext_proc/ext_proc.h"
- 
--#include <algorithm>
--#include <cstdint>
- #include <functional>
- #include <memory>
- #include <utility>
-@@ -320,11 +318,7 @@ FilterConfig::FilterConfig(const ExternalProcessor& config,
-       graceful_grpc_close_(
-           Runtime::runtimeFeatureEnabled("envoy.reloadable_features.ext_proc_graceful_grpc_close")),
-       allow_content_length_header_(config.allow_content_length_header()),
--      emit_client_span_(PROTOBUF_GET_WRAPPED_OR_DEFAULT(config, emit_client_span, true)),
--      max_streamed_body_chunk_size_(
--          config.has_max_streamed_body_chunk_size()
--              ? std::make_optional(config.max_streamed_body_chunk_size().value())
--              : std::nullopt) {
-+      emit_client_span_(PROTOBUF_GET_WRAPPED_OR_DEFAULT(config, emit_client_span, true)) {
-   if (config.disable_clear_route_cache()) {
-     route_cache_action_ = ExternalProcessor::RETAIN;
-   }
-@@ -672,10 +666,6 @@ FilterConfigPerRoute::FilterConfigPerRoute(
-       emit_client_span_(config.overrides().has_emit_client_span()
-                             ? std::optional<bool>(config.overrides().emit_client_span().value())
-                             : std::nullopt),
--      max_streamed_body_chunk_size_(
--          config.overrides().has_max_streamed_body_chunk_size()
--              ? std::make_optional(config.overrides().max_streamed_body_chunk_size().value())
--              : std::nullopt),
-       processing_request_modifier_factory_cb_(
-           createProcessingRequestModifierCb(config.overrides(), builder, context)) {}
- 
-@@ -712,9 +702,6 @@ FilterConfigPerRoute::FilterConfigPerRoute(const FilterConfigPerRoute& less_spec
-       emit_client_span_(more_specific.emitClientSpan().has_value()
-                             ? more_specific.emitClientSpan()
-                             : less_specific.emitClientSpan()),
--      max_streamed_body_chunk_size_(more_specific.maxStreamedBodyChunkSize().has_value()
--                                        ? more_specific.maxStreamedBodyChunkSize()
--                                        : less_specific.maxStreamedBodyChunkSize()),
-       processing_request_modifier_factory_cb_(
-           more_specific.processing_request_modifier_factory_cb_
-               ? more_specific.processing_request_modifier_factory_cb_
-@@ -1018,11 +1005,19 @@ FilterDataStatus Filter::handleDataStreamedModeBase(ProcessorState& state, Buffe
-     break;
-   }
- 
-+  ProcessingRequest req = setupBodyChunk(state, data, end_stream);
-+  if (state.bodyMode() != ProcessingMode::FULL_DUPLEX_STREAMED) {
-+    state.enqueueStreamingChunk(data, end_stream);
-+  } else {
-+    // For FULL_DUPLEX_STREAMED mode, just drain the data.
-+    data.drain(data.length());
-+  }
-   // If the current state is HeadersCallback, stays in that state.
--  auto cb_state = state.callbackState() == ProcessorState::CallbackState::HeadersCallback
--                      ? ProcessorState::CallbackState::HeadersCallback
--                      : ProcessorState::CallbackState::StreamedBodyCallback;
--  sendStreamedBodyChunk(state, data, cb_state, end_stream);
-+  if (state.callbackState() == ProcessorState::CallbackState::HeadersCallback) {
-+    sendBodyChunk(state, ProcessorState::CallbackState::HeadersCallback, req);
-+  } else {
-+    sendBodyChunk(state, ProcessorState::CallbackState::StreamedBodyCallback, req);
-+  }
-   return state.getBodyCallbackResultInStreamedMode(end_stream);
- }
- 
-@@ -1472,37 +1467,6 @@ void Filter::sendBodyChunk(ProcessorState& state, ProcessorState::CallbackState
-   stats_.stream_msgs_sent_.inc();
- }
- 
--void Filter::sendStreamedBodyChunk(ProcessorState& state, Buffer::Instance& data,
--                                   ProcessorState::CallbackState new_state, bool end_stream) {
--  if (!max_streamed_body_chunk_size_.has_value() ||
--      data.length() < *max_streamed_body_chunk_size_) {
--    auto req = setupBodyChunk(state, data, end_stream);
--    if (state.bodyMode() != ProcessingMode::FULL_DUPLEX_STREAMED) {
--      state.enqueueStreamingChunk(data, end_stream);
--    } else {
--      // For FULL_DUPLEX_STREAMED mode, just drain the data.
--      data.drain(data.length());
--    }
--    sendBodyChunk(state, new_state, req);
--    return;
--  }
--
--  while (data.length() > 0) {
--    const uint64_t chunk_length =
--        std::min(static_cast<uint64_t>(*max_streamed_body_chunk_size_), data.length());
--    Buffer::OwnedImpl chunk_buffer;
--    // Incrementally drain data buffer.
--    chunk_buffer.move(data, chunk_length);
--    const bool chunk_end_stream = (data.length() == 0) ? end_stream : false;
--
--    auto req = setupBodyChunk(state, chunk_buffer, chunk_end_stream);
--    if (state.bodyMode() != ProcessingMode::FULL_DUPLEX_STREAMED) {
--      state.enqueueStreamingChunk(chunk_buffer, chunk_end_stream);
--    }
--    sendBodyChunk(state, new_state, req);
--  }
--}
--
- void Filter::sendTrailers(ProcessorState& state, const Http::HeaderMap& trailers,
-                           b
-```
-
-**File**: `source/extensions/filters/http/ext_proc/ext_proc.h` (modified, +1/-13)
-```diff
-@@ -276,8 +276,6 @@ class FilterConfig {
- 
-   bool failureModeAllow() const { return failure_mode_allow_; }
- 
--  std::optional<uint32_t> maxStreamedBodyChunkSize() const { return max_streamed_body_chunk_size_; }
--
-   bool observabilityMode() const { return observability_mode_; }
- 
-   const std::chrono::milliseconds& deferredCloseTimeout() const { return deferred_close_timeout_; }
-@@ -447,7 +445,6 @@ class FilterConfig {
- 
-   const bool allow_content_length_header_ = false;
-   const bool emit_client_span_ = true;
--  const std::optional<uint32_t> max_streamed_body_chunk_size_;
- };
- 
- using FilterConfigSharedPtr = std::shared_ptr<FilterConfig>;
-@@ -501,8 +498,6 @@ class FilterConfigPerRoute : public Router::RouteSpecificFilterConfig {
- 
-   const std::optional<bool>& emitClientSpan() const { return emit_client_span_; }
- 
--  std::optional<uint32_t> maxStreamedBodyChunkSize() const { return max_streamed_body_chunk_size_; }
--
-   bool hasProcessingRequestModifierConfig() const {
-     return processing_request_modifier_factory_cb_ != nullptr;
-   }
-@@ -530,7 +525,6 @@ class FilterConfigPerRoute : public Router::RouteSpecificFilterConfig {
-   const std::optional<const std::vector<std::string>> typed_cluster_metadata_forwarding_namespaces_;
-   const std::optional<bool> failure_mode_allow_;
-   const std::optional<bool> emit_client_span_;
--  const std::optional<uint32_t> max_streamed_body_chunk_size_;
- 
-   const std::function<std::unique_ptr<ProcessingRequestModifier>()>
-       processing_request_modifier_factory_cb_;
-@@ -575,8 +569,7 @@ class Filter : public Logger::Loggable<Logger::Id::ext_proc>,
-         processing_request_modifier_(config->createProcessingRequestModifier()),
-         on_processing_response_(config->createOnProcessingResponse()),
-         failure_mode_allow_(config->failureModeAllow()),
--        emit_client_span_(config->emitClientSpan()),
--        max_streamed_body_chunk_size_(config->maxStreamedBodyChunkSize()) {}
-+        emit_client_span_(config->emitClientSpan()) {}
- 
-   const FilterConfig& config() const { return *config_; }
-   const envoy::config::core::v3::GrpcService& grpcServiceConfig() const {
-@@ -623,9 +616,6 @@ class Filter : public Logger::Loggable<Logger::Id::ext_proc>,
-   setupBodyChunk(ProcessorState& state, const Buffer::Instance& data, bool end_stream);
-   void sendBodyChunk(ProcessorState& state, ProcessorState::CallbackState new_state,
-                      envoy::service::ext_proc::v3::ProcessingRequest& req);
--  void sendStreamedBodyChunk(ProcessorState& state, Buffer::Instance& data,
--                             ProcessorState::CallbackState new_state, bool end_stream);
--  std::optional<uint32_t> maxStreamedBodyChunkSize() const { return max_streamed_body_chunk_size_; }
- 
-   void sendTrailers(ProcessorState& state, const Http::HeaderMap& trailers,
-                     bool observability_mode = false);
-@@ -788,8 +778,6 @@ class Filter : public Logger::Loggable<Logger::Id::ext_proc>,
- 
-   // Whether to emit client-side spans for external processing requests.
-   bool emit_client_span_{true};
--
--  std::optional<uint32_t> max_streamed_body_chunk_size_;
- };
- 
- extern std::string responseCaseToString(
-```
-
-**File**: `source/extensions/filters/http/ext_proc/processor_state.cc` (modified, +29/-25)
-```diff
-@@ -122,8 +122,14 @@ void ProcessorState::sendBufferedDataInStreamedMode(bool end_stream) {
-     modifyBufferedData([&buffered_chunk](Buffer::Instance& data) { buffered_chunk.move(data); });
-     ENVOY_STREAM_LOG(debug, "Sending a chunk of buffered data ({})", *filterCallbacks(),
-                      buffered_chunk.length());
--    filter_.sendStreamedBodyChunk(*this, buffered_chunk,
--                                  ProcessorState::CallbackState::StreamedBodyCallback, end_stream);
-+    auto req = filter_.setupBodyChunk(*this, buffered_chunk, end_stream);
-+    if (body_mode_ != ProcessingMode::FULL_DUPLEX_STREAMED) {
-+      // Move the current buffer into the queue for remote processing and clear the buffered data.
-+      enqueueStreamingChunk(buffered_chunk, end_stream);
-+    } else {
-+      buffered_chunk.drain(buffered_chunk.length());
-+    }
-+    filter_.sendBodyChunk(*this, ProcessorState::CallbackState::StreamedBodyCallback, req);
-   }
-   if (queueBelowLowLimit()) {
-     clearWatermark();
-@@ -268,30 +274,27 @@ absl::Status ProcessorState::handleHeaderContinue() {
- }
- 
- absl::Status ProcessorState::handleCompleteBodyAvailable() {
--  if (body_mode_ == ProcessingMode::STREAMED ||
--      body_mode_ == ProcessingMode::FULL_DUPLEX_STREAMED) {
--    // In streamed modes, always split and send any buffered data via
--    // sendBufferedDataInStreamedMode (which respects max_streamed_body_chunk_size and uses
--    // StreamedBodyCallback).
--    sendBufferedDataInStreamedMode(trailers_ == nullptr);
--    if (callback_state_ == CallbackState::Idle) {
--      // No body chunks are in flight (e.g., headers followed directly by trailers with no body,
--      // or all body chunks already completed while send_body_without_waiting_for_header_response
--      // was enabled), so proceed to handle trailers and cleanup now.
-+  if (callback_state_ == CallbackState::Idle) {
-+    // If we get here, then all the body data came in before the header message
-+    // was complete, and the server wants the body. It doesn't matter whether the
-+    // processing mode is buffered, streamed, or partially buffered.
-+    if (bufferedData()) {
-+      // Get here, no_body_ = false, and complete_body_available_ = true, the end_stream
-+      // flag of decodeData() can be determined by whether the trailers are received.
-+      // Also, bufferedData() is not nullptr means decodeData() is called, even though
-+      // the data can be an empty chunk.
-+      auto req = filter_.setupBodyChunk(*this, *bufferedData(), trailers_ == nullptr);
-+      filter_.sendBodyChunk(*this, ProcessorState::CallbackState::BufferedBodyCallback, req);
-+      clearWatermark();
-+    } else {
-       return handleTrailersAndCleanup();
-     }
--    return absl::OkStatus();
--  }
--  if (bufferedData()) {
--    // Get here in BUFFERED or BUFFERED_PARTIAL mode when no_body_ = false and
--    // complete_body_available_ = true. The end_stream flag of decodeData() can be determined by
--    // whether the trailers are received. Also, bufferedData() is not nullptr means decodeData()
--    // is called, even though the data can be an empty chunk.
--    auto req = filter_.setupBodyChunk(*this, *bufferedData(), trailers_ == nullptr);
--    filter_.sendBodyChunk(*this, ProcessorState::CallbackState::BufferedBodyCallback, req);
--    clearWatermark();
-   } else {
--    return handleTrailersAndCleanup();
-+    // StreamedBodyCallback state. There is pending body response.
-+    // Check whether there is buffered data. If there is, send them.
-+    // Do not continue filter chain here so the pending body response have chance to be
-+    // served.
-+    sendBufferedDataInStreamedMode(trailers_ == nullptr);
-   }
-   return absl::OkStatus();
- }
-@@ -836,8 +839,9 @@ bool DecodingProcessorState::handleStandaloneModeOverride(
-       modifyBufferedData([&buffered_chunk](Buffer::Instance& data) { buffered_chunk.move(data); });
-       ENVOY_STREAM_LOG(debug, "Sending a chunk of buffered data ({})", *filterCallbacks(),
-                        buffered_chunk.length());
--      filter_.sendStreamedBodyChunk(*this, buffered_chunk,
--                                    ProcessorState::CallbackState::HeadersCallback, end_stream);
-+      auto req = filter_.setupBodyChunk(*this, buffered_chunk, end_stream);
-+      buffered_chunk.drain(buffered_chunk.length());
-+      filter_.sendBodyChunk(*this, ProcessorState::CallbackState::HeadersCallback, req);
-     }
- 
-     if (trailers_ != nullptr) {
-```
-
-**File**: `test/extensions/filters/http/ext_proc/config_test.cc` (modified, +0/-70)
-```diff
-@@ -621,76 +621,6 @@ TEST(HttpExtProcConfigTest, PerRouteEmitClientSpanConfig) {
-   EXPECT_FALSE(typed_config.emitClientSpan().value());
- }
- 
--TEST(HttpExtProcConfigTest, MaxStreamedBodyChunkSizeValidation) {
--  ExternalProcessingFilterConfig factory;
--  testing::NiceMock<Server::Configuration::MockFactoryContext> context;
--
--  std::string invalid_yaml = R"EOF(
--  grpc_service:
--    google_grpc:
--      target_uri: ext_proc_server
--      stat_prefix: google
--  max_streamed_body_chunk_size: 1023
--  )EOF";
--
--  ProtobufTypes::MessagePtr proto_config = factory.createEmptyConfigProto();
--  TestUtility::loadFromYaml(invalid_yaml, *proto_config);
--  EXPECT_THROW_WITH_REGEX(
--      factory.createFilterFactoryFromProto(*proto_config, "stats", context).value(), EnvoyException,
--      "Proto constraint validation failed.*MaxStreamedBodyChunkSize.*value must be greater than or "
--      "equal to 1024.*");
--
--  std::string valid_yaml = R"EOF(
--  grpc_service:
--    google_grpc:
--      target_uri: ext_proc_server
--      stat_prefix: google
--  max_streamed_body_chunk_size: 1024
--  )EOF";
--
--  proto_config = factory.createEmptyConfigProto();
--  TestUtility::loadFromYaml(valid_yaml, *proto_config);
--  EXPECT_CALL(context, messageValidationVisitor());
--  EXPECT_OK(factory.createFilterFactoryFromProto(*proto_config, "stats", context));
--}
--
--TEST(HttpExtProcConfigTest, PerRouteMaxStreamedBodyChunkSizeValidation) {
--  ExternalProcessingFilterConfig factory;
--  testing::NiceMock<Server::Configuration::MockServerFactoryContext> context;
--
--  std::string invalid_yaml = R"EOF(
--  overrides:
--    max_streamed_body_chunk_size: 1023
--  )EOF";
--
--  ProtobufTypes::MessagePtr proto_config = factory.createEmptyRouteConfigProto();
--  TestUtility::loadFromYaml(invalid_yaml, *proto_config);
--  EXPECT_THROW_WITH_REGEX(
--      factory
--          .createRouteSpecificFilterConfig(*proto_config, context,
--                                           context.messageValidationVisitor())
--          .value(),
--      EnvoyException,
--      "Proto constraint validation failed.*MaxStreamedBodyChunkSize.*value must be greater than or "
--      "equal to 1024.*");
--
--  std::string valid_yaml = R"EOF(
--  overrides:
--    max_streamed_body_chunk_size: 1024
--  )EOF";
--
--  proto_config = factory.createEmptyRouteConfigProto();
--  TestUtility::loadFromYaml(valid_yaml, *proto_config);
--  Router::RouteSpecificFilterConfigConstSharedPtr route_config =
--      factory
--          .createRouteSpecificFilterConfig(*proto_config, context,
--                                           context.messageValidationVisitor())
--          .value();
--  const auto& typed_config = dynamic_cast<const FilterConfigPerRoute&>(*route_config);
--  ASSERT_TRUE(typed_config.maxStreamedBodyChunkSize().has_value());
--  EXPECT_EQ(typed_config.maxStreamedBodyChunkSize().value(), 1024);
--}
--
- // The gRPC client is shared across listeners and clusters via a central cache, so it must always
- // be created with the server scope. In particular the scope of an upstream filter, which has a
- // 'cluster.<cluster_name>.' prefix, must not leak into the gRPC client stats.
-```
-
-**File**: `test/extensions/filters/http/ext_proc/ext_proc_integration_test.cc` (modified, +0/-157)
-```diff
-@@ -6076,163 +6076,6 @@ TEST_P(ExtProcIntegrationTest, PackRequestTrailersWithResponseTrailersFailOpen)
-   verifyDownstreamResponse(*response, 200);
- }
- 
--TEST_P(ExtProcIntegrationTest, StreamedBodyChunking) {
--  proto_config_.mutable_processing_mode()->set_request_header_mode(ProcessingMode::SKIP);
--  proto_config_.mutable_processing_mode()->set_response_header_mode(ProcessingMode::SKIP);
--  proto_config_.mutable_processing_mode()->set_request_body_mode(ProcessingMode::STREAMED);
--  proto_config_.mutable_processing_mode()->set_response_body_mode(ProcessingMode::STREAMED);
--  proto_config_.mutable_max_streamed_body_chunk_size()->set_value(1024);
--
--  initializeConfig();
--  HttpIntegrationTest::initialize();
--
--  const std::string req_chunk1(1024, '1');
--  const std::string req_chunk2(1024, '2');
--  const std::string req_chunk3(200, '3');
--  const std::string req_chunk2_mutated(1024, 'M');
--  auto response = sendDownstreamRequestWithBody(req_chunk1 + req_chunk2 + req_chunk3, std::nullopt);
--
--  processRequestBodyMessage(*grpc_upstreams_[0], true, [&](const HttpBody& body, BodyResponse&) {
--    EXPECT_EQ(body.body(), req_chunk1);
--    EXPECT_FALSE(body.end_of_stream());
--    return true;
--  });
--  processRequestBodyMessage(
--      *grpc_upstreams_[0], false, [&](const HttpBody& body, BodyResponse& body_resp) {
--        EXPECT_EQ(body.body(), req_chunk2);
--        EXPECT_FALSE(body.end_of_stream());
--        body_resp.mutable_response()->mutable_body_mutation()->set_body(req_chunk2_mutated);
--        return true;
--      });
--  processRequestBodyMessage(*grpc_upstreams_[0], false, [&](const HttpBody& body, BodyResponse&) {
--    EXPECT_EQ(body.body(), req_chunk3);
--    EXPECT_TRUE(body.end_of_stream());
--    return true;
--  });
--
--  ASSERT_TRUE(fake_upstreams_[0]->waitForHttpConnection(*dispatcher_, fake_upstream_connection_));
--  ASSERT_TRUE(fake_upstream_connection_->waitForNewStream(*dispatcher_, upstream_request_));
--  ASSERT_TRUE(upstream_request_->waitForEndStream(*dispatcher_));
--  EXPECT_EQ(upstream_request_->body().toString(), req_chunk1 + req_chunk2_mutated + req_chunk3);
--
--  const std::string resp_chunk1(1024, 'a');
--  const std::string resp_chunk2(1024, 'b');
--  const std::string resp_chunk3(200, 'c');
--  const std::string resp_chunk3_mutated(200, 'Z');
--  upstream_request_->encodeHeaders(Http::TestResponseHeaderMapImpl{{":status", "200"}}, false);
--  Buffer::OwnedImpl resp_data(resp_chunk1 + resp_chunk2 + resp_chunk3);
--  upstream_request_->encodeData(resp_data, true);
--
--  processResponseBodyMessage(*grpc_upstreams_[0], false, [&](const HttpBody& body, BodyResponse&) {
--    EXPECT_EQ(body.body(), resp_chunk1);
--    EXPECT_FALSE(body.end_of_stream());
--    return true;
--  });
--  processResponseBodyMessage(*grpc_upstreams_[0], false, [&](const HttpBody& body, BodyResponse&) {
--    EXPECT_EQ(body.body(), resp_chunk2);
--    EXPECT_FALSE(body.end_of_stream());
--    return true;
--  });
--  processResponseBodyMessage(
--      *grpc_upstreams_[0], false, [&](const HttpBody& body, BodyResponse& body_resp) {
--        EXPECT_EQ(body.body(), resp_chunk3);
--        EXPECT_TRUE(body.end_of_stream());
--        body_resp.mutable_response()->mutable_body_mutation()->set_body(resp_chunk3_mutated);
--        return true;
--      });
--
--  verifyDownstreamResponse(*response, 200);
--  EXPECT_EQ(response->body(), resp_chunk1 + resp_chunk2 + resp_chunk3_mutated);
--}
--
--TEST_P(ExtProcIntegrationTest, FullDuplexStreamedBodyChunking) {
--  auto* processing_mode = proto_config_.mutable_processing_mode();
--  processing_mode->set_request_header_mode(ProcessingMode::SEND);
--  processing_mode->set_response_header_mode(ProcessingMode::SEND);
--  processing_mode->set_request_body_mode(ProcessingMode::FULL_DUPLEX_STREAMED);
--  processing_mode->set_response_body_mode(ProcessingMode::FULL_DUPLEX_STREAMED);
--  processing_mode->set_request_trailer_mode(ProcessingMode::SEND);
--  processing_mode->set_response_trailer_mode(ProcessingMode::SEND);
--  proto_config_.mutable_max_streamed_body_chunk_size()->set_value(1024);
--
--  initializeConfig();
--  HttpIntegrationTest::initialize();
--
--  const std::string req_chunk1(1024, '1');
--  const std::string req_chunk2(1024, '2');
--  const std::string req_chunk3(200, '3');
--  auto response = sendDownstreamRequestWithBody(req_chunk1 + req_chunk2 + req_chunk3, std::nullopt);
--
--  processRequestHeadersMessage(*grpc_upstreams_[0], true, std::nullopt);
--
--  ProcessingRequest req;
--  ASSERT_TRUE(processor_stream_->waitForGrpcMessage(*dispatcher_, req));
--  ASSERT_TRUE(req.has_request_body());
--  EXPECT_EQ(req.request_body().body(), req_chunk1);
--  EXPECT_FALSE(req.request_body().end_of_stream());
--
--  ASSERT_TRUE(processor_stream_->waitForGrpcMessage(*dispatcher_, req));
--  ASSERT_TRUE(req.has_request_body());
--  EXPECT_EQ(req.request_body().body(), req_chunk2);
--  EXPECT_FALSE(req.request_body().end_of_stream());
--
--  ASSERT_TRUE(processor_stream_->waitForGrpcMessage(*dispatcher_, req));
--  ASSERT_TRUE(req.has_r
-```
-
-**File**: `test/extensions/filters/http/ext_proc/filter_test.cc` (modified, +2/-760)
-```diff
-@@ -1,9 +1,7 @@
- // Changing the default behavior of ext_proc is generally not allowed. While you may add tests, you
- // generally should not change or remove existing tests.
- 
--#include <cstdint>
--#include <optional>
--#include <vector>
-+#include <algorithm>
- 
- #include "envoy/config/core/v3/base.pb.h"
- #include "envoy/config/core/v3/grpc_service.pb.h"
-@@ -12,7 +10,6 @@
- #include "envoy/network/connection.h"
- #include "envoy/network/filter.h"
- #include "envoy/registry/registry.h"
--#include "envoy/router/router.h"
- #include "envoy/service/ext_proc/v3/external_processor.pb.h"
- 
- #include "source/common/http/conn_manager_impl.h"
-@@ -307,10 +304,7 @@ class HttpFilterTest : public testing::Test {
-     (*dynamic_metadata_.mutable_typed_filter_metadata())[ns] = val;
-   };
- 
--  void doSend(ProcessingRequest&& request, Unused) {
--    sent_requests_.push_back(request);
--    last_request_ = std::move(request);
--  }
-+  void doSend(ProcessingRequest&& request, Unused) { last_request_ = std::move(request); }
- 
-   bool doSendClose() { return !server_closed_stream_; }
- 
-@@ -766,738 +760,8 @@ class HttpFilterTest : public testing::Test {
-   envoy::config::core::v3::Metadata dynamic_metadata_;
-   testing::NiceMock<Network::MockConnection> connection_;
-   DoStartOption do_start_option_ = DEFAULT;
--  std::vector<ProcessingRequest> sent_requests_;
- };
- 
--TEST_F(HttpFilterTest, StreamedChunkBodyTest) {
--  // Configured to chunk at 1024 bytes for both request and response in STREAMED
--  // mode.
--  initialize(R"EOF(
--  grpc_service:
--    envoy_grpc:
--      cluster_name: "ext_proc_server"
--  processing_mode:
--    request_header_mode: "SKIP"
--    response_header_mode: "SKIP"
--    request_body_mode: "STREAMED"
--    response_body_mode: "STREAMED"
--  max_streamed_body_chunk_size: 1024
--  )EOF");
--
--  EXPECT_EQ(FilterHeadersStatus::Continue, filter_->decodeHeaders(request_headers_, false));
--
--  Buffer::OwnedImpl got_request_body;
--  std::vector<bool> got_req_end_streams;
--  EXPECT_CALL(decoder_callbacks_, injectDecodedDataToFilterChain(_, _))
--      .WillRepeatedly([&got_request_body, &got_req_end_streams](Buffer::Instance& data, bool eos) {
--        got_request_body.move(data);
--        got_req_end_streams.push_back(eos);
--      });
--
--  const std::string req_chunk1(1024, '1');
--  const std::string req_chunk2(1024, '2');
--  const std::string req_chunk3(200, '3');
--  const std::string req_chunk2_mutated(1024, 'M');
--  Buffer::OwnedImpl first_chunk(req_chunk1 + req_chunk2 + req_chunk3);
--  EXPECT_EQ(FilterDataStatus::StopIterationNoBuffer, filter_->decodeData(first_chunk, false));
--  EXPECT_EQ(FilterTrailersStatus::StopIteration, filter_->decodeTrailers(request_trailers_));
--
--  // Should have sent 3 request body chunks (1024 bytes, 1024 bytes, 200 bytes).
--  ASSERT_EQ(sent_requests_.size(), 3);
--  EXPECT_EQ(sent_requests_[0].request_body().body(), req_chunk1);
--  EXPECT_FALSE(sent_requests_[0].request_body().end_of_stream());
--  EXPECT_EQ(sent_requests_[1].request_body().body(), req_chunk2);
--  EXPECT_FALSE(sent_requests_[1].request_body().end_of_stream());
--  EXPECT_EQ(sent_requests_[2].request_body().body(), req_chunk3);
--  EXPECT_FALSE(sent_requests_[2].request_body().end_of_stream());
--
--  // Process all 3 request BodyResponses, mutating the 2nd chunk.
--  processRequestBody(std::nullopt, false);
--  processRequestBody(
--      [&](const HttpBody&, ProcessingResponse&, BodyResponse& body_resp) {
--        body_resp.mutable_response()->mutable_body_mutation()->set_body(req_chunk2_mutated);
--      },
--      false);
--  processRequestBody(std::nullopt, true);
--  EXPECT_EQ(got_request_body.toString(), req_chunk1 + req_chunk2_mutated + req_chunk3);
--  EXPECT_THAT(got_req_end_streams, ElementsAre(false, false, false));
--
--  // Now test response body in STREAMED mode with end_stream = true.
--  response_headers_.addCopy(LowerCaseString(":status"), "200");
--  EXPECT_EQ(FilterHeadersStatus::Continue, filter_->encodeHeaders(response_headers_, false));
--
--  Buffer::OwnedImpl got_response_body;
--  std::vector<bool> got_resp_end_streams;
--  EXPECT_CALL(encoder_callbacks_, injectEncodedDataToFilterChain(_, _))
--      .WillRepeatedly(
--          [&got_response_body, &got_resp_end_streams](Buffer::Instance& data, bool eos) {
--            got_response_body.move(data);
--            got_resp_end_streams.push_back(eos);
--          });
--
--  const std::string resp_chunk1(1024, 'a');
--  const std::string resp_chunk2(1024, 'b');
--  const std::string resp_chunk3(200, 'c');
--  const std::string resp_chunk3_mutated(200, 'Z');
--  Buffer::OwnedImpl resp_chunk(resp_chunk1 + resp_chunk2 + resp_chunk3);
--  EXPECT_EQ(FilterDataStatus::StopIterationNoBuffer, filter_->encodeData(resp_chunk, true));
--
--  ASSERT_EQ(sent_requests_.size(), 6);
--  EXPECT_EQ(sent_requests_[3].response_body().body(), resp_chunk1);
--  EXPECT_FALSE(sent_requests_[3].response_body().end_of_stream());
--  EXPECT_EQ(sent_requests_[4].response_body().body(), resp_chunk2);
--  EXPECT_FALSE(sent_requests
-```
-
----
-
-### Incident Patch 3: `ec0f57f4` (2026-10-20)
-**Commit Message**: dynamic_modules: Link built-in Rust modules as prefixed rlibs (#48473)
+### Incident Patch 1: `1b8e063e` (2026-10-22)
+**Commit Message**: ci/cves: Fix scanner handling of pre versions (#48535)
 
 Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 
-**File**: `Cargo.Bazel.envoy.lock` (modified, +10/-2)
+**File**: `tools/dependency/version.jq` (modified, +6/-5)
 ```diff
-@@ -1,5 +1,5 @@
- {
--  "checksum": "9d535d30688f98b4402b9ec935b9491b875a733005af938d4b20b2f2b502b69c",
-+  "checksum": "ad4bb2bb3828b4dc88738d1eef9ac7f6a5a727b839ccc52863f8c5564d87e956",
-   "conditions": {
-     "aarch64-apple-darwin": [
-       "aarch64-apple-darwin"
-@@ -1258,14 +1258,22 @@
-         ],
-         "edition": "2021"
-       },
-+      "library_target_name": "envoy_dynamic_modules_builtin_extensions",
-       "license": "Apache-2.0",
-       "license_ids": [
-         "Apache-2.0"
-       ],
-       "name": "envoy-dynamic-modules-builtin-extensions",
-       "package_url": "https://github.com/envoyproxy/envoy",
-       "repository": null,
--      "targets": [],
-+      "targets": [
-+        {
-+          "Library": {
-+            "crate_name": "envoy_dynamic_modules_builtin_extensions",
-+            "crate_root": "lib.rs"
-+          }
-+        }
-+      ],
-       "version": "0.1.0"
-     },
-     "envoy-proxy-dynamic-modules-rust-sdk 0.1.0": {
+@@ -4,10 +4,10 @@ def cmp_pre(a; b):
+     elif (a == []) then 1    # empty pre-release > any pre-release
+     elif (b == []) then -1
+     else
+-      reduce range(0; max([a|length, b|length])) as $i (0;
++      reduce range(0; ([(a|length), (b|length)] | max)) as $i (0;
+         if . != 0 then . else
+-          (a[$i]? // 0) as $ai
+-          | (b[$i]? // 0) as $bi
++          (a[$i]? // "") as $ai
++          | (b[$i]? // "") as $bi
+           | if ($ai | test("^[0-9]+$")) and ($bi | test("^[0-9]+$")) then
+               ($ai | tonumber) - ($bi | tonumber)
+             else
+@@ -27,6 +27,7 @@ def cmp(v1; v2):
+          reduce range(0;3) as $i (0;
+            if . != 0 then . else $a.main[$i] - $b.main[$i] end
+          )
++         | if . != 0 then . else cmp_pre($a.pre; $b.pre) end
+        else
+          # fallback: opaque comparison → string equality or lexicographic
+          if $a.string == $b.string then 0
+@@ -58,8 +59,8 @@ def parse(v):
+             else
+               $m
+               | .main |= (split(".") | map(tonumber) + [0,0,0])[0:3]
+-              | .pre |= (if .pre == null then [] else split(".") end)
+-              | .build |= (if .build == null then [] else split(".") end)
++              | .pre |= (if . == null then [] else split(".") end)
++              | .build |= (if . == null then [] else split(".") end)
+               | .string = $v
+             end
+         end
 ```
 
-**File**: `docs/root/intro/arch_overview/advanced/dynamic_modules.rst` (modified, +23/-0)
-```diff
-@@ -56,6 +56,29 @@ There are a few design goals for the dynamic modules:
- 2. **Ease of Use**: The SDK should provide a high-level API that abstracts the details of the Envoy internals.
- 3. **Flexibility**: The dynamic modules should be able to implement any functionality that can be implemented by the built-in C++ extensions without performance penalty. This is work in progress and many features are not yet available.
- 
-+Built-in Rust modules
-+---------------------
-+
-+Rust dynamic modules linked into the Envoy binary must use ``envoy_rust_static_module`` from
-+:repo:`dynamic_modules.bzl <source/extensions/dynamic_modules/dynamic_modules.bzl>`, not
-+``rust_static_library``. The macro links the module and its SDK as always-linked Rust libraries
-+(rlibs), preserving transitive Rust dependencies so the binary shares one toolchain-provided Rust
-+runtime. A Rust staticlib bundles its own copy of that runtime and conflicts with other Rust code,
-+such as the wasmtime engine or another built-in module.
-+
-+The SDK's intentionally empty ``rust_runtime`` staticlib provides the allocator shim and std
-+runtime exactly once. It is the only Rust staticlib in the binary; all other Rust code linked
-+into Envoy, including engines such as wasmtime, must be rlibs. The macro links this shared
-+runtime without applying the module's symbol-prefix transition so Bazel deduplicates it.
-+
-+The macro's ``module_name`` must match the name passed to the static module loader. It configures
-+a separate SDK instance whose exported hooks are named ``<module_name>_envoy_dynamic_module_on_*``.
-+The SDK's init macros use the same prefix in the module crate. Hand-written ABI hooks must use
-+``#[export_name = envoy_proxy_dynamic_modules_rust_sdk::__export_name!("envoy_dynamic_module_on_...")]``
-+instead of ``#[no_mangle]``. Rust handles platform-specific symbol decoration, including the
-+leading underscore on macOS. Shared modules and ordinary Cargo SDK builds keep unprefixed hook
-+names by default.
-+
- HTTP stream timing
- ------------------
- 
-```
+---
 
-**File**: `source/extensions/dynamic_modules/builtin_extensions/BUILD` (modified, +9/-16)
-```diff
-@@ -1,45 +1,38 @@
- load("@envoy_rust_crate_index//:defs.bzl", "all_crate_deps")
--load("@rules_rust//rust:defs.bzl", "rust_clippy", "rust_static_library", "rustfmt_test")
-+load("@rules_rust//rust:defs.bzl", "rust_clippy", "rustfmt_test")
- load("//bazel:envoy_build_system.bzl", "envoy_extension_package")
--load("//source/extensions/dynamic_modules:dynamic_modules.bzl", "envoy_dynamic_module_prefix_symbols")
-+load("//source/extensions/dynamic_modules:dynamic_modules.bzl", "envoy_rust_static_module")
- 
- licenses(["notice"])  # Apache 2
- 
- envoy_extension_package()
- 
- exports_files(["Cargo.toml"])
- 
--rust_static_library(
--    name = "builtin_extensions_static_lib",
-+envoy_rust_static_module(
-+    name = "hickory_dns_static",
-     srcs = glob(["*.rs"]),
-     crate_root = "lib.rs",
-     edition = "2021",
--    deps = [
--        "//source/extensions/dynamic_modules/sdk/rust:envoy_proxy_dynamic_modules_rust_sdk",
--    ] + all_crate_deps(
--        normal = True,
--    ),
--)
--
--envoy_dynamic_module_prefix_symbols(
--    name = "hickory_dns_static",
--    archive = ":builtin_extensions_static_lib",
-     module_name = "hickory_dns_static",
-     visibility = [
-         "//source/extensions/network/dns_resolver/hickory:__pkg__",
-     ],
-+    deps = all_crate_deps(
-+        normal = True,
-+    ),
- )
- 
- rustfmt_test(
-     name = "fmt_builtin_extensions",
-     testonly = True,
-     tags = ["nocoverage"],
--    targets = [":builtin_extensions_static_lib"],
-+    targets = [":hickory_dns_static_lib"],
- )
- 
- rust_clippy(
-     name = "clippy_builtin_extensions",
-     testonly = True,
-     tags = ["nocoverage"],
--    deps = [":builtin_extensions_static_lib"],
-+    deps = [":hickory_dns_static_lib"],
- )
-```
+### Incident Patch 2: `bb3446c9` (2026-10-22)
+**Commit Message**: udp: fix IPv4 replies through Apple dual-stack sockets (#48074)
 
-**File**: `source/extensions/dynamic_modules/builtin_extensions/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -19,4 +19,4 @@ url = "2"
- [lib]
- name = "envoy_dynamic_modules_builtin_extensions"
- path = "lib.rs"
--crate-type = ["staticlib"]
-+crate-type = ["rlib"]
-```
+Commit Message: udp: fix IPv4 replies through Apple dual-stack sockets
 
-**File**: `source/extensions/dynamic_modules/dynamic_modules.bzl` (modified, +72/-2)
-```diff
-@@ -1,6 +1,76 @@
- """Bazel rules for building Envoy dynamic modules."""
- 
- load("@rules_cc//cc:defs.bzl", "cc_import")
-+load("@rules_cc//cc/common:cc_common.bzl", "cc_common")
-+load("@rules_cc//cc/common:cc_info.bzl", "CcInfo")
-+load("@rules_rust//rust:defs.bzl", "rust_library")
-+
-+_SYMBOL_PREFIX = str(Label("//source/extensions/dynamic_modules/sdk/rust:symbol_prefix"))
-+
-+def _symbol_prefix_transition_impl(_settings, attr):
-+    return {_SYMBOL_PREFIX: attr.module_name + "_"}
-+
-+_symbol_prefix_transition = transition(
-+    implementation = _symbol_prefix_transition_impl,
-+    inputs = [],
-+    outputs = [_SYMBOL_PREFIX],
-+)
-+
-+def _rust_static_module_impl(ctx):
-+    module = ctx.attr.module[0]
-+    cc_info = cc_common.merge_cc_infos(
-+        cc_infos = [module[CcInfo], ctx.attr._rust_runtime[CcInfo]],
-+    )
-+    return [cc_info, DefaultInfo(files = module[DefaultInfo].files)]
-+
-+_rust_static_module = rule(
-+    implementation = _rust_static_module_impl,
-+    attrs = {
-+        "module": attr.label(cfg = _symbol_prefix_transition, providers = [CcInfo]),
-+        "module_name": attr.string(mandatory = True),
-+        "_allowlist_function_transition": attr.label(
-+            default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
-+        ),
-+        "_rust_runtime": attr.label(
-+            default = Label("//source/extensions/dynamic_modules/sdk/rust:rust_runtime"),
-+            providers = [CcInfo],
-+        ),
-+    },
-+)
-+
-+def envoy_rust_static_module(name, module_name, deps = [], tags = [], visibility = None, **kwargs):
-+    """Builds an in-binary Rust module with its own prefixed SDK.
-+
-+    The transition configures both the module and its SDK with the same prefix.
-+    Both are always-linked rlibs: unlike a Rust staticlib, these do not bundle a
-+    private copy of std/compiler_builtins, and retain rules_rust's transitive CcInfo.
-+    The SDK's rust_runtime staticlib supplies the allocator shim and std once.
-+    It is shared without the prefix transition; all other in-binary Rust code must be rlibs.
-+    Rust's export_name handles platform-specific C symbol decoration.
-+
-+    Args:
-+        name: C++-compatible target name. The Rust target is <name>_lib.
-+        module_name: Module name used by the static module loader.
-+        deps: Rust dependencies, in addition to the SDK.
-+        tags: Tags forwarded to both targets.
-+        visibility: Visibility of the C++-compatible target.
-+        **kwargs: Arguments forwarded to rust_library.
-+    """
-+    rust_library(
-+        name = name + "_lib",
-+        alwayslink = True,
-+        deps = [Label("//source/extensions/dynamic_modules/sdk/rust:envoy_proxy_dynamic_modules_rust_sdk")] + deps,
-+        tags = tags,
-+        **kwargs
-+    )
-+    _rust_static_module(
-+        name = name,
-+        module = ":" + name + "_lib",
-+        module_name = module_name,
-+        tags = tags,
-+        testonly = kwargs.get("testonly", False),
-+        visibility = visibility,
-+    )
- 
- def envoy_dynamic_module_prefix_symbols(name, module_name, archive, tags = [], **kwargs):
-     """Renames envoy_dynamic_module_on_* symbols in a pre-built static archive.
-@@ -13,8 +83,8 @@ def envoy_dynamic_module_prefix_symbols(name, module_name, archive, tags = [], *
-     bazel/exported_symbols.txt, making them available for dlsym(RTLD_DEFAULT, ...)
-     lookup.
- 
--    This rule is language-independent: the archive may come from cc_library,
--    rust_static_library, or any other rule that produces a static archive.
-+    Use this rule for C/C++ archives. Rust modules must use envoy_rust_static_module
-+    instead so they share the toolchain's Rust runtime with other Rust code.
- 
-     Args:
-         name: Bazel target name.
-```
+Represent normalized IPv4 peers as IPv4-mapped IPv6 destinations when
+`sendmsg()` uses an Apple dual-stack IPv6 socket. Preserve the logical
+peer address, source packet information, and zero-length datagrams.
 
-**File**: `source/extensions/dynamic_modules/sdk/rust/BUILD` (modified, +37/-1)
-```diff
-@@ -1,18 +1,45 @@
-+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
- load("@envoy_rust_crate_index//:defs.bzl", "all_crate_deps", "crate_deps")
- load("@rules_rust//cargo:defs.bzl", "cargo_build_script")
--load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
-+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_static_library", "rust_test")
- load(
-     "//bazel:envoy_build_system.bzl",
-     "envoy_extension_package",
- )
- load("//bazel:toolchains.bzl", "LLVM_MAJOR")
-+load(":symbol_prefix.bzl", "symbol_prefix_env")
- 
- licenses(["notice"])  # Apache 2
- 
- envoy_extension_package()
- 
- exports_files(["Cargo.toml"])
- 
-+# Provides the Rust allocator shim (__rust_alloc etc) and std runtime exactly
-+# once in the final C++ link. All other in-binary Rust code must be rlibs
-+# (see envoy_rust_static_module in dynamic_modules.bzl).
-+rust_static_library(
-+    name = "rust_runtime",
-+    srcs = ["runtime.rs"],
-+    edition = "2021",
-+    visibility = ["//visibility:public"],
-+)
-+
-+string_flag(
-+    name = "symbol_prefix",
-+    build_setting_default = "",
-+)
-+
-+config_setting(
-+    name = "unprefixed",
-+    flag_values = {":symbol_prefix": ""},
-+)
-+
-+symbol_prefix_env(
-+    name = "symbol_prefix_env",
-+    prefix = ":symbol_prefix",
-+)
-+
- # abi/abi.h is a symlink, which git may check out as a plain text file on Windows.
- # Point the build script at the original header instead.
- _WINDOWS_ENV = {
-@@ -35,6 +62,7 @@ cargo_build_script(
-         "@platforms//os:windows": _WINDOWS_ENV,
-         "//conditions:default": {},
-     }),
-+    build_script_env_files = [":symbol_prefix_env"],
-     data = [
-         ":abi/abi.h",
-     ] + select({
-@@ -60,8 +88,16 @@ cargo_build_script(
- rust_library(
-     name = "envoy_proxy_dynamic_modules_rust_sdk",
-     srcs = glob(["src/**/*.rs"]),
-+    # Generated compile data makes rules_rust rebase the crate root into the
-+    # configuration's output directory. Its crate hash must differ per prefix,
-+    # isolating Rust-mangled factory state as well as the exported C hooks.
-+    compile_data = [":symbol_prefix_env"],
-     edition = "2021",
-     deps = crate_deps(["smallvec"]) + [":build_script"],
-+    alwayslink = select({
-+        ":unprefixed": False,
-+        "//conditions:default": True,
-+    }),
- )
- 
- # Test-only target with mock support enabled via the `mock` feature.
-```
+Co-authored-by: Filip Cacky <[REDACTED_EMAIL]>
 
-**File**: `source/extensions/dynamic_modules/sdk/rust/build.rs` (modified, +18/-0)
-```diff
-@@ -115,6 +115,24 @@ fn main() {
- 
-   let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
- 
-+  // Bake the prefix into the exported macro: env! inside its body would read the
-+  // consuming crate's environment instead of the SDK's environment.
-+  println!("cargo:rerun-if-env-changed=ENVOY_DYNAMIC_MODULE_SYMBOL_PREFIX");
-+  let prefix = env::var("ENVOY_DYNAMIC_MODULE_SYMBOL_PREFIX").unwrap_or_default();
-+  std::fs::write(
-+    out_path.join("export_name.rs"),
-+    format!(
-+      r#"
-+#[doc(hidden)]
-+#[macro_export]
-+macro_rules! __export_name_impl {{
-+  ($name:expr) => {{ concat!({prefix:?}, $name) }};
-+}}
-+"#
-+    ),
-+  )
-+  .expect("Couldn't write export naming macro");
-+
-   let bindings = bindgen::Builder::default()
-     .header(abi_header.to_str().unwrap())
-     .clang_args(bazel_clang_args())
-```
+Additional Description:
 
-**File**: `source/extensions/dynamic_modules/sdk/rust/runtime.rs` (added, +2/-0)
+On macOS, `sendmsg()` rejects an IPv4 `sockaddr` passed to a dual-stack
+IPv6 socket. This change converts only the temporary destination
+representation at the syscall boundary. Other platforms retain their
+existing behavior.
+
+AI assistance was used; I reviewed and understand the changes.
+
+Fixes #46506
+
+Risk Level: Low
+
+Testing:
+
+- macOS: all 7 `SendmsgAddressTest` cases passed, including repeated
+shuffled execution.
+- Linux: the complete `io_socket_handle_impl_test` target passed 23/23.
+- The dual-stack IPv4 UDP proxy and default-writer HTTP/3 regression
+tests passed on macOS and Linux.
+- Red/green testing on macOS reproduced `EINVAL` and the QUIC handshake
+timeout without the fix.
+- Same-family HTTP/3 IPv4 and IPv6 regression tests passed.
+- Format and pedantic spellin
+
+**File**: `changelogs/current/bug_fixes/udp__ipv4-destinations-on-dual-stack-sockets.rst` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
-+// Intentionally empty. Building this as a staticlib makes rustc emit the
-+// allocator shim and bundle std once for the whole Envoy binary.
++Fixed UDP replies to IPv4 clients through IPv6 dual-stack listeners on macOS, including
++HTTP/3 listeners using the default UDP packet writer.
+```
+
+**File**: `source/common/network/io_socket_handle_impl.cc` (modified, +24/-0)
+```diff
+@@ -22,6 +22,20 @@ namespace Envoy {
+ 
+ namespace {
+ 
++#if defined(__APPLE__)
++sockaddr_in6 ipv4MappedAddress(const sockaddr_in& address) {
++  sockaddr_in6 mapped{};
++  mapped.sin6_family = AF_INET6;
++  mapped.sin6_port = address.sin_port;
++  mapped.sin6_addr.s6_addr[10] = 0xff;
++  mapped.sin6_addr.s6_addr[11] = 0xff;
++  // Copy network-order bytes without depending on platform-specific in6_addr union members.
++  safeMemcpyUnsafeDst(&mapped.sin6_addr.s6_addr[12], &address.sin_addr);
++  ASSERT(IN6_IS_ADDR_V4MAPPED(&mapped.sin6_addr));
++  return mapped;
++}
++#endif
++
+ constexpr int messageTypeContainsIP() {
+ #ifdef IP_RECVDSTADDR
+   return IP_RECVDSTADDR;
+@@ -190,6 +204,16 @@ Api::IoCallUint64Result IoSocketHandleImpl::sendmsg(const Buffer::RawSlice* slic
+   msghdr message;
+   message.msg_name = reinterpret_cast<void*>(sock_addr);
+   message.msg_namelen = address_base->sockAddrLen();
++#if defined(__APPLE__)
++  sockaddr_in6 mapped_address{};
++  if (domain_ == AF_INET6 && !socket_v6only_ && sock_addr->sa_family == AF_INET) {
++    // Received IPv4-mapped peers are normalized to IPv4 internally. Apple requires the
++    // destination sockaddr family to match the dual-stack socket at the syscall boundary.
++    mapped_address = ipv4MappedAddress(*reinterpret_cast<const sockaddr_in*>(sock_addr));
++    message.msg_name = &mapped_address;
++    message.msg_namelen = sizeof(mapped_address);
++  }
++#endif
+   message.msg_iov = num_slices_to_write == 0 ? &empty_iov : iov.begin();
+   message.msg_iovlen = num_slices_to_write == 0 ? 1 : num_slices_to_write;
+   message.msg_flags = 0;
+```
+
+**File**: `test/common/network/io_socket_handle_impl_test.cc` (modified, +112/-0)
+```diff
+@@ -200,6 +200,8 @@ TEST(IoSocketHandleImpl, ErrnoIfaddrs) {
+   EXPECT_FALSE(maybe_interface_name.has_value());
+ }
+ 
++// These control-message tests require the platform's receive-queue overflow option.
++#ifdef SO_RXQ_OVFL
+ TEST(IoSocketHandleImpl, DroppedUdpDatagramsMsg) {
+   NiceMock<Envoy::Api::MockOsSysCalls> os_sys_calls;
+   auto os_calls =
+@@ -302,6 +304,8 @@ TEST(IoSocketHandleImpl, DroppedUdpDatagramsMmsg) {
+   EXPECT_EQ(dropped_packets, 5);
+ }
+ 
++#endif
++
+ TEST(IoSocketHandleImpl, SendEmptyPayloadCallsSend) {
+   NiceMock<Api::MockOsSysCalls> os_sys_calls;
+   TestThreadsafeSingletonInjector<Api::OsSysCallsImpl> os_calls(&os_sys_calls);
+@@ -342,6 +346,114 @@ TEST(IoSocketHandleImpl, SendmsgEmptyPayloadUsesDummyIovec) {
+   EXPECT_EQ(0, result.return_value_);
+ }
+ 
++class SendmsgAddressTest : public testing::Test {
++protected:
++  void checkDestination(std::optional<int> domain, bool v6only, const Address::InstanceBase& peer,
++                        bool mapped, const Address::Ip* source = nullptr, bool empty = false) {
++    testing::StrictMock<Api::MockOsSysCalls> syscalls;
++    TestThreadsafeSingletonInjector<Api::OsSysCallsImpl> injector(&syscalls);
++    EXPECT_CALL(syscalls, sendmsg(_, _, 0))
++        .WillOnce(Invoke([&](os_fd_t, const msghdr* message, int) -> Api::SysCallSizeResult {
++          const auto* destination = static_cast<const sockaddr*>(message->msg_name);
++          EXPECT_EQ(mapped ? AF_INET6 : peer.sockAddr()->sa_family, destination->sa_family);
++          if (mapped) {
++            EXPECT_EQ(sizeof(sockaddr_in6), message->msg_namelen);
++            // A regression must fail the contract without reading an IPv4 buffer as IPv6.
++            if (destination->sa_family != AF_INET6 ||
++                message->msg_namelen != sizeof(sockaddr_in6)) {
++              return {empty ? 0 : 1, 0};
++            }
++            const auto* v6 = reinterpret_cast<const sockaddr_in6*>(destination);
++            const auto expected = Network::Test::getV6SockAddr("::ffff:127.0.0.1", 1234);
++            const auto* expected_v6 = reinterpret_cast<const sockaddr_in6*>(&expected);
++            EXPECT_EQ(0, memcmp(&v6->sin6_addr, &expected_v6->sin6_addr, sizeof(in6_addr)));
++            EXPECT_EQ(expected_v6->sin6_port, v6->sin6_port);
++            EXPECT_EQ(0, v6->sin6_flowinfo);
++            EXPECT_EQ(0, v6->sin6_scope_id);
++          } else {
++            EXPECT_EQ(peer.sockAddrLen(), message->msg_namelen);
++            EXPECT_EQ(0, memcmp(peer.sockAddr(), destination, peer.sockAddrLen()));
++          }
++          EXPECT_EQ(1, message->msg_iovlen);
++          EXPECT_NE(nullptr, message->msg_iov[0].iov_base);
++          EXPECT_EQ(empty ? 0 : 1, message->msg_iov[0].iov_len);
++          if (source != nullptr) {
++            const auto* cmsg = CMSG_FIRSTHDR(message);
++            EXPECT_NE(nullptr, cmsg);
++            if (cmsg != nullptr) {
++              EXPECT_EQ(IPPROTO_IP, cmsg->cmsg_level);
++#ifdef IP_SENDSRCADDR
++              EXPECT_EQ(IP_SENDSRCADDR, cmsg->cmsg_type);
++              EXPECT_EQ(CMSG_LEN(sizeof(in_addr)), cmsg->cmsg_len);
++              EXPECT_EQ(source->ipv4()->address(),
++                        reinterpret_cast<const in_addr*>(CMSG_DATA(cmsg))->s_addr);
++#else
++              EXPECT_EQ(IP_PKTINFO, cmsg->cmsg_type);
++              EXPECT_EQ(CMSG_LEN(sizeof(in_pktinfo)), cmsg->cmsg_len);
++              const auto* info = reinterpret_cast<const in_pktinfo*>(CMSG_DATA(cmsg));
++              EXPECT_EQ(0, info->ipi_ifindex);
++#ifdef WIN32
++              EXPECT_EQ(source->ipv4()->address(), info->ipi_addr.s_addr);
++#else
++              EXPECT_EQ(source->ipv4()->address(), info->ipi_spec_dst.s_addr);
++#endif
++#endif
++            }
++          } else {
++            EXPECT_EQ(nullptr, message->msg_control);
++            EXPECT_EQ(0, message->msg_controllen);
++          }
++          return {empty ? 0 : 1, 0};
++        }));
++    IoSocketHandleImpl handle(INVALID_SOCKET, v6only, domain);
++    char payload = 'x';
++    Buffer::RawSlice slice{&payload, 1};
++    const auto result = handle.sendmsg(empty ? nullptr : &slice, empty ? 0 : 1, 0, source, peer);
++    EXPECT_TRUE(result.ok());
++    EXPECT_EQ(empty ? 0 : 1, result.return_value_);
++    // Conversion must not change the address used by session lookup and logging.
++    EXPECT_EQ(peer.ip()->version() == Address::IpVersion::v4 ? AF_INET : AF_INET6,
++              peer.sockAddr()->sa_family);
++  }
++
++#if defined(__APPLE__)
++  static constexpr bool MapsIpv4 = true;
++#else
++  static constexpr bool MapsIpv4 = false;
++#endif
++  const Address::Ipv4Instance ipv4_peer_{"127.0.0.1", 1234};
++};
++
++TEST_F(SendmsgAddressTest, DualStackIpv4DestinationMatchesPlatformContract) {
++  checkDestination(AF_INET6, false, ipv4_peer_, MapsIpv4);
++}
++
++TEST_F(SendmsgAddressTest, Ipv4SocketKeepsIpv4Destination) {
++  checkDestination(AF_INET, false, ipv4_peer_, false);
++}
++
++TEST_F(SendmsgAddressTest, Ipv6SocketKeepsIpv6Destination) {
++  const Address::Ipv6Instance peer("::1"
+```
+
+**File**: `test/extensions/filters/udp/udp_proxy/udp_proxy_integration_test.cc` (modified, +40/-0)
+```diff
+@@ -24,6 +24,22 @@ using testing::Ge;
+ namespace Envoy {
+ namespace {
+ 
++bool dualStackUdpIsBindable() {
++  const auto address = Network::Test::getAnyAddress(Network::Address::IpVersion::v6, true);
++  auto& syscalls = Api::OsSysCallsSingleton::get();
++  const auto fd = syscalls.socket(AF_INET6, SOCK_DGRAM, 0).return_value_;
++  if (!SOCKET_VALID(fd)) {
++    return false;
++  }
++  const int v6only = 0;
++  const bool supported =
++      syscalls.setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &v6only, sizeof(v6only)).return_value_ ==
++          0 &&
++      syscalls.bind(fd, address->sockAddr(), address->sockAddrLen()).return_value_ == 0;
++  syscalls.close(fd);
++  return supported;
++}
++
+ class UdpReverseFilter : public Network::UdpListenerReadFilter {
+ public:
+   UdpReverseFilter(Network::UdpReadFilterCallbacks& callbacks) : UdpListenerReadFilter(callbacks) {}
+@@ -345,6 +361,30 @@ TEST_P(UdpProxyIntegrationTest, HelloWorldOnLoopback) {
+   requestResponseWithListenerAddress(*listener_address);
+ }
+ 
++TEST_P(UdpProxyIntegrationTest, DualStackListenerRepliesToIpv4Client) {
++  if (version_ != Network::Address::IpVersion::v4) {
++    GTEST_SKIP() << "This regression requires an IPv4 client and upstream.";
++  }
++  if (!dualStackUdpIsBindable()) {
++    GTEST_SKIP() << "An IPv6 UDP socket with IPV6_V6ONLY=0 cannot bind [::]:0.";
++  }
++  config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
++    auto* address = bootstrap.mutable_static_resources()
++                        ->mutable_listeners(0)
++                        ->mutable_address()
++                        ->mutable_socket_address();
++    address->set_address("::");
++    address->set_ipv4_compat(true);
++  });
++  setup(1);
++  const auto listener_address =
++      *Network::Utility::resolveUrl(fmt::format("udp://127.0.0.1:{}", lookupPort("listener_0")));
++  // This helper checks both payloads, the IPv4 reply endpoint and transmit counters.
++  // The reply uses the original IPv6 listener fd and the normalized IPv4 peer.
++  requestResponseWithListenerAddress(*listener_address);
++  EXPECT_EQ(0, test_server_->counter("udp.foo.downstream_sess_tx_errors")->value());
++}
++
+ TEST_P(UdpProxyIntegrationTest, UpstreamBindConfigSourceAddress) {
+   if (version_ != Network::Address::IpVersion::v4) {
+     GTEST_SKIP();
+```
+
+**File**: `test/integration/BUILD` (modified, +1/-0)
+```diff
+@@ -3029,6 +3029,7 @@ envoy_cc_test(
+     deps = envoy_select_enable_http3([
+         ":quic_http_integration_test_lib",
+         "//test/test_common:logging_lib",
++        "@envoy_api//envoy/extensions/udp_packet_writer/v3:pkg_cc_proto",
+     ]),
+ )
+ 
+```
+
+**File**: `test/integration/quic_http_integration_test.cc` (modified, +50/-0)
+```diff
+@@ -12,6 +12,7 @@
+ #include <vector>
+ 
+ #include "envoy/common/platform.h"
++#include "envoy/extensions/udp_packet_writer/v3/udp_default_writer_factory.pb.h"
+ 
+ #include "source/common/quic/envoy_quic_client_connection.h"
+ #include "source/common/quic/envoy_quic_packet_writer.h"
+@@ -31,6 +32,22 @@ namespace Quic {
+ 
+ namespace {
+ 
++bool dualStackUdpIsBindable() {
++  const auto address = Network::Test::getAnyAddress(Network::Address::IpVersion::v6, true);
++  auto& syscalls = Api::OsSysCallsSingleton::get();
++  const auto fd = syscalls.socket(AF_INET6, SOCK_DGRAM, 0).return_value_;
++  if (!SOCKET_VALID(fd)) {
++    return false;
++  }
++  const int v6only = 0;
++  const bool supported =
++      syscalls.setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &v6only, sizeof(v6only)).return_value_ ==
++          0 &&
++      syscalls.bind(fd, address->sockAddr(), address->sockAddrLen()).return_value_ == 0;
++  syscalls.close(fd);
++  return supported;
++}
++
+ // Returns true if a socket can bind() to `address`.
+ [[maybe_unused]] bool addressIsBindable(const std::string& address) {
+   const auto addr = Network::Utility::parseInternetAddressNoThrow(address, /*port=*/0);
+@@ -96,6 +113,39 @@ TEST_P(QuicHttpIntegrationTest, GetRequestAndEmptyResponse) {
+   EXPECT_THAT(log, testing::MatchesRegex("TLSv1.3 TLS_(AES_128_GCM|CHACHA20_POLY1305)_SHA256 -"));
+ }
+ 
++TEST_P(QuicHttpIntegrationTest, DualStackListenerServesIpv4ClientUsingDefaultWriter) {
++  if (version_ != Network::Address::IpVersion::v4) {
++    GTEST_SKIP() << "This regression requires an IPv4 client.";
++  }
++  if (!dualStackUdpIsBindable()) {
++    GTEST_SKIP() << "An IPv6 UDP socket with IPV6_V6ONLY=0 cannot bind [::]:0.";
++  }
++  config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
++    auto* listener = bootstrap.mutable_static_resources()->mutable_listeners(0);
++    listener->mutable_address()->mutable_socket_address()->set_address("::");
++    listener->mutable_address()->mutable_socket_address()->set_ipv4_compat(true);
++    // Force the sendmsg path on Linux too, where automatic writer selection may use GSO.
++    auto* writer =
++        listener->mutable_udp_listener_config()->mutable_udp_packet_packet_writer_config();
++    writer->set_name("envoy.udp_packet_writer.default");
++    std::ignore = writer->mutable_typed_config()->PackFrom(
++        envoy::extensions::udp_packet_writer::v3::UdpDefaultWriterFactory());
++  });
++  initialize();
++  codec_client_ = makeHttpConnection(makeClientConnection(lookupPort("http")));
++  ASSERT_TRUE(quic_connection_->waitForHandshakeDone());
++  auto response = codec_client_->makeHeaderOnlyRequest(default_request_headers_);
++  waitForNextUpstreamRequest(0);
++  upstream_request_->encodeHeaders(default_response_headers_, false);
++  upstream_request_->encodeData(5, true);
++  ASSERT_TRUE(response->waitForEndStream());
++  EXPECT_TRUE(response->complete());
++  EXPECT_EQ("200", response->headers().getStatusValue());
++  EXPECT_EQ("aaaaa", response->body());
++  EXPECT_EQ("127.0.0.1", quic_connection_->peer_address().host().ToString());
++  codec_client_->close();
++}
++
+ TEST_P(QuicHttpIntegrationTest, GetPeerAndLocalCertsInfo) {
+   // These are not implemented yet, but configuring them shouldn't cause crash.
+   useAccessLog("%DOWNSTREAM_PEER_CERT% %DOWNSTREAM_PEER_CERT_CHAIN% %DOWNSTREAM_PEER_ISSUER% "
+```
+
+---
+
+### Incident Patch 3: `6b08712e` (2026-10-22)
+**Commit Message**: ci: Re-enable wasmtime tests (and fix/cleanup) (#48434)
+
+Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+
+**File**: `MODULE.bazel` (modified, +0/-3)
+```diff
+@@ -104,10 +104,7 @@ bazel_dep(name = "tclap", version = "1.2.5.bcr.1")
+ bazel_dep(name = "tcmalloc", version = "0.0.0-250926-12f2552.envoy")
+ bazel_dep(name = "thrift", version = "0.24.0.envoy")
+ bazel_dep(name = "uadk", version = "2.9.envoy")
+-bazel_dep(name = "v8", version = "14.6.202.10.envoy.1")
+ bazel_dep(name = "vectorscan", version = "5.4.11.envoy")
+-bazel_dep(name = "wamr", version = "2.4.5.envoy")
+-bazel_dep(name = "wasmtime", version = "45.0.2.envoy")
+ bazel_dep(name = "xds", version = "0.0.0-20251210-ee656c7")
+ bazel_dep(name = "vpp-vcl", version = "26.02-260111-85abefb.envoy")
+ bazel_dep(name = "wuffs", version = "0.4.0-alpha.9.envoy")
+```
+
+**File**: `MODULE.bazel.lock` (modified, +1/-5)
+```diff
+@@ -702,13 +702,11 @@
+     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
+-    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wamr/2.4.5.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/MODULE.bazel": "df9d74c77698e7dbc52a65ebdd6de5727044e98121ac309b5d046f2d04121d56",
+     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/source.json": "73a5421c8ef51cd455a572dee5bb9415351ab5acbcb65d4efa56a574790bd2f2",
+@@ -862,9 +860,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
+@@ -873,7 +870,6 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wamr/2.4.5.envoy/source.json": "dedc6d874500bff067e8a574e806b2a2da575b5d7f03103b3d215854e62057f8",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "000624ecaed4eabbc8ed9a0125426e04d6750e7067bdcfc6a6200560582b8128",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/source.json": "5465795a5dd906f4419c576ec48eee0a1f273268b5329080e864c6edbdee876c",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "049737b70b559b996eb68f95e38ff92ef50d629545ddafa1aa4d62b3c1a73225",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "e46699ee4851ddd18a50012b34c662f2390f014394cb17b8e07337cbc4033eb2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/source.json":
+```
+
+**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +1/-5)
+```diff
+@@ -718,13 +718,11 @@
+     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
+-    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wamr/2.4.5.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/MODULE.bazel": "df9d74c77698e7dbc52a65ebdd6de5727044e98121ac309b5d046f2d04121d56",
+     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/source.json": "73a5421c8ef51cd455a572dee5bb9415351ab5acbcb65d4efa56a574790bd2f2",
+@@ -879,9 +877,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
+@@ -890,7 +887,6 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wamr/2.4.5.envoy/source.json": "dedc6d874500bff067e8a574e806b2a2da575b5d7f03103b3d215854e62057f8",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "000624ecaed4eabbc8ed9a0125426e04d6750e7067bdcfc6a6200560582b8128",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/source.json": "5465795a5dd906f4419c576ec48eee0a1f273268b5329080e864c6edbdee876c",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "049737b70b559b996eb68f95e38ff92ef50d629545ddafa1aa4d62b3c1a73225",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "e46699ee4851ddd18a50012b34c662f2390f014394cb17b8e07337cbc4033eb2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/source.json":
+```
+
+**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +1/-3)
+```diff
+@@ -722,7 +722,6 @@
+     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
+-    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
+@@ -890,9 +889,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
+```
+
+**File**: `ci/do_ci.sh` (modified, +2/-2)
+```diff
+@@ -518,7 +518,7 @@ case $CI_TARGET in
+         bazel clean "${BAZEL_GLOBAL_OPTIONS[@]}" "${CLEAN_ARGS[@]}"
+         ;;
+ 
+-    compile_time_options)
++    compile_time_options|cto)
+         # See `compile-time-options` in `.bazelrc`
+         # This doesn't go into CI but is available for developer convenience.
+         echo "bazel with different compiletime options build with tests..."
+@@ -534,7 +534,7 @@ case $CI_TARGET in
+                 -c fastbuild \
+                 "${TEST_TARGETS[@]}"
+         fi
+-        if [[ -z "$ENVOY_SKIP_CTO_WASMTIME" ]]; then
++        if [[ -n "$ENVOY_SKIP_CTO_WASMTIME" ]]; then
+             exit 0
+         fi
+         echo "Building and testing with wasm=wasmtime and jemalloc: and admin_functionality and admin_html disabled ${TEST_TARGETS[*]}"
+```
+
+**File**: `docs/MODULE.bazel.lock` (modified, +1/-3)
+```diff
+@@ -722,7 +722,6 @@
+     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
+-    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
+@@ -890,9 +889,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
+```
+
+**File**: `mobile/MODULE.bazel.lock` (modified, +1/-5)
+```diff
+@@ -738,13 +738,11 @@
+     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
+     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
+-    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wamr/2.4.5.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/MODULE.bazel": "df9d74c77698e7dbc52a65ebdd6de5727044e98121ac309b5d046f2d04121d56",
+     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/source.json": "73a5421c8ef51cd455a572dee5bb9415351ab5acbcb65d4efa56a574790bd2f2",
+@@ -902,9 +900,8 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
+@@ -913,7 +910,6 @@
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wamr/2.4.5.envoy/source.json": "dedc6d874500bff067e8a574e806b2a2da575b5d7f03103b3d215854e62057f8",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "000624ecaed4eabbc8ed9a0125426e04d6750e7067bdcfc6a6200560582b8128",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/source.json": "5465795a5dd906f4419c576ec48eee0a1f273268b5329080e864c6edbdee876c",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "049737b70b559b996eb68f95e38ff92ef50d629545ddafa1aa4d62b3c1a73225",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "e46699ee4851ddd18a50012b34c662f2390f014394cb17b8e07337cbc4033eb2",
+     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/source.json":
+```
+
+**File**: `source/extensions/wasm_runtime/wasmtime/BUILD` (modified, +1/-0)
+```diff
+@@ -15,6 +15,7 @@ envoy_cc_extension(
+     deps = envoy_select_wasm_wasmtime([
+         "//envoy/registry",
+         "//source/extensions/common/wasm:wasm_runtime_factory_interface",
++        "//source/extensions/dynamic_modules/sdk/rust:rust_runtime",
+         "@proxy-wasm-cpp-host//:base_lib",
+         "@proxy-wasm-cpp-host//:wasmtime_lib",
+     ]),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48486** (2026-10-20): deps: Bump `bazel-registry` -> aabc9d8 (@dependency-envoy[bot])
-- **PR #48478** (closed): dynamic_forward_proxy: reselect hosts after completed DNS cache lookups (@Copilot)
-- **PR #48476** (closed): dfp: root-cause report for ParallelRequests concurrent-resolution race (@Copilot)
-- **PR #48474** (2026-10-20): Revert "ext_proc: add config option to cap body chunk size in STREAMED and FULL_DUPLEX_STREAMED modes (#48239)" (@yanjunxiang-google)
-- **PR #48473** (2026-10-20): dynamic_modules: Link built-in Rust modules as prefixed rlibs (@phlax)
-- **PR #48468** (closed): signal: bypass logger mutex in fatal backtraces (@Copilot)
+- **PR #48549** (2026-10-22): [1.39] deps: Bump OpenSSL -> 3.5.9 (@jwendell)
+- **PR #48548** (2026-10-22): mobile/deps: Bump rules_xcodeproj -> 4.1.0 (@phlax)
+- **PR #48547** (2026-10-22): [1.39] deps/cve: Add ignores for unaffected CVEs (#48541) (@phlax)
+- **PR #48546** (2026-10-22): [1.38] deps/cve: Add ignores for unaffected CVEs (#48541) (@phlax)
+- **PR #48545** (closed): mobile: upgrade rules_xcodeproj to 4.1.0 (@Copilot)
+- **PR #48541** (2026-10-22): [1.37] deps/cve: Add ignores for unaffected CVEs (@phlax)
 
 ---
 
@@ -2428,31 +1688,37 @@ Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. QUIC eBPF hot restart part 0 (#45504)
+## X. ci/cves: Fix scanner handling of pre versions (#48535)
 
 **RULE**:
-When implementing operations in `changelogs/current/minor_behavior_changes/quic__defer-worker-routing-init.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/dependency/version.jq`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f6040e4`: QUIC eBPF hot restart part 0 (#45504). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1b8e063e`: ci/cves: Fix scanner handling of pre versions (#48535). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/minor_behavior_changes/quic__defer-worker-routing-init.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/dependency/version.jq`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-QUIC listeners now create the connection ID generator factory and apply its worker-routing socket
-option when the socket factory config is loaded, instead of when the listener config is loaded.
-This behavior can be reverted by setting runtime guard
-``envoy.restart_features.defer_worker_routing_init`` to ``false``.
+      reduce range(0; ([(a|length), (b|length)] | max)) as $i (0;
+          (a[$i]? // "") as $ai
+          | (b[$i]? // "") as $bi
+         | if . != 0 then . else cmp_pre($a.pre; $b.pre) end
+              | .pre |= (if . == null then [] else split(".") end)
+              | .build |= (if . == null then [] else split(".") end)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      reduce range(0; max([a|length, b|length])) as $i (0;
+          (a[$i]? // 0) as $ai
+          | (b[$i]? // 0) as $bi
+              | .pre |= (if .pre == null then [] else split(".") end)
+              | .build |= (if .build == null then [] else split(".") end)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f6040e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1b8e063e` are properly handled with clean fallback behavior.

@@ -4289,3 +4289,10 @@ Every entry in this ledger must capture:
 | `learn-github-kubeshark-kubeshark` | `https://github.com/kubeshark/kubeshark` | `b79aa01a` | Multi-dimensional audit evidence | 2026-10-21T19:12:19.873Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `bf9cadf0` | Multi-dimensional audit evidence | 2026-10-21T19:12:25.496Z |
 | `learn-github-solacelabs-solace-agent-mesh` | `https://github.com/SolaceLabs/solace-agent-mesh` | `5a1f473c` | Multi-dimensional audit evidence | 2026-10-22T15:22:11.916Z |
+| `learn-github-sandbox-quantum-switch` | `https://github.com/sandbox-quantum/switch` | `5fa35e04` | Multi-dimensional audit evidence | 2026-10-22T15:28:46.918Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-22T15:28:47.483Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-10-22T15:28:49.819Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-10-22T15:28:55.846Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `7834210a` | Multi-dimensional audit evidence | 2026-10-22T15:28:59.925Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `07ffbf88` | Multi-dimensional audit evidence | 2026-10-22T15:29:02.866Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `731888e2` | Multi-dimensional audit evidence | 2026-10-22T15:29:05.370Z |

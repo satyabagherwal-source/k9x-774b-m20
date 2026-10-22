@@ -4282,3 +4282,10 @@
 | `CYCLE-20261021-O9ZX` | `2026-10-21T19:12:19.869Z` | `kubeshark/kubeshark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3596` | Yes (`4b914d67...`) |
 | `CYCLE-20261021-OEC4` | `2026-10-21T19:12:25.492Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3597` | Yes (`6367251c...`) |
 | `CYCLE-20261022-W6DL` | `2026-10-22T15:22:11.913Z` | `SolaceLabs/solace-agent-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3598` | Yes (`c48d40c5...`) |
+| `CYCLE-20261022-4N5V` | `2026-10-22T15:28:46.915Z` | `sandbox-quantum/switch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3599` | Yes (`e9dc0d28...`) |
+| `CYCLE-20261022-4NLK` | `2026-10-22T15:28:47.480Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`51be6c41...`) |
+| `CYCLE-20261022-4PEG` | `2026-10-22T15:28:49.816Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md` | Yes (`0d074c98...`) |
+| `CYCLE-20261022-4U1U` | `2026-10-22T15:28:55.842Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3600, Rule 3601` | Yes (`4868085f...`) |
+| `CYCLE-20261022-4X75` | `2026-10-22T15:28:59.921Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3602` | Yes (`c91698dd...`) |
+| `CYCLE-20261022-4ZGV` | `2026-10-22T15:29:02.863Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3603` | Yes (`489f8bc3...`) |
+| `CYCLE-20261022-51EE` | `2026-10-22T15:29:05.366Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3604` | Yes (`85dbc4d6...`) |

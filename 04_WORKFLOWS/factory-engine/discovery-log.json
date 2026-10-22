@@ -18355,5 +18355,56 @@
     "qualityScore": 2789,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-22T15:18:42.852Z"
+  },
+  {
+    "name": "switch",
+    "fullName": "sandbox-quantum/switch",
+    "url": "https://github.com/sandbox-quantum/switch",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source AI teammates in Slack, Teams, Discord, Telegram and Mattermost. Self-host it, with any agent harness and any model.",
+    "stars": 1188,
+    "forks": 98,
+    "openIssues": 229,
+    "language": "Python",
+    "qualityScore": 1073,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-22T15:24:50.914Z"
+  },
+  {
+    "name": "RecursiveSI/flint",
+    "fullName": "RecursiveSI/flint",
+    "url": "https://huggingface.co/RecursiveSI/flint",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: RecursiveSI/flint (441 likes, 420 downloads)",
+    "likes": 441,
+    "downloads": 420,
+    "qualityScore": 4830,
+    "discoveredAt": "2026-10-22T15:26:29.858Z"
+  },
+  {
+    "name": "XHToken/Spark-X2.6-4B",
+    "fullName": "XHToken/Spark-X2.6-4B",
+    "url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: XHToken/Spark-X2.6-4B (229 likes, 482 downloads)",
+    "likes": 229,
+    "downloads": 482,
+    "qualityScore": 2772,
+    "discoveredAt": "2026-10-22T15:26:29.858Z"
+  },
+  {
+    "name": "InternScience/Sage-A1.5",
+    "fullName": "InternScience/Sage-A1.5",
+    "url": "https://huggingface.co/InternScience/Sage-A1.5",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: InternScience/Sage-A1.5 (206 likes, 396 downloads)",
+    "likes": 206,
+    "downloads": 396,
+    "qualityScore": 2456,
+    "discoveredAt": "2026-10-22T15:26:29.858Z"
   }
 ]

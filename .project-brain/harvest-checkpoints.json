@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T15:22:11.930Z",
+  "last_updated": "2026-10-22T15:29:05.381Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "0c7329c6bccdc62f877faf3a976099612d85f39abc5501d04b3de97bcfd62db8",
-      "verified_at": "2026-10-19T19:16:09.307Z",
+      "content_hash": "489f8bc3fc7b99bbc6cdc0fb767de23e963b5b4a9e5fab629071bd210582baf2",
+      "verified_at": "2026-10-22T15:29:02.878Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:16:09.307Z"
+      "last_updated": "2026-10-22T15:29:02.878Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "41296ff1be9d1083132651cb236af854077378d60deac3563c3b17cb9cfa72dc",
-      "verified_at": "2026-10-20T20:29:12.220Z",
+      "content_hash": "85dbc4d63e7bd2535b80db0de111525b443b585a5b47d5d1a2598b359f7758a4",
+      "verified_at": "2026-10-22T15:29:05.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:29:12.220Z"
+      "last_updated": "2026-10-22T15:29:05.381Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "42bbad925e1f6b768c2b5f9df9ff32a22f753a4ff2b8746d28352b202e652633",
-      "verified_at": "2026-10-20T21:21:26.242Z",
+      "content_hash": "c91698dd65888416310fb9d8e7c69f9cb8624685f3f3b68c96052ca3e2e901f5",
+      "verified_at": "2026-10-22T15:28:59.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:21:26.242Z"
+      "last_updated": "2026-10-22T15:28:59.936Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -15749,6 +15749,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-22T15:22:11.929Z"
+    },
+    "sandbox-quantum/switch": {
+      "repository": "sandbox-quantum/switch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sandbox-quantum-switch",
+      "content_hash": "e9dc0d28fadc7f0e07f24918df62eca23a66e43fba701ac1e3957e24e27d00f4",
+      "verified_at": "2026-10-22T15:28:46.933Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-22T15:28:46.933Z"
+    },
+    "XHToken/Spark-X2.6-4B": {
+      "repository": "XHToken/Spark-X2.6-4B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "content_hash": "51be6c41ad1ecb844725749683a43a0bcc13f087bb8db51b1021249d1e009039",
+      "verified_at": "2026-10-22T15:28:47.490Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-22T15:28:47.490Z"
+    },
+    "InternScience/Sage-A1.5": {
+      "repository": "InternScience/Sage-A1.5",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-internscience-sage-a1-5",
+      "content_hash": "0d074c984406adf014c3bcec71aed868e5c58f1aeac184e21d311b73fc57ee85",
+      "verified_at": "2026-10-22T15:28:49.827Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-22T15:28:49.827Z"
+    },
+    "RecursiveSI/flint": {
+      "repository": "RecursiveSI/flint",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-recursivesi-flint",
+      "content_hash": "4868085fd591f11d29377e5fefe6de2af0511c5f2276e52645c5beb271fe471d",
+      "verified_at": "2026-10-22T15:28:55.859Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-22T15:28:55.859Z"
     }
   },
   "repos": {

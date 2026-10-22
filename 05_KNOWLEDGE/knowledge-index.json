@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T15:22:11.861Z",
-  "total_verified_learnings": 1063,
+  "last_updated": "2026-10-22T15:29:05.313Z",
+  "total_verified_learnings": 1067,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2041,8 +2041,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "7e631997",
-      "content_hash": "41296ff1be9d1083132651cb236af854077378d60deac3563c3b17cb9cfa72dc",
+      "source_version": "731888e2",
+      "content_hash": "85dbc4d63e7bd2535b80db0de111525b443b585a5b47d5d1a2598b359f7758a4",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2060,6 +2060,11 @@
           "number": 3366,
           "title": "nullable metadata consumers and JDBC statement initialization (#40300)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3604,
+          "title": "MySQL OR and XOR operator precedence (#40329)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2067,7 +2072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:29:12.149Z",
+      "verified_at": "2026-10-22T15:29:05.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9361,8 +9366,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "10acebc0",
-      "content_hash": "42bbad925e1f6b768c2b5f9df9ff32a22f753a4ff2b8746d28352b202e652633",
+      "source_version": "7834210a",
+      "content_hash": "c91698dd65888416310fb9d8e7c69f9cb8624685f3f3b68c96052ca3e2e901f5",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -9380,6 +9385,11 @@
           "number": 3389,
           "title": "QUIC eBPF hot restart part 0 (#45504)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3602,
+          "title": "ci/cves: Fix scanner handling of pre versions (#48535)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9387,7 +9397,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:21:26.171Z",
+      "verified_at": "2026-10-22T15:28:59.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35323,8 +35333,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "ecf9b6a9",
-      "content_hash": "0c7329c6bccdc62f877faf3a976099612d85f39abc5501d04b3de97bcfd62db8",
+      "source_version": "07ffbf88",
+      "content_hash": "489f8bc3fc7b99bbc6cdc0fb767de23e963b5b4a9e5fab629071bd210582baf2",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -35352,6 +35362,11 @@
           "number": 2766,
           "title": "policy): add `rtk_state` group (#2155)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3603,
+          "title": "profiles): simplify package profile listing for fully qualified names (#2166)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35359,7 +35374,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:16:09.256Z",
+      "verified_at": "2026-10-22T15:29:02.787Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109149,6 +109164,215 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T15:22:11.850Z"
+    },
+    "learn-github-sandbox-quantum-switch": {
+      "learning_id": "learn-github-sandbox-quantum-switch",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sandbox-quantum/switch",
+      "repository": "sandbox-quantum/switch",
+      "slug": "sandbox-quantum-switch",
+      "platform": "github",
+      "source_url": "https://github.com/sandbox-quantum/switch",
+      "source_version": "5fa35e04",
+      "content_hash": "e9dc0d28fadc7f0e07f24918df62eca23a66e43fba701ac1e3957e24e27d00f4",
+      "dossier_path": "07_PROJECT_LEARNING/sandbox-quantum-switch-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sandbox-quantum-switch-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3599,
+          "title": "Console feedback fixes: rooms refresh, connectors polish, buddy usernames and au",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-22T15:28:46.823Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3599": {
+      "learning_id": "rule-3599",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3599,
+      "title": "Console feedback fixes: rooms refresh, connectors polish, buddy usernames and au",
+      "source_url": "https://github.com/sandbox-quantum/switch",
+      "source_version": "5fa35e04",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:28:46.823Z"
+    },
+    "learn-huggingface-xhtoken-spark-x2-6-4b": {
+      "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XHToken/Spark-X2.6-4B",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "slug": "hf-xhtoken-spark-x2.6-4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "content_hash": "51be6c41ad1ecb844725749683a43a0bcc13f087bb8db51b1021249d1e009039",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-22T15:28:47.401Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-internscience-sage-a1-5": {
+      "learning_id": "learn-huggingface-internscience-sage-a1-5",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "InternScience/Sage-A1.5",
+      "repository": "InternScience/Sage-A1.5",
+      "slug": "hf-internscience-sage-a1.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
+      "source_version": "hf-internscience-sage-a1.5",
+      "content_hash": "0d074c984406adf014c3bcec71aed868e5c58f1aeac184e21d311b73fc57ee85",
+      "dossier_path": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-22T15:28:49.737Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-recursivesi-flint": {
+      "learning_id": "learn-huggingface-recursivesi-flint",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RecursiveSI/flint",
+      "repository": "RecursiveSI/flint",
+      "slug": "hf-recursivesi-flint",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "content_hash": "4868085fd591f11d29377e5fefe6de2af0511c5f2276e52645c5beb271fe471d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3600,
+          "title": "Hybrid Attention Layer Typing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3601,
+          "title": "MoE Router Sparsity & Load Balancing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-22T15:28:55.769Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3600": {
+      "learning_id": "rule-3600",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3600,
+      "title": "Hybrid Attention Layer Typing Invariant",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:28:55.769Z"
+    },
+    "rule-3601": {
+      "learning_id": "rule-3601",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3601,
+      "title": "MoE Router Sparsity & Load Balancing Invariant",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:28:55.769Z"
+    },
+    "rule-3602": {
+      "learning_id": "rule-3602",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3602,
+      "title": "ci/cves: Fix scanner handling of pre versions (#48535)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "7834210a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:28:59.851Z"
+    },
+    "rule-3603": {
+      "learning_id": "rule-3603",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3603,
+      "title": "profiles): simplify package profile listing for fully qualified names (#2166)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "07ffbf88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:29:02.787Z"
+    },
+    "rule-3604": {
+      "learning_id": "rule-3604",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3604,
+      "title": "MySQL OR and XOR operator precedence (#40329)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "731888e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:29:05.295Z"
     }
   },
   "aliases": {
