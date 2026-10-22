@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `88d75cb0`  
+> **Source Version**: `69d1aac2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:17:26.882Z  
+> **Timestamp**: 2026-10-22T17:19:15.903Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:17:26.875Z  
+> **Harvest Timestamp**: 2026-10-22T17:19:13.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40661 stars
+- **Stars / Engagement**: 40670 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72148** (2026-10-20): **executor, session: add tidb_dml_max_execution_time for transactional DML (#70568) | tidb-test=5730244c023616144b344939ba89b36d00abe035**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Cherry-pick https://github.com/pingcap/tidb/pull/71315 to [release-8.5-20260826-v8.5.8](https://github.com/pingcap/tidb/tree/release-8.5-20260826-v8.5.8) branch.  Issue Number: close #69207  Problem Summary: TiDB has no overall elapsed-time limit for transactional DML and `COMMIT`. Slow TiKV requests can therefore keep foreground TiDB work active across multiple RPC and retry stages.  ### What changed and how does it work? - Add `tidb_dml_max_execution_time`, a GLOBAL/SESSION variable in milliseconds. The default value is `0`, which disables the timeout. - Apply it to regular transactional `INSERT`, `REPLACE`, `UPDATE`, `DELETE`, and explicit `COMMIT`. - Reuse the existing SQLKiller and dispatch-context cancellation mechanism. - Preserve `ResultUndetermined` when the commit result cannot be confirmed. - Exclude non-transactional DML, deprecated batch DML, pipelined DML, and `EXPLAIN ANALYZE` DML.  Note that this PR also cherry-picks #71587 to fix https://github.com/tikv/client-go/issues/2062.  ### Check List  Tests <
+- **Issue #72210** (2026-10-22): **config: fix diagnostic-mode goroutine profile flake**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #71484  Problem Summary:  `TestTiDBServerGoroutinesInDiagnosticMode` can fail with `goroutine group has no frames` when a goroutine profile contains a group whose only frame is `runtime.goexit`. Go's `debug=1` profile writer suppresses that frame, leaving a valid count-and-address header without printable frames. The test incorrectly rejects this output.  ### What changed and how does it work?  Parse and count every goroutine group before checking its frames. For a header-only group, resolve each raw program counter separately and accept it only if every counter resolves to exactly `runtime.goexit`. Missing, malformed, unknown, and other worker frames remain rejected. Preserve the existing worker allowlist and the check that all goroutines are accounted for.  This change only affects the diagnostic-mode test helper.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to 
 
-- **Issue #72147** (2026-10-20): **server: detect client disconnects in explicit transactions (#70343) (#70777) | tidb-test=5730244c023616144b344939ba89b36d00abe035**
-  *Symptoms*: This is an automated cherry-pick of #70777  This is a manual backport of #70343 to `release-8.5`.  ### Dependency  tikv/client-go#2055 has merged into `tidb-8.5`. This PR now uses the official merged pseudo-version:  `github.com/tikv/client-go/v2 v2.0.8-0.20260908025646-0f91f124d321`  ### What problem does this PR solve?  Issue Number: close #68682  Connection-liveness detection on release-8.5 only covers autocommit DML execution. A disconnected client can therefore leave statements in explicit transactions, prepared statements, SELECT/DO statements, and multi-statement pessimistic prefetch blocked until another timeout or cancellation occurs.  ### What changed and how does it work?  - Install the SQLKiller connection-alive callback for interruptible statements in both autocommit and explicit transactions. - Handle prepared, TRACE, and EXPLAIN statements according to their underlying statement. - Keep DDL, ANALYZE, LOAD DATA, IMPORT INTO, BACKUP/RESTORE, COMMIT, and ROLLBACK on their existing non-interruptible paths. - Cover multi-statement pessimistic prefetch waits. - Wire SQLKiller into the client-go kill-signal handler introduced by tikv/client-go#2055. - Add query/prepared and explicit-transaction regression tests, plus RealTiKV lock-wait coverage.  The conflict resolution preserves release-8.5 PD/bodyclose versions and Bazel `intest` tags. It also uses the release-8.5 Session interface (`pkg/session/types`) and store configuration API.  ### Chec
+- **Issue #72196** (2026-10-22): **executor: add materialized view refresh runtime**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  The FAST and COMPLETE DELTA APPLY executor builders are available on master, but materialized view refresh still needs a shared runtime to coordinate transactions, refresh watermarks, job history, cancellation, and cleanup across refresh modes.  ### What changed and how does it work?  - Add `RefreshMaterializedViewExec` and refresh-step orchestration for FAST, COMPLETE IN PLACE, COMPLETE DELTA APPLY, and COMPLETE OUT OF PLACE refreshes, using the existing internal refresh builders where applicable. - Coordinate refresh locks, snapshot/read-TSO handling, transaction commit or rollback, history finalization, heartbeat and cancellation handling, and out-of-place shadow-table cleanup. - Set up internal refresh sessions with the materialized view definition settings, and attach and restore statistics collectors used by regular sessions. - Add refresh metrics, step observation and plan capture, and slow-log statement restoration; share history timestamp and duration helpers with 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,242 +1940,152 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88d75cb0` (2026-10-20)
-**Commit Message**: executor: add complete delta apply executor builder (#72127)
+### Incident Patch 1: `13544e9b` (2026-10-21)
+**Commit Message**: ddl: fix global index copies left or broken by reorganize partition (#72158)
 
-ref pingcap/tidb#18023
+close pingcap/tidb#72167
 
-**File**: `pkg/executor/BUILD.bazel` (modified, +1/-0)
+**File**: `pkg/ddl/index.go` (modified, +21/-3)
 ```diff
-@@ -53,6 +53,7 @@ go_library(
-         "mlog_purge.go",
-         "mpp_gather.go",
-         "mview_complete_delta_apply.go",
-+        "mview_complete_delta_apply_bulder.go",
-         "mview_delta_merge_agg_builder.go",
-         "mview_task.go",
-         "operate_ddl_jobs.go",
-```
-
-**File**: `pkg/executor/builder.go` (modified, +23/-14)
-```diff
-@@ -113,14 +113,15 @@ type executorBuilder struct {
- 	hasLock bool
- 	Ti      *TelemetryInfo
- 	// isStaleness means whether this statement use stale read.
--	isStaleness           bool
--	txnScope              string
--	readReplicaScope      string
--	inUpdateStmt          bool
--	inDeleteStmt          bool
--	inInsertStmt          bool
--	inSelectLockStmt      bool
--	inMViewDeltaMergeStmt bool
-+	isStaleness                   bool
-+	txnScope                      string
-+	readReplicaScope              string
-+	inUpdateStmt                  bool
-+	inDeleteStmt                  bool
-+	inInsertStmt                  bool
-+	inSelectLockStmt              bool
-+	inMViewDeltaMergeStmt         bool
-+	inMViewCompleteDeltaApplyStmt bool
+@@ -645,7 +645,8 @@ func DropIndexColumnFlag(tblInfo *model.TableInfo, indexInfo *model.IndexInfo) {
+ 	col := indexInfo.Columns[0]
+ 	// other index may still cover this col
+ 	for _, index := range tblInfo.Indices {
+-		if index.Name.L == indexInfo.Name.L {
++		// Compare IDs, since a partition reorganization keeps index copies with the same name.
++		if index.ID == indexInfo.ID {
+ 			continue
+ 		}
  
- 	// forDataReaderBuilder indicates whether the builder is used by a dataReaderBuilder.
- 	// When forDataReader is true, the builder should use the dataReaderTS as the executor read ts. This is because
-@@ -221,6 +222,8 @@ func (b *executorBuilder) build(p base.Plan) exec.Executor {
- 		return b.buildPurgeMaterializedViewLog(v)
- 	case *plannercore.MViewDeltaMerge:
- 		return b.buildMViewDeltaMerge(v)
-+	case *plannercore.MViewCompleteDeltaApply:
-+		return b.buildMViewCompleteDeltaApply(v)
- 	case *plannercore.Deallocate:
- 		return b.buildDeallocate(v)
- 	case *physicalop.Delete:
-@@ -2546,7 +2549,7 @@ func (b *executorBuilder) buildExpand(v *physicalop.PhysicalExpand) exec.Executo
- 
- 	// Use un-parallel projection for query that write on memdb to avoid data race.
- 	// See also https://github.com/pingcap/tidb/issues/26832
--	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.hasLock {
-+	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt || b.hasLock {
- 		e.numWorkers = 0
- 	}
- 	return e
-@@ -2579,7 +2582,7 @@ func (b *executorBuilder) newProjectionExec(childExec exec.Executor, v *physical
- 
- 	// Use un-parallel projection for query that write on memdb to avoid data race.
- 	// See also https://github.com/pingcap/tidb/issues/26832
--	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.hasLock {
-+	if b.inUpdateStmt || b.inDeleteStmt || b.inInsertStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt || b.hasLock {
- 		e.numWorkers = 0
- 	}
- 	return e
-@@ -2608,7 +2611,7 @@ func (b *executorBuilder) getSnapshotTS() (ts uint64, err error) {
- 	}
- 
- 	txnManager := sessiontxn.GetTxnManager(b.sctx)
--	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt {
-+	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt {
- 		return txnManager.GetStmtForUpdateTS()
- 	}
- 	return txnManager.GetStmtReadTS()
-@@ -2621,7 +2624,7 @@ func (b *executorBuilder) getSnapshot() (kv.Snapshot, error) {
- 	var err error
- 
- 	txnManager := sessiontxn.GetTxnManager(b.sctx)
--	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt {
-+	if b.inInsertStmt || b.inUpdateStmt || b.inDeleteStmt || b.inSelectLockStmt || b.inMViewDeltaMergeStmt || b.inMViewCompleteDeltaApplyStmt {
- 		snapshot, err = txnManager.GetSnapshotWithStmtForUpdateTS()
- 	} else {
- 		snapshot, err = txnManager.GetSnapshotWithStmtReadTS()
-@@ -3881,8 +3884,14 @@ func (b *executorBuilder) newDataReaderBuilder(p base.PhysicalPlan) (*dataReader
+@@ -2261,12 +2262,13 @@ func onDropIndex(sctx sessionctx.Context, jobCtx *jobContext, job *model.Job) (v
+ 	return ver, errors.Trace(err)
  }
  
- func (b *executorBuilder) newDataReaderBuilderWithSnapshot(p base.PhysicalPlan, snapshot *plannercore.DataReaderSnapshot) (*dataReaderBuilder, error) {
--	if snapshot == nil || snapshot.TS == 0 || snapshot.InfoSchema == nil {
--		return nil, errors.New("snapshot is nil or invalid")
-+	if snapshot == nil {
-+		return nil, errors.New("snapshot is nil")
-+	}
-+	if snapshot.TS == 0 {
-+		return nil, errors.New("snapshot ts is zero")
-+	}
-+	if snapshot.InfoSchema == nil {
-+		return nil, errors.New("snapshot infoschema is nil")
+-// RemoveDependentHiddenColumns removes hidden columns by the indexInfo.
++// RemoveDependentHiddenColumns removes the hidden columns used by the index, except those still
++// used by another index, e.g. a copy of the index made by a partition reorganization.
+ func RemoveDependentHiddenColumns(tblInfo *model.TableInfo, idxInfo *model.IndexInfo) {
+ 	hiddenColOffs := make([]int, 0)
+ 	for _, indexColumn := range idxInfo.Columns {
+ 		col := tblInfo.Columns[indexColumn.Offset]
+-		if col.Hidden {
++		if col.Hidden && !isColumnUsedByOtherIndex(tblInfo, idxInfo.ID, col.Offset) {
+ 			hiddenColOffs = append(hiddenColOffs, col.Offset)
+ 		}
  	}
- 	builderForDataReader := *b
- 	builderForDataReader.forDataReaderBuilder = true
-```
-
-**File**: `pkg/executor/executor_pkg_test.go` (modified, +119/-1)
-```diff
-@@ -34,6 +34,8 @@ import (
- 	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
-+	"github.com/pingcap/tidb/pkg/planner/core/operator/physicalop"
-+	"github.com/pingcap/tidb/pkg/planner/property"
- 	plannerutil "github.com/pingcap/tidb/pkg/planner/util"
- 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
- 	"github.com/pingcap/tidb/pkg/table"
-@@ -83,7 +85,73 @@ func TestValidateMViewCompleteDeltaWritableInputColTypesAllowsNullableInput(t *t
- 	unsignedInputTp := inputTp.Clone()
- 	unsignedInputTp.AddFlag(mysql.UnsignedFlag)
- 	err := validateMViewCompleteDeltaWritableInputColTypes(targetTbl, []*types.FieldType{unsignedInputTp}, []int{0})
--	require.ErrorContains(t, err, "type mismatch")
-+	require.EqualError(t, err, fmt.Sprintf(
-+		"MViewCompleteDeltaApply writable input col id 0 type mismatch, target col `a` expects %s but input is %s",
-+		targetTp.String(), unsignedInputTp.String(),
-+	))
+@@ -2280,6 +2282,22 @@ func RemoveDependentHiddenColumns(tblInfo *model.TableInfo, idxInfo *model.Index
+ 	tblInfo.Columns = tblInfo.Columns[:len(tblInfo.Columns)-len(hiddenColOffs)]
+ }
+ 
++// isColumnUsedByOtherIndex checks whether the column is used by an index other than
++// indexID, e.g. a copy of the index made by a partition reorganization.
++func isColumnUsedByOtherIndex(tblInfo *model.TableInfo, indexID int64, offset int) bool {
++	for _, idx := range tblInfo.Indices {
++		if idx.ID == indexID {
++			continue
++		}
++		for _, col := range idx.Columns {
++			if col.Offset == offset {
++				return true
++			}
++		}
++	}
++	return false
 +}
 +
-+func TestMViewCompleteDeltaApplyMappingDiagnostics(t *testing.T) {
-+	tp := types.NewFieldType(mysql.TypeLonglong)
-+	valid := newTestMViewCompleteDeltaTargetTable(tp)
-+	nonPublic := newTestMViewCompleteDeltaTargetTable(tp)
-+	nonPublic.Columns[0].State = model.StateWriteOnly
-+	nonPublic.ResetColumnsCache()
-+	nilCol := newTestMViewCompleteDeltaTargetTable(tp)
-+	nilCol.WritableCols()[0] = nil
-+	negativeOffset := newTestMViewCompleteDeltaTargetTable(tp)
-+	negativeOffset.Columns[0].Offset = -1
-+	invalidOffset := newTestMViewCompleteDeltaTargetTable(tp)
-+	invalidOffset.Columns[0].Offset = 2
-+
-+	for _, tc := range []struct {
-+		name     string
-+		target   table.Table
-+		inputIDs []int
-+		err      string
-+	}{
-+		{"nil_table", nil, nil, "MViewCompleteDeltaApply target table is nil"},
-+		{"empty_writable", &tables.TableCommon{}, nil, "MViewCompleteDeltaApply target table has no writable columns"},
-+		{"non_public", nonPublic, []int{0}, "MViewCompleteDeltaApply does not support target table with non-public writable columns"},
-+		{"input_count", valid, nil, "MViewCompleteDeltaApply row input column mapping length 0 != target public column count 1"},
-+		{"nil_column", nilCol, []int{0}, "MViewCompleteDeltaApply target writable column at offset 0 is nil"},
-+		{"negative_offset", negativeOffset, []int{0}, "MViewCompleteDeltaApply target writable column `a` offset -1 out of range [0,1)"},
-+		{"invalid_offset", invalidOffset, []int{0}, "MViewCompleteDeltaApply target writable column `a` offset 2 out of range [0,1)"},
-+	} {
-+		t.Run("writable/"+tc.name, func(t *testing.T) {
-+			_, err := buildMViewCompleteDeltaWritableInputColIDs(tc.target, tc.inputIDs)
-+			require.EqualError(t, err, tc.err)
-+		})
-+	}
-+
-+	for _, tc := range []struct {
-+		name          string
-+		target        table.Table
-+		groupKeys     []int
-+		currentIDs    []int
-+		recomputedIDs []int
-+		err           string
-+	}{
-+		{"nil_table", nil, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target table is nil"},
-+		{"input_count", valid, []int{0}, []int{0}, nil, "MViewCompleteDeltaApply writable input mapping length mismatch: current=1 recomputed=0"},
-+		{"non_public", nonPublic, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply does not support target table with non-public writable columns"},
-+		{"empty_group_keys", valid, nil, []int{0}, []int{1}, "MViewCompleteDeltaApply group key offsets are empty"},
-+		{"invalid_group_key", valid, []int{0, 2}, []int{0}, []int{1}, "MViewCompleteDeltaApply group key offset 2 at index 1 out of range [0,1)"},
-+		{"nil_column", nilCol, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target writable column at offset 0 is nil"},
-+		{"negative_offset", negativeOffset, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target writable column `a` offset -1 out of range [0,1)"},
-+		{"invalid_offset", invalidOffset, []int{0}, []int{0}, []int{1}, "MViewCompleteDeltaApply target writable column `a` offset 2 out of range [0,1)"},
-+	} {
-+		t.Run("compare/"+tc.name, func(t *testing.T) {
-+			_, _, _, err := buildMViewCompleteDeltaCompareMappings(tc.target, tc.groupKeys, tc.currentIDs, tc.recomputedIDs)
-+			require.EqualError(t, err, tc.err)
-+		})
-+	}
-+
-+	ids, err := buildMViewCompleteDeltaWritableInputColIDs(valid, []int{4})
-+	require.NoError(t, err)
-+	require.Equal(t, []int{4}, ids)
-+	_, _, _, err = buildMViewCompleteDeltaCompareMappings(valid, []int{0}, []int{4}, []int{5})
-+	require.NoError(t, err)
- }
- 
- type mviewCompleteDeltaApplyOpenProbeChild struct {
-@@ -120,6 +188,56 @@ func TestMViewCompleteDeltaApplyOpenValidatesMappingsBeforeOpeningChild(t *testi
- 	require.False(t, child.opened)
- }
- 
-+func TestMViewRefreshSourceExecutorConcurrency(t *testing.T) {
-+	for _, tc := range []struct {
-+		name       string
-+		builder    executorBuilder
-+		numWorkers int64
-+	}{
-+		{name: "read", numWorkers: 4},
-+		{name: "insert", builder: executorBuilder{inInsertStmt: true}},
-+		{name: "update", builder: executorBuilder{inUpdateStmt: true}},
-+		{name: "delete", builder: executo
+ func removeIndexInfo(tblInfo *model.TableInfo, idxInfo *model.IndexInfo) {
+ 	indices := tblInfo.Indices
+ 	offset := -1
 ```
 
-**File**: `pkg/executor/mview_complete_delta_apply.go` (modified, +8/-3)
+**File**: `pkg/ddl/partition.go` (modified, +13/-1)
 ```diff
-@@ -463,11 +463,16 @@ func validateMViewCompleteDeltaWritableInputColTypes(target table.Table, childTy
- 		if inputColID < 0 || inputColID >= len(childTypes) {
- 			return errors.Errorf("MViewCompleteDeltaApply writable input col id %d at writable offset %d out of source range [0,%d)", inputColID, i, len(childTypes))
- 		}
--		if childTypes[inputColID] == nil {
-+		inputTp := childTypes[inputColID]
-+		if inputTp == nil {
- 			return errors.Errorf("MViewCompleteDeltaApply writable input col id %d type is unavailable", inputColID)
- 		}
--		if !(&writableCols[i].FieldType).Equal(childTypes[inputColID]) {
--			return errors.Errorf("MViewCompleteDeltaApply writable input col id %d type mismatch for target column %s", inputColID, writableCols[i].Name.O)
-+		targetTp := &writableCols[i].FieldType
-+		if !targetTp.Equal(inputTp) {
-+			return errors.Errorf(
-+				"MViewCompleteDeltaApply writable input col id %d type mismatch, target col `%s` expects %s but input is %s",
-+				inputColID, writableCols[i].Name.O, targetTp.String(), inputTp.String(),
-+			)
+@@ -2208,6 +2208,18 @@ func (w *worker) rollbackLikeDropPartition(jobCtx *jobContext, job *model.Job) (
+ 	if err != nil {
+ 		return ver, errors.Trace(err)
+ 	}
++	// Like DROP INDEX, index copies stop taking writes for one schema version before being removed.
++	// convertReorgPartitionJob2RollbackJob has moved every copy that is not delete only to write only.
++	stopWrites := false
++	for _, indexInfo := range tblInfo.Indices {
++		if indexInfo.State == model.StateWriteOnly {
++			indexInfo.State = model.StateDeleteOnly
++			stopWrites = true
++		}
++	}
++	if stopWrites {
++		return updateVersionAndTableInfo(jobCtx, job, tblInfo, true)
++	}
+ 	tblInfo.Partition.DroppingDefinitions = nil
+ 	// Collect table/partition ids to clean up, through args.OldPhysicalTblIDs
+ 	// GC will later also drop matching Placement bundles.
+@@ -2239,7 +2251,7 @@ func (w *worker) rollbackLikeDropPartition(jobCtx *jobContext, job *model.Job) (
+ 
+ 	var dropIndices []*model.IndexInfo
+ 	for _, indexInfo := range tblInfo.Indices {
+-		if indexInfo.State == model.StateWriteOnly {
++		if indexInfo.State == model.StateDeleteOnly {
+ 			dropIndices = append(dropIndices, indexInfo)
  		}
  	}
- 	return nil
 ```
 
-**File**: `pkg/executor/mview_complete_delta_apply_bulder.go` (added, +184/-0)
+**File**: `pkg/ddl/rollingback.go` (modified, +5/-15)
 ```diff
-@@ -0,0 +1,184 @@
+@@ -427,11 +427,7 @@ func convertReorgPartitionJob2RollbackJob(jobCtx *jobContext, job *model.Job, ot
+ 	for _, pd := range addingDefinitions {
+ 		partNames = append(partNames, pd.Name.L)
+ 	}
+-	var dropIndices []*model.IndexInfo
+ 	for _, indexInfo := range tblInfo.Indices {
+-		if !indexInfo.Unique {
+-			continue
+-		}
+ 		isNew, ok := pi.DDLChangedIndex[indexInfo.ID]
+ 		if !ok {
+ 			// non-changed index
+@@ -442,19 +438,13 @@ func convertReorgPartitionJob2RollbackJob(jobCtx *jobContext, job *model.Job, ot
+ 				// Revert the non-public state
+ 				indexInfo.State = model.StatePublic
+ 			}
+-		} else {
+-			if pi.DDLState == model.StateDeleteReorganization {
+-				indexInfo.State = model.StateWriteOnly
+-			} else {
+-				dropIndices = append(dropIndices, indexInfo)
+-			}
++		} else if indexInfo.State != model.StateDeleteOnly {
++			// A copy may be public in delete reorganization, so it keeps taking writes for one more
++			// schema version. rollbackLikeDropPartition then moves it to delete only and removes it.
++			// A copy still in delete only never took writes and stays as is.
++			indexInfo.State = model.StateWriteOnly
+ 		}
+ 	}
+-	for _, indexInfo := range dropIndices {
+-		DropIndexColumnFlag(tblInfo, indexInfo)
+-		RemoveDependentHiddenColumns(tblInfo, indexInfo)
+-		removeIndexInfo(tblInfo, indexInfo)
+-	}
+ 	if pi.DDLState == model.StateDeleteReorganization {
+ 		// New partitions are public,
+ 		// but old is still double written.
+```
+
+**File**: `pkg/ddl/tests/partition/BUILD.bazel` (modified, +1/-0)
+```diff
+@@ -12,6 +12,7 @@ go_test(
+         "modify_column_test.go",
+         "multi_domain_test.go",
+         "placement_test.go",
++        "reorg_partition_leftover_index_test.go",
+         "reorg_partition_test.go",
+     ],
+     flaky = True,
+```
+
+**File**: `pkg/ddl/tests/partition/reorg_partition_leftover_index_test.go` (added, +176/-0)
+```diff
+@@ -0,0 +1,176 @@
 +// Copyright 2026 PingCAP, Inc.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2190,272 +2100,446 @@ ref pingcap/tidb#18023
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package executor
++package partition
 +
 +import (
 +	"context"
++	"fmt"
++	"testing"
 +
-+	"github.com/pingcap/errors"
-+	"github.com/pingcap/tidb/pkg/executor/internal/exec"
-+	plannercore "github.com/pingcap/tidb/pkg/planner/core"
-+	"github.com/pingcap/tidb/pkg/table"
-+	"github.com/pingcap/tidb/pkg/types"
++	"github.com/pingcap/tidb/pkg/errno"
++	"github.com/pingcap/tidb/pkg/meta/model"
++	"github.com/pingcap/tidb/pkg/testkit"
++	"github.com/pingcap/tidb/pkg/testkit/external"
++	"github.com/pingcap/tidb/pkg/testkit/testfailpoint"
++	"github.com/stretchr/testify/require"
 +)
 +
-+func (b *executorBuilder) buildMViewCompleteDeltaApply(v *plannercore.MViewCompleteDeltaApply) exec.Executor {
-+	if v.Source == nil {
-+		b.err = errors.New("MViewCompleteDeltaApply source plan is nil")
-+		return nil
-+	}
-+	origin := b.inMViewCompleteDeltaApplyStmt
-+	b.inMViewCompleteDeltaApplyStmt = true
-+	defer func() { b.inMViewCompleteDeltaApplyStmt = origin }()
-+	if b.err = b.updateForUpdateTS(); b.err != nil {
-+		return nil
-+	}
-+	sourceExec := b.build(v.Source)
-+	if b.err != nil || sourceExec == nil {
-+		if b.err == nil {
-+			b.err = errors.New("MViewCompleteDeltaApply source executor is nil")
++const leftoverIndexTableSQL = `create table t (id bigint not null, a int, s int, ct int not null,
++	unique key uk_id (id, ct),
++	key idx_l (s),
++	key idx_g (a, s, ct) global)
++	partition by range (ct) (
++	partition p0 values less than (10),
++	partition p1 values less than (20),
++	partition pMax values less than (maxvalue))`
++
++func countUpdateMutations(t *testing.T, tk *testkit.TestKit) int {
++	tk.MustExec("begin pessimistic")
++	tk.MustExec("update t set a = a + 1 where id = 3")
++	txn, err := tk.Session().Txn(true)
++	require.NoError(t, err)
++	n := txn.Len()
++	tk.MustExec("rollback")
++	return n
++}
++
++func TestReorgPartitionCancelNonUniqueGlobalIndex(t *testing.T) {
++	store := testkit.CreateMockStore(t)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec(leftoverIndexTableSQL)
++	tk.MustExec("insert into t values (1, 0, 1, 5), (2, 0, 1, 15), (3, 0, 1, 25), (4, 0, 1, 35)")
++	baseIndices := len(external.GetTableByName(t, tk, "test", "t").Meta().Indices)
++	baseMutations := countUpdateMutations(t, tk)
++
++	var cancelState model.SchemaState
++	var lastRollbackStates []model.SchemaState
++	testfailpoint.EnableCall(t, "github.com/pingcap/tidb/pkg/ddl/beforeRunOneJobStep", func(job *model.Job) {
++		if job.Type != model.ActionReorganizePartition && job.Type != model.ActionAlterTablePartitioning {
++			return
 +		}
-+		return nil
-+	}
-+	sourceTypes := sourceExec.RetFieldTypes()
-+	if v.OpColID < 0 || v.OpColID >= len(sourceTypes) {
-+		b.err = errors.Errorf("MViewCompleteDeltaApply op column id %d out of source range [0,%d)", v.OpColID, len(sourceTypes))
-+		return nil
-+	}
-+	if sourceTypes[v.OpColID] == nil || sourceTypes[v.OpColID].EvalType() != types.ETInt {
-+		b.err = errors.Errorf("MViewCompleteDeltaApply op column id %d must be integer typed", v.OpColID)
-+		return nil
-+	}
-+	target, ok := b.is.TableByID(context.Background(), v.MVTableID)
-+	if !ok {
-+		b.err = errors.Errorf("MViewCompleteDeltaApply target table id %d not found in infoschema", v.MVTableID)
-+		return nil
-+	}
-+	if v.CurrentHandleCols == nil {
-+		b.err = errors.New("MViewCompleteDeltaApply target handle cols is nil")
-+		return nil
-+	}
-+	if len(target.Cols()) != v.MVColumnCount {
-+		b.err = errors.Errorf("MViewCompleteDeltaApply target public column count %d != plan MV column count %d", len(target.Cols()), v.MVColumnCount)
-+		return nil
-+	}
-+	for i := range v.CurrentHandleCols.NumCols() {
-+		idx := v.CurrentHandleCols.GetCol(i).Index
-+		if idx < 0 || idx >= len(sourceTypes) {
-+			b.err = errors.Errorf("MViewCompleteDeltaApply handle col index %d out of source range [0,%d)", idx, len(sourceTypes))
-+			return nil
++		if job.IsRollingback() {
++			lastRollbackStates = lastRollbackStates[:0]
++			for _, idx := range external.GetTableByName(t, testkit.NewTestKit(t, store), "test", "t").Meta().Indices {
++				if idx.State != model.StatePublic {
++					lastRollbackStates = append(lastRollbackStates, idx.State)
++				}
++			}
++			return
 +		}
-+	}
-+	currentIDs, err := buildMViewCompleteDeltaWritableInputColIDs(target, v.CurrentRowInputColIDs)
-+	if err != nil {
-+		b.err = err
-+		return nil
-+	}
-+	recomputedIDs, err := buildMViewCompleteDeltaWritableInputColIDs(target, v.RecomputedRowInputColIDs)
-+	if err != nil {
-+		b.err = err
-+		return nil
-+	}
-+	if err := validateMViewCompleteDeltaWritableInputColTypes(target, sourceTypes, currentIDs); err != nil {
-+		b.err = err
-+		return nil
-+	}
-+	if err := validateMViewCompleteDeltaWritableInputColTypes(target, sourceTypes, recomputedIDs); err != nil {
-+		b.err = err
-+		return nil
-+	}
-+	compareIdx, currentCompare, recomputedCompare, err := buildMViewCompleteDeltaCompareMappings(target, v.GroupKeyMVOffsets, currentIDs, recomputedIDs)
-+	if err != nil {
-+		b.err = err
-+		return nil
-+	}
-+	return &MViewCompleteDeltaApplyExec{
-+		BaseExecutor: exec.NewBaseExecutor(b.sctx, v.Schema(), v.ID(), sourceExec),
-+		TargetTable:  target, TargetHandleCols: v.CurrentHandleCols, OpColID: v.OpColID,
-+		CurrentWritableInputColIDs: currentIDs, RecomputedWritableInputColIDs: recomputedIDs,
-+		CompareWritableIdxes: compareIdx, CurrentCompareInputColIDs: currentCompare,
-+		RecomputedCompareInputColIDs: recomputedCompare,
++		if cancelState == model.StateNone || job.SchemaState != cancelState {
++			return
++		}
++		cancelState = model.StateNone
++		tk2 := testkit.NewTestKit(t, store)
++		tk2.MustExec(fmt.Sprintf("admin cancel ddl jobs %d", job.ID))
++	})
++
++	for _, ddl := range []string{
++		"alter table t reorganize partition pMax into (partition p2 values less than (30), partition pMax values less than (maxvalue))",
++		"alter table t partition by range (ct) (partition p0 values less than (10), partition p1 values less than (20), partition p2 values less than (30), partition pMax values less than (maxvalue))",
++	} {
++		for _, state := range []model.SchemaState{
++			model.StateDeleteOnly,
++			model.StateWriteOnly,
++			model.StateWriteReorganization,
++			model.StateDeleteReorganization,
++		} {
++			cancelState = state
++			lastRollbackStates = nil
++			tk.MustGetErrCode(ddl, errno.ErrCancelledDDLJob)
++			tblInfo := external.GetTableByName(t, tk, "test", "t").Meta()
++			// The copies must be delete only in the step that removes them.
++			require.NotEmpty(t, lastRollbackStates, "%s, cancel at %s", ddl, state)
++			for _, s := range lastRollbackStates {
++				require.Equal(t, model.StateDeleteOnly, s, "%s, cancel at %s", ddl, state)
++			}
++			require.Len(t, tblInfo.Indices, baseIndices, "%s, cancel at %s", ddl, state)
++			for _, idx := range tblInfo.Indices {
++				require.Equal(t, model.StatePublic, idx.State, "%s, cancel at %s, index %s", ddl, state, idx.Name.O)
++			}
++			require.Equal(t, baseMutations, countUpdateMutations(t, tk), "%s, cancel at %s", ddl, state)
++			tk.MustExec("admin check table t")
++		}
 +	}
 +}
 +
-+func buildMViewCompleteDeltaWritableInputColIDs(target table.Table, rowInputColIDs []int) ([]int, error) {
-+	if target == nil {
-+		return nil, errors.New("MViewCompleteDeltaApply target table is nil")
-+	}
-+	writableCols := target.WritableCols()
-+	if len(writableCols) == 0 {
-+		return nil, errors.New("MViewCompleteDeltaApply target table has no writable columns")
-+	}
-+	publicCols := target.Cols()
-+	if len(publicCols) != len(writableCols) {
-+		return nil, errors.New("MViewCompleteDeltaApply does not support target table with non-public writable columns")
-+	}
-+	if len(rowInputColIDs) != len(publicCols) {
-+		return nil, errors.Errorf("MViewCompleteDeltaApply row input column mapping length %d != target public column count %d", len(rowInputColIDs), len(publicCols))
-+	}
-+	ids := make([]int, 0, len(writableCols))
-+	for i, col := range writableCols {
-+		if col == nil {
-+			return nil, errors.Errorf("MViewCompleteDeltaApply target writable column at offset %d is nil", i)
++func TestReorgPartitionRollbackResumeAfterOwnerChange(t *testing.T) {
++	store, dom := testkit.CreateMockStoreAndDomain(t)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec(leftoverIndexTableSQL)
++	tk.MustExec("insert into t values (1, 0, 1, 5), (2, 0, 1, 15), (3, 0, 1, 25), (4, 0, 1, 35)")
++	baseIndices := len(external.GetTableByName(t, tk, "test", "t").Meta().Indices)
++	baseMutations := countUpdateMutations(t, tk)
++
++	cancelled, resigned := false, false
++	testfailpoint.EnableCall(t, "github.com/pingcap/tidb/pkg/ddl/beforeRunOneJobStep", func(job *model.Job) {
++		if job.Type != model.ActionReorganizePartition {
++			return
 +		}
-+		if c
++		if !cancelled && job.SchemaState == model.StateWriteReorganization {
++			cancelled = true
++			testki
 ```
 
-**File**: `pkg/executor/select_internal_test.go` (modified, +134/-0)
+---
+
+### Incident Patch 2: `c464391f` (2026-10-22)
+**Commit Message**: config: fix diagnostic-mode goroutine profile flake (#72210)
+
+close pingcap/tidb#71484
+
+**File**: `pkg/config/diagnosticmode/mode_server_test.go` (modified, +30/-2)
 ```diff
-@@ -18,7 +18,11 @@ import (
+@@ -17,7 +17,9 @@ package diagnosticmode_test
+ import (
+ 	"bytes"
+ 	"fmt"
++	"runtime"
+ 	"runtime/pprof"
++	"strconv"
  	"testing"
  	"time"
  
-+	"github.com/pingcap/tidb/pkg/infoschema"
- 	"github.com/pingcap/tidb/pkg/kv"
-+	plannercore "github.com/pingcap/tidb/pkg/planner/core"
-+	"github.com/pingcap/tidb/pkg/planner/core/operator/physicalop"
-+	"github.com/pingcap/tidb/pkg/planner/property"
- 	"github.com/pingcap/tidb/pkg/session/sessmgr"
- 	"github.com/pingcap/tidb/pkg/sessionctx"
- 	"github.com/pingcap/tidb/pkg/sessiontxn"
-@@ -126,3 +130,133 @@ func TestMViewDeltaMergeSnapshotSelection(t *testing.T) {
- 		require.Equal(t, uint64(303), ts)
- 	})
+@@ -128,15 +130,20 @@ func assertDiagnosticGoroutineAllowlist(t *testing.T, dump []byte) {
+ 	groups := bytes.Split(bytes.TrimSpace(stacks), []byte("\n\n"))
+ 	var checked int
+ 	for _, group := range groups {
+-		groupHeader, _, ok := bytes.Cut(group, []byte("\n"))
+-		require.True(t, ok, "goroutine group has no frames: %s", group)
++		groupHeader, _, hasFrames := bytes.Cut(group, []byte("\n"))
+ 		var count int
+ 		var marker string
+ 		_, err := fmt.Sscanf(string(groupHeader), "%d %s", &count, &marker)
+ 		require.NoError(t, err, "invalid goroutine group header: %s", groupHeader)
+ 		require.Equal(t, "@", marker)
+ 		require.Positive(t, count)
+ 		checked += count
++		if !hasFrames {
++			// debug=1 suppresses runtime.goexit even when it is the only frame.
++			// Resolve the raw PCs so no other frameless stack escapes the allowlist.
++			require.True(t, isRuntimeGoexitGroup(groupHeader), "goroutine group has no frames: %s", group)
++			continue
++		}
+ 
+ 		allowed := false
+ 		for _, function := range allowedFunctions {
+@@ -155,6 +162,27 @@ func assertDiagnosticGoroutineAllowlist(t *testing.T, dump []byte) {
+ 	t.Logf("Checked %d goroutines in %d aggregated groups against the diagnostic allowlist", checked, len(groups))
  }
-+
-+func TestMViewCompleteDeltaApplySnapshotSelection(t *testing.T) {
-+	readSnapshot := &mviewSnapshotProbe{}
-+	forUpdateSnapshot := &mviewSnapshotProbe{}
-+	originalGetTxnManager := sessiontxn.GetTxnManager
-+	sessiontxn.GetTxnManager = func(sessionctx.Context) sessiontxn.TxnManager {
-+		return lockCtxTxnManager{
-+			readTS: 101, forUpdateTS: 202,
-+			readSnapshot: readSnapshot, forUpdateSnapshot: forUpdateSnapshot,
+ 
++func isRuntimeGoexitGroup(header []byte) bool {
++	fields := bytes.Fields(header)
++	if len(fields) <= 2 {
++		return false
++	}
++	for _, field := range fields[2:] {
++		pc, err := strconv.ParseUint(string(field), 0, strconv.IntSize)
++		if err != nil {
++			return false
++		}
++		// Resolve each PC separately so an unknown PC cannot be skipped while
++		// expanding a stack containing known frames.
++		frames := runtime.CallersFrames([]uintptr{uintptr(pc)})
++		frame, more := frames.Next()
++		if frame.Function != "runtime.goexit" || more {
++			return false
 +		}
 +	}
-+	t.Cleanup(func() { sessiontxn.GetTxnManager = originalGetTxnManager })
-+
-+	for _, tc := range []struct {
-+		name     string
-+		builder  executorBuilder
-+		ts       uint64
-+		snapshot kv.Snapshot
-+	}{
-+		{name: "read", ts: 101, snapshot: readSnapshot},
-+		{name: "update", builder: executorBuilder{inUpdateStmt: true}, ts: 202, snapshot: forUpdateSnapshot},
-+		{name: "complete_delta_apply", builder: executorBuilder{inMViewCompleteDeltaApplyStmt: true}, ts: 202, snapshot: forUpdateSnapshot},
-+	} {
-+		b := tc.builder
-+		b.sctx = mock.NewContext()
-+		t.Run(tc.name+"/timestamp", func(t *testing.T) {
-+			ts, err := b.getSnapshotTS()
-+			require.NoError(t, err)
-+			require.Equal(t, tc.ts, ts)
-+		})
-+		t.Run(tc.name+"/snapshot", func(t *testing.T) {
-+			snapshot, err := b.getSnapshot()
-+			require.NoError(t, err)
-+			require.Same(t, tc.snapshot, snapshot)
-+		})
-+	}
-+
-+	t.Run("explicit_snapshot", func(t *testing.T) {
-+		b := executorBuilder{
-+			sctx:                          mock.NewContext(),
-+			inMViewCompleteDeltaApplyStmt: true,
-+			forDataReaderBuilder:          true,
-+			dataReaderTS:                  303,
-+		}
-+		ts, err := b.getSnapshotTS()
-+		require.NoError(t, err)
-+		require.Equal(t, uint64(303), ts)
-+	})
++	return true
 +}
 +
-+func TestMViewDataReaderBuilderSnapshots(t *testing.T) {
-+	for _, tc := range []struct {
-+		name     string
-+		snapshot *plannercore.DataReaderSnapshot
-+		err      string
-+	}{
-+		{"nil_snapshot", nil, "snapshot is nil"},
-+		{"zero_ts", &plannercore.DataReaderSnapshot{}, "snapshot ts is zero"},
-+		{"nil_infoschema", &plannercore.DataReaderSnapshot{TS: 303}, "snapshot infoschema is nil"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			b := executorBuilder{}
-+			reader, err := b.newDataReaderBuilderWithSnapshot(nil, tc.snapshot)
-+			require.Nil(t, reader)
-+			require.EqualError(t, err, tc.err)
-+		})
-+	}
+ func startTiDBServer(t *testing.T) (*tidbserver.Server, *config.Config) {
+ 	t.Helper()
+ 	if kerneltype.IsNextGen() {
+```
+
+---
+
+### Incident Patch 3: `18ec04a2` (2026-10-22)
+**Commit Message**: build: prepare Bazel tooling for Go 1.27 (#72082)
+
+ref pingcap/tidb#70069
+
+**File**: `.bazelrc` (modified, +3/-0)
+```diff
+@@ -8,6 +8,9 @@ build --http_timeout_scaling=0.1
+ build --announce_rc
+ build --experimental_guard_against_concurrent_changes
+ build --incompatible_strict_action_env --incompatible_enable_cc_toolchain_resolution
++# Keep C/C++ objects PIC for Go's Linux -z nocopyreloc links.
++# Remove this override if rules_go restores its cgo PIC default in normal mode.
++build --copt=-fPIC
+ build --remote_retries=6 --remote_retry_max_delay=8s
+ build:ci --color=yes
+ build:ci --experimental_remote_cache_compression
+```
+
+**File**: `.github/workflows/check-bazel-prepare.yml` (modified, +23/-0)
+```diff
+@@ -40,3 +40,26 @@ jobs:
+           # Avoid the TiDB CI path that assumes Jenkins-owned temp directories.
+           unset CI
+           make check-bazel-prepare
++      - name: Test x/tools export-data formats
++        shell: bash
++        run: |
++          set -euo pipefail
++          unset CI
++          # External tests are not included by TiDB's //... target pattern.
++          bazel test @org_golang_x_tools//internal/pkgbits:pkgbits_test \
++            --test_output=all \
++            --nocache_test_results \
++            --flaky_test_attempts=1 \
++            --test_arg=-test.v
++      - name: Check Linux cgo test linking
++        timeout-minutes: 30
++        shell: bash
++        run: |
++          set -euo pipefail
++          unset CI
++          # Link a test executable that failed in Jenkins; do not run business tests.
++          bazel build --config=ci //pkg/sessionctx/stmtctx:stmtctx_test \
++            --linkopt=-Wl,-z,nocopyreloc \
++            --jobs=2 \
++            --local_ram_resources=4096 \
++            --verbose_failures
+```
+
+**File**: `DEPS.bzl` (modified, +4/-0)
+```diff
+@@ -6498,6 +6498,10 @@ def go_deps():
+         name = "org_golang_x_tools",
+         build_file_proto_mode = "disable_global",
+         importpath = "golang.org/x/tools",
++        patch_args = ["-p1"],
++        patches = [
++            "//build/patches:org_golang_x_tools.patch",
++        ],
+         sum = "h1:7Kn5x/d1svx/PzryTsqeoZN4TZwqeH5pGWjefhLi/1Q=",
+         version = "v0.47.0",
+     )
+```
+
+**File**: `MODULE.bazel` (modified, +5/-0)
+```diff
+@@ -4,3 +4,8 @@
+ #
+ # For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+ ###############################################################################
 +
-+	originalGetTxnManager := sessiontxn.GetTxnManager
-+	sessiontxn.GetTxnManager = func(sessionctx.Context) sessiontxn.TxnManager {
-+		return lockCtxTxnManager{readTS: 101, forUpdateTS: 202}
-+	}
-+	t.Cleanup(func() { sessiontxn.GetTxnManager = originalGetTxnManager })
++# Keep in sync with rules_go's MODULE.bazel (currently v0.64.2) and WORKSPACE.
++# Bzlmod resolves this through BCR; offline/restricted builders must preseed
++# registry metadata and the archive, or provide an approved registry mirror.
++bazel_dep(name = "platforms", version = "1.1.0")
+```
+
+**File**: `WORKSPACE` (modified, +8/-4)
+```diff
+@@ -36,14 +36,16 @@ http_archive(
+ 
+ load("@bazel_skylib//lib:versions.bzl", "versions")
+ 
+-versions.check(minimum_bazel_version = "6.0.0")
++# Match the minimum declared by rules_go; CI remains pinned in .bazelversion.
++versions.check(minimum_bazel_version = "6.5.0")
+ 
+ http_archive(
+     name = "io_bazel_rules_go",
+-    sha256 = "86d3dc8f59d253524f933aaf2f3c05896cb0b605fc35b460c0b4b039996124c6",
++    sha256 = "d5c2c953bf24697b209c21f3ff4edf46fedea98514ec358b10c0e78fc35d363e",
++    # v0.64.2 is not available on mirror.bazel.build. Restricted builders must
++    # preseed this checksum-verified archive or allow the official release URL.
+     urls = [
+-        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.60.0/rules_go-v0.60.0.zip",
+-        "https://github.com/bazel-contrib/rules_go/releases/download/v0.60.0/rules_go-v0.60.0.zip",
++        "https://github.com/bazel-contrib/rules_go/releases/download/v0.64.2/rules_go-v0.64.2.zip",
+     ],
+ )
+ 
+@@ -82,6 +84,8 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_download_sdk", "go_register_toolchai
+ load("//:DEPS.bzl", "go_deps")
+ 
+ # gazelle:repository_macro DEPS.bzl%go_deps
++# Declare the patched x/tools v0.47.0 before go_rules_dependencies(), whose
++# fallback is v0.30.0. Existing repository declarations take precedence.
+ go_deps()
+ 
+ go_rules_dependencies()
+```
+
+**File**: `build/patches/org_golang_x_tools.patch` (added, +262/-0)
+```diff
+@@ -0,0 +1,262 @@
++Subject: [PATCH] backport Go 1.27 export-data V5 support
 +
-+	for _, tc := range []struct {
-+		name    string
-+		builder executorBuilder
-+		ts      uint64
-+	}{
-+		{name: "read", ts: 101},
-+		{name: "fast_refresh", builder: executorBuilder{inMViewDeltaMergeStmt: true}, ts: 202},
-+		{name: "complete_delta_apply", builder: executorBuilder{inMViewCompleteDeltaApplyStmt: true}, ts: 202},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			b := tc.builder
-+			sctx := mock.NewContext()
-+			b.sctx = sctx
-+			b.is = infoschema.MockInfoSchema(nil)
-+			plan := physicalop.PhysicalTableDual{RowCount: 1}.Init(sctx, &property.StatsInfo{RowCount: 1}, 0)
-+			snapshot := &plannercore.DataReaderSnapshot{TS: 303, InfoSchema: infoschema.MockInfoSchema(nil)}
-+			for _, explicit := range []bool{false, true} {
-+				name := "statement_snapshot"
-+				if explicit {
-+					name = "explicit_snapshot"
-+				}
-+				t.Run(name, func(t *testing.T) {
-+					var reader *dataReaderBuilder
-+					var err error
-+					if explicit {
-+						reader, err = b.newDataReaderBuilderWithSnapshot(plan, snapshot)
-+					} else {
-+						reader, err = b.newDataReaderBuilder(plan)
-+					}
-+					require.NoError(t, err)
-+					require.Same(t, plan, reader.plan)
-+					require.True(t, reader.forDataReaderBuilder)
-+					require.Equal(t, b.inMViewDeltaMergeStmt, reader.inMViewDeltaMergeStmt)
-+					require.Equal(t, b.inMViewCompleteDeltaApplyStmt, reader.inMViewCompleteDeltaApplyStmt)
-+					require.NotNil(t, reader.stmtCtxLock)
-+					require.NotNil(t, reader.once)
-+					ts, err := reader.getSnapshotTS()
-+					require.NoError(t, err)
-+					if explicit {
-+						require.Equal(t, snapshot.TS, ts)
-+						require.Same(t, snapshot.InfoSchema, reader.is)
-+						require.True(t, reader.isStaleness)
-+					} else {
-+						require.Equal(t, tc.ts, ts)
-+						require.Same(t, b.is, reader.is)
-+						require.False(t, reader.isStaleness)
-+					}
-+				})
-+			}
-+			require.False(t, b.forDataReaderBuilder)
-+			req
++The V5 reader and format definitions are copied unchanged from the released
++upstream golang.org/x/tools v0.50.0 (go.dev/issue/81188). Keep v0.47.0's Go 1.25
++minimum instead of upgrading to v0.50.0, which requires Go 1.26. This Bazel-only
++backport can be removed when the module/toolchain upgrade permits that release.
++
++Source: https://go.googlesource.com/tools/+/refs/tags/v0.50.0/internal/gcimporter/ureader.go
++Source: https://go.googlesource.com/tools/+/refs/tags/v0.50.0/internal/pkgbits/version.go
++
++Include upstream V0-V5 format tests and a real-compiler regression checking
++interleaved ordinary/generic method order. The latter skips pre-Go 1.27.
++
++CI: Check Bazel Prepare explicitly runs the external pkgbits_test target for
++format coverage; TiDB's //... pattern alone does not include external tests.
++The gcimporter tests still require the manual compiler-specific checks below.
++Whenever x/tools or this patch changes, reapply it to a pristine, writable
++checkout of the selected x/tools module and run both commands from that module
++root. Replace <go1.25.14> and <go1.27.3> with those exact SDK directories;
++GOTOOLCHAIN=local prevents an implicit compiler upgrade. Keep the command logs
++and actual compiler versions as manual importer compatibility evidence, separate
++from the automated pkgbits format test.
++
++    GOTOOLCHAIN=local <go1.25.14>/bin/go test ./internal/pkgbits ./internal/gcimporter \
++        -run '^(TestRoundTrip|TestVersions|TestImportTestdata)$' -count=1 -v
++    GOTOOLCHAIN=local <go1.27.3>/bin/go test ./internal/pkgbits ./internal/gcimporter \
++        -run '^(TestGo127MethodOrder|TestRoundTrip|TestVersions)$' -count=1 -v
++
++diff --git a/internal/pkgbits/version.go b/internal/pkgbits/version.go
++--- a/internal/pkgbits/version.go
+++++ b/internal/pkgbits/version.go
++@@ -36,6 +36,10 @@
++ 
++ 	// V4: encodes generic methods as standalone function objects
++ 	V4
+++
+++	// V5: encodes the index of methods to preserve relative order
+++	// of nongeneric and generic methods (go.dev/issue/81188).
+++	V5
++ 
++ 	numVersions = iota
++ )
++@@ -76,6 +80,10 @@
++ 	// Generic methods may appear as standalone function objects.
++ 	GenericMethods
++ 
+++	// Method index is encoded to preserve relative order of
+++	// nongeneric and generic methods.
+++	PreserveMethodOrder
+++
++ 	numFields = iota
++ )
++ 
++@@ -85,6 +93,7 @@
++ 	AliasTypeParamNames: V2,
++ 	CompactCompLiterals: V3,
++ 	GenericMethods:      V4,
+++	PreserveMethodOrder: V5,
++ }
++ 
++ // removed is the version a field was removed in or 0 for fields
++diff --git a/internal/pkgbits/pkgbits_test.go b/internal/pkgbits/pkgbits_test.go
++--- a/internal/pkgbits/pkgbits_test.go
+++++ b/internal/pkgbits/pkgbits_test.go
++@@ -16,6 +16,9 @@
++ 		pkgbits.V0,
++ 		pkgbits.V1,
++ 		pkgbits.V2,
+++		pkgbits.V3,
+++		pkgbits.V4,
+++		pkgbits.V5,
++ 	} {
++ 		pw := pkgbits.NewPkgEncoder(version, -1)
++ 		w := pw.NewEncoder(pkgbits.RelocMeta, pkgbits.SyncPublic)
++@@ -37,6 +40,10 @@
++ // Type checker to enforce that know V* have the constant values they must have.
++ var _ [0]bool = [pkgbits.V0]bool{}
++ var _ [1]bool = [pkgbits.V1]bool{}
+++var _ [2]bool = [pkgbits.V2]bool{}
+++var _ [3]bool = [pkgbits.V3]bool{}
+++var _ [4]bool = [pkgbits.V4]bool{}
+++var _ [5]bool = [pkgbits.V5]bool{}
++ 
++ func TestVersions(t *testing.T) {
++ 	type vfpair struct {
++@@ -55,6 +62,9 @@
++ 		{pkgbits.V0, pkgbits.DerivedInfoNeeded},
++ 		{pkgbits.V1, pkgbits.DerivedInfoNeeded},
++ 		{pkgbits.V2, pkgbits.AliasTypeParamNames},
+++		{pkgbits.V3, pkgbits.CompactCompLiterals},
+++		{pkgbits.V4, pkgbits.GenericMethods},
+++		{pkgbits.V5, pkgbits.PreserveMethodOrder},
++ 	} {
++ 		if !c.v.Has(c.f) {
++ 			t.Errorf("Expected version %v to have field %v", c.v, c.f)
++@@ -69,6 +79,18 @@
++ 		{pkgbits.V2, pkgbits.DerivedInfoNeeded},
++ 		{pkgbits.V0, pkgbits.AliasTypeParamNames},
++ 		{pkgbits.V1, pkgbits.AliasTypeParamNames},
+++		{pkgbits.V0, pkgbits.CompactCompLiterals},
+++		{pkgbits.V1, pkgbits.CompactCompLiterals},
+++		{pkgbits.V2, pkgbits.CompactCompLiterals},
+++		{pkgbits.V0, pkgbits.GenericMethods},
+++		{pkgbits.V1, pkgbits.GenericMethods},
+++		{pkgbits.V2, pkgbits.GenericMethods},
+++		{pkgbits.V3, pkgbits.GenericMethods},
+++		{pkgbits.V0, pkgbits.PreserveMethodOrder},
+++		{pkgbits.V1, pkgbits.PreserveMethodOrder},
+++		{pkgbits.V2, pkgbits.PreserveMethodOrder},
+++		{pkgbits.V3, pkgbits.PreserveMethodOrder},
+++		{pkgbits.V4, pkgbits.PreserveMethodOrder},
++ 	} {
++ 		if c.v.Has(c.f) {
++ 			t.Errorf("Expected version %v to not have field %v", c.v, c.f)
++diff --git a/internal/gcimporter/ureader.go b/internal/gcimporter/ureader.go
++--- a/internal/gcimporter/ureader.go
+++++ b/internal/gcimporter/ureader.go
++@@ -629,11 +629,26 @@
++ 				})
++ 			}
++ 
++-			for i, n := 0, r.Len(); i < n; i++ {
++-				named.AddMethod(r.method())
++-			}
++-
++ 			if r.Version().Has(pkgbits.GenericMethods) {
+++				// V4 (go1.27.0) emitted all non-generic methods
+++				// before all generic one
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72148** (2026-10-20): executor, session: add tidb_dml_max_execution_time for transactional DML (#70568) | tidb-test=5730244c023616144b344939ba89b36d00abe035 (@gengliqi)
-- **PR #72147** (2026-10-20): server: detect client disconnects in explicit transactions (#70343) (#70777) | tidb-test=5730244c023616144b344939ba89b36d00abe035 (@ti-chi-bot)
-- **PR #72131** (2026-10-20): ddl: support nested materialized view creation (@windtalker)
-- **PR #72130** (2026-10-20): Startup, Diagnostic: enable diagnostic startup and integration coverage (diagnostic-split-08) (@elsa0520)
-- **PR #72127** (2026-10-20): executor: add complete delta apply executor builder (@windtalker)
-- **PR #72126** (2026-10-20): executor: add fast refresh executor builder (@windtalker)
+- **PR #72210** (2026-10-22): config: fix diagnostic-mode goroutine profile flake (@D3Hunter)
+- **PR #72196** (2026-10-22): executor: add materialized view refresh runtime (@windtalker)
+- **PR #72175** (closed): [DNM] ddl, server: add a status API to drop leftover global index (@joechenrh)
+- **PR #72173** (2026-10-22): planner, executor: support nested materialized view fast refresh (@windtalker)
+- **PR #72168** (2026-10-21): planner: resolve targets for non-OOP materialized view refresh (@windtalker)
+- **PR #72162** (closed): [DNM] ddl: drop leftover global index copies with a reserved DROP INDEX name (@joechenrh)
 
 ---
 
@@ -2475,28 +2559,50 @@ ref pingcap/tidb#18023
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. executor: add complete delta apply executor builder (#72127)
+## X. ddl: fix global index copies left or broken by reorganize partition (#72158)
 
 **RULE**:
-When implementing operations in `pkg/executor/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ddl/index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88d75cb0`: executor: add complete delta apply executor builder (#72127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13544e9b`: ddl: fix global index copies left or broken by reorganize partition (#72158). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/index.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "mview_complete_delta_apply_bulder.go",
+		// Compare IDs, since a partition reorganization keeps index copies with the same name.
+		if index.ID == indexInfo.ID {
+// RemoveDependentHiddenColumns removes the hidden columns used by the index, except those still
+// used by another index, e.g. a copy of the index made by a partition reorganization.
+		if col.Hidden && !isColumnUsedByOtherIndex(tblInfo, idxInfo.ID, col.Offset) {
+// isColumnUsedByOtherIndex checks whether the column is used by an index other than
+// indexID, e.g. a copy of the index made by a partition reorganization.
+func isColumnUsedByOtherIndex(tblInfo *model.TableInfo, indexID int64, offset int) bool {
+	for _, idx := range tblInfo.Indices {
+		if idx.ID == indexID {
+			continue
+		}
+		for _, col := range idx.Columns {
+			if col.Offset == offset {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		if index.Name.L == indexInfo.Name.L {
+// RemoveDependentHiddenColumns removes hidden columns by the indexInfo.
+		if col.Hidden {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88d75cb0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13544e9b` are properly handled with clean fallback behavior.

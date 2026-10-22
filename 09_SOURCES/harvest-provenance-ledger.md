@@ -4352,3 +4352,5 @@ Every entry in this ledger must capture:
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `b415df84` | Multi-dimensional audit evidence | 2026-10-22T17:04:54.368Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `12103033` | Multi-dimensional audit evidence | 2026-10-22T17:12:36.548Z |
 | `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `5bd900d8` | Multi-dimensional audit evidence | 2026-10-22T17:12:36.707Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `4d372f02` | Multi-dimensional audit evidence | 2026-10-22T17:19:09.760Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `69d1aac2` | Multi-dimensional audit evidence | 2026-10-22T17:19:16.226Z |

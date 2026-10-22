@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T17:12:36.716Z",
-  "total_cycles_completed": 4322,
-  "total_learnings_persisted": 4322,
-  "total_rules_promoted": 3502,
+  "last_updated": "2026-10-22T17:19:16.234Z",
+  "total_cycles_completed": 4324,
+  "total_learnings_persisted": 4324,
+  "total_rules_promoted": 3504,
   "history": [
-    {
-      "timestamp": "2026-10-21T02:08:37.584Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:08:40.130Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T02:14:57.810Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-22T17:12:36.716Z",
       "repository": "herdrdev/herdr",
       "learningId": "learn-github-herdrdev-herdr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:19:09.769Z",
+      "repository": "scrapy/scrapy",
+      "learningId": "learn-github-scrapy-scrapy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:19:16.234Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

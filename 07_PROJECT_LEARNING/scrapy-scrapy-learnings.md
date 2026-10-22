@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source**: github ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
-> **Source Version**: `962197e2`  
+> **Source Version**: `4d372f02`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:17:48.445Z  
+> **Timestamp**: 2026-10-22T17:19:09.415Z  
 > **Learning ID**: `learn-github-scrapy-scrapy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:17:47.376Z  
+> **Harvest Timestamp**: 2026-10-22T17:19:07.730Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Scrapy, a fast high-level web crawling & scraping framework for Python.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 64899 stars
+- **Stars / Engagement**: 64950 stars
 
 ---
 
@@ -74,8 +74,9 @@ ConnectionKey: TypeAlias = tuple[bytes, bytes, int, tuple[str, int] | None]
 
 
 class H2ConnectionPool:
-    def __init__(self, crawler: Crawler) -> None:
+    def __init__(self, crawler: Crawler, limit: int = 0) -> None:
         self._crawler = crawler
+        self._limit = limit
 
         # Store a dictionary which is used to get the respective
         # H2ClientProtocolInstance using the  key as Tuple(scheme, hostname, port)
@@ -97,9 +98,13 @@ class H2ConnectionPool:
             # Received a request while connecting to remote
             return self._pending_request(key)
 
-        # Check if we already have a connection to the remote
-        conn = self._connections.get(key, None)
+        # Check if we already have a usable connection to the remote, moving
+        # it to the end so that the pool stays ordered from least to most
+        # recently used
+        conn = self._connections.get(key)
         if conn and not conn.closing:
+            del self._connections[key]
+            self._connections[key] = conn
             # Return this connection instance wrapped inside a deferred
             return defer.succeed(conn)
 
@@ -109,6 +114,7 @@ class H2ConnectionPool:
     def _new_connection(
         self, key: ConnectionKey, uri: URI, endpoint: HostnameEndpoint
     ) -> Deferred[H2ClientProtocol]:
+        self._enforce_limit()
         self._pending_requests[key] = deque()
 
         conn_lost_deferred: Deferred[None] = Deferred()
@@ -137,6 +143,26 @@ class H2ConnectionPool:
         d: Deferred[H2ClientProtocol] = Deferred(pending_requests.remove)
         pending_requests.append(d)
         return d
+
+    def _enforce_limit(self) -> None:
+        """Close the least recently used connections that are not serving any
+        stream, to make room for one more connection.
+
+        HTTP/2 multiplexes requests over a single connection per remote, so a
+        connection with active streams is kept even if that leaves the pool
+        over the limit.
+        """
+        if not self._limit:
+            return
+        surplus = len(self._connections) + len(self._pending_requests) + 1 - self._limit
+        for key, conn in list(self._connections.items()):
+            if surplus <= 0:
+                return
+            if conn.metadata["active_streams"]:
+                continue
+            del self._connections[key]
+            conn._close_idle()
+            surplus -= 1
 
     def put_connection(
         self,
@@ -775,7 +801,8 @@ import random
 import warnings
 from collections import deque
 from dataclasses import dataclass, field
-from time import monotonic, time
+from logging import getLogger
+from time import monotonic, perf_counter, time
 from typing import TYPE_CHECKING, Any
 
 from twisted.internet.defer import Deferred, DeferredList, inlineCallbacks
@@ -811,6 +838,8 @@ if TYPE_CHECKING:
     from scrapy.http import Response
     from scrapy.settings import BaseSettings
     from scrapy.signalmanager import SignalManager
+
+logger = getLogger(__name__)
 
 
 # Request.meta key holding the delay of a request and the time before which it
@@ -1003,6 +1032,11 @@ class Downloader:
         self.per_slot_settings: dict[str, dict[str, Any]] = self.settings.getdict(
             "DOWNLOAD_SLOTS"
         )
+        self._stats = crawler.stats
+        # (reason, start_time): current backout reason and when it began, or
+        # (None, None) if not backing out.
+        self._last_backout: tuple[str | None, float | None] = (None, None)
+        self._max_active_size_warned = False
 
     @property
     def randomize_delay(self) -> bool:
@@ -1016,15 +1050,7 @@ class Downloader:
 
     @inlineCallbacks
     @_warn_spider_arg
-    def fetch(
-        self, request: Request, spider: Spider | None = None
-    ) -> Generator[Deferred[Any], Any, Response | Request]:
-        self.active.add(request)
-        try:
-            result: Response | Request = yield (
-                deferred_from_coro(
-                    self.middleware.download_async(self._enqueue_request, request)
-     
+    d
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/_idna_patch.py`
@@ -1388,6 +1414,7 @@ from scrapy.exceptions import (
     StopDownload,
 )
 from scrapy.http import BodyFileResponse
+from scrapy.http.request import _in_download_handler_scope
 from scrapy.utils.defer import (
     deferred_from_coro,
     ensure_awaitable,
@@ -1423,7 +1450,8 @@ class DownloadHandlerProtocol(Protocol):
 
     Besides implementing this protocol, the contract of a download handler
     includes **never** calling :meth:`crawler.engine.download_async()
-    <scrapy.core.engine.ExecutionEngine.download_async>`.
+    <scrapy.core.engine.ExecutionEngine.download_async>`, including
+    indirectly by awaiting a :class:`~scrapy.Request` object.
     """
 
     lazy: bool
@@ -1450,6 +1478,7 @@ class DownloadHandlers:
         self._notconfigured: dict[str, str] = {}
         # remembers handlers with Deferred-based download_request()
         self._old_style_handlers: set[str] = set()
+        self._closed: bool = False
         scheme_handlers: dict[str, str | Callable[..., Any]] = without_none_values(
             cast(
                 "dict[str, str | Callable[..., Any]]",
@@ -1473,6 +1502,9 @@ class DownloadHandlers:
             self._paths[handler_id] = clspath
             self._load_handler(handler_id, skip_lazy=True)
 
+        # Downloader closes the handlers when the engine closes it. This signal
+        # handler closes them for custom downloaders that don't subclass the
+        # default one.
         crawler.signals.connect(self._close, signals.engine_stopped)
 
     def _get_handler(self, handler_id: str) -> DownloadHandlerProtocol | None:
@@ -1577,14 +1609,15 @@ class DownloadHandlers:
         self, handler_id: str, handler: DownloadHandlerProtocol, request: Request
     ) -> Response:
         assert self._crawler.spider
-        if handler_id in self._old_style_handlers:  # pragma: no cover
-            return await maybe_deferred_to_future(
-                cast(
-                    "Deferred[Response]",
-                    handler.download_request(request, self._crawler.spider),  # type: ignore[call-arg]
+        with _in_download_handler_scope():
+            if handler_id in self._old_style_handlers:  # pragma: no cover
+                return await maybe_deferred_to_future(
+                    cast(
+                        "Deferred[Response]",
+                        handler.download_request(request, self._crawler.spider),  # type: ignore[call-arg]
+                    )
                 )
-            )
-        return await handler.download_request(request)
+            return await handler.download_request(request)
 
     async def _download_to_file(
         self, handler_id: str, handler: DownloadHandlerProtocol, request: Request
@@ -1611,15 +1644,7 @@ class DownloadHandlers:
             raise
         return response
 
-    async def _close(self) -> None:
-        for dh in self._handlers.values():
-            if not hasattr(dh, "close"):  # pragma: no cover
-                warnings.warn(
-                    f"{global_object_name(dh)} doesn't define a close() method."
-                    f" This is deprecated, please add an empty 'async def close()' method.",
-                    category=ScrapyDeprecationWarning,
-                    stacklevel=1,
-                
+    async def _close(self) ->
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/handlers/_aioftp.py`
@@ -1903,13 +1928,15 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8360** (2026-10-16): **Bind both v4 and v6 in mockserver_ipv6.**
-  *Symptoms*: Fix test flakiness.  - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
+- **Issue #8389** (2026-10-21): **Use a proper way to test a non-listening port.**
+  *Symptoms*: This caused random test failures when a mockserver bound it (on Windows only, apparently, as on Linux random ports are <61000).  - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8360?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.97%. Comparing base ([`30e9c7c`](https://app.codecov.io/gh/scrapy/scrapy/commit/30e9c7c12915a6c02aecd7d5aaad1b07dedc27a5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`320a473`](https://app.codecov.io/gh/scrapy/scrapy/commit/320a4734cf03db1239d5d7d9333b466cffe41d43?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           mas
+  > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8389?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 100.00%. Comparing base ([`b8b81a2`](https://app.codecov.io/gh/scrapy/scrapy/commit/b8b81a262d02fd58d5d268971770863807c5f231?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`8128832`](https://app.codecov.io/gh/scrapy/scrapy/commit/812883238565349453f66cab784c19a9f6986e02?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :warning: Report is 1 commits behind head on master. :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@
 
-- **Issue #8357** (2026-10-16): **Document the error argument of spider_closed.**
-  *Symptoms*: Missed from #8204  - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
+- **Issue #8388** (2026-10-21): **Add delay tolerance to some tests.**
+  *Symptoms*:   - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8388?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 100.00%. Comparing base ([`b8b81a2`](https://app.codecov.io/gh/scrapy/scrapy/commit/b8b81a262d02fd58d5d268971770863807c5f231?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`992b585`](https://app.codecov.io/gh/scrapy/scrapy/commit/992b585e3082942121bbea6a03b18dcd5a30ab3f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff            @@ ##           
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1926,414 +1953,442 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ecfbb77` (2026-10-16)
-**Commit Message**: Add a CONNECTION_KEEPALIVE_TIMEOUT setting (#8342)
+### Incident Patch 1: `ee068e72` (2026-10-20)
+**Commit Message**: Add CONCURRENT_CONNECTIONS_PER_HANDLER and CONNECTION_KEEPALIVE_TIMEOUT (#7932)
 
-* Add a CONNECTION_KEEPALIVE_TIMEOUT setting
-
-* Test that the HTTP/2 pool keeps a newer connection for the same key
-
-**File**: `docs/topics/settings.rst` (modified, +15/-0)
+**File**: `conftest.py` (modified, +1/-1)
 ```diff
-@@ -622,6 +622,21 @@ See also: :ref:`topics-autothrottle` and its
- It is possible to change this setting per domain by using
- :setting:`DOWNLOAD_SLOTS`.
+@@ -58,7 +58,7 @@ def _py_files(folder):
+         )
+     )
  
-+.. setting:: CONNECTION_KEEPALIVE_TIMEOUT
+-if find_spec("httpx2") is None and find_spec("httpx") is None:
++if find_spec("httpx2") is None:
+     collect_ignore.append("scrapy/core/downloader/handlers/_httpx.py")
+ 
+ if find_spec("pytest_codspeed") is None:
+```
+
+**File**: `docs/faq.rst` (modified, +17/-0)
+```diff
+@@ -422,6 +422,23 @@ inline within web pages, similar to external resources. The "data:" scheme with
+ content (",") essentially creates a request to a data URL without any specific content.
+ 
+ 
++.. _faq-too-many-open-files:
 +
-+CONNECTION_KEEPALIVE_TIMEOUT
-+----------------------------
++I get ``too many file descriptors in select()`` or ``Too many open files``
++--------------------------------------------------------------------------
++
++The crawl is opening more sockets than the system allows. On Windows
++:func:`select.select` handles at most 512 sockets; elsewhere the ceiling is the
++maximum number of open files allowed for the process, which sockets, log files
++and feed exports all count towards.
++
++Lower :setting:`CONCURRENT_CONNECTIONS_PER_HANDLER`, keeping in mind that every
++:ref:`download handler <topics-download-handlers>` applies it on its own, so a
++crawl of both ``http://`` and ``https://`` URLs can open twice as many
++connections. Raising the limit of the operating system works as well on
++platforms other than Windows.
++
++
+ Running ``runspider`` I get ``error: No spider found in file: <filename>``
+ --------------------------------------------------------------------------
+ 
+```
+
+**File**: `docs/topics/optimize.rst` (modified, +4/-0)
+```diff
+@@ -139,6 +139,10 @@ Raise them to crawl a single website faster, and see
+ :ref:`broad-crawls-concurrency` to spread requests across many websites
+ instead.
+ 
++Concurrency also drives how many connections stay open, which is capped
++separately by :setting:`CONCURRENT_CONNECTIONS_PER_HANDLER`. See
++:ref:`faq-too-many-open-files` if a crawl runs out of file descriptors.
++
+ The limit that matters, though, is the one the target website tolerates.
+ Exceeding it gets you throttled, served errors or banned, all of which make the
+ crawl slower than a lower concurrency would have been. To find that limit:
+```
+
+**File**: `docs/topics/settings.rst` (modified, +38/-0)
+```diff
+@@ -586,6 +586,44 @@ project name). This name will be used for the logging too.
+ It's automatically populated with your project name when you create your
+ project with the :command:`startproject` command.
+ 
++.. setting:: CONCURRENT_CONNECTIONS_PER_HANDLER
++
++CONCURRENT_CONNECTIONS_PER_HANDLER
++----------------------------------
++
++Default: ``None``
 +
 +.. versionadded:: VERSION
 +
-+Default: ``240.0``
++The maximum number of connections that a single :ref:`download handler
++<topics-download-handlers>` may keep open, whether they are being used for a
++request or kept around for reuse by a later request. Use ``0`` for no limit.
 +
-+How long, in seconds, a connection is kept open for reuse after the response it
-+was serving is complete. Use ``0`` to close connections as soon as they become
-+idle.
++``None`` lets Scrapy pick a limit that fits the system it runs on. How it is
++picked may change in any future Scrapy version, without a deprecation period,
++so set a number if you need it to stay the same.
 +
-+Servers usually close idle connections earlier than this on their own.
++Scrapy currently picks half of the maximum number of open files allowed for the
++process, or 480 on Windows, where :func:`select.select` handles at most 512
++sockets.
 +
- .. setting:: DEFAULT_DROPITEM_LOG_LEVEL
++Each download handler applies this limit on its own, so a crawl of both
++``http://`` and ``https://`` URLs may open up to twice as many connections.
++:class:`~scrapy.core.downloader.handlers._httpx.HttpxDownloadHandler`
++additionally applies it once per proxy, since httpx `cannot use a different
++proxy per request <https://github.com/pydantic/httpx2/issues/818>`_.
++
++HTTP/2 multiplexes requests over a single connection per remote, so
++:class:`~scrapy.core.downloader.handlers.http2.H2DownloadHandler` reaches this
++limit only after as many remotes, regardless of concurrency, and it keeps a
++connection that is serving requests even if that leaves it over the limit.
++
++How the limit is reached also depends on the handler: some close the connection
++that has been idle the longest to make room for a new one, others make requests
++wait for a connection to free up. Either way, a value below
++:setting:`CONCURRENT_REQUESTS` keeps the crawl from reaching the configured
++concurrency, and logs a warning.
++
+ .. setting:: CONCURRENT_ITEMS
  
- DEFAULT_DROPITEM_LOG_LEVEL
+ CONCURRENT_ITEMS
 ```
 
-**File**: `scrapy/core/_http2/agent.py` (modified, +13/-6)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -50,7 +50,7 @@ def get_connection(
+@@ -70,7 +70,7 @@ bpython = ["bpython>=0.7.1"]
+ clipboard = ["pyperclip>=1.8.0"]
+ color = ["colorlog>=6.6.0"]
+ gcs = ["google-cloud-storage>=1.30.0"]
+-httpx = ["httpx2[http2,socks]>=2.0.0"]
++httpx = ["httpx2[http2,socks]>=2.3.0"]
+ images = ["Pillow>=9.2.0"]
+ ipython = ["ipython>=8.15.0"]
+ memusage = ["psutil>=5.9.0"]
+```
+
+**File**: `scrapy/core/_http2/agent.py` (modified, +29/-3)
+```diff
+@@ -25,8 +25,9 @@
  
-         # Check if we already have a connection to the remote
-         conn = self._connections.get(key, None)
--        if conn:
-+        if conn and not conn.closing:
+ 
+ class H2ConnectionPool:
+-    def __init__(self, crawler: Crawler) -> None:
++    def __init__(self, crawler: Crawler, limit: int = 0) -> None:
+         self._crawler = crawler
++        self._limit = limit
+ 
+         # Store a dictionary which is used to get the respective
+         # H2ClientProtocolInstance using the  key as Tuple(scheme, hostname, port)
+@@ -48,9 +49,13 @@ def get_connection(
+             # Received a request while connecting to remote
+             return self._pending_request(key)
+ 
+-        # Check if we already have a connection to the remote
+-        conn = self._connections.get(key, None)
++        # Check if we already have a usable connection to the remote, moving
++        # it to the end so that the pool stays ordered from least to most
++        # recently used
++        conn = self._connections.get(key)
+         if conn and not conn.closing:
++            del self._connections[key]
++            self._connections[key] = conn
              # Return this connection instance wrapped inside a deferred
              return defer.succeed(conn)
  
-@@ -63,7 +63,6 @@ def _new_connection(
+@@ -60,6 +65,7 @@ def get_connection(
+     def _new_connection(
+         self, key: ConnectionKey, uri: URI, endpoint: HostnameEndpoint
+     ) -> Deferred[H2ClientProtocol]:
++        self._enforce_limit()
          self._pending_requests[key] = deque()
  
          conn_lost_deferred: Deferred[None] = Deferred()
--        conn_lost_deferred.addCallback(self._remove_connection, key)
- 
-         factory = H2ClientFactory(
-             uri,
-@@ -73,7 +72,7 @@ def _new_connection(
-         )
-         conn_d = endpoint.connect(factory)
-         d = self._pending_request(key)
--        conn_d.addCallback(self.put_connection, key)
-+        conn_d.addCallback(self.put_connection, key, conn_lost_deferred)
-         conn_d.addErrback(self._connection_failed, key)
+@@ -89,6 +95,26 @@ def _pending_request(self, key: ConnectionKey) -> Deferred[H2ClientProtocol]:
+         pending_requests.append(d)
          return d
  
-@@ -91,9 +90,13 @@ def _pending_request(self, key: ConnectionKey) -> Deferred[H2ClientProtocol]:
-         return d
- 
-     def put_connection(
--        self, conn: H2ClientProtocol, key: ConnectionKey
-+        self,
-+        conn: H2ClientProtocol,
-+        key: ConnectionKey,
-+        conn_lost_deferred: Deferred[None],
-     ) -> H2ClientProtocol:
-         self._connections[key] = conn
-+        conn_lost_deferred.addCallback(self._remove_connection, key, conn)
- 
-         # Now as we have established a proper HTTP/2 connection
-         # we fire all the deferred's with the connection instance
-@@ -112,8 +115,12 @@ def _connection_failed(self, failure: Failure, key: ConnectionKey) -> None:
-             d = pending_requests.popleft()
-             d.errback(failure)
- 
--    def _remove_connection(self, _: None, key: ConnectionKey) -> None:
--        self._connections.pop(key)
-+    def _remove_connection(
-+        self, _: None, key: ConnectionKey, conn: H2ClientProtocol
-+    ) -> None:
-+        # a newer connection may have taken over the key already
-+        if self._connections.get(key) is conn:
-+            del self._connections[key]
- 
-     def close_connections(self) -> None:
-         """Close all the HTTP/2 connections and remove them from pool."""
-```
-
-**File**: `scrapy/core/_http2/protocol.py` (modified, +14/-4)
-```diff
-@@ -84,8 +84,6 @@ def __init__(self, remote_ip_address: IPv4Address | IPv6Address | None) -> None:
- 
- @implementer(IHandshakeListener)
- class H2ClientProtocol(Protocol, TimeoutMixin):
--    IDLE_TIMEOUT = 240
--
-     def __init__(
-         self,
-         uri: URI,
-@@ -107,6 +105,10 @@ def __init__(
-         self._crawler: Crawler = crawler
-         self._conn_lost_deferred: Deferred[None] = conn_lost_deferred
-         self._tls_verbose_logging: bool = tls_verbose_logging
-+        self._idle_timeout: float = crawler.settings.getfloat(
-+            "CONNECTION_KEEPALIVE_TIMEOUT"
-+        )
-+        self.closing: bool = False
- 
-         config = H2Configuration(client_side=True)
-         self.conn = H2Connection(config=config)
-@@ -193,6 +195,8 @@ def pop_stream(self, stream_id: int) -> Stream:
-         stream = self.streams.pop(stream_id)
-         self.metadata["active_streams"] -= 1
-         self._send_pending_requests()
-+        if not self._idle_timeout and not self.metadata["active_streams"]:
-+            self._close_idle()
-         return stream
- 
-     def _new_stream(self, request: Request, spider: Spider) -> Stream:
-@@ -252,7 +256,7 @@ def connectionMade(self) -> None:
-         sending some data now: we should open with the connection preamble.
-         """
-         # Initialize the timeout
--        self.setTimeout(self.IDLE_TIMEOUT)  # type: ignore[no-untyped-call]
-+        self.setTimeout(self._idle_timeout or None)  # type: ignore[no-untyped-call]
- 
-         assert self.transport is not None  # typing
-         destination = self.transport.getPeer()
-@@ -268,10 +272,16 @@ def connectionMade(self) -> None:
-     def _lose_connection_with_error(self, errors: list[BaseException]) -> None:
-         """Helper function to lose the connection with the error sent as a
-         reason"""
-+        self.closing = True
-         self._conn_lost_errors.extend(errors)
-         assert self.transport is not None  # typing
-         self.transport.loseConnection()
- 
-+    def _close_idle(self) -> None:
-+        self.conn.close_connection(error_code=ErrorCodes.NO_ERROR)
-+        self._write_to_transport()
-+        self._lose_connection_with_error([])
++    def _enforce_limit(self) -> None:
++        """Close the least recently used connections that are not serving any
++        stream, to make room for one more connection.
 +
-     def handshakeCompleted(self) -> None:
-         """
-         Close the connection if it's not made via the expected protocol
-@@ -346,7 +356,7 @@ def timeoutConnection(self) -> None:
-         self._lose_connection_with_error(
-             [
-                 DownloadTimeoutError(
--                    f"Connection was IDLE for more than {self.IDLE_TIMEOUT}s"
-+                    f"Connection was IDLE for more than {self._idle_timeout}s"
-                 )
-             ]
-         )
++        HTTP/2 multiplexes requests over a single connection per remote, so a
++        connection with active streams is kept even if that leaves the pool
++        over the limit.
++        """
++        if not self._limit:
++            return
++        surplus = len(self._connections) + len(self._pending_requests) + 1 - self._limit
++        for key, conn in list(self._connections.items()):
++            if surplus <= 0:
++                return
++            if conn.metadata["active_streams"]:
++                continue
++            del self._connections[key]
++            conn._close_idle()
++            surplus -= 1
++
+     def put_connection(
+         self,
+         conn: H2ClientProtocol,
 ```
 
-**File**: `scrapy/core/downloader/handlers/_aiohttp.py` (modified, +2/-0)
+**File**: `scrapy/core/downloader/handlers/_aiohttp.py` (modified, +32/-2)
 ```diff
-@@ -62,6 +62,8 @@ def __init__(self, crawler: Crawler):
+@@ -25,10 +25,40 @@
+ if TYPE_CHECKING:
+     from collections.abc import AsyncIterator
+ 
++    from aiohttp.client_proto import ResponseHandler
++    from aiohttp.client_reqrep import ClientRequest
++    from aiohttp.tracing import Trace
++
+     from scrapy import Request
+     from scrapy.crawler import Crawler
+ 
+ 
++class _TCPConnector(aiohttp.TCPConnector):
++    """Counts idle connections toward the connection limit, closing the least
++    recently used one when a new connection would otherwise exceed it."""
++
++    async def _create_connection(
++        self,
++        req: ClientRequest,
++        traces: list[Trace],
++        timeout: aiohttp.ClientTimeout,  # noqa: ASYNC109
++    ) -> ResponseHandler:
++        # the connection about to be created is already counted in _acquired
++        while (
++            self._limit
++            and len(self._acquired) + sum(map(len, self._conns.values())) > self._limit
++        ):
++            self._evict()
++        return await super()._create_connection(req, traces, timeout)
++
++    def _evict(self) -> None:
++        _, key = min((conns[0][1], key) for key, conns in self._conns.items())
++        protocol, _ = self._conns[key].popleft()
++        if not self._conns[key]:
++            del self._conns[key]
++        protocol.close()
++
++
+ class _ClientResponse(aiohttp.ClientResponse):
+     """Captures transport data that can be lost after parent ``start()``.
+ 
+@@ -57,9 +87,9 @@ class AiohttpDownloadHandler(BaseStreamingDownloadHandler[_ClientResponse]):
+     def __init__(self, crawler: Crawler):
+         super().__init__(crawler)
+         self._ssl_context: ssl.SSLContext = _make_ssl_context(crawler.settings)
+-        connector = aiohttp.TCPConnector(
++        connector = _TCPConnector(
+             local_addr=self._bind_address,
+-            # hard limit on simultaneous connections
++            # hard limit on open connections, idle ones included
              limit=self._pool_size_total,
              # hard limit on simultaneous connections per host
              limit_per_host=self._pool_size_per_host,
-+            keepalive_timeout=self._keepalive_timeout or None,
-+            force_close=not self._keepalive_timeout,
-         )
-         self._session: aiohttp.ClientSession = aiohttp.ClientSession(
-             connector=connector,
 ```
 
-**File**: `scrapy/core/downloader/handlers/_base_http.py` (modified, +3/-0)
+**File**: `scrapy/core/downloader/handlers/_base_http.py` (modified, +48/-0)
 ```diff
-@@ -23,3 +23,6 @@ def __init__(self, crawler: Crawler):
+@@ -1,12 +1,55 @@
+ from __future__ import annotations
+ 
++import logging
++import sys
+ from abc import ABC
+ from typing import TYPE_CHECKING
+ 
+ from .base import BaseDownloadHandler
+ 
++try:
++    # stdlib's resource module is only available on unix platforms
++    import resource
++except ImportError:
++    resource = None  # type: ignore[assignment]
++
+ if TYPE_CHECKING:
+     from scrapy.crawler import Crawler
++    from scrapy.settings import BaseSettings
++
++
++logger = logging.getLogger(__name__)
++
++# The number of sockets that select() accepts in CPython's Windows build; see
++# FD_SETSIZE in Modules/selectmodule.c.
++_FD_SETSIZE = 512
++
++# Room left for the sockets that a Windows crawl registers with the event loop
++# outside of download handlers, e.g. the asyncio self-pipe and the telnet
++# console.
++_WINDOWS_RESERVED_SOCKETS = 32
++
++
++def _auto_connection_limit() -> int:
++    if sys.platform == "win32":
++        return _FD_SETSIZE - _WINDOWS_RESERVED_SOCKETS
++    soft_limit: int = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
++    if soft_limit == resource.RLIM_INFINITY:
++        return 0
++    return soft_limit // 2
++
++
++def _get_connection_limit(settings: BaseSettings) -> int:
++    limit = settings.get("CONCURRENT_CONNECTIONS_PER_HANDLER")
++    limit = _auto_connection_limit() if limit is None else int(limit)
++    concurrent_requests = settings.getint("CONCURRENT_REQUESTS")
++    if 0 < limit < concurrent_requests:
++        logger.warning(
++            f"CONCURRENT_CONNECTIONS_PER_HANDLER ({limit}) is lower than"
++            f" CONCURRENT_REQUESTS ({concurrent_requests}), which keeps the"
++            f" crawl from reaching the configured concurrency."
++        )
++    return limit
+ 
+ 
+ class BaseHttpDownloadHandler(BaseDownloadHandler, ABC):
+@@ -23,6 +66,11 @@ def __init__(self, crawler: Crawler):
              "DOWNLOADER_CLIENT_TLS_VERBOSE_LOGGING"
          )
          self._fail_on_dataloss_warned: bool = False
-+        self._keepalive_timeout: float = crawler.settings.getfloat(
-+            "CONNECTION_KEEPALIVE_TIMEOUT"
++        # these are useful for many handlers but used in different ways by them
++        self._pool_size_total: int = _get_connection_limit(crawler.settings)
++        self._pool_size_per_host: int = crawler.settings.getint(
++            "CONCURRENT_REQUESTS_PER_DOMAIN"
 +        )
-```
-
-**File**: `scrapy/core/downloader/handlers/_httpx.py` (modified, +7/-2)
-```diff
-@@ -95,8 +95,13 @@ def __init__(self, crawler: Crawler):
-             # hard limit on simultaneous connections (None for no limit, which
-             # is what a CONCURRENT_REQUESTS of 0 means)
-             max_connections=self._pool_size_total or None,
--            # total number of idle connections in the pool (extra ones are closed)
--            max_keepalive_connections=self._pool_size_total or None,
-+            # total number of idle connections in the pool (extra ones are
-+            # closed); keeping none of them is how keepalive gets disabled,
-+            # since expiry alone is subject to the resolution of the clock
-+            max_keepalive_connections=(
-+                (self._pool_size_total or None) if self._keepalive_timeout else 0
-+            ),
-+            keepalive_expiry=self._keepalive_timeout,
+         self._keepalive_timeout: float = crawler.settings.getfloat(
+             "CONNECTION_KEEPALIVE_TIMEOUT"
          )
- 
-         self._default_client: httpx.AsyncClient = self._make_client()
-```
-
-**File**: `scrapy/core/downloader/handlers/http11.py` (modified, +4/-1)
-```diff
-@@ -99,7 +99,10 @@ def __init__(self, crawler: Crawler):
- 
-         from twisted.internet import reactor
- 
--        self._pool: HTTPConnectionPool = HTTPConnectionPool(reactor, persistent=True)
-+        self._pool: HTTPConnectionPool = HTTPConnectionPool(
-+            reactor, persistent=bool(self._keepalive_timeout)
-+        )
-+        self._pool.cachedConnectionTimeout = self._keepalive_timeout  # type: ignore[assignment]
-         self._pool.maxPersistentPerHost = crawler.settings.getint(
-             "CONCURRENT_REQUESTS_PER_DOMAIN"
-         )
-```
-
-**File**: `scrapy/settings/default_settings.py` (modified, +3/-0)
-```diff
-@@ -46,6 +46,7 @@
-     "CONCURRENT_ITEMS",
-     "CONCURRENT_REQUESTS",
-     "CONCURRENT_REQUESTS_PER_DOMAIN",
-+    "CONNECTION_KEEPALIVE_TIMEOUT",
-     "COOKIES_DEBUG",
-     "COOKIES_ENABLED",
-     "CRAWLSPIDER_FOLLOW_LINKS",
-@@ -278,6 +279,8 @@
- CONCURRENT_REQUESTS = 16
- CONCURRENT_REQUESTS_PER_DOMAIN = 8
- 
-+CONNECTION_KEEPALIVE_TIMEOUT = 240.0
-+
- COOKIES_ENABLED = True
- COOKIES_DEBUG = False
- 
 ```
 
 ---
 
-### Incident Patch 2: `ebec11a6` (2026-10-16)
-**Commit Message**: Fail leaked aiohttp sessions in place, close subprocess on failed expect (#8194)
+### Incident Patch 2: `4091b936` (2026-10-21)
+**Commit Message**: Fix a regression on multiple waiters for robot_parser(). (#8386)
 
-* Fail leaked aiohttp sessions in place, close subprocess on failed expect
-
-* Make AiohttpDownloadHandler lazy, check leaked sessions globally
-
-* Check aiohttp sessions directly instead of forcing a gc pass per test
-
----------
-
-Co-authored-by: Andrey Rakhmatullin <[REDACTED_EMAIL]>
-
-**File**: `conftest.py` (modified, +57/-2)
+**File**: `scrapy/downloadermiddlewares/robotstxt.py` (modified, +10/-1)
 ```diff
-@@ -3,7 +3,8 @@
- import os
- from importlib.util import find_spec
- from pathlib import Path
--from typing import TYPE_CHECKING
-+from typing import TYPE_CHECKING, Any
-+from weakref import WeakSet
+@@ -205,7 +205,16 @@ async def robot_parser(self, request: Request) -> RobotParser | None:
+ 
+         parser = self._parsers[netloc]
+         if isinstance(parser, Deferred):
+-            return await maybe_deferred_to_future(parser)
++            # Every caller needs to get its own Deferred, so that awaiting or
++            # cancelling one doesn't affect others.
++            waiter: Deferred[RobotParser | None] = Deferred()
++
++            def cb(result: RobotParser | None) -> RobotParser | None:
++                waiter.callback(result)
++                return result
++
++            parser.addCallback(cb)
++            return await maybe_deferred_to_future(waiter)
+         return parser
+ 
+     async def _parse_robots(
+```
+
+**File**: `tests/test_downloadermiddleware_robotstxt.py` (modified, +43/-8)
+```diff
+@@ -5,7 +5,7 @@
+ from unittest import mock
  
  import pytest
- from twisted.web.http import H2_ENABLED
-@@ -15,8 +16,13 @@
- from tests.mockserver.http import MockServer
- from tests.mockserver.mitm_proxy import MitmProxy, mitmdump_cmd
+-from twisted.internet.defer import Deferred, DeferredList
++from twisted.internet.defer import CancelledError, Deferred, DeferredList
+ from twisted.python import failure
  
-+try:
-+    import aiohttp
-+except ImportError:
-+    aiohttp = None
-+
- if TYPE_CHECKING:
--    from collections.abc import Generator
-+    from collections.abc import Generator, Iterator
- 
- 
- def _py_files(folder):
-@@ -81,6 +87,55 @@ def fast_engine_heartbeat(monkeypatch: pytest.MonkeyPatch) -> None:
-     monkeypatch.setattr(ExecutionEngine, "_SLOT_HEARTBEAT_INTERVAL", 0.1)
- 
- 
-+_aiohttp_sessions: WeakSet[aiohttp.ClientSession] = WeakSet()
-+
-+
-+@pytest.fixture(autouse=True, scope="session")
-+def _track_aiohttp_sessions() -> Iterator[None]:
-+    if aiohttp is None:
-+        yield
-+        return
-+    original_init = aiohttp.ClientSession.__init__
-+
-+    def init(self: aiohttp.ClientSession, *args: Any, **kwargs: Any) -> None:
-+        original_init(self, *args, **kwargs)
-+        _aiohttp_sessions.add(self)
-+
-+    with pytest.MonkeyPatch.context() as monkeypatch:
-+        monkeypatch.setattr(aiohttp.ClientSession, "__init__", init)
-+        yield
-+
-+
-+@pytest.fixture(autouse=True)
-+def _fail_on_unclosed_aiohttp_session(
-+    caplog: pytest.LogCaptureFixture,
-+) -> Iterator[None]:
-+    """Fail the test that leaks an aiohttp ``ClientSession`` instead of a
-+    later, unrelated one.
-+
-+    A leaked session usually sits in a reference cycle with its crawler, so it
-+    is still alive at teardown and can be checked directly. One that was
-+    already collected during the test reported itself through
-+    ``ClientSession.__del__()``, which logs to the asyncio logger rather than
-+    through the warnings module. Under the ``none`` reactor, any test that
-+    downloads over HTTP or HTTPS can end up going through
-+    :class:`~scrapy.core.downloader.handlers._aiohttp.AiohttpDownloadHandler`,
-+    not only the tests that target it directly, so this runs for every test
-+    rather than a single module.
-+    """
-+    yield
-+    unclosed = [session for session in _aiohttp_sessions if not session.closed]
-+    _aiohttp_sessions.clear()
-+    reported = [
-+        record.message
-+        for when in ("setup", "call", "teardown")
-+        for record in caplog.get_records(when)
-+        if record.name == "asyncio" and "Unclosed" in record.message
-+    ]
-+    assert not unclosed
-+    assert not reported
-+
-+
- @pytest.fixture(scope="session")
- def mockserver() -> Generator[MockServer]:
-     with MockServer() as mockserver:
-```
-
-**File**: `tests/test_crawler_subprocess.py` (modified, +16/-14)
-```diff
-@@ -257,20 +257,22 @@ async def _test_shutdown_forced(self, script: str = "sleeping.py") -> None:
-         sig = signal.SIGINT if sys.platform != "win32" else signal.SIGBREAK  # type: ignore[attr-defined,unused-ignore]
-         args = self.get_script_args(script, "10")
-         p = PopenSpawn(args, timeout=SCRIPT_TIMEOUT, env=get_script_run_env())
--        p.expect_exact("Spider opened")
--        p.expect_exact("Crawled (200)")
--        p.kill(sig)
--        p.expect_exact("shutting down gracefully")
--        # Sending a new signal too fast often causes problems, e.g. on
--        # Windows, where signal delivery is slower and more variable than on
--        # POSIX.
--        await sleep(0.1)
--        p.kill(sig)
--        p.expect_exact("dropping downloader requests")
--        await sleep(0.1)
--        p.kill(sig)
--        p.expect_exact("forcing unclean shutdown", timeout=20)
--        stop_spawn(p)
-+        try:
-+            p.expect_exact("Spider opened")
-+            p.expect_exact("Crawled (200)")
-+            p.kill(sig)
-+            p.expect_exact("shutting down gracefully")
-+            # Sending a new signal too fast often causes problems, e.g. on
-+            # Windows, where signal delivery is slower and more variable than
-+            # on POSIX.
-+            await sleep(0.1)
-+            p.kill(sig)
-+            p.expect_exact("dropping downloader requests")
-+            await sleep(0.1)
-+            p.kill(sig)
-+            p.expect_exact("forcing unclean shutdown", timeout=20)
-+        finally:
-+            stop_spawn(p)
- 
-     @coroutine_test
-     async def test_shutdown_forced(self) -> None:
-```
-
----
-
-### Incident Patch 3: `bf89e759` (2026-10-16)
-**Commit Message**: Fix TestGCSFilesStore in non-UTC. (#8351)
-
-**File**: `tests/test_pipeline_files.py` (modified, +1/-1)
-```diff
-@@ -1473,7 +1473,7 @@ async def test_stat_checksum_algorithm(self) -> None:
-         stat = await maybe_deferred_to_future(
-             store.stat_file("full/filename", info=DUMMY_SPIDER_INFO)
+ from scrapy import Spider, signals
+@@ -14,7 +14,7 @@
+ from scrapy.http import Request, Response, TextResponse
+ from scrapy.http.request import NO_CALLBACK
+ from scrapy.settings import Settings
+-from scrapy.utils.asyncio import call_later
++from scrapy.utils.asyncio import call_later, sleep
+ from scrapy.utils.defer import deferred_from_coro, maybe_deferred_to_future
+ from scrapy.utils.misc import build_from_crawler
+ from scrapy.utils.test import get_crawler
+@@ -104,22 +104,57 @@ async def test_robotstxt_multiple_reqs(self) -> None:
+             RobotsTxtMiddleware, self._get_successful_crawler()
          )
--        assert stat == {"last_modified": time.mktime(updated.timetuple())}
-+        assert stat == {"last_modified": updated.timestamp()}
+         d1 = deferred_from_coro(
+-            middleware.process_request(Request("http://site.local/allowed1"))
++            self.assertNotIgnored(Request("http://site.local/allowed"), middleware)
+         )
+         d2 = deferred_from_coro(
+-            middleware.process_request(Request("http://site.local/allowed2"))
++            self.assertIgnored(Request("http://site.local/admin/main"), middleware)
++        )
++        d3 = deferred_from_coro(
++            self.assertIgnored(Request("http://site.local/static/"), middleware)
++        )
++        await maybe_deferred_to_future(
++            DeferredList([d1, d2, d3], fireOnOneErrback=True)
+         )
+-        await maybe_deferred_to_future(DeferredList([d1, d2], fireOnOneErrback=True))
+ 
+     @pytest.mark.only_asyncio
+     @coroutine_test
+     async def test_robotstxt_multiple_reqs_asyncio(self) -> None:
+         middleware = build_from_crawler(
+             RobotsTxtMiddleware, self._get_successful_crawler()
+         )
+-        c1 = middleware.process_request(Request("http://site.local/allowed1"))
+-        c2 = middleware.process_request(Request("http://site.local/allowed2"))
+-        await asyncio.gather(c1, c2)
++        await asyncio.gather(
++            self.assertNotIgnored(Request("http://site.local/allowed"), middleware),
++            self.assertIgnored(Request("http://site.local/admin/main"), middleware),
++            self.assertIgnored(Request("http://site.local/static/"), middleware),
++        )
++
++    @coroutine_test
++    async def test_robotstxt_multiple_reqs_cancelled(self) -> None:
++        """Cancelling one request doesn't affect others."""
++        self.crawler.settings.set("ROBOTSTXT_OBEY", True)
++        release: Deferred[None] = Deferred()
++
++        async def return_response(request: Request) -> Response:
++            await maybe_deferred_to_future(release)
++            return TextResponse(request.url, body=b"User-Agent: *\nDisallow: /admin/")
++
++        self.crawler.engine.download_async.side_effect = return_response
++        middleware = build_from_crawler(RobotsTxtMiddleware, self.crawler)
++        d1 = deferred_from_coro(
++            self.assertNotIgnored(Request("http://site.local/allowed"), middleware)
++        )
++        d2 = deferred_from_coro(
++            middleware.process_request(Request("http://site.local/admin/1"))
++        )
++        d3 = deferred_from_coro(
++            self.assertIgnored(Request("http://site.local/admin/2"), middleware)
++        )
++        await sleep(0)
++        d2.cancel()
++        with pytest.raises((CancelledError, asyncio.CancelledError)):
++            await maybe_deferred_to_future(d2)
++        release.callback(None)
++        await maybe_deferred_to_future(DeferredList([d1, d3], fireOnOneErrback=True))
  
      @coroutine_test
-     async def test_stat_missing_blob(self) -> None:
+     async def test_robotstxt_ready_parser(self):
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8372** (2026-10-19): Decouple queue tests from queuelib.tests. (@wRAR)
-- **PR #8371** (closed): Skip nested async functions when looking for generator returns (@DarkHater01)
-- **PR #8370** (closed): Give every request waiting for robots.txt the parsed parser (@HyperionBurn)
-- **PR #8369** (closed): Drop deprecated CONCURRENT_REQUESTS_PER_IP from the telnet console docs (@HyperionBurn)
-- **PR #8367** (2026-10-19): Remove remaining PyPy support. (@wRAR)
-- **PR #8366** (closed): Add Windows note about python -m scrapy to the tutorial (@GitMehdi-sys)
+- **PR #8392** (2026-10-22): Support async parse_node(), parse_row() and Rule errbacks. (@wRAR)
+- **PR #8391** (2026-10-22): Cleanup extra ensure_awaitable() calls. (@wRAR)
+- **PR #8390** (2026-10-22): Only follow alternate sitemap links (@ethancyyiu)
+- **PR #8389** (2026-10-21): Use a proper way to test a non-listening port. (@wRAR)
+- **PR #8388** (2026-10-21): Add delay tolerance to some tests. (@wRAR)
+- **PR #8387** (2026-10-21): codecov config improvements. (@wRAR)
 
 ---
 
@@ -2353,42 +2408,28 @@ Co-authored-by: Andrey Rakhmatullin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a CONNECTION_KEEPALIVE_TIMEOUT setting (#8342)
+## X. Add CONCURRENT_CONNECTIONS_PER_HANDLER and CONNECTION_KEEPALIVE_TIMEOUT (#7932)
 
 **RULE**:
-When implementing operations in `docs/topics/settings.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `conftest.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ecfbb77`: Add a CONNECTION_KEEPALIVE_TIMEOUT setting (#8342). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ee068e72`: Add CONCURRENT_CONNECTIONS_PER_HANDLER and CONNECTION_KEEPALIVE_TIMEOUT (#7932). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/topics/settings.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `conftest.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-.. setting:: CONNECTION_KEEPALIVE_TIMEOUT
-
-CONNECTION_KEEPALIVE_TIMEOUT
-----------------------------
-
-.. versionadded:: VERSION
-
-Default: ``240.0``
-
-How long, in seconds, a connection is kept open for reuse after the response it
-was serving is complete. Use ``0`` to close connections as soon as they become
-idle.
-
-Servers usually close idle connections earlier than this on their own.
-
+if find_spec("httpx2") is None:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+if find_spec("httpx2") is None and find_spec("httpx") is None:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ecfbb77` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ee068e72` are properly handled with clean fallback behavior.

@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "88d75cb0",
+    "sourceVersion": "69d1aac2",
     "license": "Apache-2.0",
-    "contentHash": "244bdffe3071b9fc5ac09708db2354683eb168893168844d27c6c4b79b295d80",
-    "lastHarvestedAt": "2026-10-20T23:17:27.288Z",
+    "contentHash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
+    "lastHarvestedAt": "2026-10-22T17:19:16.226Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "962197e2",
+    "sourceVersion": "4d372f02",
     "license": "BSD-3-Clause",
-    "contentHash": "58a30a83326bb5bc55ae8c7676218f6ed53a972aeb59995076d87ef32218d205",
-    "lastHarvestedAt": "2026-10-19T21:17:48.750Z",
+    "contentHash": "8b6f7bb172ff47036b65b49a39a02c95e78750795e27fcdca823885aeb1cdf1f",
+    "lastHarvestedAt": "2026-10-22T17:19:09.760Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

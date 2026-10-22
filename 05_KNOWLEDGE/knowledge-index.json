@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:12:36.656Z",
+  "last_updated": "2026-10-22T17:19:16.174Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38147,8 +38147,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "88d75cb0",
-      "content_hash": "244bdffe3071b9fc5ac09708db2354683eb168893168844d27c6c4b79b295d80",
+      "source_version": "69d1aac2",
+      "content_hash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -38181,6 +38181,11 @@
           "number": 3429,
           "title": "executor: add complete delta apply executor builder (#72127)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3658,
+          "title": "ddl: fix global index copies left or broken by reorganize partition (#72158)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38188,7 +38193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:17:27.212Z",
+      "verified_at": "2026-10-22T17:19:16.164Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60695,8 +60700,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "962197e2",
-      "content_hash": "58a30a83326bb5bc55ae8c7676218f6ed53a972aeb59995076d87ef32218d205",
+      "source_version": "4d372f02",
+      "content_hash": "8b6f7bb172ff47036b65b49a39a02c95e78750795e27fcdca823885aeb1cdf1f",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -60705,6 +60710,11 @@
           "number": 2816,
           "title": "Add a CONNECTION_KEEPALIVE_TIMEOUT setting (#8342)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3657,
+          "title": "Add CONCURRENT_CONNECTIONS_PER_HANDLER and CONNECTION_KEEPALIVE_TIMEOUT (#7932)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60712,7 +60722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:17:48.693Z",
+      "verified_at": "2026-10-22T17:19:09.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110390,6 +110400,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:12:36.644Z"
+    },
+    "rule-3657": {
+      "learning_id": "rule-3657",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3657,
+      "title": "Add CONCURRENT_CONNECTIONS_PER_HANDLER and CONNECTION_KEEPALIVE_TIMEOUT (#7932)",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "4d372f02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:19:09.687Z"
+    },
+    "rule-3658": {
+      "learning_id": "rule-3658",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3658,
+      "title": "ddl: fix global index copies left or broken by reorganize partition (#72158)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "69d1aac2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:19:16.164Z"
     }
   },
   "aliases": {

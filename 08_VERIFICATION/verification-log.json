@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-ZGT5",
-    "timestamp": "2026-10-20T14:25:25.721Z",
-    "repository": "software-mansion/react-native-gesture-handler",
-    "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-    "contentHash": "cd5378b6af2b4336aa2b5f99c19d4a89ff8a29b87d685eb4f80cd506d43ec115",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ZLTX",
-    "timestamp": "2026-10-20T14:25:32.229Z",
-    "repository": "smallstep/cli",
-    "learningId": "learn-github-smallstep-cli",
-    "contentHash": "5f8d5a221a5c3d4e9f499b3550b4f959606202fbc18948bbab82c9fd6ed43f15",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-ZMFV",
     "timestamp": "2026-10-20T14:25:33.019Z",
     "repository": "autotrust/JEV-35B-NVFP4",
@@ -7490,6 +7460,36 @@
     "repository": "herdrdev/herdr",
     "learningId": "learn-github-herdrdev-herdr",
     "contentHash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-2LDP",
+    "timestamp": "2026-10-22T17:19:09.757Z",
+    "repository": "scrapy/scrapy",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "8b6f7bb172ff47036b65b49a39a02c95e78750795e27fcdca823885aeb1cdf1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-2QDB",
+    "timestamp": "2026-10-22T17:19:16.223Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

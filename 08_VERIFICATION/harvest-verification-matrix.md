@@ -4345,3 +4345,5 @@
 | `CYCLE-20261022-K9CT` | `2026-10-22T17:04:54.365Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3654` | Yes (`86bb3962...`) |
 | `CYCLE-20261022-U5Z5` | `2026-10-22T17:12:36.545Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3655` | Yes (`61770392...`) |
 | `CYCLE-20261022-U63K` | `2026-10-22T17:12:36.704Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3656` | Yes (`dde2845d...`) |
+| `CYCLE-20261022-2LDP` | `2026-10-22T17:19:09.757Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3657` | Yes (`8b6f7bb1...`) |
+| `CYCLE-20261022-2QDB` | `2026-10-22T17:19:16.223Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3658` | Yes (`207e5036...`) |
