@@ -162,3 +162,19 @@ All rules codified in `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.
      5. Self-hosted `@font-face` CSS declarations in `src/styles/global.css`.
 3. **Dynamic Verification vs Hardcoded Invariants**:
    - Verification scripts must never hardcode asset counts (e.g. `catalog.length === 37`). Tests must dynamically validate that `catalog.length === registry.length`, assert that all local binaries and license files exist on disk, match cryptographic hashes, and verify 100% translation key coverage across all supported locales.
+
+---
+
+## 11. Batch 7: Controlled Publication of Next 10 Fonts (47 -> 57 Fonts)
+
+1. **Shortlist Defect Quarantine & Replacement Protocol**:
+   - Shortlisted candidates must never be assumed to have working URLs simply because they were recorded in historical ledgers.
+   - When an upstream endpoint returns HTTP 404 (e.g., `peter-wiegel.de/Klaber.html` or `ggbot.itch.io/gotfridus`), the candidate must be immediately quarantined in research staging. Guessing URLs or substituting unverified files is strictly forbidden.
+   - The queue safely promotes the next strongest verified Category A candidates (`Felipa`, `Yatra One`), preserving momentum without risking broken assets or legal liability.
+2. **Handling Non-OFL Open Licenses in Verification Suites**:
+   - Open-source fonts occasionally use non-OFL licenses (e.g., `Standard Blackletter` uses CC0-1.0 Universal with `LICENSE.md` rather than `OFL.txt`).
+   - Hardcoded assertions checking for `OFL.txt` will fail on CC0 or GPL-with-Font-Exception assets. Verification engines must dynamically read `info.licenseName || 'OFL.txt'` from the cryptographic ledger to support license diversity safely.
+3. **Multi-Language Build Scaling**:
+   - Scaling the catalogue from 47 to 57 fonts expanded the static page generation tree from 1,010 to **1,150 production HTML pages** across all 14 supported locales.
+   - Full TypeScript compile and Astro static build completed in 38.05s with 0 errors and 100% i18n parity.
+
