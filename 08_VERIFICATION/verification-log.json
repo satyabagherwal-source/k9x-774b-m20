@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-512E",
-    "timestamp": "2026-10-20T14:57:44.870Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "9bfdcd8b5a723f3461b75baf595cd82156e8aa820d63af1bc0ad7804dba30258",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-51BZ",
-    "timestamp": "2026-10-20T14:57:45.215Z",
-    "repository": "elastic/eui",
-    "learningId": "learn-github-elastic-eui",
-    "contentHash": "181381d0597000a4f48896d2214aa3916dd8a607d9bcb1d1f5a3216c6755be5a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-D35M",
-    "timestamp": "2026-10-20T15:04:00.826Z",
-    "repository": "dragonflyoss/dragonfly",
-    "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-D39A",
-    "timestamp": "2026-10-20T15:04:00.958Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "29a69396dbf3441a549561dce0547fb2c693225194844e97a9a0190b4a868912",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-L83O",
-    "timestamp": "2026-10-20T15:10:20.484Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "32dbef542dea7951e071f1de459ea78e838e556043a948d3fe11b7be36618bab",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-LEBT",
     "timestamp": "2026-10-20T15:10:28.553Z",
     "repository": "PeerDB-io/peerdb",
@@ -7490,6 +7415,81 @@
     "repository": "trufflesecurity/trufflehog",
     "learningId": "learn-github-trufflesecurity-trufflehog",
     "contentHash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-ZMTW",
+    "timestamp": "2026-10-22T17:44:51.284Z",
+    "repository": "lingui/js-lingui",
+    "learningId": "learn-github-lingui-js-lingui",
+    "contentHash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-ZQXL",
+    "timestamp": "2026-10-22T17:44:56.601Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-ZWQ6",
+    "timestamp": "2026-10-22T17:45:04.110Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "73625fce8abd27d89456e82a6e7941cafa7bc10181bf5faf7965d6e9d60b2816",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-ZYAV",
+    "timestamp": "2026-10-22T17:45:06.151Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "e0ab9c143bdc680640343623f10e7b610a51d1a6524016243446ce29252fac53",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-01YT",
+    "timestamp": "2026-10-22T17:45:10.901Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "7fc47718fd5a7edb351c10486ff0406a6496509e3fc6124640f43104af3745ab",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

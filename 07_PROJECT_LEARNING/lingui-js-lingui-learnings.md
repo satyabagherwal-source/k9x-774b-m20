@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source**: github ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
-> **Source Version**: `814929d3`  
+> **Source Version**: `ce5aa25b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:40:35.217Z  
+> **Timestamp**: 2026-10-22T17:44:50.955Z  
 > **Learning ID**: `learn-github-lingui-js-lingui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:40:35.210Z  
+> **Harvest Timestamp**: 2026-10-22T17:44:49.917Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌍 📖 A readable, automated, and optimized (2 kb) internationalization for JavaScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5921 stars
+- **Stars / Engagement**: 5923 stars
 
 ---
 
@@ -780,515 +780,488 @@ export function makePathRegexSafe(path: string) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `814929d3` (2026-10-20)
-**Commit Message**: chore(examples): migrate react-webpack-gettext example to lingui v6 (#2734)
+### Incident Patch 1: `bfa5b76d` (2026-10-22)
+**Commit Message**: perf(vite-plugin): resolve catalogs once per build instead of on every catalog import (#2737)
 
-**File**: `examples/react-webpack-gettext/lingui.config.js` (modified, +3/-5)
+**File**: `packages/vite-plugin/src/index.ts` (modified, +39/-2)
 ```diff
-@@ -1,7 +1,7 @@
--/** @type {import('@lingui/conf').LinguiConfig} */
-+import { defineConfig } from "@lingui/cli"
- import { formatter } from "@lingui/format-po-gettext"
+@@ -62,6 +62,11 @@ export function lingui({
+ }: LinguiPluginOpts = {}): Plugin[] {
+   let config: LinguiConfigNormalized
  
--const config = {
++  // `getCatalogs()` globs the file system on every call (`{name}` catalogs and
++  // `experimental.extractor.entries`), so it's resolved once and shared by all
++  // catalog modules. Reset on `buildStart` and `watchChange`.
++  let catalogs: ReturnType<typeof getCatalogs> | undefined
++
+   let nativeTools: typeof import("@lingui/native-tools")
+ 
+   const getOrLoadConfig = () => {
+@@ -71,6 +76,26 @@ export function lingui({
+     return config
+   }
+ 
++  const getOrLoadCatalogs = () => {
++    if (!catalogs) {
++      const pending: ReturnType<typeof getCatalogs> = getCatalogs(config).catch(
++        (error) => {
++          // don't cache a failure, the next catalog module will retry
++          if (catalogs === pending) {
++            catalogs = undefined
++          }
++          throw error
++        },
++      )
++      catalogs = pending
++    }
++    return catalogs
++  }
++
++  const resetCatalogs = () => {
++    catalogs = undefined
++  }
++
+   const plugins: Plugin[] = [
+     {
+       name: "vite-plugin-lingui-get-config",
+@@ -125,6 +150,8 @@ export function lingui({
+ 
+   plugins.push({
+     name: "vite-plugin-lingui-load-catalog",
++    buildStart: resetCatalogs,
++    watchChange: resetCatalogs,
+     transform: {
+       filter: {
+         id: fileRegex,
+@@ -139,11 +166,21 @@ export function lingui({
+ 
+         const catalogRelativePath = path.relative(config.rootDir, id)
+ 
+-        const fileCatalog = getCatalogForFile(
++        let fileCatalog = getCatalogForFile(
+           catalogRelativePath,
+-          await getCatalogs(config),
++          await getOrLoadCatalogs(),
+         )
+ 
++        if (!fileCatalog) {
++          // The catalog may have been created after the list was cached
++          // without a `watchChange` reaching this plugin, so check a fresh list
++          resetCatalogs()
++          fileCatalog = getCatalogForFile(
++            catalogRelativePath,
++            await getOrLoadCatalogs(),
++          )
++        }
++
+         if (!fileCatalog) {
+           throw new Error(
+             `Requested resource ${catalogRelativePath} is not matched to any of your catalogs paths specified in "lingui.config".
+```
+
+**File**: `packages/vite-plugin/test/__snapshots__/vite-plugin.test.ts.snap` (modified, +35/-0)
+```diff
+@@ -1,5 +1,40 @@
+ // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+ 
++exports[`vite-plugin > catalogs resolution > should resolve catalogs once per build regardless of the number of imported catalogs 1`] = `
++{
++  "./components/button/locale/en.po": {
++    "_j9z93": [
++      "Click me",
++    ],
++  },
++  "./components/button/locale/pl.po": {
++    "_j9z93": [
++      "Kliknij mnie",
++    ],
++  },
++  "./pages/locales/about/en.po": {
++    "-mNwru": [
++      "About us",
++    ],
++  },
++  "./pages/locales/about/pl.po": {
++    "-mNwru": [
++      "O nas",
++    ],
++  },
++  "./pages/locales/home/en.po": {
++    "U85IAq": [
++      "Welcome home",
++    ],
++  },
++  "./pages/locales/home/pl.po": {
++    "U85IAq": [
++      "Witaj w domu",
++    ],
++  },
++}
++`;
++
+ exports[`vite-plugin > should correctly process with native transformer - PRODUCTION 1`] = `"l1LkPs"`;
+ 
+ exports[`vite-plugin > should correctly process with native transformer 1`] = `"Ola"`;
+```
+
+**File**: `packages/vite-plugin/test/multiple-catalogs/components/button/index.js` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++export default function Button() {}
+```
+
+**File**: `packages/vite-plugin/test/multiple-catalogs/components/button/locale/en.po` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++msgid ""
++msgstr ""
++"Language: en\n"
++
++msgid "Click me"
++msgstr "Click me"
+```
+
+**File**: `packages/vite-plugin/test/multiple-catalogs/components/button/locale/pl.po` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++msgid ""
++msgstr ""
++"Language: pl\n"
++
++msgid "Click me"
++msgstr "Kliknij mnie"
+```
+
+**File**: `packages/vite-plugin/test/multiple-catalogs/entrypoint.js` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++// Lazy per-entry catalogs: every locale of every catalog is a separate module
++const catalogs = import.meta.glob([
++  "./pages/locales/*/*.po",
++  "./components/*/locale/*.po",
++])
++
++export async function load() {
++  const result = {}
++
++  for (const file of Object.keys(catalogs).sort()) {
++    result[file] = (await catalogs[file]()).messages
++  }
++
++  return result
++}
+```
+
+**File**: `packages/vite-plugin/test/multiple-catalogs/lingui.config.js` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++import { defineConfig } from "@lingui/cli"
++
 +export default defineConfig({
-   locales: ["en", "cs"],
-   sourceLocale: "en",
-   catalogs: [
-@@ -17,6 +17,4 @@ const config = {
-     printPlaceholdersInComments: false,
-   }),
-   compileNamespace: "json",
--}
--
--export default config
++  locales: ["en", "pl"],
++  sourceLocale: "en",
++  catalogs: [
++    {
++      path: "<rootDir>/components/{name}/locale/{locale}",
++      include: ["<rootDir>/components/{name}"],
++    },
++  ],
++  experimental: {
++    extractor: {
++      entries: ["<rootDir>/pages/*.js"],
++      output: "<rootDir>/{entryDir}/locales/{entryName}/{locale}",
++    },
++  },
 +})
 ```
 
-**File**: `examples/react-webpack-gettext/package.json` (modified, +6/-6)
+**File**: `packages/vite-plugin/test/multiple-catalogs/pages/about.js` (added, +1/-0)
 ```diff
-@@ -11,8 +11,8 @@
-     "compile": "lingui compile"
-   },
-   "dependencies": {
--    "@lingui/core": "^5.2.0",
--    "@lingui/react": "^5.2.0",
-+    "@lingui/core": "^6.10.0",
-+    "@lingui/react": "^6.10.0",
-     "react": "^18.2.0",
-     "react-dom": "^18.2.0"
-   },
-@@ -21,17 +21,17 @@
-     "@babel/preset-env": "^7.22.0",
-     "@babel/preset-react": "^7.22.0",
-     "@babel/preset-typescript": "^7.22.0",
--    "@lingui/babel-plugin-lingui-macro": "^5.2.0",
--    "@lingui/cli": "^5.2.0",
--    "@lingui/format-po-gettext": "^5.2.0",
-+    "@lingui/babel-plugin-lingui-macro": "^6.10.0",
-+    "@lingui/cli": "^6.10.0",
-+    "@lingui/format-po-gettext": "^6.10.0",
-     "@types/react": "^18.0.28",
-     "@types/react-dom": "^18.0.11",
-     "babel-loader": "^9.1.0",
-     "copy-webpack-plugin": "^11.0.0",
-     "css-loader": "^6.8.0",
-     "html-webpack-plugin": "^5.5.0",
-     "style-loader": "^3.3.0",
--    "typescript": "^4.9.5",
-+    "typescript": "^5.9.3",
-     "webpack": "^5.88.0",
-     "webpack-cli": "^5.1.0",
-     "webpack-dev-server": "^4.15.0"
+@@ -0,0 +1 @@
++export default function About() {}
 ```
 
-**File**: `examples/react-webpack-gettext/src/App.tsx` (modified, +18/-6)
+---
+
+### Incident Patch 2: `9acef0bc` (2026-10-21)
+**Commit Message**: fix(metro-transformer): forward getCacheKey from the wrapped transformer (#2736)
+
+**File**: `packages/metro-transformer/src/expo/index.ts` (modified, +2/-1)
 ```diff
-@@ -1,4 +1,4 @@
--import React, { useState } from "react"
-+import React, { useMemo, useState } from "react"
- import { Trans, Plural } from "@lingui/react/macro"
- import { locales, dynamicActivate } from "./i18n"
- import { useLingui } from "@lingui/react"
-@@ -9,6 +9,19 @@ function App() {
-   const [count, setCount] = useState(0)
-   const { i18n } = useLingui()
+@@ -4,4 +4,5 @@ import { createLinguiMetroTransformer } from "../metroTransformer"
+ // eslint-disable-next-line import/no-unresolved
+ import expoTransformer from "@expo/metro-config/babel-transformer"
  
-+  const dateFormatter = useMemo(
-+    () => new Intl.DateTimeFormat(i18n.locale),
-+    [i18n.locale],
+-export const transform = createLinguiMetroTransformer(expoTransformer)
++export const { transform, getCacheKey } =
++  createLinguiMetroTransformer(expoTransformer)
+```
+
+**File**: `packages/metro-transformer/src/metroTransformer.ts` (modified, +18/-10)
+```diff
+@@ -7,19 +7,27 @@ import {
+ import type { BabelTransformer, BabelTransformerArgs } from "./types"
+ import path from "path"
+ import memoizeOne from "memoize-one"
++import { version } from "../package.json"
++
++// a new @lingui/cli version can compile catalogs differently
++const CACHE_KEY_SALT = `@lingui/metro-transformer@${version}`
+ 
+ export const createLinguiMetroTransformer = (
+   upstreamTransformer: BabelTransformer,
+-): BabelTransformer["transform"] => {
+-  return async function linguiMetroTransformer(params) {
+-    if (!params.filename.endsWith(".po")) {
+-      return upstreamTransformer.transform(params)
+-    }
+-    const jsSource = await transformFile(params)
+-    return upstreamTransformer.transform({
+-      ...params,
+-      src: jsSource,
+-    })
++): Required<BabelTransformer> => {
++  return {
++    transform: async function linguiMetroTransformer(params) {
++      if (!params.filename.endsWith(".po")) {
++        return upstreamTransformer.transform(params)
++      }
++      const jsSource = await transformFile(params)
++      return upstreamTransformer.transform({
++        ...params,
++        src: jsSource,
++      })
++    },
++    getCacheKey: (args) =>
++      `${upstreamTransformer.getCacheKey?.(args) ?? ""}$${CACHE_KEY_SALT}`,
+   }
+ }
+ 
+```
+
+**File**: `packages/metro-transformer/src/react-native/index.ts` (modified, +3/-1)
+```diff
+@@ -4,4 +4,6 @@ import { createLinguiMetroTransformer } from "../metroTransformer"
+ // eslint-disable-next-line import/no-unresolved
+ import reactNativeTransformer from "@react-native/metro-babel-transformer"
+ 
+-export const transform = createLinguiMetroTransformer(reactNativeTransformer)
++export const { transform, getCacheKey } = createLinguiMetroTransformer(
++  reactNativeTransformer,
++)
+```
+
+**File**: `packages/metro-transformer/src/types.ts` (modified, +10/-1)
+```diff
+@@ -8,10 +8,19 @@ export type BabelTransformerArgs = {
+   readonly src: string
+ }
+ 
++// Metro's published types declare `getCacheKey` as zero-argument, but the call sites pass options:
++// https://github.com/facebook/metro/blob/b71015ef83904e7086342ddb72205b7242dcd129/packages/metro-transform-worker/src/index.js#L741-L746
++// https://github.com/expo/expo/blob/7a6f6ce1e31314ed4c6811147afb6749306dfc8a/packages/%40expo/metro-config/src/transform-worker/metro-transform-worker.ts#L1147-L1154
++export type BabelTransformerCacheKeyArgs = {
++  readonly projectRoot?: string
++  readonly enableBabelRCLookup?: boolean
++  readonly extendsBabelConfigPath?: string
++}
++
+ export type BabelTransformer = {
+   transform: (args: BabelTransformerArgs) => Promise<{
+     ast: unknown
+     metadata: unknown
+   }>
+-  getCacheKey?: () => string
++  getCacheKey?: (args?: BabelTransformerCacheKeyArgs) => string
+ }
+```
+
+**File**: `packages/metro-transformer/test/__mocks__/upstreamTransformer.ts` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++import type { BabelTransformer } from "../../src/types"
++
++const upstreamTransformer: BabelTransformer = {
++  transform: async () => ({ ast: null, metadata: null }),
++  getCacheKey: () => "upstream-key",
++}
++
++export default upstreamTransformer
+```
+
+**File**: `packages/metro-transformer/test/metroTransformer.test.ts` (modified, +114/-1)
+```diff
+@@ -1,5 +1,13 @@
+ import path from "path"
+-import { transformFile } from "../src/metroTransformer"
++import {
++  createLinguiMetroTransformer,
++  transformFile,
++} from "../src/metroTransformer"
++import type {
++  BabelTransformer,
++  BabelTransformerCacheKeyArgs,
++} from "../src/types"
++import { version } from "../package.json"
+ 
+ describe("Lingui Metro transformer tests", () => {
+   const priorEnv = process.env.LINGUI_CONFIG
+@@ -70,4 +78,109 @@ describe("Lingui Metro transformer tests", () => {
+       }),
+     ).rejects.toThrow(/is not matched to any of your catalogs paths/)
+   })
++
++  it("should hand non-PO files to the upstream transformer untouched", async () => {
++    const transform = vi.fn(async () => ({ ast: null, metadata: null }))
++    const transformer = createLinguiMetroTransformer({ transform })
++    const params = {
++      filename: "src/index.ts",
++      options: {},
++      src: "export const answer = 42",
++    }
++
++    await transformer.transform(params)
++
++    expect(transform).toHaveBeenCalledWith(params)
++  })
++
++  it("should compile PO files and hand the compiled catalog to the upstream transformer", async () => {
++    const transform = vi.fn(async () => ({ ast: null, metadata: null }))
++    const transformer = createLinguiMetroTransformer({ transform })
++    const filename = path.relative(
++      testProjectDir,
++      path.join(catalogsDir, "en", "messages.po"),
++    )
++
++    await transformer.transform({
++      filename,
++      options: {},
++      src: 'msgid "Cancel"\nmsgstr "Cancel"\n',
++    })
++
++    expect(transform).toHaveBeenCalledWith({
++      filename,
++      options: {},
++      src: await transformFile({ filename }),
++    })
++  })
++})
++
++describe("Lingui Metro transformer cache key", () => {
++  const createUpstreamTransformer = (
++    getCacheKey?: BabelTransformer["getCacheKey"],
++  ): BabelTransformer => ({
++    transform: async () => ({ ast: null, metadata: null }),
++    getCacheKey,
++  })
++
++  it("should derive the key from the upstream key and this package's version", () => {
++    const transformer = createLinguiMetroTransformer(
++      createUpstreamTransformer(() => "upstream-key"),
++    )
++
++    expect(transformer.getCacheKey()).toBe(
++      `upstream-key$@lingui/metro-transformer@${version}`,
++    )
++  })
++
++  it("should change when the upstream key changes, so babel config edits invalidate the cache", () => {
++    let upstreamKey = "upstream-key"
++    const transformer = createLinguiMetroTransformer(
++      createUpstreamTransformer(() => upstreamKey),
++    )
++
++    const before = transformer.getCacheKey()
++    upstreamKey = "upstream-key-after-babel-config-edit"
++
++    expect(transformer.getCacheKey()).not.toBe(before)
++  })
++
++  it("should forward its arguments, which Expo needs to derive a key at all", () => {
++    const getCacheKey = vi.fn(
++      (args?: BabelTransformerCacheKeyArgs) => args?.projectRoot ?? "",
++    )
++    const transformer = createLinguiMetroTransformer(
++      createUpstreamTransformer(getCacheKey),
++    )
++
++    const key = transformer.getCacheKey({ projectRoot: "/some/project" })
++
++    expect(getCacheKey).toHaveBeenCalledWith({ projectRoot: "/some/project" })
++    expect(key).not.toBe(transformer.getCacheKey({ projectRoot: "/other" }))
++  })
++
++  it("should still produce a key when the upstream transformer has none", () => {
++    const transformer = createLinguiMetroTransformer(
++      createUpstreamTransformer(),
++    )
++
++    expect(transformer.getCacheKey()).toBe(
++      `$@lingui/metro-transformer@${version}`,
++    )
++  })
++})
++
++describe("Lingui Metro transformer entrypoints", () => {
++  it.for(["../src/expo", "../src/react-native"])(
++    "%s should export both transform and getCacheKey",
++    async (entrypoint) => {
++      const transformer = await import(entrypoint)
++
++      expect(typeof transformer.transform).toBe("function")
++      expect(typeof transformer.getCacheKey).toBe("function")
++      expect(transformer.getCacheKey()).toBe(
++        `upstream-key$@lingui/metro-transformer@${version}`,
++      )
++    },
 +  )
-+  const currencyFormatter = useMemo(
-+    () =>
-+      new Intl.NumberFormat(i18n.locale, {
-+        style: "currency",
-+        currency: "EUR",
-+      }),
-+    [i18n.locale],
-+  )
-+
-   return (
-     <div className="App">
-       <header className="App-header">
-@@ -20,7 +33,7 @@ function App() {
-         <h1>
-           <Trans>React Webpack Po-Gettext Example</Trans>
-         </h1>
--        
-+
-         <h3>
-           <Trans>Language switcher example:</Trans>
-         </h3>
-@@ -47,7 +60,7 @@ function App() {
-             <Trans>Decrement</Trans>
-           </button>
-         </div>
--        
-+
-         <div>
-           <Plural
-             value={count}
-@@ -67,16 +80,15 @@ function App() {
-           <Trans>Date formatter example:</Trans>
-         </h3>
-         <div>
--          <Trans>Today is {i18n.date(new Date(), {})}</Trans>
-+          <Trans>Today is {dateFormatter.format(new Date())}</Trans>
-         </div>
- 
-         <h3>
-           <Trans>Number formatter example:</Trans>
-         </h3>
-         <div>
-           <Trans>
--            I have a balance of{" "}
--            {i18n.number(1_000_000, { style: "currency", currency: "EUR" })}
-+            I have a balance of {currencyFormatter.format(1_000_000)}
-           </Trans>
-         </div>
-       </header>
+ })
 ```
 
-**File**: `examples/react-webpack-gettext/src/locales/cs.json` (modified, +1/-1)
+**File**: `packages/metro-transformer/tsconfig.json` (modified, +1/-0)
 ```diff
-@@ -1 +1 @@
--{"messages":{"1sDaZ6":[["count","plural",{"one":["jedna kniha"],"few":["nula knih"],"other":["mnoho knih"]}]],"2aJT27":["Dnes je ",["0"]],"IM9nhj":["Mám zůstatek ",["0"]],"JvTdAL":["Úbytek"],"ZXBDaP":["Příklad přepínače jazyků:"],"Zk/eXS":["Příklad formátovače čísel:"],"dw5/c3":["Příklad množného čísla:"],"kdkZBD":["Přírůstek"],"r3hQGU":[["count","plural",{"one":["Je tu jedna kniha"],"few":["Nejsou žádné knihy"],"other":["Existuje ","#"," knih"]}]],"r7eO9I":["Příklad formátovače data:"],"zy5RIa":["Příklad React Webpacku Po-Gettext"]}}
-\ No newline at end of file
-+{"messages":{"1sDaZ6":[["count","plural",{"one":["jedna kniha"],"few":["nula knih"],"other":["mnoho knih"]}]],"2aJT27":["Dnes je ",["0"]],"IM9nhj":["Mám zůstatek ",["0"]],"JvTdAL":["Úbytek"],"ZXBDaP":["Příklad přepínače jazyků:"],"Zk_eXS":["Příklad formátovače čísel:"],"dw5_c3":["Příklad množného čísla:"],"kdkZBD":["Přírůstek"],"r3hQGU":[["count","plural",{"one":["Je tu jedna kniha"],"few":["Nejsou žádné knihy"],"other":["Existuje ","#"," knih"]}]],"r7eO9I":["Příklad formátovače data:"],"zy5RIa":["Příklad React Webpacku Po-Gettext"]}}
-\ No newline at end of file
-```
-
-**File**: `examples/react-webpack-gettext/src/locales/cs.po` (modified, +11/-11)
-```diff
-@@ -14,53 +14,53 @@ msgstr ""
- "Plural-Forms: \n"
- 
- #. js-lingui:icu=%7Bcount%2C+plural%2C+one+%7Bone+book%7D+other+%7Bmany+books%7D%7D&pluralize_on=count
--#: src/App.tsx:60
-+#: src/App.tsx:73
- msgid "one book"
- msgid_plural "many books"
- msgstr[0] "jedna kniha"
- msgstr[1] "nula knih"
- msgstr[2] "mnoho knih"
- 
- #. js-lingui:icu=%7Bcount%2C+plural%2C+one+%7BThere%27s+one+book%7D+other+%7BThere+are+%23+books%7D%7D&pluralize_on=count
--#: src/App.tsx:52
-+#: src/App.tsx:65
- msgid "There's one book"
- msgid_plural "There are # books"
- msgstr[0] "Je tu jedna kniha"
- msgstr[1] "Nejsou žádné knihy"
- msgstr[2] "Existuje # knih"
- 
--#: src/App.tsx:67
-+#: src/App.tsx:80
- msgid "Date formatter example:"
- msgstr "Příklad formátovače data:"
- 
--#: src/App.tsx:47
-+#: src/App.tsx:60
- msgid "Decrement"
- msgstr "Úbytek"
- 
--#: src/App.tsx:77
-+#: src/App.tsx:90
- msgid "I have a balance of {0}"
- msgstr "Mám zůstatek {0}"
- 
--#: src/App.tsx:44
-+#: src/App.tsx:57
- msgid "Increment"
- msgstr "Přírůstek"
- 
--#: src/App.tsx:25
-+#: src/App.tsx:38
- msgid "Language switcher example:"
- msgstr "Příklad přepínače jazyků:"
- 
--#: src/App.tsx:74
-+#: src/App.tsx:87
- msgid "Number formatter example:"
- msgstr "Příklad formátovače čísel:"
- 
--#: src/App.tsx:40
-+#: src/App.tsx:53
- msgid "Plurals example:"
- msgstr "Příklad množného čísla:"
- 
--#: src/App.tsx:21
-+#: src/App.tsx:34
- msgid "React Webpack Po-Gettext Example"
- msgstr "Příklad React Webpacku Po-Gettext"
- 
--#: src/App.tsx:70
-+#: src/App.tsx:83
- msgid "Today is {0}"
- msgstr "Dnes je {0}"
-```
-
-**File**: `examples/react-webpack-gettext/src/locales/en.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"messages":{"1sDaZ6":[["count","plural",{"one":["one book"],"other":["many books"]}]],"2aJT27":["Today is ",["0"]],"IM9nhj":["I have a balance of ",["0"]],"JvTdAL":["Decrement"],"ZXBDaP":["Language switcher example:"],"Zk/eXS":["Number formatter example:"],"dw5/c3":["Plurals example:"],"kdkZBD":["Increment"],"r3hQGU":[["count","plural",{"one":["There's one book"],"other":["There are ","#"," books"]}]],"r7eO9I":["Date formatter example:"],"zy5RIa":["React Webpack Po-Gettext Example"]}}
-\ No newline at end of file
-+{"messages":{"1sDaZ6":[["count","plural",{"one":["one book"],"other":["many books"]}]],"2aJT27":["Today is ",["0"]],"IM9nhj":["I have a balance of ",["0"]],"JvTdAL":["Decrement"],"ZXBDaP":["Language switcher example:"],"Zk_eXS":["Number formatter example:"],"dw5_c3":["Plurals example:"],"kdkZBD":["Increment"],"r3hQGU":[["count","plural",{"one":["There's one book"],"other":["There are ","#"," books"]}]],"r7eO9I":["Date formatter example:"],"zy5RIa":["React Webpack Po-Gettext Example"]}}
-\ No newline at end of file
-```
-
-**File**: `examples/react-webpack-gettext/src/locales/en.po` (modified, +11/-11)
-```diff
-@@ -14,51 +14,51 @@ msgstr ""
- "Plural-Forms: \n"
- 
- #. js-lingui:icu=%7Bcount%2C+plural%2C+one+%7Bone+book%7D+other+%7Bmany+books%7D%7D&pluralize_on=count
--#: src/App.tsx:60
-+#: src/App.tsx:73
- msgid "one book"
- msgid_plural "many books"
- msgstr[0] "one book"
- msgstr[1] "many books"
- 
- #. js-lingui:icu=%7Bcount%2C+plural%2C+one+%7BThere%27s+one+book%7D+other+%7BThere+are+%23+books%7D%7D&pluralize_on=count
--#: src/App.tsx:52
-+#: src/App.tsx:65
- msgid "There's one book"
- msgid_plural "There are # books"
- msgstr[0] "There's one book"
- msgstr[1] "There are # books"
- 
--#: src/App.tsx:67
-+#: src/App.tsx:80
- msgid "Date formatter example:"
- msgstr "Date formatter example:"
- 
--#: src/App.tsx:47
-+#: src/App.tsx:60
- msgid "Decrement"
- msgstr "Decrement"
- 
--#: src/App.tsx:77
-+#: src/App.tsx:90
- msgid "I have a balance of {0}"
- msgstr "I have a balance of {0}"
- 
--#: src/App.tsx:44
-+#: src/App.tsx:57
- msgid "Increment"
- msgstr "Increment"
- 
--#: src/App.tsx:25
-+#: src/App.tsx:38
- msgid "Language switcher example:"
- msgstr "Language switcher example:"
- 
--#: src/App.tsx:74
-+#: src/App.tsx:87
- msgid "Number formatter example:"
- msgstr "Number formatter example:"
- 
--#: src/App.tsx:40
-+#: src/App.tsx:53
- msgid "Plurals example:"
- msgstr "Plurals example:"
- 
--#: src/App.tsx:21
-+#: src/App.tsx:34
- msgid "React Webpack Po-Gettext Example"
- msgstr "React Webpack Po-Gettext Example"
- 
--#: src/App.tsx:70
-+#: src/App.tsx:83
- msgid "Today is {0}"
- msgstr "Today is {0}"
-```
-
-**File**: `examples/react-webpack-gettext/tsconfig.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-     "forceConsistentCasingInFileNames": true,
-     "noFallthroughCasesInSwitch": true,
+@@ -3,6 +3,7 @@
      "module": "esnext",
--    "moduleResolution": "node",
-+    "moduleResolution": "bundler",
-     "resolveJsonModule": true,
-     "isolatedModules": true,
+     "moduleResolution": "bundler",
+     "esModuleInterop": true,
++    "resolveJsonModule": true,
+     "strict": true,
+     "noUncheckedIndexedAccess": true,
      "noEmit": true,
 ```
 
----
-
-### Incident Patch 2: `735036ef` (2026-10-20)
-**Commit Message**: fix(detect-locale): read subdomains from the host only and return null for missing segments (#2733)
-
-**File**: `packages/detect-locale/src/detectors/fromPath.test.ts` (modified, +8/-0)
+**File**: `packages/metro-transformer/vitest.config.ts` (modified, +13/-0)
 ```diff
-@@ -8,4 +8,12 @@ describe("fromPath detector", () => {
+@@ -1,7 +1,20 @@
++import path from "path"
+ import { defineProject } from "vitest/config"
  
-     expect(fromPath(0, mockedLocation)).toEqual("fr")
-   })
++// the upstream transformers are optional peer deps and aren't installed here
++const upstreamTransformerStub = path.join(
++  import.meta.dirname,
++  "test",
++  "__mocks__",
++  "upstreamTransformer.ts",
++)
 +
-+  it("should find a locale on a deeper index", () => {
-+    expect(fromPath(1, { pathname: "/app/fr/some/route" })).toEqual("fr")
-+  })
-+
-+  it("should return null when the path has no segment at the given index", () => {
-+    expect(fromPath(1, { pathname: "/" })).toBeNull()
-+  })
+ export default defineProject({
+   test: {
+     globals: true,
++    alias: {
++      "@expo/metro-config/babel-transformer": upstreamTransformerStub,
++      "@react-native/metro-babel-transformer": upstreamTransformerStub,
++    },
+   },
  })
-```
-
-**File**: `packages/detect-locale/src/detectors/fromPath.ts` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ export default function detectFromPath(
-   location: Partial<Location> = globalThis.location,
- ): LocaleString {
-   const locale: RegExpMatchArray = location.pathname.match(/\/([a-zA-Z-]*)/g)
--  if (Array.isArray(locale)) {
-+  if (Array.isArray(locale) && locale[localePathIndex]) {
-     return locale[localePathIndex].replace("/", "")
-   }
- 
-```
-
-**File**: `packages/detect-locale/src/detectors/fromSubdomain.test.ts` (modified, +24/-0)
-```diff
-@@ -8,4 +8,28 @@ describe("fromSubdomain detector", () => {
- 
-     expect(fromSubdomain(0, mockedLocation)).toEqual("es")
-   })
-+
-+  it("should find a locale on a deeper subdomain index", () => {
-+    const mockedLocation: Partial<Location> = {
-+      href: "https://www.es.example.co.uk/",
-+    }
-+
-+    expect(fromSubdomain(1, mockedLocation)).toEqual("es")
-+  })
-+
-+  it("should only look at the host, not at dots in the path or query", () => {
-+    expect(
-+      fromSubdomain(0, { href: "https://example.com/files/report.v2.pdf" }),
-+    ).toBeNull()
-+    expect(
-+      fromSubdomain(0, { href: "https://example.com/?version=1.22.333" }),
-+    ).toBeNull()
-+    expect(
-+      fromSubdomain(0, { href: "https://es.example.com/files/report.v2.pdf" }),
-+    ).toEqual("es")
-+  })
-+
-+  it("should return null when there is no subdomain at the given index", () => {
-+    expect(fromSubdomain(1, { href: "https://es.url.com/" })).toBeNull()
-+  })
- })
-```
-
-**File**: `packages/detect-locale/src/detectors/fromSubdomain.ts` (modified, +11/-8)
-```diff
-@@ -4,14 +4,17 @@ export default function detectFromSubdomain(
-   localeSubdomainIndex: number,
-   location: Partial<Location> = globalThis.location,
- ): LocaleString {
--  const locale: RegExpMatchArray = location.href.match(
--    /(?:http[s]*:\/\/)*(.*?)\.(?=[^/]*\..{2,5})/gi,
--  )
--  if (Array.isArray(locale)) {
--    return locale[localeSubdomainIndex]
--      .replace("http://", "")
--      .replace("https://", "")
--      .replace(".", "")
-+  // Only the host can contain subdomains. Dots in the path or query string
-+  // (e.g. "/files/report.v2.pdf") must not be treated as subdomain separators.
-+  const host = location.href
-+    .replace(/^[a-z][a-z\d+.-]*:\/\//i, "")
-+    .split(/[/?#]/)[0]
-+    .replace(/^.*@/, "")
-+    .replace(/:\d*$/, "")
-+
-+  const locale: RegExpMatchArray = host.match(/(.*?)\.(?=.*\..{2,5})/g)
-+  if (Array.isArray(locale) && locale[localeSubdomainIndex]) {
-+    return locale[localeSubdomainIndex].replace(".", "")
-   }
- 
-   return null
-```
-
----
-
-### Incident Patch 3: `18123cf0` (2026-10-20)
-**Commit Message**: fix(format-po-gettext): respect explicitIdAsDefault when serializing (#2727)
-
-**File**: `packages/format-po-gettext/src/__snapshots__/po-gettext.test.ts.snap` (modified, +31/-0)
-```diff
-@@ -102,6 +102,37 @@ exports[`po-gettext format > convertPluralsToIco handle correctly locales with 4
- }
- `;
- 
-+exports[`po-gettext format > explicitIdAsDefault > should convert plurals for both explicit and generated ids 1`] = `
-+"msgid ""
-+msgstr ""
-+"POT-Creation-Date: 2018-08-27 10:00+0000\\n"
-+"MIME-Version: 1.0\\n"
-+"Content-Type: text/plain; charset=utf-8\\n"
-+"Content-Transfer-Encoding: 8bit\\n"
-+"X-Generator: @lingui/cli\\n"
-+"Language: en\\n"
-+"Project-Id-Version: \\n"
-+"Report-Msgid-Bugs-To: \\n"
-+"PO-Revision-Date: \\n"
-+"Last-Translator: \\n"
-+"Language-Team: \\n"
-+"Plural-Forms: \\n"
-+
-+#. js-lingui:pluralize_on=count
-+msgid "cart.items"
-+msgid_plural "cart.items_plural"
-+msgstr[0] "# item"
-+msgstr[1] "# items"
-+
-+#. js-lingui-generated-id
-+#. js-lingui:icu=%7Bcount%2C+plural%2C+one+%7B%23+file%7D+other+%7B%23+files%7D%7D&pluralize_on=count
-+msgid "# file"
-+msgid_plural "# files"
-+msgstr[0] "# file"
-+msgstr[1] "# files"
-+"
-+`;
-+
- exports[`po-gettext format > foldLength > should fold at custom length 1`] = `
- "msgid ""
- msgstr ""
-```
-
-**File**: `packages/format-po-gettext/src/po-gettext.test.ts` (modified, +31/-0)
-```diff
-@@ -604,6 +604,37 @@ msgstr[3] "# dní"
-     })
-   })
- 
-+  describe("explicitIdAsDefault", () => {
-+    const format = createFormat({ explicitIdAsDefault: true })
-+
-+    const catalog: CatalogType = {
-+      "cart.items": {
-+        message: "{count, plural, one {# item} other {# items}}",
-+        translation: "{count, plural, one {# item} other {# items}}",
-+      },
-+      [generateMessageId("{count, plural, one {# file} other {# files}}")]: {
-+        message: "{count, plural, one {# file} other {# files}}",
-+        translation: "{count, plural, one {# file} other {# files}}",
-+      },
-+    }
-+
-+    it("should convert plurals for both explicit and generated ids", () => {
-+      const pofile = format.serialize(catalog, defaultSerializeCtx) as string
-+
-+      expect(pofile).toMatchSnapshot()
-+    })
-+
-+    it("should parse back the serialized catalog", () => {
-+      const pofile = format.serialize(catalog, defaultSerializeCtx) as string
-+      const parsed = format.parse(pofile, defaultParseCtx) as CatalogType
-+
-+      expect(Object.keys(parsed)).toEqual(Object.keys(catalog))
-+      for (const [id, entry] of Object.entries(catalog)) {
-+        expect(parsed[id]!.translation).toEqual(entry.translation)
-+      }
-+    })
-+  })
-+
-   describe("merging plurals", () => {
-     const duplicateFormatter = createFormat({ mergePlurals: true })
- 
-```
-
-**File**: `packages/format-po-gettext/src/po-gettext.ts` (modified, +5/-3)
-```diff
-@@ -523,9 +523,11 @@ export function formatter(
-           item.nplurals = nplurals
-         }
- 
--        const isGeneratedId = !item.extractedComments.includes(
--          "js-lingui-explicit-id",
--        )
-+        // Mirror how @lingui/format-po flags ids: with `explicitIdAsDefault`
-+        // only generated ids are marked, otherwise only explicit ids are.
-+        const isGeneratedId = options.explicitIdAsDefault
-+          ? item.extractedComments.includes("js-lingui-generated-id")
-+          : !item.extractedComments.includes("js-lingui-explicit-id")
-         const id = isGeneratedId
-           ? generateMessageId(item.msgid, item.msgctxt as string)
-           : item.msgid
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2742** (2026-10-22): chore(release): published v6.10.1 [skip ci] (@andrii-bodnar)
+- **PR #2740** (2026-10-21): docs: feature the runtime macro in the website announcement bar (@andrii-bodnar)
+- **PR #2737** (2026-10-22): perf(vite-plugin): resolve catalogs once per build instead of on every catalog import (@almsh)
+- **PR #2736** (2026-10-21): fix(metro-transformer): forward getCacheKey from the wrapped transformer (@HSnils)
 - **PR #2734** (2026-10-20): chore(examples): migrate react-webpack-gettext example to lingui v6 (@mehdimirzafaruk)
 - **PR #2733** (2026-10-20): fix(detect-locale): ignore path dots in fromSubdomain and return null for missing segments (@mehdimirzafaruk)
-- **PR #2731** (2026-10-19): fix(vite-plugin): support Solid in the native macro transform (@andrii-bodnar)
-- **PR #2730** (2026-10-19): fix(conf): do not mutate config objects when replacing <rootDir> (@mehdimirzafaruk)
-- **PR #2728** (2026-10-19): fix(vue-extractor): report the .vue file and line for messages in <script setup> (@ybai08)
-- **PR #2727** (2026-10-20): fix(format-po-gettext): respect explicitIdAsDefault when serializing (@mehdimirzafaruk)
 
 ---
 
@@ -1308,34 +1281,64 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. examples): migrate react-webpack-gettext example to lingui v6 (#2734)
+## X. vite-plugin): resolve catalogs once per build instead of on every catalog import
 
 **RULE**:
-When implementing operations in `examples/react-webpack-gettext/lingui.config.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/vite-plugin/src/index.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `814929d3`: examples): migrate react-webpack-gettext example to lingui v6 (#2734). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bfa5b76d`: vite-plugin): resolve catalogs once per build instead of on every catalog import (#2737). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/react-webpack-gettext/lingui.config.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vite-plugin/src/index.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { defineConfig } from "@lingui/cli"
-export default defineConfig({
-})
+  // `getCatalogs()` globs the file system on every call (`{name}` catalogs and
+  // `experimental.extractor.entries`), so it's resolved once and shared by all
+  // catalog modules. Reset on `buildStart` and `watchChange`.
+  let catalogs: ReturnType<typeof getCatalogs> | undefined
+
+  const getOrLoadCatalogs = () => {
+    if (!catalogs) {
+      const pending: ReturnType<typeof getCatalogs> = getCatalogs(config).catch(
+        (error) => {
+          // don't cache a failure, the next catalog module will retry
+          if (catalogs === pending) {
+            catalogs = undefined
+          }
+          throw error
+        },
+      )
+      catalogs = pending
+    }
+    return catalogs
+  }
+
+  const resetCatalogs = () => {
+    catalogs = undefined
+  }
+
+    buildStart: resetCatalogs,
+    watchChange: resetCatalogs,
+        let fileCatalog = getCatalogForFile(
+          await getOrLoadCatalogs(),
+        if (!fileCatalog) {
+          // The catalog may have been created after the list was cached
+          // without a `watchChange` reaching this plugin, so check a fresh list
+          resetCatalogs()
+          fileCatalog = getCatalogForFile(
+            catalogRelativePath,
+            awai
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-/** @type {import('@lingui/conf').LinguiConfig} */
-const config = {
-}
-
-export default config
+        const fileCatalog = getCatalogForFile(
+          await getCatalogs(config),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `814929d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bfa5b76d` are properly handled with clean fallback behavior.

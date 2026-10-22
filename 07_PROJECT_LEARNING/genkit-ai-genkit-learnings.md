@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `90540b38`  
+> **Source Version**: `c0c89086`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:51:56.616Z  
+> **Timestamp**: 2026-10-22T17:45:05.983Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:51:56.610Z  
+> **Harvest Timestamp**: 2026-10-22T17:45:05.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6532 stars
+- **Stars / Engagement**: 6542 stars
 
 ---
 
@@ -1986,11 +1986,11 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6864** (2026-10-22): **fix(cli): add MCP server instructions and descriptive tool metadata for deferred tool search**
+  *Symptoms*: ## Description  Coding agents that defer MCP tool schemas behind dynamic tool search (such as Claude Code's `ToolSearch`) list connected MCP tools **by name only** in the initial context (`<available-deferred-tools>`) and omit individual tool `description`s and `inputSchema`s until the model explicitly queries `ToolSearch`.  In recent evaluations of `genkit mcp` under Claude Code, Sonnet discovered the Genkit MCP server in only 2 of 4 attempts and Haiku in only 6 of 75 attempts.  ### Root Cause  1. **Missing server-level `instructions` (and `description`) in [`genkit-tools/cli/src/mcp/server.ts`](https://github.com/firebase/genkit/blob/main/genkit-tools/cli/src/mcp/server.ts):**    ```ts    const server = new McpServer({      name: 'Genkit MCP',      version: '0.0.2',    });    ```    When `ToolSearch` defers individual tool schemas, the **only** text from an MCP server that Claude Code injects upfront into the system prompt (`# MCP Server Instructions`) is the `instructions` field returned in the `initialize` result (`new McpServer(serverInfo, { instructions })`). Because `server.ts` omits `instructions` (and `description` on `serverInfo`), agents see only bare tool names with zero upfront context on what the Genkit MCP server provides or when to search for its tools. 2. **Generic descriptions on `run_flow` and `get_trace`:**    - [`genkit-tools/cli/src/mcp/flows.ts`](https://github.com/firebase/genkit/blob/main/genkit-tools/cli/src/mcp/flows.ts): `run_flow` uses `descriptio
+
 - **Issue #6798** (2026-10-20): **[JS] @genkit-ai/anthropic: empty reasoning part with signature throws "Unsupported genkit part fields"**
   *Symptoms*: **Describe the bug** Claude can return a `thinking` block with an empty `thinking` string and a valid `signature`. @genkit-ai/anthropic converts it to:  `{ "reasoning": "", "metadata": { "thoughtSignature": "CAQS..." } }`  Any later request that includes this message in its history throws before the API is called. In a persisted chat/agent session, every later turn then fails, because the part stays in history.  ``` Error: Unsupported genkit part fields encountered for current message role: {"reasoning":"","metadata":{"thoughtSignature":"CAQS..."}}.     at BetaRunner.toAnthropicMessageContent (@genkit-ai/anthropic/src/runner/beta.ts:280:11)     at Array.map (<anonymous>)     at BetaRunner.toAnthropicMessages (@genkit-ai/anthropic/src/runner/base.ts:398:35)     at BetaRunner.toAnthropicStreamingRequestBody (@genkit-ai/anthropic/src/runner/beta.ts:367:39)     at BetaRunner.run (@genkit-ai/anthropic/src/runner/base.ts:480:25)     at @genkit-ai/anthropic/src/models.ts:181:27     at @genkit-ai/ai/src/model.ts:172:12 ```  The cause is the truthiness check in `toAnthropicMessageContent`, in both runner/beta.ts and runner/stable.ts:  ```ts if (part.reasoning) {   const signature = this.getThinkingSignature(part);   ...   return { type: 'thinking', thinking: part.reasoning, signature }; } ``` "" is falsy. The part has no text, media, toolRequest or toolResponse either, so it reaches the final throw.  **To Reproduce** ```ts import { genkit } from 'genkit'; import { anthropic } from '@g
-
-- **Issue #6761** (2026-10-13): **[Go][plugins/compat_oai]: empty reasoning_content is dropped on serialization, causing DeepSeek 400 on tool-call history replay**
-  *Symptoms*:  **Describe the bug**  compat_oai drops `reasoning_content` entirely when the model returns it as an empty string. When that turn also carries `tool_calls`, the follow-up request (which replays history with `tools` present) is missing the field, and DeepSeek's thinking mode rejects it with:  ``` Internal error: { "error": "stream error: POST \"https://api.deepseek.com/chat/completions\": 400 Bad Request {\"message\":\"The `reasoning_content` in the thinking mode must be passed back to the API. (request_id: ...)\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":\"invalid_request_error\"}" } ```  Two guards in `go/plugins/compat_oai/generate.go` cause it:  1. Parsing (~line 823): `firstReasoning(...)` on `"\"\""` returns `""`, so no `ai.ReasoningPart` is created for the response. 2. Serialization (~line 115):  ```go if reasoning := concatenateReasoningContent(msg.Content); reasoning != "" {     am.SetExtraFields(map[string]any{"reasoning_content": reasoning}) } ```  Empty ⇒ the field is omitted from the outgoing JSON. DeepSeek requires `reasoning_content` on assistant messages to be passed back on subsequent requests when `tools` is present — an empty string is accepted, a missing field is not. The bug is intermittent: it only fires on turns where the model's CoT happens to be empty.  **To Reproduce**  1. Use a DeepSeek model with thinking mode (on by default), `deepseek/deepseek-flash`, and at least one tool registered. 2. Prompt something trivially toolable (e.g. "
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2007,922 +2007,760 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f3e5116` (2026-10-20)
-**Commit Message**: fix(js/plugins/anthropic): send back empty signed thinking blocks (#6838)
+### Incident Patch 1: `c0c89086` (2026-10-22)
+**Commit Message**: chore(js): remove outdated .guides directories (#6870)
 
-**File**: `js/plugins/anthropic/src/runner/beta.ts` (modified, +3/-1)
+**File**: `js/genkit/.guides/config.json` (removed, +0/-39)
 ```diff
-@@ -160,7 +160,9 @@ export class BetaRunner extends BaseRunner<BetaRunnerTypes> {
-     | BetaToolResultBlockParam
-     | BetaThinkingBlockParam
-     | BetaRedactedThinkingBlockParam {
--    if (part.reasoning) {
-+    // Claude can return signed thinking blocks with empty text, so check the
-+    // type rather than truthiness.
-+    if (typeof part.reasoning === 'string') {
-       const signature = this.getThinkingSignature(part);
-       if (!signature) {
-         throw new Error(
+@@ -1,39 +0,0 @@
+-{
+-  "mcpServers": {
+-    "genkit": {
+-      "command": "genkit",
+-      "args": ["mcp"]
+-    }
+-  },
+-  "docs": [
+-    {
+-      "url": "https://genkit.dev/docs/models.md",
+-      "name": "generate-content",
+-      "title": "Generate Content",
+-      "description": "read before generating content (text, structured data, images, videos) with Genkit."
+-    },
+-    {
+-      "url": "https://genkit.dev/docs/flows.md",
+-      "name": "flows",
+-      "title": "Using Flows to build GenAI Workflows",
+-      "description": "read before building API endpoints or repeatable, strongly-typed workflows with Genkit"
+-    },
+-    {
+-      "url": "https://genkit.dev/docs/tool-calling.md",
+-      "name": "tool-calling",
+-      "title": "Tool Calling",
+-      "description": "read before adding tools/function calls to Genkit for GenAI"
+-    },
+-    {
+-      "url": "https://genkit.dev/docs/interrupts.md",
+-      "name": "tool-calling/interrupts",
+-      "title": "Interrupts (Tool Calling with Human-in-the-Loop)",
+-      "description": "read to understand how to use interrupts to provide human-in-the-loop capabilities to Genkit agents"
+-    },
+-    {
+-      "url": "https://genkit.dev/docs/context.md",
+-      "name": "context",
+-      "description": "read to understand how to pass context to tools and flows without exposing sensitive data to the LLM"
+-    }
+-  ]
+-}
 ```
 
-**File**: `js/plugins/anthropic/src/runner/stable.ts` (modified, +3/-1)
+**File**: `js/genkit/.guides/setup.md` (removed, +0/-31)
 ```diff
-@@ -97,7 +97,9 @@ export class Runner extends BaseRunner<RunnerTypes> {
-     | ToolResultBlockParam
-     | ThinkingBlockParam
-     | RedactedThinkingBlockParam {
--    if (part.reasoning) {
-+    // Claude can return signed thinking blocks with empty text, so check the
-+    // type rather than truthiness.
-+    if (typeof part.reasoning === 'string') {
-       const signature = this.getThinkingSignature(part);
-       if (!signature) {
-         throw new Error(
+@@ -1,31 +0,0 @@
+-Follow these instructions to set up Genkit in the current codebase. These instructions are general-purpose and have not been written with specific codebase knowledge, so use your best judgement when following them.
+-
+-0. Tell the user "I'm going to check out your workspace and set you up to use Genkit for GenAI workflows."
+-1. If the current workspace is empty or is a starter template, your goal will be to create a simple image generation flow that allows someone to generate an image based on a prompt and selectable style. If the current workspace is not empty, you will create a simple example flow to help get the user started.
+-2. Check to see if any Genkit provider plugin (such as `@genkit-ai/google-genai` or `@genkit-ai/oai-compat` or others, may start with `genkitx-*`) is installed. If not, install `@genkit-ai/google-genai`. If this is a Next.js app, install `@genkit-ai/next` as well.
+-3. Search the codebase for the exact string `genkit(` (remember to escape regexes properly) which would indicate that the user has already set up Genkit in the codebase. If found, no need to set it up again, tell the user "Genkit is already configured in this app." and exit this workflow.
+-4. Create an `ai` directory in the primary source directory of the project (this may be e.g. `src` but is project-dependent).
+-5. Create `{sourceDir}/ai/genkit.ts` and populate it using the example below. DO NOT add a `next` plugin to the file, ONLY add a model provider plugin to the plugins array:
+-
+-```ts
+-import { genkit, z } from 'genkit';
+-import { googleAI } from '@genkit-ai/google-genai';
+-
+-export const ai = genkit({
+-  plugins: [googleAI()],
+-  model: googleAI.model('gemini-2.5-flash'),
+-});
+-
+-export { z };
+-```
+-
+-6. Create `{sourceDir}/ai/tools` and `{sourceDir}/ai/flows` directories, but leave them empty for now.
+-7. Create `{sourceDir}/ai/index.ts` and populate it with the following (change the import to match import aliases in `tsconfig.json` as needed):
+-
+-```ts
+-import './genkit.js';
+-// import each created flow, tool, etc. here for use in the Genkit Dev UI
+-```
+-
+-8. Add a `genkit:ui` script to `package.json` that runs `npx genkit-cli start -- npx tsx --watch {sourceDir}/ai/index.ts` (or `pnpm dlx` or `yarn dlx` for those package managers). DO NOT try to run the script now.
+-9. Tell the user "Genkit is now configured and ready for use." as setup is now complete. Also remind them to set appropriate env variables (e.g. `GEMINI_API_KEY` for Google providers). Wait for the user to prompt further before creating any specific flows.
 ```
 
-**File**: `js/plugins/anthropic/tests/beta_runner_test.ts` (modified, +63/-0)
+**File**: `js/genkit/.guides/style.md` (removed, +0/-1)
 ```diff
-@@ -61,6 +61,30 @@ describe('BetaRunner.toAnthropicMessageContent', () => {
-     }, /Tool request ref is required/);
-   });
- 
-+  it('sends back empty reasoning that has a signature', () => {
-+    const runner = createRunner();
-+    const part: Part = {
-+      reasoning: '',
-+      metadata: { thoughtSignature: 'sig_empty' },
-+    };
-+
-+    const result = (runner as any).toAnthropicMessageContent(part);
-+
-+    assert.deepStrictEqual(result, {
-+      type: 'thinking',
-+      thinking: '',
-+      signature: 'sig_empty',
-+    });
-+  });
-+
-+  it('throws a signature error for empty reasoning without a signature', () => {
-+    const runner = createRunner();
-+
-+    assert.throws(() => {
-+      (runner as any).toAnthropicMessageContent({ reasoning: '' });
-+    }, /thinking parts require a signature/);
-+  });
-+
-   it('maps tool request with ref into tool_use block', () => {
-     const runner = createRunner();
-     const part: Part = {
-@@ -783,6 +807,45 @@ describe('BetaRunner', () => {
-     warnMock.mock.restore();
-   });
- 
-+  it('should round-trip an empty thinking block from a response', () => {
-+    const mockClient = createMockAnthropicClient();
-+    const runner = new BetaRunner({
-+      name: 'claude-test',
-+      client: mockClient as Anthropic,
-+    });
-+
-+    const thinkingPart = (runner as any).fromBetaContentBlock({
-+      type: 'thinking',
-+      thinking: '',
-+      signature: 'sig_empty',
-+    });
-+
-+    const { messages } = (runner as any).toAnthropicMessages([
-+      { role: 'user', content: [{ text: 'What is the weather?' }] },
-+      {
-+        role: 'model',
-+        content: [
-+          thinkingPart,
-+          {
-+            toolRequest: {
-+              ref: 'toolu_1',
-+              name: 'getWeather',
-+              input: { city: 'Paris' },
-+            },
-+          },
-+        ],
-+      },
-+    ]);
-+
-+    assert.strictEqual(messages[1].role, 'assistant');
-+    assert.deepStrictEqual(messages[1].content[0], {
-+      type: 'thinking',
-+      thinking: '',
-+      signature: 'sig_empty',
-+    });
-+    assert.strictEqual(messages[1].content[1].type, 'tool_use');
-+  });
-+
-   it('should map additional stop reasons', () => {
-     const mockClient = createMockAnthropicClient();
-     const runner = new BetaRunner({
+@@ -1 +0,0 @@
+-- Prefer destructuring generate calls e.g. `const {text} = await ai.generate(...)`
 ```
 
-**File**: `js/plugins/anthropic/tests/execution_test.ts` (modified, +49/-0)
+**File**: `js/genkit/.guides/usage.md` (removed, +0/-63)
 ```diff
-@@ -140,6 +140,55 @@ describe('Model Execution Integration Tests', () => {
-     assert.strictEqual(apiRequest.messages.length, 3);
-   });
- 
-+  test('should send back empty thinking blocks from history', async () => {
-+    const mockClient = createMockAnthropicClient({
-+      messageResponse: createMockAnthropicMessage({
-+        text: 'Hello again!',
-+      }),
-+    });
-+
-+    const plugin = anthropic({
-+      apiKey: 'test-key',
-+      [__testClient]: mockClient,
-+    } as PluginOptions);
-+
-+    const modelAction = plugin.resolve(
-+      'model',
-+      'claude-3-5-haiku-20241022'
-+    ) as ModelAction;
-+
-+    // Claude can return a thinking block with an empty `thinking` string and
-+    // a valid signature; it must be replayable on the next turn.
-+    const request: GenerateRequest = {
-+      messages: [
-+        { role: 'user', content: [{ text: 'Hi' }] },
-+        {
-+          role: 'model',
-+          content: [
-+            { reasoning: '', metadata: { thoughtSignature: 'sig_empty' } },
-+            { text: 'Hello!' },
-+          ],
-+        },
-+        { role: 'user', content: [{ text: 'Hello again' }] },
-+      ],
-+    };
-+
-+    await modelAction(request, {
-+      streamingRequested: false,
-+      sendChunk: mock.fn(),
-+      abortSignal: new AbortController().signal,
-+    } as Parameters<typeof modelAction>[1]);
-+
-+    const createStub = mockClient.messages.create as any;
-+    assert.strictEqual(createStub.mock.calls.length, 1);
-+    const apiRequest = createStub.mock.calls[0].arguments[0];
-+    assert.deepStrictEqual(apiRequest.messages[1].content[0], {
-+      type: 'thinking',
-+      thinking: '',
-+      signature: 'sig_empty',
-+    });
-+  });
-+
-   test('should handle system messages', async () => {
-     const mockClient = createMockAnthropicClient({
-       messageResponse: createMockAnthropicMessage({
+@@ -1,63 +0,0 @@
+-## Basic Example
+-
+-```ts
+-import { genkit, z } from "genkit";
+-// this example uses Gemini, but Genkit supports other provider plugins
+-import { googleAI } from "@genkit-ai/google-genai";
+-
+-const ai = genkit({
+-  plugins: [googleAI()],
+-  // optional: assign a default model
+-  model: googleAI.model('gemini-2.5-flash'),
+-});
+-
+-const myTool = ai.defineTool({name, description, inputSchema: z.object(...)}, (input) => {...});
+-
+-const {text} = await ai.generate({
+-  model: googleAI.model('gemini-2.5-flash'), // optional if default model is configured
+-  system: "the system instructions", // optional
+-  prompt: "the content of the prompt",
+-  // OR, for multi-modal content
+-  prompt: [{text: "what is this image?"}, {media: {url: "data:image/png;base64,..."}}],
+-  tools: [myTool],
+-});
+-
+-// structured output
+-const CharacterSchema = z.object({...}); // make sure to use .describe() on fields
+-const {output} = await ai.generate({
+-  prompt: "generate an RPG character",
+-  output: {schema: CharacterSchema},
+-});
+-```
+-
+-## Important API Clarifications
+-
+-**IMPORTANT:** This app uses Genkit v1.x which has changed significantly from pre-1.0 versions. Important changes include:
+-
+-```ts
+-const response = await ai.generate(...);
+-
+-response.text // CORRECT 1.x syntax
+-response.text() // INCORRECT pre-1.0 syntax
+-
+-response.output // CORRECT 1.x syntax
+-response.output() // INCORRECT pre-1.0 syntax
+-
+-const {stream, response} = ai.generateStream(...); // IMPORTANT: no `await` needed
+-for await (const chunk of stream) { } // CORRECT 1.x syntax
+-for await (const chunk of stream()) { } // INCORRECT pre-1.0 syntax
+-await response; // CORRECT 1.x syntax
+-await response(); // INCORRECT pre-1.0 syntax
+-await ai.generate({..., model: googleAI.model('gemini-2.5-flash')}); // CORRECT 1.x syntax
+-await ai.generate({..., model: gemini15Pro}); // INCORRECT pre-1.0 syntax
+-
+-const ai = genkit({...}); // CORRECT 1.x syntax
+-configureGenkit({...}); // INCORRECT pre-1.0 syntax
+-
+-ai.defineFlow({...}, (input) => {...}); // CORRECT 1.x syntax
+-import { defineFlow } from "..."; // INCORRECT pre-1.0 syntax
+-```
+-
+-- Use `import {z} from "genkit"` when you need Zod to get an implementation consistent with Genkit.
+-- When defining Zod schemas, ONLY use basic scalar, object, and array types. Use `.optional()` when needed and `.describe('...')` to add descriptions for output schemas.
+-- Genkit has many capabilities, make sure to read docs when you need to use them.
 ```
 
-**File**: `js/plugins/anthropic/tests/stable_runner_test.ts` (modified, +57/-0)
+**File**: `js/plugins/express/.guides/usage.md` (removed, +0/-110)
 ```diff
-@@ -67,6 +67,7 @@ type RunnerProtectedMethods = {
-   fromAnthropicContentBlockChunk: (
-     event: MessageStreamEvent
-   ) => Part | undefined;
-+  fromAnthropicContentBlock: (contentBlock: any) => Part;
-   fromAnthropicStopReason: (reason: Message['stop_reason']) => any;
-   fromAnthropicResponse: (message: Message) => GenerateResponseData;
- };
-@@ -222,6 +223,26 @@ describe('toAnthropicMessageContent', () => {
-       cache_control: undefined,
-     });
-   });
-+
-+  it('should send back empty reasoning that has a signature', () => {
-+    const result = testRunner.toAnthropicMessageContent({
-+      reasoning: '',
-+      metadata: { thoughtSignature: 'sig_empty' },
-+    });
-+
-+    assert.deepStrictEqual(result, {
-+      type: 'thinking',
-+      thinking: '',
-+      signature: 'sig_empty',
-+    });
-+  });
-+
-+  it('should throw a signature error for empty reasoning without a signature', () => {
-+    assert.throws(
-+      () => testRunner.toAnthropicMessageContent({ reasoning: '' }),
-+      /thinking parts require a signature/
-+    );
-+  });
- });
- 
- describe('toAnthropicMessages', () => {
-@@ -639,6 +660,42 @@ describe('toAnthropicMessages', () => {
-     },
-   ];
- 
-+  it('should round-trip an empty thinking block from a response', () => {
-+    const thinkingPart = testRunner.fromAnthropicContentBlock({
-+      type: 'thinking',
-+      thinking: '',
-+      signature: 'sig_empty',
-+    });
-+
-+    const { messages } = testRunner.toAnthropicMessages([
-+      { role: 'user', content: [{ text: 'What is the weather?' }] },
-+      {
-+        role: 'model',
-+        content: [
-+          thinkingPart,
-+          {
-+            toolRequest: {
-+              ref: 'toolu_1',
-+              name: 'getWeather',
-+              input: { city: 'Paris' },
-+            },
-+          },
-+        ],
-+      },
-+    ]);
-+
-+    assert.deepStrictEqual(messages[1].content, [
-+      { type: 'thinking', thinking: '', signature: 'sig_empty' },
-+      {
-+        type: 'tool_use',
-+        id: 'toolu_1',
-+        name: 'getWeather',
-+        input: { city: 'Paris' },
-+        cache_control: undefined,
-+      },
-+    ]);
-+  });
-+
-   for (const test of testCases) {
-     it(test.should, () => {
-       const actualOutput = testRunner.toAnthropicMessages(test.inputMessages);
+@@ -1,110 +0,0 @@
+-Genkit's Express integration makes it easy to expose Genkit flows as Express API endpoints:
+-
+-```ts
+-import express from 'express';
+-import { expressHandler } from '@genkit-ai/express';
+-import { simpleFlow } from './flows/simple-flow.js';
+-
+-const app = express();
+-app.use(express.json());
+-
+-app.post('/simpleFlow', expressHandler(simpleFlow));
+-
+-app.listen(8080);
+-```
+-
+-You can also handle auth using context providers:
+-
+-```ts
+-import { UserFacingError } from 'genkit';
+-import { ContextProvider, RequestData } from 'genkit/context';
+-
+-const context: ContextProvider<Context> = (req: RequestData) => {
+-  if (req.headers['authorization'] !== 'open sesame') {
+-    throw new UserFacingError('PERMISSION_DENIED', 'not authorized');
+-  }
+-  return {
+-    auth: {
+-      user: 'Ali Baba',
+-    },
+-  };
+-};
+-
+-app.post(
+-  '/simpleFlow',
+-  authMiddleware,
+-  expressHandler(simpleFlow, { context })
+-);
+-```
+-
+-Flows and actions exposed using the `expressHandler` function can be accessed using `genkit/beta/client` library:
+-
+-```ts
+-import { runFlow, streamFlow } from 'genkit/beta/client';
+-
+-const result = await runFlow({
+-  url: `http://localhost:${port}/simpleFlow`,
+-  input: 'say hello',
+-});
+-
+-console.log(result); // hello
+-```
+-
+-```ts
+-// set auth headers (when using auth policies)
+-const result = await runFlow({
+-  url: `http://localhost:${port}/simpleFlow`,
+-  headers: {
+-    Authorization: 'open sesame',
+-  },
+-  input: 'say hello',
+-});
+-
+-console.log(result); // hello
+-```
+-
+-```ts
+-// and streamed
+-const result = streamFlow({
+-  url: `http://localhost:${port}/simpleFlow`,
+-  input: 'say hello',
+-});
+-for await (const chunk of result.stream) {
+-  console.log(chunk);
+-}
+-console.log(await result.output);
+-```
+-
+-You can use `startFlowServer` to quickly expose multiple flows and actions:
+-
+-```ts
+-import { startFlowServer } from '@genkit-ai/express';
+-import { genkit } from 'genkit';
+-
+-const ai = genkit({});
+-
+-export const menuSuggestionFlow = ai.defineFlow(
+-  {
+-    name: 'menuSuggestionFlow',
+-  },
+-  async (restaurantTheme) => {
+-    // ...
+-  }
+-);
+-
+-startFlowServer({
+-  flows: [menuSuggestionFlow],
+-});
+-```
+-
+-You can also configure the server:
+-
+-```ts
+-startFlowServer({
+-  flows: [menuSuggestionFlow],
+-  port: 4567,
+-  cors: {
+-    origin: '*',
+-  },
+-});
+-```
 ```
 
-**File**: `js/plugins/vertexai/src/modelgarden/v2/anthropic.ts` (modified, +3/-1)
+**File**: `js/plugins/fastify/.guides/usage.md` (removed, +0/-107)
 ```diff
-@@ -387,7 +387,9 @@ function toAnthropicContent(
-   | ThinkingBlockParam
- > {
-   return content.map((p) => {
--    if (p.reasoning) {
-+    // Claude can return signed thinking blocks with empty text, so check the
-+    // type rather than truthiness.
-+    if (typeof p.reasoning === 'string') {
-       const signature = p.metadata?.thoughtSignature;
-       return {
-         type: 'thinking',
+@@ -1,107 +0,0 @@
+-Genkit's Fastify integration makes it easy to expose Genkit flows as Fastify API endpoints:
+-
+-```ts
+-import Fastify from 'fastify';
+-import { fastifyHandler } from '@genkit-ai/fastify';
+-import { simpleFlow } from './flows/simple-flow.js';
+-
+-const app = Fastify();
+-
+-app.post('/simpleFlow', fastifyHandler(simpleFlow));
+-
+-await app.listen({ port: 8080 });
+-```
+-
+-You can also handle auth using context providers:
+-
+-```ts
+-import { UserFacingError } from 'genkit';
+-import { ContextProvider, RequestData } from 'genkit/context';
+-
+-const contextProvider: ContextProvider<Context> = (req: RequestData) => {
+-  if (req.headers['authorization'] !== 'open sesame') {
+-    throw new UserFacingError('PERMISSION_DENIED', 'not authorized');
+-  }
+-  return {
+-    auth: {
+-      user: 'Ali Baba',
+-    },
+-  };
+-};
+-
+-app.post('/simpleFlow', fastifyHandler(simpleFlow, { contextProvider }));
+-```
+-
+-Flows and actions exposed using the `fastifyHandler` function can be accessed using the `genkit/beta/client` library:
+-
+-```ts
+-import { runFlow, streamFlow } from 'genkit/beta/client';
+-
+-const result = await runFlow({
+-  url: `http://localhost:${port}/simpleFlow`,
+-  input: 'say hello',
+-});
+-
+-console.log(result); // hello
+-```
+-
+-```ts
+-// set auth headers (when using auth policies)
+-const result = await runFlow({
+-  url: `http://localhost:${port}/simpleFlow`,
+-  headers: {
+-    Authorization: 'open sesame',
+-  },
+-  input: 'say hello',
+-});
+-
+-console.log(result); // hello
+-```
+-
+-```ts
+-// and streamed
+-const result = streamFlow({
+-  url: `http://localhost:${port}/simpleFlow`,
+-  input: 'say hello',
+-});
+-for await (const chunk of result.stream) {
+-  console.log(chunk);
+-}
+-console.log(await result.output);
+-```
+-
+-You can register the `genkitFastify` plugin to quickly expose multiple flows and actions:
+-
+-```ts
+-import Fastify from 'fastify';
+-import { genkitFastify } from '@genkit-ai/fastify';
+-import { genkit } from 'genkit';
+-
+-const ai = genkit({});
+-
+-export const menuSuggestionFlow = ai.defineFlow(
+-  {
+-    name: 'menuSuggestionFlow',
+-  },
+-  async (restaurantTheme) => {
+-    // ...
+-  }
+-);
+-
+-const app = Fastify();
+-await app.register(genkitFastify, {
+-  flows: [menuSuggestionFlow],
+-});
+-await app.listen({ port: 8080 });
+-```
+-
+-You can prefix the exposed routes and attach per-flow options:
+-
+-```ts
+-import { genkitFastify, withFlowOptions } from '@genkit-ai/fastify';
+-
+-await app.register(genkitFastify, {
+-  pathPrefix: '/api',
+-  flows: [withFlowOptions(menuSuggestionFlow, { contextProvider })],
+-});
+-```
 ```
 
-**File**: `js/plugins/vertexai/tests/modelgarden/v2/anthropic_test.ts` (modified, +32/-0)
+**File**: `js/plugins/google-genai/.guides/docs/editing-images.prompt` (removed, +0/-106)
 ```diff
-@@ -88,6 +88,38 @@ describe('toAnthropicRequest', () => {
-         ],
-       },
-     },
-+    {
-+      should:
-+        'should transform empty genkit reasoning part with signature back to anthropic thinking block',
-+      input: {
-+        messages: [
-+          {
-+            role: 'model',
-+            content: [
-+              { reasoning: '', metadata: { thoughtSignature: 'sig_empty' } },
-+              { text: 'Hello!' },
-+            ],
-+          },
-+        ],
-+      },
-+      expectedOutput: {
-+        max_tokens: 4096,
-+        model: MODEL_ID,
-+        messages: [
-+          {
-+            role: 'assistant',
-+            content: [
-+              {
-+                type: 'thinking',
-+                thinking: '',
-+                signature: 'sig_empty',
-+              } as any,
-+              { type: 'text', text: 'Hello!' },
-+            ],
-+          },
-+        ],
-+      },
-+    },
-     {
-       should: 'should transform system message',
-       input: {
+@@ -1,106 +0,0 @@
+----
+-title: Edit images with `gemini-2.5-flash-image-preview` (aka "Nano Banana")
+-description: read this if you need to perform sophisticated image edits such as background removal, post matching, character replacement, relighting, on an existing image
+----
+-
+-The `gemini-2.5-flash-image-preview` model (also known as "Nano Banana") can perform sophisticated image edits.
+-
+-- You must ALWAYS add `{config: {responseModalities: ['TEXT', 'IMAGE']}}` to your `ai.generate` calls when using this model.
+-
+-<example>
+-```ts
+-// generate an image from a prompt
+-
+-import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
+-import { googleAI } from "@genkit-ai/google-genai";
+-
+-const {media} = await ai.generate({
+-  model: googleAI.model('gemini-2.5-flash-image-preview'),
+-  config: {responseModalities: ['TEXT', 'IMAGE']}},
+-  prompt: "generate a picture of a unicorn wearing a space suit on the moon",
+-});
+-
+-return media.url; // --> "data:image/png;base64,..."
+-```
+-</example>
+-
+-<example>
+-```ts
+-// edit an image with a text prompt
+-
+-import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
+-import { googleAI } from "@genkit-ai/google-genai";
+-
+-const {media} = await ai.generate({
+-  model: googleAI.model('gemini-2.5-flash-image-preview'),
+-  config: {responseModalities: ['TEXT', 'IMAGE']}},
+-  prompt: [
+-    {text: "change the person's outfit to a banana costume"},
+-    {media: {url: "https://..." /* or 'data:...' */}},
+-  ],
+-});
+-
+-return media.url; // --> "data:image/png;base64,..."
+-```
+-</example>
+-
+-<example>
+-```ts
+-// combine multiple images together
+-
+-import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
+-import { googleAI } from "@genkit-ai/google-genai";
+-
+-const {personImageUri, animalImageUri, sceneryImageUri} = await loadImages(...);
+-
+-const {media} = await ai.generate({
+-  model: googleAI.model('gemini-2.5-flash-image-preview'),
+-  config: {responseModalities: ['TEXT', 'IMAGE']}},
+-  prompt: [
+-    // the model tends to match aspect ratio of the *last* image provided
+-    {text: "[PERSON]:\n"},
+-    {media: {url: personImageUri}},
+-    {text: "\n[ANIMAL]:\n"},
+-    {media: {url: animalImageUri}},
+-    {text; "\n[SCENERY]:\n"},
+-    // IMPORTANT: the model tends to match aspect ratio of the *last* image provided
+-    {media: {url: sceneryImageUri}},
+-    {text: "make an image of [PERSON] riding a giant version of [ANIMAL] with a background of [SCENERY]"},
+-  ],
+-});
+-
+-return media.url; // --> "data:image/png;base64,..."
+-```
+-</example>
+-
+-<example>
+-```ts
+-// use an annotated image to guide generation
+-
+-import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
+-import { googleAI } from "@genkit-ai/google-genai";
+-
+-const originalImageUri = "data:..."; // the original image
+-const annotatedImageUri = "data:..."; // the image with annotations on top of it
+-
+-const {media} = await ai.generate({
+-  model: googleAI.model('gemini-2.5-flash-image-preview'),
+-  config: {responseModalities: ['TEXT', 'IMAGE']}},
+-  prompt: [
+-    
+-    {text: "follow the instructions in the following annotated image:"},
+-    {media: {url: annotatedImageUri}},
+-    {text: "\n\napply the annotated instructions to the original image, making sure to follow the instructions of the annotations.\n\noriginal image:\n"},
+-    {media: {url: originalImageUri}},
+-  ],
+-});
+-
+-return media.url; // --> "data:image/png;base64,..."
+-```
+-</example>
+-
+-## Prompting tips for image editing
+-
+-- For complex edits prefer a chain of small edits to a single complex edit. Feed the output of one generation as input to the next.
+-- Be specific and detailed about the edits you want to make.
+-- Be clear whether added images are meant as style or subject references.
+\ No newline at end of file
+```
+
+**File**: `js/plugins/google-genai/.guides/docs/generating-speech.prompt` (removed, +0/-192)
+```diff
+@@ -1,192 +0,0 @@
+----
+-title: Generating Speech with Gemini
+-description: read this to understand how to generate realistic speech audio from a text script
+----
+-
+-The Google Genai plugin provides access to text-to-speech capabilities through Gemini TTS models. These models can convert text into natural-sounding speech for various applications.
+-
+-#### Basic Usage
+-
+-To generate audio using a TTS model:
+-
+-```ts
+-import { googleAI } from '@genkit-ai/google-genai';
+-import { writeFile } from 'node:fs/promises';
+-import wav from 'wav'; // npm install wav && npm install -D @types/wav
+-
+-const ai = genkit({
+-  plugins: [googleAI()],
+-});
+-
+-const { media } = await ai.generate({
+-  model: googleAI.model('gemini-2.5-flash-preview-tts'),
+-  config: {
+-    responseModalities: ['AUDIO'],
+-    speechConfig: {
+-      voiceConfig: {
+-        prebuiltVoiceConfig: { voiceName: 'Algenib' },
+-      },
+-    },
+-  },
+-  prompt: 'Say that Genkit is an amazing Gen AI library',
+-});
+-
+-if (!media) {
+-  throw new Error('no media returned');
+-}
+-const audioBuffer = Buffer.from(media.url.substring(media.url.indexOf(',') + 1), 'base64');
+-// The googleAI plugin returns raw PCM data, which we convert to WAV format.
+-await writeFile('output.wav', await toWav(audioBuffer));
+-
+-async function toWav(pcmData: Buffer, channels = 1, rate = 24000, sampleWidth = 2): Promise<string> {
+-  return new Promise((resolve, reject) => {
+-    // This code depends on `wav` npm library.
+-    const writer = new wav.Writer({
+-      channels,
+-      sampleRate: rate,
+-      bitDepth: sampleWidth * 8,
+-    });
+-
+-    let bufs = [] as any[];
+-    writer.on('error', reject);
+-    writer.on('data', function (d) {
+-      bufs.push(d);
+-    });
+-    writer.on('end', function () {
+-      resolve(Buffer.concat(bufs).toString('base64'));
+-    });
+-
+-    writer.write(pcmData);
+-    writer.end();
+-  });
+-}
+-```
+-
+-#### Multi-speaker Audio Generation
+-
+-You can generate audio with multiple speakers, each with their own voice:
+-
+-```ts
+-const response = await ai.generate({
+-  model: googleAI.model('gemini-2.5-flash-preview-tts'),
+-  config: {
+-    responseModalities: ['AUDIO'],
+-    speechConfig: {
+-      multiSpeakerVoiceConfig: {
+-        speakerVoiceConfigs: [
+-          {
+-            speaker: 'Speaker1',
+-            voiceConfig: {
+-              prebuiltVoiceConfig: { voiceName: 'Algenib' },
+-            },
+-          },
+-          {
+-            speaker: 'Speaker2',
+-            voiceConfig: {
+-              prebuiltVoiceConfig: { voiceName: 'Achernar' },
+-            },
+-          },
+-        ],
+-      },
+-    },
+-  },
+-  prompt: `Here's the dialog:
+-    Speaker1: "Genkit is an amazing Gen AI library!"
+-    Speaker2: "I thought it was a framework."`,
+-});
+-```
+-
+-When using multi-speaker configuration, the model automatically detects speaker labels in the text (like "Speaker1:" and "Speaker2:") and applies the corresponding voice to each speaker's lines.
+-
+-#### Configuration Options
+-
+-The Gemini TTS models support various configuration options:
+-
+-##### Voice Selection
+-
+-You can choose from different pre-built voices with unique characteristics:
+-
+-```ts
+-speechConfig: {
+-  voiceConfig: {
+-    prebuiltVoiceConfig: {
+-      voiceName: 'Algenib' // Other options: 'Achernar', 'Ankaa', etc.
+-    },
+-  },
+-}
+-```
+-
+-Full list of available voices:
+-
+-- `Zephyr`: Bright
+-- `Puck`: Upbeat
+-- `Charon`: Informative
+-- `Kore`: Firm
+-- `Fenrir`: Excitable
+-- `Leda`: Youthful
+-- `Orus`: Firm
+-- `Aoede`: Breezy
+-- `Callirrhoe`: Easy-going
+-- `Autonoe`: Bright
+-- `Enceladus`: Breathy
+-- `Iapetus`: Clear
+-- `Umbriel`: Easy-going
+-- `Algieba`: Smooth
+-- `Despina`: Smooth
+-- `Erinome`: Clear
+-- `Algenib`: Gravelly
+-- `Rasalgethi`: Informative
+-- `Laomedeia`: Upbeat
+-- `Achernar`: Soft
+-- `Alnilam`: Firm
+-- `Schedar`: Even
+-- `Gacrux`: Mature
+-- `Pulcherrima`: Forward
+-- `Achird`: Friendly
+-- `Zubenelgenubi`: Casual
+-- `Vindemiatrix`: Gentle
+-- `Sadachbia`: Lively
+-- `Sadaltager`: Knowledgeable
+-- `Sulafat`: Warm
+-
+-##### Speech Emphasis
+-
+-You can use markdown-style formatting in your prompt to add emphasis:
+-
+-- Bold text (`**like this**`) for stronger emphasis
+-- Italic text (`*like this*`) for moderate emphasis
+-
+-Example:
+-
+-```ts
+-prompt: 'Genkit is an **amazing** Gen AI *library*!';
+-```
+-
+-##### Advanced Speech Parameters
+-
+-For more control over the generated speech:
+-
+-```ts
+-speechConfig: {
+-  voiceConfig: {
+-    prebuiltVoiceConfig: {
+-      voiceName: 'Algenib',
+-      speakingRate: 1.0,  // Range: 0.25 to 4.0, default is 1.0
+-      pitch: 0.0,         // Range: -20.0 to 20.0, default is 0.0
+-      volumeGainDb: 0.0,  // Range: -96.0 to 16.0, default is 0.0
+-    },
+-  },
+-}
+-```
+-
+-- `speakingRate`: Controls the speed of speech (higher values = faster speech)
+-- `pitch`: Adjusts the pitch of the voice (higher values = higher pitch)
+-- `volumeGainDb`: Controls the volume (higher values = louder)
+-
+-For more detailed information about the Gemini TTS models and thei
 ```
 
 ---
 
-### Incident Patch 2: `bd6f1b11` (2026-10-20)
-**Commit Message**: fix(js/ai): finalize a detached run once with its cumulative state (#6360)
+### Incident Patch 2: `a7b514e9` (2026-10-22)
+**Commit Message**: fix(genkit-tools/cli): add MCP server instructions and descriptive tool metadata (#6866)
 
-**File**: `js/ai/src/agent.ts` (modified, +233/-71)
+**File**: `genkit-tools/cli/src/mcp/flows.ts` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,7 @@ import {
-   defineAction,
-   defineBidiAction,
-   getContext,
-+  getErrorMessage,
-   run,
-   z,
-   type Action,
-@@ -28,6 +29,7 @@ import {
-   type BidiAction,
- } from '@genkit-ai/core';
- import { Channel } from '@genkit-ai/core/async';
-+import { logger } from '@genkit-ai/core/logging';
- import type { Registry } from '@genkit-ai/core/registry';
- import {
-   createAgentAPI,
-@@ -333,7 +335,26 @@ export class SessionRunner<State = unknown> {
-   private lastSnapshotVersion: number = 0;
- 
-   private store?: SessionStore<State>;
-+  /**
-+   * True once the client detached. Per-turn snapshot writes are suspended
-+   * from then on: the pending row written by {@link detach} already captures
-+   * the invocation, and a single {@link finalizePendingSnapshot} rewrite
-+   * records the cumulative state once the queued inputs drain.
-+   */
-   public isDetached: boolean = false;
-+  /**
-+   * The pending row a detach wrote, which the finalize rewrites. Kept as
-+   * written so the finalize can rebuild it (its lineage and timestamps) even
-+   * when the store no longer returns it. Undefined until the client detaches.
-+   */
-+  private pendingRow?: SessionSnapshotInput<State> & { snapshotId: string };
-+  /**
-+   * Serializes snapshot writes. The detach write and an in-flight turn-end
-+   * write run on different tasks; under the lock the detach either waits for
-+   * that write to land or suspends before it starts, so the two never land as
-+   * sibling leaves and a turn-end write never follows the pending row.
-+   */
-+  private snapLock: Promise<unknown> = Promise.resolve();
-   /**
-    * Aborts in-flight turns. When set and aborted, a turn that rejects out of
-    * `generate` is reported as `aborted` (not `failed`) and its failed snapshot
-@@ -548,6 +569,13 @@ export class SessionRunner<State = unknown> {
-     }
-   }
- 
-+  /** Runs `fn` under the snapshot lock; see {@link snapLock}. */
-+  private withSnapLock<T>(fn: () => Promise<T>): Promise<T> {
-+    const run = this.snapLock.then(fn);
-+    this.snapLock = run.catch(() => {});
-+    return run;
-+  }
-+
-   /**
-    * Saves a snapshot of the current session state to the persistent store.
-    *
-@@ -556,70 +584,186 @@ export class SessionRunner<State = unknown> {
-    * that the snapshot has not been concurrently aborted before writing -
-    * preventing a race where a "done" write could overwrite a concurrent
-    * "aborted" status.
-+   *
-+   * Once the client has detached no per-turn row is written: the pending row
-+   * {@link detach} wrote already captures the invocation, so this returns its
-+   * id and the finalize records the cumulative state when the run settles.
-+   * Pending rows themselves are written by {@link detach}, not here.
-    */
-   async maybeSnapshot(
-     status?: 'pending' | 'completed' | 'failed',
-     error?: { status?: string; message: string; details?: any },
-     snapshotId?: string,
-     finishReason?: AgentFinishReason
-   ): Promise<string | undefined> {
--    if (
--      !this.store ||
--      (this.isDetached && snapshotId !== this.lastSnapshot?.snapshotId)
--    )
--      return this.lastSnapshot?.snapshotId;
--
--    const currentVersion = this.session.getVersion();
--    if (currentVersion === this.lastSnapshotVersion && !status) {
--      return this.lastSnapshot?.snapshotId;
--    }
-+    if (!this.store) return undefined;
-+    return this.withSnapLock(async () => {
-+      // Re-checked under the lock: a detach that landed while this write was
-+      // waiting suspends it, so the turn's state goes to the finalize instead
-+      // of landing beside the pending row.
-+      if (this.isDetached) return this.pendingRow?.snapshotId;
-+
-+      const currentVersion = this.session.getVersion();
-+      if (currentVersion === this.lastSnapshotVersion && !status) {
-+        return this.lastSnapshot?.snapshotId;
-+      }
- 
--    const currentState = this.session.getState();
--
--    const snapshotInput: SessionSnapshotInput<State> = {
--      ...(snapshotId || this.newSnapshotId
--        ? { snapshotId: (snapshotId || this.newSnapshotId)! }
--        : {}),
--      // Stamp the session id onto every snapshot in the chain so callers can
--      // resolve a snapshot's session without reaching into its state.
--      sessionId: this.session.sessionId,
--      createdAt: new Date().toISOString(),
--      updatedAt: new Date().toISOString(),
--      state: currentState as SessionState<State>,
--      parentId: this.lastSnapshot?.snapshotId,
--      // Default to a resumable `completed` status. The only caller that omits a
--      // status is the post-invocation write (which fires when the handler
--      // mutates state after the last turn); persisting it as `completed` keeps
--      // it a valid resume target under the "only `completed` is resumable" rule.
--      status: status ?? 'completed',
--      // Stamp an initial heartbeat on a `pending` (detached, in-flight)
--      // snapshot. A background heartbeat loop refreshes it; if it goes stale the
--      // snapshot 
+@@ -68,7 +68,7 @@ export function defineFlowTools(server: McpServer, options: McpToolOptions) {
+     'run_flow',
+     {
+       title: 'Run Flow',
+-      description: 'Runs the flow with the provided input',
++      description: 'Executes a Genkit flow with the provided JSON input.',
+       inputSchema: getCommonSchema(options.explicitProjectRoot, {
+         flowName: z.string().describe('name of the flow; type: string'),
+         input: z
 ```
 
-**File**: `js/ai/tests/agent_test.ts` (modified, +216/-11)
+**File**: `genkit-tools/cli/src/mcp/server.ts` (modified, +13/-4)
 ```diff
-@@ -1719,6 +1719,7 @@ describe('Agent', () => {
+@@ -35,10 +35,19 @@ export async function startMcpServer(params: {
+   const { projectRoot, explicitProjectRoot, timeout, auth } = params;
+   logger.info(`Starting MCP server in: ${projectRoot}`);
  
-       const output = await session.output;
-       assert.ok(output.snapshotId);
-+      session.close();
- 
-       const snapDone = await waitForSnapshotStatus(
-         store,
-@@ -1731,8 +1732,6 @@ describe('Agent', () => {
-         snapDone.state.messages[0].content[0].text,
-         'appended message'
-       );
--
--      session.close();
-     });
- 
-     it('should accumulate message history across multiple turns in one invocation', async () => {
-@@ -2331,6 +2330,7 @@ describe('Agent', () => {
- 
-       const output = await session.output;
-       assert.ok(output.snapshotId);
-+      session.close();
- 
-       // Detach-only messages are not forwarded to the runner - 2 turns, not 3.
-       const snapDone = await waitForSnapshotStatus(
-@@ -2340,8 +2340,11 @@ describe('Agent', () => {
-       );
-       assert.strictEqual(snapDone.status, 'completed');
-       assert.strictEqual(processedCount, 2);
--
--      session.close();
-+      // Both turns landed on the one row the detach wrote.
-+      assert.deepStrictEqual(
-+        snapDone.state?.messages?.map((m) => m.content[0].text),
-+        ['task 1', 'task 2']
-+      );
-     });
-   });
- 
-@@ -2635,23 +2638,30 @@ describe('Agent', () => {
- 
-       const output = await session.output;
-       assert.ok(output.snapshotId);
--      // Server-managed agents don't return state in output (state is undefined)
--      // but the snapshot should have the transformed state
-+      // Server-managed agents don't return state in output (state is
-+      // undefined). The pending row carries no state either; the finalized
-+      // row does, and it is read through the transform.
-+      const pending = await flow.getSnapshotData({
-+        snapshotId: output.snapshotId!,
-+      });
-+      assert.strictEqual(pending?.status, 'pending');
-+      assert.strictEqual(pending?.state, undefined);
-+
-+      resolvePromise();
-+      session.close();
-+      await waitForSnapshotStatus(store, output.snapshotId!, 'completed');
-       const snapshot = await flow.getSnapshotData({
-         snapshotId: output.snapshotId!,
-       });
-       assert.ok(snapshot);
-       assert.strictEqual(
--        (snapshot!.state.custom as any).publicField,
-+        (snapshot!.state!.custom as any).publicField,
-         'visible'
-       );
-       assert.strictEqual(
--        (snapshot!.state.custom as any).secretField,
-+        (snapshot!.state!.custom as any).secretField,
-         undefined
-       );
--
--      resolvePromise();
--      session.close();
-     });
- 
-     it('should pass clientTransform through definePromptAgent', async () => {
-@@ -4475,3 +4485,198 @@ Now respond to the latest message.`,
-     });
-   });
- });
-+
-+describe('detach finalize', () => {
-+  const rowCount = (store: InMemorySessionStore<any>) =>
-+    (store as any).snapshots.size as number;
-+
-+  it('writes the pending row without state and finalizes it with every turn', async () => {
-+    const store = new InMemorySessionStore<{ count: number }>();
-+    // The first turn waits until the detach has landed, so no per-turn row
-+    // lands before the pending one and every turn's state goes to the finalize.
-+    let release: () => void = () => {};
-+    const released = new Promise<void>((resolve) => (release = resolve));
-+    const flow = defineCustomAgent<{ count: number }>(
-+      new Registry(),
-+      { name: 'finalizeAllTurns', store },
-+      async (sess) => {
-+        await sess.run(async () => {
-+          if (!sess.isDetached) await released;
-+          sess.session.updateCustom((c) => ({ count: (c?.count ?? 0) + 1 }));
-+        });
-+        return { message: { role: 'model', content: [{ text: 'done' }] } };
-+      }
-+    );
-+
-+    const session = flow.streamBidi({});
-+    for (const text of ['one', 'two', 'three']) {
-+      session.send({ message: { role: 'user', content: [{ text }] } });
+-  const server = new McpServer({
+-    name: 'Genkit MCP',
+-    version: '0.0.2',
+-  });
++  const server = new McpServer(
++    {
++      name: 'Genkit MCP',
++      version: '0.0.2',
++      title: 'Genkit MCP Server',
++      description:
++        'Provides Genkit documentation, usage guides, runtime process management, flow discovery/execution, and execution trace inspection.',
++    },
++    {
++      instructions:
++        'Use this server to look up Genkit documentation and API guides (`get_usage_guide`, `search_genkit_docs`, `list_genkit_docs`, `read_genkit_docs`), manage the local Genkit runtime (`start_runtime`, `restart_runtime`, `kill_runtime`), discover and run Genkit flows (`list_flows`, `run_flow`), and inspect execution traces (`get_trace`). Always check `get_usage_guide` or search Genkit docs before implementing Genkit features.',
 +    }
-+    session.send({ detach: true });
-+    const output = await session.output;
-+    assert.strictEqual(output.finishReason, 'detached');
-+    const pendingId = output.snapshotId!;
-+    assert.ok(pendingId);
-+
-+    const pending = await store.getSnapshot({ snapshotId: pendingId });
-+    assert.strictEqual(pending?.status, 'pending');
-+    assert.strictEqual(pending?.state, undefined);
-+    assert.ok(pending?.heartbeatAt);
-+
-+    // The row settles once the queued inputs drain. A detach ends the input
-+    // side, so a client that keeps its stream open does not hold it pending,
-+    // and an input sent after the detach never runs.
-+    session.send({ message: { role: 'user', content: [{ text: 'late' }] } });
-+    release();
-+    const done = await waitForSnapshotStatus(store, pendingId, 'completed');
-+    session.close();
-+    // One row holds the cumulative state of all three turns; no per-turn row
-+    // was written beside it, and the row's lineage is intact.
-+    assert.strictEqual(rowCount(store), 1);
-+    assert.deepStrictEqual(
-+      done.state?.messages?.map((m) => m.content[0].text),
-+      ['o
++  );
+ 
+   await defineDocsTool(server);
+   await defineUsageGuideTool(server);
 ```
 
----
-
-### Incident Patch 3: `bd0b13fa` (2026-10-20)
-**Commit Message**: fix(js/plugins/compat-oai): keep assistant text alongside tool calls (#6792)
-
-**File**: `js/plugins/compat-oai/src/model.ts` (modified, +65/-49)
+**File**: `genkit-tools/cli/src/mcp/trace.ts` (modified, +2/-1)
 ```diff
-@@ -41,6 +41,7 @@ import { model } from 'genkit/plugin';
- import OpenAI, { APIError } from 'openai';
- import type {
-   ChatCompletion,
-+  ChatCompletionAssistantMessageParam,
-   ChatCompletionChunk,
-   ChatCompletionContentPart,
-   ChatCompletionCreateParams,
-@@ -295,17 +296,28 @@ export function toOpenAIMessages(
-               arguments: JSON.stringify(part.toolRequest.input),
-             },
-           }));
--        if (toolCalls.length > 0) {
--          apiMessages.push({
--            role: role,
--            tool_calls: toolCalls,
--          });
--        } else {
--          apiMessages.push({
--            role: role,
--            content: msg.text,
--          });
-+        const text = msg.text;
-+        // Providers with thinking modes (e.g. DeepSeek) expect reasoning from
-+        // all previous assistant turns to be echoed back when the request
-+        // carries tools, so it is sent on every assistant message, not only
-+        // tool-calling ones. Providers that don't use it ignore the field.
-+        const reasoning = msg.reasoning;
-+        // `reasoning_content` is a provider extension, not part of the
-+        // OpenAI SDK types.
-+        const assistantMessage: ChatCompletionAssistantMessageParam & {
-+          reasoning_content?: string;
-+        } =
-+          toolCalls.length > 0
-+            ? {
-+                role: role,
-+                ...(text ? { content: text } : {}),
-+                tool_calls: toolCalls,
-+              }
-+            : { role: role, content: text };
-+        if (reasoning) {
-+          assistantMessage.reasoning_content = reasoning;
-         }
-+        apiMessages.push(assistantMessage);
-         break;
-       }
-       case 'tool': {
-@@ -391,27 +403,29 @@ export function fromOpenAIChoice(
-   );
- 
-   // Build content array based on what's present in the message
--  let content: Part[] = [];
-+  const content: Part[] = [];
-+  const hasToolRequests = !!toolRequestParts && toolRequestParts.length > 0;
- 
--  if (toolRequestParts && toolRequestParts.length > 0) {
--    content = toolRequestParts as ToolRequestPart[];
--  } else {
--    // Handle reasoning_content if present
--    if (
--      'reasoning_content' in choice.message &&
--      choice.message.reasoning_content
--    ) {
--      content.push({ reasoning: choice.message.reasoning_content as string });
--    }
-+  // Handle reasoning_content if present
-+  if (
-+    'reasoning_content' in choice.message &&
-+    choice.message.reasoning_content
-+  ) {
-+    content.push({ reasoning: choice.message.reasoning_content as string });
-+  }
- 
--    // Handle regular content if present
--    if (choice.message.content) {
--      content.push(
--        jsonMode
--          ? { data: JSON.parse(choice.message.content!) }
--          : { text: choice.message.content! }
--      );
--    }
-+  // Handle regular content if present. Text that accompanies tool calls is a
-+  // preamble, not JSON output, so it is never parsed.
-+  if (choice.message.content) {
-+    content.push(
-+      jsonMode && !hasToolRequests
-+        ? { data: JSON.parse(choice.message.content!) }
-+        : { text: choice.message.content! }
-+    );
-+  }
-+
-+  if (hasToolRequests) {
-+    content.push(...(toolRequestParts as ToolRequestPart[]));
-   }
- 
-   return {
-@@ -495,7 +509,8 @@ function fromOpenAIToolCallChunk(
-  * Converts an OpenAI message stream event to a Genkit GenerateResponseData
-  * object.
-  * @param choice The OpenAI message stream event to convert.
-- * @param jsonMode Whether the event is a JSON response.
-+ * @param _jsonMode Unused; kept for signature compatibility. Streamed content
-+ *   is always emitted as text, see the comment in the body.
-  * @param toolCallAccumulators Optional per-message tool-call accumulators (keyed
-  *   by tool call index) used to assemble streamed `arguments` fragments into
-  *   partial tool requests. When omitted, tool-call deltas are converted
-@@ -504,7 +519,7 @@ function fromOpenAIToolCallChunk(
-  */
- export function fromOpenAIChunkChoice(
-   choice: ChatCompletionChunk.Choice,
--  jsonMode = false,
-+  _jsonMode = false,
-   toolCallAccumulators?: ToolCallAccumulator[]
- ): GenerateResponseData {
-   const toolRequestParts = toolCallAccumulators
-@@ -518,24 +533,26 @@ export function fromOpenAIChunkChoice(
-       );
- 
-   // Build content array based on what's present in the delta
--  let content: Part[] = [];
-+  const content: Part[] = [];
-+  const hasToolRequests = !!toolRequestParts && toolRequestParts.length > 0;
- 
--  if (toolRequestParts && toolRequestParts.length > 0) {
--    content = toolRequestParts as ToolRequestPart[];
--  } else {
--    // Handle reasoning_content if present
--    if ('reasoning_content' in choice.delta && choice.delta.reasoning_content) {
--      content.push({ reasoning: choice.delta.reasoning_content as string });
--    }
-+  // Handle reasoning_content if present
-+  if ('reasoning_content' in choice.delta && choice.delta.reasoning_content) {
-+    content.push({ reasoning: choice.delta.reasoning_content as 
-```
-
-**File**: `js/plugins/compat-oai/tests/compat_oai_test.ts` (modified, +469/-2)
-```diff
-@@ -25,6 +25,7 @@ import {
- } from '@jest/globals';
- import type {
-   GenerateRequest,
-+  GenerateResponseChunkData,
-   GenerateResponseData,
-   MessageData,
-   Part,
-@@ -240,6 +241,86 @@ describe('toOpenAiMessages', () => {
-         },
-       ],
-     },
-+    {
-+      should: 'keep text alongside tool request content',
-+      inputMessages: [
-+        {
-+          role: 'model',
-+          content: [
-+            { text: 'Let me look that up.' },
-+            {
-+              toolRequest: {
-+                ref: 'call_1',
-+                name: 'lookup',
-+                input: {},
-+              },
-+            },
-+          ],
-+        },
-+      ],
-+      expectedOutput: [
-+        {
-+          role: 'assistant',
-+          content: 'Let me look that up.',
-+          tool_calls: [
-+            {
-+              id: 'call_1',
-+              type: 'function',
-+              function: { name: 'lookup', arguments: '{}' },
-+            },
-+          ],
-+        },
-+      ],
-+    },
-+    {
-+      should: 'echo reasoning alongside tool request content',
-+      inputMessages: [
-+        {
-+          role: 'model',
-+          content: [
-+            { reasoning: 'I should call the tool.' },
-+            { text: 'Let me look that up.' },
-+            {
-+              toolRequest: {
-+                ref: 'call_1',
-+                name: 'lookup',
-+                input: {},
-+              },
-+            },
-+          ],
-+        },
-+      ],
-+      expectedOutput: [
-+        {
-+          role: 'assistant',
-+          content: 'Let me look that up.',
-+          reasoning_content: 'I should call the tool.',
-+          tool_calls: [
-+            {
-+              id: 'call_1',
-+              type: 'function',
-+              function: { name: 'lookup', arguments: '{}' },
-+            },
-+          ],
-+        },
-+      ],
-+    },
-+    {
-+      should: 'echo reasoning on a text-only assistant message',
-+      inputMessages: [
-+        {
-+          role: 'model',
-+          content: [{ reasoning: 'Simple greeting.' }, { text: 'Hi there!' }],
-+        },
-+      ],
-+      expectedOutput: [
-+        {
-+          role: 'assistant',
-+          content: 'Hi there!',
-+          reasoning_content: 'Simple greeting.',
-+        },
-+      ],
-+    },
+@@ -30,7 +30,8 @@ export function defineTraceTools(server: McpServer, options: McpToolOptions) {
+     'get_trace',
      {
-       should: 'transform tool response text content correctly',
-       inputMessages: [
-@@ -489,6 +570,7 @@ describe('fromOpenAiChoice', () => {
-         message: {
-           role: 'model',
-           content: [
-+            { text: 'Tool call' },
-             {
-               toolRequest: {
-                 name: 'exampleTool',
-@@ -543,6 +625,69 @@ describe('fromOpenAiChoice', () => {
-         },
-       },
-     },
-+    {
-+      should: 'keep reasoning_content and content alongside tool_calls',
-+      choice: {
-+        index: 0,
-+        message: {
-+          role: 'assistant',
-+          content: 'Let me look that up.',
-+          reasoning_content: 'Need to call lookup.',
-+          refusal: null,
-+          tool_calls: [
-+            {
-+              id: 'ref123',
-+              type: 'function',
-+              function: { name: 'lookup', arguments: '{}' },
-+            },
-+          ],
-+        } as any,
-+        finish_reason: 'tool_calls',
-+        logprobs: null,
-+      },
-+      expectedOutput: {
-+        finishReason: 'stop',
-+        message: {
-+          role: 'model',
-+          content: [
-+            { reasoning: 'Need to call lookup.' },
-+            { text: 'Let me look that up.' },
-+            { toolRequest: { name: 'lookup', input: {}, ref: 'ref123' } },
-+          ],
-+        },
-+      },
-+    },
-+    {
-+      should: 'not parse preamble text as json when tool_calls are present',
-+      jsonMode: true,
-+      choice: {
-+        index: 0,
-+        message: {
-+          role: 'assistant',
-+          content: 'Let me look that up.',
-+          refusal: null,
-+          tool_calls: [
-+            {
-+              id: 'ref123',
-+              type: 'function',
-+              function: { name: 'lookup', arguments: '{}' },
-+            },
-+          ],
-+        },
-+        finish_reason: 'tool_calls',
-+        logprobs: null,
-+      },
-+      expectedOutput: {
-+        finishReason: 'stop',
-+        message: {
-+          role: 'model',
-+          content: [
-+            { text: 'Let me look that up.' },
-+            { toolRequest: { name: 'lookup', input: {}, ref: 'ref123' } },
-+          ],
-+        },
-+      },
-+    },
-     {
-       should: 'not ignore content when tool_calls is an empty array',
-       choice: {
-@@ -600,7 +745,7 @@ describe('fromOpenAiChunkChoice', () => {
-       },
-     },
-     {
--      should: 'work with json',
-+      should: 'emit a complete json delta as text in json mode',
-       chunkChoice: {
-         index: 0,
-         delta: {
-@@ -615,10 +760,25 @@ describe('fromOpenAiChunkChoice', () => {
-         finishReason: 'unknown',
-         message: {
-           role: 'model',
--          content: [{ data: { json: 'test' } }],
-+          content: [
+       title: 'Get Genkit Trace',
+-      description: 'Returns the trace details.',
++      description:
++        'Retrieves the detailed Genkit execution trace (spans, inputs, outputs, and errors) for a flow or action run by its `traceId`.',
+       inputSchema: getCommonSchema(options.explicitProjectRoot, {
+         traceId: z
+           .string()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6870** (2026-10-22): chore(js): remove outdated .guides directories (@MichaelDoyle)
+- **PR #6866** (2026-10-22): fix(genkit-tools/cli): add MCP server instructions and descriptive tool metadata (@ssbushi)
+- **PR #6859** (2026-10-21): feat(js/plugins/google-genai): vertexAI model updates, TTS, Omni... (@ifielker)
+- **PR #6855** (2026-10-21): test(js/plugins/google-cloud): stop slow test output and unawaited rejects stalling CI (@pavelgj)
+- **PR #6851** (2026-10-21): feat(js/plugins/google-genai): route newer vertexAI Gemini models to Interactions (@ifielker)
 - **PR #6838** (2026-10-20): fix(js/plugins/anthropic): send back empty signed thinking blocks (@hkarmoush)
-- **PR #6834** (2026-10-20): refactor(js/plugins/google-genai): share the Interactions types and converters between googleAI and vertexAI (@ifielker)
-- **PR #6832** (2026-10-19): fix(go/ai): keep the request out of a model action's output (@apascal07)
-- **PR #6825** (closed): docs(skills): add running-genkit-dev-ui-alongside-other-agents (@huangjeff5)
-- **PR #6814** (2026-10-19): ci(go): run the PostgreSQL tests against a service container (@apascal07)
-- **PR #6812** (2026-10-19): fix(go/plugins/postgresql)!: fix engine connection defects and leave a caller's pool open (@apascal07)
 
 ---
 
@@ -2936,36 +2774,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. js/plugins/anthropic): send back empty signed thinking blocks (#6838)
-
-**RULE**:
-When implementing operations in `js/plugins/anthropic/src/runner/beta.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `5f3e5116`: js/plugins/anthropic): send back empty signed thinking blocks (#6838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/anthropic/src/runner/beta.ts`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-    // Claude can return signed thinking blocks with empty text, so check the
-    // type rather than truthiness.
-    if (typeof part.reasoning === 'string') {
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-    if (part.reasoning) {
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f3e5116` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b50fa327`  
+> **Source Version**: `e8249eb0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:42:14.402Z  
+> **Timestamp**: 2026-10-22T17:45:10.560Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:42:14.395Z  
+> **Harvest Timestamp**: 2026-10-22T17:45:10.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,638 +2209,47 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebb69346` (2026-10-22)
-**Commit Message**: deps: update lock file for various security fixes
+### Incident Patch 1: `e8249eb0` (2026-10-22)
+**Commit Message**: build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888)
 
-**File**: `Cargo.lock` (modified, +12/-24)
-```diff
-@@ -4824,9 +4824,9 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
- 
- [[package]]
- name = "memmap2"
--version = "0.9.11"
-+version = "0.9.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
-+checksum = "6b0ca1155a9ecc25aa12e8313a119f32edf0255fea2f44839c4ac0a12b2ac157"
- dependencies = [
-  "libc",
- ]
-@@ -4879,9 +4879,9 @@ dependencies = [
- 
- [[package]]
- name = "minijinja"
--version = "3.0.1"
-+version = "3.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "789a6b737c4a13bec43cd3c1b982aa8a8a192ff4bf444e0fb1fd5a324f064fd1"
-+checksum = "0032a2738ba16d9a8822e4eb2833faeed5c41d767633ea753f33b6becd58cbfc"
- dependencies = [
-  "itoa",
-  "percent-encoding",
-@@ -4893,9 +4893,9 @@ dependencies = [
- 
- [[package]]
- name = "minijinja-contrib"
--version = "3.0.1"
-+version = "3.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e15d0d31fbf10ce99b313a238406d62dd5913d95a9be5fa081f1232e31292fc7"
-+checksum = "d3ca3f8d41a993f03d865f7fd8a3e63502f778b16ef4680bbc0863d3a2ce12fd"
- dependencies = [
-  "jiff",
-  "minijinja",
-@@ -6844,9 +6844,9 @@ checksum = "4a6394b9e965e73d0a289ee54f589087e2c676aedf60885baf52c76b771e4958"
- 
- [[package]]
- name = "ppmd-rust"
--version = "1.5.1"
-+version = "1.5.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "494b4379484fc92217cc7d9e3a532375b1d01a61889ec8333025dc3b0377af56"
-+checksum = "cd4acc8d264ea385db64ccfdcdfd5909ee9eda0975666723d59f3bfec80b3611"
- 
- [[package]]
- name = "ppv-lite86"
-@@ -8774,17 +8774,6 @@ dependencies = [
-  "windows-sys 0.61.2",
- ]
- 
--[[package]]
--name = "socks"
--version = "0.3.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f0c3dbbd9ae980613c6dd8e28a9407b50509d3803b57624d5dfe8315218cd58b"
--dependencies = [
-- "byteorder",
-- "libc",
-- "winapi",
--]
--
- [[package]]
- name = "sorted-vec"
- version = "0.8.11"
-@@ -9465,9 +9454,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.54.0"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
-@@ -9930,9 +9919,9 @@ checksum = "6d49784317cd0d1ee7ec5c716dd598ec5b4483ea832a2dced265471cc0f690ae"
- 
- [[package]]
- name = "ureq"
--version = "3.4.2"
-+version = "3.5.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
-+checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
- dependencies = [
-  "base64 0.23.1",
-  "cookie_store",
-@@ -9944,7 +9933,6 @@ dependencies = [
-  "rustls-pki-types",
-  "serde",
-  "serde_json",
-- "socks",
-  "ureq-proto",
-  "utf8-zero",
-  "webpki-roots",
-```
+Bumps [ip-address](https://github.com/beaugunderson/ip-address) from 10.7.2 to 10.7.4.
+- [Release notes](https://github.com/beaugunderson/ip-address/releases)
+- [Commits](https://github.com/beaugunderson/ip-address/compare/v10.7.2...v10.7.4)
 
 ---
+updated-dependencies:
+- dependency-name: ip-address
+  dependency-version: 10.7.4
+  dependency-type: indirect
+...
 
-### Incident Patch 2: `6e9a8b15` (2026-10-22)
-**Commit Message**: viz: bump vendored DataTables to 3.1.4 (prototype-pollution fix) (#4876)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* viz: bump vendored DataTables to dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1
-
-DataTables 3.1.4 is a core-only security release fixing prototype
-pollution in util.assignDeep / util.assignDeepObject; upstream recommends
-it for all 3.0.0-3.1.3 users. No extension moved.
-
-- Exposure in the data viewer was low: rows reach DataTables as positional
-  arrays and the settings objects are qsv-generated literals, so no
-  CSV-controlled key reaches the merge helpers.
-- Vendored files are the CDN combo bytes (3.1.3 vendored == 3.1.3 CDN was
-  confirmed first). The stylesheet differs only in its banner; every
-  extension section of the JS is byte-identical, core grows 36 bytes.
-- All seven locale files byte-identical to the 3.1.4 plug-ins; zh
-  date-condition override stays.
-- SRI hashes regenerated; gallery regenerated via
-  refresh_external_dashboards.sh (diffs are version/SRI/timestamp churn and
-  per-build schematic UUIDs only).
-- Verified in Chrome on both the QSV_VIZ_CDN (SRI) and inline gzip paths:
-  core reports 3.1.4, all extensions register, sort and search work,
-  console clean.
-
-Co-Authored-By: Claude Opus 
-
-**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
+**File**: `.claude/skills/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -38,7 +38,7 @@ jobs:
-           #   DevSkim flags as localhost access — fixture noise, not runtime code.
-           #   Scoped to the generated text formats so executable/config files in
-           #   the same dir (check_semanticmd.py, datadict.yaml) stay scanned.
--          # src/cmd/assets/datatables.min.* : vendored DataTables 3.1.3 bundle
-+          # src/cmd/assets/datatables.min.* : vendored DataTables 3.1.4 bundle
-           #   (dt/b/cc/date/sb). DS172411 flags every setTimeout call site
-           #   regardless of argument type; all 24 in the bundle pass a function
-           #   literal, none pass a string — minified third-party noise.
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **SQL fixes**: `RIGHT SEMI`/`RIGHT ANTI` join conditions, join keys assigned to the wrong input, `EXISTS` over aggregates, and correlated aggregates over no rows ([#30135](https://github.com/pola-rs/polars/pull/30135), [#30137](https://github.com/pola-rs/polars/pull/30137), [#30146](https://github.com/pola-rs/polars/pull/30146), [#30130](https://github.com/pola-rs/polars/pull/30130)).
-   - Also faster joins (as-of joins in particular) and sliced sorts, and out-of-core streaming group-by.
- - **`viz smart`: the guided Tour's vendored [driver.js](https://driverjs.com) is now 1.10.2** (was 1.8.0; [#4859](https://github.com/dathere/qsv/pull/4859)). This brings upstream fixes for popovers and hint beacons inside `<dialog>`s and transformed containers, scrolls tour targets that sit out of view inside a scrollable container into view, and renders the popover title and footer as plain `div`s instead of `header`/`footer` landmarks, so screen readers no longer announce extra page regions. The embedded payloads, the `QSV_VIZ_CDN` jsDelivr URLs and their SRI digests are updated together.
-+- **`viz`: vendored DataTables bundle bumped to `dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1`** (DataTables 3.1.3 -> 3.1.4; no extension moved; [#4876](https://github.com/dathere/qsv/pull/4876)). This is a core-only security release: it fixes a prototype-pollution risk in DataTables' `util.assignDeep`/`util.assignDeepObject`, and upstream recommends the update for every 3.0.0-3.1.3 user. In qsv's data viewer those helpers merge only qsv-generated settings objects, so exposure was low. The remaining core fixes (`prepend()` with a jQuery object, re-showing hidden columns on destroy, TypeScript types) don't affect the drawer. The stylesheet is byte-identical apart from its version banner, and every extension section of the JS is unchanged. All seven vendored locale files are byte-identical to the 3.1.4 plug-ins, and the `QSV_VIZ_CDN` Subresource Integrity hashes were regenerated.
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
- 
- ### Fixed
-```
-
-**File**: `THIRD_PARTY_NOTICES.md` (modified, +2/-2)
-```diff
-@@ -21,7 +21,7 @@ run `cargo tree` or a tool such as `cargo-about` for that inventory.
- | [plotly.js](https://github.com/plotly/plotly.js) | 3.7.0 | MIT | embedded in `qsv viz` HTML output (gzip+base64), or referenced by CDN |
- | [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) | as bundled in plotly.js 3.7.0 | BSD-3-Clause | bundled *inside* plotly.js; ships wherever plotly.js does |
- | [plotly.rs](https://github.com/plotly/plotly.rs) | git rev `00fe051` | MIT | Cargo dependency, compiled into the `qsv` binary |
--| [DataTables](https://datatables.net/) + Buttons, ColumnControl, DateTime, SearchBuilder | `dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1` | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML |
-+| [DataTables](https://datatables.net/) + Buttons, ColumnControl, DateTime, SearchBuilder | `dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1` | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML |
- | [driver.js](https://driverjs.com/) | 1.10.2 | MIT | vendored in `src/cmd/assets/`, compiled in and embedded in `viz smart` HTML (the guided tour) |
- | [LuaDate](https://github.com/Tieske/date) | 2.2.1 | MIT | vendored in `resources/luau/vendor/luadate/`, compiled into the binary |
- | [DCAT-US v3 schemas](https://github.com/GSA/dcat-us) | commit `1ca074b` | CC0-1.0 | vendored in `resources/dcat-us-v3/`, compiled into the binary |
-@@ -307,7 +307,7 @@ THE SOFTWARE.
- ## DataTables
- 
- Upstream: <https://datatables.net/> — download-builder combination
--`dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1`, comprising DataTables 3.1.3,
-+`dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1`, comprising DataTables 3.1.4,
- Buttons 4.1.2, ColumnControl 2.1.2, DateTime 2.1.2 and SearchBuilder 2.1.1.
- 
- Vendored unmodified at [`src/cmd/assets/datatables.min.js`](src/cmd/assets/datatables.min.js)
-```
-
-**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +7/-7)
-```diff
-@@ -2,7 +2,7 @@
- <!-- Third-party software used by this page:
-      plotly.js 3.7.0 - (c) 2012-2026 Plotly, Inc. - MIT
-        (bundles MapLibre GL JS - BSD-3-Clause)
--     DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
-+     DataTables 3.1.4 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
-      driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-      Basemap tiles (c) OpenStreetMap contributors (ODbL 1.0), (c) CARTO
-@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -941,7 +941,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
- <div class="qsv-dict-downloads">
- <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcGFydGljdWxhcmx5IGZvciBzcGF5ZWQgZmVtYWxlcyBhbmQgbmV1dGVyZWQgbWFsZXMuXG4qICoqRGF0YSBRdWFsaXR5OioqIFRoZSBkYXRhc2V0IGlzIGhpZ2hseSBjb21wbGV0ZSB3aXRoIHZlcnkgbG93IG51bGwgY291bnRzIGFjcm9zcyBhbGwgZmllbGRzOyBob3dldmVyLCB0aGUgYEJyZWVkYCBhbmQgYENvbG9yYCBmaWVsZHMgY29udGFpbiBtaW5vciBzcGFyc2l0eS5cbiogKipUZW1wb3JhbCBSYW5nZToqKiBUaGUgYFZhbGlkRGF0ZWAgZmllbGQgc2hvd3MgYSB0ZW1wb3JhbCBzcGFuIG9mIGFwcHJveGltYXRlbHkgMjMgeWVhcnMsIGZyb20gMjAwMyB0byAyMDI2LlxuXG5HZW5lcmF0ZWQgYnkgcXN2IHYyMS4xLjAgZGVzY3JpYmVncHRcbkNvbW1hbmQgbGluZTogdGFyZ2V0L2RlYnVnL3FzdiBkZXNjcmliZWdwdCAtLWRpY3Rpb25hcnkgLS1kZXNjcmlwdGlvbiBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ19saWNlbnNlcy5jc3YgLS1mb3JtYXQganNvbnNjaGVtYSAtbyBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ3NfZGljdC5zY2hlbWEuanNvbiAtLWZyZXNoIC0tdHdvLXBhc3MgLS1pbmZlci1jb250ZW50LXR5cGUgLS1pbmZlci1udWxsLXZhbHVlc1xuUHJvbXB0IGZpbGU6IERlZmF1bHQgdjcuMi4wXG5Nb2RlbDogZ29vZ2xlL2dlbW1hLTQtMjZiLWE0YlxuTExNIEFQSSBVUkw6IGh0dHA6Ly9sb2NhbGhvc3Q6MTIzNC92MVxuTGFuZ3VhZ2U6IFxuVGltZXN0YW1wOiAyMDI2LTA3LTE3VDEzOjQyOjE0LjE2ODUyNSswMDowMFxuXG5XQVJOSU5HOiBEZXNjcmlwdGlvbiBnZW5lcmF0ZWQgYnkgYW4gTExNIGFuZCBtYXkgY29udGFpbiBpbmFjY3VyYWNpZXMuIFZlcmlmeSBiZWZvcmUgdXNpbmchXG4iLAogICJ0eXBlIjogIm9iamVjdCIsCiAgInByb3BlcnRpZXMiOiB7CiAgICAiX2lkIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAiaW50ZWdlciIKICAgICAgXSwKICAgICAgInRpdGxlIjogIlJlY29yZCBJRCIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJBIHVuaXF1ZSBpbnRlZ2VyIGlkZW50aWZpZXIgZm9yIGVhY2ggcmVjb3JkIGluIHRoZSBkYXRhc2V0LiIsCiAgICAgICJtaW5pbXVtIjogMjk1ODUyMjcsCiAgICAgICJtYXhpbXVtIjogMjk2MzUyMzksCiAgICAgICJ4LXFzdiI6IHsKICAgICAgICAicXN2X3R5cGUiOiAiSW50ZWdlciIsCiAgICAgICAgImNhcmRpbmFsaXR5IjogNTAwMTMsCiAgICAgICAgIm51bGxfY291bnQiOiAwLAogICAgICAgICJjb250ZW50X3R5cGUiOiAidW5pcXVlX2lkIiwKICAgICAgICAicm9sZSI6ICJpZGVudGlmaWVyIiwKICAgICAgICAiY29uY2VwdCI6ICJpZC5zdXJyb2dhdGVfa2V5IiwKICAgICAgICAiZXhhbXBsZV9jb3VudHMiOiAiPEFMTF9VTklRVUU+IgogICAgICB9CiAgICB9LAogICAgIkxpY2Vuc2VUeXBlIjogewog
-```
-
-**File**: `examples/viz/smart_cms_medicare.html` (modified, +5/-5)
-```diff
-@@ -2,7 +2,7 @@
- <!-- Third-party software used by this page:
-      plotly.js 3.7.0 - (c) 2012-2026 Plotly, Inc. - MIT
-        (bundles MapLibre GL JS - BSD-3-Clause)
--     DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
-+     DataTables 3.1.4 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
-      driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -943,8 +943,8 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
- })();
- </script>
- 
--<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-ocwhkdhxJhahyOR1uuhXjsfZRbwxcPXtVQM544ExdtdCD3tg+Z+aXD/Xm8oTwTpK" crossorigin="anonymous">
--<script src="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-lrZ3R3TIwZRywxf4o3vZT0gzuqvLi57OuwTwjm6jyvppZIwIyBVHw7jk80URF9y+" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-GmwleB1P0WhMZXHpBV6YMP4M6E37rRjmrKfIptevjapB/cZIKD6apheUY/I7vqLC" crossorigin="anonymous">
-+<script src="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-VC5dLAcszQpBHAWmzJuO3uucDRPfdkYzNohSU7GIM1gUwzAHoqyITmih/Bgo8noE" crossorigin="anonymous"></script>
- <script id="qsv-data-rows" type="application/json">[["Chiropractic","ND","23","0"],["Physical Therapist in Private Practice","NY","11","0"],["Audiologist","NY","16","0"],["Physical Therapist in Private Practice","WA","17","0"],["Family Practice","CA","16","0"],["Physical Therapist in Private Practice","NY","11","0"],["Chiropractic","NM","41","0"],["Hospitalist","CA","86","24109.29"],["Anesthesiology","MT","223","43294.09"],["Nurse Practitioner","PA","11","647.45"],["Podiatry","TX","187","43423.99"],["Certified Registered Nurse Anesthetist (CRNA)","AL","464","26963.05"],["Family Practice","NC","88",""],["Endocrinology","FL","1735","254941.67"],["Physical Therapist in Private Practice","WA","25","28524.71"],["Physician Assistant","IN","45","5248.75"],["Dermatology","CO","930","461544.26"],["Orthopedic Surgery","MI","311","115202.28"],["Interventional Radiology","OK","591","56598.61"],["Physician Assistant","FL","150","28141.89"],["Nurse Practitioner","GA","43","3413.12"],["Otolaryngology","FL","637","204825.55"],["Obstetrics \u0026 Gynecology","UT","28","5159.51"],["Dermatology","PA","411","46657.48"],["Physical Therapist in Private Practice","NY","19","9746.62"],["General Surgery","TX","53","20555.75"],["Hematology","PA","50","2495.89"],["Certified Registered Nurse Anesthetist (CRNA)","TX","99","10029.15"],["Physician Assistant","NY","62","7138.67"],["Emergency Medicine","CA","104","15582.9"],["General Surgery","LA","21","3821.28"],["Otolaryngology","NY","446","435999.05"],["Family Practice","MO","75","7943.55"],["Neurology","NY","112","62854.59"],["Physician Assistant","GA","237","26213.61"],["Physical Therapist in Private Practice","VA","19","66020.28"],["Hematology-Oncology","NY","123","46898.89"],["Nurse Practitioner","IN","67","12559.34"],["Hospitalist","UT","127","43998.67"],["Nurse Practitioner","TX","198","23435.39"],["Pulmonary Disease","IL","221","183677.1"],["Ophthalmology","MA","359","79704.84"],["Dermatology","SC","537","489209.23"],["Physical Therapist in Private Practice","NV","57","31326.34"],["Allergy/ Immunology","FL","156",""],["Nurse Practitioner","SC","55",""],["Family Practice","KY","198",""],["Physician Assistant","MN","79","8387.58"],["Internal Medicine","FL","115",""],["Diagnostic Radiology","CA","992","22081.81"],["Physician Assistant","TN","295","32235.8"],["Nurse Practitioner","MD","82","7481.61"],["Nurse Practitioner","PA","38","22989.17"],["Neurology","PA","39","12426.24"],["Physical Therapist in Private Practice","IL","89","95573.15"],["Nurse Practiti
-```
-
-**File**: `examples/viz/smart_cpdb.html` (modified, +5/-5)
-```diff
-@@ -2,7 +2,7 @@
- <!-- Third-party software used by this page:
-      plotly.js 3.7.0 - (c) 2012-2026 Plotly, Inc. - MIT
-        (bundles MapLibre GL JS - BSD-3-Clause)
--     DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
-+     DataTables 3.1.4 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
-      driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -983,8 +983,8 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
- })();
- </script>
- 
--<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-ocwhkdhxJhahyOR1uuhXjsfZRbwxcPXtVQM544ExdtdCD3tg+Z+aXD/Xm8oTwTpK" crossorigin="anonymous">
--<script src="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-lrZ3R3TIwZRywxf4o3vZT0gzuqvLi57OuwTwjm6jyvppZIwIyBVHw7jk80URF9y+" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-GmwleB1P0WhMZXHpBV6YMP4M6E37rRjmrKfIptevjapB/cZIKD6apheUY/I7vqLC" crossorigin="anonymous">
-+<script src="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-VC5dLAcszQpBHAWmzJuO3uucDRPfdkYzNohSU7GIM1gUwzAHoqyITmih/Bgo8noE" crossorigin="anonymous"></script>
- <script id="qsv-data-rows" type="application/json">[["038LBCENPH3","BPL","Brooklyn Public Library","","2800000","0","0"],["039LQMTGRMS","QPL","Queens Borough Public Library","","60000","0","0"],["850HL82HSS3","DDC","Department of Design and Construction","Fixed Asset","0","0","0"],["846P-217PDGT","DPR","Department of Parks and Recreation","Fixed Asset","-19000","0.00","401178.65"],["850HH112CTFS","DDC","Department of Design and Construction","Fixed Asset","3045000","71319.61","406640.19"],["039LQGL-RES","QPL","Queens Borough Public Library","","1000000","0","0"],["039LQNN_26","QPL","Queens Borough Public Library","","0","0","0"],["039LQNO-CCTV","QPL","Queens Borough Public Library","","0","0","0"],["039LQPHRS-23","QPL","Queens Borough Public Library","","300000","0","0"],["126PV176BLR2","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","0","0","0"],["126PV176BZV2","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","1000","2199000","0"],["126PV176COGN","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","0","0","0"],["126PV187-SI4","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","120000","112000","0"],["126PV197-AV1","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","65000","0.00","59644.35"],["126PV204AUD1","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","295000","0","0"],["126PV204ICOM","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","274000","0","0"],["126PV204-IT2","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","462000","0","0"],["126PV204JLC6","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","471000","0","0"],["126PV204JLC7","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","400000","0","0"],["126PV205NBGM","DCLA","Department of Cultural Affairs","ITT, Vehicles, and Equipment","150000","0","0"],["125HAM14CRSR","DFTA","Department for the Aging","Fixed Asset","100000","0","0"],["035LRCE12DOT","NYRL","New York Research Libraries","","0","0","0"],["846P-411C567","DPR","Department of Parks and Recreation","Fixed Asset","704000","0.00","13718953.95"],["035L21FREEZE","NYRL","New York Research Libraries","","393000","6600","0"],["850AGDJCCCON","DDC","Department of Design and Construction","ITT, Vehicles, and Equipment","0","0","145865"],["846P-5CLAYST","DPR","Department of Parks and Recreation","Fixed Asset","0","0","47900"],["846P-4FLBAY2","DPR","Department of Parks and Recr
-```
-
-**File**: `examples/viz/smart_dict_sunburst.html` (modified, +5/-5)
-```diff
-@@ -2,7 +2,7 @@
- <!-- Third-party software used by this page:
-      plotly.js 3.7.0 - (c) 2012-2026 Plotly, Inc. - MIT
-        (bundles MapLibre GL JS - BSD-3-Clause)
--     DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
-+     DataTables 3.1.4 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
-      driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -991,8 +991,8 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- })();
- </script>
- 
--<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-ocwhkdhxJhahyOR1uuhXjsfZRbwxcPXtVQM544ExdtdCD3tg+Z+aXD/Xm8oTwTpK" crossorigin="anonymous">
--<script src="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-lrZ3R3TIwZRywxf4o3vZT0gzuqvLi57OuwTwjm6jyvppZIwIyBVHw7jk80URF9y+" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-GmwleB1P0WhMZXHpBV6YMP4M6E37rRjmrKfIptevjapB/cZIKD6apheUY/I7vqLC" crossorigin="anonymous">
-+<script src="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-VC5dLAcszQpBHAWmzJuO3uucDRPfdkYzNohSU7GIM1gUwzAHoqyITmih/Bgo8noE" crossorigin="anonymous"></script>
- <script id="qsv-data-rows" type="application/json">[["100001","North","Electronics","PayPal","False","2","37","284","10200","13","0.03","0.32","cust-3b8f37f8a88b"],["100002","North","Books","Debit Card","True","5","42","219","8500","14","0.08","0.28","cust-c24101a9e71f"],["100003","South","Sports","Cash","True","2","46","57","2500","21","0.03","0.34","cust-43b79a8dca03"],["100004","North","Sports","Cash","True","4","59","45","2200","25","0.19","0.19","cust-5c94dc98d2c1"],["100005","South","Sports","Credit Card","False","2","47","124","4100","14","0.3","0.1","cust-5d65d58842de"],["100006","South","Home","PayPal","False","3","53","41","1700","22","0.21","0.2","cust-765629d4beef"],["100007","West","Home","Debit Card","True","1","40","166","5700","16","0.14","0.26","cust-e0599132b63e"],["100008","East","Clothing","Cash","True","4","56","78","4000","22","0.09","0.29","cust-bf3c434308bc"],["100009","West","Books","Cash","True","2","32","29","600","13","0.3","0.11","cust-6c12ae340454"],["100010","North","Toys","Cash","True","4","48","275","12000","16","0.09","0.27","cust-b881ae270da7"],["100011","North","Sports","PayPal","True","3","54","237","12800","23","0.0","0.35","cust-8026f8cda88b"],["100012","South","Books","Credit Card","True","3","11","264","2300","6","0.21","0.2","cust-f4188a14be62"],["100013","North","Books","PayPal","True","1","73","162","10900","28","0.08","0.29","cust-15ed14296c07"],["100014","West","Electronics","Debit Card","False","4","63","286","16900","23","0.06","0.3","cust-3638f6e07cc0"],["100015","South","Sports","PayPal","True","3","19","66","1100","8","0.09","0.28","cust-3ae88dcdcd03"],["100016","South","Electronics","Credit Card","True","1","41","122","4900","18","0.02","0.34","cust-3ced839fbc50"],["100017","East","Sports","Cash","False","2","33","300","8200","10","0.17","0.22","cust-182530beb45f"],["100018","North","Sports","Cash","True","4","8","244","1400","5","0.3","0.11","cust-1931a56c0941"],["100019","North","Toys","PayPal","True","1","40","234","8900","17","0.05","0.31","cust-ec5bdfde4fbf"],["100020","North","Toys","Credit Card","False","5","58","12","500","26","0.34","0.07","cust-680a2a935d62"],["100021","West","Toys","Debit Card","True","1","40","204","7400","16","0.09","0.28","cust-b2536c4a37ea"],["100022","West","Clothing","Debit Card","True","1","20","282","5500","8","0.02","0.34","cust-80ba7a0ecfea"],["100023","South","Electronics","Credit Card","True","1","17","125","1800","6","0.14","0.25","cust-983294340a03"],["100024","North","Books","Credit Card","True","5","31","29
-```
-
-**File**: `examples/viz/smart_dict_treemap.html` (modified, +5/-5)
-```diff
-@@ -2,7 +2,7 @@
- <!-- Third-party software used by this page:
-      plotly.js 3.7.0 - (c) 2012-2026 Plotly, Inc. - MIT
-        (bundles MapLibre GL JS - BSD-3-Clause)
--     DataTables 3.1.3 + Buttons/ColumnControl/DateTime/SearchBuilder
-+     DataTables 3.1.4 + Buttons/ColumnControl/DateTime/SearchBuilder
-        (c) SpryMedia Ltd - MIT
-      driver.js 1.10.2 - (c) Kamran Ahmed - MIT
-      Full texts: https://github.com/dathere/qsv/blob/master/THIRD_PARTY_NOTICES.md -->
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-21 11:28 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -927,8 +927,8 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- })();
- </script>
- 
--<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-ocwhkdhxJhahyOR1uuhXjsfZRbwxcPXtVQM544ExdtdCD3tg+Z+aXD/Xm8oTwTpK" crossorigin="anonymous">
--<script src="https://cdn.datatables.net/v/dt/dt-3.1.3/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-lrZ3R3TIwZRywxf4o3vZT0gzuqvLi57OuwTwjm6jyvppZIwIyBVHw7jk80URF9y+" crossorigin="anonymous"></script>
-+<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.css" integrity="sha384-GmwleB1P0WhMZXHpBV6YMP4M6E37rRjmrKfIptevjapB/cZIKD6apheUY/I7vqLC" crossorigin="anonymous">
-+<script src="https://cdn.datatables.net/v/dt/dt-3.1.4/b-4.1.2/cc-2.1.2/date-2.1.2/sb-2.1.1/datatables.min.js" integrity="sha384-VC5dLAcszQpBHAWmzJuO3uucDRPfdkYzNohSU7GIM1gUwzAHoqyITmih/Bgo8noE" crossorigin="anonymous"></script>
- <script id="qsv-data-rows" type="application/json">[["1001","Basic","East","215.39","190"],["1002","Basic","Central","33.58","14"],["1003","Plus","South","203.26","11"],["1004","Plus","West","28.51","128"],["1005","Pro","East","238.66","14"],["1006","Basic","Central","31.74","18"],["1007","Basic","South","190.01","24"],["1008","Basic","West","35.99","46"],["1009","Plus","East","189.56","155"],["1010","Plus","Central","17.79","91"],["1011","Pro","South","225.5","352"],["1012","Basic","West","29.68","62"],["1013","Basic","East","225.56","67"],["1014","Basic","Central","32.76","305"],["1015","Plus","South","230.02","184"],["1016","Plus","West","38.38","84"],["1017","Pro","East","213.81","12"],["1018","Basic","Central","29.26","42"],["1019","Basic","South","211.95","68"],["1020","Basic","West","23.3","159"],["1021","Plus","East","205.46","285"],["1022","Plus","Central","31.71","217"],["1023","Pro","South","220.87","135"],["1024","Basic","West","39.14","375"],["1025","Basic","East","218.09","706"],["1026","Basic","Central","24.28","23"],["1027","Plus","South","193.64","30"],["1028","Plus","West","35.79","121"],["1029","Pro","East","245.93","261"],["1030","Basic","Central","32.54","154"],["1031","Basic","South","231.08","214"],["1032","Basic","West","25.72","163"],["1033","Plus","East","202.58","330"],["1034","Plus","Central","26.28","522"],["1035","Pro","South","193.76","12"],["1036","Basic","West","31.68","218"],["1037","Basic","East","185.8","311"],["1038","Basic","Central","12.37","61"],["1039","Plus","South","199.84","5"],["1040","Plus","West","36.84","112"],["1041","Pro","East","224.42","11"],["1042","Basic","Central","33.04","264"],["1043","Basic","South","229.34","90"],["1044","Basic","West","33.83","370"],["1045","Plus","East","237.19","144"],["1046","Plus","Central","33.71","387"],["1047","Pro","South","235.16","59"],["1048","Basic","West","17.32","97"],["1049","Basic","East","196.4","570"],["1050","Basic","Central","41.27","30"],["1051","Plus","South","225.85","48"],["1052","Plus","West","34.55","120"],["1053","Pro","East","208.09","1"],["1054","Basic","Central","27.1","98"],["1055","Basic","South","204.15","551"],["1056","Basic","West","36.63","212"],["1057","Plus","East","195.16","203"],["1058","Plus","Central","29.06","10"],["1059","Pro","South","245.29","374"],["1060","Basic","West","22.81","288"],["1061","Basic","East","205.83","20"],["1062","Basic","Central","34.42","182"],["1063","Plus","South","226.21","43"],["1064","Plus","West","31.0","32"],["1065","Pro","East","216.83","1"],["1066",
-```
-
----
-
-### Incident Patch 3: `8e951826` (2026-10-22)
-**Commit Message**: fix(viz): escape the tour config fully and the remaining plotly label sinks (#4879)
-
-* fix(viz): escape the tour config fully and the remaining plotly label sinks
-
-The guided tour's `#qsv-tour-config` JSON escaped only `</`. Its `"key"` carries the raw
-column name, and a header containing `<!--<script>` puts the HTML tokenizer into the
-double-escaped script state, where the block's own `</script>` no longer closes it: the rest
-of the page (tour, theme toggle, qsv-clientd bridge) was swallowed as script text. It now
-escapes `&`/`<`/`>` like the figure payloads.
-
-Plotly renders a pseudo-HTML subset (including live http(s) `<a href>` links) in labels.
-Hovers, titles and freq-bar ticks were already escaped; these sinks now go through
-`escape_hover` too: correlation/association heatmap labels (standalone and smart), Sankey
-node labels, treemap/sunburst/icicle labels (ids/parents keep the raw segment), the lollipop
-category axis (Top Relationships and funnel stage ticks), and bridge waterfall categories.
-
-Regenerated the three gallery pages whose tour config changes encoding (content identical
-after JSON.parse).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite PR #4879 i
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -72,6 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - Location cells are trimmed in the built-in `iso3`/`usa-states` modes, so `PA ` and `PA` are one region instead of two, and `--denominator census` finds padded codes.
-   - A GeoJSON feature id stored as an integral float (`"FIPS": 6037.0`, as geopandas writes an integer column that holds a NaN) is emitted as `6037`, the spelling plotly matches, instead of `6037.0`, which matched no region.
-   - A mistyped `--denominator census@<year>` (e.g. `census@2O21`) is now a clear usage error. It used to be read as a column name and fail with "selector does not exist" (on `viz choropleth`, only after fetching boundaries).
-+- **`viz smart`: a column name containing `<!--<script>` no longer breaks the rest of the page.** ([#4879](https://github.com/dathere/qsv/pull/4879)) The guided tour's config is JSON inside a `<script>` element, and only `</` was escaped in it. Its `"key"` field carries the raw column name, and `<!--<script>` there switches the browser's HTML parser into a state where the element's own `</script>` no longer closes it. Everything after it was swallowed as script text, so the tour, the theme toggle and the qsv-clientd bridge never ran. It is now escaped like the chart payloads (`<`, `>` and `&` become JSON Unicode escapes). This was not a script-injection hole: the swallowed text never executed.
-+- **`viz`: CSV text no longer renders as markup in more chart labels.** ([#4879](https://github.com/dathere/qsv/pull/4879)) Plotly renders a subset of HTML in labels, including clickable `http(s)` links. Hover text, titles and frequency-bar ticks were already escaped, but some labels were not, so a CSV value or header such as `<a href="...">` became a live off-site link, and `<b>` restyled text. Escaped now: correlation/association heatmap labels (`viz heatmap` and `viz smart`), Sankey node labels, treemap/sunburst/icicle labels, Top Relationships ticks, and funnel/bridge stage names.
- - **`joinp --cache-schema 1` no longer writes a schema that types unparseable dates as dates.** ([#4872](https://github.com/dathere/qsv/pull/4872)) When it reused a stats cache that had inferred dates, as a `moarstats --advanced` cache (from `viz smart --smarter` or `pivotp --agg smart`) does, every Date/DateTime column became a Polars date type, even in formats Polars can't read such as `04/18/2019 09:55:45 PM`. The join failed, and the cached `.pschema.json` it left behind broke later `joinp` and `sqlp` reads of that file. As in `schema --polars` and `sqlp --cache-schema` since #4751, a column now gets a date type only if Polars parses a sample of its raw values; otherwise it is String. Day-first dates need `QSV_PREFER_DMY`.
- - **`pivotp --agg smart` (the default) picks Median far less often — behavior change.** ([#4869](https://github.com/dathere/qsv/pull/4869)) Its "high variability" test compared the stats cache's `cv` with 1, but `stats` reports CV as a percentage, so any numeric column with a CV above 1% got Median. That was nearly every one, and it hid the cardinality, mixed-sign and skewness checks after it. The cut is now 100% (stddev larger than the mean). **Pivots that relied on the default can now return Sum (or Mean) where they returned Median; pass an explicit `--agg` (e.g. `--agg median`) to keep the old result.**
- - **`pivotp --agg smart` now detects skewed data.** ([#4869](https://github.com/dathere/qsv/pull/4869)) Its skewness check read `stats`' `skewness`, which is Bowley's quartile skewness and never exceeds 1 in absolute value, against a cut of 2, so it could never fire. It now uses `moarstats --advanced`'s moment skewness (|G1| ≥ 1 picks Median), falling back to Pearson skewness when G1 isn't in the cache.
-```
-
-**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +5/-5)
-```diff
-@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 03:55 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -941,7 +941,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
- <div class="qsv-dict-downloads">
- <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcGFydGljdWxhcmx5IGZvciBzcGF5ZWQgZmVtYWxlcyBhbmQgbmV1dGVyZWQgbWFsZXMuXG4qICoqRGF0YSBRdWFsaXR5OioqIFRoZSBkYXRhc2V0IGlzIGhpZ2hseSBjb21wbGV0ZSB3aXRoIHZlcnkgbG93IG51bGwgY291bnRzIGFjcm9zcyBhbGwgZmllbGRzOyBob3dldmVyLCB0aGUgYEJyZWVkYCBhbmQgYENvbG9yYCBmaWVsZHMgY29udGFpbiBtaW5vciBzcGFyc2l0eS5cbiogKipUZW1wb3JhbCBSYW5nZToqKiBUaGUgYFZhbGlkRGF0ZWAgZmllbGQgc2hvd3MgYSB0ZW1wb3JhbCBzcGFuIG9mIGFwcHJveGltYXRlbHkgMjMgeWVhcnMsIGZyb20gMjAwMyB0byAyMDI2LlxuXG5HZW5lcmF0ZWQgYnkgcXN2IHYyMS4xLjAgZGVzY3JpYmVncHRcbkNvbW1hbmQgbGluZTogdGFyZ2V0L2RlYnVnL3FzdiBkZXNjcmliZWdwdCAtLWRpY3Rpb25hcnkgLS1kZXNjcmlwdGlvbiBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ19saWNlbnNlcy5jc3YgLS1mb3JtYXQganNvbnNjaGVtYSAtbyBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ3NfZGljdC5zY2hlbWEuanNvbiAtLWZyZXNoIC0tdHdvLXBhc3MgLS1pbmZlci1jb250ZW50LXR5cGUgLS1pbmZlci1udWxsLXZhbHVlc1xuUHJvbXB0IGZpbGU6IERlZmF1bHQgdjcuMi4wXG5Nb2RlbDogZ29vZ2xlL2dlbW1hLTQtMjZiLWE0YlxuTExNIEFQSSBVUkw6IGh0dHA6Ly9sb2NhbGhvc3Q6MTIzNC92MVxuTGFuZ3VhZ2U6IFxuVGltZXN0YW1wOiAyMDI2LTA3LTE3VDEzOjQyOjE0LjE2ODUyNSswMDowMFxuXG5XQVJOSU5HOiBEZXNjcmlwdGlvbiBnZW5lcmF0ZWQgYnkgYW4gTExNIGFuZCBtYXkgY29udGFpbiBpbmFjY3VyYWNpZXMuIFZlcmlmeSBiZWZvcmUgdXNpbmchXG4iLAogICJ0eXBlIjogIm9iamVjdCIsCiAgInByb3BlcnRpZXMiOiB7CiAgICAiX2lkIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAiaW50ZWdlciIKICAgICAgXSwKICAgICAgInRpdGxlIjogIlJlY29yZCBJRCIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJBIHVuaXF1ZSBpbnRlZ2VyIGlkZW50aWZpZXIgZm9yIGVhY2ggcmVjb3JkIGluIHRoZSBkYXRhc2V0LiIsCiAgICAgICJtaW5pbXVtIjogMjk1ODUyMjcsCiAgICAgICJtYXhpbXVtIjogMjk2MzUyMzksCiAgICAgICJ4LXFzdiI6IHsKICAgICAgICAicXN2X3R5cGUiOiAiSW50ZWdlciIsCiAgICAgICAgImNhcmRpbmFsaXR5IjogNTAwMTMsCiAgICAgICAgIm51bGxfY291bnQiOiAwLAogICAgICAgICJjb250ZW50X3R5cGUiOiAidW5pcXVlX2lkIiwKICAgICAgICAicm9sZSI6ICJpZGVudGlmaWVyIiwKICAgICAgICAiY29uY2VwdCI6ICJpZC5zdXJyb2dhdGVfa2V5IiwKICAgICAgICAiZXhhbXBsZV9jb3VudHMiOiAiPEFMTF9VTklRVUU+IgogICAgICB9CiAgICB9LAogICAgIkxpY2Vuc2VUeXBlIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAic3RyaW5nIgogICAgICBdLAogICAgICAidGl0bGUiOiAiTGljZW5zZSBUeXBlIiwKICAgICAgImRlc2NyaXB0aW9uIjogIlRoZSBzcGVjaWZpYyBjbGFzc2lmaWNhdGlvbiBvZiB0aGUgZG9nIGxpY2Vuc2UgKGUuZy4sIGxpZmV0aW1lLCBzZW5pb3IpLiIsCiAgICAgICJleGFtcGxlcyI6IFsKICAgICAgICAiRG9nIExpZmV0aW1lIFNwYXllZCBGZW1hbGUiLAogICAgICAgICJEb2cgTGlmZXRpbWUgTmV1dGVyZWQgTWFsZSIsCiAgICAgICAgIkRvZyBMaWZldGltZSBNYWxlIiwKICAgICAgICAiRG9nIFNlbmlvciBMaWZldGltZSBTcGF5ZWQgRmVtYWxlIiwKICAgICAg
-```
-
-**File**: `examples/viz/smart_wpa_211_requests.html` (modified, +5/-5)
-```diff
-@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">wpa_211_requests.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>279,464 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 03:55 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
- <tr><td class="qsv-viz-meta-k">PID:</td><td><a href="https://data.wprdc.org/dataset/211-requests" target="_blank" rel="noopener noreferrer">https://data.wprdc.org/dataset/211-requests</a></td></tr>
- </table>
-@@ -966,7 +966,7 @@ <h1>wpa_211_requests.csv — Data Schematic</h1>
- <div class="qsv-dict-downloads">
- <a class="qsv-dict-export" download="wpa_211_requests_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAid3BhXzIxMV9yZXF1ZXN0cyIsCiAgInR5cGUiOiAib2JqZWN0IiwKICAiZGVzY3JpcHRpb24iOiAiUkVBTCAyLTEtMSBoZWxwbGluZSByZXF1ZXN0cyBhY3Jvc3MgdGhlIDI1IFdlc3Rlcm4gUGVubnN5bHZhbmlhIGNvdW50aWVzIHNlcnZlZCBieSB0aGUgVW5pdGVkIFdheSBvZiBTb3V0aHdlc3Rlcm4gUGVubnN5bHZhbmlhLCBvbmUgcm93IHBlciByZXF1ZXN0LCB0aGUgdXBzdHJlYW0gcmVzb3VyY2UgZW50aXJlICgyMDIzLTA5LTIyIC4uIDIwMjUtMDgtMjcsIG5vIHdpbmRvdyBhbmQgbm8gc2FtcGxlIC0gc2VlIGdlbl93cGFfMjExX3JlcXVlc3RzLnB5KS4gVXNlZCB0byBkZW1vbnN0cmF0ZSBhIGRlbm9taW5hdG9yLWF3YXJlIHJlZ2lvbiBtYXAgb24gYSByZWFsIHNlcnZpY2UgbG9nIHJhdGhlciB0aGFuIGEgc3ludGhldGljIG9uZS4gTm8gcG9wdWxhdGlvbiBjb2x1bW4gaXMgY2FycmllZCBvbiBwdXJwb3NlOiB0aGUgcmF0ZSBwYW5lbCdzIGRlbm9taW5hdG9yIGlzIEZFVENIRUQgYnkgLS1kZW5vbWluYXRvciBjZW5zdXNAMjAyNCwgYW5kIHRoZSBjb3VudHkgYm91bmRhcmllcyBieSAtLWdlb2pzb24gYXV0bywgd2hpY2ggYWxzbyBjYW5vbmljYWxpemVzIHRoZSBjb3VudHkgTkFNRVMgYmVsb3cgdG8gQ2Vuc3VzIEdFT0lEcyBzbyB0aGUgZmV0Y2hlZCBwb3B1bGF0aW9uIGtleXMgb250byB0aGVtLiIsCiAgIngtcXN2IjogewogICAgImdyYWluIjogIm9uZSByb3cgPSBvbmUgMi0xLTEgcmVxdWVzdCIsCiAgICAiZ3JhaW5fdW5pdCI6ICJyZXF1ZXN0IgogIH0sCiAgInByb3BlcnRpZXMiOiB7CiAgICAiY29udGFjdF9kYXRlIjogewogICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAidGl0bGUiOiAiQ29udGFjdCBEYXRlIiwKICAgICAgImRlc2NyaXB0aW9uIjogIkRhdGUgdGhlIHJlcXVlc3QgcmVhY2hlZCB0aGUgMi0xLTEgaGVscGxpbmUuIiwKICAgICAgIngtcXN2IjogewogICAgICAgICJxc3ZfdHlwZSI6ICJEYXRlIiwKICAgICAgICAiY2FyZGluYWxpdHkiOiA3MDQsCiAgICAgICAgIm51bGxfY291bnQiOiAwLAogICAgICAgICJjb250ZW50X3R5cGUiOiAiZGF0ZTolWS0lbS0lZCIsCiAgICAgICAgInJvbGUiOiAidGltZXN0YW1wIiwKICAgICAgICAiY29uY2VwdCI6ICJ0aW1lLmV2ZW50X3RpbWVzdGFtcCIKICAgICAgfQogICAgfSwKICAgICJjb3VudHkiOiB7CiAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICJ0aXRsZSI6ICJDb3VudHkiLAogICAgICAiZGVzY3JpcHRpb24iOiAiQ291bnR5IG9mIHRoZSBjYWxsZXIsIG5vcm1hbGl6ZWQgdG8gdGhlICc8TmFtZT4gQ291bnR5JyBzcGVsbGluZyBieSB0aGUgZ2VuZXJhdG9yICh0aGUgdXBzdHJlYW0gMjAyMC0yMDIzIGFuZCAyMDIzLTIwMjUgcmVzb3VyY2VzIGRpc2FncmVlIG9uIHRoZSBzdWZmaXgpLiBUaGUgT05MWSByZWdpb24gY29uY2VwdCBpbiB0aGlzIGRpY3Rpb25hcnksIGRlbGliZXJhdGVseTogdGhlIHVwc3RyZWFtIGZlZWQgYWxzbyBjYXJyaWVzIGEgemlwX2NvZGUsIGFuZCB0YWdnaW5nIGl0IGdlby4qIHdvdWxkIGNyZWF0ZSBhIGNvbXBldGluZyBjaG9yb3BsZXRoIGNhbmRpZGF0ZSBzY29yaW5nIGFnYWluc3QgYSBjb3VudHkta2V5ZWQgbWFwLiBBbGwgMjUgbmFtZXMgYXJlIFBlbm5zeWx2YW5pYSBjb3VudGllcyBhbmQgYXJlIHVuaXF1ZSB3aXRoaW4gdGhlIHN0YXRlLCBzbyAtIHVubGlrZSB0cmlzdGF0ZV9jb3VudHlfaW5jaWRlbnRzIC0gdGhleSBuZWVkIG5vIHN0YXRlIHF1YWxpZmllciB0byBzdG9wIHRoZSBmcmVxdWVuY3kgYmFyIHNpbGVudGx5IHN1bW1pbmcgbmFtZXNha2VzLiIsCiAgICAgICJ4LXFzdiI6IHsKICAgICAgICAicXN2X3R5cGUiOiAiU3RyaW5nIiwKICAgICAgICAiY2FyZGluYWxpdHkiOiAyNSwKICAgICAgICAibnVsbF9jb3VudCI6IDAsCiAgICAgICAgImNvbnRlbnRfdHlwZSI6ICJjYXRlZ29yeSIsCiAgICAgICAgInJvbGUiOiAiZGltZW5zaW9uIiwKICAgICAgICAiY29uY2VwdCI6ICJnZW8uY291bnR5IgogICAgICB9CiAgICB9LAogICAgInN0YXRlIjogewogICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAidGl0bGUiOiAiU3RhdGUiLAogICAgICAiZGVzY3JpcHRpb24iOiAiQ29uc3RhbnQgYnkgY29uc3RydWN0aW9uIC0gdGhpcyBpcyB0aGUgV2VzdGVybiBQZW5uc3lsdmFuaWEgMi0xLTEgcmVnaW9uLiBDYXJyaWVkIHNvIC0tZ2VvanNvbiBhdXRvIHNjb3BlcyBpdHMgYm91bmRhcnkgZmV0Y2ggdG8gb25lIHN0YXRlIHJhdGhlciB0aGFuIHByb2JpbmcgdGhlIG5hdGlvbi4iLAogICAgICAiY29uc3QiOiAiUEEiLAogICAgICAieC1xc3YiOiB7CiAgICAgICAgInFzdl90eXBlIjogIlN0cmluZyIsCiAgICAgICAgImNhcmRpbmFsaXR5IjogMSwKICAgICAgICAibnVsbF9jb3VudCI6IDAsCiAgICAgICAgImNvbnRlbnRfdHlwZSI6ICJzdGF0ZV9hYmJyIiwKICAgICAgICAicm9sZSI6ICJkaW1lbnNpb24iLAogICAgICAgICJjb25jZXB0IjogImdlby5zdGF0ZSIKICAgICAgfQogICAgfSwKICAgICJnZW5kZXIiOiB7CiAgICAgICJ0eXBlIjogWwogICAgICAgICJzdHJpbmciLAogICAgICAgICJudWxsIgogICAgICBdLAogICAgICAidGl0bGUiOiAiR2VuZGVyIiwKICAgICAgImRlc2NyaXB0aW9uIjogIlNlbGYtcmVwb3J0ZWQgZ2VuZGVyIG9mIHRoZSBjYWxsZXIsIHd
-```
-
-**File**: `src/cmd/viz.rs` (modified, +29/-11)
-```diff
-@@ -12627,6 +12627,9 @@ fn heatmap_trace_with_range(
-     }
-     hover_template.push_str("<extra></extra>");
- 
-+    // labels are raw column names, rendered as tick text and through `%{x}`/`%{y}` in the hover —
-+    // both plotly pseudo-HTML — so escape them (callers truncate first, so no entity is split)
-+    let labels: Vec<String> = labels.iter().map(|l| escape_hover(l)).collect();
-     let mut h = HeatMap::new(labels.clone(), labels, matrix)
-         .color_scale(ColorScale::Palette(palette))
-         .zmin(zmin)
-@@ -18024,12 +18027,16 @@ fn build_tour_chrome(
-         "steps": steps,
-         "hints": hints,
-     });
--    // `</` must not appear inside a <script> payload (it would terminate the tag mid-JSON);
--    // serde_json never escapes it, so do it here — JSON string escaping makes `<\/` read back
--    // as `</`.
-+    // Escape `<`/`>`/`&` as the figure payloads do. Rewriting only `</` was not enough: `"key"`
-+    // carries the raw column name, and a header containing `<!--<script>` puts the HTML tokenizer
-+    // into the double-escaped script state, where this block's own `</script>` no longer closes
-+    // it and the rest of the page is swallowed as script text. `<` cannot occur outside a JSON
-+    // string, so the rewrite is lossless (JSON.parse reads each escape back as the original char).
-     let config_json = serde_json::to_string(&config)
-         .unwrap_or_default()
--        .replace("</", "<\\/");
-+        .replace('&', "\\u0026")
-+        .replace('<', "\\u003c")
-+        .replace('>', "\\u003e");
-     let mut out = String::with_capacity(config_json.len() + 4096);
-     out.push_str(&driverjs_lib_block());
-     out.push('\n');
-@@ -39587,14 +39594,20 @@ fn panel_trace_funnel_bridge(
-             }
-         };
- 
--        cats.push(stages[0].clone());
-+        // category names are displayed as plotly pseudo-HTML ticks, so escape them like the hover
-+        // (escaping is injective, so the categories stay distinct)
-+        cats.push(escape_hover(&stages[0]));
-         vals.push(totals[0]);
-         measures.push(Measure::Absolute);
-         hover.push(stage_hover(0));
- 
-         for k in 1..stages.len() {
-             let delta = totals[k] - totals[k - 1];
--            cats.push(format!("{} \u{2212} {}", stages[k], stages[k - 1]));
-+            cats.push(format!(
-+                "{} \u{2212} {}",
-+                escape_hover(&stages[k]),
-+                escape_hover(&stages[k - 1])
-+            ));
-             vals.push(delta);
-             measures.push(Measure::Relative);
-             hover.push(format!(
-@@ -39609,7 +39622,7 @@ fn panel_trace_funnel_bridge(
- 
-             // `Total` re-derives its own height from the running total; the real amount goes
-             // in the slot anyway so the arrays stay parallel and the JSON self-documenting.
--            cats.push(stages[k].clone());
-+            cats.push(escape_hover(&stages[k]));
-             vals.push(totals[k]);
-             measures.push(Measure::Total);
-             hover.push(stage_hover(k));
-@@ -43218,7 +43231,7 @@ fn hierarchy_arrays(
-     let root_children = tree.get(&Vec::<String>::new())?;
-     let total: f64 = root_children.values().sum();
- 
--    let mut labels = vec![root_label.to_string()];
-+    let mut labels = vec![escape_hover(root_label)];
-     let mut parents = vec![String::new()];
-     let mut values = vec![total];
-     let mut ids = vec![HIER_ROOT_ID.to_string()];
-@@ -43275,7 +43288,8 @@ fn hierarchy_arrays(
-                 let child_id = unique_id(format!("{prefix_id}{HIER_PATH_SEP}{seg}"));
-                 let mut child_path = prefix.clone();
-                 child_path.push(seg.clone());
--                labels.push(seg.clone());
-+                // display text only (plotly pseudo-HTML); `ids`/`parents` keep the raw segment
-+                labels.push(escape_hover(seg));
-                 parents.push(prefix_id.clone());
-                 values.push(v);
-                 ids.push(child_id.clone());
-@@ -43454,7 +43468,10 @@ fn sankey_trace(
-     link_value: &[f64],
-     positions: Option<&(Vec<f64>, Vec<f64>)>,
- ) -> Box<dyn Trace> {
--    let label_refs: Vec<&str> = node_labels.iter().map(String::as_str).collect();
-+    // node labels are raw CSV values rendered as plotly pseudo-HTML (an `<a href>` became a live
-+    // link); links address nodes by index, so escaping the display text cannot break the graph
-+    let escaped: Vec<String> = node_labels.iter().map(|l| escape_hover(l)).collect();
-+    let label_refs: Vec<&str> = escaped.iter().map(String::as_str).collect();
-     let node_colors: Vec<String> = (0..node_labels.len())
-         .map(|i| PALETTE[i % PALETTE.len()].to_string())
-         .collect();
-@@ -44596,7 +44613,8 @@ fn lollipop_category_axis(theme: Option<BuiltinTheme>, tick_text: &[String]) ->
-         .show_line(false)
-         .tick_mode(TickMode::Array)
-         .tick_values((0..tick_text.len()).map(|i| i as f64).collect())
--        .tick_text(tick_text.to_vec());
-+        // r
-```
-
-**File**: `tests/test_viz.rs` (modified, +205/-0)
-```diff
-@@ -23965,3 +23965,208 @@ fn viz_denominator_census_bad_vintage_is_usage_error() {
-         "expected an invalid-vintage error; got: {got}"
-     );
- }
-+
-+/// How viz writes text into JSON inside a `<script>` block: `&`, `<` and `>` become the JSON
-+/// escapes for U+0026/U+003C/U+003E (backslash, `u`, four hex digits). Built at runtime so the
-+/// needles below never spell those escapes in source.
-+fn script_json_escaped(s: &str) -> String {
-+    let bs = '\u{5c}';
-+    s.replace('&', &format!("{bs}u0026"))
-+        .replace('<', &format!("{bs}u003c"))
-+        .replace('>', &format!("{bs}u003e"))
-+}
-+
-+/// What a plotly label looks like on the page once viz HTML-escapes it (`escape_hover`) and the
-+/// figure JSON is then script-escaped.
-+fn escaped_label(s: &str) -> String {
-+    script_json_escaped(
-+        &s.replace('&', "&amp;")
-+            .replace('<', "&lt;")
-+            .replace('>', "&gt;"),
-+    )
-+}
-+
-+// The guided-tour config is JSON inside `<script type="application/json">`, and its `"key"` carries
-+// the raw column name. Escaping only `</` let a header containing `<!--<script>` push the HTML
-+// tokenizer into the double-escaped script state, where the block's own `</script>` no longer
-+// closes it and the rest of the page (tour, theme toggle, daemon bridge) is swallowed as text.
-+#[test]
-+fn viz_smart_tour_config_escapes_comment_open() {
-+    let wrk = Workdir::new("viz_smart_tour_config_escapes_comment_open");
-+    wrk.create_from_string(
-+        "t.csv",
-+        "id,<!--<script>,val\n1,a,10\n2,b,20\n3,a,30\n4,c,15\n",
-+    );
-+    let out_html = wrk.path("t.html").to_string_lossy().to_string();
-+    let mut cmd = wrk.command("viz");
-+    cmd.args(["smart", "t.csv", "-o", &out_html])
-+        .env("QSV_VIZ_NO_COMPRESS", "1");
-+    wrk.assert_success(&mut cmd);
-+
-+    let html = wrk.read_to_string("t.html").unwrap();
-+    let start = html
-+        .find(r#"id="qsv-tour-config""#)
-+        .expect("the page must embed a tour config");
-+    let body_start = start + html[start..].find('>').unwrap() + 1;
-+    let body = &html[body_start..body_start + html[body_start..].find("</script>").unwrap()];
-+    assert!(
-+        !body.contains('<'),
-+        "no raw `<` may appear inside the tour-config script block; got: {body}"
-+    );
-+    let key = format!(r#""key":"{}""#, script_json_escaped("<!--<script>"));
-+    assert!(
-+        body.contains(&key),
-+        "the column name must survive as an escaped JSON string ({key}); got: {body}"
-+    );
-+}
-+
-+// Sankey node labels are raw CSV values rendered as plotly pseudo-HTML: an `<a href>` became a live
-+// off-site link and `<b>` restyled the node. They must be escaped like every hover sink.
-+#[test]
-+fn viz_sankey_escapes_node_labels() {
-+    let wrk = Workdir::new("viz_sankey_escapes_node_labels");
-+    wrk.create_from_string(
-+        "s.csv",
-+        "from,to,w\n<b>x</b>,p,3\nz,\"<a href=\"\"https://e.com\"\">q</a>\",2\n",
-+    );
-+    let mut cmd = wrk.command("viz");
-+    cmd.args([
-+        "sankey", "s.csv", "--source", "from", "--target", "to", "--value", "w",
-+    ])
-+    .env("QSV_VIZ_NO_COMPRESS", "1");
-+    let out = wrk.output(&mut cmd);
-+    assert!(out.status.success());
-+    let html = String::from_utf8_lossy(&out.stdout);
-+    assert!(
-+        html.contains(&escaped_label("<b>x</b>")),
-+        "node label markup was not escaped"
-+    );
-+    assert!(
-+        !html.contains(&script_json_escaped("<a href")),
-+        "a raw `<a href>` node label renders as a live link"
-+    );
-+}
-+
-+// Correlation-heatmap categories are raw column names, shown as tick text and via `%{x}`/`%{y}`.
-+#[test]
-+fn viz_heatmap_correlation_escapes_labels() {
-+    let wrk = Workdir::new("viz_heatmap_correlation_escapes_labels");
-+    wrk.create_from_string("c.csv", "<b>A</b>,B,C\n1,2,3\n2,4,7\n3,7,8\n4,8,12\n");
-+    let mut cmd = wrk.command("viz");
-+    cmd.args(["heatmap", "c.csv"])
-+        .env("QSV_VIZ_NO_COMPRESS", "1");
-+    let out = wrk.output(&mut cmd);
-+    assert!(out.status.success());
-+    let html = String::from_utf8_lossy(&out.stdout);
-+    let x = format!(r#""x":["{}","B","C"]"#, escaped_label("<b>A</b>"));
-+    assert!(html.contains(&x), "heatmap labels were not escaped ({x})");
-+}
-+
-+// Treemap/sunburst/icicle labels are raw category values; `ids`/`parents` key the tree, so only
-+// the display labels change.
-+#[test]
-+fn viz_treemap_escapes_labels() {
-+    let wrk = Workdir::new("viz_treemap_escapes_labels");
-+    wrk.create_from_string("t.csv", "r,c,v\n<i>N</i>,a,1\n<i>N</i>,b,2\nS,a,3\nS,b,1\n");
-+    let mut cmd = wrk.command("viz");
-+    cmd.args([
-+        "treemap", "t.csv", "--cols", "r,c", "--value", "v", "--agg", "sum",
-+    ])
-+    .env("QSV_VIZ_NO_COMPRESS", "1");
-+    let out = wrk.output(&mut cmd);
-+    assert!(out.status.success());
-+    let html = String::from_utf8_lossy(&out.stdout);
-+    let labels_at = html.find(r#""labels":["#).expect("treemap labels");
-+    let labels = &html[labels_at..labels_at + html[labe
+@@ -1317,9 +1317,9 @@
+       "license": "ISC"
+     },
+     "node_modules/ip-address": {
+-      "version": "10.7.2",
+-      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
+-      "integrity": "sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==",
++      "version": "10.7.4",
++      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.4.tgz",
++      "integrity": "sha512-DWBMKyeM25D70nrIiTkgQth59/G+naKOTep6huF9j+GmeK3DMD60Zvxg5d5qQnz+38AHgou6ean2LECX+lrKDg==",
+       "license": "MIT",
+       "engines": {
+         "node": ">= 12"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4888** (2026-10-22): build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (@dependabot[bot])
+- **PR #4887** (2026-10-22): perf(validate): collect errors with Validator::iter_errors (about 2x faster on error-heavy files) (@jqnatividad)
+- **PR #4886** (2026-10-22): validate: jsonschema 0.60 follow-ups (idn formats, field names, validate schema parity, --offline, unknown-format warning) (@jqnatividad)
 - **PR #4885** (2026-10-22): fix(viz): draw auto-resolved state maps with Alaska/Hawaii on the albers usa inset map (@jqnatividad)
 - **PR #4884** (2026-10-22): test(viz): re-enable viz_denominator_census_is_reserved and make it test the reservation (@jqnatividad)
 - **PR #4883** (2026-10-22): fix(viz): extent outliers skip state-scoped sets and require a real gap (@jqnatividad)
-- **PR #4882** (2026-10-22): fix(viz): skip blank --slider cells; reject negative pie slices; P/E suffixes (@jqnatividad)
-- **PR #4881** (2026-10-22): fix(viz): smart declines over-long bubble axes; ignore blanks in bare-year pick (@jqnatividad)
-- **PR #4880** (2026-10-22): fix(viz): type category label axes so numeric-looking labels don't drop the rest (@jqnatividad)
 
 ---
 
@@ -2860,62 +2269,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file for various security fixes
+## X. build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebb69346`: deps: update lock file for various security fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8249eb0`: build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.9.12"
-checksum = "6b0ca1155a9ecc25aa12e8313a119f32edf0255fea2f44839c4ac0a12b2ac157"
-version = "3.0.2"
-checksum = "0032a2738ba16d9a8822e4eb2833faeed5c41d767633ea753f33b6becd58cbfc"
-version = "3.0.2"
-checksum = "d3ca3f8d41a993f03d865f7fd8a3e63502f778b16ef4680bbc0863d3a2ce12fd"
-version = "1.5.2"
-checksum = "cd4acc8d264ea385db64ccfdcdfd5909ee9eda0975666723d59f3bfec80b3611"
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
-version = "3.5.0"
-checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
+      "version": "10.7.4",
+      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.4.tgz",
+      "integrity": "sha512-DWBMKyeM25D70nrIiTkgQth59/G+naKOTep6huF9j+GmeK3DMD60Zvxg5d5qQnz+38AHgou6ean2LECX+lrKDg==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.9.11"
-checksum = "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
-version = "3.0.1"
-checksum = "789a6b737c4a13bec43cd3c1b982aa8a8a192ff4bf444e0fb1fd5a324f064fd1"
-version = "3.0.1"
-checksum = "e15d0d31fbf10ce99b313a238406d62dd5913d95a9be5fa081f1232e31292fc7"
-version = "1.5.1"
-checksum = "494b4379484fc92217cc7d9e3a532375b1d01a61889ec8333025dc3b0377af56"
-[[package]]
-name = "socks"
-version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0c3dbbd9ae980613c6dd8e28a9407b50509d3803b57624d5dfe8315218cd58b"
-dependencies = [
- "byteorder",
- "libc",
- "winapi",
-]
-
-version = "1.54.0"
-checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
-version = "3.4.2"
-checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
- "socks",
+      "version": "10.7.2",
+      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
+      "integrity": "sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebb69346` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8249eb0` are properly handled with clean fallback behavior.

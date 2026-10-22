@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T17:38:28.504Z",
+  "last_updated": "2026-10-22T17:45:10.913Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "506b0995133c4ae5b183f8f1115fe1350d0389e15e46c78fc5b89e2c72ed6b9f",
-      "verified_at": "2026-10-20T20:54:20.541Z",
+      "content_hash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
+      "verified_at": "2026-10-22T17:44:56.612Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:54:20.541Z"
+      "last_updated": "2026-10-22T17:44:56.612Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "25acc29f4f741c778632e9668f10edbdbe57752c7f7b96d3679d6fe8d7043bca",
-      "verified_at": "2026-10-22T15:42:14.693Z",
+      "content_hash": "7fc47718fd5a7edb351c10486ff0406a6496509e3fc6124640f43104af3745ab",
+      "verified_at": "2026-10-22T17:45:10.912Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:42:14.693Z"
+      "last_updated": "2026-10-22T17:45:10.912Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "286f1411c230d9a35930f7db5d41d375c572ed721bce0764b07ad2593ad667b2",
-      "verified_at": "2026-10-20T10:03:18.544Z",
+      "content_hash": "73625fce8abd27d89456e82a6e7941cafa7bc10181bf5faf7965d6e9d60b2816",
+      "verified_at": "2026-10-22T17:45:04.123Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:03:18.544Z"
+      "last_updated": "2026-10-22T17:45:04.123Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -6546,14 +6546,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingui-js-lingui",
-      "content_hash": "a54ef558695915e2ab7f98e778869f1eab420e463829dd52fc609b38e8704aa0",
-      "verified_at": "2026-10-20T13:40:35.628Z",
+      "content_hash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
+      "verified_at": "2026-10-22T17:44:51.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:40:35.628Z"
+      "last_updated": "2026-10-22T17:44:51.299Z"
     },
     "Nasiko-Labs/nasiko": {
       "repository": "Nasiko-Labs/nasiko",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "169137a00ff87b0707aa7402556ae3e74d5878c8fbdb47dc77b8baf417c3ca22",
-      "verified_at": "2026-10-20T22:51:56.830Z",
+      "content_hash": "e0ab9c143bdc680640343623f10e7b610a51d1a6524016243446ce29252fac53",
+      "verified_at": "2026-10-22T17:45:06.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:51:56.830Z"
+      "last_updated": "2026-10-22T17:45:06.163Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",

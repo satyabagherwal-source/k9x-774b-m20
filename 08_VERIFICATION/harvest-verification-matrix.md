@@ -4359,3 +4359,8 @@
 | `CYCLE-20261022-RDVF` | `2026-10-22T17:38:26.427Z` | `go-kratos/kratos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3668` | Yes (`ec1c033c...`) |
 | `CYCLE-20261022-REXL` | `2026-10-22T17:38:27.801Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3669` | Yes (`3653297c...`) |
 | `CYCLE-20261022-RFGE` | `2026-10-22T17:38:28.478Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3670` | Yes (`aad2319a...`) |
+| `CYCLE-20261022-ZMTW` | `2026-10-22T17:44:51.284Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3671` | Yes (`24d0b56d...`) |
+| `CYCLE-20261022-ZQXL` | `2026-10-22T17:44:56.601Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3672` | Yes (`f73c2a14...`) |
+| `CYCLE-20261022-ZWQ6` | `2026-10-22T17:45:04.110Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3673` | Yes (`73625fce...`) |
+| `CYCLE-20261022-ZYAV` | `2026-10-22T17:45:06.151Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md` | Yes (`e0ab9c14...`) |
+| `CYCLE-20261022-01YT` | `2026-10-22T17:45:10.901Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3674` | Yes (`7fc47718...`) |

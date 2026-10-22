@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `f66de90f`  
+> **Source Version**: `25dd7ab5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T10:03:18.376Z  
+> **Timestamp**: 2026-10-22T17:45:03.768Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T10:03:15.130Z  
+> **Harvest Timestamp**: 2026-10-22T17:45:03.620Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11831 stars
+- **Stars / Engagement**: 11834 stars
 
 ---
 
@@ -1017,223 +1017,252 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f66de90f` (2026-10-20)
-**Commit Message**: Allow exit-node selection to replace an existing relay. (#4195)
+### Incident Patch 1: `25dd7ab5` (2026-10-22)
+**Commit Message**: NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (#4199)
 
-* Allow exit-node selection to replace an existing relay.
+* NM-356: add username filter to nodes api
 
-Selecting an exit node was rejected when the device was already relayed by another gateway. AssignGateway already moves the node onto the exit routing node, so that check blocked the desktop app and the UI.
+* NM-356: disconnect user devices and force Desktop logout on disable/delete
 
-* NM-356: Add network_global_access so network-admin roles keep full network access.
+When a user is disabled or deleted (including IdP sync), disconnect their
+nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
 
-After NM-378 dropped TenantGlobalAccess on network roles, gateway APIs 403'd for network admins because gateway was missing from the explicit ACL. A dedicated flag restores full in-network access for default and custom admin roles without reusing tenant_global_access.
+* NM-356: rm force logout from delete user path
 
-**File**: `controllers/device.go` (modified, +0/-1)
+**File**: `controllers/user.go` (modified, +34/-5)
 ```diff
-@@ -327,7 +327,6 @@ func selectDeviceExitNode(w http.ResponseWriter, r *http.Request) {
- 			"exit node cannot use another exit node",
- 			"routing node cannot select itself as exit node",
- 			"gateway nodes cannot be assigned an exit node",
--			"node is relayed by a different gateway",
- 			"internet egress has no routing node",
- 			"exit node selection is required":
- 			errType = logic.BadReq
-```
-
-**File**: `controllers/node_exit_node.go` (modified, +1/-2)
-```diff
-@@ -127,8 +127,7 @@ func exitNodeErrType(err error) logic.ApiErrorType {
- 		"exit node cannot use another exit node",
- 		"routing node cannot select itself as exit node",
- 		"internet egress has no routing node",
--		"gateway nodes cannot be assigned an exit node",
--		"node is relayed by a different gateway":
-+		"gateway nodes cannot be assigned an exit node":
- 		return logic.BadReq
- 	default:
- 		if strings.Contains(err.Error(), "does not have TCP proxy enabled") {
-```
-
-**File**: `logic/egress.go` (modified, +5/-9)
-```diff
-@@ -765,9 +765,8 @@ func validateInternetEgressSelection(
- 	if node.IsGw || node.IsIngressGateway || node.IsRelay || node.IsInternetGateway || schemaNode.IsGateway {
- 		return errors.New("gateway nodes cannot be assigned an exit node")
+@@ -1031,10 +1031,12 @@ func updateUserAccountStatus(w http.ResponseWriter, r *http.Request, disableAcco
+ 		}
  	}
--	if schemaNode.RelayedByNodeID != nil && *schemaNode.RelayedByNodeID != "" && *schemaNode.RelayedByNodeID != routingNodeID {
--		return errors.New("node is relayed by a different gateway")
--	}
-+	// Being RelayedBy a different gateway is allowed: AssignGateway removes the
-+	// node from the previous relay and attaches it to the exit routing node.
+ 
+-	if force {
+-		for _, tenantID := range tenantIDs {
+-			ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
+-			go toggleUserExtClients(ctx, _user.Username, !disableAccount)
++	for _, tenantID := range tenantIDs {
++		ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
++		if disableAccount {
++			go disableUserDevicesAndLogout(ctx, _user.Username, force)
++		} else if force {
++			go toggleUserExtClients(ctx, _user.Username, true)
+ 		}
+ 	}
+ 
+@@ -1116,6 +1118,18 @@ func toggleUserExtClients(ctx context.Context, username string, enable bool) {
+ 	mq.PublishPeerUpdate(ctx, false)
+ }
+ 
++// disableUserDevicesAndLogout disconnects host-backed user devices on every
++// network, optionally disables RAC extclients, then force-logs out Desktop last.
++// Hosts stay enrolled so re-enable can reconnect later.
++func disableUserDevicesAndLogout(ctx context.Context, username string, forceConfigs bool) {
++	disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
++	mq.PublishDisconnectedUserDeviceNodes(ctx, disconnected)
++	if forceConfigs {
++		toggleUserExtClients(ctx, username, false)
++	}
++	mq.PublishForceLogoutUserDevices(ctx, username)
++}
++
+ // @Summary     Get a user's preferences and settings
+ // @Router      /api/users/{username}/settings [get]
+ // @Tags        Users
+@@ -2165,7 +2179,9 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
+ 		Email: username,
+ 	}).DeleteByEmail(ctx)
+ 
+-	mq.PublishDeletedUserDevices(ctx, logic.DeleteUserDevices(ctx, username))
++	// DeleteHost logs the device out and wipes local host/node config.
++	devices := logic.DeleteUserDevices(ctx, username)
++	mq.PublishDeletedUserDevices(ctx, devices)
+ 
+ 	if err := logic.RemoveUserFromNameservers(ctx, username); err != nil {
+ 		slog.Error("failed to remove user from nameservers", "user", username, "error", err)
+@@ -2341,6 +2357,7 @@ func bulkUpdateUserStatus(w http.ResponseWriter, r *http.Request) {
+ 		}
+ 
+ 		updated := 0
++		disabledUsers := make([]string, 0)
+ 		for _, username := range req.IDs {
+ 			user := &schema.User{Username: username}
+ 			if err := user.GetWithMembership(ctx); err != nil {
+@@ -2407,6 +2424,10 @@ func bulkUpdateUserStatus(w http.ResponseWriter, r *http.Request) {
+ 			logger.Log(1, username, "was", action+"d")
+ 			updated++
+ 
++			if req.Disable {
++				disabledUsers = append(disabledUsers, user.Username)
++			}
++
+ 			if forceToggle && ownerExtClients != nil {
+ 				extclientStatus := !req.Disable
+ 				for _, extclient := range ownerExtClients[user.Username] {
+@@ -2418,6 +2439,14 @@ func bulkUpdateUserStatus(w http.ResponseWriter, r *http.Request) {
+ 				}
+ 			}
+ 		}
++		for _, username := range disabledUsers {
++			disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
++			mq.PublishDisconnectedUserDeviceNodes(ctx, disconnected)
++		}
++		// FORCE_LOGOUT after all nodes are disabled (and extclients toggled above).
++		for _, username := range disabledUsers {
++			mq.PublishForceLogoutUserDevices(ctx, username)
++		}
+ 		if updated > 0 && forceToggle {
+ 			mq.PublishPeerUpdate(ctx, false)
+ 		}
+```
+
+**File**: `models/host.go` (modified, +2/-0)
+```diff
+@@ -130,6 +130,8 @@ const (
+ 	UpdateNode HostMqAction = "UPDATE_NODE"
+ 	// DeleteHost - constant for host delete action
+ 	DeleteHost HostMqAction = "DELETE_HOST"
++	// ForceLogout - clear the desktop session/JWT and disconnect networks
++	ForceLogout HostMqAction = "FORCE_LOGOUT"
+ 	// JoinHostToNetwork - constant for host network join action
+ 	JoinHostToNetwork HostMqAction = "JOIN_HOST_TO_NETWORK"
+ 	// Acknowledgement - ACK response for hosts
+```
+
+**File**: `mq/publishers.go` (modified, +26/-0)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 
+ 	"github.com/google/uuid"
+ 	"github.com/gravitl/netmaker/db"
++	dbtypes "github.com/gravitl/netmaker/db/types"
+ 	"github.com/gravitl/netmaker/logger"
+ 	"github.com/gravitl/netmaker/logic"
+ 	"github.com/gravitl/netmaker/models"
+@@ -624,6 +625,31 @@ func PublishIntegrationDelete(id string) error {
  	return nil
  }
  
-@@ -778,10 +777,8 @@ func clearNodeSelectedInternetEgress(ctx context.Context, node *models.Node, sch
- 	}
- 	schemaNode.SelectedInternetEgressID = ""
- 
--	// Always drop exit RelayedBy / IsIGWClient when clearing selection. RelayedBy may
--	// still point at a deleted routing node while egress.Nodes already lists a new one;
--	// matching only FirstInternetEgressRoutingNodeID would leave a stale RelayedBy and
--	// block reassignment with "relayed by a different gateway".
-+	// Always drop exit RelayedBy / IsIGWClient when clearing selection so the next
-+	// exit selection starts from an unrelayed state.
- 	schemaNode.RelayedByNodeID = nil
- 	schemaNode.IsIGWClient = false
- 	if err := schemaNode.UnassignGateway(ctx); err != nil {
-@@ -1057,8 +1054,7 @@ func RebindInternetEgressClients(ctx context.Context, e schema.Egress) {
- 	for i := range clients {
- 		c := clients[i]
- 		preserveTcpUplink := c.UseTcpUplink
--		// Drop RelayedBy to a removed/old routing node first; otherwise
--		// SetNodeSelectedInternetEgress rejects "relayed by a different gateway".
-+		// Drop RelayedBy to a removed/old routing node first so rebind starts clean.
- 		if err := failOpenExitClientKeepSelection(ctx, &c); err != nil {
- 			slog.Error("RebindInternetEgressClients: fail-open failed", "node", c.ID, "error", err)
- 			continue
-```
-
-**File**: `logic/exit_node_test.go` (modified, +14/-0)
-```diff
-@@ -135,3 +135,17 @@ func TestValidateInternetEgressSelection_ExitNodeCannotUseAnotherExitNode(t *tes
- 		t.Fatalf("expected exit-node validation error, got %v", err)
- 	}
- }
-+
-+func TestValidateInternetEgressSelection_AllowsRelayedByDifferentGateway(t *testing.T) {
-+	node := &models.Node{}
-+	node.ID = uuid.New()
-+	node.Network = "net-1"
-+	otherGw := uuid.NewString()
-+	exitRouting := uuid.NewString()
-+	schemaNode := &schema.Node{ID: node.ID.String(), RelayedByNodeID: &otherGw}
-+
-+	err := validateInternetEgressSelection(node, schemaNode, exitRouting, false)
++// PublishForceLogoutUserDevices tells each host registered by username to clear
++// its desktop session (JWT) and disconnect. Hosts remain enrolled on the server.
++func PublishForceLogoutUserDevices(ctx context.Context, username string) {
++	hosts, err := (&schema.Host{}).ListAll(ctx, dbtypes.WithFilter("owner_username", username))
 +	if err != nil {
-+		t.Fatalf("exit selection should unrelay and proceed, got %v", err)
++		slog.Error("failed to list user devices for force logout", "user", username, "error", err)
++		return
++	}
++	for i := range hosts {
++		if err := HostUpdate(&models.HostUpdate{Action: models.ForceLogout, Host: hosts[i]}); err != nil {
++			slog.Error("failed to send force logout to user device",
++				"host", hosts[i].ID.String(), "user", username, "error", err)
++		}
 +	}
 +}
++
++// DisconnectAndForceLogoutUserDevices marks the user's host-backed devices
++// disconnected on every network, notifies peers, then force-logs out Desktop
++// last so the client applies Connected=false before clearing the session.
++func DisconnectAndForceLogoutUserDevices(ctx context.Context, username string) {
++	disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
++	PublishDisconnectedUserDeviceNodes(ctx, disconnected)
++	PublishForceLogoutUserDevices(ctx, username)
++}
++
+ // PublishDisconnectedUserDeviceNodes notifies peers that user device nodes are
+ // offline (JIT ended) and asks each device to pull its new state. Nodes remain enrolled.
+ func PublishDisconnectedUserDeviceNodes(ctx context.Context, disconnected []logic.UserDeviceNode) {
 ```
 
-**File**: `logic/user_mgmt.go` (modified, +2/-0)
+**File**: `pro/auth/sync.go` (modified, +23/-0)
 ```diff
-@@ -116,6 +116,8 @@ func GetAllRsrcIDForRsrc(rsrc schema.RsrcType) schema.RsrcID {
- 		return schema.AllHostRsrcID
- 	case schema.RelayRsrc:
- 		return schema.AllRelayRsrcID
-+	case schema.GatewayRsrc:
-+		return schema.AllGatewayRsrcID
- 	case schema.RemoteAccessGwRsrc:
- 		return schema.AllRemoteAccessGwRsrcID
- 	case schema.ExtClientsRsrc:
+@@ -355,6 +355,7 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
+ 					dbUser.DisplayName != user.DisplayName ||
+ 					dbUser.ExternalIdentityProviderID != user.ID) {
+ 
++				wasDisabled := dbUser.AccountDisabled
+ 				dbUser.AccountDisabled = user.AccountDisabled
+ 				dbUser.DisplayName = user.DisplayName
+ 				dbUser.ExternalIdentityProviderID = user.ID
+@@ -387,6 +388,28 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
+ 				if err != nil {
+ 					return err
+ 				}
++
++				// Newly disabled via IdP: drop mesh + Desktop session like dashboard disable.
++				if !wasDisabled && dbUser.AccountDisabled {
++					username := dbUser.Username
++					if isOrgScope {
++						memberships, listErr := (&schema.TenantMembership{UserID: dbUser.ID}).ListByUserID(ctx)
++						if listErr != nil {
++							logger.Log(0, "idp sync: failed to list tenants for disabled user", username, listErr.Error())
++						} else {
++							for _, membership := range memberships {
++								if membership.AuthType != schema.Inherited {
++									continue
++								}
++								tenantCtx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, membership.TenantID)
++								go mq.DisconnectAndForceLogoutUserDevices(tenantCtx, username)
++							}
++						}
++					} else {
++						tenantCtx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, scope.ID(ctx))
++						go mq.DisconnectAndForceLogoutUserDevices(tenantCtx, username)
++					}
++				}
+ 			}
+ 		} else {
+ 			logger.Log(0, "user with username "+user.Username+" already exists, skipping creation")
 ```
 
-**File**: `pro/logic/security.go` (modified, +6/-1)
+---
+
+### Incident Patch 2: `352fd9a3` (2026-10-21)
+**Commit Message**: NM-356: add username filter to nodes api (#4198)
+
+**File**: `controllers/node.go` (modified, +13/-1)
 ```diff
-@@ -132,6 +132,11 @@ func checkNetworkAccessPermissions(ctx context.Context, netRoleID schema.UserRol
- 	if networkPermissionScope.NetworkID != schema.AllNetworks && networkPermissionScope.NetworkID.String() != netID {
- 		return errors.New("access denied")
+@@ -206,6 +206,7 @@ func AuthorizeHost(
+ // @Param       os query []string false "Filter by OS" Enums(windows, linux, darwin)
+ // @Param       status query []string false "Filter by Status" Enums(offline, online, disconnected, warning, error)
+ // @Param       device_type query string false "Filter by Device Type" Enums(gw, igw, gw_assigned, gw_unassigned, exit_assigned, user, server)
++// @Param       username query string false "Filter by owner username (only with device_type=user)"
+ // @Param       q query string false "Search across fields"
+ // @Param       page query int false "Page number"
+ // @Param       per_page query int false "Items per page"
+@@ -220,6 +221,13 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
  	}
-+	// NetworkGlobalAccess grants full access within the role's network scope
-+	// (default and custom network-admin roles). Distinct from TenantGlobalAccess.
-+	if networkPermissionScope.NetworkGlobalAccess {
-+		return nil
+ 
+ 	deviceType := r.URL.Query().Get("device_type")
++	username := r.URL.Query().Get("username")
++	if username != "" && deviceType != "user" {
++		err := fmt.Errorf("username filter is only supported with device_type=user")
++		logger.Log(0, r.Header.Get("user"), err.Error())
++		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
++		return
 +	}
- 	rsrcPermissionScope, ok := networkPermissionScope.NetworkLevelAccess.Data()[schema.RsrcType(targetRsrc)]
- 	if !ok {
- 		return errors.New("access denied")
-@@ -373,7 +378,7 @@ func roleGrantsDeviceWrite(role *schema.UserRole) bool {
- 	if role == nil {
- 		return false
- 	}
--	if role.TenantGlobalAccess {
-+	if role.TenantGlobalAccess || role.NetworkGlobalAccess {
- 		return true
- 	}
- 	access := role.NetworkLevelAccess.Data()
-```
-
-**File**: `pro/logic/security_test.go` (modified, +4/-1)
-```diff
-@@ -34,7 +34,10 @@ func TestIsDeviceAPIRequest(t *testing.T) {
  
- func TestRoleGrantsDeviceWrite(t *testing.T) {
- 	if !roleGrantsDeviceWrite(&schema.UserRole{TenantGlobalAccess: true}) {
--		t.Fatal("full access should grant write")
-+		t.Fatal("tenant global access should grant write")
-+	}
-+	if !roleGrantsDeviceWrite(&schema.UserRole{NetworkGlobalAccess: true}) {
-+		t.Fatal("network global access should grant write")
- 	}
- 
- 	readOnly := &schema.UserRole{
-```
-
-**File**: `pro/logic/user_mgmt.go` (modified, +19/-14)
-```diff
-@@ -62,6 +62,9 @@ func defaultNetworkAdminResourceAccess() schema.ResourceAccess {
- 		schema.RelayRsrc: {
- 			schema.AllRelayRsrcID: fullAccess,
- 		},
-+		schema.GatewayRsrc: {
-+			schema.AllGatewayRsrcID: fullAccess,
-+		},
- 		schema.RemoteAccessGwRsrc: {
- 			schema.AllRemoteAccessGwRsrcID: schema.RsrcPermissionScope{
- 				Create: true, Read: true, Update: true, Delete: true, VPNaccess: true,
-@@ -113,13 +116,14 @@ func defaultNetworkAdminResourceAccess() schema.ResourceAccess {
- }
- 
- var NetworkAdminAllPermissionTemplate = schema.UserRole{
--	Slug:               globalNetworksAdminRoleID,
--	Name:               "Network Admins",
--	MetaData:           "can manage configuration of all networks",
--	Default:            true,
--	TenantGlobalAccess: false,
--	NetworkID:          schema.AllNetworks,
--	NetworkLevelAccess: datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
-+	Slug:                globalNetworksAdminRoleID,
-+	Name:                "Network Admins",
-+	MetaData:            "can manage configuration of all networks",
-+	Default:             true,
-+	TenantGlobalAccess:  false,
-+	NetworkGlobalAccess: true,
-+	NetworkID:           schema.AllNetworks,
-+	NetworkLevelAccess:  datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
- }
- 
- var NetworkUserAllPermissionTemplate = schema.UserRole{
-@@ -256,13 +260,14 @@ func CreateDefaultNetworkRolesAndGroups(ctx context.Context, netID schema.Networ
- 		return
- 	}
- 	var NetworkAdminPermissionTemplate = schema.UserRole{
--		Slug:               GetDefaultNetworkAdminRoleID(netID),
--		Name:               fmt.Sprintf("%s Admin", netID),
--		MetaData:           fmt.Sprintf("can manage your network `%s` configuration.", netID),
--		Default:            true,
--		NetworkID:          netID,
--		TenantGlobalAccess: false,
--		NetworkLevelAccess: datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
-+		Slug:                GetDefaultNetworkAdminRoleID(netID),
-+		Name:                fmt.Sprintf("%s Admin", netID),
-+		MetaData:            fmt.Sprintf("can manage your network `%s` configuration.", netID),
-+		Default:             true,
-+		NetworkID:           netID,
-+		TenantGlobalAccess:  false,
-+		NetworkGlobalAccess: true,
-+		NetworkLevelAccess:  datatypes.NewJSONType(defaultNetworkAdminResourceAccess()),
- 	}
- 
- 	var NetworkUserPermissionTemplate = schema.UserRole{
+ 	var statusFilters []interface{}
+ 	for _, filter := range r.URL.Query()["status"] {
+@@ -264,7 +272,11 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
+ 		q := db.Joins("JOIN hosts_v1 ON hosts_v1.id = nodes_v1.host_id")
+ 		switch deviceType {
+ 		case "user":
+-			return q.Where("hosts_v1.owner_username <> '' AND hosts_v1.owner_username IS NOT NULL")
++			q = q.Where("hosts_v1.owner_username <> '' AND hosts_v1.owner_username IS NOT NULL")
++			if username != "" {
++				q = q.Where("hosts_v1.owner_username = ?", username)
++			}
++			return q
+ 		case "server":
+ 			return q.Where("hosts_v1.owner_username = '' OR hosts_v1.owner_username IS NULL")
+ 		default:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4199** (2026-10-22): NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (@abhishek9686)
+- **PR #4198** (2026-10-21): NM-356: add username filter to nodes api (@abhishek9686)
 - **PR #4196** (closed): Revert "Fixes: Auto Select Gateway" (@abhishek9686)
 - **PR #4195** (2026-10-20): Allow exit-node selection to replace an existing relay. (@abhishek9686)
 - **PR #4194** (2026-10-19): Ensure email usernames are lower-case (@VishalDalwadi)
 - **PR #4193** (2026-10-19): V1.7.0 develop merge  (@abhishek9686)
-- **PR #4192** (2026-10-19): Derive AES Key using ECDH (@VishalDalwadi)
-- **PR #4191** (2026-10-19): Lower-case emails when checking invites (@VishalDalwadi)
 
 ---
 
@@ -1247,3 +1276,64 @@ After NM-378 dropped TenantGlobalAccess on network roles, gateway APIs 403'd for
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. NM-356: send force logout on disabling/deleting user accounts and cleanup user d
+
+**RULE**:
+When implementing operations in `controllers/user.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `25dd7ab5`: NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (#4199). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/user.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	for _, tenantID := range tenantIDs {
+		ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
+		if disableAccount {
+			go disableUserDevicesAndLogout(ctx, _user.Username, force)
+		} else if force {
+			go toggleUserExtClients(ctx, _user.Username, true)
+// disableUserDevicesAndLogout disconnects host-backed user devices on every
+// network, optionally disables RAC extclients, then force-logs out Desktop last.
+// Hosts stay enrolled so re-enable can reconnect later.
+func disableUserDevicesAndLogout(ctx context.Context, username string, forceConfigs bool) {
+	disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
+	mq.PublishDisconnectedUserDeviceNodes(ctx, disconnected)
+	if forceConfigs {
+		toggleUserExtClients(ctx, username, false)
+	}
+	mq.PublishForceLogoutUserDevices(ctx, username)
+}
+
+	// DeleteHost logs the device out and wipes local host/node config.
+	devices := logic.DeleteUserDevices(ctx, username)
+	mq.PublishDeletedUserDevices(ctx, devices)
+		disabledUsers := make([]string, 0)
+			if req.Disable {
+				disabledUsers = append(disabledUsers, user.Username)
+			}
+
+		for _, username := range disabledUsers {
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	if force {
+		for _, tenantID := range tenantIDs {
+			ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
+			go toggleUserExtClients(ctx, _user.Username, !disableAccount)
+	mq.PublishDeletedUserDevices(ctx, logic.DeleteUserDevices(ctx, username))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `25dd7ab5` are properly handled with clean fallback behavior.

@@ -4366,3 +4366,8 @@ Every entry in this ledger must capture:
 | `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `3f6b3b6c` | Multi-dimensional audit evidence | 2026-10-22T17:38:26.430Z |
 | `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `c5ab91ef` | Multi-dimensional audit evidence | 2026-10-22T17:38:27.804Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `c85580b7` | Multi-dimensional audit evidence | 2026-10-22T17:38:28.481Z |
+| `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `ce5aa25b` | Multi-dimensional audit evidence | 2026-10-22T17:44:51.287Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `9edd3db1` | Multi-dimensional audit evidence | 2026-10-22T17:44:56.604Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `25dd7ab5` | Multi-dimensional audit evidence | 2026-10-22T17:45:04.113Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `c0c89086` | Multi-dimensional audit evidence | 2026-10-22T17:45:06.154Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e8249eb0` | Multi-dimensional audit evidence | 2026-10-22T17:45:10.904Z |

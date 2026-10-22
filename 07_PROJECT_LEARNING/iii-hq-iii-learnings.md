@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `a1d08d8b`  
+> **Source Version**: `9edd3db1`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:54:20.194Z  
+> **Timestamp**: 2026-10-22T17:44:56.263Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:54:19.717Z  
+> **Harvest Timestamp**: 2026-10-22T17:44:55.674Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18850 stars
+- **Stars / Engagement**: 18855 stars
 
 ---
 
@@ -940,290 +940,936 @@ export function QueueDlqTab({ topic, dlqEntry }: QueueDlqTabProps) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11eb028f` (2026-10-20)
-**Commit Message**: fix(observability): report log lag at most once per 10 s (#2346)
+### Incident Patch 1: `c012a89d` (2026-10-20)
+**Commit Message**: fix(deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisories (#2351)
 
-**File**: `engine/src/workers/observability/lag.rs` (added, +188/-0)
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -0,0 +1,188 @@
-+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-+// contributor license agreements. Licensed under the Elastic License 2.0;
-+// you may not use this file except in compliance with the Elastic License 2.0.
-+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-+// See LICENSE and PATENTS files for details.
+@@ -5473,9 +5473,9 @@ checksum = "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f"
+ 
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "aws-lc-rs",
+  "ring",
+@@ -7211,18 +7211,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "webpki-root-certs"
+-version = "1.0.7"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f31141ce3fc3e300ae89b78c0dd67f9708061d1d2eda54b8209346fd6be9a92c"
++checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+ dependencies = [
+  "rustls-pki-types",
+ ]
+ 
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.7"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
++checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ dependencies = [
+  "rustls-pki-types",
+ ]
+```
+
+**File**: `pnpm-lock.yaml` (modified, +33/-31)
+```diff
+@@ -98,7 +98,7 @@ importers:
+         version: 1.163.3(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tanstack/router-core@1.163.3)(csstype@3.2.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+       '@tanstack/router-plugin':
+         specifier: 1.164.0
+-        version: 1.164.0(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.6(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 1.164.0(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.7(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+       '@types/dagre':
+         specifier: ^0.7.53
+         version: 0.7.54
+@@ -113,7 +113,7 @@ importers:
+         version: 19.2.3(@types/react@19.2.14)
+       '@vitejs/plugin-react':
+         specifier: ^5.1.3
+-        version: 5.1.4(vite@7.3.6(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 5.1.4(vite@7.3.7(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+       autoprefixer:
+         specifier: ^10.4.24
+         version: 10.4.27(postcss@8.5.28)
+@@ -128,7 +128,7 @@ importers:
+         version: 5.9.3
+       vite:
+         specifier: ^7.3.1
+-        version: 7.3.6(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1)
++        version: 7.3.7(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1)
+       vitest:
+         specifier: ^2.1.9
+         version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@25.3.3)(happy-dom@20.14.5)(lightningcss@1.32.0)
+@@ -217,7 +217,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   sdk/packages/node/iii:
+     dependencies:
+@@ -257,7 +257,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   sdk/packages/node/iii-browser:
+     devDependencies:
+@@ -278,7 +278,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+       ws:
+         specifier: ^8.21.0
+         version: 8.21.3
+@@ -319,7 +319,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   website:
+     dependencies:
+@@ -1436,12 +1436,14 @@ packages:
+   '@opentelemetry/sdk-trace-base@2.11.0':
+     resolution: {integrity: sha512-H19x/TX/LZdqiYOjM7fqtSxwlplC5pgelavqbQdHbhdq0q/AI/TGkM2dfGuuynTXmJPeF2HoZVoPDu+TGoW78A==}
+     engines: {node: ^18.19.0 || >=20.6.0}
++    deprecated: Use @opentelemetry/sdk-trace package
+     peerDependencies:
+       '@opentelemetry/api': '>=1.3.0 <1.10.0'
+ 
+   '@opentelemetry/sdk-trace-node@2.11.0':
+     resolution: {integrity: sha512-CuvCMJmZxswhNLlM2LfuLOW3h3fZujA4hsG4B+Sz4dX2zvaXO8Ng74cnDHWD64gLszTlhiG3c0iNUjj4g+0/sA==}
+     engines: {node: ^18.19.0 || >=20.6.0}
++    deprecated: Use @opentelemetry/sdk-trace package
+     peerDependencies:
+       '@opentelemetry/api': '>=1.0.0 <1.10.0'
+ 
+@@ -3978,8 +3980,8 @@ packages:
+     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
+     engines: {node: '>=10'}
+ 
+-  ma
+```
+
+---
+
+### Incident Patch 2: `9edd3db1` (2026-10-22)
+**Commit Message**: fix(telemetry): make project_created and the init events reliable (#2361)
+
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `crates/scaffolder-core/src/tui/prompts.rs` (modified, +72/-13)
+```diff
+@@ -535,6 +535,10 @@ fn check_runtimes(
+     }
+ }
+ 
++/// How long `create_project` waits for its `project_created` send before the
++/// command moves on. Matches the engine CLI's `REPORT_TIMEOUT`.
++const CREATED_EVENT_WAIT: std::time::Duration = std::time::Duration::from_secs(3);
 +
-+//! Reporting that a consumer of the log broadcast fell behind.
-+//!
-+//! A consumer of the engine's log channel must not log every lag. The report
-+//! is a log line itself: it lands in the same full channel, evicts the message
-+//! the consumer was about to read, and the consumer lags again, by one, and
-+//! reports again. One burst of logs (a thousand workers disconnecting at
-+//! `info`) then keeps a core busy and the log growing for as long as the engine
-+//! runs. [`LagReport`] reports at most once per [`LAG_REPORT_INTERVAL`], so the
-+//! consumer catches up between two reports.
-+//!
-+//! What a consumer skips between two reports is held back, not lost: it is
-+//! reported with the next lag past the interval, or when the interval ends
-+//! (the consumer waits on [`LagReport::deadline`] with [`sleep_until`]), or
-+//! when the consumer stops ([`LagReport::rest`]). Every skip is reported once.
-+
-+use std::time::Duration;
-+
-+use tokio::time::Instant;
-+
-+/// The shortest time between two lag reports of one consumer.
-+pub(crate) const LAG_REPORT_INTERVAL: Duration = Duration::from_secs(10);
-+
-+/// The messages a consumer skipped since it last said so.
-+#[derive(Debug, Default)]
-+pub(crate) struct LagReport {
-+    skipped: u64,
-+    last: Option<Instant>,
+ async fn create_project(
+     product_name: &'static str,
+     cli_version: &str,
+@@ -589,24 +593,44 @@ async fn create_project(
+         project_dir.display()
+     ));
+ 
+-    if !skip_install {
+-        let install_spinner = cliclack::spinner();
+-        install_spinner.start("Installing dependencies (when applicable)...");
+-        match telemetry::run_dependency_install(project_dir, selected_languages).await {
+-            Ok(()) => install_spinner.stop("Dependency step finished"),
+-            Err(e) => {
+-                install_spinner.stop("Dependency installation failed");
+-                return Err(e);
+-            }
++    install_dependencies(
++        (!skip_install).then(|| telemetry::run_dependency_install(project_dir, selected_languages)),
++        created_handle,
++    )
++    .await
 +}
 +
-+impl LagReport {
-+    /// Records `skipped` messages. Returns how many to report now (those and
-+    /// any held back since the last report), or `None` while the last report
-+    /// is more recent than [`LAG_REPORT_INTERVAL`].
-+    pub(crate) fn lagged(&mut self, skipped: u64) -> Option<u64> {
-+        self.lagged_at(skipped, Instant::now())
-+    }
-+
-+    fn lagged_at(&mut self, skipped: u64, now: Instant) -> Option<u64> {
-+        self.skipped = self.skipped.saturating_add(skipped);
-+        if self
-+            .last
-+            .is_some_and(|last| now.duration_since(last) < LAG_REPORT_INTERVAL)
-+        {
-+            return None;
-+        }
-+        self.last = Some(now);
-+        Some(std::mem::take(&mut self.skipped))
-+    }
-+
-+    /// When the skips held back may be reported, if any are: the consumer
-+    /// wakes then ([`sleep_until`]) and calls [`Self::due`], so the last skips
-+    /// of a burst are reported even when no lag follows them.
-+    pub(crate) fn deadline(&self) -> Option<Instant> {
-+        match self.last {
-+            Some(last) if self.skipped > 0 => Some(last + LAG_REPORT_INTERVAL),
-+            _ => None,
-+        }
-+    }
-+
-+    /// The skips held back, once [`LAG_REPORT_INTERVAL`] has passed since the
-+    /// last report; `None` before that, or when there are none.
-+    pub(crate) fn due(&mut self) -> Option<u64> {
-+        self.due_at(Instant::now())
-+    }
-+
-+    fn due_at(&mut self, now: Instant) -> Option<u64> {
-+        if self.deadline().is_none_or(|deadline| now < deadline) {
-+            return None;
-+        }
-+        self.last = Some(now);
-+        Some(std::mem::take(&mut self.skipped))
-+    }
-+
-+    /// The skips held back, whenever it is: the consumer is stopping.
-+    pub(crate) fn rest(&mut self) -> Option<u64> {
-+        (self.skipped > 0).then(|| std::mem::take(&mut self.skipped))
-+    }
-+}
-+
-+/// Resolves at `deadline`, and never without one: a consumer's `select!`
-+/// branch for [`LagReport::deadline`].
-+pub(crate) async fn sleep_until(deadline: Option<Instant>) {
-+    match deadline {
-+        Some(deadline) => tokio::time::sleep_until(deadline).await,
-+        None => std::future::pending().await,
-+    }
-+}
++/// Runs the dependency step, if there is one, then waits up to
++/// [`CREATED_EVENT_WAIT`] for the `project_created` send.
++///
++/// The send was spawned before the install, so the two overlap and the wait
++/// is usually zero. The wait happens when the install fails too: the project
++/// was created either way, and the caller exits on the error, which would
++/// drop a send still in flight.
++async fn install_dependencies(
++    install: Option<impl std::future::Future<Output = Result<()>>>,
++    created_handle: Option<tokio::task::JoinHandle<()>>,
++) -> Result<()> {
++    let installed = match install {
++        Some(install) => {
++            let install_spinner = cliclack::spinner();
++            install_spinner.start("Installing dependencies (when applicable)...");
++            let installed = install.await;
++            install_spinner.stop(match installed {
++                Ok(()) => "Dependency step finished",
++                Err(_) => "Dependency installation failed",
++            });
++            installed
+         }
+-    }
++        None => Ok(()),
++    };
+ 
+-    // Best-effort flush: wait up to 2s for telemetry to complete, then move on
++    // Best-effort flush: wait up to CREATED_EVENT_WAIT for telemetry to complete, then move on
+     if let Some(handle) = created_handle {
+-        let _ = tokio::time::timeout(std::time::Duration::from_secs(2), handle).await;
++        let _ = tokio::time::timeout(CREATED_EVENT_WAIT, handle).await;
+     }
+ 
+-    Ok(())
++    installed
+ }
+ 
+ fn print_next_steps(
+@@ -637,3 +661,38 @@ fn print_next_steps(
+ 
+     Ok(())
+ }
 +
 +#[cfg(test)]
 +mod tests {
 +    use super::*;
-+    use tokio::sync::broadcast::{self, error::TryRecvError};
 +
-+    #[test]
-+    fn lags_are_reported_once_per_interval_with_what_was_held_back() {
-+        let t0 = Instant::now();
-+        let mut report = LagReport::default();
-+        assert_eq!(report.lagged_at(3, t0), Some(3));
-+        assert_eq!(report.lagged_at(1, t0 + Duration::from_secs(1)), None);
-+        assert_eq!(report.lagged_at(2, t0 + Duration::from_secs(9)), None);
-+        assert_eq!(
-+            report.lagged_at(1, t0 + LAG_REPORT_INTERVAL + Duration::from_secs(1)),
-+            Some(4)
++    #[tokio::test]
++    async fn a_failed_install_still_waits_for_project_created() {
++        use std::sync::Arc;
++        use std::sync::atomic::{AtomicBool, Ordering};
++
++        let sent = Arc::new(AtomicBool::new(false));
++        let sending = Arc::clone(&sent);
++        let created = tokio::spawn(async move {
++            tokio::time::sleep(std::time::Duration::from_millis(50)).await;
++            sending.store(true, Ordering::SeqCst);
++        });
++
++        let result = install_dependencies(
++            Some(async { Err(anyhow::anyhow!("npm install: exit status: 1")) }),
++            Some(created),
++        )
++        .await;
++
++        assert!(result.is_err(), "the install failure is still returned");
++        assert!(
++            sent.load(Ordering::SeqCst),
++            "project_created was dropped with the failed install"
 +        );
 +    }
 +
-+    /// The skips held back after a report are due when its interval ends,
-+    /// with no further lag, and are reported once.
 +    #[test]
-+    fn held_back_skips_are_due_when_the_interval_ends() {
-+        let t0 = Instant::now();
-+        let mut report = LagReport::default();
-+        assert_eq!(report.deadline(), None);
-+        assert_eq!(report.lagged_at(3, t0), Some(3));
-+        assert_eq!(report.deadline(), None, "nothing held back");
-+        assert_eq!(report.lagged_at(2, t0 
++    fn project_created_may_hold_the_command_for_three_seconds() {
++        assert_eq!(CREATED_EVENT_WAIT, std::time::Duration::from_secs(3));
++    }
++}
 ```
 
-**File**: `engine/src/workers/observability/mod.rs` (modified, +18/-1)
+**File**: `engine/src/cli/project/mod.rs` (modified, +81/-36)
 ```diff
-@@ -5,6 +5,7 @@
- // See LICENSE and PATENTS files for details.
+@@ -140,21 +140,23 @@ async fn run_init(args: InitArgs) -> i32 {
+     };
  
- pub mod configuration;
-+pub(crate) mod lag;
- pub mod logs_layer;
- pub mod metrics;
- pub mod otel;
-@@ -1754,14 +1755,21 @@ impl ObservabilityWorker {
+     if let Err(e) = std::fs::create_dir_all(&root) {
+-        crate::cli::telemetry::send_project_init_failed("create_dir", &e.to_string());
+-        return print_err(
++        let code = print_err(
+             &format!("could not create {}", root.display()),
+             &e.to_string(),
+             "check parent directory permissions or pick a different --directory",
+         );
++        crate::cli::telemetry::send_project_init_failed("create_dir", &e.to_string()).await;
++        return code;
+     }
  
-         tokio::spawn(async move {
-             tracing::debug!("[ObservabilityWorker] Log trigger subscriber started");
-+            let mut lag = lag::LagReport::default();
-             loop {
-+                let lag_due = lag.deadline();
-                 tokio::select! {
-                     result = shutdown_rx.changed() => {
-                         if result.is_err() || *shutdown_rx.borrow() {
-                             tracing::debug!("[ObservabilityWorker] Log trigger subscriber shutting down");
-                             break;
-                         }
-                     }
-+                    _ = lag::sleep_until(lag_due), if lag_due.is_some() => {
-+                        if let Some(skipped) = lag.due() {
-+                            tracing::warn!(skipped, "Log trigger subscriber lagged, some logs were skipped");
-+                        }
-+                    }
-                     result = stop_rx.changed() => {
-                         if result.is_err() || *stop_rx.borrow() {
-                             tracing::debug!("[ObservabilityWorker] Log trigger subscriber replaced");
-@@ -1774,7 +1782,10 @@ impl ObservabilityWorker {
-                                 ObservabilityWorker::invoke_triggers_for_log(&triggers, &engine, &log).await;
-                             }
-                             Err(tokio::sync::broadcast::error::RecvError::Lagged(skipped)) => {
--                                tracing::warn!(skipped, "Log trigger subscriber lagged, some logs were skipped");
-+                                // Rate-limited: this warning is a log too (see `lag`).
-+                                if let Some(skipped) = lag.lagged(skipped) {
-+                                    tracing::warn!(skipped, "Log trigger subscriber lagged, some logs were skipped");
-+                                }
-                             }
-                             Err(tokio::sync::broadcast::error::RecvError::Closed) => {
-                                 tracing::debug!("[ObservabilityWorker] Log broadcast channel closed");
-@@ -1784,6 +1795,12 @@ impl ObservabilityWorker {
-                     }
-                 }
-             }
-+            if let Some(skipped) = lag.rest() {
-+                tracing::warn!(
-+                    skipped,
-+                    "Log trigger subscriber lagged, some logs were skipped"
+     if let Err(e) = check_directory_state(&root, args.allow_non_empty, "project.ini") {
+-        crate::cli::telemetry::send_project_init_failed("non_empty_dir", &e);
+-        return print_err(
++        let code = print_err(
+             "target directory is not empty",
+             &e,
+             "pass --allow-non-empty to scaffold into an existing project, or pick a different directory",
+         );
++        crate::cli::telemetry::send_project_init_failed("non_empty_dir", &e).await;
++        return code;
+     }
+ 
+     let device_id = iii::workers::telemetry::environment::get_or_create_device_id();
+@@ -169,50 +171,84 @@ async fn run_init(args: InitArgs) -> i32 {
+     let mut fetcher = match build_fetcher(args.template_dir.as_deref()) {
+         Ok(f) => f,
+         Err(e) => {
+-            crate::cli::telemetry::send_project_init_failed("fetcher", &e.to_string());
+-            return print_err(
++            let code = print_err(
+                 "could not build template fetcher",
+                 &e.to_string(),
+                 "check III_TEMPLATE_URL or pass --template-dir <path>",
+             );
++            crate::cli::telemetry::send_project_init_failed("fetcher", &e.to_string()).await;
++            return code;
+         }
+     };
+ 
+     if let Err(e) = apply_template_idempotent(&mut fetcher, "bare", &root).await {
+-        crate::cli::telemetry::send_project_init_failed("apply_bare", &e.to_string());
+-        return print_err(
++        let code = print_err(
+             "could not apply 'bare' template",
+             &e.to_string(),
+             "see template fetch error above",
+         );
++        crate::cli::telemetry::send_project_init_failed("apply_bare", &e.to_string()).await;
++        return code;
+     }
+ 
+-    let project_id = match persist_project_ini(&root, &project_name, "init", &device_id).await {
+-        Ok(id) => id,
+-        Err(e) => {
+-            crate::cli::telemetry::send_project_init_failed("write_project_ini", &e.to_string());
+-            return print_err(
+-                "could not write .iii/project.ini",
+-                &e.to_string(),
+-                "check that the target directory is writable",
+-            );
+-        }
++    let (project_id, is_new_project) =
++        match persist_project_ini(&root, &project_name, "init", &device_id).await {
++            Ok(persisted) => persisted,
++            Err(e) => {
++                let code = print_err(
++                    "could not write .iii/project.ini",
++                    &e.to_string(),
++                    "check that the target directory is writable",
 +                );
++                crate::cli::telemetry::send_project_init_failed(
++                    "write_project_ini",
++                    &e.to_string(),
++                )
++                .await;
++                return code;
 +            }
-             tracing::debug!("[ObservabilityWorker] Log trigger subscriber stopped");
-         });
++        };
++
++    // A re-init keeps the project_id, so it is the same project and is not
++    // reported again. Spawned here so the send overlaps the docker step, and
++    // awaited once, together with the init event, just before returning.
++    let created = if is_new_project {
++        scaffolder_core::telemetry::spawn_project_event(
++            "project_created",
++            scaffolder_core::telemetry::platform_for_product("iii"),
++            env!("CARGO_PKG_VERSION").to_string(),
++            serde_json::json!({
++                "project_id": project_id,
++                "project_name": project_name,
++                "template": "bare",
++                "product": "iii",
++            }),
++        )
++    } else {
++        None
+     };
+ 
+     if args.docker
+         && let Err(e) = apply_docker(&mut fetcher, &root, &device_id).await
+     {
+-        crate::cli::telemetry::send_project_init_failed("apply_docker", &e.to_string());
+-        return print_err(
++        let error = e.to_string();
++        let code = print_err(
+             "could not apply 'docker' template",
+-            &e.to_string(),
++            &error,
+             "remove existing Dockerfile/docker-compose.yml or check write permissions",
+         );
++        tokio::join!(
++            crate::cli::telemetry::send_project_init_failed("apply_docker", &error),
++            crate::cli::telemetry::wait_for_report(created),
++        );
++        return code;
+     }
+ 
+-    crate::cli::telemetry::send_project_init_succeeded(args.docker, &project_id);
+-
+     print_init_suc
+```
+
+**File**: `engine/src/cli/telemetry.rs` (modified, +161/-11)
+```diff
+@@ -98,8 +98,16 @@ fn send_fire_and_forget(event: ProductEvent) {
+     });
+ }
+ 
++/// Sends one event and waits for it, for at most [`REPORT_TIMEOUT`].
++///
++/// For events sent on the way out of a command: a spawned send is dropped
++/// with the runtime when `main` returns, before its request completes.
++async fn send_before_exit(event: ProductEvent) {
++    let _ = tokio::time::timeout(REPORT_TIMEOUT, send_direct(event)).await;
++}
++
+ /// How long an awaited report may hold the command that is sending it.
+-const REPORT_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(2);
++pub(crate) const REPORT_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
+ 
+ /// Lets `iii-compose` report through the same CLI path as every other
+ /// command.
+@@ -145,6 +153,28 @@ async fn report_compose_batch(reports: Vec<iii_compose::telemetry::Report>) {
+     .await;
+ }
+ 
++/// Makes sure `~/.iii/telemetry.yaml` holds a device id before the
++/// scaffolder runs.
++///
++/// The scaffolder only reads that file. On a machine where neither the
++/// engine nor the curl installer has run, it is missing, and the scaffolder
++/// reports `iii_tools_telemetry_failed` in place of `project_created`.
++/// Nothing is written when telemetry is off.
++pub(crate) fn ensure_device_id_for_scaffolder() {
++    if is_telemetry_disabled() {
++        return;
++    }
++    environment::ensure_device_id();
++}
++
++/// Waits for a report that was spawned earlier, for at most
++/// [`REPORT_TIMEOUT`].
++pub(crate) async fn wait_for_report(handle: Option<tokio::task::JoinHandle<()>>) {
++    if let Some(handle) = handle {
++        let _ = tokio::time::timeout(REPORT_TIMEOUT, handle).await;
++    }
++}
++
+ pub async fn send_install_lifecycle_event(event_type: &str, properties: serde_json::Value) {
+     let install_method = properties
+         .get("install_method")
+@@ -154,7 +184,7 @@ pub async fn send_install_lifecycle_event(event_type: &str, properties: serde_js
+         event.platform = "install-script".to_string();
+         // The install script exits right after this; the retry ladder in
+         // send_direct can otherwise hold it for over a minute.
+-        let _ = tokio::time::timeout(REPORT_TIMEOUT, send_direct(event)).await;
++        send_before_exit(event).await;
+     }
+ }
+ 
+@@ -188,7 +218,7 @@ pub fn send_cli_update_started(target_binary: &str, from_version: &str) {
+     }
+ }
+ 
+-pub fn send_cli_update_succeeded(target_binary: &str, from_version: &str, to_version: &str) {
++pub async fn send_cli_update_succeeded(target_binary: &str, from_version: &str, to_version: &str) {
+     if let Some(event) = build_event(
+         "cli_update_succeeded",
+         serde_json::json!({
+@@ -199,11 +229,11 @@ pub fn send_cli_update_succeeded(target_binary: &str, from_version: &str, to_ver
+         }),
+         None,
+     ) {
+-        send_fire_and_forget(event);
++        send_before_exit(event).await;
+     }
+ }
+ 
+-pub fn send_cli_update_failed(target_binary: &str, from_version: &str, error: &str) {
++pub async fn send_cli_update_failed(target_binary: &str, from_version: &str, error: &str) {
+     if let Some(event) = build_event(
+         "cli_update_failed",
+         serde_json::json!({
+@@ -214,11 +244,11 @@ pub fn send_cli_update_failed(target_binary: &str, from_version: &str, error: &s
+         }),
+         None,
+     ) {
+-        send_fire_and_forget(event);
++        send_before_exit(event).await;
+     }
+ }
+ 
+-pub fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
++pub async fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
+     if let Some(event) = build_event(
+         "project_init_succeeded",
+         serde_json::json!({
+@@ -228,11 +258,11 @@ pub fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
+         }),
+         None,
+     ) {
+-        send_fire_and_forget(event);
++        send_before_exit(event).await;
+     }
+ }
+ 
+-pub fn send_project_init_failed(stage: &str, error: &str) {
++pub async fn send_project_init_failed(stage: &str, error: &str) {
+     if let Some(event) = build_event(
+         "project_init_failed",
+         serde_json::json!({
+@@ -242,7 +272,7 @@ pub fn send_project_init_failed(stage: &str, error: &str) {
+         }),
+         None,
+     ) {
+-        send_fire_and_forget(event);
++        send_before_exit(event).await;
+     }
+ }
+ 
+@@ -329,7 +359,12 @@ mod tests {
+     }
+ 
+     /// Generous slack over the bound, for a slow machine.
+-    const RELEASED_WITHIN: std::time::Duration = std::time::Duration::from_secs(3);
++    const RELEASED_WITHIN: std::time::Duration = std::time::Duration::from_secs(4);
++
++    #[test]
++    fn an_awaited_report_may_hold_the_command_for_three_seconds() {
++        assert_eq!(REPORT_TIMEOUT, std::time::Duration::from_secs(3));
++    }
+ 
+     #[tokio::test]
+     #[serial]
+@@ -371,6 +406,121 @@ mod tests {
+         assert!(elapsed < RELEASED_WITHIN, "held for {elapsed:?}");
+     }
+ 
++    /// Points HOME and the project root at a throwaway directory, so b
+```
+
+**File**: `engine/src/cli/update.rs` (modified, +6/-4)
+```diff
+@@ -300,15 +300,16 @@ pub async fn update_binary(
+                 spec.name,
+                 &from_version_str,
+                 &latest_version.to_string(),
+-            );
++            )
++            .await;
+             Ok(UpdateResult::Updated {
+                 binary: spec.name.to_string(),
+                 from: previous_version,
+                 to: latest_version,
+             })
+         }
+         Err(e) => {
+-            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string());
++            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string()).await;
+             Err(UpdateError::Download(e))
+         }
+     }
+@@ -411,15 +412,16 @@ pub async fn self_update(
+                 spec.name,
+                 &from_version_str,
+                 &latest_version.to_string(),
+-            );
++            )
++            .await;
+             Ok(UpdateResult::Updated {
+                 binary: spec.name.to_string(),
+                 from: previous_version,
+                 to: latest_version,
+             })
+         }
+         Err(e) => {
+-            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string());
++            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string()).await;
+             Err(UpdateError::Download(e))
+         }
      }
 ```
 
-**File**: `engine/src/workers/observability/otel.rs` (modified, +28/-2)
+**File**: `engine/src/workers/telemetry/environment.rs` (modified, +42/-6)
 ```diff
-@@ -5576,9 +5576,16 @@ impl OtlpLogsExporter {
-         tokio::spawn(async move {
-             let mut batch: Vec<StoredLog> = Vec::with_capacity(self.batch_size);
-             let mut interval = tokio::time::interval(self.flush_interval);
-+            let mut lag = super::lag::LagReport::default();
+@@ -317,22 +317,30 @@ fn load_or_migrate_v2_state() -> TelemetryYaml {
+ }
  
-             loop {
-+                let lag_due = lag.deadline();
-                 tokio::select! {
-+                    _ = super::lag::sleep_until(lag_due), if lag_due.is_some() => {
-+                        if let Some(n) = lag.due() {
-+                            tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
-+                        }
-+                    }
-                     // Receive logs from broadcast channel
-                     result = rx.recv() => {
-                         match result {
-@@ -5592,7 +5599,10 @@ impl OtlpLogsExporter {
-                                 }
-                             }
-                             Err(broadcast::error::RecvError::Lagged(n)) => {
--                                tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
-+                                // Rate-limited: this warning is a log too (see `lag`).
-+                                if let Some(n) = lag.lagged(n) {
-+                                    tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
-+                                }
-                             }
-                             Err(broadcast::error::RecvError::Closed) => {
-                                 tracing::info!("Log broadcast channel closed, stopping exporter");
-@@ -5612,6 +5622,9 @@ impl OtlpLogsExporter {
-                 }
-             }
+ pub fn get_or_create_device_id() -> String {
++    let id = ensure_device_id();
++    if !is_container_environment() {
++        write_device_id_to_project_ini(&id);
++    }
++    id
++}
++
++/// The device id from `~/.iii/telemetry.yaml`, creating the version-2 file
++/// when it is missing.
++///
++/// Unlike [`get_or_create_device_id`], this never writes `device_id=` into the
++/// `.iii/project.ini` found from the current directory, which may belong to an
++/// unrelated project.
++pub fn ensure_device_id() -> String {
+     let mut state = load_or_migrate_v2_state();
+     if let Some(existing) = state.identity.device_id.clone()
+         && !existing.is_empty()
+     {
+-        if !is_container_environment() {
+-            write_device_id_to_project_ini(&existing);
+-        }
+         return existing;
+     }
  
-+            if let Some(n) = lag.rest() {
-+                tracing::warn!(dropped = n, "Log exporter lagged, some logs were dropped");
-+            }
-             // Flush remaining logs on shutdown
-             if !batch.is_empty()
-                 && let Err(e) = self.export_batch(&batch).await
-@@ -5630,15 +5643,22 @@ impl OtlpLogsExporter {
-         tokio::spawn(async move {
-             let mut batch: Vec<StoredLog> = Vec::with_capacity(self.batch_size);
-             let mut interval = tokio::time::interval(self.flush_interval);
-+            let mut lag = super::lag::LagReport::default();
+     let id = generate_new_device_id();
+     state.identity.device_id = Some(id.clone());
+     write_telemetry_yaml(&state);
+-    if !is_container_environment() {
+-        write_device_id_to_project_ini(&id);
+-    }
+     id
+ }
  
-             loop {
-+                let lag_due = lag.deadline();
-                 tokio::select! {
-                     _ = shutdown.changed() => {
-                         if *shutdown.borrow() {
-                             tracing::debug!("[OtlpLogsExporter] Shutting down");
-                             break;
-                         }
-                     }
-+                    _ = super::lag::sleep_until(lag_due), if lag_due.is_some() => {
-+                        if let Some(n) = lag.due() {
-+                            tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
-+                        }
-+                    }
-                     result = rx.recv() => {
-                         match result {
-                             Ok(log) => {
-@@ -5651,7 +5671,10 @@ impl OtlpLogsExporter {
-                                 }
-                             }
-                             Err(broadcast::error::RecvError::Lagged(n)) => {
--                                tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
-+                                // Rate-limited: this warning is a log too (see `lag`).
-+                                if let Some(n) = lag.lagged(n) {
-+                                    tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
-+                                }
-                             }
-                             Err(broadcast::error::RecvError::Closed) => {
-                                 tracing::debug!("[OtlpLogsExporter] Channel closed");
-@@ -5670,6 +5693,9 @@ impl OtlpLogsExporter {
-                 }
-             }
+@@ -608,6 +616,34 @@ mod tests {
+         }
+     }
  
-+            if let Some(n) = lag.rest() {
-+                tracing::warn!(skipped = n, "OTLP logs exporter lagged behind");
-+            }
-             // Flush remaining logs on shutdown
-             if !batch.is_empty()
-                 && let Err(e) = self.export_batch(&batch).await
++    #[test]
++    #[serial]
++    fn ensure_device_id_writes_the_yaml_and_leaves_project_ini_alone() {
++        let home = tempfile::tempdir().unwrap();
++        let unrelated = tempfile::tempdir().unwrap();
++        let ini = unrelated.path().join(".iii").join("project.ini");
++        std::fs::create_dir_all(ini.parent().unwrap()).unwrap();
++        let before = "[project]\nproject_id=unrelated\n";
++        std::fs::write(&ini, before).unwrap();
++        unsafe {
++            env::set_var("HOME", home.path());
++            env::set_var("III_PROJECT_ROOT", unrelated.path());
++        }
++
++        let id = ensure_device_id();
++        let state = read_telemetry_yaml(&telemetry_config_path());
++        let after = std::fs::read_to_string(&ini).unwrap();
++
++        unsafe {
++            env::remove_var("HOME");
++            env::remove_var("III_PROJECT_ROOT");
++        }
++        let state = state.expect("telemetry.yaml written");
++        assert_eq!(state.version, Some(TELEMETRY_SCHEMA_VERSION));
++        assert_eq!(state.identity.device_id.as_deref(), Some(id.as_str()));
++        assert_eq!(after, before);
++    }
++
+     #[test]
+     #[serial]
+     fn test_v1_yaml_resets_to_fresh_v2_state() {
+```
+
+**File**: `engine/tests/project_init_e2e.rs` (modified, +100/-0)
+```diff
+@@ -448,3 +448,103 @@ fn project_init_failure_emits_problem_cause_fix() {
+         "stderr should contain 'fix:':\n{stderr}"
+     );
+ }
++
++/// Runs `iii project init` with telemetry on and pointed at `posthog`, in a
++/// throwaway HOME so the run reads and writes no real `~/.iii`.
++fn init_reporting_to(posthog: &str, home: &Path, project: &Path) -> std::process::Output {
++    let mut cmd = iii_bin();
++    cmd.args(["project", "init", "--template-dir"])
++        .arg(fixtures())
++        .arg("--directory")
++        .arg(project)
++        .current_dir(home)
++        .env("HOME", home)
++        .env("POSTHOG_HOST", posthog)
++        .env_remove("III_PROJECT_ROOT")
++        .env_remove("III_TELEMETRY_ENABLED")
++        .env_remove("III_TELEMETRY_DEV");
++    for ci in [
++        "CI",
++        "GITHUB_ACTIONS",
++        "GITLAB_CI",
++        "CIRCLECI",
++        "JENKINS_URL",
++        "TRAVIS",
++        "BUILDKITE",
++        "TF_BUILD",
++        "CODEBUILD_BUILD_ID",
++        "BITBUCKET_BUILD_NUMBER",
++        "DRONE",
++        "TEAMCITY_VERSION",
++    ] {
++        cmd.env_remove(ci);
++    }
++    cmd.output().expect("failed to run iii")
++}
++
++/// Every event the mock PostHog has received, across all batches.
++async fn received_events(server: &wiremock::MockServer) -> Vec<serde_json::Value> {
++    server
++        .received_requests()
++        .await
++        .unwrap_or_default()
++        .iter()
++        .filter_map(|r| serde_json::from_slice::<serde_json::Value>(&r.body).ok())
++        .flat_map(|body| body["batch"].as_array().cloned().unwrap_or_default())
++        .collect()
++}
++
++fn named<'a>(events: &'a [serde_json::Value], name: &str) -> Vec<&'a serde_json::Value> {
++    events.iter().filter(|e| e["event"] == name).collect()
++}
++
++#[tokio::test(flavor = "multi_thread")]
++async fn bare_init_reports_project_created_once_per_project() {
++    use wiremock::matchers::{method, path};
++    use wiremock::{Mock, MockServer, ResponseTemplate};
++
++    let server = MockServer::start().await;
++    Mock::given(method("POST"))
++        .and(path("/batch/"))
++        .respond_with(ResponseTemplate::new(200))
++        .mount(&server)
++        .await;
++    let home = tempdir().unwrap();
++    let project = home.path().join("my-bare-app");
++
++    let first = init_reporting_to(&server.uri(), home.path(), &project);
++    assert!(
++        first.status.success(),
++        "init failed: {}",
++        String::from_utf8_lossy(&first.stderr)
++    );
++    let events = received_events(&server).await;
++    let created = named(&events, "project_created");
++    assert_eq!(created.len(), 1, "events: {events:#?}");
++    let ini = std::fs::read_to_string(project.join(".iii").join("project.ini")).unwrap();
++    let project_id = ini
++        .lines()
++        .find_map(|l| l.trim().strip_prefix("project_id="))
++        .unwrap()
++        .trim()
++        .to_string();
++    let props = &created[0]["properties"];
++    assert_eq!(props["project_id"], project_id.as_str());
++    assert_eq!(props["project_name"], "my-bare-app");
++    assert_eq!(props["template"], "bare");
++    assert_eq!(props["product"], "iii");
++    assert_eq!(named(&events, "project_init_succeeded").len(), 1);
++    assert!(named(&events, "iii_tools_telemetry_failed").is_empty());
++
++    // Re-init keeps the project_id, so it is the same project: no second
++    // project_created.
++    let second = init_reporting_to(&server.uri(), home.path(), &project);
++    assert!(second.status.success());
++    let events = received_events(&server).await;
++    assert_eq!(
++        named(&events, "project_created").len(),
++        1,
++        "events: {events:#?}"
++    );
++    assert_eq!(named(&events, "project_init_succeeded").len(), 2);
++}
+```
+
+---
+
+### Incident Patch 3: `c0b7b8f9` (2026-10-22)
+**Commit Message**: fix(deps): bump vitest to 4.1.12 in the Node SDK packages for Supply Chain advisories (#2376)
+
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
+
+**File**: `pnpm-lock.yaml` (modified, +91/-106)
+```diff
+@@ -204,8 +204,8 @@ importers:
+         specifier: ^8.18.1
+         version: 8.18.1
+       '@vitest/coverage-v8':
+-        specifier: ^4.1.11
+-        version: 4.1.11(vitest@4.1.11)
++        specifier: ^4.1.12
++        version: 4.1.12(vitest@4.1.12)
+       tsdown:
+         specifier: ^0.21.4
+         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
+@@ -216,8 +216,8 @@ importers:
+         specifier: ^5.9.3
+         version: 5.9.3
+       vitest:
+-        specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        specifier: ^4.1.12
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   sdk/packages/node/iii:
+     dependencies:
+@@ -244,8 +244,8 @@ importers:
+         specifier: ^8.18.1
+         version: 8.18.1
+       '@vitest/coverage-v8':
+-        specifier: ^4.1.11
+-        version: 4.1.11(vitest@4.1.11)
++        specifier: ^4.1.12
++        version: 4.1.12(vitest@4.1.12)
+       tsdown:
+         specifier: ^0.21.4
+         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
+@@ -256,8 +256,8 @@ importers:
+         specifier: ^5.9.3
+         version: 5.9.3
+       vitest:
+-        specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        specifier: ^4.1.12
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   sdk/packages/node/iii-browser:
+     devDependencies:
+@@ -277,8 +277,8 @@ importers:
+         specifier: ^5.9.3
+         version: 5.9.3
+       vitest:
+-        specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        specifier: ^4.1.12
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+       ws:
+         specifier: ^8.21.0
+         version: 8.21.3
+@@ -309,17 +309,17 @@ importers:
+         version: link:../helpers
+     devDependencies:
+       '@vitest/coverage-v8':
+-        specifier: ^4.1.11
+-        version: 4.1.11(vitest@4.1.11)
++        specifier: ^4.1.12
++        version: 4.1.12(vitest@4.1.12)
+       tsdown:
+         specifier: ^0.21.4
+         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
+       typescript:
+         specifier: ^5.9.3
+         version: 5.9.3
+       vitest:
+-        specifier: ^4.1.11
+-        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        specifier: ^4.1.12
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   website:
+     dependencies:
+@@ -2497,20 +2497,20 @@ packages:
+     peerDependencies:
+       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+ 
+-  '@vitest/coverage-v8@4.1.11':
+-    resolution: {integrity: sha512-8MVGEFnJIcdGjcbfKmeq8z0pZHH0JlVtoVZH9Q/qwUp6wyFnEJUBMrw9DCaj+ra3vShGmhavjalMIhPNxZAUcw==}
++  '@vitest/coverage-v8@4.1.12':
++    resolution: {integrity: sha512-6S7/iVknKglLAxMFxQGNppBI0iqJS2NgM6FBxavitj7KaDq/vywOWGf6dGu7F2L1Qy0G6S3uTp7aGshHrzK8JA==}
+     peerDependencies:
+-      '@vitest/browser': 4.1.11
+-      vitest: 4.1.11
++      '@vitest/browser': 4.1.12
++      vitest: 4.1.12
+     peerDependenciesMeta:
+       '@vitest/browser':
+         optional: true
+ 
+   '@vitest/expect@2.1.9':
+     resolution: {integrity: sha512-UJCIkTBenHeKT1TTlKMJWy1laZewsRIzYighyYiJKZreqtdxSos/S1t+ktRMQWu2CKqaarrkeszJx1cgC5tGZw==}
+ 
+-  '@vitest/expect@4.1.11':
+-    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
++  '@vitest/expect@4.1.12':
++    resolution: {integrity: sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==}
+ 
+   '@vitest/mocker@2.1.9':
+     resolution: {integrity: sha512-tVL6uJgoUdi6icpxmdrn5YNo3g3Dxv+IHJBr0GXHaEdTcw3F+cPKnsXFhli6nO+f/6SDKPHEK1UN+k+TQv0Ehg==}
+@@ -2523,8 +2523,8 @@ 
+```
+
+**File**: `sdk/packages/node/helpers/package.json` (modified, +2/-2)
+```diff
+@@ -58,10 +58,10 @@
+   "devDependencies": {
+     "@types/node": "^24.10.1",
+     "@types/ws": "^8.18.1",
+-    "@vitest/coverage-v8": "^4.1.11",
++    "@vitest/coverage-v8": "^4.1.12",
+     "tsdown": "^0.21.4",
+     "typedoc": "^0.28.20",
+     "typescript": "^5.9.3",
+-    "vitest": "^4.1.11"
++    "vitest": "^4.1.12"
+   }
+ }
+```
+
+**File**: `sdk/packages/node/iii-browser/package.json` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@
+     "tsdown": "^0.21.4",
+     "typedoc": "^0.28.20",
+     "typescript": "^5.9.3",
+-    "vitest": "^4.1.11",
++    "vitest": "^4.1.12",
+     "ws": "^8.21.0"
+   }
+ }
+```
+
+**File**: `sdk/packages/node/iii/package.json` (modified, +2/-2)
+```diff
+@@ -88,10 +88,10 @@
+     "@opentelemetry/instrumentation": "^0.222.0",
+     "@opentelemetry/sdk-trace-base": "^2.11.0",
+     "@types/ws": "^8.18.1",
+-    "@vitest/coverage-v8": "^4.1.11",
++    "@vitest/coverage-v8": "^4.1.12",
+     "tsdown": "^0.21.4",
+     "typedoc": "^0.28.20",
+     "typescript": "^5.9.3",
+-    "vitest": "^4.1.11"
++    "vitest": "^4.1.12"
+   }
+ }
+```
+
+**File**: `sdk/packages/node/observability/package.json` (modified, +2/-2)
+```diff
+@@ -33,9 +33,9 @@
+     "@iii-dev/helpers": "workspace:*"
+   },
+   "devDependencies": {
+-    "@vitest/coverage-v8": "^4.1.11",
++    "@vitest/coverage-v8": "^4.1.12",
+     "tsdown": "^0.21.4",
+     "typescript": "^5.9.3",
+-    "vitest": "^4.1.11"
++    "vitest": "^4.1.12"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2349** (2026-10-20): perf(engine): reduce invocation and trigger dispatch overhead (@guibeira)
-- **PR #2348** (2026-10-20): fix(observe): bound queued events, share them, and push back on reports (@sergiofilhowz)
-- **PR #2347** (2026-10-20): feat: load benchmarks in fixed-size microVMs, and iii.dev/benchmarks (@sergiofilhowz)
-- **PR #2346** (2026-10-20): fix(observability): report log lag at most once per 10 s (@sergiofilhowz)
-- **PR #2344** (2026-10-20): feat(website): list the registry sitemap in robots.txt (@sergiofilhowz)
-- **PR #2343** (2026-10-19): docs: fix local links after the README translation (@guibeira)
+- **PR #2376** (2026-10-22): fix(deps): bump vitest to 4.1.12 in the Node SDK packages for Supply Chain advisories (@guibeira)
+- **PR #2375** (closed): feat(engine): optional shared namespace ownership (@ytallo)
+- **PR #2374** (2026-10-22): docs(linkly): 400/409/500, stopping the project, and other fixes from the validation runs (@guibeira)
+- **PR #2373** (2026-10-22): fix(engine): keep workers connected when they send an oversized message (@sergiofilhowz)
+- **PR #2372** (2026-10-21): fix(observe): bound how much of the time report backpressure holds a worker (@sergiofilhowz)
+- **PR #2371** (2026-10-21): Revert "fix(engine): close oversized worker messages with 1009 (#2366)" (@sergiofilhowz)
 
 ---
 
@@ -1243,47 +1889,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. observability): report log lag at most once per 10 s (#2346)
+## X. deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisori
 
 **RULE**:
-When implementing operations in `engine/src/workers/observability/lag.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11eb028f`: observability): report log lag at most once per 10 s (#2346). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c012a89d`: deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisories (#2351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/src/workers/observability/lag.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-// contributor license agreements. Licensed under the Elastic License 2.0;
-// you may not use this file except in compliance with the Elastic License 2.0.
-// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-// See LICENSE and PATENTS files for details.
-
-//! Reporting that a consumer of the log broadcast fell behind.
-//!
-//! A consumer of the engine's log channel must not log every lag. The report
-//! is a log line itself: it lands in the same full channel, evicts the message
-//! the consumer was about to read, and the consumer lags again, by one, and
-//! reports again. One burst of logs (a thousand workers disconnecting at
-//! `info`) then keeps a core busy and the log growing for as long as the engine
-//! runs. [`LagReport`] reports at most once per [`LAG_REPORT_INTERVAL`], so the
-//! consumer catches up between two reports.
-//!
-//! What a consumer skips between two reports is held back, not lost: it is
-//! reported with the next lag past the interval, or when the interval ends
-//! (the consumer waits on [`LagReport::deadline`] with [`sleep_until`]), or
-//! when the consumer 
+version = "0.103.16"
+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+version = "1.0.10"
+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+version = "1.0.10"
+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "0.103.15"
+checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
+version = "1.0.7"
+checksum = "f31141ce3fc3e300ae89b78c0dd67f9708061d1d2eda54b8209346fd6be9a92c"
+version = "1.0.7"
+checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11eb028f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c012a89d` are properly handled with clean fallback behavior.

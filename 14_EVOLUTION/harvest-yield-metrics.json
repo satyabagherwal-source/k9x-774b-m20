@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T17:38:28.491Z",
-  "total_cycles_completed": 4336,
-  "total_learnings_persisted": 4336,
-  "total_rules_promoted": 3516,
+  "last_updated": "2026-10-22T17:45:10.909Z",
+  "total_cycles_completed": 4341,
+  "total_learnings_persisted": 4341,
+  "total_rules_promoted": 3520,
   "history": [
-    {
-      "timestamp": "2026-10-21T02:33:54.651Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:33:58.823Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:43:32.891Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:49:49.068Z",
-      "repository": "buresdv/Cork",
-      "learningId": "learn-github-buresdv-cork",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:49:51.432Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T02:49:55.598Z",
       "repository": "black-forest-labs/flux-3-image-klein",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-22T17:38:28.491Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:44:51.296Z",
+      "repository": "lingui/js-lingui",
+      "learningId": "learn-github-lingui-js-lingui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:44:56.609Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:45:04.118Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:45:06.159Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:45:10.909Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

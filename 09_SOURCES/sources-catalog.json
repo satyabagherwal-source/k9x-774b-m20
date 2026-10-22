@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "a1d08d8b",
+    "sourceVersion": "9edd3db1",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "506b0995133c4ae5b183f8f1115fe1350d0389e15e46c78fc5b89e2c72ed6b9f",
-    "lastHarvestedAt": "2026-10-20T20:54:20.533Z",
+    "contentHash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
+    "lastHarvestedAt": "2026-10-22T17:44:56.604Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "b50fa327",
+    "sourceVersion": "e8249eb0",
     "license": "NOASSERTION",
-    "contentHash": "25acc29f4f741c778632e9668f10edbdbe57752c7f7b96d3679d6fe8d7043bca",
-    "lastHarvestedAt": "2026-10-22T15:42:14.682Z",
+    "contentHash": "7fc47718fd5a7edb351c10486ff0406a6496509e3fc6124640f43104af3745ab",
+    "lastHarvestedAt": "2026-10-22T17:45:10.904Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "f66de90f",
+    "sourceVersion": "25dd7ab5",
     "license": "NOASSERTION",
-    "contentHash": "286f1411c230d9a35930f7db5d41d375c572ed721bce0764b07ad2593ad667b2",
-    "lastHarvestedAt": "2026-10-20T10:03:18.537Z",
+    "contentHash": "73625fce8abd27d89456e82a6e7941cafa7bc10181bf5faf7965d6e9d60b2816",
+    "lastHarvestedAt": "2026-10-22T17:45:04.113Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -4283,10 +4283,10 @@
     "repository": "lingui/js-lingui",
     "platform": "github",
     "sourceUrl": "https://github.com/lingui/js-lingui",
-    "sourceVersion": "814929d3",
+    "sourceVersion": "ce5aa25b",
     "license": "MIT",
-    "contentHash": "a54ef558695915e2ab7f98e778869f1eab420e463829dd52fc609b38e8704aa0",
-    "lastHarvestedAt": "2026-10-20T13:40:35.619Z",
+    "contentHash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
+    "lastHarvestedAt": "2026-10-22T17:44:51.287Z",
     "learningId": "learn-github-lingui-js-lingui"
   },
   "nasiko-labs-nasiko": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "90540b38",
+    "sourceVersion": "c0c89086",
     "license": "Apache-2.0",
-    "contentHash": "169137a00ff87b0707aa7402556ae3e74d5878c8fbdb47dc77b8baf417c3ca22",
-    "lastHarvestedAt": "2026-10-20T22:51:56.824Z",
+    "contentHash": "e0ab9c143bdc680640343623f10e7b610a51d1a6524016243446ce29252fac53",
+    "lastHarvestedAt": "2026-10-22T17:45:06.154Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {

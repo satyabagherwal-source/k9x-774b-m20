@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:38:28.428Z",
+  "last_updated": "2026-10-22T17:45:10.855Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7299,8 +7299,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b50fa327",
-      "content_hash": "25acc29f4f741c778632e9668f10edbdbe57752c7f7b96d3679d6fe8d7043bca",
+      "source_version": "e8249eb0",
+      "content_hash": "7fc47718fd5a7edb351c10486ff0406a6496509e3fc6124640f43104af3745ab",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7433,6 +7433,11 @@
           "number": 3612,
           "title": "deps: update lock file for various security fixes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3674,
+          "title": "build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7440,7 +7445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:42:14.622Z",
+      "verified_at": "2026-10-22T17:45:10.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11507,8 +11512,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "90540b38",
-      "content_hash": "169137a00ff87b0707aa7402556ae3e74d5878c8fbdb47dc77b8baf417c3ca22",
+      "source_version": "c0c89086",
+      "content_hash": "e0ab9c143bdc680640343623f10e7b610a51d1a6524016243446ce29252fac53",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -11538,7 +11543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:51:56.781Z",
+      "verified_at": "2026-10-22T17:45:06.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12713,8 +12718,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "f66de90f",
-      "content_hash": "286f1411c230d9a35930f7db5d41d375c572ed721bce0764b07ad2593ad667b2",
+      "source_version": "25dd7ab5",
+      "content_hash": "73625fce8abd27d89456e82a6e7941cafa7bc10181bf5faf7965d6e9d60b2816",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -12732,6 +12737,11 @@
           "number": 2753,
           "title": "build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3673,
+          "title": "NM-356: send force logout on disabling/deleting user accounts and cleanup user d",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12739,7 +12749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:03:18.462Z",
+      "verified_at": "2026-10-22T17:45:04.051Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26882,8 +26892,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "a1d08d8b",
-      "content_hash": "506b0995133c4ae5b183f8f1115fe1350d0389e15e46c78fc5b89e2c72ed6b9f",
+      "source_version": "9edd3db1",
+      "content_hash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -26906,6 +26916,11 @@
           "number": 3376,
           "title": "observability): report log lag at most once per 10 s (#2346)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3672,
+          "title": "deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisori",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26913,7 +26928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:54:20.467Z",
+      "verified_at": "2026-10-22T17:44:56.543Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30799,8 +30814,8 @@
       "slug": "lingui-js-lingui",
       "platform": "github",
       "source_url": "https://github.com/lingui/js-lingui",
-      "source_version": "814929d3",
-      "content_hash": "a54ef558695915e2ab7f98e778869f1eab420e463829dd52fc609b38e8704aa0",
+      "source_version": "ce5aa25b",
+      "content_hash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
       "dossier_path": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "promoted_rules": [
@@ -30828,6 +30843,11 @@
           "number": 3198,
           "title": "examples): migrate react-webpack-gettext example to lingui v6 (#2734)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3671,
+          "title": "vite-plugin): resolve catalogs once per build instead of on every catalog import",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30835,7 +30855,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:40:35.539Z",
+      "verified_at": "2026-10-22T17:44:51.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110656,6 +110676,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:38:28.418Z"
+    },
+    "rule-3671": {
+      "learning_id": "rule-3671",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3671,
+      "title": "vite-plugin): resolve catalogs once per build instead of on every catalog import",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "ce5aa25b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:44:51.224Z"
+    },
+    "rule-3672": {
+      "learning_id": "rule-3672",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3672,
+      "title": "deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisori",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "9edd3db1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:44:56.543Z"
+    },
+    "rule-3673": {
+      "learning_id": "rule-3673",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3673,
+      "title": "NM-356: send force logout on disabling/deleting user accounts and cleanup user d",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "25dd7ab5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:45:04.051Z"
+    },
+    "rule-3674": {
+      "learning_id": "rule-3674",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3674,
+      "title": "build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "e8249eb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:45:10.844Z"
     }
   },
   "aliases": {
