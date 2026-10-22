@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `ba84b33d`  
+> **Source Version**: `288bc241`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:51:44.289Z  
+> **Timestamp**: 2026-10-22T19:42:16.929Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:51:44.045Z  
+> **Harvest Timestamp**: 2026-10-22T19:42:16.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1448,988 +1448,472 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba84b33d` (2026-10-20)
-**Commit Message**: feat(catalog): HUB-318 CLI writes catalog lock v2 and publishes the built closure (#4753)
+### Incident Patch 1: `a6753d88` (2026-10-21)
+**Commit Message**: fix(security): distrust four compromised CA roots in cacert bundle
+
+The eMudhra/emSign private keys were compromised; Mozilla has distrusted
+three emSign roots (nixpkgs PR #576390, then #576347). Comodo AAA
+Services root was separately compromised and is also included.
+
+On Linux, flox bakes the nixpkgs cacert bundle as
+NIXPKGS_CACERT_BUNDLE_CRT. All TLS paths — reqwest → native-tls →
+OpenSSL, Nix subprocess downloads, and NIX_SSL_CERT_FILE in activated
+environments — trust this bundle. Without this override, the
+compromised roots remain trusted.
+
+macOS is unaffected (system Keychain governs trust there).
+
+buildcatrust does not remove blocklisted certs; it marks them
+"Rejected Uses: TLS Web Server Authentication". Verified via
+openssl x509 -text output on all five roots — the four distrusted
+certs show the Rejected Uses annotation, and emSign Root CA - G1
+(not distrusted by Mozilla) remains trusted.
+
+A regression check is added to flake checks so nix flake check
+will catch any future silent regression of this distrust.
+
+Nix expression — tested with nix build (TDD exception noted).
+
+Refs: eMudhra/emSign CA distrust (incident — Linear ID TBD)
+Forge-Agent: implementation-worker (56e2dc
+
+**File**: `flake.nix` (modified, +101/-0)
+```diff
+@@ -60,6 +60,41 @@
+ 
+           process-compose = final.callPackage ./pkgs/process-compose { inherit (prev) process-compose; };
+ 
++          # Distrust four CA roots whose private keys were compromised.
++          #
++          # The three emSign entries are a backport of the distrust that
++          # upstream nixpkgs applied natively in NSS 3.131.1 (nixpkgs
++          # #576390, then #576347). flox pins NSS 3.121, so we carry them
++          # here. On a future nixpkgs bump to ≥3.131.1 they become
++          # harmless no-ops (NSS already rejects them in certdata).
++          #
++          # "Comodo AAA Services root" is a separate compromise; NSS never
++          # distrusted it, so this entry must remain regardless of the NSS
++          # version we pin.
++          #
++          # buildcatrust keeps the certs in the bundle and marks them
++          # "Rejected Uses: TLS Web Server Authentication" — grep-for-absence
++          # is the wrong check; use `openssl x509 -text | grep Rejected`.
++          #
++          # macOS is unaffected (Keychain); this override matters on Linux
++          # where reqwest → native-tls → OpenSSL, Nix subprocess downloads,
++          # and NIX_SSL_CERT_FILE all read NIXPKGS_CACERT_BUNDLE_CRT.
++          #
++          # Every cacert-baking package (flox-cli, flox-activations,
++          # rust-internal-deps, crate2nix, nef-lock-catalog) takes `cacert`
++          # from the overlays.flox fixed point (`pkgsFor = final`), so this
++          # single override propagates to all of them.
++          cacert = prev.cacert.override {
++            blacklist = [
++              "Comodo AAA Services root"
++              "emSign ECC Root CA - G3"
++              "emSign Root CA - C1"
++              "emSign ECC Root CA - C3"
++              # emSign Root CA - G1 is NOT distrusted (Mozilla did not
++              # revoke it); omitting it is intentional.
++            ];
++          };
++
+         })
+         inputs.fenix.overlays.default
+       ];
+@@ -211,6 +246,72 @@
+           inherit pkgs nixpkgs;
+           module = import ./modules/nixos pkgsContext;
+         };
++
++        # Regression test: verify that the four distrusted CA roots are
++        # rejected for TLS Web Server Authentication in the overridden
++        # bundle, and that emSign Root CA - G1 remains trusted.
++        #
++        # buildcatrust marks blocklisted CAs with "Rejected Uses:" in the
++        # p11-kit file that OpenSSL reads; `isTrusted` below mirrors the
++        # nixpkgs cacert passthru.tests.blacklist-utf8 pattern exactly.
++        #
++        # Fingerprints verified against nss-cacert-3.121-unbundled.
++        cacert-emudhra-distrust =
++          pkgs.runCommand "verify-cacert-emudhra-distrust"
++            {
++              cacertUnbundled = pkgs.cacert.unbundled;
++              nativeBuildInputs = [ pkgs.openssl ];
++            }
++            ''
++              isTrusted() {
++                # isTrusted <unbundled-dir> <sha256-fingerprint>
++                # Returns 0 (trusted) or 1 (rejected/absent for TLS).
++                for f in $1/etc/ssl/certs/*.crt; do
++                  if ! [[ -s "$f" ]]; then continue; fi
++                  fingerprint="$(openssl x509 -in "$f" -noout -fingerprint -sha256 | cut -f2 -d=)"
++                  if [[ "x$fingerprint" == "x$2" ]]; then
++                    if openssl x509 -in "$f" -noout -text | grep -q '^Rejected Uses:'; then
++                      if openssl x509 -in "$f" -noout -text | grep -A1 '^Rejected Uses:' | grep -q 'TLS Web Server'; then
++                        return 1
++                      fi
++                    fi
++                    return 0
++                  fi
++                done
++                return 1
++              }
++
++              # These four roots must be rejected for TLS.
++              declare -A distrusted=(
++                ["Comodo AAA Services root"]="D7:A7:A0:FB:5D:7E:27:31:D7:71:E9:48:4E:BC:DE:F7:1D:5F:0C:3E:0A:29:48:78:2B:C8:3E:E0:EA:69:9E:F4"
++                ["emSign ECC Root CA - G3"]="86:A1:EC:BA:08:9C:4A:8D:3B:BE:27:34:C6:12:BA:34:1D:81:3E:04:3C:F9:E8:A8:62:CD:5C:57:A3:6B:BE:6B"
++                ["emSign Root CA - C1"]="12:56:09:AA:30:1D:A0:A2:49:B9:7A:82:39:CB:6A:34:21:6F:44:DC:AC:9F:39:54:B1:42:92:F2:E8:C8:60:8F"
++                ["emSign ECC Root CA - C3"]="BC:4D:80:9B:15:18:9D:78:DB:3E:1D:8C:F4:F9:72:6A:79:5D:A1:64:3C:A5:F1:35:8E:1D:DB:0E:DC:0D:7E:B3"
++              )
++
++              for name in "''${!distrusted[@]}"; do
++                fp="''${distrusted[$name]}"
++                if isTrusted "$cacertUnbundled" "$fp"; then
++                  echo "FAIL: $name ($fp) is still trusted for TLS — distrust override did not apply" >&2
++                  exit 1
++                else
++                  echo "OK: $name is rejected for TLS"
++                fi
++              done
++
++              # emSign Root CA - G1 was NOT distrusted by Mozilla and must
++              # remain trusted.
++              G1_FP="40:F6:AF:03:46:A9:9A:A1:CD:1D:5
+```
+
+---
+
+### Incident Patch 2: `8c33f4d2` (2026-10-21)
+**Commit Message**: fix(security): distrust four compromised CA roots in cacert bundle (#4824)
 
 ## Proposed Changes
 
-Publishing a package now records the catalog dependencies it built,
-including dependencies reached through other packages. Builds from the
-same committed lock use the same catalog sources, and readable
-dependency failures explain which package needs a new publish. This
-implements [HUB-318](https://linear.app/floxdotdev/issue/HUB-318).
+The eMudhra/emSign CA private keys were compromised. Mozilla distrusted
+three emSign roots (nixpkgs #576390, then #576347 bumped NSS to 3.131.1
+and encoded the distrust natively). Comodo AAA Services root was
+separately compromised (NSS never distrusts it; only our blacklist
+covers it).
 
-The previous lock retained direct inputs without their full dependency
-graph. A consumer could therefore publish an incomplete dependency set
-when an intermediate package had not been published independently. Lock
-version 2 keeps the full lookup map and selects each package's direct
-inputs and reachable dependencies for check-build and publish.
+flox pins NSS 3.121 via its nixpkgs input. On Linux, the CLI bakes
+`NIXPKGS_CACERT_BUNDLE_CRT` from that bundle — used by reqwest →
+native-tls → OpenSSL, Nix subprocess downloads, and `NIX_SSL_CERT_FILE`
+in activated environments. Without this override all four compromised
+roots remain trusted for TLS on Linux. macOS is unaffected (system
+Keychain governs trust).
 
-The committed lock contains `version`, `locked_inputs` and project-wide
-`direct_inputs`. Builds derive the evaluator's catalog tree in a
-temporary file and leave the committed file unchanged. Nix expression
-builds reject an existing v1 lock with `flox build update-catalogs` as
-the remedy. Manifest-only operations ignore an unused lock. Source
-attributes and deep-override declarations survive publica
+This adds a `cacert.override { blacklist = […]; }` in `overlays.deps`.
+Because `overlays.flox` sets `pkgsFor = final` and every cacert-baking
+package (flox-cli, flox-activations, rust-internal-deps, crate2nix,
+nef-lock-catalog) resolves `cacert` through that fixed point, this
+single override propagates to all of them.
+
+A `checks.cacert-emudhra-distrust` regression test is also added,
+modeled on nixpkgs' own `passthru.tests.blacklist-utf8` patt
+
+**File**: `flake.nix` (modified, +23/-0)
+```diff
+@@ -60,6 +60,29 @@
+ 
+           process-compose = final.callPackage ./pkgs/process-compose { inherit (prev) process-compose; };
+ 
++          # TODO: remove this override once the upstream nixpkgs cacert distrusts these roots.
++          cacert = prev.cacert.override {
++            blacklist = [
++              "Comodo AAA Services root"
++              "emSign ECC Root CA - G3"
++              "emSign Root CA - C1"
++              "emSign ECC Root CA - C3"
++            ];
++          };
++
++          # The cacert override above changes fish's build inputs, so fish is
++          # built from source instead of substituted. Its
++          # test_replace_home_directory_with_tilde test sets the global HOME
++          # without `#[serial]` and races the serial tests that also set it.
++          # TODO: remove once the cacert override is gone or fish ships the fix.
++          fish = prev.fish.overrideAttrs (old: {
++            postPatch = (old.postPatch or "") + ''
++              substituteInPlace src/expand.rs \
++                --replace-fail "fn test_replace_home_directory_with_tilde()" \
++                               "#[serial] fn test_replace_home_directory_with_tilde()"
++            '';
++          });
++
+         })
+         inputs.fenix.overlays.default
+       ];
+```
+
+---
+
+### Incident Patch 3: `a1321b34` (2026-10-21)
+**Commit Message**: fix(cli): honor SSL_CERT_FILE as the system contract and only default NIX_SSL_CERT_FILE when neither is set (#4738)
+
+## Summary
+
+Three commits that make flox treat the certificate and locale variables
+as gap-fills, the way the Flox installer's `/usr/bin` wrappers do
+(flox/flox-installers#536, with the default-profile backstop in
+flox/flox-installers#538), so a flox run straight from the Nix store on
+a machine set up by the installer behaves the same way.
+
+**The rule**, stated once at `default_nix_env_vars` in flox-core, which
+the wrappers and the tests follow. "Set" means present, even if empty.
+
+- `NIX_SSL_CERT_FILE` set to anything but this build's bundle: do
+nothing. It is the explicit user override, for an `SSL_CERT_FILE` in a
+format the Nix TLS stack cannot read, or for testing.
+- `NIX_SSL_CERT_FILE` unset and `SSL_CERT_FILE` set: do nothing.
+`SSL_CERT_FILE` is the system-wide contract every program honors, and
+Nix falls back to it.
+- Neither set: point `NIX_SSL_CERT_FILE` at the bundled CA certificates,
+for Nix software alone. `SSL_CERT_FILE` is never written, because
+everything flox spawns and every activated shell inherits these values
+and non-Nix software must not be hande
 
 **File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -3172,6 +3172,7 @@ dependencies = [
-  "flox-config",
-  "flox-core",
-  "floxhub-client",
-+ "httpmock",
-  "indent",
-  "indoc",
-  "rnix",
+@@ -1717,6 +1717,7 @@ dependencies = [
+  "shell_gen",
+  "supports-color",
+  "sysinfo",
++ "temp-env",
+  "tempfile",
+  "thiserror 2.0.18",
+  "time",
 ```
 
-**File**: `cli/catalog-api-v1/build.rs` (modified, +10/-0)
+**File**: `cli/flox-activations/src/cli/executive/mod.rs` (modified, +7/-0)
 ```diff
-@@ -42,6 +42,16 @@ fn generator() -> progenitor::Generator {
-         "crate::types::CatalogStoreConfig",
-         vec![].into_iter(),
-     );
-+    settings.with_replacement(
-+        "LockedGitSource",
-+        "crate::types::LockedGitSource",
-+        vec![].into_iter(),
-+    );
-+    settings.with_replacement(
-+        "LockedInputEntry",
-+        "crate::types::LockedInputEntry",
-+        vec![].into_iter(),
-+    );
-     settings.with_inner_type(parse_quote! { crate::hooks::RequestHooks });
-     progenitor::Generator::new(&settings)
- }
-```
-
-**File**: `cli/catalog-api-v1/openapi.json` (modified, +100/-10)
-```diff
-@@ -1181,7 +1181,7 @@
-             }
-           },
-           "409": {
--            "description": "The package is registered to a different source repository or ref, or identical content is already published from another lineage",
-+            "description": "The package is registered to a different source repository or ref, or identical content is already published from another lineage, or its closure conflicts with an existing .flox directory",
-             "content": {
-               "application/json": {
-                 "schema": {
-@@ -1417,7 +1417,7 @@
-           "catalogs"
-         ],
-         "summary": "Check if a build already exists",
--        "description": "Check whether a build already exists for the given source tuple.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n- **package_name**: The name of the package\n\nRequest Body:\n- **source_url**: Source repository URL\n- **source_rev**: Source revision\n- **nixpkgs_rev**: Nixpkgs revision used for the build\n- **system**: Target system (e.g. x86_64-linux)\n- **locked_inputs**: Optional flat map of DIRECT catalog dependencies,\n  same shape as the locked_inputs field on the publish endpoint.  The\n  check is always closure-aware \u2014 there is no hash-blind path:\n  absent/null/{} \u2192 empty closure (H(\u2205)); {\u2026} \u2192 resolved + Merkle-hashed.\n  Old clients that omit the field are accepted (no 422); they are treated\n  as publishing with an empty closure.\n\nReturns:\n- **CheckBuildResponse** with already_published=true and provenance\n  if a matching build exists, or already_published=false otherwise.",
-+        "description": "Check whether a build already exists for the given source tuple.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n- **package_name**: The name of the package\n\nRequest Body:\n- **source_url**: Source repository URL\n- **source_rev**: Source revision\n- **nixpkgs_rev**: Nixpkgs revision used for the build\n- **system**: Target system (e.g. x86_64-linux)\n- **locked_inputs**, **direct_inputs**: the same mode-selecting pair as\n  the publish endpoint (build_lock.uses_v2_closure_contract): absent/null\n  direct_inputs is legacy, which always answers\n  already_published=false. Any list,\n  including [], selects v2: locked_inputs must hold the complete\n  closure, which is validated and walked the same way as publish; a\n  well-shaped but unresolvable closure is an advisory miss, never a\n  hard failure.\n- **source_ref**, **dot_flox_dir**: identify the package under check,\n  never a dependency's source. Either absent or unusable is an advisory\n  miss for a v2 check; legacy always misses regardless of these fields.\n\nReturns:\n- **CheckBuildResponse** with already_published=true and provenance\n  if a matching build exists, or already_published=false otherwise.",
-         "operationId": "check_build_api_v1_catalog_catalogs__catalog_name__packages__package_name__check_build_post",
-         "security": [
-           {
-@@ -1503,7 +1503,7 @@
-           "catalogs"
-         ],
-         "summary": "List all packages with their locked source metadata",
--        "description": "Return a flat paginated list of all packages in the catalog with their\nlocked source metadata (url, ref, rev, dir, buildType).\n\nPackages published before source tracking was introduced have\nsource=null and buildType=null.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n\nQuery Parameters:\n- **page**: Zero-indexed page number (default: 0)\n- **pageSize**: Items per page (default: 10)\n\nReturns:\n- **LockedSourcesResponse**: Paginated list with total_count",
-+        "description": "Return a flat paginated list of all packages in the catalog with their\nlocked source metadata (url, ref, rev, dir, buildType).\n\nOnly evaluated packages with source and build type metadata are included.\nThis endpoint supports the legacy lock protocol used by CLI v1.13.1;\nCLI v1.13.2 uses build-input lookup. Generated SDK methods remain available,\nand retirement requires an explicit compatibility policy.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n\nQuery Parameters:\n- **page**: Zero-indexed page number (default: 0)\n- **pageSize**: Items per page (default: 10)\n\nReturns:\n- **LockedSourcesResponse**: Paginated list with total_count",
-         "operationId": "get_catalog_locked_sources_api_v1_catalog_catalogs__catalog_name__locked_sources_get",
-         "security": [
-           {
-@@ -2352,7 +2352,7 @@
-           "groups"
-         ],
-         "title": "BuildInputsLookupRequest",
--        "description": "Request body for the /build-inputs/lookup endpoint.\n\nA lookup names one or more `groups` of references to resolve, optionally\nanchored at a `reference_point`.\n\nThe response is source revisions plus DAG edges: for each reference, the\nlatest revision of its own source together with the transitive non-base\nsources that revision was built against.  That answer carries no system\na
-```
-
-**File**: `cli/catalog-api-v1/src/client.rs` (modified, +189/-238)
-```diff
-@@ -87,7 +87,8 @@ pub mod types {
-     /**Request body for the /build-inputs/lookup endpoint.
+@@ -16,6 +16,7 @@ use flox_core::proc_status::read_pid_status;
+ use flox_core::process_compose::manager_responds;
+ use flox_core::sentry::init_sentry;
+ use flox_core::traceable_path;
++use flox_core::util::capture_startup_tls_env;
+ use log_gc::{spawn_heartbeat_log, spawn_logs_gc_threads};
+ use nix::sys::signal::Signal::SIGUSR1;
+ use nix::sys::signal::kill;
+@@ -67,6 +68,12 @@ pub struct ExecutiveArgs {
  
- A lookup names one or more `groups` of references to resolve, optionally
--anchored at a `reference_point`.
-+anchored at a `reference_point`. Base-catalog references are advisory
-+because the caller supplies them through pinned evaluation.
- 
- The response is source revisions plus DAG edges: for each reference, the
- latest revision of its own source together with the transitive non-base
-@@ -101,7 +102,7 @@ built repeatedly.*/
-     /// ```json
-     ///{
-     ///  "title": "BuildInputsLookupRequest",
--    ///  "description": "Request body for the /build-inputs/lookup endpoint.\n\nA lookup names one or more `groups` of references to resolve, optionally\nanchored at a `reference_point`.\n\nThe response is source revisions plus DAG edges: for each reference, the\nlatest revision of its own source together with the transitive non-base\nsources that revision was built against.  That answer carries no system\nand no nixpkgs base revision, so the request body names neither.  A base\nrevision is selected at build time, against which the same lock may be\nbuilt repeatedly.",
-+    ///  "description": "Request body for the /build-inputs/lookup endpoint.\n\nA lookup names one or more `groups` of references to resolve, optionally\nanchored at a `reference_point`. Base-catalog references are advisory\nbecause the caller supplies them through pinned evaluation.\n\nThe response is source revisions plus DAG edges: for each reference, the\nlatest revision of its own source together with the transitive non-base\nsources that revision was built against.  That answer carries no system\nand no nixpkgs base revision, so the request body names neither.  A base\nrevision is selected at build time, against which the same lock may be\nbuilt repeatedly.",
-     ///  "type": "object",
-     ///  "required": [
-     ///    "groups"
-@@ -937,6 +938,23 @@ manifest packages were built via the traditional flox manifest workflow.*/
-     ///    "system"
-     ///  ],
-     ///  "properties": {
-+    ///    "direct_inputs": {
-+    ///      "title": "Direct Inputs",
-+    ///      "type": [
-+    ///        "array",
-+    ///        "null"
-+    ///      ],
-+    ///      "items": {
-+    ///        "type": "string"
-+    ///      }
-+    ///    },
-+    ///    "dot_flox_dir": {
-+    ///      "title": "Dot Flox Dir",
-+    ///      "type": [
-+    ///        "string",
-+    ///        "null"
-+    ///      ]
-+    ///    },
-     ///    "factory_build_token": {
-     ///      "title": "Factory Build Token",
-     ///      "type": [
-@@ -958,6 +976,13 @@ manifest packages were built via the traditional flox manifest workflow.*/
-     ///      "title": "Nixpkgs Rev",
-     ///      "type": "string"
-     ///    },
-+    ///    "source_ref": {
-+    ///      "title": "Source Ref",
-+    ///      "type": [
-+    ///        "string",
-+    ///        "null"
-+    ///      ]
-+    ///    },
-     ///    "source_rev": {
-     ///      "title": "Source Rev",
-     ///      "type": "string"
-@@ -975,13 +1000,22 @@ manifest packages were built via the traditional flox manifest workflow.*/
-     /// </details>
-     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
-     pub struct CheckBuildRequest {
-+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-+        pub direct_inputs: ::std::option::Option<::std::vec::Vec<::std::string::String>>,
-+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-+        pub dot_flox_dir: ::std::option::Option<::std::string::String>,
-         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-         pub factory_build_token: ::std::option::Option<::std::string::String>,
-         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-         pub locked_inputs: ::std::option::Option<
--            ::std::collections::HashMap<::std::string::String, LockedInputEntry>,
-+            ::std::collections::HashMap<
-+                ::std::string::String,
-+                crate::types::LockedInputEntry,
-+            >,
-         >,
-         pub nixpkgs_rev: ::std::string::String,
-+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-+        pub source_ref: ::std::option::Option<::std::string::String>,
-         pub source_rev: ::std::string::String,
-         pub source_url: ::std::string::String,
-         pub system: PackageSystem,
-@@ -1417,30 +1451,19 @@ Attributes:
-             value.clone()
-         }
-     }
--    /**Result for a single LookupGroup.
--
--lock carries the resolved LockedInputs map (full transitive closure).
--unresolvable is scoped INSIDE the group (never at the top-level response).
--Keeping unresolvable entries group-scoped is the contract the lookup
--handler must respect when building this response.
-+    /**Keep failures scoped to one group; any failure invalidates its lock.
- 
--matched maps locked-input keys (sa
-```
-
-**File**: `cli/catalog-api-v1/src/lib.rs` (modified, +55/-0)
-```diff
-@@ -13,6 +13,8 @@ pub mod types {
-     pub use crate::client::types::*;
-     pub use crate::error::MessageType;
- 
-+    use std::collections::BTreeMap;
+ impl ExecutiveArgs {
+     pub fn handle(self) -> Result<(), anyhow::Error> {
++        // Step 0: Record SSL_CERT_FILE and SSL_CERT_DIR as the executive
++        // received them, before Sentry (step 4) can build the TLS client
++        // that writes them into this process on Linux. Every process the
++        // executive spawns is given this record back.
++        capture_startup_tls_env();
 +
-     use serde::{Deserialize, Serialize};
-     /// Progenitor doesn't know how to use a discriminator as a tag, so add this
-     /// enum manually.
-@@ -31,6 +33,59 @@ pub mod types {
-         /// Not yet supported
-         Publisher(CatalogStoreConfigPublisher),
-     }
-+
-+    /// Preserve unknown git attributes at initial API deserialization.
-+    /// The schema permits them, but Progenitor's generated struct would drop
-+    /// them before the lock could retain them.
-+    #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
-+    pub struct LockedGitSource {
-+        pub dir: ::std::string::String,
-+        #[serde(rename = "ref")]
-+        pub ref_: ::std::string::String,
-+        pub rev: ::std::string::String,
-+        #[serde(rename = "type")]
-+        pub type_: ::std::string::String,
-+        pub url: ::std::string::String,
-+        #[serde(flatten)]
-+        pub extra: BTreeMap<String, serde_json::Value>,
-+    }
-+
-+    /// Preserve nullable informational fields on the wire and in the lock.
-+    /// The generated type omits `None` fields; lock v2 serializes explicit nulls.
-+    #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
-+    pub struct LockedInputEntry {
-+        pub attr_path: Vec<String>,
-+        #[serde(default)]
-+        pub build: Option<String>,
-+        pub build_type: BuildType,
-+        pub catalog: String,
-+        pub inputs: Option<Vec<String>>,
-+        pub locked_inputs_hash: String,
-+        pub source: LockedGitSource,
-+        #[serde(
-+            default,
-+            skip_serializing_if = "Option::is_none",
-+            deserialize_with = "deserialize_deep_overrides"
-+        )]
-+        pub deep_overrides: Option<Vec<Vec<String>>>,
-+        #[serde(default)]
-+        pub version: Option<String>,
-+    }
-+
-+
-+    fn deserialize_deep_overrides<'de, D>(deserializer: D) -> Result<Option<Vec<Vec<String>>>, D::Error>
-+    where
-+        D: serde::Deserializer<'de>,
-+    {
-+        let paths = Option::<Vec<Vec<DeepOverridesItemItem>>>::deserialize(deserializer)?;
-+        Ok(paths.map(|paths| {
-+            paths
-+                .into_iter()
-+                .map(|path| path.into_iter().map(String::from).collect())
-+                .collect()
-+        }))
-+    }
-+
- }
- 
- #[cfg(test)]
+         // Step 1: Extract context which we need to do anything.
+         let contents = fs::read_to_string(&self.executive_ctx)?;
+         let ExecutiveCtx {
 ```
 
-**File**: `cli/flox-rust-sdk/src/flox.rs` (modified, +5/-0)
+**File**: `cli/flox-activations/src/on_deactivate.rs` (modified, +3/-0)
 ```diff
-@@ -67,6 +67,10 @@ pub struct Flox {
+@@ -14,6 +14,7 @@ use std::process::{Command, Stdio};
+ use anyhow::{Context, Result};
+ use flox_core::activate::context::{AttachCtx, AttachProjectCtx};
+ use flox_core::activations::StartIdentifier;
++use flox_core::util::restore_startup_tls_env;
+ use tracing::{debug, info, warn};
  
-     pub verbosity: i32,
+ use crate::attach_diff::AttachDiff;
+@@ -114,6 +115,8 @@ fn run_hook_script(
+     )?;
  
-+    /// Whether temporary files that aid diagnosis outlive the command.
-+    /// Set from `keep_tempdir` together with debug or verbose logging.
-+    pub retain_diagnostic_tempfiles: bool,
-+
-     /// Device UUID for telemetry correlation.
-     /// None when metrics are disabled.
-     pub metrics_device_uuid: Option<Uuid>,
-@@ -252,6 +256,7 @@ pub mod test_helpers {
-             installable_locker: InstallableLockerImpl::Mock(InstallableLockerMock::new()),
-             features: Default::default(),
-             verbosity: 0,
-+            retain_diagnostic_tempfiles: false,
-             metrics_device_uuid: None,
-         };
- 
+     let mut command = Command::new(BASH_BIN);
++    // Before the attach diff, so a hook that exported one of these wins.
++    restore_startup_tls_env(&mut command);
+     attach_diff.apply_to_command(&mut command);
+     command.arg(script);
+     command
 ```
 
-**File**: `cli/flox-rust-sdk/src/providers/build.rs` (modified, +21/-25)
+**File**: `cli/flox-activations/src/process_compose.rs` (modified, +5/-0)
 ```diff
-@@ -13,6 +13,8 @@ use flox_manifest::{Manifest, MigratedTypedOnly};
- use floxhub_client::{BaseCatalogUrl, PackageSystem};
- use indoc::formatdoc;
- use itertools::Itertools;
-+#[cfg(any(test, feature = "tests"))]
-+use nef_lock_catalog::BuildLock;
- use nef_lock_catalog::NixFlakeref;
- use serde::Deserialize;
- use tempfile::NamedTempFile;
-@@ -66,8 +68,8 @@ pub trait ManifestBuilder {
-     /// call.
-     ///
-     /// `catalog_lockfile` is the catalog lock the build's NEF evals consume,
--    /// created by the CLI (the committed .flox/catalog.lock, or a fresh
--    /// ephemeral lock) and passed through as `CATALOG_LOCKFILE`. Required
-+    /// created by the CLI (a temporary file with materialized catalogs) and
-+    /// passed through as `CATALOG_LOCKFILE`. Required
-     /// whenever the project has Nix expression builds.
-     ///
-     /// `expression_build_nixpkgs` is required under the same condition: [None]
-@@ -1235,9 +1237,9 @@ pub mod test_helpers {
-         // callers that need nothing more.
-         let empty_lock_path = flox.temp_dir.join("empty-catalog.lock");
-         let catalog_lockfile = catalog_lockfile.unwrap_or_else(|| {
--            std::fs::write(
-+            fs::write(
-                 &empty_lock_path,
--                "{\"version\": 1, \"direct_catalog_inputs\": {}, \"catalogs\": {}}\n",
-+                nef_lock_catalog::render_builder_lock(&BuildLock::default()).unwrap(),
-             )
-             .unwrap();
-             &empty_lock_path
-@@ -1301,9 +1303,9 @@ pub mod test_helpers {
-         // NEF evals require a CLI-provided catalog lock; these fixtures make
-         // no catalog references, so an empty lock suffices.
-         let empty_lock_path = flox.temp_dir.join("empty-catalog.lock");
--        std::fs::write(
-+        fs::write(
-             &empty_lock_path,
--            "{\"version\": 1, \"direct_catalog_inputs\": {}, \"catalogs\": {}}\n",
-+            nef_lock_catalog::render_builder_lock(&BuildLock::default()).unwrap(),
-         )
-         .unwrap();
+@@ -7,6 +7,7 @@ use anyhow::{Context, Error, bail};
+ use flox_core::activate::context::{AttachCtx, AttachProjectCtx};
+ use flox_core::activations::StartIdentifier;
+ use flox_core::process_compose::{PROCESS_NEVER_EXIT_NAME, manager_responds};
++use flox_core::util::restore_startup_tls_env;
+ use time::OffsetDateTime;
+ use time::macros::format_description;
+ use tracing::{debug, info};
+@@ -116,6 +117,8 @@ pub fn start_process_compose_no_services(
+         .join(format!("services.{}.log", log_timestamp_now()?));
  
-@@ -1894,7 +1896,7 @@ mod tests {
-         let empty_lock_path = flox.temp_dir.join("empty-catalog.lock");
-         fs::write(
-             &empty_lock_path,
--            "{\"version\": 1, \"direct_catalog_inputs\": {}, \"catalogs\": {}}\n",
-+            nef_lock_catalog::render_builder_lock(&BuildLock::default()).unwrap(),
-         )
-         .unwrap();
+     let mut command = Command::new(&project.process_compose_bin);
++    // Before the attach diff, so a hook that exported one of these wins.
++    restore_startup_tls_env(&mut command);
  
-@@ -2011,7 +2013,7 @@ mod tests {
-         let empty_lock_path = flox.temp_dir.join("empty-catalog.lock");
-         fs::write(
-             &empty_lock_path,
--            "{\"version\": 1, \"direct_catalog_inputs\": {}, \"catalogs\": {}}\n",
-+            nef_lock_catalog::render_builder_lock(&BuildLock::default()).unwrap(),
-         )
-         .unwrap();
- 
-@@ -4697,7 +4699,7 @@ mod nef_tests {
- 
-     use floxhub_client::LockedInputEntry;
-     use indoc::{formatdoc, indoc};
--    use nef_lock_catalog::{build_lock_from_locked_inputs, write_lock};
-+    use nef_lock_catalog::build_lock_from_locked_inputs;
-     use pretty_assertions::assert_eq;
- 
-     use super::*;
-@@ -4712,19 +4714,18 @@ mod nef_tests {
-     use crate::providers::git::tests::test_git_options;
-     use crate::providers::git::{GitCommandProvider, GitProvider};
- 
--    /// Write a catalog lock pinning `catalogs.myorg.hello` to `source_dir`
--    /// at its current revision: the lock the CLI hands the package builder
--    /// as CATALOG_LOCKFILE, assembled from one locked catalog entry the way
--    /// a real resolution assembles it — so the fixture cannot drift from the
--    /// lock format — with no catalog involved. The entry is keyed in the
-+    /// Write the builder-facing catalog JSON pinning `catalogs.myorg.hello`
-+    /// to `source_dir` at its current revision. The fixture uses the same
-+    /// materialization as the CLI, with no catalog request. The entry is keyed in the
-     /// server's canonical `<catalog>/<attr-path>` form, which the expression
-     /// references in dot-rendered form.
--    fn write_catalog_lock(path: &Path, repo: &GitCommandProvider, source_dir: &Path) {
-+    fn write_builder_catalog_lock(path: &Path, repo: &GitCommandProvider, source_dir: &Path) {
-         let status = repo.status().unwrap();
-         let entry: LockedInputEntry = serde_json::from_value(serde_json::json!({
-             "attr_path": ["hello"],
-             "build_type": "nef",
-             "catalog": "myorg",
-+            "inputs": [],
-             "locked_inputs_hash": "sha256-test-fixture",
-             "source": {
-                 "dir": ".",
-@@ -4741,7 +4742,7 @@ mod nef_tests {
-         let key = "myorg/hello".to_string();
-         let lock =
-             build_lock_from_locked_inputs(HashMap::from([(key.clone(), entry)]), [&key]).unwrap();
--        write_lock(&lock, path).unwrap();
-+        fs::write(path, nef_lock_catalog::render_builder_lock(&lock).unwrap()).unwrap();
-     }
- 
-     /// The build consumes the catalog lock it is handed: the NEF eval reads
-@@ -4783,7 +4784,7 @@ mod nef_tests {
-         repo.commit("add 
-```
-
-**File**: `cli/flox-rust-sdk/src/providers/catalog.rs` (modified, +3/-2)
-```diff
-@@ -26,6 +26,7 @@ use floxhub_client::{
-     PackageDetails,
-     PackageGroup,
-     PackageSystem,
-+    PublishReceipt,
-     PublishResponse,
-     ResolveError,
-     ResolvedPackageGroup,
-@@ -344,7 +345,7 @@ impl CatalogClientTrait for MockClient {
-         _catalog_name: impl AsRef<str> + Send + Sync,
-         _package_name: impl AsRef<str> + Send + Sync,
-         build_info: &UserBuildPublish,
--    ) -> Result<(), FloxhubClientError> {
-+    ) -> Result<PublishReceipt, FloxhubClientError> {
-         *self
-             .last_publish_build_info
-             .lock()
-@@ -355,7 +356,7 @@ impl CatalogClientTrait for MockClient {
-             .expect("couldn't acquire mock lock")
-             .pop_front();
-         match mock_resp {
--            Some(Response::PublishBuild) => Ok(()),
-+            Some(Response::PublishBuild) => Ok(PublishReceipt::default()),
-             // We don't need to test errors at the moment
-             _ => panic!("expected create package response, found {:?}", &mock_resp),
-         }
-```
-
----
-
-### Incident Patch 2: `79ff31ad` (2026-10-05)
-**Commit Message**: build(catalog-api-v1): establish the shared lock wire contract
-
-Catalog lookup, check, and publish must carry the same v2 lock metadata
-without losing unknown git source attributes. Generate the client from
-the composed server schema pinned at flox/floxhub f548fdd8b1db, which
-itself declares the check-build roots, target ref and .flox directory
-and the publish factory build token, so generated requests need no
-hand-owned shim or token injection. Keep only the two deserialization
-replacements the client still needs: an open LockedGitSource that
-retains unknown source fields, and a LockedInputEntry that keeps
-nullable version and build explicit. Existing callers fill the new
-fields with compatibility values until the closure work sends real roots
-and target identity.
-
-Refs: HUB-318
-Review-depth: high
-Review-reason: API schema and maintained deserialization boundaries
-Forge-Agent: commit-builder (4584d33e)
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `cli/catalog-api-v1/build.rs` (modified, +10/-0)
-```diff
-@@ -42,6 +42,16 @@ fn generator() -> progenitor::Generator {
-         "crate::types::CatalogStoreConfig",
-         vec![].into_iter(),
-     );
-+    settings.with_replacement(
-+        "LockedGitSource",
-+        "crate::types::LockedGitSource",
-+        vec![].into_iter(),
-+    );
-+    settings.with_replacement(
-+        "LockedInputEntry",
-+        "crate::types::LockedInputEntry",
-+        vec![].into_iter(),
-+    );
-     settings.with_inner_type(parse_quote! { crate::hooks::RequestHooks });
-     progenitor::Generator::new(&settings)
- }
-```
-
-**File**: `cli/catalog-api-v1/openapi.json` (modified, +100/-10)
-```diff
-@@ -1181,7 +1181,7 @@
-             }
-           },
-           "409": {
--            "description": "The package is registered to a different source repository or ref, or identical content is already published from another lineage",
-+            "description": "The package is registered to a different source repository or ref, or identical content is already published from another lineage, or its closure conflicts with an existing .flox directory",
-             "content": {
-               "application/json": {
-                 "schema": {
-@@ -1417,7 +1417,7 @@
-           "catalogs"
-         ],
-         "summary": "Check if a build already exists",
--        "description": "Check whether a build already exists for the given source tuple.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n- **package_name**: The name of the package\n\nRequest Body:\n- **source_url**: Source repository URL\n- **source_rev**: Source revision\n- **nixpkgs_rev**: Nixpkgs revision used for the build\n- **system**: Target system (e.g. x86_64-linux)\n- **locked_inputs**: Optional flat map of DIRECT catalog dependencies,\n  same shape as the locked_inputs field on the publish endpoint.  The\n  check is always closure-aware \u2014 there is no hash-blind path:\n  absent/null/{} \u2192 empty closure (H(\u2205)); {\u2026} \u2192 resolved + Merkle-hashed.\n  Old clients that omit the field are accepted (no 422); they are treated\n  as publishing with an empty closure.\n\nReturns:\n- **CheckBuildResponse** with already_published=true and provenance\n  if a matching build exists, or already_published=false otherwise.",
-+        "description": "Check whether a build already exists for the given source tuple.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n- **package_name**: The name of the package\n\nRequest Body:\n- **source_url**: Source repository URL\n- **source_rev**: Source revision\n- **nixpkgs_rev**: Nixpkgs revision used for the build\n- **system**: Target system (e.g. x86_64-linux)\n- **locked_inputs**, **direct_inputs**: the same mode-selecting pair as\n  the publish endpoint (build_lock.uses_v2_closure_contract): absent/null\n  direct_inputs is legacy, which always answers\n  already_published=false. Any list,\n  including [], selects v2: locked_inputs must hold the complete\n  closure, which is validated and walked the same way as publish; a\n  well-shaped but unresolvable closure is an advisory miss, never a\n  hard failure.\n- **source_ref**, **dot_flox_dir**: identify the package under check,\n  never a dependency's source. Either absent or unusable is an advisory\n  miss for a v2 check; legacy always misses regardless of these fields.\n\nReturns:\n- **CheckBuildResponse** with already_published=true and provenance\n  if a matching build exists, or already_published=false otherwise.",
-         "operationId": "check_build_api_v1_catalog_catalogs__catalog_name__packages__package_name__check_build_post",
-         "security": [
-           {
-@@ -1503,7 +1503,7 @@
-           "catalogs"
-         ],
-         "summary": "List all packages with their locked source metadata",
--        "description": "Return a flat paginated list of all packages in the catalog with their\nlocked source metadata (url, ref, rev, dir, buildType).\n\nPackages published before source tracking was introduced have\nsource=null and buildType=null.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n\nQuery Parameters:\n- **page**: Zero-indexed page number (default: 0)\n- **pageSize**: Items per page (default: 10)\n\nReturns:\n- **LockedSourcesResponse**: Paginated list with total_count",
-+        "description": "Return a flat paginated list of all packages in the catalog with their\nlocked source metadata (url, ref, rev, dir, buildType).\n\nOnly evaluated packages with source and build type metadata are included.\nThis endpoint supports the legacy lock protocol used by CLI v1.13.1;\nCLI v1.13.2 uses build-input lookup. Generated SDK methods remain available,\nand retirement requires an explicit compatibility policy.\n\nPath Parameters:\n- **catalog_name**: The name of the catalog\n\nQuery Parameters:\n- **page**: Zero-indexed page number (default: 0)\n- **pageSize**: Items per page (default: 10)\n\nReturns:\n- **LockedSourcesResponse**: Paginated list with total_count",
-         "operationId": "get_catalog_locked_sources_api_v1_catalog_catalogs__catalog_name__locked_sources_get",
-         "security": [
-           {
-@@ -2352,7 +2352,7 @@
-           "groups"
-         ],
-         "title": "BuildInputsLookupRequest",
--        "description": "Request body for the /build-inputs/lookup endpoint.\n\nA lookup names one or more `groups` of references to resolve, optionally\nanchored at a `reference_point`.\n\nThe response is source revisions plus DAG edges: for each reference, the\nlatest revision of its own source together with the transitive non-base\nsources that revision was built against.  That answer carries no system\na
-```
-
-**File**: `cli/catalog-api-v1/src/client.rs` (modified, +189/-238)
-```diff
-@@ -87,7 +87,8 @@ pub mod types {
-     /**Request body for the /build-inputs/lookup endpoint.
- 
- A lookup names one or more `groups` of references to resolve, optionally
--anchored at a `reference_point`.
-+anchored at a `reference_point`. Base-catalog references are advisory
-+because the caller supplies them through pinned evaluation.
- 
- The response is source revisions plus DAG edges: for each reference, the
- latest revision of its own source together with the transitive non-base
-@@ -101,7 +102,7 @@ built repeatedly.*/
-     /// ```json
-     ///{
-     ///  "title": "BuildInputsLookupRequest",
--    ///  "description": "Request body for the /build-inputs/lookup endpoint.\n\nA lookup names one or more `groups` of references to resolve, optionally\nanchored at a `reference_point`.\n\nThe response is source revisions plus DAG edges: for each reference, the\nlatest revision of its own source together with the transitive non-base\nsources that revision was built against.  That answer carries no system\nand no nixpkgs base revision, so the request body names neither.  A base\nrevision is selected at build time, against which the same lock may be\nbuilt repeatedly.",
-+    ///  "description": "Request body for the /build-inputs/lookup endpoint.\n\nA lookup names one or more `groups` of references to resolve, optionally\nanchored at a `reference_point`. Base-catalog references are advisory\nbecause the caller supplies them through pinned evaluation.\n\nThe response is source revisions plus DAG edges: for each reference, the\nlatest revision of its own source together with the transitive non-base\nsources that revision was built against.  That answer carries no system\nand no nixpkgs base revision, so the request body names neither.  A base\nrevision is selected at build time, against which the same lock may be\nbuilt repeatedly.",
-     ///  "type": "object",
-     ///  "required": [
-     ///    "groups"
-@@ -937,6 +938,23 @@ manifest packages were built via the traditional flox manifest workflow.*/
-     ///    "system"
-     ///  ],
-     ///  "properties": {
-+    ///    "direct_inputs": {
-+    ///      "title": "Direct Inputs",
-+    ///      "type": [
-+    ///        "array",
-+    ///        "null"
-+    ///      ],
-+    ///      "items": {
-+    ///        "type": "string"
-+    ///      }
-+    ///    },
-+    ///    "dot_flox_dir": {
-+    ///      "title": "Dot Flox Dir",
-+    ///      "type": [
-+    ///        "string",
-+    ///        "null"
-+    ///      ]
-+    ///    },
-     ///    "factory_build_token": {
-     ///      "title": "Factory Build Token",
-     ///      "type": [
-@@ -958,6 +976,13 @@ manifest packages were built via the traditional flox manifest workflow.*/
-     ///      "title": "Nixpkgs Rev",
-     ///      "type": "string"
-     ///    },
-+    ///    "source_ref": {
-+    ///      "title": "Source Ref",
-+    ///      "type": [
-+    ///        "string",
-+    ///        "null"
-+    ///      ]
-+    ///    },
-     ///    "source_rev": {
-     ///      "title": "Source Rev",
-     ///      "type": "string"
-@@ -975,13 +1000,22 @@ manifest packages were built via the traditional flox manifest workflow.*/
-     /// </details>
-     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
-     pub struct CheckBuildRequest {
-+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-+        pub direct_inputs: ::std::option::Option<::std::vec::Vec<::std::string::String>>,
-+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-+        pub dot_flox_dir: ::std::option::Option<::std::string::String>,
-         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-         pub factory_build_token: ::std::option::Option<::std::string::String>,
-         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-         pub locked_inputs: ::std::option::Option<
--            ::std::collections::HashMap<::std::string::String, LockedInputEntry>,
-+            ::std::collections::HashMap<
-+                ::std::string::String,
-+                crate::types::LockedInputEntry,
-+            >,
-         >,
-         pub nixpkgs_rev: ::std::string::String,
-+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-+        pub source_ref: ::std::option::Option<::std::string::String>,
-         pub source_rev: ::std::string::String,
-         pub source_url: ::std::string::String,
-         pub system: PackageSystem,
-@@ -1417,30 +1451,19 @@ Attributes:
-             value.clone()
-         }
-     }
--    /**Result for a single LookupGroup.
--
--lock carries the resolved LockedInputs map (full transitive closure).
--unresolvable is scoped INSIDE the group (never at the top-level response).
--Keeping unresolvable entries group-scoped is the contract the lookup
--handler must respect when building this response.
-+    /**Keep failures scoped to one group; any failure invalidates its lock.
- 
--matched maps locked-input keys (sa
-```
-
-**File**: `cli/catalog-api-v1/src/lib.rs` (modified, +55/-0)
-```diff
-@@ -13,6 +13,8 @@ pub mod types {
-     pub use crate::client::types::*;
-     pub use crate::error::MessageType;
- 
-+    use std::collections::BTreeMap;
-+
-     use serde::{Deserialize, Serialize};
-     /// Progenitor doesn't know how to use a discriminator as a tag, so add this
-     /// enum manually.
-@@ -31,6 +33,59 @@ pub mod types {
-         /// Not yet supported
-         Publisher(CatalogStoreConfigPublisher),
-     }
-+
-+    /// Preserve unknown git attributes at initial API deserialization.
-+    /// The schema permits them, but Progenitor's generated struct would drop
-+    /// them before the lock could retain them.
-+    #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
-+    pub struct LockedGitSource {
-+        pub dir: ::std::string::String,
-+        #[serde(rename = "ref")]
-+        pub ref_: ::std::string::String,
-+        pub rev: ::std::string::String,
-+        #[serde(rename = "type")]
-+        pub type_: ::std::string::String,
-+        pub url: ::std::string::String,
-+        #[serde(flatten)]
-+        pub extra: BTreeMap<String, serde_json::Value>,
-+    }
-+
-+    /// Preserve nullable informational fields on the wire and in the lock.
-+    /// The generated type omits `None` fields; lock v2 serializes explicit nulls.
-+    #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
-+    pub struct LockedInputEntry {
-+        pub attr_path: Vec<String>,
-+        #[serde(default)]
-+        pub build: Option<String>,
-+        pub build_type: BuildType,
-+        pub catalog: String,
-+        pub inputs: Option<Vec<String>>,
-+        pub locked_inputs_hash: String,
-+        pub source: LockedGitSource,
-+        #[serde(
-+            default,
-+            skip_serializing_if = "Option::is_none",
-+            deserialize_with = "deserialize_deep_overrides"
-+        )]
-+        pub deep_overrides: Option<Vec<Vec<String>>>,
-+        #[serde(default)]
-+        pub version: Option<String>,
-+    }
-+
-+
-+    fn deserialize_deep_overrides<'de, D>(deserializer: D) -> Result<Option<Vec<Vec<String>>>, D::Error>
-+    where
-+        D: serde::Deserializer<'de>,
-+    {
-+        let paths = Option::<Vec<Vec<DeepOverridesItemItem>>>::deserialize(deserializer)?;
-+        Ok(paths.map(|paths| {
-+            paths
-+                .into_iter()
-+                .map(|path| path.into_iter().map(String::from).collect())
-+                .collect()
-+        }))
-+    }
-+
- }
- 
- #[cfg(test)]
-```
-
-**File**: `cli/flox-rust-sdk/src/providers/publish.rs` (modified, +1/-0)
-```diff
-@@ -757,6 +757,7 @@ where
-             // empty server-side (floxhub#1791). The wire type is a HashMap;
-             // ordering on the wire is meaningless.
-             locked_inputs: Some(locked_inputs.clone().into_iter().collect()),
-+            direct_inputs: None,
-             base_catalog_rev_count: None,
-             base_catalog_rev_date: None,
-             url: self.env_metadata.build_repo_meta.url.to_string(),
-```
-
-**File**: `cli/floxhub-client/src/client.rs` (modified, +7/-0)
-```diff
-@@ -755,6 +755,9 @@ impl CatalogClientTrait for FloxhubClient {
-             nixpkgs_rev: query.nixpkgs_rev.to_string(),
-             system: query.system,
-             locked_inputs: Some(query.locked_inputs.clone()),
-+            direct_inputs: None,
-+            source_ref: None,
-+            dot_flox_dir: None,
-         };
-         self.catalog
-             .check_build_api_v1_catalog_catalogs_catalog_name_packages_package_name_check_build_post(
-@@ -1755,9 +1758,12 @@ pub mod tests {
-                 rev: "abc123".to_string(),
-                 ref_: "main".to_string(),
-                 dir: ".".to_string(),
-+                extra: BTreeMap::new(),
-             },
-             inputs: None,
-             locked_inputs_hash: "sha256:aabbcc".to_string(),
-+            version: None,
-+            build: None,
-         };
-         let mut locked_inputs = HashMap::new();
-         locked_inputs.insert("dep-key".to_string(), entry);
-@@ -1927,6 +1933,7 @@ pub mod tests {
-                 unfree: None,
-                 version: None,
-             },
-+            direct_inputs: None,
-             dot_flox_dir: ".flox".to_string(),
-             factory_build_token: factory_build_token.map(str::to_string),
-             locked_base_catalog_url: None,
-```
-
-**File**: `cli/nef-lock-catalog/src/lock/build_lock.rs` (modified, +3/-0)
-```diff
-@@ -231,7 +231,10 @@ mod tests {
-                 rev: "abc".to_string(),
-                 type_: "git".to_string(),
-                 url: "https://example.com/repo".to_string(),
-+                extra: BTreeMap::new(),
-             },
-+            version: None,
-+            build: None,
-         }
-     }
- 
-```
-
-**File**: `cli/nef-lock-catalog/src/lock/transform.rs` (modified, +5/-0)
-```diff
-@@ -46,6 +46,8 @@ pub fn build_lock_from_locked_inputs<'d>(
-             inputs: _,
-             locked_inputs_hash: _,
-             source,
-+            version: _,
-+            build: _,
-         } = entry;
- 
-         // Widening conversion: a `DeepOverridesItemItem` is already a
-@@ -94,6 +96,7 @@ mod tests {
-             rev: rev.to_string(),
-             type_: "git".to_string(),
-             url: url.to_string(),
-+            extra: BTreeMap::new(),
-         }
-     }
- 
-@@ -111,6 +114,8 @@ mod tests {
-             inputs: None,
-             locked_inputs_hash: "sha256-test".to_string(),
-             source,
-+            version: None,
-+            build: None,
-         }
-     }
- 
-```
-
----
-
-### Incident Patch 3: `eac7a2a9` (2026-10-05)
-**Commit Message**: fix(flox): validate local locks before command side effects
-
-Local lock failures can be detected before anything changes on the
-server or in the shell. Publish now reads, materializes and projects its
-lock before creating the package record, so a stale or legacy lock no
-longer leaves a new package behind. Develop releases the temporary
-builder file after evaluation, before either shell path replaces the
-process. With no expression builds, an explicit update-catalogs replaces
-any existing lock, malformed or not, with an empty v2 lock and reports
-the entries it could count; with no lock it writes nothing. Its output
-counts only non-base references and says when only base references were
-found.
-
-Refs: HUB-318
-Review-depth: high
-Review-reason: Explicit relock policy and command ordering
-Forge-Agent: commit-builder (4584d33e)
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `cli/flox/doc/flox-build-update-catalogs.md` (modified, +8/-2)
-```diff
-@@ -27,8 +27,14 @@ make, resolved as a union in a single request, so that every build of a
- revision evaluates against one consistent set of inputs.
- Commit the file alongside the manifest.
- 
--A committed lock is used exactly as it is found: `flox build` and
--`flox publish` never rewrite it.
-+Base references under `catalogs.nixpkgs` use pinned nixpkgs and do not enter
-+the lock. If the project has no Nix expression builds, this command replaces
-+an existing lock (including a populated v2 lock) with an empty v2 lock and
-+reports the number of entries discarded. With no existing lock it writes
-+nothing.
-+
-+A committed lock remains unchanged: `flox build` and `flox publish`
-+materialize the catalog tree for evaluation without rewriting the file.
- When the project's expressions gain a reference the lock does not cover,
- re-run `flox build update-catalogs` and commit the result.
- References the scanner cannot fully resolve are pinned conservatively;
-```
-
-**File**: `cli/flox/src/commands/build.rs` (modified, +167/-6)
-```diff
-@@ -607,15 +607,40 @@ impl Build {
- 
-         let rel_file_paths =
-             expression_rel_paths(&PackageTargets::new(&manifest, &expression_ref)?.all());
-+        let lockfile_path = catalog_lockfile_path(env.dot_flox_path());
- 
-         if rel_file_paths.is_empty() {
--            message::plain(
--                "No Nix expression builds found; only expression builds reference the catalog.",
--            );
-+            if lockfile_path.exists() {
-+                let contents = std::fs::read(&lockfile_path)
-+                    .with_context(|| format!("Failed to read '{}'.", lockfile_path.display()))?;
-+                let discarded = serde_json::from_slice::<serde_json::Value>(&contents)
-+                    .ok()
-+                    .and_then(|old| {
-+                        old.get("locked_inputs")
-+                            .or_else(|| old.get("direct_catalog_inputs"))
-+                            .and_then(serde_json::Value::as_object)
-+                            .map(serde_json::Map::len)
-+                    });
-+                nef_lock_catalog::write_lock(
-+                    &nef_lock_catalog::BuildLock::default(),
-+                    &lockfile_path,
-+                )?;
-+                let cleared = match discarded {
-+                    Some(count) => {
-+                        format!("Cleared {count} unused entries from '.flox/catalog.lock'.")
-+                    },
-+                    None => "Cleared the unused '.flox/catalog.lock'.".to_string(),
-+                };
-+                message::created(formatdoc! {"
-+                No Nix expression builds found.
-+                {cleared}
-+                Commit the updated file."});
-+            } else {
-+                message::plain("No Nix expression builds found. Nothing to update.");
-+            }
-             return Ok(());
+     // The executive inherits the pre-activation environment from activate,
+     // so these values are the same as what the initial activation captured.
+@@ -177,6 +180,7 @@ pub fn start_services_via_socket(
          }
  
--        let lockfile_path = catalog_lockfile_path(env.dot_flox_path());
-         let references = lock_project_catalog(
-             &flox.floxhub_client,
-             nix_expression_dir(&env),
-@@ -624,15 +649,24 @@ impl Build {
-         )
-         .await?;
- 
-+        let non_base_count = references
-+            .iter()
-+            .filter(|reference| !reference.is_base())
-+            .count();
-         if references.is_empty() {
-             message::created(formatdoc! {"
-                 No catalog references found; wrote an empty '.flox/catalog.lock'.
-                 Commit the file so every revision builds against the same inputs."});
-+        } else if non_base_count == 0 {
-+            message::created(formatdoc! {"
-+                Only base catalog references found; wrote an empty '.flox/catalog.lock'.
-+                Base inputs use the build's pinned nixpkgs revision.
-+                Commit the updated file."});
-         } else {
-             message::created(formatdoc! {"
--                Locked {count} catalog reference(s) to '.flox/catalog.lock'.
-+                Locked {count} non-base catalog reference(s) to '.flox/catalog.lock'.
-                 Commit the file so every revision builds against the same inputs.",
--                count = references.len(),
-+                count = non_base_count,
-             });
-         }
-         Ok(())
-@@ -1014,6 +1048,94 @@ mod test {
-         assert_eq!(displayed, vec![symlink.to_string_lossy()]);
-     }
- 
-+    #[tokio::test]
-+    async fn update_catalogs_replaces_a_v1_lock_with_no_expression_builds() {
-+        let (flox, _temp_dir) = flox_instance();
-+        let manifest = formatdoc! {r#"
-+            version = 1
-+        "#};
-+        let env = new_path_environment(&flox, &manifest);
-+        let lockfile_path = catalog_lockfile_path(env.dot_flox_path());
-+        std::fs::write(
-+            &lockfile_path,
-+            "{\"version\": 1, \"direct_catalog_inputs\": {}, \"catalogs\": {}}\n",
-+        )
-+        .unwrap();
-+
-+        Build::update_catalogs(&flox, ConcreteEnvironment::Path(env))
-+            .await
-+            .expect("a v1 lock with no expression builds is replaced, not refused");
-+
-+        assert_eq!(
-+            std::fs::read_to_string(&lockfile_path).unwrap(),
-+            "{\n  \"version\": 2,\n  \"locked_inputs\": {},\n  \"direct_inputs\": []\n}\n"
-+        );
-+    }
-+
-+    #[tokio::test]
-+    async fn update_catalogs_replaces_a_populated_v2_lock_with_no_expression_builds() {
-+        let (flox, _temp_dir) = flox_instance();
-+        let env = new_path_environment(&flox, "version = 1\n");
-+        let lockfile_path = catalog_lockfile_path(env.dot_flox_path());
-+        let input_key = "myorg/hello".to_owned();
-+        let entry = serde_json::from_value(serde_json::json!({
-+            "attr_path": ["hello"],
-+            "build_type": "nef",
-+            "catalog": "myorg",
-+            "inputs": [],
-+            "locked_inputs_hash": "sha256-test",
-+            "source": {
-+                "type": "git",
-+                "url": "https://example.com/repo",
-+                "ref": "refs/heads/main",
+         let mut cmd = Command::new(process_compose_bin);
++        restore_startup_tls_env(&mut cmd);
+         cmd.env("NO_COLOR", "1")
+             .arg("--unix-socket")
+             .arg(socket_path)
+@@ -205,6 +209,7 @@ pub fn start_services_via_socket(
+ /// Shuts down process-compose by running `process-compose down` via the unix socket.
+ pub fn process_compose_down(process_compose_bin: &Path, socket_path: &Path) -> Result<(), Error> {
+     let mut cmd = Command::new(process_compose_bin);
++    restore_startup_tls_env(&mut cmd);
+     cmd.arg("down");
+     cmd.arg("--unix-socket");
+     cmd.arg(socket_path);
 ```
 
-**File**: `cli/flox/src/commands/develop.rs` (modified, +3/-0)
+**File**: `cli/flox-core/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -186,6 +186,9 @@ impl Develop {
-             catalog_lock.path(),
-             None,
-         )?;
-+        // eval has finished reading CATALOG_LOCKFILE through make and Nix.
-+        // Release it before either shell path replaces this process.
-+        drop(catalog_lock);
-         let drv_path = eval_results
-             .first()
-             .context("eval() returned no results for the requested package")?
+@@ -37,6 +37,7 @@ uuid.workspace = true
+ 
+ [dev-dependencies]
+ indoc.workspace = true
++temp-env.workspace = true
+ 
+ [features]
+ default = ["proc_status"]
 ```
 
-**File**: `cli/flox/src/commands/publish.rs` (modified, +4/-4)
+**File**: `cli/flox-core/src/util/mod.rs` (modified, +306/-32)
 ```diff
-@@ -433,11 +433,8 @@ impl Publish {
-         let auth = NixAuth::from_flox(&flox)?;
-         let publish_provider = PublishProvider::new(env_metadata, package_metadata, auth);
+@@ -2,48 +2,322 @@ pub mod message;
  
--        // Check that we can publish before building.
-+        // Prepare the local lock before creating any server package record.
-         let catalog = &flox.floxhub_client;
--        let package_created = publish_provider
--            .create_package_and_possibly_user_catalog(catalog, &catalog_name)
--            .await?;
+ use std::collections::HashMap;
+ use std::env;
++use std::ffi::OsString;
++use std::process::Command;
++use std::sync::OnceLock;
  
-         let has_expression_build = publish_provider
-             .package_metadata
-@@ -514,6 +511,9 @@ impl Publish {
-             Some(lock) => project_for_publish(lock, &references)?,
-             None => PackageClosure::default(),
-         };
-+        let package_created = publish_provider
-+            .create_package_and_possibly_user_catalog(catalog, &catalog_name)
-+            .await?;
+-/// Explicitly set environment for nix calls
++/// The CA bundle flox fills in for Nix software, compiled in at build time.
++pub const NIXPKGS_CACERT_BUNDLE_CRT: &str = env!("NIXPKGS_CACERT_BUNDLE_CRT");
++
++/// The locale variable this platform's C library reads, and the build-time
++/// default flox fills in for it.
++#[cfg(target_os = "macos")]
++pub const LOCALE: (&str, &str) = ("PATH_LOCALE", env!("PATH_LOCALE"));
++#[cfg(target_os = "linux")]
++pub const LOCALE: (&str, &str) = ("LOCALE_ARCHIVE", env!("LOCALE_ARCHIVE"));
++
++/// Environment variables to fill in for Nix-built executables.
++///
++/// This is the one statement of the rule. The Flox installer's `/usr/bin`
++/// wrappers (flox-installers, `pkgs/env-wrapper`, from flox-installers#536)
++/// and the activation tests (`cli/tests/activate.bats`,
++/// `cli/tests/deactivate.bats`) follow it and point here.
++///
++/// Nixpkgs itself is broken in that the packages it creates depend upon a
++/// variety of environment variables at runtime. On NixOS these are
++/// convenient to set on a system-wide basis but that essentially masks the
++/// problem, and it's not uncommon to see Nix packages trip over the
++/// absence of environment variables when invoked on other Linux
++/// distributions. flox fills in Nix-provided defaults for the ones we
++/// know to be required, but only where the user has not set them: a
++/// value the user chose is theirs. The build-time values bundle the files
++/// they point at in flox's package closure.
++///
++/// The rule. "Set" means present in the environment, even if empty.
++///
++/// - `NIX_SSL_CERT_FILE` set to anything but this build's bundle: nothing.
++///   It is the explicit user override, for an `SSL_CERT_FILE` in a format
++///   the Nix TLS stack cannot read, or for testing.
++/// - `NIX_SSL_CERT_FILE` unset and `SSL_CERT_FILE` set: nothing.
++///   `SSL_CERT_FILE` is the system-wide contract that OpenSSL and most
++///   other TLS stacks honor, Nix-built or not (runtimes with a trust store
++///   of their own, such as Node, Python with certifi, Java, or rustls with
++///   webpki-roots, do not), and Nix reads it when `NIX_SSL_CERT_FILE` is
++///   unset. `SSL_CERT_DIR` plays no part in the rule: set on its own it
++///   leaves `SSL_CERT_FILE` unset, so the default applies.
++/// - Neither set: `NIX_SSL_CERT_FILE` is pointed at the bundled CA
++///   certificates, for Nix software alone. `SSL_CERT_FILE` is never
++///   written, because everything flox spawns and every activated shell
++///   inherits these values, and non-Nix software must not be handed a
++///   value it did not expect.
++/// - `NIX_SSL_CERT_FILE` equal to this build's bundle: re-applied,
++///   whatever `SSL_CERT_FILE` holds. This is the own-default clause, below.
++/// - The locale variable (`LOCALE`): filled in when unset or equal to this
++///   build's default; a user's value, empty included, is left alone.
++///
++/// The own-default clause exists because this function returns an export
++/// map for another process rather than changing the environment in place.
++/// flox applies the map to its own process at startup, then spawns
++/// `flox-activations`, which computes the map again to decide what the
++/// activation exports. Without the clause the child would take the
++/// parent's default for the user's value and export nothing, and an
++/// in-place activation would leave the shell without it. The installer's
++/// wrapper needs no such clause: it changes its own environment and execs,
++/// so its value simply persists. The clause also holds when
++/// `SSL_CERT_FILE` has appeared since the parent decided. On Linux the TLS
++/// library flox uses probes the system trust store on first use and writes
++/// `SSL_CERT_FILE` and `SSL_CERT_DIR` into the process; flox records the
++/// two before that can happen and hands the record to everything it
++/// spawns (see [`capture_startup_tls_env`]), so the child sees them only
++/// as the user left them. One consequence: a user who exports
++/// `SSL_CERT_FILE` inside an activated shell still gets
++/// `NIX_SSL_CERT_FILE` re-exported by nested activations, so to redirect
++/// Nix-built software there they set `NIX_SSL_CERT_FILE` too.
+ ///
+-/// Nixpkgs itself is broken in that the packages it creates depends
+-/// upon a variety of environment variables at runtime.  On NixOS
+-/// these are convenient to set on a system-wide basis but that
+-/// essentially masks the problem, and it's not uncommon to see Nix
+-/// packages trip over the absence of environment variables when
+-/// invoked on other Linux distributions.
++/// Requirement: the bundle and locale compiled into flox, into
++/// `flox-activations` and into the installer's wrappers must be the same
++/// store paths, since the clause recognizes flox's own default by value.
++/// That holds by construction: the installer bu
+```
+
+**File**: `cli/flox-rust-sdk/src/providers/build.rs` (modified, +3/-0)
+```diff
+@@ -402,6 +402,9 @@ impl FloxBuildMk<'_> {
+     fn base_command(&self, base_dir: &Path) -> Command {
+         // todo: extra makeflags, eventually
+         let mut command = Command::new(&*GNUMAKE_BIN);
++        // A local build must not inherit certificate paths the TLS library
++        // wrote into this process since startup.
++        flox_core::util::restore_startup_tls_env(&mut command);
+         command.env_remove("MAKEFLAGS");
+         command.arg("--file").arg(&*FLOX_BUILD_MK);
+         command.arg("--directory").arg(base_dir); // Change dir before reading makefile.
+```
+
+**File**: `cli/flox-rust-sdk/src/providers/services/process_compose.rs` (modified, +4/-0)
+```diff
+@@ -491,6 +491,7 @@ impl IntoIterator for ProcessStates {
+ fn base_process_compose_command(socket: impl AsRef<Path>) -> Command {
+     let path = Path::new(&*PROCESS_COMPOSE_BIN);
+     let mut cmd = Command::new(path);
++    flox_core::util::restore_startup_tls_env(&mut cmd);
+     cmd.env("PATH", path)
+         .env("NO_COLOR", "1") // apparently it doesn't do this automatically even though it's not connected to a tty...
+         .arg("--unix-socket")
+@@ -1032,6 +1033,9 @@ pub mod test_helpers {
+             write_process_compose_config(config, &config_path).unwrap();
  
-         // Dedup: ask the catalog server if this exact build has already been
-         // published before paying for the upload — and, when the closure
+             let mut cmd = Command::new(&*PROCESS_COMPOSE_BIN);
++            // Services must not inherit certificate paths the TLS library
++            // wrote into this process since startup.
++            flox_core::util::restore_startup_tls_env(&mut cmd);
+ 
+             // apparently it doesn't do this automatically even though it's not connected to a tty...
+             cmd.env("NO_COLOR", "1");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4822** (2026-10-20): fix(buildenv): DEV-370 create empty lib and include in dev output (@stephenyeargin)
-- **PR #4819** (2026-10-20): chore: Release v1.19.0 (@dcarley)
-- **PR #4816** (2026-10-16): build: Update FloxHub API schemas to 234ebb85 (@floxbot)
-- **PR #4815** (2026-10-16): feat(factory): Factory display catalog/attrPath (@dcarley)
-- **PR #4814** (2026-10-14): chore: Merge v1.18.2 into main (@dcarley)
-- **PR #4812** (closed): chore: Release 1.18.2 (@stephenyeargin)
+- **PR #4832** (2026-10-21): fix(containerize): install flox's own CA bundle at /etc/ssl/certs (@imkarrer)
+- **PR #4831** (closed): fix(security): scope the cacert distrust to the bundle flox ships (@imkarrer)
+- **PR #4829** (closed): fix(interpreter): undo the certificate default of envrc files rendered before 1.19.1 (@limeytexan)
+- **PR #4828** (2026-10-21): fix(activate): ignore certificate defaults in envrc rendered by 1.19.0 and earlier (@tanjadev)
+- **PR #4827** (2026-10-22): build: Update FloxHub API schemas to c993870e (@floxbot)
+- **PR #4826** (closed): build: Update FloxHub API schemas to 3f2d2679 (@floxbot)
 
 ---
 
@@ -2449,21 +1933,42 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. catalog): HUB-318 CLI writes catalog lock v2 and publishes the built closure (#4
+## X. security): distrust four compromised CA roots in cacert bundle
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba84b33d`: catalog): HUB-318 CLI writes catalog lock v2 and publishes the built closure (#4753). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6753d88`: security): distrust four compromised CA roots in cacert bundle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "httpmock",
+          # Distrust four CA roots whose private keys were compromised.
+          #
+          # The three emSign entries are a backport of the distrust that
+          # upstream nixpkgs applied natively in NSS 3.131.1 (nixpkgs
+          # #576390, then #576347). flox pins NSS 3.121, so we carry them
+          # here. On a future nixpkgs bump to ≥3.131.1 they become
+          # harmless no-ops (NSS already rejects them in certdata).
+          #
+          # "Comodo AAA Services root" is a separate compromise; NSS never
+          # distrusted it, so this entry must remain regardless of the NSS
+          # version we pin.
+          #
+          # buildcatrust keeps the certs in the bundle and marks them
+          # "Rejected Uses: TLS Web Server Authentication" — grep-for-absence
+          # is the wrong check; use `openssl x509 -text | grep Rejected`.
+          #
+          # macOS is unaffected (Keychain); this override matters on Linux
+          # where reqwest → native-tls → OpenSSL, Nix subprocess downloads,
+          # and NIX_SSL_CERT_FILE all read NIXPKGS_CACERT_BUNDLE_CRT.
+          #
+          # Every cacert-baking package (flox-cli, flox-activations,
+          # rust-internal-
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2473,4 +1978,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba84b33d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6753d88` are properly handled with clean fallback behavior.

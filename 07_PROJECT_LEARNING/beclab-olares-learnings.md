@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `994fdf5a`  
+> **Source Version**: `d0a3170d`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T01:43:06.331Z  
+> **Timestamp**: 2026-10-22T19:42:26.149Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T01:43:06.324Z  
+> **Harvest Timestamp**: 2026-10-22T19:42:25.564Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5311 stars
+- **Stars / Engagement**: 5314 stars
 
 ---
 
@@ -1137,1067 +1137,599 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `994fdf5a` (2026-10-20)
-**Commit Message**: fix(appservice): change workload options min olaresManifest version (#4276)
+### Incident Patch 1: `4613d810` (2026-10-21)
+**Commit Message**:  fix(kubeblocks): reduce mysql,mongodb default logging (#4285)
 
-* refactor(app-service): publish app Tailscale ports to the shared Headscale
+fix(kubeblocks): reduce mysql,mongodb default logging
 
-Replace per-user tailscale-acl ConfigMaps and subnet-route updates with a full replacement of the shared Headscale application-ports policy.
+ - Disable MySQL general_log by default
+ - Enable systemLog.quiet for MongoDB, shards, and mongos
 
-* fix: change workload options min olaresManifest version
-
-* chore(appservice): update image version to 0.6.56
-
-**File**: `framework/app-service/.olares/config/cluster/deploy/appservice_deploy.yaml` (modified, +1/-1)
+**File**: `.github/workflows/module_kubesphere_publish_docker.yaml` (modified, +1/-1)
 ```diff
-@@ -180,7 +180,7 @@ spec:
-       priorityClassName: "system-cluster-critical"
-       containers:
-       - name: app-service
--        image: beclab/app-service:0.6.55
-+        image: beclab/app-service:0.6.56
-         imagePullPolicy: IfNotPresent
-         ports:
-         - containerPort: 6755
-```
-
-**File**: `framework/app-service/cmd/app-service/main.go` (modified, +0/-6)
-```diff
-@@ -241,12 +241,6 @@ func main() {
- 		setupLog.Error(err, "Unable to create controller", "controller", "tailScaleACL manager")
- 		os.Exit(1)
- 	}
--	if err = (&controllers.TailScaleACLConfigMapController{
--		Client: mgr.GetClient(),
--	}).SetUpWithManager(mgr); err != nil {
--		setupLog.Error(err, "Unable to create controller", "controller", "tailScaleACL configmap manager")
--		os.Exit(1)
--	}
+@@ -24,7 +24,7 @@ jobs:
+         uses: docker/login-action@v2
+         with:
+           username: ${{ secrets.DOCKERHUB_USERNAME }}
+-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
++          password: ${{ secrets.DOCKERHUB_PASS }}
  
- 	if err = (&controllers.UserController{
- 		Client:     mgr.GetClient(),
+       - name: Build and push Docker image
+         uses: docker/build-push-action@v3
 ```
 
-**File**: `framework/app-service/controllers/headscale_application_ports.go` (added, +342/-0)
+**File**: `platform/kubeblocks/.olares/Olares.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,342 @@
-+package controllers
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"fmt"
-+	"net/http"
-+	"sort"
-+	"strconv"
-+	"strings"
-+	"time"
-+
-+	"github.com/beclab/Olares/framework/app-service/pkg/utils/app"
-+	"github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
-+	"github.com/go-resty/resty/v2"
-+	"k8s.io/apimachinery/pkg/util/sets"
-+	"k8s.io/klog/v2"
-+)
-+
-+const (
-+	headscaleApplicationPortsURL  = "http://headscale-server-svc.os-network:8001/internal/policy/application-ports"
-+	applicationPortsReconcileName = "application-ports"
-+)
-+
-+// applicationPort is one user's dynamic tcp/udp ports on the shared headscale.
-+// PUT replaces the whole set, so a user omitted here loses their dynamic ports.
-+type applicationPort struct {
-+	User string   `json:"user"`
-+	TCP  []string `json:"tcp"`
-+	UDP  []string `json:"udp"`
-+}
-+
-+type applicationPortsAPI interface {
-+	Get(ctx context.Context) ([]applicationPort, error)
-+	Put(ctx context.Context, ports []applicationPort) error
-+}
-+
-+type headscalePolicyClient struct {
-+	url  string
-+	http *resty.Client
-+}
-+
-+func newHeadscalePolicyClient() *headscalePolicyClient {
-+	return &headscalePolicyClient{
-+		url:  headscaleApplicationPortsURL,
-+		http: resty.New().SetTimeout(10 * time.Second),
-+	}
-+}
-+
-+type headscaleEnvelope struct {
-+	Code    int             `json:"code"`
-+	Message string          `json:"message"`
-+	Data    json.RawMessage `json:"data"`
-+}
-+
-+func (c *headscalePolicyClient) do(ctx context.Context, method string, body any, out any) error {
-+	req := c.http.R().
-+		SetContext(ctx).
-+		SetHeader("Content-Type", "application/json")
-+	if body != nil {
-+		req.SetBody(body)
-+	}
-+	resp, err := req.Execute(method, c.url)
-+	if err != nil {
-+		klog.Errorf("headscale application ports %s %s failed: %v", method, c.url, err)
-+		return fmt.Errorf("headscale application ports: %w", err)
-+	}
-+	klog.Infof("headscale application ports %s %s -> %d %s", method, c.url, resp.StatusCode(), truncateForLog(resp.String()))
-+	if resp.StatusCode() < 200 || resp.StatusCode() >= 300 {
-+		return fmt.Errorf("headscale application ports: %s %d: %s", method, resp.StatusCode(), resp.String())
-+	}
-+	var envelope headscaleEnvelope
-+	if err := json.Unmarshal(resp.Body(), &envelope); err != nil {
-+		return fmt.Errorf("headscale application ports: decode response: %w", err)
-+	}
-+	if envelope.Code != 0 {
-+		return fmt.Errorf("headscale application ports: code %d: %s", envelope.Code, envelope.Message)
-+	}
-+	if out != nil && len(envelope.Data) > 0 && string(envelope.Data) != "null" {
-+		if err := json.Unmarshal(envelope.Data, out); err != nil {
-+			return fmt.Errorf("headscale application ports: decode data: %w", err)
-+		}
-+	}
-+	return nil
-+}
-+
-+func (c *headscalePolicyClient) Get(ctx context.Context) ([]applicationPort, error) {
-+	var data struct {
-+		ApplicationPorts []applicationPort `json:"applicationPorts"`
-+	}
-+	if err := c.do(ctx, http.MethodGet, nil, &data); err != nil {
-+		return nil, err
-+	}
-+	if data.ApplicationPorts == nil {
-+		return []applicationPort{}, nil
-+	}
-+	return data.ApplicationPorts, nil
-+}
-+
-+func (c *headscalePolicyClient) Put(ctx context.Context, ports []applicationPort) error {
-+	if ports == nil {
-+		ports = []applicationPort{}
-+	}
-+	body := struct {
-+		ApplicationPorts []applicationPort `json:"applicationPorts"`
-+	}{ApplicationPorts: ports}
-+	return c.do(ctx, http.MethodPut, body, nil)
-+}
-+
-+type userPorts struct {
-+	tcp sets.String
-+	udp sets.String
-+}
-+
-+// applicationPortsFromApps builds the full dynamic port set from every
-+// Application. Default shared ports stay in headscale's static policy and
-+// are not added here.
-+func applicationPortsFromApps(apps []v1alpha1.Application) []applicationPort {
-+	byUser := map[string]userPorts{}
-+	for i := range apps {
-+		user := policyUser(apps[i].Spec.Owner)
-+		acls := make([]v1alpha1.ACL, 0, len(apps[i].Spec.TailScale.ACLs)+len(apps[i].Spec.TailScaleACLs))
-+		acls = append(acls, apps[i].Spec.TailScale.ACLs...)
-+		acls = append(acls, apps[i].Spec.TailScaleACLs...)
-+		if len(acls) == 0 {
-+			continue
-+		}
-+		klog.Infof("headscale application ports app=%s/%s specName=%s owner=%q aclCount=%d",
-+			apps[i].Namespace, apps[i].Name, apps[i].Spec.Name, apps[i].Spec.Owner, len(acls))
-+		if user == "" {
-+			klog.Infof("skip tailscale acls for app=%s/%s: empty owner", apps[i].Namespace, apps[i].Name)
-+			continue
-+		}
-+		for _, acl := range acls {
-+			// An empty proto allows TCP and UDP, matching Tailscale ACL behavior.
-+			// The application-ports API has no other protocol fields.
-+			protos := protosForACL(acl.Proto)
-+			if len(protos) == 0 {
-+				if strings.TrimSpace(acl.Proto) != "" || len(acl.Dst) > 0 {
-+					klog.Infof("skip tailscale acl proto %q for user %s", acl.Proto, user)
-+				}
-+				continue
-+			}
-+			klog.Infof("headscale application ports app=%s/%s owner=%s proto=%q dst=%v -> %v",
-+				apps[i].Namespace, apps[i].Name, user, acl.Proto, acl.Dst, protos)
-+			for _, dest := range acl.Dst {
-+				ports := portsFromDestination(dest
+@@ -7,4 +7,4 @@ output:
+     -
+       name: beclab/kubeblocks:1.0.1-ext1
+     -
+-      name: beclab/kubeblock-addon-charts:v1.0.1-ext3
++      name: beclab/kubeblock-addon-charts:v1.0.1-ext4
 ```
 
-**File**: `framework/app-service/controllers/headscale_application_ports_test.go` (added, +222/-0)
+**File**: `platform/kubeblocks/.olares/config/cluster/deploy/kubeblocks-addon.yaml` (modified, +7/-7)
 ```diff
-@@ -0,0 +1,222 @@
-+package controllers
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync"
-+	"testing"
-+
-+	v1alpha1 "github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
-+	"github.com/go-resty/resty/v2"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestApplicationPortsFromApps(t *testing.T) {
-+	acl := func(proto string, dst ...string) v1alpha1.ACL {
-+		return v1alpha1.ACL{Proto: proto, Dst: dst}
-+	}
-+	appWith := func(owner string, tailscale []v1alpha1.ACL, legacy []v1alpha1.ACL) v1alpha1.Application {
-+		return v1alpha1.Application{
-+			Spec: v1alpha1.ApplicationSpec{
-+				Owner:         owner,
-+				TailScale:     v1alpha1.TailScale{ACLs: tailscale},
-+				TailScaleACLs: legacy,
-+			},
-+		}
-+	}
-+
-+	tests := []struct {
-+		name string
-+		apps []v1alpha1.Application
-+		want []applicationPort
-+	}{
-+		{
-+			name: "star host port becomes the port number",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:443")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{"443"}, UDP: []string{}}},
-+		},
-+		{
-+			name: "closed range and udp",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("udp", "*:6000-6010")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{}, UDP: []string{"6000-6010"}}},
-+		},
-+		{
-+			name: "comma separated ports",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("tcp", "tag:montreal-webserver:80,443")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{"443", "80"}, UDP: []string{}}},
-+		},
-+		{
-+			name: "wildcard port is dropped",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("tcp", "git-server:*", "*:22")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{"22"}, UDP: []string{}}},
-+		},
-+		{
-+			name: "invalid ports are dropped",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:0", "*:65536", "*:7000-6000", "*:65535")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{"65535"}, UDP: []string{}}},
-+		},
-+		{
-+			name: "empty proto opens tcp and udp",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("", "*:47945")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{"47945"}, UDP: []string{"47945"}}},
-+		},
-+		{
-+			name: "non tcp udp is skipped",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("icmp", "*:1"), acl("TCP", "*:22")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{"22"}, UDP: []string{}}},
-+		},
-+		{
-+			name: "same user merges apps and legacy acls",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:22")}, []v1alpha1.ACL{acl("udp", "*:5353")}),
-+				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:22"), acl("tcp", "192.168.1.0/24:80")}, nil),
-+			},
-+			want: []applicationPort{{User: "alice", TCP: []string{"22", "80"}, UDP: []string{"5353"}}},
-+		},
-+		{
-+			name: "owners are trimmed and sorted",
-+			apps: []v1alpha1.Application{
-+				appWith(" bob@ ", []v1alpha1.ACL{acl("udp", "*:53")}, nil),
-+				appWith("alice", []v1alpha1.ACL{acl("tcp", "*:443")}, nil),
-+			},
-+			want: []applicationPort{
-+				{User: "alice", TCP: []string{"443"}, UDP: []string{}},
-+				{User: "bob", TCP: []string{}, UDP: []string{"53"}},
-+			},
-+		},
-+		{
-+			name: "user with no usable ports is omitted",
-+			apps: []v1alpha1.Application{
-+				appWith("alice", []v1alpha1.ACL{acl("icmp", "*:*")}, nil),
-+				appWith("  ", nil, nil),
-+			},
-+			want: []applicationPort{},
-+		},
-+		{
-+			name: "no apps",
-+			apps: nil,
-+			want: []applicationPort{},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			got := applicationPortsFromApps(tt.apps)
-+			require.Equal(t, tt.want, got)
-+		})
-+	}
-+}
-+
-+func TestApplicationPortsJSONEmptyArray(t *testing.T) {
-+	body := struct {
-+		ApplicationPorts []applicationPort `json:"applicationPorts"`
-+	}{ApplicationPorts: applicationPortsFromApps(nil)}
-+	raw, err := json.Marshal(body)
-+	require.NoError(t, err)
-+	require.JSONEq(t, `{"applicationPorts":[]}`, string(raw))
-+}
-+
-+func TestApplicationPortsEqualIgnoresOrder(t *testing.T) {
-+	a := []applicationPort{{User: "bob", TCP: []string{"22"}, UDP: []string{"53"}}}
-+	b := []applicationPort{{User: " bob@ ", UDP: []string{"53", "53"}, TCP: []string{"22"}}}
-+	require.True(t, applicationPortsEqual(a, b))
-+	require.False(t, applicationPortsEqual(a, []applicationPort{
-+		{User: "bob", TCP: []string{"80"}, UDP: []string{}},
-+	}))
-+}
-+
-+func TestHeadscalePolicyClient(t *testing.T) {
-+	var mu sync.Mutex
-+	var calls int
-+	var putBody []byte
-+
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		mu.Lock()
-+		calls++
-+		mu.Unlock()
-+		if r.Header.Get("Authorization") != "" {
-+			http.Error(w, "unexpected authorization", http.StatusUnauthorized)
-+			return
-+	
-```
-
-**File**: `framework/app-service/controllers/tailscale_acl_configmap_controller.go` (removed, +0/-106)
-```diff
-@@ -1,106 +0,0 @@
--package controllers
--
--import (
--	"context"
--	"strings"
--	"time"
--
--	appsv1 "k8s.io/api/apps/v1"
--	corev1 "k8s.io/api/core/v1"
--	"k8s.io/apimachinery/pkg/types"
--	"k8s.io/klog/v2"
--	ctrl "sigs.k8s.io/controller-runtime"
--	"sigs.k8s.io/controller-runtime/pkg/client"
--	"sigs.k8s.io/controller-runtime/pkg/controller"
--	"sigs.k8s.io/controller-runtime/pkg/event"
--	"sigs.k8s.io/controller-runtime/pkg/handler"
--	"sigs.k8s.io/controller-runtime/pkg/predicate"
--	"sigs.k8s.io/controller-runtime/pkg/reconcile"
--	"sigs.k8s.io/controller-runtime/pkg/source"
--)
--
--type TailScaleACLConfigMapController struct {
--	client.Client
--}
--
--func (r *TailScaleACLConfigMapController) SetUpWithManager(mgr ctrl.Manager) error {
--	c, err := controller.New("app's tailscale acls configmap manager controller", mgr, controller.Options{
--		Reconciler: r,
--	})
--	if err != nil {
--		return err
--	}
--
--	err = c.Watch(source.Kind(
--		mgr.GetCache(),
--		&corev1.ConfigMap{},
--		handler.TypedEnqueueRequestsFromMapFunc(
--			func(ctx context.Context, cm *corev1.ConfigMap) []reconcile.Request {
--				return []reconcile.Request{{NamespacedName: types.NamespacedName{
--					Name:      tailScaleACLConfigMapName,
--					Namespace: cm.Namespace,
--				}}}
--			}),
--		predicate.TypedFuncs[*corev1.ConfigMap]{
--			CreateFunc: func(e event.TypedCreateEvent[*corev1.ConfigMap]) bool {
--				return isTailScalAclConfigmap(e.Object)
--			},
--			UpdateFunc: func(e event.TypedUpdateEvent[*corev1.ConfigMap]) bool {
--				return isTailScalAclConfigmap(e.ObjectNew)
--			},
--			DeleteFunc: func(e event.TypedDeleteEvent[*corev1.ConfigMap]) bool {
--				return false
--			},
--		},
--	))
--	if err != nil {
--		return err
--	}
--	return nil
--}
--
--func (r *TailScaleACLConfigMapController) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
--	klog.Infof("reconcile tailscale acls configmap request name=%v, owner=%v", req.Name, req.Namespace)
--
--	headScaleNamespace := req.Namespace
--
--	// acl.json has changed, restart headscale via pod template annotation bump.
--	deploy := &appsv1.Deployment{}
--	err := r.Get(ctx, types.NamespacedName{Namespace: headScaleNamespace, Name: "headscale"}, deploy)
--	if err != nil {
--		klog.Errorf("get headscale deployment in ns %s failed (skip rolling update): %v", headScaleNamespace, err)
--		return ctrl.Result{}, err
--	}
--
--	if deploy.Spec.Template.Annotations == nil {
--		deploy.Spec.Template.Annotations = make(map[string]string)
--	}
--	deploy.Spec.Template.Annotations[headScaleUpdatedTimeKey] = time.Now().String()
--	err = r.Update(ctx, deploy)
--	if err != nil {
--		klog.Errorf("update headscale deploy failed: %v", err)
--		return ctrl.Result{}, err
--	}
--	klog.Infof("rolling update headscale...")
--
--	return ctrl.Result{}, nil
--}
--
--func isTailScalAclConfigmap(obj client.Object) bool {
--	cm, ok := obj.(*corev1.ConfigMap)
--	if !ok {
--		return false
--	}
--	namespace := cm.Namespace
--	if !strings.HasPrefix(namespace, tailScaleNamespacePrefix) {
--		return false
--	}
--	if cm.Name != tailScaleACLConfigMapName {
--		return false
--	}
--	owner := strings.TrimPrefix(namespace, tailScaleNamespacePrefix)
--	if owner == "" {
--		return false
--	}
--	return true
--}
-```
-
-**File**: `framework/app-service/controllers/tailscale_acl_controller.go` (modified, +38/-233)
-```diff
-@@ -3,13 +3,9 @@ package controllers
- import (
- 	"context"
- 	"encoding/json"
--	"fmt"
--	"github.com/beclab/Olares/framework/app-service/pkg/utils"
--	"github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
--	appsv1 "k8s.io/api/apps/v1"
--	corev1 "k8s.io/api/core/v1"
-+
-+	v1alpha1 "github.com/beclab/api/api/app.bytetrade.io/v1alpha1"
- 	"k8s.io/apimachinery/pkg/types"
--	"k8s.io/apimachinery/pkg/util/sets"
- 	"k8s.io/klog/v2"
- 	ctrl "sigs.k8s.io/controller-runtime"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
-@@ -19,78 +15,33 @@ import (
- 	"sigs.k8s.io/controller-runtime/pkg/predicate"
- 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
- 	"sigs.k8s.io/controller-runtime/pkg/source"
--	"sort"
--	"strings"
--)
--
--const (
--	tailScaleACLPolicyMd5Key       = "tailscale-acl-md5"
--	tailScaleACLConfigMapName      = "tailscale-acl"
--	tailScaleDeployOrContainerName = "tailscale"
--	subnetRoutesEnv                = "TS_ROUTES"
--	tailScaleNamespacePrefix       = "user-space-"
--	headScaleUpdatedTimeKey        = "headscale-updated"
--	advertiseExitNode              = "ADVERTISE_EXIT_NODE"
- )
- 
--var defaultACLs = []v1alpha1.ACL{
--	{
--		Action: "accept",
--		Src:    []string{"*"},
--		Proto:  "tcp",
--		Dst:    []string{"*:443"},
--	},
--	{
--		Action: "accept",
--		Src:    []string{"*"},
--		Proto:  "tcp",
--		Dst:    []string{"*:18088"},
--	},
--	{
--		Action: "accept",
--		Src:    []string{"*"},
--		Proto:  "udp",
--		Dst:    []string{"*:53"},
--	},
--	{
--		Action: "accept",
--		Src:    []string{"*"},
--		Proto:  "tcp",
--		Dst:    []string{"*:80"},
--	},
--}
--
--var defaultSubRoutes = []string{"$(COREDNS_SVC)/32"}
--
--type ACLPolicy struct {
--	ACLs          []v1alpha1.ACL `json:"acls"`
--	AutoApprovers AutoApprovers  `json:"autoApprovers"`
--}
--
--type AutoApprovers struct {
--	Routes   map[string][]string `json:"routes"`
--	ExitNode []string            `json:"exitNode"`
--}
--
-+// TailScaleACLController publishes every application's dynamic tailscale
-+// ports to the shared headscale in os-network. Subnet routes and the old
-+// per-user tailscale-acl ConfigMap are no longer written from here.
- type TailScaleACLController struct {
- 	client.Client
-+	ports applicationPortsAPI
- }
- 
- func (r *TailScaleACLController) SetUpWithManager(mgr ctrl.Manager) error {
--	c, err := controller.New("app's tailscale acls manager controller", mgr, controller.Options{
-+	if r.ports == nil {
-+		r.ports = newHeadscalePolicyClient()
-+	}
-+	c, err := controller.New("headscale application ports controller", mgr, controller.Options{
- 		Reconciler: r,
- 	})
- 	if err != nil {
- 		return err
- 	}
--	err = c.Watch(source.Kind(
-+	return c.Watch(source.Kind(
- 		mgr.GetCache(),
- 		&v1alpha1.Application{},
- 		handler.TypedEnqueueRequestsFromMapFunc(
- 			func(ctx context.Context, app *v1alpha1.Application) []reconcile.Request {
- 				return []reconcile.Request{{NamespacedName: types.NamespacedName{
--					Name:      app.Name,
--					Namespace: app.Spec.Owner,
-+					Name: applicationPortsReconcileName,
- 				}}}
- 			}),
- 		predicate.TypedFuncs[*v1alpha1.Application]{
-@@ -105,203 +56,57 @@ func (r *TailScaleACLController) SetUpWithManager(mgr ctrl.Manager) error {
- 			},
- 		},
- 	))
--	if err != nil {
--		return err
--	}
--	err = c.Watch(source.Kind(
--		mgr.GetCache(),
--		&corev1.ConfigMap{},
--		handler.TypedEnqueueRequestsFromMapFunc(
--			func(ctx context.Context, cm *corev1.ConfigMap) []reconcile.Request {
--				owner := strings.TrimPrefix(cm.Namespace, tailScaleNamespacePrefix)
--				return []reconcile.Request{{NamespacedName: types.NamespacedName{
--					Name:      tailScaleACLConfigMapName,
--					Namespace: owner,
--				}}}
--			}),
--		predicate.TypedFuncs[*corev1.ConfigMap]{
--			CreateFunc: func(e event.TypedCreateEvent[*corev1.ConfigMap]) bool {
--				return isTailScalAclConfigmap(e.Object)
--			},
--			UpdateFunc: func(e event.TypedUpdateEvent[*corev1.ConfigMap]) bool {
--				return isTailScalAclConfigmap(e.ObjectNew)
--			},
--			DeleteFunc: func(e event.TypedDeleteEvent[*corev1.ConfigMap]) bool {
--				return false
--			},
--		},
--	))
--	if err != nil {
--		return err
--	}
--	return nil
- }
- 
- func (r *TailScaleACLController) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
--	klog.Infof("reconcile tailscale acls subroutes request name=%v, owner=%v", req.Name, req.Namespace)
--	owner := req.Namespace
--
--	// for this request req.Namespace is owner
--	// list all apps by owner and generate acls by owner
-+	klog.Info("reconcile headscale application ports")
- 	var apps v1alpha1.ApplicationList
--	err := r.List(ctx, &apps)
--	if err != nil {
-+	if err := r.List(ctx, &apps); err != nil {
- 		klog.Errorf("list applications failed: %v", err)
- 		return ctrl.Result{}, err
- 	}
- 
--	filteredApps := make([]v1alpha1.Application, 0)
--	for _, app := range apps.Items {
--		if app.Spec.Owner != owner {
--			continue
--		}
--		filteredApps = append(filteredApps, app)
--	}
--
--	sort.Slice(filteredApps, func(i, j int) bool {
--		return filteredApps[j].CreationTimestamp.Before(&filteredApps[i].CreationTimestamp)
--	})
--
--	headScaleNamespace :
-```
-
-**File**: `framework/app-service/go.mod` (modified, +4/-21)
-```diff
-@@ -7,14 +7,14 @@ require (
- 	github.com/Masterminds/semver/v3 v3.4.0
- 	github.com/apecloud/kubeblocks v1.0.0
- 	github.com/argoproj/argo-workflows/v3 v3.7.10
--	github.com/beclab/Olares/framework/oac v0.0.0-20261008082607-2467f23e523b
-+	github.com/beclab/Olares/framework/oac v0.0.0-20261020082448-869e3c1834d8
- 	github.com/beclab/api v0.0.27-0.20260929062526-d281261cdff4
- 	github.com/beclab/lldap-client v0.0.11
- 	github.com/containerd/containerd v1.7.29
- 	github.com/containers/image/v5 v5.36.1
- 	github.com/emicklei/go-restful-openapi/v2 v2.11.0
- 	github.com/emicklei/go-restful/v3 v3.13.0
--	github.com/fsnotify/fsnotify v1.9.0
-+	github.com/evanphx/json-patch/v5 v5.9.11
- 	github.com/go-crypt/crypt v0.4.5
- 	github.com/go-jose/go-jose/v4 v4.1.4
- 	github.com/go-logr/logr v1.4.3
-@@ -32,7 +32,6 @@ require (
- 	github.com/onsi/gomega v1.38.2
- 	github.com/opencontainers/go-digest v1.0.0
- 	github.com/opencontainers/image-spec v1.1.1
--	github.com/pelletier/go-toml v1.9.5
- 	github.com/pkg/errors v0.9.1
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
- 	github.com/prometheus/client_golang v1.23.0
-@@ -114,30 +113,23 @@ require (
- 	github.com/containerd/fifo v1.1.0 // indirect
- 	github.com/containerd/log v0.1.0 // indirect
- 	github.com/containerd/platforms v0.2.1 // indirect
--	github.com/containerd/stargz-snapshotter/estargz v0.16.3 // indirect
- 	github.com/containerd/ttrpc v1.2.7 // indirect
- 	github.com/containerd/typeurl/v2 v2.2.3 // indirect
--	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
--	github.com/containers/ocicrypt v1.2.1 // indirect
- 	github.com/containers/storage v1.59.1 // indirect
- 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
- 	github.com/cyphar/filepath-securejoin v0.6.1 // indirect
- 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
- 	github.com/distribution/reference v0.6.0 // indirect
- 	github.com/dlclark/regexp2 v1.12.0 // indirect
--	github.com/docker/distribution v2.8.3+incompatible // indirect
--	github.com/docker/docker v28.5.2+incompatible // indirect
--	github.com/docker/docker-credential-helpers v0.9.3 // indirect
--	github.com/docker/go-connections v0.5.0 // indirect
- 	github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
- 	github.com/envoyproxy/go-control-plane/envoy v1.36.0 // indirect
- 	github.com/envoyproxy/protoc-gen-validate v1.3.0 // indirect
- 	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
--	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
- 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
- 	github.com/fatih/color v1.18.0 // indirect
- 	github.com/felixge/httpsnoop v1.0.4 // indirect
-+	github.com/fsnotify/fsnotify v1.9.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
- 	github.com/go-crypt/x v0.4.7 // indirect
- 	github.com/go-errors/errors v1.5.1 // indirect
-@@ -155,13 +147,10 @@ require (
- 	github.com/google/btree v1.1.3 // indirect
- 	github.com/google/gnostic-models v0.7.0 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
--	github.com/google/go-containerregistry v0.20.5 // indirect
--	github.com/google/go-intervals v0.0.2 // indirect
- 	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect
- 	github.com/googleapis/gax-go/v2 v2.14.2 // indirect
--	github.com/gorilla/mux v1.8.1 // indirect
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
- 	github.com/gosuri/uitable v0.0.4 // indirect
- 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
-@@ -177,7 +166,6 @@ require (
- 	github.com/jmoiron/sqlx v1.4.0 // indirect
- 	github.com/josharian/intern v1.0.0 // indirect
- 	github.com/klauspost/compress v1.18.0 // indirect
--	github.com/klauspost/pgzip v1.2.6 // indirect
- 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
- 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
- 	github.com/lib/pq v1.10.9 // indirect
-@@ -186,15 +174,12 @@ require (
- 	github.com/mattn/go-colorable v0.1.14 // indirect
- 	github.com/mattn/go-isatty v0.0.20 // indirect
- 	github.com/mattn/go-runewidth v0.0.16 // indirect
--	github.com/mistifyio/go-zfs/v3 v3.0.1 // indirect
- 	github.com/mitchellh/copystructure v1.2.0 // indirect
- 	github.com/mitchellh/go-homedir v1.1.0 // indirect
- 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
- 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
--	github.com/moby/docker-image-spec v1.3.1 // indirect
- 	github.com/moby/locker v1.0.1 // indirect
- 	github.com/moby/spdystream v0.5.1 // indirect
--	github.com/moby/sys/capability v0.4.0 // indirect
- 	github.com/moby/sys/mountinfo v0.7.2 // indirect
- 	github.com/moby/sys/sequential v0.6.0 // indirect
- 	github.com/moby/sys/signal v0.7.0 // indirect
-@@ -210,6 +195,7 @@ require (
- 	github.com/nats-io/nuid v1.0.1 // in
-```
-
-**File**: `framework/app-service/go.sum` (modified, +2/-43)
-```diff
-@@ -110,10 +110,8 @@ github.com/aws/aws-sdk-go-v2/service/sts v1.33.20 h1:oIaQ1e17CSKaWmUTu62MtraRWVI
- github.com/aws/aws-sdk-go-v2/service/sts v1.33.20/go.mod h1:cQnB8CUnxbMU82JvlqjKR2HBOm3fe9pWorWBza6MBJ4=
- github.com/aws/smithy-go v1.22.3 h1:Z//5NuZCSW6R4PhQ93hShNbyBbn8BWCmCVCt+Q8Io5k=
- github.com/aws/smithy-go v1.22.3/go.mod h1:t1ufH5HMublsJYulve2RKmHDC15xu1f26kHCp/HgceI=
--github.com/beclab/Olares/framework/oac v0.0.0-20260827142328-d8439d0b8dee h1:DLczREiMVf0Pt1Q9iiPpyBZesWPOZtIjUzOVjVL1TKs=
--github.com/beclab/Olares/framework/oac v0.0.0-20260827142328-d8439d0b8dee/go.mod h1:MZco7qqMAzDYJQbrnfmZlym3qN0R+RDhkkn+nEH9JWA=
--github.com/beclab/Olares/framework/oac v0.0.0-20261008082607-2467f23e523b h1:zDIV2exxs8VYQl9QKF5KFkfScJVM5oUzNFUGwnHge3c=
--github.com/beclab/Olares/framework/oac v0.0.0-20261008082607-2467f23e523b/go.mod h1:GTelsgnCP6muJopaUMc7IGOWkVsUKfpxDLAVxyS7Du4=
-+github.com/beclab/Olares/framework/oac v0.0.0-20261020082448-869e3c1834d8 h1:hRu00qw4kqFX5sbFbVbyifEvDKa06R9HKG5N09JQeIg=
-+github.com/beclab/Olares/framework/oac v0.0.0-20261020082448-869e3c1834d8/go.mod h1:GTelsgnCP6muJopaUMc7IGOWkVsUKfpxDLAVxyS7Du4=
- github.com/beclab/api v0.0.27-0.20260929062526-d281261cdff4 h1:8cFDNx0TxzGhwN5rW49vD6cfOTFG/Zgh3agN/eZoEtM=
- github.com/beclab/api v0.0.27-0.20260929062526-d281261cdff4/go.mod h1:okd0RExsvSsuW5MsRh7v56Xex3vi5B26xHOGH3LT6yQ=
- github.com/beclab/lldap-client v0.0.11 h1:/XWzEd2pAFS7nwOtapyr7ClQViyGIUsMiyQ2d8t8sEo=
-@@ -159,18 +157,12 @@ github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
- github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
- github.com/containerd/platforms v0.2.1 h1:zvwtM3rz2YHPQsF2CHYM8+KtB5dvhISiXh5ZpSBQv6A=
- github.com/containerd/platforms v0.2.1/go.mod h1:XHCb+2/hzowdiut9rkudds9bE5yJ7npe7dG/wG+uFPw=
--github.com/containerd/stargz-snapshotter/estargz v0.16.3 h1:7evrXtoh1mSbGj/pfRccTampEyKpjpOnS3CyiV1Ebr8=
--github.com/containerd/stargz-snapshotter/estargz v0.16.3/go.mod h1:uyr4BfYfOj3G9WBVE8cOlQmXAbPN9VEQpBBeJIuOipU=
- github.com/containerd/ttrpc v1.2.7 h1:qIrroQvuOL9HQ1X6KHe2ohc7p+HP/0VE6XPU7elJRqQ=
- github.com/containerd/ttrpc v1.2.7/go.mod h1:YCXHsb32f+Sq5/72xHubdiJRQY9inL4a4ZQrAbN1q9o=
- github.com/containerd/typeurl/v2 v2.2.3 h1:yNA/94zxWdvYACdYO8zofhrTVuQY73fFU1y++dYSw40=
- github.com/containerd/typeurl/v2 v2.2.3/go.mod h1:95ljDnPfD3bAbDJRugOiShd/DlAAsxGtUBhJxIn7SCk=
- github.com/containers/image/v5 v5.36.1 h1:6zpXBqR59UcAzoKpa/By5XekeqFV+htWYfr65+Cgjqo=
- github.com/containers/image/v5 v5.36.1/go.mod h1:b4GMKH2z/5t6/09utbse2ZiLK/c72GuGLFdp7K69eA4=
--github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 h1:Qzk5C6cYglewc+UyGf6lc8Mj2UaPTHy/iF2De0/77CA=
--github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01/go.mod h1:9rfv8iPl1ZP7aqh9YA68wnZv2NUDbXdcdPHVz0pFbPY=
--github.com/containers/ocicrypt v1.2.1 h1:0qIOTT9DoYwcKmxSt8QJt+VzMY18onl9jUXsxpVhSmM=
--github.com/containers/ocicrypt v1.2.1/go.mod h1:aD0AAqfMp0MtwqWgHM1bUwe1anx0VazI108CRrSKINQ=
- github.com/containers/storage v1.59.1 h1:11Zu68MXsEQGBBd+GadPrHPpWeqjKS8hJDGiAHgIqDs=
- github.com/containers/storage v1.59.1/go.mod h1:KoAYHnAjP3/cTsRS+mmWZGkufSY2GACiKQ4V3ZLQnR0=
- github.com/coreos/go-systemd/v22 v22.5.0 h1:RrqgGjYQKalulkV8NGVIfkXQf6YYmOyiJKk8iXXhfZs=
-@@ -196,16 +188,8 @@ github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5Qvfr
- github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
- github.com/dlclark/regexp2 v1.12.0 h1:0j4c5qQmnC6XOWNjP3PIXURXN2gWx76rd3KvgdPkCz8=
- github.com/dlclark/regexp2 v1.12.0/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
--github.com/docker/cli v28.3.2+incompatible h1:mOt9fcLE7zaACbxW1GeS65RI67wIJrTnqS3hP2huFsY=
--github.com/docker/cli v28.3.2+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
--github.com/docker/distribution v2.8.3+incompatible h1:AtKxIZ36LoNK51+Z6RpzLpddBirtxJnzDrHLEKxTAYk=
--github.com/docker/distribution v2.8.3+incompatible/go.mod h1:J2gT2udsDAN96Uj4KfcMRqY0/ypR+oyYUYmja8H+y+w=
--github.com/docker/docker v28.5.2+incompatible h1:DBX0Y0zAjZbSrm1uzOkdr1onVghKaftjlSWt4AFexzM=
--github.com/docker/docker v28.5.2+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
- github.com/docker/docker-credential-helpers v0.9.3 h1:gAm/VtF9wgqJMoxzT3Gj5p4AqIjCBS4wrsOh9yRqcz8=
- github.com/docker/docker-credential-helpers v0.9.3/go.mod h1:x+4Gbw9aGmChi3qTLZj8Dfn0TD20M/fuWy0E5+WDeCo=
--github.com/docker/go-connections v0.5.0 h1:USnMq7hx7gwdVZq1L49hLXaFtUdTADjXGp+uj1Br63c=
--github.com/docker/go-connections v0.5.0/go.mod h1:ov60Kzw0kKElRwhNs9UlUHAE/F9Fe6GLaXnqyDdmEXc=
- github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c h1:+pKlWGMw7gf6bQ+oDZB4KHQFypsfjYlq/C4rfL7D3g8=
- github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c/go.mod h1:Uw6UezgYA44ePAFQYUehOuCzmy5zmg/+nl2ZfMWGkpA=
- github.com/docker/go-metrics v0.0.1 h1:AgB/0SvBxihN0X8OR4SjsblXkbMvalQ8cjmtKQ2rQV8=
-@@ -325,10 +309,6 @@ github.com/google/go-cmp 
+@@ -11,7 +11,7 @@ spec:
+     or cluster of machines.
+   helm:
+     chartLocationURL: file:///minio-1.0.1.tgz
+-    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext3
++    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext4
+     chartsPathInImage: /charts
+     installValues: {}
+     valuesMapping:
+@@ -44,7 +44,7 @@ spec:
+     and scaling.
+   helm:
+     chartLocationURL: file:///mongodb-1.0.1.tgz
+-    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext3
++    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext4
+   installable:
+     autoInstall: true
+   type: Helm
+@@ -68,7 +68,7 @@ spec:
+     speed and relevance on production-scale workloads.
+   helm:
+     chartLocationURL: file:///elasticsearch-1.0.1.tgz
+-    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext3
++    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext4
+   installable:
+     autoInstall: true
+   type: Helm
+@@ -90,7 +90,7 @@ spec:
+   description: RabbitMQ is a reliable and mature messaging and streaming broker.
+   helm:
+     chartLocationURL: file:///rabbitmq-1.0.1.tgz
+-    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext3
++    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext4
+   installable:
+     autoInstall: true
+   type: Helm
+@@ -113,7 +113,7 @@ spec:
+     system that is widely used for web and application servers
+   helm:
+     chartLocationURL: file:///mariadb-1.0.1.tgz
+-    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext3
++    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext4
+   installable:
+     autoInstall: true
+   type: Helm
+@@ -136,7 +136,7 @@ spec:
+     system (RDBMS)
+   helm:
+     chartLocationURL: file:///mysql-1.0.1.tgz
+-    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext3
++    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext4
+   installable:
+     autoInstall: true
+   type: Helm
+@@ -160,7 +160,7 @@ spec:
+     and hardware efficiency.
+   helm:
+     chartLocationURL: file:///clickhouse-1.0.1.tgz
+-    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext3
++    chartsImage: beclab/kubeblock-addon-charts:v1.0.1-ext4
+   installable:
+     autoInstall: true
+   type: Helm
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `75fd898e` (2026-10-20)
-**Commit Message**: fix(oac): change workload options min olaresManifest version (#4274)
+### Incident Patch 2: `cf32be0f` (2026-10-22)
+**Commit Message**: docs: add bilingual Goose user guides (#4237)
 
-fix: change workload options min olaresManifest version
+* docs: add bilingual Goose use case and acceptance cases
 
-**File**: `framework/oac/internal/manifest/validate.go` (modified, +18/-2)
+* test: add bilingual Goose acceptance checklist
+
+* docs: record Goose acceptance results and refine client instructions
+
+* test: record repeatable Goose restart timeout
+
+* test: align Goose lifecycle acceptance with stop and resume
+
+* test: consolidate Goose acceptance into a single record
+
+* docs: remove separate Goose acceptance record
+
+* first batch updates
+
+* edits for consistency
+
+* update desktop connection procedure
+
+* address comments
+
+* Apply batched suggestions from code review
+
+Co-authored-by: Async98-cloud <[REDACTED_EMAIL]>
+
+* refine edits
+
+* adjust structure
+
+* align ZH
+
+* update connection method
+
+* style consistency
+
+---------
+
+Co-authored-by: Power-One-2025 <[REDACTED_EMAIL]>
+Co-authored-by: Async98-cloud <[REDACTED_EMAIL]>
+
+**File**: `docs/.vitepress/data/useCases.ts` (modified, +1/-0)
 ```diff
-@@ -14,7 +14,10 @@ import (
- 
- var validChartName = regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`)
- 
--var minWorkloadOptionsManifestVersion = semver.MustParse("0.13.0")
-+var (
-+	minWorkloadOptionsManifestVersion = semver.MustParse("0.16.0")
-+	maxOlaresManifestVersion          = semver.MustParse("0.16.0")
-+)
- 
- var (
- 	errInvalidSubChartName = fmt.Errorf(
-@@ -90,7 +93,8 @@ func ValidateKnownAPIVersion(api string) error {
- func ValidateAppConfiguration(c *AppConfiguration) error {
- 	structErr := validation.ValidateStruct(c,
- 		validation.Field(&c.ConfigVersion,
--			validation.Required.Error("olaresManifest.version is required")),
-+			validation.Required.Error("olaresManifest.version is required"),
-+			validation.By(validateOlaresManifestVersionCeiling)),
- 		validation.Field(&c.APIVersion,
- 			validation.When(c.APIVersion != "",
- 				validation.In(validAPIVersions...).Error("not supported version"),
-@@ -127,6 +131,18 @@ func ValidateAppConfiguration(c *AppConfiguration) error {
- 	)
- }
- 
-+func validateOlaresManifestVersionCeiling(value any) error {
-+	version, _ := value.(string)
-+	v, err := semver.NewVersion(version)
-+	if err != nil {
-+		return fmt.Errorf("olaresManifest.version is invalid: %q", version)
-+	}
-+	if v.GreaterThan(maxOlaresManifestVersion) {
-+		return fmt.Errorf("olaresManifest.version must be <= %s", maxOlaresManifestVersion)
-+	}
-+	return nil
-+}
-+
- func workloadOptionsCheckApplies(version string) bool {
- 	v, err := semver.NewVersion(version)
- 	return err == nil && v.GreaterThanEqual(minWorkloadOptionsManifestVersion)
+@@ -49,6 +49,7 @@ export const useCases: UseCase[] = [
+   { title: "OpenCode", link: "/use-cases/opencode", category: "AI agent", description: "AI coding agent driven by natural language", descriptionZh: "通过自然语言驱动的 AI 编程智能体" },
+   { title: "Claude Code", link: "/use-cases/claude-code", category: "AI agent", description: "Write, test, and manage code through natural language", descriptionZh: "通过自然语言编写、测试和管理代码" },
+   { title: "Codex CLI", link: "/use-cases/codex-cli", category: "AI agent", description: "Read, edit, and test code from an Olares terminal", descriptionZh: "在 Olares 终端中读取、编辑和测试代码" },
++  { title: "Goose", link: "/use-cases/goose", category: "AI agent", description: "Run conversations and file tasks on Olares with AI Router", descriptionZh: "通过 AI Router 在 Olares 上进行对话和文件处理" },
+   { title: "Pool CLI", link: "/use-cases/pool-cli", category: "AI agent", description: "Read code, run commands, and edit files via natural language", descriptionZh: "用自然语言读取代码、运行命令并编辑文件" },
+   { title: "Paperclip", link: "/use-cases/paperclip", category: "AI agent", description: "Coordinate multiple AI agents on the same tasks", descriptionZh: "协调多个 AI 智能体协作处理同一任务" },
+   { title: "DeerFlow 2.0", link: "/use-cases/deerflow2", category: "AI agent", description: "AI-powered deep research with a local model", descriptionZh: "基于本地模型的 AI 深度研究" },
 ```
 
-**File**: `framework/oac/internal/manifest/validate_test.go` (modified, +48/-13)
+**File**: `docs/.vitepress/usecase.en.ts` (modified, +4/-0)
 ```diff
-@@ -121,7 +121,7 @@ func TestValidateKnownAPIVersion(t *testing.T) {
- 
- func newWorkloadOptionsBaseline() *AppConfiguration {
- 	c := newValidConfig()
--	c.ConfigVersion = "0.13.0"
-+	c.ConfigVersion = "0.16.0"
- 	replicas := int32(1)
- 	c.WorkloadOptions = WorkloadOptions{
- 		c.Metadata.Name: {
-@@ -138,26 +138,63 @@ func newWorkloadOptionsBaseline() *AppConfiguration {
- 	return c
- }
- 
--func TestWorkloadOptions_ValidAt013(t *testing.T) {
-+func TestWorkloadOptions_ValidAt016(t *testing.T) {
- 	if err := ValidateAppConfiguration(newWorkloadOptionsBaseline()); err != nil {
- 		t.Fatalf("valid workloadOptions failed: %v", err)
- 	}
- }
- 
- func TestWorkloadOptions_VersionBoundary(t *testing.T) {
- 	c := newWorkloadOptionsBaseline()
--	c.ConfigVersion = "0.12.0"
-+	c.ConfigVersion = "0.15.0"
- 	err := ValidateAppConfiguration(c)
- 	if err == nil || !strings.Contains(err.Error(), "workloadOptions requires") {
--		t.Fatalf("0.12 workloadOptions should fail, got: %v", err)
-+		t.Fatalf("0.15 workloadOptions should fail, got: %v", err)
- 	}
- 
--	c = newWorkloadOptionsBaseline()
-+	c = newValidConfig()
-+	c.ConfigVersion = "0.15.0"
-+	c.Options.Dependencies = []Dependency{newOlaresSystemDep(c)}
- 	legacy := WorkloadReplicas{c.Metadata.Name: 1}
- 	c.WorkloadReplicas = &legacy
-+	if err := ValidateAppConfiguration(c); err != nil {
-+		t.Fatalf("0.15 workloadReplicas should still validate: %v", err)
-+	}
+@@ -156,6 +156,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                   text: "Codex CLI",
+                   link: "/use-cases/codex-cli",
+                 },
++                {
++                  text: "Goose",
++                  link: "/use-cases/goose",
++                },
+                 {
+                   text: "Pool CLI",
+                   link: "/use-cases/pool-cli",
+```
+
+**File**: `docs/.vitepress/usecase.zh.ts` (modified, +4/-0)
+```diff
+@@ -156,6 +156,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                   text: "Codex CLI",
+                   link: "/zh/use-cases/codex-cli",
+                 },
++                {
++                  text: "Goose",
++                  link: "/zh/use-cases/goose",
++                },
+                 {
+                   text: "Pool CLI",
+                   link: "/zh/use-cases/pool-cli",
+```
+
+**File**: `docs/use-cases/goose.md` (added, +280/-0)
+```diff
+@@ -0,0 +1,280 @@
++---
++outline: [2, 3]
++description: Run Goose as your local AI agent on Olares. Chat through Goose Terminal in your browser or connect Goose Desktop on your computer.
++head:
++  - - meta
++    - name: keywords
++      content: "Olares, Goose, AI agent, AI Router, Goose Desktop, terminal, file automation"
++app_version: "0.0.13"
++doc_version: "1.0"
++doc_updated: "2026-10-22"
++---
 +
-+	c = newWorkloadOptionsBaseline()
-+	legacy = WorkloadReplicas{c.Metadata.Name: 1}
-+	c.WorkloadReplicas = &legacy
- 	err = ValidateAppConfiguration(c)
- 	if err == nil || !strings.Contains(err.Error(), "workloadReplicas is not supported") {
--		t.Fatalf("0.13 legacy workloadReplicas should fail, got: %v", err)
-+		t.Fatalf("0.16 legacy workloadReplicas should fail, got: %v", err)
-+	}
-+}
++# Run Goose as your local AI agent on Olares
 +
-+func TestOlaresManifestVersion_Max(t *testing.T) {
-+	for _, version := range []string{"0.16.1", "0.17.0", "1.0.0", "v0.16.1"} {
-+		c := newWorkloadOptionsBaseline()
-+		c.ConfigVersion = version
-+		err := ValidateAppConfiguration(c)
-+		if err == nil || !strings.Contains(err.Error(), "olaresManifest.version must be <= 0.16.0") {
-+			t.Fatalf("version %s should exceed the maximum, got: %v", version, err)
-+		}
-+	}
++Goose is an open-source, general-purpose AI agent for research, writing, coding, automation, and more. On Olares, Goose runs on your device with local models through Router, using the default chat model. You interact with it through Goose Terminal in your browser or Goose Desktop on your computer.
 +
-+	c := newWorkloadOptionsBaseline()
-+	c.ConfigVersion = "0.16.0"
-+	if err := ValidateAppConfiguration(c); err != nil {
-+		t.Fatalf("0.16.0 is the maximum and must validate: %v", err)
-+	}
-+}
++## Learning objectives
 +
-+func TestOlaresManifestVersion_Invalid(t *testing.T) {
-+	for _, version := range []string{"not-a-version", "latest", "   "} {
-+		c := newValidConfig()
-+		c.ConfigVersion = version
-+		err := ValidateAppConfiguration(c)
-+		if err == nil || !strings.Contains(err.Error(), `olaresManifest.version is invalid: "`) {
-+			t.Fatalf("version %q should be rejected as invalid, got: %v", version, err)
-+		}
- 	}
- }
- 
-@@ -751,15 +788,13 @@ func TestValidateAppSpec_ModernAcceptsLegacyFlatEnvelope(t *testing.T) {
- 	})
- 
- 	t.Run("complete_flat_envelope_valid_above_boundary", func(t *testing.T) {
--		// 0.13.0 sits well above the gate. The closure must take the
--		// same branch as the 0.12.0 boundary and accept the flat shape.
-+		// 0.15.0 sits above the 0.12.0 resources gate and below the
-+		// 0.16.0 workloadOptions gate, so the flat envelope keeps
-+		// workloadReplicas.
- 		c := populated()
--		c.ConfigVersion = "0.13.0"
--		replicas := int32(1)
--		c.WorkloadOptions = WorkloadOptions{c.Metadata.Name: {Replicas: &replicas}}
--		c.WorkloadReplicas = nil
-+		c.ConfigVersion = "0.15.0"
- 		if err := ValidateAppConfiguration(c); err != nil {
--			t.Fatalf("modern manifest at 0.13.0 using the legacy flat envelope must validate: %v", err)
-+			t.Fatalf("modern manifest at 0.15.0 using the legacy flat envelope must validate: %v", err)
- 		}
- 	})
- 
++In this guide, you will learn how to:
++
++- Run Goose in Goose Terminal.
++- Connect Goose Desktop to the Goose service on Olares.
++- Optional: Enable access to Home or External files.
++- Optional: Connect Goose to another model provider.
++
++## Prerequisites
++
++Before you begin, you need:
++
++- Olares 1.12.7 or later.
++- Access to [Router](olares-router.md) for local model connections.
++- The following model installed from Market:
++
++  | Model type | Model | How to get it |
++  | :--- | :--- | :--- |
++  | Chat | Qwen3.8-27B (llama.cpp) | Install from Market |
++
++<!--@include: ../reusables/ai-service-connections.md#use-different-model-->
++
++## Install Goose
++
++1. Open Market and search for "Goose".
++2. Click **Get**, then **Install**, and wait for installation to complete.
++
++## Use Goose Terminal
++
++Goose Terminal opens in your browser and connects to the Goose service directly. No client installation or connection setup is needed.
++
++### Run a single request
++
++Use `goose run -t` to send a single prompt without starting an interactive conversation.
++
++1. Open Goose Terminal from Launchpad.
++2. Run `goose run -t` followed by your prompt, replacing `Your_Prompt` with your question or task:
++
++   ```bash
++   goose run -t "Your_Prompt"
++   ```
++
++   For example, ask a question:
++
++   ```bash
++   goose run -t "What is the difference between Goose Terminal and Goose Desktop? Answer in three sentences."
++   ```
++
++3. Goose displays the answer and returns to the terminal prompt.
++
++### Start a conversation
++
++Use an interactive session when you want a back-and-forth conversation.
++
++1. Open Goose Terminal from Launchpad.
++2. Start an interactive session in the workspace:
++
++   ```bash
++   cd /config/workspace
++   goose session
++   ```
++
++3. The first time you run this command, Goose asks whether to share anonymous usage data. Choose **Yes** or **No** to continue.
++4. Send your prompt. The following example creates a sample project brief in `/config/workspace/goose-demo`:
++
++   ```text
++   Work only in /config/workspace/goose-demo. Create that directory if needed.
++   Create notes.md with these facts:
++   - Project: Customer onboarding refresh
++   - Goal: Reduce the time needed to complete the first setup
++   - Deliverables: A setup checklist and a troubleshooting guide
++   - Target date: 2026-11-30
++   - Open question: Who will own the troubleshooting guide?
++   Then read notes.md and create brief.md with these sections:
++   Overview, Deliverables, Target date, and Open questions.
++   Preserve every fact. Do not invent an owner or a schedule.
++   Finally, report the absolute paths of both files and summarize what you created.
++   ```
++
++5. Follow the terminal prompts to approve tools when requested.
++6. Verify the result in the same terminal:
++
++   ```bash
++   # List the directory to confirm the files exist
++   ls -l /path/to/directory
++   # View the file to check its content
++   cat /path/to/file
++   ```
++
++   For this example:
++
++   ```bash
++   ls -l /config/workspace/goose-demo
++   cat /config/workspace/goose-demo/brief.md
++   ```
++
++   The brief should contain the project goal, both deliverables, the target date, and the unresolved ownership question. Wording can vary with the model. The facts should remain unchanged.
++
++7. Press `Ctrl+C` to exit the session. If Goose asks you to press it again, press `Ctrl+C` a second time. This ends the terminal interaction.
++
++:::info File location
++Goose stores the files in the `/config/workspace` directory on your Olares device. Restarting the app does not delete these files. For important documents, keep another copy in Files.
++:::
++
++### Find and resume a session
++
++Sessions are saved on the Goose service. You can list them and resume any session later, in Goose Terminal or Goose Desktop.
++
++- To list saved sessions, run `goose session list`.
++- To resume a session, run `goose session --resume --session-id SESSION_ID` with the ID shown in the list.
++
++   :::tip
++   Two active sessions can overwrite each other's changes when they edit the same file. Exit one session before editing the same file in another.
++   :::
++
++## Use Goose Desktop
++
++Goose Desktop runs on your computer and connects to the Goose service on Ol
+```
+
+**File**: `docs/zh/use-cases/goose.md` (added, +280/-0)
+```diff
+@@ -0,0 +1,280 @@
++---
++outline: [2, 3]
++description: 在 Olares 上把 Goose 用作本地 AI 智能体。通过浏览器中的 Goose Terminal 对话，或从电脑上的 Goose Desktop 连接。
++head:
++  - - meta
++    - name: keywords
++      content: "Olares, Goose, AI 智能体, AI Router, Goose Desktop, 终端, 文件自动化"
++app_version: "0.0.13"
++doc_version: "1.0"
++doc_updated: "2026-10-22"
++---
++
++# 在 Olares 上把 Goose 用作本地 AI 智能体
++
++Goose 是一个开源的通用 AI 智能体，可用于研究、写作、编程、自动化，以及更多场景。在 Olares 上，Goose 运行在你的设备上，通过 Router 使用本地模型，默认使用 default-chat 聊天模型。你可以通过浏览器中的 Goose Terminal 或电脑上的 Goose Desktop 与它交互。
++
++## 学习目标
++
++通过本指南，你将学会：
++
++- 在 Goose Terminal 中运行 Goose。
++- 将 Goose Desktop 连接到 Olares 上的 Goose 服务。
++- 可选：开放 Home 或 External 文件的访问权限。
++- 可选：将 Goose 连接到其他模型服务商。
++
++## 前提条件
++
++开始之前，你需要：
++
++- Olares 1.12.7 或更高版本。
++- 可正常使用 [Router](olares-router.md) 进行本地模型连接。
++- 已从 Market 安装以下模型：
++
++  | 模型类型 | 模型 | 获取方式 |
++  | :--- | :--- | :--- |
++  | 聊天 | Qwen3.8-27B (llama.cpp) | 从 Market 安装 |
++
++<!--@include: ../reusables/ai-service-connections.md#use-different-model-->
++
++## 安装 Goose
++
++1. 打开 Market，搜索“Goose”。
++2. 点击**获取**，然后点击**安装**，等待安装完成。
++
++## 使用 Goose Terminal
++
++Goose Terminal 在浏览器中打开，直接连接 Goose 服务，无需安装客户端，也无需配置连接。
++
++### 运行一次性请求
++
++使用 `goose run -t` 发送单个 prompt，无需进入交互式对话。
++
++1. 从 Launchpad 打开 Goose Terminal。
++2. 运行 `goose run -t`，后跟你的 prompt，并将 `Your_Prompt` 替换为你的问题或任务：
++
++   ```bash
++   goose run -t "Your_Prompt"
++   ```
++
++   例如，提问：
++
++   ```bash
++   goose run -t "Goose Terminal 和 Goose Desktop 有什么区别？请用三句话回答。"
++   ```
++
++3. Goose 显示回答后返回终端提示符。
++
++### 开始对话
++
++想要来回多轮对话时，使用交互式会话。
++
++1. 从 Launchpad 打开 Goose Terminal。
++2. 在工作目录中启动交互式会话：
++
++   ```bash
++   cd /config/workspace
++   goose session
++   ```
++
++3. 首次运行此命令时，Goose 会询问是否分享匿名使用数据。选择 **Yes** 或 **No** 继续。
++4. 发送你的 prompt。以下示例在 `/config/workspace/goose-demo` 中创建一个示例项目简报：
++
++   ```text
++   仅在 /config/workspace/goose-demo 中操作，如目录不存在请创建。
++   创建 notes.md，包含以下事实：
++   - 项目：优化客户首次使用流程
++   - 目标：缩短完成首次配置所需的时间
++   - 交付物：配置检查清单和故障排查指南
++   - 目标日期：2026-11-30
++   - 待确认事项：谁负责故障排查指南？
++   然后读取 notes.md，生成 brief.md，包含以下章节：
++   项目概述、交付物、目标日期、待确认事项。
++   保留所有事实，不要编造负责人或时间安排。
++   最后返回两个文件的绝对路径，并概述你创建的内容。
++   ```
++
++5. 如终端提示批准工具，按提示操作。
++6. 在同一终端中验证结果：
++
++   ```bash
++   # 列出目录，确认文件存在
++   ls -l /path/to/directory
++   # 查看文件内容
++   cat /path/to/file
++   ```
++
++   本例中：
++
++   ```bash
++   ls -l /config/workspace/goose-demo
++   cat /config/workspace/goose-demo/brief.md
++   ```
++
++   简报应包含项目目标、两项交付物、目标日期，以及尚未确定负责人的问题。模型生成的措辞可能不同，但事实应保持一致。
++
++7. 按 `Ctrl+C` 退出会话。如果 Goose 提示再次按键，再按一次 `Ctrl+C`。这会结束当前终端交互。
++
++:::info 文件位置
++Goose 将文件保存在 Olares 设备的 `/config/workspace` 目录中。重启应用不会删除这些文件。重要文档请在 Files 中另行保存一份。
++:::
++
++### 查找并恢复会话
++
++会话保存在 Goose 服务上。你可以列出会话，并在之后于 Goose Terminal 或 Goose Desktop 中恢复任意会话。
++
++- 列出已保存的会话，运行 `goose session list`。
++- 恢复会话，运行 `goose session --resume --session-id SESSION_ID`，ID 取自列表。
++
++   :::tip
++   两个同时运行的会话编辑同一文件时可能互相覆盖修改。在另一个会话中编辑同一文件前，请先退出其中一个。
++   :::
++
++## 使用 Goose Desktop
++
++Goose Desktop 运行在你的电脑上，通过 Goose ACP 入口连接到 Olares 上的 Goose 服务。
++
++### 准备连接信息
++
++1. 从 Launchpad 打开 Goose Terminal，运行：
++
++   ```bash
++   printenv GOOSE_SERVER__SECRET_KEY
++   ```
++
++2. 复制返回值并保存，稍后配置 Goose Desktop 时使用。
++
++   这是 Goose Desktop 与 Goose 服务之间的连接密钥，不是模型 API 密钥，请妥善保管。
++
++3. 打开 Olares 设置，进入**应用** > **Goose** > **入口** > **Goose ACP**，复制 **Endpoint** URL。
++4. 打开 Router，进入 **API keys** 页面，为 `goose` 创建一个可访问 **default-chat** 模型的密钥。复制密钥值，它只显示一次，请妥善保管。
++5. 在 Router 中进入 **LLM** 页面，找到被指定为 `default-chat` 的模型，点击右侧的 **View connection example**。
++6. 根据电脑的连接方式选择：
++   - 如果电脑与 Olares 设备在同一局域网，选择 **Device in LAN**，复制 Router URL。
++   - 如果电脑通过互联网连接，选择 **Remote**，复制 Router URL。
++
++### 连接到 Goose 服务
++
++:::tip
++如果电脑与 Olares 设备不在同一局域网，连接前请先开启 LarePass VPN。
++:::
++
++1. 按照[官方安装指南](https://goose-docs.ai/docs/getting-started/installation/)在电脑上安装 Goose Desktop。
++2. 打开 Goose Desktop，选择 **Connect to a Provider** > **Add a custom provider** > **Configure manually**。
++3. 在 **Add Custom Provider** 窗口中配置以下设置：
++
++   | 设置项 | 值 |
++   |:---|:---|
++   | **Provider Type** | 选择 **OpenAI Compatible**。 |
++   | **Display Name** | 填写便于识别的名称，例如 `olares-router`。 |
++   | **API URL** | 填写之前复制的 Router URL。 |
++   | **This provider requires an API key** | 勾选此选项。 |
++   | **API Key** | 填写在 Router 中为 `goose` 创建的 API 密钥。 |
++   | **Available Models** | 填写 `default-chat`。 |
++
++4. 点击 **Create Provider**。
++5. 按需选择隐私选项，然后点击 **Get Started**。
++6. 在 Goose Desktop 中，从左侧边栏进入 **Settings** > **Agent**。
++7. 找到 **External Backend (ACP)**，开启 **Use external backend**，并配置以下设置：
++
++   | 设置项 | 值 |
++   |:---|:---|
++   | **Backend Base URL** | 在**准备连接信息**中复制的 Goose ACP **Endpoint** URL，不要追加 `/acp` 或 `/v1`。 |
++   | **Remote Working Directory** (optional) | `/config/workspace`<br><br>**Note**：虽然 Goose Desktop 将此字段标记为可选，但这里必须填写。智能体需要一个服务端目录来工作。 |
++   | **Secret Key** | 在**准备连接信息**中保存的连接密钥。 |
++
++8. 重启 Goose Desktop。
++9. 新建对话。在聊天框下方确认模型为 `default-chat`，工作目录为 `/config/workspace`。
++10. 发送以下消息，确认 Goose 回复：
++
++      ```text
++      请仅回复：Goose is ready。
++      ```
++
++### 继续 Terminal 中的会话
++
++你在 Goose Terminal 中创建的会话也会以 **CLI Session** 条目出现在 Goose Desktop 左侧边栏的 **CHATS** 下
 ```
 
 ---
 
-### Incident Patch 3: `ce5a8a5b` (2026-10-20)
-**Commit Message**: fix(cli): remove kubelet soft eviction (#4270)
+### Incident Patch 3: `71a8394c` (2026-10-22)
+**Commit Message**: fix(files): provide FILES_SECRET_KEY to files and samba-server (#4291)
 
-Remove soft eviction thresholds and their grace periods from the K3s kubelet arguments and kubeadm configuration. Preserve hard eviction thresholds and host memory protection.
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-Regenerate Kubernetes configuration in PostUpgrade for daily 1.12.8-20261020, restarting K3s and waiting for the API server and system components to recover.
-
-**File**: `cli/pkg/k3s/tasks.go` (modified, +2/-31)
+**File**: `framework/files/.olares/config/cluster/deploy/files_deploy.yaml` (modified, +19/-0)
 ```diff
-@@ -196,38 +196,9 @@ func (g *GenerateK3sService) Execute(runtime connector.Runtime) error {
- 	runsControlPlane := utils.NodeRunsControlPlane(runtime)
+@@ -9,6 +9,14 @@
+ {{ $files_postgres_password = randAlphaNum 16 | b64enc }}
+ {{- end -}}
  
- 	defaultKubeletArs := map[string]string{
--		"kube-reserved":   fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.KubeReservedMemory(runsControlPlane)),
--		"system-reserved": fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.SystemReservedMemory(runtime, g.KubeConf.Arg.EnablePodSwap)),
--		// Soft eviction gives kubelet a runway. Reaching a hard threshold means
--		// reclaim has already failed, and terminating a pod from there takes long
--		// enough that the OOM killer can decide first — and it does not choose
--		// with the cluster in mind.
--		//
--		// The soft threshold is on allocatableMemory.available rather than
--		// memory.available because that is the signal that answers "have the pods
--		// used up what they were given", which is the condition worth reacting to
--		// early. kubelet will not create it: addAllocatableThresholds in
--		// pkg/kubelet/eviction/helpers.go copies only *hard* memory thresholds onto
--		// that signal. Its capacity is kubepods.slice's own allowance, so it is
--		// unaffected by the host releasing or taking page cache, and it moves with
--		// the reserve above rather than with the size of the machine.
--		//
--		// It has to stay a percentage, and above the 5% below. eviction-hard's
--		// memory.available<5% is copied onto the allocatable signal as 5% of that
--		// same allowance, so an absolute value here could not stay above it across
--		// machine sizes: whatever value sits above 5% on a small node sits below
--		// it on a large one, and there the hard copy fires first and the grace
--		// period below is never reached.
--		//
--		// Nothing is reserved for this. Only hard thresholds are subtracted from
--		// Node Allocatable (hardEvictionReservation in pkg/kubelet/cm/helpers.go,
--		// whose switch does not even have a case for the allocatable signal), so
--		// the cost of the 10% is that pods cannot sit above 90% of their allowance
--		// indefinitely, not that the 10% goes unscheduled.
-+		"kube-reserved":                       fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.KubeReservedMemory(runsControlPlane)),
-+		"system-reserved":                     fmt.Sprintf("cpu=200m,memory=%s,ephemeral-storage=1Gi", utils.SystemReservedMemory(runtime, g.KubeConf.Arg.EnablePodSwap)),
- 		"eviction-hard":                       "memory.available<5%,nodefs.available<5%,imagefs.available<5%,pid.available<10%",
--		"eviction-soft":                       "allocatableMemory.available<10%",
--		"eviction-soft-grace-period":          "allocatableMemory.available=1m",
--		"eviction-max-pod-grace-period":       "120",
- 		"eviction-pressure-transition-period": "30s",
- 		"config":                              "/etc/rancher/k3s/kubelet.config",
- 		"containerd":                          container.DefaultContainerdCRISocket,
-```
-
-**File**: `cli/pkg/kubernetes/templates/v1beta2/kubeadm_config.go` (modified, +0/-7)
-```diff
-@@ -301,13 +301,6 @@ func GetKubeletConfiguration(runtime connector.Runtime, kubeConf *common.KubeCon
- 			"nodefs.available":  "5%",
- 			"imagefs.available": "5%",
- 		},
--		"evictionSoft": map[string]string{
--			"memory.available": "10%",
--		},
--		"evictionSoftGracePeriod": map[string]string{
--			"memory.available": "2m",
--		},
--		"evictionMaxPodGracePeriod":        120,
- 		"evictionPressureTransitionPeriod": "30s",
- 		"featureGates":                     FeatureGatesDefaultConfiguration,
- 		"runtimeRequestTimeout":            "5m",
-```
-
-**File**: `cli/pkg/upgrade/1_12_8_20261020.go` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+package upgrade
++{{- $files_secret_key := "" -}}
++{{ if $files_secret -}}
++{{ $files_secret_key = (index $files_secret "data" "files_secret_key") | default "" }}
++{{- end -}}
++{{ if not $files_secret_key -}}
++{{ $files_secret_key = randAlphaNum 32 | b64enc }}
++{{- end -}}
 +
-+import (
-+	"github.com/Masterminds/semver/v3"
-+	"github.com/beclab/Olares/cli/pkg/core/task"
-+)
-+
-+// upgrader_1_12_8_20261020 regenerates the kubelet configuration so existing
-+// nodes stop using the soft eviction settings removed from the templates.
-+// The version must match the daily release carrying this change because
-+// getUpgraderByVersion selects an exact target version.
-+type upgrader_1_12_8_20261020 struct {
-+	breakingUpgraderBase
-+}
-+
-+func (u upgrader_1_12_8_20261020) Version() *semver.Version {
-+	return semver.MustParse("1.12.8-20261020")
-+}
-+
-+// Restart K3s after component upgrades finish, then wait for the API server
-+// and system components to recover.
-+func (u upgrader_1_12_8_20261020) PostUpgrade() []task.Interface {
-+	return append(regenerateKubeFiles(), u.upgraderBase.PostUpgrade()...)
-+}
-+
-+func init() {
-+	registerDailyUpgrader(upgrader_1_12_8_20261020{})
-+}
+ {{- $files_redis_password := "" -}}
+ {{ if $files_secret -}}
+ {{ $files_redis_password = (index $files_secret "data" "files_redis_password") }}
+@@ -169,6 +177,11 @@ spec:
+           ports:
+             - containerPort: 445
+           env:
++            - name: FILES_SECRET_KEY
++              valueFrom:
++                secretKeyRef:
++                  name: files-secrets
++                  key: files_secret_key
+ {{ if .Values.sharedlib }}        
+             - name: NODE_IP
+               valueFrom:
+@@ -239,6 +252,11 @@ spec:
+           ports:
+             - containerPort: 8110
+           env:
++            - name: FILES_SECRET_KEY
++              valueFrom:
++                secretKeyRef:
++                  name: files-secrets
++                  key: files_secret_key
+ {{ if .Values.sharedlib }}        
+             - name: NODE_IP
+               valueFrom:
+@@ -483,6 +501,7 @@ type: Opaque
+ data:
+   files_postgres_password: {{ $files_postgres_password }}
+   files_redis_password: {{ $files_redis_password }}
++  files_secret_key: {{ $files_secret_key }}
+ 
+ ---
+ apiVersion: v1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4276** (2026-10-20): fix(appservice): change workload options min olaresManifest version (@hysyeah)
-- **PR #4274** (2026-10-20): fix(oac): change workload options min olaresManifest version (@hysyeah)
-- **PR #4273** (2026-10-20): docs: streamline CLI onboarding and related guides (@fnalways)
-- **PR #4272** (2026-10-20): docs: fix egpu download links (@leonalovetheworld-hash)
-- **PR #4271** (2026-10-20): feat(daemon): unify registry config, mirrors and auth (@dkeven)
-- **PR #4270** (2026-10-20): fix(cli): remove kubelet soft eviction (@dkeven)
+- **PR #4292** (2026-10-22): market: remove unreleased payment feature and schema (@aby913)
+- **PR #4291** (2026-10-22): fix(files): provide FILES_SECRET_KEY to files and samba-server (@pengpeng)
+- **PR #4290** (2026-10-22): system-frontend, login: update images to v1.12.10 (@icebergtsn)
+- **PR #4289** (2026-10-22): ci: fix CI issues on non-main branches  (@eball)
+- **PR #4288** (2026-10-22): feat(download-server): preserve legacy task APIs (@kaki-admin)
+- **PR #4287** (2026-10-21): chore(kubesphere): bump ks-apiserver image tag to 0.0.33 (@hysyeah)
 
 ---
 
@@ -2217,28 +1749,28 @@ Regenerate Kubernetes configuration in PostUpgrade for daily 1.12.8-20261020, re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. appservice): change workload options min olaresManifest version (#4276)
+## X. fix(kubeblocks): reduce mysql,mongodb default logging (#4285)
 
 **RULE**:
-When implementing operations in `framework/app-service/.olares/config/cluster/deploy/appservice_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/module_kubesphere_publish_docker.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `994fdf5a`: appservice): change workload options min olaresManifest version (#4276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4613d810`: fix(kubeblocks): reduce mysql,mongodb default logging (#4285). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/app-service/.olares/config/cluster/deploy/appservice_deploy.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/module_kubesphere_publish_docker.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        image: beclab/app-service:0.6.56
+          password: ${{ secrets.DOCKERHUB_PASS }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        image: beclab/app-service:0.6.55
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `994fdf5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4613d810` are properly handled with clean fallback behavior.

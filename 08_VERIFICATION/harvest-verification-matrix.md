@@ -4409,3 +4409,6 @@
 | `CYCLE-20261022-HN50` | `2026-10-22T19:22:50.340Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3713` | Yes (`ad2cb8ed...`) |
 | `CYCLE-20261022-PZ2M` | `2026-10-22T19:29:19.054Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3714` | Yes (`0fbe024c...`) |
 | `CYCLE-20261022-Y2Y4` | `2026-10-22T19:35:37.324Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3715` | Yes (`95b26ae9...`) |
+| `CYCLE-20261022-6MI2` | `2026-10-22T19:42:15.914Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`dedef40b...`) |
+| `CYCLE-20261022-6NLZ` | `2026-10-22T19:42:17.351Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3716` | Yes (`7b0e8d3d...`) |
+| `CYCLE-20261022-6UPH` | `2026-10-22T19:42:26.549Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3717` | Yes (`27eaace4...`) |

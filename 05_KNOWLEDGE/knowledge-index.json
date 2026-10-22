@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T19:35:37.275Z",
+  "last_updated": "2026-10-22T19:42:26.492Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3677,8 +3677,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "994fdf5a",
-      "content_hash": "ce92a2b2eb2c27571014e8276682126da56bcf018606966980c5bc3750272d0b",
+      "source_version": "d0a3170d",
+      "content_hash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -3716,6 +3716,11 @@
           "number": 3478,
           "title": "appservice): change workload options min olaresManifest version (#4276)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3717,
+          "title": "fix(kubeblocks): reduce mysql,mongodb default logging (#4285)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3723,7 +3728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:43:06.593Z",
+      "verified_at": "2026-10-22T19:42:26.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10973,8 +10978,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "ba84b33d",
-      "content_hash": "457fe2ba37a78bf1aa684be2222505d491ed5aefa82dd5d418135b8c25cfed2a",
+      "source_version": "288bc241",
+      "content_hash": "7b0e8d3d422f4ec8e8f97c76a36bfe8a882b30233d359a0802596c6635f6c89a",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -10987,6 +10992,11 @@
           "number": 3420,
           "title": "catalog): HUB-318 CLI writes catalog lock v2 and publishes the built closure (#4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3716,
+          "title": "security): distrust four compromised CA roots in cacert bundle",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10994,7 +11004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:51:44.453Z",
+      "verified_at": "2026-10-22T19:42:17.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38749,8 +38759,8 @@
       "slug": "primer-react",
       "platform": "github",
       "source_url": "https://github.com/primer/react",
-      "source_version": "fb6001c8",
-      "content_hash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
+      "source_version": "3a71047a",
+      "content_hash": "dedef40b51d55b35c333ac02028e0284538758336f24b87df8008d6ce43e46d2",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
@@ -38782,7 +38792,7 @@
         {
           "number": 3483,
           "title": "react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38790,7 +38800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:08:40.041Z",
+      "verified_at": "2026-10-22T19:42:15.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107906,13 +107916,13 @@
       "rule_number": 3483,
       "title": "react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel",
       "source_url": "https://github.com/primer/react",
-      "source_version": "fb6001c8",
+      "source_version": "3a71047a",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T02:08:40.041Z"
+      "verified_at": "2026-10-22T19:42:15.841Z"
     },
     "rule-3484": {
       "learning_id": "rule-3484",
@@ -111549,6 +111559,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T19:35:37.264Z"
+    },
+    "rule-3716": {
+      "learning_id": "rule-3716",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3716,
+      "title": "security): distrust four compromised CA roots in cacert bundle",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "288bc241",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:42:17.269Z"
+    },
+    "rule-3717": {
+      "learning_id": "rule-3717",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3717,
+      "title": "fix(kubeblocks): reduce mysql,mongodb default logging (#4285)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "d0a3170d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:42:26.475Z"
     }
   },
   "aliases": {

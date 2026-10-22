@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T19:35:37.333Z",
-  "total_cycles_completed": 4386,
-  "total_learnings_persisted": 4386,
-  "total_rules_promoted": 3564,
+  "last_updated": "2026-10-22T19:42:26.561Z",
+  "total_cycles_completed": 4389,
+  "total_learnings_persisted": 4389,
+  "total_rules_promoted": 3567,
   "history": [
-    {
-      "timestamp": "2026-10-21T05:09:19.763Z",
-      "repository": "code-forge-io/seo-tools",
-      "learningId": "learn-github-code-forge-io-seo-tools",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T05:15:21.398Z",
-      "repository": "hartemyaakoub/seo-toolkit",
-      "learningId": "learn-github-hartemyaakoub-seo-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T05:15:26.474Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T05:15:30.489Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T19:35:37.333Z",
       "repository": "fallow-rs/fallow",
       "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T19:42:15.921Z",
+      "repository": "primer/react",
+      "learningId": "learn-github-primer-react",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T19:42:17.363Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T19:42:26.561Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

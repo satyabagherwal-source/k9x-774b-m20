@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-5Y12",
-    "timestamp": "2026-10-20T16:50:26.054Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "b17d6366ce3a0563b061ace1726e18249218dd5433e212d3c315ab90ed1c0235",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-5Y7Z",
-    "timestamp": "2026-10-20T16:50:26.303Z",
-    "repository": "franken-ui/ui",
-    "learningId": "learn-github-franken-ui-ui",
-    "contentHash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-66J1",
-    "timestamp": "2026-10-20T16:50:37.069Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "ca4ebb546dd20fc544d0ae64c5bc137b09a9976b69e35dbe0c27592cb546de8d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-68YX",
     "timestamp": "2026-10-20T16:50:40.233Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7490,6 +7445,51 @@
     "repository": "fallow-rs/fallow",
     "learningId": "learn-github-fallow-rs-fallow",
     "contentHash": "95b26ae9476cb16fc776567fbd4ba8d7ca11511d2c8ee6245a68c23a2365f855",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-6MI2",
+    "timestamp": "2026-10-22T19:42:15.914Z",
+    "repository": "primer/react",
+    "learningId": "learn-github-primer-react",
+    "contentHash": "dedef40b51d55b35c333ac02028e0284538758336f24b87df8008d6ce43e46d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-6NLZ",
+    "timestamp": "2026-10-22T19:42:17.351Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "7b0e8d3d422f4ec8e8f97c76a36bfe8a882b30233d359a0802596c6635f6c89a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-6UPH",
+    "timestamp": "2026-10-22T19:42:26.549Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

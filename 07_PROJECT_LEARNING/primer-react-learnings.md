@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source**: github ([https://github.com/primer/react](https://github.com/primer/react))  
-> **Source Version**: `fb6001c8`  
+> **Source Version**: `3a71047a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:08:39.668Z  
+> **Timestamp**: 2026-10-22T19:42:15.638Z  
 > **Learning ID**: `learn-github-primer-react`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/primer/react](https://github.com/primer/react))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:08:39.660Z  
+> **Harvest Timestamp**: 2026-10-22T19:42:13.935Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An implementation of GitHub's Primer Design System using React
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3919 stars
+- **Stars / Engagement**: 3921 stars
 
 ---
 
@@ -1153,12 +1153,12 @@ Co-authored-by: Josh Black <[REDACTED_EMAIL]>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8591** (2026-10-20): chore(deps): bump @modelcontextprotocol/server from 2.0.0 to 2.3.0 (@dependabot[bot])
-- **PR #8589** (closed): ci: add package-release-tracking workflow for publishing a single package (@joshblack)
-- **PR #8588** (2026-10-20): chore(deps-dev): bump launch-editor from 2.14.1 to 2.14.2 (@dependabot[bot])
-- **PR #8587** (2026-10-20): chore(deps): bump @modelcontextprotocol/client from 2.2.0 to 2.3.0 (@dependabot[bot])
-- **PR #8586** (2026-10-20): chore(deps-dev): bump vite from 8.0.16 to 8.3.4 (@dependabot[bot])
-- **PR #8583** (2026-10-20): chore(deps-dev): bump hono from 4.13.7 to 4.13.13 (@dependabot[bot])
+- **PR #8602** (2026-10-21): chore(deps-dev): bump rolldown from 1.2.13 to 1.2.14 in the rolldown group (@dependabot[bot])
+- **PR #8601** (closed): chore(deps): bump the react group across 1 directory with 4 updates (@dependabot[bot])
+- **PR #8600** (2026-10-21): chore(deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 (@dependabot[bot])
+- **PR #8598** (2026-10-21): chore(deps): bump github/gh-aw-actions/setup-cli from 0.91.11 to 0.91.14 (@dependabot[bot])
+- **PR #8596** (2026-10-21): chore(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
+- **PR #8594** (2026-10-21): chore(deps): bump github/gh-aw-actions/setup from 0.91.11 to 0.91.14 (@dependabot[bot])
 
 ---
 

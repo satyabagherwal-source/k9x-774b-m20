@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "994fdf5a",
+    "sourceVersion": "d0a3170d",
     "license": "AGPL-3.0",
-    "contentHash": "ce92a2b2eb2c27571014e8276682126da56bcf018606966980c5bc3750272d0b",
-    "lastHarvestedAt": "2026-10-21T01:43:06.665Z",
+    "contentHash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
+    "lastHarvestedAt": "2026-10-22T19:42:26.552Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "ba84b33d",
+    "sourceVersion": "288bc241",
     "license": "GPL-2.0",
-    "contentHash": "457fe2ba37a78bf1aa684be2222505d491ed5aefa82dd5d418135b8c25cfed2a",
-    "lastHarvestedAt": "2026-10-20T22:51:44.496Z",
+    "contentHash": "7b0e8d3d422f4ec8e8f97c76a36bfe8a882b30233d359a0802596c6635f6c89a",
+    "lastHarvestedAt": "2026-10-22T19:42:17.354Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -5133,10 +5133,10 @@
     "repository": "primer/react",
     "platform": "github",
     "sourceUrl": "https://github.com/primer/react",
-    "sourceVersion": "fb6001c8",
+    "sourceVersion": "3a71047a",
     "license": "MIT",
-    "contentHash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
-    "lastHarvestedAt": "2026-10-21T02:08:40.126Z",
+    "contentHash": "dedef40b51d55b35c333ac02028e0284538758336f24b87df8008d6ce43e46d2",
+    "lastHarvestedAt": "2026-10-22T19:42:15.917Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {
