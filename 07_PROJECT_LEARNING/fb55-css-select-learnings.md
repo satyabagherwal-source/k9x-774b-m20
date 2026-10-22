@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source**: github ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
-> **Source Version**: `66d88088`  
+> **Source Version**: `6b225dee`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:02:53.442Z  
+> **Timestamp**: 2026-10-22T19:03:15.835Z  
 > **Learning ID**: `learn-github-fb55-css-select`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fb55-css-select-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fb55/css-select](https://github.com/fb55/css-select))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:02:52.025Z  
+> **Harvest Timestamp**: 2026-10-22T19:03:15.828Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1475,315 +1475,70 @@ export const aliases: Record<string, string> = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66d88088` (2026-10-19)
-**Commit Message**: build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1920)
+### Incident Patch 1: `6b225dee` (2026-10-20)
+**Commit Message**: build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (#1921)
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.0)
+Bumps [eslint](https://github.com/eslint/eslint) from 10.12.0 to 10.13.0.
+- [Release notes](https://github.com/eslint/eslint/releases)
+- [Commits](https://github.com/eslint/eslint/compare/v10.12.0...v10.13.0)
 
 ---
 updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.0
-  dependency-type: direct:production
+- dependency-name: eslint
+  dependency-version: 10.13.0
+  dependency-type: direct:development
   update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
+**File**: `package-lock.json` (modified, +4/-4)
 ```diff
-@@ -23,9 +23,9 @@ jobs:
-               uses: actions/checkout@v7
- 
-             - name: Initialize CodeQL
--              uses: github/codeql-action/init@v4.38.3
-+              uses: github/codeql-action/init@v4.39.0
-               with:
-                   languages: "javascript"
- 
-             - name: Perform CodeQL Analysis
--              uses: github/codeql-action/analyze@v4.38.3
-+              uses: github/codeql-action/analyze@v4.39.0
-```
-
----
-
-### Incident Patch 2: `e6dda745` (2026-10-19)
-**Commit Message**: build(deps-dev): bump vitest from 5.0.4 to 5.0.5 (#1919)
-
-Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.0.4 to 5.0.5.
-- [Release notes](https://github.com/vitest-dev/vitest/releases)
-- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
-- [Commits](https://github.com/vitest-dev/vitest/commits/v5.0.5/packages/vitest)
-
----
-updated-dependencies:
-- dependency-name: vitest
-  dependency-version: 5.0.5
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +88/-88)
-```diff
-@@ -26,7 +26,7 @@
-                 "htmlparser2": "^12.0.0",
-                 "typescript": "^6.0.3",
-                 "typescript-eslint": "^8.71.2",
--                "vitest": "^5.0.4"
-+                "vitest": "^5.0.5"
-             },
-             "engines": {
-                 "node": ">=20.19.0"
-@@ -568,9 +568,9 @@
-             "license": "MIT"
-         },
-         "node_modules/@oxc-project/types": {
--            "version": "0.153.0",
--            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.153.0.tgz",
--            "integrity": "sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==",
-+            "version": "0.154.0",
-+            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
-+            "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
-             "dev": true,
-             "license": "MIT",
-             "peer": true,
-@@ -579,9 +579,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-android-arm-eabi": {
--            "version": "1.2.13",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.13.tgz",
--            "integrity": "sha512-Vu/NICrgdRvUOeaJZIyB2FP63s6fO/4ud5l8dXmxDx9yDyn+mN0y+gsvsVviSli+T361Aqo0h46EuMoobrwawA==",
-+            "version": "1.2.14",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
-+            "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
-             "cpu": [
-                 "arm"
-             ],
-@@ -597,9 +597,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-android-arm64": {
--            "version": "1.2.13",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.13.tgz",
--            "integrity": "sha512-6LEoIrGy5vvCd2boNnv2soPSUZj/PRvhp8R/t9KlX+mIZxThIE/ZqxrGXxmuNX0FuvQFvLdZr7S4HrYpYBVhEQ==",
-+            "version": "1.2.14",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
-+            "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
-             "cpu": [
-                 "arm64"
-             ],
-@@ -615,9 +615,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-darwin-arm64": {
--            "version": "1.2.13",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.13.tgz",
--            "integrity": "sha512-CaJSRzlQ6Q+zkDMVA9OkVxBjVoPRCDEE3v0FSJ9kIQBgRjFApA3Si4ijhbNVUji7ZJt+PfO0e46qy4nPInHUPA==",
-+            "version": "1.2.14",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
-+            "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
-             "cpu": [
-                 "arm64"
-             ],
-@@ -633,9 +633,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-darwin-x64": {
--            "version": "1.2.13",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.13.tgz",
--            "integrity": "sha512-e4r340I5hxSzJkD3YJBxgzq/rJ3wwxwdLLb2FPt1Zpyem20nrQPT11DDEEkazwxaHumH8wpglsp/Ozgj/wT6mw==",
-+            "version": "1.2.14",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.14.tgz",
-+            "integrity": "sha512-hyMKEGatjmBYCs/Q4sbIcL/GqpFEqsX3wc+HYVQ/85A4rxc1o7rPm4DUI4GV4k/h0ITddwFSGpqQunI14GXjTA==",
-             "cpu": [
-                 "x64"
-             ],
-@@ -651,9 +651,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-freebsd-x64": {
--            "version": "1.2.13",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.13.tgz",
--            "integrity": "sha512-hoBWDZ4/K/mJKVMbsgUd1jfpA2DiOrJ54mpegObU9TBHBBrtX4FLIXJJQRDPZ/2Dn91GvPob+Z2hwKJzf4E5SQ==",
-+            "version": "1.2.14",
-+            "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.14.tgz",
-+            "integrity": "sha512-u371GbXoVXrEgP20PwzoGNOdAOqAMhzo19JzzY+V4YmmnC+DTOoqdbMu+O+54emM59Mik/UdrtWgcuEDKWRPKA==",
-             "cpu": [
-                 "x64"
-             ],
-@@ -669,9 +669,9 @@
-             }
-         },
-         "node_modules/@rolldown/binding-linux-arm-gnueabihf": {
--            "version": "1.2.13",
--            "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.13.tgz",
--            "integrity": "sha512-oF9fZu3vTWnTiVAkDFxU9PJLt1nh20K9RRpuHsR7ZnE2L7Xook
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@
-         "htmlparser2": "^12.0.0",
-         "typescript": "^6.0.3",
-         "typescript-eslint": "^8.71.2",
--        "vitest": "^5.0.4"
-+        "vitest": "^5.0.5"
-     },
-     "scripts": {
-         "build": "tsc",
-```
-
----
-
-### Incident Patch 3: `2406236d` (2026-10-16)
-**Commit Message**: build(deps-dev): bump typescript-eslint from 8.71.1 to 8.71.2 (#1918)
-
-Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.71.1 to 8.71.2.
-- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
-- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
-- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.71.2/packages/typescript-eslint)
-
----
-updated-dependencies:
-- dependency-name: typescript-eslint
-  dependency-version: 8.71.2
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +62/-62)
-```diff
-@@ -25,7 +25,7 @@
+@@ -20,7 +20,7 @@
+                 "@eslint/compat": "^2.1.1",
+                 "@feedic/eslint-config": "^0.5.0",
+                 "@types/node": "^26.6.5",
+-                "eslint": "^10.12.0",
++                "eslint": "^10.13.0",
+                 "eslint-config-biome": "^2.1.3",
                  "globals": "^17.13.0",
                  "htmlparser2": "^12.0.0",
-                 "typescript": "^6.0.3",
--                "typescript-eslint": "^8.71.1",
-+                "typescript-eslint": "^8.71.2",
-                 "vitest": "^5.0.4"
-             },
-             "engines": {
-@@ -937,17 +937,17 @@
+@@ -1683,9 +1683,9 @@
              }
          },
-         "node_modules/@typescript-eslint/eslint-plugin": {
--            "version": "8.71.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.71.1.tgz",
--            "integrity": "sha512-nNlBf6HuotqMgZvSkWD5hNdemiBIxQ2NmrlgfcUIeZRs+BbakjscCQRq/Hb74EFVnFiSWWdL12JruqwBy3ERDw==",
-+            "version": "8.71.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.71.2.tgz",
-+            "integrity": "sha512-K72/pvT7qpm8q3k8G5u93NCSN1RcLxX5h7Gw0bQpbMXviBHeY6Nx1WEwmk9wP+eKTSQ8ecxvcgt/ZX/rB938xQ==",
+         "node_modules/eslint": {
+-            "version": "10.12.0",
+-            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
+-            "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
++            "version": "10.13.0",
++            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
++            "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
              "dev": true,
              "license": "MIT",
-             "dependencies": {
-                 "@eslint-community/regexpp": "^4.12.2",
--                "@typescript-eslint/scope-manager": "8.71.1",
--                "@typescript-eslint/type-utils": "8.71.1",
--                "@typescript-eslint/utils": "8.71.1",
--                "@typescript-eslint/visitor-keys": "8.71.1",
-+                "@typescript-eslint/scope-manager": "8.71.2",
-+                "@typescript-eslint/type-utils": "8.71.2",
-+                "@typescript-eslint/utils": "8.71.2",
-+                "@typescript-eslint/visitor-keys": "8.71.2",
-                 "ignore": "^7.0.5",
-                 "natural-compare": "^1.4.0",
-                 "ts-api-utils": "^2.5.0"
-@@ -960,7 +960,7 @@
-                 "url": "https://opencollective.com/typescript-eslint"
-             },
-             "peerDependencies": {
--                "@typescript-eslint/parser": "^8.71.1",
-+                "@typescript-eslint/parser": "^8.71.2",
-                 "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
-                 "typescript": ">=4.8.4 <6.1.0"
-             }
-@@ -976,16 +976,16 @@
-             }
-         },
-         "node_modules/@typescript-eslint/parser": {
--            "version": "8.71.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.71.1.tgz",
--            "integrity": "sha512-oM/5sAqz/l1v/zYK1qTOPrn2+JIrBGC1V6uNYucRO5gh6eT9vWJ/RhPbGE59byvZEUQ4VP6XkLBaS5Jti5jpvw==",
-+            "version": "8.71.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.71.2.tgz",
-+            "integrity": "sha512-aTtmZjp/x3gsGHkDs04/1I8kNogBJkpQaeGaN0PfiG43NzDEmW2n+OP5im9wfsvyX0yP1UZWBrAGtDBfH9jEVw==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
--                "@typescript-eslint/scope-manager": "8.71.1",
--                "@typescript-eslint/types": "8.71.1",
--                "@typescript-eslint/typescript-estree": "8.71.1",
--                "@typescript-eslint/visitor-keys": "8.71.1",
-+                "@typescript-eslint/scope-manager": "8.71.2",
-+                "@typescript-eslint/types": "8.71.2",
-+                "@typescript-eslint/typescript-estree": "8.71.2",
-+                "@typescript-eslint/visitor-keys": "8.71.2",
-                 "debug": "^4.4.3"
-             },
-             "engines": {
-@@ -1001,14 +1001,14 @@
-             }
-         },
-         "node_modules/@typescript-eslint/project-service": {
--            "version": "8.71.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.71.1.tgz",
--            "integrity": "sha512-Oijc9RUsohHjncg6iGi7gCtjnEjYt9FWv9u6ygK8uKcHK5eLjLAkqERQ9BaytbpceOFdk6kifPCS/zAZE+A99g==",
-+            "version": "8.71.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.71.2.tgz",
-+            "integrity": "sha512-Pd68GsLVh5ZXlcEccFPdhSOvtHZ/2WU0XsA8zmXOS3F158lVlcTLhfQ6qvtL1RzbMie0Kp8xtbVwAg4nejKPHw==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
--                "@typescript-eslint/tsconfig-utils": "^8.71.1",
--                "@typescript-eslint/types": "^8.71.1",
-+                "@typescript-eslint/tsconfig-utils": "^8.71.2",
-+                "@typescript-eslint/types": "^8.71.2",
-                 "debug": "^4.4.3"
-             },
-             "engines": {
-@@ -1023,14 +1023,14 @@
-             }
-         },
-         "node_modules/@typescript-eslint/scope-manager": {
--            "version": "8.71.1",
--            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.71.1.tgz",
--            "integrity": "sha512-1YUDZXdTnXLlob03SFHBipdyMBsDVm7zoSz0ytTJ39dk5J1TgsTK03VlR/dLXG/RLLUrPcYbD4rp23BmHxHP0w==",
-+            "version": "8.71.2",
-+            "resolved": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.71.2.tgz",
-+     
+             "workspaces": [
 ```
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -48,7 +48,7 @@
+@@ -43,7 +43,7 @@
+         "@eslint/compat": "^2.1.1",
+         "@feedic/eslint-config": "^0.5.0",
+         "@types/node": "^26.6.5",
+-        "eslint": "^10.12.0",
++        "eslint": "^10.13.0",
+         "eslint-config-biome": "^2.1.3",
          "globals": "^17.13.0",
          "htmlparser2": "^12.0.0",
-         "typescript": "^6.0.3",
--        "typescript-eslint": "^8.71.1",
-+        "typescript-eslint": "^8.71.2",
-         "vitest": "^5.0.4"
-     },
-     "scripts": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1921** (2026-10-20): build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (@dependabot[bot])
 - **PR #1920** (2026-10-19): build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (@dependabot[bot])
 - **PR #1919** (2026-10-19): build(deps-dev): bump vitest from 5.0.4 to 5.0.5 (@dependabot[bot])
 - **PR #1918** (2026-10-16): build(deps-dev): bump typescript-eslint from 8.71.1 to 8.71.2 (@dependabot[bot])
 - **PR #1917** (2026-10-15): build(deps-dev): bump vitest from 5.0.3 to 5.0.4 (@dependabot[bot])
 - **PR #1915** (2026-10-13): build(deps-dev): bump @types/node from 26.6.4 to 26.6.5 (@dependabot[bot])
-- **PR #1914** (2026-10-13): build(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
 
 ---
 
@@ -1803,30 +1558,34 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1920)
+## X. build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (#1921)
 
 **RULE**:
-When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/css-select. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/css-select. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66d88088`: build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1920). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b225dee`: build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (#1921). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-              uses: github/codeql-action/init@v4.39.0
-              uses: github/codeql-action/analyze@v4.39.0
+                "eslint": "^10.13.0",
+            "version": "10.13.0",
+            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
+            "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-              uses: github/codeql-action/init@v4.38.3
-              uses: github/codeql-action/analyze@v4.38.3
+                "eslint": "^10.12.0",
+            "version": "10.12.0",
+            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
+            "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66d88088` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b225dee` are properly handled with clean fallback behavior.

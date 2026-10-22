@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-CQRW",
-    "timestamp": "2026-10-20T16:27:43.628Z",
-    "repository": "carbon-design-system/carbon-components-svelte",
-    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-    "contentHash": "9c1ced5bae8bd43704d362cf73380a1682d07046e3aabef7d903e9b379e1b104",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-CRV4",
-    "timestamp": "2026-10-20T16:27:45.040Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "97bd8b82e33dad124b033d419c1844f11478384cde616ee625162a7c7ac368c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-CZBH",
-    "timestamp": "2026-10-20T16:27:54.701Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "43f20d32937db07bfd3054af22c4de0214758ee86be24c914ffaa77c9fb4bf12",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-D13H",
     "timestamp": "2026-10-20T16:27:57.005Z",
     "repository": "neuron-core/neuron-ai",
@@ -7490,6 +7445,51 @@
     "repository": "nats-io/nats.go",
     "learningId": "learn-github-nats-io-nats-go",
     "contentHash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-SFI2",
+    "timestamp": "2026-10-22T19:03:14.042Z",
+    "repository": "elastic/eui",
+    "learningId": "learn-github-elastic-eui",
+    "contentHash": "e56f4d2eade9c347148aa497e0070c5cbe54dea4d3fb7cd9927bde5ef8602cb5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-SG0C",
+    "timestamp": "2026-10-22T19:03:14.700Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "e3ddaff10241e0f1042e48282e667977a7ed62e0cbb3dbed87fd2c7c19addc0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-SH4Y",
+    "timestamp": "2026-10-22T19:03:16.162Z",
+    "repository": "fb55/css-select",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "58e405469fba78ad6466a727890e5873dd91c8764b9740c4b1f9c55a4e30e44a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

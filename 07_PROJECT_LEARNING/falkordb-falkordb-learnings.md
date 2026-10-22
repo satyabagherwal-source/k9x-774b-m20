@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `b6567cb9`  
+> **Source Version**: `b84473a7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:13:07.381Z  
+> **Timestamp**: 2026-10-22T19:03:14.366Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:13:06.163Z  
+> **Harvest Timestamp**: 2026-10-22T19:03:13.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10502 stars
+- **Stars / Engagement**: 10498 stars
 
 ---
 
@@ -2305,11 +2305,11 @@ def render(cmp: Comparison) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3389** (2026-10-19): **[Rust] Back-to-back CREATE INDEX on one label can leave the last field unpopulated (index reports OPERATIONAL)**
-  *Symptoms*: ### Summary  Creating several indexes on the same label back to back can leave the last field permanently unpopulated, while `db.indexes()` reports the index `OPERATIONAL`. Index scans on that field then return no rows. Since #3330, unique constraints are enforced by index lookup, so an affected constraint also accepts duplicates. C is not affected.  ### Reproduction (release build, `main` @ 0f45a8685)  ```cypher UNWIND range(1, 1000000) AS x CREATE (:Huge {a: x, b: x, c: x}) CREATE INDEX FOR (n:Huge) ON (n.a) CREATE INDEX FOR (n:Huge) ON (n.b) CREATE INDEX FOR (n:Huge) ON (n.c) -- wait until CALL db.indexes() reports OPERATIONAL MATCH (n:Huge) WHERE n.c = 7 RETURN count(n)   -- 0, expected 1 ```  About 1 run in 3 fails. In a failing run, `n.a = 7` and `n.b = 7` return 1 and `n.c = 7` returns 0, and it stays that way: re-checking 10 seconds later gives the same result.  With a `UNIQUE` constraint on `(a, b, c)`, `CREATE (:Huge {a:1, b:1, c:1})` is accepted even though node 1 already has those values.  ### CI impact  This is the flake in `tests/flow/test_effects_ddl.py:545` (`testEffects_06_ConstraintSettlingRaces.test01_a_paused_escalation_is_retried_not_abandoned`, "a duplicate must be rejected, got None"). That test creates the three indexes back to back, then checks that the constraint rejects a duplicate.  It fails at random in the `release-flow-svc` jobs of unrelated PRs: 9 of the last 60 "Rust PR" runs, e.g. #3384. Locally it fails 3 runs out of 6.  ### Mechanism  - Eac
+- **Issue #3429** (2026-10-22): **server process dies (SIGSEGV) when a non-boolean list predicate is followed by a further stage**
+  *Symptoms*: ## Summary  A 42-byte query terminates the FalkorDB server process:  ```cypher MATCH () WHERE [1, 2] WITH 1 AS x RETURN x ```  The module crashes: the client loses the connection and the container exits with code **139 (SIGSEGV)**, `OOMKilled=false`.  The predicate `[1, 2]` is a list, not a boolean. The engine returns a proper `ResponseError` for the same predicate when the query ends at that stage (`... RETURN 1`); when the query continues into a later stage (`WITH`, `MERGE`), the process is terminated instead of producing an error.  **Scope of the trigger.** The table below shows every shape that was tested. It establishes that the tested list-predicate shapes crash when a further stage follows; it does **not** establish that a list is *necessary* — only a few predicate kinds were tried.  ## Environment  - image: `falkordb/falkordb:v4.18.11` - standalone container, no compose file, no mounted data - client: `redis-py` 6.x over the Redis protocol; `socket_timeout` is a **client-side** read timeout, no server-side configuration is involved - host: Ubuntu 24.04, 48 cores, 125 GB RAM, no memory limit on the container  ## Reproduce  ```bash docker run -d --name fk-repro \   -p 6383:6379 \   -e REDIS_ARGS="--requirepass password" \   falkordb/falkordb:v4.18.11 sleep 10 python - <<'PY' import redis r = redis.Redis(host="127.0.0.1", port=6383, password="password", socket_timeout=15) print(r.ping())                       # True: the instance is healthy r.execute_command("GRAPH.QUERY
 
-- **Issue #3346** (2026-10-15): **accept index trimmed values**
-  *Symptoms*: Resolve: #3345  <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic Fixes a server crash when a UNIQUE constraint's value is empty, whitespace-only, or trimmed by RediSearch (for example `" abc"`). Resolves #3345.  The commit-time duplicate check looks the value up in the TAG index, but such values don't round-trip, so the lookup returns NULL; the code dereferenced it, and the guard was compiled out in release builds.  - The constraint is now treated as satisfied for values that can't be looked up, so they're accepted without duplicate detection. - Genuine duplicates with normal values are still rejected. - Adds regression tests for sync and async constraint creation.  <sup>Written for commit fb6bc957915eb323df7afcce407f2741b5cde0c5. Summary will update on new commits.</sup>  <a href="https://cubic.dev/pr/FalkorDB/FalkorDB/pull/3346?utm_source=github" target="_blank" rel="noopener noreferrer" data-no-image-dialog="true"><picture><source media="(prefers-color-scheme: dark)" srcset="https://www.cubic.dev/buttons/review-in-cubic-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://www.cubic.dev/buttons/review-in-cubic-light.svg"><img alt="View guided diff" src="https://www.cubic.dev/buttons/review-in-cubic-light.svg"></picture></a> <a href="https://www.cubic.dev/action/auto-fix/pr/FalkorDB/FalkorDB/3346?returnTo=https%3A%2F%2Fgithub.com%2FFalkorDB%2FFalkorDB%2Fpull%2F3346&source=description" target="_blank" rel="noopener noreferrer
+- **Issue #3427** (2026-10-21): **[C engine] Redis crashes on a two-hop variable-length path query**
+  *Symptoms*:   ## Environment  - Image: `falkordb/falkordb:edge-c` - Tested image digest: `sha256:9d1333f0b545329f3a5929ee0cf501327c855e239af914f97f35e73ef5dcccab` - Run each attempt in a fresh container  ## Reproduction  Create this graph:  ```cypher CREATE (a:l7:l8:l10)-[:rt0]->(b:mid)-[:rt0]->(c:l4:l1:l11 {k11:"o", k2:534057338}) ```  Then run:  ```cypher MATCH p=(a:l7:l8:l10)-[*2]-(c:l4:l1:l11 {k11:'o', k2:534057338}) RETURN count(p) ```  ## Expected behavior  The query returns `count(p) = 1`, and the Redis server remains available.  ## Actual behavior  The Redis process exits with code `139` while executing the query. The client reports that the server closed the connection. Docker reports `OOMKilled=false`.  This reproduced in 4 of 4 fresh-container runs.  ## Control  Replacing the variable-length pattern with an equivalent fixed-length pattern returns `count(p) = 1` and leaves the server running:  ```cypher MATCH p=(a:l7:l8:l10)-[:rt0]->(b:mid)-[:rt0]->(c:l4:l1:l11 {k11:'o', k2:534057338}) RETURN count(p) ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2326,413 +2326,278 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e63165cb` (2026-10-20)
-**Commit Message**: fix: UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899)
+### Incident Patch 1: `b97da5a1` (2026-10-21)
+**Commit Message**: fix: error replies keep UTF-8 and never panic on '一' (#3185) (#3428)
 
-* fix: UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator
+* fix: error replies keep UTF-8 and never panic on '一' (#3185)
 
-RangeIter stepped past the last element with an unchecked `+= step`; next
-to i64::MAX/MIN that wrapped and the iterator never terminated (release)
-or panicked (debug). Drive it by the exact element count eval_iter_expr
-already computes and advance with wrapping_add.
+redismodule-rs built error replies with `c as u8` per char, so a code
+point whose low byte is 0 ('一' U+4E00, 'Ā' U+0100) became a NUL and
+`CString::new(..).unwrap()` panicked, killing Redis; every other
+non-ASCII character was truncated to a garbage byte. Point redis-module
+at the fork branch that keeps the message bytes verbatim
+(AviAvni/redismodule-rs#1) and add a flow test.
 
-Closes #2894
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+* test: move the #3185 UTF-8 error-reply test into test_query_validation
 
-* review: RangeIter advances only while another element is due
-
-Instead of a wrapping add past the last element, the iterator now steps
-only when another element remains. That element is inside the range, so
-the add cannot overflow, and nothing wraps at all; a debug build would
-panic if that ever stopped holding.
+assert_error_reply (error reply + server still answers) goes to common.py
+for reuse.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `graph/src/runtime/eval.rs` (modified, +54/-14)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -95,31 +95,41 @@ fn classify_join_keys(values: Vec<Value>) -> (Column, NullBitmap) {
+@@ -253,7 +253,7 @@ dependencies = [
+ [[package]]
+ name = "common"
+ version = "0.1.0"
+-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
++source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
  
- /// Lazy integer range iterator backing `UNWIND range(a, b, step)`: yields
- /// `Value::Int`s on the fly without materialising an intermediate
--/// `Value::List`. `step` is stored as a positive magnitude and `up` selects the
--/// direction (ascending when the original step was positive). Boxed into a
--/// [`RowIter::many`] by [`ExprEval::eval_iter_expr`].
-+/// `Value::List`. Boxed into a [`RowIter::many`] by
-+/// [`ExprEval::eval_iter_expr`].
-+///
-+/// Termination is driven by the element count `remaining` (computed exactly by
-+/// the caller), not by comparing `current` against the end: a range whose last
-+/// element lies within one `step` of `i64::MAX`/`i64::MIN` would otherwise
-+/// overflow when stepping past it.
- struct RangeIter {
-     current: i64,
--    end: i64,
-     step: i64,
--    up: bool,
-+    remaining: u64,
- }
+ [[package]]
+ name = "convert_case"
+@@ -1191,7 +1191,7 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
+ [[package]]
+ name = "redis-module"
+ version = "99.99.99"
+-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
++source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+ dependencies = [
+  "backtrace",
+  "bindgen",
+@@ -1213,7 +1213,7 @@ dependencies = [
+ [[package]]
+ name = "redis-module-macros"
+ version = "99.99.99"
+-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
++source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+ dependencies = [
+  "common",
+  "proc-macro2",
+@@ -1224,7 +1224,7 @@ dependencies = [
+ [[package]]
+ name = "redis-module-macros-internals"
+ version = "99.99.99"
+-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
++source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+ dependencies = [
+  "lazy_static",
+  "proc-macro2",
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -32,7 +32,7 @@ graph = { path = "graph", version = "0.1.0" }
+ lazy_static = "1.5.0"
+ libc = "0.2"
+ parking_lot = { version = "0.12.5", features = ["arc_lock"] }
+-redis-module = { git = "https://github.com/AviAvni/redismodule-rs", branch = "master" }
++redis-module = { git = "https://github.com/AviAvni/redismodule-rs", branch = "fix/resp-string-bytes" }
+ # Pinned exactly, not caret-matched. Two engines have to serialize the same
+ # ids to the same bytes (#2698), and roaring's output is not stable across
+ # releases by contract: `optimize()` is path-dependent, and the container
+@@ -46,7 +46,7 @@ thin-vec = "0.2.18"
+ orx-tree = "2.2.0"
  
- impl Iterator for RangeIter {
-     type Item = Value;
+ [build-dependencies]
+-redis-module-macros = { git = "https://github.com/AviAvni/redismodule-rs", branch = "master" }
++redis-module-macros = { git = "https://github.com/AviAvni/redismodule-rs", branch = "fix/resp-string-bytes" }
  
-     fn next(&mut self) -> Option<Self::Item> {
--        if self.up {
--            if self.current > self.end {
--                return None;
--            }
--        } else if self.current < self.end {
-+        if self.remaining == 0 {
-             return None;
-         }
-+        self.remaining -= 1;
-         let val = self.current;
--        self.current += if self.up { self.step } else { -self.step };
-+        // Advance only while another element is due. That element lies inside
-+        // the range, so this add cannot overflow; stepping past the last one
-+        // (the only add that could) never happens.
-+        if self.remaining > 0 {
-+            self.current += self.step;
-+        }
-         Some(Value::Int(val))
-     }
+ [profile.dev]
+ opt-level = 2
+```
+
+**File**: `tests/flow/common.py` (modified, +13/-0)
+```diff
+@@ -843,3 +843,16 @@ def wrapper(x, *args, **kwargs):
+             return f(x, *args, **kwargs)
+         return wrapper
+     return decorate
 +
-+    fn size_hint(&self) -> (usize, Option<usize>) {
-+        let n = usize::try_from(self.remaining).unwrap_or(usize::MAX);
-+        (n, Some(n))
-+    }
- }
- 
- // ---------------------------------------------------------------------------
-@@ -1225,9 +1235,9 @@ impl<'a> ExprEval<'a> {
++
++def assert_error_reply(env, conn, *cmd):
++    """Run `cmd`, require an error reply, and require the server to still answer
++    afterwards. Returns the error message, so callers can check its text too."""
++    try:
++        conn.execute_command(*cmd)
++        env.assertTrue(False, message=f"expected an error reply from {cmd!r}")
++        return None
++    except ResponseError as e:
++        msg = str(e)
++    env.assertTrue(conn.ping())
++    return msg
+```
+
+**File**: `tests/flow/test_query_validation.py` (modified, +14/-0)
+```diff
+@@ -1169,3 +1169,17 @@ def test51_pattern_comprehension_reading_a_loop_variable(self):
+             self.env.assertEqual(actual, [['a', 1], ['b', 0]])
+         finally:
+             g.delete()
++
++    # An error reply used to be built one `char` at a time with `c as u8`, so any
++    # code point whose low byte is 0 -- '一' (U+4E00), 'Ā' (U+0100) -- became a NUL,
++    # and the `CString::new(..).unwrap()` that followed panicked and took Redis down
++    # (#3185); every other non-ASCII character came back as a garbage byte. An error
++    # reply must keep its message's UTF-8 verbatim and never take the server down.
++    def test52_error_reply_keeps_utf8_and_never_crashes(self):
++        con = self.redis_con
++        for cmd in ("GRAPH.QUERY", "GRAPH.RO_QUERY", "GRAPH.EXPLAIN"):
++            msg = assert_error_reply(self.env, con, cmd, GRAPH_ID,
++                                     "MATCH (n:Person {name:'一'}) RETURN n +")
++            self.env.assertContains("'一'", msg)
++            msg = assert_error_reply(self.env, con, cmd, GRAPH_ID, "RETURN 'Ā中文' +")
++            self.env.assertContains("Ā中文", msg)
+```
+
+---
+
+### Incident Patch 2: `b774fdfa` (2026-10-21)
+**Commit Message**: fix: validate the clauses that follow a procedure CALL (#3297)
+
+The `Call` arm of `inner_validate` returned `Ok(())` without validating
+the clauses after it, so `CALL db.labels() YIELD label MATCH (n)`
+reached the planner and panicked in `utilize_node_by_id`, a trailing
+UNWIND ran, and CREATE accepted two relationship types. Continue
+validation like every other arm does.
+
+Closes #3279
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `graph/src/parser/ast.rs` (modified, +2/-1)
+```diff
+@@ -1258,7 +1258,8 @@ impl<TVar: Eq + Hash + Display> QueryIR<TVar> {
+                         "The first argument of db.idx.fulltext.drop must be a string literal",
+                     ));
                  }
-                 let iter = RangeIter {
-                     current: start,
--                    end,
--                    step: step.unsigned_abs() as i64,
--                    up: step > 0,
-+                    step,
-+                    // Bounded by `u32::MAX` above.
-+                    remaining: length as u64,
-                 };
-                 Ok(Some(RowIter::many(Box::new(iter))))
+-                Ok(())
++                iter.next()
++                    .map_or(Ok(()), |first| first.inner_validate(iter))
              }
-@@ -1805,3 +1815,33 @@ pub fn evaluate_param(expr: &DynNode<ExprIR<Arc<String>>>) -> Result<Value, Stri
-         _ => Err(String::from("Invalid parameter expression.")),
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn collect_range(
-+        current: i64,
-+        step: i64,
-+        remaining: u64,
-+    ) -> Vec<i64> {
-+        RangeIter {
-+            current,
-+            step,
-+            remaining,
-+        }
-+        .map(|v| match v {
-+            Value::Int(i) => i,
-+            v => panic!("expected Int, got {v:?}"),
-+        })
-+        .collect()
-+    }
-+
-+    #[test]
-+    fn range_iter_stops_at_i64_bounds() {
-+        assert_eq!(collect_range(i64::MAX - 1, 1, 2), [i64::MAX - 1, i64::MAX]);
-+        assert_eq!(collect_range(i64::MIN + 1, -1, 2), [i64::MIN + 1, i64::MIN]);
-+        assert_eq!(collect_range(0, i64::MIN, 1), [0]);
-+        assert_eq!(collect_range(-1, i64::MAX, 2), [-1, i64::MAX - 1]);
-+    }
-+}
+             Self::Match { pattern, .. } => {
+                 Self::validate_inlined_properties(pattern)?;
 ```
 
-**File**: `tests/test_overflow_crashes.py` (modified, +24/-0)
+**File**: `tests/flow/test_procedures.py` (modified, +34/-0)
 ```diff
-@@ -110,6 +110,30 @@ def test_unwind_range_normal_values_still_work():
-     assert res.result_set == [[[10, 8, 6, 4, 2]]]
- 
- 
+@@ -467,3 +467,37 @@ def test12_list_functions(self):
+         self.env.assertEqual(reducible, True)
+         self.env.assertEqual(aggregation, False)
+         self.env.assertEqual(variable_len, True)
 +
-+# The lazy UNWIND iterator used to step past the last element with an
-+# unchecked add: next to i64::MAX/MIN it wrapped around and never terminated
-+# (release) or panicked (debug). Results must match the eager range().
-+@pytest.mark.parametrize("args, expected", [
-+    ("9223372036854775806, 9223372036854775807",
-+     [9223372036854775806, 9223372036854775807]),
-+    ("9223372036854775800, 9223372036854775807, 3",
-+     [9223372036854775800, 9223372036854775803, 9223372036854775806]),
-+    ("-9223372036854775807, -9223372036854775807 - 1, -1",
-+     [-9223372036854775807, -9223372036854775808]),
-+    ("-9223372036854775801, -9223372036854775807 - 1, -4",
-+     [-9223372036854775801, -9223372036854775805]),
-+    ("0, -10, -9223372036854775807 - 1", [0]),
-+    ("-1, 9223372036854775807, 9223372036854775807",
-+     [-1, 9223372036854775806]),
-+])
-+def test_unwind_range_near_i64_bounds(args, expected):
-+    res = common.g.query(f"UNWIND range({args}) AS x RETURN collect(x)")
-+    assert res.result_set == [[expected]]
-+    res = common.g.query(f"RETURN range({args})")
-+    assert res.result_set == [[expected]]
++    def test13_clauses_after_call_are_validated(self):
++        # the clauses that follow a procedure call get the same checks as
++        # anywhere else; a trailing MATCH used to crash the server
++        # https://github.com/FalkorDB/FalkorDB/issues/3279
++        g = self.db.select_graph("validate_after_call")
++        g.query("CREATE (:N)")
 +
++        queries = [
++            ("CALL db.labels() YIELD label MATCH (n)",
++             "Query cannot conclude with MATCH"),
++            ("CALL db.labels() YIELD label WITH label MATCH (n)",
++             "Query cannot conclude with MATCH"),
++            ("CALL db.labels() YIELD label OPTIONAL MATCH (n)",
++             "Query cannot conclude with MATCH"),
++            ("CALL db.labels() YIELD label UNWIND [1] AS x",
++             "Query cannot conclude with UNWIND"),
++            ("CALL db.labels() YIELD label CREATE (a)-[:R|S]->(b)",
++             "Exactly one relationship type must be specified for each relation in a CREATE pattern"),
++            ("CALL db.labels() YIELD label MERGE (a)-[:R|S]->(b)",
++             "Exactly one relationship type must be specified for each relation in a MERGE pattern"),
++        ]
++        for query, error in queries:
++            try:
++                g.query(query)
++                self.env.assertTrue(False, message=query)
++            except redis.ResponseError as e:
++                self.env.assertContains(error, str(e))
 +
- # --- Duration overflow tests --------------------------------------------------
- # `construct_duration_secs` previously used unchecked i64 arithmetic on the
- # user-supplied duration components, panicking (and crashing the server) on
++        # nothing was created, and valid queries after a CALL still run
++        self.env.assertEqual(g.query("MATCH ()-[r]->() RETURN count(r)").result_set, [[0]])
++        result = g.query("CALL db.labels() YIELD label MATCH (n) RETURN label, labels(n)")
++        self.env.assertEqual(result.result_set, [['N', ['N']]])
++        g.delete()
 ```
 
 ---
 
-### Incident Patch 2: `9d3869aa` (2026-10-20)
-**Commit Message**: fix: duration() string form reports week/day overflow instead of wrapping (#2935) (#2987)
+### Incident Patch 3: `9212add3` (2026-10-21)
+**Commit Message**: fix: an id seek on a graph without nodes no longer returns node 0 (#3353) (#3394)
 
-parse_duration_string used unchecked n * 7 and +=, so
-duration('P2635249153387078803W') wrapped to P5D in release (and
-panicked in debug). Use checked arithmetic and return the same
-overflow error the map form returns.
+`evaluate_id_filter` caps the seek range at `max_node_id()`, which is 0
+both when id 0 is the only id and when no id was ever handed out. On a
+graph that never had a node, `id(n) = 0`, `id(n) >= 0` and `id(n) < 3`
+therefore yielded a phantom node 0, and `DELETE` on it failed with an
+internal "never allocated" error. Return no range when the graph has no
+live nodes.
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `graph/src/runtime/functions/temporal.rs` (modified, +11/-2)
+**File**: `graph/src/runtime/runtime.rs` (modified, +6/-0)
 ```diff
-@@ -388,8 +388,17 @@ fn parse_duration_string(s: &str) -> Result<(i64, i64, i64, i64, i64, i64, i64),
-             match ch {
-                 'Y' => years = n,
-                 'M' => months = n,
--                'W' => days += n * 7,
--                'D' => days += n,
-+                'W' => {
-+                    days = n
-+                        .checked_mul(7)
-+                        .and_then(|w| days.checked_add(w))
-+                        .ok_or_else(|| format!("Duration overflow: weeks={n}"))?;
-+                }
-+                'D' => {
-+                    days = days
-+                        .checked_add(n)
-+                        .ok_or_else(|| format!("Duration overflow: days={n}"))?;
-+                }
-                 _ => return Err(format!("Unknown duration component: {ch}")),
+@@ -1361,6 +1361,12 @@ impl<'a> Runtime<'a> {
+                 }
              }
          }
++        // `max_node_id()` is 0 both when id 0 is the only id and when no id
++        // was ever handed out, so `min..=max` would seek a node 0 that was
++        // never created.
++        if self.g.borrow().node_count() == 0 {
++            return Ok(None);
++        }
+         let mut result = RoaringTreemap::new();
+         result.insert_range(min..=max);
+         Ok(Some(result))
 ```
 
-**File**: `tests/flow/test_temporal.py` (modified, +9/-0)
+**File**: `tests/flow/test_node_by_id.py` (modified, +25/-0)
 ```diff
-@@ -450,6 +450,15 @@ def test_duration_from_string(self):
-         result = self.graph.query("RETURN toString(duration('P1M')) AS s")
-         self.env.assertEqual(result.result_set[0], ["P1M"])
- 
-+        # huge week/day counts are an overflow error, not a silently wrapped
-+        # duration (2635249153387078803 * 7 wraps to 5 in i64)
-+        for s in ['P2635249153387078803W', 'P1W9223372036854775807D']:
-+            try:
-+                self.graph.query(f"RETURN duration('{s}')")
-+                self.env.assertFalse(True)
-+            except ResponseError as e:
-+                self.env.assertIn("overflow", str(e))
+@@ -278,3 +278,28 @@ def test_parenthesised_id_predicates(self):
+             self.env.assertNotContains("All Node Scan", plan, message=q)
+             self.env.assertNotContains("Filter", plan, message=q)
+             self.env.assertEqual(self.graph.query(q, params).result_set, expected, message=q)
 +
-     def test_month_end_duration_arithmetic(self):
-         result = self.graph.query(
-             """
-```
-
----
-
-### Incident Patch 3: `737dfb5d` (2026-10-20)
-**Commit Message**: fix: temporal constructors never panic on out-of-range components (#2930) (#2950)
-
-Range-check week (1-53), quarter (1-4) and dayOfQuarter (1-92) with C's
-error message before any chrono arithmetic, convert year/month/day with
-try_from instead of truncating casts, add the week offset with
-checked_add_signed, and split the week string with split_at_checked so a
-multi-byte character errors instead of panicking.
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `graph/src/runtime/functions/temporal.rs` (modified, +158/-14)
-```diff
-@@ -58,7 +58,27 @@ fn get_int_field(
-     })
- }
- 
-+/// Validate an optional date component against its inclusive range, with the
-+/// same message as the C implementation.
-+fn check_range(
-+    name: &str,
-+    value: Option<i64>,
-+    min: i64,
-+    max: i64,
-+) -> Result<(), String> {
-+    match value {
-+        Some(v) if !(min..=max).contains(&v) => Err(format!(
-+            "Invalid value for {name} (valid values {min} - {max})"
-+        )),
-+        _ => Ok(()),
-+    }
-+}
-+
- /// Build a NaiveDate from optional components. Supports ymd, week, and quarter modes.
-+///
-+/// Every component is range-checked before it reaches chrono: chrono's
-+/// `NaiveDate + TimeDelta` and `TimeDelta::days` panic on overflow, and a
-+/// panic here takes the whole server down.
- fn date_from_components(
-     year: Option<i64>,
-     month: Option<i64>,
-@@ -68,9 +88,11 @@ fn date_from_components(
-     quarter: Option<i64>,
-     day_of_quarter: Option<i64>,
- ) -> Result<NaiveDate, String> {
--    let year = year.unwrap_or(1970) as i32;
-+    let year = year.unwrap_or(1970);
-+    let year = i32::try_from(year).map_err(|_| format!("Invalid year: {year}"))?;
- 
-     if let Some(week) = week {
-+        check_range("week", Some(week), 1, 53)?;
-         let dow_raw = day_of_week.unwrap_or(1);
-         if !(0..=6).contains(&dow_raw) {
-             return Err(format!("Invalid dayOfWeek: {dow_raw}, expected 0..6"));
-@@ -79,14 +101,17 @@ fn date_from_components(
-         let jan4 =
-             NaiveDate::from_ymd_opt(year, 1, 4).ok_or_else(|| format!("Invalid year: {year}"))?;
-         let weekday_of_jan4 = jan4.weekday().num_days_from_monday();
--        let iso_week1_monday = jan4 - chrono::Duration::days(i64::from(weekday_of_jan4));
--        let target_monday = iso_week1_monday + chrono::Duration::days((week - 1) * 7);
-         let day_offset = if dow == 0 { 6 } else { i64::from(dow) - 1 };
--        let result = target_monday + chrono::Duration::days(day_offset);
--        return Ok(result);
-+        // week is in 1..=53, so the offset is at most 370 days
-+        let days = (week - 1) * 7 + day_offset - i64::from(weekday_of_jan4);
-+        return jan4
-+            .checked_add_signed(chrono::Duration::days(days))
-+            .ok_or_else(|| format!("Invalid date: year={year}, week={week}"));
-     }
- 
-     if let Some(quarter) = quarter {
-+        check_range("quarter", Some(quarter), 1, 4)?;
-+        check_range("dayOfQuarter", day_of_quarter, 1, 92)?;
-         let doq = day_of_quarter.unwrap_or(1);
-         let quarter_start_month = ((quarter - 1) * 3 + 1) as u32;
-         let base = NaiveDate::from_ymd_opt(year, quarter_start_month, 1)
-@@ -96,9 +121,12 @@ fn date_from_components(
-             .ok_or_else(|| format!("Invalid dayOfQuarter: {doq}"));
-     }
- 
--    let month = month.unwrap_or(1) as u32;
--    let day = day.unwrap_or(1) as u32;
--    NaiveDate::from_ymd_opt(year, month, day)
-+    let month = month.unwrap_or(1);
-+    let day = day.unwrap_or(1);
-+    u32::try_from(month)
-+        .ok()
-+        .zip(u32::try_from(day).ok())
-+        .and_then(|(m, d)| NaiveDate::from_ymd_opt(year, m, d))
-         .ok_or_else(|| format!("Invalid date: year={year}, month={month}, day={day}"))
- }
- 
-@@ -255,12 +283,13 @@ fn parse_week_date(s: &str) -> Result<NaiveDate, String> {
-         let week: u32 = rest.parse().map_err(|_| format!("Invalid week: {s}"))?;
-         (week, chrono::Weekday::Mon)
-     } else {
--        let week: u32 = rest[..2]
--            .parse()
--            .map_err(|_| format!("Invalid week: {s}"))?;
--        let d: u32 = rest[2..]
--            .parse()
--            .map_err(|_| format!("Invalid day of week: {s}"))?;
-+        // `split_at_checked` rather than `rest[..2]`: byte 2 may fall inside a
-+        // multi-byte character, and slicing there panics.
-+        let (week, d) = rest
-+            .split_at_checked(2)
-+            .ok_or_else(|| format!("Invalid week: {s}"))?;
-+        let week: u32 = week.parse().map_err(|_| format!("Invalid week: {s}"))?;
-+        let d: u32 = d.parse().map_err(|_| format!("Invalid day of week: {s}"))?;
-         let weekday = match d {
-             1 => chrono::Weekday::Mon,
-             2 => chrono::Weekday::Tue,
-@@ -846,6 +875,121 @@ pub fn register(funcs: &mut Functions) {
-     funcs.set_struct_fn("duration", duration_struct_pure, DURATION_SLOTS);
- }
- 
-+#[cfg(test)]
-+mod tests {
-+    use super::{date_pure, date_struct_pure, localdatetime_pure};
-+    use crate::runtime::{ordermap::OrderMap, value::Value};
-+    use std::sync::Arc;
-+
-+    fn map(entries: &[(&str, i64)]) -> Value {
-+        Value::Map(Arc::new(OrderMap::from_vec(
-+            entries
-+                .iter()
-+                .map(|(k, v)| (Arc::new((*k).to_string()), Value::Int(*v)))
-+                .collect(),
-+        )))
-+    }
-+
-+    fn date_slots(
-+        year: i64,
-+        week: Option<i64>,
-+        quarter: Option<i64>,
-+        day_of_quarter: Option<i64>,
-+    ) -> Vec<Value> {
-+        let slot = |v: Option<i6
-```
-
-**File**: `tests/flow/test_temporal.py` (modified, +25/-0)
-```diff
-@@ -182,6 +182,31 @@ def test_date_to_from_string(self):
-             self.env.assertTrue(b)
-             self.env.assertEqual(ts, expected)
- 
-+    # out-of-range components and malformed week strings used to panic inside
-+    # chrono and crash the server; they must be rejected with an error
-+    def test_date_out_of_range_components(self):
++    def test_seek_on_a_graph_without_nodes(self):
++        # #3353: id 0 was sought on a graph that never had a node.
++        g = self.db.select_graph("node_by_id_empty")
 +        queries = [
-+            ("RETURN date({year: 2020, week: 10000000000})", "week"),
-+            ("RETURN date({year: 2020, week: 0})", "week"),
-+            ("RETURN localdatetime({year: 2020, week: -9223372036854775807})", "week"),
-+            ("RETURN date({year: 2020, quarter: 2, dayOfQuarter: 9223372036854775807})", "dayOfQuarter"),
-+            ("RETURN date({year: 2021, quarter: 1, dayOfQuarter: 200})", "dayOfQuarter"),
-+            ("RETURN date({year: 2020, quarter: 4294967297})", "quarter"),
-+            ("RETURN date('2020W1é')", "week"),
++            "MATCH (n) WHERE id(n) = 0 RETURN n",
++            "MATCH (n) WHERE id(n) >= 0 RETURN n",
++            "MATCH (n) WHERE id(n) < 3 RETURN n",
++            "MATCH (n) WHERE id(n) = 0 DELETE n",
 +        ]
-+        for q, msg in queries:
-+            try:
-+                self.graph.query(q)
-+                self.env.assertFalse(True)
-+            except ResponseError as e:
-+                self.env.assertIn(msg, str(e))
++        g.query("RETURN 1")
++        for q in queries:
++            self.env.assertContains("NodeByIdSeek", str(g.explain(q)), message=q)
++            self.env.assertEqual(g.query(q).result_set, [], message=q)
 +
-+        # the server is still up and in-range components still work
-+        q = """RETURN toString(date({year: 1984, week: 53})),
-+                      toString(date({year: 1984, quarter: 4, dayOfQuarter: 92}))"""
-+        res = self.graph.query(q)
-+        self.env.assertEqual(res.result_set[0], ['1984-12-31', '1984-12-31'])
++        # Nor once every node it had is deleted.
++        g.query("CREATE (), ()")
++        g.query("MATCH (n) DELETE n")
++        for q in queries:
++            self.env.assertEqual(g.query(q).result_set, [], message=q)
 +
-     def test_date_compare(self):
-         q = """WITH date({year: 1980, month: 12, day: 24}) AS x,
-                     date({year: 1984, month: 10, day: 11}) AS d
++        # A node created in the same query is still found.
++        res = g.query("CREATE (a) WITH a MATCH (n) WHERE id(n) = id(a) RETURN count(n)")
++        self.env.assertEqual(res.result_set, [[1]])
++        g.delete()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3419** (2026-10-20): fix: accept any non-negative VKEY_MAX_ENTITY_COUNT, as C does (@AviAvni)
-- **PR #3418** (closed): fix: derive the schema version from the schema names; restore C's mismatch wording (@Anchel123)
-- **PR #3409** (2026-10-19): 4.22.2 (@swilly22)
-- **PR #3406** (2026-10-19): fix(reduce): avoid OOB record index when iterator shadows a bound ali… (@swilly22)
-- **PR #3390** (closed): fix: a superseded index population job yields, not whichever checks first (#3389) (@gkorland)
-- **PR #3346** (2026-10-15): accept index trimmed values (@swilly22)
+- **PR #3474** (2026-10-22): fix(optional-traverse): guard NULL GraphBLAS vectors in CondTraverseReset (@swilly22)
+- **PR #3465** (2026-10-22): [6.0] Batch backport (56 commits) (@github-actions[bot])
+- **PR #3440** (2026-10-21): chore(deps): bump the cargo-deps group across 1 directory with 7 updates (@dependabot[bot])
+- **PR #3428** (2026-10-21): fix: error replies keep UTF-8 and never panic on '一' (#3185) (@AviAvni)
+- **PR #3422** (2026-10-21): reentrant write lock (@swilly22)
+- **PR #3420** (2026-10-21): Bump GraphBLAS to 10.5.2-beta2 and regenerate PreJIT kernels (@GomezGab)
 
 ---
 
@@ -2752,76 +2617,34 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899)
+## X. error replies keep UTF-8 and never panic on '一' (#3185) (#3428)
 
 **RULE**:
-When implementing operations in `graph/src/runtime/eval.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e63165cb`: UNWIND range() near i64::MAX/MIN no longer overflows the lazy iterator (#2899). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b97da5a1`: error replies keep UTF-8 and never panic on '一' (#3185) (#3428). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/runtime/eval.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// `Value::List`. Boxed into a [`RowIter::many`] by
-/// [`ExprEval::eval_iter_expr`].
-///
-/// Termination is driven by the element count `remaining` (computed exactly by
-/// the caller), not by comparing `current` against the end: a range whose last
-/// element lies within one `step` of `i64::MAX`/`i64::MIN` would otherwise
-/// overflow when stepping past it.
-    remaining: u64,
-        if self.remaining == 0 {
-        self.remaining -= 1;
-        // Advance only while another element is due. That element lies inside
-        // the range, so this add cannot overflow; stepping past the last one
-        // (the only add that could) never happens.
-        if self.remaining > 0 {
-            self.current += self.step;
-        }
-
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        let n = usize::try_from(self.remaining).unwrap_or(usize::MAX);
-        (n, Some(n))
-    }
-                    step,
-                    // Bounded by `u32::MAX` above.
-                    remaining: length as u64,
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn collect_range(
-        current: i64,
-        step: i64,
-        remaining: u64,
-    ) -> Vec<i64> {
-        RangeIter {
-            curren
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// `Value::List`. `step` is stored as a positive magnitude and `up` selects the
-/// direction (ascending when the original step was positive). Boxed into a
-/// [`RowIter::many`] by [`ExprEval::eval_iter_expr`].
-    end: i64,
-    up: bool,
-        if self.up {
-            if self.current > self.end {
-                return None;
-            }
-        } else if self.current < self.end {
-        self.current += if self.up { self.step } else { -self.step };
-                    end,
-                    step: step.unsigned_abs() as i64,
-                    up: step > 0,
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
+source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e63165cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b97da5a1` are properly handled with clean fallback behavior.

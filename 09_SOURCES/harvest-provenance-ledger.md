@@ -4402,3 +4402,6 @@ Every entry in this ledger must capture:
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `0acf0e89` | Multi-dimensional audit evidence | 2026-10-22T18:50:29.966Z |
 | `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `b45055d1` | Multi-dimensional audit evidence | 2026-10-22T18:56:56.015Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `d1936d74` | Multi-dimensional audit evidence | 2026-10-22T18:56:56.080Z |
+| `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `8cdf5a58` | Multi-dimensional audit evidence | 2026-10-22T19:03:14.046Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `b84473a7` | Multi-dimensional audit evidence | 2026-10-22T19:03:14.703Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `6b225dee` | Multi-dimensional audit evidence | 2026-10-22T19:03:16.165Z |

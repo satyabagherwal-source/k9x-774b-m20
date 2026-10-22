@@ -4395,3 +4395,6 @@
 | `CYCLE-20261022-C1XM` | `2026-10-22T18:50:29.962Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3700` | Yes (`05b9de94...`) |
 | `CYCLE-20261022-KBT8` | `2026-10-22T18:56:56.012Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3701` | Yes (`c0ffe9f8...`) |
 | `CYCLE-20261022-KBV1` | `2026-10-22T18:56:56.077Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3702` | Yes (`51940044...`) |
+| `CYCLE-20261022-SFI2` | `2026-10-22T19:03:14.042Z` | `elastic/eui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3703` | Yes (`e56f4d2e...`) |
+| `CYCLE-20261022-SG0C` | `2026-10-22T19:03:14.700Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3704` | Yes (`e3ddaff1...`) |
+| `CYCLE-20261022-SH4Y` | `2026-10-22T19:03:16.162Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3705` | Yes (`58e40546...`) |

@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "b6567cb9",
+    "sourceVersion": "b84473a7",
     "license": "NOASSERTION",
-    "contentHash": "9b165c807f96431f9903f682866a5818d3e3c68d71ee29da0fab102812a223b6",
-    "lastHarvestedAt": "2026-10-20T22:13:07.721Z",
+    "contentHash": "e3ddaff10241e0f1042e48282e667977a7ed62e0cbb3dbed87fd2c7c19addc0e",
+    "lastHarvestedAt": "2026-10-22T19:03:14.703Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -4833,10 +4833,10 @@
     "repository": "elastic/eui",
     "platform": "github",
     "sourceUrl": "https://github.com/elastic/eui",
-    "sourceVersion": "42254b6c",
+    "sourceVersion": "8cdf5a58",
     "license": "NOASSERTION",
-    "contentHash": "181381d0597000a4f48896d2214aa3916dd8a607d9bcb1d1f5a3216c6755be5a",
-    "lastHarvestedAt": "2026-10-20T14:57:45.222Z",
+    "contentHash": "e56f4d2eade9c347148aa497e0070c5cbe54dea4d3fb7cd9927bde5ef8602cb5",
+    "lastHarvestedAt": "2026-10-22T19:03:14.046Z",
     "learningId": "learn-github-elastic-eui"
   },
   "aome510-spotify-player": {
@@ -9393,10 +9393,10 @@
     "repository": "fb55/css-select",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/css-select",
-    "sourceVersion": "66d88088",
+    "sourceVersion": "6b225dee",
     "license": "BSD-2-Clause",
-    "contentHash": "56b2f4ff3f1865a19dc1e34fe64a37d5da1595584911e563e1dd494a57bd29d8",
-    "lastHarvestedAt": "2026-10-19T23:02:53.838Z",
+    "contentHash": "58e405469fba78ad6466a727890e5873dd91c8764b9740c4b1f9c55a4e30e44a",
+    "lastHarvestedAt": "2026-10-22T19:03:16.165Z",
     "learningId": "learn-github-fb55-css-select"
   },
   "sindresorhus-keyboardshortcuts": {
