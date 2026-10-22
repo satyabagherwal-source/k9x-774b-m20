@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T20:45:37.000Z",
+  "last_updated": "2026-10-22T20:52:07.479Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "032281aed665b02573e96750c19e4a52f3c3f418819dc3fc07dab144976d9884",
-      "verified_at": "2026-10-22T18:37:35.821Z",
+      "content_hash": "e51c4b585f4fbd6e68828d2285087fc3f1d255f6f1d0282d95cf236082cff29e",
+      "verified_at": "2026-10-22T20:52:07.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:37:35.821Z"
+      "last_updated": "2026-10-22T20:52:07.478Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "3b6ab25465678cf039d00ac5672c122b6dfe9d105deec18b7d2edd0177cd2b8f",
-      "verified_at": "2026-10-21T02:21:27.805Z",
+      "content_hash": "b27b8563fb916cfef636c413407974f9ada2832d8606c9e02c53f710b7ee8405",
+      "verified_at": "2026-10-22T20:52:00.169Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:21:27.805Z"
+      "last_updated": "2026-10-22T20:52:00.169Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
-      "verified_at": "2026-10-22T17:25:43.787Z",
+      "content_hash": "5f64aa0c38a3563c6bfb71310f63355622a5b6fddccc6bd012ba19aed99e8c18",
+      "verified_at": "2026-10-22T20:52:02.440Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:25:43.787Z"
+      "last_updated": "2026-10-22T20:52:02.440Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "91a534ec975abccb58557398ee23eeb0f61931846f65c647709307618c605ba9",
-      "verified_at": "2026-10-20T23:31:28.619Z",
+      "content_hash": "4639e821cf92ce63d0b695b98194dd115f927d953af44df54c4d0cc1bc6d978b",
+      "verified_at": "2026-10-22T20:51:52.079Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:31:28.619Z"
+      "last_updated": "2026-10-22T20:51:52.079Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -8271,14 +8271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arco-design-arco-design-vue",
-      "content_hash": "502e364c9be995e4d503de510218493dfbc2c10ac730537d242bb4233a56ea8d",
-      "verified_at": "2026-10-20T16:21:26.495Z",
+      "content_hash": "b65dcdcbf3460037ba8fe3a146b9f68e6284c1a75242d4b7f110360f161f49c3",
+      "verified_at": "2026-10-22T20:51:50.348Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:21:26.495Z"
+      "last_updated": "2026-10-22T20:51:50.348Z"
     },
     "telemt/telemt": {
       "repository": "telemt/telemt",
@@ -14496,14 +14496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-urllib3-urllib3",
-      "content_hash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
-      "verified_at": "2026-10-20T00:19:05.574Z",
+      "content_hash": "dd005f976aa1dc04a008faa55fd8f1c6ca5a078c8c0e77c8d10f4689440d9edf",
+      "verified_at": "2026-10-22T20:51:55.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:19:05.574Z"
+      "last_updated": "2026-10-22T20:51:55.591Z"
     },
     "simibac/ConfettiSwiftUI": {
       "repository": "simibac/ConfettiSwiftUI",
@@ -15051,14 +15051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keyboardkit-keyboardkit",
-      "content_hash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
-      "verified_at": "2026-10-20T02:21:55.332Z",
+      "content_hash": "5ed390188f27ac2d758391ac60b72a3f2e45ed2b3f1197556dc6fca6f2ac8b81",
+      "verified_at": "2026-10-22T20:51:57.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:21:55.332Z"
+      "last_updated": "2026-10-22T20:51:57.378Z"
     },
     "evanw/esbuild": {
       "repository": "evanw/esbuild",

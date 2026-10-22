@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8507b422`  
+> **Source Version**: `5540a0d4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:37:35.357Z  
+> **Timestamp**: 2026-10-22T20:52:07.125Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:37:35.102Z  
+> **Harvest Timestamp**: 2026-10-22T20:52:05.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,45 +2209,292 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8507b422` (2026-10-22)
-**Commit Message**: docs: tweak README elevator-pitch wording and linebreaks
+### Incident Patch 1: `69f8b9d6` (2026-10-22)
+**Commit Message**: fix(stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed sum in the stats cache (#4889)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* fix(stats): weighted quantiles, weighted modes, --infer-boolean pairs, overflowed sum in cache
 
-**File**: `README.md` (modified, +1/-1)
+- Weighted quartiles/median/MAD/percentiles: the quantile total is now derived from the
+  ranked (value, weight) data itself. The per-sample accumulator also counted weights of
+  null cells, so upper targets were never reached (empty q1/q2/q3, fabricated `100: 0`),
+  and summing in input rather than sorted order could leave p100 just out of reach
+  through float rounding (weights 0.1/0.2/0.3).
+- Weighted mode/antimode/cardinality: zero and negative weights no longer create mode
+  entries, as the --weight docs promise (was: cardinality 3, antimode with 0 occurrences).
+- --infer-boolean: a 2-value column is Boolean only when one value matches the true side
+  and the other the false side of a pattern ("Fiona"/"Frank" both match f*).
+- StatsData.sum deserializes leniently, so an integer sum rendered as *OVERFLOW* no longer
+  makes the whole stats cache unreadable (`schema` failed with ExpectedFloat).
+
+Regression tests fail against the pre-fix code with the asserted values.
+
+
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -14,7 +14,7 @@
+@@ -72,6 +72,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
  
-  &nbsp;          |  Table of Contents
- :--------------------------|:-------------------------
--![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting, [FAIR](https://www.go-fair.org/fair-principles/)ifying,<br>visualizing, geocoding & documenting tabular data (CSV, TSV,<br>SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exercises](https://100.dathere.com)<br>* [FAQ](https://github.com/dathere/qsv/discussions/categories/faq)<br>* [Performance Tuning](docs/PERFORMANCE.md#performance-tuning)<br>* 👉 [Benchmarks](https://qsv.dathere.com/benchmarks) &nbsp;•&nbsp; [Interactive Benchmarks](https://github.com/dathere/qsv/wiki/Benchmarks) 🚀<br>* 📊 [Visualizations Gallery](https://dathere.github.io/qsv/gallery.html) 🗺️<br>* 🗃️ [Neuro](https://dathere.github.io/qsv/smart_allegheny_dogs.html)-[symbolic](https://dathere.github.io/qsv/smart_boston_311_2025.html), [Localizable](https://dathere.github.io/qsv/smart-colombia-calidad-aire.html), _**[Data](https://dathere.github.io/qsv/smart_nyc311.html) [Schematics](https://dathere.github.io/qsv/pitt311data.html)**_ 📈<br>* [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)<br>* [Feature Flags](#feature-flags)<br>* [Goals/Non-goals](#goals--non-goals)<br>* [Testing](#testing)<br>* [NYC&nbsp;SOD&nbsp;2022](https://docs.google.com/presentation/d/e/2PACX-1vQ12ndZL--gkz0HLQRaxqsNOwzddkv1iUKB3sq661yA77OPlAsmHJHpjaqt9s9QEf73VqMfb0cv4jHU/pub?start=false&loop=false&delayms=3000)/[csv,conf,v8](https://docs.google.com/presentation/d/10T_3MyIqS5UsKxJaOY7Ktrd-GfhJelQImlE_qYmtuis/edit#slide=id.g2e0f1e7aa0e_0_62)/[PyConUS&nbsp;2025](https://docs.google.com/presentation/d/e/2PACX-1vRKFnU0Hm8oDrtCYbxcf96kHVsPcoLU05jPVNYaAs09D05gPMWDJ96q_4_zgUvadGro4deohisy-XtY/pub?start=false&loop=false&delayms=3000)/<br>&nbsp;&nbsp;&nbsp;[csv,conf,v9](https://docs.google.com/presentation/d/1j-S0q5gqR8agsqIPBVXabGEntMlc4FDTwb4r-v8-9tA/edit?usp=sharing)/[NYC&nbsp;SOD&nbsp;2026](https://docs.google.com/presentation/d/e/2PACX-1vTobPFucA1QO6u8dF3CyHjOctoom1DBmgQF558I_gx5e8cWPr0HLvJISvoaZyCMwLZZdDHlhK2cil0o/pub?start=false&loop=false&delayms=5000)<br>* **_"Have we achieved ACI?"_** series - [1](https://dathere.com/2026/01/the-peoples-api-is-finally-here/) • [2](https://dathere.github.io/NYC-Snow-Analysis-2010-2026-Claude-Cowork/)  • [3](https://dathere.github.io/peoples-api-demos/NYC-Housing-Policy-SOD2026/) • [4](https://dathere.com/2026/08/data-schematic-a-neuro-symbolic-visual-story-telling-data-explorer-dictionary/) <br>* [Sponsor](#sponsor)
-+![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, geocoding, formatting, converting, visualizing,<br>[FAIR](https://www.go-fair.org/fair-principles/)ifying, chatting, joining & documenting tabular data<br>(CSV/TSV/SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exe
+ ### Fixed
++- **`stats`: weighted quartiles, median, MAD and percentiles are correct when the column has nulls or fractional weights.** ([#4889](https://github.com/dathere/qsv/pull/4889)) Null cells' weights were counted in the quantile total but their values were never ranked, so a weighted column with empty cells could report empty `q1`/`q2_median`/`q3` and a `0` that isn't in the data for upper percentiles. Separately, the total was summed in a different order from the running sum, so float rounding could drop the 100th percentile to `0` (weights `0.1/0.2/0.3`) or move a median that sits exactly on the half-weight boundary.
++- **`stats --weight`: zero and negative weights no longer count toward `mode`, `antimode` and `cardinality`**, as the `--weight` help says ([#4889](https://github.com/dathere/qsv/pull/4889)). A zero-weight value used to show up as an antimode with 0 occurrences.
++- **`stats --infer-boolean` requires one true and one false value.** ([#4889](https://github.com/dathere/qsv/pull/4889)) A two-value column whose values both matched the same side of a pattern, such as `Fiona`/`Frank` (both `f*`) or `yes`/`yellow`, was typed `Boolean`. **Behavior change:** a column holding two spellings of the same answer, such as `Yes`/`Y` or `true`/`TRUE`, is now typed `String` instead of `Boolean`, which can change the types that `schema`, `tojsonl` and other stats-cache consumers infer for it.
++- **An integer `sum` that overflows no longer breaks the stats cache.** ([#4889](https://github.com/dathere/qsv/pull/4889)) The `*OVERFLOW*`/`*UNDERFLOW*` sum made the cached stats unreadable, so `schema` failed with `ExpectedFloat` and `tojsonl` could not infer field types.
+ - **`validate`: the `idn-hostname` and `idn-email` formats are checked again.** ([#4886](https://github.com/dathere/qsv/pull/4886)) jsonschema 0.52 moved them behind its `idna` feature, which qsv's build didn't enable. Since then, row validation accepted any value for them and `validate schema` rejected schemas that used them.
+ - **`validate`: the error report names columns containing `/` or `~` correctly.** ([#4886](https://github.com/dathere/qsv/pull/4886)) The `field` column held the JSON Pointer form, so a column `a/b` was reported as `a~1b` and `c~d` as `c~0d`.
+ - **`validate`: a local schema or `dynamicEnum` file whose name starts with `http` is read from disk.** ([#4886](https://github.com/dathere/qsv/pull/4886)) Any name starting with `http`, such as `httpd.schema.json`, was taken for a URL and the fetch failed. Only `http://` and `https://` URLs are fetched now.
 ```
 
----
-
-### Incident Patch 2: `9972f5c4` (2026-10-22)
-**Commit Message**: docs: wordsmith qsv elevator-pitch 1-paragraph description
-
-[skip ci]
-
-**File**: `README.md` (modified, +1/-1)
+**File**: `src/cmd/stats.rs` (modified, +68/-40)
 ```diff
-@@ -14,7 +14,7 @@
+@@ -858,6 +858,10 @@ pub struct StatsData {
+     pub r#type: String,
+     #[serde(default)]
+     pub is_ascii: bool,
++    // lenient: an integer sum that overflows/underflows i64 renders as the *OVERFLOW* /
++    // *UNDERFLOW* sentinel, which a strict f64 rejected - failing the WHOLE record, so
++    // `schema` and `tojsonl` could not load the stats cache.
++    #[serde(default, deserialize_with = "de_lenient_f64")]
+     pub sum: Option<f64>,
+     pub min: Option<String>,
+     pub max: Option<String>,
+@@ -3351,8 +3355,8 @@ impl Args {
+         // accumulators: NaN then slipped past `add_weighted`'s `w <= 0.0` guard (every NaN
+         // comparison is false) and permanently poisoned sum_weights and weighted_mean, so
+         // weighted mean/sem/stddev/variance/cv for the ENTIRE column came out NaN. The sibling
+-        // guards (`total_weight` and the weighted-quantile buffer) use `weight > 0.0`, which
+-        // NaN fails, so they silently dropped the row instead - the same cell making the
++        // guard (the weighted-quantile buffer) uses `weight > 0.0`, which
++        // NaN fails, so it silently dropped the row instead - the same cell making the
+         // moments disagree with the quantiles.
+         let weight = if let Some(widx) = weight_col_idx {
+             if widx < row.len() {
+@@ -4567,8 +4571,7 @@ struct Stats {
+     // #[repr(u8)], so it is intentionally not asserted here)
  
-  &nbsp;          |  Table of Contents
- :--------------------------|:-------------------------
--![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a data-wrangling toolkit for querying, slicing,<br>sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting,<br>[FAIR](https://www.go-fair.org/fair-principles/)ifying & documenting tabular data (CSV, Excel, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exercises](https://100.dathere.com)<br>* [FAQ](https://github.com/dathere/qsv/discussions/categories/faq)<br>* [Performance Tuning](docs/PERFORMANCE.md#performance-tuning)<br>* 👉 [Benchmarks](https://qsv.dathere.com/benchmarks) &nbsp;•&nbsp; [Interactive Benchmarks](https://github.com/dathere/qsv/wiki/Benchmarks) 🚀<br>* 📊 [Visualizations Gallery](https://dathere.github.io/qsv/gallery.html) 🗺️<br>* 🗃️ [Neuro](https://dathere.github.io/qsv/smart_allegheny_dogs.html)-[symbolic](https://dathere.github.io/qsv/smart_boston_311_2025.html), [Localizable](https://dathere.github.io/qsv/smart-colombia-calidad-aire.html), _**[Data](https://dathere.github.io/qsv/smart_nyc311.html) [Schematics](https://dathere.github.io/qsv/pitt311data.html)**_ 📈<br>* [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)<br>* [Feature Flags](#feature-flags)<br>* [Goals/Non-goals](#goals--non-goals)<br>* [Testing](#testing)<br>* [NYC&nbsp;SOD&nbsp;2022](https://docs.google.com/presentation/d/e/2PACX-1vQ12ndZL--gkz0HLQRaxqsNOwzddkv1iUKB3sq661yA77OPlAsmHJHpjaqt9s9QEf73VqMfb0cv4jHU/pub?start=false&loop=false&delayms=3000)/[csv,conf,v8](https://docs.google.com/presentation/d/10T_3MyIqS5UsKxJaOY7Ktrd-GfhJelQImlE_qYmtuis/edit#slide=id.g2e0f1e7aa0e_0_62)/[PyConUS&nbsp;2025](https://docs.google.com/presentation/d/e/2PACX-1vRKFnU0Hm8oDrtCYbxcf96kHVsPcoLU05jPVNYaAs09D05gPMWDJ96q_4_zgUvadGro4deohisy-XtY/pub?start=false&loop=false&delayms=3000)/<br>&nbsp;&nbsp;&nbsp;[csv,conf,v9](https://docs.google.com/presentation/d/1j-S0q5gqR8agsqIPBVXabGEntMlc4FDTwb4r-v8-9tA/edit?usp=sharing)/[NYC&nbsp;SOD&nbsp;2026](https://docs.google.com/presentation/d/e/2PACX-1vTobPFucA1QO6u8dF3CyHjOctoom1DBmgQF558I_gx5e8cWPr0HLvJISvoaZyCMwLZZdDHlhK2cil0o/pub?start=false&loop=false&delayms=5000)<br>* **_"Have we achieved ACI?"_** series - [1](https://dathere.com/2026/01/the-peoples-api-is-finally-here/) • [2](https://dathere.github.io/NYC-Snow-Analysis-2010-2026-Claude-Cowork/)  • [3](https://dathere.github.io/peoples-api-demos/NYC-Housing-Policy-SOD2026/) • [4](https://dathere.com/2026/08/data-schematic-a-neuro-symbolic-visual-story-telling-data-explorer-dictionary/) <br>* [Sponsor](#sponsor)
-+![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting, [FAIR](https://www.go-fair.org/fair-principles/)ifying,<br>visualizing, geocoding & documenting tabular data (CSV, TSV,<br>SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exercises](https://100.dathere.com)<br>* [FAQ](https://github.com/dathere/qs
+     // Hot counters - all 8-byte aligned, accessed frequently
+-    nullcount:    u64, // 8 bytes - frequently updated counter
+-    total_weight: f64, // 8 bytes - frequently updated for weighted stats
++    nullcount: u64, // 8 bytes - frequently updated counter
+ 
+     // Configuration flags (accessed once during initialization, cold after init)
+     which: WhichStats, // 32 bytes - read-only after initialization
+@@ -4674,11 +4677,11 @@ impl WeightedOnlineStats {
+     fn add_weighted(&mut self, x: f64, w: f64) {
+         // The explicit NaN test is the point: a bare `w <= 0.0` is FALSE for NaN, so one NaN
+         // weight slipped into the accumulator and poisoned the column's weighted moments
+-        // forever. This is exactly equivalent to the sibling sites' `weight > 0.0` gate
+-        // (`total_weight` and the weighted-quantile buffer), spelled out rather than written
++        // forever. This is exactly equivalent to the sibling site's `weight > 0.0` gate
++        // (the weighted-quantile buffer), spelled out rather than written
+         // as `!(w > 0.0)` so the NaN case is visible instead of implied. add_row now
+         // normalizes non-finite weights to 1.0 before they reach here, so this is the belt to
+-        // that braces - but all three sites now agree, which is what stops them drifting.
++        // that braces - but both sites now agree, which is what stops them drifting.
+         if w.is_nan() || w <= 0.0 {
+             return;
+         }
+@@ -4810,14 +4813,24 @@ impl WeightedOnlineStats {
+ ///
+ /// * `data` - Vector of (value, weight) tuples (must be sorted by value, as sorted by
+ ///   `to_record()`)
+-/// * `total_weight` - Total sum of all weights
+ /// * `percentile` - Percentile to compute (0.0 to 1.0, e.g., 0.5 for median)
+ ///
+ /// # Returns
+ ///
+ /// The value at the specified percentile, computed using the weighted nearest-rank method (no
+ /// interpolation).
+-fn weighted_quantile(data: &[(f64, f64)], total_weight: f64, percentile: f64) -> Option<f64> {
++/// Sum of the weights of `data`, folded in slice order from 0.0 - the SAME order and start as
++/// the running `cum += w` in the weighted quantile functions below. Each of them derives its
++/// total from the slice it walks (never from a caller): float addition is not associative, so a
++/// total summed in any other order (input order, or value order for `weighted_mad`'s re-sorted
++/// deviations) can land just above the final running sum and leave the p100/Q3 target - or a
++/// median sitting exactly on a half-weight boundary - unreached.
++fn weighted_total(data: &[(f64, f64)]) -> f64 {
++    data.iter().fold(0.0, |acc, &(_, w)| acc + w)
++}
++
++fn weighted_quantile(data: &[(f64, f64)], percentile: f64) -> Option<f64> {
++    let total_weight = weighted_total(data);
+     if data.is_empty() || total_weight <= 0.0 {
+         return None;
+     }
+@@ -4847,12 +4860,12 @@ fn weighted_quantile(data: &[(f64, f64)], total_weight: f64, percentile: f64) ->
+ ///
+ /// * `data` - Vector of (value, weight) tuples (must be sorted by value, as sorted by
+ ///   `to_record()`)
+-/// * `total_weight` - Total sum of all weights
+ ///
+ /// # Returns
+ ///
+-/// Option containing (Q1, Q2, Q3) if data is not empty and `total_weight` > 0, None otherwise.
+-fn weighted_quartiles(data: &[(f64, f64)], total_weight: f64) -> Option<(f64, f64, f64)> {
++/// Option containing (Q1, Q2, Q3) if data is not empty and its total weight is > 0, None otherwise.
++fn weighted_quartiles(data: &[(f64, f64)]) -> Option<(f64, f64, f64)> {
++    let total_weight = weighted_total(data);
+     i
+```
+
+**File**: `src/util/json_out.rs` (modified, +3/-2)
+```diff
+@@ -278,8 +278,9 @@ fn csv_record_to_json_map(
+                         // Deliberately general rather than keyed to those 8 columns: the map is
+                         // per-COLUMN but a rendering is per-ROW, so the map cannot express this.
+                         // Verified across String/Boolean/NULL/Integer/Float/Date/DateTime columns
+-                        // that those 8 are the complete set of Float-typed cells that can be
+-                        // non-numeric, so no other field's Option<f64> can start rejecting lines.
++                        // that those 8 are the Float-typed cells that can be non-numeric, plus
++                        // `sum`, whose integer overflow renders as *OVERFLOW* / *UNDERFLOW*
++                        // (StatsData.sum is therefore deserialized leniently).
+                         serde_json::Value::String(val.to_owned())
+                     }
+                 },
+```
+
+**File**: `tests/test_stats.rs` (modified, +202/-0)
+```diff
+@@ -9915,3 +9915,205 @@ fn stats_new_cache_has_umask_default_permissions() {
+         "a successful install left a temp file behind: {strays:?}"
+     );
+ }
++
++fn stats_cell(got: &[Vec<String>], row: usize, col: &str) -> String {
++    let idx = got[0]
++        .iter()
++        .position(|h| h == col)
++        .unwrap_or_else(|| panic!("no `{col}` column in {:?}", got[0]));
++    got[row][idx].clone()
++}
++
++#[test]
++fn stats_weighted_null_cells_do_not_inflate_quantile_total() {
++    // Null cells used to add their weight to the quantile total while their (absent) values
++    // never reached the ranked data, so upper targets were unreachable: Q1/Q2/Q3 came out
++    // empty and the 75th/100th percentiles a fabricated 0.
++    let wrk = Workdir::new("stats_weighted_null_cells_do_not_inflate_quantile_total");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["x", "w"],
++            svec!["1", "1"],
++            svec!["2", "1"],
++            svec!["", "1"],
++            svec!["", "1"],
++        ],
++    );
++    let mut cmd = wrk.command("stats");
++    cmd.args(["--weight", "w", "--quartiles", "--mad", "--percentiles"])
++        .args(["--percentile-list", "25,50,75,100", "--select", "x"])
++        .arg("data.csv");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(stats_cell(&got, 1, "q1"), "1");
++    assert_eq!(stats_cell(&got, 1, "q2_median"), "1");
++    assert_eq!(stats_cell(&got, 1, "q3"), "2");
++    assert_eq!(stats_cell(&got, 1, "mad"), "0");
++    assert_eq!(
++        stats_cell(&got, 1, "percentiles"),
++        "25: 1|50: 1|75: 2|100: 2"
++    );
++}
++
++#[test]
++fn stats_weighted_percentiles_survive_float_rounding_of_the_total() {
++    // 0.1+0.2+0.3 (input order) != 0.3+0.2+0.1 (sorted order): a total summed in input
++    // order sat just above the final running sum, so p100 was never reached and kept its
++    // 0.0 placeholder, and p50 skipped past the exact half-way value.
++    let wrk = Workdir::new("stats_weighted_percentiles_survive_float_rounding_of_the_total");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["x", "w"],
++            svec!["30", "0.1"],
++            svec!["20", "0.2"],
++            svec!["10", "0.3"],
++        ],
++    );
++    let mut cmd = wrk.command("stats");
++    cmd.args([
++        "--weight",
++        "w",
++        "--percentiles",
++        "--percentile-list",
++        "50,100",
++    ])
++    .args(["--select", "x"])
++    .arg("data.csv");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(stats_cell(&got, 1, "percentiles"), "50: 10|100: 30");
++}
++
++#[test]
++fn stats_weighted_zero_and_negative_weights_excluded_from_modes() {
++    // --weight docs: zero and negative weights do not contribute. They used to still become
++    // mode-table keys: cardinality 3 and antimode `a` with 0 occurrences.
++    for (name, w) in [("zero", "0"), ("negative", "-1")] {
++        let wrk = Workdir::new(&format!(
++            "stats_weighted_{name}_weights_excluded_from_modes"
++        ));
++        wrk.create(
++            "data.csv",
++            vec![
++                svec!["value", "weight"],
++                svec!["a", w],
++                svec!["b", "2"],
++                svec!["a", w],
++                svec!["c", "1"],
++            ],
++        );
++        let mut cmd = wrk.command("stats");
++        cmd.args(["--weight", "weight", "--mode", "--cardinality"])
++            .arg("data.csv");
++        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++        assert_eq!(stats_cell(&got, 1, "cardinality"), "2", "{name} weights");
++        assert_eq!(stats_cell(&got, 1, "mode"), "b", "{name} weights");
++        assert_eq!(stats_cell(&got, 1, "antimode"), "c", "{name} weights");
++        assert_eq!(
++            stats_cell(&got, 1, "antimode_occurrences"),
++            "1",
++            "{name} weights"
++        );
++    }
++}
++
++#[test]
++fn stats_infer_boolean_requires_one_true_and_one_false_value() {
++    // With the default "t*:f*" pattern, "Fiona" and "Frank" both match the FALSE side;
++    // that is not a true/false pair. Control: "true"/"false" in the same file stays Boolean.
++    let wrk = Workdir::new("stats_infer_boolean_requires_one_true_and_one_false_value");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["name", "flag"],
++            svec!["Fiona", "true"],
++            svec!["Frank", "false"],
++            svec!["Fiona", "true"],
++        ],
++    );
++    let mut cmd = wrk.command("stats");
++    cmd.arg("--infer-boolean").arg("data.csv");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(stats_cell(&got, 1, "type"), "String");
++    assert_eq!(stats_cell(&got, 2, "type"), "Boolean");
++}
++
++#[test]
++#[cfg(any(feature = "feature_capable", feature = "lite"))]
++fn stats_integer_sum_overflow_keeps_the_stats_cache_readable() {
++    // An overflowing integer sum renders as *OVERFLOW*; the strict f64 `sum` f
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4890** (2026-10-22): ci(audit): ignore RUSTSEC-2026-0374 (basic-toml unmaintained) (@jqnatividad)
+- **PR #4889** (2026-10-22): fix(stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed sum in the stats cache (@jqnatividad)
 - **PR #4888** (2026-10-22): build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (@dependabot[bot])
 - **PR #4887** (2026-10-22): perf(validate): collect errors with Validator::iter_errors (about 2x faster on error-heavy files) (@jqnatividad)
 - **PR #4886** (2026-10-22): validate: jsonschema 0.60 follow-ups (idn formats, field names, validate schema parity, --offline, unknown-format warning) (@jqnatividad)
 - **PR #4885** (2026-10-22): fix(viz): draw auto-resolved state maps with Alaska/Hawaii on the albers usa inset map (@jqnatividad)
-- **PR #4884** (2026-10-22): test(viz): re-enable viz_denominator_census_is_reserved and make it test the reservation (@jqnatividad)
-- **PR #4883** (2026-10-22): fix(viz): extent outliers skip state-scoped sets and require a real gap (@jqnatividad)
 
 ---
 
@@ -2267,28 +2514,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: tweak README elevator-pitch wording and linebreaks
+## X. stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8507b422`: docs: tweak README elevator-pitch wording and linebreaks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69f8b9d6`: stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed sum in the stats cache (#4889). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, geocoding, formatting, converting, visualizing,<br>[FAIR](https://www.go-fair.org/fair-principles/)ifying, chatting, joining & documenting tabular data<br>(CSV/TSV/SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#
+- **`stats`: weighted quartiles, median, MAD and percentiles are correct when the column has nulls or fractional weights.** ([#4889](https://github.com/dathere/qsv/pull/4889)) Null cells' weights were counted in the quantile total but their values were never ranked, so a weighted column with empty cells could report empty `q1`/`q2_median`/`q3` and a `0` that isn't in the data for upper percentiles. Separately, the total was summed in a different order from the running sum, so float rounding could drop the 100th percentile to `0` (weights `0.1/0.2/0.3`) or move a median that sits exactly on the half-weight boundary.
+- **`stats --weight`: zero and negative weights no longer count toward `mode`, `antimode` and `cardinality`**, as the `--weight` help says ([#4889](https://github.com/dathere/qsv/pull/4889)). A zero-weight value used to show up as an antimode with 0 occurrences.
+- **`stats --infer-boolean` requires one true and one false value.** ([#4889](https://github.com/dathere/qsv/pull/4889)) A two-value column whose values both matched the same side of a pattern, such as `Fiona`/`Frank` (both `f*`) or `yes`/`yellow`, was typed `Boolean`. **Behavior change:** a column holding two sp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting, [FAIR](https://www.go-fair.org/fair-principles/)ifying,<br>visualizing, geocoding & documenting tabular data (CSV, TSV,<br>SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.m
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8507b422` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69f8b9d6` are properly handled with clean fallback behavior.

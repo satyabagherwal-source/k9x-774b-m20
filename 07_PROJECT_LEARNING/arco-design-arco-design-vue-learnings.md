@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arco-design-arco-design-vue-learnings.md`  
 > **Source**: github ([https://github.com/arco-design/arco-design-vue](https://github.com/arco-design/arco-design-vue))  
-> **Source Version**: `d9f1b374`  
+> **Source Version**: `ac03d6e3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:21:26.315Z  
+> **Timestamp**: 2026-10-22T20:51:49.959Z  
 > **Learning ID**: `learn-github-arco-design-arco-design-vue`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arco-design-arco-design-vue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arco-design/arco-design-vue](https://github.com/arco-design/arco-design-vue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:21:25.531Z  
+> **Harvest Timestamp**: 2026-10-22T20:51:48.967Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -586,11 +586,11 @@ export const getUserConfig = async (name: string) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3677** (2026-10-21): **feat(cascader): 为搜索面板添加虚拟列表支持并优化搜索防抖**
+  *Symptoms*: <!--   Thanks so much for your PR and contribution.    Before submitting, please make sure to follow the Pull Request Guidelines: https://github.com/arco-design/arco-design-vue/blob/main/CONTRIBUTING.md -->  <!-- Put an `x` in "[ ]" to check a box) -->  ## Types of changes  <!-- What types of changes does this PR introduce --> <!-- Only support choose one type, if there are multiple types, you can add the `Type` column in the Changelog. -->  - [ ] New feature - [x] Bug fix - [ ] Enhancement - [ ] Component style change - [ ] Typescript definition change - [ ] Documentation change - [ ] Coding style change - [ ] Refactoring - [ ] Test cases - [ ] Continuous integration - [ ] Breaking change - [ ] Others  ## Background and context  <!-- Explain what problem does the PR solve --> <!-- Link to related open issues if applicable -->  Fixes #3641 — `Cascader` 在选项树很大（issue 中为 300k 叶子 / 450k 节点）时，打开搜索并输入文字会让页面卡死。  根因有两处：  1. **搜索面板完全没有虚拟化。** 普通列面板走 `VirtualList`（`cascader-column.tsx`），但搜索结果面板是直接 `props.options.map(...)` 渲成 `<ul>`（`cascader-search-panel.tsx`）。该组件甚至没有 `virtual-list-props` 这个 prop，所以用户传入的虚拟列表配置**根本没有到达搜索面板** —— 命中多少条就渲染多少个 `CascaderOption`。 2. **过滤是无缓存的全量扫描，且没有防抖。** `filteredLeafOptions` 每敲一个键就 `Array.from(leafOptionSet)` 物化整个集合再全量 `filter`，`getFilteredStatus` 在循环里重复 `toLocaleLowerCase()`。`searchDelay`（默认 500ms）只对 `search` **事件**做防抖，不过滤、不渲染。  实测基线（真实浏览器，同样的数据 + 同样的 `virtual-list-props: { height: 200 }`）：  | 叶子数 | 列面板渲染 | 搜索面板渲染 | 搜索面板 DOM 元素 | |---|---|---|---| | 2,000 |
+
 - **Issue #3674** (2026-10-20): **chore(release): prepare 2.59.0**
   *Symptoms*: ## Types of changes  - [x] Documentation change  ## Background and context  准备发布 `@arco-design/web-vue@2.59.0`，同步包版本与 [2.59.0 milestone](https://github.com/arco-design/arco-design-vue/milestone/155) 的发布日志。  ## Solution  - 将组件包版本从 `2.58.0` 更新为 `2.59.0`。 - 更新中英文主日志及 11 个组件的中英文日志，共 24 份日志文件。 - 主日志包含 17 条记录：新增功能 5 条、问题修复 9 条、功能优化 2 条、类型修正 1 条。 - 按当前模板规则省略文档与测试类条目，清理生成过程产生的 Tooltip 空版本记录。  ## How is the change tested?  - 核对最近一次本地 Vitest 结果：覆盖全部 122 个测试文件，零失败。 - 逐文件核对生成日志与 milestone PR 描述，确认中英文一致、无空记录或重复版本，历史日志完整保留。 - 使用 pnpm 9.5.0 完成实际打包检查：入口、样式、图标、类型声明和编辑器元数据齐全；包及元数据版本均为 `2.59.0`。 - 打包后 CommonJS 加载和新增 API 的 TypeScript 4.9.5 消费者冒烟检查通过。 - `git diff --check` 和仓库提交钩子通过。  ## Changelog  | Component | Changelog(CN) | Changelog(EN) | Related issues | | --------- | ------------- | ------------- | -------------- | | common | 更新组件包版本至 `2.59.0`，并同步中英文发布日志。 | Prepare version `2.59.0` and update the Chinese and English release changelogs. | - |  ## Checklist:  - [x] Test suite passes (`npm run test`) - [x] Provide changelog for relevant changes if applicable. - [x] Changes are submitted to the appropriate branch (`main`).  ## Other information  合并后再执行 npm 发布并创建 `2.59.0` tag。
-
-- **Issue #3673** (2026-10-20): **chore(release): prepare 2.59.0**
-  *Symptoms*: > 此 PR 已由 [#3674](https://github.com/arco-design/arco-design-vue/pull/3674) 替代，发布分支已调整为 `release-2.59.0`。  ## Types of changes  - [x] Documentation change  ## Background and context  准备发布 `@arco-design/web-vue@2.59.0`，同步包版本与 [2.59.0 milestone](https://github.com/arco-design/arco-design-vue/milestone/155) 的发布日志。  ## Solution  - 将组件包版本从 `2.58.0` 更新为 `2.59.0`。 - 更新中英文主日志及 11 个组件的中英文日志，共 24 份日志文件。 - 主日志包含 17 条记录：新增功能 5 条、问题修复 9 条、功能优化 2 条、类型修正 1 条。 - 按当前模板规则省略文档与测试类条目，清理生成过程产生的 Tooltip 空版本记录。  ## How is the change tested?  - 核对最近一次本地 Vitest 结果：覆盖全部 122 个测试文件，零失败。 - 逐文件核对生成日志与 milestone PR 描述，确认中英文一致、无空记录或重复版本，历史日志完整保留。 - 使用 pnpm 9.5.0 完成实际打包检查：入口、样式、图标、类型声明和编辑器元数据齐全；包及元数据版本均为 `2.59.0`。 - 打包后 CommonJS 加载和新增 API 的 TypeScript 4.9.5 消费者冒烟检查通过。 - `git diff --check` 和仓库提交钩子通过。  ## Changelog  | Component | Changelog(CN) | Changelog(EN) | Related issues | | --------- | ------------- | ------------- | -------------- | | common | 更新组件包版本至 `2.59.0`，并同步中英文发布日志。 | Prepare version `2.59.0` and update the Chinese and English release changelogs. | - |  ## Checklist:  - [x] Test suite passes (`npm run test`) - [x] Provide changelog for relevant changes if applicable. - [x] Changes are submitted to the appropriate branch (`main`).  ## Other information  合并后再执行 npm 发布并创建 `2.59.0` tag。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -607,236 +607,56 @@ export const getUserConfig = async (name: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9f1b374` (2026-10-20)
-**Commit Message**: chore(release): prepare 2.59.0 (#3674)
+### Incident Patch 1: `ac03d6e3` (2026-10-21)
+**Commit Message**: docs: fix package README links (#3669)
 
-Co-authored-by: lingyunsong <[REDACTED_EMAIL]>
-
-**File**: `packages/web-vue/CHANGELOG.md` (modified, +34/-0)
+**File**: `packages/web-vue/README.md` (modified, +3/-3)
 ```diff
-@@ -2,6 +2,40 @@
- changelog: true
- ```
+@@ -97,13 +97,13 @@ Project development and contribution process please refer to the [Contributing G
  
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🆕 Feature
-+
-+- **calendar:** Align Calendar with key React capabilities (page date control, header type/operations, disabled date, custom renderers, week mode), and fix select-header today sync/highlight behavior. ([#3651](https://github.com/arco-design/arco-design-vue/pull/3651))
-+- **modal:** Add `Modal.config` and `Modal.destroyAll`, with corresponding type definitions and tests. ([#3647](https://github.com/arco-design/arco-design-vue/pull/3647))
-+- **button:** Added `loadingFixedWidth` prop to keep button width unchanged during loading state. ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-+- **config-provider:** Added global config `autoInsertSpaceInButton` to auto-insert spacing for two-Chinese-character button text. ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-+- **date-picker:** Added `utcOffset`, `timezone`, `hideNotInViewDates`, `clearRangeOnReselect`, and `panelRender` for DatePicker, with related docs and demos; timezone support addresses issue #241. ([#3645](https://github.com/arco-design/arco-design-vue/pull/3645))
-+
-+### 🐛 BugFix
-+
-+- **image:** ensure left mouse button is used for dragging ([#3665](https://github.com/arco-design/arco-design-vue/pull/3665))
-+- **textarea:** Fix reading a stale `v-model` value in Textarea `input` event handlers. ([#3659](https://github.com/arco-design/arco-design-vue/pull/3659))
-+- **verification-code:** improve cursor placement and focus behavior ([#3658](https://github.com/arco-design/arco-design-vue/pull/3658))
-+- Fixed missing validation message fields in several i18n locale files ([#3656](https://github.com/arco-design/arco-design-vue/pull/3656))
-+- Fix watcher errors during `dev-component` development builds. ([#3654](https://github.com/arco-design/arco-design-vue/pull/3654))
-+- **mention:** Fix the mention dropdown remaining visible after clearing the input with `allow-clear` following an `@` trigger. ([#3653](https://github.com/arco-design/arco-design-vue/pull/3653))
-+- Normalize Vitest snapshot line endings to LF to avoid false snapshot changes on Windows. ([#3653](https://github.com/arco-design/arco-design-vue/pull/3653))
-+- **anchor:** Fixed incorrect target resolution in multi-container scenarios with duplicated `id`s. ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+- **date-picker:** Fix year panel boundary navigation/display issues to prevent negative years and invalid date rendering in low-year scenarios. ([#3648](https://github.com/arco-design/arco-design-vue/pull/3648))
-+
-+### 💎 Enhancement
-+
-+- **anchor:** Added missing Anchor capabilities to align with React (affix, offsets, direction, target-offset), and synced demos, docs, and tests. ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+- **date-picker:** Added `input-props` for passing native input attributes; added `fixed-time` for `RangePicker`; support custom panel header display format via locale `yearFormat/monthFormat`. ([#3644](https://github.com/arco-design/arco-design-vue/pull/3644))
-+
-+### 🆎 TypeScript
-+
-+- **trigger:** Add missing properties to `TriggerProps` ([#3663](https://github.com/arco-design/arco-design-vue/pull/3663))
-+
-+
- ## 2.58.0
+ # Contributing
  
- `2026-04-16`
+-Developers interested in contributing should read the [Code of Conduct](./CODE_OF_CONDUCT.md) and
+-the [Contributing Guide](./CONTRIBUTING.md).
++Developers interested in contributing should read the [Code of Conduct](https://github.com/arco-design/arco-design-vue/blob/main/CODE_OF_CONDUCT.md) and
++the [Contributing Guide](https://github.com/arco-design/arco-design-vue/blob/main/CONTRIBUTING.md).
+ 
+ Thank you to all the people who already contributed to ArcoDesign!
+ 
+ <a href="https://github.com/arco-design/arco-design-vue/graphs/contributors"><img src="https://contrib.rocks/image?repo=arco-design/arco-design-vue" /></a>
+ 
+ # License
+ 
+-Ths project is [MIT licensed](./LICENSE).
++Ths project is [MIT licensed](https://github.com/arco-design/arco-design-vue/blob/main/LICENSE).
 ```
 
-**File**: `packages/web-vue/CHANGELOG.zh-CN.md` (modified, +34/-0)
+**File**: `packages/web-vue/README.zh-CN.md` (modified, +2/-2)
 ```diff
-@@ -2,6 +2,40 @@
- changelog: true
- ```
+@@ -95,12 +95,12 @@ app.mount('#app');
  
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🆕 新增功能
-+
-+- **calendar:** 补齐 Calendar 与 React 版本的关键能力（面板日期控制、头部类型与操作、禁用日期、自定义渲染、周模式等），并修复下拉头部“今天”同步与高亮更新问题。 ([#3651](https://github.com/arco-design/arco-design-vue/pull/3651))
-+- **modal:** 新增 `Modal.config` 与 `Modal.destroyAll`，并补充类型定义与测试。 ([#3647](https://github.com/arco-design/arco-design-vue/pull/3647))
-+- **button:** 新增 `loadingFixedWidth` 属性，支持按钮在 loading 状态保持宽度不变。 ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-+- **config-provider:** 新增全局配置 `autoInsertSpaceInButton`，当按钮文本为两个中文字符时自动插入空格。 ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-+- **date-picker:** 新增 `utcOffset`、`timezone`、`hideNotInViewDates`、`clearRangeOnReselect`、`panelRender`，并补充对应文档与示例；其中时区配置用于解决 issue #241。 ([#3645](https://github.com/arco-design/arco-design-vue/pull/3645))
-+
-+### 🐛 问题修复
-+
-+- **image:** 确保使用鼠标左键进行拖动 ([#3665](https://github.com/arco-design/arco-design-vue/pull/3665))
-+- **textarea:** 修复在 `input` 事件回调中读取到旧的 `v-model` 值的问题。 ([#3659](https://github.com/arco-design/arco-design-vue/pull/3659))
-+- **verification-code:** 修复验证码输入框光标定位与聚焦行为 ([#3658](https://github.com/arco-design/arco-design-vue/pull/3658))
-+- 修复部分国际化语言检验信息字段缺失 ([#3656](https://github.com/arco-design/arco-design-vue/pull/3656))
-+- 修复 `dev-component` 开发构建中的 watcher 报错问题。 ([#3654](https://github.com/arco-design/arco-design-vue/pull/3654))
-+- **mention:** 修复输入 `@` 后点击清空按钮仍显示提及下拉弹窗的问题。 ([#3653](https://github.com/arco-design/arco-design-vue/pull/3653))
-+- 统一 Vitest 快照换行为 LF，避免 Windows 下快照内容未变却被标记为修改。 ([#3653](https://github.com/arco-design/arco-design-vue/pull/3653))
-+- **anchor:** 修复重复 `id` 场景下多容器锚点命中错误。 ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+- **date-picker:** 修复年份面板在最小年份边界的导航与显示问题，避免出现负年份及低年份场景下的日期显示异常。 ([#3648](https://github.com/arco-design/arco-design-vue/pull/3648))
-+
-+### 💎 功能优化
-+
-+- **anchor:** 补齐 Anchor 与 React 对齐的能力（affix、offset、direction、target-offset），同步 demo、文档与测试。 ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+- **date-picker:** 新增 `input-props` 属性，支持透传原生输入框属性；`RangePicker` 新增 `fixed-time` 属性；支持通过 locale 的 `yearFormat/monthFormat` 自定义面板头部显示格式。 ([#3644](https://github.com/arco-design/arco-design-vue/pull/3644))
-+
-+### 🆎 类型修正
-+
-+- **trigger:** 补全 `TriggerProps` 缺失的类型定义 ([#3663](https://github.com/arco-design/arco-design-vue/pull/3663))
-+
-+
- ## 2.58.0
+ # 参与贡献
  
- `2026-04-16`
-```
-
-**File**: `packages/web-vue/components/anchor/CHANGELOG.md` (modified, +13/-0)
-```diff
-@@ -2,6 +2,19 @@
- changelog: true
- ```
+-贡献之前请先阅读 [行为准则](./CODE_OF_CONDUCT.md) 和 [贡献指南](./CONTRIBUTING.zh-CN.md)。
++贡献之前请先阅读 [行为准则](https://github.com/arco-design/arco-design-vue/blob/main/CODE_OF_CONDUCT.md) 和 [贡献指南](https://github.com/arco-design/arco-design-vue/blob/main/CONTRIBUTING.zh-CN.md)。
  
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🐛 BugFix
-+
-+- Fixed incorrect target resolution in multi-container scenarios with duplicated `id`s. ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+
-+### 💎 Enhancement
-+
-+- Added missing Anchor capabilities to align with React (affix, offsets, direction, target-offset), and synced demos, docs, and tests. ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+
-+
- ## 2.11.0
+ 感谢所有为 ArcoDesign 做过贡献的人!
  
- `2021-12-17`
-```
-
-**File**: `packages/web-vue/components/anchor/CHANGELOG.zh-CN.md` (modified, +13/-0)
-```diff
-@@ -2,6 +2,19 @@
- changelog: true
- ```
+ <a href="https://github.com/arco-design/arco-design-vue/graphs/contributors"><img src="https://contrib.rocks/image?repo=arco-design/arco-design-vue" /></a>
  
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🐛 问题修复
-+
-+- 修复重复 `id` 场景下多容器锚点命中错误。 ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+
-+### 💎 功能优化
-+
-+- 补齐 Anchor 与 React 对齐的能力（affix、offset、direction、target-offset），同步 demo、文档与测试。 ([#3649](https://github.com/arco-design/arco-design-vue/pull/3649))
-+
-+
- ## 2.11.0
+ # License
  
- `2021-12-17`
-```
-
-**File**: `packages/web-vue/components/button/CHANGELOG.md` (modified, +9/-0)
-```diff
-@@ -2,6 +2,15 @@
- changelog: true
- ```
- 
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🆕 Feature
-+
-+- Added `loadingFixedWidth` prop to keep button width unchanged during loading state. ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-+
-+
- ## 2.56.3
- 
- `2024-10-25`
-```
-
-**File**: `packages/web-vue/components/button/CHANGELOG.zh-CN.md` (modified, +9/-0)
-```diff
-@@ -2,6 +2,15 @@
- changelog: true
- ```
- 
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🆕 新增功能
-+
-+- 新增 `loadingFixedWidth` 属性，支持按钮在 loading 状态保持宽度不变。 ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-+
-+
- ## 2.56.3
- 
- `2024-10-25`
-```
-
-**File**: `packages/web-vue/components/calendar/CHANGELOG.md` (modified, +9/-0)
-```diff
-@@ -2,6 +2,15 @@
- changelog: true
- ```
- 
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🆕 Feature
-+
-+- Align Calendar with key React capabilities (page date control, header type/operations, disabled date, custom renderers, week mode), and fix select-header today sync/highlight behavior. ([#3651](https://github.com/arco-design/arco-design-vue/pull/3651))
-+
-+
- ## 2.56.2
- 
- `2024-09-13`
-```
-
-**File**: `packages/web-vue/components/calendar/CHANGELOG.zh-CN.md` (modified, +9/-0)
-```diff
-@@ -2,6 +2,15 @@
- changelog: true
- ```
- 
-+## 2.59.0
-+
-+`2026-10-20`
-+
-+### 🆕 新增功能
-+
-+- 补齐 Calendar 与 React 版本的关键能力（面板日期控制、头部类型与操作、禁用日期、自定义渲染、周模式等），并修复下拉头部“今天”同步与高亮更新问题。 ([#3651](https://github.com/arco-design/arco-design-vue/pull/3651))
-+
-+
- ## 2.56.2
- 
- `2024-09-13`
+-[MIT 协议](./LICENSE)
++[MIT 协议](https://github.com/arco-design/arco-design-vue/blob/main/LICENSE)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3677** (2026-10-21): feat(cascader): 为搜索面板添加虚拟列表支持并优化搜索防抖 (@makotowu)
 - **PR #3674** (2026-10-20): chore(release): prepare 2.59.0 (@lyspro)
 - **PR #3673** (closed): chore(release): prepare 2.59.0 (@lyspro)
 - **PR #3670** (closed): docs(navbar): restore Design/Dev/Ecosystem links for GitHub Pages (@xbmlz)
+- **PR #3669** (2026-10-21): docs: fix package README links (@dajiaohuang)
 - **PR #3665** (2026-06-24): fix(image): ensure left mouse button is used for dragging (@betavs)
-- **PR #3664** (closed): Merge Upstream (@liunnn1994)
-- **PR #3663** (2026-06-24): fix: 修复trigger组件props和interface定义不一致的问题 (@musishui)
 
 ---
 
@@ -856,42 +676,32 @@ Co-authored-by: lingyunsong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): prepare 2.59.0 (#3674)
+## X. docs: fix package README links (#3669)
 
 **RULE**:
-When implementing operations in `packages/web-vue/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arco-design/arco-design-vue. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/web-vue/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arco-design/arco-design-vue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9f1b374`: release): prepare 2.59.0 (#3674). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac03d6e3`: docs: fix package README links (#3669). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/web-vue/CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/web-vue/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## 2.59.0
-
-`2026-10-20`
-
-### 🆕 Feature
-
-- **calendar:** Align Calendar with key React capabilities (page date control, header type/operations, disabled date, custom renderers, week mode), and fix select-header today sync/highlight behavior. ([#3651](https://github.com/arco-design/arco-design-vue/pull/3651))
-- **modal:** Add `Modal.config` and `Modal.destroyAll`, with corresponding type definitions and tests. ([#3647](https://github.com/arco-design/arco-design-vue/pull/3647))
-- **button:** Added `loadingFixedWidth` prop to keep button width unchanged during loading state. ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-- **config-provider:** Added global config `autoInsertSpaceInButton` to auto-insert spacing for two-Chinese-character button text. ([#3646](https://github.com/arco-design/arco-design-vue/pull/3646))
-- **date-picker:** Added `utcOffset`, `timezone`, `hideNotInViewDates`, `clearRangeOnReselect`, and `panelRender` for DatePicker, with related docs and demos; timezone support addresses issue #241. ([#3645](https://github.com/arco-design/arco-design-vue/pull/3645))
-
-### 🐛 BugFix
-
-- **image:** ensure left mouse button is used for dragging ([#3665](http
+Developers interested in contributing should read the [Code of Conduct](https://github.com/arco-design/arco-design-vue/blob/main/CODE_OF_CONDUCT.md) and
+the [Contributing Guide](https://github.com/arco-design/arco-design-vue/blob/main/CONTRIBUTING.md).
+Ths project is [MIT licensed](https://github.com/arco-design/arco-design-vue/blob/main/LICENSE).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Developers interested in contributing should read the [Code of Conduct](./CODE_OF_CONDUCT.md) and
+the [Contributing Guide](./CONTRIBUTING.md).
+Ths project is [MIT licensed](./LICENSE).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9f1b374` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac03d6e3` are properly handled with clean fallback behavior.

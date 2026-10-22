@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "8507b422",
+    "sourceVersion": "5540a0d4",
     "license": "NOASSERTION",
-    "contentHash": "032281aed665b02573e96750c19e4a52f3c3f418819dc3fc07dab144976d9884",
-    "lastHarvestedAt": "2026-10-22T18:37:35.808Z",
+    "contentHash": "e51c4b585f4fbd6e68828d2285087fc3f1d255f6f1d0282d95cf236082cff29e",
+    "lastHarvestedAt": "2026-10-22T20:52:07.464Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "ab8ef76c",
+    "sourceVersion": "cfab75ea",
     "license": "Apache-2.0",
-    "contentHash": "3b6ab25465678cf039d00ac5672c122b6dfe9d105deec18b7d2edd0177cd2b8f",
-    "lastHarvestedAt": "2026-10-21T02:21:27.798Z",
+    "contentHash": "b27b8563fb916cfef636c413407974f9ada2832d8606c9e02c53f710b7ee8405",
+    "lastHarvestedAt": "2026-10-22T20:52:00.156Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "f8e6ea94",
+    "sourceVersion": "0433f847",
     "license": "Apache-2.0",
-    "contentHash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
-    "lastHarvestedAt": "2026-10-22T17:25:43.776Z",
+    "contentHash": "5f64aa0c38a3563c6bfb71310f63355622a5b6fddccc6bd012ba19aed99e8c18",
+    "lastHarvestedAt": "2026-10-22T20:52:02.427Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "ebba4d12",
+    "sourceVersion": "7206efd0",
     "license": "MIT",
-    "contentHash": "91a534ec975abccb58557398ee23eeb0f61931846f65c647709307618c605ba9",
-    "lastHarvestedAt": "2026-10-20T23:31:28.609Z",
+    "contentHash": "4639e821cf92ce63d0b695b98194dd115f927d953af44df54c4d0cc1bc6d978b",
+    "lastHarvestedAt": "2026-10-22T20:51:52.066Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -5433,10 +5433,10 @@
     "repository": "arco-design/arco-design-vue",
     "platform": "github",
     "sourceUrl": "https://github.com/arco-design/arco-design-vue",
-    "sourceVersion": "d9f1b374",
+    "sourceVersion": "ac03d6e3",
     "license": "MIT",
-    "contentHash": "502e364c9be995e4d503de510218493dfbc2c10ac730537d242bb4233a56ea8d",
-    "lastHarvestedAt": "2026-10-20T16:21:26.486Z",
+    "contentHash": "b65dcdcbf3460037ba8fe3a146b9f68e6284c1a75242d4b7f110360f161f49c3",
+    "lastHarvestedAt": "2026-10-22T20:51:50.335Z",
     "learningId": "learn-github-arco-design-arco-design-vue"
   },
   "telemt-telemt": {
@@ -9633,10 +9633,10 @@
     "repository": "urllib3/urllib3",
     "platform": "github",
     "sourceUrl": "https://github.com/urllib3/urllib3",
-    "sourceVersion": "a37bc93b",
+    "sourceVersion": "d07367de",
     "license": "MIT",
-    "contentHash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
-    "lastHarvestedAt": "2026-10-20T00:19:05.567Z",
+    "contentHash": "dd005f976aa1dc04a008faa55fd8f1c6ca5a078c8c0e77c8d10f4689440d9edf",
+    "lastHarvestedAt": "2026-10-22T20:51:55.583Z",
     "learningId": "learn-github-urllib3-urllib3"
   },
   "simibac-confettiswiftui": {
@@ -10003,10 +10003,10 @@
     "repository": "KeyboardKit/KeyboardKit",
     "platform": "github",
     "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
-    "sourceVersion": "4ea60852",
+    "sourceVersion": "2b19759f",
     "license": "NOASSERTION",
-    "contentHash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
-    "lastHarvestedAt": "2026-10-20T02:21:55.322Z",
+    "contentHash": "5ed390188f27ac2d758391ac60b72a3f2e45ed2b3f1197556dc6fca6f2ac8b81",
+    "lastHarvestedAt": "2026-10-22T20:51:57.365Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
   },
   "evanw-esbuild": {

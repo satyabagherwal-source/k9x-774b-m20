@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T20:45:36.923Z",
+  "last_updated": "2026-10-22T20:52:07.408Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -87,8 +87,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "ebba4d12",
-      "content_hash": "91a534ec975abccb58557398ee23eeb0f61931846f65c647709307618c605ba9",
+      "source_version": "7206efd0",
+      "content_hash": "4639e821cf92ce63d0b695b98194dd115f927d953af44df54c4d0cc1bc6d978b",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -121,6 +121,11 @@
           "number": 3437,
           "title": "tui): add persistent /latex rendering controls",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3733,
+          "title": "ci): restore green master for v0.99.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -128,7 +133,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:31:28.511Z",
+      "verified_at": "2026-10-22T20:51:52.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2672,17 +2677,23 @@
       "slug": "arco-design-arco-design-vue",
       "platform": "github",
       "source_url": "https://github.com/arco-design/arco-design-vue",
-      "source_version": "d9f1b374",
-      "content_hash": "502e364c9be995e4d503de510218493dfbc2c10ac730537d242bb4233a56ea8d",
+      "source_version": "ac03d6e3",
+      "content_hash": "b65dcdcbf3460037ba8fe3a146b9f68e6284c1a75242d4b7f110360f161f49c3",
       "dossier_path": "07_PROJECT_LEARNING/arco-design-arco-design-vue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arco-design-arco-design-vue-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3732,
+          "title": "docs: fix package README links (#3669)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:21:26.404Z",
+      "verified_at": "2026-10-22T20:51:50.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7344,8 +7355,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "8507b422",
-      "content_hash": "032281aed665b02573e96750c19e4a52f3c3f418819dc3fc07dab144976d9884",
+      "source_version": "5540a0d4",
+      "content_hash": "e51c4b585f4fbd6e68828d2285087fc3f1d255f6f1d0282d95cf236082cff29e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7488,6 +7499,11 @@
           "number": 3695,
           "title": "docs: tweak README elevator-pitch wording and linebreaks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3738,
+          "title": "stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7495,7 +7511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:37:35.717Z",
+      "verified_at": "2026-10-22T20:52:07.397Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29047,17 +29063,23 @@
       "slug": "keyboardkit-keyboardkit",
       "platform": "github",
       "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-      "source_version": "4ea60852",
-      "content_hash": "849c3a775390552eabb9a3b7d4787700d4c454ab6e62b8837be0ab464be23d0d",
+      "source_version": "2b19759f",
+      "content_hash": "5ed390188f27ac2d758391ac60b72a3f2e45ed2b3f1197556dc6fca6f2ac8b81",
       "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3735,
+          "title": "Patch 11.1 with a debug diacritic color fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:21:55.241Z",
+      "verified_at": "2026-10-22T20:51:57.298Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30173,8 +30195,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "ab8ef76c",
-      "content_hash": "3b6ab25465678cf039d00ac5672c122b6dfe9d105deec18b7d2edd0177cd2b8f",
+      "source_version": "cfab75ea",
+      "content_hash": "b27b8563fb916cfef636c413407974f9ada2832d8606c9e02c53f710b7ee8405",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -30187,6 +30209,11 @@
           "number": 3485,
           "title": "docs(CHANGELOG.md): updating changelog and version files (#19197)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3736,
+          "title": "lint): fix golangci-lint 2.15.0 findings (#19227)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30194,7 +30221,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:21:27.732Z",
+      "verified_at": "2026-10-22T20:52:00.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42643,8 +42670,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "f8e6ea94",
-      "content_hash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
+      "source_version": "0433f847",
+      "content_hash": "5f64aa0c38a3563c6bfb71310f63355622a5b6fddccc6bd012ba19aed99e8c18",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -42677,6 +42704,11 @@
           "number": 3661,
           "title": "Add cosign-specific user-agent to all HTTP requests (#4705)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3737,
+          "title": "Move bundle metadata types into a dependency-free package (#5180)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42684,7 +42716,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:25:43.714Z",
+      "verified_at": "2026-10-22T20:52:02.361Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62142,14 +62174,19 @@
       "slug": "urllib3-urllib3",
       "platform": "github",
       "source_url": "https://github.com/urllib3/urllib3",
-      "source_version": "a37bc93b",
-      "content_hash": "9fa1dc18e5c01769e5d3ea538d2ef2dcf945f1c9b20beb4715b24196eac4fa6f",
+      "source_version": "d07367de",
+      "content_hash": "dd005f976aa1dc04a008faa55fd8f1c6ca5a078c8c0e77c8d10f4689440d9edf",
       "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "promoted_rules": [
         {
           "number": 2914,
           "title": "HTTP/2 probe cache lock leak (#5254)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3734,
+          "title": "Avoid overflow in retry backoff calculation (#5305)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -62158,7 +62195,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:19:05.495Z",
+      "verified_at": "2026-10-22T20:51:55.518Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111853,6 +111890,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T20:45:36.909Z"
+    },
+    "rule-3732": {
+      "learning_id": "rule-3732",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3732,
+      "title": "docs: fix package README links (#3669)",
+      "source_url": "https://github.com/arco-design/arco-design-vue",
+      "source_version": "ac03d6e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:51:50.269Z"
+    },
+    "rule-3733": {
+      "learning_id": "rule-3733",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3733,
+      "title": "ci): restore green master for v0.99.1",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "7206efd0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:51:52.001Z"
+    },
+    "rule-3734": {
+      "learning_id": "rule-3734",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3734,
+      "title": "Avoid overflow in retry backoff calculation (#5305)",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "d07367de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:51:55.518Z"
+    },
+    "rule-3735": {
+      "learning_id": "rule-3735",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3735,
+      "title": "Patch 11.1 with a debug diacritic color fix",
+      "source_url": "https://github.com/KeyboardKit/KeyboardKit",
+      "source_version": "2b19759f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:51:57.298Z"
+    },
+    "rule-3736": {
+      "learning_id": "rule-3736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3736,
+      "title": "lint): fix golangci-lint 2.15.0 findings (#19227)",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "cfab75ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:52:00.091Z"
+    },
+    "rule-3737": {
+      "learning_id": "rule-3737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3737,
+      "title": "Move bundle metadata types into a dependency-free package (#5180)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "0433f847",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:52:02.361Z"
+    },
+    "rule-3738": {
+      "learning_id": "rule-3738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3738,
+      "title": "stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "5540a0d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:52:07.397Z"
     }
   },
   "aliases": {

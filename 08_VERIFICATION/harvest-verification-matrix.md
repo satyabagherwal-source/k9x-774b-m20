@@ -4424,3 +4424,10 @@
 | `CYCLE-20261022-7H7T` | `2026-10-22T20:38:54.953Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3727, Rule 3728, Rule 3729` | Yes (`8f3333b0...`) |
 | `CYCLE-20261022-FUML` | `2026-10-22T20:45:25.581Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3730` | Yes (`5aa8bfb2...`) |
 | `CYCLE-20261022-G3FA` | `2026-10-22T20:45:36.982Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3731` | Yes (`c72f6b4d...`) |
+| `CYCLE-20261022-O3I3` | `2026-10-22T20:51:50.331Z` | `arco-design/arco-design-vue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3732` | Yes (`b65dcdcb...`) |
+| `CYCLE-20261022-O4U7` | `2026-10-22T20:51:52.063Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3733` | Yes (`4639e821...`) |
+| `CYCLE-20261022-O7JW` | `2026-10-22T20:51:55.580Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3734` | Yes (`dd005f97...`) |
+| `CYCLE-20261022-O8XD` | `2026-10-22T20:51:57.361Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3735` | Yes (`5ed39018...`) |
+| `CYCLE-20261022-OB2X` | `2026-10-22T20:52:00.153Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3736` | Yes (`b27b8563...`) |
+| `CYCLE-20261022-OCU0` | `2026-10-22T20:52:02.424Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3737` | Yes (`5f64aa0c...`) |
+| `CYCLE-20261022-OGPX` | `2026-10-22T20:52:07.461Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3738` | Yes (`e51c4b58...`) |

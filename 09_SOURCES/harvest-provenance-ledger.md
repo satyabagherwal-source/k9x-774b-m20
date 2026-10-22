@@ -4431,3 +4431,10 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `e6b79d9c` | Multi-dimensional audit evidence | 2026-10-22T20:38:54.956Z |
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `f57b06ff` | Multi-dimensional audit evidence | 2026-10-22T20:45:25.584Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `18cebee8` | Multi-dimensional audit evidence | 2026-10-22T20:45:36.986Z |
+| `learn-github-arco-design-arco-design-vue` | `https://github.com/arco-design/arco-design-vue` | `ac03d6e3` | Multi-dimensional audit evidence | 2026-10-22T20:51:50.335Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `7206efd0` | Multi-dimensional audit evidence | 2026-10-22T20:51:52.066Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `d07367de` | Multi-dimensional audit evidence | 2026-10-22T20:51:55.583Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `2b19759f` | Multi-dimensional audit evidence | 2026-10-22T20:51:57.365Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `cfab75ea` | Multi-dimensional audit evidence | 2026-10-22T20:52:00.156Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `0433f847` | Multi-dimensional audit evidence | 2026-10-22T20:52:02.427Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5540a0d4` | Multi-dimensional audit evidence | 2026-10-22T20:52:07.464Z |

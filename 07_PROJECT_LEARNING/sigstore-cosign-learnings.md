@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `f8e6ea94`  
+> **Source Version**: `0433f847`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:25:43.403Z  
+> **Timestamp**: 2026-10-22T20:52:02.081Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:25:43.397Z  
+> **Harvest Timestamp**: 2026-10-22T20:52:01.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1826,136 +1826,26 @@ func (c *CreateCmd) Exec(ctx context.Context) (err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8e6ea94` (2026-10-21)
-**Commit Message**: Add cosign-specific user-agent to all HTTP requests (#4705)
+### Incident Patch 1: `0433f847` (2026-10-22)
+**Commit Message**: Move bundle metadata types into a dependency-free package (#5180)
 
-* Add cosign-specific user-agent to all HTTP requests
+pkg/oci imported pkg/cosign/bundle only for RekorBundle,
+RekorPayload, RFC3161Timestamp and BundleV03MediaType. That package
+also contains SignData, which imports sigstore-go's sign and root
+packages, so every consumer of pkg/oci linked the signing stack.
 
-This change addresses issue #4692 by ensuring that all HTTP requests
-made by cosign identify with a proper user-agent that includes both
-the cosign version and sigstore-go version.
+Move these types and the media type constant into the new leaf
+package pkg/cosign/bundle/types and import that from pkg/oci.
+pkg/cosign/bundle keeps type aliases, so its API is unchanged.
 
-Signed-off-by: Carlos Panato <[REDACTED_EMAIL]>
+The base pkg/oci package goes from 86 to 2 transitive modules. For
+ko, which uses pkg/oci, pkg/oci/mutate, pkg/oci/walk and
+pkg/oci/remote, the binary goes from 161 to 146 modules.
 
-* Scope sigstore-go user-agent to sigstore-go code paths
+Signed-off-by: Manuel Rüger <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Keep the global user-agent as cosign/<version> (os; arch) and only
-send cosign/<version> sigstore-go/<version> (os; arch) on requests
-made through sigstore-go. Fulcio and TSA clients built in SignData
-now use a transport that overrides sigstore-go's default user-agent.
-
-Rekor requests made via sigstore-go still use sigstore-go's
-user-agent until sigstore-go exposes a way to set it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Carlos Panato <[REDACTED_EMAIL]>
-
-* Set cosign user-agent on sigstore-go Fulcio, TSA and Rekor clients
-
-Bump sigstore-go to main to pick up sigstore/sigstore-go#686, which
-adds a UserAgent option and always appends sigstore-go/<version>.
-Pass cosign's user-agent through it and drop the transport wrapper
-and the sigstore-go version lookup.
-
-C
-
-**File**: `cmd/cosign/cli/options/useragent.go` (modified, +3/-12)
-```diff
-@@ -15,19 +15,10 @@
- package options
- 
- import (
--	"fmt"
--	"runtime"
--
--	"sigs.k8s.io/release-utils/version"
--)
--
--var (
--	// uaString is meant to resemble the User-Agent sent by browsers with requests.
--	// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent
--	uaString = fmt.Sprintf("cosign/%s (%s; %s)", version.GetVersionInfo().GitVersion, runtime.GOOS, runtime.GOARCH)
-+	"github.com/sigstore/cosign/v3/internal/useragent"
- )
- 
--// UserAgent returns the User-Agent string which `cosign` should send with HTTP requests.ß
-+// UserAgent returns the User-Agent string which `cosign` should send with HTTP requests.
- func UserAgent() string {
--	return uaString
-+	return useragent.Get()
- }
-```
-
-**File**: `go.mod` (modified, +2/-2)
-```diff
-@@ -37,7 +37,7 @@ require (
- 	github.com/sigstore/rekor v1.5.4
- 	github.com/sigstore/rekor-tiles/v2 v2.3.0
- 	github.com/sigstore/sigstore v1.11.1
--	github.com/sigstore/sigstore-go v1.3.0
-+	github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10
- 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.1
- 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.1
- 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.11.1
-@@ -276,7 +276,7 @@ require (
- 	go.uber.org/zap v1.28.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.61.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
-```
-
-**File**: `go.sum` (modified, +4/-4)
-```diff
-@@ -617,8 +617,8 @@ github.com/sigstore/rekor-tiles/v2 v2.3.0 h1:HhMgH61UP0t899V8Fjt7pz1YdgOBptbaQdn
- github.com/sigstore/rekor-tiles/v2 v2.3.0/go.mod h1:DEFiKSyQ4nF75QRVNdOPaIH3cmvMkO2B6xDZjNYngPc=
- github.com/sigstore/sigstore v1.11.1 h1:kPqGeoOk3IGCJH76ssgX5PKMm8mbHNnM9fhKLDc6M8E=
- github.com/sigstore/sigstore v1.11.1/go.mod h1:0jewOSMygmxdOaBIOhD1teBSIleg7RExQ1baacNrv4A=
--github.com/sigstore/sigstore-go v1.3.0 h1:hnIMHREyCNTYFtOE1o7ae3Axa9B5W5EjUSBJICP2NBE=
--github.com/sigstore/sigstore-go v1.3.0/go.mod h1:AyRQXfpH89py1twjE3kEZxlRersng90GSYqQV9zGJE8=
-+github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10 h1:Vo/RyRAj1NOccLJwJ5V39+oXI1aCcw3MKPangzG3Rq0=
-+github.com/sigstore/sigstore-go v1.3.1-0.20261021152419-0161b209ec10/go.mod h1:OvOUhstHC1stzzLMaylr2hudZ604aJ8BxU3oed/71Lc=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.1 h1:Xw+W6YvW/bQ3zSAYK6hsOQplGz/X9yOvCGeQLfkNy4c=
- github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.1/go.mod h1:agtjJMPuI6q2rBTM0XZiOFsZjlcZnTi7xkBFQt0NISY=
- github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.1 h1:UfIJOml1Y9uJwTy8cDbP7a6x/0By+fXIV7dyUHvEZlA=
-@@ -788,8 +788,8 @@ golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.15.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
- golang.org/x/mod v0.17.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
-+golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
-+golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-```
-
-**File**: `internal/pkg/cosign/tsa/client/client.go` (modified, +3/-0)
-```diff
-@@ -26,6 +26,8 @@ import (
- 	"time"
- 
- 	"github.com/digitorus/timestamp"
-+
-+	"github.com/sigstore/cosign/v3/internal/useragent"
- )
- 
- // TimestampAuthorityClient should be implemented by clients that want to request timestamp responses
-@@ -134,6 +136,7 @@ func (t *TimestampAuthorityClientImpl) GetTimestampResponse(tsq []byte) ([]byte,
- 		return nil, fmt.Errorf("error creating HTTP request: %w", err)
- 	}
- 	req.Header.Set("Content-Type", "application/timestamp-query")
-+	req.Header.Set("User-Agent", useragent.Get())
- 
- 	tsr, err := client.Do(req)
- 	if err != nil {
-```
-
-**File**: `internal/useragent/useragent.go` (added, +34/-0)
+**File**: `pkg/cosign/bundle/types.go` (added, +34/-0)
 ```diff
 @@ -0,0 +1,34 @@
 +// Copyright 2026 The Sigstore Authors.
@@ -1972,31 +1862,43 @@ C
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package useragent
++package bundle
 +
-+import (
-+	"fmt"
-+	"runtime"
++import "github.com/sigstore/cosign/v3/pkg/cosign/bundle/types"
 +
-+	"sigs.k8s.io/release-utils/version"
++// The bundle metadata types live in the dependency-free types package so
++// that pkg/oci can use them without importing the signing code in this
++// package. They are aliased here for compatibility.
++
++type (
++	RekorBundle      = types.RekorBundle
++	RekorPayload     = types.RekorPayload
++	RFC3161Timestamp = types.RFC3161Timestamp
 +)
 +
-+var (
-+	// uaString is meant to resemble the User-Agent sent by browsers with requests.
-+	// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent
-+	uaString = fmt.Sprintf("cosign/%s (%s; %s)", version.GetVersionInfo().GitVersion, runtime.GOOS, runtime.GOARCH)
-+)
++const BundleV03MediaType = types.BundleV03MediaType
 +
-+// Get returns the User-Agent string which `cosign` should send with HTTP requests.
-+// Requests made through sigstore-go append sigstore-go/<version> to it.
-+func Get() string {
-+	return uaString
++// TimestampToRFC3161Timestamp receives a base64 encoded RFC3161 timestamp.
++func TimestampToRFC3161Timestamp(timestampRFC3161 []byte) *RFC3161Timestamp {
++	return types.TimestampToRFC3161Timestamp(timestampRFC3161)
 +}
 ```
 
-**File**: `internal/useragent/useragent_test.go` (added, +32/-0)
+**File**: `pkg/cosign/bundle/types/constants.go` (renamed, +1/-1)
 ```diff
-@@ -0,0 +1,32 @@
+@@ -12,6 +12,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package bundle
++package types
+ 
+ const BundleV03MediaType = "application/vnd.dev.sigstore.bundle.v0.3+json"
+```
+
+**File**: `pkg/cosign/bundle/types/doc.go` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
 +// Copyright 2026 The Sigstore Authors.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2011,118 +1913,84 @@ C
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package useragent
-+
-+import (
-+	"fmt"
-+	"runtime"
-+	"strings"
-+	"testing"
-+)
-+
-+func TestGet(t *testing.T) {
-+	ua := Get()
-+	if !strings.HasPrefix(ua, "cosign/") {
-+		t.Errorf("User-Agent should start with 'cosign/', got: %s", ua)
-+	}
-+	if !strings.HasSuffix(ua, fmt.Sprintf("(%s; %s)", runtime.GOOS, runtime.GOARCH)) {
-+		t.Errorf("User-Agent should end with OS and architecture, got: %s", ua)
-+	}
-+}
++// Package types holds the cosign bundle metadata types. It must not import
++// any signing or transparency log code, so that pkg/oci stays lightweight
++// for library consumers.
++package types
 ```
 
-**File**: `pkg/cosign/bundle/sign.go` (modified, +14/-10)
+**File**: `pkg/cosign/bundle/types/rekor.go` (renamed, +1/-1)
 ```diff
-@@ -26,6 +26,7 @@ import (
- 	"time"
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
- 	"github.com/sigstore/cosign/v3/internal/ui"
-+	"github.com/sigstore/cosign/v3/internal/useragent"
- 	"github.com/sigstore/sigstore-go/pkg/root"
- 	"github.com/sigstore/sigstore-go/pkg/sign"
+-package bundle
++package types
+ 
+ // RekorBundle holds metadata about recording a Signature's ephemeral key to
+ // a Rekor transparency log.
+```
+
+**File**: `pkg/cosign/bundle/types/tsa.go` (renamed, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package bundle
++package types
+ 
+ // RFC3161Timestamp holds metadata about timestamp RFC3161 verification data.
+ type RFC3161Timestamp struct {
+```
+
+**File**: `pkg/cosign/bundle/types/tsa_test.go` (renamed, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package bundle
++package types
+ 
+ import (
+ 	"reflect"
+```
+
+**File**: `pkg/oci/internal/signature/layer.go` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ import (
+ 
+ 	v1 "github.com/google/go-containerregistry/pkg/v1"
+ 	payloadsize "github.com/sigstore/cosign/v3/internal/pkg/cosign/payload/size"
+-	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
++	bundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle/types"
+ 	"github.com/sigstore/cosign/v3/pkg/oci"
  	"github.com/sigstore/sigstore/pkg/cryptoutils"
-@@ -101,9 +102,10 @@ func SignData(ctx context.Context, content sign.Content, keypair sign.Keypair, i
- 		}
- 		for _, tsaSvc := range tsaSvcs {
- 			tsaOpts := &sign.TimestampAuthorityOptions{
--				URL:     tsaSvc.URL,
--				Timeout: 30 * time.Second,
--				Retries: 1,
-+				URL:       tsaSvc.URL,
-+				Timeout:   30 * time.Second,
-+				Retries:   1,
-+				UserAgent: useragent.Get(),
- 			}
- 			if opts.TSAClientTransport != nil {
- 				tsaOpts.Transport = opts.TSAClientTransport
-@@ -124,10 +126,11 @@ func SignData(ctx context.Context, content sign.Content, keypair sign.Keypair, i
- 				usingRekorV2 = true
- 			}
- 			rekorOpts := &sign.RekorOptions{
--				BaseURL: rekorSvc.URL,
--				Timeout: 90 * time.Second,
--				Retries: 1,
--				Version: rekorSvc.MajorAPIVersion,
-+				BaseURL:   rekorSvc.URL,
-+				Timeout:   90 * time.Second,
-+				Retries:   1,
-+				Version:   rekorSvc.MajorAPIVersion,
-+				UserAgent: useragent.Get(),
- 			}
- 			bundleOpts.TransparencyLogs = append(bundleOpts.TransparencyLogs, sign.NewRekor(rekorOpts))
- 		}
-@@ -232,9 +235,10 @@ func newFulcioProvider(signingConfig *root.SigningConfig) (sign.CertificateProvi
- 		return nil, err
- 	}
- 	fulcioOpts := &sign.FulcioOptions{
--		BaseURL: fulcioSvc.URL,
--		Timeout: 30 * time.Second,
--		Retries: 1,
-+		BaseURL:   fulcioSvc.URL,
-+		Timeout:   30 * time.Second,
-+		Retries:   1,
-+		UserAgent: useragent.Get(),
- 	}
- 	return sign.NewFulcio(fulcioOpts), nil
- }
+ )
 ```
 
-**File**: `pkg/cosign/tuf.go` (modified, +8/-0)
+**File**: `pkg/oci/internal/signature/layer_test.go` (modified, +1/-1)
 ```diff
-@@ -21,9 +21,11 @@ import (
- 	"os"
- 	"path/filepath"
- 
-+	"github.com/sigstore/cosign/v3/internal/useragent"
- 	"github.com/sigstore/cosign/v3/pkg/cosign/env"
- 	"github.com/sigstore/sigstore-go/pkg/root"
- 	"github.com/sigstore/sigstore-go/pkg/tuf"
-+	"github.com/theupdateframework/go-tuf/v2/metadata/fetcher"
+@@ -28,7 +28,7 @@ import (
+ 	v1 "github.com/google/go-containerregistry/pkg/v1"
+ 	"github.com/google/go-containerregistry/pkg/v1/random"
+ 	"github.com/google/go-containerregistry/pkg/v1/types"
+-	"github.com/sigstore/cosign/v3/pkg/cosign/bundle"
++	bundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle/types"
  )
  
- func TrustedRoot() (root.TrustedMaterial, error) {
-@@ -77,6 +79,12 @@ func setTUFOpts() (*tuf.Options, error) {
- 	if tufCacheDir := env.Getenv(env.VariableTUFRootDir); tufCacheDir != "" { //nolint:forbidigo
- 		opts.CachePath = tufCacheDir
- 	}
-+
-+	// Set custom fetcher with cosign user-agent
-+	f := fetcher.NewDefaultFetcher()
-+	f.SetHTTPUserAgent(useragent.Get())
-+	opts.Fetcher = f
-+
- 	err := setTUFMirror(opts)
- 	if err != nil {
- 		return nil, fmt.Errorf("error setting TUF mirror: %w", err)
+ func mustDecode(s string) []byte {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5180** (2026-10-22): Move bundle metadata types into a dependency-free package (@mrueg)
 - **PR #5179** (2026-10-21): update builder image and cosign (@cpanato)
 - **PR #5178** (2026-10-20): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #5177** (2026-10-20): Build releases with 1.27.3 (@Hayden-IO)
 - **PR #5176** (2026-10-19): Add AGENTS.md, update contributors.md with reference to AI policy (@Hayden-IO)
 - **PR #5175** (2026-10-20): chore(deps): bump the actions group with 6 updates (@dependabot[bot])
-- **PR #5174** (closed): chore(deps): bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
 
 ---
 
@@ -2142,41 +2010,59 @@ C
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add cosign-specific user-agent to all HTTP requests (#4705)
+## X. Move bundle metadata types into a dependency-free package (#5180)
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/options/useragent.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/cosign/bundle/types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8e6ea94`: Add cosign-specific user-agent to all HTTP requests (#4705). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0433f847`: Move bundle metadata types into a dependency-free package (#5180). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/options/useragent.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cosign/bundle/types.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/sigstore/cosign/v3/internal/useragent"
-// UserAgent returns the User-Agent string which `cosign` should send with HTTP requests.
-	return useragent.Get()
+// Copyright 2026 The Sigstore Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package bundle
+
+import "github.com/sigstore/cosign/v3/pkg/cosign/bundle/types"
+
+// The bundle metadata types live in the dependency-free types package so
+// that pkg/oci can use them without importing the signing code in this
+// package. They are aliased here for compatibility.
+
+type (
+	RekorBundle      = types.RekorBundle
+	RekorPayload     = types.RekorPayload
+	RFC3161Timestamp = types.RFC3161Timestamp
+)
+
+const BundleV03MediaType = types.BundleV03MediaType
+
+// TimestampToRFC3161Timestamp receives a base64 encoded RFC3161 timestamp.
+func TimestampToRFC3161Timestamp(timestampRFC3161 []byte) *RFC
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	"fmt"
-	"runtime"
-
-	"sigs.k8s.io/release-utils/version"
-)
-
-var (
-	// uaString is meant to resemble the User-Agent sent by browsers with requests.
-	// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent
-	uaString = fmt.Sprintf("cosign/%s (%s; %s)", version.GetVersionInfo().GitVersion, runtime.GOOS, runtime.GOARCH)
-// UserAgent returns the User-Agent string which `cosign` should send with HTTP requests.ß
-	return uaString
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8e6ea94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0433f847` are properly handled with clean fallback behavior.

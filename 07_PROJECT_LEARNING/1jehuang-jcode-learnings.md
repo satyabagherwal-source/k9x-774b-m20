@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `ebba4d12`  
+> **Source Version**: `7206efd0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:31:28.094Z  
+> **Timestamp**: 2026-10-22T20:51:51.729Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:31:28.083Z  
+> **Harvest Timestamp**: 2026-10-22T20:51:51.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21072 stars
+- **Stars / Engagement**: 21127 stars
 
 ---
 
@@ -2390,11 +2390,11 @@ impl Agent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1901** (2026-10-20): **Fresh sessions start on the OAuth pool head even when default_model is configured**
-  *Symptoms*: ## Summary  A fresh session on an OAuth pool (e.g. GitHub Copilot) starts on the pool head model (e.g. gpt-6.1-sol) even when `default_model` is set in config.toml. The config default is applied, then silently discarded moments later.  ## Source trace  - `provider_init` applies the configured default route first: `crates/jcode-base/src/provider/mod.rs` (`set_config_default_model`). - Then `select_fresh_session_pool_route` (`crates/jcode-base/src/provider/startup.rs`) rebinds every fresh session to the pool head, overwriting a successfully applied config default. - Related but distinct from #1112 (that one covers auth-login mutating process-global provider env vars; this one is the pool-head rebind).  ## Reproduction  1. Set `default_model` in config.toml to a non-head model of an authenticated OAuth pool. 2. Start a fresh session (new chat, no provider override). 3. Observe the session model: it is the pool head, not the configured default.  ## Expected  Config `default_model` wins for fresh sessions. The pool head is only a fallback when no config default exists (or it failed to apply).  Fix in #1900.
+- **Issue #1927** (2026-10-21): **Windows Build & Test fails to compile jcode-base: router_transfer tests use std::os::unix unconditionally**
+  *Symptoms*: The router_transfer test module uses std::os::unix::fs::PermissionsExt, mode() and symlink() without cfg gating, so the native Windows Build & Test job fails with 5 compile errors (run 39553590253):  - E0433 cannot find `unix` in `os` at router_transfer.rs:436 and :635 - E0599 no method named `mode` at :519, :523, :618  The Windows Cross-Target Check job stays green only because it runs cargo xwin check without --all-targets, so test code is never type-checked there.  Proposed fix (branch ready): keep every portable assertion running on all platforms and gate only the unix pieces. The permission asserts move behind an #[cfg(unix)] helper (assert_owner_only_unix), the destination-symlink section gets an #[cfg(unix)] block. Verified with cargo check --target x86_64-pc-windows-gnu --tests: master shows the same 5 errors as CI, the branch compiles clean; full test module passes on macOS (5/5).
 
-- **Issue #1851** (2026-10-18): **clippy: collapsible_if in jcode-sdk collections.rs save_with (rustc 1.99.0)**
-  *Symptoms*: ## What  `cargo clippy -p jcode-sdk` on current master (checked at `cb2895ab0`) warns:  ``` warning: this `if` statement can be collapsed    --> crates/jcode-sdk/src/collections.rs:313:5     | 313 |     if result.is_err() { 314 |         if let Err(cleanup_error) = fs::remove_file(&temporary) 315 |             && cleanup_error.kind() != std::io::ErrorKind::NotFound ... help: collapse nested if block     | 313 ~     if result.is_err() 314 ~         && let Err(cleanup_error) = fs::remove_file(&temporary) 315 |             && cleanup_error.kind() != std::io::ErrorKind::NotFound ```  Reproducible with rustc/clippy 1.99.0 (b940084d7 2026-09-28) by checking out master and running `cargo clippy -p jcode-sdk`. With `-D warnings` (as CI and `scripts/check_guardrails.sh` apply it) the warning becomes an error.  ## Why CI does not catch it  CI (`.github/workflows/ci.yml`, "Quality Guardrails") and `scripts/check_guardrails.sh` both run `cargo clippy --all-targets --all-features -- -D warnings` with no package selection. The workspace root is itself a package (`jcode`), so plain `cargo clippy` lints only the root package's dependency closure, and `jcode-sdk` is not in it (`cargo tree -p jcode` has zero `jcode-sdk` entries). The lint fires only when someone runs a workspace-wide or package-scoped check, e.g. `cargo clippy --workspace` or `cargo clippy -p jcode-sdk`.  ## Suggested fix  Collapse the outer `if result.is_err()` into the let-chain, as clippy suggests:  ```rust if result.is_err
+- **Issue #1925** (2026-10-21): **Venice AI is in the login catalog but has no ProviderChoice, so --provider venice cannot be selected and provider_matrix fails**
+  *Symptoms*: Since b0b2df567 (providers: add Venice AI) the login catalog carries VENICE_LOGIN_PROVIDER, but the CLI ProviderChoice enum was never extended. Two visible failures on master:  - `choice_for_login_provider(venice)` returns None, so the interactive login   path cannot map the catalog entry back to a CLI choice. - CI: tests/provider_matrix.rs panics with "venice should map to a   ProviderChoice" in provider_matrix_explicit_compatible_choice_overrides_stale_active_profile_state_space,   and `login_provider_choice_table_round_trips_catalog_providers` fails the   same way ("provider venice is in the catalog but not the CLI choice table").  Same class as the closed OrcaRouter gap in #1341.  Proposed fix (branch ready): add the Venice variant mirroring Celeris, arg value "venice", aliases from the catalog descriptor, the PROVIDER_CHOICE_LOGIN_PROVIDERS entry and the compatible-runtime init arm.  Tests: provider_matrix passes (9/9) with the fix; both jcode lib invariant tests pass. Reproduced on master 28d51019f before the fix.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2411,703 +2411,242 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61f68a82` (2026-10-20)
-**Commit Message**: feat(tui): add persistent /latex rendering controls
+### Incident Patch 1: `89e46951` (2026-10-22)
+**Commit Message**: fix(ci): restore green master for v0.99.1
 
-Adapt the LaTeX feature from PR #1871 for issue #1908 without its unrelated memory or test-lock changes. Keep bare /latex as status, add image/unicode on/off controls, help and SSH blocking, and invalidate rendering caches by mode. Batch deferred completion wakeups with a bounded drain and skip Mermaid invalidation for abandoned tasks.
+- Muse device-login credentials were invisible to auto provider detection
+  because the compatible transport only read env/config keys (provider
+  matrix failures).
+- Fix clippy -D warnings errors and dead-code warnings.
+- Refresh size, panic and swallowed-error ratchet budgets for v0.99.1 growth.
 
-Validated with hosted justrust check and eight hosted test runs (245 passing test executions).
-
-Co-authored-by: Alejandro Blanco-M <[REDACTED_EMAIL]>
-
-**File**: `crates/jcode-base/src/config/config_file.rs` (modified, +12/-0)
+**File**: `crates/jcode-app-core/src/server/turn_failover.rs` (modified, +1/-1)
 ```diff
-@@ -276,6 +276,18 @@ impl Config {
-         Ok(())
-     }
- 
-+    /// Update the persisted LaTeX rendering mode.
-+    pub fn set_latex_rendering(mode: LatexRenderingMode) -> anyhow::Result<()> {
-+        let mut cfg = Self::load_for_update()?;
-+        cfg.display.latex_rendering = mode;
-+        cfg.save()?;
-+        crate::logging::info(&format!(
-+            "Saved display.latex_rendering to config: {}",
-+            mode.as_str()
-+        ));
-+        Ok(())
-+    }
-+
-     /// Update the persisted tool-call-details preference.
-     pub fn set_tool_call_details(show: bool) -> anyhow::Result<()> {
-         let mut cfg = Self::load_for_update()?;
+@@ -162,7 +162,7 @@ pub(super) async fn process_message_with_server_failover(
+     enabled: bool,
+ ) -> anyhow::Result<()> {
+     let reminder = system_reminder.clone();
+-    let mut result = super::client_lifecycle::process_message_streaming_mpsc(
++    let result = super::client_lifecycle::process_message_streaming_mpsc(
+         Arc::clone(&agent),
+         content,
+         images,
 ```
 
-**File**: `crates/jcode-base/src/config_tests.rs` (modified, +44/-0)
+**File**: `crates/jcode-app-core/src/tool/browser_jev.rs` (modified, +1/-0)
 ```diff
-@@ -285,6 +285,50 @@ fn latex_rendering_environment_override_accepts_aliases() {
-     restore_env_var("JCODE_LATEX_RENDERING", previous);
- }
- 
-+/// The /latex command persists through set_latex_rendering, which is a
-+/// read-modify-write over the real config.toml. Pin the whole roundtrip at
-+/// this layer: write, then parse the file back and confirm the mode and an
-+/// unrelated sibling setting both survive, so a future refactor cannot make
-+/// the setter rewrite the file without keeping other keys.
-+#[test]
-+fn set_latex_rendering_roundtrips_through_config_toml() {
-+    let _guard = crate::storage::lock_test_env();
-+    let temp = tempfile::tempdir().expect("tempdir");
-+    let previous_home = std::env::var_os("JCODE_HOME");
-+    crate::env::set_var("JCODE_HOME", temp.path());
-+    let previous_latex = std::env::var_os("JCODE_LATEX_RENDERING");
-+    crate::env::remove_var("JCODE_LATEX_RENDERING");
-+
-+    // Seed a non-default sibling key so the test can catch a rewrite that
-+    // drops it.
-+    let seed = temp.path().join("config.toml");
-+    std::fs::write(
-+        &seed,
-+        "[display]\ncentered = false\nlatex_rendering = \"unicode\"\n",
-+    )
-+    .expect("seed config");
-+
-+    Config::set_latex_rendering(LatexRenderingMode::None).expect("save mode");
-+
-+    let raw = std::fs::read_to_string(&seed).expect("read config back");
-+    assert!(
-+        raw.contains("latex_rendering = \"none\""),
-+        "mode must be persisted, got: {raw}"
-+    );
-+    assert!(
-+        raw.contains("centered = false"),
-+        "unrelated display keys must survive the rewrite, got: {raw}"
-+    );
-+
-+    let reloaded = Config::load_strict().expect("config parses after the write");
-+    assert_eq!(reloaded.display.latex_rendering, LatexRenderingMode::None);
-+    assert!(!reloaded.display.centered);
-+
-+    restore_env_var("JCODE_LATEX_RENDERING", previous_latex);
-+    restore_env_var("JCODE_HOME", previous_home);
-+    Config::invalidate_cache();
-+}
-+
- #[test]
- fn swarm_max_concurrent_agents_parses_and_allows_zero_for_unbounded() {
-     let cfg: Config = toml::from_str("[agents]\nswarm_max_concurrent_agents = 64\n")
-```
-
-**File**: `crates/jcode-tui-markdown/src/markdown_latex_image.rs` (modified, +37/-11)
-```diff
-@@ -113,19 +113,45 @@ fn deferred_sender() -> &'static mpsc::Sender<DeferredLatexTask> {
- }
- 
- fn deferred_worker(rx: mpsc::Receiver<DeferredLatexTask>) {
--    for task in rx {
--        let toolchain = Toolchain::from_environment();
--        if let Err(error) = render_artifact(&task.source, task.display, task.dpi, &toolchain) {
--            remember_render_failure(task.key, &error);
--            report_error(&error);
--        }
--        if let Ok(mut pending) = PENDING_RENDERS.lock() {
--            pending.remove(&task.key);
--        }
-+    deferred_worker_with(
-+        rx,
-+        render_latex_task,
-+        super::mermaid::notify_deferred_render_completed,
-+    );
-+}
-+
-+fn deferred_worker_with<T>(
-+    rx: mpsc::Receiver<T>,
-+    mut render: impl FnMut(T),
-+    mut notify: impl FnMut(),
-+) {
-+    loop {
-+        let Ok(task) = rx.recv() else {
-+            return;
-+        };
-+        render(task);
-         // Reuse the deferred-render epoch so every markdown/body cache layer
-         // that already invalidates on completed mermaid renders also picks up
--        // completed formulas.
--        super::mermaid::notify_deferred_render_completed();
-+        // completed formulas. Drain tasks queued while this one rendered
-+        // first, and bump once for the whole batch: each bump invalidates
-+        // prepared-body caches, so N queued formulas must not force N full
-+        // transcript rebuilds in quick succession.
-+        // Bound each batch so a continuously replenished queue still wakes the UI.
-+        for next in rx.try_iter().take(31) {
-+            render(next);
-+        }
-+        notify();
-+    }
-+}
-+
-+fn render_latex_task(task: DeferredLatexTask) {
-+    let toolchain = Toolchain::from_environment();
-+    if let Err(error) = render_artifact(&task.source, task.display, task.dpi, &toolchain) {
-+        remember_render_failure(task.key, &error);
-+        report_error(&error);
-+    }
-+    if let Ok(mut pending) = PENDING_RENDERS.lock() {
-+        pending.remove(&task.key);
+@@ -24,6 +24,7 @@ impl JevTransport {
      }
  }
  
-```
-
-**File**: `crates/jcode-tui-markdown/src/markdown_latex_image_tests.rs` (modified, +15/-0)
-```diff
-@@ -1,4 +1,19 @@
- use super::*;
-+#[test]
-+fn latex_deferred_worker_batches_wakeups_and_bounds_batches() {
-+    for count in [0usize, 3, 65] {
-+        let (tx, rx) = std::sync::mpsc::channel();
-+        for n in 0..count {
-+            tx.send(n).unwrap();
-+        }
-+        drop(tx);
-+        let mut rendered = Vec::new();
-+        let mut wakeups = 0;
-+        deferred_worker_with(rx, |n| rendered.push(n), || wakeups += 1);
-+        assert_eq!(rendered, (0..count).collect::<Vec<_>>());
-+        assert_eq!(wakeups, count.div_ceil(32));
-+    }
-+}
- 
- #[test]
- fn distinct_fallback_errors_are_reported_once_across_redraws() {
-```
-
-**File**: `crates/jcode-tui-mermaid/src/mermaid_cache_render.rs` (modified, +109/-25)
-```diff
-@@ -873,40 +873,124 @@ fn deferred_render_sender() -> &'static mpsc::Sender<DeferredRenderTask> {
-     })
- }
- 
--fn deferred_render_worker(rx: mpsc::Receiver<DeferredRenderTask>) {
--    for task in rx {
--        let register_active = match PENDING_RENDER_REQUESTS.lock() {
--            Ok(pending) => pending
--                .get(&task.render_key)
--                .map(|request| request.register_active),
--            Err(poisoned) => poisoned
--                .into_inner()
--                .get(&task.render_key)
--                .map(|request| request.register_active),
--        };
 +#[cfg(test)]
-+mod deferred_batch_tests {
-+    use super::*;
- 
--        let Some(register_active) = register_active else {
--            if let Ok(mut state) = MERMAID_DEBUG.lock() {
--                state.stats.deferred_worker_skips += 1;
-+    #[test]
-+    fn deferred_worker_batches_mixed_tasks_and_skips_empty_batches() {
-+        for (tasks, expected_wakes) in [
-+            (vec![], 0),
-+            (vec![false; 65], 0),
-+            (vec![false, true, false, true], 1),
-+            (vec![true; 65], 3),
-+        ] {
-+            let (tx, rx) = mpsc::channel();
-+            let expected_count = tasks.len();
-+            for rendered in tasks {
-+                tx.send(rendered).unwrap();
-             }
--            continue;
-+            drop(tx);
-+            let mut processed = 0;
-+            let mut wakes = 0;
-+            deferred_render_worker_with(
-+                rx,
-+                |rendered| {
-+                    processed += 1;
-+                    rendered
-+                },
-+                || wakes += 1,
-+            );
-+            assert_eq!(processed, expected_count);
-+            assert_eq!(wakes, expected_wakes);
-+        }
-+    }
-+
-+    #[test]
-+    fn abandoned_mermaid_task_does_not_notify() {
-+        let (tx, rx) = mpsc::channel();
-+        tx.send(DeferredRenderTask {
-+            content: "abandoned-latex-toggle-regression".into(),
-+            terminal_width: Some(80),
-+            render_key: (u64::MAX - 1908, 80, RenderProfile::default()),
-+        })
-+        .unwrap();
-+        drop(tx);
-+        let mut wakes = 0;
-+        deferred_render_worker_with(rx, render_deferred_task, || wakes += 1);
-+        assert_eq!(
-+            wakes, 0,
-+            "skipped tasks must not bump the epoch or wake the UI"
-+        );
-+    }
-+}
-+
-+fn deferred_render_worker(rx: mpsc::Receiver<DeferredRenderTask>) {
-+    deferred_render_worker_with(rx, render_deferred_task, || {
-+        bump_deferred_render_epoch();
-+        crate::notify_render_completed();
-+    });
-+}
-+
-+fn deferred_render_worker_with<T>(
-+    rx: mpsc::Receiver<T>,
-+    mut render: impl FnMut(T) -> bool,
-+    mut notify: impl FnMut(),
-+) {
-+    loop {
-+        let Ok(task) = rx.recv() else {
-+            return;
-         };
-+        let mut rendered_any = render(task);
-+        // Drain tasks queued while this one rendered before bumping the epoch:
-+        // each bump invalidates prepared-body caches, so a burst of diagrams
-+        // must not force one full transcript rebuild per diagram.
-+        // Keep a replenished queue from postponing UI wakeups indefinitely.
-+        for next in rx.try_iter().take(31) {
-+            rendered_any |= render(next);
-+        }
-+        // Skip tasks (pending request already gone) never changed render
-+        // output, so an all-skipped batch must not invalidate anything.
-+        if rendered_any {
-+            notify();
-+        }
-+    }
-+}
-+
-+/// Render one deferred task. Returns false when the task was skipped because
-+/// its pending request is gone (stale geometry the UI already abandoned);
-+/// a skipped task must not count as a completed render for wakeup purposes.
-+fn render_deferred_task(task: DeferredRenderTask) -> bool {
-+    let register_active = match PENDING_RENDER_REQUESTS.lock() {
-+        Ok(pending) => pending
-+            .get(&task.render_key)
-+            .map(|request| request.register_active),
-+        Err(poisoned) => poisoned
-+            .into_inner()
-+            .get(&task.render_key)
-+            .map(|request| request.register_active),
-+    };
- 
-+    let Some(register_active) = register_active else {
-         if let Ok(mut state) = MERMAID_DEBUG.lock() {
--            state.stats.deferred_worker_renders += 1;
-+            state.stats.deferred_worker_skips += 1;
-         }
-+        return false;
-+    };
- 
--        let profile = task.render_key.2;
--        let _ = with_preferred_aspect_ratio(profile.preferred_aspect_ratio(), || {
--            render_mermaid_sized_internal(&task.content, task.terminal_width, register_active)
--        });
-+    if let Ok(mut state) = MERMAID_DEBUG.lock() {
-+        state.stats.deferred_worker_renders += 1;
-+    }
- 
--        if let Ok(mut pending) = PENDING_RENDER_REQUESTS.lock() {
--            pending.remove(&task.render_key);
--        }
--        bump_deferred_render_epoch();
--        crate::notify_render_completed();
-+    let profile = task.render_key
+ fn request_body(request: &DecisionRequest) -> Result<Value> {
+     request_body_for_model(request, &crate::jev::browser_jev_model_label())
+ }
 ```
 
-**File**: `crates/jcode-tui-messages/src/cache.rs` (modified, +13/-1)
+**File**: `crates/jcode-base/src/auth/muse.rs` (modified, +1/-0)
 ```diff
-@@ -1,5 +1,5 @@
- use crate::DisplayMessage;
--use jcode_config_types::{DiagramDisplayMode, DiffDisplayMode};
-+use jcode_config_types::{DiagramDisplayMode, DiffDisplayMode, LatexRenderingMode};
- use ratatui::layout::Alignment;
- use ratatui::text::{Line, Span};
- use std::collections::{HashMap, VecDeque};
-@@ -18,6 +18,7 @@ struct MessageCacheKey {
-     show_agentgrep_output: bool,
-     show_bash_output: bool,
-     tool_call_details: bool,
-+    latex_rendering: LatexRenderingMode,
- }
- 
- #[derive(Default)]
-@@ -81,6 +82,7 @@ pub struct MessageCacheContext {
-     pub show_agentgrep_output: bool,
-     pub show_bash_output: bool,
-     pub tool_call_details: bool,
-+    pub latex_rendering: LatexRenderingMode,
- }
- 
- pub fn left_pad_lines_for_centered_mode(lines: &mut [Line<'static>], width: u16) {
-@@ -132,6 +134,7 @@ where
-         show_agentgrep_output: context.show_agentgrep_output,
-         show_bash_output: context.show_bash_output,
-         tool_call_details: context.tool_call_details,
-+        latex_rendering: context.latex_rendering,
+@@ -176,6 +176,7 @@ impl std::fmt::Debug for DeviceChallenge {
+ /// Single poll attempt outcome. [`poll_login`] performs exactly one token
+ /// request and never sleeps; the caller loops honoring `interval`.
+ #[derive(Debug, Clone)]
++#[allow(clippy::large_enum_variant)] // One-shot poll result, never stored in bulk.
+ pub enum PollOutcome {
+     /// User has not approved yet; poll again after `interval` seconds.
+     Pending,
+```
+
+**File**: `crates/jcode-base/src/auth/transfer.rs` (modified, +6/-5)
+```diff
+@@ -603,7 +603,7 @@ fn publish_in(
+         return Err(TransferError::Io);
+     }
+     let staged = Staged {
+-        directory: &directory,
++        directory,
+         name: temporary,
      };
- 
-     let mut cache = match message_cache().lock() {
-@@ -165,7 +168,16 @@ mod tests {
-             show_agentgrep_output: true,
-             show_bash_output: true,
-             tool_call_details: true,
-+            latex_rendering: LatexRenderingMode::Image,
-         };
-+        let mut isolated_cache = MessageCacheState::default();
-+        isolated_cache.insert(key.clone(), vec![Line::from("image")]);
-+        let unicode_key = MessageCacheKey {
-+            latex_rendering: LatexRenderingMode::Unicode,
-+            ..key.clone()
-+        };
-+        assert!(isolated_cache.get(&unicode_key).is_none());
-+        assert!(isolated_cache.get(&key).is_some());
-         let weak = {
-             let mut cache = message_cache().lock().unwrap();
-             cache.insert(key.clone(), vec![Line::from("derived text".repeat(100))]);
-```
-
-**File**: `crates/jcode-tui/src/tui/app/command_registry_tests.rs` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ fn known_aliases_are_registered() {
-         "/resume-all",
-         "/hotkeys",
-         "/keys",
-+        "/latex",
-     ] {
-         assert!(names.contains(alias), "{alias} is not registered");
+     let mut file = unsafe { File::from_raw_fd(fd) };
+@@ -771,10 +771,11 @@ fn cloud_store(
+         return Err(TransferError::InvalidStore);
      }
+     let (accounts, active, _, _) = cloud_keys(provider);
+-    if let Some(selection) = value.get(active) {
+-        if !selection.is_null() && !selection.as_str().is_some_and(valid_cloud_label) {
+-            return Err(TransferError::InvalidStore);
+-        }
++    if let Some(selection) = value.get(active)
++        && !selection.is_null()
++        && !selection.as_str().is_some_and(valid_cloud_label)
++    {
++        return Err(TransferError::InvalidStore);
+     }
+     if let Some(entries) = value.get(accounts) {
+         let entries = entries.as_array().ok_or(TransferError::InvalidStore)?;
 ```
 
-**File**: `crates/jcode-tui/src/tui/app/commands.rs` (modified, +53/-0)
+**File**: `crates/jcode-base/src/jev.rs` (modified, +1/-0)
 ```diff
-@@ -3031,6 +3031,59 @@ fn handle_show_agentgrep_output_command(app: &mut App, trimmed: &str) -> bool {
-     true
+@@ -621,6 +621,7 @@ fn request_body(
+     request_body_for(JevPurpose::Memory, provider, state, questions)
  }
  
-+pub(super) fn handle_latex_command(app: &mut App, trimmed: &str) -> bool {
-+    let Some(rest) = slash_command_rest(trimmed, "/latex") else {
-+        return false;
-+    };
-+    let arg = rest.trim();
-+
-+    let current = crate::config::config().display.latex_rendering;
-+    if arg.is_empty() || arg.eq_ignore_ascii_case("status") {
-+        app.push_display_message(DisplayMessage::system(format!(
-+            "LaTeX rendering: {} (use /latex [on|off|none|unicode|image|status])\n\n  none    - keep raw $...$ source\n  unicode - terminal-friendly text math\n  image   - typeset PNG per formula (needs latex+dvipng or pdflatex+pdftocairo)",
-+            current.as_str()
-+        )));
-+        return true;
++#[cfg(test)]
+ fn request_body_for(
+     purpose: JevPurpose,
+     provider: JevProvider,
+```
+
+**File**: `crates/jcode-base/src/provider/openrouter.rs` (modified, +1/-1)
+```diff
+@@ -81,7 +81,7 @@ pub fn has_openrouter_credentials() -> bool {
+ pub fn get_api_key() -> Option<String> {
+     let key_name = configured_api_key_name();
+     let env_file = configured_env_file_name();
+-    load_api_key_from_env_or_config(&key_name, &env_file)
++    crate::provider_catalog::load_runtime_api_key(&key_name, &env_file)
+ }
+ 
+ /// OpenRouter API base URL
+```
+
+**File**: `crates/jcode-base/src/provider_catalog.rs` (modified, +2/-1)
+```diff
+@@ -12,7 +12,8 @@ pub const MINIMAX_CHINA_SETUP_URL: &str = "https://platform.minimaxi.com/docs/ll
+ 
+ mod profile_credentials;
+ pub use profile_credentials::{
+-    load_openai_compatible_profile_api_key, openai_compatible_profile_is_configured,
++    load_openai_compatible_profile_api_key, load_runtime_api_key,
++    openai_compatible_profile_is_configured,
+ };
+ 
+ pub fn api_base_uses_localhost(raw: &str) -> bool {
+```
+
+**File**: `crates/jcode-base/src/provider_catalog/profile_credentials.rs` (modified, +17/-0)
+```diff
+@@ -21,6 +21,23 @@ pub fn load_openai_compatible_profile_api_key(
+     load_api_key_from_env_or_config(&profile.api_key_env, &profile.env_file)
+ }
+ 
++/// Resolve the shared compatible-transport key from its configured env name and
++/// file. The Muse subscription route stores its minted key in a Jcode-managed
++/// credential file rather than an env file, so credential presence checks must
++/// consult that store too or a signed-in Muse account looks unconfigured.
++pub fn load_runtime_api_key(key_name: &str, env_file: &str) -> Option<String> {
++    if let Some(key) = load_api_key_from_env_or_config(key_name, env_file) {
++        return Some(key);
 +    }
-+
-+    let mode = match arg.to_ascii_lowercase().as_str() {
-+        "on" => Some(crate::config::LatexRenderingMode::Image),
-+        "off" => Some(crate::config::LatexRenderingMode::Unicode),
-+        _ => crate::config::LatexRenderingMode::parse(arg),
-+    };
-+    let Some(mode) = mode else {
-+        app.push_display_message(DisplayMessage::error(
-+            "Usage: /latex [on|off|none|unicode|image|status]".to_string(),
-+        ));
-+        return true;
-+    };
-+
-+    match crate::config::Config::set_latex_rendering(mode) {
-+        Ok(()) => {
-+            let effective = crate::config::config().display.latex_rendering;
-+            app.set_status_notice(format!("LaTeX rendering: {}", effective.as_str()));
-+            let override_note = if effective != mode {
-+                " JCODE_LATEX_RENDERING overrides the saved mode."
-+            } else {
-+                ""
-+            };
-+            app.push_display_message(DisplayMessage::system(format!(
-+                "Saved LaTeX rendering: {}. Effective mode: {}.{}",
-+                mode.as_str(),
-+                effective.as_str(),
-+                override_note
-+            )))
-+        }
-+        Err(error) => app.push_display_message(DisplayMessage::error(format!(
-+            "Failed to set LaTeX rendering to {}: {}. Nothing changed; the session keeps {}.",
-+            mode.as_str(),
-+            error,
-+            crate::config::config().display.latex_rendering.as_str()
-+        ))),
++    if key_name == "JCODE_MUSE_SUBSCRIPTION_API_KEY" && env_file == "muse-subscription.env" {
++        crate::auth::muse::ensure_enabled().ok()?;
++        return crate::auth::muse::load_credentials()
++            .ok()
++            .map(|credentials| credentials.api_key);
 +    }
-+    true
++    None
 +}
 +
- fn parse_agents_target(raw: &str) -> Option<crate::tui::AgentModelTarget> {
-     match raw.trim().to_ascii_lowercase().as_str() {
-         "swarm" | "agent" | "agents" | "subagent" | "subagents" => {
+ pub fn openai_compatible_profile_is_configured(profile: OpenAiCompatibleProfile) -> bool {
+     // A named profile or unrelated Meta API key must not make this native
+     // subscription route appear configured.
 ```
 
 ---
 
-### Incident Patch 2: `2bd3a076` (2026-10-20)
-**Commit Message**: test(tui): observe latex mode changes in rendered transcript
+### Incident Patch 2: `7206efd0` (2026-10-22)
+**Commit Message**: fix(ci): patch rustls-webpki/webpki-roots advisories, drop unused app-core deps
 
-**File**: `crates/jcode-tui/src/tui/app/tests/latex_command.rs` (modified, +53/-0)
+**File**: `Cargo.lock` (modified, +6/-8)
 ```diff
-@@ -131,6 +131,59 @@ fn latex_command_rejects_unknown_mode_and_reports_save_failure() {
-     );
- }
+@@ -3397,9 +3397,7 @@ dependencies = [
+  "dirs",
+  "flate2",
+  "futures",
+- "glob",
+  "global-hotkey",
+- "ignore",
+  "jcode-agent-runtime",
+  "jcode-ambient-types",
+  "jcode-applet-types",
+@@ -7163,9 +7161,9 @@ checksum = "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f"
  
-+#[test]
-+fn latex_command_rerenders_existing_math_in_the_terminal() {
-+    let _env = LatexCommandEnv::new();
-+    let mut app = create_test_app();
-+    crate::tui::markdown::install_jcode_markdown_hooks();
-+    app.push_display_message(DisplayMessage::assistant(
-+        "Inline: $x^2 + \\alpha$\n\n$$\ny^2 + \\beta\n$$",
-+    ));
-+    let mut terminal = ratatui::Terminal::new(ratatui::backend::TestBackend::new(100, 50))
-+        .expect("terminal backend");
-+
-+    // Keep the same app, transcript and rendering caches across commands. This
-+    // catches stale prefix reuse, not just a correct value in config.toml.
-+    for (mode, inline, display) in [
-+        ("none", "$x^2 + \\alpha$", "y^2 + \\beta"),
-+        ("unicode", "x² + α", "y² + β"),
-+        ("none", "$x^2 + \\alpha$", "y^2 + \\beta"),
-+    ] {
-+        app.input = format!("/latex {mode}");
-+        app.submit_input();
-+        terminal
-+            .draw(|frame| crate::tui::ui::draw(frame, &app))
-+            .unwrap();
-+        let screen: String = terminal
-+            .backend()
-+            .buffer()
-+            .content()
-+            .iter()
-+            .map(|cell| cell.symbol())
-+            .collect();
-+        assert!(
-+            screen.contains(inline),
-+            "{mode} inline math missing: {screen}"
-+        );
-+        assert!(
-+            screen.contains(display),
-+            "{mode} display math missing: {screen}"
-+        );
-+        let stale = if mode == "unicode" {
-+            "$x^2 + \\alpha$"
-+        } else {
-+            "x² + α"
-+        };
-+        assert!(
-+            !screen.contains(stale),
-+            "{mode} retained old math output: {screen}"
-+        );
-+        println!(
-+            "Observed terminal mode {mode}: inline={inline:?}, display={display:?}; no stale math"
-+        );
-+    }
-+}
-+
- #[test]
- fn latex_command_env_override_and_help() {
-     let _env = LatexCommandEnv::new();
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "aws-lc-rs",
+  "ring",
+@@ -9130,18 +9128,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "webpki-root-certs"
+-version = "1.0.7"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f31141ce3fc3e300ae89b78c0dd67f9708061d1d2eda54b8209346fd6be9a92c"
++checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+ dependencies = [
+  "rustls-pki-types",
+ ]
+ 
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.6"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "22cfaf3c063993ff62e73cb4311efde4db1efb31ab78a3e5c457939ad5cc0bed"
++checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ dependencies = [
+  "rustls-pki-types",
+ ]
+```
+
+**File**: `crates/jcode-app-core/Cargo.toml` (modified, +0/-2)
+```diff
+@@ -35,8 +35,6 @@ serde_json = { version = "1", features = ["raw_value"] }
+ # CLI
+ 
+ # File operations
+-glob = "0.3"
+-ignore = "0.4"
+ similar = "2"            # diffing for edits
+ 
+ # Utilities
 ```
 
 ---
 
-### Incident Patch 3: `5e7e0457` (2026-10-20)
-**Commit Message**: fix: honor configured model for fresh sessions (fixes #1901)
+### Incident Patch 3: `00a214b3` (2026-10-22)
+**Commit Message**: tui: show no auto-routing accounts hint as plain text
 
-Preserve a configured default only after its route applies successfully. Keep pool-head fallback for missing or rejected defaults and preserve explicit initial-provider routing.
-
-Adapt the startup guard and regression coverage from PR #1900, with additional non-head account identity coverage.
-
-Co-authored-by: Alejandro Blanco-M <[REDACTED_EMAIL]>
-
-**File**: `crates/jcode-base/src/provider/startup.rs` (modified, +8/-5)
+**File**: `crates/jcode-tui/src/tui/ui_header/account_router.rs` (modified, +1/-2)
 ```diff
-@@ -322,6 +322,7 @@ impl MultiProvider {
-         // An explicit CLI/environment provider selection owns startup routing.
-         // Applying the configured default model here can reactivate its configured
-         // provider/profile before the caller pins a dual-auth credential mode.
-+        let mut config_default_applied = false;
-         if result.initial_provider.is_none()
-             && let Some(model) = provider_state.default_model()
-         {
-@@ -333,6 +334,7 @@ impl MultiProvider {
-                     model, e
-                 ));
-             } else {
-+                config_default_applied = true;
-                 crate::logging::info(&format!("Applied default model '{}' from config", model));
-             }
-         }
-@@ -341,7 +343,7 @@ impl MultiProvider {
-         let runtimes_ms = runtimes_start.elapsed().as_millis();
-         let route_start = std::time::Instant::now();
-         result.spawn_openai_catalog_refresh_if_needed();
--        result.select_fresh_session_pool_route();
-+        result.select_fresh_session_pool_route(config_default_applied);
-         let route_ms = route_start.elapsed().as_millis();
-         crate::logging::info(&format!(
-             "[TIMING] provider_init parts: creds={creds_ms}ms, runtimes={runtimes_ms}ms, route={route_ms}ms"
-@@ -393,11 +395,12 @@ impl MultiProvider {
-         result
+@@ -305,9 +305,8 @@ fn inventory_lines(
+         })
+         .collect();
+     if lines.is_empty() {
+-        lines.push(Line::styled(
++        lines.push(Line::raw(
+             "No auto-routing accounts · /login to add credential",
+-            Style::default().fg(dim_color()),
+         ));
      }
- 
--    /// New sessions start at the head of the user's pool, not at the saved
--    /// default left behind by a previous session. This is deliberately a local
-+    /// Fresh sessions preserve a successfully applied configured default. Without
-+    /// one (missing or failed), use the first ready pool route. An explicit
-+    /// initial provider owns routing instead. This is deliberately a local
-     /// model/account binding: never promote the fallback or change active logins.
--    fn select_fresh_session_pool_route(&self) {
--        if self.initial_provider.is_some() {
-+    fn select_fresh_session_pool_route(&self, config_default_applied: bool) {
-+        if self.initial_provider.is_some() || config_default_applied {
-             return;
-         }
-         // A reconnect burst forks one provider per client. Each choice reads every
-```
-
-**File**: `crates/jcode-base/src/provider/tests/startup_pool.rs` (modified, +89/-8)
-```diff
-@@ -1,7 +1,7 @@
- use super::*;
- 
- #[test]
--fn startup_pool_claude_priority_beats_saved_openai_and_falls_back_across_providers() {
-+fn startup_pool_config_default_wins_over_pool_head() {
-     with_clean_provider_test_env(|| {
-         let runtime = enter_test_runtime();
-         let _guard = runtime.enter();
-@@ -26,6 +26,72 @@ fn startup_pool_claude_priority_beats_saved_openai_and_falls_back_across_provide
-         pool.save().unwrap();
-         models::clear_provider_unavailable_for_account("claude");
-         let router = MultiProvider::new_fast();
-+        assert_eq!(router.active_provider(), ActiveProvider::OpenAI);
-+        assert_eq!(router.model(), "gpt-5.5");
-+        assert_eq!(router.credential_mode(), CredentialMode::OAuth);
-+        assert_eq!(router.fork().model(), "gpt-5.5");
-+        let fresh = router.fork_for_new_session();
-+        assert_eq!(fresh.name(), "OpenAI");
-+        assert_eq!(fresh.model(), "gpt-5.5");
-+        assert_eq!(crate::auth::account_pool::AccountPool::load(), pool);
-+    });
-+}
-+
-+#[test]
-+fn startup_pool_config_default_preserves_non_head_account() {
-+    with_clean_provider_test_env(|| {
-+        let runtime = enter_test_runtime();
-+        let _guard = runtime.enter();
-+        let pool = startup_pool_fixture();
-+        crate::config::Config::set_default_model(
-+            Some("openai-oauth@openai-fox:gpt-5.5"),
-+            Some("openai-oauth"),
-+        )
-+        .unwrap();
-+        // Keep the configured account behind the pool head intentionally.
-+        pool.save().unwrap();
-+        let config_before = crate::config::Config::load().provider;
-+        let router = MultiProvider::new_fast();
-+        for provider in [router.fork(), router.fork_for_new_session()] {
-+            assert_eq!(provider.model(), "gpt-5.5");
-+            assert_eq!(
-+                provider.oauth_account_label().as_deref(),
-+                Some("openai-fox")
-+            );
-+            assert_eq!(provider.credential_mode(), CredentialMode::OAuth);
-+        }
-+        assert_eq!(router.oauth_account_label().as_deref(), Some("openai-fox"));
-+        assert_eq!(crate::auth::account_pool::AccountPool::load(), pool);
-+        let config_after = crate::config::Config::load().provider;
-+        assert_eq!(config_after.default_model, config_before.default_model);
-+        assert_eq!(
-+            config_after.default_provider,
-+            config_before.default_provider
-+        );
-+    });
-+}
-+
-+#[test]
-+fn startup_pool_head_binds_when_no_config_default_exists() {
-+    with_clean_provider_test_env(|| {
-+        let runtime = enter_test_runtime();
-+        let _guard = runtime.enter();
-+        let mut pool = startup_pool_fixture();
-+        crate::config::Config::set_default_model(None, None).unwrap();
-+        let label = auth::claude::upsert_account(auth::claude::AnthropicAccount {
-+            label: "claude-fox".into(),
-+            access: "access".into(),
-+            refresh: "refresh".into(),
-+            expires: chrono::Utc::now().timestamp_millis() + 86_400_000,
-+            email: None,
-+            subscription_type: Some("max".into()),
-+            scopes: vec![],
-+        })
-+        .unwrap();
-+        pool.members.insert(0, format!("claude:{label}"));
-+        pool.save().unwrap();
-+        models::clear_provider_unavailable_for_account("claude");
-+        let router = MultiProvider::new_fast();
-         assert_eq!(router.active_provider(), ActiveProvider::Claude);
-         assert_eq!(
-             router.oauth_account_label().as_deref(),
-@@ -39,20 +105,33 @@ fn startup_pool_claude_priority_beats_saved_openai_and_falls_back_across_provide
-         );
-         let fresh = router.fork_for_new_session();
-         assert_eq!(fresh.oauth_account_label().as_deref(), Some("openai-otter"));
--        assert_eq!(fresh.model(), "gpt-5.5");
-         auth::claude::set_active_account_override(Some(label.clone()));
-         models::clear_provider_unavailable_for_account("claude");
-         let reset = router.fork_for_new_session();
-         assert_eq!(reset.oauth_account_label().as_deref(), Some(label.as_str()));
-         assert!(reset.model().starts_with("claude"));
-         assert_eq!(crate::auth::account_pool::AccountPool::load(), pool);
-+    });
-+}
-+
-+#[test]
-+fn startup_pool_head_binds_when_config_default_fails_to_apply() {
-+    with_clean_provider_test_env(|| {
-+        let runtime = enter_test_runtime();
-+        let _guard = runtime.enter();
-+        let pool = startup_pool_fixture();
-+        crate::config::Config::set_default_model(
-+            Some("no-such-provider:no-such-model"),
-+            Some("no-such-provider"),
-+        )
-+        .unwrap();
-+        let router = MultiProvider::new_fast();
-         assert_eq!(
--            crate::config::Config::load()
--                .provider
--                .default_provider
--                .as_deref(),
--            Some("openai-oauth")
-+            router.oauth_account_label().as_deref(),
-+            Some("openai-otter")
- 
+     lines
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1917** (2026-10-21): Fix image rendering inside Zellij with classic Kitty placements (@anateus)
+- **PR #1916** (2026-10-21): Add configurable Kagi web search backend (@anateus)
 - **PR #1903** (closed): test: seed muse-subscription credentials in the provider_matrix sandbox (@alecuba16)
 - **PR #1900** (closed): fix: fresh sessions honor config default_model over pool head (@alecuba16)
 - **PR #1890** (2026-10-19): Make Jev decision models configurable (@Tapraj-Pathak)
 - **PR #1886** (2026-10-19): feat(provider): native Muse subscription login without the Muse CLI (@vallabha717)
-- **PR #1871** (closed): feat(tui): add /latex command to toggle LaTeX rendering (@alecuba16)
-- **PR #1870** (closed): fix(swarm): wire swarm-member rename to the coordinator (RenameSwarmSession) (@KooshaPari)
 
 ---
 
@@ -3127,39 +2666,28 @@ Co-authored-by: Alejandro Blanco-M <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): add persistent /latex rendering controls
+## X. ci): restore green master for v0.99.1
 
 **RULE**:
-When implementing operations in `crates/jcode-base/src/config/config_file.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-app-core/src/server/turn_failover.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61f68a82`: tui): add persistent /latex rendering controls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89e46951`: ci): restore green master for v0.99.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-base/src/config/config_file.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-app-core/src/server/turn_failover.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Update the persisted LaTeX rendering mode.
-    pub fn set_latex_rendering(mode: LatexRenderingMode) -> anyhow::Result<()> {
-        let mut cfg = Self::load_for_update()?;
-        cfg.display.latex_rendering = mode;
-        cfg.save()?;
-        crate::logging::info(&format!(
-            "Saved display.latex_rendering to config: {}",
-            mode.as_str()
-        ));
-        Ok(())
-    }
-
+    let result = super::client_lifecycle::process_message_streaming_mpsc(
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    let mut result = super::client_lifecycle::process_message_streaming_mpsc(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61f68a82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89e46951` are properly handled with clean fallback behavior.

@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T20:45:36.997Z",
-  "total_cycles_completed": 4401,
-  "total_learnings_persisted": 4401,
-  "total_rules_promoted": 3582,
+  "last_updated": "2026-10-22T20:52:07.474Z",
+  "total_cycles_completed": 4408,
+  "total_learnings_persisted": 4408,
+  "total_rules_promoted": 3589,
   "history": [
-    {
-      "timestamp": "2026-10-21T06:01:02.762Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T15:09:53.638Z",
-      "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T15:16:20.953Z",
-      "repository": "serpapi/google-search-results-ruby",
-      "learningId": "learn-github-serpapi-google-search-results-ruby",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T15:16:21.519Z",
-      "repository": "dalance/procs",
-      "learningId": "learn-github-dalance-procs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T15:16:24.347Z",
-      "repository": "SimonSchubert/Kai",
-      "learningId": "learn-github-simonschubert-kai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T15:16:26.318Z",
-      "repository": "bridgecrewio/checkov",
-      "learningId": "learn-github-bridgecrewio-checkov",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T15:16:30.701Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T15:16:33.552Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1353,55 @@
       "timestamp": "2026-10-22T20:45:36.997Z",
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:51:50.345Z",
+      "repository": "arco-design/arco-design-vue",
+      "learningId": "learn-github-arco-design-arco-design-vue",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:51:52.076Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:51:55.588Z",
+      "repository": "urllib3/urllib3",
+      "learningId": "learn-github-urllib3-urllib3",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:51:57.375Z",
+      "repository": "KeyboardKit/KeyboardKit",
+      "learningId": "learn-github-keyboardkit-keyboardkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:52:00.166Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:52:02.437Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:52:07.474Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

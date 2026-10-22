@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source**: github ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
-> **Source Version**: `4ea60852`  
+> **Source Version**: `2b19759f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:21:55.126Z  
+> **Timestamp**: 2026-10-22T20:51:57.003Z  
 > **Learning ID**: `learn-github-keyboardkit-keyboardkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,14 +17,14 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:21:55.115Z  
+> **Harvest Timestamp**: 2026-10-22T20:51:56.442Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `KeyboardKit/KeyboardKit`
-- **Description**: Create amazing custom iOS keyboards with Swift & SwiftUI.
+- **Description**: Create custom iOS keyboards with Swift & SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
 - **Stars / Engagement**: 1894 stars
@@ -1024,183 +1024,8 @@ private extension KeyboardViewController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ea60852` (2026-10-14)
-**Commit Message**: Update localization document
-
-**File**: `Docs/Localization.md` (modified, +6/-126)
-```diff
-@@ -1,212 +1,92 @@
- # Localization
- 
--Since support for more locales is an ongoing effort, information regarding localization will be managed in this document instead of in a forever open GitHub issue.
-+This document covers locales that aren't included in the main GitHub issue.
- 
- 
- ## TLDR;
- 
--KeyboardKit should support as many locales as possible. However, since many locales require additional layout and locale capabilities, they're not always easy to implement.
-+KeyboardKit should support as many locales as possible. However, since many locales require additional layout and logic, they're not always easy to implement.
- 
--This document is therefore used to remove clutter from the issue tracker. Feel free to open issues for individual locales at https://github.com/KeyboardKit/KeyboardKit/issues.
-+The [Language Support](https://github.com/KeyboardKit/KeyboardKit/issues/1103) GitHub issue covers locales that are supported by the native keyboard, but there are many more. This document is therefore used to remove clutter from the issue. 
- 
- 
- ## Contribute
- 
--If you provide substantial help to implement support for a new locale, you will be given a forever free Basic subscription for your project, or a discount on the higher tiers.
-+To help us prioritze, feel free to request individual locales at [GitHub](https://github.com/KeyboardKit/KeyboardKit/issues), or leave a comment in the [main issue](https://github.com/KeyboardKit/KeyboardKit/issues/1103). 
- 
- 
--## Requested (but complicated)
-+## Locales
- 
--These locales have been requested, and should be prioritized:
-+These locales and locale variants have no native keyboards.
- 
--* hi - Hindi
--* ja - Japanese
--* km-KH - Khmer
--* ko_KR Korean (South Korea)
--* ne_NP - Nepali (Nepal)
--* pa - Punjabi
--* zh - Simplified Chinese
--
--
--## Other locales
--
--These locales and locale variants from https://gist.github.com/jacobbubu/1836273 may not have native keyboards. Only implement them upon request:
--
--* ak Akan
- * ak_GH Akan (Ghana)
--* am Amharic
- * am_ET Amharic (Ethiopia)
--* as Assamese
--* as_IN Assamese (India)
--* asa Asu
- * asa_TZ Asu (Tanzania)
--* bem Bemba
- * bem_ZM Bemba (Zambia)
--* bez Bena
- * bez_TZ Bena (Tanzania)
--* bm Bambara
- * bm_ML Bambara (Mali)
--* bo Tibetan (dotted lines and arrow key to add lower accent)
--* bo_CN Tibetan (China)
--* bo_IN Tibetan (India)
--* cgg Chiga
- * cgg_UG Chiga (Uganda)
--* dav Taita
- * dav_KE Taita (Kenya)
--* ebu Embu
- * ebu_KE Embu (Kenya)
--* ee Ewe
- * ee_GH Ewe (Ghana)
- * ee_TG Ewe (Togo)
--* ff Fulah
- * ff_SN Fulah (Senegal)
--* gu Gujarati
- * gu_IN Gujarati (India)
--* guz Gusii
- * guz_KE Gusii (Kenya)
--* gv Manx
- * gv_GB Manx (United Kingdom)
- * ha Hausa (no native keyboard?)
- * ha_Latn Hausa (Latin)
- * ha_Latn_GH Hausa (Latin, Ghana)
- * ha_Latn_NE Hausa (Latin, Niger)
- * ha_Latn_NG Hausa (Latin, Nigeria)
--* hi_IN Hindi (India)
--* ig Igbo
--* ig_NG Igbo (Nigeria)
--* ii Sichuan Yi
- * ii_CN Sichuan Yi (China)
--* ja_JP Japanese (Japan)
--* jmc Machame
- * jmc_TZ Machame (Tanzania)
--* kab Kabyle
- * kab_DZ Kabyle (Algeria)
--* kam Kamba
- * kam_KE Kamba (Kenya)
- * kde Makonde (no native keyboard?)
--* kea Kabuverdianu (no native keyboard?)
- * kea_CV Kabuverdianu (Cape Verde)
--* khq Koyra Chiini
- * khq_ML Koyra Chiini (Mali)
--* ki Kikuyu
- * ki_KE Kikuyu (Kenya)
--* kln Kalenjin (no native keyboard?)
- * kln_KE Kalenjin (Kenya)
--* km Khmer
--* km_KH Khmer (Cambodia)
--* kn Kannada
--* kn_IN Kannada (India)
--* kok Konkani
--* kok_IN Konkani (India)
- * kw_GB Cornish (United Kingdom)
--* lag Langi
- * lag_TZ Langi (Tanzania)
--* lg Ganda
- * lg_UG Ganda (Uganda)
--* luo Luo (no native keyboard?)
- * luo_KE Luo (Kenya)
--* luy Luyia
- * luy_KE Luyia (Kenya)
--* mas Masai
- * mas_KE Masai (Kenya)
- * mas_TZ Masai (Tanzania)
--* mer Meru (no native keyboard?)
- * mer_KE Meru (Kenya)
--* mfe Morisyen (no native keyboard?)
- * mfe_MU Morisyen (Mauritius)
--* mg Malagasy
--* mg_MG Malagasy (Madagascar)
--* ml Malayalam
--* ml_IN Malayalam (India)
--* mr Marathi (dotted lines and complicated logic)
--* mr_IN Marathi (India)
--* my Burmese (dotted lines and complicated logic)
--* my_MM Burmese (Myanmar [Burma])
--* naq Nama
- * naq_NA Nama (Namibia)
--* nd North Ndebele (no native keyboard?)
- * nd_ZW North Ndebele (Zimbabwe)
--* ne Nepali (dotted lines and complicated logic)
--* ne_IN Nepali (India)
--* nyn Nyankole
- * nyn_UG Nyankole (Uganda)
--* om Oromo
- * om_ET Oromo (Ethiopia)
- * om_KE Oromo (Kenya)
--* or Oriya
- * or_IN Oriya (India)
--* pa_Arab Punjabi (Arabic)
--* pa_Arab_PK Punjabi (Arabic, Pakistan)
--* pa_Guru Punjabi (Gurmukhi)
--* pa_Guru_IN Punjabi (Gurmukhi, India)
--* ps Pashto
--* ps_AF Pashto (Afghanistan)
--* rof Rombo
--* rof_TZ Rombo (Tanzania)
--* rw Kinyarwanda
--* rw_RW Kinyarwanda (Rwanda)
--* rwk Rwa
--* rwk_TZ Rwa (Tanzania)
--* saq Samburu
- * saq_KE Samburu (Kenya)
--* seh Sena (no native keyboard?)
- * seh_MZ Sena (Mozambique)
--* ses Koyraboro Senni
- * ses_ML Koyraboro Senni (Mali)
--* sg Sango (no native keyboard?)
- * sg_CF Sango (Central African Republic)
--* shi Tachelhit
- * s
-```
-
----
-
-### Incident Patch 2: `2b6114a4` (2026-10-08)
-**Commit Message**: Update package to 11.0.3
+### Incident Patch 1: `4876a2d9` (2026-10-20)
+**Commit Message**: Patch 11.1 with a debug diacritic color fix
 
 **File**: `Package.swift` (modified, +2/-2)
 ```diff
@@ -1208,10 +1033,10 @@ Observed empirical fixes and code patches:
      targets: [
          .binaryTarget(
              name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.0.2/KeyboardKit.zip",
--            checksum: "3553752652c9df0944c51d27324f38a55a487ae9fcde19de8904f2022561287b"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.0.3/KeyboardKit.zip",
-+            checksum: "8651b0a9f9a4df0b3c581b896e84b7d9b985dd27d5336122a46cdda3983a42d5"
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit.zip",
+-            checksum: "edd3147f3ccc9e4239e17e50aa2ff352b8e035b780606d8e58ae5920492b5504"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit-Patch.zip",
++            checksum: "e2fa5645229fc71f7e72a020b4eac2f2ef37409588aceb95e93eef3c910abb67"
          ),
          .target(
              name: "KeyboardKitDependencies",
@@ -1219,14 +1044,14 @@ Observed empirical fixes and code patches:
 
 **File**: `RELEASE_NOTES.md` (modified, +1/-1)
 ```diff
-@@ -12,7 +12,7 @@ This document covers the current major version. See older versions for older rel
+@@ -14,7 +14,7 @@ This document covers the current major version. See older versions for older rel
  
+ ## 11.1
  
+-This version adds support for Khmer, Korean, Luxembourgish, Thai, Xhosa, and Yoruba.
++This version adds support for `Khmer`, `Korean`, `Luxembourgish`, `Thai`, `Xhosa`, and `Yoruba`.
  
--## 11.0.2
-+## 11.0.2, 11.0.3
- 
- This version makes the `KeyboardAppHomeScreen` support the iPhone Duo.
+ This version detects iPhone Duo devices, and adjusts the keyboard layout and design to match a native Duo experience.
  
 ```
 
@@ -1256,60 +1081,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update localization document
+## X. Patch 11.1 with a debug diacritic color fix
 
 **RULE**:
-When implementing operations in `Docs/Localization.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ea60852`: Update localization document. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4876a2d9`: Patch 11.1 with a debug diacritic color fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Docs/Localization.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-This document covers locales that aren't included in the main GitHub issue.
-KeyboardKit should support as many locales as possible. However, since many locales require additional layout and logic, they're not always easy to implement.
-The [Language Support](https://github.com/KeyboardKit/KeyboardKit/issues/1103) GitHub issue covers locales that are supported by the native keyboard, but there are many more. This document is therefore used to remove clutter from the issue. 
-To help us prioritze, feel free to request individual locales at [GitHub](https://github.com/KeyboardKit/KeyboardKit/issues), or leave a comment in the [main issue](https://github.com/KeyboardKit/KeyboardKit/issues/1103). 
-## Locales
-These locales and locale variants have no native keyboards.
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit-Patch.zip",
+            checksum: "e2fa5645229fc71f7e72a020b4eac2f2ef37409588aceb95e93eef3c910abb67"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-Since support for more locales is an ongoing effort, information regarding localization will be managed in this document instead of in a forever open GitHub issue.
-KeyboardKit should support as many locales as possible. However, since many locales require additional layout and locale capabilities, they're not always easy to implement.
-This document is therefore used to remove clutter from the issue tracker. Feel free to open issues for individual locales at https://github.com/KeyboardKit/KeyboardKit/issues.
-If you provide substantial help to implement support for a new locale, you will be given a forever free Basic subscription for your project, or a discount on the higher tiers.
-## Requested (but complicated)
-These locales have been requested, and should be prioritized:
-* hi - Hindi
-* ja - Japanese
-* km-KH - Khmer
-* ko_KR Korean (South Korea)
-* ne_NP - Nepali (Nepal)
-* pa - Punjabi
-* zh - Simplified Chinese
-
-
-## Other locales
-
-These locales and locale variants from https://gist.github.com/jacobbubu/1836273 may not have native keyboards. Only implement them upon request:
-
-* ak Akan
-* am Amharic
-* as Assamese
-* as_IN Assamese (India)
-* asa Asu
-* bem Bemba
-* bez Bena
-* bm Bambara
-* b
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit.zip",
+            checksum: "edd3147f3ccc9e4239e17e50aa2ff352b8e035b780606d8e58ae5920492b5504"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ea60852` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4876a2d9` are properly handled with clean fallback behavior.

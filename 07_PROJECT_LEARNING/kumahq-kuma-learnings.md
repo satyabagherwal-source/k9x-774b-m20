@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `ab8ef76c`  
+> **Source Version**: `cfab75ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:21:27.432Z  
+> **Timestamp**: 2026-10-22T20:51:59.801Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:21:26.969Z  
+> **Harvest Timestamp**: 2026-10-22T20:51:59.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4015 stars
+- **Stars / Engagement**: 4016 stars
 
 ---
 
@@ -198,10 +198,15 @@ func SetLogLevel(logger *logr.Logger, level string, name string) error {
  * - Please do NOT modify this file.
  */
 
-const PACKAGE_VERSION = '2.11.3'
-const INTEGRITY_CHECKSUM = '4db4a41e972cec1b64cc569c66952d82'
+const PACKAGE_VERSION = '3.0.1'
+const INTEGRITY_CHECKSUM = '5cd5cf8b54c3a90f82960cedcd637772'
 const IS_MOCKED_RESPONSE = Symbol('isMockedResponse')
+
 const activeClientIds = new Set()
+/**
+ * @type {Map<string, Set<Promise<Response>>>}
+ */
+const pendingRequests = new Map()
 
 addEventListener('install', function () {
   self.skipWaiting()
@@ -211,82 +216,101 @@ addEventListener('activate', function (event) {
   event.waitUntil(self.clients.claim())
 })
 
-addEventListener('message', async function (event) {
+addEventListener('message', function (event) {
   const clientId = Reflect.get(event.source || {}, 'id')
 
   if (!clientId || !self.clients) {
     return
   }
 
-  const client = await self.clients.get(clientId)
+  event.waitUntil(
+    (async () => {
+      if (event.data === 'CLIENT_CLOSE') {
+        const allClients = await self.clients.matchAll({
+          type: 'window',
+        })
 
-  if (!client) {
-    return
-  }
+        activeClientIds.delete(clientId)
 
-  const allClients = await self.clients.matchAll({
-    type: 'window',
-  })
+        // Await any pending requests from the closing client.
+        // This makes sure that those requests are handled and not passthrough.
+        const pending = pendingRequests.get(clientId)
+        if (pending != null && pending.size > 0) {
+          await Promise.allSettled(pending)
+        }
+        pendingRequests.delete(clientId)
 
-  switch (event.data) {
-    case 'KEEPALIVE_REQUEST': {
-      sendToClient(client, {
-        type: 'KEEPALIVE_RESPONSE',
-      })
-      break
-    }
+        const remainingClients = allClients.filter((client) => {
+          return client.id !== clientId
+        })
 
-    case 'INTEGRITY_CHECK_REQUEST': {
-      sendToClient(client, {
-        type: 'INTEGRITY_CHECK_RESPONSE',
-        payload: {
-          packageVersion: PACKAGE_VERSION,
-          checksum: INTEGRITY_CHECKSUM,
-        },
-      })
-      break
-    }
+        // Unregister itself when there are no more clients
+        if (remainingClients.length === 0) {
+          await self.registration.unregister()
+        }
 
-    case 'MOCK_ACTIVATE': {
-      activeClientIds.add(clientId)
+        const client = await self.clients.get(clientId)
 
-      sendToClient(client, {
-        type: 'MOCKING_ENABLED',
-        payload: {
-          client: {
-            id: client.id,
-            frameType: client.frameType,
-          },
-        },
-      })
-      break
-    }
+        if (client != null) {
+          await sendToClient(client, {
+            type: 'CLIENT_CLOSED',
+          })
+        }
 
-    case 'CLIENT_CLOSED': {
-      activeClientIds.delete(clientId)
-
-      const remainingClients = allClients.filter((client) => {
-        return client.id !== clientId
-      })
-
-      // Unregister itself when there are no more clients
-      if (remainingClients.length === 0) {
-        self.registration.unregister()
+        return
       }
 
-      break
-    }
-  }
+      /**
+       * @note Check for the client AFTER handling "CLIENT_CLOSE".
+       * This prevents early return on "!client" in case the page has reloaded
+       * and disassociated itself from the worker. This ensures self-unregistration
+       * still fires for those pages.
+       */
+      const client = await self.clients.get(clientId)
+
+      if (!client) {
+        return
+      }
+
+      switch (event.data) {
+        case 'KEEPALIVE_REQUEST': {
+          await sendToClient(client, {
+            type: 'KEEPALIVE_RESPONSE',
+          })
+          break
+        }
+
+        case 'INTEGRITY_CHECK_REQUEST': {
+          await sendToClient(client, {
+            type: 'INTEGRITY_CHECK_RESPONSE',
+            payload: {
+              packageVersion: PACKAGE_VERSION,
+              checksum: INTEGRITY_CHECKSUM,
+            },
+          })
+          break
+        }
+
+        case 'MOCK_ACTIVATE': {
+          activeClientIds.add(clientId)
+
+          await sendToClient(client, {
+            type: 'MOCKING_ENABLED',
+            payload: {
+              client: {
+                id: client.id,
+                frameType: client.frameType,
+              },
+            },
+          })
+          break
+        }
+      }
+    })(),
+  )
 })
 
 addEventListener('fetch', function (event) {
-  const requestInterceptedAt = Date.now()
-
-  // Bypass navigation requests.
-  if (event.request.mode === 'navigate') {
-    return
-  }
-
   // Opening the DevTools triggers the "only-if-cached" request
   // that cannot be handled by the worker. Bypass such requests.
   if (
@@ -304,23 +328,54 @@ addEventListener('fetch', function (event) {
   }
 
   const requestId = crypto.randomUUID()
-  event.respondWith(handleRequest(event, requestId, requestInterceptedAt))
+  event.respondWith(handleRequest(event, requestId))
 })
 
 /**
  * @param {FetchEvent} event
  * @param {string} requestId
- * @param {number} requestInterceptedAt
  */
-async function handleRequest(event, requestId, requestInterceptedAt) {
+async function handleRequest(event, requestId) {
   const client = await resolveMainClient(event)
   const requestCloneForEvents = event.request.clone()
-  const response = await getResponse(
-    event,
-    client,
-    requestId,
-    requestInterceptedAt,
-  )
+
+  const responsePromise = getResponse(event, client, requestId)
+
+  if (client != null) {
+    let pending = pendingRequests.get(client.id)
+
+    if (pending == null) {
+      pendingRequests.set(client.id, (pending = new Set()))
+    }
+
+    pending.add(responsePromise)
+    responsePromise
+      .finally(() => pending.delete(responsePromise))
+      .catch(() => {})
+  }
+
+  let response
+
+  try {
+    response = await responsePromise
+  } catch (error) {
+    // The request has settled without a response (e.g. a passthrough
+    // request failed with a network error). Notify the client so it
+    // can release the resources associated with this request.
+    if (client && activeClientIds.has(client.id)) {
+      sendToClient(client, {
+        type: 'REQUEST_ERROR',
+        payload: {
+          request: {
+            id: requestId,
+          },
+          error: serializeError(error),
+        },
+      })
+    }
+
+    throw error
+  }
 
   // Send back the response clone for the "response:*" life-cycle events.
   // Ensure MSW is active and ready to handle the message, otherwise
@@ -328,8 +383,18 @@ async function handleRequest(event, requestId, requestInterceptedAt) {
   if (client && activeClientIds.has(client.id)) {
     const serializedRequest = await serializeRequest(requestCloneForEvents)
 
+    // Omit the body of server-sent event stream responses.
+    // Cloning such responses would prevent client-side stream cancelations
+    // from reaching the original stream (a teed stream only cancels its
+    // source once both of its branches cancel) and would buffer the
+    // entire stream into the unconsumed clone indefinitely.
+    const isEventStreamResponse = response.headers
+      .get('content-type')
+      ?.toLowerCase()
+      .startsWith('text/event-stream')
+
     // Clone the response so both the client and the library could consume it.
-    const responseClone = response.clone()
+    const responseClone = isEventStreamResponse ? null : response.clone()
 
     sendToClient(
       client,
@@ -342,15 +407,17 @@ async function handleRequest(event, requestId, requestInterceptedAt) {
             ...serializedRequest,
           },
           response: {
-            type: responseClone.type,
-            status: responseClone.status,
-            statusText: responseClone.statusText,
-            headers: Object.fromEntries(responseClone.headers.entries()),
-            body: responseClone.body,
+            type: response.type,
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            body: responseClone ? responseClone.body : null,
           },
         },
       },
-      responseClone.body ? [serializedRequest.body, responseClone.body] : [],
+      responseClone && responseClone.body
+        ? [serializedRequest.body, responseClone.body]
+        : [],
     )
   }
 
@@ -398,15 +465,30 @@ async function resolveMainClient(event) {
  * @param {string} requestId
  * @returns {Promise<Response>}
  */
-async function getResponse(event, client, requestId, requestInterceptedAt) {
+async function getResponse(event, client, requestId) {
   // Clone the request because it might've been already used
   // (i.e. its body has been read and sent to the client).
   const requestClone = event.request.clone()
 
-  function passthrough() {
-    // Cast the request headers to a new Headers instance
-    // so the headers can be manipulated with.
-    const headers = new Headers(requestClone.headers)
+  /**
+   * @param {{ request?: { headers?: Array<[string, string]> } }} [data]
+   */
+  function passthrough(data) {
+    const headers = new Headers()
+    const requestHeaders = data?.request?.headers
+
+    if (Array.isArray(requestHeaders)) {
+      // Apply the request headers provided by the client.
+      // Those reflect any modifications made in the request handlers.
+      // Use ".append()" to support multiple headers with the same name.
+      for (const [name, value] of requestHeaders) {
+        headers.append(name, value)
+      }
+    } else {
+      for (const [name, value] of requestClone.headers) {
+        headers.append(name, value)
+      }
+    }
 
     // Remove the "accept" header value that marked this request as passthrough.
     // This prevents request alteration and also keeps it compliant with the
@@ -449,7 +531,6 @@ async function getResponse(event, client, requestId, requestInterceptedAt) {
       type: 'REQUEST',
       payload: {
         id: requestId,
-        interceptedAt: requestInterceptedAt,
         ...serializedRequest,
       },
     },
@@ -458,86 +539,11 @@ async function getResponse(event, client, requestId, requestInterceptedAt) {
 
   switch (clientMessage.type) {
     case 'MOCK_RESPONSE': {
-      return respondWithMock(clientMessage.data)
+      return respondWithMock(clientMessage.data, event)
     }
 
     case 'PASSTHROUGH': {
-      return passthrough()
-    }
-  }
-
-  return passthrough()
-}
-
-/**
- * @param {Client} client
- * @param {any} message
- * @param {Array<Transferable>} transferrables
- * @returns {Promise<any>}
- */
-function sendToClient(client, message, transferrables = []) {
-  return new Promise((resolve, reject) => {
-    const channel = new MessageChannel()
-
-    channel.port1.onmessage = (event) => {
-      if (event.data && event.data.error) {
-        return reject(event.data.error)
-      }
-
-      resolve(event.data)
-    }
-
-    client.postMessage(message, [
-      channel.port2,
-      ...transferrables.filter(Boolean),
-    ])
-  })
-}
-
-/**
- * @param {Response} response
- * @returns {Response}
- */
-function respondWithMock(response) {
-  // Setting response status code to 0 is a no-op.
-  // However, when responding with a "Response.error()", the produced Response
-  // instance will have status code set to 0. Since it's not possible to create
-  // a Response instance with status code 0, handle that use-case separately.
-  if (response.status === 0) {
-    return Response.error()
-  }
-
-  const mockedResponse = new Response(response.body, response)
-
-  Reflect.defineProperty(mockedResponse, IS_MOCKED_RESPONSE, {
-    value: true,
-    enumerable: true,
-  })
-
-  return mockedResponse
-}
-
-/**
- * @param {Request} request
- */
-async function serializeRequest(request) {
-  return {
-    url: request.url,
-    mode: request.mode,
-    method: request.method,
-    headers: Object.fromEntries(request.headers.entries()),
-    cache: request.cache,
-    credentials: request.credentials,
-    destination: request.destination,
-    integrity: request.integrity,
-    redirect: request.redirect,
-    referrer: request.referrer,
-    referrerPolicy: request.referrerPolicy,
-    body: await request.arrayBuffer(),
-    keepalive: request.keepalive,
-  }
-}
-
+  
 ```
 
 ### Core Architecture Module: `app/kumactl/cmd/install/render_files.go`
@@ -992,13 +998,11 @@ var DefaultEnabled = []string{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #19211** (2026-10-20): **ci(actions): dispatch with GitHub App tokens**
-  *Symptoms*: ## Motivation  The downstream dispatches from this repository authenticate with classic PATs: `NOTIFY_BOT_PAT_TOKEN` of the team's bot account and `KONG_MESH_SMOKE_DISPATCH_TOKEN`. Classic PATs are moving to a 7-day maximum lifetime, which already broke the downstream upgrade dispatch once. A long-lived PAT also reaches every repository its owner can.  ## Implementation information  - `pr-merged.yaml` and the smoke job of `trigger-release-tasks.yaml` mint a token from `vars.NOTIFY_APP_ID` and `secrets.NOTIFY_APP_PRIVATE_KEY`, with `owner: secrets.NOTIFY_OWNER`, the one target repository, and only `contents: write`, which `repository_dispatch` needs. The App needs no installation in kumahq, only its key. - `sync_kuma_oas_to_kuma-gui.yaml` mints a token from the kumahq App, which is already installed on `kuma-gui`, and sends the dispatch to `kumahq/kuma-gui` directly instead of through a redirect from the old owner. - `vars.NOTIFY_APP_ID` is set on this repository. `secrets.NOTIFY_APP_PRIVATE_KEY` is a kumahq organization secret, and a live Actions run with the same steps sent a test dispatch successfully. After it merges on every branch, `NOTIFY_BOT_PAT_TOKEN` and `KONG_MESH_SMOKE_DISPATCH_TOKEN` can be deleted.  > Changelog: skip  
-  **Post-Mortem & Fix Analysis**:
-  > ✅ **[KSAI Review](https://ksai.kongcloud.io/review?v=1&kind=run-finished&needs=none&flow=review&pr=19211&run=39424610476): Finished** 1. **`12:47 UTC`** Reviewing workflow changes for secret handling and permissions 2. **`12:51 UTC`** Reviewing pipeline workflow changes for security and permissions  ---  <details> <summary>Run report (federated) · 1 paid run · $0.2811 total</summary>  | # | Engine | Result | Model | Turns | Cost | | --- | --- | --- | --- | --- | --- | | [1](https://github.com/kumahq/kuma/actions/runs/39424610476) | `opencode` | `success` | `glm-5.3/high` | `32` | $0.2809 |  Reviewing cost $0.2809; deciding how to run it cost $0.0002  </details>  <!-- ksai-run-state:{"v":1,"flow":"review","conclusion":"success","stopped_by":null,"reviewed_commit":"1be97e1dac46da20e0a1b47ced8f6ec99812598d","model":"zai-org/GLM-5.3","effort":"high","selected_by":"input","run_settings_arm":null,"triage":{"source":"report","proposed_tier":"flagship","skipped_by":null,"skills":[],"reviewable
+- **Issue #19227** (2026-10-22): **chore(lint): fix golangci-lint 2.15.0 findings**
+  *Symptoms*: ## Motivation  Since the golangci-lint 2.15.0 bump (#19188), the `check` job fails on every PR to `master`. Master pushes stay green because the golangci-lint step only runs on PRs.  ``` pkg/kds/mux/zone_watch_test.go:124:8: Error return value is not checked (errcheck) pkg/util/watchdog/watchdog_test.go:271:8: Error return value is not checked (errcheck) ```  ## Implementation information  Both are `case <-ch:` receives from a `chan error` in a `select` that fails the test. The fix binds the received error and puts it in the `Fail` message, so a failure now shows what went wrong.  Verified locally: `golangci-lint run ./...` (2.15.0) reports 0 issues, `CI=true make check` passes, and `pkg/kds/mux` and `pkg/util/watchdog` tests pass.  ## Supporting documentation  Same kind of follow-up as #18904 for 2.14.0.  > Changelog: skip 
 
-- **Issue #19210** (2026-10-20): **ci(actions): dispatch with GitHub App tokens**
-  *Symptoms*: ## Motivation  The downstream dispatches from this repository authenticate with classic PATs: `NOTIFY_BOT_PAT_TOKEN` of the team's bot account and `KONG_MESH_SMOKE_DISPATCH_TOKEN`. Classic PATs are moving to a 7-day maximum lifetime, which already broke the downstream upgrade dispatch once. A long-lived PAT also reaches every repository its owner can.  ## Implementation information  - `pr-merged.yaml` and the smoke job of `trigger-release-tasks.yaml` mint a token from `vars.NOTIFY_APP_ID` and `secrets.NOTIFY_APP_PRIVATE_KEY`, with `owner: secrets.NOTIFY_OWNER`, the one target repository, and only `contents: write`, which `repository_dispatch` needs. The App needs no installation in kumahq, only its key. - `sync_kuma_oas_to_kuma-gui.yaml` mints a token from the kumahq App, which is already installed on `kuma-gui`, and sends the dispatch to `kumahq/kuma-gui` directly instead of through a redirect from the old owner. - `vars.NOTIFY_APP_ID` is set on this repository. `secrets.NOTIFY_APP_PRIVATE_KEY` is a kumahq organization secret, and a live Actions run with the same steps sent a test dispatch successfully. After it merges on every branch, `NOTIFY_BOT_PAT_TOKEN` and `KONG_MESH_SMOKE_DISPATCH_TOKEN` can be deleted.  > Changelog: skip  
+- **Issue #19225** (2026-10-22): **test(e2e): eject dead mes priority endpoint**
+  *Symptoms*: ## Motivation  > Changelog: skip  `MeshExternalService with endpoint priority` fails on every release-2.14 run since e2e moved to the CNCF runners. After the priority 0 container is deleted, requests keep returning 503 and never reach the priority 1 endpoint.  Priority failover only reacts to host health, and a MeshExternalService cluster has no health checks or outlier detection by default. The spec only passed because DNS re-resolution dropped the deleted container's address, which no longer happens on the new runners, so Envoy keeps the dead host as healthy.  ## Implementation information  Backport of the test fix from #18439. Before removing the primary, the spec applies a MeshCircuitBreaker targeting the MeshExternalService with `splitExternalAndLocalErrors` and `localOriginFailures.consecutive: 1`, so the endpoint is ejected once it stops accepting connections. The policy targets the MES by `name`, matching the other specs on this branch. The `ipv6-not-supported` label stays to keep the change minimal.  ## Supporting documentation  Failing run: https://github.com/kumahq/kuma/actions/runs/39764285405/job/119817284380
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1015,26 +1019,132 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab8ef76c` (2026-10-20)
-**Commit Message**: docs(CHANGELOG.md): updating changelog and version files (#19197)
+### Incident Patch 1: `cfab75ea` (2026-10-22)
+**Commit Message**: chore(lint): fix golangci-lint 2.15.0 findings (#19227)
 
-Signed-off-by: kumahq[bot] <110050114+kumahq[bot]@users.noreply.github.com>
-Co-authored-by: kumahq[bot] <110050114+kumahq[bot]@users.noreply.github.com>
+Signed-off-by: Ilya Lobkov <[REDACTED_EMAIL]>
 
-**File**: `active-branches.json` (modified, +1/-1)
+**File**: `pkg/kds/mux/zone_watch_test.go` (modified, +3/-2)
+```diff
+@@ -2,6 +2,7 @@ package mux_test
+ 
+ import (
+ 	"context"
++	"fmt"
+ 	"time"
+ 
+ 	. "github.com/onsi/ginkgo/v2"
+@@ -121,8 +122,8 @@ var _ = Describe("ZoneWatch", func() {
+ 
+ 	AfterEach(func() {
+ 		select {
+-		case <-errCh:
+-			Fail("zone watch should not have stopped")
++		case err := <-errCh:
++			Fail(fmt.Sprintf("zone watch should not have stopped: %v", err))
+ 		default:
+ 		}
+ 		close(stop)
+```
+
+**File**: `pkg/util/watchdog/watchdog_test.go` (modified, +2/-2)
+```diff
+@@ -268,8 +268,8 @@ var _ = Describe("SimpleWatchdog", func() {
+ 
+ 		// then no error is produced
+ 		select {
+-		case <-onErrorCalls:
+-			Fail("error should not be produced")
++		case err := <-onErrorCalls:
++			Fail(fmt.Sprintf("error should not be produced: %v", err))
+ 		default:
+ 		}
+ 	})
+```
+
+---
+
+### Incident Patch 2: `08a795e0` (2026-10-22)
+**Commit Message**: chore(deps): bump kumahq/kuma-gui to 9771cae2f4985a81f532df6058aa1da097ef4159 (#19174)
+
+Signed-off-by: GitHub <[REDACTED_EMAIL]>
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/App-w9ZH8y5m.js` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import{d as B,r as m,o as k,c as X,a as A,b as u,w as d,e as l,t as w,n as oe,_ as O,u as ae,f as re,g as ne,h as ie,i as le,j as f,k as v,l as T,m as C,p as se,q as ce,s as q,v as de,x as ue,y as S,z as pe}from"./index-BNNMjRXa.js";const fe=""+new URL("product-logo-CDoXkXpC.png",import.meta.url).href,ve={class:"app-navigator"},ge=B({__name:"AppNavigator",props:{active:{type:Boolean,default:!1},label:{default:""},to:{default:()=>({})}},setup(e){const o=e;return(r,a)=>{const i=m("XAction");return k(),X("li",ve,[A(r.$slots,"default",{},()=>[u(i,{class:oe({"is-active":o.active}),to:o.to},{default:d(()=>[l(w(o.label),1)]),_:1},8,["class","to"])],!0)])}}}),L=O(ge,[["__scopeId","data-v-b1ed9f4d"]]);var H=window.document,N=window.Math,z=window.HTMLElement,D=window.XMLHttpRequest,U=function(e,o){for(var r=0,a=e.length;r<a;r++)o(e[r])},K=function(e){return function(o,r,a){var i=e.createElement(o);if(r!=null)for(var n in r){var t=r[n];t!=null&&(i[n]!=null?i[n]=t:i.setAttribute(n,t))}return a!=null&&U(a,function(c){i.appendChild(typeof c=="string"?e.createTextNode(c):c)}),i}},j=K(H),he=function(e){var o;return function(){o||(o=1,e.apply(this,arguments))}},V=function(e,o){return{}.hasOwnProperty.call(e,o)},I=function(e){return(""+e).toLowerCase()},me="github-buttons",be="2.33.1",we="https://"+("unpkg.com/"+me+"@"+be+"/dist")+"/buttons.html",_="github.com",ke="https://api."+_,ee=D&&"prototype"in D&&"withCredentials"in D.prototype,_e=ee&&z&&"attachShadow"in z.prototype&&!("prototype"in z.prototype.attachShadow),y=function(e,o,r){e.addEventListener?e.addEventListener(o,r,!1):e.attachEvent("on"+o,r)},P=function(e,o,r){e.removeEventListener?e.removeEventListener(o,r,!1):e.detachEvent("on"+o,r)},ye=function(e,o,r){var a=function(){return P(e,o,a),r.apply(this,arguments)};y(e,o,a)},xe=function(e,o,r){if(e.readyState!=null){var a="readystatechange",i=function(){if(o.test(e.readyState))return P(e,a,i),r.apply(this,arguments)};y(e,a,i)}},Ae=function(e){var o={href:e.href,title:e.title,"aria-label":e.getAttribute("aria-label")};return U(["icon","color-scheme","text","size","show-count"],function(r){var a="data-"+r;o[a]=e.getAttribute(a)}),o["data-text"]==null&&(o["data-text"]=e.textContent||e.innerText),o},Me="body{margin:0}a{text-decoration:none;outline:0}.widget{display:inline-block;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;font-size:0;line-height:0;white-space:nowrap}.btn,.social-count{position:relative;display:inline-block;display:inline-flex;height:14px;padding:2px 5px;font-size:11px;font-weight:600;line-height:14px;vertical-align:bottom;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-repeat:repeat-x;background-position:-1px -1px;background-size:110% 110%;border:1px solid}.btn{border-radius:.25em}.btn:not(:last-child){border-radius:.25em 0 0 .25em}.social-count{border-left:0;border-radius:0 .25em .25em 0}.widget-lg .btn,.widget-lg .social-count{height:16px;padding:5px 10px;font-size:12px;line-height:16px}.octicon{display:inline-block;vertical-align:text-top;fill:currentColor;overflow:visible}",Ce=`.btn:focus-visible,.social-count:focus-visible{outline:2px solid #0969da;outline-offset:-2px}.btn{color:#25292e;background-color:#ebf0f4;border-color:#d1d9e0;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg'%3e%3clinearGradient id='o' x2='0' y2='1'%3e%3cstop stop-color='%23f6f8fa'/%3e%3cstop offset='90%25' stop-color='%23ebf0f4'/%3e%3c/linearGradient%3e%3crect width='100%25' height='100%25' fill='url(%23o)'/%3e%3c/svg%3e");background-image:-moz-linear-gradient(top, #f6f8fa, #ebf0f4 90%);background-image:linear-gradient(180deg, #f6f8fa, #ebf0f4 90%);filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#FFF6F8FA', endColorstr='#FFEAEFF3')}:root .btn{filter:none}.btn:hover,.btn:focus{background-color:#e5eaee;background-position:0 -0.5em;border-color:#d1d9e0;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg'%3e%3clinearGradient id='o' x2='0' y2='1'%3e%3cstop stop-color='%23eff2f5'/%3e%3cstop offset='90%25' stop-color='%23e5eaee'/%3e%3c/linearGradient%3e%3crect width='100%25' height='100%25' fill='url(%23o)'/%3e%3c/svg%3e");background-image:-moz-linear-gradient(top, #eff2f5, #e5eaee 90%);background-image:linear-gradient(180deg, #eff2f5, #e5eaee 90%);filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#FFEFF2F5', endColorstr='#FFE4E9ED')}:root .btn:hover,:root .btn:focus{filter:none}.btn:active{background-color:#e6eaef;border-color:#d1d9e0;background-image:none;filter:none}.social-count{color:#25292e;background-color:#fff;border-color:#d1d9e0}.social-count:hover,.social-count:focus{color:#0969da}.octicon-heart{color:#bf3989}`,Ee=".btn:focus-visible,.social-count:focus-visible{outline:2px solid #0349b4;outline-offset:-2px}.btn{color:#25292e;background-color:#e0e6eb;border-color:#454c54;background-image:none;filter:non
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConfigurationDetailView-CpTPPZIA.js` (renamed, +1/-1)
 ```diff
 @@ -1 +1 @@
--{"baseBranchPatterns":["release-2.7","release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
-+{"baseBranchPatterns":["release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
+-import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-BNNMjRXa.js";const y=_({__name:"ConfigurationDetailView",setup(R){return(V,r)=>{const i=o("RouteTitle"),s=o("XCodeBlock"),d=o("DataLoader"),l=o("XCard"),u=o("AppView"),p=o("RouteView");return f(),C(p,{name:"configuration-view",params:{codeSearch:"",codeFilter:!1,codeRegExp:!1}},{default:t(({route:e,t:c,uri:m})=>[n(u,{breadcrumbs:[{to:{name:"configuration-view"},text:c("configuration.routes.item.breadcrumbs")}]},{title:t(()=>[w("h1",null,[n(i,{title:c("configuration.routes.item.title")},null,8,["title"])])]),default:t(()=>[r[0]||(r[0]=x()),n(l,null,{default:t(()=>[n(d,{src:m(h(b),"/config",{})},{default:t(({data:[g]})=>[n(s,{"data-testid":"code-block-configuration",language:"json",code:JSON.stringify(g,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},null,8,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1024)]),_:2},1032,["breadcrumbs"])]),_:1})}}});export{y as default};
++import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-BcQJ2oy_.js";const y=_({__name:"ConfigurationDetailView",setup(R){return(V,r)=>{const i=o("RouteTitle"),s=o("XCodeBlock"),d=o("DataLoader"),l=o("XCard"),u=o("AppView"),p=o("RouteView");return f(),C(p,{name:"configuration-view",params:{codeSearch:"",codeFilter:!1,codeRegExp:!1}},{default:t(({route:e,t:c,uri:m})=>[n(u,{breadcrumbs:[{to:{name:"configuration-view"},text:c("configuration.routes.item.breadcrumbs")}]},{title:t(()=>[w("h1",null,[n(i,{title:c("configuration.routes.item.title")},null,8,["title"])])]),default:t(()=>[r[0]||(r[0]=x()),n(l,null,{default:t(()=>[n(d,{src:m(h(b),"/config",{})},{default:t(({data:[g]})=>[n(s,{"data-testid":"code-block-configuration",language:"json",code:JSON.stringify(g,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},null,8,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1024)]),_:2},1032,["breadcrumbs"])]),_:1})}}});export{y as default};
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryClustersView-BvksUwvM.js` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-BNNMjRXa.js";const D=T({__name:"ConnectionInboundSummaryClustersView",props:{routeName:{},data:{},overview:{}},setup(u){const n=u;return(B,r)=>{const _=o("RouteTitle"),f=o("XAction"),g=o("XCodeBlock"),y=o("DataCollection"),d=o("DataLoader"),C=o("AppView"),x=o("RouteView");return i(),l(x,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:n.routeName},{default:t(({route:e,uri:h})=>[s(_,{render:!1,title:"Clusters"}),r[1]||(r[1]=m()),s(C,null,{default:t(()=>[s(d,{data:[n.overview]},{default:t(({data:[R]})=>[s(d,{src:h(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:t(({data:[k],refresh:w})=>[(i(!0),F(N,null,v(["stat_prefix"in n.data?n.data.stat_prefix:("clusterName"in n.data?n.data.clusterName:e.params.connection).replace("_",":")],c=>(i(),l(y,{key:typeof c,items:k.split(`
++import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-BcQJ2oy_.js";const D=T({__name:"ConnectionInboundSummaryClustersView",props:{routeName:{},data:{},overview:{}},setup(u){const n=u;return(B,r)=>{const _=o("RouteTitle"),f=o("XAction"),g=o("XCodeBlock"),y=o("DataCollection"),d=o("DataLoader"),C=o("AppView"),x=o("RouteView");return i(),l(x,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:n.routeName},{default:t(({route:e,uri:h})=>[s(_,{render:!1,title:"Clusters"}),r[1]||(r[1]=m()),s(C,null,{default:t(()=>[s(d,{data:[n.overview]},{default:t(({data:[R]})=>[s(d,{src:h(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:t(({data:[k],refresh:w})=>[(i(!0),F(N,null,v(["stat_prefix"in n.data?n.data.stat_prefix:("clusterName"in n.data?n.data.clusterName:e.params.connection).replace("_",":")],c=>(i(),l(y,{key:typeof c,items:k.split(`
+ `),predicate:p=>p.startsWith(`${c}`)},{default:t(({items:p})=>[s(g,{language:"json",code:p.map(a=>a.replace(`${c}::`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},{"primary-actions":t(()=>[s(f,{action:"refresh",appearance:"primary",onClick:w},{default:t(()=>[...r[0]||(r[0]=[m(`
+                     Refresh
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryStatsView-DPR7R18M.js` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,a7 as k}from"./index-BNNMjRXa.js";const V=R({__name:"ConnectionInboundSummaryStatsView",props:{data:{},networking:{},routeName:{},overview:{}},setup(i){const a=i,e=k(()=>({...a.data,proxyResourceName:"stat_prefix"in a.data?a.data.stat_prefix:"",listenerAddress:"listenerAddress"in a.data?a.data.listenerAddress:"",clusterName:"clusterName"in a.data?a.data.clusterName:"",port:"port"in a.data?a.data.port.toString():"",servicePort:"servicePort"in a.data?a.data.servicePort:"",name:"name"in a.data?a.data.name:""}));return(S,l)=>{const u=o("RouteTitle"),m=o("XAction"),v=o("XCodeBlock"),g=o("DataCollection"),d=o("DataLoader"),x=o("AppView"),_=o("RouteView");return $(),C(_,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:a.routeName},{default:r(({route:t,uri:y})=>[n(u,{render:!1,title:"Stats"}),l[1]||(l[1]=p()),n(x,null,{default:r(()=>[n(d,{data:[a.overview]},{default:r(({data:[h]})=>[n(d,{src:y(A(w),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[t.params.proxyType]??"dataplane",name:h.id,mesh:t.params.mesh||"*",socketAddress:a.networking.inboundAddress})},{default:r(({data:[f],refresh:N})=>[n(g,{items:f.raw.split(`
++import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,a8 as k}from"./index-BcQJ2oy_.js";const V=R({__name:"ConnectionInboundSummaryStatsView",props:{data:{},networking:{},routeName:{},overview:{}},setup(i){const a=i,e=k(()=>({...a.data,proxyResourceName:"stat_prefix"in a.data?a.data.stat_prefix:"",listenerAddress:"listenerAddress"in a.data?a.data.listenerAddress:"",clusterName:"clusterName"in a.data?a.data.clusterName:"",port:"port"in a.data?a.data.port.toString():"",servicePort:"servicePort"in a.data?a.data.servicePort:"",name:"name"in a.data?a.data.name:""}));return(S,l)=>{const u=o("RouteTitle"),m=o("XAction"),v=o("XCodeBlock"),g=o("DataCollection"),d=o("DataLoader"),x=o("AppView"),_=o("RouteView");return $(),C(_,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:a.routeName},{default:r(({route:t,uri:y})=>[n(u,{render:!1,title:"Stats"}),l[1]||(l[1]=p()),n(x,null,{default:r(()=>[n(d,{data:[a.overview]},{default:r(({data:[h]})=>[n(d,{src:y(A(w),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[t.params.proxyType]??"dataplane",name:h.id,mesh:t.params.mesh||"*",socketAddress:a.networking.inboundAddress})},{default:r(({data:[f],refresh:N})=>[n(g,{items:f.raw.split(`
+ `),predicate:c=>[`listener.${e.value.listenerAddress?.length>0?e.value.listenerAddress:t.params.connection}`,`cluster.${e.value.name}.`,`cluster.${e.value.clusterName}.`,`http.${e.value.name}.`,`http.${e.value.clusterName}.`,`tcp.${e.value.name}.`,`cluster.${e.value.proxyResourceName}.`,`listener.${e.value.proxyResourceName}`,`cluster.${e.value.proxyResourceName}.`,`http.${e.value.proxyResourceName}.`,`http.${e.value.proxyResourceName}.`,`tcp.${e.value.proxyResourceName}.`].some(s=>c.startsWith(s))&&(!c.includes(".rds.")||c.includes(`_${e.value.port}`)||c.includes(`${e.value.servicePort}`))},{default:r(({items:c})=>[n(v,{language:"json",code:c.map(s=>s.replace(`${e.value.listenerAddress?.length>0?e.value.listenerAddress:e.value.proxyResourceName.length?e.value.proxyResourceName:t.params.connection}.`,"").replace(e.value.name.length?`${e.value.name}.`:"","").replace(e.value.clusterName.length?`${e.value.clusterName}.`:"","")).join(`
+ `),"is-searchable":"",query:t.params.codeSearch,"is-filter-mode":t.params.codeFilter,"is-reg-exp-mode":t.params.codeRegExp,onQueryChange:s=>t.update({codeSearch:s}),onFilterModeChange:s=>t.update({codeFilter:s}),onRegExpModeChange:s=>t.update({codeRegExp:s})},{"primary-actions":r(()=>[n(m,{action:"refresh",appearance:"primary",onClick:N},{default:r(()=>[...l[0]||(l[0]=[p(`
+                   Refresh
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryView-DjQNw5gn.js` (renamed, +1/-1)
+```diff
+@@ -1,2 +1,2 @@
+-import{d as C,r as n,o as l,l as m,w as t,b as s,e as c,K as X,J as x,t as d,x as b,j as B,m as N}from"./index-BNNMjRXa.js";const T=C({__name:"ConnectionInboundSummaryView",props:{data:{},overview:{},networking:{},routeName:{}},setup(u){const r=u;return($,o)=>{const _=n("XBadge"),w=n("XLayout"),v=n("XAction"),f=n("XTabs"),y=n("RouterView"),g=n("AppView"),V=n("DataCollection"),k=n("RouteView");return l(),m(k,{name:r.routeName,params:{inactive:Boolean,proxyType:"",connection:""}},{default:t(({route:a,t:p})=>[s(V,{items:r.data,predicate:r.networking.type==="gateway"?e=>!0:a.params.proxyType===""?e=>`${e.name}`===a.params.connection:e=>`${e.socketAddress.replace(":","_")}`===a.params.connection,find:!0},{default:t(({items:e})=>[s(g,null,{title:t(()=>[s(w,{variant:"y-stack",size:"small"},{default:t(()=>[B("h2",null,`
++import{d as C,r as n,o as l,l as m,w as t,b as s,e as c,K as X,J as x,t as d,x as b,j as B,m as N}from"./index-BcQJ2oy_.js";const T=C({__name:"ConnectionInboundSummaryView",props:{data:{},overview:{},networking:{},routeName:{}},setup(u){const r=u;return($,o)=>{const _=n("XBadge"),w=n("XLayout"),v=n("XAction"),f=n("XTabs"),y=n("RouterView"),g=n("AppView"),V=n("DataCollection"),k=n("RouteView");return l(),m(k,{name:r.routeName,params:{inactive:Boolean,proxyType:"",connection:""}},{default:t(({route:a,t:p})=>[s(V,{items:r.data,predicate:r.networking.type==="gateway"?e=>!0:a.params.proxyType===""?e=>`${e.name}`===a.params.connection:e=>`${e.socketAddress.replace(":","_")}`===a.params.connection,find:!0},{default:t(({items:e})=>[s(g,null,{title:t(()=>[s(w,{variant:"y-stack",size:"small"},{default:t(()=>[B("h2",null,`
+               Inbound `+d(a.params.connection.replace("localhost","").replace("_",":")),1),o[0]||(o[0]=c()),e[0]?.state?(l(),m(_,{key:0,appearance:p(`common.status.appearance.${e[0].state}`,void 0,{defaultMessage:"neutral"})},{default:t(()=>[c(d(p(`http.api.value.${e[0].state}`)),1)]),_:2},1032,["appearance"])):N("",!0)]),_:2},1024)]),default:t(()=>[o[1]||(o[1]=c()),s(f,{selected:a.child()?.name},X({_:2},[x(a.children,({name:i})=>({name:`${i}-tab`,fn:t(()=>[s(v,{to:{name:i,query:{inactive:a.params.inactive}}},{default:t(()=>[c(d(p(`connections.routes.item.navigation.${i.split("-")[5]}`)),1)]),_:2},1032,["to"])])}))]),1032,["selected"]),o[2]||(o[2]=c()),s(y,null,{default:t(i=>[(l(),m(b(i.Component),{data:e[0],overview:r.overview,networking:r.networking},null,8,["data","overview","networking"]))]),_:2},1024)]),_:2},1024)]),_:2},1032,["items","predicate"])]),_:1},8,["name"])}}});export{T as default};
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryXdsConfigView-zOOfmU08.js` (renamed, +1/-1)
+```diff
+@@ -1 +1 @@
+-import{d as C,r as o,o as w,l as R,w as a,b as n,e as d,k,P as T,t as V}from"./index-BNNMjRXa.js";const S=C({__name:"ConnectionInboundSummaryXdsConfigView",props:{data:{},routeName:{},overview:{}},setup(p){const t=p;return(b,r)=>{const m=o("RouteTitle"),l=o("XAction"),u=o("XCodeBlock"),i=o("DataLoader"),_=o("AppView"),g=o("RouteView");return w(),R(g,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:t.routeName},{default:a(({t:c,route:e,uri:f})=>[n(m,{render:!1,title:c("connections.routes.item.navigation.xds")},null,8,["title"]),r[0]||(r[0]=d()),n(_,null,{default:a(()=>[n(i,{data:[t.overview]},{default:a(({data:[x]})=>[n(i,{src:f(k(T),"/connections/xds/for/:proxyType/:name/:mesh/inbound/:inbound",{mesh:e.params.mesh||"*",name:x.id,inbound:"stat_prefix"in t.data?t.data.stat_prefix:`${t.data.port}`,proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane"})},{default:a(({data:[y],refresh:h})=>[n(u,{language:"json",code:JSON.stringify(y,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:s=>e.update({codeSearch:s}),onFilterModeChange:s=>e.update({codeFilter:s}),onRegExpModeChange:s=>e.update({codeRegExp:s})},{"primary-actions":a(()=>[n(l,{action:"refresh",appearance:"primary",onClick:h},{default:a(()=>[d(V(c("common.refresh")),1)]),_:2},1032,["onClick"])]),_:2},1032,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1032,["data"])]),_:2},1024)]),_:1},8,["name"])}}});export{S as default};
++import{d as C,r as o,o as w,l as R,w as a,b as n,e as d,k,P as T,t as V}from"./index-BcQJ2oy_.js";const S=C({__name:"ConnectionInboundSummaryXdsConfigView",props:{data:{},routeName:{},overview:{}},setup(p){const t=p;return(b,r)=>{const m=o("RouteTitle"),l=o("XAction"),u=o("XCodeBlock"),i=o("DataLoader"),_=o("AppView"),g=o("RouteView");return w(),R(g,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:t.routeName},{default:a(({t:c,route:e,uri:f})=>[n(m,{render:!1,title:c("connections.routes.item.navigation.xds")},null,8,["title"]),r[0]||(r[0]=d()),n(_,null,{default:a(()=>[n(i,{data:[t.overview]},{default:a(({data:[x]})=>[n(i,{src:f(k(T),"/connections/xds/for/:proxyType/:name/:mesh/inbound/:inbound",{mesh:e.params.mesh||"*",name:x.id,inbound:"stat_prefix"in t.data?t.data.stat_prefix:`${t.data.port}`,proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane"})},{default:a(({data:[y],refresh:h})=>[n(u,{language:"json",code:JSON.stringify(y,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:s=>e.update({codeSearch:s}),onFilterModeChange:s=>e.update({codeFilter:s}),onRegExpModeChange:s=>e.update({codeRegExp:s})},{"primary-actions":a(()=>[n(l,{action:"refresh",appearance:"primary",onClick:h},{default:a(()=>[d(V(c("common.refresh")),1)]),_:2},1032,["onClick"])]),_:2},1032,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1032,["data"])]),_:2},1024)]),_:1},8,["name"])}}});export{S as default};
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionOutboundSummaryClustersView-D7QngS2-.js` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import{d as T,r as a,o as p,l,w as n,b as t,e as m,k as V,P as E,c as F,I as v,J as B}from"./index-BNNMjRXa.js";const M=T({__name:"ConnectionOutboundSummaryClustersView",props:{routeName:{},overview:{}},setup(u){const i=u;return(A,s)=>{const _=a("RouteTitle"),g=a("XAction"),f=a("XCodeBlock"),y=a("DataCollection"),d=a("DataLoader"),C=a("AppView"),h=a("RouteView");return p(),l(h,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:i.routeName},{default:n(({route:e,uri:x})=>[t(_,{render:!1,title:"Clusters"}),s[1]||(s[1]=m()),t(C,null,{default:n(()=>[t(d,{data:[i.overview]},{default:n(({data:[R]})=>[t(d,{src:x(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:n(({data:[k],refresh:w})=>[(p(!0),F(v,null,B([e.params.connection],r=>(p(),l(y,{key:typeof r,items:k.split(`
++import{d as T,r as a,o as p,l,w as n,b as t,e as m,k as V,P as E,c as F,I as v,J as B}from"./index-BcQJ2oy_.js";const M=T({__name:"ConnectionOutboundSummaryClustersView",props:{routeName:{},overview:{}},setup(u){const i=u;return(A,s)=>{const _=a("RouteTitle"),g=a("XAction"),f=a("XCodeBlock"),y=a("DataCollection"),d=a("DataLoader"),C=a("AppView"),h=a("RouteView");return p(),l(h,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:i.routeName},{default:n(({route:e,uri:x})=>[t(_,{render:!1,title:"Clusters"}),s[1]||(s[1]=m()),t(C,null,{default:n(()=>[t(d,{data:[i.overview]},{default:n(({data:[R]})=>[t(d,{src:x(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:n(({data:[k],refresh:w})=>[(p(!0),F(v,null,B([e.params.connection],r=>(p(),l(y,{key:typeof r,items:k.split(`
+ `),predicate:c=>c.startsWith(`${r}::`)},{default:n(({items:c})=>[t(f,{language:"json",code:c.map(o=>o.replace(`${r}::`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:o=>e.update({codeSearch:o}),onFilterModeChange:o=>e.update({codeFilter:o}),onRegExpModeChange:o=>e.update({codeRegExp:o})},{"primary-actions":n(()=>[t(g,{action:"refresh",appearance:"primary",onClick:w},{default:n(()=>[...s[0]||(s[0]=[m(`
+                     Refresh
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionOutboundSummaryStatsView-B26DCsEC.js` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import{d as w,r as a,o as k,l as R,w as n,b as t,e as d,k as A,P as T}from"./index-BNNMjRXa.js";const v=w({__name:"ConnectionOutboundSummaryStatsView",props:{networking:{},routeName:{},overview:{}},setup(i){const r=i;return(V,s)=>{const m=a("RouteTitle"),l=a("XAction"),u=a("XCodeBlock"),_=a("DataCollection"),p=a("DataLoader"),g=a("AppView"),f=a("RouteView");return k(),R(f,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:r.routeName},{default:n(({route:e,uri:x})=>[t(m,{render:!1,title:"Stats"}),s[1]||(s[1]=d()),t(g,null,{default:n(()=>[t(p,{data:[r.overview]},{default:n(({data:[y]})=>[t(p,{src:x(A(T),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:y.id,mesh:e.params.mesh||"*",socketAddress:r.networking.inboundAddress})},{default:n(({data:[C],refresh:h})=>[t(_,{items:C.raw.split(`
++import{d as w,r as a,o as k,l as R,w as n,b as t,e as d,k as A,P as T}from"./index-BcQJ2oy_.js";const v=w({__name:"ConnectionOutboundSummaryStatsView",props:{networking:{},routeName:{},overview:{}},setup(i){const r=i;return(V,s)=>{const m=a("RouteTitle"),l=a("XAction"),u=a("XCodeBlock"),_=a("DataCollection"),p=a("DataLoader"),g=a("AppView"),f=a("RouteView");return k(),R(f,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:r.routeName},{default:n(({route:e,uri:x})=>[t(m,{render:!1,title:"Stats"}),s[1]||(s[1]=d()),t(g,null,{default:n(()=>[t(p,{data:[r.overview]},{default:n(({data:[y]})=>[t(p,{src:x(A(T),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:y.id,mesh:e.params.mesh||"*",socketAddress:r.networking.inboundAddress})},{default:n(({data:[C],refresh:h})=>[t(_,{items:C.raw.split(`
+ `),predicate:c=>c.includes(`.${e.params.connection}.`)},{default:n(({items:c})=>[t(u,{language:"json",code:c.map(o=>o.replace(`${e.params.connection}.`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:o=>e.update({codeSearch:o}),onFilterModeChange:o=>e.update({codeFilter:o}),onRegExpModeChange:o=>e.update({codeRegExp:o})},{"primary-actions":n(()=>[t(l,{action:"refresh",appearance:"primary",onClick:h},{default:n(()=>[...s[0]||(s[0]=[d(`
+                   Refresh
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19211** (2026-10-20): ci(actions): dispatch with GitHub App tokens (@bartsmykla)
-- **PR #19210** (2026-10-20): ci(actions): dispatch with GitHub App tokens (@bartsmykla)
-- **PR #19209** (2026-10-20): ci(actions): dispatch with GitHub App tokens (@bartsmykla)
-- **PR #19208** (2026-10-20): ci(actions): dispatch with GitHub App tokens (@bartsmykla)
-- **PR #19207** (2026-10-20): ci(actions): dispatch with GitHub App tokens (@bartsmykla)
-- **PR #19206** (closed): ci(actions): dispatch with GitHub App tokens (@bartsmykla)
+- **PR #19227** (2026-10-22): chore(lint): fix golangci-lint 2.15.0 findings (@lobkovilya)
+- **PR #19225** (2026-10-22): test(e2e): eject dead mes priority endpoint (@lukidzi)
+- **PR #19223** (2026-10-22): chore(deps/dev): bump go from 1.27.2 to 1.27.3 (@renovate[bot])
+- **PR #19222** (2026-10-22): chore(deps/dev): bump go from 1.27.2 to 1.27.3 (@renovate[bot])
+- **PR #19221** (2026-10-22): chore(deps/dev): bump go from 1.27.2 to 1.27.3 (@renovate[bot])
+- **PR #19220** (2026-10-22): chore(deps/dev): bump go from 1.27.2 to 1.27.3 (@renovate[bot])
 
 ---
 
@@ -1054,28 +1164,31 @@ Co-authored-by: kumahq[bot] <110050114+kumahq[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(CHANGELOG.md): updating changelog and version files (#19197)
+## X. lint): fix golangci-lint 2.15.0 findings (#19227)
 
 **RULE**:
-When implementing operations in `active-branches.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/kds/mux/zone_watch_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab8ef76c`: docs(CHANGELOG.md): updating changelog and version files (#19197). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfab75ea`: lint): fix golangci-lint 2.15.0 findings (#19227). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `active-branches.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kds/mux/zone_watch_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-{"baseBranchPatterns":["release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
+	"fmt"
+		case err := <-errCh:
+			Fail(fmt.Sprintf("zone watch should not have stopped: %v", err))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-{"baseBranchPatterns":["release-2.7","release-2.9","release-2.11","release-2.13","release-2.14","release-3.0","master"]}
+		case <-errCh:
+			Fail("zone watch should not have stopped")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab8ef76c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfab75ea` are properly handled with clean fallback behavior.
