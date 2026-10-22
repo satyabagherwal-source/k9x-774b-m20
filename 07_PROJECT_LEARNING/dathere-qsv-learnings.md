@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `e8249eb0`  
+> **Source Version**: `8507b422`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:45:10.560Z  
+> **Timestamp**: 2026-10-22T18:37:35.357Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:45:10.553Z  
+> **Harvest Timestamp**: 2026-10-22T18:37:35.102Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,38 +2209,36 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8249eb0` (2026-10-22)
-**Commit Message**: build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888)
+### Incident Patch 1: `8507b422` (2026-10-22)
+**Commit Message**: docs: tweak README elevator-pitch wording and linebreaks
 
-Bumps [ip-address](https://github.com/beaugunderson/ip-address) from 10.7.2 to 10.7.4.
-- [Release notes](https://github.com/beaugunderson/ip-address/releases)
-- [Commits](https://github.com/beaugunderson/ip-address/compare/v10.7.2...v10.7.4)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+ 
+  &nbsp;          |  Table of Contents
+ :--------------------------|:-------------------------
+-![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting, [FAIR](https://www.go-fair.org/fair-principles/)ifying,<br>visualizing, geocoding & documenting tabular data (CSV, TSV,<br>SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exercises](https://100.dathere.com)<br>* [FAQ](https://github.com/dathere/qsv/discussions/categories/faq)<br>* [Performance Tuning](docs/PERFORMANCE.md#performance-tuning)<br>* 👉 [Benchmarks](https://qsv.dathere.com/benchmarks) &nbsp;•&nbsp; [Interactive Benchmarks](https://github.com/dathere/qsv/wiki/Benchmarks) 🚀<br>* 📊 [Visualizations Gallery](https://dathere.github.io/qsv/gallery.html) 🗺️<br>* 🗃️ [Neuro](https://dathere.github.io/qsv/smart_allegheny_dogs.html)-[symbolic](https://dathere.github.io/qsv/smart_boston_311_2025.html), [Localizable](https://dathere.github.io/qsv/smart-colombia-calidad-aire.html), _**[Data](https://dathere.github.io/qsv/smart_nyc311.html) [Schematics](https://dathere.github.io/qsv/pitt311data.html)**_ 📈<br>* [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)<br>* [Feature Flags](#feature-flags)<br>* [Goals/Non-goals](#goals--non-goals)<br>* [Testing](#testing)<br>* [NYC&nbsp;SOD&nbsp;2022](https://docs.google.com/presentation/d/e/2PACX-1vQ12ndZL--gkz0HLQRaxqsNOwzddkv1iUKB3sq661yA77OPlAsmHJHpjaqt9s9QEf73VqMfb0cv4jHU/pub?start=false&loop=false&delayms=3000)/[csv,conf,v8](https://docs.google.com/presentation/d/10T_3MyIqS5UsKxJaOY7Ktrd-GfhJelQImlE_qYmtuis/edit#slide=id.g2e0f1e7aa0e_0_62)/[PyConUS&nbsp;2025](https://docs.google.com/presentation/d/e/2PACX-1vRKFnU0Hm8oDrtCYbxcf96kHVsPcoLU05jPVNYaAs09D05gPMWDJ96q_4_zgUvadGro4deohisy-XtY/pub?start=false&loop=false&delayms=3000)/<br>&nbsp;&nbsp;&nbsp;[csv,conf,v9](https://docs.google.com/presentation/d/1j-S0q5gqR8agsqIPBVXabGEntMlc4FDTwb4r-v8-9tA/edit?usp=sharing)/[NYC&nbsp;SOD&nbsp;2026](https://docs.google.com/presentation/d/e/2PACX-1vTobPFucA1QO6u8dF3CyHjOctoom1DBmgQF558I_gx5e8cWPr0HLvJISvoaZyCMwLZZdDHlhK2cil0o/pub?start=false&loop=false&delayms=5000)<br>* **_"Have we achieved ACI?"_** series - [1](https://dathere.com/2026/01/the-peoples-api-is-finally-here/) • [2](https://dathere.github.io/NYC-Snow-Analysis-2010-2026-Claude-Cowork/)  • [3](https://dathere.github.io/peoples-api-demos/NYC-Housing-Policy-SOD2026/) • [4](https://dathere.com/2026/08/data-schematic-a-neuro-symbolic-visual-story-telling-data-explorer-dictionary/) <br>* [Sponsor](#sponsor)
++![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, geocoding, formatting, converting, visualizing,<br>[FAIR](https://www.go-fair.org/fair-principles/)ifying, chatting, joining & documenting tabular data<br>(CSV/TSV/SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exe
+```
 
 ---
-updated-dependencies:
-- dependency-name: ip-address
-  dependency-version: 10.7.4
-  dependency-type: indirect
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `9972f5c4` (2026-10-22)
+**Commit Message**: docs: wordsmith qsv elevator-pitch 1-paragraph description
 
-**File**: `.claude/skills/package-lock.json` (modified, +3/-3)
+[skip ci]
+
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1317,9 +1317,9 @@
-       "license": "ISC"
-     },
-     "node_modules/ip-address": {
--      "version": "10.7.2",
--      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
--      "integrity": "sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==",
-+      "version": "10.7.4",
-+      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.4.tgz",
-+      "integrity": "sha512-DWBMKyeM25D70nrIiTkgQth59/G+naKOTep6huF9j+GmeK3DMD60Zvxg5d5qQnz+38AHgou6ean2LECX+lrKDg==",
-       "license": "MIT",
-       "engines": {
-         "node": ">= 12"
+@@ -14,7 +14,7 @@
+ 
+  &nbsp;          |  Table of Contents
+ :--------------------------|:-------------------------
+-![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a data-wrangling toolkit for querying, slicing,<br>sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting,<br>[FAIR](https://www.go-fair.org/fair-principles/)ifying & documenting tabular data (CSV, Excel, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exercises](https://100.dathere.com)<br>* [FAQ](https://github.com/dathere/qsv/discussions/categories/faq)<br>* [Performance Tuning](docs/PERFORMANCE.md#performance-tuning)<br>* 👉 [Benchmarks](https://qsv.dathere.com/benchmarks) &nbsp;•&nbsp; [Interactive Benchmarks](https://github.com/dathere/qsv/wiki/Benchmarks) 🚀<br>* 📊 [Visualizations Gallery](https://dathere.github.io/qsv/gallery.html) 🗺️<br>* 🗃️ [Neuro](https://dathere.github.io/qsv/smart_allegheny_dogs.html)-[symbolic](https://dathere.github.io/qsv/smart_boston_311_2025.html), [Localizable](https://dathere.github.io/qsv/smart-colombia-calidad-aire.html), _**[Data](https://dathere.github.io/qsv/smart_nyc311.html) [Schematics](https://dathere.github.io/qsv/pitt311data.html)**_ 📈<br>* [Environment Variables](docs/ENVIRONMENT_VARIABLES.md)<br>* [Feature Flags](#feature-flags)<br>* [Goals/Non-goals](#goals--non-goals)<br>* [Testing](#testing)<br>* [NYC&nbsp;SOD&nbsp;2022](https://docs.google.com/presentation/d/e/2PACX-1vQ12ndZL--gkz0HLQRaxqsNOwzddkv1iUKB3sq661yA77OPlAsmHJHpjaqt9s9QEf73VqMfb0cv4jHU/pub?start=false&loop=false&delayms=3000)/[csv,conf,v8](https://docs.google.com/presentation/d/10T_3MyIqS5UsKxJaOY7Ktrd-GfhJelQImlE_qYmtuis/edit#slide=id.g2e0f1e7aa0e_0_62)/[PyConUS&nbsp;2025](https://docs.google.com/presentation/d/e/2PACX-1vRKFnU0Hm8oDrtCYbxcf96kHVsPcoLU05jPVNYaAs09D05gPMWDJ96q_4_zgUvadGro4deohisy-XtY/pub?start=false&loop=false&delayms=3000)/<br>&nbsp;&nbsp;&nbsp;[csv,conf,v9](https://docs.google.com/presentation/d/1j-S0q5gqR8agsqIPBVXabGEntMlc4FDTwb4r-v8-9tA/edit?usp=sharing)/[NYC&nbsp;SOD&nbsp;2026](https://docs.google.com/presentation/d/e/2PACX-1vTobPFucA1QO6u8dF3CyHjOctoom1DBmgQF558I_gx5e8cWPr0HLvJISvoaZyCMwLZZdDHlhK2cil0o/pub?start=false&loop=false&delayms=5000)<br>* **_"Have we achieved ACI?"_** series - [1](https://dathere.com/2026/01/the-peoples-api-is-finally-here/) • [2](https://dathere.github.io/NYC-Snow-Analysis-2010-2026-Claude-Cowork/)  • [3](https://dathere.github.io/peoples-api-demos/NYC-Housing-Policy-SOD2026/) • [4](https://dathere.com/2026/08/data-schematic-a-neuro-symbolic-visual-story-telling-data-explorer-dictionary/) <br>* [Sponsor](#sponsor)
++![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting, [FAIR](https://www.go-fair.org/fair-principles/)ifying,<br>visualizing, geocoding & documenting tabular data (CSV, TSV,<br>SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#step-2-optional-install-the-cowork-plugin)<br> * [Whirlwind Tour](docs/whirlwind_tour.md#a-whirlwind-tour) / [Notebooks](contrib/notebooks/) / [Lessons & Exercises](https://100.dathere.com)<br>* [FAQ](https://github.com/dathere/qs
 ```
 
 #### Recent Merged Pull Requests:
@@ -2269,32 +2267,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888)
+## X. docs: tweak README elevator-pitch wording and linebreaks
 
 **RULE**:
-When implementing operations in `.claude/skills/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8249eb0`: build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8507b422`: docs: tweak README elevator-pitch wording and linebreaks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "version": "10.7.4",
-      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.4.tgz",
-      "integrity": "sha512-DWBMKyeM25D70nrIiTkgQth59/G+naKOTep6huF9j+GmeK3DMD60Zvxg5d5qQnz+38AHgou6ean2LECX+lrKDg==",
+![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, geocoding, formatting, converting, visualizing,<br>[FAIR](https://www.go-fair.org/fair-principles/)ifying, chatting, joining & documenting tabular data<br>(CSV/TSV/SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.md#
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "10.7.2",
-      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
-      "integrity": "sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==",
+![qsv logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png "Nano Banana Prompt: Can you make the horse robotic? Also, add an \"MCP\" label on the robotic horse. Keep the same pose and dimensions.")<br/>[_Hi-ho "Quicksilver" away!_](https://www.youtube.com/watch?v=p9lf76xOA5k)<br/><sub><sup>[original logo details](https://github.com/dathere/qsv/discussions/295) * [Base AI-reimagined logo](docs/images/qsv_logo-gemini-indy-robothorse-small.png) * [Event logo archive](docs/images/event-logos/)</sup></sub><br/>|qsv is a neuro-symbolic data-wrangling toolkit for querying,<br>slicing, sorting, analyzing, filtering, enriching, transforming,<br>validating, joining, formatting, converting, chatting, [FAIR](https://www.go-fair.org/fair-principles/)ifying,<br>visualizing, geocoding & documenting tabular data (CSV, TSV,<br>SSV, JSONL, parquet, spreadsheets, [etc](#file-formats)).<br>Commands are simple, composable & ___["blazing fast"](https://github.com/dathere/qsv/discussions/1348)___.<br><br>* [Commands](#available-commands)<br>* Installation: [CLI](#installation-options) • [MCP Server](.claude/skills/docs/guides/START_HERE.md) • [Cowork Plugin](.claude/skills/docs/guides/START_HERE.m
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8249eb0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8507b422` are properly handled with clean fallback behavior.

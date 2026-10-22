@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source**: github ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
-> **Source Version**: `584df5c8`  
+> **Source Version**: `0117cfef`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:32:56.971Z  
+> **Timestamp**: 2026-10-22T18:37:28.321Z  
 > **Learning ID**: `learn-github-lxml-lxml`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:32:55.735Z  
+> **Harvest Timestamp**: 2026-10-22T18:37:27.151Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lxml XML toolkit for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 3066 stars
+- **Stars / Engagement**: 3067 stars
 
 ---
 
@@ -2112,11 +2112,13 @@ def publish(dirname, lxml_path, release):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #530** (2026-10-11): **Build: bump pypa/cibuildwheel from 4.2.1 to 4.3.0 in the github-actions group**
-  *Symptoms*: Bumps the github-actions group with 1 update: [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).  Updates `pypa/cibuildwheel` from 4.2.1 to 4.3.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/pypa/cibuildwheel/releases">pypa/cibuildwheel's releases</a>.</em></p> <blockquote> <h2>v4.3.0</h2> <ul> <li>✨ Extends <a href="https://cibuildwheel.pypa.io/en/stable/configuration/#inherit">option inheritance</a> to every configuration layer, so global and platform-specific settings can append or prepend to existing values, including cibuildwheel's defaults. Environment variables can also extend earlier settings using <code>CIBW_INHERIT</code>. (<a href="https://redirect.github.com/pypa/cibuildwheel/issues/2928">#2928</a>)</li> <li>✨ Adds PyPy 3.12 support and updates PyPy 3.11 to v8.0.0, available with the <code>pypy</code> <a href="https://cibuildwheel.pypa.io/en/stable/options/#enable"><code>enable</code></a> flag (<a href="https://redirect.github.com/pypa/cibuildwheel/issues/2998">#2998</a>)</li> <li>✨ Adds GraalPy 3.13 (v25.3) support on Linux, Windows, and macOS arm64, available with the <code>graalpy</code> <a href="https://cibuildwheel.pypa.io/en/stable/options/#enable"><code>enable</code></a> flag (<a href="https://redirect.github.com/pypa/cibuildwheel/issues/2982">#2982</a>)</li> <li>✨ Adds <a href="https://cibuildwheel.pypa.io/en/stable/options/#log-fold-mode"><code>log-fold-mode</code></a> to override CI log folding, inclu
+- **Issue #535** (2026-10-21): **Remove duplicate class names when toggling an HTML class**
+  *Symptoms*: `Classes.toggle()` returns `False` when disabling a class, but with `class="active active other"` it removes only one occurrence and leaves `active` enabled.  Remove all occurrences of the class being disabled, preserving the other names and removing an empty class attribute. Extend the existing HTML doctests to cover duplicate removal, the returned state, re-enabling, and a class attribute containing only duplicates.  Validation: the regression produces five failed doctest assertions before the fix. Afterward, the HTML test runner completes 168 tests with `OK` and one skip marker. It loads this checkout's exact HTML Python source using the prebuilt lxml 6.1.3 `etree` extension. Native extensions were not rebuilt. Python compilation and the diff whitespace check pass.  Developed with OpenAI Codex using gpt-6.1-sol (xhigh); the behavior and tests were verified locally. 
 
-- **Issue #529** (2026-10-05): **Build: bump the github-actions group across 1 directory with 2 updates**
-  *Symptoms*: Bumps the github-actions group with 2 updates in the / directory: [docker/setup-qemu-action](https://github.com/docker/setup-qemu-action) and [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).  Updates `docker/setup-qemu-action` from 4.2.0 to 4.4.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/setup-qemu-action/releases">docker/setup-qemu-action's releases</a>.</em></p> <blockquote> <h2>v4.4.0</h2> <ul> <li>Use the shared error helper for Docker commands by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/setup-qemu-action/pull/345">docker/setup-qemu-action#345</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.96.0 to 0.100.0 in <a href="https://redirect.github.com/docker/setup-qemu-action/pull/344">docker/setup-qemu-action#344</a></li> <li>Bump <code>@​humanfs/node</code> from 0.16.7 to 0.16.8 in <a href="https://redirect.github.com/docker/setup-qemu-action/pull/340">docker/setup-qemu-action#340</a></li> <li>Bump js-yaml from 4.3.1 to 4.3.2 in <a href="https://redirect.github.com/docker/setup-qemu-action/pull/342">docker/setup-qemu-action#342</a></li> <li>Bump postcss-selector-parser from 7.1.1 to 7.1.5 in <a href="https://redirect.github.com/docker/setup-qemu-action/pull/337">docker/setup-qemu-action#337</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/setup-qemu-action/compare/v4.3.0...v4.4.0">https:
+- **Issue #534** (2026-10-21): **Keep a processing instruction after the root element**
+  *Symptoms*: A processing instruction after the document element is a sibling of the root. `ElementTreeContentHandler.processingInstruction` indexed the element stack, which is empty once the root has been closed, so `<?t?>` after `<E></E>` raised `IndexError`. The instruction is now attached with `addnext`, in order, including when another instruction already follows the root.  LP#2011542  Cherith reviewed this diff and confirmed it with the person who helped draft it.  Drafted with Cursor. 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks. Looks good to me. I'll merge it for 7.0.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2133,83 +2135,137 @@ def publish(dirname, lxml_path, release):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3eb87571` (2026-10-07)
-**Commit Message**: Fix concurrency issue in threading test.
-Updating the reader count happens concurrently by reading threads, so there is no guarantee that it works atomically.
+### Incident Patch 1: `f6467783` (2026-10-21)
+**Commit Message**: Build: Disable "CYTHON_USE_TP_FINALIZE" in PyPy again to work around crashes in "tp_finalize".
 
-**File**: `src/lxml/tests/test_rwlock.py` (modified, +5/-2)
+**File**: `setupinfo.py` (modified, +2/-2)
 ```diff
-@@ -310,6 +310,7 @@ def reader_writer():
+@@ -372,8 +372,8 @@ def define_macros():
+     # Use compact type specs to reduce the declaration size of our many extension types.
+     macros.append(('CYTHON_USE_TYPE_SPECS', '1'))
+     # PyPy crashes when accessing objects in tp_finalize().
+-    #if IS_PYPY:
+-    #    macros.append(('CYTHON_USE_TP_FINALIZE', '0'))
++    if IS_PYPY:
++        macros.append(('CYTHON_USE_TP_FINALIZE', '0'))
+     return macros
  
-     def test_concurrent_read_write_locking(self):
-         lock = RWLock()
-+        guard = threading.Lock()
  
-         # Thread monitoring:
- 
-@@ -321,11 +322,13 @@ def test_concurrent_read_write_locking(self):
-         def lock_read():
-             nonlocal reader_count
-             lock.lock_read()
--            reader_count += 1
-+            with guard:
-+                reader_count += 1
- 
-         def unlock_read():
-             nonlocal reader_count
--            reader_count -= 1
-+            with guard:
-+                reader_count -= 1
-             lock.unlock_read()
- 
-         def lock_write():
 ```
 
 ---
 
-### Incident Patch 2: `ee453ac5` (2026-10-05)
-**Commit Message**: Build: bump the github-actions group across 1 directory with 2 updates (GH-529)
+### Incident Patch 2: `56583cc6` (2026-10-21)
+**Commit Message**: Build: bump the github-actions group across 1 directory with 3 updates (GH-533)
 
-Bumps the github-actions group with 2 updates in the / directory: [docker/setup-qemu-action](https://github.com/docker/setup-qemu-action) and [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel).
+* Build: bump the github-actions group across 1 directory with 3 updates
+
+Bumps the github-actions group with 3 updates in the / directory: [actions/upload-artifact](https://github.com/actions/upload-artifact), [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel) and [actions/download-artifact](https://github.com/actions/download-artifact).
 
 
-Updates `docker/setup-qemu-action` from 4.2.0 to 4.4.0
-- [Release notes](https://github.com/docker/setup-qemu-action/releases)
-- [Commits](https://github.com/docker/setup-qemu-action/compare/96fe6ef7f33517b61c61be40b68a1882f3264fb8...99012661954931238ded8c8b007157a8430204e1)
+Updates `actions/upload-artifact` from 7.0.1 to 7.0.2
+- [Release notes](https://github.com/actions/upload-artifact/releases)
+- [Commits](https://github.com/actions/upload-artifact/compare/043fb46d1a93c77aae656e7c1c64a875d1fc6a0a...cf430e030ddbb5b0abf93d22962f4752f3646cd9)
 
-Updates `pypa/cibuildwheel` from 4.2.0 to 4.2.1
+Updates `pypa/cibuildwheel` from 4.2.1 to 4.3.0
 - [Release notes](https://github.com/pypa/cibuildwheel/releases)
 - [Changelog](https://github.com/pypa/cibuildwheel/blob/main/docs/changelog.md)
-- [Commits](https://github.com/pypa/cibuildwheel/compare/1828c10ab37f080699c7b81cea34097c684a7074...e090b81e30c4d855ea63bf4b6e59204c09a101ae)
+- [Commits](https://github.com/pypa/cibuildwheel/compare/e090b81e30c4d855ea63bf4b6e59204c09a101ae...adba99c781d3746d38b3a09b1cf797965bcb7fe6)
 
----
-updated-dependencies:
-- dependency-name: docker/setup-qemu-action
-  dependency-version: 4.3.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: github-actions
-- dependency-name: pypa/cibuildwheel
-  dependency-version: 4.2.1
-  dependency-type: direct
+Updates `actions/download-artifact` from 8.0.1 to 8.0.2
+- [Release notes](https://github.com/actions/download-artifact/releases)
+- [Commits](https://github.com
 
-**File**: `.github/workflows/wheels.yml` (modified, +5/-5)
+**File**: `.github/workflows/benchmarks.yml` (modified, +2/-2)
 ```diff
-@@ -153,7 +153,7 @@ jobs:
+@@ -101,14 +101,14 @@ jobs:
+           } >> $GITHUB_STEP_SUMMARY
  
-       - name: Set up QEMU
-         if: runner.os == 'Linux' && !(endsWith(matrix.platform, 'x86_64') || endsWith(matrix.platform, 'i686') || endsWith(matrix.platform, 'aarch64'))
--        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
-+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+       - name: Upload Log
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
          with:
-           platforms: all
+           name: benchmark_log.txt
+           path: benchmarks.log
+           if-no-files-found: ignore
  
+       - name: Upload timings
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: benchmark_results_csv
+           path: benchmark_results_*.csv
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+```diff
+@@ -272,7 +272,7 @@ jobs:
+         run: bash -c 'GITHUB_API_TOKEN="${{ secrets.GITHUB_TOKEN }}"  bash ./tools/ci-run.sh'
+ 
+       - name: Upload Coverage Report
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         if: matrix.env.COVERAGE
+         with:
+           name: pycoverage_html
+@@ -306,7 +306,7 @@ jobs:
+         run: CFLAGS="-O1 -g2 -fPIC"  make html
+ 
+       - name: Upload docs
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: website_html
+           path: doc/html
+```
+
+**File**: `.github/workflows/compiled_python.yml` (modified, +1/-1)
+```diff
+@@ -156,7 +156,7 @@ jobs:
+ 
+       - name: Archive logs
+         if: ${{ inputs.sanitize && always() }}
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: ${{inputs.sanitize}}-logs
+           path: san_log.*
+```
+
+**File**: `.github/workflows/wheels.yml` (modified, +11/-11)
+```diff
+@@ -74,14 +74,14 @@ jobs:
+       env: { STATIC_DEPS: false; CFLAGS="-Og" }  # it's run-once, so build more quickly
+ 
+     - name: Upload sdist
+-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+       with:
+         name: sdist
+         path: dist/*.tar.gz
+         compression-level: 0
+ 
+     - name: Upload website
+-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+       with:
+         name: website
+         path: doc/html
+@@ -100,7 +100,7 @@ jobs:
+ 
+       - name: Install cibuildwheel
+         # Nb. keep cibuildwheel version pin consistent with job below
+-        run: pipx install cibuildwheel==4.2.0
++        run: pipx install cibuildwheel==4.3.1
+ 
+       - id: set-matrix
+         run: |
 @@ -173,7 +173,7 @@ jobs:
            echo "CIBW_BEFORE_BUILD_LINUX=${DIST_INSTALL} ccache && ccache -o cache_dir=/host${HOST_CCACHE_DIR} && ccache -p && for dir in /host/usr/lib/ccache /host/usr/local/opt/ccache/libexec; do ls -l \$dir || true; done || echo '::notice::ccache installation failed on ${{ matrix.only }}'" | tee -a "${GITHUB_ENV}"
  
        - name: Build wheels
--        uses: pypa/cibuildwheel@1828c10ab37f080699c7b81cea34097c684a7074 # v4.2.0
-+        uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
+-        uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
++        uses: pypa/cibuildwheel@adba99c781d3746d38b3a09b1cf797965bcb7fe6 # v4.3.0
          with:
            only: ${{ matrix.only }}
  
@@ -2217,110 +2273,71 @@ updated-dependencies:
            contains(matrix.only, '-manylinux_') &&
            (startsWith(matrix.only, 'cp39-') || startsWith(matrix.only, 'cp310-') || startsWith(matrix.only, 'cp311-')) &&
            (contains(matrix.only, 'i686') || contains(matrix.only, 'x86_64') || contains(matrix.only, 'aarch64'))
--        uses: pypa/cibuildwheel@1828c10ab37f080699c7b81cea34097c684a7074 # v4.2.0
-+        uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
+-        uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
++        uses: pypa/cibuildwheel@adba99c781d3746d38b3a09b1cf797965bcb7fe6 # v4.3.0
          env:
            CIBW_MANYLINUX_i686_IMAGE: manylinux2014
            CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-@@ -243,12 +243,12 @@ jobs:
+@@ -197,7 +197,7 @@ jobs:
+           only: ${{ matrix.only }}
  
-       - name: Set up QEMU
-         if: runner.os == 'Linux' && !(endsWith(matrix.platform, 'x86_64') || endsWith(matrix.platform, 'i686') || endsWith(matrix.platform, 'aarch64'))
--        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
-+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+       - name: Upload wheels
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
          with:
+           path: ./wheelhouse/*.whl
+           name: lxml-wheel-${{ matrix.only }}
+@@ -248,7 +248,7 @@ jobs:
            platforms: all
  
        - name: Build ABI3 wheels
--        uses: pypa/cibuildwheel@1828c10ab37f080699c7b81cea34097c684a7074 # v4.2.0
-+        uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
+-        uses: pypa/cibuildwheel@e090b81e30c4d855ea63bf4b6e59204c09a101ae # v4.2.1
++        uses: pypa/cibuildwheel@adba99c781d3746d38b3a09b1cf797965bcb7fe6 # v4.3.0
          env:
            # Smaller set of platforms that we only provide Stable ABI wheels for
            CIBW_BUILD: |
-```
-
----
-
-### Incident Patch 3: `878f12fa` (2026-09-09)
-**Commit Message**: Build: bump the github-actions group with 2 updates (GH-528)
-
-Bumps the github-actions group with 2 updates: [hendrikmuhs/ccache-action](https://github.com/hendrikmuhs/ccache-action) and [softprops/action-gh-release](https://github.com/softprops/action-gh-release).
-
-
-Updates `hendrikmuhs/ccache-action` from 1.2.23 to 1.2.24
-- [Release notes](https://github.com/hendrikmuhs/ccache-action/releases)
-- [Commits](https://github.com/hendrikmuhs/ccache-action/compare/d62db5f07c26379fc4b4e0916f098a92573c3b03...f09c25b45002a07be2955cbe52e8cee55643f89d)
-
-Updates `softprops/action-gh-release` from 3.0.2 to 3.0.3
-- [Release notes](https://github.com/softprops/action-gh-release/releases)
-- [Changelog](https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/softprops/action-gh-release/compare/3d0d9888cb7fd7b750713d6e236d1fcb99157228...efb35369e0ad2afab669f228072c1b0d510eae64)
-
----
-updated-dependencies:
-- dependency-name: hendrikmuhs/ccache-action
-  dependency-version: 1.2.24
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: github-actions
-- dependency-name: softprops/action-gh-release
-  dependency-ve
-
-**File**: `.github/workflows/benchmarks.yml` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ jobs:
-           fetch-tags: true
+@@ -262,7 +262,7 @@ jobs:
+             '' }}
  
-       - name: ccache
--        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
-+        uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-         if: runner.os == 'Linux' || runner.os == 'macOS'
+       - name: Upload wheels
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
          with:
-           max-size: 150M
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -253,7 +253,7 @@ jobs:
-           ln -s /usr/local/bin/glibtoolize /usr/local/bin/libtoolize
+           path: ./wheelhouse/*.whl
+           name: lxml-wheel-abi3-${{ matrix.os }}
+@@ -283,20 +283,20 @@ jobs:
  
-       - name: ccache
--        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
-+        uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-         if: runner.os == 'Linux' || runner.os == 'macOS'
+     steps:
+       - name: Download wheels
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
          with:
-           max-size: 100M
-```
-
-**File**: `.github/workflows/wheels.yml` (modified, +2/-2)
-```diff
-@@ -156,7 +156,7 @@ jobs:
-           platforms: all
+           path: ./release_upload
+           pattern: lxml-wheel-*
+           merge-multiple: true
  
-       - name: ccache
--        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
-+        uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-         if: runner.os == 'Linux' || runner.os == 'macOS'
+       - name: Download sdist
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
          with:
-           max-size: 100M
-@@ -315,7 +315,7 @@ jobs:
-           exit ${RESULT_CODE}
+           path: ./release_upload
+           name: sdist
  
-       - name: Release
--        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
-+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
-         if: github.ref_type == 'tag'
+       - name: Upload wheels
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
          with:
-           files: |
+           path: ./release_upload/*.whl
+           name: all_wheels
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #535** (2026-10-21): Remove duplicate class names when toggling an HTML class (@xiehuanyi)
+- **PR #534** (2026-10-21): Keep a processing instruction after the root element (@Cherith1222)
+- **PR #533** (2026-10-21): Build: bump the github-actions group across 1 directory with 3 updates (@dependabot[bot])
+- **PR #532** (closed): Build: Upgrade cibuildwheel to 4.3.1 to build wheels for Python 3.15 (@benglewis)
+- **PR #531** (2026-10-21): Update libraries (@scoder)
 - **PR #530** (closed): Build: bump pypa/cibuildwheel from 4.2.1 to 4.3.0 in the github-actions group (@dependabot[bot])
-- **PR #529** (2026-10-05): Build: bump the github-actions group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #528** (2026-09-09): Build: bump the github-actions group with 2 updates (@dependabot[bot])
-- **PR #527** (closed): Point security policy back to the Launchpad bug tracker (@avalyset)
-- **PR #526** (2026-08-16): Add ``patch_lxml_deplibs.py`` to ``MANIFEST.in`` (@nsoranzo)
-- **PR #525** (2026-08-16): Build: bump pypa/cibuildwheel from 4.1.1 to 4.2.0 in the github-actions group (@dependabot[bot])
 
 ---
 
@@ -2340,33 +2357,30 @@ updated-dependencies:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. concurrency issue in threading test.
+## X. Build: Disable "CYTHON_USE_TP_FINALIZE" in PyPy again to work around crashes in 
 
 **RULE**:
-When implementing operations in `src/lxml/tests/test_rwlock.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `setupinfo.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3eb87571`: concurrency issue in threading test.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6467783`: Build: Disable "CYTHON_USE_TP_FINALIZE" in PyPy again to work around crashes in "tp_finalize".. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lxml/tests/test_rwlock.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `setupinfo.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        guard = threading.Lock()
-            with guard:
-                reader_count += 1
-            with guard:
-                reader_count -= 1
+    if IS_PYPY:
+        macros.append(('CYTHON_USE_TP_FINALIZE', '0'))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-            reader_count += 1
-            reader_count -= 1
+    #if IS_PYPY:
+    #    macros.append(('CYTHON_USE_TP_FINALIZE', '0'))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3eb87571` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6467783` are properly handled with clean fallback behavior.

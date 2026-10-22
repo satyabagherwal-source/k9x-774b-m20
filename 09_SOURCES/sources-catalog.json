@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "e8249eb0",
+    "sourceVersion": "8507b422",
     "license": "NOASSERTION",
-    "contentHash": "7fc47718fd5a7edb351c10486ff0406a6496509e3fc6124640f43104af3745ab",
-    "lastHarvestedAt": "2026-10-22T17:45:10.904Z",
+    "contentHash": "032281aed665b02573e96750c19e4a52f3c3f418819dc3fc07dab144976d9884",
+    "lastHarvestedAt": "2026-10-22T18:37:35.808Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -9313,10 +9313,10 @@
     "repository": "lxml/lxml",
     "platform": "github",
     "sourceUrl": "https://github.com/lxml/lxml",
-    "sourceVersion": "584df5c8",
+    "sourceVersion": "0117cfef",
     "license": "BSD-3-Clause",
-    "contentHash": "b81bad24bc3b002a857b3915dfb242607c92bc1814da98de54ef69774af62a03",
-    "lastHarvestedAt": "2026-10-19T22:32:57.282Z",
+    "contentHash": "e8b671d0373abe0cf3a0afce19355b17e6b8260435a61c18e2d846f2b73be6fc",
+    "lastHarvestedAt": "2026-10-22T18:37:28.766Z",
     "learningId": "learn-github-lxml-lxml"
   },
   "mazzzystar-queryable": {

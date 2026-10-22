@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-WEM2",
-    "timestamp": "2026-10-20T16:15:01.370Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "023987764ccc470904dfc254ce7e490b1d7fbfe7dc89a57f8cdcea6203cd9c9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WJ3R",
-    "timestamp": "2026-10-20T16:15:07.191Z",
-    "repository": "lingodotdev/lingo.dev",
-    "learningId": "learn-github-lingodotdev-lingo-dev",
-    "contentHash": "e2bdff160f4b6abbe25f6647ed0aed73dae73f0054ee4f8c0e0bf786c44690f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-WL6N",
     "timestamp": "2026-10-20T16:15:09.887Z",
     "repository": "clastix/kamaji",
@@ -7490,6 +7460,36 @@
     "repository": "chaos-mesh/chaos-mesh",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
     "contentHash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-VB5N",
+    "timestamp": "2026-10-22T18:37:28.763Z",
+    "repository": "lxml/lxml",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "e8b671d0373abe0cf3a0afce19355b17e6b8260435a61c18e2d846f2b73be6fc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-VGL9",
+    "timestamp": "2026-10-22T18:37:35.805Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "032281aed665b02573e96750c19e4a52f3c3f418819dc3fc07dab144976d9884",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

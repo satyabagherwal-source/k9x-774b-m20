@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:30:42.705Z",
+  "last_updated": "2026-10-22T18:37:35.735Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7314,8 +7314,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "e8249eb0",
-      "content_hash": "7fc47718fd5a7edb351c10486ff0406a6496509e3fc6124640f43104af3745ab",
+      "source_version": "8507b422",
+      "content_hash": "032281aed665b02573e96750c19e4a52f3c3f418819dc3fc07dab144976d9884",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7453,6 +7453,11 @@
           "number": 3674,
           "title": "build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (#4888)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3695,
+          "title": "docs: tweak README elevator-pitch wording and linebreaks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7460,7 +7465,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:45:10.844Z",
+      "verified_at": "2026-10-22T18:37:35.717Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61317,14 +61322,19 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "584df5c8",
-      "content_hash": "b81bad24bc3b002a857b3915dfb242607c92bc1814da98de54ef69774af62a03",
+      "source_version": "0117cfef",
+      "content_hash": "e8b671d0373abe0cf3a0afce19355b17e6b8260435a61c18e2d846f2b73be6fc",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
         {
           "number": 2858,
           "title": "concurrency issue in threading test.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3694,
+          "title": "Build: Disable \"CYTHON_USE_TP_FINALIZE\" in PyPy again to work around crashes in",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -61333,7 +61343,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:32:57.225Z",
+      "verified_at": "2026-10-22T18:37:28.686Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111098,6 +111108,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:30:42.696Z"
+    },
+    "rule-3694": {
+      "learning_id": "rule-3694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3694,
+      "title": "Build: Disable \"CYTHON_USE_TP_FINALIZE\" in PyPy again to work around crashes in",
+      "source_url": "https://github.com/lxml/lxml",
+      "source_version": "0117cfef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:37:28.686Z"
+    },
+    "rule-3695": {
+      "learning_id": "rule-3695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3695,
+      "title": "docs: tweak README elevator-pitch wording and linebreaks",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8507b422",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:37:35.717Z"
     }
   },
   "aliases": {
