@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source**: github ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
-> **Source Version**: `969b91d7`  
+> **Source Version**: `2ca2dae5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:38:27.128Z  
+> **Timestamp**: 2026-10-22T15:53:27.275Z  
 > **Learning ID**: `learn-github-duongductrong-snapzy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:38:26.928Z  
+> **Harvest Timestamp**: 2026-10-22T15:53:27.116Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source native macOS screenshot and screen recording app. A CleanShot X alternative.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3400 stars
+- **Stars / Engagement**: 3414 stars
 
 ---
 
@@ -2072,14 +2072,16 @@ final class QuickAccessPinWindowState: ObservableObject {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #652** (2026-10-20): **[Bug]: Recording stop button cannot be clicked**
+  *Symptoms*: ### Description  Recording stop button cannot be clicked System: MacOS 15.8.1 App version: 2.0.0  https://github.com/user-attachments/assets/d3ebd67e-21d0-4f11-a14b-13e429173b3f  ### Steps to Reproduce  1、Start screen recording 2、 Click the stop button  ### Expected Behavior  Can stop normally  ### Actual Behavior  Stop button click unresponsive, unable to stop screen recording normally  ### Screenshots / Recordings  _No response_  ### Snapzy Version  2.0.0  ### macOS Version  macOS 15 (Sequoia)  ### Installation Method  DMG download  ### Additional Context  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > Hi @rigoud, thanks for the report and the video. This is fixed in #655 (thanks @lvqviet).  **What was wrong:** on macOS 13–15, the Stop button in the floating recording bar didn't respond to clicks. The button redrew itself the moment you pressed it, and that cancelled the click before it registered. Pause, Restart and Delete weren't affected.  **Where to get it:** the fix ships in **[v2.1.0-beta.9](https://github.com/duongductrong/Snapzy/releases/tag/v2.1.0-beta.9)**. That build is being published now and should be available shortly.  You're on 2.0.0 (Stable), so you'll need to switch to the beta channel to get it: 1. Open **Snapzy → Settings → About**. 2. Set **Update Channel** to **Beta**. 3. Check for updates and install **v2.1.0-beta.9**.  If you'd rather stay on Stable, the fix will also be in the next stable release.  If Stop still doesn't respond after updating, please reopen this issue and include your macOS version. Thanks!
+
 - **Issue #651** (2026-10-19): **[Bug]: Incorrect capture coordinates / clipping issue on screenshot**
   *Symptoms*: ### Description  When taking a screenshot, the capture area/overlay is misaligned, resulting in a clipped/partially cut-off image.  MacOS: 27.0  ### Steps to Reproduce  1. Cmd Shift 3 2. Select capture area 3. See the bug  ### Expected Behavior  Exactly what i select  ### Actual Behavior  Incorrect image capture  ### Screenshots / Recordings  https://drive.google.com/drive/folders/1AWi2zADoKmRVxD8qg_QqLXgU2J3_OYo_?usp=sharing  ### Snapzy Version  2.0.0  ### macOS Version  Other (specify in description)  ### Installation Method  DMG download  ### Additional Context  _No response_
   **Post-Mortem & Fix Analysis**:
   > <img width="2560" height="1440" alt="Image" src="https://github.com/user-attachments/assets/50fa480c-b593-42ae-b5e5-3f5a622d61cf" /> Having this outcome of clipped screenshots also when taking a full screen shot (had to blur the top of the image).
   > Thanks for the report and the screenshots @thachtranvn @larswinter!  This looks like the same root cause as #623: when Snapzy puts temporarily hidden windows back into a ScreenCaptureKit image (e.g. with "Hide desktop icons" / "Hide desktop widgets" enabled), the restored patch was drawn at its vertical mirror. That leaves a rectangular block of wrong or missing content in the middle of the capture. It affected full-screen and area captures, which matches what you're both seeing.  It was fixed in #642 and shipped in [v2.1.0-beta.3](https://github.com/duongductrong/Snapzy/releases/tag/v2.1.0-beta.3). The latest beta, [v2.1.0-beta.6](https://github.com/duongductrong/Snapzy/releases/tag/v2.1.0-beta.6), includes it as well. v2.0.0 (stable) does not have the fix yet.  Please update to v2.1.0-beta.6 (or the next stable release). As a workaround on 2.0.0, you can turn off "Hide desktop icons" and "Hide desktop widgets" in Preferences.  Closing this for now. If the clipping still happens on v2
-
-- **Issue #639** (2026-10-19): **[Bug]: Screenshot of quick-look is misaligned and/or glitchy**
-  *Symptoms*: ### Description  Thanks for resolving the screenshot of quick look item previews, this is now fixed! :)  Still a bit of an issue with this approach though - but still not quite working as intended I don't think.  If I do a full screen screenshot (cmd-shift-3) of with a quick look item open it seems to reposition it – less noticeable on a large quicklook preview but if it is just a small image it will be respositioned on the screenshot in the lower left of the screen.  If I choose selected screen area (cmd-shift-4) and drag an area, alignment is always off - I think related to the same bug as above. If you have a big PDF or window open it will seem subtle but if it is just a small image (as above) it will be completely missed by the capture.     ### Steps to Reproduce  1. Open Snapzy 2. Return to finder 3. Quick-look preview a file (recommend an image file now more than 25% of screen area) 4. Capture screenshot   ### Expected Behavior  Expect the screen capture to be exactly as screen is laid out rather than apparently altered layout of quick look window. Seems to be unique to quick-look previews rather than standard windows - for me anyway!  ### Actual Behavior  If cmd-shift-3, will capture whole screen but the quicklook window will be repositioned If cmd-shift-4, will be either misaligned or completely miss the (intended) target within the quicklook window   ### Screenshots / Recordings  <img width="1599" height="1221" alt="Image" src="https://github.com/user-attachments/ass
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2096,1051 +2098,1049 @@ final class QuickAccessPinWindowState: ObservableObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d74508b0` (2026-10-13)
-**Commit Message**: fix: Fixed capture remapped and consumed keystrokes (#539)
+### Incident Patch 1: `9de2b0f2` (2026-10-20)
+**Commit Message**: fix: Unlock magnifier color panel and add magnifier size setting (#665)
 
-* fix: capture remapped keystrokes
+Preferences forced "Show color picker panel" off and disabled its toggle
+whenever "Show magnifier by default" was off, so a magnifier opened with
+Cmd+scroll could never show the hex value (#607). The runtime already
+reads both preferences independently; the coupling only lived in the
+Preferences view, so it is removed there.
 
-Observe key-down events before shortcut tools can consume them and retain downstream modifier rewrites. Restore recording overlays across retry and restart paths.
+Add a "Magnifier size" preference (small 128pt / medium 160pt default /
+large 200pt) for users who find the magnifier too large. It applies to
+area screenshot and screenshot-and-annotate, and round-trips through
+TOML import/export as capture.screenshot.magnifier_size. The default
+config document now also lists the two existing magnifier toggles so a
+reset to defaults covers them.
 
-* fix: re-register recording overlays after restart
+Narrower panels drop the copy hint's leading words ("[C] to Copy") when
+the full translation does not fit, and an overlong suffix truncates with
+an ellipsis instead of clipping mid-glyph. The Russian suffix is
+reworded so it no longer starts with a comma once the prefix is dropped.
 
-* fix: clear stale modifiers and invalidate recording startup
+Closes #607
 
-Clear downstream modifier rewrites when the head tap sees a flags change or is disabled. Invalidate recording startup before stop, cancel, delete, and restart, and verify the generation before resuming UI work.
-
-Add regressions for consumed modifier releases, interrupted overlay registration, replacement sessions, and retained overlay registration. Validation: 21 targeted tests pass on macOS.
-
-* fix: stop closed recording toolbar from reappearing
-
-showRecordingStatusBar observes UserDefaults changes to track the hover bar
-preference, but close() left the observer in place. A start task suspended
-during overlay registration keeps the closed window alive, so a later
-preference write (e.g. a new session saving its area) ordered the stale bar
-back on screen. Remove observers when the window closes.
-
----------
-
-Co-aut
-
-**File**: `Snapzy/Features/Recording/RecordingCoordinator.swift` (modified, +80/-35)
+**File**: `Snapzy/Features/Annotate/InlineAreaAnnotateSession.swift` (modified, +5/-0)
 ```diff
-@@ -15,13 +15,15 @@ final class RecordingCoordinator: ObservableObject {
- 
-   @Published private(set) var isActive = false
- 
--  private var toolbarWindow: RecordingToolbarWindow?
-+  private(set) var toolbarWindow: RecordingToolbarWindow?
-   private var regionOverlayWindows: [RecordingRegionOverlayWindow] = []
-   private var selectedRect: CGRect?
-   private var selectedWindowTarget: WindowCaptureTarget?
-   private let captureManager = ScreenCaptureManager.shared
-   private let recorder = ScreenRecordingManager.shared
-   private var isStartingRecording = false
-+  // Invalidated before Stop/Cancel/Restart suspends, even while the toolbar survives.
-+  private var recordingGeneration = UUID()
-   private var localEscapeMonitor: Any?
-   private var globalEscapeMonitor: Any?
-   private var onSessionEnded: (@MainActor () -> Void)?
-@@ -56,7 +58,7 @@ final class RecordingCoordinator: ObservableObject {
-     let dimNonSelectedArea: Bool
+@@ -278,6 +278,11 @@ final class InlineAreaAnnotateSession: ObservableObject {
+     defaults.object(forKey: PreferencesKeys.screenshotShowMagnifierColorPanel) as? Bool ?? true
    }
  
--  private init() {
-+  init() {
-     // Live-apply the dim preference while recording so toggling it in Settings (or the
-     // toolbar options) takes effect immediately, mirroring the hover-bar live toggle.
-     NotificationCenter.default.addObserver(
-@@ -284,6 +286,7 @@ final class RecordingCoordinator: ObservableObject {
-   }
++  /// The "magnifier size" preference — same sharing rationale as above.
++  var magnifierSize: MagnifierSizeOption {
++    MagnifierSizeOption.current(defaults: defaults)
++  }
++
+   /// Registers the per-display magnifier host view created by `InlineAreaMagnifierOverlay` so
+   /// scroll-wheel zoom and the "C" copy shortcut (handled at the session level, since key
+   /// events arrive via `handleKeyEvent`, not through the host view itself) can reach it.
+```
+
+**File**: `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift` (modified, +3/-0)
+```diff
+@@ -292,6 +292,7 @@ private struct InlineAreaAnnotateRootView: View {
+             hostSize: display.localFrame.size,
+             showsByDefault: session.showsMagnifierByDefault,
+             showsColorPanel: session.showsMagnifierColorPanel,
++            size: session.magnifierSize,
+             onHostViewReady: { hostView in
+               session.registerMagnifierHostView(hostView, for: display.displayID)
+             }
+@@ -752,12 +753,14 @@ private struct InlineAreaMagnifierOverlay: NSViewRepresentable {
+   let hostSize: CGSize
+   let showsByDefault: Bool
+   let showsColorPanel: Bool
++  let size: MagnifierSizeOption
+   let onHostViewReady: (InlineAreaMagnifierHostView) -> Void
  
-   func cancel() {
-+    recordingGeneration = UUID()
-     DiagnosticLogger.shared.log(.info, .recording, "Recording coordinator cancel requested", context: [
-       "isActive": "\(isActive)",
-       "recorderState": "\(recorder.state)",
-@@ -557,6 +560,7 @@ final class RecordingCoordinator: ObservableObject {
+   func makeNSView(context: Context) -> InlineAreaMagnifierHostView {
+     let view = InlineAreaMagnifierHostView(frame: CGRect(origin: .zero, size: hostSize))
+     view.displayBounds = CGRect(origin: .zero, size: hostSize)
+     view.magnifier.showsColorPanel = showsColorPanel
++    view.magnifier.size = size
+     // Mirrors plain area screenshot capture: coordinates live in the magnifier panel while
+     // it's active, and in `InlineAreaMagnifierHostView`'s own bubble (its equivalent of
+     // `updateCoordinateIndicator`) while it's inactive — never both at once.
+```
+
+**File**: `Snapzy/Features/Preferences/Components/PreferencesCaptureSettingsView.swift` (modified, +18/-6)
+```diff
+@@ -50,6 +50,8 @@ struct CaptureSettingsView: View {
+   @AppStorage(PreferencesKeys.screenshotAutoDetectElementUnderCursor) private var autoDetectElementUnderCursor = false
+   @AppStorage(PreferencesKeys.screenshotShowMagnifierByDefault) private var showMagnifierByDefault = false
+   @AppStorage(PreferencesKeys.screenshotShowMagnifierColorPanel) private var showMagnifierColorPanel = true
++  @AppStorage(PreferencesKeys.screenshotMagnifierSize)
++  private var magnifierSize = MagnifierSizeOption.defaultValue.rawValue
  
-   /// Delete current recording and close
-   private func deleteRecording() {
-+    recordingGeneration = UUID()
-     DiagnosticLogger.shared.log(.info, .recording, "Recording delete requested", context: [
-       "recorderState": "\(recorder.state)",
-     ])
-@@ -574,6 +578,8 @@ final class RecordingCoordinator: ObservableObject {
-       return
-     }
+   @AppStorage(PreferencesKeys.screenshotFormat) private var screenshotFormat = "png"
+   @AppStorage(PreferencesKeys.scrollingCaptureShowHints) private var scrollingCaptureShowHints = true
+@@ -223,11 +225,6 @@ struct CaptureSettingsView: View {
+             ) {
+               Toggle("", isOn: $showMagnifierByDefault)
+                 .labelsHidden()
+-                .onChange(of: showMagnifierByDefault) { isOn in
+-                  if !isOn {
+-                    showMagnifierColorPanel = false
+-                  }
+-                }
+             }
  
-+    recordingGeneration = UUID()
-+    let generation = recordingGeneration
-     let savedFormat = window.selectedFormat
-     let savedQuality = window.selectedQuality
-     let maxResolution = window.selectedMaxResolution
-@@ -596,11 +602,14 @@ final class RecordingCoordinator: ObservableObject {
-     ])
- 
-     Task {
-+      guard isCurrentRecordingStart(generation, window: window) else { return }
-       // Cancel current recording
-       await recorder.cancelRecording()
-+      guard isCurrentRecordingStart(generation, window: window) else { return }
- 
-       // Small delay to ensure cleanup completes
-       try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-+      guard isCurrentRecordingStart(generation, window: window) else { return }
- 
-       // Re-prepare and start recording with same settings
-       do {
-@@ -640,24 +649,30 @@ final class RecordingCoordinator: ObservableObject {
-             .map { CaptureContext.fromPID($0.ownerPID, windowTitle: $0.title) } ?? CaptureContext.fromFrontmostApp()
-         )
- 
-+        guard isCurrentRecordingStart(generation, window: window) else { return }
-         try await self.setupCameraOverlay(
-           for: rect,
-           enabled: savedCaptureCamera,
-           deviceID: savedCameraDeviceID
-         )
-+        guard isCurrentRecordingStart(generation, window: window) else { return }
-         try await recorder.startRecording()
-+        guard isCurrentRecordingStart(generation, window: window) else { return }
-         removeEscapeMonitors()
-+        guard await completeRecordingStart(for: rect) else { return }
-         DiagnosticLogger.shared.log(.info, .recording, "Recording restart completed")
- 
-         // Play sound to indicate restart
-         SoundManager.play("Purr")
- 
-       } catch let error as RecordingError {
-+        guard isCurrentRecordingStart(generation, window: window) else { return }
-         DiagnosticLogger.shared.logError(.recording, error, "Recording restart failed")
-         if !showErrorAlert(error) {
-           cancel()
+             SettingRow(
+@@ -244,9 +241,24 @@ struct CaptureSettingsView: View {
+               title: L10n.PreferencesCapture.showMagnifierColorPanelTitle,
+               description: L10n.PreferencesCapture.showMagnifierColorPanelDescription
+             ) {
++              // Independent of "show magnifier by default": the panel also shows on a
++              // magnifier opened with ⌘+scroll.
+               Toggle("", isOn: $showMagnifierColorPanel)
+                 .labelsHidden()
+-                .disabled(!showMagnifierByDefault)
++            }
++
++            SettingRow(
++              icon: "arrow.up.left.and.arrow.down.right",
++              title: L10n.PreferencesCapture.magnifierSizeTitle,
++              description: L10n.PreferencesCapture.magnifierSizeDescription
++            ) {
++              Picker("", selection: $magnifierSize) {
++                ForEach(MagnifierSizeOption.allCases) { option in
++                  Text(option.displayName).tag(option.rawValue)
++                }
++              }
++              .labelsHidden()
++              .pickerStyle(.menu)
+             }
+           }
          }
-       } catch {
-+        guard isCurrentRecordingStart(generation, window: window) else { return }
-         DiagnosticLogger.shared.logError(.recording, error, "Recording restart failed (generic)")
-         if !showErrorAlert(.setupFailed(error.localizedDescription)) {
-           cancel()
-@@ -695,6 +710,7 @@ final class RecordingCoordinator: ObservableObject {
-       return
-     }
-     guard beginRecordingStartAttempt(source: "toolbar") else { return }
-+    let generation = recordingGeneration
- 
-     let format = window.selectedFormat
-     DiagnosticLogger.shared.log(.info, .recording, "Start recording", context: [
-@@ -741,6 +757,7 @@ final class RecordingCoordinator: ObservableObject {
-     UserDefaults.standard.set(format.rawValue, forKey: PreferencesKeys.recordingFormat)
- 
-     Task {
-+      guard isCurrentRecordingStart(generation, window: window) else { return }
-       do {
-         let exclusionConfig = self.recordingCaptureExclusionConfiguration()
-         DiagnosticLogger.shared.log(.debug
 ```
 
-**File**: `Snapzy/Features/Recording/RecordingToolbarWindow.swift` (modified, +7/-0)
+**File**: `Snapzy/Features/Preferences/Models/PreferencesKeys.swift` (modified, +1/-0)
 ```diff
-@@ -325,6 +325,13 @@ final class RecordingToolbarWindow: NSWindow {
-     NotificationCenter.default.removeObserver(self)
-   }
- 
-+  override func close() {
-+    // A closed bar may outlive its session in a suspended start task. Stop observing so a later
-+    // preference write cannot order it back on screen.
-+    NotificationCenter.default.removeObserver(self)
-+    super.close()
-+  }
-+
-   private func configureWindow() {
-     isOpaque = false
-     backgroundColor = .clear
+@@ -73,6 +73,7 @@ enum PreferencesKeys {
+   static let screenshotAutoDetectElementUnderCursor = "screenshot.autoDetectElementUnderCursor"
+   static let screenshotShowMagnifierByDefault = "screenshot.showMagnifierByDefault"
+   static let screenshotShowMagnifierColorPanel = "screenshot.showMagnifierColorPanel"
++  static let screenshotMagnifierSize = "screenshot.magnifierSize"
+   static let screenshotLastAreaRect = "screenshot.lastAreaRect"
+   static let scrollingCaptureShowHints = "scrollingCapture.showHints"
+   static let backgroundCutoutAutoCropEnabled = "backgroundCutout.autoCropEnabled"
 ```
 
-**File**: `Snapzy/Services/Capture/KeystrokeMonitorService.swift` (modified, +95/-22)
+**File**: `Snapzy/Resources/Localization/Features/Capture.xcstrings` (modified, +326/-1)
 ```diff
-@@ -12,62 +12,135 @@ import Foundation
- @MainActor
- final class KeystrokeMonitorService {
- 
--  private var globalKeyDownMonitor: Any?
--  private var localKeyDownMonitor: Any?
-+  static let tapLocation: CGEventTapLocation = .cgSessionEventTap
-+  static let tapPlacement: CGEventTapPlacement = .headInsertEventTap
-+  static let tapOptions: CGEventTapOptions = .defaultTap
-+  static let eventMask = (CGEventMask(1) << CGEventType.keyDown.rawValue)
-+    | (CGEventMask(1) << CGEventType.flagsChanged.rawValue)
-+
-+  private var eventTap: CFMachPort?
-+  private var runLoopSource: CFRunLoopSource?
-+  private var globalFlagsChangedMonitor: Any?
-+  private var localFlagsChangedMonitor: Any?
-+  private var observedModifierFlags: NSEvent.ModifierFlags = []
-   private var isRunning = false
- 
-   /// Called with the formatted keystroke string (e.g. "⌘ ⇧ S")
-   var onKeystroke: ((String) -> Void)?
- 
-   func start() {
-     guard !isRunning else { return }
--    isRunning = true
-+    guard let eventTap = CGEvent.tapCreate(
-+      tap: Self.tapLocation,
-+      place: Self.tapPlacement,
-+      options: Self.tapOptions,
-+      eventsOfInterest: Self.eventMask,
-+      callback: Self.tapCallback,
-+      userInfo: Unmanaged.passUnretained(self).toOpaque()
-+    ) else {
-+      DiagnosticLogger.shared.log(.error, .recording, "Failed to create keystroke event tap")
-+      return
-+    }
-+    guard let runLoopSource = CFMachPortCreateRunLoopSource(nil, eventTap, 0) else {
-+      CFMachPortInvalidate(eventTap)
-+      DiagnosticLogger.shared.log(.error, .recording, "Failed to create keystroke event tap source")
-+      return
-+    }
- 
--    globalKeyDownMonitor = NSEvent.addGlobalMonitorForEvents(
--      matching: [.keyDown]
--    ) { [weak self] event in
-+    self.eventTap = eventTap
-+    self.runLoopSource = runLoopSource
-+    CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
-+    CGEvent.tapEnable(tap: eventTap, enable: true)
-+
-+    globalFlagsChangedMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) {
-+      [weak self] event in
-       MainActor.assumeIsolated {
--        self?.handleKeyDown(event)
-+        self?.handleModifierFlagsChanged(event.modifierFlags)
+@@ -6771,6 +6771,331 @@
+         }
        }
-     }
--
--    localKeyDownMonitor = NSEvent.addLocalMonitorForEvents(
--      matching: [.keyDown]
--    ) { [weak self] event in
-+    localFlagsChangedMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) {
-+      [weak self] event in
-       MainActor.assumeIsolated {
--        self?.handleKeyDown(event)
-+        self?.handleModifierFlagsChanged(event.modifierFlags)
-       }
-       return event
-     }
-+    isRunning = true
-   }
- 
-   func stop() {
-+    if let runLoopSource {
-+      CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
-+      CFRunLoopSourceInvalidate(runLoopSource)
-+    }
-+    if let eventTap {
-+      CGEvent.tapEnable(tap: eventTap, enable: false)
-+      CFMachPortInvalidate(eventTap)
-+    }
-+    if let globalFlagsChangedMonitor {
-+      NSEvent.removeMonitor(globalFlagsChangedMonitor)
-+    }
-+    if let localFlagsChangedMonitor {
-+      NSEvent.removeMonitor(localFlagsChangedMonitor)
-+    }
-+    runLoopSource = nil
-+    eventTap = nil
-+    globalFlagsChangedMonitor = nil
-+    localFlagsChangedMonitor = nil
-+    observedModifierFlags = []
-     isRunning = false
--
--    if let m = globalKeyDownMonitor { NSEvent.removeMonitor(m) }
--    if let m = localKeyDownMonitor { NSEvent.removeMonitor(m) }
--    globalKeyDownMonitor = nil
--    localKeyDownMonitor = nil
-     onKeystroke = nil
-   }
- 
-+  private static let tapCallback: CGEventTapCallBack = { _, type, event, userInfo in
-+    guard let userInfo else { return Unmanaged.passUnretained(event) }
-+    let service = Unmanaged<KeystrokeMonitorService>
-+      .fromOpaque(userInfo)
-+      .takeUnretainedValue()
-+    return MainActor.assumeIsolated {
-+      service.handleTapEvent(type: type, event: event)
-+    }
-+  }
-+
-+  func handleTapEvent(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
-+    if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-+      observedModifierFlags = []
-+      if let eventTap {
-+        CGEvent.tapEnable(tap: eventTap, enable: true)
+     },
++    "preferences-capture.magnifier-size-description": {
++      "extractionState": "manual",
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Größe der Lupenvorschau und des Farbwähler-Panels darunter"
++          }
++        },
++        "en": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Size of the magnifier preview and the color picker panel below it"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Tamaño de la vista previa de la lupa y del panel del selector de color debajo"
++          }
++        },
++        "fr": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Taille de l’aperçu de la loupe et du panneau du sélecteur de couleur en dessous"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "ルーペのプレビューとその下のカラーピッカーパネルのサイズ"
++          }
++        },
++        "ko": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "돋보기 미리보기와 그 아래 색상 선택 패널의 크기"
++          }
++        },
++        "ru": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Размер окна лупы и панели выбора цвета под ним"
++          }
++        },
++        "vi": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Kích thước vùng xem phóng to và bảng chọn màu bên dưới"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "放大镜预览及其下方取色面板的尺寸"
++          }
++        },
++        "zh-Hant": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "放大鏡預覽及其下方取色面板的尺寸"
++          }
++        }
 +      }
-+    } else if type == .flagsChanged {
-+      // Invalidate the previous rewrite before a downstream tap can consume the
-+      // release. AppKit can then supply the rewrite for this new modifier state.
-+      observedModifierFlags = []
-+    } else if type == .keyDown {
-+      if let keyEvent = NSEvent(cgEvent: event) {
-+        handleKeyDown(keyEvent)
++    },
++    "preferences-capture.magnifier-size-title": {
++      "extractionState": "manual",
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Lupengröße"
++          }
++        },
++        "en": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Magnifier size"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Tamaño de la lupa"
++          }
++        },
++        "fr": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Taille de la loupe"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "ルーペのサイズ"
++          }
++        },
++        "ko": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "돋보기 크기"
++          }
++        },
++        "ru": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Размер лупы"
++          }
++        },
++        "vi": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Kích thước kính lúp"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "放大镜尺寸"
++          }
++        },
++        "zh-Hant": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "放大鏡尺寸"
++          }
++        }
 +      }
-+    }
-+    return Unmanaged.passUnretained(event)
-+  }
-+
-   // MARK: - Event Processing
- 
-+  func handleModifierFlagsChanged(_ flags: NSEvent.ModifierFlags) {
-+    observedModifierFlags = flags.intersection(.deviceIndependentFlagsMask)
-+  }
-+
-   private func handleKeyDown(_ event: NSEvent) {
-     // Ignore key repeats to avoid spamming
-     guard !event.isARepeat else { return }
- 
--    let flags = event.modifier
++    },
++    "preferences-capture.magnifier-size.large": {
++      "extractionState": "manual",
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Groß"
++          }
++        },
++        "en": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Large"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Grande"
++          }
++        },
++        "fr": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Grande"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "大"
++          }
++        },
++        "ko": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "크게"
++          }
++        },
++        "ru": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Большой"
++          }
++        },
++        "vi": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Lớn"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "大"
++          }
++        },
++        "zh-Hant": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "大"
++          }
++        }
++      }
++    },
++    "prefe
 ```
 
-**File**: `SnapzyTests/Services/Capture/KeystrokeMonitorServiceTests.swift` (added, +60/-0)
+**File**: `Snapzy/Services/Capture/AreaSelectionMagnifier.swift` (modified, +47/-5)
 ```diff
-@@ -0,0 +1,60 @@
-+import AppKit
+@@ -3,7 +3,16 @@ import QuartzCore
+ 
+ final class AreaSelectionMagnifier {
+   // Configurable bounds/sizes. The preview square and the info panel below it share one width.
+-  private let magnifierSize: CGFloat = 160.0
++  /// The "Magnifier size" preference. Frames are laid out once per layer tree, so a size change
++  /// drops the current layers and the next `update(at:...)` rebuilds them at the new size.
++  var size: MagnifierSizeOption = .defaultValue {
++    didSet {
++      guard size != oldValue else { return }
++      removeLayers()
++    }
++  }
++
++  private var magnifierSize: CGFloat { size.previewSize }
+   private let panelGap: CGFloat = 8.0
+   private let magnifierGap: CGFloat = 20.0
+   private let minMagnifierZoom: CGFloat = 1.0
+@@ -39,6 +48,36 @@ final class AreaSelectionMagnifier {
+     let text = copyHintPrefixText
+     return text.isEmpty ? 0 : text.size(withAttributes: [.font: hintFont]).width
+   }()
++  private lazy var hintSuffixWidth: CGFloat = {
++    let text = copyHintText
++    return text.isEmpty ? 0 : text.size(withAttributes: [.font: hintFont]).width
++  }()
++
++  /// Whether the copy hint's leading words ("Press") fit next to the key cap and suffix at
++  /// the current width. Long translations don't fit narrower sizes (some not even the medium
++  /// one), so the row drops the prefix and reads "[C] to Copy" instead of clipping mid-word.
++  private var showsHintPrefix: Bool {
++    Self.hintRowFitsPrefix(
++      prefixWidth: hintPrefixWidth,
++      suffixWidth: hintSuffixWidth,
++      availableWidth: magnifierSize - panelHorizontalPadding * 2,
++      keyCapSize: keyCapSize,
++      gap: keyCapTextGap
++    )
++  }
++
++  /// The layout rule behind `showsHintPrefix`, kept pure so it can be tested with any
++  /// widths, independent of the running locale.
++  static func hintRowFitsPrefix(
++    prefixWidth: CGFloat,
++    suffixWidth: CGFloat,
++    availableWidth: CGFloat,
++    keyCapSize: CGFloat,
++    gap: CGFloat
++  ) -> Bool {
++    guard prefixWidth > 0 else { return false }
++    return prefixWidth + gap + keyCapSize + gap + suffixWidth <= availableWidth
++  }
+ 
+   private var colorRowHeight: CGFloat { max(hexLineHeight, swatchSize) }
+   private var hintRowHeight: CGFloat { max(keyCapSize, hintLineHeight) }
+@@ -254,7 +293,7 @@ final class AreaSelectionMagnifier {
+     // The "C" reads as a pressable key (solid badge) rather than blending into the sentence.
+     let hintPrefixText = CATextLayer()
+     configureTextLayer(hintPrefixText, font: hintFont, color: NSColor.white.withAlphaComponent(0.95), contentsScale: contentsScale)
+-    hintPrefixText.string = copyHintPrefixText
++    hintPrefixText.string = showsHintPrefix ? copyHintPrefixText : ""
+     panel.addSublayer(hintPrefixText)
+     self.hintPrefixTextLayer = hintPrefixText
+ 
+@@ -275,6 +314,8 @@ final class AreaSelectionMagnifier {
+     let hintText = CATextLayer()
+     configureTextLayer(hintText, font: hintFont, color: NSColor.white.withAlphaComponent(0.95), contentsScale: contentsScale)
+     hintText.string = copyHintText
++    // A suffix too long even without the prefix ends in "…" rather than being cut mid-glyph.
++    hintText.truncationMode = .end
+     panel.addSublayer(hintText)
+     self.hintTextLayer = hintText
+ 
+@@ -466,15 +507,16 @@ final class AreaSelectionMagnifier {
+     keyCapText: CATextLayer,
+     hintText: CATextLayer
+   ) {
+-    let prefixTrailingGap: CGFloat = hintPrefixWidth > 0 ? keyCapTextGap : 0
++    let prefixWidth = showsHintPrefix ? hintPrefixWidth : 0
++    let prefixTrailingGap: CGFloat = prefixWidth > 0 ? keyCapTextGap : 0
+ 
+     // Bottom row: "[prefix] [C] [suffix]", e.g. "按 [C] 复制色值" / "[C] キーでコピー"
+     let hintRowY = panelVerticalPadding
+     hintPrefixText.frame = CGRect(
+       x: panelHorizontalPadding, y: hintRowY + (hintRowHeight - hintLineHeight) / 2.0,
+-      width: hintPrefixWidth, height: hintLineHeight
++      width: prefixWidth, height: hintLineHeight
+     )
+-    let keyCapX = panelHorizontalPadding + hintPrefixWidth + prefixTrailingGap
++    let keyCapX = panelHorizontalPadding + prefixWidth + prefixTrailingGap
+     keyCapBackground.frame = CGRect(
+       x: keyCapX, y: hintRowY + (hintRowHeight - keyCapSize) / 2.0,
+       width: keyCapSize, height: keyCapSize
+```
+
+**File**: `Snapzy/Services/Capture/AreaSelectionWindow.swift` (modified, +8/-2)
+```diff
+@@ -3494,8 +3494,8 @@ final class AreaSelectionOverlayView: NSView {
+   }
+ 
+   /// Applies the magnifier's session-start preferences ("show magnifier by default", "show
+-  /// color picker panel") to a window newly entering a selection session. Called from
+-  /// `configureSessionWindow` — shared by session start and mid-session display attach —
++  /// color picker panel", "magnifier size") to a window newly entering a selection session.
++  /// Called from `configureSessionWindow` — shared by session start and mid-session display attach —
+   /// rather than from `applyBackdrop`/`clearBackdrop` directly, since a frozen session (e.g.
+   /// screenshot-and-annotate) already has its backdrop ready and takes the `applyBackdrop`
+   /// path, which must not reset these on every reapplication.
+@@ -3505,6 +3505,7 @@ final class AreaSelectionOverlayView: NSView {
+     magnifier.resetZoom(showByDefault: showsMagnifierByDefault)
+     magnifier.showsColorPanel = UserDefaults.standard
+       .object(forKey: PreferencesKeys.screenshotShowMagnifierColorPanel) as? Bool ?? true
++    magnifier.size = MagnifierSizeOption.current()
+     // Coordinates live in the panel, not the separate `updateCoordinateIndicator` bubble, once
+     // the magnifier is active — see the comment there. Same behavior as screenshot-and-annotate.
+     magnifier.showsCoordinatesInPanel = true
+@@ -3633,6 +3634,11 @@ final class AreaSelectionOverlayView: NSView {
+       magnifier.totalHeight
+     }
+ 
++    var testMagnifierSize: MagnifierSizeOption {
++      get { magnifier.size }
++      set { magnifier.size = newValue }
++    }
++
+     var testMagnifierLastHexColor: String? {
+       magnifier.lastHexColor
+     }
+```
+
+**File**: `Snapzy/Services/Capture/MagnifierSizeOption.swift` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++//
++//  MagnifierSizeOption.swift
++//  Snapzy
++//
++//  Size of the area-selection magnifier, stored as its raw value under
++//  `PreferencesKeys.screenshotMagnifierSize`.
++//
++
 +import CoreGraphics
-+@testable import Snapzy
-+import Testing
++import Foundation
 +
-+@MainActor
-+struct KeystrokeMonitorServiceTests {
-+  @Test(arguments: [CGEventType.flagsChanged, .tapDisabledByTimeout, .tapDisabledByUserInput])
-+  func lostAppKitReleaseDoesNotExposePlainTyping(resetEventType: CGEventType) throws {
-+    let service = KeystrokeMonitorService()
-+    service.handleModifierFlagsChanged([.command])
-+    var keystrokes: [String] = []
-+    service.onKeystroke = { keystrokes.append($0) }
-+    let event = try #require(CGEvent(keyboardEventSource: nil, virtualKey: 35, keyDown: true))
-+    event.flags = []
++enum MagnifierSizeOption: String, CaseIterable, Identifiable {
++  case small
++  case medium
++  case large
 +
-+    // The head tap sees the release, but the remapper consumes it before AppKit.
-+    _ = service.handleTapEvent(type: resetEventType, event: event)
-+    _ = service.handleTapEvent(type: .keyDown, event: event)
++  /// The size the magnifier had before this preference existed, so upgrades look unchanged.
++  static let defaultValue: MagnifierSizeOption = .medium
 +
-+    #expect(keystrokes.isEmpty)
++  var id: String { rawValue }
++
++  /// Side length of the square preview. The color picker panel below it shares this width;
++  /// 128pt is the narrowest width that still fits the hex row, the coordinates row and the
++  /// English copy hint without clipping.
++  var previewSize: CGFloat {
++    switch self {
++    case .small: return 128
++    case .medium: return 160
++    case .large: return 200
++    }
 +  }
 +
-+  @Test
-+  func headSessionTapObservesShortcutWithoutConsumingIt() throws {
-+    #expect(KeystrokeMonitorService.tapLocation == .cgSessionEventTap)
-+    #expect(KeystrokeMonitorService.tapPlacement == .headInsertEventTap)
-+    #expect(KeystrokeMonitorService.tapOptions == .defaultTap)
-+    #expect(KeystrokeMonitorService.eventMask & (CGEventMask(1) << CGEventType.flagsChanged.rawValue) != 0)
-+
-+    let service = KeystrokeMonitorService()
-+    let event = try #require(
-+      CGEvent(keyboardEventSource: nil, virtualKey: 123, keyDown: true)
-+    )
-+
-+    let forwarded = service.handleTapEvent(type: .keyDown, event: event)
-+
-+    #expect(forwarded?.takeUnretainedValue() === event)
++  var displayName: String {
++    switch self {
++    case .small: return L10n.PreferencesCapture.magnifierSizeSmall
++    case .medium: return L10n.PreferencesCapture.magnifierSizeMedium
++    case .large: return L10n.PreferencesCapture.magnifierSizeLarge
++    }
 +  }
 +
-+  @Test(arguments: [
-+    (CGKeyCode(18), "1"),
-+    (CGKeyCode(124), "→"),
-+  ])
-+  func tapCombinesDownstreamModifierRewrite(testCase: (keyCode: CGKeyCode, key: String)) throws {
-+    let service = KeystrokeMonitorService()
-+    var keystrokes: [String] = []
-+    service.onKeystroke = { keystrokes.append($0) }
-+    let event = try #require(
-+      CGEvent(keyboardEventSource: nil, virtualKey: testCase.keyCode, keyDown: true)
-+    )
-+    event.flags = []
-+    _ = service.handleTapEvent(type: .flagsChanged, event: event)
-+    service.handleModifierFlagsChanged([.control, .option, .command])
++  /// Unset or unknown stored values (hand-edited defaults) fall back to the default.
++  static func resolve(_ rawValue: String?) -> MagnifierSizeOption {
++    rawValue.flatMap(MagnifierSizeOption.init(rawValue:)) ?? defaultValue
++  }
 +
-+    _ = service.handleTapEvent(type: .keyDown, event: event)
-+
-+    #expect(keystrokes == ["⌃ ⌥ ⌘ \(testCase.key)"])
++  static func current(defaults: UserDefaults = .standard) -> MagnifierSizeOption {
++    resolve(defaults.string(forKey: PreferencesKeys.screenshotMagnifierSize))
 +  }
 +}
 ```
 
-**File**: `SnapzyTests/Services/Capture/RecordingCoordinatorLifecycleTests.swift` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+import AppKit
-+@testable import Snapzy
-+import Testing
-+
-+@MainActor
-+@Suite(.serialized)
-+struct RecordingCoordinatorLifecycleTests {
-+  @Test(arguments: [(false, false), (true, false), (true, true)])
-+  func stopDuringOverlayRegistrationDoesNotReopenToolbar(
-+    scenario: (waitForCleanup: Bool, replaceSession: Bool)
-+  ) async throws {
-+    let savedArea = UserDefaults.standard.object(forKey: PreferencesKeys.recordingLastAreaRect)
-+    defer { UserDefaults.standard.set(savedArea, forKey: PreferencesKeys.recordingLastAreaRect) }
-+    let coordinator = RecordingCoordinator()
-+    let rect = CGRect(x: 100, y: 100, width: 640, height: 480)
-+    var sessionEnded: CheckedContinuation<Void, Never>?
-+    var didEnd = false
-+    coordinator.showToolbar(for: rect, onSessionEnded: {
-+      didEnd = true
-+      sessionEnded?.resume()
-+    })
-+    let window = try #require(coordinator.toolbarWindow)
-+    var registrations = 0
-+
-+    let completed = await coordinator.completeRecordingStart(for: rect) { _ in
-+      registrations += 1
-+      guard registrations == 1 else { return }
-+      if scenario.waitForCleanup {
-+        // Suspend the real setup path until Stop has closed the original windows.
-+        await withCheckedContinuation { continuation in
-+          sessionEnded = continuation
-+          window.onStop?()
-+        }
-+      } else {
-+        // Stop must invalidate setup even before asynchronous cleanup runs.
-+        window.onStop?()
-+        #expect(coordinator.isActive)
-+      }
-+      if scenario.replaceSession {
-+        didEnd = false
-+        sessionEnded = nil
-+        coordinator.showToolbar(for: rect, onSessionEnded: {
-+          didEnd = true
-+          sessionEnded?.resume()
-+        })
-+      }
-+    }
-+
-+    #expect(!completed)
-+    #expect(registrations == 1)
-+    if scenario.replaceSession {
-+      #expect(coordinator.toolbarWindow !== window)
-+      coordinator.cancel()
-+    }
-+    if !didEnd {
-+      await withCheckedContinuation { sessionEnded = $0 }
-+    }
-+    #expect(!window.isVisible)
-+    #expect(!coordinator.isActive)
-+    window.close()
-+  }
-+
-+  @Test
-+  func completedSetupRegistersRetainedOverlaysAgain() async throws {
-+    let defaults = UserDefaults.standard
-+    let savedArea = defaults.object(forKey: PreferencesKeys.recordingLastAreaRect)
-+    let keys = [PreferencesKeys.recordingHighlightClicks, PreferencesKeys.recordingShowKeystrokes]
-+    let savedOptions = keys.map { defaults.object(forKey: $0) }
-+    defer {
-+      defaults.set(savedArea, forKey: PreferencesKeys.recordingLastAreaRect)
-+      for (key, value) in zip(keys, savedOptions) { defaults.set(value, forKey: key) }
-+    }
-+    for key in keys { defaults.set(true, forKey: key) }
-+    let coordinator = RecordingCoordinator()
-+    let rect = CGRect(x: 100, y: 100, width: 640, height: 480)
-+    var sessionEnded: CheckedContinuation<Void, Never>?
-+    coordinator.showToolbar(for: rect, onSessionEnded: { sessionEnded?.resume() })
-+    let window = try #require(coordinator.toolbarWindow)
-+    var firstRegistration: [CGWindowID] = []
-+    var secondRegistration: [CGWindowID] = []
-+
-+    let started = await coordinator.completeRecordingStart(for: rect) {
-+      firstRegistration.append($0)
-+    }
-+    let restarted = await coordinator.completeRecordingStart(for: rect) {
-+      secondRegistration.append($0)
-+    }
-+
-+    #expect(started && restarted)
-+    #expect(firstRegistration.count == 3)
-+    #expect(firstRegistration == secondRegistration)
-+    #expect(coordinator.toolbarWindow === window)
-+    #expect(window.isMovableByWindowBackground)
-+    await withCheckedContinuation { continuation in
-+      sessionEnded = continuation
-+      coordinator.cancel()
-+    }
-+  }
-+}
-```
-
-**File**: `docs/RECORDING.md` (modified, +3/-3)
-```diff
-@@ -91,11 +91,11 @@ The toolbar's Fullscreen toggle keeps the display already selected: `restartSele
- Snapzy windows are normally excluded from the stream; effect overlays are re-included via `ScreenRecordingManager.addExceptedWindow(windowID:)` so they appear in the video:
- 
- - **Click highlights** (pref `PreferencesKeys.recordingHighlightClicks`, default off): `MouseClickHighlightService` installs local+global NSEvent monitors for down/up/drag and forwards points to `MouseClickHighlightWindow` (`showClickEffect` ripple rings, hold circle while pressed, drag follow).
--- **Keystroke overlay** (pref `PreferencesKeys.recordingShowKeystrokes`, default off): `KeystrokeMonitorService` shows keystrokes only when a modifier (⌘/⌥/⌃) is held or a special key is pressed, building modifier-combo display strings; rendered by `KeystrokeOverlayWindow.showKeystroke`.
-+- **Keystroke overlay** (pref `PreferencesKeys.recordingShowKeystrokes`, default off): `KeystrokeMonitorService` observes session key events before other event taps can consume them and forwards every event unchanged, showing keystrokes only when a modifier (⌘/⌥/⌃) is held or a special key is pressed; rendered by `KeystrokeOverlayWindow.showKeystroke`.
- - **Camera overlay** (pref `PreferencesKeys.recordingCaptureCamera`, default off): the toolbar lists the system camera and available devices, including iPhone Continuity Camera. `RecordingCameraOverlayWindow` shows a draggable borderless preview inside the recording area following Snapzy's Liquid Glass standard (0.75pt specular hairline rim, floating window shadow, frosted placeholder on disconnect). Users can choose between Default Rectangle (16:9), Square (1:1), and Circle (1:1) shapes with Small, Medium, and Large size presets and camera mirroring, configurable from both the toolbar menu and a right-click context menu on the overlay itself. It snaps to the four corners or the center of any side when dragged within 32 points on both axes of an anchor, smoothly anchoring transitions. It is a borderless, non-activating `NSPanel` that owns the whole left-button gesture in `sendEvent` — clicking or dragging the preview never activates Snapzy, changes key window state, or reaches AppKit's default window-move handling, so no system alert sound fires on drop. ScreenCaptureKit includes this window in the video. If the camera disconnects, screen recording continues, the overlay shows a waiting message, and Snapzy reconnects the same device when it returns. Camera audio is not used; select a microphone separately.
- - **Live annotations**: `RecordingAnnotationState` + `RecordingAnnotationOverlayWindow` over the recording rect, plus a popover-style `RecordingAnnotationToolbarWindow` anchored to the status bar pencil button. The trigger center is reported by a transparent AppKit anchor reporter attached beside the button, so native Liquid Glass containers cannot isolate the measurement; the popover waits for a valid first layout and follows later updates. Tools: selection, rectangle, oval, arrow, line, pencil, highlighter, with per-tool auto-clear modes (persist / time-based / count-based). Global shortcut path: `RecordingCoordinator.togglePenFromShortcut()`. While the configured modifier is held (Shift by default), local and global key-down monitors route tool keys through `RecordingAnnotationState`; local matches are consumed, while global matches switch tools when the recorded app owns focus (Accessibility permission required). Matching uses `charactersIgnoringModifiers` so Control/Option do not change the selected tool key.
- 
--The camera overlay starts before `startRecording()` so it can be added to the initial content filter. The other overlays start after recording begins. Region overlay borders are hidden and interaction is disabled at the same moment.
-+The camera overlay starts before `startRecording()` so it can be added to the initial content filter. The other overlays start after recording begins. Region overlay borders are hidden and interaction is disabled at the same moment. Every new stream re-registers all effect overlays, including windows retained across a restart, because preparing a stream clears its window exceptions.
- 
- - **Region dimming toggle** (pref `PreferencesKeys.recordingDimNonSelectedArea`, default on): `RecordingRegionOverlayView` fills the area outside the recording rect with `black@0.4` (window `sharingType = .none`, so it never enters the video). The dim is always shown during pre-record selection for visual feedback. At record-start each per-screen overlay gets `setDimEnabled(dimNonSelectedArea)` in the same loop that calls `hideBorder()`, so when the pref is off the dim disappears the instant recording begins and non-selected windows stay fully usable. Surfaced in Settings (Capture → Recording → Behavior) and the pre-record toolbar Options popover; `RecordingCoordinator` observes `UserDefaults.didChangeNotification` and re-applies to live overlays while `RecordingState.isPauseResumeE
-```
-
 ---
 
-### Incident Patch 2: `9b574164` (2026-10-10)
-**Commit Message**: fix: stabilize pinned image focal anchoring and restore gesture zoom paths (#640)
+### Incident Patch 2: `e3bd64ca` (2026-10-22)
+**Commit Message**: fix: Refresh stale window frames before sizing window captures (#670)
 
-* fix: stabilize pin focal anchoring and restore gesture zoom paths
+A cached SCShareableContent keeps the frame a window had when it was
+fetched. After a resize, Capture Active Window sized its padded canvas
+from the old frame, and ScreenCaptureKit shrank the shadowed window to
+0.80-0.89x of native, which saved soft text (#634).
 
-- Anchor window-follows zoom resizes to the live window frame instead of
-  potentially stale scroll view bounds, and preserve the focal point
-  when zoom clamping re-applies state, fixing focal drift during fast
-  pinch gestures.
-- Route magnify events from the pin window directly to the image scroll
-  view so pinch zoom works regardless of host hit-testing quirks.
-- Restore command-scroll zoom for mouse users in both pin zoom modes.
+- resolveWindow compares the cached SCWindow frame with the window's
+  live CGWindowList bounds and refetches shareable content when they
+  differ by more than 1pt
+- Padded shadow captures that trim smaller than the native window on
+  both axes now fall back to the display crop instead of being saved
+  soft; the 75% undersize rule let 0.80-0.85x through
+- Add regression tests with the sizes measured for #634
 
-* fix: keep cursor anchored to image point across window-resizing zooms
-
-**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessPinImageScrollView.swift` (modified, +69/-9)
+**File**: `Snapzy/Services/Capture/ScreenCaptureManager.swift` (modified, +12/-4)
 ```diff
-@@ -69,6 +69,7 @@ final class QuickAccessPinImageScrollView: NSScrollView {
-   private var requestedMagnification: CGFloat = 1
-   private var requestedPanOffset: CGPoint = .zero
-   private var stateApplicationDepth = 0
-+  private var pendingFocalAnchor: CGPoint?
-   private var boundsObserver: NSObjectProtocol?
- 
-   override init(frame frameRect: NSRect) {
-@@ -162,6 +163,12 @@ final class QuickAccessPinImageScrollView: NSScrollView {
-   func scrollAction(for event: NSEvent) -> ScrollAction {
-     let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-     guard !isLockedProvider() else { return .reject("locked") }
-+    if modifiers == .command {
-+      guard abs(event.scrollingDeltaY) > abs(event.scrollingDeltaX), abs(event.scrollingDeltaY) > 0 else {
-+        return .reject("horizontalOrZeroDelta")
-+      }
-+      return .magnify
-+    }
-     guard modifiers.isEmpty else { return .reject("modifiers") }
-     if zoomMode == .windowFollowsImage {
-       guard abs(event.scrollingDeltaY) > abs(event.scrollingDeltaX), abs(event.scrollingDeltaY) > 0 else {
-@@ -270,9 +277,15 @@ final class QuickAccessPinImageScrollView: NSScrollView {
- 
-     performStateApplication {
-       if zoomChanged {
--        let visibleRect = documentView?.visibleRect ?? imageView.bounds
--        let viewportCenter = NSPoint(x: visibleRect.midX, y: visibleRect.midY)
--        setMagnification(clampedMagnification, centeredAt: viewportCenter)
-+        let anchor: CGPoint
-+        if let focal = pendingFocalAnchor {
-+          anchor = focal
-+          pendingFocalAnchor = nil
-+        } else {
-+          let visibleRect = documentView?.visibleRect ?? imageView.bounds
-+          anchor = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
-+        }
-+        setMagnification(clampedMagnification, centeredAt: anchor)
-       }
- 
-       let visibleSize = CGSize(
-@@ -301,22 +314,69 @@ final class QuickAccessPinImageScrollView: NSScrollView {
-     let before = magnification
-     guard target != before else { return }
- 
-+    pendingFocalAnchor = point
-     performStateApplication {
-       setMagnification(target, centeredAt: point)
+@@ -2122,13 +2122,19 @@ final class ScreenCaptureManager: ObservableObject {
+       fringeReference = nil
      }
-     publishViewportChange()
-     if zoomMode == .windowFollowsImage {
--      let fraction = CGPoint(x: bounds.width > 0 ? windowPoint.x / bounds.width : 0.5, y: bounds.height > 0 ? windowPoint.y / bounds.height : 0.5)
--      let displaySize = QuickAccessPinWindowState.windowFollowsImageDisplaySize(
--        baseSize: configuredImageSize,
--        zoomFactor: target
--      )
--      stateResizeRequest?(displaySize, fraction)
-+      if window == nil {
-+        stateResizeRequest?(displaySizeForZoom(target), liveAnchorFraction(windowPoint: windowPoint))
-+      } else {
-+        performWindowResizingZoom(target: target, contentPoint: point, windowPoint: windowPoint)
-+      }
-+    }
-+  }
-+
-+  private func performWindowResizingZoom(target: CGFloat, contentPoint: CGPoint, windowPoint: CGPoint) {
-+    guard let window else { return }
-+    let cursorBase = convert(windowPoint, to: nil)
-+    let cursorScreen = window.convertToScreen(NSRect(origin: cursorBase, size: .zero)).origin
-+    let documentAnchor = imageView.convert(cursorBase, from: nil)
-+
-+    stateResizeRequest?(displaySizeForZoom(target), liveAnchorFraction(windowPoint: windowPoint))
-+    window.contentView?.layoutSubtreeIfNeeded()
-+    reanchor(imagePoint: documentAnchor, atScreenPoint: cursorScreen)
-+  }
-+
-+  private func reanchor(imagePoint: CGPoint, atScreenPoint cursorScreen: CGPoint) {
-+    guard let window else { return }
-+    let cursorBase = window.convertFromScreen(NSRect(origin: cursorScreen, size: .zero)).origin
-+    let currentImagePoint = imageView.convert(cursorBase, from: nil)
-+    let delta = NSPoint(
-+      x: currentImagePoint.x - imagePoint.x,
-+      y: currentImagePoint.y - imagePoint.y
-+    )
-+    guard abs(delta.x) > 0.001 || abs(delta.y) > 0.001 else { return }
-+    let origin = contentView.bounds.origin
-+    performStateApplication {
-+      contentView.setBoundsOrigin(NSPoint(x: origin.x + delta.x, y: origin.y + delta.y))
-+      reflectScrolledClipView(contentView)
-     }
-+    publishViewportChange()
-   }
  
-   var stateResizeRequest: ((CGSize, CGPoint) -> Void)?
- 
-+  private func displaySizeForZoom(_ target: CGFloat) -> CGSize {
-+    QuickAccessPinWindowState.windowFollowsImageDisplaySize(
-+      baseSize: configuredImageSize,
-+      zoomFactor: target
-+    )
-+  }
-+
-+  private func liveAnchorFraction(windowPoint: CGPoint) -> CGPoint {
-+    guard let window else {
-+      return CGPoint(x: bounds.width > 0 ? windowPoint.x / bounds.width : 0.5, y: bounds.height > 0 ? windowPoint.y / bounds.height : 0.5)
-+    }
-+    let pointInWindow = convert(windowPoint, to: nil)
-+    let frame = window.frame
-+    return CGPoint(
-+      x: frame.width > 0 ? pointInWindow.x / frame.width : 0.5,
-+      y: frame.height > 0 ? pointInWindow.y / frame.height : 0.5
-+    )
-+  }
-+
-   private func publishViewportChange() {
-     requestedMagnificati
-```
-
-**File**: `Snapzy/Features/QuickAccess/Managers/QuickAccessPinWindow.swift` (modified, +20/-1)
-```diff
-@@ -137,7 +137,11 @@ final class QuickAccessPinWindow: NSPanel {
- 
-   override func sendEvent(_ event: NSEvent) {
-     switch event.type {
--    case .magnify, .scrollWheel:
-+    case .magnify:
-+      if !routeMagnifyToImageScrollView(event) {
-+        super.sendEvent(event)
-+      }
-+    case .scrollWheel:
-       super.sendEvent(event)
-     case .leftMouseDown:
-       beginBackgroundDragIfEligible(with: event)
-@@ -163,6 +167,21 @@ final class QuickAccessPinWindow: NSPanel {
-     super.resignKey()
-   }
- 
-+  @discardableResult
-+  private func routeMagnifyToImageScrollView(_ event: NSEvent) -> Bool {
-+    guard let contentView, let pinState, !pinState.isLocked else { return false }
-+    let hitView = contentView.hitTest(event.locationInWindow)
-+    var responder: NSResponder? = hitView
-+    while let current = responder {
-+      if let scrollView = current as? QuickAccessPinImageScrollView {
-+        scrollView.magnify(with: event)
-+        return true
-+      }
-+      responder = current.nextResponder
-+    }
-+    return false
-+  }
-+
-   private var isMouseMonitorsSuspended = false
- 
-   override func close() {
-```
-
-**File**: `SnapzyTests/Features/QuickAccess/QuickAccessCoreTests.swift` (modified, +143/-3)
-```diff
-@@ -985,6 +985,89 @@ final class QuickAccessCoreTests: XCTestCase {
-     XCTAssertEqual(state.zoomFactor, 1.5, accuracy: 0.001)
-   }
- 
-+  func testQuickAccessPinImageScrollView_windowResizingZoomKeepsCursorDocumentPointAcrossInOutCycle() throws {
-+    let image = NSImage(size: CGSize(width: 400, height: 300))
-+    let baseSize = CGSize(width: 400, height: 300)
-+    let state = QuickAccessPinWindowState(
-+      id: UUID(),
-+      url: URL(fileURLWithPath: "/tmp/pinned.png"),
-+      image: image,
-+      thumbnail: image,
-+      baseSize: baseSize,
-+      zoomMode: .windowFollowsImage
-+    )
-+    Self.retainedPinWindowStates.append(state)
-+    let scrollView = QuickAccessPinImageScrollView(frame: NSRect(origin: .zero, size: baseSize))
-+    scrollView.isLockedProvider = { state.isLocked }
-+    scrollView.onViewportChange = { magnification, panOffset in
-+      state.updateViewport(magnification: magnification, panOffset: panOffset)
-+    }
-+    scrollView.update(
-+      image: image,
-+      viewportSize: baseSize,
-+      imageSize: baseSize,
-+      zoomMode: .windowFollowsImage,
-+      magnification: 1,
-+      panOffset: .zero
-+    )
-+
-+    let initialFrame = NSRect(x: 130, y: 270, width: baseSize.width, height: baseSize.height)
-+    let window = QuickAccessPinWindow(
-+      contentRect: initialFrame,
-+      state: state
-+    )
-+    defer {
-+      window.contentView = nil
-+      window.close()
-+    }
-+    window.contentView = scrollView
-+
-+    let cursorViewPoint = NSPoint(x: 300, y: 200)
-+    let documentView = try XCTUnwrap(scrollView.documentView)
-+    let cursorBasePoint = scrollView.convert(cursorViewPoint, to: nil)
-+    let cursorScreenRect = window.convertToScreen(NSRect(origin: cursorBasePoint, size: .zero))
-+    let cursorScreenPoint = cursorScreenRect.origin
-+    let documentPointBefore = documentView.convert(cursorBasePoint, from: nil)
-+
-+    scrollView.stateResizeRequest = { [weak window] size, fraction in
-+      guard let window else { return }
-+      let resized = QuickAccessPinWindowSizing.resizedFrame(
-+        window.frame,
-+        to: size,
-+        preservingAnchorFraction: fraction
+-    func rejectIfUndersized(_ candidate: CGImage) throws {
++    func rejectIfUndersized(_ candidate: CGImage, requiresNativeSize: Bool = false) throws {
+       let actualPixelSize = CGSize(width: candidate.width, height: candidate.height)
+-      guard WindowCaptureResolution.isUndersized(
++      let isUndersized = WindowCaptureResolution.isUndersized(
+         pixelSize: actualPixelSize,
+         logicalSize: contentRect.size,
+         expectedScaleFactor: scaleFactor
+-      ) else {
 +      )
-+      window.setFrame(resized, display: false)
-+      window.contentView?.frame = NSRect(origin: .zero, size: size)
-+    }
-+
-+    func cursorBaseUnderScreenPoint() -> NSPoint {
-+      window.convertFromScreen(NSRect(origin: cursorScreenPoint, size: .zero)).origin
-+    }
-+    let documentPointUnderCursorAfter = { () -> NSPoint in
-+      documentView.convert(cursorBaseUnderScreenPoint(), from: nil)
-+    }
-+
-+    scrollView.applyMagnificationDelta(0.5, centeredAtContentPoint: cursorViewPoint, windowPoint: cursorViewPoint)
-+    XCTAssertEqual(scrollView.magnification, 1.5, accuracy: 0.001)
-+    XCTAssertEqual(window.frame.width, 600, accuracy: 1.0)
-+    let documentPointDuring = documentPointUnderCursorAfter()
-+    XCTAssertEqual(documentPointDuring.x, documentPointBefore.x, accuracy: 2.0)
-+    XCTAssertEqual(documentPointDuring.y, documentPointBefore.y, accuracy: 2.0)
-+
-+    let cursorViewPointAfterReturn = scrollView.convert(cursorBaseUnderScreenPoint(), from: nil)
-+    scrollView.applyMagnificationDelta(-0.33333, centeredAtContentPoint: cursorViewPointAfterReturn, windowPoint: cursorViewPointAfterReturn)
-+    XCTAssertEqual(scrollView.magnification, 1, accuracy: 0.001)
-+    XCTAssertEqual(window.frame.width, initialFrame.width, accuracy: 1.0)
-+    XCTAssertEqual(window.frame.height, initialFrame.height, accuracy: 1.0)
-+    XCTAssertEqual(window.frame.minX, initialFrame.minX, accuracy: 1.0)
-+    XCTAssertEqual(window.frame.minY, initialFrame.minY, accuracy: 1.0)
-+    XCTAssertEqual(scrollView.currentPanOffset.x, 0, accuracy: 1.0)
-+    XCTAssertEqual(scrollView.currentPanOffset.y, 0, accuracy: 1.0)
-+    let documentPointAfter = documentPointUnderCursorAfter()
-+    XCTAssertEqual(documentPointAfter.x, documentPointBefore.x, accuracy: 2.0)
-+    XCTAssertEqual(documentPointAfter.y, documentPointBefore.y, accuracy: 2.0)
-+  }
-+
-   func testQuickAccessPinImageZoom_resizePreservesOffCenterFocalAnchor() throws {
-     let image = NSImage(size: CGSize(width: 400, height: 300))
-     let scrollView = QuickAccessPinImageScrollView(frame: NSRect(origin: .zero, size: image.size))
-@@ -1035,6 +1118,46 @@ final class QuickAccessCoreTests: XCTestCase {
-     )
-   }
- 
-+  func testQuickAccessPinWindow_routesWindowMagnifyToImageScrollView() {
-+    let image = NSImage(size: CGSize(width: 400, height: 300))
-+    let state = QuickAccessPinWindowState(
-+      id: UUID(),
-+      url: URL(fileURLWithPath: "/tmp/pinned.png"),
-+      image: image,
-+      thumbnail: image,
-+      baseSize: CGSize(width: 400, height: 300),
-+      zoomMode: .fixedViewport
-+    )
-+    Self.retainedPinWindowStates.append(state)
-+    let scrollView = QuickAccessPinImageScrollView(frame: NSRect(origin: .zero, size: state.baseSize))
-+    scrollView.isLockedProvider = { state.isLocked }
-+    scrollView.onViewportChange = { magnification, panOffset in
-+      state.
-```
-
-**File**: `docs/QUICK_ACCESS.md` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ Customization: `QuickAccessActionConfigurationStore` — context-menu order (`qu
- - Zoom presentation is selected in Settings → Quick Access → Pinned Image. `QuickAccessPinZoomModeStore` persists `fixedViewport` by default or `windowFollowsImage`; a setting change resets zoom/pan and updates all open pins while preserving their centers.
- - Both modes use `NSScrollView` for image display. Pinch events are handled by the image document view over the image and by the scroll view over empty viewport space. Pinch zoom is clamped to 0.4x–8x, with 800% in the capsule menu. Fit returns to 100%; window-follows-image mode restores its initial window size, and fixed mode centers the image.
- - Window follows image: the initial image keeps its aspect ratio and fits within 80% of the screen’s visible area. At 40% zoom, the window keeps a 240×180 minimum interactive frame and centers the image at its selected magnification, so exact pointer anchoring gives way to centering while the image is smaller than that minimum frame. Pinch and vertical scrolling zoom at the pointer and resize the window around that focal point; horizontal scrolling does not zoom. Images remain within the window, so image panning is unnecessary.
--- Fixed viewport: the initial image is scaled to at most 80% of the screen width and the viewport height is capped at 80% of the visible screen. Unmodified precise two-finger scrolling pans only when the image overflows. Modifier-key and coarse scrolling do not manipulate the image. Pan is clamped to image bounds, centering axes where the image is smaller.
-+- Fixed viewport: the initial image is scaled to at most 80% of the screen width and the viewport height is capped at 80% of the visible screen. Unmodified precise two-finger scrolling pans only when the image overflows. Coarse and non-⌘-modified scrolling do not manipulate the image; ⌘-scroll zooms in both modes. Pan is clamped to image bounds, centering axes where the image is smaller.
- - Lock mode: click-through except the unlock button; image fades to 0.18 on hover. Locked pins reject zoom and pan. A normal one-finger background drag moves the unlocked window; Esc closes an unlocked pin.
- - The Quick Access preferences compare both modes with a synchronized SwiftUI illustration of a fictional long page. The page is drawn from shapes and contains no bundled screenshot or photo.
- - Drag-out handle (`QuickAccessPinDragHandleView`) re-exports the current rendered image to `Captures/PinDrags/` — saved edits included even while file write is in flight.
-```
-
----
-
-### Incident Patch 3: `00ae7536` (2026-10-19)
-**Commit Message**: fix: Keep shadowed window captures at native resolution (#657)
-
-The single-window filter's content rect excludes the window shadow, so a
-frame-sized output canvas made ScreenCaptureKit shrink the shadowed window
-to ~91% and resample it, which blurred Capture Active Window and
-Application Capture output.
-
-Pad the canvas by 128pt per side when the shadow is included (macOS 14+)
-with scalesToFit off, then trim the transparent margin. When the cursor is
-shown, take the trim bounds from a cursor-free pass so a cursor in the
-padding cannot enlarge the image. The undersize check now runs on the
-trimmed image for padded captures.
-
-Shadow-off and macOS 13 captures are unchanged.
-
-Closes #569
-
-**File**: `Snapzy/Services/Capture/ScreenCaptureManager.swift` (modified, +85/-20)
-```diff
-@@ -2076,10 +2076,26 @@ final class ScreenCaptureManager: ObservableObject {
- 
-     let configuration = SCStreamConfiguration()
-     let includeWindowShadow = UserDefaults.standard.object(forKey: PreferencesKeys.captureIncludeWindowShadow) as? Bool ?? WindowShadowPreference.defaultIncludeShadow
--    if #available(macOS 14.0, *) { configuration.ignoreShadowsSingleWindow = WindowShadowPreference.ignoreShadowsSingleWindow(includeShadow: includeWindowShadow) }
-+    // The content rect excludes the shadow, so a shadowed window gets a padded
-+    // canvas to render 1:1 (issue #569). Only macOS 14+ pads: its screenshot
-+    // path leaves unused canvas transparent for the fringe trim below.
-+    let padsCanvasForShadow: Bool
-+    if #available(macOS 14.0, *) {
-+      configuration.ignoreShadowsSingleWindow = WindowShadowPreference.ignoreShadowsSingleWindow(includeShadow: includeWindowShadow)
-+      padsCanvasForShadow = includeWindowShadow
-+    } else {
-+      padsCanvasForShadow = false
-+    }
-     if #available(macOS 14.2, *) { configuration.captureResolution = .best }
--    configuration.width = max(1, Int((contentRect.width * scaleFactor).rounded()))
--    configuration.height = max(1, Int((contentRect.height * scaleFactor).rounded()))
-+    let canvasPixelSize = WindowCaptureResolution.canvasPixelSize(
-+      logicalSize: contentRect.size,
-+      scaleFactor: scaleFactor,
-+      includesShadow: padsCanvasForShadow
-+    )
-+    configuration.width = Int(canvasPixelSize.width)
-+    configuration.height = Int(canvasPixelSize.height)
-+    // Scale down only, never up, so the window stays native inside the canvas.
-+    configuration.scalesToFit = false
-     configuration.pixelFormat = kCVPixelFormatType_32BGRA
-     configuration.showsCursor = showCursor
- 
-@@ -2093,38 +2109,78 @@ final class ScreenCaptureManager: ObservableObject {
-       configuration: configuration
-     )
- 
--    let actualPixelSize = CGSize(width: image.width, height: image.height)
--    let expectedPixelSize = WindowCaptureResolution.expectedPixelSize(
--      logicalSize: contentRect.size,
--      scaleFactor: scaleFactor
--    )
--    let actualScaleFactor = WindowCaptureResolution.actualScaleFactor(
--      pixelSize: actualPixelSize,
--      logicalSize: contentRect.size
--    )
--    if WindowCaptureResolution.isUndersized(
--      pixelSize: actualPixelSize,
--      logicalSize: contentRect.size,
--      expectedScaleFactor: scaleFactor
--    ) {
-+    // A cursor drawn in the padding would survive the trim and grow the
-+    // image, so take the trim bounds from a cursor-free pass instead.
-+    let fringeReference: CGImage?
-+    if padsCanvasForShadow && showCursor {
-+      configuration.showsCursor = false
-+      fringeReference = try await Self.captureImageCompat(
-+        contentFilter: contentFilter,
-+        configuration: configuration
-+      )
-+    } else {
-+      fringeReference = nil
-+    }
-+
-+    func rejectIfUndersized(_ candidate: CGImage) throws {
-+      let actualPixelSize = CGSize(width: candidate.width, height: candidate.height)
-+      guard WindowCaptureResolution.isUndersized(
++      let isScaledBelowNative = requiresNativeSize && WindowCaptureResolution.isScaledBelowNative(
 +        pixelSize: actualPixelSize,
-+        logicalSize: contentRect.size,
-+        expectedScaleFactor: scaleFactor
-+      ) else {
-+        return
-+      }
-+
-+      let expectedPixelSize = WindowCaptureResolution.expectedPixelSize(
 +        logicalSize: contentRect.size,
 +        scaleFactor: scaleFactor
 +      )
-+      let actualScaleFactor = WindowCaptureResolution.actualScaleFactor(
-+        pixelSize: actualPixelSize,
-+        logicalSize: contentRect.size
-+      )
-       DiagnosticLogger.shared.log(
-         .warning,
-         .capture,
-         "Window capture returned an undersized image; falling back to display crop",
-         context: [
-           "windowID": "\(fallbackTarget.windowID)",
-           "expected": "\(Int(expectedPixelSize.width))x\(Int(expectedPixelSize.height))",
--          "actual": "\(image.width)x\(image.height)",
-+          "actual": "\(candidate.width)x\(candidate.height)",
-           "requestedScale": String(format: "%.3f", Double(scaleFactor)),
-           "actualScale": actualScaleFactor.map { String(format: "%.3f", Double($0)) } ?? "unknown",
-         ]
-       )
-       throw CaptureError.captureFailed("ScreenCaptureKit returned an undersized window image")
-     }
++      guard isUndersized || isScaledBelowNative else {
+         return
+       }
  
-+    // A padded canvas is always large, so only the trimmed window shows
-+    // whether ScreenCaptureKit rendered it at the requested scale.
-+    if !padsCanvasForShadow {
-+      try rejectIfUndersized(image)
-+    }
-+
-     let normalizedImage = await Task.detached(priority: .userInitiated) {
--      Self.trimTransparentWindowFringe(from: image)
-+      Self.trimTransparentWindowFringe(from: image, boundsFrom: fringeReference)
+@@ -2166,7 +2172,9 @@ final class ScreenCaptureManager: ObservableObject {
      }.value
-+
-+    if padsCanvasForShadow {
-+      try rejectIfUndersized(normalizedImage.image)
-+      if normalizedImage.image.width >= image.width || normalizedImage.image.height >= image.height {
-+        DiagnosticLogger.shared.log(
-+       
+ 
+     if padsCanvasForShadow {
+-      try rejectIfUndersized(normalizedImage.image)
++      // The trimmed window still carries its shadow, so anything smaller than
++      // the native window was scaled down and would come out soft.
++      try rejectIfUndersized(normalizedImage.image, requiresNativeSize: true)
+       if normalizedImage.image.width >= image.width || normalizedImage.image.height >= image.height {
+         DiagnosticLogger.shared.log(
+           .warning,
 ```
 
-**File**: `Snapzy/Services/Capture/WindowCaptureResolution.swift` (modified, +24/-0)
+**File**: `Snapzy/Services/Capture/WindowCaptureResolution.swift` (modified, +44/-0)
 ```diff
-@@ -13,6 +13,13 @@ nonisolated enum WindowCaptureResolution {
-   /// margins. A result below this ratio is a density mismatch, not rounding.
-   static let minimumAcceptedScaleRatio: CGFloat = 0.75
+@@ -20,6 +20,26 @@ nonisolated enum WindowCaptureResolution {
+   /// headroom; the unused margin is trimmed after capture.
+   static let shadowCanvasPadding: CGFloat = 128
  
-+  /// Transparent room, in points, added on every side of a shadowed window's
-+  /// output canvas. The filter's content rect excludes the shadow, and
-+  /// ScreenCaptureKit shrinks a shadowed window that does not fit its canvas
-+  /// (issue #569). macOS shadows measured about 56pt per side, so this leaves
-+  /// headroom; the unused margin is trimmed after capture.
-+  static let shadowCanvasPadding: CGFloat = 128
++  /// Points a cached `SCWindow` frame may drift from WindowServer's live
++  /// bounds before the cached window is treated as stale.
++  static let staleFrameTolerance: CGFloat = 1
++
++  /// Pixels a padded capture may fall short of native size from rounding.
++  static let nativeSizeTolerance: CGFloat = 2
++
++  /// A cached `SCShareableContent` keeps the frame a window had when it was
++  /// fetched. Sizing a capture from it after a resize shrinks or crops the
++  /// window (issue #634), so a frame that moved or resized needs a refresh.
++  static func isFrameStale(_ cachedFrame: CGRect, currentFrame: CGRect?) -> Bool {
++    guard let currentFrame, !currentFrame.isEmpty else { return false }
++
++    let tolerance = staleFrameTolerance
++    return abs(cachedFrame.minX - currentFrame.minX) > tolerance
++      || abs(cachedFrame.minY - currentFrame.minY) > tolerance
++      || abs(cachedFrame.width - currentFrame.width) > tolerance
++      || abs(cachedFrame.height - currentFrame.height) > tolerance
++  }
 +
    static func scaleFactor(
      displayBackingScaleFactor: CGFloat?,
      filterPointPixelScale: CGFloat?,
-@@ -63,6 +70,23 @@ nonisolated enum WindowCaptureResolution {
-     )
-   }
+@@ -102,4 +122,28 @@ nonisolated enum WindowCaptureResolution {
  
-+  /// Output canvas for an independent window capture. A shadowed window needs
-+  /// padding so it renders 1:1 instead of being scaled down to fit.
-+  static func canvasPixelSize(
-+    logicalSize: CGSize,
-+    scaleFactor: CGFloat,
-+    includesShadow: Bool
-+  ) -> CGSize {
-+    let padding = includesShadow ? shadowCanvasPadding * 2 : 0
-+    return expectedPixelSize(
-+      logicalSize: CGSize(
-+        width: logicalSize.width + padding,
-+        height: logicalSize.height + padding
-+      ),
-+      scaleFactor: scaleFactor
-+    )
-+  }
+     return actualScaleFactor < expectedScaleFactor * minimumAcceptedScaleRatio
+   }
 +
-   static func isUndersized(
-     pixelSize: CGSize,
-     logicalSize: CGSize,
++  /// A padded capture is trimmed to the window plus its shadow, so at native
++  /// scale it is never smaller than the window itself. Falling short on both
++  /// axes means ScreenCaptureKit scaled the window down to fit its canvas,
++  /// which `isUndersized` lets through down to 75%. A shrink smaller than the
++  /// shadow's share of the image stays hidden, so fresh frames still matter.
++  static func isScaledBelowNative(
++    pixelSize: CGSize,
++    logicalSize: CGSize,
++    scaleFactor: CGFloat
++  ) -> Bool {
++    guard
++      scaleFactor.isFinite,
++      scaleFactor > 0,
++      logicalSize.width > 0,
++      logicalSize.height > 0
++    else {
++      return false
++    }
++
++    let nativeSize = expectedPixelSize(logicalSize: logicalSize, scaleFactor: scaleFactor)
++    return pixelSize.width < nativeSize.width - nativeSizeTolerance
++      && pixelSize.height < nativeSize.height - nativeSizeTolerance
++  }
+ }
 ```
 
-**File**: `SnapzyTests/Services/Capture/WindowCaptureResolutionTests.swift` (modified, +44/-0)
+**File**: `Snapzy/Services/Capture/WindowSelectionQueryService.swift` (modified, +25/-1)
 ```diff
-@@ -61,6 +61,50 @@ final class WindowCaptureResolutionTests: XCTestCase {
-     )
+@@ -324,7 +324,20 @@ enum WindowSelectionQueryService {
+     do {
+       let content = try await loadShareableContent(prefetchedContentTask: prefetchedContentTask)
+       if let prefetchedMatch = content.windows.first(where: { $0.windowID == windowID && $0.isOnScreen }) {
+-        return prefetchedMatch
++        let currentFrame = currentQuartzBounds(windowID: windowID)
++        guard WindowCaptureResolution.isFrameStale(prefetchedMatch.frame, currentFrame: currentFrame) else {
++          return prefetchedMatch
++        }
++        DiagnosticLogger.shared.log(
++          .debug,
++          .capture,
++          "Cached shareable window frame is stale; refreshing",
++          context: [
++            "windowID": "\(windowID)",
++            "cached": "\(prefetchedMatch.frame)",
++            "current": currentFrame.map { "\($0)" } ?? "unknown",
++          ]
++        )
+       }
+ 
+       let refreshedContent = try await SCShareableContent.current
+@@ -339,6 +352,17 @@ enum WindowSelectionQueryService {
+     }
    }
  
-+  func testUnshadowedCanvasMatchesWindowPixels() {
-+    XCTAssertEqual(
-+      WindowCaptureResolution.canvasPixelSize(
-+        logicalSize: CGSize(width: 1_800, height: 1_129),
-+        scaleFactor: 2,
-+        includesShadow: false
-+      ),
-+      CGSize(width: 3_600, height: 2_258)
++  /// Live WindowServer bounds (top-left global points, like `SCWindow.frame`).
++  nonisolated private static func currentQuartzBounds(windowID: CGWindowID) -> CGRect? {
++    guard
++      let windowInfo = (CGWindowListCopyWindowInfo([.optionIncludingWindow], windowID) as? [[String: Any]])?.first,
++      let boundsDictionary = windowInfo[kCGWindowBounds as String] as? NSDictionary
++    else {
++      return nil
++    }
++    return CGRect(dictionaryRepresentation: boundsDictionary)?.standardized
++  }
++
+   /// Uses WindowServer's raw list rather than ScreenCaptureKit: eligible menu-bar popovers
+   /// are frequently not shareable even while they remain visible.
+   nonisolated static func visibleWindowIDs(for targets: [WindowCaptureTarget]) -> Set<CGWindowID> {
+```
+
+**File**: `SnapzyTests/Services/Capture/WindowCaptureResolutionTests.swift` (modified, +92/-0)
+```diff
+@@ -114,4 +114,96 @@ final class WindowCaptureResolutionTests: XCTestCase {
+       )
+     )
+   }
++
++  // Issue #634: measured on a 2x display. A cached 600x400pt frame sized the
++  // padded canvas for an 800x620pt window, which came out 0.894x native.
++  func testResizedWindowFrameIsStale() {
++    XCTAssertTrue(
++      WindowCaptureResolution.isFrameStale(
++        CGRect(x: 200, y: 200, width: 600, height: 400),
++        currentFrame: CGRect(x: 200, y: 200, width: 800, height: 620)
++      )
 +    )
 +  }
 +
-+  // Issue #569: a 1800x1129pt window on a 2x display renders a 3824x2482px
-+  // shadowed bitmap. A frame-sized canvas shrank it to ~91%.
-+  func testShadowedCanvasFitsMeasuredRetinaShadow() {
-+    let canvas = WindowCaptureResolution.canvasPixelSize(
-+      logicalSize: CGSize(width: 1_800, height: 1_129),
-+      scaleFactor: 2,
-+      includesShadow: true
++  func testMovedWindowFrameIsStale() {
++    // A move can change the display, and with it the capture scale.
++    XCTAssertTrue(
++      WindowCaptureResolution.isFrameStale(
++        CGRect(x: 200, y: 200, width: 800, height: 620),
++        currentFrame: CGRect(x: 1_900, y: 200, width: 800, height: 620)
++      )
 +    )
-+    XCTAssertGreaterThanOrEqual(canvas.width, 3_824)
-+    XCTAssertGreaterThanOrEqual(canvas.height, 2_482)
 +  }
 +
-+  func testShadowedCanvasFitsShadowOnOneXDisplay() {
-+    // The shadow adds ~112pt per dimension at any display scale.
-+    let canvas = WindowCaptureResolution.canvasPixelSize(
-+      logicalSize: CGSize(width: 1_200, height: 798),
-+      scaleFactor: 1,
-+      includesShadow: true
++  func testMatchingWindowFrameIsNotStale() {
++    XCTAssertFalse(
++      WindowCaptureResolution.isFrameStale(
++        CGRect(x: 200, y: 200, width: 800, height: 620),
++        currentFrame: CGRect(x: 200.5, y: 200, width: 800, height: 620.5)
++      )
 +    )
-+    XCTAssertGreaterThanOrEqual(canvas.width, 1_312)
-+    XCTAssertGreaterThanOrEqual(canvas.height, 910)
 +  }
 +
-+  func testShadowPaddingScalesWithDisplay() {
-+    let canvas = WindowCaptureResolution.canvasPixelSize(
-+      logicalSize: CGSize(width: 1_000, height: 500),
-+      scaleFactor: 2,
-+      includesShadow: true
++  func testUnknownLiveFrameKeepsCachedWindow() {
++    XCTAssertFalse(
++      WindowCaptureResolution.isFrameStale(
++        CGRect(x: 200, y: 200, width: 800, height: 620),
++        currentFrame: nil
++      )
 +    )
-+    let padding = WindowCaptureResolution.shadowCanvasPadding * 2 * 2
-+    XCTAssertEqual(canvas, CGSize(width: 2_000 + padding, height: 1_000 + padding))
 +  }
 +
-   func testRoundingAndTransparentMarginsDoNotTriggerFallback() {
-     XCTAssertFalse(
-       WindowCaptureResolution.isUndersized(
++  func testShadowedWindowAtNativeScaleIsAccepted() {
++    // 800x620pt window plus shadow, trimmed: 1796x1436px.
++    XCTAssertFalse(
++      WindowCaptureResolution.isScaledBelowNative(
++        pixelSize: CGSize(width: 1_796, height: 1_436),
++        logicalSize: CGSize(width: 800, height: 620),
++        scaleFactor: 2
++      )
++    )
++  }
++
++  func testShadowedWindowScaledToFitIsRejected() {
++    // Issue #634 outputs: 0.847x (v2.0.0, frame-sized canvas) and 0.805x
++    // (stale frame). Both pass the 75% undersize rule.
++    let cases: [(pixels: CGSize, points: CGSize)] = [
++      (CGSize(width: 1_521, height: 1_215), CGSize(width: 800, height: 620)),
++      (CGSize(width: 2_091, height: 1_447), CGSize(width: 1_200, height: 800)),
++    ]
++    for (pixels, points) in cases {
++      XCTAssertFalse(
++        WindowCaptureResolution.isUndersized(pixelSize: pixels, logicalSize: points, expectedScaleFactor: 2)
++      )
++      XCTAssertTrue(
++        WindowCaptureResolution.isScaledBelowNative(pixelSize: pixels, logicalSize: points, scaleFactor: 2),
++        "\(pixels) for \(points)"
++      )
++    }
++  }
++
++  func testShallowShrinkHiddenByShadowIsNotDetected() {
++    // 0.894x from a stale frame: the shadow keeps the trimmed image wider
++    // than the native window, so only the frame refresh prevents this one.
++    XCTAssertFalse(
++      WindowCaptureResolution.isScaledBelowNative(
++        pixelSize: CGSize(width: 1_611, height: 1_287),
++        logicalSize: CGSize(width: 800, height: 620),
++        scaleFactor: 2
++      )
++    )
++  }
++
++  func testTransparentMarginOnOneAxisIsNotScaledBelowNative() {
++    // Scaling to fit shrinks both axes; a window that is transparent along
++    // one edge only trims short on that axis.
++    XCTAssertFalse(
++      WindowCaptureResolution.isScaledBelowNative(
++        pixelSize: CGSize(width: 1_500, height: 1_436),
++        logicalSize: CGSize(width: 800, height: 620),
++        scaleFactor: 2
++      )
++    )
++  }
+ }
 ```
 
 **File**: `docs/CAPTURE.md` (modified, +1/-1)
 ```diff
-@@ -112,7 +112,7 @@ flowchart TD
+@@ -113,7 +113,7 @@ flowchart TD
  - Application-window capture can also start directly from the menu, independent shortcut, or `snapzy://capture/application`; it uses the same area capture flow with `.applicationWindow` as the initial interaction mode.
  - Active-window capture resolves the AX focused window of the frontmost app via `ActiveWindowResolver`, maps it to the nearest `WindowCaptureTarget` candidate, and captures it through the same `captureWindow` path — no selection overlay appears.
  - In live application window mode, Snapzy synchronously retains an already-open eligible menu-bar popover before showing any overlay. Because some transient WindowServer popovers can be enumerated but not rendered as an independent Core Graphics window, Snapzy takes one containing-display snapshot and crops the detected popover bounds from that pre-overlay image. After the overlay appears, it checks the exact `CGWindowID` during a short, bounded session-start interval: if the source closes, the retained image is restored beneath the existing dim-mask cutout; if it remains visible, no duplicate image is drawn. The retained image receives a 12pt transparent rounded-corner mask so flattened desktop pixels do not leak into exported PNG corners. The retained candidate is merged ahead of the normal front-to-back layer-0 list built from `CGWindowListCopyWindowInfo` plus `SCShareableContent`. Normal app windows keep their live behavior; only menu-bar-anchored third-party nonzero-layer popovers/dropdowns already open at capture start are retained. Snapzy, Dock, Control Center, and Notification Center are excluded.
--- Exact window capture is handled by `ScreenCaptureManager.captureWindow()`. ScreenCaptureKit is preferred for every still-resolved `SCWindow`; its output scale uses the target display's backing scale (falling back to ScreenCaptureKit's point-pixel scale only when the display cannot be resolved), and a materially undersized returned image is routed through the existing display-area crop fallback. This keeps Retina windows from being saved at an intermittent nominal 1× while preserving native 1× external-display output. If a retained eligible menu-bar popover is no longer shareable, Snapzy saves the pre-overlay display crop instead of recapturing after it has disappeared. The legacy Core Graphics single-window path remains only as a fallback for a live eligible popover. Quick Look previews are detected as `QuickLookUIService` WindowServer windows and their pre-overlay display crops are composited back into filtered fullscreen, frozen-area, and live-area captures because ScreenCaptureKit may enumerate them as off-screen. Snapzy does not force third-party popovers to remain open.
-+- Exact window capture is handled by `ScreenCaptureManager.captureWindow()`. ScreenCaptureKit is preferred for every still-resolved `SCWindow`; its output scale uses the target display's backing scale (falling back to ScreenCaptureKit's point-pixel scale only when the display cannot be resolved), and a materially undersized returned image is routed through the existing display-area crop fallback. This keeps Retina windows from being saved at an intermittent nominal 1× while preserving native 1× external-display output. When the window shadow is included (macOS 14+), the output canvas gets 128pt of transparent padding per side with `scalesToFit` off: the filter's content rect excludes the shadow, and a frame-sized canvas made ScreenCaptureKit shrink the shadowed window to ~91% and blur it (issue #569). The unused padding is trimmed afterwards; with the cursor shown, the trim bounds come from a second cursor-free pass so a cursor in the padding cannot enlarge the image, and the undersize check runs on the trimmed image. If a retained eligible menu-bar popover is no longer shareable, Snapzy saves the pre-overlay display crop instead of recapturing after it has disappeared. The legacy Core Graphics single-window path remains only as a fallback for a live eligible popover. Quick Look previews are detected as `QuickLookUIService` WindowServer windows and their pre-overlay display crops are composited back into filtered fullscreen, frozen-area, and live-area captures because ScreenCaptureKit may enumerate them as off-screen. Snapzy does not force third-party popovers to remain open.
- - The frozen/manual and application-window paths both preserve existing desktop icon/widget exclusion, cursor, own-app exclusion, temp-save, Quick Access, clipboard, and annotate routing behavior.
- - When own-app exclusion hides visible normal Snapzy windows for screenshot, OCR, cutout, scrolling capture, or pre-recording setup, those windows are ordered out temporarily (`HiddenWindowSession`) and restored after the capture/session finishes or is cancelled.
- - Capture toasts, alerts, open-panel prompts, and error surfaces are localized through `L10n`.
+-- Exact window capture is handled by `ScreenCaptureManager.captureWindow()`. ScreenCaptureKit is preferred for every still-resolved `SCWindow`; its output scale uses the target display's backing scale (falling back to ScreenCaptureKit's point-pixel scale only when the display cannot be resolved), and a materially undersized returned image is routed through the existing display-area crop fallback. This keeps Retina windows from being saved at an intermittent nominal 1× while preserving native 1× external-display output. When the window shadow is included (macOS 14+), the output canvas gets 128pt of transparent padding per side with `scalesToFit` off: the filter's content rect excludes the shadow, and a frame-sized canvas made ScreenCaptureKit shrink the shadowed window to ~91% and blur it (issue #569). The unused padding is trimmed afterwards; with the cursor shown, the trim bounds come from a second cursor-free pass so a cursor in the padding cannot enlarge the image, and the undersize check runs on the trimmed image. If a retained eligible menu-bar popover is no longer shareable, Snapzy saves the pre-overlay display crop instead of recapturing after it has disappeared. The legacy Core Graphics single-window path remains only as a fallback for a live eligible popover. Quick Look previews are detected as `QuickLookUIService` WindowServer windows and their pre-overlay display crops are composited back into filtered fullscreen, frozen-area, and live-area captures because ScreenCaptureKit may enumerate them as off-screen. Snapzy does not force third-party popovers to remain open.
++- Exact window capture is handled by `ScreenCaptureManager.captureWindow()`. ScreenCaptureKit is preferred for every still-resolved `SCWindow`; its output scale uses the target display's backing scale (falling back to ScreenCaptureKit's point-pixel scale only when the display cannot be resolved), and a materially undersized returned image is routed through the existing display-area crop fallback. This keeps Retina windows from being saved at an intermittent nominal 1× while preserving native 1× external-display output. When the window shadow is included (macOS 14+), the output canvas gets 128pt of transparent padding per side with `scalesToFit` off: the filter's content rect excludes the shadow, and a frame-sized canvas made ScreenCaptureKit shrink the shadowed window to ~91% and blur it (issue #569). The unused padding is trimmed afterwards; with the cursor shown, the trim bounds come from a second cursor-free pass so a cursor in the padding cannot enlarge the image, and the undersize check runs on the trimmed image. Because the trimmed image still carries the shadow, a padded capture smaller than the native window on both axes (`WindowCaptureResolution.isScaledBelowNative`) is also routed to the display-crop fallback instead of being saved soft; a shrink smaller than the shadow's share of the image (about 0.89× and above for an 800×620pt window) still passes, so fresh frames are the primary guard. `WindowSelectionQueryService.resolveWindow` compares the cached `SCWindow.frame` with the window's live `CGWindowList` bounds and refetches `SCShareableContent` when they differ by more than 1pt: a frame cached before a resize sized the canvas for the old window and shrank the capture to 0.80–0.89× (issue #634). If a retained eligible menu-bar po
+```
+
+---
+
+### Incident Patch 3: `2ca2dae5` (2026-10-22)
+**Commit Message**: fix: Detect a menu bar icon hidden by the notch and open Settings on reopen (#674)
+
+On a crowded menu bar, notched MacBooks push status items behind the camera
+housing or under the active app's menus. AppKit still reports the item as
+visible, so Snapzy kept running with no way to reach it except the
+snapzy://settings URL (#587).
+
+The status item now resets isVisible on creation (macOS persists a ⌘-drag
+removal), checks the button window's occlusion state, screen bounds and notch
+gap, and logs when the icon is enabled but hidden. Reopening Snapzy from
+Spotlight or Finder while the icon is hidden opens Settings, matching the
+existing behavior when the icon is turned off.
+
+**File**: `Snapzy/App/AppStatusBarController.swift` (modified, +106/-0)
+```diff
+@@ -150,6 +150,8 @@ final class AppStatusBarController: ObservableObject {
+     }
+ 
+     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
++    // macOS persists a ⌘-drag removal per item; the Snapzy preference is the source of truth.
++    statusItem?.isVisible = true
+ 
+     if let button = statusItem?.button {
+       button.imagePosition = .imageLeading
+@@ -158,10 +160,114 @@ final class AppStatusBarController: ObservableObject {
+       button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+       renderStatusItem()
+     }
++
++    // Occlusion is only known once the status bar window is on screen (see issue #587).
++    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
++      self?.observeStatusItemOcclusion()
++      self?.logStatusItemVisibilityIfChanged(trigger: "setup")
++    }
++  }
++
++  // MARK: - Hidden Status Item Detection
++
++  /// True when the icon is enabled but macOS is not drawing it, e.g. it was pushed behind the
++  /// notch or under the active app's menus on a crowded menu bar (issue #587).
++  var isMenuBarIconObscured: Bool {
++    guard let statusItem else { return false }
++    guard statusItem.isVisible, let window = statusItem.button?.window else { return true }
++    let screen = window.screen
++    return Self.isStatusItemObscured(
++      itemFrame: window.frame,
++      screenFrame: screen?.frame,
++      notchGap: screen.flatMap { Self.notchGap(of: $0) },
++      isOcclusionVisible: window.occlusionState.contains(.visible)
++    )
++  }
++
++  /// Pure decision for whether a status item window is actually visible to the user.
++  /// Extracted for deterministic testing; AppKit reports `isVisible == true` for hidden items.
++  nonisolated static func isStatusItemObscured(
++    itemFrame: CGRect,
++    screenFrame: CGRect?,
++    notchGap: ClosedRange<CGFloat>?,
++    isOcclusionVisible: Bool
++  ) -> Bool {
++    guard isOcclusionVisible, let screenFrame else { return true }
++    if itemFrame.minX < screenFrame.minX || itemFrame.maxX > screenFrame.maxX {
++      return true
++    }
++    if let notchGap, itemFrame.minX < notchGap.upperBound, itemFrame.maxX > notchGap.lowerBound {
++      return true
++    }
++    return false
++  }
++
++  /// Horizontal span covered by the camera housing, or nil on screens without a notch.
++  private static func notchGap(of screen: NSScreen) -> ClosedRange<CGFloat>? {
++    guard let left = screen.auxiliaryTopLeftArea,
++          let right = screen.auxiliaryTopRightArea,
++          left.maxX < right.minX else { return nil }
++    return left.maxX...right.minX
++  }
++
++  private var statusItemOcclusionObserver: NSObjectProtocol?
++  private var lastLoggedStatusItemObscured: Bool?
++  private var didWarnStatusItemObscured = false
++
++  private func observeStatusItemOcclusion() {
++    removeStatusItemOcclusionObserver()
++    guard let window = statusItem?.button?.window else { return }
++    statusItemOcclusionObserver = NotificationCenter.default.addObserver(
++      forName: NSWindow.didChangeOcclusionStateNotification,
++      object: window,
++      queue: .main
++    ) { [weak self] _ in
++      MainActor.assumeIsolated {
++        self?.logStatusItemVisibilityIfChanged(trigger: "occlusionChange")
++      }
++    }
++  }
++
++  private func removeStatusItemOcclusionObserver() {
++    if let statusItemOcclusionObserver {
++      NotificationCenter.default.removeObserver(statusItemOcclusionObserver)
++    }
++    statusItemOcclusionObserver = nil
++    lastLoggedStatusItemObscured = nil
++    didWarnStatusItemObscured = false
++  }
++
++  private func logStatusItemVisibilityIfChanged(trigger: String) {
++    guard let statusItem else { return }
++    let obscured = isMenuBarIconObscured
++    guard obscured != lastLoggedStatusItemObscured else { return }
++    lastLoggedStatusItemObscured = obscured
++
++    let window = statusItem.button?.window
++    let context = [
++      "trigger": trigger,
++      "isVisible": statusItem.isVisible ? "true" : "false",
++      "frame": window.map { NSStringFromRect($0.frame) } ?? "none",
++      "occlusionVisible": (window?.occlusionState.contains(.visible) ?? false) ? "true" : "false",
++      "hasNotch": (window?.screen.flatMap { Self.notchGap(of: $0) } != nil) ? "true" : "false",
++    ]
++    if obscured {
++      // An auto-hiding menu bar flips occlusion on every reveal, so warn once per item.
++      DiagnosticLogger.shared.log(
++        didWarnStatusItemObscured ? .debug : .warning,
++        .ui,
++        "Menu bar icon is enabled but hidden by the system",
++        context: context
++      )
++      didWarnStatusItemObscured = true
++    } else {
++      DiagnosticLogger.shared.log(.debug, .ui, "Menu bar icon is visible", context: context)
++    }
+   }
+ 
+   private func removeStatusItem() {
+     guard let statusItem else { return }
++    removeStatusItemOcclusionObserver()
+     processingSpinner?.stopAnimation(nil)
+     processingSpinner?.removeFromSuperview()
+     processingSpinner = nil
+```
+
+**File**: `Snapzy/App/SnapzyApp.swift` (modified, +6/-1)
+```diff
+@@ -137,8 +137,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
+   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+     guard didFinishLaunching else { return true }
+     let showsMenuBarIcon = UserDefaults.standard.object(forKey: PreferencesKeys.showMenuBarIcon) as? Bool ?? true
+-    guard !showsMenuBarIcon else { return true }
++    // An enabled icon can still be hidden behind the notch on a crowded menu bar (issue #587).
++    let isIconObscured = showsMenuBarIcon && AppStatusBarController.shared.isMenuBarIconObscured
++    guard !showsMenuBarIcon || isIconObscured else { return true }
+ 
++    if isIconObscured {
++      DiagnosticLogger.shared.log(.info, .ui, "Opening Settings on reopen because the menu bar icon is hidden")
++    }
+     AppStatusBarController.shared.openPreferencesWindow(tab: .general)
+     return false
+   }
+```
+
+**File**: `SnapzyTests/App/AppStatusBarControllerTests.swift` (modified, +72/-0)
+```diff
+@@ -49,6 +49,78 @@ final class AppStatusBarControllerTests: XCTestCase {
+     XCTAssertFalse(controller.showsRecordingTimeOnMenuBarForTesting)
+   }
+ 
++  // MARK: - Hidden status item detection (issue #587)
++
++  // Frames measured on a 14" notched MacBook Pro at default scaling.
++  private let notchedScreen = CGRect(x: 0, y: 0, width: 1800, height: 1169)
++  private let notchGap: ClosedRange<CGFloat> = 790...1010
++
++  func testStatusItemObscured_falseWhenRightOfNotchAndVisible() {
++    XCTAssertFalse(
++      AppStatusBarController.isStatusItemObscured(
++        itemFrame: CGRect(x: 1046, y: 1130, width: 137, height: 39),
++        screenFrame: notchedScreen,
++        notchGap: notchGap,
++        isOcclusionVisible: true
++      )
++    )
++  }
++
++  func testStatusItemObscured_trueWhenOverlappingNotch() {
++    XCTAssertTrue(
++      AppStatusBarController.isStatusItemObscured(
++        itemFrame: CGRect(x: 911, y: 1130, width: 137, height: 39),
++        screenFrame: notchedScreen,
++        notchGap: notchGap,
++        isOcclusionVisible: true
++      )
++    )
++  }
++
++  func testStatusItemObscured_trueWhenPushedOffScreen() {
++    XCTAssertTrue(
++      AppStatusBarController.isStatusItemObscured(
++        itemFrame: CGRect(x: -47, y: 1130, width: 137, height: 39),
++        screenFrame: notchedScreen,
++        notchGap: notchGap,
++        isOcclusionVisible: true
++      )
++    )
++  }
++
++  func testStatusItemObscured_trueWhenOccluded() {
++    XCTAssertTrue(
++      AppStatusBarController.isStatusItemObscured(
++        itemFrame: CGRect(x: 500, y: 1130, width: 137, height: 39),
++        screenFrame: notchedScreen,
++        notchGap: notchGap,
++        isOcclusionVisible: false
++      )
++    )
++  }
++
++  func testStatusItemObscured_trueWithoutScreen() {
++    XCTAssertTrue(
++      AppStatusBarController.isStatusItemObscured(
++        itemFrame: CGRect(x: 1046, y: 1130, width: 137, height: 39),
++        screenFrame: nil,
++        notchGap: nil,
++        isOcclusionVisible: true
++      )
++    )
++  }
++
++  func testStatusItemObscured_ignoresNotchGapOnScreensWithoutNotch() {
++    XCTAssertFalse(
++      AppStatusBarController.isStatusItemObscured(
++        itemFrame: CGRect(x: 911, y: 1130, width: 137, height: 39),
++        screenFrame: notchedScreen,
++        notchGap: nil,
++        isOcclusionVisible: true
++      )
++    )
++  }
++
+   // MARK: - Menu bar title gating (issue #351)
+ 
+   func testMenuBarTitle_hiddenWhenTimeDisplayOff_forAllStates() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #661** (2026-10-19): chore: release v2.1.0-beta.8 (@github-actions[bot])
-- **PR #660** (2026-10-19): fix: Keep Quick Access panel out of screenshots when Snapzy is excluded (@duongductrong)
-- **PR #659** (2026-10-19): chore: release v2.1.0-beta.7 (@github-actions[bot])
-- **PR #658** (2026-10-19): chore: release v2.1.0-beta.7 (@github-actions[bot])
-- **PR #657** (2026-10-19): fix: Keep shadowed window captures at native resolution (@duongductrong)
-- **PR #654** (2026-10-19): feat: Cut Out tool to remove or add a strip from the middle of an image (@duongductrong)
+- **PR #674** (2026-10-22): fix: Detect a menu bar icon hidden by the notch and open Settings on reopen (@duongductrong)
+- **PR #673** (2026-10-22): chore: release v2.1.0-beta.13 (@github-actions[bot])
+- **PR #672** (2026-10-22): fix: Keep the app beneath focused during live capture so tooltips survive (@duongductrong)
+- **PR #671** (2026-10-22): chore: release v2.1.0-beta.12 (@github-actions[bot])
+- **PR #670** (2026-10-22): fix: Refresh stale window frames before sizing window captures (@duongductrong)
+- **PR #669** (2026-10-21): chore: release v2.1.0-beta.11 (@github-actions[bot])
 
 ---
 
@@ -3160,47 +3160,32 @@ Closes #569
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixed capture remapped and consumed keystrokes (#539)
+## X. Unlock magnifier color panel and add magnifier size setting (#665)
 
 **RULE**:
-When implementing operations in `Snapzy/Features/Recording/RecordingCoordinator.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Snapzy/Features/Annotate/InlineAreaAnnotateSession.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d74508b0`: Fixed capture remapped and consumed keystrokes (#539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9de2b0f2`: Unlock magnifier color panel and add magnifier size setting (#665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Recording/RecordingCoordinator.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Annotate/InlineAreaAnnotateSession.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  private(set) var toolbarWindow: RecordingToolbarWindow?
-  // Invalidated before Stop/Cancel/Restart suspends, even while the toolbar survives.
-  private var recordingGeneration = UUID()
-  init() {
-    recordingGeneration = UUID()
-    recordingGeneration = UUID()
-    recordingGeneration = UUID()
-    let generation = recordingGeneration
-      guard isCurrentRecordingStart(generation, window: window) else { return }
-      guard isCurrentRecordingStart(generation, window: window) else { return }
-      guard isCurrentRecordingStart(generation, window: window) else { return }
-        guard isCurrentRecordingStart(generation, window: window) else { return }
-        guard isCurrentRecordingStart(generation, window: window) else { return }
-        guard isCurrentRecordingStart(generation, window: window) else { return }
-        guard await completeRecordingStart(for: rect) else { return }
-        guard isCurrentRecordingStart(generation, window: window) else { return }
-        guard isCurrentRecordingStart(generation, window: window) else { return }
-    let generation = recordingGeneration
-      guard isCurrentRecordingStart(generation, window: window) else { return }
+  /// The "magnifier size" preference — same sharing rationale as above.
+  var magnifierSize: MagnifierSizeOption {
+    MagnifierSizeOption.current(defaults: defaults)
+  }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-  private var toolbarWindow: RecordingToolbarWindow?
-  private init() {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d74508b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9de2b0f2` are properly handled with clean fallback behavior.

@@ -4308,3 +4308,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `b9479757` | Multi-dimensional audit evidence | 2026-10-22T15:46:44.655Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `22c287a3` | Multi-dimensional audit evidence | 2026-10-22T15:46:53.089Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `023cfa46` | Multi-dimensional audit evidence | 2026-10-22T15:47:01.711Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `59a9e85a` | Multi-dimensional audit evidence | 2026-10-22T15:53:23.529Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `2ca2dae5` | Multi-dimensional audit evidence | 2026-10-22T15:53:27.697Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `e8ee6271` | Multi-dimensional audit evidence | 2026-10-22T15:53:29.824Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `1790bac5` | Multi-dimensional audit evidence | 2026-10-22T15:53:34.904Z |

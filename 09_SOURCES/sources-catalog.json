@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "1123cc50",
+    "sourceVersion": "1790bac5",
     "license": "Apache-2.0",
-    "contentHash": "3c2be7c65f990d597339f715c9c5ce2ccefbecbd67b7c005ff7d04ba4501f983",
-    "lastHarvestedAt": "2026-10-20T20:54:33.187Z",
+    "contentHash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
+    "lastHarvestedAt": "2026-10-22T15:53:34.904Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "36c879e3",
+    "sourceVersion": "e8ee6271",
     "license": "MIT",
-    "contentHash": "42fa5b38ca5a36358f1719a10b9c7d00d621ee55a76ae3ac708231bfd8e14fb4",
-    "lastHarvestedAt": "2026-10-20T21:47:14.977Z",
+    "contentHash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
+    "lastHarvestedAt": "2026-10-22T15:53:29.824Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "2983c7c5",
+    "sourceVersion": "59a9e85a",
     "license": "MIT",
-    "contentHash": "cc5ce361f321fb1701b30f2dfa7bbdc4cfa66c37dbc2d0715156847bf89bf85f",
-    "lastHarvestedAt": "2026-10-20T18:51:35.335Z",
+    "contentHash": "783b2c721430e64d5420c22d7f47898e9ee5372bfbb6b5b7fca3aa189725deb6",
+    "lastHarvestedAt": "2026-10-22T15:53:23.529Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {
@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "969b91d7",
+    "sourceVersion": "2ca2dae5",
     "license": "BSD-3-Clause",
-    "contentHash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
-    "lastHarvestedAt": "2026-10-19T21:38:27.412Z",
+    "contentHash": "f59f194eaa7e72c4084bfd67d8e15406130dddc83cc7864f824ebec53167b633",
+    "lastHarvestedAt": "2026-10-22T15:53:27.697Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {

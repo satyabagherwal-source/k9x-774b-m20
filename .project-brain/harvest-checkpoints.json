@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T15:47:01.720Z",
+  "last_updated": "2026-10-22T15:53:34.912Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "3c2be7c65f990d597339f715c9c5ce2ccefbecbd67b7c005ff7d04ba4501f983",
-      "verified_at": "2026-10-20T20:54:33.195Z",
+      "content_hash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
+      "verified_at": "2026-10-22T15:53:34.912Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:54:33.195Z"
+      "last_updated": "2026-10-22T15:53:34.912Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "42fa5b38ca5a36358f1719a10b9c7d00d621ee55a76ae3ac708231bfd8e14fb4",
-      "verified_at": "2026-10-20T21:47:14.984Z",
+      "content_hash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
+      "verified_at": "2026-10-22T15:53:29.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:47:14.984Z"
+      "last_updated": "2026-10-22T15:53:29.837Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "cc5ce361f321fb1701b30f2dfa7bbdc4cfa66c37dbc2d0715156847bf89bf85f",
-      "verified_at": "2026-10-20T18:51:35.344Z",
+      "content_hash": "783b2c721430e64d5420c22d7f47898e9ee5372bfbb6b5b7fca3aa189725deb6",
+      "verified_at": "2026-10-22T15:53:23.545Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:51:35.344Z"
+      "last_updated": "2026-10-22T15:53:23.545Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
-      "verified_at": "2026-10-19T21:38:27.419Z",
+      "content_hash": "f59f194eaa7e72c4084bfd67d8e15406130dddc83cc7864f824ebec53167b633",
+      "verified_at": "2026-10-22T15:53:27.710Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:38:27.419Z"
+      "last_updated": "2026-10-22T15:53:27.710Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",

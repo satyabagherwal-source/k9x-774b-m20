@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T15:47:01.716Z",
-  "total_cycles_completed": 4278,
-  "total_learnings_persisted": 4278,
-  "total_rules_promoted": 3460,
+  "last_updated": "2026-10-22T15:53:34.909Z",
+  "total_cycles_completed": 4282,
+  "total_learnings_persisted": 4282,
+  "total_rules_promoted": 3464,
   "history": [
-    {
-      "timestamp": "2026-10-21T00:02:04.341Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T00:02:04.488Z",
-      "repository": "rsuite/rsuite",
-      "learningId": "learn-github-rsuite-rsuite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T00:02:10.093Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T00:02:13.588Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T00:08:42.447Z",
       "repository": "moby/buildkit",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-22T15:47:01.716Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:53:23.542Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:53:27.706Z",
+      "repository": "duongductrong/Snapzy",
+      "learningId": "learn-github-duongductrong-snapzy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:53:29.834Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:53:34.909Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

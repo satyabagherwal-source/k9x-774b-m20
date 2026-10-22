@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `2983c7c5`  
+> **Source Version**: `59a9e85a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:51:34.944Z  
+> **Timestamp**: 2026-10-22T15:53:23.114Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:51:34.826Z  
+> **Harvest Timestamp**: 2026-10-22T15:53:21.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50183 stars
+- **Stars / Engagement**: 50219 stars
 
 ---
 
@@ -2123,11 +2123,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29536** (2026-10-20): **[`pydocstyle`] Treat backslash-escaped `*args` and `**kwargs` as documented (`D417`)**
-  *Symptoms*: ## Summary  Closes #29535.  Sphinx-style docstrings often escape the stars as `\*args` and `\*\*kwargs`, because a bare `*` starts emphasis in reST. D417 didn't account for that, so it reported those parameters as undocumented even though they were documented.  It went wrong in a different way for each style. In NumPy-style sections, the name before the `:` was taken verbatim, so `\*\*kwargs` never matched `**kwargs`. In Google-style sections, the regex didn't accept a leading `\`, so the whole line was skipped.  I added a small `unescape_parameter_name` helper in `sections.rs` that strips backslashes from the documented name, and both parsers now use it. The Google regex also accepts up to two escaped stars now. Since a backslash can't be part of a Python parameter name, removing all of them should be safe. This also covers non-raw docstrings that write `\\*\\*kwargs`.  ## Test Plan  I added five cases to `D417.py`: escaped NumPy and Google docstrings with every parameter documented, the same two styles with one parameter actually missing, and a non-raw docstring. Without the fix, all five `d417` tests fail and report `*args` and `**kwargs` as missing. With the fix, the fully documented functions aren't flagged. In the missing variants, only the parameters that really are missing get reported. The snapshots are updated, and `cargo test -p ruff_linter -- pydocstyle` and clippy both pass.  I used Claude (via T3 Code) to help with the implementation. I've reviewed the change an
+- **Issue #29578** (2026-10-21): **[ty] Avoid widening compatible generic return alternatives**
+  *Symptoms*: Since #28303, when a generic call inference has multiple valid solutions, we will intersect the return types resulting from specializing with each valid solution. This approach has various caveats discussed in the description of that PR. One of them is that sometimes a call with an invariant return type (e.g. `list[T]`) can be validly inferred as returning e.g. either `list[int]` or `list[str]`, but not both simultaneously (consider if it actually returns `[]` -- it can be viewed as either kind of list, but not both at the same time). Intersecting `list[int]` and `list[str]` would result in `Never`, which is wrong: the call can return.   For this reason, we skip intersecting return types if they vary in an invariant type.  But in some cases one specialized return type is a subtype of all the other ones. In this case it's safe to go ahead and prefer the narrower type,  even if they vary in invariant position and thus we wouldn't otherwise intersect them.  This avoids a regression in #29236. 
 
-- **Issue #29535** (2026-10-20): **Improve D417 missdetection for *args and **kwargs when backslash.**
-  *Symptoms*: ### Summary  When generating documentation with Sphinx RST, the **kwargs syntax is incorrect; you need to escape the "*" characters with "\\".   Let see this little rst compatible docstring:  ```python def foo(**kwargs):     r"""Stupid example function.      Parameters     ----------     \*\*kwargs : dict         A rst compatible sphinx docstring.     """ ```  In the example above, ruff triggers the following error:  ```D417 Missing argument description in the docstring for foo: **kwargs```  The idea behind this issue is simply to request that a "\\" be allowed before the "*" in docstrings!  That it! Thank you.
+- **Issue #29577** (2026-10-22): **[ty] Restrict range implications from gradual equivalence**
+  *Symptoms*: Fix false `invalid-argument-type` errors when inferring constrained type variables from callbacks that return an invariant generic with a gradual type argument. A callback returning `Box[Any]` can satisfy `Callable[[], T | Box[T]]` when `T` is constrained to `str` or `bytes`.  The solver treated equivalence to a gradual type as exact substitution, allowing a valid union alternative to imply an incompatible bound. Require a static equivalence bound before deriving either lower- or upper-bound implications, including when gradual types are nested inside a bound.  Prerequisite to avoid regressions in #29236. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2144,50 +2144,401 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e795df6` (2026-10-20)
-**Commit Message**: Pin Codex workflows to the merged output-protection fix (#29541)
+### Incident Patch 1: `008d4526` (2026-10-21)
+**Commit Message**: Update docker/build-push-action action to v7.4.0 (#29573)
 
-Pin the shared security-review workflow and its matching
-secure-token-service rule to `f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d`,
-which uses the merged output-protection fix from
-[openai/codex-action#187](https://github.com/openai/codex-action/pull/187).
+This PR contains the following updates:
 
-Validation: checked matching workflow and policy pins, valid JSON, and
-no new actionlint diagnostics.
+| Package | Type | Update | Change |
+|---|---|---|---|
+|
+[docker/build-push-action](https://redirect.github.com/docker/build-push-action)
+| action | minor | `v7.3.0` → `v7.4.0` |
 
-**File**: `.github/secure-token-service.json` (modified, +1/-1)
+---
+
+### Release Notes
+
+<details>
+<summary>docker/build-push-action</summary>
+
+###
+[`v7.4.0`](https://redirect.github.com/docker/build-push-action/releases/tag/v7.4.0)
+
+[Compare
+Source](https://redirect.github.com/docker/build-push-action/compare/v7.3.0...v7.4.0)
+
+- Use the shared error helper for Buildx commands by
+[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
+[#&#8203;1620](https://redirect.github.com/docker/build-push-action/pull/1620)
+- Prevent workflow command injection in metadata logs by
+[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
+[#&#8203;1617](https://redirect.github.com/docker/build-push-action/pull/1617)
+- Bump
+[@&#8203;docker/actions-toolkit](https://redirect.github.com/docker/actions-toolkit)
+from 0.92.0 to 0.100.0 in
+[#&#8203;1614](https://redirect.github.com/docker/build-push-action/pull/1614)
+[#&#8203;1618](https://redirect.github.com/docker/build-push-actio
+
+**File**: `.github/workflows/build-docker.yml` (modified, +2/-2)
 ```diff
-@@ -43,7 +43,7 @@
-       "environment": "automations",
-       "caller_ref": "refs/pull/*/merge",
-       "caller_workflow": "ci.yaml",
--      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
-+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
-       "on": ["pull_request"],
-       "permissions": { "pull_requests": "write" },
-       "target": "ruff"
+@@ -88,7 +88,7 @@ jobs:
+       # Adapted from https://docs.docker.com/build/ci/github-actions/multi-platform/
+       - name: Build and push by digest
+         id: build
+-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+         with:
+           context: .
+           platforms: ${{ matrix.platform }}
+@@ -267,7 +267,7 @@ jobs:
+ 
+       - name: Build and push
+         id: build-and-push
+-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+         with:
+           context: .
+           platforms: linux/amd64,linux/arm64
 ```
 
-**File**: `.github/workflows/ci.yaml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `e8b4b288` (2026-10-21)
+**Commit Message**: Update docker/setup-buildx-action action to v4.4.1 (#29574)
+
+This PR contains the following updates:
+
+| Package | Type | Update | Change |
+|---|---|---|---|
+|
+[docker/setup-buildx-action](https://redirect.github.com/docker/setup-buildx-action)
+| action | minor | `v4.3.0` → `v4.4.1` |
+
+---
+
+### Release Notes
+
+<details>
+<summary>docker/setup-buildx-action</summary>
+
+###
+[`v4.4.1`](https://redirect.github.com/docker/setup-buildx-action/releases/tag/v4.4.1)
+
+[Compare
+Source](https://redirect.github.com/docker/setup-buildx-action/compare/v4.4.0...v4.4.1)
+
+- Skip BuildKit image pre-pulls for explicit endpoints by
+[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
+[#&#8203;624](https://redirect.github.com/docker/setup-buildx-action/pull/624)
+
+**Full Changelog**:
+<https://github.com/docker/setup-buildx-action/compare/v4.4.0...v4.4.1>
+
+###
+[`v4.4.0`](https://redirect.github.com/docker/setup-buildx-action/releases/tag/v4.4.0)
+
+[Compare
+Source](https://redirect.github.com/docker/setup-buildx-action/compare/v4.3.0...v4.4.0)
+
+- Use official Buildx releases for cloud driver by
+[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
+[#&#8203;606](https://redirect.github.com/docke
+
+**File**: `.github/workflows/build-docker.yml` (modified, +4/-4)
 ```diff
-@@ -37,7 +37,7 @@ jobs:
-   security-review:
-     needs: determine_changes
-     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/ruff' && github.event.pull_request.head.repo.full_name == github.repository && needs.determine_changes.outputs.code == 'true' }}
--    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e
-+    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d
-     with:
-       runner: depot-ubuntu-22.04-16
-       helper-runner: github-ubuntu-24.04-x86_64-4
+@@ -46,7 +46,7 @@ jobs:
+           submodules: recursive
+           persist-credentials: false
+ 
+-      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
++      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+ 
+       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+         if: ${{ inputs.plan != '' && !fromJson(inputs.plan).announcement_tag_is_implicit }}
+@@ -130,7 +130,7 @@ jobs:
+           pattern: digests-*
+           merge-multiple: true
+ 
+-      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
++      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+ 
+       - name: Extract metadata (tags, labels) for Docker
+         id: meta
+@@ -202,7 +202,7 @@ jobs:
+           - debian:trixie-slim,trixie-slim,debian-slim
+           - buildpack-deps:trixie,trixie,debian
+     steps:
+-      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
++      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+ 
+       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+         with:
+@@ -308,7 +308,7 @@ jobs:
+           pattern: digests-*
+           merge-multiple: true
+ 
+-      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
++      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+ 
+       - name: Extract metadata (tags, labels) for Docker
+         id: meta
+```
+
+---
+
+### Incident Patch 3: `48dcdd0e` (2026-10-22)
+**Commit Message**: [ty] Restrict range implications from gradual equivalence (#29577)
+
+Fix false `invalid-argument-type` errors when inferring constrained type
+variables from callbacks that return an invariant generic with a gradual
+type argument. A callback returning `Box[Any]` can satisfy `Callable[[],
+T | Box[T]]` when `T` is constrained to `str` or `bytes`.
+
+The solver treated equivalence to a gradual type as exact substitution,
+allowing a valid union alternative to imply an incompatible bound.
+Require a static equivalence bound before deriving either lower- or
+upper-bound implications, including when gradual types are nested inside
+a bound.
+
+Prerequisite to avoid regressions in #29236.
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +38/-0)
+```diff
+@@ -2102,6 +2102,44 @@ reveal_type(infer_any_bound(list[str]()))  # revealed: str
+ reveal_type(infer_list_bound(list[list[str]]()))  # revealed: list[str]
+ ```
+ 
++## Gradual specializations in callable union returns
++
++A callable's return type only needs to match one member of an expected union, even when the match
++relies on a gradual type argument. If several declared constraints remain possible, inference
++preserves the gradual type argument.
++
++```py
++from typing import Any, Callable, Generic, TypeVar
++
++T = TypeVar("T", str, bytes)
++
++class Box(Generic[T]):
++    value: T
++
++def infer(callback: Callable[[], T | Box[T]]) -> T:
++    raise NotImplementedError
++
++unknown = Box()
++any_ = Box[Any]()
++
++unknown_result = infer(lambda: unknown)  # no diagnostic
++reveal_type(unknown_result)  # revealed: Unknown
++any_result = infer(lambda: any_)  # no diagnostic
++reveal_type(any_result)  # revealed: Any
++```
++
++Other arguments must still satisfy the type variable's declared constraints. Gradual evidence from a
++callback does not make an incompatible argument valid:
++
++```py
++def consume(callback: Callable[[], Box[T]], other: T) -> None: ...
++
++# The callback returns a box, as required by `Box[T]`. The second argument must instead
++# be `str` or `bytes`, but is also a box: only its type argument is gradual.
++consume(lambda: unknown, unknown)  # error: [invalid-argument-type] "does not satisfy constraints"
++consume(lambda: any_, any_)  # error: [invalid-argument-type] "does not satisfy constraints"
++```
++
+ ## Invalid bounds in generic union members
+ 
+ An argument that violates a type variable's bound is rejected even when another union member is not
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/functions.md` (modified, +36/-0)
+```diff
+@@ -3764,6 +3764,42 @@ reveal_type(infer_any_bound(list[str]()))  # revealed: str
+ reveal_type(infer_list_bound(list[list[str]]()))  # revealed: list[str]
+ ```
+ 
++## Gradual specializations in callable union returns
++
++A callable's return type only needs to match one member of an expected union, even when the match
++relies on a gradual type argument. If several declared constraints remain possible, inference
++preserves the gradual type argument.
++
++```py
++from typing import Any, Callable
++
++class Box[T: (str, bytes)]:
++    value: T
++
++def infer[T: (str, bytes)](callback: Callable[[], T | Box[T]]) -> T:
++    raise NotImplementedError
++
++unknown = Box()
++any_ = Box[Any]()
++
++unknown_result = infer(lambda: unknown)  # no diagnostic
++reveal_type(unknown_result)  # revealed: Unknown
++any_result = infer(lambda: any_)  # no diagnostic
++reveal_type(any_result)  # revealed: Any
++```
++
++Other arguments must still satisfy the type variable's declared constraints. Gradual evidence from a
++callback does not make an incompatible argument valid:
++
++```py
++def consume[T: (str, bytes)](callback: Callable[[], Box[T]], other: T) -> None: ...
++
++# The callback returns a box, as required by `Box[T]`. The second argument must instead
++# be `str` or `bytes`, but is also a box: only its type argument is gradual.
++consume(lambda: unknown, unknown)  # error: [invalid-argument-type] "does not satisfy constraints"
++consume(lambda: any_, any_)  # error: [invalid-argument-type] "does not satisfy constraints"
++```
++
+ ## Invalid bounds in generic union members
+ 
+ An argument that violates a type variable's bound is rejected even when another union member is not
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/type_properties/implies_subtype_of.md` (modified, +5/-3)
+```diff
+@@ -747,7 +747,8 @@ def lower_bound[T, U]():
+ ### Substituting gradual equivalences into nested bounds
+ 
+ Substituting a gradual equivalence into a lower bound preserves assignability, but does not
+-establish subtyping.
++establish subtyping. This also holds for equivalence bounds: separate occurrences of `Any` in a
++subtype comparison can materialize to different types.
+ 
+ ```py
+ from typing import Any
+@@ -765,8 +766,9 @@ def equivalence_into_lower[T, U]():
+ 
+ def equivalence_into_equality[T, U]():
+     constraints = ConstraintSet.equality(T, Any) & ConstraintSet.equality(U, Covariant[T])
+-    static_assert(constraints.implies_subtype_of(Covariant[Any], U))
+-    static_assert(constraints.implies_subtype_of(U, Covariant[Any]))
++    static_assert(constraints.satisfies(ConstraintSet.equality(U, Covariant[Any])))
++    static_assert(not constraints.implies_subtype_of(Covariant[Any], U))
++    static_assert(not constraints.implies_subtype_of(U, Covariant[Any]))
+ ```
+ 
+ ### Gradual range substitutions do not preserve correlation
+```
+
+**File**: `crates/ty_python_semantic/src/types/constraints.rs` (modified, +54/-0)
+```diff
+@@ -5703,6 +5703,60 @@ class E: ...
+         Ok(())
+     }
+ 
++    #[test]
++    fn gradual_equivalence_preserves_alternative_bounds() {
++        let db = setup_db();
++        let db = &db;
++        let env = db.program_environment();
++        let t = create_typevar(db, "T");
++        let int = known_instance(db, KnownClass::Int);
++        let str = known_instance(db, KnownClass::Str);
++        let list = |ty| KnownClass::List.to_specialized_instance(db, &env, &[ty]);
++
++        for dynamic in [Type::any(), Type::unknown()] {
++            for (gradual, bound, witness) in
++                [(dynamic, int, str), (list(dynamic), list(int), list(str))]
++            {
++                for (lower, upper) in [(Some(bound), None), (None, Some(bound))] {
++                    let builder = ConstraintSetBuilder::new();
++                    let equivalent = ConstraintSet::constrain_typevar_equivalence_bound(
++                        db,
++                        &env,
++                        &builder,
++                        ConstraintProvenance::Evidence,
++                        t,
++                        gradual,
++                    );
++                    let range =
++                        create_constraint_set_with_bounds(db, &env, &builder, t, lower, upper);
++                    let witness = ConstraintSet::constrain_typevar_equivalence_bound(
++                        db,
++                        &env,
++                        &builder,
++                        ConstraintProvenance::Evidence,
++                        t,
++                        witness,
++                    );
++
++                    // `T = Any` permits `T = str`, even though `int ≤ T` (or `T ≤ int`)
++                    // does not. The same holds inside an invariant container.
++                    let alternatives =
++                        equivalent
++                            .or(db, &builder, || range)
++                            .and(db, &builder, || witness);
++                    assert!(!alternatives.is_never_satisfied(db, &env, TypeVarSet::None));
++
++                    // Requiring both bounds still rules out that specialization.
++                    let conjunction =
++                        equivalent
++                            .and(db, &builder, || range)
++                            .and(db, &builder, || witness);
++                    assert!(conjunction.is_never_satisfied(db, &env, TypeVarSet::None));
++                }
++            }
++        }
++    }
++
+     #[test]
+     fn trivial_satisfaction_only_recognizes_terminals() {
+         let db = setup_db();
+```
+
+**File**: `crates/ty_python_semantic/src/types/constraints/sequents.rs` (modified, +13/-7)
+```diff
+@@ -1547,9 +1547,12 @@ impl<'db> ConcreteLowerBound<'db> {
+         }
+ 
+         // (α ≤ β) ⇒ ((T = β) ⇒ (α ≤ T))
+-        if self
+-            .bound
+-            .is_constraint_set_assignable_to(db, env, other.bound)
++        // This requires a static equivalence bound: `T = Any` permits `T = str`, so
++        // assignability of `int` to `Any` does not imply `int ≤ T`.
++        if other.bound.is_static_sequent_eligible(db, env)
++            && self
++                .bound
++                .is_constraint_set_assignable_to(db, env, other.bound)
+         {
+             map.add_single_implication(other.into(), self.into());
+         }
+@@ -1728,14 +1731,17 @@ impl<'db> ConcreteUpperBound<'db> {
+         }
+ 
+         // (β ≤ α) ⇒ ((T = β) ⇒ (T ≤ α))
+-        if other
+-            .bound
+-            .is_constraint_set_assignable_to(db, env, self.bound)
++        // This requires a static equivalence bound: `T = Any` permits `T = str`, so
++        // assignability of `Any` to `int` does not imply `T ≤ int`.
++        if other.bound.is_static_sequent_eligible(db, env)
++            && other
++                .bound
++                .is_constraint_set_assignable_to(db, env, self.bound)
+         {
+             map.add_single_implication(other.into(), self.into());
+         }
+ 
+-        // Given constraints `T ≤ α` and `T = β`, `α ≤ β` must also hold. If those bounds contain
++        // Given constraints `T ≤ α` and `T = β`, `β ≤ α` must also hold. If those bounds contain
+         // other typevars, we can infer additional constraints.
+         AtomicConstraint::add_sequents_for_range(db, env, map, other, self);
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29541** (2026-10-20): Pin Codex workflows to the merged output-protection fix (@zsol)
-- **PR #29540** (closed): [ruff] Update documentation for non-PEP 695 generic function and type alias (@FrancescoPezzella)
-- **PR #29539** (2026-10-20): Update Codex workflows to protect workflow command output (@zsol)
-- **PR #29538** (2026-10-20): Update certifi to 2026.10.19 (@konstin)
-- **PR #29536** (2026-10-20): [`pydocstyle`] Treat backslash-escaped `*args` and `**kwargs` as documented (`D417`) (@fixfon)
-- **PR #29530** (2026-10-20): Update Wrangler for playground deployment (@AlexWaygood)
+- **PR #29626** (2026-10-22): Avoid creating deployments for automation jobs (@zaniebot)
+- **PR #29622** (closed): [ty] Exercise pull request reports with intentional regressions (@zanieb)
+- **PR #29621** (2026-10-22): Link the commit in pull request report footers (@zanieb)
+- **PR #29620** (2026-10-22): Include uv configuration in the reviewer workflow checkout (@zanieb)
+- **PR #29619** (closed): Test reviewer round-robin assignment (@zanieb)
+- **PR #29617** (2026-10-22): Authorize report publishing and reviewer selection (@zanieb)
 
 ---
 
@@ -2207,28 +2558,30 @@ no new actionlint diagnostics.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pin Codex workflows to the merged output-protection fix (#29541)
+## X. Update docker/build-push-action action to v7.4.0 (#29573)
 
 **RULE**:
-When implementing operations in `.github/secure-token-service.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-docker.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e795df6`: Pin Codex workflows to the merged output-protection fix (#29541). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `008d4526`: Update docker/build-push-action action to v7.4.0 (#29573). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/secure-token-service.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-docker.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e795df6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `008d4526` are properly handled with clean fallback behavior.

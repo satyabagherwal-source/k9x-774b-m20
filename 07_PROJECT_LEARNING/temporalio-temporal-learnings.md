@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `36c879e3`  
+> **Source Version**: `e8ee6271`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:47:14.613Z  
+> **Timestamp**: 2026-10-22T15:53:29.405Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:47:14.606Z  
+> **Harvest Timestamp**: 2026-10-22T15:53:29.397Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23862 stars
+- **Stars / Engagement**: 23918 stars
 
 ---
 
@@ -2121,316 +2121,827 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4fa3ed47` (2026-10-20)
-**Commit Message**: Fix priority backlog acknowledgement after expired tasks (#12595)
+### Incident Patch 1: `25e47f57` (2026-10-21)
+**Commit Message**: Add temporal_minimal build tag to compile out GCS archival (#12593)
 
 ## What changed?
-Advance the priority backlog reader's acknowledgement level across
-scanned ranges when no tasks remain outstanding, including when expired
-tasks have moved the read level ahead of the acknowledgement level.
-Preserve the stale-read guard and protection for unfinished tasks.
 
-Add deterministic regressions for expired tails with and without
-trailing ID gaps. Extend the existing drain test to verify that scanning
-a gap does not advance acknowledgement or reset the backlog count while
-tasks remain unfinished. Enable the expired-only priority backlog test.
+Added a `temporal_minimal` build tag.
+
+As the smallest possible example of the approach, it compiles out one
+integration: Google Cloud Storage archival. `temporal_with_gstorage`
+opts it back in.
+
+**The default build is unchanged.**
+
+CI tests both variants: `make unit-test-build-tags` re-runs the unit
+tests of every package with a `temporal_minimal`-constrained file (found
+automatically), and `make build-tags-check` compiles everything with
+`temporal_minimal` and checks which packages each `temporal_with_*` tag
+compiles out. See `docs/development/build-tags.md`.
 
 ## Why?
-Fixes #12472.
 
-If valid tasks finish before the reader scans an expired tail, or if all
-tasks have expired, the priority reader can leave acknowledgement stuck
-until another task is written and completed. Expired tasks advance the
-read level without entering the outstanding-task map, so requiring equal
-acknowledgement and read levels prevents further acknowledgement.
+Every server binary includes the Google Cloud Storage SDK, even when
+archival to GCS is never configured.
 
-This affects production queue behavior: the persisted acknowledgement
-level stays stale, expired tasks cannot be garbage-collected, and the
-approximate backlog count is not reset.
+|                    | default  | `temporal_minimal`          |
+| ------------------ | -------- | --------------------------- |
+| darwin/arm64       | 103.0 MB | 100.2 MB (−2.75 MB, −2.7%)  |
+| linux/amd64        | 107.7 MB | 105.0 MB (−2.76 MB, −2.6%)  |
+| packages compiled  | 1442     | 1407                        |
 
-**File**: `service/matching/backlog_manager_test.go` (modified, +62/-5)
+`cloud.google.com/go/storage` and `common/archiver/gcloud` leave the
+build entirely.
+
+**This might seem sma
+
+**File**: `.github/workflows/run-tests.yml` (modified, +7/-0)
 ```diff
-@@ -309,6 +309,8 @@ func (s *BacklogManagerTestSuite) TestApproximateBacklogCount_ResetOnDrained() {
- 	updateBacklogStatsForTest(db, 2, time.Time{})
- 	s.EqualValues(5, totalApproximateBacklogCount(s.blm))
+@@ -284,6 +284,13 @@ jobs:
+           export TEST_RUNNER_TIMEOUT="$(("$GITHUB_TIMEOUT" - 1))m"
+           ./develop/github/monitor_test.sh make unit-test-coverage
  
-+	_, ackLevelBeforeGap := blm.subqueues[subqueueZero].getLevels()
++      - name: Run unit tests with build tags
++        if: ${{ !cancelled() }}
++        timeout-minutes: ${{ fromJSON(env.GITHUB_TIMEOUT) }}
++        run: |
++          export TEST_RUNNER_TIMEOUT="$(("$GITHUB_TIMEOUT" - 1))m"
++          ./develop/github/monitor_test.sh make unit-test-build-tags
 +
- 	// Advance maxReadLevel past all task IDs to simulate a range renewal.
- 	// After direct-add, readLevel == old maxReadLevel == last task ID.
- 	maxRL := db.GetMaxReadLevel(subqueueZero) + 100
-@@ -324,6 +326,12 @@ func (s *BacklogManagerTestSuite) TestApproximateBacklogCount_ResetOnDrained() {
- 		return rl >= maxRL
- 	}, 5*time.Second, 10*time.Millisecond)
- 
-+	// All three tasks are still unfinished, so only readLevel may advance.
-+	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
-+	s.Require().Equal(ackLevelBeforeGap, ackLevel)
-+	s.Require().Equal(ackLevelBeforeGap, s.dbAckLevel(blm))
-+	s.Require().EqualValues(5, totalApproximateBacklogCount(s.blm))
-+
- 	// Complete all tasks. On the last completion:
- 	// - outstandingTasks is empty
- 	// - readLevel >= maxReadLevel (pump already scanned)
-@@ -334,7 +342,7 @@ func (s *BacklogManagerTestSuite) TestApproximateBacklogCount_ResetOnDrained() {
- 		t.finish(taskFinishResult{consumedToken: true})
- 	}
- 
--	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
-+	_, ackLevel = blm.subqueues[subqueueZero].getLevels()
- 	s.Equal(ackLevel, maxRL)
- 
- 	s.Zero(totalApproximateBacklogCount(s.blm))
-@@ -495,13 +503,65 @@ func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_NoReloadSignalWhenCau
- 	}
- }
- 
-+func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTail() {
-+	s.testSetReadLevelAfterGapExpiredTail(2)
-+}
-+
-+func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTailWithGap() {
-+	s.testSetReadLevelAfterGapExpiredTail(100)
-+}
-+
-+func (s *BacklogManagerTestSuite) testSetReadLevelAfterGapExpiredTail(maxReadLevelOffset int64) {
-+	if s.fairness {
-+		s.T().Skip("this test is only for priority backlog manager")
-+	}
-+	s.setupToCaptureTasks()
-+	blm, tr, start := s.initPriReaderAtEnd()
-+
-+	tr.signalNewTasks(s.createTasksAt(blm, start+1))
-+	_, err := blm.db.CreateTasks(blm.tqCtx, []*writeTaskRequest{{
-+		subqueue:  subqueueZero,
-+		fairLevel: fairLevel{id: start + 2},
-+		taskInfo: &persistencespb.TaskInfo{
-+			CreateTime: timestamp.TimeNowPtrUtcAddSeconds(-3600),
-+			ExpiryTime: timestamp.TimeNowPtrUtcAddSeconds(-60),
-+		},
-+	}})
-+	s.Require().NoError(err)
-+	maxReadLevel := start + maxReadLevelOffset
-+	blm.db.setMaxReadLevelForTesting(subqueueZero, maxReadLevel)
-+
-+	// Complete the valid task before the reader scans the expired tail.
-+	tasks := s.capturedTasks()
-+	s.Require().Len(tasks, 1)
-+	tasks[0].finish(taskFinishResult{consumedToken: true})
-+	s.Require().Equal(start+1, s.dbAckLevel(blm))
-+
-+	batch, err := tr.getTaskBatch(blm.tqCtx)
-+	s.Require().NoError(err)
-+	s.Require().Len(batch.tasks, 1)
-+	tr.processTaskBatch(batch.tasks)
-+
-+	batch, err = tr.getTaskBatch(blm.tqCtx)
-+	s.Require().NoError(err)
-+	s.Require().Empty(batch.tasks)
-+	s.Require().True(batch.isReadBatchDone)
-+	tr.setReadLevelAfterGap(batch.readLevel)
-+
-+	readLevel, ackLevel := tr.getLevels()
-+	s.Require().Equal(maxReadLevel, readLevel)
-+	s.Require().Equal(maxReadLevel, ackLevel)
-+	s.Require().Equal(maxReadLevel, s.dbAckLevel(blm))
-+	s.Require().Zero(blm.db.getTotalApproximateBacklogCount())
-+}
-+
- // TestProcessTaskBatch_IgnoresAlreadyAckedTasks covers the other half of the same read/write
- // race: here the in-flight read does return the newly-written rows, but they get acked before the
- // pump processes them. outstandingTasks only remembers tasks above the ack level, so its dedup
- // check can't see them and they used to be dispatched and acked a second time.
- func (s *BacklogManagerTestSuite) TestProcessTaskBatch_IgnoresAlreadyAckedTasks() {
- 	if s.fairness {
--		s.T().Skip("only for fairness backlog manager")
-+		s.T().Skip("this test is only for priority backlog manager")
- 	}
- 	s.setupToCaptureTasks()
- 	blm, tr, start := s.initPriReaderAtEnd()
-@@ -738,9 +798,6 @@ func (s *BacklogManagerTestSuite) TestSkipExpiredTasks_ValidThenExpired() {
- }
- 
- func (s *BacklogManagerTestSuite) TestSkipExpiredTasks_AllExpired() {
--	if !s.fairness {
--		s.T().Skip("this case doesn't work with priTaskReader yet")
--	}
- 	s.testSkipExpiredTasks(10, expiredBlock(33))
- }
- 
+       - name: Post-test reporting
+         if: always()
+         uses: ./.github/actions/post-test-reporting
 ```
 
-**File**: `service/matching/pri_task_reader.go` (modified, +6/-7)
+**File**: `Makefile` (modified, +58/-5)
 ```diff
-@@ -493,13 +493,12 @@ func (tr *priTaskReader) setReadLevelAfterGap(newReadLevel int64) {
- 		tr.SignalTaskLoading()
- 		return
- 	}
--	if tr.ackLevel == tr.readLevel {
--		// This is called after we read a range and find no tasks. The range we read was tr.readLevel to newReadLevel.
--		// (We know this because nothing should change tr.readLevel except the getTasksPump loop itself, after initialization.
--		// And getTasksPump doesn't start until it gets a signal from taskWriter that it's initialized the levels.)
--		// If we've acked all tasks up to tr.readLevel, and there are no tasks between that and newReadLevel, then we've
--		// acked all tasks up to newReadLevel too. This lets us advance the ack level on a task queue with no activity
--		// but where the rangeid has moved higher, to prevent excessive reads on the next load.
-+	if tr.outstandingTasks.Empty() {
-+		// The scan found no tasks in (tr.readLevel, newReadLevel]. The stale-read guard above
-+		// handles signalNewTasks advancing readLevel during that scan. Tasks through readLevel
-+		// are already acked, expired, or in outstandingTasks, so an empty map means everything
-+		// through newReadLevel can be acknowledged. This also advances idle queues over gaps
-+		// left by range ID changes.
- 		tr.ackLevel = newReadLevel
- 		// Push the updated ack level to the db. If we didn't do this here, the updated ack level
- 		// wouldn't reach the db until another task is written and acked, which could be far in the
+@@ -18,6 +18,7 @@ ci-build-misc: \
+ 	shell-check \
+ 	goimports \
+ 	gomodtidy \
++	build-tags-check \
+ 	ensure-no-changes
+ 
+ # Delete all build artifacts
+@@ -49,9 +50,11 @@ VISIBILITY_DB ?= temporal_visibility
+ # gRPC client (storage.NewGRPCClient). Related issue: https://github.com/googleapis/google-cloud-go/issues/12343
+ ALL_BUILD_TAGS := disable_grpc_modules,$(BUILD_TAG)
+ ALL_TEST_TAGS := $(ALL_BUILD_TAGS),test_dep,$(TEST_TAG)
++MINIMAL_TEST_TAGS = $(ALL_TEST_TAGS),temporal_minimal
+ BUILD_TAG_FLAG := -tags $(ALL_BUILD_TAGS)
+ TEST_TAG_FLAG := -tags $(ALL_TEST_TAGS)
+ 
++
+ # 20 minutes is the upper bound defined for all tests. (Tests in CI take up to about 14:30 now)
+ # If you change this, also change .github/workflows/run-tests.yml!
+ # The timeout in the GH workflow must be larger than this to avoid GH timing out the action,
+@@ -133,6 +136,11 @@ UNIT_TEST_DIRS := $(filter-out $(FUNCTIONAL_TEST_ROOT)% $(FUNCTIONAL_TEST_XDC_RO
+ # Testcore unit tests are filtered out by the FUNCTIONAL_TEST_ROOT pattern, need to add them back manually.
+ UNIT_TEST_DIRS += $(TESTCORE_UNITTESTS)
+ endif
++
++# Packages with a file constrained by temporal_minimal.
++MINIMAL_DIRS := $(sort $(addprefix ./,$(dir $(shell git grep -lE '^//go:build .*temporal_minimal([^a-z0-9_]|$$)' -- '*.go'))))
++# The unit test packages among MINIMAL_DIRS.
++MINIMAL_UNIT_TEST_DIRS := $(filter $(UNIT_TEST_DIRS),$(MINIMAL_DIRS))
+ SYSTEM_WORKFLOWS_ROOT := ./service/worker
+ 
+ PINNED_DEPENDENCIES := \
+@@ -423,17 +431,24 @@ lint-code-fast:
+ 		$(MAKE) GOLANGCI_LINT_BASE_REV="$$base" LINT_CODE_TARGETS="$$targets" lint-code; \
+ 	fi
+ 
+-lint-code: $(GOLANGCI_LINT) $(ERRORTYPE)
+-	@printf $(COLOR) "Linting code..."
++# Lints the Go packages $(2) with the build tags $(1).
++define lint-go
+ 	@$(GOLANGCI_LINT) run \
+ 		--verbose \
+-		--build-tags $(ALL_TEST_TAGS) \
++		--build-tags $(1) \
+ 		--timeout 10m \
+ 		--fix=$(GOLANGCI_LINT_FIX) \
+ 		--new-from-rev=$(GOLANGCI_LINT_BASE_REV) \
+ 		--config=.github/.golangci.yml \
+-		$(LINT_CODE_TARGETS)
+-	@go vet -tags $(ALL_TEST_TAGS) -vettool="$(ERRORTYPE)" -style-check=false $(LINT_CODE_TARGETS)
++		$(2)
++	@go vet -tags $(1) -vettool="$(ERRORTYPE)" -style-check=false $(2)
++endef
++
++lint-code: $(GOLANGCI_LINT) $(ERRORTYPE)
++	@printf $(COLOR) "Linting code..."
++	$(call lint-go,$(ALL_TEST_TAGS),$(LINT_CODE_TARGETS))
++	@printf $(COLOR) "Linting code with temporal_minimal..."
++	$(call lint-go,$(MINIMAL_TEST_TAGS),$(MINIMAL_DIRS))
+ 
+ lint-yaml: $(YAMLFMT)
+ 	@printf $(COLOR) "Checking YAML formatting..."
+@@ -522,6 +537,39 @@ workflowcheck: $(WORKFLOWCHECK)
+ 		$(WORKFLOWCHECK) "$$dir" ; \
+ 	done
+ 
++comma := ,
++
++# Packages that temporal_minimal compiles out of the server unless the temporal_with_* build tag at the
++# end of the variable name is set. Each temporal_with_* tag needs one.
++EXCLUDED_PACKAGES_temporal_with_gstorage := cloud.google.com/go/storage go.temporal.io/server/common/archiver/gcloud
++
++# $(call server-deps,<tags>): the packages the server depends on when built with <tags>.
++server-deps = $(shell CGO_ENABLED=$(CGO_ENABLED) go list -tags $(ALL_BUILD_TAGS),$(1) -deps ./cmd/server)
++
++# $(call expect-deps,<tags>,<packages>): fails unless the server built with <tags> depends on all <packages>.
++expect-deps = $(if $(filter-out $(call server-deps,$(1)),$(2)),\
++	$(error Server built with tags "$(1)" doesn't depend on: $(filter-out $(call server-deps,$(1)),$(2))))
++
++# $(call reject-deps,<tags>,<packages>): fails if the server built with <tags> depends on any of <packages>.
++reject-deps = $(if $(filter $(2),$(call server-deps,$(1))),\
++	$(error Server built with tags "$(1)" depends on: $(filter $(2),$(call server-deps,$(1)))))
++
++# $(call check-build-tag,<tag>): temporal_minimal must compile the packages of <tag> out of the server,
++# and adding <tag> must bring them back.
++define check-build-tag
++$(if $(EXCLUDED_PACKAGES_$(1)),,$(error EXCLUDED_PACKAGES_$(1) is not set))
++$(call expect-deps,,$(EXCLUDED_PACKAGES_$(1)))
++$(call reject-deps,temporal_minimal,$(EXCLUDED_PACKAGES_$(1)))
++$(call expect-deps,temporal_minimal$(comma)$(1),$(EXCLUDED_PACKAGES_$(1)))
++endef
++
++# Compiles every package with temporal_minimal, and checks the packages each temporal_with_* tag
++# compiles out of the server.
++build-tags-check:
++	@printf $(COLOR) "Check build tags..."
++	CGO_ENABLED=$(CGO_ENABLED) go build -tags $(ALL_BUILD_TAGS),temporal_minimal ./...
++	$(foreach tag,$(sort $(shell git grep -ohE 'temporal_with_[a-z0-9_]+' -- '*.go')),$(call check-build-tag,$(tag)))
++
+ check: lint shell-check
+ 
+ ##### Tests #####
+@@ -597,6 +645,11 @@ unit-test-coverage: prepare-coverage-test
+ 	go run ./cmd/tools/test-runner test --gotestsum-path=$(GOTESTSUM) --max-attempts=$(MAX_TEST_ATTEMPTS) $(TEST_RUNNER_TIMEOUT_ARG) --junitfile=$(NEW_REPORT) -- \
+ 		$(COMPILED_TEST_ARGS) -coverprofile=$(NEW_COVER_PROFILE) $(UNIT_TEST_DIRS)
+ 
++# Runs the unit tests of MINIMAL_UNIT_TEST_DIRS with temporal_minimal.
++unit-test-build-tags:
++	$(if $(MINIMAL_UNIT_TEST_DIRS),,$(error No pack
+```
+
+**File**: `common/archiver/constants.go` (modified, +7/-0)
+```diff
+@@ -22,6 +22,13 @@ const (
+ 	ErrReasonHistoryMutated = "history was mutated"
+ )
+ 
++// URI schemes of the built-in archivers.
++const (
++	URISchemeFilestore = "file"
++	URISchemeS3store   = "s3"
++	URISchemeGstorage  = "gs"
++)
++
+ var (
+ 	// ErrInvalidURI is the error for invalid URI
+ 	ErrInvalidURI = errors.New("URI is invalid")
+```
+
+**File**: `common/archiver/filestore/history_archiver.go` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ import (
+ 
+ const (
+ 	// URIScheme is the scheme for the filestore implementation
+-	URIScheme = "file"
++	URIScheme = archiver.URISchemeFilestore
+ 
+ 	errEncodeHistory = "failed to encode history batches"
+ 	errMakeDirectory = "failed to make directory"
+```
+
+**File**: `common/archiver/gcloud/history_archiver.go` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ var (
+ 
+ const (
+ 	// URIScheme is the scheme for the gcloud storage implementation
+-	URIScheme = "gs"
++	URIScheme = archiver.URISchemeGstorage
+ 
+ 	targetHistoryBlobSize = 2 * 1024 * 1024 // 2MB
+ 	errEncodeHistory      = "failed to encode history batches"
+```
+
+**File**: `common/archiver/provider/provider.go` (modified, +8/-16)
+```diff
+@@ -8,7 +8,6 @@ import (
+ 
+ 	"go.temporal.io/server/common/archiver"
+ 	"go.temporal.io/server/common/archiver/filestore"
+-	"go.temporal.io/server/common/archiver/gcloud"
+ 	"go.temporal.io/server/common/archiver/s3store"
+ 	"go.temporal.io/server/common/config"
+ 	"go.temporal.io/server/common/log"
+@@ -147,20 +146,16 @@ func (p *archiverProvider) GetHistoryArchiver(scheme string) (historyArchiver ar
+ 
+ 	if historyArchiver == nil {
+ 		switch scheme {
+-		case filestore.URIScheme:
++		case archiver.URISchemeFilestore:
+ 			if p.historyArchiverConfigs.Filestore == nil {
+ 				return nil, ErrArchiverConfigNotFound
+ 			}
+ 			historyArchiver, err = filestore.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.Filestore)
+ 
+-		case gcloud.URIScheme:
+-			if p.historyArchiverConfigs.Gstorage == nil {
+-				return nil, ErrArchiverConfigNotFound
+-			}
+-
+-			historyArchiver, err = gcloud.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.Gstorage)
++		case archiver.URISchemeGstorage:
++			historyArchiver, err = p.newGstorageHistoryArchiver()
+ 
+-		case s3store.URIScheme:
++		case archiver.URISchemeS3store:
+ 			if p.historyArchiverConfigs.S3store == nil {
+ 				return nil, ErrArchiverConfigNotFound
+ 			}
+@@ -212,21 +207,18 @@ func (p *archiverProvider) GetVisibilityArchiver(scheme string) (archiver.Visibi
+ 
+ 	if visibilityArchiver == nil {
+ 		switch scheme {
+-		case filestore.URIScheme:
++		case archiver.URISchemeFilestore:
+ 			if p.visibilityArchiverConfigs.Filestore == nil {
+ 				return nil, ErrArchiverConfigNotFound
+ 			}
+ 			visibilityArchiver, err = filestore.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.Filestore)
+-		case s3store.URIScheme:
++		case archiver.URISchemeS3store:
+ 			if p.visibilityArchiverConfigs.S3store == nil {
+ 				return nil, ErrArchiverConfigNotFound
+ 			}
+ 			visibilityArchiver, err = s3store.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.S3store)
+-		case gcloud.URIScheme:
+-			if p.visibilityArchiverConfigs.Gstorage == nil {
+-				return nil, ErrArchiverConfigNotFound
+-			}
+-			visibilityArchiver, err = gcloud.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.Gstorage)
++		case archiver.URISchemeGstorage:
++			visibilityArchiver, err = p.newGstorageVisibilityArchiver()
+ 
+ 		default:
+ 			return nil, ErrUnknownScheme
+```
+
+**File**: `common/archiver/provider/provider_gstorage.go` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++//go:build !temporal_minimal || temporal_with_gstorage
++
++package provider
++
++import (
++	"go.temporal.io/server/common/archiver"
++	"go.temporal.io/server/common/archiver/gcloud"
++)
++
++func (p *archiverProvider) newGstorageHistoryArchiver() (archiver.HistoryArchiver, error) {
++	if p.historyArchiverConfigs.Gstorage == nil {
++		return nil, ErrArchiverConfigNotFound
++	}
++	return gcloud.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.Gstorage)
++}
++
++func (p *archiverProvider) newGstorageVisibilityArchiver() (archiver.VisibilityArchiver, error) {
++	if p.visibilityArchiverConfigs.Gstorage == nil {
++		return nil, ErrArchiverConfigNotFound
++	}
++	return gcloud.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.Gstorage)
++}
+```
+
+**File**: `common/archiver/provider/provider_gstorage_excluded.go` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++//go:build temporal_minimal && !temporal_with_gstorage
++
++package provider
++
++import (
++	"fmt"
++
++	"go.temporal.io/server/common/archiver"
++)
++
++// errGstorageExcluded is returned for the gs scheme, whose archiver is excluded from this build.
++// It doesn't mention the build tag because it can reach API clients.
++// Operators get the build tag from the config validation error instead.
++var errGstorageExcluded = fmt.Errorf("%w %q: Google Cloud Storage archival is not available on this server", ErrUnknownScheme, archiver.URISchemeGstorage)
++
++func (p *archiverProvider) newGstorageHistoryArchiver() (archiver.HistoryArchiver, error) {
++	return nil, errGstorageExcluded
++}
++
++func (p *archiverProvider) newGstorageVisibilityArchiver() (archiver.VisibilityArchiver, error) {
++	return nil, errGstorageExcluded
++}
 ```
 
 ---
 
-### Incident Patch 2: `d6a9890a` (2026-10-20)
-**Commit Message**: Fix Nexus API endpoint isolation in parallel outcome tests (#12619)
+### Incident Patch 2: `d1500492` (2026-10-21)
+**Commit Message**: Small fixes to backlog count tracking in fair backlog manager (#12566)
 
 ## What changed?
-Generate a fresh endpoint name for each start/cancel outcome subtest
-invocation.
+A few fixes to backlog count tracking in fairTaskReader:
+- Don't consider backlog count known after short read while there is a
+write pending, instead hold and re-check after the write completes
+(probably most important of the changes).
+- Track acksExcludedFromBacklog separately to handle out-of-order acks
+that race with backlog count switching to/from absolute to relative
+tracking.
+- testTaskManager checks context errors so it doesn't mess with backlog
+count after shutdown, and various places suppress logging context
+canceled errors.
 
 ## Why?
-Sibling dispatch subtests can share a cluster and reuse the endpoint
-name stored in their table row, causing endpoint registration to fail
-with “already registered”.
+Fix discrepancies in backlog count and make tests less flaky.
 
-**File**: `common/testing/testvars/test_vars.go` (modified, +6/-0)
+## How did you test it?
+- [ ] built
+- [ ] run locally and tested manually
+- [x] covered by existing tests
+- [x] added new unit test(s)
+- [ ] added new functional test(s)
+
+## Potential risks
+The changes are just to backlog count, which isn't critical.
+
+**File**: `service/matching/db.go` (modified, +5/-2)
 ```diff
-@@ -434,6 +434,12 @@ func (tv *TestVars) Service() string {
- 	return getOrCreate(tv, "service", tv.uniqueString, tv.stringNSetter)
- }
- 
-+func (tv *TestVars) NexusEndpointName() string {
-+	return getOrCreate(tv, "nexus_endpoint_name", func(key string) string {
-+		return "endpoint-" + tv.uuidString(key)
-+	}, unsupportedNSetter[string])
-+}
-+
- func (tv *TestVars) Operation() string {
- 	return getOrCreate(tv, "operation", tv.uniqueString, tv.stringNSetter)
- }
+@@ -13,6 +13,7 @@ import (
+ 	enumspb "go.temporal.io/api/enums/v1"
+ 	"go.temporal.io/api/serviceerror"
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
++	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/log/tag"
+ 	"go.temporal.io/server/common/metrics"
+@@ -711,7 +712,8 @@ func (db *taskQueueDB) CompleteTasksLessThan(
+ 		Subqueue:           int(subqueue),
+ 		Limit:              limit,
+ 	})
+-	if err != nil {
++	// Context canceled is expected if the task queue unloads during a GC.
++	if err != nil && !common.IsContextCanceledErr(err) {
+ 		db.logger.Error("Persistent store operation failure",
+ 			tag.StoreOperationCompleteTasksLessThan,
+ 			tag.Error(err),
+@@ -752,7 +754,8 @@ func (db *taskQueueDB) CompleteFairTasksLessThan(
+ 		ConditionRangeID: db.rangeID,
+ 	})
+ 	// ConditionFailedError means we lost ownership: not a store failure, caller will unload.
+-	if _, lostOwnership := errors.AsType[*persistence.ConditionFailedError](err); err != nil && !lostOwnership {
++	// Context canceled is expected if the task queue unloads during a GC.
++	if _, lostOwnership := errors.AsType[*persistence.ConditionFailedError](err); err != nil && !lostOwnership && !common.IsContextCanceledErr(err) {
+ 		db.logger.Error("Persistent store operation failure",
+ 			tag.StoreOperationCompleteTasksLessThan,
+ 			tag.Error(err),
 ```
 
-**File**: `tests/nexus_api_test.go` (modified, +27/-33)
+**File**: `service/matching/fair_task_reader.go` (modified, +36/-7)
 ```diff
-@@ -86,7 +86,6 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
- 		},
+@@ -45,6 +45,10 @@ type (
+ 		ackLevel         fairLevel                      // inclusive: task exactly at ackLevel _has_ been acked
+ 		atEnd            bool                           // whether we believe outstandingTasks represents the entire queue right now
+ 
++		// Completed tasks already excluded by a backlog count reset. Consume these before
++		// applying ack deltas to avoid subtracting the same completions twice.
++		acksExcludedFromBacklog int64
++
+ 		// Small cache of acked task levels that were evicted from outstandingTasks. When tasks
+ 		// are evicted from memory, we lose track of which ones were already acked. This cache
+ 		// helps avoid reprocessing tasks that we know were already acked but whose ack was
+@@ -268,6 +272,7 @@ func (tr *fairTaskReader) readTasksImpl() {
+ 		// ack level would have been pinned here, we may be able to advance it now (if it's not
+ 		// explicitly pinned by another write)
+ 		tr.advanceAckLevelLocked()
++		tr.maybeResetBacklogCountLocked()
  	}
- 	handlerNexusLink := commonnexus.ConvertLinkWorkflowEventToNexusLink(handlerLink)
--	asyncSuccessEndpoint := testcore.RandomizeStr("test-endpoint")
  
- 	operationErrorOutcome := "operation_error"
- 	if useTemporalFailures {
-@@ -96,7 +95,6 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
- 	type testcase struct {
- 		name           string
- 		outcome        string
--		endpointName   string
- 		timeout        time.Duration
- 		handler        nexusTaskHandler
- 		assertion      func(*NexusApiTestSuite, *nexusrpc.ClientStartOperationResponse[string], error, http.Header)
-@@ -105,10 +103,9 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+ 	// If a backoff timer fired while readPending was still true, its maybeReadTasksLocked call
+@@ -555,10 +560,8 @@ func (tr *fairTaskReader) mergeTasksLocked(tasks []*persistencespb.AllocatedTask
+ 		tr.atEnd = true
+ 	}
  
- 	testCases := []testcase{
- 		{
--			name:         "sync_success",
--			outcome:      "sync_success",
--			endpointName: testcore.RandomizeStr("test-endpoint"),
--			handler:      nexusEchoHandler,
-+			name:    "sync_success",
-+			outcome: "sync_success",
-+			handler: nexusEchoHandler,
- 			assertion: func(s *NexusApiTestSuite, res *nexusrpc.ClientStartOperationResponse[string], err error, headers http.Header) {
- 				s.NoError(err)
- 				s.Equal("input", res.Successful)
-@@ -118,11 +115,9 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
- 			name:           "async_success",
- 			outcome:        "async_success",
- 			onlyByEndpoint: true,
--			endpointName:   asyncSuccessEndpoint,
- 			handler: func(t *testing.T, res *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
- 				// Choose an arbitrary test case to assert that all of the input is delivered to the
- 				// poll response.
--				require.Equal(t, asyncSuccessEndpoint, res.Request.Endpoint)
- 				start := res.Request.Variant.(*nexuspb.Request_StartOperation).StartOperation
- 				require.Equal(t, op.Name(), start.Operation)
- 				require.Equal(t, "http://localhost/callback", start.Callback)
-@@ -146,9 +141,8 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
- 			},
- 		},
- 		{
--			name:         "operation_error",
--			outcome:      operationErrorOutcome,
--			endpointName: testcore.RandomizeStr("test-endpoint"),
-+			name:    "operation_error",
-+			outcome: operationErrorOutcome,
- 			handler: func(_ *testing.T, _ *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
- 				return nil, &nexus.OperationError{
- 					State: nexus.OperationStateFailed,
-@@ -198,9 +192,8 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
- 			},
- 		},
- 		{
--			name:         "handler_error",
--			outcome:      "handler_error:INTERNAL",
--			endpointName: testcore.RandomizeStr("test-endpoint"),
-+			name:    "handler_error",
-+			outcome: "handler_error:INTERNAL",
- 			handler: func(_ *testing.T, _ *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
- 				return nil, &nexus.HandlerError{
- 					Type: nexus.HandlerErrorTypeInternal,
-@@ -221,9 +214,8 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
- 			},
- 		},
- 		{
--			name:         "handler_error_non_retryable",
--			outcome:      "handler_error:INTERNAL",
--			endpointName: testcore.RandomizeStr("test-endpoint"),
-+			name:    "handler_error_non_retryable",
-+			outcome: "handler_error:INTERNAL",
- 			handler: func(_ *testing.T, _ *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
- 				return nil, &nexus.HandlerError{
- 					Type:          nexus.HandlerErrorTypeInternal,
-@@ -245,10 +237,9 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
- 			},
- 		},
- 		{
--			name:         "handler_timeout",
--			outcome:      "handler_timeout",
--			endpointName: testcore.RandomizeStr("test-service"),
--			timeout:      2 * time.Second,
-+			name:    "handler_timeout",
-+			outcome: "handler_timeout",
-+			timeout: 2 * time.Second,
- 			handler: func(t *testing.T, res *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
- 				timeoutStr, set := res.Request.Header[nexus.HeaderRequestTimeout]
- 				require.True(t, set)
-@@ -273,10 +264,15 @@ func (s *NexusApiTestSuite) TestNexusStartOperation_Outcomes(useTemporalFailures
+-	// If we're at the end, then outstandingTasks is the whole queue so we can set count.
+-	if count := tr.knownCountLocked(); count >= 0 {
+-		tr.backlogMgr.db.setKnownFairBacklogCount(tr.subqueue, count)
+-	}
++	// If we're at the end and all writes are accounted for, we can set the count.
++	tr.maybeResetBacklogCountLocked()
  
- 	testFn := func(s *NexusApiTestSuite, tc testcase, dispatchOnlyByEndpoint bool) {
- 		env := newNexusTestEnv(s.T(), useTemporalFailures)
--		endpoint := env.createNexusEndpoint(s.Context(), s.T(), tc.endpointName, testcore.RandomizeStr("task-queue"))
-+		endpoint := env.createNexusEndpoint(s.Context(), s.T(), env.Tv().NexusEndpointName(), env.Tv().TaskQueue().Name)
- 		var dispatchURL string
- 		if dispatchOnlyByEndpoint {
- 			dispatchURL = env.dispatchByEndpointURL(endpoint.Id)
-+			originalHandler := tc.handler
-+			tc.handler = func(t *testing.T, res *workflowservice.PollNexusTaskQueueResponse) (*nexusTaskResponse, error) {
-+				require.Equal(t, env.Tv().NexusEndpointName(), res.Request.Endpoint)
-+				re
+ 	return created
+ 
+@@ -602,6 +605,9 @@ func (tr *fairTaskReader) isDrained() bool {
+ 	return tr.atEnd && tr.loadedTasks == 0
+ }
+ 
++// Returns true if the ack level is pinned (which happens during the whole lifecycle of a
++// write, so we ensure we don't delete just-written tasks), or if it's unpinned but we haven't
++// merged the tasks that were just written into outstandingTasks yet.
+ func (tr *fairTaskReader) ackLevelPinnedLocked() bool {
+ 	return tr.ackLevelPinnedByWriter || len(tr.newlyWrittenTasks) > 0
+ }
+@@ -629,8 +635,13 @@ func (tr *fairTaskReader) advanceAckLevelLocked() {
+ 		tr.numToGC += int(numAcked)
+ 		tr.maybeGCLocked()
+ 
++		// Apply the exclusions to the next acks. If these are different tasks,
++		// the estimate remains conservative until the excluded tasks are acked.
++		excluded := min(numAcked, tr.acksExcludedFromBacklog)
++		tr.acksExcludedFromBacklog -= excluded
++		countDelta := excluded - numAcked
+ 		tr.backlogMgr.db.updateFairAckLevel(
+-			tr.subqueue, tr.ackLevel, -numAcked, tr.knownCountLocked(), tr.backlogAge.oldestTime())
++			tr.subqueue, tr.ackLevel, countDelta, tr.knownCountForResetLocked(), tr.backlogAge.oldestTime())
+ 	}
+ }
+ 
+@@ -658,6 +669,7 @@ func (tr *fairTaskReader) unpinAckLevel(writeErr error) {
+ 	softassert.That(tr.logger, tr.ackLevelPinnedByWriter, "ack level wasn't pinned")
+ 	tr.ackLevelPinnedByWriter = false
+ 	tr.advanceAckLevelLocked()
++	tr.maybeResetBacklogCountLocked()
+ }
+ 
+ func (tr *fairTaskReader) getLevels() (readLevel, ackLevel fairLevel) {
+@@ -666,13 +678,30 @@ func (tr *fairTaskReader) getLevels() (readLevel, ackLevel fairLevel) {
+ 	return tr.readLevel, tr.ackLevel
+ }
+ 
+-func (tr *fairTaskReader) knownCountLocked() int64 {
+-	if tr.atEnd {
++// knownCountForResetLocked returns the backlog count if we know it, or -1 if we don't. The
++// caller must write a known count to the db: it excludes completed tasks above the ack level,
++// so this also records those in acksExcludedFromBacklog.
++func (tr *fairTaskReader) knownCountForResetLocked() int64 {
++	// Pending writes may have incremented the backlog count without being merged into
++	// outstandingTasks yet. Do not overwrite their increments with the reader's count.
++	if tr.atEnd && !tr.ackLevelPinnedLocked() {
++		tr.acksExcludedFromBacklog = tr.completedTaskCountLocked()
+ 		return int64(tr.loadedTasks)
+ 	}
+ 	return -1
+ }
+ 
++func (tr *fairTaskReader) maybeResetBacklogCountLocked() {
++	if count := tr.knownCountForResetLocked(); count >= 0 {
++		tr.backlogMgr.db.setKnownFairBacklogCount(tr.subqueue, count)
++	}
++}
++
++// completedTaskCountLocked counts known completions above the ack level, including evicted acks.
++func (tr *fairTaskReader) completedTaskCountLocked() int64 {
++	return int64(tr.outstandingTasks.Len() - tr.loadedTasks + tr.evictedAcks.Len())
++}
++
+ // gc
+ 
+ func (tr *fairTaskReader) maybeGCLocked() {
+```
+
+**File**: `service/matching/fair_task_reader_test.go` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++package matching
++
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++	enumspb "go.temporal.io/api/enums/v1"
++	persistencespb "go.temporal.io/server/api/persistence/v1"
++	"go.temporal.io/server/common/dynamicconfig"
++	"go.temporal.io/server/common/metrics"
++	"go.temporal.io/server/common/testing/testlogger"
++	"go.uber.org/mock/gomock"
++)
++
++func TestFairTaskReaderBacklogCountWithPendingWrite(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		name         string
++		batchSize    int
++		initialCount int64
++		deferWrites  bool
++		writerUnpins bool
++	}{
++		{name: "write awaiting notification across batch boundary", batchSize: 3, initialCount: 4},
++		{name: "buffered write across batch boundary", batchSize: 3, initialCount: 4, deferWrites: true},
++		{name: "unpinned buffered write across batch boundary", batchSize: 3, initialCount: 4, deferWrites: true, writerUnpins: true},
++		{name: "write awaiting notification with count drift", batchSize: 5, initialCount: 6},
++		{name: "buffered write with count drift", batchSize: 5, initialCount: 6, deferWrites: true},
++		{name: "unpinned buffered write with count drift", batchSize: 5, initialCount: 6, deferWrites: true, writerUnpins: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			reader, blm := newBacklogCountTestReader(t, tc.batchSize, tc.initialCount)
++			tasks := newBacklogCountTestTasks(4)
++
++			// The read fetched two tasks before a concurrent write persisted two more.
++			// Hold notifications as the read loop does, without starting background goroutines.
++			// Calling readTasksImpl directly below relies on it not starting another read: either
++			// we're at the end, or loadedTasks exceeds GetTasksReloadAt (0). A real read would hit
++			// the nil persistence store.
++			reader.getAndPinAckLevel()
++			reader.readPending = true
++			if tc.deferWrites {
++				reader.wroteNewTasks(tasks[2:])
++			}
++			if tc.writerUnpins {
++				reader.unpinAckLevel(nil)
++			}
++
++			reader.lock.Lock()
++			reader.mergeTasksLocked(tasks[:2], mergeReadToEnd)
++			reader.lock.Unlock()
++			require.Equal(t, tc.initialCount, blm.db.getTotalApproximateBacklogCount(), "a short read must not overwrite the concurrent write's increment")
++
++			// Finish the write notification and merge any buffered tasks as the read loop does.
++			if tc.deferWrites {
++				reader.readTasksImpl()
++			} else {
++				reader.readPending = false
++				reader.wroteNewTasks(tasks[2:])
++			}
++			if !tc.writerUnpins {
++				reader.unpinAckLevel(nil)
++			}
++			require.Equal(t, min(4, tc.batchSize), reader.getLoadedTasks())
++			require.Equal(t, tc.batchSize >= 4, reader.atEnd)
++			require.EqualValues(t, 4, blm.db.getTotalApproximateBacklogCount())
++		})
++	}
++}
++
++func TestFairTaskReaderBacklogCountAfterOutOfOrderCompletion(t *testing.T) {
++	t.Parallel()
++
++	reader, blm := newBacklogCountTestReader(t, 3, 3)
++	tasks := newBacklogCountTestTasks(5)
++	finish := func(id int64) {
++		t.Helper()
++		entry, ok := reader.outstandingTasks.Get(outstandingTask{level: fairLevel{pass: 1, id: id}})
++		require.True(t, ok)
++		require.NotNil(t, entry.task)
++		entry.task.finish(taskFinishResult{consumedToken: true})
++	}
++	write := func(task *persistencespb.AllocatedTaskInfo) {
++		reader.getAndPinAckLevel()
++		updateBacklogStatsForTest(blm.db, 1, time.Time{})
++		reader.wroteNewTasks([]*persistencespb.AllocatedTaskInfo{task})
++		reader.unpinAckLevel(nil)
++	}
++
++	reader.mergeTasks(tasks[:3], mergeReadToEnd)
++	// Task 3 completes before tasks 1 and 2, so the ack level can't advance yet.
++	finish(3)
++	write(tasks[3])
++	require.True(t, reader.atEnd)
++	// The reset excludes completed task 3 from worker demand even though it remains in the DB.
++	require.EqualValues(t, 3, blm.db.getTotalApproximateBacklogCount())
++
++	// Another write exceeds the batch capacity, so subsequent acknowledgements use deltas.
++	write(tasks[4])
++	require.False(t, reader.atEnd)
++	finish(1)
++	// Until the previously excluded ack advances the ack level, the estimate may be conservative.
++	require.GreaterOrEqual(t, blm.db.getTotalApproximateBacklogCount(), int64(3))
++	finish(2)
++	// Tasks 4 and 5 are still pending. Task 3 must not be subtracted a second time.
++	require.EqualValues(t, 2, blm.db.getTotalApproximateBacklogCount())
++}
++
++// newBacklogCountTestReader returns a reader whose backlog manager has no persistence store, so
++// tests must not trigger reads or GC. GC is configured to effectively never run.
++func newBacklogCountTestReader(t *testing.T, batchSize int, initialCount int64) (*fairTaskReader, *fairBacklogManagerImpl) {
++	t.Helper()
++
++	logger := testlogger.NewTestLogger(t, testlogger.FailOnAnyUnexpectedError)
++	config := defaultTestConfig()
++	config.GetTasksBatchSize = dynamicconfig.GetIntPropertyFnFilteredByTaskQueue(batchSize)
++	config.GetTasksReloadAt = dynamicconfig.GetIntPropertyFnFilteredByTaskQueue(0)
++	config.MaxTaskDeleteBatchSize = dynamicconfig.GetIntPropertyFnFilteredByTaskQueue(10
+```
+
+**File**: `service/matching/fair_task_writer.go` (modified, +4/-1)
+```diff
+@@ -245,7 +245,10 @@ func (w *fairTaskWriter) writeBatch(reqs []*writeTaskRequest) (retErr error) {
+ 	if err == nil {
+ 		w.backlogMgr.wroteNewTasks(resp) // must be called before unpin()
+ 	} else {
+-		w.logger.Error("Persistent store operation failure", tag.StoreOperationCreateTask, tag.Error(err))
++		// Context canceled is expected if the task queue unloads during a write.
++		if !common.IsContextCanceledErr(err) {
++			w.logger.Error("Persistent store operation failure", tag.StoreOperationCreateTask, tag.Error(err))
++		}
+ 		w.backlogMgr.signalIfFatal(err)
+ 	}
+ 	return err
+```
+
+**File**: `service/matching/matching_engine_test.go` (modified, +57/-20)
+```diff
+@@ -3715,23 +3715,36 @@ func (s *matchingEngineSuite) concurrentPublishAndConsumeValidateBacklogCounter(
+ 	wg.Wait()
+ 
+ 	ptqMgr := s.getPhysicalTaskQueueManagerImplFromKey(ptq)
+-	backlogCount := totalApproximateBacklogCount(ptqMgr.backlogMgr)
+-
+-	// Only count tasks above the ack level: acked tasks may not have been gc'ed yet.
+ 	db := ptqMgr.backlogMgr.getDB()
+-	db.Lock()
+-	ackLevel := fairLevel{id: db.subqueues[subqueueZero].AckLevel}
+-	if s.fairness {
+-		ackLevel = fairLevelFromProto(db.subqueues[subqueueZero].FairAckLevel)
+-	}
+-	db.Unlock()
+-	dbTasks := int64(s.taskManager.getTaskCountAbove(ptq, ackLevel))
+-
+ 	if s.fairness {
+-		// Relax this condition for fairBacklogManager: it can sometimes reset backlog count on
+-		// read, making it more accurate in theory, but breaking this test's assumptions.
+-		s.InDelta(dbTasks, backlogCount, 2)
++		bm := ptqMgr.backlogMgr.(*fairBacklogManagerImpl)
++		bm.subqueueLock.Lock()
++		tr := bm.subqueues[subqueueZero]
++		bm.subqueueLock.Unlock()
++		tr.lock.Lock()
++		defer tr.lock.Unlock()
++
++		db.Lock()
++		backlogCount := db.subqueues[subqueueZero].ApproximateBacklogCount
++		ackLevel := fairLevelFromProto(db.subqueues[subqueueZero].FairAckLevel)
++		db.Unlock()
++		dbTasks := int64(s.taskManager.getTaskCountAbove(ptq, ackLevel))
++		completedTasks := tr.completedTaskCountLocked()
++
++		// Completed tasks above the ack level may already be excluded from the estimate.
++		// Require enough backlog for the remaining dispatches, allowing a conservative overestimate.
++		s.LessOrEqual(completedTasks, dbTasks)
++		s.GreaterOrEqual(backlogCount, dbTasks-completedTasks)
++		// This upper bound only holds because these tests don't inject CreateTasks faults.
++		// A write that fails without definitely failing (e.g. Unavailable) leaves the count
++		// incremented even if no task was written, so the count could legitimately exceed dbTasks.
++		s.LessOrEqual(backlogCount, dbTasks)
+ 	} else {
++		backlogCount := totalApproximateBacklogCount(ptqMgr.backlogMgr)
++		db.Lock()
++		ackLevel := fairLevel{id: db.subqueues[subqueueZero].AckLevel}
++		db.Unlock()
++		dbTasks := int64(s.taskManager.getTaskCountAbove(ptq, ackLevel))
+ 		s.LessOrEqual(dbTasks, backlogCount)
+ 	}
+ }
+@@ -5138,12 +5151,16 @@ func (q *testQueueData) persistenceStats() testQueuePersistenceStats {
+ }
+ 
+ func (m *testTaskManager) CreateTaskQueue(
+-	_ context.Context,
++	ctx context.Context,
+ 	request *persistence.CreateTaskQueueRequest,
+ ) (*persistence.CreateTaskQueueResponse, error) {
+ 	tli := request.TaskQueueInfo
+ 	tlm := m.getQueueData(tli.Name, tli.NamespaceId, tli.TaskType)
+ 
++	if ctx.Err() != nil {
++		return nil, ctx.Err()
++	}
++
+ 	m.delay()
+ 	defer m.delay()
+ 
+@@ -5163,12 +5180,16 @@ func (m *testTaskManager) CreateTaskQueue(
+ }
+ 
+ func (m *testTaskManager) UpdateTaskQueue(
+-	_ context.Context,
++	ctx context.Context,
+ 	request *persistence.UpdateTaskQueueRequest,
+ ) (*persistence.UpdateTaskQueueResponse, error) {
+ 	tli := request.TaskQueueInfo
+ 	tlm := m.getQueueData(tli.Name, tli.NamespaceId, tli.TaskType)
+ 
++	if ctx.Err() != nil {
++		return nil, ctx.Err()
++	}
++
+ 	m.delay()
+ 	defer m.delay()
+ 
+@@ -5188,9 +5209,13 @@ func (m *testTaskManager) UpdateTaskQueue(
+ }
+ 
+ func (m *testTaskManager) GetTaskQueue(
+-	_ context.Context,
++	ctx context.Context,
+ 	request *persistence.GetTaskQueueRequest,
+ ) (*persistence.GetTaskQueueResponse, error) {
++	if ctx.Err() != nil {
++		return nil, ctx.Err()
++	}
++
+ 	tlm := m.getQueueData(request.TaskQueue, request.NamespaceID, request.TaskType)
+ 	tlm.Lock()
+ 	defer tlm.Unlock()
+@@ -5219,7 +5244,7 @@ func (m *testTaskManager) getTaskCountAbove(q *PhysicalTaskQueueKey, level fairL
+ }
+ 
+ func (m *testTaskManager) CompleteTasksLessThan(
+-	_ context.Context,
++	ctx context.Context,
+ 	request *persistence.CompleteTasksLessThanRequest,
+ ) (int, error) {
+ 	if m.fairness && request.ExclusiveMaxPass < 1 {
+@@ -5228,6 +5253,10 @@ func (m *testTaskManager) CompleteTasksLessThan(
+ 		return 0, serviceerror.NewInternal("invalid CompleteTasksLessThan request on queue")
+ 	}
+ 
++	if ctx.Err() != nil {
++		return 0, ctx.Err()
++	}
++
+ 	m.delay()
+ 	defer m.delay()
+ 
+@@ -5293,14 +5322,18 @@ func (m *testTaskManager) fault(method, err string) bool {
+ }
+ 
+ func (m *testTaskManager) CreateTasks(
+-	_ context.Context,
++	ctx context.Context,
+ 	request *persistence.CreateTasksRequest,
+ ) (*persistence.CreateTasksResponse, error) {
+ 	namespaceID := request.TaskQueueInfo.Data.GetNamespaceId()
+ 	taskQueue := request.TaskQueueInfo.Data.Name
+ 	taskType := request.TaskQueueInfo.Data.TaskType
+ 	rangeID := request.TaskQueueInfo.RangeID
+ 
++	if ctx.Err() != nil {
++		return nil, ctx.Err()
++	}
++
+ 	m.delay()
+ 	defer m.delay()
+ 
+@@ -5366,7 +5399,7 @@ func (m *testTaskManager) CreateTasks(
+ }
+ 
+ func (m *testTaskManager) GetTasks(
+-	_ context.Context,
++	ctx context.Context,
+ 	request *persistence.GetTasksRequest,
+ ) (*persistence.GetTasksResponse, error) {
+ 	m.logger.Debug("testTaskManager.GetTasks", tag.Value(request))
+@@ -5377,6 +5410,10 @@ func (m 
+```
+
+**File**: `service/matching/pri_task_writer.go` (modified, +8/-5)
+```diff
+@@ -128,11 +128,14 @@ func (w *priTaskWriter) appendTasks(reqs []*writeTaskRequest) error {
+ 	resp, err := w.db.CreateTasks(w.backlogMgr.tqCtx, reqs)
+ 	if err != nil {
+ 		w.backlogMgr.signalIfFatal(err)
+-		w.logger.Error("Persistent store operation failure",
+-			tag.StoreOperationCreateTask,
+-			tag.Error(err),
+-			tag.WorkflowTaskQueueName(w.backlogMgr.queueKey().PersistenceName()),
+-			tag.WorkflowTaskQueueType(w.backlogMgr.queueKey().TaskType()))
++		// Context canceled is expected if the task queue unloads during a write.
++		if !common.IsContextCanceledErr(err) {
++			w.logger.Error("Persistent store operation failure",
++				tag.StoreOperationCreateTask,
++				tag.Error(err),
++				tag.WorkflowTaskQueueName(w.backlogMgr.queueKey().PersistenceName()),
++				tag.WorkflowTaskQueueType(w.backlogMgr.queueKey().TaskType()))
++		}
+ 		return err
+ 	}
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12631** (closed): Log malformed Nexus requests from non-server senders at warn (@stephanos)
-- **PR #12629** (closed): Document pending activity start time semantics (@wenlong-gu)
-- **PR #12628** (2026-10-20): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12623** (2026-10-20): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12621** (closed): Fix enhanced DescribeTaskQueue cache isolation and partial refreshes (@stephanos)
-- **PR #12619** (2026-10-20): Fix Nexus API endpoint isolation in parallel outcome tests (@stephanos)
+- **PR #12674** (2026-10-22): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12668** (2026-10-22): WCP: Keep first transaction of a run in single batch (@simvlad)
+- **PR #12665** (closed):  Allow first transaction of workflow start to span multiple event batches (@simvlad)
+- **PR #12663** (2026-10-21): Log Nexus task queues with the generic task queue tag (@stephanos)
+- **PR #12660** (2026-10-21): Export callback validator provider (@rodrigozhou)
+- **PR #12653** (2026-10-21): Tag Nexus task queues with the Nexus task queue log tag (@stephanos)
 
 ---
 
@@ -2450,62 +2961,34 @@ with “already registered”.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. priority backlog acknowledgement after expired tasks (#12595)
+## X. Add temporal_minimal build tag to compile out GCS archival (#12593)
 
 **RULE**:
-When implementing operations in `service/matching/backlog_manager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/run-tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4fa3ed47`: priority backlog acknowledgement after expired tasks (#12595). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25e47f57`: Add temporal_minimal build tag to compile out GCS archival (#12593). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/matching/backlog_manager_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/run-tests.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	_, ackLevelBeforeGap := blm.subqueues[subqueueZero].getLevels()
+      - name: Run unit tests with build tags
+        if: ${{ !cancelled() }}
+        timeout-minutes: ${{ fromJSON(env.GITHUB_TIMEOUT) }}
+        run: |
+          export TEST_RUNNER_TIMEOUT="$(("$GITHUB_TIMEOUT" - 1))m"
+          ./develop/github/monitor_test.sh make unit-test-build-tags
 
-	// All three tasks are still unfinished, so only readLevel may advance.
-	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
-	s.Require().Equal(ackLevelBeforeGap, ackLevel)
-	s.Require().Equal(ackLevelBeforeGap, s.dbAckLevel(blm))
-	s.Require().EqualValues(5, totalApproximateBacklogCount(s.blm))
-
-	_, ackLevel = blm.subqueues[subqueueZero].getLevels()
-func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTail() {
-	s.testSetReadLevelAfterGapExpiredTail(2)
-}
-
-func (s *BacklogManagerTestSuite) TestSetReadLevelAfterGap_ExpiredTailWithGap() {
-	s.testSetReadLevelAfterGapExpiredTail(100)
-}
-
-func (s *BacklogManagerTestSuite) testSetReadLevelAfterGapExpiredTail(maxReadLevelOffset int64) {
-	if s.fairness {
-		s.T().Skip("this test is only for priority backlog manager")
-	}
-	s.setupToCaptureTasks()
-	blm, tr, start := s.initPriReaderAtEnd()
-
-	tr.signalNewTasks(s.createTasksAt(blm, start+1))
-	_, err := blm.db.CreateTasks(blm.tqCtx, []*writeTaskRequest{{
-		subqueue:  subqueueZero,
-		fairLevel: fairLevel{id: start + 2},
-		taskInfo: &persistencespb.TaskInfo{
-			CreateTime: timestamp.TimeNowPtrUtcAddSeconds(-3600),
-			Expi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	_, ackLevel := blm.subqueues[subqueueZero].getLevels()
-		s.T().Skip("only for fairness backlog manager")
-	if !s.fairness {
-		s.T().Skip("this case doesn't work with priTaskReader yet")
-	}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4fa3ed47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25e47f57` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-WLK4",
-    "timestamp": "2026-10-20T12:31:13.444Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "3d4692956a873cb88cf2ed9775c74f1012306faa289450fc8a01c15ebb23cb33",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WOGQ",
-    "timestamp": "2026-10-20T12:31:17.210Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "b40c47b431ef0eb0e2dc62370b1bd818d48f1d3a72d80f894b547bc570502329",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-8RFE",
-    "timestamp": "2026-10-20T12:40:40.922Z",
-    "repository": "embassy-rs/embassy",
-    "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "a00d26e1f2615fb7a48cb549157126188d49f7a6905cf02679bb2beab408e1f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-8V2G",
-    "timestamp": "2026-10-20T12:40:45.640Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "6741cb9b95a52fba62b2674bf0b3665cc4e1dd73f12147054ab326c4fba52f48",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-8WU6",
     "timestamp": "2026-10-20T12:40:47.934Z",
     "repository": "kubeedge/kubeedge",
@@ -7490,6 +7430,66 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "d006dca895782abe03f7a688851765d5bbe1b802c8c702a359a450913869ac12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-0AIU",
+    "timestamp": "2026-10-22T15:53:23.526Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "783b2c721430e64d5420c22d7f47898e9ee5372bfbb6b5b7fca3aa189725deb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-0DQL",
+    "timestamp": "2026-10-22T15:53:27.693Z",
+    "repository": "duongductrong/Snapzy",
+    "learningId": "learn-github-duongductrong-snapzy",
+    "contentHash": "f59f194eaa7e72c4084bfd67d8e15406130dddc83cc7864f824ebec53167b633",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-0FDP",
+    "timestamp": "2026-10-22T15:53:29.821Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-0JAT",
+    "timestamp": "2026-10-22T15:53:34.901Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

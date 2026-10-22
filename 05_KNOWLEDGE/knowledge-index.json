@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T15:47:01.655Z",
+  "last_updated": "2026-10-22T15:53:34.846Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3071,8 +3071,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "2983c7c5",
-      "content_hash": "cc5ce361f321fb1701b30f2dfa7bbdc4cfa66c37dbc2d0715156847bf89bf85f",
+      "source_version": "59a9e85a",
+      "content_hash": "783b2c721430e64d5420c22d7f47898e9ee5372bfbb6b5b7fca3aa189725deb6",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3090,6 +3090,11 @@
           "number": 3326,
           "title": "Pin Codex workflows to the merged output-protection fix (#29541)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3616,
+          "title": "Update docker/build-push-action action to v7.4.0 (#29573)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3097,7 +3102,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:51:35.260Z",
+      "verified_at": "2026-10-22T15:53:23.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8626,14 +8631,19 @@
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "969b91d7",
-      "content_hash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
+      "source_version": "2ca2dae5",
+      "content_hash": "f59f194eaa7e72c4084bfd67d8e15406130dddc83cc7864f824ebec53167b633",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "promoted_rules": [
         {
           "number": 2826,
           "title": "Fixed capture remapped and consumed keystrokes (#539)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3617,
+          "title": "Unlock magnifier color panel and add magnifier size setting (#665)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8642,7 +8652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:38:27.349Z",
+      "verified_at": "2026-10-22T15:53:27.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45091,8 +45101,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "36c879e3",
-      "content_hash": "42fa5b38ca5a36358f1719a10b9c7d00d621ee55a76ae3ac708231bfd8e14fb4",
+      "source_version": "e8ee6271",
+      "content_hash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -45115,6 +45125,11 @@
           "number": 3401,
           "title": "priority backlog acknowledgement after expired tasks (#12595)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3618,
+          "title": "Add temporal_minimal build tag to compile out GCS archival (#12593)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45122,7 +45137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:47:14.914Z",
+      "verified_at": "2026-10-22T15:53:29.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46349,15 +46364,15 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "1123cc50",
-      "content_hash": "3c2be7c65f990d597339f715c9c5ce2ccefbecbd67b7c005ff7d04ba4501f983",
+      "source_version": "1790bac5",
+      "content_hash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
         {
           "number": 2047,
           "title": "Bump the web-ui-dependencies group",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 2664,
@@ -46380,7 +46395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:54:33.124Z",
+      "verified_at": "2026-10-22T15:53:34.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86587,13 +86602,13 @@
       "rule_number": 2047,
       "title": "Bump the web-ui-dependencies group",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "a966380e",
+      "source_version": "1790bac5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T02:55:08.272Z"
+      "verified_at": "2026-10-22T15:53:34.832Z"
     },
     "rule-2048": {
       "learning_id": "rule-2048",
@@ -109609,6 +109624,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T15:47:01.641Z"
+    },
+    "rule-3616": {
+      "learning_id": "rule-3616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3616,
+      "title": "Update docker/build-push-action action to v7.4.0 (#29573)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "59a9e85a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:53:23.446Z"
+    },
+    "rule-3617": {
+      "learning_id": "rule-3617",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3617,
+      "title": "Unlock magnifier color panel and add magnifier size setting (#665)",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "2ca2dae5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:53:27.623Z"
+    },
+    "rule-3618": {
+      "learning_id": "rule-3618",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3618,
+      "title": "Add temporal_minimal build tag to compile out GCS archival (#12593)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "e8ee6271",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:53:29.751Z"
     }
   },
   "aliases": {
