@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `1d8a29e1`  
+> **Source Version**: `c18e71c7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:43:19.332Z  
+> **Timestamp**: 2026-10-22T16:38:41.420Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:43:19.059Z  
+> **Harvest Timestamp**: 2026-10-22T16:38:39.804Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 91959 stars
+- **Stars / Engagement**: 92050 stars
 
 ---
 
@@ -321,6 +321,18 @@ fn reindex_after_removal(index: usize, removed: &Range<usize>) -> Option<usize> 
     }
 }
 
+/// How much of a tool call's content to materialize while syncing an entry.
+#[derive(Clone, Copy)]
+enum ToolCallSync {
+    /// Live updates: materialize visible content and run terminal lifecycle.
+    Live,
+    /// Thread restore: skip content that is not visible.
+    Restore,
+    /// First view after expansion: materialize without re-running terminal
+    /// lifecycle, which would collapse the card again.
+    Materialize,
+}
+
 pub struct EntryViewState {
     workspace: WeakEntity<Workspace>,
     project: WeakEntity<Project>,
@@ -520,21 +532,13 @@ impl EntryViewState {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) {
-        let Some(thread_entry) = thread.read(cx).entries().get(index) else {
-            return;
-        };
+        self.sync_entry_inner(index, thread, window, ToolCallSync::Live, cx);
+    }
 
-        match thread_entry {
-            AgentThreadEntry::UserMessage(message) => {
-                let can_rewind = thread
-                    .read(cx)
-                    .can_rewind_to(message.client_id.as_ref(), cx);
-                let source_blocks = message.content.source_blocks();
-                let source_version = message.content.source_version();
-                let source_is_representable = source_blocks
-                    .iter()
-                    .all(acp_thread::content::can_convert_to_v1);
-                let is_editable = can_rewind && source_is_repre
+    /// Like [`Self::sync_entry`], but skips the views of tool calls that are not
+    /// visible. Used when restoring a thread's history.
+    pub fn sync_entry_initial(
+   
 ```
 
 ### Core Architecture Module: `crates/benchmarks/benches/editor_render.rs`
@@ -2314,14 +2318,7 @@ fn score_against_expected_patch(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40276** (2026-08-28): **Windows Beta: SSH connection sometimes fails because askpass script does not exist**
-  *Symptoms*: ### Summary  Attempting to SSH to a linux host results in "failed to run command: ssh_askpass: exec(powershell.exe -ExecutionPolicy Bypass -File C:\\Users\\<User>\\AppData\\Local\\Temp\\zed-askpassTWz1QF\\askpass.ps1" No Such file or directory". Inspecting the AppData Local Temp directory I can indeed confirm that directory does not exist, and there is no ps1 file in it.  ### Description  Steps to trigger the problem: 1. Install Zed Nightly 0.210.0 0c08bbca0588cbea05a78f426f597b52cb91e12b on a windows machine. 2. Attempt to ssh to a linux host to open an existing project that you have a key installed on. 3. Get an askpass failure (even though SSH does work without prompting locally in terminal)  **Expected Behavior**: I should be able to connect to the remote linux host. **Actual Behavior**: I cannot connect, attempting to create the directory doesn't help as I don't have a copy of `askpass.ps1` and the directory name changes every time i hit retry.   ### Zed Version and System Specs  Zed: v0.210.0 (Zed Nightly 0c08bbca0588cbea05a78f426f597b52cb91e12b)  OS: Windows 10.0.26200 Memory: 63.2 GiB Architecture: x86_64 GPU: AMD Radeon RX 7900 XTX || AMD Corporation || 25.9.1 (25.10.25.10-250825a-418637C-AMD-Software-Adrenalin-Edition)
-  **Post-Mortem & Fix Analysis**:
-  > Also went through the windows SSH documentation on troubleshooting, and confirmed I have an SSH key agent running, can SSH, and that SSH.exe exists (and isn't pointing to something unexpected):  ``` PS C:\Users\$USER> Get-Service ssh-agent  Status   Name               DisplayName ------   ----               ----------- Running  ssh-agent          OpenSSH Authentication Agent  PS C:\Users\$USER> which ssh.exe /c/Windows/System32/OpenSSH/ssh.exe PS C:\Users\$USER> ssh.exe t-elos Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-85-generic x86_64) [... snipped ...] ```
-  > Does this happen to you on the stable version of Zed?
-
-- **Issue #40267** (2025-10-20): **Extensions page scrolls up and down when it shouldn't be scrollable**
-  *Symptoms*: ### Summary  The Extensions page scrolls back and forth when it shouldn't be scrollable.  ### Description  I think the "vibration" effect is occurring because of inertia scroll on a MBP touchpad.  Steps to reproduce: 1. Open the Extensions page 2. Scroll down  **Expected Behavior**: Nothing happens, there is no scrollbar and everything appears to fit the page perfectly, so the page shouldn't be scrollable **Actual Behavior**: The page scrolls down a bit, then snaps back to its original position.  <details><summary>Screen recording</summary>  https://github.com/user-attachments/assets/6eaee086-bf42-4d92-abc5-6fc42f6aa773  </details>   ### Zed Version and System Specs  Zed: v0.208.4 (Zed)  OS: macOS 15.7.1 Memory: 16 GiB Architecture: x86_64
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2338,944 +2335,574 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `065d7ae5` (2026-10-20)
-**Commit Message**: agent_ui: Improve model and configuration option search (#64147)
-
-# Objective
-Fixes #64144. 
-
-Improve search in agent model and configuration option pickers.
-
-Previously, searches could fail when punctuation differed between the
-query and model name, such as `GPT 5.6` versus `GPT-5.6`. Configuration
-options also could not be found by provider/group, description, or value
-identifier, and results were limited to 100 entries.
-
-## Solution
-
-Use the existing `fuzzy_nucleo` matcher for agent model and
-configuration option searches.
-
-Include relevant metadata in each search candidate:
-
-- Model name and provider/group
-- Configuration option name, group, description, and value identifier
-
-Return all matching configuration options while preserving their
-existing ordering when scores are equal.
-
-Rank matches against option/model names independently of their metadata,
-then append metadata-only matches without duplicates. This keeps
-descriptions and identifiers searchable without letting their lengths
-demote exact name matches or reorder equally relevant names.
-
-Run the shared pure-data search pipeline on the background executor,
-including candidate construction, ranking, and result cloning. Th
-
-**File**: `Cargo.lock` (modified, +14/-0)
-```diff
-@@ -484,6 +484,7 @@ dependencies = [
-  "fs",
-  "futures 0.3.34",
-  "fuzzy",
-+ "fuzzy_nucleo",
-  "git",
-  "git_ui_core",
-  "gpui",
-@@ -553,6 +554,19 @@ dependencies = [
-  "zed_actions",
- ]
- 
-+[[package]]
-+name = "agent_ui_benchmarks"
-+version = "0.1.0"
-+dependencies = [
-+ "collections",
-+ "criterion",
-+ "futures 0.3.34",
-+ "fuzzy_nucleo",
-+ "gpui",
-+ "gpui_platform",
-+ "ordered-float 5.5.0",
-+]
-+
- [[package]]
- name = "ahash"
- version = "0.8.12"
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@ members = [
-     "crates/agent_settings",
-     "crates/agent_skills",
-     "crates/agent_ui",
-+    "crates/agent_ui_benchmarks",
-     "crates/ai_onboarding",
-     "crates/anthropic",
-     "crates/askpass",
-```
-
-**File**: `crates/agent_ui/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -58,6 +58,7 @@ file_icons.workspace = true
- fs.workspace = true
- futures.workspace = true
- fuzzy.workspace = true
-+fuzzy_nucleo.workspace = true
- git.workspace = true
- gpui.workspace = true
- gpui_tokio.workspace = true
-```
-
-**File**: `crates/agent_ui/src/agent_ui.rs` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ mod language_model_selector;
- mod mention_set;
- mod message_editor;
- mod mode_selector;
-+mod model_search;
- mod model_selector;
- mod model_selector_popover;
- mod profile_selector;
-```
-
-**File**: `crates/agent_ui/src/config_options.rs` (modified, +132/-29)
-```diff
-@@ -1,16 +1,15 @@
--use std::{cmp::Reverse, rc::Rc, sync::Arc};
-+use std::{rc::Rc, sync::Arc};
- 
- use acp_thread::AgentSessionConfigOptions;
- use agent_client_protocol::schema::v2 as acp;
- use agent_servers::AgentServer;
- 
- use collections::HashSet;
- use fs::Fs;
--use fuzzy::StringMatchCandidate;
-+use fuzzy_nucleo::StringMatchCandidate;
- use gpui::{
-     App, BackgroundExecutor, Context, DismissEvent, Entity, Subscription, Task, Window, prelude::*,
- };
--use ordered_float::OrderedFloat;
- use picker::popover_menu::PickerPopoverMenu;
- use picker::{Picker, PickerDelegate};
- use settings::{AgentConfigOptionValue, SettingsStore};
-@@ -22,6 +21,7 @@ use unicode_segmentation::UnicodeSegmentation;
- use util::ResultExt as _;
- use zed_actions::agent::ToggleModelSelector;
- 
-+use crate::model_search;
- use crate::ui::documentation_aside_side;
- use crate::{
-     CycleFavoriteModels, CycleModeSelector, CycleThinkingEffort, ToggleProfileSelector,
-@@ -1074,32 +1074,22 @@ async fn fuzzy_search_options(
-     query: &str,
-     executor: BackgroundExecutor,
- ) -> Vec<ConfigOptionValue> {
--    let candidates = options
--        .iter()
--        .enumerate()
--        .map(|(ix, opt)| StringMatchCandidate::new(ix, &opt.name))
--        .collect::<Vec<_>>();
--
--    let mut matches = fuzzy::match_strings(
--        &candidates,
--        query,
--        false,
--        true,
--        100,
--        &Default::default(),
--        executor,
--    )
--    .await;
--
--    matches.sort_unstable_by_key(|mat| {
--        let candidate = &candidates[mat.candidate_id];
--        (Reverse(OrderedFloat(mat.score)), candidate.id)
--    });
--
--    matches
--        .into_iter()
--        .map(|mat| options[mat.candidate_id].clone())
--        .collect()
-+    model_search::search(options, query, executor, |index, option| {
-+        (
-+            StringMatchCandidate::new(index, option.name.clone()),
-+            StringMatchCandidate::new(
-+                index,
-+                format!(
-+                    "{} {} {} {}",
-+                    option.name,
-+                    option.group.as_deref().unwrap_or_default(),
-+                    option.description.as_deref().unwrap_or_default(),
-+                    option.value.0,
-+                ),
-+            ),
-+        )
-+    })
-+    .await
- }
- 
- fn find_option_name(
-@@ -1145,6 +1135,119 @@ mod tests {
-     use project::{AgentId, Project};
-     use std::{any::Any, cell::RefCell};
- 
-+    fn option_names(options: Vec<ConfigOptionValue>) -> Vec<String> {
-+        options.into_iter().map(|option| option.name).collect()
-+    }
-+
-+    #[gpui::test]
-+    async fn config_option_search_matches_all_searchable_fields(executor: BackgroundExecutor) {
-+        let options = vec![
-+            ConfigOptionValue {
-+                value: acp::SessionConfigValueId::new("openai/gpt-5.6-sol"),
-+                name: "GPT-5.6 Sol".to_string(),
-+                description: Some("Flagship reasoning model".to_string()),
-+                group: Some("OpenAI".to_string()),
-+            },
-+            ConfigOptionValue {
-+                value: acp::SessionConfigValueId::new("anthropic/claude-sonnet-4"),
-+                name: "Claude Sonnet 4".to_string(),
-+                description: None,
-+                group: Some("Anthropic".to_string()),
-+            },
-+        ];
-+
-+        for query in [
-+            "GPT 5.6",
-+            "GPT-5.6",
-+            "gpt5.6 sol",
-+            "openai",
-+            "openai/gpt-5.6-sol",
-+            "flagship",
-+            "openai reasoning",
-+        ] {
-+            assert_eq!(
-+                option_names(fuzzy_search_options(options.clone(), query, executor.clone()).await),
-+                ["GPT-5.6 Sol"],
-+                "query {query:?} should match the GPT model",
-+            );
-+        }
-+    }
-+
-+    #[gpui::test]
-+    async fn config_option_search_ranks_names_before_metadata(executor: BackgroundExecutor) {
-+        let options = vec![
-+            ConfigOptionValue {
-+                value: acp::SessionConfigValueId::new("reasoner"),
-+                name: "Reasoner".to_string(),
-+                description: Some("High reasoning effort".to_string()),
-+                group: None,
-+            },
-+            ConfigOptionValue {
-+                value: acp::SessionConfigValueId::new("xhigh"),
-+                name: "Extra High".to_string(),
-+                description: None,
-+                group: None,
-+            },
-+            ConfigOptionValue {
-+                value: acp::SessionConfigValueId::new("high"),
-+                name: "High".to_string(),
-+                description: Some(
-+                    "High effort with advanced reasoning for complex tasks.".to_string(),
-+                ),
-+                group: None,
-+            },
-+        ];
-+
-+        assert_eq!(
-+            option_names(fuzzy_search_options(options, "high", executor).await),
-+            ["High", "Extra High", "Reasoner"],
-+        );
-+    }
-+
-+    #[gpui::test]
-+    async fn config_optio
-```
-
-**File**: `crates/agent_ui/src/model_search.rs` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+use std::cmp::Reverse;
-+
-+use collections::HashSet;
-+use fuzzy_nucleo::StringMatchCandidate;
-+use gpui::BackgroundExecutor;
-+use ordered_float::OrderedFloat;
-+
-+pub(crate) async fn search<T, BuildCandidates>(
-+    values: Vec<T>,
-+    query: &str,
-+    executor: BackgroundExecutor,
-+    build_candidates: BuildCandidates,
-+) -> Vec<T>
-+where
-+    T: Clone + Send + 'static,
-+    BuildCandidates: Fn(usize, &T) -> (StringMatchCandidate, StringMatchCandidate) + Send + 'static,
-+{
-+    let query = query.to_owned();
-+    // Preparing and cloning candidates can block input even though matching is already asynchronous.
-+    executor
-+        .clone()
-+        .spawn(async move {
-+            let (names, candidates): (Vec<_>, Vec<_>) = values
-+                .iter()
-+                .enumerate()
-+                .map(|(index, value)| build_candidates(index, value))
-+                .unzip();
-+
-+            match_names_with_metadata(&names, &candidates, &query, executor)
-+                .await
-+                .into_iter()
-+                .map(|index| values[index].clone())
-+                .collect()
-+        })
-+        .await
-+}
-+
-+async fn match_names_with_metadata(
-+    names: &[StringMatchCandidate],
-+    candidates: &[StringMatchCandidate],
-+    query: &str,
-+    executor: BackgroundExecutor,
-+) -> Vec<usize> {
-+    let cancel_flag = Default::default();
-+    let (mut name_matches, mut metadata_matches) = futures::join!(
-+        fuzzy_nucleo::match_strings_async(
-+            names,
-+            query,
-+            fuzzy_nucleo::Case::Ignore,
-+            fuzzy_nucleo::LengthPenalty::On,
-+            names.len(),
-+            &cancel_flag,
-+            executor.clone(),
-+        ),
-+        fuzzy_nucleo::match_strings_async(
-+            candidates,
-+            query,
-+            fuzzy_nucleo::Case::Ignore,
-+            fuzzy_nucleo::LengthPenalty::On,
-+            candidates.len(),
-+            &cancel_flag,
-+            executor,
-+        ),
-+    );
-+
-+    // Metadata should expand the results without changing the relevance of name matches.
-+    let sorting_key = |matched: &fuzzy_nucleo::StringMatch| {
-+        (Reverse(OrderedFloat(matched.score)), matched.candidate_id)
-+    };
-+    name_matches.sort_unstable_by_key(sorting_key);
-+    metadata_matches.sort_unstable_by_key(sorting_key);
-+
-+    let matched_name_ids: HashSet<_> = name_matches
-+        .iter()
-+        .map(|matched| matched.candidate_id)
-+        .collect();
-+    name_matches
-+        .into_iter()
-+        .chain(
-+            metadata_matches
-+                .into_iter()
-+                .filter(|matched| !matched_name_ids.contains(&matched.candidate_id)),
-+        )
-+        .map(|matched| matched.candidate_id)
-+        .collect()
-+}
-```
-
-**File**: `crates/agent_ui/src/model_selector.rs` (modified, +67/-30)
-```diff
-@@ -1,4 +1,4 @@
--use std::{cmp::Reverse, rc::Rc, sync::Arc};
-+use std::{rc::Rc, sync::Arc};
- 
- use acp_thread::{
-     AgentModelIcon, AgentModelId, AgentModelInfo, AgentModelList, AgentModelSelector,
-@@ -7,19 +7,19 @@ use acp_thread::{
- use anyhow::Result;
- use collections::{HashSet, IndexMap};
- use futures::FutureExt;
--use fuzzy::{StringMatchCandidate, match_strings};
-+use fuzzy_nucleo::StringMatchCandidate;
- use gpui::{
-     Action, AsyncWindowContext, BackgroundExecutor, DismissEvent, FocusHandle, Subscription, Task,
-     TaskExt, WeakEntity,
- };
- use itertools::Itertools;
--use ordered_float::OrderedFloat;
- use picker::{Picker, PickerDelegate};
- use settings::SettingsStore;
- use ui::{DocumentationAside, IntoElement, prelude::*};
- use util::ResultExt;
- use zed_actions::agent::OpenSettings;
- 
-+use crate::model_search;
- use crate::ui::{
-     ModelSelectorFooter, ModelSelectorHeader, ModelSelectorListItem, documentation_aside_side,
- };
-@@ -441,44 +441,34 @@ async fn fuzzy_search(
- ) -> AgentModelList {
-     async fn fuzzy_search_list(
-         model_list: Vec<AgentModelInfo>,
-+        group_name: Option<SharedString>,
-         query: &str,
-         executor: BackgroundExecutor,
-     ) -> Vec<AgentModelInfo> {
--        let candidates = model_list
--            .iter()
--            .enumerate()
--            .map(|(ix, model)| StringMatchCandidate::new(ix, model.name.as_ref()))
--            .collect::<Vec<_>>();
--        let mut matches = match_strings(
--            &candidates,
--            query,
--            false,
--            true,
--            100,
--            &Default::default(),
--            executor,
--        )
--        .await;
--
--        matches.sort_unstable_by_key(|mat| {
--            let candidate = &candidates[mat.candidate_id];
--            (Reverse(OrderedFloat(mat.score)), candidate.id)
--        });
--
--        matches
--            .into_iter()
--            .map(|mat| model_list[mat.candidate_id].clone())
--            .collect()
-+        model_search::search(model_list, query, executor, move |index, model| {
-+            (
-+                StringMatchCandidate::new(index, model.name.clone()),
-+                StringMatchCandidate::new(
-+                    index,
-+                    format!(
-+                        "{} {}",
-+                        model.name,
-+                        group_name.as_deref().unwrap_or_default()
-+                    ),
-+                ),
-+            )
-+        })
-+        .await
-     }
- 
-     match model_list {
-         AgentModelList::Flat(model_list) => {
--            AgentModelList::Flat(fuzzy_search_list(model_list, &query, executor).await)
-+            AgentModelList::Flat(fuzzy_search_list(model_list, None, &query, executor).await)
-         }
-         AgentModelList::Grouped(index_map) => {
-             let groups =
-                 futures::future::join_all(index_map.into_iter().map(|(group_name, models)| {
--                    fuzzy_search_list(models, &query, executor.clone())
-+                    fuzzy_search_list(models, Some(group_name.0.clone()), &query, executor.clone())
-                         .map(|results| (group_name, results))
-                 }))
-                 .await;
-@@ -698,6 +688,53 @@ mod tests {
-         // Fuzzy search - test with specific model name
-         let results = fuzzy_search(models.clone(), "mistral".into(), cx.executor()).await;
-         assert_models_eq(results, vec![("ollama", vec!["mistral"])]);
-+
-+        let models = create_model_list(vec![
-+            ("OpenAI", vec!["GPT-5.6 Sol"]),
-+            ("Anthropic", vec!["Claude Sonnet 4"]),
-+        ]);
-+        let results = fuzzy_search(models.clone(), "GPT 5.6".into(), cx.executor()).await;
-+        assert_models_eq(results, vec![("OpenAI", vec!["GPT-5.6 Sol"])]);
-+
-+        let results = fuzzy_search(models.clone(), "openai 5.6".into(), cx.executor()).await;
-+        assert_models_eq(results, vec![("OpenAI", vec!["GPT-5.6 Sol"])]);
-+
-+        let results = fuzzy_search(models, "openai".into(), cx.executor()).await;
-+        assert_models_eq(results, vec![("OpenAI", vec!["GPT-5.6 Sol"])]);
-+    }
-+
-+    #[gpui::test]
-+    async fn test_fuzzy_match_prioritizes_names_over_group(cx: &mut TestAppContext) {
-+        let models = create_model_list(vec![(
-+            "High Provider",
-+            vec!["Reasoner", "Extra High", "High"],
-+        )]);
-+
-+        let results = fuzzy_search(models, "high".into(), cx.executor()).await;
-+        assert_models_eq(
-+            results,
-+            vec![("High Provider", vec!["High", "Extra High", "Reasoner"])],
-+        );
-+    }
-+
-+    #[gpui::test(iterations = 20)]
-+    async fn test_model_search_builds_candidates_in_background(executor: BackgroundExecutor) {
-+        let background_executor = executor.clone();
-+        let results = model_search::search(
-+            vec!["High".to_string()],
-+            "high",
-+            executor,
-+            move |index, name| {
-+                assert!(!background_executor.is_main_t
-```
-
-**File**: `crates/agent_ui_benchmarks/Cargo.toml` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+[package]
-+name = "agent_ui_benchmarks"
-+version = "0.1.0"
-+edition.workspace = true
-+publish.workspace = true
-+license = "GPL-3.0-or-later"
-+
-+[lints]
-+workspace = true
-+
-+[package.metadata.cargo-shear]
-+# Used by the path-included production module and the gpui::bench expansion.
-+ignored = ["futures", "gpui_platform"]
-+
-+[dev-dependencies]
-+collections.workspace = true
-+criterion.workspace = true
-+futures.workspace = true
-+fuzzy_nucleo.workspace = true
-+gpui = { workspace = true, features = ["bench-support"] }
-+gpui_platform = { workspace = true, features = ["bench-support"] }
-+ordered-float.workspace = true
-+
-+[[bench]]
-+name = "model_search"
-+harness = false
-```
-
----
-
-### Incident Patch 2: `2c626b33` (2026-10-20)
-**Commit Message**: gpui_ios: Forward Universal Links to URL handlers (#65858)
+### Incident Patch 1: `130f1e92` (2026-10-22)
+**Commit Message**: Update dependencies to address security vulnerabilities (#65956)
 
 ## Summary
 
-Forward iOS Universal Links through the existing
-`Application::on_open_urls` callback, without adding a new public API.
+Update Zed's TLS certificate dependencies, managed Node runtime, and
+Wasmtime stack to address the eMudhra intermediate compromise and recent
+Wasmtime sandbox vulnerabilities.
 
-- Handle browsing-web NSUserActivity values from cold-launch scene
-connection options and warm-launch continuation callbacks.
-- Preserve URL queries and fragments; ignore unrelated activities and
-absent URLs.
-- Add a focused delivery/filtering regression test.
+- Update `rustls-webpki` to 0.103.16, `webpki-roots` to 1.0.10 and its
+legacy wrapper to 0.26.11, and `webpki-root-certs` to 1.0.10. SQLx's
+legacy wrapper resolves to the patched 1.0.10 root data.
+- Update managed Node from 24.21.0 to 24.22.1.
+- Update Wasmtime, WASI, and Tree-sitter's Wasmtime C API from 48.0.1 to
+48.0.7, with aligned Cranelift 0.135.7 and required Wasm tooling
+patches. Keep the existing Wasmtime feature set.
 
-## Scope
+## Testing
 
-This PR is iOS-only. macOS support, request metadata, callback
-deprecation, and buffering redesign are intentionally out of scope.
-Domain association and signing configuration remain application
-responsibilities.
+Local platform: macOS arm64, Rust 1.98.1.
 
-## Validation
+- `cargo build --locked -p zed --bin zed`: passed. Launched the new
+binary with isolated user data and a temporary Rust file; the process
+remained running. A user-provided screenshot confirms `app-smoke.rs`
+opened and rendered with Rust syntax highlighting. Interactive GUI
+checks were not completed: the UI automation tool failed to initialize
+and macOS denied the Apple Events fallback. This PR remains a draft for
+human review and any further manual valid
 
-- Simulator-target library compilation passed.
-- Built the library test binary for aarch64-apple-ios-sim and ran the
-focused regression test inside the iOS simulator: passed.
-- rustfmt check for application.rs and git diff --check passed.
-- Built a GPUI example with temporary callback logging. Hosted a
-synthetic association file via a temporary HTTPS tunnel; Apple CDN
-retrieved the expected file.
-- A separate UIKit test app used openURL with universalLinksOnly to
-exercise actual OS routing, not direct
-
-**File**: `crates/gpui_ios/Cargo.toml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +107/-130)
 ```diff
-@@ -42,7 +42,7 @@ futures.workspace = true
- gpui_apple = { workspace = true, features = ["font-kit"] }
- log.workspace = true
- objc2.workspace = true
--objc2-foundation = { workspace = true, features = ["NSThread", "NSOperation", "block2"] }
-+objc2-foundation = { workspace = true, features = ["NSThread", "NSOperation", "NSUserActivity", "block2"] }
- objc2-ui-kit.workspace = true
- objc2-quartz-core = { workspace = true, features = ["CADisplayLink"] }
- objc2-core-foundation = { workspace = true, default-features = true }
+@@ -2729,18 +2729,6 @@ dependencies = [
+  "serde_core",
+ ]
+ 
+-[[package]]
+-name = "cap-fs-ext"
+-version = "4.0.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "56ff379b70af8e08307a8f65e7040c7301cb4a572538ade16b4984f0da77847f"
+-dependencies = [
+- "cap-primitives",
+- "cap-std",
+- "io-lifetimes 3.0.1",
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "cap-primitives"
+ version = "4.0.3"
+@@ -2759,18 +2747,6 @@ dependencies = [
+  "winx",
+ ]
+ 
+-[[package]]
+-name = "cap-std"
+-version = "4.0.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c1ec78e242cfa2cfe276807ac2ecc00315a6c97786977414bcd1c3963b6c91b8"
+-dependencies = [
+- "cap-primitives",
+- "io-extras",
+- "io-lifetimes 3.0.1",
+- "rustix",
+-]
+-
+ [[package]]
+ name = "cargo-platform"
+ version = "0.3.2"
+@@ -4064,37 +4040,37 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-assembler-x64"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9903e767cc0a95a59950de099a6b1d61e1476f774be1cdfa06d7ccdc9bfae56f"
++checksum = "e6071a4f1df4837aa03d1e4d53067784acafe270ffc7dad66a7f39832204da3f"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
+ ]
+ 
+ [[package]]
+ name = "cranelift-assembler-x64-meta"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e777252ea3ec9daffa71408fbfe0793ab0a7b7bc3b2cf0f417dd0fa33964b8ef"
++checksum = "5e3b92a9cc90388fe70e63640af30b734387449445aef0176ab2028e9892d70e"
+ dependencies = [
+  "cranelift-srcgen",
+ ]
+ 
+ [[package]]
+ name = "cranelift-bforest"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7828208a36e6627481cea61bd24c6234e31411d5c58b48e80ca094a1d593b944"
++checksum = "f45c85646c4425cc85b868effaf20c302b437a3fb79bb27a64513dd522f07411"
+ dependencies = [
+  "cranelift-entity",
+  "wasmtime-internal-core",
+ ]
+ 
+ [[package]]
+ name = "cranelift-bitset"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a58c8447cc59ef98c49096679f81392ad0acec2224cea2bef52011f5169f9d02"
++checksum = "94f56b5c7d564cfa03aa269a6b98c916cab4d545196a391d31403a23ef39333a"
+ dependencies = [
+  "serde",
+  "serde_derive",
+@@ -4103,9 +4079,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ce520e899df1de583e7b564eafd66760fbc147d72894d2278ddac57a1489fcc0"
++checksum = "2c073641ce6e382814a8220331cc1ea2c782a9ea5d5da6d0f7f7c0541192693e"
+ dependencies = [
+  "bumpalo",
+  "cranelift-assembler-x64",
+@@ -4134,9 +4110,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen-meta"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8d8ab23e63d78ea6bbda18ae1ed9c958bc1cb88d90fb5e95f5ba62e9c019474b"
++checksum = "db226fafea5194921de10dccf35ac2863500313990f770cbe8b26c51eebec4d4"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
+  "cranelift-codegen-shared",
+@@ -4147,24 +4123,24 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen-shared"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "24319a996b1ef40ebf8af69b39c868c790b35a42cfe38edacfd8c9deb75ea712"
++checksum = "cf8ac46b2c8e328ca979810426ea635ef90ecc8c54fd3296bde31ab470a48a1d"
+ 
+ [[package]]
+ name = "cranelift-control"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cf9856d68cc2cefb83229cb2c55b620dd38427555c2fe87d73f8a4421616f628"
++checksum = "6754e0ab97915209ea6ce6549f6443b018e1338142ada4c856cec213ee82e4b8"
+ dependencies = [
+  "arbitrary",
+ ]
+ 
+ [[package]]
+ name = "cranelift-entity"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e0ec225d6b79c5d61358cb5ea081a1384ec541dbf8c1a8c618d187875af326ad"
++checksum = "774d25e36df18696f63a284e9c4ea43455e2ebcca6308e0e02301f18c8e777e2"
+ dependencies = [
+  "cranelift-bitset",
+  "serde",
+@@ -4174,9 +4150,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-frontend"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d3a96a09bd9bd3cf6df2de2ea15d7418f493e946a8eaa1acfe39297a67ed3f3"
++checksum = "69cfcb31405e2de2a48e5a6de8e07a3d8b77f35caa3e944d627780734b36c138"
+ dependencies = [
+  "cranelift-codegen",
+  "hashbrown 0.17.1",
+@@ -4187,15 +4163,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-isle"
+-version = "0.135.1"
++version = "0.135.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bd28f593c36afbdc9aa17305c0bb66c39ce0530e1caffcf389fbec053950083e"
++checksum = "2f5a26df22db546ab92be6feaf21835ae91082af0a32bbb398b277df3765412f"
+ 
+ [[pa
 ```
 
-**File**: `crates/gpui_ios/src/ios/application.rs` (modified, +60/-0)
+**File**: `Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -9,6 +9,7 @@ use objc2::{
- };
- use objc2_foundation::{
-     NSDictionary, NSObject, NSObjectProtocol, NSRunLoop, NSRunLoopCommonModes, NSSet, NSString,
-+    NSUserActivity, NSUserActivityTypeBrowsingWeb,
- };
- use objc2_quartz_core::CADisplayLink;
- use objc2_ui_kit::{
-@@ -161,6 +162,17 @@ impl IosApplicationState {
-             .collect();
-         self.open_urls.with(|callback| callback(urls));
-     }
-+
-+    fn continue_user_activity(&self, activity: &NSUserActivity) {
-+        if &*activity.activityType() != unsafe { NSUserActivityTypeBrowsingWeb } {
-+            return;
-+        }
-+        let Some(url) = activity.webpageURL().and_then(|url| url.absoluteString()) else {
-+            return;
-+        };
-+        self.open_urls
-+            .with(|callback| callback(vec![url.to_string()]));
-+    }
+@@ -971,7 +971,7 @@ wasm-encoder = "0.254"
+ # the wasm-bindgen init function with the positional arguments deprecated in 0.2.93.
+ wasm_thread = { git = "https://github.com/zed-industries/wasm_thread", rev = "0cf96c7708dfb97ccf3da50347e25edcf75d6937", version = "0.3", features = ["es_modules"] }
+ wasmparser = "0.254"
+-wasmtime = { version = "48", default-features = false, features = [
++wasmtime = { version = "48.0.7", default-features = false, features = [
+     "anyhow",
+     "async",
+     "demangle",
+@@ -983,11 +983,11 @@ wasmtime = { version = "48", default-features = false, features = [
+ ] }
+ wasm-bindgen = "0.2.120"
+ wasm-bindgen-futures = "0.4"
+-wasmtime-wasi = { version = "48", default-features = false, features = ["p2"] }
++wasmtime-wasi = { version = "48.0.7", default-features = false, features = ["p2"] }
+ wax = { version = "0.7", default-features = false }
+ web-sys = "0.3"
+ web-time = "1.1.0"
+-webpki-roots = "1.0.8"
++webpki-roots = "1.0.10"
+ webrtc-sys = "0.3.23"
+ # 30.0.1 lacks the Vulkan surface-drop panic fix: https://github.com/gfx-rs/wgpu/pull/10230.
+ wgpu = { git = "https://github.com/gfx-rs/wgpu", rev = "3b3506ea31154edc04de64debda0e780cba2639c", default-features = false }
+```
+
+**File**: `crates/node_runtime/src/node_runtime.rs` (modified, +1/-1)
+```diff
+@@ -606,7 +606,7 @@ struct ManagedNodeRuntime {
  }
  
- impl Drop for IosApplicationState {
-@@ -181,6 +193,10 @@ impl SceneConnectionOptions {
-         #[unsafe(method(URLContexts))]
-         #[unsafe(method_family = none)]
-         fn url_contexts(&self) -> Option<Retained<NSSet<UIOpenURLContext>>>;
-+
-+        #[unsafe(method(userActivities))]
-+        #[unsafe(method_family = none)]
-+        fn user_activities(&self) -> Option<Retained<NSSet<NSUserActivity>>>;
-     );
- }
+ impl ManagedNodeRuntime {
+-    const VERSION: &str = "v24.21.0";
++    const VERSION: &str = "v24.22.1";
  
-@@ -305,6 +321,11 @@ define_class!(
-             if let Some(contexts) = options.url_contexts() {
-                 application.open_urls(&contexts);
-             }
-+            if let Some(activities) = options.user_activities() {
-+                for activity in activities.iter() {
-+                    application.continue_user_activity(&activity);
-+                }
-+            }
- 
-             application.stop_display_link();
-             let display_link = unsafe {
-@@ -365,6 +386,13 @@ define_class!(
-                 platform.application.open_urls(contexts);
-             }
-         }
-+
-+        #[unsafe(method(scene:continueUserActivity:))]
-+        fn continue_user_activity(&self, scene: &UIScene, activity: &NSUserActivity) {
-+            if let Some(platform) = self.platform_for_scene(scene) {
-+                platform.application.continue_user_activity(activity);
-+            }
-+        }
-     }
- );
- 
-@@ -384,6 +412,38 @@ mod tests {
-     use super::*;
-     use std::{cell::Cell, rc::Rc};
- 
-+    #[test]
-+    fn browsing_activity_delivers_url_without_losing_query_or_fragment() {
-+        use objc2::AnyThread;
-+        use objc2_foundation::NSURL;
-+
-+        let state = IosApplicationState::default();
-+        let received = Rc::new(RefCell::new(Vec::new()));
-+        state.open_urls.set(Box::new({
-+            let received = received.clone();
-+            move |urls| received.borrow_mut().extend(urls)
-+        }));
-+        let url_string = "https://example.com/thread/123?source=link#selection";
-+        let url = NSURL::URLWithString(&NSString::from_str(url_string)).expect("test URL is valid");
-+        let activity = NSUserActivity::initWithActivityType(NSUserActivity::alloc(), unsafe {
-+            NSUserActivityTypeBrowsingWeb
-+        });
-+        state.continue_user_activity(&activity);
-+        assert!(received.borrow().is_empty());
-+
-+        activity.setWebpageURL(Some(&url));
-+        state.continue_user_activity(&activity);
-+        assert_eq!(*received.borrow(), vec![url_string.to_string()]);
-+
-+        let unrelated = NSUserActivity::initWithActivityType(
-+            NSUserActivity::alloc(),
-+            &NSString::from_str("com.example.edit"),
-+        );
-+        unrelated.setWebpageURL(Some(&url));
-+        state.continue_user_activity(&unrelated);
-+        assert_eq!(*received.borrow(), vec![url_string.to_string()]);
-+    }
-+
-     #[test]
-     fn launch_callback_runs_once_and_can_register_callbacks() {
-         let state = Rc::new(IosApplicationState::default());
+     #[cfg(not(windows))]
+     const NODE_PATH: &str = "bin/node";
 ```
 
 ---
 
-### Incident Patch 3: `3c11d49c` (2026-10-20)
-**Commit Message**: acp_thread: Render Git-quoted and relative patch paths (#65855)
+### Incident Patch 2: `32558ab9` (2026-10-22)
+**Commit Message**: multi_buffer: Fix word diff ranges for collapsed hunks (#65829)
 
-Follow ACP v2's absolute-path `git_patch` format while accepting common
-non-conforming Git paths when they can be associated without ambiguity.
+## Summary
 
-- Normalize Git's C-quoted filename headers, including octal UTF-8 bytes
-and control-character escapes, before the existing diffy hunk parser.
-Leave hunk bodies and original patch source untouched.
-- Accept relative paths (including `a/` and `b/` prefixes) only when the
-old/new path pair uniquely matches one structured ACP file change.
-Absolute paths must still match exactly. Reject ambiguous paths, parent
-traversal, NUL, invalid UTF-8 and malformed escapes with the existing
-raw-text fallback.
-- Preserve rename/copy and patch-less file rows. Continue rendering
-sparse read-only snippets without synthesizing complete files or
-offering apply/restore operations.
+Closes #65678.
 
-Release Notes:
+Collapsed diff hunks can produce invalid word-diff ranges when offsets
+calculated against deleted base text are applied to the modified buffer.
+When the base and modified text differ in byte length, these offsets can
+land inside a multibyte UTF-8 character, violating the boundary
+invariant expected by the text rendering system.
 
-- N/A
+The issue occurs because `self.show_deleted_hunks` indicates whether
+deleted hunks can be displayed, not whether a particular hunk's deleted
+text is currently present in the multibuffer.
 
-**File**: `crates/acp_thread/src/diff.rs` (modified, +115/-13)
+This change checks for the corresponding `DiffTransform::DeletedHunk` in
+`self.diff_transforms` before including base-side word diffs for a
+specific hunk.
+
+## Changes
+
+- Check the per-hunk expansion state before projecting `base_word_diffs`
+into multibuffer offsets.
+- Preserve deleted-side and modified-side word highlighting for expanded
+hunks.
+- Avoid emitting base-side word-diff ranges for collapsed hunks, where
+the deleted text is not present in the multibuffer.
+- Add regression tests in
+`crates/multi_buffer/src/multi_buffer_tests.rs` covering:
+- `test_word_diff_byte_132_collaps
+
+**File**: `crates/multi_buffer/src/multi_buffer.rs` (modified, +21/-10)
 ```diff
-@@ -13,6 +13,7 @@ use markdown::Markdown;
- use multi_buffer::{MultiBuffer, PathKey, excerpt_context_lines};
- use std::{cmp::Reverse, ops::Range, path::Path, sync::Arc};
- use util::ResultExt;
-+use util::paths::PathStyle;
+@@ -3519,18 +3519,29 @@ impl MultiBufferSnapshot {
+                     .then(|| {
+                         let mut word_diffs = Vec::new();
  
- #[derive(Debug)]
- pub struct DiffPatch {
-@@ -133,15 +134,28 @@ impl DiffPatch {
-                 } else {
-                     paths
-                 };
--                let index = change_indices
--                    .get(&paths)
--                    .copied()
-+                let index = if let Some(index) = change_indices.get(&paths) {
-+                    *index
-+                } else if [paths.0, paths.1]
-+                    .into_iter()
-                     .flatten()
--                    .ok_or_else(|| {
--                        anyhow!(
--                            "patch paths are ambiguous or do not match the reported file changes"
--                        )
--                    })?;
-+                    .any(|path| !PathStyle::Windows.has_root(path))
-+                {
-+                    // Relative Git paths have no declared root. Only associate a
-+                    // hunk when both sides identify one reported file operation.
-+                    let mut matches = change_indices.iter().filter(|(reported, _)| {
-+                        patch_path_matches(paths.0, reported.0)
-+                            && patch_path_matches(paths.1, reported.1)
-+                    });
-+                    let index = matches.next().and_then(|(_, index)| *index);
-+                    ensure!(matches.next().is_none(), "ambiguous relative patch paths");
-+                    index
-+                } else {
-+                    None
-+                }
-+                .ok_or_else(|| {
-+                    anyhow!("patch paths are ambiguous or do not match the reported file changes")
-+                })?;
-                 ensure!(seen.insert(index), "repeated patch file");
-                 let change = source
-                     .changes
-@@ -151,7 +165,7 @@ impl DiffPatch {
-                     matches!(change.file_type, None | Some(acp_v2::DiffFileType::Text)),
-                     "text patch supplied for a non-text file"
-                 );
--                if anonymous && let Some((old, new)) = diff_change_paths(change) {
-+                if let Some((old, new)) = diff_change_paths(change) {
-                     file.old_path = old.map(|path| path.to_string_lossy().into_owned());
-                     file.new_path = new.map(|path| path.to_string_lossy().into_owned());
-                 }
-@@ -168,6 +182,15 @@ impl DiffPatch {
-     }
- }
- 
-+fn patch_path_matches(patch: Option<&Path>, reported: Option<&Path>) -> bool {
-+    match (patch, reported) {
-+        (None, None) => true,
-+        (Some(patch), Some(reported)) if PathStyle::Windows.has_root(patch) => patch == reported,
-+        (Some(patch), Some(reported)) => reported.ends_with(patch),
-+        _ => false,
-+    }
-+}
+-                        if self.show_deleted_hunks || is_inverted {
+-                            let hunk_start_offset = if is_inverted {
+-                                Anchor::in_buffer(
+-                                    excerpt.path_key_index,
+-                                    buffer_snapshot.anchor_after(hunk.diff_base_byte_range.start),
+-                                )
++                        let hunk_start_offset = if is_inverted {
++                            Anchor::in_buffer(
++                                excerpt.path_key_index,
++                                buffer_snapshot.anchor_after(hunk.diff_base_byte_range.start),
++                            )
++                            .to_offset(self)
++                        } else {
++                            Anchor::in_buffer(excerpt.path_key_index, hunk.buffer_range.start)
+                                 .to_offset(self)
+-                            } else {
+-                                Anchor::in_buffer(excerpt.path_key_index, hunk.buffer_range.start)
+-                                    .to_offset(self)
+-                            };
++                        };
 +
- impl DiffPatchHunk {
-     fn new(
-         hunk: patch::PatchHunk,
-@@ -746,6 +769,63 @@ mod tests {
-             ))
-             .is_ok()
-         );
-+        for (patch, changes, expected) in [
-+            (
-+                "--- a/src/one.rs\n+++ b/src/one.rs\n@@ -1 +1 @@\n-old\n+new\n",
-+                json!([
-+                    {"operation": "modify", "path": "/project/src/one.rs"},
-+                    {"operation": "modify", "path": "/project/src/two.rs"}
-+                ]),
-+                Some((0, Some("/project/src/one.rs"), Some("/project/src/one.rs"))),
-+            ),
-+            (
-+                "--- old.rs\n+++ new.rs\n@@ -1 +1 @@\n-old\n+new\n",
-+                json!([
-+                    {"operation": "move", "oldPath": "/project/old.rs", "path": "/project/new.rs"},
-+                    {"operation": "move", "oldPath": "/other/old.rs", "path": "/other/different.rs"}
-+                ]),
-+                Some((0, Some("/project/old.rs"), Some("/project/new.rs"))),
-+            ),
-+            (
-+                "--- /dev/null\n+++ b/added.rs\n@@ -0,0 +1 @@\n+new\n",
-+                json!([{"operation": "add", "path": "/project/added.rs"}]),
-+                Some((0, None, Some("/project/added.rs"))),
-+            ),
-+            (
-+                "--- a/deleted.rs\n+++ /dev/null\n@@ -1 +0,0 @@\n-old\n",
-+                json!([{"operation": "delete", "path": "/project/deleted.rs"}]),
-+                Some((0, Some("/project/deleted.rs"), None)),
-+            ),
-+            (
-+                "--- one.rs\n+++ one.rs\n@@ -1 +1 @@\n-old\n+new\n",
-+                json!([
-+                    {"operation": "modify", "path": "/project/one.rs"},
-+                    {"operation": "modify", "path": "/other/one.rs"}
-+                ]),
-+                None,
-+            ),
-+            (
-+                "--- src/one.rs\n+++ src/one.rs\n@@ -1 +1 @@\n-old\n+new\n",
-+                json!([{"operation": "modify", "path": "/project/not-src/one.rs"}]),
-+                None,
-+            ),
-+       
++                        let hunk_has_deleted_text = !is_inverted && {
++                            let mut cursor = self.diff_transforms.cursor::<MultiBufferOffset>(());
++                            cursor.seek(&hunk_start_offset, Bias::Right);
++                            matches!(
++                                cursor.item(),
++                                Some(DiffTransform::DeletedHunk { buffer_id, hunk_info, .. })
++                                    if *buffer_id == buffer_snapshot.remote_id()
++                                        && hunk_info.hunk_start_anchor == hunk.buffer_range.start
++                            )
++                        };
+ 
++                        if hunk_has_deleted_text || is_inverted {
+                             word_diffs.extend(hunk.base_word_diffs.iter().map(|diff| {
+                                 hunk_start_offset + diff.start..hunk_start_offset + diff.end
+                             }));
 ```
 
-**File**: `crates/acp_thread/src/diff/patch.rs` (modified, +146/-9)
+---
+
+### Incident Patch 3: `03efd492` (2026-10-22)
+**Commit Message**: ui: Keep project action shortcuts inside their buttons (#65531)
+
+## Summary
+
+This is my first PR; I'm still learning Rust.
+
+- We made long project names show dots at the end when they don't fit,
+so the shortcut stays visible.
+- We made the shortcut go underneath Open Project when the sidebar is
+too narrow, and the button grows so everything fits.
+- We added an option for a button to grow to fit its contents, and Open
+Project uses it when the shortcut wraps.
+
+AI helped with the code and testing.
+
+Closes #65220.
+
+### Screenshots
+
+Welcome before: Zed 1.23.3. The other screenshots are local development
+builds on macOS.
+
+| | Before | After |
+| --- | --- | --- |
+| Welcome recent project | ![Welcome
+before](https://github.com/user-attachments/assets/420e4542-f009-44fc-ba93-f575eae4f1bd)
+| ![Welcome
+after](https://github.com/user-attachments/assets/9123df5d-9f19-484d-8d68-f8d083d863dd)
+|
+| Empty Project Panel | ![Project Panel
+before](https://github.com/user-attachments/assets/7cbb4016-5d32-4392-879e-7b90df67eab0)
+| ![Project Panel
+after](https://github.com/user-attachments/assets/a7b060c4-50df-4363-9d1d-f0354bdd24a4)
+|
+
+## Testing
+
+- Tested with Codex on macOS 27.0.1 in light and dark the
+
+**File**: `crates/ui/src/components/button/button.rs` (modified, +92/-52)
 ```diff
-@@ -1,7 +1,6 @@
- use anyhow::{Context as _, Result, ensure};
- use diffy::{Line, Patch};
--use std::path::Path;
--use util::paths::PathStyle;
-+use std::borrow::Cow;
- 
- #[derive(Debug, PartialEq, Eq)]
- pub(super) struct PatchFile {
-@@ -36,7 +35,8 @@ pub(super) fn parse_patch(text: &str) -> Result<Vec<PatchFile>> {
-     for section in boundaries.windows(2) {
-         let section = &text[section[0]..section[1]];
-         check_coordinate_bounds(section)?;
--        let patch = Patch::from_str(section).context("invalid Git patch")?;
-+        let section = normalize_quoted_paths(section)?;
-+        let patch = Patch::from_str(&section).context("invalid Git patch")?;
-         if patch.hunks().is_empty() {
-             // File operations, including binary and rename-only changes, come from ACP's
-             // structured changes. They do not need to be inferred from Git's preamble.
-@@ -88,15 +88,97 @@ pub(super) fn parse_patch(text: &str) -> Result<Vec<PatchFile>> {
-     Ok(files)
- }
- 
-+fn normalize_quoted_paths(section: &str) -> Result<Cow<'_, str>> {
-+    if section.starts_with("@@ ") {
-+        return Ok(Cow::Borrowed(section));
-+    }
-+    let header_end = section
-+        .find("\n@@ ")
-+        .map_or(section.len(), |offset| offset + 1);
-+    let (headers, hunks) = section.split_at(header_end);
-+    if !headers.contains("--- \"") && !headers.contains("+++ \"") {
-+        return Ok(Cow::Borrowed(section));
-+    }
-+
-+    // diffy understands escaped quotes, backslashes and whitespace, but not Git's
-+    // octal byte escapes or \a, \b, \f and \v. Normalize only filename headers.
-+    let mut normalized = Vec::with_capacity(section.len());
-+    for line in headers.split_inclusive('\n') {
-+        let Some((prefix, filename)) = line.split_once(' ').filter(|(prefix, filename)| {
-+            matches!(*prefix, "---" | "+++") && filename.starts_with('"')
-+        }) else {
-+            normalized.extend_from_slice(line.as_bytes());
-+            continue;
-+        };
-+        let filename_end = filename.find(['\t', '\n']).unwrap_or(filename.len());
-+        let (filename, suffix) = filename.split_at(filename_end);
-+        let filename = filename
-+            .strip_prefix('"')
-+            .and_then(|filename| filename.strip_suffix('"'))
-+            .context("unterminated quoted patch filename")?;
-+        normalized.extend_from_slice(prefix.as_bytes());
-+        normalized.extend_from_slice(b" \"");
-+        let mut bytes = filename.bytes();
-+        while let Some(byte) = bytes.next() {
-+            if byte != b'\\' {
-+                normalized.push(byte);
-+                continue;
-+            }
-+            let byte = match bytes.next().context("unterminated patch filename escape")? {
-+                digit @ b'0'..=b'7' => {
-+                    let mut value = digit - b'0';
-+                    for _ in 0..2 {
-+                        let digit = bytes
-+                            .next()
-+                            .filter(|digit| matches!(digit, b'0'..=b'7'))
-+                            .context("invalid octal patch filename escape")?
-+                            - b'0';
-+                        value = value
-+                            .checked_mul(8)
-+                            .and_then(|value| value.checked_add(digit))
-+                            .context("octal patch filename escape exceeds one byte")?;
-+                    }
-+                    value
-+                }
-+                b'a' => 0x07,
-+                b'b' => 0x08,
-+                b'f' => 0x0c,
-+                b'v' => 0x0b,
-+                b'n' => b'\n',
-+                b'r' => b'\r',
-+                b't' => b'\t',
-+                b'\\' => b'\\',
-+                b'"' => b'"',
-+                _ => anyhow::bail!("invalid patch filename escape"),
-+            };
-+            match byte {
-+                b'\0' => normalized.extend_from_slice(b"\\0"),
-+                b'\n' => normalized.extend_from_slice(b"\\n"),
-+                b'\r' => normalized.extend_from_slice(b"\\r"),
-+                b'\t' => normalized.extend_from_slice(b"\\t"),
-+                b'\\' => normalized.extend_from_slice(b"\\\\"),
-+                b'"' => normalized.extend_from_slice(b"\\\""),
-+                byte => normalized.push(byte),
-+            }
-+        }
-+        normalized.push(b'"');
-+        normalized.extend_from_slice(suffix.as_bytes());
-+    }
-+    normalized.extend_from_slice(hunks.as_bytes());
-+    Ok(Cow::Owned(
-+        String::from_utf8(normalized).context("patch filename is not UTF-8")?,
-+    ))
-+}
-+
- fn patch_path(path: Option<&str>, prefix: &str) -> Result<Option<String>> {
-     let path = path.context("missing patch filename")?;
-     if path == "/dev/null" {
-         return Ok(None);
+@@ -87,6 +87,7 @@ pub struct Button {
+     end_icon: Option<Icon>,
+     key_binding: Option<KeyBinding>,
+     key_binding_position: KeybindingPosition,
++    wrap_key_binding: bool,
+     alpha: Option<f32>,
+     truncate: bool,
+     loading: bool,
+@@ -111,6 +112,7 @@ impl Button {
+             end_icon: None,
+             key_binding: None,
+             key_binding_position: KeybindingPosition::default(),
++            wrap_key_binding: false,
+             alpha: None,
+             truncate: false,
+             loading: false,
+@@ -210,6 +212,13 @@ impl Button {
+         self
      }
-     let path = path.strip_prefix(prefix).unwrap_or(path);
-     ensure!(
--        PathStyle::Windows.has_root(Path::new(path)),
--        "patch path must have root: {path}"
-+        !path.is_empty() && !path.split(['/', '\\']).any(|componen
+ 
++    /// Lets the keybinding wrap onto its own line when the button is too narrow
++    /// to fit it next to the label, growing the button to fit both lines.
++    pub fn wrap_key_binding(mut self, wrap: bool) -> Self {
++        self.wrap_key_binding = wrap;
++        self
++    }
++
+     /// Sets the position of the keybinding relative to the button label.
+     ///
+     /// This method allows you to specify where the keybinding should be displayed
+@@ -431,14 +440,18 @@ impl RenderOnce for Button {
+             self.base.aria_label = Some(label.clone());
+         }
+ 
++        let keyshortcuts = self
++            .key_binding
++            .as_ref()
++            .and_then(|key_binding| key_binding.keyboard_shortcut_text(window, cx));
++        let wrap_key_binding =
++            self.wrap_key_binding && keyshortcuts.is_some() && KeyBinding::default_visibility(cx);
++
+         // Announce the displayed keybinding to assistive technology via
+         // `aria-keyshortcuts` so screen-reader users hear the same shortcut
+         // sighted users see next to the button.
+         if self.base.aria_keyshortcuts.is_none()
+-            && let Some(keyshortcuts) = self
+-                .key_binding
+-                .as_ref()
+-                .and_then(|key_binding| key_binding.keyboard_shortcut_text(window, cx))
++            && let Some(keyshortcuts) = keyshortcuts
+         {
+             self.base.aria_keyshortcuts = Some(keyshortcuts);
+         }
+@@ -460,57 +473,84 @@ impl RenderOnce for Button {
+             self.label_color.unwrap_or_default()
+         };
+         let loading_icon_id = (self.base.id().clone(), "loading");
++        let wrapped_key_binding = if wrap_key_binding {
++            self.key_binding.take()
++        } else {
++            None
++        };
+ 
+-        self.base.child(
+-            h_flex()
+-                .when(self.truncate, |this| this.min_w_0().overflow_hidden())
+-                .gap(DynamicSpacing::Base04.rems(cx))
+-                .when_else(
+-                    self.loading,
+-                    |this| {
+-                        this.child(
+-                            Icon::new(IconName::LoadCircle)
+-                                .size(IconSize::Small)
+-                                .color(Color::Muted)
+-                                .with_keyed_rotate_animation(loading_icon_id, 2),
+-                        )
+-                    },
+-                    |this| {
+-                        this.when_some(self.start_icon, |this, icon| {
+-                            this.child(if is_disabled {
+-                                icon.color(Color::Disabled)
+-                            } else {
+-                                icon
+-                            })
++        let content = h_flex()
++            .when(self.truncate, |this| this.min_w_0().overflow_hidden())
++            .gap(DynamicSpacing::Base04.rems(cx))
++            .when_else(
++                self.loading,
++                |this| {
++                    this.child(
++                        Icon::new(IconName::LoadCircle)
++                            .size(IconSize::Small)
++                            .color(Color::Muted)
++                            .with_keyed_rotate_animation(loading_icon_id, 2),
++                    )
++                },
++                |this| {
++                    this.when_some(self.start_icon, |this, icon| {
++                        this.child(if is_disabled {
++                            icon.color(Color::Disabled)
++                        } else {
++                            icon
+                         })
+-                    },
+-                )
+-                .child(
+-                    h_flex()
+-                        .when(self.truncate, |this| this.min_w_0().overflow_hidden())
+-                        .when(
+-                            self.key_binding_position == KeybindingPosition::Start,
+-                            |this| this.flex_row_reverse(),
+-                        )
+-                        .gap(DynamicSpacing::Base06.rems(cx))
+-                        .justify_between()
+-                        .child(
+-                            Label::new(label)
+-                                .color(label_color)
+-                                .size(self.label_size.unwrap_or_default())
+-                                .when_some(self.alpha, |this, alpha| this.alpha(alpha))
+-                                .wh
+```
+
+**File**: `crates/ui/src/components/button/button_like.rs` (modified, +11/-6)
+```diff
+@@ -1,8 +1,8 @@
+ use documented::Documented;
+ use gpui::{
+-    AnyElement, AnyView, ClickEvent, CursorStyle, DefiniteLength, FocusHandle, Hsla, MouseButton,
+-    MouseClickEvent, MouseDownEvent, MouseUpEvent, Rems, Role, StyleRefinement, Toggled, relative,
+-    transparent_black,
++    AnyElement, AnyView, ClickEvent, CursorStyle, DefiniteLength, FocusHandle, Hsla, Length,
++    MouseButton, MouseClickEvent, MouseDownEvent, MouseUpEvent, Rems, Role, StyleRefinement,
++    Toggled, relative, transparent_black,
+ };
+ use smallvec::SmallVec;
+ 
+@@ -489,10 +489,10 @@ pub struct ButtonLike {
+     pub(super) hover_background: Option<Hsla>,
+     pub(super) active_background: Option<Hsla>,
+     pub(super) width: Option<DefiniteLength>,
+-    pub(super) height: Option<DefiniteLength>,
++    pub(super) height: Option<Length>,
+     pub(super) layer: Option<ElevationIndex>,
+     tab_index: Option<isize>,
+-    size: ButtonSize,
++    pub(super) size: ButtonSize,
+     rounding: Option<ButtonLikeRounding>,
+     pub(super) aria_label: Option<SharedString>,
+     aria_description: Option<SharedString>,
+@@ -567,7 +567,12 @@ impl ButtonLike {
+     }
+ 
+     pub fn height(mut self, height: DefiniteLength) -> Self {
+-        self.height = Some(height);
++        self.height = Some(height.into());
++        self
++    }
++
++    pub fn auto_height(mut self) -> Self {
++        self.height = Some(Length::Auto);
+         self
+     }
+ 
+```
+
+**File**: `crates/ui/src/components/project_empty_state.rs` (modified, +1/-0)
+```diff
+@@ -71,6 +71,7 @@ impl RenderOnce for ProjectEmptyState {
+                         Button::new("open_project", "Open Project")
+                             .full_width()
+                             .key_binding(self.open_project_key_binding)
++                            .wrap_key_binding(true)
+                             .when_some(self.on_open_project, |button, handler| {
+                                 button.on_click(handler)
+                             }),
+```
+
+**File**: `crates/workspace/src/welcome.rs` (modified, +4/-1)
+```diff
+@@ -105,16 +105,19 @@ impl RenderOnce for SectionButton {
+             .child(
+                 h_flex()
+                     .w_full()
++                    .min_w_0()
++                    .gap_2()
+                     .justify_between()
+                     .child(
+                         h_flex()
++                            .min_w_0()
+                             .gap_2()
+                             .child(
+                                 Icon::new(self.icon)
+                                     .color(Color::Muted)
+                                     .size(IconSize::Small),
+                             )
+-                            .child(Label::new(self.label)),
++                            .child(Label::new(self.label).truncate()),
+                     )
+                     .child(
+                         KeyBinding::for_action_in(action_ref, &self.focus_handle, cx)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #65885** (2026-10-20): google_ai: Classify invalid API keys as authentication errors (@bennetbo)
-- **PR #65880** (closed): language_models: Omit reasoning_effort for non-thinking OpenAI-compatible requests (@shantanu-gontia)
-- **PR #65875** (2026-10-20): Fix OpenCode model discovery when npm is omitted (#65872) (cherry-pick to stable) (@zed-zippy[bot])
-- **PR #65874** (2026-10-20): Fix OpenCode model discovery when npm is omitted (#65872) (cherry-pick to preview) (@zed-zippy[bot])
-- **PR #65873** (2026-10-20): Shut down ACP v2 connections on teardown (@benbrandt)
-- **PR #65872** (2026-10-20): Fix OpenCode model discovery when npm is omitted (@bennetbo)
+- **PR #65985** (closed): recent_projects: Only show icons for remote projects (@albertbogusz)
+- **PR #65982** (2026-10-22): agent_servers: Update ACP SDK to 3.5.0 (@benbrandt)
+- **PR #65976** (2026-10-22): agent_servers: Route ACP subagent associations to child threads (@benbrandt)
+- **PR #65975** (2026-10-22): gpui_ios: Reuse the cached main-thread marker (@SomeoneToIgnore)
+- **PR #65970** (2026-10-22): gpui: Make `Modifiers::secondary` web platform aware (@Veykril)
+- **PR #65968** (2026-10-22): Warn only for explicitly requested fonts (@SomeoneToIgnore)
 
 ---
 
@@ -3295,13 +2922,13 @@ Release Notes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent_ui: Improve model and configuration option search (#64147)
+## X. Update dependencies to address security vulnerabilities (#65956)
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `065d7ae5`: agent_ui: Improve model and configuration option search (#64147). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `130f1e92`: Update dependencies to address security vulnerabilities (#65956). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -3309,27 +2936,72 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "fuzzy_nucleo",
-[[package]]
-name = "agent_ui_benchmarks"
-version = "0.1.0"
-dependencies = [
- "collections",
- "criterion",
- "futures 0.3.34",
- "fuzzy_nucleo",
- "gpui",
- "gpui_platform",
- "ordered-float 5.5.0",
-]
-
+version = "0.135.7"
+checksum = "e6071a4f1df4837aa03d1e4d53067784acafe270ffc7dad66a7f39832204da3f"
+version = "0.135.7"
+checksum = "5e3b92a9cc90388fe70e63640af30b734387449445aef0176ab2028e9892d70e"
+version = "0.135.7"
+checksum = "f45c85646c4425cc85b868effaf20c302b437a3fb79bb27a64513dd522f07411"
+version = "0.135.7"
+checksum = "94f56b5c7d564cfa03aa269a6b98c916cab4d545196a391d31403a23ef39333a"
+version = "0.135.7"
+checksum = "2c073641ce6e382814a8220331cc1ea2c782a9ea5d5da6d0f7f7c0541192693e"
+version = "0.135.7"
+checksum = "db226fafea5194921de10dccf35ac2863500313990f770cbe8b26c51eebec4d4"
+version = "0.135.7"
+checksum = "cf8ac46b2c8e328ca979810426ea635ef90ecc8c54fd3296bde31ab470a48a1d"
+version = "0.135.7"
+checksum = "6754e0ab97915209ea6ce6549f6443b018e1338142ada4c856cec213ee82e4b8"
+version = "0.135.7"
+checksum = "774d25e36df18696f63a284e9c4ea43455e2ebcca6308e0e02301f18c8e777e2"
+version = "0.135.7"
+checksum = "69cfcb31405e2de2a48e5a6de8e07a3d8b77f35caa3e944d627780734b36c138"
+version = "0.135.7"
+checksum = "2f5a26df22db546ab92be6feaf21835ae91082af0a32bbb398b277df3765412f"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+[[package]]
+name = "cap-fs-ext"
+version = "4.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56ff379b70af8e08307a8f65e7040c7301cb4a572538ade16b4984f0da77847f"
+dependencies = [
+ "cap-primitives",
+ "cap-std",
+ "io-lifetimes 3.0.1",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "cap-std"
+version = "4.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1ec78e242cfa2cfe276807ac2ecc00315a6c97786977414bcd1c3963b6c91b8"
+dependencies = [
+ "cap-primitives",
+ "io-extras",
+ "io-lifetimes 3.0.1",
+ "rustix",
+]
+
+version = "0.135.1"
+checksum = "9903e767cc0a95a59950de099a6b1d61e1476f774be1cdfa06d7ccdc9bfae56f"
+version = "0.135.1"
+checksum = "e777252ea3ec9daffa71408fbfe0793ab0a7b7bc3b2cf0f417dd0fa33964b8ef"
+version = "0.135.1"
+checksum = "7828208a36e6627481cea61bd24c6234e31411d5c58b48e80ca094a1d593b944"
+version = "0.135.1"
+checksum = "a58c8447cc59ef98c49096679f81392ad0acec2224cea2bef52011f5169f9d02"
+version = "0.135.1"
+checksum = "ce520e899df1de583e7b564eafd66760fbc147d72894d2278ddac57a1489fcc0"
+version = "0.135.1"
+checksum = "8d8ab23e63d78ea6bbda18ae1ed9c958bc1cb88d90fb5e95f5ba62e9c019474b"
+version = "0.135.1"
+checksum = "24319a996b1ef
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `065d7ae5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `130f1e92` are properly handled with clean fallback behavior.

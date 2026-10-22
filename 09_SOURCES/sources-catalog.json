@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "1be7f0d9",
+    "sourceVersion": "3995dc6d",
     "license": "Apache-2.0",
-    "contentHash": "064a13d110b830fe03048313650fcdfcc1e2474003536f660d3d66cbf10f56d6",
-    "lastHarvestedAt": "2026-10-19T06:52:10.653Z",
+    "contentHash": "41071bc2595239251c0e5d21ef6ba8ebfe09f8257de87bde97a0eda6e22ae87a",
+    "lastHarvestedAt": "2026-10-22T16:38:47.363Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "1d8a29e1",
+    "sourceVersion": "c18e71c7",
     "license": "NOASSERTION",
-    "contentHash": "d7a14e80d3997bdffc3083fea1b052cf9ae11e4730dff8eac1ed855b8c41043c",
-    "lastHarvestedAt": "2026-10-20T19:43:19.748Z",
+    "contentHash": "22d0efffcb8dceb998498bc751772bfd775ee80af04c7bf657225bacabb2c9fe",
+    "lastHarvestedAt": "2026-10-22T16:38:41.695Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T16:32:30.427Z",
+  "last_updated": "2026-10-22T16:38:47.370Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "064a13d110b830fe03048313650fcdfcc1e2474003536f660d3d66cbf10f56d6",
-      "verified_at": "2026-10-19T06:52:10.659Z",
+      "content_hash": "41071bc2595239251c0e5d21ef6ba8ebfe09f8257de87bde97a0eda6e22ae87a",
+      "verified_at": "2026-10-22T16:38:47.370Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:52:10.659Z"
+      "last_updated": "2026-10-22T16:38:47.370Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "d7a14e80d3997bdffc3083fea1b052cf9ae11e4730dff8eac1ed855b8c41043c",
-      "verified_at": "2026-10-20T19:43:19.754Z",
+      "content_hash": "22d0efffcb8dceb998498bc751772bfd775ee80af04c7bf657225bacabb2c9fe",
+      "verified_at": "2026-10-22T16:38:41.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:43:19.754Z"
+      "last_updated": "2026-10-22T16:38:41.706Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

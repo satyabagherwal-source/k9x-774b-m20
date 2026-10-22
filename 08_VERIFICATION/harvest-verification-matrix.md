@@ -4329,3 +4329,5 @@
 | `CYCLE-20261022-EBDN` | `2026-10-22T16:32:17.435Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3640` | Yes (`ec584f3d...`) |
 | `CYCLE-20261022-EEBJ` | `2026-10-22T16:32:21.247Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`845b4426...`) |
 | `CYCLE-20261022-ELE7` | `2026-10-22T16:32:30.415Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3641` | Yes (`02a53f09...`) |
+| `CYCLE-20261022-MJVH` | `2026-10-22T16:38:41.693Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3642` | Yes (`22d0efff...`) |
+| `CYCLE-20261022-MO8W` | `2026-10-22T16:38:47.360Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3643` | Yes (`41071bc2...`) |

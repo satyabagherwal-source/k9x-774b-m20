@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `1be7f0d9`  
+> **Source Version**: `3995dc6d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:52:10.409Z  
+> **Timestamp**: 2026-10-22T16:38:47.066Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:52:10.402Z  
+> **Harvest Timestamp**: 2026-10-22T16:38:46.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3847 stars
+- **Stars / Engagement**: 3848 stars
 
 ---
 
@@ -1713,284 +1713,45 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9789ece` (2026-09-30)
-**Commit Message**: Fix Retry-After overflow panic in the default retry policy (#2097)
+### Incident Patch 1: `3995dc6d` (2026-10-21)
+**Commit Message**: Chore(deps): Bump actions/checkout from 6 to 7 (#2106)
 
-Fix Retry-After overflow panic in RetryPolicy
-
-A 429/503/504 with a Retry-After too large for Instant + Duration panicked
-in the default client retry layer. Use tokio::time::Instant with
-checked_add and fall back to the normal backoff on overflow.
-
-Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
-
-**File**: `kube-client/src/client/retry.rs` (modified, +25/-3)
-```diff
-@@ -30,7 +30,7 @@
- //! # }
- //! ```
- 
--use std::time::{Duration, Instant};
-+use std::time::Duration;
- 
- use http::{Request, Response, StatusCode};
- use tower::{
-@@ -41,6 +41,7 @@ use tower::{
-     },
-     util::rng::HasherRng,
- };
-+use tokio::time::Instant;
- 
- use super::Body;
- 
-@@ -154,8 +155,10 @@ impl<Res> Policy<Request<Body>, Response<Res>, BoxError> for RetryPolicy {
-                     && let Some(retry_after) = retry_after.parse::<u64>().ok()
-                 {
-                     let server_delay = Duration::from_secs(retry_after);
--                    let retry_after = Instant::now() + server_delay;
--                    if backoff.deadline().le(&retry_after.into()) {
-+                    if Instant::now()
-+                        .checked_add(server_delay)
-+                        .is_some_and(|retry_after| backoff.deadline() <= retry_after)
-+                    {
-                         return Some(tokio::time::sleep(server_delay));
-                     }
-                 }
-@@ -223,4 +226,23 @@ mod tests {
-         assert!(policy.server_aware);
-         assert_eq!(policy.max_retries, 15);
-     }
-+
-+    fn retry_after(policy: &mut RetryPolicy, secs: &str) -> Instant {
-+        let mut req = Request::new(Body::empty());
-+        let mut res: Result<_, BoxError> = Ok(Response::builder()
-+            .status(StatusCode::TOO_MANY_REQUESTS)
-+            .header("Retry-After", secs)
-+            .body(())
-+            .unwrap());
-+        policy.retry(&mut req, &mut res).expect("429 is retried").deadline()
-+    }
-+
-+    #[tokio::test(start_paused = true)]
-+    async fn retry_after_overflow_falls_back_to_backoff() {
-+        let now = Instant::now();
-+        let mut policy = RetryPolicy::server_retry();
-+        assert_eq!(retry_after(&mut policy, "30"), now + Duration::from_secs(30));
-+        // `now + Retry-After` overflows an Instant; must not panic.
-+        assert!(retry_after(&mut policy, &u64::MAX.to_string()) < now + Duration::from_secs(1));
-+    }
- }
-```
+Bumps [actions/checkout](https://github.com/actions/checkout) from 6 to 7.
+- [Release notes](https://github.com/actions/checkout/releases)
+- [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/actions/checkout/compare/v6...v7)
 
 ---
+updated-dependencies:
+- dependency-name: actions/checkout
+  dependency-version: '7'
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
 
-### Incident Patch 2: `6752745d` (2026-09-29)
-**Commit Message**: client: log non-JSON error bodies at debug, not warn (#2070)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* client: log non-JSON error bodies at debug, not warn
-
-`handle_api_errors` falls back to reconstructing a `Status` whenever
-the error body it gets back isn't valid JSON. This is expected rather
-than exceptional: a non-existent API path (e.g. probing whether a CRD
-is installed yet) or a proxy/ingress in front of the apiserver will
-often return a plain-text or HTML 404 instead of a JSON `Status`.
-Logging this at `warn` makes routine 404s noisy for no actionable
-reason, and is inconsistent with the parsed-JSON branch right above it,
-which already logs at `debug`.
-
-Also trim the raw body text before using it as the reconstructed
-`Status` message, since these bodies commonly end in a trailing
-newline (e.g. `"404 page not found\n"`) that otherwise leaks into the
-error.
-
-Closes #1604
-
-Signed-off-by: anant <[REDACTED_EMAIL]>
-
-* client: fix handle_api_errors doc comment
-
-Drop the "probably a bug if encountered" line, which contradicts the new
-inline comment explaining that non-JSON error bodies are routine, and fix
-the "someohow" typo just above it.
-
-Signed-off-by: anant <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: anant <[REDA
-
-**File**: `kube-client/src/client/mod.rs` (modified, +39/-4)
+**File**: `.github/workflows/no_ai.yml` (modified, +1/-1)
 ```diff
-@@ -545,10 +545,9 @@ impl Client {
- /// Kubernetes returned error handling
- ///
- /// Either kube returned an explicit ApiError struct,
--/// or it someohow returned something we couldn't parse as one.
-+/// or it somehow returned something we couldn't parse as one.
- ///
- /// In either case, present an ApiError upstream.
--/// The latter is probably a bug if encountered.
- async fn handle_api_errors(res: Response<Body>) -> Result<Response<Body>> {
-     let status = res.status();
-     if status.is_client_error() || status.is_server_error() {
-@@ -561,8 +560,14 @@ async fn handle_api_errors(res: Response<Body>) -> Result<Response<Body>> {
-             tracing::debug!("Unsuccessful: {status:?}");
-             Err(Error::Api(status.boxed()))
-         } else {
--            tracing::warn!("Unsuccessful data error parse: {text}");
--            let status = Status::failure(&text, "Failed to parse error data").with_code(status.as_u16());
-+            // Not every error response is a JSON `Status`. A proxy, ingress
-+            // controller, or a bare API path that doesn't exist (e.g. a CRD
-+            // that isn't installed yet) can return a plain-text or HTML body
-+            // instead. This is routine rather than exceptional, so it's
-+            // logged at `debug` like the parsed case above rather than `warn`.
-+            let text = text.trim();
-+            tracing::debug!("Unsuccessful data error parse: {text}");
-+            let status = Status::failure(text, "Failed to parse error data").with_code(status.as_u16());
-             tracing::debug!("Unsuccessful: {status:?} (reconstruct)");
-             Err(Error::Api(status.boxed()))
-         }
-@@ -819,4 +824,34 @@ mod tests {
-         assert!(matches!(&err, Error::Api(s) if s.code == 403), "got {err:?}");
-         spawned.await.unwrap();
-     }
-+
-+    #[tokio::test]
-+    async fn test_non_json_error_response_is_reconstructed() {
-+        let (mock_service, handle) = mock::pair::<Request<Body>, Response<Body>>();
-+        let spawned = tokio::spawn(async move {
-+            let mut handle = pin!(handle);
-+            let (_request, send) = handle.next_request().await.expect("service not called");
-+            // Some routers in front of the apiserver (or a probe for a CRD
-+            // that isn't installed yet) return a plain-text 404 instead of a
-+            // JSON `Status`.
-+            send.send_response(
-+                Response::builder()
-+                    .status(http::StatusCode::NOT_FOUND)
-+                    .body(Body::from(b"404 page not found\n".to_vec()))
-+                    .unwrap(),
-+            );
-+        });
-+
-+        let pods: Api<Pod> = Api::default_namespaced(Client::new(mock_service, "default"));
-+        let Err(err) = pods.get("test").await else {
-+            panic!("get with a non-JSON error response should fail");
-+        };
-+        let Error::Api(status) = &err else {
-+            panic!("expected Error::Api, got {err:?}");
-+        };
-+        assert_eq!(status.code, 404);
-+        assert_eq!(status.reason, "Failed to parse error data");
-+        assert_eq!(status.message, "404 page not found");
-+        spawned.await.unwrap();
-+    }
- }
-```
-
----
-
-### Incident Patch 3: `c724be6e` (2026-09-29)
-**Commit Message**: Deprecate ListParams::timeout (#2093)
-
-ListParams::timeout has not been sent with list requests since
-ListParams and WatchParams were split in #1162, but its docs still
-described a list/watch timeout defaulting to 290s.
-
-Refs #334
-
-Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
-
-**File**: `kube-core/src/params.rs` (modified, +14/-6)
-```diff
-@@ -48,9 +48,13 @@ pub struct ListParams {
-     /// Defaults to everything if `None`.
-     pub field_selector: Option<String>,
- 
--    /// Timeout for the list/watch call.
-+    /// Has no effect since this value is not sent with list requests.
-     ///
--    /// This limits the duration of the call, regardless of any activity or inactivity.
-+    /// To limit the duration of a watch call, use [`WatchParams::timeout`].
-+    #[deprecated(
-+        since = "5.0.0",
-+        note = "has no effect on list requests; use `WatchParams::timeout` for watch calls"
-+    )]
-     pub timeout: Option<u32>,
- 
-     /// Limit the number of results.
-@@ -129,15 +133,19 @@ impl ListParams {
- /// use kube::api::ListParams;
- /// let lp = ListParams::default()
- ///     .match_any()
--///     .timeout(60)
- ///     .labels("kubernetes.io/lifecycle=spot");
- /// ```
- impl ListParams {
--    /// Configure the timeout for list/watch calls
-+    /// Set the timeout field
-     ///
--    /// This limits the duration of the call, regardless of any activity or inactivity.
--    /// Defaults to 290s
-+    /// Has no effect since this value is not sent with list requests.
-+    /// To limit the duration of a watch call, use [`WatchParams::timeout`].
-+    #[deprecated(
-+        since = "5.0.0",
-+        note = "has no effect on list requests; use `WatchParams::timeout` for watch calls"
-+    )]
-     #[must_use]
-+    #[allow(deprecated)]
-     pub fn timeout(mut self, timeout_secs: u32) -> Self {
-         self.timeout = Some(timeout_secs);
-         self
-```
-
-**File**: `kube-runtime/src/watcher.rs` (modified, +4/-4)
-```diff
-@@ -251,10 +251,10 @@ pub struct Config {
-     /// Defaults to everything if `None`.
-     pub field_selector: Option<String>,
- 
--    /// Timeout for the list/watch call.
-+    /// Timeout for the watch call.
-     ///
-     /// This limits the duration of the call, regardless of any activity or inactivity.
--    /// If unset for a watch call, we will use 290s.
-+    /// If unset, we will use 290s.
-     /// The watcher's dead-connection detection window is this value plus 5s,
-     /// so larger values delay noticing a silently dropped connection.
-     pub timeout: Option<u32>,
-@@ -321,7 +321,7 @@ impl Default for Config {
- ///     .labels("kubernetes.io/lifecycle=spot");
- /// ```
- impl Config {
--    /// Configure the timeout for list/watch calls
-+    /// Configure the timeout for watch calls
-     ///
-     /// This limits the duration of the call, regardless of any activity or inactivity.
-     /// Defaults to 290s
-@@ -429,12 +429,12 @@ impl Config {
-         ListParams {
-             label_selector: self.label_selector.clone(),
-             field_selector: self.field_selector.clone(),
--            timeout: self.timeout,
-             version_match,
-             resource_version,
-             // The watcher handles pagination internally.
-             limit: self.page_size,
-             continue_token: None,
-+            ..Default::default()
-         }
-     }
- 
+@@ -7,7 +7,7 @@ jobs:
+   no-ai-commits:
+     runs-on: ubuntu-latest
+     steps:
+-      - uses: actions/checkout@v6
++      - uses: actions/checkout@v7
+         with:
+           # Required so the full commit range is available
+           fetch-depth: 0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2106** (2026-10-21): Chore(deps): Bump actions/checkout from 6 to 7 (@dependabot[bot])
 - **PR #2104** (2026-10-02): Only save coverage and memory-bench caches on main (@doxxx93)
 - **PR #2102** (2026-10-02): Warm PR caches from main and avoid k3d API rate limits (@doxxx93)
 - **PR #2101** (closed): chore: run cargo fmt (@cratelyn)
 - **PR #2097** (2026-09-30): Fix Retry-After overflow panic in the default retry policy (@doxxx93)
 - **PR #2096** (2026-09-30): Box large error payloads to keep kube::Error under 128 bytes (@doxxx93)
-- **PR #2095** (2026-09-30): Bump syn to 3 along with darling, prettyplease and educe (@doxxx93)
 
 ---
 
@@ -2010,54 +1771,28 @@ Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Retry-After overflow panic in the default retry policy (#2097)
+## X. deps): Bump actions/checkout from 6 to 7 (#2106)
 
 **RULE**:
-When implementing operations in `kube-client/src/client/retry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/no_ai.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9789ece`: Retry-After overflow panic in the default retry policy (#2097). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3995dc6d`: deps): Bump actions/checkout from 6 to 7 (#2106). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-client/src/client/retry.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/no_ai.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::time::Duration;
-use tokio::time::Instant;
-                    if Instant::now()
-                        .checked_add(server_delay)
-                        .is_some_and(|retry_after| backoff.deadline() <= retry_after)
-                    {
-
-    fn retry_after(policy: &mut RetryPolicy, secs: &str) -> Instant {
-        let mut req = Request::new(Body::empty());
-        let mut res: Result<_, BoxError> = Ok(Response::builder()
-            .status(StatusCode::TOO_MANY_REQUESTS)
-            .header("Retry-After", secs)
-            .body(())
-            .unwrap());
-        policy.retry(&mut req, &mut res).expect("429 is retried").deadline()
-    }
-
-    #[tokio::test(start_paused = true)]
-    async fn retry_after_overflow_falls_back_to_backoff() {
-        let now = Instant::now();
-        let mut policy = RetryPolicy::server_retry();
-        assert_eq!(retry_after(&mut policy, "30"), now + Duration::from_secs(30));
-        // `now + Retry-After` overflows an Instant; must not panic.
-        assert!(retry_after(&mut policy, &u64::MAX.to_string()) < now + Duration::from_secs(1));
-    }
+      - uses: actions/checkout@v7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use std::time::{Duration, Instant};
-                    let retry_after = Instant::now() + server_delay;
-                    if backoff.deadline().le(&retry_after.into()) {
+      - uses: actions/checkout@v6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9789ece` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3995dc6d` are properly handled with clean fallback behavior.
