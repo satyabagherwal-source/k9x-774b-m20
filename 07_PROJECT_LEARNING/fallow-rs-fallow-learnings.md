@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `94a7ef85`  
+> **Source Version**: `c9d7861d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:45:40.182Z  
+> **Timestamp**: 2026-10-22T19:35:36.973Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:45:40.176Z  
+> **Harvest Timestamp**: 2026-10-22T19:35:35.728Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5200 stars
+- **Stars / Engagement**: 5215 stars
 
 ---
 
@@ -336,6 +336,41 @@ export const installChildHooks = ({ active, beforeEach, afterEach, report }) => 
     running = Math.max(0, running - 1);
     const { hits, staticHits } = mutation.finishTest();
     report({ hits, static_hits: staticHits, overlap }, args[0]);
+  });
+};
+
+```
+
+### Core Architecture Module: `crates/api/src/mutation/companion/runtime/overlay-hook.mjs`
+```
+// Generated from tools/mutation-runner/src/runtime/overlay-hook.mjs. Do not edit.
+import { readFileSync } from "node:fs";
+import { registerHooks } from "node:module";
+import { fileURLToPath } from "node:url";
+
+import { realPath } from "./child.mjs";
+
+/**
+ * Serves the instrumented file of each overlay entry in place of its source
+ * file. `onLoad(entry)` runs for each served file.
+ *
+ * A synchronous hook runs in this thread for `import` and `require`. It keeps
+ * the format of the original file, so Node strips the types of a TypeScript
+ * file as it does without the overlay.
+ */
+export const registerOverlayHook = (overlay, onLoad = () => {}) => {
+  const overlayEntry = (url) => {
+    if (!url.startsWith("file:")) return undefined;
+    return overlay.get(realPath(fileURLToPath(url)));
+  };
+  registerHooks({
+    load(url, context, nextLoad) {
+      const result = nextLoad(url, context);
+      const entry = overlayEntry(url);
+      if (entry === undefined) return result;
+      onLoad(entry);
+      return { ...result, source: readFileSync(entry.target, "utf8"), shortCircuit: true };
+    },
   });
 };
 
@@ -1222,245 +1257,6 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
         Err(msg)
 ```
 
-### Core Architecture Module: `crates/cli/src/walkthrough_state.rs`
-```
-//! Local, account-free viewed-state for `fallow review --walkthrough`.
-//!
-//! Per-file "I've looked at this" marks live in a small JSON ledger inside the
-//! resolved cache dir (`.fallow/walkthrough-state.json`, already gitignored).
-//! The ledger is purely local: no account, no network, human/git-readable.
-//!
-//! Staleness is keyed on the guide's `graph_snapshot_hash`. A mark is honored
-//! ONLY when the stored hash matches the current guide hash, so a tree that
-//! moved silently un-views every file for that render without deleting the marks
-//! (a no-op carry-forward keeps them if the user reverts). Rendering is
-//! read-only and idempotent; marks are written ONLY on an explicit
-//! `--mark-viewed` mutation, never as a side effect of a render.
-
-use std::collections::BTreeMap;
-use std::path::Path;
-
-use serde::{Deserialize, Serialize};
-
-/// Current ledger format version. Bumped only on a breaking shape change; a
-/// reader that sees an unknown version treats the file as empty (safe default).
-const VIEWED_STATE_VERSION: u32 = 1;
-
-/// Stable schema discriminator, so a stray file under the cache dir is not
-/// mistaken for a viewed-state ledger.
-const VIEWED_STATE_SCHEMA: &str = "walkthrough-viewed-marks";
-
-/// One viewed entry: when the file was marked viewed (RFC 3339-ish UTC).
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ViewedEntry {
-    /// UTC timestamp the mark was recorded.
-    pub viewed_at: String,
-}
-
-/// The on-disk viewed-state ledger.
-///
-/// `entries` is keyed by the per-file VIEW key (the file path from the guide's
-/// `direction.order`). `graph_snapshot_hash` pins the marks to the guide they
-/// were recorded against; a mismatch on read means the tree moved and every
-/// entry is treated as not-viewed for that render (see [`ViewedState::is_viewed`]).
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ViewedState {
-    /// Ledger format version.
-    pub version: u32,
-    /// Schema discriminator.
-    pub schema: String,
-    /// The guide hash the marks were recorded against.
-    #[serde(default)]
-    pub graph_snapshot_hash: String,
-    /// Per-file viewed marks, keyed by the file path.
-    #[serde(default)]
-    pub entries: BTreeMap<String, ViewedEntry>,
-}
-
-impl Default for ViewedState {
-    fn default() -> Self {
-        Self {
-            version: VIEWED_STATE_VERSION,
-            schema: VIEWED_STATE_SCHEMA.to_string(),
-            graph_snapshot_hash: String::new(),
-            entries: BTreeMap::new(),
-        }
-    }
-}
-
-impl ViewedState {
-    /// Whether `file` is currently viewed: it must have a recorded mark AND the
-    /// ledger's stored hash must match the guide's `current_hash`. A stale hash
-    /// (the tree moved) makes every file read as not-viewed, the safe direction.
-    #[must_use]
-    pub fn is_viewed(&self, file: &str, current_hash: &str) -> bool {
-        if self.graph_snapshot_hash.is_empty() || self.graph_snapshot_hash != current_hash {
-            return false;
-        }
-        self.entries.contains_key(file)
-    }
-}
-
-/// Load the viewed-state ledger from `cache_dir`, returning an empty default
-/// when the file is missing, unreadable, or not valid JSON.
-///
-/// A missing ledger is the common first-run case, and a garbled one must never
-/// hard-error a render, so both collapse to the empty default rather than a
-/// caller-visible error. A version the reader does not understand is also
-/// treated as empty (forward-compat: a future writer's shape never crashes an
-/// older render).
-#[must_use]
-pub fn load_viewed_state(cache_dir: &Path) -> ViewedState {
-    let path = fallow_config::walkthrough_state_path(cache_dir);
-    let Ok(contents) = std::fs::read_to_string(&path) else {
-        return ViewedState::default();
-    };
-    let Ok(state) = serde_json::from_str::<ViewedState>(&contents) else {
-        return ViewedState::default();
-    };
-    if state.version != VIEWED_STATE_VERSION || state.schema != VIEWED_STATE_SCHEMA {
-        return ViewedState::default();
-    }
-    state
-}
-
-/// Record each path in `files` as viewed against `current_hash`, atomically.
-///
-/// Loads the existing ledger, upserts the marks, sets the stored hash to the
-/// current guide hash, then writes via a temp file + rename so a crash mid-write
-/// can never truncate the JSON. Returns the file count actually persisted.
-/// Swallows IO errors (logged at most by the caller); the viewed-state is a
-/// convenience, never load-bearing for the tour or the exit code.
-pub fn mark_viewed(cache_dir: &Path, files: &[String], current_hash: &str) -> std::io::Result<()> {
-    let mut state = load_viewed_state(cache_dir);
-    // A hash change means the prior marks no longer apply; reset the ledger to
-    // the current snapshot rather than mixing marks across two graph states.
-    if state.graph_snapshot_hash != current_hash {
-        state.entries.clear();
-    }
-    state.graph_snapshot_hash = current_hash.to_string();
-    let now = crate::vital_signs::chrono_timestamp();
-    for file in files {
-        state.entries.insert(
-            file.clone(),
-            ViewedEntry {
-                viewed_at: now.clone(),
-            },
-        );
-    }
-    write_atomic(cache_dir, &state)
-}
-
-/// Serialize `state` and write it to the ledger path via temp + rename.
-fn write_atomic(cache_dir: &Path, state: &ViewedState) -> std::io::Result<()> {
-    let path = fallow_config::walkthrough_state_path(cache_dir);
-    if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-    let json = serde_json::to_string_pretty(state)
-        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
-    let tmp = path.with_extension("json.tmp");
-    std::fs::write(&tmp, json.as_bytes())?;
-    std::fs::rename(&tmp, &path)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn temp_cache() -> tempfile::TempDir {
-        tempfile::tempdir().expect("tempdir")
-    }
-
-    #[test]
-    fn missing_file_loads_empty_default() {
-        let dir = temp_cache();
-        let state = load_viewed_state(dir.path());
-        assert!(state.entries.is_empty());
-        assert_eq!(state.version, VIEWED_STATE_VERSION);
-    }
-
-    #[test]
-    fn garbled_json_loads_empty_default() {
-        let dir = temp_cache();
-        let path = fallow_config::walkthrough_state_path(dir.path());
-        std::fs::write(&path, b"{ not json").expect("write");
-        let state = load_viewed_state(dir.path());
-        assert!(state.entries.is_empty());
-    }
-
-    #[test]
-    fn unknown_version_loads_empty_default() {
-        let dir = temp_cache();
-        let path = fallow_config::walkthrough_state_path(dir.path());
-        std::fs::write(
-            &path,
-            br#"{"version":999,"schema":"walkthrough-viewed-marks","graph_snapshot_hash":"h","entries":{"a.ts":{"viewed_at":"t"}}}"#,
-        )
-        .expect("write");
-        let state = load_viewed_state(dir.path());
-        assert!(state.entries.is_empty());
-    }
-
-    #[test]
-    fn mark_then_load_round_trips() {
-        let dir = temp_cache();
-        mark_viewed(dir.path(), &["src/a.ts".to_string()], "hash1").expect("mark");
-        let state = load_viewed_state(dir.path());
-        assert!(state.is_viewed("src/a.ts", "hash1"));
-        assert!(!state.is_viewed("src/b.ts", "hash1"));
-    }
-
-    #[test]
-    fn stale_hash_reads_as_not_viewed_but_keeps_entry() {
-        let dir = temp_cache();
-        mark_viewed(dir.path(), &["src/a.ts".to_string()], "hash1").expect("mark");
-        let state = load_viewed_state(dir.path());
-        // A different current hash: the mark is ignored for this render.
-        assert!(!state.is_viewed("src/a.ts", "hash2"));
-        // ...but the entry on disk is not deleted (carry-forward).
-        assert!(state.entries.contains_key("src/a.ts"));
-    }
-
-    #[test]
-    fn mark_against_new_hash_resets_prior_marks() {
-        let dir = temp_cache();
-        mark_viewed(dir.path(), &["src/a.ts".to_string()], "hash1").expect("mark a");
-        mark_viewed(dir.path(), &["src/b.ts".to_string()], "hash2").expect("mark b");
-        let state = load_viewed_state(dir.path());
-        assert!(state.is_viewed("src/b.ts", "hash2"));
-        // The hash1 mark was reset when the snapshot moved.
-        assert!(!state.entries.contains_key("src/a.ts"));
-    }
-
-    #[test]
-    fn is_viewed_only_matches_current_hash() {
-        let dir = temp_cache();
-        mark_viewed(
-            dir.path(),
-            &["src/a.ts".to_string(), "src/b.ts".to_string()],
-            "hash1",
-        )
-        .expect("mark");
-        let state = load_viewed_state(dir.path());
-        // Hash-matched files read as viewed; an un-marked file does not.
-        assert!(state.is_viewed("src/a.ts", "hash1"));
-        assert!(state.is_viewed("src/b.ts", "hash1"));
-        assert!(!state.is_viewed("src/c.ts", "hash1"));
-        // A stale snapshot hash matches nothing.
-        assert!(!state.is_viewed("src/a.ts", "stale"));
-        assert!(!state.is_viewed("src/b.ts", "stale"));
-    }
-
-    #[test]
-    fn empty_stored_hash_never_viewed() {
-        let state = ViewedState::default();
-        assert!(!state.is_viewed("a.ts", ""));
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1488,993 +1284,1046 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c80628c` (2026-10-20)
-**Commit Message**: fix: stop css-broken-reference typo suggestions for defined classes (#3703)
+### Incident Patch 1: `c642c586` (2026-10-22)
+**Commit Message**: fix(extract): stop deeply nested brackets from aborting the run (#3790)
 
-Fixes #3588
+The Oxc parser recurses once per nesting level and has no depth limit. A
+file with a few thousand nested brackets overflowed the stack, and the
+stack overflow aborted the whole process. OSS-Fuzz found this in the
+fuzz_extract and fuzz_extract_cache targets. `fallow dupes` and
+`fallow health` aborted on the same files.
 
+`fallow_extract::exceeds_nesting_limit` scans the bracket depth before a
+parse. Past 1024 levels, extraction returns a failed parse with no facts,
+so the run continues and the parse warning names the file. The
+duplication tokenizer, similar-code extraction, inventory and search
+visibility skip the file.
 
-`css-broken-reference` reported three kinds of defined classes as probable typos. This change fixes each case in the class inventory of `fallow health --css`.
+The scan ignores brackets in strings, comments and template text. A
+string or regex literal that does not end on its line is scanned again
+as code, and a regex body raises only the peak depth, so a misread
+literal cannot hide real nesting. The deepest file in a scan of 134k
+real package files nests 87 levels.
 
-1. **Tailwind utilities.** A utility such as `w-full` is generated by Tailwind and is never in the project stylesheets. When an authored class was one edit away (`wl-full`), the check reported the utility as a typo. The check now skips a token with the shape of a Tailwind utility when the project loads Tailwind. A stylesheet or style block with `@import "tailwindcss"`, `@reference "tailwindcss"` or a `@tailwind` directive marks the project as a Tailwind project. A `tailwindcss` dependency in the root `package.json` also marks it. The shape check uses a fixed list of utility roots (`w`, `h`, `min`, `text`, `grid` and others) and standalone utilities (`hidden`, `truncate`). Without Tailwind, the check does not change. The skip only removes findings. In a Tailwind project, a typo in an authored class that starts with a utility root (for example `text-` or `content-`) is no longer reported. This keeps the check close to zero false positive
+CACHE_VERSION and DUPES_CACHE_VERSION change: a file between the cap and
+the old overflow depth parsed before and is now a failed parse, so a
+warm cache must not serve its old facts or tok
 
-**File**: `changelog.d/fix-css-broken-reference-false-suggestions.md` (added, +4/-0)
+**File**: `changelog.d/fix-deep-nesting-stack-overflow.md` (added, +3/-0)
 ```diff
-@@ -0,0 +1,4 @@
+@@ -0,0 +1,3 @@
 +### Fixed
 +
-+- **`css-broken-reference` no longer suggests a "did you mean" fix for a defined class.** Three cases caused false findings. In a Tailwind project, a utility such as `w-full` was reported as a typo of an authored class such as `wl-full`. Fallow now skips tokens with the shape of a Tailwind utility when a stylesheet loads Tailwind or the root `package.json` declares it. As a result, in a Tailwind project an authored class that starts with a utility root (for example `text-` or `list-`) gets no typo suggestion. A class that a component defines only through `:global` in an Astro, Vue or Svelte `<style>` block, or in a CSS module, now counts as defined. This includes `:global(.x)`, the Svelte 5 block form `:global { .x {} }` and the selector form `div :global .x {}`. A `<style>` block in an `.html` file now contributes its classes. Thanks to @zaphir for the report.
-+  (Closes [#3588](https://github.com/fallow-rs/fallow/issues/3588))
++- **A file with deeply nested brackets no longer aborts the run.** A source with thousands of nested `(`, `[`, `{` or template substitutions overflowed the parser stack, and the stack overflow killed the whole `fallow` process. Fallow now measures the nesting before it parses a file. A file past the limit shows as a file that failed to parse, `fallow dupes` finds no clones in it, and the analysis of the other files continues. Brackets inside strings, comments and template text do not count. The extraction and duplication cache versions change, so the first run after the upgrade parses every file again. OSS-Fuzz found this.
 ```
 
-**File**: `crates/engine/src/health/css_analytics/classes.rs` (modified, +190/-26)
+**File**: `crates/engine/src/duplication_detector/tokenize/mod.rs` (modified, +10/-0)
 ```diff
-@@ -61,25 +61,33 @@ fn build_typo_target_index(
-     by_len
- }
+@@ -67,6 +67,16 @@ fn tokenize_file_inner(
  
-+/// The project-wide inputs of the typo check, shared by every markup file.
-+struct TypoTargets<'a> {
-+    defined: &'a rustc_hash::FxHashSet<String>,
-+    by_len: rustc_hash::FxHashMap<usize, Vec<&'a str>>,
-+    /// The project loads Tailwind, so utility-shaped tokens are not checked.
-+    uses_tailwind: bool,
-+}
-+
- /// Collect the likely-typo class references in one markup source into `out`,
- /// deduping by `(rel, line, value)` via `seen`.
--fn collect_unresolved_class_refs_in_file<'a>(
-+fn collect_unresolved_class_refs_in_file(
-     source: &str,
-     rel: &str,
--    defined: &rustc_hash::FxHashSet<String>,
--    by_len: &'a rustc_hash::FxHashMap<usize, Vec<&'a str>>,
-+    targets: &TypoTargets<'_>,
-     seen: &mut rustc_hash::FxHashSet<(String, u32, String)>,
-     out: &mut Vec<fallow_output::UnresolvedClassReference>,
- ) {
-     use fallow_output::{CssCandidateAction, UnresolvedClassReference};
-     for token in crate::css::scan_markup_class_tokens(source).static_tokens {
-         if token.value.len() < MIN_TOKEN_LEN
-             || is_tailwind_shaped(&token.value)
--            || defined.contains(&token.value)
-+            || (targets.uses_tailwind && tailwind_utilities::is_tailwind_utility(&token.value))
-+            || targets.defined.contains(&token.value)
-         {
-             continue;
-         }
--        let Some(suggestion) = best_class_suggestion(&token.value, by_len) else {
-+        let Some(suggestion) = best_class_suggestion(&token.value, &targets.by_len) else {
-             continue;
-         };
-         let key = (rel.to_owned(), token.line, token.value.clone());
-@@ -143,15 +151,22 @@ pub(super) fn scan_unresolved_class_references(
-     if defined.is_empty() {
-         return Vec::new();
-     }
--    let by_len = build_typo_target_index(defined);
-+    let targets = TypoTargets {
-+        defined,
-+        by_len: build_typo_target_index(defined),
-+        // A Tailwind utility (`w-full`) is generated, never authored, so it is
-+        // not in the defined set. Skip utility-shaped tokens when the project
-+        // loads Tailwind, else `w-full` reads as a typo of an authored `wl-full`.
-+        uses_tailwind: class_inventory.loads_tailwind || project_uses_tailwind(&config.root),
-+    };
+     let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
  
-     let mut out: Vec<UnresolvedClassReference> = Vec::new();
-     let mut seen: rustc_hash::FxHashSet<(String, u32, String)> = rustc_hash::FxHashSet::default();
-     for file in files {
-         let Some((rel, source)) = read_markup_scan_source(file, ctx) else {
-             continue;
-         };
--        collect_unresolved_class_refs_in_file(&source, &rel, defined, &by_len, &mut seen, &mut out);
-+        collect_unresolved_class_refs_in_file(&source, &rel, &targets, &mut seen, &mut out);
-     }
- 
-     out.sort_by(|a, b| {
-@@ -344,28 +359,127 @@ pub(super) fn collect_quoted_class_tokens(
- /// always surface as a (false) unreferenced-class candidate. `:global` is the
- /// author's explicit "not locally scoped, applied elsewhere" marker, so excluding
- /// these from the candidate set is semantically correct, not a heuristic guess.
-+///
-+/// Three forms are recognized: the function form `:global(.x)`, the Svelte 5
-+/// block form `:global { .x {} }`, and the selector form `div :global .x {}`,
-+/// where the rest of the selector up to `{` or `,` is global.
- fn collect_global_scoped_classes(source: &str, out: &mut rustc_hash::FxHashSet<String>) {
-+    const MARKER: &str = ":global";
-+    // A `:global` word in a comment is prose, not a selector.
-+    let blanked = blank_block_comments(source);
-+    let source = blanked.as_str();
-     let bytes = source.as_bytes();
-     let mut i = 0;
--    while let Some(rel) = source[i..].find(":global(") {
--        let open = i + rel + ":global(".len();
--        // Balance parentheses so a `:global(:is(.a, .b))` still closes correctly.
--        let mut depth = 1usize;
--        let mut j = open;
--        while j < bytes.len() && depth > 0 {
--            match bytes[j] {
--                b'(' => depth += 1,
--                b')' => depth -= 1,
--                _ => {}
-+    while let Some(rel) = source[i..].find(MARKER) {
-+        let after = i + rel + MARKER.len();
-+        i = match bytes.get(after) {
-+            Some(b'(') => collect_global_function(source, after + 1, out),
-+            Some(byte) if byte.is_ascii_whitespace() || *byte == b'{' => {
-+                collect_global_unparenthesized(source, after, out)
-             }
--            j += 1;
-+            _ => after,
++    if fallow_extract::exceeds_nesting_limit(source) {
++        return FileTokens {
++            tokens: Vec::new(),
++            function_spans: Vec::new(),
++            atomic_invocation_spans: Vec::new(),
++            literal_argument_spans: Vec::new(),
++            source: source.to_string(),
++            line_count: source.lines().count().max(1),
 +        };
 +    }
-+}
-+
-+/// Replace each `/* ... */` comment with spaces of the same byte length, so
-+/// byte offsets into the result match the source. An unclosed comment runs to
-+/// the end of the source, as in CSS.
-+fn blank_block_comments(source: &str) -> String {
-+    let mut out = String::with_capacity(source.len());
-+    let mut rest = source;
-+    while let Some(start) = rest.find("/*") {
-+        out.push_str(&rest[..start]);
+     if is_sfc_file(path) {
+         return tokenize_sfc(source, strip_types, skip_imports);
+     }
 ```
 
-**File**: `crates/engine/src/health/css_analytics/mod.rs` (modified, +1/-0)
+**File**: `crates/engine/src/duplication_detector/tokenize/tests/edge_cases.rs` (modified, +7/-0)
 ```diff
-@@ -14,6 +14,7 @@ mod cva;
- mod markup_scan;
- mod near_duplicates;
- mod preprocessor;
-+mod tailwind_utilities;
- mod theme_tokens;
- mod token_consumers;
+@@ -511,3 +511,10 @@ export async function fetchAndProcess(url, options = {}) {
+     assert!(has_spread, "Should have spread operator");
+     assert!(has_nullish, "Should have nullish coalescing operator");
+ }
++
++#[test]
++fn deeply_nested_source_yields_no_tokens_instead_of_overflowing() {
++    let depth = 20_000;
++    let code = format!("const x = {}1{};", "(".repeat(depth), ")".repeat(depth));
++    assert!(tokenize(&code).is_empty());
++}
+```
+
+**File**: `crates/engine/src/search_visibility.rs` (modified, +6/-0)
+```diff
+@@ -437,6 +437,9 @@ fn forwarded_import_bindings(path: &Path, source: &str) -> FxHashSet<String> {
+     let Ok(source_type) = oxc_span::SourceType::from_path(path) else {
+         return FxHashSet::default();
+     };
++    if fallow_extract::exceeds_nesting_limit(source) {
++        return FxHashSet::default();
++    }
+     let allocator = oxc_allocator::Allocator::default();
+     let parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
+     if parsed.fatal_error {
+@@ -764,6 +767,9 @@ impl TopLevelStatement {
+ /// The top-level statements of a script. A script that does not parse has
+ /// none.
+ fn top_level_statements(source: &str, source_type: oxc_span::SourceType) -> Vec<TopLevelStatement> {
++    if fallow_extract::exceeds_nesting_limit(source) {
++        return Vec::new();
++    }
+     let allocator = oxc_allocator::Allocator::default();
+     let parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
+     if parsed.fatal_error {
+```
+
+**File**: `crates/extract/src/cache/types.rs` (modified, +2/-2)
+```diff
+@@ -10,12 +10,12 @@ use crate::MemberKind;
+ /// extraction semantics change, and give the reason in the commit message and
+ /// the CHANGELOG. A stale version serves old extraction results from a warm
+ /// cache. The `assert_cached_type_size!` guards below catch shape changes.
+-pub(super) const CACHE_VERSION: u32 = 371;
++pub(super) const CACHE_VERSION: u32 = 372;
+ 
+ /// Duplication token cache version. Bump it when duplicate tokenization,
+ /// normalization, or the on-disk token cache schema changes, and give the
+ /// reason in the commit message and the CHANGELOG.
+-pub const DUPES_CACHE_VERSION: u32 = 16;
++pub const DUPES_CACHE_VERSION: u32 = 17;
+ 
+ /// Default maximum cache size (256 MB). Overridable per-project via
+ /// `cache.maxSizeMb` in the config file or `FALLOW_CACHE_MAX_SIZE` env var.
+```
+
+**File**: `crates/extract/src/inventory.rs` (modified, +3/-0)
+```diff
+@@ -506,6 +506,9 @@ fn walk_one_parse(
+     source_type: SourceType,
+     line_offsets: &[u32],
+ ) -> (Vec<InventoryEntry>, FxHashMap<String, InventoryComplexity>) {
++    if crate::exceeds_nesting_limit(source) {
++        return (Vec::new(), FxHashMap::default());
++    }
+     let allocator = Allocator::default();
+     let parser_return = Parser::new(&allocator, source, source_type).parse();
  
 ```
 
-**File**: `crates/engine/src/health/css_analytics/tailwind_utilities.rs` (added, +272/-0)
+**File**: `crates/extract/src/lib.rs` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,272 @@
-+//! Conservative recognition of Tailwind utility class tokens.
+@@ -40,8 +40,10 @@ mod jsdoc_attach;
+ mod jsdoc_deprecated;
+ pub mod mdx;
+ mod module_info;
++mod nesting;
+ pub mod og_image;
+ mod parse;
++mod parse_degradation;
+ pub mod sfc;
+ pub mod sfc_css;
+ mod sfc_props;
+@@ -104,6 +106,7 @@ pub use css_in_js::{
+ pub use css_metrics::{compute_css_analytics, parse_css_color_rgb};
+ pub use glimmer::{is_glimmer_file, strip_glimmer_templates};
+ pub use mdx::{extract_mdx_statements, extract_mdx_statements_mapped};
++pub use nesting::{MAX_NESTING_DEPTH, exceeds_nesting_limit};
+ pub use sfc::{
+     SourceRegion, extract_sfc_scripts, extract_sfc_styles, extract_sfc_template_regions,
+     is_sfc_file, sfc_merged_script_source,
+```
+
+**File**: `crates/extract/src/nesting.rs` (added, +360/-0)
+```diff
+@@ -0,0 +1,360 @@
++//! Nesting-depth guard that runs before the Oxc parser sees a source.
 +//!
-+//! The unresolved-class check compares markup class tokens with authored CSS
-+//! classes. A Tailwind utility (`w-full`, `h-full`) is never authored in the
-+//! project's stylesheets, so in a Tailwind project it looks undefined and can be
-+//! one edit away from an authored class (`wl-full`). This module recognizes the
-+//! token shape of a Tailwind utility so the check can skip it.
++//! The Oxc parser and the AST visitors recurse once per nesting level and
++//! have no depth limit (oxc-project/oxc#21953, oxc-project/oxc#24375). A
++//! file with a few thousand nested brackets overflows the stack, and because
++//! a stack overflow aborts the process, one such file kills the whole run.
++//! Extraction therefore measures the bracket nesting first and does not parse
++//! a file past [`MAX_NESTING_DEPTH`].
++//!
++//! The scan is a lexer approximation. Brackets in strings, comments and
++//! template text do not count. A string or regex literal that does not end on
++//! its line is not a literal, so the scan reads it again as code: a stray
++//! quote in JSX text or a division read as a regex cannot hide brackets. A
++//! regex body keeps its unclosed openers open, so a division that looks like
++//! a regex cannot hide brackets either. It does not need to be
++//! exact, because real code stays far below the cap. Nesting without brackets
++//! (TypeScript generics, JSX elements, long member or call chains) is not
++//! bounded here.
 +
-+/// Utilities that are a complete class without a `-value` suffix.
-+const STANDALONE_UTILITIES: &[&str] = &[
-+    "absolute",
-+    "antialiased",
-+    "block",
-+    "border",
-+    "capitalize",
-+    "collapse",
-+    "container",
-+    "contents",
-+    "filter",
-+    "fixed",
-+    "flex",
-+    "flow-root",
-+    "grayscale",
-+    "grid",
-+    "grow",
-+    "hidden",
-+    "inline",
-+    "invert",
-+    "invisible",
-+    "isolate",
-+    "italic",
-+    "lowercase",
-+    "outline",
-+    "overline",
-+    "relative",
-+    "ring",
-+    "rounded",
-+    "sepia",
-+    "shadow",
-+    "shrink",
-+    "static",
-+    "sticky",
-+    "table",
-+    "transform",
-+    "transition",
-+    "truncate",
-+    "underline",
-+    "uppercase",
-+    "visible",
-+];
++use fallow_types::discover::FileId;
++use fallow_types::extract::ModuleInfo;
 +
-+/// The first `-` segment of a utility that takes a value or a modifier, such as
-+/// `w` in `w-full` or `min` in `min-h-screen`.
-+const UTILITY_ROOTS: &[&str] = &[
-+    "accent",
-+    "align",
-+    "animate",
-+    "appearance",
-+    "aspect",
-+    "auto",
-+    "backdrop",
-+    "backface",
-+    "basis",
-+    "bg",
-+    "blur",
-+    "border",
-+    "bottom",
-+    "box",
-+    "break",
-+    "brightness",
-+    "caption",
-+    "caret",
-+    "clear",
-+    "col",
-+    "columns",
-+    "content",
-+    "contrast",
-+    "cursor",
-+    "decoration",
-+    "delay",
-+    "divide",
-+    "drop",
-+    "duration",
-+    "ease",
-+    "end",
-+    "field",
-+    "fill",
-+    "flex",
-+    "float",
-+    "font",
-+    "forced",
-+    "from",
-+    "gap",
-+    "grayscale",
-+    "grid",
-+    "grow",
-+    "h",
-+    "hue",
-+    "hyphens",
-+    "indent",
-+    "inline",
-+    "inset",
-+    "invert",
-+    "isolation",
-+    "items",
-+    "justify",
-+    "leading",
-+    "left",
-+    "line",
-+    "list",
-+    "m",
-+    "mask",
-+    "max",
-+    "mb",
-+    "me",
-+    "min",
-+    "mix",
-+    "ml",
-+    "mr",
-+    "ms",
-+    "mt",
-+    "mx",
-+    "my",
-+    "no",
-+    "normal",
-+    "not",
-+    "object",
-+    "opacity",
-+    "order",
-+    "origin",
-+    "outline",
-+    "overflow",
-+    "overscroll",
-+    "p",
-+    "pb",
-+    "pe",
-+    "perspective",
-+    "pl",
-+    "place",
-+    "pointer",
-+    "pr",
-+    "ps",
-+    "pt",
-+    "px",
-+    "py",
-+    "resize",
-+    "right",
-+    "ring",
-+    "rotate",
-+    "rounded",
-+    "row",
-+    "saturate",
-+    "scale",
-+    "scroll",
-+    "select",
-+    "self",
-+    "sepia",
-+    "shadow",
-+    "shrink",
-+    "size",
-+    "skew",
-+    "snap",
-+    "space",
-+    "sr",
-+    "start",
-+    "stroke",
-+    "subpixel",
-+    "table",
-+    "text",
-+    "to",
-+    "top",
-+    "touch",
-+    "tracking",
-+    "transform",
-+    "transition",
-+    "translate",
-+    "underline",
-+    "via",
-+    "w",
-+    "whitespace",
-+    "will",
-+    "wrap",
-+    "z",
-+];
++use crate::visitor::ModuleInfoExtractor;
 +
-+/// True when `token` has the shape of a Tailwind utility class: a standalone
-+/// utility (`hidden`, `truncate`) or a known utility root followed by a value
-+/// (`w-full`, `min-h-screen`, `-mt-4`, `!p-2`).
++/// Bracket nesting depth past which a file is not parsed.
 +///
-+/// The check is shape based. It does not prove that Tailwind generates the
-+/// class, so callers use it only to abstain, never to report.
-+pub(super) fn is_tailwind_utility(token: &str) -> bool {
-+    let token = token.trim_start_matches(['!', '-']).trim_end_matches('!');
-+    if STANDALONE_UTILITIES.contains(&token) {
-+        return true;
++/// A release build on a 16 MiB worker stack overflows at about 6000 levels for
++/// the most expensive shape (nested object literals), and at about half that
++/// on the 8 MiB main thread that parses small projects. Real code stays far
++/// below this cap.
++pub const MAX_NESTING_DEPTH: u32 = 1024;
++
++/// The module of a file whose nesting would overflow the parser stack, or
++/// `None` when the file is safe to parse. The module is a failed parse with no
++/// facts, so the file shows up as degraded instead of aborting the run.
++pub fn too_deep_module(file_id: FileId, source: &str, content_hash: u64) -> Option<ModuleInfo> {
++    let source = crate::strip_bom(source);
++    if !exceeds_nesting_limit(source) {
++        return None;
 +    }
-+    let Some((root, value)) = token.split_once('-') else {
-+        return false;
-+    };
-+    !value.is_empty() && UTILITY_ROOTS.contains(&root)
++    let mut info = ModuleInfoExtractor::new().into_module_info(
++        file_id,
++        content_hash,
++        crate::suppress::ParsedSuppressions::default(),
++    );
++    info.parse_error_count = 1;
++    info.parse_panicked = true;
++    info.line_offsets = fallow_types::extract::compute_line_offsets(source);
++    Some(info)
 +}
 +
-+/// True when a stylesheet loads Tailwind: a v4 `@import "tailwindcss"` or
-+/// `@reference "tailwindcss"` (also a subpath such as `tailwindcss/theme`), or a
-+/// v3 `@tailwind` directive.
-+pub(super) fn stylesheet_loads_tailwind(source: &str) -> bool {
-+    if source.contains("@tailwind ") {
-+        return true;
-+    }
-+    ["@import", "@reference"].iter().any(|at_rule| {
-+        source.match_indices(at_rule).any(|(start, _)| {
-+            let prelude = &source[start + at_rule.len()..];
-+            let end = prelude.find([';', '\n']).unwrap_or(prelude.len());
-+            let prelude = prelude[..end].trim_start();
-+            prelude.starts_with("\"tailwindcss") || prelude.starts_with("'tailwindcss")
-+        })
-+    })
++/// Returns `true` when the bracket nesting of `source` exceeds
++/// [`MAX_NESTING_DEPTH`]. Every caller that hands user source to the Oxc
++/// parser checks this first.
++#[must_use]
++pub fn exceeds_nesting_limit(source: &str) -> bool {
++    max_depth(source, MAX_NESTING_DEPTH) > MAX_NESTING_DEPTH
 +}
++
++/// Maximum bracket nesting depth of `source`. The scan stops as soon as the
++/// depth passes `limit`, so the result is at most `limit + 1`.
++fn max_depth(source: &str, limit: u32) -> u32 {
++    let mut scanner = Scanner {
++        bytes: source.as_bytes(),
++        pos: 0,
++        depth: 0,
++        max_depth: 0,
++        limit,
++        templates: Vec::new(),
++        regex_allowed: true,
++    };
++    scanner.scan();
++    scanner.max_depth
++}
++
++struct Scanner<'a> {
++    bytes: &'a [u8],
++    pos: usize,
++    depth: u32,
++    max_depth: u32,
++    limit: u32,
++    /// Depth of each open `${` substitution, innermost last. The `}` that
++    /// brings the depth back to this value resumes the template text.
++    templates: Vec<u32>,
++    /// Whether a `/` at this point starts a regex literal instead of a
++    /// division, judged from the previous significant byte.
++    regex_allowed: bool,
++}
++
++impl Scanner<'_> {
++    fn scan(&mut self) {
++        while let Some(&byte) = self.bytes.get(self.pos) {
++            if self.max_depth > self.limit {
++                return;
++            }
++            self.pos += 1;
++            match byte {
++                b'(' | b'[' | b'{' => {
++                    self.open();
++                    self.regex_allowed = true;
++                }
++                b'}' if self.templates.last() == Some(&self.depth) => {
++                    self.templates.pop();
++                    self.depth -= 1;
++                    self.skip_template_text();
++                }
++                b')' | b']' | b'}' => {
++                    self.depth = self.depth.saturating_sub(1);
++                    self.regex_allowed = byte == b'}';
++                }
++                b'\'' | b'"' => {
++                    self.skip_string(byte);
++                    self.regex_allowed = false;
++                }
++                b'`' => self.skip_template_text(),
++                b'/' => self.skip_slash(),
++                b' ' | b'\t' | b'\n' | b'\r' => {}
++                _ => self.regex_allowed = starts_expression(byte),
++            }
++        }
++    }
++
++    fn open(&mut self) {
++        self.depth += 1;
++        self.max_depth = self.max_depth.max(self.depth);
++    }
++
++    /// Skips a comment, a regex literal, or a divis
+```
+
+---
+
+### Incident Patch 2: `606d18d6` (2026-10-22)
+**Commit Message**: fix(lsp,mcp): run analysis on threads with the worker stack (#3806)
+
+The language server ran analysis on 2 MiB Tokio blocking threads and the default Rayon pool, and run_decision_surface did not call install. A deeply nested file overflowed those stacks and aborted the process. The language server now builds the global Rayon pool and its Tokio threads with the 16 MiB analysis worker stack, run_decision_surface runs both analysis passes inside install, and the MCP Tokio threads get the same stack size. fallow_api exports WORKER_STACK_SIZE and configure_global_analysis_pool(threads), which the CLI also uses.
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -1423,6 +1423,7 @@ dependencies = [
+  "ls-types",
+  "mimalloc",
+  "proptest",
++ "rayon",
+  "rustc-hash",
+  "serde",
+  "serde_json",
+```
+
+**File**: `changelog.d/fix-analysis-thread-stack.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Fixed
++
++- **The language server and the MCP `decision_surface` tool no longer abort on nesting that the CLI survives.** Both ran analysis on threads with a 2 MiB stack, so a deeply nested file overflowed that stack and stopped the process. The language server now gives its analysis threads the 16 MiB stack of the CLI workers. Its Tokio runtime uses two worker threads, because analysis runs on the blocking threads and the Rayon pool. `decision_surface` and `run_decision_surface` now parse on the analysis worker pool, as the other tools do. Their thread count now follows the `threads` option.
+```
+
+**File**: `crates/api/src/lib.rs` (modified, +20/-0)
+```diff
+@@ -126,6 +126,12 @@ pub use fallow_engine::change_scope::{
+ };
+ /// Engine-owned per-workspace Git baseline state used by analysis surfaces.
+ pub use fallow_engine::package_baselines::{PackageBaselineError, PackageChangeScope};
++/// Stack size for threads that run analysis.
++///
++/// A process that runs analysis outside
++/// [`ProgrammaticAnalysisContext::install`], such as the LSP server, gives its
++/// own threads this stack size.
++pub use fallow_engine::thread_pool::WORKER_STACK_SIZE;
+ /// Parsed modules that a long-lived process keeps across analysis calls.
+ ///
+ /// A process that runs many calls on the same project, such as the MCP
+@@ -1237,6 +1243,20 @@ pub struct ComplexityRunOptions<'a> {
+     pub coverage_inputs: ComplexityCoverageInputs<'a>,
+ }
+ 
++/// Build the process-global Rayon pool with the [`WORKER_STACK_SIZE`] stack
++/// and `threads` workers. Zero threads selects the Rayon default count, which
++/// honors `RAYON_NUM_THREADS`.
++///
++/// A process that runs analysis outside
++/// [`ProgrammaticAnalysisContext::install`] calls this once at startup, before
++/// any parallel work. Returns `false` when the global pool already exists or
++/// when a worker thread cannot start. Rayon then keeps its default pool.
++pub fn configure_global_analysis_pool(threads: usize) -> bool {
++    fallow_engine::thread_pool::worker_pool_builder(threads)
++        .build_global()
++        .is_ok()
++}
++
+ /// Derive effective health section flags for API consumers.
+ #[must_use]
+ pub fn derive_health_sections(options: &HealthSectionOptions) -> DerivedHealthSections {
+```
+
+**File**: `crates/api/src/runtime/decision_surface.rs` (modified, +105/-2)
+```diff
+@@ -46,7 +46,9 @@ pub fn run_decision_surface(
+         });
+     }
+ 
+-    let head = run_decision_analysis(&resolved, Some(&changed_files), None)?;
++    // The caller can be a 2 MiB Tokio blocking thread. Parse on the worker
++    // stack of the analysis pool instead.
++    let head = resolved.install(|| run_decision_analysis(&resolved, Some(&changed_files), None))?;
+     let manifests = changed_manifests(&resolved.root, &changed_files);
+     let base = compute_base_decision_snapshot(
+         options,
+@@ -290,7 +292,7 @@ fn compute_base_decision_snapshot(
+         ..options.analysis.clone()
+     };
+     let resolved = resolve_programmatic_analysis_context(&base_analysis)?;
+-    let base = run_decision_analysis(&resolved, None, Some(head_config))?;
++    let base = resolved.install(|| run_decision_analysis(&resolved, None, Some(head_config)))?;
+     let mut snapshot = snapshot_from_decision_analysis(&base);
+     snapshot.manifests = base_manifests;
+     Ok(snapshot)
+@@ -461,3 +463,104 @@ fn export_line_resolver(
+             .map_or(0, |(_, line)| *line)
+     }
+ }
 +
 +#[cfg(test)]
 +mod tests {
-+    use super::*;
++    use std::path::Path;
++    use std::process::Command;
 +
++    use crate::{AnalysisOptions, DecisionSurfaceOptions};
++
++    const STACK_PROBE_ENV: &str = "FALLOW_DECISION_SURFACE_STACK_PROBE_CHILD";
++    const STACK_PROBE_TEST: &str =
++        "runtime::decision_surface::tests::decision_surface_parses_on_the_worker_stack";
++    /// Deep enough to overflow a 2 MiB thread in a release build and to fit
++    /// the 16 MiB worker stack in a debug build. An assignment chain has no
++    /// brackets, so the pre-parse bracket guard does not stop it.
++    const ASSIGNMENT_CHAIN_DEPTH: usize = 4_000;
++
++    // A stack overflow aborts the process, so the probe re-runs this test
++    // binary as a child without RUST_MIN_STACK (pinned to 16 MiB in
++    // .cargo/config.toml). The child test thread then has the 2 MiB default
++    // stack of an MCP blocking thread.
 +    #[test]
-+    fn recognizes_value_and_standalone_utilities() {
-+        for token in [
-+            "w-full",
-+            "h-full",
-+            "min-h-screen",
-+            "max-w-prose",
-+            "-mt-4",
-+            "!p-2",
-+            "grid-cols-3",
-+            "text-primary",
-+   
++    fn decision_surface_parses_on_the_worker_stack() {
++        if std::env::var_os(STACK_PROBE_ENV).is_some() {
++            run_stack_probe_child();
++            return;
++        }
++
++        let current_exe = std::env::current_exe().expect("current test binary should be known");
++        let output = Command::new(current_exe)
++            .arg("--exact")
++            .arg(STACK_PROBE_TEST)
++            .arg("--nocapture")
++            .env(STACK_PROBE_ENV, "1")
++            .env_remove("RUST_MIN_STACK")
++            .output()
++            .expect("stack probe child should start");
++
++        assert!(
++            output.status.success(),
++            "stack probe child failed with status {:?}\nstdout:\n{}\nstderr:\n{}",
++            output.status.code(),
++            String::from_utf8_lossy(&output.stdout),
++            String::from_utf8_lossy(&output.stderr)
++        );
++    }
++
++    fn run_stack_probe_child() {
++        let project = tempfile::tempdir().expect("temp dir");
++        let root = project.path();
++        std::fs::write(root.join("index.ts"), "export const used = 1;\n").expect("write entry");
++        git(root, &["init", "-b", "main"]);
++        git(root, &["add", "."]);
++        commit(root, "initial");
++        git(root, &["checkout", "-b", "feature"]);
++        let deep = format!(
++            "export let a = 0;\n{}1;\n",
++            "a=".repeat(ASSIGNMENT_CHAIN_DEPTH)
++        );
++        std::fs::write(root.join("deep.ts"), deep).expect("write deep file");
++        git(root, &["add", "."]);
++        commit(root, "deep");
++
++        let options = DecisionSurfaceOptions {
++            analysis: AnalysisOptions {
++                root: Some(root.to_path_buf()),
++                threads: Some(1),
++                no_cache: true,
++                ..AnalysisOptions::default()
++            },
++            base: Some("main".to_owned()),
++            max_decisions: None,
++        };
++        super::super::run_decision_surface(&options).expect("decision surface should run");
++    }
++
++    fn commit(root: &Path, message: &str) {
++        git(
++            root,
++            &[
++                "-c",
++                "user.email=test@example.com",
++                "-c",
++                "user.name=Test",
++                "-c",
++                "commit.gpgsign=false",
++                "commit",
++                "-m",
++                message,
++            ],
++        );
++    }
++
++    fn git(root: &Path, args: &[&str]) {
++        let status = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
++            .args(args)
++            .current_dir(root)
++            .status()
++            .expect("git command");
++        assert!(status.success(), "git {args:?} failed");
++    }
++}
 ```
 
-**File**: `crates/engine/src/health/css_analytics/token_consumer_tests.rs` (modified, +146/-0)
+**File**: `crates/cli/src/rayon_pool.rs` (modified, +1/-3)
 ```diff
-@@ -335,6 +335,152 @@ fn cached_class_inventory_preserves_vue_style_typo_targets() {
-     assert_eq!(unresolved[0].suggestion, "panel-title");
+@@ -1,11 +1,9 @@
+-use fallow_engine::thread_pool::worker_pool_builder;
+-
+ #[allow(
+     dead_code,
+     reason = "used by the CLI binary; the library build uses per-call pools"
+ )]
+ pub fn configure_global_pool(threads: usize) {
+-    let _ = worker_pool_builder(threads).build_global();
++    let _ = fallow_api::configure_global_analysis_pool(threads);
  }
  
-+/// The `(class, suggestion)` pairs of the unresolved class references.
-+fn unresolved_pairs(computation: &CssAnalyticsComputation) -> Vec<(String, String)> {
-+    computation
-+        .report
-+        .unresolved_class_references
-+        .iter()
-+        .map(|r| (r.class.clone(), r.suggestion.clone()))
-+        .collect()
-+}
-+
-+#[test]
-+fn tailwind_utility_is_not_a_typo_of_an_authored_class() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let root = dir.path();
-+    std::fs::write(root.join("package.json"), r#"{"name":"tw-classes"}"#).unwrap();
-+    let entry = write_file(
-+        root,
-+        0,
-+        "src/styles/global.css",
-+        "@import \"tailwindcss\";\n",
-+    );
-+    let header = write_file(
-+        root,
-+        1,
-+        "src/components/Header.astro",
-+        "<div class=\"w-full\"></div>\n<img class=\"wl-full card-titl\" />\n\
-+         <style>\n.wl-full { width: 90%; }\n.card-title { color: red; }\n</style>\n",
-+    );
-+
-+    let computation = assert_cached_css_report_parity(root, &[entry, header], &[]);
-+    assert_eq!(
-+        unresolved_pairs(&computation),
-+        vec![("card-titl".to_owned(), "card-title".to_owned())],
-+        "a Tailwind utility is skipped, an authored-class typo is still reported"
-+    );
-+}
-+
-+#[test]
-+fn tailwind_shaped_token_is_checked_without_tailwind() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let root = dir.path();
-+    std::fs::write(root.join("package.json"), r#"{"name":"plain-classes"}"#).unwrap();
-+    let header = write_file(
-+        root,
-+        0,
-+        "src/Header.astro",
-+        "<div class=\"w-full\"></div>\n<style>\n.wl-full { width: 90%; }\n</style>\n",
-+    );
-+
-+    let computation = assert_cached_css_report_parity(root, &[header], &[]);
-+    assert_eq!(
-+        unresolved_pairs(&computation),
-+        vec![("w-full".to_owned(), "wl-full".to_owned())],
-+        "without Tailwind, a utility-shaped token is an ordinary class token"
-+    );
-+}
-+
-+#[test]
-+fn global_scoped_style_block_class_counts_as_defined() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let root = dir.path();
-+    std::fs::write(root.join("package.json"), r#"{"name":"astro-global"}"#).unwrap();
-+    let drawer = write_file(
-+        root,
-+        0,
-+        "src/components/Drawer.astro",
-+        "<Chevron class=\"nav-chev\" />\n<span class=\"nap-chev\"></span>\n\
-+         <style>\nnav :global(.nav-chev) { rotate: 90deg; }\n.nap-chev { color: red; }\n</style>\n",
-+    );
-+    let module = write_file(
-+        root,
-+        1,
-+        "src/Panel.module.css",
-+        ".panel :global(.ant-header) { color: red; }\n.ant-headed { color: blue; }\n",
-+    );
-+    let markup = write_file(
-+        root,
-+        2,
-+        "src/Panel.tsx",
-+        "export const Panel = () => <div className=\"ant-header\" />;\n",
-+    );
-+
-+    let computation = assert_cached_css_report_parity(root, &[drawer, module, markup], &[]);
-+    assert!(
-+        computation.report.unresolved_class_references.is_empty(),
-+        "a class defined through :global(...) is defined: {:?}",
-+        unresolved_pairs(&computation)
-+    );
-+}
-+
-+#[test]
-+fn svelte_global_block_and_selector_classes_count_as_defined() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let root = dir.path();
-+    std::fs::write(root.join("package.json"), r#"{"name":"svelte-global"}"#).unwrap();
-+    let drawer = write_file(
-+        root,
-+        0,
-+        "src/Drawer.svelte",
-+        "<Chevron class=\"sb-chev\" />\n<span class=\"sc-chev\"></span>\n\
-+         <style>\n:global {\n  .sb-chev { rotate: 90deg; }\n}\n.sc-chev { color: red; }\n</style>\n",
-+    );
-+    let menu = write_file(
-+        root,
-+        1,
-+        "src/Menu.svelte",
-+        "<Chevron class=\"xa-chev\" />\n<span class=\"xb-chev\"></span>\n\
-+         <style>\ndiv :global .xa-chev { rotate: 90deg; }\n.xb-chev { color: red; }\n</style>\n",
-+    );
-+
-+    let computation = assert_cached_css_report_parity(root, &[drawer, menu], &[]);
-+    assert!(
-+        computation.report.unresolved_class_references.is_empty(),
-+        "a class defined through an unparenthesized :global is defined: {:?}",
-+        unresolved_pairs(&computation)
-+    );
-+}
-+
-+#[test]
-+fn html_style_block_classes_count_as_defined() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let root = dir.path();
-+    std::fs::write(root.join("package.json"), r#"{"name":"html-style"}"#).unwrap();
-+    let page = write_file(
-+        root,
-+        0,
-+        "src/pages/index.astro",
-+        "<label class=\"consent consent-bx\"></label>\n\
-+         <style>\n.consent { color: blue; }\n.consent-box { margin: 0; }\n</style>\n",
-+    );
-+    let error_page = write_file(
-+        root,
-+        1,
-+        "public/error.html",
-+        "<!doctype html>\n<html><head><style>.content { margin: 0; }</style></head>\n\
+ #[cfg(test)]
+```
 
+**File**: `crates/engine/src/thread_pool.rs` (modified, +4/-2)
+```diff
+@@ -4,8 +4,10 @@
+ ///
+ /// Recursive AST extraction and analysis overflow the default Rayon worker
+ /// stack on deeply nested sources, so every pool that runs analysis work must
+-/// be built with this size. The CLI global pool and the programmatic per-call
+-/// pools share this builder so embedders cannot drift.
++/// be built with this size. The CLI and LSP global pools and the programmatic
++/// per-call pools share this builder so embedders cannot drift. A thread that
++/// runs analysis outside these pools, such as a Tokio blocking thread in a
++/// server, needs this size too.
+ pub const WORKER_STACK_SIZE: usize = 16 * 1024 * 1024;
+ 
+ /// Rayon pool builder preconfigured with the analysis worker stack size.
+```
+
+**File**: `crates/lsp/Cargo.toml` (modified, +2/-0)
+```diff
+@@ -33,6 +33,8 @@ mimalloc = { workspace = true }
+ 
+ [dev-dependencies]
+ proptest = { workspace = true }
++# The runtime stack probe drives the global Rayon pool that analysis uses.
++rayon = { workspace = true }
+ tempfile = { workspace = true }
+ # `io-util` (duplex pipes, BufReader, AsyncRead/WriteExt) is test-only: the
+ # `Server::serve` integration test drives the LSP over framed duplex streams.
+```
+
+**File**: `crates/lsp/src/lib.rs` (modified, +2/-4)
+```diff
+@@ -23,6 +23,7 @@ mod path_utils;
+ mod position;
+ mod protocol;
+ mod publish;
++mod runtime;
+ mod schedule;
+ mod server_capabilities;
+ mod session_store;
+@@ -1476,10 +1477,7 @@ pub fn run_stdio_server() -> std::process::ExitCode {
+         return std::process::ExitCode::SUCCESS;
+     }
+ 
+-    let runtime = match tokio::runtime::Builder::new_multi_thread()
+-        .enable_all()
+-        .build()
+-    {
++    let runtime = match runtime::build_server_runtime() {
+         Ok(runtime) => runtime,
+         Err(error) => {
+             #[expect(
 ```
 
 ---
 
-### Incident Patch 2: `a7b4c6bf` (2026-10-20)
-**Commit Message**: docs(security): credit presendapp for GHSA-pp5v-xh6f-qgfx (#3689)
+### Incident Patch 3: `b694b00e` (2026-10-22)
+**Commit Message**: fix(extract): stop class credit through a nested non-instance shadow (#3800)
 
-Add an Acknowledgments section that publicly credits the reporter of the
-npx fallow-mcp package-name issue, fixed in 3.32.0.
+* fix(extract): stop class credit through a nested non-instance shadow
+
+`binding_target_names` is module-flat. A module instance
+`const service = new Service()` gave credit to `Service.m` for
+`service.m`, `service['m']` and `const { m } = service` inside a
+function that declares its own `service`. Fallow then missed an unused
+member.
+
+Each nested scope now records the names it declares that provably hold
+no class instance: an object literal of functions and primitives, a
+primitive or function value, or a parameter typed by a primitive,
+function or type literal type. A read through such a root keeps its raw
+access but does not resolve through the flat class bindings. A class
+binding under the same root clears the record, so a class instance that
+the nested scope declares keeps its credit.
+
+Loop variables, catch parameters, untyped parameters and named type
+annotations give no proof and keep the old credit.
+
+CACHE_VERSION goes to 372 because the extraction output changes.
+
+Fixes #3798
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `SECURITY.md` (modified, +6/-0)
+* chore: bump cache versions above the base branch
+
+Signed-off-by: Bart
+
+**File**: `changelog.d/fix-shadowed-class-binding-credit.md` (added, +3/-0)
 ```diff
-@@ -185,3 +185,9 @@ AI coding agents read instruction files (`CLAUDE.md`, `AGENTS.md`, `.cursorrules
- - **Local agent surface (advisory):** a Claude Code `SessionStart` hook scans the agent-instruction allowlist, including untracked and gitignored files that never reach a pull request. Hidden code points are reported; on the un-reviewed (untracked) files only, shell-exec injection shapes (`curl | sh`, `base64 -d | sh`, `eval`, `node -e`) are flagged as advisory warnings.
- 
- This is defense-in-depth, not a trust boundary: it raises the cost of agent-context poisoning and surfaces the most common shapes, but a determined attacker who can write these files can also edit the hook. Agent-instruction files are untrusted by default; never run a pasted remediation without reading the patch, the URLs, and the package names first.
-+
-+## Acknowledgments
-+
-+Thanks to the people who reported vulnerabilities in fallow:
-+
-+- presendapp (https://github.com/presendapp) reported that the MCP setup snippet `npx fallow-mcp` could resolve to an unclaimed npm package name (GHSA-pp5v-xh6f-qgfx). Fixed in 3.32.0: the snippet now names the `fallow` package, and `fallow-mcp` is reserved on npm.
-```
-
----
-
-### Incident Patch 3: `203e6a50` (2026-10-20)
-**Commit Message**: fix(plugins): credit the default export of plugin config files (#3715)
-
-Fixes #3691
-
-Thanks @osazemeu for the report and for #3694, which fixed the PostCSS case.
-
-Under `includeEntryExports`, fallow reported the `default` export of most tool config files as an unused export. The tool loads its config file and reads that export, so the finding is false. Only some plugins (vite, vitest, eslint, postcss, storybook and others) had a `used_exports` rule for their config file.
-
-One general rule replaces the need for one rule per plugin:
-
-- Under `includeEntryExports`, the `default` export of a file that matches a `config_patterns` entry of an active plugin counts as used. This applies to built-in and external plugins.
-- The analysis uses a separate matcher set that marks only `default`. This set does not feed the module skip decision, so output without `includeEntryExports` does not change.
-- The matcher uses `prepare_config_pattern` and the workspace prefix, as config discovery does. A config file in a workspace package gets the credit.
-- The credit compares the export name, so an object, `defineConfig(...)`, an arrow function, an async function and `export { config as default }` all ge
-
-**File**: `changelog.d/fix-config-default-export-credit.md` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,3 @@
 +### Fixed
 +
-+- **The `default` export of a tool config file is no longer reported as an
-+  unused export under `includeEntryExports`.** The tool loads its config file
-+  and reads the default export. This rule applies to every config pattern of
-+  an active plugin, built-in or external, for example
-+  `tailwind.config.js`, `jest.config.js`, `playwright.config.ts` and a config
-+  file in a workspace package. Named exports of a config file stay
-+  reportable. Some patterns do not get the credit: Gatsby `gatsby-node`,
-+  `gatsby-browser` and `gatsby-ssr` (Gatsby reads named exports), Vercel
-+  `vercel.*` (Vercel reads the named `config` export), and GraphQL Codegen
-+  `codegen*` and Serverless `serverless.*`, because these patterns also match
-+  ordinary source files. Output without
-+  `includeEntryExports` does not change. Thanks to
-+  [@osazemeu](https://github.com/osazemeu) for the report.
-+  (Closes [#3691](https://github.com/fallow-rs/fallow/issues/3691))
++- **`unused-class-members` no longer credits a class through a local shadow.** Without `--type-aware`, a module instance `const service = new Service()` gave credit to `Service.m` for `service.m`, `service['m']`, `const { m } = service` and `({ m }: typeof service)` inside a function that declares its own `service`. Fallow then missed an unused member. Fallow now ignores this credit when the nested `service` provably holds no class instance: an object literal of functions and primitives, a primitive or function value, or a parameter whose type annotation is a primitive, literal or function type. A type literal or a named type gives no proof, because a class instance can satisfy it. A class instance that the nested scope declares keeps its credit.
 ```
 
-**File**: `crates/core/src/analyze/unused_exports.rs` (modified, +36/-39)
+**File**: `crates/core/tests/integration_test/member_detection.rs` (modified, +37/-0)
 ```diff
-@@ -18,20 +18,26 @@ use crate::results::{
- };
- use crate::suppress::{IssueKind, SuppressionContext};
- 
-+use crate::plugins::ConfigDefaultCredit;
-+
- use super::{LineOffsetsMap, byte_offset_to_line_col, read_source};
- 
- /// Pre-compiled glob matchers for plugin/framework used_exports rules.
- type PluginMatchers<'a> = Vec<CompiledUsedExportRule<'a>>;
- 
- const TANSTACK_ROUTER_PLUGIN_NAME: &str = "tanstack-router";
- 
-+/// The export name that a tool reads from its config file.
-+const DEFAULT_EXPORT: &str = "default";
-+
- type UnusedExportModuleResult = (Vec<UnusedExport>, Vec<UnusedExport>, Vec<StaleSuppression>);
- 
- struct UnusedExportModuleContext<'a> {
-     graph: &'a ModuleGraph,
-     config: &'a ResolvedConfig,
-     ignore_matchers: &'a [CompiledIgnoreExportRule],
-     plugin_matchers: &'a PluginMatchers<'a>,
-+    config_default_credit: &'a ConfigDefaultCredit,
-     module_info_by_id: Option<&'a FxHashMap<FileId, &'a ModuleInfo>>,
-     suppressions: &'a SuppressionContext<'a>,
-     line_offsets_by_file: &'a LineOffsetsMap<'a>,
-@@ -419,6 +425,8 @@ pub fn find_unused_exports(
- 
-     let ignore_matchers = config.compiled_ignore_exports.as_slice();
-     let plugin_matchers = compile_plugin_matchers(plugin_result);
-+    let config_default_credit =
-+        ConfigDefaultCredit::new(plugin_result, config.include_entry_exports);
-     let module_info_by_id: Option<FxHashMap<FileId, &ModuleInfo>> =
-         if config.ignore_exports_used_in_file.is_enabled() {
-             Some(modules.iter().map(|m| (m.file_id, m)).collect())
-@@ -432,6 +440,7 @@ pub fn find_unused_exports(
-         config,
-         ignore_matchers,
-         plugin_matchers: &plugin_matchers,
-+        config_default_credit: &config_default_credit,
-         module_info_by_id: module_info_by_id.as_ref(),
-         suppressions,
-         line_offsets_by_file,
-@@ -489,6 +498,7 @@ fn find_unused_exports_for_module(
-         re_export_names: &re_export_names,
-         matching_ignore: &matching_ignore,
-         matching_plugin: &matching_plugin,
-+        config_default_credit: has_config_default_credit(module, ctx),
-         stale_expected_unused: &mut stale_expected_unused,
-     };
-     let (unused_exports, unused_types) =
-@@ -515,6 +525,7 @@ fn collect_module_unused_export_findings(
-                 re_export_names: match_ctx.re_export_names,
-                 matching_ignore: match_ctx.matching_ignore,
-                 matching_plugin: match_ctx.matching_plugin,
-+                config_default_credit: match_ctx.config_default_credit,
-                 stale_expected_unused: &mut *match_ctx.stale_expected_unused,
-             },
-         ) {
-@@ -529,6 +540,23 @@ fn collect_module_unused_export_findings(
-     (unused_exports, unused_types)
+@@ -74,6 +74,43 @@ fn parameter_and_assignment_destructures_credit_class_members() {
+     );
  }
  
-+/// Whether `module` is a plugin config file with a `default` export to credit.
-+/// `export { config as default }` keeps the name as a string, so compare by
-+/// name and not by the `ExportName::Default` variant.
-+fn has_config_default_credit(module: &ModuleNode, ctx: &UnusedExportModuleContext<'_>) -> bool {
-+    if ctx.config_default_credit.is_empty()
-+        || !module
-+            .exports
-+            .iter()
-+            .any(|e| e.name.matches_str(DEFAULT_EXPORT))
-+    {
-+        return false;
-+    }
-+    let relative_path = module.path.strip_prefix(&ctx.config.root);
-+    let file_str = relative_path.unwrap_or(&module.path).to_string_lossy();
-+    ctx.config_default_credit.matches(file_str.as_ref())
++/// A nested binding that provably holds no class instance shadows the module
++/// instance of the same name. A read through the shadow gives no credit to the
++/// class. A class instance that is declared in the nested scope keeps its
++/// credit, and so does a parameter typed by a type literal, because a class
++/// instance satisfies that type.
++#[test]
++fn nested_non_instance_shadow_gives_no_class_member_credit() {
++    let config = create_config(fixture_path("shadowed-class-binding-members"));
++    let results = fallow_core::analyze(&config).expect("analysis should succeed");
++    let mut unused: Vec<(&str, &str)> = results
++        .unused_class_members
++        .iter()
++        .map(|item| {
++            (
++                item.member.parent_name.as_str(),
++                item.member.member_name.as_str(),
++            )
++        })
++        .collect();
++    unused.sort_unstable();
++    assert_eq!(
++        unused,
++        [
++            ("Service", "shadowBeforeVar"),
++            ("Service", "shadowBlock"),
++            ("Service", "shadowComputed"),
++            ("Service", "shadowDestructure"),
++            ("Service", "shadowInner"),
++            ("Service", "shadowLocal"),
++            ("Service", "shadowTypeof"),
++            ("Service", "toFixed"),
++            ("Service", "toLowerCase"),
++            ("Service", "toUpperCase")
++        ]
++    );
 +}
 +
- fn same_file_used_exports(
-     module: &ModuleNode,
-     ctx: &UnusedExportModuleContext<'_>,
-@@ -548,6 +576,7 @@ struct UnusedExportMatchContext<'a> {
-     re_export_names: &'a FxHashSet<&'a str>,
-     matching_ignore: &'a [&'a [String]],
-     matching_plugin: &'a [&'a [&'a str]],
-+    config_default_credit: bool,
-     stale_expected_unused: &'a mut Vec<StaleSuppression>,
- }
+ #[test]
+ fn type_guard_subject_member_access_credits_only_its_predicate_class() {
+     let project = tempfile::tempdir().expect("create project");
+```
+
+**File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ use crate::MemberKind;
+ /// extraction semantics change, and give the reason in the commit message and
+ /// the CHANGELOG. A stale version serves old extraction results from a warm
+ /// cache. The `assert_cached_type_size!` guards below catch shape changes.
+-pub(super) const CACHE_VERSION: u32 = 373;
++pub(super) const CACHE_VERSION: u32 = 374;
  
-@@ -639,11 +668,12 @@ fn unused_export_candidate_is_skipped(
-         return true;
+ /// Duplication token cache version. Bump it when duplicate tokenization,
+ /// normalization, or the on-disk token cache schema changes, and give the
+```
+
+**File**: `crates/extract/src/visitor/mod.rs` (modified, +19/-30)
+```diff
+@@ -989,6 +989,14 @@ pub(crate) struct ModuleInfoExtractor {
+     loop_object_property_values: Vec<FxHashMap<String, FxHashMap<String, Vec<String>>>>,
+     package_resolution_function_args: FxHashMap<String, usize>,
+     nested_declaration_stack: Vec<FxHashSet<String>>,
++    /// Per `nested_declaration_stack` frame: the names declared there that
++    /// provably hold no class instance, such as `const service = { m() {} }` or
++    /// a parameter `service: number`.
++    scoped_non_instance_bindings: Vec<FxHashSet<String>>,
++    /// Indices into `member_accesses` whose receiver root is one of those
++    /// shadows. `resolve_bound_member_accesses` does not resolve them through
++    /// the module-flat class bindings.
++    shadowed_member_access_indices: FxHashSet<usize>,
+     class_type_param_constraints: Vec<FxHashMap<String, Option<TypePropertyTarget>>>,
+     pending_playwright_factory_calls: Vec<PendingPlaywrightFactory>,
+     pending_playwright_factory_aliases: Vec<(String, String)>,
+@@ -1762,30 +1770,6 @@ impl ModuleInfoExtractor {
+         self.semantic_facts.extend(whole_object_facts);
      }
  
--    is_export_ignored(
--        export_str,
--        match_ctx.matching_ignore,
--        match_ctx.matching_plugin,
--    )
-+    (match_ctx.config_default_credit && export_str == DEFAULT_EXPORT)
-+        || is_export_ignored(
-+            export_str,
-+            match_ctx.matching_ignore,
-+            match_ctx.matching_plugin,
-+        )
- }
- 
- fn build_unused_export(
-@@ -2999,11 +3029,6 @@ mod tests {
-         used_exports: Vec<(String, Vec<String>)>,
-     ) -> crate::plugins::AggregatedPluginResult {
-         crate::plugins::AggregatedPluginResult {
--            entry_patterns: vec![],
--            replaced_entry_plugins: FxHashSet::default(),
--            config_entry_patterns: FxHashSet::default(),
--            config_patterns: vec![],
--            always_used: vec![],
-             used_exports: used_exports
-                 .into_iter()
-                 .map(|(pattern, exports)| {
-@@ -3013,35 +3038,7 @@ mod tests {
-                     )
-                 })
-                 .collect(),
--            used_class_members: vec![],
--          
-```
-
-**File**: `crates/core/src/plugins/ava.rs` (modified, +3/-0)
-```diff
-@@ -13,6 +13,8 @@ const ENTRY_PATTERNS: &[&str] = &[
-     "**/*.spec.{ts,tsx,js,jsx}",
- ];
- 
-+const CONFIG_PATTERNS: &[&str] = &["ava.config.{js,cjs,mjs}"];
-+
- const ALWAYS_USED: &[&str] = &["ava.config.{js,cjs,mjs}"];
- 
- const TOOLING_DEPENDENCIES: &[&str] = &["ava", "@ava/typescript"];
-@@ -21,6 +23,7 @@ define_plugin! {
-     struct AvaPlugin => "ava",
-     enablers: ENABLERS,
-     entry_patterns: ENTRY_PATTERNS,
-+    config_patterns: CONFIG_PATTERNS,
-     always_used: ALWAYS_USED,
-     tooling_dependencies: TOOLING_DEPENDENCIES,
- }
-```
-
-**File**: `crates/core/src/plugins/gatsby.rs` (modified, +9/-0)
-```diff
-@@ -23,6 +23,14 @@ const CONFIG_PATTERNS: &[&str] = &[
-     "gatsby-ssr.{ts,tsx,js,jsx}",
- ];
- 
-+/// Gatsby reads named API exports (`createPages`, `wrapPageElement`, ...) from
-+/// these files, not a default export, so their default export gets no credit.
-+const NAMED_API_CONFIG_PATTERNS: &[&str] = &[
-+    "gatsby-node.{ts,js,mjs}",
-+    "gatsby-browser.{ts,tsx,js,jsx}",
-+    "gatsby-ssr.{ts,tsx,js,jsx}",
-+];
-+
- const ALWAYS_USED: &[&str] = &[
-     "gatsby-config.{ts,js,mjs}",
-     "gatsby-node.{ts,js,mjs}",
-@@ -40,6 +48,7 @@ define_plugin! {
-     enablers: ENABLERS,
-     entry_patterns: ENTRY_PATTERNS,
-     config_patterns: CONFIG_PATTERNS,
-+    config_default_export_opt_out: NAMED_API_CONFIG_PATTERNS,
-     always_used: ALWAYS_USED,
-     tooling_dependencies: TOOLING_DEPENDENCIES,
-     used_exports: [
-```
-
-**File**: `crates/core/src/plugins/graphql_codegen.rs` (modified, +9/-1)
-```diff
-@@ -9,7 +9,14 @@ use super::{Plugin, PluginResult, config_parser};
- 
- const ENABLERS: &[&str] = &["@graphql-codegen/cli"];
- 
--const CONFIG_PATTERNS: &[&str] = &["codegen*.{ts,js,cjs,mjs}", "graphql.config.{ts,js,cjs,mjs}"];
-+const CODEGEN_CONFIG_PATTERN: &str = "codegen*.{ts,js,cjs,mjs}";
-+
-+const CONFIG_PATTERNS: &[&str] = &[CODEGEN_CONFIG_PATTERN, "graphql.config.{ts,js,cjs,mjs}"];
-+
-+/// Config discovery matches `codegen*` in every directory, so it also matches
-+/// source files such as `src/codegenUtils.ts`. Their default export gets no
-+/// credit. `graphql.config.*` keeps the credit.
-+const UNCREDITED_CONFIG_PATTERNS: &[&str] = &[CODEGEN_CONFIG_PATTERN];
- 
- const ALWAYS_USED: &[&str] = &[
-     "codegen*.{ts,js,cjs,mjs,yml,yaml}",
-@@ -27,6 +34,7 @@ define_plugin! {
-     struct GraphqlCodegenPlugin => "graphql-codegen",
-     enablers: ENABLERS,
-     config_patterns: CONFIG_PATTERNS,
-+    config_default_export_opt_out: UNCREDITED_CONFIG_PATTERNS,
-     always_used: ALWAYS_USED,
-     tooling_dependencies: TOOLING_DEPENDENCIES,
-     resolve_config(config_path, source, _root) {
-```
-
-**File**: `crates/core/src/plugins/mod.rs` (modified, +22/-88)
-```diff
-@@ -1095,94 +1095,6 @@ impl PathRule {
-     }
- }
- 
--/// A used-export rule bound to a file-pattern rule.
--#[derive(Debug, Clone, Default, PartialEq, Eq)]
--pub struct UsedExportRule {
--    pub(crate) path: PathRule,
--    pub(crate) exports: Vec<String>,
--}
+-    fn insert_class_binding_target(&mut self, binding: String, target: String) {
+-        self.walk_order_class_bindings
+-            .insert(binding.clone(), target.clone());
+-        let target = BindingTarget::Class(target);
+-        self.binding_target_names
+-            .entry(binding)
+-            .and_modify(|existing| {
+-                if *existing != target {
+-                    *existing = BindingTarget::Ambiguous;
+-                }
+-            })
+-            .or_insert(target);
+-    }
 -
--impl UsedExportRule {
--    #[must_use]
--    pub(crate) fn new(
--        pattern: impl Into<String>,
--        exports: impl IntoIterator<Item = impl Into<String>>,
--    ) -> Self {
--        Self {
--            path: PathRule::new(pattern),
--            exports: exports.into_iter().map(Into::into).collect(),
+-    fn insert_class_binding_target_if_absent(&mut self, binding: String, target: String) {
+-        if !self.binding_target_names.contains_key(&binding) {
+-            self.walk_order_class_bindings
+-                .insert(binding.clone(), target.clone());
 -        }
+-        self.binding_target_names
+-            .entry(binding)
+-            .or_insert(BindingTarget::Class(target));
 -    }
 -
--    #[must_use]
--    fn from_static(pattern: &'static str, exports: &'static [&'static str]) -> Self {
--        Self::new(pattern, exports.iter().copied())
--    }
--
--    #[must_use]
--    fn with_excluded_globs<I, S>(mut self, patterns: I) -> Self
--    where
--        I: IntoIterator<Item = S>,
--        S: Into<String>,
--    {
--        self.path = self.path.with_excluded_globs(patterns);
--        self
--    }
--
--    #[must_use]
--    fn with_excluded_regexes<I, S>(mut self, patterns: I) -> Self
--    where
--        I: IntoIterator<Item = S>,
--        S: Into<String>,
--    {
--        self.path = self.path.with_excluded_regexes(patterns);
--        self
--    }
--
--    #[must_use]
--    fn with_excluded_segment_regexes<I, S>(mut self, patterns: I) -> Self
--    where
--        I: IntoIterator<Item = S>,
--        S: Into<String>,
--    {
--        self.path = self.path.with_excluded_segment_regexes(patterns);
--        self
--    }
--
--    #[must_use]
--    fn prefixed(&self, ws_prefix: &str) -> Self {
--        Self {
--            path: self.path.prefixed(ws_prefix),
--            exports: self.exports.clone(),
--        }
--    }
--}
--
--/// A used-export rule tagged with the plugin that contributed it.
--#[derive(Debug, Clone, PartialEq, Eq)]
--pub struct PluginUsedExportRule {
--    pub(crate) plugin_name: String,
--    pub(crate) rule: UsedExportRule,
--}
--
--impl PluginUsedExportRule {
--    #[must_use]
--    pub(crate) fn new(plugin_name: impl Into<String>, rule: UsedExportRule) -> Self {
--        Self {
--            plugin_name: plugin_name.into(),
--            rule,
--        }
--    }
--
--    #[must_use]
--    fn prefixed(&self, ws_prefix: &str) -> Self {
--        Self {
--            plugin_name: self.plugin_name.clone(),
--            rule: self.rule.prefixed(ws_prefix),
--        }
--    }
--}
--
- /// A file-scoped dependency provider rule contributed by a framework plugin.
- #[derive(Debug, Clone, Default, PartialEq, Eq)]
- pub struct ProvidedDependencyRule {
-@@ -1588,6 +1500,18 @@ pub trait Plugin: Send + Sync {
-         &[]
+     fn direct_object_binding_targets(&self, object: &str) -> Option<(&FxHashSet<String>, u64)> {
+         let root = object.split_once('.').map_or(object, |(root, _)| root);
+         for index in (0..self.scoped_direct_object_binding_targets.len()).rev() {
+@@ -1894,7 +1878,9 @@ impl ModuleInfoExtractor {
+             };
+             prefix = parent;
+         }
+-        if let Some(class) = self.walk_order_class_bindings.get(object) {
++        if let Some(class) = self.walk_order_class_bindings.get(object)
++            && !self.class_binding_root_is_shadowed(object)
++        {
+             self.walk_order_member_accesses.push((
+                 Some(object.to_string()),
+                 class.clone(),
+@@ -2013,10 +1999,7 @@ impl ModuleInfoExtractor {
+             {
+                 let object = self.qualify_this_scope(&object_name);
+                 if !self.record_walk_order_member_access(&object, current.property.name.as_str()) {
+-                    self.member_accesses.push(MemberAccess {
+-                        object,
+-                        member: current.property.name.to_string(),
+-                    });
++                    self.push_receiver_member_access(object, current.property.name.to_string());
+                 }
+             }
+             match &current.object {
+@@ -3254,6 +3237,9 @@ impl ModuleInfoExtractor {
      }
  
-+    /// Config patterns whose files do not get the `default` export credit.
-+    ///
-+    /// Under `includeEntryExports`, the `default` export of a file that one of
-+    /// [`Self::config_patterns`] matches counts as used, because the tool loads
-+    /// the config file and reads its default export. List a pattern here when
-+    /// the tool reads named exports instead, or when the pattern also matches
-+    /// ordinary source files. Each entry must be identical to an entry of
-+    /// [`Self::config_patterns`].
-+    fn config_default_export_opt_out(&self) -> &'static [&'static str] {
-+        &[]
+     fn resolve_bound_object_name(&self, object: &str) -> Option<BindingTarget> {
++        if self.class_binding_root_is_shadowed(object) {
++            return None;
++        }
+         if let Some(target_name) = self.binding_target_names.get(object) {
+             return Some(target_name.clone());
+         }
+@@ -3384,7 +3370,10 @@ impl ModuleInfoExtractor {
+         let mut additional_accesses = Vec::new();
+         let mut additional_facts = Vec::new();
+         let mut additional_typed_property_facts = Vec::new();
+-        for access in &self.member_accesses {
++        for (index, access) in self.member_accesses.iter().enumerate() {
++            if self.shadowed_member_access_indices.contains(&index) {
++                continue;
++            }
+             let Some(target) = self.resolve_bound_object_name(&access.object) else {
+                 continue;
+             };
+```
+
+**File**: `crates/extract/src/visitor/visit_impl.rs` (modified, +5/-8)
+```diff
+@@ -1790,6 +1790,7 @@ impl ModuleInfoExtractor {
+                 for declarator in nested_scope_declarators(var) {
+                     self.record_nested_declaration_names(declarator.id.get_binding_identifiers());
+                 }
++                self.record_non_instance_declarators(var);
+             }
+             Declaration::ClassDeclaration(class) => {
+                 if let Some(id) = class.id.as_ref() {
+@@ -2503,10 +2504,7 @@ impl<'a> ModuleInfoExtractor {
+         {
+             let object = self.qualify_this_scope(object_name);
+             if !self.record_walk_order_member_access(&object, member) {
+-                self.member_accesses.push(MemberAccess {
+-                    object,
+-                    member: member.to_string(),
+-                });
++                self.push_receiver_member_access(object, member.to_string());
+             }
+         }
+     }
+@@ -3886,6 +3884,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+         self.preseed_direct_object_binding_scope_roots(&stmt.body);
+         if self.namespace_depth == 0 {
+             self.nested_declaration_stack.push(FxHashSet::default());
++            self.scoped_non_instance_bindings.push(FxHashSet::default());
+             self.scoped_namespace_binding_names
+                 .push(FxHashSet::default());
+             self.scoped_array_binding_element_types
+@@ -3910,6 +3909,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+         }
+         if self.namespace_depth == 0 {
+             self.nested_declaration_stack.pop();
++            self.scoped_non_instance_bindings.pop();
+             self.scoped_namespace_binding_names.pop();
+             self.scoped_array_binding_element_types.pop();
+             self.sanitizer_binding_stack.pop();
+@@ -5198,10 +5198,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
+             if let Expression::StringLiteral(lit) = &expr.expression
+                 && !shadowed
+             {
+-                self.member_accesses.push(MemberAccess {
+-                    object: obj.name.to_string(),
+-                    member: lit.value.to_string(),
+-                });
++                self.push_receiver_member_access(obj.name.to_string(), lit.value.to_string());
+                 self.mark_structured_namespace_reference(obj);
+             } else if !shadowed {
+                 self.record_whole_object_identifier_use(obj.name.as_str());
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_scope_bindings.rs` (modified, +177/-0)
+```diff
+@@ -47,6 +47,79 @@ impl<'a> Visit<'a> for FunctionVarRootCollector {
+     fn visit_ts_global_declaration(&mut self, _declaration: &TSGlobalDeclaration<'a>) {}
+ }
+ 
++/// Whether a nested binding initialized with `expr` provably holds no class
++/// instance: a primitive, a function, or an array or object literal built
++/// only from such values. A type assertion can name a class, so it gives no
++/// proof.
++fn expression_holds_no_instance(expr: &Expression<'_>) -> bool {
++    match expr {
++        Expression::ParenthesizedExpression(paren) => {
++            expression_holds_no_instance(&paren.expression)
++        }
++        Expression::StringLiteral(_)
++        | Expression::NumericLiteral(_)
++        | Expression::BooleanLiteral(_)
++        | Expression::NullLiteral(_)
++        | Expression::BigIntLiteral(_)
++        | Expression::RegExpLiteral(_)
++        | Expression::TemplateLiteral(_)
++        | Expression::FunctionExpression(_)
++        | Expression::ArrowFunctionExpression(_)
++        | Expression::ClassExpression(_) => true,
++        Expression::ArrayExpression(array) => array.elements.iter().all(|element| {
++            element
++                .as_expression()
++                .is_some_and(expression_holds_no_instance)
++        }),
++        Expression::ObjectExpression(object) => {
++            object.properties.iter().all(|property| match property {
++                ObjectPropertyKind::ObjectProperty(property) => {
++                    expression_holds_no_instance(&property.value)
++                }
++                ObjectPropertyKind::SpreadProperty(_) => false,
++            })
++        }
++        _ => false,
++    }
++}
++
++/// Whether a binding annotated with `ty` provably holds no class instance: a
++/// primitive, a literal or function type, or an array or union built only from
++/// such types. TypeScript types are structural, so a class instance satisfies
++/// a named type or a type literal with matching members. Neither gives proof.
++fn type_holds_no_instance(ty: &TSType<'_>) -> bool {
++    match ty {
++        TSType::TSStringKeyword(_)
++        | TSType::TSNumberKeyword(_)
++        | TSType::TSBooleanKeyword(_)
++        | TSType::TSBigIntKeyword(_)
++        | TSType::TSSymbolKeyword(_)
++        | TSType::TSNullKeyword(_)
++        | TSType::TSUndefinedKeyword(_)
++        | TSType::TSVoidKeyword(_)
++        | TSType::TSNeverKeyword(_)
++        | TSType::TSLiteralType(_)
++        | TSType::TSTemplateLiteralType(_)
++        | TSType::TSFunctionType(_) => true,
++        TSType::TSParenthesizedType(paren) => type_holds_no_instance(&paren.type_annotation),
++        TSType::TSArrayType(array) => type_holds_no_instance(&array.element_type),
++        TSType::TSUnionType(union) => union.types.iter().all(type_holds_no_instance),
++        _ => false,
++    }
++}
++
++/// Whether a nested declarator binds a value that provably holds no class
++/// instance, through its type annotation or its initializer.
++fn declarator_holds_no_instance(declarator: &VariableDeclarator<'_>) -> bool {
++    if let Some(annotation) = declarator.type_annotation.as_deref() {
++        return type_holds_no_instance(&annotation.type_annotation);
++    }
++    declarator
++        .init
++        .as_ref()
++        .is_some_and(expression_holds_no_instance)
++}
++
+ impl ModuleInfoExtractor {
+     pub(super) fn is_module_scope(&self) -> bool {
+         self.block_depth == 0 && self.function_depth == 0 && self.namespace_depth == 0
+@@ -56,6 +129,101 @@ impl ModuleInfoExtractor {
+         self.namespace_depth == 0
+     }
+ 
++    /// Whether the root of `object` names a nested binding that provably holds
++    /// no class instance. `binding_target_names` is module-flat, so a read of
++    /// such a shadow must not resolve through the class binding of the same
++    /// name in an outer or sibling scope.
++    pub(in crate::visitor) fn class_binding_root_is_shadowed(&self, object: &str) -> bool {
++        let root = object.split_once('.').map_or(object, |(root, _)| root);
++        self.nested_declaration_stack
++            .iter()
++            .rposition(|scope| scope.contains(root))
++            .and_then(|index| self.scoped_non_instance_bindings.get(index))
++            .is_some_and(|scope| scope.contains(root))
 +    }
 +
-     /// Files that are always considered "used" when this plugin is active.
-     fn always_used(&self) -> &'static [&'static str] {
-         &[]
-@@ -1898,6 +1822,7 @@ macro_rules! define_plugin {
-         enablers: $enablers:expr
-         $(, entry_patterns: $entry:expr)?
-         $(, config_patterns: $config:expr)?
-+        $(, config_default_export_opt_out: $config_opt_out:expr)?
-         $(, always_used: $always:expr)?
-         $(, tooling_dependencies: $tooling:expr)?
-         $(, fixture_glob_patterns: $fixtures:expr)?
-@@ -1923,6 +1848,7 @@ macro_rules! define_plugin {
- 
-             $( fn entry_patterns(&self) -> &'static [&'static str] { $entry } )?
-             $( fn config_patterns(&self) -> &'static [&'static str] { $config } )?
-+            $( fn config_default_export_opt_out(&self) -> &'static [&'static str] { $config_opt_out } )?
-             $( fn always_used(&self) -> &'static [&'static str] { $always } )?
-             $( fn tooling_dependencies(&self) -> &'static [&'static str] { $tooling } )?
-             $( fn fixture_glob_patterns(&self) -> &'static [&'static str] { $fixtures } )?
-@@ -1960,6 +1886,7 @@ macro_rules! define_plugin {
-         enablers: $enablers:expr
-         $(, entry_patterns: $entry:expr)?
-         $(, config_patterns: $config:expr)?
-+        $(, config_default_export_opt_out: $config_opt_out:expr)?
-         $(, always_used: $always:expr)?
-         $(, tooling_dependencies: $tooling:expr)?
-         $(, fixture_glob_patterns: $fixtures:expr)?
-@@ -1988,6 +1915,7 @@ macro_rules! define_plugin {
- 
-             $( fn entry_patterns(&self) -> &'static [&'static str] { $entry } )?
-             $( fn config_patterns(&self) -> &'static [&'static str] { $config } )?
-+            $( fn config_default_
-```
-
-**File**: `crates/core/src/plugins/osls.rs` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@ define_plugin! {
-     struct OslsPlugin => "osls",
-     enablers: ENABLERS,
-     config_patterns: CONFIG_PATTERNS,
-+    config_default_export_opt_out: CONFIG_PATTERNS,
-     always_used: ALWAYS_USED,
-     tooling_dependencies: TOOLING_DEPENDENCIES,
-     resolve_config(config_path, source, root) {
-```
-
-**File**: `crates/core/src/plugins/react_native.rs` (modified, +3/-0)
-```diff
-@@ -14,6 +14,8 @@ const ENTRY_PATTERNS: &[&str] = &[
-     "app.config.{ts,js}",
- ];
- 
-+const CONFIG_PATTERNS: &[&str] = &["metro.config.{ts,js}", "react-native.config.{ts,js}"];
++    /// Record the nested declarators of `var` that provably hold no class
++    /// instance. Call it together with `record_nested_declaration_names`.
++    pub(super) fn record_non_instance_declarators(&mut self, var: &VariableDeclaration<'_>) {
++        if self.namespace_depth > 0 {
++            return;
++        }
++        let Some(scope) = self.scoped_non_instance_bindings.last_mut() else {
++            return;
++        };
++        for declarator in &var.declarations {
++            if let BindingPattern::BindingIdentifier(id) = &declarator.id
++                && declarator_holds_no_instance(declarator)
++            {
++                scope.insert(id.name.to_string());
++            }
++        }
++    }
 +
- const ALWAYS_USED: &[&str] = &[
-     "metro.config.{ts,js}",
-     "react-native.config.{ts,js}",
-@@ -33,6 +35,7 @@ define_plugin! {
-     struct ReactNativePlugin => "react-native",
-     enablers: ENABLERS,
-     entry_patterns: ENTRY_PATTERNS,
-+    config_patterns: CONFIG_PATTERNS,
-     always_used: ALWAYS_USED,
-     tooling_dependencies: TOOLING_DEPENDENCIES,
- }
++    /// A class binding under
+```
+
+**File**: `tests/fixtures/shadowed-class-binding-members/package.json` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++{
++  "name": "shadowed-class-binding-members",
++  "main": "src/index.ts"
++}
+```
+
+**File**: `tests/fixtures/shadowed-class-binding-members/src/index.ts` (added, +102/-0)
+```diff
+@@ -0,0 +1,102 @@
++import { Service } from './service';
++
++const service = new Service();
++service.keptModule();
++
++export function unshadowed(): void {
++  service.keptUnshadowed();
++}
++
++export function localShadow(): void {
++  const service = { shadowLocal(): void {} };
++  service.shadowLocal();
++}
++
++export function computedShadow(): void {
++  const service = { shadowComputed(): void {} };
++  service['shadowComputed']();
++}
++
++export function typeofShadow(): void {
++  const service = { shadowTypeof(): void {} };
++  const read = ({ shadowTypeof }: typeof service): void => shadowTypeof();
++  read(service);
++}
++
++export function sibling(): void {
++  service.keptSibling();
++}
++
++export function paramShadow(service: string): string {
++  return service.toUpperCase();
++}
++
++export const arrowParamShadow = (service: number): string => service.toFixed();
++
++export function destructureShadow(): void {
++  const service = { shadowDestructure(): void {} };
++  const { shadowDestructure } = service;
++  shadowDestructure();
++}
++
++export function paramDestructureShadow(service: string): string {
++  const { toLowerCase } = service;
++  return toLowerCase.call(service);
++}
++
++// A type literal gives no proof: a `Service` instance satisfies it.
++export function structuralParam(service: { keptStructural(): void }): void {
++  service.keptStructural();
++}
++structuralParam(new Service());
++
++export function structuralParamDestructure(service: { keptStructuralDestructure(): void }): void {
++  const { keptStructuralDestructure } = service;
++  keptStructuralDestructure();
++}
++structuralParamDestructure(new Service());
++
++// `var` hoists, so the read before the declaration uses the local binding.
++export function readBeforeVar(): void {
++  service.shadowBeforeVar();
++  var service = { other: 1 };
++  void service;
++}
++
++export function closureThenSiblingShadow(): () => void {
++  const read = (): void => service.keptClosure();
++  {
++    const service = { other: 1 };
++    void service;
++  }
++  return read;
++}
++
++export function annotatedInstance(): void {
++  const service: Service = new Service();
++  service.keptAnnotated();
++}
++
++export function blockShadow(flag: boolean): void {
++  if (flag) {
++    const service = { shadowBlock(): void {} };
++    service.shadowBlock();
++  }
++}
++
++export function nestedClassBinding(): void {
++  const service = new Service();
++  service.keptNested();
++  const { keptNestedDestructure } = service;
++  keptNestedDestructure();
++}
++
++export function outer(): void {
++  const service = new Service();
++  function inner(): void {
++    const service = { shadowInner(): void {} };
++    service.shadowInner();
++  }
++  inner();
++  service.keptOuter();
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3722** (2026-10-20): feat(mutation): add the removed-chain-link operator (@BartWaardenburg)
-- **PR #3721** (2026-10-20): fix(vitest): read test.root, test.dir and named project files (@BartWaardenburg)
-- **PR #3720** (2026-10-20): fix(napi-rs): treat the generated loader as an entry point (@BartWaardenburg)
-- **PR #3717** (2026-10-20): feat(mutation): show the edit of each mutant in JSON output (@BartWaardenburg)
-- **PR #3715** (2026-10-20): fix(plugins): credit the default export of plugin config files (@BartWaardenburg)
-- **PR #3713** (2026-10-20): fix(vitest): keep includes of script configs and named vite configs (@BartWaardenburg)
+- **PR #3810** (2026-10-22): test(graph): require the package entry resolver to keep its canonical index (@BartWaardenburg)
+- **PR #3808** (2026-10-22): perf(extract): cap recorded member chain names at 64 links (@BartWaardenburg)
+- **PR #3806** (2026-10-22): fix(lsp,mcp): run analysis on threads with the worker stack (@BartWaardenburg)
+- **PR #3805** (2026-10-22): chore(release): ship LICENSE and a full README in every platform npm package (@BartWaardenburg)
+- **PR #3804** (2026-10-22): perf(graph): build the canonical package entry index one time per package (@BartWaardenburg)
+- **PR #3803** (2026-10-22): fix(extract): credit class members read by destructures of imported instances and class fields (@BartWaardenburg)
 
 ---
 
@@ -2494,24 +2343,23 @@ One general rule replaces the need for one rule per plugin:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stop css-broken-reference typo suggestions for defined classes (#3703)
+## X. extract): stop deeply nested brackets from aborting the run (#3790)
 
 **RULE**:
-When implementing operations in `changelog.d/fix-css-broken-reference-false-suggestions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-deep-nesting-stack-overflow.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c80628c`: stop css-broken-reference typo suggestions for defined classes (#3703). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c642c586`: extract): stop deeply nested brackets from aborting the run (#3790). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-css-broken-reference-false-suggestions.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-deep-nesting-stack-overflow.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ### Fixed
 
-- **`css-broken-reference` no longer suggests a "did you mean" fix for a defined class.** Three cases caused false findings. In a Tailwind project, a utility such as `w-full` was reported as a typo of an authored class such as `wl-full`. Fallow now skips tokens with the shape of a Tailwind utility when a stylesheet loads Tailwind or the root `package.json` declares it. As a result, in a Tailwind project an authored class that starts with a utility root (for example `text-` or `list-`) gets no typo suggestion. A class that a component defines only through `:global` in an Astro, Vue or Svelte `<style>` block, or in a CSS module, now counts as defined. This includes `:global(.x)`, the Svelte 5 block form `:global { .x {} }` and the selector form `div :global .x {}`. A `<style>` block in an `.html` file now contributes its classes. Thanks to @zaphir for the report.
-  (Closes [#3588](https://github.com/fallow-rs/fallow/issues/3588))
+- **A file with deeply nested brackets no longer aborts the run.** A source with thousands of nested `(`, `[`, `{` or template substitutions overflowed the parser stack, and the stack overflow killed the whole `fallow` process. Fallow now measures the nesting before it parses a file. A file past the limit shows as a file that failed to parse, `fallow dupes` finds no clones in it, and the analysis of the other files continues. Brackets inside strings, comments and template text do not count. The extraction and duplication cache versions change, so the first run after the upgrade parses every file again. OSS-Fuzz found this.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2521,4 +2369,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c80628c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c642c586` are properly handled with clean fallback behavior.

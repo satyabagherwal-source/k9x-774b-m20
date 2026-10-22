@@ -4408,3 +4408,4 @@
 | `CYCLE-20261022-HK2Y` | `2026-10-22T19:22:46.378Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3712` | Yes (`1c1b5682...`) |
 | `CYCLE-20261022-HN50` | `2026-10-22T19:22:50.340Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3713` | Yes (`ad2cb8ed...`) |
 | `CYCLE-20261022-PZ2M` | `2026-10-22T19:29:19.054Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3714` | Yes (`0fbe024c...`) |
+| `CYCLE-20261022-Y2Y4` | `2026-10-22T19:35:37.324Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3715` | Yes (`95b26ae9...`) |

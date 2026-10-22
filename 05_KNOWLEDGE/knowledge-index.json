@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T19:29:19.004Z",
+  "last_updated": "2026-10-22T19:35:37.275Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10335,8 +10335,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "94a7ef85",
-      "content_hash": "67d9083b9fe4a4dc7aef403ed4deb2ee601feac2fb72f64ac04829f4d413bff5",
+      "source_version": "c9d7861d",
+      "content_hash": "95b26ae9476cb16fc776567fbd4ba8d7ca11511d2c8ee6245a68c23a2365f855",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -10369,6 +10369,11 @@
           "number": 3418,
           "title": "stop css-broken-reference typo suggestions for defined classes (#3703)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3715,
+          "title": "extract): stop deeply nested brackets from aborting the run (#3790)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10376,7 +10381,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:45:40.405Z",
+      "verified_at": "2026-10-22T19:35:37.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111530,6 +111535,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T19:29:18.994Z"
+    },
+    "rule-3715": {
+      "learning_id": "rule-3715",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3715,
+      "title": "extract): stop deeply nested brackets from aborting the run (#3790)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "c9d7861d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:35:37.264Z"
     }
   },
   "aliases": {

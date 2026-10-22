@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T19:29:19.070Z",
+  "last_updated": "2026-10-22T19:35:37.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "67d9083b9fe4a4dc7aef403ed4deb2ee601feac2fb72f64ac04829f4d413bff5",
-      "verified_at": "2026-10-20T22:45:40.475Z",
+      "content_hash": "95b26ae9476cb16fc776567fbd4ba8d7ca11511d2c8ee6245a68c23a2365f855",
+      "verified_at": "2026-10-22T19:35:37.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:45:40.475Z"
+      "last_updated": "2026-10-22T19:35:37.336Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",

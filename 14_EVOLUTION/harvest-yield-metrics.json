@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T19:29:19.066Z",
-  "total_cycles_completed": 4385,
-  "total_learnings_persisted": 4385,
-  "total_rules_promoted": 3563,
+  "last_updated": "2026-10-22T19:35:37.333Z",
+  "total_cycles_completed": 4386,
+  "total_learnings_persisted": 4386,
+  "total_rules_promoted": 3564,
   "history": [
-    {
-      "timestamp": "2026-10-21T05:03:04.090Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T05:09:19.763Z",
       "repository": "code-forge-io/seo-tools",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-22T19:29:19.066Z",
       "repository": "kgateway-dev/kgateway",
       "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T19:35:37.333Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
