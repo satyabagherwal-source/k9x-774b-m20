@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "508b0013",
+    "sourceVersion": "a7796e20",
     "license": "Apache-2.0",
-    "contentHash": "6046861bc56d63c6f2cc69b4d702be232b19cd1c01b164fbf6974eca1a5eda76",
-    "lastHarvestedAt": "2026-10-19T16:24:49.660Z",
+    "contentHash": "b3e275ff6266e4bd2f7a17b6076850bcaff2ff8b1d70bd277539884be5297163",
+    "lastHarvestedAt": "2026-10-22T15:35:34.062Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "82b00cf5",
+    "sourceVersion": "8ce5fc8b",
     "license": "MIT",
-    "contentHash": "150d9407f266d18b2558b087a9a3329d3e208c94d2c5588b38dc7e553f214ab1",
-    "lastHarvestedAt": "2026-10-21T01:10:52.019Z",
+    "contentHash": "fb6b2150f5b5a0225e41e1e0c64a59b918621afdca308a83be111013b3b9ccac",
+    "lastHarvestedAt": "2026-10-22T15:35:37.561Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "712b51f4",
+    "sourceVersion": "efd3e6e1",
     "license": "MIT",
-    "contentHash": "a275a9ea11e685536cbf462630a0fd171808a4eb646e2ee2dfd245cd829d18c0",
-    "lastHarvestedAt": "2026-10-20T20:35:21.239Z",
+    "contentHash": "5c995f82d7f036f30882ab15a26b9f9575936f3920834d22f687f5d5f88e2704",
+    "lastHarvestedAt": "2026-10-22T15:35:34.776Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "a7c66820",
+    "sourceVersion": "65d71277",
     "license": "Apache-2.0",
-    "contentHash": "44d5167b78c12c30cf467b8e732da62acfa3d50d593d55f0e202e55e66db98d4",
-    "lastHarvestedAt": "2026-10-20T21:27:39.978Z",
+    "contentHash": "9691403d108d27975334e207df72dd5da5c5c8a92cf19bd526ce3a694d9ddd31",
+    "lastHarvestedAt": "2026-10-22T15:35:30.322Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -10518,5 +10518,15 @@
     "contentHash": "4868085fd591f11d29377e5fefe6de2af0511c5f2276e52645c5beb271fe471d",
     "lastHarvestedAt": "2026-10-22T15:28:55.846Z",
     "learningId": "learn-huggingface-recursivesi-flint"
+  },
+  "hf-qwen-qwen3-14b": {
+    "repository": "Qwen/Qwen3-14B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
+    "sourceVersion": "hf-qwen-qwen3-14b",
+    "license": "Open-Source",
+    "contentHash": "92cd05134bde50952de1dde99820e1342a4b2ab1bcab63a4649693bf6ef0c76f",
+    "lastHarvestedAt": "2026-10-22T15:35:16.614Z",
+    "learningId": "learn-huggingface-qwen-qwen3-14b"
   }
 }

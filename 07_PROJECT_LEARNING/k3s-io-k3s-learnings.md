@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `a7c66820`  
+> **Source Version**: `65d71277`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:27:39.609Z  
+> **Timestamp**: 2026-10-22T15:35:29.964Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:27:39.603Z  
+> **Harvest Timestamp**: 2026-10-22T15:35:29.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34232 stars
+- **Stars / Engagement**: 34237 stars
 
 ---
 
@@ -884,13 +884,7 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14836** (2026-10-19): **Make immutable mtime accept 1st Unix second**
-  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  In #14568, logic was added to treat files with mtime = 0 as coming from immutable filesystems, the primary example being NixOS. It, however, does not use mtime = 0 and instead uses mtime = 1, as some software has special handling for 0. For this reason, changes on that OS were not detected regardless of the fix. This PR updates that check so that files that are after the first second of the Unix timestamp are considered immutable filesystems, covering both mtime =0 and mtime = 1.  #### Types of Changes ####  Bugfix  #### Verification ####  A manifest can be created with its mtime set to 1. It will now be rescanned periodically and compared based on contents.  #### Testing ####  The test from the original PR has been updated to test the 2 mtime variants.  #### Linked Issues ####  <!-- Link any related issues, pull-requests, or commit hashes that are relevant to this pull request. If you are opening a PR without a corresponding issue please consider creating one first, at https://github.com/k3s-io/k3s/issues . A functional example will greatly help QA with verifying/reproducing a bug or testing new features. -->  #### User-Facing Change #### <!-- Does this PR introduce a user-facing change? If no, just write "NONE" in the release-note block below. If the PR
-
-- **Issue #14835** (2026-10-16): **[release-1.35] Bump rancher/mirrored-library-traefik image version**
-  *Symptoms*:    <Actions>     <action id="fadd4a5d34ca6364d7fe3f7cf2dde9f79df92759c786346176148a40abd919bb">         <h3>Bump Traefik Image Version</h3>         <details id="84a5406c17a940168798b5927b1ea1d93c1d99cd436e0b15ee7d6346865a7258">             <summary>Update Traefik image version in manifests/traefik.yaml</summary>             <p>1 file(s) updated with &#34;tag: \&#34;3.7.15\&#34;&#34;:&#xA;&#xA;* manifests/traefik.yaml&#xA;</p>         </details>         <details id="88d3f535b1d2e252bcbe4dbc57847caa74e1705ab214af30b856d857a086ebb1">             <summary>Update Traefik image version in scripts/airgap/image-list</summary>             <p>1 file(s) updated with &#34;docker.io/rancher/mirrored-library-traefik:3.7.15&#34;:&#xA;&#xA;* scripts/airgap/image-list.txt&#xA;</p>         </details>         <a href="https://github.com/k3s-io/k3s/actions/runs/38946945693">GitHub Action workflow link</a>     </action> </Actions>  ---  <table>   <tr>     <td width="77">       <img src="https://www.updatecli.io/images/updatecli.png" alt="Updatecli logo" width="50" height="50" />     </td>     <td>       <p>         Created automatically by <a href="https://www.updatecli.io/">Updatecli</a>       </p>       <details><summary>Options:</summary>         <br />         <p>Most of Updatecli configuration is done via <a href="https://www.updatecli.io/docs/prologue/quick-start/">its manifest(s)</a>.</p>         <ul>           <li>If you close this pull request, Updatecli will automatically reopen it, the
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14835?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.01%. Comparing base ([`10a456c`](https://app.codecov.io/gh/k3s-io/k3s/commit/10a456cdc331b8afcad7411f43c3139ac3a24c7f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`de19f7a`](https://app.codecov.io/gh/k3s-io/k3s/commit/de19f7a16ea40b407779411eb62cd2d8d3af30ee?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.35   #14835      +/-   ## ==============================
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -907,285 +901,48 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7c66820` (2026-10-20)
-**Commit Message**: Rootless v3 (#14746)
+### Incident Patch 1: `65d71277` (2026-10-21)
+**Commit Message**: chore: Bump to latest klipper-helm version in scripts/version.sh
 
-* Attempt to bump rootless to v3
+Made with ❤️️ by updatecli
 
-Signed-off-by: Derek Nola <[REDACTED_EMAIL]>
-
-* Migrate to rootless v3
-
-Signed-off-by: Derek Nola <[REDACTED_EMAIL]>
-
-* Align stateDirEnv with other Vars
-
-Signed-off-by: Derek Nola <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Derek Nola <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +6/-6)
+**File**: `scripts/version.sh` (modified, +1/-1)
 ```diff
-@@ -98,7 +98,7 @@ require (
- 	github.com/google/renameio/v2 v2.0.2
- 	github.com/google/uuid v1.6.0
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
--	github.com/inetaf/tcpproxy v0.0.0-20240214030015-3ce58045626c
-+	github.com/inetaf/tcpproxy v0.0.0-20260515195445-c159a6051109
- 	github.com/ipfs/go-ds-leveldb v0.5.0
- 	github.com/ipfs/go-log/v2 v2.9.2
- 	github.com/joho/godotenv v1.5.1
-@@ -130,7 +130,7 @@ require (
- 	github.com/rancher/wharfie v0.7.1
- 	github.com/rancher/wrangler/v3 v3.7.0
- 	github.com/robfig/cron/v3 v3.0.1
--	github.com/rootless-containers/rootlesskit v1.1.1
-+	github.com/rootless-containers/rootlesskit/v3 v3.2.0
- 	github.com/sirupsen/logrus v1.10.2
- 	github.com/spegel-org/spegel v0.7.0
- 	github.com/spf13/afero v1.15.0
-@@ -146,7 +146,7 @@ require (
- 	go.etcd.io/etcd/server/v3 v3.7.2
- 	go.uber.org/mock v0.6.0
- 	go.uber.org/zap v1.28.0
--	golang.org/x/crypto v0.55.0
-+	golang.org/x/crypto v0.57.0
- 	golang.org/x/mod v0.38.0
- 	golang.org/x/net v0.58.0
- 	golang.org/x/sync v0.23.0
-@@ -199,7 +199,7 @@ require (
- 	github.com/HdrHistogram/hdrhistogram-go v1.2.0 // indirect
- 	github.com/JeffAshton/win_pdh v0.0.0-20161109143554-76bb4ee9f0ab // indirect
- 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
--	github.com/Masterminds/semver/v3 v3.4.0 // indirect
-+	github.com/Masterminds/semver/v3 v3.5.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 // indirect
- 	github.com/Microsoft/hnslib v0.1.3 // indirect
- 	github.com/NYTimes/gziphandler v1.1.1 // indirect
-@@ -296,7 +296,7 @@ require (
- 	github.com/go-sql-driver/mysql v1.10.1 // indirect
- 	github.com/goccy/go-yaml v1.19.2 // indirect
- 	github.com/godbus/dbus/v5 v5.2.2 // indirect
--	github.com/gofrs/flock v0.8.1 // indirect
-+	github.com/gofrs/flock v0.13.1 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
- 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
- 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
-@@ -475,7 +475,7 @@ require (
- 	github.com/wlynxg/anet v0.0.5 // indirect
- 	github.com/xiang90/probing v0.0.0-20221125231312-a49e3df8f510 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
--	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
-+	github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 // indirect
- 	github.com/zeebo/xxh3 v1.1.0 // indirect
- 	go.etcd.io/bbolt v1.5.0 // indirect
- 	go.etcd.io/etcd/pkg/v3 v3.7.2 // indirect
+@@ -79,7 +79,7 @@ case ${ARCH} in
+     ;;
+ esac
+ 
+-VERSION_HELM_JOB="v0.13.3-build20261014"
++VERSION_HELM_JOB="v0.13.3-build20261021"
+ 
+ if [[ -n "$GIT_TAG" ]]; then
+     if [[ ! "$GIT_TAG" =~ ^"$VERSION_K8S"[+-] ]]; then
 ```
 
-**File**: `go.sum` (modified, +10/-10)
-```diff
-@@ -393,8 +393,8 @@ github.com/JohnCGriffin/overflow v0.0.0-20211019200055-46fa312c352c/go.mod h1:X0
- github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
- github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
- github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
--github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
--github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-+github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
-+github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
- github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 h1:0kQAzHq8vLs7Pptv+7TxjdETLf/nIqJpIB4oC6Ba4vY=
- github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29/go.mod h1:ZWa7ssZJT30CCDGJ7fk/2SBTq9BIQrrVjrcss0UW2s0=
-@@ -858,8 +858,8 @@ github.com/godbus/dbus/v5 v5.0.3/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5x
- github.com/godbus/dbus/v5 v5.0.6/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
- github.com/godbus/dbus/v5 v5.2.2 h1:TUR3TgtSVDmjiXOgAAyaZbYmIeP3DPkld3jgKGV8mXQ=
- github.com/godbus/dbus/v5 v5.2.2/go.mod h1:3AAv2+hPq5rdnr5txxxRwiGjPXamgoIHgz9FPBfOp3c=
--github.com/gofrs/flock v0.8.1 h1:+gYjHKf32LDeiEEFhQaotPbLuUXjY5ZqxKgXy7n59aw=
--github.com/gofrs/flock v0.8.1/go.mod h1:F1TvTiK9OcQqauNUHlbJvyl9Qa1QvF/gOUDKA14jxHU=
-+github.com/gofrs/flock v0.13.1 h1:jjREztyBeSKBZYAC+mgc1laB+xsgy4kYMf3FbKF2UBo=
-+github.com/gofrs/flock v0.13.1/go.mod h1:sf4BFiHwnvgxa25DlQoDqXQnwRMEOwqxRq37P6MzzmE=
- github.com/gogo/protobuf v1.2.0/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
- github.com/gogo/protobuf v1.2.1/go.mod h1:hp+jE20tsWTFYpLwKvXlhS1hjn+gTNwPg2I6zVXpSg4=
- github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
-@@ -1072,8 +1072,8 @@ github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:
- github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
- github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
- github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
--github.com/inetaf/tcpproxy v0.0.0-20240214030015-3ce58045626c h1:gYfYE403/nlrGNYj6BEOs9ucLCAGB9gstlSk92DttTg=
--github.com/inetaf/tcpproxy v0.0.0-20240214030015-3ce58045626c/go.mod h1:Di7LXRyUcnvAcLicFhtM9/MlZl/TNgRSDHORM2c6CMI=
-+github.com/inetaf/tcpproxy v0.0.0-20260515195445-c159a6051109 h1:H3ztMPCBcyG60Ks0plTncU3Vs6jIrxhn3nEThpMEpo4=
-+github.com/inetaf/tcpproxy v0.0.0-20260515195445-c159a6051109/go.mod h1:Di7LXRyUcnvAcLicFhtM9/MlZl/TNgRSDHORM2c6CMI=
- github.com/influxdata/influxdb1-client v0.0.0-20191209144304-8bf82d3c094d/go.mod h1:qj24IKcXYK6Iy9ceXlo3Tc+vtHo9lIhSX5JddghvEPo=
- github.com/intel/goresctrl v0.12.0 h1:F44m7jiVgOdqWfTTWaREF+5HTeX3i06qhvpuzpnrBko=
- github.com/intel/goresctrl v0.12.0/go.mod h1:5GWtmPY4BWl/a9rU8apGED9Xul5b5WoLtg/qOWaghWU=
-@@ -1639,8 +1639,8 @@ github.com/rogpeppe/go-internal v1.12.0/go.mod h1:E+RYuTGaKKdloAfM02xzb0FW3Paa99
- github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
- github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
- github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
--github.com/rootless-containers/rootlesskit v1.1.1 h1:F5psKWoWY9/VjZ3ifVcaosjvFZJOagX85U22M0/EQZE=
--github.com/rootless-containers/rootlesskit v1.1.1/go.mod h1:UD5GoA3dqKCJrnvnhVgQQnweMF2qZnf9KLw8EewcMZI=
-+github.com/rootless-containers/rootlesskit/v3 v3.2.0 h1:yNzNHcceg+8ST+ckreY/U5BYti2UVXXwQYNldtXUtRM=
-+github.com/rootless-containers/rootlesskit/v3 v3.2.0/go.mod h1:2+6juXfEVqXFICaGaaWkSnyDdhbkWv7WAvUg8hnsKwU=
- github.com/rs/xid v1.2.1/go.mod h1:+uKXf+4Djp6Md1KODXJxgGQPKngRmWyn10oCKFzNHOQ=
- github.com/rs/xid v1.6.0 h1:fV591PaemRlL6JfRxGDEPl69wICngIQ3shQtzfy2gxU=
- github.com/rs/xid v1.6.0/go.mod h1:7XoLgs4eV+QndskICGsho+ADou8ySMSjJKDIan90Nz0=
-@@ -1775,8 +1775,8 @@ github.com/xiang90/probing v0.0.0-20221125231312-a49e3df8f510 h1:S2dVYn90KE98chq
- github.com/xiang90/probing v0.0.0-20221125231312-a49e3df8f510/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
- github.com/xlab/treeprint v1.2.0 h1:HzHnuAF1plUN2zGlAFHbSQP2qJ0ZAD3XF5XD7OesXRQ=
- github.com/xlab/treeprint v1.2.0/go.mod h1:gj5Gd3gPdKtR1ikdDK6fnFLdmIS0X30kTTuNd/WEJu0=
--github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 h1:gEOO8jv9F4OT7lGCjxCBTO/36wtF6j2nSip77qHd4x4=
--github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1/go.mod h1:Ohn+xnUBiLI6FVj/9LpzZWtj1/D6lUovWYBkxHVV3aM=
-+github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 h1:FnBeRrxr7OU4VvAzt5X7s6266i6cSVkkFPS0TuXWbIg=
-+github.
-```
+---
 
-**File**: `pkg/cli/cmds/init_linux.go` (modified, +2/-2)
-```diff
-@@ -7,13 +7,13 @@ import (
- 
- 	"github.com/k3s-io/k3s/pkg/util/errors"
- 	"github.com/moby/sys/userns"
--	"github.com/rootless-containers/rootlesskit/pkg/parent/cgrouputil"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/parent/cgrouputil"
- )
- 
- // EvacuateCgroup2 will handle evacuating the root cgroup in order to enable subtree_control,
- // if running as pid 1 without rootless support.
- func EvacuateCgroup2() error {
--	if os.Getpid() == 1 && !userns.RunningInUserNS() {
-+	if os.Getenv("_K3S_ROOTLESS_FD") == "" && os.Getpid() == 1 && !userns.RunningInUserNS() {
- 		// The root cgroup has to be empty to enable subtree_control, so evacuate it by placing
- 		// ourselves in the init cgroup.
- 		if err := cgrouputil.EvacuateCgroup2("init"); err != nil {
-```
+### Incident Patch 2: `ae2558e4` (2026-10-21)
+**Commit Message**: chore: Update rancher/klipper-helm image version
 
-**File**: `pkg/rootless/portdriver.go` (modified, +4/-4)
-```diff
-@@ -7,9 +7,9 @@ import (
- 	"path"
- 	"strings"
- 
--	"github.com/rootless-containers/rootlesskit/pkg/port"
--	portbuiltin "github.com/rootless-containers/rootlesskit/pkg/port/builtin"
--	portslirp4netns "github.com/rootless-containers/rootlesskit/pkg/port/slirp4netns"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/port"
-+	portbuiltin "github.com/rootless-containers/rootlesskit/v3/pkg/port/builtin"
-+	portslirp4netns "github.com/rootless-containers/rootlesskit/v3/pkg/port/slirp4netns"
- 	"github.com/sirupsen/logrus"
- )
- 
-@@ -36,7 +36,7 @@ type builtinDriver struct {
- }
- 
- func (b *builtinDriver) NewParentDriver() (port.ParentDriver, error) {
--	return portbuiltin.NewParentDriver(b.logWriter, b.stateDir)
-+	return portbuiltin.NewParentDriver(b.logWriter, b.stateDir, false, "")
- }
- 
- func (b *builtinDriver) NewChildDriver() port.ChildDriver {
-```
+Made with ❤️️ by updatecli
 
-**File**: `pkg/rootless/rootless.go` (modified, +25/-16)
+**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
 ```diff
-@@ -13,26 +13,29 @@ import (
- 
- 	"github.com/k3s-io/k3s/pkg/util/errors"
- 	"github.com/opencontainers/cgroups"
--	"github.com/rootless-containers/rootlesskit/pkg/child"
--	"github.com/rootless-containers/rootlesskit/pkg/copyup/tmpfssymlink"
--	"github.com/rootless-containers/rootlesskit/pkg/network/slirp4netns"
--	"github.com/rootless-containers/rootlesskit/pkg/parent"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/child"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/copyup/tmpfssymlink"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/network/slirp4netns"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/parent"
- 	"github.com/sirupsen/logrus"
- 	"golang.org/x/sys/unix"
- )
- 
- var (
--	pipeFD             = "_K3S_ROOTLESS_FD"
--	childEnv           = "_K3S_ROOTLESS_SOCK"
--	evacuateCgroup2Env = "_K3S_ROOTLESS_EVACUATE_CGROUP2" // boolean
--	Sock               = ""
-+	pipeFD                 = "_K3S_ROOTLESS_FD"
-+	childEnv               = "_K3S_ROOTLESS_SOCK"
-+	evacuateCgroup2Env     = "_K3S_ROOTLESS_EVACUATE_CGROUP2" // boolean
-+	childUseActivationEnv  = "_K3S_ROOTLESS_CHILD_USE_ACTIVATION"
-+	runActivationHelperEnv = "_K3S_ROOTLESS_RUN_ACTIVATION_HELPER"
-+	Sock                   = ""
- 
- 	mtuEnv             = "K3S_ROOTLESS_MTU"
- 	cidrEnv            = "K3S_ROOTLESS_CIDR"
- 	enableIPv6Env      = "K3S_ROOTLESS_ENABLE_IPV6"
- 	portDriverEnv      = "K3S_ROOTLESS_PORT_DRIVER"
- 	disableLoopbackEnv = "K3S_ROOTLESS_DISABLE_HOST_LOOPBACK"
- 	copyUpDirsEnv      = "K3S_ROOTLESS_COPYUPDIRS"
-+	stateDirEnv        = "K3S_ROOTLESS_STATE_DIR"
- )
- 
- func Rootless(stateDir string, enableIPv6 bool) error {
-@@ -138,11 +141,13 @@ func createParentOpt(driver portDriver, stateDir string, enableIPv6 bool) (*pare
- 	driver.SetStateDir(stateDir)
- 
- 	opt := &parent.Opt{
--		StateDir:       stateDir,
--		CreatePIDNS:    true,
--		CreateCgroupNS: true,
--		CreateUTSNS:    true,
--		CreateIPCNS:    true,
-+		StateDir:                 stateDir,
-+		StateDirEnvKey:           stateDirEnv,
-+		ChildUseActivationEnvKey: childUseActivationEnv,
-+		CreatePIDNS:              true,
-+		CreateCgroupNS:           true,
-+		CreateUTSNS:              true,
-+		CreateIPCNS:              true,
- 	}
- 
- 	selfCgroupMap, err := cgroups.ParseCgroupFile("/proc/self/cgroup")
-@@ -215,9 +220,13 @@ func createParentOpt(driver portDriver, stateDir string, enableIPv6 bool) (*pare
- }
- 
- func createChildOpt(driver portDriver) (*child.Opt, error) {
--	opt := &child.Opt{}
--	opt.TargetCmd = os.Args
--	opt.PipeFDEnvKey = pipeFD
-+	opt := &child.Opt{
-+		TargetCmd:                 os.Args,
-+		PipeFDEnvKey:              pipeFD,
-+		RunActivationHelperEnvKey: runActivationHelperEnv,
-+		ChildUseActivationEnvKey:  childUseActivationEnv,
-+		StateDirEnvKey:            stateDirEnv,
-+	}
- 	opt.NetworkDriver = slirp4netns.NewChildDriver()
- 	opt.PortDriver = driver.NewChildDriver()
- 	opt.CopyUpDirs = []string{"/etc", "/var/run", "/run", "/var/lib"}
-```
-
-**File**: `pkg/rootlessports/controller.go` (modified, +2/-2)
-```diff
-@@ -9,8 +9,8 @@ import (
- 
- 	"github.com/k3s-io/k3s/pkg/rootless"
- 	corev1 "github.com/rancher/wrangler/v3/pkg/generated/controllers/core/v1"
--	"github.com/rootless-containers/rootlesskit/pkg/api/client"
--	"github.com/rootless-containers/rootlesskit/pkg/port"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/api/client"
-+	"github.com/rootless-containers/rootlesskit/v3/pkg/port"
- 	"github.com/sirupsen/logrus"
- 	v1 "k8s.io/api/core/v1"
- 	"k8s.io/apimachinery/pkg/labels"
+@@ -1,4 +1,4 @@
+-docker.io/rancher/klipper-helm:v0.13.3-build20261014
++docker.io/rancher/klipper-helm:v0.13.3-build20261021
+ docker.io/rancher/klipper-lb:v0.4.17
+ docker.io/rancher/local-path-provisioner:v0.0.37
+ docker.io/rancher/mirrored-coredns-coredns:1.14.7
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14877** (2026-10-21): [release-1.34] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
+- **PR #14876** (2026-10-21): [release-1.36] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
+- **PR #14875** (2026-10-21): [release-1.35] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
+- **PR #14874** (2026-10-21): [release-1.37] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
+- **PR #14873** (2026-10-21): [main] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
 - **PR #14836** (2026-10-19): Make immutable mtime accept 1st Unix second (@daimond113)
-- **PR #14835** (2026-10-16): [release-1.35] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
-- **PR #14834** (2026-10-16): [release-1.36] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
-- **PR #14833** (2026-10-16): [release-1.37] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
-- **PR #14832** (2026-10-16): [main] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
-- **PR #14831** (2026-10-16): [release-1.34] Bump rancher/mirrored-library-traefik image version (@github-actions[bot])
 
 ---
 
@@ -1205,38 +962,28 @@ Signed-off-by: Derek Nola <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rootless v3 (#14746)
+## X. Bump to latest klipper-helm version in scripts/version.sh
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/version.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7c66820`: Rootless v3 (#14746). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `65d71277`: Bump to latest klipper-helm version in scripts/version.sh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/version.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/inetaf/tcpproxy v0.0.0-20260515195445-c159a6051109
-	github.com/rootless-containers/rootlesskit/v3 v3.2.0
-	golang.org/x/crypto v0.57.0
-	github.com/Masterminds/semver/v3 v3.5.0 // indirect
-	github.com/gofrs/flock v0.13.1 // indirect
-	github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 // indirect
+VERSION_HELM_JOB="v0.13.3-build20261021"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/inetaf/tcpproxy v0.0.0-20240214030015-3ce58045626c
-	github.com/rootless-containers/rootlesskit v1.1.1
-	golang.org/x/crypto v0.55.0
-	github.com/Masterminds/semver/v3 v3.4.0 // indirect
-	github.com/gofrs/flock v0.8.1 // indirect
-	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
+VERSION_HELM_JOB="v0.13.3-build20261014"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7c66820` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `65d71277` are properly handled with clean fallback behavior.

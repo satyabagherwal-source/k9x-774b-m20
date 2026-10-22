@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `508b0013`  
+> **Source Version**: `a7796e20`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:24:49.361Z  
+> **Timestamp**: 2026-10-22T15:35:33.696Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:24:49.353Z  
+> **Harvest Timestamp**: 2026-10-22T15:35:32.566Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1969,122 +1969,816 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `508b0013` (2026-10-19)
-**Commit Message**: Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/itertools-0.15.0
+### Incident Patch 1: `0104b941` (2026-10-19)
+**Commit Message**: merge-fixup: compare workspace packages whole, and stop when a lockfile is unreadable
 
-chore(deps): bump itertools from 0.14.0 to 0.15.0
+A dependency added to a workspace package changes only its dependency list,
+which the lockfile comparison ignored, so the hook took HEAD's lockfile and
+dropped the new edge. A failed fetch of a lockfile looked like a side
+without one, which kept the source's snarkVM entries.
 
-**File**: `Cargo.lock` (modified, +13/-4)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/merge-fixup.sh` (modified, +25/-17)
 ```diff
-@@ -2645,6 +2645,15 @@ dependencies = [
-  "either",
- ]
+@@ -54,26 +54,24 @@ unmerged() {
+   [ -n "$(git ls-files -u -- "$@")" ]
+ }
+ 
+-# Prints one line per package of the lockfile: its name, a tab, and its name,
+-# version and source. A snarkVM pin change also rewrites the dependency lists of
+-# packages that share dependencies with snarkVM, so those lists are left out.
++# Prints one line per package of the lockfile: its name, a tab, and the entry to
++# compare. A snarkVM pin change also rewrites the dependency lists of packages
++# that share dependencies with snarkVM, so a package from a registry or git is
++# compared by its name, version and source alone. A workspace package is
++# compared whole, so a dependency added to it shows.
+ packages() {
+   awk '
+-    /^\[/ { if (e != "") print n "\t" e; e = ""; on = $0 == "[[package]]"; next }
++    function flush() { if (n != "") print n "\t" (src ? key : all); n = key = all = ""; src = 0 }
++    /^\[/ { flush(); on = $0 == "[[package]]"; next }
+     on && /^name = / { n = $3; gsub(/"/, "", n) }
+-    on && /^(name|version|source) = / { e = e " " $0 }
+-    END { if (e != "") print n "\t" e }'
++    on && /^source = / { src = 1 }
++    on && /^(name|version|source) = / { key = key " " $0 }
++    on && NF { all = all " " $0 }
++    END { flush() }'
+ }
+ 
+-# Prints the names of the packages whose lockfile entries the source changed.
+-changed_by_source() {
+-  local base
+-  base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
+-  if git cat-file -e "$base:$lockfile" 2> /dev/null && git cat-file -e "MERGE_HEAD:$lockfile" 2> /dev/null; then
+-    LC_ALL=C comm -3 <(git show "$base:$lockfile" | packages | LC_ALL=C sort) \
+-      <(git show "MERGE_HEAD:$lockfile" | packages | LC_ALL=C sort) \
+-      | awk -F '\t' '{ print $1 == "" ? $2 : $1 }' | LC_ALL=C sort -u
+-  fi
++has_lockfile() {
++  [ -n "$(git ls-tree "$1" -- "$lockfile")" ]
+ }
+ 
+ # Prints ls-tree lines as update-index lines at the given stage.
+@@ -128,12 +126,22 @@ elif [ -f "$manifest" ]; then
+   fi
+ fi
+ 
+-if git cat-file -e "HEAD:$lockfile" 2> /dev/null; then
++if has_lockfile HEAD; then
+   if [ "$(git show "HEAD:$manifest" | table)" != "$(cat "$tmp/table")" ]; then
+     leave_unmerged "$lockfile"
+     echo "$lockfile: left unmerged, since HEAD pins snarkVM unlike $TARGET"
+   else
+-    changed=$(changed_by_source)
++    # The packages whose entries the source changed. A side without the
++    # lockfile leaves git's merge, conflicted or not, to stand.
++    changed=
++    base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
++    if has_lockfile "$base" && has_lockfile MERGE_HEAD; then
++      # Outside a command substitution, so a failed fetch stops the hook.
++      git show "$base:$lockfile" | packages | LC_ALL=C sort > "$tmp/base.packages"
++      git show "MERGE_HEAD:$lockfile" | packages | LC_ALL=C sort > "$tmp/source.packages"
++      changed=$(LC_ALL=C comm -3 "$tmp/base.packages" "$tmp/source.packages" \
++        | awk -F '\t' '{ print $1 == "" ? $2 : $1 }' | LC_ALL=C sort -u)
++    fi
+     if grep -qE '^snarkvm(-|$)' <<< "$changed"; then
+       if grep -qvE '^snarkvm(-|$)' <<< "$changed"; then
+         leave_unmerged "$lockfile"
+```
+
+**File**: `.github/merge-fixup.test.sh` (modified, +31/-3)
+```diff
+@@ -34,10 +34,22 @@ version = "${2:-1.0}"
+ EOF
+ }
+ 
+-lockfile() { # pin, anyhow version, foo version
++lockfile() { # pin, anyhow version, foo version, another dependency of a
++  local dep=
++  if [ -n "${4:-}" ]; then
++    dep=$'\n'" \"$4\","
++  fi
+   cat <<EOF
+ version = 4
  
 +[[package]]
-+name = "itertools"
-+version = "0.15.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
-+dependencies = [
-+ "either",
++name = "a"
++version = "0.1.0"
++dependencies = [${dep}
++ "foo",
++ "snarkvm",
 +]
 +
  [[package]]
- name = "itoa"
- version = "1.0.18"
-@@ -3792,7 +3801,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
- dependencies = [
-  "anyhow",
-- "itertools 0.14.0",
-+ "itertools 0.13.0",
-  "proc-macro2",
-  "quote 1.0.47",
-  "syn 2.0.119",
-@@ -5075,7 +5084,7 @@ dependencies = [
-  "deadline",
-  "futures",
-  "indexmap 2.14.2",
-- "itertools 0.14.0",
-+ "itertools 0.15.0",
-  "locktick",
-  "lru",
-  "mockall",
-@@ -5199,7 +5208,7 @@ dependencies = [
-  "anyhow",
-  "cfg-if",
-  "indexmap 2.14.2",
-- "itertools 0.14.0",
-+ "itertools 0.15.0",
-  "locktick",
-  "lru",
-  "once_cell",
-@@ -5354,7 +5363,7 @@ dependencies = [
-  "anyhow",
-  "futures",
-  "indexmap 2.14.2",
-- "itertools 0.14.0",
-+ "itertools 0.15.0",
-  "locktick",
-  "parking_lot",
-  "rand 0.10.3",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -140,7 +140,7 @@ version = "0.7"
- version = "1.5"
+ name = "anyhow"
+ version = "${2:-1.0}"
+@@ -78,10 +90,10 @@ setup() {
+   git -C "$repo" branch release
+ }
  
- [workspace.dependencies.itertools]
--version = "0.14"
-+version = "0.15"
+-edit() { # branch, pin, anyhow version, foo version, line above the anyhow table
++edit() { # branch, pin, anyhow version, foo version, line above the anyhow table, another dependency of a
+   git -C "$repo" checkout -q "$1"
+   manifest "$2" "${3:-}" "${5:-}" > "$repo/Cargo.toml"
+-  lockfile "$2" "${3:-}" "${4:-}" > "$repo/Cargo.lock"
++  lockfile "$2" "${3:-}" "${4:-}" "${6:-}" > "$repo/Cargo.lock"
+   git -C "$repo" commit -qam "$1"
+ }
  
- [workspace.dependencies.indexmap]
- version = "2"
-```
-
-**File**: `node/bft/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -170,7 +170,7 @@ features = [ "derive" ]
- version = "0.2"
+@@ -172,6 +184,22 @@ ck "the pin is restored" staged_has Cargo.toml 'rev = "1111111" #staging'
+ ck "the other change is kept" staged_has Cargo.toml 'version = "1.1"'
+ ck "the lockfile is left for people" unmerged_are Cargo.lock
  
- [dev-dependencies.itertools]
--version = "0.14"
-+version = "0.15"
- 
- [dev-dependencies.open]
- version = "5"
-```
-
-**File**: `node/bft/tests/common/primary.rs` (modified, +1/-1)
-```diff
-@@ -263,7 +263,7 @@ impl TestNetwork {
- 
-     // Connects all nodes to each other.
-     pub async fn connect_all(&self) {
--        for (validator, other_validator) in self.validators.values().tuple_combinations() {
-+        for [validator, other_validator] in self.validators.values().array_combinations() {
-             // Connect to the node.
-             let ip = other_validator.primary.gateway().local_ip();
-             let _ = validator.primary.gateway().connect(ip);
++echo "the source moved the pin and added a dependency to a workspace package"
++setup "$staging_pin"
++edit release "$release_pin" 1.0 1.0.0 '' anyhow
++merge_into
++run_hook
++ck "the pin is restored" staged_has Cargo.toml 'rev = "1111111" #staging'
++ck "the lockfile is left for people" unmerged_are Cargo.lock
++
++echo "the hook cannot read the merge base's lockfile"
++setup "$staging_pin"
++edit release "$release_pin"
++merge_into
++blob=$(git -C "$repo" rev-parse "$(git -C "$repo" merge-base HEAD MERGE_HEAD):Cargo.lock")
++rm "$repo/.git/objects/${blob:0:2}/${blob:2}"
++ck "the hook fails" fails hook
++
+ echo "a conflict outside the table"
+ setup "$release_rev"
+ edit staging "$staging_pin" 1.2
 ```
 
 ---
 
-### Incident Patch 2: `db6f7195` (2026-10-19)
-**Commit Message**: Merge pull request #4560 from aleo-labs-protocol/ci/merge-mainnet-into-staging
+### Incident Patch 2: `4c17d76a` (2026-10-19)
+**Commit Message**: merge-fixup: keep lockfile bumps, read the pin where HEAD forked, test without bash -c
 
-Merge mainnet into staging
+The hook keeps git's merge of Cargo.lock unless the source changed snarkVM
+entries. Changes to snarkVM entries alone are dropped. When the source also
+changed other packages, Cargo.lock is left unmerged for people. Before, the
+hook took the target's lockfile whenever the manifests matched the target's,
+which dropped lockfile-only bumps, and it kept a clean merge that still
+pinned the source's snarkVM.
 
+The pin comes from the target at the merge base with HEAD, since HEAD is the
+pull request's branch while one is open. Comments above the next table are
+no longer part of the snarkVM table.
 
+The tests check the state the workflow's push step reads, replay a pinned
+testnet commit, run their checks as functions instead of bash -c strings,
+and remove their temporary directories.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/merge-fixup.sh` (modified, +85/-16)
+```diff
+@@ -5,10 +5,20 @@
+ #
+ # Release branches pin snarkVM by version or by a release revision, and staging
+ # pins it by a staging revision. So:
+-#   - The root manifest keeps the target's [workspace.dependencies.snarkvm]
+-#     table, whichever side changed it. The rest of the manifest merges as usual.
+-#   - Cargo.lock is the target's when every manifest is the target's.
++#   - The root manifest keeps the [workspace.dependencies.snarkvm] table of the
++#     target as HEAD forked from it, whichever side changed it. HEAD is the open
++#     pull request's branch when there is one, and the target can move on after
++#     that branch forks. The rest of the manifest merges as usual.
++#   - Cargo.lock keeps git's merge without the source's snarkVM entries. It is
++#     left unmerged for people when the source changed both snarkVM and other
++#     packages, or when HEAD's pin differs from the target's.
+ # Other paths stay as git merged them.
++#
++# The hook must not run cargo: the merged tree's cargo and rustup configuration
++# would pick the programs it runs, on the runner the push step shares.
++#
++# The hook reads blobs that the workflow's partial clone may not hold yet, and it
++# runs without a token, so it relies on the repository being public.
+ set -euo pipefail
+ 
+ manifest=Cargo.toml
+@@ -18,25 +28,75 @@ header='[workspace.dependencies.snarkvm]'
+ tmp=$(mktemp -d)
+ trap 'rm -rf "$tmp"' EXIT
+ 
+-# Prints the table: its header and the lines up to the next header.
++# Prints the table: its header and the lines up to the next header. Blank and
++# comment lines just before the next header belong to the next header.
+ table() {
+-  awk -v h="$header" '$0 == h { on = 1; print; next } on && /^\[/ { exit } on'
++  awk -v h="$header" '
++    $0 == h { on = 1; print; next }
++    on && /^\[/ { exit }
++    on && /^[[:space:]]*(#|$)/ { held = held $0 "\n"; next }
++    on { printf "%s", held; held = ""; print }'
+ }
+ 
+ # Prints the input with its table replaced by the target's. An input without
+ # the table is printed unchanged.
+ with_target_table() {
+   awk -v h="$header" -v t="$tmp/table" '
+     $0 == h { while ((getline l < t) > 0) print l; skip = 1; next }
+-    skip && /^\[/ { skip = 0 }
+-    !skip'
++    skip && /^\[/ { printf "%s", held; held = ""; skip = 0 }
++    skip && /^[[:space:]]*(#|$)/ { held = held $0 "\n"; next }
++    skip { held = ""; next }
++    { print }
++    END { printf "%s", held }'
+ }
+ 
+ unmerged() {
+   [ -n "$(git ls-files -u -- "$@")" ]
+ }
+ 
+-git show "HEAD:$manifest" | table > "$tmp/table"
++# Prints one line per package of the lockfile: its name, a tab, and its name,
++# version and source. A snarkVM pin change also rewrites the dependency lists of
++# packages that share dependencies with snarkVM, so those lists are left out.
++packages() {
++  awk '
++    /^\[/ { if (e != "") print n "\t" e; e = ""; on = $0 == "[[package]]"; next }
++    on && /^name = / { n = $3; gsub(/"/, "", n) }
++    on && /^(name|version|source) = / { e = e " " $0 }
++    END { if (e != "") print n "\t" e }'
++}
++
++# Prints the names of the packages whose lockfile entries the source changed.
++changed_by_source() {
++  local base
++  base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
++  if git cat-file -e "$base:$lockfile" 2> /dev/null && git cat-file -e "MERGE_HEAD:$lockfile" 2> /dev/null; then
++    LC_ALL=C comm -3 <(git show "$base:$lockfile" | packages | LC_ALL=C sort) \
++      <(git show "MERGE_HEAD:$lockfile" | packages | LC_ALL=C sort) \
++      | awk -F '\t' '{ print $1 == "" ? $2 : $1 }' | LC_ALL=C sort -u
++  fi
++}
++
++# Prints ls-tree lines as update-index lines at the given stage.
++at_stage() {
++  awk -v n="$1" -F '\t' '{ split($1, a, " "); print a[1] " " a[3] " " n "\t" $2 }'
++}
++
++# Leaves the path unmerged, with the merge base, HEAD and the source as its
++# stages. The working tree keeps git's merge.
++leave_unmerged() {
++  local base
++  unmerged "$1" && return
++  base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
++  {
++    printf '0 %s\t%s\n' "$(git rev-parse HEAD | tr 0-9a-f 0)" "$1"
++    git ls-tree "$base" -- "$1" | at_stage 1
++    git ls-tree HEAD -- "$1" | at_stage 2
++    git ls-tree MERGE_HEAD -- "$1" | at_stage 3
++  } | git update-index --index-info
++}
++
++fork=$(git merge-base HEAD "origin/$TARGET")
++git show "$fork:$manifest" | table > "$tmp/table"
+ if [ ! -s "$tmp/table" ]; then
+   echo "::error::$manifest on $TARGET has no $header table" >&2
+   exit 1
+@@ -46,7 +106,7 @@ if unmerged "$manifest"; then
+   # Merges again with the table made equal on all three sides. A side without
+   # the manifest leaves the conflict to people.
+   if git show ":1:$manifest" > "$tmp/base" 2> /dev/null && git show ":3:$manifest" > "$tmp/theirs" 2> /dev/null; then
+-    git show ":2:$manifest" > "$tmp/ours"
++    git show ":2:$manifest" | with_target_table > "$tmp/ours"
+     with_target_table < "$tmp/base" > "$tmp/base.fixed"
+     with_target_table < "$tmp/theirs" > "$tmp/theirs.fixed"
+     if git merge-file -L "$TARGET" -L "merge base" -L "$SOURCE" "$t
+```
+
+**File**: `.github/merge-fixup.test.sh` (modified, +182/-55)
+```diff
+@@ -3,6 +3,8 @@
+ set -euo pipefail
+ 
+ hook=$(realpath "$(dirname "$0")/merge-fixup.sh")
++work=$(mktemp -d)
++trap 'rm -rf "$work"' EXIT
+ pass=0
+ fail=0
+ 
+@@ -17,7 +19,7 @@ ck() {
+   fi
+ }
+ 
+-manifest() { # rev, extra line in the anyhow table
++manifest() { # pin, anyhow version, line above the anyhow table
+   cat <<EOF
+ [workspace]
+ members = [ "a" ]
+@@ -26,132 +28,257 @@ members = [ "a" ]
+ #path = "../snarkVM"
+ ${1}
+ default-features = false
+-
++${3:-}
+ [workspace.dependencies.anyhow]
+ version = "${2:-1.0}"
+ EOF
+ }
+ 
++lockfile() { # pin, anyhow version, foo version
++  cat <<EOF
++version = 4
++
++[[package]]
++name = "anyhow"
++version = "${2:-1.0}"
++
++[[package]]
++name = "foo"
++version = "${3:-1.0.0}"
++
++[[package]]
++name = "snarkvm"
++version = "4.12.0"
++source = "$(cksum <<< "$1" | cut -d' ' -f1)"
++EOF
++}
++
+ staging_pin='git = "https://github.com/ProvableHQ/snarkVM.git"
+ rev = "1111111" #staging'
++staging_bump='git = "https://github.com/ProvableHQ/snarkVM.git"
++rev = "3333333" #staging'
+ release_pin='#git = "https://github.com/ProvableHQ/snarkVM.git"
+ version = "=4.12.0"'
+ release_rev='git = "https://github.com/ProvableHQ/snarkVM.git"
+ rev = "2222222" #test_net_v4120'
+ 
+-# Makes a repository at $repo with branches staging and release from a common
+-# base, then starts merging release into staging.
+-#   $1: base pin   $2: staging pin   $3: release pin
+-#   $4: staging anyhow version   $5: release anyhow version
++# Makes a repository at $repo whose branches staging and release start at a
++# common base with the given pin.
+ setup() {
+-  repo=$(mktemp -d)
++  repo=$(mktemp -d -p "$work")
+   git -C "$repo" init -q -b staging
+   git -C "$repo" config user.name t
+   git -C "$repo" config user.email t@t
+   mkdir "$repo/a"
+-  manifest "$1" > "$repo/Cargo.toml"
+   echo '[package]' > "$repo/a/Cargo.toml"
+-  echo "lock $1" > "$repo/Cargo.lock"
++  manifest "$1" > "$repo/Cargo.toml"
++  lockfile "$1" > "$repo/Cargo.lock"
+   git -C "$repo" add -A
+   git -C "$repo" commit -qm base
+   git -C "$repo" branch release
+-  edit staging "$2" "${4:-1.0}"
+-  edit release "$3" "${5:-1.0}"
+-  git -C "$repo" checkout -q staging
+-  git -C "$repo" merge -q --no-ff --no-commit release > /dev/null 2>&1 || true
+ }
+ 
+-edit() { # branch, pin, anyhow version
++edit() { # branch, pin, anyhow version, foo version, line above the anyhow table
+   git -C "$repo" checkout -q "$1"
+-  manifest "$2" "$3" > "$repo/Cargo.toml"
+-  echo "lock $2" > "$repo/Cargo.lock"
+-  git -C "$repo" commit -qam "$1" > /dev/null || true
++  manifest "$2" "${3:-}" "${5:-}" > "$repo/Cargo.toml"
++  lockfile "$2" "${3:-}" "${4:-}" > "$repo/Cargo.lock"
++  git -C "$repo" commit -qam "$1"
++}
++
++# Starts merging release into the branch, by default staging, as the workflow
++# does: origin/staging is the target, and the branch is HEAD.
++merge_into() {
++  git -C "$repo" update-ref refs/remotes/origin/staging staging
++  git -C "$repo" checkout -q "${1:-staging}"
++  git -C "$repo" merge -q --no-ff --no-commit release > /dev/null 2>&1 || true
++}
++
++# Runs the hook as the workflow does, with the unmerged paths as arguments.
++hook() {
++  local paths
++  mapfile -t paths < <(git -C "$repo" -c core.quotePath=false diff --name-only --diff-filter=U)
++  (cd "$repo" && TARGET=staging SOURCE=release "$hook" "${paths[@]}") > "$repo.out" 2> "$repo.err"
+ }
+ 
+ run_hook() {
+-  # shellcheck disable=SC2046
+-  (cd "$repo" && TARGET=staging SOURCE=release "$hook" $(git ls-files -u | cut -f2 | sort -u)) > "$repo.out" 2> "$repo.err"
++  if ! hook; then
++    fail=$((fail + 1))
++    echo "FAIL: the hook failed:" >&2
++    cat "$repo.err" >&2
++  fi
+ }
+ 
+ fails() { ! "$@"; }
+ 
++# What the workflow's push step reads as unresolved.
++unmerged_paths() { git -C "$repo" -c core.quotePath=false diff --name-only --diff-filter=U; }
++
++unmerged_are() { [ "$(unmerged_paths)" = "$1" ]; }
++
++is_unmerged() { unmerged_paths | grep -qxF "$1"; }
++
+ same_as_head() { # path
+-  git -C "$repo" diff --cached --quiet HEAD -- "$1" && ! is_unmerged "$1" && git -C "$repo" diff --quiet -- "$1"
++  git -C "$repo" diff --cached --quiet HEAD -- "$1" && fails is_unmerged "$1" && git -C "$repo" diff --quiet -- "$1"
+ }
+ 
+-is_unmerged() { [ -n "$(git -C "$repo" ls-files -u -- "$1")" ]; }
++staged_has() { git -C "$repo" show ":$1" | grep -qxF "$2"; }
++
++after_marker() { grep -A1 '^<<<<<<<' "$repo/$1" | grep -qxF "$2"; }
+ 
+-has_markers() { grep -q '^<<<<<<<' "$repo/$1"; }
++near_line_no_markers() { grep -B1 -A2 -xF "$2" "$repo/$1" | fails grep -q '^[<=>]\{7\}'; }
++
++silent() { ! [ -s "$repo.out" ]; }
++
++index_is() { [ "$(git -C "$repo" ls-files -s)" = "$1" ]; }
+ 
+ echo "both sides moved the pin"
+-setup "$release_rev" "$staging_pin" "$release_pin"
++setup "$release_rev"
++edit staging "$staging_pin"
++edit release "$release_pin"
++merge_into
+ ck "the manifest conflicts before the hook" is_unmerged Cargo.toml
+ run_hook
+ ck "the manifest is the target's" same_as_head Cargo.toml
+ ck "the lockfile is the target's" same_as_head Cargo.lock
++ck "nothing is left for peopl
+```
+
+---
+
+### Incident Patch 3: `08c70174` (2026-10-21)
+**Commit Message**: Merge pull request #4562 from aleo-labs-protocol/ci/merge-fixup
+
+ci: keep staging's snarkVM pin when merging release branches into staging
+
+**File**: `.github/merge-fixup.sh` (added, +155/-0)
+```diff
+@@ -0,0 +1,155 @@
++#!/usr/bin/env bash
++# The post-merge hook of merge-into-staging.yml. It runs with the merge in
++# progress, and its arguments are the unmerged paths. See "Merging branches" in
++# aleo-labs-protocol/gh-actions for the contract.
++#
++# Release branches pin snarkVM by version or by a release revision, and staging
++# pins it by a staging revision. So:
++#   - The root manifest keeps the [workspace.dependencies.snarkvm] table of the
++#     target as HEAD forked from it, whichever side changed it. HEAD is the open
++#     pull request's branch when there is one, and the target can move on after
++#     that branch forks. The rest of the manifest merges as usual.
++#   - Cargo.lock keeps git's merge without the source's snarkVM entries. It is
++#     left unmerged for people when the source changed both snarkVM and other
++#     packages, or when HEAD's pin differs from the target's.
++# Other paths stay as git merged them.
++#
++# The hook must not run cargo: the merged tree's cargo and rustup configuration
++# would pick the programs it runs, on the runner the push step shares.
++#
++# The hook reads blobs that the workflow's partial clone may not hold yet, and it
++# runs without a token, so it relies on the repository being public.
++set -euo pipefail
++
++manifest=Cargo.toml
++lockfile=Cargo.lock
++header='[workspace.dependencies.snarkvm]'
++
++tmp=$(mktemp -d)
++trap 'rm -rf "$tmp"' EXIT
++
++# Prints the table: its header and the lines up to the next header. Blank and
++# comment lines just before the next header belong to the next header.
++table() {
++  awk -v h="$header" '
++    $0 == h { on = 1; print; next }
++    on && /^\[/ { exit }
++    on && /^[[:space:]]*(#|$)/ { held = held $0 "\n"; next }
++    on { printf "%s", held; held = ""; print }'
++}
++
++# Prints the input with its table replaced by the target's. An input without
++# the table is printed unchanged.
++with_target_table() {
++  awk -v h="$header" -v t="$tmp/table" '
++    $0 == h { while ((getline l < t) > 0) print l; skip = 1; next }
++    skip && /^\[/ { printf "%s", held; held = ""; skip = 0 }
++    skip && /^[[:space:]]*(#|$)/ { held = held $0 "\n"; next }
++    skip { held = ""; next }
++    { print }
++    END { printf "%s", held }'
++}
++
++unmerged() {
++  [ -n "$(git ls-files -u -- "$@")" ]
++}
++
++# Prints one line per package of the lockfile: its name, a tab, and the entry to
++# compare. A snarkVM pin change also rewrites the dependency lists of packages
++# that share dependencies with snarkVM, so a package from a registry or git is
++# compared by its name, version and source alone. A workspace package is
++# compared whole, so a dependency added to it shows.
++packages() {
++  awk '
++    function flush() { if (n != "") print n "\t" (src ? key : all); n = key = all = ""; src = 0 }
++    /^\[/ { flush(); on = $0 == "[[package]]"; next }
++    on && /^name = / { n = $3; gsub(/"/, "", n) }
++    on && /^source = / { src = 1 }
++    on && /^(name|version|source) = / { key = key " " $0 }
++    on && NF { all = all " " $0 }
++    END { flush() }'
++}
++
++has_lockfile() {
++  [ -n "$(git ls-tree "$1" -- "$lockfile")" ]
++}
++
++# Prints ls-tree lines as update-index lines at the given stage.
++at_stage() {
++  awk -v n="$1" -F '\t' '{ split($1, a, " "); print a[1] " " a[3] " " n "\t" $2 }'
++}
++
++# Leaves the path unmerged, with the merge base, HEAD and the source as its
++# stages. The working tree keeps git's merge.
++leave_unmerged() {
++  local base
++  unmerged "$1" && return
++  base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
++  {
++    printf '0 %s\t%s\n' "$(git rev-parse HEAD | tr 0-9a-f 0)" "$1"
++    git ls-tree "$base" -- "$1" | at_stage 1
++    git ls-tree HEAD -- "$1" | at_stage 2
++    git ls-tree MERGE_HEAD -- "$1" | at_stage 3
++  } | git update-index --index-info
++}
++
++fork=$(git merge-base HEAD "origin/$TARGET")
++git show "$fork:$manifest" | table > "$tmp/table"
++if [ ! -s "$tmp/table" ]; then
++  echo "::error::$manifest on $TARGET has no $header table" >&2
++  exit 1
++fi
++
++if unmerged "$manifest"; then
++  # Merges again with the table made equal on all three sides. A side without
++  # the manifest leaves the conflict to people.
++  if git show ":1:$manifest" > "$tmp/base" 2> /dev/null && git show ":3:$manifest" > "$tmp/theirs" 2> /dev/null; then
++    git show ":2:$manifest" | with_target_table > "$tmp/ours"
++    with_target_table < "$tmp/base" > "$tmp/base.fixed"
++    with_target_table < "$tmp/theirs" > "$tmp/theirs.fixed"
++    if git merge-file -L "$TARGET" -L "merge base" -L "$SOURCE" "$tmp/ours" "$tmp/base.fixed" "$tmp/theirs.fixed"; then
++      cp "$tmp/ours" "$manifest"
++      git add "$manifest"
++      echo "$manifest: resolved, keeping the snarkVM pin of $TARGET"
++    else
++      # Fewer markers for people to resolve. The path stays unmerged.
++      cp "$tmp/ours" "$manifest"
++      echo "$manifest: conflicts outside the snarkVM table remain"
++    fi
++  fi
++elif [ -f "$manifest" ]; then
++  with_target_table < "$manifest" > "$tmp/merged"
++  if ! cmp -s "$tmp/merg
+```
+
+**File**: `.github/merge-fixup.test.sh` (added, +313/-0)
+```diff
+@@ -0,0 +1,313 @@
++#!/usr/bin/env bash
++# Tests merge-fixup.sh against throwaway repositories.
++set -euo pipefail
++
++hook=$(realpath "$(dirname "$0")/merge-fixup.sh")
++work=$(mktemp -d)
++trap 'rm -rf "$work"' EXIT
++pass=0
++fail=0
++
++ck() {
++  local name=$1
++  shift
++  if "$@"; then
++    pass=$((pass + 1))
++  else
++    fail=$((fail + 1))
++    echo "FAIL: $name" >&2
++  fi
++}
++
++manifest() { # pin, anyhow version, line above the anyhow table
++  cat <<EOF
++[workspace]
++members = [ "a" ]
++
++[workspace.dependencies.snarkvm]
++#path = "../snarkVM"
++${1}
++default-features = false
++${3:-}
++[workspace.dependencies.anyhow]
++version = "${2:-1.0}"
++EOF
++}
++
++lockfile() { # pin, anyhow version, foo version, another dependency of a
++  local dep=
++  if [ -n "${4:-}" ]; then
++    dep=$'\n'" \"$4\","
++  fi
++  cat <<EOF
++version = 4
++
++[[package]]
++name = "a"
++version = "0.1.0"
++dependencies = [${dep}
++ "foo",
++ "snarkvm",
++]
++
++[[package]]
++name = "anyhow"
++version = "${2:-1.0}"
++
++[[package]]
++name = "foo"
++version = "${3:-1.0.0}"
++
++[[package]]
++name = "snarkvm"
++version = "4.12.0"
++source = "$(cksum <<< "$1" | cut -d' ' -f1)"
++EOF
++}
++
++staging_pin='git = "https://github.com/ProvableHQ/snarkVM.git"
++rev = "1111111" #staging'
++staging_bump='git = "https://github.com/ProvableHQ/snarkVM.git"
++rev = "3333333" #staging'
++release_pin='#git = "https://github.com/ProvableHQ/snarkVM.git"
++version = "=4.12.0"'
++release_rev='git = "https://github.com/ProvableHQ/snarkVM.git"
++rev = "2222222" #test_net_v4120'
++
++# Makes a repository at $repo whose branches staging and release start at a
++# common base with the given pin.
++setup() {
++  repo=$(mktemp -d -p "$work")
++  git -C "$repo" init -q -b staging
++  git -C "$repo" config user.name t
++  git -C "$repo" config user.email t@t
++  mkdir "$repo/a"
++  echo '[package]' > "$repo/a/Cargo.toml"
++  manifest "$1" > "$repo/Cargo.toml"
++  lockfile "$1" > "$repo/Cargo.lock"
++  git -C "$repo" add -A
++  git -C "$repo" commit -qm base
++  git -C "$repo" branch release
++}
++
++edit() { # branch, pin, anyhow version, foo version, line above the anyhow table, another dependency of a
++  git -C "$repo" checkout -q "$1"
++  manifest "$2" "${3:-}" "${5:-}" > "$repo/Cargo.toml"
++  lockfile "$2" "${3:-}" "${4:-}" "${6:-}" > "$repo/Cargo.lock"
++  git -C "$repo" commit -qam "$1"
++}
++
++# Starts merging release into the branch, by default staging, as the workflow
++# does: origin/staging is the target, and the branch is HEAD.
++merge_into() {
++  git -C "$repo" update-ref refs/remotes/origin/staging staging
++  git -C "$repo" checkout -q "${1:-staging}"
++  git -C "$repo" merge -q --no-ff --no-commit release > /dev/null 2>&1 || true
++}
++
++# Runs the hook as the workflow does, with the unmerged paths as arguments.
++hook() {
++  local paths
++  mapfile -t paths < <(git -C "$repo" -c core.quotePath=false diff --name-only --diff-filter=U)
++  (cd "$repo" && TARGET=staging SOURCE=release "$hook" "${paths[@]}") > "$repo.out" 2> "$repo.err"
++}
++
++run_hook() {
++  if ! hook; then
++    fail=$((fail + 1))
++    echo "FAIL: the hook failed:" >&2
++    cat "$repo.err" >&2
++  fi
++}
++
++fails() { ! "$@"; }
++
++# What the workflow's push step reads as unresolved.
++unmerged_paths() { git -C "$repo" -c core.quotePath=false diff --name-only --diff-filter=U; }
++
++unmerged_are() { [ "$(unmerged_paths)" = "$1" ]; }
++
++is_unmerged() { unmerged_paths | grep -qxF "$1"; }
++
++same_as_head() { # path
++  git -C "$repo" diff --cached --quiet HEAD -- "$1" && fails is_unmerged "$1" && git -C "$repo" diff --quiet -- "$1"
++}
++
++staged_has() { git -C "$repo" show ":$1" | grep -qxF "$2"; }
++
++after_marker() { grep -A1 '^<<<<<<<' "$repo/$1" | grep -qxF "$2"; }
++
++near_line_no_markers() { grep -B1 -A2 -xF "$2" "$repo/$1" | fails grep -q '^[<=>]\{7\}'; }
++
++silent() { ! [ -s "$repo.out" ]; }
++
++index_is() { [ "$(git -C "$repo" ls-files -s)" = "$1" ]; }
++
++echo "both sides moved the pin"
++setup "$release_rev"
++edit staging "$staging_pin"
++edit release "$release_pin"
++merge_into
++ck "the manifest conflicts before the hook" is_unmerged Cargo.toml
++run_hook
++ck "the manifest is the target's" same_as_head Cargo.toml
++ck "the lockfile is the target's" same_as_head Cargo.lock
++ck "nothing is left for people" unmerged_are ''
++
++echo "only the source moved the pin"
++setup "$staging_pin"
++edit release "$release_pin"
++merge_into
++ck "git merges everything cleanly" unmerged_are ''
++run_hook
++ck "the pin is restored" same_as_head Cargo.toml
++ck "the lockfile is restored" same_as_head Cargo.lock
++
++echo "the source also changed another table"
++setup "$release_rev"
++edit staging "$staging_pin"
++edit release "$release_pin" 1.1
++merge_into
++run_hook
++ck "the manifest is resolved" fails is_unmerged Cargo.toml
++ck "the pin is the target's" staged_has Cargo.toml 'rev = "1111111" #staging'
++ck "the other change is kept" staged_has Cargo.toml 'version = "1.1"'
++ck "the lockfile is left for people" unmerged_are Cargo.lock
++
++echo "the source moved the pin and changed another table, and git m
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +11/-2)
+```diff
+@@ -79,7 +79,16 @@ jobs:
+       - run: |
+           curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" \
+             | tar -xJ -C "$RUNNER_TEMP"
+-          "$RUNNER_TEMP/shellcheck-${SHELLCHECK_VERSION}/shellcheck" -x .ci/*.sh scripts/*.sh
++          "$RUNNER_TEMP/shellcheck-${SHELLCHECK_VERSION}/shellcheck" -x .ci/*.sh scripts/*.sh .github/*.sh
++
++  # The shallow checkout lacks the history the replays of real merges need, so
++  # those are skipped here and run locally.
++  merge-fixup:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v7
++        with: { persist-credentials: false }
++      - run: .github/merge-fixup.test.sh
+ 
+   lint:
+     needs: start-cpu-runners
+@@ -359,7 +368,7 @@ jobs:
+   # for a required check, so each job a pull request runs must succeed here.
+   ci-ok:
+     if: always()
+-    needs: [check-shared-refs, fmt, deny, shellcheck, machete, lint, test-hosted, test, build-snarkos, devnet]
++    needs: [check-shared-refs, fmt, deny, shellcheck, merge-fixup, machete, lint, test-hosted, test, build-snarkos, devnet]
+     runs-on: ubuntu-latest
+     steps:
+       - env:
+```
+
+**File**: `.github/workflows/merge-into-staging.yml` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@ jobs:
+     with:
+       target: staging
+       sources: testnet mainnet
++      post-merge: .github/merge-fixup.sh
+     # Lives in the merge-bot environment, which admits only staging. The called
+     # workflow's merge job sets that environment and receives the value.
+     secrets:
+```
 
 #### Recent Merged Pull Requests:
+- **PR #4572** (2026-10-22): Merge testnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4571** (2026-10-21): chore(deps): bump webpki-roots and webpki-root-certs to 1.0.10 (@awatts73)
+- **PR #4570** (2026-10-21): bench: rename cache-hit REST verification benches to cached_verify (@cbeck88)
+- **PR #4568** (2026-10-21): [Release] Testnet v4.12.1 (@vicsn)
 - **PR #4567** (2026-10-19): chore(deps): bump mockall from 0.13.1 to 0.15.0 (@dependabot[bot])
 - **PR #4566** (2026-10-19): chore(deps): bump itertools from 0.14.0 to 0.15.0 (@dependabot[bot])
-- **PR #4565** (2026-10-19): chore(deps): bump nix from 0.30.1 to 0.31.3 (@dependabot[bot])
-- **PR #4564** (2026-10-19): ci: check advisories nightly instead of on every pull request (@cbeck88)
-- **PR #4563** (2026-10-19): Bump self_update to 1.3.1 for zip 9 (RUSTSEC-2026-0367, -0368, -0369) (@cbeck88)
-- **PR #4561** (2026-10-19): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 
 ---
 
@@ -2104,43 +2798,65 @@ Merge mainnet into staging
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto
+## X. merge-fixup: compare workspace packages whole, and stop when a lockfile is unrea
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/merge-fixup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `508b0013`: Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/itertools-0.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0104b941`: merge-fixup: compare workspace packages whole, and stop when a lockfile is unreadable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/merge-fixup.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "itertools"
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
-dependencies = [
- "either",
-]
-
- "itertools 0.13.0",
- "itertools 0.15.0",
- "itertools 0.15.0",
- "itertools 0.15.0",
+# Prints one line per package of the lockfile: its name, a tab, and the entry to
+# compare. A snarkVM pin change also rewrites the dependency lists of packages
+# that share dependencies with snarkVM, so a package from a registry or git is
+# compared by its name, version and source alone. A workspace package is
+# compared whole, so a dependency added to it shows.
+    function flush() { if (n != "") print n "\t" (src ? key : all); n = key = all = ""; src = 0 }
+    /^\[/ { flush(); on = $0 == "[[package]]"; next }
+    on && /^source = / { src = 1 }
+    on && /^(name|version|source) = / { key = key " " $0 }
+    on && NF { all = all " " $0 }
+    END { flush() }'
+has_lockfile() {
+  [ -n "$(git ls-tree "$1" -- "$lockfile")" ]
+if has_lockfile HEAD; then
+    # The packages whose entries the source changed. A side without the
+    # lockfile leaves git's merge, conflicted or not, to stand.
+    changed=
+    base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
+    if has_lockfile "$base" && has_lockfile MERGE_HEAD; then
+      # Outside a command substitution, so a failed fetch stops the hook.
+      git show "$base:$lockfile" | packages | LC_ALL=C sort > "$tmp/base.packages"
+      git show "MERGE_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "itertools 0.14.0",
- "itertools 0.14.0",
- "itertools 0.14.0",
- "itertools 0.14.0",
+# Prints one line per package of the lockfile: its name, a tab, and its name,
+# version and source. A snarkVM pin change also rewrites the dependency lists of
+# packages that share dependencies with snarkVM, so those lists are left out.
+    /^\[/ { if (e != "") print n "\t" e; e = ""; on = $0 == "[[package]]"; next }
+    on && /^(name|version|source) = / { e = e " " $0 }
+    END { if (e != "") print n "\t" e }'
+# Prints the names of the packages whose lockfile entries the source changed.
+changed_by_source() {
+  local base
+  base=$(git merge-base HEAD MERGE_HEAD | head -n 1)
+  if git cat-file -e "$base:$lockfile" 2> /dev/null && git cat-file -e "MERGE_HEAD:$lockfile" 2> /dev/null; then
+    LC_ALL=C comm -3 <(git show "$base:$lockfile" | packages | LC_ALL=C sort) \
+      <(git show "MERGE_HEAD:$lockfile" | packages | LC_ALL=C sort) \
+      | awk -F '\t' '{ print $1 == "" ? $2 : $1 }' | LC_ALL=C sort -u
+  fi
+if git cat-file -e "HEAD:$lockfile" 2> /dev/null; then
+    changed=$(changed_by_source)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `508b0013` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0104b941` are properly handled with clean fallback behavior.

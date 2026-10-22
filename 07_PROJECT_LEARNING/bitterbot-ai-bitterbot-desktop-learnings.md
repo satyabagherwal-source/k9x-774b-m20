@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `82b00cf5`  
+> **Source Version**: `8ce5fc8b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T01:10:51.878Z  
+> **Timestamp**: 2026-10-22T15:35:37.182Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T01:10:51.873Z  
+> **Harvest Timestamp**: 2026-10-22T15:35:36.461Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2476 stars
+- **Stars / Engagement**: 2477 stars
 
 ---
 
@@ -1799,140 +1799,838 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82b00cf5` (2026-10-21)
-**Commit Message**: chore(main): release 1.10.0 (#284)
+### Incident Patch 1: `3a7276ff` (2026-10-22)
+**Commit Message**: fix(compute): register the Soapbox backend so the agent's compute surface is live (#291)
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+* fix(compute): register the Soapbox backend so the agent's compute surface is live
 
-**File**: `.release-please-manifest.json` (modified, +1/-1)
+PLAN-57 shipped the compute tool, prompt section, watcher, delivery ledger
+and paid-funding rail behind a backend seam, but nothing in production ever
+called registerComputeBackend, registerComputeRuntime or
+startComputeWatcher. In a stock 1.10.0 install the whole agent-facing
+surface was dormant, contrary to docs/tools/compute.md, and the signer-side
+approval-token check the docs promise did not exist.
+
+- New src/compute/soapbox-backend.ts: a secret-free ComputeBackend over the
+  coordinator HTTP API (snapshot with a 5 s cache, jobs, job, result,
+  submit, cancel, quote, fund, pauseWorker). Paid submissions are addressed
+  to the lowest-id online operator advertising paid_usdc, or refused.
+- fund() is the signer: it verifies and consumes the approval token itself,
+  re-reads the quote, refuses on a changed hash or amount, funds through
+  createSoapboxWallet's gated path, then refreshes the coordinator's
+  payment state. Operator-role backends refuse to fund at all.
+- attachComputeAwareness registers the backe
+
+**File**: `docs/tools/compute.md` (modified, +10/-3)
 ```diff
-@@ -1,3 +1,3 @@
- {
--  ".": "1.9.0"
-+  ".": "1.10.0"
+@@ -22,8 +22,12 @@ Two conditions, both required:
+ 
+ - `compute.enabled` is not `false` (default: on).
+ - A compute backend is loaded. The Soapbox compute plugin registers one when
+-  it starts. Without a backend there is no tool and no prompt section, so a
+-  node with no pool spends no tokens on compute awareness.
++  it starts in pilot, participant or local-operator mode (anything with a
++  coordinator client). Setup-only mode, the default on a fresh install before
++  a role is chosen, registers nothing. Without a backend there is no tool and
++  no prompt section, so a node with no pool spends no tokens on compute
++  awareness. Operator-role nodes get a read-only backend: the agent can see
++  jobs and workers but never submits paid work or funds a job from them.
+ 
+ Turn the whole surface off with:
+ 
+@@ -247,7 +251,10 @@ chunk, so on a large index expect the same time a first index took.
+ Paid compute is off by default (`compute.paid.enabled: false`). When the
+ owner turns it on, and the coordinator reports paid work as available to
+ this node (the invite flag), an owner turn may submit `mode: paid_usdc` with
+-`max_cost_usdc`. The coordinator accepts the job and parks it at
++`max_cost_usdc`. The Soapbox backend addresses the job to the online,
++unpaused operator with the lowest id that advertises `paid_usdc`, and refuses
++when there is none; the owner sees that operator as the payee on the quote
++before anything is funded. The coordinator accepts the job and parks it at
+ `awaiting_payment` with a quote: an exact amount, a payee and a hash over
+ both. The tool then does two things and stops:
+ 
+```
+
+**File**: `src/compute/soapbox-backend.test.ts` (added, +462/-0)
+```diff
+@@ -0,0 +1,462 @@
++import { afterEach, beforeEach, describe, expect, it } from "vitest";
++import type { SoapboxJob, SoapboxPaymentQuote, SoapboxStatus } from "../infra/soapbox-client.js";
++import { getComputeBackend, resetComputeBackendForTest } from "./awareness/backend.js";
++import {
++  computeQuoteHash,
++  mintComputeApprovalToken,
++  resetComputePaymentForTest,
++} from "./awareness/payment.js";
++import { getComputeRuntime, resetComputeRuntimeForTest } from "./awareness/runtime.js";
++import {
++  attachComputeAwareness,
++  createSoapboxComputeBackend,
++  type SoapboxBackendClient,
++} from "./soapbox-backend.js";
++
++type Call = { method: string; path: string; body?: unknown };
++
++function fakeClient(opts: {
++  status?: () => SoapboxStatus;
++  routes?: Record<string, (body?: unknown) => unknown>;
++}) {
++  const calls: Call[] = [];
++  const client: SoapboxBackendClient = {
++    async status() {
++      calls.push({ method: "GET", path: "/v1/status" });
++      const s = opts.status;
++      if (!s) throw new Error("fetch failed");
++      return s();
++    },
++    async request<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
++      calls.push({ method, path, body });
++      const route = opts.routes?.[`${method} ${path}`];
++      if (!route) throw new Error("Soapbox: HTTP 404 not found");
++      return route(body) as T;
++    },
++  };
++  return { client, calls };
++}
++
++const payment: SoapboxPaymentQuote = {
++  chain_id: 84532,
++  token: "0xusdc",
++  escrow: "0xescrow",
++  key: "k1",
++  buyer: "0xbuyer",
++  operator: "0xOperatorAddr",
++  amount_microusdc: 250_000,
++  expires: 1_900_000_000,
++};
++
++function job(over: Partial<SoapboxJob> = {}): SoapboxJob {
++  return {
++    id: "job-1",
++    owner: "buyer",
++    status: "succeeded",
++    attempts: 1,
++    spec: { mode: { kind: "private", pool_id: "lab" }, workload: { kind: "sha256", texts: ["a"] } },
++    result: { digests: ["ab"] },
++    receipt: { verification: "recomputed" },
++    error: null,
++    ...over,
++  };
++}
++
++const status = (): SoapboxStatus => ({
++  enabled: true,
++  api_version: 1,
++  settlement: "usdc_escrow",
++  principal: { id: "buyer", roles: ["submitter"], pools: ["lab"], projects: [] },
++  nodes: [
++    {
++      id: "gpu-b",
++      online: true,
++      operator_paused: false,
++      offer: {
++        cpu_threads: 1,
++        memory_mib: 2048,
++        gpu_observed: true,
++        modes: ["private", "paid_usdc"],
++        paused: false,
++        pools: ["lab"],
++      },
++    },
++    {
++      id: "gpu-a",
++      online: true,
++      operator_paused: false,
++      offer: {
++        cpu_threads: 1,
++        memory_mib: 2048,
++        gpu_observed: true,
++        modes: ["paid_usdc"],
++        paused: false,
++      },
++    },
++    {
++      id: "gpu-paused",
++      online: true,
++      operator_paused: true,
++      offer: {
++        cpu_threads: 1,
++        memory_mib: 1,
++        gpu_observed: true,
++        modes: ["paid_usdc"],
++        paused: false,
++      },
++    },
++  ],
++  jobs: [job()],
++});
++
++describe("createSoapboxComputeBackend", () => {
++  afterEach(() => {
++    resetComputePaymentForTest();
++  });
++
++  it("caches the snapshot for the TTL and marks it unreachable on failure", async () => {
++    let t = 1_000;
++    let fail = false;
++    const { client, calls } = fakeClient({
++      status: () => {
++        if (fail) throw new Error("ECONNREFUSED");
++        return status();
++      },
++    });
++    const backend = createSoapboxComputeBackend({ client, now: () => t, snapshotTtlMs: 5_000 });
++    const first = await backend.snapshot();
++    expect(first.reachable).toBe(true);
++    expect(first.pools.map((p) => p.id)).toContain("lab");
++    t += 1_000;
++    await backend.snapshot();
++    expect(calls.filter((c) => c.path === "/v1/status")).toHaveLength(1);
++    t += 10_000;
++    fail = true;
++    const stale = await backend.snapshot();
++    expect(stale.reachable).toBe(false);
++    expect(stale.pools.map((p) => p.id)).toContain("lab");
++    expect(calls.filter((c) => c.path === "/v1/status")).toHaveLength(2);
++  });
++
++  it("maps jobs, a single job, its result and a missing job", async () => {
++    const { client } = fakeClient({
++      status,
++      routes: {
++        "GET /v1/jobs": () => [job(), job({ id: "job-2", status: "running" })],
++        "GET /v1/jobs/job-1": () => job(),
++      },
++    });
++    const backend = createSoapboxComputeBackend({ client });
++    const jobs = await backend.jobs({ status: "running" });
++    expect(jobs.map((j) => j.id)).toEqual(["job-2"]);
++    expect((await backend.jobs({ limit: 1 }))?.length).toBe(1);
++    const one = await backend.job("job-1");
++    expect(one?.workload).toBe("sha256");
++    expect(one?.scope).toBe("lab");
++    const result = await backend.result("job-1");
++    expect(result).toMatchObject({ id: "job-1", status: "succeeded", verification: "recomputed" });
++    expect(result?.result).toEqual({ digests: ["ab"] });
++    expect(await backend.job("nope")).toBeNull();
+```
+
+**File**: `src/compute/soapbox-backend.ts` (added, +370/-0)
+```diff
+@@ -0,0 +1,370 @@
++/**
++ * PLAN-57 follow-up: the Soapbox compute backend adapter.
++ *
++ * `ComputeBackend` is the seam the agent's `compute` tool, the prompt
++ * section, the watcher and the paid-funding rail all talk to. Until this
++ * file existed nothing in production registered one, so the whole
++ * agent-facing compute surface stayed dormant in a stock install. The Soapbox
++ * plugin now attaches this adapter in every mode that has a coordinator
++ * client (pilot, participant, mesh-operator); setup-only mode registers
++ * nothing, which keeps the zero-cost invariant.
++ *
++ * The adapter is a thin, secret-free mapping over the coordinator's HTTP API.
++ * Snapshots are cached for a few seconds because the tool must never poll.
++ * `fund()` is the signer: it verifies and consumes the approval token itself,
++ * trusting nothing upstream, re-reads the quote from the coordinator and
++ * refuses when it no longer matches the approved hash.
++ */
++import type { BitterbotConfig } from "../config/config.js";
++import { resolveMainSessionKey } from "../config/sessions/main-session.js";
++import type { WalletConfig } from "../config/types.wallet.js";
++import type {
++  SoapboxClient,
++  SoapboxJob,
++  SoapboxPaymentQuote,
++  SoapboxStatus,
++} from "../infra/soapbox-client.js";
++import { createSubsystemLogger } from "../logging/subsystem.js";
++import type { BitterbotPluginApi } from "../plugins/types.js";
++import { fundApprovedSoapboxQuote } from "../services/soapbox-wallet.js";
++import {
++  COMPUTE_MAX_INPUTS,
++  type ComputeBackend,
++  type ComputeFundRequest,
++  type ComputeFundResult,
++  type ComputeJobSummary,
++  type ComputeQuote,
++  type ComputeResult,
++  type ComputeSnapshot,
++  type ComputeSubmitRequest,
++  type ComputeSubmitResult,
++  registerComputeBackend,
++  snapshotFromSoapboxStatus,
++  summariseSoapboxJob,
++} from "./awareness/backend.js";
++import { ComputeDeliveryStore } from "./awareness/deliveries.js";
++import { resolvePoolTrust } from "./awareness/egress.js";
++import { computeQuoteHash, toMicroUsdc, verifyComputeApprovalToken } from "./awareness/payment.js";
++import { registerComputeRuntime } from "./awareness/runtime.js";
++import { type ComputeWatcher, startComputeWatcher } from "./awareness/watcher.js";
++
++const log = createSubsystemLogger("compute/soapbox-backend");
++
++/** The slice of the coordinator client the adapter needs; tests pass a fake. */
++export type SoapboxBackendClient = Pick<SoapboxClient, "status" | "request">;
++
++export type SoapboxFunder = (
++  quote: SoapboxPaymentQuote,
++) => Promise<{ status: string; txHash: string | null }>;
++
++export type SoapboxComputeBackendOptions = {
++  client: SoapboxBackendClient;
++  config?: Pick<BitterbotConfig, "compute">;
++  /** Operators run no buyer wallet; `fund()` refuses for them. */
++  role?: "buyer" | "operator";
++  mainWallet?: WalletConfig;
++  /** Overrides the wallet-backed funder (tests). */
++  funder?: SoapboxFunder;
++  now?: () => number;
++  /** How long a status read serves `snapshot()` before the next read. */
++  snapshotTtlMs?: number;
++};
++
++export const SOAPBOX_SNAPSHOT_TTL_MS = 5_000;
++const DEFAULT_RESOURCES = {
++  sha256: { cpu_threads: 1, memory_mib: 256, require_gpu: false },
++  embeddings: { cpu_threads: 1, memory_mib: 1024, require_gpu: true },
++} as const;
++
++function isNotFound(err: unknown): boolean {
++  return /\b(404|not found)\b/i.test(err instanceof Error ? err.message : String(err));
++}
++
++function quoteFromPayment(jobId: string, payment: SoapboxPaymentQuote): ComputeQuote {
++  const amountUsdc = payment.amount_microusdc / 1_000_000;
++  const network = `eip155:${payment.chain_id}`;
++  return {
++    jobId,
++    amountUsdc,
++    payee: payment.operator,
++    network,
++    expiresAt: payment.expires * 1000,
++    quoteHash: computeQuoteHash({ jobId, amountUsdc, payee: payment.operator, network }),
++  };
++}
++
++export function createSoapboxComputeBackend(opts: SoapboxComputeBackendOptions): ComputeBackend {
++  const now = opts.now ?? (() => Date.now());
++  const ttl = opts.snapshotTtlMs ?? SOAPBOX_SNAPSHOT_TTL_MS;
++  const poolTrust = (poolId: string) => resolvePoolTrust(opts.config, poolId);
++  let cached: { at: number; snapshot: ComputeSnapshot; status: SoapboxStatus | null } | null = null;
++  let inflight: Promise<ComputeSnapshot> | null = null;
++  const fundings = new Map<string, Promise<ComputeFundResult>>();
++
++  const readStatus = async (): Promise<ComputeSnapshot> => {
++    try {
++      const status = await opts.client.status();
++      const snapshot = snapshotFromSoapboxStatus(status, {
++        now: now(),
++        poolTrust,
++        reachable: true,
++      });
++      cached = { at: now(), snapshot, status };
++      return snapshot;
++    } catch (err) {
++      // Keep the last good view but mark it unreachable; an empty, unreachable
++      // snapshot when there was never a good one.
++      const base =
++        cached?.snapshot ??
++        snapshotFromSoapboxStatus({ enabled: true }, { now: now(), poolTrust, r
+```
+
+**File**: `src/compute/soapbox-plugin-operator.ts` (modified, +3/-0)
+```diff
+@@ -4,6 +4,7 @@ import { createSoapboxHandlers } from "../gateway/server-methods/soapbox.js";
+ import { SoapboxClient } from "../infra/soapbox-client.js";
+ import type { BitterbotPluginApi } from "../plugins/types.js";
+ import { LocalOperatorService } from "../services/soapbox-local-operator.js";
++import { attachComputeAwareness } from "./soapbox-backend.js";
+ 
+ export function registerLocalOperator(api: BitterbotPluginApi, directory: string) {
+   const binary = api.pluginConfig?.binary;
+@@ -29,6 +30,8 @@ export function registerLocalOperator(api: BitterbotPluginApi, directory: string
+       respond(true, { enabled: true, local_operator: true, nodes: [], jobs: [] });
+     }
+   });
++  // PLAN-57: a read-only compute view for the agent; operators never fund.
++  attachComputeAwareness(api, { client, role: "operator" });
+   const service = new LocalOperatorService(directory, binary, (message) =>
+     api.logger.warn(message),
+   );
+```
+
+**File**: `src/compute/soapbox-plugin-participant.ts` (modified, +3/-0)
+```diff
+@@ -9,6 +9,7 @@ import {
+   verifySoapboxConnection,
+ } from "../infra/soapbox-connection.js";
+ import type { BitterbotPluginApi } from "../plugins/types.js";
++import { attachComputeAwareness } from "./soapbox-backend.js";
+ 
+ export function registerParticipant(api: BitterbotPluginApi, directory: string) {
+   const connection = parseSoapboxConnection(
+@@ -24,6 +25,8 @@ export function registerParticipant(api: BitterbotPluginApi, directory: string)
+     createSoapboxHandlers(api.config.tools?.wallet, { client, role: connection.role }),
+   ))
+     api.registerGatewayMethod(name, handler);
++  // PLAN-57: buyers get the full agent surface; operators a read-only view.
++  attachComputeAwareness(api, { client, role: connection.role });
+   if (connection.role === "buyer") return;
+   const binary = api.pluginConfig?.binary;
+   if (typeof binary !== "string" || !path.isAbsolute(binary))
+```
+
+**File**: `src/compute/soapbox-plugin.ts` (modified, +5/-0)
+```diff
+@@ -6,8 +6,10 @@ import { resolveStateDir, resolveConfigPath } from "../config/paths.js";
+ import { createSoapboxSetupHandlers } from "../gateway/server-methods/soapbox-setup.js";
+ import { createSoapboxHandlers } from "../gateway/server-methods/soapbox.js";
+ import { resolveBitterbotPackageRootSync } from "../infra/bitterbot-root.js";
++import { soapboxClientFromEnv } from "../infra/soapbox-client.js";
+ import type { BitterbotPluginApi } from "../plugins/types.js";
+ import { SoapboxSetup } from "../services/soapbox-setup.js";
++import { attachComputeAwareness } from "./soapbox-backend.js";
+ import { registerLocalOperator } from "./soapbox-plugin-operator.js";
+ import { registerParticipant } from "./soapbox-plugin-participant.js";
+ import SOAPBOX_SETUP_RELEASE from "./soapbox-runtime-release.json" with { type: "json" };
+@@ -79,6 +81,9 @@ export function registerSoapboxPlugin(api: BitterbotPluginApi) {
+   for (const [name, handler] of Object.entries(createSoapboxHandlers(api.config.tools?.wallet)))
+     api.registerGatewayMethod(name, handler);
+ 
++  // PLAN-57: the agent's compute surface exists only once a backend is registered.
++  const client = soapboxClientFromEnv();
++  if (client) attachComputeAwareness(api, { client, role: "buyer" });
+   let child: ChildProcess | undefined;
+   let timer: ReturnType<typeof setTimeout> | undefined;
+   let stopping = false;
+```
+
+**File**: `src/services/soapbox-wallet.ts` (modified, +15/-0)
+```diff
+@@ -89,6 +89,21 @@ export async function createSoapboxWallet(
+   };
  }
-```
-
-**File**: `CHANGELOG.md` (modified, +12/-0)
-```diff
-@@ -1,5 +1,17 @@
- # Changelog
  
-+## [1.10.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.9.0...v1.10.0) (2026-10-21)
++/**
++ * The one funding entry point for an owner-approved Compute quote outside the
++ * Control UI RPC. Callers hand over the exact quote the owner reviewed; the
++ * wallet re-asserts it, runs the shared spend gate and records the approval.
++ * PLAN-47 I4 keeps every value-moving call inside this file, so the compute
++ * backend's signer calls this instead of touching the wallet directly.
++ */
++export async function fundApprovedSoapboxQuote(
++  mainWallet: WalletConfig | undefined,
++  quote: SoapboxPaymentQuote,
++): Promise<{ status: string; txHash: string | null }> {
++  const wallet = await createSoapboxWallet(mainWallet, quote);
++  return wallet.fundSoapbox!(quote);
++}
 +
-+
-+### Features
-+
-+* **compute:** Soapbox compute mesh, buyer setup, isolated GPU operators and P2P pools ([#271](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/271)) ([178480b](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/178480bbfaf9d0e8b2e8fbcbd0da2871572f5929))
-+
-+
-+### Bug Fixes
-+
-+* **compute:** package the operator runtime and support public betas ([#283](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/283)) ([74a276e](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/74a276ed519eb10e6117d9b332e2d13ae3423747))
-+
- ## [1.9.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.8.0...v1.9.0) (2026-10-19)
- 
- 
-```
-
-**File**: `desktop/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "bitterbot-control-ui",
--  "version": "1.9.0",
-+  "version": "1.10.0",
-   "private": true,
-   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
-   "type": "module",
-```
-
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -316,7 +316,7 @@ dependencies = [
- 
- [[package]]
- name = "bitterbot-desktop"
--version = "1.9.0"
-+version = "1.10.0"
- dependencies = [
-  "env_logger",
-  "libc",
-```
-
-**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "bitterbot-desktop"
--version = "1.9.0"
-+version = "1.10.0"
- edition = "2021"
- description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
- 
-```
-
-**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
-   "productName": "Bitterbot",
--  "version": "1.9.0",
-+  "version": "1.10.0",
-   "identifier": "ai.bitterbot.desktop",
-   "build": {
-     "devUrl": "http://localhost:5173",
-```
-
-**File**: `extensions/discord/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/discord",
--  "version": "1.9.0",
-+  "version": "1.10.0",
-   "description": "Bitterbot Discord channel plugin",
-   "type": "module",
-   "devDependencies": {
-```
-
-**File**: `extensions/email/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/email",
--  "version": "1.9.0",
-+  "version": "1.10.0",
-   "private": true,
-   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
-   "type": "module",
+ export type SoapboxWalletAuthentication = {
+   apiKeyId: string;
+   apiKeySecret: string;
 ```
 
 ---
 
-### Incident Patch 2: `178480bb` (2026-10-21)
-**Commit Message**: feat(compute): Soapbox compute mesh, buyer setup, isolated GPU operators and P2P pools (#271)
+### Incident Patch 2: `56c68a0f` (2026-10-21)
+**Commit Message**: fix(web-fetch): decode x402 v2 PAYMENT-REQUIRED and price USDC offers safely (#286) (#289)
 
-Empty commit that records #271 for release-please. Its squash commit
-"Add Compute buyer setup, isolated GPU operators and P2P pools (#271)"
-(9b3ae182) carried no conventional-commit type, so the generated 1.9.1
-release PR left the compute mesh out of the changelog and did not bump
-the minor version. The feature ships in 1.10.0.
+* web_fetch: decode x402 v2 PAYMENT-REQUIRED header and surface price_usdc on 402
 
-Release-As: 1.10.0
+* fix(web-fetch): only price x402 offers as USDC when the asset is USDC
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Follow-up to the PAYMENT-REQUIRED decoding from #286. The first pass
+divided whatever `accepts[].amount` it found by 1e6 and called the
+result `price_usdc`, so a server quoting in another token, or USDC on a
+chain the wallet does not pay on, produced a confident wrong dollar
+figure that the payments skill fed into its budget check.
 
+- `summarizeX402Offer` picks the first priced offer and derives
+  `price_usdc` only when `asset` is the USDC contract on Base or Base
+  Sepolia; the offer itself (amount, asset, network, scheme, payTo) is
+  surfaced as `x402_offer` so the agent can see what it is being asked
+  to pay with.
+- Atomic units are formatted with BigInt, not float division.
+- The wallet-payments skill no longer tells the agent to divide raw
+  amounts by a million itself; without `price_usdc` or a legacy header
+  the price is treated as unclear.
+- Unit tests for the summarizer and tool-level tests for a v2 header,
+  a non-USDC asset a
 
+**File**: `skills/wallet-payments/SKILL.md` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ Sends and payments are held for the owner's approval unless a standing spend gra
+ 
+ When `web_fetch` returns a 402 Payment Required response, follow this workflow exactly:
+ 
+-1. **Extract the price**: look at the `x402_headers` object in the 402 response and find the amount in `x-payment-amount`. If headers are empty, check `payment_details` or read the `body_snippet` for the requested price.
++1. **Extract the price**: if the 402 result has `price_usdc`, use it. The tool derives it from the x402 `accepts[]` offer only when the asset is USDC; `x402_offer` names the asset, network and amount in atomic units. Otherwise look at `x402_headers` for `x-payment-amount`. Do not convert raw `amount` or `maxAmountRequired` values from `payment_required`, `payment_details` or the `body_snippet` yourself: they are atomic units (`10000` is 0.01 USDC) and easy to misread, so treat the price as unclear.
+ 2. **Handle unclear prices**: if you cannot confidently determine the price, DO NOT GUESS. Ask: "This resource requires payment, but the price isn't clear. Would you like me to proceed, and what is your maximum budget?"
+ 3. **Check balance and rules**: call `get_balance` (token="USDC"). If the cost exceeds your spending limits, ask the user for permission.
+ 4. **Inform the user**: state the cost and your intent briefly (for example "This endpoint requires a 0.15 USDC micropayment. I have the funds and am purchasing it now.").
+```
+
+**File**: `src/agents/tools/web-fetch.ts` (modified, +71/-0)
+```diff
+@@ -499,6 +499,55 @@ async function maybeFetchFirecrawlWebFetchPayload(
+   return payload;
+ }
+ 
++/** USDC contracts the wallet pays with; only these amounts are shown as a USDC price. */
++const X402_USDC_ASSETS = new Set([
++  "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", // USDC on Base
++  "0x036cbd53842c5426634e7929541ec2318f3dcf7e", // USDC on Base Sepolia
++]);
++
++/** Atomic USDC (6 decimals) to a decimal string without float rounding: 10000 -> "0.01". */
++function formatAtomicUsdc(atomic: string): string {
++  const value = BigInt(atomic);
++  const whole = value / 1_000_000n;
++  const fraction = (value % 1_000_000n).toString().padStart(6, "0").replace(/0+$/, "");
++  return fraction ? `${whole}.${fraction}` : whole.toString();
++}
++
++export type X402Offer = {
++  amount: string;
++  asset?: string;
++  network?: string;
++  scheme?: string;
++  payTo?: string;
++};
++
++/**
++ * Pick the first priced entry from an x402 `accepts[]` list (v2 `amount`, v1
++ * `maxAmountRequired`, both atomic units). `price_usdc` is derived only when
++ * the offer's asset is a USDC contract the wallet can pay with; any other asset
++ * is surfaced raw so the agent never labels a foreign token amount as dollars.
++ */
++export function summarizeX402Offer(
++  requirements: Record<string, unknown> | undefined,
++): { offer: X402Offer; priceUsdc?: string } | undefined {
++  const accepts = Array.isArray(requirements?.accepts)
++    ? (requirements.accepts as Array<Record<string, unknown>>)
++    : [];
++  for (const entry of accepts) {
++    if (!entry || typeof entry !== "object") continue;
++    const raw = entry.amount ?? entry.maxAmountRequired;
++    const amount = typeof raw === "string" ? raw : typeof raw === "number" ? String(raw) : "";
++    if (!/^\d+$/.test(amount)) continue;
++    const offer: X402Offer = { amount };
++    for (const key of ["asset", "network", "scheme", "payTo"] as const) {
++      if (typeof entry[key] === "string") offer[key] = entry[key] as string;
++    }
++    const isUsdc = offer.asset !== undefined && X402_USDC_ASSETS.has(offer.asset.toLowerCase());
++    return { offer, priceUsdc: isUsdc ? formatAtomicUsdc(amount) : undefined };
++  }
++  return undefined;
++}
++
+ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string, unknown>> {
+   const cacheKey = normalizeCacheKey(
+     `fetch:${params.url}:${params.extractMode}:${params.maxChars}`,
+@@ -587,6 +636,25 @@ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string
+         } catch {
+           // Not JSON — that's fine, include as snippet
+         }
++        // x402 v2 servers send requirements as a base64 JSON `PAYMENT-REQUIRED`
++        // header (v1 servers put the same shape in the body). Decode it, and
++        // surface the first priced offer. A USDC price is derived only for USDC
++        // assets (atomic units, 6 decimals) so the agent does not have to guess.
++        let paymentRequired: Record<string, unknown> | undefined;
++        const paymentRequiredHeader = res.headers.get("payment-required");
++        if (paymentRequiredHeader) {
++          try {
++            const decoded = JSON.parse(
++              Buffer.from(paymentRequiredHeader, "base64").toString("utf8"),
++            );
++            if (decoded && typeof decoded === "object") {
++              paymentRequired = decoded as Record<string, unknown>;
++            }
++          } catch {
++            // Malformed header — ignore, body/snippet still available
++          }
++        }
++        const x402Offer = summarizeX402Offer(paymentRequired ?? bodyPaymentDetails);
+ 
+         return {
+           url: params.url,
+@@ -603,6 +671,9 @@ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string
+             "x-payment-address": paymentAddress,
+           },
+           payment_details: bodyPaymentDetails,
++          ...(paymentRequired ? { payment_required: paymentRequired } : {}),
++          ...(x402Offer ? { x402_offer: x402Offer.offer } : {}),
++          ...(x402Offer?.priceUsdc ? { price_usdc: x402Offer.priceUsdc } : {}),
+           body_snippet: bodyText.substring(0, 1000),
+           fetchedAt: new Date().toISOString(),
+           tookMs: Date.now() - start,
+```
+
+**File**: `src/agents/tools/web-fetch.x402-v2.test.ts` (added, +150/-0)
+```diff
+@@ -0,0 +1,150 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import * as ssrf from "../../infra/net/ssrf.js";
++import { summarizeX402Offer } from "./web-fetch.js";
++import { createWebFetchTool } from "./web-tools.js";
++
++vi.mock("./web-fetch-utils.js", async () => {
++  const actual =
++    await vi.importActual<typeof import("./web-fetch-utils.js")>("./web-fetch-utils.js");
++  return { ...actual, extractReadableContent: vi.fn() };
++});
++
++const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
++const lookupMock = vi.fn();
++const resolvePinnedHostname = ssrf.resolvePinnedHostname;
++const baseToolConfig = {
++  config: { tools: { web: { fetch: { cacheTtlMinutes: 0, firecrawl: { enabled: false } } } } },
++} as const;
++
++function paymentRequiredHeader(accepts: Array<Record<string, unknown>>): string {
++  return Buffer.from(JSON.stringify({ x402Version: 2, accepts })).toString("base64");
++}
++
++describe("summarizeX402Offer", () => {
++  it("prices a USDC offer from atomic units without float rounding", () => {
++    expect(
++      summarizeX402Offer({
++        accepts: [{ amount: "10000", asset: USDC_BASE, network: "eip155:8453" }],
++      }),
++    ).toEqual({
++      offer: { amount: "10000", asset: USDC_BASE, network: "eip155:8453" },
++      priceUsdc: "0.01",
++    });
++    expect(
++      summarizeX402Offer({ accepts: [{ amount: "1234567", asset: USDC_BASE }] })?.priceUsdc,
++    ).toBe("1.234567");
++    expect(
++      summarizeX402Offer({ accepts: [{ amount: "3000000", asset: USDC_BASE }] })?.priceUsdc,
++    ).toBe("3");
++  });
++
++  it("accepts the v1 maxAmountRequired name and a lower-case asset", () => {
++    const summary = summarizeX402Offer({
++      accepts: [{ maxAmountRequired: "150000", asset: USDC_BASE.toLowerCase() }],
++    });
++    expect(summary?.priceUsdc).toBe("0.15");
++  });
++
++  it("surfaces a non-USDC offer raw and never labels it as dollars", () => {
++    const summary = summarizeX402Offer({
++      accepts: [
++        {
++          amount: "10000",
++          asset: "0x4200000000000000000000000000000000000006",
++          network: "eip155:8453",
++        },
++      ],
++    });
++    expect(summary?.offer.amount).toBe("10000");
++    expect(summary?.priceUsdc).toBeUndefined();
++    expect(summarizeX402Offer({ accepts: [{ amount: "10000" }] })?.priceUsdc).toBeUndefined();
++  });
++
++  it("skips unpriced entries and tolerates garbage", () => {
++    expect(summarizeX402Offer({ accepts: [{ amount: "1e6" }, { amount: "-5" }] })).toBeUndefined();
++    expect(summarizeX402Offer({ accepts: "nope" })).toBeUndefined();
++    expect(summarizeX402Offer(undefined)).toBeUndefined();
++    expect(
++      summarizeX402Offer({ accepts: [null, { amount: "abc" }, { amount: "7", asset: USDC_BASE }] })
++        ?.priceUsdc,
++    ).toBe("0.000007");
++  });
++});
++
++describe("web_fetch x402 v2 402 responses", () => {
++  const priorFetch = global.fetch;
++
++  beforeEach(() => {
++    lookupMock.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);
++    vi.spyOn(ssrf, "resolvePinnedHostname").mockImplementation((hostname) =>
++      resolvePinnedHostname(hostname, lookupMock),
++    );
++  });
++
++  afterEach(() => {
++    // @ts-expect-error restore
++    global.fetch = priorFetch;
++    lookupMock.mockReset();
++    vi.restoreAllMocks();
++  });
++
++  it("decodes the PAYMENT-REQUIRED header and reports price_usdc", async () => {
++    const response = new Response("Payment required", {
++      status: 402,
++      headers: {
++        "content-type": "text/plain",
++        "payment-required": paymentRequiredHeader([
++          {
++            scheme: "exact",
++            network: "eip155:8453",
++            amount: "10000",
++            asset: USDC_BASE,
++            payTo: "0xabc",
++          },
++        ]),
++      },
++    });
++    // @ts-expect-error mock fetch
++    global.fetch = vi.fn().mockResolvedValue(response);
++
++    const tool = createWebFetchTool(baseToolConfig);
++    const result = await tool?.execute?.("call", { url: "https://example.com/paid" });
++    const details = result?.details as Record<string, unknown>;
++
++    expect(details.status).toBe(402);
++    expect(details.price_usdc).toBe("0.01");
++    expect(details.x402_offer).toEqual({
++      amount: "10000",
++      asset: USDC_BASE,
++      network: "eip155:8453",
++      scheme: "exact",
++      payTo: "0xabc",
++    });
++    expect((details.payment_required as { x402Version: number }).x402Version).toBe(2);
++    expect((details.x402_headers as Record<string, string>)["x-payment-amount"]).toBe("");
++  });
++
++  it("ignores a malformed header and keeps the legacy fields", async () => {
++    const response = new Response(
++      JSON.stringify({ accepts: [{ maxAmountRequired: "250000", asset: USDC_BASE }] }),
++      {
++        status: 402,
++        headers: {
++          "content-type": "application/json",
++          "payment-required": "%%not-base64-json%%",
++          "x-payment-amount": "0.25",
++        },
++      },
++    );
++    // @ts-
+```
+
+---
+
+### Incident Patch 3: `91f039a3` (2026-10-21)
+**Commit Message**: docs(compute): point the Soapbox install guide at the stable 1.10.0 release (#288)
+
+The guide linked a v1.10.0-beta.1 release that was never cut, so the
+install section led to a 404. Compute shipped in the stable v1.10.0
+release, so the section now uses the standard installers and update
+path, and keeps the explicit-version pin for any future beta build.
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `docs/network/soapbox-compute-mesh.md` (modified, +2/-2)
+```diff
+@@ -194,8 +194,8 @@ See [the public-release review](soapbox-public-release-audit.md) for secret-scan
+ 
+ ## Integrated public beta
+ 
+-The integrated beta uses the normal signed app archives, with an explicit beta
+-version pin. Compute is on by default; only Linux x64 includes the pinned NVIDIA
++Compute ships in the normal signed app archives from v1.10.0 onward; a beta
++build, when published, uses an explicit version pin. Compute is on by default; only Linux x64 includes the pinned NVIDIA
+ operator archive. It is verified during packaging and again before preparation.
+ The packaged plugin finds that archive without an overlay or source checkout.
+ Base Sepolia and mainnet wallets remain separate. Follow the
+```
+
+**File**: `docs/network/soapbox.md` (modified, +23/-23)
+```diff
+@@ -1,7 +1,7 @@
+ ---
+-summary: "Set up Compute buyers and GPU operators in the integrated public beta"
++summary: "Set up Compute buyers and GPU operators in the integrated release"
+ read_when:
+-  - Installing the Compute beta or setting up a buyer or GPU operator
++  - Installing Compute or setting up a buyer or GPU operator
+ title: "Soapbox Compute"
+ ---
+ 
+@@ -16,48 +16,48 @@ Mainnet settlement and paid P2P batches are not available in this beta.
+ Opening Compute does not start a worker or fund a job. Operator activation,
+ peer access and each payment require deliberate actions in the UI.
+ 
+-## Install the integrated public beta
++## Install Compute
+ 
+-Use [Bitterbot v1.10.0-beta.1](https://github.com/Bitterbot-AI/bitterbot-desktop/releases/tag/v1.10.0-beta.1).
+-This release includes the gateway, Control UI and signed orchestrator 0.2.4.
+-Linux x64 also includes the checksum-pinned Soapbox runtime required by the
+-operator wizard. Node is bundled; a separate source checkout is unnecessary.
+-The older Soapbox rc4/rc5/rc6 overlays are for their recorded Bitterbot versions
+-and must not be installed over this integrated release.
++Compute ships in [Bitterbot v1.10.0](https://github.com/Bitterbot-AI/bitterbot-desktop/releases/tag/v1.10.0)
++and every later stable release. Each release includes the gateway, Control UI
++and signed orchestrator 0.2.4. Linux x64 also includes the checksum-pinned
++Soapbox runtime required by the operator wizard. Node is bundled; a separate
++source checkout is unnecessary. The older Soapbox rc4/rc5/rc6 overlays are for
++their recorded Bitterbot versions and must not be installed over an integrated
++release.
+ 
+-The beta is an explicit installation. It does not replace the stable GitHub
+-release or npm latest. The native Tauri installer is not part of this release.
++Existing installs upgrade with `bitterbot update` or the in-app update; the
++previous app version is retained for rollback. The native Tauri installer is
++not part of this release.
+ 
+ ### Windows with WSL2
+ 
+-Download **install.ps1** from the beta release. In PowerShell, from the download
+-folder, run:
++In PowerShell, run:
+ 
+ ```powershell
+-.\install.ps1 -Version 1.10.0-beta.1
++irm https://raw.githubusercontent.com/Bitterbot-AI/bitterbot-desktop/main/scripts/install.ps1 | iex
+ ```
+ 
+ The installer uses your default WSL2 distribution; use `-Distro Ubuntu` to select
+ one. It checks for WSL2 and explains missing prerequisites. It does not install
+ WSL, GPU drivers or Docker for you. An existing native Windows gateway is
+-reported separately; the installer does not stop its scheduled task.
++reported separately; the installer does not stop its scheduled task. To pin a
++release, download **install.ps1** from that release and pass `-Version 1.10.0`.
+ 
+ ### Linux or macOS
+ 
+-Download **install.sh** from the same beta release, then run:
+-
+ ```bash
+-bash install.sh --version 1.10.0-beta.1 --require-signature
++curl -fsSL https://github.com/Bitterbot-AI/bitterbot-desktop/releases/latest/download/install.sh | bash
+ ```
+ 
+ The installer verifies the release signature and archive checksum, installs the
+ bundled runtime and offers onboarding. Existing users are offered a gateway
+ switch; the previous app version is retained. `--no-switch` (Windows:
+-`-NoSwitch`) leaves an existing gateway running. Normal updates continue to
+-select stable releases; install a subsequent beta by its explicit version.
+-
+-Once connected to the gateway's Control UI, all Compute buyer/operator setup
+-below is available in the UI. There is no separate Compute testnet window.
++`-NoSwitch`) leaves an existing gateway running. To pin a release, download
++**install.sh** from that release and run
++`bash install.sh --version 1.10.0 --require-signature`. Normal updates select
++stable releases only; a beta build, when one is published, is installed by its
++explicit `X.Y.Z-beta.N` version and never replaces latest.
+ 
+ ## Choose how to use Compute
+ 
+```
 
 #### Recent Merged Pull Requests:
+- **PR #291** (2026-10-22): fix(compute): register the Soapbox backend so the agent's compute surface is live (@VGIL77)
+- **PR #290** (2026-10-22): chore(main): release 1.10.1 (@github-actions[bot])
+- **PR #289** (2026-10-21): fix(web-fetch): decode x402 v2 PAYMENT-REQUIRED and price USDC offers safely (#286) (@VGIL77)
+- **PR #288** (2026-10-21): docs(compute): point the Soapbox install guide at the stable 1.10.0 release (@VGIL77)
+- **PR #286** (closed): web_fetch: decode x402 v2 PAYMENT-REQUIRED header and surface price_usdc on 402 (@SCDOLAB)
 - **PR #285** (2026-10-21): feat(compute): Soapbox compute mesh, buyer setup, isolated GPU operators and P2P pools (#271) (@VGIL77)
-- **PR #284** (2026-10-21): chore(main): release 1.10.0 (@github-actions[bot])
-- **PR #283** (2026-10-21): fix(compute): package the operator runtime and support public betas (@VGIL77)
-- **PR #281** (2026-10-20): chore(deps): bump the npm-minor-patch group across 1 directory with 42 updates (@dependabot[bot])
-- **PR #278** (2026-10-20): chore(deps): bump the cargo-minor-patch group across 1 directory with 7 updates (@dependabot[bot])
-- **PR #276** (2026-10-19): feat(compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (@VGIL77)
 
 ---
 
@@ -1952,39 +2650,39 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main): release 1.10.0 (#284)
+## X. compute): register the Soapbox backend so the agent's compute surface is live (#
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/tools/compute.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82b00cf5`: main): release 1.10.0 (#284). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a7276ff`: compute): register the Soapbox backend so the agent's compute surface is live (#291). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tools/compute.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [1.10.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.9.0...v1.10.0) (2026-10-21)
-
-
-### Features
-
-* **compute:** Soapbox compute mesh, buyer setup, isolated GPU operators and P2P pools ([#271](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/271)) ([178480b](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/178480bbfaf9d0e8b2e8fbcbd0da2871572f5929))
-
-
-### Bug Fixes
-
-* **compute:** package the operator runtime and support public betas ([#283](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/283)) ([74a276e](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/74a276ed519eb10e6117d9b332e2d13ae3423747))
-
+  it starts in pilot, participant or local-operator mode (anything with a
+  coordinator client). Setup-only mode, the default on a fresh install before
+  a role is chosen, registers nothing. Without a backend there is no tool and
+  no prompt section, so a node with no pool spends no tokens on compute
+  awareness. Operator-role nodes get a read-only backend: the agent can see
+  jobs and workers but never submits paid work or funds a job from them.
+`max_cost_usdc`. The Soapbox backend addresses the job to the online,
+unpaused operator with the lowest id that advertises `paid_usdc`, and refuses
+when there is none; the owner sees that operator as the payee on the quote
+before anything is funded. The coordinator accepts the job and parks it at
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  it starts. Without a backend there is no tool and no prompt section, so a
+  node with no pool spends no tokens on compute awareness.
+`max_cost_usdc`. The coordinator accepts the job and parks it at
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82b00cf5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a7276ff` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `712b51f4`  
+> **Source Version**: `efd3e6e1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:35:21.034Z  
+> **Timestamp**: 2026-10-22T15:35:34.393Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:35:21.030Z  
+> **Harvest Timestamp**: 2026-10-22T15:35:33.909Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17807 stars
+- **Stars / Engagement**: 17809 stars
 
 ---
 
@@ -2066,11 +2066,13 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2976** (2026-10-20): **Prevent ATTACH on the query connection**
-  *Symptoms*: 
+- **Issue #2984** (2026-10-22): **POST /leader: JSON error bodies and 404 for unknown target node**
+  *Symptoms*: ## Summary - The stepdown error paths in `POST /leader` now return a JSON `{"error": "..."}` body, matching `GET /leader`. The handler had already set a JSON Content-Type, so the previous plain-text bodies were mislabelled. - A stepdown naming a node ID that is not in the cluster now returns 404 Not Found instead of 500. `store.ErrNodeNotFound` is exposed via the `proxy` package and the handler's sentinel checks use `errors.Is`. - Forwarded stepdowns also get the 404: the cluster client rebuilds the leader's error from its message, which dropped the sentinel, so `Proxy.Stepdown` now matches the message and restores `ErrNodeNotFound`.  Each commit is one logical change. `remove`, `demote` and `promote` have the same forwarding gap and are left for a follow-up.  ## Test plan - [x] New `http` tests: JSON error body on forwarded failure, 404 for unknown node when local node is leader, 404 for unknown node when the request is forwarded. - [x] New `proxy` test: forwarded stepdown error message is mapped back to `ErrNodeNotFound`. - [x] `go vet ./...`, `gofmt -l .`, and `go test` for `http`, `proxy` and `store` pass.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  **Post-Mortem & Fix Analysis**:
+  > https://github.com/rqlite/rqlite/issues/2974
 
-- **Issue #2975** (2026-10-20): **db: make the connection role a first-class thing**
-  *Symptoms*: ## Summary  The db package opened one read-write pool and one read-only pool for the same SQLite file from one registered driver with one connect hook. Policy that should differ by role (CDC hooks, authorizer, foreign keys, tracing, busy timeout, pool size) had nowhere to attach, so it was either applied to both roles or chosen by hand inside each DB method.  After this change a database is a writer and a reader pool, each opened from its own connection policy, and the connection is the unit of work. The immediate need is an authorizer that differs between writer and readers, which now has a place to go. The longer goal is letting a caller hold one connection across requests.  ## Commits, one per step, meant to be read in order  1. **Open connections through a connector, not a registered driver name.** `sql.OpenDB` with a `driver.Connector` replaces `sql.Register`. Removes the three once-only constructors, the random driver names in the store, and the duplicate-name panic. 2. **Add `Conn`, the connection as the unit of work.** The private functions that already took a connection become methods on `Conn`. DB methods become borrow, call, return. Adds a test that a query inside a transactional request sees the writes before it. 3. **Separate the writer and the reader pool.** Two objects with their own open path, pool settings, busy timeout, pragmas and stats. The `/status` keys (`rw`, `ro`, the two DSNs) are unchanged. 4. **One connection config per role.** `Config{Writer, Reade
+- **Issue #2982** (2026-10-22): **Guard backup stream handler directly against a nil request**
+  *Symptoms*: With no backup request in the command, the handler set an error on a shared response and relied on a later check of that error string to return before dereferencing the nil request. Before v10.6.4 that check did not exist and the handler panicked, taking the node down.  The nil check and the exit are now one block, and the request is only used after it. The success path writes its response through the shared helper instead of marshaling by hand. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2087,531 +2089,145 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c3bfd26` (2026-10-20)
-**Commit Message**: db: let callers acquire a writer or reader connection
+### Incident Patch 1: `55255c16` (2026-10-22)
+**Commit Message**: Require the load permission for inter-node load chunk commands
 
-A caller can now borrow the read-write connection or a read-only
-connection, run any number of statements on it, and return it. The
-existing convenience methods on DB are exactly that: acquire, call the
-Conn method, release.
+The load chunk handler answers "unsupported" and does nothing, and no
+client sends the command any more, so it was left open. That is the
+wrong reason for a command to need no permission: a handler is safe
+because its command was authorized, not because it happens to be
+harmless today. Chunked loads are load operations, so they now need
+the load permission, the same as a plain load.
 
-Holding the writer blocks every other write on the database, because
-there is only one. A SwappableDB does not hand out connections yet: a
-held connection would have to keep the swap lock as long as it lives,
-and deciding when that is safe belongs with the caller that schedules
-writes.
-
-Adds a test that a held writer keeps a concurrent execute waiting until
-it is released, while a concurrent query completes.
+Node meta is now the only command served without a permission, since
+the client uses it to find nodes before it has anything to
+authenticate against.
 
 Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `db/db.go` (modified, +27/-15)
+**File**: `cluster/service.go` (modified, +5/-3)
 ```diff
-@@ -324,6 +324,18 @@ func (db *DB) SetMaxReadOnlyConns(n int) {
- 	db.readers.setMaxConns(n)
+@@ -387,8 +387,7 @@ const unauthorizedError = "unauthorized"
+ // on it.
+ func (s *Service) authorized(c *proto.Command) bool {
+ 	switch c.Type {
+-	case proto.Command_COMMAND_TYPE_GET_NODE_META,
+-		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
++	case proto.Command_COMMAND_TYPE_GET_NODE_META:
+ 		return true
+ 	case proto.Command_COMMAND_TYPE_EXECUTE:
+ 		return s.checkCommandPerm(c, auth.PermExecute)
+@@ -399,7 +398,8 @@ func (s *Service) authorized(c *proto.Command) bool {
+ 	case proto.Command_COMMAND_TYPE_BACKUP,
+ 		proto.Command_COMMAND_TYPE_BACKUP_STREAM:
+ 		return s.checkCommandPerm(c, auth.PermBackup)
+-	case proto.Command_COMMAND_TYPE_LOAD:
++	case proto.Command_COMMAND_TYPE_LOAD,
++		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
+ 		return s.checkCommandPerm(c, auth.PermLoad)
+ 	case proto.Command_COMMAND_TYPE_REMOVE_NODE:
+ 		return s.checkCommandPerm(c, auth.PermRemove)
+@@ -441,6 +441,8 @@ func unauthorizedResponse(t proto.Command_Type) ([]byte, error) {
+ 		m = &proto.CommandBackupResponse{Error: unauthorizedError}
+ 	case proto.Command_COMMAND_TYPE_LOAD:
+ 		m = &proto.CommandLoadResponse{Error: unauthorizedError}
++	case proto.Command_COMMAND_TYPE_LOAD_CHUNK:
++		m = &proto.CommandLoadChunkResponse{Error: unauthorizedError}
+ 	case proto.Command_COMMAND_TYPE_REMOVE_NODE:
+ 		m = &proto.CommandRemoveNodeResponse{Error: unauthorizedError}
+ 	case proto.Command_COMMAND_TYPE_DEMOTE_NODE:
+```
+
+**File**: `cluster/service_test.go` (modified, +25/-31)
+```diff
+@@ -445,6 +445,15 @@ func unauthorizedCommands() []unauthorizedCommand {
+ 			perms: []string{auth.PermLoad},
+ 			resp:  &proto.CommandLoadResponse{},
+ 		},
++		{
++			name: "LOAD_CHUNK",
++			cmd: &proto.Command{
++				Type:    proto.Command_COMMAND_TYPE_LOAD_CHUNK,
++				Request: &proto.Command_LoadChunkRequest{LoadChunkRequest: &command.LoadChunkRequest{}},
++			},
++			perms: []string{auth.PermLoad},
++			resp:  &proto.CommandLoadChunkResponse{},
++		},
+ 		{
+ 			name: "REMOVE_NODE",
+ 			cmd: &proto.Command{
+@@ -528,10 +537,10 @@ func unauthorizedCommands() []unauthorizedCommand {
+ 	}
  }
  
-+// AcquireWriter borrows the read-write connection. There is only one, so
-+// the call waits until it is free or ctx is done, and while it is held
-+// nothing else can write to the database. The caller must close it.
-+func (db *DB) AcquireWriter(ctx context.Context) (*Conn, error) {
-+	return db.writer.acquire(ctx)
-+}
-+
-+// AcquireReader borrows a read-only connection. The caller must close it.
-+func (db *DB) AcquireReader(ctx context.Context) (*Conn, error) {
-+	return db.readers.acquire(ctx)
-+}
-+
- // LastModified returns the last modified time of the database file, or the WAL file,
- // whichever is most recent.
- func (db *DB) LastModified() (time.Time, error) {
-@@ -540,7 +552,7 @@ func (db *DB) CheckpointTruncateWithTimeout(dur time.Duration) (err error) {
+-// openCommands lists the command types which need no permission.
++// openCommands lists the command types which need no permission. Node meta
++// is how a client finds nodes before it has anything to authenticate against.
+ var openCommands = []proto.Command_Type{
+ 	proto.Command_COMMAND_TYPE_GET_NODE_META,
+-	proto.Command_COMMAND_TYPE_LOAD_CHUNK,
+ }
+ 
+ // mustReadClosed checks that nothing further arrives on conn and that the
+@@ -697,35 +706,20 @@ func Test_ServiceOpenCommandsNeedNoPermission(t *testing.T) {
+ 	// Send each open command twice on the same connection, to prove the
+ 	// connection is left open after each one.
+ 	for i := 0; i < 2; i++ {
+-		cmd := &proto.Command{Type: proto.Command_COMMAND_TYPE_GET_NODE_META}
+-		if err := writeCommand(conn, cmd, 5*time.Second); err != nil {
+-			t.Fatalf("failed to write node meta command: %s", err)
+-		}
+-		p, err := readResponse(conn, 5*time.Second)
+-		if err != nil {
+-			t.Fatalf("failed to read node meta response: %s", err)
+-		}
+-		if err := pb.Unmarshal(p, &proto.NodeMeta{}); err != nil {
+-			t.Fatalf("failed to unmarshal node meta response: %s", err)
+-		}
+-
+-		cmd = &proto.Command{
+-			Type:    proto.Command_COMMAND_TYPE_LOAD_CHUNK,
+-			Request: &proto.Command_LoadChunkRequest{LoadChunkRequest: &command.LoadChunkRequest{}},
+-		}
+-		if err := writeCommand(conn, cmd, 5*time.Second); err != nil {
+-			t.Fatalf("failed to write load chunk command: %s", err)
+-		}
+-		p, err = readResponse(conn, 5*time.Second)
+-		if err != nil {
+-			t.Fatalf("failed to read load chunk response: %s", err)
+-		}
+-		resp := &proto.CommandLoadChunkResponse{}
+-		if err := pb.Unmarshal(p, resp); err != nil {
+-			t.Fatalf("failed to unmarshal load chunk response: %s", err)
+-		}
+-		if resp.GetError() != "unsupported" {
+-			t.Fatalf("failed to get correct error, exp %s, got %q", "unsupported", resp.GetError())
++		for _, typ := range openCommands {
++			cmd := &proto.Command{Type: typ}
++			if err := writeCommand(conn, cmd, 5*time.Second); err != nil {
++				t.Fatalf("failed to write %s command: %s", typ, err)
++			}
++			p, err := readResponse(conn, 5*time.Second)
++			if err != nil {
++				t.Fatalf("failed to read %s response: %s", typ, err)
++			}
++			if typ == proto.Command_COMMAND_TYPE_GET_NODE_META {
++				if err := pb.Unmarshal(p, &proto.NodeMeta{}); err != nil {
++					t.Fatalf("failed to unmarshal node meta response: %s", err)
++				}
++			}
  		}
- 	}()
- 
--	conn, err := db.writer.acquire(context.Background())
-+	conn, err := db.AcquireWriter(context.Background())
- 	if err != nil {
- 		return err
  	}
-@@ -601,7 +613,7 @@ func (db *DB) CheckpointWithTimeout(mode CheckpointMode, dur time.Duration) (met
- 		}
- 	}()
- 
--	conn, err := db.writer.acquire(context.Background())
-+	conn, err := db.AcquireWriter(context.Background())
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -647,7 +659,7 @@ func (db *DB) CheckpointWithTimeout(mode CheckpointMode, dur time.Duration) (met
- 
- // GetCheckpointing returns the current checkpointing setting.
- func (db *DB) GetCheckpointing() (int, error) {
--	conn, err := db.writer.acquire(context.Background())
-+	conn, err := db.AcquireWriter(context.Background())
- 	if err != nil {
- 		return 0, err
- 	}
-@@ -685,7 +697,7 @@ func (db *DB) VacuumInto(path string) error {
- // execOnWriter runs a statement that returns no rows on the read-write
- // connection.
- func (db *DB) execOnWriter(query string) error {
--	conn, err := db.writer.acquire(context.Background())
-+	conn, err := db.AcquireWriter(context.Background())
- 	if err != nil {
- 		return err
- 	}
-@@ -755,7 +767,7 @@ func (db *DB) VerifyIntegrity() (IntegrityResult, error) {
- 
- // SetSynchronousMode sets the synchronous mode of the database.
- func (db *DB) SetSynchronousMode(mode SynchronousMode) error {
--	conn, err := db.writer.acquire(context.Background())
-+	conn, err := db.AcquireWriter(context.Background())
- 	if err != nil {
- 		return err
- 	}
-@@ -765,7 +777,7 @@ func (db *DB) SetSynchronousMode(mode SynchronousMode) error {
- 
- // GetSynchronousMode returns the current synchronous mode.
- func (db *DB) GetSynchronousMode() (SynchronousMode, error) {
--	conn, err := db.writer.acquire(context.Background())
-+	conn, err := db.AcquireWriter(context.Background())
- 	if err != nil {
- 		return 0, err
- 	}
-@@ -823,7 +835,7 @@ func (db *DB) CompileOptions() ([]string, error) {
- 
- // ColumnNames returns the names of all columns in the given table.
- func (db *DB) ColumnNames(table string) ([]string, error) {
--	conn, err := db.readers.acquire(context.Background())
-+	conn, err := db.AcquireReader(context.Background())
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -839,7 +851,7 @@ func (db *DB) ColumnNames(table string) ([]string, error) {
- 
- // TableColumnTypes returns the declared types of all columns in the given table.
- func (db *DB) TableColumnTypes(table string) (map[string]string, error) {
--	conn, err := db.readers.acquire(context.Background())
-+	conn, err := db.AcquireReader(context.Background())
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -907,7 +919,7 @@ func (db *DB) ExecuteWithContext(ctx context.Context, req *command.Request, xTim
- 		defer cancel()
- 	}
- 	stats.Add(numExecutions, int64(len(req.Statements)))
--	conn, err := db.writer.acquire(ctx)
-+	conn, err := db.AcquireWriter(ctx)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -958,7 +970,7 @@ func (db *DB) QueryWithContext(ctx context.Context, req *command.Request, xTime
- 		defer cancel()
- 	}
- 	stats.Add(numQueries, int64(len(req.Statements)))
--	conn, err := db.readers.acquire(ctx)
-+	conn, err := db.AcquireReader(ctx)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -1006,7 +1018,7 @@ func (db *DB) RequestWithContext(ctx context.Context, req *command.Request, xTim
- 		defer cancel()
- 	}
- 	stats.Add(numRequests, int64(len(req.Statements)))
--	conn, err := db.writer.acquire(ctx)
-+	conn, err := db.AcquireWriter(ctx)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -1071,12 +1083,12 @@ func (db *DB) Copy(dstDB *DB) error {
- // of src's read-only connections and writing through this database's
- // read-write connection.
- func (db *DB) copyFrom(src *DB) error {
--	dst, err := db.writer.acquire(context.Background())
-+	dst, err := db.AcquireWriter(context.Background())
- 	if err != nil {
- 		return err
- 	}
- 	defer dst.Close()
--	srcConn, err := src.readers.acquire(context.Background())
-+	srcConn, err := src.AcquireReader(context.Background())
- 	if err != nil {
- 		return err
- 	}
-@@ -1127,7 +1139,7 @@ func (db *DB) Serialize() ([]byte, error) {
- // SQLite resolves the tables a view reads from when the view is used, not wh
-```
-
-**File**: `db/db_common_test.go` (modified, +74/-0)
-```diff
-@@ -1,6 +1,7 @@
- package db
- 
- import (
-+	"context"
- 	"encoding/json"
- 	"errors"
- 	"math/rand/v2"
-@@ -9,6 +10,7 @@ import (
- 	"slices"
- 	"strings"
- 	"testing"
-+	"time"
- 
- 	command "github.com/rqlite/rqlite/v10/command/proto"
- 
-@@ -2170,6 +2172,78 @@ func Test_DB_RequestTxReadsOwnWrites(t *testing.T) {
- 	}
- }
- 
-+// Test_AcquireWriter_Exclusive tests that a held writer connection keeps
-+// every other write waiting until it is released, while reads carry on,
-+// since reads come from the reader pool.
-+func Test_AcquireWriter_Exclusive(t *testing.T) {
-+	db, path := mustCreateOnDiskDatabaseWAL()
-+	defer fsutil.Remove(path)
-+	defer db.Close()
-+
-+	mustExecute(db, `CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)`)
-+
-+	ctx := context.Background()
-+	conn, err := db.AcquireWriter(ctx)
-+	if err != nil {
-+		t.Fatalf("failed to acquire writer: %s", err)
-+	}
-+
-+	// Open a transaction on the held connection and write inside it.
-+	if _, err := conn.Execute(ctx, &command.Request{Statements: []*command.Statement{
-+		{Sql: "BEGIN"},
-+		{Sql: `INSERT INTO foo(name) VALUES('fiona')`},
-+	}}, false); err != nil {
-+		t.Fatalf("failed to write on held writer: %s", err)
-+	}
-+
-+	// A query does not need the writer, so it completes, and it does not
-+	// see the uncommitted write.
-+	rows, err := db.QueryStringStmt("SELECT COUNT(*) FROM foo")
-+	if err != nil {
-+		t.Fatalf("query failed while writer held: %s", err)
-+	}
-+	if exp, got := `[{"columns":["COUNT(*)"],"types":["integer"],"values":[[0]]}]`, asJSON(rows); exp != got {
-+		t.Fatalf("unexpected results for query, expected %s, got %s", exp, got)
-+	}
-+
-+	// A write needs the writer, so it waits until the connection is released.
-+	done := make(chan error, 1)
-+	go func() {
-+		_, err := db.ExecuteStringStmt(`INSERT INTO foo(name) VALUES('declan')`)
-+		done <- err
-+	}()
-+	select {
-+	case <-done:
-+		t.Fatalf("execute completed while writer held")
-+	case <-time.After(250 * time.Millisecond):
-+	}
-+
-+	if _, err := conn.Execute(ctx, &command.Request{Statements: []*command.Statement{
-+		{Sql: "COMMIT"},
-+	}}, false); err != nil {
-+		t.Fatalf("failed to commit on held writer: %s", err)
-+	}
-+	if err := conn.Close(); err != nil {
-+		t.Fatalf("failed to release writer: %s", err)
-+	}
-+	select {
-+	case err := <-done:
-+		if err != nil {
-+			t.Fatalf("execute failed after writer released: %s", err)
-+		}
-+	case <-time.After(5 * time.Second):
-+		t.Fatalf("execute did not complete after writer released")
-+	}
-+
-+	rows, err = db.QueryStringStmt("SELECT COUNT(*) FROM foo")
-+	if err != nil {
-+		t.Fatalf("query failed: %s", err)
-+	}
-+	if exp, got := `[{"columns":["COUNT(*)"],"types":["integer"],"values":[[2]]}]`, asJSON(rows); exp != got {
-+		t.Fatalf("unexpected results for query, expected %s, got %s", exp, got)
-+	}
-+}
-+
- func Test_DB_RequestTxPrepareError(t *testing.T) {
- 	db, path := mustCreateOnDiskDatabaseWAL()
- 	defer fsutil.Remove(path)
-```
-
-**File**: `db/swappable_db.go` (modified, +6/-0)
-```diff
-@@ -14,6 +14,12 @@ import (
- 
- // SwappableDB is a wrapper around DB that allows the underlying database to be swapped out
- // in a thread-safe manner.
-+//
-+// A SwappableDB does not hand out connections. A connection held across calls
-+// would have to keep the swap lock for as long as it is held, so that a swap
-+// cannot close the database underneath it. Deciding when that is safe belongs
-+// to the caller that schedules writes, so for now every operation borrows a
-+// connection and returns it before the call ends.
- type SwappableDB struct {
- 	db            *DB
- 	cfg           *Config
-```
-
----
-
-### Incident Patch 2: `b66fb3a7` (2026-10-20)
-**Commit Message**: db: say why the request timeout is applied twice
-
-The connection bounds the request once it has been acquired. The database
-methods apply the same timeout before acquiring, so the wait for a
-connection is bounded too.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `db/db.go` (modified, +6/-0)
-```diff
-@@ -914,6 +914,8 @@ func (db *DB) Execute(req *command.Request, xTime bool) ([]*command.ExecuteQuery
- func (db *DB) ExecuteWithContext(ctx context.Context, req *command.Request, xTime bool) (results []*command.ExecuteQueryResponse, retErr error) {
- 	defer func() { retErr = classifyError(retErr) }()
- 
-+	// The connection applies the request timeout too, but only once it has
-+	// been acquired. Applying it here also bounds the wait for the writer.
- 	if req.DbTimeout > 0 {
- 		var cancel context.CancelFunc
- 		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
-@@ -965,6 +967,8 @@ func (db *DB) Query(req *command.Request, xTime bool) ([]*command.QueryRows, err
- // Any timeout set in the request is also applied, so the effective deadline is the
- // earlier of the context's deadline and the request's timeout.
- func (db *DB) QueryWithContext(ctx context.Context, req *command.Request, xTime bool) ([]*command.QueryRows, error) {
-+	// The connection applies the request timeout too, but only once it has
-+	// been acquired. Applying it here also bounds the wait for a reader.
- 	if req.DbTimeout > 0 {
- 		var cancel context.CancelFunc
- 		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
-@@ -1013,6 +1017,8 @@ func (db *DB) Request(req *command.Request, xTime bool) ([]*command.ExecuteQuery
- // effective deadline is the earlier of the context's deadline and the request's timeout.
- func (db *DB) RequestWithContext(ctx context.Context, req *command.Request, xTime bool) (eqResponse []*command.ExecuteQueryResponse, retErr error) {
- 	defer func() { retErr = classifyError(retErr) }()
-+	// The connection applies the request timeout too, but only once it has
-+	// been acquired. Applying it here also bounds the wait for the writer.
- 	if req.DbTimeout > 0 {
- 		var cancel context.CancelFunc
- 		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
-```
-
----
-
-### Incident Patch 3: `b2326248` (2026-10-20)
-**Commit Message**: db: enforce request timeouts on borrowed connections
-
-**File**: `db/conn.go` (modified, +29/-0)
-```diff
-@@ -38,9 +38,17 @@ type execerQueryer interface {
- }
- 
- // Execute runs statements that modify the database.
-+// The earlier of the context's deadline and the request's timeout bounds
-+// the entire request.
- func (c *Conn) Execute(ctx context.Context, req *command.Request, xTime bool) (allResults []*command.ExecuteQueryResponse, retErr error) {
- 	defer func() { retErr = classifyError(retErr) }()
- 
-+	if req.DbTimeout > 0 {
-+		var cancel context.CancelFunc
-+		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
-+		defer cancel()
-+	}
-+
- 	eqer := execerQueryer(c.conn)
- 	var tx *sql.Tx
- 	if req.Transaction {
-@@ -141,6 +149,11 @@ func (c *Conn) executeStmt(ctx context.Context, stmt *command.Statement, xTime b
- 		ctx, cancel = context.WithTimeout(ctx, timeout)
- 		defer cancel()
- 	}
-+	// Reject an expired request before passing a later statement to SQLite,
-+	// which may finish a fast write before observing context cancellation.
-+	if err := ctx.Err(); err != nil {
-+		return response, err
-+	}
- 
- 	if stmt.ForceQuery {
- 		stats.Add(numExecutionsForceQueries, 1)
-@@ -205,7 +218,15 @@ type queryer interface {
- }
- 
- // Query runs statements that return rows but do not modify the database.
-+// The earlier of the context's deadline and the request's timeout bounds
-+// the entire request.
- func (c *Conn) Query(ctx context.Context, req *command.Request, xTime bool) ([]*command.QueryRows, error) {
-+	if req.DbTimeout > 0 {
-+		var cancel context.CancelFunc
-+		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
-+		defer cancel()
-+	}
-+
- 	var err error
- 
- 	queryer := queryer(c.conn)
-@@ -354,9 +375,17 @@ func (c *Conn) queryStmt(ctx context.Context, stmt *command.Statement, xTime boo
- // Request runs statements that may be a mix of executes and queries. Each
- // statement is classified on this connection before it runs, so queries in a
- // transaction see the writes that came before them.
-+// The earlier of the context's deadline and the request's timeout bounds
-+// the entire request.
- func (c *Conn) Request(ctx context.Context, req *command.Request, xTime bool) (eqResponse []*command.ExecuteQueryResponse, retErr error) {
- 	defer func() { retErr = classifyError(retErr) }()
- 
-+	if req.DbTimeout > 0 {
-+		var cancel context.CancelFunc
-+		ctx, cancel = context.WithTimeout(ctx, time.Duration(req.DbTimeout))
-+		defer cancel()
-+	}
-+
- 	var err error
- 	eq := execerQueryer(c.conn)
- 	var tx *sql.Tx
-```
-
-**File**: `db/conn_test.go` (added, +124/-0)
-```diff
-@@ -0,0 +1,124 @@
-+package db
-+
-+import (
-+	"context"
-+	"database/sql"
-+	"errors"
-+	"fmt"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	command "github.com/rqlite/rqlite/v10/command/proto"
-+)
-+
-+func Test_Conn_QueryTimeout(t *testing.T) {
-+	for _, api := range []string{"query", "request"} {
-+		for _, transaction := range []bool{false, true} {
-+			for _, requestDeadline := range []bool{false, true} {
-+				name := fmt.Sprintf("%s/transaction=%t/requestDeadline=%t", api, transaction, requestDeadline)
-+				t.Run(name, func(t *testing.T) {
-+					db, err := Open(filepath.Join(t.TempDir(), "test.db"), false, true)
-+					if err != nil {
-+						t.Fatal(err)
-+					}
-+					defer db.Close()
-+
-+					acquire := db.AcquireReader
-+					if api == "request" {
-+						acquire = db.AcquireWriter
-+					}
-+					conn, err := acquire(context.Background())
-+					if err != nil {
-+						t.Fatal(err)
-+					}
-+					defer conn.Close()
-+
-+					requestTimeout, parentTimeout := 2*time.Second, 20*time.Millisecond
-+					if requestDeadline {
-+						requestTimeout, parentTimeout = parentTimeout, requestTimeout
-+					}
-+					ctx, cancel := context.WithTimeout(context.Background(), parentTimeout)
-+					defer cancel()
-+					req := &command.Request{
-+						Transaction: transaction,
-+						DbTimeout:   int64(requestTimeout),
-+						Statements: []*command.Statement{
-+							{Sql: "SELECT 1", ForceStall: true},
-+						},
-+					}
-+
-+					start := time.Now()
-+					var rows []*command.QueryRows
-+					if api == "query" {
-+						rows, err = conn.Query(ctx, req, false)
-+					} else {
-+						var results []*command.ExecuteQueryResponse
-+						results, err = conn.Request(ctx, req, false)
-+						for _, result := range results {
-+							rows = append(rows, result.GetQ())
-+						}
-+					}
-+					// A timed-out transaction may already have been rolled back by
-+					// database/sql when the API attempts to commit or roll it back.
-+					if err != nil && !errors.Is(err, context.DeadlineExceeded) && !errors.Is(err, sql.ErrTxDone) {
-+						t.Fatalf("unexpected error: %v", err)
-+					}
-+					if len(rows) != 1 || rows[0].GetError() != ErrQueryTimeout.Error() {
-+						t.Fatalf("expected query timeout, got rows=%v, err=%v", rows, err)
-+					}
-+					if elapsed := time.Since(start); elapsed >= time.Second {
-+						t.Fatalf("query did not honor the earlier deadline: elapsed %s", elapsed)
-+					}
-+					if requestDeadline && ctx.Err() != nil {
-+						t.Fatal("query waited for the parent deadline instead of the request timeout")
-+					}
-+				})
-+			}
-+		}
-+	}
-+}
-+
-+func Test_Conn_TimeoutStopsLaterWrites(t *testing.T) {
-+	for _, api := range []string{"execute", "request"} {
-+		t.Run(api, func(t *testing.T) {
-+			db, err := Open(filepath.Join(t.TempDir(), "test.db"), false, true)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			defer db.Close()
-+			mustExecute(db, "CREATE TABLE foo (id INTEGER PRIMARY KEY)")
-+			conn, err := db.AcquireWriter(context.Background())
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			defer conn.Close()
-+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-+			defer cancel()
-+
-+			// Once the first statement consumes the request's time budget, the
-+			// second statement must not receive a fresh timeout and commit a write.
-+			run := conn.Execute
-+			if api == "request" {
-+				run = conn.Request
-+			}
-+			results, err := run(ctx, &command.Request{
-+				DbTimeout: int64(20 * time.Millisecond),
-+				Statements: []*command.Statement{
-+					{Sql: "SELECT 1", ForceQuery: true, ForceStall: true},
-+					{Sql: "INSERT INTO foo VALUES (1)"},
-+				},
-+			}, false)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if len(results) != 2 || results[1].GetE().GetError() != ErrExecuteTimeout.Error() {
-+				t.Fatalf("expected later write to time out, got %v", results)
-+			}
-+			rows := mustQuery(db, "SELECT COUNT(*) FROM foo")
-+			if got := rows[0].Values[0].Parameters[0].GetI(); got != 0 {
-+				t.Fatalf("write committed after request timeout: row count %d", got)
-+			}
-+		})
-+	}
-+}
+ 	if n := asked.Load(); n != 0 {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2984** (2026-10-22): POST /leader: JSON error bodies and 404 for unknown target node (@otoolep)
+- **PR #2982** (2026-10-22): Guard backup stream handler directly against a nil request (@otoolep)
+- **PR #2981** (2026-10-22): Cluster closes connections on authorization failure (@otoolep)
+- **PR #2980** (2026-10-22): Do not stream backup after rejecting unauthorized request (@otoolep)
+- **PR #2977** (2026-10-21): Return JSON error body from GET /leader when there is no leader (@otoolep)
 - **PR #2976** (2026-10-20): Prevent ATTACH on the query connection (@otoolep)
-- **PR #2975** (2026-10-20): db: make the connection role a first-class thing (@otoolep)
-- **PR #2973** (2026-10-18): Upgrade dependencies via 'go get' (@otoolep)
-- **PR #2972** (2026-10-18): CDC Events should include Commit Timestamp (@otoolep)
-- **PR #2971** (2026-10-18): Move everywhere to Go 1.27 (@otoolep)
-- **PR #2969** (2026-10-18): Console schema view handles reserved JavaScript property names (@otoolep)
 
 ---
 
@@ -2631,64 +2247,34 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. db: let callers acquire a writer or reader connection
+## X. Require the load permission for inter-node load chunk commands
 
 **RULE**:
-When implementing operations in `db/db.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cluster/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c3bfd26`: db: let callers acquire a writer or reader connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55255c16`: Require the load permission for inter-node load chunk commands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `db/db.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cluster/service.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// AcquireWriter borrows the read-write connection. There is only one, so
-// the call waits until it is free or ctx is done, and while it is held
-// nothing else can write to the database. The caller must close it.
-func (db *DB) AcquireWriter(ctx context.Context) (*Conn, error) {
-	return db.writer.acquire(ctx)
-}
-
-// AcquireReader borrows a read-only connection. The caller must close it.
-func (db *DB) AcquireReader(ctx context.Context) (*Conn, error) {
-	return db.readers.acquire(ctx)
-}
-
-	conn, err := db.AcquireWriter(context.Background())
-	conn, err := db.AcquireWriter(context.Background())
-	conn, err := db.AcquireWriter(context.Background())
-	conn, err := db.AcquireWriter(context.Background())
-	conn, err := db.AcquireWriter(context.Background())
-	conn, err := db.AcquireWriter(context.Background())
-	conn, err := db.AcquireReader(context.Background())
-	conn, err := db.AcquireReader(context.Background())
-	conn, err := db.AcquireWriter(ctx)
-	conn, err := db.AcquireReader(ctx)
-	conn, err := db.AcquireWriter(ctx)
-	dst, err := db.AcquireWriter(context.Background())
-	srcConn, err := src.AcquireReader(context.Background())
+	case proto.Command_COMMAND_TYPE_GET_NODE_META:
+	case proto.Command_COMMAND_TYPE_LOAD,
+		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
+	case proto.Command_COMMAND_TYPE_LOAD_CHUNK:
+		m = &proto.CommandLoadChunkResponse{Error: unauthorizedError}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	conn, err := db.writer.acquire(context.Background())
-	conn, err := db.writer.acquire(context.Background())
-	conn, err := db.writer.acquire(context.Background())
-	conn, err := db.writer.acquire(context.Background())
-	conn, err := db.writer.acquire(context.Background())
-	conn, err := db.writer.acquire(context.Background())
-	conn, err := db.readers.acquire(context.Background())
-	conn, err := db.readers.acquire(context.Background())
-	conn, err := db.writer.acquire(ctx)
-	conn, err := db.readers.acquire(ctx)
-	conn, err := db.writer.acquire(ctx)
-	dst, err := db.writer.acquire(context.Background())
-	srcConn, err := src.readers.acquire(context.Background())
+	case proto.Command_COMMAND_TYPE_GET_NODE_META,
+		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
+	case proto.Command_COMMAND_TYPE_LOAD:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c3bfd26` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55255c16` are properly handled with clean fallback behavior.

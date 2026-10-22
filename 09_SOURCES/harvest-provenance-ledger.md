@@ -4296,3 +4296,8 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `7834210a` | Multi-dimensional audit evidence | 2026-10-22T15:28:59.925Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `07ffbf88` | Multi-dimensional audit evidence | 2026-10-22T15:29:02.866Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `731888e2` | Multi-dimensional audit evidence | 2026-10-22T15:29:05.370Z |
+| `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-22T15:35:16.614Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `65d71277` | Multi-dimensional audit evidence | 2026-10-22T15:35:30.322Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a7796e20` | Multi-dimensional audit evidence | 2026-10-22T15:35:34.062Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `efd3e6e1` | Multi-dimensional audit evidence | 2026-10-22T15:35:34.776Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `8ce5fc8b` | Multi-dimensional audit evidence | 2026-10-22T15:35:37.561Z |

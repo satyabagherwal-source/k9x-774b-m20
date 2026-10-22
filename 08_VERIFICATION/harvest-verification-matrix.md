@@ -4289,3 +4289,8 @@
 | `CYCLE-20261022-4X75` | `2026-10-22T15:28:59.921Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3602` | Yes (`c91698dd...`) |
 | `CYCLE-20261022-4ZGV` | `2026-10-22T15:29:02.863Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3603` | Yes (`489f8bc3...`) |
 | `CYCLE-20261022-51EE` | `2026-10-22T15:29:05.366Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3604` | Yes (`85dbc4d6...`) |
+| `CYCLE-20261022-CZUR` | `2026-10-22T15:35:16.611Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | Yes (`92cd0513...`) |
+| `CYCLE-20261022-DAFK` | `2026-10-22T15:35:30.320Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3605` | Yes (`9691403d...`) |
+| `CYCLE-20261022-DDBG` | `2026-10-22T15:35:34.060Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3606` | Yes (`b3e275ff...`) |
+| `CYCLE-20261022-DDVA` | `2026-10-22T15:35:34.774Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3607` | Yes (`5c995f82...`) |
+| `CYCLE-20261022-DG0M` | `2026-10-22T15:35:37.558Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3608` | Yes (`fb6b2150...`) |

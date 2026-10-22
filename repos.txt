@@ -4384,3 +4384,7 @@ https://huggingface.co/RecursiveSI/flint
 https://huggingface.co/XHToken/Spark-X2.6-4B
 # [HUGGINGFACE-AI-MODELS] InternScience/Sage-A1.5 (2456 score) - Verified Hugging Face Model: InternScience/Sage-A1.5 (206 likes, 396 downloads)
 https://huggingface.co/InternScience/Sage-A1.5
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-22T15:35:10.424Z] ---
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-14B (7130 score) - Verified Hugging Face Model: Qwen/Qwen3-14B (513 likes, 9211389 downloads)
+https://huggingface.co/Qwen/Qwen3-14B
