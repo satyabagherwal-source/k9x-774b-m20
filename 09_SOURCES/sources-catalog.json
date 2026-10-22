@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "83261e0a",
+    "sourceVersion": "d1936d74",
     "license": "Apache-2.0",
-    "contentHash": "d90a3c7cbaa5a4a2df14011c3991dd0c6c68a073ec12dccd2e471272ca00be3a",
-    "lastHarvestedAt": "2026-10-21T00:55:33.994Z",
+    "contentHash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
+    "lastHarvestedAt": "2026-10-22T18:56:56.080Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "43d8ca05",
+    "sourceVersion": "b45055d1",
     "license": "MIT",
-    "contentHash": "f6279e9ba6f68e3fda1718e0f3de44d7177b6cfdcbc4638f6cb4b8c334a6689a",
-    "lastHarvestedAt": "2026-10-19T22:56:09.183Z",
+    "contentHash": "c0ffe9f8958f44648a276055da1fc5c829cb6576adfaf7925bf618b354bee011",
+    "lastHarvestedAt": "2026-10-22T18:56:56.015Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {

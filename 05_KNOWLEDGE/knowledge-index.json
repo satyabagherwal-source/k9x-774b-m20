@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:50:29.911Z",
+  "last_updated": "2026-10-22T18:56:56.024Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34906,8 +34906,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "83261e0a",
-      "content_hash": "d90a3c7cbaa5a4a2df14011c3991dd0c6c68a073ec12dccd2e471272ca00be3a",
+      "source_version": "d1936d74",
+      "content_hash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -34925,6 +34925,11 @@
           "number": 3468,
           "title": "[FIXED] Preserve KV source configuration when creating buckets (#2190)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3702,
+          "title": "[FIXED] micro: service and endpoint metadata can be changed after it is set (#21",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34932,7 +34937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:55:33.901Z",
+      "verified_at": "2026-10-22T18:56:56.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61502,14 +61507,19 @@
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "43d8ca05",
-      "content_hash": "f6279e9ba6f68e3fda1718e0f3de44d7177b6cfdcbc4638f6cb4b8c334a6689a",
+      "source_version": "b45055d1",
+      "content_hash": "c0ffe9f8958f44648a276055da1fc5c829cb6576adfaf7925bf618b354bee011",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "promoted_rules": [
         {
           "number": 2872,
           "title": "parser): match only HTML elements in the \"any other end tag\" step",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3701,
+          "title": "deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -61518,7 +61528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:56:09.145Z",
+      "verified_at": "2026-10-22T18:56:55.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111264,6 +111274,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:50:29.900Z"
+    },
+    "rule-3701": {
+      "learning_id": "rule-3701",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3701,
+      "title": "deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895)",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "b45055d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:56:55.937Z"
+    },
+    "rule-3702": {
+      "learning_id": "rule-3702",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3702,
+      "title": "[FIXED] micro: service and endpoint metadata can be changed after it is set (#21",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "d1936d74",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:56:56.010Z"
     }
   },
   "aliases": {

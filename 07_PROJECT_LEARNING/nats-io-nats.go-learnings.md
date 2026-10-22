@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `83261e0a`  
+> **Source Version**: `d1936d74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:55:33.554Z  
+> **Timestamp**: 2026-10-22T18:56:55.719Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:55:32.880Z  
+> **Harvest Timestamp**: 2026-10-22T18:56:54.611Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6786 stars
+- **Stars / Engagement**: 6788 stars
 
 ---
 
@@ -1561,78 +1561,587 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ef3fccb` (2026-10-20)
-**Commit Message**: [FIXED] Preserve KV source configuration when creating buckets (#2190)
+### Incident Patch 1: `b431a077` (2026-10-22)
+**Commit Message**: [FIXED] micro: service and endpoint metadata can be changed after it is set (#2194)
 
-Signed-off-by: Zhe Chen <[REDACTED_EMAIL]>
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
-**File**: `jetstream/kv.go` (modified, +1/-0)
+**File**: `micro/service.go` (modified, +5/-3)
 ```diff
-@@ -709,6 +709,7 @@ func (js *jetStream) prepareKeyValueConfig(ctx context.Context, cfg KeyValueConf
- 				scfg.Sources = append(scfg.Sources, ss)
- 				continue
- 			}
-+			ss = ss.copy()
- 			var sourceBucketName string
- 			if strings.HasPrefix(ss.Name, kvBucketNamePre) {
- 				sourceBucketName = ss.Name[len(kvBucketNamePre):]
+@@ -17,6 +17,7 @@ import (
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
++	"maps"
+ 	"regexp"
+ 	"strings"
+ 	"sync"
+@@ -329,6 +330,7 @@ func AddService(nc *nats.Conn, config Config) (Service, error) {
+ 		return nil, err
+ 	}
+ 
++	config.Metadata = maps.Clone(config.Metadata)
+ 	if config.Metadata == nil {
+ 		config.Metadata = map[string]string{}
+ 	}
+@@ -691,7 +693,7 @@ func (s *service) serviceIdentity() ServiceIdentity {
+ 		Name:     s.Config.Name,
+ 		ID:       s.id,
+ 		Version:  s.Config.Version,
+-		Metadata: s.Config.Metadata,
++		Metadata: maps.Clone(s.Config.Metadata),
+ 	}
+ }
+ 
+@@ -706,7 +708,7 @@ func (s *service) Info() Info {
+ 			Name:       e.Name,
+ 			Subject:    e.Subject,
+ 			QueueGroup: e.QueueGroup,
+-			Metadata:   e.Metadata,
++			Metadata:   maps.Clone(e.Metadata),
+ 		})
+ 	}
+ 
+@@ -905,7 +907,7 @@ func WithEndpointSubject(subject string) EndpointOpt {
+ 
+ func WithEndpointMetadata(metadata map[string]string) EndpointOpt {
+ 	return func(e *endpointOpts) error {
+-		e.metadata = metadata
++		e.metadata = maps.Clone(metadata)
+ 		return nil
+ 	}
+ }
 ```
 
-**File**: `jetstream/test/kv_test.go` (modified, +37/-0)
+**File**: `micro/test/service_test.go` (modified, +90/-0)
 ```diff
-@@ -2048,6 +2048,43 @@ func TestKeyValueKeysDeduplicate(t *testing.T) {
+@@ -1428,6 +1428,96 @@ func TestAddEndpoint_Options(t *testing.T) {
  	})
  }
  
-+func TestKeyValueReusesSourceConfig(t *testing.T) {
-+	withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
-+		ctx := context.Background()
-+		source, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "SOURCE"})
-+		expectOk(t, err)
++func TestServiceMetadataImmutable(t *testing.T) {
++	withServer(t, func(t *testing.T, nc *nats.Conn) {
++		handler := micro.HandlerFunc(func(req micro.Request) {})
++		svcMeta := map[string]string{"region": "east"}
++		defaultMeta := map[string]string{"owner": "team-d"}
++		srv, err := micro.AddService(nc, micro.Config{
++			Name:     "orders",
++			Version:  "0.1.0",
++			Metadata: svcMeta,
++			Endpoint: &micro.EndpointConfig{
++				Subject:  "orders.default",
++				Handler:  handler,
++				Metadata: defaultMeta,
++			},
++		})
++		if err != nil {
++			t.Fatalf("Unexpected error: %v", err)
++		}
++		defer srv.Stop()
 +
-+		sources := []*jetstream.StreamSource{{Name: "SOURCE"}}
-+		var destinations []jetstream.KeyValue
-+		for _, bucket := range []string{"DEST1", "DEST2"} {
-+			kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{
-+				Bucket:  bucket,
-+				Sources: sources,
-+			})
-+			expectOk(t, err)
-+			destinations = append(destinations, kv)
++		epMeta := map[string]string{"owner": "team-a"}
++		err = srv.AddEndpoint("create", handler,
++			micro.WithEndpointMetadata(epMeta),
++			micro.WithEndpointMetadataKey("tier", "gold"))
++		if err != nil {
++			t.Fatalf("Unexpected error: %v", err)
++		}
++		if _, ok := epMeta["tier"]; ok {
++			t.Fatalf("WithEndpointMetadataKey modified the map passed to WithEndpointMetadata: %v", epMeta)
 +		}
 +
-+		_, err = source.Put(ctx, "key", []byte("value"))
-+		expectOk(t, err)
-+		for _, kv := range destinations {
-+			checkFor(t, 5*time.Second, 15*time.Millisecond, func() error {
-+				entry, err := kv.Get(ctx, "key")
-+				if err != nil {
-+					return fmt.Errorf("bucket %s: %w", kv.Bucket(), err)
-+				}
-+				if string(entry.Value()) != "value" {
-+					return fmt.Errorf("bucket %s: unexpected value %q", kv.Bucket(), entry.Value())
-+				}
-+				return nil
-+			})
++		svcMeta["region"] = "west"
++		defaultMeta["owner"] = "team-x"
++		epMeta["owner"] = "team-b"
++		epMeta["extra"] = "x"
++		info := srv.Info()
++		info.Metadata["region"] = "west"
++		for _, ep := range info.Endpoints {
++			ep.Metadata["owner"] = "team-b"
++			delete(ep.Metadata, "tier")
 +		}
-+		if sources[0].Name != "SOURCE" || len(sources[0].SubjectTransforms) != 0 {
-+			t.Fatalf("Source config was modified: %+v", sources[0])
++		srv.Stats().Metadata["region"] = "west"
++
++		wantSvc := map[string]string{"region": "east"}
++		wantEndpoints := map[string]map[string]string{
++			"default": {"owner": "team-d"},
++			"create":  {"owner": "team-a", "tier": "gold"},
++		}
++		checkInfo := func(info micro.Info) {
++			t.Helper()
++			if !reflect.DeepEqual(info.Metadata, wantSvc) {
++				t.Fatalf("Invalid service metadata; want: %v; got: %v", wantSvc, info.Metadata)
++			}
++			got := make(map[string]map[string]string)
++			for _, ep := range info.Endpoints {
++				got[ep.Name] = ep.Metadata
++			}
++			if !reflect.DeepEqual(got, wantEndpoints) {
++				t.Fatalf("Invalid endpoint metadata; want: %v; got: %v", wantEndpoints, got)
++			}
++		}
++		checkInfo(srv.Info())
++
++		for _, verb := range []micro.Verb{micro.PingVerb, micro.InfoVerb, micro.StatsVerb} {
++			subject, err := micro.ControlSubject(verb, "orders", "")
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			resp, err := nc.Request(subject, nil, time.Second)
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			var id micro.ServiceIdentity
++			if err := json.Unmarshal(resp.Data, &id); err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			if !reflect.DeepEqual(id.Metadata, wantSvc) {
++				t.Fatalf("Invalid service metadata in %s response; want: %v; got: %v", verb, wantSvc, id.Metadata)
++			}
++			if verb == micro.InfoVerb {
++				var info micro.Info
++				if err := json.Unmarshal(resp.Data, &info); err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
++				checkInfo(info)
++			}
 +		}
 +	})
 +}
 +
- func TestKeyValueWithSources(t *testing.T) {
- 	t.Run("kv -> kv", func(t *testing.T) {
+ func TestAddEndpoint_Concurrency(t *testing.T) {
+ 	withServer(t, func(t *testing.T, nc *nats.Conn) {
+ 		ctx := context.Background()
+```
+
+---
+
+### Incident Patch 2: `d1936d74` (2026-10-22)
+**Commit Message**: [FIXED] Correct StopAfter pending accounting for pull consumers (#2208)
+
+Track the requested batch size when StopAfter shortens a pull so expired
+requests do not leave an inflated pending count and delay the next pull.
+Keep the count aligned with the first, reconnect and heartbeat recovery
+requests, and add regression coverage for these paths.
+
+Fixes https://github.com/nats-io/nats.go/issues/2207
+
+Signed-off-by: Huy Nguyen <[REDACTED_EMAIL]>
+
+**File**: `jetstream/jetstream_test.go` (modified, +74/-8)
+```diff
+@@ -423,6 +423,33 @@ func TestPullConsumer_checkPendingAfterDone(t *testing.T) {
+ 	}
+ }
+ 
++func TestPullSubscriptionResetPendingStopAfter(t *testing.T) {
++	for _, tc := range []struct {
++		name                       string
++		stopAfter, delivered, want int
++	}{
++		{"unlimited", 0, 200, 500},
++		{"full batch", 800, 200, 500},
++		{"initial shortened batch", 450, 0, 450},
++		{"remaining shortened batch", 450, 200, 250},
++		{"complete", 450, 450, 0},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			sub := &pullSubscription{
++				consumeOpts: &consumeOpts{MaxMessages: 500, MaxBytes: 10000, StopAfter: tc.stopAfter},
++				delivered:   tc.delivered,
++			}
++			sub.resetPendingMsgs()
++			if got := sub.pending.msgCount; got != tc.want {
++				t.Errorf("pending messages: got %d, want %d", got, tc.want)
++			}
++			if got := sub.pending.byteCount; got != 10000 {
++				t.Errorf("pending bytes: got %d, want 10000", got)
++			}
++		})
++	}
++}
++
+ func TestPullConsumer_checkPending(t *testing.T) {
+ 
+ 	tests := []struct {
+@@ -431,9 +458,11 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 		fetchInProgress     bool
+ 		shouldSend          bool
+ 		expectedPullRequest *pullRequest
++		expectedPendingMsgs int
+ 	}{
+ 		{
+-			name: "msgs threshold not reached, bytes not set, no pull request",
++			name:                "msgs threshold not reached, bytes not set, no pull request",
++			expectedPendingMsgs: 10,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					msgCount: 10,
+@@ -446,7 +475,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			shouldSend: false,
+ 		},
+ 		{
+-			name: "pending msgs below threshold, send pull request",
++			name:                "pending msgs below threshold, send pull request",
++			expectedPendingMsgs: 10,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					msgCount:  4,
+@@ -464,7 +494,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			name: "pending msgs below threshold but PR in progress",
++			name:                "pending msgs below threshold but PR in progress",
++			expectedPendingMsgs: 4,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					msgCount: 4,
+@@ -478,7 +509,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			shouldSend:      false,
+ 		},
+ 		{
+-			name: "pending bytes below threshold, send pull request",
++			name:                "pending bytes below threshold, send pull request",
++			expectedPendingMsgs: 1000000,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					byteCount: 400,
+@@ -497,7 +529,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			name: "pending bytes above threshold, no pull request",
++			name:                "pending bytes above threshold, no pull request",
++			expectedPendingMsgs: 0,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					byteCount: 600,
+@@ -510,7 +543,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			shouldSend: false,
+ 		},
+ 		{
+-			name: "pending bytes below threshold, fetch in progress, no pull request",
++			name:                "pending bytes below threshold, fetch in progress, no pull request",
++			expectedPendingMsgs: 0,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					byteCount: 400,
+@@ -524,7 +558,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			shouldSend:      false,
+ 		},
+ 		{
+-			name: "StopAfter set, pending msgs below StopAfter, send pull request",
++			name:                "StopAfter set, pending msgs below StopAfter, send pull request",
++			expectedPendingMsgs: 6,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					msgCount: 4,
+@@ -543,7 +578,35 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			name: "StopAfter set, pending msgs equal to StopAfter, no pull request",
++			name:                "StopAfter with message and byte limits",
++			expectedPendingMsgs: 6,
++			givenSub: &pullSubscription{
++				pending: pendingMsgs{msgCount: 4, byteCount: 400},
++				consumeOpts: &consumeOpts{
++					ThresholdMessages: 5, MaxMessages: 10, MaxBytes: 1000,
++					LimitSize: true, StopAfter: 8,
++				},
++				delivered: 2,
++			},
++			shouldSend:          true,
++			expectedPullRequest: &pullRequest{Batch: 2, MaxBytes: 1000},
++		},
++		{
++			name:                "StopAfter with bytes threshold",
++			expectedPendingMsgs: 6,
++			givenSub: &pullSubscription{
++				pending: pendingMsgs{msgCount: 4, byteCount: 400},
++				consumeOpts: &consumeOpts{
++					MaxMessages: 1000000, ThresholdBytes: 500, MaxBytes: 1000, StopAfter: 8,
++				},
++				delivered: 2,
++			},
++			shouldSend:          true,
++			expectedPullRequest: &pullRequest{Batch: 2, MaxBytes: 600},
++		},
++		{
++			name:                "StopAfter set, pending msgs equal to StopAfter, no pull request",
++			expectedPendingMsgs: 6,
+ 			givenSub: &pullSubscription{
+ 				pending: pendingMsgs{
+ 					msgCount: 6,
+@@ -593,6 +656,9 @@ func TestPullConsumer_checkPending(t *testing.T) {
+ 			}()
+ 
+ 			test.givenSub.checkPending()
++	
+```
+
+**File**: `jetstream/pull.go` (modified, +14/-15)
+```diff
+@@ -327,13 +327,9 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 	sub.Lock()
+ 	// initial pull
+ 	sub.resetPendingMsgs()
+-	batchSize := sub.consumeOpts.MaxMessages
+-	if sub.consumeOpts.StopAfter > 0 {
+-		batchSize = min(batchSize, sub.consumeOpts.StopAfter-sub.delivered)
+-	}
+ 	if err := sub.pull(&pullRequest{
+ 		Expires:       consumeOpts.Expires,
+-		Batch:         batchSize,
++		Batch:         sub.pending.msgCount,
+ 		MaxBytes:      consumeOpts.MaxBytes,
+ 		Heartbeat:     consumeOpts.Heartbeat,
+ 		MinPending:    consumeOpts.MinPending,
+@@ -371,9 +367,10 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 							sub.errs <- errConnected
+ 						}
+ 
++						sub.resetPendingMsgs()
+ 						sub.requestNext(&pullRequest{
+ 							Expires:       sub.consumeOpts.Expires,
+-							Batch:         sub.consumeOpts.MaxMessages,
++							Batch:         sub.pending.msgCount,
+ 							MaxBytes:      sub.consumeOpts.MaxBytes,
+ 							Heartbeat:     sub.consumeOpts.Heartbeat,
+ 							MinPending:    sub.consumeOpts.MinPending,
+@@ -385,7 +382,6 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 						if sub.hbMonitor != nil {
+ 							sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
+ 						}
+-						sub.resetPendingMsgs()
+ 					}
+ 					sub.Unlock()
+ 
+@@ -395,13 +391,10 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 			case err := <-sub.errs:
+ 				sub.Lock()
+ 				if errors.Is(err, ErrNoHeartbeat) {
+-					batchSize := sub.consumeOpts.MaxMessages
+-					if sub.consumeOpts.StopAfter > 0 {
+-						batchSize = min(batchSize, sub.consumeOpts.StopAfter-sub.delivered)
+-					}
++					sub.resetPendingMsgs()
+ 					sub.requestNext(&pullRequest{
+ 						Expires:       sub.consumeOpts.Expires,
+-						Batch:         batchSize,
++						Batch:         sub.pending.msgCount,
+ 						MaxBytes:      sub.consumeOpts.MaxBytes,
+ 						Heartbeat:     sub.consumeOpts.Heartbeat,
+ 						MinPending:    sub.consumeOpts.MinPending,
+@@ -413,7 +406,6 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ 					if sub.hbMonitor != nil {
+ 						sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
+ 					}
+-					sub.resetPendingMsgs()
+ 				}
+ 				sub.Unlock()
+ 				if sub.consumeOpts.ErrHandler != nil {
+@@ -434,10 +426,13 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+ }
+ 
+ // resetPendingMsgs resets pending message count and byte count
+-// to the values set in consumeOpts
++// to the values set in consumeOpts, capped by the remaining StopAfter budget.
+ // lock should be held before calling this method
+ func (s *pullSubscription) resetPendingMsgs() {
+ 	s.pending.msgCount = s.consumeOpts.MaxMessages
++	if s.consumeOpts.StopAfter > 0 {
++		s.pending.msgCount = min(s.pending.msgCount, s.consumeOpts.StopAfter-s.delivered)
++	}
+ 	s.pending.byteCount = s.consumeOpts.MaxBytes
+ }
+ 
+@@ -498,7 +493,11 @@ func (s *pullSubscription) checkPending() {
+ 				Priority:      s.consumeOpts.Priority,
+ 			})
+ 
+-			s.pending.msgCount = s.consumeOpts.MaxMessages
++			if s.consumeOpts.StopAfter > 0 {
++				s.pending.msgCount += batchSize
++			} else {
++				s.pending.msgCount = s.consumeOpts.MaxMessages
++			}
+ 			s.pending.byteCount = s.consumeOpts.MaxBytes
+ 		}
+ 	}
+```
+
+**File**: `jetstream/test/pull_test.go` (modified, +101/-0)
+```diff
+@@ -16,6 +16,7 @@ package test
+ import (
+ 	"bytes"
+ 	"context"
++	"encoding/json"
+ 	"errors"
+ 	"fmt"
+ 	"runtime"
+@@ -2337,6 +2338,106 @@ func TestPullConsumerConsume(t *testing.T) {
+ 		})
+ 	})
+ 
++	t.Run("with auto unsubscribe after expiry and reconnect", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 15*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "TEST", Subjects: []string{"test"}})
++			if err != nil {
++				t.Fatal(err)
++			}
++			c, err := s.CreateConsumer(ctx, jetstream.ConsumerConfig{Durable: "C", AckPolicy: jetstream.AckExplicitPolicy})
++			if err != nil {
++				t.Fatal(err)
++			}
++			pulls, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.TEST.C")
++			if err != nil {
++				t.Fatal(err)
++			}
++			defer pulls.Unsubscribe()
++			expectPull := func(want int, wait time.Duration) {
++				t.Helper()
++				msg, err := pulls.NextMsg(wait)
++				if err != nil {
++					t.Fatalf("waiting for pull batch %d: %v", want, err)
++				}
++				var request struct {
++					Batch int `json:"batch"`
++				}
++				if err := json.Unmarshal(msg.Data, &request); err != nil {
++					t.Fatal(err)
++				}
++				if request.Batch != want {
++					t.Fatalf("pull batch: got %d, want %d", request.Batch, want)
++				}
++			}
++			publish := func(n int) {
++				t.Helper()
++				for i := 0; i < n; i++ {
++					if _, err := js.Publish(ctx, "test", []byte("msg")); err != nil {
++						t.Fatal(err)
++					}
++				}
++			}
++			publish(2)
++			var received atomic.Int32
++			initial := make(chan struct{})
++			cc, err := c.Consume(func(msg jetstream.Msg) {
++				if err := msg.Ack(); err != nil {
++					t.Error(err)
++				}
++				if received.Add(1) == 2 {
++					close(initial)
++				}
++			}, jetstream.PullMaxMessages(10), jetstream.StopAfter(8), jetstream.PullExpiry(2*time.Second),
++				jetstream.ConsumeErrHandler(func(cc jetstream.ConsumeContext, err error) {
++					t.Errorf("Unexpected consume error: %v", err)
++					cc.Stop()
++				}))
++			if err != nil {
++				t.Fatal(err)
++			}
++			closed := cc.Closed()
++			defer func() {
++				cc.Stop()
++				select {
++				case <-closed:
++				case <-time.After(3 * time.Second):
++					t.Error("Consume did not stop")
++				}
++			}()
++			expectPull(8, 3*time.Second)
++			select {
++			case <-initial:
++			case <-ctx.Done():
++				t.Fatal(ctx.Err())
++			}
++			// Expire both the initial pull and its replacement. Six messages remain.
++			expectPull(6, 3*time.Second)
++			expectPull(6, 3*time.Second)
++			connected := nc.StatusChanged(nats.CONNECTED)
++			// Require the reconnect pull before the current two-second pull expires.
++			deadline := time.Now().Add(time.Second)
++			if err := nc.ForceReconnect(); err != nil {
++				t.Fatal(err)
++			}
++			select {
++			case <-connected:
++			case <-time.After(time.Until(deadline)):
++				t.Fatal("connection did not reconnect")
++			}
++			expectPull(6, time.Until(deadline))
++			publish(6)
++			select {
++			case <-closed:
++			case <-ctx.Done():
++				t.Fatal(ctx.Err())
++			}
++			if got := received.Load(); got != 8 {
++				t.Fatalf("received %d messages, want 8", got)
++			}
++		})
++	})
++
+ 	t.Run("with invalid batch size", func(t *testing.T) {
  		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
+ 			ctx := newTesterCtx(t, 5*time.Second)
+```
+
+---
+
+### Incident Patch 3: `464f1d61` (2026-10-21)
+**Commit Message**: [FIXED] Use mirror-aware prefix in legacy KV Create and Update (#2203)
+
+Legacy kvs.update published to kv.pre, so Create and Update on a
+cross-domain mirror failed with "no response from stream". Use putPre
+when set, as Put and Delete do and as jetstream updateRevision has
+since #1903.
+
+Signed-off-by: Leo King <[REDACTED_EMAIL]>
+
+**File**: `kv.go` (modified, +5/-1)
+```diff
+@@ -790,7 +790,11 @@ func (kv *kvs) update(key string, value []byte, revision uint64) (uint64, error)
+ 	if kv.useJSPfx {
+ 		b.WriteString(kv.js.opts.pre)
+ 	}
+-	b.WriteString(kv.pre)
++	if kv.putPre != _EMPTY_ {
++		b.WriteString(kv.putPre)
++	} else {
++		b.WriteString(kv.pre)
++	}
+ 	b.WriteString(key)
+ 
+ 	m := Msg{Subject: b.String(), Header: Header{}, Data: value}
+```
+
+**File**: `test/kv_test.go` (modified, +4/-0)
+```diff
+@@ -1374,6 +1374,10 @@ func TestKeyValueMirrorCrossDomains(t *testing.T) {
+ 	_, err = mkv.PutString("name", "rip")
+ 	expectOk(t, err)
+ 
++	_, err = mkv.Create("created", []byte("c"))
++	expectOk(t, err)
++	keyExists(t, kv, "created", "c")
++
+ 	_, err = mkv.PutString("v", "vv")
+ 	expectOk(t, err)
+ 	e := keyExists(t, kv, "v", "vv")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2208** (2026-10-22): [FIXED] Correct StopAfter pending accounting for pull consumers (@huynguyen7)
 - **PR #2204** (2026-10-20): [DOC] Document that Msg is not reused (@kave08)
+- **PR #2203** (2026-10-21): [FIXED] Use mirror-aware prefix in legacy KV Create and Update (@spicysharkco)
+- **PR #2200** (2026-10-21): [FIXED] Include headers in subscription pending byte limits (@Grivn)
+- **PR #2199** (closed): object: truncate the destination file in GetFile (@piyush295)
 - **PR #2198** (2026-10-16): [ADDED] JetStream FetchMaxBytes option (@manenim)
-- **PR #2192** (2026-10-14): [FIXED] Match v2 ack subjects in JetStream ack tests (@piotrpio)
-- **PR #2191** (2026-10-14): [FIXED] Dependencies report workflow (@piotrpio)
-- **PR #2190** (2026-10-20): [FIXED] Preserve KV source configuration when creating buckets (@zhechen-cs)
-- **PR #2188** (2026-10-14): [FIXED] Pull iterator Drain racing with Next returns ErrMsgIteratorClosed early (@piotrpio)
 
 ---
 
@@ -1652,28 +2161,34 @@ Signed-off-by: Zhe Chen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Preserve KV source configuration when creating buckets (#2190)
+## X. [FIXED] micro: service and endpoint metadata can be changed after it is set (#21
 
 **RULE**:
-When implementing operations in `jetstream/kv.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `micro/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ef3fccb`: [FIXED] Preserve KV source configuration when creating buckets (#2190). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b431a077`: [FIXED] micro: service and endpoint metadata can be changed after it is set (#2194). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/kv.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `micro/service.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			ss = ss.copy()
+	"maps"
+	config.Metadata = maps.Clone(config.Metadata)
+		Metadata: maps.Clone(s.Config.Metadata),
+			Metadata:   maps.Clone(e.Metadata),
+		e.metadata = maps.Clone(metadata)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		Metadata: s.Config.Metadata,
+			Metadata:   e.Metadata,
+		e.metadata = metadata
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ef3fccb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b431a077` are properly handled with clean fallback behavior.

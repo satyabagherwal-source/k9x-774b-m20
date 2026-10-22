@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source**: github ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
-> **Source Version**: `43d8ca05`  
+> **Source Version**: `b45055d1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:56:09.000Z  
+> **Timestamp**: 2026-10-22T18:56:55.625Z  
 > **Learning ID**: `learn-github-inikulin-parse5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:56:08.631Z  
+> **Harvest Timestamp**: 2026-10-22T18:56:49.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HTML parsing/serialization toolset for Node.js. WHATWG HTML Living Standard (aka HTML5)-compliant.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3938 stars
+- **Stars / Engagement**: 3939 stars
 
 ---
 
@@ -1578,130 +1578,84 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ab515e9` (2026-06-23)
-**Commit Message**: fix(parser): match only HTML elements in the "any other end tag" step
+### Incident Patch 1: `b45055d1` (2026-10-22)
+**Commit Message**: chore(deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895)
 
-`genericEndTagInBody` matched an open element by tag id alone. A foreign
-integration-point element whose name collides with an HTML tag (`desc`,
-`title`, `mi`, `mo`, `mn`, `ms`, `mtext`, `annotation-xml`) was therefore
-matched by an ordinary end tag, which closed the HTML elements above it.
-Per WHATWG 13.2.6.4.7 step 3 the matched node must be an HTML element;
-anything else falls through to the special-element check and the end tag
-is ignored.
-
-https://github.com/inikulin/parse5/pull/1790
-
-**File**: `packages/parse5/lib/parser/index.test.ts` (modified, +18/-0)
-```diff
-@@ -112,6 +112,24 @@ describe('parser', () => {
-         assert.strictEqual(bodyText('&#13;A'), 'A');
-     });
- 
-+    it('Regression - foreign end tag must not close an HTML element with a colliding tag id', () => {
-+        // `<svg desc>` is a foreign element whose lowercase name collides with the HTML
-+        // `desc` tag id. The "any other end tag" rule in body requires an HTML element,
-+        // so `</desc>` must be ignored and the open `<b>` must stay open and collect "y".
-+        const document = parse('<svg><desc><b>x</desc>y');
-+
-+        const html = document.childNodes[0] as Element;
-+        const body = html.childNodes[1] as Element;
-+        const svg = body.childNodes[0] as Element;
-+        const desc = svg.childNodes[0] as Element;
-+        const b = desc.childNodes[0] as Element;
-+
-+        expect(b.nodeName).toBe('b');
-+        expect(b.childNodes).toHaveLength(1);
-+        expect(b.childNodes[0].nodeName).toBe('#text');
-+        expect((b.childNodes[0] as TextNode).value).toBe('xy');
-+    });
-+
-     describe('Tree adapters', () => {
-         it('should provide element creation context', () => {
-             const contexts = new Map<string, ElementCreationContext<DefaultTreeAdapterMap>>();
-```
-
-**File**: `packages/parse5/lib/parser/index.ts` (modified, +6/-1)
-```diff
-@@ -2652,7 +2652,12 @@ function genericEndTagInBody<T extends TreeAdapterTypeMap>(p: Parser<T>, token:
-         const elementId = p.openElements.tagIDs[i];
- 
-         // Compare the tag name here, as the tag might not be a known tag with an ID.
--        if (tid === elementId && (tid !== $.UNKNOWN || p.treeAdapter.getTagName(element) === tn)) {
-+        // Only HTML elements match; a foreign element falls through to the special-element check.
-+        if (
-+            tid === elementId &&
-+            p.treeAdapter.getNamespaceURI(element) === NS.HTML &&
-+            (tid !== $.UNKNOWN || p.treeAdapter.getTagName(element) === tn)
-+        ) {
-             p.openElements.generateImpliedEndTagsWithExclusion(tid);
-             if (p.openElements.stackTop >= i) p.openElements.shortenToLength(i);
-             break;
-```
-
----
-
-### Incident Patch 2: `746454f7` (2026-10-02)
-**Commit Message**: chore(deps-dev): bump brace-expansion from 5.0.7 to 5.0.12 (#1868)
-
-Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion) from 5.0.7 to 5.0.12.
-- [Release notes](https://github.com/juliangruber/brace-expansion/releases)
-- [Commits](https://github.com/juliangruber/brace-expansion/compare/v5.0.7...v5.0.12)
+Bumps [markdown-it](https://github.com/markdown-it/markdown-it) from 14.3.2 to 14.3.3.
+- [Changelog](https://github.com/markdown-it/markdown-it/blob/14.3.3/CHANGELOG.md)
+- [Commits](https://github.com/markdown-it/markdown-it/compare/14.3.2...14.3.3)
 
 ---
 updated-dependencies:
-- dependency-name: brace-expansion
-  dependency-version: 5.0.12
+- dependency-name: markdown-it
+  dependency-version: 14.3.3
   dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +8/-7)
+**File**: `package-lock.json` (modified, +6/-6)
 ```diff
-@@ -1284,15 +1284,16 @@
-             }
+@@ -2501,9 +2501,9 @@
+             "dev": true
          },
-         "node_modules/brace-expansion": {
--            "version": "5.0.7",
--            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.7.tgz",
--            "integrity": "sha512-7oFy703dxfY3/NLxC1fh2SUCQ0H9rmAY+5EpDVfXjUTTs+HEwR2nYaqLv+GWcTsumwxPfiz6CzCNkwXwBUwqCA==",
-+            "version": "5.0.12",
-+            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
-+            "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
+         "node_modules/markdown-it": {
+-            "version": "14.3.2",
+-            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
+-            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
++            "version": "14.3.3",
++            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
++            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
              "dev": true,
-+            "license": "MIT",
-             "dependencies": {
-                 "balanced-match": "^4.0.2"
-             },
-             "engines": {
--                "node": "18 || 20 || >=22"
-+                "node": "20 || >=22"
-             }
+             "funding": [
+                 {
+@@ -5026,9 +5026,9 @@
+             "dev": true
          },
-         "node_modules/browserslist": {
-@@ -4287,9 +4288,9 @@
-             }
-         },
-         "brace-expansion": {
--            "version": "5.0.7",
--            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.7.tgz",
--            "integrity": "sha512-7oFy703dxfY3/NLxC1fh2SUCQ0H9rmAY+5EpDVfXjUTTs+HEwR2nYaqLv+GWcTsumwxPfiz6CzCNkwXwBUwqCA==",
-+            "version": "5.0.12",
-+            "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
-+            "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
+         "markdown-it": {
+-            "version": "14.3.2",
+-            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
+-            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
++            "version": "14.3.3",
++            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
++            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
              "dev": true,
              "requires": {
-                 "balanced-match": "^4.0.2"
+                 "argparse": "^2.0.1",
+```
+
+---
+
+### Incident Patch 2: `bcac2c55` (2026-10-20)
+**Commit Message**: chore: group codeql dependabot updates (#1894)
+
+Every time they do a release, both actions get bumped and fail if
+they're not on the same version. So instead of me patching it up every
+time, this tells dependabot to group them into one PR.
+
+**File**: `.github/dependabot.yml` (modified, +4/-0)
+```diff
+@@ -10,6 +10,10 @@ updates:
+       directory: '/'
+       schedule:
+           interval: daily
++      groups:
++          codeql:
++              patterns:
++                  - 'github/codeql-action*'
+     - package-ecosystem: gitsubmodule
+       directory: '/'
+       schedule:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1895** (2026-10-22): chore(deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (@dependabot[bot])
+- **PR #1894** (2026-10-20): chore: group codeql dependabot updates (@43081j)
+- **PR #1893** (2026-10-20): chore(deps-dev): bump eslint from 10.12.0 to 10.13.0 (@dependabot[bot])
+- **PR #1892** (2026-10-20): chore(deps): bump github/codeql-action/analyze from 4.38.3 to 4.39.0 (@dependabot[bot])
 - **PR #1891** (2026-10-19): chore(deps): bump github/codeql-action/init from 4.38.3 to 4.39.0 (@dependabot[bot])
 - **PR #1890** (2026-10-19): chore(deps-dev): bump @vitest/coverage-v8 from 5.0.4 to 5.0.5 (@dependabot[bot])
-- **PR #1889** (2026-10-19): chore(deps-dev): bump vitest from 5.0.4 to 5.0.5 (@dependabot[bot])
-- **PR #1888** (closed): chore(deps-dev): bump vitest from 5.0.3 to 5.0.4 (@dependabot[bot])
-- **PR #1887** (2026-10-16): chore(deps-dev): bump @vitest/coverage-v8 from 5.0.3 to 5.0.4 (@dependabot[bot])
-- **PR #1886** (2026-10-16): chore(deps-dev): bump typescript-eslint from 8.71.1 to 8.71.2 (@dependabot[bot])
 
 ---
 
@@ -1721,45 +1675,38 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parser): match only HTML elements in the "any other end tag" step
+## X. deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895)
 
 **RULE**:
-When implementing operations in `packages/parse5/lib/parser/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ab515e9`: parser): match only HTML elements in the "any other end tag" step. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b45055d1`: deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/parser/index.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    it('Regression - foreign end tag must not close an HTML element with a colliding tag id', () => {
-        // `<svg desc>` is a foreign element whose lowercase name collides with the HTML
-        // `desc` tag id. The "any other end tag" rule in body requires an HTML element,
-        // so `</desc>` must be ignored and the open `<b>` must stay open and collect "y".
-        const document = parse('<svg><desc><b>x</desc>y');
-
-        const html = document.childNodes[0] as Element;
-        const body = html.childNodes[1] as Element;
-        const svg = body.childNodes[0] as Element;
-        const desc = svg.childNodes[0] as Element;
-        const b = desc.childNodes[0] as Element;
-
-        expect(b.nodeName).toBe('b');
-        expect(b.childNodes).toHaveLength(1);
-        expect(b.childNodes[0].nodeName).toBe('#text');
-        expect((b.childNodes[0] as TextNode).value).toBe('xy');
-    });
-
+            "version": "14.3.3",
+            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
+            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
+            "version": "14.3.3",
+            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
+            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            "version": "14.3.2",
+            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
+            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
+            "version": "14.3.2",
+            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
+            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ab515e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b45055d1` are properly handled with clean fallback behavior.

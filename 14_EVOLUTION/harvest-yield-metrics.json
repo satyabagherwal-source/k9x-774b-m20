@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T18:50:29.975Z",
-  "total_cycles_completed": 4370,
-  "total_learnings_persisted": 4370,
-  "total_rules_promoted": 3549,
+  "last_updated": "2026-10-22T18:56:56.089Z",
+  "total_cycles_completed": 4372,
+  "total_learnings_persisted": 4372,
+  "total_rules_promoted": 3551,
   "history": [
-    {
-      "timestamp": "2026-10-21T04:21:58.006Z",
-      "repository": "dockview/dockview",
-      "learningId": "learn-github-dockview-dockview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T04:21:58.200Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T04:27:57.730Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-22T18:50:29.975Z",
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T18:56:56.025Z",
+      "repository": "inikulin/parse5",
+      "learningId": "learn-github-inikulin-parse5",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T18:56:56.089Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

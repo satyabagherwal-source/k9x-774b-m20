@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-4X07",
-    "timestamp": "2026-10-20T16:21:38.455Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "fca8014c8489355a2153651ac1a80a410eab1497a6a8ddca445d0c2b6f64bae8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-CQN9",
-    "timestamp": "2026-10-20T16:27:43.461Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "4ff6ce5a2a1102ec4a949b77339d284be2e07636c31143e9d3bfdec71d15a566",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-CQRW",
     "timestamp": "2026-10-20T16:27:43.628Z",
     "repository": "carbon-design-system/carbon-components-svelte",
@@ -7490,6 +7460,36 @@
     "repository": "Mintplex-Labs/anything-llm",
     "learningId": "learn-github-mintplex-labs-anything-llm",
     "contentHash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-KBT8",
+    "timestamp": "2026-10-22T18:56:56.012Z",
+    "repository": "inikulin/parse5",
+    "learningId": "learn-github-inikulin-parse5",
+    "contentHash": "c0ffe9f8958f44648a276055da1fc5c829cb6576adfaf7925bf618b354bee011",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-KBV1",
+    "timestamp": "2026-10-22T18:56:56.077Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

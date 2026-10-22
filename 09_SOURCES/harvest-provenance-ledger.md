@@ -4400,3 +4400,5 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `5141df8b` | Multi-dimensional audit evidence | 2026-10-22T18:50:19.755Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `5fedd8fc` | Multi-dimensional audit evidence | 2026-10-22T18:50:25.307Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `0acf0e89` | Multi-dimensional audit evidence | 2026-10-22T18:50:29.966Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `b45055d1` | Multi-dimensional audit evidence | 2026-10-22T18:56:56.015Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `d1936d74` | Multi-dimensional audit evidence | 2026-10-22T18:56:56.080Z |

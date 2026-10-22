@@ -4393,3 +4393,5 @@
 | `CYCLE-20261022-BU20` | `2026-10-22T18:50:19.752Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3698` | Yes (`21fb3b28...`) |
 | `CYCLE-20261022-BYC7` | `2026-10-22T18:50:25.303Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3699` | Yes (`5ecedee9...`) |
 | `CYCLE-20261022-C1XM` | `2026-10-22T18:50:29.962Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3700` | Yes (`05b9de94...`) |
+| `CYCLE-20261022-KBT8` | `2026-10-22T18:56:56.012Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3701` | Yes (`c0ffe9f8...`) |
+| `CYCLE-20261022-KBV1` | `2026-10-22T18:56:56.077Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3702` | Yes (`51940044...`) |
