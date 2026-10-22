@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "3f85d92b",
+    "sourceVersion": "b50fa327",
     "license": "NOASSERTION",
-    "contentHash": "df3e644f517054f6bfae3bf37450650e48293b5717f2dce5b3fb784f7e29d3b4",
-    "lastHarvestedAt": "2026-10-21T18:46:09.108Z",
+    "contentHash": "25acc29f4f741c778632e9668f10edbdbe57752c7f7b96d3679d6fe8d7043bca",
+    "lastHarvestedAt": "2026-10-22T15:42:14.682Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "2d1fc1de",
+    "sourceVersion": "8035d117",
     "license": "NOASSERTION",
-    "contentHash": "27cf1079ef5c70a814cb40d2d1278a2d64ad2ebb9f8c8f79415797ba95097eed",
-    "lastHarvestedAt": "2026-10-19T10:28:56.133Z",
+    "contentHash": "3ee04516dac0067e13ee4bc1069a7ddb15dbc117f6c0fc75e1da84190b7b8e40",
+    "lastHarvestedAt": "2026-10-22T15:42:08.575Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "f314e81f",
+    "sourceVersion": "37683a22",
     "license": "Apache-2.0",
-    "contentHash": "05ef0a0a95348c22b4adf3446aa5d025059b344956424f512c1273634f245a5f",
-    "lastHarvestedAt": "2026-10-20T04:15:54.875Z",
+    "contentHash": "a52dc629b26e0d06ddfec5e81d2cf07cd8952aa9d09d98bb328103a68f259e05",
+    "lastHarvestedAt": "2026-10-22T15:42:08.174Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "545c995b",
+    "sourceVersion": "0a975e83",
     "license": "MPL-2.0",
-    "contentHash": "1b60ace1a506d0776ca4e6a960eef923210861cfa86225d200b4e30e538814ed",
-    "lastHarvestedAt": "2026-10-20T21:34:02.045Z",
+    "contentHash": "5d7ddc00ef533a632c2df5f3a0e096ad456f09109a48a3717efd03c79d4bfb16",
+    "lastHarvestedAt": "2026-10-22T15:42:04.934Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

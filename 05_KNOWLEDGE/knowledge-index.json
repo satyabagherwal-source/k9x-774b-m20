@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T15:35:37.507Z",
+  "last_updated": "2026-10-22T15:42:14.631Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2210,8 +2210,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "f314e81f",
-      "content_hash": "05ef0a0a95348c22b4adf3446aa5d025059b344956424f512c1273634f245a5f",
+      "source_version": "37683a22",
+      "content_hash": "a52dc629b26e0d06ddfec5e81d2cf07cd8952aa9d09d98bb328103a68f259e05",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2229,6 +2229,11 @@
           "number": 3038,
           "title": "stale references to .actor.cpp files in two comments (#14286)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3610,
+          "title": "Merge pull request #14297 from akshay-v-kaushik/LogFailedRecruitment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2236,7 +2241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:15:54.815Z",
+      "verified_at": "2026-10-22T15:42:08.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7232,8 +7237,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "3f85d92b",
-      "content_hash": "df3e644f517054f6bfae3bf37450650e48293b5717f2dce5b3fb784f7e29d3b4",
+      "source_version": "b50fa327",
+      "content_hash": "25acc29f4f741c778632e9668f10edbdbe57752c7f7b96d3679d6fe8d7043bca",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7361,6 +7366,11 @@
           "number": 3589,
           "title": "completions): regenerate shell completions (#4868)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3612,
+          "title": "deps: update lock file for various security fixes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7368,7 +7378,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:46:09.071Z",
+      "verified_at": "2026-10-22T15:42:14.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7586,8 +7596,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "2d1fc1de",
-      "content_hash": "27cf1079ef5c70a814cb40d2d1278a2d64ad2ebb9f8c8f79415797ba95097eed",
+      "source_version": "8035d117",
+      "content_hash": "3ee04516dac0067e13ee4bc1069a7ddb15dbc117f6c0fc75e1da84190b7b8e40",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -7600,6 +7610,11 @@
           "number": 2493,
           "title": "add job to ci (#3885)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3611,
+          "title": "improve graceful shutdown handling (#3888)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7607,7 +7622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:28:56.078Z",
+      "verified_at": "2026-10-22T15:42:08.522Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36829,8 +36844,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "545c995b",
-      "content_hash": "1b60ace1a506d0776ca4e6a960eef923210861cfa86225d200b4e30e538814ed",
+      "source_version": "0a975e83",
+      "content_hash": "5d7ddc00ef533a632c2df5f3a0e096ad456f09109a48a3717efd03c79d4bfb16",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -36848,6 +36863,11 @@
           "number": 3395,
           "title": "exec: \"Forgetting\" modeled in the execution graph",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3609,
+          "title": "Config driven imports in new runtime",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36855,7 +36875,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:34:01.969Z",
+      "verified_at": "2026-10-22T15:42:04.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109476,6 +109496,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T15:35:37.492Z"
+    },
+    "rule-3609": {
+      "learning_id": "rule-3609",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3609,
+      "title": "Config driven imports in new runtime",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "0a975e83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:42:04.870Z"
+    },
+    "rule-3610": {
+      "learning_id": "rule-3610",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3610,
+      "title": "Merge pull request #14297 from akshay-v-kaushik/LogFailedRecruitment",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "37683a22",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:42:08.121Z"
+    },
+    "rule-3611": {
+      "learning_id": "rule-3611",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3611,
+      "title": "improve graceful shutdown handling (#3888)",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "8035d117",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:42:08.522Z"
+    },
+    "rule-3612": {
+      "learning_id": "rule-3612",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3612,
+      "title": "deps: update lock file for various security fixes",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "b50fa327",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:42:14.622Z"
     }
   },
   "aliases": {

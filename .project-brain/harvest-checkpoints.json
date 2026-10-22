@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T15:35:37.572Z",
+  "last_updated": "2026-10-22T15:42:14.694Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "df3e644f517054f6bfae3bf37450650e48293b5717f2dce5b3fb784f7e29d3b4",
-      "verified_at": "2026-10-21T18:46:09.116Z",
+      "content_hash": "25acc29f4f741c778632e9668f10edbdbe57752c7f7b96d3679d6fe8d7043bca",
+      "verified_at": "2026-10-22T15:42:14.693Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:46:09.116Z"
+      "last_updated": "2026-10-22T15:42:14.693Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "27cf1079ef5c70a814cb40d2d1278a2d64ad2ebb9f8c8f79415797ba95097eed",
-      "verified_at": "2026-10-19T10:28:56.140Z",
+      "content_hash": "3ee04516dac0067e13ee4bc1069a7ddb15dbc117f6c0fc75e1da84190b7b8e40",
+      "verified_at": "2026-10-22T15:42:08.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:28:56.140Z"
+      "last_updated": "2026-10-22T15:42:08.585Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "05ef0a0a95348c22b4adf3446aa5d025059b344956424f512c1273634f245a5f",
-      "verified_at": "2026-10-20T04:15:54.882Z",
+      "content_hash": "a52dc629b26e0d06ddfec5e81d2cf07cd8952aa9d09d98bb328103a68f259e05",
+      "verified_at": "2026-10-22T15:42:08.184Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:15:54.882Z"
+      "last_updated": "2026-10-22T15:42:08.184Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "1b60ace1a506d0776ca4e6a960eef923210861cfa86225d200b4e30e538814ed",
-      "verified_at": "2026-10-20T21:34:02.053Z",
+      "content_hash": "5d7ddc00ef533a632c2df5f3a0e096ad456f09109a48a3717efd03c79d4bfb16",
+      "verified_at": "2026-10-22T15:42:04.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:34:02.053Z"
+      "last_updated": "2026-10-22T15:42:04.941Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",

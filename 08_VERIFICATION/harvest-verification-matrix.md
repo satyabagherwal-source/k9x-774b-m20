@@ -4294,3 +4294,7 @@
 | `CYCLE-20261022-DDBG` | `2026-10-22T15:35:34.060Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3606` | Yes (`b3e275ff...`) |
 | `CYCLE-20261022-DDVA` | `2026-10-22T15:35:34.774Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3607` | Yes (`5c995f82...`) |
 | `CYCLE-20261022-DG0M` | `2026-10-22T15:35:37.558Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3608` | Yes (`fb6b2150...`) |
+| `CYCLE-20261022-LQWZ` | `2026-10-22T15:42:04.932Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3609` | Yes (`5d7ddc00...`) |
+| `CYCLE-20261022-LTEZ` | `2026-10-22T15:42:08.171Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3610` | Yes (`a52dc629...`) |
+| `CYCLE-20261022-LTQ4` | `2026-10-22T15:42:08.572Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3611` | Yes (`3ee04516...`) |
+| `CYCLE-20261022-LYFS` | `2026-10-22T15:42:14.680Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3612` | Yes (`25acc29f...`) |

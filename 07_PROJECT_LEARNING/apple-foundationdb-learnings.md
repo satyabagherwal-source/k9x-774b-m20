@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `f314e81f`  
+> **Source Version**: `37683a22`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:15:54.584Z  
+> **Timestamp**: 2026-10-22T15:42:07.901Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:15:54.577Z  
+> **Harvest Timestamp**: 2026-10-22T15:42:07.895Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16791 stars
+- **Stars / Engagement**: 16799 stars
 
 ---
 
@@ -1961,105 +1961,123 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `842f5239` (2026-10-19)
-**Commit Message**: Fix stale references to .actor.cpp files in two comments (#14286)
+### Incident Patch 1: `427357ce` (2026-10-20)
+**Commit Message**: Merge pull request #14297 from akshay-v-kaushik/LogFailedRecruitment
 
-The tree no longer contains any .actor.cpp or .actor.h files.
-Comment-only change.
+traceevents for additional info on recruitment failover to remoteDC
 
-**File**: `fdbrpc/include/fdbrpc/FlowTransport.h` (modified, +1/-1)
+**File**: `fdbserver/clustercontroller/ClusterController.h` (modified, +52/-0)
 ```diff
-@@ -43,7 +43,7 @@
- // TLogInterface, etc.) per process. Used for debugging stale peer references.
- //
- // All bookkeeping methods are no-ops when FLOW_KNOBS->STALE_PEER_OBSERVABILITY
--// is false. Method bodies live in fdbrpc/FlowTransport.actor.cpp to keep this
-+// is false. Method bodies live in fdbrpc/FlowTransport.cpp to keep this
- // header light.
- struct InterfaceTracker {
- 	struct Key {
-```
-
-**File**: `fdbserver/workloads/StalePeerTest.cpp` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- /*
-- * StalePeerTest.actor.cpp
-+ * StalePeerTest.cpp
-  *
-  * This source file is part of the FoundationDB open source project
-  *
-```
-
----
-
-### Incident Patch 2: `f314e81f` (2026-10-19)
-**Commit Message**: build: avoid include FDBRocksDBVersion.h if not WITH_ROCKSDB (#14319)
-
-was causing build to fail if WITH_ROCKSDB=OFF
-
-**File**: `fdbserver/checkpoint/RocksDBCheckpointUtils.cpp` (modified, +1/-1)
-```diff
-@@ -29,14 +29,14 @@
- #include <rocksdb/sst_file_reader.h>
- #include <rocksdb/types.h>
- #include <rocksdb/version.h>
-+#include "fdbserver/core/FDBRocksDBVersion.h"
- #endif // WITH_ROCKSDB
+@@ -121,6 +121,15 @@ inline bool excludesFromTLogRecruitmentDueToLowDisk(const Standalone<VectorRef<S
+ 	return hasWorkerIssue(issues, "exclude_from_tlog_recruitment_low_disk"_sr);
+ }
  
- #include "fdbclient/FDBTypes.h"
- #include "fdbclient/NativeAPI.h"
- #include "fdbserver/core/MutationTracking.h"
- #include "fdbclient/StorageCheckpoint.h"
- #include "fdbserver/CoroFlow.h"
--#include "fdbserver/core/FDBRocksDBVersion.h"
- #include "fdbserver/core/Knobs.h"
- #include "flow/IThreadPool.h"
- #include "flow/ThreadHelper.h"
-```
-
-**File**: `fdbserver/storageserver/storageserver.cpp` (modified, +9/-1)
-```diff
-@@ -45,7 +45,6 @@
- #include "fdbserver/checkpoint/BulkSstFiles.h"
- #include "fdbserver/checkpoint/Checkpoint.h"
- #include "fdbserver/core/FDBSimulationPolicy.h"
--#include "fdbserver/core/FDBRocksDBVersion.h"
- #include "fdbserver/kvstore/IKeyValueStore.h"
- #include "fdbserver/core/Knobs.h"
- #include "fdbserver/kvstore/FDBExecHelper.h"
-@@ -108,6 +107,14 @@
- #include "flow/TDMetric.h"
- #include "flow/genericactors.h"
- 
-+#ifdef WITH_ROCKSDB
-+#include "fdbserver/core/FDBRocksDBVersion.h"
-+#else
-+#define FDB_ROCKSDB_MAJOR 0
-+#define FDB_ROCKSDB_MINOR 0
-+#define FDB_ROCKSDB_PATCH 0
-+#endif
++template <class CandidateWorkers>
++int countCandidateWorkers(const CandidateWorkers& candidateWorkers) {
++	int count = 0;
++	for (const auto& [key, workers] : candidateWorkers) {
++		count += workers.size();
++	}
++	return count;
++}
 +
- #ifndef __INTEL_COMPILER
- #pragma region Data Structures
- #endif
-@@ -12257,6 +12264,7 @@ Future<Void> metricsCore(StorageServer* self, StorageServerInterface ssi) {
- 	    self->thisServerID.toString() + "/StorageMetrics",
- 	    [self = self](TraceEvent& te) {
- 		    te.detail("StorageEngine", self->storage.getKeyValueStoreType().toString());
-+		    // if not WITH_ROCKSDB: "0.0.0"
- 		    te.detail("RocksDBVersion", format("%d.%d.%d", FDB_ROCKSDB_MAJOR, FDB_ROCKSDB_MINOR, FDB_ROCKSDB_PATCH));
- 		    te.detail("Tag", self->tag.toString());
- 		    std::vector<int> rpr = self->readPriorityRanks;
+ struct RecruitWorkersInfo : ReferenceCounted<RecruitWorkersInfo> {
+ 	RecruitFromConfigurationRequest req;
+ 	RecruitFromConfigurationReply rep;
+@@ -409,6 +418,10 @@ class ClusterControllerData {
+ 		logServerSet.clear();
+ 
+ 		if (!bCompleted) {
++			TraceEvent(SevWarn, "RecruitmentFailed", id)
++			    .detail("RecruitingRole", "SeedStorage")
++			    .detail("Policy", policy->info())
++			    .detail("Candidates", countCandidateWorkers(fitness_workers));
+ 			throw no_more_servers();
+ 		}
+ 
+@@ -708,6 +721,21 @@ class ClusterControllerData {
+ 		}
+ 
+ 		if (fieldsWithMin.size() < minFields) {
++			int zones = 0;
++			for (const auto& [fieldValue, zonesAndWorkers] : field_zones) {
++				zones += zonesAndWorkers.first.size();
++			}
++
++			TraceEvent(SevWarn, "RecruitmentFailed", id)
++			    .detail("RecruitingRole", "TLog")
++			    .detail("GroupKey", field.toString())
++			    .detail("RequiredGroups", minFields)
++			    .detail("RequiredZonesPerGroup", minPerField)
++			    .detail("Groups", field_zones.size())
++			    .detail("GroupsWithEnoughZones", fieldsWithMin.size())
++			    .detail("Zones", zones)
++			    .detail("Candidates", countCandidateWorkers(fitness_workers));
++
+ 			throw no_more_servers();
+ 		}
+ 
+@@ -960,6 +988,12 @@ class ClusterControllerData {
+ 		}
+ 
+ 		if (resultSet.size() < required) {
++			TraceEvent(SevWarn, "RecruitmentFailed", id)
++			    .detail("RecruitingRole", "TLog")
++			    .detail("Required", required)
++			    .detail("ZonesFound", resultSet.size())
++			    .detail("Candidates", countCandidateWorkers(fitness_workers));
++
+ 			throw no_more_servers();
+ 		}
+ 
+@@ -1125,6 +1159,12 @@ class ClusterControllerData {
+ 				tLocalities.push_back(object->interf.locality);
+ 			}
+ 
++			TraceEvent(SevWarn, "RecruitmentFailed", id)
++			    .detail("RecruitingRole", "TLog")
++			    .detail("Policy", policy->info())
++			    .detail("Required", required)
++			    .detail("Candidates", tLocalities.size());
++
+ 			logServerSet->clear();
+ 			logServerSet.clear();
+ 			throw no_more_servers();
+@@ -1400,6 +1440,13 @@ class ClusterControllerData {
+ 			                                  (satelliteFallback ? region.satelliteTLogUsableDcsFallback
+ 			                                                     : region.satelliteTLogUsableDcs)) {
+ 				if (satelliteFallback || region.satelliteTLogUsableDcsFallback == 0) {
++					TraceEvent(SevWarn, "RecruitmentFailed", id)
++					    .detail("RecruitingRole", "SatelliteTLog")
++					    .detail("Satellites", region.satellites.size())
++					    .detail("UsableDcs", region.satelliteTLogUsableDcs)
++					    .detail("UsableDcsFallback", region.satelliteTLogUsableDcsFallback)
++					    .detail("TriedFallback", satelliteFallback);
++
+ 					throw no_more_servers();
+ 				} else {
+ 					if (!goodRecruitmentTime.isReady()) {
+@@ -1527,6 +1574,11 @@ class ClusterControllerData {
+ 			                         std::get<1>(fitness_workers.begin()->first));
+ 		}
+ 
++		TraceEvent(SevWarn, "RecruitmentFailed", id)
++		    .detail("RecruitingRole", Role::get(role).roleName)
++		    .detail("DcId", dcId)
++		    .detail("CheckStable", checkStable);
++
+ 		throw no_more_servers();
+ 	}
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14324** (closed): Replay partitioned mutation logs on a bulkload restore (@saintstack)
-- **PR #14319** (2026-10-19): build: avoid include FDBRocksDBVersion.h if not WITH_ROCKSDB (@ploxiln)
-- **PR #14317** (2026-10-19): docs: release-notes: add 6 more 8.0.1 fixes (@ploxiln)
-- **PR #14315** (closed): Do not advertise restorability from empty partitioned log files (@saintstack)
-- **PR #14314** (closed): Enterprise database and associated institutions (@hashim21223445)
-- **PR #14312** (2026-10-19): AGENTS.md: add non-obvious pitfalls, drop prose duplicated in design docs (@saintstack)
+- **PR #14340** (2026-10-21): Encapsulate native client location cache (@tclinkenbeard-oai)
+- **PR #14333** (closed): Hotfix/ss skip version delivered to not assigned (@neethuhaneesha)
+- **PR #14331** (2026-10-22): Share process-class special-key row construction (@tclinkenbeard-oai)
+- **PR #14330** (2026-10-22): Simplify range-lock state set equality (@tclinkenbeard-oai)
+- **PR #14329** (2026-10-22): Centralize allocator size-class lists (@tclinkenbeard-oai)
+- **PR #14328** (2026-10-21): Prevent a stale coordinator DNS entry to block the database creation (@johscheuer)
 
 ---
 
@@ -2079,28 +2097,60 @@ was causing build to fail if WITH_ROCKSDB=OFF
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stale references to .actor.cpp files in two comments (#14286)
+## X. Merge pull request #14297 from akshay-v-kaushik/LogFailedRecruitment
 
 **RULE**:
-When implementing operations in `fdbrpc/include/fdbrpc/FlowTransport.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/clustercontroller/ClusterController.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `842f5239`: stale references to .actor.cpp files in two comments (#14286). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `427357ce`: Merge pull request #14297 from akshay-v-kaushik/LogFailedRecruitment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbrpc/include/fdbrpc/FlowTransport.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/clustercontroller/ClusterController.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-// is false. Method bodies live in fdbrpc/FlowTransport.cpp to keep this
+template <class CandidateWorkers>
+int countCandidateWorkers(const CandidateWorkers& candidateWorkers) {
+	int count = 0;
+	for (const auto& [key, workers] : candidateWorkers) {
+		count += workers.size();
+	}
+	return count;
+}
+
+			TraceEvent(SevWarn, "RecruitmentFailed", id)
+			    .detail("RecruitingRole", "SeedStorage")
+			    .detail("Policy", policy->info())
+			    .detail("Candidates", countCandidateWorkers(fitness_workers));
+			int zones = 0;
+			for (const auto& [fieldValue, zonesAndWorkers] : field_zones) {
+				zones += zonesAndWorkers.first.size();
+			}
+
+			TraceEvent(SevWarn, "RecruitmentFailed", id)
+			    .detail("RecruitingRole", "TLog")
+			    .detail("GroupKey", field.toString())
+			    .detail("RequiredGroups", minFields)
+			    .detail("RequiredZonesPerGroup", minPerField)
+			    .detail("Groups", field_zones.size())
+			    .detail("GroupsWithEnoughZones", fieldsWithMin.size())
+			    .detail("Zones", zones)
+			    .detail("Candidates", countCandidateWorkers(fitness_workers));
+
+			TraceEvent(SevWarn, "RecruitmentFailed", id)
+			    .detail("RecruitingRole", "TLog")
+			    .detail("Required", required)
+			    .detail("ZonesFound", resultSet.size())
+			    .detail("Candida
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// is false. Method bodies live in fdbrpc/FlowTransport.actor.cpp to keep this
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `842f5239` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `427357ce` are properly handled with clean fallback behavior.

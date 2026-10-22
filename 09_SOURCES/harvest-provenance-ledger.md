@@ -4301,3 +4301,7 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a7796e20` | Multi-dimensional audit evidence | 2026-10-22T15:35:34.062Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `efd3e6e1` | Multi-dimensional audit evidence | 2026-10-22T15:35:34.776Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `8ce5fc8b` | Multi-dimensional audit evidence | 2026-10-22T15:35:37.561Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `0a975e83` | Multi-dimensional audit evidence | 2026-10-22T15:42:04.934Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `37683a22` | Multi-dimensional audit evidence | 2026-10-22T15:42:08.174Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `8035d117` | Multi-dimensional audit evidence | 2026-10-22T15:42:08.575Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b50fa327` | Multi-dimensional audit evidence | 2026-10-22T15:42:14.682Z |

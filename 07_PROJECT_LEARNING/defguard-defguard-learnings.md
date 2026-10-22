@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `2d1fc1de`  
+> **Source Version**: `8035d117`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:28:55.876Z  
+> **Timestamp**: 2026-10-22T15:42:08.301Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:28:55.869Z  
+> **Harvest Timestamp**: 2026-10-22T15:42:08.295Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2876 stars
+- **Stars / Engagement**: 2881 stars
 
 ---
 
@@ -2143,52 +2143,771 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d1fc1de` (2026-10-19)
-**Commit Message**: add job to ci (#3885)
+### Incident Patch 1: `b992d2a0` (2026-10-21)
+**Commit Message**: improve graceful shutdown handling (#3888)
 
-**File**: `.github/workflows/current.yml` (modified, +28/-0)
+* handle SIGTERM & try to shutdown gateway manager gracefully
+
+* handle shutdown signal in proxy manager
+
+* log specific error if another core is connected to GW
+
+* update deny config
+
+* mark components as disconnected during shutdown
+
+**File**: `Cargo.lock` (modified, +122/-14)
 ```diff
-@@ -49,3 +49,31 @@ jobs:
-     uses: ./.github/workflows/alert-e2e-failure.yml
-     secrets:
-       ALERT_TOKEN: ${{ secrets.ALERT_TOKEN }}
+@@ -88,12 +88,12 @@ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
+ 
+ [[package]]
+ name = "ammonia"
+-version = "4.1.4"
++version = "4.2.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "dc6d763210e2eb7670d1a5183a08bebefa3f97db2a738a684f2ce00bd49f681d"
++checksum = "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
+ dependencies = [
+- "cssparser",
+- "html5ever",
++ "cssparser 0.38.0",
++ "html5ever 0.40.1",
+  "maplit",
+  "url",
+ ]
+@@ -1223,8 +1223,8 @@ version = "0.21.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7712a34dea84441c915bf8fbd94c78ce024f0f902dc333a4fa43510e047479f0"
+ dependencies = [
+- "cssparser",
+- "html5ever",
++ "cssparser 0.37.0",
++ "html5ever 0.39.0",
+  "lru",
+  "memchr",
+  "precomputed-hash",
+@@ -1249,6 +1249,17 @@ dependencies = [
+  "smallvec",
+ ]
+ 
++[[package]]
++name = "cssparser"
++version = "0.38.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "11119743ad110e8c1bdccd930d7f5c30c99e5fc76a7b63ec9807e84eef0c5f59"
++dependencies = [
++ "dtoa-short",
++ "itoa",
++ "smallvec",
++]
 +
-+  deploy-stable:
-+    needs: build-current
-+    if: github.event_name == 'push' && startsWith(github.ref_name, 'stable/2.')
-+    runs-on: ubuntu-latest
-+    permissions:
-+      id-token: write
-+      contents: read
-+    steps:
-+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
-+        with:
-+          aws-region: eu-central-1
-+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-+      - name: Update stable instance
-+        run: |
-+          version=${GITHUB_REF_NAME#stable/}
-+          name=defguard-stable-${version//./}
-+          id=$(aws ec2 describe-instances \
-+            --filters "Name=tag:Name,Values=$name" Name=instance-state-name,Values=running \
-+            --query 'Reservations[0].Instances[0].InstanceId' --output text)
-+          if [ "$id" = "None" ]; then
-+            echo "::notice::No running instance $name, skipping"
-+            exit 0
-+          fi
-+          cmd=$(aws ssm send-command --instance-ids "$id" --document-name AWS-RunShellScript \
-+            --parameters 'commands=["cd /home/admin/defguard && docker compose pull -q && docker compose up -d"]' \
-+            --query Command.CommandId --output text)
-+          aws ssm wait command-executed --command-id "$cmd" --instance-id "$id"
+ [[package]]
+ name = "cssparser-macros"
+ version = "0.7.0"
+@@ -2912,7 +2923,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "46a1761807faccc9a19e86944bbf40610014066306f96edcdedc2fb714bcb7b8"
+ dependencies = [
+  "log",
+- "markup5ever",
++ "markup5ever 0.39.0",
++]
++
++[[package]]
++name = "html5ever"
++version = "0.40.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "456a1a377e608e555d22ddab27ac0114bc7a7b4199078108e34c2aeae6c9b130"
++dependencies = [
++ "log",
++ "markup5ever 0.40.0",
++ "memchr",
+ ]
+ 
+ [[package]]
+@@ -3726,7 +3748,18 @@ checksum = "7122d987ec5f704ee56f6e5b41a7d93722e9aae27ae07cafa4036c4d3f9757de"
+ dependencies = [
+  "log",
+  "tendril",
+- "web_atoms",
++ "web_atoms 0.2.6",
++]
++
++[[package]]
++name = "markup5ever"
++version = "0.40.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0ab3dc68ac4a0f5719e560136778c1ee716e296030d75dbd4484e37e39e3a842"
++dependencies = [
++ "log",
++ "tendril",
++ "web_atoms 0.3.0",
+ ]
+ 
+ [[package]]
+@@ -4726,6 +4759,16 @@ dependencies = [
+  "serde",
+ ]
+ 
++[[package]]
++name = "phf"
++version = "0.14.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "010378780309880b08997fae13be7834dba947d36393bd372f2b1556deb2a2f6"
++dependencies = [
++ "phf_shared 0.14.0",
++ "serde",
++]
++
+ [[package]]
+ name = "phf_codegen"
+ version = "0.11.3"
+@@ -4746,6 +4789,16 @@ dependencies = [
+  "phf_shared 0.13.1",
+ ]
+ 
++[[package]]
++name = "phf_codegen"
++version = "0.14.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "41b585a510fb76fdebead6897982ef2a03a21d8e6cbcca904999742a4afc6ffe"
++dependencies = [
++ "phf_generator 0.14.0",
++ "phf_shared 0.14.0",
++]
++
+ [[package]]
+ name = "phf_generator"
+ version = "0.11.3"
+@@ -4766,6 +4819,16 @@ dependencies = [
+  "phf_shared 0.13.1",
+ ]
+ 
++[[package]]
++name = "phf_generator"
++version = "0.14.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "aeb62e0959d5a1bebc965f4d15d9e2b7cea002b6b0f5ba8cde6cc26738467100"
++dependencies = [
++ "fastrand",
++ "phf_shared 0.14.0",
++]
++
+ [[package]]
+ name = "phf_macros"
+ version = "0.13.1"
+@@ -4797,6 +4860,15 @@ dependencies = [
+  "siphasher",
+ ]
+ 
++[[package]]
++name = "phf_shared"
++version = "0.14.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c6fd9027e2d9319be6349febd1db4e8d02aa544921200c9b777720ac34a3aa89"
++dependencies = [
++ "siphasher",
++]
++
+ [[package]]
+ name = "pin-project"
+ version = "1.1.13"
+@@ -5699,9 +5771,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustls"
+-version = "0.23.45"
++version = "0.23.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+ dependencies = [
+  "aws-lc-rs",
+  "log",
+@@ -5862,7 +5934,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "eeee001a77567bb05e71652718d3ff76d8697c151ac523e68e9513194eb2b75a"
+ dependencies = [
+  "bitflags 2.13.1",
+- "cssparser",
++ "cssparser 0.37.0",
+  "derive_more 2.1.1",
+  "log",
+  "new_debug_unreachable",
+@@ -6577,6 +6649,18 @@ dependencies = [
+  "precomputed-hash",
+ ]
+ 
++[[package]]
++name = "string_cache"
++version = "0.11.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ffa8a5dbe8b3f0bbe29d4c3225daafaeead63afdc1b65fc4c01a1384166038e6"
++dependencies = [
++ "new_debug_unreachable",
++ "parking_lot",
++ "phf_shared 0.14.0",
++ "precomputed-hash",
++]
++
+ [[package]]
+ name = "string_cache_codegen"
+ version = "0.6.1"
+@@ -6589,6 +6673,18 @@ dependencies = [
+  "quote",
+ ]
+ 
++[[package]]
++name = "string_cache_codegen"
++version = "0.11.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum
+```
+
+**File**: `crates/defguard/src/main.rs` (modified, +50/-3)
+```diff
+@@ -2,6 +2,7 @@ use std::{
+     collections::HashSet,
+     fs::read_to_string,
+     sync::{Arc, Mutex, RwLock},
++    time::Duration,
+ };
+ 
+ use anyhow::bail;
+@@ -52,18 +53,23 @@ use defguard_setup::{
+ };
+ use defguard_vpn_stats_purge::run_periodic_stats_purge;
+ use secrecy::ExposeSecret;
++#[cfg(unix)]
++use tokio::signal::unix::{SignalKind, signal};
+ use tokio::{
+     signal::ctrl_c,
+     sync::{
+         broadcast,
+         mpsc::{channel, unbounded_channel},
+     },
++    time::timeout,
+ };
+ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+ 
+ #[macro_use]
+ extern crate tracing;
+ 
++const MANAGER_SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(2);
++
+ #[tokio::main]
+ async fn main() -> Result<(), anyhow::Error> {
+     rustls::crypto::ring::default_provider()
+@@ -362,10 +368,16 @@ async fn main() -> Result<(), anyhow::Error> {
+     Gateway::mark_all_disconnected(&pool).await?;
+     debug!("Gateway connection states reset");
+ 
++    let (shutdown_tx, shutdown_rx) = tokio::sync::watch::channel(false);
++    let proxy_manager_run = proxy_manager.run(shutdown_rx.clone());
++    let gateway_manager_run = gateway_manager.run(shutdown_rx);
++    tokio::pin!(proxy_manager_run);
++    tokio::pin!(gateway_manager_run);
++
+     // run services
+     tokio::select! {
+-        res = proxy_manager.run() => bail!("ProxyManager returned early: {res:?}"),
+-        res = gateway_manager.run() => bail!("GatewayManager returned early: {res:?}"),
++        res = &mut proxy_manager_run => bail!("ProxyManager returned early: {res:?}"),
++        res = &mut gateway_manager_run => bail!("GatewayManager returned early: {res:?}"),
+         res = run_grpc_server(
+             Arc::clone(&worker_state),
+             pool.clone(),
+@@ -419,6 +431,41 @@ async fn main() -> Result<(), anyhow::Error> {
+             session_manager_event_tx,
+             gateway_tx
+         ) => bail!("VPN client session manager returned early: {res:?}"),
+-        _ = ctrl_c() => Ok(()),
++        signal = shutdown_signal() => signal?,
++    }
++
++    shutdown_tx.send_replace(true);
++    // Bound the combined wait; the managers perform their own cleanup.
++    match timeout(MANAGER_SHUTDOWN_TIMEOUT, async {
++        tokio::join!(&mut proxy_manager_run, &mut gateway_manager_run)
++    })
++    .await
++    {
++        Ok((Ok(()), Ok(()))) => info!("ProxyManager and GatewayManager stopped"),
++        Ok((proxy_result, gateway_result)) => {
++            if let Err(err) = proxy_result {
++                error!("ProxyManager shutdown failed: {err}");
++            }
++            if let Err(err) = gateway_result {
++                error!("GatewayManager shutdown failed: {err}");
++            }
++        }
++        Err(_) => error!("Timed out waiting for managers to shut down"),
+     }
++
++    Ok(())
++}
++
++async fn shutdown_signal() -> std::io::Result<()> {
++    #[cfg(unix)]
++    {
++        let mut terminate = signal(SignalKind::terminate())?;
++        tokio::select! {
++            result = ctrl_c() => result,
++            _ = terminate.recv() => Ok(()),
++        }
++    }
++
++    #[cfg(not(unix))]
++    ctrl_c().await
+ }
+```
+
+**File**: `crates/defguard_gateway_manager/src/handler.rs` (modified, +40/-2)
+```diff
+@@ -106,6 +106,10 @@ pub(crate) struct GatewayHandler {
+     test_support: Option<GatewayManagerTestSupport>,
+ }
+ 
++fn is_gateway_already_connected(err: &Status) -> bool {
++    err.code() == Code::Internal && err.message() == "Client already connected"
++}
++
+ impl GatewayHandler {
+     pub fn new(
+         gateway: Gateway<Id>,
+@@ -496,6 +500,10 @@ impl GatewayHandler {
+         retry_on_connect_failure: bool,
+         retry_delay: Duration,
+     ) {
++        if let Some(handle) = self.updates_handler_handle.take() {
++            handle.abort();
++            let _ = handle.await;
++        }
+         self.remove_client(clients);
+         self.handle_disconnection_error().await;
+ 
+@@ -531,7 +539,19 @@ impl GatewayHandler {
+         let response = match client.bidi(UnboundedReceiverStream::new(rx)).await {
+             Ok(response) => response,
+             Err(err) => {
+-                error!("Failed to connect to Gateway {uri}, retrying: {err}");
++                if is_gateway_already_connected(&err) {
++                    if retry_on_connect_failure {
++                        warn!(
++                            "Gateway {uri} refused this Core because another Core is already connected; this Core will retry"
++                        );
++                    } else {
++                        warn!(
++                            "Gateway {uri} refused this Core because another Core is already connected"
++                        );
++                    }
++                } else {
++                    error!("Failed to connect to Gateway {uri}, retrying: {err}");
++                }
+                 if retry_on_connect_failure {
+                     sleep(retry_delay).await;
+                     return Ok(());
+@@ -1290,8 +1310,26 @@ mod tests {
+     use tokio::sync::{broadcast, mpsc::unbounded_channel, watch};
+ 
+     use super::{
+-        GatewayHandler, GatewayUpdatesHandler, WireguardPeer, try_protos_into_stats_message,
++        GatewayHandler, GatewayUpdatesHandler, WireguardPeer, is_gateway_already_connected,
++        try_protos_into_stats_message,
+     };
++    use tonic::{Code, Status};
++
++    #[test]
++    fn test_gateway_already_connected_requires_exact_status() {
++        assert!(is_gateway_already_connected(&Status::new(
++            Code::Internal,
++            "Client already connected",
++        )));
++        assert!(!is_gateway_already_connected(&Status::new(
++            Code::Internal,
++            "client already connected",
++        )));
++        assert!(!is_gateway_already_connected(&Status::new(
++            Code::AlreadyExists,
++            "Client already connected",
++        )));
++    }
+ 
+     fn test_network(location_mfa_mode: LocationMfaMode) -> WireguardNetwork<Id> {
+         WireguardNetwork::new(
+```
+
+**File**: `crates/defguard_gateway_manager/src/lib.rs` (modified, +16/-2)
+```diff
+@@ -419,7 +419,7 @@ impl GatewayManager {
+     }
+ 
+     /// Bi-directional gRPC stream for communication with Defguard Gateway.
+-    pub async fn run(&mut self) -> Result<(), anyhow::Error> {
++    pub async fn run(&mut self, mut shutdown_rx: Receiver<bool>) -> Result<(), anyhow::Error> {
+         let (certs_tx, certs_rx) = tokio::sync::watch::channel(Arc::new(HashMap::new()));
+         certs::refresh_certs(&self.pool, &certs_tx).await;
+         let refresh_pool = self.pool.clone();
+@@ -452,7 +452,21 @@ impl GatewayManager {
+         #[cfg(test)]
+         self.test_support.mark_listener_ready();
+ 
+-        while let Ok(notification) = listener.recv().await {
++        loop {
++            let notification = tokio::select! {
++                result = listener.recv() => match result {
++                    Ok(notification) => notification,
++                    Err(_) => break,
++                },
++                _ = shutdown_rx.changed() => {
++                    debug!("GatewayManager shutdown requested");
++                    self.handlers.abort_all();
++                    // Drain aborted handlers before returning so their state is dropped.
++                    while self.handlers.join_next().await.is_some() {}
++                    Gateway::mark_all_disconnected(&self.pool).await?;
++                    return Ok(());
++                }
++            };
+             let payload = notification.payload();
+             match serde_json::from_str::<ChangeNotification>(payload) {
+                 Ok(gateway_notification) => {
+```
+
+**File**: `crates/defguard_gateway_manager/src/tests/common/mod.rs` (modified, +103/-6)
+```diff
+@@ -89,11 +89,13 @@ struct MockGatewayService {
+ struct MockGatewayState {
+     outbound_tx: UnboundedSender<CoreResponse>,
+     inbound_rx: Mutex<Option<UnboundedReceiver<Result<CoreRequest, Status>>>>,
++    bidi_error: Mutex<Option<Status>>,
+     connected_tx: Mutex<Option<oneshot::Sender<()>>>,
+     connection_count: AtomicU16,
+     connection_notify: Notify,
+     purge_count: AtomicU16,
+     purge_notify: Notify,
++    core_stream_closed_tx: Mutex<Option<oneshot::Sender<()>>>,
+ }
+ 
+ impl MockGatewayState {
+@@ -119,10 +121,28 @@ impl MockGatewayState {
+             .ok_or_else(|| Status::failed_precondition("mock gateway already connected"))
+     }
+ 
++    fn take_bidi_error(&self) -> Option<Status> {
++        self.bidi_error
++            .lock()
++            .expect("failed to lock mock bidi error")
++            .take()
++    }
++
+     fn note_purge(&self) {
+         self.purge_count.fetch_add(1, Ordering::Relaxed);
+         self.purge_notify.notify_waiters();
+     }
++
++    fn note_core_stream_closed(&self) {
++        if let Some(tx) = self
++            .core_stream_closed_tx
++            .lock()
++            .expect("failed to lock Core stream close notifier")
++            .take()
++        {
++            let _ = tx.send(());
++        }
++    }
+ }
+ 
+ #[tonic::async_trait]
+@@ -133,15 +153,28 @@ impl gateway_server::Gateway for MockGatewayService {
+         &self,
+         request: Request<Streaming<CoreResponse>>,
+     ) -> Result<Response<Self::BidiStream>, Status> {
++        if let Some(status) = self.state.take_bidi_error() {
++            return Err(status);
++        }
++
+         let inbound_rx = self.state.take_inbound_rx()?;
+         self.state.notify_connected();
+ 
+         let mut outbound_stream = request.into_inner();
+         let outbound_tx = self.state.outbound_tx.clone();
++        let state = Arc::clone(&self.state);
+         tokio::spawn(async move {
+-            while let Ok(Some(response)) = outbound_stream.message().await {
+-                if outbound_tx.send(response).is_err() {
+-                    break;
++            loop {
++                match outbound_stream.message().await {
++                    Ok(Some(response)) => {
++                        if outbound_tx.send(response).is_err() {
++                            break;
++                        }
++                    }
++                    Ok(None) | Err(_) => {
++                        state.note_core_stream_closed();
++                        break;
++                    }
+                 }
+             }
+         });
+@@ -161,6 +194,7 @@ pub(crate) struct MockGatewayHarness {
+     inbound_tx: Option<UnboundedSender<Result<CoreRequest, Status>>>,
+     outbound_rx: UnboundedReceiver<CoreResponse>,
+     connected_rx: oneshot::Receiver<()>,
++    core_stream_closed_rx: Option<oneshot::Receiver<()>>,
+     server_task: Option<JoinHandle<Result<(), io::Error>>>,
+     next_message_id: AtomicU64,
+ }
+@@ -178,14 +212,17 @@ impl MockGatewayHarness {
+         let (outbound_tx, outbound_rx) = mpsc::unbounded_channel();
+         let (inbound_tx, inbound_rx) = mpsc::unbounded_channel();
+         let (connected_tx, connected_rx) = oneshot::channel();
++        let (core_stream_closed_tx, core_stream_closed_rx) = oneshot::channel();
+         let state = Arc::new(MockGatewayState {
+             outbound_tx,
+             inbound_rx: Mutex::new(Some(inbound_rx)),
++            bidi_error: Mutex::new(None),
+             connected_tx: Mutex::new(Some(connected_tx)),
+             connection_count: AtomicU16::new(0),
+             connection_notify: Notify::new(),
+             purge_count: AtomicU16::new(0),
+             purge_notify: Notify::new(),
++            core_stream_closed_tx: Mutex::new(Some(core_stream_closed_tx)),
+         });
+         let service = MockGatewayService {
+             state: Arc::clone(&state),
+@@ -206,6 +243,7 @@ impl MockGatewayHarness {
+             inbound_tx: Some(inbound_tx),
+             outbound_rx,
+             connected_rx,
++            core_stream_closed_rx: Some(core_stream_closed_rx),
+             server_task: Some(server_task),
+             next_message_id: AtomicU64::new(1),
+         }
+@@ -222,6 +260,17 @@ impl MockGatewayHarness {
+             .expect("mock gateway connection notifier dropped");
+     }
+ 
++    pub(crate) async fn wait_for_core_stream_closed(&mut self) {
++        let receiver = self
++            .core_stream_closed_rx
++            .take()
++            .expect("Core stream close receiver already taken");
++        timeout(Duration::from_secs(2), receiver)
++            .await
++            .expect("timed out waiting for Core stream to close")
++            .expect("Core stream close notifier dropped");
++    }
++
+     pub(crate) fn connection_count(&self) -> u16 {
+         self.state.connection_count.load(Ordering::Relaxed)
+     }
+@@ -278,6 +327,14 @@ impl MockGatewayHarness {
+         });
+     }
+ 
++    pub(crate) fn reject_next_bidi_with(&self, status: Status) {
++        *self
++            .state
++            .b
+```
+
+**File**: `crates/defguard_gateway_manager/src/tests/gateway_manager/handler/lifecycle.rs` (modified, +41/-1)
+```diff
+@@ -1,3 +1,8 @@
++use crate::tests::common::{
++    ManagerTestContext, MockGatewayHarness, complete_manager_handshake, create_gateway,
++    create_network,
++};
++
+ #[sqlx::test]
+ async fn test_gateway_is_marked_connected_after_successful_config_handshake(
+     _: PgPoolOptions,
+@@ -39,7 +44,7 @@ async fn test_gateway_is_marked_disconnected_when_stream_closes(
+     let mut connection_events_rx = context.take_connection_events_rx();
+ 
+     let pool = context.pool.clone();
+-    let mock_gateway = context.finish().await;
++    let mut mock_gateway = context.finish().await;
+     let disconnected_gateway = reload_gateway(&pool, gateway_id).await;
+     assert!(!disconnected_gateway.is_connected());
+     assert!(disconnected_gateway.disconnected_at.is_some());
+@@ -58,9 +63,44 @@ async fn test_gateway_is_marked_disconnected_when_stream_closes(
+         })
+     );
+ 
++    mock_gateway.wait_for_core_stream_closed().await;
+     mock_gateway.expect_server_finished().await;
+ }
+ 
++#[sqlx::test]
++async fn test_gateway_manager_shutdown_closes_stream_with_updates_handler_running(
++    _: PgPoolOptions,
++    options: PgConnectOptions,
++) {
++    let mut context = ManagerTestContext::new(options).await;
++    let network = create_network(&context.pool).await;
++    let gateway = create_gateway(&context.pool, network.id).await;
++    let mut mock_gateway = MockGatewayHarness::start().await;
++    context.register_gateway_mock(&gateway, &mock_gateway);
++
++    context.start().await;
++    complete_manager_handshake(&context, &gateway, &mut mock_gateway).await;
++    context.wait_for_updates_handler().await;
++
++    context.request_shutdown().await;
++
++    let stopped_gateway = reload_gateway(&context.pool, gateway.id).await;
++    assert!(!stopped_gateway.is_connected());
++    let connected_at = stopped_gateway
++        .connected_at
++        .expect("connected_at should be set after handshake");
++    let disconnected_at = stopped_gateway
++        .disconnected_at
++        .expect("disconnected_at should be set after manager shutdown");
++    assert!(
++        disconnected_at > connected_at,
++        "disconnected_at must be later than connected_at after shutdown"
++    );
++
++    mock_gateway.wait_for_core_stream_closed().await;
++    context.finish().await;
++}
++
+ #[sqlx::test]
+ async fn test_gateway_is_marked_disconnected_when_stream_errors(
+     _: PgPoolOptions,
+```
+
+**File**: `crates/defguard_gateway_manager/src/tests/gateway_manager/manager.rs` (modified, +40/-0)
+```diff
+@@ -316,6 +316,7 @@ async fn test_retries_after_stream_close_with_single_handler_supervisor(
+     let reconnect_socket_path = mock_gateway.socket_path();
+ 
+     mock_gateway.close_stream();
++    mock_gateway.wait_for_core_stream_closed().await;
+ 
+     let gateway_after_disconnect =
+         wait_for_gateway_connection_state(&context.pool, gateway.id, false).await;
+@@ -395,3 +396,42 @@ async fn test_retries_after_stream_error_with_single_handler_supervisor(
+ 
+     context.finish().await;
+ }
++
++#[sqlx::test]
++async fn test_retries_after_gateway_refuses_existing_core(
++    _: PgPoolOptions,
++    options: PgConnectOptions,
++) {
++    let mut context = ManagerTestContext::new(options).await;
++    let network = create_network(&context.pool).await;
++    let gateway = create_gateway(&context.pool, network.id).await;
++    let mock_gateway = MockGatewayHarness::start().await;
++    mock_gateway.reject_next_bidi_with(Status::internal("Client already connected"));
++    context.register_gateway_mock(&gateway, &mock_gateway);
++
++    let initial_spawn_attempts = context.handler_spawn_attempt_count(gateway.id);
++    let initial_connection_attempts = context.handler_connection_attempt_count(gateway.id);
++    let reconnect_socket_path = mock_gateway.socket_path();
++    context.start().await;
++    context
++        .wait_for_handler_connection_attempt_count(gateway.id, initial_connection_attempts + 1)
++        .await;
++    mock_gateway.expect_server_finished().await;
++
++    let mut replacement_mock_gateway = MockGatewayHarness::start_at(reconnect_socket_path).await;
++    replacement_mock_gateway.wait_for_connection_count(1).await;
++    context
++        .wait_for_handler_connection_attempt_count(gateway.id, initial_connection_attempts + 2)
++        .await;
++    complete_manager_handshake(&context, &gateway, &mut replacement_mock_gateway).await;
++
++    assert_eq!(replacement_mock_gateway.connection_count(), 1);
++    assert_eq!(
++        context.handler_spawn_attempt_count(gateway.id),
++        initial_spawn_attempts + 1,
++        "gateway refusal retries should keep a single handler supervisor"
++    );
++
++    context.finish().await;
++    replacement_mock_gateway.expect_server_finished().await;
++}
+```
+
+**File**: `crates/defguard_proxy_manager/src/lib.rs` (modified, +22/-9)
+```diff
+@@ -252,21 +252,13 @@ impl ProxyManager {
+     /// Spawns and supervises asynchronous tasks for all configured proxies.
+     ///
+     /// Each proxy runs in its own task and shares Core-side infrastructure
+-    pub async fn run(mut self) -> Result<(), ProxyError> {
++    pub async fn run(mut self, mut shutdown_rx: watch::Receiver<bool>) -> Result<(), ProxyError> {
+         debug!("ProxyManager starting");
+         let remote_mfa_responses = Arc::default();
+         let sessions = Arc::default();
+         let (certs_tx, certs_rx) = watch::channel(Arc::new(HashMap::new()));
+         // Prime the cache to avoid race with connection loop.
+         refresh_certs(&self.pool, &certs_tx).await;
+-        let refresh_pool = self.pool.clone();
+-        tokio::spawn(async move {
+-            loop {
+-                refresh_certs(&refresh_pool, &certs_tx).await;
+-                sleep(TEN_SECS).await;
+-            }
+-        });
+-
+         // Shared map: proxy_id → sender for the handler's active gRPC stream.
+         let handler_tx_map: HandlerTxMap = Arc::new(RwLock::new(HashMap::new()));
+ 
+@@ -289,6 +281,13 @@ impl ProxyManager {
+             })
+             .collect::<Result<Vec<_>, _>>()?;
+         debug!("Retrieved {} proxies from the DB", proxies.len());
++        let refresh_pool = self.pool.clone();
++        let cert_refresh_task = tokio::spawn(async move {
++            loop {
++                refresh_certs(&refresh_pool, &certs_tx).await;
++                sleep(TEN_SECS).await;
++            }
++        });
+ 
+         // Connect to all enabled proxies.
+         let mut tasks = JoinSet::new();
+@@ -313,6 +312,10 @@ impl ProxyManager {
+                         }
+                     }
+                 }
++                _ = shutdown_rx.changed() => {
++                    debug!("ProxyManager shutdown requested");
++                    break;
++                }
+                 msg = self.proxy_control.recv() => {
+                     match msg {
+                         Some(ProxyControlMessage::StartConnection(id)) => {
+@@ -419,6 +422,16 @@ impl ProxyManager {
+                 }
+             }
+         }
++
++        cert_refresh_task.abort();
++        let _ = cert_refresh_task.await;
++        tasks.abort_all();
++        while tasks.join_next().await.is_some() {}
++        if let Ok(mut senders) = handler_tx_map.write() {
++            senders.clear();
++        }
++        Proxy::mark_all_disconnected(&self.pool).await?;
++
+         Ok(())
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3885** (2026-10-19): Add update instance job - stable (@jakub-tldr)
-- **PR #3884** (2026-10-19): Add update instance job (@jakub-tldr)
-- **PR #3878** (2026-10-19): Server check clients use only hardware keys for fido2 factor (@filipslezaklab)
-- **PR #3875** (2026-10-15): Add desktop and mobile v2.2 as posture-check option (@j-chmielewski)
-- **PR #3873** (2026-10-15): Show error message if OIDC login fails (@t-aleksander)
-- **PR #3871** (2026-10-15): Ensure Defguard and Public urls differ (@j-chmielewski)
+- **PR #3928** (2026-10-22): Fix posture checks UI (@jakub-tldr)
+- **PR #3923** (2026-10-22): update profile menu items style (@filipslezaklab)
+- **PR #3922** (2026-10-22): Add posture check explanations (@j-chmielewski)
+- **PR #3921** (2026-10-22): Improve wizard tests (@jakub-tldr)
+- **PR #3920** (2026-10-22): Ldap migration wizard for v2.x (@j-chmielewski)
+- **PR #3915** (2026-10-22): Ldap migration wizard for v2.0.x (@j-chmielewski)
 
 ---
 
@@ -2208,55 +2927,85 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add job to ci (#3885)
+## X. improve graceful shutdown handling (#3888)
 
 **RULE**:
-When implementing operations in `.github/workflows/current.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d1fc1de`: add job to ci (#3885). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b992d2a0`: improve graceful shutdown handling (#3888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/current.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+version = "4.2.4"
+checksum = "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
+ "cssparser 0.38.0",
+ "html5ever 0.40.1",
+ "cssparser 0.37.0",
+ "html5ever 0.39.0",
+[[package]]
+name = "cssparser"
+version = "0.38.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11119743ad110e8c1bdccd930d7f5c30c99e5fc76a7b63ec9807e84eef0c5f59"
+dependencies = [
+ "dtoa-short",
+ "itoa",
+ "smallvec",
+]
 
-  deploy-stable:
-    needs: build-current
-    if: github.event_name == 'push' && startsWith(github.ref_name, 'stable/2.')
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
-        with:
-          aws-region: eu-central-1
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-      - name: Update stable instance
-        run: |
-          version=${GITHUB_REF_NAME#stable/}
-          name=defguard-stable-${version//./}
-          id=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=$name" Name=instance-state-name,Values=running \
-            --query 'Reservations[0].Instances[0].InstanceId' --output text)
-          if [ "$id" = "None" ]; then
-            echo "::notice::No running instance $name, skipping"
-            exit 0
-          fi
-          cmd=$(aws ssm send-command --instance-ids "$id" --document-name AWS-RunShellScript \
-            --parameters 'commands=["cd /home/admin/defguard && docker compose pull -q && docker compose up -d"]' \
-            --query Command.CommandId --output text)
-          a
+ "markup5ever 0.39.0",
+]
+
+[[package]]
+name = "html5ever"
+version = "0.40.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "456a1a377e608e555d22ddab27ac0114bc7a7b4199078108e34c2aeae6c9b130"
+dependencies = [
+ "log",
+ "markup5ever 0.40.0",
+ "memchr",
+ "web_atoms 0.2.6",
+]
+
+[[package]]
+name = "markup5ever"
+version = "0.40.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ab3dc68ac4a0f5719e560136778c1ee716e296030d75dbd4484e37e39e3a842"
+dependencies = [
+ "log",
+ "tendril",
+ "web_atoms 0.3.0",
+[[package]]
+name = "phf"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "010378780309880b08997fae13be7834dba947d36393bd372f2b1556deb2a2f6"
+dependencies = [
+ "phf_shared 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "4.1.4"
+checksum = "dc6d763210e2eb7670d1a5183a08bebefa3f97db2a738a684f2ce00bd49f681d"
+ "cssparser",
+ "html5ever",
+ "cssparser",
+ "html5ever",
+ "markup5ever",
+ "web_atoms",
+version = "0.23.45"
+checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+ "cssparser",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d1fc1de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b992d2a0` are properly handled with clean fallback behavior.
