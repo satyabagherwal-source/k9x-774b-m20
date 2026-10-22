@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T21:01:39.742Z",
+  "last_updated": "2026-10-22T21:08:14.647Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36375,14 +36375,19 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "f599c1e6",
-      "content_hash": "bb80839393d0024831f809923806b438bdea1aa77595c648b380db7bc1e8c113",
+      "source_version": "ec52f111",
+      "content_hash": "2d17033beb68490cb9625264d15c51743afc5e8297fc150bb5c18de8c344815b",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
         {
           "number": 1842,
           "title": "wait until the namespace is fully deleted in `okteto namespace delete` (#5187)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3744,
+          "title": "Build with Go 1.26.10 and drop compromised emSign roots (eMudhra, CVE-2026-11194",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36391,7 +36396,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:20:38.283Z",
+      "verified_at": "2026-10-22T21:08:10.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37402,8 +37407,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "0681b159",
-      "content_hash": "bc6cfadadc3adb826ce2ec29859a3fd084b9fa6968ec8330c34f41f3e394ac95",
+      "source_version": "d0f481d7",
+      "content_hash": "818559490c30d2047cfd69c17d70010d937e6189df45c5946eceb46aadb9a79b",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -37421,6 +37426,11 @@
           "number": 3442,
           "title": "Update debug tips with --fail-with-body.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3742,
+          "title": "curl command generation for --tls-min option",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37428,7 +37438,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:43:32.095Z",
+      "verified_at": "2026-10-22T21:08:01.899Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47576,8 +47586,8 @@
       "slug": "valeriansaliou-sonic",
       "platform": "github",
       "source_url": "https://github.com/valeriansaliou/sonic",
-      "source_version": "011c3dfd",
-      "content_hash": "46193b7821221effe3d6db48a14356dd865073204b0bbe5a7d2656e53b5f52ac",
+      "source_version": "b635a181",
+      "content_hash": "cb36a5075e1a5e95db3e14a52c4b665828845e96fd6dfb92f0efce05cfabe0b6",
       "dossier_path": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
       "promoted_rules": [
@@ -47595,6 +47605,11 @@
           "number": 2804,
           "title": "security): Bump `rustls` from `0.23.45` to `0.23.46`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3745,
+          "title": "security): Update dependencies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47602,7 +47617,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:47:22.619Z",
+      "verified_at": "2026-10-22T21:08:14.636Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62260,14 +62275,19 @@
       "slug": "aio-libs-aiohttp",
       "platform": "github",
       "source_url": "https://github.com/aio-libs/aiohttp",
-      "source_version": "9af1fce6",
-      "content_hash": "70e7733e5584affbec2f50e3cfb8aab188e0e0dd4a66b69efa98c307aab858e5",
+      "source_version": "7275bea9",
+      "content_hash": "2f48af1ea745bc2e4a299d8ad91f325c16366021e2302772fe9bfeb68ec5507b",
       "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "promoted_rules": [
         {
           "number": 2922,
           "title": "Bump pypa/cibuildwheel from 4.3.0 to 4.3.1 (#14024)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3743,
+          "title": "Bump certifi from 2026.7.22 to 2026.10.19 in /requirements in the pip group acro",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -62276,7 +62296,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:31:45.600Z",
+      "verified_at": "2026-10-22T21:08:03.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112045,6 +112065,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T21:01:39.731Z"
+    },
+    "rule-3742": {
+      "learning_id": "rule-3742",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3742,
+      "title": "curl command generation for --tls-min option",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "d0f481d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:08:01.899Z"
+    },
+    "rule-3743": {
+      "learning_id": "rule-3743",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3743,
+      "title": "Bump certifi from 2026.7.22 to 2026.10.19 in /requirements in the pip group acro",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "7275bea9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:08:03.469Z"
+    },
+    "rule-3744": {
+      "learning_id": "rule-3744",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3744,
+      "title": "Build with Go 1.26.10 and drop compromised emSign roots (eMudhra, CVE-2026-11194",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "ec52f111",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:08:10.165Z"
+    },
+    "rule-3745": {
+      "learning_id": "rule-3745",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3745,
+      "title": "security): Update dependencies",
+      "source_url": "https://github.com/valeriansaliou/sonic",
+      "source_version": "b635a181",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:08:14.636Z"
     }
   },
   "aliases": {

@@ -4434,3 +4434,7 @@
 | `CYCLE-20261022-0FQ1` | `2026-10-22T21:01:26.041Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3739` | Yes (`8664c0cd...`) |
 | `CYCLE-20261022-0MD1` | `2026-10-22T21:01:34.645Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3740` | Yes (`1e26b4c2...`) |
 | `CYCLE-20261022-0QC0` | `2026-10-22T21:01:39.792Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3741` | Yes (`5860bc46...`) |
+| `CYCLE-20261022-8X7V` | `2026-10-22T21:08:01.963Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3742` | Yes (`81855949...`) |
+| `CYCLE-20261022-8YFG` | `2026-10-22T21:08:03.532Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3743` | Yes (`2f48af1e...`) |
+| `CYCLE-20261022-93LF` | `2026-10-22T21:08:10.227Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3744` | Yes (`2d17033b...`) |
+| `CYCLE-20261022-971K` | `2026-10-22T21:08:14.696Z` | `valeriansaliou/sonic` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3745` | Yes (`cb36a507...`) |

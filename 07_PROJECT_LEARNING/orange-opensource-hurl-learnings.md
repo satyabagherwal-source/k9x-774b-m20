@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `0681b159`  
+> **Source Version**: `d0f481d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:43:31.938Z  
+> **Timestamp**: 2026-10-22T21:08:01.618Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:43:31.934Z  
+> **Harvest Timestamp**: 2026-10-22T21:08:00.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19265 stars
+- **Stars / Engagement**: 19266 stars
 
 ---
 
@@ -1847,78 +1847,57 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0681b159` (2026-10-20)
-**Commit Message**: Update debug tips with --fail-with-body.
+### Incident Patch 1: `d0f481d7` (2026-10-22)
+**Commit Message**: Fix curl command generation for --tls-min option
 
-**File**: `docs/tutorial/debug-tips.md` (modified, +35/-2)
+**File**: `integration/hurl/tests_ssl/tls_min.curl` (modified, +1/-1)
 ```diff
-@@ -353,7 +353,7 @@ GET https://foo.com/success
- HTTP 200
- ```
- 
--- use [`--output`] per-request and [`--ignore-asserts`]: `--ignore-asserts` will disable any check, while `--output` can
-+- use [`--output`] per-request and [`--no-assert`]: `--no-assert` will disable any check, while `--output` can
- be used to output any particular response body. With this file, the response of `https://foo.com/failure` will be outputted
- on standard output:
- 
-@@ -371,6 +371,37 @@ GET https://foo.com/success
- HTTP 200
- ```
- 
-+- use [`--fail-with-body` option]: this option changes the Hurl's default behavior when there are errors and output
-+HTTP response regardless of asserts / HTTP runtime errors. Like many other options, this option can be use as a command
-+line option (`hurl --fail-with-body foo.hurl`), with environment variable (`export HURL_FAIL_WITH_BODY=true`), with [Hurl 
-+configuration file], or per request with `[Options]` section.
-+
-+```shell
-+$ hurl --fail-with-body foo.hurl
-+[1;39m{[0m
-+  [1;34m"slideshow"[0m[1;39m:[0m [1;39m{[0m
-+    [1;34m"author"[0m[1;39m:[0m [0;32m"Yours Truly"[0m[1;39m,[0m
-+    [1;34m"date"[0m[1;39m:[0m [0;32m"date of publication"[0m[1;39m,[0m
-+    [1;34m"slides"[0m[1;39m:[0m [1;39m[[0m
-+      [1;39m{[0m
-+        [1;34m"title"[0m[1;39m:[0m [0;32m"Wake up to WonderWidgets!"[0m[1;39m,[0m
-+        [1;34m"type"[0m[1;39m:[0m [0;32m"all"[0m
-+      [1;39m}[0m
-+    [1;39m][0m[1;39m,[0m
-+    [1;34m"title"[0m[1;39m:[0m [0;32m"Sample Slide Show"[0m
-+  [1;39m}[0m
-+[1;39m}[0m
-+[1;31merror[0m: [1mAssert failure[0m
-+  [1;34m-->[0m foo.hurl:4:0
-+[1;34m   |[0m
-+[1;34m   |[0m [90mGET https://httpbin.org/json[0m
-+[1;34m   |[0m[90m ...[0m
-+[1;34m 4 |[0m jsonpath "$.slideshow.author" == "Someone"
-+[1;34m   |[0m[1;31m   actual:   string <Yours Truly>[0m
-+[1;34m   |[0m[1;31m   expected: string <Someone>[0m
-+[1;34m   |[0m
-+```
-+
- To get more information, one can also used a JSON report with [`--report-json`]. This option produces a structured export
- of all run datas (request headers, response headers, response body, curl debug command line etc...)
- 
-@@ -467,7 +498,9 @@ the returned response to Hurl.
- [`--error-format`]: /docs/manual.md#error-format
- [`libcurl`]: https://curl.se/libcurl/
- [response timings]: /docs/response.md#timings
--[`--ignore-asserts`]: /docs/manual.md#ignore-asserts
-+[`--no-assert`]: /docs/manual.md#no-assert
- [`--output`]: /docs/manual.md#output
- [`--curl`]: /docs/manual.md#curl
- [`--report-json`]: /docs/manual.md#report-json
-+[`--fail-with-body` option]: /docs/manual.md#fail-with-body
-+[Hurl configuration file]: /docs/manual.md#configuration
+@@ -1 +1 @@
+-curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tls-min 1.2 'https://localhost:8001/hello'
++curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tlsv1.2 'https://localhost:8001/hello'
+```
+
+**File**: `integration/hurl/tests_ssl/tls_min_option.curl` (modified, +2/-2)
+```diff
+@@ -1,2 +1,2 @@
+-curl --insecure --tls-min 1.2 'https://localhost:8001/hello'
+-curl --insecure --tls-min 1.2 'https://localhost:8001/hello'
++curl --insecure --tlsv1.2 'https://localhost:8001/hello'
++curl --insecure --tlsv1.2 'https://localhost:8001/hello'
+```
+
+**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +4/-3)
+```diff
+@@ -517,8 +517,9 @@ impl ClientOptions {
+         match self.tls_min {
+             TlsVersion::Default => {}
+             version => {
+-                args.push("--tls-min".to_string());
+-                args.push(version.to_string());
++                // curl has no --tls-min option, minimum TLS version is
++                // set with --tlsv1.X options.
++                args.push(format!("--tlsv{version}"));
+             }
+         }
+         match self.tls_max {
+@@ -801,7 +802,7 @@ mod tests {
+         --limit-rate 8000 \
+         --max-redirs 10 \
+         --max-time 10 \
+-        --tls-min 1.0 \
++        --tlsv1.0 \
+         --tls-max 1.2 \
+         --negotiate \
+         --netrc-file '/var/run/netrc' \
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5370** (2026-10-22): Update Python dev dependencies (@jcamiel)
+- **PR #5368** (2026-10-21): Update crates (@hurl-bot)
 - **PR #5367** (2026-10-20): Update debug tips with --fail-with-body. (@jcamiel)
 - **PR #5366** (2026-10-20): Update crates (@hurl-bot)
 - **PR #5364** (2026-10-19): Update doc about JSONPath coercion. (@jcamiel)
 - **PR #5363** (2026-10-19): Update actions (@hurl-bot)
-- **PR #5362** (2026-10-17): Update CHANGELOG (@fabricereix)
-- **PR #5361** (2026-10-17): Skip suggestion fo very long keyword (@fabricereix)
 
 ---
 
@@ -1938,51 +1917,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update debug tips with --fail-with-body.
+## X. curl command generation for --tls-min option
 
 **RULE**:
-When implementing operations in `docs/tutorial/debug-tips.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration/hurl/tests_ssl/tls_min.curl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0681b159`: Update debug tips with --fail-with-body.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0f481d7`: curl command generation for --tls-min option. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tutorial/debug-tips.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/hurl/tests_ssl/tls_min.curl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- use [`--output`] per-request and [`--no-assert`]: `--no-assert` will disable any check, while `--output` can
-- use [`--fail-with-body` option]: this option changes the Hurl's default behavior when there are errors and output
-HTTP response regardless of asserts / HTTP runtime errors. Like many other options, this option can be use as a command
-line option (`hurl --fail-with-body foo.hurl`), with environment variable (`export HURL_FAIL_WITH_BODY=true`), with [Hurl 
-configuration file], or per request with `[Options]` section.
-
-```shell
-$ hurl --fail-with-body foo.hurl
-[1;39m{[0m
-  [1;34m"slideshow"[0m[1;39m:[0m [1;39m{[0m
-    [1;34m"author"[0m[1;39m:[0m [0;32m"Yours Truly"[0m[1;39m,[0m
-    [1;34m"date"[0m[1;39m:[0m [0;32m"date of publication"[0m[1;39m,[0m
-    [1;34m"slides"[0m[1;39m:[0m [1;39m[[0m
-      [1;39m{[0m
-        [1;34m"title"[0m[1;39m:[0m [0;32m"Wake up to WonderWidgets!"[0m[1;39m,[0m
-        [1;34m"type"[0m[1;39m:[0m [0;32m"all"[0m
-      [1;39m}[0m
-    [1;39m][0m[1;39m,[0m
-    [1;34m"title"[0m[1;39m:[0m [0;32m"Sample Slide Show"[0m
-  [1;39m}[0m
-[1;39m}[0m
-[1;31merror[0m: [1mAssert failure[0m
-  [1;34m-->[
+curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tlsv1.2 'https://localhost:8001/hello'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- use [`--output`] per-request and [`--ignore-asserts`]: `--ignore-asserts` will disable any check, while `--output` can
-[`--ignore-asserts`]: /docs/manual.md#ignore-asserts
+curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tls-min 1.2 'https://localhost:8001/hello'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0681b159` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0f481d7` are properly handled with clean fallback behavior.

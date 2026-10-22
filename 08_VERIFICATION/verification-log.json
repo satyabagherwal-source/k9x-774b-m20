@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-SEZF",
-    "timestamp": "2026-10-20T17:35:54.075Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "0b1877f5faa581e080e996a574f0b1cad0efafa9985475e75353a49292dddf03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-W9GU",
-    "timestamp": "2026-10-20T17:38:53.550Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-9LHN",
-    "timestamp": "2026-10-20T17:49:15.659Z",
-    "repository": "killercup/cargo-edit",
-    "learningId": "learn-github-killercup-cargo-edit",
-    "contentHash": "0633a2c8bcb54df9ae98027c45ea7d9fc107461b1c4206b99714160972c5bda3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-9MMB",
-    "timestamp": "2026-10-20T17:49:17.123Z",
-    "repository": "taiga-family/taiga-ui",
-    "learningId": "learn-github-taiga-family-taiga-ui",
-    "contentHash": "68e3b3362e07c3868a3c93af0375172b3efc005a176219f34e2dabb51279a481",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-9QK7",
     "timestamp": "2026-10-20T17:49:22.231Z",
     "repository": "open-ani/animeko",
@@ -7490,6 +7430,66 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "5860bc466398763b15910144d145dba7f40755d5733cf45b59d222026e46fc41",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-8X7V",
+    "timestamp": "2026-10-22T21:08:01.963Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "818559490c30d2047cfd69c17d70010d937e6189df45c5946eceb46aadb9a79b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-8YFG",
+    "timestamp": "2026-10-22T21:08:03.532Z",
+    "repository": "aio-libs/aiohttp",
+    "learningId": "learn-github-aio-libs-aiohttp",
+    "contentHash": "2f48af1ea745bc2e4a299d8ad91f325c16366021e2302772fe9bfeb68ec5507b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-93LF",
+    "timestamp": "2026-10-22T21:08:10.227Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "2d17033beb68490cb9625264d15c51743afc5e8297fc150bb5c18de8c344815b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-971K",
+    "timestamp": "2026-10-22T21:08:14.696Z",
+    "repository": "valeriansaliou/sonic",
+    "learningId": "learn-github-valeriansaliou-sonic",
+    "contentHash": "cb36a5075e1a5e95db3e14a52c4b665828845e96fd6dfb92f0efce05cfabe0b6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

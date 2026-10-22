@@ -4441,3 +4441,7 @@ Every entry in this ledger must capture:
 | `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `df356cd2` | Multi-dimensional audit evidence | 2026-10-22T21:01:26.044Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `c532d985` | Multi-dimensional audit evidence | 2026-10-22T21:01:34.648Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `eb234637` | Multi-dimensional audit evidence | 2026-10-22T21:01:39.795Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `d0f481d7` | Multi-dimensional audit evidence | 2026-10-22T21:08:01.967Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `7275bea9` | Multi-dimensional audit evidence | 2026-10-22T21:08:03.535Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `ec52f111` | Multi-dimensional audit evidence | 2026-10-22T21:08:10.231Z |
+| `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `b635a181` | Multi-dimensional audit evidence | 2026-10-22T21:08:14.700Z |

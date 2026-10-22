@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md`  
 > **Source**: github ([https://github.com/valeriansaliou/sonic](https://github.com/valeriansaliou/sonic))  
-> **Source Version**: `011c3dfd`  
+> **Source Version**: `b635a181`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:47:22.426Z  
+> **Timestamp**: 2026-10-22T21:08:14.342Z  
 > **Learning ID**: `learn-github-valeriansaliou-sonic`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/valeriansaliou/sonic](https://github.com/valeriansaliou/sonic))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:47:22.422Z  
+> **Harvest Timestamp**: 2026-10-22T21:08:13.804Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🦔 Fast, lightweight & schema-less search backend. An alternative to Elasticsearch that runs on a few MBs of RAM.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 21363 stars
+- **Stars / Engagement**: 21367 stars
 
 ---
 
@@ -1383,211 +1383,192 @@ impl Executor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03ac2f23` (2026-10-19)
-**Commit Message**: fix(security): Bump `rustls` from `0.23.45` to `0.23.46`
+### Incident Patch 1: `b635a181` (2026-10-21)
+**Commit Message**: fix(security): Update dependencies
 
-Fixes `rustls` advisories RUSTSEC-2026-0346, RUSTSEC-2026-0347, RUSTSEC-2026-0348 and RUSTSEC-2026-0349.
+Fixes advisories RUSTSEC-2026-0382 and RUSTSEC-2026-0381.
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +11/-23)
 ```diff
-@@ -2182,9 +2182,9 @@ dependencies = [
+@@ -545,9 +545,9 @@ dependencies = [
  
  [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
+ name = "crc32fast"
+-version = "1.5.2"
++version = "1.5.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+-checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
++checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
  dependencies = [
-  "log",
-  "once_cell",
+  "cfg-if",
+ ]
+@@ -1093,7 +1093,7 @@ dependencies = [
+  "serde",
+  "serde_json",
+  "thiserror 2.0.21",
+- "ureq 3.4.2",
++ "ureq 3.5.0",
+  "windows-sys 0.61.2",
+ ]
+ 
+@@ -2206,9 +2206,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "ring",
+  "rustls-pki-types",
+@@ -2357,17 +2357,6 @@ version = "1.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "199905e6153d6405f9728fe44daace35f8f837bbf830bb6e85fbd5828709a886"
+ 
+-[[package]]
+-name = "socks"
+-version = "0.3.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f0c3dbbd9ae980613c6dd8e28a9407b50509d3803b57624d5dfe8315218cd58b"
+-dependencies = [
+- "byteorder",
+- "libc",
+- "winapi",
+-]
+-
+ [[package]]
+ name = "sonic-core"
+ version = "0.4.2"
+@@ -2802,9 +2791,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ureq"
+-version = "3.4.2"
++version = "3.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
++checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
+ dependencies = [
+  "base64 0.23.1",
+  "cookie_store",
+@@ -2815,10 +2804,9 @@ dependencies = [
+  "rustls-pki-types",
+  "serde",
+  "serde_json",
+- "socks",
+  "ureq-proto",
+  "utf8-zero",
+- "webpki-roots 1.0.9",
++ "webpki-roots 1.0.10",
+ ]
+ 
+ [[package]]
+@@ -2983,14 +2971,14 @@ version = "0.26.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
+ dependencies = [
+- "webpki-roots 1.0.9",
++ "webpki-roots 1.0.10",
+ ]
+ 
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.9"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
++checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ dependencies = [
+  "rustls-pki-types",
+ ]
 ```
 
 **File**: `deny.toml` (modified, +1/-1)
 ```diff
-@@ -71,7 +71,7 @@ allow-build-scripts = [
-     "proc-macro2@1.0.107",
-     "quote@1.0.47",
-     "ring@0.17.14",
--    "rustls@0.23.45",
-+    "rustls@0.23.46",
-     "rustversion@1.0.23",
-     "serde@1.0.229",
-     "serde_core@1.0.229",
+@@ -50,7 +50,7 @@ allow-build-scripts = [
+     "bindgen@0.72.1",
+     "bzip2-sys@0.1.13+1.0.8",
+     "clang-sys@1.9.1",
+-    "crc32fast@1.5.2",
++    "crc32fast@1.5.3",
+     "crossbeam-utils@0.8.23",
+     "crunchy@0.2.4",
+     "flatbuffers@25.12.19",
 ```
 
 ---
 
-### Incident Patch 2: `e2e62a2b` (2026-10-09)
-**Commit Message**: feat(client): Allow configuring the recv timeout
+### Incident Patch 2: `06e05182` (2026-10-21)
+**Commit Message**: feat(security): Ensure Zed doesn’t run unvalidated build scripts
 
-**File**: `client/src/channel.rs` (modified, +10/-0)
+**File**: `.zed/settings.json` (modified, +2/-0)
 ```diff
-@@ -6,6 +6,8 @@
+@@ -8,6 +8,8 @@
+       "initialization_options": {
+         "cargo": {
+           "features": ["experimental-api"],
++          "extraArgs": ["--locked"],
++          // "autoreload": false,
+         },
+       },
+     },
+```
+
+---
+
+### Incident Patch 3: `b10f3aa0` (2026-10-21)
+**Commit Message**: fix(core): Fix ranking of loose matches
+
+**File**: `core/src/executor/search.rs` (modified, +2/-2)
+```diff
+@@ -590,9 +590,9 @@ fn update_score(
+             // SAFETY: We always initialize vecs with `term_count` entries.
+             let entry_score = unsafe { occupied_entry.get_mut().get_unchecked_mut(term_idx) };
  
- use std::str::FromStr;
- use std::sync::Arc;
-+use std::sync::RwLock;
-+use std::time::Duration;
+-            let new_score = entry_score.map_or(score, |entry_score| score.min(entry_score));
++            let new_score = entry_score.map_or(score, |entry_score| score.max(entry_score));
  
- use crate::SEND_TIMEOUT;
- use crate::SonicMultiplexer;
-@@ -56,6 +58,9 @@ pub struct SonicChannel<Mode: ChannelMode> {
-     dispatcher_tx: crossbeam_channel::Sender<connection::Task<Mode::Discriminant>>,
-     poll_waker: Arc<mio::Waker>,
-     is_closed: bool,
-+
-+    /// Safety timeout when reading events from channels.
-+    pub(crate) recv_timeout: RwLock<Duration>,
- }
+-            tracing::trace!(entry_score, new_score, "Updating to min score");
++            tracing::trace!(entry_score, new_score, "Updating to max score");
+             *entry_score = Some(new_score);
  
- impl<Mode: ChannelMode + 'static> SonicChannel<Mode> {
-@@ -102,6 +107,11 @@ impl<Mode: ChannelMode + 'static> SonicChannel<Mode> {
-             dispatcher_tx: tx,
-             poll_waker: Arc::clone(&multiplexer.poll_waker),
-             is_closed: false,
-+            // This timeout has to take into account TCP packets travel time,
-+            // parsing and processing, hence why it’s so high. It should not
-+            // be reached (except on edge cases like bulk ingest compactions),
-+            // but it’s there as a safety precaution.
-+            recv_timeout: RwLock::new(Duration::from_secs(30)),
-         })
+             false
+```
+
+**File**: `core/tests/loose_matching.rs` (modified, +26/-0)
+```diff
+@@ -239,3 +239,29 @@ fn test_no_fuzzy_matching_for_ids() {
+         assert_eq!(response, ["chat:0"], "({messages:?}, {query:?})");
      }
- 
-```
-
-**File**: `client/src/lib.rs` (modified, +0/-7)
-```diff
-@@ -74,10 +74,3 @@ const TCP_WRITE_BUFFER_CAPACITY: usize = 65_536;
- ///
- /// This timeout can be reached if channel capacities are too low.
- const SEND_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(5);
--
--/// Safety timeout when reading events from channels.
--///
--/// This timeout has to take into account TCP packets travel time, parsing and
--/// processing, hence why it’s so high. It should not be reached, but it’s there
--/// as a safety precaution.
--const RECV_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
-```
-
-**File**: `client/src/util.rs` (modified, +33/-3)
-```diff
-@@ -132,9 +132,19 @@ macro_rules! impl_channel_structs {
-                 &self.inner.channel_info
-             }
- 
-+            #[inline]
-+            pub fn recv_timeout(&self) -> std::time::Duration {
-+                *self.inner.recv_timeout.read().unwrap()
-+            }
-+
-+            #[inline]
-+            pub fn set_recv_timeout(&self, timeout: std::time::Duration) {
-+                *self.inner.recv_timeout.write().unwrap() = timeout
-+            }
-+
-             fn quit_blocking_(&mut self) -> std::io::Result<()> {
-                 self.quit()?
--                    .recv_timeout($crate::RECV_TIMEOUT)
-+                    .recv_timeout(self.recv_timeout())
-                     .map_err(|error| std::io::Error::new(std::io::ErrorKind::BrokenPipe, error))?
-             }
-         }
-@@ -191,6 +201,16 @@ macro_rules! impl_channel_structs {
-             pub fn channel_info(&self) -> &crate::events::ChannelInfo {
-                 self.inner.channel_info()
-             }
-+
-+            #[inline]
-+            pub fn recv_timeout(&self) -> std::time::Duration {
-+                self.inner.recv_timeout()
-+            }
-+
-+            #[inline]
-+            pub fn set_recv_timeout(&self, timeout: std::time::Duration) {
-+                self.inner.set_recv_timeout(timeout)
-+            }
-         }
- 
-         #[cfg(feature = "async")]
-@@ -235,6 +255,16 @@ macro_rules! impl_channel_structs {
-             pub fn channel_info(&self) -> &crate::events::ChannelInfo {
-                 self.inner.channel_info()
-             }
-+
-+            #[inline]
-+            pub fn recv_timeout(&self) -> std::time::Duration {
-+                self.inner.recv_timeout()
-+            }
-+
-+            #[inline]
-+            pub fn set_recv_timeout(&self, timeout: std::time::Duration) {
-+                self.inner.set_recv_timeout(timeout)
-+            }
-         }
-     };
  }
-@@ -268,7 +298,7 @@ macro_rules! impl_fns {
-                 $($arg_name: $arg_ty,)*
-             ) -> $ret_ty {
-                 $self.inner.$fn($($arg_name),*)?
--                    .recv_timeout($crate::RECV_TIMEOUT)
-+                    .recv_timeout($self.inner.recv_timeout())
-                     .map_err(|error| std::io::Error::new(std::io::ErrorKind::BrokenPipe, error))?
-             }
-         }
-@@ -318,7 +348,7 @@ macro_rules! impl_fns {
-             $(where $($where)+)?
-             {
-                 $self.inner.$fn($($arg_name),*)?
--                    .recv_timeout($crate::RECV_TIMEOUT)
-+                    .recv_timeout($self.inner.recv_timeout())
-                     .map_err(|error| std::io::Error::new(std::io::ErrorKind::BrokenPipe, error))?
-             }
-         }
-```
-
----
-
-### Incident Patch 3: `9f0d2e44` (2026-10-14)
-**Commit Message**: fix(client): Fix another edge case infinite loop when splitting text
-
-This is a follow-up to `f85cb3c68a4a241416d7a2328fad3d2873f74b1f`.
-
-Co-authored-by: Valerian Saliou <[REDACTED_EMAIL]>
-
-**File**: `client/src/channel.rs` (modified, +13/-1)
-```diff
-@@ -470,7 +470,11 @@ fn split_on_whitespace(s: &str, n: usize) -> (&str, &str) {
-     if let Some(i) = (chars().skip(1))
-         .zip(chars())
-         .find_map(|((i1, c1), (i2, c2))| match (c1, c2) {
--            ('\\', 'n' | 'r') => Some(i1),
-+            // FIX: Do not split before an escaped newline at the very start of `s`,
-+            //   as it would yield an empty head (and cause callers to loop forever).
-+            ('\\', 'n' | 'r') if start + i1 > 0 => Some(i1),
-+            // FIX: Do not break escape sequences.
-+            ('\\', _) => None,
-             _ if c2.is_ascii_whitespace() => Some(i2),
-             _ => None,
-         })
-@@ -533,6 +537,14 @@ mod tests {
-         // This is a non-regression test.
-         assert_eq!(split_on_whitespace(" abcdefgh", 4), (" ab", "cdefgh"));
- 
-+        // This is also a non-regression test, as the above test wasn’t
-+        // sufficient to catch a bug caused by newline escaping.
-+        assert_eq!(split_on_whitespace(r"\nabcdefgh", 5), (r"\nab", "cdefgh"));
 +
-+        // Also make sure escapes stay with their escape sequence, even if it’s
-+        // a whitespace.
-+        assert_eq!(split_on_whitespace(r"\ abcdefgh", 5), (r"\ ab", "cdefgh"));
++/// Ensures ranking of loose matches is correct.
++#[test]
++fn test_loose_matches_ranking() {
++    init_logging();
++    let executor = make_test_executor(|app_conf| {
++        // Disable stemming to make results more predictable.
++        app_conf.normalization.stemming_enabled = false;
++    });
++    assert!(executor.fst_pool.fst_action_config.prefix_matching_enabled);
 +
-         // Split on escaped newlines (`escape_str` is ran before `split_on_whitespace`).
-         let text = r"A list:\n\nAcaciapora\nAcalepha\nAcanthastrea\nAcanthocyathus";
-         #[rustfmt::skip]
++    exec!(
++        executor -> PUSH "articles" "default" "article:1"
++        "examplar"
++    );
++    exec!(
++        executor -> PUSH "articles" "default" "article:2"
++        "examplary"
++    );
++    exec!(executor -> TRIGGER consolidate);
++
++    {
++        let response = exec!(executor -> QUERY "articles" "default" "exampla");
++        assert_eq!(response, ["article:1", "article:2"]);
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1616,13 +1597,13 @@ Co-authored-by: Valerian Saliou <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): Bump `rustls` from `0.23.45` to `0.23.46`
+## X. security): Update dependencies
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in valeriansaliou/sonic. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03ac2f23`: security): Bump `rustls` from `0.23.45` to `0.23.46`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b635a181`: security): Update dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1630,16 +1611,46 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.23.46"
-checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+version = "1.5.3"
+checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
+ "ureq 3.5.0",
+version = "0.103.16"
+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+version = "3.5.0"
+checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
+ "webpki-roots 1.0.10",
+ "webpki-roots 1.0.10",
+version = "1.0.10"
+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.23.45"
-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+version = "1.5.2"
+checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
+ "ureq 3.4.2",
+version = "0.103.15"
+checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
+[[package]]
+name = "socks"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0c3dbbd9ae980613c6dd8e28a9407b50509d3803b57624d5dfe8315218cd58b"
+dependencies = [
+ "byteorder",
+ "libc",
+ "winapi",
+]
+
+version = "3.4.2"
+checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
+ "socks",
+ "webpki-roots 1.0.9",
+ "webpki-roots 1.0.9",
+version = "1.0.9"
+checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03ac2f23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b635a181` are properly handled with clean fallback behavior.

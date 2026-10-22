@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "f599c1e6",
+    "sourceVersion": "ec52f111",
     "license": "Apache-2.0",
-    "contentHash": "bb80839393d0024831f809923806b438bdea1aa77595c648b380db7bc1e8c113",
-    "lastHarvestedAt": "2026-10-18T23:20:38.322Z",
+    "contentHash": "2d17033beb68490cb9625264d15c51743afc5e8297fc150bb5c18de8c344815b",
+    "lastHarvestedAt": "2026-10-22T21:08:10.231Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "0681b159",
+    "sourceVersion": "d0f481d7",
     "license": "Apache-2.0",
-    "contentHash": "bc6cfadadc3adb826ce2ec29859a3fd084b9fa6968ec8330c34f41f3e394ac95",
-    "lastHarvestedAt": "2026-10-20T23:43:32.138Z",
+    "contentHash": "818559490c30d2047cfd69c17d70010d937e6189df45c5946eceb46aadb9a79b",
+    "lastHarvestedAt": "2026-10-22T21:08:01.967Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -7203,10 +7203,10 @@
     "repository": "valeriansaliou/sonic",
     "platform": "github",
     "sourceUrl": "https://github.com/valeriansaliou/sonic",
-    "sourceVersion": "011c3dfd",
+    "sourceVersion": "b635a181",
     "license": "MPL-2.0",
-    "contentHash": "46193b7821221effe3d6db48a14356dd865073204b0bbe5a7d2656e53b5f52ac",
-    "lastHarvestedAt": "2026-10-19T20:47:22.664Z",
+    "contentHash": "cb36a5075e1a5e95db3e14a52c4b665828845e96fd6dfb92f0efce05cfabe0b6",
+    "lastHarvestedAt": "2026-10-22T21:08:14.700Z",
     "learningId": "learn-github-valeriansaliou-sonic"
   },
   "bgreenwell-doxx": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "9af1fce6",
+    "sourceVersion": "7275bea9",
     "license": "Apache-2.0",
-    "contentHash": "70e7733e5584affbec2f50e3cfb8aab188e0e0dd4a66b69efa98c307aab858e5",
-    "lastHarvestedAt": "2026-10-20T00:31:45.677Z",
+    "contentHash": "2f48af1ea745bc2e4a299d8ad91f325c16366021e2302772fe9bfeb68ec5507b",
+    "lastHarvestedAt": "2026-10-22T21:08:03.535Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {
