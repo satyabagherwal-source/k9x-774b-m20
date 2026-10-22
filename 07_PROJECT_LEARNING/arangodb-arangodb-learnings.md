@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `f2df41b5`  
+> **Source Version**: `023cfa46`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:48:08.920Z  
+> **Timestamp**: 2026-10-22T15:47:01.295Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:48:08.913Z  
+> **Harvest Timestamp**: 2026-10-22T15:47:01.054Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14287 stars
+- **Stars / Engagement**: 14286 stars
 
 ---
 
@@ -988,11 +988,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23506** (2026-10-20): **Compile with C++26**
-  *Symptoms*: ### Scope & Purpose  - Update fakeit - Update rocksdb to arangodb branch that compiles with c++23 compiler - patch various files so they compile - switch CMakeLists to C++26
+- **Issue #23514** (2026-10-22): **catch any non-normal exit.**
+  *Symptoms*: ### Scope & Purpose  `Signal` being there is indicator enough to tell something went wrong.   - [x] :hankey: Bugfix 
 
-- **Issue #23504** (2026-10-20): **Remove V8Context member from RestTransactionHandler**
-  *Symptoms*: ### Scope & Purpose  Remove unused V8Context member from RestTransactionHandler
+- **Issue #23511** (2026-10-21): **Remove dead code releated to mustCheckBounds.**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,146 +1009,11 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d47a81ed` (2026-10-20)
-**Commit Message**: Bug fix/503 may be success as well (#22764)
+### Incident Patch 1: `9589f048` (2026-10-21)
+**Commit Message**: Merge remote-tracking branch 'origin/devel' into bugfix/COR-1152-aql-in-range-utf8
 
-* we also may see a 503 if the server crashed
-
-* cut'n'paste error
-
-**File**: `js/client/modules/@arangodb/testutils/instance.js` (modified, +3/-1)
-```diff
-@@ -1860,7 +1860,9 @@ class instance {
-       } catch(ex) {
-         if (ex instanceof ArangoError && (
-           (ex.errorNum === internal.errors.ERROR_SIMPLE_CLIENT_COULD_NOT_CONNECT.code) ||
--            (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code))) {
-+          (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code) ||
-+          (ex.errorNum === internal.errors.ERROR_HTTP_SERVICE_UNAVAILABLE.code)
-+        )) {
-           print(`Terminated instance ${this.name} - ${ex.message} ${signal_to_expect}`);
-           return this.checkDebugTerminated(true, signal_to_expect);
-         }
-```
-
----
-
-### Incident Patch 2: `54b09cff` (2026-10-20)
-**Commit Message**: Remove duplicated code, replaces TRI_Allocate with fixed array.
-
-**File**: `lib/Ssl/SslInterface.cpp` (modified, +11/-28)
-```diff
-@@ -25,7 +25,6 @@
- #include "Basics/Exceptions.h"
- #include "Basics/ScopeGuard.h"
- #include "Basics/StringUtils.h"
--#include "Basics/memory.h"
- #include "Random/UniformCharacter.h"
- 
- #include "Logger/LogMacros.h"
-@@ -120,25 +119,17 @@ void sslHEX(char const* inputStr, size_t const length,
-   TRI_ASSERT(static_cast<size_t>(p - outputStr) == 2 * length);
- }
- 
--std::string sslPBKDF2HS1(char const* salt, size_t saltLength, char const* pass,
--                         size_t passLength, int iter, int keyLength) {
--  unsigned char* dk = (unsigned char*)TRI_Allocate(keyLength + 1);
--  if (dk == nullptr) {
--    THROW_ARANGO_EXCEPTION(TRI_ERROR_OUT_OF_MEMORY);
--  }
--
--  auto sg = arangodb::scopeGuard([&]() noexcept { TRI_Free(dk); });
--
--  PKCS5_PBKDF2_HMAC(pass, (int)passLength, (const unsigned char*)salt,
--                    (int)saltLength, iter, EVP_sha1(), keyLength, dk);
--
--  // return value as hex
--  return StringUtils::encodeHex((char*)dk, keyLength);
--}
--
- std::string sslPBKDF2(char const* salt, size_t const saltLength,
-                       char const* pass, size_t const passLength, int const iter,
-                       int const keyLength, Algorithm const algorithm) {
-+  // PBKDF2 allows for longer keys than the digest returns,
-+  // there is no security benefit to that, it just wastes cpu.
-+  // The biggest digest here is SHA512 with its 512bits -> 64bytes;
-+  constexpr int kMaxKeyLength = 64;
-+  if (keyLength < 1 || keyLength > kMaxKeyLength) {
-+    THROW_ARANGO_EXCEPTION(TRI_ERROR_BAD_PARAMETER);
-+  }
-+
-   EVP_MD const* evp_md = [algorithm]() -> EVP_MD const* {
-     switch (algorithm) {
-       case Algorithm::SHA256:
-@@ -157,20 +148,12 @@ std::string sslPBKDF2(char const* salt, size_t const saltLength,
-     return nullptr;
-   }();
-   ADB_PROD_ASSERT(evp_md != nullptr);
--
--  unsigned char* dk = static_cast<unsigned char*>(TRI_Allocate(keyLength + 1));
--  if (dk == nullptr) {
--    THROW_ARANGO_EXCEPTION(TRI_ERROR_OUT_OF_MEMORY);
--  }
--
--  auto sg = arangodb::scopeGuard([&]() noexcept { TRI_Free(dk); });
--
-+  unsigned char dk[kMaxKeyLength];
-   PKCS5_PBKDF2_HMAC(pass, static_cast<int>(passLength),
--                    reinterpret_cast<const unsigned char*>(salt),
-+                    reinterpret_cast<unsigned char const*>(salt),
-                     static_cast<int>(saltLength), iter, evp_md, keyLength, dk);
- 
--  // return value as hex
--  return StringUtils::encodeHex(reinterpret_cast<char*>(dk), keyLength);
-+  return StringUtils::encodeHex(reinterpret_cast<char const*>(dk), keyLength);
- }
- 
- std::string sslHMAC(char const* key, size_t const keyLength,
-```
-
-**File**: `lib/Ssl/SslInterface.h` (modified, +0/-7)
-```diff
-@@ -87,13 +87,6 @@ void sslSHA512(char const* inputStr, size_t length, char* outputStr) noexcept;
- void sslHEX(char const* inputStr, size_t const length,
-             char* outputStr) noexcept;
- 
--//////////////////////////////////////////////////////////////////////////
--/// @brief PBKDF2HS1
--//////////////////////////////////////////////////////////////////////////
--
--std::string sslPBKDF2HS1(char const* salt, size_t saltLength, char const* pass,
--                         size_t passLength, int iter, int keyLength);
--
- //////////////////////////////////////////////////////////////////////////
- /// @brief PBKDF2
- //////////////////////////////////////////////////////////////////////////
-```
-
-**File**: `lib/V8/v8-utils.cpp` (modified, +3/-3)
-```diff
-@@ -4170,9 +4170,9 @@ static void JS_PBKDF2HS1(v8::FunctionCallbackInfo<v8::Value> const& args) {
-   int iterations = (int)TRI_ObjectToInt64(isolate, args[2]);
-   int keyLength = (int)TRI_ObjectToInt64(isolate, args[3]);
- 
--  std::string result =
--      SslInterface::sslPBKDF2HS1(salt.c_str(), salt.size(), password.c_str(),
--                                 password.size(), iterations, keyLength);
-+  std::string result = SslInterface::sslPBKDF2(
-+      salt.c_str(), salt.size(), password.c_str(), password.size(), iterations,
-+      keyLength, SslInterface::Algorithm::SHA1);
-   TRI_V8_RETURN_STD_STRING(result);
-   TRI_V8_TRY_CATCH_END
- }
-```
-
----
-
-### Incident Patch 3: `36f6596c` (2026-10-20)
-**Commit Message**: [BTS-2308] fix caculations of soft, hard limits and allocated (#23485)
-
-* fix caculations of soft, hard limits and allocated
-* refactor `migrationAllowed` size validation logic
-* review fits/migrationAllowed
+# Conflicts:
+#	CHANGELOG
 
 **File**: `3rdParty/jemalloc/jemalloc/src/jemalloc_cpp.cpp` (modified, +3/-2)
 ```diff
@@ -1166,21 +1031,38 @@ Observed empirical fixes and code patches:
  
 ```
 
-**File**: `CHANGELOG` (modified, +10/-4)
+**File**: `CHANGELOG` (modified, +25/-4)
 ```diff
-@@ -1,5 +1,11 @@
- 3.12.13 (XXXX-XX-XX)
- --------------------
+@@ -6,7 +6,28 @@
+   collation order. The same fix applies to SEARCH conditions combining ==
+   or OR of == with a range operator.
+ 
++* Add `--http.max-decompressed-request-body-size` startup option, which limits
++  how large a compressed HTTP request body may be after decompression. The default
++  is 512 MiB.
++
++* COR-1086: Replaced deprecated OpenSSL functions with the proper newer,
++  higher level envelope calls. Removed unused functions and refactored some
++  minor parts of the SslInterface.
 +
 +* BTS-2308: Fixes miscalculation of soft, hard limits and allocated
 +  values in cache manager.
 +
-+* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
+ * COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
 +
- * COR-1031 Admins (classic authentication: read-write access to `_system`) can now list,
-   inspect and abort other users' stream transactions via `/_api/transaction`.
-   RBAC gets the matching permissions `AdminMonitorTransactions` and
-@@ -171,10 +177,10 @@
++* COR-1031 Admins (classic authentication: read-write access to `_system`) can now list,
++  inspect and abort other users' stream transactions via `/_api/transaction`.
++  RBAC gets the matching permissions `AdminMonitorTransactions` and
++  `AdminKillTransactions`. Committing another user's transaction remains
++  reserved to its owner and the superuser.
++
++* COR-1081: Adapt permissions for `PUT /_api/query/properties`.
++
++* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow
+   for more fine-grained permission setting for aql queries.
+ 
+ * BTS-2481: Fix double-free on SortedCollectExecutor on hitting resource limit.
+@@ -169,10 +190,10 @@
    comparisons, such as `IS_STRING(doc.attr)` or `NOT doc.attr`. Such queries
    failed with `member out of range` before. This fixes issue #23356.
  
@@ -1194,7 +1076,7 @@ Observed empirical fixes and code patches:
    copy. The attribute is now consistently removed from both copies of the edge.
  
  * BTS-2454: Update FAISS to a new patched version which fixes a TSAN race inside
-@@ -275,7 +281,7 @@
+@@ -273,7 +294,7 @@
    a calculated expression based on a document from an earlier collection.
    Such queries are now handled safely without triggering an assertion failure or
    server crash.
@@ -1205,234 +1087,643 @@ Observed empirical fixes and code patches:
  
 ```
 
-**File**: `arangod/Cache/Manager.cpp` (modified, +22/-12)
+**File**: `Documentation/path_permissions.md` (modified, +5/-4)
 ```diff
-@@ -510,7 +510,9 @@ std::pair<bool, Manager::time_point> Manager::requestGrow(Cache* cache) {
-             pastRebalancingGracePeriod()) {
-           std::uint64_t increase =
-               std::min(metadata.hardUsageLimit / 2,
--                       metadata.maxSize - metadata.allocatedSize);
-+                       metadata.maxSize > metadata.allocatedSize
-+                           ? metadata.maxSize - metadata.allocatedSize
-+                           : 0);
-           if (increase > 0 && increaseAllowed(increase)) {
-             std::uint64_t newLimit = metadata.allocatedSize + increase;
-             metadata.adjustDeserved(newLimit);
-@@ -987,7 +989,8 @@ void Manager::reclaimTable(std::shared_ptr<Table>&& table, bool internal) {
-          ((_globalSoftLimit - _globalHighwaterMark) / 2))) {
-       _tables[logSize].emplace(std::move(table));
-       _spareTableAllocation += memoryUsage;
--      _peakSpareTableAllocation += memoryUsage;
-+      _peakSpareTableAllocation =
-+          std::max(_spareTableAllocation, _peakSpareTableAllocation);
-       ++_spareTables;
-       TRI_ASSERT(_spareTables <= kMaxSpareTablesTotal);
-     } else {
-@@ -1003,15 +1006,21 @@ void Manager::reclaimTable(std::shared_ptr<Table>&& table, bool internal) {
- bool Manager::increaseAllowed(std::uint64_t increase,
-                               bool privileged) const noexcept {
-   TRI_ASSERT(_lock.isLocked());
-+  // _globalAllocation can legitimately exceed any of the limits (e.g. the
-+  // highwater mark), so the available headroom must not underflow
-+  auto headroom = [this](std::uint64_t limit) noexcept -> std::uint64_t {
-+    return (_globalAllocation < limit) ? (limit - _globalAllocation) : 0;
-+  };
-+
-   if (privileged) {
-     if (_resizing && (_globalAllocation <= _globalSoftLimit)) {
--      return (increase <= (_globalSoftLimit - _globalAllocation));
-+      return (increase <= headroom(_globalSoftLimit));
+@@ -995,6 +995,7 @@ SA/SW/LEG    - API is switchable between SA (superuser needed for everything), S
+ | X  |    | X  | GET    | `/_api/query/slow`                                           | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
+ | X  |    | X  | GET    | `/_api/query/current`                                        | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
+ | X  |    | X  | GET    | `/_api/query/properties`                                     | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
++| X  |    | X  | PUT    | `/_api/query/properties`                                     | RestQueryHandler           | canUseAdmin(AdminAqlQueries)             | AdminAqlQueries                     |                                          |                        |
+ | X  |    | X  | GET    | `/_api/query/registry`                                       | RestQueryHandler           | isSuperuser                              | SUPER                               |                                          |                        |
+ | X  |    | X  | GET    | `/_api/query/rules`                                          | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
+ | X  |    | X  | POST   | `/_api/query`                                                | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
+@@ -1097,14 +1098,14 @@ SA/SW/LEG    - API is switchable between SA (superuser needed for everything), S
+ | X  |    | X  | GET    | `/_api/wal/tail`                                             | RestWalAccessHandler       | -                                        | SUPER                               | only DBServer/Single, not on coord       |                        |
+ | X  |    | X  | PUT    | `/_api/wal/tail`                                             | RestWalAccessHandler       | -                                        | SUPER                               | only DBServer/Single, not on coord       |                        |
+ | X  |    | X  | DELETE | `/_api/wal/tail`                                             | RestWalAccessHandler       | -                                        | SUPER                               | only DBServer/Single, not on coord       |                        |
+-| X  |    | X  | GET    | `/_api/transaction`                                          | RestTransactionHandler     | (same user and same db) or isSuperuser   | AUTHEN, only see same user and db   | Coord/Single for users, DBServer internal|                        |
+-| X  |    | X  | GET    | `/_api/transaction/{id}`                                     | RestTransactionHandler     | -                                        | AUTHEN                              | Coord/Single for users, DBServer internal|                        |
++| X  |    | X  | GET    | `/_api/transaction`                                          | RestTransactionHandler     | own or canUseAdmin(MonitorTransactions)  | AUTHEN, own/AdminMonitorTransactions| Coord/Single for users, DBServer internal|                        |
++| X  |    | X  | GET    | `/_api/transaction/{id}`                                     | RestTransactionHandler     | own or canUseAdmin(MonitorTransactions)  | AUTHEN, own/AdminMonitorTransactions| Coord/Single for users, DBServer internal|                        |
+ | X  |    | -  | GET    | `/_api/transaction/history`                                  | RestTransactionHandler     | isSuperuser                              | SUPER                               | only maintainer                          |                        |
+ | X  |    | X  | POST   | `/_api/transaction`                                          | RestTransactionHandler     | -                                        | AUTHEN                              | Coord/Single for users, DBServer internal|                        |
+ | X  |    | X  | POST   | `/_api/transaction/begin`                                    | RestTransactionHandler     | -                                        | AUTHEN                              | Coord/Single for users, DBServer internal|                        |
+ | X  |    | X  | PUT    | `/_api/transaction/{id}`                                     | RestTransactionHandler     | same user or isSuperuser                 | AUTHEN, same user or SUPER          | Coord/Single for users, DBServer inter
+```
+
+**File**: `arangod/Aql/Optimizer/Rule/JoinIndexNodes.cpp` (modified, +8/-5)
+```diff
+@@ -738,16 +738,19 @@ std::tuple<bool, IndicesOffsets> checkCandidatesEligible(
      }
  
--    return (increase <= (_globalHardLimit - _globalAllocation));
-+    return (increase <= headroom(_globalHardLimit));
-   }
+     // if there is a post filter, make sure it only accesses variables
+-    // that are available before all index nodes
++    // that are available before all index nodes, or the candidate's own
++    // document.
+     if (candidate->hasFilter()) {
+       VarSet vars;
+       candidate->filter()->variables(vars);
  
--  return (increase <= (_globalHighwaterMark - _globalAllocation));
-+  return (increase <= headroom(_globalHighwaterMark));
+-      for (auto* other : candidates) {
+-        if (other != candidate && other->setsVariable(vars)) {
++      for (auto const* var : vars) {
++        if (var != candidate->outVariable() &&
++            !knownConstVariables->contains(var)) {
+           LOG_JOIN_OPTIMIZER_RULE << "IndexNode's post filter "
+-                                     "accesses variables that are "
+-                                     "not available before all "
++                                     "accesses variable "
++                                  << var->name
++                                  << " that is not available before all "
+                                      "index nodes";
+           return {false, {}};
+         }
+```
+
+**File**: `arangod/Auth/AuthMode.cpp` (modified, +8/-0)
+```diff
+@@ -112,6 +112,10 @@ auto describe(auth::perms::AnyAdmin auto const& admin) -> std::string {
+     return "see the AQL queries of other users (as admin)";
+   } else if constexpr (std::is_same_v<T, p::AdminKillAqlQueries>) {
+     return "kill the AQL queries of other users (as admin)";
++  } else if constexpr (std::is_same_v<T, p::AdminMonitorTransactions>) {
++    return "see the transactions of other users (as admin)";
++  } else if constexpr (std::is_same_v<T, p::AdminKillTransactions>) {
++    return "abort the transactions of other users (as admin)";
+   } else if constexpr (std::is_same_v<T, p::AdminShutdown>) {
+     return "shut down the server (as admin)";
+   } else if constexpr (std::is_same_v<T, p::AdminReadLogs>) {
+@@ -992,6 +996,10 @@ auto AuthMode::Rbac::check(auth::Permission permission) const -> Result {
+       return rbac::Action::AdminMonitorAqlQueries;
+     } else if constexpr (std::is_same_v<T, p::AdminKillAqlQueries>) {
+       return rbac::Action::AdminKillAqlQueries;
++    } else if constexpr (std::is_same_v<T, p::AdminMonitorTransactions>) {
++      return rbac::Action::AdminMonitorTransactions;
++    } else if constexpr (std::is_same_v<T, p::AdminKillTransactions>) {
++      return rbac::Action::AdminKillTransactions;
+     } else if constexpr (std::is_same_v<T, p::AdminShutdown>) {
+       return rbac::Action::AdminShutdown;
+     } else if constexpr (std::is_same_v<T, p::AdminReadLogs>) {
+```
+
+**File**: `arangod/Auth/Permissions.cpp` (modified, +4/-0)
+```diff
+@@ -113,6 +113,10 @@ std::ostream& operator<<(std::ostream& os, Permission const& permission) {
+             os << "AdminMonitorAqlQueries";
+           },
+           [&](AdminKillAqlQueries const&) { os << "AdminKillAqlQueries"; },
++          [&](AdminMonitorTransactions const&) {
++            os << "AdminMonitorTransactions";
++          },
++          [&](AdminKillTransactions const&) { os << "AdminKillTransactions"; },
+           [&](AdminShutdown const&) { os << "AdminShutdown"; },
+           [&](AdminReadLogs const&) { os << "AdminReadLogs"; },
+           [&](AdminSetLogLevel const&) { os << "AdminSetLogLevel"; },
+```
+
+**File**: `arangod/Auth/Permissions.h` (modified, +8/-5)
+```diff
+@@ -94,6 +94,8 @@ struct AdminApiCalls {};
+ struct AdminAqlQueries {};
+ struct AdminMonitorAqlQueries {};
+ struct AdminKillAqlQueries {};
++struct AdminMonitorTransactions {};
++struct AdminKillTransactions {};
+ struct AdminShutdown {};
+ struct AdminReadLogs {};
+ struct AdminSetLogLevel {};
+@@ -117,11 +119,12 @@ namespace detail {
+ using AdminList = meta::TypeList<
+     AdminReadUsers, AdminMoveShards, AdminMonitoring, AdminMonitoringInternal,
+     AdminAuthReload, AdminCrashHandler, AdminApiCalls, AdminAqlQueries,
+-    AdminMonitorAqlQueries, AdminKillAqlQueries, AdminShutdown, AdminReadLogs,
+-    AdminSetLogLevel, AdminOptions, AdminSupervisionState, AdminRemoveServer,
+-    AdminClusterInfo, AdminMaintenance, AdminRebalance, AdminLicense,
+-    AdminBackup, AdminReadReplicatedLog, AdminWriteReplicatedLog, AdminDump,
+-    AdminRestore, AdminWalAccess, AdminReadAgency, AdminQueryCache>;
++    AdminMonitorAqlQueries, AdminKillAqlQueries, AdminMonitorTransactions,
++    AdminKillTransactions, AdminShutdown, AdminReadLogs, AdminSetLogLevel,
++    AdminOptions, AdminSupervisionState, AdminRemoveServer, AdminClusterInfo,
++    AdminMaintenance, AdminRebalance, AdminLicense, AdminBackup,
++    AdminReadReplicatedLog, AdminWriteReplicatedLog, AdminDump, AdminRestore,
++    AdminWalAccess, AdminReadAgency, AdminQueryCache>;
  }
  
- Manager::PriorityList Manager::priorityList() {
-@@ -1073,20 +1082,21 @@ Manager::PriorityList Manager::priorityList() {
-     globalUsage = std::max(globalUsage, std::uint64_t(1));
-     TRI_ASSERT(globalUsage > 0);
+ template<typename T>
+```
+
+**File**: `arangod/Auth/Rbac/Actions.h` (modified, +2/-0)
+```diff
+@@ -72,6 +72,8 @@ enum class Action {
+   AdminReadUsers,
+   AdminMonitorAqlQueries,
+   AdminKillAqlQueries,
++  AdminMonitorTransactions,
++  AdminKillTransactions,
+ };
  
-+    double accessNormalizer = ((1.0 - allocFrac) * remainingWeight) /
-+                              static_cast<double>(totalAccesses);
-+    double usageNormalizer =
-+        (allocFrac * remainingWeight) / static_cast<double>(globalUsage);
+ namespace resources {
+```
+
+---
+
+### Incident Patch 2: `97d17fa4` (2026-10-21)
+**Commit Message**: Fixed and added tests for FILTER and SEARCH, added CHANGELOG entry, cleaned up comments
+
+**File**: `CHANGELOG` (modified, +6/-0)
+```diff
+@@ -1,5 +1,11 @@
+ 3.12.13 (XXXX-XX-XX)
+ --------------------
++* COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list,
++  ==, or OR of ==) with a range operator (<, <=, >, >=) on the same string
++  attribute wrongly returning no results when byte order disagrees with ICU
++  collation order. The same fix applies to SEARCH conditions combining ==
++  or OR of == with a range operator.
 +
-     // gather all unaccessed caches at beginning of list
-     for (auto& c : _caches) {
-       auto& cache = c.second;
-       if (!accessed.contains(cache->id())) {
--        double weight = baseWeight + (cache->usage() / globalUsage) * allocFrac;
--        list.emplace_back(cache, weight);
-+        double usageWeight =
-+            static_cast<double>(cache->usage()) * usageNormalizer;
-+        list.emplace_back(cache, baseWeight + usageWeight);
+ * COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
+   for more fine-grained permission setting for aql queries.
+ 
+```
+
+**File**: `arangod/Aql/Condition.cpp` (modified, +2/-7)
+```diff
+@@ -1027,9 +1027,7 @@ void Condition::optimize(ExecutionPlan* plan, bool multivalued) {
+                 // enumerate over IN list
+                 for (size_t k = 0; k < values->numMembers(); ++k) {
+                   auto value = values->getMemberUnchecked(k);
+-                  // the IN member is pinned by an implicit EQ, so only the
+-                  // paired operator's own type decides collation vs byte
+-                  // comparison, matching Expression.cpp's per-operator rule
++                  // IN has no operator; other's type decides collation
+                   CompareResult res =
+                       ResultsTable[compareAstNodes(
+                                        value, other.valueNode,
+@@ -1064,10 +1062,7 @@ void Condition::optimize(ExecutionPlan* plan, bool multivalued) {
+             // end of IN-merging
+ 
+             // Results are -1, 0, 1, move to 0, 1, 2 for the lookup:
+-            // use Unicode comparison whenever either operator is an ordering
+-            // op (> 1), since that operator alone decides it at runtime
+-            // (Expression.cpp compares == / != by byte, everything else via
+-            // collation, regardless of what it's paired with)
++            // either operator being an ordering op forces collation
+             bool const useUtf8Comparison =
+                 current.whichCompareOperation() > 1 ||
+                 other.whichCompareOperation() > 1;
+```
+
+**File**: `arangod/Aql/ConditionPart.cpp` (modified, +1/-2)
+```diff
+@@ -312,8 +312,7 @@ bool ConditionPart::isCoveredBy(ConditionPart const& other,
+   }
+ 
+   // Results are -1, 0, 1, move to 0, 1, 2 for the lookup:
+-  // use Unicode comparison whenever either side is an ordering op;
+-  // == / != falls back to byte so NFC/NFD aren't collapsed
++  // an ordering op on either side forces collation; == / != stays byte-based
+   bool const useUtf8Comparison =
+       other.whichCompareOperation() > 1 || whichCompareOperation() > 1;
+   CompareResult res =
+```
+
+**File**: `tests/js/client/aql/aql-arangosearch-filter-optimization.js` (modified, +26/-3)
+```diff
+@@ -46,6 +46,9 @@ function viewFiltersMerging(isSearchAlias) {
+         docs.push({value: "footest" + i, count: i});
+         docs.push({ name_1: i.toString(), "value_nested": [{ "nested_1": [{ "nested_2": "foo123"}]}]});
        }
-     }
++      // isolated from value/count -- byte order and ICU collation disagree on "{" vs "c"
++      docs.push({s: "{"});
++      docs.push({s: "a"});
+       c.insert(docs);
+       if (isSearchAlias) {
+         let c = db._collection("UnitTestsCollection");
+@@ -54,13 +57,13 @@ function viewFiltersMerging(isSearchAlias) {
+           indexMeta = {
+             type: "inverted",
+             name: "inverted",
+-            fields: ["value", "count", {"name": "value_nested", "nested": [{"name": "nested_1", "nested": [{"name": "nested_2"}]}]}]
++            fields: ["value", "count", "s", {"name": "value_nested", "nested": [{"name": "nested_1", "nested": [{"name": "nested_2"}]}]}]
+           };
+         } else {
+           indexMeta = {
+             type: "inverted",
+             name: "inverted",
+-            fields: ["value", "count"]
++            fields: ["value", "count", "s"]
+           };
+         }
+         let i = c.ensureIndex(indexMeta);
+@@ -79,6 +82,9 @@ function viewFiltersMerging(isSearchAlias) {
+                   count: {
+                     analyzers: ["identity"]
+                   },
++                  s: {
++                    analyzers: ["identity"]
++                  },
+                   value_nested: {
+                     "nested": { "nested_1": {"nested": {"nested_2": {}}}}
+                   }
+@@ -98,6 +104,9 @@ function viewFiltersMerging(isSearchAlias) {
+                   count: {
+                     analyzers: ["identity"]
+                   },
++                  s: {
++                    analyzers: ["identity"]
++                  },
+                   value_nested: {}
+                 }
+               }
+@@ -136,13 +145,27 @@ function viewFiltersMerging(isSearchAlias) {
+       assertEqual(50, res.length);
  
--    double accessNormalizer = ((1.0 - allocFrac) * remainingWeight) /
--                              static_cast<double>(totalAccesses);
--    double usageNormalizer =
--        (allocFrac * remainingWeight) / static_cast<double>(globalUsage);
--
-     // gather all accessed caches in order
-     for (auto const& s : stats) {
-       TRI_ASSERT(accessed.contains(s.first) == _caches.contains(s.first));
-```
-
-**File**: `arangod/Cache/Metadata.cpp` (modified, +29/-13)
-```diff
-@@ -27,6 +27,7 @@
- #include "Cache/Manager.h"
- 
- #include <algorithm>
-+#include <limits>
- 
- namespace arangodb::cache {
- 
-@@ -95,13 +96,18 @@ basics::ReadWriteSpinLock& Metadata::lock() const noexcept { return _lock; }
- bool Metadata::adjustUsageIfAllowed(std::int64_t usageChange) noexcept {
-   while (true) {
-     std::uint64_t expected = usage.load(std::memory_order_acquire);
--    std::uint64_t desired =
--        (usageChange < 0) ? expected - static_cast<std::uint64_t>(-usageChange)
--                          : expected + static_cast<std::uint64_t>(usageChange);
--
--    if ((desired > hardUsageLimit) ||
--        ((expected <= softUsageLimit) && (desired > softUsageLimit))) {
--      return false;
-+    std::uint64_t desired;
-+    if (usageChange < 0) {
-+      // decreasing usage is always allowed, but must not underflow
-+      auto decrease = static_cast<std::uint64_t>(-usageChange);
-+      TRI_ASSERT(expected >= decrease);
-+      desired = (expected >= decrease) ? expected - decrease : 0;
-+    } else {
-+      desired = expected + static_cast<std::uint64_t>(usageChange);
-+      if ((desired < expected) || (desired > hardUsageLimit) ||
-+          ((expected <= softUsageLimit) && (desired > softUsageLimit))) {
-+        return false;
-+      }
-     }
- 
-     bool success = usage.compare_exchange_weak(expected, desired,
-@@ -150,7 +156,7 @@ bool Metadata::adjustLimits(std::uint64_t softLimit,
- 
-   // general case: start shrinking
-   if ((hardLimit == hardUsageLimit) && (softLimit < hardLimit) &&
--      (softLimit + fixed <= std::min(deservedSize, maxSize))) {
-+      fits(softLimit, tableSize)) {
-     return approve();
-   }
- 
-@@ -162,7 +168,7 @@ bool Metadata::adjustLimits(std::uint64_t softLimit,
- 
-   // general case: adjust both above usage but below deserved/maxSize
-   if ((softLimit == hardLimit) && (usage <= hardLimit) &&
--      ((hardLimit + fixed) <= std::min(deservedSize, maxSize))) {
-+      fits(hardLimit, tableSize)) {
-     return approve();
-   }
- 
-@@ -178,16 +184,26 @@ std::uint64_t Metadata::adjustDeserved(std::uint64_t deserved) noexcept {
- std::uint64_t Metadata::newLimit() const noexcept {
-   TRI_ASSERT(_lock.isLocked());
-   std::uint64_t fixed = fixedSize + tableSize + Manager::kCacheRecordOverhead;
-+  // cap the growth factor without overflowing
-+  constexpr std::uint64_t kMax = std::numeric_limits<std::uint64_t>::max();
-+  std::uint64_t maxGrowth =
-+      (hardUsageLimit > kMax / 4) ? kMax : 4 * hardUsageLimit;
-   return ((Cache::kMinSize + fixed) >= deservedSize)
-              ? Cache::kMinSize
--             : std::min((deservedSize - fixed), 4 * hardUsageLimit);
-+             : std::min((deservedSize - fixed), maxGrowth);
-+}
+       if (isSearchAlias) {
+-        let res = db._query(`FOR d IN UnitTestsCollection 
++        let res = db._query(`FOR d IN UnitTestsCollection
+           OPTIONS {indexHint: "inverted", forceIndexHint: true, waitForSync: true, filterOptimization: 0} FILTER
+           LEVENSHTEIN_MATCH(d.value, 'footest', 2, false) AND
+           STARTS_WITH(d.value, 'footest') RETURN d`).toArray();
+         assertEqual(50, res.length);
+       }
+     },
 +
-+bool Metadata::fits(std::uint64_t limit, std::uint64_t table) const noexcept {
-+  TRI_ASSERT(_lock.isLocked());
-+  // overflow-safe check for (limit + fixed <= min(deservedSize, maxSize))
-+  std::uint64_t bound = std::min(deservedSize, maxSize);
-+  std::uint64_t fixed = fixedSize + table + Manager::kCacheRecordOverhead;
-+  return (bound >= fixed) && (limit <= bound - fixed);
++    testMergeEqualityWithRangeCollationMismatch() {
++      let res = db._query(
++        "FOR d IN UnitTestView SEARCH d.s == '{' AND d.s < 'c' RETURN d.s"
++      ).toArray();
++      assertEqual(["{"], res);
++    },
++
++    testMergeOrEqualityWithRangeCollationMismatch() {
++      let res = db._query(
++        "FOR d IN UnitTestView SEARCH (d.s == '{' OR d.s == 'zzz') AND d.s < 'c' RETURN d.s"
++      ).toArray();
++      assertEqual(["{"], res);
++    },
+   };
  }
  
- bool Metadata::migrationAllowed(std::uint64_t newTableSize) noexcept {
-   TRI_ASSERT(_lock.isLocked());
--  return (hardUsageLimit + fixedSize + newTableSize +
--              Manager::kCacheRecordOverhead <=
--          std::min(deservedSize, maxSize));
-+  return fits(hardUsageLimit, newTableSize);
+```
+
+**File**: `tests/js/client/aql/aql-optimizer-rule-use-index-range.js` (modified, +74/-10)
+```diff
+@@ -36,11 +36,13 @@ var db = internal.db;
+ function optimizerRuleUseIndexRangeTester () {
+   var ruleName = "use-indexes";
+   var collBaseName = "UTUseIndexRange";
+-  var collNames = ["NoInd", "SkipInd", "HashInd", "BothInd"];
++  var collNames = ["NoInd", "SkipInd", "HashInd", "BothInd", "StrInd", "OtherInd"];
+   var collNoInd;
+   var collSkipInd;
+   var collHashInd;
+   var collBothInd;
++  var collStrInd;
++  var collOtherInd;
+   var edgeCollName = collBaseName + "Edges";
+ 
+   // various choices to control the optimizer: 
+@@ -70,8 +72,7 @@ function optimizerRuleUseIndexRangeTester () {
+         colls.push(coll);
+       }
+       collNoInd = colls[0];
+-      // byte order and ICU collation disagree on this value vs "c", which is
+-      // exactly what COR-1152 needs to expose
++      // byte order and ICU collation disagree on this value vs "c"
+       collNoInd.insert({"a":100, "s":"{"});
+       collNoInd.insert({"a":101, "s":"a"});
+       collSkipInd = colls[1];
+@@ -81,6 +82,16 @@ function optimizerRuleUseIndexRangeTester () {
+       collBothInd = colls[3];
+       collBothInd.ensureIndex({ type: "hash", fields: ["a"] });
+       collBothInd.ensureIndex({ type: "skiplist", fields: ["a"] });
++      collStrInd = colls[4];
++      collStrInd.ensureIndex({ type: "skiplist", fields: ["s"] });
++      // isolated from collSkipInd, other tests rely on its doc count for cost decisions
++      collStrInd.insert({"a":100, "s":"{"});
++      collStrInd.insert({"a":101, "s":"a"});
++      collOtherInd = colls[5];
++      // index doesn't cover s: use-indexes normalizes the condition but finds nothing to use
++      collOtherInd.ensureIndex({ type: "skiplist", fields: ["a"] });
++      collOtherInd.insert({"a":100, "s":"{"});
++      collOtherInd.insert({"a":101, "s":"a"});
+ 
+       internal.db._drop(edgeCollName);
+       let edges = internal.db._createEdgeCollection(edgeCollName);
+@@ -239,24 +250,24 @@ function optimizerRuleUseIndexRangeTester () {
+     },
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+-/// @brief test that string ranges are not falsely detected as impossible just
+-/// because byte order and ICU collation disagree (COR-1152)
++/// @brief test that string ranges are not falsely detected as impossible when byte order and ICU collation disagree
+ ////////////////////////////////////////////////////////////////////////////////
+ 
+     testImpossibleRangesNotFalselyDetectedForUtf8Strings : function () {
+       var queries = [
+-        // IN-list pruning (Condition.cpp IN-merging)
++        // single-element IN collapses to ==
+         [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s IN ['{'] && i.s < 'c' RETURN i.s", [ "{" ] ],
+-        // plain comparator merging (Condition.cpp useUtf8Comparison &&-gate),
+-        // one case per ordering operator
++        // IN-list pruning needs 2+ elements to not collapse
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s IN ['{', 'zzz'] && i.s < 'c' RETURN i.s", [ "{" ] ],
+         [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == '{' && i.s < 'c' RETURN i.s", [ "{" ] ],
+         [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == '{' && i.s <= 'c' RETURN i.s", [ "{" ] ],
+         [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == 'a' && i.s > '{' RETURN i.s", [ "a" ] ],
+         [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == 'a' && i.s >= '{' RETURN i.s", [ "a" ] ],
+         // operand order must not matter
+         [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s < 'c' && i.s == '{' RETURN i.s", [ "{" ] ],
+-        // OR distribution (ConditionPart.cpp isCoveredBy &&-gate)
+-        [ "FOR i IN UTUseIndexRangeNoInd FILTER (i.s == '{' || i.s == 'zzz') && i.s < 'c' RETURN i.s", [ "{" ] ]
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER (i.s == '{' || i.s == 'zzz') && i.s < 'c' RETURN i.s", [ "{" ] ],
++        // != paired with an ordering op also needs the collation rule
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s < 'c' && i.s != '{' RETURN i.s", [ "a" ] ]
+       ];
+ 
+       queries.forEach(function(query) {
+@@ -272,6 +283,59 @@ function optimizerRuleUseIndexRangeTester () {
+       });
+     },
+ 
++////////////////////////////////////////////////////////////////////////////////
++/// @brief same as above, but with an actual index on s, confirming the fix holds once an IndexNode is picked
++////////////////////////////////////////////////////////////////////////////////
++
++    testImpossibleRangesNotFalselyDetectedForUtf8StringsWithIndex : function () {
++      const queries = [
++        [ "FOR i IN UTUseIndexRangeStrInd FILTER i.s IN ['{'] && i.s < 'c' RETURN i.s", [ "{" ] ],
++        [ "FOR i IN UTUseIndexRangeStrInd FILTER i.s IN ['{', 'zzz'] && i.s < 'c' RETURN i.s", [ "{" ] ],
++        [ "FOR i IN UTUseIndexRangeStrInd FILTER i.s == '{' && i.s < 'c' RETURN i.s", [ "{" ] ],
++        [ "FOR i IN UTUseIndexRangeStrInd FILTER (i.s == '{' || i.s == 'zzz') && i.s < 'c' RETURN i.s", [ "{" ] ]
++      ];
++
++      queries.forEach(function(query) {
++        const result = d
+```
+
+---
+
+### Incident Patch 3: `023cfa46` (2026-10-22)
+**Commit Message**: Merge pull request #23502 from arangodb/bugfix/COR-1152-aql-in-range-utf8
+
+[COR-1152] AQL operator IN [] with use-indexes
+
+**File**: `CHANGELOG` (modified, +6/-1)
+```diff
+@@ -1,5 +1,10 @@
+ 3.12.13 (XXXX-XX-XX)
+ --------------------
++* COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list,
++  ==, or OR of ==) with a range operator (<, <=, >, >=) on the same string
++  attribute wrongly returning no results when byte order disagrees with ICU
++  collation order. The same fix applies to SEARCH conditions combining ==
++  or OR of == with a range operator.
+ 
+ * The `--server.jwt-secret-folder` startup option now skips everything in the
+   folder that is not a regular file (e.g. subfolders, sockets, devices, named
+@@ -9,7 +14,7 @@
+   how large a compressed HTTP request body may be after decompression. The default
+   is 512 MiB.
+ 
+-* COR-1086: Replaced deprecated OpenSSL functions with the proper newer, 
++* COR-1086: Replaced deprecated OpenSSL functions with the proper newer,
+   higher level envelope calls. Removed unused functions and refactored some
+   minor parts of the SslInterface.
+ 
+```
+
+**File**: `arangod/Aql/Condition.cpp` (modified, +6/-5)
+```diff
+@@ -1027,9 +1027,11 @@ void Condition::optimize(ExecutionPlan* plan, bool multivalued) {
+                 // enumerate over IN list
+                 for (size_t k = 0; k < values->numMembers(); ++k) {
+                   auto value = values->getMemberUnchecked(k);
++                  // IN has no operator; other's type decides collation
+                   CompareResult res =
+-                      ResultsTable[compareAstNodes(value, other.valueNode,
+-                                                   false) +
++                      ResultsTable[compareAstNodes(
++                                       value, other.valueNode,
++                                       other.whichCompareOperation() > 1) +
+                                    1][0 /*NODE_TYPE_OPERATOR_BINARY_EQ*/]
+                                   [other.whichCompareOperation()];
+ 
+@@ -1060,10 +1062,9 @@ void Condition::optimize(ExecutionPlan* plan, bool multivalued) {
+             // end of IN-merging
+ 
+             // Results are -1, 0, 1, move to 0, 1, 2 for the lookup:
+-            // use Unicode comparison only when both operators are ordering ops
+-            // (> 1)
++            // either operator being an ordering op forces collation
+             bool const useUtf8Comparison =
+-                current.whichCompareOperation() > 1 &&
++                current.whichCompareOperation() > 1 ||
+                 other.whichCompareOperation() > 1;
+             CompareResult res =
+                 resultsTable[compareAstNodes(current.valueNode, other.valueNode,
+```
+
+**File**: `arangod/Aql/ConditionPart.cpp` (modified, +2/-2)
+```diff
+@@ -312,9 +312,9 @@ bool ConditionPart::isCoveredBy(ConditionPart const& other,
+   }
+ 
+   // Results are -1, 0, 1, move to 0, 1, 2 for the lookup:
+-  // == / != use byte comparison; mirror that so NFC/NFD aren't collapsed
++  // an ordering op on either side forces collation; == / != stays byte-based
+   bool const useUtf8Comparison =
+-      other.whichCompareOperation() > 1 && whichCompareOperation() > 1;
++      other.whichCompareOperation() > 1 || whichCompareOperation() > 1;
+   CompareResult res =
+       ResultsTable[compareAstNodes(other.valueNode, valueNode,
+                                    useUtf8Comparison) +
+```
+
+**File**: `tests/js/client/aql/aql-arangosearch-filter-optimization.js` (modified, +26/-3)
+```diff
+@@ -46,6 +46,9 @@ function viewFiltersMerging(isSearchAlias) {
+         docs.push({value: "footest" + i, count: i});
+         docs.push({ name_1: i.toString(), "value_nested": [{ "nested_1": [{ "nested_2": "foo123"}]}]});
+       }
++      // isolated from value/count -- byte order and ICU collation disagree on "{" vs "c"
++      docs.push({s: "{"});
++      docs.push({s: "a"});
+       c.insert(docs);
+       if (isSearchAlias) {
+         let c = db._collection("UnitTestsCollection");
+@@ -54,13 +57,13 @@ function viewFiltersMerging(isSearchAlias) {
+           indexMeta = {
+             type: "inverted",
+             name: "inverted",
+-            fields: ["value", "count", {"name": "value_nested", "nested": [{"name": "nested_1", "nested": [{"name": "nested_2"}]}]}]
++            fields: ["value", "count", "s", {"name": "value_nested", "nested": [{"name": "nested_1", "nested": [{"name": "nested_2"}]}]}]
+           };
+         } else {
+           indexMeta = {
+             type: "inverted",
+             name: "inverted",
+-            fields: ["value", "count"]
++            fields: ["value", "count", "s"]
+           };
+         }
+         let i = c.ensureIndex(indexMeta);
+@@ -79,6 +82,9 @@ function viewFiltersMerging(isSearchAlias) {
+                   count: {
+                     analyzers: ["identity"]
+                   },
++                  s: {
++                    analyzers: ["identity"]
++                  },
+                   value_nested: {
+                     "nested": { "nested_1": {"nested": {"nested_2": {}}}}
+                   }
+@@ -98,6 +104,9 @@ function viewFiltersMerging(isSearchAlias) {
+                   count: {
+                     analyzers: ["identity"]
+                   },
++                  s: {
++                    analyzers: ["identity"]
++                  },
+                   value_nested: {}
+                 }
+               }
+@@ -136,13 +145,27 @@ function viewFiltersMerging(isSearchAlias) {
+       assertEqual(50, res.length);
+ 
+       if (isSearchAlias) {
+-        let res = db._query(`FOR d IN UnitTestsCollection 
++        let res = db._query(`FOR d IN UnitTestsCollection
+           OPTIONS {indexHint: "inverted", forceIndexHint: true, waitForSync: true, filterOptimization: 0} FILTER
+           LEVENSHTEIN_MATCH(d.value, 'footest', 2, false) AND
+           STARTS_WITH(d.value, 'footest') RETURN d`).toArray();
+         assertEqual(50, res.length);
+       }
+     },
++
++    testMergeEqualityWithRangeCollationMismatch() {
++      let res = db._query(
++        "FOR d IN UnitTestView SEARCH d.s == '{' AND d.s < 'c' RETURN d.s"
++      ).toArray();
++      assertEqual(["{"], res);
++    },
++
++    testMergeOrEqualityWithRangeCollationMismatch() {
++      let res = db._query(
++        "FOR d IN UnitTestView SEARCH (d.s == '{' OR d.s == 'zzz') AND d.s < 'c' RETURN d.s"
++      ).toArray();
++      assertEqual(["{"], res);
++    },
+   };
  }
  
- void Metadata::changeTable(std::uint64_t newTableSize) noexcept {
 ```
 
-**File**: `arangod/Cache/Metadata.h` (modified, +7/-0)
+**File**: `tests/js/client/aql/aql-optimizer-rule-use-index-range.js` (modified, +124/-1)
 ```diff
-@@ -137,6 +137,13 @@ struct Metadata {
-   void toggleResizing() noexcept { _resizing = !_resizing; }
+@@ -36,11 +36,13 @@ var db = internal.db;
+ function optimizerRuleUseIndexRangeTester () {
+   var ruleName = "use-indexes";
+   var collBaseName = "UTUseIndexRange";
+-  var collNames = ["NoInd", "SkipInd", "HashInd", "BothInd"];
++  var collNames = ["NoInd", "SkipInd", "HashInd", "BothInd", "StrInd", "OtherInd"];
+   var collNoInd;
+   var collSkipInd;
+   var collHashInd;
+   var collBothInd;
++  var collStrInd;
++  var collOtherInd;
+   var edgeCollName = collBaseName + "Edges";
  
-  private:
-+  //////////////////////////////////////////////////////////////////////////////
-+  /// @brief Checks overflow-safe whether a usage limit together with a table
-+  /// of the given size and the fixed overhead stays within the deserved and
-+  /// maximum size. Requires record to be read-locked.
-+  //////////////////////////////////////////////////////////////////////////////
-+  bool fits(std::uint64_t limit, std::uint64_t table) const noexcept;
+   // various choices to control the optimizer: 
+@@ -70,13 +72,28 @@ function optimizerRuleUseIndexRangeTester () {
+         colls.push(coll);
+       }
+       collNoInd = colls[0];
++      // byte order and ICU collation disagree on this value vs "c"
++      collNoInd.insert({"a":100, "s":"{"});
++      collNoInd.insert({"a":101, "s":"a"});
++      // uppercase sorts before lowercase bytewise, but not in the collation
++      collNoInd.insert({"a":102, "s":"Z"});
+       collSkipInd = colls[1];
+       collSkipInd.ensureIndex({ type: "skiplist", fields: ["a"] });
+       collHashInd = colls[2];
+       collHashInd.ensureIndex({ type: "hash", fields: ["a"] });
+       collBothInd = colls[3];
+       collBothInd.ensureIndex({ type: "hash", fields: ["a"] });
+       collBothInd.ensureIndex({ type: "skiplist", fields: ["a"] });
++      collStrInd = colls[4];
++      collStrInd.ensureIndex({ type: "skiplist", fields: ["s"] });
++      // isolated from collSkipInd, other tests rely on its doc count for cost decisions
++      collStrInd.insert({"a":100, "s":"{"});
++      collStrInd.insert({"a":101, "s":"a"});
++      collOtherInd = colls[5];
++      // index doesn't cover s: use-indexes normalizes the condition but finds nothing to use
++      collOtherInd.ensureIndex({ type: "skiplist", fields: ["a"] });
++      collOtherInd.insert({"a":100, "s":"{"});
++      collOtherInd.insert({"a":101, "s":"a"});
+ 
+       internal.db._drop(edgeCollName);
+       let edges = internal.db._createEdgeCollection(edgeCollName);
+@@ -234,6 +251,112 @@ function optimizerRuleUseIndexRangeTester () {
+       });
+     },
+ 
++////////////////////////////////////////////////////////////////////////////////
++/// @brief test that string ranges are not falsely detected as impossible when byte order and ICU collation disagree
++////////////////////////////////////////////////////////////////////////////////
 +
- #ifdef ARANGODB_ENABLE_MAINTAINER_MODE
-   void checkInvariants() const noexcept;
- #else
-```
-
-**File**: `arangod/Cluster/ClusterCollectionMethods.h` (modified, +1/-0)
-```diff
-@@ -24,6 +24,7 @@
- 
- #include "Basics/Result.h"
- 
-+#include <cstdint>
- #include <memory>
- #include <unordered_map>
- #include <vector>
-```
-
-**File**: `arangod/Cluster/Utils/PlanCollectionToAgencyWriter.h` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@
- 
- #pragma once
- 
-+#include <cstdint>
- #include <memory>
- #include <string>
- #include <unordered_map>
-```
-
-**File**: `arangod/RocksDBEngine/RocksDBReplicationCommon.h` (modified, +2/-0)
-```diff
-@@ -22,6 +22,8 @@
- 
- #pragma once
- 
-+#include <cstdint>
++    testImpossibleRangesNotFalselyDetectedForUtf8Strings : function () {
++      var queries = [
++        // single-element IN collapses to ==
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s IN ['{'] && i.s < 'c' RETURN i.s", [ "{" ] ],
++        // IN-list pruning needs 2+ elements to not collapse
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s IN ['{', 'zzz'] && i.s < 'c' RETURN i.s", [ "{" ] ],
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == '{' && i.s < 'c' RETURN i.s", [ "{" ] ],
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == '{' && i.s <= 'c' RETURN i.s", [ "{" ] ],
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == 'a' && i.s > '{' RETURN i.s", [ "a" ] ],
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == 'a' && i.s >= '{' RETURN i.s", [ "a" ] ],
++        // operand order must not matter
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s < 'c' && i.s == '{' RETURN i.s", [ "{" ] ],
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER (i.s == '{' || i.s == 'zzz') && i.s < 'c' RETURN i.s", [ "{" ] ],
++        // != paired with an ordering op also needs the collation rule
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s < 'c' && i.s != '{' RETURN i.s", [ "a" ] ]
++      ];
 +
- #include "Basics/Result.h"
- 
- namespace arangodb {
++      queries.forEach(function(query) {
++        var result = db._createStatement({query: query[0], bindVars: { }, options: paramAll}).explain();
++        var foundNoResults = false;
++        for (var t in result.plan.nodes) {
++          if (result.plan.nodes[t].type === "NoResultsNode") {
++            foundNoResults = true;
++          }
++        }
++        assertFalse(foundNoResults, query);
++        assertEqual(query[1], db._query(query[0]).toArray().sort(), query);
++      });
++    },
++
++////////////////////////////////////////////////////////////////////////////////
++/// @brief same, but merging IN/== with two range bounds (>= and <) instead of one
++////////////////////////////////////////////////////////////////////////////////
++
++    testTwoSidedRangeMergeForUtf8Strings : function () {
++      var queries = [
++        // byte order wrongly satisfies the lower bound; collation says no
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == '{' && i.s >= 'a' && i.s < '~' RETURN i.s", [ ] ],
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s IN ['{', 'zzz'] && i.s >= 'a' && i.s < '~' RETURN i.s", [ ] ],
++        // byte order wrongly fails the lower bound; collation says yes
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s == 'Z' && i.s >= 'a' && i.s < 'z' RETURN i.s", [ "Z" ] ],
++        [ "FOR i IN UTUseIndexRangeNoInd FILTER i.s IN ['Z', 'zzz'] && i.s >= 'a' && i.s < 'z' RE
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23514** (2026-10-22): catch any non-normal exit. (@dothebart)
+- **PR #23511** (2026-10-21): Remove dead code releated to mustCheckBounds. (@maierlars)
 - **PR #23506** (2026-10-20): Compile with C++26 (@markuspf)
+- **PR #23505** (2026-10-21): Let RocksDB apply iterator bounds in write transactions (@maierlars)
 - **PR #23504** (2026-10-20): Remove V8Context member from RestTransactionHandler (@markuspf)
 - **PR #23503** (2026-10-20): [BTS-2474] Make join rule more strict. (@maierlars)
-- **PR #23500** (2026-10-20): Rbac tests - query version directly (@RheaAyase)
-- **PR #23499** (2026-10-19): rbac-tests: fix race (@RheaAyase)
-- **PR #23495** (2026-10-17): rbac-tests: fix versions (@RheaAyase)
 
 ---
 
@@ -1452,30 +1743,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix/503 may be success as well (#22764)
+## X. Merge remote-tracking branch 'origin/devel' into bugfix/COR-1152-aql-in-range-ut
 
 **RULE**:
-When implementing operations in `js/client/modules/@arangodb/testutils/instance.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `3rdParty/jemalloc/jemalloc/src/jemalloc_cpp.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d47a81ed`: fix/503 may be success as well (#22764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9589f048`: Merge remote-tracking branch 'origin/devel' into bugfix/COR-1152-aql-in-range-utf8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/client/modules/@arangodb/testutils/instance.js`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `3rdParty/jemalloc/jemalloc/src/jemalloc_cpp.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-          (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code) ||
-          (ex.errorNum === internal.errors.ERROR_HTTP_SERVICE_UNAVAILABLE.code)
-        )) {
+	if (ptr == nullptr && !nothrow) {
+    throw std::bad_alloc();
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            (ex.errorNum === internal.errors.ERROR_BAD_PARAMETER.code))) {
+	if (ptr == nullptr && !nothrow)
+		std::__throw_bad_alloc();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d47a81ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9589f048` are properly handled with clean fallback behavior.

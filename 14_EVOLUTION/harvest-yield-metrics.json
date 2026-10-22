@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T15:42:14.690Z",
-  "total_cycles_completed": 4275,
-  "total_learnings_persisted": 4275,
-  "total_rules_promoted": 3457,
+  "last_updated": "2026-10-22T15:47:01.716Z",
+  "total_cycles_completed": 4278,
+  "total_learnings_persisted": 4278,
+  "total_rules_promoted": 3460,
   "history": [
-    {
-      "timestamp": "2026-10-20T23:49:53.451Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:55:44.499Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-20T23:55:53.398Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T00:02:04.341Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T15:42:14.690Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:46:44.665Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:46:53.099Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:47:01.716Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

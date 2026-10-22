@@ -4298,3 +4298,6 @@
 | `CYCLE-20261022-LTEZ` | `2026-10-22T15:42:08.171Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3610` | Yes (`a52dc629...`) |
 | `CYCLE-20261022-LTQ4` | `2026-10-22T15:42:08.572Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3611` | Yes (`3ee04516...`) |
 | `CYCLE-20261022-LYFS` | `2026-10-22T15:42:14.680Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3612` | Yes (`25acc29f...`) |
+| `CYCLE-20261022-RQQZ` | `2026-10-22T15:46:44.651Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3613` | Yes (`e750d900...`) |
+| `CYCLE-20261022-RX9A` | `2026-10-22T15:46:53.086Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3614` | Yes (`77789c8e...`) |
+| `CYCLE-20261022-S3WS` | `2026-10-22T15:47:01.708Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3615` | Yes (`d006dca8...`) |

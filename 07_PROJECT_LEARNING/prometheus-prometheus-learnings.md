@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `afa1fdeb`  
+> **Source Version**: `22c287a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:40:52.808Z  
+> **Timestamp**: 2026-10-22T15:46:52.667Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:40:52.800Z  
+> **Harvest Timestamp**: 2026-10-22T15:46:52.390Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66665 stars
+- **Stars / Engagement**: 66702 stars
 
 ---
 
@@ -828,6 +828,9 @@ type queueManagerMetrics struct {
 	sentBytesTotal         prometheus.Counter
 	metadataBytesTotal     prometheus.Counter
 	maxSamplesPerSend      prometheus.Gauge
+
+	samplesMetadataTotal    *prometheus.CounterVec
+	histogramsMetadataTotal *prometheus.CounterVec
 }
 
 func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManagerMetrics {
@@ -846,6 +849,13 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Help:        "Total number of samples sent to remote storage.",
 		ConstLabels: constLabels,
 	})
+	m.samplesMetadataTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace:   namespace,
+		Subsystem:   subsystem,
+		Name:        "samples_metadata_total",
+		Help:        "Total number of samples sent to remote storage using Remote Write 2.0 with the specified metadata field set.",
+		ConstLabels: constLabels,
+	}, []string{"field"})
 	m.exemplarsTotal = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace:   namespace,
 		Subsystem:   subsystem,
@@ -860,6 +870,17 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Help:        "Total number of histograms sent to remote storage.",
 		ConstLabels: constLabels,
 	})
+	m.histogramsMetadataTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace:   namespace,
+		Subsystem:   subsystem,
+		Name:        "histograms_metadata_total",
+		Help:        "Total number of histograms sent to remote storage using Remote Write 2.0 with the specified metadata field set.",
+		ConstLabels: constLabels,
+	}, []string{"field"})
+	for _, field := range []string{metadataFieldType, metadataFieldUnit, metadataFieldHelp} {
+		m.samplesMetadataTotal.WithLabelValues(field)
+		m.histogramsMetadataTotal.WithLabelValues(field)
+	}
 	m.metadataTotal = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace:   namespace,
 		Subsystem:   subsystem,
@@ -941,28 +962,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Namespace:   namespace,
 		Subsystem:   subsystem,
 		Name:        "histograms_dropped_total",
-		Help:        "Total number of histograms which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentionally because of an unknown reference ID.",
-		ConstLabels: constLabels,
-	}, []string{"reason"})
-	m.enqueueRetriesTotal = prometheus.NewCounter(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "enqueue_retries_total",
-		Help:        "Total number of times enqueue has failed because a shards queue was full.",
-		ConstLabels: constLabels,
-	})
-	m.sentBatchDuration = prometheus.NewHistogram(prometheus.HistogramOpts{
-		Namespace:                       namespace,
-		Subsystem:                       subsystem,
-		Name:                            "sent_batch_duration_seconds",
-		Help:                            "Duration of send calls to the remote storage.",
-		Buckets:                         append(prometheus.DefBuckets, 25, 60, 120, 300),
-		ConstLabels:                     constLabels,
-		NativeHistogramBucketFactor:     1.1,
-		NativeHistogramMaxBucketNumber:  100,
-		NativeHistogramMinResetDuration: 1 * time.Hour,
-	})
-	m.highestTimestamp = &maxT
+		Help:        "Total number of histograms which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentio
 ```
 
 ### Core Architecture Module: `tsdb/chunks/chunk_write_queue.go`
@@ -1500,13 +1500,14 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20089** (2026-10-20): **feat(config/promql): add default label_value_length_limit and validation**
-  *Symptoms*: Implements #16525: Set and check (and document) a global label_value_length_limit  ## Summary  Adds a default `label_value_length_limit` of 200 bytes and validation in PromQL functions.  ## Changes  1. **config/config.go**: Added `LabelValueLengthLimit: 200` to `DefaultGlobalConfig` 2. **promql/functions.go**:     - Added `DefaultLabelValueLengthLimit = 200` constant    - Added validation in `label_replace()` to enforce limit    - Added validation in `label_join()` to enforce limit  ## Testing  - `go build ./promql/...` ✅ - `go build ./config/...` ✅   - `go build ./scrape/...` ✅ - `go test ./scrape/...` - All tests pass ✅  Closes #16525.
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!  This does not belong to PromQL but it belongs to scrape. And we already have label_name_length_limit and label_value_length_limit, hence I am closing this pull request.
+- **Issue #20143** (2026-10-22): **util/pool: cover maxSize and reject a factor of 1**
+  *Symptoms*: ## What  `pool.New` documents buckets for `minSize`..`maxSize`, but the loop only appends sizes the geometric sequence lands on exactly. When it overshoots, the largest documented size has no bucket:  ```go p := pool.New(1000, 1000000, 3, make)   // sizes end at 729000 p.Get(1000000)                           // allocates ad hoc p.Put(buf)                               // dropped: every bucket is smaller ```  `scrape/scrape.go` constructs the pool with exactly these parameters, so the 1 MB buffer is reallocated on every use instead of being reused.  `factor == 1` was also accepted by the `factor < 1` guard and never advanced the loop variable.  ## Fix  - Append `maxSize` when the sequence does not reach it. - Reject `factor <= 1`.  ## Tests  Added to `util/pool/pool_test.go`:  - `TestPoolCoversMaxSize` — `New(1000, 1000000, 3, countingMake)`; `Get(1000000)` / `Put` / `Get(1000000)` must call `make` exactly once. - `TestPoolRejectsFactorOne` — `New(1, 10, 1, makeFunc)` panics.  Locally (Go 1.24.7):  ``` $ cd util/pool && go test ./... -count=1 ok  	github.com/prometheus/prometheus/util/pool	0.681s ```  With `util/pool/pool.go` reverted, `TestPoolCoversMaxSize` fails because `calls` reaches 2.  #### Which issue(s) does the PR fix:  NONE. Found while reading the package.  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  ```release-notes [BUGFIX] util/pool: Create a bucket for the documented maximum size, so th
 
-- **Issue #20083** (2026-10-19): **docs: remove retired v3 release coordinators**
-  *Symptoms*: Remove the retired Prometheus v3 release-coordinator roster from `MAINTAINERS.md`, following removal of the coordination team in prometheus/org-infra#139. The general and component-maintainer entries remain intact; `CODEOWNERS` has no corresponding coordinator entry to remove.  Validation: `git diff --check` and `make lint` pass.  ```release-notes NONE ``` 
+- **Issue #20139** (2026-10-22): **Update module github.com/hashicorp/consul/api to v1.35.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/hashicorp/consul/api](https://redirect.github.com/hashicorp/consul) | `v1.34.5` → `v1.35.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fhashicorp%2fconsul%2fapi/v1.35.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fhashicorp%2fconsul%2fapi/v1.34.5/v1.35.0?slim=true) |  ```release-notes  NONE  ```  ---  ### Configuration  📅 **Schedule**: (in timezone UTC)  - Branch creation   - On day 7 and 21 of the month (`* * 7,21 * *`) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/prometheus/prometheus). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzEuMiIsInVwZGF0ZWRJblZlciI6IjQ0LjE3MS4yIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6W119--> 
+  **Post-Mortem & Fix Analysis**:
+  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - The `go` directive was updated for compatibility reasons   Details:   | **Package** | **Change**           | | :---------- | :------------------- | | `go`        | `1.26.7` -> `1.26.9` |
+  > ### Edited/Blocked Notification  Renovate will not automatically rebase this PR, because it does not recognize the last commit author and assumes somebody else may have edited the PR.  You can manually request rebase by checking the rebase/retry box above.   ⚠️ **Warning**: custom changes will be lost.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1523,671 +1524,481 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80cd8d97` (2026-10-15)
-**Commit Message**: web/api: fix query cost timeout handling, feature discovery and docs
+### Incident Patch 1: `22c287a3` (2026-10-22)
+**Commit Message**: Update Mantine UI (#20120)
 
-With query-cost enabled, the engine's deadline also covers waiting for a
-concurrency slot while the query is built. A query that timed out or was
-canceled there was reported as 400 bad_data `invalid parameter "query"`;
-report it as a timeout or a cancellation instead.
+* Update Mantine UI
 
-Cap a `timeout` above the effective duration ceiling instead of rejecting
-it, as before the feature. The rejection also fired against
---query.timeout when query_max_duration was unset, contrary to the docs.
-The new max_* parameters keep rejecting values above their ceilings.
-Reject a negative max_query_duration, which was silently ignored.
+---------
 
-For cost=true, estimate after building the query and before executing
-it. The estimation then counts against the query's duration limit, so
-the request no longer takes up to twice that limit, a malformed query
-fails before waiting for an estimation slot, and no finished result is
-held in memory while the estimation waits for a slot.
+Signed-off-by: Arve Knudsen <[REDACTED_EMAIL]>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Arve Knudsen <[REDACTED_EMAIL]>
 
-Advertise the feature as `query_cost` in /api/v1/features, since the
-per-query overrides are silently ignored when it is off. Document that
-the limits apply to rule evaluation, that
-
-**File**: `cmd/prometheus/main_test.go` (modified, +116/-0)
+**File**: `web/ui/mantine-ui/src/pages/query/MetricsExplorer/LabelsExplorer.tsx` (modified, +7/-3)
 ```diff
-@@ -16,12 +16,14 @@ package main
+@@ -297,12 +297,16 @@ const LabelsExplorer: FC<LabelsExplorerProps> = ({
+                               value: mt,
+                               label: mt,
+                             }))}
+-                            onChange={(_value, option) =>
++                            onChange={(_value, option) => {
++                              if (option === null) {
++                                return;
++                              }
++
+                               setNewMatcher({
+                                 ...newMatcher,
+                                 type: option.value as matchType,
+-                              })
+-                            }
++                              });
++                            }}
+                           />
+                           <Autocomplete
+                             value={newMatcher.value}
+```
+
+**File**: `web/ui/mantine-ui/src/pages/query/QueryInputs.test.tsx` (modified, +75/-0)
+```diff
+@@ -17,6 +17,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ import { useAPIQuery } from "../../api/api";
+ import ExpressionInput from "./ExpressionInput";
+ import RangeInput from "./RangeInput";
++import ResolutionInput from "./ResolutionInput";
++import LabelsExplorer from "./MetricsExplorer/LabelsExplorer";
++import { GraphResolution } from "../../state/queryPageSlice";
+ 
+ vi.mock("../../state/settingsSlice", () => ({
+   useSettings: () => ({
+@@ -86,6 +89,7 @@ async function reply(value: string) {
+ 
+ beforeEach(() => {
+   client = new QueryClient();
++  Element.prototype.scrollIntoView = vi.fn();
+   vi.stubGlobal(
+     "matchMedia",
+     vi.fn().mockReturnValue({
+@@ -115,9 +119,80 @@ afterEach(() => {
+   pending.length = 0;
+   vi.clearAllMocks();
+   vi.unstubAllGlobals();
++  Reflect.deleteProperty(Element.prototype, "scrollIntoView");
+ });
+ 
+ describe("query input drafts", () => {
++  it.each<{ label: string; resolution: GraphResolution }>([
++    { label: "Low res.", resolution: { type: "auto", density: "low" } },
++    { label: "30s", resolution: { type: "fixed", step: 30000 } },
++    { label: "Enter value...", resolution: { type: "custom", step: 60000 } },
++  ])(
++    "selects $label and ignores deselection",
++    async ({ label, resolution }) => {
++      const onChangeResolution = vi.fn();
++      const { rerender } = render(
++        <ResolutionInput
++          resolution={{ type: "fixed", step: 60000 }}
++          range={600000}
++          onChangeResolution={onChangeResolution}
++        />,
++        { wrapper },
++      );
++      fireEvent.click(screen.getByTitle("Resolution"));
++      fireEvent.click(await screen.findByRole("option", { name: label }));
++      expect(onChangeResolution).toHaveBeenCalledExactlyOnceWith(resolution);
++
++      rerender(
++        <ResolutionInput
++          resolution={resolution}
++          range={600000}
++          onChangeResolution={onChangeResolution}
++        />,
++      );
++      onChangeResolution.mockClear();
++      fireEvent.click(screen.getByTitle("Resolution"));
++      fireEvent.click(await screen.findByRole("option", { name: label }));
++      expect(onChangeResolution).not.toHaveBeenCalled();
++      expect(screen.getByTitle("Resolution")).toHaveValue(label);
++    },
++  );
++
++  it("keeps the selected matcher operator when it is deselected", async () => {
++    const insertText = vi.fn();
++    render(
++      <LabelsExplorer
++        metricName="up"
++        insertText={insertText}
++        hideLabelsExplorer={vi.fn()}
++      />,
++      { wrapper },
++    );
++    await act(async () =>
++      pending[0].resolve({
++        ok: true,
++        json: async () => ({
++          status: "success",
++          data: [{ __name__: "up", job: "prometheus" }],
++        }),
++      }),
++    );
++    fireEvent.click(await screen.findByRole("button", { name: "Filter..." }));
++    fireEvent.change(screen.getByPlaceholderText("label value"), {
++      target: { value: "prometheus" },
++    });
++    const operator = screen.getAllByRole("combobox")[0];
++    fireEvent.click(operator);
++    fireEvent.click(await screen.findByRole("option", { name: "!=" }));
++    expect(operator).toHaveValue("!=");
++    fireEvent.click(operator);
++    fireEvent.click(await screen.findByRole("option", { name: "!=" }));
++    expect(operator).toHaveValue("!=");
++    fireEvent.click(screen.getByRole("button", { name: "Apply" }));
++    fireEvent.click(screen.getByRole("button", { name: "Insert" }));
++    expect(insertText).toHaveBeenCalledExactlyOnceWith('up{job!="prometheus"}');
++  });
++
+   it("preserves expression edits and focus until the initial expression changes", () => {
+     const { rerender } = render(<ExpressionInput {...props} />, { wrapper });
+     const editor = screen.getByRole("textbox", { name: "Expression" });
+```
+
+**File**: `web/ui/mantine-ui/src/pages/query/ResolutionInput.tsx` (modified, +4/-0)
+```diff
+@@ -81,6 +81,10 @@ const ResolutionInput: FC<ResolutionInputProps> = ({
+               : "custom"
+         }
+         onChange={(_value, option) => {
++          if (option === null) {
++            return;
++          }
++
+           if (["low", "medium", "high"].includes(option.value)) {
+             onChangeResolution({
+               type: "auto",
+```
+
+**File**: `web/ui/pnpm-lock.yaml` (modified, +93/-87)
+```diff
+@@ -34,7 +34,7 @@ importers:
+         version: '@typescript/typescript6@6.0.2'
+       vite:
+         specifier: ^8.3.4
+-        version: 8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.30))
++        version: 8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.31))
+ 
+   mantine-ui:
+     dependencies:
+@@ -70,19 +70,19 @@ importers:
+         version: 1.2.5
+       '@mantine/code-highlight':
+         specifier: ^9.7.2
+-        version: 9.7.2(@mantine/core@9.7.2(@mantine/hooks@9.7.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.7.2(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
++        version: 9.7.3(@mantine/core@9.7.3(@mantine/hooks@9.7.3(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.7.3(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+       '@mantine/core':
+         specifier: ^9.7.2
+-        version: 9.7.2(@mantine/hooks@9.7.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
++        version: 9.7.3(@mantine/hooks@9.7.3(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+       '@mantine/dates':
+         specifier: ^9.7.2
+-        version: 9.7.2(@mantine/core@9.7.2(@mantine/hooks@9.7.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.7.2(react@19.3.1))(dayjs@1.11.23)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
++        version: 9.7.3(@mantine/core@9.7.3(@mantine/hooks@9.7.3(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.7.3(react@19.3.1))(dayjs@1.11.23)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+       '@mantine/hooks':
+         specifier: ^9.7.2
+-        version: 9.7.2(react@19.3.1)
++        version: 9.7.3(react@19.3.1)
+       '@mantine/notifications':
+         specifier: ^9.7.2
+-        version: 9.7.2(@mantine/core@9.7.2(@mantine/hooks@9.7.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.7.2(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
++        version: 9.7.3(@mantine/core@9.7.3(@mantine/hooks@9.7.3(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.7.3(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+       '@microsoft/fetch-event-source':
+         specifier: ^2.0.1
+         version: 2.0.1
+@@ -103,10 +103,10 @@ importers:
+         version: 3.49.0(react@19.3.1)
+       '@tanstack/react-query':
+         specifier: ^5.104.3
+-        version: 5.104.3(react@19.3.1)
++        version: 5.104.4(@types/react@19.3.0)(react@19.3.1)
+       '@testing-library/jest-dom':
+         specifier: ^7.0.1
+-        version: 7.0.1(@testing-library/dom@10.4.1)(vitest@5.0.5(@types/node@26.0.1)(jsdom@30.1.3)(vite@8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.30))))
++        version: 7.0.1(@testing-library/dom@10.4.1)(vitest@5.0.5(@types/node@26.0.1)(jsdom@30.1.3)(vite@8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.31))))
+       '@testing-library/react':
+         specifier: ^16.3.3
+         version: 16.3.3(@testing-library/dom@10.4.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+@@ -179,7 +179,7 @@ importers:
+         version: 8.71.2(@typescript/typescript6@6.0.2)(eslint@10.13.0(supports-color@8.1.1))(supports-color@8.1.1)
+       '@vitejs/plugin-react':
+         specifier: ^6.1.2
+-        version: 6.1.2(vite@8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.30)))
++        version: 6.1.2(vite@8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.31)))
+       eslint:
+         specifier: ^10.13.0
+         version: 10.13.0(supports-color@8.1.1)
+@@ -197,22 +197,22 @@ importers:
+         version: 30.1.3
+       postcss:
+         specifier: ^8.5.30
+-        version: 8.5.30
++        version: 8.5.31
+       postcss-preset-mantine:
+         specifier: ^1.18.0
+-        version: 1.18.0(postcss@8.5.30)
++        version: 1.18.0(postcss@8.5.31)
+       postcss-simple-vars:
+         specifier: ^7.0.1
+-        version: 7.0.1(postcss@8.5.30)
++        version: 7.0.1(postcss@8.5.31)
+       rollup-plugin-license:
+         specifier: ^3.7.1
+         version: 3.7.1(picomatch@4.0.7)(rollup@4.64.10)
+       vite:
+         specifier: ^8.3.4
+-        version: 8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.30))
++        version: 8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.31))
+       vitest:
+         specifier: ^5.0.5
+-        version: 5.0.5(@types/node@26.0.1)(jsdom@30.1.3)(vite@8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.30)))
++        version: 5.0.5(@types/node@26.0.1)(jsdom@30.1.3)(vite@8.3.4(@types/node@26.0.1)(sugarss@5.0.1(postcss@8.5.31)))
+ 
+   module/codemirror-promql:
+     dependencies:
+@@ -800,45 +800,45 @@ packages:
+   '@lezer/lr@1.4.11':
+     resolution: {integrity: sha512-UwgZcl1R66H2hDzBrA7kWyYmX6s8p5TQ+e/t7CuvgCtBEPxbEPaH
+```
+
+---
+
+### Incident Patch 2: `1c8d5363` (2026-10-22)
+**Commit Message**: Merge pull request #19821 from Rohilalala/fix/promql-print-signed-power-base
+
+promql: when printing, parenthesise a signed left operand of ^
+
+**File**: `promql/parser/prettier.go` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@ func (e *BinaryExpr) Pretty(level int) string {
+ 	}
+ 
+ 	matching := e.getMatchingStr()
+-	return fmt.Sprintf("%s\n%s%s%s%s\n%s", e.LHS.Pretty(level+1), indent(level), e.Op, returnBool, matching, e.RHS.Pretty(level+1))
++	return fmt.Sprintf("%s\n%s%s%s%s\n%s", e.lhs().Pretty(level+1), indent(level), e.Op, returnBool, matching, e.RHS.Pretty(level+1))
+ }
+ 
+ func (e *DurationExpr) Pretty(int) string {
+```
+
+**File**: `promql/parser/prettier_test.go` (modified, +6/-0)
+```diff
+@@ -147,6 +147,12 @@ func TestBinaryExprPretty(t *testing.T) {
+ 			out: `  foo_1
+ +
+   foo_2`,
++		},
++		{
++			in: `Inf ^ foo_1`,
++			out: `  (+Inf)
++^
++  foo_1`,
+ 		},
+ 		{
+ 			in: `foo_1 + foo_2 + foo_3`,
+```
+
+**File**: `promql/parser/printer.go` (modified, +27/-1)
+```diff
+@@ -16,6 +16,7 @@ package parser
  import (
  	"bytes"
- 	"context"
-+	"encoding/json"
- 	"errors"
  	"fmt"
- 	"io"
- 	"math"
- 	"net/http"
- 	"net/http/httptest"
-+	"net/url"
- 	"os"
- 	"os/exec"
- 	"path/filepath"
-@@ -1028,6 +1030,120 @@ runtime:
++	"math"
+ 	"sort"
+ 	"strconv"
+ 	"strings"
+@@ -144,7 +145,32 @@ func (node *BinaryExpr) returnBool() string {
+ 
+ func (node *BinaryExpr) String() string {
+ 	matching := node.getMatchingStr()
+-	return node.LHS.String() + " " + node.Op.String() + node.returnBool() + matching + " " + node.RHS.String()
++	return node.lhs().String() + " " + node.Op.String() + node.returnBool() + matching + " " + node.RHS.String()
++}
++
++// lhs returns the left operand to print, in parentheses if it is the base of
++// ^ and prints with a leading sign. ^ binds tighter than a unary sign, so a
++// bare +Inf ^ 2 or -x ^ 2 would parse back as the sign applied to the power.
++func (node *BinaryExpr) lhs() Expr {
++	if node.Op == POW && printsWithSign(node.LHS) {
++		return &ParenExpr{Expr: node.LHS}
++	}
++	return node.LHS
++}
++
++// printsWithSign reports whether e's String() may start with + or -. It errs
++// towards true: a NaN or a zero duration with the sign bit set gets harmless
++// parentheses.
++func printsWithSign(e Expr) bool {
++	switch e := e.(type) {
++	case *NumberLiteral:
++		return math.Signbit(e.Val) || math.IsInf(e.Val, 1)
++	case *UnaryExpr:
++		return true
++	case *StepInvariantExpr:
++		return printsWithSign(e.Expr)
++	}
++	return false
+ }
+ 
+ func (node *BinaryExpr) ShortString() string {
+```
+
+**File**: `promql/parser/printer_test.go` (modified, +96/-0)
+```diff
+@@ -14,6 +14,7 @@
+ package parser
+ 
+ import (
++	"math"
+ 	"testing"
+ 	"time"
+ 
+@@ -113,6 +114,49 @@ func TestExprString(t *testing.T) {
+ 			in:  `a - ignoring() group_left c`,
+ 			out: `a - ignoring () group_left () c`,
+ 		},
++		{
++			in:  `Inf ^ 2`,
++			out: `(+Inf) ^ 2`,
++		},
++		{
++			in:  `-Inf ^ 2`,
++			out: `-(+Inf) ^ 2`,
++		},
++		{
++			in:  `Inf ^ 2 ^ 3`,
++			out: `(+Inf) ^ 2 ^ 3`,
++		},
++		{
++			in:  `(Inf) ^ 2`,
++			out: `(+Inf) ^ 2`,
++		},
++		{
++			in: `(+Inf) ^ 2`,
++		},
++		{
++			in:  `(+inf) ^ 2`,
++			out: `(+Inf) ^ 2`,
++		},
++		{
++			in: `(-Inf) ^ 2`,
++		},
++		{
++			in:  `((Inf)) ^ 2`,
++			out: `((+Inf)) ^ 2`,
++		},
++		{
++			in:  `-(Inf) ^ 2`,
++			out: `-(+Inf) ^ 2`,
++		},
++		{
++			in: `2 ^ -Inf`,
++		},
++		{
++			in: `+Inf * 2`,
++		},
++		{
++			in: `(-2) ^ 2`,
++		},
+ 		{
+ 			in:  `a + fill(-23) b`,
+ 			out: `a + fill (-23) b`,
+@@ -497,6 +541,58 @@ func TestMatrixSelector_String(t *testing.T) {
  	}
  }
  
-+// TestQueryCostLimitsConfig verifies that the query cost limits in the
-+// configuration file apply to queries only with the query-cost feature
-+// enabled, and that a reload updates them.
-+func TestQueryCostLimitsConfig(t *testing.T) {
-+	if testing.Short() {
-+		t.Skip("skipping test in short mode.")
++func TestBinaryExpr_String(t *testing.T) {
++	// The parser only puts +Inf on the left of ^ with a sign, but ASTs rewritten
++	// by the engine or built in code can also hold a negative number or a unary
++	// expression there.
++	nested, nestedStr := Expr(&NumberLiteral{Val: 2}), "2"
++	for range 40 {
++		nested = &BinaryExpr{Op: POW, LHS: &ParenExpr{Expr: nested}, RHS: &NumberLiteral{Val: 2}}
++		nestedStr = "(" + nestedStr + ") ^ 2"
 +	}
-+	t.Parallel()
-+
-+	type queryResponse struct {
-+		ErrorType string `json:"errorType"`
-+		Error     string `json:"error"`
-+		Data      struct {
-+			Result []json.RawMessage `json:"result"`
-+		} `json:"data"`
-+	}
-+
 +	for _, tc := range []struct {
-+		name    string
-+		enabled bool
++		name     string
++		expr     Expr
++		expected string
 +	}{
-+		{name: "feature enabled", enabled: true},
-+		{name: "feature disabled"},
++		{
++			name:     "positive infinity on the left of ^",
++			expr:     &BinaryExpr{Op: POW, LHS: &NumberLiteral{Val: math.Inf(1)}, RHS: &NumberLiteral{Val: 2}},
++			expected: `(+Inf) ^ 2`,
++		},
++		{
++			name:     "negative number on the left of ^",
++			expr:     &BinaryExpr{Op: POW, LHS: &NumberLiteral{Val: -2}, RHS: &NumberLiteral{Val: 2}},
++			expected: `(-2) ^ 2`,
++		},
++		{
++			name:     "unary expression on the left of ^",
++			expr:     &BinaryExpr{Op: POW, LHS: &UnaryExpr{Op: SUB, Expr: &VectorSelector{Name: "foo"}}, RHS: &NumberLiteral{Val: 2}},
++			expected: `(-foo) ^ 2`,
++		},
++		{
++			name:     "step invariant negative number on the left of ^",
++			expr:     &BinaryExpr{Op: POW, LHS: &StepInvariantExpr{Expr: &NumberLiteral{Val: -2}}, RHS: &NumberLiteral{Val: 2}},
++			expected: `(-2) ^ 2`,
++		},
++		{
++			name:     "negative number on the left of another operator",
++			expr:     &BinaryExpr{Op: MUL, LHS: &NumberLiteral{Val: -2}, RHS: &NumberLiteral{Val: 2}},
++			expected: `-2 * 2`,
++		},
++		{
++			// Printing must stay linear in the depth of the expression.
++			name:     "deeply nested powers",
++			expr:     nested,
++			expected: nestedStr,
++		},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			tmpDir := t.TempDir()
-+			configFile := filepath.Join(tmpDir, "prometheus.yml")
-+			port := testutil.RandomUnprivilegedPort(t)
-+			// Prometheus scrapes itself, so the query below soon matches two
-+			// series, one more than the configured limit.
-+			writeConfig := func(maxSeries int) {
-+				cfg := fmt.Sprintf(`
-+global:
-+  scrape_interval: 100ms
-+  query_max_series: %d
-+scrape_configs:
-+  - job_name: prometheus
-+    static_configs:
-+      - targets: ['127.0.0.1:%d']
-+`, maxSeries, port)
-+				require.NoError(t, os.WriteFile(configFile, []byte(cfg), 0o644))
-+			}
-+			writeConfig(1)
-+
-+			args := []string{
-+				fmt.Sprintf("--storage.tsdb.path=%s", tmpDir),
-+				"--web.enable-lifecycle",
-+				"--scrape.discovery-reload-interval=100ms", // Reduce initial wait time from default of 5 seconds.
-+			}
-+			if tc.enabled {
-+				args = append(args, "--enable-feature=query-cost")
-+			}
-+			prom := prometheusCommandWithLogging(t, configFile, port, args...)
-+			require.NoError(t, prom.Start())
-+			waitForPrometheusReady(t, port)
-+
-+			query := func(extra ...string) (int, queryResponse, error) {
-+				params := url.Values{"query": {`{__name__=~"up|scrape_duration_seconds"}`}}
-+				for i := 0; i+1 < len(extra); i += 2 {
-+					params.Set(extra[i], extra[i+1])
-+				}
-+				var body queryResponse
-+				resp, err := http.PostForm(fmt.Sprintf("http://127.0.0.1:%d/api/v1/query", port), params)
-+				if err != nil {
-+					return 0, body, err
-+				}
-+				defer resp.Body.Close()
-+				err = json.NewDecoder(resp.Body).Decode(&body)
-+				return resp.StatusCode, body, err
-+			}
-+			// waitForQuery waits until both series have been scraped and the
-+			// query gets the expected status.
-+			waitForQuery := func(wantStatus int, extra ...string) queryResponse {
-+				t.Helper()
-+				var last queryResponse
-+				require.Eventually(t, func() bool {
-+					status, body, err := query(extra...)
-+					if err != nil {
-+						return false
-+					}
-+					last = body
-+					if status == http.StatusOK {
-+						return wantStatus == http.StatusOK && len(body.Data.Result) == 2
-+					}
-+					return status == wantStatus
-+				}, readyTimeout, 100*time.Millisecond)
-+				return last
-+			}
-+
-+			if !tc.enabled {
-+				waitForQuery(http.StatusOK)
-+				return
-+			}
-+
-+			rejected := waitForQuery(http.StatusUnprocessableEntity)
-+			require.Equal(t, "cost_limit", rejected.ErrorType)
-+			// The samples-read limit also reports cost_limit, so check that the
-+			// configured series limit is the one that applied.
-+			require.Contains(t, rejected.Error, "too many series")
-+			// A request may only lower the configured ceiling.
-+			status, body, err := query("max_series", "2")
-+			require.NoError(t, err)
-+			require.Equal(t, http.StatusBadRequest, status)
-+			require.Equal(t, "bad_data", body.ErrorType)
-+
-+			writeConfig(0)
-+			reloadPrometheusConfig(t, fmt.Sprintf("http://127.0.0.1:%d/-/reload", port))
-+			waitForQuery(http.StatusOK)
++			require.Equal(t, tc.expected, tc.expr.String())
 +		})
 +	}
 +}
 +
- func TestReloadConfigLogLevel(t *testing.T) {
- 	tmpDir := t.TempDir()
- 	configFile := filepath.Join(tmpDir, "prometheus.yml")
-```
-
-**File**: `cmd/prometheus/testdata/features.json` (modified, +1/-0)
-```diff
-@@ -7,6 +7,7 @@
-     "openapi_3.1": true,
-     "openapi_3.2": true,
-     "otlp_write_receiver": false,
-+    "query_cost": false,
-     "query_stats": true,
-     "query_warnings": true,
-     "remote_write_receiver": false,
-```
-
-**File**: `docs/configuration/configuration.md` (modified, +4/-3)
-```diff
-@@ -101,6 +101,8 @@ global:
-   # rejected as soon as it loads more series than this. 0 means no limit.
-   # These three query cost limits are reloadable and only enforced when the
-   # query-cost feature flag is enabled (--enable-feature=query-cost).
-+  # They apply to every query the engine evaluates, including recording and
-+  # alerting rule evaluation.
-   # A client may lower any of them for a single request with the max_series,
-   # max_samples_read and max_query_duration query parameters. A request that
-   # asks for a value above the ceiling set here is an error, it is not silently
-@@ -109,16 +111,15 @@ global:
- 
-   # Maximum number of samples a query may read before it is rejected. Like
-   # query_max_series, it is enforced during execution against the samples the
--  # query actually reads from storage, never against the estimate: the query is
-+  # query actually reads, never against the estimate: the query is
-   # rejected as soon as it reads more samples than this. 0 means no limit.
-   [ query_max_samples_read: <int> | default = 0 ]
- 
-   # Maximum wall-clock duration a query may take. It surfaces as a query
-   # timeout: the query is aborted once it has run for this long. 0s falls back
-   # to --query.timeout. A nonzero value overrides that flag only when the
-   # query-cost feature is enabled. The per-query timeout parameter
--  # of the query endpoints is bounded by this ceiling in the same way: a larger
--  # value is an error.
-+  # of the query endpoints is capped at this ceiling.
-   [ query_max_duration: <duration> | default = 0s ]
- 
-   # File to which scrape failures are logged.
-```
-
-**File**: `docs/feature_flags.md` (modified, +14/-4)
-```diff
-@@ -45,7 +45,7 @@ When enabled, passing `stats=all` in a query request returns per-step
- statistics. The following sample statistics are included:
- 
- - **totalQueryableSamples** / **totalQueryableSamplesPerStep**: Total number of samples *loaded* during the query. For range-vector functions (e.g. `rate`, `sum_over_time`) evaluated over multiple steps, each step counts the full window (the same point may be counted in multiple steps).
--- **samplesRead** / **samplesReadPerStep**: Total number of samples *read* (I/O). For range-vector functions in range queries, only *new* points per step are counted (step 0: full window; later steps: points not seen in the previous step). For other query types, this equals totalQueryableSamples.
-+- **samplesRead** / **samplesReadPerStep**: Total number of samples *read* by the evaluator (its input, not physical storage I/O). For range-vector functions in range queries, only *new* points per step are counted (step 0: full window; later steps: points not seen in the previous step). See [Query statistics](querying/api.md#query-statistics) for the exact semantics.
- - **peakSamples**: Peak number of samples in memory during evaluation (used for the `query.max-samples` limit).
- 
- The Prometheus server exposes two counters for observability: `prometheus_engine_query_samples_total` (logical underlying sample consumption, full window per step) and `prometheus_engine_query_samples_read_total` (samples read, delta per step for range-vector).
-@@ -401,11 +401,21 @@ of samples it reads exceeds the configured limit, and `query_max_duration`
- surfaces as a query timeout. The limits are reloaded together with the rest of
- the configuration and have no effect when the feature flag is not set.
- 
-+These limits apply to every query the engine evaluates, not only to API
-+requests. Recording and alerting rules are subject to them too: a rule whose
-+query exceeds a limit fails to evaluate like any other query error, and
-+`query_max_duration` replaces `--query.timeout` as the timeout of rule queries.
-+
- A client may lower any of these ceilings for a single request with the
--`max_series`, `max_samples_read`, `max_query_duration` and `timeout` query
--parameters. A request asking for a value above the operator-set ceiling is
--rejected with HTTP 400 (`bad_data`) rather than silently clamped.
-+`max_series`, `max_samples_read` and `max_query_duration` query parameters. A
-+request asking for a value above the operator-set ceiling is rejected with HTTP
-+400 (`bad_data`) rather than silently clamped. For `max_query_duration`, the
-+ceiling is `--query.timeout` while `query_max_duration` is unset. A `timeout`
-+parameter above the effective duration ceiling is capped at that ceiling.
- 
- `query_max_duration` overrides `--query.timeout` only while this feature flag is
- enabled. The command-line flag remains supported and controls the timeout when
- the feature is disabled or `query_max_duration` is unset.
-+
-+Clients can detect the feature through [`/api/v1/features`](querying/api.md#features),
-+where it is reported as `query_cost` in the `api` category.
-```
-
-**File**: `docs/querying/api.md` (modified, +54/-34)
-```diff
-@@ -98,19 +98,18 @@ URL query parameters:
- 
- - `query=<string>`: Prometheus expression query string.
- - `time=<rfc3339 | unix_timestamp>`: Evaluation timestamp. Optional.
--- `timeout=<duration>`: Evaluation timeout. Optional. Defaults to the effective
--   server-side maximum, which is the `query_max_duration` configuration option
--   when the query-cost feature is enabled and the value is set, and otherwise
--   the value of the `-query.timeout` flag. With the [`query-cost`](../feature_flags.md#query-cost) feature flag
--   enabled and `query_max_duration` set, a `timeout` above that ceiling is
--   rejected with HTTP 400 (`bad_data`) instead of being silently lowered.
-+- `timeout=<duration>`: Evaluation timeout. Optional. Must be positive. Defaults
-+   to and is capped by the effective server-side maximum, which is the
-+   `query_max_duration` configuration option when the
-+   [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled and
-+   the value is set, and otherwise the value of the `-query.timeout` flag.
- - `limit=<number>`: Maximum number of returned series. Doesn't affect scalars or strings but truncates the number of series for matrices and vectors. Optional. 0 means disabled.
- - `lookback_delta=<duration | float>`: Override the [lookback period](#staleness) just for this query in `duration` format or float number of seconds. Optional.
- - `stats=<string>`: Include query statistics in the response. Supported values are `true` (basic statistics) and `all` (additionally includes detailed per-step statistics: timings and sample counts). Any other non-empty value currently behaves like `true`, but is deprecated, adds a warning to the response, and will be rejected in the next major release. Optional. See [Query statistics](#query-statistics).
- - `cost=<bool>`: Include an estimated-versus-actual cost comparison in the response `data`. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It is a plain on/off switch: any value that is not a boolean is an error. See [Query statistics](#query-statistics).
- - `max_series=<number>`: Lower the per-query maximum number of series this query may load. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the operator-set ceiling configured via `query_max_series`, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
- - `max_samples_read=<number>`: Lower the per-query maximum number of samples this query may read. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the operator-set ceiling configured via `query_max_samples_read`, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
--- `max_query_duration=<duration>`: Lower the per-query maximum execution duration. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the operator-set ceiling configured via `query_max_duration`, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
-+- `max_query_duration=<duration>`: Lower the per-query maximum execution duration. Optional. Ignored unless the [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled. It may only *lower* the effective duration ceiling, which is `query_max_duration` when set and otherwise the `-query.timeout` flag, never raise it: a higher value is rejected with HTTP 400 (`bad_data`) rather than silently clamped.
- 
- Optional HTTP request headers:
- 
-@@ -184,19 +183,18 @@ URL query parameters:
- - `start=<rfc3339 | unix_timestamp>`: Start timestamp, inclusive.
- - `end=<rfc3339 | unix_timestamp>`: End timestamp, inclusive.
- - `step=<duration | float>`: Query resolution step width in `duration` format or float number of seconds.
--- `timeout=<duration>`: Evaluation timeout. Optional. Defaults to the effective
--   server-side maximum, which is the `query_max_duration` configuration option
--   when the query-cost feature is enabled and the value is set, and otherwise
--   the value of the `-query.timeout` flag. With the [`query-cost`](../feature_flags.md#query-cost) feature flag
--   enabled and `query_max_duration` set, a `timeout` above that ceiling is
--   rejected with HTTP 400 (`bad_data`) instead of being silently lowered.
-+- `timeout=<duration>`: Evaluation timeout. Optional. Must be positive. Defaults
-+   to and is capped by the effective server-side maximum, which is the
-+   `query_max_duration` configuration option when the
-+   [`query-cost`](../feature_flags.md#query-cost) feature flag is enabled and
-+   the value is set, and otherwise the value of the `-query.timeout` flag.
- - `limit=<number>`: Maximum number of returned series. Optional. 0 means disabled.
- - `lookback_delta=<duration | float>`: Override the [lookback period](#staleness) just
-```
-
-**File**: `web/api/v1/api.go` (modified, +79/-59)
-```diff
-@@ -113,7 +113,8 @@ var (
- 	errorNotFound      = errorType{ErrorNotFound, "not_found"}
- 	errorNotAcceptable = errorType{ErrorNotAcceptable, "not_acceptable"}
- 	// errorCostLimit is returned when a query is rejected because it exceeds a
--	// configured query-cost limit (series, samples read, or duration).
-+	// configured query-cost limit on series or samples read. A query stopped by
-+	// the duration limit is a timeout instead.
- 	errorCostLimit = errorType{ErrorCostLimit, "cost_limit"}
- )
- 
-@@ -659,6 +660,8 @@ func (api *API) query(r *http.Request) (result apiFuncResult) {
- 		attribute.String("time", ts.Format(time.RFC3339Nano)),
- 	)
- 
-+	// The query's duration limit starts while it is built.
-+	limitStart := time.Now()
- 	qry, err := api.QueryEngine.NewInstantQuery(ctx, api.Queryable, opts, r.FormValue("query"), ts)
- 	if err != nil {
- 		span.RecordError(err)
-@@ -675,6 +678,14 @@ func (api *API) query(r *http.Request) (result apiFuncResult) {
- 		}
- 	}()
- 
-+	// Estimate after building, so that the estimation counts against the
-+	// query's duration limit, and before executing, so that no finished result
-+	// is held in memory while the estimation waits for a query slot.
-+	var pendingCost pendingCostComparison
-+	if costOn {
-+		pendingCost = api.estimateForComparison(ctx, limitStart, r.FormValue("query"), ts, ts, 0, opts)
-+	}
-+
- 	ctx = httputil.ContextFromRequest(ctx, r)
- 
- 	res := qry.Exec(ctx)
-@@ -706,16 +717,7 @@ func (api *API) query(r *http.Request) (result apiFuncResult) {
- 
- 	var cost *QueryCostComparison
- 	if costOn {
--		comparison, ca, err := api.costComparison(ctx, qry, r.FormValue("query"), ts, ts, 0, opts)
--		warnings = warnings.Merge(ca)
--		// The query already executed successfully. A failing estimate must never
--		// replace that result, so we surface the estimation error as a warning and
--		// return the query result without a cost comparison.
--		if err != nil {
--			warnings = warnings.Add(fmt.Errorf("cost estimation failed: %w", err))
--		} else {
--			cost = comparison
--		}
-+		cost, warnings = pendingCost.finish(qry, warnings)
- 	}
- 
- 	return apiFuncResult{&QueryData{
-@@ -796,6 +798,9 @@ func (api *API) extractQueryOpts(r *http.Request) (promql.QueryOpts, error) {
- 		if err != nil {
- 			return nil, fmt.Errorf("error parsing max_query_duration: %w", err)
- 		}
-+		if parsed < 0 {
-+			return nil, fmt.Errorf("error parsing max_query_duration: must not be negative, got %s", parsed)
-+		}
- 		maxQueryDuration = parsed
- 	}
- 
-@@ -907,16 +912,11 @@ func (api *API) effectiveLookbackDelta(opts promql.QueryOpts) time.Duration {
- }
- 
- // queryTimeout parses the per-query "timeout" parameter, returning zero when it
--// is absent. Like the other per-query cost overrides, a timeout may only lower
--// the operator-set query_max_duration ceiling: a request above it is rejected so
--// the caller can see that the timeout it asked for was not applied, rather than
--// being silently clamped. The timeout is applied as a context deadline instead
--// of through promql.QueryOpts, so the engine cannot enforce this itself. The
--// ceiling is query_max_duration when it is configured, and otherwise the
--// --query.timeout flag, which is the ceiling the engine falls back to.
--// A non-positive timeout is rejected rather than ignored, since it could only
--// ever produce an already-expired deadline.
--func (api *API) queryTimeout(r *http.Request) (time.Duration, *apiError) {
-+// is absent. Unlike the per-query cost overrides, a timeout above the effective
-+// query duration ceiling is not an error: the shorter deadline of that ceiling
-+// still applies. A non-positive timeout is rejected, since it could only ever
-+// produce an already-expired deadline.
-+func (*API) queryTimeout(r *http.Request) (time.Duration, *apiError) {
- 	v := r.FormValue("timeout")
- 	if v == "" {
- 		return 0, nil
-@@ -928,42 +928,60 @@ func (api *API) queryTimeout(r *http.Request) (time.Duration, *apiError) {
- 	if timeout <= 0 {
- 		return 0, &apiError{errorBadData, fmt.Errorf("invalid parameter %q: timeout must be positive, got %s", "timeout", timeout)}
- 	}
--	if _, _, ceiling := api.queryCostCeilings(); ceiling > 0 && timeout > ceiling {
--		return 0, &apiError{errorBadData, promql.ErrLimitAboveCeiling{
--			Limit:     "timeout",
--			Requested: timeout.String(),
--			Ceiling:   ceiling.String(),
--		}}
--	}
- 	return timeout, nil
- }
- 
--// queryConstructionError maps an error returned when building a query from an
--// API error. A per-query limit override above the operator-set ceiling is
--// reported as bad data with the engine's message, which names the limit, the
--// requested value and the ceiling; any other failure is a bad query parameter.
-+// queryConstructionError maps an error returned when building a query to an API
-+// error. A per-query limit override above the operator-set ceiling is reported
-+// as bad data with the engine's message, which names the limit, the requested
-+// value and the ceiling. Running out of time or being canceled, for example
-+// while
-```
-
-**File**: `web/api/v1/api_test.go` (modified, +240/-78)
-```diff
-@@ -1360,6 +1360,27 @@ func testEndpoints(t *testing.T, api *API, tr *testTargetRetriever, testLabelAPI
- 			},
- 			errType: errorBadData,
- 		},
-+		// A non-positive timeout could only produce an already-expired deadline.
-+		{
-+			endpoint: api.query,
-+			query: url.Values{
-+				"query":   []string{"2"},
-+				"time":    []string{"123.4"},
-+				"timeout": []string{"0s"},
-+			},
-+			errType: errorBadData,
-+		},
-+		{
-+			endpoint: api.queryRange,
-+			query: url.Values{
-+				"query":   []string{"time()"},
-+				"start":   []string{"0"},
-+				"end":     []string{"2"},
-+				"step":    []string{"1"},
-+				"timeout": []string{"-1"},
-+			},
-+			errType: errorBadData,
-+		},
- 		{
- 			endpoint: api.query,
- 			query: url.Values{
-@@ -5192,7 +5213,9 @@ func TestGetRuleGroupNextToken(t *testing.T) {
- }
- 
- // newQueryCostTestAPI builds an API wired to a small test storage with the
--// query-cost feature enabled (or disabled when enabled is false).
-+// query-cost feature enabled (or disabled when enabled is false). As in
-+// production, the flag enables the feature in both the API and the engine; the
-+// engine has no query-cost limits until a test sets them.
- func newQueryCostTestAPI(t *testing.T, enabled, isAgent bool) *API {
- 	t.Helper()
- 	s := promqltest.LoadedStorage(t, `
-@@ -5205,8 +5228,16 @@ func newQueryCostTestAPI(t *testing.T, enabled, isAgent bool) *API {
- 
- 	now := time.Now()
- 	return &API{
--		Queryable:       s,
--		QueryEngine:     testEngine(t),
-+		Queryable: s,
-+		QueryEngine: promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
-+			MaxSamples:               10000,
-+			Timeout:                  100 * time.Second,
-+			NoStepSubqueryIntervalFn: func(int64) int64 { return 60 * 1000 },
-+			EnableAtModifier:         true,
-+			EnableNegativeOffset:     true,
-+			EnablePerStepStats:       true,
-+			EnableQueryCost:          enabled,
-+		}),
- 		now:             func() time.Time { return now },
- 		config:          func() config.Config { return samplePrometheusCfg },
- 		ready:           func(f http.HandlerFunc) http.HandlerFunc { return f },
-@@ -5344,6 +5375,11 @@ func TestQueryCostEndpointParameterParity(t *testing.T) {
- 		// A malformed expression is a client error on /query, so it must be one
- 		// here too rather than looking like an execution failure.
- 		{name: "malformed query", params: []string{"query", "up{"}, errType: errorBadData},
-+		// A non-positive timeout could only produce an already-expired deadline.
-+		{name: "zero timeout", params: []string{"timeout", "0s"}, errType: errorBadData},
-+		{name: "negative timeout", params: []string{"timeout", "-1"}, errType: errorBadData},
-+		// Zero means no override, but a negative duration is never valid.
-+		{name: "negative max_query_duration", params: []string{"max_query_duration", "-1"}, errType: errorBadData},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			for _, ep := range queryCostEndpoints(api) {
-@@ -5555,21 +5591,10 @@ func TestQueryCostOverrideParams(t *testing.T) {
- // Entity, for both the series and the scanned-samples limit, on the instant and
- // the range query handlers.
- func TestQueryCostLimitExceeded(t *testing.T) {
--	// The engine only enforces the reloadable query-cost limits when query-cost
--	// enforcement is enabled, so we build a dedicated cost-enabled engine here
--	// rather than reusing testEngine.
- 	newAPI := func(t *testing.T, maxSeries, maxSamplesRead uint64) *API {
- 		t.Helper()
- 		api := newQueryCostTestAPI(t, true, false)
--		eng := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
--			MaxSamples:               10000,
--			Timeout:                  100 * time.Second,
--			NoStepSubqueryIntervalFn: func(int64) int64 { return 60 * 1000 },
--			EnablePerStepStats:       true,
--			EnableQueryCost:          true,
--		})
--		eng.SetQueryLimits(maxSeries, maxSamplesRead, 0)
--		api.QueryEngine = eng
-+		api.QueryEngine.(*promql.Engine).SetQueryLimits(maxSeries, maxSamplesRead, 0)
- 		return api
- 	}
- 
-@@ -5745,7 +5770,6 @@ func TestQueryCostOverrideAboveCeilingRejected(t *testing.T) {
- 		{limit: "max_series", above: "11", atCeiling: "10"},
- 		{limit: "max_samples_read", above: "101", atCeiling: "100"},
- 		{limit: "max_query_duration", above: "31s", atCeiling: "30s"},
--		{limit: "timeout", above: "31s", atCeiling: "30s"},
- 	} {
- 		t.Run(tc.limit, func(t *testing.T) {
- 			api := newAPI(t)
-@@ -5787,14 +5811,7 @@ func TestQueryCostOverrideAboveCeilingRejected(t *testing.T) {
- 		// max_series of 1 must reject the query even though the operator ceiling
- 		// of 10 would allow it.
- 		api := newAPI(t)
--		eng := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
--			MaxSamples:               10000,
--			Timeout:                  100 * time.Second,
--			NoStepSubqueryIntervalFn: func(int64) int64 { return 60 * 1000 },
--			EnableQueryCost:          true,
--		})
--		eng.SetQueryLimits(seriesCeiling, samplesCeiling, 0)
--		api.QueryEngine = eng
-+		api.QueryEngine.(*promql.Engine).SetQueryLimits(seriesCeiling, samplesCeiling, 0)
- 
- 		for _, ep := range queryCost
-```
-
-**File**: `web/api/v1/errors_test.go` (modified, +24/-0)
-```diff
-@@ -100,6 +100,30 @@ func TestApiStatusCodes(t *testing.T) {
- 			expectedString: "context canceled",
- 			expectedCode:   statusClientClosedConnection,
- 		},
-+
-+		"promql.ErrTooManySeries": {
-+			err:            promql.ErrTooManySeries("some error"),
-+			expectedString: `"errorType":"cost_limit"`,
-+			expectedCode:   http.StatusUnprocessableEntity,
-+		},
-+
-+		"promql.ErrTooManySamplesRead": {
-+			err:            promql.ErrTooManySamplesRead("some error"),
-+			expectedString: `"errorType":"cost_limit"`,
-+			expectedCode:   http.StatusUnprocessableEntity,
-+		},
-+
-+		"overridden error code for cost limit": {
-+			err:            promql.ErrTooManySeries("some error"),
-+			expectedString: "too many series",
-+			overrideErrorCode: func(errNum errorNum, _ error) (code int, override bool) {
-+				if errNum == ErrorCostLimit {
-+					return 999, true
-+				}
-+				return 0, false
-+			},
-+			expectedCode: 999,
-+		},
- 	} {
- 		for k, q := range map[string]storage.SampleAndChunkQueryable{
- 			"error from queryable": errorTestQueryable{err: tc.err},
+ func TestBinaryExprUTF8Labels(t *testing.T) {
+ 	testCases := []struct {
+ 		name     string
 ```
 
 ---
 
-### Incident Patch 2: `4949f15d` (2026-08-13)
-**Commit Message**: Fix template injection https://docs.zizmor.sh/audits/#template-injection
+### Incident Patch 3: `c706d484` (2026-10-22)
+**Commit Message**: Update quay.io/prometheus/golang-builder Docker digest to f68fab2 (#20115)
 
-Signed-off-by: Arthur Silva Sens <[REDACTED_EMAIL]>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/ci.yml` (modified, +3/-1)
+**File**: `.github/workflows/repo_sync.yml` (modified, +1/-1)
 ```diff
-@@ -97,7 +97,9 @@ jobs:
-       - uses: prometheus/promci-setup@55bd31fe92710532260eb57c554f2697363285c5 # v0.2.2
+@@ -12,7 +12,7 @@ jobs:
+     runs-on: ubuntu-latest
+     if: github.repository_owner == 'prometheus'
+     container:
+-      image: quay.io/prometheus/golang-builder@sha256:4b5df8f6cb8a483e94b7dc1a2a3749e992c93317ab8b51432a61be21e5e7335f
++      image: quay.io/prometheus/golang-builder@sha256:f68fab2282d6ec1d2dd1c5fc79a630ec246bd40cf4ad01f9168a19942f42f1bb
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
          with:
-           cache_key_suffix: upgrade
--      - run: go test -v --race ./cmd/prometheus/ --test.version-upgrade=true --test.lts-version=${{ matrix.lts_version }} -run TestVersionUpgrade
-+      - run: go test -v --race ./cmd/prometheus/ --test.version-upgrade=true --test.lts-version="${LTS_VERSION}" -run TestVersionUpgrade
-+        env:
-+          LTS_VERSION: ${{ matrix.lts_version }}
- 
-   list_oldest_go_version:
-     name: List the oldest supported Go version
-```
-
----
-
-### Incident Patch 3: `a532cdae` (2026-08-13)
-**Commit Message**: Enforce GitHub Action security across all repositories in the Prometheus org
-
-Signed-off-by: Arthur Silva Sens <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/zizmor.yml` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+---
-+###
-+# This action is synced from https://github.com/prometheus/prometheus
-+###
-+name: GitHub Actions Security
-+
-+on:
-+  pull_request:
-+  push:
-+    branches:
-+      - main
-+      - master
-+
-+permissions:
-+  contents: read
-+  actions: read
-+
-+jobs:
-+  zizmor:
-+    name: Run zizmor
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 5
-+
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+
-+      - name: Run zizmor
-+        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
-+        with:
-+          advanced-security: false
-+          version: 1.29.0
-```
-
-**File**: `scripts/dependabot.yml` (modified, +1/-0)
-```diff
-@@ -42,3 +42,4 @@ updates:
-       - .github/workflows/govulncheck.yml
-       - .github/workflows/scorecards.yml
-       - .github/workflows/stale.yml
-+      - .github/workflows/zizmor.yml
-```
-
-**File**: `scripts/sync_repo_files.sh` (modified, +2/-2)
-```diff
-@@ -64,7 +64,7 @@ for org in ${orgs}; do
- done
- 
- # List of files that should be synced.
--SYNC_FILES="CODE_OF_CONDUCT.md LICENSE Makefile.common SECURITY.md .dockerignore .yamllint scripts/dependabot.yml scripts/golangci-lint.yml .github/workflows/approve-workflows.yml .github/workflows/govulncheck.yml .github/workflows/scorecards.yml .github/workflows/container_description.yml .github/workflows/stale.yml"
-+SYNC_FILES="CODE_OF_CONDUCT.md LICENSE Makefile.common SECURITY.md .dockerignore .yamllint scripts/dependabot.yml scripts/golangci-lint.yml .github/workflows/approve-workflows.yml .github/workflows/govulncheck.yml .github/workflows/scorecards.yml .github/workflows/container_description.yml .github/workflows/stale.yml .github/workflows/zizmor.yml"
- 
- # Go to the root of the repo
- cd "$(git rev-parse --show-cdup)" || exit 1
-@@ -238,7 +238,7 @@ process_repo() {
-     if [[ -z "${target_file}" ]]; then
-       repo_log "${target_filename} doesn't exist in ${org_repo}"
-       case "${source_file}" in
--        CODE_OF_CONDUCT.md | SECURITY.md | .dockerignore | .github/workflows/approve-workflows.yml | .github/workflows/container_description.yml | .github/workflows/govulncheck.yml)
-+        CODE_OF_CONDUCT.md | SECURITY.md | .dockerignore | .github/workflows/approve-workflows.yml | .github/workflows/container_description.yml | .github/workflows/govulncheck.yml | .github/workflows/zizmor.yml)
-           repo_log_yellow "${source_file} missing in ${org_repo}, force updating."
-           needs_update+=("${source_file}")
-           ;;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20089** (closed): feat(config/promql): add default label_value_length_limit and validation (@masyarakatai)
-- **PR #20083** (2026-10-19): docs: remove retired v3 release coordinators (@ArthurSens)
-- **PR #20080** (2026-10-20): storage/remote: stop exposing legacy metadata metrics for RW2 (@shilohlee98)
-- **PR #20053** (2026-10-20): docs: document missing kubernetes_sd_config meta labels (@kamothi)
-- **PR #20050** (closed): promtool: honor --enable-feature=promql-experimental-functions in test rules (@xingzihai)
-- **PR #20046** (2026-10-20): promtool: evaluate rule unit tests with the configured parser (@dennisme)
+- **PR #20143** (closed): util/pool: cover maxSize and reject a factor of 1 (@Huang-404-Q)
+- **PR #20139** (2026-10-22): Update module github.com/hashicorp/consul/api to v1.35.0 (@renovate[bot])
+- **PR #20138** (2026-10-21): Merge release-3.15 (@ywwg)
+- **PR #20137** (closed): Merge 3.15 release (@ywwg)
+- **PR #20136** (2026-10-22): Update module github.com/digitalocean/godo to v1.231.0 (@renovate[bot])
+- **PR #20135** (2026-10-22): Update ghcr.io/zizmorcore/zizmor Docker tag to v1.31.1 (@renovate[bot])
 
 ---
 
@@ -2207,71 +2018,36 @@ Signed-off-by: Arthur Silva Sens <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web/api: fix query cost timeout handling, feature discovery and docs
+## X. Update Mantine UI (#20120)
 
 **RULE**:
-When implementing operations in `cmd/prometheus/main_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/ui/mantine-ui/src/pages/query/MetricsExplorer/LabelsExplorer.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80cd8d97`: web/api: fix query cost timeout handling, feature discovery and docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22c287a3`: Update Mantine UI (#20120). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/prometheus/main_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/ui/mantine-ui/src/pages/query/MetricsExplorer/LabelsExplorer.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"encoding/json"
-	"net/url"
-// TestQueryCostLimitsConfig verifies that the query cost limits in the
-// configuration file apply to queries only with the query-cost feature
-// enabled, and that a reload updates them.
-func TestQueryCostLimitsConfig(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-	t.Parallel()
+                            onChange={(_value, option) => {
+                              if (option === null) {
+                                return;
+                              }
 
-	type queryResponse struct {
-		ErrorType string `json:"errorType"`
-		Error     string `json:"error"`
-		Data      struct {
-			Result []json.RawMessage `json:"result"`
-		} `json:"data"`
-	}
-
-	for _, tc := range []struct {
-		name    string
-		enabled bool
-	}{
-		{name: "feature enabled", enabled: true},
-		{name: "feature disabled"},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
-			tmpDir := t.TempDir()
-			configFile := filepath.Join(tmpDir, "prometheus.yml")
-			port := testutil.RandomUnprivilegedPort(t)
-			// Prometheus scrapes itself, so the query below soon matches two
-			// series, one more than the configured limit.
-			writeConfig := func(maxSeries int) {
-				cfg := fmt.Sprintf(`
-global:
-  scrape_interval: 100ms
-  query_max_series: %d
-scrape_configs:
-  - job_name: prometheus
-    static_configs:
-      - targets: ['127.0.0.1:%d']
-`, m
+                              });
+                            }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                            onChange={(_value, option) =>
+                              })
+                            }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80cd8d97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22c287a3` are properly handled with clean fallback behavior.

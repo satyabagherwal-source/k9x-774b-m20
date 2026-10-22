@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-GAJ0",
-    "timestamp": "2026-10-20T12:18:32.652Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "aea93f3fa057853b921dc605ffe73f229d4b9fa42069cfb39e73c15fd89b1bbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-OGX5",
-    "timestamp": "2026-10-20T12:24:54.185Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "c2fd7ab3c13578b1b693e51c36fa8bd160cbc85850992b9b5e0a38c25571127f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WDKL",
-    "timestamp": "2026-10-20T12:31:03.093Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "53fc451508fae00e19dfc61e7cca14b33560f7081beb00155599ff5b2e0f8a63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-WLK4",
     "timestamp": "2026-10-20T12:31:13.444Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "25acc29f4f741c778632e9668f10edbdbe57752c7f7b96d3679d6fe8d7043bca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-RQQZ",
+    "timestamp": "2026-10-22T15:46:44.651Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "e750d900fa2f204ba02f5473d2ef15b3b3ae3f770835242376cf6563c0962210",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-RX9A",
+    "timestamp": "2026-10-22T15:46:53.086Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "77789c8e1fdc9169a9cbba39f97d16b420774bf3f456a8759d57ef4ed2c81665",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-S3WS",
+    "timestamp": "2026-10-22T15:47:01.708Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "d006dca895782abe03f7a688851765d5bbe1b802c8c702a359a450913869ac12",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

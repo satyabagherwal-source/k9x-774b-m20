@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "f2df41b5",
+    "sourceVersion": "023cfa46",
     "license": "NOASSERTION",
-    "contentHash": "f0698a640bdefd279f1e94031ec3723560edc85535f2938f1f0b27aebbb22283",
-    "lastHarvestedAt": "2026-10-20T20:48:09.308Z",
+    "contentHash": "d006dca895782abe03f7a688851765d5bbe1b802c8c702a359a450913869ac12",
+    "lastHarvestedAt": "2026-10-22T15:47:01.711Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "afa1fdeb",
+    "sourceVersion": "22c287a3",
     "license": "Apache-2.0",
-    "contentHash": "be307c7fa6b1d62aa2a23c4473be98b0c85805bb621757ef0dad3c9ff9ec2ff1",
-    "lastHarvestedAt": "2026-10-20T21:40:53.222Z",
+    "contentHash": "77789c8e1fdc9169a9cbba39f97d16b420774bf3f456a8759d57ef4ed2c81665",
+    "lastHarvestedAt": "2026-10-22T15:46:53.089Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "a907fbc6",
+    "sourceVersion": "b9479757",
     "license": "Apache-2.0",
-    "contentHash": "919eb769d2b27a288b62087dcb427912e9cefc417d0692300c7e4b7e500cd441",
-    "lastHarvestedAt": "2026-10-20T18:43:18.159Z",
+    "contentHash": "e750d900fa2f204ba02f5473d2ef15b3b3ae3f770835242376cf6563c0962210",
+    "lastHarvestedAt": "2026-10-22T15:46:44.655Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {

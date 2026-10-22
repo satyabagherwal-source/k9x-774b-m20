@@ -4305,3 +4305,6 @@ Every entry in this ledger must capture:
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `37683a22` | Multi-dimensional audit evidence | 2026-10-22T15:42:08.174Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `8035d117` | Multi-dimensional audit evidence | 2026-10-22T15:42:08.575Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b50fa327` | Multi-dimensional audit evidence | 2026-10-22T15:42:14.682Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `b9479757` | Multi-dimensional audit evidence | 2026-10-22T15:46:44.655Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `22c287a3` | Multi-dimensional audit evidence | 2026-10-22T15:46:53.089Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `023cfa46` | Multi-dimensional audit evidence | 2026-10-22T15:47:01.711Z |

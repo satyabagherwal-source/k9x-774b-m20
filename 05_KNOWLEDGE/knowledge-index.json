@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T15:42:14.631Z",
+  "last_updated": "2026-10-22T15:47:01.655Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1965,8 +1965,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "a907fbc6",
-      "content_hash": "919eb769d2b27a288b62087dcb427912e9cefc417d0692300c7e4b7e500cd441",
+      "source_version": "b9479757",
+      "content_hash": "e750d900fa2f204ba02f5473d2ef15b3b3ae3f770835242376cf6563c0962210",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -1984,6 +1984,11 @@
           "number": 3324,
           "title": "GH-54595: [Packaging][CI] Fix regex on update_deb_package_names to cover the 3 o",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3613,
+          "title": "GH-54645: [C++][FlightRPC][ODBC] Fix descriptor test query (#54695)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1991,7 +1996,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:43:18.074Z",
+      "verified_at": "2026-10-22T15:46:44.582Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2487,8 +2492,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "f2df41b5",
-      "content_hash": "f0698a640bdefd279f1e94031ec3723560edc85535f2938f1f0b27aebbb22283",
+      "source_version": "023cfa46",
+      "content_hash": "d006dca895782abe03f7a688851765d5bbe1b802c8c702a359a450913869ac12",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2506,6 +2511,11 @@
           "number": 3375,
           "title": "fix/503 may be success as well (#22764)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3615,
+          "title": "Merge remote-tracking branch 'origin/devel' into bugfix/COR-1152-aql-in-range-ut",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2513,7 +2523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:48:09.234Z",
+      "verified_at": "2026-10-22T15:47:01.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38647,8 +38657,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "afa1fdeb",
-      "content_hash": "be307c7fa6b1d62aa2a23c4473be98b0c85805bb621757ef0dad3c9ff9ec2ff1",
+      "source_version": "22c287a3",
+      "content_hash": "77789c8e1fdc9169a9cbba39f97d16b420774bf3f456a8759d57ef4ed2c81665",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -38671,6 +38681,11 @@
           "number": 3398,
           "title": "web/api: fix query cost timeout handling, feature discovery and docs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3614,
+          "title": "Update Mantine UI (#20120)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38678,7 +38693,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:40:53.146Z",
+      "verified_at": "2026-10-22T15:46:53.016Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109552,6 +109567,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T15:42:14.622Z"
+    },
+    "rule-3613": {
+      "learning_id": "rule-3613",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3613,
+      "title": "GH-54645: [C++][FlightRPC][ODBC] Fix descriptor test query (#54695)",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "b9479757",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:46:44.582Z"
+    },
+    "rule-3614": {
+      "learning_id": "rule-3614",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3614,
+      "title": "Update Mantine UI (#20120)",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "22c287a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:46:53.016Z"
+    },
+    "rule-3615": {
+      "learning_id": "rule-3615",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3615,
+      "title": "Merge remote-tracking branch 'origin/devel' into bugfix/COR-1152-aql-in-range-ut",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "023cfa46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:47:01.641Z"
     }
   },
   "aliases": {
