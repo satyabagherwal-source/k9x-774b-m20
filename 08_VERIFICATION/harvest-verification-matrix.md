@@ -4388,3 +4388,8 @@
 | `CYCLE-20261022-VB5N` | `2026-10-22T18:37:28.763Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3694` | Yes (`e8b671d0...`) |
 | `CYCLE-20261022-VGL9` | `2026-10-22T18:37:35.805Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3695` | Yes (`032281ae...`) |
 | `CYCLE-20261022-3OS1` | `2026-10-22T18:43:59.665Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3696` | Yes (`47f1923a...`) |
+| `CYCLE-20261022-BOCW` | `2026-10-22T18:50:12.368Z` | `SolaceProducts/solace-agent-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3598` | Yes (`365a2e08...`) |
+| `CYCLE-20261022-BSLG` | `2026-10-22T18:50:17.861Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3697` | Yes (`aba930c5...`) |
+| `CYCLE-20261022-BU20` | `2026-10-22T18:50:19.752Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3698` | Yes (`21fb3b28...`) |
+| `CYCLE-20261022-BYC7` | `2026-10-22T18:50:25.303Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3699` | Yes (`5ecedee9...`) |
+| `CYCLE-20261022-C1XM` | `2026-10-22T18:50:29.962Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3700` | Yes (`05b9de94...`) |

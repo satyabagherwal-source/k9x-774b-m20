@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `feb3388b`  
+> **Source Version**: `d9f86dc6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:00:15.220Z  
+> **Timestamp**: 2026-10-22T18:50:17.528Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:00:15.212Z  
+> **Harvest Timestamp**: 2026-10-22T18:50:16.853Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7763 stars
+- **Stars / Engagement**: 7773 stars
 
 ---
 
@@ -1192,13 +1192,19 @@ use schematic::ConfigLoader;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use std::{
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     fmt,
     path::{Path, PathBuf},
 };
 
 const YAML_CONFIG: &str = "devenv.yaml";
 const YAML_LOCAL_CONFIG: &str = "devenv.local.yaml";
+
+#[derive(Clone, Copy)]
+struct ImportRoots<'a> {
+    git_root: Option<&'a Path>,
+    input_sources: &'a BTreeMap<String, PathBuf>,
+}
 
 /// Version requirement for the devenv CLI.
 ///
@@ -1459,10 +1465,7 @@ impl Clean {
     /// project should exit the current shell.
     const ALWAYS_KEEP: &'static [&'static str] = &["_DEVENV_HOOK_DIR"];
 
-    /// Return host environment variables filtered by the clean/keep settings.
-    ///
-    /// When `enabled`, only variables whose name appears in `keep` or
-    /// `ALWAYS_KEEP` are returned. Otherwise every 
+    /// Return host environment variables filtered by the clean/kee
 ```
 
 ### Core Architecture Module: `devenv-core/src/dotenv.rs`
@@ -1697,176 +1700,176 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1dc3f0b4` (2026-10-20)
-**Commit Message**: fix(tasks): don't run prerequisites of disabled processes on startup (#3288)
+### Incident Patch 1: `cd351478` (2026-10-21)
+**Commit Message**: fix(shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3297)
 
-* fix(tasks): don't run prerequisites of disabled processes on startup
+Motivation: `devenv shell` intercepts chords such as Ctrl-Alt-D/W/E by
+comparing stdin with a single legacy byte sequence. When the foreground
+program (fish 4 at its prompt, Claude Code) enables the kitty keyboard
+protocol or xterm modifyOtherKeys, the same chord arrives as
+`CSI cp;mod u` or `CSI 27;mod;cp ~`, is not recognised, and is forwarded
+to the program instead of triggering the devenv action.
 
-Fixes #3272.
+Approach: `ShellKeyChord::matches_input` still accepts the legacy bytes and
+now also decodes kitty CSI u (ignoring alternate-key and event sub-fields,
+rejecting release events, ignoring caps/num lock bits) and modifyOtherKeys
+sequences for character and space chords, comparing codepoint and
+modifiers. `action_for_input` uses it. Named keys (arrows, function keys)
+are unchanged.
 
-* ci: run disabled process scheduling regressions
-
----------
-
-Co-authored-by: Domen Kožar <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build.yml` (modified, +1/-1)
-```diff
-@@ -144,7 +144,7 @@ jobs:
-         run: |
-           ${{ steps.build-devenv.outputs.path }}/bin/devenv --system ${{ inputs.system }} shell -- \
-             cargo nextest run -p devenv-tasks -p devenv -j 2 --retries 0 \
--              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter)'
-+              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites)'
- 
-       # Exercise the actual terminal boundary on every platform: PTY resize,
-       # crossterm key decoding, rendering, and reactive process commands.
-```
+Validation: the devenv-shell crate cannot be built on this machine (its
+libghostty dependency needs zig), so I compiled keybindings.rs standalone
+with `rustc --edition 2024 --test` and ran it: 6 tests passed, including a
+new test covering kitty, modifyOtherKeys, legacy, wrong-modifier, release
+and wrong-key inputs. I did 
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -29,6 +29,7 @@
- - `devenv test` now honours `strict_ports: true` and fails on a port conflict, as `devenv up` does, instead of silently moving the service to the next free port ([#3163](https://github.com/cachix/devenv/issues/3163)).
- - `enterShell` now runs from the project root when `devenv shell` starts in a subdirectory, before the shell moves to that subdirectory. Previously it ran in the subdirectory, so commands with relative paths, such as the JavaScript package install, looked in the wrong place.
- - Fixed auto-activation waiting for the next prompt when you `cd` from one devenv project directly into another, so you had to press Enter before the second project's shell started. It now starts right away ([#3129](https://github.com/cachix/devenv/issues/3129)).
-+- `devenv up` and `devenv test` no longer run the prerequisites of a process with `start.enable = false`. They now run when that process is started, or when an enabled process depends on it ([#3272](https://github.com/cachix/devenv/issues/3272)).
- 
- ## 2.4.0 (2026-09-24)
- 
+@@ -12,6 +12,7 @@
+ - Fixed machine metadata failing to load when encryption key or extra file target paths contain dots, such as `/tmp/luks.key` ([#3277](https://github.com/cachix/devenv/issues/3277)).
+ - Fixed source builds with Meson 1.12, missing syscall declarations in static Linux builds, and Linux linking failures caused by malformed Ghostty compiler-runtime objects.
+ - Restore terminal settings after tasks exit or are killed, preventing subsequent terminal output from remaining misaligned ([#3292](https://github.com/cachix/devenv/issues/3292)).
++- Fixed `devenv shell` keybindings (Ctrl-Alt-D/W/E by default) not working while the foreground program, such as fish 4 or Claude Code, has enabled the kitty keyboard protocol or xterm modifyOtherKeys ([#3294](https://github.com/cachix/devenv/issues/3294)).
+ - Updated bundled Nix to 2.35.3 with upstream security fixes ([#3287](https://github.com/cachix/devenv/issues/3287)).
+ - Failed process prerequisites and their error output now remain visible in the TUI, including shared prerequisites and when stopped processes are hidden ([#3017](https://github.com/cachix/devenv/issues/3017)). Processes with more than five prerequisites also show the full task list.
+ - Fixed `devenv shell` printing `bash: export: … not a valid identifier` and truncating `PATH` at the first space when a task re-exports `PATH` (for example Python venv activation) and the parent `PATH` contains a directory with a space ([#3165](https://github.com/cachix/devenv/issues/3165)).
 ```
 
-**File**: `devenv-tasks/src/tasks.rs` (modified, +103/-11)
+**File**: `devenv-shell/src/keybindings.rs` (modified, +89/-1)
 ```diff
-@@ -556,6 +556,17 @@ impl Tasks {
+@@ -182,6 +182,28 @@ impl ShellKeyChord {
          }
      }
  
-+    /// Whether a node is a process with `start.enable = false`.
-+    async fn is_disabled_process(&self, node: NodeIndex) -> bool {
-+        let state = self.graph[node].read().await;
-+        state.task.r#type == TaskType::Process
-+            && state
-+                .task
-+                .process
-+                .as_ref()
-+                .is_some_and(|process| !process.start.enable)
-+    }
-+
-     #[instrument(skip(self), fields(graph, subgraph), ret)]
-     async fn schedule(&mut self) -> Result<Vec<NodeIndex>, Error> {
-         let mut subgraph = DiGraph::new();
-@@ -573,20 +584,29 @@ impl Tasks {
-             // never selects unrelated dependents.
-             // See: https://github.com/cachix/devenv/issues/2337
-             let mut activated = HashSet::new();
-+            let mut expanded = HashSet::new();
-             let mut to_visit: Vec<(NodeIndex, bool)> =
-                 self.roots.iter().map(|&root| (root, true)).collect();
-             while let Some((node, active)) = to_visit.pop() {
--                if visited.insert(node) {
--                    if let Some(wanted) = self.wants.get(&node) {
--                        to_visit.extend(wanted.iter().map(|&task| (task, true)));
--                    }
--                    if upstream {
--                        to_visit.extend(
--                            self.graph
--                                .neighbors_directed(node, petgraph::Direction::Incoming)
--                                .map(|prerequisite| (prerequisite, false)),
--                        );
--                    }
-+                if visited.insert(node)
-+                    && let Some(wanted) = self.wants.get(&node)
-+                {
-+                    to_visit.extend(wanted.iter().map(|&task| (task, true)));
-+                }
-+                // A process with `start.enable = false` does not start on its
-+                // own, so selecting it does not pull in its prerequisites; they
-+                // run when the process is started. Reaching it as a
-+                // prerequisite of a selected task still does.
-+                // See: https://github.com/cachix/devenv/issues/3272
-+                if upstream
-+                    && (!active || !self.is_disabled_process(node).await)
-+                    && expanded.insert(node)
-+                {
-+                    to_visit.extend(
-+                        self.graph
-+                            .neighbors_directed(node, petgraph::Direction::Incoming)
-+                            .map(|prerequisite| (prerequisite, false)),
-+                    );
-                 }
-                 if active && downstream && activated.insert(node) {
-                     to_visit.extend(
-@@ -2286,6 +2306,78 @@ mod schedule_tests {
-         }
-     }
- 
-+    /// A long-running process with `start.enable = false` that runs after `after`.
-+    fn disabled_process_after(name: &str, after: &str) -> TaskConfig {
-+        let mut task = long_process_task(name, vec![]);
-+        task.after = vec![after.to_string()];
-+        task.process = Some(ProcessConfig {
-+            start: devenv_processes::config::StartConfig { enable: false },
-+            ..Default::default()
-+        });
-+        task
-+    }
-+
-+    #[tokio::test]
-+    async fn disabled_process_root_does_not_select_its_prerequisites() {
-+        let configs = vec![
-+            oneshot_task("fixture:prepare", vec![]),
-+            disabled_process_after("optional", "fixture:prepare"),
-+            long_process_task("app", vec![]),
-+        ];
-+        for mode in [RunMode::Before, RunMode::All] {
-+            let (tasks, _tmp) = build_test_tasks_with_run_mode(
-+                configs.clone(),
-+                vec![
-+                    format!("{PROCESS_TASK_PREFIX}optional"),
-+                    format!("{PROCESS_TASK_PREFIX}app"),
-+                ],
-+                mode,
-+                false,
-+            )
-+            .await;
-+            let mut names = task_names(&tasks).await;
-+            names.sort();
-+            assert_eq!(
-+                names,
-+                vec![
-+                    format!("{PROCESS_TASK_PREFIX}app"),
-+                    format!("{PROCESS_TASK_PREFIX}optional"),
-+                ],
-+                "{mode:?}"
-+            );
++    /// Whether `input` is this chord, in its legacy encoding or as sent once the
++    /// foreground program enables the kitty keyboard protocol (`CSI cp;mod u`) or
++    /// xterm modifyOtherKeys (`CSI 27;mod;cp ~`).
++    pub fn matches_input(&self, input: &[u8]) -> bool {
++        if self.terminal_bytes() == input {
++            return true;
++        }
++        let expected = match self.code {
++            ShellKeyCode::Char(character) => character.to_lowercase().next(),
++            ShellKeyCode::Space => Some(' '),
++            _ => None,
++        };
++        match (expected, decode_enhanced_key(input)) {
++            (Some(expected), Some((codepoint, modifiers))) => {
++                modifiers == self.xterm_modifier(false) - 1
++                    && char::from_u32(codepoint).and_then(|c| c.to_lowercase().next())
++                        == Some(expected)
++            }
++            _ => false,
 +        }
 +    }
 +
-+    #[tokio::test]
-+    async fn disabled_process_needed_by_a_root_selects_its_prerequisites() {
-+        let configs = vec![
-+            oneshot_task("fixture:prepare", vec![]),
-+            disabled_process_after("optional", "fixture:prepare"),
-+            long_process_task("app", vec!["optional@started"]),
-+        ];
-+        // Visit the disabled process as a root before reaching it through `app`.
-+        let (tasks, _tmp) = build_test_tasks_with_run_mode(
-+            configs,
-+            vec![
-+                format!("{PROCESS_TASK_PREFIX}app"),
-+                format!("{PROCESS_TASK_PREFIX}optional"),
-+            ],
-+            R
+     fn character_bytes(&self, character: char) -> Vec<u8> {
+         let emitted = if self.shift {
+             shifted_character(character)
+@@ -383,7 +405,7 @@ impl ShellKeybindings {
+         ShellAction::INTERCEPTED.into_iter().find(|action| {
+             self.bindings(*action)
+                 .iter()
+-                .any(|binding| binding.terminal_bytes() == input)
++                .any(|binding| binding.matches_input(input))
+         })
+     }
+ 
+@@ -437,6 +459,39 @@ pub struct ShellKeybindingConflict {
+     pub chord: String,
+ }
+ 
++/// Decode a kitty `CSI cp[:alt];mod[:event] u` or modifyOtherKeys
++/// `CSI 27;mod;cp ~` key press into its codepoint and modifier bits
++/// (shift=1, alt=2, ctrl=4). Lock-state bits are ignored; release events are rejected.
++fn decode_enhanced_key(input: &[u8]) -> Option<(u32, u8)> {
++    let body = input.strip_prefix(b"\x1b[")?;
++    let (&last, body) = body.split_last()?;
++    let body = std::str::from_utf8(body).ok()?;
++    let mut fields = body.split(';');
++    let number = |field: &str| field.split(':').next()?.parse::<u32>().ok();
++    let (codepoint, modifier) = match last {
++        b'u' => {
++            let codepoint = number(fields.next()?)?;
++            let modifier = fields.next().unwrap_or("1");
++            if modifier.split(':').nth(1) == Some("3") {
++                return None;
++            }
++            (codepoint, number(modifier)?)
++        }
++        b'~' => {
++            if number(fields.next()?)? != 27 {
++                return None;
++            }
++            let modifier = number(fields.next()?)?;
++            (number(fields.next()?)?, modifier)
++        }
++        _ => return None,
++    };
++    if fields.next().is_some() || modifier == 0 {
++        return None;
++    }
++    Some((codepoint, ((modifier - 1) & 0b0011_1111) as u8))
++}
++
+ fn control_byte(character: char) -> Option<u8> {
+     match character {
+         ' ' | '@' => Some(0),
+@@ -500,6 +555,39 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn default_chords_match_enhanced_keyboard_encodings() {
++        let bindings = ShellKeybindings::default();
++        // kitty CSI u, with and without event/alternate sub-fields and lock bits
++        assert_eq!(
++            bindings.action_for_input(b"\x1b[100;7u"),
++            Some(ShellAction::TogglePause)
++        );
++        assert_eq!(
++            bindings.action_for_input(b"\x1b[119;7:1u"),
++            Some(ShellAction::ListWatchedFiles)
++        );
++        assert_eq!(
++            bindings.action_for_input(b"\x1b[101:69;71u"),
++            Some(ShellAction::ToggleError)
++        );
++        // modifyOtherKeys
++        assert_eq!(
++            bindings.action_for_input(b"\x1b[27;7;100~"),
++            Some(ShellAction::TogglePause)
++        );
++        // legacy still works
++        assert_eq!(
++            bindings.action_for_input(b"\x1b\x04"),
++            Some(ShellAction::TogglePause)
++        );
++        // wrong modifiers, release events and other keys do not match
++        assert_eq!(bindings.action_for_input(b"\x1b[100;5u"), None);
++        assert_eq!(bindings.action_for_input(b"\x1b[100;7:3u"), None);
++        assert_eq!(bindings.action_for_input(b"\x1b[120;7u"), None);
++        assert_eq!(bindings.action_for_input(b"\x1b[27;7;120~"), None);
++    }
++
+     #[test]
+     fn modified_named_keys_use_xterm_sequences() {
+         let chord = ShellKeyChord::new(ShellKeyCode::Up, true, true, false);
 ```
 
 ---
 
-### Incident Patch 2: `feb3388b` (2026-10-20)
-**Commit Message**: fix(inputs): preserve YAML with yaml-edit (#3308)
+### Incident Patch 2: `c29bcf42` (2026-10-22)
+**Commit Message**: fix(bootstrap): substitute locked inputs through native Nix fetcher (#3312)
 
-* fix(inputs): preserve YAML with yaml-edit
+Use fetchFinalTree for inputs with complete locked metadata so source
+trees can be reused locally or substituted without contacting the origin.
+Keep fetchTree for live paths and incomplete metadata.
 
-* refactor(yaml): replace direct serde_yaml uses with serde_norway
+Bump both Nix locks to the 2.35 backport and cover cache-only shell entry,
+local reuse, and missing timestamp metadata.
+
+Assisted-by: Codex (GPT-6)
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -1874,482 +1877,374 @@ Co-authored-by: Domen Kožar <[REDACTED_EMAIL]>
  
  ### Bug Fixes
  
-+- `devenv inputs add` preserves surrounding YAML comments, formatting, and key order, and no longer copies imported or local inputs into `devenv.yaml` ([#3268](https://github.com/cachix/devenv/issues/3268)).
++- Locked inputs with complete source metadata now reuse sources from the Nix store or configured binary caches without contacting their original remote, so `devenv shell` works when that remote is unavailable ([#3244](https://github.com/cachix/devenv/pull/3244)).
+ - `devenv inputs add` preserves surrounding YAML comments, formatting, and key order, and no longer copies imported or local inputs into `devenv.yaml` ([#3268](https://github.com/cachix/devenv/issues/3268)).
  - Fixed machine metadata failing to load when encryption key or extra file target paths contain dots, such as `/tmp/luks.key` ([#3277](https://github.com/cachix/devenv/issues/3277)).
  - Fixed source builds with Meson 1.12, missing syscall declarations in static Linux builds, and Linux linking failures caused by malformed Ghostty compiler-runtime objects.
- - Restore terminal settings after tasks exit or are killed, preventing subsequent terminal output from remaining misaligned ([#3292](https://github.com/cachix/devenv/issues/3292)).
 ```
 
-**File**: `Cargo.lock` (modified, +37/-3)
+**File**: `devenv-nix-backend/bootstrap/resolve-lock.nix` (modified, +24/-1)
 ```diff
-@@ -2009,6 +2009,12 @@ version = "0.8.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
+@@ -86,7 +86,30 @@ let
+               && !(locked ? narHash)
+               && builtins.substring 0 1 (resolvedLocked.path or "") == "/";
  
-+[[package]]
-+name = "countme"
-+version = "3.0.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7704b5fdd17b18ae31c4c1da5a2e0305a2bf17b5249300a9ee9ed7b72114c636"
-+
- [[package]]
- name = "cpubits"
- version = "0.1.1"
-@@ -2680,8 +2686,8 @@ dependencies = [
-  "serde",
-  "serde_dhall",
-  "serde_json",
-+ "serde_norway",
-  "serde_repr",
-- "serde_yaml",
-  "sha2 0.11.0",
-  "socket2 0.6.4",
-  "tempfile",
-@@ -2690,6 +2696,7 @@ dependencies = [
-  "tracing",
-  "tracing-subscriber",
-  "xdg",
-+ "yaml-edit",
- ]
- 
- [[package]]
-@@ -2862,7 +2869,7 @@ dependencies = [
-  "portable-pty",
-  "serde",
-  "serde_json",
-- "serde_yaml",
-+ "serde_norway",
-  "shell-escape",
-  "signal-hook 0.4.4",
-  "tempfile",
-@@ -2943,7 +2950,7 @@ dependencies = [
-  "schemars 1.2.1",
-  "serde",
-  "serde_json",
-- "serde_yaml",
-+ "serde_norway",
-  "thiserror 2.0.18",
-  "tokio",
-  "tokio-shutdown",
-@@ -7983,6 +7990,18 @@ version = "1.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "323c417e1d9665a65b263ec744ba09030cfb277e9daa0b018a4ab62e57bc8189"
- 
-+[[package]]
-+name = "rowan"
-+version = "0.16.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "417a3a9f582e349834051b8a10c8d71ca88da4211e4093528e36b9845f6b5f21"
-+dependencies = [
-+ "countme",
-+ "hashbrown 0.14.5",
-+ "rustc-hash 1.1.0",
-+ "text-size",
-+]
-+
- [[package]]
- name = "rsa"
- version = "0.9.10"
-@@ -9628,6 +9647,12 @@ dependencies = [
-  "windows-sys 0.61.2",
- ]
- 
-+[[package]]
-+name = "text-size"
-+version = "1.1.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f18aa187839b2bdb1ad2fa35ead8c4c2976b64e4363c386d45ac0f7ee85c9233"
-+
- [[package]]
- name = "textwrap"
- version = "0.16.2"
-@@ -11224,6 +11249,15 @@ dependencies = [
-  "serde_json",
- ]
- 
-+[[package]]
-+name = "yaml-edit"
-+version = "0.3.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "79e531de3d80075e0a2dc8246ca46c9167211297f8b9d513130880c2ef98d0b8"
-+dependencies = [
-+ "rowan",
-+]
-+
- [[package]]
- name = "yansi"
- version = "1.0.1"
+-            fetchedSource = builtins.fetchTree (node.info or { } // removeAttrs resolvedLocked [ "dir" ]);
++            sourceAttrs = node.info or { } // removeAttrs resolvedLocked [ "dir" ];
++            # Final fetches trust the lock's metadata and can substitute the
++            # source from a binary cache. Keep ordinary fetches for inputs
++            # whose missing metadata still needs to be supplied by the fetcher.
++            hasLockedMetadata =
++              sourceAttrs ? narHash
++              && (
++                sourceAttrs.type == "file"
++                || (
++                  builtins.elem sourceAttrs.type [
++                    "git"
++                    "github"
++                    "gitlab"
++                    "sourcehut"
++                    "tarball"
++                  ]
++                  && sourceAttrs ? lastModified
++                  && (sourceAttrs.type == "tarball" || sourceAttrs ? rev)
++                  && (sourceAttrs.type != "git" || (sourceAttrs.shallow or true) || sourceAttrs ? revCount)
++                )
++              );
++            fetchTree =
++              if hasLockedMetadata then builtins.fetchFinalTree or builtins.fetchTree else builtins.fetchTree;
++            fetchedSource = fetchTree sourceAttrs;
+           in
+           if isLivePath then
+             {
 ```
 
-**File**: `Cargo.nix` (modified, +99/-8)
+**File**: `devenv.lock` (modified, +3/-3)
 ```diff
-@@ -6994,6 +6994,22 @@ rec {
-         };
-         resolvedDefaultFeatures = [ "default" "link" ];
-       };
-+      "countme" = rec {
-+        crateName = "countme";
-+        version = "3.0.1";
-+        edition = "2018";
-+        sha256 = "0dn62hhvgmwyxslh14r4nlbvz8h50cp5mnn1qhqsw63vs7yva13p";
-+        authors = [
-+          "Aleksey Kladov <aleksey.kladov@gmail.com>"
-+        ];
-+        features = {
-+          "dashmap" = [ "dep:dashmap" ];
-+          "enable" = [ "dashmap" "once_cell" "rustc-hash" ];
-+          "once_cell" = [ "dep:once_cell" ];
-+          "print_at_exit" = [ "enable" ];
-+          "rustc-hash" = [ "dep:rustc-hash" ];
-+        };
-+      };
-       "cpubits" = rec {
-         crateName = "cpubits";
-         version = "0.1.1";
-@@ -9099,12 +9115,12 @@ rec {
-             packageId = "serde_json";
-           }
-           {
--            name = "serde_repr";
--            packageId = "serde_repr";
-+            name = "serde_norway";
-+            packageId = "serde_norway";
-           }
-           {
--            name = "serde_yaml";
--            packageId = "serde_yaml";
-+            name = "serde_repr";
-+            packageId = "serde_repr";
-           }
-           {
-             name = "sha2";
-@@ -9132,6 +9148,11 @@ rec {
-             name = "xdg";
-             packageId = "xdg";
-           }
-+          {
-+            name = "yaml-edit";
-+            packageId = "yaml-edit";
-+            usesDefaultFeatures = false;
-+          }
-         ];
-         devDependencies = [
-           {
-@@ -9814,8 +9835,8 @@ rec {
-             packageId = "serde_json";
-           }
-           {
--            name = "serde_yaml";
--            packageId = "serde_yaml";
-+            name = "serde_norway";
-+            packageId = "serde_norway";
-           }
-           {
-             name = "shell-escape";
-@@ -10142,8 +10163,8 @@ rec {
-             packageId = "serde_json";
-           }
-           {
--            name = "serde_yaml";
--            packageId = "serde_yaml";
-+            name = "serde_norway";
-+            packageId = "serde_norway";
-           }
-           {
-             name = "thiserror";
-@@ -14760,6 +14781,7 @@ rec {
-           "rustc-dep-of-std" = [ "nightly" "core" "compiler_builtins" "alloc" "rustc-internal-api" ];
-           "serde" = [ "dep:serde" ];
-         };
-+        resolvedDefaultFeatures = [ "inline-more" ];
-       };
-       "hashbrown 0.15.5" = rec {
-         crateName = "hashbrown";
-@@ -27043,6 +27065,39 @@ rec {
-         sha256 = "12c1pibjxdjai80hpalxgqkzn30316x49iry4rdscrcn3mz42g1j";
- 
-       };
-+      "rowan" = rec {
-+        crateName = "rowan";
-+        version = "0.16.1";
-+        edition = "2021";
-+        sha256 = "08azddgq9f9nir996h0y46j8va0wsz4112hv0ls9hd1fb2gklyj1";
-+        authors = [
-+          "Aleksey Kladov <aleksey.kladov@gmail.com>"
-+        ];
-+        dependencies = [
-+          {
-+            name = "countme";
-+            packageId = "countme";
-+          }
-+          {
-+            name = "hashbrown";
-+            packageId = "hashbrown 0.14.5";
-+            usesDefaultFeatures = false;
-+            features = [ "inline-more" ];
-+          }
-+          {
-+            name = "rustc-hash";
-+            packageId = "rustc-hash 1.1.0";
-+          }
-+          {
-+            name = "text-size";
-+            packageId = "text-size";
-+          }
-+        ];
-+        features = {
-+          "serde" = [ "dep:serde" ];
-+          "serde1" = [ "serde" "text-size/serde" ];
-+        };
-+      };
-       "rsa" = rec {
-         crateName = "rsa";
-         version = "0.9.10";
-@@ -32893,6 +32948,20 @@ rec {
-         ];
- 
-       };
-+      "text-size" = rec {
-+        crateName = "text-size";
-+        version = "1.1.1";
-+        edition = "2018";
-+        sha256 = "0cwjbkl7w3xc8mnkhg1nwij6p5y2qkcfldgss8ddnawvhf3s32pi";
-+        libName = "text_size";
-+        authors = [
-+          "Aleksey Kladov <aleksey.kladov@gmail.com>"
-+          "Christopher Durham (CAD97) <cad97@cad97.com>"
-+        ];
-+        features = {
-+          "serde" = [ "dep:serde" ];
-+        };
-+      };
-       "textwrap" = rec {
-         crateName = "textwrap";
-         version = "0.16.2";
-@@ -39695,6 +39764,28 @@ rec {
-         ];
- 
-       };
-+      "yaml-edit" = rec {
-+        crateName = "yaml-edit";
-+        version = "0.3.2";
-+        edition = "2021";
-+        sha256 = "1f6hk3pw50082c9xbfgqjw922rwidjj6q9685l55w1w07pg33rbr";
-+        libName = "yaml_edit";
-+        authors = [
-+          "Jelmer Vernooĳ <jelmer@debian.org>"
-+        ];
-+        dependencies = [
-+          {
-+            name = "rowan";
-+            packageId = "rowan";
-+          }
-+        ];
-+        features = {
-+          "base64" = [ "dep:base64" ];
-+          "binary" = [ "base64" ];
-+          "default" = [ "binary" ];
-+          "regex" = [ "dep:regex" ];
-+        };
-+      };
-       "yansi" = rec {
-         crateName = "yansi";
-         version = "1.0.1";
+@@ -530,11 +530,11 @@
+         "nixpkgs-regression": "nixpkgs-regression"
+       },
+       "locked": {
+-        "lastModified": 1790176416,
+-        "narHash": "sha256-acP7QvsB+dHghUeL9AwSSZ3qS//skpqjv484aveg1EQ=",
++        "lastModified": 1792603708,
++        "narHash": "sha256-9KB9OFCP71d8n4Gg09saO6H1VuVzHdjusheiHtgn9jc=",
+         "owner": "cachix",
+         "repo": "nix",
+-        "rev": "bd10d7f563420c6034b9d1dc75c4168fc01e5afc",
++        "rev": "082f14105a3e545e1d60bbbc9028dba19f114a0d",
+         "type": "github"
+       },
+       "original": {
 ```
 
-**File**: `Cargo.toml` (modified, +2/-1)
+**File**: `flake.lock` (modified, +3/-3)
 ```diff
-@@ -131,7 +131,8 @@ serde_dhall = { version = "0.13.0", default-features = false }
- serde_json = "1.0.149"
- serde_repr = "0.1.20"
- serde_with = "3"
--serde_yaml = "0.9.34"
-+serde_norway = "0.9.42"
-+yaml-edit = { version = "0.3.2", default-features = false }
- toml = "0.9.12"
- ser_nix = "0.2.4"
- similar = "3.1.0"
+@@ -111,11 +111,11 @@
+         "nixpkgs-regression": []
+       },
+       "locked": {
+-        "lastModified": 1792015234,
+-        "narHash": "sha256-HBX0GszzUDIkPUL9dtNzhxeKBBJ2vyot3iIyyajEtmY=",
++        "lastModified": 1792603708,
++        "narHash": "sha256-9KB9OFCP71d8n4Gg09saO6H1VuVzHdjusheiHtgn9jc=",
+         "owner": "cachix",
+         "repo": "nix",
+-        "rev": "ab229d688f8402ef858ba69487e832075f7358e2",
++        "rev": "082f14105a3e545e1d60bbbc9028dba19f114a0d",
+         "type": "github"
+       },
+       "original": {
 ```
 
-**File**: `devenv-core/Cargo.toml` (modified, +2/-1)
+**File**: `tests/locked-input-substitution/.test.sh` (added, +87/-0)
 ```diff
-@@ -27,7 +27,8 @@ serde.workspace = true
- serde_dhall.workspace = true
- serde_json.workspace = true
- serde_repr.workspace = true
--serde_yaml.workspace = true
-+serde_norway.workspace = true
-+yaml-edit.workspace = true
- ser_nix.workspace = true
- sha2.workspace = true
- hex.workspace = true
-```
-
-**File**: `devenv-core/src/config.rs` (modified, +301/-17)
-```diff
-@@ -1372,7 +1372,7 @@ impl Config {
-     }
- 
-     fn write_to(&self, root_dir: &Path) -> Result<()> {
--        let yaml = serde_yaml::to_string(&self)
-+        let yaml = serde_norway::to_string(&self)
-             .into_diagnostic()
-             .wrap_err("Failed to serialize config to YAML")?;
-         let content = format!(
-@@ -1385,6 +1385,105 @@ impl Config {
-         Ok(())
-     }
- 
-+    /// Edit only this file's input, preserving surrounding YAML presentation.
-+    /// Resolve follows against the loaded configuration, but never write merged
-+    /// imports or local overrides back into the project's file. Unsupported edits
-+    /// fail before writing rather than falling back to a lossy rewrite.
-+    pub fn add_input_to_file(
-+        &self,
-+        root_dir: &Path,
-+        name: &str,
-+        url: &str,
-+        follows: &[String],
-+    ) -> Result<()> {
-+        let mut resolved = Config {
-+            inputs: self.inputs.clone(),
-+            ..Default::default()
-+        };
-+        resolved.add_input(name, url, follows)?;
-+        let input = &resolved.inputs[name];
-+        let path = root_dir.join(YAML_CONFIG);
-+        let text = match std::fs::read_to_string(&path) {
-+            Ok(text) => text,
-+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-+                "# yaml-language-server: $schema=https://devenv.sh/devenv.schema.json\n".to_string()
-+            }
-+            Err(error) => {
-+                return Err(error)
-+                    .into_diagnostic()
-+                    .wrap_err_with(|| format!("Failed to read {}", path.display()));
-+            }
-+        };
+@@ -0,0 +1,87 @@
++#!/usr/bin/env bash
++set -euo pipefail
 +
-+        let mut expected: serde_norway::Value = serde_norway::from_str(&text)
-+            .into_diagnostic()
-+            .wrap_err("Failed to parse devenv.yaml")?;
-+        if expected.is_null() {
-+            expected = serde_norway::Value::Mapping(Default::default());
-+        }
-+        let inputs = expected
-+            .as_mapping_mut()
-+            .ok_or_else(|| miette::miette!("devenv.yaml must contain a YAML mapping"))?
-+            .entry("inputs".into())
-+            .or_insert(serde_norway::Value::Null);
-+        if inputs.is_null() {
-+            *inputs = serde_norway::Value::Mapping(Default::default());
-+        }
-+        inputs
-+            .as_mapping_mut()
-+            .ok_or_else(|| miette::miette!("devenv.yaml inputs must be a YAML mapping"))?
-+            .insert(
-+                name.into(),
-+                serde_norway::to_value(input).into_diagnostic()?,
-+            );
++fixture=$(mktemp -d)
++trap 'rm -rf "$fixture"' EXIT
++mkdir "$fixture/source" "$fixture/project"
++cat > "$fixture/source/devenv.nix" <<'EOF'
++{
++  env.CACHED_INPUT = "from binary cache";
++}
++EOF
++# Give this test its own source path, so deleting it cannot affect other tests.
++printf '%s\n' "$fixture" > "$fixture/source/nonce"
++source_path=$(nix --extra-experimental-features nix-command store add-path --name source "$fixture/source")
++nar_hash=$(nix --extra-experimental-features nix-command hash path "$fixture/source")
++cache_url="file://$fixture/cache"
++nix --extra-experimental-features nix-command copy --to "$cache_url" "$source_path"
++nix-store --delete "$source_path"
++if nix --extra-experimental-features nix-command path-info "$source_path"; then
++    echo "Test source unexpectedly remains in the local store" >&2
++    exit 1
++fi
 +
-+        // Keep the whole stream: comments and directives can live outside the
-+        // document node itself.
-+        let file: yaml_edit::YamlFile = text
-+            .parse()
-+            .into_diagnostic()
-+            .wrap_err("Failed to parse devenv.yaml for editing")?;
-+        let document = file.ensure_document();
-+        if document.get_mapping("inputs").is_none() {
-+            let inputs = if document
-+                .as_mapping()
-+                .is_some_and(|mapping| mapping.is_flow_style())
-+            {
-+                yaml_edit::Mapping::new_flow()
-+            } else {
-+                yaml_edit::Mapping::new_pending_block()
-+            };
-+            document.set("inputs", inputs);
-+        }
-+        let inputs = document
-+            .get_mapping("inputs")
-+            .ok_or_else(|| miette::miette!("Cannot edit devenv.yaml inputs in place"))?;
-+        // A nested block mapping is not valid inside a flow mapping. JSON gives
-+        // us a properly escaped flow-style fragment without hand-rendering YAML.
-+        let fragment = if inputs.is_flow_style() {
-+            serde_json::to_string(input).into_diagnostic()?
-+        } else {
-+            serde_norway::to_string(input).into_diagnostic()?
-+        };
-+        let fragment: yaml_edit::Document = fragment.parse().into_diagnostic()?;
-+        let mapping = fragment
-+            .as_mapping()
-+            .ok_or_else(|| miette::miette!("Serialized input must be a YAML mapping"))?;
-+        inputs.set(name, mapping);
-+
-+        let edited = file.to_string();
-+        let actual: serde_norway::Value =
-+            serde_norway::from_str(&edited).into_diagnostic().wrap_err(
-+                "Cannot edit devenv.yaml without invalidating its YAML; file was not changed",
-+            )?;
-+        if actual != expected {
-+            bail!("Cannot edit devenv.yaml without changing other values; file was not changed");
-+        }
-+        std::fs::write(&path, edited)
-+            .into_diagnostic()
-+            .wrap_err("Failed to write devenv.yaml")
++# The origin never exists. Only the binary cache can supply the source.
++origin="file://$fixture/unreachable.tar.gz"
++encoded_hash=$(jq -rn --arg hash "$nar_hash" '$hash | @uri')
++cat > "$fixture/project/devenv.yaml" <<EOF
++inputs:
++  cached:
++    url: "tarball+$origin?narHash=$encoded_hash&lastModified=1000000000"
++    flake: false
++imports:
++  - cached
++EOF
++cat > "$fixture/project/devenv.nix" <<'EOF'
++{ ... }:
++assert builtins ? fetchFinalTree;
++{ }
++EOF
++jq --arg url "$origin" --arg hash "$nar_hash" '
++  .nodes[.root].inputs.cached = "cached"
++  | .nodes.cached = {
++      flake: false,
++      locked: { type: "tarball", url: $url, narHash: $hash, lastModified: 1000000000 },
++      original: { type: "tarball", url: $url, narHash: $hash, lastModified: 1000000000 }
 +    }
++' devenv.lock > "$fixture/project/devenv.lock"
 +
-     /// Add a new input, overwriting any existing input with the same name.
-     pub fn add_input(&mut self, name: &str, url: &str, follows: &[String]) -> Result<()> {
-         // A set of inputs built from the follows list.
-@@ -1596,6 +1695,189 @@ mod tests {
-         );
-     }
- 
-+    fn add_input_in_file(yaml: Option<&str>, name: &str, follows: &[String])
++cd "$fixture/project"
++# shellcheck disable=SC2016
++devenv --no-eval-cache --nix-option extra-substituters "$cache_url" shell bash -- -c \
++    'test "$CACHED_INPUT" = "from binary cache"'
++nix-store --check-validity "$source_path"
++
++# With the cache removed, a fresh evaluation must reuse the local store copy.
++mv "$fixture/cache" "$fixture/cache-unavailable"
++# shellcheck disable=SC2016
++devenv --no-eval-cache shell bash -- -c \
++    'test "$CACHED_INPUT" = "from binary cache"'
++
++# Incomplete lock metadata must still be supplied by the ordinary fetcher,
++# even when the source is already present in the store.
++touch -d '@1000000000' "$fixture/source" "$fixture/source/"*
++tar -czf "$fixture/metadata.tar.gz" -C "$fixture" source
++cat > devenv.yaml <<EOF
++inputs:
++  cached:
++    url: "tarball+file://$fixture/metadata.tar.gz?narHash=$encoded_hash"
++    flake: false
++imports:
++  - cached
++EOF
++cat > devenv.nix <<'EOF'
++{ inputs, ... }:
++{
++  env.INPUT_LAST_MODIFIED = toString inputs.cached.lastModified;
++}
++EOF
++jq --arg url "file://$fixture/metadata.tar.gz" '
++  .nodes.cached.locked.url = $url
++  | .nodes.cached.original.url = $url
++  | del(.nodes.cached.locked.lastModified, .nodes.cached.original.lastModified)
++' devenv.lock > next.lock
++mv next.lock devenv.lock
++# shellcheck disable=SC2016
++devenv --no-eval-cache shell bash -- -c \
++    'test "$INPUT_LAST_MODIFIED" = 1000000000'
 ```
 
-**File**: `devenv-core/src/nix_args.rs` (modified, +2/-2)
+**File**: `tests/locked-input-substitution/devenv.nix` (added, +8/-0)
 ```diff
-@@ -535,7 +535,7 @@ mod tests {
-             }),
-             ..Default::default()
-         };
--        let expected: serde_yaml::Value = serde_yaml::from_str(
-+        let expected: serde_norway::Value = serde_norway::from_str(
-             r#"
- allowUnfree: true
- cudaSupport: true
-@@ -547,7 +547,7 @@ android_sdk:
- "#,
-         )
-         .unwrap();
--        let actual = serde_yaml::to_value(NixpkgsConfigForNix::from(&cfg)).unwrap();
-+        let actual = serde_norway::to_value(NixpkgsConfigForNix::from(&cfg)).unwrap();
-         assert_eq!(actual, expected);
-     }
- 
+@@ -0,0 +1,8 @@
++{ pkgs, ... }:
++{
++  packages = [
++    pkgs.nix
++    pkgs.gnutar
++    pkgs.gzip
++  ];
++}
 ```
 
-**File**: `devenv-run-tests/Cargo.toml` (modified, +1/-1)
+---
+
+### Incident Patch 3: `d9f86dc6` (2026-10-22)
+**Commit Message**: fix(rust): preserve large linker response files through Nix wrappers (#3313)
+
+Enable Nix linker response-file forwarding for Rust's Clang driver on Linux, with a regression that reproduces GCC collect2 E2BIG and verifies the same oversized link succeeds through the configured driver.
+
+Validated with seven targeted integration tests and 64 Linux linker combinations. Prepared and validated with Codex.
+
+**File**: `src/modules/languages/rust.nix` (modified, +14/-0)
 ```diff
-@@ -19,6 +19,6 @@ nix-bindings-expr.workspace = true
- nix-flake-lock.workspace = true
- serde.workspace = true
- serde_json.workspace = true
--serde_yaml.workspace = true
-+serde_norway.workspace = true
- globset.workspace = true
- shell-escape.workspace = true
+@@ -316,6 +316,15 @@ in
+   config = lib.mkIf cfg.enable (lib.mkMerge [
+     {
+       changelogs = [
++        {
++          date = "2026-10-22";
++          title = "Large Rust links preserve response files through Nix's linker wrapper";
++          when = cfg.clangLinker.enable && pkgs.stdenv.hostPlatform.isLinux;
++          description = ''
++            Rust shells using Clang on Linux now enable response-file forwarding in Nix's linker wrapper.
++            This prevents large links from failing with `Argument list too long` after the wrapper expands a response file.
++          '';
++        }
+         {
+           date = "2026-10-13";
+           title = "Rust toolchain files without rust-analyzer now use a standalone language server";
+@@ -498,6 +507,11 @@ in
+           # See `hostLinker` for why the linker is not set through RUSTFLAGS.
+           // lib.optionalAttrs (cfg.clangLinker.enable || linkerArgs != [ ]) {
+             "CARGO_TARGET_${pkgs.stdenv.hostPlatform.rust.cargoEnvVarTarget}_LINKER" = hostLinker;
++          }
++          // lib.optionalAttrs (cfg.clangLinker.enable && pkgs.stdenv.hostPlatform.isLinux) {
++            # Clang can forward a response file, but Nix's linker wrapper would
++            # otherwise expand it back into an oversized exec argument list.
++            NIX_LD_USE_RESPONSE_FILE = "1";
+           };
+ 
+         # Do not inherit another shell's sources when this toolchain uses its
+```
+
+**File**: `tests/rust-linker-response-file/.test-config.yml` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++supported_systems:
++  - x86_64-linux
+```
+
+**File**: `tests/rust-linker-response-file/devenv.nix` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++{
++  config,
++  lib,
++  pkgs,
++  ...
++}:
++{
++  languages.rust.enable = true;
++
++  enterTest = ''
++    ${lib.getExe pkgs.python3} ${./test_response_file.py} \
++      ${lib.getExe pkgs.gcc} \
++      ${config.env."CARGO_TARGET_${pkgs.stdenv.hostPlatform.rust.cargoEnvVarTarget}_LINKER"}
++  '';
++}
+```
+
+**File**: `tests/rust-linker-response-file/test_response_file.py` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++"""Exercise rustc's linker response file beyond Linux's exec argument limit."""
++
++import os
++from pathlib import Path
++import resource
++import subprocess
++import sys
++import tempfile
++
++
++def compile_rust(arguments):
++    # Let the Nix compiler wrappers pass response files through, so GCC reaches
++    # collect2 instead of hitting the same exec limit in the wrapper itself.
++    return subprocess.run(
++        ["rustc", *arguments],
++        env=os.environ | {"NIX_CC_USE_RESPONSE_FILE": "1"},
++        capture_output=True,
++        text=True,
++        timeout=120,
++    )
++
++
++def diagnostic(stderr):
++    # rustc includes the enormous linker command in its error. Keep the useful
++    # diagnostic lines without dumping megabytes of search paths into CI logs.
++    return "\n".join(line for line in stderr.splitlines() if len(line) < 2000)[-8000:]
++
++
++def main():
++    gcc, clang = sys.argv[1:]
++    # Linux derives ARG_MAX from the stack limit. Bound it in this test process
++    # so unlimited-stack shells do not turn the probe into a huge, slow link.
++    _, hard_stack = resource.getrlimit(resource.RLIMIT_STACK)
++    stack = 4 * 1024 * 1024
++    if hard_stack != resource.RLIM_INFINITY:
++        stack = min(stack, hard_stack)
++    resource.setrlimit(resource.RLIMIT_STACK, (stack, hard_stack))
++    with tempfile.TemporaryDirectory(prefix="rust-linker-response-") as directory:
++        workdir = Path(directory)
++        source = workdir / "main.rs"
++        source.write_text('fn main() { println!("response file linked"); }\n')
++
++        # First rule out unrelated compiler or toolchain failures.
++        small = compile_rust(
++            [str(source), "-C", f"linker={gcc}", "-o", str(workdir / "small")]
++        )
++        if small.returncode:
++            raise AssertionError(f"small GCC link failed:\n{diagnostic(small.stderr)}")
++
++        # Give rustc its own response file so the compiler invocation stays small.
++        # Distinct native search paths survive rustc's deduplication and force it
++        # to use a second response file when spawning the linker driver.
++        limit = os.sysconf("SC_ARG_MAX")
++        paths = []
++        size = 0
++        while size <= limit * 5 // 4:
++            argument = f"-Lnative={workdir}/{'unused-' * 24}/{len(paths):08d}"
++            paths.append(argument)
++            size += len(argument.encode()) + 1
++
++        response = workdir / "rustc.rsp"
++
++        def large_link(driver, name):
++            output = workdir / name
++            response.write_text(
++                "\n".join(
++                    [str(source), "-C", f"linker={driver}", "-o", str(output), *paths]
++                )
++                + "\n"
++            )
++            return compile_rust([f"@{response}"]), output
++
++        # GCC expands the response file before trying to execute collect2.
++        broken, _ = large_link(gcc, "gcc-large")
++        if (
++            broken.returncode == 0
++            or "Argument list too long" not in broken.stderr
++            or "collect2" not in broken.stderr
++        ):
++            raise AssertionError(
++                "did not reproduce GCC's collect2 argument limit:\n"
++                + diagnostic(broken.stderr)
++            )
++
++        # Use exactly the driver selected by the Rust module, including its LLD
++        # wrapper on x86_64 Linux. Clang must pass the large link to the linker.
++        fixed, executable = large_link(clang, "clang-large")
++        if fixed.returncode:
++            raise AssertionError(
++                f"large Clang link failed:\n{diagnostic(fixed.stderr)}"
++            )
++        result = subprocess.run(
++            [str(executable)], capture_output=True, text=True, check=True, timeout=10
++        )
++        if result.stdout != "response file linked\n":
++            raise AssertionError(f"unexpected executable output: {result.stdout!r}")
++        print(
++            f"GCC reproduced E2BIG; configured Clang linked {size} bytes successfully"
++        )
++
++
++if __name__ == "__main__":
++    main()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3313** (2026-10-22): fix(rust): preserve large linker response files through Nix wrappers (@domenkozar)
+- **PR #3312** (2026-10-22): fix(bootstrap): substitute locked inputs through native Nix fetcher (@domenkozar)
+- **PR #3311** (2026-10-22): feat: compose remote YAML and resolve updates together (@domenkozar)
 - **PR #3308** (2026-10-20): fix(inputs): preserve YAML with yaml-edit (@domenkozar)
 - **PR #3306** (2026-10-20): Add ollama service (@sagikazarmark)
-- **PR #3301** (2026-10-19): feat(git): add environment configuration and attributes (@domenkozar)
-- **PR #3300** (2026-10-19): fix(terminal): restore original settings after task execution (@domenkozar)
-- **PR #3298** (2026-10-19): fix(machines): preserve dotted target paths in metadata (@domenkozar)
-- **PR #3296** (2026-10-19): fix(build): repair Nix and Ghostty source builds (@domenkozar)
+- **PR #3302** (2026-10-22): fix(rust): scope linker selection to the host target (@sagikazarmark)
 
 ---
 
@@ -2369,28 +2264,28 @@ Co-authored-by: Domen Kožar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tasks): don't run prerequisites of disabled processes on startup (#3288)
+## X. shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3
 
 **RULE**:
-When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1dc3f0b4`: tasks): don't run prerequisites of disabled processes on startup (#3288). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd351478`: shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites)'
+- Fixed `devenv shell` keybindings (Ctrl-Alt-D/W/E by default) not working while the foreground program, such as fish 4 or Claude Code, has enabled the kitty keyboard protocol or xterm modifyOtherKeys ([#3294](https://github.com/cachix/devenv/issues/3294)).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter)'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1dc3f0b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd351478` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:43:59.634Z",
-  "total_verified_learnings": 1068,
+  "last_updated": "2026-10-22T18:50:29.911Z",
+  "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3337,8 +3337,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "5ae59013",
-      "content_hash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
+      "source_version": "5fedd8fc",
+      "content_hash": "5ecedee92af13d3121864acc01439cd40d533ebe3579b1f1b6183fe061770686",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -3351,6 +3351,11 @@
           "number": 3467,
           "title": "return a clear error when filtering relationships on a permission",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3699,
+          "title": "schema): qualify wildcard cache keys by definition (#3421)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3358,7 +3363,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:48:42.951Z",
+      "verified_at": "2026-10-22T18:50:25.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4688,8 +4693,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "feb3388b",
-      "content_hash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
+      "source_version": "d9f86dc6",
+      "content_hash": "aba930c5787cdf230f49584f71a0b37d5ec76e96e9568fc37a67f49daa21b334",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -4717,6 +4722,11 @@
           "number": 3402,
           "title": "tasks): don't run prerequisites of disabled processes on startup (#3288)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3697,
+          "title": "shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4724,7 +4734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:00:15.472Z",
+      "verified_at": "2026-10-22T18:50:17.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33603,8 +33613,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "feb0ebe8",
-      "content_hash": "95b047ff5c03798718bc217a047fc1e7adc2db19d1efbaefb534f817bf7330c8",
+      "source_version": "0acf0e89",
+      "content_hash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -33617,6 +33627,11 @@
           "number": 3139,
           "title": "crash on workspace chat settings when saved LLM provider is not in the list yet",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3700,
+          "title": "mcp): treat unsupported ping as non-fatal so servers stay usable (#6805)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33624,7 +33639,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:54:37.576Z",
+      "verified_at": "2026-10-22T18:50:29.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61444,8 +61459,8 @@
       "slug": "fb55-htmlparser2",
       "platform": "github",
       "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "dd306fa1",
-      "content_hash": "2b7d2a4689449d525df9b72ab632594df6229683a7c3e6d5a916ab5567f53904",
+      "source_version": "5141df8b",
+      "content_hash": "21fb3b28e8d944af33f8150b42cfc101dadd7ad3e811c1b9da9e48e2d20a17c1",
       "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "promoted_rules": [
@@ -61458,6 +61473,11 @@
           "number": 2870,
           "title": "State-Machine Lookahead Tree-Disambiguation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3698,
+          "title": "build(deps-dev): Bump eslint from 10.12.0 to 10.13.0 (#2552)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61465,7 +61485,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:50:17.677Z",
+      "verified_at": "2026-10-22T18:50:19.684Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109623,14 +109643,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3598,
       "title": "DATAGO-146160): bump pyasn1 to 0.6.4 for CVE-2026-59884, CVE-2026-59885, CVE-202",
-      "source_url": "https://github.com/SolaceLabs/solace-agent-mesh",
+      "source_url": "https://github.com/SolaceProducts/solace-agent-mesh",
       "source_version": "5a1f473c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T15:22:11.850Z"
+      "verified_at": "2026-10-22T18:50:12.306Z"
     },
     "learn-github-sandbox-quantum-switch": {
       "learning_id": "learn-github-sandbox-quantum-switch",
@@ -111155,6 +111175,95 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:43:59.628Z"
+    },
+    "learn-github-solaceproducts-solace-agent-mesh": {
+      "learning_id": "learn-github-solaceproducts-solace-agent-mesh",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "SolaceProducts/solace-agent-mesh",
+      "repository": "SolaceProducts/solace-agent-mesh",
+      "slug": "solaceproducts-solace-agent-mesh",
+      "platform": "github",
+      "source_url": "https://github.com/SolaceProducts/solace-agent-mesh",
+      "source_version": "5a1f473c",
+      "content_hash": "365a2e089c1754de7eb7d5c47e5a469af9c64720c423195ed40827b2910dd472",
+      "dossier_path": "07_PROJECT_LEARNING/solaceproducts-solace-agent-mesh-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/solaceproducts-solace-agent-mesh-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3598,
+          "title": "DATAGO-146160): bump pyasn1 to 0.6.4 for CVE-2026-59884, CVE-2026-59885, CVE-202",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-22T18:50:12.306Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3697": {
+      "learning_id": "rule-3697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3697,
+      "title": "shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "d9f86dc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:50:17.797Z"
+    },
+    "rule-3698": {
+      "learning_id": "rule-3698",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3698,
+      "title": "build(deps-dev): Bump eslint from 10.12.0 to 10.13.0 (#2552)",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "5141df8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:50:19.684Z"
+    },
+    "rule-3699": {
+      "learning_id": "rule-3699",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3699,
+      "title": "schema): qualify wildcard cache keys by definition (#3421)",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "5fedd8fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:50:25.241Z"
+    },
+    "rule-3700": {
+      "learning_id": "rule-3700",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3700,
+      "title": "mcp): treat unsupported ping as non-fatal so servers stay usable (#6805)",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "0acf0e89",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:50:29.900Z"
     }
   },
   "aliases": {

@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "5ae59013",
+    "sourceVersion": "5fedd8fc",
     "license": "Apache-2.0",
-    "contentHash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
-    "lastHarvestedAt": "2026-10-21T00:48:43.027Z",
+    "contentHash": "5ecedee92af13d3121864acc01439cd40d533ebe3579b1f1b6183fe061770686",
+    "lastHarvestedAt": "2026-10-22T18:50:25.307Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "feb3388b",
+    "sourceVersion": "d9f86dc6",
     "license": "Apache-2.0",
-    "contentHash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
-    "lastHarvestedAt": "2026-10-20T22:00:15.538Z",
+    "contentHash": "aba930c5787cdf230f49584f71a0b37d5ec76e96e9568fc37a67f49daa21b334",
+    "lastHarvestedAt": "2026-10-22T18:50:17.864Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "feb0ebe8",
+    "sourceVersion": "0acf0e89",
     "license": "MIT",
-    "contentHash": "95b047ff5c03798718bc217a047fc1e7adc2db19d1efbaefb534f817bf7330c8",
-    "lastHarvestedAt": "2026-10-20T10:54:37.642Z",
+    "contentHash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
+    "lastHarvestedAt": "2026-10-22T18:50:29.966Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "dd306fa1",
+    "sourceVersion": "5141df8b",
     "license": "MIT",
-    "contentHash": "2b7d2a4689449d525df9b72ab632594df6229683a7c3e6d5a916ab5567f53904",
-    "lastHarvestedAt": "2026-10-19T22:50:17.746Z",
+    "contentHash": "21fb3b28e8d944af33f8150b42cfc101dadd7ad3e811c1b9da9e48e2d20a17c1",
+    "lastHarvestedAt": "2026-10-22T18:50:19.755Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {
@@ -10528,5 +10528,15 @@
     "contentHash": "92cd05134bde50952de1dde99820e1342a4b2ab1bcab63a4649693bf6ef0c76f",
     "lastHarvestedAt": "2026-10-22T15:35:16.614Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
+  },
+  "solaceproducts-solace-agent-mesh": {
+    "repository": "SolaceProducts/solace-agent-mesh",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SolaceProducts/solace-agent-mesh",
+    "sourceVersion": "5a1f473c",
+    "license": "NOASSERTION",
+    "contentHash": "365a2e089c1754de7eb7d5c47e5a469af9c64720c423195ed40827b2910dd472",
+    "lastHarvestedAt": "2026-10-22T18:50:12.371Z",
+    "learningId": "learn-github-solaceproducts-solace-agent-mesh"
   }
 }

@@ -18418,5 +18418,20 @@
     "downloads": 9211389,
     "qualityScore": 7130,
     "discoveredAt": "2026-10-22T15:33:00.804Z"
+  },
+  {
+    "name": "solace-agent-mesh",
+    "fullName": "SolaceProducts/solace-agent-mesh",
+    "url": "https://github.com/SolaceProducts/solace-agent-mesh",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Platform for building and running AI agents across the full lifecycle — build, test, deploy, monitor, improve. Hosts your agents, runs their tools, and coordinates them over an event mesh, with sessions, artifacts, auth, evaluators, and observability built in.",
+    "stars": 4914,
+    "forks": 274,
+    "openIssues": 0,
+    "language": "Shell",
+    "qualityScore": 2789,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-22T18:46:23.922Z"
   }
 ]

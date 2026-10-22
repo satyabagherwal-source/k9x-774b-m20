@@ -4395,3 +4395,8 @@ Every entry in this ledger must capture:
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `0117cfef` | Multi-dimensional audit evidence | 2026-10-22T18:37:28.766Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8507b422` | Multi-dimensional audit evidence | 2026-10-22T18:37:35.808Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `7b6f9f39` | Multi-dimensional audit evidence | 2026-10-22T18:43:59.667Z |
+| `learn-github-solaceproducts-solace-agent-mesh` | `https://github.com/SolaceProducts/solace-agent-mesh` | `5a1f473c` | Multi-dimensional audit evidence | 2026-10-22T18:50:12.371Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `d9f86dc6` | Multi-dimensional audit evidence | 2026-10-22T18:50:17.864Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `5141df8b` | Multi-dimensional audit evidence | 2026-10-22T18:50:19.755Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `5fedd8fc` | Multi-dimensional audit evidence | 2026-10-22T18:50:25.307Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `0acf0e89` | Multi-dimensional audit evidence | 2026-10-22T18:50:29.966Z |

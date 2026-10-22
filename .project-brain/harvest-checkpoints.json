@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T18:43:59.677Z",
+  "last_updated": "2026-10-22T18:50:29.979Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "88ed1b864b5ef64d179511ba38ddca7d5066f74522a1a56ca6a4a87fe7d0d984",
-      "verified_at": "2026-10-21T00:48:43.033Z",
+      "content_hash": "5ecedee92af13d3121864acc01439cd40d533ebe3579b1f1b6183fe061770686",
+      "verified_at": "2026-10-22T18:50:25.327Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:48:43.033Z"
+      "last_updated": "2026-10-22T18:50:25.327Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
-      "verified_at": "2026-10-20T22:00:15.545Z",
+      "content_hash": "aba930c5787cdf230f49584f71a0b37d5ec76e96e9568fc37a67f49daa21b334",
+      "verified_at": "2026-10-22T18:50:17.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:00:15.545Z"
+      "last_updated": "2026-10-22T18:50:17.876Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "95b047ff5c03798718bc217a047fc1e7adc2db19d1efbaefb534f817bf7330c8",
-      "verified_at": "2026-10-20T10:54:37.650Z",
+      "content_hash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
+      "verified_at": "2026-10-22T18:50:29.979Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:54:37.650Z"
+      "last_updated": "2026-10-22T18:50:29.979Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
@@ -14091,14 +14091,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-htmlparser2",
-      "content_hash": "2b7d2a4689449d525df9b72ab632594df6229683a7c3e6d5a916ab5567f53904",
-      "verified_at": "2026-10-19T22:50:17.753Z",
+      "content_hash": "21fb3b28e8d944af33f8150b42cfc101dadd7ad3e811c1b9da9e48e2d20a17c1",
+      "verified_at": "2026-10-22T18:50:19.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:50:17.753Z"
+      "last_updated": "2026-10-22T18:50:19.766Z"
     },
     "inikulin/parse5": {
       "repository": "inikulin/parse5",
@@ -15824,6 +15824,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-22T15:35:16.620Z"
+    },
+    "SolaceProducts/solace-agent-mesh": {
+      "repository": "SolaceProducts/solace-agent-mesh",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-solaceproducts-solace-agent-mesh",
+      "content_hash": "365a2e089c1754de7eb7d5c47e5a469af9c64720c423195ed40827b2910dd472",
+      "verified_at": "2026-10-22T18:50:12.383Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-22T18:50:12.383Z"
     }
   },
   "repos": {

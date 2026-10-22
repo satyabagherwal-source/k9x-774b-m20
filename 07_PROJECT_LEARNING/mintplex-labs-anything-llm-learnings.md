@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `feb0ebe8`  
+> **Source Version**: `0acf0e89`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T10:54:37.341Z  
+> **Timestamp**: 2026-10-22T18:50:29.634Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T10:54:35.305Z  
+> **Harvest Timestamp**: 2026-10-22T18:50:29.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67344 stars
+- **Stars / Engagement**: 67447 stars
 
 ---
 
@@ -1309,219 +1309,531 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4949328c` (2026-10-19)
-**Commit Message**: fix: crash on workspace chat settings when saved LLM provider is not in the list yet (#6761)
+### Incident Patch 1: `0acf0e89` (2026-10-22)
+**Commit Message**: fix(mcp): treat unsupported ping as non-fatal so servers stay usable (#6805)
 
-Settings were initialised as {} and fetched async, so the embedded_lemonade
-option was missing on first render. A workspace saved with that provider then
-resolved to undefined and ProviderSearchMenu threw on `selected.logo`.
+* fix(mcp): treat unsupported ping as non-fatal so servers stay usable
 
-Wait for settings before rendering the form and fall back to the system
-default when a saved provider is unavailable.
+MCP servers that do not implement the optional ping method answer our
+ping request with JSON-RPC -32601 (Method not found). The MCP SDK raises
+this as McpError, which servers() treated as a connectivity failure and
+marked the entire server unavailable even though initialize/tools/list
+and tools/call all work.
 
-**File**: `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx` (modified, +2/-1)
-```diff
-@@ -51,7 +51,8 @@ export default function WorkspaceLLMSelection({ settings, workspace }) {
-   }
- 
-   const llms = withEmbeddedLemonade(LLMS, settings, { after: "default" });
--  const selectedLLMObject = llms.find((llm) => llm.value === selectedLLM);
-+  const selectedLLMObject =
-+    llms.find((llm) => llm.value === selectedLLM) ?? LLM_DEFAULT;
- 
-   return (
-     <div className="flex flex-col gap-y-[8px]">
-```
+Add isMCPServerReachable(): a -32601 answer to ping proves the server is
+alive, so it is treated as reachable and tool discovery proceeds.
+Transport errors and timeouts still mark the server as down. Applied at
+all three ping call sites (servers, toggleServerStatus, deleteServer).
 
-**File**: `frontend/src/pages/WorkspaceSettings/ChatSettings/index.jsx` (modified, +2/-2)
-```diff
-@@ -12,7 +12,7 @@ import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
- import ChatQueryRefusalResponse from "./ChatQueryRefusalResponse";
- 
- export default function ChatSettings({ workspace }) {
--  const [settings, setSettings] = useState({});
-+  const [settings, setSettings] = useState(null);
-   useEffect(() => {
-     async function fetchSettings() {
-       const _settings = await System.keys();
-@@ -38,7 +38,7 @@ export default function ChatSettings({ workspace }) {
-     return true;
-   };
- 
--  if (!workspace) return null;
-+  if (!workspace || !settings) return null;
-   return (
-     <div id="workspace-chat-settings-container" className="relative">
-       <AutosaveForm
-```
-
----
-
-### Incident Patch 2: `43a23b1d` (2026-10-19)
-**Commit Message**: fix: default OpenAI image generation to gpt-image-2.5-flare (#6780)
-
-* fix: default OpenAI image generation to gpt-image-2.5-flare
-
-gpt-image-1 shuts down on 2026-10-23; installs that never set
-IMAGE_GEN_MODEL_PREF would lose OpenAI image generation. Move the
-default to gpt-image-2.5-flare, OpenAI's default-tier replacement
-(gpt-image-2.5-sunburst is the precision tier and stays available via
-IMAGE_GEN_MODEL_PREF). Both support 1024x1024, so no size-handling
-changes were needed in base.js.
+Fixes #6797
 
 Signed-off-by: Raphael Malikian <[REDACTED_EMAIL]>
 
-* remove openai image generator default model test
-
-* update image gen model pref example to gpt-image-2.5-flare
-
-* remove comment above super in openai image generator
+* trim MCP ping comments to current behavior
 
 ---------
 
 Signed-off-by: Raphael Malikian <[REDACTED_EMAIL]>
-Co-authored-by: shatfield4 <[REDACTED_EMAIL]>
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `docker/.env.example` (modified, +1/-1)
+**File**: `server/__tests__/utils/MCP/index.test.js` (modified, +45/-0)
 ```diff
-@@ -280,7 +280,7 @@ GID='1000'
- # the LLM/embedder provider keys above (you can point image generation at a
- # different endpoint or key than your LLM).
- # IMAGE_GEN_PROVIDER='openai' # openai | ollama | lemonade | openrouter | localai | gemini | llmman
--# IMAGE_GEN_MODEL_PREF='gpt-image-1'
-+# IMAGE_GEN_MODEL_PREF='gpt-image-2.5-flare'
- # IMAGE_GEN_SIZE_PREF='1024x1024' # optional - defaults to 1024x1024 (gemini uses aspect ratios e.g. 1:1)
+@@ -191,6 +191,51 @@ describe("MCPCompatibilityLayer.servers", () => {
+     expect(alive.running).toBe(true);
+     expect(alive.tools.map((t) => t.name)).toEqual(["echo"]);
+   });
++
++  it("treats a server whose ping is not implemented (-32601) as online and lists its tools (issue #6797)", async () => {
++    writeMCPConfig({});
++    mcpLayer = new MCPCompatibilityLayer();
++
++    // The MCP SDK surfaces a server's JSON-RPC "Method not found" answer to
++    // `ping` as an error with code -32601. The server is alive - it just does
++    // not implement ping - so it must stay usable instead of being marked
++    // unavailable.
++    const pingNotImplemented = new Error(
++      "MCP error -32601: Unknown method: ping"
++    );
++    pingNotImplemented.code = -32601;
++    mcpLayer.mcps = {
++      "no-ping-server": {
++        ping: () => Promise.reject(pingNotImplemented),
++        listTools: () => Promise.resolve({ tools: [GOOD_TOOL] }),
++        transport: { close: () => {} },
++        close: () => {},
++      },
++      "dead-server": {
++        ping: () => Promise.reject(new Error("fetch failed")),
++        transport: { close: () => {} },
++        close: () => {},
++      },
++    };
++    mcpLayer.mcpLoadingResults = {
++      "no-ping-server": { status: "success", message: "connected" },
++      "dead-server": { status: "success", message: "connected" },
++    };
++
++    const servers = await mcpLayer.servers();
++
++    expect(servers).toHaveLength(2);
++
++    const noPing = servers.find((s) => s.name === "no-ping-server");
++    expect(noPing.running).toBe(true);
++    expect(noPing.tools.map((t) => t.name)).toEqual(["echo"]);
++    expect(noPing.error).toBeNull();
++
++    // Genuine connectivity failures are still reported as down.
++    const dead = servers.find((s) => s.name === "dead-server");
++    expect(dead.running).toBe(false);
++    expect(dead.error).toBe("fetch failed");
++  });
+ });
  
- # Only set the credentials for the provider selected above.
+ describe("MCPCompatibilityLayer.returnMCPResult", () => {
 ```
 
-**File**: `server/.env.example` (modified, +1/-1)
+**File**: `server/utils/MCP/index.js` (modified, +25/-3)
 ```diff
-@@ -279,7 +279,7 @@ SIG_SALT='salt' # Please generate random string at least 32 chars long.
- # the LLM/embedder provider keys above (you can point image generation at a
- # different endpoint or key than your LLM).
- # IMAGE_GEN_PROVIDER='openai' # openai | ollama | lemonade | openrouter | localai | gemini | llmman
--# IMAGE_GEN_MODEL_PREF='gpt-image-1'
-+# IMAGE_GEN_MODEL_PREF='gpt-image-2.5-flare'
- # IMAGE_GEN_SIZE_PREF='1024x1024' # optional - defaults to 1024x1024 (gemini uses aspect ratios e.g. 1:1)
+@@ -1,5 +1,27 @@
+ const MCPHypervisor = require("./hypervisor");
  
- # Only set the credentials for the provider selected above.
-```
-
-**File**: `server/utils/ImageGenerators/openAi/index.js` (modified, +1/-4)
-```diff
-@@ -5,14 +5,11 @@ class OpenAiImageGenerator extends BaseImageGenerator {
-     if (!process.env.IMAGE_GEN_OPENAI_KEY)
-       throw new Error("No OpenAI image generation API key was set.");
-     const { OpenAI: OpenAIApi } = require("openai");
--    // gpt-image-1 is the default since OpenAI has deprecated the dall-e models.
--    // It does not support 512x512, so base.js upsizes to the nearest supported
--    // square (1024x1024) automatically.
-     super({
-       client: new OpenAIApi({
-         apiKey: process.env.IMAGE_GEN_OPENAI_KEY,
-       }),
--      model: process.env.IMAGE_GEN_MODEL_PREF || "gpt-image-1",
-+      model: process.env.IMAGE_GEN_MODEL_PREF || "gpt-image-2.5-flare",
-       className: "OpenAiImageGenerator",
-     });
-   }
++// JSON-RPC "Method not found". A server that does not implement `ping`
++// answers with this code, which still proves it is alive.
++const JSONRPC_METHOD_NOT_FOUND = -32601;
++
++/**
++ * Check whether an MCP server client is reachable. A server that answers
++ * `ping` with JSON-RPC -32601 ("Method not found") is alive but does not
++ * implement `ping` - treat it as reachable so its tools can still be listed
++ * and used. Any other ping failure (transport errors, timeouts) is rethrown
++ * so the server is still reported as down.
++ * @param {import("@modelcontextprotocol/sdk/client/index.js").Client} mcp - The connected MCP client
++ * @returns {Promise<boolean>} true when the server answered the ping request
++ */
++async function isMCPServerReachable(mcp) {
++  try {
++    return !!(await mcp.ping());
++  } catch (error) {
++    if (error?.code === JSONRPC_METHOD_NOT_FOUND) return true;
++    throw error;
++  }
++}
++
+ class MCPCompatibilityLayer extends MCPHypervisor {
+   static _instance;
+ 
+@@ -167,7 +189,7 @@ class MCPCompatibilityLayer extends MCPHypervisor {
+       // it crashes the entire list, so a single bad server would hide every
+       // other server. Keep the server visible with its error instead.
+       try {
+-        const online = !!(await mcp.ping());
++        const online = await isMCPServerReachable(mcp);
+         const tools = (online ? (await mcp.listTools()).tools : []).filter(
+           (tool) => !tool.name.startsWith("handle_mcp_connection_mcp_")
+         );
+@@ -209,7 +231,7 @@ class MCPCompatibilityLayer extends MCPHypervisor {
+         error: `MCP server ${name} not found in config file.`,
+       };
+     const mcp = this.mcps[name];
+-    const online = !!mcp ? !!(await mcp.ping()) : false; // If the server is not in the mcps object, it is not running
++    const online = mcp ? await isMCPServerReachable(mcp) : false; // If the server is not in the mcps object, it is not running
+ 
+     if (online) {
+       const killed = this.pruneMCPServer(name);
+@@ -237,7 +259,7 @@ class MCPCompatibilityLayer extends MCPHypervisor {
+       };
+ 
+     const mcp = this.mcps[name];
+-    const online = !!mcp ? !!(await mcp.ping()) : false; // If the server is not in the mcps object, it is not running
++    const online = mcp ? await isMCPServerReachable(mcp) : false; // If the server is not in the mcps object, it is not running
+     if (online) this.pruneMCPServer(name);
+     this.removeMCPServerFromConfig(name);
+ 
 ```
 
 ---
 
-### Incident Patch 3: `63bff456` (2026-10-19)
-**Commit Message**: fix: report empty connector imports as failures (#6775)
+### Incident Patch 2: `afd2da90` (2026-10-21)
+**Commit Message**: fix(confluence): keep code blocks as written instead of running them through htmlToText (#6794)
 
-**File**: `collector/extensions/index.js` (modified, +5/-0)
+* fix(confluence): keep code blocks as written instead of running them through htmlToText
+
+* keep unmatched code-block markers as written and cover markup in Confluence code blocks
+
+* remove code-block comment in Confluence loader
+
+---------
+
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `collector/__tests__/utils/extensions/Confluence/ConfluenceLoader.test.js` (modified, +23/-1)
 ```diff
-@@ -130,6 +130,11 @@ function extensions(app) {
-         const validatedUrl = validateURL(url);
-         if (!validURL(validatedUrl)) throw new Error("Not a valid URL.");
-         const scrapedData = await websiteDepth(validatedUrl, depth, maxLinks);
-+        if (scrapedData.length === 0)
-+          return response.status(200).json({
-+            success: false,
-+            reason: `No pages could be scraped from ${validatedUrl}.`,
-+          });
-         response.status(200).json({ success: true, data: scrapedData });
-       } catch (e) {
-         console.error(e);
+@@ -47,7 +47,29 @@ describe("ConfluencePagesLoader", () => {
+       },
+     });
+ 
+-    expect(document.pageContent).toBe("\n```js\nlet x = 1;\n```\n");
++    expect(document.pageContent).toBe("```js\nlet x = 1;\n```");
++  });
++
++  test("keeps markup, indentation and blank lines inside code blocks as written", () => {
++    const loader = new ConfluencePagesLoader({
++      baseUrl: "https://example.com",
++      spaceKey: "SP",
++      cloud: false,
++    });
++    const code =
++      '<div class="box">\n    <span>Hi & bye</span>\n</div>\n\n\n\nList<String> names = new ArrayList<>();';
++    const document = loader.createDocumentFromPage({
++      id: "123",
++      body: {
++        storage: {
++          value: `<p>Before</p><ac:structured-macro ac:name="code"><ac:parameter ac:name="language">html</ac:parameter><ac:plain-text-body><![CDATA[${code}]]></ac:plain-text-body></ac:structured-macro><p>After</p><p>ANYTHINGLLMCODEBLOCK7</p>`,
++        },
++      },
++    });
++
++    expect(document.pageContent).toBe(
++      `Before\n\n\`\`\`html\n${code}\n\`\`\`\n\nAfter\n\nANYTHINGLLMCODEBLOCK7`
++    );
+   });
+ 
+   test("load rejects with the HTTP status instead of resolving to no pages", async () => {
 ```
 
-**File**: `collector/utils/extensions/DrupalWiki/DrupalWiki/index.js` (modified, +4/-1)
+**File**: `collector/utils/extensions/Confluence/ConfluenceLoader/index.js` (modified, +9/-6)
 ```diff
-@@ -64,17 +64,19 @@ class DrupalWiki {
-    *
-    * @param {number} spaceId
-    * @param {import("../../EncryptionWorker").EncryptionWorker} encryptionWorker
--   * @returns {Promise<void>}
-+   * @returns {Promise<number>} Number of pages stored.
-    */
-   async loadAndStoreAllPagesForSpace(spaceId, encryptionWorker) {
-     const pageIndex = await this.#getPageIndexForSpace(spaceId);
-+    let stored = 0;
-     for (const pageId of pageIndex) {
-       try {
-         const page = await this.loadPage(pageId);
+@@ -100,7 +100,7 @@ class ConfluencePagesLoader {
+   }
  
-         // Pages with an empty body will lead to embedding issues / exceptions
-         if (page.processedBody.trim() !== "") {
-           this.#storePage(page, encryptionWorker);
-+          stored++;
-           await this.#downloadAndProcessAttachments(page.id);
-         } else {
-           console.log(`Skipping page (${page.id}) since it has no content`);
-@@ -86,6 +88,7 @@ class DrupalWiki {
-         console.error(e);
-       }
+   createDocumentFromPage(page) {
+-    // Function to extract code blocks
++    const codeBlocks = [];
+     const extractCodeBlocks = (content) => {
+       const codeBlockRegex =
+         /<ac:structured-macro[^>]*\sac:name="code"[^>]*>[\s\S]*?<ac:plain-text-body><!\[CDATA\[([\s\S]*?)\]\]><\/ac:plain-text-body>[\s\S]*?<\/ac:structured-macro>/g;
+@@ -113,7 +113,8 @@ class ConfluencePagesLoader {
+           match.match(
+             /<ac:plain-text-body><!\[CDATA\[([\s\S]*?)\]\]><\/ac:plain-text-body>/
+           )?.[1] || "";
+-        return `\n\`\`\`${language}\n${code.trim()}\n\`\`\`\n`;
++        codeBlocks.push(`\`\`\`${language}\n${code.trim()}\n\`\`\``);
++        return `<p>ANYTHINGLLMCODEBLOCK${codeBlocks.length - 1}</p>`;
+       });
+     };
+ 
+@@ -122,10 +123,12 @@ class ConfluencePagesLoader {
+       wordwrap: false,
+       preserveNewlines: true,
+     });
+-    const textWithPreservedStructure = plainTextContent.replace(
+-      /\n{3,}/g,
+-      "\n\n"
+-    );
++    const textWithPreservedStructure = plainTextContent
++      .replace(/\n{3,}/g, "\n\n")
++      .replace(
++        /ANYTHINGLLMCODEBLOCK(\d+)/g,
++        (marker, index) => codeBlocks[index] ?? marker
++      );
+     const pageUrl = `${this.baseUrl}${this.cloud ? "/wiki" : ""}/spaces/${
+       this.spaceKey
+     }/pages/${page.id}`;
+```
+
+---
+
+### Incident Patch 3: `1aec023f` (2026-10-21)
+**Commit Message**: fix: use the repository default branch in the GitHub connector (#6800)
+
+* fix: use the repository default branch when the GitHub connector falls back
+
+GitHubRepoLoader picked main or master whenever no branch was given or the
+given branch did not exist on the remote, without checking the repository.
+A repository with a different default branch got another branch or one that
+does not exist; mrdoob/three.js, for example, resolved to its release-only
+master instead of dev.
+
+Read default_branch from the repository metadata on the resolved API root
+and prefer it, falling back to main/master when the lookup fails, the same
+way GiteaRepoLoader already does.
+
+* fix: preselect the repository default branch in the branch list
+
+The connector UI preselects the first branch returned, which was always
+main/master, so the init fallback alone never changed what users imported.
+getRepoBranches now lists default_branch first, init only looks it up when
+the requested branch is missing, and the token is validated before the
+branch list is fetched.
+
+---------
+
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `collector/__tests__/utils/extensions/RepoLoader/GithubRepo.test.js` (modified, +144/-0)
+```diff
+@@ -55,6 +55,8 @@ const errorResponse = (status, statusText = "Error") => ({
+ function mockGithubApi({
+   branches = [{ name: "main" }],
+   branchStatus = 200,
++  defaultBranch = "main",
++  repoStatus = 200,
+   files = {},
+   octocatStatus = 200,
+ } = {}) {
+@@ -74,6 +76,11 @@ function mockGithubApi({
+       );
      }
-+    return stored;
+ 
++    if (/^\/repos\/[^/]+\/[^/]+$/.test(endpoint)) {
++      if (repoStatus !== 200) return errorResponse(repoStatus);
++      return jsonResponse({ default_branch: defaultBranch });
++    }
++
+     const contents = endpoint.match(/\/repos\/[^/]+\/[^/]+\/contents\/(.+)$/);
+     if (contents) {
+       const filePath = decodeURIComponent(contents[1]);
+@@ -240,6 +247,143 @@ describe("GitHubRepoLoader url rejection", () => {
+   });
+ });
+ 
++describe("GitHubRepoLoader default branch", () => {
++  // Shaped like mrdoob/three.js: default branch `dev`, release-only `master`.
++  const threeBranches = [{ name: "master" }, { name: "r150" }, { name: "dev" }];
++
++  test("getRepoBranches lists the repository default branch first", async () => {
++    mockGithubApi({ branches: threeBranches, defaultBranch: "dev" });
++    const loader = new GitHubRepoLoader({
++      repo: "https://github.com/mrdoob/three.js",
++    });
++
++    expect(await loader.getRepoBranches()).toEqual(["dev", "master", "r150"]);
++  });
++
++  test("getRepoBranches reads the default branch from the enterprise api root", async () => {
++    const fetchMock = mockGithubApi({
++      branches: [{ name: "main" }, { name: "trunk" }],
++      defaultBranch: "trunk",
++    });
++    const loader = new GitHubRepoLoader({
++      repo: "https://github.mycompany.com/org/repo",
++    });
++
++    expect(await loader.getRepoBranches()).toEqual(["trunk", "main"]);
++    expect(requestedUrls(fetchMock)).toContain(
++      "https://github.mycompany.com/api/v3/repos/org/repo"
++    );
++  });
++
++  test.each([404, 500])(
++    "getRepoBranches puts main or master first when the metadata request returns %i",
++    async (repoStatus) => {
++      mockGithubApi({ branches: threeBranches, repoStatus });
++      const loader = new GitHubRepoLoader({
++        repo: "https://github.com/mrdoob/three.js",
++      });
++
++      expect(await loader.getRepoBranches()).toEqual(["master", "r150", "dev"]);
++    }
++  );
++
++  test("getRepoBranches ignores a default branch missing from the branch list", async () => {
++    mockGithubApi({ branches: threeBranches, defaultBranch: "gone" });
++    const loader = new GitHubRepoLoader({
++      repo: "https://github.com/mrdoob/three.js",
++    });
++
++    expect(await loader.getRepoBranches()).toEqual(["master", "r150", "dev"]);
++  });
++
++  test("getRepoBranches skips the metadata request when no branches load", async () => {
++    const fetchMock = mockGithubApi({ branchStatus: 403 });
++    const loader = new GitHubRepoLoader({
++      repo: "https://github.com/org/repo",
++    });
++
++    expect(await loader.getRepoBranches()).toEqual([]);
++    expect(requestedUrls(fetchMock)).not.toContain(
++      "https://api.github.com/repos/org/repo"
++    );
++  });
++
++  test("init keeps an existing branch without requesting repository metadata", async () => {
++    const fetchMock = mockGithubApi({
++      branches: threeBranches,
++      defaultBranch: "dev",
++    });
++    const loader = new GitHubRepoLoader({
++      repo: "https://github.com/mrdoob/three.js",
++      branch: "master",
++    });
++    await loader.init();
++
++    expect(loader.branch).toBe("master");
++    expect(requestedUrls(fetchMock)).not.toContain(
++      "https://api.github.com/repos/mrdoob/three.js"
++    );
++  });
++
++  test.each([undefined, "", "deleted-branch"])(
++    "init assigns the default branch when the branch is %p",
++    async (branch) => {
++      mockGithubApi({ branches: threeBranches, defaultBranch: "dev" });
++      const loader = new GitHubRepoLoader({
++        repo: "https://github.com/mrdoob/three.js",
++        branch,
++      });
++      await loader.init();
++
++      expect(loader.ready).toBe(true);
++      expect(loader.branch).toBe("dev");
++    }
++  );
++
++  test("init uses the default branch even when the branch list cannot load", async () => {
++    mockGithubApi({ branchStatus: 403, defaultBranch: "dev" });
++    const loader = new GitHubRepoLoader({
++      repo: "https://github.com/mrdoob/three.js",
++      branch: "main",
++    });
++    await loader.init();
++
++    expect(loader.branch).toBe("dev");
++  });
++
++  test.each([
++    [[{ name: "main" }, { name: "legacy" }], "main"],
++    [[{ name: "master" }, { name: "legacy" }], "master"],
++    [[], "master"],
++  ])(
++    "init falls back when the metadata request fails (branches %j -> %s)",
++    async (branches, expected) => {
++      mockGithubApi({ branches, repoStatus: 500 });
++      const loader = new GitHubRepoLoader({
++        repo: "https://github.com/org/repo",
++      });
++      await loader.init();
++
++      expect(loader.branch).toBe(expected);
++    }
++  );
++
++  test("an invalid token is dropped before the branch list is requested", async ()
+```
+
+**File**: `collector/utils/extensions/RepoLoader/GithubRepo/RepoLoader/index.js` (modified, +54/-8)
+```diff
+@@ -110,16 +110,22 @@ class GitHubRepoLoader {
+     }
+   }
+ 
+-  // Ensure the branch provided actually exists
+-  // and if it does not or has not been set auto-assign to primary branch.
++  // Ensure the branch provided actually exists and if it does not or has not
++  // been set auto-assign to the repository default branch.
+   async #validBranch() {
+-    await this.getRepoBranches();
++    await this.#validateAccessToken(); // Ensure API access token is valid for pre-flight
++    await this.#fetchBranches();
+     if (!!this.branch && this.branches.includes(this.branch)) return;
+ 
+     console.log(
+       "[GitHub Loader]: Branch not set! Auto-assigning to a default branch."
+     );
+-    this.branch = this.branches.includes("main") ? "main" : "master";
++    const defaultBranch = await this.fetchDefaultBranch();
++    if (defaultBranch) {
++      this.branch = defaultBranch;
++    } else {
++      this.branch = this.branches.includes("main") ? "main" : "master";
++    }
+     console.log(`[GitHub Loader]: Branch auto-assigned to ${this.branch}.`);
+     return;
+   }
+@@ -193,8 +199,13 @@ class GitHubRepoLoader {
+     return docs;
+   }
+ 
+-  // Sort branches to always show either main or master at the top of the result.
+-  #branchPrefSort(branches = []) {
++  // Sort branches so the repository default branch is at the top of the result,
++  // since the first branch is the one preselected in the UI. When the default
++  // branch is unknown, main or master is shown at the top instead.
++  #branchPrefSort(branches = [], defaultBranch = null) {
++    if (defaultBranch && branches.includes(defaultBranch))
++      return [defaultBranch, ...branches.filter((b) => b !== defaultBranch)];
++
+     const preferredSort = ["main", "master"];
+     return branches.reduce((acc, branch) => {
+       if (preferredSort.includes(branch)) return [branch, ...acc];
+@@ -203,13 +214,49 @@ class GitHubRepoLoader {
+   }
+ 
+   /**
+-   * Retrieves all branches for the repository.
++   * Retrieves the default branch of the repository from its metadata.
++   * @returns {Promise<string|null>} The default branch name, or null if it could not be resolved.
++   */
++  async fetchDefaultBranch() {
++    return fetch(`${this.apiBase}/repos/${this.author}/${this.project}`, {
++      method: "GET",
++      headers: {
++        ...(this.accessToken
++          ? { Authorization: `Bearer ${this.accessToken}` }
++          : {}),
++        "X-GitHub-Api-Version": "2022-11-28",
++      },
++    })
++      .then((res) => {
++        if (res.ok) return res.json();
++        throw new Error(`Invalid request to Github API: ${res.statusText}`);
++      })
++      .then((metadata) => metadata?.default_branch || null)
++      .catch((err) => {
++        console.log(`RepoLoader.fetchDefaultBranch`, err);
++        return null;
++      });
++  }
++
++  /**
++   * Retrieves all branches for the repository, with the default branch first.
+    * @returns {Promise<string[]>} An array of branch names.
+    */
+   async getRepoBranches() {
+     if (!this.#validGithubUrl() || !this.author || !this.project) return [];
+     await this.#validateAccessToken(); // Ensure API access token is valid for pre-flight
++    await this.#fetchBranches();
++    if (this.branches.length === 0) return [];
+ 
++    const defaultBranch = await this.fetchDefaultBranch();
++    return this.#branchPrefSort(this.branches, defaultBranch);
++  }
++
++  /**
++   * Pages through the branches endpoint and stores every branch name on `this.branches`.
++   * @returns {Promise<void>}
++   */
++  async #fetchBranches() {
+     let page = 0;
+     let polling = true;
+     const branches = [];
+@@ -244,7 +291,6 @@ class GitHubRepoLoader {
+     }
+ 
+     this.branches = [...new Set(branches.flat())];
+-    return this.#branchPrefSort(this.branches);
    }
  
    /**
 ```
 
-**File**: `collector/utils/extensions/DrupalWiki/index.js` (modified, +12/-1)
-```diff
-@@ -48,9 +48,13 @@ async function loadAndStoreSpaces(
-     return Number(idStr.trim());
-   });
- 
-+  let storedPages = 0;
-   for (const spaceId of spaceIdsArr) {
-     try {
--      await drupalWiki.loadAndStoreAllPagesForSpace(spaceId, encryptionWorker);
-+      storedPages += await drupalWiki.loadAndStoreAllPagesForSpace(
-+        spaceId,
-+        encryptionWorker
-+      );
-       console.log(`--- Finished space ${spaceId} ---`);
-     } catch (e) {
-       console.error(e);
-@@ -63,6 +67,13 @@ async function loadAndStoreSpaces(
-   }
-   console.log(`-- Finished all spaces--`);
- 
-+  if (storedPages === 0)
-+    return {
-+      success: false,
-+      reason: `No pages with content were imported from Drupal Wiki spaces ${spaceIds}.`,
-+      data: {},
-+    };
-+
-   return {
-     success: true,
-     reason: null,
-```
-
 #### Recent Merged Pull Requests:
-- **PR #6786** (2026-10-20): Parse PDF and file links in the bulk link scraper (@shatfield4)
-- **PR #6781** (2026-10-19): fix: truncate long citation URLs in the detail modal (@leilei3167)
-- **PR #6780** (2026-10-19): fix: default OpenAI image generation to gpt-image-2.5-flare (@rtmalikian)
-- **PR #6777** (2026-10-19): fix: keep conversation history when the OpenAI compatible chat prompt is compressed (@MarMarLabs)
-- **PR #6775** (2026-10-19): fix: report empty connector imports as failures (@MarMarLabs)
-- **PR #6774** (closed): fix: inspect unsupported binary files before treating them as text (@MarMarLabs)
+- **PR #6805** (2026-10-22): fix(mcp): treat unsupported ping as non-fatal so servers stay usable (@rtmalikian)
+- **PR #6804** (2026-10-22): fix: isolate watched document sync failures (@Tong-bit-art)
+- **PR #6801** (closed): fix: preselect the repository default branch in the GitHub connector (@timothycarambat)
+- **PR #6800** (2026-10-21): fix: use the repository default branch in the GitHub connector (@Enesuygurs)
+- **PR #6798** (2026-10-21): i18n: translate color palette and branding tab strings (@timothycarambat)
+- **PR #6795** (2026-10-21): fix(paperless-ngx): keep plain-text document content as it is instead of reading it as HTML (@L4XB)
 
 ---
 
@@ -1541,29 +1853,59 @@ Co-authored-by: shatfield4 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash on workspace chat settings when saved LLM provider is not in the list yet 
+## X. mcp): treat unsupported ping as non-fatal so servers stay usable (#6805)
 
 **RULE**:
-When implementing operations in `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/__tests__/utils/MCP/index.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4949328c`: crash on workspace chat settings when saved LLM provider is not in the list yet (#6761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0acf0e89`: mcp): treat unsupported ping as non-fatal so servers stay usable (#6805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/index.jsx`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/__tests__/utils/MCP/index.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  const selectedLLMObject =
-    llms.find((llm) => llm.value === selectedLLM) ?? LLM_DEFAULT;
+
+  it("treats a server whose ping is not implemented (-32601) as online and lists its tools (issue #6797)", async () => {
+    writeMCPConfig({});
+    mcpLayer = new MCPCompatibilityLayer();
+
+    // The MCP SDK surfaces a server's JSON-RPC "Method not found" answer to
+    // `ping` as an error with code -32601. The server is alive - it just does
+    // not implement ping - so it must stay usable instead of being marked
+    // unavailable.
+    const pingNotImplemented = new Error(
+      "MCP error -32601: Unknown method: ping"
+    );
+    pingNotImplemented.code = -32601;
+    mcpLayer.mcps = {
+      "no-ping-server": {
+        ping: () => Promise.reject(pingNotImplemented),
+        listTools: () => Promise.resolve({ tools: [GOOD_TOOL] }),
+        transport: { close: () => {} },
+        close: () => {},
+      },
+      "dead-server": {
+        ping: () => Promise.reject(new Error("fetch failed")),
+        transport: { close: () => {} },
+        close: () => {},
+      },
+    };
+    mcpLayer.mcpLoadingResults = {
+      "no-ping-server": { status: "success", message: "connected" },
+      "dead-server": { status: "success", message: "connected" },
+    };
+
+    const servers = await mcpLayer.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-  const selectedLLMObject = llms.find((llm) => llm.value === selectedLLM);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4949328c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0acf0e89` are properly handled with clean fallback behavior.

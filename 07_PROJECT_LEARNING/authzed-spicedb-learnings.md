@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `5ae59013`  
+> **Source Version**: `5fedd8fc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:48:42.648Z  
+> **Timestamp**: 2026-10-22T18:50:24.954Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:48:42.643Z  
+> **Harvest Timestamp**: 2026-10-22T18:50:24.600Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7159 stars
+- **Stars / Engagement**: 7167 stars
 
 ---
 
@@ -891,11 +891,11 @@ func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3422** (2026-10-20): **chore: roll changelog**
-  *Symptoms*: ## Description Rolling changelog for v1.57 release  ## Changes * Roll the changelog ## Testing Review.
+- **Issue #3424** (2026-10-21): **chore: bump grpc_health_probe to v0.4.60 and the base images for CVE-2026-111943**
+  *Symptoms*: ## What  Bump `grpc_health_probe` to v0.4.60 and the `cgr.dev/chainguard/static` base image in both Dockerfiles to fix CVE-2026-111943 in `crypto/x509`. The development `Dockerfile` also builds SpiceDB with `golang:1.27.3-alpine`.  ## Why  The Trivy scan of the release image now fails on CVE-2026-111943 (HIGH) in two places:  | Component | Installed | Fixed in | |---|---|---| | `grpc_health_probe` (Go stdlib) | v0.4.59, built with Go 1.27.2 | v0.4.60, built with Go 1.27.3 | | `ca-certificates-bundle` in the static base image | 20260413-r1 | 20260909-r3 |  The `spicedb` binary itself isn't affected, because CI builds it with Go 1.26.10. The development `Dockerfile` built it with Go 1.27.1, which is.  ## How  - `Dockerfile.release`: static base digest `sha256:17367e4d…` and `grpc_health_probe` v0.4.60. - `Dockerfile`:   - builder `golang:1.27.3-alpine@sha256:f2c872bc…`;   - the same static base digest;   - `grpc-health-probe:v0.4.60`.  ### Testing  - `go version -m` on the v0.4.60 release binary reports `go1.27.3`. - The development image builds. The same Trivy command as CI (`aquasec/trivy:0.69.3`, `--severity CRITICAL,HIGH,MEDIUM --ignore-unfixed`) reports 0 vulnerabilities for the base image, `grpc_health_probe` and `spicedb`. - The new static base digest on its own also scans clean. 
 
-- **Issue #3415** (2026-10-20): **fix: return a clear error when filtering relationships on a permission**
-  *Symptoms*: ## Summary  `ReadRelationships` and `DeleteRelationships` only validated that a filter's relation *existed* in the namespace. Because permissions are stored in the same relation list as relations, a permission name passed validation and the request then failed deep in the type system with an opaque `relation `X` does not have type information` error (`ReadRelationships`), or silently matched nothing (`DeleteRelationships`).  `checkFilterComponent` now rejects a filter whose relation is a permission with a clear `InvalidArgument` error (`ERROR_REASON_INVALID_FILTER`), since relationships only ever exist on relations. Because the check lives in the shared filter validator, it also covers preconditions, bulk export, and Watch.  ### Before  - `ReadRelationships` with a permission relation → `FailedPrecondition: ... relation `view` does not have type information` - `DeleteRelationships` with a permission relation → succeeds, deleting nothing  ### After  Both return `InvalidArgument`:  > the relationship filter provided is not valid: cannot filter relationships by permission `view` under definition `document`; relationships exist only on relations, not permissions  ## Tests  - `TestReadRelationshipsOnPermission` and `TestDeleteRelationshipsOnPermission` cover the new behavior. 
+- **Issue #3423** (2026-10-21): **fix(crdb): derive the gc window from the zone config of SpiceDB's relationships**
+  *Symptoms*: ## What  The CockroachDB driver now takes its GC window from the zone configuration of the relationship table, not the cluster-wide `RANGE default`.  ## Why  CockroachDB resolves `gc.ttlseconds` per object: table → database → `RANGE default`. The value resolved for the table is what CockroachDB actually garbage-collects and enforces on reads. SpiceDB only read `RANGE default`, so its window was wrong whenever the database or table had its own TTL:  - **Too narrow.** With `ALTER DATABASE spicedb CONFIGURE ZONE USING gc.ttlseconds = 86400` and the default 4h `RANGE default`, SpiceDB clamped its window to 4h. `CheckRevision` then rejected revisions 4–24h old as stale, even though CockroachDB still served them. - **Too wide.** With the database below a longer `RANGE default`, SpiceDB accepted revisions past the real TTL. Reads then failed with CockroachDB's GC threshold error instead of being rejected as stale.  ## How  - At startup, run `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`). CockroachDB resolves the precedence itself. - Use `min(--datastore-gc-window, resolved TTL)` as the window. - If the query fails, e.g. the table doesn't exist yet, warn and fall back to `RANGE default`, as before. - At startup, log the effective window and the zone that set it: info when the configured window applies, warn when it is lowered. - Accept single-digit `gc.ttlseconds` values in the parser.  Deployments without a database or table zone configurati
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -912,281 +912,614 @@ func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `320e3f48` (2026-10-18)
-**Commit Message**: fix: return a clear error when filtering relationships on a permission
+### Incident Patch 1: `5fedd8fc` (2026-10-22)
+**Commit Message**: fix(schema): qualify wildcard cache keys by definition (#3421)
 
-ReadRelationships and DeleteRelationships only validated that a filter's
-resource relation existed in the namespace. Because permissions are stored
-in the same relation list as relations, a permission name passed validation
-and the request then failed deep in the type system with an opaque
-"relation `X` does not have type information" error (ReadRelationships), or
-silently matched nothing (DeleteRelationships).
+* fix(schema): qualify wildcard cache keys by definition
 
-The shared filter validator now rejects a filter whose *resource* relation
-is a permission with a clear InvalidArgument error, since relationships only
-ever exist on relations. This also covers preconditions, bulk export, and
-watch. A filter's *subject* relation may legally reference a permission
-(e.g. `group#some_permission`), so permissions are not rejected there.
+* docs: add changelog entry for wildcard validation fix
+
+---------
+
+Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ 
+ ## [Unreleased]
  ### Fixed
- - Watch: a relationship filter whose subject filter asks for subjects with no relation (`optional_relation` with an empty relation) also matched subjects with a relation, such as `group:eng#member`, so Watch sent updates that the same filter excludes when reading relationships. Watch now applies the same subject relation rules as the datastores. (https://github.com/authzed/spicedb/pull/3400)
- - Remote dispatch: a hedged Check dispatch that is canceled, or whose deadline passes, before any dispatcher answers now returns the context's error instead of `check dispatch has timed out`. Clients now receive `Canceled` or `DeadlineExceeded` rather than `Unknown`. (https://github.com/authzed/spicedb/pull/3398)
-+- ReadRelationships/DeleteRelationships: a relationship filter whose resource relation is a permission now returns a clear `InvalidArgument` error explaining that relationships cannot be filtered on a permission, instead of an opaque "does not have type information" error (ReadRelationships) or silently matching nothing (DeleteRelationships). A subject filter's relation may still legally reference a permission. (https://github.com/authzed/spicedb/pull/3415)
- - LookupSubjects: avoid quadratic exclusion-list copying when subtracting many concrete subjects from a wildcard.
- - Remote dispatch: canceled LookupResources and LookupSubjects streams now return an error instead of reporting success with incomplete results, preventing partial results from being cached and replayed. (https://github.com/authzed/spicedb/pull/3380)
- - Remote dispatch: a LookupResources2 request whose cursor is locked to a secondary dispatcher now returns `Canceled` or `DeadlineExceeded` when canceled or timed out before the secondary returns any results, instead of an `Unknown` "no dispatcher returned results" error. (https://github.com/authzed/spicedb/pull/3397)
++- Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
+ - CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
+ 
+ ## [1.57.0] - 2026-10-20
 ```
 
-**File**: `internal/services/v1/errors.go` (modified, +37/-0)
+**File**: `pkg/schema/typesystem_test.go` (modified, +67/-0)
 ```diff
-@@ -467,6 +467,43 @@ func (err NotAPermissionError) GRPCStatus() *status.Status {
- 	)
- }
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/authzed/spicedb/pkg/datastore"
+ 	ns "github.com/authzed/spicedb/pkg/namespace"
+ 	core "github.com/authzed/spicedb/pkg/proto/core/v1"
++	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
+ )
  
-+// CannotFilterOnPermissionError indicates that a relationship filter referenced a permission.
-+// Relationships only ever exist on relations, so a filter referencing a permission is invalid.
-+type CannotFilterOnPermissionError struct {
-+	error
-+	definitionName string
-+	permissionName string
-+}
+ func TestTypeSystemConcurrency(t *testing.T) {
+@@ -702,3 +703,69 @@ func TestPossibleTraitsForFilter(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+// NewCannotFilterOnPermissionErr constructs a new error for a relationship filter that
-+// references a permission rather than a relation.
-+func NewCannotFilterOnPermissionErr(definitionName, permissionName string) CannotFilterOnPermissionError {
-+	return CannotFilterOnPermissionError{
-+		error: fmt.Errorf(
-+			"the relationship filter provided is not valid: cannot filter relationships by permission `%s` under definition `%s`; relationships exist only on relations, not permissions",
-+			permissionName,
-+			definitionName,
-+		),
-+		definitionName: definitionName,
-+		permissionName: permissionName,
++// The same relation name in different definitions must have independent wildcard results.
++func TestWildcardReferencesAcrossDefinitions(t *testing.T) {
++	compiled, err := compiler.Compile(compiler.InputSchema{
++		SchemaString: `
++			definition user {}
++			definition direct {
++				relation member: user
++			}
++			definition public {
++				relation member: user:*
++			}
++		`,
++	}, compiler.AllowUnprefixedObjectType())
++	require.NoError(t, err)
++
++	for _, order := range [][]string{{"direct", "public"}, {"public", "direct"}} {
++		t.Run(fmt.Sprint(order), func(t *testing.T) {
++			ts := NewTypeSystem(ResolverForSchema(compiled))
++			for _, name := range order {
++				def, err := ts.GetDefinition(t.Context(), name)
++				require.NoError(t, err)
++				ref, err := ts.referencesWildcardType(t.Context(), def, "member")
++				require.NoError(t, err)
++				if name == "direct" {
++					require.Nil(t, ref)
++				} else {
++					require.NotNil(t, ref)
++					require.Equal(t, "public", ref.ReferencingRelation.Namespace)
++					require.Equal(t, "member", ref.ReferencingRelation.Relation)
++					require.Equal(t, "user", ref.WildcardType.Namespace)
++				}
++			}
++		})
 +	}
 +}
 +
-+// GRPCStatus implements retrieving the gRPC status for the error.
-+func (err CannotFilterOnPermissionError) GRPCStatus() *status.Status {
-+	return spiceerrors.WithCodeAndDetails(
-+		err,
-+		codes.InvalidArgument,
-+		spiceerrors.ForReason(
-+			v1.ErrorReason_ERROR_REASON_INVALID_FILTER,
-+			map[string]string{
-+				"definition_name": err.definitionName,
-+				"permission_name": err.permissionName,
-+			},
-+		),
-+	)
-+}
++func TestTransitiveWildcardValidationAfterUnrelatedDefinition(t *testing.T) {
++	compiled, err := compiler.Compile(compiler.InputSchema{
++		SchemaString: `
++			definition ty0 {
++				relation rel0: ty3#rel0
++				relation rel1: ty2#rel1
++			}
++			definition ty1 {
++				relation rel0: ty0
++			}
++			definition ty2 {
++				relation rel1: ty1#rel0
++			}
++			definition ty3 {
++				relation rel0: ty0:*
++			}
++		`,
++	}, compiler.AllowUnprefixedObjectType())
++	require.NoError(t, err)
 +
- func defaultIfZero[T comparable](value T, defaultValue T) T {
- 	var zero T
- 	if value == zero {
++	ts := NewTypeSystem(ResolverForSchema(compiled))
++	// Validating ty2 first caches a negative wildcard result for ty1#rel0.
++	_, err = ts.GetValidatedDefinition(t.Context(), "ty2")
++	require.NoError(t, err)
++
++	// That result must not hide the wildcard in ty3#rel0 when validating ty0.
++	_, err = ts.GetValidatedDefinition(t.Context(), "ty0")
++	require.ErrorContains(t, err, "wildcard relations cannot be transitively included")
++}
 ```
 
-**File**: `internal/services/v1/relationships.go` (modified, +31/-9)
+**File**: `pkg/schema/typesystem_validation.go` (modified, +4/-2)
 ```diff
-@@ -1,7 +1,6 @@
- package v1
- 
- import (
--	"cmp"
- 	"context"
- 	"errors"
- 	"fmt"
-@@ -38,7 +37,9 @@ import (
- 	"github.com/authzed/spicedb/pkg/genutil"
- 	"github.com/authzed/spicedb/pkg/genutil/mapz"
- 	"github.com/authzed/spicedb/pkg/middleware/consistency"
-+	nspkg "github.com/authzed/spicedb/pkg/namespace"
- 	dispatchv1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
-+	iv1 "github.com/authzed/spicedb/pkg/proto/impl/v1"
- 	"github.com/authzed/spicedb/pkg/query"
- 	"github.com/authzed/spicedb/pkg/schema"
- 	"github.com/authzed/spicedb/pkg/tuple"
-@@ -708,31 +709,52 @@ func validatePrecondition(ctx context.Context, precond *v1.Precondition, sr data
- 	return validateRelationshipsFilter(ctx, precond.Filter, sr)
- }
- 
--func checkFilterComponent(ctx context.Context, objectType, optionalRelation string, sr datalayer.SchemaReader) error {
-+// checkFilterComponent validates the definition+relation of one side of a relationship filter.
-+// When rejectPermission is true, the relation must be an actual relation and not a permission;
-+// this applies to a filter's *resource* relation, since a relationship can never be written to a
-+// permission and so reading or deleting one on a permission is always a mistake. It must be false
-+// for the *subject* relation, which legally may be a permission (e.g. `group#some_permission`).
-+func checkFilterComponent(ctx context.Context, objectType, optionalRelation string, rejectPermission bool, sr datalayer.SchemaReader) error {
- 	if objectType == "" {
- 		return nil
+@@ -303,7 +303,9 @@ func (ts *TypeSystem) referencesWildcardTypeWithEncountered(ctx context.Context,
+ 		ts.wildcardCheckCache = make(map[string]*WildcardTypeReference, 1)
  	}
  
--	relationToTest := cmp.Or(optionalRelation, datastore.Ellipsis)
--	allowEllipsis := optionalRelation == ""
--	return namespace.CheckNamespaceAndRelation(ctx, objectType, relationToTest, allowEllipsis, sr)
-+	// When no relation is specified, the ellipsis is used, which is always valid; just
-+	// ensure the referenced definition exists.
-+	if optionalRelation == "" {
-+		return namespace.CheckNamespaceAndRelation(ctx, objectType, datastore.Ellipsis, true, sr)
+-	cached, isCached := ts.wildcardCheckCache[relationName]
++	// Relation names are only unique within a definition.
++	relString := tuple.JoinRelRef(def.nsDef.Name, relationName)
++	cached, isCached := ts.wildcardCheckCache[relString]
+ 	if isCached {
+ 		return cached, nil
+ 	}
+@@ -313,7 +315,7 @@ func (ts *TypeSystem) referencesWildcardTypeWithEncountered(ctx context.Context,
+ 		return nil, err
+ 	}
+ 
+-	ts.wildcardCheckCache[relationName] = computed
++	ts.wildcardCheckCache[relString] = computed
+ 	return computed, nil
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `048889c6` (2026-10-21)
+**Commit Message**: fix(crdb): derive the gc window from the zone config of SpiceDB's relationships (#3423)
+
+At startup the CockroachDB driver lowered --datastore-gc-window to the
+gc.ttlseconds of RANGE default. CockroachDB resolves gc.ttlseconds per
+object (partition, index, table, database, then RANGE default), and both
+garbage collection and strict GC enforcement apply the TTL resolved for
+the table. A database configured with
+
+    ALTER DATABASE spicedb CONFIGURE ZONE USING gc.ttlseconds = 86400;
+
+on a cluster whose RANGE default is CockroachDB's built-in 4h retains 24h
+of history, yet SpiceDB clamped its window to 4h and CheckRevision
+rejected revisions 4-24h old as stale. Conversely, a database configured
+below a longer RANGE default kept SpiceDB's window too wide, and reads
+past the real TTL failed with CockroachDB's GC threshold error instead
+of being rejected as stale.
+
+The driver now reads SHOW ZONE CONFIGURATION FROM TABLE for the
+relationship table, for which CockroachDB resolves table, database and
+RANGE default precedence, and uses that TTL capped at the configured
+window. If the zone configuration cannot be read, it falls back to the
+RANGE default value as before.
+
+The gc.ttlseconds par
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ 
+ ## [Unreleased]
++### Fixed
++- CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
+ 
+ ## [1.57.0] - 2026-10-20
+ ### Added
+```
+
+**File**: `internal/datastore/crdb/crdb.go` (modified, +64/-17)
+```diff
+@@ -44,7 +44,7 @@ var ParseRevisionString = revisions.RevisionParser(revisions.HybridLogicalClock)
+ var (
+ 	psql = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+ 
+-	gcTTLRegex = regexp.MustCompile(`gc\.ttlseconds\s*=\s*([1-9][0-9]+)`)
++	gcTTLRegex = regexp.MustCompile(`gc\.ttlseconds\s*=\s*([0-9]+)`)
+ 
+ 	tracer = otel.Tracer("spicedb/internal/datastore/crdb")
+ )
+@@ -59,6 +59,7 @@ const (
+ 	queryTransactionNowPreV23 = querySelectNow
+ 	queryTransactionNow       = "SHOW COMMIT TIMESTAMP"
+ 	queryShowZoneConfig       = "SHOW ZONE CONFIGURATION FOR RANGE default;"
++	queryShowTableZoneConfig  = "SHOW ZONE CONFIGURATION FROM TABLE %s;"
+ 
+ 	spicedbTransactionKey = "$spicedb_transaction_key"
+ )
+@@ -158,19 +159,11 @@ func newCRDBDatastore(ctx context.Context, url string, options ...Option) (datas
+ 		transactionNowQuery = queryTransactionNowPreV23
+ 	}
+ 
+-	clusterTTLNanos, err := readClusterTTLNanos(initCtx, initPool)
++	gcWindow, err := resolveGCWindow(initCtx, initPool, config.gcWindow, config.withIntegrity)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("unable to read cluster gc window: %w", err)
+ 	}
+-
+-	gcWindowNanos := config.gcWindow.Nanoseconds()
+-	if clusterTTLNanos < gcWindowNanos {
+-		log.Warn().
+-			Int64("cockroach_cluster_gc_window_nanos", clusterTTLNanos).
+-			Int64("spicedb_gc_window_nanos", gcWindowNanos).
+-			Msg("configured CockroachDB cluster gc window is less than configured SpiceDB gc window, falling back to CRDB value. See " + sharederrors.CrdbGcWindowErrorLink)
+-		config.gcWindow = time.Duration(clusterTTLNanos) * time.Nanosecond
+-	}
++	config.gcWindow = gcWindow
+ 
+ 	// If watch is enabled, ensure the relationship tables suppress row-level TTL
+ 	// deletes from changefeeds, so that the Watch API does not emit deletions
+@@ -750,26 +743,80 @@ func (cds *crdbDatastore) readTransactionCommitRev(ctx context.Context, reader p
+ 	return revisions.NewForHLC(hlcNow)
+ }
+ 
+-func readClusterTTLNanos(ctx context.Context, conn pgxcommon.DBFuncQuerier) (int64, error) {
+-	var target, configSQL string
++type zoneGCTTL struct {
++	target string
++	ttl    time.Duration
++}
++
++func resolveGCWindow(ctx context.Context, conn pgxcommon.DBFuncQuerier, configured time.Duration, withIntegrity bool) (time.Duration, error) {
++	relationTable := schema.TableTuple
++	if withIntegrity {
++		relationTable = schema.TableTupleWithIntegrity
 +	}
 +
-+	// Ensure the definition and relation exist.
-+	_, relation, err := namespace.ReadNamespaceAndRelation(ctx, objectType, optionalRelation, sr)
++	var effective time.Duration
++	var rangeDefault zoneGCTTL
++	dataZone, dataErr := readZoneGCTTL(ctx, conn, fmt.Sprintf(queryShowTableZoneConfig, relationTable))
++	if dataErr == nil {
++		effective = min(configured, dataZone.ttl)
++	} else {
++		var err error
++		rangeDefault, err = readZoneGCTTL(ctx, conn, queryShowZoneConfig)
++		if err != nil {
++			return 0, err
++		}
++		log.Warn().Err(dataErr).Str("table", relationTable).Msg("unable to read the CockroachDB zone configuration of the relationship table, falling back to RANGE default")
++		effective = min(configured, rangeDefault.ttl)
++	}
++
++	event, msg := log.Info(), "using configured SpiceDB gc window, covered by the CockroachDB gc window"
++	if effective < configured {
++		event, msg = log.Warn(), "configured CockroachDB cluster gc window is less than configured SpiceDB gc window, falling back to CRDB value. See "+sharederrors.CrdbGcWindowErrorLink
++	}
++	if dataErr == nil {
++		event = event.
++			Int64("cockroach_data_gc_window_nanos", dataZone.ttl.Nanoseconds()).
++			Str("cockroach_data_zone_target", dataZone.target)
++	} else {
++		event = event.Int64("cockroach_cluster_gc_window_nanos", rangeDefault.ttl.Nanoseconds())
++	}
++	event.
++		Int64("spicedb_gc_window_nanos", configured.Nanoseconds()).
++		Int64("effective_gc_window_nanos", effective.Nanoseconds()).
++		Msg(msg)
++	return effective, nil
++}
+ 
++func readZoneGCTTL(ctx context.Context, conn pgxcommon.DBFuncQuerier, query string) (zoneGCTTL, error) {
++	var target, configSQL string
+ 	if err := conn.QueryRowFunc(ctx, func(ctx context.Context, row pgx.Row) error {
+ 		return row.Scan(&target, &configSQL)
+-	}, queryShowZoneConfig); err != nil {
+-		return 0, err
++	}, query); err != nil {
++		return zoneGCTTL{}, err
+ 	}
+ 
++	ttl, err := parseGCTTL(configSQL)
 +	if err != nil {
-+		return err
++		return zoneGCTTL{}, fmt.Errorf("zone config of %s: %w", target, err)
 +	}
++	return zoneGCTTL{target: target, ttl: ttl}, nil
++}
 +
-+	if rejectPermission && nspkg.GetRelationKind(relation) == iv1.RelationMetadata_PERMISSION {
-+		return NewCannotFilterOnPermissionErr(objectType, optionalRelation)
++func parseGCTTL(configSQL string) (time.Duration, error) {
+ 	groups := gcTTLRegex.FindStringSubmatch(configSQL)
+-	if groups == nil || len(groups) != 2 {
++	if len(groups) != 2 {
+ 		return 0, errors.New("CRDB zone config unexpected format")
+ 	}
+ 
+ 	gcSeconds, err := strconv.ParseInt(groups[1], 10, 64)
+ 	if err != nil {
+ 		return 0, err
+ 	}
++	if gcSeconds <= 0 {
++		return 0, fmt.Errorf("CRDB zone config has invalid gc.ttlseconds %d", gcSeconds)
 +	}
-+
-+	return nil
+ 
+-	return gcSeconds * 1_000_000_000, nil
++	return time.Duration(gcSeconds) * time.Second, nil
  }
  
- func validateRelationshipsFilter(ctx context.Context, filter *v1.RelationshipFilter, sr datalayer.SchemaReader) error {
--	// ResourceType is optional, so only check the relation if it is specified.
-+	// ResourceType is optional, so only check the relation if it is specified. The resource
-+	// relation must not be a permission: relationships only ever exist on relations.
- 	if filter.ResourceType != "" {
--		if err := checkFilterComponent(ctx, filter.ResourceType, filter.OptionalRelation, sr); err != nil {
-+		if err := checkFilterComponent(ctx, filter.ResourceType, filter.OptionalRelation, true, sr); err != nil {
- 			return err
- 		}
- 	}
- 
--	// SubjectFilter is optional, so only check if it is specified.
-+	// SubjectFilter is optional, so only check if it is specified. The subject relation may
-+	// legally be a permission (e.g. `group#some_permission`), so permissions are not rejected here.
- 	if subjectFilter := filter.OptionalSubjectFilter; subjectFilter != nil {
- 		subjectRelation := ""
- 		if subjectFilter.OptionalRelation != nil {
- 			subjectRelation = subjectFilter.OptionalRelation.Relation
- 		}
--		if err := checkFilterComponent(ctx, subjectFilter.SubjectType, subjectRelation, sr); err != nil {
-+		if err := checkFilterComponent(ctx, subjectFilter.SubjectType, subjectRelation, false, sr); err != nil {
- 			return err
- 		}
- 	}
+ func (cds *crdbDatastore) registerPrometheusCollectors(enablePrometheusStats bool) error {
 ```
 
-**File**: `internal/services/v1/relationships_test.go` (modified, +91/-0)
+**File**: `internal/datastore/crdb/crdb_test.go` (modified, +114/-0)
 ```diff
-@@ -369,6 +369,61 @@ func TestReadRelationships(t *testing.T) {
- 	}
+@@ -1027,3 +1027,117 @@ func TestVersionReading(t *testing.T) {
+ 	require.Equal(expectedMinor, version.Minor)
+ 	require.Equal(expectedPatch, version.Patch)
  }
- 
-+// TestReadRelationshipsOnPermission ensures that attempting to read relationships using a
-+// filter whose relation is a permission returns a clear error explaining that relationships
-+// cannot be read on a permission, rather than an opaque "does not have type information" error.
-+func TestReadRelationshipsOnPermission(t *testing.T) {
-+	t.Cleanup(func() {
-+		goleak.VerifyNone(t, testutil.GoLeakIgnores()...)
-+	})
-+	require := require.New(t)
 +
-+	conn, _, _ := testserver.NewTestServerWithConfig(t, 0, memdb.DisableGC, true,
-+		testserver.DefaultTestServerConfig,
-+		tf.StandardDatastoreWithData)
-+	client := v1.NewPermissionsServiceClient(conn)
++func TestEffectiveGCWindowFromZoneConfig(t *testing.T) {
++	t.Parallel()
 +
-+	stream, err := client.ReadRelationships(t.Context(), &v1.ReadRelationshipsRequest{
-+		RelationshipFilter: &v1.RelationshipFilter{
-+			ResourceType:     "document",
-+			OptionalRelation: "view", // `view` is a permission, not a relation.
-+		},
-+	})
-+	require.NoError(err)
++	// Owns its container, so changing RANGE default cannot affect other tests.
++	b := testdatastore.RunCRDBForTesting(t, crdbTestVersion())
 +
-+	_, err = stream.Recv()
-+	grpcutil.RequireStatus(t, codes.InvalidArgument, err)
-+	require.ErrorContains(err, "permission")
-+	require.ErrorContains(err, "view")
-+	require.NotContains(err.Error(), "type information",
-+		"expected a clear permission error, got the opaque type information error: %v", err)
-+}
++	const (
++		dbZone24h    = "ALTER DATABASE %[1]s CONFIGURE ZONE USING gc.ttlseconds = 86400"
++		dbZone4h     = "ALTER DATABASE %[1]s CONFIGURE ZONE USING gc.ttlseconds = 14400"
++		tableZone24h = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 86400"
++		tableZone6h  = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 21600"
++		tableZone4h  = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 14400"
++	)
 +
-+// TestDeleteRelationshipsOnPermission ensures that attempting to delete relationships using a
-+// filter whose relation is a permission returns a clear error rather than an opaque one.
-+func TestDeleteRelationshipsOnPermission(t *testing.T) {
-+	t.Cleanup(func() {
-+		goleak.VerifyNone(t, testutil.GoLeakIgnores()...)
-+	})
-+	require := require.New(t)
++	type zoneCase struct {
++		name           string
++		zoneStatements []string
++		skipMigrations bool
++		expectedWindow time.Duration
++	}
 +
-+	conn, _, _ := testserver.NewTestServerWithConfig(t, 0, memdb.DisableGC, true,
-+		testserver.DefaultTestServerConfig,
-+		tf.StandardDatastoreWithData)
-+	client := v1.NewPermissionsServiceClient(conn)
-+
-+	_, err := client.DeleteRelationships(t.Context(), &v1.DeleteRelationshipsRequest{
-+		RelationshipFilter: &v1.RelationshipFilter{
-+			ResourceType:     "document",
-+			OptionalRelation: "view", // `view` is a permission, not a relation.
-+		},
-+	})
-+	grpcutil.RequireStatus(t, codes.InvalidArgument, err)
-+	require.ErrorContains(err, "permission")
-+	require.NotContains(err.Error(), "type information",
-+		"expected a clear permission error, got the opaque type information error: %v", err)
-+}
-+
- func TestWriteRelationships(t *testing.T) {
- 	t.Cleanup(func() {
- 		goleak.VerifyNone(t, testutil.GoLeakIgnores()...)
-@@ -2395,6 +2450,42 @@ func TestReadRelationshipsWithTraitsAndFilters(t *testing.T) {
- 			},
- 			expectedCode: codes.OK,
- 		},
++	groups := []struct {
++		rangeDefaultSeconds int
++		cases               []zoneCase
++	}{
 +		{
-+			// A subject whose relation is a permission is a legal and valid relationship, so a
-+			// subject filter referencing that permission must be accepted and must return the
-+			// matching relationships, not be rejected as "filtering on a permission".
-+			name: "subject filter relation is a permission",
-+			schema: `definition user {}
-+
-+				definition group {
-+					relation direct_member: user
-+					relation intern: user
-+					permission intern_member = direct_member & intern
-+				}
-+
-+				definition document {
-+					relation viewer: user | group#intern_member
-+					permission view = viewer
-+				}
-+			`,
-+			setupRelationships: []string{
-+				"document:firstdoc#viewer@user:tom",
-+				"document:firstdoc#viewer@group:engineering#intern_member",
++			rangeDefaultSeconds: 14400,
++			cases: []zoneCase{
++				{name: "database 24h", zoneStatements: []string{dbZone24h}, expectedWindow: 24 * time.Hour},
++				{name: "database 24h, table 6h", zoneStatements: []string{dbZone24h, tableZone6h}, expectedWindow: 6 * time.Hour},
++				{name: "no zones", expectedWindow: 4 * time.Hour},
++				{name: "database 4h, table 24h", zoneStatements: []string{dbZone4h, tableZone24h}, expectedWindow: 24 * time.Hour},
++				{name: "table missing falls back to range default", zoneStatements: []string{dbZone24h}, skipMigrations: true, expectedWindow: 4 * time.Hour},
 +			},
-+			filter: &v1.RelationshipFilter{
-+				ResourceType: "document",
-+				OptionalSubjectFilter: &v1.SubjectFilter{
-+					SubjectType: "group",
-+					OptionalRelation: &v1.SubjectFilter_RelationFilter{
-+						Relation: "intern_member", // a permission on `group`
-+					},
-+				},
-+			},
-+			expectedRelationships: []string{
-+				"document:firstdoc#viewer@group:engineering#intern_member",
-+			},
-+			expectedCode: codes.OK,
 +		},
- 	}
- 
- 	for _, tc := range testCases {
++		{
++			rangeDefaultSeconds: 86400,
++			cases: []zoneCase{
++				{name: "database 4h", zoneStatements: []string{dbZone4h}, expectedWindow: 4 * time.Hour},
++				{name: "table 4h", zoneStatements: []string{tableZone4h}, expectedWindow: 4 * time.Hour},
++				{name: "no zones", expectedWindow: 24 * time.Hour},
++			},
++		},
++	}
++
++	applyZones := func(t *testing.T, uri string, statements []string) {
++		ctx := t.Context()
++		conn, err := pgx.Connect(ctx, uri)
++		require.NoError(t, err)
++		defer conn.Close(ctx)
++
++		var dbName string
++		require.NoError(t, conn.QueryRow(ctx, "SELECT current_database()").Scan(&dbName))
++		for _, stmt := range statements {
++			_, err := conn.Exec(ctx, fmt.Sprintf(stmt, dbName))
++			require.NoError(t, err)
++		}
++	}
++
++	newDatastore := func(t *testing.T, uri string) *crdbDatastore {
++		ds, err := newCRDBDatastore(t.Context(), uri, GCWindow(24*time.Hour), WithAcquireTimeout(5*time.Second))
++		require.NoError(t, err)
++		t.Cleanup(func() {
++			_ = ds.Close()
++		})
++		cds, ok := ds.(*crdbDatastore)
++		require.True(t, ok)
++		return cds
++	}
++
++	// Groups run sequentially: RANGE default is cluster-wide.
++	for _, group := range groups {
++		t.Run(fmt.Sprintf("range default %ds", group.rangeDefaultSeconds), func(t *testing.T) {
++			conn, err := pgx.Connect(t.Context(), b.NewDatabase(t))
++			require.NoError(t, err)
++			_, err = conn.Exec(t.Context(), fmt.Sprintf("ALTER RANGE default CONFIGURE ZONE USING gc.ttlseconds = %d", group.rangeDefaultSeconds))
++			require.NoError(t, err)
++			require.NoError(t, conn.Close(t.Context()))
++
++			for _, tc := range group.cases {
++				t.Run(tc.name, func(t *testing.T) {
++					var cds *crdbDatastore
++					if tc.skipMigrations {
++						uri := b.NewDatabase(t)
++						applyZones(t, uri, tc.zoneStatements)
++						cds = newDatastore(t, uri)
++					} else {
++						b.NewDatastore(t, func(_, uri string) datastore.Datastore {
++							applyZones(t, uri, tc.zoneStatements)
++							cds = newDatastore(t, uri)
++							return cds
++						})
++					}
++
++					require.Equal(t, tc.expectedWindow, cds.gcWindow)
++
++					ctx := t.Context()
++					justInside := revisions.NewHLCForTime(time.Now().Add(-tc.expectedWindow + 10*time.Minute))
++					require.NoError(t, cds.CheckRevision(ctx, justInside))
++					justOutside := revisions.NewHLCForTime(time.Now().Add(-tc.expectedWindow - 10*time.Minute))
++					requireStale(t, cds.CheckRevision(ctx, justOutside))
++				})
++			}
++		})
++	}
++}
++
++func requireStale(t *testing.T, err error) {
++	t.Helper()
++	var irErr datastore.InvalidRevisionError
++	require.ErrorAs(t, err, &irErr)
++	require.Equal(t, datastore.RevisionStale, irErr.Reason())
++}
+```
+
+**File**: `internal/datastore/crdb/gcwindow_test.go` (added, +219/-0)
+```diff
+@@ -0,0 +1,219 @@
++package crdb
++
++import (
++	"context"
++	"errors"
++	"testing"
++	"time"
++
++	"github.com/jackc/pgx/v5"
++	"github.com/jackc/pgx/v5/pgconn"
++	"github.com/stretchr/testify/require"
++)
++
++func TestParseGCTTL(t *testing.T) {
++	t.Parallel()
++
++	tcs := []struct {
++		name      string
++		configSQL string
++		expected  time.Duration
++		expectErr bool
++	}{
++		{
++			name: "range default",
++			configSQL: `ALTER RANGE default CONFIGURE ZONE USING
++	range_min_bytes = 134217728,
++	range_max_bytes = 536870912,
++	gc.ttlseconds = 14400,
++	num_replicas = 3,
++	constraints = '[]',
++	lease_preferences = '[]'`,
++			expected: 4 * time.Hour,
++		},
++		{
++			name: "multi-region regional by row table",
++			configSQL: `ALTER TABLE relation_tuple CONFIGURE ZONE USING
++	range_min_bytes = 134217728,
++	range_max_bytes = 536870912,
++	gc.ttlseconds = 86400,
++	num_replicas = 5,
++	num_voters = 3,
++	constraints = '{+region=us-east1: 1, +region=us-west1: 1}',
++	voter_constraints = '[+region=us-east1]',
++	lease_preferences = '[[+region=us-east1]]'`,
++			expected: 24 * time.Hour,
++		},
++		{
++			name:      "single digit",
++			configSQL: "ALTER TABLE u CONFIGURE ZONE USING gc.ttlseconds = 7",
++			expected:  7 * time.Second,
++		},
++		{
++			name:      "no spaces",
++			configSQL: "ALTER DATABASE d CONFIGURE ZONE USING gc.ttlseconds=600",
++			expected:  10 * time.Minute,
++		},
++		{
++			name:      "zero",
++			configSQL: "ALTER RANGE default CONFIGURE ZONE USING gc.ttlseconds = 0",
++			expectErr: true,
++		},
++		{
++			name:      "missing",
++			configSQL: "ALTER RANGE default CONFIGURE ZONE USING num_replicas = 3",
++			expectErr: true,
++		},
++	}
++
++	for _, tc := range tcs {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			ttl, err := parseGCTTL(tc.configSQL)
++			if tc.expectErr {
++				require.Error(t, err)
++				return
++			}
++			require.NoError(t, err)
++			require.Equal(t, tc.expected, ttl)
++		})
++	}
++}
++
++type fakeZoneQuerier struct {
++	zones   map[string]zoneResult
++	queried []string
++}
++
++type zoneResult struct {
++	target    string
++	configSQL string
++	err       error
++}
++
++func (f *fakeZoneQuerier) ExecFunc(context.Context, func(context.Context, pgconn.CommandTag, error) error, string, ...any) error {
++	return errors.New("not implemented")
++}
++
++func (f *fakeZoneQuerier) QueryFunc(context.Context, func(context.Context, pgx.Rows) error, string, ...any) error {
++	return errors.New("not implemented")
++}
++
++func (f *fakeZoneQuerier) QueryRowFunc(ctx context.Context, rowFunc func(context.Context, pgx.Row) error, sql string, _ ...any) error {
++	f.queried = append(f.queried, sql)
++	res, ok := f.zones[sql]
++	if !ok {
++		return &pgconn.PgError{Code: "42P01", Message: "relation does not exist"}
++	}
++	if res.err != nil {
++		return res.err
++	}
++	return rowFunc(ctx, fakeZoneRow(res))
++}
++
++type fakeZoneRow zoneResult
++
++func (r fakeZoneRow) Scan(dest ...any) error {
++	*dest[0].(*string) = r.target
++	*dest[1].(*string) = r.configSQL
++	return nil
++}
++
++func TestResolveGCWindow(t *testing.T) {
++	t.Parallel()
++
++	const (
++		tableQuery          = "SHOW ZONE CONFIGURATION FROM TABLE relation_tuple;"
++		integrityTableQuery = "SHOW ZONE CONFIGURATION FROM TABLE relation_tuple_with_integrity;"
++		rangeQuery          = queryShowZoneConfig
++	)
++	zone := func(target string, seconds string) zoneResult {
++		return zoneResult{target: target, configSQL: "ALTER ... CONFIGURE ZONE USING gc.ttlseconds = " + seconds}
++	}
++
++	tcs := []struct {
++		name              string
++		withIntegrity     bool
++		zones             map[string]zoneResult
++		expectedWindow    time.Duration
++		expectedQueries   []string
++		expectedErrString string
++	}{
++		{
++			name:            "database zone above range default",
++			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "86400"), rangeQuery: zone("RANGE default", "14400")},
++			expectedWindow:  24 * time.Hour,
++			expectedQueries: []string{tableQuery},
++		},
++		{
++			name:            "data zone above configured is capped",
++			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "172800")},
++			expectedWindow:  24 * time.Hour,
++			expectedQueries: []string{tableQuery},
++		},
++		{
++			name:            "database zone below range default",
++			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "14400"), rangeQuery: zone("RANGE default", "90000")},
++			expectedWindow:  4 * time.Hour,
++			expectedQueries: []string{tableQuery},
++		},
++		{
++			name:            "table override",
++			zones:           map[string]zoneResult{tableQuery: zone("TABLE spicedb.public.relation_tuple", "21600")},
++			expectedWindow:  6 * time.Hour,
++			expectedQueries: []string{tableQuery},
++		},
++		{
++			name:            "inherits range default",
++			zones:           map[string]zoneResult{tableQuery: zone("RANGE default", "14400")},
++			expectedWindow:  4 * time.Hour,
++			expectedQueries: []string{tableQuery},
++		},
++		{
++			name:            "table missing falls back to range default",
++			zones
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3424** (2026-10-21): chore: bump grpc_health_probe to v0.4.60 and the base images for CVE-2026-111943 (@vroldanbet)
+- **PR #3423** (2026-10-21): fix(crdb): derive the gc window from the zone config of SpiceDB's relationships (@vroldanbet)
 - **PR #3422** (2026-10-20): chore: roll changelog (@tstirrat15)
+- **PR #3421** (2026-10-22): fix(schema): qualify wildcard cache keys by definition (@josephschorr)
 - **PR #3415** (2026-10-20): fix: return a clear error when filtering relationships on a permission (@josephschorr)
 - **PR #3410** (closed): RHCLOUD-50295: Chore/security baseline (@akoserwal)
-- **PR #3409** (closed): perf(namespace): use an LRU cache for namespace/schema cache (@AdamMagued)
-- **PR #3407** (2026-10-13): chore: bump Go to 1.26.9, golang.org/x/net to v0.60.0 and grpc_health_probe to v0.4.59 (@ecordell)
-- **PR #3405** (closed): chore(deps): bump chainguard/static from `41e17ed` to `fe55470` in the docker group (@dependabot[bot])
 
 ---
 
@@ -1206,13 +1539,13 @@ watch. A filter's *subject* relation may legally reference a permission
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. return a clear error when filtering relationships on a permission
+## X. schema): qualify wildcard cache keys by definition (#3421)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `320e3f48`: return a clear error when filtering relationships on a permission. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fedd8fc`: schema): qualify wildcard cache keys by definition (#3421). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1220,7 +1553,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- ReadRelationships/DeleteRelationships: a relationship filter whose resource relation is a permission now returns a clear `InvalidArgument` error explaining that relationships cannot be filtered on a permission, instead of an opaque "does not have type information" error (ReadRelationships) or silently matching nothing (DeleteRelationships). A subject filter's relation may still legally reference a permission. (https://github.com/authzed/spicedb/pull/3415)
+- Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1230,4 +1563,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `320e3f48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fedd8fc` are properly handled with clean fallback behavior.

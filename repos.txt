@@ -4388,3 +4388,7 @@ https://huggingface.co/InternScience/Sage-A1.5
 # --- Automatically Discovered by AI Scout Engine [2026-10-22T15:35:10.424Z] ---
 # [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-14B (7130 score) - Verified Hugging Face Model: Qwen/Qwen3-14B (513 likes, 9211389 downloads)
 https://huggingface.co/Qwen/Qwen3-14B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-22T18:50:06.610Z] ---
+# [AI-AGENTS] SolaceProducts/solace-agent-mesh (2789 score) - Platform for building and running AI agents across the full lifecycle — build, t
+https://github.com/SolaceProducts/solace-agent-mesh
