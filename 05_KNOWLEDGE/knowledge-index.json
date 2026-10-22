@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T20:15:50.552Z",
+  "last_updated": "2026-10-22T20:22:07.167Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30087,8 +30087,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "f5cf5a68",
-      "content_hash": "91d48bdbc5089091c2e503f8f43ae5ced54ccf0a9c58b0f25174a6280c0aaa95",
+      "source_version": "9bd4e612",
+      "content_hash": "b66d80ac9edb518cad9d4eb234fa1014ee417e770b1f982df7dd8f7c926838cd",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -30108,7 +30108,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:14:54.966Z",
+      "verified_at": "2026-10-22T20:22:07.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31195,8 +31195,8 @@
       "slug": "lobehub-lobe-ui",
       "platform": "github",
       "source_url": "https://github.com/lobehub/lobe-ui",
-      "source_version": "4ffde053",
-      "content_hash": "e76898729a4f283f8dd66bcdb0a1692ba8aac50edde4cf2c277de9b39ee736a4",
+      "source_version": "a7bf63ed",
+      "content_hash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
       "dossier_path": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "promoted_rules": [
@@ -31209,6 +31209,11 @@
           "number": 2624,
           "title": "✨ feat: stable BEM class names for CSS overrides (#750)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3721,
+          "title": "🐛 fix(docs-kit): link @lobehub/ui style.css from a real module so dev SSR first",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31216,7 +31221,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:21:01.216Z",
+      "verified_at": "2026-10-22T20:22:04.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111644,6 +111649,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T20:15:50.541Z"
+    },
+    "rule-3721": {
+      "learning_id": "rule-3721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3721,
+      "title": "🐛 fix(docs-kit): link @lobehub/ui style.css from a real module so dev SSR first",
+      "source_url": "https://github.com/lobehub/lobe-ui",
+      "source_version": "a7bf63ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:22:04.217Z"
     }
   },
   "aliases": {

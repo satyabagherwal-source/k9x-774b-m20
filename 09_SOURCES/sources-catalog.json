@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "f5cf5a68",
+    "sourceVersion": "9bd4e612",
     "license": "GPL-3.0",
-    "contentHash": "91d48bdbc5089091c2e503f8f43ae5ced54ccf0a9c58b0f25174a6280c0aaa95",
-    "lastHarvestedAt": "2026-10-19T14:14:55.022Z",
+    "contentHash": "b66d80ac9edb518cad9d4eb234fa1014ee417e770b1f982df7dd8f7c926838cd",
+    "lastHarvestedAt": "2026-10-22T20:22:07.230Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -5233,10 +5233,10 @@
     "repository": "lobehub/lobe-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/lobehub/lobe-ui",
-    "sourceVersion": "4ffde053",
+    "sourceVersion": "a7bf63ed",
     "license": "MIT",
-    "contentHash": "e76898729a4f283f8dd66bcdb0a1692ba8aac50edde4cf2c277de9b39ee736a4",
-    "lastHarvestedAt": "2026-10-19T14:21:01.250Z",
+    "contentHash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
+    "lastHarvestedAt": "2026-10-22T20:22:04.286Z",
     "learningId": "learn-github-lobehub-lobe-ui"
   },
   "gitui-org-gitui": {

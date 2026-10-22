@@ -4413,3 +4413,5 @@
 | `CYCLE-20261022-6NLZ` | `2026-10-22T19:42:17.351Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3716` | Yes (`7b0e8d3d...`) |
 | `CYCLE-20261022-6UPH` | `2026-10-22T19:42:26.549Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3717` | Yes (`27eaace4...`) |
 | `CYCLE-20261022-DT1P` | `2026-10-22T20:15:50.605Z` | `reshaped-ui/reshaped` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3718, Rule 3719, Rule 3720` | Yes (`d9de89ee...`) |
+| `CYCLE-20261022-LTDN` | `2026-10-22T20:22:04.283Z` | `lobehub/lobe-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3721` | Yes (`cfe3386a...`) |
+| `CYCLE-20261022-LVNF` | `2026-10-22T20:22:07.227Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md` | Yes (`b66d80ac...`) |

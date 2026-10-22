@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T20:15:50.617Z",
-  "total_cycles_completed": 4390,
-  "total_learnings_persisted": 4390,
-  "total_rules_promoted": 3570,
+  "last_updated": "2026-10-22T20:22:07.237Z",
+  "total_cycles_completed": 4392,
+  "total_learnings_persisted": 4392,
+  "total_rules_promoted": 3571,
   "history": [
-    {
-      "timestamp": "2026-10-21T05:21:54.282Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T05:21:58.803Z",
-      "repository": "Maatify/php-seo",
-      "learningId": "learn-github-maatify-php-seo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T05:27:58.459Z",
       "repository": "davo20019/seo-analysis",
@@ -1403,6 +1389,20 @@
       "repository": "reshaped-ui/reshaped",
       "learningId": "learn-github-reshaped-ui-reshaped",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:22:04.297Z",
+      "repository": "lobehub/lobe-ui",
+      "learningId": "learn-github-lobehub-lobe-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:22:07.237Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

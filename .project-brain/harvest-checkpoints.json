@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T20:15:50.621Z",
+  "last_updated": "2026-10-22T20:22:07.242Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "91d48bdbc5089091c2e503f8f43ae5ced54ccf0a9c58b0f25174a6280c0aaa95",
-      "verified_at": "2026-10-19T14:14:55.029Z",
+      "content_hash": "b66d80ac9edb518cad9d4eb234fa1014ee417e770b1f982df7dd8f7c926838cd",
+      "verified_at": "2026-10-22T20:22:07.241Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:14:55.029Z"
+      "last_updated": "2026-10-22T20:22:07.241Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -7971,14 +7971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lobehub-lobe-ui",
-      "content_hash": "e76898729a4f283f8dd66bcdb0a1692ba8aac50edde4cf2c277de9b39ee736a4",
-      "verified_at": "2026-10-19T14:21:01.254Z",
+      "content_hash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
+      "verified_at": "2026-10-22T20:22:04.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T14:21:01.254Z"
+      "last_updated": "2026-10-22T20:22:04.301Z"
     },
     "gitui-org/gitui": {
       "repository": "gitui-org/gitui",

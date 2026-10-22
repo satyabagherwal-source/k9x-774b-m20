@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `f5cf5a68`  
+> **Source Version**: `9bd4e612`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:14:54.754Z  
+> **Timestamp**: 2026-10-22T20:22:07.050Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:14:54.130Z  
+> **Harvest Timestamp**: 2026-10-22T20:22:07.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3507 stars
+- **Stars / Engagement**: 3570 stars
 
 ---
 
@@ -1342,11 +1342,11 @@ pub(crate) fn shutdown() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #683** (2026-10-21): **[Bug] powershell 7提示 PTY启动失败 拒绝访问 （os error 5）**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  windows 10 22H2  ### Pebrel version / 版本号  2.2.1  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码, Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1.管理员启动程序。 2.设置更改默认shell 为  Powershell7 3.新开标签或者重启程序。 4.直接出现报错，无法正确展示终端，无法使用  ### Expected behavior / 期望结果  能够正常进入shell页面  ### Actual behavior / 实际结果  出现报错 无法正常使用。  ### Logs / screenshots / 日志或截图  <img width="794" height="251" alt="Image" src="https://github.com/user-attachments/assets/74f65dd0-980a-4a72-b991-343d77b8d5c9" />  ### Non-default settings / 改过的设置  改回windows powershell 则可以正常使用  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+
 - **Issue #619** (2026-10-16): **[Bug]  文件路径快捷跳转包含尾随行号说明，导致已存在的文件被提示不存在**
   *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows11 25H2 125%  ### Pebrel version / 版本号  2.2.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  cmd  ### Program running in the pane / 面板里正在跑的程序  Pi  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  AI agent (Claude Code / Codex / Pi / OMP) — AI Agent 集成与状态  ### Did it work in a previous version? / 旧版本是否正常？  No, it never worked / 一直如此  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤   1. 启动 Pebrel，打开出现问题的终端面板。  2. 在终端输出或 AI 回复中显示一个实际存在的文件路径，路径后面附带行号说明，例如：D:\test\清单_录入工具用.md (121 行)  3. 将鼠标移到该路径上，使用 Pebrel 提示的快捷跳转操作。  4. 文件未能打开，界面提示文件不存在。  ### Expected behavior / 期望结果  跳转目标应是实际文件路径：D:\test\清单_录入工具用.md  后面的“(121 行)”属于说明文字，不应作为文件名的一部分。如果支持该形式的行号识别，可以将行号单独处理；如果不支持，也应能够正常打开文件。  ### Actual behavior / 实际结果  路径本身对应的文件存在，但快捷跳转似乎将路径后面的行号说明也包含进了目标，例如把“(121”纳入文件路径，最终提示文件不存在。  ### Logs / screenshots / 日志或截图  <img width="860" height="69" alt="Image" src="https://github.com/user-attachments/assets/c7bb2bba-85f9-4670-b574-217ed556cd34" />  <img width="554" height="68" alt="Image" src="https://github.com/user-attachments/assets/ba5fe000-0ef9-4fcf-b5c8-4df1362286dc" />  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest relea
-
-- **Issue #617** (2026-10-14): **[Bug] Claude Code 自动建议文本（Ghost Text）未正确显示为暗淡颜色**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 10 LTSC;  ### Pebrel version / 版本号  2.2.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Claude Code  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Other / 其他  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 在 Pebrel 中启动 Claude Code。 2. 输入内容，触发自动建议文本。 3. 观察自动建议文本与实际输入文本的颜色。  ### Expected behavior / 期望结果  Claude code 自动建议文本应显示为较暗的灰色，与实际输入文本明显区分。  ### Actual behavior / 实际结果  Claude code 自动建议文本与实际输入文本亮度几乎一致，无法明显区分。  ### Logs / screenshots / 日志或截图  <img width="830" height="324" alt="Image" src="https://github.com/user-attachments/assets/cc89384b-dd7e-4a00-bd8b-b30eb813156a" />  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1363,565 +1363,1062 @@ pub(crate) fn shutdown() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b49b5351` (2026-10-19)
-**Commit Message**: Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point
+### Incident Patch 1: `ce093cdc` (2026-10-22)
+**Commit Message**: fix(android): retain mobile zoom and wrapping between terminal visits
 
-Verified the stale grid bounds guard against the reported resize/hover crash. The guard adds constant-time bounds checks with no allocation; targeted display::hint tests pass, including the out-of-grid regression.
-
-**File**: `nebula_app/src/display/hint.rs` (modified, +10/-0)
+**File**: `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md` (added, +37/-0)
 ```diff
-@@ -941,6 +941,16 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn table_lookup_past_the_grid_edge_is_not_a_hit() {
-+        let term = mock_term("│ entry │ https://example.com/123456 │");
-+        let past_edge = Point::new(Line(0), Column(term.columns() + 2));
-+        assert!(
-+            highlighted_at(&term, &UiConfig::default(), past_edge, ModifiersState::CONTROL)
-+                .is_none()
-+        );
-+    }
-+
-     #[test]
-     fn search_limit_never_opens_a_truncated_softwrapped_url_prefix() {
-         use nebula_terminal::event::VoidListener;
-```
-
-**File**: `nebula_app/src/display/hint/table.rs` (modified, +5/-0)
-```diff
-@@ -79,6 +79,11 @@ fn continuation<T>(term: &Term<T>, line: Line, left: usize) -> bool {
- }
- 
- pub(super) fn at<T>(term: &Term<T>, point: Point) -> Option<TableLink> {
-+    // Like `hyperlink_at`: a hover point can lead the grid by a column/row during a resize.
-+    let grid = term.grid();
-+    if point.column.0 >= grid.columns() || point.line.0 >= grid.screen_lines() as i32 {
-+        return None;
-+    }
-     let left = (0..point.column.0)
-         .rfind(|&col| border(term.grid()[Point::new(point.line, Column(col))].c))?;
-     let right = (point.column.0 + 1..term.columns())
-```
-
----
-
-### Incident Patch 2: `f5cf5a68` (2026-10-19)
-**Commit Message**: Merge pull request #562 from zuiho-kai/macos-video-background
-
-feat(macos):Play video backgrounds on macOS through a native layer below GPUI
-
-**File**: `Cargo.lock` (modified, +16/-0)
-```diff
-@@ -5336,7 +5336,10 @@ dependencies = [
-  "notify-rust",
-  "objc2 0.6.3",
-  "objc2-app-kit 0.3.2",
-+ "objc2-av-foundation",
-+ "objc2-core-foundation",
-  "objc2-foundation 0.3.2",
-+ "objc2-quartz-core 0.3.2",
-  "parking_lot",
-  "pebrel-completions",
-  "pebrel-mobile-link",
-@@ -5841,6 +5844,19 @@ dependencies = [
-  "objc2-quartz-core 0.3.2",
- ]
- 
-+[[package]]
-+name = "objc2-av-foundation"
-+version = "0.3.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "478ae33fcac9df0a18db8302387c666b8ef08a3e2d62b510ca4fc278a384b6c0"
-+dependencies = [
-+ "bitflags 2.13.0",
-+ "objc2 0.6.3",
-+ "objc2-core-foundation",
-+ "objc2-foundation 0.3.2",
-+ "objc2-quartz-core 0.3.2",
-+]
-+
- [[package]]
- name = "objc2-cloud-kit"
- version = "0.2.2"
-```
-
-**File**: `architecture/notes/nebula_app/gpui_shell/wallpaper/2026-10-10-macos-native-video-underlay.md` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+# macOS video background as a native layer below GPUI
+@@ -0,0 +1,37 @@
++# Persist phone display choices
 +
 +## Status
-+
-+Implemented behind the existing `video-background` feature on macOS. Validated on
-+one Apple Silicon machine (macOS 27); no Intel or multi-display validation yet.
++Accepted for implementation.
 +
 +## Context
-+
-+On macOS the video kind was visible in settings but fell back to image mode: the
-+animated backend selected the unavailable implementation, the decoder worker had no
-+macOS reader, and playback visibility used Win32 handles. The Windows path paints
-+decoded BGRA frames through `paint_stream_image`, but the pinned GPUI revision's
-+Metal atlas implements only postprocess resources; the stream image methods use the
-+trait default and fail.
++Issue #669 reports zoom and phone-width wrapping resetting after leaving a pane.
 +
 +## Evidence
-+
-+- `gpui_macos` already places its own native blur view in the window content view,
-+  directly below the GPUI view. A sibling view is therefore a supported composition
-+  point that needs no GPUI change.
-+- In a standalone prototype, a 3840×2160 H.264 loop played through `AVPlayerLayer`
-+  with about 0.5–2% CPU in the owning process; decoding stays in the system media
-+  service. The integrated build was not separately profiled.
-+- `gpui_component::Root` fills the window with the shell color. A layer below GPUI
-+  was invisible at window opacity 1 until that fill was cleared; the title bar was
-+  the only region relying on it and showed the windows behind it once it was cleared.
++`TerminalSnapshotView` owned a transient zoom multiplier; `DesktopTerminalScreen`
++owned wrapping with `rememberSaveable(identity)`. Neither belonged to the stored
++display preferences. Native pinch feedback did not call the existing font setter.
 +
 +## Decision
-+
-+- Keep AVFoundation handles and platform selection in `platform/video_underlay`;
-+  wallpaper owns the monitor, source lifetime and surface/error presentation. The
-+  native adapter accepts geometry/visibility inputs and never reads wallpaper
-+  globals or starts its own timer. This keeps the platform cfg budget unchanged.
-+  One `AVQueuePlayer` and
-+  `AVPlayerLooper` per source; each window owns a clip view inserted directly below
-+  the GPUI view. All AppKit and AVFoundation calls stay on the main thread.
-+- Painting does not touch the GPUI scene. The wallpaper paint callback only updates
-+  the clip frame, card radius and video frame from the shared `wallpaper_rect`, so
-+  fit, alignment and cover-chrome keep their image semantics.
-+- Preserve the image composition `w·V + a·(1-w)·B` exactly: surfaces above the video
-+  use alpha `a·(1-w)` and the layer uses opacity `w / (1 - a·(1-w))`
-+  (`underlay_composition`). While the layer is shown, the window root fill is cleared
-+  and the title bar paints the shell color it previously inherited.
-+- A 500 ms monitor owned by the source plays only when a placement window is visible
-+  (occlusion state, not miniaturized), the opacity is non-zero and reduced motion is
-+  off. It also detects decoder failure and reports the existing typed media error.
-+- Source destruction explicitly pauses playback and removes placements. Decode or
-+  native placement failure restores the regular surfaces and ends monitoring.
-+- Explicit ANSI backgrounds, INVERSE and DIM retain their normal terminal semantics.
-+  Video visibility changes the default surface composition, not application cell
-+  colors; colored terminal regions can therefore cover the video.
++Persist `desktop_zoom` and `desktop_wrap_lines` alongside the existing terminal
++preferences. Keep zoom as the existing bounded 0.5–5 multiplier so this fix does
++not change base font size or resize the desktop terminal. Persist on gesture end
++or explicit zoom reset; ignore stale preference reapplication during a pinch.
 +
 +## Rejected alternatives
-+
-+- Implementing Metal stream images in the GPUI fork and an AVFoundation BGRA reader:
-+  two repositories, a pinned-revision bump and a per-frame CPU copy and upload for
-+  the same visible result. It remains the route if video must enter GPUI effects.
-+- `paint_surface(CVPixelBuffer)`: the Metal path asserts full-range NV12, applies a
-+  fixed BT.601 matrix and has no opacity, corner radius or placement semantics.
-+- A separate process or window ordered behind Pebrel: it cannot know the card bounds,
-+  sidebar state or window moves without polling another process.
-+- Clearing `theme.background` globally: other components read it as an opaque color.
++Changing the desktop PTY size alters the remote application. Saving only base
++font size loses the existing multiplier and can apply zoom twice on reentry.
 +
 +## Consequences
-+
-+- The Windows admission limits (720p, 32 MiB, H.264) do not apply on macOS; the
-+  system decoder accepts any format AVFoundation plays, including 4K and HEVC.
-+- Shader backgrounds and GIF remain unavailable on macOS, as before.
-+- The video cannot be read back by GPUI terminal effects, which only sample the scene.
++These reading preferences apply to subsequent desktop panes on this device.
++Existing installations default to scale 1 and wrapping off.
 +
 +## Validation
-+
-+- Unit test: `native_underlay_composites_exactly_like_a_wallpaper_painted_above_the_surface`.
-+- Manual (Apple Silicon, macOS 27): 4K H.264 plays muted and loops; hiding the
-+  application pauses and showing it resumes; the title bar and sidebar keep the shell
-+  color; the card shows the video with the configured fit at opacity 1 and 0.3.
-+- Not yet run: multiple windows, cover-chrome mode, display changes, Intel Macs.
++`DisplayPreferencesTest` performs a real native-view pinch gesture, reapplies
++stored preferences during feedback, recreates preferences and the view, and
++checks zoom/wrapping restoration plus invalid-scale normalization.
 +
 +## Supersedes
-+
-+None. Adds a macOS backend at the boundary from `2026-10-06-media-backend-boundaries.md`.
++None.
 +
 +## Revisit when
-+
-+The pinned GPUI revision gains Metal stream images, or video must feed terminal or
-+background effects that sample GPUI-rendered content.
++Per-host display overrides become an explicit product requirement.
 ```
 
-**File**: `nebula_app/Cargo.toml` (modified, +35/-1)
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/DisplayPreferences.kt` (modified, +8/-1)
 ```diff
-@@ -205,6 +205,27 @@ objc2-app-kit = { version = "0.3.1", default-features = false, features = [
-     "NSView",
-     "NSWindow",
- ] }
-+# 视频背景：系统 AVPlayer 解码到 GPUI 视图下方的原生图层，仅随 video-background 启用。
-+objc2-av-foundation = { version = "0.3.2", optional = true, default-features = false, features = [
-+    "std",
-+    "AVAnimation",
-+    "AVPlayer",
-+    "AVPlayerItem",
-+    "AVPlayerLayer",
-+    "AVPlayerLooper",
-+    "objc2-core-foundation",
-+    "objc2-quartz-core",
-+] }
-+objc2-quartz-core = { version = "0.3.2", optional = true, default-features = false, features = [
-+    "std",
-+    "CALayer",
-+    "CATransaction",
-+    "objc2-core-foundation",
-+] }
-+objc2-core-foundation = { version = "0.3.2", optional = true, default-features = false, features = [
-+    "std",
-+    "CFCGTypes",
-+] }
- 
- [target.'cfg(windows)'.dependencies]
- windows-core = "=0.61.2"
-@@ -319,7 +340,20 @@ gpui-shell = [
- ]
- # 真实 GPUI hitbox / 鼠标路由测试显式启用；不能放进 dev-dependencies，
- # 否则不带 gpui-shell 的默认 `cargo test -p nebula` 也会编译整棵 GPUI。
--video-background = ["gpui-shell", "dep:anyhow", "dep:raw-window-handle", "windows/Win32_Media_MediaFoundation"]
-+video-background = [
-+    "gpui-shell",
-+    "dep:anyhow",
-+    "dep:raw-window-handle",
-+    "windows/Win32_Media_MediaFoundation",
-+    "dep:objc2-av-foundation",
-+    "dep:objc2-quartz-core",
-+    "dep:objc2-core-foundation",
-+    "objc2-app-kit/NSGraphics",
-+    "objc2-app-kit/objc2-quartz-core",
-+    "objc2-foundation/NSGeometry",
-+    "objc2-foundation/NSURL",
-+    "objc2-foundation/NSArray",
-+]
- gif-background = ["video-background", "dep:gif"]
- shader-background = ["gif-background", "dep:naga", "gpui/wgsl-postprocess", "windows/Win32_Graphics_Direct3D_Fxc"]
- gpui-test-support = ["gpui-shell", "gpui/test-support", "gpui-component/test-support"]
-```
-
-**File**: `nebula_app/src/gpui_shell/theme.rs` (modified, +1/-1)
-```diff
-@@ -335,7 +335,7 @@ pub fn card_content_bg(cx: &App) -> Hsla {
-         .try_global::<crate::gpui_shell::config::Settings>()
-         .map(|s| s.palette.background.into())
-         .unwrap_or_else(|| cx.theme().background);
--    bg.a *= crate::gpui_shell::wallpaper::chrome_surface_opacity(cx);
-+    bg.a *= crate::gpui_shell::wallpaper::card_surface_opacity(cx);
-     bg
- }
- 
-```
-
-**File**: `nebula_app/src/gpui_shell/wallpaper.rs` (modified, +70/-0)
-```diff
-@@ -215,6 +215,37 @@ fn refresh_surface_opacity(cx: &mut App) {
-     {
-         crate::gpui_shell::theme::reapply_prepared_surface_opacity(cx);
+@@ -25,6 +25,8 @@ data class TerminalPreferences(
+     val suggestions: Boolean = true,
+     val directInput: Boolean = true,
+     val scrollbackLines: Int = 1000,
++    val desktopZoom: Float = 1f,
++    val desktopWrapLines: Boolean = false,
+ ) {
+     /** Preserve the persisted contract when callers pass a stale or unknown value. */
+     fun normalized(): TerminalPreferences = copy(
+@@ -35,6 +37,7 @@ data class TerminalPreferences(
+         },
+         fontSize = fontSize.coerceIn(TerminalPreferenceValues.MIN_FONT_SIZE, TerminalPreferenceValues.MAX_FONT_SIZE),
+         scrollbackLines = scrollbackLines.coerceIn(500, 5000),
++        desktopZoom = if (desktopZoom.isFinite()) desktopZoom.coerceIn(.5f, 5f) else 1f,
+         cursorStyle = when (cursorStyle) {
+             TerminalPreferenceValues.BAR_CURSOR -> TerminalPreferenceValues.BAR_CURSOR
+             TerminalPreferenceValues.UNDERLINE_CURSOR -> TerminalPreferenceValues.UNDERLINE_CURSOR
+@@ -73,6 +76,8 @@ class DisplayPreferences(context: Context) {
+             suggestions = stored.getBoolean("suggestions", true),
+             directInput = stored.getBoolean("direct_input", true),
+             scrollbackLines = stored.getInt("scrollback_lines", 1000),
++            desktopZoom = stored.getFloat("desktop_zoom", 1f),
++            desktopWrapLines = stored.getBoolean("desktop_wrap_lines", false),
+         ).normalized().let { it.copy(scrollbackLines = it.scrollbackLines.coerceAtMost(maxScrollbackLines)) },
+     )
+     val state = current.asStateFlow()
+@@ -94,7 +99,9 @@ class DisplayPreferences(context: Context) {
+             .putBoolean("pinch_zoom", current.value.pinchZoom)
+             .putBoolean("suggestions", current.value.suggestions)
+             .putBoolean("direct_input", current.value.directInput)
+-            .putInt("scrollback_lines", current.value.scrollbackLines).apply()
++            .putInt("scrollback_lines", current.value.scrollbackLines)
++            .putFloat("desktop_zoom", current.value.desktopZoom)
++            .putBoolean("desktop_wrap_lines", current.value.desktopWrapLines).apply()
      }
-+    sync_root_background(cx);
-+}
-+
-+/// Whether a native wallpaper layer is composited below the GPUI scene.
-+pub fn native_underlay_active(cx: &App) -> bool {
-+    animated::underlay_ready(cx)
-+}
-+
-+/// `gpui_component::Root` fills the whole window with the shell color. Content
-+/// painted above it is unaffected, but a native layer below GPUI would be hidden,
-+/// so the root fill is cleared while one is shown. Shell regions around the card
-+/// are painted separately and keep their color.
-+fn sync_root_background(cx: &mut App) {
-+    let underlay = animated::underlay_ready(cx);
-+    cx.defer(move |cx| {
-+        for handle in cx.windows() {
-+            if let Err(error) = handle.update(cx, |_, window, cx| {
-+                let Some(Some(root)) = window.root::<gpui_component::Root>() else { return };
-+                root.update(cx, |root, cx| {
-+                    let background = underlay.then(|| gpui::Fill::from(gpui::transparent_black()));
-+                    let style = gpui::Styled::style(root);
-+                    if style.background != background {
-+                        style.background = background;
-+                        cx.notify();
-+                    }
-+                });
-+            }) {
-+                log::warn!("failed to update window root background: {error}");
-+            }
-+        }
-+    });
- }
  
- fn retire_image(image: Option<Arc<RenderImage>>, cx: &mut App) {
-@@ -273,12 +304,51 @@ pub fn chrome_surface_opacity(cx: &App) -> f32 {
-     let Some(effects) = cx.try_global::<VisualEffects>() else {
-         return 1.0;
-     };
-+    let opacity = base_surface_opacity(effects, cx);
-+    if effects.layout.cover_chrome && animated::underlay_ready(cx) {
-+        return underlay_composition(opacity, effects.layout.opacity).0;
-+    }
-+    opacity
-+}
+     fun update(transform: (TerminalPreferences) -> TerminalPreferences) {
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/DesktopOutputSurface.kt` (modified, +5/-0)
+```diff
+@@ -54,6 +54,8 @@ internal fun DesktopOutputSurface(
+     pasteTarget: TerminalInputTarget? = inputTarget,
+     scrollTarget: TerminalInputTarget? = inputTarget,
+     onHistoryPage: ((Long?) -> Unit)? = null,
++    zoomScale: Float = 1f,
++    onZoomScale: (Float) -> Unit = {},
+ ) {
+     val legacyText = frame == null && text.isNotEmpty()
+     var lastKeyboardRequest by remember(identity) { mutableIntStateOf(keyboardRequest) }
+@@ -68,13 +70,16 @@ internal fun DesktopOutputSurface(
+                     view.pasteTarget = null
+                     view.scrollTarget = null
+                     view.onZoomChanged = null
++                    view.onZoomScaleChanged = null
+                     view.onHistoryPage = null
+                     if (inputView === view) inputView = null
+                 }, update = { view ->
+                 inputView = view
+                 val app = view.context.applicationContext as PebrelApplication
+                 view.setFont(app.terminalTypeface(app.sessions.display.state.value.fontFamily), fontSize)
+                 view.pinchZoom = pinchZoom
++                view.setZoomScale(zoomScale)
++                view.onZoomScaleChanged = onZoomScale
+                 view.wrapLines = wrapLines
+                 view.onZoomChanged = zoomFeedback::update
+                 view.frame = frame
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/TerminalScreen.kt` (modified, +3/-2)
+```diff
+@@ -110,7 +110,7 @@ fun DesktopTerminalScreen(desktop: DesktopWorkspace, pane: DesktopPane, reposito
+     var showPermission by remember(identity) { mutableStateOf(false) }
+     var showDetails by remember(identity) { mutableStateOf(false) }
+     // TUI 边框和光标属于桌面网格；手机重排只作为用户主动选择的阅读模式。
+-    var wrapLines by rememberSaveable(identity) { mutableStateOf(false) }
++    val wrapLines = prefs.desktopWrapLines
+     val enabled = desktop.allowInput && desktop.status == "ready"
+     LaunchedEffect(enabled) { if (enabled) showPermission = false }
+     val input = remember(identity, enabled, desktop.connectionGeneration) { repository.desktopInput(desktop.id, pane) }
+@@ -125,7 +125,7 @@ fun DesktopTerminalScreen(desktop: DesktopWorkspace, pane: DesktopPane, reposito
+     if (!focused) TerminalHeader(pane.displayTitle, desktop.host.name, desktop.status, onBack, onSessions,
+         onGit = onGit.takeIf { pane.sshDestination == null }, gitEnabled = desktop.status == "ready",
+         onDetails = { showDetails = true }, onConversation = onConversation.takeIf { pane.agent != null },
+-        wrapLines = wrapLines, onToggleWrap = { wrapLines = !wrapLines })
++        wrapLines = wrapLines, onToggleWrap = { repository.display.update { it.copy(desktopWrapLines = !it.desktopWrapLines) } })
+     Column(Modifier.fillMaxSize()) {
+         if (desktop.status != "ready") Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+             verticalAlignment = Alignment.CenterVertically) {
+@@ -146,6 +146,7 @@ fun DesktopTerminalScreen(desktop: DesktopWorkspace, pane: DesktopPane, reposito
+             Modifier.weight(1f).fillMaxWidth(), frame = if (output.target == identity) output.frame else null,
+             inputTarget = input.takeIf { enabled && direct }, keyboardRequest = keyboardRequest,
+             loading = output.loading, connected = desktop.status == "ready", wrapLines = wrapLines,
++            zoomScale = prefs.desktopZoom, onZoomScale = { scale -> repository.display.update { it.copy(desktopZoom = scale) } },
+             pasteTarget = input.takeIf { enabled }, scrollTarget = input.takeIf { enabled },
+             onHistoryPage = { start -> repository.requestDesktopHistory(desktop.id, pane, start) })
+         if (output.loading && output.text.isBlank()) LinearProgressIndicator(Modifier.fillMaxWidth())
+```
+
+**File**: `mobile/android/app/src/test/java/io/github/kuddev/pebrel/mobile/session/DisplayPreferencesTest.kt` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++package io.github.kuddev.pebrel.mobile.session
 +
-+/// Card surface alpha. Equal to [`chrome_surface_opacity`] unless a native
-+/// video sits below only the card.
-+pub fn card_surface_opacity(cx: &App) -> f32 {
-+    let Some(effects) = cx.try_global::<VisualEffects>() else {
-+        return 1.0;
-+    };
-+    if !effects.layout.cover_chrome && animated::underlay_ready(cx) {
-+        return underlay_composition(base_surface_opacity(effects, cx), effects.layout.opacity).0;
-+    }
-+    chrome_surface_opacity(cx)
-+}
++import android.app.Application
++import android.content.Context
++import android.graphics.Typeface
++import android.view.MotionEvent
++import androidx.test.core.app.ApplicationProvider
++import io.github.kuddev.pebrel.terminal.TerminalSnapshotView
++import org.junit.Assert.*
++import org.junit.Test
++import org.junit.runner.RunWith
++import org.robolectric.RobolectricTestRunner
++import org.robolectric.annotation.*
 +
-+fn base_surface_opacity(effects: &VisualEffects, cx: &App) -> f32 {
-     if effects.layout.cover_chrome && background_ready(effects, cx) {
-         return effects.opacity.clamp(0.0, 1.0).min(0.78);
++@RunWith(RobolectricTestRunner::class)
++@Config(sdk = [28], application = Application::class)
++@ConscryptMode(ConscryptMode.Mode.OFF)
++class DisplayPreferencesTest {
++    private val context get() = ApplicationProvider.getApplicationContext<Context>()
++
++    @Test fun nativePinchAndWrappingSurviveViewAndPreferencesRecreation() {
++        context.getSharedPreferences("terminal_display", Context.MODE_PRIVATE).edit().clear().commit()
++        val preferences = DisplayPreferences(context)
++        val view = TerminalSnapshotView(context).apply {
++            setFont(Typeface.MONOSPACE, 16)
++            layout(0, 0, 600, 800)
++            onZoomScaleChanged = { scale -> preferences.update { it.copy(desktopZoom = scale) } }
++            // A tooltip recomposition must not overwrite an unfinished pinch with the stored scale.
++            onZoomChanged = { _, _ -> setZoomScale(preferences.state.value.desktopZoom) }
++        }
++        var time = 10L
++        fun touch(action: Int, vararg points: Pair<Float, Float>) {
++            val properties = Array(points.size) { index -> MotionEvent.PointerProperties().apply { id = index; toolType = MotionEvent.TOOL_TYPE_FINGER } }
++            val coordinates = Array(points.size) { index -> MotionEvent.PointerCoords().apply { x = points[index].first; y = points[index].second; pressure = 1f; size = 1f } }
++            val event = MotionEvent.obtain(10L, time, action, points.size, properties, coordinates, 0, 0, 1f, 1f, 0, 0, android.view.InputDevice.SOURCE_TOUCHSCREEN, 0)
++            view.onTouchEvent(event); event.recycle(); time += 20
++        }
++        touch(MotionEvent.ACTION_DOWN, 20f to 100f)
++        touch(MotionEvent.ACTION_POINTER_DOWN or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), 20f to 100f, 120f to 100f)
++        touch(MotionEvent.ACTION_MOVE, 5f to 100f, 180f to 100f)
++        touch(MotionEvent.ACTION_MOVE, 0f to 100f, 230f to 100f)
++        touch(MotionEvent.ACTION_POINTER_UP or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), 0f to 100f, 230f to 100f)
++        touch(MotionEvent.ACTION_UP, 0f to 100f)
++        assertTrue(view.zoomScale > 1f)
++        preferences.update { it.copy(desktopWrapLines = true) }
++        val restored = DisplayPreferences(context).state.value
++        assertEquals(view.zoomScale, restored.desktopZoom, .001f)
++        assertTrue(restored.desktopWrapLines)
++        assertEquals(16, restored.fontSize)
++        val reopened = TerminalSnapshotView(context).apply { setZoomScale(restored.desktopZoom); wrapLines = restored.desktopWrapLines }
++        assertEquals(view.zoomScale, reopened.zoomScale, .001f)
++        assertTrue(reopened.wrapLines)
++    }
++
++    @Test fun invalidPersistedZoomIsNormalizedWithoutChangingOtherPreferences() {
++        assertEquals(1f, TerminalPreferences(desktopZoom = Float.NaN).normalized().desktopZoom)
++        assertEquals(5f, TerminalPreferences(desktopZoom = 99f).normalized().desktopZoom)
++        assertEquals(.5f, TerminalPreferences(desktopZoom = -3f).normalized().desktopZoom)
++    }
++}
+```
+
+**File**: `mobile/android/ghostty/src/main/java/io/github/kuddev/pebrel/terminal/TerminalSnapshotView.kt` (modified, +21/-1)
+```diff
+@@ -78,6 +78,9 @@ class TerminalSnapshotView(context: Context) : View(context) {
      }
-     effects.opacity.clamp(0.0, 1.0)
- }
+     private var fontPixels = 14f * resources.displayMetrics.scaledDensity
+     private var zoom = 1f
++    private var pinchInProgress = false
++    val zoomScale: Float get() = zoom
++    var onZoomScaleChanged: ((Float) -> Unit)? = null
+     private var offsetX = 0f
+     private var offsetY = 0f
+     private var cellWidth = 1f
+@@ -163,6 +166,17 @@ class TerminalSnapshotView(context: Context) : View(context) {
+         invalidate()
+     }
  
-+fn underlay_layer_opacity(cx: &App) -> f32 {
-+    let Some(effects) = cx.try_global::<VisualEffects>() else {
-+        return 1.0;
-+    };
-+    underlay_composition(base_surface_opacity(effects, cx), effects.layout.opacity).1
-+}
-+
-+/// A wallpaper painted above a surface of alpha `a` with opacity `w` shows
-+/// `w·V + a·(1-w)·B`. A layer *below* that surface matches it exactly when the
-+/// surface alpha becomes `a·(1-w)` and the layer opacity `w / (1 - a·(1-w))`.
-+/// Returns `(surface alpha, layer opacity)`.
-+fn underlay_composition(surface: f32, wallpaper: f32) -> (f32, f32) {
-+    let surface = surface.clamp(0.0, 1.0);
-+    let wallpaper = wallpaper.clamp(0.0, 1.0);
-+    let surface_alpha = surface * (1.0 - wallpaper);
-+    let layer = if surface_alpha >= 1.0 { 0.0 } else { wallpaper / (1.0 - surface_alpha) };
-+    (surface_alpha, layer.min(1.0))
-+}
-+
- /// 开窗参数用。GPUI 通用层在窗口创建时就会把这个值下发到平台层
- /// （`gpui::Window::new` → `platform_window.set_background_appearance`）。
- /// Mica / Mica Alt 因此从首帧就走平台原生 backdrop，不再先挂一层普通透明背景。
-```
-
-**File**: `nebula_app/src/gpui_shell/wallpaper/animated.rs` (modified, +2/-3)
-```diff
-@@ -1,9 +1,8 @@
--//! 动画后端的选择只发生在此处；共享壁纸入口不拥有平台专用字段。
-+//! Windows 流式纹理与原生下衬视图共享壁纸合同；系统 API 选择归平台层。
- #[cfg(all(windows, feature = "video-background"))]
- #[path = "animated/native.rs"]
- mod implementation;
- #[cfg(not(all(windows, feature = "video-background")))]
--#[path = "animated/unavailable.rs"]
-+#[path = "animated/av_player.rs"]
- mod implementation;
--
- pub(super) use implementation::*;
-```
-
-**File**: `nebula_app/src/gpui_shell/wallpaper/animated/av_player.rs` (added, +186/-0)
-```diff
-@@ -0,0 +1,186 @@
-+//! 原生下衬视频的 UI 生命周期；播放器与系统视图由 platform 持有。
-+//!
-+//! 不走 StreamImage：固定 GPUI 版本的 Metal 后端没有流式纹理，而 AVPlayerLayer
-+//! 由系统硬件解码并直接合成，无需逐帧 CPU 拷贝和上传。GPUI 窗口本身透明清屏，
-+//! 卡片底色按 [`super::super::underlay_composition`] 降低 alpha，使合成结果与
-+//! 图片背景的 `w·V + a·(1-w)·B` 一致。所有 AppKit/AVFoundation 调用都在主线程。
-+use super::super::{
-+    VisualEffects, WallpaperLayout, refresh_surface_opacity, show_media_error, show_shader_error,
-+    underlay_layer_opacity,
-+};
-+use crate::platform::video_underlay::{Layout, NativeVideo};
-+use gpui::{App, AsyncApp, Bounds, Pixels, Task, Window, point, px};
-+use std::{path::PathBuf, time::Duration};
-+
-+const MONITOR_INTERVAL: Duration = Duration::from_millis(500);
-+#[derive(Default)]
-+pub(in crate::gpui_shell::wallpaper) struct Animated {
-+    effect_config: nebula_settings::BackgroundEffects,
-+    source: Option<Source>,
-+}
-+struct Source {
-+    video: NativeVideo,
-+    enabled: bool,
-+    _monitor: Task<()>,
-+}
-+
-+pub(in crate::gpui_shell::wallpaper) fn configure(
-+    rt: &nebula_settings::RuntimeSettings,
-+    source_changed: bool,
-+    cx: &mut App,
-+) {
-+    let state = &mut cx.global_mut::<VisualEffects>().animated;
-+    let effects_changed = state.effect_config != rt.background_effects;
-+    state.effect_config = rt.background_effects.clone();
-+    if effects_changed && rt.background_effects.preset() != "off" {
-+        show_shader_error(cx);
++    fun setZoomScale(value: Float) {
++        val bounded = if (value.isFinite()) value.coerceIn(.5f, 5f) else 1f
++        if (pinchInProgress || zoom == bounded) return
++        zoom = bounded
++        stopScrolling()
++        metrics()
++        reproject()
++        constrainOffsets()
++        invalidate()
 +    }
-+    if rt.background_media_kind != nebula_settings::BackgroundMediaKind::Video {
-+        if cx.global_mut::<VisualEffects>().animated.source.take().is_some() {
-+            cx.defer(refresh_surface_opacity);
++
+     private fun metrics() {
+         paint.textSize = fontPixels
+         // Keep the chosen font readable. Pan across desktop columns instead of
+@@ -278,6 +292,7 @@ class TerminalSnapshotView(context: Context) : View(context) {
+     private val scaling = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+         override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+             if (!pinchZoom) return false
++            pinchInProgress = true
+             stopScrolling()
+             reportZoom(true)
+             return true
+@@ -296,7 +311,11 @@ class TerminalSnapshotView(context: Context) : View(context) {
+             reportZoom(true)
+             return true
+         }
+-        override fun onScaleEnd(detector: ScaleGestureDetector) { reportZoom(false) }
++        override fun onScaleEnd(detector: ScaleGestureDetector) {
++            pinchInProgress = false
++            onZoomScaleChanged?.invoke(zoom)
++            reportZoom(false)
 +        }
-+        if source_changed && rt.background_media_kind.is_animated() {
-+            show_media_error(rt.background_media_kind, cx);
-+        }
-+        return;
-+    }
-+    if source_changed {
-+        restart(cx);
-+    }
-+    let enabled = rt.background_image_opacity > 0.0;
-+    if let Some(source) = cx.global_mut::<VisualEffects>().animated.source.as_mut() {
-+        source.enabled = enabled;
-+    }
-+    tick(cx);
-+}
-+
-+fn restart(cx: &mut App) {
-+    let path = cx.global::<VisualEffects>().wallpaper.as_ref().map(|wp| wp.path.clone());
-+    let had_source = cx.global_mut::<VisualEffects>().animated.source.take().is_some();
-+    let source = path.and_then(|path| match open(path, cx) {
-+        Ok(source) => Some(source),
-+        Err(error) => {
-+            log::warn!("video background open failed: {error:#}");
-+            show_media_error(nebula_settings::BackgroundMediaKind::Video, cx);
-+            None
-+        },
-+    });
-+    cx.global_mut::<VisualEffects>().animated.source = source;
-+    if had_source {
-+        cx.defer(refresh_surface_opacity);
-+    }
-+}
-+
-+fn open(path: PathBuf, cx: &mut App) -> anyhow::Result<Source> {
-+    let video = NativeVideo::open(path)?;
-+    let monitor = cx.spawn(async move |cx: &mut AsyncApp| {
-+        loop {
-+            cx.background_executor().timer(MONITOR_INTERVAL).await;
-+            let finished = cx.update(|cx| {
-+                tick(cx);
-+                cx.try_global::<VisualEffects>()
-+                    .and_then(|effects| effects.animated.source.as_ref())
-+                    .is_none_or(|source| source.video.failed())
-+            });
-+            if finished {
-+                break;
-+            }
-+        }
-+    });
-+    Ok(Source { video, enabled: true, _monitor: monitor })
-+}
-+
-+fn tick(cx: &mut App) {
-+    let windows = cx.windows().iter().map(|handle| handle.window_id()).collect::<Vec<_>>();
-+    let reduce_motion = cx.reduce_motion();
-+    if !cx.has_global::<VisualEffects>() {
-+        return;
-+    }
-+    let Some(source) = cx.global_mut::<VisualEffects>().animated.source.as_mut() else { return };
-+    match source.video.tick(&windows, source.enabled, reduce_motion) {
-+        Ok(true) => {
-+            cx.defer(refresh_surface_opacity);
-+            cx.refresh_windows();
-+        },
-+        Ok(false) => {},
-+        Err(error) => {
-+            log::warn!("video background failed: {error:#}");
-+            source.video.fail();
-+            show_media_error(nebula_settings::BackgroundMediaKind::Video, cx);
-+            cx.defer(refresh_surface_opacity);
-+        },
-+    }
-+}
-+
-+pub(in crate::gpui_shell::wallpaper) fn source_failed(cx: &App) -> bool {
-+    cx.global::<VisualEffects>().animated.source.as_ref().is_some_and(|s| s.video.failed())
-+}
-+pub(in crate::gpui_shell::wallpaper) fn shader_ready(_: &App) -> bool {
-+    false
-+}
-+pub(in crate::gpui_shell::wallpaper) fn media_ready(cx: &App) -> bool {
-+    underlay_ready(cx)
-+}
-+pub(in crate::gpui_shell::wallpaper) fn underlay_ready(cx: &App) -> bool {
-+    cx.try_global::<VisualEffects>()
-+        .and_then(|e| e.animated.source.as_ref())
-+        .is_some_and(|s| s.enabled && s.video.ready())
-+}
-+pub(in crate::gpui_shell::wallpaper) fn video_available() -> bool {
-+    NativeVideo::available()
-+}
-+pub(in crate::gpui_shell::wallpaper) fn shader_available() -> bool {
-+    false
-+}
-+pub(in crate::
-```
-
-**File**: `nebula_app/src/gpui_shell/wallpaper/animated/native.rs` (modified, +4/-0)
-```diff
-@@ -287,6 +287,10 @@ pub(in crate::gpui_shell::wallpaper) fn media_ready(cx: &App) -> bool {
-         || effects.animated.retired_video.as_ref().is_some_and(|v| v.read(cx).has_front())
- }
+     })
  
-+/// Backends that paint into the GPUI scene never sit below translucent surfaces.
-+pub(in crate::gpui_shell::wallpaper) fn underlay_ready(_: &App) -> bool {
-+    false
-+}
- pub(in crate::gpui_shell::wallpaper) fn video_available() -> bool {
-     true
- }
+     private fun reportZoom(gesturing: Boolean) {
+@@ -510,6 +529,7 @@ class TerminalSnapshotView(context: Context) : View(context) {
+     private fun resetZoom() {
+         stopScrolling()
+         zoom = 1f
++        onZoomScaleChanged?.invoke(zoom)
+         metrics(); reproject()
+         offsetX = 0f; offsetY = 0f
+         followOutput = true
 ```
 
 ---
 
-### Incident Patch 3: `26c07474` (2026-10-18)
-**Commit Message**: fix(hints): skip table link lookup for a hover point past the grid edge
+### Incident Patch 2: `9bd4e612` (2026-10-22)
+**Commit Message**: Merge pull request #715 from Kuddev/fix/mobile-session-context-20261022
 
-Signed-off-by: Sai Asish Y <[REDACTED_EMAIL]>
+fix(android): recover terminal sessions and preserve remote context
 
-**File**: `nebula_app/src/display/hint.rs` (modified, +10/-0)
+**File**: `architecture/notes/mobile/android/app/connection/2026-10-22-manual-session-identity.md` (added, +67/-0)
 ```diff
-@@ -941,6 +941,16 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn table_lookup_past_the_grid_edge_is_not_a_hit() {
-+        let term = mock_term("│ entry │ https://example.com/123456 │");
-+        let past_edge = Point::new(Line(0), Column(term.columns() + 2));
-+        assert!(
-+            highlighted_at(&term, &UiConfig::default(), past_edge, ModifiersState::CONTROL)
-+                .is_none()
-+        );
-+    }
+@@ -0,0 +1,67 @@
++# Track remote multiplexer entered from an ordinary SSH shell
 +
-     #[test]
-     fn search_limit_never_opens_a_truncated_softwrapped_url_prefix() {
-         use nebula_terminal::event::VoidListener;
++## Status
++Accepted for implementation.
++
++## Context
++The explicit remote multiplexer attachment path can announce its PTY before attaching. A normal
++SSH shell must retain its own startup behavior, but the user may subsequently run
++remote multiplexer or a shell command that attaches it. Restricting history/recovery control to
++configured remote multiplexer sessions left that common path without a saved remote target.
++
++## Evidence
++An isolated OpenSSH server with two independent connections showed that an exec
++channel and its connection's PTY processes share the nearest per-login sshd
++ancestor. The other connection has a different ancestor and terminal device.
++
++The same probe exposed a separate prerequisite: without a locale in the exec
++channel, remote multiplexer 3.4 replaces tab separators and non-ASCII metadata. Unit fixtures
++containing tab-separated output had not exercised this producer behavior.
++
++## Decision
++After successful POSIX discovery, read a bounded process snapshot through the
++existing authenticated query channel. Associate its shell PID with the nearest
++known OpenSSH process, and accept only one distinct terminal device belonging to
++that ancestor. Cache that device for this connection. Unknown servers, missing
++parents, cycles, oversized output and multiple terminal devices yield no match.
++
++Reuse the existing remote multiplexer controller to match that device to a client, capture its
++session/window/pane identity, and route history commands. An intentional detach
++clears the automatic target and restores ordinary shell/application input. Query
++failures retain the last known target. Metadata listing explicitly requests remote multiplexer
++UTF-8 output with `-u`; the user's shell locale is unchanged.
++
++## Rejected alternatives
++Choosing the first or only named remote multiplexer session can attach another task. Inferring
++ownership from a title or a stale inherited `SSH_CONNECTION` value is insufficient.
++Replacing the login shell with a custom bootstrap changes startup and platform
++behavior. Injecting identity commands into the interactive PTY can execute them
++inside a running application instead of the shell.
++
++## Consequences
++Manual remote multiplexer works for an identifiable POSIX OpenSSH login and the default remote multiplexer
++server. Other SSH implementations, ambiguous connections and inaccessible process
++metadata retain normal terminal input; there is no guessed reattachment. The
++initial process query runs off the UI thread and is bounded by native query
++limits. Existing checkpoint timing still applies. An observed target is restored
++with the same non-creating attachment command as an explicitly selected session.
++
++## Validation
++`SshPtyIdentityTest` covers connection separation, ambiguity, ancestry cycles and
++known OpenSSH/Darwin naming. `TmuxSessionControlTest` covers manual attachment,
++history/input control, detach and fallback. `TmuxDiscoveryTest` runs an isolated
++real remote multiplexer server without a locale and checks separators plus Unicode names; it
++reports a skip on hosts without remote multiplexer instead of pretending to verify them.
++The compiled production controller and attachment commands also passed an
++isolated two-connection OpenSSH/remote multiplexer probe: manual attachment, cursor-preserving
++scroll, input restoration, window changes, detach, and reconnection to the saved
++window/pane while the other connection remained alive.
++Phone lifecycle and APK acceptance remain separate from JVM and server probes.
++
++## Supersedes
++Extends `2026-10-22-remote-history-ownership.md` to ordinary SSH shells; the existing
++startup marker remains authoritative for explicitly launched remote multiplexer attachments.
++
++## Revisit when
++Supporting a server with different process ownership, multiple PTYs per native
++SSH transport, custom remote multiplexer sockets, or server-assisted identity notifications.
 ```
 
-**File**: `nebula_app/src/display/hint/table.rs` (modified, +5/-0)
+**File**: `architecture/notes/mobile/android/app/connection/2026-10-22-remote-history-ownership.md` (added, +50/-0)
 ```diff
-@@ -79,6 +79,11 @@ fn continuation<T>(term: &Term<T>, line: Line, left: usize) -> bool {
- }
- 
- pub(super) fn at<T>(term: &Term<T>, point: Point) -> Option<TableLink> {
-+    // Like `hyperlink_at`: a hover point can lead the grid by a column/row during a resize.
-+    let grid = term.grid();
-+    if point.column.0 >= grid.columns() || point.line.0 >= grid.screen_lines() as i32 {
-+        return None;
+@@ -0,0 +1,50 @@
++# remote multiplexer history belongs to the attached client
++
++## Status
++Accepted for implementation.
++
++## Context
++Alternate-screen touch scrolling fell back to arrow-key sequences without mouse
++tracking. In remote multiplexer this can move shell input instead of reading history. Merely
++focusing the IME did not restore the live viewport or leave remote multiplexer copy mode.
++
++## Evidence
++`TerminalSession.wheel` delegated every alternate-screen gesture to the VT wheel
++encoder. `GhosttyView` only requested IME focus on a tap.
++
++## Decision
++For app-launched remote multiplexer attachments, capture the PTY from a nonce-scoped startup
++marker, remove only that marker from the byte stream, and resolve the specific
++remote multiplexer client by its tty. Do not guess from the first server session or display title.
++Track that client's session/window/pane for reconnection, including periodic
++checkpoints and a checkpoint when the activity backgrounds.
++
++Typed history commands run through the existing independent SSH query channel.
++Copy-mode scrolling, exit from copy mode and subsequent terminal input share
++one ordered IO queue. An input action discards older queued fling events. Tapping
++to open the keyboard restores input before IME composition begins. Hide the live
++input cursor while reading history. History errors reject input instead of closing
++the SSH transport or blindly sending escape/cancel characters to a process.
++
++## Rejected alternatives
++Arrow-key emulation changes program input. Sending Ctrl+B or q assumes user remote multiplexer
++bindings and can enter the shell. A global mouse setting changes other clients.
++Inferring a client from session titles can act on another active task.
++
++## Consequences
++Generic terminals retain VT wheel negotiation. The typed remote multiplexer controller applies
++to remote multiplexer connections created/selected by the app, not arbitrary nested remote multiplexer started
++inside an opaque shell. Checkpoints preserve the last observed target, not an
++atomic server-side record of every change made immediately before network loss.
++
++## Validation
++JVM tests cover byte-exact startup-marker filtering, client selection, copy-mode
++commands, current-window tracking, IME focus restoration and repository recovery.
++An isolated real remote multiplexer server confirmed client tty fields, pane targeting, scrolling,
++copy-mode cancellation and window tracking. Android device acceptance is separate.
++
++## Supersedes
++Extends the target preservation in `../session/2026-10-22-inline-ssh-recovery.md`.
++
++## Revisit when
++Adding a server-side session protocol or supporting opaque nested multiplexers.
+```
+
+**File**: `architecture/notes/mobile/android/app/session/2026-10-22-inline-ssh-recovery.md` (added, +56/-0)
+```diff
+@@ -0,0 +1,56 @@
++# SSH recovery belongs to the open tab
++
++## Status
++Accepted for implementation.
++
++## Context
++Retry previously closed the old terminal and navigated through the login form.
++Removing the selected ID caused navigation to fall back to the home page and
++lost the tab draft. Direct SSH had no network/resume recovery owner.
++
++## Evidence
++`MainActivity.connectHost` previously called `closeTerminal` before `ssh`.
++`SessionRepository` terminal callbacks updated entries by ID without checking
++which transport generation produced the callback.
++
++## Decision
++Keep the tab ID, draft and remote attachment when replacing a failed transport.
++Guard callbacks and borrowed SFTP access by connection/terminal instance.
++Retry only previously established connections on transient network errors,
++with one bounded-backoff job per tab. Keep the foreground session service alive
++while a tab is reconnecting; closing the tab cancels recovery.
++
++Reuse `HostCredentialStore` encryption for session-only ciphertext in memory.
++Unsaved passwords/passphrases are not persisted, and plaintext arrays are erased
++after authentication/encryption. Closing a tab discards its encrypted record.
++An actual authentication failure offers a credential prompt within the terminal.
++Host pin or authentication failures do not enter an automatic retry loop.
++
++Keep discovered remote multiplexer session, window and pane IDs rather than a mutable title.
++Reattachment validates the server/session identity. When discovery is unavailable,
++a configured remote multiplexer retry attaches by the original configured name without creating
++a replacement. Explicitly new sessions retain their normal startup behavior.
++
++## Rejected alternatives
++Reopening the host form loses navigation and requires a second action. Keeping
++plaintext passwords or silently persisting unsaved credentials is unnecessary.
++Reusing a tab ID without callback guards lets a late disconnect affect a new socket.
++
++## Consequences
++Activity/view detachment only pauses rendering. Retry continues while Android
++allows the foreground service to run and resumes after route changes. Process
++termination still destroys in-memory sessions; this is not process-death recovery.
++A plain SSH shell cannot restore a process killed by its server after disconnect.
++
++## Validation
++`SshRecoveryTest` drives real repository transitions with a shadow native terminal:
++identity/draft/attachment retention, stale callbacks, unrelated tab survival,
++background route recovery and close cancellation. `SshReconnectTest` covers
++backoff, error policy and non-creating remote multiplexer reattachment commands.
++Kotlin compilation and the focused JVM tests passed; device acceptance is separate.
++
++## Supersedes
++None. Desktop relay recovery retains its existing ownership.
++
++## Revisit when
++Implementing process-death restoration or a roaming transport protocol.
+```
+
+**File**: `architecture/notes/mobile/android/app/session/2026-10-22-ssh-resume-probe.md` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++# Detect stale SSH transports when Android resumes
++
++## Status
++Accepted for implementation.
++
++## Context
++Android can suspend a connection without changing the reported default network.
++An established terminal may still appear ready when the activity returns even
++though its TCP socket no longer works. Route-change recovery alone misses this.
++
++## Evidence
++`foregroundChanged` checked desktop relay liveness but did not check direct SSH.
++`SshConnection` reports a missing native handle as `CLOSED`; that code previously
++fell through to an unknown failure, outside the transient retry policy.
++
++## Decision
++On foreground entry, probe established ready SSH tabs over their authenticated
++query channel. A short `exit` command does not write to the interactive PTY.
++Await the blocking JNI operation from a separate coroutine with a five-second
++deadline. On timeout or a transient transport error, close the terminal transport
++and request recovery inside the existing tab. Native session cancellation shuts
++down the socket and releases waiting queries.
++
++Apply the result only while foregrounded and while the original connection and
++terminal still own a ready tab. A channel refusal or authentication/trust error
++does not restart an otherwise healthy terminal. Backgrounding or closing the tab
++cancels its pending probe; native queries also have an independent timeout.
++
++## Rejected alternatives
++Waiting only for a network-change callback misses stale sockets on the same route.
++Putting the probe text into the PTY could send a command to remote multiplexer or another running
++program. Running blocking JNI inside the deadline coroutine would delay timeout
++handling until the native operation returned.
++
++## Consequences
++Foreground entry adds one bounded query per established SSH tab. This detects
++transport loss, not Android process death. Recovery retains the existing remote multiplexer
++attachment policy and does not invent a target for an opaque shell.
++
++## Validation
++`SshRecoveryTest` covers recovery from a closed handle without replacing the tab
++identity, in addition to background route recovery and stale callback rejection.
++`SshStatusTest` covers the native error classification. The focused 35-test JVM
++suite and architecture checks passed. Native close/cancellation was inspected;
++phone sleep/resume and APK acceptance have not been run on this host.
++
++## Supersedes
++None. Extends the recovery ownership in `2026-10-22-inline-ssh-recovery.md`.
++
++## Revisit when
++The native SSH layer exposes a dedicated bounded liveness request or recovery
++needs to survive Android process termination.
+```
+
+**File**: `mobile/android/app/build.gradle.kts` (modified, +2/-2)
+```diff
+@@ -13,8 +13,8 @@ android {
+         applicationId = "io.github.kuddev.pebrel.mobile"
+         minSdk = 26
+         targetSdk = 35
+-        versionCode = 23
+-        versionName = "2.2.1-preview"
++        versionCode = 24
++        versionName = "2.3.0-preview"
+         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+     }
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/MainActivity.kt` (modified, +22/-14)
+```diff
+@@ -87,7 +87,6 @@ class MainActivity : ComponentActivity() {
+         var addRelay by remember { mutableStateOf(false) }
+         var deployRelay by remember { mutableStateOf(false) }
+         var login by remember { mutableStateOf<HostProfile?>(null) }
+-        var retrySession by remember { mutableStateOf<String?>(null) }
+         var pendingAttachment by remember { mutableStateOf<RemoteAttachment?>(null) }
+         var switcher by remember { mutableStateOf(false) }
+         val desktop = desktops.find { it.id == desktopId }
+@@ -139,10 +138,9 @@ class MainActivity : ComponentActivity() {
+         LaunchedEffect(desktopId, relays) {
+             if (page in setOf("pane", "desktop", "git", "file", "conversation")) repository.restoreDesktop(desktopId)?.let { desktopId = it }
+         }
+-        fun connectHost(host: HostProfile, previous: String? = null, attachment: RemoteAttachment? = null) {
++        fun connectHost(host: HostProfile, attachment: RemoteAttachment? = null) {
+             if (credentialBusy) return
+-            if (!repository.hasSavedPassword(host)) {
+-                retrySession = previous
++            if (!repository.hasSavedPassword(host) && host.keyUri.isEmpty()) {
+                 pendingAttachment = attachment
+                 login = host
+                 return
+@@ -151,13 +149,11 @@ class MainActivity : ComponentActivity() {
+             credentialScope.launch {
+                 var secret: CharArray? = null
+                 try {
+-                    secret = repository.loadSavedPassword(host)
++                    secret = repository.passwordForConnection(host, null)
+                     if (secret == null) {
+-                        retrySession = previous
+                         pendingAttachment = attachment
+                         login = host
+                     } else {
+-                        previous?.let(repository::closeTerminal)
+                         openSession(repository.ssh(host, checkNotNull(secret), attachment))
+                         secret = null
+                     }
+@@ -172,6 +168,14 @@ class MainActivity : ComponentActivity() {
+             finishOnboarding()
+             openSession(id)
+         }
++        fun newSshTab(source: String, attachment: RemoteAttachment? = null) {
++            if (credentialBusy) return
++            credentialBusy = true
++            credentialScope.launch {
++                try { repository.newSshTab(source, attachment)?.let(::openSession) }
++                finally { credentialBusy = false }
++            }
++        }
+         var notificationRequested by rememberSaveable { mutableStateOf(false) }
+         val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+         val hasLiveSessions = sessions.any { it.status == "ready" || it.status == "connecting" } ||
+@@ -248,17 +252,15 @@ class MainActivity : ComponentActivity() {
+                     "terminal" -> {
+                         val session = sessions.find { it.id == selected }
+                         if (session != null) LocalTerminalScreen(session, repository, ::back, { switcher = true },
+-                            onRetry = { session.host?.let { host ->
+-                                connectHost(hosts.find { it.id == host.id } ?: host, session.id, session.attachment)
+-                            } },
++                            onRetry = { repository.retrySsh(session.id) },
+                             onEdit = { session.host?.let { host ->
+                                 editHost = hosts.find { it.id == host.id } ?: host; hostForm = true
+                                 repository.closeTerminal(session.id); back()
+                             } },
+                             onClose = { repository.closeTerminal(session.id); back() },
+                             onFiles = session.files?.let { { showPage("sftp") } },
+                             active = page == route,
+-                            onAttachRemote = { entry -> session.host?.let { connectHost(it, attachment = entry) } })
++                            onAttachRemote = { entry -> newSshTab(session.id, entry) })
+                         else LaunchedEffect(selected) { showPage("home") }
+                     }
+                     "sftp" -> {
+@@ -337,6 +339,14 @@ class MainActivity : ComponentActivity() {
+         }
+         if (switcher) AlertDialog(onDismissRequest = { switcher = false }, title = { Text(stringResource(R.string.all_sessions)) }, text = {
+             Column(Modifier.verticalScroll(rememberScrollState())) {
++                val current = sessions.find { it.id == selected }
++                if (current?.host != null) NavigationRow(R.drawable.ic_plus,
++                    stringResource(R.string.tab_new_terminal), current.host.name) { newSshTab(current.id) }
++                NavigationRow(R.drawable.ic_server, stringResource(R.string.ssh_hosts),
++                    stringResource(R.string.ssh_new_tab_host_hint)) { switcher = 
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/connection/PtyIdentityInput.kt` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++package io.github.kuddev.pebrel.mobile.connection
++
++import java.io.InputStream
++import java.util.ArrayDeque
++
++/** Removes only our nonce-scoped startup marker. Banners and all later output stay byte-exact. */
++internal class PtyIdentityInput(source: InputStream, token: String, private val identified: (String) -> Unit) : InputStream() {
++    private val source = source.buffered(16 * 1024)
++    private val prefix = "\u001ePEBREL_TTY_$token=".toByteArray()
++    private val candidate = ArrayList<Int>()
++    private val output = ArrayDeque<Int>()
++    private var scanned = 0
++    private var done = false
++
++    override fun read(): Int {
++        while (output.isEmpty()) {
++            if (done) return source.read()
++            val byte = source.read()
++            if (byte < 0) {
++                output.addAll(candidate); candidate.clear(); done = true
++                if (output.isEmpty()) return -1
++                break
++            }
++            scanned++
++            if (candidate.size < prefix.size) {
++                if (byte == prefix[candidate.size].toInt()) candidate.add(byte)
++                else {
++                    output.addAll(candidate); candidate.clear()
++                    if (byte == prefix[0].toInt()) candidate.add(byte) else output.add(byte)
++                }
++            } else if (byte == 0x1f) {
++                val tty = candidate.drop(prefix.size).map(Int::toChar).joinToString("")
++                if (tty.matches(Regex("/dev/[A-Za-z0-9/_-]{1,128}"))) identified(tty)
++                else { output.addAll(candidate); output.add(byte) }
++                candidate.clear(); done = true
++            } else candidate.add(byte)
++            if (scanned >= 8192 || candidate.size > prefix.size + 256) {
++                output.addAll(candidate); candidate.clear(); done = true
++            }
++        }
++        return output.removeFirst()
 +    }
-     let left = (0..point.column.0)
-         .rfind(|&col| border(term.grid()[Point::new(point.line, Column(col))].c))?;
-     let right = (point.column.0 + 1..term.columns())
++
++    override fun read(bytes: ByteArray, offset: Int, length: Int): Int {
++        require(offset >= 0 && length >= 0 && offset <= bytes.size - length)
++        if (length == 0) return 0
++        if (done && output.isEmpty()) return source.read(bytes, offset, length)
++        val first = read()
++        if (first < 0) return -1
++        bytes[offset] = first.toByte()
++        var count = 1
++        while (count < length && (output.isNotEmpty() || source.available() > 0)) {
++            val next = read()
++            if (next < 0) break
++            bytes[offset + count++] = next.toByte()
++        }
++        return count
++    }
++    override fun close() = source.close()
++}
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/connection/RemoteSessions.kt` (modified, +24/-6)
+```diff
+@@ -3,7 +3,7 @@ package io.github.kuddev.pebrel.mobile.connection
+ import org.json.JSONArray
+ import org.json.JSONObject
+ 
+-data class RemoteWindow(val id: String, val label: String, val workspace: String = "", val state: String = "")
++data class RemoteWindow(val id: String, val label: String, val workspace: String = "", val state: String = "", val pane: String = "")
+ data class RemoteSession(
+     val kind: String, val id: String, val name: String, val identity: String = "",
+     val attached: Boolean = false, val windows: List<RemoteWindow> = emptyList(),
+@@ -18,14 +18,15 @@ data class RemoteAttachment(val session: RemoteSession, val window: RemoteWindow
+ object RemoteSessions {
+     private const val path = "PATH=\"${'$'}PATH:/opt/homebrew/bin:/usr/local/bin:${'$'}HOME/.local/bin:${'$'}HOME/.cargo/bin\"; export PATH; "
+     private fun posix(script: String) = "sh -c '${script.replace("'", "'\"'\"'")}'"
++    internal fun posixWithPath(script: String) = posix(path + script)
+     internal val discoveryCommand = posix(path + """
+         printf '\036os\n'; uname -s 2>/dev/null
+         printf '\036distro\n'; cat /etc/os-release 2>/dev/null
+         printf '\036tmux\n'
+         if command -v tmux >/dev/null 2>&1; then
+-          tmux list-sessions -F '#{session_id}\t#{session_name}\t#{session_attached}\t#{session_created}:#{pid}' 2>/dev/null
++          tmux -u list-sessions -F '#{session_id}\t#{session_name}\t#{session_attached}\t#{session_created}:#{pid}' 2>/dev/null
+           printf '\036windows\n'
+-          tmux list-windows -a -F '#{session_id}\t#{window_id}\t#{window_index}\t#{window_name}' 2>/dev/null
++          tmux -u list-windows -a -F '#{session_id}\t#{window_id}\t#{window_index}\t#{window_name}\t#{window_active}\t#{pane_id}' 2>/dev/null
+         fi
+         printf '\036herdr\n'
+         if command -v herdr >/dev/null 2>&1; then herdr session list --json 2>/dev/null; fi
+@@ -71,8 +72,10 @@ object RemoteSessions {
+             else desktopOsIcon(system)
+         val windows = data["windows"].orEmpty().lineSequence().mapNotNull { line ->
+             val fields = line.split('\t')
+-            if (fields.size != 4 || !fields[0].matches(Regex("\\$[0-9]+")) || !fields[1].matches(Regex("@[0-9]+")) || !valid(fields[3])) null
+-            else fields[0] to RemoteWindow(fields[1], "${fields[2]} · ${fields[3]}")
++            if (fields.size !in setOf(4, 6) || !fields[0].matches(Regex("\\$[0-9]+")) || !fields[1].matches(Regex("@[0-9]+")) || !valid(fields[3])) null
++            else fields[0] to RemoteWindow(fields[1], "${fields[2]} · ${fields[3]}",
++                state = if (fields.getOrNull(4) == "1") "active" else "",
++                pane = fields.getOrNull(5)?.takeIf { it.matches(Regex("%[0-9]+")) }.orEmpty())
+         }.take(256).toList().groupBy({ it.first }, { it.second })
+         val sessions = data["tmux"].orEmpty().lineSequence().mapNotNull { line ->
+             val fields = line.split('\t')
+@@ -95,6 +98,17 @@ object RemoteSessions {
+         return RemoteInventory(os, sessions.distinctBy { it.kind to it.id }, warnings)
+     }
+ 
++    internal fun configuredAttachment(host: HostProfile, inventory: RemoteInventory): RemoteAttachment? {
++        val kind = when (host.sessionMode) {
++            SshSessionMode.TMUX -> "tmux"
++            SshSessionMode.HERDR -> "herdr"
++            else -> return null
++        }
++        val name = if (host.sessionMode == SshSessionMode.TMUX) host.sessionName.ifEmpty { "pebrel" } else host.sessionName
++        val session = inventory.sessions.singleOrNull { it.kind == kind && it.name == name } ?: return null
++        return RemoteAttachment(session, session.windows.firstOrNull { it.state == "active" })
++    }
++
+     fun windows(connection: SshConnection, session: RemoteSession): List<RemoteWindow> {
+         if (session.kind != "herdr") return session.windows
+         val prefix = "herdr --session ${quote(session.id)} "
+@@ -145,7 +159,11 @@ object RemoteSessions {
+                 require(session.id.matches(Regex("\\$[0-9]+")) && session.identity.matches(Regex("[0-9]+:[0-9]+")))
+                 val selected = window?.let {
+                     require(it.id.matches(Regex("@[0-9]+")))
+-                    "tmux select-window -t ${quote("${session.id}:${it.id}")} && "
++                    val pane = it.pane.takeIf { pane -> pane.isNotEmpty() }?.let { pane ->
++                        require(pane.matches(Regex("%[0-9]+")))
++                        "tmux select-pane -t ${quote("${session.id}:${it.id}.$pane")} && "
++                    }.orEmpty()
++                    "tmux select-window -t ${quote("${session.id}:${it.id}")} && " + pane
+                 }.orEmpty()
+                 // 不按可重命名的标题匹配；服务器重启后不能误接到复用的 session ID。
+                 "[ \"${'$'}(tmux display-message -p -t ${quote(session.id)} '#{session_created}:#{pid}')\" = ${quote(session.identity)} ] && " +
+```
+
+---
+
+### Incident Patch 3: `f065dc1e` (2026-10-22)
+**Commit Message**: Merge pull request #713 from Kuddev/fix/mobile-input-preferences-20261022
+
+fix(android): persist terminal display and custom key preferences
+
+**File**: `architecture/notes/mobile/android/app/session/2026-10-22-custom-terminal-keys.md` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++# Custom terminal key definitions
++
++## Status
++Accepted for implementation.
++
++## Context
++The mobile toolbar had a fixed key list and separate label-to-key switches.
++An unknown label fell through to Down, so adding a modifier combination could
++silently send a different key.
++
++## Evidence
++`LocalTerminalScreen` and `DesktopTerminalScreen` each owned their own mapping.
++The native key boundary already carries a physical key, modifier mask, text and
++unshifted codepoint.
++
++## Decision
++`TerminalShortcut` owns parsing/canonicalization and the shared key payload.
++Persist at most 24 ordered definitions under `terminal_shortcuts/custom_v1`.
++Only keys supported by the native physical-key mapping are accepted. Reject
++unknown keys, duplicate modifiers and duplicate canonical combinations.
++Expose the editor in terminal toolbars and input settings. Conversation controls
++keep their separately supported server-side actions.
++
++## Rejected alternatives
++Raw escape strings or shell macros can execute commands and do not express
++physical modifier state. Separate UI switches recreate the original divergence.
++
++## Consequences
++Custom keys apply to local, SSH and mirrored desktop terminal input. The program
++and negotiated terminal keyboard protocol still determine the resulting behavior.
++Removing a line removes a custom key; default controls remain available.
++
++## Validation
++`TerminalShortcutTest` covers Ctrl+Shift payloads, function/navigation keys,
++modifier canonicalization and invalid input. `ShortcutEditorTest` exercises
++editing, validation, order, saving, recreation and deletion.
++
++## Supersedes
++None.
++
++## Revisit when
++The native input protocol adds physical keys outside the current mapping.
+```
+
+**File**: `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++# Persist phone display choices
++
++## Status
++Accepted for implementation.
++
++## Context
++Issue #669 reports zoom and phone-width wrapping resetting after leaving a pane.
++
++## Evidence
++`TerminalSnapshotView` owned a transient zoom multiplier; `DesktopTerminalScreen`
++owned wrapping with `rememberSaveable(identity)`. Neither belonged to the stored
++display preferences. Native pinch feedback did not call the existing font setter.
++
++## Decision
++Persist `desktop_zoom` and `desktop_wrap_lines` alongside the existing terminal
++preferences. Keep zoom as the existing bounded 0.5–5 multiplier so this fix does
++not change base font size or resize the desktop terminal. Persist on gesture end
++or explicit zoom reset; ignore stale preference reapplication during a pinch.
++
++## Rejected alternatives
++Changing the desktop PTY size alters the remote application. Saving only base
++font size loses the existing multiplier and can apply zoom twice on reentry.
++
++## Consequences
++These reading preferences apply to subsequent desktop panes on this device.
++Existing installations default to scale 1 and wrapping off.
++
++## Validation
++`DisplayPreferencesTest` performs a real native-view pinch gesture, reapplies
++stored preferences during feedback, recreates preferences and the view, and
++checks zoom/wrapping restoration plus invalid-scale normalization.
++
++## Supersedes
++None.
++
++## Revisit when
++Per-host display overrides become an explicit product requirement.
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/DisplayPreferences.kt` (modified, +8/-1)
+```diff
+@@ -25,6 +25,8 @@ data class TerminalPreferences(
+     val suggestions: Boolean = true,
+     val directInput: Boolean = true,
+     val scrollbackLines: Int = 1000,
++    val desktopZoom: Float = 1f,
++    val desktopWrapLines: Boolean = false,
+ ) {
+     /** Preserve the persisted contract when callers pass a stale or unknown value. */
+     fun normalized(): TerminalPreferences = copy(
+@@ -35,6 +37,7 @@ data class TerminalPreferences(
+         },
+         fontSize = fontSize.coerceIn(TerminalPreferenceValues.MIN_FONT_SIZE, TerminalPreferenceValues.MAX_FONT_SIZE),
+         scrollbackLines = scrollbackLines.coerceIn(500, 5000),
++        desktopZoom = if (desktopZoom.isFinite()) desktopZoom.coerceIn(.5f, 5f) else 1f,
+         cursorStyle = when (cursorStyle) {
+             TerminalPreferenceValues.BAR_CURSOR -> TerminalPreferenceValues.BAR_CURSOR
+             TerminalPreferenceValues.UNDERLINE_CURSOR -> TerminalPreferenceValues.UNDERLINE_CURSOR
+@@ -73,6 +76,8 @@ class DisplayPreferences(context: Context) {
+             suggestions = stored.getBoolean("suggestions", true),
+             directInput = stored.getBoolean("direct_input", true),
+             scrollbackLines = stored.getInt("scrollback_lines", 1000),
++            desktopZoom = stored.getFloat("desktop_zoom", 1f),
++            desktopWrapLines = stored.getBoolean("desktop_wrap_lines", false),
+         ).normalized().let { it.copy(scrollbackLines = it.scrollbackLines.coerceAtMost(maxScrollbackLines)) },
+     )
+     val state = current.asStateFlow()
+@@ -94,7 +99,9 @@ class DisplayPreferences(context: Context) {
+             .putBoolean("pinch_zoom", current.value.pinchZoom)
+             .putBoolean("suggestions", current.value.suggestions)
+             .putBoolean("direct_input", current.value.directInput)
+-            .putInt("scrollback_lines", current.value.scrollbackLines).apply()
++            .putInt("scrollback_lines", current.value.scrollbackLines)
++            .putFloat("desktop_zoom", current.value.desktopZoom)
++            .putBoolean("desktop_wrap_lines", current.value.desktopWrapLines).apply()
+     }
+ 
+     fun update(transform: (TerminalPreferences) -> TerminalPreferences) {
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/SessionRepository.kt` (modified, +1/-0)
+```diff
+@@ -44,6 +44,7 @@ data class DesktopOutput(val target: String = "", val text: String = "", val loa
+ class SessionRepository(private val context: Context,
+                         private val relayTransport: (RelayProfile) -> DesktopTransport = { RelayTransport(it) }) {
+     val display = DisplayPreferences(context)
++    val shortcuts = ShortcutPreferences(context)
+     private val main = Handler(Looper.getMainLooper())
+     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+     private val preferences = context.getSharedPreferences("pebrel_mobile", Context.MODE_PRIVATE)
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/ShortcutPreferences.kt` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++package io.github.kuddev.pebrel.mobile.session
++
++import android.content.Context
++import io.github.kuddev.pebrel.terminal.TerminalShortcut
++import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.flow.asStateFlow
++
++/** Ordered key definitions only; this format never stores shell commands or terminal input. */
++class ShortcutPreferences(context: Context) {
++    private val stored = context.getSharedPreferences("terminal_shortcuts", Context.MODE_PRIVATE)
++    private val current = MutableStateFlow(stored.getString("custom_v1", "").orEmpty().take(4096)
++        .lineSequence().mapNotNull(TerminalShortcut::parse).map { it.label }.distinct().take(MAX_KEYS).toList())
++    val state = current.asStateFlow()
++
++    fun save(lines: List<String>): Boolean {
++        if (lines.size > MAX_KEYS) return false
++        val parsed = lines.map { TerminalShortcut.parse(it)?.label ?: return false }
++        if (parsed.distinct().size != parsed.size) return false
++        current.value = parsed
++        stored.edit().putString("custom_v1", parsed.joinToString("\n")).apply()
++        return true
++    }
++
++    companion object { const val MAX_KEYS = 24 }
++}
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/CommandComposer.kt` (modified, +11/-1)
+```diff
+@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import io.github.kuddev.pebrel.mobile.R
+ import io.github.kuddev.pebrel.mobile.session.SessionRepository
++import io.github.kuddev.pebrel.terminal.TerminalShortcut
+ import io.github.kuddev.pebrel.mobile.voice.appendVoiceDraft
+ import kotlinx.coroutines.launch
+ 
+@@ -52,10 +53,13 @@ fun CommandComposer(
+     attachmentBusy: Boolean = false,
+     shortcutsEnabled: Boolean = enabled,
+     extraShortcuts: List<String> = emptyList(),
++    customKeys: Boolean = onDirect != null,
+     send: suspend (String) -> Boolean,
+ ) {
+     val drafts by repository.drafts.collectAsStateWithLifecycle()
+     val preferences by repository.display.state.collectAsStateWithLifecycle()
++    val customShortcuts by repository.shortcuts.state.collectAsStateWithLifecycle()
++    var editShortcuts by remember(id) { mutableStateOf(false) }
+     val historyBySession by repository.commandHistory.collectAsStateWithLifecycle()
+     val draft = drafts[id].orEmpty()
+     val history = historyBySession[id].orEmpty()
+@@ -135,14 +139,16 @@ fun CommandComposer(
+         }
+     }
+     val showHistory = historyItems.isNotEmpty() && draft.isNotBlank() && editorFocused && !historyDismissed && historyRoom >= 52.dp
+-    val shortcuts = (extraShortcuts + listOf("Ctrl+C", "Esc", "Tab", "Shift+Tab", "←", "→", "↑", "↓")).distinct()
++    val shortcuts = (extraShortcuts + (if (customKeys) customShortcuts else emptyList()) + TerminalShortcut.defaults).distinct()
++    if (editShortcuts) ShortcutEditor(repository.shortcuts) { editShortcuts = false }
+     // One mutually exclusive slot. Animating two independently visible surfaces
+     // left an empty toolbar under the editor and retained two input targets.
+     Column(Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 4.dp)
+         .animateContentSize(motion.contentSizeSpec())) {
+         if (direct) {
+             ComposerToolbar(
+                 onEdit = onDirect?.let { toggle -> { toggle(false) } },
++                onEditShortcuts = if (customKeys) ({ editShortcuts = true }) else null,
+                 keyboardVisible = keyboardVisible,
+                 keyboardEnabled = onKeyboard != null,
+                 enabled = enabled,
+@@ -222,6 +228,10 @@ fun CommandComposer(
+                                             onClick = { toolsOpen = false; attach() },
+                                         )
+                                     }
++                                    if (customKeys && onKey != null) DropdownMenuItem(
++                                        text = { Text(stringResource(R.string.custom_shortcuts)) },
++                                        onClick = { toolsOpen = false; editShortcuts = true },
++                                    )
+                                     if (onKey != null) DropdownMenuItem(
+                                         text = { Text(stringResource(if (keys) R.string.composer_hide_aux_keys else R.string.composer_aux_keys)) },
+                                         onClick = { toolsOpen = false; keys = !keys },
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/ComposerToolbar.kt` (modified, +4/-0)
+```diff
+@@ -118,6 +118,7 @@ internal fun ComposerToolbar(
+     enabled: Boolean,
+     shortcuts: List<String> = emptyList(),
+     onKey: ((String) -> Unit)? = null,
++    onEditShortcuts: (() -> Unit)? = null,
+ ) {
+     val colors = MaterialTheme.colorScheme
+     Row(
+@@ -141,6 +142,9 @@ internal fun ComposerToolbar(
+         }
+         Box(Modifier.padding(horizontal = 4.dp).width(1.dp).height(24.dp)
+             .background(colors.outlineVariant.copy(alpha = .45f)))
++        onEditShortcuts?.let { edit ->
++            ComposerIconButton(R.drawable.ic_command, stringResourceCompat(R.string.custom_shortcuts), onClick = edit)
++        }
+         onEdit?.let { edit ->
+             ComposerIconButton(
+                 icon = R.drawable.ic_edit,
+```
+
+**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/DesktopOutputSurface.kt` (modified, +5/-0)
+```diff
+@@ -54,6 +54,8 @@ internal fun DesktopOutputSurface(
+     pasteTarget: TerminalInputTarget? = inputTarget,
+     scrollTarget: TerminalInputTarget? = inputTarget,
+     onHistoryPage: ((Long?) -> Unit)? = null,
++    zoomScale: Float = 1f,
++    onZoomScale: (Float) -> Unit = {},
+ ) {
+     val legacyText = frame == null && text.isNotEmpty()
+     var lastKeyboardRequest by remember(identity) { mutableIntStateOf(keyboardRequest) }
+@@ -68,13 +70,16 @@ internal fun DesktopOutputSurface(
+                     view.pasteTarget = null
+                     view.scrollTarget = null
+                     view.onZoomChanged = null
++                    view.onZoomScaleChanged = null
+                     view.onHistoryPage = null
+                     if (inputView === view) inputView = null
+                 }, update = { view ->
+                 inputView = view
+                 val app = view.context.applicationContext as PebrelApplication
+                 view.setFont(app.terminalTypeface(app.sessions.display.state.value.fontFamily), fontSize)
+                 view.pinchZoom = pinchZoom
++                view.setZoomScale(zoomScale)
++                view.onZoomScaleChanged = onZoomScale
+                 view.wrapLines = wrapLines
+                 view.onZoomChanged = zoomFeedback::update
+                 view.frame = frame
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #682** (2026-10-19): fix(hints): skip table link lookup for a hover point past the grid edge (@SAY-5)
-- **PR #667** (2026-10-17): Release Pebrel 2.2.2 desktop updates (@Kuddev)
-- **PR #666** (closed): perf: bound Agent activity updates and stop hidden badge animation (@Kuddev)
-- **PR #663** (2026-10-16): fix: 修复本地文件链接包含尾随行数说明时无法打开的问题 (@galact-byte)
-- **PR #659** (2026-10-15): docs: finalize Pebrel 2.2.1 release checksums (@Kuddev)
-- **PR #658** (2026-10-16): fix(keymap): release macOS Control character defaults (@YinBuLiao)
+- **PR #715** (2026-10-22): fix(android): recover terminal sessions and preserve remote context (@Kuddev)
+- **PR #714** (2026-10-22): fix(naming): recognize remote session control interfaces (@Kuddev)
+- **PR #713** (2026-10-22): fix(android): persist terminal display and custom key preferences (@Kuddev)
+- **PR #712** (closed): fix(android): recover SSH tabs and preserve tmux context (@Kuddev)
+- **PR #711** (2026-10-22): fix(android): reuse authenticated SFTP for terminal attachments (@Kuddev)
+- **PR #694** (2026-10-21): Reduce activity spinner redraw work and restore tab scrolling (@Kuddev)
 
 ---
 
@@ -1941,30 +2438,50 @@ Signed-off-by: Sai Asish Y <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point
+## X. android): retain mobile zoom and wrapping between terminal visits
 
 **RULE**:
-When implementing operations in `nebula_app/src/display/hint.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b49b5351`: Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce093cdc`: android): retain mobile zoom and wrapping between terminal visits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nebula_app/src/display/hint.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[test]
-    fn table_lookup_past_the_grid_edge_is_not_a_hit() {
-        let term = mock_term("│ entry │ https://example.com/123456 │");
-        let past_edge = Point::new(Line(0), Column(term.columns() + 2));
-        assert!(
-            highlighted_at(&term, &UiConfig::default(), past_edge, ModifiersState::CONTROL)
-                .is_none()
-        );
-    }
+# Persist phone display choices
 
+## Status
+Accepted for implementation.
+
+## Context
+Issue #669 reports zoom and phone-width wrapping resetting after leaving a pane.
+
+## Evidence
+`TerminalSnapshotView` owned a transient zoom multiplier; `DesktopTerminalScreen`
+owned wrapping with `rememberSaveable(identity)`. Neither belonged to the stored
+display preferences. Native pinch feedback did not call the existing font setter.
+
+## Decision
+Persist `desktop_zoom` and `desktop_wrap_lines` alongside the existing terminal
+preferences. Keep zoom as the existing bounded 0.5–5 multiplier so this fix does
+not change base font size or resize the desktop terminal. Persist on gesture end
+or explicit zoom reset; ignore stale preference reapplication during a pinch.
+
+## Rejected alternatives
+Changing the desktop PTY size alters the remote application. Saving only base
+font size loses the existing multiplier and can apply zoom twice on reentry.
+
+## Consequences
+These reading preferences apply to subsequent desktop panes on this device.
+Existing installations default to scale 1 and wrapping off.
+
+## Validation
+`DisplayPreferencesTest` performs a real native-view pinch gesture, reapplies
+stored preference
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1974,4 +2491,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b49b5351` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce093cdc` are properly handled with clean fallback behavior.

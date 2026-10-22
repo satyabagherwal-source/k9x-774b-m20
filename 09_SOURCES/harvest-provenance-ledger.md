@@ -4420,3 +4420,5 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `288bc241` | Multi-dimensional audit evidence | 2026-10-22T19:42:17.354Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `d0a3170d` | Multi-dimensional audit evidence | 2026-10-22T19:42:26.552Z |
 | `learn-github-reshaped-ui-reshaped` | `https://github.com/reshaped-ui/reshaped` | `bf8a1e44` | Multi-dimensional audit evidence | 2026-10-22T20:15:50.608Z |
+| `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `a7bf63ed` | Multi-dimensional audit evidence | 2026-10-22T20:22:04.286Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `9bd4e612` | Multi-dimensional audit evidence | 2026-10-22T20:22:07.230Z |

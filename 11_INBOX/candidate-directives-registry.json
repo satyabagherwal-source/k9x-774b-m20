@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T19:22:41.316Z",
+  "last_updated": "2026-10-22T20:22:07.236Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2477,6 +2477,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-wzh4869-appports"
+    },
+    {
+      "id": "CD-LVNO",
+      "directive_title": "android): retain mobile zoom and wrapping between terminal visits",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "9bd4e612",
+      "date_staged": "2026-10-22",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
     }
   ]
 }

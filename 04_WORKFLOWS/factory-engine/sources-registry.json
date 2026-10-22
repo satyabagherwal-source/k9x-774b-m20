@@ -1916,8 +1916,8 @@
     "officialUrl": "https://github.com/influxdata/influxdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T01:04:44.271Z",
-    "lastVerified": "2026-10-21T01:04:44.271Z",
+    "lastChecked": "2026-10-22T20:22:14.023Z",
+    "lastVerified": "2026-10-22T20:22:14.023Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-influxdata-influxdb",
@@ -3191,12 +3191,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-22T16:58:16.586Z",
-    "lastVerified": "2026-10-22T16:58:16.586Z",
+    "lastChecked": "2026-10-22T20:22:11.523Z",
+    "lastVerified": "2026-10-22T20:22:11.523Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -3205,7 +3205,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "edbfb2c3"
   },
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
@@ -3657,22 +3658,21 @@
     "revisionIdentifier": "bc92d715"
   },
   "kuddev-pebrel": {
-    "name": "pebrel",
+    "name": "Kuddev/pebrel",
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T23:04:14.904Z",
-    "lastVerified": "2026-10-20T23:04:14.904Z",
+    "lastChecked": "2026-10-22T20:22:07.042Z",
+    "lastVerified": "2026-10-22T20:22:07.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "91d48bdbc5089091c2e503f8f43ae5ced54ccf0a9c58b0f25174a6280c0aaa95",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "b66d80ac9edb518cad9d4eb234fa1014ee417e770b1f982df7dd8f7c926838cd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f5cf5a68"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zeronsh-zeron": {
     "name": "zeron",
@@ -5980,8 +5980,8 @@
     "officialUrl": "https://github.com/taubyte/tau",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T01:55:48.342Z",
-    "lastVerified": "2026-10-21T01:55:48.342Z",
+    "lastChecked": "2026-10-22T20:22:08.943Z",
+    "lastVerified": "2026-10-22T20:22:08.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-taubyte-tau",
@@ -7879,22 +7879,21 @@
     "revisionIdentifier": "146d8664"
   },
   "lobehub-lobe-ui": {
-    "name": "lobe-ui",
+    "name": "lobehub/lobe-ui",
     "officialUrl": "https://github.com/lobehub/lobe-ui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-21T02:21:13.464Z",
-    "lastVerified": "2026-10-21T02:21:13.464Z",
+    "lastChecked": "2026-10-22T20:22:03.235Z",
+    "lastVerified": "2026-10-22T20:22:03.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lobehub-lobe-ui",
-    "contentHash": "e76898729a4f283f8dd66bcdb0a1692ba8aac50edde4cf2c277de9b39ee736a4",
+    "contentHash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4ffde053"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "bergside-typeui": {
     "name": "typeui",
@@ -18501,8 +18500,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-22T19:29:19.885Z",
-    "lastVerified": "2026-10-22T19:29:19.885Z",
+    "lastChecked": "2026-10-22T20:22:16.731Z",
+    "lastVerified": "2026-10-22T20:22:16.731Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -20842,12 +20841,12 @@
     "revisionIdentifier": "e7884cce"
   },
   "mikeroyal-apple-silicon-guide": {
-    "name": "mikeroyal/Apple-Silicon-Guide",
+    "name": "Apple-Silicon-Guide",
     "officialUrl": "https://github.com/mikeroyal/Apple-Silicon-Guide",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-20T01:52:35.319Z",
-    "lastVerified": "2026-10-20T01:52:35.319Z",
+    "lastChecked": "2026-10-22T20:22:06.453Z",
+    "lastVerified": "2026-10-22T20:22:06.453Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mikeroyal-apple-silicon-guide",
@@ -20856,7 +20855,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7e58c7d7"
   },
   "shpigford-chops": {
     "name": "Shpigford/chops",
@@ -26543,12 +26543,12 @@
     "revisionIdentifier": "07f0abed"
   },
   "sindresorhus-got": {
-    "name": "sindresorhus/got",
+    "name": "got",
     "officialUrl": "https://github.com/sindresorhus/got",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T23:53:44.850Z",
-    "lastVerified": "2026-10-19T23:53:44.850Z",
+    "lastChecked": "2026-10-22T20:22:03.931Z",
+    "lastVerified": "2026-10-22T20:22:03.931Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sindresorhus-got",
@@ -26557,7 +26557,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "05b44769"
   },
   "nodejs-undici": {
     "name": "nodejs/undici",
@@ -27430,8 +27431,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-22T20:15:53.156Z",
-    "lastVerified": "2026-10-22T20:15:53.156Z",
+    "lastChecked": "2026-10-22T20:22:16.748Z",
+    "lastVerified": "2026-10-22T20:22:16.748Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

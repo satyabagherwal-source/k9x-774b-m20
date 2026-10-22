@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md`  
 > **Source**: github ([https://github.com/lobehub/lobe-ui](https://github.com/lobehub/lobe-ui))  
-> **Source Version**: `4ffde053`  
+> **Source Version**: `a7bf63ed`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:21:01.085Z  
+> **Timestamp**: 2026-10-22T20:22:03.936Z  
 > **Learning ID**: `learn-github-lobehub-lobe-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lobehub/lobe-ui](https://github.com/lobehub/lobe-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:21:01.079Z  
+> **Harvest Timestamp**: 2026-10-22T20:22:03.235Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🍭  Lobe UI - an open-source UI component library for building AIGC web apps
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 2228 stars
+- **Stars / Engagement**: 2239 stars
 
 ---
 
@@ -1181,14 +1181,11 @@ export default function Footer(props: FooterProps) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #750** (2026-10-19): **✨ feat: stable BEM class names for CSS overrides**
-  *Symptoms*: #### 💻 变更类型 | Change Type  - [x] ✨ feat - [x] 📝 docs  #### 🔀 变更说明 | Description of Change  Adds stable, documented BEM class names to every public component, so downstream CSS can override component internals without targeting build-hashed StyleX classes or using `!important`.  - **Blocks** — each component root renders `lobe-<component>`; subpath components carry their namespace (`lobe-mdx-tabs`, `lobe-chat-chat-item`). - **Elements** — each stylable part renders `lobe-<block>__<element>`, matching the component's `classNames` slot key (or the DOM part name when they differ, e.g. `.lobe-popover__positioner`). Compound atoms and portal parts are covered. - **State and variants** — exposed as base-ui attributes (`[data-checked]`) or lobe-ui props/states (`data-variant`, `data-size`, `data-expanded`); portal parts repeat the root's attributes. - **Inline defaults** — component default values moved out of inline `style` where needed so single-class overrides win; explicit props stay inline. - **Docs** — new Styling Overrides guide plus a generated Class names table on each component page. - **Guardrails** — tests render every public component (including subpaths) and require the block class, element classes, and var defaults.  No restyling and no renames of existing `lobe-*` classes. Additive minor release. Downstream lobehub migration is a separate follow-up.  Spec: `docs/superpowers/specs/2026-10-19-bem-classnames-design.md`  #### 📝 补充信息 | Additional Information  - Verifie
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #Mtd4SX7HVgf6pEis3Ue0nbHRxxQ8dBbqF3dDdk4IDSo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJsb2JlLXVpIiwicHJvamVjdElkIjoicHJqX0NNemVSVjBESElCc3A0UXhUMjBJeWd4TDVWZkEiLCJ2MCI6ZmFsc2UsImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9sb2JlLWh1Yi1vc3MvbG9iZS11aS83ZmtwNzNjdkV0d25HTjRvSlZLZTJVSEJrZFpmIiwicHJldmlld1VybCI6ImxvYmUtdWktZ2l0LWZlYXQtYmVtLWNsYXNzbmFtZXMtbG9iZS1odWItb3NzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoibG9iZS11aS1naXQtZmVhdC1iZW0tY2xhc3NuYW1lcy1sb2JlLWh1Yi1vc3MudmVyY2VsLmFwcCJ9LCJyb290RGlyZWN0b3J5IjpudWxsfV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPWxvYmVodWImcmVwbz1sb2JlLXVpJnByPTc1MCJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"dfcfedca30a718de9e5891549e0f2ab06fe6e561","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-19T05:32:04.252853Z">2026-10-19T05:32:04.252853Z</relative-time> | `dfcfedc` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex re
+- **Issue #757** (2026-10-22): **✨ feat(highlighter): replace shiki with @pierre/highlights**
+  *Symptoms*: ## Summary  Replaces shiki with [`@pierre/highlights`](https://diffs.com/highlights) (WebAssembly lexers, Shiki-compatible tokens) for `Highlighter`, `SyntaxHighlighter` and Markdown code blocks.  - **Static**: `codeToTokens` → HTML with the same `pre.shiki > code > span.line` markup, so existing styles keep working. - **Streaming**: `LiveTokenizer` with append-at-end edits; unchanged lines keep their token arrays, so memoized lines skip re-rendering. Token fade-in is unchanged. - **lobe-theme**: rewritten as a Zed palette theme whose colors are `--lobe-*` variables (`src/Highlighter/theme/lobe-highlights-theme.ts`). The TextMate `lobe-theme.ts` stays for `CodeDiff` (`@pierre/diffs`). - **Themes**: all former shiki bundled theme ids are still accepted (plus the pierre themes); each is lazy-loaded on first use. `theme` type is now `'lobe-theme' | BundledHighlighterTheme`. - **Deps**: removed `shiki`, `@shikijs/core`, `@shikijs/stream`, `@shikijs/transformers`; added `@pierre/highlights@^0.2.0` (release-age exclude added). `@pierre/diffs` still pulls shiki transitively for `CodeDiff`.  ## Behavior changes  - **Languages**: 80 built-in languages (shiki had ~230). Unsupported languages render as plaintext. - **Transformers**: `enableTransformer` is `@deprecated` and has no effect (`// [!code ++]` etc. are no longer processed). The Markdown transformer demo and its docs section are removed.  ## Fixes along the way  - `SyntaxHighlighter` now re-renders when `theme` / `variant` / `a
 
-- **Issue #749** (2026-10-18): **🐛 fix: drop leftover ant- class names and the antd eslint bans**
-  *Symptoms*: ## Summary - Highlighter / Mermaid stop emitting `ant-highlighter-*` and `ant-mermaid-mermaid`; the `lobe-highlighter-*` / `lobe-mermaid` classes remain. Internal `prefix` export from `Highlighter/style` removed. - `@lobehub/ui/eslint` `restrictedImports` no longer bans `antd`, `antd/*`, `rc-*`, `@rc-component/*`, `antd-style` or `@ant-design/*`; only the `thinking-orbs` ban is left. - DatePicker / Table demos use `--lobe-color-*` instead of `--ant-color-*`.  ## Downstream impact Scanned lobehub canary, lobehub-cloud main and every local `@lobehub/ui` consumer: no references to the removed class names.  ## Test plan - [x] `vitest run src/eslint src/Highlighter src/Mermaid src/DatePicker src/Table` (586 passed) - [x] eslint + prettier on changed files
+- **Issue #756** (2026-10-21): **🔧 chore(docs-kit): consume @lobehub/docs-kit from npm**
+  *Symptoms*: ## Summary  `@lobehub/docs-kit` now lives in its own repo, [lobehub/docs-kit](https://github.com/lobehub/docs-kit) (history and `vX` tags carried over, releases continue from 6.2.1). lobe-ui consumes it from npm.  - `@lobehub/docs-kit`: `workspace:*` → `^6.2.1` - Removed `packages/docs-kit`, `tests/fixtures/site`, `release-docs-kit.yml` (release chain is now `release` → `codemod`) and `tsconfig.site.json` (`type-check` is plain `tsc`) - lobe-ui content contracts that lived in the kit's suite moved to `tests/docs/`: component API runtime defaults, documentation inventory counts, frozen demo aliases from `compatibility.json`, the Button guide migration and live-transform of repository demos. They deep-import the kit (`@lobehub/docs-kit/site/...`), so vitest inlines it - `docs.config.ts` and `scripts/` import from the package; eslint, vitest, vercel `ignoreCommand`, AGENTS.md and the `using-docs-kit` skill no longer reference `packages/docs-kit` - `minimumReleaseAgeExclude` gains `@lobehub/docs-kit@6.2.1` (published today)  ## Verification  - `pnpm run docs:build` with the npm package: passes; Button page renders styled with demos - `tsc --noEmit`: passes - `vitest run tests scripts`: 134 files / 1840 tests pass - eslint + prettier on changed files: clean  ## Notes  Run `pnpm install` after pulling. A `lobedocs dev` started before this change keeps a lease on the generated `react-router.config.mjs` pointing at the removed path; stop it first. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1205,710 +1202,207 @@ export default function Footer(props: FooterProps) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df73069d` (2026-10-19)
-**Commit Message**: ✨ feat: stable BEM class names for CSS overrides (#750)
+### Incident Patch 1: `56ff04cd` (2026-10-21)
+**Commit Message**: 🐛 fix(docs-kit): inherit primary text color in docs content
 
-* 📝 docs: stable BEM class names spec and plan
+Release the docs-kit fix that landed in db9d5e97. That commit used a
+`docs:` header without the docs-kit scope, so the docs-kit release
+stream (scope-filtered semantic-release) skipped it.
 
-* ✨ feat(utils): add stableClasses manifest and toDataAttributes
+.docs-content now uses --docs-text-primary, so custom MDX components
+painting with currentColor match the page text (#f4f4f5 dark instead
+of #b4b4bc). Body prose (p, li, blockquote, dl, figcaption, details,
+h4-h6) keeps --docs-text-secondary, so regular docs look unchanged.
 
-* ✅ test: guard stable class names on public components
 
-* 📝 docs: add styling overrides guide and class name table
-
-* ✨ feat: stable class names for DraggablePanel, Switch and Popover
-
-* ✅ test: verify stable class overrides beat StyleX layers
-
-* ✨ feat: stable class names for buttons and text inputs
-
-* ✨ feat: stable class names for choice controls and pickers
-
-* ✨ feat: stable class names for display and layout
-
-* ✨ feat: stable class names for overlays
-
-* ✨ feat: stable class names for content and data
-
-* ✨ feat: stable class names for subpaths
-
-* ✅ test: require stable class names on every public component
-
-* 🐛 fix: declare var defaults on blocks, name grouped popover triggers
-
-**File**: `docs.config.ts` (modified, +2/-1)
-```diff
-@@ -24,7 +24,7 @@ export default defineDocsConfig({
-   },
-   homePage: './docs/home/home.tsx',
-   legacyRedirects,
--  publicDocs: ['docs/design-tokens.mdx', 'docs/migration-v6.mdx'],
-+  publicDocs: ['docs/design-tokens.mdx', 'docs/migration-v6.mdx', 'docs/styling-overrides.mdx'],
-   siteUrl: 'https://ui.lobehub.com',
-   stylex: './config/stylex.ts',
-   themeConfig: {
-@@ -54,6 +54,7 @@ export default defineDocsConfig({
-     navItems: [
-       { href: '/design-tokens', icon: 'swatch-book', label: 'Design Tokens' },
-       { href: '/migration-v6', icon: 'milestone', label: 'Migrating to v6' },
-+      { href: '/styling-overrides', icon: 'paintbrush', label: 'Styling Overrides' },
-     ],
-     prefersColor: 'auto',
-     socialLinks: [
-```
-
-**File**: `docs/stable-classes/StableClassTable.tsx` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+import type { AnyStableClasses } from '@/utils/bem';
-+
-+export function StableClassTable({ of }: { of: AnyStableClasses }) {
-+  return (
-+    <>
-+      <table>
-+        <thead>
-+          <tr>
-+            <th>Class</th>
-+            <th>Part</th>
-+          </tr>
-+        </thead>
-+        <tbody>
-+          <tr>
-+            <td>
-+              <code>.{of.block}</code>
-+            </td>
-+            <td>block</td>
-+          </tr>
-+          {of.elements.map((element) => (
-+            <tr key={element}>
-+              <td>
-+                <code>.{of(element)}</code>
-+              </td>
-+              <td>{element}</td>
-+            </tr>
-+          ))}
-+        </tbody>
-+      </table>
-+      {of.dataAttributes.length > 0 && (
-+        <p>
-+          Attributes on the block:{' '}
-+          {of.dataAttributes.map((name, index) => (
-+            <span key={name}>
-+              {index > 0 && ', '}
-+              <code>data-{name}</code>
-+            </span>
-+          ))}
-+          .
-+        </p>
-+      )}
-+    </>
-+  );
-+}
-```
-
-**File**: `docs/styling-overrides.mdx` (added, +114/-0)
-```diff
-@@ -0,0 +1,114 @@
-+---
-+title: Styling Overrides
-+description: Stable class names and data attributes for overriding Lobe UI component styles with plain CSS.
-+order: 3
-+---
-+
-+import { aClasses } from '../src/A/stable';
-+import { autoCompleteClasses } from '../src/AutoComplete/stable';
-+import { checkboxClasses, checkboxGroupClasses } from '../src/Checkbox/stable';
-+import { formClasses } from '../src/Form/stable';
-+import {
-+  inputClasses,
-+  inputNumberClasses,
-+  inputOTPClasses,
-+  inputPasswordClasses,
-+  textAreaClasses,
-+} from '../src/Input/stable';
-+import { StableClassTable } from './stable-classes/StableClassTable';
-+import { OverrideDemo } from './styling-overrides/OverrideDemo';
-+
-+Component styles are compiled by StyleX into hashed class names that change between releases. To override a component from your own CSS, target its stable class names instead. They follow BEM and are public API: a rename is a breaking change.
-+
-+## Class names
-+
-+Every component renders a block class on its root and an element class on each part you can style.
-+
-+| Selector                    | Matches                    |
-+| --------------------------- | -------------------------- |
-+| `.lobe-switch`              | the Switch root (block)    |
-+| `.lobe-switch__thumb`       | the Switch thumb (element) |
-+| `.lobe-popover`             | the visible Popover box    |
-+| `.lobe-popover__positioner` | the Popover positioner     |
-+
-+- Element names match the component's `classNames` slot keys. When a slot lands on a differently named part, the part name wins: Popover `classNames.root` is on `.lobe-popover__positioner`.
-+- Components from a subpath carry the subpath in the block: `@lobehub/ui/mdx` Tabs is `.lobe-mdx-tabs`.
-+- Overlays (Popover, Tooltip, Modal, Drawer, menus, toasts) put the block class on the visible popup box.
-+- Each component page lists its classes under **Class names**.
-+
-+## State and variants
-+
-+There are no modifier classes. State and variants are data attributes:
-+
-+- State from the underlying primitive: `.lobe-switch[data-checked]`, `.lobe-select__option[data-highlighted]`.
-+- Lobe UI's own props: `.lobe-button[data-variant="filled"]`, `.lobe-highlighter[data-expanded]`. Enum props render their value, boolean props render the attribute only when true.
-+- Parts rendered in a portal repeat the root's attributes, so `.lobe-select__popup[data-variant="borderless"]` works without a descendant selector.
-+
-+## Cascade
-+
-+Lobe UI ships its styles inside `@layer lobe-base, lobe-popup, lobe-ui`. CSS outside any layer always wins over layered CSS, so a single class is enough:
-+
-+```css
-+.lobe-switch__thumb {
-+  background: rebeccapurple;
-+}
-+```
-+
-+- Put overrides outside any `@layer`, or in a layer declared after `lobe-ui`. A layer declared before it loses.
-+- Values you pass through props (for example `height` on Skeleton) render inline and win over global CSS. Component defaults do not, so you can restyle them.
-+
-+## Stability
-+
-+- Class names listed on a component page do not change in minor or patch releases.
-+- Older `lobe-*` classes that predate this scheme (`lobe-select-arrow`, `lobe-chat-item-bubble`, …) keep working.
-+- Do not target generated class names; they change on every build.
-+
-+## Components without a page
-+
-+These components have no page on this site yet, so their class names are listed here.
-+
-+### A
-+
-+<StableClassTable of={aClasses} />
-+
-+### AutoComplete
-+
-+<StableClassTable of={autoCompleteClasses} />
-+
-+### Checkbox
-+
-+<StableClassTable of={checkboxClasses} />
-+
-+### CheckboxGroup
-+
-+<StableClassTable of={checkboxGroupClasses} />
-+
-+### Form
-+
-+<StableClassTable of={formClasses} />
-+
-+### Input
-+
-+<StableClassTable of={inputClasses} />
-+
-+### InputNumber
-+
-+<StableClassTable of={inputNumberClasses} />
-+
-+### InputOTP
-+
-+<StableClassTable of={inputOTPClasses} />
-+
-+### InputPassword
-+
-+<StableClassTable of={inputPasswordClasses} />
-+
-+### TextArea
-+
-+<StableClassTable of={textAreaClasses} />
-+
-+## Example
-+
-+The demo below loads plain CSS that recolors the Switch thumb, squares the Popover corners and paints the DraggablePanel content.
-+
-+<OverrideDemo />
-```
-
-**File**: `docs/styling-overrides/OverrideDemo.tsx` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+import { DraggablePanel, Flexbox, Popover, Switch } from '@lobehub/ui';
-+
-+const overrides = `
-+.lobe-switch__thumb { background: rgb(255, 0, 0); }
-+.lobe-popover { border-radius: 3px; }
-+.lobe-draggable-panel__content { background: rgb(0, 0, 255); }
-+`;
-+
-+export function OverrideDemo() {
-+  return (
-+    <Flexbox horizontal gap={24}>
-+      <style>{overrides}</style>
-+      <div id="override-switch">
-+        <Switch defaultChecked />
-+      </div>
-+      <Popover open content="Overridden radius">
-+        <span id="override-popover">Popover trigger</span>
-+      </Popover>
-+      <div id="override-panel" style={{ display: 'flex', height: 120, position: 'relative' }}>
-+        <DraggablePanel placement="left">
-+          <Flexbox padding={12}>Panel</Flexbox>
-+        </DraggablePanel>
-+      </div>
-+    </Flexbox>
-+  );
-+}
-```
-
-**File**: `docs/superpowers/plans/2026-10-19-bem-classnames.md` (added, +264/-0)
-```diff
-@@ -0,0 +1,264 @@
-+# Stable BEM Class Names Implementation Plan
-+
-+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-+
-+**Goal:** Every public lobe-ui component renders stable `lobe-<block>` / `lobe-<block>__<element>` classes plus lobe-ui-owned `data-*` attributes, documented per component and enforced by a test.
-+
-+**Architecture:** Each component gets a `stable.ts` manifest built with a typed `stableClasses()` helper on top of the existing `bem()` (`src/utils/bem.ts`). The component reads class names and data attributes from that manifest; the docs page renders the same manifest; one guard test renders a fixture per component and checks the DOM against the manifest. Rollout goes in batches, each removing its components from a `PENDING` list until it is empty.
-+
-+**Tech Stack:** React 19, StyleX, `@base-ui/react`, vitest + jsdom + `@testing-library/react`, `@playwright/test` (browser script), docs-kit MDX.
-+
-+**Spec:** `docs/superpowers/specs/2026-10-19-bem-classnames-design.md`
-+
-+## Global Constraints
-+
-+- Block: `lobe-<kebab(ExportName)>`; subpath components prefix their namespace: `lobe-mdx-tabs`, `lobe-chat-chat-item`; `@lobehub/ui/form` uses namespace `form`; `./pro-table` → `lobe-pro-table`.
-+- Element: `lobe-<block>__<element>`; element = `classNames` slot key in kebab-case, except when the slot lands on a differently named DOM part, then the DOM part name wins (`lobe-popover__positioner`, `__viewport`, `__popup`). Nested slot paths join with `-` (`lobe-table__header-cell`). Elements are flat, never `__a__b`.
-+- Aliased slots on one node produce one class named after the part (Select `dropdown`/`popup` → `lobe-select__popup`; `item`/`option` → `lobe-select__option`).
-+- Overlays (Popover, Tooltip, Modal, Drawer, DropdownMenu, ContextMenu, Toast): block class on the visible popup box; trigger / positioner / backdrop / viewport are elements.
-+- When an existing class already equals the block on a non-root node, that node stays the block and the outer node becomes `__wrapper` (Table).
-+- No `--modifier` classes. base-ui state stays on base-ui's own `data-*`. lobe-ui's own `variant`, `size`, `shadow`, `glass` and non-base-ui states (e.g. Highlighter `expanded`) are `data-*` on the block root: enum → `data-<prop>="<value>"`, boolean → attribute present (`""`) or absent.
-+- Portal parts (popup, positioner, backdrop) mirror the block root's lobe-ui `data-*` attributes.
-+- When two blocks share one node (ActionIcon → Button root), only the outer component writes lobe-ui `data-*`.
-+- Stable class goes on the same node as the matching slot; order in `clsx`: stable class first, then slot class, then user `className`.
-+- Existing ad-hoc `lobe-*` classes are never renamed or removed; BEM classes are added next to them. Internal CSS is never retargeted.
-+- Component-own defaults move out of inline `style` into StyleX (or a CSS variable with a fallback); values passed explicitly through props stay inline.
-+- Icon gains `lobe-icon`; `anticon` stays in this project.
-+- Exempt from the guard test: ConfigProvider, MotionProvider, Freeze, FocusScope, FontLoader, GlobalFocusRing, the `icons`, `storybook`, `spline` subpaths, and compound atoms (covered through their root).
-+- Release: additive only, `✨ feat` (minor) per PR. Never bump versions.
-+- Zero comments / JSDoc in new code unless they record a workaround or a non-obvious invariant (user rule).
-+- Lint / format / typecheck only changed files: `pnpm exec eslint <files>`, `pnpm exec prettier --check <files>`; never `pnpm lint` / `pnpm prettier` repo-wide.
-+
-+## Review Focus
-+
-+1. A user `className` (or slot class) passed to a component must be appended, never replace the stable class. → Guard test renders every fixture a second time with `className="user-x"` and asserts both classes on the block node (Task 2).
-+2. A user swapping the element through base-ui's `render` prop must keep the stable class. → Button batch adds `Button render={<a href="#" />}` keeps `lobe-button` (Task 6).
-+3. An explicit prop value must still beat downstream CSS, while defaults must not. → Skeleton test: default renders no inline `height`; `height={20}` renders inline `height: 20px` (Task 8).
-+4. Variant-dependent overrides on portal parts. → Select test: `variant="borderless"` open popup carries `data-variant="borderless"` and `lobe-select__popup` (Task 7).
-+5. Two blocks on one node writing `data-*` twice. → ActionIcon test: root has `lobe-action-icon` and `lobe-button`, exactly one `data-variant`, equal to ActionIcon's prop (Task 6).
-+
-+---
-+
-+## File Structure
-+
-+| File                                                                           | Responsibility                                                                                   |
-+| ----------------------------------------------------------------------
-```
-
-**File**: `docs/superpowers/plans/2026-10-19-inline-defaults-audit.md` (added, +316/-0)
-```diff
-@@ -0,0 +1,316 @@
-+# Inline style defaults audit
-+
-+First pass, generated 2026-10-19 from `rg -n "style=\{\{" src` (demos, tests, storybook, icons excluded).
-+Kind is a heuristic: `default?` = only literal values (likely a component default → move to StyleX), `prop/dynamic` = references a variable or spread (likely stays inline), `multi-line, review` = the object spans lines. Each batch confirms its rows before changing code.
-+
-+The heuristic misses defaults applied while destructuring props (`height = '1em'` in Skeleton): those rows show as `prop/dynamic` but the default must still move. For each component, check whether an inline value can come from a destructuring default rather than from the caller.
-+
-+## Task 4 (5 sites, 0 `default?`)
-+
-+| Site                                       | Kind         | Code                                                                                  |
-+| ------------------------------------------ | ------------ | ------------------------------------------------------------------------------------- |
-+| `src/DraggablePanel/DraggablePanel.tsx:90` | prop/dynamic | `style={{ ...customStyles?.content, ...style }}`                                      |
-+| `src/DraggablePanel/atoms.tsx:398`         | prop/dynamic | `style={{ opacity: expand ? undefined : showHandleWhenCollapsed ? 1 : 0, ...style }}` |
-+| `src/DraggablePanel/atoms.tsx:419`         | prop/dynamic | `style={{ '--seam-bend': bend } as CSSProperties}`                                    |
-+| `src/Switch/Switch.tsx:105`                | prop/dynamic | `style={{ color: cssVar.colorPrimary }}`                                              |
-+| `src/Switch/Switch.tsx:63`                 | prop/dynamic | `style={{ ...style, ...customStyles?.root }}`                                         |
-+
-+## Task 6 (12 sites, 4 `default?`)
-+
-+| Site                                    | Kind               | Code                                                                          |
-+| --------------------------------------- | ------------------ | ----------------------------------------------------------------------------- |
-+| `src/ActionIcon/ActionIcon.tsx:123`     | multi-line, review | `style={{`                                                                    |
-+| `src/ActionIcon/ActionIcon.tsx:98`      | prop/dynamic       | `style={{ pointerEvents: 'none', ...slotStyles?.icon }}`                      |
-+| `src/Burger/Burger.tsx:80`              | prop/dynamic       | `<div {...stylex.props(styles.fullHeader)} style={{ height: headerHeight }}>` |
-+| `src/EditableText/ControlInput.tsx:102` | multi-line, review | `style={{`                                                                    |
-+| `src/EditableText/ControlInput.tsx:65`  | multi-line, review | `style={{`                                                                    |
-+| `src/EditableText/EditableText.tsx:114` | multi-line, review | `style={{`                                                                    |
-+| `src/EditableText/EditableText.tsx:74`  | multi-line, review | `style={{`                                                                    |
-+| `src/HotkeyInput/HotkeyInput.tsx:234`   | multi-line, review | `style={{`                                                                    |
-+| `src/HotkeyInput/HotkeyInput.tsx:254`   | default?           | `<div style={{ pointerEvents: 'none' }}>`                                     |
-+| `src/HotkeyInput/HotkeyInput.tsx:272`   | default?           | `style={{ pointerEvents: 'none' }}`                                           |
-+| `src/Input/ClearButton.tsx:31`          | default?           | `<Icon icon={X} size={10} style={{ strokeWidth: 3 }} />`                      |
-+| `src/SearchBar/SearchBar.tsx:64`        | default?           | `style={{ marginRight: 4 }}`                                                  |
-+
-+## Task 7 (41 sites, 8 `default?`)
-+
-+| Site                                                                    | Kind               | Code                                                                                           |
-+| ----------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------- |
-+| `src/Checkbox/Checkbox.tsx:58`                                          | prop/dynamic       | `style={{ transform: `scale(${shape === 'square' ? 0.75 : 0.66})` }}`                          |
-+| `src/Checkbox/Checkbox.tsx:64`                                          | prop/dynamic       | `style={{ transform: `scale(${shape === 'square' ? 0.75 : 0.66})` }}`                          |
-+| `src/Checkbox/CheckboxGroup.tsx:21`                                     | multi-line, review | `style={{`                                                                                     |
-+| `src/ColorPicker/ColorPanel.tsx:127`                                    | prop/dynamic   
-```
-
-**File**: `docs/superpowers/specs/2026-10-19-bem-classnames-design.md` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+# Stable BEM class names for public components
-+
-+Date: 2026-10-19
-+Discussion doc: https://claude.ai/code/artifact/f5b1bcdd-33bd-470a-9d0e-ae7c41240546
-+
-+## Why
-+
-+Component styles are compiled by StyleX into hashed class names that can change on every build. Downstream apps therefore have no stable hook to override a component's internals with plain CSS. Before v6 they used antd's `.ant-*` classes; v6 removed antd and those selectors went dead. lobehub #21046 deleted 14 files' worth of dead overrides, and some of the intent they carried (compact Switch / Slider / InputNumber in the ChatInput params panel, a 400px max height on the message action-bar submenu, Skeleton line heights in AgentProfileCard) has no way back in today.
-+
-+Success: every public component exposes a documented, stable set of global class names, and a downstream rule such as `.lobe-switch__thumb { … }` overrides the internal style without `!important`.
-+
-+## Goals
-+
-+- Every public component renders a stable block class on its root and a stable element class on each stylable part.
-+- One naming scheme across the whole library, documented on each component's docs page.
-+- A test that fails when a public component ships without its block class.
-+- Downstream (lobehub canary) can re-apply the lost overrides against the new names.
-+
-+## Non-goals
-+
-+- No BEM modifier classes (`--checked`, `--filled`). State and variants are `data-*` attributes (see below).
-+- Existing `lobe-*` class names are not renamed, deprecated or removed.
-+- No restyling: StyleX stays the source of styles and rendered output does not change. The one internal change allowed is moving defaults out of inline `style` (see below).
-+
-+## Anti-goals
-+
-+- A naming scheme that needs a second downstream migration later. Names shipped here are public API; renaming one is a breaking change.
-+- Overrides that only work with `!important` or with selectors longer than one class plus one attribute.
-+
-+## Naming contract (decided)
-+
-+1. **Block** = the component's exported name in kebab-case, prefixed `lobe-`: `Switch` → `lobe-switch`, `ActionIcon` → `lobe-action-icon`.
-+2. **Subpath components carry their namespace** in the block: `@lobehub/ui/mdx` `Tabs` → `lobe-mdx-tabs`, `@lobehub/ui/chat` `ChatItem` → `lobe-chat-chat-item`. Root-entry components have no namespace. Builder's call, recorded here: `@lobehub/ui/form` (`src/FormKit`) uses `form` as its namespace; a single-component subpath whose component shares its name (`./pro-table` → `ProTable`) uses the plain block, `lobe-pro-table`.
-+3. **Element** = `lobe-<block>__<element>`, where `<element>` is the component's `classNames` slot key in kebab-case: `classNames.header` → `lobe-highlighter__header`.
-+4. Components without a `classNames` prop get slots for their stylable parts in the same change, so the slot key and the element class are always the same word.
-+5. **Compound components:** each atom is an element of the parent block: `SelectTrigger` → `lobe-select__trigger`, `PopoverPopup` → `lobe-popover__popup`.
-+6. Elements are flat: never `__a__b`. Builder's call, recorded here: a nested slot path joins with a hyphen (`classNames.header.cell` → `lobe-table__header-cell`); a slot group that is passed through to another public component (Table `pagination.*`) defers to that component's own block. Function-valued slots still get their static element class.
-+7. A nested component keeps its own block. A part that is also another component carries both classes: Highlighter's copy button has `lobe-highlighter__copy` and `lobe-action-icon`.
-+8. Builder's call, recorded here: when an existing class already equals the block name on a non-root node (Table: `.lobe-table` sits inside `div.lobe-table-wrapper`), that node keeps being the block and the outer node becomes an element (`lobe-table__wrapper`). Internal CSS is never retargeted to make room.
-+9. The stable class goes on the same DOM node that receives the matching `classNames` slot. The user's `className` / slot class is appended after it.
-+10. Parts rendered in a portal (popup, positioner, backdrop) must carry their element class, because descendant selectors from the root do not reach them.
-+11. Existing ad-hoc `lobe-*` classes (`lobe-select-arrow`, `lobe-chat-item-bubble`, …) stay exactly as they are; the BEM classes are added next to them.
-+
-+## State and variants (decided)
-+
-+- State that base-ui already exposes is targeted through base-ui's attributes: `.lobe-switch[data-checked]`, `.lobe-select__option[data-highlighted]`. lobe-ui adds nothing for these.
-+- lobe-ui's own props and states are exposed as lobe-ui-owned `data-*` attributes on the block root: `variant`, `size`, `shadow`, `glass`, and non-base-ui states such as Highlighter `expanded`.
-+- Builder's call, recorded here: when two blocks share one node (ActionIcon renders Button's root), only the component the user rendered writes the lobe-ui `data-*` attributes; the inner component does not.
-+- Buil
-```
-
-**File**: `src/A/index.tsx` (modified, +4/-1)
-```diff
-@@ -1,10 +1,13 @@
- 'use client';
- 
-+import clsx from 'clsx';
- import { createElement, type ElementType, type FC, memo, type Ref, use, useMemo } from 'react';
- 
- import { ConfigContext } from '@/ConfigProvider';
- import { type AProps } from '@/types';
- 
-+import { aClasses } from './stable';
-+
- const createContainer = (as: ElementType) => memo((props: any) => createElement(as, props));
- 
- const A: FC<AProps & { ref?: Ref<HTMLAnchorElement> }> = (props) => {
-@@ -13,7 +16,7 @@ const A: FC<AProps & { ref?: Ref<HTMLAnchorElement> }> = (props) => {
- 
-   const AContainer = useMemo(() => createContainer(render), [render]);
- 
--  return <AContainer {...props} />;
-+  return <AContainer {...props} className={clsx(aClasses(), props.className)} />;
- };
- 
- A.displayName = 'A';
-```
 
 ---
 
-### Incident Patch 2: `4a7b08a9` (2026-10-19)
-**Commit Message**: :bug: fix(markdown): stop GFM autolink from swallowing CJK punctuation (#747)
+### Incident Patch 2: `e7ee0cb0` (2026-10-21)
+**Commit Message**: 🐛 fix(docs-kit): link @lobehub/ui style.css from a real module so dev SSR first paint is styled (#755)
 
-* :bug: fix(markdown): stop GFM autolink from swallowing CJK punctuation
+React Router's dev critical-CSS walk only collects CSS reachable through real
+modules. The @lobehub/ui style.css was imported from inside the
+virtual:lobedocs/stylex module, so critical.css carried none of the lb* rules and
+the SSR first paint was unstyled until the client bundle injected them (a longer
+window on cold start, when dependency re-optimization reloads the page).
 
-GFM's autolink literal only backtracks ASCII trailing punctuation, so model
-output like （https://example.com/x）。后文 swallowed the whole rest of the
-paragraph into the URL. Add a remark plugin that truncates bare autolinks at
-the first full-width/CJK punctuation mark and restores the remainder as text.
+Resolve virtual:lobedocs/ui-style.css straight to the real file (or an empty
+stylesheet when absent / StyleX compiles the UI from source) and import it from
+root.tsx.
 
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
+Co-authored-by: lobehub-coder <[REDACTED_EMAIL]>
 
-* :bug: fix(markdown): re-linkify URLs in the tail cut off by the CJK autolink split
-
-Mirrors vercel/streamdown#624: after splitting an autolink at CJK
-punctuation, a URL sitting in the removed tail (https://a.com。https://b.com)
-would stay plain text. Re-run the GFM autolink transform per segment.
-
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `package.json` (modified, +1/-0)
+**File**: `packages/docs-kit/site/compiler/stylexVirtualModule.test.ts` (modified, +40/-10)
 ```diff
-@@ -195,6 +195,7 @@
-     "katex": "^0.18.1 || ^0.19.0",
-     "leva": "^0.10.1",
-     "lucide-react": "^1.55.0",
-+    "mdast-util-gfm-autolink-literal": "^2.0.1",
-     "motion": "^13.0.0 || ^14.0.0",
-     "pele": "^1.6.0",
-     "re-resizable": "^6.11.2",
-```
-
-**File**: `src/Markdown/plugins/remarkCjkAutolink.test.ts` (added, +89/-0)
-```diff
-@@ -0,0 +1,89 @@
-+import remarkGfm from 'remark-gfm';
-+import remarkParse from 'remark-parse';
-+import { unified } from 'unified';
-+import { describe, expect, it } from 'vitest';
-+
-+import { remarkCjkAutolink } from './remarkCjkAutolink';
-+
-+/** 返回首段的子节点，只保留我们关心的字段 */
-+const parse = async (md: string) => {
-+  const processor = unified().use(remarkParse).use(remarkGfm).use(remarkCjkAutolink);
-+  const tree: any = await processor.run(processor.parse(md));
-+
-+  return tree.children[0].children.map((node: any) =>
-+    node.type === 'link'
-+      ? { text: node.children.map((c: any) => c.value).join(''), type: 'link', url: node.url }
-+      : { type: node.type, value: node.value },
-+  );
-+};
-+
-+describe('remarkCjkAutolink', () => {
-+  it('stops the autolink at a full-width closing paren', async () => {
-+    expect(
-+      await parse('文档已完成（https://lobehub.com/page/docs_X）。四条验收标准都已提交。'),
-+    ).toEqual([
-+      { type: 'text', value: '文档已完成（' },
-+      {
-+        text: 'https://lobehub.com/page/docs_X',
-+        type: 'link',
-+        url: 'https://lobehub.com/page/docs_X',
-+      },
-+      { type: 'text', value: '）。四条验收标准都已提交。' },
-+    ]);
-+  });
-+
-+  it.each(['。', '，', '、', '；', '：', '！', '？', '」', '】', '》', '…'])(
-+    'stops the autolink at %s',
-+    async (punctuation) => {
-+      expect(await parse(`见 https://a.com/b${punctuation}后文`)).toEqual([
-+        { type: 'text', value: '见 ' },
-+        { text: 'https://a.com/b', type: 'link', url: 'https://a.com/b' },
-+        { type: 'text', value: `${punctuation}后文` },
-+      ]);
-+    },
-+  );
-+
-+  it('keeps the http:// prefix added for www links', async () => {
-+    expect(await parse('见 www.a.com，后文')).toEqual([
-+      { type: 'text', value: '见 ' },
-+      { text: 'www.a.com', type: 'link', url: 'http://www.a.com' },
-+      { type: 'text', value: '，后文' },
-+    ]);
-+  });
-+
-+  it('keeps non-ASCII paths that contain no CJK punctuation', async () => {
-+    const url = 'https://zh.wikipedia.org/wiki/中文';
-+
-+    expect(await parse(`见 ${url} 的说明`)).toEqual([
-+      { type: 'text', value: '见 ' },
-+      { text: url, type: 'link', url },
-+      { type: 'text', value: ' 的说明' },
-+    ]);
-+  });
-+
-+  it('leaves ASCII-only autolinks untouched', async () => {
-+    const url = 'https://a.com/b?c=1&d=2';
-+
-+    expect(await parse(`see ${url} ok`)).toEqual([
-+      { type: 'text', value: 'see ' },
-+      { text: url, type: 'link', url },
-+      { type: 'text', value: ' ok' },
-+    ]);
-+  });
-+
-+  it('re-links a second URL that sat in the swallowed tail', async () => {
-+    expect(await parse('见 https://a.com。https://b.com。')).toEqual([
-+      { type: 'text', value: '见 ' },
-+      { text: 'https://a.com', type: 'link', url: 'https://a.com' },
-+      { type: 'text', value: '。' },
-+      { text: 'https://b.com', type: 'link', url: 'https://b.com' },
-+      { type: 'text', value: '。' },
-+    ]);
-+  });
-+
-+  it('does not touch explicit links', async () => {
-+    expect(await parse('[文字](https://b.com/x）y)')).toEqual([
-+      { text: '文字', type: 'link', url: 'https://b.com/x）y' },
-+    ]);
-+  });
-+});
-```
-
-**File**: `src/Markdown/plugins/remarkCjkAutolink.ts` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+import { gfmAutolinkLiteralFromMarkdown } from 'mdast-util-gfm-autolink-literal';
-+import { visit } from 'unist-util-visit';
-+
-+/**
-+ * GFM 的 autolink literal 只会回溯裁剪 ASCII 的尾随标点（`)`、`.`、`,` 等），
-+ * 对中日韩常用的全角标点一无所知。于是模型输出里很常见的
-+ *
-+ *   调研文档已完成（https://example.com/page/docs_X）。四条验收标准…
-+ *
-+ * 会把 `）。四条验收标准…` 整段吞进 URL，渲染出一条超长的错误链接。
-+ *
-+ * 本插件在 remark-gfm 之后运行，把裸链接（link 文本与 url 相同的那种）在
-+ * 第一个全角/CJK 标点处截断，被截掉的部分按标点再切段并重新做一次 autolink，
-+ * 这样 `https://a.com。https://b.com` 里的第二条链接不会连带失效。
-+ *
-+ * 注意：只在标点处截断，不在汉字/假名处截断，所以 `https://zh.wikipedia.org/wiki/中文`
-+ * 这类合法的 IDN / 非 ASCII 路径不受影响；显式写出的 `[文本](url)` 也不会被改动。
-+ *
-+ * 参考：vercel/streamdown#326、ant-design/x#2055 —— 上游 remark-gfm 至今未处理。
-+ */
-+
-+// 全角与 CJK 标点：〃〈〉《》「」『』【】〔〕〜、。 等，以及全角 ASCII 标点区、
-+// 竖排/兼容标点区，再补上中文常用的弯引号与省略号、破折号。
-+const CJK_PUNCTUATION = /[、-〃〈-】〔-〟〰︐-︙︰-﹏！-／：-＠［-｀｛-･‘’“”—…]/;
-+
-+/** 裸链接的 url 相对于文本可能带上的协议前缀（`www.x.com` → `http://www.x.com`） */
-+const AUTO_PREFIXES = ['', 'http://', 'https://', 'mailto:', 'xmpp:'];
-+
-+const autolinkTransforms = gfmAutolinkLiteralFromMarkdown().transforms ?? [];
-+
-+const getAutolinkPrefix = (url: string, text: string): string | undefined =>
-+  AUTO_PREFIXES.find((prefix) => url === prefix + text);
-+
-+/**
-+ * 把被截掉的尾巴按全角标点逐段切开，每段单独重新跑一次 GFM autolink，
-+ * 逐段处理是为了让标点本身始终停留在链接外面。
-+ */
-+const relinkify = (text: string): any[] => {
-+  const nodes: any[] = [];
-+
-+  const pushSegment = (segment: string) => {
-+    if (!segment) return;
-+
-+    const paragraph = { children: [{ type: 'text', value: segment }], type: 'paragraph' };
-+    const root = { children: [paragraph], type: 'root' };
-+
-+    for (const transform of autolinkTransforms) transform(root as any);
-+
-+    nodes.push(...paragraph.children);
-+  };
-+
-+  let start = 0;
-+
-+  for (let i = 0; i < text.length; i++) {
-+    if (!CJK_PUNCTUATION.test(text[i])) continue;
-+
-+    pushSegment(text.slice(start, i));
-+    nodes.push({ type: 'text', value: text[i] });
-+    start = i + 1;
-+  }
-+
-+  pushSegment(text.slice(start));
-+
-+  // 合并相邻的纯文本节点，避免把一句话切成一串碎片
-+  return nodes.reduce<any[]>((acc, node) => {
-+    const prev = acc.at(-1);
-+
-+    if (node.type === 'text' && prev?.type === 'text') {
-+      prev.value += node.value;
-+      return acc;
-+    }
-+
-+    acc.push(node);
-+    return acc;
-+  }, []);
-+};
-+
-+export const remarkCjkAutolink = () => {
-+  return (tree: any) => {
-+    visit(tree, 'link', (node: any, index, parent: any) => {
-+      if (!parent || typeof index !== 'number') return;
-+      if (node.children?.length !== 1) return;
-+
-+      const child = node.children[0];
-+      if (child.type !== 'text' || typeof child.value !== 'string') return;
-+      if (typeof node.url !== 'string') return;
-+
-+      // 只处理裸链接：link 的文本就是 url 本身（可能差一个协议前缀）
-+      const prefix = getAutolinkPrefix(node.url, child.value);
-+      if (prefix === undefined) return;
-+
-+      const match = CJK_PUNCTUATION.exec(child.value);
-+      if (!match || match.index === 0) return;
-+
-+      const kept = child.value.slice(0, match.index);
-+
-+      child.value = kept;
-+      node.url = prefix + kept;
-+
-+      // 位置信息已经失真，删掉以免下游（streaming 渲染）按旧位置复用
-+      delete node.position;
-+      delete child.position;
-+
-+      const rest = relinkify(match.input.slice(match.index));
-+      parent.children.splice(index + 1, 0, ...rest);
-+
-+      return index + rest.length + 1;
-+    });
-+  };
-+};
-```
-
-**File**: `src/hooks/useMarkdown/useMarkdownRemarkPlugins.ts` (modified, +3/-0)
-```diff
-@@ -9,6 +9,7 @@ import type { Pluggable } from 'unified';
+@@ -37,6 +37,24 @@ const installUi = (root: string): string => {
+   return join(uiRoot, 'es/style.css');
+ };
  
- import { useMarkdownContext } from '@/Markdown/components/MarkdownProvider';
- import { remarkBr } from '@/Markdown/plugins/remarkBr';
-+import { remarkCjkAutolink } from '@/Markdown/plugins/remarkCjkAutolink';
- import { remarkCustomFootnotes } from '@/Markdown/plugins/remarkCustomFootnotes';
- import { remarkGfmPlus } from '@/Markdown/plugins/remarkGfmPlus';
- import { remarkVideo } from '@/Markdown/plugins/remarkVideo';
-@@ -32,6 +33,8 @@ export const useMarkdownRemarkPlugins = (): Pluggable[] => {
-         // Parse math before GFM so that '|' inside $...$ isn't treated as a table separator
-         enableLatex && remarkMath,
-         [remarkGfm, { singleTilde: false }],
-+        // Trim CJK punctuation that GFM's autolink literal wrongly swallows into the URL
-+        remarkCjkAutolink,
-         !allowHtml && remarkBr,
-         !allowHtml && remarkGfmPlus,
-         !allowHtml && remarkVideo,
++const resolveUiStyle = async (root: string) => {
++  const plugin = lobeDocsSiteConfigPlugin(root);
++  const resolveId =
++    typeof plugin.resolveId === 'function' ? plugin.resolveId : plugin.resolveId?.handler;
++  const resolved = await resolveId?.call(
++    {} as never,
++    'virtual:lobedocs/ui-style.css',
++    undefined,
++    {} as never,
++  );
++  const load = typeof plugin.load === 'function' ? plugin.load : plugin.load?.handler;
++  const emptyCode =
++    typeof resolved === 'string' && resolved.startsWith('\0')
++      ? await load?.call({} as never, resolved)
++      : undefined;
++  return { emptyCode, resolved };
++};
++
+ const loadStylexModule = async (root: string, command: 'build' | 'serve' = 'build') => {
+   const plugin = lobeDocsSiteConfigPlugin(root);
+   const configResolved =
+@@ -54,20 +72,30 @@ afterEach(() => {
+   for (const root of temporaryRoots.splice(0)) rmSync(root, { force: true, recursive: true });
+ });
+ 
+-it('imports the consumer @lobehub/ui style.css when StyleX is not configured', async () => {
++it('resolves the consumer @lobehub/ui style.css to the real file when StyleX is not configured', async () => {
+   const root = createFixtureConsumerRoot();
+   const styleCss = installUi(root);
+ 
+-  await expect(loadStylexModule(root)).resolves.toContain(`import ${JSON.stringify(styleCss)};`);
+-  await expect(loadStylexModule(root, 'serve')).resolves.toContain(
+-    `import ${JSON.stringify(styleCss)};`,
+-  );
++  await expect(resolveUiStyle(root)).resolves.toEqual({ emptyCode: undefined, resolved: styleCss });
+ });
+ 
+-it('skips the @lobehub/ui import when the consumer has no style.css', async () => {
++it('never hides the @lobehub/ui import inside the virtual stylex module', async () => {
++  // React Router's dev critical-CSS walk cannot see CSS imported from a virtual module, so the
++  // SSR first paint lost every @lobehub/ui rule until the client bundle injected it.
+   const root = createFixtureConsumerRoot();
++  installUi(root);
+ 
+   await expect(loadStylexModule(root)).resolves.not.toContain('node_modules/@lobehub/ui');
++  await expect(loadStylexModule(root, 'serve')).resolves.not.toContain('node_modules/@lobehub/ui');
++});
++
++it('resolves to an empty stylesheet when the consumer has no style.css', async () => {
++  const root = createFixtureConsumerRoot();
++
++  await expect(resolveUiStyle(root)).resolves.toEqual({
++    emptyCode: '',
++    resolved: '\0virtual:lobedocs/ui-style.css',
++  });
+ });
+ 
+ it('always emits the docs-kit StyleX stylesheet and dev runtime', async () => {
+@@ -78,11 +106,13 @@ it('always emits the docs-kit StyleX stylesheet and dev runtime', async () => {
+   await expect(loadStylexModule(root, 'serve')).resolves.toContain('virtual:stylex:runtime');
+ });
+ 
+-it('drops the prebuilt @lobehub/ui stylesheet when StyleX compiles it from source', async () => {
++it('resolves to an empty stylesheet when StyleX compiles @lobehub/ui from source', async () => {
+   const root = createFixtureConsumerRoot(`\n      stylex: {},`);
+   installUi(root);
+ 
+-  const code = await loadStylexModule(root);
+-  expect(code).toContain('styles/stylex.css');
+-  expect(code).not.toContain('node_modules/@lobehub/ui');
++  await expect(resolveUiStyle(root)).resolves.toEqual({
++    emptyCode: '',
++    resolved: '\0virtual:lobedocs/ui-style.css',
++  });
++  await expect(loadStylexModule(root)).resolves.toContain('styles/stylex.css');
+ });
+```
+
+**File**: `packages/docs-kit/site/compiler/vitePlugin.ts` (modified, +14/-7)
+```diff
+@@ -28,6 +28,8 @@ const resolvedDocumentModulesVirtualId = `\0${documentModulesVirtualId}`;
+ const homePageVirtualId = 'virtual:lobedocs/home-page';
+ const stylexVirtualId = 'virtual:lobedocs/stylex';
+ const resolvedStylexVirtualId = `\0${stylexVirtualId}`;
++const uiStyleVirtualId = 'virtual:lobedocs/ui-style.css';
++const resolvedEmptyUiStyleId = `\0${uiStyleVirtualId}`;
+ const stylexBuildCssPath = resolve(import.meta.dirname, '../styles/stylex.css');
+ const defaultHomePagePath = resolve(import.meta.dirname, '../components/Home/DefaultHome.tsx');
+ 
+@@ -56,11 +58,8 @@ const resolveUiStyleCss = (root: string): string | undefined => {
+   }
+ };
+ 
+-const stylexModule = (command: 'build' | 'serve', uiStyleCss?: string) => {
+-  const imports = [command === 'build' ? stylexBuildCssPath : undefined, uiStyleCss]
+-    .filter(Boolean)
+-    .map((cssPath) => `import ${JSON.stringify(cssPath)};\n`)
+-    .join('');
++const stylexModule = (command: 'build' | 'serve') => {
++  const imports = command === 'build' ? `import ${JSON.stringify(stylexBuildCssPath)};\n` : '';
+   if (command === 'serve') {
+     return `${imports}export const stylexLinks = [{ href: '/virtual:stylex.css', rel: 'stylesheet' }];
+ export const loadStylexRuntime = () => import('virtual:stylex:runtime');`;
+@@ -77,9 +76,9 @@ export function lobeDocsSiteConfigPlugin(root: string = process.cwd()): Plugin {
+     },
+     load(id) {
+       if (id === resolvedStylexVirtualId) {
+-        const compilesUi = Boolean(getDocsConfig(root).stylex);
+-        return stylexModule(command, compilesUi ? undefined : resolveUiStyleCss(root));
++        return stylexModule(command);
+       }
++      if (id === resolvedEmptyUiStyleId) return '';
+       if (id === resolvedSiteConfigVirtualId) {
+         const config = getDocsConfig(root);
+         const clientConfig: ClientSiteConfig = {
+@@ -119,6 +118,14 @@ export function lobeDocsSiteConfigPlugin(root: string = process.cwd()): Plugin {
+       if (source === compatibilityVirtualId) return resolvedCompatibilityVirtualId;
+       if (source === standaloneDemosVirtualId) return resolvedStandaloneDemosVirtualId;
+       if (source === stylexVirtualId) return resolvedStylexVirtualId;
++      if (source === uiStyleVirtualId) {
++        // Resolve to the real file instead of importing it from inside another virtual module:
++        // React Router's dev critical-CSS walk only finds CSS reachable through real modules, so
++        // an import hidden in `virtual:lobedocs/stylex` left every SSR first paint without the
++        // @lobehub/ui rules until the client bundle injected them.
++        const compilesUi = Boolean(getDocsConfig(root).stylex);
++        return (!compilesUi && resolveUiStyleCss(root)) || resolvedEmptyUiStyleId;
++      }
+       if (source === homePageVirtualId) {
+         const config = getDocsConfig(root);
+         if (!config.homePage) return defaultHomePagePath;
+```
+
+**File**: `packages/docs-kit/site/root.tsx` (modified, +1/-0)
+```diff
+@@ -1,6 +1,7 @@
+ import './styles/global.css';
+ // Demo frames are prerendered, so their CSS must be linked from the root route, not a lazy chunk.
+ import './components/Demo/Demo.css';
++import 'virtual:lobedocs/ui-style.css';
+ 
+ import { createHash } from 'node:crypto';
+ 
+```
+
+**File**: `packages/docs-kit/site/types/demo-imports.d.ts` (modified, +2/-0)
+```diff
+@@ -22,6 +22,8 @@ declare module 'virtual:lobedocs/site-config' {
+   export default siteConfig;
+ }
+ 
++declare module 'virtual:lobedocs/ui-style.css';
++
+ declare module 'virtual:lobedocs/stylex' {
+   export const stylexLinks: import('react-router').LinkDescriptor[];
+   export const loadStylexRuntime: () => unknown;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #757** (2026-10-22): ✨ feat(highlighter): replace shiki with @pierre/highlights (@Innei)
+- **PR #756** (2026-10-21): 🔧 chore(docs-kit): consume @lobehub/docs-kit from npm (@Innei)
+- **PR #755** (2026-10-21): 🐛 fix(docs-kit): link @lobehub/ui style.css from a real module so dev… (@Innei)
 - **PR #750** (2026-10-19): ✨ feat: stable BEM class names for CSS overrides (@Innei)
 - **PR #749** (2026-10-18): 🐛 fix: drop leftover ant- class names and the antd eslint bans (@Innei)
 - **PR #748** (2026-10-18): ✨ feat(mermaid): render all diagrams with pele, drop CDN fallback (@Innei)
-- **PR #747** (2026-10-19): :bug: fix(markdown): stop GFM autolink from swallowing CJK punctuation (@rdmclin2)
-- **PR #743** (2026-10-17): ✨ feat(ToggleGroup): support multiple selection (@arvinxx)
-- **PR #742** (2026-10-17): ✨ feat(utils): add bem() for stable component class names (@arvinxx)
 
 ---
 
@@ -1928,29 +1422,61 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ✨ feat: stable BEM class names for CSS overrides (#750)
+## X. 🐛 fix(docs-kit): link @lobehub/ui style.css from a real module so dev SSR first
 
 **RULE**:
-When implementing operations in `docs.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lobehub/lobe-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/docs-kit/site/compiler/stylexVirtualModule.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lobehub/lobe-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df73069d`: ✨ feat: stable BEM class names for CSS overrides (#750). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7ee0cb0`: 🐛 fix(docs-kit): link @lobehub/ui style.css from a real module so dev SSR first paint is styled (#755). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs.config.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/docs-kit/site/compiler/stylexVirtualModule.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  publicDocs: ['docs/design-tokens.mdx', 'docs/migration-v6.mdx', 'docs/styling-overrides.mdx'],
-      { href: '/styling-overrides', icon: 'paintbrush', label: 'Styling Overrides' },
+const resolveUiStyle = async (root: string) => {
+  const plugin = lobeDocsSiteConfigPlugin(root);
+  const resolveId =
+    typeof plugin.resolveId === 'function' ? plugin.resolveId : plugin.resolveId?.handler;
+  const resolved = await resolveId?.call(
+    {} as never,
+    'virtual:lobedocs/ui-style.css',
+    undefined,
+    {} as never,
+  );
+  const load = typeof plugin.load === 'function' ? plugin.load : plugin.load?.handler;
+  const emptyCode =
+    typeof resolved === 'string' && resolved.startsWith('\0')
+      ? await load?.call({} as never, resolved)
+      : undefined;
+  return { emptyCode, resolved };
+};
+
+it('resolves the consumer @lobehub/ui style.css to the real file when StyleX is not configured', async () => {
+  await expect(resolveUiStyle(root)).resolves.toEqual({ emptyCode: undefined, resolved: styleCss });
+it('never hides the @lobehub/ui import inside the virtual stylex module', async () => {
+  // React Router's dev critical-CSS walk cannot see CSS imported from a virtual module, so the
+  // SSR first paint lost every @lobehub/ui rule until the client bundle injected it.
+  installUi(root);
+  await expect(loadStylexModule(root, 'serve')).resolves.not.toContain('node_module
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  publicDocs: ['docs/design-tokens.mdx', 'docs/migration-v6.mdx'],
+it('imports the consumer @lobehub/ui style.css when StyleX is not configured', async () => {
+  await expect(loadStylexModule(root)).resolves.toContain(`import ${JSON.stringify(styleCss)};`);
+  await expect(loadStylexModule(root, 'serve')).resolves.toContain(
+    `import ${JSON.stringify(styleCss)};`,
+  );
+it('skips the @lobehub/ui import when the consumer has no style.css', async () => {
+it('drops the prebuilt @lobehub/ui stylesheet when StyleX compiles it from source', async () => {
+  const code = await loadStylexModule(root);
+  expect(code).toContain('styles/stylex.css');
+  expect(code).not.toContain('node_modules/@lobehub/ui');
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df73069d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7ee0cb0` are properly handled with clean fallback behavior.
