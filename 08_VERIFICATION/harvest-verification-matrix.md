@@ -4398,3 +4398,6 @@
 | `CYCLE-20261022-SFI2` | `2026-10-22T19:03:14.042Z` | `elastic/eui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3703` | Yes (`e56f4d2e...`) |
 | `CYCLE-20261022-SG0C` | `2026-10-22T19:03:14.700Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3704` | Yes (`e3ddaff1...`) |
 | `CYCLE-20261022-SH4Y` | `2026-10-22T19:03:16.162Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3705` | Yes (`58e40546...`) |
+| `CYCLE-20261022-0TOW` | `2026-10-22T19:09:45.680Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3706` | Yes (`b3efe308...`) |
+| `CYCLE-20261022-0U9X` | `2026-10-22T19:09:46.437Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3707` | Yes (`b0597b35...`) |
+| `CYCLE-20261022-10G0` | `2026-10-22T19:09:54.432Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3708` | Yes (`868bab57...`) |

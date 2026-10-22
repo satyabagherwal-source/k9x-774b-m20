@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-D13H",
-    "timestamp": "2026-10-20T16:27:57.005Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "2a219feacb36386c257b070710ce36b6c871077dcbd2d9d3a3394e79ebcea9cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-PO6T",
-    "timestamp": "2026-10-20T16:37:46.805Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "d847333cd8a9a8fb72cfaf80cdd4a9de17c562bbc210ae307c793dcc93997f40",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-PQ7H",
-    "timestamp": "2026-10-20T16:37:49.421Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "46e1a6478d37e5a3d2874614152fd4851600be353fe311ba52054f5b6264d93e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-PW79",
     "timestamp": "2026-10-20T16:37:57.189Z",
     "repository": "sigstore/cosign",
@@ -7490,6 +7445,51 @@
     "repository": "fb55/css-select",
     "learningId": "learn-github-fb55-css-select",
     "contentHash": "58e405469fba78ad6466a727890e5873dd91c8764b9740c4b1f9c55a4e30e44a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-0TOW",
+    "timestamp": "2026-10-22T19:09:45.680Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "b3efe3089c46c54fa85ef9d75600851e64cb1e1170a456447bc9e3bff0b3f75b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-0U9X",
+    "timestamp": "2026-10-22T19:09:46.437Z",
+    "repository": "sozercan/kaset",
+    "learningId": "learn-github-sozercan-kaset",
+    "contentHash": "b0597b35661f933f758a833a015fdeb46866cc426247a0df2125d585c279fa53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-10G0",
+    "timestamp": "2026-10-22T19:09:54.432Z",
+    "repository": "VectifyAI/PageIndex",
+    "learningId": "learn-github-vectifyai-pageindex",
+    "contentHash": "868bab57256eb81322e5458ec725dbf5d25ba43743a819c19191f63e45df9a5e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

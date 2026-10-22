@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T19:03:16.111Z",
+  "last_updated": "2026-10-22T19:09:54.384Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43474,14 +43474,19 @@
       "slug": "sozercan-kaset",
       "platform": "github",
       "source_url": "https://github.com/sozercan/kaset",
-      "source_version": "24929e68",
-      "content_hash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
+      "source_version": "4c59ff25",
+      "content_hash": "b0597b35661f933f758a833a015fdeb46866cc426247a0df2125d585c279fa53",
       "dossier_path": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
       "promoted_rules": [
         {
           "number": 2954,
           "title": "ui): keep collapsed sidebar collapsed when window regains focus (#545)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3707,
+          "title": "add App Intents for Shortcuts, Siri, and Spotlight (#551)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43490,7 +43495,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:05:32.754Z",
+      "verified_at": "2026-10-22T19:09:46.377Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47629,8 +47634,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "27f28429",
-      "content_hash": "acf2b121251abe0c60fe4cec6d66d5101421d09ab396cb60a6990ec22130d23c",
+      "source_version": "cc62cce7",
+      "content_hash": "868bab57256eb81322e5458ec725dbf5d25ba43743a819c19191f63e45df9a5e",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -47648,6 +47653,11 @@
           "number": 3451,
           "title": "build: cap litellm below 1.106 until its mcp import is fixed (#608)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3708,
+          "title": "build: restore the litellm cap; 1.107.0 was compromised (#620)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47655,7 +47665,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:14:52.502Z",
+      "verified_at": "2026-10-22T19:09:54.374Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61593,14 +61603,19 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "afefe5c6",
-      "content_hash": "9f38a0287349273eac941a5fefb26eb3f390c38f7da177c7bd2c36a7ba7987c5",
+      "source_version": "d924d49e",
+      "content_hash": "b3efe3089c46c54fa85ef9d75600851e64cb1e1170a456447bc9e3bff0b3f75b",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
         {
           "number": 2880,
           "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1750)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3706,
+          "title": "build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (#1751)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -61609,7 +61624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:09:25.163Z",
+      "verified_at": "2026-10-22T19:09:45.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111359,6 +111374,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T19:03:16.100Z"
+    },
+    "rule-3706": {
+      "learning_id": "rule-3706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3706,
+      "title": "build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (#1751)",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "d924d49e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:09:45.617Z"
+    },
+    "rule-3707": {
+      "learning_id": "rule-3707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3707,
+      "title": "add App Intents for Shortcuts, Siri, and Spotlight (#551)",
+      "source_url": "https://github.com/sozercan/kaset",
+      "source_version": "4c59ff25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:09:46.377Z"
+    },
+    "rule-3708": {
+      "learning_id": "rule-3708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3708,
+      "title": "build: restore the litellm cap; 1.107.0 was compromised (#620)",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "cc62cce7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:09:54.374Z"
     }
   },
   "aliases": {

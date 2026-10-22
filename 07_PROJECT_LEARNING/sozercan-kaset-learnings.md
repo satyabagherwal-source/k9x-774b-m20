@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source**: github ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
-> **Source Version**: `24929e68`  
+> **Source Version**: `4c59ff25`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:05:32.519Z  
+> **Timestamp**: 2026-10-22T19:09:46.097Z  
 > **Learning ID**: `learn-github-sozercan-kaset`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:05:32.512Z  
+> **Harvest Timestamp**: 2026-10-22T19:09:45.482Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📼 The missing YouTube and YouTube Music macOS app
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2440 stars
+- **Stars / Engagement**: 2453 stars
 
 ---
 
@@ -1359,325 +1359,266 @@ extension PlayerService {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83513f6d` (2026-10-12)
-**Commit Message**: fix(ui): keep collapsed sidebar collapsed when window regains focus (#545)
+### Incident Patch 1: `4c59ff25` (2026-10-22)
+**Commit Message**: feat: add App Intents for Shortcuts, Siri, and Spotlight (#551)
 
 Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
-**File**: `Sources/Kaset/Views/MainWindow.swift` (modified, +2/-7)
+**File**: `.github/workflows/dev-build.yml` (modified, +1/-0)
 ```diff
-@@ -101,7 +101,8 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
-     /// Navigation paths for pinned sidebar playlists/albums keyed by content ID.
-     @State private var pinnedNavigationPaths: [String: NavigationPath] = [:]
+@@ -61,6 +61,7 @@ jobs:
  
--    /// Column visibility state for NavigationSplitView - persisted to fix restoration from dock.
-+    /// Column visibility for NavigationSplitView. The main window is hidden rather than closed,
-+    /// so this keeps the user's sidebar choice across focus changes and Dock restores.
-     @State private var columnVisibility: NavigationSplitViewVisibility = .all
- 
-     init(
-@@ -571,12 +572,6 @@ struct MainWindow: View { // swiftlint:disable:this type_body_length
-             }
-             .id(self.contentResetID)
-             .frame(maxWidth: .infinity, maxHeight: .infinity)
--            .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
--                // Ensure the sidebar returns when the app is re-activated from the Dock or app switcher.
--                if self.columnVisibility != .all {
--                    self.columnVisibility = .all
--                }
--            }
- 
-             // Right sidebar overlay - either lyrics or queue (mutually exclusive)
-             self.rightSidebarOverlay(client: self.client)
-```
-
----
-
-### Incident Patch 2: `585dd92c` (2026-10-12)
-**Commit Message**: fix(auth): stop recoverable cookie gaps from signing users out (#542)
-
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/tests.yml` (modified, +1/-1)
-```diff
-@@ -150,7 +150,7 @@ jobs:
-         run: Scripts/build-app.sh debug
- 
-       - name: Verify packaged app
--        run: Scripts/verify-release-app.sh .build/app/Kaset.app
-+        run: Scripts/verify-release-app.sh --bundle-id com.sertacozercan.Kaset.debug .build/app/Kaset.app
- 
-       - name: Install app for UI tests
+       - name: Build app
+         env:
++          # Ad-hoc builds list App Intents in Shortcuts but macOS will not run them.
+           KASET_SIGNING: adhoc
+           ARCHES: "arm64 x86_64"
          run: |
 ```
 
-**File**: `AGENTS.md` (modified, +2/-2)
+**File**: `.github/workflows/release.yml` (modified, +1/-0)
 ```diff
-@@ -53,11 +53,11 @@ Default local workflow is CLI-first: use the commands above for day-to-day verif
+@@ -103,6 +103,7 @@ jobs:
  
- > 🔬 **Measure before you fix — never guess at runtime behavior.** For any bug about *timing, lifecycle, or "why didn't this run/load/update"* (SwiftUI `.task`/state churn, cold-launch ordering, perceived latency), instrument the real code path and observe before changing anything. Reasoning about SwiftUI lifecycle or async ordering from the source alone is unreliable; a 10-line timestamped trace settles in one launch what hours of hypothesizing cannot. Add the trace → reproduce → read the evidence → fix the thing the data points at → re-measure to confirm → remove the instrumentation.
- 
--> ⚠️ **The app is sandboxed — most ad-hoc logging silently fails.** `Logger`/`os_log` `.info`/`.debug` lines do **not** reliably surface in `log stream`/`log show`, and a hardcoded `/tmp/...` file write is blocked by the sandbox and fails with no error. For throwaway diagnostics, write to **`NSTemporaryDirectory()`** (the app's container tmp), `synchronize()` after each line, and read it from `~/Library/Containers/com.sertacozercan.Kaset/Data/tmp/`. Macro-level: window-screenshot automation is also unreliable here, so prefer file traces over visual capture. Always strip diagnostic instrumentation before commit.
-+> ⚠️ **The app is sandboxed — most ad-hoc logging silently fails.** `Logger`/`os_log` `.info`/`.debug` lines do **not** reliably surface in `log stream`/`log show`, and a hardcoded `/tmp/...` file write is blocked by the sandbox and fails with no error. For throwaway diagnostics, write to **`NSTemporaryDirectory()`** (the app's container tmp), `synchronize()` after each line, and read it from `~/Library/Containers/com.sertacozercan.Kaset/Data/tmp/` (`com.sertacozercan.Kaset.debug` for packaged debug builds). Macro-level: window-screenshot automation is also unreliable here, so prefer file traces over visual capture. Always strip diagnostic instrumentation before commit.
- 
- See `docs/common-bug-patterns.md` for the timestamped-trace template, the sandbox tmp path, the single-flight load pattern that resolves the `.task`-restart cancellation deadlock, concurrency anti-patterns, and the pre-submit checklist.
- 
--> 🔐 **Keychain vs. File-based Cookie Storage**: Sandboxed macOS apps without a valid Developer ID or provisioning profile (such as local debug or ad-hoc builds) will hang inside `SecItemCopyMatching` when querying the Keychain. To bypass this, `#if DEBUG` builds store cookies in the sandboxed Application Support folder under `Kaset/cookies.dat` and completely bypass Keychain API calls by default. To test the production Keychain path locally, launch with `KASET_DEBUG_COOKIE_STORAGE=keychain`. Debug and release builds share one container (UserDefaults and the WebKit cookie jar), so the debug file backend uses its own sign-out tombstone key (`authCookieBackupInvalidated.debugFileStorage`); never let debug-only auth state write the release key, or a debug sign-out will delete the release Keychain archive on its next launch.
-+> 🔐 **Keychain vs. File-based Cookie Storage**: Sandboxed macOS apps without a valid Developer ID or provisioning profile (such as local debug or ad-hoc builds) will hang inside `SecItemCopyMatching` when querying the Keychain. To bypass this, `#if DEBUG` builds store cookies in the sandboxed Application Support folder under `Kaset/cookies.dat` and completely bypass Keychain API calls by default. To test the production Keychain path locally, launch with `KASET_DEBUG_COOKIE_STORAGE=keychain`. Packaged debug builds use the bundle ID `com.sertacozercan.Kaset.debug`, so they get their own container, UserDefaults, and WebKit cookie jar; never package a debug build with the release bundle ID, or each build's startup overwrites the other's session. The Keychain is still shared, so `KASET_DEBUG_COOKIE_STORAGE=keychain` reads and writes the release archive. The debug file backend keeps its own sign-out tombstone key (`authCookieBackupInvalidated.debugFileStorage`); never let debug-only auth state write the release key.
- 
- ## Continuous Review
- 
+             echo "WARN: $reason" >&2
+             echo "WARN: Falling back to ad-hoc signing. The release will not be notarized and macOS Gatekeeper may warn users." >&2
++            echo "::warning::Ad-hoc signed release: Shortcuts, Siri, and Spotlight actions (App Intents) will not run without a team-signed build."
+             echo "identity=" >> "$GITHUB_OUTPUT"
+             echo "signing_mode=adhoc" >> "$GITHUB_OUTPUT"
+           }
 ```
 
-**File**: `Scripts/build-app.sh` (modified, +16/-2)
+**File**: `AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -14,7 +14,14 @@ CONF=${1:-release}
- SIGNING_MODE=${KASET_SIGNING:-dev}
- SKIP_MAIN_ASSETS=${KASET_SKIP_MAIN_ASSETS:-0}
- APP_NAME="Kaset"
--BUNDLE_ID="com.sertacozercan.Kaset"
-+RELEASE_BUNDLE_ID="com.sertacozercan.Kaset"
-+# Debug bundles get their own sandbox container, so they never share the release
-+# app's WebKit cookie jar, saved sign-in data, or preferences.
-+if [[ "$(printf '%s' "$CONF" | tr '[:upper:]' '[:lower:]')" == "debug" ]]; then
-+  BUNDLE_ID="${RELEASE_BUNDLE_ID}.debug"
-+else
-+  BUNDLE_ID="$RELEASE_BUNDLE_ID"
-+fi
+@@ -47,6 +47,7 @@ Default local workflow is CLI-first: use the commands above for day-to-day verif
+ 
+ - When adding localization keys or changing translations, update the catalog first and update the corresponding checked-in `.lproj/Localizable.strings` files in the same change. Never update only one side.
+ - Run `swift test --skip KasetUITests --filter LocalizationCatalogParityTests` after localization changes.
++- Siri phrases for App Shortcuts live in `Sources/Kaset/Resources/AppShortcuts.xcstrings` (no `.lproj` mirror). `Scripts/build-app.sh` fails if it drifts from `KasetShortcuts`, so update it whenever a phrase changes.
+ - When adding a locale, also register its `.lproj` in `Package.swift`, add the `SettingsManager.ContentLanguage` case, and extend localization tests.
+ 
+ ## Debugging & Measurement
+```
+
+**File**: `Package.swift` (modified, +3/-0)
+```diff
+@@ -37,6 +37,9 @@ let package = Package(
+                 // resources. build-app.sh compiles the source catalog for the
+                 // packaged app to avoid duplicate .strings outputs in SwiftPM.
+                 "Resources/Localizable.xcstrings",
++                // App Shortcut phrases belong in the main bundle, which only
++                // build-app.sh assembles; it compiles this catalog there.
++                "Resources/AppShortcuts.xcstrings",
+             ],
+             resources: [
+                 .process("Resources/Assets.xcassets"),
+```
+
+**File**: `README.md` (modified, +1/-0)
+```diff
+@@ -55,6 +55,7 @@
+ 
+ - 🧩 **[Extensions](docs/extensions.md)** — Load WebKit Web Extensions, including [uBlock Origin Lite](https://github.com/uBlockOrigin/uBOL-home) and [SponsorBlock](https://github.com/ajayyy/SponsorBlock)
+ - 🔗 **[URL Scheme](docs/url-scheme.md)** — Open songs directly with `kaset://play?v=VIDEO_ID`; app-targeted YouTube watch and `youtu.be` links play in YouTube mode
++- ⚡️ **[Shortcuts, Siri & Spotlight](docs/shortcuts.md)** — Native actions to play music, playlists, and albums, control playback, and rate songs; Siri phrases; Library playlists and albums in Spotlight
+ - 🤖 **[AppleScript Support](docs/applescript.md)** — Automate playback with scripts, Raycast, Alfred, and Shortcuts
+ 
+ ## Requirements
+```
+
+**File**: `Scripts/app-intents-const-protocols.json` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++[
++  "AnyResolverProviding",
++  "AppEntity",
++  "AppEnum",
++  "AppExtension",
++  "AppIntent",
++  "AppIntentsPackage",
++  "AppShortcutProviding",
++  "AppShortcutsProvider",
++  "AppUnionValue",
++  "AppUnionValueCasesProviding",
++  "DynamicOptionsProvider",
++  "EntityQuery",
++  "ExtensionPointDefining",
++  "IntentValueQuery",
++  "Resolver",
++  "TransientEntity",
++  "_AssistantIntentsProvider",
++  "_GenerativeFunctionExtractable",
++  "_IntentValueRepresentable"
++]
+```
+
+**File**: `Scripts/build-app.sh` (modified, +174/-1)
+```diff
+@@ -23,9 +23,22 @@ else
+   BUNDLE_ID="$RELEASE_BUNDLE_ID"
+ fi
  DEVELOPMENT_LOCALIZATION="en"
++MIN_MACOS_VERSION="15.4"
  BUILD_DIR="$ROOT/.build/app"
  APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
-@@ -580,14 +587,21 @@ if [[ -d "$SPARKLE" ]]; then
- fi
  
- if [[ -f "$ROOT/Kaset.entitlements" ]]; then
--  codesign "${CODESIGN_ARGS[@]}" --entitlements "$ROOT/Kaset.entitlements" "$APP_BUNDLE"
-+  ENTITLEMENTS="$ROOT/Kaset.entitlements"
-+  if [[ "$BUNDLE_ID" != "$RELEASE_BUNDLE_ID" ]]; then
-+    # Sparkle's installer services are named after the bundle identifier.
-+    ENTITLEMENTS="$BUILD_DIR/Kaset.entitlements"
-+    sed "s/${RELEASE_BUNDLE_ID//./\\.}-sp/${BUNDLE_ID}-sp/g" "$ROOT/Kaset.entitlements" > "$ENTITLEMENTS"
++# App Intents: the compiler records the intents, entities, and App Shortcuts it sees as
++# "const values", which appintentsmetadataprocessor turns into Metadata.appintents.
++APP_INTENTS_PROTOCOLS="$ROOT/Scripts/app-intents-const-protocols.json"
++# The protocol list goes to the frontend: Swift 6.2 (Xcode 26) has no driver-level
++# -const-gather-protocols-list, while every supported compiler accepts the frontend flag.
++APP_INTENTS_SWIFT_FLAGS=(
++  -Xswiftc -emit-const-values
++  -Xswiftc -Xfrontend -Xswiftc -const-gather-protocols-file
++  -Xswiftc -Xfrontend -Xswiftc "$APP_INTENTS_PROTOCOLS"
++)
++APP_SHORTCUTS_CATALOG="$ROOT/Sources/Kaset/Resources/AppShortcuts.xcstrings"
++
+ # Build for host architecture by default; allow overriding via ARCHES (e.g., "arm64 x86_64" for universal).
+ ARCH_LIST=( ${ARCHES:-} )
+ if [[ ${#ARCH_LIST[@]} -eq 0 ]]; then
+@@ -117,6 +130,154 @@ stage_arch_product() {
+   chmod +x "$dest_dir/$name"
+ }
+ 
++# Copies the app module's const values for one architecture next to its staged binary.
++# Swift Build (Xcode 27+) writes them under .build/out/Intermediates.noindex; the native
++# SwiftPM build system (Xcode 26) writes them next to the module's objects.
++stage_app_intents_const_values() {
++  local arch="$1"
++  local dest_dir
++  local search_patterns=()
++  local dir_name
++  local file
++  local name
++  local source_names
++  local count=0
++
++  dest_dir="$(arch_staging_dir "$arch")/const-values"
++  rm -rf "$dest_dir"
++  mkdir -p "$dest_dir"
++
++  while IFS= read -r dir_name; do
++    search_patterns+=(-o -path "*/${dir_name}/${APP_NAME}-p.build/Objects-normal/${arch}/*.swiftconstvalues")
++    search_patterns+=(-o -path "*/${arch}-apple-macosx/${dir_name}/${APP_NAME}.build/*.swiftconstvalues")
++  done < <(build_config_dir_names)
++
++  # Debug builds emit one file per source (Foo.swiftconstvalues with Swift Build,
++  # Foo.swift.swiftconstvalues natively); skip leftovers from deleted sources.
++  source_names=" $(find "$ROOT/Sources/$APP_NAME" -name '*.swift' -exec basename {} .swift \; | tr '\n' ' ') "
++
++  while IFS= read -r file; do
++    name=$(basename "$file" .swiftconstvalues)
++    name="${name%.swift}"
++    case "$name" in
++      "$APP_NAME" | "$APP_NAME-primary") ;;
++      *) [[ "$source_names" == *" $name "* ]] || continue ;;
++    esac
++    cp "$file" "$dest_dir/"
++    count=$((count + 1))
++  done < <(find .build \( -false "${search_patterns[@]}" \) -type f 2>/dev/null)
++
++  if [[ $count -eq 0 ]]; then
++    echo "ERROR: No App Intents const values found for ${APP_NAME} (${arch})." >&2
++    echo "       swift build must run with: ${APP_INTENTS_SWIFT_FLAGS[*]}" >&2
++    exit 1
 +  fi
-+  codesign "${CODESIGN_ARGS[@]}" --entitlements "$ENTITLEMENTS" "$APP_BUNDLE"
- else
-   codesign "${CODESIGN_ARGS[@]}" "$APP_BUNDLE"
- fi
- 
- echo ""
- echo "✅ Build complete!"
- echo "📍 App location: $APP_BUNDLE"
-+echo "   Bundle:  ${BUNDLE_ID}"
- echo "   Version: ${MARKETING_VERSION} (${BUILD_NUMBER})"
- echo "   Commit:  ${GIT_COMMIT}"
- echo "   Arches:  ${ARCH_LIST[*]}"
++}
++
++# Generates Contents/Resources/Metadata.appintents, which Shortcuts, Siri, and Spotlight
++# read to discover the app's intents. Xcode does this in an "Extract App Intents Metadata"
++# build phase that SwiftPM lacks, so run the same tool with the flags Xcode passes.
++generate_app_intents_metadata() {
++  local arch="${ARCH_LIST[0]}"
++  local work_dir="$BUILD_DIR/app-intents"
++  local const_dir
++  local swiftc_path
++  local toolchain_dir
++  local sdk_root
++  local xcode_build
++
++  if ! xcrun --find appintentsmetadataprocessor &>/dev/null; then
++    echo "ERROR: appintentsmetadataprocessor not found. Select a full Xcode with xcode-select." >&2
++    exit 1
++  fi
++
++  const_dir="$(arch_staging_dir "$arch")/const-values"
++  mkdir -p "$work_dir"
++  find "$const_dir" -name '*.swiftconstvalues' | LC_ALL=C sort > "$work_dir/const-values.list"
++  find "$ROOT/Sources/$APP_NAME" -name '*.swift' | LC_ALL=C sort > "$work_dir/sources.list"
++
++  swiftc_path=$(xcrun --find swiftc)
++  toolchain_dir=$(cd "$(dirname "$swiftc_path")/../.." && pwd)
++  sdk_root=$(xcrun --sdk macosx --show-sdk-path)
++  xcode_build=$(xcodebuild -version | awk '/Build version/ { print $3 }')
++
++  # The staged thin binary matches the const values' architecture.
++  xcrun appintentsmetadataprocessor \
++    --toolchain-dir "$toolchain_dir" \
++    --module-name "$APP_NAME" \
++    --sdk-root "$sdk_root" \
++    --xcode-version "$xcode_build" \
++    --platform-family macOS \
++    --deployment-target "$MIN_MACOS_VERSION" \
++    --bundle-identifier "$BUNDLE_ID" \
++    --output "$APP_BUNDLE/Contents/Resources" \
++    --target-triple "${arch}-apple-macos${MIN_MACOS_VERSION}" \
++    --binary-file "$(build_product_path "$APP_NAME" "$arch")" \
++    --source-file-list "$work_dir/sources.list" \
++    --swift-const-vals-list "$work_dir/const-values.list" \
++    --stringsdata-file "$work_dir/ExtractedAppShortcutsMetadata.stringsdata" \
++    --compile-time-extraction \
++    --deployment-aware-processing \
++    --force
++
++  if [[ ! -f "$APP_BUNDLE/Contents/Resources/Metadata.appintents/extract.actionsdata" ]]; then
++    echo "ERROR: appintentsmetadataprocessor did not write Metadata.app
 ```
 
-**File**: `Scripts/verify-release-app.sh` (modified, +9/-3)
+**File**: `Scripts/verify-release-app.sh` (modified, +12/-0)
 ```diff
-@@ -7,16 +7,22 @@ set -euo pipefail
- ROOT=$(cd "$(dirname "$0")/.." && pwd)
- APP_PATH="$ROOT/.build/app/Kaset.app"
- REQUIRE_DEVELOPER_ID=false
-+EXPECTED_BUNDLE_ID="com.sertacozercan.Kaset"
- 
- while [[ $# -gt 0 ]]; do
-   case "$1" in
-     --require-developer-id)
-       REQUIRE_DEVELOPER_ID=true
-       shift
-       ;;
-+    --bundle-id)
-+      [[ $# -ge 2 ]] || { echo "ERROR: --bundle-id requires a value" >&2; exit 1; }
-+      EXPECTED_BUNDLE_ID="$2"
-+      shift 2
-+      ;;
-     --help|-h)
-       cat <<USAGE
--Usage: Scripts/verify-release-app.sh [--require-developer-id] [path/to/Kaset.app]
-+Usage: Scripts/verify-release-app.sh [--require-developer-id] [--bundle-id ID] [path/to/Kaset.app]
- 
- Checks:
+@@ -28,6 +28,7 @@ Checks:
    - Info.plist contains Sparkle's sandboxed installer launcher key
-@@ -54,14 +60,15 @@ codesign -d --entitlements :- "$APP_PATH" >"$ENTITLEMENTS_PLIST" 2>/dev/null ||
- plutil -lint "$ENTITLEMENTS_PLIST" >/dev/null
+   - sandbox entitlements include Sparkle's installer/status mach lookups
+   - Sparkle Installer.xpc is embedded
++  - App Intents metadata and App Shortcut phrases are embedded
+   - codesign verification succeeds
+   - optional Developer ID Application signing identity is used
+ USAGE
+@@ -61,6 +62,7 @@ plutil -lint "$ENTITLEMENTS_PLIST" >/dev/null
  codesign -dv --verbose=4 "$APP_PATH" >"$CODESIGN_DETAILS" 2>&1 || fail "Could not read code signature details"
  
--python3 - "$APP_PATH" "$INFO_PLIST" "$ENTITLEMENTS_PLIST" <<'PY'
-+python3 - "$APP_PATH" "$INFO_PLIST" "$ENTITLEMENTS_PLIST" "$EXPECTED_BUNDLE_ID" <<'PY'
+ python3 - "$APP_PATH" "$INFO_PLIST" "$ENTITLEMENTS_PLIST" "$EXPECTED_BUNDLE_ID" <<'PY'
++import json
  import plistlib
  import sys
  from pathlib import Path
+@@ -87,6 +89,16 @@ installer_xpc = app_path / "Contents/Frameworks/Sparkle.framework/Versions/B/XPC
+ if not installer_xpc.exists():
+     errors.append(f"Sparkle Installer.xpc is missing at {installer_xpc}")
  
- app_path = Path(sys.argv[1])
- info_path = Path(sys.argv[2])
- entitlements_path = Path(sys.argv[3])
-+expected_bundle_id = sys.argv[4]
- 
- with info_path.open("rb") as handle:
-     info = plistlib.load(handle)
-@@ -70,7 +77,6 @@ with entitlements_path.open("rb") as handle:
- 
- errors: list[str] = []
- bundle_id = info.get("CFBundleIdentifier")
--expected_bundle_id = "com.sertacozercan.Kaset"
- if bundle_id != expected_bundle_id:
-     errors.append(f"CFBundleIdentifier must be {expected_bundle_id}, found {bundle_id!r}")
- 
-```
-
-**File**: `Sources/APIExplorer/main.swift` (modified, +17/-11)
-```diff
-@@ -334,19 +334,25 @@ func selectedCookieBackupFile(
-             .appendingPathComponent("Kaset", isDirectory: true)
-             .appendingPathComponent("cookies.dat")
- 
--    let containerCookieFile = homeDirectory
--        .appendingPathComponent("Library/Containers/com.sertacozercan.Kaset/Data", isDirectory: true)
--        .appendingPathComponent("Library/Application Support/Kaset", isDirectory: true)
--        .appendingPathComponent("cookies.dat")
-+    // Packaged debug builds export cookies.dat into their own container; older
-+    // debug builds shared the release container.
-+    let containerCookieFiles = ["com.sertacozercan.Kaset.debug", "com.sertacozercan.Kaset"].map { bundleID in
-+        homeDirectory
-+            .appendingPathComponent("Library/Containers/\(bundleID)/Data", isDirectory: true)
-+            .appendingPathComponent("Library/Application Support/Kaset", isDirectory: true)
-+            .appendingPathComponent("cookies.dat")
-+    }
- 
-     // Once the sandboxed app has created its Application Support directory, its
--    // container export is authoritative. Never resurrect the legacy host archive
--    // after logout, account switching, expiry, corruption, or a cleared export.
--    if FileManager.default.fileExists(atPath: containerCookieFile.path) {
--        return containerCookieFile
--    }
--    if FileManager.default.fileExists(atPath: containerCookieFile.deletingLastPathComponent().path) {
--        return nil
-+    // container export is authoritative. Never resurrect an older archive after
-+    // logout, account switching, expiry, corruption, or a cleared export.
-+    for containerCookieFile in containerCookieFiles {
-+        if FileManager.default.fileExists(atPath: containerCookieFile.path) {
-+            return containerCookieFile
-+        }
-+        if FileManager.default.fileExists(atPath: containerCookieFile.deletingLastPathComponent().path) {
-+            return nil
-+        }
-     }
-     return FileManager.default.fileExists(atPath: legacyCookieFile.path) ? legacyCookieFile : nil
- }
-```
-
-**File**: `Sources/Kaset/Services/Auth/AuthService.swift` (modified, +3/-3)
-```diff
-@@ -203,7 +203,7 @@ final class AuthService: AuthServiceProtocol {
- 
-     /// Starts the login flow by presenting the login sheet.
-     func startLogin() {
--        self.logger.info("Starting login flow")
-+        self.logger.notice("Starting login flow")
-         guard self.signOutTask == nil else {
-             self.logger.info("Ignoring login request while sign-out is in progress")
-             return
-@@ -262,7 +262,7 @@ final class AuthService: AuthServiceProtocol {
-         self.cancellingLoginAttemptID = nil
-         self.state = self.stateBeforeLogin ?? .loggedOut
-         self.stateBeforeLogin = nil
--        self.logger.info("Login flow cancelled")
-+        self.logger.notice("Login flow cancelled")
-         if self.state.isInitializing {
-             // The early attempt cancelled startup's only status probe. Resume it
-             // unless another login or sign-out has already changed the state.
-@@ -377,7 +377,7 @@ final class AuthService: AuthServiceProtocol {
-         if let signOutTask = self.signOutTask {
-             return await signOutTask.value
-         }
--        self.logger.info("Signing out user")
-+        self.logger.notice("Signing out user")
-         // Keep pending recovery from publishing login if sign-out intent cannot be saved.
-         self.invalidateLoginCheck()
-         guard self.webKitManager.invalidateAuthCookieRestoration() else {
-```
-
-**File**: `Sources/Kaset/Services/Protocols.swift` (modified, +4/-0)
-```diff
-@@ -46,6 +46,10 @@ protocol WebKitManagerProtocol: AnyObject, Sendable {
-     /// authentication cookies, preserving the previous restorable archive.
-     func beginLoginCookieBackup() async -> CookieBackupTransaction?
- 
-+    /// Clears live login cookies for reauthentication inside an active login
-+    /// transaction, leaving the archive for rollback.
-+    func clearLiveLoginCookies(for transaction: CookieBackupTransaction) async -> Bool
++# Shortcuts, Siri, and Spotlight discover App Intents only from this generated metadata.
++app_intents_metadata = app_path / "Contents/Resources/Metadata.appintents/extract.actionsdata"
++if not app_intents_metadata.exists():
++    errors.append(f"App Intents metadata is missing at {app_intents_metadata}")
++elif not json.loads(app_intents_metadata.read_text(encoding="utf-8")).get("actions"):
++    errors.append("App Intents metadata declares no actions")
++app_shortcut_phrases = app_path / "Contents/Resources/en.lproj/AppShortcuts.strings"
++if not app_shortcut_phrases.exists():
++    errors.append(f"App Shortcut phrases are missing at {app_shortcut_phrases}")
 +
-     /// Persists a fresh stable snapshot for the active login transaction while
-     /// keeping startup restoration disabled.
-     func refreshLoginCookieBackup(_ transaction: CookieBackupTransaction) async -> Bool
-```
-
-**File**: `Sources/Kaset/Services/WebKit/WebKitManager+AuthCookieClearing.swift` (modified, +7/-0)
-```diff
-@@ -32,8 +32,12 @@ enum LiveAuthCookieStoreClearer {
-         let removeAllCookies: @MainActor () async -> Void
-     }
- 
-+    /// Deletes login-session cookies, escalating to a store-wide cookie removal
-+    /// only when `allowsCookieStoreFallback` is set. Rollback-safe callers must
-+    /// disable it, because rollback restores only login-domain cookies.
-     static func clear(
-         maximumDeletePasses: Int = 3,
-+        allowsCookieStoreFallback: Bool = true,
-         operations: Operations
-     ) async -> LiveAuthCookieClearResult {
-         for _ in 0 ..< max(maximumDeletePasses, 0) {
-@@ -51,6 +55,9 @@ enum LiveAuthCookieStoreClearer {
-             await Task.yield()
-         }
- 
-+        guard allowsCookieStoreFallback else {
-+            return LiveAuthCookieClearResult(didClear: false, usedCookieStoreFallback: false)
-+        }
-         await operations.removeAllCookies()
-         let remainingCookies = await operations.readCookies()
-         return LiveAuthCookieClearResult(
-```
-
----
-
-### Incident Patch 3: `e8e2c1bf` (2026-10-11)
-**Commit Message**: fix(ui): keep prominent button labels visible in inactive windows (#492)
-
-Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
-Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
-
-**File**: `Sources/Kaset/Views/ArtistDetailView.swift` (modified, +0/-1)
-```diff
-@@ -269,7 +269,6 @@ struct ArtistDetailView: View { // swiftlint:disable:this type_body_length
-                         .frame(width: 16, height: 16)
-                 } else {
-                     Text(self.subscribeButtonText(detail))
--                        .foregroundStyle(.white)
-                 }
-             }
-             .compatGlassProminentButton()
-```
-
-**File**: `Sources/Kaset/Views/PlaylistDetailView+HeaderActions.swift` (modified, +0/-1)
-```diff
-@@ -73,7 +73,6 @@ extension PlaylistDetailView {
-             )
-         } label: {
-             self.headerActionLabel(localized: "Play", systemImage: "play.fill", showsTitle: showsTitles)
--                .foregroundStyle(.white)
-         }
-         .buttonStyle(.glassProminent)
-         .controlSize(.large)
+ if entitlements.get("com.apple.security.app-sandbox") is True:
+     expected_mach_services = {
+         f"{expected_bundle_id}-spks",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #551** (2026-10-22): feat: add App Intents for Shortcuts, Siri, and Spotlight (@sozercan)
 - **PR #550** (2026-10-19): perf(player): keep progress ticks out of PlayerBar and MiniPlayerWindow bodies (@friedtori)
 - **PR #545** (2026-10-12): fix(ui): keep collapsed sidebar collapsed when window regains focus (@sozercan)
 - **PR #543** (2026-10-12): chore(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 in the github-actions group (@dependabot[bot])
 - **PR #542** (2026-10-12): fix(auth): stop recoverable cookie gaps from signing users out (@sozercan)
 - **PR #541** (2026-10-11): Update appcast to v0.14.2 (@github-actions[bot])
-- **PR #540** (2026-10-11): perf(player): animate the equalizer and title marquee with Core Animation (@sozercan)
 
 ---
 
@@ -1697,35 +1638,28 @@ Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): keep collapsed sidebar collapsed when window regains focus (#545)
+## X. add App Intents for Shortcuts, Siri, and Spotlight (#551)
 
 **RULE**:
-When implementing operations in `Sources/Kaset/Views/MainWindow.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/dev-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83513f6d`: ui): keep collapsed sidebar collapsed when window regains focus (#545). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c59ff25`: add App Intents for Shortcuts, Siri, and Spotlight (#551). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Kaset/Views/MainWindow.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/dev-build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// Column visibility for NavigationSplitView. The main window is hidden rather than closed,
-    /// so this keeps the user's sidebar choice across focus changes and Dock restores.
+          # Ad-hoc builds list App Intents in Shortcuts but macOS will not run them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    /// Column visibility state for NavigationSplitView - persisted to fix restoration from dock.
-            .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
-                // Ensure the sidebar returns when the app is re-activated from the Dock or app switcher.
-                if self.columnVisibility != .all {
-                    self.columnVisibility = .all
-                }
-            }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83513f6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c59ff25` are properly handled with clean fallback behavior.

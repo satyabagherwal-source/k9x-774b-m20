@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `27f28429`  
+> **Source Version**: `cc62cce7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:14:52.283Z  
+> **Timestamp**: 2026-10-22T19:09:54.095Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:14:51.621Z  
+> **Harvest Timestamp**: 2026-10-22T19:09:53.554Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 39374 stars
+- **Stars / Engagement**: 39470 stars
 
 ---
 
@@ -325,7 +325,7 @@ print()
 """PageIndex SDK."""
 from typing import TYPE_CHECKING as _TYPE_CHECKING
 
-from .chat_stream import ChatStream
+from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .client import PageIndexClient, PageIndexCloudClient, PageIndexLocalClient
 from .errors import PageIndexAPIError
 from .types import (ChatConfig, ChatProcessOptions, CloudIndexConfig,
@@ -342,7 +342,7 @@ __all__ = [
     "PageIndexClient", "PageIndexCloudClient", "PageIndexLocalClient",
     "PageIndexAPIError",
     "IndexConfig", "CloudIndexConfig", "LocalIndexConfig", "ChatConfig",
-    "ChatProcessOptions", "ChatStream",
+    "ChatProcessOptions", "ChatStream", "MessagesStream", "ChatObject",
     "page_index", "page_index_main", "page_index_flash",
     "optimize_tree", "md_to_tree", "highlight_region",
 ]
@@ -621,12 +621,63 @@ TOOL_CONTRACT: dict[str, dict[str, Any]] = {
 
 ### Core Architecture Module: `pageindex/chat_stream.py`
 ```
-"""chat(stream=True)'s return type: one run, one view — text or events."""
+"""chat()'s return types: the answer lane's ChatStream, the Messages
+protocol's MessagesStream, and the protocol lanes' ChatObject."""
 from __future__ import annotations
 
 from typing import Any, Iterator, Optional
 
 from .errors import PageIndexAPIError
+
+
+class ChatObject(dict[str, Any]):
+    """What chat()'s protocol lanes return, envelopes, chunks and events
+    alike: the protocol's JSON as a dict, which also reads by attribute as
+    the official SDK reads that JSON (its lenient construct_type):
+    ``r.choices[0].message.content`` beside
+    ``r["choices"][0]["message"]["content"]``. A value or event type the
+    installed SDK doesn't know reads as sent, a field the type has and the
+    dict lacks reads None, and a name the official object lacks raises.
+    The attribute view is read-only: write through the keys. chat() returns
+    it; callers don't construct one."""
+
+    @staticmethod
+    def _parse(data: dict) -> Any:
+        # a bare ChatObject names no official type to read through
+        raise AttributeError("ChatObject reads attributes only as a lane's "
+                             "envelope, chunk or event")
+
+    def __getattr__(self, name: str) -> Any:
+        if name.startswith("_"):
+            raise AttributeError(name)
+        return getattr(self._parse(dict(self)), name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if not name.startswith("_"):
+            raise AttributeError(
+                f"attributes are a read-only view; set [{name!r}] instead")
+        super().__setattr__(name, value)
+
+
+def _as_plain_dict(dumper: Any, data: ChatObject) -> Any:
+    rule = dumper.yaml_representers.get(dict)
+    return rule(dumper, data) if rule else dumper.represent_data(dict(data))
+
+
+def _yaml_as_dict() -> None:
+    """yaml writes a ChatObject exactly as the plain dict it is, through
+    the dumper's own dict rule (safe_dump refuses a dict subclass, and dump
+    would tag it as a Python object). The rule goes on every representer
+    class that already holds its own table, BaseRepresenter, Representer
+    or a caller's dumper that registered something; the rest inherit it
+    and keep inheriting what others register later."""
+    from yaml.representer import BaseRepresenter
+    pending: list = [BaseRepresenter]
+    while pending:
+        representer = pending.pop()
+        if "yaml_multi_representers" in vars(representer):
+            representer.add_multi_representer(ChatObject, _as_plain_dict)
+        pending.extend(representer.__subclasses__())
 
 
 class ChatStream:
@@ -691,6 +742,66 @@ class ChatStream:
         if close is not None:
             close()
 
+
+class MessagesStream:
+    """chat(protocol="messages", stream=True)'s stream: iterate it for the
+    Anthropic SDK's events, one message sequence per turn; then
+    ``get_final_message()`` returns what the non-stream call returns."""
+
+    def __init__(self, events):
+        self._events = events  # a generator that returns the run's envelope
+        self._result: Any = None
+
+    def __iter__(self) -> "MessagesStream":
+        return self
+
+    def __next__(self) -> ChatObject:
+        try:
+            return next(self._events)
+        except StopIteration as stop:
+            if stop.value is not None:
+                self._result = stop.value
+            raise
+
+    def close(self) -> None:
+        """Stop the run, like closing a generator."""
+        self._events.close()
+
+    def get_final_message(self) -> ChatObject:
+        """Read the stream to its end (raising what iterating it would),
+        then return the run's envelope as the non-stream call returns it:
+        the final message, with ``usage`` aggregated across turns and the
+        ``messages`` turn sequence."""
+        for _ in self:
+            pass
+        if self._result is None:
+            raise PageIndexAPIError(
+                "This stream has no final message: the run failed, or the "
+                "stream was closed before the run finished.")
+        return self._result
+
+    def get_final_text(self) -> str:
+        """The final message's text blocks, joined. A bare string has
+        nowhere to mark an answer cut short, so unless the message finished
+        (stop_reason ``end_turn`` or ``stop_sequence``) this raises, the cut
+        text in ``partial_answer``; it raises too when there is no text."""
+        message = self.get_final_message()
+        texts = [block["text"] for block in message["content"]
+                 if block.get("type") == "text"]
+        stop = message.get("stop_reason")
+        if stop not in ("end_turn", "stop_sequence"):
+            error = PageIndexAPIError(
+                f"The final message is unfinished (stop_reason {stop!r}); "
+                "get_final_message() returns it as it is.")
+            error.partial_answer = "".join(texts)
+            error.usage = message.get("usage")
+            raise error
+        if not texts:
+            raise PageIndexAPIError(
+                "The final message has no text block; its content is in "
+                "get_final_message().content.")
+        return "".join(texts)
+
 ```
 
 ### Core Architecture Module: `pageindex/client.py`
@@ -706,7 +817,7 @@ import warnings
 from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
                     Optional, Union, cast, overload)
 
-from .chat_stream import ChatStream
+from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .errors import PageIndexAPIError
 
 
@@ -934,9 +1045,7 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
                 "index is an empty dict — its keys pick the side: "
                 '{"api_key": ...} for cloud documents, or '
                 f"{', '.join(_LOCAL_INDEX_KEYS)} for the local store.")
-        unknown = set(conf) - {"api_key"} - set(_LOCAL_INDEX_KEYS)
-        if unknown:
- 
+        unknown = set(conf) - {"api_key"} - set(_LOCAL_INDEX
 ```
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
@@ -948,6 +1057,7 @@ from typing import Optional, Dict, Any, List, Union, Iterator
 import json
 import urllib.parse
 
+from .chat_stream import ChatObject
 from .errors import PageIndexAPIError
 from .naming import sanitize_filename, validate_folder_name
 
@@ -1220,8 +1330,7 @@ class CloudAPI:
         temperature: Optional[float] = None,
         stream_metadata: bool = False,
         enable_citations: bool = False,
-        extra_body: Optional[Dict[str, Any]] = None,
-        folder_id: Optional[str] 
+        extra_body: Optional[Dict[str, Any]] = Non
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1234,8 +1343,9 @@ class PageIndexAPIError(Exception):
     the protocol's usage shape with each call listed (claude-code/: the
     run's total only, None on a tool failure or if the run ends before
     Claude Code reports it); None on any other error. partial_answer is
-    the text a non-streamed chat() answer reached before it was cut short
-    (a stream has already delivered its text); None otherwise."""
+    the text a non-streamed chat() answer, or a Messages stream's
+    get_final_text(), reached before it was cut short (a stream has already
+    delivered its text); None otherwise."""
 
     def __init__(self, *args: object, status_code: int | None = None,
                  rpc_error: dict | None = None) -> None:
@@ -1272,13 +1382,14 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #608** (2026-10-20): **build: cap litellm below 1.106 until its mcp import is fixed**
-  *Symptoms*: With litellm 1.106.0 and mcp below 2.2 installed, own-model `chat()` with an OpenAI gpt-5.4+ model (the default gpt-6-sol included) fails on every call with `cannot import name 'CacheableResult' from 'mcp.types'`. This caps litellm at 1.105.x, which has no such import, until litellm fixes it.  litellm sends gpt-5.4+ chat calls that carry function tools through its Responses bridge, and the bridge's `_responses_try_dispatch_mcp_gateway` imports litellm's proxy MCP gateway code before it checks whether the gateway is in use. Since 1.106.0 that code needs mcp 2.2's `CacheableResult`. litellm lists mcp 2.2+ only under its extras, so nothing upgrades mcp, and the latest crewai, langchain-mcp-adapters, semantic-kernel and mcp-use still pin mcp below 2. 1.107.0rc2 still has the import. A fresh install gets mcp 2.3.0 and never saw it, which is also why CI stayed green.  The cap comes off once litellm guards the import.  ## Changes  - `pyproject.toml` and `requirements.txt`: `litellm>=1.105.1,<1.106` (was `>=1.106.0`). 1.105.1 was the floor through 0.4.4.  ## Verification  - CI installs litellm 1.105.1 with mcp 2.3.0: 959 passed with frameworks on py3.10 and py3.13 (958 + 1 skipped on pdfium 4), 683 passed + 276 skipped without. - A fresh-venv dry run resolves litellm 1.105.1 with mcp 2.3.0, no conflicts. - A real gpt-6-luna chat call fails on litellm 1.106.0 with mcp 1.26.0, and passes on 1.105.1 with mcp 1.26.0 and with 2.3.0. - Full suite on litellm 1.105.1: 952 passed, 7 skipped w
+- **Issue #623** (2026-10-22): **fix: retire workarounds the dependency floors outgrew**
+  *Symptoms*: Stacked on #622 (same function in `local_chat.py`); it moves to main once #622 merges.  Three workarounds had gone silent at today's dependency floors: `extra_body` settings that never reached LiteLLM, an anthropic check that let a refusal turn's tool calls run, and a Claude SDK fallback that cut tool results to a 2KB preview. This retires them, fixes three misleading errors and docs, and deletes code that can no longer run.  `extra_body` on a non-OpenAI LiteLLM destination (Claude, Gemini, Bedrock, ...) routed every `ModelSettings` field name into `ModelSettings`, but openai-agents' `LitellmModel` reads only 13 of them. `context_management`, `verbosity`, `store`, `prompt_cache_retention` and the rest never reached LiteLLM (Anthropic's dict-shaped `context_management` was even refused by the settings type), and `retry` turned on the runner's own retries.  ## Changes  - `extra_body`: only the fields `LitellmModel` reads ride `ModelSettings`; the rest go to LiteLLM as kwargs. - `chat(protocol="messages")` checks the anthropic version against the extra's floor (0.122.0). 0.107 passed the old feature probes and ran a refused turn's tool calls; 0.108 to 0.121 lack the Bedrock/Vertex runner. The client-class and `tool_runner` probes and the two `warnings=False` go with it (no serializer warning at 0.122.0). - Local `as_claude_mcp()` requires claude-agent-sdk 0.2.166, like the `claude-code/` route. An older SDK lost `readOnlyHint` and the 200,000-char result cap without a word. - Er
 
-- **Issue #606** (2026-10-20): **docs: update readme**
-  *Symptoms*: Rewords the PageIndex SDK line under Updates.
+- **Issue #621** (2026-10-21): **feat: protocol lanes read by key and by attribute, as the official SDKs**
+  *Symptoms*: The own-model protocol lanes now read both ways: `r["choices"][0]["message"]["content"]` as before, and `r.choices[0].message.content` as the official SDKs do. Every envelope, chunk and event stays a dict, so existing code and `json.dumps` keep working; an attribute read answers as the official SDK object would.  Stacked on #612 (it needs the Responses `messages` envelope); retarget to `main` once #612 merges.  ## Changes  - **Dict plus attributes.** Chat Completions envelopes and chunks, Responses envelopes and stream events, and Messages envelopes are dicts whose attribute reads validate the dict with the official type (`ChatCompletion`, `ChatCompletionChunk`, `Response`, `ResponseStreamEvent`, `BetaMessage`) and read from it. An official field the dict lacks reads `None`, as on the official object (`r.system_fingerprint`, `message.refusal`); a name the type doesn't have still raises `AttributeError`. Official helpers work too: `r.output_text`, `r.model_dump_json()`. - **Messages stream.** It used to yield the Anthropic SDK's event objects while the non-stream envelope was a dict. Each event is now the object's dict, whose attributes read the object itself, so `event.type` and `event.message.content[0].text` keep working and `event["type"]` works too. An `isinstance` check against the SDK's event classes no longer matches. - **`get_final_result()`** returns a dict that also reads by attribute: `.usage` and `["usage"]` both work. - **`claude-code/`** on Chat Completions gets
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null},"security_review":{"commit_sha":"8ae6b0af3c0ef8ebae643e48ccec543e8641a333","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"8ae6b0af3c0ef8ebae643e48ccec543e8641a333","mergeGateEnabled":false,"pullRequestNumber":606,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-20T11:04:14.540960Z">2026-10-20T11:04:14.540960Z</relative-time> | `8ae6b0a` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null},"security_review":{"commit_sha":"7688b14fddfc598a943b1bbf2c838bd9e794a585","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"7688b14fddfc598a943b1bbf2c838bd9e794a585","mergeGateEnabled":false,"pullRequestNumber":621,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 🔒 **Security Review** | ✅ **Completed** <relative-time datetime="2026-10-21T20:31:39.454413Z">2026-10-21T20:31:39.454413Z</relative-time> | `7688b14` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review
+  > Folded into #612 at Ray's request: this PR's commit landed there as 16e667e, followed by get_final_message()/get_final_text(), response.in_progress and conformance tests (306b108, ccb0d01, 4151c35).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1295,22 +1406,12 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27f28429` (2026-10-20)
-**Commit Message**: build: cap litellm below 1.106 until its mcp import is fixed (#608)
+### Incident Patch 1: `3dbeb4ea` (2026-10-21)
+**Commit Message**: build: restore the litellm cap; 1.107.0 was compromised (#620)
 
-litellm 1.106.0 imports mcp 2.2's CacheableResult (its proxy MCP
-gateway catalog) on every call through its Responses bridge, before it
-checks whether the gateway is in use. The bridge carries every chat
-call to an OpenAI gpt-5.4+ model with function tools, the default
-gpt-6-sol included. So with mcp below 2.2 installed, chat() fails:
-"cannot import name 'CacheableResult' from 'mcp.types'". litellm lists
-mcp 2.2+ only under its extras, and the latest crewai,
-langchain-mcp-adapters, semantic-kernel and mcp-use still pin mcp
-below 2. 1.107.0rc2 still has the import.
-
-1.105.1, the floor through 0.4.4, has no such import: a real gpt-6-luna
-chat call passes on it with mcp 1.26.0 and 2.3.0 alike. Lift the cap
-once litellm guards the import.
+litellm 1.107.0 on PyPI was compromised (BerriAI/litellm#47826) and has
+been removed, so the >=1.107.0 floor from #619 no longer installs.
+This restores #608's >=1.105.1,<1.106.
 
 **File**: `pyproject.toml` (modified, +1/-1)
 ```diff
@@ -1318,7 +1419,7 @@ once litellm guards the import.
  # Older releases crash on current openai before the request is sent.
  openai-agents = ">=0.18.1"
  mcp = ">=1.19.0,<3"
--litellm = ">=1.106.0"
+-litellm = ">=1.107.0"
 +litellm = ">=1.105.1,<1.106"
  PyPDF2 = ">=3.0.0"
  pypdfium2 = ">=5"
@@ -1328,20 +1429,53 @@ once litellm guards the import.
 **File**: `requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1,4 +1,4 @@
--litellm>=1.106.0
+-litellm>=1.107.0
 +litellm>=1.105.1,<1.106
  openai>=1.70.0
  requests>=2.28.0
  # MCP retries use Retry(allowed_methods=...), added in urllib3 1.26.
 ```
 
+---
+
+### Incident Patch 2: `06ea94b9` (2026-10-21)
+**Commit Message**: build: lift the litellm cap, floor 1.107.0 (#619)
+
+litellm 1.107.0 ships the upstream fix (BerriAI/litellm#45961), so the
+<1.106 cap from #608 comes off. The floor goes to 1.107.0 so no install
+resolves 1.106.x. A fresh install now also resolves openai 3.x and
+openai-agents 0.24.
+
+**File**: `pyproject.toml` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ openai = ">=1.70.0"
+ # Older releases crash on current openai before the request is sent.
+ openai-agents = ">=0.18.1"
+ mcp = ">=1.19.0,<3"
+-litellm = ">=1.105.1,<1.106"
++litellm = ">=1.107.0"
+ PyPDF2 = ">=3.0.0"
+ pypdfium2 = ">=5"
+ sortedcontainers = ">=2.4.0"
+```
+
+**File**: `requirements.txt` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-litellm>=1.105.1,<1.106
++litellm>=1.107.0
+ openai>=1.70.0
+ requests>=2.28.0
+ # MCP retries use Retry(allowed_methods=...), added in urllib3 1.26.
+```
+
 #### Recent Merged Pull Requests:
-- **PR #608** (2026-10-20): build: cap litellm below 1.106 until its mcp import is fixed (@rejojer)
-- **PR #606** (2026-10-20): docs: update readme (@rejojer)
-- **PR #605** (2026-10-20): build: raise the litellm floor to 1.106.0 (@rejojer)
-- **PR #604** (2026-10-20): fix: sync the local tool text with the cloud MCP server (@rejojer)
-- **PR #603** (2026-10-19): fix(claude): a missing login fails in one clear error, saying how to log in (@rejojer)
-- **PR #601** (2026-10-18): docs(cookbook): index the Harness² paper, show progress, stream the answer (@rejojer)
+- **PR #623** (2026-10-22): fix: retire workarounds the dependency floors outgrew (@rejojer)
+- **PR #621** (closed): feat: protocol lanes read by key and by attribute, as the official SDKs (@rejojer)
+- **PR #620** (2026-10-21): build: restore the litellm cap; 1.107.0 was compromised (@rejojer)
+- **PR #619** (2026-10-21): build: lift the litellm cap, floor 1.107.0 (@rejojer)
+- **PR #618** (2026-10-21): feat: create_metadata_schema declares a folder's metadata fields (cloud-only) (@BukeLy)
+- **PR #616** (2026-10-21): docs(cookbook): publish the PageIndex answers behind the embeddings notebook (@noobakong)
 
 ---
 
@@ -1361,13 +1495,13 @@ once litellm guards the import.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: cap litellm below 1.106 until its mcp import is fixed (#608)
+## X. build: restore the litellm cap; 1.107.0 was compromised (#620)
 
 **RULE**:
 When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27f28429`: build: cap litellm below 1.106 until its mcp import is fixed (#608). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3dbeb4ea`: build: restore the litellm cap; 1.107.0 was compromised (#620). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
@@ -1381,8 +1515,8 @@ litellm = ">=1.105.1,<1.106"
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-litellm = ">=1.106.0"
+litellm = ">=1.107.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27f28429` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3dbeb4ea` are properly handled with clean fallback behavior.

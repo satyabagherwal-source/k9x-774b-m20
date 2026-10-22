@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "27f28429",
+    "sourceVersion": "cc62cce7",
     "license": "MIT",
-    "contentHash": "acf2b121251abe0c60fe4cec6d66d5101421d09ab396cb60a6990ec22130d23c",
-    "lastHarvestedAt": "2026-10-21T00:14:52.551Z",
+    "contentHash": "868bab57256eb81322e5458ec725dbf5d25ba43743a819c19191f63e45df9a5e",
+    "lastHarvestedAt": "2026-10-22T19:09:54.435Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "afefe5c6",
+    "sourceVersion": "d924d49e",
     "license": "MIT",
-    "contentHash": "9f38a0287349273eac941a5fefb26eb3f390c38f7da177c7bd2c36a7ba7987c5",
-    "lastHarvestedAt": "2026-10-19T23:09:25.203Z",
+    "contentHash": "b3efe3089c46c54fa85ef9d75600851e64cb1e1170a456447bc9e3bff0b3f75b",
+    "lastHarvestedAt": "2026-10-22T19:09:45.683Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {
@@ -9783,10 +9783,10 @@
     "repository": "sozercan/kaset",
     "platform": "github",
     "sourceUrl": "https://github.com/sozercan/kaset",
-    "sourceVersion": "24929e68",
+    "sourceVersion": "4c59ff25",
     "license": "MIT",
-    "contentHash": "47b8313a0ed40d86e52c6f861eee76f4efd13137f85e8e4e005a4f6449db7002",
-    "lastHarvestedAt": "2026-10-20T01:05:32.829Z",
+    "contentHash": "b0597b35661f933f758a833a015fdeb46866cc426247a0df2125d585c279fa53",
+    "lastHarvestedAt": "2026-10-22T19:09:46.440Z",
     "learningId": "learn-github-sozercan-kaset"
   },
   "digitalbazaar-pyld": {

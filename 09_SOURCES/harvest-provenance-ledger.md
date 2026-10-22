@@ -4405,3 +4405,6 @@ Every entry in this ledger must capture:
 | `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `8cdf5a58` | Multi-dimensional audit evidence | 2026-10-22T19:03:14.046Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `b84473a7` | Multi-dimensional audit evidence | 2026-10-22T19:03:14.703Z |
 | `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `6b225dee` | Multi-dimensional audit evidence | 2026-10-22T19:03:16.165Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `d924d49e` | Multi-dimensional audit evidence | 2026-10-22T19:09:45.683Z |
+| `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `4c59ff25` | Multi-dimensional audit evidence | 2026-10-22T19:09:46.440Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `cc62cce7` | Multi-dimensional audit evidence | 2026-10-22T19:09:54.435Z |
