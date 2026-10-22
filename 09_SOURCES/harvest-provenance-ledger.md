@@ -4342,3 +4342,8 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `7d70e57f` | Multi-dimensional audit evidence | 2026-10-22T16:45:16.660Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `55bd0f76` | Multi-dimensional audit evidence | 2026-10-22T16:51:42.318Z |
 | `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `aa8596de` | Multi-dimensional audit evidence | 2026-10-22T16:51:46.911Z |
+| `learn-github-react-bootstrap-react-bootstrap` | `https://github.com/react-bootstrap/react-bootstrap` | `2926ad4e` | Multi-dimensional audit evidence | 2026-10-22T16:58:06.674Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `5ab62913` | Multi-dimensional audit evidence | 2026-10-22T16:58:08.162Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `98b3bb68` | Multi-dimensional audit evidence | 2026-10-22T16:58:15.125Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `edbfb2c3` | Multi-dimensional audit evidence | 2026-10-22T16:58:17.556Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `d565603d` | Multi-dimensional audit evidence | 2026-10-22T16:58:22.077Z |

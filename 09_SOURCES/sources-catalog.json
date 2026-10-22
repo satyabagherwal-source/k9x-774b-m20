@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "e4d55d4b",
+    "sourceVersion": "edbfb2c3",
     "license": "NOASSERTION",
-    "contentHash": "046be9ad9fc497dcfea6ccb43dd97a17c414208045a9a3a7a733c9c352d768f9",
-    "lastHarvestedAt": "2026-10-21T18:07:52.952Z",
+    "contentHash": "4d0a6474ca329a03987bf44518b736609e886ba9a332ae81da7cc87dce85ff0e",
+    "lastHarvestedAt": "2026-10-22T16:58:17.556Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -3933,10 +3933,10 @@
     "repository": "react-bootstrap/react-bootstrap",
     "platform": "github",
     "sourceUrl": "https://github.com/react-bootstrap/react-bootstrap",
-    "sourceVersion": "2f6eef1f",
+    "sourceVersion": "2926ad4e",
     "license": "MIT",
-    "contentHash": "574f53d671feceb9bba48e06c0d3a72d96712392d77f3a9a10e4989a27e30146",
-    "lastHarvestedAt": "2026-10-19T00:16:28.310Z",
+    "contentHash": "1ed64a392a1438a8e2aeb249c311dcaec323161f227e00012d93800f4f55adc1",
+    "lastHarvestedAt": "2026-10-22T16:58:06.674Z",
     "learningId": "learn-github-react-bootstrap-react-bootstrap"
   },
   "orf-gping": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "f93736aa",
+    "sourceVersion": "d565603d",
     "license": "Apache-2.0",
-    "contentHash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
-    "lastHarvestedAt": "2026-10-20T22:06:54.253Z",
+    "contentHash": "eae32945948b207e81d4e1270247ab2cdb7f8e082c84bc99f1f92b367e2ee19a",
+    "lastHarvestedAt": "2026-10-22T16:58:22.077Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "319351b4",
+    "sourceVersion": "98b3bb68",
     "license": "Apache-2.0",
-    "contentHash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
-    "lastHarvestedAt": "2026-10-20T10:32:10.453Z",
+    "contentHash": "3cf0cbaa68acc6c69595bc720a69e5fa22830d62ef3ad9da4ff55308c59f6f0c",
+    "lastHarvestedAt": "2026-10-22T16:58:15.125Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "5538d72b",
+    "sourceVersion": "5ab62913",
     "license": "Apache-2.0",
-    "contentHash": "fb33f2f71ae6277c65d3c2c1ddeda23db9a85a54cb042b1913950d57bf4c5fd4",
-    "lastHarvestedAt": "2026-10-20T20:07:00.457Z",
+    "contentHash": "4d6310865c76a361439c89f1fb191a9e58ce3a6f93d3c4c77fdbe61c75d1157c",
+    "lastHarvestedAt": "2026-10-22T16:58:08.162Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

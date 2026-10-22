@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T16:51:46.843Z",
+  "last_updated": "2026-10-22T16:58:22.017Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29282,8 +29282,8 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "319351b4",
-      "content_hash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
+      "source_version": "98b3bb68",
+      "content_hash": "3cf0cbaa68acc6c69595bc720a69e5fa22830d62ef3ad9da4ff55308c59f6f0c",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
@@ -29321,6 +29321,11 @@
           "number": 3134,
           "title": "Gateway API Ancestor Status Array Bound and Deterministic Ordering",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3649,
+          "title": "deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc (#80",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29328,7 +29333,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:32:10.387Z",
+      "verified_at": "2026-10-22T16:58:15.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39430,14 +39435,19 @@
       "slug": "react-bootstrap-react-bootstrap",
       "platform": "github",
       "source_url": "https://github.com/react-bootstrap/react-bootstrap",
-      "source_version": "2f6eef1f",
-      "content_hash": "574f53d671feceb9bba48e06c0d3a72d96712392d77f3a9a10e4989a27e30146",
+      "source_version": "2926ad4e",
+      "content_hash": "1ed64a392a1438a8e2aeb249c311dcaec323161f227e00012d93800f4f55adc1",
       "dossier_path": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
       "promoted_rules": [
         {
           "number": 1901,
           "title": "deps): update dependency playwright to v1.55.1 [security] (#6973)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3647,
+          "title": "Publish v3.0.0-beta.6",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39446,7 +39456,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:16:28.259Z",
+      "verified_at": "2026-10-22T16:58:06.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40688,8 +40698,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "6c1af5fb",
-      "content_hash": "64512e0847f085e47d3e46fb3f1aff746bf002ef02f48d12ad4341a0995da019",
+      "source_version": "5ab62913",
+      "content_hash": "4d6310865c76a361439c89f1fb191a9e58ce3a6f93d3c4c77fdbe61c75d1157c",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -40702,6 +40712,11 @@
           "number": 2960,
           "title": "Merge pull request #4464 from taekop/fix/recall-content-hash-collision",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3648,
+          "title": "json): quote --keys-only schema keys that read as syntax",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40709,7 +40724,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:27:25.334Z",
+      "verified_at": "2026-10-22T16:58:08.086Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49279,8 +49294,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "f93736aa",
-      "content_hash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
+      "source_version": "d565603d",
+      "content_hash": "eae32945948b207e81d4e1270247ab2cdb7f8e082c84bc99f1f92b367e2ee19a",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -49303,6 +49318,11 @@
           "number": 3404,
           "title": "YTFLOW: Fix queue source cancellation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3651,
+          "title": "YQL-21692 fix tidy & sans",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49310,7 +49330,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:06:54.185Z",
+      "verified_at": "2026-10-22T16:58:22.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49471,8 +49491,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "e4d55d4b",
-      "content_hash": "046be9ad9fc497dcfea6ccb43dd97a17c414208045a9a3a7a733c9c352d768f9",
+      "source_version": "edbfb2c3",
+      "content_hash": "4d0a6474ca329a03987bf44518b736609e886ba9a332ae81da7cc87dce85ff0e",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -49500,6 +49520,11 @@
           "number": 3573,
           "title": "integer): move neg/overflowing_neg tests to new harness",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3650,
+          "title": "integer): use exact worst-case bound for bitonic shuffle key size",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49507,7 +49532,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:07:52.882Z",
+      "verified_at": "2026-10-22T16:58:17.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110200,6 +110225,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T16:51:42.219Z"
+    },
+    "rule-3647": {
+      "learning_id": "rule-3647",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3647,
+      "title": "Publish v3.0.0-beta.6",
+      "source_url": "https://github.com/react-bootstrap/react-bootstrap",
+      "source_version": "2926ad4e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:58:06.599Z"
+    },
+    "rule-3648": {
+      "learning_id": "rule-3648",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3648,
+      "title": "json): quote --keys-only schema keys that read as syntax",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "5ab62913",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:58:08.086Z"
+    },
+    "rule-3649": {
+      "learning_id": "rule-3649",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3649,
+      "title": "deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc (#80",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "98b3bb68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:58:15.047Z"
+    },
+    "rule-3650": {
+      "learning_id": "rule-3650",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3650,
+      "title": "integer): use exact worst-case bound for bitonic shuffle key size",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "edbfb2c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:58:17.480Z"
+    },
+    "rule-3651": {
+      "learning_id": "rule-3651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3651,
+      "title": "YQL-21692 fix tidy & sans",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "d565603d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:58:22.003Z"
     }
   },
   "aliases": {

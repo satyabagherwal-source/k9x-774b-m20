@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `5538d72b`  
+> **Source Version**: `5ab62913`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:07:00.113Z  
+> **Timestamp**: 2026-10-22T16:58:07.729Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:06:59.034Z  
+> **Harvest Timestamp**: 2026-10-22T16:58:06.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 84084 stars
+- **Stars / Engagement**: 84291 stars
 
 ---
 
@@ -1722,11 +1722,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4648** (2026-10-20): **rtk task: api_key_command needs sh, digest -- <cmd> skips the resolver, transcript lookup ignores CLAUDE_CONFIG_DIR**
-  *Symptoms*: ## Summary  Three places in `src/core/task_cmd.rs` launch a child process or locate a path in a way that only holds on a default Linux/macOS setup:  1. `api_key` runs `api_key_command` through a hardcoded `sh -c`. 2. `run_for_output`, the `-- <command>` form of the `digest` task, spawns `std::process::Command::new(program)` directly. 3. `claude_project_dir` joins `~/.claude` instead of honoring `CLAUDE_CONFIG_DIR`.  Observed on `upstream/develop` (`e542dca0`):  ``` src/core/task_cmd.rs:153   std::process::Command::new(program) src/core/task_cmd.rs:325   std::process::Command::new("sh") src/core/task_cmd.rs:476   .join(".claude") ```  ## Details  ### 1. `api_key_command` needs `sh` on `PATH`  `docs/guide/pipelines/tasks.md` describes `api_key_command` as taking "stdout (keychain, vault)", the same shape as Claude Code's `apiKeyHelper`. `api_key` hardcodes `sh -c <command>`, so on a Windows host without `sh` on `PATH` every upstream that uses `api_key_command` fails at credential resolution.  Expected: run it through the platform default shell. `core::shell::shell_command(script, None)` already does that (`cmd` on Windows, `sh` elsewhere), so Linux and macOS behavior does not change.  ### 2. `digest -- <command>` bypasses the command resolver  `run_for_output` does not use `core::utils::resolved_command` or `child_args`, which the other command modules use to launch children. A wrapper that has to be resolved by extension (`.cmd`, `.bat`) or needs its arguments escaped for one 
+- **Issue #4670** (2026-10-22): **fix(aws): handle --query output in sts get-caller-identity formatter**
+  *Symptoms*: When using `aws sts get-caller-identity --query '[Account,Arn]' --output json`, the AWS CLI returns a JSON array like `["account", "arn"]` instead of an object with `Account` and `Arn` fields. The `filter_sts_identity` function didn't handle this case and would return "AWS: ? ?" because it tried to access `Account`/`Arn` fields on the array.  The fix adds an early return when the parsed JSON is an array, causing the filter to return `None` and fall back to raw output. This matches the expected behavior: when `--query` is used, pass the output through as-is.  A test `bugfix_issue_4662_test_filter_sts_identity_with_query_array` verifies the fix. Existing tests for normal STS identity output continue to pass.  Refs https://github.com/rtk-ai/rtk/issues/4662  ### Reproduction and validation  Regression: `cmds::cloud::aws_cmd::tests::bugfix_issue_4662_test_filter_sts_identity_with_query_array`. Confirmed failing on the baseline plus the new test, and passing with the implementation change.  - `cargo test -p rtk --lib --locked --offline cmds::cloud::aws_cmd::tests::bugfix_issue_4662_test_filter_sts_identity_with_query_array -- --exact --nocapture --test-threads=1`: passed - `cargo fmt --all -- --check`: passed - `cargo clippy --workspace --all-targets --locked --offline`: passed - `cargo test --workspace --locked --offline -- --skip hooks::init::pi::tests::test_global_uninstall_detects_shared_pi_omp_extension`: passed - `cargo clippy --no-default-features --all-targets --locked --of
 
-- **Issue #4632** (2026-10-18): **fix(init): preserve existing file permissions in atomic_write**
-  *Symptoms*: ## Summary  Fixes #4631.  When `atomic_write` overwrites an existing file or a symlink target, it creates a temporary file using `tempfile::NamedTempFile::new_in(parent)` before persisting it over the destination. Because `NamedTempFile` defaults to mode `0600` for security, replacing the destination unconditionally resets the file permissions to `0600`, regardless of its previous mode (such as `0644`).  This change queries `fs::metadata(&target)` before creating the tempfile: - If the file exists, its permissions are read and reapplied to `temp_file.as_file().set_permissions(permissions)` before persisting to `target`. - If the file does not exist (`ErrorKind::NotFound`), the default tempfile permissions are kept intact. - Other I/O errors are propagated cleanly. - Symlinks continue to be followed correctly via `resolve_atomic_target`, so permissions of the underlying target are preserved without breaking the symlink.  ## Test plan  - [x] Added unit test `test_atomic_write_preserves_existing_file_permissions` in `src/hooks/init/mod.rs` (fails before fix with `assertion left == right failed: left: 384 (0o600), right: 420 (0o644)`, passes after fix). - [x] Added unit test `test_atomic_write_preserves_symlink_target_permissions` in `src/hooks/init/mod.rs` verifying target permissions and symlink preservation. - [x] `cargo test --lib hooks::init::tests::test_atomic_write` passes (5 passed, 0 failed). - [x] `cargo test --manifest-path proxy/Cargo.toml` passes (274 passed). - [x] 
+- **Issue #4668** (2026-10-22): **fix(aws): handle --query output for sts get-caller-identity**
+  *Symptoms*: When `aws sts get-caller-identity --query '[Account,Arn]'` is run, AWS CLI outputs a JSON array (e.g., `["123456789012", "arn:aws:iam::123456789012:user/example"]`) instead of the full JSON object. The `filter_sts_identity` function expected an object with `Account` and `Arn` fields, so it returned `"?"` for both, producing misleading output "AWS: ? ?".  This change adds a check in `filter_sts_identity` to detect JSON array input (indicating `--query` was used) and return `None`. This triggers the existing fallback path in `run_aws_filtered` that passes through the raw AWS CLI output, preserving the queried values.  A new test `bugfix_issue_4662_filter_sts_identity_query_output_returns_none` verifies the filter returns `None` for JSON array input. All existing tests pass.  Refs https://github.com/rtk-ai/rtk/issues/4662  ### Reproduction and validation  Regression: `cmds::cloud::aws_cmd::tests::bugfix_issue_4662_filter_sts_identity_query_output_returns_none`. Confirmed failing on the baseline plus the new test, and passing with the implementation change.  - `cargo test -p rtk --lib --locked --offline cmds::cloud::aws_cmd::tests::bugfix_issue_4662_filter_sts_identity_query_output_returns_none -- --exact --nocapture --test-threads=1`: passed - `cargo fmt --all -- --check`: passed - `cargo clippy --workspace --all-targets --locked --offline`: passed - `cargo test --workspace --locked --offline -- --skip hooks::init::pi::tests::test_global_uninstall_detects_shared_pi_omp_extension
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1743,177 +1743,1013 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5538d72b` (2026-10-20)
-**Commit Message**: Merge pull request #4555 from viniciusdsandrade/fix/task-platform-resolution
+### Incident Patch 1: `dadc712f` (2026-10-20)
+**Commit Message**: fix(json): quote --keys-only schema keys that read as syntax
 
-fix(task): resolve command and platform shell in task runner
+The compact schema prints keys bare between `,` `:` and braces, so a key
+containing one of them changed the structure the schema shows:
+{"a":{"b:int,c":1}} and {"a":{"b":1,"c":1}} both printed
+{a:{b:int,c:int}}. Such keys, and keys with whitespace, control
+characters or a leading `...`, are now printed JSON-quoted.
 
-**File**: `docs/guide/pipelines/tasks.md` (modified, +1/-1)
+Adds a test for inputs where never_worse would print the raw JSON:
+with the compact schema smaller than every earlier test input, routing
+--keys-only back through the guard no longer failed any test. Also
+states that short string values can make the schema a few bytes larger
+than the input, and replaces two unwrap() calls in tests.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/cmds/system/json_cmd.rs` (modified, +70/-10)
 ```diff
-@@ -74,7 +74,7 @@ An upstream is a model endpoint, shared by tasks and [judges](./conditions.md#ju
- | `model` | the model name |
- | `base_url` | optional — any compatible endpoint |
- | `api_key_env` | the environment variable holding the key. Omit it for the provider's conventional variable (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`), which `validate` names for you. A literal `api_key = "…"` does not load (E015) |
--| `api_key_command` | or run a command and take its stdout (keychain, vault) — the same shape as Claude Code's `apiKeyHelper`; an upstream with one is never reported as needing auth |
-+| `api_key_command` | or run a command and take its stdout (keychain, vault) — the same shape as Claude Code's `apiKeyHelper`. It runs through `sh` on Linux/macOS and `cmd` on Windows, so a command written for Git Bash needs rewriting there, or an explicit `bash -c "…"`. An upstream with one is never reported as needing auth |
- | `timeout_secs` | default 30; set it lower for anything on the hook path |
+@@ -214,8 +214,9 @@ pub fn filter_json_string(json_str: &str, max_depth: usize) -> Result<String> {
+ const MAX_SCHEMA_KEYS: usize = 16;
  
- `rtk pipeline validate`, `rtk trust` and `rtk init` print `auth needed: export VAR=...` for any key that is unset.
-```
-
-**File**: `src/core/task_cmd.rs` (modified, +132/-9)
-```diff
-@@ -6,7 +6,9 @@
- //! saving.
- 
- use crate::core::pipeline_config;
-+use crate::core::shell::{Launch, shell_command};
- use crate::core::tracking::{Tracker, estimate_tokens};
-+use crate::core::utils::{ChildArgExt, resolved_command};
- use anyhow::{Context, Result, bail};
- use rtk_engine::pipeline::{TaskDef, UpstreamDef};
- use rtk_engine::task::{CorpusFile, TaskIntent, TaskOutcome, WorkerRequest, find_kind};
-@@ -150,8 +152,9 @@ fn run_for_output(command: &[String]) -> Result<(CorpusFile, i32)> {
-     let (program, rest) = command
-         .split_first()
-         .context("`--` needs a command after it")?;
--    let output = std::process::Command::new(program)
--        .args(rest)
-+    let mut cmd = resolved_command(program);
-+    cmd.child_args(rest);
-+    let output = cmd
-         .output()
-         .with_context(|| format!("Failed to run {program}"))?;
-     let mut content = String::new();
-@@ -322,18 +325,25 @@ fn default_key_env(provider: &str) -> Option<&'static str> {
- /// conventional one when the upstream does not name it.
- fn api_key(upstream: &UpstreamDef) -> Result<String> {
-     if let Some(command) = upstream.api_key_command.as_deref() {
--        let out = std::process::Command::new("sh")
--            .arg("-c")
--            .arg(command)
-+        let mut cmd = match shell_command(command, None)? {
-+            Launch::Ready(cmd) => cmd,
-+            Launch::Unrunnable(unrunnable) => {
-+                bail!(
-+                    "api_key_command could not be run: {}",
-+                    unrunnable.message.trim()
-+                );
-+            }
-+        };
-+        let out = cmd
-             .output()
-             .with_context(|| format!("running api_key_command: {command}"))?;
-         if !out.status.success() {
-             let err = String::from_utf8_lossy(&out.stderr);
--            anyhow::bail!("api_key_command failed: {}", err.trim());
-+            bail!("api_key_command failed: {}", err.trim());
+ /// Render `value` as a compact schema (`{a:int,b:{c:string}}`), with no
+-/// indentation or newlines so it stays at or under the minified input that
+-/// `--keys-only` replaces.
++/// indentation or newlines. On real payloads that is far smaller than the
++/// input; a short string value or a small array can still cost a few bytes
++/// more (`"a":"b"` becomes `a:string`).
+ fn extract_schema(value: &Value, depth: usize, max_depth: usize) -> String {
+     if depth > max_depth {
+         return "...".to_string();
+@@ -270,14 +271,32 @@ fn extract_schema(value: &Value, depth: usize, max_depth: usize) -> String {
+                         break;
+                     }
+                     let val_schema = extract_schema(&map[*key], depth + 1, max_depth);
+-                    parts.push(format!("{}:{}", key, val_schema));
++                    parts.push(format!("{}:{}", schema_key(key), val_schema));
+                 }
+                 format!("{{{}}}", parts.join(","))
+             }
          }
-         let key = String::from_utf8_lossy(&out.stdout).trim().to_string();
-         if key.is_empty() {
--            anyhow::bail!("api_key_command printed nothing: {command}");
-+            bail!("api_key_command printed nothing: {command}");
-         }
-         return Ok(key);
      }
-@@ -472,8 +482,8 @@ fn claude_project_dir(cwd: &std::path::Path) -> Option<std::path::PathBuf> {
-         .chars()
-         .map(|c| if c.is_alphanumeric() { c } else { '-' })
-         .collect();
--    let dir = crate::core::user_dirs::home()?
--        .join(".claude")
-+    let dir = crate::hooks::init::resolve_claude_dir()
-+        .ok()?
-         .join("projects")
-         .join(slug);
-     dir.is_dir().then_some(dir)
-@@ -676,6 +686,32 @@ mod tests {
-         assert!(parse_args(&["--quesiton".to_string(), "x".to_string()]).is_err());
-         assert!(parse_args(&["--question".to_string()]).is_err());
-     }
-+
-+    #[test]
-+    fn claude_project_dir_respects_custom_config_dir() {
-+        // Claude Code names the directory after the absolute path, every
-+        // non-alphanumeric character turned into `-`: the separators, and the
-+        // `.` and `:` in the path too.
-+        #[cfg(windows)]
-+        let (cwd, slug) = (r"C:\work\my.project", "C--work-my-project");
-+        #[cfg(not(windows))]
-+        let (cwd, slug) = ("/work/my.project", "-work-my-project");
-+
-+        let temp = tempfile::tempdir().expect("tempdir");
-+        let custom_claude = temp.path().join("custom_claude");
-+        let expected_dir = custom_claude.join("projects").join(slug);
-+        std::fs::create_dir_all(&expected_dir).expect("project dir");
-+
-+        crate::core::test_isolation::with_agent_dir(
-+            temp.path(),
-+            "CLAUDE_CONFIG_DIR",
-+            &custom_claude,
-+            || {
-+                let resolved = claude_project_dir(std::path::Path::new(cwd));
-+                assert_eq!(resolved, Some(expected_dir));
-+            },
-+        );
-+    }
  }
  
++/// A key that could be read as schema syntax (empty, a delimiter, a `...`
++/// marker, whitespace or a control character) is printed JSON-quoted; any
++/// other key stays bare.
++fn schema_key(key: &str) -> Cow<'_, str> {
++    let bare = !key.is_empty()
++        && !key.starts_with("...")
++        && !key.chars().any(|c| {
++            c.is_whitespace()
++                || c.is_control()
++                || matches!(c, ',' | ':' | '{' | '}' | '[' | ']' | '"' | '\\')
++        });
++    if bare {
++        Cow::Borrowed(key)
++    } else {
++        Cow::Owned(Value::from(key).to_string())
++    }
++}
++
  #[cfg(test)]
-@@ -755,6 +791,93 @@ mod command_tests {
-         let (_, code) = run_for_output(&args(&["sh", "-c", "exit 0"])).expect("runs");
-         assert_eq!(code, 0);
+ mod tests {
+     use super::*;
+@@ -421,8 +440,8 @@ mod tests {
+         // the raw JSON back whenever the schema was longer — printing the very
+         // values the flag exists to hide. Short values make that the common
+         // case, so a small config or credential file leaked while a large one
+-        // did not. Assert on quotes: extract_schema emits keys unquoted, so a
+-        // `"` anywhere in the output can only have come from a raw value.
++        // did not. Assert on quotes: these keys print bare, so a `"` anywhere
++        // in the output can only have come from a raw value.
+         let short_values = format!(
+             "{{{}}}",
+             (0..11)
+@@ -446,9 +465,9 @@ mod tests {
+ 
+     #[test]
+     fn test_keys_only_schema_is_no_longer_than_input() {
+-        // `--keys-only` always prints the schema, so it must not cost more
+-        // than the minified input it replaces. The old indented layout did:
+-        // leak.json 31 → 36 B and the 4-level chain 30 → 79 B.
++        // `--keys-only` always prints the schema. On these inputs the compact
++        // form is no longer than the minified input, where the indented layout
++        // was: leak.json 31 → 36 B and the 4-level chain 30 → 79 B.
+         for raw in [
+             r#"{"a":1,"b":"secretvalue","c":3}"#,
+             r#"{"a":{"b":{"c":{"d":"deep"}}}}"#,
+@@ -467,6 +486,23 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn test_keys_only_prints_schema_where_never_worse_would_pick_raw() {
++        // Short values make the schema the longer output; never_worse would
++        // print these inputs verbatim, values included.
++        for (raw, expected) in [
++            (
++                r#"{"cc":"FR","n":"3","ok":"Y"}"#,
++                "{cc:string,n:string,ok:string}",
++            ),
++            ("[1,2]", "[int] (2)"),
++        ] {
++            assert_eq!(never_worse(raw, expected), raw, "guard premise for {raw}");
++            let shown = render_json(raw, 5, true).expect("must render");
++            assert_eq!(shown, expected, "for {raw}");
++        }
++    }
++
+     #[test]
+     fn test_keys_only_schema_beats_real_captures() {
+         for raw in [
+@@ -499,18 +535,42 @@ mod tests {
+             )
+         };
+ 
+-        let sixteen = filter_json_string(&make(16), 5).unwrap();
++        let sixteen = filter_json_string(&make(16), 5).expect("16-key object must parse");
+         assert_eq!(sixteen.matches(":int").count(), 16, "{sixteen:?}");
+         assert!(
+             !sixteen.contains("+0"),
+             "16-key object reported an empty cap: {sixteen:?}"
+         );
+ 
+-        let seventeen = filter_json_string(&make(17), 5).unwrap();
++        let seventeen = filter_json_string(&make(17), 5).expect("17-key object must parse");
+         assert_eq!(seventeen.matches(":int").count(), 16, "{seventeen:?}");
+         assert!(
+             seventeen.contains("...+1"),
+             "17-key object should show 16 keys plus +1: {seventeen:?}"
+         );
      }
 +
-+    /// npm, vitest and the other Node tools install as `.cmd` wrappers on
-+    /// Windows, and `Command::new("npm")` cannot start one: the failure
-+    /// `resolved_command` is there for. `which` reads the process's own `PATH`,
-+    /// so rather than change it under the tests running beside this one, the
-+    /// test runs itself again with the wrapper's directory on the child's.
-+    #[cfg(windows)]
 +    #[test]
-+    fn a_cmd_wrapper_on_path_is_run() {
-+        /// Set on the re-run that does the work: the directory holding `hello.cmd`.
-+        const WRAPPER_DIR: &str = "RTK_TEST_CMD_WRAPPER_DIR";
-+
-+        if std::env::var_os(WRAPPER_DIR).is_some() {
-+            let (captured, code) = run_for_output(&args(&["hello"])).expect("hello.cmd runs");
-+            assert_eq!(code, 0, "{}", captured.content);
-+            assert!(
-+                captured.content.c
++    fn test_keys_only_quotes_keys_that_read_as_syntax() {
++        for (raw, expected) in [
++            (r#"{"user_id":1,"a.b":2}"#, "{a.b:int,user_id:int}"),
++            (r#"{"a":{"b":1,"c":1}}"#, "{a:{b:int,c:int
 ```
 
-**File**: `src/core/test_isolation/mod.rs` (modified, +9/-1)
+---
+
+### Incident Patch 2: `57fc55c1` (2026-10-20)
+**Commit Message**: Merge pull request #4467 from Cedric921/fix/nextest-slow-summary
+
+fix(cargo): keep nextest failed/skipped counts when a test is slow
+
+**File**: `src/cmds/rust/cargo_cmd.rs` (modified, +70/-1)
 ```diff
-@@ -431,10 +431,18 @@ fn call_text<'a>(code: &'a str, head: regex::Match<'_>) -> (&'a str, &'a str) {
+@@ -632,8 +632,9 @@ fn flush_failure_block(header: &mut String, body: &mut Vec<String>, failures: &m
  
- /// The environment reads that stay direct, as written, each with its reason.
- /// Each covers one read: a second identical call in the same file is refused.
--const DIRECT_READS: [(&str, &str); 8] = [
-+const DIRECT_READS: [(&str, &str); 10] = [
-     // Builds the `PATH` a Windows test hands a child, extending the one it runs
-     // under so the child still finds its tools.
-     ("src/core/utils.rs", r#"var_os("PATH")"#),
-+    // The same, for the Windows test that runs itself again with a `.cmd`
-+    // wrapper's directory in front of its `PATH`.
-+    ("src/core/task_cmd.rs", r#"var_os("PATH")"#),
-+    // Tells that re-run apart from the test that spawned it. The parent sets
-+    // it on the child's command, and the child is the test binary itself, so
-+    // the process environment is the only place it arrives: `user_env` holds
-+    // what the calling thread set, and nothing more, in a test build.
-+    ("src/core/task_cmd.rs", "var_os(WRAPPER_DIR)"),
-     // Only `rtk hook audit` reaches it, and no test runs that in-process.
-     // `user_dirs::home` would move it to the Windows profile folder, which is
-     // #1681's question, not this scan's.
+ /// Filter cargo nextest output - show failures + compact summary
+ fn filter_cargo_nextest(output: &str) -> String {
++    // nextest annotates `passed` in place, e.g. `2 passed (1 slow), 1 failed`
+     let summary_re = regex::Regex::new(
+-        r"Summary \[\s*([\d.]+)s\]\s+(\d+) tests? run:\s+(\d+) passed(?:,\s+(\d+) failed)?(?:,\s+(\d+) skipped)?"
++        r"Summary \[\s*([\d.]+)s\]\s+(\d+) tests? run:\s+(\d+) passed(?:\s+\([^)]*\))?(?:,\s+(\d+) failed)?(?:,\s+(\d+) skipped)?"
+     ).expect("invalid nextest summary regex");
+ 
+     let starting_re = regex::Regex::new(r"Starting \d+ tests? across (\d+) binar(?:y|ies)")
+@@ -2347,6 +2348,74 @@ error: test run failed
+         );
+     }
+ 
++    #[test]
++    fn test_filter_cargo_nextest_slow_annotation_keeps_failed_and_skipped() {
++        // cargo-nextest 0.9.143 puts `(N slow)` directly after `passed` (#4420)
++        let output = r#"    Starting 3 tests across 1 binary (1 test skipped)
++        PASS [   0.004s] (1/3) scratch tests::passing
++        FAIL [   0.005s] (2/3) scratch tests::failing
++
++  stderr ───
++
++    thread 'tests::failing' panicked at src/lib.rs:14:9:
++    assertion `left == right` failed
++      left: 1
++     right: 2
++
++        SLOW [>  1.000s] (───────) scratch tests::slow
++        PASS [   2.502s] (3/3) scratch tests::slow
++────────────
++     Summary [   2.503s] 3 tests run: 2 passed (1 slow), 1 failed, 1 skipped
++        FAIL [   0.005s] (2/3) scratch tests::failing
++error: test run failed
++"#;
++        let result = filter_cargo_nextest(output);
++        assert!(
++            result.contains("cargo nextest: 2 passed, 1 failed, 1 skipped"),
++            "should keep failed and skipped counts: {}",
++            result
++        );
++        assert!(
++            result.contains("FAIL [   0.005s] (2/3) scratch tests::failing"),
++            "should keep the failure block: {}",
++            result
++        );
++        assert!(
++            result.contains("panicked"),
++            "should keep failure stderr: {}",
++            result
++        );
++    }
++
++    #[test]
++    fn test_filter_cargo_nextest_slow_annotation_all_pass() {
++        let output = r#"    Starting 2 tests across 1 binary
++        PASS [   0.004s] (1/2) scratch tests::passing
++        PASS [   2.502s] (2/2) scratch tests::slow
++────────────
++     Summary [   2.503s] 2 tests run: 2 passed (1 slow), 0 skipped
++"#;
++        let result = filter_cargo_nextest(output);
++        assert_eq!(
++            result, "cargo nextest: 2 passed (1 binary, 2.503s)",
++            "got: {}",
++            result
++        );
++    }
++
++    #[test]
++    fn test_filter_cargo_nextest_combined_annotation_keeps_failed_and_skipped() {
++        // cargo-nextest 0.9.143 with retries: `(1 slow, 1 flaky)` after `passed`
++        let output =
++            include_str!("../../../tests/fixtures/cargo_nextest_slow_flaky_failed_raw.txt");
++        let result = filter_cargo_nextest(output);
++        assert!(
++            result.contains("cargo nextest: 2 passed, 1 failed, 4 skipped (1 binary, 1.503s)"),
++            "should keep failed and skipped counts: {}",
++            result
++        );
++    }
++
+     #[test]
+     fn test_filter_cargo_nextest_summary_regex_fallback() {
+         let output = r#"    Starting 5 tests across 1 binary
+```
+
+**File**: `tests/fixtures/cargo_nextest_slow_flaky_failed_raw.txt` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
++────────────
++ Nextest run ID 5468985e-1fdf-40aa-a01e-4759652d1b15 with nextest profile: retry
++    Starting 3 tests across 1 binary (4 tests skipped)
++  TRY 1 FAIL [   0.003s] (───) fx tests::fail_fast
++  stdout ───
++
++    running 1 test
++    test tests::fail_fast ... FAILED
++
++    failures:
++
++    failures:
++        tests::fail_fast
++
++    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
++
++  stderr ───
++
++    thread 'tests::fail_fast' (338357) panicked at src/lib.rs:6:30:
++    assertion `left == right` failed
++      left: 1
++     right: 2
++    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
++
++  TRY 1 FAIL [   0.004s] (───) fx tests::flaky
++  stdout ───
++
++    running 1 test
++    test tests::flaky ... FAILED
++
++    failures:
++
++    failures:
++        tests::flaky
++
++    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
++
++  stderr ───
++
++    thread 'tests::flaky' (338358) panicked at src/lib.rs:13:83:
++    first try fails
++    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
++
++  TRY 2 PASS [   0.003s] (1/3) fx tests::flaky
++  TRY 2 FAIL [   0.003s] (───) fx tests::fail_fast
++  stdout ───
++
++    running 1 test
++    test tests::fail_fast ... FAILED
++
++    failures:
++
++    failures:
++        tests::fail_fast
++
++    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
++
++  stderr ───
++
++    thread 'tests::fail_fast' (338362) panicked at src/lib.rs:6:30:
++    assertion `left == right` failed
++      left: 1
++     right: 2
++    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
++
++  TRY 3 FAIL [   0.003s] (2/3) fx tests::fail_fast
++  stdout ───
++
++    running 1 test
++    test tests::fail_fast ... FAILED
++
++    failures:
++
++    failures:
++        tests::fail_fast
++
++    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
++
++  stderr ───
++
++    thread 'tests::fail_fast' (338364) panicked at src/lib.rs:6:30:
++    assertion `left == right` failed
++      left: 1
++     right: 2
++    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
++
++        SLOW [>  1.000s] (───) fx tests::pass_slow
++        PASS [   1.503s] (3/3) fx tests::pass_slow
++────────────
++     Summary [   1.503s] 3 tests run: 2 passed (1 slow, 1 flaky), 1 failed, 4 skipped
++   FLAKY 2/3 [   0.003s] (1/3) fx tests::flaky
++  TRY 3 FAIL [   0.003s] (2/3) fx tests::fail_fast
++error: test run failed
+```
+
+---
+
+### Incident Patch 3: `5ab62913` (2026-10-20)
+**Commit Message**: Merge pull request #4645 from ZXLyyds100/fix/python-lint-rule-details
+
+perf(python): compact repeated Ruff and SQLFluff descriptions
+
+**File**: `src/cmds/python/README.md` (modified, +3/-0)
+```diff
+@@ -7,6 +7,9 @@
+ - `pytest_cmd.rs` uses a state machine text parser (no JSON available from pytest)
+ - `ruff_cmd.rs` uses JSON for check mode (`--output-format=json`) and text filtering for format mode
+ - `sqlfluff_cmd.rs` injects `--format json` for lint mode and groups violations by rule and file; other subcommands pass through capped
++- Ruff and SQLFluff list identical descriptions once beside a visible top rule.
++  Locations retain the rule code; differing messages and rules outside the
++  summary cap keep their descriptions beside each location.
+ - `pip_cmd.rs` auto-detects `uv` as a pip alternative and routes accordingly
+ - `uv_cmd.rs` preserves `uv run` environment semantics: the program's own output passes through on success (bounded, with a tee hint), diagnostics are extracted on failure
+ - `python -m pytest` and `python3 -m mypy` are rewritten by the hook registry to `rtk pytest` / `rtk mypy`
+```
+
+**File**: `src/cmds/python/ruff_cmd.rs` (modified, +155/-11)
+```diff
+@@ -7,7 +7,7 @@ use crate::core::truncate::CAP_WARNINGS;
+ use crate::core::utils::{resolved_command, truncate};
+ use anyhow::Result;
+ use serde::Deserialize;
+-use std::collections::HashMap;
++use std::collections::{HashMap, HashSet};
+ 
+ /// A tool with a list like this also belongs in `core::tracking::SUBCOMMAND_ROUTERS`,
+ /// which keeps the subcommand in its telemetry label.
+@@ -170,9 +170,16 @@ pub fn filter_ruff_check_json(output: &str) -> String {
+     let total_files = unique_files.len();
+ 
+     // Group by rule code
+-    let mut by_rule: HashMap<String, usize> = HashMap::new();
++    let mut by_rule: HashMap<&str, (usize, Option<&str>)> = HashMap::new();
+     for diag in &diagnostics {
+-        *by_rule.entry(diag.code.clone()).or_insert(0) += 1;
++        let message = diag.message.trim();
++        let entry = by_rule.entry(&diag.code).or_insert((0, Some(message)));
++        entry.0 += 1;
++        // F401, for example, includes the imported name. Never replace
++        // different messages with the first message seen for that code.
++        if entry.1 != Some(message) {
++            entry.1 = None;
++        }
+     }
+ 
+     // Group by file
+@@ -182,7 +189,7 @@ pub fn filter_ruff_check_json(output: &str) -> String {
+     }
+ 
+     let mut file_counts: Vec<_> = by_file.iter().collect();
+-    file_counts.sort_by(|a, b| b.1.cmp(a.1));
++    file_counts.sort_by_key(|(file, count)| (std::cmp::Reverse(**count), **file));
+ 
+     // Build output
+     let mut result = String::new();
+@@ -197,15 +204,24 @@ pub fn filter_ruff_check_json(output: &str) -> String {
+     result.push('\n');
+ 
+     // Show top rules
+-    let mut rule_counts: Vec<_> = by_rule.iter().collect();
+-    rule_counts.sort_by(|a, b| b.1.cmp(a.1));
++    let mut rule_counts: Vec<_> = by_rule
++        .iter()
++        .map(|(&code, &(count, message))| (code, count, message))
++        .collect();
++    rule_counts.sort_by_key(|&(code, count, _)| (std::cmp::Reverse(count), code));
+ 
+     const MAX_RUFF_RULES: usize = CAP_WARNINGS;
+     const MAX_RUFF_FILES: usize = CAP_WARNINGS;
++    let mut described_rules = HashSet::new();
+     if !rule_counts.is_empty() {
+         result.push_str("Top rules:\n");
+-        for (rule, count) in rule_counts.iter().take(MAX_RUFF_RULES) {
+-            result.push_str(&format!("  {} ({}x)\n", rule, count));
++        for (rule, count, message) in rule_counts.iter().take(MAX_RUFF_RULES) {
++            result.push_str(&format!("  {} ({}x)", rule, count));
++            if let Some(message) = message.filter(|s| !s.is_empty()) {
++                result.push_str(&format!(": {}", truncate(message, 100)));
++                described_rules.insert(*rule);
++            }
++            result.push('\n');
+         }
+         result.push('\n');
+     }
+@@ -223,7 +239,7 @@ pub fn filter_ruff_check_json(output: &str) -> String {
+         }
+ 
+         let mut file_rule_counts: Vec<_> = file_rules.iter().collect();
+-        file_rule_counts.sort_by(|a, b| b.1.cmp(a.1));
++        file_rule_counts.sort_by_key(|(rule, count)| (std::cmp::Reverse(**count), *rule));
+ 
+         for (rule, count) in file_rule_counts.iter().take(3) {
+             result.push_str(&format!("    {} ({})\n", rule, count));
+@@ -253,8 +269,22 @@ pub fn filter_ruff_check_json(output: &str) -> String {
+         .collect();
+ 
+     result.push_str("\nViolations:\n");
+-    for line in violation_lines.iter().take(MAX_VIOLATIONS) {
+-        result.push_str(line);
++    for (diag, line) in diagnostics
++        .iter()
++        .zip(&violation_lines)
++        .take(MAX_VIOLATIONS)
++    {
++        if described_rules.contains(diag.code.as_str()) {
++            result.push_str(&format!(
++                "  {}:{}:{} {}\n",
++                compact_path(&diag.filename),
++                diag.location.row,
++                diag.location.column,
++                diag.code,
++            ));
++        } else {
++            result.push_str(line);
++        }
+     }
+     if violation_lines.len() > MAX_VIOLATIONS {
+         result.push_str(&format!(
+@@ -490,6 +520,120 @@ mod tests {
+         assert!(result.contains("No issues found"));
+     }
+ 
++    #[test]
++    fn repeated_descriptions_are_listed_once_in_visible_top_rules() {
++        let input = r#"[
++            {"code":"F401","message":"`os` imported but unused","location":{"row":1,"column":8},"filename":"/project/src/a.py","fix":null},
++            {"code":"F401","message":"`os` imported but unused","location":{"row":2,"column":8},"filename":"/project/src/b.py","fix":null}
++        ]"#;
++        let out = filter_ruff_check_json(input);
++        let (summary, detail) = out.split_once("Violations:\n").expect("detail section");
++        assert!(
++            summary.contains("F401 (2x): `os` imported but unused"),
++            "{out}"
++        );
++        assert_eq!(out.matches("`os` imported but unused").count(), 1, "{out}");
++        assert!(detail.contains("src/a.py:1:8 F401"));
++        assert!(detail.contains("src/b.py:2:8 F401"));
++    }
++
++
+```
+
+**File**: `src/cmds/python/sqlfluff_cmd.rs` (modified, +105/-19)
+```diff
+@@ -11,7 +11,7 @@ use crate::core::truncate::CAP_WARNINGS;
+ use crate::core::utils::{resolved_command, truncate};
+ use anyhow::Result;
+ use serde::Deserialize;
+-use std::collections::HashMap;
++use std::collections::{HashMap, HashSet};
+ 
+ #[derive(Debug, Deserialize)]
+ struct SqlfluffViolation {
+@@ -50,6 +50,13 @@ struct SqlfluffFile {
+     violations: Vec<SqlfluffViolation>,
+ }
+ 
++struct RuleSummary<'a> {
++    count: usize,
++    path: &'a str,
++    line: Option<u64>,
++    description: Option<&'a str>,
++}
++
+ /// How rtk should invoke sqlfluff, and how to read the result back.
+ ///
+ /// Both entry points - `rtk sqlfluff ...` and `rtk lint sqlfluff ...` - build
+@@ -205,27 +212,35 @@ fn render_lint_json(output: &str, exit_code: i32) -> String {
+     // Group by rule over the raw sqlfluff JSON order (`parsed`, pre-sort), so
+     // "first at" is the earliest occurrence in the original output - not the
+     // first after the worst-first file sort above.
+-    let mut by_rule: HashMap<&str, (usize, &str, Option<u64>)> = HashMap::new();
++    let mut by_rule: HashMap<&str, RuleSummary<'_>> = HashMap::new();
+     for file in &parsed {
+         for v in &file.violations {
+-            let entry =
+-                by_rule
+-                    .entry(v.code.as_str())
+-                    .or_insert((0, file.filepath.as_str(), v.line()));
+-            entry.0 += 1;
+-            if entry.2.is_none() && v.line().is_some() {
+-                entry.1 = file.filepath.as_str();
+-                entry.2 = v.line();
++            let description = v.description.trim();
++            let entry = by_rule.entry(v.code.as_str()).or_insert(RuleSummary {
++                count: 0,
++                path: &file.filepath,
++                line: v.line(),
++                description: Some(description),
++            });
++            entry.count += 1;
++            if entry.line.is_none() && v.line().is_some() {
++                entry.path = &file.filepath;
++                entry.line = v.line();
++            }
++            // One code may name several diagnostics (for example RF01 embeds
++            // a column name). Only identical descriptions can move to the key.
++            if entry.description != Some(description) {
++                entry.description = None;
+             }
+         }
+     }
+-    let mut rule_counts: Vec<(&str, usize, &str, Option<u64>)> = by_rule
++    let mut rule_counts: Vec<_> = by_rule
+         .iter()
+-        .map(|(code, (count, path, line))| (*code, *count, *path, *line))
++        .map(|(&code, summary)| (code, summary))
+         .collect();
+     // Most frequent rule first; ties break alphabetically by rule code so
+     // identical input always yields an identical report.
+-    rule_counts.sort_by_key(|r| (std::cmp::Reverse(r.1), r.0));
++    rule_counts.sort_by_key(|(code, summary)| (std::cmp::Reverse(summary.count), *code));
+ 
+     // Build compact output
+     let mut result = String::new();
+@@ -241,13 +256,19 @@ fn render_lint_json(output: &str, exit_code: i32) -> String {
+ 
+     // Top rules
+     result.push_str("Top rules:\n");
+-    for (rule, count, path, line) in rule_counts.iter().take(MAX_REPORTED_RULES) {
++    let mut described_rules = HashSet::new();
++    for (rule, summary) in rule_counts.iter().take(MAX_REPORTED_RULES) {
+         result.push_str(&format!(
+-            "  {} ({}x, first at {})\n",
++            "  {} ({}x, first at {})",
+             rule,
+-            count,
+-            sample_location(path, *line)
++            summary.count,
++            sample_location(summary.path, summary.line)
+         ));
++        if let Some(description) = summary.description.filter(|s| !s.is_empty()) {
++            result.push_str(&format!(": {}", truncate(description, 100)));
++            described_rules.insert(*rule);
++        }
++        result.push('\n');
+     }
+     if rule_counts.len() > MAX_REPORTED_RULES {
+         result.push_str(&format!(
+@@ -321,11 +342,16 @@ fn render_lint_json(output: &str, exit_code: i32) -> String {
+                 break 'detail;
+             }
+             detail.push_str(&format!(
+-                "  {} {} {}\n",
++                "  {} {}",
+                 location(&path, v.line(), v.col()),
+                 v.code,
+-                truncate(v.description.trim(), 100),
+             ));
++            // A description outside the visible Top rules cap is not a key
++            // the reader has seen; keep it next to every affected location.
++            if !described_rules.contains(v.code.as_str()) {
++                detail.push_str(&format!(" {}", truncate(v.description.trim(), 100)));
++            }
++            detail.push('\n');
+             rendered += 1;
+         }
+     }
+@@ -430,6 +456,66 @@ mod tests {
+     /// coordinates, no `fixes` key, 51 files whose worst one is emitted last.
+     const V2_JSON: &str = include_str!("../../../tests/fixtures/sqlfluff_lint_v2_raw.json");
+ 
++    #[test]
++    fn repeated_descriptions_are_listed_once_in_visible_top_rules() {
++        l
+```
+
+**File**: `tests/fixtures/ruff_check_long_message_raw.json` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++[
++  {
++    "cell": null,
++    "code": "F401",
++    "end_location": {
++      "column": 96,
++      "row": 1
++    },
++    "filename": "/fixture/src/pkg_a/mod.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "",
++          "end_location": {
++            "column": 1,
++            "row": 2
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Remove unused import: `a_really_long_package_name_for_testing.with_a_long_submodule_name.and_yet_another_module`"
++    },
++    "location": {
++      "column": 8,
++      "row": 1
++    },
++    "message": "`a_really_long_package_name_for_testing.with_a_long_submodule_name.and_yet_another_module` imported but unused",
++    "name": "unused-import",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/unused-import"
++  },
++  {
++    "cell": null,
++    "code": "F401",
++    "end_location": {
++      "column": 96,
++      "row": 1
++    },
++    "filename": "/fixture/src/pkg_b/mod.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "",
++          "end_location": {
++            "column": 1,
++            "row": 2
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Remove unused import: `a_really_long_package_name_for_testing.with_a_long_submodule_name.and_yet_another_module`"
++    },
++    "location": {
++      "column": 8,
++      "row": 1
++    },
++    "message": "`a_really_long_package_name_for_testing.with_a_long_submodule_name.and_yet_another_module` imported but unused",
++    "name": "unused-import",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/unused-import"
++  }
++]
+\ No newline at end of file
+```
+
+**File**: `tests/fixtures/ruff_check_repeated_raw.json` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++[
++  {
++    "cell": null,
++    "code": "F401",
++    "end_location": {
++      "column": 10,
++      "row": 1
++    },
++    "filename": "/fixture/src/four.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "",
++          "end_location": {
++            "column": 1,
++            "row": 2
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Remove unused import: `os`"
++    },
++    "location": {
++      "column": 8,
++      "row": 1
++    },
++    "message": "`os` imported but unused",
++    "name": "unused-import",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/unused-import"
++  },
++  {
++    "cell": null,
++    "code": "E701",
++    "end_location": {
++      "column": 9,
++      "row": 3
++    },
++    "filename": "/fixture/src/four.py",
++    "fix": null,
++    "location": {
++      "column": 8,
++      "row": 3
++    },
++    "message": "Multiple statements on one line (colon)",
++    "name": "multiple-statements-on-one-line-colon",
++    "noqa_row": 3,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/multiple-statements-on-one-line-colon"
++  },
++  {
++    "cell": null,
++    "code": "E701",
++    "end_location": {
++      "column": 10,
++      "row": 4
++    },
++    "filename": "/fixture/src/four.py",
++    "fix": null,
++    "location": {
++      "column": 9,
++      "row": 4
++    },
++    "message": "Multiple statements on one line (colon)",
++    "name": "multiple-statements-on-one-line-colon",
++    "noqa_row": 4,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/multiple-statements-on-one-line-colon"
++  }
++]
+```
+
+**File**: `tests/fixtures/ruff_check_tied_raw.json` (added, +536/-0)
+```diff
+@@ -0,0 +1,536 @@
++[
++  {
++    "cell": null,
++    "code": "E401",
++    "end_location": {
++      "column": 15,
++      "row": 1
++    },
++    "filename": "/fixture/src/alpha.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "import os\nimport sys",
++          "end_location": {
++            "column": 15,
++            "row": 1
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Split imports"
++    },
++    "location": {
++      "column": 1,
++      "row": 1
++    },
++    "message": "Multiple imports on one line",
++    "name": "multiple-imports-on-one-line",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/multiple-imports-on-one-line"
++  },
++  {
++    "cell": null,
++    "code": "D100",
++    "end_location": {
++      "column": 1,
++      "row": 1
++    },
++    "filename": "/fixture/src/alpha.py",
++    "fix": null,
++    "location": {
++      "column": 1,
++      "row": 1
++    },
++    "message": "Missing docstring in public module",
++    "name": "undocumented-public-module",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/undocumented-public-module"
++  },
++  {
++    "cell": null,
++    "code": "I001",
++    "end_location": {
++      "column": 15,
++      "row": 1
++    },
++    "filename": "/fixture/src/alpha.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "import os\nimport sys\n",
++          "end_location": {
++            "column": 1,
++            "row": 2
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Organize imports"
++    },
++    "location": {
++      "column": 1,
++      "row": 1
++    },
++    "message": "Import block is un-sorted or un-formatted",
++    "name": "unsorted-imports",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/unsorted-imports"
++  },
++  {
++    "cell": null,
++    "code": "CPY001",
++    "end_location": {
++      "column": 1,
++      "row": 1
++    },
++    "filename": "/fixture/src/alpha.py",
++    "fix": null,
++    "location": {
++      "column": 1,
++      "row": 1
++    },
++    "message": "Missing copyright notice at top of file",
++    "name": "missing-copyright-notice",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/missing-copyright-notice"
++  },
++  {
++    "cell": null,
++    "code": "F401",
++    "end_location": {
++      "column": 10,
++      "row": 1
++    },
++    "filename": "/fixture/src/alpha.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "",
++          "end_location": {
++            "column": 1,
++            "row": 2
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Remove unused import"
++    },
++    "location": {
++      "column": 8,
++      "row": 1
++    },
++    "message": "`os` imported but unused",
++    "name": "unused-import",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/unused-import"
++  },
++  {
++    "cell": null,
++    "code": "F401",
++    "end_location": {
++      "column": 15,
++      "row": 1
++    },
++    "filename": "/fixture/src/alpha.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "",
++          "end_location": {
++            "column": 1,
++            "row": 2
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Remove unused import"
++    },
++    "location": {
++      "column": 12,
++      "row": 1
++    },
++    "message": "`sys` imported but unused",
++    "name": "unused-import",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/unused-import"
++  },
++  {
++    "cell": null,
++    "code": "E401",
++    "end_location": {
++      "column": 15,
++      "row": 1
++    },
++    "filename": "/fixture/src/beta.py",
++    "fix": {
++      "applicability": "safe",
++      "edits": [
++        {
++          "content": "import os\nimport sys",
++          "end_location": {
++            "column": 15,
++            "row": 1
++          },
++          "location": {
++            "column": 1,
++            "row": 1
++          }
++        }
++      ],
++      "message": "Split imports"
++    },
++    "location": {
++      "column": 1,
++      "row": 1
++    },
++    "message": "Multiple imports on one line",
++    "name": "multiple-imports-on-one-line",
++    "noqa_row": 1,
++    "severity": "error",
++    "url": "https://docs.astral.sh/ruff/rules/multiple-imports-on-one-line"
++  },
++  {
++    "cell": null,
++    "code": "D100",
++    "end_location": {
++      "column": 1,
++      "row": 1
++    },
++    "filename": "/fixture/src/beta
+```
+
+**File**: `tests/fixtures/sqlfluff_lint_long_description_raw.json` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++[{"filepath": "models/a.sql", "violations": [{"start_line_no": 1, "start_line_pos": 8, "code": "RF01", "description": "Reference 'c.reason' refers to table/view not found in the FROM clause or found in ancestor statement.", "name": "references.from", "warning": false, "fixes": [], "start_file_pos": 7, "end_line_no": 1, "end_line_pos": 9, "end_file_pos": 8}], "statistics": {"source_chars": 28, "templated_chars": 28, "segments": 26, "raw_segments": 15}, "timings": {"templating": 0.00019895900004485156, "lexing": 0.00037157900078454986, "parsing": 0.0027214869996896596, "linting": 0.0004028979992654058, "RF01": 0.00028506899980129674}}, {"filepath": "models/b.sql", "violations": [{"start_line_no": 1, "start_line_pos": 8, "code": "RF01", "description": "Reference 'c.reason' refers to table/view not found in the FROM clause or found in ancestor statement.", "name": "references.from", "warning": false, "fixes": [], "start_file_pos": 7, "end_line_no": 1, "end_line_pos": 9, "end_file_pos": 8}], "statistics": {"source_chars": 31, "templated_chars": 31, "segments": 26, "raw_segments": 15}, "timings": {"templating": 4.9029999900085386e-05, "lexing": 0.00021788899994135136, "parsing": 0.0018857920003938489, "linting": 0.00033736800014594337, "RF01": 0.00024352899981749943}}]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4723** (closed): feat(filters): add Vercel CLI deployment and output filter (@rpatty-dev)
+- **PR #4670** (closed): fix(aws): handle --query output in sts get-caller-identity formatter (@TechWizard9999)
+- **PR #4668** (closed): fix(aws): handle --query output for sts get-caller-identity (@TechWizard9999)
+- **PR #4645** (2026-10-20): perf(python): compact repeated Ruff and SQLFluff descriptions (@ZXLyyds100)
 - **PR #4632** (closed): fix(init): preserve existing file permissions in atomic_write (@1932819331hy-debug)
 - **PR #4622** (2026-10-19): fix(init): only offer the proxy when rtk-proxy can run, and remove its base URL on uninstall (@kevin9327)
-- **PR #4578** (2026-10-16): fix(git): no log cap notice under git's usage on git 2.56 (@KuSh)
-- **PR #4575** (2026-10-14): chore(deps): bump googleapis/release-please-action from 4.4.1 to 5.0.0 (@dependabot[bot])
-- **PR #4574** (2026-10-14): chore(deps): bump actions/checkout from 4 to 7 (@dependabot[bot])
-- **PR #4573** (2026-10-14): chore(deps): bump actions/upload-artifact from 4 to 7 (@dependabot[bot])
 
 ---
 
@@ -1933,28 +2769,63 @@ fix(task): resolve command and platform shell in task runner
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4555 from viniciusdsandrade/fix/task-platform-resolution
+## X. json): quote --keys-only schema keys that read as syntax
 
 **RULE**:
-When implementing operations in `docs/guide/pipelines/tasks.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmds/system/json_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5538d72b`: Merge pull request #4555 from viniciusdsandrade/fix/task-platform-resolution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dadc712f`: json): quote --keys-only schema keys that read as syntax. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/pipelines/tasks.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/system/json_cmd.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| `api_key_command` | or run a command and take its stdout (keychain, vault) — the same shape as Claude Code's `apiKeyHelper`. It runs through `sh` on Linux/macOS and `cmd` on Windows, so a command written for Git Bash needs rewriting there, or an explicit `bash -c "…"`. An upstream with one is never reported as needing auth |
+/// indentation or newlines. On real payloads that is far smaller than the
+/// input; a short string value or a small array can still cost a few bytes
+/// more (`"a":"b"` becomes `a:string`).
+                    parts.push(format!("{}:{}", schema_key(key), val_schema));
+/// A key that could be read as schema syntax (empty, a delimiter, a `...`
+/// marker, whitespace or a control character) is printed JSON-quoted; any
+/// other key stays bare.
+fn schema_key(key: &str) -> Cow<'_, str> {
+    let bare = !key.is_empty()
+        && !key.starts_with("...")
+        && !key.chars().any(|c| {
+            c.is_whitespace()
+                || c.is_control()
+                || matches!(c, ',' | ':' | '{' | '}' | '[' | ']' | '"' | '\\')
+        });
+    if bare {
+        Cow::Borrowed(key)
+    } else {
+        Cow::Owned(Value::from(key).to_string())
+    }
+}
+
+        // did not. Assert on quotes: these keys print bare, so a `"` anywhere
+        // in the output can only have come from a raw value.
+        // `--keys-only` always prints the schema. On these inputs the compact
+        // form is no longer than the minified input, where the indented layout
+        // was: leak.json 31 → 36 B and the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| `api_key_command` | or run a command and take its stdout (keychain, vault) — the same shape as Claude Code's `apiKeyHelper`; an upstream with one is never reported as needing auth |
+/// indentation or newlines so it stays at or under the minified input that
+/// `--keys-only` replaces.
+                    parts.push(format!("{}:{}", key, val_schema));
+        // did not. Assert on quotes: extract_schema emits keys unquoted, so a
+        // `"` anywhere in the output can only have come from a raw value.
+        // `--keys-only` always prints the schema, so it must not cost more
+        // than the minified input it replaces. The old indented layout did:
+        // leak.json 31 → 36 B and the 4-level chain 30 → 79 B.
+        let sixteen = filter_json_string(&make(16), 5).unwrap();
+        let seventeen = filter_json_string(&make(17), 5).unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5538d72b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dadc712f` are properly handled with clean fallback behavior.

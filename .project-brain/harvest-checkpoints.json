@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T16:51:46.920Z",
+  "last_updated": "2026-10-22T16:58:22.091Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "046be9ad9fc497dcfea6ccb43dd97a17c414208045a9a3a7a733c9c352d768f9",
-      "verified_at": "2026-10-21T18:07:52.962Z",
+      "content_hash": "4d0a6474ca329a03987bf44518b736609e886ba9a332ae81da7cc87dce85ff0e",
+      "verified_at": "2026-10-22T16:58:17.571Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:07:52.962Z"
+      "last_updated": "2026-10-22T16:58:17.571Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -6021,14 +6021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-bootstrap-react-bootstrap",
-      "content_hash": "574f53d671feceb9bba48e06c0d3a72d96712392d77f3a9a10e4989a27e30146",
-      "verified_at": "2026-10-19T00:16:28.314Z",
+      "content_hash": "1ed64a392a1438a8e2aeb249c311dcaec323161f227e00012d93800f4f55adc1",
+      "verified_at": "2026-10-22T16:58:06.688Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:16:28.314Z"
+      "last_updated": "2026-10-22T16:58:06.688Z"
     },
     "orf/gping": {
       "repository": "orf/gping",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
-      "verified_at": "2026-10-20T22:06:54.261Z",
+      "content_hash": "eae32945948b207e81d4e1270247ab2cdb7f8e082c84bc99f1f92b367e2ee19a",
+      "verified_at": "2026-10-22T16:58:22.090Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:06:54.261Z"
+      "last_updated": "2026-10-22T16:58:22.090Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -10551,14 +10551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "2c4fd059ffc84744c428c864ea4c785d7918f8e062f61a592cf08890ec4d12f1",
-      "verified_at": "2026-10-20T10:32:10.461Z",
+      "content_hash": "3cf0cbaa68acc6c69595bc720a69e5fa22830d62ef3ad9da4ff55308c59f6f0c",
+      "verified_at": "2026-10-22T16:58:15.139Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:32:10.461Z"
+      "last_updated": "2026-10-22T16:58:15.139Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "fb33f2f71ae6277c65d3c2c1ddeda23db9a85a54cb042b1913950d57bf4c5fd4",
-      "verified_at": "2026-10-20T20:07:00.466Z",
+      "content_hash": "4d6310865c76a361439c89f1fb191a9e58ce3a6f93d3c4c77fdbe61c75d1157c",
+      "verified_at": "2026-10-22T16:58:08.176Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:07:00.466Z"
+      "last_updated": "2026-10-22T16:58:08.176Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `f93736aa`  
+> **Source Version**: `d565603d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:06:53.920Z  
+> **Timestamp**: 2026-10-22T16:58:21.662Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:06:53.913Z  
+> **Harvest Timestamp**: 2026-10-22T16:58:21.198Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2321 stars
+- **Stars / Engagement**: 2322 stars
 
 ---
 
@@ -1198,38 +1198,321 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dbc66013` (2026-10-20)
-**Commit Message**: YTFLOW: Fix queue source cancellation
-commit_hash:ab9422a0905afea8f2b312051a024f05d64a7eca
+### Incident Patch 1: `dc55e1eb` (2026-10-22)
+**Commit Message**: YQL-21692 fix tidy & sans
 
-**File**: `yt/yt/flow/library/cpp/connectors/queue/source.cpp` (modified, +2/-1)
+#### Fix tidy and sans issues ✎
+
+- Introduce a build-time macro `YQL_UDF_STATIC_ENTRY_POINT` that resolves to the static UDF library entry point symbol, replacing direct hardcoded function references in the static host and its unit tests. The macro is defined via a compiler flag in the build configuration, making the symbol name configurable without source changes.
+- Apply code-style and safety improvements across the affected files: add named parameters to improve call-site readability, use `const` references where mutation is not needed, prefer designated initializers over positional ones, rename local `static constexpr` variables to follow capitalized naming, and replace a C-style array with `std::array`.
+
+<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
+commit_hash:c3c83e4d663738fcf40b31872303ad7b44b4d20e
+
+**File**: `yql/essentials/ast/yql_constraint.cpp` (modified, +3/-3)
 ```diff
-@@ -185,6 +185,7 @@ void TQueueSourceImpl::DoTerminate()
-         CurrentRequestFuture_.Cancel(TError("Source is terminated, so result of current request is useless"));
-         CurrentRequestFuture_ = {};
-     }
-+    InitialCommittedOffset_.TrySet(TError(NYT::EErrorCode::Canceled, "Source is terminated"));
+@@ -2162,7 +2162,7 @@ NYT::TNode TStreamingConstraintNode::ToYson() const {
+ 
+     auto res = NYT::TNode::CreateMap();
+     res["event_time"] = PathToNode(*EventTime_);
+-    res["aliases"] = SetToNode(EventTimePaths_, false);
++    res["aliases"] = SetToNode(EventTimePaths_, /*withShortcut=*/false);
+     return res;
  }
  
- NObjectClient::EObjectType TQueueSourceImpl::GetQueueObjectType()
-@@ -330,7 +331,7 @@ auto TQueueSourceImpl::DoReadNextBatch(
+@@ -2226,8 +2226,8 @@ const TConstraintWithFieldsNode* TStreamingConstraintNode::DoRenameFields(TExprC
+     const auto canonicalPaths = reduce(*EventTime_);
+     TSetType paths;
+     for (const auto& path : EventTimePaths_) {
+-        for (auto& renamed : reduce(path)) {
+-            paths.insert_unique(std::move(renamed));
++        for (const auto& renamed : reduce(path)) {
++            paths.insert_unique(renamed);
+         }
+     }
+     if (paths.empty()) {
+```
+
+**File**: `yql/essentials/ast/yql_constraint_ut.cpp` (modified, +1/-1)
+```diff
+@@ -195,7 +195,7 @@ Y_UNIT_TEST(StreamingAliasesSerialization) {
+     UNIT_ASSERT(!restored->IsEventTimePath(TPath{"other"}));
+     UNIT_ASSERT(restored->GetEventTime() == streaming->GetEventTime());
  
-         CurrentRequestFuture_ = InitialCommittedOffset_
-             .ToFuture()
--            .ToUncancelable()
-+            .ToImmediatelyCancelable(/*propagateCancelation*/ false)
-             .Apply(BIND([this, this_ = MakeStrong(this), offsetLimit, nextOffset, rowBatchReadOptions] (const i64& initialOffset) {
-                 NApi::TPullQueueConsumerOptions options;
-                 options.Timeout = GetDynamicParameters()->PullQueueTimeout;
+-    for (const TStringBuf yson : {"#", "\"t\"", "[\"nested\";\"t\"]", "[]"}) {
++    for (const TStringBuf yson : {"#", "\"t\"", R"(["nested";"t"])", "[]"}) {
+         const auto node = NYT::NodeFromYsonString(yson);
+         const auto legacy = ctx.MakeConstraint<TStreamingConstraintNode>(node);
+         UNIT_ASSERT_VALUES_EQUAL(NYT::NodeToCanonicalYsonString(legacy->ToYson()), NYT::NodeToCanonicalYsonString(node));
+```
+
+**File**: `yql/essentials/core/type_ann/type_ann_sql.cpp` (modified, +1/-1)
+```diff
+@@ -1520,7 +1520,7 @@ IGraphTransformer::TStatus RebuildLambdaColumns(
+                     const auto& column = usedInUsing.at(key);
+                     const auto offset = Min(column.Order, aliasedRightUsingOrder.size());
+                     aliasedRightUsingOrder.insert(aliasedRightUsingOrder.begin() + offset,
+-                        TStarColumn{{}, column.Name, column.PhysicalName, &column});
++                        TStarColumn{.Alias = {}, .Name = column.Name, .PhysicalName = column.PhysicalName, .Using = &column});
+                 }
+             }
+             aliased = std::move(aliasedRightUsingOrder);
+```
+
+**File**: `yql/essentials/public/udf/udf_registrator.h` (modified, +2/-2)
+```diff
+@@ -190,15 +190,15 @@ void AddToStaticUdfRegistry(const TYqlUdfStaticLibrary* library);
+ 
+ template <typename... TModules>
+ static inline void AddToStaticUdfRegistry() {
+-    static constexpr TYqlUdfStaticLibrary library{
++    static constexpr TYqlUdfStaticLibrary Library{
+         .StructSize = sizeof(TYqlUdfStaticLibrary),
+         .AbiVersion = CurrentAbiVersion(),
+         .Register = [](IRegistrator& registrator, ui32 flags) {
+             Y_UNUSED(flags);
+             RegisterHelper<TModules...>(registrator);
+         },
+     };
+-    AddToStaticUdfRegistry(&library);
++    AddToStaticUdfRegistry(&Library);
+ }
+ 
+ } // namespace NYql::NUdf
+```
+
+**File**: `yql/essentials/public/udf/udf_registrator_ut.cpp` (modified, +4/-4)
+```diff
+@@ -69,15 +69,15 @@ Y_UNIT_TEST(StaticDescriptorRetainsLazyModuleFactories) {
+ }
+ 
+ Y_UNIT_TEST(RejectInvalidStaticDescriptors) {
+-    static constexpr TYqlUdfStaticLibrary tooSmall{};
+-    static constexpr TYqlUdfStaticLibrary missingRegister{
++    static constexpr TYqlUdfStaticLibrary TooSmall{};
++    static constexpr TYqlUdfStaticLibrary MissingRegister{
+         .StructSize = sizeof(TYqlUdfStaticLibrary),
+         .AbiVersion = CurrentAbiVersion(),
+     };
+     const auto size = GetStaticUdfLibraryList().size();
+     UNIT_ASSERT_EXCEPTION(AddToStaticUdfRegistry(nullptr), yexception);
+-    UNIT_ASSERT_EXCEPTION(AddToStaticUdfRegistry(&tooSmall), yexception);
+-    UNIT_ASSERT_EXCEPTION(AddToStaticUdfRegistry(&missingRegister), yexception);
++    UNIT_ASSERT_EXCEPTION(AddToStaticUdfRegistry(&TooSmall), yexception);
++    UNIT_ASSERT_EXCEPTION(AddToStaticUdfRegistry(&MissingRegister), yexception);
+     UNIT_ASSERT_VALUES_EQUAL(GetStaticUdfLibraryList().size(), size);
+ }
+ 
+```
+
+**File**: `yql/essentials/udfs/common/string/fat/ut/static_udf_ut.cpp` (modified, +4/-4)
+```diff
+@@ -4,11 +4,11 @@
+ 
+ #include <library/cpp/testing/unittest/registar.h>
+ 
+-extern "C" const NYql::NUdf::TYqlUdfStaticLibrary* GetStaticUdfLibrary_string_udf();
++extern "C" const NYql::NUdf::TYqlUdfStaticLibrary* YQL_UDF_STATIC_ENTRY_POINT();
+ 
+ Y_UNIT_TEST_SUITE(TInternalizedStringUdf) {
+ Y_UNIT_TEST(StableDescriptor) {
+-    const auto* library = GetStaticUdfLibrary_string_udf();
++    const auto* library = YQL_UDF_STATIC_ENTRY_POINT();
+     UNIT_ASSERT(library);
+     UNIT_ASSERT_VALUES_EQUAL(library->StructSize, sizeof(*library));
+     UNIT_ASSERT_VALUES_EQUAL(library->AbiVersion, NYql::NUdf::MakeAbiVersion(
+@@ -27,7 +27,7 @@ Y_UNIT_TEST(CachedAndSourceModulesRegisterInCurrentHost) {
+ }
+ 
+ Y_UNIT_TEST(CachedAndSourceDescriptorsShareRegistry) {
+-    const auto* cached = GetStaticUdfLibrary_string_udf();
++    const auto* cached = YQL_UDF_STATIC_ENTRY_POINT();
+     bool foundCached = false;
+     bool foundSource = false;
+     for (const auto* library : NYql::NUdf::GetStaticUdfLibraryList()) {
+@@ -42,7 +42,7 @@ Y_UNIT_TEST(SkipAlreadyLoadedModules) {
+     auto registry = NKikimr::NMiniKQL::CreateFunctionRegistry({})->Clone();
+     NKikimr::NMiniKQL::FillStaticModules(*registry);
+     const auto modules = registry->GetAllModuleNames();
+-    NKikimr::NMiniKQL::FillStaticModules(*registry, true);
++    NKikimr::NMiniKQL::FillStaticModules(*registry, /*skipLoaded=*/true);
+     UNIT_ASSERT(registry->GetAllModuleNames() == modules);
+     UNIT_ASSERT(registry->GetModuleFunctions("String").contains("HexEncode"));
+     UNIT_ASSERT(registry->GetModuleFunctions("Math").contains("Pi"));
+```
+
+---
+
+### Incident Patch 2: `59491adb` (2026-10-22)
+**Commit Message**: YT-30089: fix cross-medium HNV
+
+* Changelog entry
+Type: fix
+Component: master
+
+Before this, chunk could become historically non-vital if its requisition has 2 or less replicas on each medium. Therefore, if table replication factors was `{"ssd": 1, "nvme": 2}` its chunks could become non-vital even if there are more than 2 replicas in total. This commit fixes it.
+commit_hash:14067a4eb78c53483eb7fcd46d44b6d29eb27b8c
+
+**File**: `yt/yt/server/master/cell_master/serialize.h` (modified, +1/-0)
+```diff
+@@ -235,6 +235,7 @@ DEFINE_ENUM(EMasterReign,
+     ((RecomputeAllTabletCellStatistics)                             (3360))  // sabdenovch
+     ((ClearSequoiaLastSeenReplicasOnMaster)                         (3361))  // aleksandra-zh
+     ((IgnoreMissingLeaseCellsOnForcedTransactionAbort)              (3362))  // shakurov
++    ((FixCrossMediumHistoricallyNonVital)                           (3363))  // kvk1920
+ );
+ 
+ static_assert(TEnumTraits<EMasterReign>::IsMonotonic, "Master reign enum is not monotonic");
+```
+
+**File**: `yt/yt/server/master/chunk_server/chunk_requisition.cpp` (modified, +8/-5)
+```diff
+@@ -191,21 +191,24 @@ int TChunkReplication::GetSize() const
+ 
+ bool TChunkReplication::IsDurable(const IChunkManagerPtr& chunkManager, bool isErasureChunk) const
+ {
++    int totalReplicationFactor = 0;
+     for (auto entry : Entries_) {
+         auto* medium = chunkManager->GetMediumByIndex(entry.GetMediumIndex());
+         if (medium->IsOffshore()) {
+             return true;
+         }
+ 
+         YT_VERIFY(medium->IsDomestic());
+-        if (!medium->AsDomestic()->GetTransient() &&
+-            (entry.Policy().GetReplicationFactor() >= MinVitalReplicationFactor || isErasureChunk))
+-        {
+-            return true;
++        if (!medium->AsDomestic()->GetTransient()) {
++            if (isErasureChunk) {
++                return true;
++            }
++
++            totalReplicationFactor += entry.Policy().GetReplicationFactor();
+         }
+     }
+ 
+-    return false;
++    return totalReplicationFactor >= MinVitalReplicationFactor;
+ }
+ 
+ bool TChunkReplication::IsDurabilityRequired(const IChunkManagerPtr& chunkManager, bool isErasureChunk) const
+```
+
+**File**: `yt/yt/tests/integration/master/test_chunk_server.py` (modified, +45/-0)
+```diff
+@@ -68,6 +68,10 @@ def _get_replicator_queue_size(self):
+                 refresh_queue_size += count
+         return refresh_queue_size
+ 
++    @classmethod
++    def on_masters_started(cls):
++        create_domestic_medium("non_default")
++
+     @authors("kvk1920")
+     def test_invalid_medium_name(self):
+         with raises_yt_error("Invalid object name: starts with #"):
+@@ -543,6 +547,47 @@ def test_historically_non_vital_explicit_vitality_change(self):
+         wait(lambda: get("//sys/@lost_vital_chunk_count") == 0)
+         wait(lambda: chunk_id not in get("//sys/lost_vital_chunks"))
+ 
++    @authors("kvk1920")
++    def test_cross_medium_historically_non_vital(self):
++        non_default_location = ls("//sys/chunk_locations")[0]
++        set(f"//sys/chunk_locations/{non_default_location}/@medium_override", "non_default")
++        wait(lambda: get(f"//sys/chunk_locations/{non_default_location}/@statistics/medium_name") == "non_default")
++
++        create("table", "//tmp/t", attributes={"replication_factor": 3})
++        write_table("//tmp/t", [{"key": "abc", "value": 42}])
++        chunk_id = get_singular_chunk_id("//tmp/t")
++
++        def get_replication_factors():
++            rf = {}
++            for r in get(f"#{chunk_id}/@stored_replicas"):
++                medium = r.attributes["medium"]
++                rf[medium] = rf.get(medium, 0) + 1
++            return rf
++
++        wait(lambda: get_replication_factors() == {"default": 3})
++
++        set("//tmp/t/@media", {
++            "default": {
++                "replication_factor": 2,
++                "data_parts_only": False,
++            },
++            "non_default": {
++                "replication_factor": 1,
++                "data_parts_only": False,
++            },
++        })
++
++        wait(lambda: get_replication_factors() == {
++            "default": 2,
++            "non_default": 1,
++        })
++
++        assert not get(f"#{chunk_id}/@historically_non_vital")
++        assert get(f"#{chunk_id}/@vital")
++
++        set_nodes_banned(ls("//sys/data_nodes"), True)
++        wait(lambda: chunk_id in ls("//sys/lost_vital_chunks"))
++
+     @authors("danilalexeev")
+     def test_unexpected_overreplicated_chunks(self):
+         create("table", "//tmp/t", attributes={"replication_factor": 8})
+```
+
+**File**: `yt/yt/tests/library/yt_env_setup.py` (modified, +14/-0)
+```diff
+@@ -2198,7 +2198,21 @@ def _abort_transactions(self, driver=None):
+ 
+         yt_commands.execute_batch(requests, driver=driver)
+ 
++    def _reset_media(self, driver):
++        requests = [
++            yt_commands.make_batch_request(
++                "remove",
++                path=f"//sys/chunk_locations/{str(location)}/@medium_override",
++            )
++            for location in yt_commands.ls("//sys/chunk_locations", attributes=["medium_override"])
++            if "medium_override" in location.attributes
++        ]
++        for response in yt_commands.execute_batch(requests, driver=driver):
++            assert not yt_commands.get_batch_error(response)
++
+     def _reset_nodes(self, wait_for_nodes=True, driver=None):
++        self._reset_media(driver)
++
+         use_maintenance_requests = yt_commands.get(
+             "//sys/@config/node_tracker/forbid_maintenance_attribute_writes",
+             default=False,
+```
+
+---
+
+### Incident Patch 3: `6f77bda7` (2026-10-22)
+**Commit Message**: CHYT-1284: Enable calculate_text_stack_trace
+commit_hash:4124adb7d405cf8db97587de04e0143fe14bb739
+
+**File**: `yt/chyt/server/clickhouse_config.cpp` (modified, +0/-1)
+```diff
+@@ -215,7 +215,6 @@ void TClickHouseConfig::Register(TRegistrar registrar)
+             // broken around our 2.04 branch (it imposes busy loop in polling thread).
+             map["use_hedged_requests"] = NYTree::ConvertToNode(0);
+             map["distributed_product_mode"] = NYTree::ConvertToNode("allow");
+-            map["calculate_text_stack_trace"] = NYTree::ConvertToNode(false);
+             map["query_cache_system_table_handling"] = NYTree::ConvertToNode("ignore");
+             map["query_cache_nondeterministic_function_handling"] = NYTree::ConvertToNode("ignore");
+             return map;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1877** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
+- **PR #1872** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
+- **PR #1871** (closed): remove duplicate text (@masterbpro)
 - **PR #1870** (closed): Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1869** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1865** (closed): [queues] Add a list of ignored objects for cypress synchronizer pass (@ItIsApachee)
-- **PR #1860** (closed): feat(CHYT): describe clique creation options [CHYT-1471] (@sesho96)
-- **PR #1858** (closed): Fix links to images after the directory with them has been moved (@andrey-khropov)
-- **PR #1856** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1249,29 +1532,32 @@ commit_hash:ab9422a0905afea8f2b312051a024f05d64a7eca
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YTFLOW: Fix queue source cancellation
+## X. YQL-21692 fix tidy & sans
 
 **RULE**:
-When implementing operations in `yt/yt/flow/library/cpp/connectors/queue/source.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yql/essentials/ast/yql_constraint.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dbc66013`: YTFLOW: Fix queue source cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc55e1eb`: YQL-21692 fix tidy & sans. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/flow/library/cpp/connectors/queue/source.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/ast/yql_constraint.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    InitialCommittedOffset_.TrySet(TError(NYT::EErrorCode::Canceled, "Source is terminated"));
-            .ToImmediatelyCancelable(/*propagateCancelation*/ false)
+    res["aliases"] = SetToNode(EventTimePaths_, /*withShortcut=*/false);
+        for (const auto& renamed : reduce(path)) {
+            paths.insert_unique(renamed);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            .ToUncancelable()
+    res["aliases"] = SetToNode(EventTimePaths_, false);
+        for (auto& renamed : reduce(path)) {
+            paths.insert_unique(std::move(renamed));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dbc66013` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc55e1eb` are properly handled with clean fallback behavior.

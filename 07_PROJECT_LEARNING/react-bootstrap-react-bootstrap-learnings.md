@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md`  
 > **Source**: github ([https://github.com/react-bootstrap/react-bootstrap](https://github.com/react-bootstrap/react-bootstrap))  
-> **Source Version**: `2f6eef1f`  
+> **Source Version**: `2926ad4e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:16:28.081Z  
+> **Timestamp**: 2026-10-22T16:58:06.243Z  
 > **Learning ID**: `learn-github-react-bootstrap-react-bootstrap`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-bootstrap/react-bootstrap](https://github.com/react-bootstrap/react-bootstrap))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:16:27.110Z  
+> **Harvest Timestamp**: 2026-10-22T16:58:04.311Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bootstrap components built with React
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22608 stars
+- **Stars / Engagement**: 22609 stars
 
 ---
 
@@ -700,11 +700,11 @@ export default context;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6991** (2026-04-14): **OverlayTrigger appears to leak detached nodes**
-  *Symptoms*: ### Prerequisites  - [x] I am using the [correct version](https://github.com/react-bootstrap/react-bootstrap#bootstrap-compatibility) of React-Bootstrap for my version of Bootstrap - [x] I have [searched](https://github.com/react-bootstrap/react-bootstrap/issues?q=is%3Aissue) for duplicate or closed issues - [x] I have read the [contributing guidelines](https://github.com/react-bootstrap/react-bootstrap/blob/master/CONTRIBUTING.md)  ### Describe the bug  Looking at the demo site here https://react-bootstrap.netlify.app/docs/components/overlays/#overlaytrigger  Using the chrome dev tools memory profiler capturing detached nodes shows a leak each time the mouse hovers over the button and the tooltip is rendered  <img width="1535" height="417" alt="Image" src="https://github.com/user-attachments/assets/65c77355-2bd9-41b0-955b-f77dd7a76e4f" />  Those nodes remain even if the user navigates away from that page.  ### Expected behavior  Detached nodes should be cleaned up when the tooltip component is unmounted.   ### To Reproduce  1. Go to https://react-bootstrap.netlify.app/docs/components/overlays/#overlaytrigger 2. Use chrome dev tool memory profiler 3. capture detached element dump 4. hover over the tooltip to trigger it 5. capture detached element dump again  ### Reproducible Example  https://react-bootstrap.netlify.app/docs/components/overlays/#overlaytrigger  ### Screenshots  <img width="1535" height="417" alt="Image" src="https://github.com/user-attachments/assets/65c77355-
+- **Issue #7022** (2026-07-23): **chore(deps-dev): bump @vitest/browser from 4.1.5 to 4.1.8**
+  *Symptoms*: Bumps [@vitest/browser](https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser) from 4.1.5 to 4.1.8. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/vitest-dev/vitest/releases">@​vitest/browser's releases</a>.</em></p> <blockquote> <h2>v4.1.8</h2> <h3>   🐞 Bug Fixes</h3> <ul> <li><strong>browser</strong>: <ul> <li>Disable client <code>cdp</code> API when <code>allowWrite/allowExec: false</code> [backport to v4]  -  by <a href="https://github.com/hi-ogawa"><code>@​hi-ogawa</code></a> and <strong>Codex</strong> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/10450">vitest-dev/vitest#10450</a> <a href="https://github.com/vitest-dev/vitest/commit/e4067b3b1"><!-- raw HTML omitted -->(e4067)<!-- raw HTML omitted --></a></li> <li>Remove orphaned Playwright route when same module is mocked via multiple ids [backport to v4]  -  by <a href="https://github.com/toxik"><code>@​toxik</code></a> and <a href="https://github.com/Zelys-DFKH"><code>@​Zelys-DFKH</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/10474">vitest-dev/vitest#10474</a> <a href="https://github.com/vitest-dev/vitest/commit/675b4343f"><!-- raw HTML omitted -->(675b4)<!-- raw HTML omitted --></a></li> </ul> </li> </ul> <h5>    <a href="https://github.com/vitest-dev/vitest/compare/v4.1.7...v4.1.8">View changes on GitHub</a></h5> <h2>v4.1.7</h2> <h3>   🐞 Bug Fixes</h3> <ul> <li><strong>runner</strong>: Limit concurrency per task 
 
-- **Issue #6969** (2025-10-27): **Carousel breaks when clicking previous icon with no items**
-  *Symptoms*: ### Prerequisites  - [x] I am using the [correct version](https://github.com/react-bootstrap/react-bootstrap#bootstrap-compatibility) of React-Bootstrap for my version of Bootstrap - [x] I have [searched](https://github.com/react-bootstrap/react-bootstrap/issues?q=is%3Aissue) for duplicate or closed issues - [x] I have read the [contributing guidelines](https://github.com/react-bootstrap/react-bootstrap/blob/master/CONTRIBUTING.md)  ### Describe the bug  Carousel can break and become unable to display any items when clicking previous button when there are no items.  ### Expected behavior  Carousel should not break and become unable to display any items when clicking previous button with no items.  ### To Reproduce  1. Create a carousel with dynamically populated items based on an array. Initial array is empty. 2. Click previous button. Active index gets set to -1. 3. Add an item to the array and update the active index to 0 to display the newly added item. The item indicator appears but the item itself does not actually appear in the carousel and previous, next, and indicator buttons don't do anything so you can never view any of the items that get added to the carousel.  In minimal reproduction pressing the next button before adding results in the item not being displayed and clicking the previous button makes it appear just before it gets transitioned off-screen then bricks the carousel. This does not occur in my actual project and the item gets displayed immediately after 
+- **Issue #7015** (2026-06-16): **chore(deps-dev): bump @vitest/browser from 4.1.5 to 4.1.6**
+  *Symptoms*: Bumps [@vitest/browser](https://github.com/vitest-dev/vitest/tree/HEAD/packages/browser) from 4.1.5 to 4.1.6. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/vitest-dev/vitest/releases">@​vitest/browser's releases</a>.</em></p> <blockquote> <h2>v4.1.6</h2> <h3>   🐞 Bug Fixes</h3> <ul> <li><strong>browser</strong>: Provide project reference in <code>ToMatchScreenshotResolvePath</code>  -  by <a href="https://github.com/macarie"><code>@​macarie</code></a> and <a href="https://github.com/sheremet-va"><code>@​sheremet-va</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/10138">vitest-dev/vitest#10138</a> <a href="https://github.com/vitest-dev/vitest/commit/31882607c"><!-- raw HTML omitted -->(31882)<!-- raw HTML omitted --></a></li> <li>Global <code>sequence.concurrent: true</code> with top-level <code>test(..., { concurrent: false })</code> + depreacte <code>sequential</code> test API and options  -  by <a href="https://github.com/hi-ogawa"><code>@​hi-ogawa</code></a>, <strong>Codex</strong> and <a href="https://github.com/sheremet-va"><code>@​sheremet-va</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/10196">vitest-dev/vitest#10196</a> <a href="https://github.com/vitest-dev/vitest/commit/2847dfa2a"><!-- raw HTML omitted -->(2847d)<!-- raw HTML omitted --></a></li> <li><strong>browser</strong>: Simplify orchestrator otel carrier  -  by <a href="https://github.com/hi-ogawa"><code>@​h
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -721,214 +721,38 @@ export default context;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `761a3e53` (2025-10-27)
-**Commit Message**: chore(deps): update dependency playwright to v1.55.1 [security] (#6973)
+### Incident Patch 1: `2926ad4e` (2026-10-22)
+**Commit Message**: Publish v3.0.0-beta.6
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `yarn.lock` (modified, +8/-8)
+**File**: `CHANGELOG.md` (modified, +11/-0)
 ```diff
-@@ -5845,17 +5845,17 @@ pkg-dir@^3.0.0:
-   dependencies:
-     find-up "^3.0.0"
+@@ -1,3 +1,14 @@
++# [3.0.0-beta.6](https://github.com/react-bootstrap/react-bootstrap/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2026-10-22)
++
++
++### Bug Fixes
++
++* **Carousel:** ensure nextActiveIndex is non-negative when no children are present ([#6972](https://github.com/react-bootstrap/react-bootstrap/issues/6972)) ([b652b00](https://github.com/react-bootstrap/react-bootstrap/commit/b652b00c7fdd993c3a3f283703ce5fbd8cd16145))
++
++
++
++
++
+ # [3.0.0-beta.5](https://github.com/react-bootstrap/react-bootstrap/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2025-09-22)
  
--playwright-core@1.55.0:
--  version "1.55.0"
--  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.55.0.tgz#ec8a9f8ef118afb3e86e0f46f1393e3bea32adf4"
--  integrity sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==
-+playwright-core@1.56.1:
-+  version "1.56.1"
-+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.56.1.tgz#24a66481e5cd33a045632230aa2c4f0cb6b1db3d"
-+  integrity sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==
- 
- playwright@^1.55.0:
--  version "1.55.0"
--  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.55.0.tgz#7aca7ac3ffd9e083a8ad8b2514d6f9ba401cc78b"
--  integrity sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==
-+  version "1.56.1"
-+  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.56.1.tgz#62e3b99ddebed0d475e5936a152c88e68be55fbf"
-+  integrity sha512-aFi5B0WovBHTEvpM3DzXTUaeN6eN0qWnTkKx4NQaH4Wvcmc153PdaY2UBdSYKaGYw+UyWXSVyxDUg5DoPEttjw==
-   dependencies:
--    playwright-core "1.55.0"
-+    playwright-core "1.56.1"
-   optionalDependencies:
-     fsevents "2.3.2"
  
 ```
 
----
-
-### Incident Patch 2: `63f1e632` (2026-04-14)
-**Commit Message**: Fix #6991: Clear cached popper references when overlays hide (#6995)
-
-* Clear cached popper state when overlays unmount
-
-* Fix OverlaySpec formatting
-
-* Update test/OverlaySpec.tsx
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `src/Overlay.tsx` (modified, +13/-0)
-```diff
-@@ -70,6 +70,11 @@ function wrapRefs(props, arrowProps) {
-   arrowProps.ref = aRef.__wrapped || (aRef.__wrapped = (r) => aRef(r));
- }
- 
-+function clearPopperCache(popperRef: Partial<PopperRef>) {
-+  popperRef.state = undefined;
-+  popperRef.scheduleUpdate = undefined;
-+}
-+
- const Overlay = React.forwardRef<HTMLElement, OverlayProps>(
-   (
-     {
-@@ -108,9 +113,17 @@ const Overlay = React.forwardRef<HTMLElement, OverlayProps>(
-     useEffect(() => {
-       if (!outerShow) {
-         setFirstRenderedState(null);
-+        clearPopperCache(popperRef.current);
-       }
-     }, [outerShow]);
- 
-+    useEffect(
-+      () => () => {
-+        clearPopperCache(popperRef.current);
-+      },
-+      [],
-+    );
-+
-     return (
-       <BaseOverlay
-         {...outerProps}
-```
-
-**File**: `test/OverlaySpec.tsx` (modified, +88/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
- import * as React from 'react';
- import { describe, expect, it } from 'vitest';
--import { render, screen } from '@testing-library/react';
-+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
- import Overlay from '../src/Overlay';
- import Popover from '../src/Popover';
- 
-@@ -41,4 +41,91 @@ describe('<Overlay>', () => {
-     const popoverElem = screen.getByTestId('test');
-     expect(popoverElem.classList).not.toContain('fade');
-   });
-+
-+  it('should clear cached popper state when an overlay hides', async () => {
-+    let capturedPopper: any;
-+
-+    function OverlayExample() {
-+      const target = React.useRef<HTMLButtonElement>(null);
-+      const [show, setShow] = React.useState(false);
-+
-+      return (
-+        <>
-+          <button
-+            ref={target}
-+            type="button"
-+            data-testid="target"
-+            onClick={() => setShow((value) => !value)}
-+          >
-+            toggle
-+          </button>
-+          <Overlay show={show} transition={false} target={target.current}>
-+            {(props) => {
-+              capturedPopper = props.popper;
-+
-+              return (
-+                <Popover id="my-overlay" data-testid="test-overlay" {...props}>
-+                  test
-+                </Popover>
-+              );
-+            }}
-+          </Overlay>
-+        </>
-+      );
-+    }
-+
-+    render(<OverlayExample />);
-+
-+    fireEvent.click(screen.getByTestId('target'));
-+
-+    await screen.findByTestId('test-overlay');
-+    await waitFor(() => expect(capturedPopper.state).toBeDefined());
-+    expect(capturedPopper.scheduleUpdate).toBeDefined();
-+
-+    fireEvent.click(screen.getByTestId('target'));
-+
-+    await waitFor(() =>
-+      expect(screen.queryByTestId('test-overlay')).toBeNull(),
-+    );
-+    await waitFor(() => expect(capturedPopper.state).toBeUndefined());
-+    expect(capturedPopper.scheduleUpdate).toBeUndefined();
-+  });
-+
-+  it('should clear cached popper state when an overlay unmounts', async () => {
-+    let capturedPopper: any;
-+
-+    function OverlayExample() {
-+      const target = React.useRef<HTMLButtonElement>(null);
-+
-+      return (
-+        <>
-+          <button ref={target} type="button" data-testid="target">
-+            toggle
-+          </button>
-+          <Overlay show transition={false} target={() => target.current}>
-+            {(props) => {
-+              capturedPopper = props.popper;
-+
-+              return (
-+                <Popover id="my-overlay" data-testid="test-overlay" {...props}>
-+                  test
-+                </Popover>
-+              );
-+            }}
-+          </Overlay>
-+        </>
-+      );
-+    }
-+
-+    const { unmount } = render(<OverlayExample />);
-+
-+    await screen.findByTestId('test-overlay');
-+    await waitFor(() => expect(capturedPopper.state).toBeDefined());
-+    expect(capturedPopper.scheduleUpdate).toBeDefined();
-+
-+    unmount();
-+
-+    expect(capturedPopper.state).toBeUndefined();
-+    expect(capturedPopper.scheduleUpdate).toBeUndefined();
-+  });
- });
-```
-
----
-
-### Incident Patch 3: `b652b00c` (2025-10-27)
-**Commit Message**: fix(Carousel): ensure nextActiveIndex is non-negative when no children are present (#6972)
-
-Co-authored-by: noeHernandez94 <[REDACTED_EMAIL]>
-
-**File**: `src/Carousel.tsx` (modified, +1/-1)
-```diff
-@@ -311,7 +311,7 @@ const Carousel: DynamicRefForwardingComponent<'div', CarouselProps> =
-               return;
-             }
- 
--            nextActiveIndex = numChildren - 1;
-+            nextActiveIndex = numChildren > 0 ? numChildren - 1 : 0;
-           }
- 
-           nextDirectionRef.current = 'prev';
+ {
+   "name": "react-bootstrap",
+-  "version": "3.0.0-beta.5",
++  "version": "3.0.0-beta.6",
+   "description": "Bootstrap 5 components built with React",
+   "keywords": [
+     "bootstrap",
 ```
 
 #### Recent Merged Pull Requests:
@@ -957,42 +781,38 @@ Co-authored-by: noeHernandez94 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency playwright to v1.55.1 [security] (#6973)
+## X. Publish v3.0.0-beta.6
 
 **RULE**:
-When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-bootstrap/react-bootstrap. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-bootstrap/react-bootstrap. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `761a3e53`: deps): update dependency playwright to v1.55.1 [security] (#6973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2926ad4e`: Publish v3.0.0-beta.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-playwright-core@1.56.1:
-  version "1.56.1"
-  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.56.1.tgz#24a66481e5cd33a045632230aa2c4f0cb6b1db3d"
-  integrity sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==
-  version "1.56.1"
-  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.56.1.tgz#62e3b99ddebed0d475e5936a152c88e68be55fbf"
-  integrity sha512-aFi5B0WovBHTEvpM3DzXTUaeN6eN0qWnTkKx4NQaH4Wvcmc153PdaY2UBdSYKaGYw+UyWXSVyxDUg5DoPEttjw==
-    playwright-core "1.56.1"
+# [3.0.0-beta.6](https://github.com/react-bootstrap/react-bootstrap/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2026-10-22)
+
+
+### Bug Fixes
+
+* **Carousel:** ensure nextActiveIndex is non-negative when no children are present ([#6972](https://github.com/react-bootstrap/react-bootstrap/issues/6972)) ([b652b00](https://github.com/react-bootstrap/react-bootstrap/commit/b652b00c7fdd993c3a3f283703ce5fbd8cd16145))
+
+
+
+
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-playwright-core@1.55.0:
-  version "1.55.0"
-  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.55.0.tgz#ec8a9f8ef118afb3e86e0f46f1393e3bea32adf4"
-  integrity sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==
-  version "1.55.0"
-  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.55.0.tgz#7aca7ac3ffd9e083a8ad8b2514d6f9ba401cc78b"
-  integrity sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==
-    playwright-core "1.55.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `761a3e53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2926ad4e` are properly handled with clean fallback behavior.

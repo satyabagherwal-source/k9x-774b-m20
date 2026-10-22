@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T16:51:46.916Z",
-  "total_cycles_completed": 4312,
-  "total_learnings_persisted": 4312,
-  "total_rules_promoted": 3492,
+  "last_updated": "2026-10-22T16:58:22.087Z",
+  "total_cycles_completed": 4317,
+  "total_learnings_persisted": 4317,
+  "total_rules_promoted": 3497,
   "history": [
-    {
-      "timestamp": "2026-10-21T01:30:17.623Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T01:36:31.408Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T01:36:46.028Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T01:42:58.023Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T01:43:06.670Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T01:49:23.993Z",
       "repository": "chakra-ui/ark",
@@ -1403,6 +1368,41 @@
       "repository": "hmlongco/Factory",
       "learningId": "learn-github-hmlongco-factory",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:58:06.685Z",
+      "repository": "react-bootstrap/react-bootstrap",
+      "learningId": "learn-github-react-bootstrap-react-bootstrap",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:58:08.173Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:58:15.136Z",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "learningId": "learn-github-kong-kubernetes-ingress-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:58:17.568Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:58:22.087Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
