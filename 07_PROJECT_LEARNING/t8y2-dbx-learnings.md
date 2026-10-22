@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `b993e7a6`  
+> **Source Version**: `eb234637`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T01:36:45.612Z  
+> **Timestamp**: 2026-10-22T21:01:39.465Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T01:36:45.604Z  
+> **Harvest Timestamp**: 2026-10-22T21:01:39.456Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27368 stars
+- **Stars / Engagement**: 27557 stars
 
 ---
 
@@ -2063,13 +2063,11 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12894** (2026-10-20): **[Bug] 数据库备份早期备份文件删除时未删除掉文件夹**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  mysql5.7  ### 问题描述 / Problem description  设置中只保留最近5次，之前的备份会删掉， <img width="703" height="343" alt="Image" src="https://github.com/user-attachments/assets/703354cc-a374-4b34-ace0-73614be5737a" />  <img width="718" height="796" alt="Image" src="https://github.com/user-attachments/assets/cb3f3c4d-9fa3-4807-87f5-6bb468423cee" />  <img width="907" height="413" alt="Image" src="https://github.com/user-attachments/assets/536a73fc-187d-4c6e-a145-97e98a0f0a6d" />  ### 支持信息 / Support information  dbx版本：0.6.17 操作系统：windows 11  ### 优先级（是否紧急） / Priority (urgency)  🟢 P3 低优 · 有空再修 / Low · Fix when possible  ### 补充信息 / Additional information  _No response_
+- **Issue #13183** (2026-10-22): **[Bug] 数据结果表格区域的边框颜色很突兀，不美观，希望改为与SQL编辑器的边框风格一致，统一且美观**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  所有  ### 问题描述 / Problem description  数据结果表格区域的边框颜色很突兀，不美观，希望改为与SQL编辑器的边框风格一致，统一且美观  <img width="1781" height="1041" alt="Image" src="https://github.com/user-attachments/assets/1dab126f-cc8a-43be-bef0-35d5177b9dfd" />  ### 支持信息 / Support information  DBX 版本: v0.6.51 运行环境: 桌面端 操作系统: Windows 11 (10.0.26300.9711) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0 数据库类型: iris/cache 本地驱动版本: cache 0.1.30, iris 0.1.78  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
 
-- **Issue #12887** (2026-10-20): **[Bug] 数据库编辑链接中显示全部功能更新版本后不符合预期**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL  ### 问题描述 / Problem description  1.复现步骤：编辑链接 --> 选择显示数据库 --> 显示系统库 --> 全选 --> 显示全部 2.期望结果：展示系统库以及当前所有的库，点击显示全部后新增的库能自动展示出来 3.实际结果：点击显示全部后系统库的所有选择被默认取消掉了  <img width="1052" height="1108" alt="Image" src="https://github.com/user-attachments/assets/45e5db77-cb4f-4e41-b536-87e31cd6b692" />  ### 支持信息 / Support information  版本：Version 0.6.48 运行环境：macos 15  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > 已在 1e1467083 中修复，将包含在 v0.6.50 中，本 Issue 将关闭。  根因：未配置可见库筛选时，默认视图会隐藏 MySQL 系统库；“显示系统库 + 全选”后点“显示全部”会清空筛选，但系统库的可见性没有持久化，重新打开连接或编辑后系统库又回到默认隐藏状态。  修复：把“显示全部（含系统库）”保存为动态的全匹配筛选，而不是当前库名快照——系统库保持可见，之后新建的库也仍会自动出现；同时修正编辑连接保存时会丢失已有可见库通配符的问题。连接编辑弹窗和侧栏可见库弹窗统一使用该逻辑，并补充了回归测试。  请在 v0.6.50 发布并升级后再次验证。如果问题仍然存在，请新建 Issue，不要在本 Issue 继续留言。新 Issue 中请注明当前版本号、复现步骤和相关日志，并引用本 Issue。 
+- **Issue #13178** (2026-10-22): **fix(grid): 刷新/自动刷新保持当前结果标签页**
+  *Symptoms*: Closes #13043  ## 现象  开启「自动保留查询结果」后，点结果工具栏的「刷新」会让结果多出一个标签页；打开「自动刷新」后每个 interval 都多一个，标签页会不断堆积。翻页、数据库排序这些“重新取数”的操作同理。  用户的心智模型是：「自动保留查询结果」作用于**执行 SQL**；刷新/自动刷新只是把当前结果重新取一遍数据，应该在原标签页里更新。  ## 根因  `DataGrid` 的刷新/自动刷新 → `useDataGridActions.onReloadData` → `queryStore.executeTabSql`。`executeTabSql` 里：  ```ts const captureAutoSavedResultRun = tab.mode === "query" && tab.resultAutoSave === true && (!!tab.activeResultRunId || ...) ```  它只看 tab 是否开启「自动保留」，不区分这次调用是执行、刷新、自动刷新还是翻页/排序，所以刷新也会 capture 一个新的 result run。  ## 改动  - `executeTabSql` 新增 `refreshActiveResultRun` 选项：结果视图操作（刷新/自动刷新/翻页/数据库排序）在开启自动保留时**原地更新当前 result run**，保留结果页签、序号、pin 状态、分页与排序状态；显式执行 SQL（Run / Cmd+Enter）仍然 capture 新 run； - `useDataGridActions` 的 reload / paginate / database sort 路径传入该选项；数据表 tab（mode === "data"）不受影响； - 不改变默认用户（未开启自动保留）的任何行为。  ## 实测  用本分支构建的 web 前端 + 本地 `dbx-web`（seed 的 SQLite 数据）在浏览器里跑了一遍：  1. 打开 SQL 查询 → 开启「自动保留查询结果」→ 执行两次：结果标签页 = 3（原有语义）； 2. 点结果工具栏「刷新」：仍为 3 个，当前页签原地刷新； 3. 打开「自动刷新」等 2 个 tick：仍为 3 个； 4. 再点「执行全部 SQL」：变为 4 个 —— 显式执行仍会新增结果标签页。  实测截图（本分支前端 + 本地 dbx-web + seed 的 SQLite 数据；中间刷新、自动刷新各 2 次没有新增，最后再执行一次后共 4 个结果标签页）：  ![自动保留结果下刷新原地更新](https://raw.githubusercontent.com/zipg/dbx/d320df8863944ce2c1b611563974c501d74c2a29/docs/assets/pr-screenshots/13043-auto-keep-in-place.png)  自动化用例同步覆盖：  - `queryStore.refreshActiveResultRun.spec.ts`：刷新原地更新、显式执行新增 run、未开启自动保留、执行中保持网格、pin 的结果原地刷新后 pin 不丢； - `useDataGridActions.refreshActiveResultRun.spec.ts`：真实 `useDataGridActions` + 真实 `queryStore`（仅 mock 后端 SQL）串起 执
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2086,412 +2084,1131 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a3e9805` (2026-10-20)
-**Commit Message**: fix(sql): keep procedure bodies together on JDBC and Hive connections (#12578)
+### Incident Patch 1: `bc0734ab` (2026-10-22)
+**Commit Message**: fix(windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036)
 
-* fix(sql): keep procedure bodies together on JDBC and Hive connections (Fixes #12321)
+* fix(windows): diagnose WebView2 runtime failures and recover startup
 
-* fix(sql): gate JDBC and Hive procedure statement ranges on Oracle-style routine bodies
+On Windows the "main window never appears" failure has three very different
+causes that used to share one misleading "enterprise compatibility mode"
+retry: WebView2 runtime missing, WebView2 runtime registered but damaged, and
+a security product blocking WebView2. This change separates them before Tauri
+creates a window and turns the single retry into a bounded recovery ladder.
 
-Narrow the JDBC and Hive PL/SQL detection gate from full supports_oracle_plsql_blocks
-to supports_oracle_style_routine_bodies on backend and startsWithOracleStyleRoutineBody
-on frontend. This ensures string-bodied vanilla Hive UDFs (CREATE FUNCTION ... AS 'class')
-properly split at semicolons while preserving ArgoDB/Inceptor procedure bodies intact.
-Also restores '#' line comments and prevents '/' flushing on JDBC and Hive.
+- webview2_preflight: three-state runtime health (available / missing /
+  registered_but_damaged), runtime version and install kind, installed security
+  products, msedgewebview2 process count, Zone.Identifier and integrity level,
+  plus an STA environment-creation probe with a hard timeout and HRESULT capture
+- startup_recovery: 11-profile bounded compatibility ladder (isolated user data,
+  sandbox/GPU off, RendererCodeIntegrity off for old runtimes, in-process GPU,
+  temp data, scan delay, warm-up child, AppCompat Windows 8 layer, elevated
+  relaunch, relocated copy, single-process experiment) with per-profile user data
+  folders, fast-fail window probing, chain handoff throu
 
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts` (modified, +61/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -582,6 +582,12 @@ describe("splitSqlStatementRanges", () => {
-     expect(rangeSqlTexts(splitSqlStatementRanges(sql, "mysql"))).toEqual(["SELECT 1", "SELECT 2"]);
-   });
- 
-+  it("treats hash comments as line comments on generic JDBC and Hive connections", () => {
-+    const sql = "SELECT 1 # comment;\n;\nSELECT 2";
-+    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "jdbc"))).toEqual(["SELECT 1", "SELECT 2"]);
-+    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "hive"))).toEqual(["SELECT 1", "SELECT 2"]);
-+  });
-+
-   it("keeps SQL Server temporary table names instead of treating them as hash comments", () => {
-     const sql = "DROP TABLE IF EXISTS #Temp;\nSELECT * FROM ##GlobalTemp;";
-     expect(rangeSqlTexts(splitSqlStatementRanges(sql, "sqlserver"))).toEqual(["DROP TABLE IF EXISTS #Temp", "SELECT * FROM ##GlobalTemp"]);
-@@ -723,6 +729,61 @@ SELECT f1 + f2 FROM dual;`;
-     expect(hasMultipleExecutionTargets(argoProcedureFixture, "argo")).toBe(false);
-     expect(rangeSqlTexts(executableStatementRanges(argoProcedureFixture, "argo"))).toEqual([argoProcedureFixture]);
-     expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "transwarp"))).toEqual([argoProcedureFixture]);
-+    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "jdbc"))).toEqual([argoProcedureFixture]);
-+    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "hive"))).toEqual([argoProcedureFixture]);
-+  });
-+
-+  it("keeps procedure bodies together on JDBC and Hive connections (#12321)", () => {
-+    const procedure = `CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
-+IS
-+BEGIN
-+    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
-+    WHERE data_date = is_date;
-+
-+    INSERT INTO transwarp.tmp_cbs_t00_corp_cust_his
-+    SELECT * FROM transwarp.cbs_t00_corp_cust_his
-+    WHERE data_date = is_date;
-+
-+    COMMIT;
-+END;`;
-+
-+    for (const dbType of ["jdbc", "hive", "argo", "transwarp"] as const) {
-+      expect(rangeSqlTexts(splitSqlStatementRanges(procedure, dbType))).toEqual([procedure]);
-+      expect(hasMultipleExecutionTargets(procedure, dbType)).toBe(false);
-+      expect(rangeSqlTexts(executableStatementRanges(procedure, dbType))).toEqual([procedure]);
-+    }
-+
-+    const procedureWithAs = `CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
-+AS
-+BEGIN
-+    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
-+    WHERE data_date = is_date;
-+
-+    COMMIT;
-+END;`;
-+
-+    for (const dbType of ["jdbc", "hive", "argo", "transwarp"] as const) {
-+      expect(rangeSqlTexts(splitSqlStatementRanges(procedureWithAs, dbType))).toEqual([procedureWithAs]);
-+      expect(hasMultipleExecutionTargets(procedureWithAs, dbType)).toBe(false);
-+      expect(rangeSqlTexts(executableStatementRanges(procedureWithAs, dbType))).toEqual([procedureWithAs]);
-+    }
-+  });
-+
-+  it("splits vanilla Hive string-bodied functions at semicolons on JDBC and Hive connections", () => {
-+    const sqlBasic = `CREATE FUNCTION my_udf AS 'com.example.Mask';
-+SELECT mask_fn(x) FROM t;`;
-+
-+    const sqlIfNotExists = `CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask';
-+SELECT mask_fn(x) FROM t;`;
-+
-+    const sqlTemporary = `CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask';
-+SELECT mask_fn(x) FROM t;`;
-+
-+    for (const dbType of ["jdbc", "hive"] as const) {
-+      expect(rangeSqlTexts(splitSqlStatementRanges(sqlBasic, dbType))).toEqual(["CREATE FUNCTION my_udf AS 'com.example.Mask'", "SELECT mask_fn(x) FROM t"]);
-+      expect(rangeSqlTexts(splitSqlStatementRanges(sqlIfNotExists, dbType))).toEqual(["CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask'", "SELECT mask_fn(x) FROM t"]);
-+      expect(rangeSqlTexts(splitSqlStatementRanges(sqlTemporary, dbType))).toEqual(["CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask'", "SELECT mask_fn(x) FROM t"]);
-+    }
-   });
- 
-   it("statement at cursor inside an ArgoDB procedure body returns the whole definition", () => {
+@@ -2203,6 +2203,7 @@ dependencies = [
+  "tokio-util",
+  "uuid",
+  "webview2-com",
++ "windows 0.61.3",
+  "windows-core 0.61.2",
+  "windows-sys 0.61.2",
+  "wry",
 ```
 
-**File**: `apps/desktop/src/lib/sql/sqlStatementRanges.ts` (modified, +7/-2)
+**File**: `src-tauri/Cargo.toml` (modified, +6/-2)
 ```diff
-@@ -2047,14 +2047,19 @@ function isPostgresFamilyDatabase(databaseType?: DatabaseType): boolean {
-   return !!databaseType && POSTGRES_FAMILY_DATABASES.has(databaseType);
- }
+@@ -98,9 +98,13 @@ gtk = "0.18"
  
-+function isOracleStyleRoutineDatabase(databaseType?: DatabaseType): boolean {
-+  return isPostgresFamilyDatabase(databaseType) || databaseType === "jdbc" || databaseType === "hive";
+ [target.'cfg(target_os = "windows")'.dependencies]
+ # 与 vendored wry / tauri-runtime-wry 同版本（Cargo.lock 只有一份 0.38.x），用于在
+-# 快捷键录入态运行时切换 WebView2 的浏览器加速键开关（见 commands/shortcut_recording.rs）。
++# 快捷键录入态运行时切换 WebView2 的浏览器加速键开关（见 commands/shortcut_recording.rs），
++# 以及启动兼容模式下直接探测 WebView2 环境能否创建（见 webview2_preflight.rs）。
+ webview2-com = "0.38"
++# `windows` crate 与 wry/webview2-com 使用同一份 0.61，仅用其 core 类型
++# （HSTRING/PCWSTR/PWSTR/Interface），供 WebView2 预检调用 COM 接口时构造参数。
++windows = { version = "0.61", default-features = false }
+ # `cast`（Settings → Settings3 的 QueryInterface）来自 windows-core 的 Interface trait，
+ # 版本与 vendored wry / webview2-com-sys 一致。
+ windows-core = "0.61"
+-windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Threading", "Win32_UI_WindowsAndMessaging"] }
++windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Com", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Registry", "Win32_System_Threading", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging"] }
+```
+
+**File**: `src-tauri/src/lib.rs` (modified, +95/-0)
+```diff
+@@ -11,15 +11,26 @@ mod migration_gate;
+ mod models;
+ mod plugin_ui_protocol;
+ #[cfg(any(target_os = "windows", test))]
++mod startup_messages;
++#[cfg(any(target_os = "windows", test))]
+ mod startup_recovery;
+ #[cfg(all(not(target_os = "windows"), not(test)))]
+ #[path = "startup_recovery_noop.rs"]
+ mod startup_recovery;
+ #[cfg(any(target_os = "windows", test))]
+ mod webview2_legacy_css;
++#[cfg(target_os = "windows")]
++mod webview2_preflight;
+ #[cfg(any(target_os = "windows", test))]
+ mod webview2_recovery;
+ mod window_state_guard;
++#[cfg(target_os = "windows")]
++mod windows_appcompat;
++#[cfg(not(target_os = "windows"))]
++#[path = "windows_appcompat_noop.rs"]
++mod windows_appcompat;
++#[cfg(any(target_os = "windows", test))]
++mod windows_appcompat_state;
+ 
+ use commands::connection::AppState;
+ use dbx_core::persistence::secret_codec::SecretKeyPolicy;
+@@ -641,21 +652,26 @@ fn apply_linux_webkit_rendering_workarounds() {
+ fn show_main_window<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> bool {
+     let Some(window) = app.get_webview_window("main") else {
+         eprintln!("[WINDOW] show_main_window: no \"main\" webview window to reveal");
++        startup_recovery::record("show_main_window: main webview window is missing");
+         return false;
+     };
+     if let Err(err) = window.show() {
+         eprintln!("[WINDOW] show_main_window: show() failed: {err}");
++        startup_recovery::record(format!("show_main_window: show() failed: {err}"));
+     }
+     if let Err(err) = window.unminimize() {
+         eprintln!("[WINDOW] show_main_window: unminimize() failed: {err}");
++        startup_recovery::record(format!("show_main_window: unminimize() failed: {err}"));
+     }
+     if let Err(err) = window.set_focus() {
+         eprintln!("[WINDOW] show_main_window: set_focus() failed: {err}");
++        startup_recovery::record(format!("show_main_window: set_focus() failed: {err}"));
+     }
+     match window.is_visible() {
+         Ok(visible) => visible,
+         Err(err) => {
+             eprintln!("[WINDOW] show_main_window: is_visible() failed: {err}");
++            startup_recovery::record(format!("show_main_window: is_visible() failed: {err}"));
+             false
+         }
+     }
+@@ -1729,6 +1745,17 @@ fn route_external_commands(
+ 
+ #[cfg_attr(mobile, tauri::mobile_entry_point)]
+ pub fn run() {
++    // WebView2 warm-up child mode: when a compatibility profile asks for a
++    // preflight, the parent re-launches this executable with
++    // DBX_WEBVIEW2_PREFLIGHT_CHILD=1. The child only creates and releases a
++    // WebView2 environment (forcing AV products to scan/trust msedgewebview2.exe)
++    // and exits before any Tauri/window setup. Doing this in a separate process
++    // isolates a hanging environment creation from the real startup attempt.
++    #[cfg(target_os = "windows")]
++    if webview2_preflight::run_child_if_requested() {
++        return;
++    }
++
+     // Metadata/completion command chains nest very large async futures and can
+     // exhaust tokio's default 2 MiB worker stack, which aborts the process with
+     // STATUS_STACK_OVERFLOW. Share the roomier stack the backup worker and Web
+@@ -1741,6 +1768,68 @@ pub fn run() {
+     startup_recovery::initialize();
+     rustls::crypto::aws_lc_rs::default_provider().install_default().expect("Failed to install rustls crypto provider");
+     append_startup_probe("runtime prerequisites configured");
++    // Record the WebView2 / security-software environment before any window is
++    // created. This is the first thing to look at when a startup recovery chain
++    // fails: it distinguishes a missing/hooked WebView2 runtime from an AV
++    // product that blocks the child browser process.
++    #[cfg(target_os = "windows")]
++    let webview2_runtime_health = webview2_preflight::runtime_health();
++    #[cfg(target_os = "windows")]
++    append_startup_probe(format!("webview2 runtime_health={}", webview2_runtime_health.as_str()));
++
++    #[cfg(target_os = "windows")]
++    {
++        // Collect WebView2/AV diagnostics on a worker thread with a hard deadline:
++        // on machines where a security product hooks the WebView2 loader (the very
++        // machines this diagnostics targets) the version query must never be able
++        // to delay the real startup path. A timed-out worker is abandoned and dies
++        // with the process.
++        let (diagnostics_tx, diagnostics_rx) = std::sync::mpsc::channel();
++        std::thread::spawn(move || {
++            let diagnostics = webview2_preflight::collect_diagnostics();
++            let _ = diagnostics_tx.send(webview2_preflight::format_diagnostics(&diagnostics));
++        });
++        match diagnostics_rx.recv_timeout(std::time::Duration::from_secs(3)) {
++            Ok(lines) => {
++                for line in lines {
++                    append_startup_probe(line);
++                }
++            }
++            Err(_) => append_startup_probe("webview2 diagnostics timed out after 3s; continuing startup")
+```
+
+**File**: `src-tauri/src/startup_messages.rs` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++//! Native-dialog messages for Windows startup failures, centralized for i18n.
++//!
++//! Startup-failure dialogs are shown before the webview exists (a missing or
++//! damaged WebView2 runtime, or a window that never appears), so they cannot use
++//! the frontend i18n resources. The Rust side keeps a small catalog here instead
++//! of hard-coding `if locale.starts_with("zh")` branches at every call site.
++//!
++//! Coverage follows the existing native-UI precedent (`tray_menu_labels_for_locale`
++//! in `lib.rs`): Simplified Chinese, Traditional Chinese and English are
++//! translated; every other locale falls back to English. The frontend locales
++//! remain the authoritative translation source for in-app text.
++//!
++//! Placeholders in templates:
++//! - `{{log}}`  — full path of `startup.log`
++//! - `{{url}}`  — direct download URL of the Windows 10 offline package
++
++/// Messages for one language. Templates contain `{{log}}` / `{{url}}` placeholders.
++pub(crate) struct StartupMessages {
++    pub title: &'static str,
++    pub missing_runtime: &'static str,
++    pub damaged_runtime: &'static str,
++    pub compatibility_failed: &'static str,
++    pub recovery_disabled: &'static str,
 +}
 +
- /**
-  * Whether a statement must stay a single statement instead of being cut at its inner semicolons:
-  * Oracle PL/SQL blocks on Oracle-like dialects, and the Oracle-style routine bodies that a
-- * PostgreSQL-family connection reaches on a GaussDB/openGauss Oracle-compatibility server.
-+ * PostgreSQL-family connection reaches on a GaussDB/openGauss Oracle-compatibility server,
-+ * as well as generic JDBC and Hive drivers reaching ArgoDB/Inceptor procedure bodies (#12321).
-  */
- export function keepsOracleStyleBlockTogether(sql: string, databaseType?: DatabaseType, options?: SqlParameterOptions): boolean {
-   if (isOraclePlSqlStatement(sql, databaseType, options)) return true;
--  return isPostgresFamilyDatabase(databaseType) && startsWithOracleStyleRoutineBody(sql);
-+  return isOracleStyleRoutineDatabase(databaseType) && startsWithOracleStyleRoutineBody(sql);
- }
- 
- export function isOraclePlSqlStatement(sql: string, databaseType?: DatabaseType, options?: SqlParameterOptions): boolean {
++impl StartupMessages {
++    /// Fills the template placeholders. Unknown placeholders are left untouched
++    /// so a translation mistake is visible instead of silently producing an empty
++    /// dialog.
++    pub(crate) fn render(&self, template: &'static str, log_path: &str, offline_url: &str) -> String {
++        template.replace("{{log}}", log_path).replace("{{url}}", offline_url)
++    }
++}
++
++const EN: StartupMessages = StartupMessages {
++    title: "DBX could not start",
++    missing_runtime: "【DBX could not start】\nWebView2 is missing, so DBX cannot show its window.\n\nDownload the Windows 10 offline package from the DBX website and install it (the offline package bundles WebView2, no internet required). Click Yes to open the download page:\n{{url}}\n\nIf it still fails, send this log to the maintainer:\n{{log}}",
++    damaged_runtime: "【DBX could not start】\nThe WebView2 runtime is damaged, so DBX cannot show its window.\n\nDownload the Windows 10 offline package from the DBX website and install it (it bundles WebView2 and repairs it during setup). Click Yes to open the download page:\n{{url}}\n\nIf it still fails, send this log to the maintainer:\n{{log}}",
++    compatibility_failed: "【DBX could not start】\nDBX tried several startup compatibility methods, but the main window still did not appear.\n\nSend this log to the maintainer for diagnosis. Click Yes to open the log folder:\n{{log}}",
++    recovery_disabled: "【DBX could not start】\nThe main window did not appear and automatic compatibility retries are disabled in this environment.\n\nSend this log to the maintainer for diagnosis. Click Yes to open the log folder:\n{{log}}",
++};
++
++const ZH_CN: StartupMessages = StartupMessages {
++    title: "DBX 无法启动",
++    missing_runtime: "【DBX 无法启动】\n缺少 WebView2 运行时，DBX 无法显示主界面。\n\n请到 DBX 官网下载「Windows 10 离线版」安装（离线版自带 WebView2，无需联网），点“是”打开下载页：\n{{url}}\n\n如仍有问题，请把启动日志发给维护者：\n{{log}}",
++    damaged_runtime: "【DBX 无法启动】\nWebView2 运行时已损坏，DBX 无法显示主界面。\n\n请到 DBX 官网下载「Windows 10 离线版」重新安装（安装时会自动修复），点“是”打开下载页：\n{{url}}\n\n如仍有问题，请把启动日志发给维护者：\n{{log}}",
++    compatibility_failed: "【DBX 无法启动】\nDBX 已自动尝试多种兼容启动方式，主窗口仍未显示。\n\n请把启动日志发给维护者排查，点“是”打开日志所在文件夹：\n{{log}}",
++    recovery_disabled: "【DBX 无法启动】\n主窗口没有显示，且当前环境没有继续自动尝试兼容启动方式。\n\n请把启动日志发给维护者排查，点“是”打开日志所在文件夹：\n{{log}}",
++};
++
++const ZH_TW: StartupMessages = StartupMessages {
++    title: "DBX 無法啟動",
++    missing_runtime: "【DBX 無法啟動】\n缺少 WebView2 執行階段，DBX 無法顯示主視窗。\n\n請到 DBX 官網下載「Windows 10 離線版」安裝（離線版自帶 WebView2，無需連網），點「是」開啟下載頁：\n{{url}}\n\n若仍有問題，請把啟動日誌寄給維護者：\n{{log}}",
++    damaged_runtime: "【DBX 無法啟動】\nWebView2 執行階段已損壞，DBX 無法顯示主視窗。\n\n請到 DBX 官網下載「Windows 10 離線版」重新安裝（安裝時會自動修復），點「是」開啟下載頁：\n{{url}}\n\n若仍有問題，請把啟動日誌寄給維護者：\n{{log}}",
++    compatibility_failed: "【DBX 無法啟動】\nDBX 已自動嘗試多種相容啟動方式，主視窗仍未顯示。\n\n請把啟動日誌寄給維護者排查，點「是」開啟日誌所在資料夾：\n{{log}}",
++    recovery_disabled: "【DBX 無法啟動】\n主視窗沒有顯示，且目前環境沒有繼續自動嘗試相容啟動方式。\n\n請把啟動日誌寄給維護者排查，點「是」開啟日誌所在資料夾：\n{{log}}",
++};
++
++/// Normalize a BCP-47-ish locale tag and pick a catalog. Unknown locales fall
++/// back to English, matching the existing native-UI behaviour.
++pub(crate) fn messages_for_locale(locale: &str) -> &'static StartupMessages {
++    let normalized = locale.trim().to_ascii_lowercase().replace('_', "-");
++    if normalized.starts_with("zh") {
++        // Traditional Chinese for Taiwan/Hong Kong/Macau and explicit Hant tags;
++        // everything else Chinese is Simplified.
++        if normalized.contains("-tw")
++            || normalized.contains("-hk")
++            || normalized.contains("-mo")
++            || normalized.contains("hant")
++        {
++            return &ZH_TW;
++        }
++        return &ZH_CN;
++    }
++    &EN
++}
++
++/// Catalog for the current system locale.
++#[cfg_attr(not(target_os = "windows"), allow(dead_code
 ```
 
-**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +91/-0)
+**File**: `src-tauri/src/startup_recovery.rs` (modified, +1229/-289)
 ```diff
-@@ -316,6 +316,10 @@ impl SqlDialectProfile {
-             };
-         }
- 
-+        if matches!(db_type, DatabaseType::Jdbc | DatabaseType::Hive) {
-+            return Self { supports_oracle_style_routine_bodies: true, ..Self::default() };
-+        }
+@@ -1,31 +1,317 @@
++//! Windows startup diagnostics and the ordered startup-compatibility ladder.
++//!
++//! Some Windows 10 enterprise machines (360 安全卫士 / 奇安信 / 卡巴斯基 and other
++//! security products) block WebView2 from creating its browser process. The Tauri
++//! event loop then never runs (or starts but the main window stays invisible with
++//! `Runtime(FailedToReceiveMessage)` window queries) and the user sees nothing.
++//!
++//! The previous behaviour was a single retry with one "enterprise compatibility"
++//! profile. Norton worked with it; 360 / QiAnXin / Kaspersky still did not. This
++//! module now owns a deterministic *ladder* of startup profiles: every profile is
++//! a set of WebView2 environment overrides (user data folder, browser arguments,
++//! warm-up preflight, scan delay, elevation, relocated executable), and a failed
++//! attempt relaunches the executable with the next profile through environment
++//! variables (see [`CompatProfile`]). The last successful profile is recorded so
++//! a later launch can go straight to it (after asking the user once), and every
++//! attempt appends structured evidence to `startup.log` — the file users send to
++//! the maintainer.
++//!
++//! Design constraints:
++//! - The standard startup path must stay byte-for-byte equivalent in behaviour:
++//!   no environment overrides, no dialogs, no retries unless the main window
++//!   never becomes visible.
++//! - A profile only changes WebView2 environment variables *before* Tauri builds
++//!   the webview, because wry reads them at environment-creation time. The
++//!   vendored wry patch makes `WEBVIEW2_USER_DATA_FOLDER` and
++//!   `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS` effective (upstream wry always set
++//!   explicit options, which made the variables no-ops).
++//! - The chain must be bounded: a hard cap on attempts, and a one-shot guard for
++//!   the elevated profile so UAC cannot loop.
++//! - Diagnostics in `startup.log` are deliberately path-class only (no usernames,
++//!   no full user-profile paths) because users email the file.
 +
-         Self::default()
-     }
+ use std::collections::VecDeque;
+ use std::ffi::OsString;
+ use std::io::Write;
+ use std::path::{Path, PathBuf};
+-use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
++use std::sync::atomic::{AtomicBool, AtomicU8, AtomicUsize, Ordering};
+ use std::sync::{Condvar, LazyLock, Mutex};
+-use std::time::Duration;
++use std::time::{Duration, Instant};
+ use tauri::Manager;
  
-@@ -5278,6 +5282,15 @@ SELECT 2;";
-         assert_eq!(firebird, SqlDialectProfile::firebird());
-         assert!(firebird.supports_firebird_routine_blocks);
-         assert!(!firebird.supports_backslash_escaped_quotes);
+ const STARTUP_LOG_FILE: &str = "startup.log";
+ #[cfg(target_os = "windows")]
+ const RUNTIME_RECOVERY_LOG_FILE: &str = "webview2-recovery.log";
+ const STARTUP_LOG_DIR_ENV: &str = "DBX_STARTUP_LOG_DIR";
+ const KEEP_STARTUP_LOG_ENV: &str = "DBX_KEEP_STARTUP_LOG";
+-#[cfg(target_os = "windows")]
+ const NO_SANDBOX_ENV: &str = "DBX_WEBVIEW2_NO_SANDBOX";
+-#[cfg(target_os = "windows")]
++/// Set on every compatibility child: legacy token for "this is a recovery attempt".
++// Kept unconditional: the shared browser-argument preparation code (also built
++// for host-side unit tests) reads it; it is only meaningful for Win7 targets.
+ const DISABLE_WIN7_CSS_COLOR4_ENV: &str = "DBX_DISABLE_WIN7_CSS_COLOR4";
+ const RECOVERY_ATTEMPT_ENV: &str = "DBX_STARTUP_COMPAT_RECOVERY";
++/// Parent process id, used to wait for the single-instance mutex handoff.
+ const RECOVERY_PARENT_PID_ENV: &str = "DBX_STARTUP_COMPAT_PARENT_PID";
++/// The profile index executed by this process. `0`/unset = standard startup.
++const COMPAT_PROFILE_ENV: &str = "DBX_STARTUP_COMPAT_PROFILE";
++/// Comma separated profile indexes already attempted in this chain.
++const COMPAT_HISTORY_ENV: &str = "DBX_STARTUP_COMPAT_HISTORY";
++/// Set once the elevated profile has been attempted, so UAC cannot loop.
++const COMPAT_ELEVATED_ENV: &str = "DBX_STARTUP_COMPAT_ELEVATED";
++/// Captured once per chain: the user's original WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS.
++/// Each profile rebuilds the effective argument list from this base instead of
++/// accumulating flags from the previous attempt.
++const COMPAT_BASE_ARGS_ENV: &str = "DBX_STARTUP_COMPAT_BASE_ARGS";
+ const DISABLE_ENTERPRISE_COMPAT_ENV: &str = "DBX_DISABLE_ENTERPRISE_COMPAT";
++const DISABLE_STARTUP_COMPAT_ENV: &str = "DBX_DISABLE_STARTUP_COMPAT";
++/// Optional test hook: overrides the standard-mode watchdog delay in seconds.
++const WATCHDOG_SECS_ENV: &str = "DBX_STARTUP_WATCHDOG_SECS";
++/// Optional test hook: how long to keep waiting after a failed window probe
++/// before escalating (gives a slow WebView2 creation a last chance).
++const FAST_FAIL_GRACE_MS_ENV: &str = "DBX_STARTUP_COMPAT_FAST_FAIL_GRACE_MS";
 +
-+        for db_type in [DatabaseType::Jdbc, DatabaseType::Hive] {
-+            let profile = SqlDialectProfile::for_database_type(db_type);
-+            assert!(profile.supports_oracle_style_routine_bodies);
-+            assert!(!profile.supports_oracle_plsql_blocks);
-+            assert!(!profile.supports_mysql_routine_blocks);
-+            assert!(!profile.supports_slash_line_block_delimiter);
-+            assert!(profile.supports_backslash_escaped_quotes);
+ const WINDOWS_APP_DATA_DIR_NAME: &str = "com.dbx.app";
+ const COMPATIBILITY_MARKER_FILE: &str = "webview2-enterprise-compat.enabled";
+ const COMPATIBILITY_PROFILE_DIR: &str = "webview2-enterprise-compat";
+-const STARTUP_LOG_BUFFER_CAPACITY: usize = 256;
++const COMPATIBILITY_TEMP_PROFILE_DIR: &str = "dbx-webview2-compat";
++const STARTUP_LOG_BUFFER_CAPACITY: usize = 512;
++/// Standard startup: the app may legiti
+```
+
+**File**: `src-tauri/src/startup_recovery_noop.rs` (modified, +14/-0)
+```diff
+@@ -6,4 +6,18 @@ pub(crate) fn mark_frontend_ready(_main_window_visible: bool) {}
+ 
+ pub(crate) fn record_run_event() {}
+ 
++pub(crate) fn run_profile_pre_tauri_hooks() {}
++
++pub(crate) fn report_window_visibility_probe(_main_window_visible: bool) {}
++
++pub(crate) fn probe_main_window_visible<R: tauri::Runtime>(_app: &tauri::AppHandle<R>) -> bool {
++    false
++}
++
+ pub(crate) fn start_watchdog<R: tauri::Runtime>(_app: &tauri::AppHandle<R>) {}
++
++#[allow(dead_code)]
++pub(crate) fn handle_missing_webview2_runtime() {}
++
++#[allow(dead_code)]
++pub(crate) fn handle_damaged_webview2_runtime(_runtime_version: Option<&str>) {}
+```
+
+**File**: `src-tauri/src/webview2_preflight.rs` (added, +1476/-0)
+```diff
+@@ -0,0 +1,1476 @@
++//! Windows WebView2 startup preflight and diagnostics.
++//!
++//! WHY THIS MODULE EXISTS
++//!
++//! On some Windows 10 machines (notably those running 360 安全卫士 / 奇安信天擎 /
++//! Kaspersky), `CreateCoreWebView2EnvironmentWithOptions` stalls for ~35 s and the
++//! Tauri main window never becomes visible. The leading theory is that the
++//! security product intercepts (scans, sandboxes or blocks) the
++//! `msedgewebview2.exe` child processes that WebView2 spawns on environment
++//! creation, so the ready callback never arrives or arrives far too late. DBX
++//! therefore needs two independent capabilities:
++//!
++//! 1. **Diagnostics** ([`collect_diagnostics`] / [`format_diagnostics`]): capture
++//!    the facts that distinguish the failure modes (installed WebView2 runtime and
++//!    how it is located, user-data-folder class, additional browser arguments,
++//!    live `msedgewebview2.exe` process count, installed security products, Mark
++//!    of the Web (Zone.Identifier), process integrity level and Windows build) and
++//!    emit them as privacy-safe log lines that a client can email to us.
++//!
++//! 2. **Environment probe** ([`probe_environment`]): re-run exactly the WebView2
++//!    environment creation that wry performs, but on a throwaway STA thread with a
++//!    hard deadline. This turns "the window never appears" into a structured
++//!    result (success / HRESULT / elapsed ms / timeout) without blocking or
++//!    crashing the app.
++//!
++//! 3. **Child-process warm-up** ([`spawn_preflight_child`] /
++//!    [`run_child_if_requested`]): spawn a copy of the DBX executable in a
++//!    diagnostics-only mode *before* the real Tauri window exists. On affected
++//!    machines the first WebView2 start is the slow one; letting a disposable child
++//!    absorb that cost makes the AV/EDR product scan and trust `msedgewebview2.exe`
++//!    while the user is still looking at the splash, so the real window creation
++//!    afterwards can succeed quickly. This is a known workaround for 360-style
++//!    startup blockers.
++//!
++//! PRIVACY CONTRACT
++//!
++//! `startup.log` is emailed to the maintainer, so it must never contain a user
++//! name or a full user-profile path. [`format_diagnostics`] therefore only emits
++//! path *classes* ("local_appdata", "appdata", "temp", "custom"), counts, version
++//! numbers and product display names. Free-form values that may embed a profile
++//! path (additional browser arguments) are scrubbed through [`sanitize_for_log`].
++//!
++//! PLATFORM SCOPE
++//!
++//! This module is declared only under `#[cfg(target_os = "windows")]`; the body
++//! below is Windows-only on purpose. The pure helpers at the bottom (path
++//! classification, product matching, integrity mapping and result-file parsing)
++//! are kept free of Win32 calls so they can be unit-tested on Windows CI.
++//!
++//! This file is the whole surface of the module: it does not call back into the
++//! rest of the crate, which keeps it usable from both `run()` (child mode) and the
++//! startup-recovery ladder.
++
++use std::collections::BTreeSet;
++use std::fmt::Write as _;
++use std::path::{Path, PathBuf};
++use std::sync::mpsc;
++use std::time::{Duration, Instant};
++
++use webview2_com::Microsoft::Web::WebView2::Win32::{
++    CreateCoreWebView2EnvironmentWithOptions, GetAvailableCoreWebView2BrowserVersionString, ICoreWebView2Environment,
++    ICoreWebView2EnvironmentOptions,
++};
++use webview2_com::{CoreWebView2EnvironmentOptions, CreateCoreWebView2EnvironmentCompletedHandler};
++use windows::core::{Error as WinError, HRESULT, HSTRING, PCWSTR, PWSTR};
++use windows_sys::Win32::Foundation::{CloseHandle, ERROR_NO_MORE_ITEMS, ERROR_SUCCESS, INVALID_HANDLE_VALUE};
++use windows_sys::Win32::Security::{
++    GetSidSubAuthority, GetSidSubAuthorityCount, GetTokenInformation, TokenIntegrityLevel, TOKEN_MANDATORY_LABEL,
++    TOKEN_QUERY,
++};
++use windows_sys::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_APARTMENTTHREADED};
++use windows_sys::Win32::System::Diagnostics::ToolHelp::{
++    CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
++};
++use windows_sys::Win32::System::Registry::{
++    RegCloseKey, RegEnumKeyExW, RegOpenKeyExW, RegQueryValueExW, HKEY, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, KEY_READ,
++    KEY_WOW64_64KEY, REG_DWORD, REG_EXPAND_SZ, REG_SZ, REG_VALUE_TYPE,
++};
++use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
++use windows_sys::Win32::UI::WindowsAndMessaging::{DispatchMessageW, PeekMessageW, TranslateMessage, MSG, PM_REMOVE};
++
++// ---------------------------------------------------------------------------
++// Environment contract shared with lib.rs / startup_recovery.rs
++// ---------------------------------------------------------------------------
++
++/// Set to `1` in the spawned diagnostics child; makes `run()` perform the
++/// WebView2 probe and exit before any Tauri/window code runs.
++pub(crate) const PREFLIGHT_CHILD_E
+```
+
+**File**: `src-tauri/src/windows_appcompat.rs` (added, +473/-0)
+```diff
+@@ -0,0 +1,473 @@
++//! Windows AppCompat "Windows 8" layer helper for the WebView2 browser process.
++//!
++//! WHY: field evidence in `docs/win-av-compat-research.md` (P4, WebView2Feedback #4094):
++//! Windows 8 compatibility mode for `msedgewebview2.exe` unblocks WebView2 environment
++//! creation where 360 安全卫士 / 奇安信天擎 / Kaspersky intercept the browser process,
++//! because the shim engine pushes WebView2 onto legacy API branches that AV hooks only
++//! attach to on "modern Windows" code paths.
++//!
++//! The layer is the per-user value
++//! `HKCU\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers` =
++//! full path to `msedgewebview2.exe` -> `~ WIN8RTM`: no admin rights, applied at the next
++//! process creation, reversible. Evergreen updates change the version directory, so the
++//! ladder rewrites it on every startup ([`set_win8_compat_layer`] resolves the newest
++//! runtime). Log-safe strings only carry a source class + version (`startup.log` is emailed
++//! to the maintainer). Windows-only module; the pure helpers are Win32-free and testable.
++
++use std::cmp::Ordering;
++use std::path::{Path, PathBuf};
++
++use windows_sys::Win32::Foundation::{
++    CloseHandle, ERROR_FILE_NOT_FOUND, ERROR_INVALID_PARAMETER, ERROR_MORE_DATA, ERROR_NO_MORE_ITEMS, ERROR_SUCCESS,
++};
++use windows_sys::Win32::Security::{GetTokenInformation, TokenElevation, TOKEN_ELEVATION, TOKEN_QUERY};
++use windows_sys::Win32::System::Registry::{
++    RegCloseKey, RegCreateKeyExW, RegDeleteValueW, RegEnumValueW, RegOpenKeyExW, RegQueryValueExW, RegSetValueExW,
++    HKEY, HKEY_CURRENT_USER, KEY_QUERY_VALUE, KEY_SET_VALUE, REG_OPTION_NON_VOLATILE, REG_SZ, REG_VALUE_TYPE,
++};
++use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
++
++use crate::windows_appcompat_state::{self, LayerRegistry, LayerValue};
++
++/// Per-user AppCompat layer store; the shim engine reads it when a process with a
++/// matching full path starts.
++const LAYERS_KEY: &str = r"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
++/// Separate DBX-owned key records the exact values created by the recovery
++/// chain. Never enumerate the shared Layers key to decide what to remove.
++const OWNED_LAYERS_KEY: &str = r"Software\com.dbx.app\StartupCompat\OwnedWebView2Layers";
++/// "Windows 8" mode token; `~` marks the data as a compatibility-layer token list.
++const WIN8_LAYER_DATA: &str = "~ WIN8RTM";
++/// `KEY_QUERY_VALUE` keeps `RegCreateKeyExW` working on an already existing key;
++/// `KEY_SET_VALUE` is needed to write/delete the layer value.
++const LAYERS_KEY_ACCESS: u32 = KEY_QUERY_VALUE | KEY_SET_VALUE;
++
++/// Evergreen runtime locations and their log-safe source classes, in search order:
++/// per-machine 32-bit install, per-machine 64-bit install, then per-user install.
++const RUNTIME_LOCATIONS: [(&str, &str); 3] =
++    [("ProgramFiles(x86)", "program_files_x86"), ("ProgramFiles", "program_files"), ("LOCALAPPDATA", "local_appdata")];
++
++/// Enumeration buffer bounds: real layer values are tiny, but a corrupt/foreign value
++/// must not be allowed to allocate without limit.
++const MAX_VALUE_NAME_CHARS: usize = 16_384;
++const MAX_VALUE_DATA_BYTES: usize = 1 << 20;
++const INITIAL_VALUE_NAME_CHARS: usize = 256;
++const INITIAL_VALUE_DATA_BYTES: usize = 2_048;
++
++/// Newest installed Evergreen `msedgewebview2.exe` for the current user: the AppCompat
++/// layer value name must be the exact path Windows launches, and Evergreen installs one
++/// version directory per update. Search order: %ProgramFiles(x86)%, %ProgramFiles%,
++/// %LOCALAPPDATA%; highest numeric version wins inside a location; None if absent.
++pub(crate) fn find_runtime_browser_executable() -> Option<PathBuf> {
++    for (environment_variable, _) in RUNTIME_LOCATIONS {
++        let Some(base) = std::env::var_os(environment_variable).filter(|value| !value.is_empty()) else {
++            continue;
++        };
++        if let Some(executable) = newest_browser_executable_in(&webview_application_directory(&PathBuf::from(base))) {
++            return Some(executable);
 +        }
-     }
- 
-     #[test]
-@@ -5730,6 +5743,84 @@ END;";
- 
-         assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Argo), vec![sql.to_string()]);
-         assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Transwarp), vec![sql.to_string()]);
-+        assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Jdbc), vec![sql.to_string()]);
-+        assert_eq!(split_sql_statements_for_database(sql, DatabaseType::Hive), vec![sql.to_string()]);
 +    }
++    None
++}
 +
-+    #[test]
-+    fn jdbc_and_hive_keep_procedure_statement_ranges_intact() {
-+        let sql = "\
-+CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
-+IS
-+BEGIN
-+    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
-+    WHERE data_date = is_date;
-+
-+    INSERT INTO transwarp.tmp_cbs_t00_corp_cust_his
-+    SELECT * FROM transwarp.cbs_t00_corp_cust_his
-+    WHERE data_date = is_date;
-+
-+    COMMIT;
-+END;";
-+
-+        let sql_as = "\
-+CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
-+AS
-+BEGIN
-+    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
-+    WHERE data_date = is_date;
-+
-+    COMMIT;
-+END;";
-+
-+        for db_type in [DatabaseType::Jdbc, DatabaseType::Hive, DatabaseType::Argo, DatabaseType::Transwarp] {
-+            let statements = split_sql_statements_for_database(sql, db_type);
-+            assert_eq!(statements, vec![sql.to_string()], "failed for {db_type:?}");
-+            let statements_as = split_sql_statements_for_database(sql_as, db_type);
-+            assert_eq!(statements_as, vec![sql_as.to_string()], "failed for {db_type:?}");
-+        }
-+    }
-+
-+    #[test]
-+    fn jdbc_and_hive_split_hiveql_functions_with_string_body() {
-+        let sql_basic = "\
-+CREATE FUNCTION my_udf AS 'com.example.Mask';
-+SELECT mask_fn(x) FROM t;";
-+
-+        let sql_if_not_exists = "\
-+CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask';
-+SELECT mask_fn(x) FROM t;";
-+
-+        let sql_temporary = "\
-+CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask';
-+SELECT mask_fn(x) FROM t;";
-+
-+        for db_type in [DatabaseType::Jdbc, DatabaseType::Hive] {
-+            assert_eq!(
-+                split_sql_statements_for_database(sql_basic, db_type),
-+                vec![
-+                    "CREATE FUNCTION my_udf AS 'com.example.Mask'".to_string(),
-+                    "SELECT mask_fn(x) FROM t".to_string(),
-+                ],
-+                "failed for {db_type:?}"
-+            );
-+            assert_eq!(
-+                split_sql_statements_for_database(sql_if_not_exists, db_type),
-+                vec![
-+                    "CREATE FUNCTION IF NOT EXISTS my_udf AS 'com.example.Mask'".to_string(),
-+                    "SELECT mask_fn(x) FROM t".to_string(),
-+                ],
-+                "failed for {db_type:?}"
-+            );
-+            assert_eq!(
-+                split_sql_statements_for_database(sql_temporary, db_type),
-+                vec![
-+                    "CREATE TEMPORARY FUNCTION my_udf AS 'com.example.Mask'".to_string(),
-+                    "SELECT mask_fn(x) FROM t".to_string(),
-+                ],
-+                "failed for {db_type:?}"
-+            );
-+        }
-     }
- 
-     #[test]
++/// Sets the Windows 8 layer only when no user/application layer exists.
++/// Ownership is persisted separately for cleanup across recovery processes.
++pub(crate) fn set_win8_compat_layer() -> Result<String, String> {
++    let Some(executable) = find_runtime_browser_executable() else {
++        return Err("appcompat win8 layer not set: no WebView2 runtime msedgewebview2.exe found".to_string());
++    };
++    let registry = WindowsLayerRegistry::open(true)
++        .map_err(|code| format!("appcompat win8 layer not set: registry open failed (Win32 error {code})"))?;
++    let value =
++        LayerValue { value_type: REG_SZ, data: wide(WIN8_LAYER_DATA).into_iter().flat_map(u16::to_le_bytes).collect() };
++    let created = windows_appcompat_state::set_if_unconfigured(&registry, &executable.to_string_lossy(), &value)
++        .map_err(|code| format!("appcompat win8 layer not 
 ```
 
 ---
 
-### Incident Patch 2: `5e898861` (2026-10-20)
-**Commit Message**: fix(settings): index the HTTP tunnel protocol label (#12903)
+### Incident Patch 2: `b111c6ac` (2026-10-22)
+**Commit Message**: fix(mysql): honor the configured budget for remaining infrastructure timeouts (#13100)
 
-`TunnelProfileManager.vue` gained a `connection.httpTunnelProtocol` control in
-e5d3ec790 (Navicat HTTP tunnels on CGI/FastCGI hosts) without adding it to the
-`tunnels` settings-search entry, so `settingsSearchCoverage` fails on every PR.
-Add the keyword so the label is searchable from Settings.
+* fix(mysql): derive remaining driver timeouts from the pool checkout budget
 
-The coverage spec also walks component paths with `path.relative()`, which
-yields backslashes on Windows and broke its `/`-separated expectations there;
-normalize the findings keys to POSIX separators so the suite passes on both
-platforms.
+#12924 moved MySQL metadata/DDL checkouts onto MySqlPool::checkout_timeout,
+but query cancellation and the auxiliary MySQL profiles still used the
+compile-time 5 s budget:
+
+- kill_query_with_opts opens a fresh physical connection for KILL QUERY;
+  pass the caller's DbOperationBudget checkout budget through the query,
+  SQL-file import and result export paths.
+- Dolt, StarRocks, MySQL-compatible and OceanBase-MySQL metadata helpers
+  and mysql_object_source now use pool.checkout_timeout().
+
+On a slow link those paths failed after 5 s even with a 300 s connect budget.
+
+* fix(core): scale metadata gate and skip empty stale-pool probes
+
+The metadata gate waited a fixed 5 s, so on slow links queued metadata
+requests reported "DBX metadata pool is busy" while the permitted ones were
+still progressing. Derive the wait budget from the connection's configured
+connect timeout, keeping the old 5 s floor and the 300 s config cap.
+
+The MySQL stale-pool probe also started a new physical connection when the
+pool had no idle connectio
+
+**File**: `crates/dbx-core/src/connection/mod.rs` (modified, +107/-34)
+```diff
+@@ -518,6 +518,32 @@ pub(crate) fn uses_metadata_gate(db_type: DatabaseType) -> bool {
+     matches!(db_type, DatabaseType::Mysql | DatabaseType::Postgres | DatabaseType::SqlServer)
+ }
+ 
++/// Wait budget for the metadata gate.
++///
++/// The gate serializes metadata work against a connection's pool. On a slow
++/// link each in-flight operation can spend the connection's configured connect
++/// timeout, so the previous fixed 5 s wait reported "DBX metadata pool is busy"
++/// while useful work was still making progress. Honor the configured connect
++/// timeout (already clamped to 1-300 s by `effective_connect_timeout_secs`)
++/// without going below the old 5 s floor, so fast links keep today's behavior.
++fn metadata_pool_acquire_timeout(config: Option<&ConnectionConfig>) -> Duration {
++    let configured = config.map(ConnectionConfig::effective_connect_timeout_secs);
++    Duration::from_secs(
++        configured
++            .map_or(METADATA_POOL_ACQUIRE_TIMEOUT.as_secs(), |secs| secs.max(METADATA_POOL_ACQUIRE_TIMEOUT.as_secs())),
++    )
++}
++
++/// Whether the MySQL stale-pool probe has an idle connection to validate.
++///
++/// With zero idle connections the probe would start a fresh physical connection
++/// just to abandon it at the short probe budget; on a slow link that is one
++/// wasted handshake per metadata request. In that case keep the pool and let the
++/// real checkout report any failure.
++fn mysql_probe_has_idle_connection(connections_in_pool: usize) -> bool {
++    connections_in_pool > 0
++}
++
+ /// Session-scoped metadata gate allowance for a database type.
+ ///
+ /// A non-empty `client_session_id` normally means the caller opened a
+@@ -1820,17 +1846,22 @@ impl AppState {
+             let mut gates = self.metadata_gates.lock().await;
+             gates.entry(key.clone()).or_insert_with(|| Arc::new(Semaphore::new(limit))).clone()
+         };
++        let acquire_timeout = {
++            let configs = self.configs.read().await;
++            metadata_pool_acquire_timeout(configs.get(connection_id))
++        };
+         let started = Instant::now();
+         let queued = gate.available_permits() == 0;
+-        let permit = match tokio::time::timeout(METADATA_POOL_ACQUIRE_TIMEOUT, gate.acquire_owned()).await {
++        let permit = match tokio::time::timeout(acquire_timeout, gate.acquire_owned()).await {
+             Ok(Ok(permit)) => permit,
+             Ok(Err(_)) => return Err(crate::query::METADATA_POOL_BUSY_ERROR.to_string()),
+             Err(_) => {
+                 log::warn!(
+-                    "[metadata:pool:busy] connection_id={} database={} wait_ms={} limit={}",
++                    "[metadata:pool:busy] connection_id={} database={} wait_ms={} timeout_ms={} limit={}",
+                     connection_id,
+                     database.unwrap_or_default(),
+                     started.elapsed().as_millis(),
++                    acquire_timeout.as_millis(),
+                     limit
+                 );
+                 return Err(crate::query::METADATA_POOL_BUSY_ERROR.to_string());
+@@ -4500,38 +4531,50 @@ impl AppState {
+             match &checked.pool {
+                 PoolKind::Mysql(pool, _) => {
+                     let pool = pool.clone();
+-                    match db::mysql::checkout_mysql_conn(&pool, HEALTH_CHECK_POOL_ACQUIRE_TIMEOUT).await {
+-                        // The 500 ms probe budget is intentionally shorter than a foreground checkout. A timeout
+-                        // while waiting, creating, or recycling is inconclusive: slow remote handshakes and active
+-                        // metadata exports can legitimately exceed it. Removing the pool here would start competing
+-                        // reconnects while useful work is still running.
+-                        Err(err @ db::PoolCheckoutError::Timeout { .. }) => {
+-                            log::debug!(
++                    let connections_in_pool = pool.metrics().connections_in_pool.load(Ordering::Relaxed);
++                    if !mysql_probe_has_idle_connection(connections_in_pool) {
++                        log::debug!(
++                            "MySQL connection pool '{pool_key}' has no idle connection; skipping the stale-pool probe"
++                        );
++                        false
++                    } else {
++                        match db::mysql::checkout_mysql_conn(&pool, HEALTH_CHECK_POOL_ACQUIRE_TIMEOUT).await {
++                            // The 500 ms probe budget is intentionally shorter than a foreground checkout. A timeout
++                            // while waiting, creating, or recycling is inconclusive: slow remote handshakes and active
++                            // metadata exports can legitimately exceed it. Removing the pool here would start competing
++                            // reconnects while useful work is still running.
++                            Err(err @ db::PoolCheckoutError::Timeout { .. }) => {
++                                log::debug!(
+         
+```
+
+**File**: `crates/dbx-core/src/data/query_result_export.rs` (modified, +7/-2)
+```diff
+@@ -1623,10 +1623,13 @@ async fn try_export_mysql_query_result_stream(
+     let kill_opts = conn.opts().clone();
+     if let Some(execution_id) = request.execution_id.clone() {
+         let interrupt_kill_opts = kill_opts.clone();
++        let kill_timeout = operation_budget.checkout_timeout;
+         state.running_queries.register_interrupt(&execution_id, move || {
+             let kill_opts = interrupt_kill_opts.clone();
+             tokio::spawn(async move {
+-                if let Err(error) = crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id).await {
++                if let Err(error) =
++                    crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id, kill_timeout).await
++                {
+                     log::warn!("Failed to cancel MySQL export query {mysql_connection_id}: {error}");
+                 }
+             });
+@@ -1760,7 +1763,9 @@ async fn try_export_mysql_query_result_stream(
+     )
+     .await;
+     if stream_result.as_ref().is_err_and(|error| error == &timeout_error) {
+-        let _ = crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id).await;
++        let _ =
++            crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id, operation_budget.checkout_timeout)
++                .await;
+     }
+     watcher_done.cancel();
+ 
+```
+
+**File**: `crates/dbx-core/src/data/sql_file_import.rs` (modified, +2/-1)
+```diff
+@@ -364,10 +364,11 @@ impl MySqlSqlFileExecutor {
+             let conn = self.conn.as_mut().ok_or("MySQL SQL file executor is missing a connection".to_string())?;
+             let connection_id = conn.id();
+             let kill_opts = conn.opts().clone();
++            let kill_timeout = self.budget.checkout_timeout;
+             state.running_queries.register_interrupt(execution_id, move || {
+                 let kill_opts = kill_opts.clone();
+                 tokio::spawn(async move {
+-                    if let Err(error) = db::mysql::kill_query_with_opts(kill_opts, connection_id).await {
++                    if let Err(error) = db::mysql::kill_query_with_opts(kill_opts, connection_id, kill_timeout).await {
+                         log::warn!("Failed to cancel MySQL SQL file import query {connection_id}: {error}");
+                     }
+                 });
+```
+
+**File**: `crates/dbx-core/src/query/mod.rs` (modified, +7/-1)
+```diff
+@@ -1839,10 +1839,16 @@ async fn do_execute_typed(
+             let connection_id = conn.id();
+             if let Some(ref execution_id) = options.execution_id {
+                 let kill_opts = conn.opts().clone();
++                // The interrupt runs after the user asked to cancel; give the
++                // dedicated kill connection the same infrastructure budget as
++                // the query path instead of the old compile-time 5 s.
++                let kill_timeout = operation_budget.checkout_timeout;
+                 state.running_queries.register_interrupt(execution_id, move || {
+                     let kill_opts = kill_opts.clone();
+                     tokio::spawn(async move {
+-                        if let Err(error) = db::mysql::kill_query_with_opts(kill_opts, connection_id).await {
++                        if let Err(error) =
++                            db::mysql::kill_query_with_opts(kill_opts, connection_id, kill_timeout).await
++                        {
+                             log::warn!("Failed to cancel MySQL query {connection_id}: {error}");
+                         }
+                     });
+```
+
+**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +1/-1)
+```diff
+@@ -11234,7 +11234,7 @@ async fn mysql_object_source(
+ ) -> Result<String, String> {
+     let primary_sql = mysql_object_source_sql(database, name, kind);
+     let primary_column_index = mysql_object_source_ddl_column_index(kind);
+-    let mut conn = db::mysql::get_conn_with_timeout(pool, db::connection_timeout()).await?;
++    let mut conn = db::mysql::get_conn_with_timeout(pool, pool.checkout_timeout()).await?;
+ 
+     match read_mysql_object_source_row(&mut conn, &primary_sql, primary_column_index).await {
+         Ok(source) => Ok(source),
+```
+
+**File**: `crates/dbx-core/tests/live_mysql57.rs` (modified, +3/-1)
+```diff
+@@ -955,7 +955,9 @@ async fn live_mysql_query_cancel_kills_running_sleep() {
+     });
+ 
+     tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+-    dbx_core::db::mysql::kill_query_with_opts(kill_opts, connection_id).await.unwrap();
++    dbx_core::db::mysql::kill_query_with_opts(kill_opts, connection_id, dbx_core::db::connection_timeout())
++        .await
++        .unwrap();
+ 
+     let started = std::time::Instant::now();
+     let result = query.await.unwrap();
+```
+
+**File**: `crates/dbx-driver-mysql/src/dolt.rs` (modified, +2/-2)
+```diff
+@@ -40,7 +40,7 @@ fn is_profile(db_type: &DatabaseType, driver_profile: Option<&str>) -> bool {
+ }
+ 
+ pub async fn list_databases(pool: &MySqlPool) -> Result<Vec<DatabaseInfo>, String> {
+-    let mut conn = get_conn_with_timeout(pool, super::connection_timeout()).await?;
++    let mut conn = get_conn_with_timeout(pool, pool.checkout_timeout()).await?;
+     if let Err(error) = conn.query_drop(ENABLE_BRANCH_DATABASES_SQL).await {
+         log::debug!("Dolt branch database system variable is unavailable; falling back to dolt_branches: {error}");
+         return list_databases_from_branches(&mut conn).await;
+@@ -61,7 +61,7 @@ pub async fn list_system_tables(
+ ) -> Result<Vec<TableInfo>, String> {
+     // The visibility flag is session-scoped, so setup, metadata lookup, and
+     // cleanup must use the same pooled connection.
+-    let mut conn = get_conn_with_timeout(pool, super::connection_timeout()).await?;
++    let mut conn = get_conn_with_timeout(pool, pool.checkout_timeout()).await?;
+     conn.query_drop(ENABLE_SYSTEM_TABLES_SQL).await.map_err(|error| error.to_string())?;
+     let server_filter = filter.map(str::trim).filter(|filter| !filter.is_empty()).unwrap_or(SYSTEM_TABLE_PREFIX);
+     let tables = list_table_names_show_filtered_with_conn(&mut conn, database, Some(server_filter), &[])
+```
+
+**File**: `crates/dbx-driver-mysql/src/mysql.rs` (modified, +11/-2)
+```diff
+@@ -6335,9 +6335,18 @@ pub async fn kill_query(pool: &MySqlPool, connection_id: u32) -> Result<(), Stri
+     Ok(())
+ }
+ 
+-pub async fn kill_query_with_opts(opts: mysql_async::Opts, connection_id: u32) -> Result<(), String> {
++/// Kills a query through a dedicated connection rebuilt from its `Opts`.
++///
++/// Cancel paths run while the original pool may be busy, so this opens a new
++/// physical connection. `timeout` is the caller's infrastructure budget (the
++/// connection's configured connect/checkout timeout), not the old compile-time
++/// 5 s: on a slow link a hardcoded budget turns cancellation into a failure.
++pub async fn kill_query_with_opts(
++    opts: mysql_async::Opts,
++    connection_id: u32,
++    timeout: Duration,
++) -> Result<(), String> {
+     let start = Instant::now();
+-    let timeout = super::connection_timeout();
+     let mut conn = tokio::time::timeout(timeout, mysql_async::Conn::new(opts))
+         .await
+         .map_err(|_| {
+```
+
+---
+
+### Incident Patch 3: `f4cb9f14` (2026-10-22)
+**Commit Message**: fix(sqlserver): stop reading the result stream after the row limit (#13101)
+
+* fix(sqlserver): stop reading after the result row limit
+
+The SQL Server driver kept consuming the whole TDS result stream after the
+requested row limit was reached and only flagged the surplus rows as
+truncated. A query whose full result set is large therefore spent seconds
+draining rows that the caller had already discarded: on a 1.29M-row result
+a row-limited execution took 12.8s while the same bounded SQL returned in
+about 60ms. Other clients look fast because they stop at the first page.
+
+Stop the stream as soon as the limit is hit, send a best-effort ATTENTION
+and mark the connection as abandoned so the pool replaces it instead of
+reusing a client that still has unread tokens on the wire. Only executions
+that asked for a row limit and are not session-pinned take this path;
+multi-statement batches, transactions and pinned sessions keep draining so
+later statements and session state stay intact.
+
+* fix(sqlserver): limit stream abandonment to parsed read queries
+
+---------
 
 Co-authored-by: zipg <[REDACTED_EMAIL]>
 
-**File**: `apps/desktop/src/lib/settings/__tests__/settingsSearchCoverage.spec.ts` (modified, +8/-3)
+**File**: `crates/dbx-core/src/query/mod.rs` (modified, +32/-0)
 ```diff
-@@ -1,5 +1,5 @@
- import { readFileSync } from "node:fs";
--import { dirname, resolve, relative } from "node:path";
-+import { dirname, resolve, relative, sep } from "node:path";
- import { fileURLToPath } from "node:url";
- import { parse } from "vue/compiler-sfc";
- import { describe, expect, it } from "vitest";
-@@ -14,6 +14,11 @@ import { APP_CUSTOM_UI_COLOR_DEFS } from "@/lib/app/appTheme";
- const src = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
- const root = resolve(src, "components/editor/EditorSettingsDialog.vue");
+@@ -2042,11 +2042,20 @@ async fn do_execute_typed(
+                     Ok(value) => value,
+                     Err(err) => return Err(err.into()),
+                 };
++            // A display-bound execution must not pay for the rows the caller
++            // discards: the driver stops the TDS stream at `max_rows` and marks
++            // the connection as abandoned, which then gets dropped instead of
++            // returned to the pool. Session-pinned executions keep the old
++            // draining path because the connection carries user state.
++            let stop_at_row_limit =
++                max_rows.is_some() && options.client_session_id.is_none() && !options.use_transaction.unwrap_or(false);
+             let execution = async {
+                 if execution_mode == QueryExecutionMode::Simple {
+                     let mut results =
+                         db::sqlserver::execute_simple_batch_with_max_rows(&mut client, &sql, max_rows).await?;
+                     Ok(results.remove(0))
++                } else if stop_at_row_limit {
++                    db::sqlserver::execute_query_with_max_rows_stopping(&mut client, &sql, max_rows).await
+                 } else {
+                     db::sqlserver::execute_query_with_max_rows(&mut client, &sql, max_rows).await
+                 }
+@@ -2058,7 +2067,11 @@ async fn do_execute_typed(
+                     result.execution_time_ms += lock_wait_ms;
+                     result
+                 });
++            let abandoned = client.take_abandoned_after_row_limit();
+             drop(client);
++            if abandoned {
++                state.remove_pool_by_key(pool_key).await;
++            }
+             if matches!(result.as_ref(), Err(err) if should_discard_pool_after_error(pool_db_type, err)) {
+                 state.remove_pool_by_key(pool_key).await;
+             }
+@@ -4626,16 +4639,35 @@ async fn execute_multi_sqlserver(
  
-+/** Findings key with POSIX separators so the expectations stay stable on Windows. */
-+function relativePosix(file: string): string {
-+  return relative(src, file).split(sep).join("/");
+         let execution_sql =
+             sql_for_execution_context_with_identifier_quote(Some(DatabaseType::SqlServer), batch, schema, Some("["));
++        // Only a single-statement batch can abandon its stream early: a real
++        // multi-statement script must keep draining so the later statements
++        // still produce their own results. Session-pinned tabs keep draining
++        // because the pooled connection carries their temporary objects.
++        let stop_at_row_limit = batches.len() == 1
++            && max_rows.is_some()
++            && options.client_session_id.is_none()
++            && !options.use_transaction.unwrap_or(false);
+         let execution = async {
+             if execution_mode == QueryExecutionMode::Simple {
+                 db::sqlserver::execute_simple_batch_with_max_rows_metadata(&mut client_guard, &execution_sql, max_rows)
+                     .await
++            } else if stop_at_row_limit {
++                db::sqlserver::execute_batch_with_max_rows_metadata_stopping(
++                    &mut client_guard,
++                    &execution_sql,
++                    max_rows,
++                )
++                .await
+             } else {
+                 db::sqlserver::execute_batch_with_max_rows_metadata(&mut client_guard, &execution_sql, max_rows).await
+             }
+         };
+         let result = wait_for_result_opt(cancel_token.clone(), query_timeout, execution).await;
++        let abandoned = client_guard.take_abandoned_after_row_limit();
+         drop(client_guard);
++        if abandoned {
++            state.remove_pool_by_key(pool_key).await;
++        }
+ 
+         match result {
+             Ok(results) => all_results.extend(sqlserver_batch_results(results).into_iter().map(|mut item| {
+```
+
+**File**: `crates/dbx-core/tests/sqlserver_batch_results.rs` (modified, +73/-0)
+```diff
+@@ -236,3 +236,76 @@ async fn sqlserver_duplicate_join_columns_page_without_leaking_rowcount() {
+             .expect("execute query after ROWCOUNT page");
+     assert_eq!(follow_up.rows.len(), 2);
+ }
++
++/// The desktop grid only ever shows `max_rows` rows. Reading the rest of the
++/// TDS stream costs ~10-15us per discarded row, which is what turns a
++/// few-hundred-ms query into a 10s+ stall when the executed SQL is unbounded.
++/// The stopping path must return the same bounded result but leave the client
++/// flagged for pool replacement instead of draining the whole result.
++#[tokio::test]
++#[ignore = "requires DBX_TEST_SQLSERVER_HOST and DBX_TEST_SQLSERVER_PASSWORD"]
++async fn sqlserver_stops_reading_after_row_limit_and_flags_the_connection() {
++    let mut client = connect_sqlserver().await;
++
++    // A huge streaming result that needs no fixture tables: every SQL Server
++    // has sys.all_columns, and the cross join keeps producing rows forever.
++    let sql = "SELECT a.object_id, b.object_id FROM sys.all_columns a CROSS JOIN sys.all_columns b";
++
++    let started = std::time::Instant::now();
++    let result = sqlserver::execute_query_with_max_rows_stopping(&mut client, sql, Some(100))
++        .await
++        .expect("execute stopping query");
++    let elapsed = started.elapsed();
++
++    assert_eq!(result.rows.len(), 100);
++    assert!(result.truncated, "the row limit must still be reported as truncation");
++    assert!(client.take_abandoned_after_row_limit(), "the client must be flagged for pool replacement");
++    assert!(!client.take_abandoned_after_row_limit(), "the flag must be one-shot");
++    assert!(elapsed < Duration::from_secs(30), "stopping must not drain the result: {elapsed:?}");
++
++    // The abandoned client is never reused. A replacement connection (what the
++    // pool creates after removing the abandoned one) must work normally.
++    let mut replacement = connect_sqlserver().await;
++    let health = sqlserver::execute_query_with_max_rows(&mut replacement, "SELECT 1 AS ok", Some(10))
++        .await
++        .expect("replacement connection query");
++    assert_eq!(health.rows.len(), 1);
++
++    // A result that fits under the limit keeps the connection usable.
++    let mut small = connect_sqlserver().await;
++    let small_result = sqlserver::execute_query_with_max_rows_stopping(&mut small, "SELECT 1 AS ok", Some(10))
++        .await
++        .expect("execute small stopping query");
++    assert_eq!(small_result.rows.len(), 1);
++    assert!(!small_result.truncated);
++    assert!(!small.take_abandoned_after_row_limit());
 +}
 +
- // These dialogs display transient operations or release notes, not persisted settings.
- // UI primitives and decorative icons are excluded by directory, not by control label.
- const excludedComponents: Record<string, string> = {
-@@ -100,7 +105,7 @@ function inspectSettingsTemplates(entry: string): Map<string, Set<string>> {
-           const expression = expressions(node).trim().replace(/\s+/g, " ");
-           const translated = translationKeys(expression);
-           translated.forEach((key) => keys.add(key));
--          if (expression && !translated.length && !auditedNonLiteralLabels[expression]) unauditedLabels.push(`${relative(src, file)}: ${expression}`);
-+          if (expression && !translated.length && !auditedNonLiteralLabels[expression]) unauditedLabels.push(`${relativePosix(file)}: ${expression}`);
-         }
-         // Buttons with configuration roles are settings, not ordinary action buttons.
-         const role = node.props?.find((prop) => prop.name === "role")?.value?.content;
-@@ -131,7 +136,7 @@ function inspectSettingsTemplates(entry: string): Map<string, Set<string>> {
-       if (!ruleEnums) throw new Error("Formatter rule enum source is missing");
-       for (const match of ruleEnums.matchAll(/["']([^"']+)["']/g)) keys.add(`settings.sqlFormatterRule_${match[1]}`);
-     }
--    findings.set(relative(src, file), keys);
-+    findings.set(relativePosix(file), keys);
-     for (const component of components) {
-       if (excludedComponents[component]) continue;
-       const importPath = imports.get(component)!;
++#[tokio::test]
++#[ignore = "requires DBX_TEST_SQLSERVER_HOST and DBX_TEST_SQLSERVER_PASSWORD"]
++async fn sqlserver_stopping_path_finishes_stored_procedure_side_effects() {
++    let mut client = connect_sqlserver().await;
++    sqlserver::execute_query(
++        &mut client,
++        "CREATE TABLE #dbx_row_limit_marker (value INT); INSERT INTO #dbx_row_limit_marker VALUES (0);",
++    )
++    .await
++    .unwrap();
++    sqlserver::execute_query(
++        &mut client,
++        "CREATE PROCEDURE #dbx_row_limit_proc AS BEGIN SET NOCOUNT ON; \
++         SELECT TOP (100000) a.object_id FROM sys.all_columns a CROSS JOIN sys.all_columns b; \
++         UPDATE #dbx_row_limit_marker SET value = 1; END;",
++    )
++    .await
++    .unwrap();
++
++    let result = sqlserver::execute_query_with_max_rows_stopping(&mut client, "EXEC #dbx_row_limit_proc", Some(1))
++        .await
++        .unwrap();
++    assert_eq!(result.rows.len(), 1);
++    assert!(result.truncated);
++    assert!(!client.take_abandoned_after_row_limit(), "a procedure must finish before returning");
++    let marker = sqlserver::execute_query(&mut client, "SELECT value FROM #dbx_row_limit_marker").await.unwrap();
++    assert_eq!(marker.rows[0][0].as_i64(), Some(1));
++}
 ```
 
-**File**: `apps/desktop/src/lib/settings/settingsSearch.ts` (modified, +0/-1)
+**File**: `crates/dbx-driver-sqlserver/src/sqlserver.rs` (modified, +204/-36)
 ```diff
-@@ -563,7 +563,6 @@ export const SETTINGS_SEARCH_DEFINITIONS: readonly SettingsSearchDefinition[] =
-       "connection.httpTunnelProtocolDbx",
-       "connection.httpTunnelProtocolNavicat",
-       "connection.httpTunnelUrl",
--      "connection.httpTunnelProtocol",
-       "connection.httpTunnelToken",
-       "connection.httpTunnelConnectTimeout",
-     ],
-```
-
----
-
-### Incident Patch 3: `00b2cdb5` (2026-10-20)
-**Commit Message**: fix(transfer): use explicit TO_DATE for OceanBase Oracle midnight dates (#12904)
-
-OceanBase's Oracle mode resolves the ANSI `DATE 'YYYY-MM-DD'` literal through
-NLS_DATE_FORMAT, so a midnight DATE value from an Oracle source could fail the
-INSERT with ORA-01858 ("a non-numeric character was found where a numeric was
-expected"). The transfer only used that spelling for midnight values; every
-other DATE/TIMESTAMP value already carried an explicit mask.
-
-Emit `TO_DATE('YYYY-MM-DD HH24:MI:SS', ...)` for OceanBase Oracle targets so
-the literal is independent of the session's NLS settings. Oracle targets keep
-the ANSI literal. Reported in #12841.
-
-**File**: `crates/dbx-core/src/data/transfer.rs` (modified, +37/-4)
-```diff
-@@ -4166,7 +4166,7 @@ fn format_oracle_temporal_sql_literal(
-     let normalized_column_type = column_type?.trim().to_ascii_lowercase();
-     let parts = oracle_export_date_parts(value)?;
-     match kind {
--        "date" => Some(format_oracle_date_sql_literal_parts(&parts)),
-+        "date" => Some(format_oracle_date_sql_literal_parts(&parts, db_type)),
-         "datetime"
-             if (normalized_column_type.contains("with time zone")
-                 || normalized_column_type.contains("with local time zone"))
-@@ -4196,8 +4196,11 @@ struct OracleExportDateParts<'a> {
-     zone: Option<&'a str>,
+@@ -41,11 +41,30 @@ pub struct SqlServerClient {
+     inner: SqlServerTdsClient,
+     query_transport: SqlServerQueryTransport,
+     server_major_version: Option<u32>,
++    /// Set when a result stream was abandoned mid-flight because the caller's
++    /// row limit was reached. The connection still has unread TDS tokens on
++    /// the wire, so it must be discarded instead of returned to the pool.
++    abandoned_after_row_limit: bool,
  }
  
--fn format_oracle_date_sql_literal_parts(parts: &OracleExportDateParts<'_>) -> String {
--    if oracle_export_date_parts_are_midnight(parts) {
-+fn format_oracle_date_sql_literal_parts(parts: &OracleExportDateParts<'_>, db_type: &DatabaseType) -> String {
-+    // Oracle accepts the ANSI `DATE 'YYYY-MM-DD'` literal for midnight values.
-+    // OceanBase's Oracle mode resolves that spelling through NLS_DATE_FORMAT, so the
-+    // same value can raise ORA-01858; use the explicit mask there (#12841).
-+    if *db_type == DatabaseType::Oracle && oracle_export_date_parts_are_midnight(parts) {
-         format!("DATE '{}'", parts.date)
-     } else {
-         format!("TO_DATE('{} {}', 'YYYY-MM-DD HH24:MI:SS')", parts.date, parts.time)
-@@ -21338,6 +21341,11 @@ PARTITION p_old VALUES LESS THAN (TO_DAYS('2026-01-01')))";
-             escape_value_typed(&json!("2022-08-25T00:00:00Z"), &DatabaseType::Oracle, Some("DATE")),
-             "DATE '2022-08-25'"
-         );
-+        assert_eq!(
-+            escape_value_typed(&json!("2022-08-25T00:00:00Z"), &DatabaseType::OceanbaseOracle, Some("DATE")),
-+            "TO_DATE('2022-08-25 00:00:00', 'YYYY-MM-DD HH24:MI:SS')",
-+            "OceanBase Oracle mode must not use the ANSI DATE literal (#12841)"
-+        );
-         assert_eq!(
-             escape_value_typed(
-                 &json!("2022-08-25T09:58:43.123456+08:00"),
-@@ -21348,6 +21356,24 @@ PARTITION p_old VALUES LESS THAN (TO_DAYS('2026-01-01')))";
-         );
-     }
- 
-+    #[test]
-+    fn oceanbase_oracle_insert_uses_explicit_to_date_for_midnight_dates() {
-+        // #12841: OceanBase's Oracle mode resolves `DATE '...'` through NLS_DATE_FORMAT,
-+        // so midnight DATE values raised ORA-01858 during transfer; use TO_DATE instead.
-+        let sql = generate_insert_typed(
-+            &[String::from("id"), String::from("ordertime")],
-+            &[Some(String::from("NUMBER")), Some(String::from("DATE"))],
-+            &[vec![json!(1), json!("2026-10-20T00:00:00Z")]],
-+            "appointments",
-+            "APP",
-+            &DatabaseType::OceanbaseOracle,
-+            None,
-+        );
-+
-+        assert!(sql.contains("TO_DATE('2026-10-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS')"), "{sql}");
-+        assert!(!sql.contains("DATE '2026-10-20'"), "{sql}");
+ impl SqlServerClient {
+     fn new(inner: SqlServerTdsClient) -> Self {
+-        Self { inner, query_transport: SqlServerQueryTransport::Unknown, server_major_version: None }
++        Self {
++            inner,
++            query_transport: SqlServerQueryTransport::Unknown,
++            server_major_version: None,
++            abandoned_after_row_limit: false,
++        }
 +    }
 +
-     #[test]
-     fn mysql_insert_formats_numeric_strings_from_numeric_columns_as_numeric_literals() {
-         let sql = generate_insert_typed(
-@@ -21954,7 +21980,14 @@ SELECT 1 FROM dual"#
-             assert!(sql.contains("ON (t.\"ID\" = s.\"ID\" AND t.\"Kind\" = s.\"Kind\")"));
-             assert!(sql.contains("WHEN MATCHED THEN UPDATE SET t.\"Name\" = s.\"Name\", t.\"CREATED\" = s.\"CREATED\", t.\"UPDATED\" = s.\"UPDATED\", t.\"OPTIONAL\" = s.\"OPTIONAL\""));
-             assert!(sql.contains("'O''Brien' AS \"Name\""));
--            assert!(sql.contains("DATE '2026-10-09' AS \"CREATED\""));
-+            // OceanBase's Oracle mode resolves ANSI date literals through
-+            // NLS_DATE_FORMAT, so midnight values use an explicit TO_DATE (#12841).
-+            let created_literal = if matches!(database_type, DatabaseType::OceanbaseOracle) {
-+                "TO_DATE('2026-10-09 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AS \"CREATED\""
-+            } else {
-+                "DATE '2026-10-09' AS \"CREATED\""
-+            };
-+            assert!(sql.contains(created_literal), "{database_type:?}: {sql}");
-             assert!(sql.contains("TO_DATE('2026-10-09 12:34:56', 'YYYY-MM-DD HH24:MI:SS') AS \"UPDATED\""));
-             assert!(sql.contains("NULL AS \"OPTIONAL\""));
-             assert_eq!(sql.matches("FROM dual").count(), 2);
++    fn mark_abandoned_after_row_limit(&mut self) {
++        self.abandoned_after_row_limit = true;
++    }
++
++    /// Returns whether the last result stream was abandoned after the row limit
++    /// and resets the flag. Callers must discard (never reuse) such a client.
++    pub fn take_abandoned_after_row_limit(&mut self) -> bool {
++        std::mem::take(&mut self.abandoned_after_row_limit)
+     }
+ 
+     async fn ensure_query_transport(&mut self) -> SqlServerQueryTransport {
+@@ -894,7 +913,8 @@ async fn collect_first_result_limited(
+     sql: &str,
+     query: &SqlServerUnsafeTypeQuery,
+     progress_clock: Option<&crate::execution::StreamProgressClock>,
+-) -> Result<QueryResult, String> {
++    stop_at_row_limit: bool,
++) -> Result<(QueryResult, bool), String> {
+     let row_limit = query_result_row_limit(max_rows);
+     let mut remaining_offset = result_offset;
+     let mut columns: Vec<String> = vec![];
+@@ -930,33 +950,82 @@ async fn collect_first_result_limited(
+                     spatial_values.push(srids);
+                 } else {
+                     truncated = true;
++                    if stop_at_row_limit {
++                        // The caller only asked for `row_limit` rows. Reading the
++                        // rest of a large result set costs ~10-15us per row on
++                        // the TDS side (a 1M-row query then keeps the UI busy
++                        // for 10s+ while the grid shows 100 rows), so abandon
++                        // the stream and let the caller reset the connection.
++                        return collect_first_result_finish(
++                            columns,
++                            column_types,
++                            rows,
++                            spatial_values,
++                            spatial_values_builder,
++                            query,
++                            sql,
++                            start,
++                            true,
++                            true,
++                        );
++                    }
+                 }
+             }
+             QueryItem::Row(_) => {}
+         }
+     }
+ 
+-    restore_sqlserver_blank_column_names(&mut columns, sql);
+-    restore_sqlserver_unsafe_column_types(&mut column_types, query);
+-
+-    let (spatial_columns, spatial_values) = spatial_values_builder.finish_with_values(spatial_values);
+-    Ok(QueryResult {
++    collect_first_result_finish(
+         columns,
+         column_types,
+-        column_sortables: vec![],
+-        spatial_columns,
+-        spatial_values,
+         rows,
+-        affected_rows: 0,
+-        execution_time_ms: start.elapsed().as_millis(),
+-        server_execute_time_us: None,
+-        query_timings_ms: None,
++        spatial_values,
++        spatial_values_builder,
++        query,
++        sql,
++        start,
+         truncated,
+-        session_id: None,
+-        has_more: false,
+-        elasticsearch_raw_body: None,
+-        messages: Vec::new(),
+-    })
++        false,
++    )
++}
++
++#[allow(clippy::too_many_arguments)]
++fn collect_first_result_finish(
++    mut columns: Vec<String>,
++    mut column_types: Vec<String>,
++    rows: Vec<Vec<serde_json::Value>>,
++    spatial_values: Vec<Vec<Option<u32>>>,
++    spatial_values_builder: SpatialColumnBuilder,
++    query: &SqlServerUnsafeTypeQuery,
++    sql: &str,
++    start: Instant,
++    truncated: bool,
++    stopped_early: bool,
++) -> Result<(QueryResult, bool), String> {
++    restore_sqlserver_blank_column_names(&mut columns, sql);
++    restore_sqlserver_unsafe_column_types(&mut column_types, query);
++
++    let (spatial_columns, spatial_values) = spatial_values_builder.finish_with_values(spatial_values);
++    Ok((
++        QueryResult {
++            columns,
++            column_types,
++            column_sortables: vec![],
++            spatial_columns,
++            spatial_values,
++            rows,
++            affected_rows: 0,
++            execution_time_ms: start.elapsed().as_millis(),
++            server_execute_time_us: None,
++            query_timings_ms: None,
++            truncated,
++            session_id: None,
++            has_more: false,
++            elasticsea
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12910** (2026-10-20): fix(grid): preserve search filter results when editing cells in paginated tables (@lxk955)
-- **PR #12905** (2026-10-20): feat(editor): add optional two-row grouped tab layout (@yaoxinghuo)
-- **PR #12904** (2026-10-20): fix(transfer): use explicit TO_DATE for OceanBase Oracle midnight dates (@Tong-bit-art)
-- **PR #12903** (2026-10-20): fix(settings): normalize coverage paths on Windows (@Tong-bit-art)
-- **PR #12902** (2026-10-20): fix(backup): remove emptied run directories when pruning old backups (@jeff377)
-- **PR #12895** (2026-10-20): feat(opengauss): 开启表数据导入能力（补 live 实测） (@zipg)
+- **PR #13198** (2026-10-22): Fix MCP shell probes suspending Tauri development on Linux (@hoangph-34)
+- **PR #13197** (closed): fix(mcp): isolate shell probes from terminal job control (@hoangph-34)
+- **PR #13196** (2026-10-22): fix(tabs): use one group-colored accent for grouped tabs (@zipg)
+- **PR #13195** (2026-10-22): fix(query): remove result surface border (@eryajf)
+- **PR #13193** (closed): feat(sidebar): 展示数据库服务端版本 (@Acd-kk)
+- **PR #13188** (2026-10-22): fix(editor): make execution summary fill the results pane (@eryajf)
 
 ---
 
@@ -2511,47 +3228,21 @@ the ANSI literal. Reported in #12841.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql): keep procedure bodies together on JDBC and Hive connections (#12578)
+## X. windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036)
 
 **RULE**:
-When implementing operations in `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a3e9805`: sql): keep procedure bodies together on JDBC and Hive connections (#12578). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc0734ab`: windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  it("treats hash comments as line comments on generic JDBC and Hive connections", () => {
-    const sql = "SELECT 1 # comment;\n;\nSELECT 2";
-    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "jdbc"))).toEqual(["SELECT 1", "SELECT 2"]);
-    expect(rangeSqlTexts(splitSqlStatementRanges(sql, "hive"))).toEqual(["SELECT 1", "SELECT 2"]);
-  });
-
-    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "jdbc"))).toEqual([argoProcedureFixture]);
-    expect(rangeSqlTexts(splitSqlStatementRanges(argoProcedureFixture, "hive"))).toEqual([argoProcedureFixture]);
-  });
-
-  it("keeps procedure bodies together on JDBC and Hive connections (#12321)", () => {
-    const procedure = `CREATE OR REPLACE PROCEDURE pro_cbs_check_his(is_date IN VARCHAR(8))
-IS
-BEGIN
-    DELETE FROM transwarp.tmp_cbs_t00_corp_cust_his
-    WHERE data_date = is_date;
-
-    INSERT INTO transwarp.tmp_cbs_t00_corp_cust_his
-    SELECT * FROM transwarp.cbs_t00_corp_cust_his
-    WHERE data_date = is_date;
-
-    COMMIT;
-END;`;
-
-    for (const dbType of ["jdbc", "hive", "argo", "transwarp"] as const) {
-      expect(rangeSqlTexts(splitSqlStatementRanges(procedure, dbType))).toEqual([procedure]);
-      expect(hasMultipl
+ "windows 0.61.3",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2561,4 +3252,4 @@ END;`;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a3e9805` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc0734ab` are properly handled with clean fallback behavior.

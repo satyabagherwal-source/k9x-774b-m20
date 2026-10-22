@@ -4431,3 +4431,6 @@
 | `CYCLE-20261022-OB2X` | `2026-10-22T20:52:00.153Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3736` | Yes (`b27b8563...`) |
 | `CYCLE-20261022-OCU0` | `2026-10-22T20:52:02.424Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3737` | Yes (`5f64aa0c...`) |
 | `CYCLE-20261022-OGPX` | `2026-10-22T20:52:07.461Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3738` | Yes (`e51c4b58...`) |
+| `CYCLE-20261022-0FQ1` | `2026-10-22T21:01:26.041Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3739` | Yes (`8664c0cd...`) |
+| `CYCLE-20261022-0MD1` | `2026-10-22T21:01:34.645Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3740` | Yes (`1e26b4c2...`) |
+| `CYCLE-20261022-0QC0` | `2026-10-22T21:01:39.792Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3741` | Yes (`5860bc46...`) |

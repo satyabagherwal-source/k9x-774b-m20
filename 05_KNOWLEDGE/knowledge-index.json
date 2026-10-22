@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T20:52:07.408Z",
+  "last_updated": "2026-10-22T21:01:39.742Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4924,8 +4924,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "de29c9f1",
-      "content_hash": "cd8732dd298035fe3119c75a1217a6d514740ddf91cafece77aad805bb16acf3",
+      "source_version": "df356cd2",
+      "content_hash": "8664c0cd63ac5d0357d462e71a7be4dbc66c042ec9647f04a07cde708be4f421",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -4973,6 +4973,11 @@
           "number": 3502,
           "title": "Dynamic Registration Synchronization with DOM Order",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3739,
+          "title": "syntax): color comments in JSON and use the JSON lexer for jsonc",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4980,7 +4985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:57:48.903Z",
+      "verified_at": "2026-10-22T21:01:25.980Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43066,8 +43071,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "382b6dbd",
-      "content_hash": "d217e1565b09fe3e47430b0c2b98379897a8feb25fe32da0193b2beb6f9a5c9f",
+      "source_version": "c532d985",
+      "content_hash": "1e26b4c2ea1121172317aa54f58f3e87f60d1544744ef298302eda71fb6c8ddf",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -43095,6 +43100,11 @@
           "number": 3487,
           "title": "Add wait_for MCP tool: wait for a fix to land, within MCP client timeouts (#2231",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3740,
+          "title": "Enforce --disable-exec on the exec, debug and pod-file routes (#2269)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43102,7 +43112,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:27:50.262Z",
+      "verified_at": "2026-10-22T21:01:34.586Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44831,8 +44841,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "b993e7a6",
-      "content_hash": "8131aadb7851fa87ceffc005ff93becaf9acdc8816112a2b65ce13f367343ad9",
+      "source_version": "eb234637",
+      "content_hash": "5860bc466398763b15910144d145dba7f40755d5733cf45b59d222026e46fc41",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -44865,6 +44875,11 @@
           "number": 3477,
           "title": "sql): keep procedure bodies together on JDBC and Hive connections (#12578)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3741,
+          "title": "windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44872,7 +44887,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:36:45.946Z",
+      "verified_at": "2026-10-22T21:01:39.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111988,6 +112003,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T20:52:07.397Z"
+    },
+    "rule-3739": {
+      "learning_id": "rule-3739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3739,
+      "title": "syntax): color comments in JSON and use the JSON lexer for jsonc",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "df356cd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:01:25.980Z"
+    },
+    "rule-3740": {
+      "learning_id": "rule-3740",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3740,
+      "title": "Enforce --disable-exec on the exec, debug and pod-file routes (#2269)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "c532d985",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:01:34.586Z"
+    },
+    "rule-3741": {
+      "learning_id": "rule-3741",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3741,
+      "title": "windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036)",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "eb234637",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:01:39.731Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T20:52:07.479Z",
+  "last_updated": "2026-10-22T21:01:39.807Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "d217e1565b09fe3e47430b0c2b98379897a8feb25fe32da0193b2beb6f9a5c9f",
-      "verified_at": "2026-10-21T02:27:50.349Z",
+      "content_hash": "1e26b4c2ea1121172317aa54f58f3e87f60d1544744ef298302eda71fb6c8ddf",
+      "verified_at": "2026-10-22T21:01:34.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:27:50.349Z"
+      "last_updated": "2026-10-22T21:01:34.660Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -8406,14 +8406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
-      "content_hash": "cd8732dd298035fe3119c75a1217a6d514740ddf91cafece77aad805bb16acf3",
-      "verified_at": "2026-10-21T02:57:48.979Z",
+      "content_hash": "8664c0cd63ac5d0357d462e71a7be4dbc66c042ec9647f04a07cde708be4f421",
+      "verified_at": "2026-10-22T21:01:26.055Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:57:48.979Z"
+      "last_updated": "2026-10-22T21:01:26.055Z"
     },
     "shadcn-ui/lint": {
       "repository": "shadcn-ui/lint",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "8131aadb7851fa87ceffc005ff93becaf9acdc8816112a2b65ce13f367343ad9",
-      "verified_at": "2026-10-21T01:36:46.030Z",
+      "content_hash": "5860bc466398763b15910144d145dba7f40755d5733cf45b59d222026e46fc41",
+      "verified_at": "2026-10-22T21:01:39.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:36:46.031Z"
+      "last_updated": "2026-10-22T21:01:39.806Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

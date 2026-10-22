@@ -4438,3 +4438,6 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `cfab75ea` | Multi-dimensional audit evidence | 2026-10-22T20:52:00.156Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `0433f847` | Multi-dimensional audit evidence | 2026-10-22T20:52:02.427Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5540a0d4` | Multi-dimensional audit evidence | 2026-10-22T20:52:07.464Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `df356cd2` | Multi-dimensional audit evidence | 2026-10-22T21:01:26.044Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `c532d985` | Multi-dimensional audit evidence | 2026-10-22T21:01:34.648Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `eb234637` | Multi-dimensional audit evidence | 2026-10-22T21:01:39.795Z |

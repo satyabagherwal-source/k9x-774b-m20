@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `382b6dbd`  
+> **Source Version**: `c532d985`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:27:49.924Z  
+> **Timestamp**: 2026-10-22T21:01:34.317Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:27:49.915Z  
+> **Harvest Timestamp**: 2026-10-22T21:01:34.143Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3877 stars
+- **Stars / Engagement**: 3893 stars
 
 ---
 
@@ -1474,6 +1474,10 @@ type candidate struct {
 	Annotations map[string]string
 	Images      []string
 	Content     []ContentField
+	// report is a Trivy Operator report's findings, matched in place by
+	// scoreToken rather than copied into Content, within findings' limits.
+	report   map[string]any
+	findings *findingsScan
 }
 
 // ContentField is a searchable string extracted from object content, such as
@@ -1488,25 +1492,8 @@ type ContentField struct {
 // the candidate or when at least one free token didn't land anywhere.
 func match(q Query, c candidate) (int, []MatchedField, []MatchSnippet, bool) {
 	// Hard filters first — cheaper to reject early.
-	if len(q.KindFilter) > 0 && !kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
+	if !matchesModifiers(q, c) {
 		return 0, nil, nil, false
-	}
-	if len(q.NSFilter) > 0 && !sliceContainsFold(q.NSFilter, c.Namespace) {
-		return 0, nil, nil, false
-	}
-	for _, lf := range q.LabelFilter {
-		v, ok := c.Labels[lf.Key]
-		if !ok {
-			return 0, nil, nil, false
-		}
-		if lf.Value != "" && v != lf.Value {
-			return 0, nil, nil, false
-		}
-	}
-	for _, img := range q.ImageFilter {
-		if !anyContainsFold(c.Images, img) {
-			return 0, nil, nil, false
-		}
 	}
 
 	if len(q.Tokens) == 0 {
@@ -1530,6 +1517,32 @@ func match(q Query, c candidate) (int, []MatchedField, []MatchSnippet, bool) {
 		}
 	}
 	return total, matched, snippets, true
+}
+
+// matchesModifiers reports whether a candidate passes the query's hard
+// filters (kind:, ns:, label:, image:). It reads identity only, never Content.
+func matchesModifiers(q Query, c candidate) bool {
+	if len(q.KindFilter) > 0 && !kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
+		return false
+	}
+	if len(q.NSFilter) > 0 && !sliceContainsFold(q.NSFilter, c.Namespace) {
+		return false
+	}
+	for _, lf := range q.LabelFilter {
+		v, ok := c.Labels[lf.Key]
+		if !ok {
+			return false
+		}
+		if lf.Value != "" && v != lf.Value {
+			return false
+		}
+	}
+	for _, img := range q.ImageFilter {
+		if !anyContainsFold(c.Images, img) {
+			return false
+		}
+	}
+	return true
 }
 
 // scoreToken returns the highest-scoring site a single free token matches,
@@ -1612,6 +1625,19 @@ func scoreToken(tok string, c candidate) (int, string, *MatchSnippet, bool) {
 				Snippet: snippetForToken(cf.Value, tok),
 			})
 		}
+	}
+	if c.report != nil {
+		eachTrivyFinding(c.report, c.findings, func(f *trivyFinding) bool {
+			if score := f.match(low); score > best {
+				value := f.value()
+				considerSnippet(score, "content:"+f.path(), MatchSnippet{
+					Token:   tok,
+					Path:    f.path(),
+					Snippet: snippetForToken(value, tok),
+				})
+			}
+			return best < scoreContentExact
+		})
 	}
 	if c.Kind != "" {
 		kindLow := strings.ToLower(c.Kind)
@@ -2181,13 +2207,13 @@ export function AWSMachineRenderer({ data }: Props) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2158** (2026-10-21): **While streaming a pod's logs, Radar stops receiving lines and prints `failed to create fsnotify watcher: too many open files` into the log pane / terminal**
+  *Symptoms*: ## Describe the bug  While streaming a pod's logs, Radar stops receiving lines and prints `failed to create fsnotify watcher: too many open files` into the log pane / terminal.  The error is emitted by the Radar client process, not by the workload: the pod's own container logs are ECS JSON and contain no occurrence of `fsnotify` (checked across the last 5,000 lines).  It is not environmental resource exhaustion: at the moment of the failure Radar holds ~20 file descriptors and **zero** inotify file descriptors, against very high limits (details below), and creating inotify watchers succeeds from the same shell.  It has recurred across separate Radar process starts (i.e. it is not a one-off after a very long session).  ## To reproduce  1. On WSL2 (Ubuntu), with a kubeconfig pointing at a k3s cluster, start Radar:    `radar -prometheus-url https://<redacted>/api/prom -prometheus-header-from-env Authorization=RADAR_PROMETHEUS_AUTHORIZATION`    (the working directory is a Docker Desktop bind mount, i.e. a 9p filesystem) 2. Open a workload's **Logs** pane and stream a pod's logs (e.g. a Deployment's pod). 3. Log lines arrive normally for a while, then the pane stops updating and    `failed to create fsnotify watcher: too many open files` is printed.  ## Expected behavior  The log stream keeps following the pod without emitting a filesystem-watcher error, and opening/switching log streams does not consume or leak inotify watchers.  ## Screenshots  <!-- optional: the log pane showin
+
 - **Issue #2029** (2026-10-15): **AI panel scroll bug**
   *Symptoms*: ## Describe the bug  The AI panel will not scroll to the end in the macOS 1.16.0 desktop app.  ## To reproduce  1. Open an AI investigation  2. Go to the Findings tab 3. Scroll to the bottom of the investigation text  ## Expected behavior  The entire context of the text is able to be scrolled.  ## Screenshots  https://github.com/user-attachments/assets/a20ccf83-efcd-4864-86a1-e0d18267cd5f  ## Additional context  Appears to be the same behavior as #1940 
   **Post-Mortem & Fix Analysis**:
   > Thanks for reporting and for the video - will review
-
-- **Issue #1870** (2026-09-25): **Traffic: Istio not detected when istiod uses a revisioned name (e.g. istiod-1-30-1)**
-  *Symptoms*: Moved from discussion #1765. Thanks @Svm1905 for the clear diagnosis there.  ## Summary  The Traffic view doesn't detect Istio when the `istiod` control plane uses a **revisioned** Deployment name such as `istiod-1-30-1`, the standard pattern for Istio canary / revision-based upgrades. The mesh is healthy and `istio_requests_total` is in Prometheus, but Radar reports Istio as not detected and recommends installing Caretta instead.  ## Cause  `IstioSource.Detect()` in `internal/traffic/istio.go` looks for `istiod` by an exact Deployment name across a fixed list of namespaces:  ```go const istiodName = "istiod" var istioNamespaces = []string{"istio-system", "istio", "default"} ... deploy, err := s.k8sClient.AppsV1().Deployments(ns).Get(ctx, istiodName, metav1.GetOptions{}) ```  On a revisioned install that `Get` returns NotFound in every namespace, so the source ends up `Available: false`. Downstream, the Istio branch of `generateRecommendation` (`internal/traffic/manager.go`) only fires for a detected source, so the user falls through to the CNI-based recommendation (Caretta).  Once detection passes, `GetFlows()` already works against the existing Prometheus metrics. The reporter confirmed this with direct PromQL. So the fix is detection only.  ## Desired behavior  Detect `istiod` by **label** instead of exact name, keeping today's behavior for default installs:  - In each candidate namespace, **list** Deployments with the label selector `app=istiod`. Istio's chart sets this l
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2204,1220 +2230,517 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `382b6dbd` (2026-10-20)
-**Commit Message**: Add wait_for MCP tool: wait for a fix to land, within MCP client timeouts (#2231)
+### Incident Patch 1: `3b60573e` (2026-10-22)
+**Commit Message**: Enforce --disable-exec on the exec, debug and pod-file routes (#2269)
 
 ## Description
 
-Adds `wait_for`, a read-only MCP tool for checking that a fix took
-effect, like `kubectl rollout status` and `kubectl wait`. It replaces
-agents' `sleep`-and-re-read loops. It can wait for:
+`--disable-exec` hid the terminal and debug controls but didn't block
+them. The flag set the exec capability to `false`, so the UI stopped
+offering them, but no handler checked it. A direct request still opened
+a shell in a Pod, created a debug container or a privileged node debug
+Pod, or read files through exec.
 
-- a rollout (Deployment, StatefulSet, DaemonSet, Argo Rollout);
-- Job completion;
-- Pod readiness;
-- deletion;
-- a status condition (`Type` or `Type=Status`);
-- `jsonpath={.status.field}=value`.
+That matters most on a shared Radar without auth, where the flag is the
+only gate. There, anyone who can reach the UI could get a shell while
+the operator believed exec was off. With auth on, each user's Kubernetes
+RBAC still applied, but the operator's choice to turn exec off was
+ignored.
 
-**One call returns within 45 seconds.** Over HTTP, Claude Code aborts
-any MCP tool call whose response headers haven't arrived within
-max(`MCP_TOOL_TIMEOUT`, 60s). That includes the Claude Agent SDK, which
-Radar Hub's agent runs. Radar's stateless handler sends nothing until
-the tool returns, so a longer wait failed with `The operation timed
-out.` while Radar kept polling. Codex (`tool_timeout_sec`) and
-TypeScript-SDK clients also default to 60s. Progress notifications don't
-help through Hub, which buffers the whole response. So each call waits
-at most 45s. If the condition isn't met, the call returns `state:
-"waiting"`, and the agent calls again within its own time limit.
+With the flag set, these routes now return 403 `exec is disabled on this
+Radar instance (--disable-exec)`:
 
-### Response
+- Pod terminal: `GET /api/pods/{ns}/{name}/exec`
+- Debug container: `POST /api/pods/{ns}/{name}/debug`
+- Node debug Pod: `POST /api/nodes/{name}/debug`. Cleanup (`DELETE`)
+stays available so an existing debug Pod can still be removed.
+- Pod file browser, which runs `ls`/`find`/`cat`/`tar` through exec:
+`GET .../files`, `GET .../file`, `GET .../files/download`, `POST
+.../files/save`
 
-`state` is one of:
+The `create
 
-**File**: `docs/mcp.md` (modified, +4/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -115,6 +115,10 @@ When a client connects, Radar returns MCP [server instructions](https://modelcon
- 
- What a client does with the text depends on the client and its version. Some add it to the model's context at session start; others show it only after the model loads Radar's tools; some ignore it. Claude Code keeps the first 4,096 characters (2,048 before v2.1.296; see its [MCP documentation](https://code.claude.com/docs/en/mcp)), so Radar puts tool routing first and keeps it within the first 2,048 characters. Codex describes a server whose tools it loads on demand by the first line alone, cut at 250 characters, so that line says on its own what Radar is, that its tools are preferred over kubectl for reading cluster state, and which core tools to load. Each tool's description carries its own routing, so agents in clients that ignore server instructions still get it. `/mcp-readonly` sends the same text without the write tools.
- 
-+### Waiting for a fix to land
-+
-+Use `wait_for` after a change to wait for a controller's rollout, Pod readiness, Job completion, deletion, or a status condition. Each call waits at most 45 seconds so it can return within common MCP client timeouts. The caller owns the total deadline: repeat `waiting` calls within that limit, passing back the named object's `uid` to pin it. The states are `met`, `waiting`, `blocked` (an observed stall), and `failed` (terminal). Selector waits check the current set; use the controller's rollout to wait for replacements. `jsonpath={.status.field}=value` reads only `.status`; its freshness guard uses `status.observedGeneration` when present. `inStateSeconds` is condition age, not time since the fix.
-+
- ## Catalog Introspection
- 
- MCP registries and inspectors can start Radar without a Kubernetes cluster when they only need the tool and resource catalog:
+@@ -192,7 +192,7 @@ The table below covers common startup flags. See the [full CLI reference](https:
+ | `--timeline-db` | `~/.radar/timeline.db` | Path to SQLite database (when using sqlite storage) |
+ | `--timeline-max-size` | `1Gi` | Maximum SQLite DB + WAL size before pruning oldest events (e.g. `800Mi`, `8Gi`; `0` disables) |
+ | `--history-limit` | `10000` | Maximum events to retain in timeline (memory only) |
+-| `--disable-exec` | `false` | Disable terminal and debug shell |
++| `--disable-exec` | `false` | Disable pod terminal, debug shells and pod file browsing |
+ | `--disable-helm-write` | `false` | Disable Helm write operations |
+ | `--disable-local-terminal` | `false` | Disable the host local terminal |
+ | `--debug-image` | `busybox:latest` | Image for ephemeral debug containers and node debug pods. If built-in restricted PodSecurity rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default; point at a compatible mirror for air-gapped / private-registry clusters. |
 ```
 
-**File**: `internal/mcp/instructions_test.go` (modified, +1/-0)
+**File**: `cmd/desktop/main.go` (modified, +1/-1)
 ```diff
-@@ -115,6 +115,7 @@ func TestServerInstructionsNameOnlyRegisteredTools(t *testing.T) {
- // (backedBy) or a parameter in its input schema (param). It is a tripwire: when
- // either side changes, the test fails and the pairing gets rechecked by hand.
- var instructionClaims = []struct{ tool, says, backedBy, param string }{
-+	{tool: "wait_for", says: "wait_for its rollout within a time limit", backedBy: "until your own time limit"},
- 	{tool: "issues", says: "Symptom known, faulty resource not: issues", backedBy: "live state"},
- 	{tool: "issues", says: "references to missing objects", backedBy: "references"},
- 	{tool: "diagnose", says: "a Pod, Deployment, StatefulSet, DaemonSet or Rollout", backedBy: "Pod, Deployment, StatefulSet, DaemonSet and Argo Rollout"},
+@@ -65,7 +65,7 @@ func main() {
+ 	debugEvents := flag.Bool("debug-events", false, "Enable verbose event debugging")
+ 	fakeInCluster := flag.Bool("fake-in-cluster", false, "Simulate in-cluster mode for testing")
+ 	disableHelmWrite := flag.Bool("disable-helm-write", false, "Simulate restricted Helm permissions")
+-	disableExec := flag.Bool("disable-exec", false, "Simulate restricted exec permissions")
++	disableExec := flag.Bool("disable-exec", false, "Disable pod exec: terminal, debug shells and pod file browsing")
+ 	podShellDefault := flag.String("pod-shell-default", "", "Override the default pod exec shell command (runs as 'sh -c <value>'; empty = built-in bash -il → ash → sh cascade)")
+ 	timelineStorage := flag.String("timeline-storage", fileCfg.TimelineStorageOr("memory"), "Timeline storage backend: memory, sqlite, or postgres")
+ 	timelineDBPath := flag.String("timeline-db", fileCfg.TimelineDBPath, "Path to timeline database file (default: ~/.radar/timeline.db)")
 ```
 
-**File**: `internal/mcp/mutation_verification.go` (modified, +3/-0)
+**File**: `cmd/explorer/main.go` (modified, +1/-1)
 ```diff
-@@ -94,6 +94,9 @@ func buildMutationVerification(ctx context.Context, dynClient dynamic.Interface,
- 		return out
+@@ -118,7 +118,7 @@ func main() {
+ 	debugEvents := flag.Bool("debug-events", false, "Enable verbose event debugging (logs all event drops)")
+ 	fakeInCluster := flag.Bool("fake-in-cluster", false, "Simulate in-cluster mode for testing (shows kubectl copy buttons instead of port-forward)")
+ 	disableHelmWrite := flag.Bool("disable-helm-write", false, "Simulate restricted Helm permissions (disables install/upgrade/rollback/uninstall)")
+-	disableExec := flag.Bool("disable-exec", false, "Simulate restricted exec permissions (disables terminal, debug shell)")
++	disableExec := flag.Bool("disable-exec", false, "Disable pod exec: terminal, debug shells and pod file browsing")
+ 	disableLocalTerminal := flag.Bool("disable-local-terminal", false, "Disable the host local terminal")
+ 	podShellDefault := flag.String("pod-shell-default", "", "Override the default pod exec shell command (runs as 'sh -c <value>'; empty = built-in bash -il → ash → sh cascade)")
+ 	debugImage := flag.String("debug-image", fileCfg.DebugImage, "Image for ephemeral debug containers and node debug pods (empty = busybox:latest; point at a mirror for air-gapped/private-registry clusters)")
+```
+
+**File**: `internal/k8s/capabilities.go` (modified, +5/-1)
+```diff
+@@ -246,7 +246,8 @@ var (
+ 
+ 	// ForceDisableHelmWrite overrides the helmWrite capability to false (for dev testing)
+ 	ForceDisableHelmWrite bool
+-	// ForceDisableExec overrides the exec capability to false (for dev testing)
++	// ForceDisableExec turns off exec (--disable-exec): the capability reports false
++	// and the exec, debug and pod-file routes refuse requests.
+ 	ForceDisableExec bool
+ 	// ForceDisableLocalTerminal turns the local terminal off (--disable-local-terminal)
+ 	ForceDisableLocalTerminal bool
+@@ -607,6 +608,9 @@ func CheckCapabilitiesForUser(ctx context.Context, username string, groups []str
+ 	if ForceDisableHelmWrite {
+ 		caps.HelmWrite = false
  	}
- 	if rollout := summarizeWorkloadRollout(post); len(rollout) > 0 {
-+		if rollout["complete"] == false {
-+			rollout["next"] = fmt.Sprintf("wait_for %s %s in %s to see it finish", post.GetKind(), post.GetName(), post.GetNamespace())
-+		}
- 		out["rollout"] = rollout
- 	}
- 	cacheSnapshot := false
++	if ForceDisableExec {
++		caps.Exec = false
++	}
+ 
+ 	// Cache result
+ 	userCapabilitiesCache.Store(identityKey, &userCapEntry{
 ```
 
-**File**: `internal/mcp/tools.go` (modified, +6/-0)
+**File**: `internal/server/actions.go` (modified, +5/-0)
 ```diff
-@@ -551,6 +551,12 @@ func registerTools(server *mcp.Server, includeWrites bool, paramRegistry *toolPa
- 		Annotations: readOnly,
- 	}, logToolCall("get_workload_logs", handleGetWorkloadLogs))
- 
-+	addToolWithRegistry(paramRegistry, server, &mcp.Tool{
-+		Name:        "wait_for",
-+		Description: "Wait until a change takes effect, like kubectl rollout status and kubectl wait; use it after a fix instead of sleeping and re-reading. condition: rollout (default for Deployment, StatefulSet, DaemonSet, Argo Rollout), complete (default for Job), ready (default for Pod), deleted, a status condition type that must be True (Type=Status for another value), or jsonpath={.status.field}=value. Target one object by name, every match of label_selector, or all of the kind in the namespace. One call waits at most 45s and returns state: met; waiting (not yet: call again, passing back uid if one was returned, until your own time limit); blocked (stalled on the problem in blockers; it may clear, but usually needs a fix); failed (Job failed or Pod finished). Not a timer: to let time pass, run the check that needs it.",
-+		Annotations: readOnly,
-+	}, logToolCall("wait_for", handleWaitFor))
-+
- 	// --- Write tools (workload, cronjob, gitops, apply, patch, node) ---
- 	// Registered only on the full server. The read-only mount omits them so a
- 	// read-only investigation can't even discover a mutating tool — server-side
+@@ -142,6 +142,11 @@ func (s *Server) grantPermission(r *http.Request, g Grant) string {
+ // grantDecision asks for g as the caller. Subresource answers are memoized on
+ // the same per-user cache as canRead, keyed resource/subresource.
+ func (s *Server) grantDecision(r *http.Request, g Grant) (bool, bool) {
++	// --disable-exec is a definite no for every feature that runs commands in
++	// Pods through this grant (database sessions and inspection, for example).
++	if k8s.ForceDisableExec && g.Group == "" && g.Resource == "pods" && g.Subresource == "exec" {
++		return false, true
++	}
+ 	if auth.UserFromContext(r.Context()) == nil {
+ 		return localCanI(r.Context(), g)
+ 	}
 ```
 
-**File**: `internal/mcp/tools_catalog_test.go` (modified, +1/-1)
+**File**: `internal/server/cnpg_service.go` (modified, +7/-0)
 ```diff
-@@ -248,7 +248,7 @@ func TestToolCatalogContextBudget(t *testing.T) {
- 	// node in errors/pendingPods/skippedPods, is not safe to take down) is one
- 	// such uncertainty boundary.
- 	const (
--		maxCatalogBytes         = 59600
-+		maxCatalogBytes         = 61726
- 		maxToolDescriptionBytes = 3000
- 	)
- 
+@@ -89,6 +89,13 @@ func (s *Server) cnpgReader(r *http.Request) *cnpgReadAdapter {
+ 	}
+ 	adapter.Clients.Proxy = cnpgRuntimeClient(adapter.config)
+ 	adapter.Clients.Exec = cnpgsvc.NewExec(adapter.Clients.Typed, adapter.config)
++	if k8s.ForceDisableExec {
++		// Session reads and cancel/terminate actions run psql through this
++		// client; a forbidden error surfaces as "exec denied" in both.
++		adapter.Clients.Exec = func(context.Context, string, string, string, []string, string) ([]byte, error) {
++			return nil, errExecDisabled
++		}
++	}
+ 	current := func() bool { return operation != nil && operation.Err() == nil }
+ 	boundBudget := func(ctx context.Context) *syncBudget {
+ 		budget := newSyncBudget(ctx)
 ```
 
-**File**: `internal/mcp/tools_wait.go` (added, +907/-0)
+**File**: `internal/server/copy.go` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,907 @@
-+package mcp
-+
-+import (
-+	"context"
-+	"fmt"
-+	"sort"
-+	"strconv"
-+	"strings"
-+	"time"
-+
-+	"github.com/modelcontextprotocol/go-sdk/mcp"
-+	appsv1 "k8s.io/api/apps/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/dynamic"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/rollouts"
-+)
-+
-+var (
-+	waitMaxTimeout   = 45 * time.Second
-+	waitPollInterval = 2 * time.Second
-+	waitEmptyGrace   = 10 * time.Second
-+	waitBlockerGrace = 10 * time.Second
-+	waitNow          = time.Now
-+)
-+
-+type waitForInput struct {
-+	Kind           string `json:"kind" jsonschema:"resource kind: deployment, statefulset, daemonset, rollout, job, pod, namespace, or any kind including CRDs"`
-+	Group          string `json:"group,omitempty" jsonschema:"API group when the kind is ambiguous"`
-+	Namespace      string `json:"namespace,omitempty" jsonschema:"namespace for namespaced kinds"`
-+	Name           string `json:"name,omitempty" jsonschema:"object name; or set label_selector or all"`
-+	UID            string `json:"uid,omitempty" jsonschema:"with name: the uid a previous wait_for call returned, so a replacement with the same name doesn't count as this object"`
-+	LabelSelector  string `json:"label_selector,omitempty" jsonschema:"every matching object must meet the condition; with deleted, none may remain; to wait for replacements, wait on their controller's rollout"`
-+	All            bool   `json:"all,omitempty" jsonschema:"every object of the kind in the namespace"`
-+	Condition      string `json:"condition,omitempty" jsonschema:"rollout, complete, ready, deleted, a condition type (Type or Type=Status), or jsonpath={.status.path}=value; defaults by kind"`
-+	TimeoutSeconds int    `json:"timeout_seconds,omitempty" jsonschema:"seconds this call waits, 1-45 (default 45); larger values wait 45"`
-+}
-+
-+type waitObjectState struct {
-+	Name               string           `json:"name"`
-+	UID                types.UID        `json:"uid"`
-+	Met                bool             `json:"met"`
-+	Generation         int64            `json:"generation,omitempty"`
-+	ObservedGeneration any              `json:"observedGeneration,omitempty"`
-+	Observed           string           `json:"observed"`
-+	Replicas           map[string]int64 `json:"replicas,omitempty"`
-+	InStateSeconds     *int64           `json:"inStateSeconds,omitempty"`
-+	state              string
-+	next               string
-+	controllerObserved bool
-+}
-+
-+type waitCheck func(obj *unstructured.Unstructured) (met bool, message, failure string)
-+
-+type waitStepResult[T any] struct {
-+	value T
-+	err   error
-+}
-+
-+// Cache and discovery helpers are synchronous; the call deadline also bounds those steps.
-+func waitStep[T any](ctx context.Context, fn func() (T, error)) (T, error) {
-+	if err := ctx.Err(); err != nil {
-+		var zero T
-+		return zero, err
+@@ -43,6 +43,9 @@ type PodFilesystem struct {
+ // handlePodFileList lists files at a given path inside a pod container.
+ // GET /api/pods/{ns}/{name}/files?container=X&path=/
+ func (s *Server) handlePodFileList(w http.ResponseWriter, r *http.Request) {
++	if !s.requireExecEnabled(w) {
++		return
 +	}
-+	ch := make(chan waitStepResult[T], 1)
-+	go func() { v, err := fn(); ch <- waitStepResult[T]{v, err} }()
-+	select {
-+	case r := <-ch:
-+		return r.value, r.err
-+	case <-ctx.Done():
-+		var zero T
-+		return zero, ctx.Err()
+ 	if !s.requireConnected(w) {
+ 		return
+ 	}
+@@ -163,6 +166,9 @@ func (s *Server) listFilesWithLS(r *http.Request, namespace, podName, container,
+ // handlePodFileDownload downloads a single file from a pod container.
+ // GET /api/pods/{ns}/{name}/files/download?container=X&path=/some/file
+ func (s *Server) handlePodFileDownload(w http.ResponseWriter, r *http.Request) {
++	if !s.requireExecEnabled(w) {
++		return
 +	}
-+}
-+
-+func handleWaitFor(ctx context.Context, req *mcp.CallToolRequest, input waitForInput) (*mcp.CallToolResult, any, error) {
-+	start := time.Now()
-+	ctx, cancel := context.WithTimeout(ctx, waitTimeout(input.TimeoutSeconds))
-+	defer cancel()
-+	if err := requireConnected(); err != nil {
-+		return nil, nil, err
+ 	src := s.openPodFileForRequest(w, r)
+ 	if src == nil {
+ 		return
+@@ -198,6 +204,9 @@ func (s *Server) handlePodFileDownload(w http.ResponseWriter, r *http.Request) {
+ // fails, so the desktop app asks the backend to do the whole thing.
+ // POST /api/pods/{ns}/{name}/files/save?container=X&path=/some/file
+ func (s *Server) handlePodFileSave(w http.ResponseWriter, r *http.Request) {
++	if !s.requireExecEnabled(w) {
++		return
 +	}
-+	dyn := k8s.DynamicClientFromContext(ctx)
-+	if dyn == nil {
-+		return nil, nil, errNotConnected()
+ 	if s.saveFileStreamFunc == nil {
+ 		s.writeError(w, http.StatusNotFound, "not available")
+ 		return
+@@ -1228,6 +1237,9 @@ func classifyOpenErrorForPreview(openErr *podFileOpenError) (int, string) {
+ // and returns it in a JSON envelope for the inline viewer.
+ // GET /api/pods/{ns}/{name}/file?container=X&path=/some/file
+ func (s *Server) handlePodFilePreview(w http.ResponseWriter, r *http.Request) {
++	if !s.requireExecEnabled(w) {
++		return
 +	}
-+	return waitForUntil(ctx, dyn, input, start)
-+}
-+
-+func waitTimeout(seconds int) time.Duration {
-+	if seconds <= 0 || seconds >= 45 {
-+		return waitMaxTimeout
-+	}
-+	return min(time.Duration(seconds)*time.Second, waitMaxTimeout)
-+}
-+
-+func waitFor(ctx context.Context, dyn dynamic.Interface, input waitForInput) (*mcp.CallToolResult, any, error) {
-+	start := time.Now()
-+	ctx, cancel := context.WithTimeout(ctx, waitTimeout(input.TimeoutSeconds))
-+	defer cancel()
-+	return waitForUntil(ctx, dyn, input, start)
-+}
-+
-+func waitForUntil(ctx context.Context, dyn dynamic.Interface, input waitForInput, start time.Time) (*mcp.CallToolResult, any, error) {
-+	kind, name, selector := strings.TrimSpace(input.Kind), strings.TrimSpace(input.Name), strings.TrimSpace(input.LabelSelector)
-+	if kind == "" {
-+		return nil, nil, fmt.Errorf("kind is required")
-+	}
-+	if targets := btoi(name != "") + btoi(selector != "") + btoi(input.All); targets != 1 {
-+		return nil, nil, fmt.Errorf("set exactly one of name, label_selector or all")
-+	}
-+	if input.UID != "" && name == "" {
-+		return nil, nil, fmt.Errorf("uid needs name")
-+	}
-+	if input.TimeoutSeconds < 0 {
-+		return nil, nil, fmt.Errorf("timeout_seconds must be positive")
-+	}
-+	type resolved struct {
-+		gvr        schema.
+ 	if !s.requireConnected(w) {
+ 		return
+ 	}
 ```
 
-**File**: `internal/mcp/tools_wait_blockers.go` (added, +231/-0)
+**File**: `internal/server/exec.go` (modified, +24/-0)
 ```diff
-@@ -0,0 +1,231 @@
-+package mcp
-+
-+import (
-+	"context"
-+	"errors"
-+
-+	appsv1 "k8s.io/api/apps/v1"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/labels"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/dynamic"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/health"
-+	"github.com/skyhook-io/radar/pkg/k8score"
-+)
-+
-+type waitBlockerKey struct {
-+	uid               types.UID
-+	container, reason string
-+}
-+type waitBlocker struct {
-+	Pod       string `json:"pod"`
-+	Container string `json:"container,omitempty"`
-+	Reason    string `json:"reason"`
-+	Message   string `json:"message"`
-+	key       waitBlockerKey
-+}
-+type waitBlockerResult struct {
-+	blockers    []waitBlocker
-+	unavailable string
-+}
-+
-+func waitBlockerPermission(ctx context.Context, group, resource, ns, verb, denial string) string {
-+	allowed, determined := canReadInNamespaceDecision(ctx, group, resource, ns, verb)
-+	if !determined {
-+		return "permission check failed"
-+	}
-+	if !allowed {
-+		return denial
-+	}
-+	return ""
-+}
-+
-+func readWaitBlockers(ctx context.Context, dyn dynamic.Interface, gvr schema.GroupVersionResource, obj *unstructured.Unstructured) waitBlockerResult {
-+	ns := obj.GetNamespace()
-+	unavailable := func(reason string) waitBlockerResult { return waitBlockerResult{unavailable: reason} }
-+	if !namespaceWithinPin(ns) {
-+		return unavailable("outside Radar's namespace scope")
-+	}
-+	if !checkNamespaceAccess(ctx, ns) {
-+		return unavailable("pods are not readable with your permissions")
-+	}
-+	if reason := waitBlockerPermission(ctx, "", "pods", ns, "list", "pods are not readable with your permissions"); reason != "" {
-+		return unavailable(reason)
-+	}
-+	if isWaitController(gvr) && gvr.Group != "argoproj.io" {
-+		gen, present := waitGeneration(obj)
-+		if !present || gen < obj.GetGeneration() {
-+			return waitBlockerResult{}
-+		}
-+	}
-+	dependencyDenied := "workload's ReplicaSets or ControllerRevisions are not readable"
-+	needsRS := gvr.Group == "apps" && gvr.Resource == "deployments" || gvr.Group == "argoproj.io" && gvr.Resource == "rollouts"
-+	if needsRS {
-+		if reason := waitBlockerPermission(ctx, "apps", "replicasets", ns, "get", dependencyDenied); reason != "" {
-+			return unavailable(reason)
-+		}
-+	}
-+	if gvr.Group == "apps" && gvr.Resource == "deployments" {
-+		if reason := waitBlockerPermission(ctx, "apps", "replicasets", ns, "list", dependencyDenied); reason != "" {
-+			return unavailable(reason)
-+		}
-+	}
-+	if gvr.Group == "apps" && gvr.Resource == "daemonsets" {
-+		if reason := waitBlockerPermission(ctx, "apps", "controllerrevisions", ns, "list", dependencyDenied); reason != "" {
-+			return unavailable(reason)
-+		}
-+	}
-+	cache := k8s.GetResourceCache()
-+	if cache == nil || cache.ResourceCache == nil {
-+		return unavailable("pod cache is still loading")
-+	}
-+	if cache.Pods() == nil {
-+		return unavailable("pods are not readable with your permissions")
-+	}
-+	if synced, known := cache.InformerSynced("pods"); known && !synced {
-+		return unavailable("pod cache is still loading")
-+	}
-+	if !cache.KindCoversNamespace("pods", ns) {
-+		return unavailable("pods are not readable with your permissions")
-+	}
-+	var pods []*corev1.Pod
-+	if gvr.Group == "" && gvr.Resource == "pods" {
-+		pod, err := cache.Pods().Pods(ns).Get(obj.GetName())
-+		if err != nil {
-+			return unavailable("pod cache is still loading")
-+		}
-+		if pod.UID == obj.GetUID() {
-+			pods = []*corev1.Pod{pod}
-+		}
-+	} else {
-+		if needsRS {
-+			if cache.ReplicaSets() == nil || !cache.KindCoversNamespace("replicasets", ns) {
-+				return unavailable(dependencyDenied)
-+			}
-+			if synced, known := cache.InformerSynced("replicasets"); known && !synced {
-+				return unavailable(dependencyDenied)
-+			}
-+		}
-+		var err error
-+		pods, err = k8s.WorkloadPodsForUID(cache, obj.GetKind(), ns, obj.GetName(), gvr.Group, obj.GetUID())
-+		if err != nil {
-+			if errors.Is(err, k8s.ErrWorkloadCacheWarming) {
-+				return unavailable("pod cache is still loading")
-+			}
-+			return unavailable(dependencyDenied)
-+		}
-+	}
-+	var revision string
-+	var rsUID types.UID
-+	switch gvr.GroupResource() {
-+	case schema.GroupResource{Group: "apps", Resource: "deployments"}:
-+		sets, err := cache.ReplicaSets().ReplicaSets(ns).List(labels.Everything())
-+		if err != nil {
-+			return unavailable(dependencyDenied)
-+		}
-+		revision, rsUID = currentWaitReplicaSet(obj, sets)
-+	case schema.GroupResource{Group: "apps", Resource: "statefulsets"}:
-+		revision, _, _ = unstructured.NestedString(obj.Object, "status", "updateRevision")
-+	case schema.GroupResource{Group: "argoproj.io", Resource: "rollouts"}:
-+		revision, _, _ = unstructured.NestedString(obj.Object, "status", "currentPodHash")
-+	case schema.GroupResource{Group: "apps", Resource: "daemonsets"}:
-+		// ControllerRevisions aren't warmed in the c
-```
-
-**File**: `internal/mcp/tools_wait_blockers_test.go` (added, +246/-0)
-```diff
-@@ -0,0 +1,246 @@
-+package mcp
-+
-+import (
-+	"fmt"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	appsv1 "k8s.io/api/apps/v1"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/types"
-+	fakeclientset "k8s.io/client-go/kubernetes/fake"
-+	clienttesting "k8s.io/client-go/testing"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/k8score"
-+)
-+
-+func waitFatalPod(name string, owner metav1.OwnerReference) *corev1.Pod {
-+	return &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: "shop", UID: types.UID("uid-" + name), OwnerReferences: []metav1.OwnerReference{owner}}, Status: corev1.PodStatus{ContainerStatuses: []corev1.ContainerStatus{{Name: "app", State: corev1.ContainerState{Waiting: &corev1.ContainerStateWaiting{Reason: "CrashLoopBackOff", Message: "fatal detail"}}}}}}
-+}
-+func waitOwner(kind, name string, uid types.UID) metav1.OwnerReference {
-+	yes := true
-+	return metav1.OwnerReference{APIVersion: "apps/v1", Kind: kind, Name: name, UID: uid, Controller: &yes}
-+}
-+func waitInstallPodCache(t *testing.T, objs ...runtime.Object) {
-+	t.Helper()
-+	t.Cleanup(k8s.ResetTestState)
-+	if err := k8s.InitTestResourceCacheFromConfig(k8score.CacheConfig{Client: fakeclientset.NewSimpleClientset(objs...), ResourceTypes: map[string]bool{"pods": true, "replicasets": true}}); err != nil {
-+		t.Fatal(err)
-+	}
-+}
-+
-+func TestWaitCurrentRevisionBlockers(t *testing.T) {
-+	obj := deploymentObj("web", 2, 2, 3, 3, 1, 2)
-+	obj.SetAnnotations(map[string]string{"deployment.kubernetes.io/revision": "8"})
-+	oldRS := &appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "old", Namespace: "shop", UID: "old-rs", OwnerReferences: []metav1.OwnerReference{waitOwner("Deployment", "web", obj.GetUID())}, Annotations: map[string]string{"deployment.kubernetes.io/revision": "7"}, Labels: map[string]string{"pod-template-hash": "old"}}}
-+	newRS := oldRS.DeepCopy()
-+	newRS.Name = "new"
-+	newRS.UID = "new-rs"
-+	newRS.Annotations["deployment.kubernetes.io/revision"] = "8"
-+	newRS.Labels["pod-template-hash"] = "new"
-+	oldPod := waitFatalPod("old-pod", waitOwner("ReplicaSet", "old", "old-rs"))
-+	oldPod.Labels = map[string]string{"pod-template-hash": "old"}
-+	newPod := waitFatalPod("new-pod", waitOwner("ReplicaSet", "new", "new-rs"))
-+	newPod.Labels = map[string]string{"pod-template-hash": "new"}
-+	newPod.Status.ContainerStatuses = nil
-+	waitInstallPodCache(t, oldRS, newRS, oldPod, newPod)
-+	result := readWaitBlockers(t.Context(), waitDynamic(), deploymentsGVR, obj)
-+	if result.unavailable != "" || len(result.blockers) != 0 {
-+		t.Fatalf("old revision leaked: %+v", result)
-+	}
-+	// A rollback reuses the old ReplicaSet with a newly assigned revision.
-+	obj.SetAnnotations(map[string]string{"deployment.kubernetes.io/revision": "9"})
-+	oldRS.Annotations["deployment.kubernetes.io/revision"] = "9"
-+	revision, uid := currentWaitReplicaSet(obj, []*appsv1.ReplicaSet{newRS, oldRS})
-+	blockers := waitPodBlockers(deploymentsGVR, []*corev1.Pod{oldPod, newPod}, revision, uid)
-+	if len(blockers) != 1 || blockers[0].Pod != "old-pod" {
-+		t.Fatal(blockers)
-+	}
-+}
-+
-+func TestWaitRevisionPodFilters(t *testing.T) {
-+	for _, tc := range []struct{ group, resource, label string }{
-+		{"apps", "statefulsets", "controller-revision-hash"}, {"apps", "daemonsets", "controller-revision-hash"}, {"argoproj.io", "rollouts", "rollouts-pod-template-hash"},
-+	} {
-+		pod := waitFatalPod("pod", metav1.OwnerReference{})
-+		pod.Labels = map[string]string{tc.label: "new"}
-+		gvr := schema.GroupVersionResource{Group: tc.group, Resource: tc.resource}
-+		if got := waitPodBlockers(gvr, []*corev1.Pod{pod}, "old", ""); len(got) != 0 {
-+			t.Fatal(got)
-+		}
-+		if got := waitPodBlockers(gvr, []*corev1.Pod{pod}, "new", ""); len(got) != 1 {
-+			t.Fatal(got)
-+		}
-+		now := metav1.Now()
-+		pod.DeletionTimestamp = &now
-+		if got := waitPodBlockers(gvr, []*corev1.Pod{pod}, "new", ""); len(got) != 0 {
-+			t.Fatal(got)
-+		}
-+	}
-+}
-+
-+func TestWaitBlockerPersistence(t *testing.T) {
-+	for _, tc := range []struct {
-+		seconds int
-+		replace bool
-+		want    string
-+	}{
-+		{0, false, "waiting"}, {9, false, "waiting"}, {10, false, "blocked"}, {10, true, "waiting"},
-+	} {
-+		t.Run(fmt.Sprintf("%d-%v", tc.seconds, tc.replace), func(t *testing.T) {
-+			fastWaitPolling(t)
-+			pod := waitFatalPod("web", metav1.OwnerReference{})
-+			waitInstallPodCache(t, pod)
-+			obj := waitTestPod("web", "False")
-+			obj.SetUID(pod.UID)
-+			now := time.Now()
-+			previousNow := waitNow
-+			waitNow = func() time.Time { return now }
-+			t.Cleanup(func() { waitNow = previousNow })
-+			dyn := waitDynamic(obj)
-+			calls := 0
-+			dyn.PrependReactor("get", "pods", func(clienttesting.Action) (bool, runtime.Object, error) {
-+				calls++
-+				if calls == 2 {
-+					now = now.Add(time.Duration(tc.seconds) * time.Second)
-+					if tc.re
-```
-
----
-
-### Incident Patch 2: `705ffd1d` (2026-10-20)
-**Commit Message**: Require explicit chart sources for Helm upgrades (#2233)
-
-Charts from different repositories can share a name and version. Helm
-upgrades must not treat metadata, matching versions or a repository
-alias as proof that two charts have the same source.
-
-Normal upgrades now require a confirmed repository URL and chart name,
-or the full OCI chart path. The existing source picker shows the saved
-source first and offers other name matches for an intentional switch.
-Switching requires explicit values and a preview tied to the selected
-package and release revision. It also works when a mirror no longer
-publishes the installed version.
-
-Review the source binding, isolated downloads and failed-operation paths
-closely. Older releases need source confirmation before normal upgrades.
-Original-source association compares chart material retained by Helm; it
-cannot prove the origin of identical copies or verify omitted subchart
-bodies. Preview does not guarantee hook, CRD, data or immutable-field
-compatibility.
-
-Validation: Helm unit tests, 2,852 frontend tests and production build
-passed. Disposable-cluster API/browser checks covered same-version
-publisher switches, pruned mirrors, failed apply/ret
-
-**File**: `docs/helm.md` (modified, +20/-0)
-```diff
-@@ -128,3 +128,23 @@ Use `issues` for currently broken native Helm releases: active failed and stuck
- - Hook evidence can disappear after Helm records the failure. Radar reports the absence and likely reasons, but cannot reconstruct deleted Job/Pod logs unless Kubernetes or Helm retained them.
- - Flux-managed releases should be changed through Flux. Radar links them to the owning `HelmRelease` and warns that direct `helm upgrade` changes may be reconciled back.
- - Upgrade source detection depends on source data available to the running Radar environment. Local OSS can use local Helm repo/OCI configuration; Radar Cloud should not assume that local repo config exists, so unresolved source states are reported explicitly.
-+
-+
-+## Chart sources and upgrades
-+
-+Radar identifies a chart by its repository URL and chart name. Local repository aliases can differ between machines. OCI sources use the full registry/chart path. Charts with the same name or version in different repositories are separate choices.
-+
-+Normal upgrades use the saved source. If no source is confirmed, use **Choose chart source** in the release drawer. The picker shows the last recorded source first, followed by other configured sources. A name match is a suggestion, not proof of where the release was installed from.
-+
-+You can associate an original source when its installed package matches the chart Helm stored. Older source records may need confirmation again if they lack a chart binding or a later Helm command changed the chart. This comparison cannot establish the origin of identical copies or verify subchart bodies Helm omitted from release storage.
-+
-+Values-only edits can use the chart Helm stored. If Helm omitted dependencies from an umbrella chart, record its original source so Radar can restore the exact installed package before editing values.
-+
-+To use another repository, select it for the next upgrade. Choose an available version, review your settings and preview the rendered resource changes. The old installed version does not need to remain in the selected repository. Preview and apply use the same selected package and settings; if either changes, preview again.
-+
-+A preview does not guarantee compatibility of hooks, data or immutable fields. Helm does not upgrade CRDs from a chart's `crds/` directory. A failed source change records the attempted source on the failed revision and preserves earlier revision history. Select a source and preview again before retrying; a values-only edit cannot finish the source change.
-+
-+Programmatic upgrades require a confirmed saved source or an explicit source selection with the preview digest and expected release revision. Name-only inference never authorizes an upgrade. New source-selection controls require the backend's `helmSourceIdentity` capability. Flux-managed releases should be changed through their owning Flux configuration.
-+
-+
-+Explicit source changes use `POST /api/helm/releases/{namespace}/{name}/source/preview`, followed by `/source/upgrade` or `/source/upgrade-stream`. These routes require the `sourceUpgrade` selection, explicit values and an exact version (body `version` for preview, query `version` for upgrade). Preview returns `previewDigest`; send it back in the selection when applying. The selection also carries `expectedRevision` and `expectedSource` from source status. Older backends return 404 for these routes instead of ignoring the selected source. Ordinary upgrade routes reject source-change fields.
-```
-
-**File**: `internal/helm/chart_sources.go` (modified, +27/-131)
-```diff
-@@ -12,7 +12,6 @@ import (
- 	"path/filepath"
- 	"regexp"
- 	"slices"
--	"sort"
- 	"strings"
- 
- 	"helm.sh/helm/v3/pkg/action"
-@@ -433,54 +432,6 @@ func publishStagedRepositoryCache(stageDir, stagedIndex, cacheDir string) error
- 	return nil
- }
- 
--func (c *Client) configuredChartSourceCandidates(chartName, version string, lister ociTagLister) ([]ChartSourceCandidate, error) {
--	var candidates []ChartSourceCandidate
--	f, err := repo.LoadFile(c.settings.RepositoryConfig)
--	if err == nil {
--		for _, configured := range f.Repositories {
--			repositoryURL, urlErr := canonicalClassicRepositoryURL(configured.URL)
--			if urlErr != nil {
--				continue
--			}
--			idx, loadErr := repo.LoadIndexFile(filepath.Join(c.settings.RepositoryCache, configured.Name+"-index.yaml"))
--			if loadErr != nil {
--				continue
--			}
--			for _, entry := range idx.Entries[chartName] {
--				if entry.Version == version {
--					candidates = append(candidates, ChartSourceCandidate{Type: "repository", Reference: configured.Name, URL: repositoryURL})
--					break
--				}
--			}
--		}
--	} else if !errors.Is(err, os.ErrNotExist) {
--		return nil, fmt.Errorf("load repository configuration: %w", err)
--	}
--	if len(ListOCISources()) > 0 {
--		if lister == nil {
--			lister = c.newRegistryClient()
--		}
--		if lister != nil {
--			for _, prefix := range ListOCISources() {
--				tags, tagErr := lister.Tags(ociRef(prefix, chartName))
--				if tagErr == nil && slices.Contains(tags, version) {
--					candidate := ChartSourceCandidate{Type: "oci", Reference: ociChartURL(prefix, chartName)}
--					if validateChartSourceCandidate(&candidate) == nil {
--						candidates = append(candidates, candidate)
--					}
--				}
--			}
--		}
--	}
--	sort.Slice(candidates, func(i, j int) bool {
--		if candidates[i].Type != candidates[j].Type {
--			return candidates[i].Type < candidates[j].Type
--		}
--		return candidates[i].Reference < candidates[j].Reference
--	})
--	return candidates, nil
--}
--
- func (c *Client) configuredRepositoryForSource(source ChartSourceCandidate) *repo.Entry {
- 	if source.Type != "repository" || source.Reference == "" {
- 		return nil
-@@ -499,10 +450,9 @@ func (c *Client) configuredRepositoryForSource(source ChartSourceCandidate) *rep
- 	}
- 	if byName != nil {
- 		configuredURL, err := canonicalClassicRepositoryURL(byName.URL)
--		if err != nil || configuredURL != recordedURL {
--			return nil
-+		if err == nil && configuredURL == recordedURL {
-+			return byName
- 		}
--		return byName
- 	}
- 	for _, configured := range f.Repositories {
- 		configuredURL, err := canonicalClassicRepositoryURL(configured.URL)
-@@ -585,72 +535,8 @@ func ociSourceConfigured(reference string) bool {
- 	return slices.Contains(ListOCISources(), prefix)
- }
- 
--func (c *Client) resolveRecordedChartPath(actionConfig *action.Configuration, source ChartSourceCandidate, chartName, version string) (string, string, error) {
--	return c.resolveRecordedChartPathWithLister(actionConfig, source, chartName, version, nil)
--}
--
--func (c *Client) resolveRecordedChartPathWithLister(_ *action.Configuration, source ChartSourceCandidate, chartName, version string, lister ociTagLister) (string, string, error) {
--	switch source.Type {
--	case "repository":
--		configured := c.configuredRepositoryForSource(source)
--		if configured == nil {
--			return "", "", fmt.Errorf("recorded chart repository is not configured on this Radar installation")
--		}
--		return c.resolveUpgradeChartPathWithOCIResolver(chartName, version, configured.Name, nil, func(string, string) (string, bool) { return "", false })
--	case "oci":
--		if !ociSourceConfigured(source.Reference) {
--			return "", "", fmt.Errorf("recorded OCI chart source is not configured on this Radar installation")
--		}
--		if lister == nil {
--			lister = c.newRegistryClient()
--		}
--		if lister == nil {
--			return "", "", fmt.Errorf("recorded OCI chart source is unavailable")
--		}
--		tags, err := lister.Tags(strings.TrimPrefix(source.Reference, "oci://"))
--		if err != nil {
--			return "", "", fmt.Errorf("recorded OCI chart source is unavailable: %w", err)
--		}
--		if !slices.Contains(tags, version) {
--			return "", "", fmt.Errorf("recorded OCI chart source does not publish %s version %s", chartName, version)
--		}
--		return source.Reference, "oci", nil
--	default:
--		return "", "", fmt.Errorf("recorded chart source type is invalid")
--	}
--}
--
- func (c *Client) sourceStatusWith(actionConfig *action.Configuration, name string) (*ChartSourceStatus, error) {
--	rel, err := action.NewGet(actionConfig).Run(name)
--	if err != nil {
--		return nil, err
--	}
--	if rel.Chart == nil || rel.Chart.Metadata == nil {
--		return nil, fmt.Errorf("release has no usable chart metadata")
--	}
--	status := &ChartSourceStatus{}
--	status.Recorded, _ = chartSourceFromRelease(rel)
--	status.Candidates, err = c.configuredChartSourceCandidates(rel.Chart.Metadata.Name, rel.Chart.Metadata.Version, nil)
--	if err != nil {
--		return nil, err
--	}
--	if status.Recorded == nil {
--		return status, nil
--	}
--	if status.Recorded.Type == "repository" {
--	
-```
-
-**File**: `internal/helm/chart_sources_test.go` (modified, +27/-84)
-```diff
-@@ -6,14 +6,13 @@ import (
- 	"net/http/httptest"
- 	"os"
- 	"path/filepath"
--	"slices"
--	"strings"
- 	"sync"
- 	"testing"
- 	"time"
- 
- 	"helm.sh/helm/v3/pkg/action"
- 	"helm.sh/helm/v3/pkg/chart"
-+	"helm.sh/helm/v3/pkg/chartutil"
- 	"helm.sh/helm/v3/pkg/cli"
- 	"helm.sh/helm/v3/pkg/kube/fake"
- 	"helm.sh/helm/v3/pkg/release"
-@@ -76,7 +75,19 @@ func TestCanonicalClassicRepositoryURL(t *testing.T) {
- 
- func chartSourceTestServer(t *testing.T, versions ...string) *httptest.Server {
- 	t.Helper()
-+	archives := map[string]string{}
-+	for _, version := range versions {
-+		filename, err := chartutil.Save(&chart.Chart{Metadata: &chart.Metadata{APIVersion: "v2", Name: "app", Version: version}}, t.TempDir())
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		archives["/app-"+version+".tgz"] = filename
-+	}
- 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if archive, ok := archives[r.URL.Path]; ok {
-+			http.ServeFile(w, r, archive)
-+			return
-+		}
- 		if r.URL.Path != "/index.yaml" {
- 			http.NotFound(w, r)
- 			return
-@@ -207,25 +218,6 @@ func TestCanonicalClassicRepositoryURLAppliesExistingAddressPolicy(t *testing.T)
- 	}
- }
- 
--func TestConfiguredCandidatesExactAndAmbiguous(t *testing.T) {
--	withOCISources(t, []string{"oci://registry.example.test/charts"})
--	server := chartSourceTestServer(t, "1.2.3", "2.0.0")
--	defer server.Close()
--	c := newChartSourceTestClient(t)
--	if _, err := c.ensureClassicRepository(server.URL, "classic"); err != nil {
--		t.Fatal(err)
--	}
--	lister := &fakeTagLister{tags: map[string][]string{"registry.example.test/charts/app": {"1.2.3"}}}
--	candidates, err := c.configuredChartSourceCandidates("app", "1.2.3", lister)
--	if err != nil || len(candidates) != 2 {
--		t.Fatalf("exact candidates = %+v, %v", candidates, err)
--	}
--	missing, err := c.configuredChartSourceCandidates("app", "9.9.9", lister)
--	if err != nil || len(missing) != 0 {
--		t.Fatalf("version mismatch candidates = %+v, %v", missing, err)
--	}
--}
--
- func TestClassicProvenanceCrossMachineAliasRecoveryAndMismatchFailsClosed(t *testing.T) {
- 	server := chartSourceTestServer(t, "1.2.3")
- 	defer server.Close()
-@@ -245,8 +237,8 @@ func TestClassicProvenanceCrossMachineAliasRecoveryAndMismatchFailsClosed(t *tes
- 	if err := f.WriteFile(c.settings.RepositoryConfig, 0o600); err != nil {
- 		t.Fatal(err)
- 	}
--	if got := c.configuredRepositoryForSource(recorded); got != nil {
--		t.Fatalf("mismatched recorded alias must fail closed, got %+v", got)
-+	if got := c.configuredRepositoryForSource(recorded); got == nil || got.Name != "new-alias" || got.URL != server.URL {
-+		t.Fatalf("saved URL must win over repointed alias: %+v", got)
- 	}
- }
- 
-@@ -269,7 +261,7 @@ func TestSourceStatusReadOnlyAndManualAssociation(t *testing.T) {
- 	if _, err := c.ensureClassicRepository(server.URL, "configured-alias"); err != nil {
- 		t.Fatal(err)
- 	}
--	rel := &release.Release{Name: "app", Namespace: "ns", Version: 1, Info: &release.Info{Status: release.StatusDeployed}, Chart: &chart.Chart{Metadata: &chart.Metadata{Name: "app", Version: "1.2.3"}}}
-+	rel := &release.Release{Name: "app", Namespace: "ns", Version: 1, Info: &release.Info{Status: release.StatusDeployed}, Chart: &chart.Chart{Metadata: &chart.Metadata{APIVersion: "v2", Name: "app", Version: "1.2.3"}}}
- 	cfg := chartSourceActionConfig(t, rel)
- 	status, err := c.sourceStatusWith(cfg, rel.Name)
- 	if err != nil || status.Recorded != nil || status.Configured || status.Available || len(status.Candidates) != 1 {
-@@ -309,15 +301,16 @@ func TestSetSourceMovesRecordedRepositoryToLocalNameWhenVersionPruned(t *testing
- 	}
- 	recordedURL, _ := canonicalClassicRepositoryURL(recordedServer.URL)
- 	recorded := ChartSourceCandidate{Type: "repository", Reference: "podinfo", URL: recordedURL}
--	rel := &release.Release{Name: "app", Namespace: "ns", Version: 1, Labels: chartSourceLabels(&recorded), Info: &release.Info{Status: release.StatusDeployed}, Chart: &chart.Chart{Metadata: &chart.Metadata{Name: "app", Version: "1.2.3"}}}
-+	rel := &release.Release{Name: "app", Namespace: "ns", Version: 1, Labels: chartSourceLabels(&recorded), Info: &release.Info{Status: release.StatusDeployed}, Chart: &chart.Chart{Metadata: &chart.Metadata{APIVersion: "v2", Name: "app", Version: "1.2.3"}}}
-+	rel.Labels[chartSourceBindingLabel] = chartSourceBinding(rel.Chart)
- 	cfg := chartSourceActionConfig(t, rel)
- 
- 	otherURL, _ := canonicalClassicRepositoryURL(otherServer.URL)
- 	if err := c.setSourceWith(cfg, rel.Name, ChartSourceCandidate{Type: "repository", Reference: "podinfo", URL: otherURL}); err == nil {
- 		t.Fatal("a repository other than the recorded one was associated")
- 	}
--	if err := c.setSourceWith(cfg, rel.Name, ChartSourceCandidate{Type: "repository", Reference: "podinfo", URL: recordedURL}); err == nil {
--		t.Fatal("the recorded URL was associated under a local name that points elsewhere")
-+	if err := c.setSourceWith(cfg, rel.Name, ChartSourceCandidate{Type: "repository", Reference: "podinfo", URL: recordedURL}); err != 
-```
-
-**File**: `internal/helm/client.go` (modified, +116/-642)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"crypto/sha256"
- 	"encoding/base64"
+@@ -3,6 +3,7 @@ package server
+ import (
+ 	"context"
  	"encoding/json"
 +	"errors"
  	"fmt"
  	"io"
  	"log"
-@@ -34,6 +35,7 @@ import (
- 	"helm.sh/helm/v3/pkg/chart/loader"
- 	"helm.sh/helm/v3/pkg/chartutil"
- 	"helm.sh/helm/v3/pkg/cli"
-+	"helm.sh/helm/v3/pkg/getter"
- 	"helm.sh/helm/v3/pkg/kube"
- 	"helm.sh/helm/v3/pkg/registry"
- 	"helm.sh/helm/v3/pkg/release"
-@@ -1521,6 +1523,7 @@ func applyFluxOwnership(name, storageNamespace string, fluxMap map[string]string
+@@ -276,8 +277,25 @@ func (t *terminalSizeQueue) Next() *remotecommand.TerminalSize {
+ 	return &size
  }
  
- type helmReleaseStorageSnapshot struct {
-+	deployed          map[string]*release.Release
- 	storageNamespaces map[string]string
- 	histories         map[string][]HelmRevision
- 	latest            []*release.Release
-@@ -1602,6 +1605,14 @@ func helmReleaseStorageSnapshotFromSecrets(ctx context.Context, secrets []corev1
- 		snapshot.storageNamespaces[releaseStorageKey(rel)] = secret.Namespace
- 
- 		historyKey := releaseHistoryKey(rel)
-+		if rel.Info != nil && rel.Info.Status == release.StatusDeployed {
-+			if snapshot.deployed == nil {
-+				snapshot.deployed = make(map[string]*release.Release)
-+			}
-+			if previous := snapshot.deployed[historyKey]; previous == nil || rel.Version > previous.Version {
-+				snapshot.deployed[historyKey] = rel
-+			}
-+		}
- 		if revision, ok := toHelmRevision(rel); ok {
- 			snapshot.histories[historyKey] = append(snapshot.histories[historyKey], revision)
- 		}
-@@ -2180,97 +2191,23 @@ func (c *Client) checkForUpgrade(namespace, name, username string, groups []stri
- 		return nil, err
- 	}
- 
--	// Get current release
--	getAction := action.NewGet(actionConfig)
--	rel, err := getAction.Run(name)
-+	op, err := releaseReadContext(actionConfig, name)
- 	if err != nil {
--		return nil, fmt.Errorf("failed to get release: %w", err)
--	}
--
--	currentVersion := rel.Chart.Metadata.Version
--	chartName := rel.Chart.Metadata.Name
--
--	info := &UpgradeInfo{
--		CurrentVersion: currentVersion,
--	}
--	if recorded, ok := chartSourceFromRelease(rel); ok {
--		if c.applyRecordedUpgrade(info, *recorded, chartName, currentVersion, nil) {
--			return info, nil
--		}
--		markUpgradeSourceIssue(info, UpgradeSourceIssueUnavailable, recordedSourceUnavailableMessage)
--		return info, nil
-+		return nil, err
- 	}
--
--	// Load repository file. A missing/empty/unreadable repo config is not fatal —
--	// the user may rely solely on registered OCI sources, so we fall through to the
--	// OCI fallback with an empty classic-candidate set rather than returning early.
--	var candidates []repoVersionInfo
--	noClassicRepos := false
--	indexLoadFailed := false
--	repoFile := c.settings.RepositoryConfig
--	f, err := repo.LoadFile(repoFile)
--	switch {
--	case err != nil:
--		if !os.IsNotExist(err) {
--			log.Printf("[helm] failed to load repository config %s (treating as no classic repos): %v", repoFile, err)
--		}
--		noClassicRepos = true
--	case len(f.Repositories) == 0:
--		noClassicRepos = true
--	default:
--		// Search through all repo indexes, tracking which repos contain the current version
--		cacheDir := c.settings.RepositoryCache
--		for _, r := range f.Repositories {
--			indexPath := filepath.Join(cacheDir, fmt.Sprintf("%s-index.yaml", r.Name))
--			indexFile, err := repo.LoadIndexFile(indexPath)
--			if err != nil {
--				log.Printf("[helm] skipping repo %q: failed to load index %s: %v", r.Name, indexPath, err)
--				indexLoadFailed = true
--				continue
--			}
--
--			if versions, ok := indexFile.Entries[chartName]; ok {
--				var latestInRepo string
--				hasCurrentVersion := false
--				for _, v := range versions {
--					if latestInRepo == "" || compareVersions(v.Version, latestInRepo) > 0 {
--						latestInRepo = v.Version
--					}
--					if v.Version == currentVersion {
--						hasCurrentVersion = true
--					}
--				}
--				if latestInRepo != "" {
--					candidates = append(candidates, repoVersionInfo{
--						repoName:          r.Name,
--						repoURL:           r.URL,
--						latestVersion:     latestInRepo,
--						hasCurrentVersion: hasCurrentVersion,
--					})
--				}
--			}
--		}
-+	rel := op.Latest
-+	if rel.Chart == nil || rel.Chart.Metadata == nil {
-+		return nil, fmt.Errorf("release has no usable chart metadata")
- 	}
--
--	if len(candidates) == 0 {
--		applyNoClassicCandidateUpgrade(info, noClassicRepos, indexLoadFailed, len(ListOCISources()) > 0, func() bool {
--			return c.applyOCIUpgrade(info, chartName, currentVersion, nil, nil)
--		})
-+	info := &UpgradeInfo{CurrentVersion: rel.Chart.Metadata.Version}
-+	source, issue, message := upgradeSourceState(op)
-+	if issue != "" {
-+		markUpgradeSourceIssue(info, issue, message)
- 		return info, nil
- 	}
--
--	sourceHosts := chartSourceHosts(rel.Chart.Metadata.Home, rel.Chart.Metadata.Sources)
--	latestVersion, repoName := findBestUpgradeVersion(candidates, sourceHosts)
--	if latestVersion == "" {
--		markUpgradeSourceIssue(info, UpgradeSourceIssueAmbiguousRepository, "could not identify upstream chart repository")
--		return info, nil
-+	if !c.applyRecordedUpgrade(info, *source, rel.Chart.Metadata.Name, rel.Chart.Metadata.Version, nil) {
-+		markUpgradeSourceIssue(info, Upgr
-```
-
-**File**: `internal/helm/client_test.go` (modified, +4/-486)
-```diff
-@@ -40,220 +40,6 @@ import (
- 	ktesting "k8s.io/client-go/testing"
- )
- 
--func TestFindBestUpgradeVersion(t *testing.T) {
--	tests := []struct {
--		name        string
--		candidates  []repoVersionInfo
--		sourceHosts []string
--		wantVersion string
--		wantRepo    string
--	}{
--		{
--			name:        "no candidates returns empty",
--			candidates:  nil,
--			wantVersion: "",
--			wantRepo:    "",
--		},
--		{
--			name: "single repo with current version",
--			candidates: []repoVersionInfo{
--				{repoName: "metallb", latestVersion: "0.15.3", hasCurrentVersion: true},
--			},
--			wantVersion: "0.15.3",
--			wantRepo:    "metallb",
--		},
--		{
--			name: "multiple repos only one has current version - picks source repo",
--			candidates: []repoVersionInfo{
--				{repoName: "bitnami", latestVersion: "6.4.22", hasCurrentVersion: false},
--				{repoName: "metallb", latestVersion: "0.15.3", hasCurrentVersion: true},
--			},
--			wantVersion: "0.15.3",
--			wantRepo:    "metallb",
--		},
--		{
--			name: "multiple repos both have current version without affinity - bail out",
--			candidates: []repoVersionInfo{
--				{repoName: "repo-a", latestVersion: "2.0.0", hasCurrentVersion: true, repoURL: "https://charts.example-a.com"},
--				{repoName: "repo-b", latestVersion: "3.0.0", hasCurrentVersion: true, repoURL: "https://charts.example-b.com"},
--			},
--			wantVersion: "",
--			wantRepo:    "",
--		},
--		{
--			name: "multiple repos both have current version with affinity - picks matching repo",
--			candidates: []repoVersionInfo{
--				{repoName: "repo-a", latestVersion: "2.0.0", hasCurrentVersion: true, repoURL: "https://charts.example-a.com"},
--				{repoName: "repo-b", latestVersion: "3.0.0", hasCurrentVersion: true, repoURL: "https://charts.example-b.com"},
--			},
--			sourceHosts: []string{"example-b.com"},
--			wantVersion: "3.0.0",
--			wantRepo:    "repo-b",
--		},
--		{
--			name: "source repo has lower latest than non-source - still picks source",
--			candidates: []repoVersionInfo{
--				{repoName: "community", latestVersion: "10.0.0", hasCurrentVersion: false},
--				{repoName: "official", latestVersion: "1.2.0", hasCurrentVersion: true},
--			},
--			wantVersion: "1.2.0",
--			wantRepo:    "official",
--		},
--		{
--			name: "ambiguous chart-name collision without affinity - bail out",
--			candidates: []repoVersionInfo{
--				{repoName: "bitnami", latestVersion: "6.4.22", hasCurrentVersion: false, repoURL: "https://charts.bitnami.com/bitnami"},
--				{repoName: "argo", latestVersion: "8.5.0", hasCurrentVersion: false, repoURL: "https://argoproj.github.io/argo-helm"},
--			},
--			wantVersion: "",
--			wantRepo:    "",
--		},
--		{
--			name: "single candidate without current version - accept (stale index case)",
--			candidates: []repoVersionInfo{
--				{repoName: "argo", latestVersion: "8.5.0", hasCurrentVersion: false, repoURL: "https://argoproj.github.io/argo-helm"},
--			},
--			wantVersion: "8.5.0",
--			wantRepo:    "argo",
--		},
--		{
--			name: "source-affinity host match picks correct repo",
--			candidates: []repoVersionInfo{
--				{repoName: "bitnami", latestVersion: "6.4.22", hasCurrentVersion: false, repoURL: "https://charts.bitnami.com/bitnami"},
--				{repoName: "argo", latestVersion: "8.5.0", hasCurrentVersion: false, repoURL: "https://argoproj.github.io/argo-helm"},
--			},
--			sourceHosts: []string{"argoproj.github.io"},
--			wantVersion: "8.5.0",
--			wantRepo:    "argo",
--		},
--		{
--			name: "source-affinity registered-domain match (charts.bitnami.com vs bitnami.com)",
--			candidates: []repoVersionInfo{
--				{repoName: "bitnami", latestVersion: "12.0.0", hasCurrentVersion: false, repoURL: "https://charts.bitnami.com/bitnami"},
--				{repoName: "argo", latestVersion: "8.5.0", hasCurrentVersion: false, repoURL: "https://argoproj.github.io/argo-helm"},
--			},
--			sourceHosts: []string{"bitnami.com"},
--			wantVersion: "12.0.0",
--			wantRepo:    "bitnami",
--		},
--		{
--			name: "source-affinity hosts present but none match - bail out",
--			candidates: []repoVersionInfo{
--				{repoName: "bitnami", latestVersion: "6.4.22", hasCurrentVersion: false, repoURL: "https://charts.bitnami.com/bitnami"},
--				{repoName: "argo", latestVersion: "8.5.0", hasCurrentVersion: false, repoURL: "https://argoproj.github.io/argo-helm"},
--			},
--			sourceHosts: []string{"github.com"}, // chart-declared, but not the repo's host
--			wantVersion: "",
--			wantRepo:    "",
--		},
--		{
--			name: "cloudnative pg collision keeps official installed-version source",
--			candidates: []repoVersionInfo{
--				{repoName: "cnpg", latestVersion: "0.29.1", hasCurrentVersion: true, repoURL: "https://cloudnative-pg.github.io/charts"},
--				{repoName: "bitnami", latestVersion: "1.0.11", hasCurrentVersion: false, repoURL: "https://charts.bitnami.com/bitnami"},
--			},
--			sourceHosts: []string{"cloudnative-pg.io", "cloudnative-pg.github.io"},
--			wantVersion: "0.29.1",
--			wantRepo:    "cnpg",
--		},
--		{
--			name: "single unrelated candidate with source affinity - reject",
--			candidates: []repoVersionInfo{
--		
-```
-
-**File**: `internal/helm/handlers.go` (modified, +62/-45)
-```diff
-@@ -33,6 +33,10 @@ func IsForbiddenError(err error) bool {
- // caller. Helm stores releases as Secrets, so a denial is the caller's
- // Kubernetes RBAC, not a server fault.
- func writeReleaseReadError(w http.ResponseWriter, err error) {
-+	if sourceErrorCode(err) != "" {
-+		writeChartSourceOperationError(w, err, "read-release", "", "")
++// errExecDisabled reads as a Kubernetes "forbidden" so callers that classify
++// exec failures treat it as a permission denial.
++var errExecDisabled = errors.New("forbidden: exec is disabled on this Radar instance (--disable-exec)")
++
++// requireExecEnabled rejects routes that run commands in Pods or start debug
++// shells when the operator started Radar with --disable-exec.
++func (s *Server) requireExecEnabled(w http.ResponseWriter) bool {
++	if k8s.ForceDisableExec {
++		s.writeError(w, http.StatusForbidden, "exec is disabled on this Radar instance (--disable-exec)")
++		return false
++	}
++	return true
++}
++
+ // handlePodExec handles WebSocket connections for pod exec
+ func (s *Server) handlePodExec(w http.ResponseWriter, r *http.Request) {
++	if !s.requireExecEnabled(w) {
 +		return
 +	}
- 	if isReleaseReadForbidden(err) {
- 		writeError(w, http.StatusForbidden, "insufficient permissions to read this Helm release: "+err.Error())
- 		return
-@@ -70,7 +74,7 @@ func decodeApplyValuesRequest(body io.Reader) (ApplyValuesRequest, error) {
- 	if err := json.NewDecoder(body).Decode(&req); err != nil {
- 		return req, fmt.Errorf("invalid request body: %s", err.Error())
- 	}
--	if req.Version != "" || req.Repository != "" {
-+	if req.Version != "" || req.Repository != "" || req.SourceUpgrade != nil {
- 		return req, errors.New("version and repository are not supported when applying values; use the upgrade endpoint to change the chart version")
- 	}
- 	return req, nil
-@@ -136,12 +140,16 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
- 		r.Get("/releases/{namespace}/{name}/upgrade-info", h.handleCheckUpgrade)
- 		r.Get("/releases/{namespace}/{name}/versions", h.handleAvailableVersions)
- 		r.Get("/releases/{namespace}/{name}/source", h.handleSourceStatus)
-+		r.Get("/releases/{namespace}/{name}/source/versions", h.handleSourceVersions)
- 		r.Get("/upgrade-check", h.handleBatchUpgradeCheck)
- 		// Actions (write operations)
- 		r.Post("/releases/{namespace}/{name}/rollback", h.handleRollback)
- 		r.Post("/releases/{namespace}/{name}/rollback-stream", h.handleRollbackStream)
- 		r.Post("/releases/{namespace}/{name}/upgrade", h.handleUpgrade)
- 		r.Post("/releases/{namespace}/{name}/upgrade-stream", h.handleUpgradeStream)
-+		r.Post("/releases/{namespace}/{name}/source/upgrade", h.handleUpgrade)
-+		r.Post("/releases/{namespace}/{name}/source/upgrade-stream", h.handleUpgradeStream)
-+		r.Post("/releases/{namespace}/{name}/source/preview", h.handlePreviewValues)
- 		r.Post("/releases/{namespace}/{name}/values/preview", h.handlePreviewValues)
- 		r.Put("/releases/{namespace}/{name}/values", h.handleApplyValues)
- 		r.Put("/releases/{namespace}/{name}/source", h.handleSetSource)
-@@ -760,19 +768,23 @@ func (h *Handlers) handleUpgrade(w http.ResponseWriter, r *http.Request) {
- 	}
- 	repositoryName := r.URL.Query().Get("repository")
+ 	namespace := chi.URLParam(r, "namespace")
+ 	podName := chi.URLParam(r, "name")
+ 	container := r.URL.Query().Get("container")
+@@ -601,6 +619,9 @@ type NodeDebugResponse struct {
  
--	auth.AuditLog(r, namespace, name)
--	var upgradeErr error
--	if user := auth.UserFromContext(r.Context()); user != nil {
--		upgradeErr = client.UpgradeAsUser(namespace, name, version, repositoryName, user.Username, user.Groups)
--	} else {
--		upgradeErr = client.Upgrade(namespace, name, version, repositoryName)
-+	req, err := decodeUpgradeRequest(r.Body)
-+	if err != nil {
-+		writeError(w, http.StatusBadRequest, "Invalid upgrade request")
+ // handleNodeDebug creates a privileged debug pod on a node
+ func (s *Server) handleNodeDebug(w http.ResponseWriter, r *http.Request) {
++	if !s.requireExecEnabled(w) {
 +		return
 +	}
-+	if !validSourceUpgradeRoute(w, r, req) {
-+		return
- 	}
-+	auth.AuditLog(r, namespace, name)
-+	username, groups := userCreds(r)
-+	upgradeErr := client.upgradeRequestAsUser(namespace, name, version, repositoryName, req, username, groups, func(string, string, string) {})
- 	if err := upgradeErr; err != nil {
- 		if IsForbiddenError(err) {
- 			writeError(w, http.StatusForbidden, "insufficient permissions to upgrade Helm release")
- 			return
- 		}
--		writeError(w, http.StatusInternalServerError, err.Error())
-+		writeChartSourceOperationError(w, err, "upgrade", namespace, name)
+ 	if !s.requireConnected(w) {
  		return
  	}
+@@ -711,6 +732,9 @@ type DebugContainerResponse struct {
  
-@@ -801,12 +813,15 @@ func (h *Handlers) handleUpgradeStream(w http.ResponseWriter, r *http.Request) {
- 	}
- 	repositoryName := r.URL.Query().Get("repository")
- 
--	editedValues, err := decodeOptionalApplyValuesRequest(r.Body)
-+	req, err := decodeUpgradeRequest(r.Body)
- 	if err != nil {
- 		writeError(w, http.StatusBadRequest, "invalid request body: "+err.Error())
- 		return
- 	}
- 
-+	if !validSourceUpgradeRoute(w, r, req) {
+ // handleCreateDebugContainer creates an ephemeral debug container in a pod
+ func (s *Server) handleCreateDebugContainer(w http.ResponseWriter, r *http.Request) {
++	if !s.requireExecEnabled(w) {
 +		return
 +	}
- 	// Set up SSE headers
- 	w.Header().Set("Content-Type", "text/event-stream")
- 	w.Header().Set("Cache-Control", "no-cache")
-@@ -820,27 +835,13 @@ func (h *Handlers) handleUpgradeStream(w http.ResponseWriter, r *http.Request) {
+ 	namespace := chi.URLParam(r, "namespace")
+ 	podName := chi.URLParam(r, "name")
+ 
+```
+
+---
+
+### Incident Patch 2: `a734d72d` (2026-10-22)
+**Commit Message**: Image inspection: require a Pod when auth is on (#2270)
+
+## Description
+
+With auth on, the image inspection routes (`/api/images/metadata`,
+`/api/images/inspect`, `/api/images/file`) still accepted requests that
+named no Pod. These ran anonymously, but Radar still connected to
+whatever host the `image` parameter named, from inside the cluster
+network. For example, `image=10.0.0.5:8080/x` made Radar send `GET /v2/`
+to that internal address, and the returned status (404, 401 or 500)
+showed whether something listens there. Any signed-in user could use
+Radar to probe internal hosts and ports.
+
+With auth on, the routes now require `pod` and `namespace` and return
+400 otherwise. The existing rule then applies: the caller must be able
+to `get` that Pod, and the image must be one it runs. So the registry
+host is always one the cluster already pulls from.
+
+**UI:** the Pod view always passes its Pod, so it's unchanged. The
+batch-execution view browses a template's image with no Pod; with auth
+on it no longer offers the image browser, since the request would be
+refused. With auth off, nothing changes.
+
+## Type of change
+
+- [x] Bug fix (non-breaking change that fixes an issue)
+
+## How has this
+
+**File**: `docs/authentication.md` (modified, +3/-3)
+```diff
+@@ -37,9 +37,9 @@ Deletion-impact previews require read access to the root resource and use the ca
+ ### Image inspection
+ 
+ Authenticated requests (proxy, OIDC, or Radar Cloud) to `/api/images/metadata`,
+-`/api/images/inspect`, and `/api/images/file` without a `pod` use anonymous-only
+-registry access. If a `pod` is given, `namespace` is required, the caller must
+-have `get pods` in that namespace, and the image must match a
++`/api/images/inspect`, and `/api/images/file` must name a `pod` and `namespace`
++(400 otherwise), so Radar only contacts the registry of an image a Pod runs. The
++caller must have `get pods` in that namespace, and the image must match a
+ regular, init, or ephemeral container's spec image or status imageID digest reference.
+ Authorization failures deny access; an unavailable authorization check returns 503.
+ Registry credentials come from that Pod's `spec.imagePullSecrets`, each used only
+```
+
+**File**: `internal/images/handlers.go` (modified, +7/-8)
+```diff
+@@ -156,8 +156,8 @@ func (h *Handlers) handleGetFile(w http.ResponseWriter, r *http.Request) {
  	}
- 
- 	progressCh := make(chan InstallProgress, 10)
--	defer close(progressCh)
-+	// An upgrade may finish after the client disconnects; the receiver must not close the producer's channel.
- 
- 	auth.AuditLog(r, namespace, name)
- 	resultCh := make(chan error, 1)
- 	go func() {
--		user := auth.UserFromContext(r.Context())
--		// Use != nil, not len > 0: an explicit empty map ({}) means
--		// "clear all my overrides" and must NOT fall back to carry-over.
--		if editedValues != nil {
--			if user != nil {
--				resultCh <- client.UpgradeWithValuesProgressAsUser(namespace, name, version, repositoryName, editedValues, user.Username, user.Groups, progressCh)
--				return
--			}
--			resultCh <- client.UpgradeWithValuesProgress(namespace, name, version, repositoryName, editedValues, progressCh)
--			return
--		}
--		if user != nil {
--			resultCh <- client.UpgradeWithProgressAsUser(namespace, name, vers
-```
-
-**File**: `internal/helm/handlers_test.go` (modified, +3/-0)
-```diff
-@@ -67,6 +67,9 @@ func TestChartSourceRoutesAndWriteAuthorization(t *testing.T) {
- 		body   string
- 	}{
- 		{http.MethodPut, "/helm/releases/default/example/source", `{"type":"repository","reference":"repo","url":"https://example.test"}`},
-+		{http.MethodPost, "/helm/releases/default/example/source/upgrade", `{}`},
-+		{http.MethodPost, "/helm/releases/default/example/source/upgrade-stream", `{}`},
-+		{http.MethodPost, "/helm/releases/default/example/source/preview", `{}`},
- 		{http.MethodPost, "/helm/repositories", `{"name":"repo","url":"https://example.test","namespace":"default","releaseName":"example"}`},
- 	} {
- 		req := httptest.NewRequest(tc.method, tc.path, strings.NewReader(tc.body))
-```
-
-**File**: `internal/helm/install_preflight.go` (modified, +4/-1)
-```diff
-@@ -207,7 +207,7 @@ func runInstallOrUpgrade(actionConfig *action.Configuration, req *InstallRequest
- 		upgrade.MaxHistory = 10
- 		upgrade.Version = req.Version
- 		if previous, err := actionConfig.Releases.Last(req.ReleaseName); err == nil {
--			upgrade.Labels = chartSourceUpgradeLabels(previous.Labels, req.resolvedSource)
-+			upgrade.Labels = boundChartSourceLabels(previous.Labels, req.resolvedSource, ch)
- 		} else {
- 			return nil, fmt.Errorf("load previous release labels: %w", err)
- 		}
-@@ -224,6 +224,9 @@ func runInstallOrUpgrade(actionConfig *action.Configuration, req *InstallRequest
- 	install.Version = req.Version
- 	install.Replace = mode == installReplace
- 	install.Labels = chartSourceLabels(req.resolvedSource)
-+	if req.resolvedSource != nil {
-+		install.Labels[chartSourceBindingLabel] = chartSourceBinding(ch)
-+	}
- 	return install.Run(ch, req.Values)
  }
  
+-// inspectionRequest limits authenticated inspection to anonymous access or
+-// authorized pull secrets from a readable Pod that uses the requested image.
++// inspectionRequest limits authenticated inspection to an image a readable Pod
++// runs, with only the credentials that caller may use.
+ func (h *Handlers) inspectionRequest(w http.ResponseWriter, r *http.Request, image string) (InspectRequest, bool) {
+ 	req := InspectRequest{
+ 		Image:     image,
+@@ -174,12 +174,11 @@ func (h *Handlers) inspectionRequest(w http.ResponseWriter, r *http.Request, ima
+ 		return req, true
+ 	}
+ 
+-	if req.PodName == "" {
+-		req.keychain = &pullSecretKeychain{}
+-		return req, true
+-	}
+-	if req.Namespace == "" {
+-		writeError(w, http.StatusBadRequest, "namespace parameter is required when pod is given")
++	// Without a Pod the caller could name any host and have Radar connect to
++	// it from inside the cluster network. Binding every authenticated request
++	// to a Pod they can read limits the registry host to that Pod's image.
++	if req.PodName == "" || req.Namespace == "" {
++		writeError(w, http.StatusBadRequest, "pod and namespace are required when authentication is enabled")
+ 		return req, false
+ 	}
+ 	if h.authorize == nil {
+```
+
+**File**: `internal/images/handlers_test.go` (modified, +15/-30)
+```diff
+@@ -110,7 +110,7 @@ func TestImageRoutesAuthenticatedGuard(t *testing.T) {
+ 			want                        int
+ 			message                     string
+ 		}{
+-			{"missing namespace", "", "app", "gcr.io/project/app:v1", true, true, 400, "namespace parameter is required"},
++			{"missing namespace", "", "app", "gcr.io/project/app:v1", true, true, 400, "pod and namespace are required"},
+ 			{"denied", "team", "app", "gcr.io/project/app:v1", false, true, 403, "rbac_denied: requires get pods in namespace team"},
+ 			{"check failed", "team", "app", "gcr.io/project/app:v1", false, false, 503, "Could not authorize"},
+ 			{"non-authoritative allow", "team", "app", "gcr.io/project/app:v1", true, false, 503, "Could not authorize"},
+@@ -394,37 +394,22 @@ func TestImageRoutesExecHolderUsesAmbientCredentials(t *testing.T) {
+ 	}
+ }
+ 
+-func TestImageRoutesAuthenticatedWithoutPodAnonymousOnly(t *testing.T) {
+-	imageTestCache(t, imageTestPod(), imageTestSecret("team", "pod-secret", "gcr.io", "pod-user"))
+-	dockerDir := t.TempDir()
+-	t.Setenv("DOCKER_CONFIG", dockerDir)
+-	if err := os.WriteFile(filepath.Join(dockerDir, "config.json"), []byte(`{"auths":{"gcr.io":{"auth":"YW1iaWVudDpzZWNyZXQ="}}}`), 0600); err != nil {
+-		t.Fatal(err)
+-	}
+-	previousGoogle := google.Keychain
+-	google.Keychain = rejectingImageKeychain{t}
+-	t.Cleanup(func() { google.Keychain = previousGoogle })
++func TestImageRoutesAuthenticatedRequirePod(t *testing.T) {
+ 	for _, route := range []string{"metadata", "inspect", "file"} {
+-		for _, namespace := range []string{"", "team"} {
+-			f := &fakeImageInspector{check: func(req InspectRequest) {
+-				if req.keychain == nil || len(req.PullSecretNames) != 0 {
+-					t.Fatalf("expected explicit anonymous-only keychain: %+v", req)
+-				}
+-				assertImageCredentials(t, req.keychain, "gcr.io/project/app:v1", "")
++		for _, q := range []url.Values{
++			{"image": {"10.0.0.5:8080/x:1"}},
++			{"image": {"10.0.0.5:8080/x:1"}, "namespace": {"team"}, "pullSecrets": {"pod-secret"}},
++			{"image": {"10.0.0.5:8080/x:1"}, "pod": {"app"}},
++		} {
++			q.Set("path", "/file.txt")
++			f := &fakeImageInspector{}
++			h := &Handlers{inspector: f, authorize: func(*http.Request, string) (bool, bool) {
++				t.Fatal("Pod authorization called without a Pod and namespace")
++				return false, false
+ 			}}
+-			h := &Handlers{inspector: f,
+-				authorize: func(*http.Request, string) (bool, bool) {
+-					t.Fatal("Pod authorization called without Pod")
+-					return false, false
+-				},
+-				authorizeSecret: func(*http.Request, string, string) (bool, bool) {
+-					t.Fatal("Secret authorization called without Pod")
+-					return false, false
+-				},
+-			}
+-			w := serveImageTest(h, route, url.Values{"image": {"gcr.io/project/app:v1"}, "namespace": {namespace}, "pullSecrets": {"pod-secret"}, "path": {"/file.txt"}}, true)
+-			if w.Code != 200 || f.calls != 1 {
+-				t.Fatalf("got %d %s, calls=%d", w.Code, w.Body.String(), f.calls)
++			w := serveImageTest(h, route, q, true)
++			if w.Code != http.StatusBadRequest || f.calls != 0 {
++				t.Fatalf("%s %v: got %d %s, calls=%d", route, q, w.Code, w.Body.String(), f.calls)
+ 			}
+ 		}
+ 	}
+```
+
+**File**: `internal/server/image_routes_test.go` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ func TestImageRoutesPodAuthorization(t *testing.T) {
+ 			name, query, user, message string
+ 			status                     int
+ 		}{
+-			{"missing namespace", "&pod=app", "denied", "namespace parameter is required", 400},
++			{"missing namespace", "&pod=app", "denied", "pod and namespace are required", 400},
+ 			{"get denied despite list allowed", "&namespace=team&pod=app", "denied", "rbac_denied: requires get pods in namespace team", 403},
+ 			{"check failed", "&namespace=team&pod=app", "check-error", "Could not authorize get pods", 503},
+ 		} {
+```
+
+**File**: `web/src/components/execution/BatchExecutionView.tsx` (modified, +6/-2)
+```diff
+@@ -26,6 +26,7 @@ import type { WorkloadPodInfo } from '../../types'
+ import { getScaledJobStatus } from '../resources/resource-utils-keda'
+ import { Tooltip } from '../ui/Tooltip'
+ import { ImageFilesystemModal } from '../resources/ImageFilesystemModal'
++import { useIsAuthEnabled } from '../../contexts/CapabilitiesContext'
+ import { executionDefinitionDiffers, executionDefinitionSummary, type ExecutionDefinitionSummary, type ExecutionUnitSummary } from './execution-definition'
+ import { batchRunHasContainerOutcome, batchRunNextStep, isFailedRunPhase, type BatchRunNextStep } from './batch-run-actions'
+ import { JobSetAdmission } from './JobSetAdmission'
+@@ -731,18 +732,21 @@ function ExecutionDefinitionDetails({ summary, namespace, compact = false }: { s
+ 
+ function ExecutionUnitDetails({ unit, namespace, pullSecrets, compact }: { unit: ExecutionUnitSummary; namespace: string; pullSecrets: string[]; compact: boolean }) {
+   const [browseImage, setBrowseImage] = useState(false)
++  const authEnabled = useIsAuthEnabled()
++  // With auth on, images are browsed through a Pod; a template has none.
++  const canBrowseImage = !authEnabled
+   return (
+     <>
+       <div className={clsx(!compact && 'rounded-md bg-theme-elevated/40 px-3 py-2')}>
+         {!compact && <div className="mb-1 flex items-center justify-between gap-3"><span className="truncate text-xs font-medium text-theme-text-primary">{unit.name}</span><span className="text-[10px] uppercase tracking-wide text-theme-text-tertiary">{unit.type}</span></div>}
+         <div className="space-y-1">
+-          {unit.image && <DefinitionFact label="Image" value={unit.image} mono onClick={() => setBrowseImage(true)} tooltip="Browse image filesystem from registry" />}
++          {unit.image && <DefinitionFact label="Image" value={unit.image} mono onClick={canBrowseImage ? () => setBrowseImage(true) : undefined} tooltip={canBrowseImage ? 'Browse image filesystem from registry' : undefined} />}
+           {unit.command && <DefinitionFact label="Command" value={unit.command} mono />}
+           {!compact && unit.requests && <DefinitionFact label="Requests" value={unit.requests} />}
+           {!compact && unit.limits && <DefinitionFact label="Limits" value={unit.limits} />}
+         </div>
+       </div>
+-      {unit.image && (
++      {unit.image && canBrowseImage && (
+         <ImageFilesystemModal
+           open={browseImage}
+           onClose={() => setBrowseImage(false)}
+```
+
+**File**: `web/src/components/resources/ImageFilesystemModal.test.tsx` (modified, +0/-12)
+```diff
+@@ -47,18 +47,6 @@ it.each([true, false])('shows private-image guidance for authEnabled=%s', async
+   }
+ })
+ 
+-it('shows anonymous-only guidance in auth mode without a Pod', async () => {
+-  state.authEnabled = true
+-  root = createRoot(document.createElement('div'))
+-  await act(async () => {
+-    root.render(<ImageFilesystemModal open onClose={() => {}} image="gcr.io/project/app:v1" namespace="team" podName="" pullSecrets={[]} />)
+-  })
+-  const text = document.body.textContent || ''
+-  expect(text).toContain("This view reads images anonymously. Open the image from its Pod to use the Pod's pull secrets.")
+-  expect(text).not.toContain("Private images are read with the Pod's imagePullSecrets")
+-  expect(text).not.toContain('gcloud')
+-})
+-
+ it.each([true, false])('shows download confirmation for authEnabled=%s', async (authEnabled) => {
+   state.authEnabled = authEnabled
+   state.showMetadata = true
+```
+
+**File**: `web/src/components/resources/ImageFilesystemModal.tsx` (modified, +2/-8)
+```diff
+@@ -204,7 +204,6 @@ export function ImageFilesystemModal({
+             <AuthenticationHelp
+               image={image}
+               registryType={registryType}
+-              hasPod={!!podName}
+               onRetry={() => refetchMetadata()}
+             />
+           )}
+@@ -416,11 +415,10 @@ function DownloadConfirmation({ metadata, onConfirm, onCancel }: DownloadConfirm
+ interface AuthenticationHelpProps {
+   image: string
+   registryType?: string
+-  hasPod: boolean
+   onRetry: () => void
+ }
+ 
+-function AuthenticationHelp({ image, registryType, hasPod, onRetry }: AuthenticationHelpProps) {
++function AuthenticationHelp({ image, registryType, onRetry }: AuthenticationHelpProps) {
+   const authEnabled = useIsAuthEnabled()
+   const [copied, setCopied] = useState(false)
+   const [retrying, setRetrying] = useState(false)
+@@ -495,11 +493,7 @@ function AuthenticationHelp({ image, registryType, hasPod, onRetry }: Authentica
+       {/* Explanation */}
+       <p className="text-xs text-theme-text-tertiary text-center max-w-md mb-6">
+         {authEnabled ? (
+-          hasPod ? (
+-            <>Private images need exec access to the Pod, or read access to its imagePullSecrets. Exec access also lets Radar use its own registry credentials.</>
+-          ) : (
+-            <>This view reads images anonymously. Open the image from its Pod to use the Pod's pull secrets.</>
+-          )
++          <>Private images need exec access to the Pod, or read access to its imagePullSecrets. Exec access also lets Radar use its own registry credentials.</>
+         ) : (
+           <>Radar uses your local Docker credentials (<span className="font-mono">~/.docker/config.json</span>).
+           Run the command above in your terminal, then click Retry.</>
+```
+
+---
+
+### Incident Patch 3: `c532d985` (2026-10-22)
+**Commit Message**: Use the resource response envelope in the Argo browser fixture
+
+**File**: `web/e2e/settings-connections.spec.ts` (modified, +1/-1)
+```diff
+@@ -1531,7 +1531,7 @@ test('contextual Argo health and diff preserve benefits and open Argo settings',
+   const state = await contextualFixture(page)
+   const resource = { apiVersion: 'argoproj.io/v1alpha1', kind: 'Application', metadata: { name: 'storefront', namespace: 'argocd' }, spec: { destination: { namespace: 'default' } }, status: { health: { status: 'Degraded' }, sync: { status: 'OutOfSync' } } }
+   const root = { id: 'app/storefront', ref: { kind: 'Application', namespace: 'argocd', name: 'storefront' }, role: 'root', tool: 'argocd', resource }
+-  await page.route('**/api/resources/applications/argocd/storefront*', route => route.fulfill({ json: resource }))
++  await page.route('**/api/resources/applications/argocd/storefront*', route => route.fulfill({ json: { resource, relationships: {} } }))
+   await page.route('**/api/gitops/tree/applications/argocd/storefront*', route => route.fulfill({ json: { root, nodes: [root], edges: [] } }))
+   await page.route('**/api/gitops/insights/applications/argocd/storefront*', route => route.fulfill({ json: {
+     summary: { tool: 'argocd', kind: 'Application', namespace: 'argocd', name: 'storefront', health: 'Degraded', resourceHealthMode: 'appTree' },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2237** (2026-10-20): Protect Helm repository refresh cache and credentials (@hisco)
-- **PR #2234** (2026-10-20): Allow reordering resource columns per type (@hisco)
-- **PR #2233** (2026-10-20): Require explicit chart sources for Helm upgrades (@hisco)
-- **PR #2232** (2026-10-20): Keep node drain results visible and show elapsed progress (@hisco)
-- **PR #2231** (2026-10-20): Add wait_for MCP tool: wait for a fix to land, within MCP client timeouts (@nadaverell)
-- **PR #2230** (2026-10-20): Report node drain completion, exclusions and uncertainty consistently (@hisco)
+- **PR #2275** (2026-10-22): Match controller UI and GitOps detection by exact API group (@hisco)
+- **PR #2272** (2026-10-22): Expand v1.18 CVE highlight with runtime version inventory (@nadaverell)
+- **PR #2271** (2026-10-22): What's New: Radar v1.18.0 release notes (@nadaverell)
+- **PR #2270** (2026-10-22): Image inspection: require a Pod when auth is on (@nadaverell)
+- **PR #2269** (2026-10-22): Enforce --disable-exec on the exec, debug and pod-file routes (@nadaverell)
+- **PR #2268** (2026-10-22): Search: keep Trivy findings search cheap on large clusters (@hisco)
 
 ---
 
@@ -3437,31 +2760,28 @@ publisher switches, pruned mirrors, failed apply/ret
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add wait_for MCP tool: wait for a fix to land, within MCP client timeouts (#2231
+## X. Enforce --disable-exec on the exec, debug and pod-file routes (#2269)
 
 **RULE**:
-When implementing operations in `docs/mcp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `382b6dbd`: Add wait_for MCP tool: wait for a fix to land, within MCP client timeouts (#2231). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b60573e`: Enforce --disable-exec on the exec, debug and pod-file routes (#2269). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/mcp.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-### Waiting for a fix to land
-
-Use `wait_for` after a change to wait for a controller's rollout, Pod readiness, Job completion, deletion, or a status condition. Each call waits at most 45 seconds so it can return within common MCP client timeouts. The caller owns the total deadline: repeat `waiting` calls within that limit, passing back the named object's `uid` to pin it. The states are `met`, `waiting`, `blocked` (an observed stall), and `failed` (terminal). Selector waits check the current set; use the controller's rollout to wait for replacements. `jsonpath={.status.field}=value` reads only `.status`; its freshness guard uses `status.observedGeneration` when present. `inStateSeconds` is condition age, not time since the fix.
-
+| `--disable-exec` | `false` | Disable pod terminal, debug shells and pod file browsing |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+| `--disable-exec` | `false` | Disable terminal and debug shell |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `382b6dbd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b60573e` are properly handled with clean fallback behavior.
