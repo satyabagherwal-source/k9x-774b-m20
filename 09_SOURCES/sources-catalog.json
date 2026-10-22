@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "8c8b17d3",
+    "sourceVersion": "760378b7",
     "license": "Apache-2.0",
-    "contentHash": "81abcde60547e1d03b7cd35ca07208cb17f3108579ec15e890fcd920e2d484b8",
-    "lastHarvestedAt": "2026-10-20T21:01:26.961Z",
+    "contentHash": "385792884a7295d370d455105f3159ed3e25fbb66ade93f6a473f03a99b38f81",
+    "lastHarvestedAt": "2026-10-22T17:51:42.221Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "d5ca4c76",
+    "sourceVersion": "724e39f0",
     "license": "NOASSERTION",
-    "contentHash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
-    "lastHarvestedAt": "2026-10-20T22:58:14.543Z",
+    "contentHash": "e9a616dbf3ec02ca7edd57cb6c4ac55b09b80255f2146df32a1c84665fc27b67",
+    "lastHarvestedAt": "2026-10-22T17:51:54.204Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -9533,10 +9533,10 @@
     "repository": "superhighfives/pika",
     "platform": "github",
     "sourceUrl": "https://github.com/superhighfives/pika",
-    "sourceVersion": "4fc05696",
+    "sourceVersion": "d28d2ecc",
     "license": "MIT",
-    "contentHash": "e7a877dd1c0e321993727a261a7a67f98eeac615b1f81023ce2f09248f81ebd8",
-    "lastHarvestedAt": "2026-10-19T23:47:13.375Z",
+    "contentHash": "cb3fba2de944d2a73f42c341fb30559df781bdd918efb52ff68e379d6d850ca3",
+    "lastHarvestedAt": "2026-10-22T17:51:45.643Z",
     "learningId": "learn-github-superhighfives-pika"
   },
   "wooorm-parse-entities": {

@@ -4371,3 +4371,6 @@ Every entry in this ledger must capture:
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `25dd7ab5` | Multi-dimensional audit evidence | 2026-10-22T17:45:04.113Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `c0c89086` | Multi-dimensional audit evidence | 2026-10-22T17:45:06.154Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e8249eb0` | Multi-dimensional audit evidence | 2026-10-22T17:45:10.904Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `760378b7` | Multi-dimensional audit evidence | 2026-10-22T17:51:42.221Z |
+| `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `d28d2ecc` | Multi-dimensional audit evidence | 2026-10-22T17:51:45.643Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `724e39f0` | Multi-dimensional audit evidence | 2026-10-22T17:51:54.204Z |

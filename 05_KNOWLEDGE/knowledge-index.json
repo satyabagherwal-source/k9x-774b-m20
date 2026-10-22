@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:45:10.855Z",
+  "last_updated": "2026-10-22T17:51:54.151Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3375,8 +3375,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "8c8b17d3",
-      "content_hash": "81abcde60547e1d03b7cd35ca07208cb17f3108579ec15e890fcd920e2d484b8",
+      "source_version": "760378b7",
+      "content_hash": "385792884a7295d370d455105f3159ed3e25fbb66ade93f6a473f03a99b38f81",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3399,6 +3399,11 @@
           "number": 3378,
           "title": "core): DisjointPrefixes keeps title case when joining prefix (#4641)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3675,
+          "title": "lint-framework): position highlights correctly under zoomed or scaled ancestors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3406,7 +3411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:01:26.891Z",
+      "verified_at": "2026-10-22T17:51:42.159Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40107,8 +40112,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "d5ca4c76",
-      "content_hash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
+      "source_version": "724e39f0",
+      "content_hash": "e9a616dbf3ec02ca7edd57cb6c4ac55b09b80255f2146df32a1c84665fc27b67",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -40126,6 +40131,11 @@
           "number": 3425,
           "title": "[MOD-14594] Prevent integer overflow in geometry allocators (#11941)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3676,
+          "title": "[MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40133,7 +40143,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:58:14.468Z",
+      "verified_at": "2026-10-22T17:51:54.140Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44156,8 +44166,8 @@
       "slug": "superhighfives-pika",
       "platform": "github",
       "source_url": "https://github.com/superhighfives/pika",
-      "source_version": "4fc05696",
-      "content_hash": "e7a877dd1c0e321993727a261a7a67f98eeac615b1f81023ce2f09248f81ebd8",
+      "source_version": "d28d2ecc",
+      "content_hash": "cb3fba2de944d2a73f42c341fb30559df781bdd918efb52ff68e379d6d850ca3",
       "dossier_path": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
       "promoted_rules": [
@@ -44172,7 +44182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:47:13.315Z",
+      "verified_at": "2026-10-22T17:51:45.566Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110732,6 +110742,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:45:10.844Z"
+    },
+    "rule-3675": {
+      "learning_id": "rule-3675",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3675,
+      "title": "lint-framework): position highlights correctly under zoomed or scaled ancestors",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "760378b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:51:42.159Z"
+    },
+    "rule-3676": {
+      "learning_id": "rule-3676",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3676,
+      "title": "[MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967)",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "724e39f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:51:54.140Z"
     }
   },
   "aliases": {

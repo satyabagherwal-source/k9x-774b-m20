@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T17:45:10.909Z",
-  "total_cycles_completed": 4341,
-  "total_learnings_persisted": 4341,
-  "total_rules_promoted": 3520,
+  "last_updated": "2026-10-22T17:51:54.213Z",
+  "total_cycles_completed": 4344,
+  "total_learnings_persisted": 4344,
+  "total_rules_promoted": 3522,
   "history": [
-    {
-      "timestamp": "2026-10-21T02:49:55.598Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:49:56.739Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:56:06.780Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T02:57:48.976Z",
       "repository": "carbon-design-system/carbon-components-svelte",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T17:45:10.909Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:51:42.225Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:51:45.648Z",
+      "repository": "superhighfives/pika",
+      "learningId": "learn-github-superhighfives-pika",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:51:54.213Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

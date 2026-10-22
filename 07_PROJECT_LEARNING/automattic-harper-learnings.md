@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `8c8b17d3`  
+> **Source Version**: `760378b7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:01:26.534Z  
+> **Timestamp**: 2026-10-22T17:51:41.873Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:01:26.526Z  
+> **Harvest Timestamp**: 2026-10-22T17:51:40.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 16894 stars
+- **Stars / Engagement**: 16983 stars
 
 ---
 
@@ -1429,193 +1429,408 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d8432a5c` (2026-10-20)
-**Commit Message**: fix(core): DisjointPrefixes keeps title case when joining prefix (#4641)
+### Incident Patch 1: `8670fc3c` (2026-10-21)
+**Commit Message**: fix(lint-framework): position highlights correctly under zoomed or scaled ancestors (#4506)
 
-Motivation: "Pre-Requisite" was flagged and the suggestion was
-"PreRequisite". The suggestion copied casing letter by letter from the
-whole matched span, so the capital R of the second word carried into the
-middle of the joined word.
+* fix(lint-framework): position highlights correctly under zoomed or scaled ancestors
 
-Approach: copy the casing from the prefix token only. "Pre-Requisite"
-now becomes "Prerequisite", and "PRE-REQUISITE" becomes "PREREQUISITE".
-Hyphenated suggestions follow the same rule, so "Pre Requisite" suggests
-"Pre-requisite".
+When a text field sits inside an element with CSS `zoom`, or with an
+individual transform property such as `scale` (which
+`isContainingBlock()` does not check), highlights drift away from the
+text. This happens for example in a web app that sets `scale: 0.9` on its
+main container and `zoom: 1.2` on its forms. Two things go wrong:
 
-Validation: added two tests to disjoint_prefixes.rs. With the old line
-restored, the "Pre-Requisite" test fails. With the fix, `cargo test -p
-harper-core` passes in full. `cargo clippy -p harper-core --all-targets`
-completes; it prints 11 warnings in the harper-core lib tests that this
-change doesn't touch. `cargo fmt` was run. Not run: the other workspace
-crates' tests and `just format`.
+- The render box sits inside the zoomed or scaled subtree, so the
+  `position: fixed` highlights are moved and scaled again. Render an
+  invisible fixed marker at (0, 0) alongside them, measure where it lands
+  and how much it is scaled, and map the boxes through that frame,
+  rendering once more when the frame has changed.
+- The textarea mirror lives in `<body>`, with the field's own font and
+  padding but its on-screen width, so its text is laid out too small.
+  Give it the field's own size and scale it to the on-screen size.
 
-The change affects only the casing of DisjointPrefixes suggestions.
-Which inputs get flagged is unchanged.
+* test(chrome-plugin): use the exact CSS scale in the scaled textarea test
 
-Report: https://github.com/Automattic/harper/issues/4381
+The ratio of the two textareas' on-screen widths is not exactly
+scale × zoom
 
-Assisted-by: claude-sonnet-5-5 (via Claude Code)
-
-Signed-off-by: Pujitha Paladugu <[REDACTED_EMAIL]
-
-**File**: `harper-core/src/linting/disjoint_prefixes.rs` (modified, +20/-1)
+**File**: `packages/chrome-plugin/tests/css_zoom.spec.ts` (added, +69/-0)
 ```diff
-@@ -121,7 +121,8 @@ impl<D: Dictionary> ExprLinter for DisjointPrefixes<D> {
-         let suggestions = suggestions
-             .iter()
-             .map(|s| {
--                Suggestion::replace_with_match_case(s.chars().collect(), toks_span.get_content(src))
-+                // Copy casing from the prefix alone, so "Pre-Requisite" becomes "Prerequisite", not "PreRequisite"
-+                Suggestion::replace_with_match_case(s.chars().collect(), toks[0].get_ch(src))
-             })
-             .collect();
+@@ -0,0 +1,69 @@
++import type { Page } from '@playwright/test';
++import { expect, test } from './fixtures';
++import { getHarperHighlights, getTextarea, replaceEditorContent } from './testUtils';
++
++test('Positions highlights inside an ancestor with CSS zoom.', async ({ page }) => {
++	await page.goto('http://localhost:8081/css_zoom.html');
++
++	const editor = getTextarea(page);
++	await replaceEditorContent(editor, 'This is an test of the Harper grammar checker.');
++
++	const highlights = getHarperHighlights(page);
++	await expect(highlights).toHaveCount(1, { timeout: 24000 });
++
++	const editorBox = (await editor.boundingBox())!;
++	const highlightBox = (await highlights.first().boundingBox())!;
++
++	// When the zoom is applied to the highlight a second time, it drifts below and to the
++	// right of the textarea.
++	expect(highlightBox.x).toBeGreaterThanOrEqual(editorBox.x);
++	expect(highlightBox.y).toBeGreaterThanOrEqual(editorBox.y);
++	expect(highlightBox.x + highlightBox.width).toBeLessThanOrEqual(editorBox.x + editorBox.width);
++	expect(highlightBox.y + highlightBox.height).toBeLessThanOrEqual(editorBox.y + editorBox.height);
++});
++
++/** The highlight box inside `textareaId`, relative to that textarea's top-left corner. */
++async function relativeHighlight(page: Page, textareaId: string) {
++	const editor = page.locator(`#${textareaId}`);
++	const editorBox = (await editor.boundingBox())!;
++
++	for (const highlight of await getHarperHighlights(page).all()) {
++		const box = await highlight.boundingBox();
++		if (
++			box != null &&
++			box.x >= editorBox.x &&
++			box.y >= editorBox.y &&
++			box.x < editorBox.x + editorBox.width &&
++			box.y < editorBox.y + editorBox.height
++		) {
++			return { editorBox, x: box.x - editorBox.x, y: box.y - editorBox.y, width: box.width };
++		}
++	}
++
++	return null;
++}
++
++test('Positions highlights inside a scaled and zoomed ancestor.', async ({ page }) => {
++	await page.goto('http://localhost:8081/css_scale.html');
++
++	// Put the mistake far along the line, so a scale error adds up to a visible offset.
++	const text = 'The quick brown fox jumps over the lazy dog, and then an test.';
++	await replaceEditorContent(page.locator('#reference'), text);
++	await replaceEditorContent(page.locator('#scaled'), text);
++
++	await expect(getHarperHighlights(page)).toHaveCount(2, { timeout: 24000 });
++
++	const reference = (await relativeHighlight(page, 'reference'))!;
++	const scaled = (await relativeHighlight(page, 'scaled'))!;
++	expect(reference).not.toBeNull();
++	expect(scaled).not.toBeNull();
++
++	// Both textareas have the same layout size, so the scaled one should show the same
++	// highlight, just scaled by `scale: 0.9` times `zoom: 1.2` from css_scale.html. The ratio
++	// of the textareas' on-screen widths is not exact, because their borders snap to device
++	// pixels.
++	const ratio = 0.9 * 1.2;
++	expect(Math.abs(scaled.x / ratio - reference.x)).toBeLessThan(2);
++	expect(Math.abs(scaled.y / ratio - reference.y)).toBeLessThan(2);
++	expect(Math.abs(scaled.width / ratio - reference.width)).toBeLessThan(2);
++});
+```
+
+**File**: `packages/chrome-plugin/tests/pages/css_scale.html` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++<!DOCTYPE html>
++<html>
++  <body style="margin: 0">
++    <textarea id="reference" style="position: absolute; top: 400px; left: 20px; font: 16px monospace" rows="3" cols="60"></textarea>
++    <div style="position: absolute; top: 64px; left: 0; scale: 0.9; transform-origin: 0 0">
++      <div style="zoom: 1.2">
++        <textarea id="scaled" style="margin: 20px 0 0 20px; font: 16px monospace" rows="3" cols="60"></textarea>
++      </div>
++    </div>
++  </body>
++</html>
+```
+
+**File**: `packages/chrome-plugin/tests/pages/css_zoom.html` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++<!DOCTYPE html>
++<html>
++  <body>
++    <div style="zoom: 1.5">
++      <textarea style="margin: 200px 0 0 200px" rows="3" cols="40"></textarea>
++    </div>
++  </body>
++</html>
+```
+
+**File**: `packages/lint-framework/src/lint/Highlights.ts` (modified, +55/-9)
+```diff
+@@ -25,7 +25,7 @@ import {
+ 	isGoogleDocsSourceSyncing,
+ } from './googleDocsAdapter';
+ import { type LintKind, lintKindColor } from './lintKindColor';
+-import RenderBox from './RenderBox';
++import RenderBox, { FIXED_FRAME_MARKER_ID, type FixedFrame } from './RenderBox';
+ import type SourceElement from './SourceElement';
+ import type { UnpackedLint } from './unpackLint';
  
-@@ -214,4 +215,22 @@ mod tests {
-             DisjointPrefixes::new(FstDictionary::curated()),
-         );
+@@ -150,7 +150,21 @@ export default class Highlights {
+ 				googleDocsRenderOffset ?? (isGoogleDocs || cpa == null ? null : { x: cpa.x, y: cpa.y });
+ 			const boxPosition: 'absolute' | 'fixed' = isGoogleDocs ? 'absolute' : 'fixed';
+ 
+-			renderBox.render(this.renderTree(boxes, offset, boxPosition));
++			// Lint boxes are measured in viewport pixels, but the render box lives inside the
++			// source's subtree, where ancestors with `zoom`, `transform` or `scale` can move and
++			// scale fixed-position content. Map the boxes through the frame we actually get.
++			if (isGoogleDocs) {
++				renderBox.render(this.renderTree(boxes, offset, boxPosition));
++			} else {
++				// The frame is measured from a marker in the previous render, so render once more
++				// when it was missing or has moved since.
++				const before = renderBox.measureFixedFrame();
++				renderBox.render(this.renderTree(boxes, before, boxPosition));
++				const after = renderBox.measureFixedFrame();
++				if (after != null && !framesEqual(before, after)) {
++					renderBox.render(this.renderTree(boxes, after, boxPosition));
++				}
++			}
+ 			updated.add(source);
+ 		}
+ 
+@@ -178,16 +192,38 @@ export default class Highlights {
+ 
+ 	private renderTree(
+ 		boxes: LintBox[],
+-		offset: { x: number; y: number } | null,
++		frame: { x: number; y: number; scaleX?: number; scaleY?: number } | null,
+ 		boxPosition: 'absolute' | 'fixed',
+ 	): VNode {
+ 		const elements = [];
+-		const offsetX = offset?.x ?? 0;
+-		const offsetY = offset?.y ?? 0;
++		const offsetX = frame?.x ?? 0;
++		const offsetY = frame?.y ?? 0;
++		const scale = { x: frame?.scaleX ?? 1, y: frame?.scaleY ?? 1 };
++
++		if (boxPosition === 'fixed') {
++			elements.push(
++				h(
++					'div',
++					{
++						id: FIXED_FRAME_MARKER_ID,
++						style: {
++							position: 'fixed',
++							left: '0px',
++							top: '0px',
++							width: '100px',
++							height: '100px',
++							visibility: 'hidden',
++							pointerEvents: 'none',
++						},
++					},
++					[],
++				),
++			);
++		}
+ 
+ 		for (const box of boxes) {
+-			const x = box.x - offsetX;
+-			const y = box.y - offsetY;
++			const x = (box.x - offsetX) / scale.x;
++			const y = (box.y - offsetY) / scale.y;
+ 			const positionStyle =
+ 				boxPosition === 'fixed'
+ 					? {
+@@ -207,8 +243,8 @@ export default class Highlights {
+ 				{
+ 					style: {
+ 						...positionStyle,
+-						width: `${box.width}px`,
+-						height: `${box.height}px`,
++						width: `${box.width / scale.x}px`,
++						height: `${box.height / scale.y}px`,
+ 						pointerEvents: 'none',
+ 						borderBottom: `2px solid ${lintKindColor(box.lint.lint_kind)}`,
+ 						backgroundColor: `${lintKindColor(box.lint.lint_kind)}22`,
+@@ -266,6 +302,16 @@ export default class Highlights {
+ 	}
+ }
+ 
++function framesEqual(a: FixedFrame | null, b: FixedFrame): boolean {
++	return (
++		a != null &&
++		Math.abs(a.x - b.x) < 0.5 &&
++		Math.abs(a.y - b.y) < 0.5 &&
++		Math.abs(a.scaleX - b.scaleX) < 0.001 &&
++		Math.abs(a.scaleY - b.scaleY) < 0.001
++	);
++}
++
+ function getInitialContainingRect(el: HTMLElement): DOMRect | null {
+ 	let node = el.parentElement;
+ 
+```
+
+**File**: `packages/lint-framework/src/lint/RenderBox.ts` (modified, +34/-2)
+```diff
+@@ -5,6 +5,12 @@ import patch from 'virtual-dom/patch';
+ 
+ type ParentResolver = () => Node;
+ 
++/** The id of the invisible `position: fixed` marker used by `RenderBox.measureFixedFrame`. */
++export const FIXED_FRAME_MARKER_ID = 'harper-fixed-frame';
++
++/** The on-screen origin and scale of `position: fixed` content inside a render box. */
++export type FixedFrame = { x: number; y: number; scaleX: number; scaleY: number };
++
+ /** Wraps `virtual-dom` to create a box that is unaffected by the style of the rest of the page. */
+ export default class RenderBox {
+ 	/** The node we reattach into if a host is removed by editor-managed DOM updates. */
+@@ -30,15 +36,41 @@ export default class RenderBox {
+ 
+ 		if (!this.virtualRoot || !this.virtualTree) {
+ 			this.virtualRoot = createElement(node);
+-			const shadow = this.shadowHost.attachShadow({ mode: 'open' });
+-			shadow.appendChild(this.virtualRoot);
++			this.getShadowRoot().appendChild(this.virtualRoot);
+ 		} else {
+ 			const patches = diff(this.virtualTree, node);
+ 			this.virtualRoot = patch(this.virtualRoot, patches);
+ 		}
+ 		this.virtualTree = node;
+ 	}
+ 
++	/**
++	 * Measure where the rendered frame marker (see `FIXED_FRAME_MARKER_ID`), a `position: fixed`
++	 * element placed at (0, 0) and 100px wide, actually lands on screen and how much it is
++	 * scaled. Ancestors with CSS `zoom`, `transform`, `scale` and similar properties change
++	 * both, so highlights have to be mapped through this frame. Returns `null` before the
++	 * marker has been rendered.
++	 */
++	public measureFixedFrame(): FixedFrame | null {
++		const marker = this.shadowHost.shadowRoot?.getElementById(FIXED_FRAME_MARKER_ID);
++		if (marker == null || !marker.isConnected) {
++			return null;
++		}
++
++		const rect = marker.getBoundingClientRect();
++
++		return {
++			x: rect.x,
++			y: rect.y,
++			scaleX: rect.width > 0 ? rect.width / 100 : 1,
++			scaleY: rect.height > 0 ? rect.height / 100 : 1,
++		};
++	}
++
++	private getShadowRoot(): ShadowRoot {
++		return this.shadowHost.shadowRoot ?? this.shadowHost.attachShadow({ mode: 'open' });
++	}
++
+ 	/** Remove the box from the DOM. */
+ 	public remove() {
+ 		try {
+```
+
+**File**: `packages/lint-framework/src/lint/TextFieldRange.ts` (modified, +14/-2)
+```diff
+@@ -129,11 +129,23 @@ export default class TextFieldRange {
+ 		const fieldRect = field.getBoundingClientRect();
+ 		const scrollTop = window.scrollY || document.documentElement.scrollTop;
+ 		const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
++
++		// The copied styles are in the field's own CSS pixels, while its bounding rect is on
++		// screen. When an ancestor zooms or scales the field (CSS `zoom`, `transform`, `scale`),
++		// lay the mirror out at the field's own size and scale it to match what is on screen.
++		const width = field.offsetWidth || fieldRect.width;
++		const height = field.offsetHeight || fieldRect.height;
++		const scaleX = width > 0 ? fieldRect.width / width : 1;
++		const scaleY = height > 0 ? fieldRect.height / height : 1;
++		const scaled = Math.abs(scaleX - 1) > 0.001 || Math.abs(scaleY - 1) > 0.001;
++
+ 		Object.assign(mirror.style, {
+ 			top: `${fieldRect.top + scrollTop}px`,
+ 			left: `${fieldRect.left + scrollLeft}px`,
+-			width: `${fieldRect.width}px`,
+-			height: `${fieldRect.height}px`,
++			width: `${scaled ? width : fieldRect.width}px`,
++			height: `${scaled ? height : fieldRect.height}px`,
++			transform: scaled ? `scale(${scaleX}, ${scaleY})` : '',
++			transformOrigin: scaled ? '0 0' : '',
+ 		});
+ 	}
+ 
+```
+
+---
+
+### Incident Patch 2: `31fc96f3` (2026-10-21)
+**Commit Message**: build(deps): bump ammonia from 4.2.3 to 4.2.4 (#4663)
+
+Bumps [ammonia](https://github.com/rust-ammonia/ammonia) from 4.2.3 to 4.2.4.
+- [Release notes](https://github.com/rust-ammonia/ammonia/releases)
+- [Changelog](https://github.com/rust-ammonia/ammonia/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/rust-ammonia/ammonia/compare/v4.2.3...v4.2.4)
+
+---
+updated-dependencies:
+- dependency-name: ammonia
+  dependency-version: 4.2.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -46,9 +46,9 @@ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
+ 
+ [[package]]
+ name = "ammonia"
+-version = "4.2.3"
++version = "4.2.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "061e83b03c2681c18a6787d956e355c74e0b98ba7ba3d69b0822ade1e6f1d716"
++checksum = "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
+ dependencies = [
+  "cssparser",
+  "html5ever",
+```
+
+---
+
+### Incident Patch 3: `65d54e6a` (2026-10-21)
+**Commit Message**: fix(desktop): stop recreating the linter every second (#4661)
+
+Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
+
+**File**: `harper-desktop/src-tauri/src/main.rs` (modified, +6/-2)
+```diff
+@@ -548,7 +548,12 @@ fn apply_highlighter_config(
+     debounce_ms: &Rc<RefCell<u64>>,
+     linter: &Rc<RefCell<LintGroup>>,
+ ) {
+-    let linter_config = config.create_linter();
++    if config.mutable_dictionary != *user_dictionary.borrow()
++        || config.dialect != *dialect.borrow()
++        || config.lint_config != linter.borrow().config
++    {
++        *linter.borrow_mut() = config.create_linter();
++    }
+     *ignored_lints.borrow_mut() = config.ignored_lints;
+     *user_dictionary.borrow_mut() = config.mutable_dictionary;
+     *dialect.borrow_mut() = config.dialect;
+@@ -562,5 +567,4 @@ fn apply_highlighter_config(
+         Err(error) => eprintln!("failed to update integrations: {error}"),
      }
-+
-+    #[test]
-+    fn fix_title_case_hyphenated_to_joined_4381() {
-+        assert_suggestion_result(
-+            "Pre-Requisite",
-+            DisjointPrefixes::new(FstDictionary::curated()),
-+            "Prerequisite",
-+        );
-+    }
-+
-+    #[test]
-+    fn fix_all_caps_hyphenated_to_joined() {
-+        assert_suggestion_result(
-+            "PRE-REQUISITE",
-+            DisjointPrefixes::new(FstDictionary::curated()),
-+            "PREREQUISITE",
-+        );
-+    }
+     *debounce_ms.borrow_mut() = config.debounce_ms;
+-    *linter.borrow_mut() = linter_config;
  }
 ```
 
----
-
-### Incident Patch 2: `fbb7a660` (2026-10-20)
-**Commit Message**: fix(chrome-ext): don't close popup when the context_hash changes (#4658)
-
-* feat(chrome-ext): allow to require specific problematic text in assertions
-
-* fix(chrome-ext): don't close the popup when the context_hash changes
-
-**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +15/-5)
-```diff
-@@ -161,8 +161,14 @@ export async function waitForHighlightsToSettle(
- export async function waitForHarperHighlightCenter(
- 	page: Page,
- 	timeoutMs = 30000,
-+	/** Require that the highlight in question have this "problemText" before returning. */
-+	problemText: string | null = null,
- ): Promise<ScreenPoint | null> {
--	const highlight = getHarperHighlights(page).first();
-+	let highlight = getHarperHighlights(page).first();
-+
-+	if (problemText != null) {
-+		highlight = highlight.and(page.locator(`[data-problem-text="${problemText}"]`));
-+	}
- 
- 	try {
- 		await highlight.waitFor({ state: 'visible', timeout: timeoutMs });
-@@ -197,8 +203,12 @@ export async function assertLocatorsResolveEqually(page: Page, a: Locator, b: Lo
- 
- /** Click the first Harper highlight and check that its popup opens.
-  * Returns false if no highlight was found; a missing popup fails the test. */
--export async function clickHarperHighlight(page: Page): Promise<boolean> {
--	const center = await waitForHarperHighlightCenter(page);
-+export async function clickHarperHighlight(
-+	page: Page,
-+	/** Require that the highlight be over specific text before clicking it. */
-+	problemText: string | null = null,
-+): Promise<boolean> {
-+	const center = await waitForHarperHighlightCenter(page, undefined, problemText);
- 	if (center == null) return false;
- 
- 	await page.mouse.click(center.x, center.y);
-@@ -300,7 +310,7 @@ export async function testBasicSuggestion(
- 		await assertEditorText(editor, 'This is an test');
- 		await waitForHighlightsToSettle(page);
- 
--		const opened = await clickHarperHighlight(page);
-+		const opened = await clickHarperHighlight(page, 'an');
- 		expect(opened).toBe(true);
- 		const suggestion = page.getByTitle('Click to replace "an" with "a"');
- 		await expect(suggestion).toBeVisible();
-@@ -349,7 +359,7 @@ export async function testCanIgnoreSuggestion(
- 		await expect(getHarperHighlights(page)).toHaveCount(1, { timeout: 30000 });
- 
- 		// Open the popup for the highlight and click Ignore.
--		const opened = await clickHarperHighlight(page);
-+		const opened = await clickHarperHighlight(page, 'mistaek');
- 		expect(opened).toBe(true);
- 
- 		// The popup captures the editor's cursor state on the next animation frame.
-```
-
-**File**: `packages/lint-framework/src/lint/Highlights.ts` (modified, +3/-0)
-```diff
-@@ -214,6 +214,9 @@ export default class Highlights {
- 						backgroundColor: `${lintKindColor(box.lint.lint_kind)}22`,
- 					},
- 					id: 'harper-highlight',
-+					attributes: {
-+						'data-problem-text': box.lint.problem_text,
-+					},
- 				},
- 				[],
- 			);
-```
-
-**File**: `packages/lint-framework/src/lint/PopupHandler.ts` (modified, +0/-2)
-```diff
-@@ -219,13 +219,11 @@ export default class PopupHandler {
- 				.slice(0, this.popupLint)
- 				.filter(
- 					(box) =>
--						box.lint.context_hash === previous.lint.context_hash &&
- 						box.source === previous.source &&
- 						box.lint.span.start === previous.lint.span.start &&
- 						box.lint.span.end === previous.lint.span.end,
- 				).length;
- 			const matches = boxes.flatMap((box, index) =>
--				box.lint.context_hash === previous.lint.context_hash &&
- 				box.source === previous.source &&
- 				box.lint.span.start === previous.lint.span.start &&
- 				box.lint.span.end === previous.lint.span.end &&
-```
-
----
-
-### Incident Patch 3: `d0aae35e` (2026-10-20)
-**Commit Message**: Revert "fix(chrome-ext): extend timeout"
-
-This reverts commit 99d282e57315ef6ac94d3d121ac26bc82059f7e6.
-
-**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +1/-1)
-```diff
-@@ -115,7 +115,7 @@ export function getHarperHighlights(page: Page): Locator {
- 
- export async function waitForHighlightsToSettle(
- 	page: Page,
--	quietMs = 1000,
-+	quietMs = 250,
- 	timeoutMs = 30000,
- ): Promise<void> {
- 	let previous: string | undefined;
-```
-
 #### Recent Merged Pull Requests:
+- **PR #4665** (closed): fix(cli): write each lint report in one go so parallel reports don't interleave (@bercedev)
+- **PR #4664** (2026-10-21): feat: fiber optics/fibre optics → optic (@hippietrail)
+- **PR #4663** (2026-10-21): build(deps): bump ammonia from 4.2.3 to 4.2.4 (@dependabot[bot])
+- **PR #4662** (2026-10-21): build(deps): bump tree-sitter-php from 0.24.2 to 0.25.1 (@dependabot[bot])
+- **PR #4661** (2026-10-21): fix(desktop): stop recreating the linter every second (@elijah-potter)
 - **PR #4658** (2026-10-20): fix(chrome-ext): don't close popup when the context_hash changes (@elijah-potter)
-- **PR #4655** (2026-10-20): feat: as log as→as long as; ad nausea→ad nauseam (@hippietrail)
-- **PR #4653** (2026-10-20): fix(chrome-ext): bypass spellcheck suppression on Gmail (@elijah-potter)
-- **PR #4648** (2026-10-20): feat: compete over each other → compete with/against each other (@hippietrail)
-- **PR #4647** (2026-10-19): feat: fussy logic → fuzzy logic (@hippietrail)
-- **PR #4646** (2026-10-20): feat: air → err in idioms (@hippietrail)
 
 ---
 
@@ -1635,47 +1850,53 @@ This reverts commit 99d282e57315ef6ac94d3d121ac26bc82059f7e6.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): DisjointPrefixes keeps title case when joining prefix (#4641)
+## X. lint-framework): position highlights correctly under zoomed or scaled ancestors 
 
 **RULE**:
-When implementing operations in `harper-core/src/linting/disjoint_prefixes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/chrome-plugin/tests/css_zoom.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d8432a5c`: core): DisjointPrefixes keeps title case when joining prefix (#4641). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8670fc3c`: lint-framework): position highlights correctly under zoomed or scaled ancestors (#4506). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/disjoint_prefixes.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/tests/css_zoom.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // Copy casing from the prefix alone, so "Pre-Requisite" becomes "Prerequisite", not "PreRequisite"
-                Suggestion::replace_with_match_case(s.chars().collect(), toks[0].get_ch(src))
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
+import { getHarperHighlights, getTextarea, replaceEditorContent } from './testUtils';
 
-    #[test]
-    fn fix_title_case_hyphenated_to_joined_4381() {
-        assert_suggestion_result(
-            "Pre-Requisite",
-            DisjointPrefixes::new(FstDictionary::curated()),
-            "Prerequisite",
-        );
-    }
+test('Positions highlights inside an ancestor with CSS zoom.', async ({ page }) => {
+	await page.goto('http://localhost:8081/css_zoom.html');
 
-    #[test]
-    fn fix_all_caps_hyphenated_to_joined() {
-        assert_suggestion_result(
-            "PRE-REQUISITE",
-            DisjointPrefixes::new(FstDictionary::curated()),
-            "PREREQUISITE",
-        );
-    }
+	const editor = getTextarea(page);
+	await replaceEditorContent(editor, 'This is an test of the Harper grammar checker.');
+
+	const highlights = getHarperHighlights(page);
+	await expect(highlights).toHaveCount(1, { timeout: 24000 });
+
+	const editorBox = (await editor.boundingBox())!;
+	const highlightBox = (await highlights.first().boundingBox())!;
+
+	// When the zoom is applied to the highlight a second time, it drifts below and to the
+	// right of the textarea.
+	expect(highlightBox.x).toBeGreaterThanOrEqual(editorBox.x);
+	expect(highlightBox.y).toBeGreaterThanOrEqual(editorBox.y);
+	expect(highlightBox.x + highlightBox.width).toBeLessThanOrEqual(editorBox.x + editorBox.width);
+	expect(highlightBox.y + highlightBox.height).toBeLessThanOrEqual(editorBox.y + editorBox.height);
+});
+
+/** The highlight box inside `textareaId`, relative to that textarea's top-left corner. */
+asy
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                Suggestion::replace_with_match_case(s.chars().collect(), toks_span.get_content(src))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d8432a5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8670fc3c` are properly handled with clean fallback behavior.

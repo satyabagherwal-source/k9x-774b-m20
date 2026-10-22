@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `d5ca4c76`  
+> **Source Version**: `724e39f0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:58:14.258Z  
+> **Timestamp**: 2026-10-22T17:51:53.875Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:58:14.252Z  
+> **Harvest Timestamp**: 2026-10-22T17:51:53.192Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6243 stars
+- **Stars / Engagement**: 6242 stars
 
 ---
 
@@ -1626,108 +1626,116 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e9bbdc2` (2026-10-20)
-**Commit Message**: [MOD-14594] Prevent integer overflow in geometry allocators (#11941)
+### Incident Patch 1: `8ad57da6` (2026-10-22)
+**Commit Message**: [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967)
 
-* Throw bad_alloc on size overflow in geometry allocators
+* [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete
 
-Allocator<T>::allocate computed n * sizeof(T) unchecked, so a wrapped size
-would return an undersized block. It now throws std::bad_alloc when n exceeds
-SIZE_MAX / sizeof(T), per the standard allocator contract (failure throws,
-never returns null). allocate drops noexcept in all three allocators so the
-exception can propagate; tracked byte counts are untouched on failure.
+* Assert hybrid shard profile invariants
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* Disable query timeout in hybrid profile structure test
 
-* Drop redundant comment on allocator overflow guard
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/geometry/allocator/allocator.hpp` (modified, +7/-2)
+**File**: `src/coord/hybrid/dist_hybrid.c` (modified, +40/-23)
 ```diff
-@@ -10,6 +10,8 @@
+@@ -539,21 +539,35 @@ static void setupCoordinatorArrangeSteps(AREQ *searchRequest, AREQ *vectorReques
  
- #include "rmalloc.h"
- #include <cstddef>
-+#include <limits>
-+#include <new>
- 
- namespace RediSearch {
- namespace Allocator {
-@@ -21,7 +23,7 @@ struct Allocator {
-   template <class U>
-   explicit inline constexpr Allocator(Allocator<U> const&) noexcept;
- 
--  [[nodiscard]] static inline auto allocate(std::size_t n) noexcept -> value_type*;
-+  [[nodiscard]] static inline auto allocate(std::size_t n) -> value_type*;
-   static inline void deallocate(value_type* p, std::size_t n) noexcept;
- };
- 
-@@ -31,7 +33,10 @@ inline constexpr Allocator<T>::Allocator(Allocator<U> const&) noexcept {
- }
- 
- template <class T>
--inline auto Allocator<T>::allocate(std::size_t n) noexcept -> value_type* {
-+inline auto Allocator<T>::allocate(std::size_t n) -> value_type* {
-+  if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type)) {
-+    throw std::bad_alloc{};
+ // Helper function to extract shard profile from a reply based on protocol version
+ static MRReply *extractShardProfile(MRReply *current, bool resp3) {
++  // RPNet collects complete shard profiles or errors; timeouts can shorten the list.
++  RS_LOG_ASSERT(current, "Collected shard profile must not be NULL");
+   if (MRReply_Type(current) == MR_REPLY_ERROR) {
+     return current;
+   }
++  MRReply *shards;
+   if (resp3) {
+     // RESP3: profile -> Shards -> [shard_profile]
+-    MRReply *shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
+-    return MRReply_ArrayElement(shards, 0);
++    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_MAP && MRReply_Length(current) >= 2 &&
++                      MRReply_Length(current) % 2 == 0,
++                  "RESP3 profile must be a nonempty map");
++    shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
+   } else {
+-    // RESP2: [results, shards_array] -> shards_array[0] is the shard profile
+-    MRReply *shards_array_profile = MRReply_ArrayElement(current, 1);
+-    MRReply *profile = MRReply_ArrayElement(shards_array_profile, 0);
++    // RESP2: ["Shards", shards_array, ...] -> shards_array[0] is the shard profile
++    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_ARRAY && MRReply_Length(current) >= 2,
++                  "RESP2 profile must contain the Shards key and array");
++    shards = MRReply_ArrayElement(current, 1);
 +  }
-   auto alloc_size = n * sizeof(value_type);
-   auto p = static_cast<value_type*>(rm_malloc(alloc_size));
-   return p;
-```
-
-**File**: `src/geometry/allocator/stateful_allocator.hpp` (modified, +2/-2)
-```diff
-@@ -27,7 +27,7 @@ struct StatefulAllocator {
-   template <class U>
-   explicit inline constexpr StatefulAllocator(StatefulAllocator<U> const&) noexcept;
- 
--  [[nodiscard]] inline auto allocate(std::size_t n) noexcept -> value_type*;
-+  [[nodiscard]] inline auto allocate(std::size_t n) -> value_type*;
-   inline void deallocate(value_type* p, std::size_t n) noexcept;
- 
-   [[nodiscard]] inline constexpr std::size_t report() const noexcept;
-@@ -39,7 +39,7 @@ inline constexpr StatefulAllocator<T>::StatefulAllocator(StatefulAllocator<U> co
++  RS_LOG_ASSERT(shards && MRReply_Type(shards) == MR_REPLY_ARRAY && MRReply_Length(shards) > 0,
++                "Shards must contain a shard profile");
++  MRReply *profile = MRReply_ArrayElement(shards, 0);
++  RS_LOG_ASSERT(profile && MRReply_Length(profile) >= 2 && MRReply_Length(profile) % 2 == 0,
++                "Shard profile must contain key-value pairs");
++  if (!resp3) {
+     // Convert to map for easier access (modifies in place)
+     MRReply_ArrayToMap(profile);
+-    return profile;
+   }
++  RS_LOG_ASSERT(MRReply_Type(profile) == MR_REPLY_MAP, "Shard profile must be a map");
++  return profile;
  }
  
- template <class T>
--inline auto StatefulAllocator<T>::allocate(std::size_t n) noexcept -> value_type* {
-+inline auto StatefulAllocator<T>::allocate(std::size_t n) -> value_type* {
-   auto p = Allocator<T>::allocate(n);
-   if (p) {
-     allocated_ += n * sizeof(value_type);
+ // Helper function to extract Shard ID MRReply from a shard profile
+@@ -567,7 +581,7 @@ static MRReply *extractShardIdReply(MRReply *shardProfile) {
+ 
+ // Helper function to print a profile map excluding the "Shard ID" field
+ static void printProfileExcludingShardId(RedisModule_Reply *reply, MRReply *profile) {
+-  if (!profile || MRReply_Type(profile) == MR_REPLY_ERROR) {
++  if (MRReply_Type(profile) == MR_REPLY_ERROR) {
+     MR_ReplyWithMRReply(reply, profile);
+     return;
+   }
+@@ -595,7 +609,8 @@ static void printProfileExcludingShardId(RedisModule_Reply *reply, MRReply *prof
+ void printShardsHybridProfile(RedisModule_Reply *reply, void *ctx) {
+   HybridRequest *hreq = ctx;
+   // New format: group by shard with Shard ID printed once per shard
+-  // [{"Shard ID": "id", "SEARCH": profile (without Shard ID), "VSIM": profile (without Shard ID)}, ...]
++  // [{"Shard ID": "id", "SEARCH": profile (without Shard ID), "VSIM": profile (without Shard ID)},
++  // ...]
+ 
+   // Get RPNets for SEARCH and VSIM requests
+   AREQ *searchAreq = hreq->requests[SEARCH_INDEX];
+@@ -604,24 +619,26 @@ void printShardsHybridProfile(RedisModule_Reply *reply, void *ctx) {
+   RPNet *vsimRpnet = (RPNet *)AREQ_QueryProcessingCtx(vsimAreq)->rootProc;
+ 
+   size_t searchCount = array_len(searchRpnet->shardsProfile);
+-
+-  bool resp3 = reply->resp3;
+-
+-  // Iterate over shards and print both SEARCH and VSIM profiles for each shard
+-  for (size_t i = 0; i < searchCount; i++) {
++  size_t vsimCount = array_len(vsimRpnet->shardsProfile);
++
++  // The subqueries collect profiles independently; a timeout can leave either list shorter.
++  // Decode using each shard command's protocol, which can differ from the client's protocol.
++  for (size_t i = 0; i < MAX(searchCount, vsimCount); i++) {
++    MRReply *searchProfile = i < searchCount ? extractShardProfile(searchRpnet->shardsProfile[i],
++                                                                   searchRpnet->cmd.protocol == 3)
++                                             : NULL;
++    MRReply *vsimProfile = i < vsimCount ? extractShardProfile(vsimRpnet->shardsProfile[i],
++                                                               vsimRpnet->cmd.protocol == 3)
++                                         : NULL;
+     RedisModule_Reply_Map(reply);  // Start shard map
+ 
+-    // Extract shard profiles
+-    MRReply *searchProfile = extractShardProfile(searchRpnet->shardsProfile[i], resp3);
+-    MRReply *vsimProfile = extractShardProfile(vsimRpnet->shardsProfile[i], resp3);
+-
+-    // Extract and print Shard ID from SEARCH profile
+-    MRReply *shardIdReply = NULL;
+-    if (searchProfile) {
+-      shardIdReply = extractShardIdReply(searchProfile);
+-      RedisModule_Reply_SimpleString(reply, "Shard ID");
+-      MR_ReplyWithMRReply(reply, shardIdReply);
++    // Use the available profile when SEARCH is missing or c
 ```
 
-**File**: `src/geometry/allocator/tracking_allocator.hpp` (modified, +2/-2)
+**File**: `tests/cpptests/coord_tests/test_cpp_hybrid_profile.cpp` (added, +144/-0)
 ```diff
-@@ -27,7 +27,7 @@ struct TrackingAllocator {
-   template <class U>
-   explicit inline constexpr TrackingAllocator(TrackingAllocator<U> const& other) noexcept;
- 
--  [[nodiscard]] inline auto allocate(std::size_t n) noexcept -> value_type*;
-+  [[nodiscard]] inline auto allocate(std::size_t n) -> value_type*;
-   inline void deallocate(value_type* p, std::size_t n) noexcept;
- 
-   [[nodiscard]] inline constexpr std::size_t report() const noexcept;
-@@ -45,7 +45,7 @@ inline constexpr TrackingAllocator<T>::TrackingAllocator(TrackingAllocator<U> co
- }
- 
- template <class T>
--inline auto TrackingAllocator<T>::allocate(std::size_t n) noexcept -> value_type* {
-+inline auto TrackingAllocator<T>::allocate(std::size_t n) -> value_type* {
-   auto p = Allocator<T>::allocate(n);
-   if (p) {
-     allocated_ += n * sizeof(value_type);
-```
-
-**File**: `tests/cpptests/test_cpp_geometry_allocator.cpp` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
+@@ -0,0 +1,144 @@
 +/*
 + * Copyright (c) 2006-Present, Redis Ltd.
 + * All rights reserved.
@@ -1739,515 +1747,636 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +
 +#include "gtest/gtest.h"
 +#include "redismock/redismock.h"
++extern "C" {
++#include "reply.h"
++}
++#include "hybrid/hybrid_request.h"
++#include "hiredis/hiredis.h"
++#include "coord/rpnet.h"
 +
-+#include "geometry/allocator/allocator.hpp"
-+#include "geometry/allocator/stateful_allocator.hpp"
-+#include "geometry/allocator/tracking_allocator.hpp"
++#include <memory>
++#include <string>
++#include <tuple>
++#include <vector>
 +
-+#include <cstdint>
-+#include <limits>
-+#include <new>
++extern "C" void printShardsHybridProfile(RedisModule_Reply *reply, void *ctx);
 +
-+using namespace RediSearch::Allocator;
++class HybridProfileTest : public ::testing::TestWithParam<std::tuple<bool, bool>> {
++ protected:
++  RedisModuleCtx *ctx = nullptr;
++  std::vector<std::unique_ptr<MRReply, decltype(&MRReply_Free)>> replies;
 +
-+namespace {
-+using Elem = std::uint64_t;
-+// Smallest element count for which n * sizeof(Elem) overflows size_t.
-+constexpr std::size_t kOverflowCount = std::numeric_limits<std::size_t>::max() / sizeof(Elem) + 1;
-+}  // namespace
++  bool shardResp3() const {
++    return std::get<0>(GetParam());
++  }
 +
-+TEST(GeometryAllocatorTest, OverflowThrows) {
-+  EXPECT_THROW((void)Allocator<Elem>::allocate(kOverflowCount), std::bad_alloc);
++  void SetUp() override {
++    ctx = RedisModule_GetThreadSafeContext(nullptr);
++  }
++  void TearDown() override {
++    RedisModule_FreeThreadSafeContext(ctx);
++  }
++
++  MRReply *parse(const std::string &wire) {
++    redisReader *reader = redisReaderCreate();
++    EXPECT_EQ(redisReaderFeed(reader, wire.data(), wire.size()), REDIS_OK);
++    void *reply = nullptr;
++    EXPECT_EQ(redisReaderGetReply(reader, &reply), REDIS_OK);
++    redisReaderFree(reader);
++    EXPECT_NE(reply, nullptr);
++    replies.emplace_back(static_cast<MRReply *>(reply), MRReply_Free);
++    return replies.back().get();
++  }
++
++  std::string wrap(const std::string &profile) {
++    return (shardResp3() ? "%1\r\n+Shards\r\n*1\r\n" : "*2\r\n+Shards\r\n*1\r\n") + profile;
++  }
++
++  MRReply *validProfile() {
++    return parse(wrap(std::string(shardResp3() ? "%2" : "*4") +
++                      "\r\n+Shard ID\r\n+shard-1\r\n+Warning\r\n+None\r\n"));
++  }
++
++  void check(const std::vector<MRReply *> &search, const std::vector<MRReply *> &vsim, size_t count,
++             const std::string &expected) {
++    AREQ searchAreq = {}, vsimAreq = {};
++    RPNet searchRpnet = {}, vsimRpnet = {};
++    searchRpnet.cmd.protocol = vsimRpnet.cmd.protocol = shardResp3() ? 3 : 2;
++    // Allocate exactly the collected count, so ASan catches reading past either list.
++    if (!search.empty()) {
++      searchRpnet.shardsProfile = array_new(MRReply *, search.size());
++      for (auto *profile : search) array_append(searchRpnet.shardsProfile, profile);
++    }
++    if (!vsim.empty()) {
++      vsimRpnet.shardsProfile = array_new(MRReply *, vsim.size());
++      for (auto *profile : vsim) array_append(vsimRpnet.shardsProfile, profile);
++    }
++    AREQ_QueryProcessingCtx(&searchAreq)->rootProc = &searchRpnet.base;
++    AREQ_QueryProcessingCtx(&vsimAreq)->rootProc = &vsimRpnet.base;
++    AREQ *requests[] = {&searchAreq, &vsimAreq};
++    HybridRequest hreq = {};
++    hreq.requests = requests;
++
++    RMCK_GetReplyLog(ctx).clear();
++    RedisModule_Reply reply = RedisModule_NewReply(ctx);
++    reply.resp3 = std::get<1>(GetParam());
++    RedisModule_Reply_Array(&reply);
++    printShardsHybridProfile(&reply, &hreq);
++    RedisModule_Reply_ArrayEnd(&reply);
++#ifdef ENABLE_ASSERT
++    EXPECT_EQ(std::string(reply.json), expected);
++#endif
++    RedisModule_EndReply(&reply);
++    EXPECT_EQ(RMCK_GetReplyLog(ctx).back(), "setarray:" + std::to_string(count));
++    array_free(searchRpnet.shardsProfile);
++    array_free(vsimRpnet.shardsProfile);
++  }
++
++  const std::string searchOnly =
++      "{ \"Shard ID\": \"shard-1\", \"SEARCH\": { \"Warning\": \"None\" } }";
++  const std::string vsimOnly = "{ \"Shard ID\": \"shard-1\", \"VSIM\": { \"Warning\": \"None\" } }";
++  const std::string both =
++      "{ \"Shard ID\": \"shard-1\", \"SEARCH\": { \"Warning\": \"None\" }, "
++      "\"VSIM\": { \"Warning\": \"None\" } }";
++};
++
++TEST_P(HybridProfileTest, NoProfiles) {
++  check({}, {}, 0, "[  ]");
 +}
 +
-+TEST(GeometryAllocatorTest, StatefulOverflowThrowsAndKeepsCount) {
-+  StatefulAllocator<Elem> alloc;
-+  EXPECT_THROW((void)alloc.allocate(kOverflowCount), std::bad_alloc);
-+  EXPECT_EQ(alloc.report(), 0u);
++TEST_P(HybridProfileTest, CompleteProfiles) {
++  auto *search = validProfile();
++  auto *vsim = validProfile();
++  check({search}, {vsim}, 1, "[ " + both + " ]");
++  // RESP2 profiles are converted to maps in place and must remain readable.
++  check({search}, {vsim}, 1, "[ " + both + " ]");
 +}
 +
-+TEST(GeometryAllocatorTest, TrackingOverflowThrowsAndKeepsCount) {
-+  std::size_t tracked = 0;
-+  TrackingAllocator<Elem> alloc{tracked};
-+  EXPECT_THROW((void)alloc.allocate(kOverflowCount), std::bad_alloc);
-+  EXPECT_EQ(tracked, 0u);
++TEST_P(HybridProfileTest, MissingVsimProfiles) {
++  check({validProfile()}, {}, 1, "[ " + searchOnly + " ]");
++  check({validProfile(), validProfile(), validProfile()}, {validProfile()}, 3,
++        "[ " + both + ", " + searchOnly + ", " + searchOnly + " ]");
 +}
 +
-+TEST(GeometryAllocatorTest, NormalAllocationIsTracked) {
-+  std::size_t tracked = 0;
-+  TrackingAllocator<Elem> alloc{tracked};
-+  Elem* p = alloc.allocate(4);
-+  ASSERT_NE(p, nullptr);
-+  EXPECT_EQ(tracked, 4 * sizeof(Elem));
-+  alloc.deallocate(p, 4);
-+  EXPECT_EQ(tracked, 0u);
++TEST_P(HybridProfileTest, MissingSearchProfiles) {
++  check({}, {validProfile()}, 1, "[ " + vsimOnly + " ]");
++  check({validProfile()}, {validProfile(), validProfile(), validProfile()}, 3,
++        "[ " + both + ", " + vsimOnly + ", " + vsimOnly + " ]");
 +}
++
++TEST_P(HybridProfileTest, ErrorProfiles) {
++  auto *error = parse("-timeout\r\n");
++  check({error}, {validProfile()}, 1,
++        "[ { \"Shard ID\": \"shard-1\", \"SEARCH\": \"ERR: timeout\", "
++        "\"VSIM\": { \"Warning\": \"None\" } } ]");
++  check({validProfi
+```
+
+**File**: `tests/pytests/test_hybrid_profile.py` (modified, +3/-1)
+```diff
+@@ -683,13 +683,15 @@ def test_profile_standalone_with_background_depletion():
+ 
+ @skip(cluster=False)
+ def test_profile_cluster():
+-    env = Env(moduleArgs='DEFAULT_DIALECT 2 _PRINT_PROFILE_CLOCK false')
++    # This structure test requires complete profiles from every shard.
++    env = Env(moduleArgs='DEFAULT_DIALECT 2 _PRINT_PROFILE_CLOCK false TIMEOUT 0')
+     _setup_index_and_data(env)
+     for query, _, _, _, expected_shard_profile, expected_coordinator_profile in query_and_profile:
+         actual_res = env.execute_command(*query)
+         _verify_profile_structure(env, env.protocol, actual_res)
+ 
+         shard_profiles = actual_res[8][1]
++        env.assertEqual(len(shard_profiles), env.shardsCount, message=f'query: {query}, reply: {actual_res}')
+         for i in range(len(shard_profiles)):
+             shard_profile = shard_profiles[i]
+             # Shard profile is a list of 6 items
 ```
 
 ---
 
-### Incident Patch 2: `2bfde4a7` (2026-10-20)
-**Commit Message**: Fix suggestion and dictionary commands reading past input that ends in a truncated UTF-8 sequence (#11902)
+### Incident Patch 2: `95a67995` (2026-10-22)
+**Commit Message**: [MOD-19932] Add FT.DEBUG DISK_STATS and the search-disk-statistics config (#11918)
 
-* Add a test that the rune decoders stay within the supplied length
+* [MOD-19932] Add FT.DEBUG DISK_STATS and the search-disk-statistics config
 
-FT.SUGGET hands strToSingleCodepointFoldedRunes a Redis string's exact
-byte length, and FT.SUGADD/SUGDEL do the same with strToRunes. The test
-decodes "ab" plus a trailing 2-, 3- or 4-byte lead through each helper
-twice, once followed by zeros and once by the rest of U+1F600, and
-requires the same runes: a decoder that reads past the length sees the
-difference.
+FT.DEBUG DISK_STATS <index> [STATS] returns storage-engine diagnostics
+for a disk index as text: per-column-family level and block-cache stats
+and, with STATS, the sections shared by every index (block-cache entry
+stats and storage-engine statistics).
+
+Statistics add per-operation bookkeeping, so they are opt-in through the
+new hidden, immutable search-disk-statistics config (default no). It is
+load-time only because statistics must be attached before each index
+database opens; BasicDiskAPI.open gains an enableStatistics parameter to
+carry it. MetricsDiskAPI gains debugDiskStats for the report.
+
+On a non-disk index the command replies with an error.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Keep the rune decoders within the supplied byte length
+* [MOD-19932] Accept search-disk-statistics as a module argument
 
-nu_utf8_read sizes a sequence from its lead byte alone, and libnu's
-bounded-string loops only check the limit before each call. A prefix
-ending in 0xF0 makes FT.SUGGET's decoder read three bytes past the
-argument; Redis's terminator covers only the first of them.
+Like search-disk-use-direct-reads, the config gets a legacy setter so it
+can be passed with the other module arguments at load time, not only
+through the Redis config file. It stays hidden and immutable.
 
-Decode a sequence that the end cuts short from a zero-padded copy, and
-use that reader in strToSingleCodepointFoldedRunes (FT.SUGGET), strToRunes
-(FT.SUGADD, FT.SUGDEL, dictionaries and indexed terms) and strToLowerRunes
-(FT.SPELLCHECK). The missing bytes read as 0, which is what th
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/trie/rune_util.c` (modified, +60/-34)
+* [MO
+
+**File**: `src/config.c` (modified, +9/-0)
 ```diff
-@@ -18,6 +18,22 @@
- #include "libnu/strings.h"
- #include "libnu/utf8.h"
+@@ -2799,6 +2799,15 @@ int RegisterModuleConfig_Local(RedisModuleCtx *ctx) {
+     )
+   )
  
-+/* nu_utf8_read sizes a sequence from its lead byte alone and has no end bound,
-+ * so a lead byte among the last three bytes makes it read past the buffer.
-+ * Such a sequence is decoded from a zero-padded copy instead. The bytes past
-+ * `end` read as 0, as the first of them does in a NUL-terminated string, so
-+ * every sequence that fits decodes exactly as before. */
-+static const char *utf8ReadBounded(const char *p, const char *end, uint32_t *codepoint) {
-+  size_t avail = end - p;
-+  if (avail >= 4) {
-+    return nu_utf8_read(p, codepoint);
-+  }
-+  char padded[4] = {0};
-+  memcpy(padded, p, avail);
-+  size_t consumed = nu_utf8_read(padded, codepoint) - padded;
-+  return consumed < avail ? p + consumed : end;
-+}
++  RM_TRY(
++    RedisModule_RegisterBoolConfig(
++      ctx, "search-_disk-statistics", 0,
++      REDISMODULE_CONFIG_HIDDEN | REDISMODULE_CONFIG_IMMUTABLE | REDISMODULE_CONFIG_UNPREFIXED,
++      get_bool_config, set_bool_config, NULL,
++      (void *)&(RSGlobalConfig.diskStatistics)
++    )
++  )
 +
- static uint32_t __fold(uint32_t runelike) {
-   uint32_t lowered = 0;
-   const char *map = 0;
-@@ -66,60 +82,70 @@ char *runesToStr(const rune *in, size_t len, size_t *utflen) {
-   return ret;
- }
- 
--rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len) {
-+/* Lowers `str` up to its first decoded NUL, writing at most `cap` runes to
-+ * `out`, and returns the lowered length. Once that length exceeds
-+ * MAX_RUNE_STR_LEN it stops early and returns a value above the limit, so a
-+ * caller that rejects such strings never walks the rest. Sizing and filling
-+ * both go through here so the buffer always fits what is written to it. */
-+static size_t lowerRunes(const char *str, const char *end, rune *out, size_t cap) {
-+  size_t n = 0;
-+  for (const char *p = str; p < end && n <= MAX_RUNE_STR_LEN;) {
-+    uint32_t codepoint;
-+    p = utf8ReadBounded(p, end, &codepoint);
-+    if (codepoint == 0) {
-+      break;
-+    }
-+    const char *map = nu_tolower(codepoint);
-+    if (map == NULL) {
-+      if (n < cap) out[n] = codepoint;
-+      n++;
-+      continue;
-+    }
-+    uint32_t mu;
-+    while ((map = nu_casemap_read(map, &mu)), mu != 0) {
-+      if (n < cap) out[n] = mu;
-+      n++;
-+    }
-+  }
-+  return n;
-+}
- 
--  // determine the length of the folded string
--  ssize_t rlen = nu_strtransformnlen(str, utf8_len, nu_utf8_read,
--                                     nu_tolower, nu_casemap_read);
-+rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len) {
-+  const char *end = str + utf8_len;
-+  size_t rlen = lowerRunes(str, end, NULL, 0);
-   if (rlen > MAX_RUNE_STR_LEN) {
-     *unicode_len = 0;
-     return NULL;
-   }
- 
-   rune *ret = rm_calloc(rlen + 1, sizeof(rune));
--  const char *encoded_char = str;
--  uint32_t codepoint;
--  unsigned i = 0;
--  while (encoded_char < str + utf8_len) {
--    // Read unicode codepoint from utf8 string
--    encoded_char = nu_utf8_read(encoded_char, &codepoint);
--    // Transform unicode codepoint to lower case
--    const char *map = nu_tolower(codepoint);
--
--    // Read the transformed codepoint and store it in the unicode buffer
--    if (map != NULL) {
--      uint32_t mu;
--      while (1) {
--        map = nu_casemap_read(map, &mu);
--        if (mu == 0) {
--          break;
--        }
--        ret[i++] = mu;
--      }
--    } else {
--        ret[i++] = codepoint;
--    }
--  }
-+  lowerRunes(str, end, ret, rlen);
-   *unicode_len = rlen;
- 
-   return ret;
- }
- 
- rune *strToSingleCodepointFoldedRunes(const char *str, size_t utf8_len, size_t *len) {
- 
--  ssize_t rlen = nu_strnlen(str, utf8_len, nu_utf8_read);
-+  const char *end = str + utf8_len;
-+  ssize_t rlen = 0;
-+  for (const char *p = str; p < end; rlen++) {
-+    uint32_t codepoint;
-+    p = utf8ReadBounded(p, end, &codepoint);
-+    if (codepoint == 0) {
-+      break;
-+    }
-+  }
-   if (rlen > MAX_RUNE_STR_LEN) {
-     if (len) *len = 0;
-     return NULL;
-   }
- 
--  uint32_t decoded[rlen + 1];
--  decoded[rlen] = 0;
--  nu_readnstr(str, utf8_len, decoded, nu_utf8_read);
--
-   rune *ret = rm_calloc(rlen + 1, sizeof(rune));
-+  const char *p = str;
-   for (int i = 0; i < rlen; i++) {
--    uint32_t runelike = decoded[i];
-+    uint32_t runelike;
-+    p = utf8ReadBounded(p, end, &runelike);
-     ret[i] = (rune)__fold(runelike);
-   }
-   if (len) *len = rlen;
-@@ -132,7 +158,7 @@ size_t strToRunes(const char *src, size_t slen, rune *out, size_t outcap) {
-   size_t nout = 0;
-   while (src < end) {
-     uint32_t cp;
--    src = nu_utf8_read(src, &cp);
-+    src = utf8ReadBounded(src, end, &cp);
-     if (cp == 0) {
-       break;
-     }
+   RM_TRY(
+     RedisModule_RegisterBoolConfig(
+       ctx, "search-_fallback-to-main-thread-when-block-client-unavailable", 1,
 ```
 
-**File**: `src/trie/rune_util.h` (modified, +9/-4)
+**File**: `src/config.h` (modified, +4/-0)
 ```diff
-@@ -55,11 +55,15 @@ char *runesToStr(const rune *in, size_t len, size_t *utflen);
+@@ -248,6 +248,9 @@ typedef struct {
+   // are intentionally not coupled to any Flex bigredis-driver settings.
+   bool diskDropReadCache;
+   bool diskUseDirectReads;
++  // Collect storage-engine statistics for disk indexes, reported by FT.DEBUG DISK_STATS.
++  // Load-time only: statistics must be attached before each index database opens.
++  bool diskStatistics;
+   // Per-DB SpeedB open-file cap, and the per-index cost charged against the process-wide file-descriptor reservation
+   // (see SearchDisk_CanCreateIndex). Immutable, so a deployment with few, very large indexes must set this at startup
+   // rather than raising it later.
+@@ -521,6 +524,7 @@ static_assert(DISK_ASYNC_READ_POOL_SIZE_MAX * DISK_ASYNC_READ_QUEUE_FACTOR_MAX <
+     .diskWbmBudgetPerIndexMB = DEFAULT_DISK_WBM_BUDGET_PER_INDEX_MB,           \
+     .diskDropReadCache = false,                                                \
+     .diskUseDirectReads = false,                                               \
++    .diskStatistics = false,                                                   \
+     .diskMaxOpenFiles = DEFAULT_DISK_MAX_OPEN_FILES,                           \
+     .diskAsyncReadPoolSize = DEFAULT_DISK_ASYNC_READ_POOL_SIZE,                \
+     .diskAsyncReadQueueFactor = DEFAULT_DISK_ASYNC_READ_QUEUE_FACTOR,          \
+```
+
+**File**: `src/debug_commands.c` (modified, +37/-0)
+```diff
+@@ -3845,6 +3845,42 @@ DEBUG_COMMAND(NumericBucketMap) {
+   return REDISMODULE_OK;
+ }
  
- /* This function reads a UTF-8 encoded string, transforms it to lowercase,
-  * and returns a dynamically allocated array of runes (32-bit integers).
-+ * Decoding stops early at an embedded NUL. Returns NULL for a result longer
-+ * than MAX_RUNE_STR_LEN runes.
-  * Parameters:
-- * - str: The input UTF-8 encoded string.
-- * - utf8_len: The length of the input string in bytes.
-+ * - str: The input UTF-8 encoded buffer (need not be NUL-terminated; nothing
-+ *   past `utf8_len` bytes is read).
-+ * - utf8_len: The length of the input buffer in bytes.
-  * - unicode_len: A pointer to a size_t variable where the length of the
-- *   resulting array of runes will be stored. Must be non-NULL.
-+ *   resulting array of runes will be stored. Must be non-NULL; it is set to 0
-+ *   when NULL is returned.
++// FT.DEBUG DISK_STATS <index> [VERBOSE]
++// Storage-engine level and block-cache stats for every column family of a disk
++// index. VERBOSE appends the sections shared by every index, so callers pass it
++// for one index per shard.
++DEBUG_COMMAND(DiskStats) {
++  if (!debugCommandsEnabled(ctx)) {
++    return RedisModule_ReplyWithError(ctx, NODEBUG_ERR);
++  }
++  if (argc != 3 && argc != 4) {
++    return RedisModule_WrongArity(ctx);
++  }
++  bool withStatistics = false;
++  if (argc == 4) {
++    if (strcasecmp(RedisModule_StringPtrLen(argv[3], NULL), "VERBOSE")) {
++      return RedisModule_ReplyWithError(ctx, "Expected VERBOSE");
++    }
++    withStatistics = true;
++  }
++  GET_SEARCH_CTX(argv[2])
++
++  if (!sctx->spec->diskSpec) {
++    RedisModule_ReplyWithError(sctx->redisCtx, "DISK_STATS is only supported on disk indexes");
++  } else {
++    char *text = SearchDisk_DebugDiskStats(sctx->spec->diskSpec, withStatistics);
++    if (!text) {
++      RedisModule_ReplyWithError(sctx->redisCtx, "Disk stats are unavailable");
++    } else {
++      RedisModule_ReplyWithStringBuffer(sctx->redisCtx, text, sdslen(text));
++      sdsfree(text);
++    }
++  }
++
++  SearchCtx_Free(sctx);
++  return REDISMODULE_OK;
++}
++
+ /**
+  * FT.DEBUG REGISTER_TEST_SCORERS
+  * Register the test scorers for testing purposes.
+@@ -3956,6 +3992,7 @@ DebugCommandType commands[] = {{"DUMP_INVIDX", DumpInvertedIndex}, // Print all
+                                {"GET_MAX_DOC_ID", GetMaxDocId},
+                                {"DUMP_DELETED_IDS", DumpDeletedIds},
+                                {"NUMERIC_BUCKET_MAP", NumericBucketMap},
++                               {"DISK_STATS", DiskStats},
+                                {"DISK_IO_CONTROL", DiskIOControl},
+                                {"REGISTER_TEST_SCORERS", RegisterTestScorers},
+                                {"SET_MAX_INDEXES", SetMaxIndexes},
+```
+
+**File**: `src/search_disk.c` (modified, +7/-1)
+```diff
+@@ -201,7 +201,8 @@ bool SearchDisk_Initialize(RedisModuleCtx *ctx) {
+     .maxOpenFiles = RSGlobalConfig.diskMaxOpenFiles,
+   };
+   disk_db = disk->basic.open(ctx, &resource_config, RSGlobalConfig.hideUserDataFromLog,
+-                             RSGlobalConfig.diskDropReadCache, RSGlobalConfig.diskUseDirectReads);
++                             RSGlobalConfig.diskDropReadCache, RSGlobalConfig.diskUseDirectReads,
++                             RSGlobalConfig.diskStatistics);
+   if (!disk_db) {
+     RedisModule_Log(ctx, "warning", "Search Disk is enabled but could not be initialized");
+     return false;
+@@ -538,6 +539,11 @@ size_t SearchDisk_GetDeletedIds(RedisSearchDiskIndexSpec *handle, t_docId *buffe
+     return disk->docTable.getDeletedIds(handle, buffer, buffer_size);
+ }
+ 
++char *SearchDisk_DebugDiskStats(RedisSearchDiskIndexSpec *handle, bool withStatistics) {
++    RS_ASSERT(disk && disk_db && handle);
++    return disk->metrics.debugDiskStats(disk_db, handle, withStatistics, &sdsnewlen);
++}
++
+ char *SearchDisk_DebugDumpNumericBucketMap(RedisSearchDiskIndexSpec *handle, t_fieldIndex fieldIndex) {
+     RS_ASSERT(disk && handle);
+     return disk->index.debugDumpNumericBucketMap(handle, fieldIndex, &sdsnewlen);
+```
+
+**File**: `src/search_disk.h` (modified, +9/-0)
+```diff
+@@ -532,6 +532,15 @@ size_t SearchDisk_GetDeletedIds(RedisSearchDiskIndexSpec *handle, t_docId *buffe
   */
- rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len);
+ char *SearchDisk_DebugDumpNumericBucketMap(RedisSearchDiskIndexSpec *handle, t_fieldIndex fieldIndex);
  
-@@ -74,7 +78,8 @@ rune *strToLowerRunes(const char *str, size_t utf8_len, size_t *unicode_len);
- rune *strToSingleCodepointFoldedRunes(const char *str, size_t utf8_len, size_t *len);
- 
- /* Decode `slen` bytes of UTF-8 from `src` into the caller-supplied `out`,
-- * writing at most `outcap` runes and never NUL-terminating. Decoding stops
-+ * writing at most `outcap` runes and never NUL-terminating. `src` need not be
-+ * NUL-terminated; nothing past `slen` bytes is read. Decoding stops
-  * early at an embedded NUL. Returns the input's full rune count, which exceeds
-  * `outcap` when the output was truncated. */
- size_t strToRunes(const char *src, size_t slen, rune *out, size_t outcap);
++/**
++ * @brief Debug: storage-engine stats text of a disk index, for FT.DEBUG DISK_STATS.
++ *
++ * @param withStatistics Also append the sections shared by every index (block cache and
++ *        statistics enabled by search-_disk-statistics)
++ * @return sds text (release with sdsfree), or NULL if it could not be produced
++ */
++char *SearchDisk_DebugDiskStats(RedisSearchDiskIndexSpec *handle, bool withStatistics);
++
+ /**
+  * @brief Replace the key name in document metadata for a given document ID
+  *
 ```
 
-**File**: `tests/cpptests/test_cpp_trie.cpp` (modified, +90/-0)
+**File**: `src/search_disk_api.h` (modified, +16/-1)
 ```diff
-@@ -27,8 +27,12 @@
- #include <set>
- #include <vector>
- #include <algorithm>
-+#include <utility>
- #include <climits>
+@@ -154,11 +154,14 @@ typedef struct BasicDiskAPI {
+    * @param logObfuscation true to enable obfuscation, false to disable
+    * @param dropReadCache When true, hints the OS to evict pages after reading
+    * @param useDirectReads When true, opens files with O_DIRECT to bypass the OS page cache
++   * @param enableStatistics When true, every index database shares one storage-engine
++   *        statistics object, reported by `MetricsDiskAPI::debugDiskStats`
+    * @return Pointer to the disk context, or NULL on error
+    */
+   RedisSearchDisk *(*open)(RedisModuleCtx *ctx,
+                            const SearchDiskResourceConfig *resourceConfig,
+-                           bool logObfuscation, bool dropReadCache, bool useDirectReads);
++                           bool logObfuscation, bool dropReadCache, bool useDirectReads,
++                           bool enableStatistics);
+   void (*close)(RedisModuleCtx *ctx, RedisSearchDisk *disk);
  
-+#include <sys/mman.h>
-+#include <unistd.h>
+   /**
+@@ -1164,6 +1167,18 @@ typedef struct MetricsDiskAPI {
+    */
+   PerFieldCfDiskMetrics (*getVectorFieldMetrics)(const RedisSearchDiskIndexSpec *index,
+                                                  const char *fieldName, size_t fieldNameLen);
 +
- class TrieTest : public ::testing::Test {};
++  /**
++   * @brief Debug: storage-engine level and block-cache stats for every column family of
++   *        `index`, as text.
++   *
++   * With `withStatistics`, also appends the shared block-cache and statistics sections,
++   * which cover every index; statistics are reported as disabled unless enabled in `open`.
++   *
++   * @return Text allocated via `allocate`, or NULL if it could not be produced
++   */
++  char *(*debugDiskStats)(RedisSearchDisk *disk, RedisSearchDiskIndexSpec *index,
++                          bool withStatistics, AllocateKeyCallback allocate);
+ } MetricsDiskAPI;
  
- static bool trieInsert(Trie *t, const char *s, size_t n) {
-@@ -1423,6 +1427,92 @@ TEST_F(TrieTest, testSearchTrimDropsTail) {
-   TrieType_Free(t);
- }
+ typedef struct RedisSearchDiskAPI {
+```
+
+**File**: `tests/pytests/test_debug_commands.py` (modified, +13/-0)
+```diff
+@@ -54,6 +54,18 @@ def testDiskLiveSnapshotsIsZeroWithoutDisk(self):
+         self.env.expect(debug_cmd(), 'DISK_LIVE_SNAPSHOTS', 'extra').error().contains(
+             'wrong number of arguments')
  
-+// FT.SUGGET hands strToSingleCodepointFoldedRunes a Redis string's exact byte
-+// length, and FT.SUGADD/SUGDEL do the same with strToRunes. A multi-byte lead
-+// byte at the end must not make a decoder read past that length, so the result
-+// cannot depend on the bytes that follow it.
-+TEST_F(TrieTest, testRuneDecodeStaysWithinLength) {
-+  typedef std::vector<rune> (*Decoder)(const char *, size_t);
-+  const std::pair<const char *, Decoder> decoders[] = {
-+      {"strToSingleCodepointFoldedRunes",
-+       [](const char *s, size_t n) {
-+         size_t rlen = 0;
-+         rune *r = strToSingleCodepointFoldedRunes(s, n, &rlen);
-+         std::vector<rune> out(r, r + rlen);
-+         rm_free(r);
-+         return out;
-+       }},
-+      {"strToRunes",
-+       [](const char *s, size_t n) {
-+         std::vector<rune> out(n);
-+         out.resize(std::min(strToRunes(s, n, out.data(), n), n));
-+         return out;
-+       }},
-+      {"strToLowerRunes",
-+       [](const char *s, size_t n) {
-+         size_t rlen = 0;
-+         rune *r = strToLowerRunes(s, n, &rlen);
-+         std::vector<rune> out(r, r + rlen);
-+         rm_free(r);
-+         return out;
-+       }},
-+  };
++    def testDiskStatsRequiresDiskIndex(self):
++        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx').error().contains(
++            'only supported on disk indexes')
++        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx', 'verbose').error().contains(
++            'only supported on disk indexes')
++        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx', 'other').error().contains('Expected VERBOSE')
++        self.env.expect(debug_cmd(), 'DISK_STATS', 'invalid_idx').error().contains(
++            'Can not create a search ctx')
++        self.env.expect(debug_cmd(), 'DISK_STATS').error().contains('wrong number of arguments')
++        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx', 'VERBOSE', 'extra').error().contains(
++            'wrong number of arguments')
 +
-+  // The leads of a 2-, 3- and 4-byte sequence, each cut off after "ab".
-+  for (char lead : {'\xC3', '\xE4', '\xF0'}) {
-+    const std::string input = std::string("ab") + lead;
-+    // The same input followed by zeros, or by the rest of U+1F600.
-+    const std::string zeroed = input + std::string(3, '\0');
-+    const std::string continued = input + "\x9F\x98\x80";
-+    for (const auto &[name, decode] : decoders) {
-+      EXPECT_EQ(decode(zeroed.data(), input.size()), decode(continued.data(), input.size()))
-+          << name << " read past the supplied length (trailing lead byte 0x" << std::hex
-+          << (int)(unsigned char)lead << ")";
-+    }
-+  }
-+}
+     def testDebugHelp(self):
+         err_msg = 'wrong number of arguments'
+         help_list = [
+@@ -112,6 +124,7 @@ def testDebugHelp(self):
+             'GET_MAX_DOC_ID',
+             'DUMP_DELETED_IDS',
+             'NUMERIC_BUCKET_MAP',
++            'DISK_STATS',
+             'DISK_IO_CONTROL',
+             'REGISTER_TEST_SCORERS',
+             'SET_MAX_INDEXES',
+```
+
+**File**: `tests/pytests/test_disk_config.py` (modified, +33/-1)
+```diff
+@@ -5,10 +5,14 @@
+ # (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ # GNU Affero General Public License v3 (AGPLv3).
+ 
++import os
++import tempfile
 +
-+// Lowering ends at the first decoded NUL, whether a literal 0 byte or an
-+// overlong encoding of one.
-+TEST_F(TrieTest, testLowerRunesStopsAtNul) {
-+  const std::pair<std::string, std::vector<rune>> cases[] = {
-+      {std::string("\0AB", 3), {}},
-+      {std::string("a\0BCD", 5), {'a'}},
-+      {std::string("Ab\xC0\x80") + "CD", {'a', 'b'}},
-+  };
-+  for (const auto &[input, expected] : cases) {
-+    size_t rlen = 0;
-+    rune *r = strToLowerRunes(input.data(), input.size(), &rlen);
-+    ASSERT_TRUE(r != nullptr);
-+    EXPECT_EQ(expected, std::vector<rune>(r, r + rlen)) << "input size " << input.size();
-+    EXPECT_EQ(0, r[rlen]) << "input size " << input.size();
-+    rm_free(r);
-+  }
-+}
+ from common import *
+ 
+ """
+-Tests for search-disk-drop-read-cache and search-disk-use-direct-reads module configs.
++Tests for the search-disk-drop-read-cache, search-disk-use-direct-reads and
++search-_disk-statistics module configs.
+ 
+ These configs control SpeedB OS page-cache behaviour for disk indexes:
+   - search-disk-drop-read-cache: whether to drop the OS read cache after each read
+@@ -94,3 +98,31 @@ def test_disk_config_startup_both():
+     env.expect('CONFIG', 'GET', 'search-disk-use-direct-reads').equal(
+         ['search-disk-use-direct-reads', 'yes'])
+     env.stop()
 +
-+// A string longer than MAX_RUNE_STR_LEN runes is rejected without being walked
-+// to its end. The bytes past the limit sit in an inaccessible page, so reading
-+// them faults.
-+TEST_F(TrieTest, testLowerRunesStopsCountingPastLimit) {
-+  const long pageSize = sysconf(_SC_PAGESIZE);
-+  ASSERT_GT(pageSize, 0);
-+  const size_t page = pageSize;
-+  const size_t n = MAX_RUNE_STR_LEN + 1;
-+  const size_t region = ((n + page - 1) / page + 1) * page;
-+  char *base =
-+      (char *)mmap(nullptr, region, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+  ASSERT_NE(MAP_FAILED, (void *)base);
-+  char *guard = base + region - page;
-+  ASSERT_EQ(0, mprotect(guard, page, PROT_NONE));
-+  char *str = guard - n;
-+  memset(str, 'a', n);
 +
-+  size_t rlen = 1;
-+  EXPECT_EQ(nullptr, strToLowerRunes(str, n + page, &rlen));
-+  EXPECT_EQ(0, rlen);
-+  munmap(base, region);
-+}
++@skip(cluster=True, redis_less_than="8.8")
++def test_disk_statistics_config_defaults_to_no_and_is_hidden():
++    env = Env(noDefaultModuleArgs=True)
++    if env.env == 'existing-env':
++        env.skip()
++    env.expect('CONFIG', 'GET', 'search-_disk-statistics').equal(['search-_disk-statistics', 'no'])
++    env.assertNotContains('search-_disk-statistics', env.cmd('CONFIG', 'GET', '*'))
 +
- namespace {
- // Big enough for every allocation a search over a two-entry trie writes to.
- constexpr size_t kServedAllocBytes = 64 * 1024;
++
++@skip(cluster=True, redis_less_than="8.8")
++def test_disk_statistics_config_is_immutable(env):
++    env.expect('CONFIG', 'SET', 'search-_disk-statistics', 'yes').error()
++    env.expect('CONFIG', 'GET', 'search-_disk-statistics').equal(['search-_disk-statistics', 'no'])
++
++
++@skip(cluster=True, redis_less_than="8.8")
++def test_disk_statistics_config_set_at_load_time():
++    # No legacy module-argument alias; load-time values come from the config file.
++    conf_path = os.path.join(tempfile.mkdtemp(), 'disk_statistics.conf')
++    with open(conf_path, 'w') as f:
++        f.write('search-_disk-statistics yes\n')
++    env = Env(noDefaultModuleArgs=True, redisConfigFile=conf_path)
++    if env.env == 'existing-env':
++        env.skip()
++    env.expect('CONFIG', 'GET', 'search-_disk-statistics').equal(['search-_disk-statistics', 'yes'])
++    env.stop()
 ```
 
 ---
 
-### Incident Patch 3: `359a32a8` (2026-10-20)
-**Commit Message**: [MOD-19639] Prevent crashes from unsupported RDB index storage flags (#11944)
+### Incident Patch 3: `724e39f0` (2026-10-22)
+**Commit Message**: [MOD-19631] Fix crash on default FT.SEARCH / LOAD * when a JSON index has a SORTABLE $ field (#11958)
 
-Reject numeric storage flags in persisted index specifications
+[MOD-19631] Force-load the JSON root key in load-all for SORTABLE `$` fields
 
-**File**: `src/spec.c` (modified, +9/-0)
+A SORTABLE schema field named `$` makes the root key value-available from
+the sorting vector, so `get_key_load` returned `None` and the `unwrap` in
+the JSON load-all path panicked across FFI, aborting Redis on
+`FT.SEARCH idx *` and `FT.AGGREGATE idx * LOAD *`.
+
+Pass `ForceLoad`, as the hash loader already does, and add a flow test.
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/redisearch_rs/rlookup/src/load_document/json.rs` (modified, +5/-2)
 ```diff
-@@ -3366,6 +3366,10 @@ IndexSpec *IndexSpec_RdbLoad(RedisModuleIO *rdb, int encver, bool useSst, QueryE
-   RedisModule_Free(rawName);
+@@ -8,7 +8,7 @@
+ */
  
-   flags = (IndexFlags)LoadUnsigned_IOError(rdb, goto cleanup_name);
-+  if (flags & Index_StoreNumeric) {
-+    QueryError_SetError(status, QUERY_ERROR_CODE_PARSE_ARGS, "Invalid index storage flags");
-+    goto cleanup_name;
-+  }
-   if (encver < INDEX_MIN_NOFREQ_VERSION) {
-     flags |= Index_StoreFreqs;
-   }
-@@ -3598,6 +3602,11 @@ void *IndexSpec_LegacyRdbLoad(RedisModuleIO *rdb, int encver) {
-   sp->obfuscatedName = IndexSpec_FormatObfuscatedName(sp->specName);
-   RedisModule_Free(legacyName);
-   sp->flags = (IndexFlags)RedisModule_LoadUnsigned(rdb);
-+  if (sp->flags & Index_StoreNumeric) {
-+    RedisModule_LogIOError(rdb, "warning", "RDB Load: Invalid index storage flags");
-+    StrongRef_Release(spec_ref);
-+    return NULL;
-+  }
-   if (encver < INDEX_MIN_NOFREQ_VERSION) {
-     sp->flags |= Index_StoreFreqs;
-   }
+ use crate::{
+-    RLookup, RLookupKey, RLookupKeyFlags, RLookupRow,
++    RLookup, RLookupKey, RLookupKeyFlag, RLookupRow,
+     load_document::{
+         DOCUMENT_OPEN_KEY_QUERY_FLAGS, DocumentFormat, FieldLoader, LoadAllError, LoadFieldError,
+         UNDERSCORE_KEY,
+@@ -176,8 +176,11 @@ impl DocumentFormat for JsonDocumentFormat<'_> {
+         let rlk = if let Some(rlk) = rlookup.find_key_by_name(JSON_ROOT) {
+             rlk.into_current().unwrap()
+         } else {
++            // A SORTABLE schema field on `$` makes the key value-available from
++            // the sorting vector, in which case `get_key_load` returns `None`
++            // unless forced.
+             rlookup
+-                .get_key_load(JSON_ROOT, JSON_ROOT, RLookupKeyFlags::empty())
++                .get_key_load(JSON_ROOT, JSON_ROOT, RLookupKeyFlag::ForceLoad.into())
+                 .unwrap()
+         };
+ 
 ```
 
-**File**: `tests/cpptests/test_cpp_rdb.cpp` (modified, +95/-0)
+**File**: `src/redisearch_rs/rlookup/tests/load_document_json.rs` (modified, +51/-1)
 ```diff
-@@ -9,6 +9,9 @@
+@@ -22,12 +22,14 @@
+ //! ([`redis_json_api::mock`]) whose vtable resolves JSONPath queries against a
+ //! [`serde_json::Value`].
  
- #include "gtest/gtest.h"
- #include "gtest/internal/gtest-port.h"  // For CaptureStderr/GetCapturedStderr
-+extern "C" {
-+#include "util/dict.h"
-+}
- #include "common.h"
- #include "redismock/redismock.h"
- #include "synonym_map.h"
-@@ -24,6 +27,7 @@ extern "C" {
- #include "spec.h"
- #include "vector_index.h"
- #include "indexes.h"
-+#include "indexer.h"
- #include "query_error_ffi.h"
- #include "rules.h"
- #include "alias.h"
-@@ -38,6 +42,7 @@ extern "C" {
- extern int Indexes_RdbLoad(RedisModuleIO *rdb, int encver, int when);
- extern void Spec_AddToDict(RefManager *rm);  // Helper to add spec to global dict
- extern RedisSearchDiskAPI *disk;
-+extern dict *legacySpecDict;
++use field_spec::FieldSpecOption;
+ use proptest::prelude::{Just, Strategy, any, prop_oneof};
+ use proptest::proptest;
+ use redis_json_api::mock::{with_json_api, with_json_api_broken_handle};
+ use redis_module::RedisString;
+ use rlookup::{
+-    DocumentFormat, FieldLoader, JsonDocumentFormat, JsonPathCache, LoadAllError, RLookup,
++    DocumentFormat, FieldLoader, FieldSpecBuilder, FieldSpecType, IndexSpecCache,
++    JsonDocumentFormat, JsonPathCache, LoadAllError, RLookup, RLookupKey, RLookupKeyFlag,
+     RLookupKeyFlags, RLookupRow,
+ };
+ use serde_json::json;
+@@ -208,6 +210,54 @@ fn load_all_writes_root_value() {
+     });
  }
  
- 
-@@ -283,6 +288,96 @@ TEST_F(RdbMockTest, testIndexSpecRdbLoadNormalizesInvalidStorageFlags) {
-     EXPECT_FALSE(loadedSpec->flags & Index_StoreFieldFlags);
- }
- 
-+TEST_F(RdbMockTest, testIndexSpecRdbLoadRejectsNumericStorageFlag) {
-+  const char *args[] = {"SCHEMA", "title", "TEXT", "price", "NUMERIC"};
-+  QueryError status = QueryError_Default();
-+  StrongRef originalRef =
-+      IndexSpec_ParseC(nullptr, "storage_flags", args, std::size(args), &status);
-+  ASSERT_FALSE(QueryError_HasError(&status)) << QueryError_GetUserError(&status);
-+  auto *original = static_cast<IndexSpec *>(StrongRef_Get(originalRef));
-+  ASSERT_NE(original, nullptr);
-+  std::unique_ptr<IndexSpec, std::function<void(IndexSpec *)>> originalPtr(
-+      original, [](IndexSpec *spec) { Indexes_RemoveSpecFromGlobals(spec->own_ref, false); });
-+
-+  // Numeric fields are valid; only a numeric encoding on the whole spec is unsupported.
-+  for (unsigned storage = 0; storage < 8; ++storage) {
-+    const uint64_t flags = Index_StoreByteOffsets | ((storage & 1) ? Index_StoreTermOffsets : 0) |
-+                           ((storage & 2) ? Index_StoreFieldFlags : 0) |
-+                           ((storage & 4) ? Index_StoreFreqs : 0);
-+    for (bool numericStorage : {false, true}) {
-+      SCOPED_TRACE(::testing::Message() << "flags=" << flags << " numeric=" << numericStorage);
-+      original->flags = static_cast<IndexFlags>(flags | (numericStorage ? Index_StoreNumeric : 0));
-+      std::unique_ptr<RedisModuleIO, decltype(&RMCK_FreeRdbIO)> io(RMCK_CreateRdbIO(),
-+                                                                   RMCK_FreeRdbIO);
-+      IndexSpec_RdbSave(io.get(), original, 0);
-+      ASSERT_EQ(RMCK_IsIOError(io.get()), 0);
-+      io->read_pos = 0;
-+      char *name = RMCK_LoadStringBuffer(io.get(), nullptr);
-+      rm_free(name);
-+      RMCK_LoadUnsigned(io.get());
-+      const size_t flagsEnd = io->read_pos;
-+      io->read_pos = 0;
-+
-+      IndexSpec *loaded = IndexSpec_RdbLoad(io.get(), INDEX_CURRENT_VERSION, false, &status);
-+      if (numericStorage) {
-+        EXPECT_EQ(loaded, nullptr);
-+        EXPECT_TRUE(QueryError_HasError(&status));
-+        EXPECT_EQ(io->read_pos, flagsEnd);
-+      } else {
-+        ASSERT_NE(loaded, nullptr) << QueryError_GetUserError(&status);
-+        EXPECT_FALSE(QueryError_HasError(&status));
-+        EXPECT_EQ(loaded->flags, flags);
-+        EXPECT_EQ(loaded->numFields, 2);
-+        EXPECT_EQ(loaded->fields[1].types, INDEXFLD_T_NUMERIC);
-+        EXPECT_EQ(io->read_pos, io->buffer.size());
-+      }
-+      if (loaded) {
-+        IndexSpec_RdbLoadDiscard(loaded->own_ref);
-+      }
-+      EXPECT_EQ(RMCK_IsIOError(io.get()), 0);
-+      QueryError_ClearError(&status);
-+    }
-+  }
++/// An [`RLookup`] whose schema declares `$` as a SORTABLE, un-normalized (UNF) text field.
++///
++/// Such a key is "value available" from the sorting vector, so creating it without
++/// [`RLookupKeyFlag::ForceLoad`] yields no key to write into.
++fn rlookup_with_sortable_root() -> RLookup<'static> {
++    let mut rlookup = RLookup::new();
++    rlookup.set_cache(Some(IndexSpecCache::from_fields([FieldSpecBuilder::new(
++        c"$",
++    )
++    .with_types(FieldSpecType::Fulltext.into())
++    .with_options(FieldSpecOption::Sortable | FieldSpecOption::Unf)
++    .with_sort_idx(0)
++    .finish()])));
++    rlookup
 +}
 +
-+TEST_F(RdbMockTest, testLegacyIndexSpecRdbLoadRejectsNumericStorageFlag) {
-+  const auto originalGetKeyName = RedisModule_GetKeyNameFromIO;
-+  const bool originalLoading = g_isLoading;
-+  dict *originalRules = legacySpecRules;
-+  dict *originalSpecs = legacySpecDict;
-+  RedisModule_GetKeyNameFromIO = [](RedisModuleIO *) -> const RedisModuleString * {
-+    return nullptr;
-+  };
-+  g_isLoading = true;
-+  legacySpecRules = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
-+  legacySpecDict = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
++/// Assert that `load_all` loads the root from the document when the schema declares `$` as a
++/// SORTABLE, un-normalized (UNF) field.
++#[test]
++#[cfg_attr(miri, ignore)]
++fn load_all_force_loads_sortable_root_key() {
++    // Precondition: without forcing, the schema alone makes the key value-available and
++    // `get_key_load` declines to hand it out, so the assertions below exercise the forced path.
++    assert!(
++        rlookup_with_sortable_root()
++            .get_key_load(c"$", c"$", RLookupKeyFlags::empty())
++            .is_none(),
++        "a SORTABLE|UNF `$` must not be loadable without ForceLoad"
++    );
 +
-+  for (int encver = LEGACY_INDEX_MIN_VERSION; encver <= LEGACY_INDEX_MAX_VERSION; ++encver) {
-+    for (bool numericStorage : {false, true}) {
-+      SCOPED_TRACE(::testing::Message() << "encver=" << encver << " numeric=" << numericStorage);
-+      std::unique_ptr<RedisModuleIO, decltype(&RMCK_FreeRdbIO)> io(RMCK_CreateRdbIO(),
-+                                                                   RMCK_FreeRdbIO);
-+      RMCK_SaveStringBuffer(io.get(), "legacy_storage_flags", sizeof("legacy_storage_flags"));
-+      RMCK_SaveUnsigned(io.get(), INDEX_DEFAULT_FLAGS | (numericStorage ? Index_StoreNumeric : 0));
-+      const size_t flagsEnd = io->buffer.size();
-+      // A later, distinct validation failure keeps the control safe on unfixed code and proves
-+      // valid storage flags reach the schema, while numeric storage must stop before it.
-+      RMCK_SaveUnsigned(io.get(), SPEC_MAX_FIELDS + 1);
++    redis_mock::init_redis_module_mock();
++    with_json_api(Some(json!("hello")), |japi, ctx| {
++        // SAFETY: the root path is static.
++        let cache = unsafe { JsonPathCache::new(&japi, [Some(c"$")].into_iter()) };
++        let format = JsonDocumentFormat::new(ctx, &japi, PRE_MULTI, &cache);
++        let key_name = make_redis_string(c"doc:1");
 +
-+      EXPECT_EQ(IndexSpec_LegacyRdbLoad(io.get(), encver), nullptr);
-+      EXPECT_EQ(io->read_pos, numericStor
++        let mut rlookup = rlookup_with_sortable_root();
++        let mut row = RLookupRow::new();
++        format.load_all(&mut rlookup, &mut row, &key_name).unwrap();
++
++        let cursor = rlookup.find_key_by_name(c"$").unwrap();
++        let key: &RLookupKey = cursor.current().unwrap();
++        assert!(key.flags.contains(RLookupKeyFlag::ValAvailable));
++        assert_eq!(row.get(key).unwrap().as_str_bytes(), Some(&b"hello"[..]));
++    });
++}
++
+ /// Assert that `load_all` maps a missing key to `KeyNotFound`, and a present-but-empty
+ /// root (`$` resolving to an empty array) to `JsonRootMissing`.
+ #[test]
+```
+
+**File**: `tests/pytests/test_json_partial_load.py` (modified, +52/-0)
+```diff
+@@ -98,6 +98,58 @@ def test_doc_level_load_returns_root_for_matching_document(env):
+     env.assertEqual(res, [1, "doc:1", ["$", {"name": "carol"}]])
+ 
+ 
++@skip(no_json=True)
++def test_load_all_sortable_root_field(env):
++    """MOD-19631: a SORTABLE schema field on the JSON root (`$`) makes the
++    root key value-available from the sorting vector. Load-all must still
++    populate it from the document instead of crashing the server. The
++    non-SORTABLE case guards that the default path is unchanged."""
++    cases = [
++        # (field type, extra schema args, JSON document, expected loaded `$`).
++        # A scalar root is loaded as its plain value, not as serialized JSON.
++        ("TEXT", ["SORTABLE"], '"hello"', "hello"),
++        ("TAG", ["SORTABLE"], '"hello"', "hello"),
++        ("NUMERIC", ["SORTABLE"], "42", "42"),
++        ("TEXT", ["SORTABLE", "NOINDEX"], '"hello"', "hello"),
++        ("TEXT", [], '"hello"', "hello"),
++    ]
++    for field_type, extra, doc, expected in cases:
++        env.flush()
++        env.expect(
++            "FT.CREATE", "idx", "ON", "JSON", "SCHEMA", "$", field_type, *extra
++        ).ok()
++        env.cmd("JSON.SET", "doc:1", "$", doc)
++        waitForIndex(env, "idx")
++        msg = f"{field_type} {extra}"
++
++        res = env.cmd("FT.SEARCH", "idx", "*")
++        env.assertEqual(res[0], 1, message=msg)
++        env.assertEqual(res[1], "doc:1", message=msg)
++        env.assertEqual(to_dict(res[2])["$"], expected, message=msg)
++
++        res = env.cmd("FT.AGGREGATE", "idx", "*", "LOAD", "*")
++        env.assertEqual(res[0], 1, message=msg)
++        env.assertEqual(to_dict(res[1])["$"], expected, message=msg)
++
++
++@skip(no_json=True)
++def test_load_all_sortable_array_root_field(env):
++    """MOD-19631: a SORTABLE `$` over an array root. The sorting vector and the loaded
++    document may hold different values; load-all must return the whole root from the
++    document, consistently for `FT.SEARCH` and `FT.AGGREGATE ... LOAD *`."""
++    env.expect("FT.CREATE", "idx", "ON", "JSON", "SCHEMA", "$", "TEXT", "SORTABLE").ok()
++    env.cmd("JSON.SET", "doc:1", "$", '["a", "b"]')
++    waitForIndex(env, "idx")
++
++    res = env.cmd("FT.SEARCH", "idx", "*")
++    env.assertEqual(res[0], 1)
++    env.assertEqual(json.loads(to_dict(res[2])["$"]), ["a", "b"])
++
++    res = env.cmd("FT.AGGREGATE", "idx", "*", "LOAD", "*")
++    env.assertEqual(res[0], 1)
++    env.assertEqual(json.loads(to_dict(res[1])["$"]), ["a", "b"])
++
++
+ @skip(cluster=True, no_json=True)
+ def test_return_json_paths_across_documents(env):
+     """Explicit RETURN mixes compiled paths, multi-values, and the __key sentinel."""
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11948** (closed): [MOD-19994] Keep C++ exceptions from escaping the geometry C API (@ofiryanai)
-- **PR #11946** (2026-10-20): [MOD-20014] clear docIDmetadata on restore commands on disk (@JoanFM)
-- **PR #11944** (2026-10-20): [MOD-19639] Prevent crashes from unsupported RDB index storage flags (@dor-forer)
-- **PR #11942** (closed): add tests to see how doc ID meta behaves under dump restore (@JoanFM)
-- **PR #11941** (2026-10-20): [MOD-14594] Prevent integer overflow in geometry allocators (@ofiryanai)
-- **PR #11939** (2026-10-20): [MOD-19840] Fix flaky test_hybrid_knn_implicit_filter_matches_wildcard (@Itzikvaknin)
+- **PR #11975** (2026-10-22): [8.6-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
+- **PR #11974** (2026-10-22): [8.8-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
+- **PR #11972** (2026-10-22): [8.12] [MOD-18503] Serialize background query replies without retaining result rows (@GuyAv46)
+- **PR #11967** (2026-10-22): [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (@lerman25)
+- **PR #11964** (2026-10-21): [MOD-19626] Prevent excessive memory allocation for large hybrid WINDOW values (@dor-forer)
+- **PR #11963** (closed): [MOD-19619] Prevent coordinator crashes when hybrid shard profiles are incomplete (@dor-forer)
 
 ---
 
@@ -2267,35 +2396,68 @@ Reject numeric storage flags in persisted index specifications
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-14594] Prevent integer overflow in geometry allocators (#11941)
+## X. [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967)
 
 **RULE**:
-When implementing operations in `src/geometry/allocator/allocator.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/coord/hybrid/dist_hybrid.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e9bbdc2`: [MOD-14594] Prevent integer overflow in geometry allocators (#11941). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ad57da6`: [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/geometry/allocator/allocator.hpp`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/coord/hybrid/dist_hybrid.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#include <limits>
-#include <new>
-  [[nodiscard]] static inline auto allocate(std::size_t n) -> value_type*;
-inline auto Allocator<T>::allocate(std::size_t n) -> value_type* {
-  if (n > std::numeric_limits<std::size_t>::max() / sizeof(value_type)) {
-    throw std::bad_alloc{};
+  // RPNet collects complete shard profiles or errors; timeouts can shorten the list.
+  RS_LOG_ASSERT(current, "Collected shard profile must not be NULL");
+  MRReply *shards;
+    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_MAP && MRReply_Length(current) >= 2 &&
+                      MRReply_Length(current) % 2 == 0,
+                  "RESP3 profile must be a nonempty map");
+    shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
+    // RESP2: ["Shards", shards_array, ...] -> shards_array[0] is the shard profile
+    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_ARRAY && MRReply_Length(current) >= 2,
+                  "RESP2 profile must contain the Shards key and array");
+    shards = MRReply_ArrayElement(current, 1);
   }
+  RS_LOG_ASSERT(shards && MRReply_Type(shards) == MR_REPLY_ARRAY && MRReply_Length(shards) > 0,
+                "Shards must contain a shard profile");
+  MRReply *profile = MRReply_ArrayElement(shards, 0);
+  RS_LOG_ASSERT(profile && MRReply_Length(profile) >= 2 && MRReply_Length(profile) % 2 == 0,
+                "Shard profile must contain key-value pairs");
+  if (!resp3) {
+  RS_LOG_ASSERT(MRReply_Type(profile) == MR_REPLY_MAP, "Shard profile must be a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  [[nodiscard]] static inline auto allocate(std::size_t n) noexcept -> value_type*;
-inline auto Allocator<T>::allocate(std::size_t n) noexcept -> value_type* {
+    MRReply *shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
+    return MRReply_ArrayElement(shards, 0);
+    // RESP2: [results, shards_array] -> shards_array[0] is the shard profile
+    MRReply *shards_array_profile = MRReply_ArrayElement(current, 1);
+    MRReply *profile = MRReply_ArrayElement(shards_array_profile, 0);
+    return profile;
+  if (!profile || MRReply_Type(profile) == MR_REPLY_ERROR) {
+  // [{"Shard ID": "id", "SEARCH": profile (without Shard ID), "VSIM": profile (without Shard ID)}, ...]
+
+  bool resp3 = reply->resp3;
+
+  // Iterate over shards and print both SEARCH and VSIM profiles for each shard
+  for (size_t i = 0; i < searchCount; i++) {
+    // Extract shard profiles
+    MRReply *searchProfile = extractShardProfile(searchRpnet->shardsProfile[i], resp3);
+    MRReply *vsimProfile = extractShardProfile(vsimRpnet->shardsProfile[i], resp3);
+
+    // Extract and print Shard ID from SEARCH profile
+    MRReply *shardIdReply = NULL;
+    if (searchProfile) {
+      shardIdReply = extractShardIdReply(searchProfile);
+      RedisModule_Reply_SimpleString(reply, "Shard ID");
+      MR_ReplyWithMRReply(reply, shardIdReply);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e9bbdc2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ad57da6` are properly handled with clean fallback behavior.

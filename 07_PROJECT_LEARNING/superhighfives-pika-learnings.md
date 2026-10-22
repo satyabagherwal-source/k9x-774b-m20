@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
 > **Source**: github ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
-> **Source Version**: `4fc05696`  
+> **Source Version**: `d28d2ecc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:47:13.090Z  
+> **Timestamp**: 2026-10-22T17:51:45.474Z  
 > **Learning ID**: `learn-github-superhighfives-pika`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:47:12.717Z  
+> **Harvest Timestamp**: 2026-10-22T17:51:44.961Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source colour picker app for macOS
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2593 stars
+- **Stars / Engagement**: 2597 stars
 
 ---
 
@@ -1448,479 +1448,183 @@ extension NSColor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dd82fcf` (2026-07-31)
-**Commit Message**: Drop the build from the review so it actually posts
+### Incident Patch 1: `d28d2ecc` (2026-10-20)
+**Commit Message**: Refresh ColorNames.json at release time, not weekly (#316)
 
-The review workflow handed Claude an Xcode build-for-testing to run and
-report. That build outlives the review agent's 300s per-command timeout,
-gets backgrounded, and the agent stalls waiting for it — composing a
-review with a <FILL_IN_RESULT> placeholder for the build, then passively
-waiting for a completion notification and ending the session without
-posting. The check goes green with no review (seen on #251: an 8-17 min
-run, success, zero review posted, twice).
+* Refresh ColorNames.json at release time, not weekly
 
-Allowing the Monitor tool (control-room#4) let the agent wait, but the
-build is simply slower than the agent's willingness to actively wait, so
-it still didn't post. The real fix is to not build during review at all:
-tests.yml already builds and runs the suite (~90s), so the review only
-needs to read the diff. Dropping verify_commands also drops the macOS
-runner and Xcode setup — the read-only review runs fast on ubuntu and
-posts every time.
+Since 2.0.0 Pika downloads colour lists from color.pizza while it
+runs, so the weekly workflow that opened PRs to refresh the bundled
+offline list isn't needed. The bundled list is now refreshed by
+/pre-release in pika-workspace before each release.
 
-Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
+Also corrects the LoadColors.swift comments, which said the list was
+downloaded during the build.
 
-**File**: `.github/workflows/claude-code-review.yml` (modified, +7/-20)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Add scripts/update-color-names
+
+Refreshes the bundled offline list from color-name-list's best-of
+list, so it can be run by hand before a release instead of relying
+on the weekly workflow.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* update-color-names: check every entry has a name and a valid hex
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* update-color-names: fail if the download fails
+
+Plain sh has no pipefail, so a failed curl piped into jq left an empty
+temp file, the count checks errored (which if treats as false), and the
+bundled list was overwritten with nothing. Download to a file first,
+then transform it, and fail on any non-numeric count.
+
+Co
+
+**File**: `.github/workflows/update-color-names.yml` (removed, +0/-40)
 ```diff
-@@ -17,26 +17,13 @@ jobs:
-   review:
-     # Standard lives in superhighfives/control-room so every repo reviews the
-     # same way. Repo-specific rules go in CLAUDE.md.
-+    #
-+    # No verify_commands: the review reads the diff and doesn't build. An Xcode
-+    # build outlives the review agent's per-command timeout, gets backgrounded,
-+    # and the agent stalls waiting for it — finishing a green check without ever
-+    # posting a review. tests.yml already builds and runs the suite (~90s), so
-+    # the review doesn't need to. Reading-only, it runs fast on the default
-+    # ubuntu runner and posts every time.
-     uses: superhighfives/control-room/.github/workflows/review.yml@main
--    with:
--      # Pinned to match tests.yml — macos-latest doesn't ship Xcode 16.3, so
--      # xcode-select fails there. Bump both together.
--      runs_on: macos-15
--      runtime: none
--      setup_command: sudo xcode-select -s /Applications/Xcode_16.3.app
--      # Build for testing rather than a full test run: it catches the compile
--      # errors that matter for review without the runtime cost of the suite,
--      # which tests.yml already covers.
--      #
--      # Resolve Swift packages first, as a separate step — same as tests.yml.
--      # Without it, build-for-testing resolves SPM cold, and the `| tail -40`
--      # buffers all output so nothing streams; the review agent sits on a build
--      # that can run past the timeout and gets cancelled without ever reviewing.
--      verify_commands: |
--        xcodebuild -resolvePackageDependencies -project Pika.xcodeproj -scheme Pika
--        set -o pipefail && xcodebuild build-for-testing -project Pika.xcodeproj -scheme Pika -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tail -40
--      # Safety net over the pre-resolve fix above, so a slow cold build can't get
--      # cancelled mid-review before Claude posts anything.
--      timeout_minutes: 45
-     secrets:
-       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+@@ -1,40 +0,0 @@
+-name: Update Color Names
+-
+-on:
+-  schedule:
+-    - cron: "0 12 * * 1"
+-  workflow_dispatch:
+-
+-permissions:
+-  contents: write
+-  pull-requests: write
+-
+-jobs:
+-  update:
+-    name: Fetch latest color names
+-    runs-on: ubuntu-latest
+-
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v7
+-
+-      - name: Fetch and transform upstream list
+-        run: |
+-          set -euo pipefail
+-          curl --fail --retry 3 --retry-delay 5 --retry-all-errors --max-time 60 -sSL \
+-            https://unpkg.com/color-name-list/dist/colornames.bestof.json \
+-            -o upstream.json
+-          jq -c '{colors: [.[] | {name, hex}]}' upstream.json > Pika/Assets/ColorNames.json
+-          rm upstream.json
+-
+-      - name: Open pull request if changed
+-        uses: peter-evans/create-pull-request@v8
+-        with:
+-          branch: chore/update-color-names
+-          commit-message: "chore: update ColorNames.json from color-name-list"
+-          title: "chore: update ColorNames.json"
+-          body: |
+-            Automated refresh of `Pika/Assets/ColorNames.json` from
+-            [color-name-list](https://unpkg.com/color-name-list/dist/colornames.bestof.json).
+-          labels: dependencies
+-          add-paths: Pika/Assets/ColorNames.json
 ```
 
----
-
-### Incident Patch 2: `c5805e4c` (2026-07-20)
-**Commit Message**: Serialise @claude runs to avoid concurrent context-fetch races
-
-Rapid-fire @claude comments spawned concurrent claude.yml runs that raced
-on context assembly, yielding an empty formatted_context and an immediate
-is_error failure. Add a per-issue/PR concurrency group (no cancel — each
-request is distinct and worth completing).
-
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/claude.yml` (modified, +9/-0)
+**File**: `Pika/Services/LoadColors.swift` (modified, +8/-6)
 ```diff
-@@ -10,6 +10,15 @@ on:
-   pull_request_review:
-     types: [submitted]
- 
-+# Serialise runs per issue/PR so rapid-fire @claude comments don't spawn
-+# concurrent runs that race on context assembly (which yields an empty
-+# formatted_context and an immediate is_error failure). Unlike the review
-+# workflow we don't cancel in-progress runs — each @claude request is distinct
-+# and worth completing.
-+concurrency:
-+  group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
-+  cancel-in-progress: false
-+
- jobs:
-   claude:
-     if: |
-```
-
----
-
-### Incident Patch 3: `2affb8f3` (2026-07-23)
-**Commit Message**: Fix picking shadow, add fadeable custom shadow, and rework footer shedding
-
-The "hidden while picking" shadow never worked: every call routed through
-`NSApp.delegate as? AppDelegate`, but under `@NSApplicationDelegateAdaptor`
-`NSApp.delegate` is SwiftUI's forwarding wrapper, so the cast was always nil
-and the call silently no-opped. Add an `AppDelegate.shared` accessor captured
-on launch and use it everywhere the fragile cast was used — this also repairs
-the same latent bug in the URL scheme handler and the Touch Bar (a force
-unwrap that would have crashed on any Touch Bar Mac).
-
-Replace the native window shadow in `.hiddenWhilePicking` with a custom,
-layer-backed companion window whose `shadowOpacity` can animate — AppKit's
-`hasShadow` is on/off only. The shadow now fades out while the sampler is up
-(the hairline edge border crossfades in) and fades back when picking ends, and
-softens to a lighter resting shadow when the window loses focus.
-
-Rework the contrast footer's adaptive shedding: it no longer hides on width —
-WCAG/APCA drop just their right-hand compliance badges (keeping the left ratio
-value) and the denser "both" view clips its right edge. On height it now stays
-until t
-
-**File**: `Pika/AppDelegate.swift` (modified, +8/-0)
-```diff
-@@ -8,6 +8,13 @@ import SwiftUI
- #endif
- 
- class AppDelegate: NSObject, NSApplicationDelegate {
-+    /// The live app delegate. `NSApp.delegate` cannot be relied on here: under
-+    /// `@NSApplicationDelegateAdaptor`, AppKit's `NSApp.delegate` is SwiftUI's own
-+    /// forwarding wrapper (`SwiftUI.AppDelegate`), so `NSApp.delegate as? AppDelegate`
-+    /// is always `nil` and any call chained off it silently no-ops. Capture the real
-+    /// instance on launch and reach it through here instead.
-+    weak static var shared: AppDelegate?
-+
-     var eyedroppers: Eyedroppers!
- 
-     let notificationCenter = NotificationCenter.default
-@@ -52,6 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
-     }
- 
-     func applicationWillFinishLaunching(_: Notification) {
-+        AppDelegate.shared = self
-         NSApp.setActivationPolicy(.prohibited)
-         NSAppleEventManager.shared().setEventHandler(
-             URLSchemeHandler.shared,
-```
-
-**File**: `Pika/Services/Eyedropper.swift` (modified, +4/-5)
-```diff
-@@ -121,7 +121,7 @@ extension Eyedropper {
-         // picked near the window edge. Restored on every terminal pick path below;
-         // a chained background pick simply re-suppresses when it starts. The call is
-         // a no-op unless the shadow preference is `.hiddenWhilePicking`.
--        (NSApp.delegate as? AppDelegate)?.windowCoordinator.setPickingShadowSuppressed(true)
-+        AppDelegate.shared?.windowCoordinator.setPickingShadowSuppressed(true)
- 
-         DispatchQueue.main.asyncAfter(deadline: .now()) {
-             if Defaults[.appMode].usesPopover {
-@@ -135,8 +135,7 @@ extension Eyedropper {
-                     self.commitCancelledChain()
-                 } else {
-                     // Fresh pick cancelled: restore the shadow the sampler suppressed.
--                    (NSApp.delegate as? AppDelegate)?.windowCoordinator
--                        .setPickingShadowSuppressed(false)
-+                    AppDelegate.shared?.windowCoordinator.setPickingShadowSuppressed(false)
-                 }
- 
-                 if self.forceShow {
-@@ -174,7 +173,7 @@ extension Eyedropper {
- 
-         if chainContrasting,
-            type == .foreground,
--           let appDelegate = NSApp.delegate as? AppDelegate
-+           let appDelegate = AppDelegate.shared
-         {
-             startChainedBackgroundPick(using: appDelegate)
-         } else {
-@@ -221,6 +220,6 @@ extension Eyedropper {
- 
-         // Terminal path for a committed pick (or a cancelled chain): bring the
-         // window's shadow back. No-op unless the shadow preference suppressed it.
--        (NSApp.delegate as? AppDelegate)?.windowCoordinator.setPickingShadowSuppressed(false)
-+        AppDelegate.shared?.windowCoordinator.setPickingShadowSuppressed(false)
-     }
+@@ -20,12 +20,14 @@ struct ColorListInfo: Identifiable, Hashable {
+     var id: String { key }
  }
+ 
+-/// The key of the list bundled with the app as the offline fallback. It's downloaded as
+-/// part of the build so colour names always work without a network connection.
++/// The key of the list selected out of the box, and the one we fall back to when the chosen
++/// list is no longer offered by the API.
+ let defaultColorListKey = "default"
+ 
+-/// Loads the colour list bundled at build time — the `default` list, used as the offline
+-/// fallback until (and if) a network refresh caches a newer copy.
++/// Loads the colour list bundled with the app (`ColorNames.json`), used as the offline
++/// fallback until (and if) a network refresh caches a newer copy. It's a snapshot of
++/// color-name-list's best-of list; refresh it with `scripts/update-color-names` before
++/// each release.
+ func loadColors() -> [ColorName]? {
+     if let url = Bundle.main.url(forResource: "ColorNames", withExtension: "json") {
+         do {
+@@ -42,8 +44,8 @@ func loadColors() -> [ColorName]? {
+ 
+ /// Owns colour-name data sourced from the color.pizza API, with an offline fallback.
+ ///
+-/// - The `default` list is downloaded during the build and bundled, so names always work
+-///   offline.
++/// - A snapshot list is bundled with the app (refreshed before each release), so names
++///   always work offline.
+ /// - On launch the currently-selected list is refreshed from the network and cached on disk.
+ /// - Settings and the splash let the user pick any list from `/v1/lists/`; if the chosen
+ ///   list is no longer offered by the API, we fall back to `default`.
 ```
 
-**File**: `Pika/Services/PikaWindow.swift` (modified, +4/-5)
+**File**: `scripts/update-color-names` (added, +50/-0)
 ```diff
-@@ -23,11 +23,10 @@ class PikaWindow {
-         window.standardWindowButton(NSWindow.ButtonType.zoomButton)!.isEnabled = false
-         window.titlebarAppearsTransparent = true
- 
--        // The window's drop shadow can bleed onto pixels beneath its edge and skew
--        // colour readings taken nearby. Honour the user's shadow preference; the
--        // `.hiddenWhilePicking` case keeps the resting shadow and is dropped mid-pick
--        // by `Eyedropper.start`. Setting *changes* (and the companion border shown while
--        // shadowless) are handled in `WindowCoordinator`.
-+        // The window's drop shadow can bleed onto pixels beneath its edge and skew colour
-+        // readings taken nearby. Seed a sensible initial native shadow from the preference;
-+        // `WindowCoordinator.applyShadowState` takes full ownership immediately after setup
-+        // (including swapping in the custom, fadeable shadow for `.hiddenWhilePicking`).
-         window.hasShadow = Defaults[.windowShadow].showsShadowAtRest
- 
-         Defaults.observe(.appFloating) { change in
-```
-
-**File**: `Pika/Services/URLSchemeHandler.swift` (modified, +2/-2)
-```diff
-@@ -83,7 +83,7 @@ final class URLSchemeHandler: NSObject {
-         guard
-             let hex,
-             hex.count == 6,
--            let appDelegate = NSApp.delegate as? AppDelegate
-+            let appDelegate = AppDelegate.shared
-         else { return }
-         let color = NSColor(hex: hex)
-         if task == "foreground" {
-@@ -181,7 +181,7 @@ final class URLSchemeHandler: NSObject {
- 
-         // Apply the first history entry as the active colours
-         if let first = autoHistory.pairs.first,
--           let appDelegate = NSApp.delegate as? AppDelegate
-+           let appDelegate = AppDelegate.shared
-         {
-             appDelegate.eyedroppers.foreground.set(first.foregroundColor)
-             appDelegate.eyedroppers.background.set(first.backgroundColor)
-```
-
-**File**: `Pika/Services/WindowCoordinator.swift` (modified, +254/-45)
-```diff
-@@ -12,6 +12,31 @@ class WindowCoordinator: NSObject {
-     /// The border window extends this far beyond the main window frame so its outline can
-     /// be drawn out on the window's visible glass edge (which sits just past the frame).
-     private let borderPad: CGFloat = 6.0
+@@ -0,0 +1,50 @@
++#!/bin/sh
++# Refreshes Pika/Assets/ColorNames.json, the offline colour-name list bundled with
++# the app, from color-name-list's best-of list. Run before a release, then commit
++# the result. The app downloads the full lists from color.pizza when it's online.
++#
++# Usage: scripts/update-color-names
 +
-+    /// A companion window that renders the main window's drop shadow ourselves, used only
-+    /// in `.hiddenWhilePicking`. AppKit's native `hasShadow` is a plain on/off flag with no
-+    /// public opacity control, so a *fade* on pick is impossible with it. This layer-backed
-+    /// window sits behind the main window (its opaque fill is occluded; only the soft shadow
-+    /// spills past the edges) and its `shadowOpacity` animates 1↔0 as picking starts/ends.
-+    private var shadowWindow: NSWindow?
-+    /// Room around the main frame for the soft shadow to spill without the window clipping it.
-+    private let shadowPad: CGFloat = 60.0
-+    /// Radius of the main window's visible rounded corners; the border stroke and the custom
-+    /// shadow both trace this so they line up with the glass edge.
-+    private let windowCornerRadius: CGFloat = 20.0
-+    /// Resting opacity of the custom shadow when the window is focused, tuned to sit close
-+    /// to the native macOS shadow.
-+    private let focusedShadowOpacity: Float = 0.30
-+    /// Resting opacity when the window isn't key — a lighter shadow, mirroring how AppKit
-+    /// softens a native window's shadow once it loses focus.
-+    private let unfocusedShadowOpacity: Float = 0.13
-+    /// The resting opacity for the current focus state (ignores picking suppression).
-+    private var restingShadowOpacity: Float {
-+        pikaWindow?.isKeyWindow == true ? focusedShadowOpacity : unfocusedShadowOpacity
-+    }
++set -eu
 +
-+    /// Whether an active pick currently wants the shadow suppressed. Drives the fade target.
-+    private var isPickingSuppressed = false
-     private var splashWindow: NSWindow!
-     private var aboutWindow: NSWindow?
-     private var helpWindow: NSWindow?
-@@ -43,74 +68,177 @@ class WindowCoordinator: NSObject {
-             self.resizeMainWindow(toFitContent: size)
-         }
- 
--        // Apply the shadow setting and show/hide the companion border to match.
--        Defaults.observe(.windowShadow) { [weak self] change in
--            guard let self else { return }
--            self.pikaWindow.hasShadow = change.newValue.showsShadowAtRest
--            self.updateShadowBorder()
-+        // Re-apply the whole shadow configuration when the setting changes.
-+        Defaults.observe(.windowShadow) { [weak self] _ in
-+            self?.applyShadowState(animated: false)
-         }.tieToLifetime(of: self)
- 
--        // Keep the border on the same window level as the main window (which PikaWindow
--        // moves between .floating/.normal), so toggling "float on top" doesn't leave the
--        // border stranded on a stale level.
-+        // Keep the companion windows on the same level as the main window (which PikaWindow
-+        // moves between .floating/.normal), so toggling "float on top" doesn't leave them
-+        // stranded on a stale level.
-         Defaults.observe(.appFloating) { [weak self] change in
--            self?.borderWindow?.level = change.newValue == true ? .floating : .normal
-+            let level: NSWindow.Level = change.newValue == true ? .floating : .normal
-+            self?.borderWindow?.level = level
-+            self?.shadowWindow?.level = level
-         }.tieToLifetime(of: self)
- 
--        // Keep the border aligned to the main window and re-attached whenever it shows.
-+        // Keep the companion windows aligned to the main window as it resizes and moves.
-         for name in [NSWindow.didResizeNotification, NSWindow.didMoveNotification] {
-             notificationCenter.addObserver(forName: name, object: pikaWindow, queue: .main) {
-                 [weak self] _ in
--                guard let self, let border = self.borderWindow, border.parent != nil else { return }
--                border.setFrame(self.borderFrame(), display: true)
-+                self?.positionCompanionWindows()
-             }
-         }
--        notificationCenter.addObserver(
--            forName: NSWindow.didBecomeKeyNotification, object: pikaWindow, queue: .main
--        ) { [weak self] _ in
--            self?.updateShadowBorder()
-+        // Focus changes fade the custom shadow between its focused and unfocused resting
-+        // strengths (`didBecomeKey` also re-asserts the whole configuration on show).
-+        for name in [NSWindow.didBecomeKeyNotification, NSWindow.didResignKeyNotification] {
-+            notificationCenter.addObserver(forName: name, object: pikaWindow, queue: .main) {
-+                [weak self] _ in
-+                self?.applyShadowState(animated: true)
-+            }
-         }
- 
--        updateShadowBorder()
-+        applyShadowState(animated: false)
-     }
- 
--    /// The main window can lose its drop shadow (either via the setting or wh
-```
-
-**File**: `Pika/TouchBar/PikaTouchBar.swift` (modified, +1/-1)
-```diff
-@@ -148,7 +148,7 @@ class PikaTouchBarController: NSWindowController, NSTouchBarDelegate {
-         _: NSTouchBar,
-         makeItemForIdentifier identifier: NSTouchBarItem.Identifier
-     ) -> NSTouchBarItem? {
--        let delegate = NSApplication.shared.delegate as? AppDelegate
-+        let delegate = AppDelegate.shared
-         let foreground = delegate!.eyedroppers.foreground
-         let background = delegate!.eyedroppers.background
- 
-```
-
-**File**: `Pika/Views/ContentView.swift` (modified, +21/-8)
-```diff
-@@ -98,7 +98,13 @@ struct ContentView: View {
-             // clips. ANDed with user preferences below so the saved toggles survive
-             // resizing (suppress-but-remember).
-             let allowPreview = height >= PikaAdaptiveHeight.preview && width >= PikaAdaptiveWidth.preview
--            let allowContrast = height >= PikaAdaptiveHeight.contrast && width >= PikaAdaptiveWidth.contrast
-+            // The contrast footer clings on far longer than the other elements. On height it
-+            // stays until the window is short enough that the expand affordance tucks into
-+            // the corner; on width it never hides outright — instead the WCAG/APCA rows drop
-+            // just their right-hand compliance badges, keeping the left-most ratio value.
-+            let allowContrastHeight = height >= PikaAdaptiveHeight.expandCornerBelow
-+            let allowContrastWidth = width >= PikaAdaptiveWidth.contrast
-+            let allowContrast = allowContrastHeight && allowContrastWidth
-             let allowPalettes = height >= PikaAdaptiveHeight.palettes && width >= PikaAdaptiveWidth.palettes
-             // The preview pill overlaps the type labels, so labels only show when the
-             // pill is effectively hidden.
-@@ -109,9 +115,9 @@ struct ContentView: View {
-             let suppressed = (showColorPreview && !allowPreview)
-                 || (showCompliance && !allowContrast)
-                 || (historyDrawerVisible && !allowPalettes)
--            // Centre the affordance normally, but at very short heights tuck it into the
--            // top-right corner so it doesn't sit on top of the colour values.
--            let expandAlignment: Alignment = height < PikaAdaptiveHeight.expandCornerBelow ? .topTrailing : .center
-+            // Always tuck the expand affordance into the top-right corner so it never sits
-+            // on top of the colour values.
-+            let expandAlignment: Alignment = .topTrailing
- 
-             VStack(alignment: .trailing, spacing: 0) {
-                 Divider()
-@@ -169,11 +175,17 @@ struct ContentView: View {
-                         swapTimerSubscription = swapTimer.connect()
-                     }
- 
--                if showCompliance, allowContrast {
-+                if showCompliance, allowContrastHeight {
-                     AdaptiveDivider()
-                     // Slide only — no opacity fade, so the footer is always full opacity.
--                    Footer(foreground: eyedroppers.foreground, background: eyedroppers.background)
--                        .transition(.move(edge: .bottom))
-+                    // `showsCompliance` drops the right-hand badges when there isn't the
-+                    // width for them, so the footer stays put and only sheds on height.
-+                    Footer(
-+                        foreground: eyedroppers.foreground,
-+                        background: eyedroppers.background,
-+                        showsCompliance: allowContrastWidth
-+                    )
-+                    .transition(.move(edge: .bottom))
-                 }
-                 if historyDrawerVisible, allowPalettes {
-                     ColorHistoryDrawer(foreground: eyedroppers.foreground, background: eyedroppers.background)
-@@ -196,7 +208,8 @@ struct ContentView: View {
-                 case .ended: isHovering = false
-                 }
-             }
--            .animation(.easeInOut(duration: 0.2), value: allowContrast)
-+            .animation(.easeInOut(duration: 0.2), value: allowContrastHeight)
-+            .animation(.easeInOut(duration: 0.2), value: allowContrastWidth)
-             .animation(.easeInOut(duration: 0.2), value: allowPalettes)
-             .animation(.easeInOut(duration: 0.15), value: suppressed)
-             .animation(.easeInOut(duration: 0.15), value: isHovering)
-```
-
-**File**: `Pika/Views/Footer.swift` (modified, +25/-11)
-```diff
-@@ -11,6 +11,9 @@ private struct FooterRow: View {
-     @ObservedObject var foreground: Eyedropper
-     @ObservedObject var background: Eyedropper
-     var combineCompliance: Bool
-+    /// When false there isn't the width for the compliance badges, so the whole right-hand
-+    /// side (divider + toggle group) drops and only the left-most ratio value remains.
-+    var showsCompliance: Bool = true
- 
-     private var contrastHeader: String {
-         kind == .wcag ? PikaText.textColorRatio : PikaText.textLightnessContrastValue
-@@ -65,18 +68,20 @@ private struct FooterRow: View {
-                 }
-             }
- 
--            AdaptiveDivider(axis: .vertical)
-+            if showsCompliance {
-+                AdaptiveDivider(axis: .vertical)
- 
--            VStack(alignment: .leading, spacing: 3.0) {
--                Text(complianceLabel)
--                    .font(.caption)
--                    .fontWeight(.semibold)
--                    .foregroundStyle(.secondary)
-+                VStack(alignment: .leading, spacing: 3.0) {
-+                    Text(complianceLabel)
-+                        .font(.caption)
-+                        .fontWeight(.semibold)
-+                        .foregroundStyle(.secondary)
- 
--                ComplianceToggleGroup(
--                    complianceData: complianceData,
--                    theme: combineCompliance ? .contrast : .weight
--                )
-+                    ComplianceToggleGroup(
-+                        complianceData: complianceData,
-+                        theme: combineCompliance ? .contrast : .weight
-+                    )
-+                }
-             }
-         }
-         .frame(maxWidth: .infinity, alignment: .leading)
-@@ -186,6 +191,9 @@ struct Footer: View {
-     @Default(.contrastStandard) var contrastStandard
-     @ObservedObject var foreground: Eyedropper
-     @ObservedObject var background: Eyedropper
-+    /// Whether there's width for the compliance badges. WCAG/APCA drop the badges entirely
-+    /// when there isn't; the denser "both" view instead clips its right edge (below).
-+    var showsCompliance: Bool = true
- 
-     var body: some View {
-         Group {
-@@ -200,13 +208,19 @@ struct Footer: View {
-                     kind: contrastStandard == .wcag ? .wcag : .apca,
-                     foreground: foreground,
-                     background: background,
--                    combineCompliance: combineCompliance
-+                    combineCompliance: combineCompliance,
-+                    showsCompliance: showsCompliance
-                 )
-                 .frame(maxHeight: 50.0)
-             }
-         }
-         .frame(maxWidth: .infinity, alignment: .leading)
-         .padding(.horizontal, 12.0)
-+        // Only the dense "both" view can overflow (its badges pack right against a Spacer);
-+        // when narrow they spill past the edge and clip rather than compressing the value.
-+        // WCAG/APCA instead drop their badges outright (see `showsCompliance`), so nothing
-+        // there overflows and the clip is a harmless no-op for them.
-+        .clipped()
-         .background(AdaptivePanelBackground())
-     }
- }
++SOURCE="https://unpkg.com/color-name-list/dist/colornames.bestof.json"
++MIN_COLORS=1000
++
++cd "$(dirname "$0")/.."
++DEST="Pika/Assets/ColorNames.json"
++RAW="$(mktemp)"
++TMP="$(mktemp)"
++trap 'rm -f "$RAW" "$TMP"' EXIT
++
++fail() {
++  echo "error: $1; kept the existing list" >&2
++  exit 1
++}
++
++command -v jq >/dev/null || { echo "error: jq is required" >&2; exit 1; }
++
++old=$(jq '.colors | length' "$DEST" 2>/dev/null || echo 0)
++
++# Download and transform as separate steps, so a failed download stops here rather
++# than being hidden by a pipe (plain sh has no pipefail).
++curl --fail --retry 3 --retry-delay 5 --retry-all-errors --max-time 60 -sSL "$SOURCE" -o "$RAW" \
++  || fail "couldn't download $SOURCE"
++jq -c '{colors: [.[] | {name, hex}]}' "$RAW" > "$TMP" || fail "the download isn't the expected JSON"
++
++new=$(jq '.colors | length' "$TMP") || fail "couldn't count the downloaded colours"
++case "$new" in '' | *[!0-9]*) fail "couldn't count the downloaded colours" ;; esac
++[ "$new" -ge "$MIN_COLORS" ] || fail "only $new colours downloaded (expected at least $MIN_COLORS)"
++
++# Every entry needs a non-empty name and a #rrggbb hex, or the app can't use it.
++bad=$(jq '[.colors[] | select((.name | type) != "string" or .name == ""
++  or ((.hex | type) != "string") or (.hex | test("^#[0-9a-fA-F]{6}$") | not))] | length' "$TMP") \
++  || fail "couldn't validate the downloaded colours"
++[ "$bad" = 0 ] || fail "$bad entries are missing a name or have an invalid hex"
++
++if cmp -s "$TMP" "$DEST"; then
++  echo "ColorNames.json is already up to date ($new colours)."
++  exit 0
++fi
++
++cat "$TMP" > "$DEST"
++echo "Updated ColorNames.json: $old → $new colours. Review and commit it."
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #314** (2026-10-19): Split AppDelegate's notification-dispatch actions into their own file (@superhighfives)
-- **PR #312** (2026-10-19): Better documentation: explain the basics, especially WCAG and APCA (@superhighfives)
-- **PR #310** (2026-10-15): Show the next icon label straight away until the buttons hide (@superhighfives)
-- **PR #309** (2026-10-15): Readout and icon button polish (@superhighfives)
-- **PR #308** (2026-10-16): Pika 2.0.1 (@superhighfives)
-- **PR #307** (2026-10-14): Hide the cursor over the loupe when Pika is in the background (@superhighfives)
+- **PR #323** (2026-10-22): Settings: show what CSS copy gives in P3, and say so for Match display (@superhighfives)
+- **PR #322** (2026-10-21): Treat a display profile that's Display P3 in all but name as P3 (@superhighfives)
+- **PR #321** (2026-10-21): Clear history keeps the current colours (@superhighfives)
+- **PR #320** (2026-10-21): Check a Color: its own colour and a cleaner layout; no colour space dropdown on the readout (@superhighfives)
+- **PR #318** (2026-10-20): Point What's new at the changelog's version anchor (@superhighfives)
+- **PR #317** (2026-10-21): Colour spaces: sRGB by default, a clearer setting, and Colors don't match? (@superhighfives)
 
 ---
 
@@ -1934,57 +1638,3 @@ until t
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Drop the build from the review so it actually posts
-
-**RULE**:
-When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in superhighfives/pika. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `7dd82fcf`: Drop the build from the review so it actually posts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```swift
-// Verified production-grade fix pattern:
-    #
-    # No verify_commands: the review reads the diff and doesn't build. An Xcode
-    # build outlives the review agent's per-command timeout, gets backgrounded,
-    # and the agent stalls waiting for it — finishing a green check without ever
-    # posting a review. tests.yml already builds and runs the suite (~90s), so
-    # the review doesn't need to. Reading-only, it runs fast on the default
-    # ubuntu runner and posts every time.
-```
-
-**NEGATIVE CONSTRAINT**:
-```swift
-// Anti-pattern to NEVER write (induced failure mode):
-    with:
-      # Pinned to match tests.yml — macos-latest doesn't ship Xcode 16.3, so
-      # xcode-select fails there. Bump both together.
-      runs_on: macos-15
-      runtime: none
-      setup_command: sudo xcode-select -s /Applications/Xcode_16.3.app
-      # Build for testing rather than a full test run: it catches the compile
-      # errors that matter for review without the runtime cost of the suite,
-      # which tests.yml already covers.
-      #
-      # Resolve Swift packages first, as a separate step — same as tests.yml.
-      # Without it, build-for-testing resolves SPM cold, and the `| tail -40`
-      # buffers all output so nothing streams; the review agent sits on a build
-      # that can run past the timeout and gets cancelled without ever reviewing.
-      verify_commands: |
-        xcodebuild -resolvePackageDependencies -project Pika.xcodeproj -scheme Pika
-        set -o pipefail && xcodebuild build-for-testing -project Pika.xcodeproj -scheme Pika -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tail -40
-      # Safety net over the pre-resolve fix above, so a slow cold buil
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7dd82fcf` are properly handled with clean fallback behavior.
