@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "c4df8578",
+    "sourceVersion": "f8e6ea94",
     "license": "Apache-2.0",
-    "contentHash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
-    "lastHarvestedAt": "2026-10-21T18:33:32.102Z",
+    "contentHash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
+    "lastHarvestedAt": "2026-10-22T17:25:43.776Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -4133,10 +4133,10 @@
     "repository": "mui/base-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/mui/base-ui",
-    "sourceVersion": "051a971e",
+    "sourceVersion": "205831ca",
     "license": "MIT",
-    "contentHash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
-    "lastHarvestedAt": "2026-10-20T23:49:40.154Z",
+    "contentHash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
+    "lastHarvestedAt": "2026-10-22T17:25:32.388Z",
     "learningId": "learn-github-mui-base-ui"
   },
   "ekzhang-bore": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "f6d172c0",
+    "sourceVersion": "bcdb4c4c",
     "license": "GPL-2.0",
-    "contentHash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
-    "lastHarvestedAt": "2026-10-20T06:25:53.901Z",
+    "contentHash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
+    "lastHarvestedAt": "2026-10-22T17:25:45.385Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "eb86638b",
+    "sourceVersion": "54e7a937",
     "license": "MIT",
-    "contentHash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
-    "lastHarvestedAt": "2026-10-19T07:59:20.860Z",
+    "contentHash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
+    "lastHarvestedAt": "2026-10-22T17:25:43.106Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

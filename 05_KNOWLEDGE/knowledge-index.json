@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:19:16.174Z",
+  "last_updated": "2026-10-22T17:25:45.338Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31686,8 +31686,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "f6d172c0",
-      "content_hash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
+      "source_version": "bcdb4c4c",
+      "content_hash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -31700,6 +31700,11 @@
           "number": 3097,
           "title": "MDEV-25515 User Account Host Names using CIDR notation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3662,
+          "title": "[MDEV-36841] Warn when slave timeout drops below heartbeat period",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31707,7 +31712,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:25:53.862Z",
+      "verified_at": "2026-10-22T17:25:45.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34375,8 +34380,8 @@
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "051a971e",
-      "content_hash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
+      "source_version": "205831ca",
+      "content_hash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "promoted_rules": [
@@ -34409,6 +34414,11 @@
           "number": 3443,
           "title": "[popups] Dismiss after dropped IME compositions (#5978)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3659,
+          "title": "[dialog] Fix outside press crash when the target is the document (#6057)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34416,7 +34426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:49:40.093Z",
+      "verified_at": "2026-10-22T17:25:32.298Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42398,8 +42408,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "c4df8578",
-      "content_hash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
+      "source_version": "f8e6ea94",
+      "content_hash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -42427,6 +42437,11 @@
           "number": 3585,
           "title": "update builder image and cosign (#5179)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3661,
+          "title": "Add cosign-specific user-agent to all HTTP requests (#4705)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42434,7 +42449,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:33:32.029Z",
+      "verified_at": "2026-10-22T17:25:43.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49750,8 +49765,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "eb86638b",
-      "content_hash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
+      "source_version": "54e7a937",
+      "content_hash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -49764,6 +49779,11 @@
           "number": 2356,
           "title": "Zero-Interval Cache Bypassing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3660,
+          "title": "filex): don't return EOF when last line exceeds chunk size (#5800)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49771,7 +49791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:59:20.800Z",
+      "verified_at": "2026-10-22T17:25:42.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110428,6 +110448,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:19:16.164Z"
+    },
+    "rule-3659": {
+      "learning_id": "rule-3659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3659,
+      "title": "[dialog] Fix outside press crash when the target is the document (#6057)",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "205831ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:25:32.299Z"
+    },
+    "rule-3660": {
+      "learning_id": "rule-3660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3660,
+      "title": "filex): don't return EOF when last line exceeds chunk size (#5800)",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "54e7a937",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:25:42.982Z"
+    },
+    "rule-3661": {
+      "learning_id": "rule-3661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3661,
+      "title": "Add cosign-specific user-agent to all HTTP requests (#4705)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "f8e6ea94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:25:43.714Z"
+    },
+    "rule-3662": {
+      "learning_id": "rule-3662",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3662,
+      "title": "[MDEV-36841] Warn when slave timeout drops below heartbeat period",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "bcdb4c4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:25:45.326Z"
     }
   },
   "aliases": {

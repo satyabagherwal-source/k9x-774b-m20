@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-ZMFV",
-    "timestamp": "2026-10-20T14:25:33.019Z",
-    "repository": "autotrust/JEV-35B-NVFP4",
-    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "7591af4eee1d1bd313e5bb9277fca2ce1790bfde3ae495908167fa6609452496",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ZOQK",
-    "timestamp": "2026-10-20T14:25:35.996Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "44cf0ed5af954177f3f5f6f9821d988ae8baadf1a8af0390a5fffe1dd2f6c6c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ZRMR",
-    "timestamp": "2026-10-20T14:25:39.747Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "e51a33d5f49cf431b00b7c0eebd743c0c417daad5d76ddf4fc18edcbe82b4c61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-7YEP",
-    "timestamp": "2026-10-20T14:32:01.778Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "56f51ec3d357fc360d6431e6c6217540ed220f5fc59129cf46b4c90452bdca55",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-G7DE",
     "timestamp": "2026-10-20T14:38:26.642Z",
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -7490,6 +7430,66 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-ASM9",
+    "timestamp": "2026-10-22T17:25:32.385Z",
+    "repository": "mui/base-ui",
+    "learningId": "learn-github-mui-base-ui",
+    "contentHash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-B0W0",
+    "timestamp": "2026-10-22T17:25:43.104Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-B1EL",
+    "timestamp": "2026-10-22T17:25:43.773Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-B2NA",
+    "timestamp": "2026-10-22T17:25:45.382Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

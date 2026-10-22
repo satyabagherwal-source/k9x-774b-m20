@@ -4354,3 +4354,7 @@ Every entry in this ledger must capture:
 | `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `5bd900d8` | Multi-dimensional audit evidence | 2026-10-22T17:12:36.707Z |
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `4d372f02` | Multi-dimensional audit evidence | 2026-10-22T17:19:09.760Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `69d1aac2` | Multi-dimensional audit evidence | 2026-10-22T17:19:16.226Z |
+| `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `205831ca` | Multi-dimensional audit evidence | 2026-10-22T17:25:32.388Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `54e7a937` | Multi-dimensional audit evidence | 2026-10-22T17:25:43.106Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `f8e6ea94` | Multi-dimensional audit evidence | 2026-10-22T17:25:43.776Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `bcdb4c4c` | Multi-dimensional audit evidence | 2026-10-22T17:25:45.385Z |

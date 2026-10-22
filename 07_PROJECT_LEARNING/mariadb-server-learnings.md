@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `f6d172c0`  
+> **Source Version**: `bcdb4c4c`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:25:53.714Z  
+> **Timestamp**: 2026-10-22T17:25:45.046Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:25:53.709Z  
+> **Harvest Timestamp**: 2026-10-22T17:25:45.041Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8393 stars
+- **Stars / Engagement**: 8417 stars
 
 ---
 
@@ -1595,11 +1595,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5919** (2026-10-19): **Tests fixes**
-  *Symptoms*: 
+- **Issue #5949** (2026-10-22): **MDEV-41657 TO_DATE no longer works as a variable**
+  *Symptoms*: TO_DATE was added as a reserved keyword rather than just function so additional and unnecessary restriction where placed including the restriction of TO_DATE as a variable or column name.  Demoted TO_DATE to just function name.
 
-- **Issue #5916** (2026-10-18): **MDEV-40845: DuckDB: reject SELECT ... FOR UPDATE / LOCK IN SHARE MODE…**
-  *Symptoms*: … (msan)  Works under MSAN just fine.
+- **Issue #5939** (2026-10-22): **MDEV-41490 ignore_db_dirs not working with SST**
+  *Symptoms*: rsync and mariabackup SST ignored ignore_db_dirs: rsync copied and deleted such directories like a normal schema dir, and mariabackup's joiner wiped them during its pre-apply cleanup, failing SST outright on a read-only mount. A directory name is also unvalidated by the server, so it was spliced unchecked into an eval'd rsync filter.  Fix both SST scripts to read ignore_db_dirs and exclude those directories, accepting only safe characters in the name.  Assisted-by: https://mariadb.org/governance/governance-ai-policy/
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1616,469 +1616,212 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6d172c0` (2026-08-06)
-**Commit Message**: MDEV-25515 User Account Host Names using CIDR notation
-CREATE USER u@'192.168.0.0/24';  -- same as '192.168.0.0/255.255.255.0'
-CIDR is an input spelling only, normalised to the netmask form while parsing.
-A malformed mask is now rejected instead of stored, and one already in
-the privilege tables is skipped at load with a warning instead of being honoured.
-Nothing rejected these before, and they are not merely
-useless: a non-contiguous mask such as 10.0.0.0/255.0.255.0 matches the
-scattered set 10.*0.*. Skipping rather than erroring keeps such a row droppable and renamable, except for a literal CIDR host stored by an older version (for example 10.0.0.0/24): the parser converts that name, so it can no longer be named and must be removed with a direct DELETE from the privilege tables.
+### Incident Patch 1: `bcdb4c4c` (2026-03-19)
+**Commit Message**: [MDEV-36841] Warn when slave timeout drops below heartbeat period
 
-New error ER_INVALID_HOST_NETMASK, ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK
+When CHANGE MASTER sets master_heartbeat_period to a value greater than
+@@GLOBAL.slave_net_timeout, a ER_SLAVE_HEARTBEAT_VALUE_OUT_OF_RANGE_MAX
+warning is emitted. However, the reverse scenario, lowering
+slave_net_timeout below an existing master_heartbeat_period, produced no
+warning.
 
-**File**: `mysql-test/main/host_cidr.result` (added, +319/-0)
+Add an on_check callback for slave_net_timeout that iterates all
+Master_info entries and warns if any heartbeat period exceeds the
+requested timeout. Connections that are not configured are skipped. A
+DEFAULT heartbeat period is skipped unless --master-heartbeat-period was
+given at startup: without it the period follows slave_net_timeout/2 and
+can never exceed the timeout, but with it the period is a fixed value
+and is checked like an explicit one.
+
+The warning is reported with a new, generalized error
+ER_OPERATION_INVALIDATES_CONFIGURED_SLAVE, which names the affected
+replication connection and carries a parameterized description of the
+misconfiguration. Naming the connection matters for multi-source: when
+several connections exceed the new timeout, the user can see exactly
+which ones are problematic. One warning is emitted per affec
+
+**File**: `mysql-test/suite/binlog_in_engine/rpl_heartbeat.result` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,319 @@
-+#
-+# MDEV-25515 User Account Host Names using CIDR notation
-+#
-+call mtr.add_suppression("ignored, the host is not a valid ip/netmask");
-+# CIDR is stored in the netmask form
-+CREATE USER c1@'127.0.0.0/8'   IDENTIFIED BY 'pw';
-+CREATE USER c2@'127.0.0.0/24'  IDENTIFIED BY 'pw';
-+CREATE USER c3@'127.0.0.1/32'  IDENTIFIED BY 'pw';
-+CREATE USER c4@'127.0.0.0/31'  IDENTIFIED BY 'pw';
-+CREATE USER c5@'0.0.0.0/1'     IDENTIFIED BY 'pw';
-+CREATE USER n1@'127.0.0.0/255.0.0.0'     IDENTIFIED BY 'pw';
-+CREATE USER n2@'127.0.0.0/255.255.255.0' IDENTIFIED BY 'pw';
-+SELECT User, Host FROM mysql.global_priv WHERE User LIKE 'c_' OR User LIKE 'n_'
-+ORDER BY User;
-+User	Host
-+c1	127.0.0.0/255.0.0.0
-+c2	127.0.0.0/255.255.255.0
-+c3	127.0.0.1/255.255.255.255
-+c4	127.0.0.0/255.255.255.254
-+c5	0.0.0.0/128.0.0.0
-+n1	127.0.0.0/255.0.0.0
-+n2	127.0.0.0/255.255.255.0
-+SHOW CREATE USER c1@'127.0.0.0/8';
-+CREATE USER for c1@127.0.0.0/255.0.0.0
-+CREATE USER `c1`@`127.0.0.0/255.0.0.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
-+SHOW GRANTS FOR c2@'127.0.0.0/24';
-+Grants for c2@127.0.0.0/255.255.255.0
-+GRANT USAGE ON *.* TO `c2`@`127.0.0.0/255.255.255.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
-+# Both spellings are the same account
-+CREATE USER dup@'127.0.0.0/8' IDENTIFIED BY 'pw';
-+CREATE USER dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
-+ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
-+CREATE USER IF NOT EXISTS dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
+@@ -14,6 +14,8 @@ show status like 'Slave_heartbeat_period';;
+ Variable_name	Slave_heartbeat_period
+ Value	4.000
+ set @@global.slave_net_timeout= 3 /* must be a warning */;
 +Warnings:
-+Note	1973	Can't create user 'dup'@'127.0.0.0/255.0.0.0'; it already exists
-+CREATE USER dup@'127.000.0.0/8' IDENTIFIED BY 'other';
-+ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
-+CREATE USER dup@'127.0.0.0/+8'  IDENTIFIED BY 'other';
-+ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
-+CREATE USER dup@'127.0.0.0/ 8'  IDENTIFIED BY 'other';
-+ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
-+CREATE USER dup@'127.0.0.0/255.000.0.0' IDENTIFIED BY 'other';
-+ERROR HY000: Operation CREATE USER failed for 'dup'@'127.0.0.0/255.0.0.0'
-+SELECT User, Host FROM mysql.global_priv WHERE User='dup';
-+User	Host
-+dup	127.0.0.0/255.0.0.0
-+DROP USER dup@'127.0.0.0/8';
-+# Matching is unchanged
-+connect  con1,127.0.0.1,c1,pw,,$MASTER_MYPORT,;
-+connection con1;
-+SELECT CURRENT_USER();
-+CURRENT_USER()
-+c1@127.0.0.0/255.0.0.0
-+disconnect con1;
-+connection default;
-+connect  con1,127.0.0.1,c2,pw,,$MASTER_MYPORT,;
-+connection con1;
-+SELECT CURRENT_USER();
-+CURRENT_USER()
-+c2@127.0.0.0/255.255.255.0
-+disconnect con1;
-+connection default;
-+connect  con1,127.0.0.1,c3,pw,,$MASTER_MYPORT,;
-+connection con1;
-+SELECT CURRENT_USER();
-+CURRENT_USER()
-+c3@127.0.0.1/255.255.255.255
-+disconnect con1;
-+connection default;
-+connect  con1,127.0.0.1,c4,pw,,$MASTER_MYPORT,;
-+connection con1;
-+SELECT CURRENT_USER();
-+CURRENT_USER()
-+c4@127.0.0.0/255.255.255.254
-+disconnect con1;
-+connection default;
-+connect  con1,127.0.0.1,c5,pw,,$MASTER_MYPORT,;
-+connection con1;
-+SELECT CURRENT_USER();
-+CURRENT_USER()
-+c5@0.0.0.0/128.0.0.0
-+disconnect con1;
-+connection default;
-+connect  con1,127.0.0.1,n1,pw,,$MASTER_MYPORT,;
-+connection con1;
-+SELECT CURRENT_USER();
-+CURRENT_USER()
-+n1@127.0.0.0/255.0.0.0
-+disconnect con1;
-+connection default;
-+CREATE USER z1@'127.0.0.0/32' IDENTIFIED BY 'pw';
-+connect(127.0.0.1,z1,pw,test,MASTER_PORT,MASTER_SOCKET);
-+connect  con1,127.0.0.1,z1,pw,,$MASTER_MYPORT,;
-+ERROR 28000: Access denied for user 'z1'@'localhost' (using password: YES)
-+DROP USER z1@'127.0.0.0/32';
-+# Either spelling resolves to the same row, in every privilege table
-+CREATE DATABASE cidr_db;
-+CREATE TABLE cidr_db.t (a INT);
-+GRANT SELECT ON cidr_db.* TO c1@'127.0.0.0/255.0.0.0';
-+SHOW GRANTS FOR c1@'127.0.0.0/8';
-+Grants for c1@127.0.0.0/255.0.0.0
-+GRANT USAGE ON *.* TO `c1`@`127.0.0.0/255.0.0.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
-+GRANT SELECT ON `cidr_db`.* TO `c1`@`127.0.0.0/255.0.0.0`
-+GRANT INSERT ON cidr_db.* TO c1@'127.0.0.0/8';
-+REVOKE SELECT ON cidr_db.* FROM c1@'127.0.0.0/8';
-+SELECT User, Host FROM mysql.db WHERE User='c1';
-+User	Host
-+c1	127.0.0.0/255.0.0.0
-+GRANT SELECT ON cidr_db.t TO c1@'127.0.0.0/8';
-+SELECT User, Host FROM mysql.tables_priv WHERE User='c1';
-+User	Host
-+c1	127.0.0.0/255.0.0.0
-+REVOKE SELECT ON cidr_db.t FROM c1@'127.0.0.0/255.0.0.0';
-+SET PASSWORD FOR c1@'127.0.0.0/8' = PASSWORD('pw2');
-+ALTER USER c1@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'pw';
-+RENAME USER c1@'127.0.0.0/8' TO c1@'127.0.0.0/16';
-+SELECT User, Host FROM mysql.global_priv WHERE User='c1';
-+User	Host
-+c1	127.0.0.0/255.255.0.0
-+SELECT User, Host FROM mysql.db          WHERE User='c1';
-+User	Host
-+c1	127.0.0.0/255.255.0.0
-+RENAME USER c1@'127.0.0.0/255.255.0.0' TO c1@'127.0.0.0/8';
-+REVOKE ALL PRIVILEGES, GRANT OPTION FROM c1@'127.0.0.0/255.0.0.0';
-+SHOW GRANTS FOR c1@'127.0.0.0/8';
-+Grants for c1@127.0.0.0/255.0.0.0
-+GRANT U
++Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (4.000 seconds) exceeds the requested slave_net_timeout (3 seconds); a sensible value for the period should be less than the timeout
+ reset slave;
+ connection master;
+ drop table if exists t1;
 ```
 
-**File**: `mysql-test/main/host_cidr.test` (added, +259/-0)
+**File**: `mysql-test/suite/multi_source/slave_net_timeout_heartbeat.opt` (added, +1/-0)
 ```diff
-@@ -0,0 +1,259 @@
+@@ -0,0 +1 @@
++--master-heartbeat-period=30
+```
+
+**File**: `mysql-test/suite/multi_source/slave_net_timeout_heartbeat.result` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++connect  slave,127.0.0.1,root,,,$SERVER_MYPORT_3;
++connection slave;
++SET @restore_slave_net_timeout= @@global.slave_net_timeout;
++SET @@global.slave_net_timeout= 60;
++change master 'slave1' to master_port=MYPORT_1, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=40;
++change master 'slave2' to master_port=MYPORT_2, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=50;
++change master 'slave3' to master_port=MYPORT_1, master_host='localhost', master_user='root', master_ssl_verify_server_cert=0;
++SET @@global.slave_net_timeout= 20;
++SHOW WARNINGS;
++Level	Code	Message
++Warning	4276	This operation leaves replication connection 'slave1' with an invalid configuration: the heartbeat period (40.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
++Warning	4276	This operation leaves replication connection 'slave2' with an invalid configuration: the heartbeat period (50.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
++Warning	4276	This operation leaves replication connection 'slave3' with an invalid configuration: the heartbeat period (30.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
++SET @@global.slave_net_timeout= @restore_slave_net_timeout;
++include/reset_master_slave.inc
++disconnect slave;
++connection default;
+```
+
+**File**: `mysql-test/suite/multi_source/slave_net_timeout_heartbeat.test` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++#
++# MDEV-36841: Lowering @@global.slave_net_timeout below an explicitly
++# configured master_heartbeat_period warns once per replication connection.
++#
++# With multi-source replication there can be more than one connection whose
++# heartbeat period exceeds the new timeout, so the warning names each affected
++# connection.  This test configures two named connections, each with an
++# explicit heartbeat period above the timeout we set next, and verifies that a
++# separate warning is emitted for both.
++#
++# The server is started with --master-heartbeat-period=30, so a third
++# connection left at the DEFAULT heartbeat period resolves to a fixed 30
++# seconds rather than slave_net_timeout/2, and must warn as well.
++#
 +--source include/not_embedded.inc
 +
-+--echo #
-+--echo # MDEV-25515 User Account Host Names using CIDR notation
-+--echo #
++--connect (slave,127.0.0.1,root,,,$SERVER_MYPORT_3)
 +
-+call mtr.add_suppression("ignored, the host is not a valid ip/netmask");
++--connection slave
++SET @restore_slave_net_timeout= @@global.slave_net_timeout;
++SET @@global.slave_net_timeout= 60;
 +
-+--echo # CIDR is stored in the netmask form
-+CREATE USER c1@'127.0.0.0/8'   IDENTIFIED BY 'pw';
-+CREATE USER c2@'127.0.0.0/24'  IDENTIFIED BY 'pw';
-+CREATE USER c3@'127.0.0.1/32'  IDENTIFIED BY 'pw';
-+CREATE USER c4@'127.0.0.0/31'  IDENTIFIED BY 'pw';
-+CREATE USER c5@'0.0.0.0/1'     IDENTIFIED BY 'pw';
-+CREATE USER n1@'127.0.0.0/255.0.0.0'     IDENTIFIED BY 'pw';
-+CREATE USER n2@'127.0.0.0/255.255.255.0' IDENTIFIED BY 'pw';
-+SELECT User, Host FROM mysql.global_priv WHERE User LIKE 'c_' OR User LIKE 'n_'
-+ORDER BY User;
-+SHOW CREATE USER c1@'127.0.0.0/8';
-+SHOW GRANTS FOR c2@'127.0.0.0/24';
++# Two sources, each with an explicit heartbeat period below the current
++# timeout (60), so configuring them does not warn.
++--replace_result $SERVER_MYPORT_1 MYPORT_1
++eval change master 'slave1' to master_port=$SERVER_MYPORT_1, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=40;
++--replace_result $SERVER_MYPORT_2 MYPORT_2
++eval change master 'slave2' to master_port=$SERVER_MYPORT_2, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=50;
++# DEFAULT heartbeat period, i.e. --master-heartbeat-period=30.  The
++# connection is never started; 'localhost' only avoids the host:port
++# conflict with 'slave1'.
++--replace_result $SERVER_MYPORT_1 MYPORT_1
++eval change master 'slave3' to master_port=$SERVER_MYPORT_1, master_host='localhost', master_user='root', master_ssl_verify_server_cert=0;
 +
-+--echo # Both spellings are the same account
-+CREATE USER dup@'127.0.0.0/8' IDENTIFIED BY 'pw';
-+--error ER_CANNOT_USER
-+CREATE USER dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
-+CREATE USER IF NOT EXISTS dup@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'other';
++# Lowering the timeout below all three heartbeat periods must warn once per
++# connection.  Warnings are pushed in master_info hash order, which is not
++# deterministic, so capture them with a sorted SHOW WARNINGS.
++--disable_warnings
++SET @@global.slave_net_timeout= 20;
++--enable_warnings
++--sorted_result
++SHOW WARNINGS;
 +
-+--error ER_CANNOT_USER
-+CREATE USER dup@'127.000.0.0/8' IDENTIFIED BY 'other';
-+--error ER_CANNOT_USER
-+CREATE USER dup@'127.0.0.0/+8'  IDENTIFIED BY 'other';
-+--error ER_CANNOT_USER
-+CREATE USER dup@'127.0.0.0/ 8'  IDENTIFIED BY 'other';
-+--error ER_CANNOT_USER
-+CREATE USER dup@'127.0.0.0/255.000.0.0' IDENTIFIED BY 'other';
-+SELECT User, Host FROM mysql.global_priv WHERE User='dup';
-+DROP USER dup@'127.0.0.0/8';
-+
-+--echo # Matching is unchanged
-+connect (con1,127.0.0.1,c1,pw,,$MASTER_MYPORT,);
-+connection con1;
-+SELECT CURRENT_USER();
-+disconnect con1;
-+connection default;
-+connect (con1,127.0.0.1,c2,pw,,$MASTER_MYPORT,);
-+connection con1;
-+SELECT CURRENT_USER();
-+disconnect con1;
-+connection default;
-+connect (con1,127.0.0.1,c3,pw,,$MASTER_MYPORT,);
-+connection con1;
-+SELECT CURRENT_USER();
-+disconnect con1;
-+connection default;
-+connect (con1,127.0.0.1,c4,pw,,$MASTER_MYPORT,);
-+connection con1;
-+SELECT CURRENT_USER();
-+disconnect con1;
-+connection default;
-+connect (con1,127.0.0.1,c5,pw,,$MASTER_MYPORT,);
-+connection con1;
-+SELECT CURRENT_USER();
-+disconnect con1;
-+connection default;
-+connect (con1,127.0.0.1,n1,pw,,$MASTER_MYPORT,);
-+connection con1;
-+SELECT CURRENT_USER();
-+disconnect con1;
-+connection default;
-+
-+CREATE USER z1@'127.0.0.0/32' IDENTIFIED BY 'pw';
-+--replace_result $MASTER_MYSOCK MASTER_SOCKET $MASTER_MYPORT MASTER_PORT
-+--error ER_ACCESS_DENIED_ERROR
-+connect (con1,127.0.0.1,z1,pw,,$MASTER_MYPORT,);
-+DROP USER z1@'127.0.0.0/32';
-+
-+
-+--echo # Either spelling resolves to the same row, in every privilege table
-+CREATE DATABASE cidr_db;
-+CREATE TABLE cidr_db.t (a INT);
-+GRANT SELECT ON cidr_db.* TO c1@'127.0.0.0/255.0.0.0';
-+SHOW GRANTS FOR c1@'127.0.0.0/8';
-+GRANT INSERT ON cidr_db.* TO c1@'127.0.0.0/8';
-+REVOKE SELECT ON cidr_db.* FROM c1@'127.0.0.0/8';
-+SELECT User, Host FROM mysql.db WHERE User='c1';
-+GRANT SELECT ON cidr_db.t TO c1@'127.0.0.0/8';
-+SELECT User, Host FROM mysql.tables_priv WHERE User='c1';
-+REVOKE SELECT ON cidr_db.t FROM c1@'127.0.0.0/255.0.0.0';
-+SET PASSWORD FOR c1@'127.0.0.0/8' = PASSWORD('pw2');
-+ALTER USER c1@'127.0.0.0/255.0.0.0' IDENTIFIED BY 'pw';
-+RENAME USER c1@'127.0.0.0/8' TO c1@'127.0.0.0/16';
-+SELECT User, Host FROM mysql.global_priv WHERE User='c1';
-+SELECT User, Host FROM mysql.db          WHERE User='c1';
-+RENAME USER c1@'127.0.0.0/255.255.0.0' TO c1@'127.0.0.0/8';
-+REVOKE ALL PRIVILEGES, GRANT OPTION FROM c1@'127.0.0.0/255.0.0.0';
-+SHOW GRANTS FOR c1@'127.0.0.0/8';
-+DROP TABLE cidr_db.t;
-+DROP DATABASE cidr_db;
-+
-+--echo # GRANT normalises the host of an account it auto-creates
-+CREATE TABLE test.t (a INT);
-+CREATE PROCEDURE test.p1() SELECT 1;
-+CREATE ROLE cidr_role;
-+GRANT SELECT ON test.* TO g1@'10.0.0.0/24' IDENTIFIED BY 'pw';
-+GRANT SELECT ON test.t TO g2@'10.0.0.0/24' IDENTIFIED BY 'pw';
-+GRANT EXECUTE ON PROCEDURE test.p1 TO g3@'10.0.0.0/24' IDENTIFIED BY 'pw';
-+GRANT cidr_role       TO g4@'10.0.0.0/24' IDENTIFIED BY 'pw';
-+GRANT PROXY ON ''@'%' TO g5@'10.0.0.0/24' IDENTIFIED BY 'pw';
-+SELECT User, Host FROM mysql.global_priv   WHERE User LIKE 'g_' ORDER BY User;
-+SELECT User, Host FROM mysql.db            WHERE User='g1';
-+SELECT User, Host FROM mysql.tables_priv   WHERE User='g2';
-+SELECT User, Host FROM mysql.procs_priv    WHERE User='g3';
-+SELECT User, Host FROM mysql.roles_mapping WHERE User='g4';
-+SELECT User, Host FROM mysql.proxies_priv  WHERE User='g5';
-+DROP USER g1@'10.0.0.0/255.255.255.0', g2@'10.0.0.0/255.255.255.0',
-+          g3@'10.0.0.0/255.255.255.0', g4@'10.0.0.0/255.255.255.0',
-+          g5@'10.0.0.0/255.255.255.0';
-+DROP ROLE cidr_role;
-+DROP PROCEDURE test.p1;
-+DROP TABLE test.t;
-+
-+--echo # DEFINER reaches the same grammar rule
-+CREATE USER def@'10.0.0.0/24' IDENTIFIED BY 'pw';
-+GRANT ALL ON test.* TO def@'10.0.0.0/255.255.255.0';
-+CREATE DEFINER=def@'10.0.0.0/24' VIEW test.v1 AS SELECT 1;
-+CREATE DEFINER=def@'10.0.0.0/24' PROCEDURE test.p2() SELECT 1;
-+SELECT
++# Clean up
++SET @@global.slave_net_timeout= @restore_slave_net_timeout;
++--source include/reset_master_slave.inc
++--disconnect slave
++--connection default
 ```
 
-**File**: `sql/share/errmsg-utf8.txt` (modified, +4/-0)
+**File**: `mysql-test/suite/rpl/r/rpl_heartbeat.result` (modified, +2/-0)
 ```diff
-@@ -12423,3 +12423,7 @@ ER_RESULT_CUT_BY_LIMIT
-         eng "Result was cut by %s) because of %s limit"
- ER_CUT_VALUES_WHILE_PROCESSING
-         eng "Some values were cut while processing %s). Increase %s if you want to avoid the cut"
-+ER_INVALID_HOST_NETMASK
-+        eng "Invalid masked host '%s' for user '%s'"
-+ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK
-+        eng "'%s' entry '%s' ignored, the host is not a valid ip/netmask"
+@@ -14,6 +14,8 @@ show status like 'Slave_heartbeat_period';;
+ Variable_name	Slave_heartbeat_period
+ Value	4.000
+ set @@global.slave_net_timeout= 3 /* must be a warning */;
++Warnings:
++Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (4.000 seconds) exceeds the requested slave_net_timeout (3 seconds); a sensible value for the period should be less than the timeout
+ reset slave;
+ connection master;
+ drop table if exists t1;
 ```
 
-**File**: `sql/sql_acl.cc` (modified, +181/-0)
+**File**: `mysql-test/suite/rpl/r/rpl_heartbeat_basic.result` (modified, +10/-1)
 ```diff
-@@ -339,6 +339,7 @@ ulong role_global_merges= 0, role_db_merges= 0, role_table_merges= 0,
- #ifndef NO_EMBEDDED_ACCESS_CHECKS
- static bool ignore_max_password_errors(const ACL_USER *acl_user);
- static void update_hostname(acl_host_and_ip *host, const char *hostname);
-+static bool valid_host_mask(const char *hostname);
- static bool show_proxy_grants (THD *, const char *, const char *,
-                                char *, size_t);
- static bool show_role_grants(THD *, const char *,
-@@ -443,6 +444,17 @@ class ACL_PROXY_USER :public ACL_ACCESS
-                         safe_str(host.hostname));
-       return TRUE;
-     }
-+    if (!valid_host_mask(host.hostname) ||
-+        !valid_host_mask(proxied_host.hostname))
-+    {
-+      char entry[2 * (USERNAME_LENGTH + HOSTNAME_LENGTH) + 4];
-+      my_snprintf(entry, sizeof(entry), "%s@%s %s@%s", proxied_user,
-+                  safe_str(proxied_host.hostname), user,
-+                  safe_str(host.hostname));
-+      sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
-+                        "proxies_priv", entry);
-+      return TRUE;
-+    }
-     return FALSE;
-   }
+@@ -54,11 +54,20 @@ Slave_heartbeat_period	25.000
+ SET @@global.slave_net_timeout=@restore_slave_net_timeout;
+ include/reset_slave.inc
  
-@@ -3437,6 +3449,15 @@ static bool acl_load(THD *thd, const Grant_tables& tables)
-                          host.host.hostname, host.db);
-         continue;
-       }
-+      if (!valid_host_mask(host.host.hostname))
-+      {
-+        char entry[HOSTNAME_LENGTH + NAME_LEN + 2];
-+        my_snprintf(entry, sizeof(entry), "%s|%s", host.host.hostname,
-+                    safe_str(host.db));
-+        sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
-+                          "host", entry);
-+        continue;
-+      }
- #ifndef TO_BE_REMOVED
-       if (host_table.num_fields() == 8)
-       {						// Without grant
-@@ -3518,6 +3539,17 @@ static bool acl_load(THD *thd, const Grant_tables& tables)
-         continue;
-       }
+-*** Warning if updated slave_net_timeout < slave_heartbeat_timeout ***
++*** No warning if slave_net_timeout lowered with default heartbeat_period ***
+ SET @@global.slave_net_timeout=FLOOR(SLAVE_HEARTBEAT_TIMEOUT)-1;
+ SET @@global.slave_net_timeout=@restore_slave_net_timeout;
+ RESET SLAVE;
  
-+      /* Skipped rows stay in the table, so DROP and RENAME USER still work */
-+      if (!valid_host_mask(user.host.hostname))
-+      {
-+        char entry[USERNAME_LENGTH + HOSTNAME_LENGTH + 2];
-+        my_snprintf(entry, sizeof(entry), "%s@%s", user.user.str,
-+                    safe_str(user.host.hostname));
-+        sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
-+                          "user", entry);
-+        continue;
-+      }
++*** Warning if slave_net_timeout set below explicit heartbeat_period ***
++SET @@global.slave_net_timeout=60;
++CHANGE MASTER TO MASTER_HOST='127.0.0.1', MASTER_PORT=MASTER_PORT, MASTER_USER='root', MASTER_CONNECT_RETRY=20, MASTER_HEARTBEAT_PERIOD=40;
++SET @@global.slave_net_timeout=20;
++Warnings:
++Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (40.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
++SET @@global.slave_net_timeout=@restore_slave_net_timeout;
++RESET SLAVE;
 +
-       if (user_table.get_auth(thd, &acl_memroot, &user))
-         continue;
-       for (uint i= 0; i < user.nauth; i++)
-@@ -3592,6 +3624,15 @@ static bool acl_load(THD *thd, const Grant_tables& tables)
- 		        db.db, db.user, safe_str(db.host.hostname));
-       continue;
-     }
-+    if (!valid_host_mask(db.host.hostname))
-+    {
-+      char entry[NAME_LEN + USERNAME_LENGTH + HOSTNAME_LENGTH + 3];
-+      my_snprintf(entry, sizeof(entry), "%s %s@%s", db.db,
-+                  db.user, safe_str(db.host.hostname));
-+      sql_print_warning(ER_DEFAULT(ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK),
-+                        "db", entry);
-+      continue;
-+    }
-     db.access= access_t(fix_rights_for_db(db_table.get_access()));
-     db.initial_access= db.access;
-     db.sort=get_magic_sort("hdu", db.host.hostname, db.db, db.user);
-@@ -5407,6 +5448,101 @@ static const char *calc_ip(const char *ip, long *val, char end)
-   return ip;
- }
- 
-+/* Convert CIDR prefix length (1-32) to a 32-bit IPv4 subnet mask. */
-+static const char *calc_cidr(const char *prefix_str, long *val)
-+{
-+  uchar prefix;
-+
-+  if (!(prefix_str=str2int(prefix_str, INT16_MAX, 10, &prefix)) ||
-+      *prefix_str != '\0' || !prefix || prefix > 32)
-+    return 0;
-+
-+  *val= (long) (uint32) (0xFFFFFFFFU << (32 - prefix));
-+  return prefix_str;
-+}
-+
-+/*
-+  compare_hostname() tests (client_ip & ip_mask) == ip, so a zero or
-+  non-contiguous mask, or an ip with host bits set, can never match.
-+*/
-+static bool valid_masked_ip(long ip, long mask)
-+{
-+  ulong inv, m= (ulong) (uint32) mask;
-+
-+  if (!m)
-+    return false;                         /* a mask of 0.0.0.0 */
-+
-+  inv= (~m) & 0xFFFFFFFFUL;
-+  if (inv & (inv + 1))
-+    return false;                         /* not contiguous */
-+
-+  return !(((ulong) (uint32) ip) & inv);
-+}
-+
-+
-+/*
-+  Rewrite a masked host into the canonical netmask spelling:
-+
-+    10.0.0.0/8            -> 10.0.0.0/255.0.0.0
-+    010.0.0.0/+8          -> 10.0.0.0/255.0.0.0
-+    10.0.0.0/255.0.0.0    -> unchanged, already canonical
-+
-+  Anything that is not a valid masked host is returned unchanged and no error
-+  is raised, so DROP USER and RENAME USER can still name a malformed host
-+  stored by a version that did not validate it.
-+
-+  The exception is a stored literal CIDR host such as 10.0.0.0/24: it is
-+  converted here, so it can no longer be named and has to be removed with a
-+  direct DELETE from the privilege tables.
-+*/
-+
-+LEX_CSTRING normalize_masked_host(THD *thd, const LEX_CSTRING &host)
-+{
-+  long ip, mask;
-+  const char *p;
-+  char buf[32];                 /* 255.255.255.255/255.255.255.255 and NUL */
-+  uint32 a, m;
-+  size_t
+ *** Warning if updated slave_heartbeat_timeout > slave_net_timeout ***
+ CHANGE MASTER TO MASTER_HOST='127.0.0.1', MASTER_PORT=MASTER_PORT, MASTER_USER='root', MASTER_CONNECT_RETRY=20, MASTER_HEARTBEAT_PERIOD=SLAVE_NET_TIMEOUT;
+ Warnings:
 ```
 
-**File**: `sql/sql_acl.h` (modified, +1/-0)
+**File**: `mysql-test/suite/rpl/t/rpl_heartbeat_basic.test` (modified, +12/-2)
 ```diff
-@@ -148,6 +148,7 @@ bool mysql_drop_user(THD *thd, List <LEX_USER> &list, bool handle_as_role);
- bool mysql_rename_user(THD *thd, List <LEX_USER> &list);
- int mysql_alter_user(THD *thd, List <LEX_USER> &list);
- bool mysql_revoke_all(THD *thd, List <LEX_USER> &list);
-+LEX_CSTRING normalize_masked_host(THD *thd, const LEX_CSTRING &host);
- void fill_effective_table_privileges(THD *thd, GRANT_INFO *grant,
-                                      const char *db, const char *table);
- bool sp_revoke_privileges(THD *thd,
+@@ -104,15 +104,25 @@ SET @@global.slave_net_timeout=@restore_slave_net_timeout;
+ --source include/reset_slave.inc
+ --echo
+ 
+-# Set slave_net_timeout less than current value of slave_heartbeat_period
+---echo *** Warning if updated slave_net_timeout < slave_heartbeat_timeout ***
++# No warning when heartbeat_period is DEFAULT (automatically slave_net_timeout/2)
++--echo *** No warning if slave_net_timeout lowered with default heartbeat_period ***
+ let $slave_heartbeat_timeout= query_get_value(SHOW GLOBAL STATUS LIKE 'slave_heartbeat_period', Value, 1);
+ --replace_result $slave_heartbeat_timeout SLAVE_HEARTBEAT_TIMEOUT
+ eval SET @@global.slave_net_timeout=FLOOR($slave_heartbeat_timeout)-1;
+ SET @@global.slave_net_timeout=@restore_slave_net_timeout;
+ RESET SLAVE;
+ --echo
+ 
++# Set slave_net_timeout less than explicitly set slave_heartbeat_period (MDEV-36841)
++--echo *** Warning if slave_net_timeout set below explicit heartbeat_period ***
++SET @@global.slave_net_timeout=60;
++--replace_result $MASTER_MYPORT MASTER_PORT
++eval CHANGE MASTER TO MASTER_HOST='127.0.0.1', MASTER_PORT=$MASTER_MYPORT, MASTER_USER='root', MASTER_CONNECT_RETRY=$connect_retry, MASTER_HEARTBEAT_PERIOD=40;
++SET @@global.slave_net_timeout=20;
++SET @@global.slave_net_timeout=@restore_slave_net_timeout;
++RESET SLAVE;
++--echo
++
+ # Set value of slave_heartbeat_period greater than slave_net_timeout
+ --echo *** Warning if updated slave_heartbeat_timeout > slave_net_timeout ***
+ let $slave_net_timeout= query_get_value(SHOW VARIABLES LIKE 'slave_net_timeout', Value, 1);
 ```
 
-**File**: `sql/sql_yacc.yy` (modified, +5/-0)
+**File**: `sql/share/errmsg-utf8.txt` (modified, +2/-0)
 ```diff
-@@ -16824,7 +16824,12 @@ user_name:
-                 check_host_name(&$$->host))
-               MYSQL_YYABORT;
-             if ($$->host.str[0])
-+            {
-               $$->host= thd->make_ident_casedn($$->host);
-+              $$->host= normalize_masked_host(thd, $$->host);
-+              if (unlikely(!$$->host.str))
-+                MYSQL_YYABORT;
-+            }
-             else
-               $$->host= host_not_specified;
-           }
+@@ -12427,3 +12427,5 @@ ER_INVALID_HOST_NETMASK
+         eng "Invalid masked host '%s' for user '%s'"
+ ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK
+         eng "'%s' entry '%s' ignored, the host is not a valid ip/netmask"
++ER_OPERATION_INVALIDATES_CONFIGURED_SLAVE
++        eng "This operation leaves replication connection '%s' with an invalid configuration: %s"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5919** (2026-10-19): Tests fixes (@midenok)
-- **PR #5916** (2026-10-18): MDEV-40845: DuckDB: reject SELECT ... FOR UPDATE / LOCK IN SHARE MODE… (@grooverdan)
-- **PR #5905** (2026-10-19): MDEV-41508 Off-by-One Uninitialized Stack Read in Proxy Protocol V2 Port Parsing (@vaintroub)
-- **PR #5904** (2026-10-16): MDEV-40819 DuckDB TIME conversion crashes the server (@itzanway)
-- **PR #5899** (2026-10-16): MDEV-41557 Test encryption.innochecksum is flaky (@iMineLink)
-- **PR #5898** (2026-10-19): MDEV-41553 galera_restart_on_unknown_option test regression after MDE… (@sjaakola)
+- **PR #5949** (2026-10-22): MDEV-41657 TO_DATE no longer works as a variable (@grooverdan)
+- **PR #5939** (2026-10-22): MDEV-41490 ignore_db_dirs not working with SST (@janlindstrom)
+- **PR #5938** (2026-10-21): MDEV-41669 ALTER TABLE…IMPORT TABLESPACE may break MVCC (@dr-m)
+- **PR #5937** (2026-10-21): MDEV-41661: Leak and corruption on btr_page_reorganize_low() (@dr-m)
+- **PR #5932** (2026-10-21): MDEV-40616: MSAN - use-of-uninitialized-value in extract_date_time() (@raghunandanbhat)
+- **PR #5926** (2026-10-20): 10.11 mdev 40727 (@janlindstrom)
 
 ---
 
@@ -2098,48 +1841,22 @@ New error ER_INVALID_HOST_NETMASK, ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-25515 User Account Host Names using CIDR notation
+## X. [MDEV-36841] Warn when slave timeout drops below heartbeat period
 
 **RULE**:
-When implementing operations in `mysql-test/main/host_cidr.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/suite/binlog_in_engine/rpl_heartbeat.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6d172c0`: MDEV-25515 User Account Host Names using CIDR notation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcdb4c4c`: [MDEV-36841] Warn when slave timeout drops below heartbeat period. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/host_cidr.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/binlog_in_engine/rpl_heartbeat.result`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#
-# MDEV-25515 User Account Host Names using CIDR notation
-#
-call mtr.add_suppression("ignored, the host is not a valid ip/netmask");
-# CIDR is stored in the netmask form
-CREATE USER c1@'127.0.0.0/8'   IDENTIFIED BY 'pw';
-CREATE USER c2@'127.0.0.0/24'  IDENTIFIED BY 'pw';
-CREATE USER c3@'127.0.0.1/32'  IDENTIFIED BY 'pw';
-CREATE USER c4@'127.0.0.0/31'  IDENTIFIED BY 'pw';
-CREATE USER c5@'0.0.0.0/1'     IDENTIFIED BY 'pw';
-CREATE USER n1@'127.0.0.0/255.0.0.0'     IDENTIFIED BY 'pw';
-CREATE USER n2@'127.0.0.0/255.255.255.0' IDENTIFIED BY 'pw';
-SELECT User, Host FROM mysql.global_priv WHERE User LIKE 'c_' OR User LIKE 'n_'
-ORDER BY User;
-User	Host
-c1	127.0.0.0/255.0.0.0
-c2	127.0.0.0/255.255.255.0
-c3	127.0.0.1/255.255.255.255
-c4	127.0.0.0/255.255.255.254
-c5	0.0.0.0/128.0.0.0
-n1	127.0.0.0/255.0.0.0
-n2	127.0.0.0/255.255.255.0
-SHOW CREATE USER c1@'127.0.0.0/8';
-CREATE USER for c1@127.0.0.0/255.0.0.0
-CREATE USER `c1`@`127.0.0.0/255.0.0.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD122'
-SHOW GRANTS FOR c2@'127.0.0.0/24';
-Grants for c2@127.0.0.0/255.255.255.0
-GRANT USAGE ON *.* TO `c2`@`127.0.0.0/255.255.255.0` IDENTIFIED BY PASSWORD '*D821809F681A40A6E379B50D0463EFAE20BDD
+Warnings:
+Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (4.000 seconds) exceeds the requested slave_net_timeout (3 seconds); a sensible value for the period should be less than the timeout
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2149,4 +1866,4 @@ GRANT USAGE ON *.* TO `c2`@`127.0.0.0/255.255.255.0` IDENTIFIED BY PASSWORD '*D8
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6d172c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcdb4c4c` are properly handled with clean fallback behavior.

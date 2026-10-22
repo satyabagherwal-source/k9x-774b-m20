@@ -4347,3 +4347,7 @@
 | `CYCLE-20261022-U63K` | `2026-10-22T17:12:36.704Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3656` | Yes (`dde2845d...`) |
 | `CYCLE-20261022-2LDP` | `2026-10-22T17:19:09.757Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3657` | Yes (`8b6f7bb1...`) |
 | `CYCLE-20261022-2QDB` | `2026-10-22T17:19:16.223Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3658` | Yes (`207e5036...`) |
+| `CYCLE-20261022-ASM9` | `2026-10-22T17:25:32.385Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3659` | Yes (`72aa3811...`) |
+| `CYCLE-20261022-B0W0` | `2026-10-22T17:25:43.104Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3660` | Yes (`a38351b2...`) |
+| `CYCLE-20261022-B1EL` | `2026-10-22T17:25:43.773Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3661` | Yes (`e13d8a1e...`) |
+| `CYCLE-20261022-B2NA` | `2026-10-22T17:25:45.382Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3662` | Yes (`332c2261...`) |

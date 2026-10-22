@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T17:19:16.238Z",
+  "last_updated": "2026-10-22T17:25:45.396Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
-      "verified_at": "2026-10-21T18:33:32.116Z",
+      "content_hash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
+      "verified_at": "2026-10-22T17:25:43.787Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:33:32.116Z"
+      "last_updated": "2026-10-22T17:25:43.787Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -6321,14 +6321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mui-base-ui",
-      "content_hash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
-      "verified_at": "2026-10-20T23:49:40.160Z",
+      "content_hash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
+      "verified_at": "2026-10-22T17:25:32.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:49:40.160Z"
+      "last_updated": "2026-10-22T17:25:32.423Z"
     },
     "ekzhang/bore": {
       "repository": "ekzhang/bore",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
-      "verified_at": "2026-10-20T06:25:53.906Z",
+      "content_hash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
+      "verified_at": "2026-10-22T17:25:45.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:25:53.906Z"
+      "last_updated": "2026-10-22T17:25:45.396Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
-      "verified_at": "2026-10-19T07:59:20.871Z",
+      "content_hash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
+      "verified_at": "2026-10-22T17:25:43.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:59:20.871Z"
+      "last_updated": "2026-10-22T17:25:43.118Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",

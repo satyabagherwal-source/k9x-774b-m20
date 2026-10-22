@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T17:19:16.234Z",
-  "total_cycles_completed": 4324,
-  "total_learnings_persisted": 4324,
-  "total_rules_promoted": 3504,
+  "last_updated": "2026-10-22T17:25:45.393Z",
+  "total_cycles_completed": 4328,
+  "total_learnings_persisted": 4328,
+  "total_rules_promoted": 3508,
   "history": [
-    {
-      "timestamp": "2026-10-21T02:14:57.810Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:15:03.570Z",
-      "repository": "modelcontextprotocol/kotlin-sdk",
-      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:21:27.574Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:21:27.802Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T02:21:31.601Z",
       "repository": "lancedb/lancedb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-22T17:19:16.234Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:25:32.420Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:25:43.116Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:25:43.784Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:25:45.393Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

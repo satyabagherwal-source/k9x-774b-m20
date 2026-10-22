@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mui-base-ui-learnings.md`  
 > **Source**: github ([https://github.com/mui/base-ui](https://github.com/mui/base-ui))  
-> **Source Version**: `051a971e`  
+> **Source Version**: `205831ca`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:49:39.832Z  
+> **Timestamp**: 2026-10-22T17:25:31.990Z  
 > **Learning ID**: `learn-github-mui-base-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mui-base-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mui/base-ui](https://github.com/mui/base-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:49:39.582Z  
+> **Harvest Timestamp**: 2026-10-22T17:25:30.770Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Unstyled UI components for building accessible web apps and design systems. From the creators of Radix, Floating UI, and Material UI.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11190 stars
+- **Stars / Engagement**: 11207 stars
 
 ---
 
@@ -355,17 +355,11 @@ export function handleInputPress(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6040** (2026-10-20): **[code-infra] Include resolution settings in lockfile**
-  *Symptoms*: Port of mui/material-ui#49509. With `lockfile.includeResolutionSettings`, pnpm records `autoDedupe` and the other resolution settings in `pnpm-lock.yaml`, so non-frozen installs on any machine can trust the lockfile and skip re-resolving the whole graph.
-  **Post-Mortem & Fix Analysis**:
-  >  - [base-ui-tanstack-start](https://pkg.pr.new/template/39b899f1-8f1f-4f9f-8723-39e3f12e112e) - [vite-css-base-ui-example](https://pkg.pr.new/template/f328cf1f-004c-44a1-8df6-6224a4ffd7d9)     ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/react@6040   ```       ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/utils@6040   ```     _commit: <a href="https://github.com/mui/base-ui/runs/118502447813"><code>8e97896</code></a>_ 
-  > <!-- ci-report-comment -->  ## Bundle size  | Bundle | Parsed size | Gzip size | |:----------|----------:|----------:| | @base-ui/react |  0B<sup>(0.00%)</sup> |  0B<sup>(0.00%)</sup> |    [Details of bundle changes](https://code-infra-dashboard.onrender.com/size-comparison/mui/base-ui/diff?sha=8e97896bc3fb823ef87cd262b19f87cb7ea44c66&base=bd3f1494d0e5f66a4775c166eb3c2cf016a77556&prNumber=6040&baseRef=master)  ## Performance  **Total duration:** 464.66 ms +60.58 ms<sup>(+15.0%)</sup> | **Renders:** 75 <sup>(+0)</sup> | **Paint:** 843.40 ms +99.22 ms<sup>(+13.3%)</sup>  | Test | Duration | Renders | |:-----|----------:|--------:| | Tabs mount (200 instances) | 82.99 ms 🔺+20.03 ms<sup>(+31.8%)</sup> | 3 <sup>(+0)</sup> | | Mixed surface mount (app-like density) | 39.97 ms 🔺+8.50 ms<sup>(+27.0%)</sup> | 5 <sup>(+0)</sup> | | Menu mount (300 instances) | 26.35 ms 🔺+6.39 ms<sup>(+32.0%)</sup> | 1 <sup>(+0)</sup> | | Select open (500 options) | 29.75 ms 🔺+5.22 ms<sup>(+21.3%)</sup> | 14 
+- **Issue #6066** (2026-10-22): **[tooltip] Keep the trigger disabled when the root is disabled**
+  *Symptoms*: - [x] I have followed (at least) the [PR section of the contributing guide](https://github.com/mui/base-ui/blob/HEAD/CONTRIBUTING.md#sending-a-pull-request).  `Tooltip.Trigger` resolved `disabled` with `disabledProp ?? rootDisabled`, so `<Tooltip.Trigger disabled={false}>` under `<Tooltip.Root disabled>` turned the trigger's hover and focus interactions back on. The root still refuses to stay open while disabled (`TooltipRoot` closes it with reason `disabled`), so hovering that trigger fired `onOpenChange(true, 'trigger-hover')` and then `onOpenChange(false, 'disabled')`. The trigger also didn't get `data-trigger-disabled`.  The trigger now uses `disabledProp || rootDisabled`. Every other part with its own `disabled` under a parent that also has one does the same (Menu, Select, Combobox, Accordion, Toolbar, Toggle and others; Collapsible is fixed in #6065).  The `??` came in with detached triggers (#3071), and no reason was given for it. The existing test "keeps the tooltip disabled when the root is disabled and the trigger opts back in" (from the #5270 coverage sweep) already expected the tooltip to stay closed. It now also checks `data-trigger-disabled` and that `onOpenChange` isn't called. Without the fix it's called twice.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #6036** (2026-10-20): **[popups] Keep focus inside modal popups when Tab is pressed faster than a frame**
-  *Symptoms*: Fixes #6030  The focus guards of a modal popup wrapped focus back inside on the next animation frame, so a second Tab pressed before that frame moved focus from the guard to the page behind the popup. This PR focuses the wrap target synchronously in the guard's `onFocus`, which is what the non-modal and portal guards already do.
-  **Post-Mortem & Fix Analysis**:
-  >  - [base-ui-tanstack-start](https://pkg.pr.new/template/4383baf1-09c8-45b7-b5e7-43c7e145f2c4) - [vite-css-base-ui-example](https://pkg.pr.new/template/80505746-a3d9-4e22-a9cf-d3620be76912)     ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/react@6036   ```       ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/utils@6036   ```     _commit: <a href="https://github.com/mui/base-ui/runs/118492013201"><code>7fc3ca1</code></a>_ 
-  > <!-- ci-report-comment -->  ## Bundle size  | Bundle | Parsed size | Gzip size | |:----------|----------:|----------:| | @base-ui/react | 🔺+10B<sup>(0.00%)</sup> | ▼-1B<sup>(0.00%)</sup> |    [Details of bundle changes](https://code-infra-dashboard.onrender.com/size-comparison/mui/base-ui/diff?sha=7fc3ca15a97b7245e27acd94c1f2983c2e62af1e&base=b45439f800dbece8d5b5e587252c81b6fb8f5b3c&prNumber=6036&baseRef=master)  ## Performance  **Total duration:** 445.83 ms -31.55 ms<sup>(-6.6%)</sup> | **Renders:** 75 <sup>(+0)</sup> | **Paint:** 821.33 ms -46.75 ms<sup>(-5.4%)</sup>  | Test | Duration | Renders | |:-----|----------:|--------:| | Scroll Area mount (300 instances) | 44.76 ms 🔺+9.39 ms<sup>(+26.6%)</sup> | 3 <sup>(+0)</sup> | | Menu mount (300 instances) | 25.77 ms 🔺+4.50 ms<sup>(+21.2%)</sup> | 1 <sup>(+0)</sup> | | Checkbox mount (500 instances) | 28.31 ms ▼-17.58 ms<sup>(-38.3%)</sup> | 1 <sup>(+0)</sup> | | Slider mount (300 instances) | 47.13 ms ▼-16.35 ms<sup>(-25.8%)</sup> | 
+- **Issue #6061** (2026-10-22): **[internal] Use existing helpers instead of inline copies**
+  *Symptoms*: - [x] I have followed (at least) the [PR section of the contributing guide](https://github.com/mui/base-ui/blob/HEAD/CONTRIBUTING.md#sending-a-pull-request).  These spots re-implement a helper the codebase already has:  | Helper | Sites | | --- | --- | | `isElementDisabled` (`@base-ui/utils`) | `useCompositeItem` hover check, `isListIndexDisabled` | | `clamp` (`@base-ui/utils`) | `OTPFieldRoot` `focusInput`, `DrawerSwipeArea` open and backdrop progress | | `store.useStateSetter` | `ComboboxInputGroup`, `ComboboxPositioner`, `ComboboxTrigger`, `ComboboxList` (×2), which wrapped `store.set` in `useStableCallback`. Select and Menu already use `useStateSetter` for the same elements. |  Behavior is unchanged, with one exception: `useCompositeItem` read `item.ariaDisabled`, and `isElementDisabled` reads the `aria-disabled` attribute. These match wherever ARIA reflection exists (Chrome, Safari, Firefox 119+, jsdom). On older Firefox, hovering an `aria-disabled` Menubar or Toolbar item no longer focuses it.  `OTPFieldRoot` applied min and max in the opposite order from `clamp`. That gives the same result because the upper bound, `Math.max(length - 1, 0)`, is never negative.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -382,218 +376,156 @@ export function handleInputPress(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `051a971e` (2026-10-20)
-**Commit Message**: [popups] Dismiss after dropped IME compositions (#5978)
+### Incident Patch 1: `74292641` (2026-10-22)
+**Commit Message**: [dialog] Fix outside press crash when the target is the document (#6057)
 
-**File**: `packages/react/src/utils/popups/interactions/useDismiss.test.tsx` (modified, +1/-1)
+**File**: `packages/react/src/dialog/root/DialogRoot.test.tsx` (modified, +51/-0)
 ```diff
-@@ -166,7 +166,7 @@ describe.skipIf(!isJSDOM)('useDismiss', () => {
-       // cancellation.
-       fireEvent.change(textbox, { target: { value: 'あ' } });
-       fireEvent.compositionStart(textbox);
--      fireEvent.keyDown(textbox, { key: 'Escape' });
-+      fireEvent.keyDown(textbox, { key: 'Escape', isComposing: true });
-       fireEvent.compositionEnd(textbox);
+@@ -684,6 +684,57 @@ describe('<Dialog.Root />', () => {
+         }
+       });
  
-       // Wait for the compositionend timeout tick due to Safari
-```
-
-**File**: `packages/react/src/utils/popups/interactions/useDismiss.ts` (modified, +11/-15)
-```diff
-@@ -161,7 +161,7 @@ export function useDismiss(
-   // A click whose press began before the floating element opened is the tail of that
-   // gesture (e.g. the drag-release that opened it), not a new outside press.
-   const sawPressWhileOpenRef = React.useRef(false);
--  const isComposingRef = React.useRef(false);
-+  const compositionEndPendingRef = React.useRef(false);
-   const currentPointerTypeRef = React.useRef<PointerEvent['pointerType']>('');
- 
-   const touchStateRef = React.useRef<{
-@@ -174,7 +174,7 @@ export function useDismiss(
- 
-   const cancelDismissOnEndTimeout = useTimeout();
-   const clearInsideReactTreeTimeout = useTimeout();
--  // Outlives effect re-runs so a pending reset can't leave `isComposingRef` stuck.
-+  // Outlives effect re-runs so a pending reset can't leave `compositionEndPendingRef` stuck.
-   const compositionTimeout = useTimeout();
- 
-   const clearInsideReactTree = useStableCallback(() => {
-@@ -221,11 +221,13 @@ export function useDismiss(
-       }
- 
-       const native = isReactEvent(event) ? event.nativeEvent : event;
-+      // Key code 229 indicates that an IME is processing the key event.
-+      const isImeKey = native.keyCode === 229;
- 
-       // Wait until IME is settled. Pressing `Escape` while composing should
-       // close the compose menu, but not the floating element. The ref covers Safari, which fires
--      // `compositionend` before `keydown`; `isComposing` covers compositions that began while closed.
--      if (isComposingRef.current || native.isComposing) {
-+      // `compositionend` before `keydown`; the native event identifies an active composition.
-+      if (compositionEndPendingRef.current || native.isComposing || isImeKey) {
-         return;
-       }
- 
-@@ -325,7 +327,7 @@ export function useDismiss(
-       // changes mid-gesture.
-       if (!open) {
-         sawPressWhileOpenRef.current = false;
--        isComposingRef.current = false;
-+        compositionEndPendingRef.current = false;
-         currentPointerTypeRef.current = '';
-         touchStateRef.current = null;
-       }
-@@ -338,23 +340,18 @@ export function useDismiss(
-     const preventedPressSuppressionTimeout = new Timeout();
-     const doc = ownerDocument(positionerElement);
- 
--    function handleCompositionStart() {
--      compositionTimeout.clear();
--      isComposingRef.current = true;
--    }
--
-     function handleCompositionEnd() {
-       // Safari fires `compositionend` before `keydown`, so we need to wait
--      // until the next tick to set `isComposing` to `false`. Set it here too, since closing
--      // resets it while a composition can continue into the next open session.
-+      // until the next tick before dismissing. Open this bounded window on compositionend
-+      // even when the composition began while the popup was closed.
-       // https://bugs.webkit.org/show_bug.cgi?id=165004
--      isComposingRef.current = true;
-+      compositionEndPendingRef.current = true;
-       compositionTimeout.start(
-         // 0ms or 1ms don't work in Safari. 5ms appears to consistently work.
-         // Only apply to WebKit for the test to remain 0ms.
-         platform.engine.webkit ? 5 : 0,
-         () => {
--          isComposingRef.current = false;
-+          compositionEndPendingRef.current = false;
-         },
-       );
-     }
-@@ -758,7 +755,6 @@ export function useDismiss(
-               closeOnEscapeKeyDown(event);
-             }
-           }),
--          addEventListener(doc, 'compositionstart', handleCompositionStart),
-           addEventListener(doc, 'compositionend', handleCompositionEnd),
-         ),
-       outsidePressEnabled &&
-```
-
-**File**: `packages/react/test/popupConformanceTests.tsx` (modified, +51/-1)
-```diff
-@@ -1,7 +1,15 @@
- import * as React from 'react';
-+import { ownerDocument } from '@base-ui/utils/owner';
-+import { activeElement } from '@base-ui/utils/shadowDom';
- import type { UserEvent } from '@testing-library/user-event';
- import { expect, vi, describe, it, afterEach, beforeEach } from 'vitest';
--import { flushMicrotasks, randomStringValue, screen, waitFor } from '@mui/internal-test-utils';
-+import {
-+  fireEvent,
-+  flushMicrotasks,
-+  randomStringValue,
-+  screen,
-+  waitFor,
-+} from '@mui/internal-test-utils';
- import type { createRenderer } from '#test-utils';
- import { enterWithMouse, isJSDOM } from '#test-utils';
- import { REASONS } from '../src/internals/reasons';
-@@ -59,6 +67,48 @@ export function popupConformanceTests(config: PopupTestConfig) {
-   };
- 
-   describe('Popup conformance', () => {
-+    describe('IME dismissal', () => {
-+      it('dismisses after a composition is dropped without compositionend', async () => {
++      it('closes when the outside press targets the document', async () => {
 +        const handleOpenChange = vi.fn();
-+        const { user } = await render(
-+          prepareComponent({ root: { defaultOpen: true, onOpenChange: handleOpenChange } }),
-+        );
-+        const popup = getPopup()!;
-+        expect(popup).toBeVisible();
 +
-+        fireEvent.compositionStart(popup);
-+        await user.keyboard('[Escape]');
-+
-+        await waitFor(expectPopupClosed);
-+        expect(handleOpenChange).toHaveBeenCalledWith(
-+          false,
-+          expect.objectContaining({ reason: REASONS.escapeKey }),
++        await render(
++          <TestDialog
++            rootProps={{ defaultOpen: true, onOpenChange: handleOpenChange, modal: true }}
++          />,
 +        );
++
++        fireEvent.click(document);
++
++        await waitFor(() => {
++          expect(screen.queryByRole('dialog')).toBe(null);
++        });
++        expect(handleOpenChange.mock.calls.length).toBe(1);
++        expect(handleOpenChange.mock.calls[0][1].reason).toBe(REASONS.outsidePress);
 +      });
 +
-+      it.each([
-+        { name: 'isComposing', isComposing: true, keyCode: 27 },
-+        { name: 'keyCode 229', isComposing: false, keyCode: 229 },
-+      ])('preserves the popup for an IME Escape identified by $name', async (event) => {
++      it('suppresses only the click of a press that starts inside and ends on the document', async () => {
 +        const handleOpenChange = vi.fn();
-+        await render(
-+          prepareComponent({ root: { defaultOpen: true, onOpenChange: handleOpenChange } }),
-+        );
-+        const popup = getPopup()!;
-+        expect(popup).toBeVisible();
 +
-+        fireEvent.keyDown(activeElement(ownerDocument(popup))!, {
-+          key: 'Escape',
-+          isComposing: event.isComposing,
-+          keyCode: event.keyCode,
-+        });
++        await render(
++          <TestDialog
++            rootProps={{ defaultOpen: true, onOpenChange: handleOpenChange, modal: true }}
++          />,
++        );
++
++        const popup = screen.getByTestId('dialog-popup');
++
++        fireEvent.pointerDown(popup, { pointerType: 'mouse', button: 0 });
++        fireEvent.mouseDown(popup, { button: 0 });
++        fireEvent.pointerUp(document, { pointerType: 'mouse', button: 0 });
++        fireEvent.mouseUp(document, { button: 0 });
++        fireEvent.click(document);
 +        await flushMicrotasks();
 +
-+        expect(popup).toBeVisible();
-+        expect(handleOpenChange).not.toHaveBeenCalled();
-+      });
-+    });
++        expect(screen.queryByRole('dialog')).not.toBe(null);
++        expect(handleOpenChange.mock.calls.length).toBe(0);
 +
-     describe('controlled mode', () => {
-       it('opens the popup with the `open` prop', async () => {
-         const { rerender } = await render(prepareComponent({ root: { open: false } }));
++        fireEvent.pointerDown(document, { pointerType: 'mouse', button: 0 });
++        fireEvent.mouseDown(document, { button: 0 });
++        fireEvent.pointerUp(document, { pointerType: 'mouse', button: 0 });
++        fireEvent.mouseUp(document, { button: 0 });
++        fireEvent.click(document);
++
++        await waitFor(() => {
++          expect(screen.queryByRole('dialog')).toBe(null);
++        });
++        expect(handleOpenChange.mock.calls[0][1].reason).toBe(REASONS.outsidePress);
++      });
++
+       it('closing via outside press: works when clicking outside the shadow root', async () => {
+         const handleOpenChange = vi.fn();
+ 
+```
+
+**File**: `packages/react/src/dialog/root/useDialogRoot.ts` (modified, +4/-1)
+```diff
+@@ -1,5 +1,6 @@
+ 'use client';
+ import * as React from 'react';
++import { isElement } from '@floating-ui/utils/dom';
+ import { useIsoLayoutEffect } from '@base-ui/utils/useIsoLayoutEffect';
+ import { useScrollLock } from '@base-ui/utils/useScrollLock';
+ import { contains, getTarget } from '@base-ui/utils/shadowDom';
+@@ -73,7 +74,9 @@ export function DialogInteractions({
+           return internalBackdrop || backdrop
+             ? internalBackdrop === target ||
+                 backdrop === target ||
+-                (contains(target, popupElement) && !target?.hasAttribute('data-base-ui-portal'))
++                // `target` can be the document, which contains the popup but isn't an element.
++                (contains(target, popupElement) &&
++                  !(isElement(target) && target.hasAttribute('data-base-ui-portal')))
+             : true;
+         }
+         return true;
 ```
 
 ---
 
-### Incident Patch 2: `6e3eddda` (2026-10-20)
-**Commit Message**: [code-infra] Include resolution settings in lockfile (#6040)
+### Incident Patch 2: `da272c0d` (2026-10-21)
+**Commit Message**: [docs] Fix the group labeling snippets in the forms handbook (#5918)
 
-**File**: `pnpm-lock.yaml` (modified, +4/-0)
+**File**: `docs/src/app/(docs)/react/handbook/forms/page.mdx` (modified, +16/-6)
 ```diff
-@@ -159,8 +159,12 @@ snapshots:
- lockfileVersion: '9.0'
+@@ -87,7 +87,7 @@ import { Slider } from '@base-ui/react/slider';
  
- settings:
-+  autoDedupe: true
-   autoInstallPeers: true
-+  dedupeInjectedDeps: true
-+  dedupePeerDependents: true
-   excludeLinksFromLockfile: false
-+  linkWorkspacePackages: false
+ ### Labeling control groups
  
- overrides:
-   '@guidepup/setup>@guidepup/record': '-'
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +3/-0)
-```diff
-@@ -58,6 +58,9 @@ overrides:
- engineStrict: true
- updateNotifier: false
- autoDedupe: true
-+# Record resolution settings like autoDedupe in the lockfile, so installs can trust it and skip resolution.
-+lockfile:
-+  includeResolutionSettings: true
- blockExoticSubdeps: true
- minimumReleaseAge: 4320
- minimumReleaseAgeExclude:
+-Compose `<Fieldset>` when a single label applies to multiple controls, such as a range slider with multiple thumbs or a section that combines several inputs. For checkbox and radio groups, keep the group label in `<Fieldset.Legend>` and wrap each option with `<Field.Item>`:
++Compose `<Fieldset>` when labeling a group of controls, such as a range slider with multiple thumbs or a section that combines several inputs. For checkbox and radio groups, keep the group label in `<Fieldset.Legend>` and wrap each option with `<Field.Item>`:
+ 
+ ```tsx title="Composing range slider and radio group with fieldset"
+ import { Form } from '@base-ui/react/form';
+@@ -100,13 +100,13 @@ import { Slider } from '@base-ui/react/slider';
+ <Form>
+   <Field.Root>
+     {/* @highlight-start */}
+-    <Fieldset.Root render={<Slider.Root />}>
++    <Fieldset.Root render={<Slider.Root defaultValue={[25, 75]} />}>
+       <Fieldset.Legend>Price range</Fieldset.Legend>
+       {/* @highlight-end */}
+       <Slider.Control>
+         <Slider.Track>
+-          <Slider.Thumb aria-label="Minimum price" />
+-          <Slider.Thumb aria-label="Maximum price" />
++          <Slider.Thumb index={0} aria-label="Minimum price" />
++          <Slider.Thumb index={1} aria-label="Maximum price" />
+         </Slider.Track>
+       </Slider.Control>
+       {/* @highlight */}
+@@ -118,8 +118,18 @@ import { Slider } from '@base-ui/react/slider';
+     <Fieldset.Root render={<RadioGroup />}>
+       <Fieldset.Legend>Storage type</Fieldset.Legend>
+       {/* @highlight-end */}
+-      <Radio.Root value="ssd" />
+-      <Radio.Root value="hdd" />
++      <Field.Item>
++        <Field.Label>
++          <Radio.Root value="ssd" />
++          SSD
++        </Field.Label>
++      </Field.Item>
++      <Field.Item>
++        <Field.Label>
++          <Radio.Root value="hdd" />
++          HDD
++        </Field.Label>
++      </Field.Item>
+       {/* @highlight */}
+     </Fieldset.Root>
+   </Field.Root>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6040** (2026-10-20): [code-infra] Include resolution settings in lockfile (@Janpot)
-- **PR #6036** (2026-10-20): [popups] Keep focus inside modal popups when Tab is pressed faster than a frame (@atomiks)
-- **PR #6024** (2026-10-19): [select] Avoid re-rendering every item when the popup closes (@mdm317)
-- **PR #6022** (2026-10-19): [radio group] Skip the tab stop when the group is disabled (@rohits2501)
-- **PR #6016** (2026-10-19): [popups] Focus the trigger before a screen reader press opens it (@henryqdineen)
-- **PR #6015** (2026-10-20): [popover] Keep focus that moved elsewhere before the deferred focus restore (@cristianchiriac)
+- **PR #6066** (2026-10-22): [tooltip] Keep the trigger disabled when the root is disabled (@flaviendelangle)
+- **PR #6061** (2026-10-22): [internal] Use existing helpers instead of inline copies (@flaviendelangle)
+- **PR #6060** (2026-10-22): [combobox] Remove unused `query` from the derived items context (@flaviendelangle)
+- **PR #6059** (2026-10-22): [popups] Reuse `popupTransitionStateMapping` (@flaviendelangle)
+- **PR #6058** (2026-10-22): [code-infra] Remove redundant `only-allow` preinstall hook (@Janpot)
+- **PR #6057** (2026-10-22): [dialog] Fix outside press crash when the target is the document (@skrabe)
 
 ---
 
@@ -613,28 +545,61 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [popups] Dismiss after dropped IME compositions (#5978)
+## X. [dialog] Fix outside press crash when the target is the document (#6057)
 
 **RULE**:
-When implementing operations in `packages/react/src/utils/popups/interactions/useDismiss.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mui/base-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react/src/dialog/root/DialogRoot.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mui/base-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `051a971e`: [popups] Dismiss after dropped IME compositions (#5978). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `74292641`: [dialog] Fix outside press crash when the target is the document (#6057). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react/src/utils/popups/interactions/useDismiss.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react/src/dialog/root/DialogRoot.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      fireEvent.keyDown(textbox, { key: 'Escape', isComposing: true });
+      it('closes when the outside press targets the document', async () => {
+        const handleOpenChange = vi.fn();
+
+        await render(
+          <TestDialog
+            rootProps={{ defaultOpen: true, onOpenChange: handleOpenChange, modal: true }}
+          />,
+        );
+
+        fireEvent.click(document);
+
+        await waitFor(() => {
+          expect(screen.queryByRole('dialog')).toBe(null);
+        });
+        expect(handleOpenChange.mock.calls.length).toBe(1);
+        expect(handleOpenChange.mock.calls[0][1].reason).toBe(REASONS.outsidePress);
+      });
+
+      it('suppresses only the click of a press that starts inside and ends on the document', async () => {
+        const handleOpenChange = vi.fn();
+
+        await render(
+          <TestDialog
+            rootProps={{ defaultOpen: true, onOpenChange: handleOpenChange, modal: true }}
+          />,
+        );
+
+        const popup = screen.getByTestId('dialog-popup');
+
+        fireEvent.pointerDown(popup, { pointerType: 'mouse', button: 0 });
+        fireEvent.mouseDown(popup, { button: 0 });
+        fireEvent.pointerUp(document, { pointerType: 'mouse', button: 0 });
+        fireEvent.mouseUp(document, { button: 0 });
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      fireEvent.keyDown(textbox, { key: 'Escape' });
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `051a971e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `74292641` are properly handled with clean fallback behavior.

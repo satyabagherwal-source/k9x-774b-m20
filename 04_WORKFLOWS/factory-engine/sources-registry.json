@@ -3138,22 +3138,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zeromicro-go-zero": {
-    "name": "go-zero",
+    "name": "zeromicro/go-zero",
     "officialUrl": "https://github.com/zeromicro/go-zero",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T23:24:02.567Z",
-    "lastVerified": "2026-10-20T23:24:02.567Z",
+    "lastChecked": "2026-10-22T17:25:42.522Z",
+    "lastVerified": "2026-10-22T17:25:42.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
-    "promotedRulesCount": 2,
-    "recentFixesCount": 5,
+    "contentHash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "eb86638b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "build-trust-ockam": {
     "name": "ockam",
@@ -5016,14 +5015,14 @@
     "officialUrl": "https://github.com/mui/base-ui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T23:49:39.582Z",
-    "lastVerified": "2026-10-20T23:49:39.582Z",
+    "lastChecked": "2026-10-22T17:25:30.770Z",
+    "lastVerified": "2026-10-22T17:25:30.770Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mui-base-ui",
-    "contentHash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
+    "contentHash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -15199,22 +15198,21 @@
     "revisionIdentifier": "f432041f"
   },
   "mariadb-server": {
-    "name": "server",
+    "name": "MariaDB/server",
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-20T22:32:58.624Z",
-    "lastVerified": "2026-10-20T22:32:58.624Z",
+    "lastChecked": "2026-10-22T17:25:45.041Z",
+    "lastVerified": "2026-10-22T17:25:45.041Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
-    "contentHash": "d56bc5dfc06d01ac654ff3659a4d499a63c5931f596a0f823aa533f49405e637",
+    "contentHash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f6d172c0"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -18528,8 +18526,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-22T16:58:17.813Z",
-    "lastVerified": "2026-10-22T16:58:17.813Z",
+    "lastChecked": "2026-10-22T17:25:40.357Z",
+    "lastVerified": "2026-10-22T17:25:40.357Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -20309,12 +20307,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nalexn-viewinspector": {
-    "name": "nalexn/ViewInspector",
+    "name": "ViewInspector",
     "officialUrl": "https://github.com/nalexn/ViewInspector",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-19T23:21:58.567Z",
-    "lastVerified": "2026-10-19T23:21:58.567Z",
+    "lastChecked": "2026-10-22T17:25:30.369Z",
+    "lastVerified": "2026-10-22T17:25:30.369Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nalexn-viewinspector",
@@ -20323,7 +20321,8 @@
     "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4d5e732c"
   },
   "blackjacx-wwdc": {
     "name": "Blackjacx/WWDC",
@@ -22135,14 +22134,14 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T18:33:30.344Z",
-    "lastVerified": "2026-10-21T18:33:30.344Z",
+    "lastChecked": "2026-10-22T17:25:43.397Z",
+    "lastVerified": "2026-10-22T17:25:43.397Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
+    "contentHash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -23048,12 +23047,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nguyenphutrong-quotio": {
-    "name": "nguyenphutrong/quotio",
+    "name": "quotio",
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T20:35:08.292Z",
-    "lastVerified": "2026-10-20T20:35:08.292Z",
+    "lastChecked": "2026-10-22T17:25:25.376Z",
+    "lastVerified": "2026-10-22T17:25:25.376Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
@@ -23062,7 +23061,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1b734d48"
   },
   "pathwaycom-serviette": {
     "name": "serviette",
@@ -26071,12 +26071,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "scrapy-plugins-scrapy-playwright": {
-    "name": "scrapy-plugins/scrapy-playwright",
+    "name": "scrapy-playwright",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-playwright",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T21:24:05.731Z",
-    "lastVerified": "2026-10-19T21:24:05.731Z",
+    "lastChecked": "2026-10-22T17:25:27.878Z",
+    "lastVerified": "2026-10-22T17:25:27.878Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-plugins-scrapy-playwright",
@@ -26085,7 +26085,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2658f86a"
   },
   "scrapy-plugins-scrapy-splash": {
     "name": "scrapy-plugins/scrapy-splash",
@@ -27404,8 +27405,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-22T17:19:18.770Z",
-    "lastVerified": "2026-10-22T17:19:18.770Z",
+    "lastChecked": "2026-10-22T17:25:47.934Z",
+    "lastVerified": "2026-10-22T17:25:47.934Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
