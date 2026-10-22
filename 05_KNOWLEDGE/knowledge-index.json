@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T19:22:50.298Z",
+  "last_updated": "2026-10-22T19:29:19.004Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29044,8 +29044,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "86f5499c",
-      "content_hash": "853c2d1118531e177be4eda7c3700352b616e722eb14cebd5e5dcf13d6e32c0e",
+      "source_version": "40bddf72",
+      "content_hash": "0fbe024ccece434f6735e4e2b25db1ca6e8b9753faf4d99878fc8f4bbe0b08bf",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -29068,6 +29068,11 @@
           "number": 3475,
           "title": "deployer): stop rolling proxy pods on listener port changes (#14866)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3714,
+          "title": "ds): bound per-client publication and preserve coherent snapshots (#14698)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29075,7 +29080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:30:14.988Z",
+      "verified_at": "2026-10-22T19:29:18.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111511,6 +111516,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T19:22:50.289Z"
+    },
+    "rule-3714": {
+      "learning_id": "rule-3714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3714,
+      "title": "ds): bound per-client publication and preserve coherent snapshots (#14698)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "40bddf72",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:29:18.994Z"
     }
   },
   "aliases": {

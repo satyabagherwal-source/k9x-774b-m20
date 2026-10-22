@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-YAUZ",
-    "timestamp": "2026-10-20T16:44:29.435Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "c806da9cb7a001f75c9034df1ab5977933b5b3089ed1d2f840c51c4782676378",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-YBXF",
     "timestamp": "2026-10-20T16:44:30.819Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7475,21 @@
     "repository": "qdrant/qdrant",
     "learningId": "learn-github-qdrant-qdrant",
     "contentHash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-PZ2M",
+    "timestamp": "2026-10-22T19:29:19.054Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "0fbe024ccece434f6735e4e2b25db1ca6e8b9753faf4d99878fc8f4bbe0b08bf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

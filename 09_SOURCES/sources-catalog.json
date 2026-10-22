@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "86f5499c",
+    "sourceVersion": "40bddf72",
     "license": "Apache-2.0",
-    "contentHash": "853c2d1118531e177be4eda7c3700352b616e722eb14cebd5e5dcf13d6e32c0e",
-    "lastHarvestedAt": "2026-10-21T01:30:15.074Z",
+    "contentHash": "0fbe024ccece434f6735e4e2b25db1ca6e8b9753faf4d99878fc8f4bbe0b08bf",
+    "lastHarvestedAt": "2026-10-22T19:29:19.057Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {

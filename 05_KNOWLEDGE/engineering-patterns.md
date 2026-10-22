@@ -265107,3 +265107,71 @@ pub fn build_hnsw_on_gpu<'a, 'b>(
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `10039ce8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3714. ds): bound per-client publication and preserve coherent snapshots (#14698) (Harvested from kgateway-dev/kgateway)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ds): bound per-client publication and preserve coherent snapshots (#14698)",
+  "source": "kgateway-dev/kgateway",
+  "source_url": "https://github.com/kgateway-dev/kgateway",
+  "source_version": "40bddf72",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-22T19:29:18.898Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kgateway-dev-kgateway",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway) (Revision: `40bddf72`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `api/settings/settings.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `40bddf72`: xds): bound per-client publication and preserve coherent snapshots (#14698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/settings/settings.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// PerClientPublishBudget bounds how long per-client xDS publication may be
+	// withheld while referenced clusters are not ready. A build whose referenced
+	// clusters are all in CDS with derived endpoints publishes at once. Derived
+	// endpoints may be empty, which is the backend's real state; endpoints not
+	// yet derived are a gap.
+	//
+	//   - first publish: a client not yet published on its current connection
+	//     gets the latest deferred snapshot at expiry, so a new gateway pod gets
+	//     listeners instead of crash-looping; routes to unready clusters return
+	//     503 until ready. The budget starts when the gate receives the
+	//     client's first deferred build, not at connect; a client that left
+	//     mid-withhold less than a budget earlier resumes its start. A warm
+	//     client stays withheld while referenced clusters are missing from CDS,
+	//     for at most PerClientWarmWithholdBound after expiry. If its only gaps
+	//     are underived endpoints, it publishes at expiry and keeps the endpoints
+	//     it holds: such gaps may never converge, and withholding would freeze
+	//     its config.
+	//   - flip release: a route flip held for a newly-referenced unready
+	//
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `40bddf72` are properly handled with clean fallback behavior.

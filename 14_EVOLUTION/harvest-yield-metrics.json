@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T19:22:50.351Z",
-  "total_cycles_completed": 4384,
-  "total_learnings_persisted": 4384,
-  "total_rules_promoted": 3562,
+  "last_updated": "2026-10-22T19:29:19.066Z",
+  "total_cycles_completed": 4385,
+  "total_learnings_persisted": 4385,
+  "total_rules_promoted": 3563,
   "history": [
-    {
-      "timestamp": "2026-10-21T05:02:53.647Z",
-      "repository": "ISTIFANO/seo-auditor",
-      "learningId": "learn-github-istifano-seo-auditor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T05:03:04.090Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-22T19:22:50.351Z",
       "repository": "qdrant/qdrant",
       "learningId": "learn-github-qdrant-qdrant",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T19:29:19.066Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

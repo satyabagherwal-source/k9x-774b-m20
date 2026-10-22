@@ -4414,3 +4414,4 @@ Every entry in this ledger must capture:
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `5a36d344` | Multi-dimensional audit evidence | 2026-10-22T19:22:41.312Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `86c71b95` | Multi-dimensional audit evidence | 2026-10-22T19:22:46.381Z |
 | `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `222b2e44` | Multi-dimensional audit evidence | 2026-10-22T19:22:50.342Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `40bddf72` | Multi-dimensional audit evidence | 2026-10-22T19:29:19.057Z |

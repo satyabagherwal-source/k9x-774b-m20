@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `86f5499c`  
+> **Source Version**: `40bddf72`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T01:30:14.609Z  
+> **Timestamp**: 2026-10-22T19:29:18.728Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T01:30:14.602Z  
+> **Harvest Timestamp**: 2026-10-22T19:29:17.654Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5716 stars
+- **Stars / Engagement**: 5723 stars
 
 ---
 
@@ -930,11 +930,11 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14866** (2026-10-20): **fix(deployer): stop rolling proxy pods on listener port changes**
-  *Symptoms*: # Description  **Motivation:** Adding, removing or renumbering a listener port on a Gateway (or an attached ListenerSet) rolls the proxy pods. The deployer lists every listener port as a `containerPort` in the Envoy pod template, so any change to the set of ports changes the template and triggers a rollout.  Those entries do nothing else: Envoy binds whatever listeners xDS gives it, and the generated Service sets `targetPort` by number, not by name.  **What changed:** - The Envoy chart no longer renders listener ports as container ports. Only `http-monitoring` (9091) is still listed, when stats are enabled. - The Service ports are unchanged. - The privileged-port sysctl is unchanged. Pods still roll when a Gateway gains its first port below 1024 or loses its last one. - New deployer unit test: renders a Gateway, changes one listener's port and adds a second listener, then checks that the Service ports change while the Deployment pod template stays identical. The test fails without the template change. - Refreshed the deployer golden files.  # Change Type  /kind breaking_change /kind fix  # Changelog  ```release-note Changing a Gateway or ListenerSet listener port no longer restarts the proxy pods.  Listener ports are no longer listed as container ports on the proxy Deployment.  If you reference the proxy pods' named ports (`listener-<port>`) from your own Services, switch to port numbers before upgrading. If you run the proxy with hostNetwork, add the p
+- **Issue #14874** (2026-10-22): **HTTPRoute validation**
+  *Symptoms*: Close issue. Wrong repo
 
-- **Issue #14864** (2026-10-20): **build: add a Dockerfile for Anthropic's OSS Scanner**
-  *Symptoms*: # Description  **Motivation:** [OSS Scanner](https://github.com/anthropics/oss-scanner) is a free Anthropic service that scans enrolled open-source projects for vulnerabilities and privately emails findings (with a reproducer and a proposed patch) to the project's security contact. The scanner builds the project from a Dockerfile with network access, then analyses it with no Internet access, so everything the build and tests need has to be fetched up front.  **What changed:** adds `.oss-scanner/Dockerfile`, which: - builds `kgateway`, `sds` and `envoyinit`; - downloads the main and `tools/` Go modules; - pre-fetches the envtest binaries via `make envtest-path` and points `KUBEBUILDER_ASSETS` at them, since envtest-backed tests otherwise download them at test time; - copies the Envoy binary from the `ENVOY_IMAGE` pin to `/usr/local/bin/envoy`, where the binary validator expects it; - builds the Envoy dynamic module (`librust_module.so`) from `internal/envoy_modules` into `/usr/local/lib`, so configs using the rustformation and http-acl filters validate, and the Rust filters and their tests are in the scanned image; - makes the tests pass with no network: a wrapper gives envtest's kube-apiserver `--advertise-address=127.0.0.1` (it will not start without a default route otherwise), and `.oss-scanner/docker-shim.sh`, installed as `docker`, runs the bundled Envoy binary for tests that use the Docker validator; - compiles the unit tests and runs them once as a smoke check (E2E test
+- **Issue #14868** (2026-10-21): **test(proxy_syncer): wait for derived rows in TestUnsupportedBackendTranslationIsRecordedAsErrored**
+  *Symptoms*: # Description  `TestUnsupportedBackendTranslationIsRecordedAsErrored` (#14692) fails intermittently under load with `status must see the unsupported backend's error`. It waits for the base and per-client collections, then reads two derived results once:  - **The status row of each unsupported backend.** `StatusClusters` is a join derived from the base rows, and synced base rows don't mean it has caught up, so under load the row can still be missing. - **The per-client row.** The wait accepted any row with one cluster. A row built before the last base rows arrived also matches, but it lacks some errored backends, so the errored-set assertion could fail the same way.  The test now waits for the per-client row to track all three errored backends, and waits for each status row before checking it. Test only.  # Change Type  /kind flake  # Changelog  ```release-note NONE ```  # Additional Notes  - With eight CPU-bound processes running, the test failed once in 1,200 runs before the change (`-count=400 -cpu=1,2,4`) and passed all 3,600 runs after it (`-count=1200 -cpu=1,2,4`). Without that load it didn't fail in 600 runs. - `make analyze` reports 0 issues.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,387 +951,1179 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8d5688b` (2026-10-20)
-**Commit Message**: fix(deployer): stop rolling proxy pods on listener port changes (#14866)
+### Incident Patch 1: `40bddf72` (2026-10-22)
+**Commit Message**: fix(xds): bound per-client publication and preserve coherent snapshots (#14698)
 
+Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
 Signed-off-by: omar <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Omar Hammami <[REDACTED_EMAIL]>
 
-**File**: `pkg/deployer/deployer_test.go` (modified, +63/-30)
+**File**: `api/settings/settings.go` (modified, +69/-0)
 ```diff
-@@ -2272,6 +2272,35 @@ var _ = Describe("Deployer", func() {
- 			listenerPort    int32 = 1234
- 		)
+@@ -352,6 +352,75 @@ type Settings struct {
+ 	// Enables setting the `dev.kgateway.auth_policy:auth_succeeded=true` dynamic metadata on successfully-authenticated routes.
+ 	EnableAuthMetadata bool `split_words:"true" default:"false"`
  
-+		render := func(gw *gwv1.Gateway, extra ...client.Object) clientObjects {
-+			fakeClient := fake.NewClient(GinkgoT(), defaultGatewayClass(), defaultGatewayParams())
-+			gwParams := deployerinternal.NewGatewayParameters(
-+				fakeClient, &deployer.Inputs{
-+					CommonCollections: deployertest.NewCommonCols(GinkgoT(), append([]client.Object{defaultGatewayClass(), gw}, extra...)...),
-+					Dev:               false,
-+					ControlPlane: deployer.ControlPlaneInfo{
-+						XdsHost: "something.cluster.local", XdsPort: 1234,
-+					},
-+					ImageInfo: &deployer.ImageInfo{
-+						Registry: "foo",
-+						Tag:      "bar",
-+					},
-+				})
-+			d, err := deployerinternal.NewGatewayDeployer(
-+				wellknown.DefaultGatewayControllerName,
-+				scheme,
-+				fakeClient,
-+				gwParams,
-+			)
-+			Expect(err).NotTo(HaveOccurred())
-+			fakeClient.RunAndWait(context.Background().Done())
++	// PerClientPublishBudget bounds how long per-client xDS publication may be
++	// withheld while referenced clusters are not ready. A build whose referenced
++	// clusters are all in CDS with derived endpoints publishes at once. Derived
++	// endpoints may be empty, which is the backend's real state; endpoints not
++	// yet derived are a gap.
++	//
++	//   - first publish: a client not yet published on its current connection
++	//     gets the latest deferred snapshot at expiry, so a new gateway pod gets
++	//     listeners instead of crash-looping; routes to unready clusters return
++	//     503 until ready. The budget starts when the gate receives the
++	//     client's first deferred build, not at connect; a client that left
++	//     mid-withhold less than a budget earlier resumes its start. A warm
++	//     client stays withheld while referenced clusters are missing from CDS,
++	//     for at most PerClientWarmWithholdBound after expiry. If its only gaps
++	//     are underived endpoints, it publishes at expiry and keeps the endpoints
++	//     it holds: such gaps may never converge, and withholding would freeze
++	//     its config.
++	//   - flip release: a route flip held for a newly-referenced unready
++	//     cluster publishes one budget after the hold began, so it cannot pin
++	//     route, listener and secret updates indefinitely.
++	//
++	// A client is warm when its first listener request on the connection
++	// carries a previously accepted version. That suggests, but does not prove,
++	// that it still serves that config.
++	//
++	// The budget times installation in the controller's xDS cache. It is not a
++	// deadline for a pod to go Ready, or for Envoy to receive or apply config:
++	// translation before the first deferred build, KGW_XDS_FIRST_CONNECT_DELAY,
++	// delivery, Envoy's fetch timeouts and cluster warming all add to it. Keep
++	// it well below the proxy's startup probe window (60s by default); above
++	// it, the first publish comes too late and the crash loop returns.
++	//
++	// 0 or a negative value removes both deadlines: an unpublished client waits
++	// for a coherent build, and a held flip for its cluster, indefinitely.
++	// PerClientWarmWithholdBound then has no effect. Timers that other settings
++	// configure keep running.
++	PerClientPublishBudget time.Duration `split_words:"true" default:"15s"`
 +
-+			objs, err := d.GetObjsToDeploy(context.Background(), gw)
-+			Expect(err).NotTo(HaveOccurred())
-+			objs = d.SetNamespaceAndOwner(gw, objs)
-+			return objs
++	// PerClientWarmWithholdBound bounds how long a warm client (see
++	// PerClientPublishBudget) stays withheld because referenced clusters are
++	// missing from CDS. Without it, a cluster that never appears would freeze
++	// the client's config, including certificate rotations, until the proxy
++	// restarts. The withhold starts when the first-publish budget expires and
++	// resumes if the client reconnects within the bound. At the bound the
++	// latest deferred snapshot publishes, and routes to missing clusters fail
++	// until they appear.
++	//
++	// It separately bounds how long a published client is still sent a missing
++	// cluster's last config (make-before-break carry), so stale endpoints are
++	// not served forever. Each carried cluster's clock starts with the first
++	// build that lacks it and stops when it returns.
++	//
++	// Keep it well above how long translation takes to catch up after a
++	// controller restart; a shorter bound fails warm routes on every restart.
++	// Applies only while PerClientPublishBudget is positive. 0 or a negative
++	// value removes the bound: warm clients stay withheld, and missing clusters
++	// are carried, indefinitely.
++	PerClientWarmWithholdBound time.Duration `split_words:"true" default:"10m"`
++
++	// XdsSnapshotConsistencyCheck checks each per-client snapshot before
++	// publish for EDS or RDS resources that no CDS or LDS resource references
++	// (Envoy never requests them) and for listeners naming a missing
++	// RouteConfiguration.
++	// Violations are logged and counted in
++	// kgateway_xds_snapshot_perclient_inconsistent_snapshots_total; any
++	// increment is a kgateway bug. The snapshot still publishes: blocking would
++	// reintroduce unbounded withholds. For test and CI; off by default.
++	XdsSnapshotConsistencyCheck bool `split_words:"true" default:"false"`
++
+ 	// ReferenceGrantMode controls how cross-namespace references are validated via ReferenceGrant.
+ 	// Supported values are:
+ 	// - "OFF": No ReferenceGrant validation. All cross-namespace references are permitted.
+```
+
+**File**: `api/settings/settings_test.go` (modified, +13/-3)
+```diff
+@@ -54,6 +54,9 @@ func allEnvVarsSet() map[string]string {
+ 		"KGW_XDS_TLS":                                   "true",
+ 		"KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES":  "false",
+ 		"KGW_ENABLE_AUTH_METADATA":                      "true",
++		"KGW_PER_CLIENT_PUBLISH_BUDGET":                 "90s",
++		"KGW_PER_CLIENT_WARM_WITHHOLD_BOUND":            "20m",
++		"KGW_XDS_SNAPSHOT_CONSISTENCY_CHECK":            "true",
+ 		"KGW_WORKLOAD_ENTRIES_EXCLUSION_LABELS":         "example.io/managed-by,example.io/other-key",
+ 		"KGW_ENABLE_ROUTE_SOURCE_METADATA":              "true",
+ 		"KGW_SERVICE_ENTRIES_EXCLUSION_LABEL_SELECTORS": `[{"matchLabels":{"example.io/managed-by":"some-controller"}}]`,
+@@ -117,6 +120,8 @@ func TestSettings(t *testing.T) {
+ 				EnableExperimentalGatewayAPIFeatures:  true,
+ 				GatewayClassParametersRefs:            GatewayClassParametersRefs{},
+ 				EnableAuthMetadata:                    false,
++				PerClientPublishBudget:                15 * time.Second,
++				PerClientWarmWithholdBound:            10 * time.Minute,
+ 				ServiceEntriesExclusionLabelSelectors: "[]",
+ 			},
+ 		},
+@@ -167,9 +172,12 @@ func TestSettings(t *testing.T) {
+ 						Namespace: new(gwv1.Namespace("infra")),
+ 					},
+ 				},
+-				EnableAuthMetadata:        true,
+-				EnableRouteSourceMetadata: true,
+-				ReferenceGrantMode:        ReferenceGrantStrict,
++				EnableAuthMetadata:          true,
++				PerClientWarmWithholdBound:  20 * time.Minute,
++				PerClientPublishBudget:      90 * time.Second,
++				XdsSnapshotConsistencyCheck: true,
++				EnableRouteSourceMetadata:   true,
++				ReferenceGrantMode:          ReferenceGrantStrict,
+ 			},
+ 		},
+ 		{
+@@ -272,6 +280,8 @@ func TestSettings(t *testing.T) {
+ 				XdsTLS:                                false,
+ 				EnableExperimentalGatewayAPIFeatures:  true,
+ 				GatewayClassParametersRefs:            GatewayClassParametersRefs{},
++				PerClientPublishBudget:                15 * time.Second,
++				PerClientWarmWithholdBound:            10 * time.Minute,
+ 				ServiceEntriesExclusionLabelSelectors: "[]",
+ 			},
+ 		},
+```
+
+**File**: `devel/architecture/metrics.md` (modified, +85/-0)
+```diff
+@@ -74,3 +74,88 @@ metrics.RegisterEvents(httpRoutes, kmetrics.GetResourceMetricEventHandler[*gwv1.
+ * This indicates the metrics system, and probably the gateway, is overloaded.
+ * Once updates have been dropped, `kgateway_resources_*` metrics are no longer valid, until the process has been restarted.
+ * Metrics subsystems other than `kgateway_resources_` are not affected.
++
++## Per-client xDS publication metrics
++
++The controller builds an xDS snapshot for each connected client and holds back a
++publication that would point Envoy at a cluster it does not have yet. These
++metrics show when that happens and how it ends. Each carries `gateway` and
++`namespace` labels unless noted. `kgateway_xds_snapshot_deferred_clients` covers
++the stage before them: a client with no snapshot yet.
++
++A client is *warm* when its first listener request on a connection carries a
++previously accepted version, a sign that it may still be serving that
++configuration, and *cold* otherwise. The version does not prove that the
++configuration is active.
++
++These metrics describe when the controller installs snapshots in its xDS cache.
++They do not show when Envoy receives, accepts or applies them.
++
++### `kgateway_xds_snapshot_perclient_defers_total` Metric
++* Counts per-client snapshots built while a referenced cluster was not ready, by
++  `reason`:
++  * `missing_clusters`: a route references a cluster absent from CDS.
++  * `missing_endpoints`: the cluster is in CDS but its endpoints have not been
++    derived yet. A cluster whose derived endpoints are empty is the backend's
++    real state and does not count.
++* A build with both kinds of gap counts once under each reason.
++* Each increment means the publication was resolved at publish time, for example
++  by carrying a missing cluster forward from the last published snapshot, or by
++  holding a route change until the new cluster is ready.
++* A sustained rate for one gateway means some referenced cluster is not becoming
++  ready.
++
++### `kgateway_xds_snapshot_perclient_withheld_clients` Metric
++* Counts clients whose first publish on their current connection is withheld
++  because referenced clusters are not ready, by `state`. Until it goes out, a new
++  proxy has no listeners and is not Ready.
++  * `within_budget`: waiting inside the first-publish budget
++    (`KGW_PER_CLIENT_PUBLISH_BUDGET`), which starts with the client's first
++    deferred build rather than at connect. A cold client is published when the
++    budget ends, ready or not, so it only ever appears here.
++  * `warm_withheld`: a warm client still withheld after the budget because
++    referenced clusters are missing from CDS. Publishing would replace routes it
++    may still be serving with routes to clusters it does not have. While
++    withheld it receives no updates at all, including certificate rotations. It
++    is released `KGW_PER_CLIENT_WARM_WITHHOLD_BOUND` after the budget ended, or
++    never if the bound is 0 or negative.
++* The states do not overlap; their sum is every client being held.
++* With the budget at 0 or negative, nothing is counted here: a withheld client
++  waits without a deadline and is visible only through
++  `kgateway_xds_snapshot_perclient_defers_total`.
++* A state's series is removed when it has no clients.
++
++### `kgateway_xds_snapshot_perclient_bounded_publishes_total` Metric
++* Counts withheld or held publications that a time bound released before every
++  referenced cluster was ready, by `mode`:
++  * `first_publish`: a client never published before started on incomplete but
++    consistent config when the first-publish budget ended, instead of waiting
++    indefinitely.
++  * `warm_truth`: a warm client whose only gaps were clusters with no derived
++    endpoints was published at the budget. Withholding would have frozen its
++    config indefinitely. Those clusters' endpoints were left out, so the client
++    kept the ones it had.
++  * `flip_release`: a route change held for a newly referenced cluster was
++    published at the budget because the cluster never became ready. Routes to it
++    fail until it does, and the route, listener and secret updates held with it
++    resume.
++  * `warm_release`: a warm client withheld for the whole warm withhold bound,
++    because referenced clusters were missing from CDS, was published. Routes to
++    those clusters fail until they appear.
++  * `carry_expired`: a published client stopped being carried a referenced
++    cluster that stayed missing from CDS for the warm withhold bound. Routes to it
++    fail until it reappears.
++* `flip_release`, `warm_release` and `carry_expired` mean some routes are
++  failing; they are the modes to alert on.
++
++### `kgateway_xds_snapshot_perclient_inconsistent_snapshots_total` Metric
++* Recorded only when `KGW_XDS_SNAPSHOT_CONSISTENCY_CHECK` is enabled, which is
++  meant for test and CI environments. It has no labels.
++* Counts per-client snapshots that, just before publication, carried an EDS or
++  RDS resource
+```
+
+**File**: `pkg/kgateway/controller/start.go` (modified, +6/-0)
+```diff
+@@ -83,6 +83,11 @@ type StartConfig struct {
+ 	CommonCollections *collections.CommonCollections
+ 	AugmentedPods     krt.Collection[krtcollections.LocalityPod]
+ 	UniqueClients     krt.Collection[ir.UniquelyConnectedClient]
++	// XDSClientState is the connection state behind UniqueClients (the third
++	// result of krtcollections.NewUniquelyConnectedClients). Leave it nil
++	// only if no such state exists: per-client publication then treats every
++	// reconnecting proxy as a new one.
++	XDSClientState krtcollections.XDSClientState
+ 
+ 	KrtOptions krtutil.KrtOptions
+ 
+@@ -153,6 +158,7 @@ func NewControllerBuilder(ctx context.Context, cfg StartConfig) (*ControllerBuil
+ 		cfg.CommonCollections,
+ 		cfg.SetupOpts.Cache,
+ 		cfg.Validator,
++		cfg.XDSClientState,
+ 		cfg.StatusSyncerOptions...,
+ 	)
+ 	proxySyncer.Init(ctx, cfg.KrtOptions)
+```
+
+**File**: `pkg/kgateway/proxy_syncer/backends_disabled_pod_locality_test.go` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ func TestPerClientClustersTrackSharedClientCapability(t *testing.T) {
+ 	t.Cleanup(cancel)
+ 	krtopts := krtutil.NewKrtOptions(ctx.Done(), nil)
+ 
+-	callbacks, buildClients := krtcollections.NewUniquelyConnectedClients(false)
++	callbacks, buildClients, _ := krtcollections.NewUniquelyConnectedClients(false)
+ 	var pods krt.Collection[krtcollections.LocalityPod]
+ 	clients := buildClients(ctx, krtopts, pods)
+ 	clients.WaitUntilSynced(ctx.Done())
+```
+
+**File**: `pkg/kgateway/proxy_syncer/backends_test_helpers_test.go` (modified, +17/-0)
+```diff
+@@ -89,3 +89,20 @@ func storedClusterNamesForClient(c PerClientEnvoyClusters, ucc ir.UniquelyConnec
+ 	slices.Sort(names)
+ 	return names
+ }
++
++// newTestPerClientClustersFromCol feeds per-client test rows through the
++// production CDS assembler. Keyed by client, it keeps an empty row after a
++// client's last backend leaves.
++func newTestPerClientClustersFromCol(col krt.Collection[uccWithCluster], clients krt.Collection[ir.UniquelyConnectedClient]) PerClientEnvoyClusters {
++	rows := krt.NewCollection(clients, func(kctx krt.HandlerContext, ucc ir.UniquelyConnectedClient) *clustersWithErrors {
++		all := krt.Fetch(kctx, col)
++		var selected []uccWithCluster
++		for _, row := range all {
++			if row.Client.ResourceName() == ucc.ResourceName() {
++				selected = append(selected, row)
++			}
++		}
++		return assemblePerClientClusters(ucc, selected)
++	})
++	return PerClientEnvoyClusters{perClient: rows}
++}
+```
+
+**File**: `pkg/kgateway/proxy_syncer/carry_dependencies.go` (added, +226/-0)
+```diff
+@@ -0,0 +1,226 @@
++package proxy_syncer
++
++import (
++	"fmt"
++
++	envoyclusterv3 "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
++	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
++	envoyendpointv3 "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
++	envoylistenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
++	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
++	envoycachetypes "github.com/envoyproxy/go-control-plane/pkg/cache/types"
++	envoycache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
++	envoyresourcev3 "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
++	"google.golang.org/protobuf/proto"
++	"google.golang.org/protobuf/reflect/protoreflect"
++	"google.golang.org/protobuf/types/known/anypb"
++
++	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/utils"
++)
++
++// carryDependencies adds to a composed snapshot what the clusters the gate
++// carries from the published snapshot need beyond their own cluster and CLA.
++//
++// A backend can ship listeners and secrets with its cluster
++// (ProcessBaseClusterResources), and they come from the backend's row like the
++// cluster does. A CONNECT tunnel is one: its cluster's endpoint is a pipe its
++// listener binds, and that listener proxies through the proxy backend's
++// cluster and reads its header values from SDS. When the row is missing and the
++// cluster is carried, the build lacks the rest too, so the carried cluster
++// would point at a socket nothing listens on.
++//
++// carry follows what Envoy resolves, not which plugin generated what: the
++// published listeners bound to the carried cluster's endpoint addresses (a
++// pipe path, or an internal listener's name), the secrets those listeners
++// name, and the clusters they route to (collectReferencedClusters). A listener
++// or secret the build has under the same name is kept as built, so current
++// configuration and secret rotations are never replaced by the published
++// copy. Routed-to clusters go back through the caller's carry rules, so an
++// errored or carry-expired one is never carried and a built one is kept, and
++// their own listeners are followed in turn; a cycle ends at a cluster already
++// present.
++type carryDependencies struct {
++	published envoycache.ResourceSnapshot
++	listeners envoycache.Resources
++	secrets   envoycache.Resources
++	// byAddress maps the address an endpoint reaches a published listener at
++	// to that listener's name. Built on first use.
++	byAddress                      map[string]string
++	listenersCloned, secretsCloned bool
++	listenerHash, secretHash       uint64
++}
++
++func newCarryDependencies(published envoycache.ResourceSnapshot, composed *envoycache.Snapshot) *carryDependencies {
++	return &carryDependencies{
++		published: published,
++		listeners: composed.Resources[envoycachetypes.Listener],
++		secrets:   composed.Resources[envoycachetypes.Secret],
++	}
++}
++
++// carry adds the listeners and secrets a carried cluster needs and returns the
++// clusters those listeners route to, for the caller to carry by its rules.
++func (d *carryDependencies) carry(cluster envoycachetypes.ResourceWithTTL) []string {
++	c, ok := cluster.Resource.(*envoyclusterv3.Cluster)
++	if !ok {
++		return nil
++	}
++	var targets []string
++	for _, address := range d.endpointAddresses(c) {
++		name, ok := d.listenerAt(address)
++		if !ok {
++			continue
++		}
++		if _, built := d.listeners.Items[name]; built {
++			continue
++		}
++		listener := d.published.GetResourcesAndTTL(envoyresourcev3.ListenerType)[name]
++		if !d.listenersCloned {
++			d.listeners.Items = cloneResourceItems(d.listeners.Items)
++			d.listenersCloned = true
++		}
++		d.listeners.Items[name] = listener
++		d.listenerHash ^= utils.HashString(name) ^ utils.HashProto(listener.Resource)
++
++		secretNames := make(map[string]struct{})
++		sdsSecretNames(listener.Resource, secretNames)
++		publishedSecrets := d.published.GetResourcesAndTTL(envoyresourcev3.SecretType)
++		for secretName := range secretNames {
++			if _, built := d.secrets.Items[secretName]; built {
++				continue
++			}
++			secret, ok := publishedSecrets[secretName]
++			if !ok {
++				continue
++			}
++			if !d.secretsCloned {
++				d.secrets.Items = cloneResourceItems(d.secrets.Items)
++				d.secretsCloned = true
++			}
++			d.secrets.Items[secretName] = secret
++			d.secretHash ^= utils.HashString(secretName) ^ utils.HashProto(secret.Resource)
 +		}
 +
- 		It("exposes all necessary ports", func() {
- 			allNamespaces := gwv1.NamespacesFromAll
- 			gw := &gwv1.Gateway{
-@@ -2317,32 +2346,7 @@ var _ = Describe("Deployer", func() {
- 				},
- 			}
- 
--			fakeClient := fake.NewClient(GinkgoT(), defaultGatewayClass(), defaultGatewayParams())
--			gwParams := deployerinternal.NewGatewayParameters(
--				fakeClient, &deployer.Inputs{
--					CommonCollections: deployertest.NewCommonCols(GinkgoT(), defaultGatewayClass(), gw, ls),
--					Dev:               false,
--					ControlPlane: deployer.ControlPlaneInfo{
--						XdsHost: "something.cluster.local", XdsPort: 1234,
--					},
--					ImageInfo: &deployer.ImageInfo{
--						Registry: "foo",
--						Tag:      "bar",
--					},
--				})
--			d, err := deployerinternal.NewGatewayDeployer(
--				wellknown.DefaultGatewayControllerName,
--				scheme,
--				fakeClient,
--				gwParams,
--			)
--			Expect(err).NotTo(HaveOccurred())
--			fakeClient.RunAndWait(context.Background().Done())
--
--			var objs clientObjects
--			objs, err = d.GetObjsToDeploy(context.Background(), gw)
--			Expect(err).NotTo(HaveOccurred())
--			objs = d.SetNamespaceAndOwner(gw, objs)
-+			objs := render(gw, ls)
- 
- 			Expect(objs).To(HaveLen(4))
- 			Expect(objs.findConfigMap(defaultNamespace, gw.Name)).ToNot(BeNil())
-@@ -2355,10 +2359,39 @@ var _ = Describe("Deployer", func() {
- 			Expect(servicePorts[1].Port).To(Equal(listenerSetPort))
- 
- 			deploymentPorts := objs.findDeployment(gw.Name).Spec.Template.Spec.Containers[0].Ports
--			Expect(deploymentPorts[0].Name).To(Equal(fmt.Sprintf("listener-%d", listenerPort)))
--			Expect(deploymentPorts[0].ContainerPort).To(Equal(listenerPort))
--			Expect(deploymentPorts[1].Name).To(Equal(fmt.Sprintf("listener-%d", listenerSetPort)))
--			Expect(deploymentPorts[1].ContainerPort).To(Equal(listenerSetPort))
-+			Expect(deploymentPorts).To(ConsistOf(HaveField("Name", "http-monitoring")),
-+				"listener ports should not be rendered as container ports")
-+		})
++		single := envoycache.Resources{Items: map[string]envoycachetypes.ResourceWithTTL{name: listener}}
++		for target := range collectReferencedClusters(envoycache.Resources{}, single) {
++			targets = append(targets, target)
++		}
++	}
++	return targets
++}
 +
-+		It("does not change the pod template when listener ports change", func() {
-+			gw := &gwv1.Gateway{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "foo",
-+					Namespace: defaultNamespace,
-+					UID:       "1235",
-+				},
-+				Spec: gwv1.GatewaySpec{
-+					GatewayClassName: wellknown.DefaultGatewayClassName,
-+					Listeners: []gwv1.Listener{{
-+						Name: "gateway-listener",
-+						Port: gwv1.PortNumber(listenerPort),
++// apply installs the carried listeners and secrets into composed. Each carried
++// set changes its type's version, as carried clusters do, so a later snapshot
++// without them can never reuse the version.
++func (d *carryDependencies) apply(composed *envoycache.Snapshot) {
++	
+```
+
+**File**: `pkg/kgateway/proxy_syncer/carry_dependencies_test.go` (added, +267/-0)
+```diff
+@@ -0,0 +1,267 @@
++package proxy_syncer
++
++import (
++	"context"
++	"strings"
++	"testing"
++	"time"
++
++	envoyclusterv3 "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
++	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
++	envoyendpointv3 "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
++	envoylistenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
++	envoytcpv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/tcp_proxy/v3"
++	envoygenericsecretv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/formatter/generic_secret/v3"
++	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
++	envoycachetypes "github.com/envoyproxy/go-control-plane/pkg/cache/types"
++	envoycache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
++	envoyresourcev3 "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
++	envoywellknown "github.com/envoyproxy/go-control-plane/pkg/wellknown"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/protobuf/proto"
++
++	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/utils"
++)
++
++// tunnelCluster is a tunneled backend's cluster as the CONNECT tunnel
++// generates it: STATIC, with one endpoint on the pipe its listener binds.
++func tunnelCluster(name string) *envoyclusterv3.Cluster {
++	return &envoyclusterv3.Cluster{
++		Name:                 name,
++		ClusterDiscoveryType: &envoyclusterv3.Cluster_Type{Type: envoyclusterv3.Cluster_STATIC},
++		LoadAssignment: &envoyendpointv3.ClusterLoadAssignment{
++			ClusterName: name,
++			Endpoints: []*envoyendpointv3.LocalityLbEndpoints{{LbEndpoints: []*envoyendpointv3.LbEndpoint{{
++				HostIdentifier: &envoyendpointv3.LbEndpoint_Endpoint{Endpoint: &envoyendpointv3.Endpoint{
++					Address: &envoycorev3.Address{Address: &envoycorev3.Address_Pipe{Pipe: &envoycorev3.Pipe{Path: "@" + name}}},
++				}},
++			}}}},
++		},
++	}
++}
++
++// tunnelBoundListener binds the pipe tunnelCluster(cluster) reaches and
++// CONNECTs through proxy, adding a header read from the SDS secret secret.
++func tunnelBoundListener(cluster, proxy, secret string) *envoylistenerv3.Listener {
++	tcp := &envoytcpv3.TcpProxy{
++		StatPrefix:       "tunnel_" + cluster,
++		ClusterSpecifier: &envoytcpv3.TcpProxy_Cluster{Cluster: proxy},
++		TunnelingConfig: &envoytcpv3.TcpProxy_TunnelingConfig{
++			Hostname: "dest.example.com:443",
++			HeadersToAdd: []*envoycorev3.HeaderValueOption{{
++				Header: &envoycorev3.HeaderValue{Key: "proxy-authorization", Value: "%SECRET(" + secret + ")%"},
++			}},
++			Formatters: []*envoycorev3.TypedExtensionConfig{{
++				Name: "envoy.formatter.generic_secret",
++				TypedConfig: utils.MustMessageToAny(&envoygenericsecretv3.GenericSecret{
++					SecretConfigs: map[string]*envoytlsv3.SdsSecretConfig{secret: {
++						Name:      secret,
++						SdsConfig: &envoycorev3.ConfigSource{ConfigSourceSpecifier: &envoycorev3.ConfigSource_Ads{Ads: &envoycorev3.AggregatedConfigSource{}}},
 +					}},
-+				},
-+			}
-+			before := render(gw)
++				}),
++			}},
++		},
++	}
++	return &envoylistenerv3.Listener{
++		Name:    "tunnel_" + cluster,
++		Address: &envoycorev3.Address{Address: &envoycorev3.Address_Pipe{Pipe: &envoycorev3.Pipe{Path: "@" + cluster}}},
++		FilterChains: []*envoylistenerv3.FilterChain{{Filters: []*envoylistenerv3.Filter{{
++			Name:       envoywellknown.TCPProxy,
++			ConfigType: &envoylistenerv3.Filter_TypedConfig{TypedConfig: utils.MustMessageToAny(tcp)},
++		}}}},
++	}
++}
 +
-+			changed := gw.DeepCopy()
-+			changed.Spec.Listeners[0].Port = gwv1.PortNumber(listenerSetPort)
-+			changed.Spec.Listeners = append(changed.Spec.Listeners, gwv1.Listener{
-+				Name: "another-listener",
-+				Port: gwv1.PortNumber(listenerSetPort + 1),
-+			})
-+			after := render(changed)
++func genericSecret(name, value string) *envoytlsv3.Secret {
++	return &envoytlsv3.Secret{Name: name, Type: &envoytlsv3.Secret_GenericSecret{GenericSecret: &envoytlsv3.GenericSecret{
++		Secret: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_InlineString{InlineString: value}},
++	}}}
++}
 +
-+			Expect(after.findService(gw.Name).Spec.Ports).NotTo(Equal(before.findService(gw.Name).Spec.Ports),
-+				"the Service should follow the listener ports")
-+			Expect(after.findDeployment(gw.Name).Spec.Template).To(Equal(before.findDeployment(gw.Name).Spec.Template),
-+				"a listener port change should not roll the proxy pods")
- 		})
- 	})
- })
-```
-
-**File**: `pkg/kgateway/helm/envoy/templates/deployment.yaml` (modified, +7/-6)
-```diff
-@@ -124,13 +124,14 @@ spec:
- {{ toYaml $filteredEnv | indent 8 }}
- {{- end }}
- {{- end }}{{/* if $gateway.env */}}
--        ports:
--        {{- range $p := $gateway.ports }}
--        - name: {{ $p.name }}
--          protocol: {{ $p.protocol }}
--          containerPort: {{ $p.targetPort }}
--        {{- end }}
-+        {{- /*
-+        Listener ports are deliberately not listed as containerPorts: Envoy binds
-+        whatever xDS tells it to, and the Service targets ports by number. Listing
-+        them would put every listener port change into the pod template and roll
-+        the Deployment.
-+        */}}
-         {{- if $statsConfig.enabled }}
-+        ports:
-         - name: http-monitoring
-           containerPort: 9091
-         {{- end }}
-```
-
-**File**: `test/deployer/testdata/base-gateway-out.yaml` (modified, +0/-3)
-```diff
-@@ -336,9 +336,6 @@ spec:
-                 sleep 10
-         name: kgateway-proxy
-         ports:
--        - containerPort: 8080
--          name: listener-8080
--          protocol: TCP
-         - containerPort: 9091
-           name: http-monitoring
-         readinessProbe:
-```
-
-**File**: `test/deployer/testdata/base-gateway-tls-out.yaml` (modified, +0/-3)
-```diff
-@@ -365,9 +365,6 @@ spec:
-                 sleep 10
-         name: kgateway-proxy
-         ports:
--        - containerPort: 8080
--          name: listener-8080
--          protocol: TCP
-         - containerPort: 9091
-           name: http-monitoring
-         readinessProbe:
-```
-
-**File**: `test/deployer/testdata/both-gwc-and-gw-have-envoy-extra-args-out.yaml` (modified, +0/-3)
-```diff
-@@ -340,9 +340,6 @@ spec:
-                 sleep 10
-         name: kgateway-proxy
-         ports:
--        - containerPort: 8080
--          name: listener-8080
--          protocol: TCP
-         - containerPort: 9091
-           name: http-monitoring
-         readinessProbe:
-```
-
-**File**: `test/deployer/testdata/both-gwc-and-gw-have-params-out.yaml` (modified, +0/-3)
-```diff
-@@ -337,9 +337,6 @@ spec:
-                 sleep 10
-         name: kgateway-proxy
-         ports:
--        - containerPort: 8080
--          name: listener-8080
--          protocol: TCP
-         - containerPort: 9091
-           name: http-monitoring
-         readinessProbe:
-```
-
-**File**: `test/deployer/testdata/both-gwc-and-gw-have-params-reversed-out.yaml` (modified, +0/-3)
-```diff
-@@ -337,9 +337,6 @@ spec:
-                 sleep 10
-         name: kgateway-proxy
-         ports:
--        - containerPort: 8080
--          name: listener-8080
--          protocol: TCP
-         - containerPort: 9091
-           name: http-monitoring
-         readinessProbe:
-```
-
-**File**: `test/deployer/testdata/envoy-all-autoscalers-out.yaml` (modified, +0/-3)
-```diff
-@@ -336,9 +336,6 @@ spec:
-                 sleep 10
-         name: kgateway-proxy
-         ports:
--        - containerPort: 8080
--          name: listener-8080
--          protocol: TCP
-         - containerPort: 9091
-           name: http-monitoring
-         readinessProbe:
++// tunnelBuild is one build for a gateway routing to "x", a backend tunneled
++// through "proxy". withTunnel is whether x's row (its cluster, listener and
++// secret) made the build; withProxy whether proxy's did.
++type tunnelBuild struct {
++	version     string
++	withTunnel  bool
++	withProxy   bool
++	secretValue string
++	// proxyStatName marks a proxy cluster's content, to tell copies apart.
++	proxyStatName string
++}
++
++func (b tunnelBuild) snapshot(t *testing.T) *envoycache.Snapshot {
++	t.Helper()
++	ucc := newTestUcc(publishGateTestClient)
++	listeners := []envoycachetypes.Resource{httpListenerWithRDS(t, "listener", "route-config")}
++	var clusters, endpoints, secrets []envoycachetypes.Resource
++	if b.withTunnel {
++		listeners = append(listeners, tunnelBoundListener("x", "proxy", "tunnel_x/h"))
++		clusters = append(clusters, tunnelCluster("x"))
++		secrets = append(secrets, genericSecret("tunnel_x/h", b.secretValue))
++	}
++	if b.withProxy {
++		proxy := proto.Clone(edsClusterForClient(ucc, "proxy", 1).Cluster.BorrowForRead()).(*envoyclusterv3.Cluster)
++		proxy.AltStatName = b.proxyStatName
++		clusters = append(clusters, proxy)
++		endpoints = append(endpoints, endpointsForClient(uc
 ```
 
 ---
 
-### Incident Patch 2: `86f5499c` (2026-10-20)
-**Commit Message**: build: add a Dockerfile for Anthropic's OSS Scanner (#14864)
-
-Signed-off-by: omar <[REDACTED_EMAIL]>
-
-**File**: `.oss-scanner/Dockerfile` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+FROM docker.io/library/golang:1.26.9-trixie
-+# Pinned Debian package versions break on every point release.
-+# hadolint ignore=DL3008
-+RUN apt-get update && apt-get install -y --no-install-recommends \
-+      ca-certificates curl git make jq clang libclang-dev \
-+    && rm -rf /var/lib/apt/lists/*
-+# The binary validator (strict Envoy config validation) shells out to /usr/local/bin/envoy. Match the ENVOY_IMAGE pin
-+# in the Makefile.
-+COPY --from=docker.io/envoyproxy/envoy:v1.39.4 /usr/local/bin/envoy /usr/local/bin/envoy
-+COPY . /src
-+WORKDIR /src
-+# Fetch every module the build, the tests and the tools/ module (setup-envtest, gotestsum) need.
-+RUN go mod download && go -C tools mod download
-+# envtest-backed tests download kube-apiserver and etcd at test time unless KUBEBUILDER_ASSETS is set; fetch them now,
-+# while online.
-+RUN ln -s "$(make -s --no-print-directory envtest-path)" /opt/envtest && ls /opt/envtest/
-+ENV KUBEBUILDER_ASSETS=/opt/envtest
-+# With no network there is no default route, and kube-apiserver will not start unless told its advertise address.
-+RUN mv /opt/envtest/kube-apiserver /opt/envtest/kube-apiserver.real \
-+    && printf '#!/bin/sh\nexec "$(dirname "$0")/kube-apiserver.real" --advertise-address=127.0.0.1 "$@"\n' \
-+      > /opt/envtest/kube-apiserver \
-+    && chmod +x /opt/envtest/kube-apiserver
-+# Tests that validate Envoy config shell out to `docker run envoyproxy/envoy`; run the local Envoy binary instead.
-+COPY .oss-scanner/docker-shim.sh /usr/local/bin/docker
-+# The Envoy dynamic module (librust_module.so, the rustformation and http-acl filters) is loaded from /usr/local/lib by
-+# the validator and by Envoy. rust-toolchain.toml pins the toolchain; install it now, while online.
-+ENV PATH=/root/.cargo/bin:$PATH CARGO_TERM_COLOR=never
-+RUN curl -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none \
-+    && cd internal/envoy_modules \
-+    && rustup toolchain install \
-+    && cargo fetch --locked \
-+    && cargo build --locked \
-+    && cp target/debug/librust_module.so /usr/local/lib/librust_module.so \
-+    && cargo test --workspace --locked --no-run
-+RUN go build -o /usr/local/bin/kgateway ./cmd/kgateway \
-+    && go build -o /usr/local/bin/sds ./cmd/sds \
-+    && go build -o /usr/local/bin/envoyinit ./cmd/envoyinit
-+# Build the tests now so they run offline without recompiling. E2E tests (-tags e2e) need a kind cluster and are
-+# left out.
-+RUN go test -count=1 -run '^$' ./... \
-+    && (go test -timeout 35m ./... || echo "WARNING: go test reported failures")
-```
-
-**File**: `.oss-scanner/docker-shim.sh` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+#!/bin/sh
-+# Stands in for `docker` in the OSS Scanner image, which has neither Docker nor a network. Tests that validate Envoy
-+# config call pkg/validator's docker validator, which runs
-+#   docker run --rm -i [--pull P] [-v DIR:/etc/envoy/:ro] --entrypoint /usr/local/bin/envoy IMAGE ENVOY_ARGS...
-+# This runs the same Envoy binary locally instead, with DIR linked at /etc/envoy.
-+set -eu
-+[ "${1:-}" = run ] || { echo "docker shim: only 'docker run' is supported" >&2; exit 1; }
-+shift
-+entrypoint=
-+while [ $# -gt 0 ]; do
-+  case "$1" in
-+    --rm | -i) shift ;;
-+    --pull) shift 2 ;;
-+    -v)
-+      src=${2%%:*}
-+      ln -sfn "$src" /etc/envoy
-+      shift 2
-+      ;;
-+    --entrypoint) entrypoint=$2; shift 2 ;;
-+    -*) echo "docker shim: unsupported flag $1" >&2; exit 1 ;;
-+    *) shift; break ;; # the image
-+  esac
-+done
-+# The envoy-wrapper image sets this so Envoy finds librust_module.so.
-+export ENVOY_DYNAMIC_MODULES_SEARCH_PATH=/usr/local/lib
-+exec "${entrypoint:-/usr/local/bin/envoy}" "$@"
-```
-
----
-
-### Incident Patch 3: `f75d52bc` (2026-10-20)
-**Commit Message**: test(setup): fix TestExtraCallbacksSeeEveryStreamHook/ordered flake on cancellation (#14863)
+### Incident Patch 2: `4c11984c` (2026-10-21)
+**Commit Message**: fix(xds): stop one rejected cluster or listener from freezing endpoint and route updates (#14865)
 
 Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `pkg/kgateway/setup/ads_delivery_order_test.go` (modified, +17/-1)
+**File**: `pkg/kgateway/proxy_syncer/local_cluster.go` (modified, +6/-5)
 ```diff
-@@ -2,6 +2,7 @@ package setup
+@@ -39,8 +39,9 @@ func gatewayPodIndexKey(namespace, gatewayName string) string {
  
- import (
- 	"context"
-+	"errors"
- 	"io"
- 	"testing"
- 	"time"
-@@ -18,6 +19,8 @@ import (
- 	xdsserver "github.com/envoyproxy/go-control-plane/pkg/server/v3"
- 	"github.com/stretchr/testify/require"
- 	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/status"
- 	"google.golang.org/protobuf/types/known/structpb"
- 
- 	kgwxds "github.com/kgateway-dev/kgateway/v2/pkg/kgateway/xds"
-@@ -114,7 +117,7 @@ func newADSHarnessWithCallbacks(t *testing.T, ordered bool, callbacks xdsserver.
- 		select {
- 		case err := <-h.done:
- 			if err != nil {
--				require.ErrorIs(t, err, context.Canceled)
-+				require.Truef(t, isCancellation(err), "ADS stream ended with %v, not the test's cancellation", err)
- 			}
- 		case <-time.After(2 * time.Second):
- 			t.Fatal("ADS stream did not stop after test cancellation")
-@@ -124,6 +127,19 @@ func newADSHarnessWithCallbacks(t *testing.T, ordered bool, callbacks xdsserver.
- 	return h
+ // NewPerClientLocalClusterEndpoints builds each gateway's local-cluster CLA
+ // from its pods for Envoy's zone-aware routing. Rows are per client, not per backend.
+-// Clients that have not subscribed are skipped: publishing an unrequested CLA
+-// would cause go-control-plane to withhold their ADS endpoint responses.
++// Clients that have not subscribed are skipped. newSnapshotCache serves EDS per
++// request, so an unrequested CLA would no longer withhold their other endpoints
++// (#14471), but there is no reason to build and publish one they never request.
+ func NewPerClientLocalClusterEndpoints(
+ 	krtopts krtutil.KrtOptions,
+ 	uccs krt.Collection[ir.UniquelyConnectedClient],
+@@ -57,9 +58,9 @@ func NewPerClientLocalClusterEndpoints(
+ 	endpoints := krt.NewCollection(uccs, func(kctx krt.HandlerContext, ucc ir.UniquelyConnectedClient) *UccWithEndpoints {
+ 		if !ucc.KnowsLocalCluster {
+ 			// Client's own EDS subscription has never named this resource (old Envoy with
+-			// no matching static bootstrap cluster). Never emit it for this client: an
+-			// unrequested resource in the snapshot makes go-control-plane's ADS "superset"
+-			// check withhold the client's *entire* EDS response. See issue #14471.
++			// no matching static bootstrap cluster), so it would never be sent. Before
++			// newSnapshotCache served EDS per request, publishing it withheld the client's
++			// entire EDS response (#14471).
+ 			return nil
+ 		}
+ 		localClusterName, gatewayName, gatewayNamespace := ucc.LocalClusterInfo()
+```
+
+**File**: `pkg/kgateway/proxy_syncer/perclient.go` (modified, +6/-5)
+```diff
+@@ -128,12 +128,13 @@ func snapshotPerClient(
+ 			clusterResources.Version = strconv.FormatUint(clustersForUcc.clustersHash^listenerRouteSnapshot.ClustersHash, 10)
+ 			clusterResources.Items = clustersProto
+ 		}
+-		// Exclude CLAs for STATIC clusters so ADS snapshot only contains resources Envoy will request.
++		// Exclude CLAs for STATIC clusters so the snapshot only contains resources Envoy will request.
+ 		endpointRes := filterEndpointResourcesForStaticClusters(clusterResources, clientEndpointResources.endpoints)
+ 		// Backend translation errors remove the corresponding cluster from CDS above. Remove
+ 		// its CLA as well: after Envoy observes the CDS removal it stops naming that resource
+-		// in EDS requests, and go-control-plane otherwise withholds the entire named EDS
+-		// response, including updates for healthy clusters.
++		// in EDS requests. newSnapshotCache serves EDS per request, so an unrequested CLA no
++		// longer holds back healthy clusters' endpoints (#14498); this keeps the snapshot
++		// consistent with CDS and keeps that protection if the cache changes.
+ 		//
+ 		// Keep this filtering explicitly error-scoped. Some endpoint resources, such as the
+ 		// bootstrap-defined local cluster, intentionally have no cluster in this CDS snapshot.
+@@ -260,8 +261,8 @@ func mergeBackendResources[M proto.Message](gateway envoycache.Resources, backen
  }
  
-+// isCancellation reports whether err is how the ADS server reports the test
-+// cancelling the stream. Ordered ADS turns a failed send into an Unavailable
-+// status that keeps only the cause's message, so a response still in flight at
-+// cancellation, such as the resend of a NACKed version, ends the stream with
-+// Unavailable "context canceled" instead of an error wrapping context.Canceled.
-+func isCancellation(err error) bool {
-+	if errors.Is(err, context.Canceled) {
-+		return true
-+	}
-+	s, ok := status.FromError(err)
-+	return ok && s.Code() == codes.Unavailable && s.Message() == context.Canceled.Error()
+ // filterEndpointResourcesForStaticClusters returns endpoint resources excluding CLAs for clusters
+-// that are STATIC (inline endpoints). Envoy does not request EDS for those; including them in the
+-// snapshot triggers the ADS cache "not listed" warning when responding to EDS requests.
++// that are STATIC (inline endpoints). Envoy does not request EDS for those, so the snapshot
++// should not carry them.
+ func filterEndpointResourcesForStaticClusters(clusters envoycache.Resources, endpoints envoycache.Resources) envoycache.Resources {
+ 	staticClusterNames := make(map[string]struct{})
+ 	for _, item := range clusters.Items {
+```
+
+**File**: `pkg/kgateway/setup/ads_delivery_order_test.go` (modified, +52/-15)
+```diff
+@@ -4,6 +4,9 @@ import (
+ 	"context"
+ 	"errors"
+ 	"io"
++	"slices"
++	"strings"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -67,13 +70,45 @@ func (s *mockAdsStream) Recv() (*discoveryv3.DiscoveryRequest, error) {
+ }
+ 
+ type adsHarness struct {
+-	t      *testing.T
+-	ctx    context.Context
+-	cancel context.CancelFunc
+-	cache  envoycache.SnapshotCache
+-	stream *mockAdsStream
+-	done   chan error
+-	node   *envoycorev3.Node
++	t       *testing.T
++	ctx     context.Context
++	cancel  context.CancelFunc
++	cache   envoycache.SnapshotCache
++	watches *watchRecorder
++	stream  *mockAdsStream
++	done    chan error
++	node    *envoycorev3.Node
 +}
 +
- func adsTestNode(t *testing.T) *envoycorev3.Node {
- 	t.Helper()
++// watchRecorder counts the CreateWatch calls the server has completed, by type
++// and resource names, so a test can wait until the cache has handled one
++// particular request. A call counts once it returns: the cache has registered,
++// answered or declined the watch.
++type watchRecorder struct {
++	envoycache.Cache
++
++	mu      sync.Mutex
++	handled map[string]int
++}
++
++func (r *watchRecorder) CreateWatch(request *envoycache.Request, sub envoycache.Subscription, value chan envoycache.Response) (func(), error) {
++	cancel, err := r.Cache.CreateWatch(request, sub, value)
++	r.mu.Lock()
++	defer r.mu.Unlock()
++	r.handled[watchKey(request.GetTypeUrl(), request.GetResourceNames())]++
++	return cancel, err
++}
++
++// count returns how many requests for typeURL naming exactly names, in any
++// order, the cache has handled.
++func (r *watchRecorder) count(typeURL string, names []string) int {
++	r.mu.Lock()
++	defer r.mu.Unlock()
++	return r.handled[watchKey(typeURL, names)]
++}
++
++func watchKey(typeURL string, names []string) string {
++	return typeURL + " " + strings.Join(slices.Sorted(slices.Values(names)), ",")
+ }
  
+ func newADSHarness(t *testing.T, ordered bool) *adsHarness {
+@@ -92,21 +127,23 @@ func newADSHarnessWithCallbacks(t *testing.T, ordered bool, callbacks xdsserver.
+ 		recv: make(chan *discoveryv3.DiscoveryRequest, 16),
+ 	}
+ 	cache := newSnapshotCache(kgwxds.NewNodeRoleHasher(), nil)
++	watches := &watchRecorder{Cache: cache, handled: map[string]int{}}
+ 
+ 	var opts []serverconfig.XDSOption
+ 	if ordered {
+ 		opts = append(opts, sotwv3.WithOrderedADS())
+ 	}
+-	srv := xdsserver.NewServer(ctx, cache, callbacks, opts...)
++	srv := xdsserver.NewServer(ctx, watches, callbacks, opts...)
+ 
+ 	h := &adsHarness{
+-		t:      t,
+-		ctx:    ctx,
+-		cancel: cancel,
+-		cache:  cache,
+-		stream: stream,
+-		done:   make(chan error, 1),
+-		node:   adsTestNode(t),
++		t:       t,
++		ctx:     ctx,
++		cancel:  cancel,
++		cache:   cache,
++		watches: watches,
++		stream:  stream,
++		done:    make(chan error, 1),
++		node:    adsTestNode(t),
+ 	}
+ 	go func() {
+ 		h.done <- srv.StreamAggregatedResources(stream)
+```
+
+**File**: `pkg/kgateway/setup/ads_rejected_resource_test.go` (added, +567/-0)
+```diff
+@@ -0,0 +1,567 @@
++package setup
++
++import (
++	"testing"
++	"time"
++
++	envoyclusterv3 "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
++	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
++	envoyendpointv3 "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
++	envoylistenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
++	envoyroutev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
++	discoveryv3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
++	cachetypes "github.com/envoyproxy/go-control-plane/pkg/cache/types"
++	envoycache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
++	envoyresource "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/genproto/googleapis/rpc/status"
++)
++
++// These tests drive our ADS cache through the go-control-plane SotW server with
++// the requests Envoy sends when it rejects one resource of a CDS or LDS
++// response, and require that the proxy still gets the endpoint and route
++// updates it subscribed to.
++//
++// Envoy applies the valid resources of a NACKed CDS or LDS response and never
++// subscribes to the rejected resource's endpoints or routes. In ADS mode the
++// pinned go-control-plane answers a named EDS or RDS request only when the
++// snapshot holds nothing outside the request. On its plain ADS cache:
++//
++//   - while the rejected resource is in the snapshot, its CLA or
++//     RouteConfiguration holds back every endpoint or route update for the
++//     proxy, not only its own;
++//   - the request Envoy sends for a valid resource added in the same response
++//     is declined on the request path, which registers no watch. Removing the
++//     rejected resource then has nothing to answer, and the proxy stays on its
++//     old endpoints or routes until its subscription changes again or it
++//     reconnects;
++//   - a proxy that connects while the rejected resource is published loses its
++//     first EDS or RDS request the same way. Its cluster initializes empty at
++//     the fetch timeout, or its listener with no routes, so it reports ready
++//     while the route fails.
++//
++// The request sequences are the ones Envoy v1.39.4 sent to this pinned
++// go-control-plane with ordered ADS, with an EDS cluster rejected for
++// CLUSTER_PROVIDED load balancing or an unrecognized TLS signature algorithm,
++// and a listener rejected for an HTTP filter with no registered factory. In
++// those runs the added cluster started empty at its 15s EDS fetch timeout, the
++// added listener started with no routes at its RDS fetch timeout, and the
++// existing cluster and route kept their first version through two later
++// updates and the rejected resource's removal.
++//
++// newSnapshotCache serves EDS, RDS and SDS (and LDS, to keep ADS's order) from
++// non-ADS caches that answer the requested names (perTypeCache), so these tests
++// pass. On the plain ADS cache they all fail. A go-control-plane that answers
++// named ADS requests with only the subscribed resources would pass them all on
++// its own; one that keeps the watch of a request it declines would pass only
++// the two "after it is removed" tests.
++
++const proxyUpdateWithin = 2 * time.Second
++
++func adsEDSCluster(name string) *envoyclusterv3.Cluster {
++	return &envoyclusterv3.Cluster{
++		Name:                 name,
++		ClusterDiscoveryType: &envoyclusterv3.Cluster_Type{Type: envoyclusterv3.Cluster_EDS},
++		EdsClusterConfig: &envoyclusterv3.Cluster_EdsClusterConfig{
++			EdsConfig: &envoycorev3.ConfigSource{
++				ResourceApiVersion:    envoycorev3.ApiVersion_V3,
++				ConfigSourceSpecifier: &envoycorev3.ConfigSource_Ads{Ads: &envoycorev3.AggregatedConfigSource{}},
++			},
++		},
++	}
++}
++
++func adsEndpoints(cluster, address string) *envoyendpointv3.ClusterLoadAssignment {
++	return &envoyendpointv3.ClusterLoadAssignment{
++		ClusterName: cluster,
++		Endpoints: []*envoyendpointv3.LocalityLbEndpoints{{
++			LbEndpoints: []*envoyendpointv3.LbEndpoint{{
++				HostIdentifier: &envoyendpointv3.LbEndpoint_Endpoint{Endpoint: &envoyendpointv3.Endpoint{
++					Address: &envoycorev3.Address{Address: &envoycorev3.Address_SocketAddress{SocketAddress: &envoycorev3.SocketAddress{
++						Address:       address,
++						PortSpecifier: &envoycorev3.SocketAddress_PortValue{PortValue: 8080},
++					}}},
++				}},
++			}},
++		}},
++	}
++}
++
++// clusterEndpointSnapshot versions CDS and EDS separately, as kgateway does: a
++// change to one type leaves the other's version alone. endpoints maps each
++// cluster to its one endpoint address.
++func clusterEndpointSnapshot(cdsVersion, edsVersion string, clusters []string, endpoints map[string]string) *envoycache.Snapshot {
++	clusterItems := make([]cachetypes.Resource, 0, len(clusters))
++	for _, name := range clusters {
++		clusterItems = append(clusterItems, adsEDSCluster(name))
++	}
++	endpointItems := make([]cachetypes.Resource, 0, len(endpoints))
++	for
+```
+
+**File**: `pkg/kgateway/setup/ads_watch_retention_test.go` (modified, +4/-2)
+```diff
+@@ -143,8 +143,10 @@ func TestADSCacheRetainsNamedWatchItCannotAnswer(t *testing.T) {
+ // snapshot is misaligned — the window around a rejected or not-yet-applied
+ // cluster update — can be left waiting on a request that is never answered.
+ //
+-// This test documents the residual gap. If it starts failing, upstream has
+-// closed it and any local mitigation can be dropped.
++// This test documents the request-retention gap only. Keeping this watch would
++// permit recovery after the blocker is removed, but not updates while it remains.
++// Removing perTypeCache requires all six rejected-resource delivery scenarios
++// to pass with the upstream cache alone, including those with the blocker present.
+ func TestADSCacheDropsNewNamedRequestItCannotAnswer(t *testing.T) {
+ 	ctx := context.Background()
+ 	cache := envoycache.NewSnapshotCache(true, retentionHash{}, nil)
+```
+
+**File**: `pkg/kgateway/setup/controlplane.go` (modified, +192/-22)
+```diff
+@@ -8,13 +8,16 @@ import (
+ 	"log/slog"
+ 	"math"
+ 	"net"
++	"slices"
++	"sync"
++	"time"
+ 
++	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
+ 	envoy_service_cluster_v3 "github.com/envoyproxy/go-control-plane/envoy/service/cluster/v3"
+ 	envoy_service_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
+ 	envoy_service_endpoint_v3 "github.com/envoyproxy/go-control-plane/envoy/service/endpoint/v3"
+ 	envoy_service_listener_v3 "github.com/envoyproxy/go-control-plane/envoy/service/listener/v3"
+ 	envoy_service_route_v3 "github.com/envoyproxy/go-control-plane/envoy/service/route/v3"
+-	envoycachetypes "github.com/envoyproxy/go-control-plane/pkg/cache/types"
+ 	envoycache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
+ 	envoylog "github.com/envoyproxy/go-control-plane/pkg/log"
+ 	envoyresource "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
+@@ -96,45 +99,212 @@ func (s *slogAdapterForEnvoy) Errorf(format string, args ...any) {
+ 	}
+ }
+ 
+-// newSnapshotCache returns the ADS snapshot cache, with secrets served per request.
++// newSnapshotCache returns the ADS snapshot cache, with EDS, LDS, RDS and SDS
++// served per request (perTypeCache).
+ func newSnapshotCache(hash envoycache.NodeHash, logger envoylog.Logger) envoycache.SnapshotCache {
+-	return &perRequestSecretsCache{
++	c := &perTypeCache{
+ 		SnapshotCache: envoycache.NewSnapshotCache(true, hash, logger),
+-		secrets:       envoycache.NewSnapshotCache(false, hash, logger),
++		byType:        make(map[string]envoycache.SnapshotCache, len(perTypeOrder)),
+ 	}
++	for _, typeURL := range perTypeOrder {
++		c.byType[typeURL] = envoycache.NewSnapshotCache(false, hash, logger)
++	}
++	return c
+ }
+ 
+-// perRequestSecretsCache serves secret watches from a non-ADS copy of each
+-// snapshot's secrets. Delta watches, Fetch and status stay on the embedded cache.
+-type perRequestSecretsCache struct {
++// perTypeOrder lists the types perTypeCache serves itself, in publish order.
++var perTypeOrder = []string{envoyresource.SecretType, envoyresource.EndpointType, envoyresource.ListenerType, envoyresource.RouteType}
++
++// perTypeCache serves EDS, RDS and SDS watches from a non-ADS copy of each
++// snapshot's resources of that type. In ADS mode go-control-plane answers a
++// named request only when the snapshot holds nothing outside it, and keeps no
++// watch for a new request it declines. Envoy never requests the endpoints,
++// routes or secrets of a cluster or listener it rejected, so one rejected
++// resource would hold back every update of that type for the proxy, and the
++// proxy would stay stale after the resource is removed
++// (ads_rejected_resource_test.go). A non-ADS cache answers the requested names.
++// Keeping declined watches permits recovery after the blocking resource is
++// removed, but cannot deliver updates while it remains. Remove this wrapper
++// only when the upstream cache alone passes all six rejected-resource delivery
++// scenarios, including updates while a rejected resource remains published.
++//
++// LDS is served the same way only to keep ADS's order: SetSnapshot publishes
++// secrets first, so they are ready when a new listener requests them, then
++// CDS, EDS, LDS and RDS. CDS, delta watches and Fetch stay on the embedded ADS
++// cache, which stores the whole snapshot for GetSnapshot. Status combines all
++// the caches.
++type perTypeCache struct {
+ 	envoycache.SnapshotCache
+-	secrets envoycache.SnapshotCache
++	byType map[string]envoycache.SnapshotCache
++
++	mutationMu sync.Mutex
++	mutations  map[string]*nodeCacheMutation
++}
++
++type nodeCacheMutation struct {
++	mu    sync.Mutex
++	users int // includes callers waiting for mu
++}
++
++// lockNode serializes installs and clears for one node. Count waiting callers
++// too, so the lock can be reclaimed without creating a second lock for that node.
++func (c *perTypeCache) lockNode(node string) func() {
++	c.mutationMu.Lock()
++	if c.mutations == nil {
++		c.mutations = make(map[string]*nodeCacheMutation)
++	}
++	m := c.mutations[node]
++	if m == nil {
++		m = &nodeCacheMutation{}
++		c.mutations[node] = m
++	}
++	m.users++
++	c.mutationMu.Unlock()
++
++	m.mu.Lock()
++	return func() {
++		m.mu.Unlock()
++		c.mutationMu.Lock()
++		defer c.mutationMu.Unlock()
++		m.users--
++		if m.users == 0 {
++			delete(c.mutations, node)
++		}
++	}
+ }
+ 
+-func (c *perRequestSecretsCache) CreateWatch(request *envoycache.Request, sub envoycache.Subscription, value chan envoycache.Response) (func(), error) {
+-	if request.GetTypeUrl() == envoyresource.SecretType {
+-		return c.secrets.CreateWatch(request, sub, value)
++func (c *perTypeCache) CreateWatch(request *envoycache.Request, sub envoycache.Subscription, value chan envoycache.Response) (func(), error) {
++	if typed, ok := c.byType[request.GetTypeUrl()]; ok {
++		return typed.CreateWatch(request, sub, value)
+ 	}
+ 	return c.SnapshotCache.CreateWatch(request, sub, value)
+ }
+ 
+-// SetSnapshot publishes secrets first, so they are ready when a new listener
+```
+
+**File**: `pkg/kgateway/setup/per_type_cache_concurrency_test.go` (added, +210/-0)
+```diff
+@@ -0,0 +1,210 @@
++package setup
++
++import (
++	"context"
++	"sync"
++	"testing"
++	"time"
++
++	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
++	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
++	cachetypes "github.com/envoyproxy/go-control-plane/pkg/cache/types"
++	envoycache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
++	envoyresource "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
++	"github.com/stretchr/testify/require"
++)
++
++type cacheMutationPause struct {
++	ctx     context.Context
++	entered chan struct{}
++	release chan struct{}
++	once    sync.Once
++}
++
++func newCacheMutationPause(t *testing.T) *cacheMutationPause {
++	t.Helper()
++	p := &cacheMutationPause{ctx: t.Context(), entered: make(chan struct{}), release: make(chan struct{})}
++	t.Cleanup(p.resume)
++	return p
++}
++
++func (p *cacheMutationPause) wait() {
++	close(p.entered)
++	select {
++	case <-p.release:
++	case <-p.ctx.Done():
++	}
++}
++
++func (p *cacheMutationPause) resume() { p.once.Do(func() { close(p.release) }) }
++
++func runCacheMutation(t *testing.T, f func() error) <-chan error {
++	t.Helper()
++	done := make(chan error, 1)
++	go func() {
++		defer close(done)
++		done <- f()
++	}()
++	t.Cleanup(func() {
++		select {
++		case <-done:
++		case <-time.After(proxyUpdateWithin):
++			t.Error("cache mutation did not stop after cancellation")
++		}
++	})
++	return done
++}
++
++func awaitCacheMutation(t *testing.T, done <-chan error) {
++	t.Helper()
++	select {
++	case err := <-done:
++		require.NoError(t, err)
++	case <-time.After(proxyUpdateWithin):
++		t.Fatal("cache mutation did not finish")
++	}
++}
++
++// Give the second mutation a chance to run before releasing the first. Without
++// serialization it finishes here, leaving types from different publications.
++func releaseCacheMutation(t *testing.T, pause *cacheMutationPause, second <-chan error) {
++	t.Helper()
++	select {
++	case err := <-second:
++		require.NoError(t, err)
++	case <-time.After(100 * time.Millisecond):
++	}
++	pause.resume()
++}
++
++func cacheMutationSnapshot(version string) *envoycache.Snapshot {
++	cluster := "backend-" + version
++	snapshot := clusterEndpointSnapshot(version, version, []string{cluster}, map[string]string{cluster: "10.0.0." + version})
++	listeners := listenerRouteSnapshot(version, version, []string{"front-" + version}, map[string]string{"routes-" + version: cluster})
++	snapshot.Resources[cachetypes.Listener] = listeners.Resources[cachetypes.Listener]
++	snapshot.Resources[cachetypes.Route] = listeners.Resources[cachetypes.Route]
++	snapshot.Resources[cachetypes.Secret] = envoycache.NewResources(version, []cachetypes.Resource{&envoytlsv3.Secret{Name: "secret-" + version}})
++	return snapshot
++}
++
++// Check what fresh watches receive, not only the full snapshot used by admin.
++func requireServingSnapshot(t *testing.T, c *perTypeCache, node, version string) {
++	t.Helper()
++	snapshot, err := c.GetSnapshot(node)
++	require.NoError(t, err)
++	for _, typeURL := range append([]string{envoyresource.ClusterType}, perTypeOrder...) {
++		require.Equal(t, version, snapshot.GetVersion(typeURL))
++		var names []string
++		want := make(map[string]string)
++		for name := range snapshot.GetResources(typeURL) {
++			names = append(names, name)
++			want[name] = version
++		}
++		replies := make(chan envoycache.Response, 1)
++		cancel, err := c.CreateWatch(&envoycache.Request{
++			Node: &envoycorev3.Node{Id: node}, TypeUrl: typeURL, ResourceNames: names,
++		}, *newSotwSubscription(names...), replies)
++		require.NoError(t, err)
++		if cancel != nil {
++			t.Cleanup(cancel)
++		}
++		response := awaitResponse(t, replies, typeURL)
++		require.Equal(t, version, response.GetResponseVersion(), typeURL)
++		require.Equal(t, want, response.GetReturnedResources(), typeURL)
++	}
++}
++
++func pauseSnapshotInstall(t *testing.T, c *perTypeCache, node string, pause *cacheMutationPause) <-chan error {
++	t.Helper()
++	done := runCacheMutation(t, func() error {
++		return c.setSnapshot(t.Context(), node, cacheMutationSnapshot("1"), func(typeURL string) {
++			if typeURL == envoyresource.ClusterType {
++				pause.wait()
++			}
++		})
++	})
++	select {
++	case <-pause.entered:
++	case <-time.After(proxyUpdateWithin):
++		t.Fatal("snapshot install did not reach CDS")
++	}
++	return done
++}
++
++func TestPerTypeCacheSerializesSnapshotInstalls(t *testing.T) {
++	c := newSnapshotCache(envoycache.IDHash{}, nil).(*perTypeCache)
++	pause := newCacheMutationPause(t)
++	first := pauseSnapshotInstall(t, c, "node", pause)
++	second := runCacheMutation(t, func() error {
++		return c.SetSnapshot(t.Context(), "node", cacheMutationSnapshot("2"))
++	})
++	releaseCacheMutation(t, pause, second)
++	awaitCacheMutation(t, first)
++	awaitCacheMutation(t, second)
++	requireServingSnapshot(t, c, "node", "2")
++}
++
++func TestPerTypeCacheClearWaitsForSnapshotInstall(t *testing.T) {
++	c := newSnapshotCache(envoycache.IDHash{}, nil).(*perTypeCache)
++	pause := newCacheMutationPause(t)
++	first := pauseSnapshotInstall(t, c, "nod
+```
+
+**File**: `pkg/pluginsdk/ir/model.go` (modified, +5/-5)
+```diff
+@@ -41,11 +41,11 @@ type UniquelyConnectedClient struct {
+ 	// have no matching static cluster in their bootstrap and can never name it,
+ 	// so this must default to false and only ever be set by observing a real
+ 	// request (see pkg/krtcollections/uniqueclients.go) — never assume support.
+-	// Without this gate, go-control-plane's ADS "superset" check
+-	// (github.com/envoyproxy/go-control-plane pkg/cache/v3/simple.go) withholds
+-	// the *entire* EDS response to a client that doesn't ask for every resource
+-	// in the snapshot, breaking all endpoint updates for that client, not just
+-	// the local cluster (see https://github.com/kgateway-dev/kgateway/issues/14471).
++	// The local-cluster CLA is built only for clients with this set. Before EDS
++	// was served per request (newSnapshotCache in pkg/kgateway/setup), an
++	// unrequested CLA made go-control-plane's ADS cache withhold the client's
++	// *entire* EDS response, breaking all endpoint updates for that client, not
++	// just the local cluster (https://github.com/kgateway-dev/kgateway/issues/14471).
+ 	KnowsLocalCluster bool
+ 
+ 	// modified role that includes the namespace and the hash of the labels.
+```
+
+---
+
+### Incident Patch 3: `2b5e1790` (2026-10-21)
+**Commit Message**: fix(gateway): add message to Gateway Programmed condition when no valid listeners (#14841)
+
+Signed-off-by: Harkirat <[REDACTED_EMAIL]>
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/gateway-only/gateway-invalid-listener-proxy.yaml` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ Statuses:
+         status: "False"
+         type: Accepted
+       - lastTransitionTime: null
+-        message: ""
++        message: No valid listeners
+         reason: Invalid
+         status: "False"
+         type: Programmed
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/validation/gateway-reserved-port.yaml` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ Statuses:
+         status: "True"
+         type: Accepted
+       - lastTransitionTime: null
+-        message: ""
++        message: No valid listeners
+         reason: Invalid
+         status: "False"
+         type: Programmed
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/validation/xlistenerset-reserved-port.yaml` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ Statuses:
+         status: "False"
+         type: Accepted
+       - lastTransitionTime: null
+-        message: ""
++        message: No valid listeners
+         reason: Invalid
+         status: "False"
+         type: Programmed
+```
+
+**File**: `pkg/kgateway/translator/listener/validation.go` (modified, +4/-3)
+```diff
+@@ -313,9 +313,10 @@ func validateListeners(gw *ir.Gateway, reporter reports.Reporter, settings Liste
+ 			Message: "No valid listeners",
+ 		})
+ 		reporter.Gateway(gw.Obj).SetCondition(reports.GatewayCondition{
+-			Type:   gwv1.GatewayConditionProgrammed,
+-			Status: metav1.ConditionFalse,
+-			Reason: gwv1.GatewayReasonInvalid,
++			Type:    gwv1.GatewayConditionProgrammed,
++			Status:  metav1.ConditionFalse,
++			Reason:  gwv1.GatewayReasonInvalid,
++			Message: "No valid listeners",
+ 		})
+ 		return validListeners
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14868** (2026-10-21): test(proxy_syncer): wait for derived rows in TestUnsupportedBackendTranslationIsRecordedAsErrored (@chandler-solo)
 - **PR #14866** (2026-10-20): fix(deployer): stop rolling proxy pods on listener port changes (@puertomontt)
+- **PR #14865** (2026-10-21): fix(xds): stop one rejected cluster or listener from freezing endpoint and route updates (@chandler-solo)
 - **PR #14864** (2026-10-20): build: add a Dockerfile for Anthropic's OSS Scanner (@puertomontt)
 - **PR #14863** (2026-10-20): test(setup): fix TestExtraCallbacksSeeEveryStreamHook/ordered flake on cancellation (@chandler-solo)
 - **PR #14860** (2026-10-20): fix(trafficpolicy): stop bufferIR.Equals dereferencing a typed nil (@chandler-solo)
-- **PR #14858** (2026-10-20): [2.4] Refine comments in HTTPHeaderFilter struct (#14710) (@Nadine2016)
-- **PR #14856** (2026-10-20): fix(xds): deliver every xDS callback to extra callbacks (@chandler-solo)
 
 ---
 
@@ -1351,91 +2143,46 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deployer): stop rolling proxy pods on listener port changes (#14866)
+## X. xds): bound per-client publication and preserve coherent snapshots (#14698)
 
 **RULE**:
-When implementing operations in `pkg/deployer/deployer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/settings/settings.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8d5688b`: deployer): stop rolling proxy pods on listener port changes (#14866). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40bddf72`: xds): bound per-client publication and preserve coherent snapshots (#14698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/deployer/deployer_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/settings/settings.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		render := func(gw *gwv1.Gateway, extra ...client.Object) clientObjects {
-			fakeClient := fake.NewClient(GinkgoT(), defaultGatewayClass(), defaultGatewayParams())
-			gwParams := deployerinternal.NewGatewayParameters(
-				fakeClient, &deployer.Inputs{
-					CommonCollections: deployertest.NewCommonCols(GinkgoT(), append([]client.Object{defaultGatewayClass(), gw}, extra...)...),
-					Dev:               false,
-					ControlPlane: deployer.ControlPlaneInfo{
-						XdsHost: "something.cluster.local", XdsPort: 1234,
-					},
-					ImageInfo: &deployer.ImageInfo{
-						Registry: "foo",
-						Tag:      "bar",
-					},
-				})
-			d, err := deployerinternal.NewGatewayDeployer(
-				wellknown.DefaultGatewayControllerName,
-				scheme,
-				fakeClient,
-				gwParams,
-			)
-			Expect(err).NotTo(HaveOccurred())
-			fakeClient.RunAndWait(context.Background().Done())
-
-			objs, err := d.GetObjsToDeploy(context.Background(), gw)
-			Expect(err).NotTo(HaveOccurred())
-			objs = d.SetNamespaceAndOwner(gw, objs)
-			return objs
-		}
-
-			objs := render(gw, ls)
-			Expect(deploymentPorts).To(ConsistOf(HaveField("Name", "http-monitoring")),
-				"listener ports should not be rendered as container ports")
-		})
-
-		It("does 
+	// PerClientPublishBudget bounds how long per-client xDS publication may be
+	// withheld while referenced clusters are not ready. A build whose referenced
+	// clusters are all in CDS with derived endpoints publishes at once. Derived
+	// endpoints may be empty, which is the backend's real state; endpoints not
+	// yet derived are a gap.
+	//
+	//   - first publish: a client not yet published on its current connection
+	//     gets the latest deferred snapshot at expiry, so a new gateway pod gets
+	//     listeners instead of crash-looping; routes to unready clusters return
+	//     503 until ready. The budget starts when the gate receives the
+	//     client's first deferred build, not at connect; a client that left
+	//     mid-withhold less than a budget earlier resumes its start. A warm
+	//     client stays withheld while referenced clusters are missing from CDS,
+	//     for at most PerClientWarmWithholdBound after expiry. If its only gaps
+	//     are underived endpoints, it publishes at expiry and keeps the endpoints
+	//     it holds: such gaps may never converge, and withholding would freeze
+	//     its config.
+	//   - flip release: a route flip held for a newly-referenced unready
+	//
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			fakeClient := fake.NewClient(GinkgoT(), defaultGatewayClass(), defaultGatewayParams())
-			gwParams := deployerinternal.NewGatewayParameters(
-				fakeClient, &deployer.Inputs{
-					CommonCollections: deployertest.NewCommonCols(GinkgoT(), defaultGatewayClass(), gw, ls),
-					Dev:               false,
-					ControlPlane: deployer.ControlPlaneInfo{
-						XdsHost: "something.cluster.local", XdsPort: 1234,
-					},
-					ImageInfo: &deployer.ImageInfo{
-						Registry: "foo",
-						Tag:      "bar",
-					},
-				})
-			d, err := deployerinternal.NewGatewayDeployer(
-				wellknown.DefaultGatewayControllerName,
-				scheme,
-				fakeClient,
-				gwParams,
-			)
-			Expect(err).NotTo(HaveOccurred())
-			fakeClient.RunAndWait(context.Background().Done())
-
-			var objs clientObjects
-			objs, err = d.GetObjsToDeploy(context.Background(), gw)
-			Expect(err).NotTo(HaveOccurred())
-			objs = d.SetNamespaceAndOwner(gw, objs)
-			Expect(deploymentPorts[0].Name).To(Equal(fmt.Sprintf("listener-%d", listenerPort)))
-			Expect(deploymentPorts[0].ContainerPort).To(Equal(listenerPort))
-			Expect(deploymentPorts[1].Name).To(Equal(fmt.Sprintf("listener-%d", listenerSetPort)))
-			Expect(deploymentPorts[1].ContainerPort).T
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8d5688b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40bddf72` are properly handled with clean fallback behavior.
