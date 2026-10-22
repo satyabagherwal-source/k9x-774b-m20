@@ -108,3 +108,20 @@ All rules codified in `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.
 | **Discovered - currently not indexed** | 229 | Queue Latency | Mitigated via clean prioritized sitemap and tiered manual inspection batches (Rule 1491 Dual-Pronged Discovery). |
 | **Crawled - currently not indexed** | 12 | Quality Threshold | Category hubs enriched to 400+ words of historical paleography content (Rule 1162). Resubmit in GSC. |
 
+---
+
+## 8. Font Collection & Licensing Governance Learnings (Batches 4 & 5)
+
+1. **Two-Level Collection Architecture**:
+   - Decouple the **Research Collection (Staging Ledger)** from the **Publicly Approved Font Catalogue**.
+   - Breadth of discovery can safely scale to 150+ candidates across GitHub, academic research labs, and open foundries without destabilizing the production website, ASTRO build pipelines, or 14-language i18n translation stores.
+2. **Key Historical Revivals Solved via Open-Source**:
+   - *William Morris Kelmscott Press (Troy type)*: Revived via `GL-Morris` (Gutenberg Labo) under SIL OFL 1.1 instead of commercial proprietary packages (`P22 Morris`, `Elsner+Flake`).
+   - *Franciscus Junius 1655 Old English Type*: Revived via `BabelStone Englisc` (Andrew West) under SIL OFL 1.1.
+   - *15th-Century Incunabula Revivals*: Meticulously researched and open-sourced by ANRT (`GoticoAntiqua` series: `Durandus 1459`, `Subiaco 1465`, `Rusch 1470`) under SIL OFL 1.1.
+3. **Licensing Pitfalls & Rejection Precedents**:
+   - *Manfred Klein Charityware*: Requires donations to Doctors Without Borders, but strictly prohibits inclusion in font CD/software bundle distributions without permission. Incompatible with open-source web download model.
+   - *Academic-Only Fonts (LeedsUni / MUFI)*: Free strictly for non-commercial educational use; cannot be deployed on commercial web platforms.
+   - *Peter Wiegel CAT-Fonts GPL Font Exception*: Confirmed that the GPL with Font Exception permits unrestricted web embedding and document generation without copyleft GPL contagion on the parent website.
+
+
