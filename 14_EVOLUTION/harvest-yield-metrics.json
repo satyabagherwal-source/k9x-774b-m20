@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T16:58:22.087Z",
-  "total_cycles_completed": 4317,
-  "total_learnings_persisted": 4317,
-  "total_rules_promoted": 3497,
+  "last_updated": "2026-10-22T17:04:54.375Z",
+  "total_cycles_completed": 4320,
+  "total_learnings_persisted": 4320,
+  "total_rules_promoted": 3500,
   "history": [
-    {
-      "timestamp": "2026-10-21T01:49:23.993Z",
-      "repository": "chakra-ui/ark",
-      "learningId": "learn-github-chakra-ui-ark",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T01:49:24.742Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T01:55:44.506Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T02:02:08.503Z",
       "repository": "vinceglb/FileKit",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T16:58:22.087Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:04:41.194Z",
+      "repository": "microsoft/fluentui",
+      "learningId": "learn-github-microsoft-fluentui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:04:54.086Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:04:54.375Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

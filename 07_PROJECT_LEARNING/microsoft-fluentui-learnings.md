@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
-> **Source Version**: `ba08dbe0`  
+> **Source Version**: `7e6920d5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:31:27.526Z  
+> **Timestamp**: 2026-10-22T17:04:40.990Z  
 > **Learning ID**: `learn-github-microsoft-fluentui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:31:26.578Z  
+> **Harvest Timestamp**: 2026-10-22T17:04:39.801Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fluent UI web represents a collection of utilities, React components, and web components for building web applications.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 20330 stars
+- **Stars / Engagement**: 20338 stars
 
 ---
 
@@ -1545,14 +1545,17 @@ module.exports = [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36949** (2026-10-20): **chore(react-range-slider-preview): prepare initial release**
-  *Symptoms*: ## Previous Behavior  `@fluentui/react-range-slider-preview` (added in #36887) is private, so it isn't published.  ## New Behavior  Makes the package publishable for its first preview release: removes `"private": true`, sets the package description, and adds a `minor` change file. Same steps as the Calendar preview release (#36751).  The headless RangeSlider (#36894) depends on this package, and beachball rejects a published package that depends on a private one, so this has to land before #36894.  ## Related Issue(s)  - Replaces #36937, which was merged into the `react-range-slider` feature branch after #36887 had already landed on `master`, so its change never reached `master`. - Follow-up: #36894.
+- **Issue #36980** (2026-10-22): **docs(public-docsite-v9): add RangeSlider preview stories**
+  *Symptoms*: ## Previous Behavior  The v9 docsite does not show RangeSlider. The docsite collects stories only from packages listed in its `dependencies`, and `@fluentui/react-range-slider-preview` (released as 0.1.0) was never added.  ## New Behavior  Adds `@fluentui/react-range-slider-preview` to `apps/public-docsite-v9` dependencies, so its stories appear under **Preview Components/RangeSlider**, like the other preview packages (e.g. `react-calendar-preview`).
   **Post-Mortem & Fix Analysis**:
   > ## 📊 Bundle size report  ✅ No changes found  <!-- Sticky Pull Request Commentbundle-size-report -->
-  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36949/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
+  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36980/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
 
-- **Issue #36948** (2026-10-20): **refactor(react-calendar-preview): render Calendar grid rows and cells**
-  *Symptoms*: ## Previous Behavior  `@fluentui/react-calendar-preview` split the Calendar into 12 components: Calendar, CalendarDay, CalendarMonth and CalendarYear, plus 8 row and cell components (`CalendarDayGridRow/Cell/HeaderRow/HeaderCell`, `CalendarMonthGridRow/Cell`, `CalendarYearGridRow/Cell`). Each had its own hook, render function, styles hook and context. Every cell was a component with its own keyboard and mouse handlers, and keyboard events were forwarded between nested cell slots. Day cells were customized through `getDayCellProps(date)` with nested `button`, `dayLabel` and `marker` slot props.  ## New Behavior  - **Four components:** Calendar, CalendarDay, CalendarMonth and CalendarYear. The row and cell components and the day, month and year contexts are removed. - **Rows and cells come from picker state:** each picker renders its rows and cells from props objects in its state (`weeks`, `weekdayRow`, `monthRows`, `yearRows`). The styled hooks add class names to those props. Row motions are supplied through `wrapWeek`, `wrapWeekdayCell` and `wrapRow`. - **Each grid handles input for all its cells:** selection, range hover, arrow navigation and a single roving tab stop are handled by delegated handlers on the grid element, so base hooks need no per-cell components and no focus runtime. Styled pickers keep Tabster arrow-navigation groups that ignore the keys the grids own. - **Customization:** `getDayCellProps(date)` returns cell props and a ref. The new `renderDay(day, default
+- **Issue #36979** (2026-10-22): **fix(react-headless-components-preview): emit data-disabled on ImageSwatch**
+  *Symptoms*: ## Previous Behavior  `ImageSwatch` set only `data-selected` (and `focusgroupstart`) on its root. A disabled image swatch had no `data-disabled`, unlike `ColorSwatch` and `EmptySwatch`, so styling layers had to fall back to `:disabled` or add the attribute themselves.  ## New Behavior  `useImageSwatch` sets `data-disabled` from the `disabled` prop (present when true, absent otherwise), matching `ColorSwatch`. `ImageSwatchState` and the API report include the new root attribute. A unit test covers the disabled and enabled cases 
+  **Post-Mortem & Fix Analysis**:
+  > ## 📊 Bundle size report  | Package & Exports | Baseline (minified/GZIP) | PR    | Change     | | :---------------- | -----------------------: | ----: | ---------: | | <samp>react-headless-components-preview</samp> <br /> <abbr title='bundle-size/AllComponents.fixture.js'>react-headless-components-preview: entire library</abbr>  | `228.392 kB`<br />`67.579 kB` | `228.43 kB`<br />`67.584 kB` | `38 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" /><br />`5 B` <img aria-hidden="true" src="https://microsoft.github.io/monosize/images/increase.png" />|  <details> <summary>Unchanged fixtures</summary>  | Package & Exports | Size (minified/GZIP) | | ----------------- | -------------------: | | <samp>react-headless-components-preview</samp> <br /> <abbr title='bundle-size/TagPicker.fixture.js'>@fluentui/react-headless-components-preview/tag-picker</abbr> | `50.254 kB`<br />`16.375 kB` | | <samp>react-headless-components-preview</samp> <br /> <abbr title
+  > Pull request demo site: [URL](https://fluentuipr.z22.web.core.windows.net/pull/36979/) <!-- Sticky Pull Request Commentdeploy-pr-site -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1569,322 +1572,602 @@ module.exports = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba08dbe0` (2026-10-20)
-**Commit Message**: refactor(react-calendar-preview): render Calendar grid rows and cells… (#36948)
+### Incident Patch 1: `20ea3d5d` (2026-10-22)
+**Commit Message**: fix(react-compiler-analyzer): analyze TypeScript without lowering (#36969)
 
-Co-authored-by: Claude <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `change/@fluentui-react-calendar-preview-5b1f0c2e-8d4a-4f6e-9c3b-2a7e1d6f4b90.json` (added, +7/-0)
+**File**: `change/@fluentui-react-compiler-analyzer-aac2a69f-7a20-4a4c-86de-f6b67c934869.json` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++{
++  "type": "patch",
++  "comment": "Support syntax-only TypeScript analysis, protected directive revalidation, and annotation previews.",
++  "packageName": "@fluentui/react-compiler-analyzer",
++  "email": "martinhochel@microsoft.com"
++}
+```
+
+**File**: `tools/react-compiler-analyzer/MIGRATION.md` (modified, +50/-0)
+```diff
+@@ -3,6 +3,56 @@
+ Use this guide when upgrading between package versions. Entries are ordered by target version,
+ newest first; dates within an entry identify changes made during its development, not release dates.
+ 
++## 0.0.2 to 0.0.3
++
++| Upgrade            | Release date | Guide updated |
++| ------------------ | ------------ | ------------- |
++| `0.0.2` to `0.0.3` | Unreleased   | 2026-10-21    |
++
++`0.0.3` is a non-breaking patch release. Removing TypeScript lowering fixes unnecessary
++transform failures: previously rejected files can now contribute functions, findings, and
++annotation targets, and analysis observes original TypeScript nodes rather than lowered nodes.
++Re-run saved coverage/risk baselines and preview source-writing operations before applying them.
++Verbose human output also changes; scripts that consume it should use JSON instead.
++
++This is not a JSON schema-version migration. Default CLI options, default JSON shapes, and
++existing field meanings remain compatible with schema version 2. The new workflow flags are
++opt-in, and their optional JSON fields require the updated schema for strict validation.
++
++### Changes and migration actions
++
++- TypeScript is parsed without the TypeScript-to-JavaScript preset. Mutable namespace exports,
++  `import = require(...)`, and `export =` no longer fail solely because of Babel lowering
++  limitations. JSX remains extension-sensitive, auto-accessors are accepted, and decorators
++  remain explicitly configured. This does not establish native React Compiler parity.
++- `lint --revalidate-justified` rechecks both memo directive kinds against the selected Babel
++  mode. Justified directives remain report-only even with `--fix`; redundant, broken, and
++  conflicting results cause a nonzero exit. Explicitly revalidated justified JSON rows add
++  `justified: true` and `revalidated: true`. Default justified skipping is unchanged.
++- `analyze --annotate <mode> --dry-run` previews the same edits as write mode without writing.
++  JSON actual write counters stay zero, with `annotate.dryRun: true` and `annotate.planned`
++  containing projected counters. `--dry-run` without `--annotate` is an error.
++- JSON remains schema version 2; default shapes and existing field meanings are unchanged.
++  Consumers validating the new opt-in fields against an older strict schema must use the
++  updated schema. No backend or version provenance is added to JSON.
++- Verbose human output now identifies the Babel and Babel React Compiler versions.
++
++Before applying new annotations, review the proposed targets:
++
++```bash
++react-compiler-analyzer analyze ./src --mode infer --annotate all-safe --dry-run
++```
++
++To reassess historical justifications explicitly, use the mode assumed by your build:
++
++```bash
++react-compiler-analyzer lint ./src --mode infer --revalidate-justified
++```
++
++Neither command above modifies source. Justified directives remain protected even if a later
++lint invocation includes `--fix`. Babel-specific conclusions do not establish that a directive
++is redundant for a native compiler or for another consumer build.
++
+ ## Experimental builds to 0.0.1
+ 
+ | Upgrade                                  | Release date | Guide updated |
+```
+
+**File**: `tools/react-compiler-analyzer/README.md` (modified, +49/-22)
+```diff
+@@ -12,9 +12,8 @@ still do what you intended.
+ 
+ This is a command-line tool, not a React runtime dependency. There is no public JavaScript API.
+ Compiler acceptance is not a guarantee of runtime safety or a prediction of performance gains.
+-
+-This README documents the prepared `0.0.1` release, which is not yet published. For differences
+-from published experimental builds, see the [version migration guide](MIGRATION.md).
++Outcomes come from Babel's React Compiler plugin, not the native Rust/OXC/SWC compiler. Parsing
++the same syntax does not establish equal eligibility, bailouts, emitted caches, or runtime exports.
+ 
+ ## Quick start
+ 
+@@ -24,8 +23,7 @@ Requires Node.js 22.14.0 or newer within 22.x, or Node.js 24.x. Install the publ
+ npm install --save-dev @fluentui/react-compiler-analyzer
+ ```
+ 
+-Until `0.0.1` is published, this installs a published experimental version. To try the prepared
+-version in this repository, see [local development](#local-development).
++To run the CLI from this repository, see [local development](#local-development).
+ 
+ Create a config without installing agent tooling, then inspect your source:
+ 
+@@ -49,8 +47,14 @@ Neither scan command modifies source unless you explicitly pass `analyze --annot
+ - [Shared options](#shared-options): paths, compilation modes, exclusions, parser settings, and formats.
+ - [Configuration](#configuration): stable defaults and optional risk rules.
+ - [JSON output](#--format-json): machine-readable fields and schemas.
++- [Upgrading](#upgrading): compatibility notes and migration instructions.
+ - [Documentation contents](docs/README.md): migration workflows, runtime risks, and implementation details.
+ 
++## Upgrading
++
++See the [version migration guide](MIGRATION.md) for release-specific changes, compatibility
++considerations, and upgrade instructions.
++
+ ## Configuration
+ 
+ `analyze` and `lint` read stable defaults from an optional `rca.config.json` in the current working
+@@ -131,8 +135,6 @@ persistent configuration: use `--annotate` and `--fix` explicitly on each run.
+ | `analyze.risks.pathAliases.baseUrl`    | `string`   | Required with `pathAliases`; relative to the config file.                          |
+ | `analyze.risks.pathAliases.paths`      | `object`   | Required with `baseUrl`; alias patterns map to nonempty arrays of target patterns. |
+ 
+-If you previously used `--risk-config`, see the [experimental-to-0.0.1 migration](MIGRATION.md).
+-
+ ### Optional agent integration
+ 
+ The npm package ships the canonical skill at `skills/react-compiler-analyzer`. By default, `init`
+@@ -196,15 +198,23 @@ even if no directive status could be derived. `--fix` does not modify these file
+ 
+ #### Options and fixes
+ 
+-| Flag    | Type      | Default | Description                                                                |
+-| ------- | --------- | ------- | -------------------------------------------------------------------------- |
+-| `--fix` | `boolean` | `false` | Remove redundant opt-outs, justify active opt-outs, and resolve conflicts. |
++| Flag                     | Type      | Default | Description                                                                                       |
++| ------------------------ | --------- | ------- | ------------------------------------------------------------------------------------------------- |
++| `--fix`                  | `boolean` | `false` | Remove redundant opt-outs, justify active opt-outs, and resolve conflicts.                        |
++| `--revalidate-justified` | `boolean` | `false` | Recheck both kinds of justified function directive against Babel; never fix justified directives. |
+ 
+ All shared options apply. `--fix` removes redundant `'use no memo'` directives, adds
+ `// justified: <reason>` to active ones, and resolves conflicts by keeping `'use memo'`.
+ It does not repair broken opt-ins, remove file-level opt-outs, or change directives whose probes
+ fail. JSON output describes the post-fix statuses and failures.
+ 
++By default, directives with a `// justified:` comment are skipped. Use `--revalidate-justified`
++to recheck both directive kinds in the selected compiler mode. Redundant, broken, or conflicting
++results fail lint, but justified directives and their comments remain untouched even with `--fix`.
++File-level directives remain preserved. Results describe Babel acceptance, not runtime safety or
++removability in another build. See [directive probing](docs/how-it-works.md#directive-probing)
++for implementation details.
++
+ | Directive and scenario                          | `infer`       | `annotation`  |
+ | ----------------------------------------------- | ------------- | ------------- |
+ | `'use no memo'` on a compilable named component | `active`      | `redundant`   |
+@@ -220,6 +230,7 @@ react-compiler-analyzer lint ./src --mode annotation
+ react-compiler-analyzer lint packages/button/src packages/menu/src --mode infer
+ react-compiler-analyzer lint ./src/Widget.tsx --verbose
+ react-compiler-ana
+```
+
+**File**: `tools/react-compiler-analyzer/docs/how-it-works.md` (modified, +36/-6)
+```diff
+@@ -14,15 +14,24 @@ scan paths -> discover TypeScript files -> attribute package -> compile files
+                                       summaries and formatted reports
+ ```
+ 
+-The analyzer uses Babel with the TypeScript preset and `babel-plugin-react-compiler`, configured
++The analyzer uses Babel with TypeScript parser syntax and `babel-plugin-react-compiler`, configured
+ with `noEmit: true` and a custom logger. Workers process files concurrently and consume compact
+ results as they finish rather than retaining every source file or AST.
+ 
+-The TypeScript preset erases `declare` class fields, so classes with type-only declarations do not
+-prevent analysis of function components or hooks in the same module. This does not add React
+-Compiler support for class components. JSX parsing is enabled only for `.tsx`; `.ts` files retain
+-support for angle-bracket type assertions. Compilation and wrapper resolution share one Babel
+-configuration factory for the per-file TypeScript preset and additional parser plugins.
++The analyzer does not erase or lower TypeScript. React Compiler consumes TypeScript-bearing ASTs;
++its compilation runs from `Program.enter`. Removing the unnecessary TypeScript transform prevents
++its namespace and CommonJS-emission limitations from failing otherwise parseable modules.
++`noEmit: true` and Babel's `code: false` alone would not disable those transform visitors.
++Ambient fields remain parsed without adding React Compiler support for class components.
++JSX is enabled by default only for `.tsx`; `.ts` files retain angle-bracket assertions.
++Compilation, directive probes, and wrapper resolution share one parser configuration factory.
++TypeScript auto-accessors are supported; decorators still require explicit parser plugins.
++
++This is Babel analysis, not native Rust/OXC/SWC compiler execution. Valid syntax need not be
++accepted by React Compiler, and Babel outcomes do not prove native candidate, cache, or export
++parity. Verbose human reports identify the installed compiler versions; JSON has no provenance.
++Unavailable compiler version metadata produces a warning and an `unavailable` label, not an
++analysis failure. Actual compiler failures remain errors.
+ 
+ Directories apply exclusion globs; explicit files bypass them. Results are deduplicated by absolute
+ path and attributed to the nearest package where possible. Files without an attributable package
+@@ -51,6 +60,21 @@ To decide whether `'use no memo'` is active or redundant, directive lint needs t
+ compiler would do without the opt-out. It runs a second probe that neutralizes the directive in
+ place while preserving parser settings, line/column locations, and source offsets.
+ 
++`lint --revalidate-justified` explicitly rechecks justified opt-ins and opt-outs, neutralizing
++one directive per probe while retaining all others. Accepted outcomes with and without the
++directive determine whether it affects acceptance in the selected Babel mode. Probe failures
++remain broken results, not evidence of redundancy. File-level directives are preserved with
++an explicit limitation. Revalidated rows carry `justified: true` and `revalidated: true`.
++Justified source is protected inside the fixer as well as the CLI. Redundant, broken, and
++conflicting revalidated directives fail lint even alongside `--fix`.
++
++Revalidation can add one whole-file compilation per justified function directive, performed
++sequentially within that file. This is additional work beyond the initial pass and ordinary opt-out probes, so files
++with many justified directives can take longer. File-level and conflicting directives are not probed.
++If the initial pass has unattributed compiler errors, lint reports the file as not analyzed before
++evaluating either ordinary or justified directives. New unattributed errors in a probe remain failed
++revalidation evidence rather than being ignored.
++
+ Coverage analysis uses the selected discovery mode. Directive health uses the mode assumed for the
+ build. The same function can therefore be relevant to an infer-mode assessment but redundant as an
+ opt-out in an annotation-mode build.
+@@ -59,6 +83,12 @@ Fixing and annotating are separate operations. `lint --fix` edits directive heal
+ `analyze --annotate` writes opt-ins or risk-driven opt-outs for accepted functions. Both operate on
+ explicit requests rather than persistent configuration.
+ 
++`analyze --annotate <mode> --dry-run` builds and validates the same edit plan but never invokes
++the writer. It lists proposed targets in human output. JSON keeps actual write counters at zero
++and adds only `dryRun: true` and `planned` counters; normal output shapes are unchanged.
++Planned insertion targets are intentionally omitted from JSON to keep the contract compact.
++Use human output to inspect target locations, rendered relative to the workspace.
++
+ ## Memo-cache statistics
+ 
+ Compiler acceptance is not itself an optimization signal. Human summaries separate accepted
+```
+
+**File**: `tools/react-compiler-analyzer/docs/migration-workflow.md` (modified, +19/-0)
+```diff
+@@ -92,6 +92,25 @@ Run lint using the build's mode:
+ react-compiler-analyzer lint ./src --mode annotation
+ ```
+ 
++To revisit historical justification comments, run:
++
++```bash
++react-compiler-analyzer lint ./src --mode annotation --revalidate-justified
++```
++
++Both memo directive kinds are probed individually against Babel in the selected mode. Justified
++directives remain untouched even with `--fix`; redundant, broken, or conflicting findings fail
++lint for manual review. This does not prove a guard is removable in a native or different consumer
++build, or validate its rationale. File-level directives remain preserved.
++Each justified function directive can add a sequential whole-file compilation; expect additional
++runtime for files with many justified directives.
++
++Preview new annotations without changing files:
++
++```bash
++react-compiler-analyzer analyze ./src --mode infer --annotate all-safe --dry-run
++```
++
+ Review `--fix` diffs rather than applying them blindly. A justified directive is deliberately
+ retained, and parse/compiler failures cannot be repaired by directive edits. After migration,
+ continue to run your application's tests and measure behavior and performance.
+```
+
+**File**: `tools/react-compiler-analyzer/esbuild.config.mjs` (modified, +2/-2)
+```diff
+@@ -13,7 +13,7 @@ const outdir = join(projectRoot, 'dist');
+  * and bundling yargs makes esbuild pick its `import` condition, whose `cliui/index.mjs` swaps
+  * `wrap-ansi` for a char-slicing fallback that mangles `--help`.
+  */
+-const external = ['@babel/core', '@babel/preset-typescript', 'ajv', 'babel-plugin-react-compiler', 'enquirer', 'yargs'];
++const external = ['@babel/core', 'ajv', 'babel-plugin-react-compiler', 'enquirer', 'yargs'];
+ 
+ await rm(outdir, { recursive: true, force: true });
+ 
+@@ -46,7 +46,7 @@ if (leaked.length > 0) {
+ }
+ 
+ const cli = await readFile(join(outdir, 'cli.js'), 'utf-8');
+-for (const name of ['babel-plugin-react-compiler', '@babel/preset-typescript']) {
++for (const name of ['babel-plugin-react-compiler']) {
+   if (!cli.includes(`require.resolve("${name}")`)) {
+     throw new Error(`\`require.resolve("${name}")\` did not survive bundling — the CLI will fail at runtime.`);
+   }
+```
+
+**File**: `tools/react-compiler-analyzer/package.json` (modified, +0/-1)
+```diff
+@@ -26,7 +26,6 @@
+   "bin": "./bin/react-compiler-analyzer.js",
+   "dependencies": {
+     "@babel/core": "^7.28.5",
+-    "@babel/preset-typescript": "^7.28.5",
+     "ajv": "^8.13.0",
+     "babel-plugin-react-compiler": "^1.0.0",
+     "enquirer": "^2.3.6",
+```
+
+**File**: `tools/react-compiler-analyzer/rca.analyze.schema.json` (modified, +23/-0)
+```diff
+@@ -267,7 +267,30 @@
+       "type": "object",
+       "additionalProperties": false,
+       "required": ["mode", "filesModified", "functionsAnnotated", "functionsBailedOut"],
++      "dependencies": {
++        "dryRun": ["planned"],
++        "planned": ["dryRun"]
++      },
++      "if": { "required": ["dryRun"] },
++      "then": {
++        "properties": {
++          "filesModified": { "const": 0 },
++          "functionsAnnotated": { "const": 0 },
++          "functionsBailedOut": { "const": 0 }
++        }
++      },
+       "properties": {
++        "dryRun": { "const": true },
++        "planned": {
++          "type": "object",
++          "additionalProperties": false,
++          "required": ["filesModified", "functionsAnnotated", "functionsBailedOut"],
++          "properties": {
++            "filesModified": { "$ref": "#/definitions/nonNegativeInteger" },
++            "functionsAnnotated": { "$ref": "#/definitions/nonNegativeInteger" },
++            "functionsBailedOut": { "$ref": "#/definitions/nonNegativeInteger" }
++          }
++        },
+         "mode": {
+           "enum": ["manual-memo", "all", "all-safe", "bailout-only"]
+         },
+```
+
+---
+
+### Incident Patch 2: `e7c98730` (2026-10-22)
+**Commit Message**: fix(react-headless-components-preview): emit data-disabled on ImageSwatch (#36979)
+
+**File**: `change/@fluentui-react-headless-components-preview-9859e823-f2ae-475e-9309-fb57c6f0b814.json` (added, +7/-0)
 ```diff
 @@ -0,0 +1,7 @@
 +{
-+  "type": "minor",
-+  "comment": "feat: render Calendar grid rows and cells from picker state with grid-owned keyboard navigation and a roving tab stop; add CalendarDay renderDay and remove the row and cell components; preserve button currentTarget for picker selection events and support selection from SVG and descendant-focusgroup cell content; clear range hover and pressed state when leaving editable day content; preserve cancelled-click focus, a single eligible tab stop through hidden-panel updates and reveal while excluding individually hidden dates, restricted-date focus with allFocusable, focus after synchronous controlled navigation, and explicitly empty navigation-button content",
-+  "packageName": "@fluentui/react-calendar-preview",
-+  "email": "dmytrokirpa@microsoft.com",
++  "type": "patch",
++  "comment": "fix: emit data-disabled state attribute on ImageSwatch",
++  "packageName": "@fluentui/react-headless-components-preview",
++  "email": "vgenaev@gmail.com",
 +  "dependentChangeType": "patch"
 +}
 ```
 
-**File**: `packages/react-components/react-calendar-preview/library/docs/Spec.md` (modified, +22/-33)
+**File**: `packages/react-components/react-headless-components-preview/library/etc/swatch-picker.api.md` (modified, +1/-0)
 ```diff
-@@ -20,7 +20,7 @@ Calendar is intended for choosing a date in application UI. It does not provide
- - [Fluent UI v9 Calendar compatibility component](../../../react-calendar-compat/library/src/components/Calendar/Calendar.types.ts)
- - [WAI-ARIA Authoring Practices date picker dialog example](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/)
- 
--The v8 and compatibility components are the behavioral predecessors of this package. Calendar Preview reimplements the control with v9 slots, contexts, Griffel styles, and Tabster navigation. The WAI-ARIA example informs the day-grid semantics, but Calendar itself is not a dialog and does not trap focus.
-+The v8 and compatibility components are the behavioral predecessors of this package. Calendar Preview reimplements the control with v9 slots, contexts, Griffel styles, and grid-owned keyboard navigation. The WAI-ARIA example informs the day-grid semantics, but Calendar itself is not a dialog and does not trap focus.
- 
- ## Sample Code
- 
-@@ -125,8 +125,10 @@ The reported range is clipped to `minDate` and `maxDate` and excludes `restricte
- - `dayPicker.weeksToShow` fixes the number of visible week rows; otherwise the picker renders the number required by the navigated month. A five-week grid advances its start by one week when the navigated date would otherwise fall in a sixth row.
- - `dayPicker.lightenDaysOutsideNavigatedMonth` visually deemphasizes dates outside the navigated month.
- - `dayPicker.getMarkedDays` marks dates without selecting or disabling them.
--- `dayPicker.getDayCellProps(date)` customizes each visible day cell's native props, ref, and `button`, `dayLabel`, and `marker` slots. Click and keyboard handlers run before the built-in action; `preventDefault()` cancels that action. Transition rows do not invoke the customization callback.
-+- `dayPicker.getDayCellProps(date)` customizes each visible day cell's native props and ref. Click and keyboard handlers run before the built-in action; `preventDefault()` cancels that action, including click-driven focus, so a consumer's focus destination is preserved. Transition rows do not invoke the customization callback.
-+- `dayPicker.renderDay(day, defaultContent)` customizes the content of each visible day's button, such as a badge or a custom label, while retaining the cell's selection, navigation, and disabled behavior.
- - `monthPicker.yearPicker.renderYear(year)` customizes year content while retaining the year cell's selection, navigation, and disabled behavior.
-+- Picker navigation-button slots use default icons only when `children` is `undefined`. Explicit `children: null` preserves an empty button for consumer styling.
- - `highlightCurrentMonth` and `highlightSelectedMonth` add current and selected treatments to month cells.
- - `goToTodayButton={null}` removes the default Go to today action.
- 
-@@ -244,36 +246,23 @@ Honor a day picker's `focusOnNavigatedDay` request through its focus handle afte
- 
- ### Internal composition
- 
--Calendar owns selected-date, displayed-date, and picker-view state. The day and month pickers share the displayed date. It publishes shared date, range, formatting, and boundary configuration through `CalendarContext`. `CalendarDay`, `CalendarMonth`, and `CalendarYear` publish narrower contexts to their row and cell components so navigation and styling do not require cloning props through the tree.
--
--The styled components use Tabster arrow-navigation groups. Base state hooks are exported for a headless layer and intentionally leave picker resolution or roving-focus behavior to the caller.
--
--Month and year cells own two-dimensional arrow navigation in both layers. Horizontal arrows stay in the current
--four-cell row, respect RTL, and do not wrap; vertical arrows stay in the same column. Unavailable cells are skipped
--unless `allFocusable` is enabled, which permits focus but not selection. Consumer cell handlers can cancel the
--built-in action with `preventDefault()`. Modified arrows and editable descendants are left untouched.
--Handled arrows, including boundary keys, are prevented so Tabster or a native focusgroup does not move focus again.
--
--Owned day/month/year arrows dispatch the composed cell keyboard handler during capture, before a native grid
--owner's bubbling listener. Consumer `onKeyDownCapture` runs first; consumer `onKeyDown` runs exactly once with the
--cell as `currentTarget`, and `preventDefault()` cancels movement without an intermediate focus hop. Day slot
--handlers, including handlers on custom descendants, and custom year-renderer handlers run before navigation
--with the correct `currentTarget`. Only handlers on the target's ancestor path run.
--`preventDefault()` cancels
--navigation without suppressing later consumer callbacks; `stopPropagation()` suppresses later callbacks,
--but a cell bubbling handler can stop propagation without cancelling Calendar navigation.
--Arrows from independently nested grids or descendant `[focusgroup]` owner
-```
-
-**File**: `packages/react-components/react-calendar-preview/library/etc/react-calendar-preview.api.md` (modified, +117/-374)
-```diff
-@@ -10,15 +10,12 @@ import type { ContextSelector } from '@fluentui/react-context-selector';
- import type { DistributiveOmit } from '@fluentui/react-utilities';
- import type { EventData } from '@fluentui/react-utilities';
- import { EventHandler } from '@fluentui/react-utilities';
--import type { FadeParams } from '@fluentui/react-motion-components-preview';
- import { FC } from 'react';
- import type { ForwardRefComponent } from '@fluentui/react-utilities';
- import type { JSXElement } from '@fluentui/react-utilities';
--import type { MotionSlotProps } from '@fluentui/react-motion';
- import { Provider } from 'react';
- import { ProviderProps } from 'react';
- import * as React_2 from 'react';
--import type { RefAttributes } from '@fluentui/react-utilities';
- import type { Slot } from '@fluentui/react-utilities';
- import type { SlotClassNames } from '@fluentui/react-utilities';
- 
-@@ -76,6 +73,11 @@ export type CalendarContextValues = {
-     calendar: CalendarContextValue;
+@@ -70,6 +70,7 @@ export { ImageSwatchSlots }
+ export type ImageSwatchState = ImageSwatchBaseState & {
+     root: {
+         'data-selected'?: string;
++        'data-disabled'?: string;
+     };
  };
  
-+// @public
-+export type CalendarDataAttributes = {
-+    [attribute: `data-${string}`]: string | undefined;
-+};
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/ImageSwatch/ImageSwatch.test.tsx` (modified, +12/-0)
+```diff
+@@ -24,6 +24,18 @@ describe('ImageSwatch', () => {
+     expect(getByRole('radio')).toHaveAttribute('data-selected');
+   });
+ 
++  it('emits the disabled state attribute only while disabled', () => {
++    const { getByLabelText } = render(
++      <SwatchPicker aria-label="Images">
++        <ImageSwatch src="image.png" value="image" aria-label="Image" disabled />
++        <ImageSwatch src="other.png" value="other" aria-label="Other" />
++      </SwatchPicker>,
++    );
 +
- // @public
- export type CalendarDateLabelData = {
-     date: Date;
-@@ -99,154 +101,54 @@ export const CalendarDay: React_2.ForwardRefExoticComponent<Omit<Partial<Calenda
-     lightenDaysOutsideNavigatedMonth?: boolean;
-     getMarkedDays?: (startingDate: Date, endingDate: Date) => Date[];
-     getDayCellProps?: (date: Date) => CalendarDayCellProps;
-+    renderDay?: (day: CalendarDayCell, defaultContent: React_2.ReactNode) => React_2.ReactNode;
- } & React_2.RefAttributes<CalendarDayHandle>>;
++    expect(getByLabelText('Image')).toHaveAttribute('data-disabled');
++    expect(getByLabelText('Other')).not.toHaveAttribute('data-disabled');
++  });
++
+   it('marks only the selected swatch as the focusgroup entry point', () => {
+     const { getByLabelText } = render(
+       <SwatchPicker aria-label="Images" selectedValue="image">
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/ImageSwatch/ImageSwatch.types.ts` (modified, +4/-0)
+```diff
+@@ -8,5 +8,9 @@ export type ImageSwatchState = ImageSwatchBaseState & {
+      * Whether ImageSwatch is selected
+      */
+     'data-selected'?: string;
++    /**
++     * Whether ImageSwatch is disabled
++     */
++    'data-disabled'?: string;
+   };
+ };
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/SwatchPicker/ImageSwatch/useImageSwatch.ts` (modified, +2/-0)
+```diff
+@@ -12,6 +12,8 @@ export const useImageSwatch = (props: ImageSwatchProps, ref: React.Ref<HTMLButto
+   state.root.focusgroupstart = toDataAttributeValue(state.selected);
+   // eslint-disable-next-line react-hooks/immutability
+   state.root['data-selected'] = toDataAttributeValue(state.selected);
++  // eslint-disable-next-line react-hooks/immutability
++  state.root['data-disabled'] = toDataAttributeValue(props.disabled);
  
--// @public
-+// @public (undocumented)
- export type CalendarDayBaseProps = CalendarDayProps;
+   return state;
+ };
+```
+
+---
+
+### Incident Patch 3: `cd81f8c1` (2026-10-22)
+**Commit Message**: fix: add aria-controls to PopoverTrigger and name the Default story surface (#36975)
+
+**File**: `change/@fluentui-react-headless-components-preview-popover-a11y-39583.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "patch",
++  "comment": "fix: add aria-controls to PopoverTrigger and name the Default story surface",
++  "packageName": "@fluentui/react-headless-components-preview",
++  "email": "vgenaev@gmail.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/Popover.cy.tsx` (modified, +30/-0)
+```diff
+@@ -335,6 +335,36 @@ describe('Popover', () => {
+     });
+   });
  
--// @public
-+// @public (undocumented)
- export type CalendarDayBaseState = CalendarDayState;
++  describe('Focus on open', () => {
++    it('browser focuses a text-only surface on open', () => {
++      mount(
++        <Popover>
++          <PopoverTrigger>
++            <button data-testid="trigger">Trigger</button>
++          </PopoverTrigger>
++          <PopoverSurface data-testid="surface">Text only</PopoverSurface>
++        </Popover>,
++      );
++      cy.get('[data-testid=trigger]').focus().realPress('Enter');
++      cy.get('[data-testid=surface]').should('have.focus');
++    });
++
++    it('browser focuses the first focusable element inside the surface on open', () => {
++      mount(
++        <Popover>
++          <PopoverTrigger>
++            <button data-testid="trigger">Trigger</button>
++          </PopoverTrigger>
++          <PopoverSurface data-testid="surface">
++            <button data-testid="inner">Inner</button>
++          </PopoverSurface>
++        </Popover>,
++      );
++      cy.get('[data-testid=trigger]').focus().realPress('Enter');
++      cy.get('[data-testid=inner]').should('have.focus');
++    });
++  });
++
+   describe('Focus restoration', () => {
+     it('should restore focus to trigger on close', () => {
+       mount(
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/Popover.test.tsx` (modified, +19/-0)
+```diff
+@@ -428,6 +428,25 @@ describe('Popover', () => {
+     expect(trigger).toHaveAttribute('aria-expanded', 'true');
+   });
  
- // @public
--export type CalendarDayCellProps = ComponentProps<Partial<CalendarDayGridCellSlots>> & RefAttributes<HTMLTableCellElement>;
--
--// @public
--export const calendarDayClassNames: SlotClassNames<CalendarDaySlots>;
--
--// @public
--export type CalendarDayContextValue = {
--    activeDescendantId: string;
--    calculateRoundedCorners: (above: boolean, below: boolean, left: boolean, right: boolean) => DayCorners;
--    daysToSelectInDayView?: number;
--    focusTargetDate?: Date;
--    getDayCellProps?: CalendarDayProps['getDayCellProps'];
--    getDayInfosInRangeOfDay: (dayToCompare: DayInfo) => DayInfo[];
--    getRefsFromDayInfos: (dayInfosInRange: DayInfo[]) => (HTMLElement | null)[];
--    lightenDaysOutsideNavigatedMonth: boolean;
--    navigatedDate: Date;
--    navigatedDayRef: React_2.RefObject<HTMLTableCellElement | null>;
--    onNavigateDate: EventHandler<CalendarDayNavigateData>;
--    weekCorners: WeekCorners;
--    weeks: DayInfo[][];
--    weeksToShow?: number;
--};
--
--// @public
--export type CalendarDayContextValues = {
--    calendarDay: CalendarDayContextValue;
--};
--
--// @public
--export type CalendarDayDismissData = EventData<'click' | 'keydown', React_2.SyntheticEvent<HTMLButtonElement>>;
--
--// @public
--export const CalendarDayGridCell: ForwardRefComponent<CalendarDayGridCellProps>;
--
--// @public
--export const calendarDayGridCellClassNames: SlotClassNames<CalendarDayGridCellSlots>;
--
--// @public
--export type CalendarDayGridCellProps = ComponentProps<Partial<CalendarDayGridCellSlots>> & {
--    day: DayInfo;
--    dayIndex: number;
--    weekIndex: number;
--    ariaHidden?: boolean;
--};
--
--// @public
--export type CalendarDayGridCellSlots = {
--    root: NonNullable<Slot<'td'>>;
--    button: NonNullable<Slot<'button'>>;
--    dayLabel: NonNullable<Slot<'span'>>;
--    marker?: Slot<'div'>;
-+export type CalendarDayCell = DayInfo & {
-+    props: CalendarElementProps<HTMLTableCellElement, React_2.TdHTMLAttributes<HTMLTableCellElement>>;
-+    button: CalendarElementProps<HTMLButtonElement, React_2.ButtonHTMLAttributes<HTMLButtonElement>>;
-+    label: CalendarElementProps<HTMLSpanElement>;
-+    marker?: CalendarElementProps<HTMLDivElement>;
++  it('sets aria-controls on trigger only while open', () => {
++    const { getByText, getByRole } = render(
++      <Popover id="my-id">
++        <PopoverTrigger>
++          <button>Trigger</button>
++        </PopoverTrigger>
++        <PopoverSurface>Surface</PopoverSurface>
++      </Popover>,
++    );
++
++    const trigger = getByText('Trigger');
++    expect(trigger).not.toHaveAttribute('aria-controls');
++
++    userEvent.click(trigger);
++
++    expect(trigger).toHaveAttribute('aria-controls', 'my-id');
++    expect(getByRole('group', { hidden: true })).toHaveAttribute('id', 'my-id');
++  });
++
+   it('sets data-open on trigger when open', () => {
+     const { getByText } = render(
+       <Popover defaultOpen>
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/Popover.types.ts` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ export type PopoverProps = {
+   /**
+    * Optional id for the popover surface. When provided, this id is applied to
+    * the `PopoverSurface` element and referenced by `PopoverTrigger`
+-   * (`aria-details`). If omitted, a generated id is used.
++   * (`aria-details` and `aria-controls`). If omitted, a generated id is used.
+    */
+   id?: string;
+ 
+```
+
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/PopoverTrigger/PopoverTrigger.types.ts` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@ import type { PopoverTriggerChildProps as CanonicalPopoverTriggerChildProps } fr
+ type HeadlessPopoverTriggerChildExtras = {
+   'aria-haspopup'?: 'true';
+   'aria-details'?: string;
++  'aria-controls'?: string;
+   'data-open'?: string;
  };
  
- // @public
--export type CalendarDayGridCellState = ComponentState<CalendarDayGridCellSlots> & {
--    day: DayInfo;
--    lightenDaysOutsideNavigatedMonth: boolean;
--};
--
--// @public
--export const CalendarDayGridHeaderCell: ForwardRefComponent<CalendarDayGridHeaderCellProps>;
--
--// @public
--export type CalendarDayGridHeaderCellBaseProps = ComponentProps<Partial<CalendarDayGridHeaderCellBaseSlots>> & Pick<CalendarDayGridHeaderCellProps, 'dayLabel'>;
--
--// @public
--export const calendarDayGridHeaderCellClassNames: SlotClassNames<CalendarDayGridHeaderCellBaseSlots>;
--
--// @public
--export type CalendarDayGridHeaderCellProps = ComponentProps<Partial<CalendarDayGridHeaderCellSlots>> & {
--    dayLabel: CalendarWeekDayLabel;
--};
--
--// @public
--export type CalendarDayGridHeaderCellSlots = {
--    root: NonNullable<Slot<'th'>>;
--    labelMotion?: Slot<MotionSlotProps<FadeParams>>;
--};
--
--// @public
--export type CalendarDayGridHeaderCellState = ComponentState<CalendarDayGridHeaderCellSlots>;
--
--// @public
--export const CalendarDay
 ```
 
-**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDay.ts` (modified, +4/-3)
+**File**: `packages/react-components/react-headless-components-preview/library/src/components/Popover/PopoverTrigger/usePopoverTrigger.ts` (modified, +1/-0)
 ```diff
-@@ -1,9 +1,8 @@
- export type {
-   CalendarDayBaseProps,
-   CalendarDayBaseState,
-+  CalendarDayCell,
-   CalendarDayCellProps,
--  CalendarDayContextValue,
--  CalendarDayContextValues,
-   CalendarDayDismissData,
-   CalendarDayHandle,
-   CalendarDayHeaderSelectData,
-@@ -12,14 +11,16 @@ export type {
-   CalendarDaySelectData,
-   CalendarDaySlots,
-   CalendarDayState,
-+  CalendarDayWeek,
-+  CalendarDayWeekdayRow,
-   DayInfo,
- } from './components/CalendarDay/index';
- export {
-   CalendarDay,
-   calendarDayClassNames,
-+  calendarDayGridClassNames,
-   renderCalendarDay_unstable,
-   useCalendarDayBase_unstable,
--  useCalendarDayContextValues_unstable,
-   useCalendarDay_unstable,
-   useCalendarDayStyles_unstable,
- } from './components/CalendarDay/index';
+@@ -78,6 +78,7 @@ export const usePopoverTrigger = (props: PopoverTriggerProps): PopoverTriggerSta
+     'aria-expanded': `${open}` as 'true' | 'false',
+     'aria-haspopup': 'true' as const,
+     'aria-details': open ? surfaceId : undefined,
++    'aria-controls': open ? surfaceId : undefined,
+     'data-open': toDataAttributeValue(open),
+     ...child?.props,
+     onMouseEnter: useEventCallback(mergeCallbacks(child?.props.onMouseEnter, onMouseEnter)),
 ```
 
-**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridCell.ts` (removed, +0/-12)
+**File**: `packages/react-components/react-headless-components-preview/stories/src/Popover/PopoverBestPractices.md` (modified, +1/-1)
 ```diff
-@@ -1,12 +0,0 @@
--export type {
--  CalendarDayGridCellProps,
--  CalendarDayGridCellSlots,
--  CalendarDayGridCellState,
--} from './components/CalendarDayGridCell/index';
--export {
--  CalendarDayGridCell,
--  calendarDayGridCellClassNames,
--  renderCalendarDayGridCell_unstable,
--  useCalendarDayGridCellStyles_unstable,
--  useCalendarDayGridCell_unstable,
--} from './components/CalendarDayGridCell/index';
+@@ -3,7 +3,7 @@
+ ### Do
+ 
+ - Create nested `Popover`s as separate components.
+-- If there are no interactive items in the `Popover` content, set `tabIndex={-1}` on the `PopoverSurface`.
++- If there are no interactive items in the `Popover` content, the browser focuses the `PopoverSurface` itself on open. Give it an accessible name (`aria-label` or `aria-labelledby`) and point `aria-describedby` at the content, so screen readers announce the popover and its text.
+ - Use `Popover` to reduce screen clutter and host non-essential information.
+ 
+ ### Don't
 ```
 
-**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridHeaderCell.ts` (removed, +0/-14)
+**File**: `packages/react-components/react-headless-components-preview/stories/src/Popover/PopoverDefault.stories.tsx` (modified, +22/-13)
 ```diff
-@@ -1,14 +0,0 @@
--export type {
--  CalendarDayGridHeaderCellBaseProps,
--  CalendarDayGridHeaderCellProps,
--  CalendarDayGridHeaderCellSlots,
--  CalendarDayGridHeaderCellState,
--} from './components/CalendarDayGridHeaderCell/index';
--export {
--  CalendarDayGridHeaderCell,
--  calendarDayGridHeaderCellClassNames,
--  renderCalendarDayGridHeaderCell_unstable,
--  useCalendarDayGridHeaderCellBase_unstable,
--  useCalendarDayGridHeaderCellStyles_unstable,
--  useCalendarDayGridHeaderCell_unstable,
--} from './components/CalendarDayGridHeaderCell/index';
-```
-
-**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridHeaderRow.ts` (removed, +0/-14)
-```diff
-@@ -1,14 +0,0 @@
--export type {
--  CalendarDayGridHeaderRowProps,
--  CalendarDayGridHeaderRowSlots,
--  CalendarDayGridHeaderRowState,
--  CalendarWeekDayLabel,
--} from './components/CalendarDayGridHeaderRow/index';
--export {
--  CalendarDayGridHeaderRow,
--  calendarDayGridHeaderRowClassNames,
--  renderCalendarDayGridHeaderRow_unstable,
--  useCalendarDayGridHeaderRowBase_unstable,
--  useCalendarDayGridHeaderRowStyles_unstable,
--  useCalendarDayGridHeaderRow_unstable,
--} from './components/CalendarDayGridHeaderRow/index';
-```
-
-**File**: `packages/react-components/react-calendar-preview/library/src/CalendarDayGridRow.ts` (removed, +0/-14)
-```diff
-@@ -1,14 +0,0 @@
--export type {
--  CalendarDayGridRowBaseProps,
--  CalendarDayGridRowProps,
--  CalendarDayGridRowSlots,
--  CalendarDayGridRowState,
--} from './components/CalendarDayGridRow/index';
--export {
--  CalendarDayGridRow,
--  calendarDayGridRowClassNames,
--  renderCalendarDayGridRow_unstable,
--  useCalendarDayGridRowBase_unstable,
--  useCalendarDayGridRowStyles_unstable,
--  useCalendarDayGridRow_unstable,
--} from './components/CalendarDayGridRow/index';
+@@ -1,18 +1,27 @@
+ import * as React from 'react';
++import { useId } from '@fluentui/react-components';
+ import { Popover, PopoverTrigger, PopoverSurface } from '@fluentui/react-headless-components-preview/popover';
+ 
+ import styles from './popover.module.css';
+ 
+-export const Default = (): React.ReactNode => (
+-  <Popover>
+-    <PopoverTrigger>
+-      <button className={styles.trigger}>Show popover</button>
+-    </PopoverTrigger>
+-    <PopoverSurface className={styles.surface}>
+-      <h3 className={styles.heading}>Popover title</h3>
+-      <p className={styles.body}>
+-        This is the content of the popover. Click the trigger again or press Escape to close.
+-      </p>
+-    </PopoverSurface>
+-  </Popover>
+-);
++export const Default = (): React.ReactNode => {
++  const headingId = useId('popover-heading-');
++  const bodyId = useId('popover-body-');
++
++  return (
++    <Popover>
++      <PopoverTrigger>
++        <button className={styles.trigger}>Show popover</button>
++      </PopoverTrigger>
++      {/* Text-only content: the surface itself receives focus on open, so it needs a name and description. */}
++      <PopoverSurface className={styles.surface} aria-labelledby={headingId} aria-describedby={bodyId}>
++        <h3 id={headingId} className={styles.heading}>
++          Popover title
++        </h3>
++        <p id={bodyId} className={styles.body}>
++          This is the content of the popover. Click the trigger again or press Escape to close.
++        </p>
++      </PopoverSurface>
++    </Popover>
++  );
++};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36949** (2026-10-20): chore(react-range-slider-preview): prepare initial release (@mainframev)
-- **PR #36948** (2026-10-20): refactor(react-calendar-preview): render Calendar grid rows and cells (@dmytrokirpa)
-- **PR #36942** (2026-10-20): fix(ci): require successful validation before ADO releases (@Hotell)
-- **PR #36941** (2026-10-19): fix(react-docsite-components): handle encoded hash-route anchors (@micahgodbolt)
-- **PR #36940** (2026-10-20): test(react-provider): avoid E2BIG in Linux release tests (@dmytrokirpa)
-- **PR #36939** (2026-10-19): release: applying package updates (manual recovery) (@dmytrokirpa)
+- **PR #36980** (2026-10-22): docs(public-docsite-v9): add RangeSlider preview stories (@mainframev)
+- **PR #36979** (2026-10-22): fix(react-headless-components-preview): emit data-disabled on ImageSwatch (@mainframev)
+- **PR #36978** (2026-10-22): feat(react-components): export existing Menu base hooks (@PaulGMardling)
+- **PR #36975** (2026-10-22): fix: add aria-controls to PopoverTrigger and name the Default story surface (@mainframev)
+- **PR #36971** (2026-10-21): refactor(storybook): collocate shared icon configuration and tests (@Hotell)
+- **PR #36970** (closed): refactor(storybook): collocate shared icon configuration and tests (@Hotell)
 
 ---
 
@@ -1904,26 +2187,25 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react-calendar-preview): render Calendar grid rows and cells… (#36948)
+## X. react-compiler-analyzer): analyze TypeScript without lowering (#36969)
 
 **RULE**:
-When implementing operations in `change/@fluentui-react-calendar-preview-5b1f0c2e-8d4a-4f6e-9c3b-2a7e1d6f4b90.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/fluentui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `change/@fluentui-react-compiler-analyzer-aac2a69f-7a20-4a4c-86de-f6b67c934869.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/fluentui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba08dbe0`: react-calendar-preview): render Calendar grid rows and cells… (#36948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20ea3d5d`: react-compiler-analyzer): analyze TypeScript without lowering (#36969). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/@fluentui-react-calendar-preview-5b1f0c2e-8d4a-4f6e-9c3b-2a7e1d6f4b90.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/@fluentui-react-compiler-analyzer-aac2a69f-7a20-4a4c-86de-f6b67c934869.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 {
-  "type": "minor",
-  "comment": "feat: render Calendar grid rows and cells from picker state with grid-owned keyboard navigation and a roving tab stop; add CalendarDay renderDay and remove the row and cell components; preserve button currentTarget for picker selection events and support selection from SVG and descendant-focusgroup cell content; clear range hover and pressed state when leaving editable day content; preserve cancelled-click focus, a single eligible tab stop through hidden-panel updates and reveal while excluding individually hidden dates, restricted-date focus with allFocusable, focus after synchronous controlled navigation, and explicitly empty navigation-button content",
-  "packageName": "@fluentui/react-calendar-preview",
-  "email": "dmytrokirpa@microsoft.com",
-  "dependentChangeType": "patch"
+  "type": "patch",
+  "comment": "Support syntax-only TypeScript analysis, protected directive revalidation, and annotation previews.",
+  "packageName": "@fluentui/react-compiler-analyzer",
+  "email": "martinhochel@microsoft.com"
 }
 ```
 
@@ -1934,4 +2216,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba08dbe0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20ea3d5d` are properly handled with clean fallback behavior.

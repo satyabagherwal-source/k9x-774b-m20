@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `bcd8ac3d`  
+> **Source Version**: `b415df84`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:13:18.335Z  
+> **Timestamp**: 2026-10-22T17:04:54.164Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:13:18.326Z  
+> **Harvest Timestamp**: 2026-10-22T17:04:53.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13038 stars
+- **Stars / Engagement**: 13056 stars
 
 ---
 
@@ -2181,209 +2181,66 @@ __all__ = ["LeannHybridRetriever", "LeannRetriever"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcd8ac3d` (2026-10-20)
-**Commit Message**: perf: lazy-load the public API so importing leann.mcp stays lightweight (#437)
+### Incident Patch 1: `0710a9e1` (2026-10-20)
+**Commit Message**: fix(deps): pin pymupdf below 2.0 (#438)
 
-* perf: lazy-load the public API so importing leann.mcp stays lightweight
+`main` is red on the Intel macOS cells, and every open PR inherits it:
 
-* test: cover lazy package import and backend discovery
+    error: Failed to download and build `pymupdf==2.0`
+      cause: Package metadata name `pymupdf-lite` does not match given name `pymupdf`
+    hint: `pymupdf` (v2.0) was included because `leann-core` (v0.3.8) depends on `pymupdf`
 
-**File**: `packages/leann-core/src/leann/__init__.py` (modified, +37/-4)
+pymupdf 2.0 ships four wheels and none of them are macOS x86_64, so the Intel
+runners fall back to building the sdist -- whose metadata declares itself as
+`pymupdf-lite`, which uv rejects as a name mismatch. ARM macOS and Linux get a
+wheel and never hit it, which is why only `macos-15-intel` and `macos-14` fail.
+
+Retrying does not help; the install failed identically on all five attempts in
+the step's retry loop.
+
+Both specs were unbounded. Verified with uv:
+
+    pymupdf>=1.23.0       -> pymupdf==2.0      (broken)
+    pymupdf>=1.23.0,<2    -> pymupdf==1.28.2   (resolves)
+
+uv.lock already holds 1.26.4, so the lock is unaffected; this stops a fresh
+resolve from reaching 2.0.
+
+Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
+
+**File**: `packages/leann-core/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -24,11 +24,26 @@
-     os.environ.setdefault("FAISS_NUM_THREADS", "1")
-     os.environ.setdefault("OMP_WAIT_POLICY", "PASSIVE")
- 
--from .api import LeannBuilder, LeannChat, LeannSearcher
--from .react_agent import ReActAgent, create_react_agent
--from .registry import BACKEND_REGISTRY, autodiscover_backends
-+from typing import TYPE_CHECKING, Any
- 
--autodiscover_backends()
-+if TYPE_CHECKING:
-+    from .api import LeannBuilder, LeannChat, LeannSearcher
-+    from .react_agent import ReActAgent, create_react_agent
-+    from .registry import BACKEND_REGISTRY
-+
-+# The public API is resolved lazily (PEP 562). Importing a lightweight
-+# submodule such as ``leann.mcp`` or ``leann.settings`` must not pull in the
-+# whole stack (api -> chat -> embedding server -> faiss backends), which costs
-+# gigabytes of resident memory for processes that only need a few helpers.
-+# Backend auto-discovery runs when ``leann.api`` is first imported.
-+_LAZY_ATTRS = {
-+    "LeannBuilder": ".api",
-+    "LeannChat": ".api",
-+    "LeannSearcher": ".api",
-+    "ReActAgent": ".react_agent",
-+    "create_react_agent": ".react_agent",
-+    "BACKEND_REGISTRY": ".registry",
-+}
- 
- __all__ = [
-     "BACKEND_REGISTRY",
-@@ -38,3 +53,21 @@
-     "ReActAgent",
-     "create_react_agent",
- ]
-+
-+
-+def __getattr__(name: str) -> Any:
-+    module_name = _LAZY_ATTRS.get(name)
-+    if module_name is None:
-+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-+    import importlib
-+
-+    if name == "BACKEND_REGISTRY":
-+        # Make sure backends are discovered before handing out the registry.
-+        importlib.import_module(".api", __name__)
-+    value = getattr(importlib.import_module(module_name, __name__), name)
-+    globals()[name] = value  # cache so __getattr__ is only hit once per name
-+    return value
-+
-+
-+def __dir__() -> list[str]:
-+    return sorted(set(globals()) | set(__all__))
+@@ -35,7 +35,7 @@ dependencies = [
+     "requests>=2.25.0",
+     "accelerate>=0.20.0",
+     "PyPDF2>=3.0.0",
+-    "pymupdf>=1.23.0",
++    "pymupdf>=1.23.0,<2",
+     "pdfplumber>=0.10.0",
+     "nbconvert>=7.0.0",  # For .ipynb file support
+     "gitignore-parser>=0.1.12",  # For proper .gitignore handling
 ```
 
-**File**: `packages/leann-core/src/leann/api.py` (modified, +7/-1)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -25,7 +25,7 @@
- from .embedding_server_manager import EmbeddingServerManager
- from .interface import LeannBackendFactoryInterface
- from .metadata_filter import MetadataFilterEngine
--from .registry import BACKEND_REGISTRY
-+from .registry import BACKEND_REGISTRY, autodiscover_backends
- 
- logger = logging.getLogger(__name__)
- 
-@@ -1869,3 +1869,9 @@ def __del__(self):
-             self.cleanup()
-         except Exception:
-             pass
-+
-+
-+# Register installed ``leann-backend-*`` packages. This used to live in
-+# ``leann/__init__.py``; it runs here so that anything importing ``leann.api``
-+# (directly or through the lazy package attributes) still sees every backend.
-+autodiscover_backends()
-```
-
-**File**: `tests/test_lazy_package_import.py` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+"""Importing light submodules must not pull in the whole LEANN stack.
-+
-+Regression tests for eager package initialisation: ``import leann.mcp`` used to
-+execute ``leann/__init__.py``, which imported ``leann.api`` and auto-discovered
-+every backend (faiss included), costing gigabytes for processes that never run
-+a search.
-+"""
-+
-+import os
-+import subprocess
-+import sys
-+import textwrap
-+from pathlib import Path
-+
-+
-+def _run(code: str, extra_path: Path | None = None) -> subprocess.CompletedProcess:
-+    env = None
-+    if extra_path is not None:
-+        paths = [str(extra_path), *filter(None, [os.environ.get("PYTHONPATH")])]
-+        env = {**os.environ, "PYTHONPATH": os.pathsep.join(paths)}
-+    return subprocess.run(
-+        [sys.executable, "-c", textwrap.dedent(code)],
-+        capture_output=True,
-+        text=True,
-+        timeout=120,
-+        env=env,
-+    )
-+
-+
-+def test_importing_mcp_does_not_load_heavy_modules():
-+    result = _run(
-+        """
-+        import sys
-+        import leann.mcp
-+        heavy = [m for m in ("leann.api", "leann.chat", "leann.embedding_server_manager",
-+                             "leann.react_agent", "faiss") if m in sys.modules]
-+        print(",".join(heavy))
-+        """
-+    )
-+    assert result.returncode == 0, result.stderr
-+    assert result.stdout.strip() == ""
-+
-+
-+def test_public_api_is_still_importable_from_package():
-+    result = _run(
-+        """
-+        import leann
-+        from leann import LeannBuilder, LeannChat, LeannSearcher, ReActAgent
-+        from leann import create_react_agent, BACKEND_REGISTRY
-+        import leann.api
-+        assert LeannBuilder is leann.api.LeannBuilder
-+        assert LeannSearcher is leann.api.LeannSearcher
-+        assert LeannChat is leann.api.LeannChat
-+        assert BACKEND_REGISTRY is leann.api.BACKEND_REGISTRY
-+        assert set(leann.__all__) <= set(dir(leann))
-+        print("ok")
-+        """
-+    )
-+    assert result.returncode == 0, result.stderr
-+    assert result.stdout.strip() == "ok"
-+
-+
-+def test_unknown_attribute_raises_attribute_error():
-+    result = _run(
-+        """
-+        import leann
-+        try:
-+            leann.does_not_exist
-+        except AttributeError as e:
-+            print("AttributeError", "does_not_exist" in str(e))
-+        """
-+    )
-+    assert result.returncode == 0, result.stderr
-+    assert result.stdout.strip() == "AttributeError True"
-+
-+
-+def test_backends_are_discovered_when_api_is_imported(tmp_path):
-+    """Backend auto-discovery must still run for ``from leann.api import ...``."""
-+    dist = tmp_path / "leann_backend_lazyprobe-0.0.0.dist-info"
-+    dist.mkdir()
-+    (dist / "METADATA").write_text(
-+        "Metadata-Version: 2.1\nName: leann-backend-lazyprobe\nVersion: 0.0.0\n"
-+    )
-+    (tmp_path / "leann_backend_lazyprobe.py").write_text(
-+        "from leann.registry import register_backend\n\n\n"
-+        "@register_backend('lazyprobe')\n"
-+        "class Probe:\n"
-+        "    pass\n"
-+    )
-+    for statement in (
-+        "from leann.api import LeannSearcher",
-+        "from leann import LeannSearcher",
-+        "from leann import BACKEND_REGISTRY",
-+    ):
-+        result = _run(
-+            f"""
-+            {statement}
-+            from leann.registry import BACKEND_REGISTRY
-+            print("lazyprobe" in BACKEND_REGISTRY)
-+            """,
-+            extra_path=tmp_path,
-+        )
-+        assert result.returncode == 0, f"{statement}: {result.stderr}"
-+        assert result.stdout.strip() == "True", statement
+@@ -30,7 +30,7 @@ dependencies = [
+     # PDF parsing dependencies - essential for document processing
+     "PyPDF2>=3.0.0",
+     "pdfplumber>=0.11.0",
+-    "pymupdf>=1.26.0",
++    "pymupdf>=1.26.0,<2",
+     "pypdfium2>=4.30.0",
+     # LlamaIndex core and readers - updated versions
+     "llama-index>=0.12.44",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #439** (2026-10-21): chore: untrack the generated .leann index store (@ASuresh0524)
+- **PR #438** (2026-10-20): fix(deps): pin pymupdf below 2.0 (@ASuresh0524)
 - **PR #437** (2026-10-20): perf: lazy-load the public API so importing leann.mcp stays lightweight (@Samuelpedroso-dev)
+- **PR #436** (2026-10-20): feat(search): cache query embeddings per searcher (@ASuresh0524)
 - **PR #435** (closed): [diagnostic] #226 without the Linux native-backend stubs (@ASuresh0524)
 - **PR #434** (2026-10-12): fix(core): fit chunk sizes to the embedding model's sequence limit (@yichuan-w)
-- **PR #433** (2026-10-12): feat: add an opt-in Parallel MCP web document reader (@georgeatparallel)
-- **PR #431** (closed): feat: add Cheaper Inference LLM provider (@aiapienthusiast)
-- **PR #430** (2026-10-09): fix(core): keep index metadata when MCP status counts passages (@Lesereingrape)
 
 ---
 
@@ -2403,61 +2260,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lazy-load the public API so importing leann.mcp stays lightweight (#437)
+## X. deps): pin pymupdf below 2.0 (#438)
 
 **RULE**:
-When implementing operations in `packages/leann-core/src/leann/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/leann-core/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcd8ac3d`: lazy-load the public API so importing leann.mcp stays lightweight (#437). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0710a9e1`: deps): pin pymupdf below 2.0 (#438). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/src/leann/__init__.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from typing import TYPE_CHECKING, Any
-if TYPE_CHECKING:
-    from .api import LeannBuilder, LeannChat, LeannSearcher
-    from .react_agent import ReActAgent, create_react_agent
-    from .registry import BACKEND_REGISTRY
-
-# The public API is resolved lazily (PEP 562). Importing a lightweight
-# submodule such as ``leann.mcp`` or ``leann.settings`` must not pull in the
-# whole stack (api -> chat -> embedding server -> faiss backends), which costs
-# gigabytes of resident memory for processes that only need a few helpers.
-# Backend auto-discovery runs when ``leann.api`` is first imported.
-_LAZY_ATTRS = {
-    "LeannBuilder": ".api",
-    "LeannChat": ".api",
-    "LeannSearcher": ".api",
-    "ReActAgent": ".react_agent",
-    "create_react_agent": ".react_agent",
-    "BACKEND_REGISTRY": ".registry",
-}
-
-
-def __getattr__(name: str) -> Any:
-    module_name = _LAZY_ATTRS.get(name)
-    if module_name is None:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    import importlib
-
-    if name == "BACKEND_REGISTRY":
-        # Make sure backends are discovered before handing out the registry.
-        importlib.import_module(".api", __name__)
-    value = getattr(importlib
+    "pymupdf>=1.23.0,<2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-from .api import LeannBuilder, LeannChat, LeannSearcher
-from .react_agent import ReActAgent, create_react_agent
-from .registry import BACKEND_REGISTRY, autodiscover_backends
-autodiscover_backends()
+    "pymupdf>=1.23.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcd8ac3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0710a9e1` are properly handled with clean fallback behavior.

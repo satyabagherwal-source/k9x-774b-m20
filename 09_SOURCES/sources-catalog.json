@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "03f383a8",
+    "sourceVersion": "9e24f135",
     "license": "Apache-2.0",
-    "contentHash": "ee6d54aad23c445e9fa9591dbbd210690cedcf790f23ade646123db77f247f3e",
-    "lastHarvestedAt": "2026-10-21T18:14:07.201Z",
+    "contentHash": "ae02aa34d138e63d95b17b9e44f0827526ba8c42d2f452ddcfcbe7c69023c2e9",
+    "lastHarvestedAt": "2026-10-22T17:04:54.078Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "ba08dbe0",
+    "sourceVersion": "7e6920d5",
     "license": "NOASSERTION",
-    "contentHash": "63e5bbf1d11dd93560fb139ab98e49769c22ecaf29de1e6bbd93675fde131da1",
-    "lastHarvestedAt": "2026-10-20T23:31:28.086Z",
+    "contentHash": "71f9ca4f6a8b89bc4f85ca8996a741ddb844590d0ecd9256d6a2892be21688bf",
+    "lastHarvestedAt": "2026-10-22T17:04:41.187Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {
@@ -5673,10 +5673,10 @@
     "repository": "StarTrail-org/LEANN",
     "platform": "github",
     "sourceUrl": "https://github.com/StarTrail-org/LEANN",
-    "sourceVersion": "bcd8ac3d",
+    "sourceVersion": "b415df84",
     "license": "MIT",
-    "contentHash": "babeb3322b46ca0c3c2471de6466bc29be1a5ce197a95810334c089b2c45fb55",
-    "lastHarvestedAt": "2026-10-20T22:13:18.653Z",
+    "contentHash": "86bb39620b96fbfef2cf2d203a2210bfe10dcb41e78c3fe072ad6b7ef112788a",
+    "lastHarvestedAt": "2026-10-22T17:04:54.368Z",
     "learningId": "learn-github-startrail-org-leann"
   },
   "adonisjs-core": {

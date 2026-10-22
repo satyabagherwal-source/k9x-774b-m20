@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `03f383a8`  
+> **Source Version**: `9e24f135`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:14:07.008Z  
+> **Timestamp**: 2026-10-22T17:04:53.879Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:14:06.614Z  
+> **Harvest Timestamp**: 2026-10-22T17:04:53.418Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25699 stars
+- **Stars / Engagement**: 25706 stars
 
 ---
 
@@ -1259,16 +1259,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49515** (2026-10-21): **[v1.20] ci: ignore transient xDS mode drift during downgrade**
-  *Symptoms*: Newer agents defaults to "split" xDS mode. During downgrade, the older chart restores "ads" in the ConfigMap before those agents stop, causing expected drift warnings to fail CI.  Pass the drift exclusion directly to the newer agents and clear it from reused Helm values on downgrade. Keep production charts unchanged.  Revert this workaround once the tested releases no longer require the split-to-ads transition during downgrade.  Fixes: #49383 
+- **Issue #49546** (2026-10-22): **Prepare for release v1.19.10**
+  *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
   **Post-Mortem & Fix Analysis**:
-  > /test
   > /test
 
-- **Issue #49514** (2026-10-21): **[v1.20] ci: ignore transient xDS mode drift during downgrade**
-  *Symptoms*: Newer agents defaults to "split" xDS mode. During downgrade, the older chart restores "ads" in the ConfigMap before those agents stop, causing expected drift warnings to fail CI.  Pass the drift exclusion directly to the newer agents and clear it from reused Helm values on downgrade. Keep production charts unchanged.  Revert this workaround once the tested releases no longer require the split-to-ads transition during downgrade.  Fixes: #49383 
+- **Issue #49545** (2026-10-22): **Prepare for release v1.18.16**
+  *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
   **Post-Mortem & Fix Analysis**:
-  > /test
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1286,266 +1284,517 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `103e474c` (2026-09-21)
-**Commit Message**: loadbalancer: add BPF state leak regression tests
+### Incident Patch 1: `5ff3986e` (2026-10-20)
+**Commit Message**: ci: fix PR chart checkout ref in smoke conformance workflows
 
-Exercise failed frontend reconciliation, partial NodePort expansion,
-wildcard and Maglev transitions, and restored quarantine cleanup.
+The PR checkout used steps.vars.outputs.sha, but these workflows output
+the SHA from the 'sha' step, so the ref was empty. Fork PRs were thus
+tested with the target branch's Helm chart instead of their own.
 
-AIL: 3
-Signed-off-by: Jussi Maki <[REDACTED_EMAIL]>
+Fixes: 29c832727dad ("ci: handle pull_request workflows by ariane")
+Signed-off-by: Blaz Zupan <[REDACTED_EMAIL]>
 
-**File**: `pkg/loadbalancer/reconciler/bpf_reconciler_test.go` (modified, +409/-8)
+**File**: `.github/workflows/tests-smoke-conformance.yaml` (modified, +1/-1)
 ```diff
-@@ -75,6 +75,12 @@ var (
- 		80,
- 		loadbalancer.ScopeExternal,
- 	)
-+	backend3 = loadbalancer.NewL3n4Addr(
-+		loadbalancer.TCP,
-+		types.MustParseAddrCluster("10.1.0.3"),
-+		80,
-+		loadbalancer.ScopeExternal,
-+	)
+@@ -223,7 +223,7 @@ jobs:
+       - name: Checkout pull request branch (NOT TRUSTED)
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+-          ref: ${{ steps.vars.outputs.sha }}
++          ref: ${{ steps.sha.outputs.sha }}
+           persist-credentials: false
+           # Required by checkout v7+ to fetch fork PR code; see the NOT TRUSTED warning above.
+           allow-unsafe-pr-checkout: true
+```
+
+**File**: `.github/workflows/tests-smoke-ipv6.yaml` (modified, +1/-1)
+```diff
+@@ -182,7 +182,7 @@ jobs:
+       - name: Checkout pull request branch (NOT TRUSTED)
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+-          ref: ${{ steps.vars.outputs.sha }}
++          ref: ${{ steps.sha.outputs.sha }}
+           persist-credentials: false
+           # Required by checkout v7+ to fetch fork PR code; see the NOT TRUSTED warning above.
+           allow-unsafe-pr-checkout: true
+```
+
+---
+
+### Incident Patch 2: `17c31a60` (2026-10-22)
+**Commit Message**: Revert "gateway: enable system CA for BackendTLSPolicy"
+
+This reverts commit f0cdf8225e9d84d511230d4effc1fe5e8795da63.
+
+The reverted commit added a "fix" that actually produced a much
+worse outcome when run in a live cluster.
+
+Signed-off-by: Nick Young <[REDACTED_EMAIL]>
+
+**File**: `operator/pkg/gateway-api/policychecks/backendtlspolicy.go` (modified, +0/-14)
+```diff
+@@ -63,15 +63,13 @@ func (b *BackendTLSPolicyInput) ValidateSpec(ctx context.Context, scopedLog *slo
+ 				string(gatewayv1.PolicyReasonInvalid), string(gatewayv1.PolicyReasonInvalid))
+ 			return false, nil
+ 		}
+-
+ 		// Secondly, we check that there is only one CACertificateRef. We will ignore any additional
+ 		// ones, but we want to tell people about that.
+ 		if len(b.BackendTLSPolicy.Spec.Validation.CACertificateRefs) > 1 {
+ 			b.setRejectedConditions(ancestorRef, "Having more than one CA Certificate Ref is not supported",
+ 				string(gatewayv1.PolicyReasonInvalid), string(gatewayv1.PolicyReasonInvalid))
+ 			return false, nil
+ 		}
+-
+ 		// Thirdly, check that the CACertificateRef exists, and is a ConfigMap with a key named `ca.crt`.
+ 		caCertRef := b.BackendTLSPolicy.Spec.Validation.CACertificateRefs[0]
  
- 	// frontendAddrs are assigned to the <auto>/autoAddr. Each test set is run with
- 	// each of these.
-@@ -166,12 +172,15 @@ type testCase struct {
- // faultyLBMaps wraps an LBMaps and can inject errors on map operations.
- type faultyLBMaps struct {
- 	maps.LBMaps
--	fail              bool
--	failDeleteService bool
-+	fail                    bool
-+	failDeleteService       bool
-+	shouldFailUpdateService func(maps.ServiceKey) bool
- }
- 
- func (m *faultyLBMaps) UpdateService(key maps.ServiceKey, value maps.ServiceValue) error {
--	if m.fail && key.GetBackendSlot() > 0 {
-+	hostKey := key.ToHost()
-+	if hostKey.GetBackendSlot() > 0 &&
-+		(m.fail || m.shouldFailUpdateService != nil && m.shouldFailUpdateService(hostKey)) {
- 		return errors.New("update service failed")
+@@ -110,18 +108,6 @@ func (b *BackendTLSPolicyInput) ValidateSpec(ctx context.Context, scopedLog *slo
+ 		}
  	}
- 	return m.LBMaps.UpdateService(key, value)
-@@ -1130,7 +1139,7 @@ var sessionAffinityTestCases = []testCase{
- // mapErrorTestCases exercises the UpdateService error path.
- var mapErrorTestCases = []testCase{
- 	// Step 1: Create a ClusterIP with one backend. This succeeds and establishes
--	// backendReferences[fe] = {backend1}.
-+	// frontendStates[fe].backendReferences = {backend1}.
- 	newTestCase(
- 		"MapError_setup_1_backend",
- 		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
-@@ -1151,10 +1160,10 @@ var mapErrorTestCases = []testCase{
- 		false,
- 	),
  
--	// Step 2: Switch to backend2 with an error injected. updateBackendRevision
--	// runs for backend2 (creating backendStates[backend2]) but upsertService
--	// fails on the slot, so updateReferences is skipped. The invariant check
--	// in runTests verifies that backendStates[backend2].addr is still set.
-+	// Step 2: Switch to backend2 with an error injected. Backend state and the
-+	// frontend reference are recorded before upsertService fails on the slot,
-+	// so the invariant check in runTests verifies that backendStates[backend2].addr
-+	// is still set for cleanup or retry.
- 	newTestCase(
- 		"MapError_update_service_fails",
- 		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
-@@ -1200,6 +1209,136 @@ var mapErrorTestCases = []testCase{
- 	),
+-	// Cilium currently supports only the "System" well-known CA bundle.
+-	if b.BackendTLSPolicy.Spec.Validation.WellKnownCACertificates != nil &&
+-		*b.BackendTLSPolicy.Spec.Validation.WellKnownCACertificates != gatewayv1.WellKnownCACertificatesSystem {
+-		b.setRejectedConditions(
+-			ancestorRef,
+-			"Only System is supported for wellKnownCACertificates",
+-			string(gatewayv1.PolicyReasonInvalid),
+-			string(gatewayv1.PolicyReasonInvalid),
+-		)
+-		return false, nil
+-	}
+-
+ 	return true, nil
  }
  
-+// mapErrorDeleteTestCases verifies that deleting a frontend after a failed
-+// update, but before the update is retried, does not leak the newly upserted
-+// backend in the BPF maps or in BPFOps bookkeeping.
-+var mapErrorDeleteTestCases = []testCase{
-+	// Step 1: Create a ClusterIP with one backend. This succeeds and establishes
-+	// frontendStates[fe].backendReferences = {backend1}.
-+	newTestCase(
-+		"MapErrorDelete_setup_1_backend",
-+		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
-+			fe.Type = ClusterIP
-+			fe.Address = autoAddr
-+			return false, []loadbalancer.Backend{
-+				newTestBackend(backend1, loadbalancer.BackendStateActive),
-+			}
-+		},
-+		[]maps.MapDump{
-+			"BE: ID=1 ADDR=10.1.0.1:80/TCP STATE=active",
-+			"REV: ID=1 ADDR=<auto>",
-+			"SVC: ID=0 ADDR=<auto>/ANY SLOT=0 LBALG=undef AFFTimeout=0 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable",
-+			"SVC: ID=1 ADDR=<auto>/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=1 QCOUNT=0 FLAGS=ClusterIP+Local+InternalLocal+non-routable",
-+			"SVC: ID=1 ADDR=<auto>/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+Local+InternalLocal+non-routable",
-+		},
-+		nil,
-+		false,
-+	),
-+
-+	// Step 2: Switch to backend2 and fail while updating its service slot. The
-+	// backend map upsert has already succeeded and the new reference is retained
-+	// so deletion can clean it up before a retry.
-+	newTestCase(
-+		"MapErrorDelete_update_service_fails",
-+		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
-+			fe.Type = ClusterIP
-+			fe.Address = autoAddr
-+			return false, []loadbalancer.Backend{
-+				newTestBackend(backend2, loadbalancer.BackendStateActive),
-+			}
-+		},
-+		nil, // maps not checked on error
-+		nil,
-+		true,
-+	),
-+
-+	// Step 3: Delete the frontend before the failed update is retried. Pruning
-+	// and the final runTests assertions verify that no BPF or in-memory state
-+	// remains for either backend.
-+	newTestCase(
-+		"MapErrorDelete_delete_before_retry",
-+		deleteFrontend(autoAddr, ClusterIP),
-+		[]maps.MapDump{},
-+		nil,
-+		false,
-+	),
-+}
-+
-+// mapErrorShrinkTestCases verifies that releasing backend references does not
-+// lose the number of service slots that still need to be removed after a
-+// failed update.
-+var mapErrorShrinkTestCases = []testCase{
-+	newTestCase(
-+		"MapErrorShrink_setup_3_backends",
-+		func(svc *loadbalancer.Service, fe *loadbalancer.Frontend) (bool, []loadbalancer.Backend) {
-+			fe.Type = ClusterIP
-+			fe.Address = autoAddr
-+			return false, []loadbalancer.Backend{
-+				newTestBackend(backend1, loadbalancer.BackendS
 ```
 
-**File**: `pkg/loadbalancer/tests/script_test.go` (modified, +17/-0)
+**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/input/httproute-and-backendtlspolicy.yaml` (modified, +0/-38)
 ```diff
-@@ -290,6 +290,7 @@ func (tc testCommands) cmds() map[string]script.Cmd {
- 		"test/update-backend-health":        tc.updateHealth(),
- 		"test/bpfops-reset":                 tc.opsReset(),
- 		"test/bpfops-summary":               tc.opsSummary(),
-+		"test/bpfops-state-empty":           tc.opsStateEmpty(),
- 		"test/set-node-labels":              tc.setNodeLabels(),
- 		"test/set-node-ip":                  tc.setNodeIP(),
- 		"test/set-is-service-healthchecked": tc.setIsServiceHealthChecked(),
-@@ -354,6 +355,22 @@ func (tc testCommands) opsSummary() script.Cmd {
- 		})
+@@ -55,15 +55,6 @@ spec:
+         - path:
+             type: Exact
+             value: /backendtlspolicy
+-    - backendRefs:
+-        - group: ""
+-          kind: Service
+-          name: backendtlspolicy-system-ca-test
+-          port: 443
+-      matches:
+-        - path:
+-            type: Exact
+-            value: /backendtlspolicy-system-ca
+     - backendRefs:
+         - group: ""
+           kind: Service
+@@ -99,20 +90,6 @@ spec:
+ ---
+ apiVersion: v1
+ kind: Service
+-metadata:
+-  name: backendtlspolicy-system-ca-test
+-  namespace: gateway-conformance-infra
+-spec:
+-  selector:
+-    app: tls-backend
+-  ports:
+-    - name: "btls"
+-      protocol: TCP
+-      port: 443
+-      targetPort: 8443
+----
+-apiVersion: v1
+-kind: Service
+ metadata:
+   name: backendtlspolicy-host-mismatch-test
+   namespace: gateway-conformance-infra
+@@ -163,21 +140,6 @@ spec:
+ ---
+ apiVersion: gateway.networking.k8s.io/v1
+ kind: BackendTLSPolicy
+-metadata:
+-  name: system-ca
+-  namespace: gateway-conformance-infra
+-spec:
+-  targetRefs:
+-    - group: ""
+-      kind: Service
+-      name: backendtlspolicy-system-ca-test
+-      sectionName: "btls"
+-  validation:
+-    wellKnownCACertificates: System
+-    hostname: "abc.example.com"
+----
+-apiVersion: gateway.networking.k8s.io/v1
+-kind: BackendTLSPolicy
+ metadata:
+   name: host-mismatch
+   namespace: gateway-conformance-infra
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/output/backendtlspolicy-system-ca.yaml` (removed, +0/-35)
+```diff
+@@ -1,35 +0,0 @@
+----
+-apiVersion: gateway.networking.k8s.io/v1
+-kind: BackendTLSPolicy
+-metadata:
+-  name: system-ca
+-  namespace: gateway-conformance-infra
+-spec:
+-  targetRefs:
+-    - group: ""
+-      kind: Service
+-      name: "backendtlspolicy-system-ca-test"
+-      sectionName: "btls"
+-  validation:
+-    wellKnownCACertificates: System
+-    
+-    hostname: "abc.example.com"
+-status:
+-  ancestors:
+-    - controllerName: io.cilium/gateway-controller
+-      ancestorRef:
+-        group: "gateway.networking.k8s.io"
+-        kind: "Gateway"
+-        namespace: gateway-conformance-infra
+-        name: same-namespace
+-      conditions:
+-        - lastTransitionTime: "2025-07-01T14:19:43Z"
+-          message: Accepted BackendTLSPolicy
+-          reason: Accepted
+-          status: "True"
+-          type: Accepted
+-        - lastTransitionTime: "2025-07-01T14:19:43Z"
+-          message: All references are valid
+-          reason: ResolvedRefs
+-          status: "True"
+-          type: ResolvedRefs
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/output/cec-same-namespace.yaml` (modified, +9/-50)
+```diff
+@@ -21,10 +21,6 @@ spec:
+       namespace: gateway-conformance-infra
+       number:
+         - "443"
+-    - name: backendtlspolicy-system-ca-test
+-      namespace: gateway-conformance-infra
+-      number:
+-        - "443"
+     - name: backendtlspolicy-test
+       namespace: gateway-conformance-infra
+       number:
+@@ -102,12 +98,6 @@ spec:
+                 cluster: gateway-conformance-infra:backendtlspolicy-cert-mismatch-test:443
+                 maxStreamDuration:
+                   maxStreamDuration: 0s
+-            - match:
+-                path: /backendtlspolicy-system-ca
+-              route:
+-                cluster: gateway-conformance-infra:backendtlspolicy-system-ca-test:443
+-                maxStreamDuration:
+-                  maxStreamDuration: 0s
+             - match:
+                 path: /backendtlspolicy
+               route:
+@@ -131,9 +121,9 @@ spec:
+             combinedValidationContext:
+               defaultValidationContext:
+                 match_typed_subject_alt_names:
+-                  - san_type: DNS
+-                    matcher:
+-                      exact: "abc.example.com"
++                - san_type: DNS
++                  matcher:
++                    exact: "abc.example.com"
+               validationContextSdsSecretConfig:
+                 name: cilium-secrets/cilium-sync-cfgmap-b12423955ebfb5ff0e4c9b01e91a2f2325aba4de2924d35b2799aa2e51462c24
+           sni: abc.example.com
+@@ -145,7 +135,6 @@ spec:
+             idleTimeout: 60s
+           useDownstreamProtocolConfig:
+             http2ProtocolOptions: {}
+-
+     - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+       edsClusterConfig:
+         serviceName: gateway-conformance-infra/backendtlspolicy-host-mismatch-test:443
+@@ -162,9 +151,9 @@ spec:
+             combinedValidationContext:
+               defaultValidationContext:
+                 match_typed_subject_alt_names:
+-                  - san_type: DNS
+-                    matcher:
+-                      exact: "mismatch.example.com"
++                - san_type: DNS
++                  matcher:
++                    exact: "mismatch.example.com"
+               validationContextSdsSecretConfig:
+                 name: cilium-secrets/cilium-sync-cfgmap-f3757660099595ce0587b4d45f08d43da98e3f80d7c9fa16d991dbd0946ee01b
+           sni: mismatch.example.com
+@@ -176,36 +165,6 @@ spec:
+             idleTimeout: 60s
+           useDownstreamProtocolConfig:
+             http2ProtocolOptions: {}
+-
+-    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+-      edsClusterConfig:
+-        serviceName: gateway-conformance-infra/backendtlspolicy-system-ca-test:443
+-      name: gateway-conformance-infra:backendtlspolicy-system-ca-test:443
+-      outlierDetection:
+-        splitExternalLocalOriginErrors: true
+-      transportSocket:
+-        name: envoy.transport_sockets.tls
+-        typedConfig:
+-          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+-          commonTlsContext:
+-            tlsParams:
+-              tlsMaximumProtocolVersion: TLSv1_3
+-            validationContext:
+-              match_typed_subject_alt_names:
+-                - san_type: DNS
+-                  matcher:
+-                    exact: "abc.example.com"
+-              systemRootCerts: {}
+-          sni: abc.example.com
+-      type: EDS
+-      typedExtensionProtocolOptions:
+-        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+-          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+-          commonHttpProtocolOptions:
+-            idleTimeout: 60s
+-          useDownstreamProtocolConfig:
+-            http2ProtocolOptions: {}
+-
+     - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+       edsClusterConfig:
+         serviceName: gateway-conformance-infra/backendtlspolicy-test:443
+@@ -222,9 +181,9 @@ spec:
+             combinedValidationContext:
+               defaultValidationContext:
+                 match_typed_subject_alt_names:
+-                  - san_type: DNS
+-                    matcher:
+-                      exact: "abc.example.com"
++                - san_type: DNS
++                  matcher:
++                    exact: "abc.example.com"
+               validationContextSdsSecretConfig:
+                 name: cilium-secrets/cilium-sync-cfgmap-f3757660099595ce0587b4d45f08d43da98e3f80d7c9fa16d991dbd0946ee01b
+           sni: abc.example.com
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/output/httproute-backendtlspolicy.yaml` (modified, +0/-9)
+```diff
+@@ -20,15 +20,6 @@ spec:
+         - path:
+             type: Exact
+             value: /backendtlspolicy
+-    - backendRefs:
+-        - group: ""
+-          kind: Service
+-          name: backendtlspolicy-system-ca-test
+-          port: 443
+-      matches:
+-        - path:
+-            type: Exact
+-            value: /backendtlspolicy-system-ca
+     - backendRefs:
+         - group: ""
+           kind: Service
+```
+
+**File**: `operator/pkg/model/translation/envoy_cluster_mutator.go` (modified, +12/-46)
+```diff
+@@ -143,41 +143,7 @@ func withTLSOrigination(secretsNamespace string, tls *model.BackendTLSOriginatio
+ 			return cluster
+ 		}
+ 
+-		if tls.CACertRef == nil {
+-			tlsContext := &envoy_config_tls.UpstreamTlsContext{
+-				Sni: tls.SNI,
+-				CommonTlsContext: &envoy_config_tls.CommonTlsContext{
+-					TlsParams: &envoy_config_tls.TlsParameters{
+-						TlsMaximumProtocolVersion: envoy_config_tls.TlsParameters_TLSv1_3,
+-					},
+-					ValidationContextType: &envoy_config_tls.CommonTlsContext_ValidationContext{
+-						ValidationContext: &envoy_config_tls.CertificateValidationContext{
+-							MatchTypedSubjectAltNames: []*envoy_config_tls.SubjectAltNameMatcher{
+-								{
+-									SanType: envoy_config_tls.SubjectAltNameMatcher_DNS,
+-									Matcher: &envoy_type_matcher.StringMatcher{
+-										MatchPattern: &envoy_type_matcher.StringMatcher_Exact{
+-											Exact: tls.SNI,
+-										},
+-									},
+-								},
+-							},
+-							SystemRootCerts: &envoy_config_tls.CertificateValidationContext_SystemRootCerts{},
+-						},
+-					},
+-				},
+-			}
+-
+-			cluster.TransportSocket = &envoy_config_core_v3.TransportSocket{
+-				Name: "envoy.transport_sockets.tls",
+-				ConfigType: &envoy_config_core.TransportSocket_TypedConfig{
+-					TypedConfig: toAny(tlsContext),
+-				},
+-			}
+-			return cluster
+-		}
+-
+-		if tls.CACertRef.Name == "" || tls.CACertRef.Namespace == "" {
++		if tls.CACertRef == nil || tls.CACertRef.Name == "" || tls.CACertRef.Namespace == "" {
+ 			return cluster
+ 		}
+ 
+@@ -202,18 +168,18 @@ func withTLSOrigination(secretsNamespace string, tls *model.BackendTLSOriginatio
+ 							},
+ 						},
+ 						ValidationContextSdsSecretConfig: &envoy_config_tls.SdsSecretConfig{
++							// This secret is synchronized by the secretsyncer Cell, with the Secret being copied
++							// out of the relevant ConfigMap by the ConfigMap sync Reconcile function there, which itself
++							// watches for ConfigMaps referenced in BackendTLSPolicy objects.
++							//
++							// That is, the flow is:
++							//
++							// * BackendTLSPolicy references ConfigMap
++							// * SecretSync sees ConfigMap reference
++							// * SecretSync copies ConfigMap into Secret in the configured secrets namespace
++							// * This translation references that Secret using the shared sync name
++							// * The Cilium Agent reads the Secret directly and suppies it to Envoy via SDS.
+ 							Name: syncnames.SyncedConfigMapSDSSecretName(secretsNamespace, types.NamespacedName{
+-								// This secret is synchronized by the secretsyncer Cell, with the Secret being copied
+-								// out of the relevant ConfigMap by the ConfigMap sync Reconcile function there, which itself
+-								// watches for ConfigMaps referenced in BackendTLSPolicy objects.
+-								//
+-								// That is, the flow is:
+-								//
+-								// * BackendTLSPolicy references ConfigMap
+-								// * SecretSync sees ConfigMap reference
+-								// * SecretSync copies ConfigMap into Secret in the configured secrets namespace
+-								// * This translation references that Secret using the shared sync name
+-								// * The Cilium Agent reads the Secret directly and supplies it to Envoy via SDS.
+ 								Namespace: tls.CACertRef.Namespace,
+ 								Name:      tls.CACertRef.Name,
+ 							}),
+```
+
+**File**: `operator/pkg/model/translation/envoy_cluster_test.go` (modified, +0/-25)
+```diff
+@@ -179,31 +179,6 @@ func Test_withTLSOrigination(t *testing.T) {
+ 		sdsName := combined.ValidationContextSdsSecretConfig.GetName()
+ 		require.Equal(t, syncnames.SyncedConfigMapSDSSecretName("cilium-secrets", types.NamespacedName{Namespace: "my-namespace", Name: "my-ca-configmap"}), sdsName)
+ 	})
+-
+-	t.Run("uses system root certificates when no CA ref is configured", func(t *testing.T) {
+-		systemTLS := &model.BackendTLSOrigination{
+-			SNI: "my-backend.svc.cluster.local",
+-		}
+-
+-		fn := withTLSOrigination("cilium-secrets", systemTLS)
+-		cluster := fn(&envoy_config_cluster_v3.Cluster{})
+-
+-		require.NotNil(t, cluster.TransportSocket)
+-
+-		upstreamTLS := &envoy_config_tls.UpstreamTlsContext{}
+-		err := proto.Unmarshal(cluster.TransportSocket.GetTypedConfig().GetValue(), upstreamTLS)
+-		require.NoError(t, err)
+-
+-		validationContext := upstreamTLS.CommonTlsContext.GetValidationContext()
+-		require.NotNil(t, validationContext)
+-
+-		require.NotNil(t, validationContext.GetSystemRootCerts())
+-
+-		matchers := validationContext.GetMatchTypedSubjectAltNames()
+-		require.Len(t, matchers, 1)
+-		require.Equal(t, envoy_config_tls.SubjectAltNameMatcher_DNS, matchers[0].GetSanType())
+-		require.Equal(t, systemTLS.SNI, matchers[0].GetMatcher().GetExact())
+-	})
  }
  
-+func (tc testCommands) opsStateEmpty() script.Cmd {
-+	return script.Command(
-+		script.CmdUsage{
-+			Summary: "Fails if BPFOps state is not empty",
-+		},
-+		func(s *script.State, args ...string) (script.WaitFunc, error) {
-+			return func(s *script.State) (stdout string, stderr string, err error) {
-+				if !tc.ops.StateIsEmpty() {
-+					stdout = tc.ops.StateSummary()
-+					err = fmt.Errorf("state not empty")
-+				}
-+				return
-+			}, nil
-+		})
-+}
-+
- func (tc testCommands) setNodeLabels() script.Cmd {
- 	return script.Command(
- 		script.CmdUsage{Summary: "Set local node labels", Args: "key=value..."},
+ func Test_tcpCluster(t *testing.T) {
 ```
 
-**File**: `pkg/loadbalancer/tests/testdata/delete-before-success.txtar` (added, +74/-0)
+---
+
+### Incident Patch 3: `cadfefd4` (2026-10-22)
+**Commit Message**: images: update cilium-{runtime,builder}
+
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+
+**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,74 @@
-+#! --lb-test-fault-probability=0.5
-+# This test adds a service with 10 backends with high fault injection probability and
-+# then removes the service after something has been reconciled to the maps and then
-+# asserts that eventually all BPF map entries and internal reconciler state is
-+# cleaned up. As this is a probabilistic check this is intended for catching
-+# leaks when run with stress.sh.
-+
-+hive start
-+
-+# Add a service with 10 backends
-+k8s/add service.yaml endpointslice.yaml
-+
-+# Wait until something was reconciled into the BPF maps
-+!* lb/maps-empty
-+
-+# Delete the frontend before the pending update has necessarily succeeded.
-+k8s/delete service.yaml
-+
-+# Verify that eventually maps and state has been cleaned up
-+* db/empty services frontends
-+* lb/maps-empty
-+* test/bpfops-state-empty
-+
-+####
-+
-+-- service.yaml --
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: echo
-+  namespace: test
-+spec:
-+  clusterIP: 10.96.50.104
-+  clusterIPs:
-+  - 10.96.50.104
-+  ports:
-+  - name: http
-+    port: 80
-+    protocol: TCP
-+    targetPort: 80
-+  selector:
-+    name: echo
-+  type: ClusterIP
-+
-+-- endpointslice.yaml --
-+apiVersion: discovery.k8s.io/v1
-+kind: EndpointSlice
-+metadata:
-+  labels:
-+    kubernetes.io/service-name: echo
-+  name: echo-kvlm2
-+  namespace: test
-+addressType: IPv4
-+endpoints:
-+- addresses:
-+  - 10.244.1.1
-+  - 10.244.1.2
-+  - 10.244.1.3
-+  - 10.244.1.4
-+  - 10.244.1.5
-+  - 10.244.1.6
-+  - 10.244.1.7
-+  - 10.244.1.8
-+  - 10.244.1.9
-+  - 10.244.1.10
-+  conditions:
-+    ready: true
-+    serving: true
-+    terminating: false
-+  nodeName: testnode
-+ports:
-+- name: http
-+  port: 80
-+  protocol: TCP
+@@ -1,6 +1,6 @@
+ {
+   "name": "Cilium",
+-  "image": "quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa",
++  "image": "quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5",
+   "workspaceFolder": "/go/src/github.com/cilium/cilium",
+   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
+   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
+```
+
+**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-quay.io/cilium/cilium-runtime:b132fb169c8bd92e091117c405098dbc3d66b03c@sha256:0ce5af51c7127f0dd4dd126fe1eba282aabd657b073e639453fe8e14fa44d243
+\ No newline at end of file
++quay.io/cilium/cilium-runtime:9e48d94e359f386032909f1364c791a34089d5f0@sha256:569487d156988d2ed444cc88d10064d3851becfca2b2367f3bf6648393985846
+\ No newline at end of file
+```
+
+**File**: `images/cilium/Dockerfile` (modified, +2/-2)
+```diff
+@@ -3,8 +3,8 @@
+ # Copyright Authors of Cilium
+ # SPDX-License-Identifier: Apache-2.0
+ 
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa
+-ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:b132fb169c8bd92e091117c405098dbc3d66b03c@sha256:0ce5af51c7127f0dd4dd126fe1eba282aabd657b073e639453fe8e14fa44d243
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5
++ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:9e48d94e359f386032909f1364c791a34089d5f0@sha256:569487d156988d2ed444cc88d10064d3851becfca2b2367f3bf6648393985846
+ #
+ # cilium-envoy from github.com/cilium/proxy
+ #
+```
+
+**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
+ ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:d62067879de890a1def9da0e7766b7d20810a5e5555cef8506b752437d7a3e88
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5
+ 
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
+```
+
+**File**: `images/operator/Dockerfile` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+ ARG BASE_IMAGE=scratch
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc
+ ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5
+ 
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49515** (2026-10-21): [v1.20] ci: ignore transient xDS mode drift during downgrade (@jrajahalme)
-- **PR #49514** (closed): [v1.20] ci: ignore transient xDS mode drift during downgrade (@jrajahalme)
-- **PR #49508** (2026-10-21): workflows: Upgrade to RHEL9 (@pchaigno)
-- **PR #49507** (2026-10-21): mapsweeper: Stop removing the always-created SRv6 maps (@aanm)
-- **PR #49498** (closed): kvstore: respect caller timeout in etcd diagnostics (@NUAAwqy)
-- **PR #49495** (2026-10-20): fix(deps): update all go dependencies main (major) (main) (major) (@cilium-renovate[bot])
+- **PR #49546** (2026-10-22): Prepare for release v1.19.10 (@cilium-release-bot[bot])
+- **PR #49545** (2026-10-22): Prepare for release v1.18.16 (@cilium-release-bot[bot])
+- **PR #49538** (closed): daemon: Fix the BPF masquerade auto-disable log message (@aanm)
+- **PR #49537** (2026-10-22): daemon: Warn instead of error for BPF masquerade on upgrades (@pchaigno)
+- **PR #49533** (2026-10-22): daemon: Don't warn when disabling BPF masquerading (@pchaigno)
+- **PR #49531** (2026-10-22): chore(deps): update stable lvh-images (v1.18) (patch) (@cilium-renovate[bot])
 
 ---
 
@@ -1565,60 +1814,28 @@ Signed-off-by: Jussi Maki <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. loadbalancer: add BPF state leak regression tests
+## X. ci: fix PR chart checkout ref in smoke conformance workflows
 
 **RULE**:
-When implementing operations in `pkg/loadbalancer/reconciler/bpf_reconciler_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/tests-smoke-conformance.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `103e474c`: loadbalancer: add BPF state leak regression tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ff3986e`: ci: fix PR chart checkout ref in smoke conformance workflows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/loadbalancer/reconciler/bpf_reconciler_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests-smoke-conformance.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	backend3 = loadbalancer.NewL3n4Addr(
-		loadbalancer.TCP,
-		types.MustParseAddrCluster("10.1.0.3"),
-		80,
-		loadbalancer.ScopeExternal,
-	)
-	fail                    bool
-	failDeleteService       bool
-	shouldFailUpdateService func(maps.ServiceKey) bool
-	hostKey := key.ToHost()
-	if hostKey.GetBackendSlot() > 0 &&
-		(m.fail || m.shouldFailUpdateService != nil && m.shouldFailUpdateService(hostKey)) {
-	// frontendStates[fe].backendReferences = {backend1}.
-	// Step 2: Switch to backend2 with an error injected. Backend state and the
-	// frontend reference are recorded before upsertService fails on the slot,
-	// so the invariant check in runTests verifies that backendStates[backend2].addr
-	// is still set for cleanup or retry.
-// mapErrorDeleteTestCases verifies that deleting a frontend after a failed
-// update, but before the update is retried, does not leak the newly upserted
-// backend in the BPF maps or in BPFOps bookkeeping.
-var mapErrorDeleteTestCases = []testCase{
-	// Step 1: Create a ClusterIP with one backend. This succeeds and establishes
-	// frontendStates[fe].backendReferences = {backend1}.
-	newTestCase(
-		"MapErrorDelete_setup_1_backend",
-		func(svc *loadbalancer.Service, fe *l
+          ref: ${{ steps.sha.outputs.sha }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	fail              bool
-	failDeleteService bool
-	if m.fail && key.GetBackendSlot() > 0 {
-	// backendReferences[fe] = {backend1}.
-	// Step 2: Switch to backend2 with an error injected. updateBackendRevision
-	// runs for backend2 (creating backendStates[backend2]) but upsertService
-	// fails on the slot, so updateReferences is skipped. The invariant check
-	// in runTests verifies that backendStates[backend2].addr is still set.
+          ref: ${{ steps.vars.outputs.sha }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `103e474c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ff3986e` are properly handled with clean fallback behavior.

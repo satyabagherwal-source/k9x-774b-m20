@@ -4347,3 +4347,6 @@ Every entry in this ledger must capture:
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `98b3bb68` | Multi-dimensional audit evidence | 2026-10-22T16:58:15.125Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `edbfb2c3` | Multi-dimensional audit evidence | 2026-10-22T16:58:17.556Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `d565603d` | Multi-dimensional audit evidence | 2026-10-22T16:58:22.077Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `7e6920d5` | Multi-dimensional audit evidence | 2026-10-22T17:04:41.187Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `9e24f135` | Multi-dimensional audit evidence | 2026-10-22T17:04:54.078Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `b415df84` | Multi-dimensional audit evidence | 2026-10-22T17:04:54.368Z |

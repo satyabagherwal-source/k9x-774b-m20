@@ -4340,3 +4340,6 @@
 | `CYCLE-20261022-BPAQ` | `2026-10-22T16:58:15.122Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3649` | Yes (`3cf0cbaa...`) |
 | `CYCLE-20261022-BR69` | `2026-10-22T16:58:17.553Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3650` | Yes (`4d0a6474...`) |
 | `CYCLE-20261022-BUNT` | `2026-10-22T16:58:22.073Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3651` | Yes (`eae32945...`) |
+| `CYCLE-20261022-JZ6P` | `2026-10-22T17:04:41.185Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3652` | Yes (`71f9ca4f...`) |
+| `CYCLE-20261022-K94S` | `2026-10-22T17:04:54.076Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3653` | Yes (`ae02aa34...`) |
+| `CYCLE-20261022-K9CT` | `2026-10-22T17:04:54.365Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3654` | Yes (`86bb3962...`) |

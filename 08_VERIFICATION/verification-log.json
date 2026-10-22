@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-CCDQ",
-    "timestamp": "2026-10-20T14:07:26.894Z",
-    "repository": "openkruise/kruise",
-    "learningId": "learn-github-openkruise-kruise",
-    "contentHash": "7da28b3ca1210b6754fd51bff358e9583ee6ff46de2ee9aad19ce55081714bb8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-CHB9",
-    "timestamp": "2026-10-20T14:07:33.285Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "b075f3486301ca36f4c8e35a22855268e2a28a8a48cd1078f9d1c3fde823a444",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-G2W4",
-    "timestamp": "2026-10-20T14:10:21.220Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-OBG1",
     "timestamp": "2026-10-20T14:16:45.553Z",
     "repository": "wcandillon/react-native-skia",
@@ -7490,6 +7445,51 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "eae32945948b207e81d4e1270247ab2cdb7f8e082c84bc99f1f92b367e2ee19a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-JZ6P",
+    "timestamp": "2026-10-22T17:04:41.185Z",
+    "repository": "microsoft/fluentui",
+    "learningId": "learn-github-microsoft-fluentui",
+    "contentHash": "71f9ca4f6a8b89bc4f85ca8996a741ddb844590d0ecd9256d6a2892be21688bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-K94S",
+    "timestamp": "2026-10-22T17:04:54.076Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "ae02aa34d138e63d95b17b9e44f0827526ba8c42d2f452ddcfcbe7c69023c2e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-K9CT",
+    "timestamp": "2026-10-22T17:04:54.365Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "86bb39620b96fbfef2cf2d203a2210bfe10dcb41e78c3fe072ad6b7ef112788a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

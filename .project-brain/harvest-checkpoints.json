@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T16:58:22.091Z",
+  "last_updated": "2026-10-22T17:04:54.378Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "ee6d54aad23c445e9fa9591dbbd210690cedcf790f23ade646123db77f247f3e",
-      "verified_at": "2026-10-21T18:14:07.209Z",
+      "content_hash": "ae02aa34d138e63d95b17b9e44f0827526ba8c42d2f452ddcfcbe7c69023c2e9",
+      "verified_at": "2026-10-22T17:04:54.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:14:07.209Z"
+      "last_updated": "2026-10-22T17:04:54.088Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -6096,14 +6096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-fluentui",
-      "content_hash": "63e5bbf1d11dd93560fb139ab98e49769c22ecaf29de1e6bbd93675fde131da1",
-      "verified_at": "2026-10-20T23:31:28.097Z",
+      "content_hash": "71f9ca4f6a8b89bc4f85ca8996a741ddb844590d0ecd9256d6a2892be21688bf",
+      "verified_at": "2026-10-22T17:04:41.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:31:28.097Z"
+      "last_updated": "2026-10-22T17:04:41.196Z"
     },
     "o2sh/onefetch": {
       "repository": "o2sh/onefetch",
@@ -8631,14 +8631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-startrail-org-leann",
-      "content_hash": "babeb3322b46ca0c3c2471de6466bc29be1a5ce197a95810334c089b2c45fb55",
-      "verified_at": "2026-10-20T22:13:18.661Z",
+      "content_hash": "86bb39620b96fbfef2cf2d203a2210bfe10dcb41e78c3fe072ad6b7ef112788a",
+      "verified_at": "2026-10-22T17:04:54.377Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:13:18.661Z"
+      "last_updated": "2026-10-22T17:04:54.377Z"
     },
     "adonisjs/core": {
       "repository": "adonisjs/core",
