@@ -124,4 +124,24 @@ All rules codified in `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.
    - *Academic-Only Fonts (LeedsUni / MUFI)*: Free strictly for non-commercial educational use; cannot be deployed on commercial web platforms.
    - *Peter Wiegel CAT-Fonts GPL Font Exception*: Confirmed that the GPL with Font Exception permits unrestricted web embedding and document generation without copyleft GPL contagion on the parent website.
 
+---
+
+## 9. Batch 6 Historical Font Discovery & Master Ledger Reconciliation Learnings
+
+1. **Forensic Master Ledger Reconciliation**:
+   - Reconciled Batch 5 cumulative metric of 167: exactly `37 Published + 58 (Batch 4) + 72 (Batch 5) = 167 total tracked assets`.
+   - Audited Batch 5 Category A Approved (33) and Peter Wiegel CAT-Fonts (20) to confirm **zero overlap** (53 mutually exclusive families).
+   - Segregated 18 historical evaluation candidates from Batches 1–3 to prevent double-counting.
+   - Built machine-readable canonical inventory (`FONT_CANDIDATES_CANONICAL.json`) with automated validator (`scripts/generate-canonical-inventory.mjs`) enforcing zero ID collisions across all 227 program assets.
+2. **Runic Script Epigraphy & Standardization**:
+   - Web runic fonts often remap runes to ASCII Latin keys, causing display garbling and loss of semantic meaning.
+   - Discovered `Erilaz` (Eyvar Tjörvason / Ristir) under SIL OFL 1.1 covering all 89 Unicode runic characters (`U+16A0`–`U+16F8`) with 450+ epigraphic glyphs based on the Rök stone, Gallehus horns, and Bryggen rune-sticks.
+   - Augmented with Google's `Noto Sans Runic`, Gutenberg Labo's `GL-Runen`, and Andrew West's 5 BabelStone Runic families.
+3. **15th-Century Drop Initials vs Body Text**:
+   - Historic incunabula paired texturas with woodcut initials. Catalogued Johann Zainer's 1478–1480 Ulm gothic initials (`Zainer Initials`) digitized by ANRT under SIL OFL 1.1.
+4. **Italian Chancery Open Alternatives vs Monotype Copyright**:
+   - Replaced proprietary `Monotype Arrighi` with verified open alternatives: `URW Z003` (Hermann Zapf / URW under SIL OFL 1.1 / LPPL) and `Tangerine` (Toshi Omagari under SIL OFL 1.1).
+5. **Commercial Paywalls in Celtic & Gaelic Type**:
+   - Rejected Michael Everson's `Ceanannas` and `Doire` due to $45/seat commercial paywalls on Evertype/MyFonts, protecting catalog integrity.
+
 
