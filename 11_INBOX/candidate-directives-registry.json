@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T16:32:21.252Z",
+  "last_updated": "2026-10-22T18:04:29.335Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2455,6 +2455,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-louis-cfm-coucou"
+    },
+    {
+      "id": "CD-OVTJ",
+      "directive_title": "bump version to v0.26.3",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ducaale/xh",
+      "source_commit": "319d39c2",
+      "date_staged": "2026-10-22",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-ducaale-xh"
     }
   ]
 }

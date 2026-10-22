@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T17:58:25.598Z",
+  "last_updated": "2026-10-22T18:04:42.139Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3711,14 +3711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ducaale-xh",
-      "content_hash": "4eaa9881de4f76cb3d3cf45f7d5d24fa9483771994b82d30715c6530c5ee5659",
-      "verified_at": "2026-10-18T21:26:10.051Z",
+      "content_hash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
+      "verified_at": "2026-10-22T18:04:29.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:26:10.051Z"
+      "last_updated": "2026-10-22T18:04:29.339Z"
     },
     "NervJS/taro": {
       "repository": "NervJS/taro",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "27e4da8281e9dc9cbd12268349ea47e68cb67e99fae0c10b67b7510623b0b83d",
-      "verified_at": "2026-10-20T23:11:01.791Z",
+      "content_hash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
+      "verified_at": "2026-10-22T18:04:42.139Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:11:01.791Z"
+      "last_updated": "2026-10-22T18:04:42.139Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
-      "verified_at": "2026-10-21T00:02:13.591Z",
+      "content_hash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
+      "verified_at": "2026-10-22T18:04:38.070Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:02:13.591Z"
+      "last_updated": "2026-10-22T18:04:38.070Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",

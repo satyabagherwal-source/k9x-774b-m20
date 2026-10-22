@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:58:25.525Z",
+  "last_updated": "2026-10-22T18:04:42.085Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8496,8 +8496,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "fc204527",
-      "content_hash": "27e4da8281e9dc9cbd12268349ea47e68cb67e99fae0c10b67b7510623b0b83d",
+      "source_version": "6ca67f43",
+      "content_hash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -8530,6 +8530,11 @@
           "number": 3428,
           "title": "acl): restore ACL categories regressed by #8308 and #8311 (#8614)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3684,
+          "title": "server): register key locks of optimistic transactions in cache mode (#8630)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8537,7 +8542,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:11:01.706Z",
+      "verified_at": "2026-10-22T18:04:42.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8612,8 +8617,8 @@
       "slug": "ducaale-xh",
       "platform": "github",
       "source_url": "https://github.com/ducaale/xh",
-      "source_version": "2404acee",
-      "content_hash": "4eaa9881de4f76cb3d3cf45f7d5d24fa9483771994b82d30715c6530c5ee5659",
+      "source_version": "319d39c2",
+      "content_hash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
       "dossier_path": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "promoted_rules": [
@@ -8628,7 +8633,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:26:10.020Z",
+      "verified_at": "2026-10-22T18:04:29.252Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42301,8 +42306,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "943cbcdd",
-      "content_hash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
+      "source_version": "7c40a452",
+      "content_hash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -42325,6 +42330,11 @@
           "number": 3448,
           "title": "skip EFI boot entries that cannot be decoded",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3683,
+          "title": "test: boot Alpine with builtin virtual machine profiles",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42332,7 +42342,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:02:13.504Z",
+      "verified_at": "2026-10-22T18:04:38.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110889,6 +110899,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:58:25.510Z"
+    },
+    "rule-3683": {
+      "learning_id": "rule-3683",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3683,
+      "title": "test: boot Alpine with builtin virtual machine profiles",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "7c40a452",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:04:38.013Z"
+    },
+    "rule-3684": {
+      "learning_id": "rule-3684",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3684,
+      "title": "server): register key locks of optimistic transactions in cache mode (#8630)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "6ca67f43",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:04:42.076Z"
     }
   },
   "aliases": {

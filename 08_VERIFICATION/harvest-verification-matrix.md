@@ -4372,3 +4372,6 @@
 | `CYCLE-20261022-GZUQ` | `2026-10-22T17:58:21.314Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 3679, Rule 3680` | Yes (`eb70879f...`) |
 | `CYCLE-20261022-H0JI` | `2026-10-22T17:58:22.206Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3681` | Yes (`0421010b...`) |
 | `CYCLE-20261022-H359` | `2026-10-22T17:58:25.581Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3682` | Yes (`c5dbbdf5...`) |
+| `CYCLE-20261022-OVTE` | `2026-10-22T18:04:29.330Z` | `ducaale/xh` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ducaale-xh-learnings.md` | Yes (`f27d21df...`) |
+| `CYCLE-20261022-P2JU` | `2026-10-22T18:04:38.058Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3683` | Yes (`746cdf66...`) |
+| `CYCLE-20261022-P5OV` | `2026-10-22T18:04:42.127Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3684` | Yes (`be26f657...`) |

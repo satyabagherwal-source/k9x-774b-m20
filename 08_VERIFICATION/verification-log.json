@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-JP3G",
-    "timestamp": "2026-10-20T15:37:08.812Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "d93e0081a9eb697383ee810af42d9e56cc8957b02ef5850cf5d739e28fc9cacd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-S9XO",
-    "timestamp": "2026-10-20T15:43:49.068Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "28d84ab5df0060278c48fa5c0ce59773713ed895984f00d32a5e21846ee4de26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-01TZ",
-    "timestamp": "2026-10-20T15:49:51.815Z",
-    "repository": "lodestones/Kromoss",
-    "learningId": "learn-huggingface-lodestones-kromoss",
-    "contentHash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-057M",
     "timestamp": "2026-10-20T15:49:56.194Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7490,6 +7445,51 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "c5dbbdf58d8c91ea6191198bfb16b0f4af0c3a38fe57a668a4b70c470922a6b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-OVTE",
+    "timestamp": "2026-10-22T18:04:29.330Z",
+    "repository": "ducaale/xh",
+    "learningId": "learn-github-ducaale-xh",
+    "contentHash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-P2JU",
+    "timestamp": "2026-10-22T18:04:38.058Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-P5OV",
+    "timestamp": "2026-10-22T18:04:42.127Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

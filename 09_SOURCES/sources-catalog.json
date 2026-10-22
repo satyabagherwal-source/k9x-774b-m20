@@ -2383,10 +2383,10 @@
     "repository": "ducaale/xh",
     "platform": "github",
     "sourceUrl": "https://github.com/ducaale/xh",
-    "sourceVersion": "2404acee",
+    "sourceVersion": "319d39c2",
     "license": "MIT",
-    "contentHash": "4eaa9881de4f76cb3d3cf45f7d5d24fa9483771994b82d30715c6530c5ee5659",
-    "lastHarvestedAt": "2026-10-18T21:26:10.048Z",
+    "contentHash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
+    "lastHarvestedAt": "2026-10-22T18:04:29.332Z",
     "learningId": "learn-github-ducaale-xh"
   },
   "nervjs-taro": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "fc204527",
+    "sourceVersion": "6ca67f43",
     "license": "NOASSERTION",
-    "contentHash": "27e4da8281e9dc9cbd12268349ea47e68cb67e99fae0c10b67b7510623b0b83d",
-    "lastHarvestedAt": "2026-10-20T23:11:01.783Z",
+    "contentHash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
+    "lastHarvestedAt": "2026-10-22T18:04:42.129Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "943cbcdd",
+    "sourceVersion": "7c40a452",
     "license": "MPL-2.0",
-    "contentHash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
-    "lastHarvestedAt": "2026-10-21T00:02:13.583Z",
+    "contentHash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
+    "lastHarvestedAt": "2026-10-22T18:04:38.060Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

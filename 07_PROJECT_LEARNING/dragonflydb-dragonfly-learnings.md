@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `fc204527`  
+> **Source Version**: `6ca67f43`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T23:11:01.365Z  
+> **Timestamp**: 2026-10-22T18:04:41.836Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T23:11:01.358Z  
+> **Harvest Timestamp**: 2026-10-22T18:04:40.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31806 stars
+- **Stars / Engagement**: 31816 stars
 
 ---
 
@@ -2300,11 +2300,11 @@ class Segment {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8477** (2026-10-06): **ListFamilyTest.BLMPopBlocking failed**
-  *Symptoms*: https://github.com/dragonflydb/dragonfly/actions/runs/37358332678/job/111926852521?pr=8456  https://productionresultssa1.blob.core.windows.net/actions-results/499a116a-d897-870e-83d8-3a48fce4c12f/workflow-job-run-797d5fc0-a12a-5c35-8e49-e46203d5fb02/logs/job/job-logs.txt?rsct=text%2Fplain&se=2026-10-06T06%3A51%3A33Z&sig=pXSdqBBjXj%2FW2hX5ynhVl4dNLTAMXPyTq%2BY3N6exAbk%3D&ske=2026-10-06T08%3A59%3A09Z&skoid=ca7593d4-ee42-46cd-af88-8b886a2f84eb&sks=b&skt=2026-10-06T04%3A59%3A09Z&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skv=2025-11-05&sp=r&spr=https&sr=b&st=2026-10-06T06%3A41%3A28Z&sv=2025-11-05
+- **Issue #8629** (2026-10-21): **'*' is accepted as a stream ID outside XADD and the ID is then read uninitialized; XTRIM MINID * deletes the whole stream**
+  *Symptoms*: **Describe the bug**  `ParseID` accepts `*` for any stream ID and returns success **without writing the output ID**, so the caller proceeds with whatever was on the stack. `*` is only meaningful as `XADD`'s auto-generated-ID request; every other command that takes a concrete ID should reject it, and every other implementation does.  The worst case destroys data: `XTRIM key MINID *` trims against an indeterminate threshold, which in practice removes every entry.  ``` XADD s 1-0 a 1       ->  "1-0" XADD s 2-0 b 2       ->  "2-0" XTRIM s MINID *      ->  (integer) 2     every reference: ERR Invalid stream ID ... XLEN s               ->  (integer) 0     the stream is empty ```  The same parse is reached from `XADD`'s own trim options, where it deletes the entry the command just acknowledged:  ``` XADD s MINID * 3-0 c 3   ->  "3-0"       the client is told 3-0 was added XLEN s                   ->  (integer) 0 and the stream, including 3-0, is empty ```  and from the read and write paths, where the indeterminate ID shows up as results that depend on whatever the uninitialized value happened to be:  ``` XRANGE s * +             ->  (empty array)      expected an error XRANGE s - *             ->  both entries       expected an error XREVRANGE s + *          ->  (empty array)      expected an error XDEL s *                 ->  (integer) 0        expected an error XREAD STREAMS s *        ->  (nil)              expected an error XSETID s *               ->  OK                 expecte
 
-- **Issue #8458** (2026-10-12): **Pipelined writes hang forever after SAVE when tiering is enabled; shutdown never completes**
-  *Symptoms*: ``` dragonfly --tiered_prefix=/tmp/tiered  redis-cli debug populate 2000 key 3000; sleep 2 seq 200000 | sed 's/.*/SET a& v/' | redis-cli --pipe & seq 200000 | sed 's/.*/SET b& v/' | redis-cli --pipe & redis-cli save wait                                      # never returns ```  Actual: one or both `redis-cli --pipe` clients never get their remaining replies. `redis-cli info all | grep tx_queue_len` shows `tx_queue_len:1` forever, `dbsize` stays below 402000. `redis-cli shutdown` replies OK (same on SIGTERM), the log says "Some commands are still being dispatched but didn't conclude in time", and the process never exits.  Expected: both clients finish, dbsize 402000, clean shutdown.  Notes: - Default flags otherwise; BGSAVE triggers it as well. Not reproducible without tiering or with   `--pipeline_squash=0`. - A full sync cancelled midway triggers it too (populate 20000 keys, 1M SETs per client, then on a   replica: `replicaof 127.0.0.1 6379; sleep 0.05; replicaof no one`). There a plain non-pipelined   command on the master can be the one that hangs. - The stuck transaction is released by any later command on the same key or by the next SAVE,   so repeated SAVEs hide the problem.  Cause: while a transaction is suspended mid-callback (snapshot OnChange waiting for tiered reads), `EngineShard::PollExecution` returns early and sets `needs_repoll_`. The optimistic branch of `Transaction::SingleHopAsync` (async squashed commands, used when tiering is on) never calls `PollExecutio
+- **Issue #8617** (2026-10-21): **XTRIM/XADD MINID accept the range specials '+' and '-'; MINID + deletes the whole stream**
+  *Symptoms*: **Describe the bug**  `MINID` takes a concrete stream ID as its threshold. `-` and `+` are range-only specials, meaningful as the bounds of `XRANGE`/`XREVRANGE`, and every reference rejects them wherever an exact ID is required. Dragonfly parses the `MINID` threshold in non-strict mode, so `+` becomes `18446744073709551615-18446744073709551615` and trims every entry in the stream:  ``` XADD s 1-0 a 1       ->  "1-0" XADD s 2-0 b 2       ->  "2-0" XTRIM s MINID +      ->  2        every reference: ERR Invalid stream ID specified as stream command argument XLEN s               ->  0 XRANGE s - +         ->  []       the stream is empty ```  `-` is accepted too (it becomes `0-0`, so the trim is a harmless no-op), `~` makes no difference, and the same parse is reached through `XADD`'s trim options - where it deletes the entry the command just created and acknowledged:  ``` XADD s 1-0 a 1; XADD s 2-0 b 2 XADD s MINID + 3-0 c 3   ->  "3-0"    the client is told entry 3-0 was added XLEN s                   ->  0        and the stream, including 3-0, is empty ```  A client that builds a `MINID` threshold from a variable and gets `"+"` into it - an unset value, a default, a sentinel from a config file - loses the stream rather than getting an error back.  Dragonfly already rejects `+` in `XSETID` and `XDEL`, the other places that take a concrete ID; only the trim threshold accepts it.  **To Reproduce**  Steps to reproduce the behavior:  1. Start Dragonfly 2.0.2: `docker run -d -p 6404
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2321,370 +2321,501 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc204527` (2026-10-20)
-**Commit Message**: fix(acl): restore ACL categories regressed by #8308 and #8311 (#8614)
+### Incident Patch 1: `a3c04a61` (2026-10-21)
+**Commit Message**: fix(server): register key locks of optimistic transactions in cache mode (#8630)
 
-8311 lowered SLOWLOG, LATENCY and MEMORY to @slow to match Valkey's container entries, and the
-8308 merge of explicit and implied categories made ACL CAT/HELP @admin and gave XINFO and
-JSON.DEBUG @read. Those two have no key position, so @read users could read keys outside their
-patterns.
+Since #7788 an uncontended single-shard transaction runs its callback without registering its
+key locks. Inline cache-mode eviction spares only keys found in the lock table, so a multi-key
+command could evict a key it had just written. For MSET the eviction journals DEL before the
+command itself, and the replica keeps the key forever.
 
-- Restore SLOWLOG/LATENCY @admin @dangerous (SLOWLOG CO::ADMIN|CO::LOADING), MEMORY @read,
-  ACL CAT/HELP @slow and DELEX @keyspace.
-- Add the missing categories: XGROUP/XINFO @stream, PUBSUB @pubsub, FUNCTION @scripting @write.
-- Check the key of XINFO, JSON.DEBUG and MEMORY USAGE against the user's key patterns.
-- verify_script_acl: compare a flat container with the union of its Valkey subcommands, compare
-  ACL subcommands one by one, and pin Valkey 9.1.2.
+In cache mode register the callback's key locks again, as before #7788. A command whose own key
+is the eviction victim now gets OOM, as it already does inside MULTI/EXEC.
 
-**File**: `src/server/acl/acl_family.cc` (modified, +2/-2)
+Fixes #7925
+
+**File**: `src/server/dragonfly_test.cc` (modified, +45/-0)
 ```diff
-@@ -1303,12 +1303,12 @@ void AclFamily::Register(dfly::CommandRegistry* registry) {
-   *registry << CI{"ACL LOAD", kAclMask, 1, 0, 0, acl::kLoad}.HFUNC(Load);
-   *registry << CI{"ACL LOG", kAclMask, 0, 0, 0, acl::kLog}.HFUNC(Log);
-   *registry << CI{"ACL USERS", kAclMask, 1, 0, 0, acl::kUsers}.HFUNC(Users);
--  *registry << CI{"ACL CAT", kAclMask, -1, 0, 0, acl::kCat}.HFUNC(Cat);
-+  *registry << CI{"ACL CAT", CO::NOSCRIPT | CO::LOADING, -1, 0, 0, acl::kCat}.HFUNC(Cat);
-   *registry << CI{"ACL GETUSER", kAclMask, 2, 0, 0, acl::kGetUser}.HFUNC(GetUser);
-   *registry << CI{"ACL DRYRUN", kAclMask, -3, 0, 0, acl::kDryRun}.HFUNC(DryRun);
-   *registry << CI{"ACL GENPASS", CO::NOSCRIPT | CO::LOADING, -1, 0, 0, acl::kGenPass}.HFUNC(
-       GenPass);
--  *registry << CI{"ACL HELP", kAclMask, 0, 0, 0, acl::kHelp}.HFUNC(Help);
-+  *registry << CI{"ACL HELP", CO::NOSCRIPT | CO::LOADING, 0, 0, 0, acl::kHelp}.HFUNC(Help);
-   cmd_registry_ = registry;
+@@ -39,6 +39,8 @@ ABSL_DECLARE_FLAG(uint32_t, lua_max_stall_ms);
+ ABSL_DECLARE_FLAG(double, eviction_memory_budget_threshold);
+ ABSL_DECLARE_FLAG(std::vector<std::string>, command_alias);
+ ABSL_DECLARE_FLAG(bool, latency_tracking);
++ABSL_DECLARE_FLAG(bool, enable_heartbeat_eviction);
++ABSL_DECLARE_FLAG(double, table_growth_margin);
  
-   // build indexers
-```
-
-**File**: `src/server/acl/acl_family_test.cc` (modified, +88/-0)
-```diff
-@@ -427,6 +427,94 @@ TEST_F(AclFamilyTest, ClusterReadonlyIsNotReadCategory) {
-   EXPECT_THAT(resp, "OK");
+ namespace dfly {
+ 
+@@ -645,6 +647,49 @@ TEST_F(DflyEngineTest, ZeroAllocationEviction) {
+   EXPECT_GT(evicted_count, 0) << "Zero-allocation entries should be evicted under memory pressure";
  }
  
-+TEST_F(AclFamilyTest, SlowlogLatencyMemoryCategories) {
-+  TestInitAclFam();
++// In a full table each new key evicts the tail of the stash bucket chosen by its hash. A command
++// must not evict its own keys: the eviction journals a DEL before the MSET itself, so the replica
++// would keep the key.
++TEST_F(SingleThreadDflyEngineTest, MSetDoesNotEvictItsOwnKeys) {
++  absl::FlagSaver fs;
++  SetFlag(&FLAGS_enable_heartbeat_eviction, false);
++  SetFlag(&FLAGS_table_growth_margin, 1e9);  // the table can not grow
++  shard_set->TEST_EnableCacheMode();
++  max_memory_limit = 1ULL << 30;
++  used_mem_current.fetch_add(900ULL << 20);
++  PrimeTable* pt = pp_->at(0)->Await([] {
++    auto& db_slice = namespaces->GetDefaultNamespace().GetDbSlice(0);
++    db_slice.UpdateMemoryParams(100LL << 20, db_slice.bytes_per_object());
++    return db_slice.GetTables(0);
++  });
 +
-+  auto resp = Run("ACL SETUSER non-admin ON >p +@all -@admin -@dangerous");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN non-admin SLOWLOG GET");
-+  EXPECT_THAT(resp, "This user has no permissions to run the 'SLOWLOG' command");
-+  resp = Run("ACL DRYRUN non-admin LATENCY LATEST");
-+  EXPECT_THAT(resp, "This user has no permissions to run the 'LATENCY' command");
-+
-+  resp = Run("ACL SETUSER reader ON >p ~* +@read");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN reader MEMORY USAGE key");
-+  EXPECT_THAT(resp, "OK");
-+
-+  resp = Run({"COMMAND", "INFO", "SLOWLOG", "MEMORY"});
-+  EXPECT_THAT(resp.GetVec()[0].GetVec()[2].GetVec(), IsSupersetOf({"admin", "loading"}));
-+  EXPECT_THAT(resp.GetVec()[1].GetVec()[2].GetVec(), Contains("readonly"));
-+}
-+
-+TEST_F(AclFamilyTest, AclCatAndHelpAreNotAdminCategory) {
-+  TestInitAclFam();
-+
-+  auto resp = Run("ACL SETUSER non-admin ON >p +@all -@admin -@dangerous");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN non-admin ACL CAT");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN non-admin ACL HELP");
-+  EXPECT_THAT(resp, "OK");
-+}
-+
-+TEST_F(AclFamilyTest, ContainerCommandsCategories) {
-+  TestInitAclFam();
-+
-+  auto resp = Run("ACL SETUSER no-stream ON >p ~* +@all -@stream");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN no-stream XGROUP CREATE s g $ MKSTREAM");
-+  EXPECT_THAT(resp, "This user has no permissions to run the 'XGROUP' command");
-+  resp = Run("ACL DRYRUN no-stream XINFO STREAM s");
-+  EXPECT_THAT(resp, "This user has no permissions to run the 'XINFO' command");
-+
-+  resp = Run("ACL SETUSER no-pubsub ON >p +@all -@pubsub");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN no-pubsub PUBSUB CHANNELS");
-+  EXPECT_THAT(resp, "This user has no permissions to run the 'PUBSUB' command");
-+
-+  resp = Run("ACL SETUSER no-write ON >p +@all -@write");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN no-write FUNCTION FLUSH");
-+  EXPECT_THAT(resp, "This user has no permissions to run the 'FUNCTION' command");
-+
-+  resp = Run("ACL SETUSER scripter ON >p +@scripting");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN scripter FUNCTION FLUSH");
-+  EXPECT_THAT(resp, "OK");
-+}
-+
-+TEST_F(AclFamilyTest, KeyAfterSubcommandIsChecked) {
-+  TestInitAclFam();
-+
-+  EXPECT_EQ(Run("ACL SETUSER tenant ON >p ~public:* +@all"), "OK");
-+  for (std::string_view cmd :
-+       {"XINFO STREAM", "XINFO GROUPS", "JSON.DEBUG MEMORY", "JSON.DEBUG FIELDS", "MEMORY usage"}) {
-+    std::string name{cmd.substr(0, cmd.find(' '))};
-+    EXPECT_EQ(Run(absl::StrCat("ACL DRYRUN tenant ", cmd, " secret:k")),
-+              absl::StrCat("This user has no permissions to run the '", name, "' command"));
-+    EXPECT_EQ(Run(absl::StrCat("ACL DRYRUN tenant ", cmd, " public:k")), "OK") << cmd;
++  for (unsigned i = 0;; ++i) {
++    auto [size, capacity, segments] = pp_->at(0)->Await([&] {
++      return tuple{pt->size(), pt->capacity(), pt->GetSegmentCount()};
++    });
++    ASSERT_EQ(segments, 2u) << "the table grew";
++    if (size == capacity)
++      break;
++    Run({"set", StrCat("filler:", i), string(32, 'v')});
 +  }
-+  EXPECT_EQ(Run("ACL DRYRUN tenant XINFO CONSUMERS secret:k g"),
-+            "This user has no permissions to run the 'XINFO' command");
-+  EXPECT_EQ(Run("ACL DRYRUN tenant MEMORY STATS"), "OK");
 +
-+  EXPECT_EQ(Run("ACL SETUSER reader ON >p %R~public:* +@all"), "OK");
-+  EXPECT_EQ(Run("ACL DRYRUN reader XINFO STREAM public:k"), "OK");
-+  EXPECT_EQ(Run("ACL SETUSER writer ON >p %W~public:* +@all"), "OK");
-+  EXPECT_EQ(Run("ACL DRYRUN writer XINFO STREAM public:k"),
-+            "This user has no permissions to run the 'XINFO' command");
++  // kSlotNum + 1 keys of the same segment and stash bucket: the last one evicts the first one.
++  auto stash = [&](string_view key) {
++    uint64_t hash = pt->DoHash(key);
++    return pair{hash >> 63, hash % PrimeTable::Segment_t::kStashBucketNum};
++  };
++  vector<string> args = {"MSET"};
++  for (unsigned i = 0; args.size() < 2 * PrimeTable::kSlotNum + 3; ++i) {
++    if (string key = StrCat("k", i); stash(key) == stash("k0"))
++      args.insert(args.end(), {key, "v"});
++  }
++
++  size_t evicted = GetMetrics().db_stats[0].events.evicted_keys;
++  Run(args);
++  EXPECT_GE(GetMetrics().db_stats[0].events.evicted_keys - evicted, PrimeTable::kSlotNum);
++  EXPECT_EQ(1, CheckedInt({"exists", "k0"}));
 +}
 +
-+TEST_F(AclFamilyTest, DelexIsKeyspaceCategory) {
-+  TestInitAclFam();
-+
-+  auto resp = Run("ACL SETUSER no-keyspace ON >p ~* +@all -@keyspace");
-+  EXPECT_THAT(resp, "OK");
-+  resp = Run("ACL DRYRUN no-keyspace DELEX key");
-+  EXPECT_THAT(resp, "This user has no permissions to run the 'DELEX' command");
-+}
-+
- TEST_F(AclFamilyTest, TestGetUser) {
-   TestInitAclFam();
-   auto resp = Run("ACL GETUSER kostas");
+ TEST_F(DflyEngineTest, PSubscribe) {
+   single_response_ = false;
+   auto resp = pp_->at(1)->Await([&] { return Run({"psubscribe", "a*", "b*"}); });
 ```
 
-**File**: `src/server/acl/validator.cc` (modified, +10/-0)
+**File**: `src/server/transaction.cc` (modified, +3/-1)
 ```diff
-@@ -4,6 +4,7 @@
- 
- #include "server/acl/validator.h"
- 
-+#include <absl/strings/match.h>
- #include <absl/strings/numbers.h>
- 
- #include "base/logging.h"
-@@ -62,6 +63,12 @@ bool KeyGlobAllowed(const AclKeys& keys, std::string_view target, KeyPermissions
-   return false;
+@@ -1311,8 +1311,10 @@ bool Transaction::ScheduleInShard(EngineShard* shard, bool execute_optimistic) {
+     // lock: if we finish without preempting (the common case), no one will ever observe it; if
+     // we do preempt, whoever schedules next on this shard will lazily register it for us (see
+     // above), so the lock table stays accurate throughout.
++    // In cache mode an insert can evict keys inline, and eviction spares only the keys found in
++    // the lock table, so the callback must register its keys there.
+     bool skip_acquire = execute_optimistic && running == nullptr && shard_unlocked &&
+-                        db_slice.IsLockFree(mode, lock_args);
++                        !db_slice.IsCacheMode() && db_slice.IsLockFree(mode, lock_args);
+     if (!skip_acquire) {
+       // Slow path: either contended, or a callback is mid-flight on this shard, or we're not
+       // eligible for immediate execution. Acquire intent locks as usual - they're always
+```
+
+---
+
+### Incident Patch 2: `dedeee1e` (2026-10-21)
+**Commit Message**: fix(stream): reject "*" and "<ms>-*" as explicit stream IDs outside XADD (#8634)
+
+ParseID accepted "*" without writing the ID, so every caller except XADD used an indeterminate
+value: XTRIM/XADD MINID * dropped entries, XSETID * and XGROUP CREATE/SETID * stored garbage
+that XINFO then exposed, and XREAD BLOCK 0 STREAMS key * never returned. "<ms>-*" was accepted
+everywhere as <ms>-0, and the MINID threshold accepted "+" and "-".
+
+- Accept "*" and "<ms>-*" only as XADD's own ID.
+- Parse the MINID threshold strictly.
+- Reply "Invalid stream ID specified as stream command argument" for an invalid MINID,
+  XGROUP CREATE/SETID or XAUTOCLAIM start ID (was "syntax error").
+
+Fixes #8629
+Fixes #8617
+
+**File**: `src/server/stream_family.cc` (modified, +19/-12)
+```diff
+@@ -516,7 +516,7 @@ nonstd::unexpected_type<ErrorReply> CreateSyntaxError(std::string_view message)
  }
  
-+// These commands have no key position because a subcommand comes first; the key follows it.
-+bool ReadsKeyAfterSubcommand(std::string_view cmd, std::string_view sub) {
-+  return cmd == "XINFO" || cmd == "JSON.DEBUG" ||
-+         (cmd == "MEMORY" && absl::EqualsIgnoreCase(sub, "USAGE"));
+ struct ParsedStreamId {
+-  streamID val;
++  streamID val{};
+ 
+   // Was an ID different than "ms-*" specified? for XADD only.
+   bool has_seq = false;
+@@ -732,13 +732,12 @@ inline const uint8_t* SafePtr(MutableSlice field) {
+                        : reinterpret_cast<const uint8_t*>(field.data());
+ }
+ 
+-bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamId* dest) {
++// allow_auto_seq accepts XADD's "<ms>-*" form.
++bool ParseID(string_view strid, bool strict, uint64_t missing_seq, bool allow_auto_seq,
++             ParsedStreamId* dest) {
+   if (strid.empty() || strid.size() > 127)
+     return false;
+ 
+-  if (strid == "*")
+-    return true;
+-
+   dest->id_given = true;
+   dest->has_seq = true;
+ 
+@@ -769,7 +768,7 @@ bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamI
+     if (dash_pos + 1 == strid.size())
+       return false;
+ 
+-    if (dash_pos + 2 == strid.size() && strid[dash_pos + 1] == '*') {
++    if (allow_auto_seq && dash_pos + 2 == strid.size() && strid[dash_pos + 1] == '*') {
+       result.seq = 0;
+       dest->has_seq = false;
+     } else if (!absl::SimpleAtoi(strid.substr(dash_pos + 1), &result.seq)) {
+@@ -782,6 +781,10 @@ bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamI
+   return true;
+ }
+ 
++bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamId* dest) {
++  return ParseID(strid, strict, missing_seq, false, dest);
 +}
 +
- }  // namespace
- 
- // Exported (not anonymous-namespace-local) so callers without a live connection, like ACL DRYRUN's
-@@ -199,6 +206,9 @@ std::pair<bool, AclLog::Reason> IsPubSubCommandAuthorized(bool literal_match,
+ enum class RangeBoundary { kStart, kEnd };
+ bool ParseRangeId(string_view id, RangeBoundary type, RangeId* dest) {
+   if (id.empty())
+@@ -2486,6 +2489,8 @@ void CreateGroup(facade::CmdArgParser* parser, CommandContext* cmd_cntx) {
+   switch (result) {
+     case OpStatus::KEY_NOTFOUND:
+       return cmd_cntx->SendError(kXGroupKeyNotFound);
++    case OpStatus::SYNTAX_ERR:
++      return cmd_cntx->SendError(kInvalidStreamId, kSyntaxErrType);
+     default:
+       cmd_cntx->SendError(result);
+   }
+@@ -2598,6 +2603,8 @@ void SetId(facade::CmdArgParser* parser, CommandContext* cmd_cntx) {
+       return cmd_cntx->SendError(NoGroupError(key, gname));
+     case OpStatus::KEY_NOTFOUND:
+       return cmd_cntx->SendError(kXGroupKeyNotFound);
++    case OpStatus::SYNTAX_ERR:
++      return cmd_cntx->SendError(kInvalidStreamId, kSyntaxErrType);
+     default:
+       cmd_cntx->SendError(result);
+   }
+@@ -2674,8 +2681,8 @@ ParseResult<TrimOpts> ParseTrimOpts(bool max_len, CmdArgParser* parser) {
+     opts.length_or_id = parser->Next<uint32_t>();
+   } else {
+     ParsedStreamId parsed_id;
+-    if (!ParseID(parser->Next(), false, 0, &parsed_id)) {
+-      return CreateSyntaxError(kSyntaxErr);
++    if (!ParseID(parser->Next(), true, 0, &parsed_id)) {
++      return CreateSyntaxError(kInvalidStreamId);
      }
+ 
+     opts.length_or_id = parsed_id;  // trivial copy
+@@ -2694,8 +2701,8 @@ ParseResult<TrimOpts> ParseTrimOpts(bool max_len, CmdArgParser* parser) {
+ 
+ ParseResult<TrimOpts> ParseTrimOpts(CmdArgParser* parser) {
+   bool max_len = parser->Check("MAXLEN");
+-  if (!max_len) {
+-    parser->ExpectTag("MINID");
++  if (!max_len && !parser->Check("MINID")) {
++    return CreateSyntaxError(kSyntaxErr);
    }
  
-+  if (!keys.all_keys && tail_args.size() >= 2 && ReadsKeyAfterSubcommand(id.name(), tail_args[0]))
-+    keys_allowed &= KeyGlobAllowed(keys, tail_args[1], {true, false});
-+
-   return {keys_allowed, AclLog::Reason::KEY};
+   auto res = ParseTrimOpts(max_len, parser);
+@@ -2730,7 +2737,7 @@ ParseResult<AddOpts> ParseAddOpts(CmdArgParser* parser) {
+     } else {
+       // It is StreamId
+       std::string_view id = parser->Next();
+-      if (!ParseID(id, true, 0, &opts.parsed_id)) {
++      if (id != "*" && !ParseID(id, true, 0, /*allow_auto_seq=*/true, &opts.parsed_id)) {
+         return CreateSyntaxError(kInvalidStreamId);
+       }
+       break;
+@@ -4230,7 +4237,7 @@ void CmdXAutoClaim(CmdArgParser parser, CommandContext* cmd_cntx) {
+   RangeId rs;
+ 
+   if (!ParseRangeId(start, RangeBoundary::kStart, &rs)) {
+-    return rb->SendError(kSyntaxErr);
++    return rb->SendError(kInvalidStreamId, kSyntaxErrType);
+   }
+ 
+   if (rs.exclude && StreamDecrID(&rs.parsed_id.val) != C_OK) {
+```
+
+**File**: `src/server/stream_family_test.cc` (modified, +18/-3)
+```diff
+@@ -1491,7 +1491,7 @@ TEST_F(StreamFamilyTest, XTrimInvalidArgs) {
+   resp = Run({"xtrim", "foo", "maxlen", "-1"});
+   EXPECT_THAT(resp, ErrArg("not an integer or out of range"));
+   resp = Run({"xtrim", "foo", "minid", "nan"});
+-  EXPECT_THAT(resp, ErrArg("syntax error"));
++  EXPECT_THAT(resp, ErrArg("Invalid stream ID"));
+ 
+   // Limit with non-approx.
+   resp = Run({"xtrim", "foo", "maxlen", "2", "limit", "5"});
+@@ -1508,6 +1508,21 @@ TEST_F(StreamFamilyTest, XTrimInvalidArgs) {
+   EXPECT_THAT(resp, ErrArg("value is not an integer or out of range"));
  }
  
-```
-
-**File**: `src/server/generic_family.cc` (modified, +1/-1)
-```diff
-@@ -2871,7 +2871,7 @@ using CI = CommandId;
- namespace acl {
- 
- constexpr uint32_t kDel = KEYSPACE | WRITE | SLOW;
--constexpr uint32_t kDelEx = STRING | WRITE | FAST;
-+constexpr uint32_t kDelEx = KEYSPACE | STRING | WRITE | FAST;
- constexpr uint32_t kPing = FAST | CONNECTION;
- constexpr uint32_t kEcho = FAST | CONNECTION;
- constexpr uint32_t kExists = KEYSPACE | READ | FAST;
-```
-
-**File**: `src/server/main_service.cc` (modified, +2/-2)
-```diff
-@@ -3101,9 +3101,9 @@ constexpr uint32_t kSubscribe = PUBSUB | SLOW;
- constexpr uint32_t kUnsubscribe = PUBSUB | SLOW;
- constexpr uint32_t kPSubscribe = PUBSUB | SLOW;
- constexpr uint32_t kPUnsubsribe = PUBSUB | SLOW;
--constexpr uint32_t kFunction = SLOW;
-+constexpr uint32_t kFunction = WRITE | SLOW | SCRIPTING;
- constexpr uint32_t kMonitor = ADMIN | SLOW | DANGEROUS;
--constexpr uint32_t kPubSub = SLOW;
-+constexpr uint32_t kPubSub = PUBSUB | SLOW;
- constexpr uint32_t kCommand = SLOW | CONNECTION;
- constexpr uint32_t kReset = FAST | CONNECTION;
- }  // namespace acl
-```
-
-**File**: `src/server/server_family.cc` (modified, +5/-5)
-```diff
-@@ -4201,8 +4201,8 @@ constexpr uint32_t kFlushAll = KEYSPACE | WRITE | SLOW | DANGEROUS;
- constexpr uint32_t kInfo = SLOW | DANGEROUS;
- constexpr uint32_t kHello = FAST | CONNECTION;
- constexpr uint32_t kLastSave = ADMIN | FAST | DANGEROUS;
--constexpr uint32_t kLatency = SLOW;
--constexpr uint32_t kMemory = SLOW;
-+constexpr uint32_t kLatency = ADMIN | SLOW | DANGEROUS;
-+constexpr uint32_t kMemory = READ | SLOW;
- constexpr uint32_t kShrink = WRITE | FAST;
- constexpr uint32_t kSave = ADMIN | SLOW | DANGEROUS;
- constexpr uint32_t kShutDown = ADMIN | SLOW | DANGEROUS;
-@@ -4212,7 +4212,7 @@ constexpr uint32_t kReplTakeOver = DANGEROUS;
- constexpr uint32_t kReplConf = ADMIN | SLOW | DANGEROUS;
- constexpr uint32_t kRole = ADMIN | FAST | DANGEROUS;
- constexpr uint32_t kWait = SLOW | CONNECTION | BLOCKING;
--constexpr uint32_t kSlowLog = SLOW;
-+constexpr uint32_t kSlowLog = ADMIN | SLOW | DANGEROUS;
- constexpr uint32_t kScript = SLOW | SCRIPTING;
- constexpr uint32_t kModule = ADMIN | SLOW | DANGEROUS;
- // TODO(check this)
-@@ -4221,7 +4221,7 @@ constexpr uint32_t kDfly = ADMIN;
- 
- void ServerFamily::Register(CommandRegistry* registry) {
-   constexpr auto kReplicaOpts = CO::LOADING | CO::ADMIN | CO::GLOBAL_TRANS;
--  constexpr auto kMemOpts = CO::LOADING;
-+  constexpr auto kMemOpts = CO::LOADING | CO::READONLY;
-   registry->StartFamily();
-   *registry
-       << CI{"AUTH", CO::NOSCRIPT | CO::FAST | CO::LOADING, -2, 0, 0, acl::kAuth}.HFUNC(Auth)
-@@ -4252,7 +4252,7 @@ void ServerFamily::Register(CommandRegistry* registry) {
-       << CI{"REPLCONF", CO::ADMIN | CO::LOADING, -1, 0, 0, acl::kReplConf}.HFUNC(ReplConf)
-       << CI{"WAIT", CO::NOSCRIPT | CO::BLOCKING, 3, 0, 0, acl::kWait}.HFUNC(Wait)
-       << CI{"ROLE", CO::LOADING | CO::FAST | CO::NOSCRIPT, 1, 0, 0, acl::kRole}.HFUNC(Role)
--      << CI{"SLOWLOG", CO::LOADING, -2, 0, 0, acl::kSlowLog}.HFUNC(SlowLog)
-+      << CI{"SLOWLOG", CO::ADMIN | CO::LOADING, -2, 0, 0, acl::kSlowLog}.HFUNC(SlowLog)
-       << CI{"SCRIPT", CO::NOSCRIPT | CO::NO_KEY_TRANSACTIONAL, -2, 0, 0, acl::kScript}.HFUNC(Script)
-       << CI{"DFLY", CO::ADMIN | CO::GLOBAL_TRANS | CO::HIDDEN, -2, 0, 0, acl::kDfly}.HFUNC(Dfly)
-       << CI{"MODULE", CO::ADMIN, 2, 0, 0, acl::kModule}.HFUNC(Module);
-```
-
-**File**: `src/server/stream_family.cc` (modified, +2/-2)
-```diff
-@@ -4305,8 +4305,8 @@ namespace acl {
- constexpr uint32_t kXAdd = WRITE | STREAM | FAST;
- constexpr uint32_t kXClaim = WRITE | STREAM | FAST;
- constexpr uint32_t kXDel = WRITE | STREAM | FAST;
--constexpr uint32_t kXGroup = SLOW;
--constexpr uint32_t kXInfo = SLOW;
-+constexpr uint32_t kXGroup = WRITE | STREAM | SLOW;
-+constexpr uint32_t kXInfo = READ | STREAM | SLOW;
- constexpr uint32_t kXLen = READ | STREAM | FAST;
- constexpr uint32_t kXPending = READ | STREAM | SLOW;
- constexpr uint32_t kXRange = READ | STREAM | SLOW;
-```
-
-**File**: `tools/verify_script_acl` (modified, +33/-23)
-```diff
-@@ -8,8 +8,8 @@ Two independent checks:
-                   constant. No network access required.
-   --check valkey: diffs Dragonfly's effective ACL categories against real Valkey's
-                   (ground truth), for commands Dragonfly shares with Valkey. Requires
--                  a Valkey checkout (--valkey-dir), or clones the latest valkey/valkey
--                  default branch itself if omitted -- this needs network access.
-+                  a Valkey checkout (--valkey-dir), or clones valkey/valkey at
-+                  VALKEY_REF itself if omitted -- this needs network access.
- 
- Default is --check all (both checks), matching the CI job -- so a plain, no-argument
- invocation clones Valkey and needs network access. Pass --check self explicitly, or
-@@ -127,18 +127,18 @@ STANDARD_ACL_NAMES = {
- ACL_REV = {v: k for k, v in ACL.items()}
- CO_REV = {v: k for k, v in CO.items()}
- 
--# Container commands: Dragonfly registers these as a single flat command, while Valkey gives
--# each subcommand its own real categories and leaves the container itself with just @slow.
--# Not modeled here (no per-subcommand ACL categories in Dragonfly yet). Every other mismatch
--# is a real one and must be fixed, not added here.
-+# Pinned so that unrelated changes upstream cannot fail CI; bump deliberately. Releases before 9.1
-+# list only explicit categories in their command JSON, so they cannot be compared.
-+VALKEY_REF = "9.1.2"
++TEST_F(StreamFamilyTest, SpecialTokensAsExplicitId) {
++  Run({"xadd", "s", "1-0", "a", "1"});
++  Run({"xadd", "s", "2-0", "b", "2"});
++  Run({"xgroup", "create", "s", "g", "0"});
++  EXPECT_THAT(Run({"xtrim", "s", "minid", "*"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xtrim", "s", "minid", "+"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xadd", "s", "minid", "+", "3-0", "c", "3"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xsetid", "s", "*"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xdel", "s", "1-*"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xgroup", "create", "s", "g2", "*"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xgroup", "setid", "s", "g", "*"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xautoclaim", "s", "g", "c", "0", "*"}), ErrArg("Invalid stream ID"));
++  EXPECT_THAT(Run({"xlen", "s"}), IntArg(2));
++}
 +
-+# Not compared with Valkey: commands whose Valkey categories (for a flat container, the union of
-+# its subcommands' categories, see valkey_command_categories) do not fit what Dragonfly runs. Every
-+# other mismatch is a real one and must be fixed, not added here.
- VALKEY_SKIP = {
--    "CLIENT": "container command, Valkey categorizes per-subcommand only",
--    "CONFIG": "container command, Valkey categorizes per-subcommand only",
--    "SCRIPT": "container command, Valkey categorizes per-subcommand only",
--    "MODULE": "container command, Valkey categorizes per-subcommand only",
--    "CLUSTER": "container command, Valkey categorizes per-subcommand only",
--    "XGROUP": "container command, Valkey categorizes per-subcommand only",
--    "XINFO": "container command, Valkey categorizes per-subcommand only",
-+    "ACL": "the bare command only replies an error, its subcommands are compared one by one",
-+    "CLIENT": "KILL/LIST/PAUSE are @admin, SETNAME/ID are not",
-+    "CLUSTER": "runs only the @slow subcommands, the @admin ones are in DFLYCLUSTER",
-+    "DELEX": "without a condition it deletes a key of any type, like DEL",
+ TEST_F(StreamFamilyTest, XTrimWrongSyntax) {
+   auto resp = Run({"xtrim", "-992", "k1 \"v1\" k2 \"v2 with spaces\" \"k3 with spaces\" \"v3\"",
+                    "list1 element1"});
+@@ -2425,7 +2440,7 @@ TEST_F(StreamFamilyTest, XInfoConsumersArityCrash) {
+ 
+ TEST_F(StreamFamilyTest, GroupCreateInvalidIdMemoryTracking) {
+   auto resp = Run({"xgroup", "create", "mystream", "mygroup", "notanumber", "MKSTREAM"});
+-  EXPECT_THAT(resp, ErrArg("syntax error"));
++  EXPECT_THAT(resp, ErrArg("Invalid stream ID"));
+ 
+   // Verify the stream was not created (no orphan stream after the error)
+   resp = Run({"exists", "mystream"});
+@@ -2434,7 +2449,7 @@ TEST_F(StreamFamilyTest, GroupCreateInvalidIdMemoryTracking) {
+ 
+ TEST_F(StreamFamilyTest, XAddOnOrphanedStreamMemoryTracking) {
+   auto resp = Run({"xgroup", "create", "mystream", "mygroup", "invalid_id", "MKSTREAM"});
+-  EXPECT_THAT(resp, ErrArg("syntax error"));
++  EXPECT_THAT(resp, ErrArg("Invalid stream ID"));
+ 
+   resp = Run({"xadd", "mystream", "0-0", "field", "value"});
+   EXPECT_THAT(resp, ErrArg("equal or smaller"));
+```
+
+---
+
+### Incident Patch 3: `d32c05f4` (2026-10-22)
+**Commit Message**: fix: migration SYNC timeout (#8491)
+
+**File**: `src/server/journal/buffered_socket_writer.cc` (modified, +10/-0)
+```diff
+@@ -244,6 +244,16 @@ void BufferedSocketWriter::Throttle() {
+   }
  }
  
++void BufferedSocketWriter::AbortOnWriteTimeout(uint64_t timeout_usec) {
++  if (in_flight_bytes_ == 0 || !cntx_->IsRunning() ||
++      base::CycleClock::ToUsec(base::CycleClock::Now() - last_async_write_time_) < timeout_usec)
++    return;
++
++  LOG(WARNING) << "Stream write timed out: " << FormatInternalState();
++  LogTcpSocketDiagnostics(dest_);
++  cntx_->ReportError("BufferedSocketWriter write operation timeout");
++}
++
+ void BufferedSocketWriter::WaitForInflightToComplete(bool with_timeout) {
+   const auto start = chrono::steady_clock::now();
+   const auto max_timeout = start + chrono::milliseconds(absl::GetFlag(FLAGS_replication_timeout));
+```
+
+**File**: `src/server/journal/buffered_socket_writer.h` (modified, +4/-0)
+```diff
+@@ -49,6 +49,10 @@ class BufferedSocketWriter {
+   // Blocks the caller if the socket is not keeping up.
+   void Throttle();
  
-@@ -338,24 +338,36 @@ def ensure_valkey_checkout(valkey_dir):
-             sys.exit(f"--valkey-dir {valkey_dir} has no src/commands -- not a valkey checkout")
-         return valkey_dir
-     tmp = tempfile.mkdtemp(prefix="valkey-acl-check-")
--    print(f"Cloning latest valkey/valkey into {tmp} ...", file=sys.stderr)
-+    print(f"Cloning valkey/valkey {VALKEY_REF} into {tmp} ...", file=sys.stderr)
-     subprocess.run(
--        ["git", "clone", "--depth", "1", "https://github.com/valkey-io/valkey.git", tmp],
-+        [
-+            "git",
-+            "clone",
-+            "--depth",
-+            "1",
-+            "--branch",
-+            VALKEY_REF,
-+            "https://github.com/valkey-io/valkey.git",
-+            tmp,
-+        ],
-         check=True,
-     )
-     return tmp
++  // Reports a write timeout if the in-flight write has not completed within timeout_usec.
++  // For producers that pause below output_limit() and therefore never block in Throttle().
++  void AbortOnWriteTimeout(uint64_t timeout_usec);
++
+   void WaitForInflightToComplete(bool with_timeout);
  
+   // Wakes up fibers blocked in Throttle() or WaitForInflightToComplete().
+```
+
+**File**: `src/server/journal/journal_test.cc` (modified, +49/-0)
+```diff
+@@ -13,13 +13,16 @@
+ #include "core/detail/gen_utils.h"
+ #include "server/common.h"
+ #include "server/engine_shard_set.h"
++#include "server/journal/buffered_socket_writer.h"
+ #include "server/journal/journal_slice.h"
+ #include "server/journal/pending_buf.h"
+ #include "server/journal/serializer.h"
+ #include "server/journal/tx_executor.h"
+ #include "server/journal/types.h"
+ #include "server/serializer_commons.h"
++#include "server/test_utils.h"
+ #include "strings/human_readable.h"
++#include "util/fibers/epoll_socket.h"
+ #include "util/fibers/fibers.h"
  
- def valkey_command_categories(valkey_dir):
--    """Returns {command_name: set(acl_category_names)} for top-level commands only."""
-+    """Returns {command_name: set(acl_category_names)}, subcommands keyed as "CONTAINER SUB". A
-+    container's set also holds every category of its subcommands: Dragonfly's single command may
-+    run any of them, so a -@category rule that denies one of them in Valkey must deny the whole
-+    command."""
-     result = {}
-     for path in glob.glob(os.path.join(valkey_dir, "src", "commands", "*.json")):
--        base = os.path.basename(path)[: -len(".json")]
--        if "-" in base:
--            continue  # subcommand (e.g. acl-cat.json) -- not modeled here yet
-         data = json.load(open(path))
-         for name, spec in data.items():
--            result[name.upper()] = set(spec.get("acl_categories") or [])
-+            cats = set(spec.get("acl_categories") or [])
-+            if "container" in spec:
-+                result[f"{spec['container']} {name}".upper()] = cats
-+            result.setdefault(spec.get("container", name).upper(), set()).update(cats)
-     return result
+ ABSL_DECLARE_FLAG(uint32_t, shard_repl_backlog_time_ms);
+@@ -210,6 +213,52 @@ TEST(Journal, PendingBuf) {
+   ASSERT_EQ(pbuf.Size(), 0);
+ }
  
++// Completes writes only on demand to simulate a stalled or slowly progressing receiver.
++class ControlledSocket : public util::fb2::EpollSocket {
++ public:
++  void AsyncWriteSome(const iovec* v, uint32_t len, io::AsyncProgressCb cb) override {
++    size_t bytes = 0;
++    for (uint32_t i = 0; i < len; ++i)
++      bytes += v[i].iov_len;
++    completion_ = [cb = std::move(cb), bytes] { cb(bytes); };
++  }
++
++  void Complete() {
++    std::exchange(completion_, {})();
++  }
++
++ private:
++  std::function<void()> completion_;
++};
++
++class BufferedSocketWriterTest : public BaseFamilyTest {};
++
++TEST_F(BufferedSocketWriterTest, AbortOnWriteTimeout) {
++  pp_->at(0)->Await([] {
++    constexpr uint64_t kTimeoutUsec = 500'000;
++    ControlledSocket socket;
++    ExecutionState cntx;
++    BufferedSocketWriter writer(&cntx, {});
++    writer.Start(&socket);
++
++    // Writes that keep completing do not time out, even past the timeout.
++    writer.Write(string(512, 'x'));
++    for (unsigned i = 0; i < 12; ++i) {
++      ThisFiber::SleepFor(50ms);
++      writer.Write(string(512, 'x'));
++      socket.Complete();
++      writer.AbortOnWriteTimeout(kTimeoutUsec);
++    }
++    EXPECT_TRUE(cntx.IsRunning());
++
++    // A write that stays in flight longer than the timeout fails the stream.
++    ThisFiber::SleepFor(600ms);
++    writer.AbortOnWriteTimeout(kTimeoutUsec);
++    EXPECT_EQ(cntx.GetError().Format(), "BufferedSocketWriter write operation timeout");
++    socket.Complete();
++  });
++}
++
+ void AddSetRecord(JournalSlice* slice, string_view value) {
+   array<string_view, 2> args{"key", value};
+   slice->AddLogRecord(
+```
+
+**File**: `src/server/journal/streamer.cc` (modified, +6/-0)
+```diff
+@@ -32,6 +32,8 @@ ABSL_FLAG(float, migration_buckets_cpu_budget, 0.2,
+ ABSL_FLAG(uint32_t, replication_dispatch_threshold, 1500,
+           "Number of bytes to aggregate before replication");
  
-@@ -364,8 +376,6 @@ def check_valkey(commands, valkey_dir):
-     issues = []
-     checked = 0
-     for name, (final, _mask, f) in commands.items():
--        if " " in name:
--            continue  # subcommand, not modeled here yet
-         if name in VALKEY_SKIP:
-             continue
-         if name not in vk:
-@@ -397,7 +407,7 @@ def main():
-         help="'all' (default) clones/needs Valkey and network access; 'self' is offline-only",
-     )
-     ap.add_argument(
--        "--valkey-dir",
++ABSL_DECLARE_FLAG(uint32_t, replication_timeout);
++
+ namespace dfly {
+ using namespace util;
+ using namespace journal;
+@@ -179,6 +181,7 @@ SlotMigrationStreamer::SlotMigrationStreamer(DbSlice* slice, cluster::SlotSet sl
+   migration_buckets_serialization_threshold_cached =
+       absl::GetFlag(FLAGS_migration_buckets_serialization_threshold);
+   migration_buckets_sleep_usec_cached = absl::GetFlag(FLAGS_migration_buckets_sleep_usec);
++  replication_timeout_usec_ = absl::GetFlag(FLAGS_replication_timeout) * 1000ULL;
+ 
+   cmd_serializer_ = std::make_unique<CmdSerializer>(
+       [&](std::string s) {
+@@ -249,6 +252,9 @@ void SlotMigrationStreamer::PaceTraversal(bool done) {
+ 
+   while (base_cntx_->IsRunning() && should_stall()) {
+     ThisFiber::SleepFor(300us);
++    // Pacing stops below output_limit, where Throttle() would detect a stuck socket. Checked
++    // after sleeping, so completions of already finished writes have been processed.
++    writer_.AbortOnWriteTimeout(replication_timeout_usec_);
+ 
+     // We have a design bug in RealTimeAggregator that resets it measurements only when
+     // the next sample is taken. So we add this sample to ensure cpu_aggregator_
+```
+
+**File**: `src/server/journal/streamer.h` (modified, +1/-0)
+```diff
+@@ -118,6 +118,7 @@ class SlotMigrationStreamer : public journal::JournalConsumerInterface, public S
+   // to share across fibers because ShouldSerialize does not preempt.
+   mutable std::string key_buffer_;
+   uint32_t buckets_since_sleep_ = 0;  // non-empty buckets traversed since the last sleep
++  uint64_t replication_timeout_usec_ = 0;
+   LSN last_lsn_writen_ = 0;
+   uint32_t journal_cb_id_{0};
+ };
+```
+
+**File**: `tests/dragonfly/cluster_migration_resilience_test.py` (modified, +19/-14)
+```diff
+@@ -389,8 +389,11 @@ async def test_cluster_memory_consumption_migration(df_factory: DflyInstanceFact
+ 
+ @pytest.mark.large
+ @pytest.mark.exclude_epoll
++@pytest.mark.parametrize("background_writes", [True, False], ids=["with_writes", "without_writes"])
+ @dfly_args({"proactor_threads": 4, "cluster_mode": "yes", "migration_buckets_cpu_budget": 1})
+-async def test_migration_timeout_on_sync(df_factory: DflyInstanceFactory, df_seeder_factory):
++async def test_migration_timeout_on_sync(
++    df_factory: DflyInstanceFactory, df_seeder_factory, background_writes
++):
+     # Timeout set to 3 seconds because we must first saturate the socket before we get the timeout
+     instances, nodes = await create_cluster(
+         df_factory,
+@@ -407,9 +410,11 @@ async def test_migration_timeout_on_sync(df_factory: DflyInstanceFactory, df_see
+ 
+     await DebugPopulateSeeder(key_target=300000, data_size=1000).run(nodes[0].client)
+ 
+-    # we use this seeder to saturate the pending_buf_ in streamer
+-    seeder = df_seeder_factory.create(port=nodes[0].instance.port, cluster_mode=True)
+-    fill_task = asyncio.create_task(seeder.run())
++    # Without background writes, snapshot pacing must detect a stalled receiver below the
++    # full-buffer threshold. With writes, other producers can fill the buffer completely.
++    if background_writes:
++        seeder = df_seeder_factory.create(port=nodes[0].instance.port, cluster_mode=True)
++        fill_task = asyncio.create_task(seeder.run())
+ 
+     logging.debug("Start migration")
+     nodes[0].migrations.append(
+@@ -424,16 +429,16 @@ async def test_migration_timeout_on_sync(df_factory: DflyInstanceFactory, df_see
+     logging.debug("debug migration pause")
+     await nodes[1].client.execute_command("debug migration pause")
+ 
+-    await wait_for_error(
+-        nodes[0].admin_client, nodes[1].id, "BufferedSocketWriter write operation timeout", 30
+-    )
+-
+-    logging.debug("debug migration resume")
+-    await nodes[1].client.execute_command("debug migration resume")
+-
+-    # Stop seeder
+-    seeder.stop()
+-    await fill_task
++    try:
++        await wait_for_error(
++            nodes[0].admin_client, nodes[1].id, "BufferedSocketWriter write operation timeout", 30
++        )
++    finally:
++        logging.debug("debug migration resume")
++        await nodes[1].client.execute_command("debug migration resume")
++        if background_writes:
++            seeder.stop()
++            await fill_task
+ 
+     await wait_for_status(nodes[0].admin_client, nodes[1].id, "FINISHED", 300)
+     await wait_for_status(nodes[1].admin_client, nodes[0].id, "FINISHED")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8622** (2026-10-20): backport(server): Fix TS read lifetimes (@abhijat)
-- **PR #8621** (2026-10-20): backport(server): Fix TS storage read life time (@abhijat)
-- **PR #8614** (2026-10-20): fix(acl): restore ACL categories regressed by #8308 and #8311 (@vyavdoshenko)
-- **PR #8613** (2026-10-19): refactor: remove unused C++ code (@vyavdoshenko)
-- **PR #8611** (2026-10-19): chore(server): fix compiler and clang-tidy warnings (@romange)
-- **PR #8610** (2026-10-19): feat(aof): read once and buffer (@kostasrim)
+- **PR #8652** (2026-10-22): fix: SADD return value (@BorysTheDev)
+- **PR #8651** (2026-10-22): feat(search): allow several attributes on one JSON path (@vyavdoshenko)
+- **PR #8644** (closed): fuzz: retry crash triage and keep the fuzz run's fatal message (@vyavdoshenko)
+- **PR #8643** (2026-10-22): feat: add slot stats for several databases (@BorysTheDev)
+- **PR #8642** (2026-10-21): perf(sidekiq): map private and public queue to same shard (@kostasrim)
+- **PR #8639** (2026-10-21): refactor: improve search negate operation (@BorysTheDev)
 
 ---
 
@@ -2704,30 +2835,56 @@ patterns.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. acl): restore ACL categories regressed by #8308 and #8311 (#8614)
+## X. server): register key locks of optimistic transactions in cache mode (#8630)
 
 **RULE**:
-When implementing operations in `src/server/acl/acl_family.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/dragonfly_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc204527`: acl): restore ACL categories regressed by #8308 and #8311 (#8614). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3c04a61`: server): register key locks of optimistic transactions in cache mode (#8630). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/acl/acl_family.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/dragonfly_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  *registry << CI{"ACL CAT", CO::NOSCRIPT | CO::LOADING, -1, 0, 0, acl::kCat}.HFUNC(Cat);
-  *registry << CI{"ACL HELP", CO::NOSCRIPT | CO::LOADING, 0, 0, 0, acl::kHelp}.HFUNC(Help);
+ABSL_DECLARE_FLAG(bool, enable_heartbeat_eviction);
+ABSL_DECLARE_FLAG(double, table_growth_margin);
+// In a full table each new key evicts the tail of the stash bucket chosen by its hash. A command
+// must not evict its own keys: the eviction journals a DEL before the MSET itself, so the replica
+// would keep the key.
+TEST_F(SingleThreadDflyEngineTest, MSetDoesNotEvictItsOwnKeys) {
+  absl::FlagSaver fs;
+  SetFlag(&FLAGS_enable_heartbeat_eviction, false);
+  SetFlag(&FLAGS_table_growth_margin, 1e9);  // the table can not grow
+  shard_set->TEST_EnableCacheMode();
+  max_memory_limit = 1ULL << 30;
+  used_mem_current.fetch_add(900ULL << 20);
+  PrimeTable* pt = pp_->at(0)->Await([] {
+    auto& db_slice = namespaces->GetDefaultNamespace().GetDbSlice(0);
+    db_slice.UpdateMemoryParams(100LL << 20, db_slice.bytes_per_object());
+    return db_slice.GetTables(0);
+  });
+
+  for (unsigned i = 0;; ++i) {
+    auto [size, capacity, segments] = pp_->at(0)->Await([&] {
+      return tuple{pt->size(), pt->capacity(), pt->GetSegmentCount()};
+    });
+    ASSERT_EQ(segments, 2u) << "the table grew";
+    if (size == capacity)
+      break;
+    Run({"set", StrCat("filler:", i), string(32, 'v')});
+  }
+
+  // k
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  *registry << CI{"ACL CAT", kAclMask, -1, 0, 0, acl::kCat}.HFUNC(Cat);
-  *registry << CI{"ACL HELP", kAclMask, 0, 0, 0, acl::kHelp}.HFUNC(Help);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc204527` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3c04a61` are properly handled with clean fallback behavior.

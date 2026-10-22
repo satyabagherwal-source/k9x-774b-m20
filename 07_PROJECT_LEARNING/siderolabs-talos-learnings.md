@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `943cbcdd`  
+> **Source Version**: `7c40a452`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:02:13.172Z  
+> **Timestamp**: 2026-10-22T18:04:37.780Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:02:13.165Z  
+> **Harvest Timestamp**: 2026-10-22T18:04:36.255Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11384 stars
+- **Stars / Engagement**: 11390 stars
 
 ---
 
@@ -1920,11 +1920,15 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14680** (2026-10-20): **Default `talosctl reboot` (kexec) leaves SecureBoot + TPM-sealed nodes unable to unlock their volumes until a power cycle**
-  *Symptoms*: ## Summary  On a SecureBoot installation whose volumes are sealed to the TPM, the **default** `talosctl reboot` makes the node unable to unlock `STATE` and `EPHEMERAL`. The node comes back on the same version, cannot read its machine config, never configures its network, and never starts the API — so it is unreachable, and the obvious next step (`talosctl reboot` again) is impossible. Only a power cycle recovers it.  The cause is that the default reboot path uses **kexec**, which does not go through the firmware, so **systemd-stub never runs**. `/.extra` — where the UKI's `.pcrpkey` and `.pcrsig` sections are materialised as `tpm2-pcr-public-key.pem` and `tpm2-pcr-signature.json` — is therefore never created, and the TPM key handler has nothing to read:  ``` [talos] failed to call key handler {"component": "controller-runtime",   "controller": "block.VolumeManagerController", "volume": "STATE", "slot": 0,   "handler": "*keys.TPMKeyHandler",   "error": "failed to read pcr signing public key: open /.extra/tpm2-pcr-public-key.pem: no such file or directory"} [talos] volume status {"volume": "STATE", "phase": "failed -> failed",   "error": "error opening encrypted volume: no handlers available to get encryption keys from"} ```  `talosctl reboot --mode=powercycle` (and `talosctl upgrade --reboot-mode=powercycle`) work correctly.  We are filing this mainly as a **documentation / UX gap** rather than a crash: everything behaves as designed in isolation, but
+- **Issue #14711** (2026-10-22): **chore: mount git common dir into dockerized commands**
+  *Symptoms*: This mirrors the change https://github.com/siderolabs/kres/pull/717, but for Talos where these files are not under kres control. 
+  **Post-Mortem & Fix Analysis**:
+  > /m
 
-- **Issue #14677** (2026-10-19): **KubeAuthenticationConfig renders `apiVersion: apiserver.config.k8s.io/v1beta1` but kube-apiserver v1.36.4 rejects it**
-  *Symptoms*: I think I found a bug while converting my old OIDC config (add a new entry to audiences)  My Talos (v1.14) Cluster renders `authentication-config.yaml` with a hardcoded `apiVersion: apiserver.config.k8s.io/v1beta1`. In my Cluster (kube-apiserver v1.36.4) the rendered file is rejected and kube-apiserver crashloops whenever a KubeAuthenticationConfig document is present.  **Description**  1. A `KubeAuthenticationConfig` document only takes effect when the config uses the modern `KubeAPIServerConfig` document. The legacy `cluster.apiServer` path hardcodes `UseAuthenticationConfig() == false`, so mixed states silently ignore the document. 2. After migrating legacy `cluster.apiServer` to modern `KubeAPIServerConfig` + `KubeAuthenticationConfig` documents Talos renders the authentication config file as:     ```yaml    apiVersion: apiserver.config.k8s.io/v1beta1    kind: AuthenticationConfiguration    jwt:    - issuer:        url: https://idp.domain.tld        audiences:        - <client-a>        - <client-b>      claimMappings:        username:          claim: sub        groups:          claim: groups          prefix: 'oidc:'     ```     Source: https://github.com/siderolabs/talos/blob/release-1.14/internal/app/machined/pkg/controllers/k8s/control_plane.go  3. kube-apiserver v1.36.4 refuses the file and crashloops: all OIDC authentication stops, healthz still answers but the server never becomes usable. Reverting to the legacy `cluster.apiServer` `oidc` flags restores the previous
+- **Issue #14709** (2026-10-22): **feat: implement swap resource limits for containers**
+  *Symptoms*: This started as a fix for a flaky test `TestIntegration/api.ContainersSuite/TestWorkloadMemoryLimitEnforced` which fails when it runs on the node with swap enabled, as the OOM is never triggered, but a proper fix is to have control over container's swap.  The default is unchanged - swap is unrestricted, but now the swap can be disabled for a container or limited.  The 2nd commit actually should fix a flaky test.
+  **Post-Mortem & Fix Analysis**:
+  > /m
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1941,848 +1945,644 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ae6963d` (2026-10-06)
-**Commit Message**: fix: skip EFI boot entries that cannot be decoded
+### Incident Patch 1: `fe3aeb01` (2026-10-20)
+**Commit Message**: test: boot Alpine with builtin virtual machine profiles
 
-ListBootEntries failed as soon as one Boot#### variable could not be
-decoded, so the installer could not create the Talos boot entry and the
-upgrade failed after the new UKI had already been written.
+Select host, passthrough and legacy before the guest's first start.
+Verify projected intent, rendered CPU and machine settings, and CPU
+architecture, count and basic flags inside the stock Alpine guest.
 
-AMI firmware writes a "UEFI OS" entry whose FilePathListLength is two
-bytes longer than the device path, which fails with "dangling bytes at
-the end of device path: 0000". Seen on Gigabyte B85N PHOENIX-CF
-(BIOS F6) and ASUS H81I-PLUS (BIOS 2001).
+Reuse the serial-console fixture, retain bounded failure diagnostics,
+and confirm the transient domain is removed during cleanup.
 
-Talos only needs its own entries, so an entry that cannot be decoded is
-now kept in the map with a nil value: its index stays occupied and is
-never reused for the Talos entry, and CreateBootEntry skips it, logging
-the decode error. Read errors still fail.
+Refs #14672
 
-Signed-off-by: sasha-sup <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars.go` (modified, +8/-1)
+**File**: `internal/integration/hypervisor/virtual_machine_alpine.go` (modified, +331/-4)
 ```diff
-@@ -152,7 +152,14 @@ func CreateBootEntry(rw efivarfs.ReadWriter, blkidInfo *blkid.Info, printf func(
+@@ -26,6 +26,7 @@ import (
+ 	"github.com/opencontainers/go-digest"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"libvirt.org/go/libvirtxml"
  
- 	// Find all boot entries with the Talos Linux UKI description.
- 	for idx, entry := range bootEntries {
--		if entry.Description == TalosBootEntryDescription {
-+		if entry.Err != nil {
-+			// The index stays occupied, but the entry can't be a Talos one.
-+			printf("Skipping boot entry at index %d: %v", idx, entry.Err)
-+
-+			continue
-+		}
-+
-+		if entry.Option.Description == TalosBootEntryDescription {
- 			existingTalosBootEntryIndexes = append(existingTalosBootEntryIndexes, idx)
- 		}
+ 	"github.com/siderolabs/talos/internal/integration/base"
+ 	"github.com/siderolabs/talos/pkg/machinery/api/machine"
+@@ -57,7 +58,7 @@ func (suite *LibvirtSuite) prepareAlpineGuest() (string, *hypervisorcfg.VirtualM
  	}
-```
-
-**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars_test.go` (modified, +59/-4)
-```diff
-@@ -49,6 +49,9 @@ func TestSetBootEntry(t *testing.T) {
- 	talosBootEntry, err := talosLoadOption.Marshal()
- 	require.NoError(t, err)
  
-+	// Firmware is known to write load options which can't be decoded.
-+	undecodableBootEntry := defaultBootEntry[:len(defaultBootEntry)-2]
-+
- 	blkidInfo := &blkid.Info{
- 		Name:       "loop0",
- 		SectorSize: 512,
-@@ -69,6 +72,7 @@ func TestSetBootEntry(t *testing.T) {
- 		efivarfsMock *efivarfs.Mock
+ 	ourRecord := extraDHCPRecords[len(extraDHCPRecords)-1]
+-	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20)
++	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20, "")
  
- 		expectedEntries map[int]string
-+		expectedBroken  []int
- 	}{
- 		{
- 			name:         "empty efivarfs", // both BootOrder and BootEntries are initially empty
-@@ -325,6 +329,54 @@ func TestSetBootEntry(t *testing.T) {
- 				42: "Default Boot Entry",
- 			},
- 		},
-+		{
-+			name: "undecodable entry", // the broken entry is skipped, but keeps its index
-+			efivarfsMock: &efivarfs.Mock{
-+				Variables: map[uuid.UUID]map[string]efivarfs.MockVariable{
-+					efivarfs.ScopeGlobal: {
-+						"BootOrder": {
-+							Attrs: 0,
-+							Data:  []byte{0x00, 0x00}, // BootOrder: [0]
-+						},
-+						"Boot0000": {
-+							Attrs: 0,
-+							Data:  undecodableBootEntry,
-+						},
-+					},
-+				},
-+			},
-+
-+			expectedEntries: map[int]string{
-+				1: sdboot.TalosBootEntryDescription,
-+			},
-+			expectedBroken: []int{0},
-+		},
-+		{
-+			name: "undecodable entry with existing Talos entry",
-+			efivarfsMock: &efivarfs.Mock{
-+				Variables: map[uuid.UUID]map[string]efivarfs.MockVariable{
-+					efivarfs.ScopeGlobal: {
-+						"BootOrder": {
-+							Attrs: 0,
-+							Data:  []byte{0x02, 0x00, 0x00, 0x00}, // BootOrder: [2, 0]
-+						},
-+						"Boot0000": {
-+							Attrs: 0,
-+							Data:  undecodableBootEntry,
-+						},
-+						"Boot0002": {
-+							Attrs: 0,
-+							Data:  talosBootEntry,
-+						},
-+					},
-+				},
-+			},
-+
-+			expectedEntries: map[int]string{
-+				2: sdboot.TalosBootEntryDescription,
-+			},
-+			expectedBroken: []int{0},
-+		},
- 	} {
- 		t.Run(testData.name, func(t *testing.T) {
- 			t.Parallel()
-@@ -340,13 +392,16 @@ func TestSetBootEntry(t *testing.T) {
- 			bootEntries, err := efivarfs.ListBootEntries(testData.efivarfsMock)
- 			require.NoError(t, err)
- 
--			require.Len(t, bootEntries, len(testData.expectedEntries), "number of boot entries does not match expected value")
-+			require.Len(t, bootEntries, len(testData.expectedEntries)+len(testData.expectedBroken), "number of boot entries does not match expected value")
- 
- 			for idx, desc := range testData.expectedEntries {
--				entry, err := efivarfs.GetBootEntry(testData.efivarfsMock, idx)
--				require.NoError(t, err)
-+				require.NoError(t, bootEntries[idx].Err)
-+				require.Equal(t, desc, bootEntries[idx].Option.Description, "boot entry description does not match expected value")
-+			}
- 
--				require.Equal(t, desc, entry.Description, "boot entry description does not match expected value")
-+			for _, idx := range testData.expectedBroken {
-+				require.Error(t, bootEntries[idx].Err)
-+				require.Contains(t, logger.String(), fmt.Sprintf("Skipping boot entry at index %d: ", idx))
- 			}
- 		})
- 	}
-```
-
-**File**: `internal/pkg/efivarfs/boot.go` (modified, +18/-0)
-```diff
-@@ -111,6 +111,17 @@ func (e *LoadOption) Marshal() ([]byte, error) {
- 	return data, nil
+ 	return node, doc, ourRecord.Gateway.String(), ourRecord.IP.Addr().String()
+ }
+@@ -87,9 +88,15 @@ func (suite *LibvirtSuite) requireAlpineGuestNode() (string, context.Context) {
+ 	return node, nodeCtx
  }
  
-+// isZeroPadding reports whether data consists only of zero bytes.
-+func isZeroPadding(data []byte) bool {
-+	for _, b := range data {
-+		if b != 0 {
-+			return false
-+		}
+-// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM and optional NIC.
++// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM, profile and optional NIC.
+ // A nil DHCP record needs neither a reservation nor host macvtap support.
+-func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context.Context, ourRecord *provision.DHCPRecord, memoryBytes uint64) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
++func (suite *LibvirtSuite) prepareAlpineGuestOnNode(
++	node string,
++	nodeCtx context.Context,
++	ourRecord *provision.DHCPRecord,
++	memoryBytes uint64,
++	profile string,
++) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
+ 	suite.T().Helper()
+ 
+ 	original, err := suite.ReadConfigFromNode(nodeCtx)
+@@ -169,6 +176,11 @@ func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context
+ 
+ 	doc := hypervisorcfg.NewVirtualMachineConfigV1Alpha1()
+ 	doc.MetaName = name
++
++	if profile != "" {
++		doc.ProfileConfig = &profile
 +	}
 +
-+	return true
-+}
-+
- // ucs2Terminator returns the offset of the first 00 00 null code on a 2-byte
- // boundary in data, or -1 if there is none.
- //
-@@ -169,6 +180,13 @@ func UnmarshalLoadOption(data []byte) (*LoadOption, error) {
- 	}
+ 	doc.PowerStateConfig = hypervisorhelpers.PowerStateRunning
+ 	doc.FirmwareConfig.FirmwareType = hypervisorhelpers.VirtualMachineFirmwareTypeBIOS
+ 	doc.CPUConfig.CPUCount = 1
+@@ -197,6 +209,7 @@ func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context
+ 		cleanupCtx := client.WithNode(ctx, node)
+ 		suite.RemoveMachineConfigDocumentsByName(cleanupCtx, hypervisorcfg.VirtualMachineConfigKind, name)
+ 		rtestutils.AssertNoResource[*hypervisor.VirtualMachineDomainStatus](cleanupCtx, suite.T(), suite.Client.COSI, name)
++		suite.assertNoDomainWithContext(cleanupCtx, node, name)
+ 	})
  
- 	for len(filePathData) > 0 {
-+		// Some firmware (e.g. AMI) declares a FilePathListLength which includes
-+		// a few zero bytes of padding after the End of Device Path node. Those
-+		// are not an ExtraPath, so stop parsing there.
-+		if isZeroPadding(filePathData) {
-+			break
-+		}
-+
- 		var extraPath DevicePath
- 
- 		extraPath, filePathData, err = UnmarshalDevicePath(filePathData)
-```
-
-**File**: `internal/pkg/efivarfs/boot_test.go` (modified, +37/-0)
-```diff
-@@ -76,6 +76,7 @@ var descriptions = []string{
- func FuzzDecode(f *testing.F) {
- 	f.Add(ref)
- 	f.Add(appleBootFFFF)
-+	f.Add(amiUEFIOSBootEntry)
- 
- 	for _, description := range descriptions {
- 		raw, err := (&efivarfs.LoadOption{
-@@ -122,6 +123,42 @@ func TestDecodeEmptyDescription(t *testing.T) {
- 	require.Equal(t, appleBootFFFF, reencoded)
+ 	suite.PatchMachineConfig(nodeCtx, doc)
+@@ -214,6 +227,320 @@ func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context
+ 	return doc
  }
  
-+// "UEFI OS" entry written by AMI firmware on a Gigabyte B85N PHOENIX-CF (BIOS F6).
-+// FilePathListLength is 96, but the device path ends after 94 bytes, leaving two
-+// zero bytes of padding after the end node.
-+var amiUEFIOSBootEntry = mustDecodeHex(
-+	"01000000600055004500460049002000" +
-+		"4f005300000004012a00010000000008" +
-+		"00000000000000a8410000000000da44" +
-+		"a6173c249a4c8c1f89e000db7cbc0202" +
-+		"040430005c004500460049005c004200" +
-+		"4f004f0054005c0042004f004f005400" +
-+		"5800360034002e004500460049000000" +
-+		"7fff04000000",
-+)
-+
-+func TestDecodeTrailingPadding(t *testing.T) {
-+	t.Parallel()
-+
-+	got, err := efivarfs.UnmarshalLoadOption(amiUEFIOSBootEntry)
-+	require.NoError(t, err)
-+
-+	require.Equal(t, "UEFI OS", got.Description)
-+	require.False(t, got.Inactive)
-+	require.Len(t, got.FilePath, 2) // HD, File
-+	require.IsType(t, &efivarfs.HardDrivePath{}, got.FilePath[0])
-+	require.Equal(t, efivarfs.FilePath("/EFI/BOOT/BOOTX64.EFI"), got.FilePath[1])
-+	require.Empty(t, got.ExtraPaths)
-+	require.Empty(t, got.OptionalData)
-+
-+	// Non-zero trailing bytes are still an error.
-+	garbage := append([]byte{}, amiUEFIOSBootEntry...)
-+	garbage[len(garbage)-1] = 0x01
-+
-+	_, err = efivarfs.UnmarshalLoadOption(garbage)
-+	require.ErrorContains(t, err, "failed unmarshaling ExtraPath")
-+}
-+
- func TestDescriptionRoundTrip(t *testing.T) {
- 	t.Parallel()
- 
-```
-
-**File**: `internal/pkg/efivarfs/efivarfs_test.go` (modified, +115/-0)
-```diff
-@@ -6,6 +6,7 @@ package efivarfs_test
- 
- import (
- 	"encoding/binary"
-+	"errors"
- 	"io/fs"
- 	"testing"
- 
-@@ -157,3 +158,117 @@ func TestUniqueBootOrder(t *testing.T) {
- 
- 	require.Equal(t, efivarfs.BootOrder{0, 1, 3, 2}, efivarfs.UniqueBootOrder(efivarfs.BootOrder{0, 1, 0, 1, 0, 1, 1, 3, 2, 2, 3, 3, 1}), "BootOrder with all entries duplicated should have duplicates removed preserving order of first appearance") //nolint:lll
- }
-+
-+func TestListBootEntriesBroken(t *testing.T) {
-+	t.Parallel()
-+
-+	valid, err := (&efivarfs.LoadOption{
-+		Description: "Valid",
-+		FilePath: efivarfs.DevicePath{
-+			efivarfs.FilePath("/valid.efi"),
-+		},
-+	}).Marshal()
-+	require.NoError(t, err)
-+
-+	// Truncated entry: the declared FilePath length overruns the data.
-+	undecodable := valid[:len(valid)-2]
-+
-+	errRead := errors.New("input/output error")
++// TestAlpineBuiltinProfiles boots the stock ISO on each amd64 builtin guest ABI.
++// The selected profile is present before the VM is first created and started.
++func (suite *LibvirtSuite) TestAlpineBuiltinProfiles() {
++	node, nodeCtx := suite.requireAlpineGuestNode()
 +
 +	for _, test := range []struct {
-+		name       string
-+		variables  map[string]efivarfs.MockVariable
-+		readErrors map[string]error
-+
-+		expectedBroken map[int]string // index -> error substring
-+		expectedValid  []int
-+		expectedNewIdx int
++		name     string
++		machine  string
++		cpuMode  hypervisorhelpers.VirtualMachineProfileCPUMode
++		model    string
++		fallback string
 +	}{
 +		{
-+			name: "undecodable entry",
-+			variables: map[string]efivarfs.MockVariable{
-+				"Boot0000": {Data: undecodable},
-+				"Boot0001": {Data: valid},
-+			},
-+			expectedBroken: map[int]string{0: "failed to decode boot entry Boot0000"},
-+			expectedValid:  []int{1},
-+			expectedNewIdx: 2,
++			name:    "host",
++			machine: "q35",
++			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHostModel,
 +		},
 +		{
-+			name: "unreadable entry",
-+			variables: map[string]efivarfs.MockVariable{
-+				"Boot0000": {Data: valid},
-+				"Boot0001": {Data: valid},
-+			},
-+			readErrors:     map[string]error{"Boot0000": errRead},
-+			expectedBroken: map[int]string{0: "failed to read boot entry Boot0000: input/output error"},
-+			expectedValid:  []int{1},
-+			expectedNewIdx: 2,
++			name:    "passthrough",
++			machine: "q35",
++			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHostPassthrough,
 +		},
 +		{
-+			name: "entry removed between List and Read",
-+			variables: map[string]efivarfs.MockVariable{
-+				"Boot0000": {Data: valid},
-+				"Boot0001": {Data: valid},
-+			},
-+			readErrors:     map[string]error{"Boot0000": fs.ErrNotExist},
-+			expectedValid:  []int{1},
-+			expectedNewIdx: 0,
-+		},
-+		{
-+			// Mock.List is sorted, so the uppercase (valid) spelling is read first.
-+			name: "duplicate spelling, valid first",
-+			variables: map[string]efivarfs.MockVariable{
-+				"Boot000A": {Data: valid},
-+				"Boot000a": {Data: undecodable},
-+			},
-+			expectedValid:  []int{10},
-+			expectedNewIdx: 0,
-+		},
-+		{
-+			name: "duplicate spelling, broken first",
-+			variables: map[string]efivarfs.MockVariable{
-+				"Boot000A": {Data: undecodable},
-+				"Boot000a": {Data: valid},
-+			},
-+			expectedValid:  []int{10},
-+			expectedNewIdx: 0,
++			name:     "legacy",
++			machine:  "pc-i440fx-9.2",
++			cpuMode:  hypervisorhelpers.VirtualMachineProfileCPUModeCustom,
++			model:    "kvm64",
++			fallback: "forbid",
 +		},
 +	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			t.Parallel()
++		suite.Run(test.name, func() {
++			const cpuCount = 1
 +
-+			efiRW := efivarfs.Mock{
-+				Variables: map[uuid.UUID]map[string]efivarfs.MockVariable{
-+					efivarfs.ScopeGlobal: test.variables,
-+				},
-+				ReadErrors: test.readErrors,
-+			}
++			doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, nil, 512<<20, test.name)
++			suite.Require().NotNil(doc.ProfileConfig)
++			suite.Require().Equal(test.name, *doc.ProfileConfig)
 +
-+			entries, err := efivarfs.ListBootEntries(&efiRW)
-+			require.NoError(t, err)
++			rtestutils.AssertResource(nodeCtx, suite.T(), suite.Client.COSI, doc.Name(),
++				func(spec *hypervisor.VirtualMachineSpec, asrt *assert.Assertions) {
++					asrt.Equal(test.name, spec.TypedSpec().Profile)
++					asrt.EqualValues(cpuCount, spec.TypedSpec().CPU.Count)
++				})
 +
-+			require.Len(t, entries, len(test.expectedBroken)+len(test.expectedValid))
++			rtestutils.AssertResource(nodeCtx, suite.T(), suite.Client.COSI, doc.Name(),
++				func(spec *hypervisor.VirtualMachineDomainSpec, asrt *assert.Assertions) {
++					var domain libvirtxml.Domain
++					if !asrt.NoError(domain.Unmarshal(spec.TypedSpec().DomainXML)) || !asrt.NotNil(domain.CPU) || !asrt.NotNil(domain.OS) || !asrt.NotNil(domain.OS.Type) {
++						return
++					}
 +
-+			for idx, errSubstring := range test.expectedBroken {
-+				require.Nil(t, entries[idx].Option)
-+				require.ErrorContains(t, entries[idx].Err, errSubstring)
-+			}
++					asrt.Equal("x86_64", domain.OS.Type.Arch)
++					asrt.Equal(test.machine, domain.OS.Type.Machine)
++					asrt.Equal(test.cpuMode.String(), domain.CPU.Mode)
 +
-+			for _, idx := range test.expectedValid {
-+				require.NoError(t, entries[idx].Err)
-+				require.Equal(t, "Valid", entries[idx].Option.Description)
-+			}
++					if test.model == "" {
++						asrt.Nil(domain.CPU.Model, "host CPU mode must not pin a literal model")
++					} else if asrt.NotNil(domain.CPU.Model) {
++						asrt.Equal(test.model, domain.CPU.Model.Value)
++						asrt.Equal(test.fallback, domain.CPU.Model.Fallback)
++						asrt.Empty(domain.CPU.Features)
++					}
++				})
 +
-+			// Broken entries keep their index occupied.
-+			idx, err := efivarfs.AddBootEntry(&efiRW, &efivarfs.LoadOption{
-+				Description: "New",
-+				FilePath: efivarfs.DevicePath{
-+					efivarfs.FilePath("/new.efi"),
-+				},
-+			})
-+			require.NoError(t, err)
-+			require.Equal(t, test.expectedNewIdx, idx)
-+		})
-+	}
-+}
++			suite.T().Cleanup(func() {
++				if suite.T().Failed() {
++					suite.T().Logf("profile %q VM log: %q", test.name, suite
 ```
 
-**File**: `internal/pkg/efivarfs/mock.go` (modified, +10/-2)
+**File**: `internal/integration/hypervisor/virtual_machine_console_format.go` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,9 @@ import (
- // Mock is a mock implementation of ReaderWriter interface for testing purposes.
- type Mock struct {
- 	Variables map[uuid.UUID]map[string]MockVariable
-+
-+	// ReadErrors makes Read fail with the given error for a variable name.
-+	ReadErrors map[string]error
- }
- 
- // MockVariable represents a mock EFI variable with its attributes and data.
-@@ -67,14 +70,19 @@ func (mock *Mock) Read(scope uuid.UUID, varName string) ([]byte, Attribute, erro
- 		return nil, 0, fs.ErrNotExist
- 	}
- 
-+	if err := mock.ReadErrors[varName]; err != nil {
-+		return nil, 0, err
-+	}
-+
- 	return variable.Data, variable.Attrs, nil
- }
- 
--// List lists all variable names in the given scope.
-+// List lists all variable names in the given scope sorted by their names,
-+// matching FilesystemReaderWriter.
- func (mock *Mock) List(scope uuid.UUID) ([]string, error) {
- 	if mock.Variables == nil || mock.Variables[scope] == nil {
- 		return nil, nil
- 	}
- 
--	return slices.Collect(maps.Keys(mock.Variables[scope])), nil
-+	return slices.Sorted(maps.Keys(mock.Variables[scope])), nil
- }
+@@ -28,7 +28,7 @@ import (
+ func (suite *LibvirtSuite) TestAlpineConsoleBlankDiskFormat() {
+ 	node, nodeCtx := suite.requireAlpineGuestNode()
+ 	// Reuse the ISO upload and cleanup, without a DHCP reservation or guest networking.
+-	live := suite.prepareAlpineGuestOnNode(node, nodeCtx, nil, 512<<20)
++	live := suite.prepareAlpineGuestOnNode(node, nodeCtx, nil, 512<<20, "")
+ 	live.PowerStateConfig = hypervisorhelpers.PowerStateStopped
+ 	suite.PatchMachineConfig(nodeCtx, live)
+ 	suite.assertStoppedDomain(nodeCtx, node, live.Name())
 ```
 
-**File**: `internal/pkg/efivarfs/variables.go` (modified, +41/-5)
+**File**: `internal/integration/hypervisor/virtual_machine_logs.go` (modified, +7/-0)
 ```diff
-@@ -55,9 +55,24 @@ func ReadLoaderDevicePartUUID(rw ReadWriter) (uuid.UUID, error) {
- // thus accept these here as well.
- var bootVarRegexp = regexp.MustCompile(`^Boot([0-9A-Fa-f]{4})$`)
- 
-+// BootEntry is an EFI boot entry as returned by ListBootEntries.
-+//
-+// Exactly one of Option and Err is set.
-+type BootEntry struct {
-+	// Option is the decoded load option.
-+	Option *LoadOption
-+	// Err is set if the entry exists, but could not be read or decoded
-+	// (firmware is known to write load options which do not follow the
-+	// specification). The index of such an entry is still occupied.
-+	Err error
-+}
+@@ -253,6 +253,13 @@ func (suite *LibvirtSuite) attachAlpineConsole(ctx context.Context, name string)
+ func (suite *LibvirtSuite) loginAlpineConsole(ctx context.Context, name string) *alpineConsole {
+ 	suite.T().Helper()
+ 	console := suite.attachAlpineConsole(ctx, name)
 +
- // ListBootEntries lists all EFI boot entries present in the system by their index.
--func ListBootEntries(rw ReadWriter) (map[int]*LoadOption, error) {
--	bootEntries := make(map[int]*LoadOption)
-+//
-+// Entries which exist but cannot be read or decoded are returned with Err set,
-+// so that their index is still reported as occupied.
-+func ListBootEntries(rw ReadWriter) (map[int]BootEntry, error) {
-+	bootEntries := make(map[int]BootEntry)
- 
- 	varNames, err := rw.List(ScopeGlobal)
- 	if err != nil {
-@@ -77,9 +92,16 @@ func ListBootEntries(rw ReadWriter) (map[int]*LoadOption, error) {
- 			panic(err)
- 		}
- 
--		entry, err := GetBootEntry(rw, int(idx))
--		if err != nil {
--			return nil, fmt.Errorf("failed to get boot entry %s: %w", varName, err)
-+		entry := readBootEntry(rw, varName)
-+		if errors.Is(entry.Err, fs.ErrNotExist) {
-+			// The variable was removed between List and Read.
-+			continue
++	defer func() {
++		if suite.T().Failed() {
++			suite.T().Logf("Alpine login serial transcript (bounded): %q", console.transcript)
 +		}
++	}()
 +
-+		// The same index might be present under both upper- and lowercase
-+		// spellings: never let a broken entry shadow a decoded one.
-+		if existing, ok := bootEntries[int(idx)]; ok && existing.Err == nil {
-+			continue
- 		}
- 
- 		bootEntries[int(idx)] = entry
-@@ -88,6 +110,20 @@ func ListBootEntries(rw ReadWriter) (map[int]*LoadOption, error) {
- 	return bootEntries, nil
- }
- 
-+func readBootEntry(rw ReadWriter, varName string) BootEntry {
-+	raw, _, err := rw.Read(ScopeGlobal, varName)
-+	if err != nil {
-+		return BootEntry{Err: fmt.Errorf("failed to read boot entry %s: %w", varName, err)}
-+	}
-+
-+	option, err := UnmarshalLoadOption(raw)
-+	if err != nil {
-+		return BootEntry{Err: fmt.Errorf("failed to decode boot entry %s: %w", varName, err)}
-+	}
-+
-+	return BootEntry{Option: option}
-+}
-+
- // AddBootEntry creates an new EFI boot entry variable and returns its
- // non-negative index on success.
- func AddBootEntry(rw ReadWriter, be *LoadOption) (int, error) {
+ 	suite.Require().NoError(console.send("\n"))
+ 	suite.Require().NoError(console.expectAfter(0, []byte("login:")))
+ 	start := console.mark()
 ```
 
 ---
 
-### Incident Patch 2: `943cbcdd` (2026-10-12)
-**Commit Message**: fix: preserve omitted CEL expressions when patching configs
+### Incident Patch 2: `4f5fb57e` (2026-10-15)
+**Commit Message**: fix: provide proper concurrency for health checks
 
-Skip zero-valued expressions during strategic merges
-for all custom merger types, including CEL expressions, byte sizes, etc.
+Replace the for loops with multiplex calls, fix some places
+where the order of the messages in the errors was not deterministic.
 
-Fixes #14584
+Fixes #14565
+
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `pkg/cluster/check/diagnostics.go` (modified, +17/-7)
+```diff
+@@ -17,6 +17,7 @@ import (
+ 
+ 	"github.com/siderolabs/talos/pkg/conditions"
+ 	"github.com/siderolabs/talos/pkg/machinery/client"
++	"github.com/siderolabs/talos/pkg/machinery/client/multiplex"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
+ )
+ 
+@@ -32,19 +33,28 @@ func NoDiagnostics(ctx context.Context, cluster ClusterInfo) error {
+ 
+ 	warningsByNode := map[string][]*runtime.Diagnostic{}
+ 
+-	for _, nodeIP := range nodeInternalIPs {
+-		warnings, err := safe.StateListAll[*runtime.Diagnostic](client.WithNode(ctx, nodeIP), cli.COSI)
+-		if err != nil {
+-			if client.StatusCode(err) == codes.PermissionDenied {
++	ctx, cancel := context.WithCancel(ctx)
++	defer cancel()
++
++	respCh := multiplex.Unary(
++		ctx, nodeInternalIPs,
++		func(ctx context.Context) (safe.List[*runtime.Diagnostic], error) {
++			return safe.StateListAll[*runtime.Diagnostic](ctx, cli.COSI)
++		},
++	)
++
++	for resp := range respCh {
++		if resp.Err != nil {
++			if client.StatusCode(resp.Err) == codes.PermissionDenied {
+ 				// not supported, skip
+ 				return conditions.ErrSkipAssertion
+ 			}
+ 
+-			return err
++			return fmt.Errorf("error getting diagnostics for node %q: %w", resp.Node, resp.Err)
+ 		}
+ 
+-		for res := range warnings.All() {
+-			warningsByNode[nodeIP] = append(warningsByNode[nodeIP], res)
++		for res := range resp.Payload.All() {
++			warningsByNode[resp.Node] = append(warningsByNode[resp.Node], res)
+ 		}
+ 	}
+ 
+```
+
+**File**: `pkg/cluster/check/nodes.go` (modified, +70/-28)
+```diff
+@@ -13,6 +13,7 @@ import (
+ 	"github.com/cosi-project/runtime/pkg/safe"
+ 	"github.com/dustin/go-humanize"
+ 	"github.com/hashicorp/go-multierror"
++	"github.com/siderolabs/gen/maps"
+ 	"google.golang.org/grpc/codes"
+ 
+ 	"github.com/siderolabs/talos/pkg/conditions"
+@@ -27,6 +28,8 @@ import (
+ )
+ 
+ // AllNodesMemorySizes checks that all nodes have enough memory.
++//
++//nolint:gocyclo
+ func AllNodesMemorySizes(ctx context.Context, cluster ClusterInfo) error {
+ 	cl, err := cluster.Client()
+ 	if err != nil {
+@@ -46,22 +49,25 @@ func AllNodesMemorySizes(ctx context.Context, cluster ClusterInfo) error {
+ 		return nil
+ 	}
+ 
++	ctx, cancel := context.WithCancel(ctx)
++	defer cancel()
++
+ 	respCh := multiplex.Unary(
+ 		ctx, nodesIP,
+ 		func(ctx context.Context) (*machineapi.MemoryResponse, error) {
+ 			return cl.Memory(ctx)
+ 		},
+ 	)
+ 
+-	var resultErr error
+-
+ 	nodeToType := getNodesTypes(cluster, machine.TypeInit, machine.TypeControlPlane, machine.TypeWorker)
+ 
++	errorsByNode := map[string]error{}
++
+ 	for resp := range respCh {
+ 		hostname := resp.Node
+ 
+ 		if resp.Err != nil {
+-			resultErr = multierror.Append(resultErr, fmt.Errorf("error getting memory info for node %q: %w", hostname, resp.Err))
++			errorsByNode[hostname] = fmt.Errorf("error getting memory info for node %q: %w", hostname, resp.Err)
+ 
+ 			continue
+ 		}
+@@ -73,26 +79,42 @@ func AllNodesMemorySizes(ctx context.Context, cluster ClusterInfo) error {
+ 
+ 		minimum, _, err := minimal.Memory(typ)
+ 		if err != nil {
+-			resultErr = multierror.Append(resultErr, err)
++			errorsByNode[hostname] = fmt.Errorf("error getting minimal memory for node %q: %w", hostname, err)
++
++			continue
++		}
++
++		if len(resp.Payload.GetMessages()) == 0 {
++			errorsByNode[hostname] = fmt.Errorf("no memory info returned for node %q", hostname)
+ 
+ 			continue
+ 		}
+ 
+ 		msg := resp.Payload.GetMessages()[0]
+ 
+ 		if totalMemory := msg.Meminfo.Memtotal * humanize.KiByte; totalMemory < minimum {
+-			resultErr = multierror.Append(
+-				resultErr,
+-				fmt.Errorf(
+-					"node %q does not meet memory requirements: expected at least %d MiB, actual %d MiB",
+-					hostname,
+-					minimum/humanize.MiByte,
+-					totalMemory/humanize.MiByte,
+-				),
++			errorsByNode[hostname] = fmt.Errorf(
++				"node %q does not meet memory requirements: expected at least %d MiB, actual %d MiB",
++				hostname,
++				minimum/humanize.MiByte,
++				totalMemory/humanize.MiByte,
+ 			)
+ 		}
+ 	}
+ 
++	if len(errorsByNode) == 0 {
++		return nil
++	}
++
++	errorNodes := maps.Keys(errorsByNode)
++	slices.Sort(errorNodes)
++
++	var resultErr *multierror.Error
++
++	for _, node := range errorNodes {
++		resultErr = multierror.Append(resultErr, errorsByNode[node])
++	}
++
+ 	return resultErr
+ }
+ 
+@@ -130,40 +152,60 @@ func AllNodesDiskSizes(ctx context.Context, cluster ClusterInfo) error {
+ 		return nil
+ 	}
+ 
+-	var resultErr error
++	// calculate EPHEMERAL by subtracting the size of all other partitions and GPT overhead
++	ps := quirks.New("").PartitionSizes()
++	minimalEphemeralSize := minimal.DiskSize() - (ps.UKIEFISize() + ps.StateSize() + ps.METASize() + 10*1048576 /* GPT overhead, including alignment */)
+ 
+-	slices.Sort(nodesIP)
++	ctx, cancel := context.WithCancel(ctx)
++	defer cancel()
+ 
+-	for _, nodeIP := range nodesIP {
+-		vs, err := safe.StateGetByID[*block.VolumeStatus](client.WithNode(ctx, nodeIP), cl.COSI, constants.EphemeralPartitionLabel)
+-		if err != nil {
+-			if client.StatusCode(err) == codes.PermissionDenied {
++	respCh := multiplex.Unary(
++		ctx, nodesIP,
++		func(ctx context.Context) (*block.VolumeStatus, error) {
++			return safe.StateGetByID[*block.VolumeStatus](ctx, cl.COSI, constants.EphemeralPartitionLabel)
++		},
++	)
++
++	errorsByNode := map[string]error{}
++
++	for resp := range respCh {
++		if resp.Err != nil {
++			if client.StatusCode(resp.Err) == codes.PermissionDenied {
+ 				// old Talos versions don't support this resource
+ 				return conditions.ErrSkipAssertion
+ 			}
+ 
+-			resultErr = multierror.Append(resultErr, fmt.Errorf("error getting volume status for node %q: %w", nodeIP, err))
++			errorsByNode[resp.Node] = fmt.Errorf("error getting volume status for node %q: %w", resp.Node, resp.Err)
+ 
+ 			continue
+ 		}
+ 
+-		actualSize := vs.TypedSpec().Size
+-
+-		// calculate EPHEMERAL by subtracting the size of all other partitions and GPT overhead
+-		ps := quirks.New("").PartitionSizes()
+-		minimalEphemeralSize := minimal.DiskSize() - (ps.UKIEFISize() + ps.StateSize() + ps.METASize() + 10*1048576 /* GPT overhead, including alignment */)
++		actualSize := resp.Payload.TypedSpec().Size
+ 
+ 		if actualSize < minimalEphemeralSize {
+-			resultErr = multierror.Append(resultErr, fmt.Errorf(
++			errorsByNode[resp.Node] = fmt.Errorf(
+ 				"ephemeral partition %q for node %q is too small, expected at least %s, actual %s",
+-				vs.TypedSpec().Location,
+-				nodeIP,
++				resp.Payload.TypedSpec().Location,
++				resp.Node,
+ 				humanize.IBytes(minimalEphemeralSize),
+ 				humanize.IBytes(actualSize),
+-			))
++			)
+ 		}
+ 	}
+ 
++	if len(errorsByNode) == 0
+```
+
+---
+
+### Incident Patch 3: `b80589fa` (2026-10-22)
+**Commit Message**: fix: preserve rejected edits in talosctl edit
+
+Keep the recovery copy by registering cleanup after the return that reports its path.
 
 Signed-off-by: immanuwell <[REDACTED_EMAIL]>
 Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `pkg/machinery/cel/cel.go` (modified, +1/-1)
+**File**: `cmd/talosctl/cmd/talos/edit.go` (modified, +18/-15)
 ```diff
-@@ -80,7 +80,7 @@ func parseExpressionWithOutputType(expression string, env *cel.Env, expectedType
- 	return ast, nil
- }
+@@ -10,7 +10,6 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"io"
+-	"io/fs"
+ 	"os"
+ 	"runtime"
+ 	"strings"
+@@ -40,11 +39,6 @@ var editCmdFlags struct {
  
--// Merge imlements merge.Mergeable.
-+// Merge implements the merger interface: the expression is replaced as a whole.
- func (expr *Expression) Merge(v any) error {
- 	other, ok := v.(Expression)
- 	if !ok {
+ //nolint:gocyclo
+ func editFn() func(ctx context.Context, c *client.Client, node string, mc resource.Resource) error {
+-	var (
+-		path      string
+-		lastError string
+-	)
+-
+ 	edit := editor.NewDefaultEditor([]string{
+ 		"TALOS_EDITOR",
+ 		"EDITOR",
+@@ -56,6 +50,8 @@ func editFn() func(ctx context.Context, c *client.Client, node string, mc resour
+ 			return err
+ 		}
+ 
++		var lastError string
++
+ 		edited := body
+ 
+ 		for {
+@@ -90,26 +86,33 @@ func editFn() func(ctx context.Context, c *client.Client, node string, mc resour
+ 
+ 			editedDiff := edited
+ 
++			var path string
++
+ 			edited, path, err = edit.LaunchTempFile(fmt.Sprintf("%s-%s-edit-", mc.Metadata().Type(), mc.Metadata().ID()), ".yaml", &buf)
+ 			if err != nil {
++				if path != "" {
++					os.Remove(path) //nolint:errcheck
++				}
++
+ 				return err
+ 			}
+ 
+-			defer os.Remove(path) //nolint:errcheck
+-
+ 			edited = stripEditingComment(edited)
++			stripped := yamlstrip.Comments(edited)
+ 
+ 			// If we're retrying the loop because of an error, and no change was made in the file, short-circuit
+-			if lastError != "" && bytes.Equal(yamlstrip.Comments(editedDiff), yamlstrip.Comments(edited)) {
+-				if _, err = os.Stat(path); !errors.Is(err, fs.ErrNotExist) {
+-					message := addEditingComment(lastError)
+-					message += fmt.Sprintf("A copy of your changes has been stored to %q\nEdit canceled, no valid changes were saved.\n", path)
++			// keeping the temporary file around as a recovery copy of the rejected changes.
++			if lastError != "" && bytes.Equal(yamlstrip.Comments(editedDiff), stripped) {
++				message := addEditingComment(lastError)
++				message += fmt.Sprintf("A copy of your changes has been stored to %q\nEdit canceled, no valid changes were saved.\n", path)
+ 
+-					return errors.New(message)
+-				}
++				return errors.New(message)
+ 			}
+ 
+-			if len(bytes.TrimSpace(bytes.TrimSpace(yamlstrip.Comments(edited)))) == 0 {
++			// The contents have been read already, so the temporary file is no longer needed.
++			os.Remove(path) //nolint:errcheck
++
++			if len(bytes.TrimSpace(stripped)) == 0 {
+ 				fmt.Fprintln(safeout.Stderr(), "Apply was skipped: empty file.")
+ 
+ 				break
 ```
 
-**File**: `pkg/machinery/cel/cel_test.go` (modified, +50/-0)
+**File**: `cmd/talosctl/cmd/talos/edit_test.go` (added, +154/-0)
 ```diff
-@@ -5,6 +5,7 @@
- package cel_test
- 
- import (
-+	"fmt"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -14,6 +15,7 @@ import (
- 	"github.com/siderolabs/talos/pkg/machinery/api/resource/definitions/block"
- 	"github.com/siderolabs/talos/pkg/machinery/cel"
- 	"github.com/siderolabs/talos/pkg/machinery/cel/celenv"
-+	"github.com/siderolabs/talos/pkg/machinery/config/merge"
- )
- 
- func TestCELMarshal(t *testing.T) {
-@@ -67,6 +69,54 @@ func TestCELMarshal(t *testing.T) {
- 	}
- }
- 
-+func TestCELMerge(t *testing.T) {
-+	t.Parallel()
+@@ -0,0 +1,154 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
-+	parse := func(t *testing.T, expression string, parsed bool) cel.Expression {
-+		if parsed {
-+			return cel.MustExpression(cel.ParseBooleanExpression(expression, celenv.DiskLocator()))
-+		}
++//go:build !windows
 +
-+		var expr cel.Expression
++package talos //nolint:testpackage // to test editFn
 +
-+		require.NoError(t, expr.UnmarshalText([]byte(expression)))
++import (
++	"context"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
 +
-+		return expr
++	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc"
++
++	"github.com/siderolabs/talos/pkg/machinery/api/machine"
++	"github.com/siderolabs/talos/pkg/machinery/client"
++	"github.com/siderolabs/talos/pkg/machinery/config/configloader"
++	configres "github.com/siderolabs/talos/pkg/machinery/resources/config"
++)
++
++const (
++	editTestConfig        = "version: v1alpha1\nmachine:\n  type: worker\n"
++	editTestInvalidConfig = "version: [\n"
++	editTestValidConfig   = "version: v1alpha1\nmachine:\n  type: controlplane\n"
++)
++
++type editMachineClient struct {
++	machine.MachineServiceClient
++}
++
++func (editMachineClient) ApplyConfiguration(_ context.Context, req *machine.ApplyConfigurationRequest, _ ...grpc.CallOption) (*machine.ApplyConfigurationResponse, error) {
++	_, err := configloader.NewFromBytes(req.Data)
++	if err != nil {
++		return nil, err
 +	}
 +
-+	for _, exprParsed := range []bool{false, true} {
-+		for _, otherParsed := range []bool{false, true} {
-+			t.Run(fmt.Sprintf("exprParsed=%t/otherParsed=%t", exprParsed, otherParsed), func(t *testing.T) {
-+				t.Parallel()
++	return &machine.ApplyConfigurationResponse{}, nil
++}
 +
-+				expr := parse(t, "true", exprParsed)
-+				other := parse(t, "false", otherParsed)
++// installEditor sets up a shell script as the editor for the test.
++//
++// The script runs the given shell snippet with $1 set to the file being edited and $N set to the
++// 1-based number of the editor launch, and the returned function lists the files edited so far.
++//
++// Temporary files are redirected into the test directory, so they are cleaned up with it.
++func installEditor(t *testing.T, script string) func() []string {
++	t.Helper()
 +
-+				require.NoError(t, expr.Merge(other))
++	dir := t.TempDir()
++	pathsFile := filepath.Join(dir, "paths")
++	editorPath := filepath.Join(dir, "editor.sh")
 +
-+				assert.Equal(t, "false", expr.String())
-+				require.False(t, expr.IsZero())
++	require.NoError(t, os.WriteFile(editorPath, []byte(
++		"#!/bin/sh\nprintf '%s\\n' \"$1\" >> \"$EDIT_PATHS\"\nN=$(wc -l < \"$EDIT_PATHS\" | tr -d ' ')\n"+script,
++	), 0o700))
 +
-+				result, err := expr.EvalBool(celenv.DiskLocator(), nil)
-+				require.NoError(t, err)
-+				assert.False(t, result)
-+			})
-+		}
++	t.Setenv("TMPDIR", dir)
++	t.Setenv("TALOS_EDITOR", editorPath)
++	t.Setenv("EDIT_PATHS", pathsFile)
++
++	return func() []string {
++		paths, err := os.ReadFile(pathsFile)
++		require.NoError(t, err)
++
++		return strings.Split(strings.TrimSpace(string(paths)), "\n")
 +	}
 +}
 +
-+func TestCELMergeZero(t *testing.T) {
-+	t.Parallel()
++func editTestResource(t *testing.T) *configres.MachineConfig {
++	t.Helper()
 +
-+	expr := cel.MustExpression(cel.ParseBooleanExpression("true", celenv.DiskLocator()))
++	cfg, err := configloader.NewFromBytes([]byte(editTestConfig))
++	require.NoError(t, err)
 +
-+	// zero value is skipped by the generic merge before it reaches Expression.Merge
-+	require.NoError(t, merge.Merge(&expr, &cel.Expression{}))
-+
-+	assert.Equal(t, "true", expr.String())
-+	require.False(t, expr.IsZero())
++	return configres.NewMachineConfig(cfg)
 +}
 +
- func TestCELEvalFromYAML(t *testing.T) {
- 	t.Parallel()
- 
-```
-
-**File**: `pkg/machinery/config/configpatcher/apply_test.go` (modified, +63/-0)
-```diff
-@@ -23,6 +23,69 @@ var config []byte
- //go:embed testdata/apply/expected.yaml
- var expected string
- 
-+//go:embed testdata/patchpreserve/base.yaml
-+var preserveBase []byte
++func TestEditPreservesRejectedChanges(t *testing.T) {
++	editedPaths := installEditor(t, `if [ "$N" -eq 1 ]; then printf '`+editTestInvalidConfig+`' > "$1"; fi`)
 +
-+//go:embed testdata/patchpreserve/omitted_expected.yaml
-+var preserveOmittedExpected string
++	err := editFn()(context.Background(), &client.Client{MachineClient: editMachineClient{}}, "127.0.0.1", editTestResource(t))
++	require.ErrorContains(t, err, "Edit canceled, no valid changes were saved.")
 +
-+//go:embed testdata/patchpreserve/explicit_expected.yaml
-+var preserveExplicitExpected string
++	files := editedPaths()
++	require.Len(t, files, 2)
 +
-+// TestApplyPreservesOmitted is a regression test for https://github.com/siderolabs/talos/issues/14584:
-+// fields with custom merge (CEL expressions, sizes) omitted in the patch should keep the base value,
-+// while explicit values (including `false`) should still replace it.
-+func TestApplyPreservesOmitted(t *testing.T) {
-+	for _, tc := range []struct {
-+		name     string
-+		patch    string
-+		expected string
++	require.Contains(t, err.Error(), files[1])
++	data, readErr := os.ReadFile(files[1])
++	require.NoError(t, readErr, "the recovery copy named in the error must remain available")
++	require.Contains(t, string(data), editTestInvalidConfig)
++	require.NoFileExists(t, files[0], "superseded temporary files should still be removed")
++}
++
++func TestEditRetriesRejectedChanges(t *testing.T) {
++	editedPaths := installEditor(t, `if [ "$N" -eq 1 ]; then printf '`+editTestInvalidConfig+`' > "$1"; else printf '`+editTestValidConfig+`' > "$1"; fi`)
++
++	require.NoError(t, editFn()(context.Background(), &client.Client{MachineClient: editMachineClient{}}, "127.0.0.1", editTestResource(t)))
++
++	files := editedPaths()
++	require.Len(t, files, 2)
++
++	for _, file := range files {
++		require.NoFileExists(t, file)
++	}
++}
++
++func TestEditResetsErrorBetweenNodes(t *testing.T) {
++	editedPaths := installEditor(t, `if [ "$N" -le 2 ]; then printf '`+editTestInvalidConfig+`' > "$1"; fi`)
++
++	fn := editFn()
++	c := &client.Client{MachineClient: editMachineClient{}}
++
++	err := fn(context.Background(), c, "127.0.0.1", editTestResource(t))
++	require.ErrorContains(t, err, "Edit canceled, no valid changes were saved.")
++
++	// the next node leaves the configuration unchanged, so the previous node's error must not cancel the edit
++	require.NoError(t, fn(context.Background(), c, "127.0.0.2", editTestResource(t)))
++
++	files := editedPaths()
++	require.Len(t, files, 3)
++	require.NoFileExists(t, files[2])
++}
++
++func TestEditRemovesTemporaryFiles(t *testing.T) {
++	for _, test := range []struct {
++		name        string
++		edit        string
++		expectedErr string
 +	}{
-+		{
-+			name:     "Omitted",
-+			patch:    "@testdata/patchpreserve/omitted.yaml",
-+			expected: preserveOmittedExpected,
-+		},
-+		{
-+			name:     "Explicit",
-+			patch:    "@testdata/patchpreserve/explicit.yaml",
-+			expected: preserveExplicitExpected,
-+		},
++		{name: "unchanged"},
++		{name: "accepted", edit: `printf '\n' >> "$1"`},
++		{name: "empty", edit: `: > "$1"`},
++		{name: "editor failed", edit: `exit 1`, expectedErr: "there was a problem with the editor"},
 +	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			patches, err := configpatcher.LoadPatches([]string{tc.patch})
-+			require.NoError(t, err)
++		t.Run(test.name, func(t *testing.T) {
++			editedPaths := installEditor(t, test.edit)
 +
-+			cfg, err := configloader.NewFromBytes(preserveBase)
-+			require.NoError(t, err)
-+
-+			for _, tt := range []struct {
-+				name  string
-+				input configpatcher.Input
-+			}{
-+				{
-+					name:  "WithConfig",
-+					input: configpatcher.WithConfig(cfg),
-+				},
-+				{
-+					name:  "WithBytes",
-+					input: configpatcher.WithBytes(preserveBase),
-+				},
-+			} {
-+				t.Run(tt.name, func(t *testing.T) {
-+					out, err := configpatcher.Apply(tt.input, patches)
-+					require.NoError(t, err)
-+
-+					data, err := out.Bytes()
-+					require.NoError(t, err)
-+
-+					assert.Equal(t, tc.expected, string(data))
-+				})
-+			}
-+		})
-+	}
-+}
-+
- //go:embed testdata/multidoc/config.yaml
- var configMultidoc []byte
- 
-```
-
-**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/base.yaml` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+apiVersion: v1alpha1
-+kind: UnattendedInstallConfig
-+installer:
-+    image: ghcr.io/siderolabs/installer:v1.14.1
-+provisioning:
-+    diskSelector:
-+        match: disk.dev_path == "/dev/nvme0n1"
-+    wipe: false
-+---
-+apiVersion: v1alpha1
-+kind: VolumeConfig
-+name: EPHEMERAL
-+provisioning:
-+    diskSelector:
-+        match: disk.transport == "nvme"
-+    grow: true
-+    minSize: 10GiB
-+    maxSize: 50%
-+---
-+apiVersion: v1alpha1
-+kind: UserVolumeConfig
-+name: data
-+provisioning:
-+    diskSelector:
-+        match: disk.size > 1u
-+    grow: true
-+    minSize: 1GiB
-+---
-+apiVersion: v1alpha1
-+kind: OOMConfig
-+triggerExpression: time_since_trigger > duration("5s")
-+sampleInterval: 100ms
-+---
-+apiVersion: v1alpha1
-+kind: LinkAliasConfig
-+name: net0
-+selector:
-+    match: mac(link.permanent_addr) == "00:1a:2b:3c:4d:5e"
-```
-
-**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/explicit.yaml` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+apiVersion: v1alpha1
-+kind: UnattendedInstallConfig
-+provisioning:
-+    diskSelector:
-+        match: disk.transport == "nvme"
-+---
-+apiVersion: v1alpha1
-+kind: VolumeConfig
-+name: EPHEMERAL
-+provisioning:
-+    minSize: 20GiB
-+    maxSize: 100GiB
-+---
-+apiVersion: v1alpha1
-+kind: UserVolumeConfig
-+name: data
-+provisioning:
-+    diskSelector:
-+        match: "false"
-+    grow: false
-+---
-+apiVersion: v1alpha1
-+kind: OOMConfig
-+triggerExpression: "false"
-+---
-+apiVersion: v1alpha1
-+kind: LinkAliasConfig
-+name: net0
-+selector:
-+    match: link.name == "eth0"
-```
-
-**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/explicit_expected.yaml` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+apiVersion: v1alpha1
-+kind: UnattendedInstallConfig
-+installer:
-+    image: ghcr.io/siderolabs/installer:v1.14.1
-+provisioning:
-+    diskSelector:
-+        match: disk.transport == "nvme"
-+    wipe: false
-+---
-+apiVersion: v1alpha1
-+kind: VolumeConfig
-+name: EPHEMERAL
-+provisioning:
-+    diskSelector:
-+        match: disk.transport == "nvme"
-+    grow: true
-+    minSize: 20GiB
-+    maxSize: 100GiB
-+---
-+apiVersion: v1alpha1
-+kind: UserVolumeConfig
-+name: data
-+provisioning:
-+    diskSelector:
-+        match: "false"
-+    grow: false
-+    minSize: 1GiB
-+---
-+apiVersion: v1alpha1
-+kind: OOMConfig
-+triggerExpression: "false"
-+sampleInterval: 100ms
-+---
-+apiVersion: v1alpha1
-+kind: LinkAliasConfig
-+name: net0
-+selector:
-+    match: link.name == "eth0"
-```
-
-**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/omitted.yaml` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+apiVersion: v1alpha1
-+kind: UnattendedInstallConfig
-+installer:
-+    image: ghcr.io/siderolabs/installer:v1.14.2
-+---
-+apiVersion: v1alpha1
-+kind: VolumeConfig
-+name: EPHEMERAL
-+mount:
-+    secure: true
-+---
-+apiVersion: v1alpha1
-+kind: UserVolumeConfig
-+name: data
-+---
-+apiVersion: v1alpha1
-+kind: OOMConfig
-+sampleInterval: 200ms
-+---
-+apiVersion: v1alpha1
-+kind: LinkAliasConfig
-+name: net0
-```
-
-**File**: `pkg/machinery/config/configpatcher/testdata/patchpreserve/omitted_expected.yaml` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+apiVersion: v1alpha1
-+kind: UnattendedInstallConfig
-+installer:
-+    image: ghcr.io/siderolabs/installer:v1.14.2
-+provisioning:
-+    diskSelector:
-+        match: disk.dev_path == "/dev/nvme0n1"
-+    wipe: false
-+---
-+apiVersion: v1alpha1
-+kind: VolumeConfig
-+name: EPHEMERAL
-+provisioning:
-+    diskSelector:
-+        match: disk.transport == "nvme"
-+    grow: true
-+    minSize: 10GiB
-+    maxSize: 50%
-+mount:
-+    secure: true
-+---
-+apiVersion: v1alpha1
-+kind: UserVolumeConfig
-+name: data
-+provisioning:
-+    diskSelector:
-+        match: disk.size > 1u
-+    grow: true
-+    minSize: 1GiB
-+---
-+apiVersion: v1alpha1
-+kind: OOMConfig
-+triggerExpression: time_since_trigger > duration("5s")
-+sampleInterval: 200ms
-+---
-+apiVersion: v1alpha1
-+kind: LinkAliasConfig
-+name: net0
-+selector:
-+    match: mac(link.permanent_addr) == "00:1a:2b:3c:4d:5e"
++			err := editFn()(context.Background(), &client.Client{MachineClient: editMachineClient{}}, "
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14662** (2026-10-19): chore: make vulncheck happy (@Orzelius)
-- **PR #14661** (2026-10-19): feat: update Linux to 6.18.57 (@smira)
-- **PR #14660** (2026-10-19): fix: high cpu usage by the bridge keepalive dummy qemu vm (@Orzelius)
-- **PR #14658** (closed): Issues 14650 (@vitaly-zverev)
-- **PR #14653** (2026-10-19): fix: route pod CIDRs matching the KubeSpan ULA purpose byte (@eleboucher)
-- **PR #14648** (2026-10-20): fix: wait for inactive MD arrays before volume discovery (@shanduur)
+- **PR #14711** (2026-10-22): chore: mount git common dir into dockerized commands (@smira)
+- **PR #14709** (2026-10-22): feat: implement swap resource limits for containers (@smira)
+- **PR #14703** (2026-10-22): fix: preserve rejected edits in talosctl edit (@immanuwell)
+- **PR #14699** (2026-10-22): test: pin Cilium version explicitly (@smira)
+- **PR #14698** (2026-10-22): feat: bring in kTLS changes (@smira)
+- **PR #14697** (2026-10-21): test: add a test matrix for NVIDIA 'new feature' flavor (@smira)
 
 ---
 
@@ -2802,35 +2602,66 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skip EFI boot entries that cannot be decoded
+## X. test: boot Alpine with builtin virtual machine profiles
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/integration/hypervisor/virtual_machine_alpine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ae6963d`: skip EFI boot entries that cannot be decoded. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe3aeb01`: test: boot Alpine with builtin virtual machine profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/efivars.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/integration/hypervisor/virtual_machine_alpine.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if entry.Err != nil {
-			// The index stays occupied, but the entry can't be a Talos one.
-			printf("Skipping boot entry at index %d: %v", idx, entry.Err)
+	"libvirt.org/go/libvirtxml"
+	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20, "")
+// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM, profile and optional NIC.
+func (suite *LibvirtSuite) prepareAlpineGuestOnNode(
+	node string,
+	nodeCtx context.Context,
+	ourRecord *provision.DHCPRecord,
+	memoryBytes uint64,
+	profile string,
+) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
 
-			continue
-		}
+	if profile != "" {
+		doc.ProfileConfig = &profile
+	}
 
-		if entry.Option.Description == TalosBootEntryDescription {
+		suite.assertNoDomainWithContext(cleanupCtx, node, name)
+// TestAlpineBuiltinProfiles boots the stock ISO on each amd64 builtin guest ABI.
+// The selected profile is present before the VM is first created and started.
+func (suite *LibvirtSuite) TestAlpineBuiltinProfiles() {
+	node, nodeCtx := suite.requireAlpineGuestNode()
+
+	for _, test := range []struct {
+		name     string
+		machine  string
+		cpuMode  hypervisorhelpers.VirtualMachineProfileCPUMode
+		model    string
+		fallback string
+	}{
+		{
+			name:    "host",
+			machine: "q35",
+			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHostModel,
+		},
+		{
+			name:    "passthrough",
+			machine: "q35",
+			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if entry.Description == TalosBootEntryDescription {
+	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20)
+// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM and optional NIC.
+func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context.Context, ourRecord *provision.DHCPRecord, memoryBytes uint64) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ae6963d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe3aeb01` are properly handled with clean fallback behavior.

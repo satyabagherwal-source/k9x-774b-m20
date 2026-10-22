@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source**: github ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
-> **Source Version**: `2404acee`  
+> **Source Version**: `319d39c2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:26:09.923Z  
+> **Timestamp**: 2026-10-22T18:04:29.168Z  
 > **Learning ID**: `learn-github-ducaale-xh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:26:09.526Z  
+> **Harvest Timestamp**: 2026-10-22T18:04:27.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Friendly and fast tool for sending HTTP requests
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8134 stars
+- **Stars / Engagement**: 8141 stars
 
 ---
 
@@ -2448,380 +2448,72 @@ pub(crate) fn create_hyperlink(text: &str, url: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d38979da` (2026-05-01)
-**Commit Message**: fix clippy + failing test
+### Incident Patch 1: `319d39c2` (2026-10-21)
+**Commit Message**: bump version to v0.26.3
 
-**File**: `src/generation.rs` (modified, +5/-5)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -106,12 +106,12 @@ fn generate_markdown(app: &mut clap::Command) {
-             header.pop();
-             let value_name = &opt.get_value_names().unwrap();
-             if opt.get_long().is_some() {
--                header.push_str("=");
-+                header.push('=');
-             } else {
--                header.push_str(" ");
-+                header.push(' ');
-             }
-             header.push_str(&value_name.join(" "));
--            header.push_str("`")
-+            header.push('`')
-         }
+@@ -1,4 +1,4 @@
+-## Unreleased
++## [0.26.3] - 2026-10-21
+ ### Security fixes
+ - Upgrade rustls-webpki to v0.103.16 and webpki-root-certs to v1.0.10
  
-         let mut body = String::new();
-@@ -407,8 +407,8 @@ mod tests {
-         let parsed = parse_help(indoc! {"
-             String specifying what the output should contain
+```
+
+**File**: `Cargo.lock` (modified, +1/-1)
+```diff
+@@ -3499,7 +3499,7 @@ checksum = "3ad82d2a33cdc9674dc7465672f271e096168fcdbe0f799d9e6db8c5892679dc"
  
--                H request headers
--                B request body
-+                'H' request headers
-+                'B' request body
+ [[package]]
+ name = "xh"
+-version = "0.26.2"
++version = "0.26.3"
+ dependencies = [
+  "anyhow",
+  "assert_cmd",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "xh"
+-version = "0.26.2"
++version = "0.26.3"
+ authors = ["ducaale <sharaf.13@hotmail.com>"]
+ edition = "2024"
+ rust-version = "1.85.0"
+```
+
+**File**: `doc/xh.1` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-.TH XH 1 2026-07-26 0.26.2 "User Commands"
++.TH XH 1 2026-10-21 0.26.3 "User Commands"
  
-             Example: --print=Hb
-         "});
+ .SH NAME
+ xh \- Friendly and fast tool for sending HTTP requests
 ```
 
 ---
 
-### Incident Patch 2: `a005bcb3` (2026-07-17)
-**Commit Message**: Merge pull request #470 from snowyukitty/fix-concatenated-zstd-frames
+### Incident Patch 2: `849fc89d` (2026-10-21)
+**Commit Message**: Update CHANGELOG.md
 
-Fix truncated concatenated zstd response bodies
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -1,6 +1,7 @@
- ## Unreleased
+@@ -1,3 +1,10 @@
++## Unreleased
++### Security fixes
++- Upgrade rustls-webpki to v0.103.16 and webpki-root-certs to v1.0.10
++
++### Features
++- Detect and error on incomplete downloads, see #487 (@AkshayDhola)
++
+ ## [0.26.2] - 2026-07-26
  ### Bug fixes
  - Fix `--auth` ignoring credentials when the username is empty (e.g. `-a :password`), see #467 (@upuddu)
-+- Decode all frames in concatenated zstd response bodies, see #470 (@snowyukitty)
- 
- ## [0.26.1] - 2026-06-19
- ### Features
-```
-
-**File**: `src/decoder.rs` (modified, +146/-27)
-```diff
-@@ -1,12 +1,14 @@
- use std::cell::Cell;
--use std::io::{self, Read};
-+use std::io::{self, BufRead, BufReader, Read};
- use std::rc::Rc;
- use std::str::FromStr;
- 
- use brotli::Decompressor as BrotliDecoder;
- use flate2::read::{GzDecoder, ZlibDecoder};
- use reqwest::header::{CONTENT_ENCODING, CONTENT_LENGTH, HeaderMap, TRANSFER_ENCODING};
--use ruzstd::{FrameDecoder, StreamingDecoder as ZstdDecoder};
-+use ruzstd::frame::ReadFrameHeaderError;
-+use ruzstd::frame_decoder::FrameDecoderError;
-+use ruzstd::{BlockDecodingStrategy, FrameDecoder};
- 
- #[derive(Debug, Clone, Copy)]
- pub enum CompressionType {
-@@ -137,11 +139,9 @@ impl<R: Read> Read for InnerReader<R> {
-                 // Store the real error and return a placeholder.
-                 // The placeholder is intercepted and replaced by the real error
-                 // before leaving this module.
--                // We store the whole error instead of setting a flag because of zstd:
--                // - ZstdDecoder::new() fails with a custom error type and it's hard
--                //   to extract the underlying io::Error
--                // - ZstdDecoder::read() (unlike the other decoders) wraps custom errors
--                //   around the underlying io::Error
-+                // We store the whole error instead of setting a flag because ruzstd
-+                // wraps I/O errors in custom errors during frame initialization and
-+                // decoding, making the original io::Error hard to recover.
-                 let msg = err.to_string();
-                 let kind = err.kind();
-                 self.status.read_error.set(Some(err));
-@@ -200,37 +200,93 @@ pub fn decompress(
-             CompressionType::Deflate => Box::new(ZlibDecoder::new(reader)),
-             // 32K is the default buffer size for gzip and deflate
-             CompressionType::Brotli => Box::new(BrotliDecoder::new(reader, 32 * 1024)),
--            CompressionType::Zstd => Box::new(LazyZstdDecoder::Uninit(Some(reader))),
-+            CompressionType::Zstd => Box::new(LazyZstdDecoder::new(reader)),
-         },
-         status: Some(status),
-     }
- }
- 
--/// [ZstdDecoder] reads from its input during construction.
-+/// A lazy decoder for a stream containing any number of zstd frames.
- ///
--/// We need to delay construction until [Read] so read errors stay read errors.
--#[allow(clippy::large_enum_variant)]
--enum LazyZstdDecoder<R: Read> {
--    Uninit(Option<R>),
--    Init(ZstdDecoder<R, FrameDecoder>),
-+/// ruzstd's high-level streaming decoder reads during construction and stops
-+/// after one frame. Using [FrameDecoder] directly lets us defer all reads until
-+/// [Read] and continue through concatenated and skippable frames.
-+struct LazyZstdDecoder<R: Read> {
-+    reader: BufReader<R>,
-+    decoder: FrameDecoder,
-+    state: ZstdDecoderState,
-+}
-+
-+#[derive(Clone, Copy)]
-+enum ZstdDecoderState {
-+    NeedFrame,
-+    Decoding,
-+    Finished,
-+}
-+
-+impl<R: Read> LazyZstdDecoder<R> {
-+    fn new(reader: R) -> Self {
-+        Self {
-+            reader: BufReader::new(reader),
-+            decoder: FrameDecoder::new(),
-+            state: ZstdDecoderState::NeedFrame,
-+        }
-+    }
- }
- 
- impl<R: Read> Read for LazyZstdDecoder<R> {
-     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
--        match self {
--            LazyZstdDecoder::Uninit(reader) => match reader.take() {
--                Some(reader) => match ZstdDecoder::new(reader) {
--                    Ok(decoder) => {
--                        *self = LazyZstdDecoder::Init(decoder);
--                        self.read(buf)
-+        if buf.is_empty() {
-+            return Ok(0);
-+        }
-+
-+        loop {
-+            match self.state {
-+                ZstdDecoderState::NeedFrame => {
-+                    if self.reader.fill_buf()?.is_empty() {
-+                        self.state = ZstdDecoderState::Finished;
-+                        return Ok(0);
-+                    }
-+
-+                    match self.decoder.reset(&mut self.reader) {
-+                        Ok(()) => self.state = ZstdDecoderState::Decoding,
-+                        Err(FrameDecoderError::ReadFrameHeaderError(
-+                            ReadFrameHeaderError::SkipFrame { length, .. },
-+                        )) => {
-+                            let length = u64::from(length);
-+                            let copied = {
-+                                let mut payload = self.reader.by_ref().take(length);
-+                                io::copy(&mut payload, &mut io::sink())?
-+                            };
-+                            if copied != length {
-+                                return Err(io::Error::new(
-+                                    io::ErrorKind::UnexpectedEof,
-+                                    "truncated zstd skippable frame",
-+                                ));
-+                            }
-+                        }
-+                        Err(err) => return Err(io::Error::other(err)),
-+                    }
-+  
-```
-
-**File**: `tests/cli.rs` (modified, +27/-0)
-```diff
-@@ -3582,6 +3582,33 @@ fn zstd() {
-         "#});
- }
- 
-+#[test]
-+fn zstd_concatenated_frames() {
-+    let server = server::http(|_req| async move {
-+        let frame = fs::read("./tests/fixtures/responses/hello_world.zst").unwrap();
-+        let compressed_bytes = [frame.as_slice(), frame.as_slice()].concat();
-+        hyper::Response::builder()
-+            .header("date", "N/A")
-+            .header("content-encoding", "zstd")
-+            .body(compressed_bytes.into())
-+            .unwrap()
-+    });
-+
-+    get_command()
-+        .arg(server.base_url())
-+        .assert()
-+        .stdout(indoc! {r#"
-+            HTTP/1.1 200 OK
-+            Content-Encoding: zstd
-+            Content-Length: 50
-+            Date: N/A
-+
-+            Hello world
-+            Hello world
-+
-+        "#});
-+}
-+
- #[test]
- fn empty_response_with_content_encoding() {
-     let server = server::http(|_req| async move {
-```
-
----
-
-### Incident Patch 3: `4ad146e3` (2026-07-15)
-**Commit Message**: Fix truncated concatenated zstd response bodies
-
-**File**: `src/decoder.rs` (modified, +146/-27)
-```diff
-@@ -1,12 +1,14 @@
- use std::cell::Cell;
--use std::io::{self, Read};
-+use std::io::{self, BufRead, BufReader, Read};
- use std::rc::Rc;
- use std::str::FromStr;
- 
- use brotli::Decompressor as BrotliDecoder;
- use flate2::read::{GzDecoder, ZlibDecoder};
- use reqwest::header::{CONTENT_ENCODING, CONTENT_LENGTH, HeaderMap, TRANSFER_ENCODING};
--use ruzstd::{FrameDecoder, StreamingDecoder as ZstdDecoder};
-+use ruzstd::frame::ReadFrameHeaderError;
-+use ruzstd::frame_decoder::FrameDecoderError;
-+use ruzstd::{BlockDecodingStrategy, FrameDecoder};
- 
- #[derive(Debug, Clone, Copy)]
- pub enum CompressionType {
-@@ -137,11 +139,9 @@ impl<R: Read> Read for InnerReader<R> {
-                 // Store the real error and return a placeholder.
-                 // The placeholder is intercepted and replaced by the real error
-                 // before leaving this module.
--                // We store the whole error instead of setting a flag because of zstd:
--                // - ZstdDecoder::new() fails with a custom error type and it's hard
--                //   to extract the underlying io::Error
--                // - ZstdDecoder::read() (unlike the other decoders) wraps custom errors
--                //   around the underlying io::Error
-+                // We store the whole error instead of setting a flag because ruzstd
-+                // wraps I/O errors in custom errors during frame initialization and
-+                // decoding, making the original io::Error hard to recover.
-                 let msg = err.to_string();
-                 let kind = err.kind();
-                 self.status.read_error.set(Some(err));
-@@ -200,37 +200,93 @@ pub fn decompress(
-             CompressionType::Deflate => Box::new(ZlibDecoder::new(reader)),
-             // 32K is the default buffer size for gzip and deflate
-             CompressionType::Brotli => Box::new(BrotliDecoder::new(reader, 32 * 1024)),
--            CompressionType::Zstd => Box::new(LazyZstdDecoder::Uninit(Some(reader))),
-+            CompressionType::Zstd => Box::new(LazyZstdDecoder::new(reader)),
-         },
-         status: Some(status),
-     }
- }
- 
--/// [ZstdDecoder] reads from its input during construction.
-+/// A lazy decoder for a stream containing any number of zstd frames.
- ///
--/// We need to delay construction until [Read] so read errors stay read errors.
--#[allow(clippy::large_enum_variant)]
--enum LazyZstdDecoder<R: Read> {
--    Uninit(Option<R>),
--    Init(ZstdDecoder<R, FrameDecoder>),
-+/// ruzstd's high-level streaming decoder reads during construction and stops
-+/// after one frame. Using [FrameDecoder] directly lets us defer all reads until
-+/// [Read] and continue through concatenated and skippable frames.
-+struct LazyZstdDecoder<R: Read> {
-+    reader: BufReader<R>,
-+    decoder: FrameDecoder,
-+    state: ZstdDecoderState,
-+}
-+
-+#[derive(Clone, Copy)]
-+enum ZstdDecoderState {
-+    NeedFrame,
-+    Decoding,
-+    Finished,
-+}
-+
-+impl<R: Read> LazyZstdDecoder<R> {
-+    fn new(reader: R) -> Self {
-+        Self {
-+            reader: BufReader::new(reader),
-+            decoder: FrameDecoder::new(),
-+            state: ZstdDecoderState::NeedFrame,
-+        }
-+    }
- }
- 
- impl<R: Read> Read for LazyZstdDecoder<R> {
-     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
--        match self {
--            LazyZstdDecoder::Uninit(reader) => match reader.take() {
--                Some(reader) => match ZstdDecoder::new(reader) {
--                    Ok(decoder) => {
--                        *self = LazyZstdDecoder::Init(decoder);
--                        self.read(buf)
-+        if buf.is_empty() {
-+            return Ok(0);
-+        }
-+
-+        loop {
-+            match self.state {
-+                ZstdDecoderState::NeedFrame => {
-+                    if self.reader.fill_buf()?.is_empty() {
-+                        self.state = ZstdDecoderState::Finished;
-+                        return Ok(0);
-+                    }
-+
-+                    match self.decoder.reset(&mut self.reader) {
-+                        Ok(()) => self.state = ZstdDecoderState::Decoding,
-+                        Err(FrameDecoderError::ReadFrameHeaderError(
-+                            ReadFrameHeaderError::SkipFrame { length, .. },
-+                        )) => {
-+                            let length = u64::from(length);
-+                            let copied = {
-+                                let mut payload = self.reader.by_ref().take(length);
-+                                io::copy(&mut payload, &mut io::sink())?
-+                            };
-+                            if copied != length {
-+                                return Err(io::Error::new(
-+                                    io::ErrorKind::UnexpectedEof,
-+                                    "truncated zstd skippable frame",
-+                                ));
-+                            }
-+                        }
-+                        Err(err) => return Err(io::Error::other(err)),
-+                    }
-+  
-```
-
-**File**: `tests/cli.rs` (modified, +27/-0)
-```diff
-@@ -3582,6 +3582,33 @@ fn zstd() {
-         "#});
- }
- 
-+#[test]
-+fn zstd_concatenated_frames() {
-+    let server = server::http(|_req| async move {
-+        let frame = fs::read("./tests/fixtures/responses/hello_world.zst").unwrap();
-+        let compressed_bytes = [frame.as_slice(), frame.as_slice()].concat();
-+        hyper::Response::builder()
-+            .header("date", "N/A")
-+            .header("content-encoding", "zstd")
-+            .body(compressed_bytes.into())
-+            .unwrap()
-+    });
-+
-+    get_command()
-+        .arg(server.base_url())
-+        .assert()
-+        .stdout(indoc! {r#"
-+            HTTP/1.1 200 OK
-+            Content-Encoding: zstd
-+            Content-Length: 50
-+            Date: N/A
-+
-+            Hello world
-+            Hello world
-+
-+        "#});
-+}
-+
- #[test]
- fn empty_response_with_content_encoding() {
-     let server = server::http(|_req| async move {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2850,36 +2542,28 @@ Fix truncated concatenated zstd response bodies
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clippy + failing test
+## X. bump version to v0.26.3
 
 **RULE**:
-When implementing operations in `src/generation.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d38979da`: clippy + failing test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `319d39c2`: bump version to v0.26.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/generation.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                header.push('=');
-                header.push(' ');
-            header.push('`')
-                'H' request headers
-                'B' request body
+## [0.26.3] - 2026-10-21
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                header.push_str("=");
-                header.push_str(" ");
-            header.push_str("`")
-                H request headers
-                B request body
+## Unreleased
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d38979da` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `319d39c2` are properly handled with clean fallback behavior.

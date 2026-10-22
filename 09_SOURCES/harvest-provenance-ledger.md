@@ -4379,3 +4379,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-22T17:58:21.318Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `7b22c59c` | Multi-dimensional audit evidence | 2026-10-22T17:58:22.210Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `2211c107` | Multi-dimensional audit evidence | 2026-10-22T17:58:25.585Z |
+| `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `319d39c2` | Multi-dimensional audit evidence | 2026-10-22T18:04:29.332Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `7c40a452` | Multi-dimensional audit evidence | 2026-10-22T18:04:38.060Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `6ca67f43` | Multi-dimensional audit evidence | 2026-10-22T18:04:42.129Z |
