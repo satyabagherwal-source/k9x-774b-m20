@@ -1140,8 +1140,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T05:34:20.904Z",
-    "lastVerified": "2026-10-21T05:34:20.904Z",
+    "lastChecked": "2026-10-22T15:22:20.851Z",
+    "lastVerified": "2026-10-22T15:22:20.851Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -9487,8 +9487,8 @@
     "officialUrl": "https://github.com/cockroachdb/cockroach",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T20:20:23.048Z",
-    "lastVerified": "2026-10-20T20:20:23.048Z",
+    "lastChecked": "2026-10-22T15:22:23.974Z",
+    "lastVerified": "2026-10-22T15:22:23.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cockroachdb-cockroach",
@@ -14332,8 +14332,8 @@
     "officialUrl": "https://github.com/atanunq/viu",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T18:20:33.062Z",
-    "lastVerified": "2026-10-20T18:20:33.062Z",
+    "lastChecked": "2026-10-22T15:22:10.698Z",
+    "lastVerified": "2026-10-22T15:22:10.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-atanunq-viu",
@@ -14452,12 +14452,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "linkerd-linkerd2": {
-    "name": "linkerd/linkerd2",
+    "name": "linkerd2",
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T21:15:03.433Z",
-    "lastVerified": "2026-10-20T21:15:03.433Z",
+    "lastChecked": "2026-10-22T15:22:18.488Z",
+    "lastVerified": "2026-10-22T15:22:18.488Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
@@ -14466,7 +14466,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5bb8ea84"
   },
   "manavarya09-design-extract": {
     "name": "Manavarya09/design-extract",
@@ -18534,8 +18535,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-21T18:52:38.977Z",
-    "lastVerified": "2026-10-21T18:52:38.977Z",
+    "lastChecked": "2026-10-22T15:22:25.696Z",
+    "lastVerified": "2026-10-22T15:22:25.696Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -19443,12 +19444,12 @@
     "revisionIdentifier": "494a3635"
   },
   "lessica-trollfools": {
-    "name": "Lessica/TrollFools",
+    "name": "TrollFools",
     "officialUrl": "https://github.com/Lessica/TrollFools",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-19T21:11:33.616Z",
-    "lastVerified": "2026-10-19T21:11:33.616Z",
+    "lastChecked": "2026-10-22T15:22:15.692Z",
+    "lastVerified": "2026-10-22T15:22:15.692Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lessica-trollfools",
@@ -19457,7 +19458,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5c87b85"
   },
   "krzysztofzablocki-inject": {
     "name": "krzysztofzablocki/Inject",
@@ -25721,9 +25723,9 @@
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",
     "officialUrl": "https://github.com/samvelik/sitemap-checker",
-    "lastChecked": "2026-10-19T19:15:55.328Z",
+    "lastChecked": "2026-10-22T15:22:13.138Z",
     "revisionIdentifier": "main",
-    "lastVerified": "2026-10-19T19:15:55.328Z"
+    "lastVerified": "2026-10-22T15:22:13.138Z"
   },
   "crawlcove-robots-txt-tester": {
     "name": "crawlcove-robots-txt-tester",
@@ -27379,8 +27381,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-21T19:12:28.053Z",
-    "lastVerified": "2026-10-21T19:12:28.053Z",
+    "lastChecked": "2026-10-22T15:22:25.716Z",
+    "lastVerified": "2026-10-22T15:22:25.716Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -28049,6 +28051,23 @@
     "contentHash": "89f017a0e3fd0461a59684179d6fe2a701e94bbb66b1e803dad92fe4da2034f5",
     "promotedRulesCount": 1,
     "recentFixesCount": 27,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "solacelabs-solace-agent-mesh": {
+    "name": "SolaceLabs/solace-agent-mesh",
+    "officialUrl": "https://github.com/SolaceLabs/solace-agent-mesh",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-10-22T15:22:10.332Z",
+    "lastVerified": "2026-10-22T15:22:10.332Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-solacelabs-solace-agent-mesh",
+    "contentHash": "c48d40c54ce644bf0da8b11efb692ff180ed98d8fc6f8b242aeef16926b2811c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

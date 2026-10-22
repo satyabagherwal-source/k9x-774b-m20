@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-21T19:12:25.511Z",
+  "last_updated": "2026-10-22T15:22:11.930Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15734,6 +15734,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-21T18:07:43.814Z"
+    },
+    "SolaceLabs/solace-agent-mesh": {
+      "repository": "SolaceLabs/solace-agent-mesh",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-solacelabs-solace-agent-mesh",
+      "content_hash": "c48d40c54ce644bf0da8b11efb692ff180ed98d8fc6f8b242aeef16926b2811c",
+      "verified_at": "2026-10-22T15:22:11.929Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-22T15:22:11.929Z"
     }
   },
   "repos": {

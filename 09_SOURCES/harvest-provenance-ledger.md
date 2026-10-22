@@ -4288,3 +4288,4 @@ Every entry in this ledger must capture:
 | `learn-github-pamburus-hl` | `https://github.com/pamburus/hl` | `3a71b1a5` | Multi-dimensional audit evidence | 2026-10-21T19:12:14.569Z |
 | `learn-github-kubeshark-kubeshark` | `https://github.com/kubeshark/kubeshark` | `b79aa01a` | Multi-dimensional audit evidence | 2026-10-21T19:12:19.873Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `bf9cadf0` | Multi-dimensional audit evidence | 2026-10-21T19:12:25.496Z |
+| `learn-github-solacelabs-solace-agent-mesh` | `https://github.com/SolaceLabs/solace-agent-mesh` | `5a1f473c` | Multi-dimensional audit evidence | 2026-10-22T15:22:11.916Z |

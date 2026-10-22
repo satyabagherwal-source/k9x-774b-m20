@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T19:12:25.507Z",
-  "total_cycles_completed": 4258,
-  "total_learnings_persisted": 4258,
-  "total_rules_promoted": 3442,
+  "last_updated": "2026-10-22T15:22:11.926Z",
+  "total_cycles_completed": 4259,
+  "total_learnings_persisted": 4259,
+  "total_rules_promoted": 3443,
   "history": [
-    {
-      "timestamp": "2026-10-20T23:10:49.307Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-20T23:11:01.788Z",
       "repository": "dragonflydb/dragonfly",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-21T19:12:25.507Z",
       "repository": "etcd-io/etcd",
       "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T15:22:11.926Z",
+      "repository": "SolaceLabs/solace-agent-mesh",
+      "learningId": "learn-github-solacelabs-solace-agent-mesh",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

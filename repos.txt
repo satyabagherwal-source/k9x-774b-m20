@@ -4370,3 +4370,7 @@ https://github.com/Ryder-Sun/Meldwork
 https://github.com/cheaper-inference/OmniRoute
 # [AI-AGENTS] ai-job-search-dev/ai-job-search (37435 score) - The job search that runs on your machine. AI job application framework built on 
 https://github.com/ai-job-search-dev/ai-job-search
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-22T15:22:05.174Z] ---
+# [AI-AGENTS] SolaceLabs/solace-agent-mesh (2789 score) - Platform for building and running AI agents across the full lifecycle — build, t
+https://github.com/SolaceLabs/solace-agent-mesh

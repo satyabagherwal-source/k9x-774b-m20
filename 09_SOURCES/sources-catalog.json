@@ -10468,5 +10468,15 @@
     "contentHash": "89f017a0e3fd0461a59684179d6fe2a701e94bbb66b1e803dad92fe4da2034f5",
     "lastHarvestedAt": "2026-10-21T18:07:43.804Z",
     "learningId": "learn-github-ai-job-search-dev-ai-job-search"
+  },
+  "solacelabs-solace-agent-mesh": {
+    "repository": "SolaceLabs/solace-agent-mesh",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SolaceLabs/solace-agent-mesh",
+    "sourceVersion": "5a1f473c",
+    "license": "NOASSERTION",
+    "contentHash": "c48d40c54ce644bf0da8b11efb692ff180ed98d8fc6f8b242aeef16926b2811c",
+    "lastHarvestedAt": "2026-10-22T15:22:11.916Z",
+    "learningId": "learn-github-solacelabs-solace-agent-mesh"
   }
 }

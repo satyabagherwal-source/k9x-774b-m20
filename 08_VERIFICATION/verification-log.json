@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-Z5XP",
-    "timestamp": "2026-10-20T11:09:14.317Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "222a37e78a480089cbad5cc7344db39f6cfe29cc2d1560c0a79ea44ca0db291d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-FKBD",
     "timestamp": "2026-10-20T11:21:59.449Z",
     "repository": "VectifyAI/PageIndex",
@@ -7490,6 +7475,21 @@
     "repository": "etcd-io/etcd",
     "learningId": "learn-github-etcd-io-etcd",
     "contentHash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-W6DL",
+    "timestamp": "2026-10-22T15:22:11.913Z",
+    "repository": "SolaceLabs/solace-agent-mesh",
+    "learningId": "learn-github-solacelabs-solace-agent-mesh",
+    "contentHash": "c48d40c54ce644bf0da8b11efb692ff180ed98d8fc6f8b242aeef16926b2811c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
