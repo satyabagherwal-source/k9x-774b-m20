@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:25:45.338Z",
+  "last_updated": "2026-10-22T17:32:02.637Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12174,8 +12174,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "43dfe11b",
-      "content_hash": "f0a4d7423d82813026b1fd54a468dd433e9be7e87740a45cae35bb52fab6c791",
+      "source_version": "d1a63a91",
+      "content_hash": "aba69d13fcac4d03873853b228083ebaa130dbb558a3a3372aa3490d444f0d99",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -12203,6 +12203,11 @@
           "number": 3145,
           "title": "replication): make the image resource filter take effect again (#24176)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3664,
+          "title": "deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#2410",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12210,7 +12215,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:26:54.491Z",
+      "verified_at": "2026-10-22T17:31:54.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35717,8 +35722,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "cd3d7354",
-      "content_hash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
+      "source_version": "51115a16",
+      "content_hash": "c2deffd64dab79fad523991104714d2bb4e2c68d1fadf4333662fbc3b4345ef3",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -35741,6 +35746,11 @@
           "number": 3592,
           "title": "Refine ARC prompt placeholders and declarations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3667,
+          "title": "Rename ARC instance input_code to implementation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35748,7 +35758,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:59:13.058Z",
+      "verified_at": "2026-10-22T17:32:02.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44824,8 +44834,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "47743a8b",
-      "content_hash": "aa5eb044677569518da91bf61f0f54499a7fa495263045ad4c97c56f9606e786",
+      "source_version": "f8ad538a",
+      "content_hash": "2584732f780d17e362fa86e3896d04f8d67d5d4b2f7bb3465e8078a2b61b0331",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -44853,6 +44863,11 @@
           "number": 3276,
           "title": ".github/workflows: only run tailcat check on PRs to main",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3665,
+          "title": "words: add a missing scale",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44860,7 +44875,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:44:30.735Z",
+      "verified_at": "2026-10-22T17:31:55.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47616,8 +47631,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "f7d92df4",
-      "content_hash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
+      "source_version": "503b816e",
+      "content_hash": "7f9107d1153d0c76a230080ece54096b44141beacbe7a4cd8896c76d87c3049c",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -47640,6 +47655,11 @@
           "number": 3417,
           "title": "ValueUpdate inheritors doc comments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3666,
+          "title": "Merge pull request #38295 from vespa-engine/toregge/use-config-set-builders-for-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47647,7 +47667,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:39:35.323Z",
+      "verified_at": "2026-10-22T17:32:00.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58694,8 +58714,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "19c32e68",
-      "content_hash": "d2bb389efc813e4ab89360ec512cb81865e466938281cfba526ec1ddb752309b",
+      "source_version": "557ef7a2",
+      "content_hash": "a0aebfe8a286a74ff1926499277dfec53118c03596afe0d53cf7060f2b02fa10",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -58708,6 +58728,11 @@
           "number": 2552,
           "title": "take a single local file back out of dist after a dev run",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3663,
+          "title": "clear two windows-only clippy errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58715,7 +58740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:48:32.121Z",
+      "verified_at": "2026-10-22T17:31:47.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110504,6 +110529,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:25:45.326Z"
+    },
+    "rule-3663": {
+      "learning_id": "rule-3663",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3663,
+      "title": "clear two windows-only clippy errors",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "557ef7a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:31:47.451Z"
+    },
+    "rule-3664": {
+      "learning_id": "rule-3664",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3664,
+      "title": "deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#2410",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "d1a63a91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:31:54.130Z"
+    },
+    "rule-3665": {
+      "learning_id": "rule-3665",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3665,
+      "title": "words: add a missing scale",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "f8ad538a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:31:55.813Z"
+    },
+    "rule-3666": {
+      "learning_id": "rule-3666",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3666,
+      "title": "Merge pull request #38295 from vespa-engine/toregge/use-config-set-builders-for-",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "503b816e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:32:00.957Z"
+    },
+    "rule-3667": {
+      "learning_id": "rule-3667",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3667,
+      "title": "Rename ARC instance input_code to implementation",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "51115a16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:32:02.630Z"
     }
   },
   "aliases": {

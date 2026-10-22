@@ -4358,3 +4358,8 @@ Every entry in this ledger must capture:
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `54e7a937` | Multi-dimensional audit evidence | 2026-10-22T17:25:43.106Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `f8e6ea94` | Multi-dimensional audit evidence | 2026-10-22T17:25:43.776Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `bcdb4c4c` | Multi-dimensional audit evidence | 2026-10-22T17:25:45.385Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `557ef7a2` | Multi-dimensional audit evidence | 2026-10-22T17:31:47.493Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `d1a63a91` | Multi-dimensional audit evidence | 2026-10-22T17:31:54.188Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f8ad538a` | Multi-dimensional audit evidence | 2026-10-22T17:31:55.855Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `503b816e` | Multi-dimensional audit evidence | 2026-10-22T17:32:00.996Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `51115a16` | Multi-dimensional audit evidence | 2026-10-22T17:32:02.671Z |

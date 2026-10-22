@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T17:25:45.396Z",
+  "last_updated": "2026-10-22T17:32:02.681Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "d2bb389efc813e4ab89360ec512cb81865e466938281cfba526ec1ddb752309b",
-      "verified_at": "2026-10-19T11:48:32.219Z",
+      "content_hash": "a0aebfe8a286a74ff1926499277dfec53118c03596afe0d53cf7060f2b02fa10",
+      "verified_at": "2026-10-22T17:31:47.503Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:48:32.219Z"
+      "last_updated": "2026-10-22T17:31:47.503Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
-      "verified_at": "2026-10-21T18:59:13.148Z",
+      "content_hash": "c2deffd64dab79fad523991104714d2bb4e2c68d1fadf4333662fbc3b4345ef3",
+      "verified_at": "2026-10-22T17:32:02.680Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:59:13.148Z"
+      "last_updated": "2026-10-22T17:32:02.680Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "aa5eb044677569518da91bf61f0f54499a7fa495263045ad4c97c56f9606e786",
-      "verified_at": "2026-10-20T16:44:30.838Z",
+      "content_hash": "2584732f780d17e362fa86e3896d04f8d67d5d4b2f7bb3465e8078a2b61b0331",
+      "verified_at": "2026-10-22T17:31:55.866Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:44:30.838Z"
+      "last_updated": "2026-10-22T17:31:55.866Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
-      "verified_at": "2026-10-20T22:39:35.420Z",
+      "content_hash": "7f9107d1153d0c76a230080ece54096b44141beacbe7a4cd8896c76d87c3049c",
+      "verified_at": "2026-10-22T17:32:01.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:39:35.420Z"
+      "last_updated": "2026-10-22T17:32:01.004Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "f0a4d7423d82813026b1fd54a468dd433e9be7e87740a45cae35bb52fab6c791",
-      "verified_at": "2026-10-20T11:26:54.565Z",
+      "content_hash": "aba69d13fcac4d03873853b228083ebaa130dbb558a3a3372aa3490d444f0d99",
+      "verified_at": "2026-10-22T17:31:54.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:26:54.565Z"
+      "last_updated": "2026-10-22T17:31:54.194Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",

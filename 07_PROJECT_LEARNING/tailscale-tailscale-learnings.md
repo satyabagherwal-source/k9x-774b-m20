@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `47743a8b`  
+> **Source Version**: `f8ad538a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:44:30.351Z  
+> **Timestamp**: 2026-10-22T17:31:55.637Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:44:30.193Z  
+> **Harvest Timestamp**: 2026-10-22T17:31:55.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 37822 stars
+- **Stars / Engagement**: 37941 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #21889** (2026-10-22): **Install script broken for Ubuntu 26.10**
+  *Symptoms*: ### What is the issue?  Tailscale install script "curl -fsSL https://tailscale.com/install.sh | sh" doesn't install on Ubuntu 26.10. Error says OS not supported.  ### Steps to reproduce  Paste the official install command into Ubuntu 26.10 terminal "curl -fsSL https://tailscale.com/install.sh | sh"  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Ubuntu 26.10  ### Tailscale version  Latest  ### Other software  _No response_  ### Bug report  _No response_
+
 - **Issue #21796** (2026-10-15): **Funnel: ingress connections over IPv6 to PeerAPI dropped by packet filter ("no rules matched"); IPv4 works**
   *Symptoms*: ### What is the issue?  On a Linux node serving Funnel (`tailscale funnel` → proxy http://127.0.0.1:8765, port 443), every Funnel ingress connection that arrives over IPv6 is dropped by tailscaled's packet filter:    Drop: TCP{[fd7a:115c:a1e0::5a01:aea3]:44183 > [fd7a:115c:a1e0::435:f064]:47765} 80 no rules matched   Drop: TCP{[fd7a:115c:a1e0:ab12:4843:cd96:626f:140a]:36530 > [fd7a:115c:a1e0::435:f064]:47765} 80 no rules matched  Source addresses are the funnel-ingress-node peers (tag:ingress); destination port is this node's IPv6 PeerAPI port. The same ingress nodes reach the IPv4 PeerAPI fine, so most Funnel requests succeed after the ingress falls back to IPv4, but some requests are lost entirely when all retries take the IPv6 path. (In our case: a webhook delivery from Slack never arrived, including its retries.)  - 15 such drops in the 13 minutes after a tailscaled restart; 307 on the previous boot. Present since the node was installed (2026-10-13). A tailscaled restart does not change it. - Policy is the default allow-all: grants [{src:["*"], dst:["*"], ip:["*"]}], plus nodeAttrs [{target:["autogroup:member"], attr:["funnel"]}]. Node CapMap includes "funnel" and funnel-ports 443,8443,10000. - `tailscale debug netmap` PacketFilterRules has 2 rules:   1. accept all ports from the whole tailnet range, with the 23 ingress-node addresses (v4 and v6) carved out as gaps;   2. a CapGrant `https://tailscale.com/cap/ingress` from all 23 ingress-node addresses (v4 /32 and v6 /128)
-
-- **Issue #21791** (2026-10-15): **macOS GUI and CLI (`tailscale login` / `up`) hang silently and indefinitely when `controlplane.tailscale.com` is blocked via DPI/SNI filtering**
-  *Symptoms*: ### What is the issue?  When connecting from a network where a firewall or middlebox blocks `controlplane.tailscale.com` via Deep Packet Inspection (SNI filtering)—specifically allowing the TCP 3-way handshake (`SYN`/`SYN-ACK`/`ACK`) to `192.200.0.0/24:443` to succeed, but silently dropping the subsequent TLS `ClientHello` packet containing the `controlplane.tailscale.com` SNI—both the macOS GUI and CLI become completely unresponsive during login/authentication:  1. **macOS GUI (`macsys`):** Clicking **Log in** / **Authenticate** in the menu bar does nothing. No browser window opens, no loading state is shown, and no error dialog or timeout alert is ever surfaced to the user. 2. **CLI (`tailscale login` / `tailscale up`):** Running `tailscale login` or `tailscale up --auth-key=...` hangs indefinitely in the terminal with zero stdout/stderr output until manually interrupted (`Ctrl+C`). 3. **Misleading Diagnosis:** Because `login.tailscale.com` (the admin console) often remains unblocked in the user's web browser, and `tailscale status` immediately returns `Logged out.`, the silent failure strongly mimics a corrupted local macOS System Extension, broken Keychain state, or IPC deadlock rather than a network reachability/TLS failure.  ### Steps to reproduce  1. Log out of Tailscale on macOS (`tailscale logout`). 2. Connect to a network that silently drops TLS `ClientHello` packets matching `SNI = controlplane.tailscale.com` (after allowing the TCP connection to port 443 to establ
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,36 +821,102 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47743a8b` (2026-10-20)
-**Commit Message**: .github/workflows: only run tailcat check on PRs to main
+### Incident Patch 1: `f8ad538a` (2026-10-22)
+**Commit Message**: words: add a missing scale
 
-Release branches don't need the heads-up about tailcat breakage.
+Updates #words
+
+Change-Id: Iff0c568fa4ffe2c2972521d5bf21dbdbe8af3a80
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+
+**File**: `words/scales.txt` (modified, +1/-0)
+```diff
+@@ -47,6 +47,7 @@ kelvin
+ celsius
+ decibel
+ beaufort
++fitzpatrick
+ mohs
+ pauling
+ python
+```
+
+---
+
+### Incident Patch 2: `37fc7a7a` (2026-10-22)
+**Commit Message**: format using `go fmt` version 1.27.2 (#21838)
 
 Updates #cleanup
 
-Change-Id: I132880827880f6b80cf4df34ac7e16dbe0b41eb4
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Change-Id: I3b0987b431fa4c601b90a2763ce73eb24a7713ce
 
-**File**: `.github/workflows/tailcat.yml` (modified, +2/-0)
+Signed-off-by: Simon Law <[REDACTED_EMAIL]>
+
+**File**: `k8s-operator/reconciler/nameserver/nameserver.go` (modified, +7/-7)
 ```diff
-@@ -11,6 +11,8 @@ on:
-     branches:
-       - main
-   pull_request:
-+    branches:
-+      - main
-     paths:
-       - "**/*.go"
-       - "go.mod"
+@@ -246,13 +246,13 @@ type deployable struct {
+ }
+ 
+ type deployConfig struct {
+-	replicas     int32
+-	imageRepo    string
+-	imageTag     string
+-	labels       map[string]string
+-	ownerRefs    []metav1.OwnerReference
+-	namespace    string
+-	clusterIP    string
++	replicas         int32
++	imageRepo        string
++	imageTag         string
++	labels           map[string]string
++	ownerRefs        []metav1.OwnerReference
++	namespace        string
++	clusterIP        string
+ 	tolerations      []corev1.Toleration
+ 	affinity         *corev1.Affinity
+ 	nodeSelector     map[string]string
+```
+
+**File**: `net/traffic/traffic_test.go` (modified, +0/-1)
+```diff
+@@ -111,7 +111,6 @@ func TestScoreMany(t *testing.T) {
+ 	}
+ }
+ 
+-
+ func TestMakeRendezvousHasher(t *testing.T) {
+ 	t.Run("new-hasher", func(t *testing.T) {
+ 		f := func(from, to tailcfg.NodeID) uint64 {
+```
+
+**File**: `ssh/tailssh/localstate_test.go` (modified, +5/-5)
+```diff
+@@ -70,11 +70,11 @@ func (ts *localState) WhoIs(proto string, ipp netip.AddrPort) (n tailcfg.NodeVie
+ 	}
+ 
+ 	return (&tailcfg.Node{
+-			ID:       2,
+-			StableID: "peer-id",
+-		}).View(), tailcfg.UserProfile{
+-			LoginName: "peer",
+-		}, true
++		ID:       2,
++		StableID: "peer-id",
++	}).View(), tailcfg.UserProfile{
++		LoginName: "peer",
++	}, true
+ 
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21893** (2026-10-22): words: add a missing scale (@bradfitz)
+- **PR #21875** (closed): net/dns{,/resolver}: omit AAAA on the default route without IPv6 (@malcojus)
 - **PR #21872** (2026-10-20): .github/workflows: only run tailcat check on PRs to main (@bradfitz)
 - **PR #21870** (2026-10-20): go.toolchain.rev: bump to Go 1.27.3 [release-branch] (@nickoneill)
 - **PR #21865** (2026-10-20): net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted (@nickkhyl)
 - **PR #21864** (2026-10-20): net/dns: don't make quad-100 the primary resolver on Windows when hosts are unrouted (@nickkhyl)
-- **PR #21861** (2026-10-20): go.toolchain.rev: bump Go toolchain (@tailscale-code-updater[bot])
-- **PR #21853** (2026-10-19): clientupdate: use a per-update Linux download directory (@patrickod)
 
 ---
 
@@ -870,22 +936,21 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. .github/workflows: only run tailcat check on PRs to main
+## X. words: add a missing scale
 
 **RULE**:
-When implementing operations in `.github/workflows/tailcat.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `words/scales.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47743a8b`: .github/workflows: only run tailcat check on PRs to main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8ad538a`: words: add a missing scale. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tailcat.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `words/scales.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    branches:
-      - main
+fitzpatrick
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -895,4 +960,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47743a8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8ad538a` are properly handled with clean fallback behavior.

@@ -3173,22 +3173,21 @@
     "revisionIdentifier": "0435d8d7"
   },
   "goharbor-harbor": {
-    "name": "harbor",
+    "name": "goharbor/harbor",
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-20T23:31:32.422Z",
-    "lastVerified": "2026-10-20T23:31:32.422Z",
+    "lastChecked": "2026-10-22T17:31:53.678Z",
+    "lastVerified": "2026-10-22T17:31:53.678Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "f0a4d7423d82813026b1fd54a468dd433e9be7e87740a45cae35bb52fab6c791",
+    "contentHash": "aba69d13fcac4d03873853b228083ebaa130dbb558a3a3372aa3490d444f0d99",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "43dfe11b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zama-ai-tfhe-rs": {
     "name": "zama-ai/tfhe-rs",
@@ -5032,8 +5031,8 @@
     "officialUrl": "https://github.com/uber/baseweb",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T23:55:38.666Z",
-    "lastVerified": "2026-10-20T23:55:38.666Z",
+    "lastChecked": "2026-10-22T17:31:38.475Z",
+    "lastVerified": "2026-10-22T17:31:38.475Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-uber-baseweb",
@@ -15219,14 +15218,14 @@
     "officialUrl": "https://github.com/vespa-engine/vespa",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-20T22:39:35.003Z",
-    "lastVerified": "2026-10-20T22:39:35.003Z",
+    "lastChecked": "2026-10-22T17:31:59.229Z",
+    "lastVerified": "2026-10-22T17:31:59.229Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
+    "contentHash": "7f9107d1153d0c76a230080ece54096b44141beacbe7a4cd8896c76d87c3049c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -18540,22 +18539,21 @@
     "revisionIdentifier": "092970a5"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-22T17:04:50.264Z",
-    "lastVerified": "2026-10-22T17:04:50.264Z",
+    "lastChecked": "2026-10-22T17:32:01.616Z",
+    "lastVerified": "2026-10-22T17:32:01.616Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
+    "contentHash": "c2deffd64dab79fad523991104714d2bb4e2c68d1fadf4333662fbc3b4345ef3",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cd3d7354"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -20325,12 +20323,12 @@
     "revisionIdentifier": "4d5e732c"
   },
   "blackjacx-wwdc": {
-    "name": "Blackjacx/WWDC",
+    "name": "WWDC",
     "officialUrl": "https://github.com/Blackjacx/WWDC",
     "sourceType": "github",
     "technology": "Shell",
-    "lastChecked": "2026-10-19T23:28:18.941Z",
-    "lastVerified": "2026-10-19T23:28:18.941Z",
+    "lastChecked": "2026-10-22T17:31:45.851Z",
+    "lastVerified": "2026-10-22T17:31:45.851Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-blackjacx-wwdc",
@@ -20339,7 +20337,8 @@
     "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4973be7a"
   },
   "androoagi-starnet": {
     "name": "androoAGI/starnet",
@@ -22180,22 +22179,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T18:39:46.984Z",
-    "lastVerified": "2026-10-21T18:39:46.984Z",
+    "lastChecked": "2026-10-22T17:31:55.368Z",
+    "lastVerified": "2026-10-22T17:31:55.368Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "aa5eb044677569518da91bf61f0f54499a7fa495263045ad4c97c56f9606e786",
+    "contentHash": "2584732f780d17e362fa86e3896d04f8d67d5d4b2f7bb3465e8078a2b61b0331",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "47743a8b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tailwindlabs-tailwindcss": {
     "name": "tailwindlabs-tailwindcss",
@@ -24744,22 +24742,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tw93-pake": {
-    "name": "Pake",
+    "name": "tw93/Pake",
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T20:41:30.134Z",
-    "lastVerified": "2026-10-20T20:41:30.134Z",
+    "lastChecked": "2026-10-22T17:31:45.515Z",
+    "lastVerified": "2026-10-22T17:31:45.515Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "d2bb389efc813e4ab89360ec512cb81865e466938281cfba526ec1ddb752309b",
+    "contentHash": "a0aebfe8a286a74ff1926499277dfec53118c03596afe0d53cf7060f2b02fa10",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "19c32e68"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-datalab-to-indra-ocr": {
     "name": "datalab-to/indra-ocr",
@@ -26089,12 +26086,12 @@
     "revisionIdentifier": "2658f86a"
   },
   "scrapy-plugins-scrapy-splash": {
-    "name": "scrapy-plugins/scrapy-splash",
+    "name": "scrapy-splash",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-splash",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T21:30:25.362Z",
-    "lastVerified": "2026-10-19T21:30:25.362Z",
+    "lastChecked": "2026-10-22T17:31:43.328Z",
+    "lastVerified": "2026-10-22T17:31:43.328Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-plugins-scrapy-splash",
@@ -26103,7 +26100,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "72a87882"
   },
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-plugins/scrapy-headless",
@@ -27405,8 +27403,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-22T17:25:47.934Z",
-    "lastVerified": "2026-10-22T17:25:47.934Z",
+    "lastChecked": "2026-10-22T17:32:05.206Z",
+    "lastVerified": "2026-10-22T17:32:05.206Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

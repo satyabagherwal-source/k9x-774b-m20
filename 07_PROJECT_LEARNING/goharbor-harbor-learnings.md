@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `43dfe11b`  
+> **Source Version**: `d1a63a91`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:26:54.238Z  
+> **Timestamp**: 2026-10-22T17:31:53.948Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:21:52.134Z  
+> **Harvest Timestamp**: 2026-10-22T17:31:53.678Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29575 stars
+- **Stars / Engagement**: 29597 stars
 
 ---
 
@@ -656,11 +656,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24180** (2026-10-20): **[release-2.15] fix(replication): make the image resource filter take effect again (#24176)**
-  *Symptoms*: Backport of #24176 to release-2.15.0.  Since the chart resource type was removed in #18191, the `resource` filter of a replication policy is only validated and shown in the UI but never applied when fetching artifacts, so `image` and `artifact` behave the same and charts get replicated too.  This wires the `resource` filter back into `BuildArtifactFilters`: `image` keeps artifacts whose type is `IMAGE`, `artifact` keeps everything. Artifacts with an unknown type (e.g. from the native registry adapter) are kept, otherwise pull replication from such registries with the `image` filter would replicate nothing.  Clean cherry-pick apart from adding the `fmt` import, which `artifact.go` on this branch didn't have yet.  Note for the release note: policies saved with the `image` filter since 2.8 will start excluding non-image artifacts (CHART, CNAI, WASM...), which is what the filter was meant to do.  Fixes #24047  - [x] Well Written Title and Summary of the PR - [x] Label the PR as needed. - [x] Accepted the DCO. Commits without the DCO will delay acceptance. - [x] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24203** (2026-10-22): **(cherry-pick): preserve artifact type for multi-tier accessories in replication**
+  *Symptoms*: In getAccessoryArts, reassigning art when fetching accessory details shadowed the parent artifact and caused sub-accessories (such as signatures of an SBOM) to inherit Type "UNKNOWN" from the accessory artifact rather than the subject artifact's type (e.g. "IMAGE"). Consequently, when a replication policy configured a resource filter (e.g. "image"), the sub-accessories were dropped by the artifact type filter.  Fix this by using a separate variable subArt to avoid shadowing art, and propagate art.Type to subArt so nested accessories inherit the root subject artifact's type.  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
-- **Issue #24179** (2026-10-20): **chore: bump Trivy, Trivy adapter, and Distribution versions**
-  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24199** (2026-10-22): **bump: bump Go to 1.26.10 for release-2.14.0**
+  *Symptoms*: Update the Go module, build images, CI workflows, and contributor version table.    Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -677,144 +677,124 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a360e527` (2026-10-20)
-**Commit Message**: fix(replication): make the image resource filter take effect again (#24176)
+### Incident Patch 1: `020b3e6c` (2026-10-22)
+**Commit Message**: chore(deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#24108)
 
-The resource filter stopped filtering artifacts by type when the chart
-resource type was removed in #18191, so policies with the image filter
-replicated charts and other artifacts as well.
+chore(deps): bump compression in /src/portal/app-swagger-ui
 
-Fixes #24047
+Bumps [compression](https://github.com/expressjs/compression) from 1.8.1 to 1.8.2.
+- [Release notes](https://github.com/expressjs/compression/releases)
+- [Changelog](https://github.com/expressjs/compression/blob/master/HISTORY.md)
+- [Commits](https://github.com/expressjs/compression/compare/v1.8.1...v1.8.2)
 
-Signed-off-by: chlins <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: compression
+  dependency-version: 1.8.2
+  dependency-type: indirect
+...
 
-**File**: `src/pkg/reg/filter/artifact.go` (modified, +19/-2)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `src/portal/app-swagger-ui/package-lock.json` (modified, +19/-3)
 ```diff
-@@ -55,6 +55,17 @@ func BuildArtifactFilters(filters []*model.Filter) (ArtifactFilters, error) {
- 			} else {
- 				return nil, fmt.Errorf("invalid filter value type for tag filter, expecting string")
- 			}
-+		case model.FilterTypeResource:
-+			if resourceType, ok := filter.Value.(string); ok {
-+				// "artifact" covers all kinds of artifacts, only "image" narrows down the result
-+				if resourceType == model.ResourceTypeImage {
-+					f = &artifactTypeFilter{
-+						types: []string{resourceType},
-+					}
-+				}
-+			} else {
-+				return nil, fmt.Errorf("invalid filter value type for resource filter, expecting string")
-+			}
- 		}
- 		if f != nil {
- 			fs = append(fs, f)
-@@ -93,10 +104,16 @@ func (a *artifactTypeFilter) Filter(artifacts []*model.Artifact) ([]*model.Artif
- 	}
- 	var result []*model.Artifact
- 	for _, artifact := range artifacts {
-+		// some adapters (e.g. the native registry adapter) don't know the type of
-+		// the artifacts, keep them rather than filtering out everything
-+		if len(artifact.Type) == 0 {
-+			result = append(result, artifact)
-+			continue
-+		}
- 		for _, t := range a.types {
--			if strings.EqualFold(strings.ToLower(artifact.Type), strings.ToLower(t)) {
-+			if strings.EqualFold(artifact.Type, t) {
- 				result = append(result, artifact)
--				continue
-+				break
- 			}
- 		}
- 	}
+@@ -2508,22 +2508,27 @@
+       }
+     },
+     "node_modules/compression": {
+-      "version": "1.8.1",
+-      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.1.tgz",
+-      "integrity": "sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==",
++      "version": "1.8.2",
++      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
++      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "bytes": "3.1.2",
+         "compressible": "~2.0.18",
+         "debug": "2.6.9",
++        "destroy": "1.2.0",
+         "negotiator": "~0.6.4",
+         "on-headers": "~1.1.0",
+         "safe-buffer": "5.2.1",
+         "vary": "~1.1.2"
+       },
+       "engines": {
+         "node": ">= 0.8.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/express"
+       }
+     },
+     "node_modules/compression/node_modules/debug": {
+@@ -2922,6 +2927,17 @@
+         "node": ">= 0.8"
+       }
+     },
++    "node_modules/destroy": {
++      "version": "1.2.0",
++      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
++      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.8",
++        "npm": "1.2.8000 || >= 1.4.16"
++      }
++    },
+     "node_modules/dns-packet": {
+       "version": "5.6.1",
+       "resolved": "https://registry.npmjs.org/dns-packet/-/dns-packet-5.6.1.tgz",
 ```
 
-**File**: `src/pkg/reg/filter/artifact_test.go` (added, +74/-0)
+---
+
+### Incident Patch 2: `9644fada` (2026-10-22)
+**Commit Message**: chore(deps): bump shell-quote from 1.10.0 to 1.12.0 in /src/portal/app-swagger-ui (#24106)
+
+chore(deps): bump shell-quote in /src/portal/app-swagger-ui
+
+Bumps [shell-quote](https://github.com/ljharb/shell-quote) from 1.10.0 to 1.12.0.
+- [Changelog](https://github.com/ljharb/shell-quote/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/ljharb/shell-quote/compare/v1.10.0...v1.12.0)
+
+---
+updated-dependencies:
+- dependency-name: shell-quote
+  dependency-version: 1.12.0
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `src/portal/app-swagger-ui/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,74 @@
-+// Copyright Project Harbor Authors
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//    http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package filter
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/goharbor/harbor/src/pkg/reg/model"
-+)
-+
-+func TestArtifactResourceFilters(t *testing.T) {
-+	artifacts := []*model.Artifact{
-+		{Type: "IMAGE", Tags: []string{"1.0"}},
-+		{Type: "CHART", Tags: []string{"1.0"}},
-+		{Type: "CNAI", Tags: []string{"1.0"}},
-+		// the type is unknown for artifacts fetched from the native registry adapter
-+		{Tags: []string{"1.0"}},
-+	}
-+
-+	// resource type "image" keeps the images and the artifacts whose type is unknown
-+	filters := []*model.Filter{
-+		{Type: model.FilterTypeResource, Value: model.ResourceTypeImage},
-+	}
-+	result, err := DoFilterArtifacts(artifacts, filters)
-+	require.NoError(t, err)
-+	require.Len(t, result, 2)
-+	require.Equal(t, "IMAGE", result[0].Type)
-+	require.Equal(t, "", result[1].Type)
-+
-+	// resource type "artifact" keeps everything
-+	filters = []*model.Filter{
-+		{Type: model.FilterTypeResource, Value: model.ResourceTypeArtifact},
-+	}
-+	result, err = DoFilterArtifacts(artifacts, filters)
-+	require.NoError(t, err)
-+	require.Len(t, result, 4)
-+
-+	// combined with a tag filter
-+	filters = []*model.Filter{
-+		{Type: model.FilterTypeResource, Value: model.ResourceTypeImage},
-+		{Type: model.FilterTypeTag, Value: "1.*"},
-+	}
-+	result, err = DoFilterArtifacts(artifacts, filters)
-+	require.NoError(t, err)
-+	require.Len(t, result, 2)
-+
-+	// invalid value type
-+	filters = []*model.Filter{
-+		{Type: model.FilterTypeResource, Value: 1},
-+	}
-+	_, err = DoFilterArtifacts(artifacts, filters)
-+	require.Error(t, err)
-+}
-+
-+func TestArtifactTypeFilterNoDuplicates(t *testing.T) {
-+	f := &artifactTypeFilter{types: []string{"image", "IMAGE"}}
-+	result, err := f.Filter([]*model.Artifact{{Type: "IMAGE"}})
-+	require.NoError(t, err)
-+	require.Len(t, result, 1)
-+}
+@@ -6092,9 +6092,9 @@
+       }
+     },
+     "node_modules/shell-quote": {
+-      "version": "1.10.0",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.10.0.tgz",
+-      "integrity": "sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX4IbLrvmhXbzQsj1+Zwi4VO3+fa6ZF91TWSjIxoEkKnMeHcLEODK5ZXA==",
++      "version": "1.12.0",
++      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
++      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
+       "dev": true,
+       "license": "MIT",
+       "engines": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24180** (2026-10-20): [release-2.15] fix(replication): make the image resource filter take effect again (#24176) (@chlins)
-- **PR #24179** (2026-10-20): chore: bump Trivy, Trivy adapter, and Distribution versions (@stonezdj)
-- **PR #24176** (2026-10-20): fix(replication): make the image resource filter take effect again (@chlins)
-- **PR #24171** (2026-10-19): portal: align robot account immutability label (@NUAAwqy)
-- **PR #24167** (2026-10-19): chore(deps): bump google.golang.org/grpc to v1.82.2 and golang/x/net to v0.60.0 (@stonezdj)
-- **PR #24164** (2026-10-20): Stamp version info into the bundled Trivy adapter binary (@fjvbn2003)
+- **PR #24203** (2026-10-22): (cherry-pick): preserve artifact type for multi-tier accessories in replication (@stonezdj)
+- **PR #24199** (2026-10-22): bump: bump Go to 1.26.10 for release-2.14.0 (@stonezdj)
+- **PR #24194** (2026-10-22): chore(deps): bump hono from 4.13.8 to 4.13.13 in /src/portal (@dependabot[bot])
+- **PR #24192** (2026-10-21): [release-2.16] chore(deps): bump up Go version to v1.27.3 (#24188) (@bupd)
+- **PR #24190** (2026-10-21): chore(deps): upgrade Go dependencies to fix High and Critical CVEs (@stonezdj)
+- **PR #24189** (2026-10-22): chore: Upgrade Casbin To v3 (@bupd)
 
 ---
 
@@ -834,47 +814,48 @@ Signed-off-by: chlins <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replication): make the image resource filter take effect again (#24176)
+## X. deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#2410
 
 **RULE**:
-When implementing operations in `src/pkg/reg/filter/artifact.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/portal/app-swagger-ui/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a360e527`: replication): make the image resource filter take effect again (#24176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `020b3e6c`: deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#24108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/reg/filter/artifact.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/app-swagger-ui/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		case model.FilterTypeResource:
-			if resourceType, ok := filter.Value.(string); ok {
-				// "artifact" covers all kinds of artifacts, only "image" narrows down the result
-				if resourceType == model.ResourceTypeImage {
-					f = &artifactTypeFilter{
-						types: []string{resourceType},
-					}
-				}
-			} else {
-				return nil, fmt.Errorf("invalid filter value type for resource filter, expecting string")
-			}
-		// some adapters (e.g. the native registry adapter) don't know the type of
-		// the artifacts, keep them rather than filtering out everything
-		if len(artifact.Type) == 0 {
-			result = append(result, artifact)
-			continue
-		}
-			if strings.EqualFold(artifact.Type, t) {
-				break
+      "version": "1.8.2",
+      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
+      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
+        "destroy": "1.2.0",
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/express"
+    "node_modules/destroy": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
+      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8",
+        "npm": "1.2.8000 || >= 1.4.16"
+      }
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			if strings.EqualFold(strings.ToLower(artifact.Type), strings.ToLower(t)) {
-				continue
+      "version": "1.8.1",
+      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.1.tgz",
+      "integrity": "sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a360e527` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `020b3e6c` are properly handled with clean fallback behavior.

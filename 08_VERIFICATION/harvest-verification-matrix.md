@@ -4351,3 +4351,8 @@
 | `CYCLE-20261022-B0W0` | `2026-10-22T17:25:43.104Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3660` | Yes (`a38351b2...`) |
 | `CYCLE-20261022-B1EL` | `2026-10-22T17:25:43.773Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3661` | Yes (`e13d8a1e...`) |
 | `CYCLE-20261022-B2NA` | `2026-10-22T17:25:45.382Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3662` | Yes (`332c2261...`) |
+| `CYCLE-20261022-IU1V` | `2026-10-22T17:31:47.491Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3663` | Yes (`a0aebfe8...`) |
+| `CYCLE-20261022-IZ7Q` | `2026-10-22T17:31:54.182Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3664` | Yes (`aba69d13...`) |
+| `CYCLE-20261022-J0I5` | `2026-10-22T17:31:55.853Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3665` | Yes (`2584732f...`) |
+| `CYCLE-20261022-J4GX` | `2026-10-22T17:32:00.993Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3666` | Yes (`7f9107d1...`) |
+| `CYCLE-20261022-J5RH` | `2026-10-22T17:32:02.669Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3667` | Yes (`c2deffd6...`) |
