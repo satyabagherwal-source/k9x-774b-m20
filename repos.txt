@@ -4396,3 +4396,7 @@ https://github.com/SolaceProducts/solace-agent-mesh
 # --- Automatically Discovered by AI Scout Engine [2026-10-22T21:35:03.837Z] ---
 # [HUGGINGFACE-AI-MODELS] Comfy-Org/Z-Image-Turbo (11900 score) - Verified Hugging Face Model: Comfy-Org/Z-Image-Turbo (990 likes, 9173397 downloa
 https://huggingface.co/Comfy-Org/Z-Image-Turbo
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-22T21:47:47.850Z] ---
+# [HUGGINGFACE-AI-MODELS] unsloth/flint-GGUF (3460 score) - Verified Hugging Face Model: unsloth/flint-GGUF (146 likes, 7401 downloads)
+https://huggingface.co/unsloth/flint-GGUF

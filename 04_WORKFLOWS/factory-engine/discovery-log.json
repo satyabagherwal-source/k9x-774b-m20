@@ -18445,5 +18445,17 @@
     "downloads": 9173397,
     "qualityScore": 11900,
     "discoveredAt": "2026-10-22T21:32:55.718Z"
+  },
+  {
+    "name": "unsloth/flint-GGUF",
+    "fullName": "unsloth/flint-GGUF",
+    "url": "https://huggingface.co/unsloth/flint-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: unsloth/flint-GGUF (146 likes, 7401 downloads)",
+    "likes": 146,
+    "downloads": 7401,
+    "qualityScore": 3460,
+    "discoveredAt": "2026-10-22T21:45:39.647Z"
   }
 ]

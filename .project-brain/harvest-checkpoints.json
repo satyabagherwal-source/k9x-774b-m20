@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T21:41:46.198Z",
+  "last_updated": "2026-10-22T21:48:10.931Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "1b82b2039e65e924e34106e27f4a71ed6e8f2785135c2bd3eaf200bb9e0091d2",
-      "verified_at": "2026-10-21T00:21:49.788Z",
+      "content_hash": "a90bb24e21146663a25eebeba75df2934583765dd6e288274ff64c1c5c814c81",
+      "verified_at": "2026-10-22T21:48:00.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:21:49.788Z"
+      "last_updated": "2026-10-22T21:48:00.867Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "2c652f4c3dfc695a40d59ec6f53553f56be9b5f93fff4743308c5d79d1c5b54e",
-      "verified_at": "2026-10-21T02:21:31.604Z",
+      "content_hash": "d87a5a0f1d8d5d54dbd1f84654fc6be41528ae925976470b4de37d39ef465512",
+      "verified_at": "2026-10-22T21:48:10.931Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:21:31.604Z"
+      "last_updated": "2026-10-22T21:48:10.931Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -14736,14 +14736,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-digitalbazaar-pyld",
-      "content_hash": "19d150f386aed2d34fc594a7b19d584968fa4aa5459e67896e96df8a402ac6a9",
-      "verified_at": "2026-10-20T01:11:48.266Z",
+      "content_hash": "f791be9df922b92d6c3c17d6eb2f1ef7ef823789935adec730dc71b0ca0a3097",
+      "verified_at": "2026-10-22T21:48:01.834Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:11:48.266Z"
+      "last_updated": "2026-10-22T21:48:01.834Z"
     },
     "aheze/Popovers": {
       "repository": "aheze/Popovers",
@@ -15854,6 +15854,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-22T21:35:20.223Z"
+    },
+    "unsloth/flint-GGUF": {
+      "repository": "unsloth/flint-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-unsloth-flint-gguf",
+      "content_hash": "e5303460f8da6d7fb543f6560c0142877cc13066a5cb55195c2025bcb3c286a6",
+      "verified_at": "2026-10-22T21:47:59.911Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-22T21:47:59.911Z"
     }
   },
   "repos": {

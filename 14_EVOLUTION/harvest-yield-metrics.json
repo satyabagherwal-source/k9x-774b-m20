@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T21:41:46.194Z",
-  "total_cycles_completed": 4427,
-  "total_learnings_persisted": 4427,
-  "total_rules_promoted": 3609,
+  "last_updated": "2026-10-22T21:48:10.928Z",
+  "total_cycles_completed": 4431,
+  "total_learnings_persisted": 4431,
+  "total_rules_promoted": 3614,
   "history": [
-    {
-      "timestamp": "2026-10-21T16:51:31.212Z",
-      "repository": "assistant-ui/assistant-ui",
-      "learningId": "learn-github-assistant-ui-assistant-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:51:35.109Z",
-      "repository": "jhspetersson/fselect",
-      "learningId": "learn-github-jhspetersson-fselect",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:51:49.662Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:57:54.545Z",
-      "repository": "tamagui/tamagui",
-      "learningId": "learn-github-tamagui-tamagui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T18:01:19.808Z",
       "repository": "cosscom/coss",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-22T21:41:46.194Z",
       "repository": "vikejs/vike",
       "learningId": "learn-github-vikejs-vike",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:47:59.908Z",
+      "repository": "unsloth/flint-GGUF",
+      "learningId": "learn-huggingface-unsloth-flint-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:48:00.865Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:48:01.831Z",
+      "repository": "digitalbazaar/pyld",
+      "learningId": "learn-github-digitalbazaar-pyld",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:48:10.928Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

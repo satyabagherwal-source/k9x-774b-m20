@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "7a229482",
+    "sourceVersion": "e87b6eef",
     "license": "Apache-2.0",
-    "contentHash": "1b82b2039e65e924e34106e27f4a71ed6e8f2785135c2bd3eaf200bb9e0091d2",
-    "lastHarvestedAt": "2026-10-21T00:21:49.780Z",
+    "contentHash": "a90bb24e21146663a25eebeba75df2934583765dd6e288274ff64c1c5c814c81",
+    "lastHarvestedAt": "2026-10-22T21:48:00.862Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "9e54c8cf",
+    "sourceVersion": "88203d25",
     "license": "Apache-2.0",
-    "contentHash": "2c652f4c3dfc695a40d59ec6f53553f56be9b5f93fff4743308c5d79d1c5b54e",
-    "lastHarvestedAt": "2026-10-21T02:21:31.597Z",
+    "contentHash": "d87a5a0f1d8d5d54dbd1f84654fc6be41528ae925976470b4de37d39ef465512",
+    "lastHarvestedAt": "2026-10-22T21:48:10.922Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -9793,10 +9793,10 @@
     "repository": "digitalbazaar/pyld",
     "platform": "github",
     "sourceUrl": "https://github.com/digitalbazaar/pyld",
-    "sourceVersion": "b69c22fb",
+    "sourceVersion": "470edbc3",
     "license": "BSD-3-Clause",
-    "contentHash": "19d150f386aed2d34fc594a7b19d584968fa4aa5459e67896e96df8a402ac6a9",
-    "lastHarvestedAt": "2026-10-20T01:11:48.260Z",
+    "contentHash": "f791be9df922b92d6c3c17d6eb2f1ef7ef823789935adec730dc71b0ca0a3097",
+    "lastHarvestedAt": "2026-10-22T21:48:01.821Z",
     "learningId": "learn-github-digitalbazaar-pyld"
   },
   "aheze-popovers": {
@@ -10548,5 +10548,15 @@
     "contentHash": "f6d9511e888b789348c4b6a1014711b6622bdcb0901e26f201be1b275c05910a",
     "lastHarvestedAt": "2026-10-22T21:35:20.211Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
+  },
+  "hf-unsloth-flint-gguf": {
+    "repository": "unsloth/flint-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/unsloth/flint-GGUF",
+    "sourceVersion": "hf-unsloth-flint-gguf",
+    "license": "Open-Source",
+    "contentHash": "e5303460f8da6d7fb543f6560c0142877cc13066a5cb55195c2025bcb3c286a6",
+    "lastHarvestedAt": "2026-10-22T21:47:59.901Z",
+    "learningId": "learn-huggingface-unsloth-flint-gguf"
   }
 }

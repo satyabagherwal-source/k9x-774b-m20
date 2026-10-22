@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T21:41:46.132Z",
-  "total_verified_learnings": 1070,
+  "last_updated": "2026-10-22T21:48:10.890Z",
+  "total_verified_learnings": 1071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -11850,8 +11850,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "7a229482",
-      "content_hash": "1b82b2039e65e924e34106e27f4a71ed6e8f2785135c2bd3eaf200bb9e0091d2",
+      "source_version": "e87b6eef",
+      "content_hash": "a90bb24e21146663a25eebeba75df2934583765dd6e288274ff64c1c5c814c81",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -11874,6 +11874,11 @@
           "number": 3454,
           "title": "gix-protocol): receive early HTTP fetch packs with `no-done` (#3073)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3760,
+          "title": "Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1,",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11881,7 +11886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:21:49.712Z",
+      "verified_at": "2026-10-22T21:48:00.823Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30283,8 +30288,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "9e54c8cf",
-      "content_hash": "2c652f4c3dfc695a40d59ec6f53553f56be9b5f93fff4743308c5d79d1c5b54e",
+      "source_version": "88203d25",
+      "content_hash": "d87a5a0f1d8d5d54dbd1f84654fc6be41528ae925976470b4de37d39ef465512",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -30307,6 +30312,11 @@
           "number": 3486,
           "title": "don't panic building permutations over tables with schema metadata (#4602)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3762,
+          "title": "python): stop retrying permanent embedding errors and cap the backoff delay (#45",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30314,7 +30324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:21:31.532Z",
+      "verified_at": "2026-10-22T21:48:10.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62515,14 +62525,19 @@
       "slug": "digitalbazaar-pyld",
       "platform": "github",
       "source_url": "https://github.com/digitalbazaar/pyld",
-      "source_version": "b69c22fb",
-      "content_hash": "19d150f386aed2d34fc594a7b19d584968fa4aa5459e67896e96df8a402ac6a9",
+      "source_version": "470edbc3",
+      "content_hash": "f791be9df922b92d6c3c17d6eb2f1ef7ef823789935adec730dc71b0ca0a3097",
       "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
       "promoted_rules": [
         {
           "number": 2956,
           "title": "Update CHANGELOG for the @direction fixes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3761,
+          "title": "Bump specifications/json-ld-api from `ffdb326` to `5551473`",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -62531,7 +62546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:11:48.185Z",
+      "verified_at": "2026-10-22T21:48:01.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112377,6 +112392,114 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T21:41:46.121Z"
+    },
+    "learn-huggingface-unsloth-flint-gguf": {
+      "learning_id": "learn-huggingface-unsloth-flint-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unsloth/flint-GGUF",
+      "repository": "unsloth/flint-GGUF",
+      "slug": "hf-unsloth-flint-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/flint-GGUF",
+      "source_version": "hf-unsloth-flint-gguf",
+      "content_hash": "e5303460f8da6d7fb543f6560c0142877cc13066a5cb55195c2025bcb3c286a6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3758,
+          "title": "MoE Quantization Precision Hierarchy",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3759,
+          "title": "GGUF Metadata Integrity & Tokenizer Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-22T21:47:59.858Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3758": {
+      "learning_id": "rule-3758",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3758,
+      "title": "MoE Quantization Precision Hierarchy",
+      "source_url": "https://huggingface.co/unsloth/flint-GGUF",
+      "source_version": "hf-unsloth-flint-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:47:59.858Z"
+    },
+    "rule-3759": {
+      "learning_id": "rule-3759",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3759,
+      "title": "GGUF Metadata Integrity & Tokenizer Alignment",
+      "source_url": "https://huggingface.co/unsloth/flint-GGUF",
+      "source_version": "hf-unsloth-flint-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:47:59.858Z"
+    },
+    "rule-3760": {
+      "learning_id": "rule-3760",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3760,
+      "title": "Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1,",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "e87b6eef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:48:00.823Z"
+    },
+    "rule-3761": {
+      "learning_id": "rule-3761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3761,
+      "title": "Bump specifications/json-ld-api from `ffdb326` to `5551473`",
+      "source_url": "https://github.com/digitalbazaar/pyld",
+      "source_version": "470edbc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:48:01.779Z"
+    },
+    "rule-3762": {
+      "learning_id": "rule-3762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3762,
+      "title": "python): stop retrying permanent embedding errors and cap the backoff delay (#45",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "88203d25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:48:10.884Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `9e54c8cf`  
+> **Source Version**: `88203d25`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:21:31.239Z  
+> **Timestamp**: 2026-10-22T21:48:10.715Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:21:31.233Z  
+> **Harvest Timestamp**: 2026-10-22T21:48:10.710Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11719 stars
+- **Stars / Engagement**: 11743 stars
 
 ---
 
@@ -530,8 +530,21 @@ def retry_with_exponential_backoff(
     exponential_base: float = 2,
     jitter: bool = True,
     max_retries: int = 7,
+    max_delay: float = 60,
 ):
     """Retry a function with exponential backoff.
+
+    Only errors that may succeed when repeated are retried. Errors that carry an
+    HTTP status code are retried when the status is 408, 409, 429 or >= 500; any
+    other 4xx status (for example 400, 401, 403, 404 or 422) is a permanent failure
+    that is raised immediately. Errors without a recognisable status code (for
+    example connection errors, timeouts, or exceptions raised by a custom embedding
+    function) are retried.
+
+    The delay before the n-th retry is ``initial_delay * exponential_base ** n``,
+    never more than ``max_delay``. With ``jitter`` enabled, a random amount of up to
+    half of that delay is removed ("equal jitter"), so the actual wait is always in
+    the range ``[delay / 2, delay]``.
 
     Args:
         func (function): The function to be retried.
@@ -539,6 +552,8 @@ def retry_with_exponential_backoff(
         exponential_base (float): The base for exponential backoff (default is 2).
         jitter (bool): Whether to add jitter to the delay (default is True).
         max_retries (int): Maximum number of retries (default is 7).
+        max_delay (float): Maximum delay between two attempts, in seconds
+            (default is 60).
 
     Returns:
         function: The decorated function.
@@ -554,13 +569,12 @@ def retry_with_exponential_backoff(
             try:
                 return func(*args, **kwargs)
 
-            # Currently retrying on all exceptions as there is no way to know the
-            # format of the error msgs used by different APIs. We'll log the error
-            # and say that it is assumed that if this portion errors out, it's due
-            # to rate limit but the user should check the error message to be sure.
+            # Errors are retried unless they are known to be permanent (see
+            # `_is_non_retryable_error`). Custom embedding functions can raise
+            # arbitrary exceptions, so unknown errors are assumed to be transient.
             except Exception as e:  # noqa: PERF203
-                # Don't retry on authentication errors (e.g., OpenAI 401)
-                # These are permanent failures that won't be fixed by retrying
+                # Don't retry permanent failures (e.g., OpenAI 401 or 404). They
+                # won't be fixed by retrying and would only delay the real error.
                 if _is_non_retryable_error(e):
                     raise
 
@@ -569,76 +583,43 @@ def retry_with_exponential_backoff(
                 if num_retries > max_retries:
                     raise Exception(
                         f"Maximum number of retries ({max_retries}) exceeded.", e
-                    )
+                    ) from e
 
-                delay *= exponential_base * (1 + jitter * random.random())
+                delay = min(delay * exponential_base, max_delay)
+                sleep_for = delay
+                if jitter:
+                    sleep_for = delay / 2 + random.random() * delay / 2
                 logging.warning(
                     "Error occurred: %s \n Retrying in %s seconds (retry %s of %s) \n",
                     e,
-                    delay,
+                    sleep_for,
                     num_retries,
                     max_retries,
                 )
-                time.sleep(delay)
+                time.sleep(sleep_for)
 
     return wrapper
 
 
-def _is_non_retryable_error(error: Exception) -> bool:
-    """Check if an error should not be retried.
+# HTTP statuses in the 4xx range that are worth retrying: request timeout,
+# conflict (the OpenAI SDK treats it as transient) and rate limiting.
+_RETRYABLE_CLIENT_STATUSES = (408, 409, 429)
 
-    Args:
-        error: The exception to check
-
-    Returns:
-        True if the error should not be retried, False otherwise
-    """
-    from .base import UntrustedEmbeddingConfigError
-
-    if isinstance(error, UntrustedEmbeddingConfigError):
-        return True
-
-    # Check for OpenAI authentication errors
-    error_type = type(error).__name__
-    if error_type == "AuthenticationError":
-        return True
-
-    # Check for other common non-retryable HTTP status codes
-    # 401 Unauthorized, 403 Forbidden
-    if hasattr(error, "status_code"):
-        if error.status_code in (401, 403):
-            return True
-
-    return False
+# AWS error codes that are reported with a 4xx status but are transient.
+_RETRYABLE_AWS_ERROR_CODES = (
+    "Throttl",
+    "TooManyRequests",
+    "RequestLimitExceeded",
+    "ProvisionedThroughputExceeded",
+    "ModelNotReady",
+    "ModelTimeout",
+)
 
 
-def url_retrieve(url: str):
-    """
-    Parameters
-    ----------
-    url: str
-        URL to download from
-    """
-    try:
-        with urllib.request.urlopen(url) as conn:
-            return conn.read()
-    except (socket.gaierror, urllib.error.URLError) as err:
-        raise ConnectionError("could not download {} due to {}".format(url, err))
+def _get_http_status(error: Exception):
+    """Best-effort extraction of an HTTP status code from an exception.
 
-
-def api_key_not_found_help(provider):
-    logging.error("Could not find API key for %s", provider)
-    raise ValueError(f"Please set the {provider.upper()}_API_KEY environment variable.")
-
-
-def is_flash_attn_2_available():
-    try:
-        attempt_import_or_raise("flash_attn", "flash_attn")
-
-        return True
-    except ImportError:
-        return False
-
+    Provider SDKs expose it in different ways: ``status_code`` (openai, co
 ```
 
 ### Core Architecture Module: `python/python/lancedb/namespace_utils.py`
@@ -758,20 +739,20 @@ def safe_import_adlfs():
 adlfs = safe_import_adlfs()
 
 
-def get_uri_scheme(uri: str) -> str:
+def get_uri_scheme(uri: Union[str, pathlib.Path]) -> str:
     """
     Get the scheme of a URI. If the URI does not have a scheme, assume it is a file URI.
 
     Parameters
     ----------
-    uri : str
+    uri : str or pathlib.Path
         The URI to parse.
 
     Returns
     -------
     str: The scheme of the URI.
     """
-    parsed = urlparse(uri)
+    parsed = urlparse(str(uri))
     scheme = parsed.scheme
     if not scheme:
         scheme = "file"
@@ -785,25 +766,26 @@ def get_uri_scheme(uri: str) -> str:
     return scheme
 
 
-def get_uri_location(uri: str) -> str:
+def get_uri_location(uri: Union[str, pathlib.Path]) -> str:
     """
     Get the location of a URI. If the parameter is not a url, assumes it is just a path
 
     Parameters
     ----------
-    uri : str
+    uri : str or pathlib.Path
         The URI to parse.
 
     Returns
     -------
     str: Location part of the URL, without scheme
     """
-    parsed = urlparse(uri)
+    uri_str = str(uri)
+    parsed = urlparse(uri_str)
     if len(parsed.scheme) == 1:
         # Windows drive names are parsed as the scheme
         # e.g. "c:\path" -> ParseResult(scheme="c", netloc="", path="/path", ...)
         # So we add special handling here for schemes that are a single character
-        return uri
+        return uri_str
 
     if not parsed.netloc:
         return parsed.path
@@ -1033,28 +1015,18 @@ def _query_vector_dim(query: Optional[Any]) -> Optional[int]:
         if query.ndim == 0:
             return None
         return query.shape[-1]
-    if isinstance(query, list) and query:
-        first = query[0]
-        if isinstance(first, (list, tuple, np.ndarray)):
-            return len(first)
+    if isinstance(query, (pa.Array, pa.ChunkedArray)):
+        if len(query) == 0:
+            return None
+        if pa.types.is_fixed_size_list(query.type):
+            return query.type.list_size
+        if pa.types.is_list(query.type) or pa.types.is_large_list(query.type):
+            first = query[0].as_py()
+            return len(first) if first is not None else None
         return len(query)
-    return None
+    if isinstance(query, (list, tuple)) and query:
+        first = query[0]
 
-
-def infer_vector_column_name(
-    schema: pa.Schema,
-    query_type: str,
-    query: Optional[Any],  # inferred later in query builder
-    vector_column_name: Optional[str],
-):
-    if query_type != "fts":
-        _validate_query_vector(query)
-
-    if vector_column_name is not None:
-        return vector_column_name
-
-    if query_type == "fts":
-        # FTS queries do not require a vecto
 ```
 
 ### Core Architecture Module: `python/src/util.rs`
@@ -1237,11 +1209,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4602** (2026-10-20): **fix: don't panic building permutations over tables with schema metadata**
-  *Symptoms*: ## Problem  `permutation_builder(table).execute()` and `StreamingDataset(table, ...)` (which builds a permutation at construction) panic with `RustPanic` on any table whose Arrow schema has schema-level metadata:  ```python schema = pa.schema([pa.field("x", pa.int64())], metadata={b"huggingface": b"{}"}) t = lancedb.connect(tmp).create_table("t", pa.table({"x": list(range(100))}, schema=schema)) permutation_builder(t).split_random(fixed=2, seed=1).execute()   # RustPanic ```  Every Hugging Face Lance dataset triggers this, e.g. `hf://datasets/lance-format/lerobot-xvla-soft-fold/data` table `frames` carries `source-column-name-map`.  ## Root cause  `PermutationBuilder::add_config_metadata` replaced the stream schema's metadata with the permutation config and then called `batch.with_schema(schema).unwrap()`. The base-table scan's batches carry the base schema metadata, and `RecordBatch::with_schema` requires the target to be a superset of the current schema, metadata included. It returned `SchemaError("target schema is not superset of current schema ...")`, and the `unwrap` turned that into a panic on a tokio worker.  ## Fix  - The permutation table deliberately does **not** inherit base-table schema metadata. That metadata describes columns the permutation table (`row_id`, `split_id`) does not have, and its keys can collide with config keys such as `split_names`. A merge would let a base table's `split_names` leak into, or override, the permutation's split names. Batches are r
+- **Issue #4632** (2026-10-22): **fix(python): expect oidc credential-type header on refreshed tokens**
+  *Symptoms*: ## Summary  #3971 added `test_zero_lifetime_token_is_refreshed`, but its expected headers omit `x-lancedb-credential-type: oidc`, which `OAuthProvider.get_headers()` has emitted since #2631/#4070. The test fails against current main and breaks the PR CI matrix for every open PR.  ## Changes  - Align the two zap assertions in `test_zero_lifetime_token_is_refreshed` with the provider contract (see `test_token_refresh` and `test_sync_method`).  ## Tests  - `pytest python/tests/test_header_provider.py -q`
 
-- **Issue #4589** (2026-10-19): **fix!: normalize blob layouts and support external byte ranges**
-  *Symptoms*: Fixes #4588  TypeScript rejected external blob byte ranges, and the TypeScript and Rust `blob()` helpers declared only `Struct<data, uri>`. Both helpers now declare nullable `data`, `uri`, `position`, and `size` children, matching Python. The extra range-specific helpers have been removed. TypeScript preserves ranges through Arrow conversion and rejects partial, zero-sized, negative, unsafe, or overflowing ranges.  Append and merge-insert normalize input to the stored blob layout for local and remote tables. Four-field targets receive typed nulls for missing range fields. Two-field targets accept four-field input only when both range fields are logically null throughout the stream; a visible non-null value aborts the operation without committing earlier batches. Range validation honors effective ancestor validity through structs and lists, ignoring physical range slots hidden by null parents while preserving non-nullable child fields. List items reuse recursive field projections, so blob leaves beneath intermediate lists and structs follow the same rules. Append validation descends through supported collection items before projection, rejecting unknown or duplicate sibling fields without changing local schema/version/rows or sending a remote write. Declared siblings, including reordered input fields, are preserved. Shared blob coercion rejects duplicate descriptor child names before extracting data, URI, or range fields by name. Merge validation retains each collection item's
+- **Issue #4627** (2026-10-22): **fix(index): preserve registered scalar plugin type names**
+  *Symptoms*: Native `list_indices()` drops registered scalar plugin types absent from LanceDB's fixed enum, and `index_stats()` reports them as `Unknown`. Preserve their registered display names through `IndexType::Custom(String)`.  Resolve these names through Lance's shared `IndexDetails` registry entry point. Registered types such as MinHashLSH become visible; system and unregistered types remain excluded. Existing builtin aliases retain their canonical names. Rust consumers with exhaustive `IndexType` matches need to handle the added variant.  Manual validation with [Lance #10224](https://github.com/lance-format/lance/pull/10224) at `fcc070f88a`: a downstream statistics-only plugin appears as `Custom("Sketch")` in native listing and statistics. Its `load_index` deliberately returns an error, and repeated calls do not construct additional plugin instances, verifying metadata-only lookup through the shared registry. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1258,270 +1230,629 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1772f4ef` (2026-10-20)
-**Commit Message**: fix: don't panic building permutations over tables with schema metadata (#4602)
+### Incident Patch 1: `2d54630a` (2026-10-22)
+**Commit Message**: fix(python): stop retrying permanent embedding errors and cap the backoff delay (#4542)
 
-## Problem
+Permanent embedding errors (HTTP 400/404/422 and other 4xx) were retried
+the full `max_retries` times with an
+uncapped, multiplicatively jittered backoff, so a typo'd model name
+looked like a hang of about an hour
+(median 50 min of sleeping with a 404; see the issue for the repro and
+numbers).
 
-`permutation_builder(table).execute()` and `StreamingDataset(table,
-...)` (which builds a permutation at construction) panic with
-`RustPanic` on any table whose Arrow schema has schema-level metadata:
+Changes (`python/python/lancedb/embeddings/utils.py`,
+`embeddings/base.py`):
+- An HTTP status in 4xx other than 408/409/429 is raised immediately.
+The status is read from `status_code`,
+`http_status`, `response.status_code`, an integer `code`
+(google-api-core, urllib) or a botocore
+`response["ResponseMetadata"]["HTTPStatusCode"]`. AWS throttling
+reported as 400 stays retryable (matched by
+  error code). `AuthenticationError` by name is unchanged.
+- Still retried: 408, 409, 429, >=500, and anything without a
+recognisable status (connection errors, timeouts,
+custom exceptions), so existing custom embedding functions behave as
+before.
+- New keyword `max_delay=60` (last in the signature, default keeps call
+sites working). `delay = min(delay * base,
+max_delay)` with equal jitter `delay/2 + random() * delay/2`
 
-```python
-schema = pa.schema([pa.field("x", pa.int64())], metadata={b"huggingface": b"{}"})
-t = lancedb.connect(tmp).create_table("t", pa.table({"x": list(range(100))}, schema=schema))
-permutation_builder(t).split_random(fixed=2, seed=1).execute()   # RustPanic
+**File**: `python/python/lancedb/embeddings/base.py` (modified, +5/-3)
+```diff
+@@ -38,9 +38,11 @@ class EmbeddingFunction(BaseModel, ABC):
+     3. ndims() which returns the number of dimensions of the vector column
+     """
+ 
+-    max_retries: int = (
+-        7  # Setting 0 disables retires. Maybe this should not be enabled by default,
+-    )
++    # Maximum number of retries for transient errors (rate limits, 5xx responses,
++    # connection errors, ...), with exponential backoff capped at 60 seconds between
++    # attempts. Permanent errors (HTTP 4xx other than 408/409/429) are never retried.
++    # Setting 0 disables retries.
++    max_retries: int = 7
+     _ndims: int = PrivateAttr()
+     _original_args: dict = PrivateAttr()
+ 
 ```
 
-Every Hugging Face Lance dataset triggers this, e.g.
-`hf://datasets/lance-format/lerobot-xvla-soft-fold/data` table `frames`
-carries `source-column-name-map`.
-
-## Root cause
-
-`PermutationBuilder::add_config_metadata` replaced the stream schema's
-metadata with the permutation config and then called
-`batch.with_schema(schema).unwrap()`. The base-table scan's batches
-carry the base schema metadata, and `RecordBatch::with_schema` requires
-the target to be a superset of the current schema, metadata included. It
-returned `SchemaError("target schema is not superset of current schema
-...")`, and the `unwrap` turned that into a panic on a 
-
-**File**: `python/python/tests/test_elastic_dataloader.py` (modified, +16/-0)
+**File**: `python/python/lancedb/embeddings/utils.py` (modified, +86/-17)
 ```diff
-@@ -3259,6 +3259,22 @@ def test_doc_example_checkpoint(lance_table):
-     )
+@@ -241,15 +241,30 @@ def retry_with_exponential_backoff(
+     exponential_base: float = 2,
+     jitter: bool = True,
+     max_retries: int = 7,
++    max_delay: float = 60,
+ ):
+     """Retry a function with exponential backoff.
+ 
++    Only errors that may succeed when repeated are retried. Errors that carry an
++    HTTP status code are retried when the status is 408, 409, 429 or >= 500; any
++    other 4xx status (for example 400, 401, 403, 404 or 422) is a permanent failure
++    that is raised immediately. Errors without a recognisable status code (for
++    example connection errors, timeouts, or exceptions raised by a custom embedding
++    function) are retried.
++
++    The delay before the n-th retry is ``initial_delay * exponential_base ** n``,
++    never more than ``max_delay``. With ``jitter`` enabled, a random amount of up to
++    half of that delay is removed ("equal jitter"), so the actual wait is always in
++    the range ``[delay / 2, delay]``.
++
+     Args:
+         func (function): The function to be retried.
+         initial_delay (float): Initial delay in seconds (default is 1).
+         exponential_base (float): The base for exponential backoff (default is 2).
+         jitter (bool): Whether to add jitter to the delay (default is True).
+         max_retries (int): Maximum number of retries (default is 7).
++        max_delay (float): Maximum delay between two attempts, in seconds
++            (default is 60).
+ 
+     Returns:
+         function: The decorated function.
+@@ -265,13 +280,12 @@ def wrapper(*args, **kwargs):
+             try:
+                 return func(*args, **kwargs)
+ 
+-            # Currently retrying on all exceptions as there is no way to know the
+-            # format of the error msgs used by different APIs. We'll log the error
+-            # and say that it is assumed that if this portion errors out, it's due
+-            # to rate limit but the user should check the error message to be sure.
++            # Errors are retried unless they are known to be permanent (see
++            # `_is_non_retryable_error`). Custom embedding functions can raise
++            # arbitrary exceptions, so unknown errors are assumed to be transient.
+             except Exception as e:  # noqa: PERF203
+-                # Don't retry on authentication errors (e.g., OpenAI 401)
+-                # These are permanent failures that won't be fixed by retrying
++                # Don't retry permanent failures (e.g., OpenAI 401 or 404). They
++                # won't be fixed by retrying and would only delay the real error.
+                 if _is_non_retryable_error(e):
+                     raise
+ 
+@@ -280,24 +294,72 @@ def wrapper(*args, **kwargs):
+                 if num_retries > max_retries:
+                     raise Exception(
+                         f"Maximum number of retries ({max_retries}) exceeded.", e
+-                    )
++                    ) from e
+ 
+-                delay *= exponential_base * (1 + jitter * random.random())
++                delay = min(delay * exponential_base, max_delay)
++                sleep_for = delay
++                if jitter:
++                    sleep_for = delay / 2 + random.random() * delay / 2
+                 logging.warning(
+                     "Error occurred: %s \n Retrying in %s seconds (retry %s of %s) \n",
+                     e,
+-                    delay,
++                    sleep_for,
+                     num_retries,
+                     max_retries,
+                 )
+-                time.sleep(delay)
++                time.sleep(sleep_for)
+ 
+     return wrapper
  
  
-+def test_streaming_dataset_over_table_with_schema_metadata(tmp_path):
-+    """StreamingDataset builds its permutation at construction; base table schema
-+    metadata (e.g. Hugging Face's `source-column-name-map`) must not break it."""
-+    schema = pa.schema(
-+        [pa.field("id", pa.int64())],
-+        metadata={b"source-column-name-map": b"{}", b"huggingface": b"{}"},
-+    )
-+    table = lancedb.connect(tmp_path).create_table(
-+        "data", pa.table({"id": list(range(NUM_ROWS))}, schema=schema)
-+    )
++# HTTP statuses in the 4xx range that are worth retrying: request timeout,
++# conflict (the OpenAI SDK treats it as transient) and rate limiting.
++_RETRYABLE_CLIENT_STATUSES = (408, 409, 429)
 +
-+    ds = StreamingDataset(table, num_splits=NUM_SPLITS, shuffle_seed=SHUFFLE_SEED)
++# AWS error codes that are reported with a 4xx status but are transient.
++_RETRYABLE_AWS_ERROR_CODES = (
++    "Throttl",
++    "TooManyRequests",
++    "RequestLimitExceeded",
++    "ProvisionedThroughputExceeded",
++    "ModelNotReady",
++    "ModelTimeout",
++)
 +
-+    assert sorted(s["id"] for s in ds) == list(range(NUM_ROWS))
 +
++def _get_http_status(error: Exception):
++    """Best-effort extraction of an HTTP status code from an exception.
 +
- # ---------------------------------------------------------------------------
- # Remote tables (LanceDB Cloud / Enterprise)
- # ---------------------------------------------------------------------------
-```
-
-**File**: `python/python/tests/test_permutation.py` (modified, +29/-0)
-```diff
-@@ -115,6 +115,35 @@ def test_split_random_fixed(mem_db):
-         assert split_ids.count(split_id) == 25
- 
- 
-+def test_permutation_over_table_with_schema_metadata(tmp_path):
-+    """Schema-level metadata on the base table must not break the build.
-+
-+    Hugging Face datasets carry keys like `huggingface` or `source-column-name-map`.
++    Provider SDKs expose it in different ways: ``status_code`` (openai, cohere),
++    ``http_status`` (voyageai), ``response.status_code`` (requests, httpx),
++    ``code`` (google-api-core, urllib) or ``response["ResponseMetadata"]``
++    (botocore). Returns None if no status can be found.
 +    """
-+    schema = pa.schema(
-+        [pa.field("x", pa.int64())],
-+        # `split_names` collides with a permutation config key; the config must win.
-+        metadata={b"huggingface": b"{}", b"split_names": b'["base"]'},
-+    )
-+    tbl = connect(tmp_path).create_table(
-+        "t", pa.table({"x": list(range(100))}, schema=schema)
-+    )
-+    permutation_tbl = (
-+        permutation_builder(tbl)
-+        .split_random(fixed=2, seed=1, split_names=["train", "test"])
-+        .execute()
-+    )
++    candidates = [
++        getattr(error, "status_code", None),
++        getattr(error, "http_status", None),
++    ]
++    response = getattr(error, "response", None)
++    if isinstance(response, dict):
++        candidates.append(response.get("ResponseMetadata", {}).get("HTTPStatusCode"))
++    else:
++        candidates.append(getattr(response, "status_code", None))
++    candidates.append(getattr(error, "code", None))
 +
-+    permutations = Permutations(tbl, permutation_tbl)
-+    assert permutations.split_names == ["train", "test"]
-+    train = Permutation.from_tables(tbl, permutation_tbl, "train")
-+    test = Permutation.from_tables(tbl, permutation_tbl, "test")
-+    assert train.num_rows + test.num_rows == 100
-+    train_x = [row["x"] for batch in train.iter(16) for row in batch]
-+    test_x = [row["x"] for batch in test.iter(16) for row in batch]
-+    assert sorted(train_x + test_x) == list(range(100))
-+
-+
- def test_split_random_with_seed(mem_db):
-     """Test that seeded random splits are reproducible."""
-     tbl = mem_db.create_table("test_table", pa.table({"x": range(50), "y": range(50)}))
++    for status in candidates:
++        if isinstance(status, int) and not isinstance(status, bool):
++    
 ```
 
-**File**: `rust/lancedb/src/dataloader/permutation/builder.rs` (modified, +79/-1)
+**File**: `python/python/tests/test_embeddings.py` (modified, +263/-0)
 ```diff
-@@ -3,6 +3,7 @@
+@@ -633,6 +633,269 @@ class MockAuthenticationError(Exception):
+     assert mock_sleep.call_count == 0
  
- use std::{collections::HashMap, sync::Arc};
  
-+use arrow_array::RecordBatch;
- use datafusion::prelude::{SessionConfig, SessionContext};
- use datafusion_execution::{disk_manager::DiskManagerBuilder, runtime_env::RuntimeEnvBuilder};
- use datafusion_expr::col;
-@@ -220,14 +221,26 @@ impl PermutationBuilder {
-         Ok(Box::pin(SimpleRecordBatchStream { schema, stream }))
-     }
- 
-+    /// Replaces the stream's schema metadata with the permutation config.
-+    ///
-+    /// The scan of the base table can carry the base table's schema metadata (e.g. Hugging
-+    /// Face's `huggingface` key).  That metadata describes columns the permutation table does
-+    /// not have, and its keys could collide with the config keys, so it is dropped rather
-+    /// than merged.
-     fn add_config_metadata(
-         data: SendableRecordBatchStream,
-         metadata: HashMap<String, String>,
-     ) -> Result<SendableRecordBatchStream> {
-         let schema = data.schema().as_ref().clone().with_metadata(metadata);
-         let schema = Arc::new(schema);
-         let schema_clone = schema.clone();
--        let stream = data.map_ok(move |batch| batch.with_schema(schema.clone()).unwrap());
-+        // `RecordBatch::with_schema` only accepts a superset of the batch's schema, which a
-+        // schema with replaced metadata is not, so rebuild the batch around the new schema.
-+        let stream = data.and_then(move |batch| {
-+            std::future::ready(
-+                RecordBatch::try_new(schema.clone(), batch.columns().to_vec()).map_err(Error::from),
-+            )
-+        });
-         Ok(Box::pin(SimpleRecordBatchStream {
-             schema: schema_clone,
-             stream,
-@@ -776,4 +789,69 @@ mod tests {
-             "expected the pre-check to refuse the table, got: {err}"
-         );
-     }
++class _HttpStatusError(Exception):
++    """Stand-in for provider SDK errors (openai, cohere, ...) with a status code."""
 +
-+    /// Base table schema metadata (e.g. Hugging Face's `huggingface` key) describes the base
-+    /// table's columns, so the permutation table drops it and keeps only its own config.
++    def __init__(self, status_code, message="error"):
++        super().__init__(message)
++        self.status_code = status_code
++
++
++class _ResponseStatusError(Exception):
++    """Stand-in for requests/httpx errors, which expose `response.status_code`."""
++
++    def __init__(self, status_code):
++        super().__init__(f"HTTP {status_code}")
++        self.response = MagicMock(status_code=status_code)
++
++
++def _run_with_retry(side_effect, **kwargs):
++    """Run a function through the retry helper with a mocked `time.sleep`.
++
++    Returns (mock_func, sleeps, error).
++    """
++    from lancedb.embeddings.utils import retry_with_exponential_backoff
++
++    mock_func = MagicMock(side_effect=side_effect)
++    sleeps = []
++    error = None
++    with patch("time.sleep", side_effect=sleeps.append):
++        try:
++            retry_with_exponential_backoff(mock_func, **kwargs)()
++        except Exception as e:
++            error = e
++    return mock_func, sleeps, error
++
++
++@pytest.mark.parametrize("status", [400, 401, 403, 404, 405, 410, 413, 422])
++@pytest.mark.parametrize("make_error", [_HttpStatusError, _ResponseStatusError])
++def test_retry_does_not_retry_permanent_http_errors(status, make_error):
++    err = make_error(status)
++    mock_func, sleeps, error = _run_with_retry(err, max_retries=7)
++
++    assert error is err
++    assert mock_func.call_count == 1
++    assert sleeps == []
++
++
++@pytest.mark.parametrize("status", [408, 409, 429, 500, 502, 503, 504])
++@pytest.mark.parametrize("make_error", [_HttpStatusError, _ResponseStatusError])
++def test_retry_retries_transient_http_errors(status, make_error):
++    mock_func, sleeps, error = _run_with_retry(
++        [make_error(status), make_error(status), "result"], max_retries=7
++    )
++
++    assert error is None
++    assert mock_func.call_count == 3
++    assert len(sleeps) == 2
++
++
++@pytest.mark.parametrize(
++    "exc",
++    [
++        ConnectionError("connection reset"),
++        TimeoutError("timed out"),
++        OSError("network is unreachable"),
++        ValueError("custom embedding function failure"),
++        RuntimeError("boom"),
++        Exception("plain exception"),
++    ],
++)
++def test_retry_retries_errors_without_http_status(exc):
++    mock_func, sleeps, error = _run_with_retry([exc, exc, "result"], max_retries=7)
++
++    assert error is None
++    assert mock_func.call_count == 3
++    assert len(sleeps) == 2
++
++
++def test_retry_error_status_attributes_of_other_types_are_ignored():
++    # `code` is a string for openai errors ("model_not_found"), and arbitrary
++    # exceptions may carry unrelated numeric attributes. Neither is an HTTP status.
++    class WeirdError(Exception):
++        code = "model_not_found"
++        status_code = None
++
++    class ExitCodeError(Exception):
++        code = 2
++
++    for exc in (WeirdError("a"), ExitCodeError("b")):
++        mock_func, sleeps, error = _run_with_retry(exc, max_retries=2)
++        assert mock_func.call_count == 3
++        assert len(sleeps) == 2
++
++
++def test_retry_botocore_style_errors():
++    # botocore ClientError exposes `response["ResponseMetadata"]["HTTPStatusCode"]`.
++    # Bedrock reports throttling with a 400, which must stay retryable.
++    class ClientError(Exception):
++        def __init__(self, status, code):
++            super().__init__(code)
++            self.response = {
++                "ResponseMetadata": {"HTTPStatusCode": status},
++                "Error": {"Code": code},
++            }
++
++    throttled = ClientError(400, "ThrottlingException")
++    mock_func, sleeps, error = _run_with_retry([throttled, "result"], max_retries=3)
++    assert error is None
++    assert mock_func.call_count == 2
++
++    invalid = ClientError(400, "ValidationException")
++    mock_func, sleeps, error = _run_with_retry(invalid, max_retries=3)
++    assert error is invalid
++    assert mock_func.call_count == 1
++    assert sleeps == []
++
++
++def test_retry_authentication_error_by_name_not_retried():
++    class AuthenticationError(Exception):
++        pass
++
++    mock_func, sleeps, error = _run_with_retry(AuthenticationError("bad key"))
++    assert isinstance(error, AuthenticationError)
++    assert mock_func.call_count == 1
++    assert sleeps == []
++
++
++def test_retry_gives_up_after_max_retries_with_original_error_attached():
++    original = _HttpStatusError(503, "overloaded")
++    mock_func, sleeps, error = _run_with_retry(original, max_retries=3)
++
++    assert mock_func.call_count == 4
++    assert len(sleeps) == 3
++    assert "Maximum number of retries (3) exceeded" in str(error)
++    assert error.args[1] is original
++    assert error.__cause__ is original
++
++
++def test_retry_delay_is_capped_by_max_delay():
++    # Default settings (7 retries, 60s cap): the old implementation could slee
+```
+
+---
+
+### Incident Patch 2: `bc4c32b7` (2026-10-22)
+**Commit Message**: fix: keep tagged versions when pruning in optimize (#4544)
+
+`optimize()` fails once a tagged version is older than the cleanup
+cutoff, although the docs say tagged versions
+are exempt from cleanup, and the failed prune also skips the
+index-optimize step (repro and numbers in the issue).
+
+Change: `OptimizeAction::Prune` already exposes
+`error_if_tagged_old_versions: Option<bool>`, so no new API.
+`cleanup_old_versions` and `cleanup_old_versions_before` in
+`rust/lancedb/src/table/optimize.rs` now use
+`unwrap_or(false)`, which covers `OptimizeAction::Prune`,
+`OptimizeAction::All` and `optimize_prune_before`. The
+Python and Node bindings pass `None`, which now means "retain tagged
+versions"; I left `python/src/table.rs` and
+`nodejs/src/table.rs` untouched (this also avoids a conflict with #3870,
+which edits that region). `Some(true)`
+still opts in to the error. Doc comments updated; the sentence in
+`docs/web/management/table.mdx` is accurate once
+this lands.
+
+Tests: Rust `test_optimize_prune_retains_tagged_versions` (`Some(true)`
+still errors; the default retains the tag;
+`optimize_prune_before`; `checkout_tag` plus a data read), a Python sync
+test with a scalar index (index step runs,
+
+
+**File**: `nodejs/__test__/table.test.ts` (modified, +15/-0)
+```diff
+@@ -3742,6 +3742,21 @@ describe("when optimizing a dataset", () => {
+     expect(stats.prune.oldVersionsRemoved).toBe(2);
+   });
+ 
++  it("retains tagged versions older than the cleanup cutoff", async () => {
++    await (await table.tags()).create("keep", 1);
++    await table.add([{ id: 3 }]);
++
++    const cutoff = await nextMillisecond();
++    const stats = await table.optimize({ cleanupOlderThan: cutoff });
++    // Versions 2 and 3 are pruned, tagged version 1 is retained
++    expect(stats.prune.oldVersionsRemoved).toBe(2);
++
++    await table.checkout("keep");
++    expect(await table.countRows()).toBe(1);
++    await table.checkoutLatest();
++    expect(await table.countRows()).toBe(3);
++  });
++
+   it("delete unverified", async () => {
+     const version = await table.version();
+     const versionFile = `${tmpDir.name}/${table.name}.lance/_versions/${String(
+```
+
+**File**: `python/python/tests/test_table.py` (modified, +51/-0)
+```diff
+@@ -4792,6 +4792,57 @@ def test_optimize_warns_on_zero_cleanup_sync(mem_db: DBConnection):
+     assert all("concurrent" in str(w.message) for w in seen)
+ 
+ 
++def test_optimize_retains_tagged_versions(tmp_db: DBConnection):
++    # A tagged version older than the cleanup cutoff must be retained, not make
++    # optimize() fail part-way (after compaction, before the index step).
++    table = tmp_db.create_table(
++        "test", data=pa.table({"id": list(range(100)), "text": ["a"] * 100})
++    )
++    table.create_index("id", config=BTree())
++    table.tags.create("release-1", table.version)
++    tagged_version = table.version
++    for i in range(3):
++        table.add(pa.table({"id": [1000 + i], "text": ["new"]}))
++    assert table.stats()["fragment_stats"]["num_fragments"] == 4
++    assert table.index_stats("id_idx").num_unindexed_rows == 3
++    sleep(1.1)
++
++    table.optimize(cleanup_older_than=timedelta(seconds=1))
++
++    # The index step ran after the prune step
++    assert table.index_stats("id_idx").num_unindexed_rows == 0
++    # It stays optimizable
++    table.optimize(cleanup_older_than=timedelta(seconds=1))
++    assert table.stats()["fragment_stats"]["num_fragments"] == 1
++
++    # Untagged old versions were pruned, the tagged one was retained
++    versions = [v["version"] for v in table.list_versions()]
++    assert tagged_version in versions
++    for added in range(tagged_version + 1, tagged_version + 4):
++        assert added not in versions
++    assert len(table) == 103
++
++    table.checkout("release-1")
++    assert len(table) == 100
++    assert table.to_arrow().num_rows == 100
++
++
++@pytest.mark.asyncio
++async def test_optimize_retains_tagged_versions_async(tmp_db_async: AsyncConnection):
++    table = await tmp_db_async.create_table("test", data=[{"x": [1]}])
++    await table.tags.create("keep", await table.version())
++    await table.add(data=[{"x": [2]}])
++    await table.add(data=[{"x": [3]}])
++    sleep(1.1)
++
++    stats = await table.optimize(cleanup_older_than=timedelta(seconds=1))
++    assert stats.prune.old_versions_removed >= 1
++
++    await table.checkout("keep")
++    assert await table.count_rows() == 1
++    assert await table.query().to_arrow() == pa.table({"x": [[1]]})
++
++
+ def test_replace_field_metadata(tmp_path):
+     db = lancedb.connect(tmp_path)
+     table = db.create_table("my_table", data=[{"x": 0}])
+```
+
+**File**: `rust/lancedb/src/table/optimize.rs` (modified, +101/-4)
+```diff
+@@ -69,7 +69,11 @@ pub enum OptimizeAction {
+         /// **WARNING**: This should only be set to true if you can guarantee that no other process is
+         /// currently working on this dataset.  Otherwise the dataset could be put into a corrupted state.
+         delete_unverified: Option<bool>,
++        /// Tagged versions are never removed, regardless of their age.
++        ///
+         /// If true, an error will be returned if there are any old versions that are still tagged.
++        /// If false or `None` (the default), tagged versions are silently retained and all other
++        /// old versions are removed.
+         error_if_tagged_old_versions: Option<bool>,
+     },
+     /// Optimize the indices
+@@ -125,6 +129,12 @@ pub(crate) async fn optimize_indices(table: &NativeTable, options: &OptimizeOpti
+ ///   no other process is currently working on this dataset.  Otherwise the
+ ///   dataset could be put into a corrupted state.
+ ///
++/// * `error_if_tagged_old_versions` - Tagged versions are always retained.  If
++///   this is true, an error is returned when a tagged version is older than the
++///   cutoff.  Defaults to false (the tagged versions are retained silently),
++///   unlike Lance's own default, so that `optimize` does not fail (and skip the
++///   steps after pruning) once a tagged version ages past the cutoff.
++///
+ /// This calls into [lance::dataset::Dataset::cleanup_old_versions] and
+ /// returns the result.
+ pub(crate) async fn cleanup_old_versions(
+@@ -136,7 +146,11 @@ pub(crate) async fn cleanup_old_versions(
+     table.dataset.ensure_mutable()?;
+     let dataset = table.dataset.get().await?;
+     let stats = dataset
+-        .cleanup_old_versions(older_than, delete_unverified, error_if_tagged_old_versions)
++        .cleanup_old_versions(
++            older_than,
++            delete_unverified,
++            Some(error_if_tagged_old_versions.unwrap_or(false)),
++        )
+         .await?;
+     // Computed-column signature sidecars live outside lance's directories;
+     // drop the ones the surviving versions no longer reference.
+@@ -161,9 +175,8 @@ pub(crate) async fn cleanup_old_versions_before(
+     if let Some(delete_unverified) = delete_unverified {
+         policy = policy.delete_unverified(delete_unverified);
+     }
+-    if let Some(error_if_tagged_old_versions) = error_if_tagged_old_versions {
+-        policy = policy.error_if_tagged_old_versions(error_if_tagged_old_versions);
+-    }
++    // Tagged versions are retained rather than raising an error unless asked.
++    policy = policy.error_if_tagged_old_versions(error_if_tagged_old_versions.unwrap_or(false));
+     let stats = dataset.cleanup_with_policy(policy.build()).await?;
+     // Computed-column signature sidecars live outside lance's directories;
+     // drop the ones the surviving versions no longer reference.
+@@ -511,6 +524,90 @@ mod tests {
+         assert_eq!(all_values, expected);
+     }
+ 
 +    #[tokio::test]
-+    async fn test_permutation_over_table_with_schema_metadata() {
-+        use arrow_array::{Int64Array, RecordBatchIterator};
-+        use arrow_schema::{DataType, Field, Schema};
-+
-+        let temp_dir = tempfile::tempdir().unwrap();
-+        let db = connect(temp_dir.path().to_str().unwrap())
++    async fn test_optimize_prune_retains_tagged_versions() {
++        let tmpdir = tempfile::tempdir().unwrap();
++        let conn = connect(tmpdir.path().to_str().unwrap())
 +            .execute()
 +            .await
 +            .unwrap();
-+        let schema = Arc::new(
-+            Schema::new(vec![Field::new("x", DataType::Int64, false)]).with_metadata(
-+                HashMap::from([
-+                    ("huggingface".to_string(), "{}".to_string()),
-+                    // Collides with a config key; the config value must win.
-+                    (SPLIT_NAMES_CONFIG_KEY.to_string(), "not json".to_string()),
-+                ]),
-+            ),
-+        );
-+        let batch = RecordBatch::try_new(
-+            schema.clone(),
-+            vec![Arc::new(Int64Array::from_iter_values(0..100))],
-+        )
-+        .unwrap();
-+        let reader: Box<dyn arrow_array::RecordBatchReader + Send> =
-+            Box::new(RecordBatchIterator::new(vec![Ok(batch)], schema.clone()));
-+        let table = db.create_table("tbl", reader).execute().await.unwrap();
-+        assert!(
-+            table
-+                .schema()
-+                .await
-+                .unwrap()
-+                .metadata
-+                .contains_key("huggingface")
-+        );
 +
-+        let permutation_table = PermutationBuilder::new(table)
-+            .with_split_strategy(
-+                SplitStrategy::Random {
-+                    seed: Some(1),
-+                    sizes: SplitSizes::Fixed(2),
-+                    clump_size: None,
-+                },
-+                Some(vec!["train".to_string(), "test".to_string()]),
++        let schema = Arc::new(Schema::new(vec![Field::new("i", DataType::Int32, false)]));
++        let make_batch = |start: i32| {
++            RecordBatch::try_new(
++                schema.clone(),
++                vec![Arc::new(Int32Array::from_iter_values(start..start + 10))],
 +            )
-+            .with_shuffle_strategy(ShuffleStrategy::Random {
-+                seed: Some(1),
-+                clump_size: None,
-+            })
-+            .build()
++            .unwrap()
++        };
++
++        let table = conn
++            .create_table("test_prune_tagged", make_batch(0))
++            .execute()
 +            .await
 +            .unwrap();
++        // Tag the first version, then create more versions after it.
++        table.tags().await.unwrap().create("keep", 1).await.unwrap();
++        for i in 1..4 {
++            table.add(make_batch(i * 10)).execute().await.unwrap();
++        }
++        assert_eq!(table.list_versions().await.unwrap().len(), 4);
 +
-+        assert_eq!(permutation_table.count_rows(None).await.unwrap(), 100);
-+        let metadata = permutation_table.schema().await.unwrap().metadata.clone();
-+        assert!(!metadata.contains_key("huggingface"));
-+        assert_eq!(
-+            metadata.get(SPLIT_NAMES_CONFIG_KEY).map(String::as_str),
-+            Some(r#"["train","test"]"#)
-+        );
-+        assert!(metadata.contains_key(BASE_VERSION_CONFIG_KEY));
-+    }
- }
++        // Explicitly asking for an error still errors, and leaves everything in place.
++        let err = table
++            .optimize(OptimizeAction::Prune {
++                older_than: Some(chrono::Duration::try_days(0).unwrap()),
++                delete_unverified: Some(true),
++                error_if_tagged_old_versions: Some(true),
++            })
++            .await
++            .unwrap_err();
++        assert!(err.to_string().contains("tagged version"), "{err}");
++        assert_eq!(table.list_versions().await.unwrap().len(), 4);
++
++        // By default, tagged versions are retained and the other old versions are removed.
++        let stats = table
++            .optimize(OptimizeAction::Prune {
++                older_than: Some(chrono::Duration::try_days(0).unwrap()),
++                delete_unverified: Some(true),
++                error_if_tagged_old_versions: None,
++            })
++            .await
++            .unwrap();
++        assert_eq!(stats.prune.unwrap().old_v
 ```
 
-**File**: `rust/lancedb/src/dataloader/permutation/split.rs` (modified, +13/-13)
+---
+
+### Incident Patch 3: `118e606e` (2026-10-22)
+**Commit Message**: fix(python): align vector parent indices after flattening null lists (#4572)
+
+Arrow's `flatten()` skips child values hidden under null list parents,
+but `list_parent_indices()` can retain their indices. This makes
+`has_nan_values()` raise `ArrowInvalid` because the parent indices and
+NaN mask have different lengths.
+
+Filter out indices belonging to null parents before applying the mask.
+The regression test covers `ListArray` and `LargeListArray`,
+float16/32/64, and chunked inputs: 12 cases. NaN and null-component
+policies stay the same.
+
+The crash also affects #4503. This patch fixes it separately from that
+PR's changes to bad-vector policies.
+
+Validation:
+
+- All 12 regression cases failed before the fix. The utility suite now
+passes with 87 passed and 1 skipped.
+- Ruff lint and formatting pass for both changed files, as does `git
+diff --check`.
+- The patch applies cleanly to main at `ca275b6d`. The patched helper
+from that revision also passes all 12 cases.
+- A separate AI reviewer checked commit `343082a6` and found no blocking
+issues. They reran the utility suite and compared 4,059 generated cases
+plus 12 explicit null-parent cases with a row-by-row reference
+implementation. Tho
+
+**File**: `python/python/lancedb/table.py` (modified, +5/-0)
 ```diff
-@@ -214,9 +214,9 @@ impl Splitter {
-             }
-             arrays.push(Arc::new(split_ids));
+@@ -5333,6 +5333,11 @@ def has_nan_values(arr: Union[pa.ListArray, pa.ChunkedArray]) -> pa.BooleanArray
+     else:
+         values_has_nan = pc.is_nan(values)
+     values_indices = pc.list_parent_indices(arr)
++    if arr.null_count:
++        # Match flatten(), which excludes child spans under null parent lists.
++        values_indices = pc.filter(
++            values_indices, pc.take(pc.is_valid(arr), values_indices)
++        )
+     has_nan_indices = pc.unique(pc.filter(values_indices, values_has_nan))
+     indices = pa.array(range(len(arr)), type=pa.uint32())
+     return pc.is_in(indices, has_nan_indices)
+```
+
+**File**: `python/python/tests/test_util.py` (modified, +15/-0)
+```diff
+@@ -21,6 +21,7 @@
+     _infer_target_schema,
+     _merge_metadata,
+     _sanitize_data,
++    has_nan_values,
+     sanitize_create_table,
+ )
+ import pyarrow as pa
+@@ -489,6 +490,20 @@ def test_handle_bad_vectors_nan(on_bad_vectors):
+     assert output["vector"].combine_chunks() == expected
  
--            std::future::ready(Some(Ok(
--                RecordBatch::try_new(new_schema.clone(), arrays).unwrap()
--            )))
-+            std::future::ready(Some(
-+                RecordBatch::try_new(new_schema.clone(), arrays).map_err(Error::from),
-+            ))
-         });
  
-         Ok(Box::pin(SimpleRecordBatchStream::new(
-@@ -289,23 +289,23 @@ impl Splitter {
-             .collect::<Vec<_>>();
- 
-         let new_schema_clone = new_schema.clone();
--        let stream = source.map_ok(move |batch| {
-+        let stream = source.and_then(move |batch| {
-             let split_ids = Self::hash_split_id(&batch, &thresholds, total_weight);
- 
--            if split_ids.null_count() > 0 {
--                let is_valid = split_ids.nulls().unwrap().inner();
--                let is_valid_mask = BooleanArray::new(is_valid.clone(), None);
--                let split_ids = arrow::compute::filter(&split_ids, &is_valid_mask).unwrap();
--                let row_ids = batch.column(row_id_index);
--                let row_ids = arrow::compute::filter(row_ids.as_ref(), &is_valid_mask).unwrap();
--                RecordBatch::try_new(new_schema.clone(), vec![row_ids, split_ids]).unwrap()
-+            let batch = if let Some(nulls) = split_ids.nulls().filter(|n| n.null_count() > 0) {
-+                let is_valid_mask = BooleanArray::new(nulls.inner().clone(), None);
-+                arrow::compute::filter(&split_ids, &is_valid_mask).and_then(|split_ids| {
-+                    let row_ids = batch.column(row_id_index);
-+                    let row_ids = arrow::compute::filter(row_ids.as_ref(), &is_valid_mask)?;
-+                    RecordBatch::try_new(new_schema.clone(), vec![row_ids, split_ids])
-+                })
-             } else {
-                 RecordBatch::try_new(
-                     new_schema.clone(),
-                     vec![batch.column(row_id_index).clone(), Arc::new(split_ids)],
-                 )
--                .unwrap()
--            }
-+            };
-+            std::future::ready(batch.map_err(Error::from))
-         });
- 
-         Ok(Box::pin(SimpleRecordBatchStream::new(
++@pytest.mark.parametrize("dtype", [pa.float16(), pa.float32(), pa.float64()])
++@pytest.mark.parametrize("large", [False, True])
++@pytest.mark.parametrize("chunked", [False, True])
++def test_has_nan_values_skips_hidden_children_of_null_lists(dtype, large, chunked):
++    array_type = pa.LargeListArray if large else pa.ListArray
++    values = pa.array([float("nan"), None, float("nan"), 3.0, 4.0, 5.0], type=dtype)
++    arr = array_type.from_arrays(
++        [0, 2, 4, 6], values, mask=pa.array([True, False, False])
++    )
++    if chunked:
++        arr = pa.chunked_array([arr.slice(0, 2), arr.slice(2, 1)])
++    assert has_nan_values(arr).to_pylist() == [False, True, False]
++
++
+ def test_handle_bad_vectors_noop():
+     # ChunkedArray should be preserved as-is
+     vector = pa.chunked_array(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4604** (2026-10-20): docs: explain managed blob ingestion, functions, and cleanup (@Xuanwo)
-- **PR #4602** (2026-10-20): fix: don't panic building permutations over tables with schema metadata (@eddyxu)
-- **PR #4598** (2026-10-20): refactor!: rename MemWAL APIs to RTE (realtime engine) (@hamersaw)
-- **PR #4596** (2026-10-19): docs: clean up prose flagged by the shared Vale rules (@brendanclement)
-- **PR #4595** (closed): test(docs): verify Vale annotations (do not merge) (@brendanclement)
-- **PR #4593** (2026-10-19): chore(deny): ignore zip advisories reachable only through candle-core (@LuQQiu)
+- **PR #4632** (2026-10-22): fix(python): expect oidc credential-type header on refreshed tokens (@Xuanwo)
+- **PR #4628** (2026-10-22): chore: update lance dependency to v15.0.0-beta.1 (@Xuanwo)
+- **PR #4627** (2026-10-22): fix(index): preserve registered scalar plugin type names (@Xuanwo)
+- **PR #4626** (2026-10-22): fix(python): keep a renamed Permutation column in its position (@chrikrah)
+- **PR #4624** (2026-10-21): fix: update trust-store pins for the eMudhra CA compromise (@esteban)
+- **PR #4621** (2026-10-22): feat(python): expose materialized view auto-refresh creation options (@jackye1995)
 
 ---
 
@@ -1541,43 +1872,34 @@ returned `SchemaError("target schema is not superset of current schema
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. don't panic building permutations over tables with schema metadata (#4602)
+## X. python): stop retrying permanent embedding errors and cap the backoff delay (#45
 
 **RULE**:
-When implementing operations in `python/python/tests/test_elastic_dataloader.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/python/lancedb/embeddings/base.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1772f4ef`: don't panic building permutations over tables with schema metadata (#4602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d54630a`: python): stop retrying permanent embedding errors and cap the backoff delay (#4542). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/python/tests/test_elastic_dataloader.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/python/lancedb/embeddings/base.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-def test_streaming_dataset_over_table_with_schema_metadata(tmp_path):
-    """StreamingDataset builds its permutation at construction; base table schema
-    metadata (e.g. Hugging Face's `source-column-name-map`) must not break it."""
-    schema = pa.schema(
-        [pa.field("id", pa.int64())],
-        metadata={b"source-column-name-map": b"{}", b"huggingface": b"{}"},
-    )
-    table = lancedb.connect(tmp_path).create_table(
-        "data", pa.table({"id": list(range(NUM_ROWS))}, schema=schema)
-    )
-
-    ds = StreamingDataset(table, num_splits=NUM_SPLITS, shuffle_seed=SHUFFLE_SEED)
-
-    assert sorted(s["id"] for s in ds) == list(range(NUM_ROWS))
-
-
+    # Maximum number of retries for transient errors (rate limits, 5xx responses,
+    # connection errors, ...), with exponential backoff capped at 60 seconds between
+    # attempts. Permanent errors (HTTP 4xx other than 408/409/429) are never retried.
+    # Setting 0 disables retries.
+    max_retries: int = 7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    max_retries: int = (
+        7  # Setting 0 disables retires. Maybe this should not be enabled by default,
+    )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1772f4ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d54630a` are properly handled with clean fallback behavior.

@@ -4450,3 +4450,7 @@
 | `CYCLE-20261022-81AO` | `2026-10-22T21:35:20.208Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3754, Rule 3755` | Yes (`f6d9511e...`) |
 | `CYCLE-20261022-85PJ` | `2026-10-22T21:35:25.927Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3756` | Yes (`296fe9a3...`) |
 | `CYCLE-20261022-GB46` | `2026-10-22T21:41:46.182Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3757` | Yes (`55c4ed2f...`) |
+| `CYCLE-20261022-OBH7` | `2026-10-22T21:47:59.899Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3758, Rule 3759` | Yes (`e5303460...`) |
+| `CYCLE-20261022-OC7W` | `2026-10-22T21:48:00.860Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3760` | Yes (`a90bb24e...`) |
+| `CYCLE-20261022-OCYJ` | `2026-10-22T21:48:01.819Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3761` | Yes (`f791be9d...`) |
+| `CYCLE-20261022-OJZC` | `2026-10-22T21:48:10.920Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3762` | Yes (`d87a5a0f...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source**: github ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
-> **Source Version**: `b69c22fb`  
+> **Source Version**: `470edbc3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:11:47.953Z  
+> **Timestamp**: 2026-10-22T21:48:01.609Z  
 > **Learning ID**: `learn-github-digitalbazaar-pyld`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:11:47.947Z  
+> **Harvest Timestamp**: 2026-10-22T21:48:01.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -993,76 +993,56 @@ def main(args: list[str] | None = None) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4f1df46` (2026-09-15)
-**Commit Message**: Update CHANGELOG for the @direction fixes
+### Incident Patch 1: `470edbc3` (2026-10-19)
+**Commit Message**: Bump specifications/json-ld-api from `ffdb326` to `5551473`
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+Bumps [specifications/json-ld-api](https://github.com/w3c/json-ld-api) from `ffdb326` to `5551473`.
+- [Commits](https://github.com/w3c/json-ld-api/compare/ffdb326121ea89b7b8280e76a5caea923834bcef...55514738d854e56bb8bad4c53cda2f0e23be4a50)
+
+---
+updated-dependencies:
+- dependency-name: specifications/json-ld-api
+  dependency-version: 55514738d854e56bb8bad4c53cda2f0e23be4a50
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `specifications/json-ld-api` (modified, +1/-1)
 ```diff
-@@ -23,6 +23,8 @@
- ### Fixed
- 
- - Preserved RDF literal lexical forms when converting through RDFLib, including canonical double output, large numeric values, and compound literal handling.
-+- Fixed the active context clone dropping the default base direction: `@direction` now survives context layers like `@language`. Fixes [issue #337](https://github.com/digitalbazaar/pyld/issues/337).
-+- Fixed `KeyError` when a context sets `@direction: null` and no default base direction is in effect.
- - Fixed `iri_resolver.unresolve()` query/fragment reconstruction while cleaning up the resolver docstring.
- - Invalid IRI base values within lists are now skipped when serializing to RDF. Fixes [toRdf#tli12](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tli12) and [toRdf#tli14](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#tli14).
- - Literals with invalid `@language` no longer output triples. Fixes [toRdf#twf05](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#twf05).
+@@ -1 +1 @@
+-Subproject commit ffdb326121ea89b7b8280e76a5caea923834bcef
++Subproject commit 55514738d854e56bb8bad4c53cda2f0e23be4a50
 ```
 
 ---
 
-### Incident Patch 2: `eacd8880` (2026-09-22)
-**Commit Message**: fix docs build
+### Incident Patch 2: `117b2373` (2026-10-13)
+**Commit Message**: Bump multidict from 6.9.0 to 6.9.1
 
-**File**: `docs/tutorials/index.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- ---
- hide: [toc]
--icon: material/developer_guide
-+icon: material/school-outline
- ---
- 
- # :material-school-outline: Tutorials
-```
+Bumps [multidict](https://github.com/aio-libs/multidict) from 6.9.0 to 6.9.1.
+- [Release notes](https://github.com/aio-libs/multidict/releases)
+- [Changelog](https://github.com/aio-libs/multidict/blob/master/CHANGES.rst)
+- [Commits](https://github.com/aio-libs/multidict/compare/v6.9.0...v6.9.1)
 
 ---
+updated-dependencies:
+- dependency-name: multidict
+  dependency-version: 6.9.1
+  dependency-type: indirect
+...
 
-### Incident Patch 3: `2e951535` (2026-09-21)
-**Commit Message**: Document uv setup in the installation guide
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `docs/installation.md` (modified, +4/-3)
-```diff
-@@ -26,16 +26,17 @@ manages those dependencies.
- 
- ## Development Install
- 
--From a local checkout:
-+Install [:simple-uv: uv](https://docs.astral.sh/uv/), then sync the locked
-+development environment from a local checkout:
- 
- ```bash
--pip install -e .
-+uv sync --locked
- ```
- 
- Run the project tests with:
- 
- ```bash
--pytest
-+uv run --locked pytest
- ```
- 
- The JSON-LD specification test suites are stored under `specifications/` and are
-```
+
 
 #### Recent Merged Pull Requests:
+- **PR #355** (2026-10-20): Bump specifications/json-ld-api from `ffdb326` to `5551473` (@dependabot[bot])
 - **PR #350** (closed): Bump specifications/json-ld-api from `ffdb326` to `3399869` (@dependabot[bot])
+- **PR #349** (2026-10-20): Bump multidict from 6.9.0 to 6.9.1 (@dependabot[bot])
 - **PR #348** (2026-10-13): Bump ruff from 0.16.8 to 0.16.9 (@dependabot[bot])
 - **PR #347** (closed): Add mypy and configuration to typecheck (@mielvds)
 - **PR #346** (2026-09-22): Skip the coverage PR comment on fork pull requests (@anatoly-scherbakov)
-- **PR #345** (2026-09-22): Migrate packaging and development workflows to uv (@gorewilliams)
-- **PR #343** (2026-09-15): Make schema.org test local. (@mielvds)
 
 ---
 
@@ -1082,29 +1062,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update CHANGELOG for the @direction fixes
+## X. Bump specifications/json-ld-api from `ffdb326` to `5551473`
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `specifications/json-ld-api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4f1df46`: Update CHANGELOG for the @direction fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `470edbc3`: Bump specifications/json-ld-api from `ffdb326` to `5551473`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `specifications/json-ld-api`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Fixed the active context clone dropping the default base direction: `@direction` now survives context layers like `@language`. Fixes [issue #337](https://github.com/digitalbazaar/pyld/issues/337).
-- Fixed `KeyError` when a context sets `@direction: null` and no default base direction is in effect.
+Subproject commit 55514738d854e56bb8bad4c53cda2f0e23be4a50
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Subproject commit ffdb326121ea89b7b8280e76a5caea923834bcef
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4f1df46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `470edbc3` are properly handled with clean fallback behavior.

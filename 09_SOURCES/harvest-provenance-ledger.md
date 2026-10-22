@@ -4457,3 +4457,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-22T21:35:20.211Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `8f32a2fd` | Multi-dimensional audit evidence | 2026-10-22T21:35:25.930Z |
 | `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `c8c53e6f` | Multi-dimensional audit evidence | 2026-10-22T21:41:46.185Z |
+| `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-22T21:47:59.901Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `e87b6eef` | Multi-dimensional audit evidence | 2026-10-22T21:48:00.862Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `470edbc3` | Multi-dimensional audit evidence | 2026-10-22T21:48:01.821Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `88203d25` | Multi-dimensional audit evidence | 2026-10-22T21:48:10.922Z |

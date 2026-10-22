@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `7a229482`  
+> **Source Version**: `e87b6eef`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:21:49.433Z  
+> **Timestamp**: 2026-10-22T21:48:00.648Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:21:49.425Z  
+> **Harvest Timestamp**: 2026-10-22T21:48:00.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An idiomatic, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12036 stars
+- **Stars / Engagement**: 12044 stars
 
 ---
 
@@ -1612,11 +1612,16 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3079** (2026-10-20): **perf(gix): don't look for new packs before writing an object**
-  *Symptoms*: Before writing an object, gix checks whether it already exists so it doesn't write duplicates (`Repository::write_object()`, `write_blob()`, `write_blob_stream()` and the `gix_object::Write` implementation). A new object never exists. With the default `RefreshMode::AfterAllIndicesLoaded`, each of those misses calls `consolidate_with_disk_state()`, which lists the pack directory and stats every index file. Writing N new objects reads the pack directory N times, and each read gets slower as packs accumulate.  This adds `exists_without_refresh()` to gix-odb's dynamic `Handle`, plus a `memory::Proxy` version that checks the in-memory objects first. It runs the same lookup as `contains()`, with `RefreshMode::Never` for that call only. The store is still initialized on first use, and every index it already knows about is still loaded. The write paths in gix now use it.  If another process added a pack containing the object since the last refresh, the object is written again as a loose object, and `git gc` removes it later. Git's own write path does the same: `odb_freshen_object()` calls `find_pack_entry()`, which looks only at packs that are already prepared. Git re-reads the pack directory (`packfile_store_reprepare()`) only when a read misses. `exists()` keeps its behaviour, because reads still need the refresh to see packs written by other processes, for example by a fetch.  `exists_without_refresh` in the gix-odb store tests checks that the new method still finds packed and loo
+- **Issue #3083** (2026-10-22): **Report October**
+  *Symptoms*: ### Tasks  * [x] outline * [x] draft * [x] polish with mild proof-read * [x] release crates * [x] publish advisories * [x] update timesheets and publish report 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"dd39fb66e3b1551c9fe849043e39b357a9799ca1","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-22T14:17:26.509137Z">2026-10-22T14:17:26.509137Z</relative-time> | `dd39fb6` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review". 
 
-- **Issue #3078** (2026-10-20): **perf(gix-filter): only read the index object when there is a CRLF to convert**
-  *Symptoms*: In auto-text mode (`text=auto`, or `core.autocrlf` without a `text` attribute), `eol::convert_to_git()` reads the path's object from the index to see whether it was committed with CRLF, so that files committed with CRLF stay that way. That check can only turn a conversion off. When the worktree content has no CRLF there is nothing to turn off, but the object was still looked up and decompressed for every file going through the filter.  `gix status` sends a file through the filter whenever its stat doesn't match the index entry but its size does. Unchanged files end up there after a copy or extraction that changes ctimes, after an index is written without stat information, and while they are racily clean. gix only writes the refreshed stat back if the caller asks for it, so tools that run status repeatedly pay this on every call. Git's `crlf_to_git()` reads the object unconditionally too, but `git status` refreshes the index, so unchanged files rarely get there twice.  Now the object is only read when the content has a CRLF. The conversion, its result and the round-trip checks are unchanged. `no_crlf_means_no_work` asserts that auto mode no longer consults the index without a CRLF, and `crlf_in_index_prevents_conversion_to_lf` now uses input with a CRLF, so the index check is what keeps it from converting.  ### Impact  `gix status --no-write` on a repository with 3,204 tracked files whose index entries all have a stale ctime (it was extracted from a tarball), Apple M3 Pro with
+- **Issue #3082** (2026-10-22): **Fix 3 small sha256 test bugs**
+  *Symptoms*: Hello again,  Further testing sha256-only builds revealed 3 small bugs which this PR fixes: 1. A hardcoded sha1 fixture in the `Commit::short_id()` doctest. 2. The behavior of `object_hash: None`  in sha256-only builds. 3. Gix dev deps were enabling sha1 in sha256 only --lib tests.  More details in the respective commit messages, I tried to keep them small and easy to review.  Many thanks, Adrian
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"0a36a397bfc52f5393c551259af29cd7ee189eb0","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-21T14:38:54.619576Z">2026-10-21T14:38:54.619576Z</relative-time> | `0a36a39` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex re
+  > Thanks!  You can take a look at the `review` commit if you are interested.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1633,713 +1638,871 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de997d9c` (2026-10-19)
-**Commit Message**: fix(gix-protocol): receive early HTTP fetch packs with `no-done` (#3073)
+### Incident Patch 1: `dd39fb66` (2026-10-22)
+**Commit Message**: Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1, gix-validate v0.13.1, gix-path v0.14.1, gix-quote v0.10.1, gix-command v0.12.1, gix-hash v0.28.1, gix-fs v0.24.1, gix-tempfile v26.0.1, gix-object v0.66.1, gix-glob v0.29.1, gix-attributes v0.37.1, gix-packetline v0.24.1, gix-filter v0.36.1, gix-chunk v0.10.1, gix-commitgraph v0.42.0, gix-revwalk v0.38.0, gix-traverse v0.64.0, gix-worktree-stream v0.39.0, gix-archive v0.39.0, gix-bitmap v0.6.1, gix-lock v26.0.1, gix-index v0.58.0, gix-config-value v0.21.1, gix-pathspec v0.22.1, gix-worktree v0.59.0, gix-imara-diff v0.3.2, gix-diff v0.70.0, gix-blame v0.20.0, gix-ref v0.69.1, gix-config v0.62.1, gix-prompt v0.19.1, gix-url v0.40.1, gix-credentials v0.42.1, gix-discover v0.57.1, gix-dir v0.32.0, gix-mailmap v0.36.1, gix-revision v0.52.0, gix-merge v0.23.0, gix-negotiate v0.38.0, gix-note v0.3.1, gix-zlib v0.4.0, gix-pack v0.77.0, gix-odb v0.87.0, gix-refspec v0.47.1, gix-shallow v0.15.1, gix-transport v0.62.0, gix-protocol v0.68.0, gix-status v0.37.0, gix-submodule v0.36.1, gix-worktree-state v0.37.0, gix v0.90.0, gix-fsck v0.27.1, gitoxide-core v0.64.0, gix-tix v0.6.0, gitoxide v0.61.0, safety bump 21 c
 
-<!-- agent -->
-Smart HTTP can finish negotiation before the client has exhausted its
-`have` list. With `no-done`, Git sends `ACK ... ready`, `NAK`, a final
-`ACK`, and the pack in the same response. Treating that `NAK` as the end
-of the response starts another request while reqwest is still sending
-the previous body, deadlocking both threads.
-
-Pass the negotiated `no-done` capability to the existing response parser
-so it keeps reading after `ready`. Preserve the extra `done` round when
-the capability is absent. Before starting another HTTP request, reject
-unconsumed response-body bytes so a protocol-layer mistake produces an
-error instead of blocking the worker. Expose the underlying packet-line
-reader for this HTTP body check.
-
-The fetch regression fails before the fix by performing two negotiation
-rounds instead of one. It uses the existing Git response fixture and
-also checks the case without `no-done`. The reqwest regression leaves a
-large response unread and fails with a bounded timeout before the fix.
-
-Git reference: `6de20f6092dcf9bdb1c8efe03db4b70c82b423dd`
-(`v2.56.0-116-g6de20f6092`), `upload-pack.c:g
-
-**File**: `gix-packetline/src/read.rs` (modified, +12/-0)
+**File**: `Cargo.lock` (modified, +58/-58)
 ```diff
-@@ -54,6 +54,18 @@ pub struct StreamingPeekableIterState<T> {
- }
+@@ -1465,7 +1465,7 @@ dependencies = [
  
- impl<T> StreamingPeekableIterState<T> {
-+    /// Return the underlying reader, bypassing any buffered packet line.
-+    ///
-+    /// This is useful for checking transport-level EOF after packet-line iteration has stopped at a delimiter.
-+    /// For example, an HTTP transport can use [`std::io::BufRead::fill_buf()`] to check that the previous response
-+    /// body is exhausted before starting another request, without decoding another packet line.
-+    ///
-+    /// Any packet line already buffered by this iterator remains buffered and is not visible through this reader.
-+    /// Reading from it directly advances the underlying stream without updating the iterator's state.
-+    pub fn inner_mut(&mut self) -> &mut T {
-+        &mut self.read
-+    }
-+
-     /// Return a new instance from `read` which will stop decoding packet lines when receiving one of the given `delimiters`.
-     /// If `trace` is `true`, all packetlines received or sent will be passed to the facilities of the `gix-trace` crate.
-     #[cfg(any(feature = "blocking-io", feature = "async-io"))]
+ [[package]]
+ name = "gitoxide"
+-version = "0.60.0"
++version = "0.61.0"
+ dependencies = [
+  "anstream",
+  "clap",
+@@ -1485,7 +1485,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gitoxide-core"
+-version = "0.63.0"
++version = "0.64.0"
+ dependencies = [
+  "async-io",
+  "async-net",
+@@ -1525,7 +1525,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix"
+-version = "0.89.0"
++version = "0.90.0"
+ dependencies = [
+  "async-std",
+  "document-features",
+@@ -1600,7 +1600,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-actor"
+-version = "0.44.0"
++version = "0.44.1"
+ dependencies = [
+  "bstr",
+  "document-features",
+@@ -1615,7 +1615,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-archive"
+-version = "0.38.0"
++version = "0.39.0"
+ dependencies = [
+  "bstr",
+  "document-features",
+@@ -1637,7 +1637,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-attributes"
+-version = "0.37.0"
++version = "0.37.1"
+ dependencies = [
+  "bstr",
+  "criterion",
+@@ -1658,15 +1658,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-bitmap"
+-version = "0.6.0"
++version = "0.6.1"
+ dependencies = [
+  "gix-error",
+  "gix-testtools",
+ ]
+ 
+ [[package]]
+ name = "gix-blame"
+-version = "0.19.0"
++version = "0.20.0"
+ dependencies = [
+  "gix-commitgraph",
+  "gix-date",
+@@ -1691,14 +1691,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-chunk"
+-version = "0.10.0"
++version = "0.10.1"
+ dependencies = [
+  "gix-error",
+ ]
+ 
+ [[package]]
+ name = "gix-command"
+-version = "0.12.0"
++version = "0.12.1"
+ dependencies = [
+  "bstr",
+  "gix-error",
+@@ -1711,7 +1711,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-commitgraph"
+-version = "0.41.0"
++version = "0.42.0"
+ dependencies = [
+  "bstr",
+  "document-features",
+@@ -1728,7 +1728,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-config"
+-version = "0.62.0"
++version = "0.62.1"
+ dependencies = [
+  "bstr",
+  "bytesize",
+@@ -1755,7 +1755,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-config-value"
+-version = "0.21.0"
++version = "0.21.1"
+ dependencies = [
+  "bitflags 2.13.0",
+  "bstr",
+@@ -1771,7 +1771,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-credentials"
+-version = "0.42.0"
++version = "0.42.1"
+ dependencies = [
+  "bstr",
+  "document-features",
+@@ -1793,7 +1793,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-date"
+-version = "0.18.0"
++version = "0.18.1"
+ dependencies = [
+  "bstr",
+  "document-features",
+@@ -1809,7 +1809,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-diff"
+-version = "0.69.0"
++version = "0.70.0"
+ dependencies = [
+  "bstr",
+  "criterion",
+@@ -1839,7 +1839,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-dir"
+-version = "0.31.0"
++version = "0.32.0"
+ dependencies = [
+  "bstr",
+  "gix-dir",
+@@ -1861,7 +1861,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-discover"
+-version = "0.57.0"
++version = "0.57.1"
+ dependencies = [
+  "bstr",
+  "defer",
+@@ -1880,7 +1880,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-error"
+-version = "0.5.1"
++version = "0.5.2"
+ dependencies = [
+  "anyhow",
+  "bstr",
+@@ -1896,7 +1896,7 @@ version = "0.0.0"
+ 
+ [[package]]
+ name = "gix-filter"
+-version = "0.36.0"
++version = "0.36.1"
+ dependencies = [
+  "bstr",
+  "encoding_rs",
+@@ -1920,7 +1920,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-fs"
+-version = "0.24.0"
++version = "0.24.1"
+ dependencies = [
+  "bstr",
+  "crossbeam-channel",
+@@ -1940,7 +1940,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-fsck"
+-version = "0.27.0"
++version = "0.27.1"
+ dependencies = [
+  "gix-error",
+  "gix-hash",
+@@ -1952,7 +1952,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-glob"
+-version = "0.29.0"
++version = "0.29.1"
+ dependencies = [
+  "bitflags 2.13.0",
+  "bstr",
+@@ -1968,7 +1968,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-hash"
+-version = "0.28.0"
++version = "0.28.1"
+ dependencies = [
+  "bstr",
+  "document-features",
+@@ -2009,7 +2009,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-imara-diff"
+-version = "0.3.1"
++version = "0.3.2"
+ dependencies = [
+  "arbitrary",
+  "bstr",
+@@ -2024,7 +2024,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-index"
+-version = "0.57.0"
++version = "0.58.0"
+ dependencies = [
+  "bitflags 2.13.0",
+  "bstr",
+@@ -2062,7 +2062,7 @@ version = "0.0.0"
+ 
+ [[package]]
+ name = "gix-lock"
+-version = "26.0.0"
++version = "26.0.1"
+ dependencies = [
+  "gix-error",
+  "gix-fs",
+@@ -2085,7 +2085,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-mailmap"
+-version = "0.36.0"
++version = "0.36.1"
+ dependencies = [
+  "bstr",
+  "document-features",
+@@ -2099,7 +2099,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-merge"
+-version = "0.22.0"
++version = "0.23.0"
+ dependencies = [
+  "arbitrary",
+  "bstr",
+@@ -2134,7 +2134,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-negotiate"
+-version = "0.37.0"
++version = "0.38.0"
+ dependencies = [
+  "bitflags 2.13.0",
+  "gix-commitgraph",
+@@ -2150,7 +2150,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-note"
+-version = "0.3.0"
++version = "0.3.1"
+ dependencies = [
+  "criterion",
+  "gix-error",
+@@ -2164,7 +2164,7 @@ dependencies = [
+ 
+ [[packag
 ```
 
-**File**: `gix-protocol/src/fetch/function.rs` (modified, +9/-4)
+**File**: `Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -73,6 +73,7 @@ where
+@@ -7,7 +7,7 @@ repository = "https://github.com/GitoxideLabs/gitoxide"
+ authors = ["Sebastian Thiel <sebastian.thiel@icloud.com>"]
+ edition = "2024"
+ license = "MIT OR Apache-2.0"
+-version = "0.60.0"
++version = "0.61.0"
+ # Rust 1.88 is required by `dua-core` 4.0, used for worktree removal.
+ rust-version = "1.88"
+ default-run = "gix"
+@@ -169,9 +169,9 @@ http-client-reqwest = ["gix/blocking-http-transport-reqwest-rust-tls"]
+ gitoxide-core-async-client = ["gitoxide-core/async-client", "futures-lite"]
  
-     crate::fetch::Response::check_required_features(protocol_version, &fetch_features)?;
-     let sideband_all = fetch_features.iter().any(|(n, _)| *n == "sideband-all");
-+    let no_done = fetch_features.iter().any(|(n, _)| *n == "no-done");
-     let mut arguments = Arguments::new(protocol_version, fetch_features, trace_packetlines);
-     if matches!(tags, Tags::Included) {
-         if !arguments.can_use_include_tag() {
-@@ -126,10 +127,14 @@ where
-                 if sideband_all {
-                     setup_remote_progress(&mut progress, &mut reader, should_interrupt);
-                 }
--                let response =
--                    crate::fetch::Response::from_line_reader(protocol_version, &mut reader, is_done, !is_done)
--                        .await
--                        .or_raise(|| message("Could not decode server reply"))?;
-+                let response = crate::fetch::Response::from_line_reader(
-+                    protocol_version,
-+                    &mut reader,
-+                    is_done || no_done,
-+                    !is_done,
-+                )
-+                .await
-+                .or_raise(|| message("Could not decode server reply"))?;
-                 let has_pack = response.has_pack();
-                 previous_response = Some(response);
-                 if has_pack {
+ [dependencies]
+-gitoxide-core = { version = "^0.63.0", path = "gitoxide-core" }
+-gix = { version = "^0.89.0", path = "gix", default-features = false, features = ["error-print-location"] }
+-gix-tix = { version = "^0.5.0", path = "gix-tix", default-features = false, optional = true }
++gitoxide-core = { version = "^0.64.0", path = "gitoxide-core" }
++gix = { version = "^0.90.0", path = "gix", default-features = false, features = ["error-print-location"] }
++gix-tix = { version = "^0.6.0", path = "gix-tix", default-features = false, optional = true }
+ 
+ clap = { version = "4.5.42", features = ["derive", "cargo"] }
+ clap_complete = "4.5.55"
 ```
 
-**File**: `gix-protocol/src/fetch/response/io.rs` (modified, +3/-3)
+**File**: `gitoxide-core/Cargo.toml` (modified, +9/-9)
 ```diff
-@@ -38,8 +38,8 @@ async fn parse_v2_section<'a, T>(
- impl Response {
-     /// Parse a response of the given `version` of the protocol from `reader`.
-     ///
--    /// `client_expects_pack` is only relevant for V1 stateful connections, and if `false`, causes us to stop parsing when seeing `NAK`,
--    /// and if `true` we will keep parsing until we get a pack as the client already signalled to the server that it's done.
-+    /// `client_expects_pack` is only relevant for V1 connections. Set it when the client sent `done` or negotiated `no-done`,
-+    /// so that `ready` followed by `NAK` allows us to keep parsing until the pack. Otherwise `NAK` ends the round.
-     /// This way of doing things allows us to exploit knowledge about more recent versions of the protocol, which keeps code easier
-     /// and more localized without having to support all the cruft that there is.
-     ///
-@@ -99,7 +99,7 @@ impl Response {
-                         0,
-                         "consuming a peeked line works"
-                     );
--                    // When the server sends ready, we know there is going to be a pack so no need to stop early.
-+                    // With no-done negotiated, ready promises a pack even before the client sends done.
-                     saw_ready |= matches!(acks.last(), Some(Acknowledgement::Ready));
-                     if let Some(Acknowledgement::Nak) = acks.last().filter(|_| !client_expects_pack || !saw_ready) {
-                         if !wants_to_negotiate {
+@@ -4,7 +4,7 @@ lints.workspace = true
+ name = "gitoxide-core"
+ description = "The library implementing all capabilities of the gitoxide CLI"
+ repository = "https://github.com/GitoxideLabs/gitoxide"
+-version = "0.63.0"
++version = "0.64.0"
+ authors = ["Sebastian Thiel <sebastian.thiel@icloud.com>"]
+ license = "MIT OR Apache-2.0"
+ edition = "2024"
+@@ -55,12 +55,12 @@ serde = ["gix/serde", "dep:serde_json", "dep:serde", "bytesize/serde"]
+ 
+ [dependencies]
+ # deselect everything else (like "performance") as this should be controllable by the parent application.
+-gix = { version = "^0.89.0", path = "../gix", default-features = false, features = ["merge", "blob-diff", "blame", "revision", "mailmap", "excludes", "attributes", "worktree-mutation", "credentials", "interrupt", "status", "dirwalk", "command"] }
+-gix-pack-for-configuration-only = { package = "gix-pack", version = "^0.76.0", path = "../gix-pack", default-features = false, features = ["pack-cache-lru-dynamic", "pack-cache-lru-static", "generate", "streaming-input"] }
+-gix-transport-configuration-only = { package = "gix-transport", version = "^0.61.0", path = "../gix-transport", default-features = false }
+-gix-archive-for-configuration-only = { package = "gix-archive", version = "^0.38.0", path = "../gix-archive", optional = true, features = ["tar", "tar_gz"] }
+-gix-status = { version = "^0.36.0", path = "../gix-status" }
+-gix-fsck = { version = "^0.27.0", path = "../gix-fsck" }
++gix = { version = "^0.90.0", path = "../gix", default-features = false, features = ["merge", "blob-diff", "blame", "revision", "mailmap", "excludes", "attributes", "worktree-mutation", "credentials", "interrupt", "status", "dirwalk", "command"] }
++gix-pack-for-configuration-only = { package = "gix-pack", version = "^0.77.0", path = "../gix-pack", default-features = false, features = ["pack-cache-lru-dynamic", "pack-cache-lru-static", "generate", "streaming-input"] }
++gix-transport-configuration-only = { package = "gix-transport", version = "^0.62.0", path = "../gix-transport", default-features = false }
++gix-archive-for-configuration-only = { package = "gix-archive", version = "^0.39.0", path = "../gix-archive", optional = true, features = ["tar", "tar_gz"] }
++gix-status = { version = "^0.37.0", path = "../gix-status" }
++gix-fsck = { version = "^0.27.1", path = "../gix-fsck" }
+ serde = { version = "1.0.114", optional = true, default-features = false, features = ["derive"] }
+ bytesize = "2.3.1"
+ tempfile = "3.26.0"
+@@ -76,7 +76,7 @@ blocking = { version = "1.6.2", optional = true }
+ 
+ # for 'organize' functionality
+ dua-core = { version = "4.1.0", optional = true }
+-gix-url = { version = "^0.40.0", path = "../gix-url", optional = true }
++gix-url = { version = "^0.40.1", path = "../gix-url", optional = true }
+ 
+ # for 'hours'
+ fs-err = { version = "3.3.0", optional = true }
+@@ -94,7 +94,7 @@ sysinfo = { version = "0.38.3", optional = true, default-features = false, featu
+ serde_json = { version = "1.0.150", optional = true }
+ 
+ # for 'tracing'
+-gix-trace = { version = "^0.3.0", path = "../gix-trace", features = ["forest-ansi"], optional = true }
++gix-trace = { version = "^0.3.1", path = "../gix-trace", features = ["forest-ansi"], optional = true }
+ tracing-subscriber = { version = "0.3.22", optional = true }
+ tracing = { version = "0.1.43", optional = true }
+ 
 ```
 
-**File**: `gix-protocol/tests/protocol/fetch/v1.rs` (modified, +101/-0)
+**File**: `gix-actor/CHANGELOG.md` (modified, +25/-1)
 ```diff
-@@ -6,6 +6,107 @@ use gix_utils::progress;
+@@ -5,13 +5,36 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
- use crate::fetch::{_impl::FetchConnection, CloneDelegate, LsRemoteDelegate, helper_unused, oid, transport};
++## 0.44.1 (2026-10-22)
++
++### Commit Statistics
++
++<csr-read-only-do-not-edit/>
++
++ - 3 commits contributed to the release over the course of 14 calendar days.
++ - 14 days passed between releases.
++ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
++ - 0 issues like '(#ID)' were seen in commit messages
++
++### Commit Details
++
++<csr-read-only-do-not-edit/>
++
++<details><summary>view details</summary>
++
++ * **Uncategorized**
++    - Merge pull request #3053 from GitoxideLabs/various-improvements ([`2d8dcc4`](https://github.com/GitoxideLabs/gitoxide/commit/2d8dcc466750e474e6c51ac636c24259563a26cf))
++    - Release gix-error v0.5.1, gix-utils v0.5.1 ([`6d1b686`](https://github.com/GitoxideLabs/gitoxide/commit/6d1b68632cec55fa5d3f752ca97daca4e5485b6c))
++    - Merge pull request #3048 from GitoxideLabs/new-release ([`5fccccf`](https://github.com/GitoxideLabs/gitoxide/commit/5fccccfdedd17f7d4b0cc57039d118a3496aa8aa))
++</details>
++
+ ## 0.44.0 (2026-10-08)
  
-+#[crate::bisync::bisync]
-+#[cfg_attr(feature = "blocking-client", test)]
-+#[cfg_attr(all(feature = "async-client", not(feature = "blocking-client")), async_std::test)]
-+async fn fetch_receives_pack_after_ready_with_no_done() -> TestResult {
-+    use gix_error::{Result, ResultExt};
-+    use gix_protocol::fetch::{self, negotiate};
-+
-+    struct Negotiation;
-+    impl fetch::Negotiate for Negotiation {
-+        fn mark_complete_and_common_ref(&mut self) -> Result<negotiate::Action> {
-+            Ok(negotiate::Action::MustNegotiate {
-+                remote_ref_target_known: vec![false],
-+            })
-+        }
-+
-+        fn add_wants(&mut self, arguments: &mut fetch::Arguments, _known: &[bool]) -> bool {
-+            arguments.want(oid("6504930888c9c5337e7e065c964f87b60d16a7d7"));
-+            true
-+        }
-+
-+        fn one_round(
-+            &mut self,
-+            _state: &mut negotiate::one_round::State,
-+            arguments: &mut fetch::Arguments,
-+            previous_response: Option<&fetch::Response>,
-+        ) -> Result<(negotiate::Round, bool)> {
-+            let is_done = previous_response.is_some();
-+            if !is_done {
-+                arguments.have(oid("f22743895a3024bb0c958335981439f1fa747d57"));
-+            }
-+            Ok((
-+                negotiate::Round {
-+                    haves_sent: usize::from(!is_done),
-+                    in_vain: 0,
-+                    haves_to_send: 16,
-+                    previous_response_had_at_least_one_in_common: is_done,
-+                },
-+                is_done,
-+            ))
-+        }
-+    }
-+
-+    let temp = gix_testtools::tempfile::tempdir()?;
-+    for no_done in [false, true] {
-+        let capabilities = format!(
-+            "{} HEAD\0multi_ack_detailed side-band-64k{}",
-+            "6504930888c9c5337e7e065c964f87b60d16a7d7",
-+            if no_done { " no-done" } else { "" }
-+        );
-+        let mut handshake = gix_protocol::Handshake {
-+            server_protocol_version: Protocol::V1,
-+            capabilities: gix_transport::client::Capabilities::from_bytes(capabilities.as_bytes())?.0,
-+            refs: None,
-+            v1_shallow_updates: None,
-+        };
-+        // Git's response contains ready, NAK, a final ACK, and the sideband pack.
-+        let mut transport = transport(
-+            Vec::new(),
-+            "v1/fetch.response",
-+            Protocol::V1,
-+            gix_transport::client::git::ConnectMode::Process,
-+        );
-+        let mut pack = Vec::new();
-+        let outcome = gix_protocol::fetch(
-+            &mut Negotiation,
-+            |reader, _, _| {
-+                reader.read_to_end(&mut pack).or_error()?;
-+                Ok(true)
-+            },
-+            progress::Discard,
-+            &std::sync::atomic::AtomicBool::new(false),
-+            fetch::Context {
-+                handshake: &mut handshake,
-+                transport: &mut transport,
-+                user_agent: ("agent", Some("test".into())),
-+                trace_packetlines: false,
-+            },
-+            fetch::Options {
-+                shallow_file: temp.path().join("shallow"),
-+                shallow: &fetch::Shallow::NoChange,
-+                tags: fetch::Tags::None,
-+                reject_shallow_remote: false,
-+            },
-+        )
-+        .await?
-+        .expect("negotiation receives a pack");
-+        assert!(pack.starts_with(b"PACK"), "the final ACK is consumed before the pack");
-+        assert_eq!(
-+            outcome.negotiate.rounds.len(),
-+            if no_done { 1 } else { 2 },
-+            "only no-done allows receiving a pack before the client is done"
-+        );
-+        assert_eq!(
-+            transport.into_inner().1.contains_str("done\n"),
-+            !no_done,
-+            "without no-done, ready still requires sending done"
-+        );
-+    }
-+    Ok(())
-+}
-+
- #[crate::bisync::bisync]
- #[cfg_attr(feature = "blocking-client", test)]
- #[cfg_attr(all(feature = "async-client", not(feature = "blocking-client")), async_std::test)]
+ ### Commit Statistics
+ 
+ <csr-read-only-do-not-edit/>
+ 
+- - 6 commits contributed to the release over the course of 13 calendar days.
++ - 7 commits contributed to the release over the course of 13 calendar days.
+  - 13 days passed between releases.
+  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+  - 0 issues like '(#ID)' were seen in commit messages
+@@ -23,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ <details><summary>view details</summary>
+ 
+  * **Uncategorized**
++    - Release gix-error v0.5.0, gix-date v0.18.0, gix-actor v0.44.0, gix-trace v0.3.0, gix-validate v0.13.0, gix-path v0.14.0, gix-utils v0.5.0, gix-quote v0.10.0, gix-command v0.12.0, gix-hash v0.28.0, gix-hashtable v0.18.0, gix-parallel v0.50.0, gix-fs v0.24.0, gix-tempfile v26.0.0, gix-object v0.66.0, gix-glob v0.29.0, gix-attributes v0.37.0, gix-packetline v0.24.0, gix-filter v0.36.0, gix-chunk v0.10.0, gix-commitgraph v0.41.0, gix-revwalk v0.37.0, gix-traverse v0.63.0, gix-worktree-stream v0.38.0, gix-archive v0.38.0, gix-bitmap v0.6.0, gix-lock v26.0.0, gix-index v0.57.0, gix-config-value v0.21.0, gix-pathspec v0.22.0, gix-ignore v0.24.0, gix-worktree v0.58.0, gix-imara-diff v0.3.1, gix-diff v0.69.0, gix-blame v0.19.0, gix-ref v0.69.0, gix-sec v0.16.0, gix-config v0.62.0, gix-prompt v0.19.0, gix-url v0.40.0, gix-credentials v0.42.0, gix-discover v0.57.0, gix-dir v0.31.0, gix-mailmap v0.36.0, gix-revision v0.51.0, gix-merge v0.22.0, gix-negotiate v0.37.0, gix-note v0.3.0, gix-zlib v0.3.0, gix-pack v0.76.0, gix-odb v0.86.0, gix-refspec v0.47.0, gix-shallow v0.15.0, gix-transport v0.61.0, gix-protocol v0.67.0, gix-status v0.36.0, gix-submodule v0.36.0, gix-worktree-state v0.36.0, gix v0.89.0, gix-fsck v0.27.0, gitoxide-core v0.63.0, gix-tix v0.5.0, gitoxide v0.60.0, safety bump 62 crates ([`0115e90`](https://github.com/GitoxideLabs/gitoxide/commit/0115e902fd0334b8f370766993eb17babed3157f))
+     - Prepare changelogs prior to release ([`794eeef`](https://github.com/GitoxideLabs/gitoxide/commit/794eeef835f8dde0fc8f4fd1d215f304d28d7f77))
+     - Merge pull request #3032 from GitoxideLabs/sec-audit ([`1d7bac7`](https://github.com/GitoxideLabs/gitoxide/commit/1d7bac742f70b72ddda0c7294f4a97566b8db596))
+     - Merge pull request #3046 from GitoxideLabs/gix-error-optional-bstr ([`9272d45`](https://github.com/GitoxideLabs/gitoxide/commit/9272d45a1b08ca6f26779389954bd718f8308a80))
 ```
 
-**File**: `gix-transport/src/client/blocking_io/http/mod.rs` (modified, +8/-0)
+**File**: `gix-actor/Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -465,6 +465,14 @@ impl<H: Http> blocking_io::Transport for Transport<H> {
-         trace: bool,
-     ) -> std::result::Result<RequestWriter<'_>, client::Error> {
-         let service = self.service.ok_or(client::Error::MissingHandshake)?;
-+        // A worker cannot accept another request while blocked sending the previous response.
-+        if let Some(previous_response) = self.line_provider.as_mut()
-+            && !previous_response.inner_mut().fill_buf()?.is_empty()
-+        {
-+            return Err(client::Error::Http(
-+                message("previous HTTP response body was not fully consumed").raise(),
-+            ));
-+        }
-         let url = append_url(&self.url, service.as_str());
-         let static_headers = &[
-             Cow::Borrowed(self.user_agent_header),
+@@ -2,7 +2,7 @@ lints.workspace = true
+ 
+ [package]
+ name = "gix-actor"
+-version = "0.44.0"
++version = "0.44.1"
+ description = "A way to identify git actors"
+ authors = ["Sebastian Thiel <sebastian.thiel@icloud.com>"]
+ repository = "https://github.com/GitoxideLabs/gitoxide"
+@@ -19,8 +19,8 @@ doctest = true
+ serde = ["dep:serde", "bstr/serde", "gix-date/serde"]
+ 
+ [dependencies]
+-gix-date = { version = "^0.18.0", path = "../gix-date" }
+-gix-error = { version = "^0.5.1", path = "../gix-error", features = ["bstr"] }
++gix-date = { version = "^0.18.1", path = "../gix-date" }
++gix-error = { version = "^0.5.2", path = "../gix-error", features = ["bstr"] }
+ 
+ bstr = { version = "1.12.0", default-features = false, features = [
+     "std",
 ```
 
-**File**: `gix-transport/tests/client/blocking_io/http/mod.rs` (modified, +72/-2)
+**File**: `gix-archive/CHANGELOG.md` (modified, +25/-1)
 ```diff
-@@ -30,6 +30,74 @@ type Remote = http::curl::Curl;
- #[cfg(all(feature = "http-client-reqwest", not(feature = "http-client-curl")))]
- type Remote = http::reqwest::Remote;
+@@ -5,13 +5,36 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
-+#[test]
-+fn next_request_rejects_an_unread_response_body() -> gix_testtools::TestResult {
-+    use gix_transport::client::{MessageKind, WriteMode};
++## 0.39.0 (2026-10-22)
 +
-+    let listener = std::net::TcpListener::bind("127.0.0.1:0")?;
-+    let url = format!("http://{}/repo", listener.local_addr()?);
-+    let server = std::thread::spawn(move || -> std::io::Result<()> {
-+        let mut response = b"0008NAK\n".to_vec();
-+        // More than one copy buffer keeps the worker blocked after the protocol stops at NAK.
-+        response.resize(32 * 1024, b'x');
-+        for (content_type, body) in [
-+            ("advertisement", b"000eversion 2\n000cls-refs\n000afetch\n0000".to_vec()),
-+            ("result", response),
-+        ] {
-+            let (stream, _) = listener.accept()?;
-+            stream.set_read_timeout(Some(std::time::Duration::from_secs(5)))?;
-+            let mut reader = std::io::BufReader::new(stream);
-+            read_request_lines(&mut reader);
-+            if content_type == "result" {
-+                let mut request = [0; 4];
-+                reader.read_exact(&mut request)?;
-+                assert_eq!(&request, b"0000", "the request contains only a flush packet");
-+            }
-+            write!(
-+                reader.get_mut(),
-+                "HTTP/1.1 200 OK\r\n\
-+                 Content-Type: application/x-git-upload-pack-{content_type}\r\n\
-+                 Content-Length: {}\r\n\
-+                 Connection: close\r\n\
-+                 \r\n",
-+                body.len()
-+            )?;
-+            reader.get_mut().write_all(&body)?;
-+        }
-+        Ok(())
-+    });
++### Commit Statistics
 +
-+    let mut client = http::connect::<Remote>(url.as_str().try_into()?, Protocol::V2, false);
-+    client.handshake(Service::UploadPack, &[])?;
-+    let mut response = client
-+        .request(WriteMode::OneLfTerminatedLinePerWriteCall, MessageKind::Flush, false)?
-+        .into_read()?;
-+    let mut line = String::new();
-+    response.read_line(&mut line)?;
-+    assert_eq!(line, "NAK\n", "the protocol stops before the remaining response body");
-+    drop(response);
-+    server.join().expect("HTTP server thread completed")?;
++<csr-read-only-do-not-edit/>
 +
-+    let (send, receive) = std::sync::mpsc::channel();
-+    let request = std::thread::spawn(move || {
-+        let result = client
-+            .request(WriteMode::OneLfTerminatedLinePerWriteCall, MessageKind::Flush, false)
-+            .map(|_| ())
-+            .map_err(|err| format!("{err:?}"));
-+        send.send(result).expect("the test is waiting for the request result");
-+    });
-+    let error = receive
-+        .recv_timeout(std::time::Duration::from_secs(5))
-+        .expect("an unread response must cause an error instead of a deadlock")
-+        .expect_err("the next request must reject the unread response");
-+    request.join().expect("request thread completed");
-+    assert!(
-+        error.contains("previous HTTP response body was not fully consumed"),
-+        "the error explains why the next request cannot start: {error}"
-+    );
-+    Ok(())
-+}
++ - 3 commits contributed to the release over the course of 14 calendar days.
++ - 14 days passed between releases.
++ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
++ - 0 issues like '(#ID)' were seen in commit messages
 +
- fn assert_error_status(
-     status: usize,
-     kind: std::io::ErrorKind,
-@@ -285,7 +353,8 @@ fn http_authentication_error_can_be_differentiated_and_identity_is_transmitted()
-         password: "password".into(),
-         oauth_refresh_token: None,
-     })?;
--    client.handshake(Service::UploadPack, &[])?;
-+    let SetServiceResponse { refs, .. } = client.handshake(Service::UploadPack, &[])?;
-+    io::copy(&mut refs.expect("refs in protocol V1"), &mut io::sink())?;
++### Commit Details
++
++<csr-read-only-do-not-edit/>
++
++<details><summary>view details</summary>
++
++ * **Uncategorized**
++    - Merge pull request #3053 from GitoxideLabs/various-improvements ([`2d8dcc4`](https://github.com/GitoxideLabs/gitoxide/commit/2d8dcc466750e474e6c51ac636c24259563a26cf))
++    - Release gix-error v0.5.1, gix-utils v0.5.1 ([`6d1b686`](https://github.com/GitoxideLabs/gitoxide/commit/6d1b68632cec55fa5d3f752ca97daca4e5485b6c))
++    - Merge pull request #3048 from GitoxideLabs/new-release ([`5fccccf`](https://github.com/GitoxideLabs/gitoxide/commit/5fccccfdedd17f7d4b0cc57039d118a3496aa8aa))
++</details>
++
+ ## 0.38.0 (2026-10-08)
  
-     assert_eq!(
-         server
-@@ -556,7 +625,8 @@ fn redirected_post_does_not_forward_basic_auth_to_the_new_host() -> TestResult {
-         oauth_refresh_token: None,
-     })?;
+ ### Commit Statistics
  
--    client.handshake(Service::UploadPack, &[]).map(drop)?;
-+    let SetServiceResponse { refs, .. } = client.handshake(Service::UploadPack, &[])?;
-+    io::copy(&mut refs.expect("refs in protocol V1"), &mut io::sink())?;
-     let url_after_handshake = client.to_url().as_ref().to_owned();
-     let mut request = client.request(client::WriteMode::Binary, client::MessageKind::Flush, false)?;
-     request.write_all(b"0000")?;
+ <csr-read-only-do-not-edit/>
+ 
+- - 6 commits contributed to the release over the course of 13 calendar days.
++ - 7 commits contributed to the release over the course of 13 calendar days.
+  - 13 days passed between releases.
+  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+  - 0 issues like '(#ID)' were seen in commit messages
+@@ -23,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ <details><summary>view details</summary>
+ 
+  * **Uncategorized**
++    - Release gix-error v0.5.0, gix-date v0.18.0, gix-actor v0.44.0, gix-trace v0.3.0, gix-validate v0.13.0, gix-path v0.14.0, gix-utils v0.5.0, gix-quote v0.10.0, gix-command v0.12.0, gix-hash v0.28.0, gix-hashtable v0.18.0, gix-parallel v0.50.0, gix-fs v0.24.0, gix-tempfile v26.0.0, gix-object v0.66.0, gix-glob v0.29.0, gix-attributes v0.37.0, gix-packetline v0.24.0, gix-filter v0.36.0, gix-chunk v0.10.0, gix-commitgraph v0.41.0, gix-revwalk v0.37.0, gix-traverse v0.63.0, gix-worktree-stream v0.38.0, gix-archive v0.38.0, gix-bitmap v0.6.0, gix-lock v26.0.0, gix-index v0.57.0, gix-config-value v0.21.0, gix-pathspec v0.22.0, gix-ignore v0.24.0, gix-worktree v0.58.0, gix-imara-diff v0.3.1, gix-diff v0.69.0, gix-blame v0.19.0, gix-ref v0.69.0, gix-sec v0.16.0, gix-config v0.62.0, gix-prompt v0.19.0, gix-url v0.40.0, gix-credentials v0.42.0, gix-discover v0.57.0, gix-dir v0.31.0, gix-mailmap v0.36.0, gix-revision v0.51.0, gix-merge v0.22.0, gix-negotiate v0.37.0, gix-note v0.3.0, gix-zlib v0.3.0, gix-pack v0.76.0, gix-odb v0.86.0, gix-refspec v0.47.0, gix-shallow v0.15.0, gix-transport v0.61.0, gix-protocol v0.67.0, gix-status v0.36.0, gix-submodule v0.36.0, gix-worktree-state v0.36.0, gix v0.89.0, gix-fsck v0.27.0, gitoxide-core v0.63.0, gix-tix v0.5.0, gitoxide v0.60.0, safety bump 62 crates ([`0115e90`](https://github.com/GitoxideLabs/gitoxide/commit/0115e902fd0334b8f370766993eb17babed3157f))
+     - Prepare changelogs prior to release ([`794eeef`](https://github.com/GitoxideLabs/gitoxide/commit/794eeef835f8dde0fc8f4fd1d215f304d28d7f77))
+     - Merge pull request #3032 from GitoxideLabs/sec-audit ([`1d7bac7`](https://github.com/GitoxideLabs/gitoxide/commit/1d7bac742f70b72ddda0c7294f4a97566b8db596))
+     - Merge pull request #3033 from GitoxideLabs/gix-cli-progress-cleanup ([`80f4b03`](https://github.com/GitoxideLabs/gitoxide/commit/80f4b03257da9a664468e7b75247023187565a34))
 ```
 
-**File**: `gix-transport/tests/http_helpers/mod.rs` (modified, +11/-1)
+**File**: `gix-archive/Cargo.toml` (modified, +6/-6)
 ```diff
-@@ -9,10 +9,20 @@ pub(crate) fn response_with_connection_close(response: &[u8]) -> Vec<u8> {
-     let (headers, body) = response.split_at(split);
-     let body = &body[2..];
-     let headers = std::str::from_utf8(headers).expect("fixture headers are UTF-8");
-+    // Text fixtures end with a newline which is not part of the final flush packet.
-+    let body = if body.ends_with(b"0000\n") {
-+        &body[..body.len() - 1]
-+    } else {
-+        body
-+    };
+@@ -2,7 +2,7 @@ lints.workspace = true
  
-     let mut out = Vec::with_capacity(response.len() + 64);
-     for line in headers.lines() {
--        out.extend_from_slice(line.as_bytes());
-+        if line.to_ascii_lowercase().starts_with("content-length:") {
-+            out.extend_from_slice(format!("Content-Length: {}", body.len()).as_bytes());
-+        } else {
-+            out.extend_from_slice(line.as_bytes());
-+        }
-         out.extend_from_slice(b"\r\n");
-     }
-     out.extend_from_slice(b"Connection: close\r\n\r\n");
+ [package]
+ name = "gix-archive"
+-version = "0.38.0"
++version = "0.39.0"
+ repository = "https://github.com/GitoxideLabs/gitoxide"
+ license = "MIT OR Apache-2.0"
+ description = "archive generation from of a worktree stream"
+@@ -31,15 +31,15 @@ zip = ["dep:rawzip", "dep:flate2"]
+ 
+ 
+ [dependencies]
+-gix-worktree-stream = { version = "^0.38.0", path = "../gix-worktree-stream" }
+-gix-object = { version = "^0.66.0", path = "../gix-object" }
+-gix-path = { version = "^0.14.0", path = "../gix-path", optional = true }
+-gix-date = { version = "^0.18.0", path = "../gix-date" }
++gix-worktree-stream = { version = "^0.39.0", path = "../gix-worktree-stream" }
++gix-object = { version = "^0.66.1", path = "../gix-object" }
++gix-path = { version = "^0.14.1", path = "../gix-path", optional = true }
++gix-date = { version = "^0.18.1", path = "../gix-date" }
+ 
+ flate2 = { version = "1.1.9", optional = true, default-features = false, features = ["zlib-rs"] }
+ rawzip = { version = "0.4.3", optional = true }
+ 
+-gix-error = { version = "^0.5.1", path = "../gix-error" }
++gix-error = { version = "^0.5.2", path = "../gix-error" }
+ bstr = { version = "1.12.0", default-features = false }
+ 
+ tar = { version = "0.4.46", optional = true }
+```
+
+**File**: `gix-attributes/CHANGELOG.md` (modified, +25/-1)
+```diff
+@@ -5,13 +5,36 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
++## 0.37.1 (2026-10-22)
++
++### Commit Statistics
++
++<csr-read-only-do-not-edit/>
++
++ - 3 commits contributed to the release over the course of 14 calendar days.
++ - 14 days passed between releases.
++ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
++ - 0 issues like '(#ID)' were seen in commit messages
++
++### Commit Details
++
++<csr-read-only-do-not-edit/>
++
++<details><summary>view details</summary>
++
++ * **Uncategorized**
++    - Merge pull request #3053 from GitoxideLabs/various-improvements ([`2d8dcc4`](https://github.com/GitoxideLabs/gitoxide/commit/2d8dcc466750e474e6c51ac636c24259563a26cf))
++    - Release gix-error v0.5.1, gix-utils v0.5.1 ([`6d1b686`](https://github.com/GitoxideLabs/gitoxide/commit/6d1b68632cec55fa5d3f752ca97daca4e5485b6c))
++    - Merge pull request #3048 from GitoxideLabs/new-release ([`5fccccf`](https://github.com/GitoxideLabs/gitoxide/commit/5fccccfdedd17f7d4b0cc57039d118a3496aa8aa))
++</details>
++
+ ## 0.37.0 (2026-10-08)
+ 
+ ### Commit Statistics
+ 
+ <csr-read-only-do-not-edit/>
+ 
+- - 8 commits contributed to the release over the course of 13 calendar days.
++ - 9 commits contributed to the release over the course of 13 calendar days.
+  - 13 days passed between releases.
+  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+  - 0 issues like '(#ID)' were seen in commit messages
+@@ -23,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ <details><summary>view details</summary>
+ 
+  * **Uncategorized**
++    - Release gix-error v0.5.0, gix-date v0.18.0, gix-actor v0.44.0, gix-trace v0.3.0, gix-validate v0.13.0, gix-path v0.14.0, gix-utils v0.5.0, gix-quote v0.10.0, gix-command v0.12.0, gix-hash v0.28.0, gix-hashtable v0.18.0, gix-parallel v0.50.0, gix-fs v0.24.0, gix-tempfile v26.0.0, gix-object v0.66.0, gix-glob v0.29.0, gix-attributes v0.37.0, gix-packetline v0.24.0, gix-filter v0.36.0, gix-chunk v0.10.0, gix-commitgraph v0.41.0, gix-revwalk v0.37.0, gix-traverse v0.63.0, gix-worktree-stream v0.38.0, gix-archive v0.38.0, gix-bitmap v0.6.0, gix-lock v26.0.0, gix-index v0.57.0, gix-config-value v0.21.0, gix-pathspec v0.22.0, gix-ignore v0.24.0, gix-worktree v0.58.0, gix-imara-diff v0.3.1, gix-diff v0.69.0, gix-blame v0.19.0, gix-ref v0.69.0, gix-sec v0.16.0, gix-config v0.62.0, gix-prompt v0.19.0, gix-url v0.40.0, gix-credentials v0.42.0, gix-discover v0.57.0, gix-dir v0.31.0, gix-mailmap v0.36.0, gix-revision v0.51.0, gix-merge v0.22.0, gix-negotiate v0.37.0, gix-note v0.3.0, gix-zlib v0.3.0, gix-pack v0.76.0, gix-odb v0.86.0, gix-refspec v0.47.0, gix-shallow v0.15.0, gix-transport v0.61.0, gix-protocol v0.67.0, gix-status v0.36.0, gix-submodule v0.36.0, gix-worktree-state v0.36.0, gix v0.89.0, gix-fsck v0.27.0, gitoxide-core v0.63.0, gix-tix v0.5.0, gitoxide v0.60.0, safety bump 62 crates ([`0115e90`](https://github.com/GitoxideLabs/gitoxide/commit/0115e902fd0334b8f370766993eb17babed3157f))
+     - Prepare changelogs prior to release ([`794eeef`](https://github.com/GitoxideLabs/gitoxide/commit/794eeef835f8dde0fc8f4fd1d215f304d28d7f77))
+     - Merge pull request #3032 from GitoxideLabs/sec-audit ([`1d7bac7`](https://github.com/GitoxideLabs/gitoxide/commit/1d7bac742f70b72ddda0c7294f4a97566b8db596))
+     - Merge pull request #3046 from GitoxideLabs/gix-error-optional-bstr ([`9272d45`](https://github.com/GitoxideLabs/gitoxide/commit/9272d45a1b08ca6f26779389954bd718f8308a80))
 ```
 
 ---
 
-### Incident Patch 2: `ba550491` (2026-10-20)
-**Commit Message**: Merge pull request #3075 from GitoxideLabs/fix-fetch
+### Incident Patch 2: `b8ef9ea9` (2026-10-22)
+**Commit Message**: Merge pull request #3082 from 10ne1/sha256-ci-fixes
 
-Fix HTTP fetch hangs with protocol V1 and no-done
+Fix 3 small sha256 test bugs
 
-**File**: `gix-packetline/src/read.rs` (modified, +12/-0)
+**File**: `AGENTS.md` (modified, +5/-0)
 ```diff
-@@ -54,6 +54,18 @@ pub struct StreamingPeekableIterState<T> {
+@@ -137,6 +137,11 @@ Follow "purposeful conventional commits" style:
+ 
+ ### Test Best Practices
+ 
++- Test public APIs in the crate's integration tests under `tests/`, using only
++  public interfaces. Reserve in-source unit tests (`#[cfg(test)]` modules) for
++  private or `pub(crate)` functionality that integration tests cannot access.
++  Extend an existing integration test with additional assertions when it already
++  exercises the relevant behavior.
+ - Tests must be isolated from the developer's checkout, other worktrees, shared
+   Git metadata, and user configuration. Use fixtures provided by `gix-testtools`;
+   never use the source checkout as a test repository.
+```
+
+**File**: `etc/scripts/cargo-check-all.sh` (modified, +14/-14)
+```diff
+@@ -113,20 +113,20 @@ cargo check -p gix --no-default-features --features sha1,async-network-client-as
+ cargo check -p gix --no-default-features --features sha1,blocking-network-client
+ cargo check -p gix --no-default-features --features sha1,blocking-http-transport-curl
+ cargo check -p gix --no-default-features --features sha1,blocking-http-transport-reqwest
+-cargo check -p gix --no-default-features --features max-performance --tests
+-cargo check -p gix --no-default-features --features max-performance --tests
+-cargo check -p gix --no-default-features --features progress-tree --tests
+-cargo check -p gix --no-default-features --features blob-diff --tests
+-cargo check -p gix --no-default-features --features revision --tests
+-cargo check -p gix --no-default-features --features revparse-regex --tests
+-cargo check -p gix --no-default-features --features mailmap --tests
+-cargo check -p gix --no-default-features --features excludes --tests
+-cargo check -p gix --no-default-features --features attributes --tests
+-cargo check -p gix --no-default-features --features worktree-mutation --tests
+-cargo check -p gix --no-default-features --features credentials --tests
+-cargo check -p gix --no-default-features --features index --tests
+-cargo check -p gix --no-default-features --features interrupt --tests
+-cargo check -p gix --no-default-features --features blame --tests
++cargo check -p gix --no-default-features --features max-performance,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features max-performance,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features progress-tree,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features blob-diff,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features revision,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features revparse-regex,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features mailmap,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features excludes,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features attributes,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features worktree-mutation,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features credentials,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features index,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features interrupt,sha1,sha256 --tests
++cargo check -p gix --no-default-features --features blame,sha1,sha256 --tests
+ cargo check -p gix --no-default-features --features sha1
+ cargo check -p gix --no-default-features --features sha1,sha256
+ cargo check -p gix --no-default-features --features sha256
+```
+
+**File**: `gix/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -428,7 +428,7 @@ document-features = { version = "0.2.0", optional = true }
+ 
+ [dev-dependencies]
+ gix = { path = ".", default-features = false, features = [
+-    "merge", "tree-error", "sha1", "sha256"
++    "merge", "tree-error"
+ ] }
+ gix-hash = { version = "^0.28.0", path = "../gix-hash" }
+ gix-pack = { version = "^0.76.0", path = "../gix-pack", default-features = false, features = [
+```
+
+**File**: `gix/src/create.rs` (modified, +2/-0)
+```diff
+@@ -111,6 +111,7 @@ pub struct Options {
+     /// If set to `Some(Sha256)`, write `extensions.objectFormat=sha256`.
+     /// Otherwise, create a repository without an explicit object-format extension,
+     /// which is interpreted as legacy SHA-1.
++    /// In builds without SHA-1 support, `None` means SHA-256.
+     pub object_hash: Option<gix_hash::Kind>,
  }
  
- impl<T> StreamingPeekableIterState<T> {
-+    /// Return the underlying reader, bypassing any buffered packet line.
-+    ///
-+    /// This is useful for checking transport-level EOF after packet-line iteration has stopped at a delimiter.
-+    /// For example, an HTTP transport can use [`std::io::BufRead::fill_buf()`] to check that the previous response
-+    /// body is exhausted before starting another request, without decoding another packet line.
-+    ///
-+    /// Any packet line already buffered by this iterator remains buffered and is not visible through this reader.
-+    /// Reading from it directly advances the underlying stream without updating the iterator's state.
-+    pub fn inner_mut(&mut self) -> &mut T {
-+        &mut self.read
-+    }
-+
-     /// Return a new instance from `read` which will stop decoding packet lines when receiving one of the given `delimiters`.
-     /// If `trace` is `true`, all packetlines received or sent will be passed to the facilities of the `gix-trace` crate.
-     #[cfg(any(feature = "blocking-io", feature = "async-io"))]
-```
-
-**File**: `gix-protocol/src/fetch/function.rs` (modified, +9/-4)
-```diff
-@@ -73,6 +73,7 @@ where
+@@ -162,6 +163,7 @@ pub(crate) fn into_with_capabilities(
+ ) -> Result<(gix_discover::repository::Path, gix_fs::Capabilities)> {
+     let mut dot_git = directory.into();
+     let bare = matches!(kind, Kind::Bare);
++    let object_hash = object_hash.or_else(default_object_hash);
  
-     crate::fetch::Response::check_required_features(protocol_version, &fetch_features)?;
-     let sideband_all = fetch_features.iter().any(|(n, _)| *n == "sideband-all");
-+    let no_done = fetch_features.iter().any(|(n, _)| *n == "no-done");
-     let mut arguments = Arguments::new(protocol_version, fetch_features, trace_packetlines);
-     if matches!(tags, Tags::Included) {
-         if !arguments.can_use_include_tag() {
-@@ -126,10 +127,14 @@ where
-                 if sideband_all {
-                     setup_remote_progress(&mut progress, &mut reader, should_interrupt);
-                 }
--                let response =
--                    crate::fetch::Response::from_line_reader(protocol_version, &mut reader, is_done, !is_done)
--                        .await
--                        .or_raise(|| message("Could not decode server reply"))?;
-+                let response = crate::fetch::Response::from_line_reader(
-+                    protocol_version,
-+                    &mut reader,
-+                    is_done || no_done,
-+                    !is_done,
-+                )
-+                .await
-+                .or_raise(|| message("Could not decode server reply"))?;
-                 let has_pack = response.has_pack();
-                 previous_response = Some(response);
-                 if has_pack {
+     if bare || destination_must_be_empty.unwrap_or(false) {
+         let num_entries_in_dot_git = fs::read_dir(&dot_git)
 ```
 
-**File**: `gix-protocol/src/fetch/response/io.rs` (modified, +3/-3)
+**File**: `gix/src/object/commit.rs` (modified, +1/-1)
 ```diff
-@@ -38,8 +38,8 @@ async fn parse_v2_section<'a, T>(
- impl Response {
-     /// Parse a response of the given `version` of the protocol from `reader`.
+@@ -38,7 +38,7 @@ impl<'repo> Commit<'repo> {
+     /// let short_id = commit.short_id()?;
      ///
--    /// `client_expects_pack` is only relevant for V1 stateful connections, and if `false`, causes us to stop parsing when seeing `NAK`,
--    /// and if `true` we will keep parsing until we get a pack as the client already signalled to the server that it's done.
-+    /// `client_expects_pack` is only relevant for V1 connections. Set it when the client sent `done` or negotiated `no-done`,
-+    /// so that `ready` followed by `NAK` allows us to keep parsing until the pack. Otherwise `NAK` ends the round.
-     /// This way of doing things allows us to exploit knowledge about more recent versions of the protocol, which keeps code easier
-     /// and more localized without having to support all the cruft that there is.
-     ///
-@@ -99,7 +99,7 @@ impl Response {
-                         0,
-                         "consuming a peeked line works"
-                     );
--                    // When the server sends ready, we know there is going to be a pack so no need to stop early.
-+                    // With no-done negotiated, ready promises a pack even before the client sends done.
-                     saw_ready |= matches!(acks.last(), Some(Acknowledgement::Ready));
-                     if let Some(Acknowledgement::Nak) = acks.last().filter(|_| !client_expects_pack || !saw_ready) {
-                         if !wants_to_negotiate {
+     /// assert_eq!(short_id.cmp_oid(&commit.id), Ordering::Equal);
+-    /// assert_eq!(short_id.to_string(), "3189cd3");
++    /// assert_eq!(short_id.to_string(), &commit.id.to_string()[..7]);
+     /// # Ok(()) }
+     /// ```
+     pub fn short_id(&self) -> Result<gix_hash::Prefix> {
 ```
 
-**File**: `gix-protocol/tests/protocol/fetch/v1.rs` (modified, +101/-0)
+**File**: `gix/tests/gix/init.rs` (modified, +36/-13)
 ```diff
-@@ -6,6 +6,107 @@ use gix_utils::progress;
- 
- use crate::fetch::{_impl::FetchConnection, CloneDelegate, LsRemoteDelegate, helper_unused, oid, transport};
- 
-+#[crate::bisync::bisync]
-+#[cfg_attr(feature = "blocking-client", test)]
-+#[cfg_attr(all(feature = "async-client", not(feature = "blocking-client")), async_std::test)]
-+async fn fetch_receives_pack_after_ready_with_no_done() -> TestResult {
-+    use gix_error::{Result, ResultExt};
-+    use gix_protocol::fetch::{self, negotiate};
-+
-+    struct Negotiation;
-+    impl fetch::Negotiate for Negotiation {
-+        fn mark_complete_and_common_ref(&mut self) -> Result<negotiate::Action> {
-+            Ok(negotiate::Action::MustNegotiate {
-+                remote_ref_target_known: vec![false],
-+            })
-+        }
-+
-+        fn add_wants(&mut self, arguments: &mut fetch::Arguments, _known: &[bool]) -> bool {
-+            arguments.want(oid("6504930888c9c5337e7e065c964f87b60d16a7d7"));
-+            true
-+        }
-+
-+        fn one_round(
-+            &mut self,
-+            _state: &mut negotiate::one_round::State,
-+            arguments: &mut fetch::Arguments,
-+            previous_response: Option<&fetch::Response>,
-+        ) -> Result<(negotiate::Round, bool)> {
-+            let is_done = previous_response.is_some();
-+            if !is_done {
-+                arguments.have(oid("f22743895a3024bb0c958335981439f1fa747d57"));
-+            }
-+            Ok((
-+                negotiate::Round {
-+                    haves_sent: usize::from(!is_done),
-+                    in_vain: 0,
-+                    haves_to_send: 16,
-+                    previous_response_had_at_least_one_in_common: is_done,
-+                },
-+                is_done,
-+            ))
-+        }
-+    }
-+
-+    let temp = gix_testtools::tempfile::tempdir()?;
-+    for no_done in [false, true] {
-+        let capabilities = format!(
-+            "{} HEAD\0multi_ack_detailed side-band-64k{}",
-+            "6504930888c9c5337e7e065c964f87b60d16a7d7",
-+            if no_done { " no-done" } else { "" }
-+        );
-+        let mut handshake = gix_protocol::Handshake {
-+            server_protocol_version: Protocol::V1,
-+            capabilities: gix_transport::client::Capabilities::from_bytes(capabilities.as_bytes())?.0,
-+            refs: None,
-+            v1_shallow_updates: None,
-+        };
-+        // Git's response contains ready, NAK, a final ACK, and the sideband pack.
-+        let mut transport = transport(
-+            Vec::new(),
-+            "v1/fetch.response",
-+            Protocol::V1,
-+            gix_transport::client::git::ConnectMode::Process,
-+        );
-+        let mut pack = Vec::new();
-+        let outcome = gix_protocol::fetch(
-+            &mut Negotiation,
-+            |reader, _, _| {
-+                reader.read_to_end(&mut pack).or_error()?;
-+                Ok(true)
+@@ -27,19 +27,42 @@ mod bare {
+     #[serial_test::serial]
+     fn init_into_empty_directory_uses_it_directly() -> TestResult {
+         let _environment = gix_testtools::isolate_git_environment()?;
+-        let tmp = tempfile::tempdir()?;
+-        let repo = gix::init_bare(tmp.path())?;
+-        assert_eq!(repo.kind(), gix::repository::Kind::Common);
+-        assert!(
+-            repo.workdir().is_none(),
+-            "a worktree isn't present in bare repositories"
+-        );
+-        assert_eq!(
+-            repo.git_dir(),
+-            tmp.path(),
+-            "the repository is placed into the directory itself"
+-        );
+-        assert_eq!(gix::open_opts(repo.git_dir(), crate::restricted())?, repo);
++        #[cfg(feature = "sha1")]
++        let expected = gix_hash::Kind::Sha1;
++        #[cfg(not(feature = "sha1"))]
++        let expected = gix_hash::Kind::Sha256;
++        for options in [
++            gix::create::Options::default(),
++            gix::create::Options {
++                object_hash: None,
++                ..Default::default()
 +            },
-+            progress::Discard,
-+            &std::sync::atomic::AtomicBool::new(false),
-+            fetch::Context {
-+                handshake: &mut handshake,
-+                transport: &mut transport,
-+                user_agent: ("agent", Some("test".into())),
-+                trace_packetlines: false,
-+            },
-+            fetch::Options {
-+                shallow_file: temp.path().join("shallow"),
-+                shallow: &fetch::Shallow::NoChange,
-+                tags: fetch::Tags::None,
-+                reject_shallow_remote: false,
-+            },
-+        )
-+        .await?
-+        .expect("negotiation receives a pack");
-+        assert!(pack.starts_with(b"PACK"), "the final ACK is consumed before the pack");
-+        assert_eq!(
-+            outcome.negotiate.rounds.len(),
-+            if no_done { 1 } else { 2 },
-+            "only no-done allows receiving a pack before the client is done"
-+        );
-+        assert_eq!(
-+            transport.into_inner().1.contains_str("done\n"),
-+            !no_done,
-+            "without no-done, ready still requires sending done"
-+        );
-+    }
-+    Ok(())
-+}
-+
- #[crate::bisync::bisync]
- #[cfg_attr(feature = "blocking-client", test)]
- #[cfg_attr(all(feature = "async-client", not(feature = "blocking-client")), async_std::test)]
-```
-
-**File**: `gix-transport/src/client/blocking_io/http/mod.rs` (modified, +8/-0)
-```diff
-@@ -465,6 +465,14 @@ impl<H: Http> blocking_io::Transport for Transport<H> {
-         trace: bool,
-     ) -> std::result::Result<RequestWriter<'_>, client::Error> {
-         let service = self.service.ok_or(client::Error::MissingHandshake)?;
-+        // A worker cannot accept another request while blocked sending the previous response.
-+        if let Some(previous_response) = self.line_provider.as_mut()
-+            && !previous_response.inner_mut().fill_buf()?.is_empty()
-+        {
-+            return Err(client::Error::Http(
-+                message("previous HTTP response body was not fully consumed").raise(),
-+            ));
-+        }
-         let url = append_url(&self.url, service.as_str());
-         let static_headers = &[
-             Cow::Borrowed(self.user_agent_header),
-```
-
-**File**: `gix-transport/tests/client/blocking_io/http/mod.rs` (modified, +72/-2)
-```diff
-@@ -30,6 +30,74 @@ type Remote = http::curl::Curl;
- #[cfg(all(feature = "http-client-reqwest", not(feature = "http-client-curl")))]
- type Remote = http::reqwest::Remote;
- 
-+#[test]
-+fn next_request_rejects_an_unread_response_body() -> gix_testtools::TestResult {
-+    use gix_transport::client::{MessageKind, WriteMode};
-+
-+    let listener = std::net::TcpListener::bind("127.0.0.1:0")?;
-+    let url = format!("http://{}/repo", listener.local_addr()?);
-+    let server = std::thread::spawn(move || -> std::io::Result<()> {
-+        let mut response = b"0008NAK\n".to_vec();
-+        // More than one copy buffer keeps the worker blocked after the protocol stops at NAK.
-+        response.resize(32 * 1024, b'x');
-+        for (content_type, body) in [
-+            ("advertisement", b"000eversion 2\n000cls-refs\n000afetch\n0000".to_vec()),
-+            ("result", response),
 +        ] {
-+            let (stream, _) = listener.accept()?;
-+            stream.set_read_timeout(Some(std::time::Duration::from_secs(5)))?;
-+            let mut reader = std::io::BufReader::new(stream);
-+            read_request_lines(&mut reader);
-+            if content_type == "result" {
-+                let mut request = [0; 4];
-+                reader.read_exact(&mut request)?;
-+                assert_eq!(&request, b"0000", "the request contains only a flush packet");
-+            }
-+            write!(
-+                reader.get_mut(),
-+                "HTTP/1.1 200 OK\r\n\
-+                 Content-Type: application/x-git-upload-pack-{content_type}\r\n\
-+                 Content-Length: {}\r\n\
-+                 Connection: close\r\n\
-+                 \r\n",
-+                body.len()
++            let tmp = tempfile::tempdir()?;
++            let repo = gix::ThreadSafeRepository::init_opts(
++                tmp.path(),
++                gix::create::Kind::Bare,
++                options,
++                gix::open::Options::isolated(),
++            )?
++            .to_thread_local();
++            assert_eq!(repo.kind(), gix::repository::Kind::Common);
++            assert!(
++                repo.workdir().is_none(),
++                "a worktree isn't present in bare repositories"
++            );
++            assert_eq!(
++                repo.git_dir(),
++                tmp.path(),
++                "the repository is placed into the directory itself"
++            );
++            assert_eq!(
++                repo.object_hash(),
++                expected,
++                "initialization uses a supported object hash"
++            );
++            assert_eq!(gix::open_opts(repo.git_dir(), crate::restricted())?, repo);
++        }
+         Ok(())
+     }
+ 
+```
+
+**File**: `justfile` (modified, +11/-10)
+```diff
+@@ -156,13 +156,13 @@ unit-tests:
+     env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix-revision --features sha256 --no-fail-fast
+     env GIX_TEST_FIXTURE_HASH=sha1 cargo nextest run -p gix-worktree-stream --no-fail-fast
+     env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix-worktree-stream --features sha256 --no-fail-fast
+-    cargo nextest run -p gix --no-default-features --features basic,comfort,max-performance --no-fail-fast
+-    cargo nextest run -p gix --no-default-features --features basic,extras,comfort --no-fail-fast
+-    cargo nextest run -p gix --features async-network-client --no-fail-fast
+-    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features async-network-client --no-fail-fast
+-    cargo nextest run -p gix --features blocking-network-client --no-fail-fast
+-    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features blocking-network-client --no-fail-fast
+-    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --no-fail-fast
++    cargo nextest run -p gix --no-default-features --features basic,comfort,max-performance,sha1,sha256 --no-fail-fast
++    cargo nextest run -p gix --no-default-features --features basic,extras,comfort,sha1,sha256 --no-fail-fast
++    cargo nextest run -p gix --features async-network-client,sha256 --no-fail-fast
++    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features async-network-client,sha256 --no-fail-fast
++    cargo nextest run -p gix --features blocking-network-client,sha256 --no-fail-fast
++    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features blocking-network-client,sha256 --no-fail-fast
++    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features sha256 --no-fail-fast
+     cargo nextest run -p gix --no-default-features --features sha256 --lib --no-fail-fast
+     cargo nextest run -p gitoxide-core --no-fail-fast
+ 
+@@ -174,13 +174,14 @@ doc-tests:
+     cargo test -p gix-packetline --doc --features blocking-io --no-fail-fast
+     cargo test -p gix-trace --doc --no-default-features --features forest --no-fail-fast
+     cargo test -p gix-trace --doc --no-default-features --features forest-ansi,tracing-detail --no-fail-fast
+-    cargo test -p gix --doc --no-default-features --no-fail-fast
+-    cargo test -p gix --doc --no-default-features --features revision --no-fail-fast
++    cargo test -p gix --doc --no-default-features --features sha1,sha256 --no-fail-fast
++    cargo test -p gix --doc --no-default-features --features revision,sha1,sha256 --no-fail-fast
++    env GIX_TEST_FIXTURE_HASH=sha256 cargo test -p gix --doc --features sha256 --no-fail-fast
+ 
+ # Run optional flaky async tests
+ [group('Tests')]
+ unit-tests-flaky:
+-    cargo test -p gix --features async-network-client-async-std
++    cargo test -p gix --features async-network-client-async-std,sha256
+ 
+ # Extract cargo metadata, excluding dependencies, and query it
+ [private]
+```
+
+---
+
+### Incident Patch 3: `521b3b29` (2026-10-21)
+**Commit Message**: fix: create SHA-256 repositories for `object_hash: None` in SHA-256-only builds
+
+Previously a SHA-1 repository was created that the same build couldn't open.
+Now `None` falls back to the build's default object format.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `gix/src/create.rs` (modified, +2/-0)
+```diff
+@@ -111,6 +111,7 @@ pub struct Options {
+     /// If set to `Some(Sha256)`, write `extensions.objectFormat=sha256`.
+     /// Otherwise, create a repository without an explicit object-format extension,
+     /// which is interpreted as legacy SHA-1.
++    /// In builds without SHA-1 support, `None` means SHA-256.
+     pub object_hash: Option<gix_hash::Kind>,
+ }
+ 
+@@ -162,6 +163,7 @@ pub(crate) fn into_with_capabilities(
+ ) -> Result<(gix_discover::repository::Path, gix_fs::Capabilities)> {
+     let mut dot_git = directory.into();
+     let bare = matches!(kind, Kind::Bare);
++    let object_hash = object_hash.or_else(default_object_hash);
+ 
+     if bare || destination_must_be_empty.unwrap_or(false) {
+         let num_entries_in_dot_git = fs::read_dir(&dot_git)
+```
+
+**File**: `gix/src/init.rs` (modified, +37/-0)
+```diff
+@@ -86,3 +86,40 @@ impl ThreadSafeRepository {
+         Ok(repo)
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use gix_testtools::TestResult;
++
++    #[test]
++    fn unspecified_object_hash_creates_a_repository_this_build_can_open() -> TestResult {
++        #[cfg(feature = "sha1")]
++        let expected = gix_hash::Kind::Sha1;
++        #[cfg(not(feature = "sha1"))]
++        let expected = gix_hash::Kind::Sha256;
++        for options in [
++            crate::create::Options::default(),
++            crate::create::Options {
++                object_hash: None,
++                ..Default::default()
++            },
++        ] {
++            let tmp = gix_testtools::tempfile::tempdir()?;
++            let repo = crate::ThreadSafeRepository::init_opts(
++                tmp.path(),
++                crate::create::Kind::Bare,
++                options,
++                crate::open::Options::isolated(),
 +            )?;
-+            reader.get_mut().write_all(&body)?;
++            assert_eq!(repo.config.object_hash, expected);
++            assert_eq!(
++                crate::ThreadSafeRepository::open_opts(tmp.path(), crate::open::Options::isolated())?
++                    .config
++                    .object_hash,
++                expected,
++                "the repository can be reopened"
++            );
 +        }
 +        Ok(())
-+    });
-+
-+    let mut client = http::connect::<Remote>(url.as_str().try_into()?, Protocol::V2, false);
-+    client.handshake(Service::UploadPack, &[])?;
-+    let mut response = client
-+        .request(WriteMode::OneLfTerminatedLinePerWriteCall, MessageKind::Flush, false)?
-+        .into_read()?;
-+    let mut line = String::new();
-+    response.read_line(&mut line)?;
-+    assert_eq!(line, "NAK\n", "the protocol stops before the remaining response body");
-+    drop(response);
-+    server.join().expect("HTTP server thread completed")?;
-+
-+    let (send, receive) = std::sync::mpsc::channel();
-+    let request = std::thread::spawn(move || {
-+        let result = client
-+            .request(WriteMode::OneLfTerminatedLinePerWriteCall, MessageKind::Flush, false)
-+            .map(|_| ())
-+            .map_err(|err| format!("{err:?}"));
-+        send.send(result).expect("the test is waiting for the request result");
-+    });
-+    let error = receive
-+        .recv_timeout(std::time::Duration::from_secs(5))
-+        .expect("an unread response must cause an error instead of a deadlock")
-+        .expect_err("the next request must reject the unread response");
-+    request.join().expect("request thread completed");
-+    assert!(
-+        error.contains("previous HTTP response body was not fully consumed"),
-+        "the error explains why the next request cannot start: {error}"
-+    );
-+    Ok(())
++    }
 +}
-+
- fn assert_error_status(
-     status: usize,
-     kind: std::io::ErrorKind,
-@@ -285,7 +353,8 @@ fn http_authentication_error_can_be_differentiated_and_identity_is_transmitted()
-         password: "password".into(),
-         oauth_refresh_token: None,
-     })?;
--    client.handshake(Service::UploadPack, &[])?;
-+    let SetServiceResponse { refs, .. } = client.handshake(Service::UploadPack, &[])?;
-+    io::copy(&mut refs.expect("refs in protocol V1"), &mut io::sink())?;
- 
-     assert_eq!(
-         server
-@@ -556,7 +625,8 @@ fn redirected_post_does_not_forward_basic_auth_to_the_new_host() -> TestResult {
-         oauth_refresh_token: None,
-     })?;
- 
--    client.handshake(Service::UploadPack, &[]).map(drop)?;
-+    let SetServiceResponse { refs, .. } = client.handshake(Service::UploadPack, &[])?;
-+    io::copy(&mut refs.expect("refs in protocol V1"), &mut io::sink())?;
-     let url_after_handshake = client.to_url().as_ref().to_owned();
-     let mut request = client.request(client::WriteMode::Binary, client::MessageKind::Flush, false)?;
-     request.write_all(b"0000")?;
-```
-
-**File**: `gix-transport/tests/http_helpers/mod.rs` (modified, +11/-1)
-```diff
-@@ -9,10 +9,20 @@ pub(crate) fn response_with_connection_close(response: &[u8]) -> Vec<u8> {
-     let (headers, body) = response.split_at(split);
-     let body = &body[2..];
-     let headers = std::str::from_utf8(headers).expect("fixture headers are UTF-8");
-+    // Text fixtures end with a newline which is not part of the final flush packet.
-+    let body = if body.ends_with(b"0000\n") {
-+        &body[..body.len() - 1]
-+    } else {
-+        body
-+    };
- 
-     let mut out = Vec::with_capacity(response.len() + 64);
-     for line in headers.lines() {
--        out.extend_from_slice(line.as_bytes());
-+        if line.to_ascii_lowercase().starts_with("content-length:") {
-+            out.extend_from_slice(format!("Content-Length: {}", body.len()).as_bytes());
-+        } else {
-+            out.extend_from_slice(line.as_bytes());
-+        }
-         out.extend_from_slice(b"\r\n");
-     }
-     out.extend_from_slice(b"Connection: close\r\n\r\n");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3083** (2026-10-22): Report October (@Byron)
+- **PR #3082** (2026-10-22): Fix 3 small sha256 test bugs (@10ne1)
+- **PR #3081** (2026-10-21): Update `webpki-root-certs` and `rustls-webpki` for eMudhra compromise (@EliahKagan)
+- **PR #3080** (2026-10-21): Skip occurrence counting for trivial Myers diffs (@cruessler)
 - **PR #3079** (2026-10-20): perf(gix): don't look for new packs before writing an object (@krlvi)
 - **PR #3078** (2026-10-20): perf(gix-filter): only read the index object when there is a CRLF to convert (@krlvi)
-- **PR #3077** (2026-10-20): Fix text merge alignment for repeated lines (@Byron)
-- **PR #3075** (2026-10-20): Fix HTTP fetch hangs with protocol V1 and no-done (@Byron)
-- **PR #3074** (2026-10-19): fix/imara myers whole file occurrences (@Byron)
-- **PR #3072** (2026-10-19): fix(gix-status): match Git's filter path so Git LFS extensions don't show false modifications (@juanibiapina)
 
 ---
 
@@ -2359,39 +2522,88 @@ Fix HTTP fetch hangs with protocol V1 and no-done
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gix-protocol): receive early HTTP fetch packs with `no-done` (#3073)
+## X. Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1,
 
 **RULE**:
-When implementing operations in `gix-packetline/src/read.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de997d9c`: gix-protocol): receive early HTTP fetch packs with `no-done` (#3073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd39fb66`: Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1, gix-validate v0.13.1, gix-path v0.14.1, gix-quote v0.10.1, gix-command v0.12.1, gix-hash v0.28.1, gix-fs v0.24.1, gix-tempfile v26.0.1, gix-object v0.66.1, gix-glob v0.29.1, gix-attributes v0.37.1, gix-packetline v0.24.1, gix-filter v0.36.1, gix-chunk v0.10.1, gix-commitgraph v0.42.0, gix-revwalk v0.38.0, gix-traverse v0.64.0, gix-worktree-stream v0.39.0, gix-archive v0.39.0, gix-bitmap v0.6.1, gix-lock v26.0.1, gix-index v0.58.0, gix-config-value v0.21.1, gix-pathspec v0.22.1, gix-worktree v0.59.0, gix-imara-diff v0.3.2, gix-diff v0.70.0, gix-blame v0.20.0, gix-ref v0.69.1, gix-config v0.62.1, gix-prompt v0.19.1, gix-url v0.40.1, gix-credentials v0.42.1, gix-discover v0.57.1, gix-dir v0.32.0, gix-mailmap v0.36.1, gix-revision v0.52.0, gix-merge v0.23.0, gix-negotiate v0.38.0, gix-note v0.3.1, gix-zlib v0.4.0, gix-pack v0.77.0, gix-odb v0.87.0, gix-refspec v0.47.1, gix-shallow v0.15.1, gix-transport v0.62.0, gix-protocol v0.68.0, gix-status v0.37.0, gix-submodule v0.36.1, gix-worktree-state v0.37.0, gix v0.90.0, gix-fsck v0.27.1, gitoxide-core v0.64.0, gix-tix v0.6.0, gitoxide v0.61.0, safety bump 21 c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix-packetline/src/read.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Return the underlying reader, bypassing any buffered packet line.
-    ///
-    /// This is useful for checking transport-level EOF after packet-line iteration has stopped at a delimiter.
-    /// For example, an HTTP transport can use [`std::io::BufRead::fill_buf()`] to check that the previous response
-    /// body is exhausted before starting another request, without decoding another packet line.
-    ///
-    /// Any packet line already buffered by this iterator remains buffered and is not visible through this reader.
-    /// Reading from it directly advances the underlying stream without updating the iterator's state.
-    pub fn inner_mut(&mut self) -> &mut T {
-        &mut self.read
-    }
-
+version = "0.61.0"
+version = "0.64.0"
+version = "0.90.0"
+version = "0.44.1"
+version = "0.39.0"
+version = "0.37.1"
+version = "0.6.1"
+version = "0.20.0"
+version = "0.10.1"
+version = "0.12.1"
+version = "0.42.0"
+version = "0.62.1"
+version = "0.21.1"
+version = "0.42.1"
+version = "0.18.1"
+version = "0.70.0"
+version = "0.32.0"
+version = "0.57.1"
+version = "0.5.2"
+version = "0.36.1"
+version = "0.24.1"
+version = "0.27.1"
+version = "0.29.1"
+version = "0.28.1"
+version = "0.3.2"
+version = "0.58.0"
+version = "26.0.1"
+version = "0.36.1"
+version = "0.23.0"
+version = "0.38.0"
+version = "0.3.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "0.60.0"
+version = "0.63.0"
+version = "0.89.0"
+version = "0.44.0"
+version = "0.38.0"
+version = "0.37.0"
+version = "0.6.0"
+version = "0.19.0"
+version = "0.10.0"
+version = "0.12.0"
+version = "0.41.0"
+version = "0.62.0"
+version = "0.21.0"
+version = "0.42.0"
+version = "0.18.0"
+version = "0.69.0"
+version = "0.31.0"
+version = "0.57.0"
+version = "0.5.1"
+version = "0.36.0"
+version = "0.24.0"
+version = "0.27.0"
+version = "0.29.0"
+version = "0.28.0"
+version = "0.3.1"
+version = "0.57.0"
+version = "26.0.0"
+version = "0.36.0"
+version = "0.22.0"
+version = "0.37.0"
+version = "0.3.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de997d9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd39fb66` are properly handled with clean fallback behavior.
