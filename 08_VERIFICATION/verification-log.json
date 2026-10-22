@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-UQKO",
-    "timestamp": "2026-10-20T13:53:45.480Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "12b8a47994a9a84d8ea63051e22c7adce249c1c1ac409f694ea1ab029cfc4764",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-URMH",
-    "timestamp": "2026-10-20T13:53:46.841Z",
-    "repository": "litmuschaos/litmus",
-    "learningId": "learn-github-litmuschaos-litmus",
-    "contentHash": "852bf05a79c3f24e745a198a66f64c86cf4d776783b95a51bfdd9ec1a0f62e1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-UV7U",
     "timestamp": "2026-10-20T13:53:51.498Z",
     "repository": "lancedb/lancedb",
@@ -7492,6 +7462,36 @@
     "contentHash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-3A7F",
+    "timestamp": "2026-10-22T16:51:42.315Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "cf39d8596b28d0f5c4e09cb7ac2de79544fec7f0468c4ec10906120d9629e283",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-3DR0",
+    "timestamp": "2026-10-22T16:51:46.908Z",
+    "repository": "hmlongco/Factory",
+    "learningId": "learn-github-hmlongco-factory",
+    "contentHash": "347cc5fc71aa1c8fe0db97b6e69536e06132bd56f2c75aa6bd189dcb23ef1bc8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

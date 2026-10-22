@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "547751f2",
+    "sourceVersion": "55bd0f76",
     "license": "Apache-2.0",
-    "contentHash": "51572215e561c9589e8eb25bffca64a02a473abe8f57a8aa458b8b7952660f1e",
-    "lastHarvestedAt": "2026-10-20T19:58:39.497Z",
+    "contentHash": "cf39d8596b28d0f5c4e09cb7ac2de79544fec7f0468c4ec10906120d9629e283",
+    "lastHarvestedAt": "2026-10-22T16:51:42.318Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -9353,10 +9353,10 @@
     "repository": "hmlongco/Factory",
     "platform": "github",
     "sourceUrl": "https://github.com/hmlongco/Factory",
-    "sourceVersion": "2a306bcd",
+    "sourceVersion": "aa8596de",
     "license": "MIT",
-    "contentHash": "9bdb925fbbb87ec8864bd96690e694fd497edc8b817913a33288bf454ef6c551",
-    "lastHarvestedAt": "2026-10-19T22:49:31.588Z",
+    "contentHash": "347cc5fc71aa1c8fe0db97b6e69536e06132bd56f2c75aa6bd189dcb23ef1bc8",
+    "lastHarvestedAt": "2026-10-22T16:51:46.911Z",
     "learningId": "learn-github-hmlongco-factory"
   },
   "fb55-htmlparser2": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `547751f2`  
+> **Source Version**: `55bd0f76`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:58:39.096Z  
+> **Timestamp**: 2026-10-22T16:51:41.874Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:58:39.088Z  
+> **Harvest Timestamp**: 2026-10-22T16:51:40.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 90940 stars
+- **Stars / Engagement**: 91025 stars
 
 ---
 
@@ -1497,17 +1497,13 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22727** (2026-10-19): **Handle invalid Python version requests without panicking**
-  *Symptoms*: Return an error instead of panicking when `uv pip compile --python-version 3.12.1.1` cannot convert the Python version into an interpreter request. Construct managed installation requests directly from their known version components.
+- **Issue #22815** (2026-10-22): **Prevent local-version containment markers from panicking**
+  *Symptoms*: Rendering `python_full_version not in '3.20+x' and python_full_version < '4'` can panic when the local version reaches an ordered comparison, which does not allow local segments. Normalize versions in `in` and `not in` markers to their release segments, as comparison markers already do, so the resulting marker can be rendered and parsed consistently.  Fixes astral-sh/uv#22804 
   **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **degrade performance by 2.57%**  <details> <summary>:warning: <b>1 benchmark measured no execution time</b></summary>  > Nothing ran under measurement, usually because the compiler removed the code under test. This result is not comparable, so it counts as unchanged. > > [Preventing compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > - [`` imbibe_marker_no_conflicts[0] ``](https://app.codspeed.io/astral-sh/uv/branches/konsti%2Ffix-python-version-components?uri=crates%2Fuv-bench%2Fbenches%2Fuv_pep508.rs%3A%3Auv_pep508%3A%3Aimbibe%3A%3Amarker%2Fimbibe%3A%3Aimbibe_marker_no_conflicts%255B0%255D&runnerMode=WallTime&utm_source=github&utm_medium=comment-v2&utm_content=benchmark)  </details> <details> <summary>:warning: <b>8 benchmarks spent significant time in system calls</b></summary>  > System calls cannot be
-  >  <!-- generated-comment uv test-inventory -->  ## uv test inventory changes  This PR changes the tests when compared with the `main` base revision.  - Added tests: **1** - Removed tests: **0** - Changed suites: **1**  <details> <summary><code>uv::pip_compile</code>: +1 / -0</summary>  <br>  **Added:** - `uv::pip_compile::pip_compile::compile_python_version_too_many_components`  **Removed:** none  </details> 
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 7.08%**  <details> <summary><b>1 warning</b></summary>  > :warning: **8 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/astral-sh/uv/branches/automations%2Ffix-bug%2F22804?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `⚡ 3` improved benchmarks   `✅ 116` untouched benchmarks   `⏩ 54` skipped benchmarks[^skipped]      ### Performance Changes  |     | Mode | Benchmark | `BASE` | `HEAD` | Efficiency | | --- | ---- | --------- | ------ | --
 
-- **Issue #22725** (2026-10-19): **Reject invalid pylock output paths**
-  *Symptoms*: Reject output paths without a valid PEP 751 filename before resolution. This reports the existing filename diagnostic instead of panicking when the output path is a filesystem root.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 5.7%**  <details> <summary>:warning: <b>1 benchmark measured no execution time</b></summary>  > Nothing ran under measurement, usually because the compiler removed the code under test. This result is not comparable, so it counts as unchanged. > > [Preventing compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > - [`` imbibe_marker_no_conflicts[0] ``](https://app.codspeed.io/astral-sh/uv/branches/konsti%2Ffix-pylock-root-output?uri=crates%2Fuv-bench%2Fbenches%2Fuv_pep508.rs%3A%3Auv_pep508%3A%3Aimbibe%3A%3Amarker%2Fimbibe%3A%3Aimbibe_marker_no_conflicts%255B0%255D&runnerMode=WallTime&utm_source=github&utm_medium=comment-v2&utm_content=benchmark)  </details> <details> <summary>:warning: <b>8 benchmarks spent significant time in system calls</b></summary>  > System calls cannot be consist
-  >  <!-- generated-comment uv test-inventory -->  ## uv test inventory changes  This PR changes the tests when compared with the `main` base revision.  - Added tests: **1** - Removed tests: **0** - Changed suites: **1**  <details> <summary><code>uv::pip_compile</code>: +1 / -0</summary>  <br>  **Added:** - `uv::pip_compile::pip_compile::pep_751_root_output_path`  **Removed:** none  </details> 
+- **Issue #22806** (2026-10-21): **Infer platform markers from Android wheel tags**
+  *Symptoms*: <!-- Thank you for contributing to uv! To help us out with reviewing, please consider the following:  - Does this pull request include a summary of the change? (See below.) - Does this pull request include a descriptive title? - Does this pull request include references to any relevant issues? -->  ## Summary `implied_platform_markers()` in resolution does not cover any Android wheels, causing an error when trying to lock a package that has no sdist but does have Android wheels. See #22805 for a more in-depth explainer of the issue. This PR fixes this by adding the `PlatformTag::Android` match arm to `implied_platform_markers()`, emitting the implicit platform markers `sys_platform == 'android'` and `platform_machine == abi.arch().name()`.  `AndroidAbi::arch()` is simply the inverse of the existing `AndroidAbi::from_arch()`.  Closes #22805  ## Test Plan This PR adds a test, `lock_android_no_sdist`, that covers the previously un-tested case of locking an Android wheel that does *not* include an sdist. `lock_android`'s package also has an sdist, so the Android tags on the wheels didn't have any effect on the lockfile result, since the sdist covers all possible platforms.  There's also some new `assert_platform_markers` cases in `prioritzed_distribution.rs`.  All the added tests fail with the Android implicit platforms code removed.  This PR also fixes the two reproductions listed in #22805.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1524,343 +1520,347 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffefd1f7` (2026-10-20)
-**Commit Message**: Pin Codex workflows to the merged output-protection fix (#22772)
+### Incident Patch 1: `55bd0f76` (2026-10-22)
+**Commit Message**: Compact lockfile requirement sets (#22834)
 
-Pin the shared security-review workflow and its matching
-secure-token-service rule to `f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d`,
-which uses the merged output-protection fix from
-[openai/codex-action#187](https://github.com/openai/codex-action/pull/187).
+We build `requires-dist` and dependency-group requirements as
+`BTreeSet`s to sort and deduplicate them. Once we have the lock
+metadata, we only read those sets. We now store their contents in sorted
+boxed slices, which lets us release the unused slots in each B-tree
+node.
 
-Also repin direct `openai/codex-action` calls to merged commit
-`c05cfd74ad95c626cdf05c6685e62becc3bf7813`.
+On a large project, the median nonempty set held two requirements, while
+each node reserved eleven slots. Compacting the sets reduced the live
+heap from parsing the input lock by 69 MiB. That lock stays live during
+an upgrade, which is where we saw the largest reduction in peak RSS.
 
-Validation: checked matching workflow and policy pins, valid JSON, and
-no new actionlint diagnostics.
+| Resolve | Main peak RSS | This PR | RSS reduction | Wall time |
+| --- | ---: | ---: | ---: | ---: |
+| Fresh lock | 772.4 MiB | 765.1 MiB | 0.9% | 1.5% slower |
+| Full upgrade | 1,018.2 MiB | 945.2 MiB | 7.2% | 0.5% slower |
 
-**File**: `.github/secure-token-service.json` (modified, +1/-1)
+**File**: `crates/uv-lock/src/lock/mod.rs` (modified, +32/-4)
 ```diff
-@@ -157,7 +157,7 @@
-       "environment": "automations",
-       "caller_ref": "refs/pull/*/merge",
-       "caller_workflow": "ci.yml",
--      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
-+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
-       "on": ["pull_request"],
-       "permissions": { "pull_requests": "write" },
-       "target": "uv"
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-   review:
-     needs: plan
-     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
--    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e
-+    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d
-     with:
-       runner: depot-ubuntu-24.04-16
-       helper-runner: github-ubuntu-24.04-x86_64-4
-```
-
-**File**: `.github/workflows/diagnose-workflow-failure.yml` (modified, +1/-1)
-```diff
-@@ -109,7 +109,7 @@ jobs:
-       - name: "Diagnose workflow failure"
-         id: diagnose
-         if: steps.context.outputs.ready == 'true'
--        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
-+        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-```
-
-**File**: `.github/workflows/fix-bug.yml` (modified, +1/-1)
-```diff
-@@ -312,7 +312,7 @@ jobs:
-       - name: "Fix reproduced bug"
-         id: fix-bug
-         if: steps.prepare.outputs.existing != 'true'
--        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
-+        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
-         env:
-           CARGO_HOME: ${{ runner.temp }}/cargo-home
-           GH_TOKEN: ${{ github.token }}
-```
-
-**File**: `.github/workflows/issue-triage.yml` (modified, +1/-1)
-```diff
-@@ -142,7 +142,7 @@ jobs:
+@@ -7351,7 +7351,7 @@ impl Package {
+     }
  
-       - name: "Triage issue"
-         id: triage
--        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
-+        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           TMPDIR: ${{ runner.temp }}
-```
-
-**File**: `.github/workflows/pull-request-code-quality-review.yml` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ jobs:
+     /// Returns the dependency groups the package provides, if any.
+-    pub fn dependency_groups(&self) -> &BTreeMap<GroupName, BTreeSet<Requirement>> {
++    pub fn dependency_groups(&self) -> &BTreeMap<GroupName, Box<[Requirement]>> {
+         &self.metadata.dependency_groups
+     }
  
-       - name: "Review pull request"
-         id: review
--        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
-+        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           TMPDIR: ${{ runner.temp }}/codex-code-quality-review
-```
-
-**File**: `.github/workflows/pull-request-labels.yml` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ jobs:
- 
-       - name: "Determine pull request labels"
-         id: labels
--        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
-+        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-```
-
-**File**: `.github/workflows/rebase-conflicted-pull-request.yml` (modified, +1/-1)
-```diff
-@@ -115,7 +115,7 @@ jobs:
-           fi
- 
-       - name: Rebase pull request
--        uses: openai/codex-action@c97f61512499740f4c5320dad158bdcd02807053
-+        uses: openai/codex-action@c05cfd74ad95c626cdf05c6685e62becc3bf7813
-         env:
-           BASE_REF: ${{ inputs.base-ref }}
-           BASE_PREVIOUS_SHA: ${{ inputs.base-previous-sha }}
-```
-
----
-
-### Incident Patch 2: `0713adcf` (2026-10-20)
-**Commit Message**: Pin security review to the merged shared workflow commit (#22766)
-
-Pin the shared security-review workflow and its matching
-secure-token-service policy to the merged commit from
-astral-sh/github-actions#24. GitHub Actions cannot resolve the previous
-PR-head SHA after its branch was deleted following the squash merge.
-
-The merged commit has the same Git tree and retains the Codex output
-protection from openai/codex-action#187.
-
-Validation: verified identical shared-workflow Git trees, matching
-workflow and policy pins, valid JSON, and no new actionlint diagnostics.
-
-**File**: `.github/secure-token-service.json` (modified, +1/-1)
-```diff
-@@ -157,7 +157,7 @@
-       "environment": "automations",
-       "caller_ref": "refs/pull/*/merge",
-       "caller_workflow": "ci.yml",
--      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6a612d86f84507386fc1e361e3fda194351ceadd",
-+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
-       "on": ["pull_request"],
-       "permissions": { "pull_requests": "write" },
-       "target": "uv"
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-   review:
-     needs: plan
-     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
--    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6a612d86f84507386fc1e361e3fda194351ceadd
-+    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e
-     with:
-       runner: depot-ubuntu-24.04-16
-       helper-runner: github-ubuntu-24.04-x86_64-4
-```
-
----
-
-### Incident Patch 3: `547751f2` (2026-10-20)
-**Commit Message**: Keep additional error Debug formatters out of line (#22775)
-
-Co-authored-by: William Woodruff <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +5/-0)
-```diff
-@@ -5936,6 +5936,7 @@ dependencies = [
-  "uv-client",
-  "uv-distribution-filename",
-  "uv-extract",
-+ "uv-macros",
-  "uv-pep440",
-  "uv-platform",
-  "uv-redacted",
-@@ -6511,6 +6512,7 @@ dependencies = [
-  "smallvec",
-  "thiserror",
-  "uv-cache-key",
-+ "uv-macros",
-  "uv-normalize",
-  "uv-pep440",
-  "uv-platform-tags",
-@@ -6873,6 +6875,7 @@ dependencies = [
-  "uv-fs",
-  "uv-git-types",
-  "uv-install-wheel",
-+ "uv-macros",
-  "uv-normalize",
-  "uv-pep440",
-  "uv-pep508",
-@@ -6989,6 +6992,7 @@ dependencies = [
-  "uv-fs",
-  "uv-git",
-  "uv-lock",
-+ "uv-macros",
-  "uv-normalize",
-  "uv-pep440",
-  "uv-pep508",
-@@ -7741,6 +7745,7 @@ dependencies = [
-  "uv-git",
-  "uv-installer",
-  "uv-lock",
-+ "uv-macros",
-  "uv-normalize",
-  "uv-pep440",
-  "uv-pep508",
-```
-
-**File**: `crates/uv-bin-install/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -20,6 +20,7 @@ uv-cache = { workspace = true }
- uv-client = { workspace = true }
- uv-distribution-filename = { workspace = true }
- uv-extract = { workspace = true }
-+uv-macros = { workspace = true }
- uv-pep440 = { workspace = true }
- uv-platform = { workspace = true }
- uv-redacted = { workspace = true }
-```
-
-**File**: `crates/uv-bin-install/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -29,6 +29,7 @@ use uv_static::{
- use uv_cache::{Cache, CacheBucket, CacheEntry, Error as CacheError};
- use uv_client::{BaseClient, RetriableError, fetch_with_url_fallback};
- use uv_extract::{Error as ExtractError, stream};
-+use uv_macros::DebugNoInline;
- use uv_pep440::{Version, VersionSpecifier, VersionSpecifiers};
- use uv_platform::Platform;
- use uv_redacted::SafeUrl;
-@@ -361,7 +362,7 @@ impl ResolvedVersion {
+@@ -7430,8 +7430,20 @@ struct PackageWire {
  }
  
- /// Errors that can occur during binary download and installation.
--#[derive(Debug, Error)]
-+#[derive(DebugNoInline, Error)]
- pub enum Error {
-     #[error("Failed to download from: {url}")]
-     Download {
-```
-
-**File**: `crates/uv-build-backend/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -25,13 +25,14 @@ use walkdir::DirEntry;
+ #[derive(Clone, Default, Debug, Eq, PartialEq, serde::Deserialize)]
+-#[serde(rename_all = "kebab-case")]
++#[serde(from = "PackageMetadataWire")]
+ struct PackageMetadata {
++    requires_dist: Box<[Requirement]>,
++    provides_extra: Box<[ExtraName]>,
++    dependency_groups: BTreeMap<GroupName, Box<[Requirement]>>,
++}
++
++#[derive(serde::Deserialize)]
++#[serde(
++    rename = "PackageMetadata",
++    rename_all = "kebab-case",
++    expecting = "struct PackageMetadata"
++)]
++struct PackageMetadataWire {
+     #[serde(default)]
+     requires_dist: BTreeSet<Requirement>,
+     #[serde(default, rename = "provides-extras")]
+@@ -7440,6 +7452,22 @@ struct PackageMetadata {
+     dependency_groups: BTreeMap<GroupName, BTreeSet<Requirement>>,
+ }
  
- use uv_fs::{Simplified, normalize_path};
- use uv_globfilter::PortableGlobError;
-+use uv_macros::DebugNoInline;
- use uv_normalize::PackageName;
- use uv_pypi_types::{Identifier, IdentifierParseError};
++impl From<PackageMetadataWire> for PackageMetadata {
++    fn from(wire: PackageMetadataWire) -> Self {
++        // The lock only reads these sets. Keep their canonical order without retaining spare
++        // B-tree slots for each package and dependency group.
++        Self {
++            requires_dist: wire.requires_dist.into_iter().collect(),
++            provides_extra: wire.provides_extra,
++            dependency_groups: wire
++                .dependency_groups
++                .into_iter()
++                .map(|(group, requirements)| (group, requirements.into_iter().collect()))
++                .collect(),
++        }
++    }
++}
++
+ impl PackageMetadata {
+     fn from_distribution(
+         metadata: &DistributionMetadata,
+@@ -7486,11 +7514,11 @@ impl PackageMetadata {
+             })
+             .collect::<Result<_, _>>()?;
  
- use crate::metadata::ValidationError;
- use crate::settings::ModuleName;
- 
--#[derive(Debug, Error)]
-+#[derive(DebugNoInline, Error)]
- pub enum Error {
-     #[error(transparent)]
-     Io(#[from] io::Error),
-```
-
-**File**: `crates/uv-distribution-filename/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ doctest = false
- 
- [dependencies]
- uv-cache-key = { workspace = true }
-+uv-macros = { workspace = true }
- uv-normalize = { workspace = true }
- uv-pep440 = { workspace = true }
- uv-platform-tags = { workspace = true }
-```
-
-**File**: `crates/uv-distribution-filename/src/wheel.rs` (modified, +2/-1)
-```diff
-@@ -7,6 +7,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
- use thiserror::Error;
- 
- use uv_cache_key::cache_digest;
-+use uv_macros::DebugNoInline;
- use uv_normalize::{InvalidNameError, PackageName};
- use uv_pep440::{Version, VersionParseError};
- use uv_platform_tags::{
-@@ -442,7 +443,7 @@ impl Serialize for WheelFilename {
+-        Ok(Self {
++        Ok(Self::from(PackageMetadataWire {
+             requires_dist,
+             provides_extra: metadata.provides_extra.clone(),
+             dependency_groups,
+-        })
++        }))
      }
  }
  
--#[derive(Error, Debug)]
-+#[derive(Error, DebugNoInline)]
- pub enum WheelFilenameError {
-     #[error("The wheel filename `{0}` is invalid: {1}")]
-     InvalidWheelFileName(String, String),
 ```
 
-**File**: `crates/uv-distribution/src/metadata/lowering.rs` (modified, +2/-1)
+**File**: `crates/uv-lock/src/lock/serialize.rs` (modified, +7/-6)
 ```diff
-@@ -15,6 +15,7 @@ use uv_distribution_types::{
- };
- use uv_fs::{Simplified, normalize_absolute_path, normalize_path};
- use uv_git_types::{GitLfs, GitReference, GitUrl, GitUrlParseError};
-+use uv_macros::DebugNoInline;
- use uv_normalize::{ExtraName, GroupName, PackageName};
- use uv_pep440::VersionSpecifiers;
- use uv_pep508::{MarkerTree, VerbatimUrl, VersionOrUrl, looks_like_git_repository};
-@@ -555,7 +556,7 @@ impl LoweredRequirement {
+@@ -1,4 +1,3 @@
+-use std::collections::BTreeSet;
+ use std::fmt;
  
- /// An error parsing and merging `tool.uv.sources` with
- /// `project.{dependencies,optional-dependencies}`.
--#[derive(Debug, Error)]
-+#[derive(DebugNoInline, Error)]
- pub enum LoweringError {
-     #[error(
-         "`{0}` is included as a workspace member, but is missing an entry in `tool.uv.sources` (e.g., `{0} = {{ workspace = true }}`)"
+ use rustc_hash::FxHashMap;
+@@ -605,9 +604,10 @@ fn write_dependency_inline(
+ fn write_serialized_non_empty_array<T: Serialize>(
+     writer: &mut LockWriter,
+     key: &str,
+-    values: &BTreeSet<T>,
++    values: impl IntoIterator<Item = T, IntoIter: ExactSizeIterator>,
+ ) -> Result<(), WriteError> {
+-    if values.is_empty() {
++    let values = values.into_iter();
++    if values.len() == 0 {
+         return Ok(());
+     }
+     write_serialized_array(writer, key, values)
+@@ -620,11 +620,12 @@ fn write_serialized_non_empty_array<T: Serialize>(
+ fn write_serialized_array<T: Serialize>(
+     writer: &mut LockWriter,
+     key: &str,
+-    values: &BTreeSet<T>,
++    values: impl IntoIterator<Item = T, IntoIter: ExactSizeIterator>,
+ ) -> Result<(), WriteError> {
++    let values = values.into_iter();
+     writer.key_start(key)?;
+-    let write_value = |writer: &mut LockWriter, value: &T| {
+-        let value = serialize_value(value)?;
++    let write_value = |writer: &mut LockWriter, value: T| {
++        let value = serialize_value(&value)?;
+         writer.value(value)
+     };
+     if values.len() <= 1 {
 ```
 
-**File**: `crates/uv-installer/Cargo.toml` (modified, +1/-0)
+**File**: `crates/uv-lock/src/lock/snapshots/uv_lock__lock__tests__hash_optional_missing.snap` (modified, +1/-1)
 ```diff
-@@ -28,6 +28,7 @@ uv-distribution-types = { workspace = true }
- uv-fs = { workspace = true }
- uv-git-types = { workspace = true }
- uv-install-wheel = { workspace = true, default-features = false }
-+uv-macros = { workspace = true }
- uv-normalize = { workspace = true }
- uv-pep440 = { workspace = true }
- uv-pep508 = { workspace = true }
+@@ -102,7 +102,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+```
+
+**File**: `crates/uv-lock/src/lock/snapshots/uv_lock__lock__tests__hash_optional_present.snap` (modified, +1/-1)
+```diff
+@@ -106,7 +106,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+```
+
+**File**: `crates/uv-lock/src/lock/snapshots/uv_lock__lock__tests__hash_required_present.snap` (modified, +1/-1)
+```diff
+@@ -102,7 +102,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+```
+
+**File**: `crates/uv-lock/src/lock/snapshots/uv_lock__lock__tests__missing_dependency_source_unambiguous.snap` (modified, +2/-2)
+```diff
+@@ -92,7 +92,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+@@ -165,7 +165,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+```
+
+**File**: `crates/uv-lock/src/lock/snapshots/uv_lock__lock__tests__missing_dependency_source_version_unambiguous.snap` (modified, +2/-2)
+```diff
+@@ -92,7 +92,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+@@ -165,7 +165,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+```
+
+**File**: `crates/uv-lock/src/lock/snapshots/uv_lock__lock__tests__missing_dependency_version_dynamic.snap` (modified, +3/-3)
+```diff
+@@ -69,7 +69,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+@@ -116,7 +116,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+@@ -183,7 +183,7 @@ Ok(
+                 default_groups: None,
+                 group_requires_python: {},
+                 metadata: PackageMetadata {
+-                    requires_dist: {},
++                    requires_dist: [],
+                     provides_extra: [],
+                     dependency_groups: {},
+                 },
+```
+
+---
+
+### Incident Patch 2: `ac12718e` (2026-10-22)
+**Commit Message**: Prevent local-version containment markers from panicking (#22815)
+
+Rendering `python_full_version not in '3.20+x' and python_full_version <
+'4'` can panic when the local version reaches an ordered comparison,
+which does not allow local segments. Normalize versions in `in` and `not
+in` markers to their release segments, as comparison markers already do,
+so the resulting marker can be rendered and parsed consistently.
+
+Fixes astral-sh/uv#22804
+
+Co-authored-by: astral-automations-bot[bot] <305554984+astral-automations-bot[bot]@users.noreply.github.com>
+
+**File**: `crates/uv-pep508/src/marker/algebra.rs` (modified, +2/-0)
+```diff
+@@ -1692,6 +1692,8 @@ impl EdgeBuilder {
+     fn from_versions(versions: Vec<Version>, operator: ContainerOperator) -> Self {
+         let mut range: Ranges<Version> = versions
+             .into_iter()
++            // Containment uses release-only versions, just like comparison specifiers.
++            .map(|version| version.only_release())
+             .map(|version| (Bound::Included(version.clone()), Bound::Included(version)))
+             .collect();
+ 
+```
+
+**File**: `crates/uv-pep508/src/marker/tree.rs` (modified, +18/-3)
+```diff
+@@ -3138,10 +3138,25 @@ mod test {
+ 
+     /// Render a local-version exclusion combined with an upper bound.
+     #[test]
+-    #[should_panic(expected = "OperatorLocalCombo")]
+     fn local_version_exclusion() {
+-        let marker = m("python_full_version not in '3.20+x' and python_full_version < '4'");
+-        let _ = marker.contents().unwrap().to_string();
++        assert_simplifies(
++            "python_full_version not in '3.20+x' and python_full_version < '4'",
++            "python_full_version < '3.20' or (python_full_version > '3.20' and python_full_version < '4')",
++        );
++    }
++
++    /// Local-version containment markers must produce equivalent marker trees after rendering
++    /// and reparsing.
++    #[test]
++    fn local_version_containment_roundtrip() {
++        assert_simplifies(
++            "python_full_version in '3.20+x'",
++            "python_full_version == '3.20'",
++        );
++        assert_simplifies(
++            "python_full_version not in '3.20+x'",
++            "python_full_version != '3.20'",
++        );
+     }
+ 
+     #[test]
+```
+
+---
+
+### Incident Patch 3: `0ee565f1` (2026-10-21)
+**Commit Message**: Reproduce local-version marker rendering panic (#22807)
+
+A `python_full_version not in '3.20+x'` marker combined with an upper
+bound panics when rendered. Add a focused `MarkerTree` reproducer for
+astral-sh/uv#22804.
+
+Co-authored-by: zaniebot <[REDACTED_EMAIL]>
+
+**File**: `crates/uv-pep508/src/marker/tree.rs` (modified, +8/-0)
+```diff
+@@ -3136,6 +3136,14 @@ mod test {
+         assert_eq!(simplified, expected);
+     }
+ 
++    /// Render a local-version exclusion combined with an upper bound.
++    #[test]
++    #[should_panic(expected = "OperatorLocalCombo")]
++    fn local_version_exclusion() {
++        let marker = m("python_full_version not in '3.20+x' and python_full_version < '4'");
++        let _ = marker.contents().unwrap().to_string();
++    }
++
+     #[test]
+     fn test_marker_simplification() {
+         assert_false("python_version == '3.9.1'");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22775** (2026-10-20): Keep additional error Debug formatters out of line (@astral-automations-bot[bot])
-- **PR #22772** (2026-10-20): Pin Codex workflows to the merged output-protection fix (@zsol)
-- **PR #22766** (2026-10-20): Pin security review to the merged shared workflow commit (@zsol)
-- **PR #22765** (closed): Do not forward SIGPIPE to the child process (@Varshith-Kali)
-- **PR #22764** (2026-10-20): Update Codex workflows to protect workflow command output (@zsol)
-- **PR #22763** (2026-10-20): Switch back to env::args_os (@woodruffw)
+- **PR #22838** (closed): Use Ubuntu’s Git for Linux integration tests (@charliermarsh)
+- **PR #22834** (2026-10-22): Compact lockfile requirement sets (@charliermarsh)
+- **PR #22833** (2026-10-22): Store Git URL fields out of line (@charliermarsh)
+- **PR #22828** (2026-10-22): Disable deployments for automation jobs (@zanieb)
+- **PR #22827** (2026-10-22): Use checkout Python metadata in publishing workflows (@zanieb)
+- **PR #22825** (2026-10-22): Disable caching for registry and publishing tests (@astral-automations-bot[bot])
 
 ---
 
@@ -1880,28 +1880,62 @@ Co-authored-by: William Woodruff <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pin Codex workflows to the merged output-protection fix (#22772)
+## X. Compact lockfile requirement sets (#22834)
 
 **RULE**:
-When implementing operations in `.github/secure-token-service.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv-lock/src/lock/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffefd1f7`: Pin Codex workflows to the merged output-protection fix (#22772). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55bd0f76`: Compact lockfile requirement sets (#22834). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/secure-token-service.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-lock/src/lock/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@f11dbff15181b71f2cc5e8487b1ac7d7bb03ea7d",
+    pub fn dependency_groups(&self) -> &BTreeMap<GroupName, Box<[Requirement]>> {
+#[serde(from = "PackageMetadataWire")]
+    requires_dist: Box<[Requirement]>,
+    provides_extra: Box<[ExtraName]>,
+    dependency_groups: BTreeMap<GroupName, Box<[Requirement]>>,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(
+    rename = "PackageMetadata",
+    rename_all = "kebab-case",
+    expecting = "struct PackageMetadata"
+)]
+struct PackageMetadataWire {
+impl From<PackageMetadataWire> for PackageMetadata {
+    fn from(wire: PackageMetadataWire) -> Self {
+        // The lock only reads these sets. Keep their canonical order without retaining spare
+        // B-tree slots for each package and dependency group.
+        Self {
+            requires_dist: wire.requires_dist.into_iter().collect(),
+            provides_extra: wire.provides_extra,
+            dependency_groups: wire
+                .dependency_groups
+                .into_iter()
+                .map(|(group, requirements)| (group, requirements.into_iter().collect()))
+                .collect(),
+        }
+    }
+}
+
+        Ok(Self::from(PackageMetadataWire {
+        }))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@b504bbb0ff97d4bbf8176c145409bbc1e40a1f5e",
+    pub fn dependency_groups(&self) -> &BTreeMap<GroupName, BTreeSet<Requirement>> {
+#[serde(rename_all = "kebab-case")]
+        Ok(Self {
+        })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffefd1f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55bd0f76` are properly handled with clean fallback behavior.

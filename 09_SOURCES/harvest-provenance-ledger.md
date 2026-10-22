@@ -4340,3 +4340,5 @@ Every entry in this ledger must capture:
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `3995dc6d` | Multi-dimensional audit evidence | 2026-10-22T16:38:47.363Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `4f1d7ab5` | Multi-dimensional audit evidence | 2026-10-22T16:45:08.576Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `7d70e57f` | Multi-dimensional audit evidence | 2026-10-22T16:45:16.660Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `55bd0f76` | Multi-dimensional audit evidence | 2026-10-22T16:51:42.318Z |
+| `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `aa8596de` | Multi-dimensional audit evidence | 2026-10-22T16:51:46.911Z |

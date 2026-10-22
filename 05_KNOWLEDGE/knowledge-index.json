@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T16:45:16.607Z",
+  "last_updated": "2026-10-22T16:51:46.843Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3135,8 +3135,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "547751f2",
-      "content_hash": "51572215e561c9589e8eb25bffca64a02a473abe8f57a8aa458b8b7952660f1e",
+      "source_version": "55bd0f76",
+      "content_hash": "cf39d8596b28d0f5c4e09cb7ac2de79544fec7f0468c4ec10906120d9629e283",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3164,6 +3164,11 @@
           "number": 3355,
           "title": "Pin Codex workflows to the merged output-protection fix (#22772)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3646,
+          "title": "Compact lockfile requirement sets (#22834)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3171,7 +3176,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:58:39.420Z",
+      "verified_at": "2026-10-22T16:51:42.219Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26392,8 +26397,8 @@
       "slug": "hmlongco-factory",
       "platform": "github",
       "source_url": "https://github.com/hmlongco/Factory",
-      "source_version": "2a306bcd",
-      "content_hash": "9bdb925fbbb87ec8864bd96690e694fd497edc8b817913a33288bf454ef6c551",
+      "source_version": "aa8596de",
+      "content_hash": "347cc5fc71aa1c8fe0db97b6e69536e06132bd56f2c75aa6bd189dcb23ef1bc8",
       "dossier_path": "07_PROJECT_LEARNING/hmlongco-factory-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hmlongco-factory-learnings.md",
       "promoted_rules": [
@@ -26408,7 +26413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:49:31.538Z",
+      "verified_at": "2026-10-22T16:51:46.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110181,6 +110186,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T16:45:16.596Z"
+    },
+    "rule-3646": {
+      "learning_id": "rule-3646",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3646,
+      "title": "Compact lockfile requirement sets (#22834)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "55bd0f76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:51:42.219Z"
     }
   },
   "aliases": {
