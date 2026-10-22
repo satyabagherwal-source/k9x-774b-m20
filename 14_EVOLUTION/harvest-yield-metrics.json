@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T21:14:31.001Z",
-  "total_cycles_completed": 4417,
-  "total_learnings_persisted": 4417,
-  "total_rules_promoted": 3598,
+  "last_updated": "2026-10-22T21:22:27.819Z",
+  "total_cycles_completed": 4420,
+  "total_learnings_persisted": 4420,
+  "total_rules_promoted": 3601,
   "history": [
-    {
-      "timestamp": "2026-10-21T16:19:25.890Z",
-      "repository": "Ryder-Sun/Meldwork",
-      "learningId": "learn-github-ryder-sun-meldwork",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:25:44.389Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T16:25:54.684Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T16:25:57.424Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T21:14:31.001Z",
       "repository": "dragonflyoss/dragonfly",
       "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:22:11.998Z",
+      "repository": "franken-ui/ui",
+      "learningId": "learn-github-franken-ui-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:22:21.471Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:22:27.819Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `946ba6c2`  
+> **Source Version**: `dec84ad2`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:49:50.978Z  
+> **Timestamp**: 2026-10-22T21:22:21.022Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:49:50.969Z  
+> **Harvest Timestamp**: 2026-10-22T21:22:20.723Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1860,779 +1860,542 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `041f9cc6` (2026-10-20)
-**Commit Message**: feat(ui): add a replication lag chart to the mirror page (#4943)
+### Incident Patch 1: `dec84ad2` (2026-10-22)
+**Commit Message**: fix(postgres): keep unchanged toast columns on delete rows (#4951)
 
-Adds a line chart of source, destination, and end-to-end lag over time
-to the mirror page, next to the sync history chart. Users without an
-OpenTelemetry collector can't see the lag gauges, so the new
-`CDCLagGraph` endpoint computes the same values from timestamps that
-`cdc_batches` already stores.
+Fixes #4917
 
-Changes:
+The Postgres destination wrote `""` as `_peerdb_unchanged_toast_columns`
+for delete rows, which
+dropped the `_peerdb_not_backfilled_delete` marker from `cdc.go`. If the
+batch also held an insert or
+update for the table, the key-only delete matched the all-columns delete
+arm in the normalize MERGE
+and wrote NULLs into the soft-deleted row, or failed with 23502 on a NOT
+NULL column.
+`utils/stream.go` already writes the record's unchanged toast columns
+for the other destinations,
+and this change does the same.
 
-- New `POST /v1/mirrors/cdc/lag_graph` endpoint, and an index on
-`cdc_batches (flow_name, end_time)` for it.
-- New 1 minute graph bucket, which the lag chart uses by default.
-- Fixes the swapped arguments for the 5 minute last-x graph in
-`getGraphParams`.
+`Test_Soft_Delete_Key_Only_Delete_With_Insert` in
+`e2e/postgres_postgres` commits an insert and a
+key-only delete in one transaction, then checks that the soft-deleted
+row keeps its values.
+`Test_Soft_Delete_Basic` never caught this because its delete batch has
+no other record.
 
-<img width="769" height="332" alt="Screenshot 2026-10-19 at 6 17 32 PM"
-src="https://github.com/user-attachments/assets/ed43ee06-4443-4b16-b7b2-1752e860b8d4"
-/>
-<img width="766" height="345" alt="Screenshot 2026-10-19 at 6 17 43 PM"
-src="https://github.com/user-attachments/assets/869b8d78-aacf-4ec8-9486-4a2d46699dc2"
-/>
+I could not run the e2e suite locally, since it needs the Tilt stack.
+gofmt is clean on both files.
+`go vet` did not run either, because the protos are not generated in my
+checkout. CI is the first
+real run of the test.
 
-Thanks @dtunikov for putting all the numbers in accessible places
-
-**File**: `flow/cmd/mirror_status.go` (modified, +46/-1)
+**File**: `flow/connectors/postgres/postgres_destination.go` (modified, +1/-1)
 ```diff
-@@ -219,9 +219,14 @@ func (h *FlowRequestHandler) cdcFlowStatus(
- // returns truncation, tick size, & number of ticks
- func getGraphParams(aggType protos.TimeAggregateType, mode protos.GraphMode) (string, string, int) {
- 	switch aggType {
-+	case protos.TimeAggregateType_TIME_AGGREGATE_TYPE_ONE_MIN:
-+		if mode == protos.GraphMode_GRAPH_MODE_LAST_X {
-+			return "minute", "1 minute", 1
-+		}
-+		return "minute", "1 minute", 30
- 	case protos.TimeAggregateType_TIME_AGGREGATE_TYPE_FIVE_MIN:
- 		if mode == protos.GraphMode_GRAPH_MODE_LAST_X {
--			return "1 minute", "minute", 5
-+			return "minute", "1 minute", 5
- 		}
- 		return "minute", "5 minutes", 30
- 	case protos.TimeAggregateType_TIME_AGGREGATE_TYPE_FIFTEEN_MIN:
-@@ -291,6 +296,46 @@ func (h *FlowRequestHandler) CDCGraph(ctx context.Context, req *protos.GraphRequ
- 	}, nil
+@@ -162,7 +162,7 @@ func syncRecordsCore[Items model.Items](
+ 					2,
+ 					itemsJSON,
+ 					req.SyncBatchID,
+-					"",
++					utils.KeysToString(typedRecord.UnchangedToastColumns),
+ 				}
+ 
+ 			case *model.MessageRecord[Items]:
+```
+
+**File**: `flow/e2e/postgres_postgres/postgres_test.go` (modified, +66/-0)
+```diff
+@@ -965,6 +965,72 @@ func (s PeerFlowE2ETestSuitePG) Test_Soft_Delete_Insert_After_Delete() {
+ 	require.Equal(s.t, int64(0), numRows)
  }
  
-+func (h *FlowRequestHandler) CDCLagGraph(ctx context.Context, req *protos.GraphRequest) (*protos.LagGraphResponse, APIError) {
-+	truncUnit, tickInterval, numberOfTicks := getGraphParams(req.AggregateType, req.Mode)
-+	// same formulas as the source/destination/e2e lag otel gauges, from the batch's first row
-+	rows, err := h.pool.Query(ctx, `
-+		SELECT tm,
-+			MAX(EXTRACT(EPOCH FROM first_row_received_at - first_row_commit_time) * 1000)::float8,
-+			MAX(EXTRACT(EPOCH FROM end_time - first_row_received_at) * 1000)::float8,
-+			MAX(EXTRACT(EPOCH FROM end_time - first_row_commit_time) * 1000)::float8
-+		FROM generate_series(
-+			date_trunc($2, now() - $1::INTERVAL * $3),
-+			now(),
-+			$1::INTERVAL
-+		) tm
-+		LEFT JOIN peerdb_stats.cdc_batches
-+			ON end_time >= tm AND end_time < tm + $1::INTERVAL
-+			AND flow_name = $4
-+			AND first_row_received_at IS NOT NULL
-+		GROUP BY 1
-+		ORDER BY 1
-+	`, tickInterval, truncUnit, numberOfTicks, req.FlowJobName)
-+	if err != nil {
-+		return nil, NewInternalApiError(fmt.Errorf("failed to query cdc lag graph: %w", err))
++func (s PeerFlowE2ETestSuitePG) Test_Soft_Delete_Key_Only_Delete_With_Insert() {
++	tc := e2e.NewTemporalClient(s.t)
++
++	cmpTableName := s.attachSchemaSuffix("test_softdel_kod")
++	srcTableName := cmpTableName + "_src"
++	dstTableName := s.attachSchemaSuffix("test_softdel_kod_dst")
++
++	_, err := s.Conn().Exec(s.t.Context(), fmt.Sprintf(`
++		CREATE TABLE IF NOT EXISTS %s (
++			id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
++			c1 INT,
++			c2 INT
++		);
++	`, srcTableName))
++	require.NoError(s.t, err)
++
++	config := &protos.FlowConnectionConfigs{
++		FlowJobName:     s.attachSuffix("test_softdel_kod"),
++		DestinationName: s.Peer().Name,
++		TableMappings: []*protos.TableMapping{
++			{
++				SourceTableIdentifier:      srcTableName,
++				DestinationTableIdentifier: dstTableName,
++			},
++		},
++		SourceName:        e2e.GeneratePostgresPeer(s.t).Name,
++		SoftDeleteColName: "_PEERDB_IS_DELETED",
++		SyncedAtColName:   "_PEERDB_SYNCED_AT",
++		MaxBatchSize:      100,
 +	}
 +
-+	data, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*protos.LagGraphResponseItem, error) {
-+		var t time.Time
-+		item := &protos.LagGraphResponseItem{}
-+		if err := row.Scan(&t, &item.SourceLagMs, &item.DestinationLagMs, &item.E2ELagMs); err != nil {
-+			return nil, err
-+		}
-+		item.Time = float64(t.UnixMilli())
-+		return item, nil
++	env := e2e.ExecutePeerflow(s.t, tc, config)
++	e2e.SetupCDCFlowStatusQuery(s.t, env, config)
++
++	_, err = s.Conn().Exec(s.t.Context(), fmt.Sprintf(`
++			INSERT INTO %s(c1,c2) VALUES (1,2)`, srcTableName))
++	e2e.EnvNoError(s.t, env, err)
++	e2e.EnvWaitFor(s.t, env, 3*time.Minute, "normalize row", func() bool {
++		return s.comparePGTables(srcTableName, dstTableName, "id,c1,c2") == nil
 +	})
-+	if err != nil {
-+		return nil, NewInternalApiError(fmt.Errorf("failed to collect cdc lag graph: %w", err))
-+	}
++	_, err = s.Conn().Exec(s.t.Context(), fmt.Sprintf(`
++			CREATE TABLE %s AS SELECT * FROM %s`, cmpTableName, srcTableName))
++	e2e.EnvNoError(s.t, env, err)
 +
-+	return &protos.LagGraphResponse{Data: data}, nil
++	// The insert gives the batch an update arm for empty unchanged toast columns,
++	// which the key-only delete of id=1 must not take.
++	tx, err := s.Conn().Begin(s.t.Context())
++	e2e.EnvNoError(s.t, env, err)
++	_, err = tx.Exec(s.t.Context(), fmt.Sprintf(`
++			INSERT INTO %s(c1,c2) VALUES (3,4)`, srcTableName))
++	e2e.EnvNoError(s.t, env, err)
++	_, err = tx.Exec(s.t.Context(), fmt.Sprintf(`
++			DELETE FROM %s WHERE id=1`, srcTableName))
++	e2e.EnvNoError(s.t, env, err)
++	e2e.EnvNoError(s.t, env, tx.Commit(s.t.Context()))
++
++	e2e.EnvWaitFor(s.t, env, 3*time.Minute, "normalize transaction", func() bool {
++		return s.comparePGTables(srcTableName, dstTableName+` WHERE NOT "_PEERDB_IS_DELETED"`, "id,c1,c2") == nil
++	})
++
++	env.Cancel(s.t.Context())
++	e2e.RequireEnvCanceled(s.t, env)
++
++	require.NoError(s.t, s.comparePGTables(cmpTableName, dstTableName+` WHERE "_PEERDB_IS_DELETED"`, "id,c1,c2"))
 +}
 +
- func (h *FlowRequestHandler) InitialLoadSummary(
- 	ctx context.Context,
- 	req *protos.InitialLoadSummaryRequest,
-```
-
-**File**: `flow/db/migrations/00058_cdc_batches_flow_name_end_time_index.sql` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+-- +goose NO TRANSACTION
-+-- +goose Up
-+DROP INDEX CONCURRENTLY IF EXISTS peerdb_stats.idx_cdc_batches_flow_name_end_time;
-+CREATE INDEX CONCURRENTLY idx_cdc_batches_flow_name_end_time ON peerdb_stats.cdc_batches (flow_name, end_time);
-```
-
-**File**: `protos/route.proto` (modified, +20/-0)
-```diff
-@@ -402,6 +402,7 @@ enum TimeAggregateType {
-   TIME_AGGREGATE_TYPE_ONE_HOUR = 3;
-   TIME_AGGREGATE_TYPE_ONE_DAY = 4;
-   TIME_AGGREGATE_TYPE_ONE_MONTH = 5;
-+  TIME_AGGREGATE_TYPE_ONE_MIN = 6;
- }
+ func (s PeerFlowE2ETestSuitePG) Test_Supported_Mixed_Case_Table() {
+ 	tc := e2e.NewTemporalClient(s.t)
  
- message GraphRequest {
-@@ -421,6 +422,18 @@ message GraphResponse {
- 
- }
- 
-+// lags are the max over batches normalized in the bucket, unset when no batch was normalized
-+message LagGraphResponseItem {
-+  double time = 1;
-+  optional double source_lag_ms = 2;
-+  optional double destination_lag_ms = 3;
-+  optional double e2e_lag_ms = 4;
-+}
-+
-+message LagGraphResponse {
-+  repeated LagGraphResponseItem data = 1;
-+}
-+
- message MirrorLog {
-   string flow_name = 1;
-   string error_message = 2;
-@@ -796,6 +809,13 @@ service FlowService {
-     };
-   }
- 
-+  rpc CDCLagGraph(GraphRequest) returns (LagGraphResponse) {
-+    option (google.api.http) = {
-+      post : "/v1/mirrors/cdc/lag_graph",
-+      body : "*"
-+    };
-+  }
-+
-   rpc InitialLoadSummary(InitialLoadSummaryRequest)
-       returns (InitialLoadSummaryResponse) {
-     option (google.api.http) = {
-```
-
-**File**: `ui/app/mirrors/[mirrorId]/lagGraph.tsx` (added, +175/-0)
-```diff
-@@ -0,0 +1,175 @@
-+'use client';
-+import { useSelectTheme } from '@/app/styles/select';
-+import { formatGraphLabel, timeOptions } from '@/app/utils/graph';
-+import { LagGraphResponse, TimeAggregateType } from '@/grpc_generated/route';
-+import { useTheme } from '@/lib/AppTheme';
-+import { BarLoader } from '@/lib/BarLoader';
-+import { Icon } from '@/lib/Icon';
-+import { Label } from '@/lib/Label';
-+import { Chart as ChartJS, ChartOptions } from 'chart.js';
-+import { useEffect, useRef, useState } from 'react';
-+import { Line } from 'react-chartjs-2';
-+import ReactSelect from 'react-select';
-+import useSWR from 'swr';
-+
-+const toSeconds = (ms: number | null | undefined) =>
-+  ms == null ? null : ms / 1000;
-+
-+const lagTimeOptions = [
-+  { label: '1 min', value: TimeAggregateType.TIME_AGGREGATE_TYPE_ONE_MIN },
-+  ...timeOptions,
-+];
-+
-+type LagGraphProps = { mirrorName: string };
-+
-+export default function LagGraph({ mirrorName }: LagGraphProps) {
-+  const selectTheme = useSelectTheme();
-+  const [aggregateType, setAggregateType] = useState<TimeAggregateType>(
-+    TimeAggregateType.TIME_AGGREGATE_TYPE_ONE_MIN
-+  );
-+
-+  const chartRef = useRef<ChartJS<'line'> | null>(null);
-+
-+  useEffect(() => {
-+    return () => {
-+      if (chartRef.current) {
-+        chartRef.current.destroy();
-+        chartRef.current = null;
-+      }
-+    };
-+  }, []);
-+
-+  const theme = useTheme();
-+  const isDarkMode = theme.theme === 'dark';
-+
-+  const chartOptions: ChartOptions<'line'> = {
-+    interaction: {
-+      mode: 'index',
-+      intersect: false,
-+    },
-+    spanGaps: false,
-+    scales: {
-+      x: {
-+        grid: { display: false },
-+      },
-+      y: {
-+        beginAtZero: true,
-+        title: { display: true, text: 'seconds' },
-+        grid: {
-+          color: isDarkMode ? '#333333' : '#e5e7eb',
-+        },
-+      },
-+    },
-+  };
-+
-+  const fetcher = async ([mirrorName, aggregateType]: [
-+    string,
-+    TimeAggregateType,
-+  ]) => {
-+    const res = await fetch('/api/v1/mirrors/cdc/lag_graph', {
-+      method: 'POST',
-+      cache: 'no-store',
-+      body: JSON.stringify({ flowJobName: mirrorName, aggregateType }),
-+    });
-+    const data: LagGraphResponse = await res.json();
-+
-+    return {
-+      labels: data.data.map(({ time }) =>
-+        formatGraphLabel(new Date(time), aggregateType)
-+      ),
-+      datasets: [
-+        {
-+          label: 'Source lag',
-+          data: data.data.map(({ sourceLagMs }) => toSeconds(sourceLagMs)),
-+          borderColor: 'rgba(54, 162, 235, 1)',
-+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-+        },
-+        {
-+          label: 'Destination lag',
-+          data: data.data.map(({ destinationLagMs }) =>
-+            toSeconds(destinationLagMs)
-+          ),
-+          borderColor: 'rgba(255, 159, 64, 1)',
-+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
-+        },
-+        {
-+          label: 'End-to-end lag',
-+          data: data.data.map(({ e2eLagMs }) => toSeconds(e2eLagMs)),
-+          borderColor: 'rgba(153, 102, 255, 1)',
-+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
-+        },
-+      ],
-+    };
-+  };
-+
-+  const { data, isLoading, error } = useSWR(
-+    [mirrorName, aggregateType],
-+    fetcher,
-+    {
-+      refreshInterval: 30_000,
-+      revalidateOnFocus: false,
-+      revalidateOnReconnect: false,
-+    }
-+  );
-+
-+  return (
-+    <div>
-+      <div style={{ float: 'right' }}>
-+        <ReactSelect
-+          id='lag-timeframe'
-+          placeholder='Select a timeframe'
-+          options={lagTimeOptions}
-+          defaultValue={lagTimeOptions.at(0)}
-+          onChange={(val, _) => val && setAggregateType(val.value)}
-+          theme={selectTheme}
-+        />
-+      </div>
-+      <div style={{ height: '3rem' }}>
-+        <Label variant='headline'>Replication lag</Label>
-+      </div>
-+      <div
-+        style={{
-+          height: '320px',
-+          alignItems: 'center',
-+          justifyContent: 'center',
-+          display: 'flex',
-+          width: '100%',
-+        }}
-+      >
-+        {isLoading && (
-+          <div
-+            style={{
-+              display: 'flex',
-+              rowGap: '1rem',
-+              flexDirection: 'column',
-+              alignItems: 'center',
-+            }}
-+          >
-+            Loading lag data...
-+            <BarLoader />
-+          </div>
-+        )}
-+        {error && (
-+          <div
-+            style={{
-+              display: 'flex',
-+              alignItems: 'center',
-+              columnGap: '0.5rem',
-+            }}
-+          >
-+            <Icon name='error' /> Failed to load replication lag
-+          </div>
-+        )}
-+        {data && !isLoading && !error && (
-+          <Line
-+            ref={(chart) => {
-+              chartRef.current = chart ?? null;
-+            }}
-+            data={data}
-+            options={chartOptions}
-+          />
-+        )}
-+      </div>
-+    </div>
-+  );
-+}
-```
-
-**File**: `ui/app/mirrors/[mirrorId]/syncStatus.tsx` (modified, +15/-2)
-```diff
-@@ -3,6 +3,7 @@ import { fetcher } from '@/app/utils/swr';
- import { CDCTableTotalCountsResponse } from '@/grpc_generated/route';
- import useSWR from 'swr';
- import CdcGraph from './cdcGraph';
-+import LagGraph from './lagGraph';
- import RowsDisplay from './rowsDisplay';
- import { SyncStatusTable } from './syncStatusTable';
- import TableStats from './tableStats';
-@@ -29,8 +30,20 @@ export default function SyncStatus({ flowJobName }: SyncStatusProps) {
-     tableStats?.tablesData && (
-       <div>
-         <RowsDisplay totalRowsData={tableStats.totalData} />
--        <div style={{ marginBlock: '2.5rem' }}>
--          <CdcGraph mirrorName={flowJobName} />
-+        <div
-+          style={{
-+            marginBlock: '2.5rem',
-+            display: 'grid',
-+            gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))',
-+            gap: '2rem',
-+          }}
-+        >
-+          <div style={{ minWidth: 0 }}>
-+            <CdcGraph mirrorName={flowJobName} />
-+          </div>
-+          <div style={{ minWidth: 0 }}>
-+            <LagGraph mirrorName={flowJobName} />
-+          </div>
-         </div>
-         <SyncStatusTable mirrorName={flowJobName} />
-         <TableStats tableSyncs={tableStats.tablesData} />
-```
-
-**File**: `ui/app/utils/graph.ts` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@ export function formatGraphLabel(
-   aggregateType: TimeAggregateType
- ): string {
-   switch (aggregateType) {
-+    case TimeAggregateType.TIME_AGGREGATE_TYPE_ONE_MIN:
-     case TimeAggregateType.TIME_AGGREGATE_TYPE_FIVE_MIN:
-     case TimeAggregateType.TIME_AGGREGATE_TYPE_FIFTEEN_MIN:
-     case TimeAggregateType.TIME_AGGREGATE_TYPE_ONE_HOUR:
 ```
 
 ---
 
-### Incident Patch 2: `1e40689a` (2026-10-20)
-**Commit Message**: e2e: move the JSON column tests into clickhouse_json_suite.go (#4949)
+### Incident Patch 2: `26ab341e` (2026-10-22)
+**Commit Message**: fix(clickhouse): write {} for SQL NULL into plain JSON column on CDC (#4955)
 
-Move only, no code changes. Follows #4946, which added the tests in
-place; `clickhouse_suite.go` is getting too large to work with. Same
-pattern as `clickhouse_inheritance_suite.go`: `package e2e`, no build
-tag, picked up by the existing runners through `RunSuite`.
+- With `PEERDB_CLICKHOUSE_ENABLE_JSON` on and `PEERDB_NULLABLE` off, a
+SQL NULL in a Postgres/MySQL JSON column failed the CDC normalize query
+on `''::JSON` and stalled the mirror.
+- The `JSON` projection now routes the empty string to `{}`, the same
+guard `Nullable(JSON)` already has for NULL. Non-empty values are cast
+exactly as before.
+- No version gate: it turns a failing batch into a value.
 
-**File**: `flow/e2e/clickhouse_json_suite.go` (added, +401/-0)
+Tests:
+- `TestBuildQueryNullableJSON` asserts the generated projection text for
+the plain `JSON` column.
+- `Test_JSON_CH` (Postgres and MySQL to ClickHouse, native JSON on,
+nullable off) covers it end to end: the SQL NULL row is now inserted
+during the CDC phase too and is asserted to land as `{}`. Before this
+change that row stalled the mirror, which is why the test had a
+`skipNullDuringCDC` escape hatch; that is removed.
+
+Closes
+[DBI-1248](https://linear.app/clickhouse/issue/DBI-1248/peerdb-clickhouse-cdc-plain-json-column-writes-on-sql-null-from).
+
+**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,401 @@
-+package e2e
-+
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"reflect"
-+	"strconv"
-+	"strings"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/model"
-+	"github.com/PeerDB-io/peerdb/flow/model/qvalue"
-+	"github.com/PeerDB-io/peerdb/flow/shared/types"
-+)
-+
-+// Tests for Postgres and MySQL JSON columns replicated to ClickHouse with PEERDB_CLICKHOUSE_ENABLE_JSON on
-+// and off, with and without PEERDB_NULLABLE. Moved verbatim from clickhouse_suite.go.
-+
-+func (s ClickHouseSuite) Test_JSON_CH() {
-+	emptyObject := "{}"
-+	s.testJSONColumns(jsonColumnMirrorConfig{
-+		tableName:          "test_json",
-+		nativeJSON:         true,
-+		expectedColumnType: "JSON",
-+		sourceNullLandsAs:  &emptyObject,
-+		skipNullDuringCDC:  true,
-+	})
-+}
-+
-+func (s ClickHouseSuite) Test_JSON_CH_Nullable() {
-+	s.testJSONColumns(jsonColumnMirrorConfig{
-+		tableName:                  "test_json_nullable",
-+		nativeJSON:                 true,
-+		nullableDestinationColumns: true,
-+		expectedColumnType:         "Nullable(JSON)",
-+	})
-+}
-+
-+func (s ClickHouseSuite) Test_JSON_CH_Disabled() {
-+	emptyString := ""
-+	s.testJSONColumns(jsonColumnMirrorConfig{
-+		tableName:          "test_json_off",
-+		expectedColumnType: "String",
-+		sourceNullLandsAs:  &emptyString,
-+	})
-+}
-+
-+func (s ClickHouseSuite) Test_JSON_CH_Disabled_Nullable() {
-+	s.testJSONColumns(jsonColumnMirrorConfig{
-+		tableName:                  "test_json_off_nullable",
-+		nullableDestinationColumns: true,
-+		expectedColumnType:         "Nullable(String)",
-+	})
-+}
-+
-+// jsonColumnTestCases is the source value table shared by the JSON column tests. mysqlUtf8mb4Support
-+// drops the emoji case on MySQL servers that do not default to utf8mb4.
-+func jsonColumnTestCases(mysqlUtf8mb4Support bool) []jsonColumnTestCase {
-+	// TODO: fix and enable failing test cases
-+	return []jsonColumnTestCase{
-+		{
-+			desc:  "obj",
-+			value: `'{"key": "val", "number": 30, "bool": true}'`,
-+		},
-+		{
-+			desc:  "nested obj",
-+			value: `'{"name": "john", "contact": {"email": "john@example.com", "phone": {"cell": "1234567890"}}}'`,
-+		},
-+		{
-+			desc:  "obj with array as values",
-+			value: `'{"array_key": [1, 2, 3, ["hello", "world"]], "empty_array": []}'`,
-+		},
-+		{
-+			desc:  "obj with numeric values",
-+			value: `'{"int": 42, "float": 3.14159, "scientific": 1.23e-4, "negative": -456}'`,
-+		},
-+		{
-+			desc:  "obj with special chars as values",
-+			value: `'{"path": "/home/user","quote": "check \"quoted\"", "newline": "line1\nline2"}'`,
-+		},
-+		{
-+			desc:  "obj with emoji",
-+			value: `'{"unicode": "🚀"}'`,
-+			skip:  !mysqlUtf8mb4Support,
-+		},
-+		{
-+			desc:  "empty object",
-+			value: `'{}'`,
-+		},
-+		{
-+			desc:  "same key as int",
-+			value: `'{"v": 1}'`,
-+		},
-+		{
-+			desc:  "same key as string",
-+			value: `'{"v": "1"}'`,
-+		},
-+		{
-+			desc:  "same key as float",
-+			value: `'{"v": 1.5}'`,
-+		},
-+		{
-+			desc:  "same key as array",
-+			value: `'{"v": [1]}'`,
-+		},
-+		{
-+			desc:  "same key as object",
-+			value: `'{"v": {"x": 1}}'`,
-+		},
-+		{
-+			desc:  "same key as bool",
-+			value: `'{"v": true}'`,
-+		},
-+		{
-+			desc:  "array with null element",
-+			value: `'{"arr": [1, null, 2]}'`,
-+		},
-+		{
-+			desc:  "array with mixed types",
-+			value: `'{"arr": [1, "a", true, {"k": 1}, [2]]}'`,
-+		},
-+		{
-+			desc:  "float edges",
-+			value: `'{"exp": 2.5e10, "negexp": 1.5e-5, "negzero": -0.0, "tenth": 0.1}'`,
-+		},
-+		{
-+			desc:  "awkward keys",
-+			value: `'{"": 1, "with space": 2, "qu\"ote": 3, "ключ": 4, "1": 5}'`,
-+		},
-+		{
-+			desc:  "awkward string values",
-+			value: `'{"empty": "", "spaces": "   ", "escaped": "\u00e9", "literal": "é", "tab": "a\tb"}'`,
-+		},
-+		{
-+			desc:  "numeric-looking strings",
-+			value: `'{"zip": "00123", "sci": "1e5", "bool": "true", "null": "null"}'`,
-+		},
-+		{
-+			desc:  "many keys",
-+			value: manyKeysJSON(500),
-+		},
-+		{
-+			desc:  "deep nesting",
-+			value: deeplyNestedJSON(30),
-+		},
-+		{
-+			desc:  "large string value",
-+			value: `'{"blob": "` + strings.Repeat("x", 1<<20) + `"}'`,
-+		},
-+		{
-+			desc:       "top-level number",
-+			value:      `'123'`,
-+			skip:       true,
-+			skipReason: "not supported by ClickHouse JSON",
-+		},
-+		{
-+			desc:       "top-level string",
-+			value:      `'"string value"'`,
-+			skip:       true,
-+			skipReason: "not supported by ClickHouse JSON",
-+		},
-+		{
-+			desc:       "top-level boolean",
-+			value:      `'true'`,
-+			skip:       true,
-+			skipReason: "not supported by ClickHouse JSON",
-+		},
-+		{
-+			desc:       "top-level arrays",
-+			value:      `'[1, 2, 3, {"key": "val"}, ["hello", "world"]]'`,
-+			skip:       true,
-+			skipReason: "not supported by ClickHouse JSON",
-+		},
-+		{
-+			desc:       "json null value",
-+			value:      `'null'`,
-+			skip:       true,
-+			skipReason: "peerdb bug where null value is parsed as empty string due to JSONExtractString",
-+		},
-+		{
-+			desc:   "postgres null value",
-+			va
+@@ -273,14 +273,16 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
+ 				}
+ 			}
+ 		case "JSON":
++			// JSONExtractString yields '' both for a SQL NULL and for a missing field, and casting '' with
++			// ::JSON raises; every other type lands as its zero value on NULL, so write {} instead.
+ 			fmt.Fprintf(&projection,
+-				"JSONExtractString(_peerdb_data, %s)::JSON AS %s,",
++				"CAST(ifNull(nullIf(JSONExtractString(_peerdb_data, %s), ''), '{}'), 'JSON') AS %s,",
+ 				peerdb_clickhouse.QuoteLiteral(colName),
+ 				peerdb_clickhouse.QuoteIdentifier(dstColName),
+ 			)
+ 			if t.enablePrimaryUpdate {
+ 				fmt.Fprintf(&projectionUpdate,
+-					"JSONExtractString(_peerdb_match_data, %s)::JSON AS %s,",
++					"CAST(ifNull(nullIf(JSONExtractString(_peerdb_match_data, %s), ''), '{}'), 'JSON') AS %s,",
+ 					peerdb_clickhouse.QuoteLiteral(colName),
+ 					peerdb_clickhouse.QuoteIdentifier(dstColName),
+ 				)
 ```
 
-**File**: `flow/e2e/clickhouse_suite.go` (modified, +0/-382)
+**File**: `flow/connectors/clickhouse/normalize_query_test.go` (modified, +5/-5)
 ```diff
-@@ -2,7 +2,6 @@ package e2e
- 
- import (
- 	"embed"
--	"encoding/json"
- 	"fmt"
- 	"math"
- 	"math/big"
-@@ -1821,387 +1820,6 @@ func (s ClickHouseSuite) Test_JSON_Null() {
- 	RequireEnvCanceled(s.t, env)
+@@ -131,15 +131,15 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
  }
  
--func (s ClickHouseSuite) Test_JSON_CH() {
--	emptyObject := "{}"
--	s.testJSONColumns(jsonColumnMirrorConfig{
--		tableName:          "test_json",
--		nativeJSON:         true,
--		expectedColumnType: "JSON",
--		sourceNullLandsAs:  &emptyObject,
+ // TestBuildQueryNullableJSON checks the projection for native JSON columns.
+-// JSONExtractString yields `""` both for a JSON null and for a missing field so `"" ::JSON` errors.
++// JSONExtractString yields `""` both for a SQL NULL and for a missing field, and casting `""` to JSON errors.
+ // Nullable(JSON) column has to route `""` to NULL.
+-// A non-nullable JSON column keeps the plain ::JSON cast.
++// A non-nullable JSON column writes {} for it instead.
+ func TestBuildQueryNullableJSON(t *testing.T) {
+ 	const (
+ 		nullableProjection = `CAST(nullIf(JSONExtractString(_peerdb_data, 'payload'), ''), 'Nullable(JSON)') AS ` + "`payload`"
+ 		nullableUpdate     = `CAST(nullIf(JSONExtractString(_peerdb_match_data, 'payload'), ''), 'Nullable(JSON)') AS ` + "`payload`"
+-		plainProjection    = `JSONExtractString(_peerdb_data, 'payload')::JSON AS ` + "`payload`"
+-		plainUpdate        = `JSONExtractString(_peerdb_match_data, 'payload')::JSON AS ` + "`payload`"
++		plainProjection    = `CAST(ifNull(nullIf(JSONExtractString(_peerdb_data, 'payload'), ''), '{}'), 'JSON') AS ` + "`payload`"
++		plainUpdate        = `CAST(ifNull(nullIf(JSONExtractString(_peerdb_match_data, 'payload'), ''), '{}'), 'JSON') AS ` + "`payload`"
+ 	)
+ 	// ClickHouse 25.8 supports the native JSON type
+ 	chVersion := &chproto.Version{Major: 25, Minor: 8}
+@@ -210,7 +210,7 @@ func TestBuildQueryNullableJSON(t *testing.T) {
+ 		require.NotContains(t, query, "Nullable(Nullable(")
+ 	})
+ 
+-	t.Run("non-nullable JSON column keeps plain cast", func(t *testing.T) {
++	t.Run("non-nullable JSON column writes {} on empty", func(t *testing.T) {
+ 		query := build(t, newSchema(false), newMapping(""), true, jsonEnabled)
+ 		require.Contains(t, query, plainProjection)
+ 		require.Contains(t, query, plainUpdate)
+```
+
+**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +0/-9)
+```diff
+@@ -26,7 +26,6 @@ func (s ClickHouseSuite) Test_JSON_CH() {
+ 		nativeJSON:         true,
+ 		expectedColumnType: "JSON",
+ 		sourceNullLandsAs:  &emptyObject,
 -		skipNullDuringCDC:  true,
--	})
--}
--
--func (s ClickHouseSuite) Test_JSON_CH_Nullable() {
--	s.testJSONColumns(jsonColumnMirrorConfig{
--		tableName:                  "test_json_nullable",
--		nativeJSON:                 true,
--		nullableDestinationColumns: true,
--		expectedColumnType:         "Nullable(JSON)",
--	})
--}
--
--func (s ClickHouseSuite) Test_JSON_CH_Disabled() {
--	emptyString := ""
--	s.testJSONColumns(jsonColumnMirrorConfig{
--		tableName:          "test_json_off",
--		expectedColumnType: "String",
--		sourceNullLandsAs:  &emptyString,
--	})
--}
--
--func (s ClickHouseSuite) Test_JSON_CH_Disabled_Nullable() {
--	s.testJSONColumns(jsonColumnMirrorConfig{
--		tableName:                  "test_json_off_nullable",
--		nullableDestinationColumns: true,
--		expectedColumnType:         "Nullable(String)",
--	})
--}
--
--// jsonColumnTestCases is the source value table shared by the JSON column tests. mysqlUtf8mb4Support
--// drops the emoji case on MySQL servers that do not default to utf8mb4.
--func jsonColumnTestCases(mysqlUtf8mb4Support bool) []jsonColumnTestCase {
--	// TODO: fix and enable failing test cases
--	return []jsonColumnTestCase{
--		{
--			desc:  "obj",
--			value: `'{"key": "val", "number": 30, "bool": true}'`,
--		},
--		{
--			desc:  "nested obj",
--			value: `'{"name": "john", "contact": {"email": "john@example.com", "phone": {"cell": "1234567890"}}}'`,
--		},
--		{
--			desc:  "obj with array as values",
--			value: `'{"array_key": [1, 2, 3, ["hello", "world"]], "empty_array": []}'`,
--		},
--		{
--			desc:  "obj with numeric values",
--			value: `'{"int": 42, "float": 3.14159, "scientific": 1.23e-4, "negative": -456}'`,
--		},
--		{
--			desc:  "obj with special chars as values",
--			value: `'{"path": "/home/user","quote": "check \"quoted\"", "newline": "line1\nline2"}'`,
--		},
--		{
--			desc:  "obj with emoji",
--			value: `'{"unicode": "🚀"}'`,
--			skip:  !mysqlUtf8mb4Support,
--		},
--		{
--			desc:  "empty object",
--			value: `'{}'`,
--		},
--		{
--			desc:  "same key as int",
--			value: `'{"v": 1}'`,
--		},
--		{
--			desc:  "same key as string",
--			value: `'{"v": "1"}'`,
--		},
--		{
--			desc:  "same key as float",
--			value: `'{"v": 1.5}'`,
--		},
--		{
--			desc:  "same key as array",
--			value: `'{"v": [1]}'`,
--		},
--		{
--			desc:  "same key as object",
--			value: `'{"v": {"x": 1}}'`,
--		},
--		{
--			desc:  "same key as bool",
--			value: `'{"v": true}'`,
--		},
--		{
--			desc:  "array with null element",
--			value: `'{"arr": [1, null, 2]}'`,
--		},
--		{
--			desc:  "array with mixed types",
--			value: `'{"arr": [1, "a", true, {"k": 1}, [2]]}'`,
--		},
--		{
--			desc:  "float edges",
--			value: `'{"exp": 2.5e10, "negexp": 1.5e-5, "negzero": -0.0, "tenth": 0.1}'`,
--		},
--		{
--			desc:  "awkward keys",
--			value: `'{"": 1, "with space": 2, "qu\"ote": 3, "ключ": 4, "1": 5}'`,
--		},
--		{
--			desc:  "awkward string values",
--			value: `'{"empty": "", "spaces": "   ", "escaped": "\u00e9", "literal": "é", "tab": "a\tb"}'`,
--		},
--		{
--			desc:  "numeric-looking strings",
--			value: `'{"zip": "00123", "sci": "1e5", "bool": "true", "null": "null"}'`,
--		},
--		{
--			desc:  "many keys",
--			value: manyKeysJSON(500),
--		},
--		{
--			desc:  "deep nesting",
--			value: deeplyNestedJSON(30),
--		},
--		{
--			desc:  "large string value",
--			value: `'{"blob": "` + strings.Repeat("x", 1<<20) + `"}'`,
--		},
--		{
--			desc:       "top-level number",
--			value:      `'123'`,
--			skip:       true,
--			skipReason: "not supported by ClickHouse JSON",
--		},
--		{
--			desc:       "top-level string",
--			value:      `'"string value"'`,
--			skip:       true,
--			skipReason: "not supported by ClickHouse JSON",
--		},
--		{
--			desc:       "top-level boolean",
--			value:      `'true'`,
--			skip:       true,
--			skipReason: "not supported by ClickHouse JSON",
--		},
--		{
--			desc:       "top-level arrays",
--			value:      `'[1, 2, 3, {"key": "val"}, ["hello", "world"]]'`,
--			skip:       true,
--			skipReason: "not supported by ClickHouse JSON",
--		},
--		{
--			desc:       "json null value",
--			value:      `'null'`,
--			skip:       true,
--			skipReason: "peerdb bug where null value is parsed as empty string due to JSONExtractString",
--		},
--		{
--			desc:   "postgres null value",
--			value:  `null`,
--			isNull: true,
--		},
--		{
--			desc:       "null as values",
--			value:      `'{"key1": null, "key2": {"nested_key": null}}'`,
--			skip:       true,
--			skipReason: "insertion succeeds; but comparison fails because CH JSON removes all null fields but postgres does not",
--		},
+ 	})
+ }
+ 
+@@ -273,12 +272,6 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
+ 		if testCase.skip {
+ 			continue
+ 		}
+-		// a SQL NULL into a plain JSON column fails on the CDC path: the normalize query extracts it as an
+-		// empty string and casts that with ::JSON, which ClickHouse rejects, so the batch errors and the
+-		// mirror stalls
+-		if testCase.isNull && cfg.skipNullDuringCDC {
+-			continue
+-		}
+ 		require.NoError(s.t, s.source.Exec(s.t.Context(), insertStmt(testCase.value)))
+ 	}
+ 	EnvWaitForEqualTablesWithNamesFunc(env, s, "compare cdc", srcTableName, dstTableName, cols, rowsMatch)
+@@ -298,8 +291,6 @@ type jsonColumnMirrorConfig struct {
+ 	nativeJSON bool
+ 	// nullableDestinationColumns sets PEERDB_NULLABLE, so nullable source columns get Nullable(...) on the destination
+ 	nullableDestinationColumns bool
+-	// skipNullDuringCDC keeps the SQL NULL case out of the CDC phase
+-	skipNullDuringCDC bool
+ }
+ 
+ // jsonColumnTestCase is one source value for the JSON column tests. value is the SQL literal to insert.
+```
+
+---
+
+### Incident Patch 3: `33089ab1` (2026-10-21)
+**Commit Message**: fix(bigquery): consistent schema-ordered STRUCT JSON across snapshot and CDC (#4937)
+
+Fixes DBI-1069.
+
+STRUCT columns from BigQuery landed differently depending on which path
+replicated the row:
+- **CDC** used `map[string]any` + `json.Marshal`, which sorted keys
+alphabetically and collapsed unnamed fields into one `""` key.
+- **Snapshot** exported RECORD to Parquet with no cast. ClickHouse read
+it as a Tuple and inserted unnamed tuple text like `('nested',7)` into
+the `String` column.
+
+Changes:
+- CDC: `bigQueryRecordJSONString` writes the object in schema order.
+Unnamed fields get `_field_N`, the names BigQuery's `TO_JSON_STRING`
+uses.
+- Snapshot: `buildBigQueryExportSQL` encodes RECORD with
+`TO_JSON_STRING` (NULL stays NULL), and repeated RECORD as an array of
+JSON strings.
+
+E2E:
+- New `Test_BigQuery_CDC_Snapshot_And_CDC_Struct_JSON_Match` checks that
+a snapshot row and a CDC row with the same nested STRUCT values land
+identically, in schema order.
+- `Test_BigQuery_CDC_All_Types` now compares STRUCT output as exact
+strings instead of with `JSONEq`.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `flow/connectors/bigquery/qrep_object_pull.go` (modified, +11/-0)
+```diff
+@@ -520,6 +520,17 @@ func buildBigQueryExportSQL(
+ 			// is timezone-unaware and its Parquet representation may not be compatible
+ 			// with ClickHouse. Casting to TIMESTAMP (UTC) preserves the value.
+ 			columnSelect = fmt.Sprintf("CAST(%s AS TIMESTAMP) AS %s", quotedName, quotedName)
++		case bigquery.RecordFieldType:
++			// Encode STRUCT as JSON here, matching CDC; otherwise ClickHouse reads the
++			// Parquet group as a Tuple and casts it to unnamed tuple text like ('a',1).
++			// TO_JSON_STRING keeps schema field order but returns 'null' for NULL, hence the IF.
++			if field.Repeated {
++				columnSelect = fmt.Sprintf(
++					"ARRAY(SELECT TO_JSON_STRING(e) FROM UNNEST(%s) AS e WITH OFFSET AS o ORDER BY o) AS %s",
++					quotedName, quotedName)
++			} else {
++				columnSelect = fmt.Sprintf("IF(%s IS NULL, NULL, TO_JSON_STRING(%s)) AS %s", quotedName, quotedName, quotedName)
++			}
+ 		}
+ 		columnSelects = append(columnSelects, columnSelect)
+ 	}
+```
+
+**File**: `flow/connectors/bigquery/qrep_object_pull_test.go` (modified, +20/-0)
+```diff
+@@ -75,6 +75,26 @@ func TestBuildBigQueryExportSQL(t *testing.T) {
+ 				"SELECT `plain`, TO_JSON_STRING(`payload`) AS `payload`, ST_AsText(`geo`) AS `geo`, " +
+ 				"CAST(`ts` AS TIMESTAMP) AS `ts` FROM `ds`.`tbl` FOR SYSTEM_TIME AS OF TIMESTAMP('2026-08-14 12:00:00 UTC')",
+ 		},
++		{
++			name:    "RECORD columns are encoded as JSON strings",
++			dsTable: datasetTable{dataset: "ds", table: "tbl"},
++			schema: bigquery.Schema{
++				{Name: "rec", Type: bigquery.RecordFieldType, Schema: bigquery.Schema{
++					{Name: "b", Type: bigquery.StringFieldType},
++				}},
++				{Name: "recs", Type: bigquery.RecordFieldType, Repeated: true, Schema: bigquery.Schema{
++					{Name: "b", Type: bigquery.StringFieldType},
++				}},
++			},
++			snapshotStagingPath:   "gs://bucket",
++			sourceTableIdentifier: "tbl",
++			snapshotTime:          time.Date(2026, 8, 14, 12, 0, 0, 0, time.UTC),
++			expected: "EXPORT DATA OPTIONS(uri='gs://bucket/tbl/*.parquet', format='PARQUET', " +
++				"compression='GZIP', overwrite=true) AS " +
++				"SELECT IF(`rec` IS NULL, NULL, TO_JSON_STRING(`rec`)) AS `rec`, " +
++				"ARRAY(SELECT TO_JSON_STRING(e) FROM UNNEST(`recs`) AS e WITH OFFSET AS o ORDER BY o) AS `recs` " +
++				"FROM `ds`.`tbl` FOR SYSTEM_TIME AS OF TIMESTAMP('2026-08-14 12:00:00 UTC')",
++		},
+ 		{
+ 			name:    "watermark column filters instead of FOR SYSTEM_TIME AS OF",
+ 			dsTable: datasetTable{dataset: "ds", table: "tbl"},
+```
+
+**File**: `flow/connectors/bigquery/qvalue_convert.go` (modified, +27/-8)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"encoding/json"
+ 	"fmt"
+ 	"math/big"
++	"strings"
+ 	"time"
+ 
+ 	"cloud.google.com/go/bigquery"
+@@ -500,19 +501,37 @@ func bigQueryRecordJSONString(schema bigquery.Schema, values []bigquery.Value) (
+ 	if len(schema) != len(values) {
+ 		return "", fmt.Errorf("record schema has %d fields but value has %d elements", len(schema), len(values))
+ 	}
+-	record := make(map[string]any, len(schema))
++	// Build the object by hand: a map would sort keys alphabetically and
++	// collapse unnamed fields into a single "" key.
++	var buf strings.Builder
++	buf.WriteByte('{')
+ 	for i, field := range schema {
++		name := field.Name
++		if name == "" {
++			// Same naming BigQuery uses for anonymous fields in TO_JSON_STRING.
++			name = fmt.Sprintf("_field_%d", i+1)
++		}
+ 		value, err := bigQueryValueForJSON(field, values[i])
+ 		if err != nil {
+-			return "", fmt.Errorf("field %s: %w", field.Name, err)
++			return "", fmt.Errorf("field %s: %w", name, err)
+ 		}
+-		record[field.Name] = value
 -	}
--}
--
--// testJSONColumns mirrors a table with JSON columns (jso
+-	encoded, err := json.Marshal(record)
+-	if err != nil {
+-		return "", err
++		encodedName, err := json.Marshal(name)
++		if err != nil {
++			return "", err
++		}
++		encodedValue, err := json.Marshal(value)
++		if err != nil {
++			return "", fmt.Errorf("field %s: %w", name, err)
++		}
++		if i > 0 {
++			buf.WriteByte(',')
++		}
++		buf.Write(encodedName)
++		buf.WriteByte(':')
++		buf.Write(encodedValue)
+ 	}
+-	return string(encoded), nil
++	buf.WriteByte('}')
++	return buf.String(), nil
+ }
+ 
+ func bigQueryValueForJSON(field *bigquery.FieldSchema, value bigquery.Value) (any, error) {
+```
+
+**File**: `flow/connectors/bigquery/qvalue_convert_test.go` (modified, +33/-0)
+```diff
+@@ -489,6 +489,39 @@ func TestQValueFromBigQueryValue(t *testing.T) {
+ 		assert.JSONEq(t, `{"name":"alice","created":"2024-01-02","metadata":{"active":true}}`, v.Value().(string))
+ 	})
+ 
++	t.Run("record JSON keeps schema field order", func(t *testing.T) {
++		field := &bigquery.FieldSchema{
++			Name: "record_col", Type: bigquery.RecordFieldType,
++			Schema: bigquery.Schema{
++				{Name: "b", Type: bigquery.IntegerFieldType},
++				{Name: "a", Type: bigquery.RecordFieldType, Schema: bigquery.Schema{
++					{Name: "z", Type: bigquery.StringFieldType},
++					{Name: "y", Type: bigquery.StringFieldType},
++				}},
++			},
++		}
++		f := BigQueryFieldToQField(field)
++		v, err := qvalueFromBigQueryValue(f, []bigquery.Value{
++			int64(1), []bigquery.Value{"z", "y"},
++		}, field)
++		require.NoError(t, err)
++		assert.Equal(t, `{"b":1,"a":{"z":"z","y":"y"}}`, v.Value().(string)) //nolint:testifylint // exact match: JSONEq ignores key order
++	})
++
++	t.Run("record JSON names unnamed fields instead of dropping them", func(t *testing.T) {
++		field := &bigquery.FieldSchema{
++			Name: "record_col", Type: bigquery.RecordFieldType,
++			Schema: bigquery.Schema{
++				{Type: bigquery.IntegerFieldType},
++				{Type: bigquery.StringFieldType},
++			},
++		}
++		f := BigQueryFieldToQField(field)
++		v, err := qvalueFromBigQueryValue(f, []bigquery.Value{int64(1), "a"}, field)
++		require.NoError(t, err)
++		assert.Equal(t, `{"_field_1":1,"_field_2":"a"}`, v.Value().(string)) //nolint:testifylint // exact match: JSONEq ignores key order
++	})
++
+ 	t.Run("record JSON recursively preserves BigQuery logical types", func(t *testing.T) {
+ 		field := &bigquery.FieldSchema{
+ 			Name: "record_col", Type: bigquery.RecordFieldType,
+```
+
+**File**: `flow/e2e/bigquery_clickhouse/bigquery_cdc_test.go` (modified, +83/-2)
+```diff
+@@ -1065,7 +1065,7 @@ func (s BigQueryClickhouseSuite) Test_BigQuery_CDC_All_Types() {
+ 	require.Equal(t, "0.12345678901234567890123456789012345678", bigNumeric.String())
+ 	require.Equal(t, "1-2 3 4:5:6", row[1].Value())
+ 	require.Equal(t, "[2024-01-01, 2024-02-01)", row[2].Value())
+-	require.JSONEq(t, `{"nested_str":"nested","nested_int":7}`, row[3].Value().(string))
++	require.Equal(t, `{"nested_str":"nested","nested_int":7}`, row[3].Value()) //nolint:testifylint // exact match: JSONEq ignores key order
+ 	require.Equal(t, []string{"aGk=", "Ynll"}, row[4].Value())
+ 	arrayTime, ok := row[5].Value().([]time.Time)
+ 	require.True(t, ok, "array_time should land as an array of time-of-day values, got %T", row[5].Value())
+@@ -1075,7 +1075,88 @@ func (s BigQueryClickhouseSuite) Test_BigQuery_CDC_All_Types() {
+ 	arrayRecord, ok := row[7].Value().([]string)
+ 	require.True(t, ok)
+ 	require.Len(t, arrayRecord, 1)
+-	require.JSONEq(t, `{"item_count":9,"item_name":"item"}`, arrayRecord[0])
++	require.Equal(t, `{"item_name":"item","item_count":9}`, arrayRecord[0]) //nolint:testifylint // exact match: JSONEq ignores key order
++
++	env.Cancel(ctx)
++	e2e.RequireEnvCanceled(t, env)
++}
++
++// Test_BigQuery_CDC_Snapshot_And_CDC_Struct_JSON_Match checks that STRUCT columns
++// land identically whether a row arrives via the initial snapshot (Parquet export)
++// or via CDC (Go JSON encoding), with keys in schema order.
++func (s BigQueryClickhouseSuite) Test_BigQuery_CDC_Snapshot_And_CDC_Struct_JSON_Match() {
++	t := s.T()
++	ctx := t.Context()
++
++	source := s.Source().(*bigQuerySource)
++	srcTable := e2e.AddSuffix(s, "cdc_struct_match")
++	dstTable := srcTable + "_dst"
++	tableFQN := fmt.Sprintf("%s.%s.%s", source.config.ProjectId, source.config.DatasetId, srcTable)
++	// Field names are deliberately not in alphabetical order.
++	require.NoError(t, source.Exec(ctx, fmt.Sprintf(`CREATE TABLE %s (
++		id INT64 NOT NULL,
++		record_col STRUCT<nested_str STRING, nested_int INT64, sub STRUCT<z STRING, y INT64>>,
++		array_record ARRAY<STRUCT<item_name STRING, item_count INT64>>,
++		PRIMARY KEY(id) NOT ENFORCED
++	)`, quoteBigQueryTableFQN(tableFQN))), "should create struct BigQuery CDC source table %s", srcTable)
++	t.Cleanup(func() {
++		table := source.client.DatasetInProject(source.config.ProjectId, source.config.DatasetId).Table(srcTable)
++		if err := table.Delete(context.Background()); err != nil {
++			t.Logf("Warning: failed to delete test table %s: %v", srcTable, err)
++		}
++	})
++
++	insertRow := func(id int64) {
++		t.Helper()
++		require.NoError(t, source.Exec(ctx, fmt.Sprintf(`INSERT INTO %s VALUES (
++			%d,
++			STRUCT('nested', 7, STRUCT('zz', 1)),
++			[STRUCT('item', 9), STRUCT('other', 3)]
++		)`, quoteBigQueryTableFQN(tableFQN), id)), "should insert struct row %d", id)
++	}
++
++	// present before the mirror exists - lands via the initial snapshot.
++	insertRow(1)
++
++	flowConnConfig := bqCdcFlowConnectionConfig(s, srcTable, dstTable, bqCdcFlowParams{
++		eventsFunction:    protos.BigqueryCdcEventsFunction_BIGQUERY_CDC_EVENTS_FUNCTION_APPENDS,
++		replicationMethod: protos.BigQueryReplicationMethod_BIGQUERY_REPLICATION_METHOD_EVENTS,
++	})
++
++	tc := e2e.NewTemporalClient(t)
++	env := e2e.ExecutePeerflow(t, tc, flowConnConfig)
++	e2e.SetupCDCFlowStatusQuery(t, env, flowConnConfig)
++
++	waitForRows := func(reason string, n int) {
++		t.Helper()
++		e2e.EnvWaitFor(t, env, 4*time.Minute, reason, func() bool {
++			rows, err := s.GetRows(dstTable, "id")
++			if err != nil {
++				t.Log(err)
++				return false
++			}
++			return len(rows.Records) == n
++		})
++	}
++	waitForRows("snapshot row landed", 1)
++
++	// inserted after the snapshot - lands via CDC.
++	insertRow(2)
++	waitForRows("CDC row landed", 2)
++
++	rows, err := s.GetRows(dstTable, "id,record_col,array_record")
++	require.NoError(t, err)
++	require.Len(t, rows.Records, 2)
++	snapshotRow, cdcRow := rows.Records[0], rows.Records[1]
++	require.Equal(t, int64(1), snapshotRow[0].Value())
++	require.Equal(t, int64(2), cdcRow[0].Value())
++
++	expectedRecord := `{"nested_str":"nested","nested_int":7,"sub":{"z":"zz","y":1}}`
++	expectedArray := []string{`{"item_name":"item","item_count":9}`, `{"item_name":"other","item_count":3}`}
++	require.Equal(t, expectedRecord, cdcRow[1].Value(), "CDC record_col")
++	require.Equal(t, expectedArray, cdcRow[2].Value(), "CDC array_record")
++	require.Equal(t, cdcRow[1].Value(), snapshotRow[1].Value(), "snapshot and CDC record_col should match")
++	require.Equal(t, cdcRow[2].Value(), snapshotRow[2].Value(), "snapshot and CDC array_record should match")
+ 
+ 	env.Cancel(ctx)
+ 	e2e.RequireEnvCanceled(t, env)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4949** (2026-10-20): e2e: move the JSON column tests into clickhouse_json_suite.go (@gheorghepucea)
-- **PR #4948** (2026-10-20): docs: refresh stale sections of the architecture and deep-dive docs (@gheorghepucea)
-- **PR #4947** (2026-10-20): fix(mongo): measure destination lag from change stream read time (@dtunikov)
-- **PR #4946** (2026-10-20): test(e2e) Postgres/MySQL JSON columns with native JSON on and off (@gheorghepucea)
-- **PR #4945** (2026-10-20): Make `PEERDB_POSTGRES_FAST_PROCESS_JSON_COLUMNS` dynamic setting default to `true` (@pfcoperez)
-- **PR #4944** (2026-10-20): support longer change stream resume for mongo resharding edge case (@jgao54)
+- **PR #4961** (2026-10-22): safe command monitor debugging (@jgao54)
+- **PR #4959** (2026-10-21): CI: wait for (Tiltfile) resource before tilt wait (@ilidemi)
+- **PR #4957** (2026-10-21): Log failover slots setting and missing source configs in hourly config log (@ilidemi)
+- **PR #4956** (2026-10-22): CI versions table: Bump MongoDB 8.X version from 8.0 to 8.2 (@pfcoperez)
+- **PR #4955** (2026-10-22): fix(clickhouse): write {} for SQL NULL into plain JSON column on CDC (@gheorghepucea)
+- **PR #4951** (2026-10-22): fix(postgres): keep unchanged toast columns on delete rows (@ReguiguiMohamed)
 
 ---
 
@@ -2652,55 +2415,28 @@ tag, picked up by the existing runners through `RunSuite`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): add a replication lag chart to the mirror page (#4943)
+## X. postgres): keep unchanged toast columns on delete rows (#4951)
 
 **RULE**:
-When implementing operations in `flow/cmd/mirror_status.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/postgres/postgres_destination.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `041f9cc6`: ui): add a replication lag chart to the mirror page (#4943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dec84ad2`: postgres): keep unchanged toast columns on delete rows (#4951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/cmd/mirror_status.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/postgres_destination.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	case protos.TimeAggregateType_TIME_AGGREGATE_TYPE_ONE_MIN:
-		if mode == protos.GraphMode_GRAPH_MODE_LAST_X {
-			return "minute", "1 minute", 1
-		}
-		return "minute", "1 minute", 30
-			return "minute", "1 minute", 5
-func (h *FlowRequestHandler) CDCLagGraph(ctx context.Context, req *protos.GraphRequest) (*protos.LagGraphResponse, APIError) {
-	truncUnit, tickInterval, numberOfTicks := getGraphParams(req.AggregateType, req.Mode)
-	// same formulas as the source/destination/e2e lag otel gauges, from the batch's first row
-	rows, err := h.pool.Query(ctx, `
-		SELECT tm,
-			MAX(EXTRACT(EPOCH FROM first_row_received_at - first_row_commit_time) * 1000)::float8,
-			MAX(EXTRACT(EPOCH FROM end_time - first_row_received_at) * 1000)::float8,
-			MAX(EXTRACT(EPOCH FROM end_time - first_row_commit_time) * 1000)::float8
-		FROM generate_series(
-			date_trunc($2, now() - $1::INTERVAL * $3),
-			now(),
-			$1::INTERVAL
-		) tm
-		LEFT JOIN peerdb_stats.cdc_batches
-			ON end_time >= tm AND end_time < tm + $1::INTERVAL
-			AND flow_name = $4
-			AND first_row_received_at IS NOT NULL
-		GROUP BY 1
-		ORDER BY 1
-	`, tickInterval, truncUnit, numberOfTicks, req.FlowJobName)
-	if err != nil {
-		return nil, NewInternalAp
+					utils.KeysToString(typedRecord.UnchangedToastColumns),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			return "1 minute", "minute", 5
+					"",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `041f9cc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dec84ad2` are properly handled with clean fallback behavior.

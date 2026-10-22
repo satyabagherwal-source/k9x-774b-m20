@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T21:14:30.954Z",
+  "last_updated": "2026-10-22T21:22:27.747Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7365,8 +7365,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "5540a0d4",
-      "content_hash": "e51c4b585f4fbd6e68828d2285087fc3f1d255f6f1d0282d95cf236082cff29e",
+      "source_version": "c61bb71f",
+      "content_hash": "b6fd6d0bc02a0825dddb1a6000e2d89464573498a5f20fcba0f126ad8eef2a30",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7514,6 +7514,11 @@
           "number": 3738,
           "title": "stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3749,
+          "title": "stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7521,7 +7526,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:52:07.397Z",
+      "verified_at": "2026-10-22T21:22:27.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11204,7 +11209,7 @@
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
       "source_version": "32af1a27",
-      "content_hash": "e594c19f607d39915fa60a44d78bb69b462fe1f1c462877db5587e6c6af1204f",
+      "content_hash": "79ba0afde567b391b74778ba5651861852e83bf21ea6122724f5842aab0b6a9c",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "promoted_rules": [
@@ -11219,7 +11224,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:50:26.263Z",
+      "verified_at": "2026-10-22T21:22:11.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38119,8 +38124,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "946ba6c2",
-      "content_hash": "34c66ba2724c2f0566aac3b3eb3097ab2e03131e34eeb333c8810026fc47d1e8",
+      "source_version": "dec84ad2",
+      "content_hash": "4726ed226b5125ae462b4ebe9862ee76b43fb3ed6f7356b54492a84eb10ad3fc",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -38143,6 +38148,11 @@
           "number": 3496,
           "title": "ui): add a replication lag chart to the mirror page (#4943)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3748,
+          "title": "postgres): keep unchanged toast columns on delete rows (#4951)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38150,7 +38160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:49:51.322Z",
+      "verified_at": "2026-10-22T21:22:21.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88087,7 +88097,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T16:50:26.263Z"
+      "verified_at": "2026-10-22T21:22:11.908Z"
     },
     "rule-2110": {
       "learning_id": "rule-2110",
@@ -112159,6 +112169,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T21:14:30.945Z"
+    },
+    "rule-3748": {
+      "learning_id": "rule-3748",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3748,
+      "title": "postgres): keep unchanged toast columns on delete rows (#4951)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "dec84ad2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:22:21.382Z"
+    },
+    "rule-3749": {
+      "learning_id": "rule-3749",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3749,
+      "title": "stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exa",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "c61bb71f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:22:27.733Z"
     }
   },
   "aliases": {

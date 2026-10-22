@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T21:14:31.004Z",
+  "last_updated": "2026-10-22T21:22:27.823Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "e51c4b585f4fbd6e68828d2285087fc3f1d255f6f1d0282d95cf236082cff29e",
-      "verified_at": "2026-10-22T20:52:07.478Z",
+      "content_hash": "b6fd6d0bc02a0825dddb1a6000e2d89464573498a5f20fcba0f126ad8eef2a30",
+      "verified_at": "2026-10-22T21:22:27.822Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:52:07.478Z"
+      "last_updated": "2026-10-22T21:22:27.822Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "34c66ba2724c2f0566aac3b3eb3097ab2e03131e34eeb333c8810026fc47d1e8",
-      "verified_at": "2026-10-21T02:49:51.436Z",
+      "content_hash": "4726ed226b5125ae462b4ebe9862ee76b43fb3ed6f7356b54492a84eb10ad3fc",
+      "verified_at": "2026-10-22T21:22:21.474Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:49:51.436Z"
+      "last_updated": "2026-10-22T21:22:21.474Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -8571,14 +8571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "d1c53b8c93450ae1cb0a7a2fbf33ca2aa34801034c87596086e363ff1f62aa17",
-      "verified_at": "2026-10-21T03:18:02.574Z",
+      "content_hash": "79ba0afde567b391b74778ba5651861852e83bf21ea6122724f5842aab0b6a9c",
+      "verified_at": "2026-10-22T21:22:12.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:18:02.574Z"
+      "last_updated": "2026-10-22T21:22:12.002Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",

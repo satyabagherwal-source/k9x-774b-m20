@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `5540a0d4`  
+> **Source Version**: `c61bb71f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:52:07.125Z  
+> **Timestamp**: 2026-10-22T21:22:27.371Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:52:05.945Z  
+> **Harvest Timestamp**: 2026-10-22T21:22:27.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2209,292 +2209,312 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69f8b9d6` (2026-10-22)
-**Commit Message**: fix(stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed sum in the stats cache (#4889)
+### Incident Patch 1: `c61bb71f` (2026-10-22)
+**Commit Message**: fix(stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exact integer sum, NULL antimodes (#4891)
 
-* fix(stats): weighted quantiles, weighted modes, --infer-boolean pairs, overflowed sum in cache
+* fix(stats): sidecar records OOM-fallback estimators; weighted all-distinct mode; order-independent `00` typing; exact integer sum; per-value NULL antimodes
 
-- Weighted quartiles/median/MAD/percentiles: the quantile total is now derived from the
-  ranked (value, weight) data itself. The per-sample accumulator also counted weights of
-  null cells, so upper targets were never reached (empty q1/q2/q3, fabricated `100: 0`),
-  and summing in input rather than sorted order could leave p100 just out of reach
-  through float rounding (weights 0.1/0.2/0.3).
-- Weighted mode/antimode/cardinality: zero and negative weights no longer create mode
-  entries, as the --weight docs promise (was: cardinality 3, antimode with 0 occurrences).
-- --infer-boolean: a 2-value column is Boolean only when one value matches the true side
-  and the other the false side of a pattern ("Fiona"/"Frank" both match f*).
-- StatsData.sum deserializes leniently, so an integer sum rendered as *OVERFLOW* no longer
-  makes the whole stats cache unreadable (`schema` failed with ExpectedFloat).
+- OOM fallback: try_enable_approx_sketches now re-syncs quantile/cardinality method and
+  MAD into the cache sidecar, which was snapshotted before the fallback and recorded
+  `exact` over t-digest/HLL results.
+- --weight: the *ALL antimode short-circuit for an all-distinct column now also requires
+  every weight to tie; otherwise the heaviest value is reported as the mode.
+- `00`/`-000` are the number 0, not zero-padding, in is_zero_padded_number too, so the
+  column type no longer depends on whether a float arrived first.
+- TypedSum accumulates integers in i128; *OVERFLOW*/*UNDERFLOW* only when the final total
+  is outside i64, so a total that comes back in range is exact in any row order and
+  across parallel chunk merges.
+- format_antimodes maps each empty antimode to NULL instead of sniffing the joined string,
+  fixing a lone NULL rendered as "" and a fabricated NULL for values starting with `|`.
 
-Regression tests fail against the pre-fix code with the asserted values.
+Co
 
-
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -72,6 +72,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
- 
- ### Fixed
-+- **`stats`: weighted quartiles, median, MAD and percentiles are correct when the column has nulls or fractional weights.** ([#4889](https://github.com/dathere/qsv/pull/4889)) Null cells' weights were counted in the quantile total but their values were never ranked, so a weighted column with empty cells could report empty `q1`/`q2_median`/`q3` and a `0` that isn't in the data for upper percentiles. Separately, the total was summed in a different order from the running sum, so float rounding could drop the 100th percentile to `0` (weights `0.1/0.2/0.3`) or move a median that sits exactly on the half-weight boundary.
-+- **`stats --weight`: zero and negative weights no longer count toward `mode`, `antimode` and `cardinality`**, as the `--weight` help says ([#4889](https://github.com/dathere/qsv/pull/4889)). A zero-weight value used to show up as an antimode with 0 occurrences.
-+- **`stats --infer-boolean` requires one true and one false value.** ([#4889](https://github.com/dathere/qsv/pull/4889)) A two-value column whose values both matched the same side of a pattern, such as `Fiona`/`Frank` (both `f*`) or `yes`/`yellow`, was typed `Boolean`. **Behavior change:** a column holding two spellings of the same answer, such as `Yes`/`Y` or `true`/`TRUE`, is now typed `String` instead of `Boolean`, which can change the types that `schema`, `tojsonl` and other stats-cache consumers infer for it.
-+- **An integer `sum` that overflows no longer breaks the stats cache.** ([#4889](https://github.com/dathere/qsv/pull/4889)) The `*OVERFLOW*`/`*UNDERFLOW*` sum made the cached stats unreadable, so `schema` failed with `ExpectedFloat` and `tojsonl` could not infer field types.
+@@ -76,6 +76,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`stats --weight`: zero and negative weights no longer count toward `mode`, `antimode` and `cardinality`**, as the `--weight` help says ([#4889](https://github.com/dathere/qsv/pull/4889)). A zero-weight value used to show up as an antimode with 0 occurrences.
+ - **`stats --infer-boolean` requires one true and one false value.** ([#4889](https://github.com/dathere/qsv/pull/4889)) A two-value column whose values both matched the same side of a pattern, such as `Fiona`/`Frank` (both `f*`) or `yes`/`yellow`, was typed `Boolean`. **Behavior change:** a column holding two spellings of the same answer, such as `Yes`/`Y` or `true`/`TRUE`, is now typed `String` instead of `Boolean`, which can change the types that `schema`, `tojsonl` and other stats-cache consumers infer for it.
+ - **An integer `sum` that overflows no longer breaks the stats cache.** ([#4889](https://github.com/dathere/qsv/pull/4889)) The `*OVERFLOW*`/`*UNDERFLOW*` sum made the cached stats unreadable, so `schema` failed with `ExpectedFloat` and `tojsonl` could not infer field types.
++- **`stats`: when an out-of-memory check auto-enables approximate estimators, the stats cache now records them.** ([#4891](https://github.com/dathere/qsv/pull/4891)) The cache's `.stats.csv.json` still said `exact`, so a later `--quantile-method exact` run was served the approximate results, and `frequency` treated an approximate cardinality as exact.
++- **`stats --weight` reports a mode for a column whose values are all distinct but whose weights differ.** ([#4891](https://github.com/dathere/qsv/pull/4891)) It always showed no mode and `*ALL` antimodes, even when one value carried most of the weight. `*ALL` is still returned when every weight is the same, now with that weight as its occurrence count instead of `1`. Weighted mode and antimode occurrence counts above 4,294,967,295 are no longer capped there.
++- **`stats --mode` no longer crashes with `QSV_ANTIMODES_LEN=0`**, the documented way to turn off antimode truncation ([#4891](https://github.com/dathere/qsv/pull/4891)).
++- **`stats`: a value like `00` no longer types differently depending on row order.** ([#4891](https://github.com/dathere/qsv/pull/4891)) After a float it was treated as zero-padded and made the column `String`; before a float it was the integer 0. It is now always the number 0, so such a column is `Float`. `+00` is likewise a number now.
++- **`stats`: an integer `sum` whose running total passes the 64-bit limit and comes back is now exact.** ([#4891](https://github.com/dathere/qsv/pull/4891)) It used to clamp at the limit and print a plausible but wrong total that depended on row order. `*OVERFLOW*`/`*UNDERFLOW*` now appear only when the final total is out of range, so a sum of exactly the 64-bit maximum prints as a number.
++- **`stats`: NULL antimodes are shown as `NULL`.** ([#4891](https://github.com/dathere/qsv/pull/4891)) A lone NULL antimode was shown as an empty string, and a value starting with `|` had a `NULL` added in front of it.
  - **`validate`: the `idn-hostname` and `idn-email` formats are checked again.** ([#4886](https://github.com/dathere/qsv/pull/4886)) jsonschema 0.52 moved them behind its `idna` feature, which qsv's build didn't enable. Since then, row validation accepted any value for them and `validate schema` rejected schemas that used them.
  - **`validate`: the error report names columns containing `/` or `~` correctly.** ([#4886](https://github.com/dathere/qsv/pull/4886)) The `field` column held the JSON Pointer form, so a column `a/b` was reported as `a~1b` and `c~d` as `c~0d`.
  - **`validate`: a local schema or `dynamicEnum` file whose name starts with `http` is read from disk.** ([#4886](https://github.com/dathere/qsv/pull/4886)) Any name starting with `http`, such as `httpd.schema.json`, was taken for a URL and the fetch failed. Only `http://` and `https://` URLs are fetched now.
 ```
 
-**File**: `src/cmd/stats.rs` (modified, +68/-40)
+**File**: `docs/help/stats.md` (modified, +2/-1)
 ```diff
-@@ -858,6 +858,10 @@ pub struct StatsData {
-     pub r#type: String,
-     #[serde(default)]
-     pub is_ascii: bool,
-+    // lenient: an integer sum that overflows/underflows i64 renders as the *OVERFLOW* /
-+    // *UNDERFLOW* sentinel, which a strict f64 rejected - failing the WHOLE record, so
-+    // `schema` and `tojsonl` could not load the stats cache.
-+    #[serde(default, deserialize_with = "de_lenient_f64")]
-     pub sum: Option<f64>,
-     pub min: Option<String>,
-     pub max: Option<String>,
-@@ -3351,8 +3355,8 @@ impl Args {
-         // accumulators: NaN then slipped past `add_weighted`'s `w <= 0.0` guard (every NaN
-         // comparison is false) and permanently poisoned sum_weights and weighted_mean, so
-         // weighted mean/sem/stddev/variance/cv for the ENTIRE column came out NaN. The sibling
--        // guards (`total_weight` and the weighted-quantile buffer) use `weight > 0.0`, which
--        // NaN fails, so they silently dropped the row instead - the same cell making the
-+        // guard (the weighted-quantile buffer) uses `weight > 0.0`, which
-+        // NaN fails, so it silently dropped the row instead - the same cell making the
-         // moments disagree with the quantiles.
-         let weight = if let Some(widx) = weight_col_idx {
-             if widx < row.len() {
-@@ -4567,8 +4571,7 @@ struct Stats {
-     // #[repr(u8)], so it is intentionally not asserted here)
+@@ -57,7 +57,8 @@ You can override this behavior by setting the QSV_STATS_CHUNK_MEMORY_MB environm
+ or -1 for CPU-based chunking (1 chunk = records/number of CPUs)).
  
-     // Hot counters - all 8-byte aligned, accessed frequently
--    nullcount:    u64, // 8 bytes - frequently updated counter
--    total_weight: f64, // 8 bytes - frequently updated for weighted stats
-+    nullcount: u64, // 8 bytes - frequently updated counter
+ "Antimode" is the least frequently occurring non-zero value and is the opposite of mode.
+-It returns "*ALL" if all the values are unique, and only returns a preview of the first
++It returns "*ALL" if all the values are unique (with --weight, if all the values are unique
++AND have the same weight), and only returns a preview of the first
+ 10 antimodes, truncating after 100 characters (configurable with QSV_ANTIMODES_LEN).
  
-     // Configuration flags (accessed once during initialization, cold after init)
-     which: WhichStats, // 32 bytes - read-only after initialization
-@@ -4674,11 +4677,11 @@ impl WeightedOnlineStats {
-     fn add_weighted(&mut self, x: f64, w: f64) {
-         // The explicit NaN test is the point: a bare `w <= 0.0` is FALSE for NaN, so one NaN
-         // weight slipped into the accumulator and poisoned the column's weighted moments
--        // forever. This is exactly equivalent to the sibling sites' `weight > 0.0` gate
--        // (`total_weight` and the weighted-quantile buffer), spelled out rather than written
-+        // forever. This is exactly equivalent to the sibling site's `weight > 0.0` gate
-+        // (the weighted-quantile buffer), spelled out rather than written
-         // as `!(w > 0.0)` so the NaN case is visible instead of implied. add_row now
-         // normalizes non-finite weights to 1.0 before they reach here, so this is the belt to
--        // that braces - but all three sites now agree, which is what stops them drifting.
-+        // that braces - but both sites now agree, which is what stops them drifting.
-         if w.is_nan() || w <= 0.0 {
-             return;
-         }
-@@ -4810,14 +4813,24 @@ impl WeightedOnlineStats {
- ///
- /// * `data` - Vector of (value, weight) tuples (must be sorted by value, as sorted by
- ///   `to_record()`)
--/// * `total_weight` - Total sum of all weights
- /// * `percentile` - Percentile to compute (0.0 to 1.0, e.g., 0.5 for median)
- ///
- /// # Returns
- ///
- /// The value at the specified percentile, computed using the weighted nearest-rank method (no
- /// interpolation).
--fn weighted_quantile(data: &[(f64, f64)], total_weight: f64, percentile: f64) -> Option<f64> {
-+/// Sum of the weights of `data`, folded in slice order from 0.0 - the SAME order and start as
-+/// the running `cum += w` in the weighted quantile functions below. Each of them derives its
-+/// total from the slice it walks (never from a caller): float addition is not associative, so a
-+/// total summed in any other order (input order, or value order for `weighted_mad`'s re-sorted
-+/// deviations) can land just above the final running sum and leave the p100/Q3 target - or a
-+/// median sitting exactly on a half-weight boundary - unreached.
-+fn weighted_total(data: &[(f64, f64)]) -> f64 {
-+    data.iter().fold(0.0, |acc, &(_, w)| acc + w)
-+}
-+
-+fn weighted_quantile(data: &[(f64, f64)], percentile: f64) -> Option<f64> {
-+    let total_weight = weighted_total(data);
-     if data.is_empty() || total_weight <= 0.0 {
-         return None;
+ If you need all the antimode values of a column, run the `frequency` command with --limit set
+```
+
+**File**: `src/cmd/stats.rs` (modified, +103/-38)
+```diff
+@@ -43,7 +43,8 @@ You can override this behavior by setting the QSV_STATS_CHUNK_MEMORY_MB environm
+ or -1 for CPU-based chunking (1 chunk = records/number of CPUs)).
+ 
+ "Antimode" is the least frequently occurring non-zero value and is the opposite of mode.
+-It returns "*ALL" if all the values are unique, and only returns a preview of the first
++It returns "*ALL" if all the values are unique (with --weight, if all the values are unique
++AND have the same weight), and only returns a preview of the first
+ 10 antimodes, truncating after 100 characters (configurable with QSV_ANTIMODES_LEN).
+ 
+ If you need all the antimode values of a column, run the `frequency` command with --limit set
+@@ -1465,6 +1466,7 @@ fn parse_boolean_patterns(boolean_patterns: &str) -> CliResult<Vec<BooleanPatter
+ #[cfg(not(target_endian = "big"))]
+ fn try_enable_approx_sketches(
+     args: &mut Args,
++    stats_args: &mut StatsArgs,
+     user_set_quantile_method: bool,
+     user_set_cardinality_method: bool,
+ ) -> Vec<&'static str> {
+@@ -1501,6 +1503,17 @@ fn try_enable_approx_sketches(
+         enabled.push("--cardinality-method approx");
      }
-@@ -4847,12 +4860,12 @@ fn weighted_quantile(data: &[(f64, f64)], total_weight: f64, percentile: f64) ->
- ///
- /// * `data` - Vector of (value, weight) tuples (must be sorted by value, as sorted by
- ///   `to_record()`)
--/// * `total_weight` - Total sum of all weights
- ///
- /// # Returns
- ///
--/// Option containing (Q1, Q2, Q3) if data is not empty and `total_weight` > 0, None otherwise.
--fn weighted_quartiles(data: &[(f64, f64)], total_weight: f64) -> Option<(f64, f64, f64)> {
-+/// Option containing (Q1, Q2, Q3) if data is not empty and its total weight is > 0, None otherwise.
-+fn weighted_quartiles(data: &[(f64, f64)]) -> Option<(f64, f64, f64)> {
-+    let total_weight = weighted_total(data);
-     i
+ 
++    // The cache sidecar was snapshotted from `args` before this fallback ran. Without re-syncing
++    // it records `exact` over t-digest/HLL results: an explicit `--quantile-method exact` rerun is
++    // then served the approximate cache, and `frequency` trusts an HLL cardinality as exact.
++    stats_args
++        .flag_quantile_method
++        .clone_from(&args.flag_quantile_method);
++    stats_args
++        .flag_cardinality_method
++        .clone_from(&args.flag_cardinality_method);
++    stats_args.flag_mad = args.flag_mad;
++
+     enabled
+ }
+ 
+@@ -1517,6 +1530,7 @@ const fn modes_keep_unbounded_exact_table(args: &Args) -> bool {
+ #[cfg(target_endian = "big")]
+ fn try_enable_approx_sketches(
+     _args: &mut Args,
++    _stats_args: &mut StatsArgs,
+     _user_set_quantile_method: bool,
+     _user_set_cardinality_method: bool,
+ ) -> Vec<&'static str> {
+@@ -2272,6 +2286,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                             }
+                             let enabled = try_enable_approx_sketches(
+                                 &mut args,
++                                &mut current_stats_args,
+                                 user_set_quantile_method,
+                                 user_set_cardinality_method,
+                             );
+@@ -4960,25 +4975,30 @@ fn format_antimodes(
+     max_len: usize,
+     visualize_ws: bool,
+ ) -> String {
+-    let mut antimodes_list = String::with_capacity(max_len);
++    // max_len is usize::MAX when QSV_ANTIMODES_LEN=0 disables truncation, so it can't be the
++    // capacity hint
++    let mut antimodes_list = String::new();
+ 
+     // We only store the first MAX_ANTIMODES antimodes
+     // so if antimodes_count > MAX_ANTIMODES, add the "*PREVIEW: " prefix
+     if antimodes_count > MAX_ANTIMODES {
+         antimodes_list.push_str("*PREVIEW: ");
+     }
+ 
+-    let antimodes_vals = &antimodes
++    // an empty antimode is the NULL value; decide per element, since sniffing the joined string
++    // for a leading separator missed a lone NULL and invented one for a value like "|a"
++    let antimodes_vals = antimodes
+         .iter()
+-        .map(|c| util::bytes_to_cow_str(c.as_ref()))
++        .map(|c| {
++            let c = c.as_ref();
++            if c.is_empty() {
++                std::borrow::Cow::Borrowed("NULL")
++            } else {
++                util::bytes_to_cow_str(c)
++            }
++        })
+         .join(separator);
+-
+-    // if the antimodes result starts with the separator,
+-    // it indicates that NULL is the first antimode. Add NULL to the list.
+-    if antimodes_vals.starts_with(separator) {
+-        antimodes_list.push_str("NULL");
+-    }
+-    antimodes_list.push_str(antimodes_vals);
++    antimodes_list.push_str(&antimodes_vals);
+ 
+     // truncate at max_len characters with an ellipsis
+     if antimodes_list.len() > max_len {
+@@ -5747,30 +5767,34 @@ impl Stats {
+                         "0".to_string(),
+                     ]);
+                 } else {
+-                    // Check if all values are unique (cardinality == record_count)
++                    let max_weight = weighted_modes_map.values().copied().fold(0.0, f64::max);
++                    let min_weight = weighted_modes_map
++                        .values()
++                        .copied()
++                        .fold(f64::INFINITY, f64::min);
++                    // The unweighted *ALL short-circuit holds because every count ties at 1.
++                    // Weighted, distinct values can still carry different weights, so the
++                    // short-circuit also needs every weight to tie - else the heaviest value
++                    // IS the mode.
+                     let unique_count = weighted_modes_map.len() as u64;
+-                    if unique_count == record_count {
+-                        // all values unique
++      
 ```
 
-**File**: `src/util/json_out.rs` (modified, +3/-2)
+**File**: `tests/test_stats.rs` (modified, +167/-0)
 ```diff
-@@ -278,8 +278,9 @@ fn csv_record_to_json_map(
-                         // Deliberately general rather than keyed to those 8 columns: the map is
-                         // per-COLUMN but a rendering is per-ROW, so the map cannot express this.
-                         // Verified across String/Boolean/NULL/Integer/Float/Date/DateTime columns
--                        // that those 8 are the complete set of Float-typed cells that can be
--                        // non-numeric, so no other field's Option<f64> can start rejecting lines.
-+                        // that those 8 are the Float-typed cells that can be non-numeric, plus
-+                        // `sum`, whose integer overflow renders as *OVERFLOW* / *UNDERFLOW*
-+                        // (StatsData.sum is therefore deserialized leniently).
-                         serde_json::Value::String(val.to_owned())
-                     }
-                 },
-```
-
-**File**: `tests/test_stats.rs` (modified, +202/-0)
-```diff
-@@ -9915,3 +9915,205 @@ fn stats_new_cache_has_umask_default_permissions() {
-         "a successful install left a temp file behind: {strays:?}"
-     );
+@@ -10117,3 +10117,170 @@ fn stats_weighted_infer_boolean_uses_the_weighted_values() {
+         assert_eq!(stats_cell(&got, 1, "type"), expected, "{name}");
+     }
  }
 +
-+fn stats_cell(got: &[Vec<String>], row: usize, col: &str) -> String {
-+    let idx = got[0]
-+        .iter()
-+        .position(|h| h == col)
-+        .unwrap_or_else(|| panic!("no `{col}` column in {:?}", got[0]));
-+    got[row][idx].clone()
-+}
-+
 +#[test]
-+fn stats_weighted_null_cells_do_not_inflate_quantile_total() {
-+    // Null cells used to add their weight to the quantile total while their (absent) values
-+    // never reached the ranked data, so upper targets were unreachable: Q1/Q2/Q3 came out
-+    // empty and the 75th/100th percentiles a fabricated 0.
-+    let wrk = Workdir::new("stats_weighted_null_cells_do_not_inflate_quantile_total");
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["x", "w"],
-+            svec!["1", "1"],
-+            svec!["2", "1"],
-+            svec!["", "1"],
-+            svec!["", "1"],
-+        ],
-+    );
-+    let mut cmd = wrk.command("stats");
-+    cmd.args(["--weight", "w", "--quartiles", "--mad", "--percentiles"])
-+        .args(["--percentile-list", "25,50,75,100", "--select", "x"])
-+        .arg("data.csv");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(stats_cell(&got, 1, "q1"), "1");
-+    assert_eq!(stats_cell(&got, 1, "q2_median"), "1");
-+    assert_eq!(stats_cell(&got, 1, "q3"), "2");
-+    assert_eq!(stats_cell(&got, 1, "mad"), "0");
-+    assert_eq!(
-+        stats_cell(&got, 1, "percentiles"),
-+        "25: 1|50: 1|75: 2|100: 2"
-+    );
-+}
-+
-+#[test]
-+fn stats_weighted_percentiles_survive_float_rounding_of_the_total() {
-+    // 0.1+0.2+0.3 (input order) != 0.3+0.2+0.1 (sorted order): a total summed in input
-+    // order sat just above the final running sum, so p100 was never reached and kept its
-+    // 0.0 placeholder, and p50 skipped past the exact half-way value.
-+    let wrk = Workdir::new("stats_weighted_percentiles_survive_float_rounding_of_the_total");
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["x", "w"],
-+            svec!["30", "0.1"],
-+            svec!["20", "0.2"],
-+            svec!["10", "0.3"],
-+        ],
-+    );
-+    let mut cmd = wrk.command("stats");
-+    cmd.args([
-+        "--weight",
-+        "w",
-+        "--percentiles",
-+        "--percentile-list",
-+        "50,100",
-+    ])
-+    .args(["--select", "x"])
-+    .arg("data.csv");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(stats_cell(&got, 1, "percentiles"), "50: 10|100: 30");
-+}
-+
-+#[test]
-+fn stats_weighted_zero_and_negative_weights_excluded_from_modes() {
-+    // --weight docs: zero and negative weights do not contribute. They used to still become
-+    // mode-table keys: cardinality 3 and antimode `a` with 0 occurrences.
-+    for (name, w) in [("zero", "0"), ("negative", "-1")] {
++fn stats_weighted_all_distinct_values_still_report_the_heaviest_mode() {
++    // Every value is distinct, but the weights are not: `a` carries 5 of the 7 total weight, so
++    // it is the weighted mode. The *ALL short-circuit only applies when every weight ties, and
++    // then each value's occurrences is that shared weight.
++    for (name, rows, mode, occurrences, antimode, antimode_occurrences) in [
++        (
++            "unequal",
++            [["a", "5"], ["b", "1"], ["c", "1"]],
++            "a",
++            "5",
++            "b|c",
++            "1",
++        ),
++        (
++            "equal",
++            [["a", "2"], ["b", "2"], ["c", "2"]],
++            "",
++            "0",
++            "*ALL",
++            "2",
++        ),
++        // occurrences above u32::MAX must not saturate at 4294967295
++        (
++            "huge",
++            [["a", "5000000000"], ["b", "1"], ["c", "1"]],
++            "a",
++            "5000000000",
++            "b|c",
++            "1",
++        ),
++    ] {
 +        let wrk = Workdir::new(&format!(
-+            "stats_weighted_{name}_weights_excluded_from_modes"
++            "stats_weighted_all_distinct_values_still_report_the_heaviest_mode_{name}"
 +        ));
-+        wrk.create(
-+            "data.csv",
-+            vec![
-+                svec!["value", "weight"],
-+                svec!["a", w],
-+                svec!["b", "2"],
-+                svec!["a", w],
-+                svec!["c", "1"],
-+            ],
-+        );
++        let mut data = vec![svec!["value", "w"]];
++        data.extend(rows.iter().map(|[v, w]| svec![*v, *w]));
++        wrk.create("data.csv", data);
 +        let mut cmd = wrk.command("stats");
-+        cmd.args(["--weight", "weight", "--mode", "--cardinality"])
++        cmd.args(["--mode", "--cardinality", "--weight", "w"])
 +            .arg("data.csv");
 +        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+        assert_eq!(stats_cell(&got, 1, "cardinality"), "2", "{name} weights");
-+        assert_eq!(stats_cell(&got, 1, "mode"), "b", "{name} weights");
-+        assert_eq!(stats_cell(&got, 1, "antimode"), "c", "{name} weights");
++        assert_eq!(stats_cell(&got, 1, "mode"), mode, "{name}");
++        assert_eq!(
++            stats_cell(&got, 1, "mode_occurrences"),
++            occurrences,
++            "{name}"
++        );
++        assert_eq!(stats_cell(&got, 1, "antimode"), antimode, "{name}");
 +        assert_eq!(
 +            stats_cell(&got, 1, "antimode_occurrences"),
-+            "1",
-+            "{name} weights"
++            antimode_occurrences,
++            "{name}"
 +        );
 +    }
 +}
 +
 +#[test]
-+fn stats_infer_boolean_requires_one_true_and_one_false_value() {
-+    // With the default "t*:f*" pattern, "Fiona" and "Frank" both match the FALSE side;
-+    // that is not a true/false pair. Control: "true"/"false" in the same file stays Boolean.
-+    let wrk = Workdir::new("stats_infer_boolean_requires_one_true_and_one_false_value");
++fn stats_antimodes_len_zero_disables_truncation_without_panicking() {
++    // QSV_ANTIMODES_LEN=0 is documented as "disable length limiting"; it maps to usize::MAX,
++    // which was also used as a String capacity and aborted with a capacity overflow.
++    let wrk = Workdir::new("stats_antimodes_len_zero_disables_truncation_without_panicking");
 +    wrk.create(
 +        "data.csv",
-+        vec![
-+            svec!["name", "flag"],
-+            svec!["Fiona", "true"],
-+            svec!["Frank", "false"],
-+            svec!["Fiona", "true"],
-+        ],
++        vec![svec!["v"], svec!["a"], svec!["a"], svec!["b"], svec!["c"]],
 +    );
 +    let mut cmd = wrk.command("stats");
-+    cmd.arg("--infer-boolean").arg("data.csv");
++    cmd.arg("--mode")
++        .env("QSV_ANTIMODES_LEN", "0")
++        .arg("data.csv");
 +    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(stats_cell(&got, 1, "type"), "String");
-+    assert_eq!(stats_cell(&got, 2, "type"), "Boolean");
++    assert_eq!(stats_cell(&got, 1, "antimode"), "b|c");
 +}
 +
 +#[test]
-+#[cfg(any(feature = "feature_capable", feature = "lite"))]
-+fn stats_integer_sum_overflow_keeps_the_stats_cache_readable() {
-+    // An overflowing integer sum renders as *OVERFLOW*; the strict f64 `sum` f
++fn stats_all_zero_integer_typing_does_not_depend_on_row_order() {
++    // `00` is the integer 0 when it arrives first, so it must not be called zero-padded (and
++    // the column String) just because a float arrived before it.
++    for (name, rows) in [
++        ("float_first", ["1.5", "00"]),
++        ("zero_first", ["00", "1.5"]),
++    ] {
++        let wrk = Workdir::new(&format!(
++            "stats_all_zero_integer_typing_does_not_depend_on_row_order_{name}"
++        ));
++        let mut data = vec![svec!["x"]];
++        data.extend(rows.iter().map(|v| svec![*v]));
++        wrk.create("data.csv", data);
++        let mut cmd = wrk.command("stats");
++        cmd.arg("data.csv");
++        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++        assert_eq!(stats_cell(&got, 1, "type"), "Float", "{name}");
++        assert_eq!(stats_cell(&got, 1, "sum"), "1.5", "{name}");
++    }
++}
++
++#[test]
++fn stats_integer_sum_back_in_range_is_exact_in_any_order() {
++    // 9e18 + 9e18 - 9e18 = 9e18 fits i64. A saturating i64 sum clamped at i64::MAX and then
++    // printed 223372036854775807 - a plausible-looking wrong total - depending on row order.
++    let big = "9000000000000000000";
++    let neg = "-9000000000000000000";
++    for (name, rows) in [
++        ("pos_pos_neg", [big, big, neg]),
++        ("pos_neg_pos", [big, neg, big]),
++    ] {
++        let wrk = Workdir::new(&format!(
++            "stats_integer_sum_back_in_range_is_exact_in_any_order_{name}"
++        ));
++        let mut data = vec![svec!["x"]];
++        data.extend(rows.iter().map(|v| svec![*v]));
++        wrk.create("data.csv", data);
++        let mut cmd = wrk.command("stats");
++        cmd.arg("data.csv");
++        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++        assert_eq!(stats_cell(&got, 1, "sum"), big, "{name}");
++    }
++}
++
++#[test]
++fn stats_integer_sum_merged_across_chunks_is_exact() {
++    // One row per chunk, so the out-of-range intermediate total is formed in Commute::merge.
++    let wrk = Workdir::new("stats_integer_sum_merged_across_chunks_is_exact");
++  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4891** (2026-10-22): fix(stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exact integer sum, NULL antimodes (@jqnatividad)
 - **PR #4890** (2026-10-22): ci(audit): ignore RUSTSEC-2026-0374 (basic-toml unmaintained) (@jqnatividad)
 - **PR #4889** (2026-10-22): fix(stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed sum in the stats cache (@jqnatividad)
 - **PR #4888** (2026-10-22): build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (@dependabot[bot])
 - **PR #4887** (2026-10-22): perf(validate): collect errors with Validator::iter_errors (about 2x faster on error-heavy files) (@jqnatividad)
 - **PR #4886** (2026-10-22): validate: jsonschema 0.60 follow-ups (idn formats, field names, validate schema parity, --offline, unknown-format warning) (@jqnatividad)
-- **PR #4885** (2026-10-22): fix(viz): draw auto-resolved state maps with Alaska/Hawaii on the albers usa inset map (@jqnatividad)
 
 ---
 
@@ -2514,13 +2534,13 @@ Regression tests fail against the pre-fix code with the asserted values.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed
+## X. stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exa
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69f8b9d6`: stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed sum in the stats cache (#4889). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c61bb71f`: stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exact integer sum, NULL antimodes (#4891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2528,9 +2548,10 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`stats`: weighted quartiles, median, MAD and percentiles are correct when the column has nulls or fractional weights.** ([#4889](https://github.com/dathere/qsv/pull/4889)) Null cells' weights were counted in the quantile total but their values were never ranked, so a weighted column with empty cells could report empty `q1`/`q2_median`/`q3` and a `0` that isn't in the data for upper percentiles. Separately, the total was summed in a different order from the running sum, so float rounding could drop the 100th percentile to `0` (weights `0.1/0.2/0.3`) or move a median that sits exactly on the half-weight boundary.
-- **`stats --weight`: zero and negative weights no longer count toward `mode`, `antimode` and `cardinality`**, as the `--weight` help says ([#4889](https://github.com/dathere/qsv/pull/4889)). A zero-weight value used to show up as an antimode with 0 occurrences.
-- **`stats --infer-boolean` requires one true and one false value.** ([#4889](https://github.com/dathere/qsv/pull/4889)) A two-value column whose values both matched the same side of a pattern, such as `Fiona`/`Frank` (both `f*`) or `yes`/`yellow`, was typed `Boolean`. **Behavior change:** a column holding two sp
+- **`stats`: when an out-of-memory check auto-enables approximate estimators, the stats cache now records them.** ([#4891](https://github.com/dathere/qsv/pull/4891)) The cache's `.stats.csv.json` still said `exact`, so a later `--quantile-method exact` run was served the approximate results, and `frequency` treated an approximate cardinality as exact.
+- **`stats --weight` reports a mode for a column whose values are all distinct but whose weights differ.** ([#4891](https://github.com/dathere/qsv/pull/4891)) It always showed no mode and `*ALL` antimodes, even when one value carried most of the weight. `*ALL` is still returned when every weight is the same, now with that weight as its occurrence count instead of `1`. Weighted mode and antimode occurrence counts above 4,294,967,295 are no longer capped there.
+- **`stats --mode` no longer crashes with `QSV_ANTIMODES_LEN=0`**, the documented way to turn off antimode truncation ([#4891](https://github.com/dathere/qsv/pull/4891)).
+- **`stats`: a value like `00` no longer types differently depending on row order.** ([#4891](https://github.com/dathere/qsv/pull/4891)) After a float it was treated as zero-padded and made the column `String`; 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2540,4 +2561,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69f8b9d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c61bb71f` are properly handled with clean fallback behavior.

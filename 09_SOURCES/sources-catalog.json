@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "5540a0d4",
+    "sourceVersion": "c61bb71f",
     "license": "NOASSERTION",
-    "contentHash": "e51c4b585f4fbd6e68828d2285087fc3f1d255f6f1d0282d95cf236082cff29e",
-    "lastHarvestedAt": "2026-10-22T20:52:07.464Z",
+    "contentHash": "b6fd6d0bc02a0825dddb1a6000e2d89464573498a5f20fcba0f126ad8eef2a30",
+    "lastHarvestedAt": "2026-10-22T21:22:27.808Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "946ba6c2",
+    "sourceVersion": "dec84ad2",
     "license": "AGPL-3.0",
-    "contentHash": "34c66ba2724c2f0566aac3b3eb3097ab2e03131e34eeb333c8810026fc47d1e8",
-    "lastHarvestedAt": "2026-10-21T02:49:51.406Z",
+    "contentHash": "4726ed226b5125ae462b4ebe9862ee76b43fb3ed6f7356b54492a84eb10ad3fc",
+    "lastHarvestedAt": "2026-10-22T21:22:21.459Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "d1c53b8c93450ae1cb0a7a2fbf33ca2aa34801034c87596086e363ff1f62aa17",
-    "lastHarvestedAt": "2026-10-21T03:18:02.566Z",
+    "contentHash": "79ba0afde567b391b74778ba5651861852e83bf21ea6122724f5842aab0b6a9c",
+    "lastHarvestedAt": "2026-10-22T21:22:11.988Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {

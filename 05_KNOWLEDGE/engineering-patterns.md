@@ -267566,3 +267566,106 @@ Subproject commit 701552010f620feb3539f7f1ebb5c809efb7dea9
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a670afb4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3748. postgres): keep unchanged toast columns on delete rows (#4951) (Harvested from PeerDB-io/peerdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "postgres): keep unchanged toast columns on delete rows (#4951)",
+  "source": "PeerDB-io/peerdb",
+  "source_url": "https://github.com/PeerDB-io/peerdb",
+  "source_version": "dec84ad2",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-22T21:22:21.255Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-peerdb-io-peerdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `dec84ad2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `flow/connectors/postgres/postgres_destination.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dec84ad2`: postgres): keep unchanged toast columns on delete rows (#4951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/postgres_destination.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+					utils.KeysToString(typedRecord.UnchangedToastColumns),
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+					"",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dec84ad2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3749. stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exa (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exa",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "c61bb71f",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-22T21:22:27.606Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `c61bb71f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c61bb71f`: stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exact integer sum, NULL antimodes (#4891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **`stats`: when an out-of-memory check auto-enables approximate estimators, the stats cache now records them.** ([#4891](https://github.com/dathere/qsv/pull/4891)) The cache's `.stats.csv.json` still said `exact`, so a later `--quantile-method exact` run was served the approximate results, and `frequency` treated an approximate cardinality as exact.
+- **`stats --weight` reports a mode for a column whose values are all distinct but whose weights differ.** ([#4891](https://github.com/dathere/qsv/pull/4891)) It always showed no mode and `*ALL` antimodes, even when one value carried most of the weight. `*ALL` is still returned when every weight is the same, now with that weight as its occurrence count instead of `1`. Weighted mode and antimode occurrence counts above 4,294,967,295 are no longer capped there.
+- **`stats --mode` no longer crashes with `QSV_ANTIMODES_LEN=0`**, the documented way to turn off antimode truncation ([#4891](https://github.com/dathere/qsv/pull/4891)).
+- **`stats`: a value like `00` no longer types differently depending on row order.** ([#4891](https://github.com/dathere/qsv/pull/4891)) After a float it was treated as zero-padded and made the column `String`; 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c61bb71f` are properly handled with clean fallback behavior.

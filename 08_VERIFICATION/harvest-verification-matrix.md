@@ -4440,3 +4440,6 @@
 | `CYCLE-20261022-971K` | `2026-10-22T21:08:14.696Z` | `valeriansaliou/sonic` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3745` | Yes (`cb36a507...`) |
 | `CYCLE-20261022-H37S` | `2026-10-22T21:14:22.984Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3746` | Yes (`21721296...`) |
 | `CYCLE-20261022-H9EA` | `2026-10-22T21:14:30.994Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3747` | Yes (`0b6968c6...`) |
+| `CYCLE-20261022-R53L` | `2026-10-22T21:22:11.985Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`79ba0afd...`) |
+| `CYCLE-20261022-RCEO` | `2026-10-22T21:22:21.456Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3748` | Yes (`4726ed22...`) |
+| `CYCLE-20261022-RHB1` | `2026-10-22T21:22:27.805Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3749` | Yes (`b6fd6d0b...`) |

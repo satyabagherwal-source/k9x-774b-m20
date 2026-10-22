@@ -4447,3 +4447,6 @@ Every entry in this ledger must capture:
 | `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `b635a181` | Multi-dimensional audit evidence | 2026-10-22T21:08:14.700Z |
 | `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `43480f95` | Multi-dimensional audit evidence | 2026-10-22T21:14:22.987Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `a670afb4` | Multi-dimensional audit evidence | 2026-10-22T21:14:30.997Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-22T21:22:11.988Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `dec84ad2` | Multi-dimensional audit evidence | 2026-10-22T21:22:21.459Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c61bb71f` | Multi-dimensional audit evidence | 2026-10-22T21:22:27.808Z |
