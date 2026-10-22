@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T15:56:59.569Z",
+  "last_updated": "2026-10-22T16:03:31.631Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4004,17 +4004,23 @@
       "slug": "bitnami-sealed-secrets",
       "platform": "github",
       "source_url": "https://github.com/bitnami/sealed-secrets",
-      "source_version": "19227f36",
-      "content_hash": "e0f54001fcdc8f959449b222443c6288e9af54940eba5a14d1ca818235a06dde",
+      "source_version": "41e2c244",
+      "content_hash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
       "dossier_path": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3623,
+          "title": "multidocyaml): do not panic on malformed YAML (#2074)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:11:10.620Z",
+      "verified_at": "2026-10-22T16:03:31.621Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10147,8 +10153,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "4f25ddd3",
-      "content_hash": "c4bf617b247db3d7e3afe9a0a247c9cd8030901e06a0168597ac7c4d20aa42c8",
+      "source_version": "1dc7fac0",
+      "content_hash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -10166,6 +10172,11 @@
           "number": 3332,
           "title": "Add askBarney, a netcat-style trace injector that punts its SYN to Fife",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3622,
+          "title": "Build folly's concurrency primitives on wasi, without emulations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10173,7 +10184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:04:27.851Z",
+      "verified_at": "2026-10-22T16:03:26.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109723,6 +109734,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T15:56:59.557Z"
+    },
+    "rule-3622": {
+      "learning_id": "rule-3622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3622,
+      "title": "Build folly's concurrency primitives on wasi, without emulations",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "1dc7fac0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:03:26.921Z"
+    },
+    "rule-3623": {
+      "learning_id": "rule-3623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3623,
+      "title": "multidocyaml): do not panic on malformed YAML (#2074)",
+      "source_url": "https://github.com/bitnami/sealed-secrets",
+      "source_version": "41e2c244",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:03:31.621Z"
     }
   },
   "aliases": {

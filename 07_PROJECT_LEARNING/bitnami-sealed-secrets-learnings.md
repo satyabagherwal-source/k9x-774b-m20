@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source**: github ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
-> **Source Version**: `19227f36`  
+> **Source Version**: `41e2c244`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:11:10.543Z  
+> **Timestamp**: 2026-10-22T16:03:31.363Z  
 > **Learning ID**: `learn-github-bitnami-sealed-secrets`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:11:10.536Z  
+> **Harvest Timestamp**: 2026-10-22T16:03:31.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller and tool for one-way encrypted Secrets
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9307 stars
+- **Stars / Engagement**: 9311 stars
 
 ---
 
@@ -95,7 +95,7 @@ func bindControllerFlags(f *controller.Flags, fs *flag.FlagSet) {
 	fs.BoolVar(&f.UpdateStatus, "update-status", true, "if true, the controller will update the status sub-resource whenever it processes a sealed secret (stable; enabled by default since v0.17.0)")
 	fs.BoolVar(&f.WatchForSecrets, "watch-for-secrets", false, "beta: If this is true, the controller will watch for key secrets. This is useful if you create the key secrets externally.")
 
-	fs.BoolVar(&f.SkipRecreate, "skip-recreate", false, "if true the controller will skip listening for managed secret changes to recreate them. This helps on limited permission environments.")
+	fs.BoolVar(&f.SkipRecreate, "skip-recreate", false, "if true the controller will skip listening for managed secret changes to recreate deleted secrets and restore modified ones. This helps on limited permission environments.")
 
 	fs.BoolVar(&f.LogInfoToStdout, "log-info-stdout", true, "if true the controller will log info to stdout and error/warn to stderr.")
 	fs.StringVar(&f.LogLevel, "log-level", "INFO", "Log level (INFO|ERROR).")
@@ -1475,444 +1475,143 @@ func (c *Clientset) BitnamiV1alpha1() bitnamiv1alpha1.BitnamiV1alpha1Interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5a7b730c` (2026-09-10)
-**Commit Message**: fix(controller): remove redundant scheme registration from NewController (#2046)
+### Incident Patch 1: `9b8c749e` (2026-10-22)
+**Commit Message**: fix(multidocyaml): do not panic on malformed YAML (#2074)
 
-Fixes #2045.
+**Description of the change**
 
-`NewController` registered the SealedSecret types into client-go's
-global `scheme.Scheme` on every call:
+`multidocyaml.isMultiDocumentYAML` decodes the input once, ignores the
+error, and then calls `Decode` a second time to see whether another
+document follows. When the first call fails with a YAML syntax error,
+`gopkg.in/yaml.v2` panics on the second call with:
 
-```go
-utilruntime.Must(ssscheme.AddToScheme(scheme.Scheme))
+```
+panic: attempted to parse unknown event: none
 ```
 
-That registration has already happened by then. `ssscheme.AddToScheme`
-is a `SchemeBuilder` whose only member is `v1alpha1.AddToScheme`
-(`pkg/client/clientset/versioned/scheme/register.go:17-18`), and the
-v1alpha1 package's own `init()` runs exactly that against
-`scheme.Scheme` (`pkg/apis/sealedsecrets/v1alpha1/register.go:24`).
-`controller.go` imports that package directly, so the `init()` has run
-before any controller is built.
+This is the panic reported in #857. The kubeseal sealing path no longer
+goes through this package, but `Controller.AttemptUnseal` (the
+`/v1/verify` handler) still calls `multidocyaml.EnsureNotMultiDoc`. A
+malformed request body therefore panics the handler instead of getting
+the usual `500` response.
 
-The redundancy was harmless while startup was serial. #2018 made the
-additional-namespace bootstrap parallel
-(`pkg/controller/main.go:321-343`, concurrency 16), so
-`prepareController` — and through it `NewController` — now runs from
-many goroutines at once. `runtime.Scheme.AddKnownTypes` writes the
-scheme's internal maps; identical values still count as concurrent map
-writes, so the process aborts. A single namespace only ever calls it
-once, which matches default deployments being unaffected.
+This change stops after the first `Decode` when it returns anything
+other than a `*yaml.TypeError` and reports the input as not
+multi-document. The caller's own decoder then returns the parse error. A
+`*yaml.TypeError` only means the document didn't fit the dummy value, so
+it keeps the current behaviour for inputs like `foo\n---\n`.
+
+**Benefits**
+
+Malformed YAML now produces an error instead of a panic.
+
+**Possible drawbacks**
+
+None expected. Valid inputs take the same path as before.
 
 
-**File**: `pkg/controller/controller.go` (modified, +0/-2)
+
+**File**: `pkg/controller/controller_test.go` (modified, +23/-0)
 ```diff
-@@ -30,7 +30,6 @@ import (
- 
- 	ssv1alpha1 "github.com/bitnami/sealed-secrets/pkg/apis/sealedsecrets/v1alpha1"
- 	ssclientset "github.com/bitnami/sealed-secrets/pkg/client/clientset/versioned"
--	ssscheme "github.com/bitnami/sealed-secrets/pkg/client/clientset/versioned/scheme"
- 	ssv1alpha1client "github.com/bitnami/sealed-secrets/pkg/client/clientset/versioned/typed/sealedsecrets/v1alpha1"
- 	ssinformer "github.com/bitnami/sealed-secrets/pkg/client/informers/externalversions"
- 	"github.com/bitnami/sealed-secrets/pkg/multidocyaml"
-@@ -89,7 +88,6 @@ func NewController(
- ) (*Controller, error) {
- 	queue := workqueue.NewTypedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[string]())
- 
--	utilruntime.Must(ssscheme.AddToScheme(scheme.Scheme))
- 	eventBroadcaster := record.NewBroadcaster()
- 	eventBroadcaster.StartLogging(func(format string, args ...interface{}) {
- 		// Must use Sprintf to ensure slog doesn't interpret args... as key-value pairs
-```
-
-**File**: `pkg/controller/controller_test.go` (modified, +50/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"crypto/rsa"
- 	"errors"
- 	"fmt"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -546,3 +547,52 @@ func TestRotateIgnoresTemplate(t *testing.T) {
- 		t.Errorf("Rotate must not turn template execution into a decryption oracle, got error: %v", err)
+@@ -476,6 +476,29 @@ func TestAttemptUnsealIgnoresTemplate(t *testing.T) {
  	}
  }
-+
-+// prepareController is called once per namespace from parallel goroutines when
-+// --additional-namespaces is set, so it must be safe to call concurrently.
-+// Regression test for #2045.
-+func TestPrepareControllerConcurrently(t *testing.T) {
+ 
++// TestAttemptUnsealMalformedYAML checks that malformed input is reported as an error instead of panicking (#857).
++func TestAttemptUnsealMalformedYAML(t *testing.T) {
 +	ns := "some-namespace"
 +	keyNs := "some-key-namespace"
 +	var tweakopts func(*metav1.ListOptions)
 +	clientset := fake.NewClientset()
 +	ssc := ssfake.NewSimpleClientset()
 +	keyRegistry := testKeyRegister(t, context.Background(), clientset, ns)
-+
-+	const goroutines = 64
-+
-+	var wg sync.WaitGroup
-+	start := make(chan struct{})
-+	errs := make(chan error, goroutines)
-+
-+	for i := 0; i < goroutines; i++ {
-+		wg.Add(1)
-+		go func() {
-+			defer wg.Done()
-+			<-start
-+			if _, err := prepareController(clientset, ns, keyNs, tweakopts, &Flags{}, ssc, keyRegistry); err != nil {
-+				errs <- err
-+			}
-+		}()
-+	}
-+
-+	close(start)
-+	wg.Wait()
-+	close(errs)
-+
-+	for err := range errs {
-+		t.Fatalf("prepareController failed under concurrency: %v", err)
-+	}
-+}
-+
-+// The controller's decoders (scheme.Codecs.UniversalDecoder) rely on the
-+// SealedSecret types being present in the global scheme. That registration comes
-+// from the v1alpha1 package init(), which is why NewController does not need to
-+// repeat it. Guards that invariant.
-+func TestSealedSecretTypesAreRegisteredGlobally(t *testing.T) {
-+	for _, kind := range []string{"SealedSecret", "SealedSecretList"} {
-+		if !scheme.Scheme.Recognizes(ssv1alpha1.SchemeGroupVersion.WithKind(kind)) {
-+			t.Fatalf("%s is not registered in the global scheme", kind)
-+		}
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `32171b69` (2026-09-10)
-**Commit Message**: [Security] Stop /v1/rotate from acting as a decryption oracle (#2049)
-
-Rotate() decrypted via the full Unseal() path, which renders
-spec.template.data as a Go template. That field isn't covered by the
-AEAD label, so an attacker able to submit a SealedSecret manifest to the
-unauthenticated /v1/rotate endpoint could pair a victim's real
-metadata/encryptedData with a crafted template and use the resulting
-success/error response as a one-bit decryption oracle - the same class
-of issue previously fixed for /v1/verify in 66db186e.
-
-Add UnsealWithoutTemplate, which decrypts spec.encryptedData without
-ever executing spec.template.data, and use it in Rotate() instead.
-
-**File**: `pkg/apis/sealedsecrets/v1alpha1/sealedsecret_expansion.go` (modified, +45/-34)
-```diff
-@@ -292,8 +292,17 @@ func (s *SealedSecret) ValidateEncryptedData(privKeys map[string]*rsa.PrivateKey
- 	return fmt.Errorf("using deprecated 'data' field, use 'encryptedData' or flip the feature flag")
- }
- 
--// Unseal decrypts and returns the embedded v1.Secret.
-+// Unseal decrypts and returns the embedded v1.Secret, rendering spec.template.data as a Go template.
- func (s *SealedSecret) Unseal(codecs runtimeserializer.CodecFactory, privKeys map[string]*rsa.PrivateKey) (*v1.Secret, error) {
-+	return s.unseal(codecs, privKeys, true)
-+}
-+
-+// UnsealWithoutTemplate is like Unseal but skips rendering spec.template.data, since it's not authenticated and could be used as a decryption oracle.
-+func (s *SealedSecret) UnsealWithoutTemplate(codecs runtimeserializer.CodecFactory, privKeys map[string]*rsa.PrivateKey) (*v1.Secret, error) {
-+	return s.unseal(codecs, privKeys, false)
-+}
-+
-+func (s *SealedSecret) unseal(codecs runtimeserializer.CodecFactory, privKeys map[string]*rsa.PrivateKey, renderTemplate bool) (*v1.Secret, error) {
- 	boolTrue := true
- 	smeta := s.GetObjectMeta()
- 
-@@ -328,41 +337,43 @@ func (s *SealedSecret) Unseal(codecs runtimeserializer.CodecFactory, privKeys ma
- 			data[key] = string(plaintext)
- 		}
- 
--		// Expose raw plaintext values from spec.template.data in the
--		// template rendering context, so that templates defined in
--		// spec.template.data can reference sibling plaintext keys as
--		// {{ .key }} variables (e.g. {{ .username }} alongside an
--		// encrypted password). Encrypted values take precedence on key
--		// collision so adding a plaintext key can never silently shadow
--		// a real secret value.
--		// See https://github.com/bitnami-labs/sealed-secrets/issues/1607
--		for key, value := range s.Spec.Template.Data {
--			if _, exists := data[key]; !exists && value != nil {
--				data[key] = *value
-+		if renderTemplate {
-+			// Expose raw plaintext values from spec.template.data in the
-+			// template rendering context, so that templates defined in
-+			// spec.template.data can reference sibling plaintext keys as
-+			// {{ .key }} variables (e.g. {{ .username }} alongside an
-+			// encrypted password). Encrypted values take precedence on key
-+			// collision so adding a plaintext key can never silently shadow
-+			// a real secret value.
-+			// See https://github.com/bitnami-labs/sealed-secrets/issues/1607
-+			for key, value := range s.Spec.Template.Data {
-+				if _, exists := data[key]; !exists && value != nil {
-+					data[key] = *value
-+				}
- 			}
--		}
--
--		for key, value := range s.Spec.Template.Data {
--			var plaintext bytes.Buffer
- 
--			if value == nil {
--				delete(secret.Data, key)
--				continue
--			}
--			template, err := template.New(key).Funcs(sprigFuncMap).Parse(*value)
--			if err != nil {
--				errs = append(errs, multierror.Tag(key, err))
--				continue
--			}
--			err = template.Execute(&plaintext, data)
--			if err != nil {
--				errs = append(errs, multierror.Tag(key, err))
--			}
--			// Do not overwrite a key that was already populated from
--			// encryptedData; encrypted values take precedence in the
--			// output Secret as well as in the template rendering context.
--			if _, fromEncrypted := s.Spec.EncryptedData[key]; !fromEncrypted {
--				secret.Data[key] = plaintext.Bytes()
-+			for key, value := range s.Spec.Template.Data {
-+				var plaintext bytes.Buffer
-+
-+				if value == nil {
-+					delete(secret.Data, key)
-+					continue
-+				}
-+				template, err := template.New(key).Funcs(sprigFuncMap).Parse(*value)
-+				if err != nil {
-+					errs = append(errs, multierror.Tag(key, err))
-+					continue
-+				}
-+				err = template.Execute(&plaintext, data)
-+				if err != nil {
-+					errs = append(errs, multierror.Tag(key, err))
-+				}
-+				// Do not overwrite a key that was already populated from
-+				// encryptedData; encrypted values take precedence in the
-+				// output Secret as well as in the template rendering context.
-+				if _, fromEncrypted := s.Spec.EncryptedData[key]; !fromEncrypted {
-+					secret.Data[key] = plaintext.Bytes()
-+				}
- 			}
- 		}
- 
-```
-
-**File**: `pkg/apis/sealedsecrets/v1alpha1/sealedsecret_test.go` (modified, +37/-0)
-```diff
-@@ -432,6 +432,43 @@ func TestValidateEncryptedDataIgnoresTemplate(t *testing.T) {
- 	}
- }
- 
-+// TestUnsealWithoutTemplateIgnoresTemplate checks that UnsealWithoutTemplate never renders spec.template.data.
-+func TestUnsealWithoutTemplateIgnoresTemplate(t *testing.T) {
-+	secret := v1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "myname",
-+			Namespace: "myns",
-+		},
-+		Data: map[string][]byte{
-+			"password": []byte("hunter2"),
-+		},
-+	}
-+
-+	ssecret, _, keys := sealSecret(t, &secret, NewSealedSecret)
-+
-+	// This probe template must not affect decryption or leak into the output.
-+	ssecret.Spec.Template.Data = map[string]*string{
-+		"probe": someStr(`{{ if eq .password "hunter2" }}{{ fail "guessed it" }}{{ end }}`),
-+	}
-+
-+	unsealed, err := ssecret.UnsealWithoutTemplate(serializer.CodecFactory{}, keys)
-+	if err != nil {
-+		t.Fatalf("UnsealWithoutTemplate returned error for a decryptable secret with a template: %v", err)
-+	}
-+	if got, want := string(unsealed.Data["password"]), "hunter2"; got != want {
-+		t.Errorf("password: got %q, want %q", got, want)
-+	}
-+	if _, ok := unsealed.Data["probe"]; ok {
-+		t.Errorf("UnsealWithoutTemplate must not render spec.template.data, but found rendered key %q", "probe")
-+	}
-+
-+	// Sanity check: genuinely undecryptable data must still fail.
-+	_, otherKeys := generateTestKey(t, testRand(), 2048)
-+	if _, err := ssecret.UnsealWithoutTemplate(serializer.CodecFactory{}, otherKeys); err == nil {
-+		t.Errorf("UnsealWithoutTemplate did not return an error for encryptedData undecryptable with the given keys")
-+	}
-+}
-+
- // TestTemplateDataPlaintextReference verifies that plaintext keys defined
- // in spec.template.data can be referenced from sibling templates as
- // {{ .key }} variables. Regression test for
-```
-
-**File**: `pkg/controller/controller.go` (modified, +6/-1)
-```diff
-@@ -574,7 +574,7 @@ func (c *Controller) Rotate(content []byte) ([]byte, error) {
- 			slog.Warn("Sealed Secret metadata doesn't match. Please align your Sealed Secret metadata")
- 		}
- 
--		secret, err := c.attemptUnseal(s)
-+		secret, err := c.attemptUnsealForRotate(s)
- 		if err != nil {
- 			return nil, fmt.Errorf("error decrypting secret. %v", err)
- 		}
-@@ -603,3 +603,8 @@ func (c *Controller) attemptUnseal(ss *ssv1alpha1.SealedSecret) (*corev1.Secret,
- func attemptUnseal(ss *ssv1alpha1.SealedSecret, keyRegistry *KeyRegistry) (*corev1.Secret, error) {
- 	return ss.Unseal(scheme.Codecs, keyRegistry.privateKeys())
- }
-+
-+// attemptUnsealForRotate decrypts without rendering the template, since /v1/rotate is unauthenticated and the template could be used as a decryption oracle.
-+func (c *Controller) attemptUnsealForRotate(ss *ssv1alpha1.SealedSecret) (*corev1.Secret, error) {
-+	return ss.UnsealWithoutTemplate(scheme.Codecs, c.keyRegistry.privateKeys())
-+}
-```
-
-**File**: `pkg/controller/controller_test.go` (modified, +76/-0)
-```diff
-@@ -470,3 +470,79 @@ func TestAttemptUnsealIgnoresTemplate(t *testing.T) {
- 		t.Errorf("AttemptUnseal reported a decryptable secret as invalid because of an unrelated template failure")
- 	}
- }
-+
-+// TestRotateIgnoresTemplate checks that Rotate never executes spec.template.data as a template.
-+func TestRotateIgnoresTemplate(t *testing.T) {
-+	ns := "some-namespace"
-+	keyNs := "some-key-namespace"
-+	var tweakopts func(*metav1.ListOptions)
-+	clientset := fake.NewClientset()
-+	ssc := ssfake.NewSimpleClientset()
-+	keyRegistry := testKeyRegister(t, context.Background(), clientset, ns)
-+
-+	validFor := time.Hour
-+	cn := "my-cn"
-+	_, err := keyRegistry.generateKey(context.Background(), validFor, cn, "", "")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
 +
 +	controller, err := prepareController(clientset, ns, keyNs, tweakopts, &Flags{SkipRecreate: false}, ssc, keyRegistry)
 +	if err != nil {
 +		t.Fatalf("err %v want %v", err, nil)
 +	}
 +
-+	secret := &corev1.Secret{
-+		TypeMeta: metav1.TypeMeta{
-+			APIVersion: "v1",
-+			Kind:       "Secret",
-+		},
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "ss",
-+			Namespace: "default",
-+		},
-+		Data: map[string][]byte{
-+			"password": []byte("hunter2"),
-+		},
++	valid, err := controller.AttemptUnseal([]byte("apiVersion: v1\nkind: Secret\nmetadata: name: foo\n"))
++	if err == nil {
++		t.Errorf("AttemptUnseal returned no error for malformed YAML")
 +	}
++	if valid {
++		t.Errorf("AttemptUnseal reported malformed YAML as valid")
++	}
++}
 +
-+	cert, err := controller.keyRegistry.getCert()
-+	if err != nil {
-+		t.Fatalf("error getting certificate: %v", err)
+ // TestRotateIgnoresTemplate checks that Rotate never executes spec.template.data as a template.
+ func TestRotateIgnoresTemplate(t *testing.T) {
+ 	ns := "some-namespace"
+```
+
+**File**: `pkg/multidocyaml/multidocyaml.go` (modified, +12/-1)
+```diff
+@@ -2,6 +2,7 @@ package multidocyaml
+ 
+ import (
+ 	"bytes"
++	"errors"
+ 	"fmt"
+ 
+ 	"gopkg.in/yaml.v2"
+@@ -10,7 +11,17 @@ import (
+ func isMultiDocumentYAML(src []byte) bool {
+ 	dec := yaml.NewDecoder(bytes.NewReader(src))
+ 	var dummy struct{}
+-	_ = dec.Decode(&dummy)
++	if err := dec.Decode(&dummy); err != nil {
++		// A *yaml.TypeError only means the document doesn't fit the dummy
++		// value; the decoder can still move on to the next document.
++		// Any other error leaves the yaml.v2 decoder in a state where calling
++		// Decode again panics, so stop here and let the caller's own parsing
++		// report the malformed input.
++		var typeErr *yaml.TypeError
++		if !errors.As(err, &typeErr) {
++			return false
++		}
 +	}
+ 	return dec.Decode(&dummy) == nil
+ }
+ 
+```
+
+**File**: `pkg/multidocyaml/multidocyaml_test.go` (modified, +14/-0)
+```diff
+@@ -13,6 +13,14 @@ func TestIsMultiDocumentYAML(t *testing.T) {
+ 		{"foo\n---\n", true},
+ 		{"foo\n ---\n", false},
+ 		{"---\nfoo\n---\n", true},
++		{"", false},
++		// Malformed YAML must not panic (see #857).
++		{"a: b: c\n", false},
++		{"key:\n\t- x\n", false},
++		{"foo: [\n", false},
++		{"a: 1\n  b: 2\n", false},
++		{"\"unterminated\n", false},
++		{"{a: 1\n---\nb: 2\n", false},
+ 	}
+ 
+ 	for _, tc := range testCases {
+@@ -21,3 +29,9 @@ func TestIsMultiDocumentYAML(t *testing.T) {
+ 		}
+ 	}
+ }
 +
-+	ssecret, err := ssv1alpha1.NewSealedSecret(scheme.Codecs, cert.PublicKey.(*rsa.PublicKey), secret)
-+	if err != nil {
-+		t.Fatalf("error creating sealed secrets: %v", err)
-+	}
-+
-+	// Attacker-controlled, always-failing template paired with the victim's real data.
-+	ssecret.Spec.Template.Data = map[string]*string{
-+		"probe": someStr(`{{ fail "attacker-controlled failure" }}`),
-+	}
-+
-+	enc, err := prettyEncoder(scheme.Codecs, runtime.ContentTypeJSON, ssv1alpha1.SchemeGroupVersion)
-+	if err != nil {
-+		t.Fatalf("unexpected pretty encoding: %v", err)
-+	}
-+	data, err := runtime.Encode(enc, ssecret)
-+	if err != nil {
-+		t.Fatalf("unexpected encoding the sealed secret: %v", err)
-+	}
-+
-+	if _, err := controller.Rotate(data); err != nil {
-+		t.Errorf("Rotate returned error for a decryptable secret because of an unrelated template failure: %v", err)
-+	}
-+
-+	// Different guesses against the same ciphertext must behave identically.
-+	ssecret.Spec.Template.Data = map[string]*string{
-+		"probe": someStr(`{{ if eq .password "hunter2" }}{{ fail "guessed it" }}{{ end }}`),
-+	}
-+	data2, err := runtime.Encode(enc, ssecret)
-+	if err != nil {
-+		t.Fatalf("unexpected encoding the sealed secret: %v", err)
-+	}
-+	if _, err := controller.Rotate(data2); err != nil {
-+		t.Errorf("Rotate must not turn template execution into a decryption oracle, got error: %v", err)
++func TestEnsureNotMultiDocMalformedYAML(t *testing.T) {
++	if err := EnsureNotMultiDoc([]byte("a: b: c\n")); err != nil {
++		t.Errorf("unexpected error: %v", err)
 +	}
 +}
 ```
 
----
-
-### Incident Patch 3: `90293948` (2026-08-27)
-**Commit Message**: Add imports to force vendoring required codegen tools (#2020)
-
-<!--
-Before you open the request please review the following guidelines and
-tips to help it be more easily integrated:
-
- - Describe the scope of your change - i.e. what the change does.
- - Describe any known limitations with your change.
-- Please run any tests or examples that can exercise your modified code.
-
-Thank you for contributing! We will try to test and integrate the change
-as soon as we can, but be aware we have many GitHub repositories to
-manage and can't immediately respond to every request. There is no need
-to bump or check in on a pull request (it will clutter the discussion of
-the request).
-
-Also don't be worried if the request is closed or not integrated
-sometimes the priorities of Bitnami might not match the priorities of
-the pull request. Don't fret, the open source community thrives on forks
-and GitHub makes it easy to keep your changes in a forked repo.
- -->
-
-**Description of the change**
-
-<!-- Describe the scope of your change - i.e. what the change does. -->
-Add imports to force vendoring of tools required by
-`./hack/update-codegen.sh`.
-
-For whatever reason, only a subset of `k8s.io/code-generator/c
-
-**File**: `hack/tools.go` (modified, +4/-0)
-```diff
-@@ -9,4 +9,8 @@ package tools
- 
- import (
- 	_ "k8s.io/code-generator"
-+	_ "k8s.io/code-generator/cmd/conversion-gen"
-+	_ "k8s.io/code-generator/cmd/deepcopy-gen"
-+	_ "k8s.io/code-generator/cmd/defaulter-gen"
-+	_ "k8s.io/code-generator/cmd/validation-gen"
- )
-```
-
 #### Recent Merged Pull Requests:
+- **PR #2077** (2026-10-22): Bump go to 1.27.3 (@agarcia-oss)
+- **PR #2076** (2026-10-21): Bump distroless/static from `5813399` to `9e0130b` in /docker (@dependabot[bot])
+- **PR #2075** (2026-10-21): Bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (@dependabot[bot])
+- **PR #2074** (2026-10-22): fix(multidocyaml): do not panic on malformed YAML (@cvas22)
+- **PR #2073** (2026-10-22): feat(controller): heal manually modified Secrets (@mikidax)
 - **PR #2072** (2026-10-15): Bump golang.org/x/crypto from 0.57.0 to 0.58.0 (@dependabot[bot])
-- **PR #2071** (2026-10-15): Bump github.com/prometheus/client_golang from 1.24.1 to 1.25.0 (@dependabot[bot])
-- **PR #2068** (closed): Bump k8s.io/api from 0.37.0 to 0.37.1 (@dependabot[bot])
-- **PR #2067** (2026-09-30): Bump k8s.io/client-go from 0.37.0 to 0.37.1 (@dependabot[bot])
-- **PR #2066** (closed): Bump k8s.io/apimachinery from 0.37.0 to 0.37.1 (@dependabot[bot])
-- **PR #2065** (2026-10-01): Bump github.com/onsi/gomega from 1.43.1 to 1.44.0 (@dependabot[bot])
 
 ---
 
@@ -1926,3 +1625,56 @@ For whatever reason, only a subset of `k8s.io/code-generator/c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. multidocyaml): do not panic on malformed YAML (#2074)
+
+**RULE**:
+When implementing operations in `pkg/controller/controller_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bitnami/sealed-secrets. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9b8c749e`: multidocyaml): do not panic on malformed YAML (#2074). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controller/controller_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// TestAttemptUnsealMalformedYAML checks that malformed input is reported as an error instead of panicking (#857).
+func TestAttemptUnsealMalformedYAML(t *testing.T) {
+	ns := "some-namespace"
+	keyNs := "some-key-namespace"
+	var tweakopts func(*metav1.ListOptions)
+	clientset := fake.NewClientset()
+	ssc := ssfake.NewSimpleClientset()
+	keyRegistry := testKeyRegister(t, context.Background(), clientset, ns)
+
+	controller, err := prepareController(clientset, ns, keyNs, tweakopts, &Flags{SkipRecreate: false}, ssc, keyRegistry)
+	if err != nil {
+		t.Fatalf("err %v want %v", err, nil)
+	}
+
+	valid, err := controller.AttemptUnseal([]byte("apiVersion: v1\nkind: Secret\nmetadata: name: foo\n"))
+	if err == nil {
+		t.Errorf("AttemptUnseal returned no error for malformed YAML")
+	}
+	if valid {
+		t.Errorf("AttemptUnseal reported malformed YAML as valid")
+	}
+}
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9b8c749e` are properly handled with clean fallback behavior.

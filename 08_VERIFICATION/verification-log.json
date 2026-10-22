@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-LTLF",
-    "timestamp": "2026-10-20T12:50:50.259Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "94dc1005ae54cee87295096be2e7f9d93d70832502930809e72bb3b63f775a7d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-NWFW",
-    "timestamp": "2026-10-20T12:52:27.260Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "d9e88326c9371ead25833418099aa2c624e67eeffd9e17eba03b39197bf71135",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-VZSJ",
     "timestamp": "2026-10-20T12:58:44.851Z",
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -7490,6 +7460,36 @@
     "repository": "apache/zookeeper",
     "learningId": "learn-github-apache-zookeeper",
     "contentHash": "f3394aa9ee3fdd3b2e07d24151baa4005f71f8656b6562cf3078bca82398e711",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-D85H",
+    "timestamp": "2026-10-22T16:03:26.981Z",
+    "repository": "facebook/folly",
+    "learningId": "learn-github-facebook-folly",
+    "contentHash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-DBRZ",
+    "timestamp": "2026-10-22T16:03:31.679Z",
+    "repository": "bitnami/sealed-secrets",
+    "learningId": "learn-github-bitnami-sealed-secrets",
+    "contentHash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

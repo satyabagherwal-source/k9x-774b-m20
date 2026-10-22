@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T15:56:59.628Z",
-  "total_cycles_completed": 4285,
-  "total_learnings_persisted": 4285,
-  "total_rules_promoted": 3467,
+  "last_updated": "2026-10-22T16:03:31.691Z",
+  "total_cycles_completed": 4287,
+  "total_learnings_persisted": 4287,
+  "total_rules_promoted": 3469,
   "history": [
-    {
-      "timestamp": "2026-10-21T00:15:37.142Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T00:21:48.801Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T00:21:49.785Z",
       "repository": "GitoxideLabs/gitoxide",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-22T15:56:59.628Z",
       "repository": "apache/zookeeper",
       "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:03:26.992Z",
+      "repository": "facebook/folly",
+      "learningId": "learn-github-facebook-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T16:03:31.691Z",
+      "repository": "bitnami/sealed-secrets",
+      "learningId": "learn-github-bitnami-sealed-secrets",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

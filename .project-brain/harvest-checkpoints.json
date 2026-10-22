@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T15:56:59.631Z",
+  "last_updated": "2026-10-22T16:03:31.695Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9891,14 +9891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitnami-sealed-secrets",
-      "content_hash": "e0f54001fcdc8f959449b222443c6288e9af54940eba5a14d1ca818235a06dde",
-      "verified_at": "2026-10-19T06:11:10.679Z",
+      "content_hash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
+      "verified_at": "2026-10-22T16:03:31.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:11:10.679Z"
+      "last_updated": "2026-10-22T16:03:31.695Z"
     },
     "run-llama/llama_index": {
       "repository": "run-llama/llama_index",
@@ -11541,14 +11541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-facebook-folly",
-      "content_hash": "c4bf617b247db3d7e3afe9a0a247c9cd8030901e06a0168597ac7c4d20aa42c8",
-      "verified_at": "2026-10-20T19:04:27.915Z",
+      "content_hash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
+      "verified_at": "2026-10-22T16:03:26.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:04:27.915Z"
+      "last_updated": "2026-10-22T16:03:26.996Z"
     },
     "Kotlin/kmp-production-sample": {
       "repository": "Kotlin/kmp-production-sample",

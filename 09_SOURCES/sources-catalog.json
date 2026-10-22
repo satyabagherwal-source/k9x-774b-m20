@@ -6543,10 +6543,10 @@
     "repository": "bitnami/sealed-secrets",
     "platform": "github",
     "sourceUrl": "https://github.com/bitnami/sealed-secrets",
-    "sourceVersion": "19227f36",
+    "sourceVersion": "41e2c244",
     "license": "Apache-2.0",
-    "contentHash": "e0f54001fcdc8f959449b222443c6288e9af54940eba5a14d1ca818235a06dde",
-    "lastHarvestedAt": "2026-10-19T06:11:10.673Z",
+    "contentHash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
+    "lastHarvestedAt": "2026-10-22T16:03:31.682Z",
     "learningId": "learn-github-bitnami-sealed-secrets"
   },
   "run-llama-llama_index": {
@@ -7663,10 +7663,10 @@
     "repository": "facebook/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "4f25ddd3",
+    "sourceVersion": "1dc7fac0",
     "license": "Apache-2.0",
-    "contentHash": "c4bf617b247db3d7e3afe9a0a247c9cd8030901e06a0168597ac7c4d20aa42c8",
-    "lastHarvestedAt": "2026-10-20T19:04:27.907Z",
+    "contentHash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
+    "lastHarvestedAt": "2026-10-22T16:03:26.984Z",
     "learningId": "learn-github-facebook-folly"
   },
   "kotlin-kmp-production-sample": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `4f25ddd3`  
+> **Source Version**: `1dc7fac0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:04:27.615Z  
+> **Timestamp**: 2026-10-22T16:03:26.663Z  
 > **Learning ID**: `learn-github-facebook-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:04:27.406Z  
+> **Harvest Timestamp**: 2026-10-22T16:03:25.677Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30550 stars
+- **Stars / Engagement**: 30552 stars
 
 ---
 
@@ -2348,10 +2348,7 @@ class WriteFileAtomicOptions {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #348** (2016-03-19): **Commit 2a0cb937 breaks compilation on OS X Yosemite**
-  *Symptoms*: OS X Yosemite doesn't seem to know about __NR_gettid, but does know about SYS_gettid. 
-  **Post-Mortem & Fix Analysis**:
-  > Already fixed. 
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2368,113 +2365,430 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4f25ddd3` (2026-10-20)
-**Commit Message**: Add askBarney, a netcat-style trace injector that punts its SYN to Fife
+### Incident Patch 1: `999670f7` (2026-10-22)
+**Commit Message**: Build folly's concurrency primitives on wasi, without emulations
 
 Summary:
-# Context
-Fife authorizes connections for vDPUs, and callers punt the opening TCP SYN with `authorize` so Fife can forward it (D125621587). We need a simple client to inject that traffic by hand, and the vDPU-side client has to be open source, so this tool is too.
+wasi-libc lacks several facilities folly's portability layer assumes, and offers others only as opt-in emulations folly doesn't take. With this, folly's concurrency primitives build on wasi, and what can't work there fails to compile instead of misbehaving at run time.
 
-# Product decisions
-1. `askBarney --fife_ip X --fife_port Y --cert_path C [--key_path K] --ca_path A <host> <port>` works like netcat over TCP, except it first punts the connection's SYN to Fife.
-2. The punt is `authorize(local_ip, dst_ip, syn)` over mTLS. askBarney prints Fife's `decision` and `forward` to stderr. Anything other than `ALLOWED` exits 1. If allowed, it relays stdin and stdout over the connection until the server closes it.
+- `portability/Unistd.h`: no `using ::pipe` on wasi, since wasi-libc declares no `pipe()`.
+- `portability/SysMman.h` and `portability/SysResource.h` declare nothing on wasi. wasi-libc's `mmap` and `getrusage` are opt-in emulations (malloc-backed mappings, wall time reported as CPU time), so code that needs them fails to compile. `SharedMutex` takes its existing no-`RUSAGE_THREAD` branch.
+- `portability/SysSyscall.h`: `linux_syscall` reports `ENOSYS` on wasi, as on Windows, Emscripten and tvOS, since wasi has no `syscall()`.
+- `net/NetOps.h`, `net/NetOps.cpp` and `portability/Sockets.h` declare nothing on wasi preview 1. Preview 1 cannot create, bind or connect sockets: wasi-libc declares `socket`, `bind`, `connect` and `listen` only for preview 2, so socket code fails to compile there. Preview 2 is unchanged. `<sys/socket.h>` defines `__wasil
 
-# Code decisions
-- **The kernel owns the connection.** If askBarney made up its own SYN and only Fife sent it, the server's SYN-ACK would reach a kernel with no matching socket and be reset. So askBarney starts a normal non-blocking `connect()`, captures the SYN the kernel sends with an `AF_PACKET` socket, and punts those exact bytes. Because the punted SYN has the kernel's ports and sequence number, the 
-
-**File**: `build/fbcode_builder/manifests/askbarney` (added, +33/-0)
+**File**: `folly/Random.cpp` (modified, +11/-0)
 ```diff
-@@ -0,0 +1,33 @@
-+[manifest]
-+name = askbarney
-+fbsource_path = fbcode/fife
-+shipit_project = askbarney
-+shipit_fbcode_builder = true
+@@ -62,6 +62,17 @@ void readRandomDevice(void* data, size_t size) {
+   }();
+   CHECK(size <= std::numeric_limits<DWORD>::max());
+   PCHECK(CryptGenRandom(cryptoProv, (DWORD)size, (BYTE*)data));
++#elif defined(__wasi__)
++  // wasi has no /dev/urandom; getentropy, which wasi-libc implements with the
++  // random_get import, is its entropy source. It fills at most 256 bytes a
++  // call.
++  auto* out = static_cast<unsigned char*>(data);
++  while (size > 0) {
++    size_t const chunk = size < 256 ? size : 256;
++    PCHECK(::getentropy(out, chunk) == 0);
++    out += chunk;
++    size -= chunk;
++  }
+ #else
+   ssize_t bytesRead = 0;
+   auto gen = [](int, void* buf, size_t buflen) {
+```
+
+**File**: `folly/memory/ReentrantAllocator.cpp` (modified, +34/-0)
+```diff
+@@ -23,12 +23,44 @@
+ #include <folly/lang/SafeAssert.h>
+ #include <folly/portability/SysMman.h>
+ 
++#if defined(__wasi__)
++#include <unistd.h> // sysconf
 +
-+[build]
-+builder = cmake
++#include <cstdlib> // posix_memalign, free
++#endif
 +
-+[dependencies]
-+fb303
-+fbthrift
-+fizz
-+fmt
-+folly
-+gflags
-+googletest
-+wangle
+ namespace folly {
+ 
+ namespace {
+ 
+ max_align_t dummy; // return value for zero-sized allocations
+ 
++#if defined(__wasi__)
 +
-+[cmake.defines.test=on]
-+BUILD_TESTS=ON
++// wasi has no mmap (wasi-libc's <sys/mman.h> is an opt-in malloc-backed
++// emulation folly does not take) and no asynchronous signals, so on wasi
++// blocks come from posix_memalign and free, page-aligned as large allocations
++// promise.
++// Unlike the mmap version, this calls into malloc: do not use it from inside
++// the allocator, for example from a malloc hook.
 +
-+[cmake.defines.test=off]
-+BUILD_TESTS=OFF
++void* reentrant_allocate(std::size_t const n) noexcept {
++  FOLLY_SAFE_CHECK(n, "zero-sized");
++  void* addr = nullptr;
++  auto const pageSize = static_cast<std::size_t>(::sysconf(_SC_PAGESIZE));
++  auto const err = ::posix_memalign(&addr, pageSize, n);
++  FOLLY_SAFE_CHECK(!err, "posix_memalign failed");
++  return addr;
++}
 +
-+[shipit.pathmap]
-+fbcode/fife/askbarney/public_tld = .
-+fbcode/fife/askbarney = fife/askbarney
-+fbcode/fife/if = fife/if
++void reentrant_deallocate(void* const p, std::size_t const n) noexcept {
++  FOLLY_SAFE_CHECK(p, "null-pointer");
++  FOLLY_SAFE_CHECK(n, "zero-sized");
++  ::free(p);
++}
 +
-+[shipit.strip]
-+^fbcode/fife/if/(?!fife\.thrift$).+$
-+^fbcode/fife/askbarney/(.+/)?BUCK$
++#else
++
+ void* reentrant_allocate(std::size_t const n) noexcept {
+   FOLLY_SAFE_CHECK(n, "zero-sized");
+   auto const prot = PROT_READ | PROT_WRITE;
+@@ -45,6 +77,8 @@ void reentrant_deallocate(void* const p, std::size_t const n) noexcept {
+   FOLLY_SAFE_PCHECK(!err, "munmap failed");
+ }
+ 
++#endif
++
+ } // namespace
+ 
+ namespace detail {
+```
+
+**File**: `folly/net/NetOps.cpp` (modified, +8/-0)
+```diff
+@@ -14,6 +14,12 @@
+  * limitations under the License.
+  */
+ 
++#if defined(__wasi__)
++#include <sys/socket.h> // Defines __wasilibc_use_wasip2 on preview 2.
++#endif
++// wasi preview 1 cannot create, bind or connect sockets; see NetOps.h.
++#if !defined(__wasi__) || defined(__wasilibc_use_wasip2)
++
+ #include <folly/net/NetOps.h>
+ 
+ #include <fcntl.h>
+@@ -912,3 +918,5 @@ XPLAT_CMSGHDR* Msgheader::cmsgFirstHrd() {
+ }
+ } // namespace netops
+ } // namespace folly
++
++#endif // !defined(__wasi__) || defined(__wasilibc_use_wasip2)
+```
+
+**File**: `folly/net/NetOps.h` (modified, +11/-0)
+```diff
+@@ -16,6 +16,15 @@
+ 
+ #pragma once
+ 
++// wasi preview 1 cannot create, bind or connect sockets: wasi-libc declares
++// socket, bind, connect and listen only for preview 2. On preview 1 this header
++// declares nothing, so code that uses socket operations fails to compile there.
++// <sys/socket.h> defines __wasilibc_use_wasip2 on preview 2.
++#if defined(__wasi__)
++#include <sys/socket.h>
++#endif
++#if !defined(__wasi__) || defined(__wasilibc_use_wasip2)
++
+ #include <cstdint>
+ 
+ #include <folly/Portability.h>
+@@ -423,3 +432,5 @@ void set_wsa_error_translator(
+ 
+ } // namespace netops
+ } // namespace folly
++
++#endif // !defined(__wasi__) || defined(__wasilibc_use_wasip2)
+```
+
+**File**: `folly/portability/Sockets.h` (modified, +5/-0)
+```diff
+@@ -119,6 +119,11 @@ int setsockopt(
+ 
+ // None of these are implemented or referenced right now.
+ 
++#elif defined(__wasi__) && !defined(__wasilibc_use_wasip2)
++
++// wasi preview 1 cannot create, bind or connect sockets; nothing is declared
++// (see folly/net/NetOps.h).
++
+ #else
+ 
+ using ::accept;
+```
+
+**File**: `folly/portability/SysMman.h` (modified, +6/-1)
+```diff
+@@ -16,7 +16,12 @@
+ 
+ #pragma once
+ 
+-#ifndef _WIN32
++#if defined(__wasi__)
++
++// wasi has no mmap. wasi-libc's <sys/mman.h> is an opt-in malloc-backed
++// emulation that folly does not take, so on wasi nothing is declared here.
++
++#elif !defined(_WIN32)
+ 
+ #include <sys/mman.h>
+ 
+```
+
+**File**: `folly/portability/SysResource.h` (modified, +5/-1)
+```diff
+@@ -16,7 +16,11 @@
+ 
+ #pragma once
+ 
+-#if !defined(_WIN32)
++#if defined(__wasi__)
++// wasi has no resource limits or usage. wasi-libc's <sys/resource.h> is an
++// opt-in emulation that reports wall time as CPU time, which folly does not
++// take, so on wasi nothing is declared here.
++#elif !defined(_WIN32)
+ #include <sys/resource.h>
+ #else
+ #include <cstdint>
+```
+
+**File**: `folly/portability/SysSyscall.h` (modified, +1/-1)
+```diff
+@@ -129,7 +129,7 @@ template <typename... A>
+ FOLLY_ERASE long linux_syscall(
+     [[maybe_unused]] long number, [[maybe_unused]] A... a) {
+ #if defined(_WIN32) || (defined(__EMSCRIPTEN__) && !defined(syscall)) || \
+-    FOLLY_APPLE_TVOS
++    defined(__wasi__) || FOLLY_APPLE_TVOS
+   errno = ENOSYS;
+   return -1;
+ #else
 ```
 
 ---
 
-### Incident Patch 2: `fb437800` (2026-10-20)
-**Commit Message**: Fix FixedString literal macros with MSVC's conforming preprocessor (#2726)
+### Incident Patch 2: `e504801e` (2026-10-21)
+**Commit Message**: Warm up the fatal signal handler with a full stack trace
 
 Summary:
-Fix the fixed-capacity `FixedString` literal operators with the MSVC conforming preprocessor while keeping their standard, unspaced spelling.
+Alternative to D123783671 and D126445956 for T291835469.
 
-In `operator""_fs##N`, MSVC rejects pasting the `""_fs` token with the capacity argument. Change `FOLLY_DEFINE_FIXED_STRING_UDL` to accept the complete literal-operator name as a second argument, and invoke it with `operator""_fs4` through `operator""_fs128`. This eliminates token pasting entirely, preserves the existing API and behavior, compiles under the MSVC conforming preprocessor, and avoids Clang's `-Wdeprecated-literal-operator` diagnostic.
+On a small sigaltstack, folly's fatal signal handler calls libc functions whose PLT slots are still lazily bound, so it enters the dynamic loader (`_dl_runtime_resolve` -> `_dl_fixup` -> `_dl_lookup_symbol_x`) on that stack. That is not async-signal-safe, and it is the stack in the Buck2 daemon crashes.
 
-With MSVC 19.44 and `/std:c++20 /Zc:preprocessor /permissive-`, simply compiling a translation unit that includes `folly/FixedString.h` fails before this change:
+On the small-sigaltstack path, `installFatalSignalHandler()` now prints one full symbolized stack trace to `/dev/null` with an `UnsafeSelfAllocateStackTracePrinter` before installing the handlers. That binds everything the printer uses later: the stack switch, the symbolizer's file reads and the output writes, the same way Abseil and Chromium warm `backtrace()` before a crash. The handlers are installed only after the warm-up returns, so no separate "initialized" flag is needed.
 
-```text
-warning C5103: pasting '""_fs' and '4' does not result in a valid preprocessing token
-error C2143: syntax error: missing ';' before 'constant'
-error C2473: 'operator ""_fs': looks like a function definition, but there is no parameter list
+The handler's header lines ("Aborted at", "Signal N received by PID") are not warmed: `time`, plus `getpid`/`pthread_self`/`syscall` in dev builds, can still bind on first use.
+
+Startup cost (Broadwell OD, 8 KiB sigaltstack): about 1.5 ms in an opt test binary, about 30 ms in ASan de
+
+**File**: `folly/debugging/symbolizer/BUCK` (modified, +1/-0)
+```diff
+@@ -168,6 +168,7 @@ fb_dirsync_cpp_library(
+         "fbsource//third-party/glog:glog",
+         ":elf",
+         "//folly:demangle",
++        "//folly:file",
+         "//folly:file_util",
+         "//folly:indestructible",
+         "//folly:memory",
 ```
 
-The same failure repeats for the other five capacities.
-
-## Validation
-
-- MSVC 19.44, x64, C++20, confo
-
-**File**: `folly/FixedString.h` (modified, +8/-8)
+**File**: `folly/debugging/symbolizer/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -2846,20 +2846,20 @@ constexpr BasicFixedString<Char, sizeof...(Cs)> operator""_fs() noexcept {
- #endif
+@@ -151,6 +151,7 @@ folly_add_library(
+     folly_debugging_symbolizer_detail_debug
+     folly_debugging_symbolizer_elf
+     folly_demangle
++    folly_file
+     folly_file_util
+     folly_indestructible
+     folly_lang_safe_assert
+```
+
+**File**: `folly/debugging/symbolizer/SignalHandler.cpp` (modified, +6/-0)
+```diff
+@@ -28,6 +28,7 @@
  
- #ifndef NO_FIXED_STR_UDL
--#define FOLLY_DEFINE_FIXED_STRING_UDL(N)                     \
--  constexpr FixedString<N> operator""_fs##N(                 \
-+#define FOLLY_DEFINE_FIXED_STRING_UDL(N, OP)                 \
-+  constexpr FixedString<N> OP(                               \
-       const char* that, std::size_t count) noexcept(false) { \
-     return {that, count};                                    \
-   }                                                          \
- /**/
+ #include <glog/logging.h>
  
- // Define UDLs _fs4, _fs8, _fs16, etc for FixedString<[4, 8, 16, ...]>
--FOLLY_DEFINE_FIXED_STRING_UDL(4)
--FOLLY_DEFINE_FIXED_STRING_UDL(8)
--FOLLY_DEFINE_FIXED_STRING_UDL(16)
--FOLLY_DEFINE_FIXED_STRING_UDL(32)
--FOLLY_DEFINE_FIXED_STRING_UDL(64)
--FOLLY_DEFINE_FIXED_STRING_UDL(128)
-+FOLLY_DEFINE_FIXED_STRING_UDL(4, operator""_fs4)
-+FOLLY_DEFINE_FIXED_STRING_UDL(8, operator""_fs8)
-+FOLLY_DEFINE_FIXED_STRING_UDL(16, operator""_fs16)
-+FOLLY_DEFINE_FIXED_STRING_UDL(32, operator""_fs32)
-+FOLLY_DEFINE_FIXED_STRING_UDL(64, operator""_fs64)
-+FOLLY_DEFINE_FIXED_STRING_UDL(128, operator""_fs128)
++#include <folly/File.h>
+ #include <folly/Portability.h>
+ #include <folly/ScopeGuard.h>
+ #include <folly/debugging/symbolizer/Symbolizer.h>
+@@ -678,6 +679,11 @@ void installFatalSignalHandler(std::bitset<64> signals) {
+   bool useUnsafePrinter = kIsLinux && isSmallSigAltStackEnabled();
+   if (useUnsafePrinter) {
+ #if FOLLY_HAVE_SWAPCONTEXT
++    // Make sure UnsafeSelfAllocateStackTracePrinter internals are initialized
++    // before the handler is installed. /dev/null discards the output.
++    if (auto devNull = File::makeFile("/dev/null", O_WRONLY | O_CLOEXEC)) {
++      UnsafeSelfAllocateStackTracePrinter(devNull->fd()).printStackTrace(true);
++    }
+     gStackTracePrinter = new UnsafeSelfAllocateStackTracePrinter();
+ #else
+     // This environment does not support swapcontext, so always use
+```
+
+**File**: `folly/debugging/symbolizer/Symbolizer.h` (modified, +3/-0)
+```diff
+@@ -380,6 +380,9 @@ inline std::string getStackTraceStr(
+  * Note it's still unsafe even with that.
+  */
+ class UnsafeSelfAllocateStackTracePrinter : public SafeStackTracePrinter {
++ public:
++  using SafeStackTracePrinter::SafeStackTracePrinter;
++
+  protected:
+   void printSymbolizedStackTrace() override;
+   const long pageSizeUnchecked_ = sysconf(_SC_PAGESIZE);
+```
+
+**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +10/-0)
+```diff
+@@ -6,6 +6,7 @@ load("@fbcode_macros//build_defs:cpp_unittest.bzl", "cpp_unittest")
+ load("@fbcode_macros//build_defs:custom_unittest.bzl", "custom_unittest")
+ load("@fbcode_macros//build_defs:export_files.bzl", "export_file")
+ load("@fbcode_macros//build_defs:native_rules.bzl", "buck_sh_binary")
++load("@fbcode_macros//build_defs:python_unittest.bzl", "python_unittest")
+ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_unittest.bzl", "fb_dirsync_cpp_unittest")
+ load(":validate_folly_symbolizer.bzl", "SPLIT_DWARF_FLAGS", "customized_unittest", "validate_folly_symbolizer", "validate_symbolizer_dwp")
  
- #undef FOLLY_DEFINE_FIXED_STRING_UDL
- #endif
+@@ -67,6 +68,15 @@ fbcode_target(
+     ],
+ )
+ 
++fbcode_target(
++    _kind = python_unittest,
++    name = "small_sigaltstack_lazy_binding_test",
++    srcs = ["small_sigaltstack_lazy_binding_test.py"],
++    env = {
++        "SMALL_SIGALTSTACK_CRASH": "$(location :small_sigaltstack_crash)",
++    },
++)
++
+ fbcode_target(
+     _kind = cpp_unittest,
+     name = "symbolized_frame_test",
+```
+
+**File**: `folly/debugging/symbolizer/test/SmallSigAltStackCrash.cpp` (modified, +2/-2)
+```diff
+@@ -20,7 +20,7 @@
+ #include <folly/debugging/symbolizer/SignalHandler.h>
+ 
+ namespace {
+-std::array<char, 8192> stack;
++std::array<char, 32768> stack;
+ }
+ 
+ int main() {
+@@ -31,5 +31,5 @@ int main() {
+   sigaltstack(&ss, nullptr);
+ 
+   folly::symbolizer::installFatalSignalHandler();
+-  __builtin_trap();
++  raise(SIGILL);
+ }
+```
+
+**File**: `folly/debugging/symbolizer/test/small_sigaltstack_lazy_binding_test.py` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++#!/usr/bin/env python3
++# Copyright (c) Meta Platforms, Inc. and affiliates.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++import os
++import re
++import resource
++import signal
++import subprocess
++import unittest
++
++BINDING = re.compile(r"binding file .* normal symbol `([^']+)'")
++
++
++class SmallSigAltStackLazyBindingTest(unittest.TestCase):
++    def test_stack_trace_does_not_lazily_bind_symbols(self) -> None:
++        helper = os.environ["SMALL_SIGALTSTACK_CRASH"]
++        env = {k: v for k, v in os.environ.items() if k != "LD_BIND_NOW"}
++        env["LD_DEBUG"] = "bindings"
++        p = subprocess.run(
++            [helper],
++            env=env,
++            stdout=subprocess.PIPE,
++            stderr=subprocess.PIPE,
++            preexec_fn=lambda: resource.setrlimit(resource.RLIMIT_CORE, (0, 0)),
++        )
++        err = p.stderr.decode("utf-8", errors="replace")
++        self.assertEqual(p.returncode, -signal.SIGILL, err)
++
++        _, header, trace = err.partition("*** Signal 4 (SIGILL)")
++        self.assertTrue(header, err)
++
++        bound = [m.group(1) for m in BINDING.finditer(trace.partition("\n")[2])]
++        self.assertEqual(bound, [])
+```
+
+---
+
+### Incident Patch 3: `2d97c901` (2026-10-21)
+**Commit Message**: Keep isolated Codex fixture shebangs within the kernel limit
+
+Summary:
+The optimized xplat test exposes a 259-byte `sys.executable` path. Copying that into the fake codex/git shebang makes the kernel reject the executable with `ENOEXEC`, so the real CLI test cannot start its subprocess.
+
+Use the same short `/usr/bin/python3 -I` interpreter already required by the directly invoked production CLI. Both fakes use only the standard library. Preserve environment isolation, subprocess execution and every session/resume/output assertion. Remove the now-unused outer `sys` import and mirror the change to xplat.
+
+The immediate child enables opt by default for this test in both cells.
+
+## Why opt-by-default
+This repair unblocks the adjacent enable diff's migration to opt-by-default (better runtime performance, unified build graph with shared outputs, faster builds), while preserving the dev-mode-only behavior that must stay.
+
+Reviewed By: dtolnay
+
+Differential Revision: D125716664
+
+fbshipit-source-id: e3d7afb9e710d6f4494c93c08bb51176f3d568d9
+
+**File**: `folly/agents/backtest/tests/test_isolated_codex.py` (modified, +2/-3)
+```diff
+@@ -17,7 +17,6 @@
+ import json
+ import os
+ import subprocess
+-import sys
+ import tempfile
+ import unittest
+ from pathlib import Path
+@@ -52,10 +51,10 @@ def setUp(self) -> None:
+     def fake_codex(self, name: str) -> Path:
+         executable = self.root / name / "codex"
+         executable.parent.mkdir()
+-        executable.write_text(f"#!{sys.executable}\n{FAKE_CODEX}")
++        executable.write_text(f"#!/usr/bin/python3 -I\n{FAKE_CODEX}")
+         executable.chmod(0o755)
+         git = executable.with_name("git")
+-        git.write_text(f"#!{sys.executable}\n{FAKE_GIT}")
++        git.write_text(f"#!/usr/bin/python3 -I\n{FAKE_GIT}")
+         git.chmod(0o755)
+         return executable
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2503,53 +2817,31 @@ The same failure repeats for the other five capacities.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add askBarney, a netcat-style trace injector that punts its SYN to Fife
+## X. Build folly's concurrency primitives on wasi, without emulations
 
 **RULE**:
-When implementing operations in `build/fbcode_builder/manifests/askbarney`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/Random.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4f25ddd3`: Add askBarney, a netcat-style trace injector that punts its SYN to Fife. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `999670f7`: Build folly's concurrency primitives on wasi, without emulations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/manifests/askbarney`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/Random.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-[manifest]
-name = askbarney
-fbsource_path = fbcode/fife
-shipit_project = askbarney
-shipit_fbcode_builder = true
-
-[build]
-builder = cmake
-
-[dependencies]
-fb303
-fbthrift
-fizz
-fmt
-folly
-gflags
-googletest
-wangle
-
-[cmake.defines.test=on]
-BUILD_TESTS=ON
-
-[cmake.defines.test=off]
-BUILD_TESTS=OFF
-
-[shipit.pathmap]
-fbcode/fife/askbarney/public_tld = .
-fbcode/fife/askbarney = fife/askbarney
-fbcode/fife/if = fife/if
-
-[shipit.strip]
-^fbcode/fife/if/(?!fife\.thrift$).+$
-^fbcode/fife/askbarney/(.+/)?BUCK$
+#elif defined(__wasi__)
+  // wasi has no /dev/urandom; getentropy, which wasi-libc implements with the
+  // random_get import, is its entropy source. It fills at most 256 bytes a
+  // call.
+  auto* out = static_cast<unsigned char*>(data);
+  while (size > 0) {
+    size_t const chunk = size < 256 ? size : 256;
+    PCHECK(::getentropy(out, chunk) == 0);
+    out += chunk;
+    size -= chunk;
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2559,4 +2851,4 @@ fbcode/fife/if = fife/if
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4f25ddd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `999670f7` are properly handled with clean fallback behavior.

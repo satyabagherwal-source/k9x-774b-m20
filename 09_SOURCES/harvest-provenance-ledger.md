@@ -4315,3 +4315,5 @@ Every entry in this ledger must capture:
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `e83e08a9` | Multi-dimensional audit evidence | 2026-10-22T15:56:51.663Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `7670fd4a` | Multi-dimensional audit evidence | 2026-10-22T15:56:54.733Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `777b3723` | Multi-dimensional audit evidence | 2026-10-22T15:56:59.618Z |
+| `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `1dc7fac0` | Multi-dimensional audit evidence | 2026-10-22T16:03:26.984Z |
+| `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `41e2c244` | Multi-dimensional audit evidence | 2026-10-22T16:03:31.682Z |
