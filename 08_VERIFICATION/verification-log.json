@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-PW79",
-    "timestamp": "2026-10-20T16:37:57.189Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "4532ac248dcb001a32e523e366c36ca88cb5a46631b283eba6e49e7f1781230a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-PYHX",
-    "timestamp": "2026-10-20T16:38:00.165Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "dde1cee0135e0163c627d3fdfb9d7a47bcf6cc96dfb9de144ee1278c4c12698a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-PZ8N",
     "timestamp": "2026-10-20T16:38:01.127Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "VectifyAI/PageIndex",
     "learningId": "learn-github-vectifyai-pageindex",
     "contentHash": "868bab57256eb81322e5458ec725dbf5d25ba43743a819c19191f63e45df9a5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-95H1",
+    "timestamp": "2026-10-22T19:16:14.197Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "9b742df0e2793c4aac960c4e9edfaa79e15350888cf89c96fe44b24c0655b458",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-9G1Q",
+    "timestamp": "2026-10-22T19:16:27.902Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

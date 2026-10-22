@@ -4401,3 +4401,5 @@
 | `CYCLE-20261022-0TOW` | `2026-10-22T19:09:45.680Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3706` | Yes (`b3efe308...`) |
 | `CYCLE-20261022-0U9X` | `2026-10-22T19:09:46.437Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3707` | Yes (`b0597b35...`) |
 | `CYCLE-20261022-10G0` | `2026-10-22T19:09:54.432Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3708` | Yes (`868bab57...`) |
+| `CYCLE-20261022-95H1` | `2026-10-22T19:16:14.197Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3709` | Yes (`9b742df0...`) |
+| `CYCLE-20261022-9G1Q` | `2026-10-22T19:16:27.902Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3710` | Yes (`b2cda982...`) |

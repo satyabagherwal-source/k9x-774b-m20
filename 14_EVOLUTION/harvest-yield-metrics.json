@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T19:09:54.439Z",
-  "total_cycles_completed": 4378,
-  "total_learnings_persisted": 4378,
-  "total_rules_promoted": 3557,
+  "last_updated": "2026-10-22T19:16:27.914Z",
+  "total_cycles_completed": 4380,
+  "total_learnings_persisted": 4380,
+  "total_rules_promoted": 3559,
   "history": [
-    {
-      "timestamp": "2026-10-21T04:43:06.847Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T04:49:09.823Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T04:49:14.624Z",
       "repository": "software-mansion/react-native-screens",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-22T19:09:54.439Z",
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T19:16:14.209Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T19:16:27.914Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

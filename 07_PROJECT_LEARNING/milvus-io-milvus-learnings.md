@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `a880185c`  
+> **Source Version**: `f0f76776`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:22:02.203Z  
+> **Timestamp**: 2026-10-22T19:16:27.585Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:22:02.195Z  
+> **Harvest Timestamp**: 2026-10-22T19:16:26.324Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46450 stars
+- **Stars / Engagement**: 46451 stars
 
 ---
 
@@ -1412,14 +1412,17 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54465** (2026-10-20): **enhance: [3.0] convert ARRAY_CONTAINS terms only on cache miss**
-  *Symptoms*: Indexed ARRAY_CONTAINS predicates rebuilt and deduplicated their query terms for every expression batch even though the index bitmap was already cached. Move that conversion into the cache-miss callback so later batches and expression-result cache hits reuse the bitmap without rebuilding the term list.  Backport #54052 using the 3.0 array-offset and Array access APIs. The 20,000-row BITMAP regression builds, serializes and reloads the index, forces three evaluation batches, and checks ContainsAny/ContainsAll results with duplicate query terms against brute force. The existing ARRAY_LENGTH regression remains intact.  pr: #54052 issue: #54051  Validation:  - Compiled the complete changed production and test translation units against 3.0 headers, then linked them with the real 3.0 native libraries for unchanged classes. No class layout changes are involved. - All seven ARRAY_CONTAINS regressions passed, including the new multi-batch case, empty terms, numeric casts and nested-index coverage. The existing cross-chunk ARRAY_LENGTH regression also passed. - Separate local instrumentation of the actual production TU verifies one term-list construction over three batches and zero conversions on an ExprResCache hit. Replacing it with the unchanged target baseline fails the count assertions (three reconstructions, including cache hits) while result checks still pass. The committed regression asserts row-result correctness; conversion counts are verified only in this local instrumented 
+- **Issue #54566** (2026-10-22): **fix: serialize segment and channel tasks for each node**
+  *Symptoms*: This change has been consolidated into #54453 as a single signed-off commit, `5445ffffe6aaa14ad794976594da7c9eb22004c8`. Review the combined channel handoff and physical-copy task ownership fix in #54453.  The combined commit has exactly the same source tree as this PR's `dd0ca04b5277e020b26989db539419b8d900036d`; no implementation was dropped. This PR is closed as superseded. 
   **Post-Mortem & Fix Analysis**:
-  > [INFO] PR Label Summary by Default [SUCCESS] PR #54052 merged to master - Title: enhance: convert ARRAY_CONTAINS terms only on an index-result cache miss - Link: https://github.com/milvus-io/milvus/pull/54052    Use /refresh-label to update related check and label manually
-  > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-amd-gray  // for ci-v2/e2e-amd-gray (TC pool shadow; non-gating) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **xiaofan-luan** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[internal/querycoordv2/task/OWNERS](https://github.com/milvus-io/milvus/blob/master/internal/querycoordv2/task/OWNERS)** - **[internal/querynodev2/OWNERS](https://github.com/milvus-io/milvus/blob/master/internal/querynodev2/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["xiaofan-luan"]} -->
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"dd0ca04b5277e020b26989db539419b8d900036d","has_any_findings":null,"has_unresolved_findings":null,"status":"running"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | 🔄 **Running** since <relative-time datetime="2026-10-22T07:37:14.403714Z">2026-10-22T07:37:14.403714Z</relative-time> | `dd0ca04` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review
 
-- **Issue #54464** (2026-10-20): **fix: [3.0] preserve omitted timestamptz fields in partial upserts**
-  *Symptoms*: Partial upserts that omit a nullable or default-valued TIMESTAMPTZ field can panic or reject valid requests when new primary keys are present. The generated integer column replaces string-form query results during merging, leaving timestamps and validity entries out of alignment.  Keep omitted TIMESTAMPTZ placeholders in string form until insert validation converts the merged column to UTC microseconds and fills nulls/defaults. This backport uses the 3.0 proxy package and FieldData validity bitmap.  pr: #54087 issue: #54084  Validation: - 30 regression cases exercise production upsert preparation and insert validation with mocked query, allocator, and WAL dependencies. They cover nullable/default schemas, all-new and mixed PK batches, reversed PK ordering, null ordering, a non-UTC collection timezone, and RLS USING enabled/disabled; exact values and validity are asserted. - Target generation tests pass using `-tags dynamic,test -gcflags="all=-N -l" -count=1` and native libraries from a successful 3.0 CI build. - The identical regression tests fail on unchanged 3.0: 8 bounds panics and 22 timestamp-type rejections; all 30 pass after the fix. - Complete `internal/proxy/fieldvalidator`, `internal/proxy/dql`, and `internal/util/rlsutil` tests pass. - Independent Codex and Claude reviews converged after correcting the backport rationale; no code changes were needed. - A temporary tree combining this change with the independent #54088 backport passes all 30 timestamp and 288 nullab
+- **Issue #54558** (2026-10-22): **test: [3.0] isolate TestTransfer from automatic compaction**
+  *Symptoms*: issue: #54552  Backport of #54557 to 3.0.  Automatic mix compaction can produce segments that SegmentChecker loads onto the new QueryNode after SuspendBalance, failing `TestManualRollingUpgrade/TestTransfer`'s empty-node assertion before manual transfer.  Set `collection.autocompaction.enabled=false` only when creating TestTransfer's collection. `SetupSuite`, `TestSuspendNode`, other collections, production configuration, and all manual-transfer assertions are unchanged.  Scope: one test file, six added lines. The previously included orphan cleanup changes have been removed; #53729 is outside this PR's scope.  Validation: gofmt and diff checks passed; verified `SetupSuite` and `TestSuspendNode` are byte-identical to the base. The rollingupgrade package compiled with default vet and `-tags dynamic,test -gcflags='all=-N -l' -count=1 -run '^$'` on the exact candidate Go source, reusing same-branch native libraries (zero cases executed). The actual Integration case has not been executed locally and still needs CI coverage. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"845041a0bb42d2d2b2009a50ab6f0a33b4516fce","has_any_findings":null,"has_unresolved_findings":null,"status":"running"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | 🔄 **Running** since <relative-time datetime="2026-10-22T04:40:19.549114Z">2026-10-22T04:40:19.549114Z</relative-time> | `845041a` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex
+  > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-amd-gray  // for ci-v2/e2e-amd-gray (TC pool shadow; non-gating) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1436,564 +1439,1489 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac7e94e2` (2026-10-20)
-**Commit Message**: fix: stop import from waiting forever (#54109)
+### Incident Patch 1: `a21b4e63` (2026-10-22)
+**Commit Message**: fix: bound sync packed index buffers to positioned download tasks (#54358)
 
-issue: #54106, #54149, #54430
+issue: #54357
 
-## What changed
+## Problem and change
 
-### Oversized request (#54106)
+Synchronous packed scalar-index reads can release a download worker
+while keeping its payload in an ordered future until the caller consumes
+it. This makes worker-count-based scratch reservations unsafe and leaves
+conservative full-stream reservations unnecessarily large.
 
-`memoryAllocator.BlockingAllocate` waited for `usedMemory + size <=
-limit`. When `size` is larger than the whole limit, this condition is
-never true, even when `usedMemory` is 0. `cond.Wait()` wakes up only on
-`Release`, so the task waited forever.
+Reuse the existing async IndexLoadPlan destinations for non-BITMAP
+synchronous loads. Each download task writes its file region through
+PositionedFileWriter, or copies into its final memory region, before
+releasing scratch and admission. Future completion no longer owns
+downloaded payloads. Keep HIGH/LOW execution and the selected sync/async
+mode unchanged.
 
-A request larger than the limit now waits only until no other task holds
-memory (`usedMemory == 0`). Then it runs alone. A request within the
-limit behaves as before.
+The reader drains submitted tasks on submission errors, read/write
+failures and cancellation, then validates ordered CRCs before
+publication. Resource estimates include alignment and merged tails,
+while genuine request-level staging remains separately reserved.
+FM_INDEX's short EOF safety padding is handled without overlapping
+writes or retaining two full-slice bounce buffers. BITMAP retains
+ordered consumption.
 
-### Cancellation (#54149)
+## Failure handling
 
-`BlockingAllocate` took no context. `taskManager.Remove` cancels the
-task context, but a worker parked in `cond.Wait()` did not see it. The
-worker stayed parked until an unrelated task released memory, then
-charged memory to the canceled task before it failed in `NewReader`.
+A failure in 
 
-`BlockingAllocate` now takes the task context and returns `ctx.Err()`
-when the task is canceled while it waits. No memory is charged on that
-path, so the worker has nothing to release. It reuses `waitForMemory`,
-which already wakes waiters on cancellation for the snapshot path. The
-oversized-request rule moves into `waitForMemory` as well. Both sna
-
-**File**: `docs/agent_guides/streaming-system/coordination/broadcaster.md` (modified, +5/-0)
+**File**: `internal/core/src/index/IndexLoadPlan.h` (modified, +4/-1)
 ```diff
-@@ -52,6 +52,11 @@ per-channel RPC or L0 materialization is required for these jobs. Absent/false
- flags retain legacy completion: BroadcastAckModule calls HandleCommitVchannel
- before Ack on each business VChannel, and the checker completes the job after
- all channel commits. The RPC is a no-op for new jobs when sent by old nodes.
-+Both the RPC and the callback treat a job that importMeta no longer holds as
-+already committed and garbage collected, except on a CDC secondary, where the
-+replicated CommitImport can precede the local job and the caller keeps waiting.
-+A secondary that already garbage collected the job waits forever. A GC tombstone
-+(#54425) is the follow-up that closes this case.
- See [Import commit ownership](../../../design-docs/design_docs/wal/broadcast_ack_module.md#8-import-commit-ownership).
+@@ -39,6 +39,8 @@ namespace milvus::index {
+  * loading keeps cleanup on the caller thread.
+  */
+ struct IndexLoadPlan {
++    // BITMAP keeps its existing ordered staging/conversion path.
++    bool worker_writes{true};
+     std::vector<storage::EntryLoadPlan> entries;
+     std::any load_context;
  
- ## Resource Key Locking
+@@ -49,7 +51,8 @@ struct IndexLoadPlan {
+ 
+     /** @brief Transfer cleanup responsibility, leaving the old plan empty. */
+     IndexLoadPlan(IndexLoadPlan&& other) noexcept
+-        : entries(std::move(other.entries)),
++        : worker_writes(other.worker_writes),
++          entries(std::move(other.entries)),
+           load_context(std::move(other.load_context)) {
+         other.entries.clear();
+     }
 ```
 
-**File**: `docs/design-docs/design_docs/wal/broadcast_ack_module.md` (modified, +12/-0)
+**File**: `internal/core/src/index/LoadResource.cpp` (modified, +23/-22)
 ```diff
-@@ -199,6 +199,18 @@ works when the original broadcast task is already TOMBSTONE. No WAL scan or
- rebroadcast by the checker is needed. RPC calls may repeat after a failure or
- restart; their effects are idempotent, not exactly-once calls.
- 
-+A replay can arrive after importChecker.checkGC removed the job. A job exists
-+before any CommitImport for it is written, so on a cluster that is not a CDC
-+secondary a missing job at commit time is a terminal job that GC removed: both
-+HandleCommitVchannel and the CommitImport callback return success and leave
-+metadata unchanged. On a CDC secondary the replicated CommitImport can precede
-+the local Import ack callback, so a missing job there still returns a retriable
-+error. When the replication role cannot be read yet, the error is retriable too.
-+A secondary cannot tell a job that is not created yet from a job that its own
-+checkGC removed, so a replay of a garbage-collected CommitImport on a secondary
-+retries without end. A durable tombstone at GC time (see #54425) would close
-+that case. It is follow-up work.
-+
- This branch uses the existing segment-metadata serving path: MVCC already
- tracks CommitImport's WAL position, and QueryNode uses CommitTimestamp for
- import visibility and the delete replay boundary. DataView reconciliation from
+@@ -782,9 +782,12 @@ PackedScalarIndexLoadResource(
+     const bool file_stream = type == INVERTED_INDEX_TYPE ||
+                              type == NGRAM_INDEX_TYPE ||
+                              type == RTREE_INDEX_TYPE;
++    const bool worker_writes = type != BITMAP_INDEX_TYPE;
++    const bool bounded_load = use_async_load || worker_writes;
+     const bool may_write_files =
+-        use_async_load && (mmap_enable || file_stream || type == MARISA_TRIE ||
+-                           type == MARISA_TRIE_UPPER);
++        (!use_async_load && worker_writes) ||
++        (use_async_load && (mmap_enable || file_stream || type == MARISA_TRIE ||
++                            type == MARISA_TRIE_UPPER));
+     EntryStreamLoadInfo legacy_stream;
+     uint64_t total_transient = 0;
+     uint64_t max_task = 0;
+@@ -793,7 +796,7 @@ PackedScalarIndexLoadResource(
+                 std::get_if<storage::EncryptedEntrySource>(&entry.source)) {
+             legacy_stream.encrypted = true;
+             for (const auto& slice : encrypted->slices) {
+-                if (!use_async_load) {
++                if (!bounded_load) {
+                     const auto bytes = SaturatingAdd(
+                         slice.remote_bytes,
+                         SaturatingMultiply(slice.plaintext_bytes, uint64_t{2}));
+@@ -816,10 +819,13 @@ PackedScalarIndexLoadResource(
+                 total_transient = SaturatingAdd(total_transient, bytes);
+                 max_task = std::max(max_task, bytes);
+             }
+-        } else if (use_async_load) {
++        } else if (bounded_load) {
+             const auto slice_size = storage::DefaultStreamSliceSize();
+             auto bytes = entry.plaintext_size;
+-            auto task_bytes = std::min<uint64_t>(bytes, slice_size);
++            auto task_bytes = std::min<uint64_t>(
++                bytes,
++                use_async_load ? slice_size
++                               : storage::MaxEntryStreamTaskBytes());
+             if (may_write_files && bytes != 0) {
+                 const auto slices = 1 + (bytes - 1) / slice_size;
+                 bytes = SaturatingAdd(
+@@ -837,13 +843,13 @@ PackedScalarIndexLoadResource(
+     }
+     // Estimates survive admission refreshes, including removal of all limits.
+     // The shared overhead group applies the live global bound where eligible.
+-    const auto read_peak = use_async_load ? total_transient
+-                                          : ScalarIndexStreamMemoryOverhead(
+-                                                index_size,
+-                                                std::max(version, 3),
+-                                                legacy_stream.encrypted,
+-                                                file_stream,
+-                                                legacy_stream);
++    const auto read_peak =
++        bounded_load ? total_transient
++                     : ScalarIndexStreamMemoryOverhead(index_size,
++                                                       std::max(version, 3),
++                                                       legacy_stream.encrypted,
++                                                       file_stream,
++                                                       legacy_stream);
+     uint64_t staging_bytes = 0;
+     uint64_t bitmap_resident_bytes = 0;
+     if ((type == INVERTED_INDEX_TYPE || type == NGRAM_INDEX_TYPE) &&
+@@ -886,11 +892,6 @@ PackedScalarIndexLoadResource(
+         staging_bytes = SaturatingAdd(
+             staging_bytes, directory.At("fm_index_null_bitmap").plaintext_size);
+     }
+-    if (!use_async_load && type == ASCENDING_SORT &&
+-        metadata.contains("version") && directory.HasEntry("valid_bitset")) {
+-        staging_bytes = SaturatingAdd(
+-            staging_bytes, directory.At("valid_bitset").plaintext_size);
+-    }
+     auto request = ScalarIndexLoadResourceWithOverhead(field_type,
+                                                        index_size,
+                                                        resolved_params,
+@@ -928,13 +929,13 @@ PackedScalarIndexLoadResource(
+                  SaturatingAdd(request.final_memory_cost,
+                                SaturatingAdd(staging_bytes, read_peak)));
+     // The translator pins the load mode for the lifetime of this cell.
+-    // Ordered sync prefetch retains completed buffers beyond worker execution;
+-    // only its direct-to-file streams have worker-bounded scratch lifetimes.
++    // Non-bitmap sync plans consume slices on the downloading worker. Both
++    // modes keep admission through the destination write and scratch release.
+     const bool can_share =
+-        (use_async_load || file_stream) && staging_bytes == 0 &&
+-        type != BITMAP_INDEX_TYPE && type != RTREE_INDEX_TYPE &&
++        bounded_load && staging_bytes == 0 && type != BITMAP_INDEX_TYPE &&
++        type != RTREE_INDEX_TYPE &&
+         request.max_memory_cost - request.final_memory_cost <= read_peak;
+-    if (!use_async_load) {
++    if (!bounded_
 ```
 
-**File**: `internal/datacoord/ddl_callbacks_import.go` (modified, +35/-0)
+**File**: `internal/core/src/index/LoadResourceTest.cpp` (modified, +2/-2)
 ```diff
-@@ -208,6 +208,34 @@ func (s *Server) getReplicationRole(ctx context.Context) (replicateutil.Role, bo
- 	return helper.GetCurrentCluster().Role(), true, nil
+@@ -1080,7 +1080,7 @@ TEST(ScalarIndexV3ResourceTest, EncryptedEstimatesRetainFullScratch) {
+     }
  }
  
-+// importJobForgotten reports whether a CommitImport for a job that importMeta
-+// does not hold can be acknowledged as already applied.
-+//
-+// A job is created before any CommitImport for it exists: by ImportV2 on the
-+// primary, or by the Import ack callback. So on a cluster that is not a CDC
-+// secondary, a missing job at commit time is a job that reached a terminal
-+// state and that importChecker.checkGC removed after the retention period. A
-+// WAL replay of that CommitImport (StreamingNode restart with an old channel
-+// checkpoint) has nothing left to commit, and waiting for the job to appear
-+// would block forever.
-+//
-+// A secondary can receive the replicated CommitImport before its own Import
-+// ack callback creates the job, so there the caller must keep waiting. An
-+// unknown role (balancer not ready) is reported as an error, so the caller
-+// retries instead of guessing.
-+func (s *Server) importJobForgotten(ctx context.Context, jobID int64) (bool, error) {
-+	role, _, err := s.getReplicationRole(ctx)
-+	if err != nil {
-+		return false, merr.Wrap(err, "cannot tell whether the import job can still be created")
-+	}
-+	if role == replicateutil.RoleSecondary {
-+		return false, nil
-+	}
-+	mlog.Info(ctx, "CommitImport refers to a job that was completed and garbage collected, nothing to commit",
-+		mlog.FieldJobID(jobID))
-+	return true, nil
-+}
-+
- // jobIDFromDuplicatedBroadcast recovers the original import jobID from the broadcast
- // message the broadcaster returned on an idempotency hit. The broadcaster does not
- // know about import-specific structures, so the decode happens here.
-@@ -429,6 +457,13 @@ func (c *DDLCallbacks) commitImportV2AckCallback(ctx context.Context, result mes
- 
- 	job := c.importMeta.GetJob(ctx, jobID)
- 	if job == nil {
-+		forgotten, err := c.importJobForgotten(ctx, jobID)
-+		if err != nil {
-+			return err
-+		}
-+		if forgotten {
-+			return nil
-+		}
- 		mlog.Info(ctx, "CommitImport: job not found, retry later", mlog.FieldJobID(jobID))
- 		return merr.WrapErrImportSysFailedMsg("job %d not found, waiting for import job creation", jobID)
- 	}
+-TEST(ScalarIndexV3ResourceTest, StringValidityStagingPreventsSyncSharing) {
++TEST(ScalarIndexV3ResourceTest, StringValidityDestinationAllowsSyncSharing) {
+     ResourceFixture fixture;
+     constexpr size_t rows = 9;
+     const auto path = fixture.WritePacked(
+@@ -1097,7 +1097,7 @@ TEST(ScalarIndexV3ResourceTest, StringValidityStagingPreventsSyncSharing) {
+                                         rows,
+                                         {path},
+                                         fixture.context);
+-        EXPECT_EQ(resources.overhead.has_value(), async);
++        EXPECT_TRUE(resources.overhead.has_value());
+     }
+ }
+ TEST(ScalarIndexV3ResourceTest,
 ```
 
-**File**: `internal/datacoord/ddl_callbacks_import_test.go` (modified, +50/-1)
+**File**: `internal/core/src/index/PackedIndexLoad.cpp` (modified, +88/-22)
 ```diff
-@@ -1356,10 +1356,59 @@ func TestCommitImportCallback_BeforeUncommitted_Retry(t *testing.T) {
- 	assert.Equal(t, internalpb.ImportJobState_Importing, updatedJob.GetState())
+@@ -15,6 +15,8 @@
+ // limitations under the License.
+ 
+ #include "index/PackedIndexLoad.h"
++
++#include <cstdlib>
+ #include "folly/ScopeGuard.h"
+ 
+ #include <cstring>
+@@ -133,8 +135,8 @@ RunPackedIndexLoad(PackedIndexSource& source,
+     if (const auto* sync =
+             std::get_if<std::shared_ptr<storage::IndexEntryReader>>(
+                 &source.reader)) {
+-        // Keep planning, streaming and finalization on the synchronous caller;
+-        // the Task interface alone must not introduce an executor hop.
++        // Keep planning and finalization on the synchronous caller. Stream
++        // tasks consume their slices on the existing HIGH/LOW executor.
+         auto& entry_reader = **sync;
+         entry_reader.SetLoadContext(
+             priority == proto::common::LoadPriority::HIGH
+@@ -157,29 +159,93 @@ RunPackedIndexLoad(PackedIndexSource& source,
+             AssertInfo(expected <= storage::EntryTargetSize(entry.target),
+                        "packed entry exceeds planned destination: {}",
+                        entry.name);
+-            size_t offset = 0;
+-            entry_reader.ReadEntryStream(
+-                entry.name, [&](const uint8_t* bytes, size_t size) {
+-                    storage::ThrowIfCancelled(token, "read packed index");
+-                    AssertInfo(offset <= expected && size <= expected - offset,
+-                               "packed entry exceeds declared size: {}",
+-                               entry.name);
+-                    if (const auto* memory =
+-                            std::get_if<storage::MemoryEntryTarget>(
+-                                &entry.target)) {
+-                        if (size != 0) {
+-                            std::memcpy(memory->data + offset, bytes, size);
++            auto write = [&](size_t offset, const uint8_t* bytes, size_t size) {
++                storage::ThrowIfCancelled(token, "read packed index");
++                AssertInfo(offset <= expected && size <= expected - offset,
++                           "packed entry exceeds declared size: {}",
++                           entry.name);
++                if (const auto* memory =
++                        std::get_if<storage::MemoryEntryTarget>(
++                            &entry.target)) {
++                    if (size != 0) {
++                        std::memcpy(memory->data + offset, bytes, size);
++                    }
++                } else {
++                    const auto& file =
++                        std::get<storage::FileEntryTarget>(entry.target);
++                    AssertInfo(
++                        file.offset <= file.staging->file_size &&
++                            offset <= file.staging->file_size - file.offset &&
++                            size <=
++                                file.staging->file_size - file.offset - offset,
++                        "packed file target exceeds file size: {}",
++                        entry.name);
++                    const auto absolute = file.offset + offset;
++                    const auto full_padding =
++                        (-size) & storage::FileWriter::ALIGNMENT_MASK;
++                    const auto padding =
++                        std::min(full_padding,
++                                 file.staging->file_size - absolute - size);
++                    if (plan.worker_writes && padding != 0 &&
++                        absolute + size != file.staging->file_size &&
++                        file.staging->write_mode !=
++                            storage::FileWriter::WriteMode::BUFFERED) {
++                        // Match the async plan's per-entry alignment region.
++                        // Aligned scratch avoids another bounce buffer in WriteAt.
++                        AssertInfo(offset <= file.bytes &&
++                                       size <= file.bytes - offset &&
++                                       padding <= file.bytes - offset - size &&
++                                       padding <= file.staging->file_size -
++                                                      absolute - size,
++                                   "packed entry lacks alignment padding: {}",
++                                   entry.name);
++                        if (padding != full_padding) {
++                            // Some plans reserve only a small EOF safety pad
++                            // (FM-index), not a complete aligned block. Write
++                            // the aligned prefix first, then a small EOF tail;
++                            // do not retain two whole-slice bounce buffers.
++                            const auto prefix =
++                                size & ~storage::FileWriter::ALIGNMENT_MASK;
++                            if (prefix != 0) {
++                                file.staging->WriteAt(absolute, bytes, prefix);
++                            }
++                            std::vector<uint8_t> tail(size - prefix + padding,
++                                               
+```
+
+**File**: `internal/core/src/index/PackedIndexLoadTest.cpp` (modified, +43/-30)
+```diff
+@@ -114,36 +114,49 @@ ExpectPackedLoadError(milvus::ErrorCode expected, F&& load) {
+ }  // namespace
+ 
+ TEST(ScalarIndexV3AsyncTest, HeapAndMmapPreserveValuesAndNulls) {
+-    for (const auto* name : {"BitmapVarchar",
+-                             "BitmapVarcharMmap",
+-                             "SortedVarchar",
+-                             "SortedVarcharMmap",
+-                             "InvertedVarchar",
+-                             "InvertedVarcharMmap",
+-                             "MarisaVarchar",
+-                             "MarisaVarcharMmap",
+-                             "FmIndexVarchar",
+-                             "FmIndexVarcharMmap"}) {
+-        SCOPED_TRACE(name);
+-        const auto& backend =
+-            ScalarReaderBackends().Get<std::string_view>(name);
+-        ScalarTestData<std::string_view> data(
+-            {"alpha", "beta", "beta", "null"});
+-        data.validity.reset(3);
+-        const ScalarTestInput<std::string_view> input(data);
+-        auto artifact = backend.Build(input.View(), {.row_count = 4});
+-        auto reader =
+-            OpenV3(backend, SerializeV3(*artifact), {.row_count = 4}, true);
+-        const auto* pattern =
+-            dynamic_cast<const IPatternMatchReader*>(reader.get());
+-        ASSERT_NE(pattern, nullptr);
+-        ExpectHits(
+-            pattern->PatternMatch("beta", PatternOp::PrefixMatch), 4, {1, 2});
+-        ExpectHits(
+-            pattern->PatternMatch("null", PatternOp::PrefixMatch), 4, {});
+-        const auto* nulls = dynamic_cast<const INullReader*>(reader.get());
+-        ASSERT_NE(nulls, nullptr);
+-        ExpectHits(nulls->IsNull(), 4, {3});
++    const auto previous_mode = storage::FileWriter::GetMode();
++    auto restore_mode =
++        folly::makeGuard([&] { storage::FileWriter::SetMode(previous_mode); });
++    storage::FileWriter::SetMode(storage::FileWriter::WriteMode::DIRECT);
++    milvus::OpContext context;
++    context.runtime_load_priority = 1;
++    for (bool use_async : {false, true}) {
++        SCOPED_TRACE(use_async);
++        for (const auto* name : {"BitmapVarchar",
++                                 "BitmapVarcharMmap",
++                                 "SortedVarchar",
++                                 "SortedVarcharMmap",
++                                 "InvertedVarchar",
++                                 "InvertedVarcharMmap",
++                                 "MarisaVarchar",
++                                 "MarisaVarcharMmap",
++                                 "FmIndexVarchar",
++                                 "FmIndexVarcharMmap"}) {
++            SCOPED_TRACE(name);
++            const auto& backend =
++                ScalarReaderBackends().Get<std::string_view>(name);
++            ScalarTestData<std::string_view> data(
++                {"alpha", "beta", "beta", "null"});
++            data.validity.reset(3);
++            const ScalarTestInput<std::string_view> input(data);
++            auto artifact = backend.Build(input.View(), {.row_count = 4});
++            auto reader = OpenV3(backend,
++                                 SerializeV3(*artifact),
++                                 {.row_count = 4},
++                                 use_async,
++                                 &context);
++            const auto* pattern =
++                dynamic_cast<const IPatternMatchReader*>(reader.get());
++            ASSERT_NE(pattern, nullptr);
++            ExpectHits(pattern->PatternMatch("beta", PatternOp::PrefixMatch),
++                       4,
++                       {1, 2});
++            ExpectHits(
++                pattern->PatternMatch("null", PatternOp::PrefixMatch), 4, {});
++            const auto* nulls = dynamic_cast<const INullReader*>(reader.get());
++            ASSERT_NE(nulls, nullptr);
++            ExpectHits(nulls->IsNull(), 4, {3});
++        }
+     }
  }
  
--func TestCommitImportCallback_MissingJob_Retry(t *testing.T) {
-+// mockReplicateConfiguration makes getReplicationRole see cfg as the live
-+// channel assignment for the rest of the test. nil means no replication.
-+func mockReplicateConfiguration(t *testing.T, cfg *commonpb.ReplicateConfiguration) {
-+	t.Helper()
-+	mockBalancer := &mockBalancerImpl{}
-+	mockBalance := mockey.Mock(balance.GetWithContext).To(func(ctx context.Context) (balancer.Balancer, error) {
-+		return mockBalancer, nil
-+	}).Build()
-+	mockAssignment := mockey.Mock((*mockBalancerImpl).GetLatestChannelAssignment).To(
-+		func(_ *mockBalancerImpl) (*channel.WatchChannelAssignmentsCallbackParam, error) {
-+			return &channel.WatchChannelAssignmentsCallbackParam{ReplicateConfiguration: cfg}, nil
-+		}).Build()
-+	t.Cleanup(func() {
-+		mockAssignment.UnPatch()
-+		mockBalance.UnPatch()
-+	})
-+}
-+
-+// secondaryReplicateConfiguration returns a topology in which this cluster
-+// is the CDC secondary of "primary-cluster".
-+func secondaryReplicateConfiguration() *commonpb.ReplicateConfiguration {
-+	current := Params.CommonCfg.ClusterPrefix.GetValue()
-+	return &commonpb.ReplicateConfiguration{
-+		Clusters: []*commonpb.MilvusCluster{
-+			{ClusterId: "primary-cluster"},
-+			{ClusterId: current},
-+		},
-+		CrossClusterTopology: []*commonpb.CrossClusterTopology{
-+			{SourceClusterId: "primary-cluster", TargetClusterId: current},
-+		},
-+	}
-+}
-+
-+func TestCommitImportCallback_MissingJob_PrimaryIsNoOp(t *testing.T) {
-+	ctx := context.Background()
-+	importMeta, _ := newTestImportMeta(t)
-+	mockReplicateConfiguration(t, nil)
-+
-+	// A replayed CommitImport for a job that checkGC already removed must not
-+	// keep the broadcast task alive: nothing can create that job again.
-+	callbacks := &DDLCallbacks{Server: &Server{importMeta: importMeta}}
-+	err := callbacks.commitImportV2AckCallback(ctx, buildCommitImportBroadcastResult(13))
-+	assert.NoError(t, err)
-+	assert.Nil(t, importMeta.GetJob(ctx, 13))
-+}
-+
-+func TestCommitImportCallback_MissingJob_SecondaryRetries(t *testing.T) {
- 	ctx := context.Background()
- 	importMeta, _ := newTestImportMeta(t)
-+	mockReplicateConfiguration(t, secondaryReplicateConfiguration())
- 
-+	// On a secondary the replicated CommitImport can arrive before the local
-+	// Import ack callback creates the job, so the callback must wait.
- 	callbacks := &DDLCallbacks{Server: &Server{importMeta: importMeta}}
- 	err := callbacks.commitImportV2AckCallback(ctx, buildCommitImportBroadcastResult(13))
- 	assert.Error(t, err)
 ```
 
-**File**: `internal/datacoord/services.go` (modified, +9/-0)
+**File**: `internal/core/src/index/scalar/bitmap/BitmapIndexLoader.cpp` (modified, +1/-0)
 ```diff
-@@ -3567,6 +3567,15 @@ func (s *Server) HandleCommitVchannel(ctx context.Context, req *datapb.HandleCom
- 		return merr.Status(err), nil
- 	}
- 	job := s.importMeta.GetJob(ctx, req.GetJobId())
-+	if job == nil {
-+		forgotten, err := s.importJobForgotten(ctx, req.GetJobId())
-+		if err != nil {
-+			return merr.Status(err), nil
-+		}
-+		if forgotten {
-+			return merr.Success(), nil
-+		}
-+	}
- 	if job != nil && job.GetCommitByCoordinator() {
- 		return merr.Success(), nil
- 	}
+@@ -1151,6 +1151,7 @@ BitmapIndexLoader::PlanPacked(const storage::IndexEntryDirectory& directory,
+         state->meta.count,
+         !has_validity && (state->meta.nested || !state->params.nullable));
+     IndexLoadPlan plan;
++    plan.worker_writes = false;
+     plan.load_context = state;
+     plan.entries.reserve(3);
+     state->projection = PreparePackedJsonProjectedOpen(
 ```
 
-**File**: `internal/datacoord/services_test.go` (modified, +29/-0)
+**File**: `internal/core/src/index/test_utils/ArtifactTestUtils.h` (modified, +3/-1)
 ```diff
-@@ -6597,6 +6597,35 @@ func TestHandleCommitVchannelRPCIsNoOpForCoordinatorOwnedJob(t *testing.T) {
- 	require.Error(t, merr.CheckRPCCall(resp, err))
+@@ -134,12 +134,14 @@ inline IIndexReaderBasePtr
+ OpenV3(const ReaderBackend& backend,
+        const TestArtifactData& artifact,
+        const BackendCaseMetadata& metadata = {},
+-       bool use_async = false) {
++       bool use_async = false,
++       milvus::OpContext* context = nullptr) {
+     auto input = std::make_shared<storage::RemoteInputStream>(
+         std::make_shared<arrow::io::BufferReader>(
+             MakePackedArtifactBuffer(artifact)));
+     auto source = storage::IndexEntryReader::Open(input, input->Size());
+     storage::LoadOptions options;
++    options.op_ctx = context;
+     options.enable_mmap = backend.MmapRequested();
+     if (options.enable_mmap) {
+         options.mmap_dir_path = std::filesystem::temp_directory_path().string();
+```
+
+**File**: `internal/core/src/storage/IndexEntryReader.cpp` (modified, +173/-54)
+```diff
+@@ -28,6 +28,7 @@
+ #include <future>
+ #include <limits>
+ #include <memory>
++#include <mutex>
+ #include <string>
+ #include <utility>
+ #include <vector>
+@@ -821,20 +822,51 @@ IndexEntryReader::PrepareEntryStreamDownload(const std::string& name,
+         state.writer = std::make_unique<PositionedFileWriter>(
+             local_path, meta.plaintext_size, write_priority);
+     }
++    state.write = [writer = state.writer.get()](
++                      size_t offset, const uint8_t* data, size_t bytes) {
++        writer->WriteAt(offset, data, bytes);
++    };
+     return state;
  }
  
-+func TestHandleCommitVchannelRPC_MissingJob_PrimaryIsNoOp(t *testing.T) {
-+	importMeta, _ := newTestImportMeta(t)
-+	mockReplicateConfiguration(t, nil)
-+	server := &Server{importMeta: importMeta}
-+	server.stateCode.Store(commonpb.StateCode_Healthy)
+ // Each submitted slice releases admission when its execution scope exits,
+ // before the caller drains futures. Future state may retain the task closure.
++// One failure domain per operation, including all entries in a bulk load.
++// Record the original exception before cancellation wakes admission waiters.
++struct IndexEntryReader::EntryStreamFailure {
++    void
++    RecordAndCancel(std::exception_ptr error) {
++        {
++            std::lock_guard lock(mutex);
++            if (first_error) {
++                return;
++            }
++            first_error = std::move(error);
++        }
++        cancellation.requestCancellation();
++    }
 +
-+	// A StreamingNode replaying an old CommitImport after checkGC removed the
-+	// job must get success, or it retries forever and blocks the pchannel.
-+	resp, err := server.HandleCommitVchannel(context.Background(), &datapb.HandleCommitVchannelRequest{
-+		JobId: 13, Vchannel: "vchan-0", CommitTimestamp: 300,
-+	})
-+	require.NoError(t, merr.CheckRPCCall(resp, err))
-+	require.Nil(t, importMeta.GetJob(context.Background(), 13))
-+}
++    std::exception_ptr
++    FirstError() {
++        std::lock_guard lock(mutex);
++        return first_error;
++    }
 +
-+func TestHandleCommitVchannelRPC_MissingJob_SecondaryRetries(t *testing.T) {
-+	importMeta, _ := newTestImportMeta(t)
-+	mockReplicateConfiguration(t, secondaryReplicateConfiguration())
-+	server := &Server{importMeta: importMeta}
-+	server.stateCode.Store(commonpb.StateCode_Healthy)
++    std::mutex mutex;
++    std::exception_ptr first_error;
++    folly::CancellationSource cancellation;
++};
 +
-+	resp, err := server.HandleCommitVchannel(context.Background(), &datapb.HandleCommitVchannelRequest{
-+		JobId: 13, Vchannel: "vchan-0", CommitTimestamp: 300,
-+	})
-+	err = merr.CheckRPCCall(resp, err)
-+	require.Error(t, err)
-+	require.True(t, errors.Is(err, merr.ErrImportSysFailed))
-+}
-+
- func TestLoadableProjectionUsesFinalSegments(t *testing.T) {
- 	ctx := context.Background()
- 	segments := NewSegmentsInfo(metacache.NewMetaStore(nil))
-```
-
-**File**: `internal/datanode/importv2/memory_allocator.go` (modified, +22/-20)
-```diff
-@@ -41,9 +41,10 @@ func GetMemoryAllocator() MemoryAllocator {
+ void
+ IndexEntryReader::SubmitEntryStreamDownloadTasks(
+     const EntryMeta& meta,
+     EntryStreamDownloadState& state,
+-    std::vector<std::future<void>>& futures) {
++    std::vector<std::future<void>>& futures,
++    EntryStreamFailure& failure) {
+     auto& pool = ThreadPools::GetThreadPool(priority_);
+     auto input = input_;
+-    auto* writer = state.writer.get();
+-    const auto cancellation_token = cancellation_token_;
++    const auto cancellation_token = folly::cancellation_token_merge(
++        cancellation_token_, failure.cancellation.getToken());
+     const auto budget_priority = LoadAdmissionPriorityForThreadPool(priority_);
+     futures.reserve(futures.size() + StreamDownloadTaskCount(meta));
  
- // MemoryAllocator handles memory allocation and deallocation for import tasks
- type MemoryAllocator interface {
--	// BlockingAllocate blocks until memory is available and then allocates
--	// This method will block until memory becomes available
--	BlockingAllocate(taskID int64, size int64)
-+	// BlockingAllocate blocks until memory is available and then allocates.
-+	// It returns ctx.Err() when ctx is canceled before the allocation succeeds,
-+	// in which case no memory is charged.
-+	BlockingAllocate(ctx context.Context, taskID int64, size int64) error
- 	// Allocate reserves snapshot row/delete budgets atomically and returns the
- 	// admitted row buffer, shrinking it if needed to retain the full delete budget.
- 	Allocate(ctx context.Context, taskID, preferredRowBuffer, deleteBudget int64) (int64, error)
-@@ -74,32 +75,27 @@ func NewMemoryAllocator(systemTotalMemory int64) MemoryAllocator {
- 	return ma
- }
+@@ -850,58 +882,75 @@ IndexEntryReader::SubmitEntryStreamDownloadTasks(
+             const auto output_offset = slice.plaintext_offset;
+             const auto plain_len = slice.plaintext_bytes;
+             auto budget_guard = std::make_unique<LoadAdmissionGuard>(
+-                EncryptedStreamBudgetBytes(slice.remote_bytes, plain_len),
++                SaturatingAdd(
++                    EncryptedStreamBudgetBytes(slice.remote_bytes, plain_len),
++                    2 * FileWriter::ALIGNMENT_MASK),
+                 budget_priority,
+                 cancellation_token,
+                 "IndexEntryReader::ReadEntriesStreamToFiles");
  
--// BlockingAllocate blocks until memory is available and then allocates
--func (ma *memoryAllocator) BlockingAllocate(taskID int64, size int64) {
-+// BlockingAllocate blocks until memory is available and then allocates.
-+func (ma *memoryAllocator) BlockingAllocate(ctx context.Context, taskID int64, size int64) error {
- 	ma.mutex.Lock()
- 	defer ma.mutex.Unlock()
- 
- 	percentage := paramtable.Get().DataNodeCfg.ImportMemoryLimitPercentage.GetAsFloat()
- 	memoryLimit := int64(float64(ma.systemTotalMemory) * percentage / 100.0)
- 
--	// Wait until enough memory is available
--	for ma.usedMemory+size > memoryLimit {
--		mlog.Warn(context.TODO(), "task waiting for memory allocation...",
-+	if err := ma.waitForMemory(ctx, taskID, size, memoryLimit); err != nil {
-+		mlog.Warn(ctx, "task canceled while waiting for memory allocation",
- 			mlog.FieldTaskID(taskID),
- 			mlog.Int64("requestedSize", size),
--			mlog.Int64("usedMemory", ma.usedMemory),
--			mlog.Int64("availableMemory", memoryLimit-ma.usedMemory))
++            ThrowIfCancelled(
++                cancellation_token,
++                "IndexEntryReader::SubmitEntryStreamDownloadTasks");
+             futures.push_back(pool.Submit([input,
+                                            cipher_plugin,
+                                            ez_id,
+                                            collection_id,
+                                            edek,
+                                            slice,
+-                                           writer,
+                                            output_offset,
+                                            plain_len,
+                                            i,
+                                            &state,
++                                           &failure,
+                                            cancellation_token,
+                                            budget_guard = std::move(
+                                                budget_guard)]() mutable {
+                 // Move out of packaged_task's closure: completed futures can
+                 // retain that closure while submission waits for another slot.
+                 auto reservation = std::move(budget_guard);
+-                ThrowIfCancelled(cancellation_token,
+-                                 "IndexEntryReader::ReadEntriesStreamToFiles");
 -
--		ma.cond.Wait()
-+			mlog.Err(err))
-+		return err
- 	}
--
--	// Allocate memory
--	ma.usedMemory += size
--	mlog.Info(context.TODO(), "memory allocated successfully",
-+	mlog.Info(ctx, "memory allocated successfully",
- 		mlog.FieldTaskID(taskID),
- 		mlog.Int64("allocatedSize", size),
- 		mlog.Int64("usedMemory", ma.usedMemory),
- 		mlog.Int64("availableMemory", memoryLimit-ma.usedMemory))
-+	return nil
- }
- 
- // Allocate reserves row and delete-map memory atomically for a typed snapshot
-@@ -120,7 +116,7 @@ func (ma *memoryAllocator) Allocate(ctx context.Context, taskID, preferredRowBuf
- 	// adding also avoids overflow for a very large preferred row buffer.
- 	rowBuffer := min(preferredRowBuffer, limit-deleteBudget)
- 	size := rowBuffer + deleteBudget
--	if err := ma.waitForMemory(ctx, size, limit); err != nil {
-+	if err := ma.waitForMemory(ctx, taskID, size, limit); err != nil {
- 		return 0, err
- 	}
- 	return rowBuffer, nil
-@@ -138,15 +134,16 @@ func (ma *memoryAllocator) AllocateSnapshotTask(ctx context.Context, taskID, pre
- 	rowBuffer := min(preferredRowBuffer, limit-2*deleteBudget)
- 	admitted := min(int64(readers), (limit-deleteBudget)/(rowBuffer+deleteBudget))
- 	size := deleteBudget + admitted*(rowBuffer+deleteBudget)
--	if err := ma.waitForMemory(ctx, size, limit); err != nil {
-+	if err := ma.waitForMemory(ctx, taskID, size, limit); err != nil {
- 		return 0, 0, err
- 	}
- 	return rowBuffer, int(admitted), nil
- }
- 
- // Caller holds ma.mutex. Waiting acquires no partial reservation, and releasing
- // any existing reservation or canceling the context wakes the waiter.
--func (ma *memoryAllocator) waitForMemory(ctx context.Context, size, limit int64) error {
-+// A request larger than the whole limit runs alone instead of waiting forever.
-+func (ma *memoryAllocator) waitForMemory(ctx context.Context, taskID, size, limit int64) error {
- 	// Acquiring the same lock in the callback prevents a lost wakeup between
- 	// checking ctx.Err and Cond.Wait. Stop need not wait for the callback.
- 	stop := context.AfterFunc(ctx, func() {
-@@ -159,10 +156,15 @@ func (ma *memoryAllocator) waitForMemory(ctx context.Context, size, limit int64)
- 		if err := ctx.Err(); err != nil {
- 			return err
- 		}
--		if size <= limit-ma.usedMemory {
-+		if ma.usedMemory == 0 || size <= limit-ma.usedMemory {
- 			ma.usedMemory += size
- 			return nil
- 		}
-+		mlog.Warn(ctx, "task waiting for memory allocation...",
-+			mlog.FieldTaskID(taskID),
-+			mlog.Int64("requestedSize", size),
-+			mlog.Int64("usedMemory", ma.usedMemory),
-+			mlog.Int64("availableMemory", limit-ma.usedMemory))
- 		ma.cond.Wait()
- 	}
- }
-```
-
-**File**: `internal/datanode/importv2/memory_allocator_test.go` (modified, +108/-12)
-```diff
-@@ -113,7 +113,7 @@ func TestSnapshotTaskMemoryAdmission(t *testing.T) {
- 		})
- 	}
- 	ma := NewMemoryAllocator(1024).(*memoryAllocator)
--	ma.BlockingAllocate(1, 512)
-+	ma.BlockingAllocate(context.Background(), 1, 512)
- 	ctx, cancel := context.WithCancel(context.Background())
- 	done := make(chan error, 1)
- 	go func() {
-@@ -174,7 +174,7 @@ func TestSnapshotMemoryAdmission(t *testing.T) {
- 
- 	// A legacy reader occupies half the allowance. Snapshot readers must wait
- 	// for their full reservation, not shrink to the currently free half.
--	ma.BlockingAllocate(1, 512)
-+	ma.BlockingAllocate(context.Background(), 1, 512)
- 	ctx, cancel = context.WithCancel(context.Background())
- 	defer cancel()
- 	done := make(chan error, 1)
-@@ -265,11 +265,11 @@ func TestMemoryAllocatorBasicOperations(t *testing.T) {
- 	assert.Equal(t, int64(0), ma.(*memoryAllocator).usedMemory)
- 
- 	// Test memory allocation for task 1 using BlockingAllocate
--	ma.BlockingAllocate(1, 50*1024*1024) // 50MB for task 1
-+	ma.BlockingAllocate(context.Background(), 1, 50*1024*1024) // 50MB for task 1
- 	assert.Equal(t, int64(50*1024*1024), ma.(*memoryAllocator).usedMemory)
- 
- 	// Test memory allocation for task 2
--	ma.BlockingAllocate(2, 50*1024*1024) // 50MB for task 2
-+	ma.BlockingAllocate(context.Background(), 2, 50*1024*1024) // 50MB for task 2
- 	assert.Equal(t, int64(100*1024*1024), ma.(*memoryAllocator).usedMemory)
- 
- 	// Test memory release for task 1
-@@ -292,13 +292,13 @@ func TestMemoryAllocatorMemoryLimit(t *testing.T) {
- 	testSize := memoryLimit / 10 // Use 10% of available memory
- 
- 	// Allocate memory up to the limit
--	ma.BlockingAllocate(1, testSize)
-+	ma.BlockingAllocate(context.Background(), 1, testSize)
- 	assert.Equal(t, testSize, ma.(*memoryAllocator).usedMemory)
- 
- 	// Try to allocate more memory than available (this will block, so we test in a goroutine)
- 	done := make(chan bool)
- 	go func() {
--		ma.BlockingAllocate(2, testSize)
-+		ma.BlockingAllocate(context.Background(), 2, testSize)
- 		done <- true
- 	}()
- 
-@@ -324,7 +324,7 @@ func TestMemoryAllocatorConcurrentAccess(t *testing.T) {
- 	for i := 0; i < 10; i++ {
- 		taskID := int64(i + 1)
- 		go func() {
--			ma.BlockingAllocate(taskID, 50*1024*1024) // 50MB each
-+			ma.BlockingAllocate(context.Background(), taskID, 50*1024*1024) // 50MB each
- 			ma.Release(taskID, 50*1024*1024)
- 			done <- true
- 		}()
-@@ -346,7 +346,7 @@ func TestMemoryAllocatorNegativeRelease(t *testing.T) {
- 	ma := NewMemoryAllocator(1024 * 1024 * 1024)
- 
- 	// Allocate some memory
--	ma.BlockingAllocate(1, 100*1024*1024) // 100MB
-+	ma.BlockingAllocate(context.Background(), 1, 100*1024*1024) // 100MB
- 	assert.Equal(t, int64(100*1024*1024), ma.(*memoryAllocator).usedMemory)
- 
- 	// Release more than allocated (should not go negative)
-@@ -364,7 +364,7 @@ func TestMemoryAllocatorMultipleTasks(t *testing.T) {
- 	sizes := []int64{20, 30, 25, 15, 35} // Total: 125MB
- 
- 	for i, taskID := range taskIDs {
--		ma.BlockingAllocate(taskID, sizes[i]*1024*1024)
-+		ma.BlockingAllocate(context.Background(), taskID, sizes[i]*1024*1024)
- 	}
- 
- 	// Verify total used memory
-@@ -397,7 +397,7 @@ func TestMemoryAllocatorZeroSize(t *testing.T) {
- 	ma := NewMemoryAllocator(1024 * 1024 * 1024)
- 
- 	// Test zero size allocation
--	ma.BlockingAllocate(1, 0)
-+	ma.BlockingAllocate(context.Background(), 1, 0)
- 	assert.Equal(t, int64(0), ma.(*memoryAllocator).usedMemory)
- 
- 	// Test zero size release
-@@ -414,7 +414,7 @@ func TestMemoryAllocatorSimple(t *testing.T) {
- 	assert.Equal(t, int64(0), ma.(*memoryAllocator).usedMemory)
- 
- 	// Test memory allocation
--	ma.BlockingAllocate(1, 50*1024*1024) // 50MB
-+	ma.BlockingAllocate(context.Background(), 1, 50*1024*1024) // 50MB
- 	assert.Equal(t, int64(50*1024*1024), ma.(*memoryAllocator).usedMemory)
- 
- 	// Test memory release
-@@ -446,7 +446,7 @@ func TestMemoryAllocatorMassiveConcurrency(t *testing.T) {
- 
- 		go func(id int64, size int64) {
- 			defer wg.Done()
--			ma.BlockingAllocate(id, size)
-+			ma.BlockingAllocate(context.Background(), id, size)
- 			time.Sleep(1 * time.Millisecond)
- 			ma.Release(id, size)
- 		}(taskID, memorySize)
-@@ -457,3 +457,99 @@ func TestMemoryAllocatorMassiveConcurrency(t *testing.T) {
- 	finalMemory := ma.(*memoryAllocator).usedMemory
- 	assert.Equal(t, int64(0), finalMemory, "All memory should be released")
- }
+-                std::vector<uint8_t> cipher(slice.remote_bytes);
+-                size_t n = input->ReadAt(
+-                    cipher.data(), slice.remote_offset, slice.remote_bytes);
+-                ThrowIfCancelled(cancellation_token,
+-                                 "IndexEntryReader::ReadEntriesStreamToFiles");
+-                if (!(n == slice.remote_bytes)) {
+-                    ThrowInfo(ErrorCode::FileReadFailed,
+-                              "Failed to read encrypted slice");
+-                }
++                try {
++                    ThrowIfCancelled(
++                        cancellation_token,
++                        "IndexEntryReader::ReadEntriesStreamToFiles");
 +
-+// TestMemoryAllocatorOversizedRequest tests that a request larger than the whole limit
-+// runs alone instead of waiting forever.
-+func TestMemoryAllocatorOversizedRequest(t *testing.T) {
-+	ma := NewMemoryAllocator(1024 * 1024 * 1024)
-+	memoryLimit := int64(float64(ma.(*memoryAllocator).systemTotalMemory) *
-+		paramtable.Get().DataNodeCfg.ImportMemoryLimitPercentage.GetAsFloat() / 100.0)
-+	oversized := memoryLimit * 2
-+	small := memoryLimit / 10
-+
-+	allocateAsync := func(taskID int64, size int64) chan struct{} {
-+		done := make(chan struct{})
-+		go func() {
-+			ma.BlockingAllocate(context.Background(), taskID, size)
-+			close(done)
-+		}()
-+		return done
-+	}
-+
-+	// The oversized requ
++                    std::vector<uint8_t> cipher(slice.remote_bytes);
++                    size_t n = input->ReadAt(
++          
 ```
 
 ---
 
-### Incident Patch 2: `281b9372` (2026-10-20)
-**Commit Message**: fix: restore the DataCoord build after the metacache and Talon prewarm merges (#54462)
+### Incident Patch 2: `3392105c` (2026-10-22)
+**Commit Message**: fix: Write self-describing Avro snapshot manifests (#54290)
 
-#54316 still enumerates `SegmentsInfo.segments` and builds test metadata
-with `NewSegmentsInfo()`, both removed by #53579, so
-`internal/datacoord` no longer compiles on master
-(`manifest_supplier.go:42`). Enumerate segments with
-`SegmentsInfo.GetSegments()` and build test metadata with
-`newEmptyTestMeta()`. The prewarm startup test builds a bare `Server`,
-which now reaches `importInspector.Reload` (added by #53334); stub it
-like the test's other startup dependencies.
+issue: #54289
 
-issue: #53875
+Raw Avro snapshot manifests require the exact writer schema, and
+metadata version ceilings reject newer snapshots before examining
+compatible data. Write V6 manifests as single-record Avro OCF files with
+the full writer schema, retaining the V5 segment fields and index
+marker.
 
-Signed-off-by: sunby <[REDACTED_EMAIL]>
+Keep V0-V5 binary decoding and use embedded schemas for OCF, allowing
+unknown fields to be skipped. Unify metadata parsing without a version
+ceiling and document the compatibility obligations for future writers.
+Unmodified legacy readers still require an upgrade to read OCF; changed
+restore semantics need explicit reader support.
 
-**File**: `internal/datacoord/manifest_supplier.go` (modified, +1/-1)
+Validate OCF block sizes before constructing the decoder, bounding every
+declared size by the actual input length without allocating block
+payload buffers. Reject OCF manifests declaring V0-V5 while retaining
+exact historical raw binary decoding.
+
+Close the OCF encoder on serialization failure while preserving the
+original error. Use a named OCF magic and document that the OCF format
+boundary stays fixed at V6.
+
+### Validation
+
+- Rebased onto `master` at `e577fe5b40`; the five branch commits are
+patch-equiv
+
+**File**: `docs/design-docs/design_docs/20251114-snapshot_design.md` (modified, +32/-1)
 ```diff
-@@ -39,7 +39,7 @@ func (s *Server) GetPublishedManifestPaths(ctx context.Context) ([]string, error
- 	s.meta.segMu.RLock()
- 	defer s.meta.segMu.RUnlock()
- 	manifests := make([]string, 0)
--	for _, segment := range s.meta.segments.segments {
-+	for _, segment := range s.meta.segments.GetSegments() {
- 		if err := ctx.Err(); err != nil {
+@@ -130,6 +130,37 @@ type StorageV2SegmentManifest struct {
+   - is_sorted (whether segment data is sorted by primary key)
+ - Uses Avro format to provide schema evolution support
+ 
++### Snapshot format compatibility
++
++V0 (missing `format_version`) and V1-V5 manifests use raw Avro binary.
++Readers select the exact historical writer schema: V2 adds index path version,
++V3 adds commit timestamp, V4 adds field groups and format, and V5 adds the
++manifest index marker. Existing upstream segment metadata retains that marker.
++
++V6 writes one record per Avro Object Container File (OCF), embedding the full
++writer schema and using the null (uncompressed) codec. The record fields remain
++those of V5; V6 changes the container encoding rather than the segment model.
++
++`format_version` is a writer format identifier, not a reader ceiling. OCF
++readers use the embedded writer schema and skip fields absent from the current
++Go structure. Metadata readers likewise ignore unknown JSON fields.
++
++Future format changes MUST consider compatibility with existing V6 readers.
++Keep OCF framing and supported codecs; preserve existing field names, types,
++and meanings; and make added fields safe for older readers to ignore. A
++change to storage layouts, index interpretation, or other required restore
++semantics needs explicit reader handling and compatibility tests before the
++new writer format is introduced. Embedded schemas describe binary encoding;
++they cannot establish semantic restore compatibility. There is no separate
++minimum-reader or feature-negotiation protocol.
++
++Historical raw binary manifests continue to require an exact V0-V5 version;
++OCF manifests declaring V0-V5 and raw binary manifests declaring V6+ are rejected.
++Old unmodified readers cannot read OCF snapshots. OCF corruption must not fall
++back to historical binary decoding.
++Before OCF decoding, readers reject declared block sizes exceeding the input
++length to prevent allocations based on corrupt block headers.
++
+ **StorageV2 Support**: For segments using Milvus's newer storage format, additional manifest paths are stored in `StorageV2ManifestList`. This enables seamless snapshot/restore for both legacy and new storage formats.
+ 
+ ### Write Process (SnapshotWriter)
+@@ -139,7 +170,7 @@ type StorageV2SegmentManifest struct {
+    a. Create manifest directory: manifests/{snapshot_id}/
+    b. For each segment, call writeSegmentManifest():
+       - Convert SegmentDescription to Avro ManifestEntry
+-      - Serialize to Avro binary format
++      - Serialize to Avro OCF with the writer schema
+       - Write to S3: manifests/{snapshot_id}/{segment_id}.avro
+    c. Collect StorageV2 manifest paths (if applicable)
+    d. Call writeMetadataFile()
+```
+
+**File**: `internal/datacoord/external_collection_refresh_manager_test.go` (modified, +2/-4)
+```diff
+@@ -175,7 +175,7 @@ func mockRefreshSnapshotReads(t *testing.T, read func() ([]byte, error)) {
+ 		if err != nil {
  			return nil, err
  		}
+-		return snapshotio.ParseSnapshotMetadataWithVersionCheck(data)
++		return snapshotio.ParseSnapshotMetadata(data)
+ 	}
+ 	metadata := mockey.Mock(packed.ReadMilvusTableSnapshotMetadata).To(func(string, string, *indexpb.StorageConfig, packed.ExternalSpecContext) (*datapb.SnapshotMetadata, error) {
+ 		return parse()
+@@ -198,7 +198,6 @@ func TestRefreshMilvusTableInvalidMetadataFailsJob(t *testing.T) {
+ 	}{
+ 		{"truncated_json", `{"corrupt manifest`, false, false, "failed to parse metadata JSON"},
+ 		{"empty_metadata", "", false, false, "failed to parse metadata JSON"},
+-		{"unsupported_version", `{"format_version":99999}`, false, false, "snapshot format version 99999 is too new"},
+ 		{"corrupted_between_validation_and_explore", `{"corrupt manifest`, true, false, "failed to parse metadata JSON"},
+ 		{"failed_state_persistence_retried", `{"corrupt manifest`, false, true, "failed to parse metadata JSON"},
+ 	} {
+@@ -353,7 +352,6 @@ func TestCreateTasksForJobSnapshotErrorCodes(t *testing.T) {
+ 		wantErr error
+ 	}{
+ 		{"corrupt_metadata", `{`, merr.ErrDataIntegrity},
+-		{"unsupported_version", `{"format_version":99999}`, merr.ErrOperationNotSupported},
+ 	} {
+ 		for _, failDuringExplore := range []bool{false, true} {
+ 			t.Run(fmt.Sprintf("%s/explore=%t", tc.name, failDuringExplore), func(t *testing.T) {
+@@ -426,7 +424,7 @@ func TestRefreshMilvusTableMetadataReadTimeoutRetries(t *testing.T) {
+ }
+ 
+ func TestCreateTasksForJobInvalidMetadataRedactsSource(t *testing.T) {
+-	_, metadataErr := snapshotio.ParseSnapshotMetadataWithVersionCheck([]byte(`{"corrupt manifest`))
++	_, metadataErr := snapshotio.ParseSnapshotMetadata([]byte(`{"corrupt manifest`))
+ 	require.ErrorIs(t, metadataErr, merr.ErrDataIntegrity)
+ 	// Source validation rejects userinfo before reading. Inject only the
+ 	// dependency's real parse error here to test diagnostic redaction in isolation.
 ```
 
-**File**: `internal/datacoord/manifest_supplier_test.go` (modified, +1/-1)
+**File**: `internal/datanode/external/milvus_table_deltalog_test.go` (modified, +1/-2)
 ```diff
-@@ -28,7 +28,7 @@ import (
+@@ -1038,11 +1038,10 @@ func TestGetMilvusTableSourcePKFieldMetadataErrors(t *testing.T) {
+ 		wantErr error
+ 	}{
+ 		{"corrupt_metadata", `{`, nil, merr.ErrDataIntegrity},
+-		{"unsupported_version", `{"format_version":99999}`, nil, merr.ErrOperationNotSupported},
+ 		{"read_timeout", "", context.DeadlineExceeded, context.DeadlineExceeded},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			_, parseErr := snapshotio.ParseSnapshotMetadataWithVersionCheck([]byte(tc.data))
++			_, parseErr := snapshotio.ParseSnapshotMetadata([]byte(tc.data))
+ 			if tc.readErr != nil {
+ 				parseErr = tc.readErr
+ 			}
+```
+
+**File**: `internal/rootcoord/create_collection_task_test.go` (modified, +1/-2)
+```diff
+@@ -2120,11 +2120,10 @@ func TestPrepareMilvusTableSnapshotSchemaErrors(t *testing.T) {
+ 		wantErr error
+ 	}{
+ 		{"corrupt metadata", `{`, nil, merr.ErrDataIntegrity},
+-		{"unsupported snapshot version", `{"format_version":99999}`, nil, merr.ErrOperationNotSupported},
+ 		{"metadata read timeout", "", context.DeadlineExceeded, context.DeadlineExceeded},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			_, parseErr := snapshotio.ParseSnapshotMetadataWithVersionCheck([]byte(tc.data))
++			_, parseErr := snapshotio.ParseSnapshotMetadata([]byte(tc.data))
+ 			if tc.readErr != nil {
+ 				parseErr = tc.readErr
+ 			}
+```
+
+**File**: `internal/snapshotio/snapshot.go` (modified, +110/-28)
+```diff
+@@ -19,10 +19,13 @@
+ package snapshotio
+ 
+ import (
++	"bytes"
++	"io"
+ 	"strings"
+ 	"sync"
+ 
+ 	"github.com/iskorotkov/avro/v2"
++	"github.com/iskorotkov/avro/v2/ocf"
+ 	"google.golang.org/protobuf/encoding/protojson"
+ 	"google.golang.org/protobuf/proto"
+ 
+@@ -34,8 +37,20 @@ import (
  )
  
- func TestPublishedManifestSnapshot(t *testing.T) {
--	s := &Server{meta: &meta{segments: NewSegmentsInfo()}}
-+	s := &Server{meta: newEmptyTestMeta()}
- 	s.UpdateStateCode(commonpb.StateCode_Healthy)
- 	fixtures := []*datapb.SegmentInfo{
- 		{ID: 1, CollectionID: 10, State: commonpb.SegmentState_Flushed, Level: datapb.SegmentLevel_L1, ManifestPath: "collection10/v1"},
+ const (
+-	// SnapshotFormatVersion is the current snapshot metadata and manifest format.
+-	SnapshotFormatVersion = 5
++	// SnapshotFormatVersion identifies snapshots written by this implementation.
++	// Future readers must retain V0-V5 binary decoding and V6 OCF support.
++	// Future writers must preserve compatibility with V6 readers: keep OCF
++	// framing and supported codecs, preserve existing field names, types and
++	// meanings, and make new fields safe to ignore. Embedded schemas only
++	// describe encoding; incompatible restore semantics need explicit reader
++	// handling before a future writer format is introduced.
++	SnapshotFormatVersion = 6
++	// SelfDescribingManifestVersion is the first format requiring OCF manifests.
++	// It must remain 6 when SnapshotFormatVersion increases, so V6 OCF manifests
++	// remain readable and V0-V5 manifests retain their raw binary format.
++	SelfDescribingManifestVersion = 6
++
++	ocfMagic = "Obj\x01"
+ )
+ 
+ var (
+@@ -105,7 +120,8 @@ func ManifestSchemaV5() (avro.Schema, error) {
+ 	return manifestSchemaV5, manifestSchemaV5Err
+ }
+ 
+-// ManifestSchemaByVersion returns the Avro schema for a snapshot format version.
++// ManifestSchemaByVersion selects historical raw binary schemas.
++// OCF manifests carry their own writer schema.
+ func ManifestSchemaByVersion(version int) (avro.Schema, error) {
+ 	switch version {
+ 	case 0, 1:
+@@ -123,14 +139,11 @@ func ManifestSchemaByVersion(version int) (avro.Schema, error) {
+ 	}
+ }
+ 
+-// ValidateFormatVersion checks if a snapshot metadata version can be read.
++// ValidateFormatVersion validates the identifier, not a reader ceiling.
++// OCF embeds the writer schema; future changes must preserve compatibility.
+ func ValidateFormatVersion(version int) error {
+-	if version == 0 {
+-		return nil
+-	}
+-	if version > SnapshotFormatVersion {
+-		return merr.WrapErrOperationNotSupportedMsg("snapshot format version %d is too new, current supported version: %d (please upgrade Milvus)",
+-			version, SnapshotFormatVersion)
++	if version < 0 {
++		return merr.WrapErrServiceInternalMsg("invalid snapshot format version: %d", version)
+ 	}
+ 	return nil
+ }
+@@ -144,17 +157,8 @@ func ParseSnapshotMetadata(data []byte) (*datapb.SnapshotMetadata, error) {
+ 	if err := opts.Unmarshal(data, metadata); err != nil {
+ 		return nil, merr.WrapErrDataIntegrity(err, "failed to parse metadata JSON")
+ 	}
+-	return metadata, nil
+-}
+-
+-// ParseSnapshotMetadataWithVersionCheck deserializes metadata and rejects unsupported versions.
+-func ParseSnapshotMetadataWithVersionCheck(data []byte) (*datapb.SnapshotMetadata, error) {
+-	metadata, err := ParseSnapshotMetadata(data)
+-	if err != nil {
+-		return nil, err
+-	}
+ 	if err := ValidateFormatVersion(int(metadata.GetFormatVersion())); err != nil {
+-		return nil, err
++		return nil, merr.Wrap(err, "invalid snapshot metadata")
+ 	}
+ 	return metadata, nil
+ }
+@@ -180,10 +184,9 @@ type ManifestEntry struct {
+ 	CommitTimestamp   int64                   `avro:"commit_timestamp"`
+ 	ManifestHasIndex  bool                    `avro:"manifest_has_index"`
+ 
+-	// manifestHasIndexPresent is derived from the snapshot format version and
+-	// is intentionally not serialized. Version 5 always sets it; older records
+-	// leave it false so their missing marker remains distinguishable from an
+-	// explicit false value.
++	// manifestHasIndexPresent follows the embedded OCF writer schema or the
++	// legacy binary format version. It is not serialized, so an absent marker
++	// remains distinguishable from an explicit false value.
+ 	manifestHasIndexPresent bool
+ }
+ 
+@@ -272,21 +275,75 @@ type AvroJSONKeyIndexEntry struct {
+ 	Stats   *AvroJSONKeyStats `avro:"stats"`
+ }
+ 
+-// MarshalSegmentManifest serializes a segment description as a snapshot manifest.
++// MarshalSegmentManifest writes one segment in an OCF with its complete writer schema.
+ func MarshalSegmentManifest(segment *datapb.SegmentDescription) ([]byte, error) {
+ 	avroSchema, err := ManifestSchema()
+ 	if err != nil {
+ 		return nil, merr.WrapErrServiceInternalErr(err, "failed to get manifest schema")
+ 	}
+-	data, err := avro.Marshal(avroSchema, SegmentToManifestEntry(segment))
++	var buf bytes.Buffer
++	encoder, err := ocf.NewEncoderWithSchema(avroSchema, &buf, ocf.WithSchemaMarshaler(ocf.FullSchemaMarshaler))
+ 	if err != nil {
++		return nil, merr.WrapErrServiceInternalErr(err, "failed to create avro container")
++	}
++	if err := encoder.Encode(SegmentToManifestEntry(segment)); err != nil {
++		_ = encoder.Close()
+ 		return nil, merr.WrapErrServiceInternalErr(err, "failed to serialize entry to avro")
+ 	}
+-	return data, nil
++	if err := encoder.Close(); err != nil {
++		return nil, merr.WrapErrServiceInternalErr(err, "failed to finalize av
 ```
 
-**File**: `internal/datacoord/talon_prewarm_test.go` (modified, +5/-2)
+**File**: `internal/snapshotio/snapshot_test.go` (modified, +301/-19)
 ```diff
-@@ -138,15 +138,18 @@ func TestTalonPrewarmUsesDataCoordConfiguration(t *testing.T) {
+@@ -17,12 +17,16 @@
+ package snapshotio
  
- func TestTalonPrewarmDataCoordStartAfterHealthy(t *testing.T) {
- 	// Keep DC's state transition and prewarm loop real; suppress unrelated
--	// schedulers/service discovery and the process-level server-info file.
-+	// schedulers, import recovery, service discovery and the process-level
-+	// server-info file.
- 	patchScheduler := mockey.Mock((*Server).startTaskScheduler).To(func(*Server) {}).Build()
- 	defer patchScheduler.UnPatch()
-+	patchImportReload := mockey.Mock((*importInspector).Reload).To(func(*importInspector) {}).Build()
-+	defer patchImportReload.UnPatch()
- 	patchLoops := mockey.Mock((*Server).startServerLoop).To(func(*Server) {}).Build()
- 	defer patchLoops.UnPatch()
- 	patchInfo := mockey.Mock(sessionutil.SaveServerInfo).To(func(string, int64) {}).Build()
- 	defer patchInfo.UnPatch()
+ import (
++	"bytes"
++	"encoding/binary"
+ 	"fmt"
++	"strings"
+ 	"testing"
  
--	s := &Server{ctx: context.Background(), meta: &meta{segments: NewSegmentsInfo()}}
-+	s := &Server{ctx: context.Background(), meta: newEmptyTestMeta(), importInspector: &importInspector{}}
- 	s.UpdateStateCode(commonpb.StateCode_Initializing)
- 	s.meta.segments.SetSegment(1, NewSegmentInfo(&datapb.SegmentInfo{
- 		ID: 1, CollectionID: 10, State: commonpb.SegmentState_Flushed, ManifestPath: "unloaded/object",
+ 	"github.com/bytedance/mockey"
+ 	"github.com/cockroachdb/errors"
+ 	"github.com/iskorotkov/avro/v2"
++	"github.com/iskorotkov/avro/v2/ocf"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	"google.golang.org/protobuf/proto"
+@@ -50,7 +54,7 @@ func TestManifestSchemaByVersion(t *testing.T) {
+ 	assert.NotContains(t, AvroSchemaV4(), "manifest_has_index")
+ 	assert.Contains(t, AvroSchemaV5(), "manifest_has_index")
+ 
+-	currentSchema, err := ManifestSchemaByVersion(SnapshotFormatVersion)
++	currentSchema, err := ManifestSchema()
+ 	require.NoError(t, err)
+ 	assert.NotNil(t, currentSchema)
+ 
+@@ -60,8 +64,8 @@ func TestManifestSchemaByVersion(t *testing.T) {
+ 	assert.Contains(t, err.Error(), "unsupported manifest schema version")
+ }
+ 
+-func TestParseSnapshotMetadataWithVersionCheck(t *testing.T) {
+-	metadata, err := ParseSnapshotMetadataWithVersionCheck([]byte(`{
++func TestParseSnapshotMetadata(t *testing.T) {
++	metadata, err := ParseSnapshotMetadata([]byte(`{
+ 		"format_version": 3,
+ 		"snapshot_info": {"id": 10, "name": "snap"},
+ 		"unknown_field": "ignored"
+@@ -70,22 +74,15 @@ func TestParseSnapshotMetadataWithVersionCheck(t *testing.T) {
+ 	assert.Equal(t, int32(3), metadata.GetFormatVersion())
+ 	assert.Equal(t, int64(10), metadata.GetSnapshotInfo().GetId())
+ 
+-	metadata, err = ParseSnapshotMetadataWithVersionCheck([]byte(fmt.Sprintf(`{"format_version":%d}`, SnapshotFormatVersion)))
++	metadata, err = ParseSnapshotMetadata([]byte(fmt.Sprintf(`{"format_version":%d}`, SnapshotFormatVersion)))
+ 	require.NoError(t, err)
+ 	assert.Equal(t, int32(SnapshotFormatVersion), metadata.GetFormatVersion())
+ 
+ 	futureVersion := SnapshotFormatVersion + 1
+-	_, err = ParseSnapshotMetadataWithVersionCheck([]byte(fmt.Sprintf(`{"format_version":%d}`, futureVersion)))
+-	require.Error(t, err)
+-	assert.Contains(t, err.Error(), fmt.Sprintf("snapshot format version %d is too new", futureVersion))
+-	assert.Contains(t, err.Error(), fmt.Sprintf("current supported version: %d", SnapshotFormatVersion))
+-	assert.Contains(t, err.Error(), "please upgrade Milvus")
+-	assert.ErrorIs(t, err, merr.ErrOperationNotSupported)
+-	assert.Equal(t, int32(3000), merr.Status(err).GetCode())
+-	assert.Equal(t, merr.SystemError, merr.GetErrorType(err))
+-	assert.False(t, merr.Status(err).GetRetriable())
++	_, err = ParseSnapshotMetadata([]byte(fmt.Sprintf(`{"format_version":%d}`, futureVersion)))
++	require.NoError(t, err)
+ 
+-	_, err = ParseSnapshotMetadataWithVersionCheck([]byte(`{`))
++	_, err = ParseSnapshotMetadata([]byte(`{`))
+ 	require.Error(t, err)
+ 	assert.Contains(t, err.Error(), "failed to parse metadata JSON")
+ 	assert.ErrorIs(t, err, merr.ErrDataIntegrity)
+@@ -96,7 +93,7 @@ func TestParseSnapshotMetadataWithVersionCheck(t *testing.T) {
+ 
+ 	assert.NoError(t, ValidateFormatVersion(0))
+ 	assert.NoError(t, ValidateFormatVersion(SnapshotFormatVersion))
+-	assert.Error(t, ValidateFormatVersion(SnapshotFormatVersion+1))
++	assert.NoError(t, ValidateFormatVersion(SnapshotFormatVersion+1))
+ }
+ 
+ func TestSegmentManifestRoundTrip(t *testing.T) {
+@@ -196,7 +193,7 @@ func TestSegmentManifestRoundTrip(t *testing.T) {
+ 	assert.Equal(t, segment.GetJsonKeyIndexFiles()[102].GetJsonKeyStatsDataFormat(), parsed.GetJsonKeyIndexFiles()[102].GetJsonKeyStatsDataFormat())
+ 
+ 	_, err = ParseSegmentManifest(data, SnapshotFormatVersion+1)
+-	require.Error(t, err)
++	require.NoError(t, err)
+ 
+ 	_, err = ParseSegmentManifest([]byte("not-avro"), SnapshotFormatVersion)
+ 	require.Error(t, err)
+@@ -247,11 +244,18 @@ func TestMarshalSegmentManifestErrors(t *testing.T) {
+ 
+ 	schema, err := ManifestSchema()
+ 	require.NoError(t, err)
+-	mockMarshal := mockey.Mock(avro.Marshal).Return(nil, errors.New("marshal failed")).Build()
++	marshalErr := errors.New("marshal failed")
++	mockMarshal := mockey.Mock((*ocf.Encoder).Encode).Return(marshalErr).Build()
+ 	defer mockMarshal.UnPatch()
++	closeErr := errors.New("close failed")
++	mockClose := mockey.Mock((*ocf.Encoder).Close).Return(closeErr).Build()
++	defer mockClose.UnPatch()
+ 
+-	_, err = MarshalSegmentManifest(&datapb.SegmentDescription{SegmentId: 100})
+-	require.Error(t, err)
++	data, err := MarshalSegmentManifest(&datapb.SegmentDescription{SegmentId: 100})
++	require.ErrorIs(t, err, marshalErr)
++	assert.NotErrorIs(t, err, closeErr)
++	assert.Nil(t, data)
++	assert.Equal(t, 1, mockClose.Times())
+ 	assert.Contains(t, err.Error(), "failed to serialize entry to avro")
+ 	_ = schema
+ }
+@@ -285,3 +289,281 @@ func fieldBinlog(fieldID int64, logID int64, logPath string) *datapb.FieldBinlog
+ 		},
+ 	}
+ }
++
++func TestContainerManifestWriterSchema(t *testing.T) {
++	schemaJSON := strings.Replace(AvroSchemaV4(), `{"name": "segment_id", "type": "long"},`, `{"name": "future_field", "type": "string"}, {"name": "segment_id", "type": "long"},`, 1)
++	schemaJSON = strings.Replace(schemaJSON, `{"name": "field_id", "type": "long"},`, `{"name"
+```
+
+**File**: `internal/snapshotio/storage/snapshot_data.go` (modified, +2/-2)
+```diff
+@@ -327,7 +327,7 @@ func marshalSnapshotMetadata(snapshot *SnapshotData, manifestPaths []string, sto
+ }
+ 
+ func validateStagedSnapshotMetadata(data []byte, metadataURI string) error {
+-	metadata, err := snapshotio.ParseSnapshotMetadataWithVersionCheck(data)
++	metadata, err := snapshotio.ParseSnapshotMetadata(data)
+ 	if err != nil {
+ 		return merr.WrapErrDataIntegrity(err, "invalid staged snapshot metadata")
+ 	}
+@@ -607,7 +607,7 @@ func (r *SnapshotReader) readMetadataFile(ctx context.Context, filePath string)
+ 		return nil, merr.Wrap(err, "failed to read metadata file")
+ 	}
+ 
+-	metadata, err := snapshotio.ParseSnapshotMetadataWithVersionCheck(data)
++	metadata, err := snapshotio.ParseSnapshotMetadata(data)
+ 	if err != nil {
+ 		return nil, merr.WrapErrDataIntegrity(err, "invalid snapshot metadata")
+ 	}
+```
+
+**File**: `internal/snapshotio/storage/snapshot_data_test.go` (modified, +44/-22)
+```diff
+@@ -255,7 +255,7 @@ func readSnapshotMetadataForTest(t *testing.T, cm storage.ChunkManager, metadata
+ 	t.Helper()
+ 	data, err := cm.Read(context.Background(), snapshotstorage.NormalizeSnapshotObjectPath(metadataPath))
+ 	require.NoError(t, err)
+-	metadata, err := snapshotio.ParseSnapshotMetadataWithVersionCheck(data)
++	metadata, err := snapshotio.ParseSnapshotMetadata(data)
+ 	require.NoError(t, err)
+ 	return metadata
+ }
+@@ -366,6 +366,14 @@ func TestSnapshotWriter_Save_RealAvro(t *testing.T) {
+ 		writeCallCount++
+ 		// Verify that written content is not empty mock data
+ 		assert.NotEmpty(t, content)
++		if path.Ext(filePath) == ".json" {
++			metadata, err := snapshotio.ParseSnapshotMetadata(content)
++			require.NoError(t, err)
++			assert.Equal(t, int32(6), metadata.GetFormatVersion())
++		} else {
++			_, err := snapshotio.ParseSegmentManifest(content, 6)
++			require.NoError(t, err)
++		}
+ 		return nil
+ 	}).Build()
+ 	defer mockWrite.UnPatch()
+@@ -685,7 +693,7 @@ func TestSnapshotReader_ReadSnapshot_Success(t *testing.T) {
+ 	}
+ 
+ 	// Pre-generate valid Avro data for manifest using the real schema (single record)
+-	manifestSchema, _ := snapshotio.ManifestSchema()
++	manifestSchema, _ := snapshotio.ManifestSchemaByVersion(0)
+ 	validManifestData, _ := avro.Marshal(manifestSchema, manifestEntry)
+ 
+ 	metadataFilePath := "snapshots/100/metadata/00001-uuid.json"
+@@ -2694,10 +2702,7 @@ func TestSnapshotReader_ReadSnapshot_RebasesRelocatedSelfContainedBundleBeforeMa
+ 		StorageVersion:    2,
+ 		CommitTimestamp:   10,
+ 	}
+-	manifestEntry := snapshotio.SegmentToManifestEntry(segment)
+-	manifestSchema, err := snapshotio.ManifestSchemaByVersion(snapshotio.SnapshotFormatVersion)
+-	require.NoError(t, err)
+-	manifestBytes, err := avro.Marshal(manifestSchema, manifestEntry)
++	manifestBytes, err := snapshotio.MarshalSegmentManifest(segment)
+ 	require.NoError(t, err)
+ 
+ 	readPaths := make([]string, 0, 2)
+@@ -2862,10 +2867,6 @@ func TestSnapshotReader_ReadSnapshot_ClassifiesPermanentMetadataErrorsAsDataInte
+ 			name: "invalid json",
+ 			data: []byte("{"),
+ 		},
+-		{
+-			name: "unsupported format version",
+-			data: []byte(`{"format_version":999}`),
+-		},
+ 	}
+ 
+ 	for _, tt := range tests {
+@@ -3307,10 +3308,7 @@ func TestSnapshotReader_ReadSnapshot_RebasesStorageV2ManifestListBeforeFillingSe
+ 		StorageVersion:    2,
+ 		CommitTimestamp:   10,
+ 	}
+-	manifestEntry := snapshotio.SegmentToManifestEntry(segment)
+-	manifestSchema, err := snapshotio.ManifestSchemaByVersion(snapshotio.SnapshotFormatVersion)
+-	require.NoError(t, err)
+-	manifestBytes, err := avro.Marshal(manifestSchema, manifestEntry)
++	manifestBytes, err := snapshotio.MarshalSegmentManifest(segment)
+ 	require.NoError(t, err)
+ 
+ 	mockRead := mockey.Mock((*storage.LocalChunkManager).Read).To(func(ctx context.Context, filePath string) ([]byte, error) {
+@@ -3400,10 +3398,9 @@ func TestValidateFormatVersion(t *testing.T) {
+ 			wantErr: false,
+ 		},
+ 		{
+-			name:        "version_100_future",
+-			version:     100,
+-			wantErr:     true,
+-			errContains: "too new",
++			name:    "version_100_future",
++			version: 100,
++			wantErr: false,
+ 		},
+ 	}
+ 
+@@ -3549,7 +3546,7 @@ func TestSnapshotReader_ReadSnapshot_LegacyVersion(t *testing.T) {
+ }
+ 
+ func TestSnapshotReader_ReadSnapshot_FutureVersion(t *testing.T) {
+-	// Test that reading a snapshot with future version fails
++	// A future writer version alone does not prevent metadata reading.
+ 	tempDir := t.TempDir()
+ 	cm := storage.NewLocalChunkManager(objectstorage.RootPath(tempDir))
+ 	reader := snapshotstorage.NewSnapshotReader(cm)
+@@ -3577,7 +3574,32 @@ func TestSnapshotReader_ReadSnapshot_FutureVersion(t *testing.T) {
+ 	}).Build()
+ 	defer mockRead.UnPatch()
+ 
+-	_, err := reader.ReadSnapshot(context.Background(), metadataFilePath, false)
+-	assert.Error(t, err)
+-	assert.Contains(t, err.Error(), "too new")
++	snapshot, err := reader.ReadSnapshot(context.Background(), metadataFilePath, false)
++	require.NoError(t, err)
++	assert.Equal(t, "future_snapshot", snapshot.SnapshotInfo.GetName())
++}
++
++func TestSnapshotReader_FutureManifest(t *testing.T) {
++	root := t.TempDir()
++	cm := storage.NewLocalChunkManager(objectstorage.RootPath(root))
++	ctx := context.Background()
++	metadataPath := path.Join(root, "metadata.json")
++	manifestPath := path.Join(root, "segment.avro")
++	metadata := &datapb.SnapshotMetadata{
++		FormatVersion: 7,
++		SnapshotInfo:  &datapb.SnapshotInfo{Id: 1, CollectionId: 10, Name: "future", S3Location: metadataPath},
++		Collection:    &datapb.CollectionDescription{Schema: &schemapb.CollectionSchema{Name: "source"}},
++		ManifestList:  []string{manifestPath},
++		SegmentIds:    []int64{123},
++	}
++	data, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(metadata)
++	require.NoError(t, err)
++	require.NoError(t, cm.Write(ctx, metadataPath, data))
++	data, err = snapshotio.MarshalSegmentManifest(&datapb.SegmentDescription{SegmentId: 123})
++	require.NoError(t, err)
++	require.NoError(t, cm.Write(ctx, manifestPath, data))
++	snapshot, 
+```
+
+---
+
+### Incident Patch 3: `7a12f67f` (2026-10-21)
+**Commit Message**: fix: use PK row locks for partial-update CAS (#54216)
+
+issue: #54285
+
+Partial-update CAS commits held the vchannel write lock through the WAL
+append, so every other write on the shard waited behind each CAS commit.
+With this change every DML message, CAS commits included, takes the
+vchannel lock only in shared mode, and a CAS excludes only writes that
+share one of its primary keys. To keep that exclusion complete,
+StreamingNode also enforces a transaction ordering contract,
+reconstructs pending transaction write sets on recovery, and rejects
+commits whose write set it does not know.
+
+- **Row locks:** a StreamingNode-wide manager keeps an exact-PK lock
+table per active vchannel. It is process-wide so that a write still
+finishing on a closing WAL keeps excluding writes on the reopened WAL of
+the same vchannel. The lock interceptor takes row locks under the shard
+lifecycle read lock, before TimeTick allocates the write timestamp, and
+releases them after the downstream append returns (CAS validation, WAL
+append, version publication, transaction completion, ack and MVCC
+publication). So of two writes on a common PK where at least one is a
+CAS, the later one always gets the later timesta
+
+**File**: `docs/agent_guides/streaming-system/message/message-semantic-txn.md` (modified, +1/-0)
+```diff
+@@ -19,6 +19,7 @@ Messages managing transactions on a single VChannel.
+ - BeginTxn must precede all body messages and CommitTxn/RollbackTxn for the same transaction.
+ - Body messages must arrive within the keepalive window, otherwise the transaction expires. After expiration, no messages for that transaction will appear in the WAL.
+ - CommitTxn/RollbackTxn must come after all body messages have completed (inFlightCount == 0).
++- With partial-update CAS enabled, the lock interceptor enforces the body-before-commit order for local transactions before TimeTick: a CommitTxn freezes its transaction on arrival, later bodies are rejected with `TRANSACTION_EXPIRED`, and a commit that arrives while a body admitted before it is still in flight is itself rejected with `TRANSACTION_EXPIRED` (the session stays InFlight until its lease ends), so an accepted commit's row locks cover the complete write set. See the [partial-update design](../../../design-docs/design_docs/20260601-partial-update-optimistic-lock-design.md).
+ - The consumer assembles Begin + body messages into a single ImmutableTxnMessage using **CommitTxn's TimeTick and LastConfirmedMessageID** as the transaction's overall TimeTick and LastConfirmedMessageID.
+ - On RollbackTxn, the consumer discards the corresponding Begin + body messages.
+ 
+```
+
+**File**: `docs/design-docs/design_docs/20260601-partial-update-optimistic-lock-design.md` (modified, +657/-82)
+```diff
+@@ -34,9 +34,20 @@ resolve all touched PChannel terms
+ ```
+ 
+ StreamingNode maintains an in-memory, per-WAL-term index of recent primary-key
+-writes. A local partial-update `CommitTxn` acquires the existing vchannel write
+-lock, validates the observed term and read snapshot, appends the commit, and
+-publishes the transaction write set before releasing the lock.
++writes. Before TimeTick allocates the write timestamp, the lock interceptor takes
++exact PK row locks in a per-vchannel table: ordinary writes take shared locks on
++their PKs, and a local CAS takes exclusive locks on its PKs. StreamingNode
++enforces the transaction ordering contract: BeginTxn takes effect before any
++body, and every body takes effect before CommitTxn. A CommitTxn freezes the body
++PK union when it arrives, so later bodies are rejected; it is itself rejected
++while a body is still in flight, and otherwise locks the union. CAS validates
++the term, read snapshot, and exact PK versions before persisting CommitTxn.
++Locks remain held through version publication, transaction completion,
++acknowledgement, and MVCC publication. Different vchannels use separate
++tables. A write takes its place in line for its PKs and waits directly only
++for earlier writes that share a PK with it, so writes are served in arrival
++order without retries. The existing lifecycle locks continue to serialize
++exclusive DDL.
+ 
+ The design does not add a public RPC, SDK field, configuration option,
+ partial-update-specific WAL message type, or persistent row-version store.
+@@ -144,13 +155,15 @@ with an empty value as a control marker. The outer marker contains no PK,
+ 
+ ### Configuration and metrics
+ 
+-The proposal adds one internal, non-refreshable StreamingNode configuration
+-parameter. The remaining values are internal constants:
++The proposal uses three internal StreamingNode configuration parameters. The
++remaining values are internal constants:
+ 
+ | Parameter or constant | Default | Purpose |
+ |---|---|---|
+ | `defaultVersionIndexTTL` | 30 seconds | Limits how long each vchannel retains recent PK-write versions and also bounds the valid window from `readTS` to `commitTS` for one partial-update attempt. When the window is exceeded, StreamingNode returns a retryable CAS rejection; Proxy automatically retries only replacement updates that can be rebuilt safely. |
++| `streaming.partialUpdate.enableCAS` | `true` | Hidden switch added by #54248. When it is `false`, the partial-update interceptor installs no row-lock hook, skips write-set recovery, and passes every write through without CAS validation, so concurrent updates based on stale rows may overwrite each other. Shard lifecycle and structural DDL locks are unchanged. Each interceptor reads it once when the WAL opens. |
+ | `streaming.partialUpdate.versionIndexMaxBytes` | 640,000,000 bytes, approximately 610 MiB | Caps the estimated memory used by all PK-version indexes on one StreamingNode. When the shared budget is unavailable, ordinary writes continue, but CAS on the affected vchannel fails closed until the omitted write leaves the valid read window. |
++| `streaming.partialUpdate.recoveryDecodeTimeout` | `5s` | Total time budget, per WAL open, for rebuilding pending transaction write sets. A transaction whose bodies are not decoded within it is marked incomplete, and its commit is rejected and replayed. The budget is checked before each body decode, so `0` or a negative value marks every pending transaction with an insert or delete body incomplete. Larger values can delay WAL open when decoding stalls. |
+ | `partialUpdateCASMaxRetryAttempts` | 5 attempts, including the first attempt | Limits the total number of Proxy attempts used to rebuild a complete replacement update after a deterministic CAS conflict. Requests containing relative field operations do not use this automatic retry. |
+ | `partialUpdateCASRetryBackoff` | Starts at 10 ms with exponential backoff; each sleep is capped at 40 ms | Controls the delay between Proxy CAS attempts and reduces sustained contention caused by immediately retrying concurrent conflicts. The 40 ms cap is calculated as `4 * partialUpdateCASRetryBackoff`. |
+ 
+@@ -166,28 +179,43 @@ CommitTxn keep their existing formats and transaction semantics. CAS metadata
+ uses an existing properties map inside the Insert body, and the commit marker
+ uses the existing outer properties map.
+ 
+-No persistent PK index, schema migration, or restore-time gate is introduced.
++No persistent PK index or schema migration is introduced. Pending PK write sets
++are reconstructed from existing recovery bodies before accepting writes.
+ 
+ ## Design Details
+ 
+ ### Correctness invariants
+ 
+-The design depends on six invariants:
++The design depends on seven invariants:
+ 
+ 1. **Attempt proof:** a term snapshot and `readTS` belong to the same attempt,
+    and terms are resolved before the Strong query starts.
+ 2. **Exact query snapshot:** every CAS `readTS` is the nonzero snapshot
+    reported by that channel'
+```
+
+**File**: `internal/streamingnode/server/wal/adaptor/initializing.go` (modified, +1/-0)
+```diff
+@@ -46,6 +46,7 @@ func buildInterceptorParams(ctx context.Context, underlyingWALImpls walimpls.WAL
+ 	)
+ 	mvccManager := mvcc.NewMVCCManager(msg.TimeTick())
+ 	return &interceptors.InterceptorBuildParam{
++		Context:             ctx,
+ 		ChannelInfo:         underlyingWALImpls.Channel(),
+ 		WAL:                 syncutil.NewFuture[wal.WAL](),
+ 		LastTimeTickMessage: msg,
+```
+
+**File**: `internal/streamingnode/server/wal/adaptor/wal_adaptor_fence_test.go` (modified, +50/-0)
+```diff
+@@ -159,6 +159,56 @@ func TestOversizedAppendWithSNChunkingDisabledUsesLegacySingleRecordPath(t *test
+ 	assert.Equal(t, int32(1), persisted.Load())
+ }
+ 
++// The WAL detaches an append from its caller: client cancellation must not
++// reach the interceptor chain, while the WAL becoming unavailable, which WAL
++// close and fence both end in, must cancel it. Waits inside the chain, such as
++// a write waiting for partial-update row locks, rely on both halves to end only
++// with the WAL.
++func TestAppendContextEndsWithWALNotClient(t *testing.T) {
++	gate := &contextTestGateInterceptor{entered: make(chan struct{})}
++	walImpls := newFirstTimeTickWALImpls(func(ctx context.Context, _ message.MutableMessage) (message.MessageID, error) {
++		return finishFenceTestAppend(ctx, 1), nil
++	})
++	w := newFenceTestWAL(t, walImpls, gate)
++
++	clientCtx, cancelClient := context.WithCancel(context.Background())
++	appendErr := make(chan error, 1)
++	go func() {
++		_, err := w.Append(clientCtx, message.CreateTestEmptyInsertMesage(1, nil))
++		appendErr <- err
++	}()
++	waitFenceTestSignal(t, gate.entered)
++	cancelClient()
++	select {
++	case err := <-appendErr:
++		t.Fatalf("client cancellation reached the interceptor chain: %v", err)
++	case <-time.After(50 * time.Millisecond):
++	}
++
++	// Close and fence cancel availableCtx through forceCancelAfterGracefulTimeout.
++	w.availableCancel()
++	require.ErrorIs(t, waitFenceTestError(t, appendErr), context.Canceled)
++}
++
++type contextTestGateInterceptor struct {
++	entered chan struct{}
++}
++
++func (i *contextTestGateInterceptor) DoAppend(
++	ctx context.Context,
++	msg message.MutableMessage,
++	append interceptors.Append,
++) (message.MessageID, error) {
++	if msg.MessageType() != message.MessageTypeInsert {
++		return append(ctx, msg)
++	}
++	close(i.entered)
++	<-ctx.Done()
++	return nil, ctx.Err()
++}
++
++func (i *contextTestGateInterceptor) Close() {}
++
+ type countingAppendInterceptor struct {
+ 	calls atomic.Int32
+ }
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/interceptor.go` (modified, +12/-0)
+```diff
+@@ -20,8 +20,19 @@ type (
+ 	Append = func(ctx context.Context, msg message.MutableMessage) (message.MessageID, error)
+ )
+ 
++// MessageRowLock coordinates writes before their visibility timestamp is
++// allocated. The lock interceptor calls it under the shard lifecycle lock for
++// every non-replicated message. The returned context may retain decoded write
++// metadata for later interceptors. The release function runs after the
++// downstream append returns: after transaction, acknowledgement and MVCC
++// publication.
++type MessageRowLock interface {
++	Acquire(ctx context.Context, msg message.MutableMessage) (context.Context, func(), error)
++}
++
+ // InterceptorBuildParam is the parameter to build a interceptor.
+ type InterceptorBuildParam struct {
++	Context                context.Context // WAL-open context for bounded startup recovery; optional in tests.
+ 	ChannelInfo            types.PChannelInfo
+ 	WAL                    *syncutil.Future[wal.WAL]    // The wal final object, can be used after interceptor is ready.
+ 	LastTimeTickMessage    message.ImmutableMessage     // The last time tick message in wal.
+@@ -33,6 +44,7 @@ type InterceptorBuildParam struct {
+ 	TxnManager             *txn.TxnManager              // The transaction manager for the wal, used to manage the transactions.
+ 	ShardManager           shards.ShardManager          // The shard manager for the wal, used to manage the shards, segment assignment, partition.
+ 	ReplicateManager       replicates.ReplicatesManager // The replicates manager for the wal, used to manage the replicates.
++	RowLock                MessageRowLock               // Optional per-write row lock, taken by the lock interceptor.
+ }
+ 
+ // Clear release the resources in the interceptor build param.
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/lock/builder.go` (modified, +1/-2)
+```diff
+@@ -3,7 +3,6 @@ package lock
+ import (
+ 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/lock"
+-	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+ )
+ 
+ // NewInterceptorBuilder creates a new redo interceptor builder.
+@@ -17,9 +16,9 @@ type interceptorBuilder struct{}
+ // Build creates a new redo interceptor.
+ func (b *interceptorBuilder) Build(param *interceptors.InterceptorBuildParam) interceptors.Interceptor {
+ 	return &lockAppendInterceptor{
+-		enableCAS:      paramtable.Get().StreamingCfg.PartialUpdateEnableCAS.GetAsBool(),
+ 		channel:        param.ChannelInfo,
+ 		vchannelLocker: lock.NewKeyLock[string](),
+ 		txnManager:     param.TxnManager,
++		buildParam:     param,
+ 	}
+ }
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/lock/lock_interceptor.go` (modified, +25/-10)
+```diff
+@@ -13,20 +13,42 @@ import (
+ )
+ 
+ type lockAppendInterceptor struct {
+-	enableCAS      bool
+ 	channel        types.PChannelInfo
+ 	glock          sync.RWMutex // glock is a wal level lock, it will acquire a highest level lock for wal.
+ 	vchannelLocker *lock.KeyLock[string]
+ 	txnManager     *txn.TxnManager
++	// Builders run in chain order; a later builder can install the row-lock hook.
++	buildParam *interceptors.InterceptorBuildParam
+ }
+ 
+ func (r *lockAppendInterceptor) DoAppend(ctx context.Context, msg message.MutableMessage, append interceptors.Append) (message.MessageID, error) {
+ 	g := r.acquireLockGuard(ctx, msg)
+ 	defer g()
+ 
++	// Row locks are taken under the shard lifecycle lock and before TimeTick
++	// allocates the write timestamp, so a later lock holder always receives a
++	// later timestamp. They are released after the downstream append returns,
++	// which is after transaction completion, acknowledgement and MVCC update.
++	// Replicated messages are already serialized by the replicate interceptor
++	// and must reach it before any partial-update admission check.
++	if rowLock := r.rowLock(); rowLock != nil && msg.ReplicateHeader() == nil {
++		var release func()
++		var err error
++		if ctx, release, err = rowLock.Acquire(ctx, msg); err != nil {
++			return nil, err
++		}
++		defer release()
++	}
+ 	return append(ctx, msg)
+ }
+ 
++func (r *lockAppendInterceptor) rowLock() interceptors.MessageRowLock {
++	if r.buildParam == nil {
++		return nil
++	}
++	return r.buildParam.RowLock
++}
++
+ // acquireLockGuard acquires the lock for the vchannel and return a function as a guard.
+ func (r *lockAppendInterceptor) acquireLockGuard(_ context.Context, msg message.MutableMessage) func() {
+ 	vchannel := msg.VChannel()
+@@ -61,15 +83,8 @@ func (r *lockAppendInterceptor) acquireLockGuard(_ context.Context, msg message.
+ 		// DDL is serialized by the broadcaster resource-key lock. PChannel-level
+ 		// messages already acquire the global write lock above.
+ 	}
+-	if r.enableCAS && msg.MessageType() == message.MessageTypeCommitTxn &&
+-		message.HasPartialUpdateCAS(msg) && msg.ReplicateHeader() == nil {
+-		r.glock.RLock()
+-		r.vchannelLocker.Lock(vchannel)
+-		return func() {
+-			r.vchannelLocker.Unlock(vchannel)
+-			r.glock.RUnlock()
+-		}
+-	}
++	// DML, including CAS commits, keeps the shard lifecycle stable with a
++	// shared lock. Row-level exclusion is taken by PK in DoAppend.
+ 	r.glock.RLock()
+ 	r.vchannelLocker.RLock(vchannel)
+ 	return func() {
+```
+
+**File**: `internal/streamingnode/server/wal/interceptors/lock/lock_interceptor_test.go` (modified, +97/-46)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/bytedance/mockey"
++	"github.com/cockroachdb/errors"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 
+@@ -15,9 +16,9 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/messagespb"
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/types"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/walimpls/impls/walimplstest"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/funcutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/lock"
+-	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+ )
+ 
+ const (
+@@ -27,7 +28,6 @@ const (
+ 
+ func newTestInterceptor() *lockAppendInterceptor {
+ 	return &lockAppendInterceptor{
+-		enableCAS:      true,
+ 		channel:        types.PChannelInfo{Name: testPChannelName},
+ 		vchannelLocker: lock.NewKeyLock[string](),
+ 		txnManager:     new(txn.TxnManager),
+@@ -149,6 +149,8 @@ func TestAcquireLockGuard(t *testing.T) {
+ 		assert.True(t, interceptor.glock.TryRLock())
+ 		interceptor.glock.RUnlock()
+ 		assert.False(t, interceptor.vchannelLocker.TryLock(testVChannel))
++		assert.True(t, interceptor.vchannelLocker.TryRLock(testVChannel), "CAS commit must keep the shard lock shareable")
++		interceptor.vchannelLocker.RUnlock(testVChannel)
+ 		assert.True(t, interceptor.vchannelLocker.TryLock("other-vchannel"))
+ 		interceptor.vchannelLocker.Unlock("other-vchannel")
+ 		guard()
+@@ -185,7 +187,7 @@ func TestAcquireLockGuard(t *testing.T) {
+ 	})
+ }
+ 
+-func TestPartialUpdateCASCommitWaitsForSameVChannelWriter(t *testing.T) {
++func TestPartialUpdateCASCommitSharesShardLockWithWriter(t *testing.T) {
+ 	interceptor := newTestInterceptor()
+ 	writer := newLockTestInsertMessage(testVChannel)
+ 	commit := newLockTestCASCommit(t, testVChannel)
+@@ -214,18 +216,12 @@ func TestPartialUpdateCASCommitWaitsForSameVChannelWriter(t *testing.T) {
+ 
+ 	select {
+ 	case <-commitEntered:
++	case <-time.After(time.Second):
+ 		close(releaseWriter)
+-		require.NoError(t, <-writerDone)
+-		t.Fatal("CAS commit entered while a same-vchannel writer still held the read lock")
+-	case <-time.After(20 * time.Millisecond):
++		t.Fatal("CAS commit still acquired an exclusive shard lock")
+ 	}
+ 	close(releaseWriter)
+ 	require.NoError(t, <-writerDone)
+-	select {
+-	case <-commitEntered:
+-	case <-time.After(time.Second):
+-		t.Fatal("CAS commit did not resume after the writer released the lock")
+-	}
+ 	require.NoError(t, <-commitDone)
+ }
+ 
+@@ -339,49 +335,104 @@ func newLockTestCASCommit(t *testing.T, vchannel string) message.MutableMessage
+ 	return msg
+ }
+ 
+-func TestCASDisabledCommitSharesVChannelLock(t *testing.T) {
++type testRowLock func(context.Context, message.MutableMessage) (context.Context, func(), error)
++
++func (f testRowLock) Acquire(ctx context.Context, msg message.MutableMessage) (context.Context, func(), error) {
++	return f(ctx, msg)
++}
++
++type rowLockTestKey struct{}
++
++func newRowLockTestInterceptor(rowLock interceptors.MessageRowLock) *lockAppendInterceptor {
+ 	interceptor := newTestInterceptor()
+-	interceptor.enableCAS = false
+-	guard := interceptor.acquireLockGuard(context.Background(), newLockTestInsertMessage(testVChannel))
+-	defer guard()
+-	done := make(chan struct{})
+-	commit := newLockTestCASCommit(t, testVChannel)
+-	go func() {
+-		unlock := interceptor.acquireLockGuard(context.Background(), commit)
+-		unlock()
+-		close(done)
+-	}()
+-	select {
+-	case <-done:
+-	case <-time.After(time.Second):
+-		t.Fatal("disabled CAS commit blocked behind a shared writer")
+-	}
++	interceptor.buildParam = &interceptors.InterceptorBuildParam{RowLock: rowLock}
++	return interceptor
+ }
+ 
+-func TestLockInterceptorCachesCASConfig(t *testing.T) {
+-	paramtable.Init()
+-	params := paramtable.Get()
+-	key := params.StreamingCfg.PartialUpdateEnableCAS.Key
+-	old := params.StreamingCfg.PartialUpdateEnableCAS.GetValue()
+-	defer params.Save(key, old)
+-	builder := NewInterceptorBuilder()
+-	for _, value := range []string{"true", "false"} {
+-		require.NoError(t, params.Save(key, value))
+-		interceptor := builder.Build(&interceptors.InterceptorBuildParam{}).(*lockAppendInterceptor)
+-		next := "true"
+-		if value == "true" {
+-			next = "false"
+-		}
+-		require.NoError(t, params.Save(key, next))
+-		require.Equal(t, value == "true", interceptor.enableCAS)
+-	}
++func TestRowLockIsHeldUnderShardLockAcrossAppend(t *testing.T) {
++	var interceptor *lockAppendInterceptor
++	acquired, released := false, false
++	interceptor = newRowLockTestInterceptor(testRowLock(func(ctx context.Context, msg message.MutableMessage) (context.Context, func(), error) {
++		// The shard lifecycle lock is already held in shared mode.
++		require.False(t, interceptor.vchannelLocker.TryLock(testVChannel))
++		acquired = true
++		return context.WithValue(ctx, rowLockTestKey{}, true), func() {
++			released = true
++			require.False(t, interceptor.vchannelLocker.TryLock(testVChannel), "row lock released after the shard lock")
++		}, nil
++	}))
++	_, err := interceptor.DoAppend(conte
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54465** (2026-10-20): enhance: [3.0] convert ARRAY_CONTAINS terms only on cache miss (@liliu-z)
-- **PR #54464** (2026-10-20): fix: [3.0] preserve omitted timestamptz fields in partial upserts (@liliu-z)
-- **PR #54463** (2026-10-20): fix: [3.0] release Rust token strings after word-level MinHash computation (@liliu-z)
-- **PR #54462** (2026-10-20): fix: restore the DataCoord build after the metacache and Talon prewarm merges (@sunby)
-- **PR #54461** (2026-10-20): fix: [3.0] upgrade otel, ebpf and runtime package recipes (@liliu-z)
-- **PR #54459** (2026-10-20): enhance: [3.0] bound raw array reads during indexed equality checks (@liliu-z)
+- **PR #54566** (closed): fix: serialize segment and channel tasks for each node (@xiaofan-luan)
+- **PR #54558** (2026-10-22): test: [3.0] isolate TestTransfer from automatic compaction (@xiaofan-luan)
+- **PR #54557** (2026-10-22): test: isolate TestTransfer from automatic compaction (@xiaofan-luan)
+- **PR #54555** (2026-10-22): fix: [3.0] return the replicate configuration of an unconfigured cluster instead of blocking (@huanghaoyuanhhy)
+- **PR #54551** (2026-10-22): fix: [3.0] stop instantiating the ArrayView index validity path (#53507) (@xiaofan-luan)
+- **PR #54549** (2026-10-22): fix: [3.0] Write self-describing Avro snapshot manifests (@weiliu1031)
 
 ---
 
@@ -2013,32 +2941,31 @@ Signed-off-by: sunby <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stop import from waiting forever (#54109)
+## X. bound sync packed index buffers to positioned download tasks (#54358)
 
 **RULE**:
-When implementing operations in `docs/agent_guides/streaming-system/coordination/broadcaster.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/src/index/IndexLoadPlan.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac7e94e2`: stop import from waiting forever (#54109). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a21b4e63`: bound sync packed index buffers to positioned download tasks (#54358). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/agent_guides/streaming-system/coordination/broadcaster.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/index/IndexLoadPlan.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Both the RPC and the callback treat a job that importMeta no longer holds as
-already committed and garbage collected, except on a CDC secondary, where the
-replicated CommitImport can precede the local job and the caller keeps waiting.
-A secondary that already garbage collected the job waits forever. A GC tombstone
-(#54425) is the follow-up that closes this case.
+    // BITMAP keeps its existing ordered staging/conversion path.
+    bool worker_writes{true};
+        : worker_writes(other.worker_writes),
+          entries(std::move(other.entries)),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        : entries(std::move(other.entries)),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac7e94e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a21b4e63` are properly handled with clean fallback behavior.

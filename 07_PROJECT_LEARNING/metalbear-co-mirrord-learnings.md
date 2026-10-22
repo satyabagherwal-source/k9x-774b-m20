@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `41117e99`  
+> **Source Version**: `a41ecdeb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:26:36.067Z  
+> **Timestamp**: 2026-10-22T19:16:13.867Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:26:35.720Z  
+> **Harvest Timestamp**: 2026-10-22T19:16:12.544Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5376 stars
+- **Stars / Engagement**: 5379 stars
 
 ---
 
@@ -1535,363 +1535,474 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c439f1f` (2026-10-20)
-**Commit Message**: Merge pull request #5120 from metalbear-co/push-vmzuxknvloto
+### Incident Patch 1: `7c2c1cd4` (2026-10-21)
+**Commit Message**: Fixed concurrency issues in layer ProxyConnection
 
-nix: get rid of fenix (on linux)
-
-**File**: `changelog.d/+nix-fenix.internal.md` (added, +1/-0)
+**File**: `mirrord/layer-lib/clippy.toml` (modified, +1/-0)
 ```diff
-@@ -0,0 +1 @@
-+Stop using `fenix` to get the Rust toolchain on Linux now that we're on stable.
+@@ -13,6 +13,7 @@ disallowed-macros = [
+ disallowed-methods = [
+     { path = "std::thread::current", reason = "claims the thread handle slot. See layer-lib::logging." },
+     { path = "std::thread::park", reason = "reaches std::thread::current. See layer-lib::logging." },
++    { path = "std::thread::park_timeout", reason = "reaches std::thread::current. See layer-lib::logging." },
+     { path = "std::io::stderr", reason = "takes a reentrant lock that claims the thread handle slot. Use crate::logging::report_to_stderr." },
+     { path = "std::io::stdout", reason = "takes a reentrant lock that claims the thread handle slot. See layer-lib::logging." },
+     { path = "tracing_subscriber::fmt::Layer::with_thread_ids", reason = "reaches std::thread::current. Use the OsThreadId event format." },
 ```
 
-**File**: `flake.lock` (modified, +18/-36)
+**File**: `mirrord/layer-lib/src/mutex.rs` (modified, +5/-1)
 ```diff
-@@ -1,33 +1,12 @@
- {
-   "nodes": {
--    "fenix": {
--      "inputs": {
--        "nixpkgs": [
--          "nixpkgs"
--        ],
--        "rust-analyzer-src": "rust-analyzer-src"
--      },
--      "locked": {
--        "lastModified": 1790943170,
--        "narHash": "sha256-90jjxCm7QgknpZ77ZMqwnKmQndqtRST/ekDtx11IpHs=",
--        "owner": "nix-community",
--        "repo": "fenix",
--        "rev": "c8ed30fa2e75f7191a0fb8398a4a84dd009d12fc",
--        "type": "github"
--      },
--      "original": {
--        "owner": "nix-community",
--        "repo": "fenix",
--        "type": "github"
--      }
--    },
-     "nixpkgs": {
-       "locked": {
--        "lastModified": 1790736253,
--        "narHash": "sha256-Z2q/klLczs/xdnH0wZa6HsP3Ru6Rq9aDilNCRYwg3hE=",
-+        "lastModified": 1792488032,
-+        "narHash": "sha256-RkAXQ3+a5rHMiP97Er7AawR1kvEXX9tK1mhiWedOPTc=",
-         "owner": "NixOS",
-         "repo": "nixpkgs",
--        "rev": "1ec21f6ee4970c41e0824c539c52a50e91fab898",
-+        "rev": "e513db7b0a65def6f6e17bb55195dfe510871944",
-         "type": "github"
-       },
-       "original": {
-@@ -39,24 +18,27 @@
-     },
-     "root": {
-       "inputs": {
--        "fenix": "fenix",
--        "nixpkgs": "nixpkgs"
-+        "nixpkgs": "nixpkgs",
-+        "rust-overlay": "rust-overlay"
-       }
-     },
--    "rust-analyzer-src": {
--      "flake": false,
-+    "rust-overlay": {
-+      "inputs": {
-+        "nixpkgs": [
-+          "nixpkgs"
-+        ]
-+      },
-       "locked": {
--        "lastModified": 1790847093,
--        "narHash": "sha256-rdozQQrPNIUIRX8Wy8A58IUCPARJ3UNQI1JeXaFACgk=",
--        "owner": "rust-lang",
--        "repo": "rust-analyzer",
--        "rev": "bcf0514497034e1156f3cc2bb72b99cc9634a949",
-+        "lastModified": 1792480937,
-+        "narHash": "sha256-arni7i+yH5ZnkvAN9UotvhMml5+fZyXcMHpiOvI3WFY=",
-+        "owner": "oxalica",
-+        "repo": "rust-overlay",
-+        "rev": "5424e1e6dda30b0626935d2a03a6526db4858d60",
-         "type": "github"
-       },
-       "original": {
--        "owner": "rust-lang",
--        "ref": "nightly",
--        "repo": "rust-analyzer",
-+        "owner": "oxalica",
-+        "repo": "rust-overlay",
-         "type": "github"
-       }
+@@ -1,6 +1,6 @@
+ use std::{
+     backtrace::Backtrace,
+-    sync::{LockResult, MutexGuard, TryLockError},
++    sync::{LockResult, MutexGuard, TryLockError, TryLockResult},
+     time::{Duration, Instant},
+ };
+ 
+@@ -58,4 +58,8 @@ impl<T> Mutex<T> {
+             }
+         }
      }
++
++    pub fn try_lock(&self) -> TryLockResult<MutexGuard<'_, T>> {
++        self.inner.try_lock()
++    }
+ }
 ```
 
-**File**: `flake.nix` (modified, +28/-31)
+**File**: `mirrord/layer-lib/src/proxy_connection.rs` (modified, +19/-47)
 ```diff
-@@ -1,8 +1,8 @@
- {
-   inputs = {
-     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
--    fenix = {
--      url = "github:nix-community/fenix";
-+    rust-overlay = {
-+      url = "github:oxalica/rust-overlay";
-       inputs.nixpkgs.follows = "nixpkgs";
-     };
-   };
-@@ -26,41 +26,38 @@
-                 # Packages required to build the rust workspace
-                 rustPackages =
-                   let
--                    rust-toolchain =
--                      let
--                        fenix = inputs.fenix.packages.${system};
+@@ -1,11 +1,11 @@
+-//! Common ProxyConnection implementation shared between Unix and Windows layers.
++//! Common [`ProxyConnection`] implementation shared between Unix and Windows layers.
++
+ use std::{
+-    collections::HashMap,
+     fmt::Debug,
+     io,
+     net::{SocketAddr, TcpStream},
+     sync::{
+-        OnceLock, PoisonError,
++        Arc, OnceLock, PoisonError,
+         atomic::{AtomicU64, Ordering},
+     },
+     time::Duration,
+@@ -14,15 +14,18 @@ use std::{
+ use mirrord_intproxy_protocol::{
+     IsLayerRequest, IsLayerRequestWithResponse, LayerId, LayerToProxyMessage, LocalMessage,
+     MessageId, NewSessionRequest, ProxyToLayerMessage,
+-    codec::{self, CodecError, SyncDecoder, SyncEncoder},
++    codec::{self, CodecError, SyncEncoder},
+ };
+ use thiserror::Error;
+ 
+ use crate::{
+     error::{HookError, HookResult},
+     mutex::Mutex,
++    proxy_connection::responses::ResponseManager,
+ };
+ 
++mod responses;
++
+ // TODO: We don't really need a lock, we just need a type that:
+ //  1. Can be initialized as static (with a const constructor or whatever)
+ //  2. Is `Sync` (because shared static vars have to be).
+@@ -40,9 +43,7 @@ pub static mut PROXY_CONNECTION: OnceLock<ProxyConnection> = OnceLock::new();
+ #[derive(Debug, Error)]
+ pub enum ProxyError {
+     #[error("{0}")]
+-    CodecError(#[from] CodecError),
+-    #[error("connection closed")]
+-    ConnectionClosed,
++    CodecError(#[from] Arc<CodecError>),
+     #[error("unexpected response: {0:?}")]
+     UnexpectedResponse(
+         /// Boxed due to large size difference.
+@@ -58,18 +59,24 @@ pub enum ProxyError {
+     IoFailed(#[from] io::Error),
+ }
+ 
++impl From<CodecError> for ProxyError {
++    fn from(value: CodecError) -> Self {
++        Arc::new(value).into()
++    }
++}
++
+ impl<T> From<PoisonError<T>> for ProxyError {
+     fn from(_value: PoisonError<T>) -> Self {
+         Self::LockPoisoned
+     }
+ }
+ 
+-pub type Result<T> = core::result::Result<T, ProxyError>;
++pub type Result<T, E = ProxyError> = core::result::Result<T, E>;
+ 
+ #[derive(Debug)]
+ pub struct ProxyConnection {
+     sender: Mutex<SyncEncoder<LocalMessage<LayerToProxyMessage>, TcpStream>>,
+-    responses: Mutex<ResponseManager>,
++    responses: ResponseManager,
+     next_message_id: AtomicU64,
+     layer_id: LayerId,
+     proxy_addr: SocketAddr,
+@@ -101,15 +108,15 @@ impl ProxyConnection {
+             inner: LayerToProxyMessage::NewSession(session),
+         })?;
+ 
+-        let mut responses = ResponseManager::new(receiver);
++        let responses = ResponseManager::new(receiver);
+         let response = responses.receive(0)?;
+         let ProxyToLayerMessage::NewSession(layer_id) = &response else {
+             return Err(ProxyError::UnexpectedResponse(Box::new(response)));
+         };
+ 
+         Ok(Self {
+             sender: Mutex::new(sender),
+-            responses: Mutex::new(responses),
++            responses,
+             next_message_id: AtomicU64::new(1),
+             layer_id: *layer_id,
+             proxy_addr,
+@@ -135,7 +142,7 @@ impl ProxyConnection {
+     }
+ 
+     pub fn receive(&self, response_id: u64) -> Result<ProxyToLayerMessage> {
+-        let response = self.responses.lock()?.receive(response_id)?;
++        let response = self.responses.receive(response_id)?;
+         match response {
+             ProxyToLayerMessage::ProxyFailed {
+                 agent_reported: true,
+@@ -179,41 +186,6 @@ impl ProxyConnection {
+     }
+ }
+ 
+-#[derive(Debug)]
+-struct ResponseManager {
+-    receiver: SyncDecoder<LocalMessage<ProxyToLayerMessage>, TcpStream>,
+-    outstanding_responses: HashMap<u64, ProxyToLayerMessage>,
+-}
 -
--                        toolchainName = {
--                          name = "1.99.1";
--                          sha256 = "sha256-+xUr6Al1wZSqX8aEsq7DpuFOK4Ve/i+qTl+K5uWQ9GM=";
--                        };
+-impl ResponseManager {
+-    fn new(receiver: SyncDecoder<LocalMessage<ProxyToLayerMessage>, TcpStream>) -> Self {
+-        Self {
+-            receiver,
+-            outstanding_responses: Default::default(),
+-        }
+-    }
 -
--                        components = with fenix.fromToolchainName toolchainName; [
-+                    rustToolchain =
-+                      if stdenv.hostPlatform.isDarwin then
-+                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
-+                        # as well as the one for linux in order to work on the agent, which is linux-only. nixpkgs'
-+                        # toolchain only ships the host's standard library, so we use rust-overlay to add the
-+                        # cross-compilation ones.
-+                        let
-+                          rust-bin = inputs.rust-overlay.lib.mkRustBin { } pkgs;
-+                        in
-+                        [
-+                          (rust-bin.stable.latest.default.override {
-+                            extensions = [ "rust-src" ];
-+                            targets = [
-+                              "x86_64-apple-darwin"
-+                              "x86_64-unknown-linux-gnu"
-+                            ];
-+                          })
-+                          # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use rust-overlay's,
-+                          # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
-+                          rust-analyzer-unwrapped
-+                        ]
-+                      else
-+                        [
-                           cargo
-                           clippy
--                          rust-src
-                           rustc
-                           rustfmt
-+                          rust-analyzer
-                         ];
+-    fn receive(&mut self, response_id: u64) -> Result<ProxyToLayerMessage> {
+-        if let Some(response) = self.outstanding_responses.remove(&response_id) {
+-            return Ok(response);
+-        }
 -
--                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
--                        # as well as the one for linux in order to work on the agent, which is linux-only
--                        crossComponents =
--                          let
--                            crossTargets = lib.optionals stdenv.hostPlatform.isDarwin [
--                              "x86_64-apple-darwin"
--                              "x86_64-unknown-linux-gnu"
--                            ];
--                          in
--                          lib.map (target: (fenix.targets.${target}.fromToolchainName toolchainName).rust-std) crossTargets;
--                      in
--                      fenix.combine (components ++ crossComponents);
-                   in
--                  [
--                    rust-toolchain
--                    # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use a custom toolchain,
--                    # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
--                    rust-analyzer-unwrapped
-+                  rustToolchain
-+                  ++ [
-                     rustPlatform.bindgenHook
-                     # Required to build `containerd-client`
-                     protobuf
+-        loop {
+-            let response = self
+-                .receiver
+-                .receive()?
+-                .ok_or(ProxyError::ConnectionClosed)?;
+-
+-            if response.message_id == response_id {
+-                break Ok(response.inner);
+-            }
+-
+-            self.outstanding_responses
+-                .insert(response.message_id, response.inner);
+-        }
+-    }
+-}
+-
+ /// Time a hooked call waits for the proxy connection to be established before falling
+ /// back to the pre-connection error path. Matches the worker's own connect timeout.
+ #[cfg(target_os = "windows")]
+```
+
+**File**: `mirrord/layer-lib/src/proxy_connection/responses.rs` (added, +320/-0)
+```diff
+@@ -0,0 +1,320 @@
++use std::{
++    collections::HashMap,
++    io,
++    net::TcpStream,
++    sync::{Arc, Condvar, TryLockError},
++};
++
++use mirrord_intproxy_protocol::{
++    LocalMessage, ProxyToLayerMessage,
++    codec::{CodecError, SyncDecoder},
++};
++
++use crate::{
++    mutex::Mutex,
++    proxy_connection::{ProxyError, Result},
++};
++
++pub type Decoder = SyncDecoder<LocalMessage<ProxyToLayerMessage>, TcpStream>;
++
++/// Manages response reception on a single [`Decoder`] shared by all threads in the current process.
++#[derive(Debug)]
++pub struct ResponseManager {
++    /// Decoder that receives responses from the proxy.
++    receiver: Mutex<Result<Decoder, Arc<CodecError>>>,
++    /// Stores the state of threads running [`Self::receive`].
++    state: Mutex<HashMap<u64, Slot>>,
++}
++
++impl ResponseManager {
++    pub fn new(receiver: Decoder) -> Self {
++        Self {
++            receiver: Mutex::new(Ok(receiver)),
++            state: Default::default(),
++        }
++    }
++
++    pub fn receive(&self, response_id: u64) -> Result<ProxyToLayerMessage> {
++        let mut state = self.state.lock()?;
++        loop {
++            // Check if some other thread already received our response.
++            // This also clears our stale `Waiting` slot, if any.
++            if let Some(Slot::Ready(payload)) = state.remove(&response_id) {
++                return Ok(payload);
++            }
++
++            let mut receiver = match self.receiver.try_lock() {
++                Ok(receiver) => receiver,
++                Err(TryLockError::Poisoned(..)) => return Err(ProxyError::LockPoisoned),
++                // Some other thread is reading from the socket, wait until it notifies us.
++                // We are notified when our response is ready, when the reading thread leaves,
++                // or spuriously, so we always recheck the state.
++                Err(TryLockError::WouldBlock) => {
++                    let condvar = Arc::new(Condvar::new());
++                    state.insert(response_id, Slot::Waiting(condvar.clone()));
++                    #[cfg(not(test))]
++                    {
++                        // Many things can go wrong in multi-threaded code injected via dynamic library.
++                        // We use a timeout just to be more safe.
++                        state = condvar
++                            .wait_timeout(state, std::time::Duration::from_millis(100))?
++                            .0;
++                    }
++                    #[cfg(test)]
++                    {
++                        // In unit tests, we assert that wakeups arrive as expected.
++                        state = condvar.wait(state)?;
++                    }
++                    continue;
++                }
++            };
++            let decoder = receiver.as_mut().map_err(|error| error.clone())?;
++
++            let result = loop {
++                drop(state);
++                let result = decoder
++                    .receive()
++                    .and_then(|res| {
++                        res.ok_or_else(|| io::Error::from(io::ErrorKind::UnexpectedEof).into())
++                    })
++                    .map_err(Arc::new);
++                state = self.state.lock()?;
++                match result {
++                    Ok(response) if response.message_id == response_id => break Ok(response.inner),
++                    Ok(response) => {
++                        // Store responses meant for other threads, and wake them if they're waiting.
++                        if let Some(Slot::Waiting(condvar)) =
++                            state.insert(response.message_id, Slot::Ready(response.inner))
++                        {
++                            condvar.notify_one();
++                        }
++                    }
++                    Err(error) => break Err(error),
++                }
++            };
++
++            let mut waiting = state.values().filter_map(Slot::waiting);
++            match &result {
++                // Hand the reading over to one of the waiting threads.
++                Ok(..) => {
++                    drop(receiver);
++                    if let Some(condvar) = waiting.next() {
++                        condvar.notify_one();
++                    }
++                }
++                // The stream is no longer usable.
++                // Wake all waiting threads.
++                Err(error) => {
++                    *receiver = Err(error.clone());
++                    drop(receiver);
++                    waiting.for_each(Condvar::notify_one);
++                }
++            }
++
++            break result.map_err(From::from);
++        }
++    }
++}
++
++#[derive(Debug)]
++enum Slot {
++    /// A thread is waiting on this [`Condvar`], paired with [`ResponseManager::state`].
++    Waiting(Arc<Condvar>),
++    Ready(ProxyToLayerMessage),
++}
++
++impl Slot {
++    fn waiting(&self) -> Option<&Condvar> {
++        match self {
++            Self::Waiting(cond) => Some(cond),
++            Self::Ready(..) => None,
++        }
+
 ```
 
 ---
 
-### Incident Patch 2: `b8232d19` (2026-10-20)
-**Commit Message**: nix: get rid of fenix (on linux)
+### Incident Patch 2: `438a1fe5` (2026-10-21)
+**Commit Message**: Bound out_of_order_responses with the test timeout
 
-**File**: `changelog.d/+nix-fenix.internal.md` (added, +1/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `mirrord/layer-lib/src/proxy_connection/responses.rs` (modified, +5/-1)
+```diff
+@@ -238,7 +238,11 @@ mod tests {
+         }
+ 
+         for response_id in [1, 2, 3] {
+-            assert_eq!(manager.receive(response_id).unwrap(), payload(response_id));
++            let receiver = spawn_receive(&manager, response_id);
++            assert_eq!(
++                receiver.recv_timeout(TIMEOUT).unwrap().unwrap(),
++                payload(response_id)
++            );
+         }
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `e1cfaaca` (2026-10-21)
+**Commit Message**: Merge pull request #5126 from metalbear-co/docs-config-link-fixes
+
+Point config reference links at their final docs URLs
+
+**File**: `changelog.d/+config-docs-links.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Stop using `fenix` to get the Rust toolchain on Linux now that we're on stable.
++Point config reference links at their final docs URLs and give the configuration page a longer description.
 ```
 
-**File**: `flake.lock` (modified, +18/-36)
+**File**: `mirrord-schema.json` (modified, +8/-8)
 ```diff
-@@ -1,33 +1,12 @@
- {
-   "nodes": {
--    "fenix": {
--      "inputs": {
--        "nixpkgs": [
--          "nixpkgs"
--        ],
--        "rust-analyzer-src": "rust-analyzer-src"
--      },
--      "locked": {
--        "lastModified": 1790943170,
--        "narHash": "sha256-90jjxCm7QgknpZ77ZMqwnKmQndqtRST/ekDtx11IpHs=",
--        "owner": "nix-community",
--        "repo": "fenix",
--        "rev": "c8ed30fa2e75f7191a0fb8398a4a84dd009d12fc",
--        "type": "github"
--      },
--      "original": {
--        "owner": "nix-community",
--        "repo": "fenix",
--        "type": "github"
--      }
--    },
-     "nixpkgs": {
-       "locked": {
--        "lastModified": 1790736253,
--        "narHash": "sha256-Z2q/klLczs/xdnH0wZa6HsP3Ru6Rq9aDilNCRYwg3hE=",
-+        "lastModified": 1792488032,
-+        "narHash": "sha256-RkAXQ3+a5rHMiP97Er7AawR1kvEXX9tK1mhiWedOPTc=",
-         "owner": "NixOS",
-         "repo": "nixpkgs",
--        "rev": "1ec21f6ee4970c41e0824c539c52a50e91fab898",
-+        "rev": "e513db7b0a65def6f6e17bb55195dfe510871944",
-         "type": "github"
-       },
-       "original": {
-@@ -39,24 +18,27 @@
-     },
-     "root": {
-       "inputs": {
--        "fenix": "fenix",
--        "nixpkgs": "nixpkgs"
-+        "nixpkgs": "nixpkgs",
-+        "rust-overlay": "rust-overlay"
-       }
-     },
--    "rust-analyzer-src": {
--      "flake": false,
-+    "rust-overlay": {
-+      "inputs": {
-+        "nixpkgs": [
-+          "nixpkgs"
-+        ]
-+      },
-       "locked": {
--        "lastModified": 1790847093,
--        "narHash": "sha256-rdozQQrPNIUIRX8Wy8A58IUCPARJ3UNQI1JeXaFACgk=",
--        "owner": "rust-lang",
--        "repo": "rust-analyzer",
--        "rev": "bcf0514497034e1156f3cc2bb72b99cc9634a949",
-+        "lastModified": 1792480937,
-+        "narHash": "sha256-arni7i+yH5ZnkvAN9UotvhMml5+fZyXcMHpiOvI3WFY=",
-+        "owner": "oxalica",
-+        "repo": "rust-overlay",
-+        "rev": "5424e1e6dda30b0626935d2a03a6526db4858d60",
-         "type": "github"
-       },
-       "original": {
--        "owner": "rust-lang",
--        "ref": "nightly",
--        "repo": "rust-analyzer",
-+        "owner": "oxalica",
-+        "repo": "rust-overlay",
-         "type": "github"
-       }
-     }
+@@ -289,7 +289,7 @@
+   "additionalProperties": false,
+   "$defs": {
+     "AdvancedFsUserConfig": {
+-      "description": "Allows the user to specify the default behavior for file operations:\n\n1. `\"read\"` or `true` - Read from the remote file system (default)\n2. `\"write\"` - Read/Write from the remote file system.\n3. `\"local\"` or `false` - Read from the local file system.\n4. `\"localwithoverrides\"` - perform fs operation locally, unless the path matches a pre-defined\n   or user-specified exception.\n\n> Note: by default, some paths are read locally or remotely, regardless of the selected FS mode.\n> This is described in further detail below.\n\nBesides the default behavior, the user can specify behavior for specific regex patterns.\nCase insensitive.\n\n1. `\"read_write\"` - List of patterns that should be read/write remotely.\n2. `\"read_only\"` - List of patterns that should be read only remotely.\n3. `\"local\"` - List of patterns that should be read locally.\n4. `\"not_found\"` - List of patterns that should never be read nor written. These files should be\n   treated as non-existent.\n4. `\"mapping\"` - Map of patterns and their corresponding replacers. The replacement happens before any specific behavior as defined above or mode (uses [`Regex::replace`](https://docs.rs/regex/latest/regex/struct.Regex.html#method.replace))\n\nThe logic for choosing the behavior is as follows:\n\n\n1. Check against \"mapping\" if path needs to be replaced, if matched then continue to next step\n   with new path after replacements otherwise continue as usual.\n2. Check if one of the patterns match the file path, do the corresponding action. There's no\n   specified order if two lists match the same path, we will use the first one (and we do not\n   guarantee what is first).\n\n   **Warning**: Specifying the same path in two lists is unsupported and can lead to undefined\n   behaviour.\n\n3. There are pre-defined exceptions to the set FS mode.\n  1. Paths that match the pre-defined patterns [for Linux/MacOS](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/read_local_by_default.rs)\n     or [for Windows](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/read_local_by_default.rs)\n     are read locally by default.\n  2. Paths that match the pre-defined patterns [for Linux/MacOS](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/read_remote_by_default.rs)\n     or [for Windows](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/read_remote_by_default.rs)\n     are read remotely by default when the mode is `localwithoverrides`.\n  3. Paths that match the pre-defined patterns [for Linux/MacOS](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/not_found_by_default.rs)\n     or [for Windows](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/not_found_by_default.rs)\n     under the running user's home directory will not be found by the application when the mode\n     is not `local`.\n\n  In order to override that default setting for a path, or a pattern, include it the\n  appropriate pattern set from above. E.g. in order to read files under `/etc/` remotely even\n  though it is covered by the set of pre-defined patterns that are read locally by default,\n  add `\"^/etc/.\"` to the `read_only` set.\n\n4. If none of the above match, use the default behavior (mode).\n\nFor more information, check the file operations\n[technical reference](https://metalbear.com/mirrord/docs/reference/fileops/).\n\n```json\n{\n  \"feature\": {\n    \"fs\": {\n      \"mode\": \"write\",\n      \"read_write\": \".+\\\\.json\" ,\n      \"read_only\": [ \".+\\\\.yaml\", \".+important-file\\\\.txt\" ],\n      \"local\": [ \".+\\\\.js\", \".+\\\\.mjs\" ],\n      \"not_found\": [ \"\\\\.config/gcloud\" ],\n      \"prefetch\": [ \"/etc/ssl\" ]\n    }\n  }\n}\n```\n\n#### Windows paths {#fs-windows-paths}\n\nOn Windows, the patterns of `read_write`, `read_only`, `local`, `not_found` and `mapping` are\nmatched against two forms of the path, both with forward slashes:\n\n| Form | `D:\\Workspaces\\myapp\\app.json` becomes | A pattern for this form matches |\n|---|---|---|\n| without the drive | `/Workspaces/myapp/app.json` | the path on every drive |\n| with the drive | `D:/Workspaces/myapp/app.json` | the path on that drive only |\n\nA pattern applies when it matches either form. So `^/Workspaces/` matches the folder on\nevery drive, and `^D:/Workspaces/` matches it on `D:` only. Like the rest of a pattern, the\ndrive letter ignores case.\n\nWrite patterns with forward slashes. A pattern that needs a backslash in the path (`\\\\`, or\n`C:\\` copied from Explorer) never matches, since neither form has one, and mirrord warns about\nit. A backslash that escapes a regex character (`\\.`, `\\d`), or one choice in a class\n(`[\\\\/]`), is fine.\n\
 ```
 
-**File**: `flake.nix` (modified, +28/-31)
+**File**: `mirrord/config/src/feature.rs` (modified, +2/-2)
 ```diff
-@@ -1,8 +1,8 @@
- {
-   inputs = {
-     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
--    fenix = {
--      url = "github:nix-community/fenix";
-+    rust-overlay = {
-+      url = "github:oxalica/rust-overlay";
-       inputs.nixpkgs.follows = "nixpkgs";
-     };
-   };
-@@ -26,41 +26,38 @@
-                 # Packages required to build the rust workspace
-                 rustPackages =
-                   let
--                    rust-toolchain =
--                      let
--                        fenix = inputs.fenix.packages.${system};
--
--                        toolchainName = {
--                          name = "1.99.1";
--                          sha256 = "sha256-+xUr6Al1wZSqX8aEsq7DpuFOK4Ve/i+qTl+K5uWQ9GM=";
--                        };
--
--                        components = with fenix.fromToolchainName toolchainName; [
-+                    rustToolchain =
-+                      if stdenv.hostPlatform.isDarwin then
-+                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
-+                        # as well as the one for linux in order to work on the agent, which is linux-only. nixpkgs'
-+                        # toolchain only ships the host's standard library, so we use rust-overlay to add the
-+                        # cross-compilation ones.
-+                        let
-+                          rust-bin = inputs.rust-overlay.lib.mkRustBin { } pkgs;
-+                        in
-+                        [
-+                          (rust-bin.stable.latest.default.override {
-+                            extensions = [ "rust-src" ];
-+                            targets = [
-+                              "x86_64-apple-darwin"
-+                              "x86_64-unknown-linux-gnu"
-+                            ];
-+                          })
-+                          # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use rust-overlay's,
-+                          # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
-+                          rust-analyzer-unwrapped
-+                        ]
-+                      else
-+                        [
-                           cargo
-                           clippy
--                          rust-src
-                           rustc
-                           rustfmt
-+                          rust-analyzer
-                         ];
--
--                        # On darwin we need the standard library for x86 too in order to compile universal binaries,
--                        # as well as the one for linux in order to work on the agent, which is linux-only
--                        crossComponents =
--                          let
--                            crossTargets = lib.optionals stdenv.hostPlatform.isDarwin [
--                              "x86_64-apple-darwin"
--                              "x86_64-unknown-linux-gnu"
--                            ];
--                          in
--                          lib.map (target: (fenix.targets.${target}.fromToolchainName toolchainName).rust-std) crossTargets;
--                      in
--                      fenix.combine (components ++ crossComponents);
-                   in
--                  [
--                    rust-toolchain
--                    # The wrapper points `RUST_SRC_PATH` to nixpkgs' rust toolchain, but we use a custom toolchain,
--                    # so let rust-analyzer find out where it is on its own with `rustc --print sysroot`.
--                    rust-analyzer-unwrapped
-+                  rustToolchain
-+                  ++ [
-                     rustPlatform.bindgenHook
-                     # Required to build `containerd-client`
-                     protobuf
+@@ -27,7 +27,7 @@ pub mod split_queues;
+ /// Controls mirrord features.
+ ///
+ /// See the
+-/// [technical reference, Technical Reference](https://metalbear.com/mirrord/docs/reference/)
++/// [technical reference, Technical Reference](https://metalbear.com/mirrord/docs/reference/architecture)
+ /// to learn more about what each feature does.
+ ///
+ /// The [`env`](#feature-env), [`fs`](#feature-fs) and [`network`](#feature-network) options
+@@ -97,7 +97,7 @@ pub struct FeatureConfig {
+     /// ### feature.copy_target {#feature-copy_target}
+     ///
+     /// Creates a new copy of the target. mirrord will use this copy instead of the original target
+-    /// (e.g. intercept network traffic). This feature requires a [mirrord operator](https://metalbear.com/mirrord/docs/overview/teams/?utm_source=copytarget).
++    /// (e.g. intercept network traffic). This feature requires a [mirrord operator](https://metalbear.com/mirrord/docs/getting-started/what-is-mirrord#mirrord-for-teams).
+     ///
+     /// This feature is not compatible with rollout targets and running without a target
+     /// (`targetless` mode).
+```
+
+**File**: `mirrord/config/src/feature/env.rs` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ pub const MIRRORD_OVERRIDE_ENV_FILE_ENV: &str = "MIRRORD_OVERRIDE_ENV_VARS_FILE"
+ /// Which environment variables to load from the remote pod are controlled by setting either
+ /// [`include`](#feature-env-include) or [`exclude`](#feature-env-exclude).
+ ///
+-/// See the environment variables [reference](https://metalbear.com/mirrord/docs/reference/env/) for more details.
++/// See the environment variables [reference](https://metalbear.com/mirrord/docs/reference/env) for more details.
+ ///
+ /// ```json
+ /// {
+```
+
+**File**: `mirrord/config/src/feature/fs.rs` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ pub mod mode;
+ ///
+ /// Changes file operations behavior based on user configuration.
+ ///
+-/// See the file operations [reference](https://metalbear.com/mirrord/docs/reference/fileops/)
++/// See the file operations [reference](https://metalbear.com/mirrord/docs/reference/fileops)
+ /// for more details, and [fs advanced](#fs-advanced) for more information on how to fully setup
+ /// mirrord file operations.
+ ///
+```
+
+**File**: `mirrord/config/src/feature/fs/advanced.rs` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ pub const PREFETCH_TIMEOUT_DEFAULT: u64 = 30;
+ /// 4. If none of the above match, use the default behavior (mode).
+ ///
+ /// For more information, check the file operations
+-/// [technical reference](https://metalbear.com/mirrord/docs/reference/fileops/).
++/// [technical reference](https://metalbear.com/mirrord/docs/reference/fileops).
+ ///
+ /// ```json
+ /// {
+```
+
+**File**: `mirrord/config/src/feature/network.rs` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ pub mod outgoing;
+ 
+ /// Controls mirrord network operations.
+ ///
+-/// See the network traffic [reference](https://metalbear.com/mirrord/docs/reference/traffic/)
++/// See the network traffic [reference](https://metalbear.com/mirrord/docs/reference/traffic)
+ /// for more details.
+ ///
+ /// ```json
+```
+
+**File**: `mirrord/config/src/feature/network/incoming.rs` (modified, +2/-2)
+```diff
+@@ -24,7 +24,7 @@ use http_filter::*;
+ ///
+ /// Controls the incoming TCP traffic feature.
+ ///
+-/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic/#incoming) for more
++/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic#incoming) for more
+ /// details.
+ ///
+ /// Incoming traffic supports 2 modes of operation:
+@@ -390,7 +390,7 @@ where
+ 
+ /// Controls the incoming TCP traffic feature.
+ ///
+-/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic/#incoming) for more
++/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic#incoming) for more
+ /// details.
+ ///
+ /// Incoming traffic supports 3 [modes](#feature-network-incoming-mode) of operation:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5128** (closed): Record rosetta fallback from parent rather than the x86 emulated process (@0x00A5)
+- **PR #5126** (2026-10-21): Point config reference links at their final docs URLs (@eyalb181)
+- **PR #5125** (2026-10-21): Improve concurrency around layer<->intproxy connection (@Razz4780)
+- **PR #5124** (2026-10-22): INT-781 Point at the Helm value when an operator feature is switched off in the chart (@vladrbg)
 - **PR #5123** (2026-10-20): eMudhra distrust patch (@0x00A5)
 - **PR #5122** (2026-10-20): COR-1974 Operator install tip (@0x00A5)
-- **PR #5120** (2026-10-20): nix: get rid of fenix (on linux) (@iniw)
-- **PR #5117** (2026-10-20): nix: use pnpm 10 in the devshell (@iniw)
-- **PR #5116** (2026-10-20): CI image rust 1.99.1 (@0x00A5)
-- **PR #5113** (2026-10-20): Remove all rust toolchain shenanigans (@0x00A5)
 
 ---
 
@@ -1911,21 +2022,21 @@ nix: get rid of fenix (on linux)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5120 from metalbear-co/push-vmzuxknvloto
+## X. Fixed concurrency issues in layer ProxyConnection
 
 **RULE**:
-When implementing operations in `changelog.d/+nix-fenix.internal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mirrord/layer-lib/clippy.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c439f1f`: Merge pull request #5120 from metalbear-co/push-vmzuxknvloto. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c2c1cd4`: Fixed concurrency issues in layer ProxyConnection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+nix-fenix.internal.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mirrord/layer-lib/clippy.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Stop using `fenix` to get the Rust toolchain on Linux now that we're on stable.
+    { path = "std::thread::park_timeout", reason = "reaches std::thread::current. See layer-lib::logging." },
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1935,4 +2046,4 @@ Stop using `fenix` to get the Rust toolchain on Linux now that we're on stable.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c439f1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c2c1cd4` are properly handled with clean fallback behavior.

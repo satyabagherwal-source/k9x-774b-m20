@@ -4408,3 +4408,5 @@ Every entry in this ledger must capture:
 | `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `d924d49e` | Multi-dimensional audit evidence | 2026-10-22T19:09:45.683Z |
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `4c59ff25` | Multi-dimensional audit evidence | 2026-10-22T19:09:46.440Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `cc62cce7` | Multi-dimensional audit evidence | 2026-10-22T19:09:54.435Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `a41ecdeb` | Multi-dimensional audit evidence | 2026-10-22T19:16:14.200Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `f0f76776` | Multi-dimensional audit evidence | 2026-10-22T19:16:27.905Z |

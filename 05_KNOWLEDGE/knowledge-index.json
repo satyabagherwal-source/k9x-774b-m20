@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T19:09:54.384Z",
+  "last_updated": "2026-10-22T19:16:27.854Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32688,8 +32688,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "41117e99",
-      "content_hash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
+      "source_version": "a41ecdeb",
+      "content_hash": "9b742df0e2793c4aac960c4e9edfaa79e15350888cf89c96fe44b24c0655b458",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -32712,6 +32712,11 @@
           "number": 3413,
           "title": "Merge pull request #5120 from metalbear-co/push-vmzuxknvloto",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3709,
+          "title": "Fixed concurrency issues in layer ProxyConnection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32719,7 +32724,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:26:36.397Z",
+      "verified_at": "2026-10-22T19:16:14.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33495,8 +33500,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "a880185c",
-      "content_hash": "3008496c3334a8e47d47d16c43d045a6d645d8e8343d6ecae3043a69e4cb5a00",
+      "source_version": "f0f76776",
+      "content_hash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -33519,6 +33524,11 @@
           "number": 3455,
           "title": "stop import from waiting forever (#54109)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3710,
+          "title": "bound sync packed index buffers to positioned download tasks (#54358)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33526,7 +33536,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:22:02.469Z",
+      "verified_at": "2026-10-22T19:16:27.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111416,6 +111426,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T19:09:54.374Z"
+    },
+    "rule-3709": {
+      "learning_id": "rule-3709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3709,
+      "title": "Fixed concurrency issues in layer ProxyConnection",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "a41ecdeb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:16:14.137Z"
+    },
+    "rule-3710": {
+      "learning_id": "rule-3710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3710,
+      "title": "bound sync packed index buffers to positioned download tasks (#54358)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "f0f76776",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:16:27.844Z"
     }
   },
   "aliases": {

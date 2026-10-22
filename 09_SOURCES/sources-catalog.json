@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "41117e99",
+    "sourceVersion": "a41ecdeb",
     "license": "MIT",
-    "contentHash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
-    "lastHarvestedAt": "2026-10-20T22:26:36.472Z",
+    "contentHash": "9b742df0e2793c4aac960c4e9edfaa79e15350888cf89c96fe44b24c0655b458",
+    "lastHarvestedAt": "2026-10-22T19:16:14.200Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "a880185c",
+    "sourceVersion": "f0f76776",
     "license": "Apache-2.0",
-    "contentHash": "3008496c3334a8e47d47d16c43d045a6d645d8e8343d6ecae3043a69e4cb5a00",
-    "lastHarvestedAt": "2026-10-21T00:22:02.537Z",
+    "contentHash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
+    "lastHarvestedAt": "2026-10-22T19:16:27.905Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
