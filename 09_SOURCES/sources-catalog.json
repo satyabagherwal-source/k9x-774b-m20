@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "9e24f135",
+    "sourceVersion": "28b8d3eb",
     "license": "Apache-2.0",
-    "contentHash": "ae02aa34d138e63d95b17b9e44f0827526ba8c42d2f452ddcfcbe7c69023c2e9",
-    "lastHarvestedAt": "2026-10-22T17:04:54.078Z",
+    "contentHash": "55960f3f253fd4161cf3a559a59adc9a1f5c73ec6bddcef547be52682bdeae12",
+    "lastHarvestedAt": "2026-10-22T20:30:27.282Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "911ec56e",
+    "sourceVersion": "69b67d33",
     "license": "MIT",
-    "contentHash": "33ecc935b138db8ccd981718779db2ffb0341d378daa3dd2e78ba9a7be02871d",
-    "lastHarvestedAt": "2026-10-20T04:57:06.214Z",
+    "contentHash": "f8fcdcc5a91ca1255d8a80c87702845ee9dde99b02196eecea943cde73635c59",
+    "lastHarvestedAt": "2026-10-22T20:30:15.775Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -6973,10 +6973,10 @@
     "repository": "chroma-core/chroma",
     "platform": "github",
     "sourceUrl": "https://github.com/chroma-core/chroma",
-    "sourceVersion": "ddc17cd7",
+    "sourceVersion": "52ce8448",
     "license": "Apache-2.0",
-    "contentHash": "317507d2a352d6d8e82b8d85d3dd3ba9c0a3862da1db3720546f193b198e9125",
-    "lastHarvestedAt": "2026-10-19T07:21:33.879Z",
+    "contentHash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
+    "lastHarvestedAt": "2026-10-22T20:30:28.077Z",
     "learningId": "learn-github-chroma-core-chroma"
   },
   "restatedev-restate": {
@@ -9573,10 +9573,10 @@
     "repository": "nodejs/undici",
     "platform": "github",
     "sourceUrl": "https://github.com/nodejs/undici",
-    "sourceVersion": "9f06d6bc",
+    "sourceVersion": "1f452240",
     "license": "MIT",
-    "contentHash": "fa6f322f7c9b2af1baa1aebbf5b2a4465654d29622cc93abf2fbc06e9a2ceddb",
-    "lastHarvestedAt": "2026-10-19T23:59:53.980Z",
+    "contentHash": "128d4224b2517c48095591f8c5336138acc9a330c70acc0fc7deb7f36fac7632",
+    "lastHarvestedAt": "2026-10-22T20:30:17.145Z",
     "learningId": "learn-github-nodejs-undici"
   },
   "jordansinger-swiftui-kit": {

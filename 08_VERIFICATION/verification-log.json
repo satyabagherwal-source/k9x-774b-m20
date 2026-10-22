@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-EVIO",
-    "timestamp": "2026-10-20T16:57:22.704Z",
-    "repository": "SeekStorm/SeekStorm",
-    "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "6ea6411fe87de9b4677ae0e799419d70cc6f2bd805c8ba068c7e3159dd244e2e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-N4VH",
-    "timestamp": "2026-10-20T17:03:48.077Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-N5YJ",
-    "timestamp": "2026-10-20T17:03:49.483Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "5efb9ed34defe6a0a3af692599ca2f0b8ac6e73a04df2b776e96f4ab66eba946",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-N6LB",
-    "timestamp": "2026-10-20T17:03:50.303Z",
-    "repository": "vikejs/vike",
-    "learningId": "learn-github-vikejs-vike",
-    "contentHash": "a701f7dd23b40ab7e84d4dc78db76b979d5b1b37c615a2772e0b3679ae9edf51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-NDRW",
     "timestamp": "2026-10-20T17:03:59.612Z",
     "repository": "zarf-dev/zarf",
@@ -7492,6 +7432,66 @@
     "contentHash": "b66d80ac9edb518cad9d4eb234fa1014ee417e770b1f982df7dd8f7c926838cd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-WCM4",
+    "timestamp": "2026-10-22T20:30:15.772Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "f8fcdcc5a91ca1255d8a80c87702845ee9dde99b02196eecea943cde73635c59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-WDO6",
+    "timestamp": "2026-10-22T20:30:17.142Z",
+    "repository": "nodejs/undici",
+    "learningId": "learn-github-nodejs-undici",
+    "contentHash": "128d4224b2517c48095591f8c5336138acc9a330c70acc0fc7deb7f36fac7632",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-WLHR",
+    "timestamp": "2026-10-22T20:30:27.279Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "55960f3f253fd4161cf3a559a59adc9a1f5c73ec6bddcef547be52682bdeae12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-WM3U",
+    "timestamp": "2026-10-22T20:30:28.075Z",
+    "repository": "chroma-core/chroma",
+    "learningId": "learn-github-chroma-core-chroma",
+    "contentHash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

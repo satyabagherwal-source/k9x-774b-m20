@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source**: github ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
-> **Source Version**: `9f06d6bc`  
+> **Source Version**: `1f452240`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:59:53.754Z  
+> **Timestamp**: 2026-10-22T20:30:16.931Z  
 > **Learning ID**: `learn-github-nodejs-undici`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nodejs-undici-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nodejs/undici](https://github.com/nodejs/undici))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:59:52.926Z  
+> **Harvest Timestamp**: 2026-10-22T20:30:16.617Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An HTTP/1.1 client, written from scratch for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7717 stars
+- **Stars / Engagement**: 7719 stars
 
 ---
 
@@ -703,407 +703,470 @@ await run()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `febada26` (2026-10-14)
-**Commit Message**: fix: ignore missing release ref during cleanup (#5891)
+### Incident Patch 1: `1f452240` (2026-10-22)
+**Commit Message**: fix(http2): keep persistent error sink on released streams (#5983)
 
-Signed-off-by: Matteo Collina <[REDACTED_EMAIL]>
+* fix(http2): keep persistent error sink on released streams
 
-**File**: `scripts/release.js` (modified, +5/-2)
+When an HTTP/2 session is torn down with an error (e.g. the idle reaper
+in onHttp2SessionIdleTimeout), Node fans that error out to every native
+stream still tracked in the session's internal state. A released stream
+that no longer has an 'error' listener then crashes the process with an
+unhandled `InformationalError: socket idle timeout` (#5936).
+
+releaseRequestStream, severRequestStream and releaseUpgradeStream only
+installed a one-shot `once('error', noop)` sink (and not at all in
+onError), so a single late error consumed it and the subsequent
+session-level error went unhandled.
+
+Keep a persistent `on('error', noop)` sink on every stream undici stops
+tracking, and add a noop fallback in onError when the real handler is
+removed. Retain the sink on upgrade streams instead of dropping it in
+onUpgradeStreamClose.
+
+Closes #5936.
+
+* test(http2): make idle reaper regression test cross-platform robust
+
+The released stream is only observable in the window between its 'end' and
+'close' events. On some platforms (Node 25/macOS) that window is too short to
+inspect
+
+**File**: `lib/dispatcher/client-h2.js` (modified, +23/-8)
 ```diff
-@@ -75,8 +75,11 @@ const release = async ({ github, context, versionTag, commitHash }) => {
-       ref: `heads/release/${versionTag}`
-     })
-   } catch (err) {
--    console.log("Couldn't delete release PR ref")
--    console.log(err)
-+    if (err.status === 422 && err.response?.data?.message === 'Reference does not exist') {
-+      return
-+    }
-+
-+    throw err
+@@ -253,8 +253,14 @@ function severRequestStream (stream) {
+     closeStreamSession(stream)
+   }
+ 
++  // #5936: Node can still deliver a session-level error to a native stream
++  // after undici has stopped tracking it (e.g. on idle session teardown). Keep
++  // a persistent noop error sink so the 'error' event is never emitted with no
++  // listener, which would crash the process. A single sink is enough even if
++  // one was already attached by the onError path, so clear it first.
+   if (!stream.destroyed && !stream.closed) {
+-    stream.once('error', noop)
++    stream.off('error', noop)
++    stream.on('error', noop)
    }
  }
  
+@@ -868,8 +874,8 @@ function closeStreamSession (stream) {
+ }
+ 
+ function onUpgradeStreamClose () {
+-  this.off('error', noop)
+-
++  // #5936: Retain the noop error sink so a session-level error delivered to
++  // this stream after undici detaches it cannot crash via an unhandled 'error'.
+   const state = this[kRequestStreamState]
+   this[kRequestStreamState] = null
+ 
+@@ -973,8 +979,11 @@ function releaseUpgradeStream (stream) {
+ 
+   removeUpgradeStreamListeners(stream)
+ 
++  // #5936: removeUpgradeStreamListeners() dropped the noop sink; re-attach a
++  // persistent one so a late session-level error on this (possibly still native
++  // tracked) stream cannot crash via an unhandled 'error'.
+   if (!stream.destroyed && !stream.closed) {
+-    stream.once('error', noop)
++    stream.on('error', noop)
+   }
+ }
+ 
+@@ -1407,12 +1416,14 @@ function releaseRequestStream (stream) {
+     detachRequestFromStream(request)
+   }
+ 
+-  // A closed or destroyed stream cannot emit further events; leaving the
+-  // listeners in place saves the removal scans (they are collected with
+-  // the stream). All handlers bail out when the stream state is gone.
++  // #5936: Node can deliver a session-level error to a released stream before
++  // its native handle is dropped (e.g. on idle session teardown). Attach a
++  // persistent noop error sink so a late 'error' always has a listener and
++  // cannot crash the process. A closed/destroyed stream cannot emit further
++  // events and is no longer tracked natively, so skip the listener teardown.
+   if (!stream.destroyed && !stream.closed) {
+     removeRequestStreamListeners(stream)
+-    stream.once('error', noop)
++    stream.on('error', noop)
+   }
+ }
+ 
+@@ -1631,6 +1642,10 @@ function onError (err) {
+   }
+ 
+   stream.off('error', onError)
++  // #5936: The stream has already errored, but Node may destroy it again with a
++  // session-level error before the native handle is released. Keep a persistent
++  // noop error sink so that re-delivery cannot go unhandled.
++  stream.on('error', noop)
+ 
+   // Node's HTTP/2 implementation can turn an incomplete Content-Length body
+   // into a protocol stream error instead of emitting 'end'. Prefer the
 ```
 
-**File**: `test/release.js` (modified, +41/-2)
+**File**: `test/issue-5936.js` (added, +108/-0)
 ```diff
-@@ -1,8 +1,8 @@
- 'use strict'
- 
--const { strictEqual } = require('node:assert')
-+const { rejects, strictEqual } = require('node:assert')
- const { test } = require('node:test')
--const { getPreviousRelease } = require('../scripts/release')
-+const { getPreviousRelease, release } = require('../scripts/release')
- 
- test('getPreviousRelease uses the latest release from the current major line', () => {
-   const previousRelease = getPreviousRelease({
-@@ -39,3 +39,42 @@ test('getPreviousRelease returns undefined when the current major has no previou
- 
-   strictEqual(previousRelease, undefined)
- })
+@@ -0,0 +1,108 @@
++'use strict'
 +
-+const createGithub = (deleteRef) => ({
-+  rest: {
-+    repos: {
-+      listReleases: async () => ({ data: [] }),
-+      generateReleaseNotes: async () => ({ data: { body: 'Release notes' } }),
-+      createRelease: async () => {}
-+    },
-+    git: { deleteRef }
++const assert = require('node:assert')
++const { once } = require('node:events')
++const { createSecureServer } = require('node:http2')
++const { setTimeout: sleep } = require('node:timers/promises')
++const { test } = require('node:test')
++const pem = require('@metcoder95/https-pem')
++
++const { Client } = require('..')
++const { kHTTP2Session } = require('../lib/core/symbols.js')
++
++// Node keeps every live native stream in the session's internal state, and only
++// drops the entry once the stream fully closes. A stream that has fired 'end'
++// (so undici releases it via completeRequestStream) is still tracked here during
++// the window between 'end' and 'close'. The HTTP/2 idle reaper (#5406) can
++// destroy such a session with an error in this window, and Node fans that error
++// out to every still-tracked stream. If a released stream has no 'error'
++// listener the process crashes (#5936).
++function sessionStreams (client) {
++  const session = client[kHTTP2Session]
++  if (session == null) {
++    return []
 +  }
-+})
 +
-+const releaseArgs = {
-+  github: null,
-+  context: { repo: { owner: 'nodejs', repo: 'undici' } },
-+  versionTag: 'v8.0.0',
-+  commitHash: 'abc123'
++  for (const sym of Object.getOwnPropertySymbols(session)) {
++    const state = session[sym]
++    if (state && typeof state === 'object' && state.streams) {
++      return [...state.streams.values()]
++    }
++  }
++
++  return []
 +}
 +
-+test('release treats a missing release PR ref as a no-op', async () => {
-+  const github = createGithub(async () => {
-+    const error = new Error('Reference does not exist')
-+    error.status = 422
-+    error.response = { data: { message: 'Reference does not exist' } }
-+    throw error
++async function waitFor (predicate, timeout = 1000) {
++  const deadline = Date.now() + timeout
++
++  while (Date.now() < deadline) {
++    if (predicate()) {
++      return true
++    }
++
++    await sleep(0)
++  }
++
++  return predicate()
++}
++
++test('Issue #5936 - released streams retain an error sink so the idle reaper cannot crash', async (t) => {
++  const server = createSecureServer(await pem.generate({ opts: { keySize: 2048 } }))
++  server.on('error', () => {})
++  server.on('session', (session) => {
++    session.on('error', () => {})
++  })
++  server.on('stream', (stream) => {
++    stream.on('error', () => {})
++    stream.respond({ ':status': 200 })
++    stream.end('hello')
 +  })
 +
-+  await release({ ...releaseArgs, github })
-+})
++  t.after(() => server.close())
++  await once(server.listen(0), 'listening')
 +
-+test('release propagates other release PR ref deletion errors', async () => {
-+  const error = new Error('Forbidden')
-+  error.status = 403
-+  const github = createGithub(async () => {
-+    throw error
++  const client = new Client(`https://localhost:${server.address().port}`, {
++    allowH2: true,
++    connect: {
++      rejectUnauthorized: false
++    }
 +  })
++  t.after(() => client.close())
 +
-+  await rejects(release({ ...releaseArgs, github }), (actual) => actual === error)
++  const response = await client.request({ path: '/', method: 'GET' })
++  await response.body.dump()
++
++  // 'end' has fired, so undici released the stream and it is still natively
++  // tracked during the 'end' -> 'close' window. On some platforms this window is
++  // too short to observe (the stream closes before we can inspect it), in which
++  // case the teardown race that this issue describes cannot manifest either.
++  const found = await waitFor(() => sessionStreams(client).length === 1, 50)
++  if (!found) {
++    t.skip('idle-teardown window not observable; released stream already closed')
++    return
++  }
++
++  const stream = sessionStreams(client)[0]
++
++  // A released stream must keep a persistent error sink. If it only installed a
++  // one-shot sink, a first late error would consume it and a second session-level
++  // error (as the idle reaper emits) would be delivered with no listener, which
++  // crashes the process.
++  assert.strictEqual(stream.listenerCount('error'), 1)
++
++  // Simulate the first late error (e.g. a late RST_STREAM / frame error) that
++  // arrives after undici has finished with the request.
++  stream.emit('error', new Error('late stream error'))
++  assert.strictEqual(stream.listenerCount('error'), 1)
++
++  // Tear down the session with an error exactly like onHttp2SessionIdleTimeout:
++  // Node fans the error out to every still-tracked stream. With the persistent
++  // sink the process keeps running; a one-shot sink would already be consumed
++  // and trigger an unhandled 'error'.
++  client[kHTTP2Session].destroy(new Error('socket idle timeout'))
++
++  // The session error is delivered asynchronously; give the stream a chance to
++  // be destroyed with it before asserting the process survived.
++  await sleep(50)
 +})
 ```
 
 ---
 
-### Incident Patch 2: `9f06d6bc` (2026-10-19)
-**Commit Message**: build(deps-dev): bump neostandard from 0.14.0 to 0.14.1 (#6058)
+### Incident Patch 2: `b5588246` (2026-10-22)
+**Commit Message**: fix(cache): ignore SQLITE_BUSY in the sqlite cache store (#6049)
 
-Bumps [neostandard](https://github.com/neostandard/neostandard) from 0.14.0 to 0.14.1.
-- [Release notes](https://github.com/neostandard/neostandard/releases)
-- [Changelog](https://github.com/neostandard/neostandard/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/neostandard/neostandard/compare/v0.14.0...v0.14.1)
+The store is meant to be shared between processes. SQLite reports a
+database another connection is writing as SQLITE_BUSY/SQLITE_LOCKED
+("database is locked"), and those errors currently propagate out of
+get(), set(), delete() and the pruning that set() performs, failing the
+request that triggered the write.
+
+Caching is best effort, so skip the operation instead of throwing: a
+locked database is a cache miss, and the next request retries.
+
+Co-authored-by: AdityaProCoder <[REDACTED_EMAIL]>
+
+**File**: `lib/cache/sqlite-cache-store.js` (modified, +55/-11)
+```diff
+@@ -18,6 +18,20 @@ const COMPRESS_THRESHOLD = 1024 * 1024
+ // node:sqlite is available.
+ const hasZstd = typeof zstdCompressSync === 'function' && typeof zstdDecompressSync === 'function'
+ 
++// SQLite reports a database that another connection is writing as SQLITE_BUSY
++// (5) or SQLITE_LOCKED (6).
++// https://www.sqlite.org/rescode.html#busy
++const SQLITE_BUSY = 5
++const SQLITE_LOCKED = 6
++
++/**
++ * @param {Error & { errcode?: number }} err
++ * @returns {boolean}
++ */
++function isLockedError (err) {
++  return err?.errcode === SQLITE_BUSY || err?.errcode === SQLITE_LOCKED
++}
++
+ /**
+  * @typedef {import('../../types/cache-interceptor.d.ts').default.CacheStore} CacheStore
+  * @implements {CacheStore}
+@@ -259,7 +273,7 @@ module.exports = class SqliteCacheStore {
+   get (key) {
+     assertCacheKey(key)
+ 
+-    const value = this.#findValue(key)
++    const value = this.#lockSafe(() => this.#findValue(key))
+     return value
+       ? {
+           body: value.body
+@@ -307,10 +321,10 @@ module.exports = class SqliteCacheStore {
+       }
+     }
+ 
+-    const existingValue = this.#findValue(key, true)
++    const existingValue = this.#lockSafe(() => this.#findValue(key, true))
+     if (existingValue) {
+       // Updating an existing response, let's overwrite it
+-      this.#updateValueQuery.run(
++      this.#lockSafe(() => this.#updateValueQuery.run(
+         storedBody,
+         compressed,
+         value.deleteAt,
+@@ -323,10 +337,10 @@ module.exports = class SqliteCacheStore {
+         value.cachedAt,
+         value.staleAt,
+         existingValue.id
+-      )
++      ))
+     } else {
+       // New response, let's insert it
+-      this.#insertValueQuery.run(
++      this.#lockSafe(() => this.#insertValueQuery.run(
+         url,
+         key.method,
+         storedBody,
+@@ -340,7 +354,7 @@ module.exports = class SqliteCacheStore {
+         value.vary ? JSON.stringify(value.vary) : null,
+         value.cachedAt,
+         value.staleAt
+-      )
++      ))
+       this.#prune()
+     }
+   }
+@@ -389,23 +403,53 @@ module.exports = class SqliteCacheStore {
+       throw new TypeError(`expected key to be object, got ${typeof key}`)
+     }
+ 
+-    this.#deleteByUrlQuery.run(this.#makeValueUrl(key))
++    this.#lockSafe(() => this.#deleteByUrlQuery.run(this.#makeValueUrl(key)))
++  }
++
++  /**
++   * Runs a database operation, skipping it when another connection holds the
++   * database lock.
++   *
++   * The cache store is meant to be shared between processes, and SQLite reports
++   * a concurrent writer as SQLITE_BUSY/SQLITE_LOCKED. Those errors are
++   * transient, and caching is best effort: the entry is skipped and the next
++   * request retries, rather than failing the request that triggered the write.
++   *
++   * @template T
++   * @param {() => T} fn
++   * @returns {T | undefined}
++   */
++  #lockSafe (fn) {
++    try {
++      return fn()
++    } catch (err) {
++      if (!isLockedError(err)) {
++        throw err
++      }
++
++      return undefined
++    }
+   }
+ 
+   #prune () {
+-    if (Number.isFinite(this.#maxCount) && this.size <= this.#maxCount) {
+-      return 0
++    if (Number.isFinite(this.#maxCount)) {
++      // A locked database cannot be measured, so skip pruning instead of
++      // failing the write that triggered it.
++      const size = this.#lockSafe(() => this.size)
++      if (size === undefined || size <= this.#maxCount) {
++        return 0
++      }
+     }
+ 
+     {
+-      const removed = this.#deleteExpiredValuesQuery.run(Date.now()).changes
++      const removed = this.#lockSafe(() => this.#deleteExpiredValuesQuery.run(Date.now()).changes)
+       if (removed) {
+         return removed
+       }
+     }
+ 
+     {
+-      const removed = this.#deleteOldValuesQuery?.run(Math.max(Math.floor(this.#maxCount * 0.1), 1)).changes
++      const removed = this.#lockSafe(() => this.#deleteOldValuesQuery?.run(Math.max(Math.floor(this.#maxCount * 0.1), 1)).changes)
+       if (removed) {
+         return removed
+       }
+```
+
+**File**: `test/cache-interceptor/sqlite-cache-store-tests.js` (modified, +55/-0)
+```diff
+@@ -467,3 +467,58 @@ test('SqliteCacheStore compresses big files with zstd', { skip: skipCompression
+   strictEqual(rows[2].compressed, 'zstd')
+   strictEqual(rows[2].body.byteLength < jsonBody.byteLength, true)
+ })
++
++test('SqliteCacheStore ignores a database locked by another connection', { skip: runtimeFeatures.has('sqlite') === false }, async (t) => {
++  const SqliteCacheStore = require('../../lib/cache/sqlite-cache-store.js')
++  const { DatabaseSync } = require('node:sqlite')
++  const sqliteLocation = 'cache-interceptor-locked.sqlite'
++
++  const store = new SqliteCacheStore({ location: sqliteLocation })
++
++  // A second connection holding the write lock is what another process (or
++  // another store instance) sharing the same cache database looks like.
++  const otherConnection = new DatabaseSync(sqliteLocation)
++
++  t.after(async () => {
++    store.close()
++    otherConnection.close()
++    await rm(sqliteLocation)
++  })
++
++  /**
++   * @type {import('../../types/cache-interceptor.d.ts').default.CacheKey}
++   */
++  const key = {
++    origin: 'localhost',
++    path: '/',
++    method: 'GET',
++    headers: {}
++  }
++
++  /**
++   * @type {import('../../types/cache-interceptor.d.ts').default.CacheValue}
++   */
++  const value = {
++    statusCode: 200,
++    statusMessage: '',
++    headers: { foo: 'bar' },
++    cachedAt: Date.now(),
++    staleAt: Date.now() + 10000,
++    deleteAt: Date.now() + 20000,
++    body: Buffer.from('asd')
++  }
++
++  otherConnection.exec('BEGIN IMMEDIATE')
++
++  // Contention is transient and the cache is best effort: none of these may
++  // throw while the database is locked, the entry is just not cached.
++  store.set(key, value)
++  strictEqual(store.get(key), undefined)
++  store.delete(key)
++
++  otherConnection.exec('COMMIT')
++
++  // Once the lock is released the store behaves as usual again.
++  store.set(key, value)
++  notEqual(store.get(key), undefined)
++})
+```
+
+---
+
+### Incident Patch 3: `25543f5b` (2026-10-20)
+**Commit Message**: build(deps): bump cronometro from 6.0.3 to 7.0.1 in /benchmarks (#5969)
+
+Bumps [cronometro](https://github.com/ShogunPanda/cronometro) from 6.0.3 to 7.0.1.
+- [Release notes](https://github.com/ShogunPanda/cronometro/releases)
+- [Changelog](https://github.com/ShogunPanda/cronometro/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/ShogunPanda/cronometro/compare/v6.0.3...v7.0.1)
 
 ---
 updated-dependencies:
-- dependency-name: neostandard
-  dependency-version: 0.14.1
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
+- dependency-name: cronometro
+  dependency-version: 7.0.1
+  dependency-type: direct:production
+  update-type: version-update:semver-major
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +3/-3)
+**File**: `benchmarks/package.json` (modified, +1/-1)
 ```diff
-@@ -7103,9 +7103,9 @@
-       "license": "MIT"
-     },
-     "node_modules/neostandard": {
--      "version": "0.14.0",
--      "resolved": "https://registry.npmjs.org/neostandard/-/neostandard-0.14.0.tgz",
--      "integrity": "sha512-11ZZgQdQrzdMqAo494FJzrSh5/lNtUyrx1mz7BVXcA9EpXCEBOz4WhVz5sG79VvoBG/4L5lZ8xjfHxng95CtFQ==",
-+      "version": "0.14.1",
-+      "resolved": "https://registry.npmjs.org/neostandard/-/neostandard-0.14.1.tgz",
-+      "integrity": "sha512-cEGi7ADMWJRTcdsZeDXCyA1ZeJLQPBq6HP9z9CE1ysu+CJOKYt59ADG0BT6ETonuF6xNXZbMiNc8S8prYys4aQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-```
-
----
-
-### Incident Patch 3: `aa1eef17` (2026-10-19)
-**Commit Message**: fix(h2): replace a connection that stops responding after a stream timeout (#6052)
-
-**File**: `lib/dispatcher/client-h2.js` (modified, +78/-3)
-```diff
-@@ -61,6 +61,12 @@ const kRefusedStreamRetry = Symbol('refused stream retry')
- // event loop.
- const MAX_GOAWAY_REPLAY_ATTEMPTS = 1
- 
-+// Lower bound on how long a liveness PING may take to be acked. Stream
-+// timeouts can be tiny (tens of ms), while an ack on a live connection can take
-+// longer than that on a loaded event loop; without a floor a slow but healthy
-+// connection would be torn down.
-+const MIN_PROBE_TIMEOUT = 1e3
-+
- let extractBody
- 
- /** @type {import('http2')} */
-@@ -277,6 +283,9 @@ function connectH2 (client, socket) {
-     // Armed while the peer advertises MAX_CONCURRENT_STREAMS = 0 and we have
-     // work that cannot start. See setNoStreamsTimeout.
-     noStreamsTimeout: null,
-+    // Armed while a PING checks whether the peer is still there after a
-+    // stream timed out. See probeHttp2Session.
-+    probeTimeout: null,
-     // Sockets start out ref'd. Session ref/unref proxies to the socket, so a
-     // single cached flag lets us skip redundant uv ref/unref calls, provided
-     // every ref/unref of the session or its socket goes through
-@@ -361,6 +370,11 @@ function connectH2 (client, socket) {
-         return true
-       }
- 
-+      // Do not open streams on a connection that may be dead.
-+      if (session[kHTTP2SessionState].probeTimeout != null) {
-+        return true
-+      }
-+
-       if (client[kRunning] >= client[kMaxConcurrentStreams]) {
-         return true
-       }
-@@ -494,6 +508,60 @@ function onNoStreamsTimeout (session) {
-   resetHttp2Session(session, err)
- }
- 
-+// A stream timeout only resets that stream, unlike HTTP/1.1 which destroys the
-+// socket. If the connection itself silently died (dropped by a NAT or load
-+// balancer, a hung peer), every new stream would time out in turn and the
-+// session would never be replaced. Ask the peer for a PING ack within the
-+// timeout that just fired (but at least MIN_PROBE_TIMEOUT): if it answers, only
-+// that request was slow; if not, drop the session so queued requests move to a
-+// fresh connection.
-+function probeHttp2Session (session, timeout) {
-+  const state = session[kHTTP2SessionState]
-+
-+  if (state.probeTimeout != null || session.closed || session.destroyed) {
-+    return
-+  }
-+
-+  try {
-+    session.ping(onHttp2ProbeAck.bind(session))
-+  } catch {
-+    // The session is going away on its own.
-+    return
-+  }
-+
-+  state.probeTimeout = setTimeout(onHttp2ProbeTimeout, Math.max(timeout, MIN_PROBE_TIMEOUT), session).unref()
-+}
-+
-+function clearHttp2ProbeTimeout (session) {
-+  const state = session[kHTTP2SessionState]
-+
-+  if (state?.probeTimeout != null) {
-+    clearTimeout(state.probeTimeout)
-+    state.probeTimeout = null
-+  }
-+}
-+
-+function onHttp2ProbeAck () {
-+  if (this[kHTTP2SessionState].probeTimeout == null) {
-+    return
-+  }
-+
-+  clearHttp2ProbeTimeout(this)
-+  this[kClient][kResume]()
-+}
-+
-+function onHttp2ProbeTimeout (session) {
-+  session[kHTTP2SessionState].probeTimeout = null
-+
-+  if (session.closed || session.destroyed) {
-+    return
-+  }
-+
-+  const err = new SocketError('HTTP/2: connection unresponsive', util.getSocketInfo(session[kSocket]))
-+  session[kError] = err
-+  resetHttp2Session(session, err)
-+}
-+
- function clearHttp2IdleTimeout (session) {
-   const state = session[kHTTP2SessionState]
- 
-@@ -686,6 +754,7 @@ function onHttp2SessionGoAway (errorCode, lastStreamID) {
- 
-   clearHttp2IdleTimeout(this)
-   clearNoStreamsTimeout(this)
-+  clearHttp2ProbeTimeout(this)
- 
-   if (!this.closed && !this.destroyed) {
-     this.close()
-@@ -711,6 +780,7 @@ function onHttp2SessionClose () {
- 
-   clearHttp2IdleTimeout(this)
-   clearNoStreamsTimeout(this)
-+  clearHttp2ProbeTimeout(this)
- 
-   if (state.ping.interval != null) {
-     clearInterval(state.ping.interval)
-@@ -1610,9 +1680,14 @@ function onTimeout () {
-   // Remove self so timeout doesn't fire again after we handle it
-   stream.off('timeout', onTimeout)
- 
--  const err = state.responseReceived
--    ? new BodyTimeoutError(`HTTP/2: "stream timeout after ${state.bodyTimeout}"`)
--    : new HeadersTimeoutError(`HTTP/2: "headers timeout after ${state.headersTimeout}"`)
-+  const { responseReceived, session, bodyTimeout, headersTimeout } = state
-+  const err = responseReceived
-+    ? new BodyTimeoutError(`HTTP/2: "stream timeout after ${bodyTimeout}"`)
-+    : new HeadersTimeoutError(`HTTP/2: "headers timeout after ${headersTimeout}"`)
-+
-+  // Probe before aborting: completing the request resumes the queue, which
-+  // must not open new streams until the peer has proven it is alive.
-+  probeHttp2Session(session, responseReceived ? bodyTimeout : headersTimeout)
-   state.abort(err)
- }
- 
-```
-
-**File**: `test/http2-timeout.js` (modified, +4/-0)
-```diff
-@@ -18,6 +18,9 @@ test('Should handle http2 stream timeout', async t => {
-   const stream = createReadStream(__filename)
- 
-   server.on('stream', (stream, headers) => {
-+    // The client is torn down while this stream is still open; the reset can
-+    // surface here (e.g. on Windows) and must not crash the test.
-+    stream.on('error', () => {})
-     stream.respond({
-       'content-type': 'text/plain; charset=utf-8',
-       'x-custom-h2': headers['x-my-header'],
-@@ -77,6 +80,7 @@ test('http2 stream timeout keeps open-stream counter non-negative', async t => {
-   const server = createSecureServer(await pem.generate({ opts: { keySize: 2048 } }))
- 
-   server.on('stream', (stream) => {
-+    stream.on('error', () => {})
-     // Respond with headers but hold the body long enough for the client
-     // bodyTimeout to fire.
-     stream.respond({ ':status': 200, 'content-type': 'text/plain' })
-```
-
-**File**: `test/http2-unresponsive-connection.js` (added, +109/-0)
-```diff
-@@ -0,0 +1,109 @@
-+'use strict'
-+
-+// A stream timeout only resets that stream, so a connection that silently
-+// stopped delivering data (dropped by a NAT or load balancer, a hung peer)
-+// used to keep receiving new streams that all timed out in turn. The client
-+// must drop a connection on which nothing at all arrived while a stream timed
-+// out, like HTTP/1.1 drops the socket, and leave a live one alone.
-+
-+const { test, after } = require('node:test')
-+const assert = require('node:assert')
-+const { createServer } = require('node:http2')
-+const net = require('node:net')
-+const { once } = require('node:events')
-+
-+const { Pool } = require('..')
-+
-+// A TCP proxy in front of an h2c server. Calling `goDark()` stops forwarding
-+// in both directions on the current connections without closing them.
-+async function startProxiedServer (onStream) {
-+  const server = createServer()
-+  server.on('stream', onStream)
-+  await once(server.listen(0), 'listening')
-+
-+  const state = { connections: 0, goDark: null }
-+  const sockets = new Set()
-+
-+  const proxy = net.createServer((downstream) => {
-+    state.connections++
-+    const upstream = net.connect(server.address().port)
-+    let dark = false
-+    state.goDark = () => { dark = true }
-+    sockets.add(downstream).add(upstream)
-+    downstream.on('data', (chunk) => { if (!dark) upstream.write(chunk) })
-+    upstream.on('data', (chunk) => { if (!dark) downstream.write(chunk) })
-+    downstream.on('error', () => {})
-+    upstream.on('error', () => {})
-+    downstream.on('close', () => upstream.destroy())
-+    upstream.on('close', () => downstream.destroy())
-+  })
-+  await once(proxy.listen(0), 'listening')
-+
-+  after(() => {
-+    for (const socket of sockets) socket.destroy()
-+    proxy.close()
-+    server.close()
-+  })
-+
-+  return { state, origin: `http://localhost:${proxy.address().port}` }
-+}
-+
-+test('h2: a connection that went silent is replaced after a stream times out', async () => {
-+  const { state, origin } = await startProxiedServer((stream) => {
-+    stream.on('error', () => {})
-+    stream.respond({ ':status': 200 })
-+    stream.end('ok')
-+  })
-+
-+  const pool = new Pool(origin, { useH2c: true, headersTimeout: 100 })
-+  after(() => pool.destroy())
-+
-+  const first = await pool.request({ path: '/', method: 'GET' })
-+  assert.strictEqual(await first.body.text(), 'ok')
-+
-+  state.goDark()
-+
-+  await assert.rejects(
-+    pool.request({ path: '/', method: 'GET' }),
-+    { code: 'UND_ERR_HEADERS_TIMEOUT' }
-+  )
-+
-+  const third = await pool.request({ path: '/', method: 'GET' })
-+  assert.strictEqual(await third.body.text(), 'ok')
-+  assert.strictEqual(state.connections, 2)
-+})
-+
-+test('h2: a stream timeout on a live connection keeps the connection', async () => {
-+  let release
-+  const slowArrived = new Promise((resolve) => { release = resolve })
-+
-+  const { state, origin } = await startProxiedServer((stream, headers) => {
-+    stream.on('error', () => {})
-+    if (headers[':path'] === '/slow') {
-+      // Never answered.
-+      release()
-+      return
-+    }
-+    stream.respond({ ':status': 200 })
-+    stream.end('ok')
-+  })
-+
-+  const pool = new Pool(origin, { useH2c: true })
-+  after(() => pool.destroy())
-+
-+  const warmup = await pool.request({ path: '/', method: 'GET' })
-+  await warmup.body.text()
-+
-+  const slow = pool.request({ path: '/slow', method: 'GET', headersTimeout: 500 })
-+  await slowArrived
-+
-+  // Data arrives on the connection while /slow waits.
-+  const fast = await pool.request({ path: '/', method: 'GET' })
-+  assert.strictEqual(await fast.body.text(), 'ok')
-+
-+  await assert.rejects(slow, { code: 'UND_ERR_HEADERS_TIMEOUT' })
-+
-+  const next = await pool.request({ path: '/', method: 'GET' })
-+  assert.strictEqual(await next.body.text(), 'ok')
-+  assert.strictEqual(state.connections, 1)
-+})
+@@ -18,7 +18,7 @@
+   "dependencies": {
+     "axios": "^1.6.7",
+     "concurrently": "^10.0.3",
+-    "cronometro": "^6.0.3",
++    "cronometro": "^7.0.1",
+     "got": "^16.0.0",
+     "mitata": "^1.0.4",
+     "node-fetch": "^3.3.2",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6062** (2026-10-20): docs: add QUERY to the documented retry default methods (@qodelicious)
 - **PR #6059** (2026-10-19): build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (@dependabot[bot])
 - **PR #6058** (2026-10-19): build(deps-dev): bump neostandard from 0.14.0 to 0.14.1 (@dependabot[bot])
+- **PR #6057** (2026-10-20): docs: fix a couple of typos (@qodelicious)
+- **PR #6056** (2026-10-22): fix(types): declare FormData prototype methods (@RlxChap2)
 - **PR #6053** (2026-10-19): [Release] v8.12.3 (@github-actions[bot])
-- **PR #6052** (2026-10-19): fix(h2): replace a connection that stops responding after a stream timeout (@mcollina)
-- **PR #6050** (2026-10-19): docs: document the options of interceptors.cache() (@qodelicious)
-- **PR #6031** (2026-10-19): fix(mock): ignore the trailing slash before a query string (@lprnmns)
 
 ---
 
@@ -1123,33 +1186,52 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ignore missing release ref during cleanup (#5891)
+## X. http2): keep persistent error sink on released streams (#5983)
 
 **RULE**:
-When implementing operations in `scripts/release.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/dispatcher/client-h2.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nodejs/undici. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `febada26`: ignore missing release ref during cleanup (#5891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f452240`: http2): keep persistent error sink on released streams (#5983). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/release.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/dispatcher/client-h2.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    if (err.status === 422 && err.response?.data?.message === 'Reference does not exist') {
-      return
-    }
-
-    throw err
+  // #5936: Node can still deliver a session-level error to a native stream
+  // after undici has stopped tracking it (e.g. on idle session teardown). Keep
+  // a persistent noop error sink so the 'error' event is never emitted with no
+  // listener, which would crash the process. A single sink is enough even if
+  // one was already attached by the onError path, so clear it first.
+    stream.off('error', noop)
+    stream.on('error', noop)
+  // #5936: Retain the noop error sink so a session-level error delivered to
+  // this stream after undici detaches it cannot crash via an unhandled 'error'.
+  // #5936: removeUpgradeStreamListeners() dropped the noop sink; re-attach a
+  // persistent one so a late session-level error on this (possibly still native
+  // tracked) stream cannot crash via an unhandled 'error'.
+    stream.on('error', noop)
+  // #5936: Node can deliver a session-level error to a released stream before
+  // its native handle is dropped (e.g. on idle session teardown). Attach a
+  // persistent noop error sink so a late 'error' always has a listener and
+  // cannot crash the process. A closed/destroyed stream cannot emit further
+  // events and is no longer tracked native
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    console.log("Couldn't delete release PR ref")
-    console.log(err)
+    stream.once('error', noop)
+  this.off('error', noop)
+
+    stream.once('error', noop)
+  // A closed or destroyed stream cannot emit further events; leaving the
+  // listeners in place saves the removal scans (they are collected with
+  // the stream). All handlers bail out when the stream state is gone.
+    stream.once('error', noop)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `febada26` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f452240` are properly handled with clean fallback behavior.

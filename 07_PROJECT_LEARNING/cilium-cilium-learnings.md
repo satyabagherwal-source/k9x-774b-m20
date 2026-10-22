@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `9e24f135`  
+> **Source Version**: `28b8d3eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:04:53.879Z  
+> **Timestamp**: 2026-10-22T20:30:27.071Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:04:53.418Z  
+> **Harvest Timestamp**: 2026-10-22T20:30:26.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25706 stars
+- **Stars / Engagement**: 25708 stars
 
 ---
 
@@ -1259,12 +1259,10 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49546** (2026-10-22): **Prepare for release v1.19.10**
-  *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
-  **Post-Mortem & Fix Analysis**:
-  > /test
+- **Issue #49554** (2026-10-22): **[Closed] Superseded by #49555**
+  *Symptoms*: Superseded by #49555.
 
-- **Issue #49545** (2026-10-22): **Prepare for release v1.18.16**
+- **Issue #49546** (2026-10-22): **Prepare for release v1.19.10**
   *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
   **Post-Mortem & Fix Analysis**:
   > /test
@@ -1284,517 +1282,456 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ff3986e` (2026-10-20)
-**Commit Message**: ci: fix PR chart checkout ref in smoke conformance workflows
+### Incident Patch 1: `e085ff3a` (2026-10-22)
+**Commit Message**: ipam/resynctest: add a full resync race test helper
 
-The PR checkout used steps.vars.outputs.sha, but these workflows output
-the SHA from the 'sha' step, so the ref was empty. Fork PRs were thus
-tested with the target branch's Helm chart instead of their own.
+The AWS, Alibaba Cloud and Azure IPAM providers need regression tests
+that pause a full resync after its cloud read and run a cache update
+inside that window. The three can share one helper, and the helper holds
+the delicate part: it bounds every wait, and it tells an update that
+waits for the resync apart from one that deadlocks it.
 
-Fixes: 29c832727dad ("ci: handle pull_request workflows by ariane")
-Signed-off-by: Blaz Zupan <[REDACTED_EMAIL]>
+Add the helper to pkg/ipam/resynctest and pass the instances manager
+and the fetch hook in. The package also holds the ENI attachment check
+for the AWS and Alibaba Cloud tests.
 
-**File**: `.github/workflows/tests-smoke-conformance.yaml` (modified, +1/-1)
+This commit was prepared with AIL:3. I personally checked the diff.
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `pkg/ipam/resynctest/resynctest.go` (added, +133/-0)
 ```diff
-@@ -223,7 +223,7 @@ jobs:
-       - name: Checkout pull request branch (NOT TRUSTED)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
--          ref: ${{ steps.vars.outputs.sha }}
-+          ref: ${{ steps.sha.outputs.sha }}
-           persist-credentials: false
-           # Required by checkout v7+ to fetch fork PR code; see the NOT TRUSTED warning above.
-           allow-unsafe-pr-checkout: true
-```
-
-**File**: `.github/workflows/tests-smoke-ipv6.yaml` (modified, +1/-1)
-```diff
-@@ -182,7 +182,7 @@ jobs:
-       - name: Checkout pull request branch (NOT TRUSTED)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
--          ref: ${{ steps.vars.outputs.sha }}
-+          ref: ${{ steps.sha.outputs.sha }}
-           persist-credentials: false
-           # Required by checkout v7+ to fetch fork PR code; see the NOT TRUSTED warning above.
-           allow-unsafe-pr-checkout: true
-```
-
----
-
-### Incident Patch 2: `17c31a60` (2026-10-22)
-**Commit Message**: Revert "gateway: enable system CA for BackendTLSPolicy"
-
-This reverts commit f0cdf8225e9d84d511230d4effc1fe5e8795da63.
-
-The reverted commit added a "fix" that actually produced a much
-worse outcome when run in a live cluster.
-
-Signed-off-by: Nick Young <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/gateway-api/policychecks/backendtlspolicy.go` (modified, +0/-14)
-```diff
-@@ -63,15 +63,13 @@ func (b *BackendTLSPolicyInput) ValidateSpec(ctx context.Context, scopedLog *slo
- 				string(gatewayv1.PolicyReasonInvalid), string(gatewayv1.PolicyReasonInvalid))
- 			return false, nil
- 		}
--
- 		// Secondly, we check that there is only one CACertificateRef. We will ignore any additional
- 		// ones, but we want to tell people about that.
- 		if len(b.BackendTLSPolicy.Spec.Validation.CACertificateRefs) > 1 {
- 			b.setRejectedConditions(ancestorRef, "Having more than one CA Certificate Ref is not supported",
- 				string(gatewayv1.PolicyReasonInvalid), string(gatewayv1.PolicyReasonInvalid))
- 			return false, nil
- 		}
--
- 		// Thirdly, check that the CACertificateRef exists, and is a ConfigMap with a key named `ca.crt`.
- 		caCertRef := b.BackendTLSPolicy.Spec.Validation.CACertificateRefs[0]
- 
-@@ -110,18 +108,6 @@ func (b *BackendTLSPolicyInput) ValidateSpec(ctx context.Context, scopedLog *slo
- 		}
- 	}
- 
--	// Cilium currently supports only the "System" well-known CA bundle.
--	if b.BackendTLSPolicy.Spec.Validation.WellKnownCACertificates != nil &&
--		*b.BackendTLSPolicy.Spec.Validation.WellKnownCACertificates != gatewayv1.WellKnownCACertificatesSystem {
--		b.setRejectedConditions(
--			ancestorRef,
--			"Only System is supported for wellKnownCACertificates",
--			string(gatewayv1.PolicyReasonInvalid),
--			string(gatewayv1.PolicyReasonInvalid),
--		)
--		return false, nil
--	}
--
- 	return true, nil
- }
- 
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/input/httproute-and-backendtlspolicy.yaml` (modified, +0/-38)
-```diff
-@@ -55,15 +55,6 @@ spec:
-         - path:
-             type: Exact
-             value: /backendtlspolicy
--    - backendRefs:
--        - group: ""
--          kind: Service
--          name: backendtlspolicy-system-ca-test
--          port: 443
--      matches:
--        - path:
--            type: Exact
--            value: /backendtlspolicy-system-ca
-     - backendRefs:
-         - group: ""
-           kind: Service
-@@ -99,20 +90,6 @@ spec:
- ---
- apiVersion: v1
- kind: Service
--metadata:
--  name: backendtlspolicy-system-ca-test
--  namespace: gateway-conformance-infra
--spec:
--  selector:
--    app: tls-backend
--  ports:
--    - name: "btls"
--      protocol: TCP
--      port: 443
--      targetPort: 8443
-----
--apiVersion: v1
--kind: Service
- metadata:
-   name: backendtlspolicy-host-mismatch-test
-   namespace: gateway-conformance-infra
-@@ -163,21 +140,6 @@ spec:
- ---
- apiVersion: gateway.networking.k8s.io/v1
- kind: BackendTLSPolicy
--metadata:
--  name: system-ca
--  namespace: gateway-conformance-infra
--spec:
--  targetRefs:
--    - group: ""
--      kind: Service
--      name: backendtlspolicy-system-ca-test
--      sectionName: "btls"
--  validation:
--    wellKnownCACertificates: System
--    hostname: "abc.example.com"
-----
--apiVersion: gateway.networking.k8s.io/v1
--kind: BackendTLSPolicy
- metadata:
-   name: host-mismatch
-   namespace: gateway-conformance-infra
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/output/backendtlspolicy-system-ca.yaml` (removed, +0/-35)
-```diff
-@@ -1,35 +0,0 @@
-----
--apiVersion: gateway.networking.k8s.io/v1
--kind: BackendTLSPolicy
--metadata:
--  name: system-ca
--  namespace: gateway-conformance-infra
--spec:
--  targetRefs:
--    - group: ""
--      kind: Service
--      name: "backendtlspolicy-system-ca-test"
--      sectionName: "btls"
--  validation:
--    wellKnownCACertificates: System
--    
--    hostname: "abc.example.com"
--status:
--  ancestors:
--    - controllerName: io.cilium/gateway-controller
--      ancestorRef:
--        group: "gateway.networking.k8s.io"
--        kind: "Gateway"
--        namespace: gateway-conformance-infra
--        name: same-namespace
--      conditions:
--        - lastTransitionTime: "2025-07-01T14:19:43Z"
--          message: Accepted BackendTLSPolicy
--          reason: Accepted
--          status: "True"
--          type: Accepted
--        - lastTransitionTime: "2025-07-01T14:19:43Z"
--          message: All references are valid
--          reason: ResolvedRefs
--          status: "True"
--          type: ResolvedRefs
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/output/cec-same-namespace.yaml` (modified, +9/-50)
-```diff
-@@ -21,10 +21,6 @@ spec:
-       namespace: gateway-conformance-infra
-       number:
-         - "443"
--    - name: backendtlspolicy-system-ca-test
--      namespace: gateway-conformance-infra
--      number:
--        - "443"
-     - name: backendtlspolicy-test
-       namespace: gateway-conformance-infra
-       number:
-@@ -102,12 +98,6 @@ spec:
-                 cluster: gateway-conformance-infra:backendtlspolicy-cert-mismatch-test:443
-                 maxStreamDuration:
-                   maxStreamDuration: 0s
--            - match:
--                path: /backendtlspolicy-system-ca
--              route:
--                cluster: gateway-conformance-infra:backendtlspolicy-system-ca-test:443
--                maxStreamDuration:
--                  maxStreamDuration: 0s
-             - match:
-                 path: /backendtlspolicy
-               route:
-@@ -131,9 +121,9 @@ spec:
-             combinedValidationContext:
-               defaultValidationContext:
-                 match_typed_subject_alt_names:
--                  - san_type: DNS
--                    matcher:
--                      exact: "abc.example.com"
-+                - san_type: DNS
-+                  matcher:
-+                    exact: "abc.example.com"
-               validationContextSdsSecretConfig:
-                 name: cilium-secrets/cilium-sync-cfgmap-b12423955ebfb5ff0e4c9b01e91a2f2325aba4de2924d35b2799aa2e51462c24
-           sni: abc.example.com
-@@ -145,7 +135,6 @@ spec:
-             idleTimeout: 60s
-           useDownstreamProtocolConfig:
-             http2ProtocolOptions: {}
--
-     - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
-       edsClusterConfig:
-         serviceName: gateway-conformance-infra/backendtlspolicy-host-mismatch-test:443
-@@ -162,9 +151,9 @@ spec:
-             combinedValidationContext:
-               defaultValidationContext:
-                 match_typed_subject_alt_names:
--                  - san_type: DNS
--                    matcher:
--                      exact: "mismatch.example.com"
-+                - san_type: DNS
-+                  matcher:
-+                    exact: "mismatch.example.com"
-               validationContextSdsSecretConfig:
-                 name: cilium-secrets/cilium-sync-cfgmap-f3757660099595ce0587b4d45f08d43da98e3f80d7c9fa16d991dbd0946ee01b
-           sni: mismatch.example.com
-@@ -176,36 +165,6 @@ spec:
-             idleTimeout: 60s
-           useDownstreamProtocolConfig:
-             http2ProtocolOptions: {}
--
--    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
--      edsClusterConfig:
--        serviceName: gateway-conformance-infra/backendtlspolicy-system-ca-test:443
--      name: gateway-conformance-infra:backendtlspolicy-system-ca-test:443
--      outlierDetection:
--        splitExternalLocalOriginErrors: true
--      transportSocket:
--        name: envoy.transport_sockets.tls
--        typedConfig:
--          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
--          commonTlsContext:
--            tlsParams:
--              tlsMaximumProtocolVersion: TLSv1_3
--            validationContext:
--              match_typed_subject_alt_names:
--                - san_type: DNS
--                  matcher:
--                    exact: "abc.example.com"
--              systemRootCerts: {}
--          sni: abc.example.com
--      type: EDS
--      typedExtensionProtocolOptions:
--        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
--          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
--          commonHttpProtocolOptions:
--            idleTimeout: 60s
--          useDownstreamProtocolConfig:
--            http2ProtocolOptions: {}
--
-     - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
-       edsClusterConfig:
-         serviceName: gateway-conformance-infra/backendtlspolicy-test:443
-@@ -222,9 +181,9 @@ spec:
-             combinedValidationContext:
-               defaultValidationContext:
-                 match_typed_subject_alt_names:
--                  - san_type: DNS
--                    matcher:
--                      exact: "abc.example.com"
-+                - san_type: DNS
-+                  matcher:
-+                    exact: "abc.example.com"
-               validationContextSdsSecretConfig:
-                 name: cilium-secrets/cilium-sync-cfgmap-f3757660099595ce0587b4d45f08d43da98e3f80d7c9fa16d991dbd0946ee01b
-           sni: abc.example.com
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/httproute-backendtlspolicy-valid/output/httproute-backendtlspolicy.yaml` (modified, +0/-9)
-```diff
-@@ -20,15 +20,6 @@ spec:
-         - path:
-             type: Exact
-             value: /backendtlspolicy
--    - backendRefs:
--        - group: ""
--          kind: Service
--          name: backendtlspolicy-system-ca-test
--          port: 443
--      matches:
--        - path:
--            type: Exact
--            value: /backendtlspolicy-system-ca
-     - backendRefs:
-         - group: ""
-           kind: Service
-```
-
-**File**: `operator/pkg/model/translation/envoy_cluster_mutator.go` (modified, +12/-46)
-```diff
-@@ -143,41 +143,7 @@ func withTLSOrigination(secretsNamespace string, tls *model.BackendTLSOriginatio
- 			return cluster
- 		}
- 
--		if tls.CACertRef == nil {
--			tlsContext := &envoy_config_tls.UpstreamTlsContext{
--				Sni: tls.SNI,
--				CommonTlsContext: &envoy_config_tls.CommonTlsContext{
--					TlsParams: &envoy_config_tls.TlsParameters{
--						TlsMaximumProtocolVersion: envoy_config_tls.TlsParameters_TLSv1_3,
--					},
--					ValidationContextType: &envoy_config_tls.CommonTlsContext_ValidationContext{
--						ValidationContext: &envoy_config_tls.CertificateValidationContext{
--							MatchTypedSubjectAltNames: []*envoy_config_tls.SubjectAltNameMatcher{
--								{
--									SanType: envoy_config_tls.SubjectAltNameMatcher_DNS,
--									Matcher: &envoy_type_matcher.StringMatcher{
--										MatchPattern: &envoy_type_matcher.StringMatcher_Exact{
--											Exact: tls.SNI,
--										},
--									},
--								},
--							},
--							SystemRootCerts: &envoy_config_tls.CertificateValidationContext_SystemRootCerts{},
--						},
--					},
--				},
--			}
--
--			cluster.TransportSocket = &envoy_config_core_v3.TransportSocket{
--				Name: "envoy.transport_sockets.tls",
--				ConfigType: &envoy_config_core.TransportSocket_TypedConfig{
--					TypedConfig: toAny(tlsContext),
--				},
--			}
--			return cluster
--		}
--
--		if tls.CACertRef.Name == "" || tls.CACertRef.Namespace == "" {
-+		if tls.CACertRef == nil || tls.CACertRef.Name == "" || tls.CACertRef.Namespace == "" {
- 			return cluster
- 		}
- 
-@@ -202,18 +168,18 @@ func withTLSOrigination(secretsNamespace string, tls *model.BackendTLSOriginatio
- 							},
- 						},
- 						ValidationContextSdsSecretConfig: &envoy_config_tls.SdsSecretConfig{
-+							// This secret is synchronized by the secretsyncer Cell, with the Secret being copied
-+							// out of the relevant ConfigMap by the ConfigMap sync Reconcile function there, which itself
-+							// watches for ConfigMaps referenced in BackendTLSPolicy objects.
-+							//
-+							// That is, the flow is:
-+							//
-+							// * BackendTLSPolicy references ConfigMap
-+							// * SecretSync sees ConfigMap reference
-+							// * SecretSync copies ConfigMap into Secret in the configured secrets namespace
-+							// * This translation references that Secret using the shared sync name
-+							// * The Cilium Agent reads the Secret directly and suppies it to Envoy via SDS.
- 							Name: syncnames.SyncedConfigMapSDSSecretName(secretsNamespace, types.NamespacedName{
--								// This secret is synchronized by the secretsyncer Cell, with the Secret being copied
--								// out of the relevant ConfigMap by the ConfigMap sync Reconcile function there, which itself
--								// watches for ConfigMaps referenced in BackendTLSPolicy objects.
--								//
--								// That is, the flow is:
--								//
--								// * BackendTLSPolicy references ConfigMap
--								// * SecretSync sees ConfigMap reference
--								// * SecretSync copies ConfigMap into Secret in the configured secrets namespace
--								// * This translation references that Secret using the shared sync name
--								// * The Cilium Agent reads the Secret directly and supplies it to Envoy via SDS.
- 								Namespace: tls.CACertRef.Namespace,
- 								Name:      tls.CACertRef.Name,
- 							}),
-```
-
-**File**: `operator/pkg/model/translation/envoy_cluster_test.go` (modified, +0/-25)
-```diff
-@@ -179,31 +179,6 @@ func Test_withTLSOrigination(t *testing.T) {
- 		sdsName := combined.ValidationContextSdsSecretConfig.GetName()
- 		require.Equal(t, syncnames.SyncedConfigMapSDSSecretName("cilium-secrets", types.NamespacedName{Namespace: "my-namespace", Name: "my-ca-configmap"}), sdsName)
- 	})
--
--	t.Run("uses system root certificates when no CA ref is configured", func(t *testing.T) {
--		systemTLS := &model.BackendTLSOrigination{
--			SNI: "my-backend.svc.cluster.local",
--		}
--
--		fn := withTLSOrigination("cilium-secrets", systemTLS)
--		cluster := fn(&envoy_config_cluster_v3.Cluster{})
--
--		require.NotNil(t, cluster.TransportSocket)
--
--		upstreamTLS := &envoy_config_tls.UpstreamTlsContext{}
--		err := proto.Unmarshal(cluster.TransportSocket.GetTypedConfig().GetValue(), upstreamTLS)
--		require.NoError(t, err)
--
--		validationContext := upstreamTLS.CommonTlsContext.GetValidationContext()
--		require.NotNil(t, validationContext)
--
--		require.NotNil(t, validationContext.GetSystemRootCerts())
--
--		matchers := validationContext.GetMatchTypedSubjectAltNames()
--		require.Len(t, matchers, 1)
--		require.Equal(t, envoy_config_tls.SubjectAltNameMatcher_DNS, matchers[0].GetSanType())
--		require.Equal(t, systemTLS.SNI, matchers[0].GetMatcher().GetExact())
--	})
- }
- 
- func Test_tcpCluster(t *testing.T) {
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
++
++// Package resynctest checks that an IPAM cache update made during a full
++// cloud API resync survives it.
++package resynctest
++
++import (
++	"context"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	ipamTypes "github.com/cilium/cilium/pkg/ipam/types"
++	"github.com/cilium/cilium/pkg/time"
++)
++
++type resyncer interface {
++	Resync(ctx context.Context) (time.Time, error)
++}
++
++// RunDuringFullResync runs cloudSetup and then cacheUpdate inside the cloud fetch window of a full resync.
++// setHook installs the function the fake cloud API calls when the full resync's fetch returns.
++func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
++	t.Helper()
++
++	// An unguarded cacheUpdate must land within this much of the fetch window for the resync to drop it.
++	const detectionBudget = 2 * time.Second
++	// Only a locking regression keeps cloudSetup or cacheUpdate waiting this long.
++	const progressTimeout = 10 * time.Second
++
++	var setupErr error
++	var setupStalled bool
++	atCacheUpdate := make(chan struct{})
++	done := make(chan struct{})
++	hookReturned := make(chan struct{})
++
++	// The resync goroutine runs this hook, so it records what it saw and never calls t itself.
++	setHook(func() {
++		defer close(hookReturned)
++		go func() {
++			defer close(done)
++			if setupErr = cloudSetup(); setupErr != nil {
++				return
++			}
++			close(atCacheUpdate)
++			cacheUpdate()
++		}()
++
++		// Keep the cloud calls out of the budget below, and never wait on a setup that gave up.
++		select {
++		case <-atCacheUpdate:
++		case <-done:
++			return
++		case <-time.After(progressTimeout):
++			setupStalled = true
++			return
++		}
++
++		// A guarded cacheUpdate waits for resyncLock, so this select always spends the whole budget.
++		select {
++		case <-done:
++		case <-time.After(detectionBudget):
++		}
++	})
++
++	ctx := t.Context()
++	resynced := make(chan error, 1)
++	go func() {
++		_, err := mngr.Resync(ctx)
++		resynced <- err
++	}()
++
++	// The hook owns progressTimeout plus the budget, so wait that out before blaming the resync.
++	select {
++	case <-hookReturned:
++	case <-time.After(progressTimeout + detectionBudget + time.Second):
++		t.Fatalf("the full resync did not reach its cloud fetch hook within %v", progressTimeout)
++	}
++	require.False(t, setupStalled, "cloud setup neither reached the cache update nor failed within %v", progressTimeout)
++
++	// A cacheUpdate that takes the locks in the wrong order deadlocks the publish after the hook.
++	select {
++	case err := <-resynced:
++		require.NoError(t, err)
++	case <-time.After(progressTimeout):
++		t.Fatalf("the full resync did not publish within %v of its fetch window; cacheUpdate holds a lock it needs", progressTimeout)
++	}
++
++	select {
++	case <-done:
++	case <-time.After(progressTimeout):
++		t.Fatalf("cache update still blocked %v after the full resync released resyncLock", progressTimeout)
++	}
++
++	setHook(nil)
++	require.NoError(t, setupErr)
++}
++
++type eniCache[E any] interface {
++	resyncer
++	ForeachInstance(instanceID string, fn ipamTypes.InterfaceIterator)
++	UpdateENI(instanceID string, eni E)
++}
++
++// ENIUpdate checks that an ENI attached inside the cloud fetch window of a full resync survives it.
++func ENIUpdate[E any](t *testing.T, mngr eniCache[E], setHook func(func()), instanceID string, attach func() (string, E, error)) {
++	t.Helper()
++
++	before := cachedENIIDs(mngr, instanceID)
++	require.NotEmpty(t, before)
++
++	var eniID string
++	var eni E
++	RunDuringFullResync(t, mngr, setHook,
++		func() (err error) {
++			eniID, eni, err = attach()
++			return err
++		},
++		func() {
++			mngr.UpdateENI(instanceID, eni)
++		})
++
++	require.ElementsMatch(t, append(before, eniID), cachedENIIDs(mngr, instanceID))
++}
++
++func cachedENIIDs[E any](mngr eniCache[E], instanceID string) (ids []string) {
++	mngr.ForeachInstance(instanceID, func(_, ifaceID string, _ ipamTypes.Interface) error {
++		ids = append(ids, ifaceID)
++		return nil
++	})
++	return ids
++}
 ```
 
 ---
 
-### Incident Patch 3: `cadfefd4` (2026-10-22)
-**Commit Message**: images: update cilium-{runtime,builder}
+### Incident Patch 2: `6b7c233b` (2026-10-19)
+**Commit Message**: docs: Add docs-builder-image checker
 
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+To ensure that the documentation directory is built against the latest
+copy of the docs-builder dependencies, add a check which updates the
+docs-builder image tag based on the docs-builder dependencies in the git
+tree, and then fail out with a message requiring the user to update the
+docs-builder image if the local tree is out of sync.
 
-**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
+This should ensure that renovate docs-builder updates are tested before
+we merge the changes, by virtue of being run from the standard GitHub
+workflow for documentation checks.
+
+Signed-off-by: Joe Stringer <[REDACTED_EMAIL]>
+
+**File**: `Documentation/Makefile` (modified, +2/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "Cilium",
--  "image": "quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa",
-+  "image": "quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5",
-   "workspaceFolder": "/go/src/github.com/cilium/cilium",
-   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
-   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
-```
-
-**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--quay.io/cilium/cilium-runtime:b132fb169c8bd92e091117c405098dbc3d66b03c@sha256:0ce5af51c7127f0dd4dd126fe1eba282aabd657b073e639453fe8e14fa44d243
-\ No newline at end of file
-+quay.io/cilium/cilium-runtime:9e48d94e359f386032909f1364c791a34089d5f0@sha256:569487d156988d2ed444cc88d10064d3851becfca2b2367f3bf6648393985846
-\ No newline at end of file
-```
-
-**File**: `images/cilium/Dockerfile` (modified, +2/-2)
-```diff
-@@ -3,8 +3,8 @@
- # Copyright Authors of Cilium
- # SPDX-License-Identifier: Apache-2.0
+@@ -104,6 +104,8 @@ $(HELM_VALUES): FORCE
+ 	$(QUIET)$(RM) -- $(TMP_FILE_1) $(TMP_FILE_2) $(TMP_FILE_3)
  
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa
--ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:b132fb169c8bd92e091117c405098dbc3d66b03c@sha256:0ce5af51c7127f0dd4dd126fe1eba282aabd657b073e639453fe8e14fa44d243
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5
-+ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:9e48d94e359f386032909f1364c791a34089d5f0@sha256:569487d156988d2ed444cc88d10064d3851becfca2b2367f3bf6648393985846
- #
- # cilium-envoy from github.com/cilium/proxy
- #
+ check: builder-image api-flaggen update-cmdref update-feature-metrics update-crdlist update-helm-values update-codeowners update-redirects ## Validate command and Helm references, policy examples, and others.
++	@$(ECHO_CHECK) ./check-docs-builder-image.sh
++	$(QUIET) ./check-docs-builder-image.sh
+ 	@$(ECHO_CHECK) cmdref
+ 	$(QUIET) ./check-cmdref.sh
+ 	@$(ECHO_CHECK) feature-metrics
 ```
 
-**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
+**File**: `Documentation/check-docs-builder-image.sh` (added, +18/-0)
 ```diff
-@@ -7,7 +7,7 @@
- # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
- ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:d62067879de890a1def9da0e7766b7d20810a5e5555cef8506b752437d7a3e88
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5
- 
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
+@@ -0,0 +1,18 @@
++#!/usr/bin/env bash
++
++set -o errexit
++set -o nounset
++set -o pipefail
++
++script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++source_dir="$(cd "${script_dir}/.." && pwd)"
++target_file="${source_dir}/Documentation/Makefile"
++
++make -C "${script_dir}" update-docs-builder-image
++
++git add --intent-to-add -- "$target_file"
++if ! git diff --quiet -- "$target_file"; then
++    git --no-pager diff "$target_file"
++    echo "HINT: to fix this, run 'make -C Documentation builder-image'"
++    exit 1
++fi
 ```
 
-**File**: `images/operator/Dockerfile` (modified, +1/-1)
+---
+
+### Incident Patch 3: `76cc4f5d` (2026-10-19)
+**Commit Message**: images: Move docs-builder into images/ directory
+
+The docs-builder image build workflows have created some pain during
+maintenance due to the way that the files have been managed, including:
+
+* docs-builder image tag was calculated from all Documentation/ content.
+  This means that _any_ change to Documentation files would cause the
+  builder to need to be rebuilt.
+* Documentation/Makefile contains the docs-builder image tag, meaning
+  that any time we update the docs-builder tag, it updates the input
+  used to calculate the docs-builder tag. As soon as you make one change
+  to any docs file dependency, the docs-builder update GitHub workflows
+  would always trigger the deployment to rebuild the docs-builder image,
+  even if all changes to the docs-builder have been accounted for.
+* Due to these discrepancies, there has been no way to detect whether
+  the docs-builder needs updating, so the regular Documentation build
+  did not depend on building a docs-builder image with the latest
+  dependencies. This lead to cases where we would review and merge docs
+  dependency updates without actually building the docs using the new
+  dependencies.
+
+Move all of the build infrastructure for cr
+
+**File**: `.gitattributes` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@
- ARG BASE_IMAGE=scratch
- ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc
- ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
--ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:29ef998a359604fb0db5e54e5ee7a257a9ccb02d@sha256:546da8ba6fc7d64cc03675a14b6394b063b56f9fef20b85aff2d2e78a12ab0fa
-+ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:59066b0bd5b2752eb43967ddc463416bceff0e6f@sha256:97d3a0f90898e83c8e63712accb64518f50ae0c4709c423f047c7871e8710ad5
+@@ -4,14 +4,14 @@
+ go.sum linguist-generated
+ vendor/modules.txt linguist-generated
+ examples/kubernetes/connectivity-check/connectivity-*.yaml linguist-generated
++images/docs-builder/requirements.txt linguist-generated
+ pkg/k8s/apis/cilium.io/v2/client/crds/*.yaml linguist-generated
+ test/controlplane/**/v1.[0-9][0-9]/*.yaml linguist-generated
+ test/controlplane/services/graceful-termination/*.yaml linguist-generated
+ Documentation/cmdref/*.md linguist-generated
+ Documentation/crdlist.rst linguist-generated
+ Documentation/helm-values.rst linguist-generated
+ Documentation/codeowners.rst linguist-generated
+-Documentation/requirements.txt linguist-generated
+ Documentation/_static/* -diff
+ *svg -diff
+ *excalidraw -diff
+```
+
+**File**: `.github/renovate.json5` (modified, +1/-1)
+```diff
+@@ -848,7 +848,7 @@
+           "make -C Documentation update-requirements"
+         ],
+         "fileFilters": [
+-          "Documentation/requirements.txt"
++          "images/docs-builder/requirements.txt"
+         ],
+         "executionMode": "update"
+       }
+```
+
+**File**: `.github/workflows/build-images-docs-builder-v1.18.yaml` (modified, +4/-5)
+```diff
+@@ -10,8 +10,7 @@ on:
+       - synchronize
+       - reopened
+     paths:
+-      - Documentation/Dockerfile
+-      - Documentation/requirements.txt
++      - images/docs-builder/**
  
- # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
- # Represents the plataform where the build is happening, do not mix with
+ 
+ permissions:
+@@ -66,7 +65,7 @@ jobs:
+       - name: Generate image tag for docs-builder
+         id: docs-builder-tag
+         run: |
+-          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
++          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
+ 
+       - name: Check if tag for docs-builder already exists
+         id: docs-builder-tag-in-repositories
+@@ -124,8 +123,8 @@ jobs:
+         id: docker-build-docs-builder
+         with:
+           provenance: false
+-          context: ./Documentation
+-          file: ./Documentation/Dockerfile
++          context: ./images/docs-builder
++          file: ./images/docs-builder/Dockerfile
+           push: true
+           tags: |
+             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
+```
+
+**File**: `.github/workflows/build-images-docs-builder-v1.19.yaml` (modified, +4/-5)
+```diff
+@@ -10,8 +10,7 @@ on:
+       - synchronize
+       - reopened
+     paths:
+-      - Documentation/Dockerfile
+-      - Documentation/requirements.txt
++      - images/docs-builder/**
+ 
+ 
+ permissions:
+@@ -66,7 +65,7 @@ jobs:
+       - name: Generate image tag for docs-builder
+         id: docs-builder-tag
+         run: |
+-          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
++          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
+ 
+       - name: Check if tag for docs-builder already exists
+         id: docs-builder-tag-in-repositories
+@@ -124,8 +123,8 @@ jobs:
+         id: docker-build-docs-builder
+         with:
+           provenance: false
+-          context: ./Documentation
+-          file: ./Documentation/Dockerfile
++          context: ./images/docs-builder
++          file: ./images/docs-builder/Dockerfile
+           push: true
+           tags: |
+             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
+```
+
+**File**: `.github/workflows/build-images-docs-builder-v1.20.yaml` (modified, +4/-5)
+```diff
+@@ -10,8 +10,7 @@ on:
+       - synchronize
+       - reopened
+     paths:
+-      - Documentation/Dockerfile
+-      - Documentation/requirements.txt
++      - images/docs-builder/**
+ 
+ 
+ permissions:
+@@ -66,7 +65,7 @@ jobs:
+       - name: Generate image tag for docs-builder
+         id: docs-builder-tag
+         run: |
+-          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
++          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
+ 
+       - name: Check if tag for docs-builder already exists
+         id: docs-builder-tag-in-repositories
+@@ -124,8 +123,8 @@ jobs:
+         id: docker-build-docs-builder
+         with:
+           provenance: false
+-          context: ./Documentation
+-          file: ./Documentation/Dockerfile
++          context: ./images/docs-builder
++          file: ./images/docs-builder/Dockerfile
+           push: true
+           tags: |
+             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
+```
+
+**File**: `.github/workflows/build-images-docs-builder.yaml` (modified, +4/-5)
+```diff
+@@ -8,8 +8,7 @@ on:
+       - synchronize
+       - reopened
+     paths:
+-      - Documentation/Dockerfile
+-      - Documentation/requirements.txt
++      - images/docs-builder/**
+     branches-ignore:
+       - v1.20
+       - v1.19
+@@ -67,7 +66,7 @@ jobs:
+       - name: Generate image tag for docs-builder
+         id: docs-builder-tag
+         run: |
+-          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
++          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
+ 
+       - name: Check if tag for docs-builder already exists
+         id: docs-builder-tag-in-repositories
+@@ -125,8 +124,8 @@ jobs:
+         id: docker-build-docs-builder
+         with:
+           provenance: false
+-          context: ./Documentation
+-          file: ./Documentation/Dockerfile
++          context: ./images/docs-builder
++          file: ./images/docs-builder/Dockerfile
+           push: true
+           tags: |
+             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
+```
+
+**File**: `.github/workflows/documentation.yaml` (modified, +1/-0)
+```diff
+@@ -45,6 +45,7 @@ jobs:
+               - 'cilium-health/cmd/**'
+               - 'daemon/cmd/**'
+               - 'hubble-relay/cmd/**'
++              - 'images/docs-builder/**'
+               - 'install/kubernetes/**'
+               - 'operator/cmd/**'
+               - 'pkg/metrics/features/**'
+```
+
+**File**: `CODEOWNERS` (modified, +1/-2)
+```diff
+@@ -437,7 +437,6 @@ Makefile* @cilium/build
+ /Documentation/contributing/development/reviewers_committers/review_vendor.rst @cilium/vendor
+ /Documentation/contributing/testing/scalability.rst @cilium/sig-scalability
+ /Documentation/crdlist.rst
+-/Documentation/Dockerfile @cilium/docs-structure
+ /Documentation/gettingstarted/demo.rst @cilium/docs-structure
+ /Documentation/gettingstarted/gettinghelp.rst @cilium/contributing @cilium/docs-structure
+ /Documentation/glossary.rst @cilium/docs-structure
+@@ -483,7 +482,6 @@ Makefile* @cilium/build
+ /Documentation/operations/troubleshooting_clustermesh.rst @cilium/sig-clustermesh @cilium/docs-structure
+ /Documentation/overview/component-overview.rst @cilium/docs-structure
+ /Documentation/overview/intro.rst @cilium/docs-structure
+-/Documentation/requirements.txt @cilium/docs-structure
+ /Documentation/security/http.rst @cilium/sig-policy @cilium/docs-structure
+ /Documentation/security/images/cilium_threat_model* @cilium/security-cilium @cilium/docs-structure
+ /Documentation/security/network/encryption-ipsec.rst @cilium/ipsec @cilium/docs-structure
+@@ -516,6 +514,7 @@ Makefile* @cilium/build
+ /images/builder/install-protoc.sh @cilium/sig-hubble-api
+ /images/builder/install-protoplugins.sh @cilium/sig-hubble-api
+ /images/builder/update-cilium-builder-image.sh @cilium/github-sec
++/images/docs-builder @cilium/docs-structure
+ /images/hubble-relay @cilium/sig-hubble
+ /images/runtime/update-cilium-runtime-image.sh @cilium/github-sec
+ /install/kubernetes/ @cilium/helm
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49554** (closed): [Closed] Superseded by #49555 (@abraaoteixeira)
 - **PR #49546** (2026-10-22): Prepare for release v1.19.10 (@cilium-release-bot[bot])
 - **PR #49545** (2026-10-22): Prepare for release v1.18.16 (@cilium-release-bot[bot])
+- **PR #49541** (closed): [v1.20] Backports 2026-10-22 (@aanm)
 - **PR #49538** (closed): daemon: Fix the BPF masquerade auto-disable log message (@aanm)
 - **PR #49537** (2026-10-22): daemon: Warn instead of error for BPF masquerade on upgrades (@pchaigno)
-- **PR #49533** (2026-10-22): daemon: Don't warn when disabling BPF masquerading (@pchaigno)
-- **PR #49531** (2026-10-22): chore(deps): update stable lvh-images (v1.18) (patch) (@cilium-renovate[bot])
 
 ---
 
@@ -1814,28 +1751,65 @@ Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: fix PR chart checkout ref in smoke conformance workflows
+## X. ipam/resynctest: add a full resync race test helper
 
 **RULE**:
-When implementing operations in `.github/workflows/tests-smoke-conformance.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ipam/resynctest/resynctest.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ff3986e`: ci: fix PR chart checkout ref in smoke conformance workflows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e085ff3a`: ipam/resynctest: add a full resync race test helper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests-smoke-conformance.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ipam/resynctest/resynctest.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          ref: ${{ steps.sha.outputs.sha }}
+// SPDX-License-Identifier: Apache-2.0
+// Copyright Authors of Cilium
+
+// Package resynctest checks that an IPAM cache update made during a full
+// cloud API resync survives it.
+package resynctest
+
+import (
+	"context"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	ipamTypes "github.com/cilium/cilium/pkg/ipam/types"
+	"github.com/cilium/cilium/pkg/time"
+)
+
+type resyncer interface {
+	Resync(ctx context.Context) (time.Time, error)
+}
+
+// RunDuringFullResync runs cloudSetup and then cacheUpdate inside the cloud fetch window of a full resync.
+// setHook installs the function the fake cloud API calls when the full resync's fetch returns.
+func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
+	t.Helper()
+
+	// An unguarded cacheUpdate must land within this much of the fetch window for the resync to drop it.
+	const detectionBudget = 2 * time.Second
+	// Only a locking regression keeps cloudSetup or cacheUpdate waiting this long.
+	const progressTimeout = 10 * time.Second
+
+	var setupErr error
+	var setupStalled bool
+	atCacheUpdate := make(chan struct{})
+	done := make(chan struct{})
+	hookReturned := make(chan struct{})
+
+	// 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          ref: ${{ steps.vars.outputs.sha }}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ff3986e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e085ff3a` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T20:22:07.167Z",
+  "last_updated": "2026-10-22T20:30:28.044Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5559,8 +5559,8 @@
       "slug": "chroma-core-chroma",
       "platform": "github",
       "source_url": "https://github.com/chroma-core/chroma",
-      "source_version": "ddc17cd7",
-      "content_hash": "317507d2a352d6d8e82b8d85d3dd3ba9c0a3862da1db3720546f193b198e9125",
+      "source_version": "52ce8448",
+      "content_hash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
       "dossier_path": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
       "promoted_rules": [
@@ -5578,6 +5578,11 @@
           "number": 2293,
           "title": "Deep In-Memory Parameter Boundary Enforcement for Computational Engines",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3725,
+          "title": "[ENH](helm): Expose query-service termination grace and minReadySeconds (#7924)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5585,7 +5590,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:21:33.826Z",
+      "verified_at": "2026-10-22T20:30:28.037Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5622,8 +5627,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "9e24f135",
-      "content_hash": "ae02aa34d138e63d95b17b9e44f0827526ba8c42d2f452ddcfcbe7c69023c2e9",
+      "source_version": "28b8d3eb",
+      "content_hash": "55960f3f253fd4161cf3a559a59adc9a1f5c73ec6bddcef547be52682bdeae12",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5696,6 +5701,11 @@
           "number": 3653,
           "title": "ci: fix PR chart checkout ref in smoke conformance workflows",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3724,
+          "title": "ipam/resynctest: add a full resync race test helper",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5703,7 +5713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:04:54.039Z",
+      "verified_at": "2026-10-22T20:30:27.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50053,8 +50063,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "911ec56e",
-      "content_hash": "33ecc935b138db8ccd981718779db2ffb0341d378daa3dd2e78ba9a7be02871d",
+      "source_version": "69b67d33",
+      "content_hash": "f8fcdcc5a91ca1255d8a80c87702845ee9dde99b02196eecea943cde73635c59",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -50067,6 +50077,11 @@
           "number": 3059,
           "title": "ACP: order advertised effort levels from lowest to highest (#953)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3722,
+          "title": "Bump version to v0.2.116",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50074,7 +50089,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:57:06.150Z",
+      "verified_at": "2026-10-22T20:30:15.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61993,14 +62008,19 @@
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "9f06d6bc",
-      "content_hash": "fa6f322f7c9b2af1baa1aebbf5b2a4465654d29622cc93abf2fbc06e9a2ceddb",
+      "source_version": "1f452240",
+      "content_hash": "128d4224b2517c48095591f8c5336138acc9a330c70acc0fc7deb7f36fac7632",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "promoted_rules": [
         {
           "number": 2905,
           "title": "ignore missing release ref during cleanup (#5891)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3723,
+          "title": "http2): keep persistent error sink on released streams (#5983)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -62009,7 +62029,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:59:53.939Z",
+      "verified_at": "2026-10-22T20:30:17.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111663,6 +111683,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T20:22:04.217Z"
+    },
+    "rule-3722": {
+      "learning_id": "rule-3722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3722,
+      "title": "Bump version to v0.2.116",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "69b67d33",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:30:15.734Z"
+    },
+    "rule-3723": {
+      "learning_id": "rule-3723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3723,
+      "title": "http2): keep persistent error sink on released streams (#5983)",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "1f452240",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:30:17.095Z"
+    },
+    "rule-3724": {
+      "learning_id": "rule-3724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3724,
+      "title": "ipam/resynctest: add a full resync race test helper",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "28b8d3eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:30:27.241Z"
+    },
+    "rule-3725": {
+      "learning_id": "rule-3725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3725,
+      "title": "[ENH](helm): Expose query-service termination grace and minReadySeconds (#7924)",
+      "source_url": "https://github.com/chroma-core/chroma",
+      "source_version": "52ce8448",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:30:28.037Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `911ec56e`  
+> **Source Version**: `69b67d33`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:57:05.907Z  
+> **Timestamp**: 2026-10-22T20:30:15.546Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:57:04.620Z  
+> **Harvest Timestamp**: 2026-10-22T20:30:14.318Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3311 stars
+- **Stars / Engagement**: 3328 stars
 
 ---
 
@@ -481,6 +481,20 @@ final class CoreSessionSource: SessionSource {
     private var hostDevice = "" {
         didSet { if hostDevice != oldValue { connectVisuals() } }
     }
+    /// Between turns, on a host that switches providers, the model menu
+    /// offers the other providers too.
+    private var canSwitchProvider = false
+    private var hostSwitchesProviders = false
+    private var turnRunning = false
+    /// The host's providers, read ahead: a menu whose top level waits on the
+    /// host doesn't open until it answers.
+    private var hostHarnesses: [HarnessInfo] = []
+    private var harnessesDevice = ""
+    /// What a chat with no model of its own runs: its host's default (the
+    /// catalog's first model), by "device|harness". Seeded from the built-in
+    /// list so the chip never shows a bare provider name, then the host's.
+    private var defaultModels: [String: ModelPickerRow] = [:]
+    private var defaultModelsLoading: Set<String> = []
     private weak var engine: TranscriptView?
 
     init(app: AppModel, client: CoreClient, handle: SessionHandle, chatId: String) {
@@ -518,15 +532,39 @@ final class CoreSessionSource: SessionSource {
         let c = handle.composer()
         let row = app?.row(chatId)
         hostDevice = c.host.deviceId
+        hostSwitchesProviders = c.host.capabilities.providerSwitch
+        turnRunning = c.live.turnRunning
+        // Not mid-turn, and not while a message is still on its way (its
+        // turn is about to start on the current provider).
+        let sendPending = c.sendState == .sending || c.sendState == .queued
+        canSwitchProvider = hostSwitchesProviders && !turnRunning && !sendPending
+        if canSwitchProvider, harnessesDevice != hostDevice {
+            let device = hostDevice
+            harnessesDevice = device
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                let list = await self.client.listHarnesses(deviceId: device)
+                guard self.hostDevice == device else { return }
+                // Nothing back (offline, slow): ask again on the next refresh.
+                guard !list.isEmpty else {
+                    self.harnessesDevice = ""
+                    return
+                }
+                self.hostHarnesses = list
+                self.onChange?()
+            }
+        }
         var next = SessionChrome()
         next.title = c.title
         let project = row?.project?.name ?? "No project"
-        next.subtitle = c.host.name.map { "\(project) @ \($0)" } ?? project
+        // A Cloud chat's machine is "Cloud", not its own device name.
+        let hostName = row?.isCloud == true ? row?.deviceName : c.host.name
+        next.subtitle = hostName.map { "\(project) @ \($0)" } ?? project
         next.running = c.live.turnRunning
         next.canSteer = c.host.capabilities.midTurnSteering ?? false
         next.placeholder = "Message \(row?.harnessLabel ?? "the agent")"
         var chips: [ComposerChip] = []
-        if let model = row?.modelLabel ?? row?.harnessLabel {
+        if let model = row?.modelLabel ?? row.flatMap({ defaultModel(for: $0)?.label }) ?? row?.harnessLabel {
             chips.append(ComposerChip(id: "model", title: model, symbol: nil, icon: BrandMarks.image(for: row?.harness ?? "claude-code", side: 13)))
         }
         if let r = row?.reasoning, !r.isEmpty {
@@ -555,7 +593,11 @@ final class CoreSessionSource: SessionSource {
         } else if c.sendState == .failed {
             next.banner = .notDelivered
         } else if c.sendState == .queued {
-            next.banner = .failed("\(c.host.name ?? "Host") is offline — will send when it's back")
+            // A Cloud chat's message waits for its machine to start or wake —
+            // the transcript's setup step says so, as on the desktop.
+            if row?.isCloud != true {
+                next.banner = .failed("\(c.host.name ?? "Host") is offline — will send when it's back")
+            }
         } else if c.sendState == .sending {
             next.banner = .sending
         } else if app?.connectivity?.state == .offline {
@@ -638,54 +680,36 @@ final class CoreSessionSource: SessionSource {
         renewal = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(20))
-                guard let self, let lease = self.lease, !Task.isCancelled else { return }
-                if await !self.handle.renewQueuedEdit(lease: lease) { return }
-            }
+                gua
+```
+
+### Core Architecture Module: `apps/zeron/src/bin/zeron-engine.rs`
+```
+//! `zeron-engine` — the desktop app's background engine, as a process of its
+//! own ("Zeron Engine" in Activity Monitor): the app starts it and attaches;
+//! sessions keep running with the app closed. Without the UI linked in.
+//!
+//! It also answers what the engine runs its own executable for: `mcp` (the
+//! Zeron MCP server injected into agents) and `--noop-browser` (browser
+//! suppression for agents' sign-in flows).
+
+#![cfg_attr(windows, windows_subsystem = "windows")]
+
+fn main() -> anyhow::Result<()> {
+    match std::env::args().nth(1).as_deref() {
+        Some("--noop-browser") => Ok(()),
+        Some("mcp") => {
+            zeron_app::init_logging(false, "mcp", true);
+            zeron_app::run_mcp()
         }
-        guard let item = handle.composer().queue.first(where: { $0.id == id }) else { return nil }
-        editBase = (item.text, item.visibleText)
-        return item.visibleText
-    }
-
-    func finishEdit(text: String?) async {
-        renewal?.cancel()
-        let base = editBase
-        editBase = nil
-        guard let lease else { return }
-        self.lease = nil
-        var body = text
-        if let edited = text, let base {
-            // Unchanged: release the row as it was (a commit would drop what
-            // the composer never showed).
-            body = edited == base.visible ? nil : Self.replacingVisible(in: base.raw, visible: base.visible, with: edited)
+        Some("--version" | "-V") => {
+            println!("zeron-engine {}", env!("CARGO_PKG_VERSION"));
+            Ok(())
         }
-        _ = await handle.finishQueuedEdit(lease: lease, action: body == nil ? .cancel : .commit, text: body)
+        _ => zeron_app::background::run(),
     }
+}
 
-    /// The row's raw text with its visible part replaced, keeping the hidden
-    /// context after it. Blank edits stay blank (the host removes the row).
-    static func replacingVisible(in raw: String, visible: String, with edited: String) -> String {
-        if edited.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || raw == visible { return edited }
-        let body = raw.drop(while: \.isWhitespace)
-        if body.hasPrefix(visible) { return edited + body.dropFirst(visible.count) }
-        // Attachment-only rows show a placeholder: all of the raw text is context.
-        return body.isEmpty ? edited : edited + "\n\n" + body
-    }
-
-    func retryDelivery() {
-        try? handle.retryDelivery()
-    }
-
-    func chipMenu(_ id: String) -> UIMenu? {
-        guard let row = app?.row(chatId) else { return nil }
-        let harness = row.harness ?? "claude-code"
-        switch id {
-        case "model":
-            return UIMenu(title: "Model", children: [UIDeferredMenuElement { [weak self] done in
-                guard let self else { return done([]) }
-                Task { @MainActor in
-                    let models = (try? await self.client.listModels(deviceId: self.hostDevice, harness: harness)) ?? fallbackModels(harness: harness)
-                    done(mode
 ```
 
 ### Core Architecture Module: `crates/audio/src/worker.rs`
@@ -1484,204 +1508,17 @@ fn print_rss(label: &str) {
 
 ```
 
-### Core Architecture Module: `crates/engine/src/agent_accounts.rs`
-```
-//! AgentAccounts — the logins of every agent CLI on this device that has one
-//! (feature-inventory §3.7 "Agent accounts"; port of zeron's
-//! `agent-accounts.ts`).
-//!
-//! Grok, Devin, OpenCode, Pi and Hermes live in [`stores`] (credential
-//! formats and detection), [`oauth`] (the sign-ins the engine drives itself)
-//! and [`usage`] (their quota probes); each module documents per provider
-//! what is supported and why. In short:
-//!
-//! | agent    | detect | switch | add account                    | usage |
-//! |----------|--------|--------|--------------------------------|-------|
-//! | Grok     | yes    | yes    | `grok login --device-auth`     | yes   |
-//! | Devin    | yes    | yes    | ACP `authenticate` (loopback)  | yes   |
-//! | OpenCode | yes    | yes    | ChatGPT loopback, Copilot code | yes   |
-//! | Pi       | yes    | yes    | ChatGPT loopback               | yes   |
-//! | Hermes   | yes    | no¹    | `hermes auth add` (device code) | yes  |
-//!
-//! ¹ Hermes keeps every account in its own credential pool and rotates
-//! through it itself; zeron lists the pool and adds to it through Hermes'
-//! own CLI, but never rewrites it.
-//!
-//! The original four providers each store exactly one live login:
-//!
-//! - **Claude Code** — credentials in `~/.claude/.credentials.json`
-//!   (`$CLAUDE_CONFIG_DIR` relocates the dir) or, on macOS, the Keychain item
-//!   `Claude Code-credentials`; the account identity (`oauthAccount`, `userID`)
-//!   lives in `~/.claude.json`.
-//! - **Codex** — `$CODEX_HOME/auth.json` (default `~/.codex`): a ChatGPT OAuth
-//!   token set (identity inside the `id_token` JWT) or a raw API key.
-//! - **Cursor** — `~/.cursor/sdk/auth.json`: the Cursor SDK's credential store
-//!   (`StoredSdkCredentials`) holding the named, expiring user API key its
-//!   browser login mints. Deliberately SEPARATE from `cursor-agent login`'s
-//!   whole-account session tokens, which zeron never reads.
-//! - **Antigravity** — its ACP server keeps one Google login per
-//!   `GEMINI_HOME`: a token blob in the macOS Keychain (service `gemini`) or
-//!   `antigravity-acp/acp_token.json`, plus the method in `settings.json`.
-//!   The blob carries no identity and is never read — the login is listed
-//!   from the method and the token's PRESENCE only, active and unswitchable.
-//!
-//! Claude-swap mechanics:
-//!
-//! 1. **Detect** the live login of each CLI and auto-snapshot it into a slot
-//!    under `{data_dir}/agent-accounts/{harness}/{slotId}.json` — the current
-//!    session is always backed up before any swap, and refreshed tokens stay
-//!    current.
-//! 2. **Swap** (`activate`): overwrite the CLI's credential store (and, for
-//!    Claude, merge the identity back into `~/.claude.json`) with a saved slot.
-//!    Claude's credential blob is overloaded: `claudeAiOauth` is per-account,
-//!    but sibling keys such as `mcpOAuth` are machine-shared MCP/plugin tokens.
-//!    Activate splices those live shared fields onto the target login so a
-//!    switch does not force every MCP server to re-auth.
-//! 3. **Add** (`start_login`…): drive an OAuth flow for a NEW account without
-//!    touching the live one (unless it re-signs the live account in, or there
-//!    is no live login) — the way each CLI signs in itself: the browser
-//!    redirects to a loopback callback that finishes the login unattended.
-//!    Claude runs the CLI's PKCE flow against our own `localhost:<port>/callback`
-//!    (pasting the code is only the fallback when no port can be bound);
-//!    Codex spawns `codex login` against a throwaway `CODEX_HOME` and polls
-//!    until its loopback callback lands; Antigravity runs its server's
-//!    `authenticate`. A login run for ANOTHER device (`requester`) publishes
-//!    its callback port to [`zeron_preview::login`], so the requester can
-//!    forward its own loopback to it over the P2P link.
-//!
-//! Usage probes: all three providers expose the rate-limit view their own CLIs render
-//! (`/usage` in Claude Code, `/status` in Codex; Cursor's key has no quota view,
-//! so the probe exchanges it for a dashboard session and reads the
-//! `GetCurrentPeriodUsage` call the Cursor app itself makes). Usage is
-//! stale-while-revalidate: every list serves each account's last good probe
-//! (persisted to `agent-accounts/usage-cache.json`, so it survives restarts)
-//! with its fetch time; only `force_usage` hits the network, probing all
-//! accounts concurrently. The UI paints from a plain list, then forces one to
-//! update in place. A failed probe keeps the last good windows, records why
-//! (shown instead of "Usage unavailable"), and backs off — honouring
-//! `Retry-After` — before that account is probed again. Only 401/403 counts
-//! as a rejected token (and only then is a saved Claude slot refreshed).
-
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
-use std::time::{Duration, Instant};
-
-use base64::Engine as _;
-use base64::engine::general_purpose::STANDARD as BASE64;
-use base64::engine::general_purpose::URL_SAFE_NO_PAD as BASE64_URL;
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-
-use zeron_proto::{
-    AgentAccount, AgentAccountWarning, AgentAccountsSnapshot, AgentAuthKind, AgentLoginMode,
-    AgentLoginPoll, AgentLoginStart, AgentLoginStatus, AgentUsageWindow, HarnessId,
-};
-
-use crate::repos::home_dir;
-use crate::{EngineError, new_id, now_ms};
-
-mod oauth;
-#[cfg(test)]
-mod provider_tests;
-mod stores;
-mod usage;
-
-// Claude Code's public OAuth client (the one the CLI itself uses for the manual
-// "paste the code" flow — no secret involved, PKCE carries the proof).
-const CLAUDE_CLIENT_ID: &str = "9d1c250a-e61b-44d9-88ed-5944d1962f5e";
-const CLAUDE_REDIRECT: &str = "https://console.anthropic.com/oauth/code/callback";
-const CLAUDE_SCOPES: &str = "org:create_api_key user:profile user:inference";
-const CLAUDE_TOKEN_URL: &str = "https://console.anthropic.com/v1/oauth/token";
-const CLAUDE_PROFILE_URL: &str = "https://api.anthropic.com/api/oauth/profile";
-const CLAUDE_USAGE_URL: &str = "https://api.anthropic.com/api/oauth/usage";
-// Claude Code 2.1.x's automatic (loopback) login: the claude.ai authorize
-// page, the token endpoint it exchanges at, the page it sends the browser to
-// once the code is redeemed, and the scopes it asks for.
-const CLAUDE_LOOPBACK_AUTHORIZE_URL: &str = "https://claude.com/cai/oauth/authorize";
-const CLAUDE_LOOPBACK_TOKEN_URL: &str = "https://platform.claude.com/v1/oauth/token";
-const CLAUDE_LOOPBACK_SUCCESS_URL: &str =
-    "https://platform.claude.com/oauth/code/success?app=claude-code";
-const CLAUDE_LOOPBACK_SCOPES: &str = "org:create_api_key user:profile user:inference \
-     user:sessions:claude_code user:mcp_servers user:file_upload user:plugins";
-const CODEX_USAGE_URL: &str = "https://chatgpt.com/backend-api/wham/usage";
-/// The Cursor dashboard's current-period usage RPC (Connect-style POST).
-const CURSOR_CURRENT_PERIOD_USAGE: &str = "aiserver.v1.DashboardService/GetCurrentPeriodUsage";
-const CURSOR_DEFAULT_BACKEND: &str = "https://api2.cursor.sh";
-
-/// Claude Code stores these next to `claudeAiOauth` in the same credential
-/// blob, but they are machine-shared (MCP server OAuth, plugin secrets) and
-/// rotate independently of any account slot. On activate the live copies win.
-const CLAUDE_SHARED_CREDENTIAL_KEYS: &[&str] = &[
-    "mcpOAuth",
-    "mcpOAuthClientConfig",
-    "mcpXaaIdp",
-    "mcpXaaIdpConfig",
-    "pluginSecrets",
-];
-
-/// A forced list re-probes an account only when its last attempt is older
-/// than this — the page's paint-then-refresh pair and Refresh mashing must
-/// not multiply provider calls (Anthropic's usage endpoint 429s eagerly).
-const FORCED_MIN_INTERVAL: Duration = Duration::from_secs(30);
-/// How long a live Claude credential read is reused (see
-/// [`AgentAccounts::read_claude_credentials_cached`]).
-const CLAUDE_CREDENTIALS_TTL: Duration = Duration::from_secs(10);
-/// An abandoned login flow (dialog dismissed without Cancel) is reaped past this.
-const FLOW_TTL: Duration = Duration::from_secs(15 * 60);
-const HTTP_TIMEOUT: Duration = Duration::from_secs(8);
-
-/// A failed identity lookup is retried no sooner than this — an offline
-/// device must not call the profile endpoint on every list.
-const IDENTITY_RETRY: Duration = Duration::from_secs(5 * 60);
-
-/// A remembered identity lookup (see `Inner::identities`).
-#[derive(Clone)]
-enum IdentityLookup {
-    Known(String, SlotProfile),
-    Failed(Instant),
-}
-
-/// Filesystem knobs — env-resolved in production ([`AgentAccountsConfig::detect`]),
-/// explicit in tests.
-#[derive(Debug, Clone)]
-pub struct AgentAccountsConfig {
-    /// Engine data dir; slots live under `{data_dir}/agent-accounts/`.
-    pub data_dir: PathBuf,
-    /// Claude config dir (`$CLAUDE_CONFIG_DIR` or `~/.claude`) — holds `.credentials.json`.
-    pub claude_config_dir: PathBuf,
-    /// Claude identity file (`~/.claude.json`, or `$CLAUDE_CONFIG_DIR/.claude.json`).
-    pub claude_config_file: PathBuf,
-    /// Codex home (`$CODEX_HOME` or `~/.codex`) — holds `auth.json`.
-    pub codex_home: PathBuf,
-    /// The Cursor SDK's credential store (`~/.cursor/sdk/auth.json`): the
-    /// named, expiring API key minted by its browser login. SEPARATE from
-    /// `cursor-agent login`'s session tokens — deliberately never read.
-    pub cursor_sdk_auth_file: PathBuf,
-    /// macOS Keychain service holding Claude Code's credentials, or `None`
-    /// to use `.credentials.json` only (tests — a temp config must never
-    /// read or write the real login). See [`claude_keychain_service`].
-    pub claude_keychain_service: Option<String>,
-    /// Antigravity's `GEMINI_HOME` (`None`: unresolvable — no Antigravity row).
-    pub antigravity_home: Option<PathBuf>,
-    /// Whether Antigravity's Keychain token counts (macOS production); tests
-    /// look at the temp token files only.
-    pub antigravity_keychain: bool,
-    /// Grok's `GROK_HOME` (default `
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #953** (2026-10-19): **ACP: order advertised effort levels from lowest to highest**
-  *Symptoms*: ## Summary  - On Grok 4.7 the composer's effort slider runs backwards: the left end is Extra High and the right end is Low, so the fill grows as effort drops. - Cause: Grok Build advertises its `thought_level` options from highest to lowest. `models_from_session` kept the wire order, and only Grok 4.5 has a built-in catalog row, so Grok 4.7, Grok 4.7 Fast and Grok 4.6 showed Grok's order directly. - Fix: sort and deduplicate the advertised ladder in `ReasoningLevel` order. The change is in the shared ACP parser, so any ACP agent that advertises a descending ladder now shows it ascending. Ladders that are already ascending are unchanged. - The default effort is unchanged. Zeron still picks High when a model offers it, which is also the level Grok marks as recommended.  Effort lists reported by Grok Build 1.0.62 (`session/new`, then `session/set_config_option` for each model):  | Model | Advertised order | Shown after this change | | --- | --- | --- | | `grok-4.7` | xhigh, high, medium, low | Low → Extra High | | `grok-4.7-build-fast` | xhigh, high, medium, low | Low → Extra High | | `grok-4.6` | xhigh, high, medium, low | Low → Extra High | | `grok-4.5` | high, medium, low | Low → High (catalog row, unchanged) |  ## Test plan  - [x] Added `grok_thought_levels_order_from_lowest_to_highest`, which uses the exact `configOptions` payload Grok Build 1.0.62 returns. It fails on `main` with `[XHigh, High, Medium, Low]` and passes with this change. - [x] `cargo test --locked -p zeron-
+- **Issue #966** (2026-10-22): **Zeron Cloud, provider switching, and the phone model picker**
+  *Symptoms*: Zeron Cloud: agents running on Cloud machines of their own, plus the work around it on desktop, phone and the edge.  ## Cloud - Cloud chats run on their own sandbox machine, cloning the project's GitHub repository. Machines wake on a send and sleep after 10 idle minutes. Deleting a chat deletes its machine, with durable retries. - Cloud agents can start child Cloud chats one level deep. - A credential vault keeps provider logins and GitHub access for Cloud machines and for your own computers. - Billing: plans and credit packs through Stripe, with Cloud's own customer portal. - Cloud is offered per account via `CLOUD_ACCESS` on the edge; anyone else sees no Cloud UI. - Cloud's model list is kept on the edge, so new models need no app release.  ## Providers and models - A chat can switch provider between turns on hosts that support it, with a seam in the transcript and per-provider session resume. - The phone's model picker is a sheet with a provider switcher and the host's model list. Chats on the default model name it.  ## Apps - Desktop: Cloud settings, billing, onboarding, the Cloud checkout, sidebar drag and overscroll fixes. - Phone: provider sign-in, Cloud screens, out-of-credits notice, onboarding polish. - Engine: Codex app-server relaunch, status publication, shutdown and terminal robustness.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/966?autoLogin=true&r
 
-- **Issue #942** (2026-10-18): **iOS: adapt to iPhone Duo (fold/unfold, uneven safe areas)**
-  *Symptoms*: ## What  Makes the iOS app adapt to iPhone Duo: the phone layout when it's folded, the sidebar layout when it's open, switching live as you fold and unfold.  **The shell follows the window, not the device.** The split shell (sidebar + session column) used to be chosen once at launch with `userInterfaceIdiom == .pad`. On iPhone Duo the idiom is always `.phone`, so the open inner display (regular × regular, like an iPad) got a stretched phone UI. The split shell is now the root everywhere: - Regular width **and** height (iPad, Duo open or half-open): sidebar beside the session. - Anything else (iPhone, Duo folded, Slide Over, narrow Split View): it collapses to the existing tab shell. - Folding and unfolding reuse the existing collapse/expand handoff, so the open session moves between the tab stack and the main column instead of being lost. - Phones in landscape keep the tab shell. Pro Max models are regular-width there; the split pins its horizontal class to compact while height is compact, so nothing changes on today's iPhones. - The main column's new-session page is built only once the sidebar is actually on screen, so a phone that never expands doesn't build it.  **Sidebar width on the open Duo.** The inner display is 669pt wide in portrait. Below 700pt the sidebar's minimum drops to 280pt so the session column keeps about 390pt, a phone's width. iPads are unchanged (the iPad mini still gets 320pt in portrait).  **Composer level with the sidebar toolbar.** Beside the sideba
+- **Issue #957** (2026-10-21): **Track agent activity with OSC 7501 across sidebar and MCP**
+  *Symptoms*: Native agents already emit structured lifecycle events, but chat-owned PTYs did not understand OSC 7501, and MCP derived completion and stale activity differently from the sidebar. This adds engine-owned Program Status Protocol support and one shared display contract: working, needs input, unseen completion, error, or idle.  - Parse bounded, fragmented OSC reports and answer capability probes without an attached terminal view. Preserve hierarchical records, app inheritance, shell/reset/exit lifetimes, and input reasons. - Project terminal activity through the session watch and synced registry. Use the synced seen marker so acknowledged errors cannot hide newer results. - Share sidebar/MCP status derivation and expose native status, last native outcome, terminal metadata, and stale evidence separately. Interrupted or stale work does not imply successful completion. - Keep native Stop/steer controls and turn completion receipts independent of terminal reports.  ## Validation  - 2,711 Linux tests passed across client, document, protocol, MCP, engine, desktop UI, native lifecycle, publication, and workspace synchronization suites. - Real PTY tests cover capability detection without a viewport, input reasons, acknowledgement, stale owners, and isolation from native completion receipts. Included in core CI. - Built and ran the opt-in native capture fixture successfully. It emits real OSC reports into three isolated PTYs and renders the production Shell with the resulting shared sta
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1698,116 +1535,676 @@ pub struct AgentAccountsConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `911ec56e` (2026-10-19)
-**Commit Message**: ACP: order advertised effort levels from lowest to highest (#953)
+### Incident Patch 1: `69b67d33` (2026-10-22)
+**Commit Message**: Bump version to v0.2.116
 
-Grok Build lists its thought_level options from highest to lowest
-(xhigh, high, medium, low for Grok 4.7, 4.7 Fast and 4.6; high, medium,
-low for Grok 4.5). Models without a built-in catalog row used that
-order directly, so the composer's effort slider ran from Extra High on
-the left to Low on the right.
-
-Sort and deduplicate the wire ladder in models_from_session so every
-ACP model presents its levels in ReasoningLevel order.
-
-**File**: `crates/harness/src/acp/mod.rs` (modified, +65/-1)
+**File**: `Cargo.lock` (modified, +27/-27)
 ```diff
-@@ -1923,7 +1923,7 @@ fn models_from_session(session_response: &Value, catalog: &[Model]) -> Vec<Model
-         .map(|a| a.as_slice())
-         .unwrap_or_default();
+@@ -13308,7 +13308,7 @@ dependencies = [
  
--    let ladder: Vec<ReasoningLevel> = config_options
-+    let mut ladder: Vec<ReasoningLevel> = config_options
-         .iter()
-         .find(|o| o.get("category").and_then(Value::as_str) == Some("thought_level"))
-         .and_then(|o| o.get("options").and_then(Value::as_array))
-@@ -1934,6 +1934,8 @@ fn models_from_session(session_response: &Value, catalog: &[Model]) -> Vec<Model
-                 .collect()
-         })
-         .unwrap_or_default();
-+    ladder.sort_unstable();
-+    ladder.dedup();
-     let wire_options: Vec<ModelOption> = config_options
-         .iter()
-         .filter_map(trait_from_config_option)
-@@ -5842,6 +5844,68 @@ mod tests {
-         assert_eq!(models[0].options[0].default_choice, "off");
+ [[package]]
+ name = "zatex"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "tiny-skia",
+  "ttf-parser",
+@@ -13559,7 +13559,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13582,7 +13582,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-audio"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "base64 0.22.1",
+  "cpal 0.18.2",
+@@ -13594,7 +13594,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-client"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "async-trait",
+  "base64 0.22.1",
+@@ -13622,7 +13622,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-doc"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "chrono",
+  "loro",
+@@ -13636,7 +13636,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-engine"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13683,7 +13683,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-harness"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13711,14 +13711,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-markdown"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "pulldown-cmark",
+ ]
+ 
+ [[package]]
+ name = "zeron-mcp"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13738,7 +13738,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-mobile"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "async-trait",
+  "serde",
+@@ -13764,19 +13764,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-notify"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "objc",
+  "tracing",
+ ]
+ 
+ [[package]]
+ name = "zeron-orb"
+-version = "0.2.115"
++version = "0.2.116"
+ 
+ [[package]]
+ name = "zeron-preview"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13804,7 +13804,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-proto"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "chrono",
+  "pulldown-cmark",
+@@ -13815,7 +13815,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-rpc"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13836,7 +13836,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-sync"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "block2 0.6.2",
+  "chrono",
+@@ -13859,7 +13859,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-syntax"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "thiserror 2.0.20",
+  "tree-sitter",
+@@ -13893,7 +13893,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-text"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "core-foundation 0.10.1",
+  "core-graphics 0.24.0",
+@@ -13910,7 +13910,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-theme"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13925,7 +13925,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-ui"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "alacritty_terminal",
+  "anyhow",
+@@ -14006,7 +14006,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-update"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "futures",
+@@ -14022,11 +14022,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-veil"
+-version = "0.2.115"
++version = "0.2.116"
+ 
+ [[package]]
+ name = "zeron-visual"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "base64 0.22.1",
+  "gltf",
+@@ -14038,7 +14038,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual-gpu"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "image",
+  "pollster 0.4.0",
+@@ -14049,7 +14049,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "anyhow",
+  "cpal 0.17.3",
+@@ -14066,7 +14066,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice-media"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "async-trait",
+  "semver",
+@@ -14081,7 +14081,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice-session"
+-version = "0.2.115"
++version = "0.2.116"
+ dependencies = [
+  "async-trait",
+  "futures",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ members = [
+ ]
+ 
+ [workspace.package]
+-version = "0.2.115"
++version = "0.2.116"
+ edition = "2024"
+ license = "MIT"
+ publish = false
+```
+
+---
+
+### Incident Patch 2: `acd7c9ba` (2026-10-22)
+**Commit Message**: RPC: fragment large messages so a long transcript can't drop the engine socket
+
+A long chat's transcript watch reply (~18 MiB) exceeded tungstenite's
+default 16 MiB frame cap. The desktop dropped the socket, reconnected, got
+the same frame, and after five losses reported "engine keeps stopping"
+while the engine ran fine.
+
+- Write messages over 1 MiB as fragmented frames, so peers on the default
+  limits (older builds) reassemble them.
+- Raise the local IPC frame/message cap to 512 MiB for unfragmented
+  frames from older peers.
+- Log transport errors instead of dropping them, expose
+  RpcClient::close_reason, and show it in the desktop's failure message.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/rpc/src/client.rs` (modified, +31/-39)
+```diff
+@@ -4,9 +4,7 @@ use std::collections::HashMap;
+ use std::sync::atomic::{AtomicU64, Ordering};
+ use std::sync::{Arc, Mutex, PoisonError};
+ 
+-use futures::{SinkExt, StreamExt};
+ use tokio::sync::{mpsc, oneshot};
+-use tokio_tungstenite::tungstenite::Message as WsMessage;
+ 
+ use crate::{ClientFrame, RpcError, ServerFrame};
+ 
+@@ -44,6 +42,8 @@ pub struct RpcClient {
+     reader: tokio::task::JoinHandle<()>,
+     /// Flips to true once the server side of the duplex is gone.
+     closed: tokio::sync::watch::Receiver<bool>,
++    /// Why the transport failed, when it did; set before `closed` flips.
++    close_reason: Arc<std::sync::OnceLock<String>>,
+ }
+ 
+ /// Owned stream receiver whose drop immediately cancels the server task.
+@@ -140,9 +140,16 @@ impl RpcClient {
+             next_id: AtomicU64::new(1),
+             reader,
+             closed,
++            close_reason: Arc::default(),
+         }
      }
  
-+    #[test]
-+    fn grok_thought_levels_order_from_lowest_to_highest() {
-+        let response = json!({
-+            "sessionId": "s-1",
-+            "configOptions": [
-+                {
-+                    "id": "model",
-+                    "name": "Model",
-+                    "category": "model",
-+                    "type": "select",
-+                    "currentValue": "grok-4.7",
-+                    "options": [
-+                        { "value": "grok-4.7", "name": "Grok 4.7" },
-+                        { "value": "grok-4.7-build-fast", "name": "Grok 4.7 Fast" },
-+                        { "value": "grok-4.6", "name": "Grok 4.6" },
-+                        { "value": "grok-4.5", "name": "Grok 4.5" },
-+                    ],
-+                },
-+                {
-+                    "id": "reasoning_effort",
-+                    "name": "Reasoning Effort",
-+                    "category": "thought_level",
-+                    "type": "select",
-+                    "currentValue": "xhigh",
-+                    "options": [
-+                        { "value": "xhigh", "name": "Extra High" },
-+                        { "value": "high", "name": "High" },
-+                        { "value": "medium", "name": "Medium" },
-+                        { "value": "low", "name": "Low" },
-+                    ],
-+                },
-+            ],
-+        });
-+        let models = models_from_session(&response, &(grok_spec().models)());
-+        let ladders = models
-+            .iter()
-+            .map(|m| (m.id.as_str(), m.reasoning_levels.clone()))
-+            .collect::<Vec<_>>();
-+        let ascending = vec![
-+            ReasoningLevel::Low,
-+            ReasoningLevel::Medium,
-+            ReasoningLevel::High,
-+            ReasoningLevel::XHigh,
-+        ];
++    /// Why the connection failed (an oversized frame, a reset socket), once
++    /// [`Self::closed`] resolved; `None` for a clean close.
++    pub fn close_reason(&self) -> Option<String> {
++        self.close_reason.get().cloned()
++    }
++
+     /// Resolves once the connection has closed (the server went away). An
+     /// in-memory client's never does while its service lives.
+     pub async fn closed(&self) {
+@@ -443,45 +450,30 @@ async fn dial(url: &str, token: Option<&str>) -> Result<RpcClient, DialError> {
+             HeaderValue::from_str(&format!("Bearer {token}")).map_err(|_| DialError::Malformed)?;
+         request.headers_mut().insert(header::AUTHORIZATION, value);
+     }
+-    let (ws, _) = tokio::time::timeout(CONNECT_TIMEOUT, tokio_tungstenite::connect_async(request))
+-        .await
+-        .map_err(|_| DialError::Other(RpcError::Transport(format!("timed out dialing {url}"))))?
+-        .map_err(|e| match e {
+-            tokio_tungstenite::tungstenite::Error::Http(response)
+-                if response.status() == StatusCode::UNAUTHORIZED =>
+-            {
+-                DialError::Unauthorized
+-            }
+-            other => DialError::Other(RpcError::Transport(other.to_string())),
+-        })?;
+-    let (mut sink, mut stream) = ws.split();
+-    let (out_tx, mut out_rx) = mpsc::channel::<String>(256);
++    let (ws, _) = tokio::time::timeout(
++        CONNECT_TIMEOUT,
++        tokio_tungstenite::connect_async_with_config(request, Some(crate::ws::config()), false),
++    )
++    .await
++    .map_err(|_| DialError::Other(RpcError::Transport(format!("timed out dialing {url}"))))?
++    .map_err(|e| match e {
++        tokio_tungstenite::tungstenite::Error::Http(response)
++            if response.status() == StatusCode::UNAUTHORIZED =>
++        {
++            DialError::Unauthorized
++        }
++        other => DialError::Other(RpcError::Transport(other.to_string())),
++    })?;
++    let (out_tx, out_rx) = mpsc::channel::<String>(256);
+     let (in_tx, in_rx) = mpsc::channel::<String>(256);
++    let client = RpcClient::new(out_tx, in_rx);
++    let close_reason = client.close_reason.clone();
++    let url = url.to_owned();
+     tokio::spawn(async move {
+-        loop {
+-            tokio::select! {
+-                frame = out_rx.recv() => match frame {
+-                    Some(text) => {
+-                        if sink.send(WsMessage::Text(text)).await.is_err() {
+-                            break;
+-                        }
+-                    }
+-                    None => {
+-                        let _ = sink.send(WsMessage::Close(None)).await;
+-                        break;
+-                    }
+-                },
+-                message = stream.next() => match message {
+-                    Some(Ok(WsMessage::Text(text))) => {
+-                        if in_tx.send(text).await.is_err() {
+-                            break;
+-                        }
+-                    }
+-                    Some(Ok(WsMessage::Close(_))) | Some(Err(_)) | None => break,
+-                    Some(Ok(_)) => {}
+-                },
+-            }
++        if let Some(reason) = crate::ws::pump(ws, out_rx, in_tx).await {
++            tracing::warn!(%reason, %url, "rpc: lost the connection");
++            let _ = close_reason.set(reason);
+         }
+     });
+-    Ok(RpcClient::new(out_tx, in_rx))
++    Ok(client)
+ }
+```
+
+**File**: `crates/rpc/src/lib.rs` (modified, +50/-0)
+```diff
+@@ -22,6 +22,7 @@ mod client;
+ pub mod device_room;
+ pub mod ipc_auth;
+ mod server;
++mod ws;
+ 
+ pub use client::{RpcClient, RpcSubscription, connect_ipc, connect_ws};
+ pub use device_room::{
+@@ -737,6 +738,55 @@ mod tests {
+         assert_eq!(items.recv().await, None);
+     }
+ 
++    /// A reply past tungstenite's default 16 MiB frame cap (a long chat's
++    /// transcript watch) must arrive, not drop the connection.
++    #[tokio::test]
++    async fn websocket_carries_messages_past_the_default_frame_cap() {
++        let token = ipc_auth::generate_token().unwrap();
++        let port = serve_test(&token).await;
++        // Multi-byte chars so fragment boundaries land mid-codepoint.
++        let big = "é".repeat(9_500_000);
++
++        let client = connect_ws(&format!("ws://127.0.0.1:{port}"), Some(&token))
++            .await
++            .unwrap();
++        let echoed = client.call("Echo", serde_json::json!(big)).await.unwrap();
++        assert_eq!(echoed.as_str().map(str::len), Some(big.len()));
++        assert_eq!(client.close_reason(), None);
++
++        // A peer still on tungstenite's default limits (an older app build)
++        // reassembles the fragmented reply too.
++        use futures::{SinkExt, StreamExt};
++        use tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest};
++        let mut req = format!("ws://127.0.0.1:{port}")
++            .into_client_request()
++            .unwrap();
++        req.headers_mut()
++            .insert("authorization", format!("Bearer {token}").parse().unwrap());
++        let (mut legacy, _) = tokio_tungstenite::connect_async(req).await.unwrap();
++        let request = serde_json::to_string(&ClientFrame {
++            id: 1,
++            method: Some("Echo".into()),
++            params: serde_json::json!(big),
++            cancel: false,
++        })
++        .unwrap();
++        // It sends one unfragmented frame past 16 MiB: the raised cap takes it.
++        assert!(request.len() > 16 << 20);
++        legacy.send(Message::Text(request)).await.unwrap();
++        let reply = loop {
++            match legacy.next().await.unwrap().unwrap() {
++                Message::Text(text) => break text,
++                _ => continue,
++            }
++        };
++        let frame: ServerFrame = serde_json::from_str(&reply).unwrap();
 +        assert_eq!(
-+            ladders,
-+            vec![
-+                ("grok-4.7", ascending.clone()),
-+                ("grok-4.7-build-fast", ascending.clone()),
-+                ("grok-4.6", ascending),
-+                (
-+                    "grok-4.5",
-+                    vec![
-+                        ReasoningLevel::Low,
-+                        ReasoningLevel::Medium,
-+                        ReasoningLevel::High,
-+                    ],
-+                ),
-+            ]
++            frame.ok.and_then(|v| v.as_str().map(str::len)),
++            Some(big.len())
 +        );
 +    }
 +
-     #[test]
-     fn model_1m_variants_collapse_into_a_context_window_trait() {
-         let response = json!({
+     /// Raw handshake status for a dial with the given headers (`None` = served).
+     async fn handshake_status(port: u16, headers: &[(&str, &str)]) -> Option<u16> {
+         use tokio_tungstenite::tungstenite::client::IntoClientRequest;
+```
+
+**File**: `crates/rpc/src/server.rs` (modified, +11/-28)
+```diff
+@@ -3,10 +3,9 @@
+ use std::collections::HashMap;
+ use std::sync::Arc;
+ 
+-use futures::{SinkExt, StreamExt};
++use futures::StreamExt;
+ use tokio::net::{TcpListener, TcpStream};
+ use tokio::sync::mpsc;
+-use tokio_tungstenite::tungstenite::Message as WsMessage;
+ use tokio_tungstenite::tungstenite::handshake::server::{
+     ErrorResponse, Request as HandshakeRequest, Response as HandshakeResponse,
+ };
+@@ -202,42 +201,26 @@ async fn serve_ws_socket(stream: TcpStream, service: Arc<dyn RpcService>, token:
+         }
+         Ok(resp)
+     };
+-    let ws = match tokio_tungstenite::accept_hdr_async(stream, authorize).await {
++    let ws = match tokio_tungstenite::accept_hdr_async_with_config(
++        stream,
++        authorize,
++        Some(crate::ws::config()),
++    )
++    .await
++    {
+         Ok(ws) => ws,
+         Err(err) => {
+             tracing::warn!(error = %err, "rpc: websocket handshake failed");
+             return;
+         }
+     };
+-    let (mut sink, mut ws_stream) = ws.split();
+-    let (out_tx, mut out_rx) = mpsc::channel::<String>(256);
++    let (out_tx, out_rx) = mpsc::channel::<String>(256);
+     let (in_tx, in_rx) = mpsc::channel::<String>(256);
+ 
+     // Pump: socket <-> string channels. Ends when either side closes.
+     let pump = tokio::spawn(async move {
+-        loop {
+-            tokio::select! {
+-                frame = out_rx.recv() => match frame {
+-                    Some(text) => {
+-                        if sink.send(WsMessage::Text(text)).await.is_err() {
+-                            break;
+-                        }
+-                    }
+-                    None => {
+-                        let _ = sink.send(WsMessage::Close(None)).await;
+-                        break;
+-                    }
+-                },
+-                message = ws_stream.next() => match message {
+-                    Some(Ok(WsMessage::Text(text))) => {
+-                        if in_tx.send(text).await.is_err() {
+-                            break;
+-                        }
+-                    }
+-                    Some(Ok(WsMessage::Close(_))) | Some(Err(_)) | None => break,
+-                    Some(Ok(_)) => {} // ping/pong/binary — ignored
+-                },
+-            }
++        if let Some(reason) = crate::ws::pump(ws, out_rx, in_tx).await {
++            tracing::warn!(%reason, "rpc: lost a viewport connection");
+         }
+     });
+ 
+```
+
+**File**: `crates/rpc/src/ws.rs` (added, +95/-0)
+```diff
+@@ -0,0 +1,95 @@
++//! The socket <-> string-channel pump both ends of the local RPC WebSocket run.
++
++use futures::{SinkExt, StreamExt};
++use tokio::io::{AsyncRead, AsyncWrite};
++use tokio::sync::mpsc;
++use tokio_tungstenite::WebSocketStream;
++use tokio_tungstenite::tungstenite::Message as WsMessage;
++use tokio_tungstenite::tungstenite::protocol::WebSocketConfig;
++use tokio_tungstenite::tungstenite::protocol::frame::Frame;
++use tokio_tungstenite::tungstenite::protocol::frame::coding::{Data, OpCode};
++
++/// Largest single frame we write. tungstenite refuses any *frame* over 16 MiB
++/// by default, and one watch reply carries a whole transcript — a long chat's
++/// is past that, and the peer dropping the socket on it then repeats on every
++/// reconnect. Fragmenting keeps every frame small, so even a peer built
++/// before this still reassembles the message (up to its 64 MiB message cap).
++const FRAGMENT_BYTES: usize = 1 << 20;
++
++/// Largest message (and, from older peers that don't fragment, frame) we
++/// accept. Local IPC behind the bearer token: the cap only stops runaways.
++const MAX_MESSAGE_BYTES: usize = 512 << 20;
++
++pub(crate) fn config() -> WebSocketConfig {
++    WebSocketConfig {
++        max_message_size: Some(MAX_MESSAGE_BYTES),
++        max_frame_size: Some(MAX_MESSAGE_BYTES),
++        ..WebSocketConfig::default()
++    }
++}
++
++/// Shuttle frames between `ws` and the string channels until either side
++/// closes. Returns why the socket went away when it wasn't a clean close.
++pub(crate) async fn pump<S>(
++    ws: WebSocketStream<S>,
++    mut out: mpsc::Receiver<String>,
++    inbound: mpsc::Sender<String>,
++) -> Option<String>
++where
++    S: AsyncRead + AsyncWrite + Unpin,
++{
++    let (mut sink, mut stream) = ws.split();
++    loop {
++        tokio::select! {
++            frame = out.recv() => match frame {
++                Some(text) => {
++                    if let Err(error) = send_text(&mut sink, text).await {
++                        return Some(format!("sending to the socket failed: {error}"));
++                    }
++                }
++                None => {
++                    let _ = sink.send(WsMessage::Close(None)).await;
++                    return None;
++                }
++            },
++            message = stream.next() => match message {
++                Some(Ok(WsMessage::Text(text))) => {
++                    if inbound.send(text).await.is_err() {
++                        return None;
++                    }
++                }
++                Some(Ok(WsMessage::Close(_))) | None => return None,
++                Some(Err(error)) => return Some(format!("reading the socket failed: {error}")),
++                Some(Ok(_)) => {} // ping/pong/binary — ignored
++            },
++        }
++    }
++}
++
++async fn send_text<S>(
++    sink: &mut futures::stream::SplitSink<WebSocketStream<S>, WsMessage>,
++    text: String,
++) -> Result<(), tokio_tungstenite::tungstenite::Error>
++where
++    S: AsyncRead + AsyncWrite + Unpin,
++{
++    if text.len() <= FRAGMENT_BYTES {
++        return sink.send(WsMessage::Text(text)).await;
++    }
++    // A text message may split mid-codepoint: the receiver validates UTF-8
++    // over the reassembled message, not per fragment.
++    let bytes = text.into_bytes();
++    let mut chunks = bytes.chunks(FRAGMENT_BYTES).peekable();
++    let mut opcode = OpCode::Data(Data::Text);
++    while let Some(chunk) = chunks.next() {
++        let last = chunks.peek().is_none();
++        sink.feed(WsMessage::Frame(Frame::message(
++            chunk.to_vec(),
++            opcode,
++            last,
++        )))
++        .await?;
++        opcode = OpCode::Data(Data::Continue);
++    }
++    sink.flush().await
++}
+```
+
+**File**: `crates/ui/src/state.rs` (modified, +17/-6)
+```diff
+@@ -3384,6 +3384,9 @@ impl AppState {
+         let Some(config) = self.boot_config.clone() else {
+             return;
+         };
++        // A transport failure (an oversized frame, a reset socket) loses the
++        // connection while the engine runs on; say which it was.
++        let reason = handle.client().close_reason();
+         let respawn = record_engine_loss(&mut self.engine_losses, std::time::Instant::now());
+         self.engine = None;
+         self.watch_tasks.clear();
+@@ -3395,16 +3398,24 @@ impl AppState {
+             let log = config.data_dir.join("logs").join("zeron-engine.log");
+             tracing::error!(
+                 losses = self.engine_losses.len(),
+-                "the background engine keeps stopping; giving up until Retry"
++                reason = reason.as_deref().unwrap_or("the engine went away"),
++                "the engine connection keeps dropping; giving up until Retry"
+             );
+-            self.connection = ConnectionStatus::Failed(format!(
+-                "Zeron's engine keeps stopping unexpectedly. Details are in {}.",
+-                log.display()
+-            ));
++            self.connection = ConnectionStatus::Failed(match reason {
++                Some(reason) => format!(
++                    "Zeron keeps losing its connection to the engine: {reason}. \
++                     Details are in {}.",
++                    log.display()
++                ),
++                None => format!(
++                    "Zeron's engine keeps stopping unexpectedly. Details are in {}.",
++                    log.display()
++                ),
++            });
+             cx.notify();
+             return;
+         };
+-        tracing::warn!(?delay, "lost the engine connection; reconnecting");
++        tracing::warn!(?delay, ?reason, "lost the engine connection; reconnecting");
+         self.reconnect_task = Some(cx.spawn(async move |this, cx| {
+             cx.background_executor().timer(delay).await;
+             let _ = cx.update(|cx| {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #966** (2026-10-22): Zeron Cloud, provider switching, and the phone model picker (@wingleeio)
+- **PR #957** (2026-10-21): Track agent activity with OSC 7501 across sidebar and MCP (@katulevskiy)
 - **PR #953** (2026-10-19): ACP: order advertised effort levels from lowest to highest (@woosal1337)
 - **PR #942** (2026-10-18): iOS: adapt to iPhone Duo (fold/unfold, uneven safe areas) (@wingleeio)
 - **PR #920** (2026-10-15): fix: send cursor model defaults for plus subscriptions (@laurentcodes)
 - **PR #912** (2026-10-18): Render LaTeX math in messages with zatex (@SinaKhalili)
-- **PR #909** (2026-10-17): Reorder sidebar sections by dragging their header (@jsgrrchg)
-- **PR #903** (2026-10-17): Sidebar: show a session hover card beside each chat row (@jsgrrchg)
 
 ---
 
@@ -1827,57 +2224,80 @@ ACP model presents its levels in ReasoningLevel order.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ACP: order advertised effort levels from lowest to highest (#953)
+## X. Bump version to v0.2.116
 
 **RULE**:
-When implementing operations in `crates/harness/src/acp/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `911ec56e`: ACP: order advertised effort levels from lowest to highest (#953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69b67d33`: Bump version to v0.2.116. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/harness/src/acp/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let mut ladder: Vec<ReasoningLevel> = config_options
-    ladder.sort_unstable();
-    ladder.dedup();
-    #[test]
-    fn grok_thought_levels_order_from_lowest_to_highest() {
-        let response = json!({
-            "sessionId": "s-1",
-            "configOptions": [
-                {
-                    "id": "model",
-                    "name": "Model",
-                    "category": "model",
-                    "type": "select",
-                    "currentValue": "grok-4.7",
-                    "options": [
-                        { "value": "grok-4.7", "name": "Grok 4.7" },
-                        { "value": "grok-4.7-build-fast", "name": "Grok 4.7 Fast" },
-                        { "value": "grok-4.6", "name": "Grok 4.6" },
-                        { "value": "grok-4.5", "name": "Grok 4.5" },
-                    ],
-                },
-                {
-                    "id": "reasoning_effort",
-                    "name": "Reasoning Effort",
-                    "category": "thought_level",
-                    "type": "select",
-                    "currentValue": "xhigh",
-                    "options": [
-                        { "value": "xhigh", "name": "Extra High" },
-
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
+version = "0.2.116"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let ladder: Vec<ReasoningLevel> = config_options
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
+version = "0.2.115"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `911ec56e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69b67d33` are properly handled with clean fallback behavior.

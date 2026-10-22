@@ -4422,3 +4422,7 @@ Every entry in this ledger must capture:
 | `learn-github-reshaped-ui-reshaped` | `https://github.com/reshaped-ui/reshaped` | `bf8a1e44` | Multi-dimensional audit evidence | 2026-10-22T20:15:50.608Z |
 | `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `a7bf63ed` | Multi-dimensional audit evidence | 2026-10-22T20:22:04.286Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `9bd4e612` | Multi-dimensional audit evidence | 2026-10-22T20:22:07.230Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `69b67d33` | Multi-dimensional audit evidence | 2026-10-22T20:30:15.775Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `1f452240` | Multi-dimensional audit evidence | 2026-10-22T20:30:17.145Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `28b8d3eb` | Multi-dimensional audit evidence | 2026-10-22T20:30:27.282Z |
+| `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `52ce8448` | Multi-dimensional audit evidence | 2026-10-22T20:30:28.077Z |
