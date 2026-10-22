@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T17:04:54.378Z",
+  "last_updated": "2026-10-22T17:12:36.720Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
-      "verified_at": "2026-10-21T18:20:38.609Z",
+      "content_hash": "61770392bf7e2bb04598999fe986beab028b1e9320e02684284dd0ae8ee1877e",
+      "verified_at": "2026-10-22T17:12:36.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:20:38.609Z"
+      "last_updated": "2026-10-22T17:12:36.562Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -11856,14 +11856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-herdrdev-herdr",
-      "content_hash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
-      "verified_at": "2026-10-19T11:27:51.445Z",
+      "content_hash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
+      "verified_at": "2026-10-22T17:12:36.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:27:51.445Z"
+      "last_updated": "2026-10-22T17:12:36.719Z"
     },
     "darrylmorley/whatcable": {
       "repository": "darrylmorley/whatcable",

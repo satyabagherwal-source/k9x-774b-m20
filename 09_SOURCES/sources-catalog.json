@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "c2c5b4ed",
+    "sourceVersion": "12103033",
     "license": "MIT",
-    "contentHash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
-    "lastHarvestedAt": "2026-10-21T18:20:38.596Z",
+    "contentHash": "61770392bf7e2bb04598999fe986beab028b1e9320e02684284dd0ae8ee1877e",
+    "lastHarvestedAt": "2026-10-22T17:12:36.548Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -7883,10 +7883,10 @@
     "repository": "herdrdev/herdr",
     "platform": "github",
     "sourceUrl": "https://github.com/herdrdev/herdr",
-    "sourceVersion": "143bf5fd",
+    "sourceVersion": "5bd900d8",
     "license": "Apache-2.0",
-    "contentHash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
-    "lastHarvestedAt": "2026-10-19T11:27:51.437Z",
+    "contentHash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
+    "lastHarvestedAt": "2026-10-22T17:12:36.707Z",
     "learningId": "learn-github-herdrdev-herdr"
   },
   "darrylmorley-whatcable": {

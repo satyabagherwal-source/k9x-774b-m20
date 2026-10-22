@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T17:04:54.333Z",
+  "last_updated": "2026-10-22T17:12:36.656Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13593,14 +13593,19 @@
       "slug": "herdrdev-herdr",
       "platform": "github",
       "source_url": "https://github.com/herdrdev/herdr",
-      "source_version": "143bf5fd",
-      "content_hash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
+      "source_version": "5bd900d8",
+      "content_hash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
       "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "promoted_rules": [
         {
           "number": 2535,
           "title": "test: deflake observer write timeout on loaded runners (#5280)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3656,
+          "title": "prevent windows ssh output from delaying typing (#5463)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13609,7 +13614,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:27:51.365Z",
+      "verified_at": "2026-10-22T17:12:36.644Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33561,8 +33566,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "c2c5b4ed",
-      "content_hash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
+      "source_version": "12103033",
+      "content_hash": "61770392bf7e2bb04598999fe986beab028b1e9320e02684284dd0ae8ee1877e",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -33605,6 +33610,11 @@
           "number": 3584,
           "title": "Bump Certifi (#8499)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3655,
+          "title": "the escape_control_characters docstring (#8507)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33612,7 +33622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:20:38.524Z",
+      "verified_at": "2026-10-22T17:12:36.483Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110352,6 +110362,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T17:04:54.327Z"
+    },
+    "rule-3655": {
+      "learning_id": "rule-3655",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3655,
+      "title": "the escape_control_characters docstring (#8507)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "12103033",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:12:36.483Z"
+    },
+    "rule-3656": {
+      "learning_id": "rule-3656",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3656,
+      "title": "prevent windows ssh output from delaying typing (#5463)",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "5bd900d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T17:12:36.644Z"
     }
   },
   "aliases": {

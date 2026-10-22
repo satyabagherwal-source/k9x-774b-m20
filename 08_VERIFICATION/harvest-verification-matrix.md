@@ -4343,3 +4343,5 @@
 | `CYCLE-20261022-JZ6P` | `2026-10-22T17:04:41.185Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3652` | Yes (`71f9ca4f...`) |
 | `CYCLE-20261022-K94S` | `2026-10-22T17:04:54.076Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3653` | Yes (`ae02aa34...`) |
 | `CYCLE-20261022-K9CT` | `2026-10-22T17:04:54.365Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3654` | Yes (`86bb3962...`) |
+| `CYCLE-20261022-U5Z5` | `2026-10-22T17:12:36.545Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3655` | Yes (`61770392...`) |
+| `CYCLE-20261022-U63K` | `2026-10-22T17:12:36.704Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3656` | Yes (`dde2845d...`) |

@@ -4350,3 +4350,5 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `7e6920d5` | Multi-dimensional audit evidence | 2026-10-22T17:04:41.187Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `9e24f135` | Multi-dimensional audit evidence | 2026-10-22T17:04:54.078Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `b415df84` | Multi-dimensional audit evidence | 2026-10-22T17:04:54.368Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `12103033` | Multi-dimensional audit evidence | 2026-10-22T17:12:36.548Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `5bd900d8` | Multi-dimensional audit evidence | 2026-10-22T17:12:36.707Z |

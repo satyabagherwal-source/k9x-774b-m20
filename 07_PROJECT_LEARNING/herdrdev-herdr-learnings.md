@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source**: github ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
-> **Source Version**: `143bf5fd`  
+> **Source Version**: `5bd900d8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:27:51.071Z  
+> **Timestamp**: 2026-10-22T17:12:36.320Z  
 > **Learning ID**: `learn-github-herdrdev-herdr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:27:50.358Z  
+> **Harvest Timestamp**: 2026-10-22T17:12:24.143Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: the runtime your coding agents live on
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44742 stars
+- **Stars / Engagement**: 45356 stars
 
 ---
 
@@ -2507,1066 +2507,252 @@ export default function (pi) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b0c3e9e` (2026-10-14)
-**Commit Message**: test: deflake observer write timeout on loaded runners (#5280)
+### Incident Patch 1: `ccc7521a` (2026-10-21)
+**Commit Message**: fix: prevent windows ssh output from delaying typing (#5463)
 
-The macOS CI job intermittently fails
-server::client_transport::tests::observer_write_timeout_resets_when_sending_makes_progress
-with "assertion failed: write_framed_bytes(...)" followed by "observer
-disconnected while making progress".
+refs #3701
 
-The test proves that every partial write resets the writer's deadline by
-draining a 1 MiB frame through an observer that sleeps 5 ms per 16 KiB read
-while the writer's send timeout is 100 ms. On a loaded runner, one scheduler
-stall longer than 100 ms makes write_client_stream time out and shut the
-socket down, so the write assertion fails and the observer then reads EOF.
-
-Give the writer a 1 s timeout and slow the observer to 25 ms per read. The
-transfer still takes about 1.6 s, longer than the timeout, so the deadline
-reset is still required, while the stall budget grows 10x and the drain
-cadence stays 40x below it.
-
-Also bound both kernel socket buffers well below the frame size. The reset
-path is only exercised while the writer is blocked, so the test should not
-depend on the platform default buffers happening to be smaller than 1 MiB.
-
-**File**: `src/server/client_transport.rs` (modified, +40/-7)
+**File**: `src/api/client.rs` (modified, +1/-0)
 ```diff
-@@ -1701,29 +1701,62 @@ mod tests {
-         ));
-     }
+@@ -256,6 +256,7 @@ mod tests {
  
-+    /// Keeps both kernel socket buffers far below the frame size so the writer must
-+    /// block for the observer instead of accepting the whole frame at once. Without
-+    /// this the reset path would only be exercised when the platform default buffers
-+    /// happen to be smaller than the frame.
-+    #[cfg(unix)]
-+    fn limit_local_stream_buffers(stream: &LocalStream) {
-+        use std::os::fd::AsRawFd as _;
-+
-+        let LocalStream::UdSocket(socket) = stream;
-+        let bytes: libc::c_int = 64 * 1024;
-+        for option in [libc::SO_SNDBUF, libc::SO_RCVBUF] {
-+            let result = unsafe {
-+                libc::setsockopt(
-+                    socket.inner().as_raw_fd(),
-+                    libc::SOL_SOCKET,
-+                    option,
-+                    std::ptr::addr_of!(bytes).cast(),
-+                    std::mem::size_of::<libc::c_int>() as libc::socklen_t,
-+                )
-+            };
-+            assert_eq!(result, 0, "setsockopt({option}) failed");
-+        }
-+    }
-+
-     #[cfg(unix)]
      #[test]
-     fn observer_write_timeout_resets_when_sending_makes_progress() {
-         use std::io::Read as _;
- 
-+        // A slow observer that keeps draining must not be disconnected, because every
-+        // partial write resets the writer's deadline. Keep the drain cadence far below
-+        // the write timeout so a loaded runner's scheduler jitter cannot manufacture a
-+        // stall, while the transfer still outlasts the timeout so the reset is required
-+        // (otherwise the writer could finish within one timeout window without resetting).
-+        const WRITE_TIMEOUT: Duration = Duration::from_secs(1);
-+        const DRAIN_INTERVAL: Duration = Duration::from_millis(25);
-+        const TOTAL_BYTES: usize = 1024 * 1024;
-+
-         let (mut client, mut server, _path) = local_stream_pair("slow-observer");
--        server
--            .set_send_timeout(Some(Duration::from_millis(100)))
--            .unwrap();
-+        limit_local_stream_buffers(&server);
-+        limit_local_stream_buffers(&client);
-+        server.set_send_timeout(Some(WRITE_TIMEOUT)).unwrap();
-         server.set_nonblocking(true).unwrap();
-         let worker = std::thread::spawn(move || {
--            assert!(write_framed_bytes(&mut server, &vec![b'x'; 1024 * 1024]));
-+            assert!(write_framed_bytes(&mut server, &vec![b'x'; TOTAL_BYTES]));
-         });
-         client
--            .set_recv_timeout(Some(Duration::from_secs(3)))
-+            .set_recv_timeout(Some(Duration::from_secs(5)))
-             .unwrap();
-         let mut received = 0;
-         let mut buffer = [0; 16 * 1024];
--        while received < 1024 * 1024 {
-+        while received < TOTAL_BYTES {
-             let count = client.read(&mut buffer).unwrap();
-             assert_ne!(count, 0, "observer disconnected while making progress");
-             received += count;
--            std::thread::sleep(Duration::from_millis(5));
-+            std::thread::sleep(DRAIN_INTERVAL);
-         }
-         worker.join().unwrap();
-     }
+     fn status_timeout_closes_a_stalled_probe() {
++        #[cfg(unix)]
+         use interprocess::local_socket::traits::Listener as _;
+         let path =
+             std::env::temp_dir().join(format!("herdr-status-timeout-{}.sock", std::process::id()));
 ```
 
----
-
-### Incident Patch 2: `87e5c13c` (2026-10-13)
-**Commit Message**: fix: cancel and clean up endpoint connection attempts (#5247)
-
-* fix: cancel and clean up endpoint connection attempts
-
-refs #4721
-
-* fix: keep probe teardown scoped to its bridge
-
-refs #4721
-
-* fix: preserve nonblocking bridge output and simplify cleanup
-
-refs #4721
-
-**File**: `src/client/endpoint/supervisor.rs` (modified, +230/-5)
+**File**: `src/client/endpoint/supervisor.rs` (modified, +9/-3)
 ```diff
-@@ -53,6 +53,8 @@ struct ReconnectState {
-     attempts: u32,
-     next_attempt: Option<Instant>,
-     in_flight: bool,
-+    cancelled: Arc<AtomicBool>,
-+    completed: Arc<AtomicBool>,
-     generation: Option<u64>,
-     ready_since: Option<Instant>,
- }
-@@ -64,14 +66,31 @@ impl ReconnectState {
-             attempts: 0,
-             next_attempt: Some(now),
-             in_flight: false,
-+            cancelled: Arc::new(AtomicBool::new(false)),
-+            completed: Arc::new(AtomicBool::new(true)),
-             generation: None,
-             ready_since: None,
-         }
-     }
- }
- 
-+impl Drop for ReconnectState {
-+    fn drop(&mut self) {
-+        self.cancelled.store(true, Ordering::Release);
-+    }
-+}
-+
-+struct AttemptCompletion(Arc<AtomicBool>);
-+
-+impl Drop for AttemptCompletion {
-+    fn drop(&mut self) {
-+        self.0.store(true, Ordering::Release);
-+    }
-+}
-+
- pub(crate) struct EndpointSupervisors {
-     endpoints: HashMap<ClientEndpointId, ReconnectState>,
-+    retired: HashMap<ClientEndpointId, Arc<AtomicBool>>,
-     next_generation: u64,
-     shutdown: Arc<AtomicBool>,
- }
-@@ -90,6 +109,7 @@ impl EndpointSupervisors {
-             .collect();
-         Self {
-             endpoints,
-+            retired: HashMap::new(),
-             next_generation: 2,
-             shutdown: Arc::new(AtomicBool::new(false)),
-         }
-@@ -101,7 +121,13 @@ impl EndpointSupervisors {
-         if generation.is_some() {
-             state.next_attempt = None;
-         }
--        self.endpoints.insert(ClientEndpointId::Local, state);
-+        if let Some(previous) = self.endpoints.insert(ClientEndpointId::Local, state) {
-+            if !previous.completed.load(Ordering::Acquire) {
-+                self.retired
-+                    .entry(ClientEndpointId::Local)
-+                    .or_insert_with(|| Arc::clone(&previous.completed));
-+            }
-+        }
-     }
- 
-     pub(crate) fn reconcile_profiles(
-@@ -110,6 +136,7 @@ impl EndpointSupervisors {
-         now: Instant,
-     ) -> Vec<ClientEndpointId> {
-         let mut retired = Vec::new();
-+        let retiring = &mut self.retired;
-         self.endpoints.retain(|endpoint_id, state| {
-             let ConnectTarget::Ssh(previous) = &state.target else {
-                 return true;
-@@ -122,6 +149,12 @@ impl EndpointSupervisors {
-             });
-             if !keep {
-                 retired.push(endpoint_id.clone());
-+                // A stale Connected event still owns its bridge until the client rejects it.
-+                if !state.completed.load(Ordering::Acquire) {
-+                    retiring
-+                        .entry(endpoint_id.clone())
-+                        .or_insert_with(|| Arc::clone(&state.completed));
-+                }
-             }
-             keep
-         });
-@@ -141,11 +174,21 @@ impl EndpointSupervisors {
-         options: EndpointConnectOptions,
-         event_tx: &tokio::sync::mpsc::Sender<EndpointSupervisorEvent>,
-     ) {
-+        self.retired
-+            .retain(|_, completed| !completed.load(Ordering::Acquire));
-         for (endpoint_id, state) in &mut self.endpoints {
--            if state.in_flight || state.next_attempt.is_none_or(|deadline| deadline > now) {
-+            if state.in_flight
-+                || !state.completed.load(Ordering::Acquire)
-+                || self.retired.contains_key(endpoint_id)
-+                || state.next_attempt.is_none_or(|deadline| deadline > now)
-+            {
-                 continue;
-             }
-             state.in_flight = true;
-+            state.cancelled = Arc::new(AtomicBool::new(false));
-+            let cancelled = Arc::clone(&state.cancelled);
-+            state.completed = Arc::new(AtomicBool::new(false));
-+            let completed = Arc::clone(&state.completed);
-             state.next_attempt = None;
-             let generation = self.next_generation;
-             state.generation = Some(generation);
-@@ -156,11 +199,19 @@ impl EndpointSupervisors {
-             let shutdown = self.shutdown.clone();
-             tokio::spawn(async move {
-                 if shutdown.load(Ordering::Acquire) {
-+                    completed.store(true, Ordering::Release);
-                     return;
-                 }
-                 let task_endpoint_id = endpoint_id.clone();
-                 let result = tokio::task::spawn_blocking(move || {
--                    connect_once(&target, options, endpoint_id, generation)
-+                    connect_once(
-+                        &target,
-+                        options,
-+                        endpoint_id,
-+                        generation,
-+                        cancelled,
-+                        completed,
-+                    )
-                 })
-                 .await;
-                 let event = match result {
-@@ -296,10 +347,24 @@ fn connect_once(
-     options: EndpointConnectOptions,
-     endpoint_id: ClientEndpointId,
-     generation: u64,
-+    cancelled: Arc<AtomicBool>,
-+    completed: Arc<AtomicBool
+@@ -592,7 +592,9 @@ mod tests {
+     async fn replacement_waits_for_queued_connection_teardown() {
+         use crate::protocol::endpoint::{EndpointServerWelcome, ENDPOINT_WELCOME_KIND};
+         use crate::protocol::{self, ClientMessage, ServerMessage};
+-        use interprocess::local_socket::traits::{Listener as _, Stream as _};
++        #[cfg(unix)]
++        use interprocess::local_socket::traits::Listener as _;
++        use interprocess::local_socket::traits::Stream as _;
+         let path = std::env::temp_dir().join(format!("hretired-{}.sock", std::process::id()));
+         let listener = crate::ipc::bind_private_local_listener(&path).unwrap();
+         let now = Instant::now();
+@@ -672,7 +674,9 @@ mod tests {
+     async fn wake_replacement_waits_for_the_obsolete_attempt_to_close() {
+         use crate::platform::HostPowerEvent::*;
+         use crate::protocol::{self, ClientMessage};
+-        use interprocess::local_socket::traits::{Listener as _, Stream as _};
++        #[cfg(unix)]
++        use interprocess::local_socket::traits::Listener as _;
++        use interprocess::local_socket::traits::Stream as _;
+         for observed_suspend in [true, false] {
+             let path = std::env::temp_dir().join(format!(
+                 "hwake-{}-{observed_suspend}.sock",
+@@ -759,7 +763,9 @@ mod tests {
+     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+     async fn retiring_or_shutting_down_a_silent_attempt_closes_its_connection() {
+         use crate::protocol::{self, ClientMessage};
+-        use interprocess::local_socket::traits::{Listener as _, Stream as _};
++        #[cfg(unix)]
++        use interprocess::local_socket::traits::Listener as _;
++        use interprocess::local_socket::traits::Stream as _;
+         for shutdown in [false, true] {
+             let path = std::env::temp_dir()
+                 .join(format!("hcancel-{}-{shutdown}.sock", std::process::id()));
 ```
 
 **File**: `src/client/endpoint/writer.rs` (modified, +1/-0)
 ```diff
-@@ -75,6 +75,7 @@ impl NativeEndpointTransport {
-                         break;
-                     }
-                 }
-+                drop(stream);
-             })?;
-         Ok(Self {
-             sender,
-```
-
-**File**: `src/client/handshake.rs` (modified, +14/-4)
-```diff
-@@ -103,14 +103,14 @@ fn direct_graphics_profile_allowed() -> bool {
- fn read_handshake_response(
-     stream: &mut LocalStream,
-     read_timeout: Duration,
-+    stopped: &AtomicBool,
- ) -> Result<ServerMessage, ClientError> {
-     let deadline = Instant::now() + read_timeout;
-     crate::ipc::set_local_stream_polling(stream, true).map_err(ClientError::ConnectionFailed)?;
--    let stopped = AtomicBool::new(false);
-     let response = protocol::read_message(
-         &mut super::transport::EndpointReader {
-             stream,
--            stopped: &stopped,
-+            stopped,
-             deadline: Some(deadline),
-         },
-         MAX_FRAME_SIZE,
-@@ -146,6 +146,7 @@ pub(crate) fn probe_endpoint_negotiation(
-         false,
-         false,
-         false, // This probe uses an SSH bridge, not a shared filesystem.
-+        &AtomicBool::new(false),
-     )
-     .map_err(io::Error::other)?;
-     Ok(super::endpoint::EndpointNegotiation::new(
-@@ -165,6 +166,9 @@ pub(super) struct HandshakePixelCapabilities {
- /// shells use the stable endpoint generation and negotiate whole codecs without
- /// comparing Herdr build versions. `local_transport` means the endpoint shares the
- /// client's filesystem, not merely that its bridge exposes a local socket.
-+// Cancellation extends the existing handshake call; regrouping unrelated display options
-+// would broaden this lifecycle fix across all client entry points.
-+#[allow(clippy::too_many_arguments)]
- pub(super) fn do_handshake(
-     stream: &mut LocalStream,
-     cols: u16,
-@@ -177,6 +181,7 @@ pub(super) fn do_handshake(
-     mouse_capture: bool,
-     surface_active: bool,
-     local_transport: bool,
-+    stopped: &AtomicBool,
- ) -> Result<HandshakeResult, ClientError> {
-     stream
-         .set_nonblocking(false)
-@@ -231,7 +236,7 @@ pub(super) fn do_handshake(
-     } else {
-         handshake_read_timeout()
-     };
--    let welcome = read_handshake_response(stream, read_timeout)?;
-+    let welcome = read_handshake_response(stream, read_timeout, stopped)?;
- 
-     if endpoint_shell {
-         let ServerMessage::EndpointControl { kind, data } = welcome else {
-@@ -356,7 +361,11 @@ mod tests {
-                 }
-             });
-             let start = Instant::now();
--            let result = read_handshake_response(&mut client, Duration::from_millis(100));
-+            let result = read_handshake_response(
-+                &mut client,
-+                Duration::from_millis(100),
-+                &AtomicBool::new(false),
-+            );
-             let elapsed = start.elapsed();
-             let _ = release.send(());
-             peer.join().unwrap();
-@@ -430,6 +439,7 @@ mod tests {
-                     false,
-                     true,
-                     true,
-+                    &AtomicBool::new(false),
-                 );
-                 peer.join().unwrap();
-                 match outcome {
-```
-
-**File**: `src/client/mod.rs` (modified, +1/-0)
-```diff
-@@ -296,6 +296,7 @@ fn run_client_with_mode(
-                 loop_config.mouse_capture_active,
-                 true,
-                 !is_remote_client_process(),
-+                &AtomicBool::new(false),
-             )
-             .map_err(|error| io::Error::other(error.to_string()))?;
-             if federated
-```
-
-**File**: `src/client/terminal_sessions.rs` (modified, +2/-0)
-```diff
-@@ -1,4 +1,5 @@
- use std::io::{self, BufRead, Write as _};
-+use std::sync::atomic::AtomicBool;
- 
- use base64::Engine;
- use interprocess::local_socket::traits::Stream as _;
-@@ -104,6 +105,7 @@ fn connect_terminal_session_stream(
-         false,
-         true,
-         true,
-+        &AtomicBool::new(false),
-     ) {
-         Ok(handshake) if handshake.encoding == RenderEncoding::TerminalAnsi => {}
-         Ok(handshake) => {
-```
-
-**File**: `src/ipc.rs` (modified, +41/-0)
-```diff
-@@ -51,6 +51,47 @@ pub(crate) fn connect_local_stream(path: &Path) -> io::Result<LocalStream> {
-     }
- }
- 
-+pub(crate) fn connect_local_stream_cancellable(
-+    path: &Path,
-+    stopped: &std::sync::atomic::AtomicBool,
-+    deadline: std::time::Instant,
-+) -> io::Result<LocalStream> {
-+    use std::sync::atomic::Ordering;
-+    use std::time::{Duration, Instant};
-+    loop {
-+        if stopped.load(Ordering::Acquire) {
-+            return Err(io::Error::new(
-+                io::ErrorKind::ConnectionAborted,
-+                "connection attempt cancelled",
-+            ));
-+        }
-+        let remaining = deadline
-+            .checked_duration_since(Instant::now())
-+            .ok_or_else(|| {
-+                io::Error::new(io::ErrorKind::TimedOut, "endpoint connection timed out")
-+            })?;
-+        let timeout = remaining.min(Duration::from_millis(100));
-+        #[cfg(unix)]
-+        let result = {
-+            use interprocess::local_socket::{ConnectOptions, GenericFilePath, ToFsName as _};
-+            ConnectOptions::new()
-+                .name(path.to_fs_name::<GenericFilePath>()?)
-+                .wait_mode(interprocess::ConnectWaitMode::Timeout(timeout))
-+                .connect_sync()
-+        };
-+        #[cfg(windows)]
-+        let result = crate::platform::connect_local_stream_with_timeout(path, timeout);
-+        match result {
-+            Err(error)
-+                if matches!(
-+                    error.kind(),
-+                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
-+                ) => {}
-+            result => return result,
-+        }
-+    }
-+}
-+
- pub(crate) fn bind_local_listener(path: &Path) -> io::Result<LocalListener> {
-     #[cfg(unix)]
-     {
-```
-
-**File**: `src/platform/mod.rs` (modified, +1/-1)
-```diff
-@@ -445,7 +445,7 @@ pub(crate) mod unix_image_files;
- #[cfg(unix)]
- pub(crate) use unix_common::{
-     begin_cli_output, end_cli_output, forward_remote_bridge_stdio, ignore_server_hangup,
--    local_stream_peer_description, spawn_server_signal_monitor, RemoteBridgeWake,
-+    local_stream_peer_description, spawn_server_signal_monitor, ChildPipe, RemoteBridgeWake,
- };
- 
- mod client_state;
-```
-
-**File**: `src/platform/unix_common.rs` (modified, +51/-0)
-```diff
-@@ -1,5 +1,56 @@
- use std::path::{Path, PathBuf};
- 
-+pub(crate) struct ChildPipe(std::fs::File);
-+
-+impl ChildPipe {
-+    pub(crate) fn new_reader(pipe: impl Into<std::os::fd::OwnedFd>) -> std::io::Result<Self> {
-+        use std::os::fd::AsRawFd as _;
-+        let file = std::fs::File::from(pipe.into());
-+        let fd = file.as_raw_fd();
-+        let flags = unsafe { libc::fcntl(fd, libc::F_GETFL) };
-+        if flags < 0 || unsafe { libc::fcntl(fd, libc::F_SETFL, flags | libc::O_NONBLOCK) } < 0 {
-+            return Err(std::io::Error::last_os_error());
-+        }
-+        Ok(Self(file))
-+    }
-+
-+    pub(crate) fn new_writer(pipe: impl Into<std::os::fd::OwnedFd>) -> std::io::Result<Self> {
-+        Self::new_reader(pipe)
-+    }
-+
-+    pub(crate) fn wait(&self, writing: bool) -> std::io::Result<()> {
-+        use std::os::fd::AsRawFd as _;
-+        let mut descriptor = libc::pollfd {
-+            fd: self.0.as_raw_fd(),
-+            events: if writing { libc::POLLOUT } else { libc::POLLIN },
-+            revents: 0,
-+        };
-+        if unsafe { libc::poll(&mut descriptor, 1, 50) } < 0 {
-+            let error = std::io::Error::last_os_error();
-+            if error.kind() != std::io::ErrorKind::Interrupted {
-+                return Err(error);
-+            }
-+        }
-+        Ok(())
-+    }
-+}
-+
-+impl std::io::Read for ChildPipe {
-+    fn read(&mut self, buffer: &mut [u8]) -> std::io::Result<usize> {
-+        std::io::Read::read(&mut self.0, buffer)
-+    }
-+}
-+
-+impl std::io::Write for ChildPipe {
-+    fn write(&mut self, buffer: &[u8]) -> std::io::Result<usize> {
-+        std::io::Write::write(&mut self.0, buffer)
-+    }
-+
-+    fn flush(&mut self) -> std::io::Result<()> {
-+        Ok(())
-+    }
-+}
-+
- pub(crate) fn classify_child_exit(status: &portable_pty::ExitStatus) -> super::ChildExitReason {
-     if status.signal().is_some() {
-         super::ChildExitReason::Interrupted
-```
-
----
-
-### Incident Patch 3: `6521382d` (2026-10-14)
-**Commit Message**: fix: recover blocked shared ssh connections (#5252)
-
-* fix: recover blocked shared ssh connections
-
-refs #4721
-
-* test: support shared ssh checks in client fixtures
-
-refs #4721
-
-* test: separate ssh cancellation from timeout scheduling
-
-refs #4721
-
-**File**: `docs/next/website/src/content/docs/connecting-machines.mdx` (modified, +2/-0)
-```diff
-@@ -15,6 +15,8 @@ On Linux and macOS clients, when `remote.manage_ssh_config=true`, Herdr shares a
- 
- The shared connection uses `ControlPersist 600` (10 minutes of idle time); this is not MFA validity. Active connections can remain open, while corporate policy, the SSH server, or the network may end them sooner. Local Windows recovery is not supported yet. For unmanaged SSH connections, authentication remains your responsibility: running `ssh` by itself does not grant Herdr approval unless it uses the shared ControlPath. Host-key checking is unchanged; an unknown or changed host key remains **Attention**.
- 
-+Saved TUI connections check whether an existing shared SSH connection can open a new channel. CLI status and API commands check only after an initial read-only connection failure. If reuse fails while a fresh connection to the same host succeeds, Herdr retires the old connection from reuse and reconnects. Existing channels stay open. A fresh connection that needs authentication or rejects the host key does not trigger this recovery. API commands retry connection setup at most once and never repeat a request that may already have changed remote state.
-+
- ## Before you connect
- 
- You need normal SSH access to the remote machine. Verify it first:
-```
-
-**File**: `src/cli/target.rs` (modified, +12/-8)
-```diff
-@@ -80,6 +80,7 @@ pub(super) fn api_client() -> io::Result<ApiClient> {
-                     &target.profile.target,
-                     &target.profile.session,
-                     true,
-+                    true,
-                 )
-                 .map_err(|error| {
-                     io::Error::new(
-@@ -123,20 +124,23 @@ pub(super) fn server_status(
-         let Some(bridge) = target.bridge.as_ref() else {
-             return Err(error);
-         };
--        let Some(failure) = bridge.reported_failure() else {
--            return Err(error);
--        };
--        if !bridge.used_cached_metadata
--            || !crate::remote::SavedSshApiBridge::stale_metadata_failure(&failure)
--        {
--            return Err(failure.into());
-+        let failure = bridge.reported_failure();
-+        let stale_metadata = bridge.used_cached_metadata
-+            && failure
-+                .as_ref()
-+                .is_some_and(crate::remote::SavedSshApiBridge::stale_metadata_failure);
-+        if !bridge.can_retry || (!stale_metadata && !bridge.recover_transport()) {
-+            return Err(failure.map(Into::into).unwrap_or(error));
-+        }
-+        if stale_metadata {
-+            bridge.invalidate_metadata();
-         }
--        bridge.invalidate_metadata();
-         target.bridge.take();
-         target.bridge = Some(crate::remote::SavedSshApiBridge::start(
-             target.profile.id.as_str(),
-             &target.profile.target,
-             &target.profile.session,
-+            !stale_metadata,
-             false,
-         )?);
-         Ok(())
-```
-
-**File**: `src/platform/linux.rs` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ pub(crate) use super::unix_common::{
-     remote_private_temp_base, remote_reattach_argument, remote_reattach_program,
-     remote_ssh_config_paths, set_default_plugin_pane_pwd, shutdown_client_stream,
-     status_commands_supported, wait_client_stream_readable, write_client_stream,
--    ClientStreamReader, StatusCommandGuard,
-+    ClientStreamReader, PinnedSshControlSocket, StatusCommandGuard,
- };
- 
- #[cfg(test)]
-```
-
-**File**: `src/platform/macos.rs` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ pub(crate) use super::unix_common::{
-     remote_private_temp_base, remote_reattach_argument, remote_reattach_program,
-     remote_ssh_config_paths, set_default_plugin_pane_pwd, shutdown_client_stream,
-     status_commands_supported, wait_client_stream_readable, write_client_stream,
--    ClientStreamReader, StatusCommandGuard,
-+    ClientStreamReader, PinnedSshControlSocket, StatusCommandGuard,
- };
- 
- mod bootstrap;
-```
-
-**File**: `src/platform/unix_common.rs` (modified, +109/-0)
-```diff
-@@ -731,10 +731,119 @@ fn validate_shared_ssh_dir(dir: &Path) -> std::io::Result<()> {
-     Ok(())
- }
- 
-+pub(crate) struct PinnedSshControlSocket {
-+    pub(crate) alias: PathBuf,
-+    original: PathBuf,
-+    dev: u64,
-+    ino: u64,
-+}
-+
-+impl PinnedSshControlSocket {
-+    pub(crate) fn new(path: &Path) -> std::io::Result<Self> {
-+        use std::os::unix::fs::{DirBuilderExt, FileTypeExt, MetadataExt};
-+        use std::sync::atomic::{AtomicU64, Ordering};
-+        static NEXT_PIN: AtomicU64 = AtomicU64::new(0);
-+
-+        let parent = path.parent().ok_or(std::io::ErrorKind::InvalidInput)?;
-+        validate_shared_ssh_dir(parent)?;
-+        let metadata = std::fs::symlink_metadata(path)?;
-+        if !metadata.file_type().is_socket() || metadata.uid() != unsafe { libc::geteuid() } {
-+            return Err(std::io::Error::new(
-+                std::io::ErrorKind::PermissionDenied,
-+                "SSH control path must be a socket owned by the current user",
-+            ));
-+        }
-+        let directory = parent.join(format!(
-+            "r-{}-{}",
-+            std::process::id(),
-+            NEXT_PIN.fetch_add(1, Ordering::Relaxed)
-+        ));
-+        std::fs::DirBuilder::new().mode(0o700).create(&directory)?;
-+        let pinned = Self {
-+            alias: directory.join("ctl"),
-+            original: path.to_owned(),
-+            dev: metadata.dev(),
-+            ino: metadata.ino(),
-+        };
-+        // A separate name pins the old inode; a replacement cannot receive its stop request.
-+        std::fs::hard_link(path, &pinned.alias)?;
-+        let linked = std::fs::symlink_metadata(&pinned.alias)?;
-+        if (linked.dev(), linked.ino()) != (pinned.dev, pinned.ino) {
-+            return Err(std::io::ErrorKind::NotFound.into());
-+        }
-+        Ok(pinned)
-+    }
-+
-+    pub(crate) fn is_current(&self) -> std::io::Result<bool> {
-+        use std::os::unix::fs::MetadataExt;
-+        match std::fs::symlink_metadata(&self.original) {
-+            Ok(metadata) => Ok((metadata.dev(), metadata.ino()) == (self.dev, self.ino)),
-+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
-+            Err(error) => Err(error),
-+        }
-+    }
-+}
-+
-+impl Drop for PinnedSshControlSocket {
-+    fn drop(&mut self) {
-+        let _ = std::fs::remove_file(&self.alias);
-+        if let Some(directory) = self.alias.parent() {
-+            let _ = std::fs::remove_dir(directory);
-+        }
-+    }
-+}
-+
- #[cfg(test)]
- mod shared_ssh_tests {
+@@ -260,6 +260,7 @@ mod tests {
      use super::*;
  
-+    #[test]
-+    fn pinned_ssh_socket_connects_old_listener_after_original_is_replaced() {
-+        use std::io::{Read as _, Write as _};
-+        use std::os::unix::net::{UnixListener, UnixStream};
-+
-+        let directory = create_remote_ssh_config_dir("ctl").unwrap();
-+        let path = directory.join("ctl");
-+        let old = UnixListener::bind(&path).unwrap();
-+        let pinned = PinnedSshControlSocket::new(&path).unwrap();
-+        assert!(pinned.is_current().unwrap());
-+        std::fs::remove_file(&path).unwrap();
-+        let replacement = UnixListener::bind(&path).unwrap();
-+        assert!(!pinned.is_current().unwrap());
-+        let mut client = UnixStream::connect(&pinned.alias).unwrap();
-+        let (mut server, _) = old.accept().unwrap();
-+        server.write_all(b"old").unwrap();
-+        let mut reply = [0; 3];
-+        client.read_exact(&mut reply).unwrap();
-+        assert_eq!(&reply, b"old");
-+        let alias = pinned.alias.clone();
-+        drop(pinned);
-+        assert!(!alias.exists());
-+        let _client = UnixStream::connect(&path).unwrap();
-+        replacement.accept().unwrap();
-+        drop((old, replacement));
-+        std::fs::remove_dir_all(directory).unwrap();
-+    }
-+
-+    #[test]
-+    fn ssh_socket_pin_rejects_files_symlinks_and_public_parent() {
-+        use std::os::unix::fs::{symlink, PermissionsExt};
-+        use std::os::unix::net::UnixListener;
-+
-+        let directory = create_remote_ssh_config_dir("ctl").unwrap();
-+        let file = directory.join("file");
-+        std::fs::write(&file, b"not a socket").unwrap();
-+        assert!(PinnedSshControlSocket::new(&file).is_err());
-+        let path = directory.join("ctl");
-+        let _listener = UnixListener::bind(&path).unwrap();
-+        let link = directory.join("link");
-+        symlink(&path, &link).unwrap();
-+        assert!(PinnedSshControlSocket::new(&link).is_err());
-+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o755)).unwrap();
-+        assert!(PinnedSshControlSocket::new(&path).is_err());
-+        std::fs::remove_dir_all(directory).unwrap();
-+    }
-+
+     fn streams() -> (LocalStream, LocalStream, std::path::PathBuf) {
++        #[cfg(unix)]
+         use interprocess::local_socket::traits::Listener as _;
+         let path = std::env::temp_dir().join(format!(
+             "herdr-writer-{}-{}.sock",
+```
+
+**File**: `src/client/handshake.rs` (modified, +1/-0)
+```diff
+@@ -314,6 +314,7 @@ mod tests {
+     use super::*;
+ 
+     fn stream_pair() -> (LocalStream, LocalStream) {
++        #[cfg(unix)]
+         use interprocess::local_socket::traits::Listener as _;
+         let path = std::env::temp_dir().join(format!(
+             "hhs-{}-{:x}.sock",
+```
+
+**File**: `src/ipc.rs` (modified, +27/-25)
+```diff
+@@ -9,6 +9,10 @@ use interprocess::local_socket::traits::Stream as _;
+ 
+ pub(crate) type LocalListener = interprocess::local_socket::Listener;
+ pub(crate) type LocalStream = interprocess::local_socket::Stream;
++#[cfg(unix)]
++type PrivateLocalListener = LocalListener;
++#[cfg(windows)]
++type PrivateLocalListener = crate::platform::PrivateLocalListener;
+ 
+ pub(crate) enum LocalStreamRead {
+     Data,
+@@ -176,29 +180,15 @@ pub(crate) fn set_local_stream_polling(stream: &mut LocalStream, enabled: bool)
+ 
+ /// Binds a listener for private terminal traffic. Unix callers restrict the
+ /// socket file after binding; Windows must set the named-pipe DACL at creation.
+-pub(crate) fn bind_private_local_listener(path: &Path) -> io::Result<LocalListener> {
++pub(crate) fn bind_private_local_listener(path: &Path) -> io::Result<PrivateLocalListener> {
+     #[cfg(unix)]
+     {
+         bind_local_listener(path)
+     }
+ 
+     #[cfg(windows)]
+     {
+-        use interprocess::local_socket::{prelude::*, GenericNamespaced, ListenerOptions};
+-        use interprocess::os::windows::local_socket::ListenerOptionsExt as _;
+-        use interprocess::os::windows::security_descriptor::SecurityDescriptor;
+-        use widestring::U16CString;
+-
+-        let sddl = U16CString::from_str("D:P(A;;GA;;;SY)(A;;GA;;;OW)")
+-            .map_err(|err| io::Error::new(io::ErrorKind::InvalidInput, err))?;
+-        let security_descriptor = SecurityDescriptor::deserialize(&sddl)?;
+-        let name = path.to_string_lossy().to_string();
+-        let name = name.to_ns_name::<GenericNamespaced>()?;
+-        let listener = ListenerOptions::new()
+-            .name(name)
+-            .reclaim_name(false)
+-            .security_descriptor(security_descriptor)
+-            .create_sync()?;
++        let listener = PrivateLocalListener::bind(path)?;
+         fs::write(path, windows_socket_marker())?;
+         Ok(listener)
+     }
+@@ -401,22 +391,34 @@ mod tests {
+ 
+     #[cfg(windows)]
      #[test]
-     fn shared_ssh_control_path_is_stable_scoped_and_bounded() {
-         let path = shared_ssh_control_path(Path::new("/config/one"), "user@host").unwrap();
-```
-
-**File**: `src/remote/attach.rs` (modified, +223/-22)
-```diff
-@@ -1,5 +1,7 @@
- //! Remote thin-client launcher over SSH command stdio.
+-    fn private_named_pipe_accepts_same_user() {
++    fn private_named_pipe_transfers_surface_bursts_without_waiting_for_peer() {
++        use interprocess::local_socket::traits::Stream as _;
+         use std::io::Write as _;
  
-+#[cfg(unix)]
-+use super::process::wait_with_output_limit;
- use super::{
-     args::*,
-     process::{wait_with_output_timeout, CancellablePipe, OwnedSshChild, PipeControl},
-@@ -30,6 +32,12 @@ const BRIDGE_IO_POLL: Duration = Duration::from_millis(1);
- const BRIDGE_SOCKET_PERMISSION_MODE: u32 = 0o600;
- const REMOTE_SERVER_SHUTDOWN_CONFIRM_TIMEOUT: Duration = Duration::from_secs(5);
- const NONINTERACTIVE_SSH_COMMAND_TIMEOUT: Duration = Duration::from_secs(15);
-+#[cfg(unix)]
-+const SSH_CONTROL_TIMEOUT: Duration = Duration::from_secs(3);
-+#[cfg(unix)]
-+// Diagnostic commands may print remote-controlled banners; drain them with a
-+// fixed memory budget. An oversized local configuration is never parsed.
-+const SSH_DIAGNOSTIC_OUTPUT_LIMIT: usize = 256 * 1024;
- const NONINTERACTIVE_SSH_STDERR_LIMIT: usize = 16 * 1024;
- const BRIDGE_FAILURE_REPORT_TIMEOUT: Duration = Duration::from_secs(1);
- const REMOTE_SERVER_SHUTDOWN_POLL_INTERVAL: Duration = Duration::from_millis(100);
-@@ -104,29 +112,35 @@ pub(crate) fn check_saved_ssh(target: &str, session: &str) -> io::Result<()> {
-         .map_err(|error| io::Error::new(io::ErrorKind::InvalidInput, error))?;
-     let mut ssh = RemoteSsh::new_noninteractive(target.to_owned());
-     ssh.session_name = session.to_owned();
--    let remote = find_installed_remote_herdr(&ssh)?;
--    match remote_server_status(&ssh, &remote, false)? {
--        RemoteServerStatus::Running {
--            endpoint_protocol_generation,
--            surface_interest,
--            health_check,
--            detached_server_daemon,
--            ..
--        } if remote_server_restart_reason(
--            endpoint_protocol_generation,
--            detached_server_daemon,
--            true,
--            surface_interest,
--            health_check,
--        )
--        .is_none() =>
--        {
--            Ok(())
-+    let check = || {
-+        let remote = find_installed_remote_herdr(&ssh)?;
-+        match remote_server_status(&ssh, &remote, false)? {
-+            RemoteServerStatus::Running {
-+                endpoint_protocol_generation,
-+                surface_interest,
-+                health_check,
-+                detached_server_daemon,
-+                ..
-+            } if remote_server_restart_reason(
-+                endpoint_protocol_generation,
-+                detached_server_daemon,
-+                true,
-+                surface_interest,
-+                health_check,
-+            )
-+            .is_none() =>
-+            {
-+                Ok(())
-+            }
-+            _ => Err(io::Error::other(format!(
-+                "remote Herdr server is stopped or incompatible; run `{}`",
-+                super::saved_ssh_bootstrap_command(target, session),
-+            ))),
-         }
--        _ => Err(io::Error::other(format!(
--            "remote Herdr server is stopped or incompatible; run `{}`",
--            super::saved_ssh_bootstrap_command(target, session),
--        ))),
-+    };
-+    match check() {
-+        Err(_) if ssh.prepare_shared_transport().unwrap_or(false) => check(),
-+        result => result,
-     }
- }
- 
-@@ -828,6 +842,148 @@ impl RemoteSsh {
-         self.managed_config.as_ref().map(|config| &config.options)
-     }
- 
-+    #[cfg(not(unix))]
-+    pub(super) fn prepare_shared_transport(&self) -> io::Result<bool> {
-+        Ok(false)
-+    }
-+
-+    #[cfg(unix)]
-+    // True permits one new connection after retirement, disappearance, or
-+    // another helper's replacement. It does not prove the old TCP link died.
-+    pub(super) fn prepare_shared_transport(&self) -> io::Result<bool> {
-+        let Some(options) = self.options() else {
-+            return Ok(false);
-+        };
-+        let Some(control_path) = &options.control_path else {
-+            return Ok(false);
-+        };
-+        let mut configuration = self.base_command();
-+        configuration.arg("-G").arg(&self.target);
-+        let output = self.bounded_control_output(configuration, SSH_CONTROL_TIMEOUT)?;
-+        if output.stdout.len() > SSH_DIAGNOSTIC_OUTPUT_LIMIT {
-+            return Err(io::Error::new(
-+                io::ErrorKind::InvalidData,
-+                "SSH configuration output is too large",
-+            ));
-+        }
-+        if !output.status.success() {
-+            return Err(command_failed(
-+                "could not resolve managed SSH configuration",
-+                &output,
-+            ));
-+        }
-+        let configuration = String::from_utf8_lossy(&output.stdout);
-+        let Some(path) = configuration
-+            .lines()
-+            .find_map(|line| line.strip_prefix("controlpath "))
-+        else {
-+            return Ok(false);
-+        };
-+        let path = Path::new(path);
-+        if path.parent() != control_path.parent() {
-+            return Ok(false);
-+        }
-+        let pinned = match crate::platform::PinnedSshControlSocket::new(path) {
-+            Ok(pinned) => pinned,
-+            Err(
-```
-
-**File**: `src/remote/process.rs` (modified, +79/-12)
-```diff
-@@ -114,6 +114,40 @@ pub(super) fn wait_with_output_timeout(
-     input: Option<Vec<u8>>,
-     timeout: Duration,
-     cancelled: Arc<AtomicBool>,
-+) -> io::Result<Output> {
-+    wait_with_output(child, input, timeout, cancelled, None)
-+}
-+
-+#[cfg(any(unix, test))]
-+pub(super) fn wait_with_output_limit(
-+    child: Child,
-+    timeout: Duration,
-+    cancelled: Arc<AtomicBool>,
-+    limit: usize,
-+) -> io::Result<Output> {
-+    wait_with_output(child, None, timeout, cancelled, Some(limit))
-+}
-+
-+fn read_output(mut pipe: CancellablePipe, limit: Option<usize>) -> io::Result<Vec<u8>> {
-+    let mut bytes = Vec::new();
-+    if let Some(limit) = limit {
-+        io::Read::by_ref(&mut pipe)
-+            .take((limit + 1) as u64)
-+            .read_to_end(&mut bytes)?;
-+        // Drain excess so a full pipe cannot manufacture a command timeout.
-+        io::copy(&mut pipe, &mut io::sink())?;
-+    } else {
-+        pipe.read_to_end(&mut bytes)?;
-+    }
-+    Ok(bytes)
-+}
-+
-+fn wait_with_output(
-+    child: Child,
-+    input: Option<Vec<u8>>,
-+    timeout: Duration,
-+    cancelled: Arc<AtomicBool>,
-+    limit: Option<usize>,
- ) -> io::Result<Output> {
-     let mut child = OwnedSshChild(child);
-     let control = PipeControl::new(cancelled);
-@@ -137,18 +171,12 @@ pub(super) fn wait_with_output_timeout(
-         .take()
-         .map(crate::platform::ChildPipe::new_writer)
-         .transpose()?;
--    let mut stdout = CancellablePipe::new(stdout, &control);
--    let mut stderr = CancellablePipe::new(stderr, &control);
-+    let stdout = CancellablePipe::new(stdout, &control);
-+    let stderr = CancellablePipe::new(stderr, &control);
-     let stdin = stdin.map(|pipe| CancellablePipe::new(pipe, &control));
-     thread::scope(|scope| {
--        let stdout = scope.spawn(move || {
--            let mut bytes = Vec::new();
--            stdout.read_to_end(&mut bytes).map(|_| bytes)
--        });
--        let stderr = scope.spawn(move || {
--            let mut bytes = Vec::new();
--            stderr.read_to_end(&mut bytes).map(|_| bytes)
--        });
-+        let stdout = scope.spawn(move || read_output(stdout, limit));
-+        let stderr = scope.spawn(move || read_output(stderr, limit));
-         let stdin = scope.spawn(move || match (stdin, input) {
-             (Some(mut stdin), Some(input)) => stdin.write_all(&input),
-             (None, Some(_)) => Err(io::Error::other("ssh bootstrap stdin missing")),
-@@ -317,14 +345,47 @@ pub(in crate::remote) mod tests {
-                     .write_all(&vec![b'x'; 2 * 1024 * 1024])
-                     .unwrap();
-             }
-+            if mode == "output-limit" {
-+                eprintln!("Permission denied (publickey)");
-+                io::stdout().write_all(&vec![b'x'; 1024 * 1024]).unwrap();
-+                io::stderr().write_all(&vec![b'y'; 1024 * 1024]).unwrap();
-+            }
-             println!("final child output");
-             eprintln!("Permission denied (publickey)");
-         }
--        if mode != "exit" && mode != "bridge-final" {
-+        if mode != "exit" && mode != "bridge-final" && mode != "output-limit" {
-             thread::sleep(Duration::from_secs(30));
-         }
-     }
- 
-+    #[test]
-+    fn diagnostic_capture_drains_flooded_pipes_with_bounded_memory() {
-+        let fixture = PipeFixture::new("output-limit");
-+        let child = fixture
-+            .command()
-+            .stdout(Stdio::piped())
-+            .stderr(Stdio::piped())
-+            .spawn()
+         let path = temp_socket_marker_path("private-pipe");
+         let _ = fs::remove_file(&path);
+         let listener = bind_private_local_listener(&path).unwrap();
++        listener
++            .set_nonblocking(interprocess::local_socket::ListenerNonblockingMode::Accept)
 +            .unwrap();
-+        let descendant = fixture.ready();
-+        let limit = 16 * 1024;
-+        let output = wait_with_output_limit(
-+            child,
-+            Duration::from_secs(5),
-+            Arc::new(AtomicBool::new(false)),
-+            limit,
-+        )
-+        .unwrap();
-+        assert!(
-+            output.status.success(),
-+            "capture must drain instead of blocking the child"
++        assert_eq!(
++            listener.accept().unwrap_err().kind(),
++            io::ErrorKind::WouldBlock
 +        );
-+        assert_eq!(output.stdout.len(), limit + 1);
-+        assert_eq!(output.stderr.len(), limit + 1);
-+        assert!(String::from_utf8_lossy(&output.stderr).contains("Permission denied (publickey)"));
-+        assert!(crate::platform::process_exists(descendant));
-+    }
+         let mut client = connect_local_stream(&path).unwrap();
+         let mut server = listener.accept().unwrap();
+-        client.write_all(b"remote").unwrap();
+-
+-        let mut buffer = [0_u8; 16];
+-        assert!(matches!(
+-            poll_local_stream_read_count(&mut server, &mut buffer).unwrap(),
+-            LocalStreamReadCount::Data(6)
+-        ));
+-        assert_eq!(&buffer[..6], b"remote");
++        server.set_nonblocking(true).unwrap();
++        client.set_nonblocking(true).unwrap();
 +
-     #[test]
-     fn child_exit_drains_output_without_waiting_for_inherited_pipes() {
-         let fixture = PipeFixture::new("exit");
-@@ -375,7 +436,13 @@ pub(in crate::remote) mod tests {
-             let error = wait_with_output_timeout(
-                 child,
-                 Some(vec![b'x'; 1024 * 1024]),
--                Duration::from_millis(200),
-+                // Test cancellation independently of the scheduler's ability
-+                // to run its thread within the timeout branch's 100 ms margin.
-+                if cancel {
-+                    Duration::from_secs(5)
-+                } else {
-+                    Duration::from_millis(200)
-+                },
-                 stopped,
-             )
-             .unwrap_err();
++        // A screen update must fit before the peer's next poll in either direction.
++        let payload = vec![b'x'; 48 * 1024];
++        let mut received = vec![0; payload.len()];
++        assert_eq!(server.write(&payload).unwrap(), payload.len());
++        client.read_exact(&mut received).unwrap();
++        assert_eq!(received, payload);
++        assert_eq!(client.write(&payload).unwrap(), payload.len());
++        server.read_exact(&mut received).unwrap();
++        assert_eq!(received, payload);
+ 
+         drop(client);
+         drop(server);
 ```
 
-**File**: `src/remote/saved.rs` (modified, +19/-1)
+**File**: `src/platform/windows.rs` (modified, +47/-0)
 ```diff
-@@ -25,6 +25,7 @@ pub(crate) fn connect_saved_ssh(
- ) -> io::Result<SavedSshStream> {
-     let mut ssh = validated_saved_ssh(profile_id, target, session)?;
-     ssh.cancelled = Arc::clone(&cancelled);
-+    ssh.prepare_shared_transport()?;
-     let remote_herdr = find_installed_remote_herdr(&ssh)?;
-     let metadata = remote_herdr.machine_metadata();
-     if cancelled.load(Ordering::Acquire) {
-@@ -59,6 +60,8 @@ pub(crate) struct SavedSshApiBridge {
-     path: PathBuf,
-     bridge: SshStdioBridge,
-     metadata_cache: crate::client::endpoint::SshMetadataCache,
-+    ssh: RemoteSsh,
-+    pub(crate) can_retry: bool,
-     pub(crate) used_cached_metadata: bool,
- }
+@@ -25,6 +25,53 @@ pub(crate) use power::monitor_host_power;
  
-@@ -68,16 +71,25 @@ impl SavedSshApiBridge {
-         target: &str,
-         session: &str,
-         use_cached_metadata: bool,
-+        allow_retry: bool,
-     ) -> io::Result<Self> {
-         let ssh = validated_saved_ssh(profile_id, target, session)?;
-+        let mut can_retry = allow_retry;
-         let metadata_cache =
-             crate::client::endpoint::SshMetadataCache::new(profile_id, target, session)?;
-         let cached = use_cached_metadata.then(|| metadata_cache.load()).flatten();
-         let used_cached_metadata = cached.is_some();
-         let metadata = match cached {
-             Some(metadata) => metadata,
-             None => {
--                let metadata = super::attach::discover_remote_api_metadata(&ssh, session)?;
-+                let discover = || super::attach::discover_remote_api_metadata(&ssh, session);
-+                let metadata = match discover() {
-+                    Err(_) if can_retry && ssh.prepare_shared_transport().unwrap_or(false) => {
-+                        can_retry = false;
-+                        discover()?
-+                    }
-+                    result => result?,
-+                };
-                 metadata_cache.store(&metadata);
-                 metadata
-             }
-@@ -103,6 +115,8 @@ impl SavedSshApiBridge {
-             path,
-             bridge,
-             metadata_cache,
-+            ssh,
-+            can_retry,
-             used_cached_metadata,
-         })
-     }
-@@ -119,6 +133,10 @@ impl SavedSshApiBridge {
-         self.metadata_cache.invalidate();
-     }
+ static ALLOW_UNELEVATED_CLIENTS: OnceLock<bool> = OnceLock::new();
  
-+    pub(crate) fn recover_transport(&self) -> bool {
-+        self.can_retry && self.ssh.prepare_shared_transport().unwrap_or(false)
++pub(crate) struct PrivateLocalListener {
++    listener: interprocess::os::windows::named_pipe::PipeListener<
++        interprocess::os::windows::named_pipe::pipe_mode::Bytes,
++        interprocess::os::windows::named_pipe::pipe_mode::Bytes,
++    >,
++    stream_nonblocking: std::sync::atomic::AtomicBool,
++}
++
++impl PrivateLocalListener {
++    pub(crate) fn bind(path: &std::path::Path) -> std::io::Result<Self> {
++        use interprocess::os::windows::{
++            named_pipe::PipeListenerOptions, security_descriptor::SecurityDescriptor,
++        };
++
++        let sddl = widestring::U16CString::from_str("D:P(A;;GA;;;SY)(A;;GA;;;OW)")
++            .map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
++        let security_descriptor = SecurityDescriptor::deserialize(&sddl)?;
++        // The default 512-byte buffers serialize busy SSH output behind reader polling.
++        let listener = PipeListenerOptions::new()
++            .path(format!(r"\\.\pipe\{}", path.to_string_lossy()))
++            .input_buffer_size_hint(64 * 1024)
++            .output_buffer_size_hint(64 * 1024)
++            .security_descriptor(Some(security_descriptor))
++            .create_duplex()?;
++        Ok(Self {
++            listener,
++            stream_nonblocking: std::sync::atomic::AtomicBool::new(false),
++        })
 +    }
 +
-     pub(crate) fn stale_metadata_failure(error: &io::Error) -> bool {
-         error
-             .to_string()
++    pub(crate) fn accept(&self) -> std::io::Result<crate::ipc::LocalStream> {
++        let stream = self.listener.accept()?;
++        stream.set_nonblocking(self.stream_nonblocking.load(AtomicOrdering::Acquire))?;
++        Ok(crate::ipc::LocalStream::NamedPipe(stream.into()))
++    }
++
++    pub(crate) fn set_nonblocking(
++        &self,
++        mode: interprocess::local_socket::ListenerNonblockingMode,
++    ) -> std::io::Result<()> {
++        self.listener.set_nonblocking(mode.accept_nonblocking())?;
++        self.stream_nonblocking
++            .store(mode.stream_nonblocking(), AtomicOrdering::Release);
++        Ok(())
++    }
++}
++
+ pub(crate) struct ChildPipe(std::fs::File);
+ 
+ impl ChildPipe {
+```
+
+**File**: `src/remote/attach.rs` (modified, +1/-0)
+```diff
+@@ -15,6 +15,7 @@ use std::io::{self, IsTerminal, Read as _, Write as _};
+ use std::path::{Path, PathBuf};
+ use std::process::{Child, Command, Output, Stdio};
+ 
++#[cfg(unix)]
+ use interprocess::local_socket::traits::Listener as _;
+ use interprocess::local_socket::traits::Stream as _;
+ use interprocess::local_socket::ListenerNonblockingMode;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5395** (closed): feat: add native Omo integration (@rhdtl78)
-- **PR #5387** (closed): Fix/opencode subagent lifecycle (@giannisCKS)
-- **PR #5339** (closed): Fix wedged agent waits (background-tab idle projection, no default timeout), retry integration repair, match opencode v2 permission footers (@WSHAPER)
-- **PR #5326** (closed): fix: report idle when closing record is missing (@matthias-scale)
-- **PR #5310** (2026-10-15): fix: keep polling through a transient zero-sized terminal grid (@JJLiebig)
-- **PR #5308** (2026-10-15): fix: keep posix machine scripts intact through windows openssh (@JJLiebig)
+- **PR #5488** (closed): fix: preserve foreground sizing for public tab creation (@rezzminator)
+- **PR #5480** (closed): feat: add atomic preconditions to agent.prompt (@applifaction)
+- **PR #5476** (2026-10-21): test: synchronize shell and server startup checks (@JJLiebig)
+- **PR #5467** (2026-10-21): test: stabilize plugin worker lease test (@JJLiebig)
+- **PR #5463** (2026-10-21): fix: prevent windows ssh output from delaying typing (@JJLiebig)
+- **PR #5453** (closed): feat: wrap directional pane focus at edges with ui.wrap_pane_focus (@craftzdog)
 
 ---
 
@@ -3586,60 +2772,28 @@ refs #4721
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: deflake observer write timeout on loaded runners (#5280)
+## X. prevent windows ssh output from delaying typing (#5463)
 
 **RULE**:
-When implementing operations in `src/server/client_transport.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in herdrdev/herdr. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/api/client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in herdrdev/herdr. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b0c3e9e`: test: deflake observer write timeout on loaded runners (#5280). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccc7521a`: prevent windows ssh output from delaying typing (#5463). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/client_transport.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/api/client.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Keeps both kernel socket buffers far below the frame size so the writer must
-    /// block for the observer instead of accepting the whole frame at once. Without
-    /// this the reset path would only be exercised when the platform default buffers
-    /// happen to be smaller than the frame.
-    #[cfg(unix)]
-    fn limit_local_stream_buffers(stream: &LocalStream) {
-        use std::os::fd::AsRawFd as _;
-
-        let LocalStream::UdSocket(socket) = stream;
-        let bytes: libc::c_int = 64 * 1024;
-        for option in [libc::SO_SNDBUF, libc::SO_RCVBUF] {
-            let result = unsafe {
-                libc::setsockopt(
-                    socket.inner().as_raw_fd(),
-                    libc::SOL_SOCKET,
-                    option,
-                    std::ptr::addr_of!(bytes).cast(),
-                    std::mem::size_of::<libc::c_int>() as libc::socklen_t,
-                )
-            };
-            assert_eq!(result, 0, "setsockopt({option}) failed");
-        }
-    }
-
-        // A slow observer that keeps draining must not be disconnected, because every
-        // partial write resets the writer's deadline. Keep the drain cadence far below
-        // the write timeou
+        #[cfg(unix)]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        server
-            .set_send_timeout(Some(Duration::from_millis(100)))
-            .unwrap();
-            assert!(write_framed_bytes(&mut server, &vec![b'x'; 1024 * 1024]));
-            .set_recv_timeout(Some(Duration::from_secs(3)))
-        while received < 1024 * 1024 {
-            std::thread::sleep(Duration::from_millis(5));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b0c3e9e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccc7521a` are properly handled with clean fallback behavior.

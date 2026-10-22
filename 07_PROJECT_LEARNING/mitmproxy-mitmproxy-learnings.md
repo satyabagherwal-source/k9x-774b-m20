@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `c2c5b4ed`  
+> **Source Version**: `12103033`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:20:38.180Z  
+> **Timestamp**: 2026-10-22T17:12:36.168Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:20:36.414Z  
+> **Harvest Timestamp**: 2026-10-22T17:12:34.456Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 45810 stars
+- **Stars / Engagement**: 46105 stars
 
 ---
 
@@ -1307,11 +1307,14 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8499** (2026-10-21): **Bump Certifi**
-  *Symptoms*: 
+- **Issue #8507** (2026-10-22): **Fix the escape_control_characters docstring**
+  *Symptoms*: #### Description  The `escape_control_characters` docstring says it replaces unicode C1 control characters, but it actually replaces C0 (0x00 to 0x1f) and DEL, and C1 characters like `\x85` go through unchanged. Its tests check exactly that. `keep_spacing` also keeps `\r`, not just tabs and newlines.  Docstring only, so no tests or changelog entry.  #### Checklist   - [ ] I have updated tests where applicable.  - [ ] I have added an entry to the CHANGELOG. 
 
-- **Issue #8495** (2026-10-20): **Fix KeyError for unknown tags in the WBXML contentview**
-  *Symptoms*: #### Description  When the WBXML decoder meets a tag token that its code page doesn't define, it builds a placeholder name with `"UNKNOWN_TAG_{0,2:X}".format(token)`. `{0,2:X}` isn't a valid replacement field: `0,2` is read as a keyword argument name, so the call raises `KeyError: '0,2'` and the whole contentview fails with `ValueError: Error: '0,2'` instead of showing the message.  The format is now `{0:02X}` (two-digit uppercase hex), which is what the original seems to have meant, so an unknown token `0x3F` renders as `<UNKNOWN_TAG_3F/>`.  Added `test_wbxml_unknown_tag`, which decodes a minimal document whose only tag is token `0x3F` in the AirSync code page. It fails on `main` with the `KeyError` and passes with the fix. `test/mitmproxy/contentviews` passes locally (118 passed), and `ruff check` / `ruff format --check` are clean on the test file.  *Note: I found this with a static check (ruff F523/F524) and used Claude (an AI assistant) to help write the fix and test; I reviewed and ran them as described.*  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG.
+- **Issue #8504** (2026-10-22): **Add YAML contentview**
+  *Symptoms*: #### Description  This PR adds a dedicated `YAMLContentview` to format, validate, and syntax-highlight YAML payloads.  Mitmproxy currently supports contentviews for JSON, GraphQL, XML/HTML, CSS, and JS, but lacks a viewer for YAML. Requests or responses with YAML MIME types (`application/yaml`, `application/x-yaml`, `text/yaml`, `text/x-yaml`, and `*+yaml` subtypes such as OpenAPI specs or Kubernetes manifests) previously fell back to the unformatted raw view.  Key details: - Uses `ruamel.yaml` (already an existing mitmproxy dependency) with round-trip mode to preserve structure and comments while prettifying. - Supports both single-document and multi-document YAML streams (`---` separators). - Auto-detects standard YAML MIME types in `render_priority`. - Raises `ValueError` on malformed YAML so mitmproxy gracefully falls back to raw view. - Accompanied by unit tests in `test__view_yaml.py` covering single/multi-doc payloads, comments, error handling, and priority selection (100% coverage).  #### Checklist  - [x] I have updated tests where applicable. - [x] I have added an entry to the CHANGELOG.
+  **Post-Mortem & Fix Analysis**:
+  > > Thanks for the PR 🚀 just left a couple of nits :)  Applied the suggestions, thanks for the review !! XD
+  > > I'd much rather we implement this in mitmproxy_rs. I don't want to expose ruamel_yaml, which has C components, to user input.  Understood, that makes complete sense from a security standpoint regarding C components and untrusted input! I will close this PR.   Thanks for the guidance !! XD XD
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1328,78 +1331,33 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2c5b4ed` (2026-10-21)
-**Commit Message**: Bump Certifi (#8499)
+### Incident Patch 1: `12103033` (2026-10-22)
+**Commit Message**: Fix the escape_control_characters docstring (#8507)
 
-* bump certifi
-
-* [autofix.ci] apply automated fixes
-
----------
-
-Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `mitmproxy/utils/strutils.py` (modified, +2/-2)
 ```diff
-@@ -7,6 +7,8 @@
+@@ -68,10 +68,10 @@ def always_str(str_or_bytes: None | str | bytes, *decode_args) -> None | str:
  
- ## Unreleased: mitmproxy next
+ def escape_control_characters(text: str, keep_spacing=True) -> str:
+     """
+-    Replace all unicode C1 control characters from the given text with a single "."
++    Replace all C0 control characters and DEL in the given text with a single "."
  
-+- Update `certifi` dependency to remove eMudhra CAs from precompiled binaries.
-+  ([#8499](https://github.com/mitmproxy/mitmproxy/pull/8499), @mhils) 
- - Fix the WBXML contentview raising a `KeyError` on tags that are missing from the code page,
-   instead of showing them as `UNKNOWN_TAG_XX`.
-   ([#8495](https://github.com/mitmproxy/mitmproxy/pull/8495), @kayaal34)
-```
-
-**File**: `pyproject.toml` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ dependencies = [
-     "backports.zstd>=1.7.0,<=1.7.0 ; python_version<'3.14'",
-     "bcrypt>=5.0.0,<=5.0.0",
-     "Brotli>=1.0,<=1.2.0",
--    "certifi>=2019.9.11",  # no upper bound here to get latest CA bundle
-+    "certifi>=2026.10.19",  # no upper bound here to get latest CA bundle
-     "cryptography>=42.0,<=50.0.2",  # relaxed upper bound here to get security fixes
-     "flask>=3.0,<=3.1.3",
-     "h11>=0.16.0,<=0.16.0",
-```
-
-**File**: `uv.lock` (modified, +4/-4)
-```diff
-@@ -302,11 +302,11 @@ wheels = [
- 
- [[package]]
- name = "certifi"
--version = "2026.1.4"
-+version = "2026.10.19"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/e0/2d/a891ca51311197f6ad14a7ef42e2399f36cf2f9bd44752b3dc4eab60fdc5/certifi-2026.1.4.tar.gz", hash = "sha256:ac726dd470482006e014ad384921ed6438c457018f4b3d204aea4281258b2120", size = 154268, upload-time = "2026-01-04T02:42:41.825Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/e6/ad/3cc14f097111b4de0040c83a525973216457bbeeb63739ef1ed275c1c021/certifi-2026.1.4-py3-none-any.whl", hash = "sha256:9943707519e4add1115f44c2bc244f782c0249876bf51b6599fee1ffbedd685c", size = 152900, upload-time = "2026-01-04T02:42:40.15Z" },
-+    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
- ]
- 
- [[package]]
-@@ -1077,7 +1077,7 @@ requires-dist = [
-     { name = "backports-zstd", marker = "python_full_version < '3.14'", specifier = "<=1.7.0,>=1.7.0" },
-     { name = "bcrypt", specifier = "<=5.0.0,>=5.0.0" },
-     { name = "brotli", specifier = ">=1.0,<=1.2.0" },
--    { name = "certifi", specifier = ">=2019.9.11" },
-+    { name = "certifi", specifier = ">=2026.10.19" },
-     { name = "cryptography", specifier = ">=42.0,<=50.0.2" },
-     { name = "flask", specifier = ">=3.0,<=3.1.3" },
-     { name = "h11", specifier = "<=0.16.0,>=0.16.0" },
+     Args:
+-        keep_spacing: If True, tabs and newlines will not be replaced.
++        keep_spacing: If True, tabs, carriage returns and newlines will not be replaced.
+     """
+     if not isinstance(text, str):
+         raise ValueError(f"text type must be unicode but is {type(text).__name__}")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8507** (2026-10-22): Fix the escape_control_characters docstring (@qodelicious)
+- **PR #8504** (closed): Add YAML contentview (@vansh917917)
+- **PR #8503** (2026-10-22): Add `--emudhra-old` option (@mhils)
+- **PR #8502** (2026-10-22): Bump dependencies (@mhils)
+- **PR #8500** (2026-10-21): Add `--emudhra` option (@mhils)
 - **PR #8499** (2026-10-21): Bump Certifi (@mhils)
-- **PR #8495** (2026-10-20): Fix KeyError for unknown tags in the WBXML contentview (@kayaal34)
-- **PR #8494** (2026-10-20): Fix typos in option help, docstrings and docs (@qodelicious)
-- **PR #8493** (closed): Fix Set-Cookie parsing of short Expires values and RFC 850 dates (@qodelicious)
-- **PR #8492** (2026-10-19): Web: fix and improve the flow details splitter (@lups2000)
-- **PR #8491** (closed): mitmweb: Update web port to actual value if set to 0 (@george-hopkins)
 
 ---
 
@@ -1419,29 +1377,30 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump Certifi (#8499)
+## X. the escape_control_characters docstring (#8507)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mitmproxy/utils/strutils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2c5b4ed`: Bump Certifi (#8499). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `12103033`: the escape_control_characters docstring (#8507). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `mitmproxy/utils/strutils.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Update `certifi` dependency to remove eMudhra CAs from precompiled binaries.
-  ([#8499](https://github.com/mitmproxy/mitmproxy/pull/8499), @mhils) 
+    Replace all C0 control characters and DEL in the given text with a single "."
+        keep_spacing: If True, tabs, carriage returns and newlines will not be replaced.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    Replace all unicode C1 control characters from the given text with a single "."
+        keep_spacing: If True, tabs and newlines will not be replaced.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2c5b4ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `12103033` are properly handled with clean fallback behavior.

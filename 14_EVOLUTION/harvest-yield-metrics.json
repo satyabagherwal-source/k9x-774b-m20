@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T17:04:54.375Z",
-  "total_cycles_completed": 4320,
-  "total_learnings_persisted": 4320,
-  "total_rules_promoted": 3500,
+  "last_updated": "2026-10-22T17:12:36.716Z",
+  "total_cycles_completed": 4322,
+  "total_learnings_persisted": 4322,
+  "total_rules_promoted": 3502,
   "history": [
-    {
-      "timestamp": "2026-10-21T02:02:08.503Z",
-      "repository": "vinceglb/FileKit",
-      "learningId": "learn-github-vinceglb-filekit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:02:15.110Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T02:08:37.584Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-22T17:04:54.375Z",
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:12:36.559Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:12:36.716Z",
+      "repository": "herdrdev/herdr",
+      "learningId": "learn-github-herdrdev-herdr",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

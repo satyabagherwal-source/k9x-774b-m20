@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-OBG1",
-    "timestamp": "2026-10-20T14:16:45.553Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "1c532e695dfff1226863a2949ef79afdb2d26a6c051d0d0dd4df93ff6b407afa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-OKYB",
-    "timestamp": "2026-10-20T14:16:57.875Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "47255242ce590b94474942c0f999bb89c246124f07459cd65580bdea34c1c6a8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-ZGT5",
     "timestamp": "2026-10-20T14:25:25.721Z",
     "repository": "software-mansion/react-native-gesture-handler",
@@ -7490,6 +7460,36 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "86bb39620b96fbfef2cf2d203a2210bfe10dcb41e78c3fe072ad6b7ef112788a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-U5Z5",
+    "timestamp": "2026-10-22T17:12:36.545Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "61770392bf7e2bb04598999fe986beab028b1e9320e02684284dd0ae8ee1877e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-U63K",
+    "timestamp": "2026-10-22T17:12:36.704Z",
+    "repository": "herdrdev/herdr",
+    "learningId": "learn-github-herdrdev-herdr",
+    "contentHash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
