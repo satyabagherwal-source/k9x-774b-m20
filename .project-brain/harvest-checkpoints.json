@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T16:26:16.600Z",
+  "last_updated": "2026-10-22T16:32:30.427Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "b7a7ad8ce8b45339709a0dc7d084c18ef0cf8d3ecddbc9edd129af8b1915fa85",
-      "verified_at": "2026-10-20T21:40:59.738Z",
+      "content_hash": "02a53f0967593a554183822c776bb2136cd7f727fca09f2fe1231bc7f0ab50ac",
+      "verified_at": "2026-10-22T16:32:30.427Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:40:59.738Z"
+      "last_updated": "2026-10-22T16:32:30.427Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
-      "verified_at": "2026-10-20T00:59:13.213Z",
+      "content_hash": "ec584f3d71c87b2c3256df031d604e3ecb406d8a7f3dbd30bcb2a6bb5d5eba41",
+      "verified_at": "2026-10-22T16:32:17.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:59:13.213Z"
+      "last_updated": "2026-10-22T16:32:17.450Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
-      "verified_at": "2026-10-19T22:26:46.319Z",
+      "content_hash": "845b4426c3c815bbb1d05f738c39ac63f82b5ef10eab67466ae01c93208a8443",
+      "verified_at": "2026-10-22T16:32:21.256Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:26:46.319Z"
+      "last_updated": "2026-10-22T16:32:21.256Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",

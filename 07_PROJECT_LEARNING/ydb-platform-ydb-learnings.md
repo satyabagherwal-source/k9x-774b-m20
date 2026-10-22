@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `2cf64c2f`  
+> **Source Version**: `0a8f26c4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:40:59.333Z  
+> **Timestamp**: 2026-10-22T16:32:30.151Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:40:59.132Z  
+> **Harvest Timestamp**: 2026-10-22T16:32:29.728Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1284,622 +1284,466 @@ func Int(rand io.Reader, max *big.Int) (n *big.Int, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `169425c4` (2026-10-20)
-**Commit Message**: Fix replication proxy responses on session acquisition failure (#56190)
+### Incident Patch 1: `e8700d37` (2026-10-22)
+**Commit Message**: YQ-5707 Fix pq status mapping (#55621)
 
-**File**: `ydb/core/tx/replication/controller/stream_creator_ut.cpp` (modified, +90/-0)
+**File**: `ydb/library/yql/providers/pq/gateway/clients/message_stream/yql_pq_message_stream_client.cpp` (modified, +10/-1)
 ```diff
-@@ -13,6 +13,96 @@ namespace NKikimr::NReplication::NController {
- Y_UNIT_TEST_SUITE(StreamCreator) {
-     using namespace NTestHelpers;
- 
-+    void SessionAcquisitionFailure(Ydb::StatusIds::StatusCode failure) {
-+        TEnv env(true, ERuntimeMode::Simulated);
-+        auto& runtime = env.GetRuntime();
-+        env.CreateTable("/Root", *MakeTableDescription(TTestTableDescription{
-+            .Name = "Table",
-+            .KeyColumns = {"key"},
-+            .Columns = {{.Name = "key", .Type = "Uint32"}},
-+            .ReplicationConfig = Nothing(),
-+        }));
-+
-+        // No table operation has used this proxy, so GetSession must create a session.
-+        TSessionCreationFault fault(runtime, failure);
-+        TActorId creator;
-+        ui32 firstResponseType = 0;
-+        ui64 alterResponses = 0;
-+        std::optional<NYdb::TStatus> acquisitionStatus;
-+        auto observer = runtime.AddObserver([&](IEventHandle::TPtr& ev) {
-+            if (ev->Sender != env.GetYdbProxy() || ev->GetRecipientRewrite() != creator) {
-+                return;
-+            }
-+            if (!firstResponseType) {
-+                firstResponseType = ev->GetTypeRewrite();
-+            }
-+            if (ev->GetTypeRewrite() == TEvYdbProxy::TEvAlterTableResponse::EventType) {
-+                ++alterResponses;
-+                if (!acquisitionStatus) {
-+                    acquisitionStatus.emplace(ev->Get<TEvYdbProxy::TEvAlterTableResponse>()->Result);
-+                }
-+            }
-+        });
-+
-+        creator = runtime.Register(CreateStreamCreator(
-+            env.GetSender(), env.GetYdbProxy(), 1, 1,
-+            std::make_shared<TTargetTable::TTableConfig>("/Root/Table", "/Root/Replica"),
-+            "Stream", "replicationConsumer", TDuration::Hours(1), std::nullopt));
-+        runtime.EnableScheduleForActor(creator);
-+        const auto request = runtime.GrabEdgeEvent<TEvPrivate::TEvRequestCreateStream>(
-+            env.GetSender(), TDuration::Seconds(30));
-+        UNIT_ASSERT(request);
-+        runtime.Send(creator, env.GetSender(), new TEvPrivate::TEvAllowCreateStream());
-+        runtime.WaitFor("first proxy response to stream creator", [&] { return firstResponseType != 0; },
-+            TDuration::Seconds(30));
-+        UNIT_ASSERT_VALUES_EQUAL(firstResponseType, TEvYdbProxy::TEvAlterTableResponse::EventType);
-+        UNIT_ASSERT(acquisitionStatus);
-+        UNIT_ASSERT_VALUES_EQUAL(acquisitionStatus->GetIssues().Size(), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(acquisitionStatus->GetIssues().begin()->GetMessage(), "injected GetSession failure");
-+        UNIT_ASSERT_VALUES_EQUAL(fault.SessionRequests, 1);
-+        UNIT_ASSERT_VALUES_EQUAL(fault.TableRequests, 0);
-+
-+        const auto result = runtime.GrabEdgeEvent<TEvPrivate::TEvCreateStreamResult>(
-+            env.GetSender(), TDuration::Seconds(60));
-+        UNIT_ASSERT_C(result, "Stream creator must report completion after GetSession failure");
-+        UNIT_ASSERT_VALUES_EQUAL(result->Get()->ReplicationId, 1);
-+        UNIT_ASSERT_VALUES_EQUAL(result->Get()->TargetId, 1);
-+
-+        if (failure == Ydb::StatusIds::UNAVAILABLE) {
-+            UNIT_ASSERT_VALUES_EQUAL(acquisitionStatus->GetStatus(), NYdb::EStatus::UNAVAILABLE);
-+            UNIT_ASSERT_C(result->Get()->IsSuccess(), result->Get()->Status.GetIssues().ToString());
-+            UNIT_ASSERT_VALUES_EQUAL(alterResponses, 2);
-+            UNIT_ASSERT(fault.SessionRequests >= 2);
-+            const auto desc = env.GetDescription("/Root/Table");
-+            const auto& streams = desc.GetPathDescription().GetTable().GetCdcStreams();
-+            UNIT_ASSERT_VALUES_EQUAL(streams.size(), 1);
-+            UNIT_ASSERT_VALUES_EQUAL(streams.at(0).GetName(), "Stream");
-+
-+            env.SendAsync(env.GetYdbProxy(), new TEvYdbProxy::TEvDescribeConsumerRequest(
-+                "/Root/Table/Stream", "replicationConsumer", {}));
-+            const auto consumer = runtime.GrabEdgeEvent<TEvYdbProxy::TEvDescribeConsumerResponse>(
-+                env.GetSender(), TDuration::Seconds(30));
-+            UNIT_ASSERT(consumer);
-+            UNIT_ASSERT_C(consumer->Get()->Result.IsSuccess(), consumer->Get()->Result.GetIssues().ToString());
-+        } else {
-+            UNIT_ASSERT_VALUES_EQUAL(acquisitionStatus->GetStatus(), NYdb::EStatus::UNAUTHORIZED);
-+            UNIT_ASSERT_VALUES_EQUAL(result->Get()->Status.GetStatus(), NYdb::EStatus::UNAUTHORIZED);
-+            UNIT_ASSERT_STRING_CONTAINS(result->Get()->Status.GetIssues().ToString(), "injected GetSession failure");
-+            UNIT_ASSERT_VALUES_EQUAL(alterResponses, 1);
-+            UNIT_ASSERT_VALUES_EQUAL(fault.SessionRequests, 1);
-+            UNIT_ASSERT_VALUES_EQUAL(fault.TableRequests, 0);
-+            UNIT_ASSERT(env.GetDescription("/Root/Table").GetPathDescription().GetTable().GetCdcStreams().empty());
-+        }
-+    }
-+
-+    Y_UNIT_TEST(SessionAcquisitionFailureRetries) {
-+        SessionAcquisitionFailure(Ydb::StatusIds::UNAVAILABLE);
-+  
+@@ -22,6 +22,7 @@ NFq::EMessageStreamStatus ToStreamStatus(EStatus status) {
+         case EStatus::NOT_FOUND:
+             return NFq::EMessageStreamStatus::NotFound;
+         case EStatus::UNAUTHORIZED:
++        case EStatus::CLIENT_UNAUTHENTICATED:
+             return NFq::EMessageStreamStatus::Unauthorized;
+         case EStatus::BAD_REQUEST:
+             return NFq::EMessageStreamStatus::InvalidArgument;
+@@ -30,16 +31,23 @@ NFq::EMessageStreamStatus ToStreamStatus(EStatus status) {
+         case EStatus::PRECONDITION_FAILED:
+             return NFq::EMessageStreamStatus::PreconditionFailed;
+         case EStatus::UNAVAILABLE:
++        case EStatus::TRANSPORT_UNAVAILABLE:
++        case EStatus::CLIENT_DISCOVERY_FAILED:
+             return NFq::EMessageStreamStatus::Unavailable;
+         case EStatus::TIMEOUT:
++        case EStatus::CLIENT_DEADLINE_EXCEEDED:
+             return NFq::EMessageStreamStatus::Timeout;
+         case EStatus::OVERLOADED:
++        case EStatus::CLIENT_RESOURCE_EXHAUSTED:
++        case EStatus::CLIENT_LIMITS_REACHED:
+             return NFq::EMessageStreamStatus::Overloaded;
+         case EStatus::ABORTED:
+             return NFq::EMessageStreamStatus::Aborted;
+         case EStatus::CANCELLED:
++        case EStatus::CLIENT_CANCELLED:
+             return NFq::EMessageStreamStatus::Cancelled;
+         case EStatus::UNSUPPORTED:
++        case EStatus::CLIENT_CALL_UNIMPLEMENTED:
+             return NFq::EMessageStreamStatus::Unsupported;
+         case EStatus::UNDETERMINED:
+             return NFq::EMessageStreamStatus::Undetermined;
+@@ -56,9 +64,10 @@ NFq::EMessageStreamStatus ToStreamStatus(EStatus status) {
+         case EStatus::SESSION_BUSY:
+             return NFq::EMessageStreamStatus::SessionBusy;
+         case EStatus::INTERNAL_ERROR:
++        case EStatus::CLIENT_INTERNAL_ERROR:
+             return NFq::EMessageStreamStatus::InternalError;
+         default:
+-            // Client transport statuses are not Ydb::StatusIds values.
++            // Undefined statuses and end-of-stream have no matching category.
+             return NFq::EMessageStreamStatus::Unknown;
+     }
+ }
 ```
 
-**File**: `ydb/core/tx/replication/ut_helpers/test_env.h` (modified, +59/-5)
+**File**: `ydb/library/yql/providers/pq/gateway/ut/message_stream_client_ut.cpp` (modified, +29/-0)
 ```diff
-@@ -11,12 +11,51 @@
- #include <ydb/public/api/grpc/ydb_auth_v1.grpc.pb.h>
- 
- #include <library/cpp/testing/unittest/registar.h>
-+#include <library/cpp/threading/future/async.h>
- 
- namespace NKikimr::NReplication::NTestHelpers {
- 
- class TFeatureFlags: public TTestFeatureFlagsHolder<TFeatureFlags> {
- };
- 
-+enum class ERuntimeMode {
-+    RealThreads,
-+    Simulated,
-+};
-+
-+// Fail the first server-side CreateSession RPC while exercising the real SDK
-+// GetSession path. Install before using a fresh proxy so its pool is empty.
-+class TSessionCreationFault {
-+public:
-+    TSessionCreationFault(TTestActorRuntime& runtime, Ydb::StatusIds::StatusCode status)
-+        : Observer(runtime.AddObserver<NGRpcService::TEvProxyRuntimeEvent>(
-+            [this, status](NGRpcService::TEvProxyRuntimeEvent::TPtr& ev) {
-+                const auto method = ev->Get()->GetRpcMethodName();
-+                if (method.EndsWith("/CreateSession")) {
-+                    ++SessionRequests;
-+                    if (SessionRequests == 1) {
-+                        auto* request = dynamic_cast<NGRpcService::IRequestCtx*>(ev->Get());
-+                        UNIT_ASSERT(request);
-+                        request->RaiseIssue(NYql::TIssue("injected GetSession failure"));
-+                        request->ReplyWithYdbStatus(status);
-+                        ev.Reset();
-+                    }
-+                } else if (method.EndsWith("/CreateTable") || method.EndsWith("/DropTable") || method.EndsWith("/AlterTable")
-+                    || method.EndsWith("/CopyTable") || method.EndsWith("/CopyTables") || method.EndsWith("/RenameTables")
-+                    || method.EndsWith("/DescribeTable"))
-+                {
-+                    ++TableRequests;
-+                }
-+            }))
-+    {}
-+
-+    ui64 SessionRequests = 0;
-+    ui64 TableRequests = 0;
-+
-+private:
-+    TTestActorRuntime::TEventObserverHolder Observer;
-+};
-+
- template <bool UseDatabase = true>
- class TEnv {
-     static constexpr char DomainName[] = "Root";
-@@ -32,8 +71,10 @@ class TEnv {
-         auto grpcPort = PortManager.GetPort();
- 
-         Server.EnableGRpc(grpcPort);
--        Server.SetupDefaultProfiles();
--        Client.InitRootScheme(DomainName);
-+        RunCall([&] {
-+            Server.SetupDefaultProfiles();
-+            Client.InitRootScheme(DomainName);
-+        });
- 
-         Endpoint = "localhost:" + ToString(grpcPort);
-         Database = "/" + ToString(DomainName);
-@@ -69,9 +110,22 @@ class TEnv {
-     }
- 
- public:
--    TEnv(bool init = true)
-+    template <typename TFunc>
-+    auto RunCall(TFunc&& func) {
-+        if (GetRuntime().IsRealThreads()) {
-+            return func();
-+        }
-+
-+        TAdaptiveThreadPool threadPool;
-+        threadPool.Start();
-+        auto future = NThreading::Async(std::forward<TFunc>(func), threadPool);
-+        return GetRuntime().WaitFuture(std::move(future), TDuration::Seconds(60));
-+    }
-+
-+    TEnv(bool init = true, ERuntimeMode runtimeMode = ERuntimeMode::RealThreads)
-         : Settings(Tests::TServerSettings(PortManager.GetPort(), {}, MakePqConfig())
-             .SetDomainName(DomainName)
-+            .SetUseRealThreads(runtimeMode == ERuntimeMode::RealThreads)
-         )
-         , Server(Settings)
-         , Client(Settings)
-@@ -144,7 +198,7 @@ class TEnv {
- 
-     template <typename... Args>
-     auto Describe(Args&&... args) {
--        return Client.Ls(std::forward<Args>(args)...);
-+        return RunCall([&] { return Client.Ls(std::forward<Args>(args)...); });
-     }
- 
-     auto GetDescription(const TString& path) {
-@@ -167,7 +221,7 @@ class TEnv {
- 
-     template <typename... Args>
-     auto CreateTable(Args&&... args) {
--        return Client.CreateTable(std::forward<Args>(args)...);
-+        return RunCall([&] { return Client.CreateTable(std::forward<Args>(args)...); });
-     }
- 
-     void ConfigureTableProfiles(const NKikimrConfig::TTableProfilesConfig& profiles) {
-```
-
-**File**: `ydb/core/tx/replication/ydb_proxy/ydb_proxy.cpp` (modified, +9/-1)
-```diff
-@@ -3,6 +3,7 @@
- 
- #include <ydb/core/base/appdata.h>
- #include <ydb/core/protos/replication.pb.h>
-+#include <ydb/public/api/protos/ydb_table.pb.h>
- #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/driver/driver.h>
- #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/types/credentials/credentials.h>
- #include <ydb/public/sdk/cpp/include/ydb-cpp-sdk/client/iam/iam.h>
-@@ -377,7 +378,14 @@ class TYdbProxy: public TBaseProxyActor<TYdbProxy> {
-         auto cb = [request, func, args = std::move(args)](const TAsyncCreateSessionResult& result) {
-             auto sessionResult = result.GetValueSync();
-             if (!sessionResult.IsSuccess()) {
--                return Complete<TEvYdbProxy::TEvCreateSessionResponse>(request, sessionResult);
-+                using TResult = typename TEvResponse::TResult;
-+                if constexpr (std::is_same_v<TResult, TStatus>) {
-+                    return Complete<TEvResponse>(request, TResult(sessionResult));
-+                } else {
-+                    static_assert(std::is_same_v<TResult, TDescribeTableResult>);
-+                    return Complete<TEvResponse>(request, TResult(TStatus(sessionResult),
-+                        Ydb::Table::DescribeTableResult{}, std::get<TDescribeTableSettings>(args)));
-+                }
-             }
- 
-             auto session = sessionResult.GetSession();
-```
-
-**File**: `ydb/core/tx/replication/ydb_proxy/ydb_proxy_ut.cpp` (modified, +65/-0)
-```diff
-@@ -7,6 +7,7 @@
+@@ -5,6 +5,8 @@
  
  #include <library/cpp/testing/unittest/registar.h>
  
-+#include <util/generic/hash_set.h>
- #include <util/string/printf.h>
++#include <utility>
++
+ namespace NYql {
+ namespace {
  
- namespace NKikimr::NReplication {
-@@ -26,6 +27,70 @@ Y_UNIT_TEST_SUITE(YdbProxy) {
+@@ -248,6 +250,33 @@ Y_UNIT_TEST_SUITE(TMessageStreamContract) {
+         UNIT_ASSERT(fixture.Session->GetEvents({}).empty());
+     }
+ 
++    Y_UNIT_TEST(ClientStatusesRetainCategory) {
++        const std::pair<NYdb::EStatus, NFq::EMessageStreamStatus> cases[] = {
++            { NYdb::EStatus::TRANSPORT_UNAVAILABLE, NFq::EMessageStreamStatus::Unavailable },
++            { NYdb::EStatus::CLIENT_DEADLINE_EXCEEDED, NFq::EMessageStreamStatus::Timeout },
++            { NYdb::EStatus::CLIENT_RESOURCE_EXHAUSTED, NFq::EMessageStreamStatus::Overloaded },
++            { NYdb::EStatus::CLIENT_LIMITS_REACHED, NFq::EMessageStreamStatus::Overloaded },
++            { NYdb::EStatus::CLIENT_INTERNAL_ERROR, NFq::EMessageStreamStatus::InternalError },
++            { NYdb::EStatus::CLIENT_CANCELLED, NFq::EMessageStreamStatus::Cancelled },
++            { NYdb::EStatus::CLIENT_UNAUTHENTICATED, NFq::EMessageStreamStatus::Unauthorized },
++            { NYdb::EStatus::CLIENT_CALL_UNIMPLEMENTED, NFq::EMessageStreamStatus::Unsupported },
++            { NYdb::EStatus::CLIENT_DISCOVERY_FAILED, NFq::EMessageStreamStatus::Unavailable },
++            { NYdb::EStatus::CLIENT_OUT_OF_RANGE, NFq::EMessageStreamStatus::Unknown },
++            { NYdb::EStatus::STATUS_UNDEFINED, NFq::EMessageStreamStatus::Unknown },
++        };
++        for (const auto& [status, expected] : cases) {
++            TStreamFixture fixture;
++            fixture.Mock->SetEventProvider([status]() -> NYdb::NTopic::TReadSessionEvent::TEvent {
++                return NYdb::NTopic::TSessionClosedEvent(status, { NYdb::NIssue::TIssue("Connection failed") });
++            });
++            const auto events = fixture.Session->GetEvents({});
++            UNIT_ASSERT_VALUES_EQUAL(events.size(), 1);
++            const auto& closed = std::get<NFq::TMessageStreamSessionClosedEvent>(events.front());
++            UNIT_ASSERT(closed.Status == expected);
++            UNIT_ASSERT_STRING_CONTAINS(closed.Issues.ToOneLineString(), "Connection failed");
++        }
++    }
++
+     Y_UNIT_TEST(TerminalEventIsDeliveredOnce) {
+         TStreamFixture fixture;
+         fixture.Mock->SetEventProvider([]() -> NYdb::NTopic::TReadSessionEvent::TEvent {
+```
+
+**File**: `ydb/tests/fq/pq_async_io/ut/dq_pq_control_plane_ut.cpp` (modified, +1/-1)
+```diff
+@@ -404,7 +404,7 @@ Y_UNIT_TEST_SUITE(TDqPqControlPlaneTest) {
+             const auto response = Runtime.GrabEdgeEvent<TEvResult>(Request(MakeRequest()));
+             UNIT_ASSERT(response);
+             UNIT_ASSERT_VALUES_EQUAL(
+-                response->Get()->Record.GetStatus(), TransportError ? Ydb::StatusIds::EXTERNAL_ERROR : Ydb::StatusIds::UNAUTHORIZED);
++                response->Get()->Record.GetStatus(), TransportError ? Ydb::StatusIds::UNAVAILABLE : Ydb::StatusIds::UNAUTHORIZED);
+             UNIT_ASSERT_VALUES_EQUAL(response->Get()->Record.GetIssues(0).message(), "describe details");
+             UNIT_ASSERT_VALUES_EQUAL(response->Get()->Record.PartitionsSize(), 0);
          }
+```
+
+---
+
+### Incident Patch 2: `2cb92713` (2026-10-22)
+**Commit Message**: KIKIMR-25046: Include memtable waste in compaction and memory accounting (#56176)
+
+**File**: `ydb/core/tablet_flat/flat_database.cpp` (modified, +10/-2)
+```diff
+@@ -13,6 +13,7 @@
+ #include "util_fmt_abort.h"
+ #include <ydb/core/util/pb.h>
+ #include <ydb/core/scheme_types/scheme_type_registry.h>
++#include <util/generic/algorithm.h>
+ #include <util/generic/cast.h>
+ #include <util/stream/output.h>
+ 
+@@ -497,9 +498,10 @@ void TDatabase::RollbackChanges()
+     TTxStamp stamp = Change->Stamp;
+     IPages& env = *Env;
+ 
+-    Commit(stamp, false, nullptr);
++    auto prod = Commit(stamp, false, nullptr);
+     env.OnRollbackChanges();
+     Begin(stamp, env);
++    Change->RollbackAffects = std::move(prod.Change->RollbackAffects);
+ }
+ 
+ TPartView TDatabase::GetPartView(ui32 tableId, const TLogoBlobID &bundle) const {
+@@ -534,6 +536,10 @@ ui64 TDatabase::GetTableMemSize(ui32 tableId, TEpoch epoch) const {
+     return Require(tableId)->GetMemSize(epoch);
+ }
+ 
++ui64 TDatabase::GetTableMemAllocatedSize(ui32 tableId) const {
++    return Require(tableId)->GetMemAllocatedSize();
++}
++
+ ui64 TDatabase::GetTableMemRowCount(ui32 tableId) const {
+     return Require(tableId)->GetMemRowCount();
+ }
+@@ -847,7 +853,9 @@ TDatabase::TProd TDatabase::Commit(TTxStamp stamp, bool commit, TCookieAllocator
+             Y_TABLET_ERROR(NFmt::Do(*Change) << " has inconsistent garbage data");
+         }
+     } else {
+-        DatabaseImpl->RollbackTransaction();
++        auto affects = DatabaseImpl->RollbackTransaction();
++        Change->RollbackAffects.insert(Change->RollbackAffects.end(), affects.begin(), affects.end());
++        SortUnique(Change->RollbackAffects);
+     }
+ 
+     DatabaseImpl->RunGC();
+```
+
+**File**: `ydb/core/tablet_flat/flat_database.h` (modified, +1/-0)
+```diff
+@@ -231,6 +231,7 @@ class TDatabase {
+     void EnumerateTableTxStatusParts(ui32 table, const std::function<void(const TIntrusiveConstPtr<TTxStatusPart>&)>& callback) const;
+     void EnumerateTxStatusParts(const std::function<void(const TIntrusiveConstPtr<TTxStatusPart>&)>& callback) const;
+     ui64 GetTableMemSize(ui32 table, TEpoch epoch = TEpoch::Max()) const;
++    ui64 GetTableMemAllocatedSize(ui32 table) const;
+     ui64 GetTableMemRowCount(ui32 tableId) const;
+     ui64 GetTableMemOpsCount(ui32 tableId) const;
+     ui64 GetTableIndexSize(ui32 table) const;
+```
+
+**File**: `ydb/core/tablet_flat/flat_dbase_change.h` (modified, +1/-0)
+```diff
+@@ -58,6 +58,7 @@ namespace NTable {
+         TMemGlobs Annex;        /* Enum of blobs used in redo   */
+ 
+         TVector<ui32> Affects;  /* This tables touched in redo  */
++        TVector<ui32> RollbackAffects; // Tables whose memtable capacity may have changed on rollback
+         TVector<ui32> Deleted;  /* Tables deleted in some alter */
+         TGarbage Garbage;       /* Wiped tables, ids in Deleted */
+ 
+```
+
+**File**: `ydb/core/tablet_flat/flat_dbase_naked.h` (modified, +2/-3)
+```diff
+@@ -412,7 +412,7 @@ namespace NTable {
+             SchemeRollbackState.Redo.reset();
+         }
+ 
+-        void RollbackTransaction()
++        TVector<ui32> RollbackTransaction()
+         {
+             for (ui32 tid : Prepared) {
+                 auto& wrap = Tables.at(tid);
+@@ -439,11 +439,10 @@ namespace NTable {
+                     wrap.Serial = wrap.SerialBackup;
+                 }
+             }
+-            Affects.clear();
+-
+             RollbackScheme();
+             Serial_ = Begin_;
+             InTransaction = false;
++            return std::exchange(Affects, {});
+         }
+ 
+         void RollbackScheme()
+```
+
+**File**: `ydb/core/tablet_flat/flat_executor.cpp` (modified, +12/-3)
+```diff
+@@ -538,7 +538,7 @@ void TExecutor::Active(const TActorContext &ctx) {
+     CompactionLogic->Start();
+ 
+     for (const auto &it: Database->GetScheme().Tables)
+-        CompactionLogic->UpdateInMemStatsStep(it.first, 0, Database->GetTableMemSize(it.first));
++        CompactionLogic->UpdateInMemStatsStep(it.first, 0, Database->GetTableMemAllocatedSize(it.first));
+ 
+     UpdateCompactions();
+ 
+@@ -2198,6 +2198,7 @@ void TExecutor::ExecuteTransaction(TSeat* seat) {
+ 
+     auto *annex = CommitManager ? CommitManager->Annex.Get() : nullptr;
+     auto prod = Database->Commit(Stamp(), done && !failed, annex);
++    auto rollbackAffects = std::move(prod.Change->RollbackAffects);
+ 
+     if (auto logl = Logger->Log(ELnLev::Debug)) {
+         logl
+@@ -2251,6 +2252,14 @@ void TExecutor::ExecuteTransaction(TSeat* seat) {
+         PostponeTransaction(seat, env, prod.Change, cpuTimer);
+     }
+ 
++    if (CompactionLogic) {
++        for (ui32 table : rollbackAffects) {
++            if (Scheme().Tables.contains(table)) {
++                CompactionLogic->UpdateInMemStatsStep(table, 0, Database->GetTableMemAllocatedSize(table));
++            }
++        }
++    }
++
+     activeTransaction.Done();
+     PlanTransactionActivation();
+ }
+@@ -3009,7 +3018,7 @@ void TExecutor::CommitTransactionLog(std::unique_ptr<TSeat> seat, TPageCollectio
+         }
+ 
+         for (auto &affectedTable : change->Affects)
+-            CompactionLogic->UpdateInMemStatsStep(affectedTable, 1, Database->GetTableMemSize(affectedTable));
++            CompactionLogic->UpdateInMemStatsStep(affectedTable, 1, Database->GetTableMemAllocatedSize(affectedTable));
+ 
+         if (commitResult.NeedFlush && !LogBatchFlushScheduled) {
+             LogBatchFlushScheduled = true;
+@@ -4115,7 +4124,7 @@ void TExecutor::Handle(NOps::TEvResult *ops, TProdCompact *msg, bool cancelled)
+     CommitManager->Commit(commit);
+ 
+     if (hadFrozen || logicResult.MemCompacted)
+-        CompactionLogic->UpdateInMemStatsStep(tableId, 0, Database->GetTableMemSize(tableId));
++        CompactionLogic->UpdateInMemStatsStep(tableId, 0, Database->GetTableMemAllocatedSize(tableId), true);
+ 
+     CompactionLogic->UpdateLogUsage(LogicRedo->GrabLogUsage());
+ 
+```
+
+**File**: `ydb/core/tablet_flat/flat_executor_compaction_logic.cpp` (modified, +2/-2)
+```diff
+@@ -444,7 +444,7 @@ void TCompactionLogic::ResubmitCompactions(TCompactionLogicState::TTableInfo &ta
+     }
+ }
+ 
+-void TCompactionLogic::UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size) {
++void TCompactionLogic::UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size, bool compactionComplete) {
+     auto *info = State->Tables.FindPtr(table);
+     Y_ENSURE(info);
+     auto &mem = info->InMem;
+@@ -453,7 +453,7 @@ void TCompactionLogic::UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size) {
+ 
+     if (auto& consumer = info->MemTableMemoryConsumer) {
+         consumer->SetConsumption(size);
+-        if (steps == 0) {
++        if (compactionComplete) {
+             MemTableMemoryConsumersCollection->CompactionComplete(consumer);
+         }
+     }
+```
+
+**File**: `ydb/core/tablet_flat/flat_executor_compaction_logic.h` (modified, +1/-1)
+```diff
+@@ -233,7 +233,7 @@ class TCompactionLogic {
+     TReflectSchemeChangesResult ReflectSchemeChanges();
+     void ProvideMemTableMemoryConsumer(ui32 table, TIntrusivePtr<NMemory::IMemoryConsumer> memTableMemoryConsumer);
+     void ReflectRemovedRowVersions(ui32 table);
+-    void UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size);
++    void UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size, bool compactionComplete = false);
+     void CheckInMemStats(ui32 table);
+     void UpdateLogUsage(TArrayRef<const NRedo::TUsage>);
+     void UpdateLogUsage(const NRedo::TUsage&);
+```
+
+**File**: `ydb/core/tablet_flat/flat_executor_ut.cpp` (modified, +28/-9)
+```diff
+@@ -4101,22 +4101,29 @@ Y_UNIT_TEST_SUITE(TFlatTableExecutor_RejectProbability) {
      };
  
-+    template <typename TEvResponse>
-+    void CheckSessionAcquisitionFailure(IEventBase* request) {
-+        TEnv<> env(true, NTestHelpers::ERuntimeMode::Simulated);
-+        auto& runtime = env.GetRuntime();
-+        NTestHelpers::TSessionCreationFault fault(runtime, Ydb::StatusIds::UNAVAILABLE);
-+        THashSet<const IEventHandle*> replies;
-+        ui64 unexpectedReplies = 0;
-+        auto observer = runtime.AddObserver([&](IEventHandle::TPtr& ev) {
-+            if (ev->Sender == env.GetYdbProxy() && ev->Cookie == 0x1234) {
-+                // Edge observers may revisit a queued event before it is consumed.
-+                replies.insert(ev.Get());
-+                if (ev->GetTypeRewrite() != TEvResponse::EventType) {
-+                    ++unexpectedReplies;
-+                }
+     struct TTxWrite8MB : public ITransaction {
++        static constexpr ui64 PayloadSize = 8 * 1024 * 1024;
++
+         i64 Key;
+         ui32 TableId;
++        ui64* AllocatedSize;
+ 
+-        explicit TTxWrite8MB(i64 key, ui32 tableId = TRowsModel::TableId)
++        explicit TTxWrite8MB(i64 key, ui32 tableId = TRowsModel::TableId, ui64* allocatedSize = nullptr)
+             : Key(key)
+             , TableId(tableId)
+-        { }
++            , AllocatedSize(allocatedSize)
++        {}
+ 
+         bool Execute(TTransactionContext& txc, const TActorContext&) override {
+             const auto key = NScheme::TInt64::TInstance(Key);
+ 
+-            TString str(size_t(8 * 1024 * 1024), 'x');
++            TString str(PayloadSize, 'x');
+             const auto val = NScheme::TString::TInstance(str);
+             NTable::TUpdateOp ops{ TRowsModel::ColumnValueId, NTable::ECellOp::Set, val };
+ 
+             txc.DB.Update(TableId, NTable::ERowOp::Upsert, { key }, { ops });
++            if (AllocatedSize) {
++                *AllocatedSize = txc.DB.GetTableMemAllocatedSize(TableId);
 +            }
-+        });
-+        runtime.Send(new IEventHandle(env.GetYdbProxy(), env.GetSender(), request, 0, 0x1234));
-+        TAutoPtr<IEventHandle> response;
-+        runtime.WaitForEdgeEvents([&](TTestActorRuntimeBase&, TAutoPtr<IEventHandle>& ev) {
-+            response = ev;
-+            return true;
-+        }, {env.GetSender()}, TDuration::Seconds(30));
-+        UNIT_ASSERT_C(response, "No response to failed GetSession");
-+        UNIT_ASSERT_VALUES_EQUAL(fault.SessionRequests, 1);
-+        UNIT_ASSERT_VALUES_EQUAL(fault.TableRequests, 0);
-+        UNIT_ASSERT_VALUES_EQUAL_C(response->GetTypeRewrite(), TEvResponse::EventType,
-+            "Failed GetSession must reply with the operation response, not TEvCreateSessionResponse");
-+        UNIT_ASSERT_VALUES_EQUAL(response->Sender, env.GetYdbProxy());
-+        UNIT_ASSERT_VALUES_EQUAL(response->GetRecipientRewrite(), env.GetSender());
-+        UNIT_ASSERT_VALUES_EQUAL(response->Cookie, 0x1234);
-+        const auto& result = response->Get<TEvResponse>()->Result;
-+        UNIT_ASSERT_VALUES_EQUAL(result.GetStatus(), NYdb::EStatus::UNAVAILABLE);
-+        UNIT_ASSERT_VALUES_EQUAL(result.GetIssues().Size(), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(result.GetIssues().begin()->GetMessage(), "injected GetSession failure");
-+        UNIT_ASSERT(!result.IsTransportError());
-+        // Dispatch another proxy request before checking for extra replies.
-+        env.SendAsync(env.GetYdbProxy(), new TEvYdbProxy::TEvDescribePathRequest("/Root", {}));
-+        const auto barrier = runtime.GrabEdgeEvent<TEvYdbProxy::TEvDescribePathResponse>(
-+            env.GetSender(), TDuration::Seconds(30));
-+        UNIT_ASSERT(barrier);
-+        UNIT_ASSERT(barrier->Get()->Result.IsSuccess());
-+        UNIT_ASSERT_VALUES_EQUAL(replies.size(), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(unexpectedReplies, 0);
-+        UNIT_ASSERT_VALUES_EQUAL(fault.SessionRequests, 1);
-+        UNIT_ASSERT_VALUES_EQUAL(fault.TableRequests, 0);
-+    }
-+
-+    Y_UNIT_TEST(SessionAcquisitionFailureUsesOperationResponse) {
-+        CheckSessionAcquisitionFailure<TEvYdbProxy::TEvAlterTableResponse>(
-+            new TEvYdbProxy::TEvAlterTableRequest("/Root/table", {}));
-+        CheckSessionAcquisitionFailure<TEvYdbProxy::TEvDescribeTableResponse>(
-+            new TEvYdbProxy::TEvDescribeTableRequest("/Root/table", {}));
-+        CheckSessionAcquisitionFailure<TEvYdbProxy::TEvCreateTableResponse>(
-+            new TEvYdbProxy::TEvCreateTableRequest("/Root/table", NYdb::NTable::TTableBuilder().Build(), {}));
-+        CheckSessionAcquisitionFailure<TEvYdbProxy::TEvDropTableResponse>(
-+            new TEvYdbProxy::TEvDropTableRequest("/Root/table", {}));
-+        CheckSessionAcquisitionFailure<TEvYdbProxy::TEvCopyTableResponse>(
-+            new TEvYdbProxy::TEvCopyTableRequest("/Root/table", "/Root/copy", {}));
-+        CheckSessionAcquisitionFailure<TEvYdbProxy::TEvCopyTablesResponse>(
-+            new TEvYdbProxy::TEvCopyTablesRequest({}, {}));
-+        CheckSessionAcquisitionFailure<TEvYdbProxy::TEvRenameTablesResponse>(
-+            new TEvYdbProxy::TEvRenameTablesRequest({}, {}));
-+    }
-+
-     Y_UNIT_TEST(MakeDirectory) {
-         TEnv env;
-         // ok
-```
-
----
-
-### Incident Patch 2: `7d9bfd41` (2026-10-20)
-**Commit Message**: Fixed the NBS protobuf descriptor isolation test failing on Arcadia sync (#56108)
-
-**File**: `ydb/services/nbs/classic_grpc_service_ut.cpp` (modified, +3/-5)
-```diff
-@@ -359,11 +359,9 @@ namespace NKikimr::NGRpcService {
+             return true;
+         }
+ 
+@@ -4161,19 +4168,25 @@ Y_UNIT_TEST_SUITE(TFlatTableExecutor_RejectProbability) {
+         env.FireDummyTablet(ui32(NFake::TDummy::EFlg::Comp));
+ 
+         TIntrusivePtr<TCompactionPolicy> policy = new TCompactionPolicy;
++        const ui64 lowWatermark = policy->InMemForceSizeToSnapshot * 2.5f;
++        const ui64 highWatermark = policy->InMemForceSizeToSnapshot * 4.0f;
+ 
+         env.SendSync(rows.MakeScheme(std::move(policy)));
+ 
++        ui64 allocatedSize = 0;
+         float rejectProbability;
+         env.SendSync(new NFake::TEvCall{ [&](auto* executor, const auto& ctx) {
+-            // Write 48MB
+-            for (i64 key = 1; key <= 6; ++key) {
+-                executor->Execute(new TTxWrite8MB(key), ctx);
++            for (i64 key = 1; allocatedSize <= lowWatermark; ++key) {
++                UNIT_ASSERT_C(ui64(key) <= lowWatermark / TTxWrite8MB::PayloadSize + 1,
++                    "Allocated size did not reach the low watermark: " << allocatedSize);
++                executor->Execute(new TTxWrite8MB(key, TRowsModel::TableId, &allocatedSize), ctx);
              }
+             rejectProbability = executor->GetRejectProbability();
+             ctx.Send(ctx.SelfID, new NFake::TEvReturn);
+         } });
  
-             Y_UNIT_TEST(ShouldIsolateProtobufDescriptors) {
--                const auto* file = google::protobuf::DescriptorPool::generated_pool()
--                                       ->FindFileByName(
--                                           "ydb/core/nbs/nbs1_compat_api/cloud/blockstore/public/api/grpc/service.proto");
--                UNIT_ASSERT(file);
--                const auto* service = file->FindServiceByName("TBlockStoreService");
-+                const auto* service = google::protobuf::DescriptorPool::generated_pool()
-+                                          ->FindServiceByName(
-+                                              "NYdb.NBS.NNbs1CompatApi.NBlockStore.NProto.TBlockStoreService");
-                 UNIT_ASSERT(service);
-                 UNIT_ASSERT_VALUES_EQUAL(service->full_name(),
-                                          "NYdb.NBS.NNbs1CompatApi.NBlockStore.NProto.TBlockStoreService");
++        UNIT_ASSERT_C(allocatedSize > lowWatermark && allocatedSize < highWatermark,
++            "Allocated size " << allocatedSize << " must be between " << lowWatermark << " and " << highWatermark);
+         UNIT_ASSERT_C(rejectProbability > 0.0f && rejectProbability < 1.0f,
+                 "unexpected reject probability: " << rejectProbability);
+     }
+@@ -4188,19 +4201,25 @@ Y_UNIT_TEST_SUITE(TFlatTableExecutor_RejectProbability) {
+         env.FireDummyTablet(ui32(NFake::TDummy::EFlg::Comp));
+ 
+         TIntrusivePtr<TCompactionPolicy> policy = new TCompactionPolicy;
++        const ui64 lowWatermark = policy->InMemForceSizeToSnapshot * 2.5f;
++        const ui64 targetSize = lowWatermark / 2;
+ 
+         env.SendSync(rows.MakeScheme(std::move(policy)));
+ 
++        ui64 allocatedSize = 0;
+         float rejectProbability;
+         env.SendSync(new NFake::TEvCall{ [&](auto* executor, const auto& ctx) {
+-            // Write 32MB
+-            for (i64 key = 1; key <= 4; ++key) {
+-                executor->Execute(new TTxWrite8MB(key), ctx);
++            for (i64 key = 1; allocatedSize < targetSize; ++key) {
++                UNIT_ASSERT_C(ui64(key) <= targetSize / TTxWrite8MB::PayloadSize + 1,
++                    "Allocated size did not reach the target: " << allocatedSize);
++                executor->Execute(new TTxWrite8MB(key, TRowsModel::TableId, &allocatedSize), ctx);
+             }
+             rejectProbability = executor->GetRejectProbability();
+             ctx.Send(ctx.SelfID, new NFake::TEvReturn);
+         } });
+ 
++        UNIT_ASSERT_C(allocatedSize >= targetSize && allocatedSize < lowWatermark,
++            "Allocated size " << allocatedSize << " must remain below the low watermark " << lowWatermark);
+         UNIT_ASSERT_C(rejectProbability <= 0.0f,
+                 "unexpected reject probability: " << rejectProbability);
+     }
 ```
 
 ---
 
-### Incident Patch 3: `2cf64c2f` (2026-10-20)
-**Commit Message**: Revert filling EstimatedRows in KQP query compiler (#56232)
+### Incident Patch 3: `8596a7dc` (2026-10-22)
+**Commit Message**: Revert query and table LTO workaround (#56386)
 
-**File**: `ydb/core/kqp/executer_actor/kqp_data_executer.cpp` (modified, +1/-13)
+**File**: `ydb/public/sdk/cpp/src/client/query/impl/ya.make` (modified, +0/-3)
 ```diff
-@@ -407,7 +407,6 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
-                 hFunc(TEvSaveScriptPhysicalGraphResponse, HandleResolve);
-                 hFunc(TEvDescribeSecretsResponse, HandleResolve);
-                 hFunc(TEvKqpExecuter::TEvPqTopicResolveStatus, HandleResolve);
--                hFunc(NSchemeShard::TEvSchemeShard::TEvDescribeSchemeResult, HandlePartitionStats);
-                 hFunc(TEvKqp::TEvAbortExecution, HandleAbortExecution);
-                 hFunc(TEvKqpBuffer::TEvError, Handle);
-                 default:
-@@ -903,23 +902,12 @@ class TKqpDataExecuter : public TKqpExecuterBase<TKqpDataExecuter, EExecType::Da
-         }
+@@ -1,8 +1,5 @@
+ LIBRARY()
  
-         if (resolveStatus == CONTINUE) {
--            if (!TBase::GetPartitionStats()) {
--                DoExecute();
--            }
-+            DoExecute();
-         }
-     }
- 
-     void HandleResolve(NShardResolver::TEvShardsResolveStatus::TPtr& ev) {
-         if (TBase::HandleResolve(ev)) {
--            if (!TBase::GetPartitionStats()) {
--                DoExecute();
--            }
--        }
--    }
+-# Work around LLVM 20 ThinLTO codegen crashes in StreamExecuteQuery.
+-NO_LTO()
 -
--    void HandlePartitionStats(NSchemeShard::TEvSchemeShard::TEvDescribeSchemeResult::TPtr& ev) {
--        TBase::ApplyPartitionStatsResult(ev);
--        if (TBase::PendingPartitionStatsRequests == 0) {
-             DoExecute();
-         }
-     }
+ SRCS(
+     exec_query.cpp
+     exec_query.h
 ```
 
-**File**: `ydb/core/kqp/executer_actor/kqp_executer_impl.h` (modified, +3/-107)
+**File**: `ydb/public/sdk/cpp/src/client/query/ya.make` (modified, +0/-3)
 ```diff
-@@ -277,6 +277,9 @@ class TKqpExecuterBase : public TActor<TDerived> {
-                 for (const auto& [shardId, _] : stageInfo.Meta.PrunedPartitions.back()) {
-                     shardIds.insert(shardId);
-                 }
-+                // TODO: weight per-shard estimates by partition row counts instead of splitting them evenly.
-+                // Take the counts from a node-local cached source, never from SchemeShard while executing
-+                // a query. SchemeCache and the statistics service have no per-partition row counts yet.
-                 {
-                     const double totalRows = stage.GetEstimatedRows();
-                     auto& shards = stageInfo.Meta.PrunedPartitions.back();
-@@ -435,107 +438,6 @@ class TKqpExecuterBase : public TActor<TDerived> {
-         return true;
-     }
+@@ -1,8 +1,5 @@
+ LIBRARY()
  
--    // Sends TEvTxUserProxy::TEvNavigate(ReturnPartitionStats=true) for each table whose
--    // estimated read row count exceeds HeavyReadEstimatedRowsThreshold.
--    // Returns true if at least one request was sent (caller should stay in WaitResolveState).
--    bool GetPartitionStats() {
--        THashSet<TString> sentPaths;
--        for (const auto& [stageId, stageInfo] : TasksGraph.GetStagesInfo()) {
--            if (stageInfo.Meta.TablePath.empty() || sentPaths.contains(stageInfo.Meta.TablePath)) {
--                continue;
--            }
+-# Work around LLVM 20 ThinLTO codegen crashes in transaction precommit.
+-NO_LTO()
 -
--            const auto& stage = stageInfo.Meta.GetStage(stageId);
--
--            bool isHeavy = stage.GetEstimatedRows() > HeavyReadEstimatedRowsThreshold;
--            if (!isHeavy) {
--                for (const auto& op : stage.GetTableOps()) {
--                    if (op.GetEstimatedRows() > HeavyReadEstimatedRowsThreshold) {
--                        isHeavy = true;
--                        break;
--                    }
--                }
--            }
--            if (!isHeavy) {
--                continue;
--            }
--
--            auto request = MakeHolder<TEvTxUserProxy::TEvNavigate>();
--            request->Record.MutableDescribePath()->SetPath(stageInfo.Meta.TablePath);
--            request->Record.MutableDescribePath()->MutableOptions()->SetReturnPartitionStats(true);
--            this->Send(MakeTxProxyID(), request.Release());
--            sentPaths.insert(stageInfo.Meta.TablePath);
--            ++PendingPartitionStatsRequests;
--        }
--
--        return PendingPartitionStatsRequests > 0;
--    }
--
--    // Handles one TEvDescribeSchemeResult response, populates PartitionRowCounts for
--    // matching stages, recomputes per-shard EstimatedRows using the weighted formula.
--    // Decrements PendingPartitionStatsRequests_; caller should call DoExecute() when it hits 0.
--    void ApplyPartitionStatsResult(NSchemeShard::TEvSchemeShard::TEvDescribeSchemeResult::TPtr& ev) {
--        const auto& record = ev->Get()->GetRecord();
--        --PendingPartitionStatsRequests;
--
--        if (record.GetStatus() != NKikimrScheme::StatusSuccess) {
--            YDB_LOG_WARN_COMP(NKikimrServices::KQP_EXECUTER, "DescribeScheme for partition stats returned non-success, using uniform distribution",
--                {"marker", "KQPEX"},
--                {"actorId", SelfId()},
--                {"txId", TxId},
--                {"ctx", *GetUserRequestContext()},
--                {"status", record.GetStatus()},
--                {"path", record.GetPath()},
--                {"traceId", TraceId()});
--            return;
--        }
--
--        const auto& pathDescription = record.GetPathDescription();
--        const auto& tablePartitions = pathDescription.GetTablePartitions();
--        const auto& partitionStats  = pathDescription.GetTablePartitionStats();
--
--        THashMap<ui64 /* shardId */, ui64 /* rowCount */> shardRowCounts;
--        const int count = Min(tablePartitions.size(), partitionStats.size());
--        for (int i = 0; i < count; ++i) {
--            shardRowCounts[tablePartitions.Get(i).GetDatashardId()] = partitionStats.Get(i).GetRowCount();
--        }
--
--        const TString tablePath = record.GetPath();
--        for (auto& [stageId, stageInfo] : TasksGraph.GetStagesInfo()) {
--            if (stageInfo.Meta.TablePath != tablePath) {
--                continue;
--            }
--
--            stageInfo.Meta.PartitionRowCounts = shardRowCounts;
--
--            for (size_t i = 0; i < stageInfo.Meta.PrunedPartitions.size(); ++i) {
--                const double totalRows = i < stageInfo.Meta.EstimatedRowsPerTableOp.size()
--                    ? stageInfo.Meta.EstimatedRowsPerTableOp[i] : 0.0;
--                if (totalRows <= 0.0) {
--                    continue;
--                }
--
--                auto& shards = stageInfo.Meta.PrunedPartitions[i];
--
--                double totalPrunedRows = 0.0;
--                for (const auto& [shardId, _] : shards) {
--                    auto it = shardRowCounts.find(shardId);
--                    if (it != shardRowCounts.end()) {
--                        totalPrunedRows += it->second;
--                    }
--               
+ SRCS(
+     client.cpp
+     query.cpp
 ```
 
-**File**: `ydb/core/kqp/executer_actor/kqp_scan_executer.cpp` (modified, +2/-14)
+**File**: `ydb/public/sdk/cpp/src/client/table/impl/ya.make` (modified, +0/-3)
 ```diff
-@@ -77,7 +77,6 @@ class TKqpScanExecuter : public TKqpExecuterBase<TKqpScanExecuter, EExecType::Sc
-                 hFunc(TEvKqpExecuter::TEvTableResolveStatus, HandleResolve);
-                 hFunc(NShardResolver::TEvShardsResolveStatus, HandleResolve);
-                 hFunc(TEvPrivate::TEvResourcesSnapshot, HandleResolve);
--                hFunc(NSchemeShard::TEvSchemeShard::TEvDescribeSchemeResult, HandlePartitionStats);
-                 hFunc(TEvKqp::TEvAbortExecution, HandleAbortExecution);
-                 default:
-                     UnexpectedEvent("WaitResolveState", ev->GetTypeRewrite());
-@@ -133,24 +132,13 @@ class TKqpScanExecuter : public TKqpExecuterBase<TKqpScanExecuter, EExecType::Sc
- private:
-     void HandleResolve(TEvKqpExecuter::TEvTableResolveStatus::TPtr& ev) {
-         if (TBase::HandleResolve(ev) == CONTINUE) {
--            if (!TBase::GetPartitionStats()) {
--                GetResourcesSnapshot();
--            }
-+            GetResourcesSnapshot();
-         }
-     }
+@@ -1,8 +1,5 @@
+ LIBRARY()
  
-     void HandleResolve(NShardResolver::TEvShardsResolveStatus::TPtr& ev) {
-         if (!TBase::HandleResolve(ev)) return;
--        if (!TBase::GetPartitionStats()) {
--            GetResourcesSnapshot();
--        }
--    }
+-# Work around LLVM 20 ThinLTO codegen crashes in transaction coroutines.
+-NO_LTO()
 -
--    void HandlePartitionStats(NSchemeShard::TEvSchemeShard::TEvDescribeSchemeResult::TPtr& ev) {
--        TBase::ApplyPartitionStatsResult(ev);
--        if (TBase::PendingPartitionStatsRequests == 0) {
--            GetResourcesSnapshot();
--        }
-+        GetResourcesSnapshot();
-     }
- 
-     void HandleResolve(TEvPrivate::TEvResourcesSnapshot::TPtr& ev) {
+ # Avoid llvm-symbolizer cache thrashing for large line-table-only ASan binaries.
+ IF (SANITIZER_TYPE == "address" AND DEBUGINFO_LINES_ONLY == "yes")
+     NO_DEBUG_INFO()
 ```
 
-**File**: `ydb/core/kqp/executer_actor/kqp_tasks_graph.h` (modified, +0/-2)
+**File**: `ydb/public/sdk/cpp/src/client/table/ya.make` (modified, +0/-3)
 ```diff
-@@ -111,8 +111,6 @@ struct TStageInfoMeta {
-     std::vector<TShardIdToInfoMap> PrunedPartitions;
-     // Estimated row counts per table op (indexed as PrunedPartitions), from query optimizer statistics.
-     std::vector<double> EstimatedRowsPerTableOp;
--    // Actual row counts per shard from SchemeShard, populated only for "heavy" reads.
--    THashMap<ui64 /* shardId */, ui64 /* rowCount */> PartitionRowCounts;
+@@ -1,8 +1,5 @@
+ LIBRARY()
  
-     // Used for single-partitioned stage and sequential inflight optimization.
-     std::optional<TShardInfoWithId> VirtualPartition;
-```
-
-**File**: `ydb/core/kqp/query_compiler/kqp_query_compiler.cpp` (modified, +4/-23)
-```diff
-@@ -1018,11 +1018,6 @@ class TKqpQueryCompiler : public IKqpQueryCompiler {
-                 FillTableId(readTable.Table(), *tableOp.MutableTable());
-                 FillColumns(readTable.Columns(), *tableMeta, tableOp, true);
-                 FillReadRange(readTable, *tableMeta, *tableOp.MutableReadRange());
--                if (auto stats = OptimizeCtx.KqpStats.GetStats(exprNode.get())) {
--                    tableOp.SetEstimatedRows(stats->Nrows);
--                } else if (tableMeta->RecordsCount) {
--                    tableOp.SetEstimatedRows(static_cast<double>(tableMeta->RecordsCount));
--                }
-             } else if (auto maybeWideReadTableRanges = node.Maybe<TKqpWideReadTableRanges>()) {
-                 auto readTableRanges = maybeWideReadTableRanges.Cast();
-                 auto tableMeta = TablesData->ExistingTable(Cluster, readTableRanges.Table().Path()).Metadata;
-@@ -1033,11 +1028,6 @@ class TKqpQueryCompiler : public IKqpQueryCompiler {
-                 FillTableId(readTableRanges.Table(), *tableOp.MutableTable());
-                 FillColumns(readTableRanges.Columns(), *tableMeta, tableOp, true);
-                 FillReadRanges(readTableRanges, *tableMeta, *tableOp.MutableReadRanges());
--                if (auto stats = OptimizeCtx.KqpStats.GetStats(exprNode.get())) {
--                    tableOp.SetEstimatedRows(stats->Nrows);
--                } else if (tableMeta->RecordsCount) {
--                    tableOp.SetEstimatedRows(static_cast<double>(tableMeta->RecordsCount));
--                }
-             } else if (auto maybeReadWideTableRanges = node.Maybe<TKqpWideReadOlapTableRanges>()) {
-                 auto readTableRanges = maybeReadWideTableRanges.Cast();
-                 auto tableMeta = TablesData->ExistingTable(Cluster, readTableRanges.Table().Path()).Metadata;
-@@ -1051,11 +1041,6 @@ class TKqpQueryCompiler : public IKqpQueryCompiler {
-                 auto miniKqlResultType = GetMKqlResultType(readTableRanges.Process().Ref().GetTypeAnn());
-                 FillOlapProgram(readTableRanges, miniKqlResultType, *tableMeta, *tableOp.MutableReadOlapRange(), ctx, TypesCtx);
-                 FillResultType(miniKqlResultType, *tableOp.MutableReadOlapRange());
--                if (auto stats = OptimizeCtx.KqpStats.GetStats(exprNode.get())) {
--                    tableOp.SetEstimatedRows(stats->Nrows);
--                } else if (tableMeta->RecordsCount) {
--                    tableOp.SetEstimatedRows(static_cast<double>(tableMeta->RecordsCount));
--                }
-             } else if (auto maybeReadBlockTableRanges = node.Maybe<TKqpBlockReadOlapTableRanges>()) {
-                 auto readTableRanges = maybeReadBlockTableRanges.Cast();
-                 auto tableMeta = TablesData->ExistingTable(Cluster, readTableRanges.Table().Path()).Metadata;
-@@ -1070,11 +1055,6 @@ class TKqpQueryCompiler : public IKqpQueryCompiler {
-                 FillOlapProgram(readTableRanges, miniKqlResultType, *tableMeta, *tableOp.MutableReadOlapRange(), ctx, TypesCtx);
-                 FillResultType(miniKqlResultType, *tableOp.MutableReadOlapRange());
-                 tableOp.MutableReadOlapRange()->SetReadType(NKqpProto::TKqpPhyOpReadOlapRanges::BLOCKS);
--                if (auto stats = OptimizeCtx.KqpStats.GetStats(exprNode.get())) {
--                    tableOp.SetEstimatedRows(stats->Nrows);
--                } else if (tableMeta->RecordsCount) {
--                    tableOp.SetEstimatedRows(static_cast<double>(tableMeta->RecordsCount));
--                }
-             } else if (auto maybeDqSourceWrapBase = node.Maybe<TDqSourceWrapBase>()) {
-                 stageCost += GetDqSourceWrapBaseCost(maybeDqSourceWrapBase.Cast(), TypesCtx);
-             } else if (auto maybeDqReadWrapBase = node.Maybe<TDqReadWrapBase>()) {
-@@ -1087,9 +1067,10 @@ class TKqpQueryCompiler : public IKqpQueryCompiler {
-         });
- 
-         stageProto.SetStageCost(stageCost);
--        if (auto stats = OptimizeCtx.KqpStats.GetStats(stage.Program().Body().Raw())) {
--            stageProto.SetEstimatedRows(stats->Nrows);
--        }
-+        // TODO: fill TKqpPhyStage::EstimatedRows and TKqpPhyTableOperation::EstimatedRows when:
-+        //  - read estimates take key ranges into account: now a read by ranges, e.g. `key IN $param`,
-+        //    is estimated as the whole table;
-+        //  - TShardInfo::EstimatedRows gets a consumer, e.g. task placement in TMaxTasksGraph.
-         const auto& secureParams = FindSecureParams(stage.Program().Ptr(), TypesCtx, SecretNames);
-         stageProto.MutableSecureParams()->insert(secureParams.begin(), secureParams.end());
- 
+-# Work around LLVM 20 ThinLTO codegen crashes in table coroutine templates.
+-NO_LTO()
+-
+ SRCS(
+     out.cpp
+     proto_accessor.cpp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #56236** (2026-10-20): Fix flaky Arrow compression compatibility test (@dahbka-lis)
-- **PR #56232** (2026-10-20): Revert filling EstimatedRows in KQP query compiler (@abyss7)
-- **PR #56216** (2026-10-20): DataShard CDC: fix missing precharge bugs (@ztlpn)
-- **PR #56215** (2026-10-20): Add prestable-27-1-1 to compat tests (@maximyurchuk)
-- **PR #56209** (closed): [Backport stable-26-4-1] PR #56147: Fix composite array slices starting at chunk boundary (@ydbot)
-- **PR #56197** (2026-10-20): Bridge: remove-pile, removing DISCONNECTED pile from running cluster (@alexvru)
+- **PR #56426** (2026-10-22): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #56410** (2026-10-22): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #56409** (2026-10-22): Assign OLAP tests to column tables code owners (@xyliganSereja)
+- **PR #56401** (2026-10-22): EXT-2634 Pass table ranges during snapshot creation (#56175) (@UgnineSirdis)
+- **PR #56395** (2026-10-22): Fix merge-rightlib-261022-0104 (@vityaman)
+- **PR #56389** (2026-10-22): Use NbsReleaseApprovers for nbs-26-3-1 (@kobzonega)
 
 ---
 
@@ -1919,54 +1763,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replication proxy responses on session acquisition failure (#56190)
+## X. YQ-5707 Fix pq status mapping (#55621)
 
 **RULE**:
-When implementing operations in `ydb/core/tx/replication/controller/stream_creator_ut.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/library/yql/providers/pq/gateway/clients/message_stream/yql_pq_message_stream_client.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `169425c4`: replication proxy responses on session acquisition failure (#56190). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8700d37`: YQ-5707 Fix pq status mapping (#55621). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/replication/controller/stream_creator_ut.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/library/yql/providers/pq/gateway/clients/message_stream/yql_pq_message_stream_client.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    void SessionAcquisitionFailure(Ydb::StatusIds::StatusCode failure) {
-        TEnv env(true, ERuntimeMode::Simulated);
-        auto& runtime = env.GetRuntime();
-        env.CreateTable("/Root", *MakeTableDescription(TTestTableDescription{
-            .Name = "Table",
-            .KeyColumns = {"key"},
-            .Columns = {{.Name = "key", .Type = "Uint32"}},
-            .ReplicationConfig = Nothing(),
-        }));
-
-        // No table operation has used this proxy, so GetSession must create a session.
-        TSessionCreationFault fault(runtime, failure);
-        TActorId creator;
-        ui32 firstResponseType = 0;
-        ui64 alterResponses = 0;
-        std::optional<NYdb::TStatus> acquisitionStatus;
-        auto observer = runtime.AddObserver([&](IEventHandle::TPtr& ev) {
-            if (ev->Sender != env.GetYdbProxy() || ev->GetRecipientRewrite() != creator) {
-                return;
-            }
-            if (!firstResponseType) {
-                firstResponseType = ev->GetTypeRewrite();
-            }
-            if (ev->GetTypeRewrite() == TEvYdbProxy::TEvAlterTableResponse::EventType) {
-                ++alterResponses;
-                if (!acquisitionStatus) {
-    
+        case EStatus::CLIENT_UNAUTHENTICATED:
+        case EStatus::TRANSPORT_UNAVAILABLE:
+        case EStatus::CLIENT_DISCOVERY_FAILED:
+        case EStatus::CLIENT_DEADLINE_EXCEEDED:
+        case EStatus::CLIENT_RESOURCE_EXHAUSTED:
+        case EStatus::CLIENT_LIMITS_REACHED:
+        case EStatus::CLIENT_CANCELLED:
+        case EStatus::CLIENT_CALL_UNIMPLEMENTED:
+        case EStatus::CLIENT_INTERNAL_ERROR:
+            // Undefined statuses and end-of-stream have no matching category.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            // Client transport statuses are not Ydb::StatusIds values.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `169425c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8700d37` are properly handled with clean fallback behavior.

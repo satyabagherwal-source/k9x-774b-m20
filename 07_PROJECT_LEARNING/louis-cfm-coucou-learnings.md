@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `98a767c4`  
+> **Source Version**: `ddc16857`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:26:45.957Z  
+> **Timestamp**: 2026-10-22T16:32:21.116Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:26:45.948Z  
+> **Harvest Timestamp**: 2026-10-22T16:32:20.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5584 stars
+- **Stars / Engagement**: 6198 stars
 
 ---
 
@@ -680,6 +680,8 @@ final class HookServer: @unchecked Sendable {
     private var focusBeforeQuestion: String? = nil    // saved focus to restore after question
     private var activeSessionId: String? = nil        // current Claude Code session
     private var focusBeforeApproval: String? = nil    // saved focus to restore after approval
+    private var focusBeforeAlert: String? = nil       // saved focus while another pill's card shows
+    private var alertPill: String? = nil              // the pill that took the focus for its alert
     private var sessions = PillSessionRegistry()      // live sessions behind each pill
 
     private init() {}
@@ -830,14 +832,7 @@ final class HookServer: @unchecked Sendable {
             AppState.shared.pendingQuestion = nil
             AppState.shared.isPinned = false
             AppState.shared.view = AppState.shared.tasks.isEmpty ? .empty : .overview
-            DemoEngine.shared.handleQuestionAnswered(answers: answers)
-            return
-        }
-        let fd = pendingQuestionFD
-        pendingQuestionFD = -1
-        let source = questionFDSource
-        questionFDSource = nil
-   
+            DemoEngine.shared.handleQ
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/IslandStateMachine.swift`
@@ -1985,14 +1980,7 @@ final class VoiceEngine: ObservableObject {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #495** (2026-10-13): **UI is cut off in Ubuntu**
-  *Symptoms*: **What happened** <img width="1918" height="177" alt="Image" src="https://github.com/user-attachments/assets/7d7c191f-ecee-41be-999f-7d1d7fb1bf24" />  **What you expected** Could it be positioned a bit lower? The UI is getting cut off, so the chat and file-drop buttons aren't visible. Also, the Dynamic Island isn't appearing, forcing me to open it via the tray icon instead.  **Ubuntu version** Ubuntu 26.04.1 LTS  **Coucou version** 0.3.0 Linux version .deb 
-  **Post-Mortem & Fix Analysis**:
-  > Hey @rayasya! The screenshot explains the situation really well.  What you're running into comes down to how GNOME handles window layering: unlike KDE Plasma or COSMIC, GNOME doesn't support `gtk-layer-shell`, so Coucou runs as an X11 dock window placed flush against the monitor's top edge (`y = 0`).  Because GNOME's top panel sits at `y = 0..32px`, two things happen: 1. The 6px invisible wake strip at the very top is completely obscured by the panel, so moving the cursor to the top edge hits GNOME Shell instead of Coucou (which is why hovering doesn't wake the island and you have to use the tray). 2. When opened from the tray, the top ~32px of the island (the header and rounded corners) is hidden behind the bar, which pushes the rest of the fixed 320px UI down and cuts off the chat prompt and drop buttons at the bottom.  The good news is that @Ahmed-chouaya opened #421 a couple of days ago specifically tackling this. It dynamically reads `_NET_WORKAREA` on X11 and offsets the island's
-  > @rayasya you can try the code of #421 it works fine for me now .  https://github.com/user-attachments/assets/e3d11c5e-e5e4-4f9b-80a5-763af29d2844
-
-- **Issue #459** (2026-10-14): **Opencode not working in Windows**
-  *Symptoms*: Coucou isnt working with Opencode.  I have tried littearly anything different versions different installers still havent worked. (Server plugin error ~/.config/opencode/plugins/coucou.js Plugin must export a default definition with an id and an effect or setup function. Reference: err_c59e4c00)  I'm on Windows 11 and like i searched online and thru the bug reports but couldnt find anything. Coucou ver 0.3.0
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2009,981 +1997,305 @@ final class VoiceEngine: ObservableObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f931645e` (2026-10-15)
-**Commit Message**: Fix a crash: the thermal state change arrives off the main thread
-
-macOS posts thermalStateDidChangeNotification from a background queue; the sink was
-isolated to the main actor and Swift's runtime check stopped the app. Every publisher
-MachineVitals follows is now received on the main queue.
+### Incident Patch 1: `5b6f2136` (2026-10-22)
+**Commit Message**: Mac 0.5.3, Windows and Linux 0.5.2: CHANGELOG, README, versions, What's new
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `NotchBuddy/Sources/App/MachineVitals.swift` (modified, +5/-2)
+**File**: `CHANGELOG.md` (modified, +15/-2)
 ```diff
-@@ -47,13 +47,16 @@ final class MachineVitals: ObservableObject {
-     /// Starts following whether Mochi is on screen. Called once at launch.
-     func start() {
-         let state = AppState.shared
--        state.$mode.removeDuplicates().sink { [weak self] _ in
-+        // Everything is received on the main thread: macOS posts some of these (the thermal
-+        // state) from a background queue, and Mochi's code only runs on the main one.
-+        state.$mode.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
-             Task { @MainActor in self?.refreshRunning() }
-         }.store(in: &subscriptions)
--        state.$mochiOnDesktop.removeDuplicates().sink { [weak self] _ in
-+        state.$mochiOnDesktop.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
-             Task { @MainActor in self?.refreshRunning() }
-         }.store(in: &subscriptions)
-         NotificationCenter.default.publisher(for: ProcessInfo.thermalStateDidChangeNotification)
-+            .receive(on: DispatchQueue.main)
-             .sink { [weak self] _ in Task { @MainActor in self?.sample() } }
-             .store(in: &subscriptions)
-         refreshRunning()
-```
-
----
-
-### Incident Patch 2: `57d13207` (2026-10-18)
-**Commit Message**: WhatsApp: fixes from an independent review
-
-- No redirect is ever followed (and an answer from another host is
-  refused): credentials and a reply's text only reach the gateway.
-- GOWA started by Coucou is restarted only when its binary, address or
-  password changes, after the old one has gone; Save and Test no longer kill
-  it. Test connection waits a few seconds for a GOWA just started, and uses
-  the running connection.
-- Focus authorization callback is @Sendable (Intents may answer off the
-  main thread).
-- History loaded at connection is added as quiet history instead of
-  zeroing every unread count afterwards.
-- Messages arriving in the conversation open on screen aren't unread and
-  don't make Mochi react; the receipt still waits for a reply or an opening.
-- The badge clears on the unread you can actually see (muted groups and
-  ignored chats aside). Ignoring a chat removes it from the inbox.
-- The conversation and its draft survive a missed status check (a banner
-  says it); a send finishing after WhatsApp is turned off adds nothing back.
-- QR: never asked again within 15 s, even when none came (each GOWA login
-  call restarts the pairing).
-- Dedupe forgets the oldest ids,
-
-**File**: `NotchBuddy/Sources/App/WhatsAppController.swift` (modified, +53/-13)
-```diff
-@@ -141,6 +141,8 @@ final class WhatsAppController: ObservableObject {
-     private var lastPoll = Date()
-     private var lastAnnounce: Date = .distantPast
-     private var namingGroups: Set<String> = []
-+    /// The conversation open in the card: what arrives there is seen, so it isn't unread.
-+    private(set) var openChat: String?
-     private var rateLimit = WARateLimit(limit: 6, window: 60)
-     /// Failed checks in a row (the gateway down, refusing, unreachable).
-     private var failures = 0
-@@ -207,7 +209,7 @@ final class WhatsAppController: ObservableObject {
-         startListener(kind: provider.kind)
-         if WhatsAppSettings.respectFocus { askFocus() }
-         // GOWA started by Coucou when asked to (Settings), before the first check.
--        WhatsAppGOWAProcess.shared.startIfNeeded()
-+        WhatsAppGOWAProcess.shared.sync()
-         let t = Timer(timeInterval: 5, repeats: true) { _ in
-             MainActor.assumeIsolated { WhatsAppController.shared.onTick() }
-         }
-@@ -234,9 +236,11 @@ final class WhatsAppController: ObservableObject {
-         lastWebhook = nil
-         namingGroups = []
-         failures = 0
--        // Started again on the next begin() with the new settings, or gone for good.
--        WhatsAppGOWAProcess.shared.stop()
-+        // Turned off: GOWA goes too. Otherwise begin() keeps it, or restarts it if its
-+        // settings changed.
-+        if !shouldRun { WhatsAppGOWAProcess.shared.stopNow() }
-         if forget {
-+            openChat = nil
-             inbox.clear()
-             resetTask()
-         }
-@@ -285,6 +289,9 @@ final class WhatsAppController: ObservableObject {
-                 case .needsQR:
-                     link = .needsQR
-                     if qrPNG == nil || Date() > qrExpiry {
-+                        // Not asked again for 15 s even when nothing came: each GOWA login call
-+                        // restarts the pairing.
-+                        qrExpiry = Date().addingTimeInterval(15)
-                         if let qr = try await provider.qrCode(), gen == generation {
-                             qrPNG = qr.png
-                             qrExpiry = Date().addingTimeInterval(TimeInterval(qr.seconds))
-@@ -313,7 +320,7 @@ final class WhatsAppController: ObservableObject {
-         // Twice in a row (not a gateway still starting): a small red dot on the pill, nothing more.
-         if failures == 2 { showDown(true) }
-         // GOWA started by Coucou and gone (crash, killed): started again, once a minute at most.
--        if error == .unreachable { WhatsAppGOWAProcess.shared.startIfNeeded() }
-+        if error == .unreachable { WhatsAppGOWAProcess.shared.sync() }
-     }
+@@ -2,8 +2,6 @@
  
-     /// The discreet error pill: the pill's red badge while the gateway is down.
-@@ -326,9 +333,21 @@ final class WhatsAppController: ObservableObject {
+ ## Unreleased
  
-     /// One check from Settings' "Test connection": what the gateway says, in a sentence.
-     func testConnection() async -> String {
--        guard let provider = WhatsAppSettings.makeProvider() else { return String(localized: "whatsapp.status.bad-url") }
-+        // The running connection when there is one (a second one could race it for OpenWA's session).
-+        guard let provider = provider ?? WhatsAppSettings.makeProvider() else { return String(localized: "whatsapp.status.bad-url") }
-         do {
--            let status = try await provider.status()
-+            var status: WAStatus
-+            var attempt = 0
-+            while true {
-+                do {
-+                    status = try await provider.status()
-+                    break
-+                } catch WAError.unreachable where WhatsAppGOWAProcess.shared.isRunning && attempt < 8 {
-+                    // GOWA just started by Coucou: give it a few seconds to come up.
-+                    attempt += 1
-+                    try? await Task.sleep(for: .seconds(1))
-+                }
-+            }
-             switch status.link {
-             case .connected:
-                 let who = status.me.map(WAJID.displayNumber) ?? ""
-@@ -407,8 +426,9 @@ final class WhatsAppController: ObservableObject {
-         backfilled = true
-         let since = Date().addingTimeInterval(-12 * 3600)
-         guard let messages = try? await provider.recentMessages(since: since, me: me), gen == generation else { return }
--        ingest(messages, announce: false)
--        inbox.markAllRead()
-+        // History: kept, never counted as unread (whether it was read is unknown), never announced.
-+        for message in messages { inbox.add(message, filters: filters, history: true) }
-+        for message in messages { nameGroupIfNeeded(WAJID.normalized(message.chat)) }
-         lastPoll = Date()
-     }
+-- **Mochi turns blue when a new version waits** *(macOS GitHub build, Windows, Linux)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, and opening the island shows **Update now** first. Later hides it for a day. Approvals and questions always come first
+-- **What's new, after the update** — once Coucou updated itself, the island shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the island, words dictated and time saved with Flow, calls transcribed. All of it is counted on your computer and never leaves it. And, if Coucou saves you time, **Buy Mochi a coffee**
+ - **Coucou for Android 0.3.0**, by @Rhytam23 — a bigger release (versionCode 3). It works with Coucou 0.5.0 on Windows and Linux; the weekly recap needs the next Windows and Linux build.
+   - **Clearer link** — Home names the likely cause when the computer is out of reach (computer closed, other network, phone link off); predictive back; the ongoing notification is updated only when its text changes.
+   - **Permission requests** — choose the vibration (default, short, off) and whether a request wakes the screen (off by default). Allow still needs your fingerprint or screen lock, and approvals are never muted or hidden.
+@@ -13,6 +11,21 @@
+   - **Weekly recap and history** — last week's counts on Home (optional, off by default, behind its own switch on the computer), search and export of recent decisions as text, and a per-agent mute for finished, failed and limit notices (requests and questions are never muted).
+   - Fixes #629: the *Away from home Wi-Fi* section only shows when the pairing carries a relay (#682 by @Rhytam23)
  
-@@ -429,9 +449,16 @@ final class WhatsAppController: ObservableObject {
-     private func ingest(_ messages: [WAMessage], announce: Bool) {
-         var fresh: WAMessage?
-         for message in messages {
-+            let key = WAJID.normalized(message.chat)
-         
-```
-
-**File**: `NotchBuddy/Sources/App/WhatsAppGOWAProcess.swift` (modified, +26/-26)
-```diff
-@@ -33,21 +33,33 @@ final class WhatsAppGOWAProcess {
-         return base.appendingPathComponent("Coucou/GOWA", isDirectory: true)
-     }
- 
--    /// Starts GOWA unless it already runs (or was started less than a minute ago).
--    /// Returns false when the binary can't be run.
-+    /// What the running GOWA was started with: changed, it is restarted; same, left alone.
-+    private var launchedWith: String?
++## 0.5.3 — October 22, 2026
 +
-+    /// Brings GOWA in line with Settings: started when "Start GOWA automatically" is on (and
-+    /// the gateway is GOWA on this Mac), restarted only when its binary, address or password
-+    /// changed, stopped when the option is off. A GOWA that keeps dying is started again once
-+    /// a minute at most. Returns false when it can't run.
-     @discardableResult
--    func startIfNeeded() -> Bool {
--        guard Self.autoStart, WhatsAppSettings.gateway == .gowa else { return false }
--        if isRunning { return true }
--        guard Date().timeIntervalSince(lastStart) > 60 else { return true }
-+    func sync() -> Bool {
-+        guard Self.autoStart, WhatsAppSettings.gateway == .gowa else { stopNow(); return false }
-         let path = (Self.binaryPath as NSString).expandingTildeInPath
-         guard !path.isEmpty, FileManager.default.isExecutableFile(atPath: path),
-               let url = URL(string: WhatsAppSettings.url) else {
-             appendAppLog("nb.log", "[WhatsApp] GOWA binary missing or not executable")
-+            stopNow()
-             return false
-         }
-         // Only ever on this Mac: an address elsewhere is someone else's gateway.
--        guard ["127.0.0.1", "localhost", "::1"].contains(url.host ?? "") else { return false }
-+        guard ["127.0.0.1", "localhost", "::1"].contains(url.host ?? "") else { stopNow(); return false }
-+        let credential = KeychainStore.shared.get(WhatsAppSettings.credentialKey) ?? ""
-+        let signature = [path, url.absoluteString, credential].joined(separator: "\u{1F}")
-+        if isRunning {
-+            if launchedWith == signature { return true }
-+            stopNow()   // waits for it to let go of the port and its database
-+        } else if launchedWith == signature, Date().timeIntervalSince(lastStart) < 60 {
-+            return true
-+        }
-         try? FileManager.default.createDirectory(at: Self.workingDirectory, withIntermediateDirectories: true)
- 
-         let p = Process()
-@@ -56,9 +68,7 @@ final class WhatsAppGOWAProcess {
-         p.currentDirectoryURL = Self.workingDirectory
-         var env = ProcessInfo.processInfo.environment
-         // The credential goes through the environment, not the command line (`ps` shows that).
--        if let auth = KeychainStore.shared.get(WhatsAppSettings.credentialKey), auth.contains(":") {
--            env["APP_BASIC_AUTH"] = auth
--        }
-+        if credential.contains(":") { env["APP_BASIC_AUTH"] = credential }
-         p.environment = env
-         // GOWA's own output may name contacts or quote messages: it goes nowhere.
-         p.standardOutput = FileHandle.nullDevice
-@@ -73,6 +83,7 @@ final class WhatsAppGOWAProcess {
-             try p.run()
-             process = p
-             lastStart = Date()
-+            launchedWith = signature
-             appendAppLog("nb.log", "[WhatsApp] GOWA started (pid \(p.processIdentifier))")
-             return true
-         } catch {
-@@ -81,23 +92,12 @@ final class WhatsAppGOWAProcess {
-         }
-     }
- 
--    /// Stops GOWA if Coucou started it (Coucou quits, the option or WhatsApp is turned off).
--    func stop() {
--        lastStart = .distantPast
--        guard let p = process else { return }
--        process = nil
--        guard p.isRunning else { return }
--        p.terminate()
--        // Still there after 2 s: killed.
--        let pid = p.processIdentifier
--        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
--            if kill(pid, 0) == 0 { kill(pid, SIGKILL) }
--        }
--    }
--
--    /// At quit: the gateway can't outlive Coucou, and there is no time to wait.
-+    /// Stops GOWA if Coucou started it, waiting a second at most for it to go (at quit, or
-+    /// before starting it again so two never share its database).
-     func stopNow() {
--        guard let p = process, p.isRunning else { return }
-+        launchedWith = nil
-+        guard let p = process else { return }
-+        guard p.isRunning else { process = nil; return }
-         p.terminate()
-         let deadline = Date().addingTimeInterval(1)
-         while p.isRunning && Date() < deadline { usleep(50_000) }
-```
-
-**File**: `NotchBuddy/Sources/App/WhatsAppModels.swift` (modified, +20/-1)
-```diff
-@@ -110,6 +110,8 @@ struct WAInbox: Equatable, Sendable {
- 
-     private(set) var conversations: [String: WAConversation] = [:]
-     private var seenIds: Set<String> = []
-+    /// The same ids in arrival order, so the oldest are the ones forgotten.
-+    private var seenOrder: [String] = []
- 
-     /// Newest activity first.
-     var sorted: [WAConversation] {
-@@ -130,7 +132,12 @@ struct WAInbox: Equatable, Sendable {
-         let chat = WAJID.normalized(message.chat)
-         guard !filters.ignored.contains(chat) else { return .ignored }
-         seenIds.insert(message.id)
--        if seenIds.count > 2_000 { seenIds = Set(seenIds.suffix(1_000)) }
-+        seenOrder.append(message.id)
-+        if seenOrder.count > 2_000 {
-+            let dropped = seenOrder.prefix(1_000)
-+            seenOrder.removeFirst(1_000)
-+            for id in dropped { seenIds.remove(id) }
-+        }
- 
-         let isGroup = WAJID.isGroup(chat)
-         let number = WAJID.displayNumber(chat)
-@@ -168,6 +175,17 @@ struct WAInbox: Equatable, Sendable {
-         sorted.filter { !filters.ignored.contains($0.id) && (!$0.isGroup || !filters.muteGroups || $0.messages.contains { $0.mentionsMe && !$0.fromMe }) }
-     }
- 
-+    /// Unread messages in the conversations the pill shows (a muted group's quiet messages
-+    /// and an ignored chat can't be opened, so they don't count).
-+    func visibleUnread(filters: WAFilters) -> Int {
-+        visible(filters: filters).reduce(0) { $0 + $1.unread }
-+    }
++Mochi tells you a new version waits, and after the update he shows you what it brings.
 +
-+    /// A chat dropped from the inbox (the user ignores it).
-+    mutating func remove(_ chat: String) {
-+        conversations[WAJID.normalized(chat)] = nil
-+    }
++- **Mochi turns blue when a new version waits** *(macOS, GitHub build)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, in the notch and in the menu bar, and opening the notch shows **Update now** first (it is also the first line of the menu). Later hides it for a day. Approvals and questions always come first
++- **What's new, after the update** — once Coucou updated itself, the notch shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the notch, words dictated and time saved with Flow, calls transcribed. All of it is counted on your Mac and never leaves it
++- **Buy Mochi a coffee** — Coucou stays free and open source; if it saves you time, the last step of What's new has a coffee for Mochi (Stripe, the same page as Coucou's website)
 +
-     mutating func markRead(_ chat: String) {
-         conversations[WAJID.normalized(chat)]?.unread = 0
-     }
-@@ -186,6 +204,7 @@ struct WAInbox: Equatable, Sendable {
-     mutating func clear() {
-         conversations = [:]
-         seenIds = []
-+        seenOrder = []
-     }
- 
-     private func nonEmpty(_ s: String) -> String? { s.isEmpty ? nil : s }
-```
-
-**File**: `NotchBuddy/Sources/App/WhatsAppProvider.swift` (modified, +14/-2)
-```diff
-@@ -38,7 +38,17 @@ protocol WhatsAppProvider: Sendable {
-     func groupName(_ chat: String) async -> String?
- }
- 
--/// HTTP to the local gateway: no cookies, no cache, nothing stored on disk.
-+/// Never follows a redirect: a request (with its credentials and, for a send, the reply's
-+/// text) goes to the configured gateway and nowhere else.
-+final class WANoRedirect: NSObject, URLSessionTaskDelegate, Sendable {
-+    func urlSession(_ session: URLSession, task: URLSessionTask,
-+                    willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest,
-+                    completionHandler: @escaping @Sendable (URLRequest?) -> Void) {
-+        completionHandler(nil)
-+    }
-+}
++## Windows and Linux 0.5.2 — October 22, 2026
 +
-+/// HTTP to the local gateway: no cookies, no cache, no redirect, nothing stored on disk.
- final class WAHTTP: Sendable {
-     let base: URL
-     let headers: [String: String]
-@@ -53,7 +63,7 @@ final class WAHTTP: Sendable {
-         config.httpCookieStorage = nil
-         config.timeoutIntervalForRequest = 60   // each request sets its own (10 s, longer for a QR)
-         config.connectionProxyDictionary = [:]   // straight to the local gateway
--        session = URLSession(configuration: config)
-+        session = URLSession(configuration: config, delegate: WANoRedirect(), delegateQueue: nil)
-     }
- 
-     /// `path` is appended to the base URL as given (already percent-encoded where needed).
-@@ -74,6 +84,8 @@ final class WAHTTP: Sendable {
-         }
-         do {
-             let (data, response) = try await session.data(for: req)
-+            // Second lock: an answer from anywhere but the gateway is not one.
-+            if let final = response.url, final.host != url.host || final.port != url.port { throw WAError.unreachable }
-             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-             return (data, code)
-         } catch {
-```
-
-**File**: `NotchBuddy/Sources/App/WhatsAppViews.swift` (modified, +12/-3)
-```diff
-@@ -17,7 +17,8 @@ struct WhatsAppCardView: View {
- 
-     var body: some View {
-         Group {
--            if wa.link == .connected, let chat = openChat, let conversation = wa.inbox.conversations[chat] {
-+            // Kept open through a missed check (the draft too): only gone when WhatsApp is off.
-+            if wa.link != .off, let chat = openChat, let conversation = wa.inbox.conversations[chat] {
-                 WhatsAppConversationView(conversation: conversation) {
-                     withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) { openChat = nil }
-                 }
-@@ -275,7 +276,12 @@ struct WhatsAppConversationView: View {
-             .padding(.horizontal, 8).padding(.vertical, 4)
-             .background(RoundedRectangle(cornerRadius: 7).fill(Color.white.opacity(0.06)))
- 
--            if let error = wa.sendError {
-+            if wa.link != .connected {
-+                Text(verbatim: WhatsAppStatus.label(wa.link))
-+                    .font(.system(size: 9.5))
-+                    .foregroundColor(Color(hex: "#F5B83D"))
-+                    .lineLimit(1).truncationMode(.tail)
-+            } else if let error = wa.sendError {
-                 Text(verbatim: error)
-                     .font(.system(size: 9.5))
-                     .foregroundColor(Color(hex: "#F4505E"))
-@@ -292,7 +298,10 @@ struct WhatsAppConversationView: View {
-         .onChange(of: draft) { _, text in
-             wa.composing = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-         }
--        .onDisappear { wa.composing = false }
-+        .onDisappear {
-+            wa.composing = false
-+            wa.close(conversation.id)
-+        }
-     }
- 
-     /// Return: sends. Shift-Return: a new line instead.
-```
-
-**File**: `NotchBuddy/Sources/App/WhatsAppWebhook.swift` (modified, +13/-2)
-```diff
-@@ -10,10 +10,21 @@ final class WhatsAppWebhook: @unchecked Sendable {
-     private let queue = DispatchQueue(label: "fr.louisraille.NotchBuddy.whatsapp.webhook")
-     private(set) var port: UInt16 = 0
- 
-+    private let lock = NSLock()
-+    private var _onRequest: (@Sendable (WAHTTPRequest) -> Int)?
-+    private var _onListening: (@Sendable (Bool) -> Void)?
++- **Mochi turns blue when a new version waits** — once you agreed to look for updates, a newer version turns Mochi blue with a little up arrow, in the island and in the tray, and opening the island shows **Update now** first. Later hides it for a day. Approvals and questions always come first
++- **What's new, after the update** — the island shows once what the new version brings, then *Your Coucou so far* (counted on your computer, never sent) and **Buy Mochi a coffee**
++- **GitLab and Gitea** — two new pills like GitHub's: open merge and pull requests, reviews asked of you, the default branch's CI and your activity, for gitlab.com or your own instance; tokens stay in the system's credential store (#831 by @Andrey89711, from #591 and #585)
++- **Weekly recap on Coucou for Android** — Settings → Android phone → *Show my weekly recap on the phone*: last week's counts only, off by default (#682 by @Rhytam23)
 +
-     /// Called on `queue` with each complete request; returns the HTTP status to answer.
--    var onRequest: (@Sendable (WAHTTPRequest) -> Int)?
-+    /// Set on the main thread, read on `queue`: behind a lock.
-+    var onRequest: (@Sendable (WAHTTPRequest) -> Int)? {
-+        get { lock.withLock { _onRequest } }
-+        set { lock.withLock { _onRequest = newValue } }
-+    }
-     /// Called on `queue`: true once listening, false when the port can't be used.
--    var onListening: (@Sendable (Bool) -> Void)?
-+    var onListening: (@Sendable (Bool) -> Void)? {
-+        get { lock.withLock { _onListening } }
-+        set { lock.withLock { _onListening = newValue } }
-+    }
+ ## 0.5.2 — October 20, 2026
  
-     /// Starts listening; false when the port is taken or invalid.
-     @discardableResult
-```
-
-**File**: `docs/INTEGRATIONS.md` (modified, +1/-1)
-```diff
-@@ -333,7 +333,7 @@ Pas d'API WhatsApp pour un compte perso : Coucou parle à une **passerelle local
- - **Répondre** : clic → 10 derniers messages + champ (Entrée envoie, Maj+Entrée saut de ligne, Échap ferme ; le brouillon garde l'île ouverte). Réponse seulement dans une conversation déjà là, 4 096 caractères max, 6 par minute. Lu à l'ouverture (option) ou à la réponse, jamais à la réception.
- - **Filtres** : groupes muets sauf mention, chats ignorés (clic droit ou Réglages), Concentration via `INFocusStatusCenter` (demande la capability Communication Notifications ; sans elle, le réglage s'affiche indisponible).
- - **Vie privée** : rien d'autre que la passerelle locale (pas de photo de profil, elles sont sur les serveurs de WhatsApp), historique en mémoire seulement (20 messages par conversation), vidé à la fermeture ou à la désactivation, aucun contenu dans les logs ni sur disque. URL, identifiants et secret dans le Keychain.
--- **Lancer GOWA automatiquement** : processus enfant `rest --host=127.0.0.1 --port=<port de l'URL> --auto-download-media=false`, identifiant passé par `APP_BASIC_AUTH` (pas sur la ligne de commande), sortie vers `/dev/null`, dossier `~/Library/Application Support/Coucou/GOWA`, arrêté à la fermeture de Coucou, relancé s'il tombe (une fois par minute au plus).
-+- **Lancer GOWA automatiquement** : processus enfant `rest --host=127.0.0.1 --port=<port de l'URL> --auto-download-media=false`, identifiant passé par `APP_BASIC_AUTH` (pas sur la ligne de commande), sortie vers `/dev/null`, dossier `~/Library/Application Support/Coucou/GOWA`, arrêté à la fermeture de Coucou ou quand l'option est coupée, redémarré seulement si son binaire, son adresse ou son mot de passe change (en attendant que l'ancien soit parti), relancé s'il tombe (une fois par minute au plus). Aucune requête ne suit de redirection : rien ne part ailleurs que vers la passerelle.
- 
- ---
- 
-```
-
-**File**: `tests/WhatsAppTests.swift` (modified, +8/-0)
-```diff
-@@ -58,6 +58,14 @@ enum WhatsAppTests {
-             for i in 0..<30 { inbox.add(msg("m\(i)", chat: "1@s.whatsapp.net", at: Double(i)), filters: WAFilters()) }
-             check("20 kept, newest last", inbox.conversations["1@s.whatsapp.net"]?.messages.count == 20
-                   && inbox.conversations["1@s.whatsapp.net"]?.messages.last?.id == "m29")
-+            var big = WAInbox()
-+            for i in 0..<2_500 { big.add(msg("b\(i)", chat: "2@s.whatsapp.net", at: Double(i)), filters: WAFilters()) }
-+            check("the newest ids are still known after 2,000", big.add(msg("b2499", chat: "2@s.whatsapp.net"), filters: WAFilters()) == .duplicate)
-+            var groups = WAInbox()
-+            groups.add(msg("q1", chat: "120363000000000009@g.us", from: "33@s.whatsapp.net"), filters: WAFilters())
-+            check("a muted group's quiet messages don't count as unread to read", groups.visibleUnread(filters: WAFilters()) == 0)
-+            groups.remove("120363000000000009@g.us")
-+            check("removed", groups.conversations.isEmpty)
-             inbox.clear()
-             check("cleared", inbox.conversations.isEmpty)
-         }
-```
-
----
-
-### Incident Patch 3: `98a767c4` (2026-10-18)
-**Commit Message**: Merge pull request #800 from Louis-CFM/feat/whatsapp-installer
-
-WhatsApp in one click, Mac 0.5.1
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -1,5 +1,10 @@
- # Changelog
- 
-+## 0.5.1 — October 18, 2026
-+
-+- **WhatsApp in one click** *(macOS, GitHub build)* — no more GitHub, zip or Terminal: Settings → Integrations → WhatsApp → **Install WhatsApp**. Coucou downloads GOWA, the open-source gateway, for your Mac (about 15 MB, once), checks it against the SHA-256 GOWA publishes, starts it, and shows the QR code to scan. It starts and stops with Coucou, and **Update** fetches GOWA's latest version. Your own gateway (GOWA by hand, OpenWA, another address) moves under **Advanced**
-+- GOWA started by Coucou no longer fetches its own web dashboard from GitHub at each start (Coucou is the interface)
-+
- ## 0.5.0 — October 18, 2026
- 
- WhatsApp in the notch, Mochi who feels your Mac, a screen capture for Claude, and dictation that writes prompts or translates. All of it free and open source.
+ New versions now come to you: Mochi says it in the notch and one click installs it. Plus four new languages and a round of community work.
 ```
 
 **File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
 ```diff
-@@ -30,9 +30,9 @@
+@@ -34,9 +34,9 @@
  	<key>CFBundlePackageType</key>
  	<string>APPL</string>
  	<key>CFBundleShortVersionString</key>
--	<string>0.5.0</string>
-+	<string>0.5.1</string>
+-	<string>0.5.2</string>
++	<string>0.5.3</string>
  	<key>CFBundleVersion</key>
--	<string>17</string>
-+	<string>18</string>
+-	<string>19</string>
++	<string>20</string>
  	<key>LSUIElement</key>
  	<true/>
  	<key>NSAccessibilityUsageDescription</key>
 ```
 
-**File**: `NotchBuddy/Resources/Localizable.xcstrings` (modified, +975/-0)
+**File**: `NotchBuddy/Resources/whats-new.json` (modified, +110/-0)
 ```diff
-@@ -1,6 +1,981 @@
+@@ -1,6 +1,116 @@
  {
-   "sourceLanguage" : "en",
-   "strings" : {
-+    "whatsapp.advanced" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "متقدم: بوابتك الخاصة"
+   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
+   "releases": [
++    {
++      "version": "0.5.3",
++      "items": [
++        {
++          "icon": "update",
++          "title": {
++            "en": "Mochi turns blue for updates",
++            "fr": "Mochi bleu pour les mises à jour",
++            "es": "Mochi azul cuando hay versión nueva",
++            "pt-BR": "Mochi azul quando há versão nova",
++            "ru": "Синий Mochi — есть обновление",
++            "zh-Hans": "有更新时 Mochi 变蓝",
++            "hi": "अपडेट पर Mochi नीला",
++            "ar": "Mochi يتحول للأزرق عند التحديث",
++            "bn": "আপডেটে Mochi নীল",
++            "id": "Mochi biru saat ada pembaruan",
++            "de": "Mochi wird blau bei Updates",
++            "tr": "Güncellemede Mochi maviye döner",
++            "th": "Mochi เป็นสีฟ้าเมื่อมีอัปเดต",
++            "zh-Hant": "有更新時 Mochi 變藍"
++          },
++          "detail": {
++            "en": "A new Coucou turns him blue, in the notch and the menu bar. One click installs it.",
++            "fr": "Un nouveau Coucou le rend bleu, dans le notch et la barre des menus. Un clic l’installe.",
++            "es": "Un Coucou nuevo lo vuelve azul, en el notch y la barra de menús. Un clic lo instala.",
++            "pt-BR": "Um Coucou novo o deixa azul, no notch e na barra de menus. Um clique instala.",
++            "ru": "Новый Coucou делает его синим — в вырезе и в строке меню. Один клик — и готово.",
++            "zh-Hans": "有新版 Coucou 时，刘海和菜单栏中的它会变蓝，一键安装。",
++            "hi": "नया Coucou आने पर वह नॉच और मेन्यू बार में नीला हो जाता है। एक क्लिक में इंस्टॉल।",
++            "ar": "عند صدور Coucou جديد يصبح أزرق في النوتش وشريط القوائم. نقرة واحدة تثبّته.",
++            "bn": "নতুন Coucou এলে নচ ও মেনু বারে সে নীল হয়। এক ক্লিকে ইনস্টল।",
++            "id": "Coucou baru membuatnya biru, di notch dan bilah menu. Sekali klik untuk memasang.",
++            "de": "Ein neues Coucou macht ihn blau, in der Notch und der Menüleiste. Ein Klick installiert es.",
++            "tr": "Yeni Coucou onu çentikte ve menü çubuğunda maviye çevirir. Tek tıkla kurulur.",
++            "th": "เมื่อมี Coucou ใหม่ เขาจะเป็นสีฟ้าในรอยบากและแถบเมนู คลิกเดียวติดตั้ง",
++            "zh-Hant": "有新版 Coucou 時，瀏海和選單列中的它會變藍，一鍵安裝。"
 +          }
 +        },
-+        "bn" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "অ্যাডভান্সড: নিজের গেটওয়ে"
++        {
++          "icon": "sparkles",
++          "title": {
++            "en": "What’s new, right here",
++            "fr": "Les nouveautés, ici même",
++            "es": "Las novedades, aquí mismo",
++            "pt-BR": "As novidades, aqui mesmo",
++            "ru": "Что нового — прямо здесь",
++            "zh-Hans": "更新内容，就在这里",
++            "hi": "नया क्या है, यहीं",
++            "ar": "الجديد، هنا مباشرة",
++            "bn": "নতুন কী, এখানেই",
++            "id": "Yang baru, langsung di sini",
++            "de": "Neuigkeiten, direkt hier",
++            "tr": "Yenilikler, tam burada",
++            "th": "มีอะไรใหม่ ดูได้ที่นี่",
++            "zh-Hant": "更新內容，就在這裡"
++          },
++          "detail": {
++            "en": "After each update: what it brings, then your Coucou so far.",
++            "fr": "Après chaque mise à jour : ce qu’elle apporte, puis ton Coucou jusqu’ici.",
++            "es": "Tras cada actualización: lo que trae y luego tu Coucou hasta ahora.",
++            "pt-BR": "Após cada atualização: o que ela traz e depois seu Coucou até agora.",
++            "ru": "После каждого обновления — что нового, а затем ваш Coucou на сегодня.",
++            "zh-Hans": "每次更新后：先看新内容，再看你的 Coucou 至今。",
++            "hi": "हर अपडेट के बाद: उसमें क्या नया है, फिर अब तक आपका Coucou।",
++            "ar": "بعد كل تحديث: ما الجديد فيه، ثم Coucou الخاص بك حتى الآن.",
++            "bn": "প্রতিটি আপডেটের পর: কী নতুন, তারপর এ পর্যন্ত আপনার Coucou।",
++            "id": "Setelah tiap pembaruan: isinya, lalu Coucou-mu sejauh ini.",
++            "de": "Nach jedem Update: was es bringt, dann dein Coucou bisher.",
++            "tr": "Her güncellemeden sonra: getirdikleri, ardından şimdiye kadar Coucou’n.",
++            "th": "หลังอัปเดตแต่ละครั้ง: ดูของใหม่ แล้วดู Coucou ของคุณจนถึงตอนนี้",
++            "zh-Hant": "每次更新後：先看新內容，再看你的 Coucou 至今。"
 +          }
 +        },
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Advanced: your own gateway"
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Avanzado: tu propia pasarela"
-+          }
-+        },
-+        "fr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Avancé : ta propre passerelle"
-+          }
-+        },
-+        "hi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "एडवांस्ड: अपना गेटवे"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Lanjutan: gateway sendiri"
-+          }
-+        },
-+        "pt-BR" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Avançado: seu próprio gateway"
-+          }
-+        },
-+        "ru" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Дополнительно: свой шлюз"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "高级：你自己的网关"
-+          }
-+        }
-+      }
-+    },
-+    "whatsapp.install" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "تثبيت واتساب"
-+          }
-+        },
-+        "bn" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "WhatsApp ইনস্টল করো"
-+          }
-+        },
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Install WhatsApp"
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Instalar WhatsApp"
-+          }
-+        },
-+        "fr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Installer WhatsApp"
-+          }
-+        },
-+        "hi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "WhatsApp इंस्टॉल करें"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Pasang WhatsApp"
-+          }
-+        },
-+        "pt-BR" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Instalar o WhatsApp"
-+          }
-+        },
-+        "ru" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Установить WhatsApp"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "安装 WhatsApp"
-+          }
-+        }
-+      }
-+    },
-+    "whatsapp.install.bad-checksum" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "التنزيل لا يطابق الملف الذي نشره GOWA: حُذف ولم يُثبَّت شيء."
-+          }
-+        },
-+        "bn" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "ডাউনলোড GOWA-র প্রকাশিত ফাইলের সঙ্গে মেলে না: মুছে ফেলা হয়েছে, কিছু ইনস্টল হয়নি।"
-+          }
-+        },
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "The download doesn't match the file GOWA published: it was deleted, nothing was installed."
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "La descarga no coincide con el archivo publicado por GOWA: se eliminó y no se instaló nada."
-+          }
-+        },
-+        "fr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Le téléchargement ne correspond pas au fichier publié par GOWA : il a été supprimé, rien n'a été installé."
-+          }
-+        },
-+        "hi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "डाउनलोड GOWA की फ़ाइल से मेल नहीं खाता: हटा दिया गया, कुछ इंस्टॉल नहीं हुआ।"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Unduhan tidak cocok dengan file dari GOWA: sudah dihapus, tidak ada yang dipasang."
-+          }
-+
++        {
++          "icon": "heart",
++          "title": {
++            "en": "Buy Mochi a coffee",
++            "fr": "Offrir un café à Mochi",
++            "es": "Invitar a Mochi a un café",
++            "pt-BR": "Pagar um café para o Mochi",
++            "ru": "Угостить Mochi кофе",
++            "zh-Hans": "请 Mochi 喝咖啡",
++            "hi": "Mochi को कॉफ़ी पिलाएँ",
++            "ar": "ادعُ Mochi إلى قهوة",
++            "bn": "Mochi-কে কফি খাওয়ান",
++            "id": "Traktir Mochi kopi",
++            "de": "Mochi einen Kaffee spendieren",
++   
 ```
 
-**File**: `NotchBuddy/Sources/App/WhatsAppGOWAInstaller.swift` (added, +172/-0)
+**File**: `NotchBuddy/project.yml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,172 @@
-+#if !APPSTORE
-+import Foundation
-+import CryptoKit
-+
-+// "Install WhatsApp": one click instead of GitHub, a zip, xattr, chmod and a Terminal command.
-+// Downloads GOWA's own latest macOS build for this Mac from its GitHub releases, checks its
-+// SHA-256 against the checksums GOWA publishes, puts the binary in Coucou's GOWA folder (next
-+// to the WhatsApp session it keeps) and turns on "Start GOWA automatically". GitHub build only.
-+// The only network call is to GitHub, once, after the click; no message ever goes there.
-+
-+@MainActor
-+final class WhatsAppGOWAInstaller: ObservableObject {
-+    static let shared = WhatsAppGOWAInstaller()
-+
-+    enum Step: Equatable {
-+        case idle
-+        case checking
-+        case downloading(megabytes: Int)
-+        case verifying
-+        case installing
-+        case done(version: String)
-+        case failed(String)
-+    }
-+
-+    @Published private(set) var step: Step = .idle
-+
-+    var busy: Bool {
-+        switch step {
-+        case .checking, .downloading, .verifying, .installing: return true
-+        default: return false
-+        }
-+    }
-+
-+    /// GOWA's version once installed by Coucou (not a secret: UserDefaults).
-+    static var installedVersion: String? {
-+        get { UserDefaults.standard.string(forKey: "whatsappGOWAVersion") }
-+        set { UserDefaults.standard.set(newValue, forKey: "whatsappGOWAVersion") }
-+    }
-+
-+    /// Where Coucou keeps the binary it installed.
-+    static var binaryURL: URL { WhatsAppGOWAProcess.workingDirectory.appendingPathComponent("gowa") }
-+
-+    /// A gateway Coucou can start: the one it installed, or one the user picked.
-+    static var isInstalled: Bool {
-+        let path = (WhatsAppGOWAProcess.binaryPath as NSString).expandingTildeInPath
-+        return !path.isEmpty && FileManager.default.isExecutableFile(atPath: path)
-+    }
-+
-+    static var arch: String {
-+        #if arch(arm64)
-+        return "arm64"
-+        #else
-+        return "amd64"
-+        #endif
-+    }
-+
-+    private let session: URLSession = {
-+        let config = URLSessionConfiguration.ephemeral
-+        config.urlCache = nil
-+        config.httpCookieStorage = nil
-+        config.timeoutIntervalForRequest = 30
-+        config.timeoutIntervalForResource = 600
-+        return URLSession(configuration: config, delegate: GitHubOnly(), delegateQueue: nil)
-+    }()
-+
-+    func install() {
-+        guard !busy else { return }
-+        step = .checking
-+        Task { await run() }
-+    }
-+
-+    private func run() async {
-+        do {
-+            // 1. Which build: GOWA's latest release, the zip for this Mac.
-+            var req = URLRequest(url: WAGOWARelease.latestURL)
-+            req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-+            let (meta, metaResponse) = try await session.data(for: req)
-+            guard (metaResponse as? HTTPURLResponse)?.statusCode == 200,
-+                  let release = WAGOWARelease.parse(meta),
-+                  let picked = WAGOWARelease.pick(release.assets, arch: Self.arch) else {
-+                throw Failure(String(localized: "whatsapp.install.no-build"))
-+            }
-+            var checksums: String? = nil
-+            if let sums = picked.checksums {
-+                let (data, _) = try await session.data(from: sums.url)
-+                checksums = String(data: data, encoding: .utf8)
-+            }
-+            guard let expected = WAGOWARelease.expectedSHA256(for: picked.zip, checksums: checksums) else {
-+                throw Failure(String(localized: "whatsapp.install.no-checksum"))
-+            }
-+
-+            // 2. Download.
-+            step = .downloading(megabytes: max(1, picked.zip.size / 1_000_000))
-+            let (tmp, zipResponse) = try await session.download(from: picked.zip.url)
-+            guard (zipResponse as? HTTPURLResponse)?.statusCode == 200 else { throw Failure(String(localized: "whatsapp.install.download-failed")) }
-+
-+            // 3. Verify: exactly the file GOWA published.
-+            step = .verifying
-+            let digest = try await Task.detached { () throws -> String in
-+                let data = try Data(contentsOf: tmp)
-+                return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
-+            }.value
-+            guard digest == expected else {
-+                try? FileManager.default.removeItem(at: tmp)
-+                throw Failure(String(localized: "whatsapp.install.bad-checksum"))
-+            }
-+
-+            // 4. Unzip with macOS's own ditto, put the binary in place, make it runnable.
-+            step = .installing
-+            let version = release.version
-+            let binary = WAGOWARelease.binaryName(arch: Self.arch)
-+            try await Task.detached {
-+                try Self.unpack(zip: tmp, binaryName: binary)
-+            }.value
-+            Self.installedVersion = version
-+            WhatsAppSettings.gateway = .gowa
-+            KeychainStore.shared
+@@ -140,8 +140,8 @@ targets:
+         CFBundleName: Coucou
+         CFBundleDisplayName: Coucou
+         CFBundleIdentifier: fr.louisraille.NotchBuddy
+-        CFBundleVersion: "19"
+-        CFBundleShortVersionString: "0.5.2"
++        CFBundleVersion: "20"
++        CFBundleShortVersionString: "0.5.3"
+         CFBundlePackageType: APPL
+         LSUIElement: YES
+         NSHighResolutionCapable: YES
 ```
 
-**File**: `NotchBuddy/Sources/App/WhatsAppGOWAProcess.swift` (modified, +4/-1)
+**File**: `README.md` (modified, +3/-1)
 ```diff
-@@ -28,7 +28,7 @@ final class WhatsAppGOWAProcess {
+@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
  
-     /// Where GOWA keeps its own WhatsApp session (its database, not Coucou's): one folder in
-     /// Application Support, so the link survives restarts.
--    static var workingDirectory: URL {
-+    nonisolated static var workingDirectory: URL {
-         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-         return base.appendingPathComponent("Coucou/GOWA", isDirectory: true)
-     }
-@@ -69,6 +69,9 @@ final class WhatsAppGOWAProcess {
-         var env = ProcessInfo.processInfo.environment
-         // The credential goes through the environment, not the command line (`ps` shows that).
-         if credential.contains(":") { env["APP_BASIC_AUTH"] = credential }
-+        // GOWA's own web dashboard is not needed (Coucou is the interface): it would fetch
-+        // itself from GitHub at each start.
-+        env["APP_UI_ENABLED"] = "false"
-         p.environment = env
-         // GOWA's own output may name contacts or quote messages: it goes nowhere.
-         p.standardOutput = FileHandle.nullDevice
+ | Version | Date | Highlights |
+ |---------|------|------------|
++| [0.5.3](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.3) | Oct 22, 2026 | Mochi turns blue when a new version waits; What's new and your Coucou so far after each update; Buy Mochi a coffee |
+ | [0.5.2](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.2) | Oct 20, 2026 | New version in the notch, one click to install it; German, Turkish, Thai, Traditional Chinese; Homebrew; plan approval from the notch |
+ | [0.5.1](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.1) | Oct 18, 2026 | WhatsApp in one click: Coucou installs and starts the gateway, no Terminal |
+ | [0.5.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.0) | Oct 18, 2026 | WhatsApp in the notch (experimental), Mochi feels your Mac, a screen capture for Claude, dictation that writes prompts or translates |
+@@ -172,6 +173,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+ 
+ | Windows & Linux | Date | Highlights |
+ |---------|------|------------|
++| 0.5.2 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.2) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.2) | Oct 22, 2026 | Mochi turns blue when a new version waits, What's new after each update; GitLab and Gitea pills; the weekly recap on Android |
+ | 0.5.1 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.1) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.1) | Oct 20, 2026 | New version in the island, one click to install it on Windows; German and Turkish; an optional clock; Linux idle CPU fixed |
+ | 0.5.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.0) | Oct 15, 2026 | Catches up with the Mac: the Coucou window, Flow dictation with Parakeet offline (X11 and Wayland), the Notetaker, « OK Coucou » |
+ | 0.4.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.4.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.4.0) | Oct 11, 2026 | Your Android phone: the link for Coucou for Android, by @Rhytam23 — approvals with your fingerprint, answers, chat, off by default |
+@@ -245,7 +247,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
+ 
+ This is only because the app isn't signed with a paid certificate yet. Coucou is open source, and Microsoft Defender scans the installer as clean.
+ 
+-**Windows and Linux 0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
++**Windows and Linux 0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents
 ```
 
-**File**: `NotchBuddy/Sources/App/WhatsAppGateway.swift` (modified, +55/-0)
+**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
 ```diff
-@@ -235,6 +235,61 @@ enum WAGOWA {
-     }
- }
+@@ -4,7 +4,7 @@
  
-+/// GOWA's own releases on GitHub, for "Install WhatsApp" (one click, no Terminal): which zip
-+/// fits this Mac and the SHA-256 GOWA publishes for it. The release workflow (GoReleaser,
-+/// .github/workflows/release.yml in GOWA's repo) names them `whatsapp_<version>_darwin_<arch>.zip`
-+/// (the binary inside is `darwin-<arch>`) next to `checksums-macos.txt`.
-+enum WAGOWARelease {
-+    static let latestURL = URL(string: "https://api.github.com/repos/aldinokemal/go-whatsapp-web-multidevice/releases/latest")!
-+
-+    struct Asset: Equatable, Sendable {
-+        let name: String
-+        let url: URL
-+        let size: Int
-+        /// "sha256:<hex>" when GitHub gives it.
-+        let digest: String?
-+    }
-+
-+    /// `GET /releases/latest` → `{tag_name, assets: [{name, browser_download_url, size, digest?}]}`.
-+    static func parse(_ data: Data) -> (version: String, assets: [Asset])? {
-+        guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
-+              let tag = obj["tag_name"] as? String, let list = obj["assets"] as? [[String: Any]] else { return nil }
-+        let assets: [Asset] = list.compactMap { a in
-+            guard let name = a["name"] as? String, let s = a["browser_download_url"] as? String,
-+                  let url = URL(string: s) else { return nil }
-+            return Asset(name: name, url: url, size: (a["size"] as? Int) ?? 0, digest: a["digest"] as? String)
-+        }
-+        let version = tag.hasPrefix("v") ? String(tag.dropFirst()) : tag
-+        return (version, assets)
-+    }
-+
-+    /// The zip for this Mac ("arm64" or "amd64") and the macOS checksums file.
-+    static func pick(_ assets: [Asset], arch: String) -> (zip: Asset, checksums: Asset?)? {
-+        guard let zip = assets.first(where: { $0.name.hasPrefix("whatsapp_") && $0.name.hasSuffix("_darwin_\(arch).zip") }) else { return nil }
-+        return (zip, assets.first { $0.name == "checksums-macos.txt" })
-+    }
-+
-+    /// The binary's name inside the zip.
-+    static func binaryName(arch: String) -> String { "darwin-\(arch)" }
-+
-+    /// The SHA-256 (lowercase hex) of `name` in a GoReleaser checksums file ("<hex>  <name>" per line),
-+    /// else from GitHub's own "sha256:<hex>" digest.
-+    static func expectedSHA256(for asset: Asset, checksums: String?) -> String? {
-+        for line in (checksums ?? "").split(whereSeparator: \.isNewline) {
-+            let parts = line.split(separator: " ", omittingEmptySubsequences: true)
-+            if parts.count == 2, parts[1] == Substring(asset.name), parts[0].count == 64 { return parts[0].lowercased() }
-+        }
-+        if let d = asset.digest, d.hasPrefix("sha256:"), d.count == 71 { return String(d.dropFirst(7)).lowercased() }
-+        return nil
-+    }
-+
-+    /// Only GitHub serves the download (its assets redirect to githubusercontent.com).
-+    static func allowedHost(_ host: String?) -> Bool {
-+        guard let h = host?.lowercased() else { return false }
-+        return h == "github.com" || h == "api.github.com" || h.hasSuffix(".githubusercontent.com")
-+    }
-+}
-+
- enum WAOpenWA {
-     /// A session: `{id (uuid), name, status, phone, pushName, …}`.
-     /// status: created|initializing|qr_ready|authenticating|ready|disconnected|action_required|failed.
+ pkgname=coucou-git
+ _pkgname=coucou
+-pkgver=0.5.1
++pkgver=0.5.2
+ pkgrel=1
+ pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
+ arch=('x86_64' 'aarch64')
 ```
 
-**File**: `NotchBuddy/Sources/App/WhatsAppViews.swift` (modified, +124/-43)
+**File**: `windows/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -432,6 +432,8 @@ func waTimeAgo(_ date: Date) -> String {
- struct WhatsAppSettingsSection: View {
-     @ObservedObject private var wa = WhatsAppController.shared
-     @ObservedObject private var appState = AppState.shared
-+    @ObservedObject private var installer = WhatsAppGOWAInstaller.shared
-+    @State private var showAdvanced = false
-     @State private var enabled = WhatsAppSettings.enabled
-     @State private var gateway = WhatsAppSettings.gateway
-     @State private var url = KeychainStore.shared.get(WhatsAppSettings.urlKey) ?? ""
-@@ -467,50 +469,10 @@ struct WhatsAppSettingsSection: View {
-                         .foregroundColor(Color(hex: "#F4505E"))
-                 }
+@@ -719,7 +719,7 @@ dependencies = [
  
--                Picker("whatsapp.gateway", selection: $gateway) {
--                    ForEach(WAGatewayKind.allCases, id: \.self) { kind in
--                        Text(verbatim: kind == .gowa ? "GOWA" : "OpenWA").tag(kind)
--                    }
--                }
--                .pickerStyle(.segmented)
-+                // One click: Coucou downloads GOWA, checks it and starts it. No Terminal.
-+                if gateway == .gowa { installBlock }
+ [[package]]
+ name = "coucou"
+-version = "0.5.1"
++version = "0.5.2"
+ dependencies = [
+  "arboard",
+  "cpal",
+@@ -754,7 +754,7 @@ dependencies = [
  
--                TextField(gateway.defaultURL, text: $url)
--                    .textFieldStyle(.roundedBorder)
--                SecureField(gateway == .gowa ? String(localized: "whatsapp.credential.gowa")
--                                             : String(localized: "whatsapp.credential.openwa"),
--                            text: $credential)
--                    .textFieldStyle(.roundedBorder)
--                if gateway == .gowa { autoStartRow }
--                HStack(spacing: 6) {
--                    Text("whatsapp.port").font(.system(size: 11))
--                    TextField(String(WhatsAppSettings.defaultPort), text: $port)
--                        .textFieldStyle(.roundedBorder)
--                        .frame(width: 80)
--                    Spacer()
--                }
--
--                HStack(spacing: 8) {
--                    Button("whatsapp.save") { save() }
--                        .buttonStyle(.borderedProminent)
--                    Button("whatsapp.test") {
--                        save()
--                        testing = true
--                        Task {
--                            testResult = await wa.testConnection()
--                            testing = false
--                        }
--                    }
--                    .buttonStyle(.bordered)
--                    .disabled(testing)
--                    if testing { ProgressView().controlSize(.small) }
--                }
--                if let testResult {
--                    Text(verbatim: testResult)
--                        .font(.system(size: 10))
--                        .foregroundColor(Color(hex: "#8E939C"))
--                }
--
--                linkState
-+                if showsLinkState { linkState }
+ [[package]]
+ name = "coucou-hook"
+-version = "0.5.1"
++version = "0.5.2"
+ dependencies = [
+  "libc",
+  "serde_json",
+```
+
+**File**: `windows/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
+ resolver = "2"
  
-                 // Filters
-                 Toggle("whatsapp.mute-groups", isOn: Binding(
-@@ -541,6 +503,66 @@ struct WhatsAppSettingsSection: View {
-                     .font(.system(size: 10))
-                     .foregroundColor(Color(hex: "#8E939C"))
-                     .fixedSize(horizontal: false, vertical: true)
+ [workspace.package]
+-version = "0.5.1"
++version = "0.5.2"
+ edition = "2021"
+ license = "MIT"
+ 
+```
+
+---
+
+### Incident Patch 2: `d50f32b8` (2026-10-20)
+**Commit Message**: Mac 0.5.2, Windows and Linux 0.5.1: CHANGELOG, README, versions
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+
+**File**: `CHANGELOG.md` (modified, +25/-0)
+```diff
+@@ -1,5 +1,30 @@
+ # Changelog
+ 
++## 0.5.2 — October 20, 2026
 +
-+                // Your own gateway (OpenWA, another address, a password, the port): folded away.
-+                DisclosureGroup(isExpanded: $showAdvanced) {
-+                    VStack(alignment: .leading, spacing: 6) {
-+                        Picker("whatsapp.gateway", selection: $gateway) {
-+                            ForEach(WAGatewayKind.allCases, id: \.self) { kind in
-+                                Text(verbatim: kind == .gowa ? "GOWA" : "OpenWA").tag(kind)
-+                            }
-+                        }
-+                        .pickerStyle(.segmented)
++New versions now come to you: Mochi says it in the notch and one click installs it. Plus four new languages and a round of community work.
 +
-+                        TextField(gateway.defaultURL, text: $url)
-+                            .textFieldStyle(.roundedBorder)
-+                        SecureField(gateway == .gowa ? String(localized: "whatsapp.credential.gowa")
-+                                                     : String(localized: "whatsapp.credential.openwa"),
-+                                    text: $credential)
-+                            .textFieldStyle(.roundedBorder)
-+                        if gateway == .gowa { autoStartRow }
-+                        HStack(spacing: 6) {
-+                            Text("whatsapp.port").font(.system(size: 11))
-+                            TextField(String(WhatsAppSettings.defaultPort), text: $port)
-+                                .textFieldStyle(.roundedBorder)
-+                                .frame(width: 80)
-+                            Spacer()
-+                        }
++- **New version in the notch** *(macOS, GitHub build)* — Coucou asks once whether it may look at its releases on GitHub; then, a few times a day, Mochi tells you when a new Coucou is out: **Update now**, What's new, Later. The click downloads it from GitHub, checks it is Coucou at the announced version, signed with its developer's Developer ID and notarized by Apple, swaps the app and restarts. Also in the menu bar and in Settings → General → Updates (Check now). Nothing is checked before you say yes, and nothing about you is sent
++- **Four new languages** — German and Turkish (by @Ohualtex), Thai (by @XBalanceZ) and Traditional Chinese (by @shawn-t516): 14 languages in Settings → General → Language
++- **Homebrew** — `brew tap louis-cfm/coucou https://github.com/Louis-CFM/coucou`, then `brew install --cask coucou` (#340 by @espensgr)
++- **Plan approval from the notch** — when Claude Code has a plan ready, the card offers the terminal's own choices: Auto mode, Manual, or Change plan, which brings the terminal forward to type the change (#703 by @orrrrli)
++- **The pill's name** — a Claude Code session's pill is named after its `/rename` title, else the folder it started in (no longer the subfolder it moved into), and with several sessions it follows the one that is working (#761 by @orrrrli)
++- **Quiet when you're watching** — a turn that ends while its terminal is in front only takes a badge: no sound, no reveal (#719 by @orrrrli)
++- **Alerts from every pill** — Settings → General → Behavior → *Open for every pill's alerts*: another pill that finishes or fails opens the notch for a moment, then the pill you had comes back (#683, asked by @Arochell). Off by default
++- **Claude Desktop chats** *(GitHub build, experimental)* — Mochi jumps when a regular chat reply is ready in the Claude app, while you're elsewhere (#686, idea by @GreGCerisier). Settings → Agents → Claude Desktop chats, off by default; it uses Accessibility and reads nothing of the chat
++- **Antigravity questions** — when Antigravity asks you something, its pill says so with a sound (#709 by @Ohualtex, #690)
++- **Conductor** — Claude Code sessions run from Conductor land on the Claude Code pill, and Open terminal brings Conductor forward (#793, asked by @victorlohezic)
++- DeepSeek, Qwen and Moonshot chats work again: streaming sent the wrong key (#803 and #730 by @itgoodojo, fix from #667 by @pedrozampiroli)
 +
-+                        HStack(spacing: 8) {
-+                            Button("whatsapp.save") { save() }
-+                                .buttonStyle(.borderedProminent)
-+                            Button("whatsapp.test") {
-+                                save()
-+                  
++## Windows and Linux 0.5.1 — October 20, 2026
++
++- **New version in the island** — Coucou asks once whether it may look at its releases on GitHub, then tells you when a new one is out. On Windows, **Update now** downloads the installer that matches how you installed Coucou (setup.exe or MSI), checks its SHA-256 against the one GitHub publishes, installs it and comes back by itself; the portable exe and Linux get the release page. Settings → General → Updates and the tray menu too (#812, plan by @afpruivo)
++- **German and Turkish** (by @Ohualtex): 12 languages
++- **Optional clock** in the middle of the compact island, for the place a Mac has its notch: Settings → General → Show clock in the island (#788 by @eduardo-qts)
++- **Antigravity questions** — the pill turns to a question with a sound and the island shows up (#709 by @Ohualtex)
++- **Linux**: the Coucou window no longer keeps a core busy once closed, on KDE and other desktops whose webview doesn't report it hidden (#792, reported by @Michael-1103)
++- The island's error view shows the real error and who stopped
++
+ ## 0.5.1 — October 18, 2026
+ 
+ - **WhatsApp in one click** *(macOS, GitHub build)* — no more GitHub, zip or Terminal: Settings → Integrations → WhatsApp → **Install WhatsApp**. Coucou downloads GOWA, the open-source gateway, for your Mac (about 15 MB, once), checks it against the SHA-256 GOWA publishes, starts it, and shows the QR code to scan. It starts and stops with Coucou, and **Update** fetches GOWA's latest version. Your own gateway (GOWA by hand, OpenWA, another address) moves under **Advanced**
+```
+
+**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
+```diff
+@@ -34,9 +34,9 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>APPL</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>0.5.1</string>
++	<string>0.5.2</string>
+ 	<key>CFBundleVersion</key>
+-	<string>18</string>
++	<string>19</string>
+ 	<key>LSUIElement</key>
+ 	<true/>
+ 	<key>NSAccessibilityUsageDescription</key>
 ```
 
 **File**: `NotchBuddy/project.yml` (modified, +2/-2)
@@ -2992,22 +2304,468 @@ WhatsApp in one click, Mac 0.5.1
          CFBundleName: Coucou
          CFBundleDisplayName: Coucou
          CFBundleIdentifier: fr.louisraille.NotchBuddy
--        CFBundleVersion: "17"
--        CFBundleShortVersionString: "0.5.0"
-+        CFBundleVersion: "18"
-+        CFBundleShortVersionString: "0.5.1"
+-        CFBundleVersion: "18"
+-        CFBundleShortVersionString: "0.5.1"
++        CFBundleVersion: "19"
++        CFBundleShortVersionString: "0.5.2"
          CFBundlePackageType: APPL
          LSUIElement: YES
          NSHighResolutionCapable: YES
 ```
 
+**File**: `README.md` (modified, +4/-2)
+```diff
+@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
+ 
+ | Version | Date | Highlights |
+ |---------|------|------------|
++| [0.5.2](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.2) | Oct 20, 2026 | New version in the notch, one click to install it; German, Turkish, Thai, Traditional Chinese; Homebrew; plan approval from the notch |
+ | [0.5.1](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.1) | Oct 18, 2026 | WhatsApp in one click: Coucou installs and starts the gateway, no Terminal |
+ | [0.5.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.0) | Oct 18, 2026 | WhatsApp in the notch (experimental), Mochi feels your Mac, a screen capture for Claude, dictation that writes prompts or translates |
+ | [0.4.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.4.0) | Oct 14, 2026 | Coucou becomes an app: Flow dictation anywhere, Parakeet offline, the Notetaker, a window in the Dock |
+@@ -171,6 +172,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+ 
+ | Windows & Linux | Date | Highlights |
+ |---------|------|------------|
++| 0.5.1 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.1) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.1) | Oct 20, 2026 | New version in the island, one click to install it on Windows; German and Turkish; an optional clock; Linux idle CPU fixed |
+ | 0.5.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.0) | Oct 15, 2026 | Catches up with the Mac: the Coucou window, Flow dictation with Parakeet offline (X11 and Wayland), the Notetaker, « OK Coucou » |
+ | 0.4.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.4.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.4.0) | Oct 11, 2026 | Your Android phone: the link for Coucou for Android, by @Rhytam23 — approvals with your fingerprint, answers, chat, off by default |
+ | 0.3.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.3.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.3.0) | Oct 9, 2026 | Linux catches up: Spotify with Mochi dancing, global shortcuts on Wayland, Open terminal brings the terminal back; open on hover, your own sounds, a colour per Mochi |
+@@ -243,7 +245,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
+ 
+ This is only because the app isn't signed with a paid certificate yet. Coucou is open source, and Microsoft Defender scans the installer as clean.
+ 
+-**Windows and Linux 0.5.0** catch up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
++**Windows and Linux 0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CH
+```
+
+**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ pkgname=coucou-git
+ _pkgname=coucou
+-pkgver=0.5.0
++pkgver=0.5.1
+ pkgrel=1
+ pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
+ arch=('x86_64' 'aarch64')
+```
+
+**File**: `windows/Cargo.lock` (modified, +2/-2)
+```diff
+@@ -719,7 +719,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "coucou"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "arboard",
+  "cpal",
+@@ -754,7 +754,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "coucou-hook"
+-version = "0.5.0"
++version = "0.5.1"
+ dependencies = [
+  "libc",
+  "serde_json",
+```
+
+**File**: `windows/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
+ resolver = "2"
+ 
+ [workspace.package]
+-version = "0.5.0"
++version = "0.5.1"
+ edition = "2021"
+ license = "MIT"
+ 
+```
+
+**File**: `windows/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "coucou-windows",
+-  "version": "0.5.0",
++  "version": "0.5.1",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "coucou-windows",
+-      "version": "0.5.0",
++      "version": "0.5.1",
+       "dependencies": {
+         "@tauri-apps/api": "^2"
+       },
+```
+
+---
+
+### Incident Patch 3: `5075a204` (2026-10-22)
+**Commit Message**: What's new data for the Mac and Windows/Linux, and its check
+
+Each release brings its own short What's new (icon, title, one line, in
+every language the app speaks). scripts/test-whats-new.py fails when the
+version about to ship has no complete entry.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+
+**File**: `NotchBuddy/Resources/whats-new.json` (added, +150/-0)
+```diff
+@@ -0,0 +1,150 @@
++{
++  "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
++  "releases": [
++    {
++      "version": "0.5.2",
++      "items": [
++        {
++          "icon": "update",
++          "title": {
++            "en": "New version in the notch",
++            "fr": "Nouvelle version dans le notch",
++            "es": "Nueva versión en el notch",
++            "pt-BR": "Nova versão no notch",
++            "ru": "Новая версия в вырезе",
++            "zh-Hans": "刘海中的新版本",
++            "hi": "नॉच में नया वर्ज़न",
++            "ar": "إصدار جديد في النوتش",
++            "bn": "নচে নতুন ভার্সন",
++            "id": "Versi baru di notch",
++            "de": "Neue Version in der Notch",
++            "tr": "Çentikte yeni sürüm",
++            "th": "เวอร์ชันใหม่ในรอยบาก",
++            "zh-Hant": "瀏海中的新版本"
++          },
++          "detail": {
++            "en": "Mochi tells you when a new Coucou is out. One click installs it.",
++            "fr": "Mochi te prévient quand un nouveau Coucou sort. Un clic l'installe.",
++            "es": "Mochi te avisa cuando sale un nuevo Coucou. Un clic lo instala.",
++            "pt-BR": "O Mochi avisa quando sai um novo Coucou. Um clique instala.",
++            "ru": "Mochi сообщит о новом Coucou. Один клик — и он установлен.",
++            "zh-Hans": "有新版 Coucou 时 Mochi 会告诉你，一键即可安装。",
++            "hi": "नया Coucou आने पर Mochi बताता है। एक क्लिक में इंस्टॉल।",
++            "ar": "يخبرك Mochi بصدور Coucou جديد. نقرة واحدة تثبّته.",
++            "bn": "নতুন Coucou এলে Mochi জানায়। এক ক্লিকে ইনস্টল।",
++            "id": "Mochi memberi tahu saat Coucou baru keluar. Sekali klik untuk memasang.",
++            "de": "Mochi sagt dir, wenn ein neues Coucou da ist. Ein Klick installiert es.",
++            "tr": "Yeni Coucou çıkınca Mochi haber verir. Tek tıkla kurulur.",
++            "th": "Mochi บอกเมื่อมี Coucou ใหม่ คลิกเดียวก็ติดตั้งได้",
++            "zh-Hant": "有新版 Coucou 時 Mochi 會告訴你，一鍵即可安裝。"
++          }
++        },
++        {
++          "icon": "languages",
++          "title": {
++            "en": "Four new languages",
++            "fr": "Quatre nouvelles langues",
++            "es": "Cuatro idiomas nuevos",
++            "pt-BR": "Quatro novos idiomas",
++            "ru": "Четыре новых языка",
++            "zh-Hans": "新增四种语言",
++            "hi": "चार नई भाषाएँ",
++            "ar": "أربع لغات جديدة",
++            "bn": "চারটি নতুন ভাষা",
++            "id": "Empat bahasa baru",
++            "de": "Vier neue Sprachen",
++            "tr": "Dört yeni dil",
++            "th": "เพิ่มสี่ภาษาใหม่",
++            "zh-Hant": "新增四種語言"
++          },
++          "detail": {
++            "en": "German, Turkish, Thai and Traditional Chinese: 14 in all.",
++            "fr": "Allemand, turc, thaï et chinois traditionnel : 14 en tout.",
++            "es": "Alemán, turco, tailandés y chino tradicional: 14 en total.",
++            "pt-BR": "Alemão, turco, tailandês e chinês tradicional: 14 no total.",
++            "ru": "Немецкий, турецкий, тайский и традиционный китайский: всего 14.",
++            "zh-Hans": "德语、土耳其语、泰语和繁体中文：共 14 种。",
++            "hi": "जर्मन, तुर्की, थाई और पारंपरिक चीनी: कुल 14।",
++            "ar": "الألمانية والتركية والتايلاندية والصينية التقليدية: 14 لغة.",
++            "bn": "জার্মান, তুর্কি, থাই ও প্রথাগত চীনা: মোট ১৪টি।",
++            "id": "Jerman, Turki, Thai, dan Mandarin Tradisional: total 14.",
++            "de": "Deutsch, Türkisch, Thai und traditionelles Chinesisch: 14 insgesamt.",
++            "tr": "Almanca, Türkçe, Tayca ve Geleneksel Çince: toplam 14.",
++            "th": "เยอรมัน ตุรกี ไทย และจีนตัวเต็ม รวม 14 ภาษา",
++            "zh-Hant": "德文、土耳其文、泰文和繁體中文：共 14 種。"
++          }
++        },
++        {
++          "icon": "checklist",
++          "title": {
++            "en": "Plans from the notch",
++            "fr": "Les plans depuis le notch",
++            "es": "Planes desde el notch",
++            "pt-BR": "Planos pelo notch",
++            "ru": "Планы прямо из выреза",
++            "zh-Hans": "在刘海中处理计划",
++            "hi": "नॉच से प्लान",
++            "ar": "الخطط من النوتش",
++            "bn": "নচ থেকেই প্ল্যান",
++            "id": "Rencana dari notch",
++            "de": "Pläne aus der Notch",
++            "tr": "Planlar çentikten",
++            "th": "จัดการแผนจากรอยบาก",
++            "zh-Hant": "在瀏海中處理計畫"
++          },
++          "detail": {
++            "en": "Approve Claude Code's plan in Auto or Manual mode, or change it.",
++            "fr": "Valide le plan de Claude Code en mode Auto ou Manuel, ou modifie-le.",
++            "es": "Aprueba el plan de Claude Code en modo Auto o Manual, o cámbialo.",
++            "pt-BR": "Aprove o plano do Claude Code no modo Auto ou Manual, ou mude-o.",
++            "
+```
+
+**File**: `scripts/test-whats-new.py` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++#!/usr/bin/env python3
++"""What's new after an update: every release must bring its entry.
++
++Coucou shows, once after it updated itself, what the new version brings (an icon, a title and a
++line per item, in every language the app speaks). The entries live in
++  NotchBuddy/Resources/whats-new.json   (Mac, the 14 languages of Localizable.xcstrings)
++  windows/src/whats-new/whats-new.json  (Windows and Linux, the 12 languages of strings.json)
++This test fails when the version the app is about to ship has no entry, or an entry is
++incomplete. release.sh runs it too, so a release can't go out without its "What's new".
++
++    python3 scripts/test-whats-new.py
++"""
++import json
++import re
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++
++# The icons both apps know (WhatsNew.swift maps them to SF Symbols, src/whats-new/icons.ts to SVG).
++ICONS = {
++    "update", "languages", "terminal", "checklist", "bell", "chat", "mic", "phone", "shield",
++    "sparkles", "bolt", "puzzle", "paint", "eye", "keyboard", "heart", "clock", "download", "bug",
++}
++
++MAC_LANGS = ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "hi", "ar", "bn", "id", "de", "tr", "th", "zh-Hant"]
++
++MAX_ITEMS = 4
++MAX_TITLE = 48     # characters, any language: one line in the card
++MAX_DETAIL = 110   # characters: two short lines at most
++
++failures = []
++
++
++def fail(msg):
++    failures.append(msg)
++    print(f"  ✗ {msg}")
++
++
++def mac_version():
++    text = (ROOT / "NotchBuddy/project.yml").read_text(encoding="utf-8")
++    # The first target is the GitHub app (NotchBuddy); the App Store build has its own numbers.
++    m = re.search(r'CFBundleShortVersionString:\s*"([0-9.]+)"', text)
++    return m.group(1)
++
++
++def windows_version():
++    return json.loads((ROOT / "windows/package.json").read_text(encoding="utf-8"))["version"]
++
++
++def windows_langs():
++    return json.loads((ROOT / "windows/src/i18n/strings.json").read_text(encoding="utf-8"))["languages"]
++
++
++def vkey(v):
++    return tuple(int(x) for x in v.split("."))
++
++
++def check(label, path, version, langs):
++    print(f"\n{label}: {path.relative_to(ROOT)} for {version}")
++    before = len(failures)
++    try:
++        data = json.loads(path.read_text(encoding="utf-8"))
++    except Exception as e:  # noqa: BLE001
++        fail(f"{path.name} does not read as JSON: {e}")
++        return
++    releases = data.get("releases")
++    if not isinstance(releases, list) or not releases:
++        fail("no releases")
++        return
++    versions = [r.get("version", "") for r in releases]
++    if len(set(versions)) != len(versions):
++        fail(f"a version appears twice: {versions}")
++    if any(not re.fullmatch(r"\d+(\.\d+){1,3}", v) for v in versions):
++        fail(f"a version is not numbers and dots: {versions}")
++        return
++    if versions != sorted(versions, key=vkey, reverse=True):
++        fail(f"newest first, please: {versions}")
++    current = next((r for r in releases if r["version"] == version), None)
++    if current is None:
++        fail(f"no entry for {version}: add it to {path.relative_to(ROOT)} (see CLAUDE.md, Releases)")
++        return
++    for r in releases:
++        items = r.get("items")
++        where = r["version"]
++        if not isinstance(items, list) or not (1 <= len(items) <= MAX_ITEMS):
++            fail(f"{where}: 1 to {MAX_ITEMS} items")
++            continue
++        for i, item in enumerate(items, 1):
++            if item.get("icon") not in ICONS:
++                fail(f"{where} item {i}: icon {item.get('icon')!r} is not one of {sorted(ICONS)}")
++            for field, limit in (("title", MAX_TITLE), ("detail", MAX_DETAIL)):
++                values = item.get(field)
++                if not isinstance(values, dict):
++                    fail(f"{where} item {i}: no {field}")
++                    continue
++                # Older entries may miss a language added later (English is shown instead);
++                # the version being shipped must have them all.
++                needed = langs if r is current else ["en"]
++                for lang in needed:
++                    v = values.get(lang)
++                    if not isinstance(v, str) or not v.strip():
++                        fail(f"{where} item {i}: {field} has no {lang}")
++                    elif len(v) > limit:
++                        fail(f"{where} item {i}: {field} in {lang} is {len(v)} characters (at most {limit})")
++                for lang in values:
++                    if lang not in langs:
++                        fail(f"{where} item {i}: {field} has {lang!r}, which the app does not speak")
++    if len(failures) == before:
++        print(f"  ✓ {version}: {len(current['items'])} items in {len(langs)} languages")
++
++
++def main():
++    only = sys.argv[1] if len(sys.argv) > 1 else None
++    if only in (None, "mac"):
++        check("Mac", ROOT / "NotchBuddy/Resources/whats-new.json", mac_version(), MAC_LANGS)
++    if only in (None, "windows"):
++      
+```
+
+**File**: `windows/src/whats-new/whats-new.json` (added, +134/-0)
+```diff
+@@ -0,0 +1,134 @@
++{
++  "about": "What's new, shown once in the island after Coucou updates itself (src/whats-new/). Every Windows and Linux release adds its entry here, in the 12 languages: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
++  "releases": [
++    {
++      "version": "0.5.1",
++      "items": [
++        {
++          "icon": "update",
++          "title": {
++            "en": "New version in the island",
++            "zh-Hans": "岛中的新版本",
++            "hi": "आइलैंड में नया वर्ज़न",
++            "es": "Nueva versión en la isla",
++            "ar": "إصدار جديد في الشريط",
++            "fr": "Nouvelle version dans l'île",
++            "bn": "আইল্যান্ডে নতুন ভার্সন",
++            "pt-BR": "Nova versão na ilha",
++            "ru": "Новая версия на острове",
++            "id": "Versi baru di pulau",
++            "de": "Neue Version in der Insel",
++            "tr": "Adada yeni sürüm"
++          },
++          "detail": {
++            "en": "Coucou tells you when a new version is out. On Windows, one click installs it.",
++            "zh-Hans": "有新版本时 Coucou 会告诉你。在 Windows 上一键即可安装。",
++            "hi": "नया वर्ज़न आने पर Coucou बताता है। Windows पर एक क्लिक में इंस्टॉल।",
++            "es": "Coucou te avisa cuando sale una versión nueva. En Windows, un clic la instala.",
++            "ar": "يخبرك Coucou بصدور إصدار جديد. على Windows تثبّته نقرة واحدة.",
++            "fr": "Coucou te prévient quand une nouvelle version sort. Sur Windows, un clic l'installe.",
++            "bn": "নতুন ভার্সন এলে Coucou জানায়। Windows-এ এক ক্লিকে ইনস্টল।",
++            "pt-BR": "O Coucou avisa quando sai uma nova versão. No Windows, um clique instala.",
++            "ru": "Coucou сообщит о новой версии. В Windows она ставится одним кликом.",
++            "id": "Coucou memberi tahu saat versi baru keluar. Di Windows, sekali klik untuk memasang.",
++            "de": "Coucou sagt dir, wenn eine neue Version da ist. Unter Windows installiert sie ein Klick.",
++            "tr": "Yeni sürüm çıkınca Coucou haber verir. Windows'ta tek tıkla kurulur."
++          }
++        },
++        {
++          "icon": "languages",
++          "title": {
++            "en": "German and Turkish",
++            "zh-Hans": "德语和土耳其语",
++            "hi": "जर्मन और तुर्की",
++            "es": "Alemán y turco",
++            "ar": "الألمانية والتركية",
++            "fr": "Allemand et turc",
++            "bn": "জার্মান ও তুর্কি",
++            "pt-BR": "Alemão e turco",
++            "ru": "Немецкий и турецкий",
++            "id": "Jerman dan Turki",
++            "de": "Deutsch und Türkisch",
++            "tr": "Almanca ve Türkçe"
++          },
++          "detail": {
++            "en": "Coucou now speaks 12 languages.",
++            "zh-Hans": "Coucou 现在支持 12 种语言。",
++            "hi": "Coucou अब 12 भाषाएँ बोलता है।",
++            "es": "Coucou ya habla 12 idiomas.",
++            "ar": "يتحدث Coucou الآن 12 لغة.",
++            "fr": "Coucou parle maintenant 12 langues.",
++            "bn": "Coucou এখন ১২টি ভাষায় কথা বলে।",
++            "pt-BR": "O Coucou agora fala 12 idiomas.",
++            "ru": "Теперь Coucou говорит на 12 языках.",
++            "id": "Coucou kini berbicara 12 bahasa.",
++            "de": "Coucou spricht jetzt 12 Sprachen.",
++            "tr": "Coucou artık 12 dil konuşuyor."
++          }
++        },
++        {
++          "icon": "clock",
++          "title": {
++            "en": "A clock in the island",
++            "zh-Hans": "岛中的时钟",
++            "hi": "आइलैंड में घड़ी",
++            "es": "Un reloj en la isla",
++            "ar": "ساعة في الشريط",
++            "fr": "Une horloge dans l'île",
++            "bn": "আইল্যান্ডে ঘড়ি",
++            "pt-BR": "Um relógio na ilha",
++            "ru": "Часы на острове",
++            "id": "Jam di pulau",
++            "de": "Eine Uhr in der Insel",
++            "tr": "Adada saat"
++          },
++          "detail": {
++            "en": "Optional, in the middle of the compact island.",
++            "zh-Hans": "可选，显示在紧凑岛的中间。",
++            "hi": "वैकल्पिक, कॉम्पैक्ट आइलैंड के बीच में।",
++            "es": "Opcional, en el centro de la isla compacta.",
++            "ar": "اختيارية، في منتصف الشريط المصغّر.",
++            "fr": "En option, au milieu de l'île compacte.",
++            "bn": "ঐচ্ছিক, ছোট আইল্যান্ডের মাঝখানে।",
++            "pt-BR": "Opcional, no meio da ilha compacta.",
++            "ru": "По желанию, в центре компактного острова.",
++            "id": "Opsional, di tengah pulau ringkas.",
++            "de": "Optional, in der Mitte der kompakten Insel.",
++            "tr": "İsteğe bağlı, kompakt adanın ortasında."
++          }
++        },
++        {
++          "icon": "bolt",
++          "title": {
++            "en": "Lighter on Linux",
++            "zh-Hans": "Linux 上更轻快",
++            "hi": "Linux पर हल्का",
++            "es": "Más ligero en Linux",
++            "ar": "أخف على Linux",
++            "fr": "Pl
+```
+
 #### Recent Merged Pull Requests:
-- **PR #806** (closed): update (@betodoescher)
-- **PR #800** (2026-10-18): WhatsApp in one click, Mac 0.5.1 (@Louis-CFM)
-- **PR #799** (2026-10-18): Mac 0.5.0 (@Louis-CFM)
-- **PR #798** (2026-10-18): WhatsApp pill (experimental) (@Louis-CFM)
-- **PR #796** (closed): Fix/linux desktop voice (@PedroMglo)
-- **PR #783** (2026-10-16): dev-install.sh: works with macOS's bash 3.2 (@Louis-CFM)
+- **PR #885** (2026-10-22): Blue Mochi while an update waits, What's new after the update (Mac, Windows, Linux) (@Louis-CFM)
+- **PR #866** (closed): Orca data in the island: agent counters and workspace list (@henriquefps)
+- **PR #847** (closed): Windows: no black rectangle at login, no plan pills of dashes (@umarjavaid4335)
+- **PR #832** (2026-10-20): CI check: #831 on current main (@Louis-CFM)
+- **PR #831** (2026-10-20): feat: add GitLab and Gitea integration pulses (Windows/Linux) (@Andrey89711)
+- **PR #824** (2026-10-20): Mac 0.5.2, Windows and Linux 0.5.1 (@Louis-CFM)
 
 ---
 
@@ -3027,33 +2785,39 @@ WhatsApp in one click, Mac 0.5.1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. a crash: the thermal state change arrives off the main thread
+## X. Mac 0.5.3, Windows and Linux 0.5.2: CHANGELOG, README, versions, What's new
 
 **RULE**:
-When implementing operations in `NotchBuddy/Sources/App/MachineVitals.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f931645e`: a crash: the thermal state change arrives off the main thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b6f2136`: Mac 0.5.3, Windows and Linux 0.5.2: CHANGELOG, README, versions, What's new. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `NotchBuddy/Sources/App/MachineVitals.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        // Everything is received on the main thread: macOS posts some of these (the thermal
-        // state) from a background queue, and Mochi's code only runs on the main one.
-        state.$mode.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
-        state.$mochiOnDesktop.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
-            .receive(on: DispatchQueue.main)
+## 0.5.3 — October 22, 2026
+
+Mochi tells you a new version waits, and after the update he shows you what it brings.
+
+- **Mochi turns blue when a new version waits** *(macOS, GitHub build)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, in the notch and in the menu bar, and opening the notch shows **Update now** first (it is also the first line of the menu). Later hides it for a day. Approvals and questions always come first
+- **What's new, after the update** — once Coucou updated itself, the notch shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the notch, words dictated and time saved with Flow, calls transcribed. All of it is counted on your Mac and never leaves it
+- **Buy Mochi a coffee** — Coucou stays free and open source; if it saves you time, the last step of What's new has a coffee for Mochi (Stripe, the same page as Coucou's website)
+
+## Windows and Linux 0.5.2 — October 22, 2026
+
+- **Mochi turns blue when a new version waits** — once you agreed to look for updates, a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        state.$mode.removeDuplicates().sink { [weak self] _ in
-        state.$mochiOnDesktop.removeDuplicates().sink { [weak self] _ in
+- **Mochi turns blue when a new version waits** *(macOS GitHub build, Windows, Linux)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, and opening the island shows **Update now** first. Later hides it for a day. Approvals and questions always come first
+- **What's new, after the update** — once Coucou updated itself, the island shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the island, words dictated and time saved with Flow, calls transcribed. All of it is counted on your computer and never leaves it. And, if Coucou saves you time, **Buy Mochi a coffee**
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f931645e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b6f2136` are properly handled with clean fallback behavior.

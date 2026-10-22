@@ -4333,3 +4333,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `c691e1b3` | Multi-dimensional audit evidence | 2026-10-22T16:26:10.770Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `5b6eae3d` | Multi-dimensional audit evidence | 2026-10-22T16:26:12.824Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `2eff52c7` | Multi-dimensional audit evidence | 2026-10-22T16:26:16.585Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `17638a0d` | Multi-dimensional audit evidence | 2026-10-22T16:32:17.438Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `ddc16857` | Multi-dimensional audit evidence | 2026-10-22T16:32:21.249Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `0a8f26c4` | Multi-dimensional audit evidence | 2026-10-22T16:32:30.417Z |

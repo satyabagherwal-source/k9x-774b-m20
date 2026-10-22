@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-21T19:12:14.575Z",
+  "last_updated": "2026-10-22T16:32:21.252Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2444,6 +2444,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-pamburus-hl"
+    },
+    {
+      "id": "CD-EEBO",
+      "directive_title": "Mac 0.5.3, Windows and Linux 0.5.2: CHANGELOG, README, versions, What's new",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Louis-CFM/coucou",
+      "source_commit": "ddc16857",
+      "date_staged": "2026-10-22",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-louis-cfm-coucou"
     }
   ]
 }

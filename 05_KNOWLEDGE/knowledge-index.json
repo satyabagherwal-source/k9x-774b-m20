@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T16:26:16.526Z",
+  "last_updated": "2026-10-22T16:32:30.378Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31204,8 +31204,8 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "98a767c4",
-      "content_hash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
+      "source_version": "ddc16857",
+      "content_hash": "845b4426c3c815bbb1d05f738c39ac63f82b5ef10eab67466ae01c93208a8443",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
@@ -31220,7 +31220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:26:46.245Z",
+      "verified_at": "2026-10-22T16:32:21.186Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45898,8 +45898,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "ce685ee6",
-      "content_hash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
+      "source_version": "17638a0d",
+      "content_hash": "ec584f3d71c87b2c3256df031d604e3ecb406d8a7f3dbd30bcb2a6bb5d5eba41",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -45922,6 +45922,11 @@
           "number": 2951,
           "title": "State Invalidation and Drain Invariance During Framed Stream Errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3640,
+          "title": "task: clarify `block_in_place` panics in `LocalSet` (#8701)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45929,7 +45934,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:59:13.133Z",
+      "verified_at": "2026-10-22T16:32:17.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49055,8 +49060,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "2cf64c2f",
-      "content_hash": "b7a7ad8ce8b45339709a0dc7d084c18ef0cf8d3ecddbc9edd129af8b1915fa85",
+      "source_version": "0a8f26c4",
+      "content_hash": "02a53f0967593a554183822c776bb2136cd7f727fca09f2fe1231bc7f0ab50ac",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -49079,6 +49084,11 @@
           "number": 3400,
           "title": "replication proxy responses on session acquisition failure (#56190)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3641,
+          "title": "YQ-5707 Fix pq status mapping (#55621)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49086,7 +49096,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:40:59.655Z",
+      "verified_at": "2026-10-22T16:32:30.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -110067,6 +110077,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T16:26:16.512Z"
+    },
+    "rule-3640": {
+      "learning_id": "rule-3640",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3640,
+      "title": "task: clarify `block_in_place` panics in `LocalSet` (#8701)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "17638a0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:32:17.388Z"
+    },
+    "rule-3641": {
+      "learning_id": "rule-3641",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3641,
+      "title": "YQ-5707 Fix pq status mapping (#55621)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "0a8f26c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T16:32:30.369Z"
     }
   },
   "aliases": {

@@ -4326,3 +4326,6 @@
 | `CYCLE-20261022-6GGF` | `2026-10-22T16:26:10.767Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3637` | Yes (`077d972e...`) |
 | `CYCLE-20261022-6I1G` | `2026-10-22T16:26:12.820Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3638` | Yes (`92219e9d...`) |
 | `CYCLE-20261022-6KXX` | `2026-10-22T16:26:16.581Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3639` | Yes (`016d9fc2...`) |
+| `CYCLE-20261022-EBDN` | `2026-10-22T16:32:17.435Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3640` | Yes (`ec584f3d...`) |
+| `CYCLE-20261022-EEBJ` | `2026-10-22T16:32:21.247Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`845b4426...`) |
+| `CYCLE-20261022-ELE7` | `2026-10-22T16:32:30.415Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3641` | Yes (`02a53f09...`) |

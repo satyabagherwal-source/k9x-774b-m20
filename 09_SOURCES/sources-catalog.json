@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "2cf64c2f",
+    "sourceVersion": "0a8f26c4",
     "license": "Apache-2.0",
-    "contentHash": "b7a7ad8ce8b45339709a0dc7d084c18ef0cf8d3ecddbc9edd129af8b1915fa85",
-    "lastHarvestedAt": "2026-10-20T21:40:59.730Z",
+    "contentHash": "02a53f0967593a554183822c776bb2136cd7f727fca09f2fe1231bc7f0ab50ac",
+    "lastHarvestedAt": "2026-10-22T16:32:30.417Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "ce685ee6",
+    "sourceVersion": "17638a0d",
     "license": "MIT",
-    "contentHash": "a5f41546f95cd2f5b87d510c51b1bd4309bfc9ff3c191c494ab7e21a73ce2ce0",
-    "lastHarvestedAt": "2026-10-20T00:59:13.205Z",
+    "contentHash": "ec584f3d71c87b2c3256df031d604e3ecb406d8a7f3dbd30bcb2a6bb5d5eba41",
+    "lastHarvestedAt": "2026-10-22T16:32:17.438Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "98a767c4",
+    "sourceVersion": "ddc16857",
     "license": "MIT",
-    "contentHash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
-    "lastHarvestedAt": "2026-10-19T22:26:46.312Z",
+    "contentHash": "845b4426c3c815bbb1d05f738c39ac63f82b5ef10eab67466ae01c93208a8443",
+    "lastHarvestedAt": "2026-10-22T16:32:21.249Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {
