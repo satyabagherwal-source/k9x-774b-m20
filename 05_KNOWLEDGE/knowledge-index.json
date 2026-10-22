@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T19:16:27.854Z",
+  "last_updated": "2026-10-22T19:22:50.298Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28736,8 +28736,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "7cb3c422",
-      "content_hash": "f65cba1bce65642e44d5df12cf9a4ed38307fc49f18524cb7bc61ce9e9a0ba46",
+      "source_version": "86c71b95",
+      "content_hash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -28750,6 +28750,11 @@
           "number": 2839,
           "title": "Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduli",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3712,
+          "title": "Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28757,7 +28762,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:59:34.512Z",
+      "verified_at": "2026-10-22T19:22:46.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39254,14 +39259,19 @@
       "slug": "qdrant-qdrant",
       "platform": "github",
       "source_url": "https://github.com/qdrant/qdrant",
-      "source_version": "016542aa",
-      "content_hash": "27b83912203b302abe4155641241909ce0237d864350397e332cac11c29ca41b",
+      "source_version": "222b2e44",
+      "content_hash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
       "dossier_path": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
       "promoted_rules": [
         {
           "number": 2246,
           "title": "build(deps): bump urllib3 and pyjwt in /tests (#10912)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3713,
+          "title": "[AI, graph indexing variations] Graph builder cleanups before indexing variation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39270,7 +39280,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:32:44.330Z",
+      "verified_at": "2026-10-22T19:22:50.289Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47356,14 +47366,19 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "94123e97",
-      "content_hash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
+      "source_version": "02474e61",
+      "content_hash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
         {
           "number": 1794,
           "title": "test(ui): replace no-op step regression test with history navigation check",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3711,
+          "title": "Merge pull request #252 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -47372,7 +47387,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:41:48.476Z",
+      "verified_at": "2026-10-22T19:22:37.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48812,8 +48827,8 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "8ef2dad3",
-      "content_hash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
+      "source_version": "5a36d344",
+      "content_hash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
@@ -48828,7 +48843,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T01:21:13.094Z",
+      "verified_at": "2026-10-22T19:22:41.252Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111454,6 +111469,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T19:16:27.844Z"
+    },
+    "rule-3711": {
+      "learning_id": "rule-3711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3711,
+      "title": "Merge pull request #252 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "02474e61",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:22:37.552Z"
+    },
+    "rule-3712": {
+      "learning_id": "rule-3712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3712,
+      "title": "Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "86c71b95",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:22:46.328Z"
+    },
+    "rule-3713": {
+      "learning_id": "rule-3713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3713,
+      "title": "[AI, graph indexing variations] Graph builder cleanups before indexing variation",
+      "source_url": "https://github.com/qdrant/qdrant",
+      "source_version": "222b2e44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T19:22:50.289Z"
     }
   },
   "aliases": {

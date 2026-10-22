@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source**: github ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
-> **Source Version**: `94123e97`  
+> **Source Version**: `02474e61`  
 > **License**: ISC  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:41:48.341Z  
+> **Timestamp**: 2026-10-22T19:22:37.323Z  
 > **Learning ID**: `learn-github-unhappychoice-gitlogue`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:41:47.032Z  
+> **Harvest Timestamp**: 2026-10-22T19:22:36.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cinematic Git commit replay tool for the terminal, turning your Git history into a living, animated story.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5143 stars
+- **Stars / Engagement**: 5205 stars
 
 ---
 
@@ -2505,428 +2505,69 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b23f105` (2026-10-12)
-**Commit Message**: test(ui): replace no-op step regression test with history navigation check
+### Incident Patch 1: `02474e61` (2026-10-21)
+**Commit Message**: Merge pull request #252 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.3
 
-The previous key_release_events_must_not_step_an_extra_line test passed
-even without the fix, because step_line() only ensures a pause and the
-asserted playback_state never changes. Use 'p' history navigation, which
-moves the history index twice when release events are not ignored.
-Also extract press_event/release_event helpers.
+chore(deps): bump tree-sitter-scala from 0.26.2 to 0.26.3
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/ui.rs` (modified, +20/-34)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1075,6 +1075,14 @@ mod tests {
-         event::KeyEvent::new(code, KeyModifiers::NONE)
-     }
+@@ -2308,9 +2308,9 @@ dependencies = [
  
-+    fn press_event(code: KeyCode) -> event::KeyEvent {
-+        event::KeyEvent::new_with_kind(code, KeyModifiers::NONE, event::KeyEventKind::Press)
-+    }
-+
-+    fn release_event(code: KeyCode) -> event::KeyEvent {
-+        event::KeyEvent::new_with_kind(code, KeyModifiers::NONE, event::KeyEventKind::Release)
-+    }
-+
-     fn quit_event() -> io::Result<Event> {
-         Ok(Event::Key(key_event(KeyCode::Char('q'))))
-     }
-@@ -1282,57 +1290,35 @@ mod tests {
-         let mut ui = test_ui();
-         assert_eq!(ui.playback_state, PlaybackState::Playing);
- 
--        let press = event::KeyEvent::new_with_kind(
--            KeyCode::Char(' '),
--            KeyModifiers::NONE,
--            event::KeyEventKind::Press,
--        );
--        let release = event::KeyEvent::new_with_kind(
--            KeyCode::Char(' '),
--            KeyModifiers::NONE,
--            event::KeyEventKind::Release,
--        );
--
--        ui.handle_event(Event::Key(press));
-+        ui.handle_event(Event::Key(press_event(KeyCode::Char(' '))));
-         assert_eq!(ui.playback_state, PlaybackState::Paused);
- 
-         // The release of the same physical keypress must be ignored, otherwise
-         // playback resumes immediately.
--        ui.handle_event(Event::Key(release));
-+        ui.handle_event(Event::Key(release_event(KeyCode::Char(' '))));
-         assert_eq!(ui.playback_state, PlaybackState::Paused);
-     }
- 
-     #[test]
-     fn key_release_events_must_not_quit_the_app() {
-         let mut ui = test_ui();
--        let release = event::KeyEvent::new_with_kind(
--            KeyCode::Char('q'),
--            KeyModifiers::NONE,
--            event::KeyEventKind::Release,
--        );
- 
--        ui.handle_event(Event::Key(release));
-+        ui.handle_event(Event::Key(release_event(KeyCode::Char('q'))));
-         assert_ne!(ui.state, UIState::Finished);
-     }
- 
-     #[test]
--    fn key_release_events_must_not_step_an_extra_line() {
-+    fn key_release_events_must_not_navigate_history_twice() {
-         let mut ui = test_ui();
--        let press = event::KeyEvent::new_with_kind(
--            KeyCode::Char('l'),
--            KeyModifiers::NONE,
--            event::KeyEventKind::Press,
--        );
--        let release = event::KeyEvent::new_with_kind(
--            KeyCode::Char('l'),
--            KeyModifiers::NONE,
--            event::KeyEventKind::Release,
--        );
-+        ui.load_commit(metadata("1111111", "first"));
-+        ui.load_commit(metadata("2222222", "second"));
-+        ui.load_commit(metadata("3333333", "third"));
- 
--        ui.handle_event(Event::Key(press));
--        let after_press = ui.playback_state;
--        ui.handle_event(Event::Key(release));
--        assert_eq!(ui.playback_state, after_press);
-+        ui.handle_event(Event::Key(press_event(KeyCode::Char('p'))));
-+        assert_eq!(ui.history_index, Some(1));
-+
-+        ui.handle_event(Event::Key(release_event(KeyCode::Char('p'))));
-+        assert_eq!(ui.history_index, Some(1));
-     }
- 
-     #[test]
+ [[package]]
+ name = "tree-sitter-scala"
+-version = "0.26.2"
++version = "0.26.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "24e0ab4505990bfe30051761d40a7bf4033ce5a81c9eda9e20e987a5cdc84826"
++checksum = "c554730d29306d9c7cdd26912638d2401378c26961e12d161a071df43f49b81b"
+ dependencies = [
+  "cc",
+  "tree-sitter-language",
 ```
 
 ---
 
-### Incident Patch 2: `3b7f3721` (2026-10-01)
-**Commit Message**: fix: respect pause and detached checkouts in watch mode
+### Incident Patch 2: `b0c640a9` (2026-10-21)
+**Commit Message**: chore(deps): bump tree-sitter-scala from 0.26.2 to 0.26.3
 
-- Do not advance to the next queued commit while playback is paused,
-  and keep the paused state from falling through to the non-watch
-  waiting branch
-- Do not replay commits when HEAD returns to an unchanged branch tip
-  after a detached checkout, while still replaying commits rebased
-  while detached
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/ui.rs` (modified, +81/-1)
-```diff
-@@ -514,7 +514,9 @@ impl<'a> UI<'a> {
- 
-         match self.state {
-             UIState::Playing if self.engine.is_finished() && self.watcher.is_some() => {
--                self.advance_to_next_commit();
-+                if self.playback_state != PlaybackState::Paused {
-+                    self.advance_to_next_commit();
-+                }
-             }
-             UIState::Watching if self.playback_state != PlaybackState::Paused => {
-                 self.play_next_watched_commit();
-@@ -1839,6 +1841,84 @@ mod tests {
-         assert_eq!(ui.history.last().unwrap().hash, next);
-     }
- 
-+    #[test]
-+    fn watch_mode_ignores_return_from_detached_checkout() {
-+        let test_repo = TestRepo::new();
-+        let ancestor =
-+            test_repo.commit_file("src/lib.rs", "fn old() {}\n", "ancestor", 1_700_000_000);
-+        test_repo.commit_file("src/lib.rs", "fn tip() {}\n", "tip", 1_700_000_060);
-+        let branch = test_repo.repo.head().unwrap().name().unwrap().to_string();
-+        let repo = GitRepository::open(&test_repo.path).unwrap();
-+        let now = Instant::now();
-+        let mut ui = watch_ui(&repo, now);
-+
-+        test_repo
-+            .repo
-+            .set_head_detached(git2::Oid::from_str(&ancestor).unwrap())
-+            .unwrap();
-+        ui.advance_state_after_tick(now + Duration::from_secs(2));
-+        test_repo.repo.set_head(&branch).unwrap();
-+        ui.advance_state_after_tick(now + Duration::from_secs(4));
-+
-+        assert_eq!(ui.state, UIState::Watching);
-+        assert!(ui.history.is_empty());
-+    }
-+
-+    #[test]
-+    fn watch_mode_replays_commits_rebased_while_detached() {
-+        let test_repo = TestRepo::new();
-+        let tip = test_repo.commit_file("src/lib.rs", "fn old() {}\n", "tip", 1_700_000_000);
-+        let branch = test_repo.repo.head().unwrap().name().unwrap().to_string();
-+        let repo = GitRepository::open(&test_repo.path).unwrap();
-+        let now = Instant::now();
-+        let mut ui = watch_ui(&repo, now);
-+
-+        test_repo
-+            .repo
-+            .set_head_detached(git2::Oid::from_str(&tip).unwrap())
-+            .unwrap();
-+        ui.advance_state_after_tick(now + Duration::from_secs(2));
-+        let rebased =
-+            test_repo.commit_file("src/lib.rs", "fn rebased() {}\n", "rebased", 1_700_000_060);
-+        test_repo
-+            .repo
-+            .reference(
-+                &branch,
-+                git2::Oid::from_str(&rebased).unwrap(),
-+                true,
-+                "rebase",
-+            )
-+            .unwrap();
-+        test_repo.repo.set_head(&branch).unwrap();
-+        ui.advance_state_after_tick(now + Duration::from_secs(4));
-+
-+        assert_eq!(ui.state, UIState::Playing);
-+        assert_eq!(ui.history.last().unwrap().hash, rebased);
-+    }
-+
-+    #[test]
-+    fn watch_mode_does_not_advance_to_queued_commit_while_paused() {
-+        let test_repo = TestRepo::new();
-+        test_repo.commit_file("src/lib.rs", "fn old() {}\n", "existing", 1_700_000_000);
-+        let repo = GitRepository::open(&test_repo.path).unwrap();
-+        let now = Instant::now();
-+        let mut ui = watch_ui(&repo, now);
-+        test_repo.commit_file("src/lib.rs", "fn first() {}\n", "first", 1_700_000_060);
-+        let second =
-+            test_repo.commit_file("src/lib.rs", "fn second() {}\n", "second", 1_700_000_120);
-+        ui.advance_state_after_tick(now + Duration::from_secs(2));
-+
-+        ui.toggle_pause();
-+        finish_playback(&mut ui);
-+        ui.advance_state_after_tick(now + Duration::from_secs(2));
-+        assert_eq!(ui.state, UIState::Playing);
-+        assert_eq!(ui.history.len(), 1);
-+
-+        ui.toggle_pause();
-+        ui.advance_state_after_tick(now + Duration::from_secs(2));
-+        assert_eq!(ui.history.last().unwrap().hash, second);
-+    }
-+
-     #[test]
-     fn watch_mode_does_not_start_new_commit_while_paused() {
-         let test_repo = TestRepo::new();
-```
-
-**File**: `src/watch.rs` (modified, +51/-9)
-```diff
-@@ -13,6 +13,8 @@ const MAX_SPEED_MULTIPLIER: f64 = 10.0;
- pub struct CommitWatcher {
-     last_head: Option<String>,
-     last_branch: Option<String>,
-+    /// Branch and its tip recorded when HEAD became detached.
-+    detached_from: Option<(String, Option<String>)>,
-     pending: VecDeque<String>,
-     next_poll: Instant,
- }
-@@ -22,6 +24,7 @@ impl CommitWatcher {
-         Self {
-             last_head: repo.head_commit_id(),
-             last_branch: repo.head_branch_name(),
-+            detached_from: None,
-             pending: VecDeque::new(),
-             next_poll: now + POLL_INTERVAL,
-         }
-@@ -46,10 +49,10 @@ impl CommitWatcher {
-     }
- 
-     fn check_head(&mut self, repo: &GitRepository) {
--        let branch_switched = self.update_branch(repo.head_branch_name());
-         let Some(head) = repo.head_commit_id() else {
-             return;
-         };
-+        let branch_switched = self.update_branch(repo.head_branch_name(), &head);
-         if branch_switched || self.last_head.as_deref() == Some(head.as_str()) {
-             self.last_head = Some(head);
-             return;
-@@ -61,18 +64,33 @@ impl CommitWatcher {
-         self.last_head = Some(head);
-     }
- 
--    /// Records the checked-out branch and reports whether it changed.
--    /// Detached HEAD (e.g. mid-rebase) is ignored so rebased commits are still replayed.
--    fn update_branch(&mut self, branch: Option<String>) -> bool {
-+    /// Records the checked-out branch and reports whether HEAD moved without new commits:
-+    /// a switch to another branch, or a return to an unchanged branch after a detached checkout.
-+    /// Detached HEAD itself (e.g. mid-rebase) is ignored so rebased commits are still replayed.
-+    fn update_branch(&mut self, branch: Option<String>, head: &str) -> bool {
-         let Some(branch) = branch else {
-+            self.remember_detached_tip();
-             return false;
-         };
-+        let returned_unchanged = self
-+            .detached_from
-+            .take()
-+            .is_some_and(|(detached, tip)| detached == branch && tip.as_deref() == Some(head));
-         let switched = self
-             .last_branch
-             .as_ref()
-             .is_some_and(|last| *last != branch);
-         self.last_branch = Some(branch);
--        switched
-+        switched || returned_unchanged
-+    }
-+
-+    fn remember_detached_tip(&mut self) {
-+        if self.detached_from.is_none() {
-+            self.detached_from = self
-+                .last_branch
-+                .clone()
-+                .map(|branch| (branch, self.last_head.clone()));
-+        }
-     }
- 
-     fn enqueue(&mut self, commits: Vec<String>) {
-@@ -96,6 +114,7 @@ mod tests {
-         CommitWatcher {
-             last_head: None,
-             last_branch: None,
-+            detached_from: None,
-             pending: pending.iter().map(|hash| hash.to_string()).collect(),
-             next_poll: Instant::now(),
-         }
-@@ -129,10 +148,33 @@ mod tests {
-     fn update_branch_reports_switch_only_between_named_branches() {
-         let mut watcher = watcher_with_pending(&[]);
- 
--        assert!(!watcher.update_branch(Some("main".to_string())));
--        assert!(!watcher.update_branch(None));
--        assert!(!watcher.update_branch(Some("main".to_string())));
--        assert!(watcher.update_branch(Some("feature".to_string())));
-+        assert!(!watcher.update_branch(Some("main".to_string()), "a"));
-+        assert!(!watcher.update_branch(None, "b"));
-+        assert!(!watcher.update_branch(Some("main".to_string()), "c"));
-+        assert!(watcher.update_branch(Some("feature".to_string()), "c"));
-+    }
-+
-+    #[test]
-+    fn update_branch_reports_return_to_unchanged_tip_after_detaching() {
-+        let mut watcher = watcher_with_pending(&[]);
-+        watcher.last_branch = Some("main".to_string());
-+        watcher.last_head = Some("tip".to_string());
-+
-+        assert!(!watcher.update_branch(None, "ancestor"));
-+        watcher.last_head = Some("ancestor".to_string());
-+
-+        assert!(watcher.update_branch(Some("main".to_string()), "tip"));
-+    }
-+
-+    #[test]
-+    fn update_branch_keeps_replaying_when_branch_tip_changed_while_detached() {
-+        let mut watcher = watcher_with_pending(&[]);
-+        watcher.last_branch = Some("main".to_string());
-+        watcher.last_head = Some("tip".to_string());
-+
-+        assert!(!watcher.update_branch(None, "onto"));
-+
-+        assert!(!watcher.update_branch(Some("main".to_string()), "rebased"));
-     }
- 
-     #[test]
-```
+Bumps [tree-sitter-scala](https://github.com/tree-sitter/tree-sitter-scala) from 0.26.2 to 0.26.3.
+- [Release notes](https://github.com/tree-sitter/tree-sitter-scala/releases)
+- [Commits](https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.2...v0.26.3)
 
 ---
+updated-dependencies:
+- dependency-name: tree-sitter-scala
+  dependency-version: 0.26.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-### Incident Patch 3: `8a7158b4` (2026-10-01)
-**Commit Message**: fix: redraw when UI state changes without animation progress
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-The run loop only redrew when the animation engine advanced, so the
-initial watch screen and the startup HEAD display could stay blank.
-Force a redraw on the first frame, after showing the startup HEAD, and
-after any terminal event.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/ui.rs` (modified, +18/-1)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -66,6 +66,7 @@ pub struct UI<'a> {
-     menu_index: usize,
-     prev_state: Option<Box<UIState>>,
-     watcher: Option<CommitWatcher>,
-+    force_redraw: bool,
- }
+@@ -2308,9 +2308,9 @@ dependencies = [
  
- impl<'a> UI<'a> {
-@@ -133,6 +134,7 @@ impl<'a> UI<'a> {
-             menu_index: 0,
-             prev_state: None,
-             watcher: None,
-+            force_redraw: true,
-         }
-     }
- 
-@@ -410,6 +412,7 @@ impl<'a> UI<'a> {
-         };
-         self.engine.load_commit(&metadata);
-         while self.engine.manual_step(StepMode::Change) {}
-+        self.force_redraw = true;
-     }
- 
-     fn poll_watcher(&mut self, now: Instant) {
-@@ -569,6 +572,7 @@ impl<'a> UI<'a> {
-     }
- 
-     fn handle_event(&mut self, event: Event) {
-+        self.force_redraw = true;
-         if let Event::Key(key) = event {
-             self.handle_key_event(key);
-         }
-@@ -633,7 +637,7 @@ impl<'a> UI<'a> {
-             self.sync_exit_state();
- 
-             self.update_viewport(terminal.size()?.into());
--            let needs_redraw = self.engine.tick();
-+            let needs_redraw = self.engine.tick() | std::mem::take(&mut self.force_redraw);
-             self.draw_if_needed(terminal, needs_redraw)?;
-             self.handle_pending_event(&mut poll, &mut read)?;
- 
-@@ -1760,6 +1764,18 @@ mod tests {
-         while ui.engine.manual_step(StepMode::Change) {}
-     }
- 
-+    #[test]
-+    fn run_loop_draws_first_frame_even_without_animation_progress() {
-+        let mut ui = test_ui();
-+        ui.state = UIState::Watching;
-+        let mut terminal = Terminal::new(TestBackend::new(100, 30)).unwrap();
-+
-+        ui.run_loop_with(&mut terminal, |_| Ok(true), quit_event, Instant::now)
-+            .unwrap();
-+
-+        assert!(buffer_text(terminal.backend().buffer()).contains("Watching for new commits..."));
-+    }
-+
-     #[test]
-     fn watch_mode_shows_head_in_final_state_without_playing_it() {
-         let test_repo = TestRepo::new();
-@@ -1774,6 +1790,7 @@ mod tests {
-         assert!(ui.history.is_empty());
-         assert!(ui.engine.is_finished());
-         assert_eq!(ui.engine.current_metadata().unwrap().hash, head);
-+        assert!(ui.force_redraw);
-     }
- 
-     #[test]
+ [[package]]
+ name = "tree-sitter-scala"
+-version = "0.26.2"
++version = "0.26.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "24e0ab4505990bfe30051761d40a7bf4033ce5a81c9eda9e20e987a5cdc84826"
++checksum = "c554730d29306d9c7cdd26912638d2401378c26961e12d161a071df43f49b81b"
+ dependencies = [
+  "cc",
+  "tree-sitter-language",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #252** (2026-10-21): chore(deps): bump tree-sitter-scala from 0.26.2 to 0.26.3 (@dependabot[bot])
 - **PR #251** (2026-10-12): fix(ui): ignore key release events so keys do not fire twice on Windows (@Naoki326)
 - **PR #249** (2026-10-12): chore(deps): bump tree-sitter-erlang from 0.20.0 to 0.21.0 (@dependabot[bot])
 - **PR #248** (2026-10-12): chore(deps): bump tree-sitter-php from 0.24.2 to 0.25.1 (@dependabot[bot])
 - **PR #247** (2026-10-09): chore(deps): bump tree-sitter-swift from 0.7.3 to 0.7.4 (@dependabot[bot])
 - **PR #246** (closed): fix: report invalid ignore patterns (@Ha1baraA11)
-- **PR #245** (2026-10-05): chore(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (@dependabot[bot])
 
 ---
 
@@ -2946,80 +2587,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(ui): replace no-op step regression test with history navigation check
+## X. Merge pull request #252 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.
 
 **RULE**:
-When implementing operations in `src/ui.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b23f105`: test(ui): replace no-op step regression test with history navigation check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02474e61`: Merge pull request #252 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ui.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    fn press_event(code: KeyCode) -> event::KeyEvent {
-        event::KeyEvent::new_with_kind(code, KeyModifiers::NONE, event::KeyEventKind::Press)
-    }
-
-    fn release_event(code: KeyCode) -> event::KeyEvent {
-        event::KeyEvent::new_with_kind(code, KeyModifiers::NONE, event::KeyEventKind::Release)
-    }
-
-        ui.handle_event(Event::Key(press_event(KeyCode::Char(' '))));
-        ui.handle_event(Event::Key(release_event(KeyCode::Char(' '))));
-        ui.handle_event(Event::Key(release_event(KeyCode::Char('q'))));
-    fn key_release_events_must_not_navigate_history_twice() {
-        ui.load_commit(metadata("1111111", "first"));
-        ui.load_commit(metadata("2222222", "second"));
-        ui.load_commit(metadata("3333333", "third"));
-        ui.handle_event(Event::Key(press_event(KeyCode::Char('p'))));
-        assert_eq!(ui.history_index, Some(1));
-
-        ui.handle_event(Event::Key(release_event(KeyCode::Char('p'))));
-        assert_eq!(ui.history_index, Some(1));
+version = "0.26.3"
+checksum = "c554730d29306d9c7cdd26912638d2401378c26961e12d161a071df43f49b81b"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let press = event::KeyEvent::new_with_kind(
-            KeyCode::Char(' '),
-            KeyModifiers::NONE,
-            event::KeyEventKind::Press,
-        );
-        let release = event::KeyEvent::new_with_kind(
-            KeyCode::Char(' '),
-            KeyModifiers::NONE,
-            event::KeyEventKind::Release,
-        );
-
-        ui.handle_event(Event::Key(press));
-        ui.handle_event(Event::Key(release));
-        let release = event::KeyEvent::new_with_kind(
-            KeyCode::Char('q'),
-            KeyModifiers::NONE,
-            event::KeyEventKind::Release,
-        );
-        ui.handle_event(Event::Key(release));
-    fn key_release_events_must_not_step_an_extra_line() {
-        let press = event::KeyEvent::new_with_kind(
-            KeyCode::Char('l'),
-            KeyModifiers::NONE,
-            event::KeyEventKind::Press,
-        );
-        let release = event::KeyEvent::new_with_kind(
-            KeyCode::Char('l'),
-            KeyModifiers::NONE,
-            event::KeyEventKind::Release,
-        );
-        ui.handle_event(Event::Key(press));
-        let after_press = ui.playback_state;
-        ui.handle_event(Event::Key(release));
-        assert_eq!(ui.p
+version = "0.26.2"
+checksum = "24e0ab4505990bfe30051761d40a7bf4033ce5a81c9eda9e20e987a5cdc84826"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b23f105` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02474e61` are properly handled with clean fallback behavior.

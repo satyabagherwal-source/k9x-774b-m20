@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "7cb3c422",
+    "sourceVersion": "86c71b95",
     "license": "Apache-2.0",
-    "contentHash": "f65cba1bce65642e44d5df12cf9a4ed38307fc49f18524cb7bc61ce9e9a0ba46",
-    "lastHarvestedAt": "2026-10-19T21:59:34.583Z",
+    "contentHash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
+    "lastHarvestedAt": "2026-10-22T19:22:46.381Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "94123e97",
+    "sourceVersion": "02474e61",
     "license": "ISC",
-    "contentHash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
-    "lastHarvestedAt": "2026-10-18T22:41:48.514Z",
+    "contentHash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
+    "lastHarvestedAt": "2026-10-22T19:22:37.606Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -6713,10 +6713,10 @@
     "repository": "qdrant/qdrant",
     "platform": "github",
     "sourceUrl": "https://github.com/qdrant/qdrant",
-    "sourceVersion": "016542aa",
+    "sourceVersion": "222b2e44",
     "license": "Apache-2.0",
-    "contentHash": "27b83912203b302abe4155641241909ce0237d864350397e332cac11c29ca41b",
-    "lastHarvestedAt": "2026-10-19T06:32:44.383Z",
+    "contentHash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
+    "lastHarvestedAt": "2026-10-22T19:22:50.342Z",
     "learningId": "learn-github-qdrant-qdrant"
   },
   "vuetifyjs-vuetify": {
@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "8ef2dad3",
+    "sourceVersion": "5a36d344",
     "license": "Apache-2.0",
-    "contentHash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
-    "lastHarvestedAt": "2026-10-20T01:21:13.155Z",
+    "contentHash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
+    "lastHarvestedAt": "2026-10-22T19:22:41.312Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {

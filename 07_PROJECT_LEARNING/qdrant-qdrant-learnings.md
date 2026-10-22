@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/qdrant-qdrant-learnings.md`  
 > **Source**: github ([https://github.com/qdrant/qdrant](https://github.com/qdrant/qdrant))  
-> **Source Version**: `016542aa`  
+> **Source Version**: `222b2e44`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:32:44.145Z  
+> **Timestamp**: 2026-10-22T19:22:50.061Z  
 > **Learning ID**: `learn-github-qdrant-qdrant`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qdrant-qdrant-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/qdrant/qdrant](https://github.com/qdrant/qdrant))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:32:44.136Z  
+> **Harvest Timestamp**: 2026-10-22T19:22:50.055Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Qdrant - High-performance, massive-scale Vector Database and Vector Search Engine for the next generation of AI. Also available in the cloud https://cloud.qdrant.io/
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 35133 stars
+- **Stars / Engagement**: 35187 stars
 
 ---
 
@@ -42,7 +42,8 @@
 use std::collections::HashSet;
 
 use ahash::AHashMap;
-use common::counter::hardware_accumulator::HwMeasurementAcc;
+use common::ambient::AmbientFutureExt;
+use common::reason::reason;
 use futures::StreamExt as _;
 use futures::stream::FuturesUnordered;
 
@@ -223,6 +224,7 @@ impl Collection {
                 strict_mode_config,
                 uuid: _,
                 metadata,
+                created_at: _,
             } = &new_config;
 
             let is_core_config_updated = params != &config.params
@@ -281,8 +283,7 @@ impl Collection {
 
         let shard_ids = shards.keys().copied().collect::<HashSet<_>>();
 
-        // There are two components, where shard-related info is stored:
-        // Shard objects th
+        // There are two components, where shard-related info i
 ```
 
 ### Core Architecture Module: `lib/collection/src/collection_state.rs`
@@ -453,7 +454,6 @@ async fn cleanup_file(path: &Path) {
 use std::sync::Arc;
 use std::time::Duration;
 
-use common::counter::hardware_accumulator::HwMeasurementAcc;
 use common::types::ScoreType;
 use segment::data_types::query_context::FormulaContext;
 use segment::index::query_optimization::rescore_formula::parsed_formula::ParsedFormula;
@@ -472,7 +472,6 @@ impl LocalShard {
         limit: usize,
         score_threshold: Option<ScoreType>,
         timeout: Duration,
-        hw_measurement_acc: HwMeasurementAcc,
     ) -> CollectionResult<Vec<ScoredPoint>> {
         let stopping_guard = StoppingGuard::new();
 
@@ -490,7 +489,6 @@ impl LocalShard {
             self.segments.clone(),
             arc_ctx,
             &self.search_runtime,
-            hw_measurement_acc,
             timeout,
         );
 
@@ -513,7 +511,8 @@ use std::time::Duration;
 
 use api::grpc::UpdateBatchInternal;
 use async_trait::async_trait;
-use common::counter::hardware_accumulator::HwMeasurementAcc;
+use common::ambient::AmbientFutureExt;
+use common::reason::reason;
 use common::tar_ext;
 use common::types::{DeferredBehavior, TelemetryDetail};
 use parking_lot::Mutex as ParkingMutex;
@@ -763,8 +762,7 @@ impl QueueProxyShard {
     /// # Warning
     ///
     /// This intentionally forgets and drops updates pending to be transferred to the remote shard.
-    /// The remote shard is therefore left in an inconsistent state, which should be resolved
-   
+    /// The remote shard is therefore left in an inconsistent state, which should be resolv
 ```
 
 ### Core Architecture Module: `lib/collection/src/shards/replica_set/replica_set_state.rs`
@@ -1611,13 +1609,11 @@ pub struct UpdateWorkers {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11056** (2026-10-12): **Nightly model testing failure**
-  *Symptoms*: ## Last failure  The nightly model testing job failed.  - Seed: `7327973513379700016` (reproduce with `--seed 7327973513379700016`) - Date: 09.10.2026 05:59 - Failed: no io_uring only (async scorer passed the same seed) - [Failed run](https://github.com/qdrant/qdrant/actions/runs/37874419483) - [Commit](https://github.com/qdrant/qdrant/tree/6c75188f52134a945abbdf757f60accaefa855d6) (the `dev` commit under test)  Note: this issue is reused for every nightly failure, so the details above describe the **latest** one only. Consecutive failures are often unrelated bugs; check the linked run. 
-  **Post-Mortem & Fix Analysis**:
-  > ## Investigation summary (nightly run from 2026-10-09)  ### What failed - Workflow: Nightly Model Testing, job `model-testing` - Failed step: **no io_uring** only (async-scorer pass with the **same seed** succeeded) - Seed: `7327973513379700016` - Panic:   ```   scroll(paged, filter=HasId([Uuid(62362eb8-81fc-43e1-a59c-4e7653a5842b)])):   id-set mismatch (returned 1 ids, expected 0);   extra in returned: [Uuid(62362eb8-81fc-43e1-a59c-4e7653a5842b)]   ``` - Stack is `apply` → `ScrollPaged` (`reads.rs` id-set assert), **not** the restart `assert_matches_model` path.  ### Timing around the panic At ~`op:395315`: 1. Mid-run restart completes reopen + `wait_for_pending_updates` 2. Unfiltered restart `scroll + verify` runs (breadcrumb printed) 3. ~100ms later a new `CreateSnapshot` starts 4. ~180ms after that, `ScrollPaged(HasId)` panics on a point the in-memory model says is absent  So this looks like a **live ghost** shortly after restart verify, with a snapshot in flight — not a failed rel
+- **Issue #11258** (2026-10-20): **SQ8 quantized Euclid search returns empty results for large-magnitude vectors (1.19.1)**
+  *Symptoms*: <!--- Provide a general summary of the issue in the Title above -->  ## Current Behavior With scalar quantization (INT8) and Euclid distance, collections whose vectors have large magnitudes (components ~1e20, representable float32) return **zero results** for every query — 10 stored points, limit 10, both `rescore=false` and `rescore=true`. Manhattan at the same scale works (10/10 with correct ~1e20 distances), isolating the defect to the squared-distance path.  ## Steps to Reproduce See `reproduce.py`. Qdrant 1.19.1 (docker); SQ8 config `{"type":"int8"}`, dim 4, vectors `uniform(-1,1)*1e20`, query at the same scale.  [reproduce.py](https://github.com/user-attachments/files/33697746/reproduce.py)   ## Expected Behavior `min(limit, count)` results; overflowed dequantized distances should be clamped or flagged rather than silently dropped. Same magnitude family as the unquantified L2 drop (reported separately); this is the quantized path with the same completeness observable.   ## Context (Environment) Server: Qdrant 1.19.1 (docker, default settings).   
 
-- **Issue #10858** (2026-10-06): **[bug] Sender-side snapshot shard transfer keeps the shards holder read lock across the whole transfer**
-  *Symptoms*: ## Current Behavior  The source side of a snapshot shard transfer is driven by `transfer_snapshot` in `lib/collection/src/shards/transfer/snapshot.rs`. The function acquires the collection registry read lock, `shards_holder.read()`, resolves the transferred shard into a borrowed `&Arc<ShardReplicaSet>`, and keeps that reference alive until its last statement. The read lock therefore remains held across the snapshot creation, across the remote recovery in which the destination peer downloads and unpacks the snapshot from this peer, across the consensus confirmation of the `Partial` state, and across the queue flush. The remote recovery call carries an explicit client deadline of 24 hours, and for the shard sizes this path is used with, the phase lasts minutes to hours.  Any collection operation that needs the write side of the same lock queues behind the transfer. That includes configuration updates applied through consensus (`UpdateCollection` with a strict mode change), snapshot state application (`apply_shard_info`), resharding stage transitions, and collection shutdown. The consensus thread applies entries serially, so the queued writer occupies it for the whole transfer, and the transfer's own `SetReplicaState(Partial)` confirmation cannot be applied. The transfer attempt then fails after three 10 second confirmations, and the driver restarts the transfer up to three times, which takes the guard again.  The lock is write preferring, so once the writer is queued every late
+- **Issue #11257** (2026-10-20): **Binary-quantized Manhattan query returns results ordered from farthest to nearest when rescore=false (1.19.1)**
+  *Symptoms*: ## Current Behavior With binary quantization enabled and `quantization.rescore=false`, a Manhattan nearest-neighbor query returns points roughly ordered from the **largest** reported score to the smallest — i.e. the *worst* candidates first — and the reported scores are the discrete BQ distance levels rather than rescored Manhattan distances.  `exact=true` and `rescore=true` both return correctly ascending distances, so the ranking inversion is specific to the unrescored BQ path.  This looks related to #10607 (same symptom for `Euclid`), but manifests for the `Manhattan` distance, where the returned order is almost fully reversed rather than merely locally disordered.  ## Steps to Reproduce 1. Start Qdrant v1.19.1 (observed server reports `1.19.1`). 2. Run the attached `qdrant_bq_manhattan_reproduce.py` (Python 3, standard library    HTTP only):     ```sh    python qdrant_bq_manhattan_reproduce.py --url http://127.0.0.1:6333    ```  3. It creates a temporary collection    `{"vectors":{"size":32,"distance":"Manhattan"},"quantization_config":{"binary":{"always_ram":true}}}`,    upserts 300 random `[-1,1)^32` points, queries once with    `{"params":{"exact":false,"quantization":{"rescore":false}}}`, and then with    `rescore=true` and `exact=true` as controls.  [reproduce.py](https://github.com/user-attachments/files/33697109/reproduce.py)   ## Expected Behavior For a distance metric (lower = better), returned points should be ordered by ascending reported score, and the scores 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1634,638 +1630,1298 @@ pub struct UpdateWorkers {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `268576f4` (2026-10-02)
-**Commit Message**: build(deps): bump urllib3 and pyjwt in /tests (#10912)
+### Incident Patch 1: `10039ce8` (2026-10-19)
+**Commit Message**: [AI, graph indexing variations] Graph builder cleanups before indexing variations (#11192)
 
-* build(deps): bump urllib3 from 2.7.0 to 2.8.0 in /tests
+* HNSW build: share the GPU vectors through an `Arc`
 
-Bumps [urllib3](https://github.com/urllib3/urllib3) from 2.7.0 to 2.8.0.
-- [Release notes](https://github.com/urllib3/urllib3/releases)
-- [Changelog](https://github.com/urllib3/urllib3/blob/main/CHANGES.rst)
-- [Commits](https://github.com/urllib3/urllib3/compare/2.7.0...2.8.0)
+`GpuInsertContext` borrowed `GpuVectorStorage`, so whoever held an insert
+context had to keep the vectors alive somewhere else. It now holds an
+`Arc` of them and has no lifetime: the vector buffers live as long as any
+insert context that uses them.
 
----
-updated-dependencies:
-- dependency-name: urllib3
-  dependency-version: 2.8.0
-  dependency-type: indirect
-...
+This lets one struct own both the uploaded vectors and the insert
+context for payload blocks, which the GPU graph builder needs. No
+behavior changes.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* build(deps): bump pyjwt from 2.13.0 to 2.15.0 in /tests
+* HNSW build: drop the unused count of points linked by payload blocks
 
-Bumps [pyjwt](https://github.com/jpadilla/pyjwt) from 2.13.0 to 2.15.0.
-- [Release notes](https://github.com/jpadilla/pyjwt/releases)
-- [Changelog](https://github.com/jpadilla/pyjwt/blob/master/CHANGELOG.rst)
-- [Commits](https://github.com/jpadilla/pyjwt/compare/2.13.0...2.15.0)
+`build_additional_links` counted the points it linked, and the build
+kept the larger of that count and the number of indexed points. Since
+the GPU integration (#5535), the number of indexed points is every
+non-deleted point, also when `m == 0`, and the points of payload blocks
+are a subset of them. So the count never changed the result, and
+`indexed_vector_count` stays the number of non-deleted points.
 
----
-updated-dependencies:
-- dependency-name: pyjwt
-  dependency-version: 2.15.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.nor
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+(cherry 
 
-**File**: `tests/pyproject.toml` (modified, +1/-1)
+**File**: `lib/segment/src/index/hnsw_index/gpu/gpu_graph_builder.rs` (modified, +14/-11)
 ```diff
-@@ -7,7 +7,7 @@ dependencies = [
-     "grpc-requests>=0.1,<0.2",
-     "grpcio>=1.80,<2",
-     "more-itertools>=10.8,<11",
--    "pyjwt>=2.13.0,<3",
-+    "pyjwt>=2.15.0,<3",
-     "jsons>=1.6.3,<2",
-     "pytest>=8.4,<9",
-     "pytest-timeout>=2.4,<3",
-```
-
-**File**: `tests/uv.lock` (modified, +7/-7)
-```diff
-@@ -1543,14 +1543,14 @@ wheels = [
+@@ -16,8 +16,8 @@ pub static GPU_MAX_VISITED_FLAGS_FACTOR: usize = 32;
  
- [[package]]
- name = "pyjwt"
--version = "2.13.0"
-+version = "2.15.0"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/3b/81/58d0ac84e1ef3a3843791d6954d94c0b33d526c75eeb1efbce9d0a4c4077/pyjwt-2.13.0.tar.gz", hash = "sha256:41571c89ca91598c79e8ef18a2d07367d4810fbbd6f637794879baf1b7703423", size = 107515, upload-time = "2026-05-21T19:54:36.618Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/02/a5/5197bfd06417837ac079921c66fa6393f1dea3557272a263cebfef69e432/pyjwt-2.15.0.tar.gz", hash = "sha256:b11c5f9791d7bf51c2b39a81ed669f6b2dbbd669df2942f6c60167e9e3d1abe4", size = 120513, upload-time = "2026-09-23T16:56:00.689Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/a3/5e/ecf12fdb62546d64385c158514e9b2b671f7832108ef2ecd2020ce0af2d1/pyjwt-2.13.0-py3-none-any.whl", hash = "sha256:66adcc2aff09b3f1bbd95fc1e1577df8ac8723c978552fd43304c8a290ac5728", size = 31274, upload-time = "2026-05-21T19:54:35.362Z" },
-+    { url = "https://files.pythonhosted.org/packages/e8/55/40e45bf052ee8ee12a4dfd785519660f8effa7b065442b91646ec6828619/pyjwt-2.15.0-py3-none-any.whl", hash = "sha256:7a3742debf6b879e912dbb9819ceec1594be812452b78c5f2e2dfc56564954f8", size = 33680, upload-time = "2026-09-23T16:55:59.241Z" },
- ]
+ /// Build HNSW graph on GPU.
+ #[allow(clippy::too_many_arguments)]
+-pub fn build_hnsw_on_gpu<'a, 'b>(
+-    gpu_insert_context: &mut GpuInsertContext<'b>,
++pub fn build_hnsw_on_gpu<'a>(
++    gpu_insert_context: &mut GpuInsertContext,
+     // Graph with all settings like m, ef, levels, etc.
+     reference_graph: &GraphLayersBuilder,
+     // Parallel inserts count.
+@@ -103,6 +103,7 @@ pub fn build_hnsw_on_gpu<'a, 'b>(
+ #[cfg(test)]
+ mod tests {
+     use std::borrow::Borrow;
++    use std::sync::Arc;
  
- [[package]]
-@@ -1784,7 +1784,7 @@ requires-dist = [
-     { name = "grpcio", specifier = ">=1.80,<2" },
-     { name = "jsons", specifier = ">=1.6.3,<2" },
-     { name = "more-itertools", specifier = ">=10.8,<11" },
--    { name = "pyjwt", specifier = ">=2.13.0,<3" },
-+    { name = "pyjwt", specifier = ">=2.15.0,<3" },
-     { name = "pytest", specifier = ">=8.4,<9" },
-     { name = "pytest-cases", specifier = ">=3.9.1,<4" },
-     { name = "pytest-subtests", specifier = ">=0.14.1,<0.15" },
-@@ -2182,11 +2182,11 @@ wheels = [
+     use common::ambient;
  
- [[package]]
- name = "urllib3"
--version = "2.7.0"
-+version = "2.8.0"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz", hash = "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c", size = 433602, upload-time = "2026-05-07T16:13:18.596Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/e3/05/b17359e1cefb4f909b5e40b1b90a496d987258916dbbf88e842c729f510e/urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63", size = 458972, upload-time = "2026-09-15T19:29:36.253Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
-+    { url = "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3", size = 135717, upload-time = "2026-09-15T19:29:34.577Z" },
- ]
+@@ -125,17 +126,19 @@ mod tests {
+         let instance = gpu::GPU_TEST_INSTANCE.clone();
+         let device = gpu::Device::new(instance.clone(), &instance.physical_devices()[0]).unwrap();
  
- [[package]]
-```
-
----
-
-### Incident Patch 2: `6c037938` (2026-10-01)
-**Commit Message**: Fix merge and search with an empty multivector placeholder (#10870)
-
-* Support empty multivector placeholder in merge and search
-
-A named multivector added to an existing segment is backed by an
-EmptyDense placeholder that carries a multivector config. Merging it
-into a multi-dense target failed with "source is not a f32 multi-dense
-storage", and a multivector query against it failed with a multi/regular
-conversion error.
-
-Read it as one zero inner vector per deleted slot when merging, and
-score multivector queries through a multi-dense view of the placeholder.
-
-Fixes #10857
-
-* Cover uint8 and float16 placeholders in merge, tidy multivector view
-
-Read an EmptyDense placeholder as zeros in the dense uint8/float16 and
-multi uint8/float16 merge readers too, not only float32. Turbo readers
-are left out: their record size comes from the target's quantizer.
-
-Make the multivector view expect a multivector config instead of
-inventing MaxSim, score the placeholder in the raw scorer test, and
-move test imports to module level.
-
-* Support empty Turbo4 placeholder in merge
-
-A named Turbo4 vector added to an existing segment is backed by an
-EmptyDense placeholder. Merging it into a turbo target
-
-**File**: `lib/segment/src/segment_constructor/batched_reader.rs` (modified, +113/-5)
-```diff
-@@ -11,8 +11,11 @@ use sparse::common::sparse_vector::SparseVector;
- 
- use crate::common::operation_error::{OperationError, OperationResult};
- use crate::data_types::named_vectors::CowMultiVector;
--use crate::data_types::vectors::{VectorElementType, VectorElementTypeByte, VectorElementTypeHalf};
-+use crate::data_types::vectors::{
-+    TypedMultiDenseVector, VectorElementType, VectorElementTypeByte, VectorElementTypeHalf,
-+};
- use crate::types::CompactExtendedPointId;
-+use crate::vector_storage::turbo::shared::quantized_vector_size;
- use crate::vector_storage::{
-     DenseTQVectorStorage, DenseTQVectorStorageRead, DenseVectorStorage, DenseVectorStorageRead,
-     MultiTQVectorStorage, MultiTQVectorStorageRead, MultiVectorStorage, MultiVectorStorageRead,
-@@ -414,6 +417,11 @@ fn read_dense_byte(
-         #[cfg(target_os = "linux")]
-         VectorStorageEnum::DenseUringByte(v) => v.get_dense::<Sequential>(key),
-         VectorStorageEnum::DenseAppendableMemmapByte(v) => v.get_dense::<Sequential>(key),
-+        // Placeholder for a vector added to an existing segment: every slot is
-+        // deleted, but the destination still needs one zero vector per slot.
-+        VectorStorageEnum::EmptyDense(v) => {
-+            Cow::Owned(vec![0; DenseVectorStorageRead::vector_dim(v)])
-+        }
-         VectorStorageEnum::DenseVolatile(_)
-         | VectorStorageEnum::DenseMemmap(_)
-         | VectorStorageEnum::DenseGraphInline(_)
-@@ -430,7 +438,6 @@ fn read_dense_byte(
-         | VectorStorageEnum::DenseTurboMemmap(_)
-         | VectorStorageEnum::DenseTurboGraphInline(_)
-         | VectorStorageEnum::DenseTurboAppendableMemmap(_)
--        | VectorStorageEnum::EmptyDense(_)
-         | VectorStorageEnum::MultiDenseTurbo(_)
-         | VectorStorageEnum::EmptySparse(_) => {
-             return Err(OperationError::service_error(
-@@ -470,6 +477,12 @@ fn read_dense_half(
-         #[cfg(target_os = "linux")]
-         VectorStorageEnum::DenseUringHalf(v) => v.get_dense::<Sequential>(key),
-         VectorStorageEnum::DenseAppendableMemmapHalf(v) => v.get_dense::<Sequential>(key),
-+        // Placeholder for a vector added to an existing segment: every slot is
-+        // deleted, but the destination still needs one zero vector per slot.
-+        VectorStorageEnum::EmptyDense(v) => Cow::Owned(vec![
-+            VectorElementTypeHalf::ZERO;
-+            DenseVectorStorageRead::vector_dim(v)
-+        ]),
-         VectorStorageEnum::DenseVolatile(_)
-         | VectorStorageEnum::DenseMemmap(_)
-         | VectorStorageEnum::DenseGraphInline(_)
-@@ -486,7 +499,6 @@ fn read_dense_half(
-         | VectorStorageEnum::DenseTurboMemmap(_)
-         | VectorStorageEnum::DenseTurboGraphInline(_)
-         | VectorStorageEnum::DenseTurboAppendableMemmap(_)
--        | VectorStorageEnum::EmptyDense(_)
-         | VectorStorageEnum::MultiDenseTurbo(_)
-         | VectorStorageEnum::EmptySparse(_) => {
-             return Err(OperationError::service_error(
-@@ -524,6 +536,14 @@ fn read_dense_tq(
-         #[cfg(target_os = "linux")]
-         VectorStorageEnum::DenseTurboUring(v) => v.get_dense_tq::<Sequential>(key),
-         VectorStorageEnum::DenseTurboAppendableMemmap(v) => v.get_dense_tq::<Sequential>(key),
-+        // Placeholder for a vector added to an existing segment: every slot is
-+        // deleted, but the destination still needs one zero record per slot.
-+        // The record size depends only on dim and distance, which the
-+        // placeholder shares with the destination.
-+        VectorStorageEnum::EmptyDense(v) => {
-+            let size = quantized_vector_size(DenseVectorStorageRead::vector_dim(v), v.distance());
-+            Cow::Owned(vec![0; size])
-+        }
-         VectorStorageEnum::DenseVolatile(_)
-         | VectorStorageEnum::DenseMemmap(_)
-         | VectorStorageEnum::DenseMemmapByte(_)
-@@ -540,7 +560,6 @@ fn read_dense_tq(
-         | VectorStorageEnum::MultiDenseAppendableMemmap(_)
-         | VectorStorageEnum::MultiDenseAppendableMemmapByte(_)
-         | VectorStorageEnum::MultiDenseAppendableMemmapHalf(_)
--        | VectorStorageEnum::EmptyDense(_)
-         | VectorStorageEnum::MultiDenseTurbo(_)
-         | VectorStorageEnum::EmptySparse(_) => {
-             return Err(OperationError::service_error(
-@@ -575,6 +594,12 @@ fn read_multi_tq(
-     let deleted = source.is_deleted_vector(key);
-     let vector = match source {
-         VectorStorageEnum::MultiDenseTurbo(v) => v.get_multi_tq::<Sequential>(key),
-+        // Named multivector added to an existing segment: all slots are deleted,
-+        // but the destination still needs one zero inner record per slot.
-+        VectorStorageEnum::EmptyDense(v) if v.multi_vector_config().is_some() => {
-+            let size = quantized_vector_size(DenseVectorStorageRead::vector_dim(v), v.distance());
-+            Cow::Owned(vec![0; size])
-+        }
-         VectorStorageEnum::DenseVolatile(_)
-         | VectorStorageEnum::DenseMemmap(_)
-         | VectorStorageEnum::DenseMemma
-```
-
-**File**: `lib/segment/src/vector_storage/dense/empty_dense_vector_storage.rs` (modified, +85/-5)
-```diff
-@@ -11,12 +11,15 @@ use common::universal_io::UserData;
- 
- use crate::common::Flusher;
- use crate::common::operation_error::{OperationError, OperationResult};
--use crate::data_types::named_vectors::CowVector;
--use crate::data_types::vectors::{VectorElementType, VectorRef};
-+use crate::data_types::named_vectors::{CowMultiVector, CowVector};
-+use crate::data_types::vectors::{
-+    TypedMultiDenseVector, TypedMultiDenseVectorRef, VectorElementType, VectorRef,
-+};
- use crate::types::{Distance, MultiVectorConfig, VectorStorageDatatype};
- use crate::vector_storage::{
--    DenseVectorStorage, DenseVectorStorageRead, VectorStorage, VectorStorageEnum,
--    VectorStorageRead, default_for_each_in_dense_batch, default_read_vector_bytes_impl,
-+    DenseVectorStorage, DenseVectorStorageRead, MultiVectorStorageRead, VectorStorage,
-+    VectorStorageEnum, VectorStorageRead, default_for_each_in_dense_batch,
-+    default_read_vector_bytes_impl,
- };
- 
- /// Placeholder vector storage that contains no data.
-@@ -120,6 +123,52 @@ impl DenseVectorStorage<VectorElementType> for EmptyDenseVectorStorage {
-     }
- }
- 
-+/// Multivector view of the placeholder, used when it was created with a
-+/// multivector config. Every slot is deleted and holds one zero inner vector,
-+/// so scoring stays well-defined and the results are discarded as deleted.
-+impl MultiVectorStorageRead<VectorElementType> for EmptyDenseVectorStorage {
-+    fn vector_dim(&self) -> usize {
-+        self.dim
-+    }
-+
-+    fn get_multi<P: AccessPattern>(
-+        &self,
-+        _key: PointOffsetType,
-+    ) -> CowMultiVector<'_, VectorElementType> {
-+        CowMultiVector::Owned(TypedMultiDenseVector::placeholder(self.dim))
-+    }
-+
-+    fn get_multi_opt<P: AccessPattern>(
-+        &self,
-+        key: PointOffsetType,
-+    ) -> Option<CowMultiVector<'_, VectorElementType>> {
-+        ((key as usize) < self.num_points).then(|| self.get_multi::<P>(key))
-+    }
-+
-+    fn for_each_in_batch_multi<F>(&self, keys: &[PointOffsetType], mut callback: F)
-+    where
-+        F: FnMut(usize, TypedMultiDenseVectorRef<'_, VectorElementType>),
-+    {
-+        let zeros = vec![0.0; self.dim];
-+        for idx in 0..keys.len() {
-+            callback(idx, TypedMultiDenseVectorRef::new(&zeros, self.dim));
-+        }
-+    }
-+
-+    fn iterate_inner_vectors(
-+        &self,
-+    ) -> impl Iterator<Item = Cow<'_, [VectorElementType]>> + Clone + Send {
-+        // All vectors are deleted, so there are no inner vectors to report.
-+        std::iter::empty()
-+    }
-+
-+    fn multi_vector_config(&self) -> &MultiVectorConfig {
-+        self.multi_vector_config
-+            .as_ref()
-+            .expect("multivector view requires the placeholder to have a multivector config")
-+    }
-+}
-+
- impl VectorStorageRead for EmptyDenseVectorStorage {
-     fn size_of_available_vectors_in_bytes(&self) -> usize {
-         // All vectors are deleted, so there are no available vectors.
-@@ -202,6 +251,9 @@ mod tests {
-     use common::generic_consts::Random;
- 
-     use super::*;
-+    use crate::data_types::vectors::{MultiDenseVectorInternal, QueryVector, VectorInternal};
-+    use crate::types::MultiVectorComparator;
-+    use crate::vector_storage::raw_scorer::new_raw_scorer;
- 
-     #[test]
-     fn test_empty_dense_basic_contract() {
-@@ -223,7 +275,7 @@ mod tests {
-         assert_eq!(storage.deleted_vector_bitslice().len(), 1000);
-         assert!(storage.is_deleted_vector(0));
-         assert!(storage.is_deleted_vector(999));
--        assert_eq!(storage.vector_dim(), 128);
-+        assert_eq!(DenseVectorStorageRead::vector_dim(&storage), 128);
-         assert!(storage.files().is_empty());
-         assert!(storage.multi_vector_config().is_none());
- 
-@@ -322,4 +374,32 @@ mod tests {
-         // delete_vector returns false because it was already deleted
-         assert!(!storage.delete_vector(0).unwrap());
-     }
-+
-+    /// Searching a multivector added to an already-indexed segment (backed by this
-+    /// placeholder) must not fail with a multi/regular conversion error.
-+    #[test]
-+    fn test_empty_dense_multi_vector_raw_scorer() {
-+        let multi_cfg = MultiVectorConfig {
-+            comparator: MultiVectorComparator::MaxSim,
-+        };
-+        let storage = new_empty_dense_vector_storage(
-+            4,
-+            Distance::Cosine,
-+            VectorStorageDatatype::Float32,
-+            false,
-+            Some(multi_cfg),
-+            3,
+-        let gpu_vector_storage = GpuVectorStorage::new(
+-            device.clone(),
+-            test.vector_storage.borrow(),
+-            None,
+-            false,
+-            &false.into(),
+-        )
+-        .unwrap();
++        let gpu_vector_storage = Arc::new(
++            GpuVectorStorage::new(
++                device.clone(),
++                test.vector_storage.borrow(),
++                None,
++                false,
++                &false.into(),
++            )
++            .unwrap(),
 +        );
-+        let query = QueryVector::Nearest(VectorInternal::MultiDense(
-+            MultiDenseVectorInternal::new(vec![1.0; 8], 4),
-+        ));
-+
-+        let scorer = new_raw_scorer(query, &storage, HardwareCounterCell::disposable())
-+            .expect("multivector query on an empty placeholder must not fail");
-+
-+        // Slots are deleted zero placeholders: scoring them must not panic.
-+        let mut scores = [0.0; 3];
-+        scorer.score_points(&[0, 1, 2], &mut scores);
-+        assert!(scores.iter().all(|score| score.is_finite()));
-+ 
+ 
+         let mut gpu_search_context = GpuInsertContext::new(
+-            &gpu_vector_storage,
++            gpu_vector_storage,
+             groups_count,
+             test.graph_layers_builder.hnsw_m(),
+             test.graph_layers_builder.ef_construct(),
 ```
 
-**File**: `lib/segment/src/vector_storage/raw_scorer.rs` (modified, +8/-2)
+**File**: `lib/segment/src/index/hnsw_index/gpu/gpu_insert_context.rs` (modified, +16/-14)
 ```diff
-@@ -19,7 +19,7 @@ use super::{
- use crate::common::operation_error::{OperationError, OperationResult};
- use crate::data_types::primitive::PrimitiveVectorElement;
- use crate::data_types::vectors::{
--    DenseVector, MultiDenseVectorInternal, QueryVector, VectorInternal,
-+    DenseVector, MultiDenseVectorInternal, QueryVector, VectorElementType, VectorInternal,
- };
- use crate::spaces::metric::Metric;
- use crate::spaces::simple::{CosineMetric, DotProductMetric, EuclidMetric, ManhattanMetric};
-@@ -114,7 +114,13 @@ pub fn new_raw_scorer<'a>(
-         VectorStorageEnum::MultiDenseTurbo(vs) => {
-             raw_turbo_multi_scorer_impl(query, vs.as_ref(), hc)
-         }
--        VectorStorageEnum::EmptyDense(vs) => raw_scorer_impl(query, vs, hc),
-+        VectorStorageEnum::EmptyDense(vs) => {
-+            if vs.multi_vector_config().is_some() {
-+                raw_multi_scorer_impl::<VectorElementType, _>(query, vs, hc)
-+            } else {
-+                raw_scorer_impl(query, vs, hc)
-+            }
-+        }
-         VectorStorageEnum::EmptySparse(vs) => raw_sparse_scorer_impl(query, vs, hc),
+@@ -28,11 +28,12 @@ pub struct GpuRequest {
+ /// Structure to perform insert and update entries operations on GPU.
+ /// It handles all GPU resources and shaders instead of gpu vector storage,
+ /// which may be shared between multiple hnsw constructions.
+-pub struct GpuInsertContext<'a> {
++pub struct GpuInsertContext {
+     context: gpu::Context,
+     groups_count: usize,
+ 
+-    gpu_vector_storage: &'a GpuVectorStorage,
++    /// Shared with whoever uploaded the vectors, so the vector buffers outlive the context.
++    gpu_vector_storage: Arc<GpuVectorStorage>,
+     gpu_links: GpuLinks,
+     gpu_visited_flags: GpuVisitedFlags,
+     insert_resources: GpuInsertResources,
+@@ -178,9 +179,9 @@ impl GpuInsertResources {
      }
  }
+ 
+-impl<'a> GpuInsertContext<'a> {
++impl GpuInsertContext {
+     pub fn new(
+-        gpu_vector_storage: &'a GpuVectorStorage,
++        gpu_vector_storage: Arc<GpuVectorStorage>,
+         // Parallel inserts count.
+         groups_count: usize,
+         hnsw_m: HnswM,
+@@ -196,7 +197,7 @@ impl<'a> GpuInsertContext<'a> {
+         let device = gpu_vector_storage.device();
+         let points_count = gpu_vector_storage.num_vectors();
+         let insert_resources =
+-            GpuInsertResources::new(gpu_vector_storage, groups_count, points_count, ef, exact)?;
++            GpuInsertResources::new(&gpu_vector_storage, groups_count, points_count, ef, exact)?;
+ 
+         let gpu_links = GpuLinks::new(device.clone(), hnsw_m.m, hnsw_m.m0, points_count)?;
+ 
+@@ -209,15 +210,15 @@ impl<'a> GpuInsertContext<'a> {
+ 
+         let greedy_search_shader = ShaderBuilder::new(device.clone())
+             .with_shader_code(include_str!("shaders/run_greedy_search.comp"))
+-            .with_parameters(gpu_vector_storage)
++            .with_parameters(gpu_vector_storage.as_ref())
+             .with_parameters(&gpu_links)
+             .with_parameters(&gpu_visited_flags)
+             .with_parameters(&insert_resources)
+             .build("run_greedy_search.comp")?;
+ 
+         let insert_shader = ShaderBuilder::new(device.clone())
+             .with_shader_code(include_str!("shaders/run_insert_vector.comp"))
+-            .with_parameters(gpu_vector_storage)
++            .with_parameters(gpu_vector_storage.as_ref())
+             .with_parameters(&gpu_links)
+             .with_parameters(&gpu_visited_flags)
+             .with_parameters(&insert_resources)
+@@ -503,7 +504,7 @@ mod tests {
+         groups_count: usize,
+         m: usize,
+         ef: usize,
+-        gpu_vector_storage: GpuVectorStorage,
++        gpu_vector_storage: Arc<GpuVectorStorage>,
+         vector_holder: TestRawScorerProducer,
+         graph_layers_builder: GraphLayersBuilder,
+     }
+@@ -547,8 +548,9 @@ mod tests {
+         let instance = gpu::GPU_TEST_INSTANCE.clone();
+         let device = gpu::Device::new(instance.clone(), &instance.physical_devices()[0]).unwrap();
+ 
+-        let gpu_vector_storage =
+-            GpuVectorStorage::new(device.clone(), &storage, None, false, &false.into()).unwrap();
++        let gpu_vector_storage = Arc::new(
++            GpuVectorStorage::new(device.clone(), &storage, None, false, &false.into()).unwrap(),
++        );
+ 
+         TestData {
+             groups_count,
+@@ -560,12 +562,12 @@ mod tests {
+         }
+     }
+ 
+-    fn create_insert_context(test_data: &TestData) -> GpuInsertContext<'_> {
++    fn create_insert_context(test_data: &TestData) -> GpuInsertContext {
+         let total_num_vectors = test_data.gpu_vector_storage.num_vectors() + test_data.groups_count;
+         let point_ids = (0..total_num_vectors as PointOffsetType).collect_vec();
+ 
+         let mut gpu_insert_context = GpuInsertContext::new(
+-            &test_data.gpu_vector_storage,
++            test_data.gpu_vector_storage.clone(),
+             test_data.groups_count,
+             HnswM::new(test_data.m, test_data.m),
+             test_data.ef,
+@@ -617,7 +619,7 @@ mod tests {
+ 
+         let search_shader = ShaderBuilder::new(device.clone())
+             .with_shader_code(include_str!("shaders/tests/test_hnsw_search.comp"))
+-            .with_parameters(gpu_insert_context.gpu_vector_storage)
++            .with_parameters(gpu_insert_context.gpu_vector_storage.as_ref())
+             .with_parameters(&gpu_insert_context.gpu_links)
+             .with_parameters(&gpu_insert_context.gpu_visited_flags)
+             .with_parameters(&gpu_insert_context.insert_resources)
+@@ -894,7 +896,7 @@ mod tests {
+         // Create test pipeline
+         let shader = ShaderBuilder::new(device.clone())
+             .with_shader_code(include_str!("shaders/tests/test_heuristic.comp"))
+-            .with_parameters(gpu_insert_context.gpu_vector_storage)
++            .with_parameters(gpu_insert_context.gpu_vector_storage.as_ref())
+             .with_parameters(&gpu_insert_context.gpu_links)
+             .with_parameters(&gpu_insert_context.gpu_visited_flags)
+             .with_parameters(&gpu_insert_context.insert_resources)
 ```
 
-**File**: `lib/segment/src/vector_storage/turbo/shared.rs` (modified, +44/-0)
+**File**: `lib/segment/src/index/hnsw_index/gpu/gpu_level_builder.rs` (modified, +12/-9)
 ```diff
-@@ -44,6 +44,24 @@ pub(super) fn build_quantizer(dim: usize, distance: Distance) -> TurboQuantizer
+@@ -98,6 +98,7 @@ fn gpu_batched_apply_entries(batch: &Batch, new_entries: Vec<PointOffsetType>) {
+ #[cfg(test)]
+ mod tests {
+     use std::borrow::Borrow;
++    use std::sync::Arc;
+ 
+     use common::ambient;
+     use common::types::PointOffsetType;
+@@ -139,17 +140,19 @@ mod tests {
+         let instance = gpu::GPU_TEST_INSTANCE.clone();
+         let device = gpu::Device::new(instance.clone(), &instance.physical_devices()[0]).unwrap();
+ 
+-        let gpu_vector_storage = GpuVectorStorage::new(
+-            device.clone(),
+-            test.vector_storage.borrow(),
+-            None,
+-            false,
+-            &false.into(),
+-        )
+-        .unwrap();
++        let gpu_vector_storage = Arc::new(
++            GpuVectorStorage::new(
++                device.clone(),
++                test.vector_storage.borrow(),
++                None,
++                false,
++                &false.into(),
++            )
++            .unwrap(),
++        );
+ 
+         let mut gpu_search_context = GpuInsertContext::new(
+-            &gpu_vector_storage,
++            gpu_vector_storage,
+             groups_count,
+             hnsw_m,
+             ef,
+```
+
+**File**: `lib/segment/src/index/hnsw_index/hnsw/build.rs` (modified, +1/-5)
+```diff
+@@ -214,7 +214,7 @@ impl HNSWIndex {
+             #[cfg(not(feature = "gpu"))]
+             let mut gpu_insert_context = None;
+ 
+-            let indexed_payload_vectors = build_additional_links(
++            build_additional_links(
+                 id_tracker_ref.deref(),
+                 &vector_storage_ref,
+                 &quantized_vectors_ref,
+@@ -230,10 +230,6 @@ impl HNSWIndex {
+                 rng,
+                 stopped,
+             )?;
+-
+-            debug_assert!(indexed_vectors >= indexed_payload_vectors || config.m == 0);
+-            indexed_vectors = indexed_vectors.max(indexed_payload_vectors);
+-            debug_assert!(indexed_payload_vectors <= total_vector_count);
+         } else {
+             debug!("skip building additional HNSW links");
+         }
+```
+
+**File**: `lib/segment/src/index/hnsw_index/hnsw/build/additional_links.rs` (modified, +4/-19)
+```diff
+@@ -6,7 +6,7 @@ use std::collections::HashMap;
+ use std::sync::atomic::AtomicBool;
+ 
+ use common::ambient;
+-use common::bitvec::{BitSliceExt as _, BitVec};
++use common::bitvec::BitSliceExt as _;
+ use common::progress_tracker::ProgressTracker;
+ use common::reason::reason;
+ use common::types::{DeferredBehavior, PointOffsetType};
+@@ -83,8 +83,6 @@ fn in_build_order(
+ ///
+ /// With an `old_index` (whose payload links have the same `m`), each block starts from the
+ /// links its points had to each other in the old graph; see [`BlockSeeds`].
+-///
+-/// Returns the number of vectors that got indexed through these subgraphs.
+ #[allow(clippy::too_many_arguments)]
+ #[cfg_attr(
+     not(feature = "gpu"),
+@@ -95,7 +93,7 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
+     vector_storage: &VectorStorageEnum,
+     quantized_vectors: &Option<QuantizedVectors>,
+     payload_index: &StructPayloadIndex,
+-    gpu_insert_context: &mut Option<GpuInsertContext<'_>>,
++    gpu_insert_context: &mut Option<GpuInsertContext>,
+     graph_layers_builder: &mut GraphLayersBuilder,
+     config: &HnswGraphConfig,
+     payload_m: HnswM,
+@@ -105,7 +103,7 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
+     pool: &ThreadPool,
+     rng: &mut R,
+     stopped: &AtomicBool,
+-) -> OperationResult<usize> {
++) -> OperationResult<()> {
+     let total_vector_count = vector_storage.total_vector_count();
+     let deleted_bitslice = vector_storage.deleted_vector_bitslice();
+ 
+@@ -156,13 +154,6 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
+     let mut seeded_points = 0;
+     let mut block_points = 0;
+ 
+-    let mut indexed_vectors_set = if config.m != 0 {
+-        // Every vector is already indexed in the main graph, so skip counting.
+-        BitVec::new()
+-    } else {
+-        BitVec::repeat(false, total_vector_count)
+-    };
+-
+     // The GPU stores vectors and links by segment id, so it builds blocks in a segment-sized
+     // builder. This one only carries the block graph's settings: `payload_m`, `ef_construct`
+     // and level 0 for every point.
+@@ -245,12 +236,6 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
+                 trace!("graph connectivity: {graph_connectivity} for {field}");
+             }
+ 
+-            if !indexed_vectors_set.is_empty() {
+-                for &point_id in &points_to_index {
+-                    indexed_vectors_set.set(point_id as usize, true);
+-                }
+-            }
+-
+             #[cfg(feature = "gpu")]
+             if let (Some(gpu_insert_context), Some(reference_graph)) =
+                 (gpu_insert_context.as_mut(), &gpu_block_reference)
+@@ -318,7 +303,7 @@ pub(super) fn build_additional_links<R: Rng + ?Sized>(
+     if seeds.is_some() {
+         debug!("seeded {seeded_points} of {block_points} payload block points from the old graph");
+     }
+-    Ok(indexed_vectors_set.count_ones())
++    Ok(())
+ }
+ 
+ /// Get list of points for indexing, associated with payload block filtering condition
+```
+
+**File**: `lib/segment/src/index/hnsw_index/hnsw/gpu_build.rs` (modified, +12/-10)
+```diff
+@@ -1,3 +1,4 @@
++use std::sync::Arc;
+ use std::sync::atomic::AtomicBool;
+ 
+ use common::ambient;
+@@ -36,12 +37,13 @@ pub(super) fn upload_and_build_main_graph(
+     deleted_bitslice: &BitSlice,
+     entry_points_num: usize,
+     stopped: &AtomicBool,
+-) -> OperationResult<(Option<GpuVectorStorage>, Option<GraphLayersBuilder>)> {
++) -> OperationResult<(Option<Arc<GpuVectorStorage>>, Option<GraphLayersBuilder>)> {
+     if !(build_main_graph || has_additional_links) {
+         return Ok((None, None));
+     }
+     let timer = std::time::Instant::now();
+-    let gpu_vectors = create_gpu_vectors(gpu_device, vector_storage, quantized_vectors, stopped)?;
++    let gpu_vectors =
++        create_gpu_vectors(gpu_device, vector_storage, quantized_vectors, stopped)?.map(Arc::new);
+     if !build_main_graph {
+         return Ok((gpu_vectors, None));
+     }
+@@ -66,7 +68,7 @@ fn build_main_graph_on_gpu(
+     id_tracker: &IdTrackerEnum,
+     vector_storage: &VectorStorageEnum,
+     quantized_vectors: &Option<QuantizedVectors>,
+-    gpu_vectors: Option<&GpuVectorStorage>,
++    gpu_vectors: Option<&Arc<GpuVectorStorage>>,
+     graph_layers_builder: &GraphLayersBuilder,
+     deleted_bitslice: &BitSlice,
+     entry_points_num: usize,
+@@ -84,7 +86,7 @@ fn build_main_graph_on_gpu(
+ 
+     let mut gpu_insert_context = if let Some(gpu_vectors) = gpu_vectors {
+         Some(GpuInsertContext::new(
+-            gpu_vectors,
++            gpu_vectors.clone(),
+             get_gpu_groups_count(),
+             graph_layers_builder.hnsw_m(),
+             graph_layers_builder.ef_construct(),
+@@ -113,7 +115,7 @@ pub(super) fn build_block_on_gpu(
+     id_tracker: &IdTrackerEnum,
+     vector_storage: &VectorStorageEnum,
+     quantized_vectors: &Option<QuantizedVectors>,
+-    gpu_insert_context: &mut GpuInsertContext<'_>,
++    gpu_insert_context: &mut GpuInsertContext,
+     reference_graph: &GraphLayersBuilder,
+     points_to_index: &[PointOffsetType],
+     stopped: &AtomicBool,
+@@ -138,8 +140,8 @@ pub(super) fn build_block_on_gpu(
      )
  }
  
-+/// Size in bytes of one encoded vector of a dense `Turbo4` storage, or of one
-+/// inner vector of a multivector one. Equal to
-+/// `build_quantizer(dim, distance).quantized_size()`, without building the
-+/// rotation tables, so it is cheap enough to call per point.
-+pub(crate) fn quantized_vector_size(dim: usize, distance: Distance) -> usize {
-+    let vector_parameters = quantization::VectorParameters {
-+        dim,
-+        distance_type: quantization::DistanceType::from(distance),
-+        invert: false,
-+        deprecated_count: None,
-+    };
-+    quantization::encoded_vectors_tq::get_quantized_vector_size(
-+        &vector_parameters,
-+        TQDT_BITS,
-+        TQDT_MODE,
-+    )
-+}
-+
- /// Quantize then dequantize `vector` exactly as a dense TQ storage with this
- /// `distance` does across `insert_vector` + `get_vector`. Pure function of its inputs:
- /// the quantizer is fully determined by `(dim, distance)` (the rotation derives from
-@@ -197,3 +215,29 @@ pub(super) fn dequantize_for_requantization(
-             .collect()
-     }
+-fn build_graph_on_gpu<'a, 'b>(
+-    gpu_insert_context: Option<&mut GpuInsertContext<'b>>,
++fn build_graph_on_gpu<'a>(
++    gpu_insert_context: Option<&mut GpuInsertContext>,
+     graph_layers_builder: &GraphLayersBuilder,
+     points_to_index: impl Iterator<Item = PointOffsetType>,
+     entry_points_num: usize,
+@@ -216,14 +218,14 @@ fn create_gpu_vectors(
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    /// The cheap size helper must match the record size of the quantizer every
-+    /// TQ storage builds, or merged placeholders would misalign records.
-+    #[test]
-+    fn quantized_vector_size_matches_quantizer() {
-+        let distances = [
-+            Distance::Cosine,
-+            Distance::Euclid,
-+            Distance::Dot,
-+            Distance::Manhattan,
-+        ];
-+        for distance in distances {
-+            for dim in [1, 4, 5, 127, 256, 1023] {
-+                assert_eq!(
-+                    quantized_vector_size(dim, distance),
-+                    build_quantizer(dim, distance).quantized_size(),
-+                    "dim {dim}, distance {distance:?}",
-+                );
-+            }
-+        }
-+    }
-+}
+ 
+ pub(super) fn create_gpu_insert_context(
+-    gpu_vectors: Option<&GpuVectorStorage>,
++    gpu_vectors: Option<&Arc<GpuVectorStorage>>,
+     payload_m: HnswM,
+     ef_construct: usize,
+-) -> OperationResult<Option<GpuInsertContext<'_>>> {
++) -> OperationResult<Option<GpuInsertContext>> {
+     gpu_vectors
+         .map(|gpu_vectors| {
+             GpuInsertContext::new(
+-                gpu_vectors,
++                gpu_vectors.clone(),
+                 get_gpu_groups_count(),
+                 payload_m,
+                 ef_construct,
 ```
 
-**File**: `lib/segment/src/vector_storage/vector_storage_base.rs` (modified, +3/-1)
+**File**: `lib/segment/src/index/hnsw_index/mod.rs` (modified, +1/-3)
 ```diff
-@@ -843,7 +843,9 @@ impl VectorStorageEnum {
-             VectorStorageEnum::MultiDenseTurbo(v) => {
-                 VectorInternal::from(MultiDenseVectorInternal::placeholder(v.vector_dim()))
-             }
--            VectorStorageEnum::EmptyDense(v) => VectorInternal::from(vec![1.0; v.vector_dim()]),
-+            VectorStorageEnum::EmptyDense(v) => {
-+                VectorInternal::from(vec![1.0; DenseVectorStorageRead::vector_dim(v)])
-+            }
-             VectorStorageEnum::EmptySparse(_) => VectorInternal::from(SparseVector::default()),
-         }
+@@ -67,9 +67,7 @@ pub mod gpu {
+ 
+     pub mod gpu_insert_context {
+         /// Placeholder for GPU insertion context to process indexing on.
+-        pub struct GpuInsertContext<'a> {
+-            phantom: std::marker::PhantomData<&'a usize>,
+-        }
++        pub struct GpuInsertContext {}
      }
+ 
+     pub mod gpu_vector_storage {
 ```
 
 ---
 
-### Incident Patch 3: `39f9d227` (2026-10-01)
-**Commit Message**: Fix clippy lints for Rust 1.99 and beta (#10883)
+### Incident Patch 2: `1d4bcbb8` (2026-10-21)
+**Commit Message**: fix(object-storage-snapshot): add option to override client settings for timeouts and retries (#11289)
 
-* Bump pyo3 to 0.29.3 to fix beta clippy clone_on_copy
+* fix(s3-snapshot): add option to override s3 client settings
 
-Clippy beta (1.100) reports clone_on_copy inside the code pyo3 0.29.2
-generates for `#[pyclass(from_py_object)]` on Copy types, failing
-`cargo +beta clippy --all-features -D warnings` with 30 errors in
-qdrant-edge-py. pyo3 0.29.3 no longer emits the clone.
+* feat(gcs,azure-blob-storage): also be able to configure timeouts and retries
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+For parity.
 
-* Iterate links_layers directly in test_add_points
+(cherry picked from commit 17161f79c946a74d11f9c715f9f388090cbe0f91)
 
-Clippy beta (1.100) flags needless_range_loop on the index loop over
-links_layers in test_add_points. Iterate with enumerate() instead; the
-index is still needed to read the original graph's links.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* Pass convert closure by value in edge ffi filter conversion
-
-Clippy 1.99 flags needless_borrows_for_generic_args on `.map(&convert)`.
-The closure only captures `depth`, so it is Copy and can be passed by
-value to each Option::map call.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +14/-14)
+**File**: `config/config.yaml` (modified, +15/-0)
 ```diff
-@@ -5748,7 +5748,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "22505a5c94da8e3b7c2996394d1c933236c4d743e81a410bcca4e6989fc066a4"
+@@ -37,6 +37,11 @@ storage:
+     #   secret_key: ""
+     #   # Custom endpoint, for MinIO and similar
+     #   endpoint_url: ""
++    #   # Timeouts and retries, in seconds
++    #   timeout_sec: 30
++    #   connect_timeout_sec: 5
++    #   max_retries: 10
++    #   retry_timeout_sec: 180
+ 
+     # Google Cloud Storage. Without credential fields, Application Default
+     # Credentials are used: GOOGLE_* environment, gcloud config or the
+@@ -51,6 +56,11 @@ storage:
+     #   application_credentials_path: ""
+     #   # Custom endpoint, for fake-gcs-server and similar
+     #   endpoint_url: ""
++    #   # Timeouts and retries, same as in s3_config
++    #   timeout_sec: 30
++    #   connect_timeout_sec: 5
++    #   max_retries: 10
++    #   retry_timeout_sec: 180
+ 
+     # Azure Blob Storage. Without credential fields, the default chain is
+     # used: AZURE_* environment, managed identity or the Azure CLI.
+@@ -67,6 +77,11 @@ storage:
+     #   tenant_id: ""
+     #   # Custom endpoint, for Azurite and similar
+     #   endpoint_url: ""
++    #   # Timeouts and retries, same as in s3_config
++    #   timeout_sec: 30
++    #   connect_timeout_sec: 5
++    #   max_retries: 10
++    #   retry_timeout_sec: 180
+ 
+   # Where to store temporary files
+   # If null, temporary snapshots are stored in: storage/snapshots_temp/
+```
+
+**File**: `lib/collection/src/common/snapshots_manager.rs` (modified, +270/-25)
+```diff
+@@ -1,15 +1,16 @@
++use std::num::NonZeroU64;
+ use std::path::{Path, PathBuf};
++use std::time::Duration;
+ 
+ use common::defaults::APP_USER_AGENT;
+ use common::tempfile_ext::MaybeTempPath;
+ use fs_err as fs;
+ use fs_err::tokio as tokio_fs;
+-use http::HeaderValue;
+-use object_store::aws::AmazonS3Builder;
++use object_store::aws::{AmazonS3Builder, AmazonS3ConfigKey};
+ use object_store::azure::{AzureConfigKey, MicrosoftAzureBuilder};
+-use object_store::gcp::GoogleCloudStorageBuilder;
++use object_store::gcp::{GoogleCloudStorageBuilder, GoogleConfigKey};
+ use object_store::prefix::PrefixStore;
+-use object_store::{ClientOptions, ObjectStoreExt};
++use object_store::{ClientConfigKey, ObjectStoreExt, RetryConfig};
+ use serde::Deserialize;
+ use tempfile::TempPath;
+ use tokio::io::AsyncWriteExt;
+@@ -55,6 +56,14 @@ pub struct S3Config {
+     pub access_key: Option<String>,
+     pub secret_key: Option<String>,
+     pub endpoint_url: Option<String>,
++    /// Request timeout. Overrides `AWS_TIMEOUT`.
++    pub timeout_sec: Option<NonZeroU64>,
++    /// Connect timeout. Overrides `AWS_CONNECT_TIMEOUT`.
++    pub connect_timeout_sec: Option<NonZeroU64>,
++    /// Retries for a failed request. 0 disables retries.
++    pub max_retries: Option<usize>,
++    /// How long to keep retrying after the first attempt.
++    pub retry_timeout_sec: Option<u64>,
+ }
+ 
+ /// Google Cloud Storage connection parameters.
+@@ -75,6 +84,14 @@ pub struct GcsConfig {
+     pub application_credentials_path: Option<String>,
+     /// Custom base URL, for emulators such as fake-gcs-server.
+     pub endpoint_url: Option<String>,
++    /// See [`S3Config::timeout_sec`]. Overrides `GOOGLE_TIMEOUT`.
++    pub timeout_sec: Option<NonZeroU64>,
++    /// See [`S3Config::connect_timeout_sec`]. Overrides `GOOGLE_CONNECT_TIMEOUT`.
++    pub connect_timeout_sec: Option<NonZeroU64>,
++    /// See [`S3Config::max_retries`].
++    pub max_retries: Option<usize>,
++    /// See [`S3Config::retry_timeout_sec`].
++    pub retry_timeout_sec: Option<u64>,
+ }
+ 
+ /// Azure Blob Storage connection parameters.
+@@ -99,6 +116,14 @@ pub struct AzureConfig {
+     pub tenant_id: Option<String>,
+     /// Custom endpoint URL, for emulators such as Azurite.
+     pub endpoint_url: Option<String>,
++    /// See [`S3Config::timeout_sec`]. Overrides `AZURE_TIMEOUT`.
++    pub timeout_sec: Option<NonZeroU64>,
++    /// See [`S3Config::connect_timeout_sec`]. Overrides `AZURE_CONNECT_TIMEOUT`.
++    pub connect_timeout_sec: Option<NonZeroU64>,
++    /// See [`S3Config::max_retries`].
++    pub max_retries: Option<usize>,
++    /// See [`S3Config::retry_timeout_sec`].
++    pub retry_timeout_sec: Option<u64>,
+ }
+ 
+ pub struct SnapshotStorageCloud {
+@@ -137,23 +162,108 @@ pub enum SnapshotStorageManager {
+     Cloud(SnapshotStorageCloud),
+ }
+ 
+-/// HTTP client options shared by all object store backends.
+-///
+-/// Identifies Qdrant with its user agent so providers can attribute snapshot traffic.
+-/// Plain HTTP is only allowed for explicitly configured `http://` endpoints, which
+-/// are typically local emulators.
+-fn client_options(endpoint_url: Option<&str>) -> ClientOptions {
+-    let allow_http = endpoint_url.is_some_and(|url| url.starts_with("http://"));
+-    let mut options = ClientOptions::new().with_allow_http(allow_http);
+-    if let Ok(user_agent) = HeaderValue::from_str(APP_USER_AGENT.as_str()) {
+-        options = options.with_user_agent(user_agent);
++/// HTTP client settings that every object store backend accepts.
++#[derive(Clone, Copy, Debug, Default)]
++struct ClientSettings<'a> {
++    endpoint_url: Option<&'a str>,
++    timeout_sec: Option<NonZeroU64>,
++    connect_timeout_sec: Option<NonZeroU64>,
++    max_retries: Option<usize>,
++    retry_timeout_sec: Option<u64>,
++}
++
++impl<'a> From<&'a S3Config> for ClientSettings<'a> {
++    fn from(config: &'a S3Config) -> Self {
++        Self {
++            endpoint_url: config.endpoint_url.as_deref(),
++            timeout_sec: config.timeout_sec,
++            connect_timeout_sec: config.connect_timeout_sec,
++            max_retries: config.max_retries,
++            retry_timeout_sec: config.retry_timeout_sec,
++        }
++    }
++}
++
++impl<'a> From<&'a GcsConfig> for ClientSettings<'a> {
++    fn from(config: &'a GcsConfig) -> Self {
++        Self {
++            endpoint_url: config.endpoint_url.as_deref(),
++            timeout_sec: config.timeout_sec,
++            connect_timeout_sec: config.connect_timeout_sec,
++            max_retries: config.max_retries,
++            retry_timeout_sec: config.retry_timeout_sec,
++        }
++    }
++}
++
++impl<'a> From<&'a AzureConfig> for ClientSettings<'a> {
++    fn from(config: &'a AzureConfig) -> Self {
++        Self {
++            endpoint_url: config.endpoint_url.as_deref(),
++            timeout_sec: config.timeout_sec,
++            connect_timeout_sec: config.connect_timeout_sec,
++            max_retries: config.max_retries,
++            retry_timeout_sec: config.retry_timeout_sec,
++        }
++    }
++}
++
++impl ClientSetting
+```
+
+---
+
+### Incident Patch 3: `1079e85c` (2026-10-21)
+**Commit Message**: fix: enforce CRC64NVME for S3 writes (#11262)
+
+* fix: retry SHA256-checksummed S3 appends
+
+* test: fix object-store integration setup
+
+* fix: enforce CRC64NVME for S3 writes
+
+* chore: drop the snapshot manager change
+
+(cherry picked from commit 38bec7e76d2ff23edb556a5defb3ffac9d24e124)
+
+**File**: `Cargo.lock` (modified, +2/-0)
+```diff
+@@ -3916,6 +3916,8 @@ version = "0.0.0"
  dependencies = [
   "bytes",
-- "heck 0.5.0",
-+ "heck 0.4.1",
-  "itertools 0.12.1",
-  "log",
-  "multimap",
-@@ -5768,7 +5768,7 @@ version = "0.14.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "03da047801ff44bb6a4d407d4860c05fd70bb81714e6b2f3812603d5b145b042"
- dependencies = [
-- "heck 0.5.0",
-+ "heck 0.4.1",
-  "itertools 0.14.0",
-  "log",
-  "multimap",
-@@ -5870,7 +5870,7 @@ version = "0.7.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "cb5cd191fad9142d096efc97c64715db73db4adb60c38ebdf22f5b54cd6ea712"
- dependencies = [
-- "heck 0.5.0",
-+ "heck 0.4.1",
-  "prost 0.14.4",
-  "prost-build 0.14.4",
-  "prost-types 0.14.4",
-@@ -5954,9 +5954,9 @@ dependencies = [
- 
- [[package]]
- name = "pyo3"
--version = "0.29.2"
-+version = "0.29.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4688ddedf473e32662b9b067670129a8afb8c18e351482c70d62ba4a88171e8b"
-+checksum = "700d18fa267b73b9b521fd7e13580e2f446916f176cacee1ab63fcc8191f1655"
- dependencies = [
-  "libc",
-  "once_cell",
-@@ -5969,28 +5969,28 @@ dependencies = [
- 
- [[package]]
- name = "pyo3-build-config"
--version = "0.29.2"
-+version = "0.29.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f41027e41b4bd03f6e60f9f417fe24a6341a6bb744edd62b6f709f2a52ea30e9"
-+checksum = "7b3fc0c4d08f6bb10e71fe39dfb9e2f59c6eb6854e22ec8092f50c69a4499adb"
- dependencies = [
-  "target-lexicon",
- ]
- 
- [[package]]
- name = "pyo3-ffi"
--version = "0.29.2"
-+version = "0.29.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e591a95526fead067432c3b3a33fc74770b87b1e04e73671090d9c2055a2b327"
-+checksum = "dfc0b8e19df29aad7086cf977bb0c2a2f143e30567eb113e9cf72b62ca698330"
- dependencies = [
-  "libc",
-  "pyo3-build-config",
- ]
- 
- [[package]]
- name = "pyo3-macros"
--version = "0.29.2"
-+version = "0.29.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "73225868fc1cd84eef2c3c230ddb91273bf1de46aeb8a4248da76d32a0924a1c"
-+checksum = "6100e8a4b5eba53afaa5ed078364851a0b2499c553a44c31026b929049b49dc6"
- dependencies = [
-  "proc-macro2",
-  "pyo3-macros-backend",
-@@ -6000,9 +6000,9 @@ dependencies = [
- 
- [[package]]
- name = "pyo3-macros-backend"
--version = "0.29.2"
-+version = "0.29.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "571575aa3749fa6216757dd47d2a3e7ef360f329a40f0666a9fbd14889024952"
-+checksum = "6143877a16e82b5a727b7127ff4cd86858a24a28d745d72f43e6f227c7b1bdb3"
- dependencies = [
-  "heck 0.5.0",
-  "proc-macro2",
-@@ -8060,7 +8060,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.4.2",
-+ "getrandom 0.3.4",
-  "once_cell",
-  "rustix 1.1.5",
-  "windows-sys 0.61.2",
+  "common",
++ "crc-fast",
++ "data-encoding",
+  "futures",
+  "http 1.5.0",
+  "io_bridge",
 ```
 
-**File**: `lib/edge/ffi/src/filter.rs` (modified, +3/-3)
+**File**: `Cargo.toml` (modified, +4/-1)
 ```diff
-@@ -719,9 +719,9 @@ fn filter_to_segment(f: Filter, depth: u32) -> Result<SegmentFilter, crate::erro
-             .collect::<Result<Vec<_>, _>>()
-     };
-     Ok(SegmentFilter {
--        must: must.map(&convert).transpose()?,
--        should: should.map(&convert).transpose()?,
--        must_not: must_not.map(&convert).transpose()?,
-+        must: must.map(convert).transpose()?,
-+        should: should.map(convert).transpose()?,
-+        must_not: must_not.map(convert).transpose()?,
-         min_should: min_should
-             .map(
-                 |MinShould {
+@@ -118,7 +118,7 @@ raft-proto = { git = "https://github.com/tikv/raft-rs", rev = "aafb07c7bab439c61
+     "prost-codec",
+ ], default-features = false }
+ 
+-common = { path = "lib/common/common" }
++common = { workspace = true }
+ cancel = { path = "lib/common/cancel" }
+ issues = { path = "lib/common/issues" }
+ segment = { path = "lib/segment", default-features = false }
+@@ -220,7 +220,9 @@ bytes = "1.11.1"
+ cc = "1.2"
+ chrono = { version = "0.4.44", features = ["serde"] }
+ clap = { version = "4.6.1", features = ["derive", "env"] }
++common = { path = "lib/common/common" }
+ core_affinity = "0.8.3"
++crc-fast = "1.10.0"
+ criterion = "0.8.2"
+ data-encoding = "2.11.0"
+ duplicate = { version = "2.0.1", default-features = false }
+@@ -246,6 +248,7 @@ url = { version = "2.5.8", features = ["serde"] }
+ urlencoding = "2.1.3"
+ indicatif = { version = "0.18.4", features = ["rayon"] }
+ integer-encoding = "4.1.0"
++io_bridge = { path = "lib/common/io_bridge" }
+ itertools = "0.15.0"
+ log = "0.4.31"
+ memchr = "2.8.0"
 ```
 
-**File**: `lib/segment/src/index/hnsw_index/graph_layers_builder.rs` (modified, +2/-2)
+**File**: `lib/common/io_bridge_object_store/Cargo.toml` (modified, +5/-3)
 ```diff
-@@ -852,12 +852,12 @@ mod tests {
+@@ -8,15 +8,17 @@ publish = false
+ workspace = true
  
-         assert_eq!(orig_len, builder_len);
+ [dependencies]
+-common = { path = "../common" }
+-io_bridge = { path = "../io_bridge" }
+ bytes = { workspace = true }
++common = { workspace = true }
++crc-fast = { workspace = true }
++data-encoding = { workspace = true }
+ futures = { workspace = true }
+ http = { workspace = true }
++io_bridge = { workspace = true }
+ object_store = { workspace = true }
+ tokio = { workspace = true }
+ url = { workspace = true }
  
--        for idx in 0..builder_len {
-+        for (idx, layers) in graph_layers_builder.links_layers.iter().enumerate() {
-             let links_orig = &graph_layers_orig
-                 .links
-                 .links(idx as PointOffsetType, 0)
-                 .collect_vec();
--            let links_builder = graph_layers_builder.links_layers[idx][0].read();
-+            let links_builder = layers[0].read();
-             let link_container_from_builder = links_builder.links().to_vec();
-             let m = match format {
-                 GraphLinksFormat::Plain => 0,
+ [dev-dependencies]
+-common = { path = "../common", features = ["testing"] }
++common = { workspace = true, features = ["testing"] }
+ tempfile = { workspace = true }
+```
+
+**File**: `lib/common/io_bridge_object_store/src/append/context/aws_tests.rs` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
++use bytes::Bytes;
++use object_store::ObjectStoreExt as _;
++use object_store::aws::AmazonS3;
++use object_store::path::Path;
++
++use super::stub::{StubResponse, stub_server};
++use crate::BlobBackend as _;
++use crate::backends::aws::{AwsConfig, AwsCredentials};
++
++fn assert_crc64nvme_uploads(credentials: AwsCredentials) {
++    let (endpoint, seen) = stub_server(vec![
++        StubResponse::new(200).header("etag", "\"put\""),
++        StubResponse::new(200).body(
++            "<InitiateMultipartUploadResult><UploadId>upload-1</UploadId>\
++             </InitiateMultipartUploadResult>",
++        ),
++        StubResponse::new(200)
++            .header("etag", "\"part\"")
++            .header("x-amz-checksum-crc64nvme", "rosUhgp5mIg="),
++        StubResponse::new(200).body(
++            "<CompleteMultipartUploadResult><ETag>\"complete\"</ETag>\
++             </CompleteMultipartUploadResult>",
++        ),
++    ]);
++    let store = AmazonS3::build_store(&AwsConfig {
++        bucket: "bucket".into(),
++        region: Some("us-east-1".into()),
++        endpoint: Some(endpoint),
++        s3_express: false,
++        native_append: false,
++        credentials,
++    })
++    .unwrap();
++    io_bridge::BridgeRuntime::global().block_on(async {
++        let key = Path::from("checksum.dat");
++        store
++            .put(&key, Bytes::from_static(b"123456789").into())
++            .await
++            .unwrap();
++        let mut upload = store.put_multipart(&key).await.unwrap();
++        upload
++            .put_part(Bytes::from_static(b"123456789").into())
++            .await
++            .unwrap();
++        upload.complete().await.unwrap();
++    });
++    let seen = seen.lock().unwrap();
++    assert_eq!(seen.len(), 4);
++    for request in [&seen[0], &seen[2]] {
++        assert_eq!(request.headers["x-amz-checksum-crc64nvme"], "rosUhgp5mIg=");
++        assert!(!request.headers.contains_key("x-amz-checksum-sha256"));
++    }
++    assert_eq!(seen[1].headers["x-amz-checksum-algorithm"], "CRC64NVME");
++    assert!(
++        String::from_utf8_lossy(&seen[3].body)
++            .contains("<ChecksumCRC64NVME>rosUhgp5mIg=</ChecksumCRC64NVME>")
++    );
++}
++
++#[test]
++fn static_credentials_uploads_use_crc64nvme() {
++    assert_crc64nvme_uploads(AwsCredentials::Static {
++        access_key_id: "id".into(),
++        secret_access_key: "secret".into(),
++        session_token: None,
++    });
++}
++
++#[test]
++fn uploads_override_sha256_from_the_environment() {
++    const CHILD: &str = "QDRANT_CRC64_CHECKSUM_TEST";
++    if std::env::var_os(CHILD).is_some() {
++        assert_crc64nvme_uploads(AwsCredentials::Default);
++        return;
++    }
++    let status = std::process::Command::new(std::env::current_exe().unwrap())
++        .args([
++            "--exact",
++            "append::context::aws_tests::uploads_override_sha256_from_the_environment",
++            "--nocapture",
++        ])
++        .env(CHILD, "1")
++        .env("AWS_CHECKSUM_ALGORITHM", "SHA256")
++        .env("AWS_ACCESS_KEY_ID", "id")
++        .env("AWS_SECRET_ACCESS_KEY", "secret")
++        .env_remove("AWS_SESSION_TOKEN")
++        .status()
++        .unwrap();
++    assert!(status.success());
++}
++
++#[test]
++#[ignore = "requires S3 Express credentials and S3_EXPRESS_INTEGRATION_TEST=1"]
++fn crc64nvme_survives_uploads_appends_and_multipart_rewrites() {
++    if std::env::var("S3_EXPRESS_INTEGRATION_TEST").as_deref() != Ok("1") {
++        return;
++    }
++    let config = AwsConfig {
++        bucket: std::env::var("S3_EXPRESS_BUCKET").expect("S3_EXPRESS_BUCKET"),
++        region: Some(std::env::var("AWS_REGION").expect("AWS_REGION")),
++        endpoint: None,
++        s3_express: true,
++        native_append: false,
++        credentials: AwsCredentials::Default,
++    };
++    let store = std::sync::Arc::new(AmazonS3::build_store(&config).unwrap());
++    let super::AppendContext::Native(native) = AmazonS3::append_context(&config).unwrap().unwrap()
++    else {
++        panic!("expected native append");
++    };
++    let nonce = std::time::SystemTime::now()
++        .duration_since(std::time::UNIX_EPOCH)
++        .unwrap()
++        .as_nanos();
++    let key = Path::from(format!(
++        "_integration_tests/crc64-lifecycle-{}-{nonce}.dat",
++        std::process::id()
++    ));
++    io_bridge::BridgeRuntime::global().block_on(async {
++        let seed = Bytes::from(vec![b'x'; 5 * 1024 * 1024]);
++        let result = async {
++            store.put(&key, seed.clone().into()).await?;
++            native
++                .append(&store, &key, seed.len() as u64, Bytes::from_static(b"-put"))
++                .await?;
++
++            let mut upload = store.put_multipart(&key).await?;
++            let uploaded = async {
++                upload.put_part(seed.clone().into()).await?;
++                upload
++                    .put_part(Bytes::from_static(b"-multipart").into())
++                    .await?;
++                upload.complete().await
++            }
++            .await;
++ 
+```
+
+**File**: `lib/common/io_bridge_object_store/src/append/context/mod.rs` (modified, +7/-0)
+```diff
+@@ -1,6 +1,8 @@
+ //! The append strategies: one object per strategy, each implementing its
+ //! own append logic, combined by [`AppendContext`].
+ 
++#[cfg(test)]
++mod aws_tests;
+ mod compose;
+ mod native;
+ pub(super) mod part_copy;
+@@ -13,6 +15,11 @@ pub use native::NativeAppend;
+ pub use part_copy::PartCopyAppend;
+ pub use signed::SignedRequestContext;
+ 
++fn crc64nvme(data: &[u8]) -> String {
++    let checksum = crc_fast::checksum(crc_fast::CrcAlgorithm::Crc64Nvme, data);
++    data_encoding::BASE64.encode(&checksum.to_be_bytes())
++}
++
+ /// Text of the first `<tag>…</tag>` element in an S3 XML response, with
+ /// surrounding whitespace trimmed. Tolerates attributes on the opening tag
+ /// (`<Error xmlns="…">`) and pretty-printed bodies. Deliberately not a
+```
+
+**File**: `lib/common/io_bridge_object_store/src/append/context/native.rs` (modified, +10/-317)
+```diff
+@@ -8,10 +8,7 @@
+ //!
+ //! The write-offset append API exists on AWS S3 Express One Zone directory
+ //! buckets and on S3-compatible stores that adopted it (e.g. MinIO AiStor) —
+-//! plain S3 Standard buckets reject it. MinIO-AiStor-compatible stores are
+-//! the primary supported target for now; real S3 Express directory buckets
+-//! use zonal endpoints and session-token auth that have not been verified
+-//! against this implementation yet.
++//! plain S3 Standard buckets reject it.
+ 
+ use std::path::PathBuf;
+ use std::sync::Arc;
+@@ -23,6 +20,7 @@ use object_store::ObjectStoreExt as _;
+ use object_store::aws::{AmazonS3, AwsAuthorizer};
+ use object_store::client::HttpRequestBody;
+ 
++use super::crc64nvme;
+ use super::part_copy::PartCopyAppend;
+ use super::signed::SignedRequestContext;
+ 
+@@ -45,11 +43,7 @@ const NO_SUCH_KEY_CODE: &str = "NoSuchKey";
+ /// a whole-object rewrite.
+ const TOO_MANY_PARTS_CODE: &str = "TooManyParts";
+ 
+-/// Total attempts for one append: transient failures (connection errors,
+-/// 5xx, 429) are retried with a short linear backoff, like `object_store`
+-/// does for its own requests. Retrying is safe: the write offset acts as a
+-/// compare-and-swap, and a conflict caused by a lost-acknowledgement
+-/// attempt is reconciled in [`append_request`].
++/// Retry limit for connection errors, 5xx and 429 responses.
+ const MAX_ATTEMPTS: u32 = 3;
+ 
+ /// Backoff before retry attempt `n` is `n * RETRY_BACKOFF`.
+@@ -111,6 +105,8 @@ async fn append_request(
+     // object_store crate does not support the append operation.
+     // See: <https://github.com/apache/arrow-rs-object-store/issues/632>
+     let mut attempt = 1;
++    let checksum = crc64nvme(&data);
++    let mut may_have_appended = false;
+     loop {
+         // Built and signed per attempt: the SigV4 signature embeds the
+         // request date. Building can fail — `url` accepts URIs the `http`
+@@ -119,6 +115,7 @@ async fn append_request(
+             .method(http::Method::PUT)
+             .uri(url.as_str())
+             .header(WRITE_OFFSET_HEADER, offset.to_string())
++            .header("x-amz-checksum-crc64nvme", &checksum)
+             .body(HttpRequestBody::from(data.clone()))
+             .map_err(|err| UniversalIoError::S3Config {
+                 description: format!("append request for {key}: {err}"),
+@@ -134,6 +131,7 @@ async fn append_request(
+         let response = match client.execute(request).await {
+             Ok(response) => response,
+             Err(_) if attempt < MAX_ATTEMPTS => {
++                may_have_appended = true;
+                 tokio::time::sleep(RETRY_BACKOFF * attempt).await;
+                 attempt += 1;
+                 continue;
+@@ -145,6 +143,7 @@ async fn append_request(
+         if (status.is_server_error() || status == http::StatusCode::TOO_MANY_REQUESTS)
+             && attempt < MAX_ATTEMPTS
+         {
++            may_have_appended = true;
+             tokio::time::sleep(RETRY_BACKOFF * attempt).await;
+             attempt += 1;
+             continue;
+@@ -232,7 +231,7 @@ async fn append_request(
+             // A conflict on a retried attempt may just mean the earlier,
+             // lost-acknowledgement attempt landed; under the single-writer
+             // contract a matching object size proves the tail is ours.
+-            if attempt > 1
++            if may_have_appended
+                 && let Ok(meta) = store.head(key).await
+                 && meta.size == offset + data_len
+             {
+@@ -267,310 +266,4 @@ async fn append_request(
+ }
+ 
+ #[cfg(test)]
+-mod tests {
+-    use std::assert_matches;
+-
+-    use object_store::aws::AmazonS3Builder;
+-    use url::Url;
+-
+-    use super::super::stub::{StubResponse, stub_server, stub_store_and_context};
+-    use super::*;
+-
+-    /// Request building failures (URIs the `http` crate rejects) surface as
+-    /// errors instead of panics. Fails before any network IO.
+-    #[test]
+-    fn unbuildable_request_is_an_error_not_a_panic() {
+-        let store = Arc::new(
+-            AmazonS3Builder::new()
+-                .with_bucket_name("bucket")
+-                .with_region("us-east-1")
+-                .with_access_key_id("id")
+-                .with_secret_access_key("secret")
+-                .build()
+-                .unwrap(),
+-        );
+-        let context = SignedRequestContext::new(
+-            true,
+-            "bucket".to_string(),
+-            Url::parse("http://localhost:9000/bucket").unwrap(),
+-            "us-east-1".to_string(),
+-            "s3",
+-        );
+-        // `url` accepts this; `http` caps URIs at u16::MAX bytes.
+-        let key = object_store::path::Path::from("k".repeat(70_000));
+-
+-        let result = io_bridge::BridgeRuntime::global().block_on(
+-            NativeAppend::new(context).append(&store, &key, 0, Bytes::from_static(b"data")),
+-        );
+-        assert!(matches!(result, Err(UniversalIoError::S3Config { .. })));
+-    }
+-
+-    /// Append `b"data"` at `offset` to `dir/append.dat` via the stub, so a
+```
+
+**File**: `lib/common/io_bridge_object_store/src/append/context/native/tests.rs` (added, +348/-0)
+```diff
+@@ -0,0 +1,348 @@
++use std::assert_matches;
++
++use object_store::aws::AmazonS3Builder;
++use url::Url;
++
++use super::super::stub::{StubResponse, stub_server, stub_store_and_context};
++use super::*;
++
++fn checksum_mismatch() -> StubResponse {
++    StubResponse::new(400).body(
++        "<Error><Code>InvalidRequest</Code><Message>Checksum Type mismatch occurred, \
++         expected checksum Type: sha256, actual checksum Type: crc64nvme.</Message></Error>",
++    )
++}
++
++#[test]
++fn append_always_sends_the_crc64nvme_of_the_new_bytes() {
++    let (endpoint, seen) = stub_server(vec![success_with_size(9)]);
++    assert_eq!(append_data_at(&endpoint, 5).unwrap(), 9);
++
++    let seen = seen.lock().unwrap();
++    let [request] = &seen[..] else {
++        panic!("expected one append");
++    };
++    assert_eq!(request.headers["x-amz-checksum-crc64nvme"], "7a5hQ478J4A=");
++    assert!(!request.headers.contains_key("x-amz-checksum-sha256"));
++    assert!(
++        request.headers["authorization"]
++            .to_str()
++            .unwrap()
++            .contains("x-amz-checksum-crc64nvme")
++    );
++    assert_eq!(request.write_offset.as_deref(), Some("5"));
++    assert_eq!(request.body, b"data");
++}
++
++#[test]
++fn checksum_mismatch_stops_without_switching_algorithms() {
++    let (endpoint, seen) = stub_server(vec![checksum_mismatch()]);
++    let err = append_data_at(&endpoint, 5).unwrap_err();
++    assert!(err.to_string().contains("Checksum Type mismatch"), "{err}");
++    assert_eq!(seen.lock().unwrap().len(), 1);
++}
++
++#[test]
++fn checksum_mismatch_after_an_uncertain_write_does_not_retry_or_reconcile() {
++    let (endpoint, seen) = stub_server(vec![StubResponse::new(503), checksum_mismatch()]);
++    let err = append_data_at(&endpoint, 5).unwrap_err();
++    assert!(err.to_string().contains("Checksum Type mismatch"), "{err}");
++    assert_eq!(seen.lock().unwrap().len(), 2);
++}
++
++#[test]
++fn crc64nvme_append_preserves_lost_acknowledgement_recovery() {
++    let (endpoint, seen) = stub_server(vec![
++        StubResponse::new(503),
++        write_offset_conflict(),
++        head_with_size(9),
++    ]);
++
++    assert_eq!(append_data_at(&endpoint, 5).unwrap(), 9);
++
++    let seen = seen.lock().unwrap();
++    assert_eq!(seen.len(), 3);
++    assert_eq!(seen[2].method, "HEAD");
++    for request in &seen[..2] {
++        assert_eq!(request.headers["x-amz-checksum-crc64nvme"], "7a5hQ478J4A=");
++        assert!(!request.headers.contains_key("x-amz-checksum-sha256"));
++    }
++}
++
++#[test]
++fn unrelated_invalid_request_is_not_retried() {
++    let (endpoint, seen) = stub_server(vec![
++        StubResponse::new(400).body(
++            "<Error><Code>InvalidRequest</Code><Message>Invalid bucket configuration</Message></Error>",
++        ),
++        success_with_size(9),
++    ]);
++
++    let err = append_data_at(&endpoint, 5).unwrap_err();
++
++    assert!(
++        err.to_string().contains("Invalid bucket configuration"),
++        "{err}"
++    );
++    assert_eq!(seen.lock().unwrap().len(), 1);
++}
++
++#[test]
++fn unbuildable_request_is_an_error_not_a_panic() {
++    let store = Arc::new(
++        AmazonS3Builder::new()
++            .with_bucket_name("bucket")
++            .with_region("us-east-1")
++            .with_access_key_id("id")
++            .with_secret_access_key("secret")
++            .build()
++            .unwrap(),
++    );
++    let context = SignedRequestContext::new(
++        true,
++        "bucket".to_string(),
++        Url::parse("http://localhost:9000/bucket").unwrap(),
++        "us-east-1".to_string(),
++        "s3",
++    );
++    // `url` accepts this; `http` caps URIs at u16::MAX bytes.
++    let key = object_store::path::Path::from("k".repeat(70_000));
++
++    let result = io_bridge::BridgeRuntime::global().block_on(NativeAppend::new(context).append(
++        &store,
++        &key,
++        0,
++        Bytes::from_static(b"data"),
++    ));
++    assert!(matches!(result, Err(UniversalIoError::S3Config { .. })));
++}
++
++fn append_data_at(endpoint: &str, offset: u64) -> UioResult<u64> {
++    let (store, context) = stub_store_and_context(endpoint);
++    let key = object_store::path::Path::from("dir/append.dat");
++
++    io_bridge::BridgeRuntime::global().block_on(NativeAppend::new(context).append(
++        &store,
++        &key,
++        offset,
++        Bytes::from_static(b"data"),
++    ))
++}
++
++fn success_with_size(size: u64) -> StubResponse {
++    StubResponse::new(200).header(OBJECT_SIZE_HEADER, size)
++}
++
++fn write_offset_conflict() -> StubResponse {
++    StubResponse::new(400).body("<Error><Code>InvalidWriteOffset</Code></Error>")
++}
++
++fn head_with_size(size: u64) -> StubResponse {
++    StubResponse::new(200)
++        .header("content-length", size)
++        .header("last-modified", "Tue, 14 Jul 2026 12:00:00 GMT")
++        .header("etag", "\"stub\"")
++}
++
++#[test]
++fn append_sends_a_signed_write_offset_put_and_returns_the_new_size() {
++    let (endpoint, seen) = stub_server(vec![success_with_size(9)]);
++    assert_eq!(append_dat
+```
+
+**File**: `lib/common/io_bridge_object_store/src/append/context/part_copy.rs` (modified, +21/-205)
+```diff
+@@ -17,8 +17,8 @@ use object_store::aws::{AmazonS3, AwsAuthorizer, AwsCredential};
+ use object_store::client::{HttpClient, HttpRequestBody};
+ use url::Url;
+ 
+-use super::extract_xml_tag;
+ use super::signed::SignedRequestContext;
++use super::{crc64nvme, extract_xml_tag};
+ 
+ /// Max bytes per `UploadPartCopy` part: the S3 5 GiB part-size ceiling.
+ const MAX_COPY_PART_SIZE: u64 = 5 * 1024 * 1024 * 1024;
+@@ -177,7 +177,10 @@ async fn multipart_rewrite(
+         .request(
+             http::Method::POST,
+             "uploads",
+-            &[],
++            &[
++                ("x-amz-checksum-algorithm", "CRC64NVME"),
++                ("x-amz-checksum-type", "FULL_OBJECT"),
++            ],
+             HttpRequestBody::from(Bytes::new()),
+             "initiate multipart rewrite",
+         )
+@@ -227,13 +230,13 @@ async fn rewrite_parts(
+     expected_etag: Option<&str>,
+     upload_id: &str,
+ ) -> UioResult<u64> {
+-    let mut etags = Vec::new();
++    let mut parts = Vec::new();
+     let copy_source = format!("/{}/{}", context.bucket, key);
+     let part_len = offset.div_ceil(offset.div_ceil(MAX_COPY_PART_SIZE).max(1));
+     let mut start = 0;
+     while start < offset {
+         let end = (start + part_len).min(offset);
+-        let part_number = etags.len() + 1;
++        let part_number = parts.len() + 1;
+         let range = format!("bytes={start}-{}", end - 1);
+         let mut headers = vec![
+             ("x-amz-copy-source", copy_source.as_str()),
+@@ -262,18 +265,24 @@ async fn rewrite_parts(
+                 "multipart rewrite part copy for {key}: no ETag in response: {excerpt}",
+             )))
+         })?;
+-        etags.push(etag.to_string());
++        let checksum = extract_xml_tag(&body, "ChecksumCRC64NVME").ok_or_else(|| {
++            UniversalIoError::s3(std::io::Error::other(format!(
++                "multipart rewrite part copy for {key}: no ChecksumCRC64NVME in response",
++            )))
++        })?;
++        parts.push((etag.to_string(), checksum.to_string()));
+         start = end;
+     }
+ 
+     // The new data as the final part (no minimum size for the last part).
+     let final_size = offset + data.len() as u64;
+-    let part_number = etags.len() + 1;
++    let part_number = parts.len() + 1;
++    let checksum = crc64nvme(&data);
+     let (headers, _) = client
+         .request(
+             http::Method::PUT,
+             &format!("partNumber={part_number}&uploadId={upload_id}"),
+-            &[],
++            &[("x-amz-checksum-crc64nvme", &checksum)],
+             HttpRequestBody::from(data),
+             "multipart rewrite data part",
+         )
+@@ -286,12 +295,13 @@ async fn rewrite_parts(
+                 "multipart rewrite data part for {key}: no ETag response header",
+             )))
+         })?;
+-    etags.push(etag.to_string());
++    parts.push((etag.to_string(), checksum));
+ 
+     let mut complete = String::from("<CompleteMultipartUpload>");
+-    for (index, etag) in etags.iter().enumerate() {
++    for (index, (etag, checksum)) in parts.iter().enumerate() {
+         complete += &format!(
+-            "<Part><PartNumber>{}</PartNumber><ETag>{etag}</ETag></Part>",
++            "<Part><PartNumber>{}</PartNumber><ETag>{etag}</ETag>\
++             <ChecksumCRC64NVME>{checksum}</ChecksumCRC64NVME></Part>",
+             index + 1,
+         );
+     }
+@@ -324,198 +334,4 @@ async fn rewrite_parts(
+ }
+ 
+ #[cfg(test)]
+-mod tests {
+-    use std::assert_matches;
+-
+-    use super::super::stub::{StubResponse, stub_server, stub_store_and_context};
+-    use super::*;
+-
+-    /// Multipart-rewrite `dir/append.dat` as its `[0, offset)` prefix plus
+-    /// `b"data"` via the stub.
+-    fn rewrite_data_at(endpoint: &str, offset: u64) -> UioResult<u64> {
+-        rewrite_data_at_if_match(endpoint, offset, None)
+-    }
+-
+-    fn rewrite_data_at_if_match(
+-        endpoint: &str,
+-        offset: u64,
+-        expected_etag: Option<&str>,
+-    ) -> UioResult<u64> {
+-        let (store, context) = stub_store_and_context(endpoint);
+-        let key = object_store::path::Path::from("dir/append.dat");
+-
+-        io_bridge::BridgeRuntime::global().block_on(PartCopyAppend::new(context).append(
+-            &store,
+-            &key,
+-            offset,
+-            Bytes::from_static(b"data"),
+-            expected_etag,
+-        ))
+-    }
+-
+-    fn initiate_ok() -> StubResponse {
+-        StubResponse::new(200).body(
+-            "<InitiateMultipartUploadResult><UploadId>upload-1</UploadId>\
+-             </InitiateMultipartUploadResult>",
+-        )
+-    }
+-
+-    fn copy_part_ok() -> StubResponse {
+-        StubResponse::new(200).body("<CopyPartResult><ETag>\"etag-copy\"</ETag></CopyPartResult>")
+-    }
+-
+-    fn data_part_ok() -> StubResponse {
+-        StubResponse::new(200).header("etag", "\"etag-data\"")
+-    }
+-
+-    fn complete_ok() -> StubResponse {
+-        StubResponse::new(200).body("<CompleteMultipartUploadResult/>")
+-    }
+-
+-    #[test]
+-    fn multipart_rewrite_copies_the_prefix_and_comp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11222** (2026-10-18): Qdrant Edge: per-element index parameter in all interfaces, index builders (@generall)
-- **PR #11220** (2026-10-18): Read-only bool index: clear the flags of deleted points (@generall)
-- **PR #11219** (2026-10-18): Read-only appendable indexes: skip deleted points at open (@generall)
-- **PR #11218** (closed): Read-only bool index: hide deleted points (@generall)
-- **PR #11216** (2026-10-18): Nested payload index: per-element indexes in update-only segments (@generall)
-- **PR #11215** (2026-10-18): Nested payload index: per-element indexes in read-only segments (@generall)
+- **PR #11300** (closed): Bump the cargo-minor-patch group across 1 directory with 3 updates (@dependabot[bot])
+- **PR #11299** (2026-10-21): Bump dev version to 1.20.1-dev (@generall)
+- **PR #11298** (2026-10-21): Bump version to 1.20.0 (@generall)
+- **PR #11290** (2026-10-21): Reject . and .. as vector names (@generall)
+- **PR #11289** (2026-10-21): fix(object-storage-snapshot): add option to override client settings for timeouts and retries (@syndbg)
+- **PR #11284** (2026-10-22): Revise guidelines on struct organization in files (@generall)
 
 ---
 
@@ -2285,28 +2941,51 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump urllib3 and pyjwt in /tests (#10912)
+## X. [AI, graph indexing variations] Graph builder cleanups before indexing variation
 
 **RULE**:
-When implementing operations in `tests/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in qdrant/qdrant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/segment/src/index/hnsw_index/gpu/gpu_graph_builder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in qdrant/qdrant. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `268576f4`: build(deps): bump urllib3 and pyjwt in /tests (#10912). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10039ce8`: [AI, graph indexing variations] Graph builder cleanups before indexing variations (#11192). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/pyproject.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/segment/src/index/hnsw_index/gpu/gpu_graph_builder.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "pyjwt>=2.15.0,<3",
+pub fn build_hnsw_on_gpu<'a>(
+    gpu_insert_context: &mut GpuInsertContext,
+    use std::sync::Arc;
+        let gpu_vector_storage = Arc::new(
+            GpuVectorStorage::new(
+                device.clone(),
+                test.vector_storage.borrow(),
+                None,
+                false,
+                &false.into(),
+            )
+            .unwrap(),
+        );
+            gpu_vector_storage,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "pyjwt>=2.13.0,<3",
+pub fn build_hnsw_on_gpu<'a, 'b>(
+    gpu_insert_context: &mut GpuInsertContext<'b>,
+        let gpu_vector_storage = GpuVectorStorage::new(
+            device.clone(),
+            test.vector_storage.borrow(),
+            None,
+            false,
+            &false.into(),
+        )
+        .unwrap();
+            &gpu_vector_storage,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `268576f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10039ce8` are properly handled with clean fallback behavior.

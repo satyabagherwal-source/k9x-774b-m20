@@ -4410,3 +4410,7 @@ Every entry in this ledger must capture:
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `cc62cce7` | Multi-dimensional audit evidence | 2026-10-22T19:09:54.435Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `a41ecdeb` | Multi-dimensional audit evidence | 2026-10-22T19:16:14.200Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `f0f76776` | Multi-dimensional audit evidence | 2026-10-22T19:16:27.905Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `02474e61` | Multi-dimensional audit evidence | 2026-10-22T19:22:37.606Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `5a36d344` | Multi-dimensional audit evidence | 2026-10-22T19:22:41.312Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `86c71b95` | Multi-dimensional audit evidence | 2026-10-22T19:22:46.381Z |
+| `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `222b2e44` | Multi-dimensional audit evidence | 2026-10-22T19:22:50.342Z |

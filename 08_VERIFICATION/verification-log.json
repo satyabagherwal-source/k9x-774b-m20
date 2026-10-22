@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-PZ8N",
-    "timestamp": "2026-10-20T16:38:01.127Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "9fd173cd5a64c228ca921081ade418fb72fad19c47cc128289e299d1b43bde8e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-Y3T3",
-    "timestamp": "2026-10-20T16:44:20.295Z",
-    "repository": "cloudscape-design/components",
-    "learningId": "learn-github-cloudscape-design-components",
-    "contentHash": "34b6ba897d2b375d7dc4db8f8c269247008a031159b9ea9fabe1a559fe2a7bd0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-Y4ZO",
-    "timestamp": "2026-10-20T16:44:21.828Z",
-    "repository": "jhspetersson/fselect",
-    "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "b62b10f30203fe5e7e5c4985482a448c6658d45bf07c9e13c2ee4646a41fbdd1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-YA6Y",
-    "timestamp": "2026-10-20T16:44:28.570Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "b72db8ca8384daf1a04bd3998deaa4a1375662656c2ee5e24884439023d68fdc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-YAUZ",
     "timestamp": "2026-10-20T16:44:29.435Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7490,6 +7430,66 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-HDB7",
+    "timestamp": "2026-10-22T19:22:37.603Z",
+    "repository": "unhappychoice/gitlogue",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-HG64",
+    "timestamp": "2026-10-22T19:22:41.308Z",
+    "repository": "wzh4869/AppPorts",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-HK2Y",
+    "timestamp": "2026-10-22T19:22:46.378Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-HN50",
+    "timestamp": "2026-10-22T19:22:50.340Z",
+    "repository": "qdrant/qdrant",
+    "learningId": "learn-github-qdrant-qdrant",
+    "contentHash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

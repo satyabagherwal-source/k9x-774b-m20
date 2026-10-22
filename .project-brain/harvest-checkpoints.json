@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T19:16:27.917Z",
+  "last_updated": "2026-10-22T19:22:50.354Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "f65cba1bce65642e44d5df12cf9a4ed38307fc49f18524cb7bc61ce9e9a0ba46",
-      "verified_at": "2026-10-19T21:59:34.590Z",
+      "content_hash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
+      "verified_at": "2026-10-22T19:22:46.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:59:34.590Z"
+      "last_updated": "2026-10-22T19:22:46.392Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
-      "verified_at": "2026-10-18T22:41:48.520Z",
+      "content_hash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
+      "verified_at": "2026-10-22T19:22:37.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:41:48.520Z"
+      "last_updated": "2026-10-22T19:22:37.618Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -10131,14 +10131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qdrant-qdrant",
-      "content_hash": "27b83912203b302abe4155641241909ce0237d864350397e332cac11c29ca41b",
-      "verified_at": "2026-10-19T06:32:44.391Z",
+      "content_hash": "ad2cb8edf3601643fee298578ae24886612cff45ff5f9e98450e041ce08e8779",
+      "verified_at": "2026-10-22T19:22:50.354Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:32:44.391Z"
+      "last_updated": "2026-10-22T19:22:50.354Z"
     },
     "vuetifyjs/vuetify": {
       "repository": "vuetifyjs/vuetify",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "2cb3d9d9a89a3cc67c3154eb465fe581774b5d646040c84e278ca66f92187164",
-      "verified_at": "2026-10-20T01:21:13.161Z",
+      "content_hash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
+      "verified_at": "2026-10-22T19:22:41.320Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:21:13.161Z"
+      "last_updated": "2026-10-22T19:22:41.320Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",

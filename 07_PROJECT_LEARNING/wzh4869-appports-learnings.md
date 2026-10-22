@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source**: github ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
-> **Source Version**: `8ef2dad3`  
+> **Source Version**: `5a36d344`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:21:12.900Z  
+> **Timestamp**: 2026-10-22T19:22:41.171Z  
 > **Learning ID**: `learn-github-wzh4869-appports`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wzh4869-appports-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wzh4869/AppPorts](https://github.com/wzh4869/AppPorts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:21:12.894Z  
+> **Harvest Timestamp**: 2026-10-22T19:22:41.163Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📦 A macOS utility to seamlessly migrate applications to external storage and reclaim local disk space.【一款 macOS 工具，无缝迁移应用到外部存储并自动建立链接，释放宝贵的本地空间】
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2133 stars
+- **Stars / Engagement**: 2144 stars
 
 ---
 
@@ -79,6 +79,41 @@ struct AppListScanState {
 
 ```
 
+### Core Architecture Module: `AppPorts/Models/VolumeStateClass.swift`
+```
+import Foundation
+
+/// Stable diagnostic codes. No classification authorizes deletion or adoption.
+enum VolumeStateClass: String, CaseIterable, Sendable {
+    case normal = "A", pendingMount = "B", volumeMissing = "C", pendingCleanup = "D"
+    case interrupted = "E", rolledBack = "F", legacyBackup = "G"
+    case orphanIdentified = "H", orphanUnidentified = "I", unreadable = "J"
+}
+
+enum InterruptedResidueKind: String, Sendable {
+    case entryAvailable = "E1", awaitingRecovery = "E2"
+}
+
+struct VolumeStateFinding: Equatable, Sendable {
+    let state: VolumeStateClass
+    let originalPath: String
+    let volumeUUID: String?
+    var residue: InterruptedResidueKind? = nil
+    var detail: String? = nil
+}
+
+struct VolumeStateInventory: Equatable, Sendable {
+    let findings: [VolumeStateFinding]
+    let scannedAt: Date
+    let complete: Bool
+
+    var counts: [VolumeStateClass: Int] {
+        findings.reduce(into: [:]) { $0[$1.state, default: 0] += 1 }
+    }
+}
+
+```
+
 ### Core Architecture Module: `AppPorts/Services/AppOperationState.swift`
 ```
 import Combine
@@ -94,6 +129,7 @@ final class AppOperationState: ObservableObject {
     static let shared = AppOperationState()
 
     @Published private var activeOperation: UUID?
+    @Published private var migrationCount = 0
     @Published private(set) var recordsRevision: UInt64 = 0
     private var recordObserver: AnyCancellable?
     private var terminationReply: (() -> Void)?
@@ -108,10 +144,17 @@ final class AppOperationState: ObservableObject {
             }
     }
 
-    var isBusy: Bool { activeOperation != nil }
+    var isBusy: Bool { activeOperation != nil || migrationCount > 0 }
+    var blocksInteraction: Bool { activeOperation != nil }
+
+    func setMigrationCount(_ count: Int) {
+        let wasBusy = isBusy
+        migrationCount = count
+        if wasBusy && !isBusy { recordsRevision &+= 1 }
+    }
 
     func begin() -> UUID? {
-        guard activeOperation == nil, terminationReply == nil else { return nil }
+        guard !isBusy, terminationReply == nil else { return nil }
         let token = UUID()
         activeOperation = token
         return token
@@ -127,6 +170,7 @@ final class AppOperationState: ObservableObject {
         let reply = terminationReply
         terminationReply = nil
         reply?()
+        MigrationTaskCenter.shared.schedule()
     }
 
     func registerCancellation(for token: UUID, _ cancel: @escaping () -> Void) {
@@ -151,6 +195,239 @@ final class AppOperationState: ObservableObject {
         terminationReply = reply
         cancellation?()
         return true
+    }
+}
+
+```
+
+### Core Architecture Module: `AppPorts/Services/VolumeStateClassifier.swift`
+```
+import Darwin
+import Foundation
+
+/// Observation only. The operation services retain their own locks, identity
+/// checks and content proofs; this snapshot can become stale immediately.
+struct VolumeStateClassifier: Sendable {
+    struct Volume: Sendable {
+        let uuid: String
+        let name: String
+        let mountPoint: String?
+        let locked: Bool
+    }
+
+    struct Snapshot: Sendable {
+        let volumes: [String: Volume]
+        var complete = true
+    }
+
+    enum PathState: Sendable {
+        case missing, unreadable, other, placeholder
+        case directory(DataPathIdentity)
+    }
+
+    var observe: @Sendable (URL) -> PathState = { VolumePathProbe.observe($0) }
+    var markerMatches: @Sendable (URL, String) -> Bool = { root, uuid in
+        VolumePathProbe.markerMatches(root, uuid: uuid)
+    }
+
+    func classify(_ transfer: DataTransferRecord, snapshot: Snapshot) -> VolumeStateFinding {
+        let uuid = transfer.direction == .migrate ? transfer.createdVolumeUUID : transfer.sourceIdentity.volumeUUID
+        func finding(_ state: VolumeStateClass, _ residue: InterruptedResidueKind? = nil,
+                     _ detail: String? = nil) -> VolumeStateFinding {
+            .init(state: state, originalPath: transfer.originalPath, volumeUUID: uuid, residue: residue, detail: detail)
+        }
+        guard snapshot.complete else { return finding(.unreadable, nil, "inventory_unavailable") }
+        let volume = uuid.flatMap { snapshot.volumes[$0.uppercased()] }
+        let mountedAtOriginal = snapshot.volumes.values.first { $0.mountPoint == transfer.originalPath }
+        if let mountedAtOriginal, mountedAtOriginal.uuid.caseInsensitiveCompare(uuid ?? "") != .orderedSame {
+            return finding(.unreadable, nil, "unexpected_mounted_volume")
+        }
+        if volume?.locked == true && !(transfer.isDataSwitchComplete && transfer.direction == .restore) {
+            return finding(.pendingMount, nil, "waiting_for_unlock")
+        }
+        for path in Set([transfer.backupPath, transfer.stagingPath, transfer.preparationPath].compactMap { $0 }) {
+            if case .unreadable = observe(URL(fileURLWithPath: path)) {
+                return finding(.unreadable, nil, "material_path_unreadable")
+            }
+        }
+        let original = observe(URL(fileURLWithPath: transfer.originalPath))
+        if case .unreadable = original { return finding(.unreadable, nil, "entry_unreadable") }
+        if let mountedAtOriginal {
+            guard let uuid, mountedAtOriginal.uuid.caseInsensitiveCompare(uuid) == .orderedSame,
+                  transfer.direction == .migrate || !transfer.isDataSwitchComplete else {
+                return finding(.unreadable, nil, "unexpected_mounted_volume")
+            }
+            guard case .directory(let identity) = original else { return finding(.unreadable, nil, "entry_unreadable") }
+            if transfer.direction == .restore, transfer.sourceIdentity.matchesFilesystemObject(identity) {
+                return transfer.rollbackCompletedAt == nil ? finding(.interrupted, .entryAvailable) : finding(.rolledBack)
+            }
+            return transfer.isDataSwitchComplete ? finding(.pendingCleanup)
+                : finding(.interrupted, .awaitingRecovery, "entry_commit_or_restore_pending")
+        }
+        if transfer.isDataSwitchComplete, transfer.direction == .migrate {
+            return finding(volume == nil ? .volumeMissing : .pendingMount, nil, "volume_not_at_entry")
+        }
+        if transfer.isDataSwitchComplete {
+            guard case .directory(let identity) = original,
+                  transfer.destinationIdentity?.matchesFilesystemObject(identity) == true else {
+                return finding(.unreadable, nil, "restored_entry_not_confirmed")
+            }
+            return finding(.pendingCleanup)
+        }
+        let available: Bool
+        if transfer.direction == .migrate, case .directory(let identity) = original {
+            available = transfer.sourceIdentity.matchesFilesystemObject(identity)
+        } else {
+            available = false
+        }
+        if available {
+            return transfer.rollbackCompletedAt == nil ? finding(.interrupted, .entryAvailable) : finding(.rolledBack)
+        }
+        // A placeholder, a replacement inode or a vanished entry never means
+        // recovery is finished, regardless of the persisted phase.
+        return finding(.interrupted, .awaitingRecovery, "entry_recovery_required")
+    }
+
+    func inventory(_ records: ContainerMountStore.Inspection, snapshot: Snapshot, now: Date = Date()) -> VolumeStateInventory {
+        var findings = records.transfers.filter { $0.mode == .mount }.map { classify($0, snapshot: snapshot) }
+        var known: Set<String> = []
+        func remember(_ uuid: String?) { if let uuid { known.insert(uuid.uppercased()) } }
+        for transfer in records.transfers where transfer.mode == .mount {
+            remember(transfer.createdVolumeUUID)
+            remember(transfer.sourceIdentity.volumeUUID)
+            remember(transfer.recoveryMountRecord?.volumeUUID)
+        }
+        for record in records.mounts {
+            remember(record.volumeUUID)
+            let volume = snapshot.volumes[record.volumeUUID.uppercased()]
+            let entry = observe(record.mountPointURL)
+            let state: VolumeStateClass
+            var detail: String?
+            let occupant = snapshot.volumes.values.first { $0.mountPoint == record.mountPointPath }
+            if !snapshot.complete { state = .unreadable }
+            else if let occupant, occupant.uuid.caseInsensitiveCompare(record.volumeUUID) != .orderedSame {
+                state = .unreadable; detail = "unexpected_mounted_volume"
+            }
+            else if case .unreadable = entry { state = .unreadable; detail = "entry_unreadable" }
+            else if volume?.locked == true { state = .pendingMount; detail = "waiting_for_unlock" }
+            else if volume == nil { state = .volumeMissing; detail = "volume_unavailable_not_proven_deleted" }
+            else if volume?.mountPoint == record.mountPointPath {
+                if case .directory = entry { state = .normal }
+                else { state = .unreadable }
+            } else { state = .pendingMount }
+            findings.append(.init(state: state, originalPath: record.mountPointPath, volumeUUID: record.volumeUUID, detail: detail))
+        }
+        for cleanup in records.cleanups {
+            remember(cleanup.mountRecord.volumeUUID)
+            let unreadable = [cleanup.localPath, cleanup.mountRecord.mountPointPath, cleanup.restoreStagingPath].compactMap { $0 }.contains {
+                if case .unreadable = observe(URL(fileURLWithPath: $0)) { return true }
+                return false
+            }
+            findings.append(.init(state: !snapshot.complete || unreadable ? .unreadable : cleanup.restoreStagingPath != nil ? .interrupted
+                : cleanup.kind == .migrationBackup ? .legacyBackup : .pendingCleanup,
+                originalPath: cleanup.mountRecord.mountPointPath, volumeUUID: cleanup.mountRecord.volumeUUID,
+                residue: cleanup.restoreStagingPath == nil || unreadable || !snapshot.complete ? nil : .awaitingRecovery))
+        }
+        for material in records.preservedMaterials where material.mode == .mount {
+            remember(material.volumeUUID)
+            remember(material.recoveryRecord?.sourceIdentity.volumeUUID)
+            remember(material.recoveryRecord?.recoveryMountRecord?.volumeUUID)
+            var finding = material.recoveryRecord.map { classify($0, snapshot: snapshot) }
+                ?? .init(state: .unreadable, originalPath: material.originalPath, volumeUUID: material.volumeUUID)
+            finding.detail = "preserved_material"
+            findings.append(finding)
+        }
+        for volume in snapshot.volumes.values.sorted(by: { $0.uuid < $1.uuid })
+            where !known.contains(volume.uuid.uppercased()) && volume.name.hasPrefix("AppPorts-") {
+            let state: VolumeStateClass
+            if !snapshot.complete { state = .unreadable }
+            else if let path = volume.mountPoint {
+                switch observe(URL(fileURLWithPath: path)) {
+                case .directory:
+                    state = markerMatches(URL(fileURLWithPath: path), volume.uuid) ? .orphanIdentified : .orphanUnidentified
+                default: state = .unreadable
+                }
+            } else { state = .orphanUnidentified }
+            findings.append(.init(state: state, originalPath: volume.mountPoint ?? "", volumeUUID: volume.uuid,
+                                  detail: volume.locked ? "waiting_for_unlock" : "report_only"))
+        }
+        if !snapshot.complete || records.validationError != nil {
+            findings.append(.init(state: .unreadable, originalPath: "", volumeUUID: nil,
+                                  detail: records.validationError == nil ? "inventory_unavailable" : "journal_invalid"))
+        }
+        return .init(findings: findings, scannedAt: now, complete: snapshot.complete && records.validationError == nil)
+    }
+}
+
+enum VolumePathProbe {
+    static func observe(_ url: URL) -> VolumeStateClassifier.PathState {
+        var info = stat()
+        guard lstat(url.path, &info) == 0 else { return errno == ENOENT ? .missing : .unreadable }
+        guard info.st_mode & S_IFMT == S_IFDIR else { return .other }
+        guard info.st_mode & 0o777 != 0 else { return .placeholder }
+        guard isReadableDirectory(url), let identity = try? DataPathIdentity.capture(url) else { return .unreadable }
+        return .directory(identity)
+    }
+
+    static func isReadableDirectory(_ url: URL) -> Bool {
+        let fd = open(url.path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
+        guard fd >= 0 else { return false }
+        var info = stat()
+        guard fstat(fd, &info) == 0, info.st_mode & 0o777 != 0 else { close(fd); return false }
+        guard let directory = fdopendir(fd) else { close(fd); 
+```
+
+### Core Architecture Module: `AppPorts/Services/VolumeStateReporting.swift`
+```
+import Foundation
+
+enum VolumeStateReporting {
+    private static let lock = NSLock()
+    private static var recent: VolumeStateInventory?
+
+    static func remember(_ inventory: VolumeStateInventory) {
+        lock.lock()
+        let changed = recent?.findings != inventory.findings || recent?.complete != inventory.complete
+        recent = inventory
+        lock.unlock()
+        if changed {
+            AppLogger.shared.logContext("数据卷状态盘点", details: [
+                ("categories", VolumeStateClass.allCases.map { "\($0.rawValue)=\(inventory.counts[$0] ?? 0)" }.joined(separator: ", ")),
+                ("complete", String(inventory.complete)), ("total", String(inventory.findings.count))
+            ], level: "INFO")
+        }
+    }
+
+    static func lastInventory() -> VolumeStateInventory? {
+        lock.lock()
+        defer { lock.unlock() }
+        return recent
+    }
+
+    static func collect(store: ContainerMountStore = .shared,
+                        disk: DiskUtility = DiskUtility(runner: ProcessCommandRunner(captureLimit: 1_048_576),
+                                                       commandTimeout: 5, administratorRunner: nil)) async {
+        let snapshot = (try? await disk.volumeStateSnapshot()) ?? .init(volumes: [:], complete: false)
+        do {
+            let records = try store.recordsForInspection()
+            remember(VolumeStateClassifier().inventory(records, snapshot: snapshot))
+        } catch {
+            remember(.init(findings: [.init(state: .unreadable, originalPath: "", volumeUUID: nil,
+                                           detail: "journal_unreadable")], scannedAt: Date(), complete: false))
+        }
+    }
+
+    /// Aggregate counts contain no paths, application names or credentials.
+    static func diagnosticSection(_ inventory: VolumeStateInventory?) -> [String] {
+        guard let inventory else { return ["volume_state_inventory", "  state: not_scanned"] }
+        var lines = ["volume_state_inventory", "  state: \(inventory.complete ? "scanned" : "incomplete")",
+                     "  scanned_at: \(ISO8601DateFormatter().string(from: inventory.scannedAt))"]
+        lines += VolumeStateClass.allCases.map { "  \($0.rawValue): \(inventory.counts[$0] ?? 0)" }
+        for residue in [InterruptedResidueKind.entryAvailable, .awaitingRecovery] {
+            lines.append("  \(residue.rawValue): \(inventory.findings.filter { $0.residue == residue }.count)")
+        }
+        lines.append("  total: \(inventory.findings.count)")
+        return lines
     }
 }
 
@@ -841,6 +1118,12 @@ import Foundation
 import CoreData
 
 extension ContainerVolumeMigrator {
+    struct RecoveryPaused: LocalizedError {
+        var errorDescription: String? {
+            "此操作已暂停，现有文件已保留。请在“处理异常”中点击“重试”后继续。".localized
+        }
+    }
+
     enum AutomaticRecoveryError: LocalizedError, CustomNSError {
         case restored(operation: Error, retainedDetails: String?)
         case incomplete(operation: Error, recovery: Error)
@@ -901,31 +1184,49 @@ extension ContainerVolumeMigrator {
     func recoverWithIndependentBudget(_ transfer: DataTransferRecord,
                                       finishPreparedRestore: Bool = true,
                                       timeoutNanoseconds: UInt64 = 0) async throws -> AutomaticRecoveryResult {
+        guard transfer.needsAutomaticCompletion else { throw RecoveryPaused() }
         let transfer = try store.adoptLegacyRestoreOwnership(transfer)
         let progress = DataTransferSession.progress
+        let session = DataTransferSession.current
+        let automatic = CleanupRetryContext.automatic
+        let retryClock = CleanupRetryContext.now
         // Disk commands have their own deadlines. A dataset-sized verification
         // must not restart forever because it exceeds a fixed 10/90s budget.
         if timeoutNanoseconds == 0 {
             return try await Task.detached(priority: .userInitiated) {
-                try await DataTransferSession.$progress.withValue(progress) {
-                    try await DataTransferSession.run {
-                        progress?.begin(.recovering)
-                        return try await self.recoverMountOperation(transfer, finishPreparedRestore: finishPreparedRestore)
+                try await DataTransferSession.$current.withValue(session) {
+                    try await DataTransferSession.$progress.withValue(progress) {
+                        try await DataTransferSession.run {
+                            progress?.begin(.recovering)
+                            return try await CleanupRetryContext.$automatic.withValue(automatic) {
+                                try await CleanupRetryContext.$now.withValue(retryClock) {
+                                    try await self.recoverMountOperation(transfer, finishPreparedRestore: finishPreparedRestore)
+                                }
+                            }
+                        }
                     }
                 }
             }.value
         }
         return try await Task.detached(priority: .userInitiated) {
-            try await DataTransferSession.$progress.withValue(progress) {
-                progress?.begin(.recovering)
-                return try await withThrowingTaskGroup(of: AutomaticRecoveryResult.self) { group in
-                    group.addTask { try await self.recoverMountOperation(transfer, finishPreparedRestore: finishPreparedRestore) }
-                    group.addTask {
-                        try await Task.sleep(nanoseconds: timeoutNanoseconds)
-                        throw AutomaticRecoveryError.timedOut
+            try await DataTransferSession.$current.withValue(session) {
+                try await DataTransferSession.$progress.withValue(progress) {
+                    progress?.begin(.recovering)
+                    return try await withThrowingTaskGroup(of: AutomaticRecoveryResult.self) { group in
+                        group.addTask {
+                            try await CleanupRetryContext.$automatic.withValue(automatic) {
+                                try await CleanupRetryContext.$now.withValue(retryClock) {
+                                    try await self.recoverMountOperation(transfer, finishPreparedRestore: finishPreparedRestore)
+                                }
+                            }
+                        }
+                        group.addTask {
+                            try await Task.sleep(nanoseconds: timeoutNanoseconds)
+                            throw AutomaticRecoveryError.timedOut
+                        }
+                        defer { group.cancelAll() }
+                        return try await group.next()!
                     }
-                    defer { group.cancelAll() }
-                    return try await group.next()!
                 }
             }
         }.value
@@ -966,6 +1267,7 @@ extension ContainerVolumeMigrator {
 
     private func requireRecoveryJournal(_ expected: DataTransferRecord) throws {
         try Task.checkCancellation()
+        guard expected.needsAutomaticCompletion else { throw RecoveryPaused() }
         guard try store.transfer(operationID: expected.operationID) == expected,
               !(try store.transfers()).contains(where: { $0.priorOperationID == expected.operationID }) else {
             throw RecoveryJournalChanged(operation: DataOperationSafety.Failure.conflict(expected.originalPath))
@@ -995,6 +1297,7 @@ extension ContainerVolumeMigrator {
     private func recoverMountOperation(_ expected: DataTransferRecord,
                                        finishPreparedRestore: Bool) async throws -> AutomaticRecoveryResult {
         try requireRecoveryJournal(expected)
+        DataTransferSession.progress?.setDirectory(URL(fileURLWithPath: expected.originalPath))
         if expected.isDataSwitchComplete { return .completed }
         if expected.rollbackCompletedAt != nil {
             return try await cleanupRolledBackOperation(expected)
@@ -1006,536 +1309,7 @@ extension ContainerVolumeMigrator {
             try await finishVerifiedRecovery(expected)
             return .completed
         }
-        if expected.direction == .migrate, expected.isVerifiedSwitchRecoverable, expected.backupIdentity != nil {
-            do {
-                try await finishVerifiedRecovery(expected)
-                return .completed
-            } catch {
-                try Task.checkCancellation()
-                guard !RecoveryJournalChanged.isContained(in: error), !isMountPoint(local) else { throw error }
-                // The final mount can fail repeatedly (busy/permissions). If
-                // the candidate never became active, restore the local entry.
-                // rollBackMountMigration proves its contents before doing so.
-            }
-        }
-        if expected.direction == .restore, !isMountPoint(local), !isSymbolicLink(at: local),
-           let identity = try? DataPathIdentity.capture(local),
-           expected.destinationIdentity.map({ identity.matchesFilesystemObject($0) }) == true {
-            try await finishVerifiedRecovery(expected)
-            return .completed
-        }
-        if expected.direction == .restore, expected.isVerifiedSwitchRecoverable, finishPreparedRestore {
-            do {
-                try await finishVerifiedRecovery(expected)
-                return .completed
-            } catch {
-                try Task.checkCancellation()
-                guard !RecoveryJournalChanged.isContained(in: error) else { throw error }
-                // The source is still authoritative. A move/mount failure must
-                //
-```
-
-### Core Architecture Module: `AppPorts/Utils/ContainerVolumeMigrator.swift`
-```
-//
-//  ContainerVolumeMigrator.swift
-//  AppPorts
-//
-
-import Darwin
-import Foundation
-
-// MARK: - 容器数据挂载迁移器
-
-/// 沙盒应用容器数据的挂载迁移器。
-///
-/// 与 `DataDirMover` 的符号链接策略并列：沙盒应用无法透过符号链接访问容器外路径
-/// （内核按解析后的真实路径判定），这里改为在外置盘的 APFS 容器中新建一个卷，
-/// 把它挂载到容器内的原目录上。路径不离开容器，应用签名与 entitlements 不做任何修改。
-///
-/// ## 操作流程
-/// - **迁移**：建卷 → 复制并核验 → 切换原路径 → 持久化记录 → 自动清理已核验的旧数据
-/// - **还原**：定位当前卷 → 复制最新数据并核验 → 切回原路径 → 自动清理旧卷
-/// - **挂载 / 卸载**：只处理已有记录。未挂载期间挂载点保持 000 权限，
-///   应用在盘不在时只会看到空目录，不会把新数据写进本地形成分叉。
-actor ContainerVolumeMigrator {
-
-    enum MigrationError: LocalizedError {
-        case sourceNotDirectory(URL)
-        case alreadyManaged(URL)
-        case externalNotAPFS(URL)
-        case encryptedDestination
-        case unexpectedMountedVolume(URL)
-        case volumeCreationFailed(String)
-        case mountFailed(URL, String)
-        case mountVerificationFailed(URL)
-        case mountPointNotEmpty(URL)
-        case mountPointConflict(URL, String)
-        case unmountFailed(URL, String)
-        case volumeUnavailable(String)
-        case insufficientSpace(required: Int64, available: Int64)
-        case copyFailed(Error)
-        case switchFailed(Error)
-        case rollbackIncomplete(backup: URL, volumeName: String, volumeUUID: String, underlying: Error)
-        /// 还原时本地副本已复制好，但没能换到原路径。外置卷和记录保持不变。
-        case restoreIncomplete(staging: URL, underlying: Error)
-        case restoreRecordRecovery(staging: URL, underlying: Error)
-        case ownershipRollbackFailed(URL, operation: Error, rollback: Error)
-        case cleanupRecordLocalUnavailable(URL)
-        case cleanupRecordStillMounted(URL)
-        case cleanupRecordStagingExists(URL)
-
-        var errorDescription: String? {
-            switch self {
-            case .sourceNotDirectory(let url):
-                return String(format: "该路径不是真实目录，无法挂载迁移：%@".localized, url.lastPathComponent)
-            case .alreadyManaged(let url):
-                return String(format: "该目录已经是挂载迁移项：%@".localized, url.lastPathComponent)
-            case .externalNotAPFS(let url):
-                return String(format: "外部存储不是 APFS 格式，无法创建挂载卷：%@".localized, url.path)
-            case .encryptedDestination:
-                return "所选 APFS 卷已加密，新建数据卷不会继承它的密码。为避免降低数据保护，当前版本不支持向此位置挂载迁移；原数据未改动，可以继续保留现状。".localized
-            case .unexpectedMountedVolume(let url):
-                return String(format: "此目录挂载的卷与迁移记录不一致，已停止操作并保留数据：%@".localized, url.path)
-            case .volumeCreationFailed(let output):
-                return String(format: "创建外置卷失败：%@".localized, output)
-            case .mountFailed(let url, let output):
-                return String(format: "挂载到容器目录失败：%@\n%@".localized, url.path, output)
-            case .mountVerificationFailed(let url):
-                return String(format: "挂载后校验失败，该路径不是挂载点：%@".localized, url.path)
-            case .mountPointConflict(let url, let details):
-                return ["数据入口无法安全切换，现有数据已保留。".localized, url.path, details].joined(separator: "\n")
-            case .mountPointNotEmpty(let url):
-                return String(format: "挂载点目录不为空，为避免覆盖数据已停止操作：%@".localized, url.path)
-            case .unmountFailed(let url, let output):
-                return String(format: "卸载失败，可能有应用正在使用该目录：%@\n%@".localized, url.path, output)
-            case .volumeUnavailable(let name):
-                return String(format: "找不到外置卷「%@」，请确认外部存储已连接".localized, name)
-            case .insufficientSpace(let required, let available):
-                return String(
-                    format: "空间不足：需要约 %@ 可用空间，目前只有 %@。未做任何改动。".localized,
-                    LocalizedByteCountFormatter.string(fromByteCount: required),
-                    LocalizedByteCountFormatter.string(fromByteCount: available)
-                )
-            case .copyFailed(let error):
-                return String(format: "复制失败：%@".localized, error.localizedDescription)
-            case .switchFailed(let error):
-                return String(format: "切换挂载点失败，数据已紧急还原：%@".localized, error.localizedDescription)
-            case .rollbackIncomplete(let backup, let volumeName, let volumeUUID, let error):
-                return ["数据入口无法安全切换，现有数据已保留。".localized,
-                    backup.path, volumeName, volumeUUID, error.localizedDescription].joined(separator: "\n")
-            case .restoreIncomplete(let staging, let error):
-                return String(
-                    format: "还原没有完成：外置卷上的数据和迁移记录保持不变，已复制到本机的副本保留在「%@」。%@".localized,
-                    staging.path,
-                    error.localizedDescription
-                )
-            case .restoreRecordRecovery(let staging, let error):
-                return ["数据入口无法安全切换，现有数据已保留。".localized,
-                    staging.path, error.localizedDescription].joined(separator: "\n")
-            case .ownershipRollbackFailed(let url, let operation, let rollback):
-                return ["自动恢复暂未完成，已保留恢复记录；再次操作时会继续检查实际数据位置。".localized,
-                    url.path, operation.localizedDescription, rollback.localizedDescription].joined(separator: "\n")
-            case .cleanupRecordLocalUnavailable(let url):
-                return "未确认本地还原目录，未移除记录：".localized + url.path
-            case .cleanupRecordStillMounted(let url):
-                return ["数据入口无法安全切换，现有数据已保留。".localized, url.path].joined(separator: "\n")
-            case .cleanupRecordStagingExists(let url):
-                return ["暂存对象归属无法确认，已保留。".localized, url.path].joined(separator: "\n")
-            }
-        }
-    }
-
-    struct MigrationResult: Sendable {
-        let record: ContainerMountRecord
-        let cleanupWarning: CleanupWarning?
-        let operationID: UUID
-    }
-
-    /// 主操作已完成，副本或记录清理尚未完成；调用方须按部分成功呈现。
-    struct CleanupWarning: Sendable {
-        let cleanup: ContainerCleanupRecord
-        let details: String
-        var needsRecordUpdateOnly = false
-        var transferOperationID: UUID? = nil
-
-        var message: String {
-            if transferOperationID != nil {
-                let format = cleanup.kind == .restoredVolume
-                    ? "数据已还原到本地，但旧副本尚未全部清理。%@".localized
-                    : "迁移已完成，但旧副本尚未全部清理。%@".localized
-                return String(format: format, "\n" + details)
-            }
-            return (["旧版操作的安全收尾尚未完成，数据已保留。AppPorts 会继续检查；当前未完成的原因：".localized,
-                     cleanup.localPath, "APFS · " + cleanup.mountRecord.volumeName + " · " + cleanup.mountRecord.volumeUUID]
-                + [cleanup.restoreStagingPath, details.isEmpty ? nil : details].compactMap { $0 }).joined(separator: "\n")
-        }
-    }
-
-    /// 卷现在挂在哪 —— 决定挂载前要不要先把它从别处卸下来。
-    enum KnownMountPoint: Equatable {
-        /// 还没查过，需要一次 `diskutil info`（开机时这条要一秒上下）。
-        case unknown
-        /// 查过，卷没挂在任何地方。
-        case unmounted
-        /// 卷挂在别的位置（多半是系统自动挂到了 `/Volumes`）。
-        case mounted(at: URL)
-    }
-
-    struct RemountOutcome: Sendable {
-        enum State: Equatable, Sendable {
-            case alreadyMounted
-            case mounted
-            case unavailable
-            case failed(String)
-            case requiresIntervention(String)
-        }
-
-        let record: ContainerMountRecord
-        let state: State
-    }
-
-    static let volumeMarkerFileName = ".appports-mount-metadata.plist"
-    /// 系统自动挂载外置卷的位置：`/Volumes/<卷名>`。挂载前先看一眼这里能省掉一次 diskutil 查询。
-    static let autoMountRoot = "/Volumes"
-    /// 卷根的防索引标记：系统会把挂到容器路径上的卷当成普通外置卷索引，
-    /// 两个微信卷实测留下过合计约 110 MB 的 `.Spotlight-V100`。空文件放在卷根，
-    /// mds 就会跳过整个卷；标记写在卷上，跟着卷走，不需要任何系统设置。
-    static let neverIndexFileName = ".metadata_never_index"
-    private static let managedIdentifier = "com.shimoko.AppPorts"
-    private static let lockedMountPointMode: mode_t = 0o000
-    private static let openMountPointMode: mode_t = 0o700
-    /// 挂载动作的尝试轮数：命令报告成功但挂载点没出现时（被系统自动挂载抢先）重来。
-    static let maximumMountAttempts = 3
-    /// 两次挂载尝试之间的间隔，给自动挂载留出落地时间。
-    private static let mountRetrySettleNanoseconds: UInt64 = 500_000_000
-    /// 卷根目录上由系统创建、不属于应用数据的条目，还原时不带回本地。
-    static let volumeSystemArtifacts: Set<String> = [
-        volumeMarkerFileName, neverIndexFileName, ".fseventsd", ".Spotlight-V100", ".Trashes", ".TemporaryItems",
-        ".DocumentRevisions-V100", ".PKInstallSandboxManager", ".PKInstallSandboxManager-SystemSoftware"
-    ]
-
-    /// 复制这么多数据需要预留的可用空间：数据本身加 5% 余量，至少多留 256 MB 给文件系统元数据。
-    static func requiredFreeBytes(forDataBytes bytes: Int64) -> Int64 {
-        bytes + max(bytes / 20, 256 * 1024 * 1024)
-    }
-
-    private struct VolumeMarker: Codable {
-        let schemaVersion: Int
-        let managedBy: String
-        let mountPointPath: String
-        let volumeUUID: String
-        let dataDirType: String
-        let appName: String
-        let createdAt: Date
-    }
-
-    private let fileManager = FileManager.default
-    // Shared with the actor's automatic-recovery extension.
-    let disk: DiskUtility
-    let store: ContainerMountStore
-    let isMountPoint: @Sendable (URL) -> Bool
-    private let mountedVolumePath: @Sendable (URL) -> String?
-    private let mountedVolumeUUID: @Sendable (URL) -> String?
-    /// 读卷根迁移标记里的 Volume UUID。挂载前用它确认 `/Volumes/<卷名>` 上挂的就是我们要的卷，
-    /// 测试注入假实现，避免真去读磁盘。
-    private let volumeUUIDMarker: @Sendable (URL) -> String?
-    /// 记录增删后同步登录代理的安装状态；测试注入空实现，避免动真实 LaunchAgents。
-    let synchronizeAgent: @Sendable (ContainerMountStore) -> Void
-    /// 路径所在卷的可用空间；返回 nil 表示查不到，此时不拦截。测试注入固定值。
-    private let availableCapacity: @Sendable (URL) -> Int64?
-    /// 挂载点的挂载标志，用来发现早期版本挂上、仍会显示在 Finder 里的卷。测试注入固定值。
-    let mountFlags: @Sendable (URL) -> UInt32?
-    let stagingMountRootURL: URL
-    let safety: DataOperationSafety
-    private let makeMountPointLease: @Sendable (URL) throws -> any MountPointLeasing
-    private let synchronizeCleanupParent: @Sendable (URL) throws -> Void
-    private var completingPaths: Set<String> = []
-    private var runningCleanups: Set<UUID> = []
-
-    init(
-        disk: DiskUtility = DiskUtility(),
-        store: ContainerMountStore = .shared,
-        stagingMountRootURL: URL? = nil,
-        isMountPoint: @escaping @Sendable (URL) -> Bool = { DiskUtility.isMo
-```
-
-### Core Architecture Module: `AppPorts/Utils/CustomDirScanner.swift`
-```
-//
-//  CustomDirScanner.swift
-//  AppPorts
-//
-//  Created by Codex on 2026/6/26.
-//
-
-import Foundation
-
-actor CustomDirScanner {
-    private let fileManager: FileManager
-
-    init(fileManager: FileManager = .default) {
-        self.fileManager = fileManager
-    }
-
-    func scan(configs: [CustomDirConfig], calculateSizes: Bool = false) -> [CustomDirPair] {
-        configs.map { scan(config: $0, calculateSizes: calculateSizes) }
-    }
-
-    private func scan(config: CustomDirConfig, calculateSizes: Bool) -> CustomDirPair {
-        let localURL = config.localURL
-        let externalURL = config.externalDestinationURL
-        let localState = inspectLocal(localURL: localURL, expectedExternalURL: externalURL)
-        let externalExists = fileManager.fileExists(atPath: externalURL.path)
-        let externalStatus: String
-
-        if externalExists {
-            externalStatus = localState.status == CustomDirStatus.linked
-                ? CustomDirStatus.linked
-                : CustomDirStatus.pendingRelink
-        } else {
-            externalStatus = CustomDirStatus.missing
-        }
-
-        var localEntry = CustomDirEntry(
-            config: config,
-            kind: .local,
-            url: localURL,
-            status: localState.status,
-            linkedDestination: localState.linkedDestination
-        )
-        var externalEntry = CustomDirEntry(
-            config: config,
-            kind: .external,
-            url: externalURL,
-            status: externalStatus,
-            linkedDestination: localState.status == CustomDirStatus.linked ? localURL : nil
-        )
-
-        if calculateSizes {
-            applySize(to: &localEntry)
-            applySize(to: &externalEntry)
-        }
-
-        return CustomDirPair(config: config, local: localEntry, external: externalEntry)
-    }
-
-    private func inspectLocal(localURL: URL, expectedExternalURL: URL) -> (status: String, linkedDestination: URL?) {
-        if isSymbolicLink(at: localURL) {
-            guard let destination = resolveSymlinkDestination(of: localURL) else {
-                return (CustomDirStatus.orphanedLink, nil)
-            }
-
-            if fileManager.fileExists(atPath: destination.path) {
-                let status = destination.standardizedFileURL == expectedExternalURL.standardizedFileURL
-                    ? CustomDirStatus.linked
-                    : CustomDirStatus.destinationConflict
-                return (status, destination.standardizedFileURL)
-            }
-
-            return (CustomDirStatus.orphanedLink, destination.standardizedFileURL)
-        }
-
-        if fileManager.fileExists(atPath: localURL.path) {
-            return (CustomDirStatus.local, nil)
-        }
-
-        return (CustomDirStatus.missing, nil)
-    }
-
-    private func applySize(to entry: inout CustomDirEntry) {
-        guard fileManager.fileExists(atPath: entry.url.path) else { return }
-        let sizeBytes = fastDirectorySize(at: entry.url, fileManager: fileManager)
-        entry.sizeBytes = sizeBytes
-        entry.size = LocalizedByteCountFormatter.string(fromByteCount: sizeBytes)
-    }
-
-    private func isSymbolicLink(at url: URL) -> Bool {
-        guard let attrs = try? fileManager.attributesOfItem(atPath: url.path),
-              let fileType = attrs[.type] as? FileAttributeType else {
-            return false
-        }
-        return fileType == .typeSymbolicLink
-    }
-
-    private func resolveSymlinkDestination(of url: URL) -> URL? {
-        guard let destinationPath = try? fileManager.destinationOfSymbolicLink(atPath: url.path) else {
-            return nil
-        }
-
-        if destinationPath.hasPrefix("/") {
-            return URL(fileURLWithPath: destinationPath).standardizedFileURL
-        }
-
-        return url
-            .deletingLastPathComponent()
-            .appendingPathComponent(destinationPath)
-            .standardizedFileURL
-    }
-}
-
-```
-
-### Core Architecture Module: `AppPorts/Utils/DataDirMover.swift`
-```
-import Darwin
-import Foundation
-
-/// Low-level data-tree operations retain originals; complete user flows clean
-/// their verified copies after the successful switch has been committed.
-/// UI flags never authorize execution; every entry point evaluates real paths and durable topology.
-actor DataDirMover {
-    struct CompletionResult: Sendable {
-        /// The data switch succeeded. A warning refers only to retained-copy cleanup.
-        let cleanupWarning: String?
-    }
-
-    enum CompletionError: LocalizedError {
-        case previousRestoreNeedsCleanup(String)
-
-        var errorDescription: String? {
-            switch self {
-            case .previousRestoreNeedsCleanup(let details):
-                return String(format: "上次还原的旧副本尚未清理，新的迁移尚未开始。AppPorts 会继续完成清理，条件恢复后可直接重试。%@".localized, "\n" + details)
-            }
-        }
-    }
-
-    private let fileManager = FileManager.default
-    private let homeDir: URL
-    private let store: ContainerMountStore
-    private let safety: DataOperationSafety
-    private let mountMigrator: ContainerVolumeMigrator?
-    private let failSymlinkCreation: Bool
-    private let synchronizeDirectory: @Sendable (URL, Bool) throws -> Void
-    private var runningMigrations: Set<UUID> = []
-    private var runningRestores: Set<UUID> = []
-    private var runningCleanups: Set<UUID> = []
-    private var completingPaths: Set<String> = []
-    private let managedLinkMarkerFileName = ".appports-link-metadata.plist"
-    private let managedLinkMetadataSidecarSuffix = ".appports-link-metadata.plist"
-    private let managedLinkIdentifier = "com.shimoko.AppPorts"
-    private let managedLinkSchemaVersion = 1
-
-    private struct ManagedLinkMetadata: Codable, Sendable {
-        let schemaVersion: Int
-        let managedBy: String
-        let sourcePath: String
-        let destinationPath: String
-        let dataDirType: String
-    }
-
-    init(homeDir: URL = URL(fileURLWithPath: NSHomeDirectory()),
-         failSymlinkCreation: Bool = false, failSourceBackupCleanup: Bool = false,
-         store: ContainerMountStore = .shared, runner: any ShellCommandRunning = ProcessCommandRunner(),
-         mountMigrator: ContainerVolumeMigrator? = nil,
-         synchronizeDirectory: @escaping @Sendable (URL, Bool) throws -> Void = {
-             try DurableFileIO.syncDirectory(at: $0, resolvingAlias: $1)
-         }) {
-        self.homeDir = homeDir.standardizedFileURL
-        self.store = store
-        self.safety = DataOperationSafety(homeDirectory: homeDir, store: store, runner: runner)
-        self.mountMigrator = mountMigrator
-        self.failSymlinkCreation = failSymlinkCreation
-        self.synchronizeDirectory = synchronizeDirectory
-        // Kept source-compatible with older callers. Success now always retains the original.
-        _ = failSourceBackupCleanup
-    }
-
-    /// Complete the ordinary user flow while keeping cleanup failures separate
-    /// from a successful data switch. The caller holds the shared operation lock.
-    func migrateAndComplete(item: DataDirItem, to externalBaseURL: URL,
-                            progressHandler: FileCopier.ProgressHandler?) async throws -> CompletionResult {
-        let path = item.path.standardizedFileURL.path
-        guard completingPaths.insert(path).inserted else { throw DataOperationSafety.Failure.occupied(path) }
-        defer { completingPaths.remove(path) }
-        try await completePreviousRestoreIfNeeded(item: item, externalBaseURL: externalBaseURL, progressHandler: progressHandler)
-        let operationID = try await migrateRetainingOriginal(item: item, to: externalBaseURL, progressHandler: progressHandler)
-        return await completeSuccessfulTransfer(operationID: operationID, direction: .migrate, progressHandler: progressHandler)
-    }
-
-    func restoreAndComplete(item: DataDirItem,
-                            progressHandler: FileCopier.ProgressHandler?) async throws -> CompletionResult {
-        try await completeInterruptedMigrationBeforeRestore(at: item.path, progressHandler: progressHandler)
-        let path = item.path.standardizedFileURL.path
-        guard completingPaths.insert(path).inserted else { throw DataOperationSafety.Failure.occupied(path) }
-        defer { completingPaths.remove(path) }
-        let operationID = try await restoreRetainingOriginal(item: item, progressHandler: progressHandler)
-        return await completeSuccessfulTransfer(operationID: operationID, direction: .restore,
-            progressHandler: progressHandler, requireUnchangedActive: false)
-    }
-
-    /// Low-level recovery callers may deliberately retain the verified original.
-    func migrate(item: DataDirItem, to externalBaseURL: URL, progressHandler: FileCopier.ProgressHandler?) async throws {
-        _ = try await migrateRetainingOriginal(item: item, to: externalBaseURL, progressHandler: progressHandler)
-    }
-
-    private func migrateRetainingOriginal(item: DataDirItem, to externalBaseURL: URL,
-                                          progressHandler: FileCopier.ProgressHandler?, reusingOperationID: UUID? = nil) async throws -> UUID {
-        await progressHandler?(.working(.preparing))
-        let source = item.path.standardizedFileURL
-        let destination = externalBaseURL.appendingPathComponent(source.lastPathComponent).standardizedFileURL
-        try requirePolicy(source)
-        guard !isSymbolicLink(at: source) else { throw DataDirError.destinationExists(source) }
-        guard !DiskUtility.isMountPoint(source) else { throw DataOperationSafety.Failure.conflict(source.path) }
-        guard try !entryExists(destination) else { throw DataDirError.destinationExists(destination) }
-        try requireMarker(at: source, for: source, type: item.type, allowOwned: false)
-        let restored = try completedRestoreLineage(at: source)
-        try await safety.requireNewMigration(at: source, destination: destination,
-            bundleIdentifier: item.associatedBundleIdentifier, ownedTransferIDs: Set(restored.map(\.operationID)))
-        // Reject known permission failures before reserving a recovery record.
-        // Directory creation still happens only after the durable intent below.
-        let destinationVolumeUUID = try preflightWritePermission(at: externalBaseURL)
-        let id = reusingOperationID ?? UUID()
-        let candidate = externalBaseURL.appendingPathComponent(".appports-copy-\(id.uuidString)").standardizedFileURL
-        let backup = source.deletingLastPathComponent().appendingPathComponent(".appports-migration-backup-\(source.lastPathComponent)-\(id)")
-        var transfer = DataTransferRecord(operationID: id, mode: .symlink, direction: .migrate, sourceID: item.id,
-            appName: item.associatedAppName ?? item.name, bundleIdentifier: item.associatedBundleIdentifier,
-            dataDirType: item.type.rawValue, originalPath: source.path, activePath: source.path,
-            destinationPath: destination.path, backupPath: backup.path,
-            sourceIdentity: try DataPathIdentity.capture(source), destinationVolumeUUID: destinationVolumeUUID,
-            priorOperationID: restored.last?.operationID)
-        transfer.preparationPath = candidate.path
-        try store.beginTransfer(transfer)
-        runningMigrations.insert(id)
-        defer { runningMigrations.remove(id) }
-        do {
-            try checkWritePermission(at: externalBaseURL)
-            if let destinationVolumeUUID {
-                try requireDestinationVolume(at: externalBaseURL, expected: destinationVolumeUUID)
-            }
-            transfer.phase = .copying
-            try store.updateTransfer(transfer)
-            let baseline = try await copy(from: source, to: candidate, final: destination, operationID: id, progress: progressHandler)
-            transfer = try store.transfer(operationID: id) ?? transfer
-            try requireMarker(at: source, for: source, type: item.type, allowOwned: false)
-            transfer.baseline = try PropertyListEncoder().encode(baseline)
-            transfer.phase = .verified
-            try store.updateTransfer(transfer)
-            try moveTree(candidate, to: destination)
-            try syncDirectory(at: destination.deletingLastPathComponent())
-            try installMarker(source: source, destination: destination, type: item.type, baseline: baseline)
-            try syncTree(at: destination)
-            await progressHandler?(.init(copiedBytes: baseline.logicalBytes, totalBytes: baseline.logicalBytes, currentFile: "正在切换本地入口...".localized, showsByteProgress: false, stage: .switching))
-            try await safety.requireNoKnownWriters(at: source, bundleIdentifier: item.associatedBundleIdentifier)
-            try requireIdentity(source, transfer.sourceIdentity)
-            try requireMarker(at: source, for: source, type: item.type, allowOwned: false)
-            try TreeCopySession.verifyUnchanged(at: source, against: baseline)
-            try TreeCopySession.verifyCopy(at: destination, against: baseline)
-            transfer.phase = .switching
-            try store.updateTransfer(transfer)
-            try moveTree(source, to: backup)
-            try syncDirectory(at: source.deletingLastPathComponent())
-            transfer.backupIdentity = try DataPathIdentity.capture(backup)
-            try requireIdentity(backup, transfer.sourceIdentity)
-            try store.updateTransfer(transfer)
-            await progressHandler?(.init(copiedBytes: baseline.logicalBytes, totalBytes: baseline.logicalBytes, currentFile: "正在创建符号链接...".localized, showsByteProgress: false, stage: .switching))
-            try requireMarker(at: backup, for: source, type: item.type, allowOwned: false)
-            try TreeCopySession.verifyUnchanged(at: backup, against: baseline)
-            do { try createSymbolicLink(at: source, withDestinationURL: destination) }
-            catch {
-                // The backup is still complete; never overwrite a competing entry during rollback.
-                if try !entryExists(source) { try moveTree(backup, to: sou
+        if expected.direction == .migrate, expected.isVerifiedSwitchRecoverable, expected.backupId
 ```
 
 
@@ -1544,11 +1318,11 @@ actor DataDirMover {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #82** (2026-10-20): **[BUG] App Store 装在外置硬盘上的软件（微软家的Word办公套件）无法正常检测签名**
+  *Symptoms*: ### 问题描述 / Problem  如图，从官方安装的无法检验签名 <img width="1483" height="332" alt="Image" src="https://github.com/user-attachments/assets/10cedcf0-bb6b-4a6a-b4dc-66fec58cfa39" />  <img width="560" height="484" alt="Image" src="https://github.com/user-attachments/assets/a9773496-713f-4a4a-b95b-2c675967ac9a" />  ### 复现步骤 / Steps to Reproduce  1、在1.9.2版本前链接外置硬盘的软件 2、更新最新版后出现签名待检查，未对应用数据进行迁移 3、目前只有微软的套件存在问题 ps：只迁移过 Edge 的数据  ### 设备系统版本 / OS Version  macOS 27.0.1  ### 软件版本 / App Version  v1.9.2  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  [AppPorts-Diagnostic-20261019-104416.zip](https://github.com/user-attachments/files/33646535/AppPorts-Diagnostic-20261019-104416.zip)  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [x] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  _No response_  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
+
 - **Issue #77** (2026-10-18): **[BUG] 1.9.0升级1.9.1后 微信迁回本地失败**
   *Symptoms*: ### 问题描述 / Problem  1.9.0升级1.9.1后 微信迁回本地失败,只要是图标中带锁的应用都迁入本地失败。  ### 复现步骤 / Steps to Reproduce  无  ### 设备系统版本 / OS Version  macOS 27.0.1  ### 软件版本 / App Version  1.9.1  ### 诊断信息确认 / Diagnostics    - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  [AppPorts-Diagnostic-20261017-033531.zip](https://github.com/user-attachments/files/33570648/AppPorts-Diagnostic-20261017-033531.zip)  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [x] 移动硬盘盒 / Drive Enclosure - [ ] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  _No response_  ### 截图（可选） / Screenshots (Optional)  <img width="1700" height="1280" alt="Image" src="https://github.com/user-attachments/assets/6fa20fd5-f7cb-4b80-808a-82f67f1c0d0d" />  <img width="60" height="409" alt="Image" src="https://github.com/user-attachments/assets/b242cd87-7204-4c8d-8a43-40cc69629159" />  ### 日志（可选，仅在无诊断包时填写） / Logs (Optional, only if no diagnostic package)  ```shell  ```
-
-- **Issue #67** (2026-10-15): **[BUG] 在macOS 26执行迁移后，部分App图标显示异常，重复显示**
-  *Symptoms*: ### 问题描述 / Problem  部分App迁移后图标显示异常，如图  <img width="94" height="95" alt="Image" src="https://github.com/user-attachments/assets/88046496-1801-445c-b9cf-56871624a06d" />  <img width="890" height="623" alt="Image" src="https://github.com/user-attachments/assets/0f30cf8a-0629-4f14-a47a-5b6d9f70bc08" />  <img width="890" height="623" alt="Image" src="https://github.com/user-attachments/assets/b6d359c0-0b27-42d3-b71f-46934e11f310" />  <img width="890" height="623" alt="Image" src="https://github.com/user-attachments/assets/683bd84c-6cf0-4f6e-a262-d3d7aef56ac0" />  <img width="1012" height="764" alt="Image" src="https://github.com/user-attachments/assets/c7417b8d-aad7-47af-9b81-c7df495fce07" />  <img width="1069" height="1017" alt="Image" src="https://github.com/user-attachments/assets/0272ba7c-ffbc-4c89-9bd9-852a4df72b20" />  ### 复现步骤 / Steps to Reproduce  1，迁移App 2，打开Spotlight  ### 设备系统版本 / OS Version  macOS Tahoe 26.6.2 (25G83) x86_64  ### 软件版本 / App Version  1.9.0 (22)  ### 诊断信息确认 / Diagnostics  - [x] 我已附上诊断包；如无法提供，已在下方说明原因。 / I attached a diagnostic package or explained why it is unavailable.  ### 诊断包 / Diagnostic Package  [AppPorts-Diagnostic-20261005-140721.zip](https://github.com/user-attachments/files/33044661/AppPorts-Diagnostic-20261005-140721.zip)  ### 外置存储设备类型 / External Storage Type  - [ ] NAS - [ ] 移动硬盘 / Portable External Drive - [ ] 移动硬盘盒 / Drive Enclosure - [x] 其他 / Other  ### 外置存储设备产品名 / External Storage Product Name  内置硬盘：WD10EZEX  ### 截图（可选） / Screenshots (Optio
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1565,478 +1339,1108 @@ actor DataDirMover {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66d8f7cd` (2026-10-18)
-**Commit Message**: fix: clear update protection locks on any app location change
+### Incident Patch 1: `e0302b07` (2026-10-21)
+**Commit Message**: fix(应用数据): 「锁定目录结构」只补回可操作项的上游祖先
 
-1.9.0 locked every self-updating external copy with `chflags -R uchg` and
-recorded nothing, so 1.9.1 saw those bits as a user's own lock and failed
-closed before copying. Restoring such an app reported "无法完整保留此项目的
-内容或权限" and left a journal that repeated the same error forever.
+原先两个开关各守一道门，任何单独勾选都不放行：
 
-Every attempt to prove which bits AppPorts wrote blocks real restores: an
-app that was updated or repaired after being locked keeps some flags and
-loses others, so a tree can end up locked only at its root or only in
-places. A location change now records and clears the immutable bit over the
-whole tree, whatever shape it has. The record is still written before any
-flag changes so an interruption can reapply exactly those bits; only
-`UF_IMMUTABLE` is attributed, every other flag still fails closed.
+    if isMigrationUnsupported && !showNonMigratableDirectories { return false }
+    if !isMigratable { return showLockedStructure }
 
-Also records a replaced target's baseline before any content moves, and
-persists it, so a resume can never face a record whose only outcome is the
-refusal on the next attempt.
+isMigrationUnsupported 是 !isMigratable 的子集，其余不可迁移行又被
+needsRecoveryOrAttention 强制显示，于是「锁定目录结构」能多显示的内容是空集——
+勾了没反应。
 
-**File**: `AppPorts/Models/AppTransferRecord.swift` (modified, +23/-0)
+现在按用途拆开：
+- 锁定目录结构：在树层补回“可操作项之上的锁定祖先”，只用于交代层级，
+  没有可操作子项的锁定目录不会出现（DataDirTree.visibleItems）；
+- 不支持迁移：仍由 matchesVisibility 单条判断决定，全量放出。
+
+matchesVisibility 相应回到两个参数，不再依赖兄弟节点。表头计数改按最终
+渲染行数统计，补回的祖先行也算进去。
+
+测试同步：DataDirTreeTests 新增“只开锁定结构不会放出孤立锁定目录”和
+“打开不支持迁移后全量出现”两组断言；其余用例改用新参数。
+
+决定记录见 .agents/notes/implemented/bug-fix/2026-10-22-locked-structure-shows-actionable-ancestors.md
+
+**File**: `.agents/notes/implemented/bug-fix/2026-10-22-locked-structure-shows-actionable-ancestors.md` (added, +60/-0)
 ```diff
-@@ -108,6 +108,29 @@ struct AppTransferRecord: Codable, Identifiable, Sendable {
-     }
- }
- 
-+/// Resume verifies against recorded manifests. A journal whose manifest was lost
-+/// (v1.9.1 removed manifests before its record) can never be verified again, so
-+/// every caller must hear that instead of a raw file error. Reported as one
-+/// actionable message; the caller decides whether to retry or end the record.
-+enum AppTransferJournalIntegrity {
-+    static func missingManifests(for record: AppTransferRecord, store: AppTransferStore) -> Bool {
-+        var required = record.hasCandidateBaseline ? ["candidate"] : []
-+        if record.hasSourceBaseline { required.append("source") }
-+        if record.hasExistingDestinationBaseline { required.append("existing") }
-+        for item in record.cleanupItems where !item.completed { required.append(item.baselineName) }
-+        // Legacy portals embed their baseline in the record itself, so they never
-+        // require a manifest file and must not be reported as missing here.
-+        return Set(required).contains { (try? store.baseline($0, operationID: record.operationID)) == nil }
-+    }
+@@ -0,0 +1,60 @@
++# Agent Note: 「锁定目录结构」改为只补回可操作项之上的锁定祖先
 +
-+    static func requireVerifiedManifests(for record: AppTransferRecord, store: AppTransferStore) throws {
-+        guard missingManifests(for: record, store: store) else { return }
-+        throw AppTransferTransaction.failure("这条记录缺少校验清单，无法再次验证副本。".localized
-+            + "\n" + "已保留的内容需要你确认；可以结束这条记录并保留所有副本，再重新发起操作。".localized,
-+            at: URL(fileURLWithPath: record.activeDestinationPath))
-+    }
-+}
++Status: implemented
 +
- struct AppTransferActivation: Codable, Equatable, Sendable {
-     let operationID: UUID
-     let path: String
++## Problem
++
++应用数据页的两个可见性开关单独勾选时都没有效果，只有同时勾上才会出现锁定行：
++
++```swift
++if isMigrationUnsupported && !showNonMigratableDirectories { return false }  // 第三道门
++if !isMigratable { return showLockedStructure }                              // 第二道门
++```
++
++`isMigrationUnsupported` 是 `!isMigratable` 的子集，而子集之外那些“不能迁移但还能接回/挂载/恢复”的行本来就被 `needsRecoveryOrAttention` 强制显示。于是「显示锁定目录结构」能多显示的内容只剩空集：勾上它，列表纹丝不动，用户只会怀疑开关坏了。
++
++同时两个开关的语义也没有区分开：它们覆盖的行完全重叠，等于同一个过滤器的两道锁。
++
++## Decision
++
++把两个开关拆成两种不同的问题：
++
++- **显示锁定目录结构**（`showLockedStructure`）只在树层生效：补回**可操作项之上的锁定祖先**，用来交代层级。没有可操作子项的锁定目录不会因为打开它而出现。判定在 `DataDirTree.visibleItems`：
++
++  ```swift
++  guard showLockedStructure, !showNonMigratableDirectories else { return base }
++  let prefix = item.path.standardizedFileURL.path + "/"
++  return basePaths.contains { $0.hasPrefix(prefix) }
++  ```
++
++- **显示不支持迁移目录**（`showNonMigratableDirectories`）保持“全量放出”的语义，作用在 `DataDirItem.matchesVisibility` 的单条判断上。
++
++`matchesVisibility` 因此回到两个参数：它只回答“这一条本身该不该出现”，祖先补充交给树层，避免让单条判断依赖兄弟节点。
++
++表头计数改为按最终渲染的行数统计（`visibleLibraryItemCount`），否则补回的祖先行会让“显示 X / 67”和列表对不上。
++
++`DataDirTree.visibleTree` 的 `showNonMigratableDirectories` 默认值改为 `false`：默认只显示可操作内容，需要更多内容由调用方显式打开。
++
++## Verification
++
++- 独立 harness 编译真实模型文件（`DataDirItem.swift`、`DataDirTree.swift`、`DataPathPolicy.swift`、`PartialWeChatMigrationPolicy.swift`）验证 13 条规则：默认隐藏锁定行、打开「锁定结构」只补可操作项的祖先、无子项的锁定目录不出现、打开「不支持迁移」全量出现、零字节开关互不影响。全部通过。
++- Release `xcodebuild clean build` 通过，无编译错误。
++- 测试调用点已同步：`DataDirPresentationTests`、`DataDirTreeTests`、`DataPathPolicyTests`、`DataDirScannerTests`、`MigrationSafetyRenderTests`；`DataDirTreeTests` 的可见性矩阵新增了“只开锁定结构不放出孤立锁定目录”和“打开不支持迁移后全量出现”两组断言。
++
++## Alternatives considered
++
++- **合并成一个开关**：行为最简单，但用户明确需要“看层级”和“看全部”两种不同的浏览方式，合并会丢失前者。
++- **保持原状，只让第三个开关自动打开第二个**：仍然没有解决「锁定结构」本身没有内容可显示的问题，等于留一个装饰性开关。
++- **在单条判断里补祖先**：`matchesVisibility` 只能看到自己，判断“是否有可操作子项”需要遍历兄弟节点，会把树结构的知识塞进单条模型。
++- **把祖先补充放在视图层**：可见性规则会分散到 View 和 Model 两处，测试也只能覆盖一半。
++
++## Consequences
++
++收益：两个开关各自回答一个问题——“这层结构是什么”与“还有哪些不能迁移的东西”。单独勾任何一个都有可见效果。
++
++代价与边界：
++
++- 「锁定结构」补回的祖先行没有独立操作，只用于展示；它们的大小仍按行统计，父行与子行不能相加。
++- 祖先判定按路径前缀在**当前分组内**计算，跨类型分组（例如 Application Support 与 Containers）之间的层级不会被补回。
++- 用户目录快捷入口（Desktop/Downloads 等）即使作为祖先也不会补回，避免把个人目录当成应用数据展示。
++- `visibleTree` 的默认参数由 `true` 改为 `false`，未显式传参的调用方（主要是测试）行为随之收紧。
 ```
 
-**File**: `AppPorts/Services/AppTransferStore.swift` (modified, +108/-6)
+**File**: `AppPorts/Models/DataDirItem.swift` (modified, +6/-2)
 ```diff
-@@ -151,16 +151,49 @@ final class AppTransferStore: @unchecked Sendable {
-     func remove(_ id: UUID) throws {
-         lock.lock(); defer { lock.unlock() }
-         try recheckWriterAdmission()
--        // Delete manifests first. A record is only removed after all effects
--        // have completed; a retry of its final bookkeeping does not need them.
--        for url in try FileManager.default.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
--        where url.lastPathComponent.hasPrefix(id.uuidString + "-") && url.pathExtension == "manifest" {
--            try FileManager.default.removeItem(at: url)
--        }
-+        // The record is the authority. Removing it first makes a retry of this
-+        // bookkeeping harmless: leftover manifests are ignored by every reader,
-+        // while a record that outlived its manifests could never be verified or
-+        // completed again and would keep blocking its paths forever.
-         let url = recordURL(id)
-         if try Self.exists(url) { try FileManager.default.removeItem(at: url) }
-+        try removeManifests(id)
-+        try DurableFileIO.syncDirectory(at: directoryURL)
-+        NotificationCenter.default.post(name: .appPortsRecordsDidChange, object: nil)
+@@ -317,12 +317,16 @@ struct DataDirItem: Identifiable, Equatable, Sendable {
+             || pathPolicy?.reason == .runtimeConflict || pathPolicy?.reason == .readFailure
+     }
+ 
+-    func matchesVisibility(showZeroByteDirectories: Bool, showLockedStructure: Bool,
++    /// 单条目录的基础可见性：可操作项、需要处理的行，以及按开关决定的空目录与不可迁移目录。
++    ///
++    /// “可操作项之上的锁定祖先”不属于单条判断能回答的问题，由 `DataDirTree.visibleItems` 补回；
++    /// `showNonMigratableDirectories` 才是把全部不可迁移目录一并放出的开关。
++    func matchesVisibility(showZeroByteDirectories: Bool,
+                            showNonMigratableDirectories: Bool = true) -> Bool {
+         if isMigrationUnsupported && !showNonMigratableDirectories { return false }
+         if needsRecoveryOrAttention || hasMountTransferRecord { return true }
+         if isUserDirectoryLink { return false }
+-        if !isMigratable { return showLockedStructure }
++        if !isMigratable { return showNonMigratableDirectories }
+         return showZeroByteDirectories || !isEmptyLocalDirectory
+     }
+ 
+```
+
+**File**: `AppPorts/Models/DataDirTree.swift` (modified, +26/-4)
+```diff
+@@ -111,13 +111,35 @@ enum DataDirTree {
+     /// Row.contextPath supplies the intermediate path that indentation no longer represents.
+     static func visibleTree(from items: [DataDirItem], showZeroByteDirectories: Bool,
+                             showLockedStructure: Bool, matchingIDs: Set<String>,
+-                            showNonMigratableDirectories: Bool = true) -> [DataDirItem] {
+-        let visibleItems = items.filter {
++                            showNonMigratableDirectories: Bool = false) -> [DataDirItem] {
++        let included = visibleItems(from: items,
++                                    showZeroByteDirectories: showZeroByteDirectories,
++                                    showLockedStructure: showLockedStructure,
++                                    showNonMigratableDirectories: showNonMigratableDirectories)
++        return retainingMatches(in: build(from: included), matchingIDs: matchingIDs)
 +    }
 +
-+    /// Archive only bookkeeping: the journal and its manifests leave the live
-+    /// directory, so the operation stops owning its paths. Applications,
-+    /// retained copies and staging objects are deliberately left untouched and
-+    /// remain the user's to inspect. Callers decide when work is unrecoverable.
-+    @discardableResult
-+    func archive(_ id: UUID) throws -> URL? {
-+        lock.lock(); defer { lock.unlock() }
-+        try recheckWriterAdmission()
-+        let recordURL = recordURL(id)
-+        let recordExists = try Self.exists(recordURL)
-+        let manifests = try manifestURLs(id)
-+        guard recordExists || !manifests.isEmpty else { return nil }
-+        let archive = directoryURL.appendingPathComponent("archived", isDirectory: true)
-+        try FileManager.default.createDirectory(at: archive, withIntermediateDirectories: true)
-+        for url in [recordURL] + manifests where try Self.exists(url) {
-+            try FileManager.default.moveItem(at: url, to: archive.appendingPathComponent(url.lastPathComponent))
++    /// 一屏里应当出现的目录集合。
++    ///
++    /// `showNonMigratableDirectories` 打开时，所有不可迁移目录都算可见；
++    /// 只勾「锁定目录结构」时，仅补回**可操作项之上的锁定祖先**——
++    /// 它们的唯一作用是交代层级，不会把没有可操作子项的锁定目录一并放出。
++    static func visibleItems(from items: [DataDirItem], showZeroByteDirectories: Bool,
++                             showLockedStructure: Bool,
++                             showNonMigratableDirectories: Bool) -> [DataDirItem] {
++        let base = items.filter {
+             $0.matchesVisibility(showZeroByteDirectories: showZeroByteDirectories,
+-                                 showLockedStructure: showLockedStructure,
+                                  showNonMigratableDirectories: showNonMigratableDirectories)
+         }
+-        return retainingMatches(in: build(from: visibleItems), matchingIDs: matchingIDs)
++        guard showLockedStructure, !showNonMigratableDirectories else { return base }
++        let baseIDs = Set(base.map(\.id))
++        let basePaths = base.map { $0.path.standardizedFileURL.path }
++        return items.filter { item in
++            if baseIDs.contains(item.id) { return true }
++            guard !item.isMigratable, !item.isUserDirectoryLink else { return false }
++            let prefix = item.path.standardizedFileURL.path + "/"
++            return basePaths.contains { $0.hasPrefix(prefix) }
 +        }
-+        try DurableFileIO.syncDirectory(at: archive)
-         try DurableFileIO.syncDirectory(at: directoryURL)
-         NotificationCenter.default.post(name: .appPortsRecordsDidChange, object: nil)
-+        return archive
-+    }
-+
-+    private func manifestURLs(_ id: UUID) throws -> [URL] {
-+        guard try Self.exists(directoryURL) else { return [] }
-+        return try FileManager.default.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
-+            .filter { $0.lastPathComponent.hasPrefix(id.uuidString + "-") && $0.pathExtension == "manifest" }
-+            .sorted { $0.path < $1.path }
-+    }
-+
-+    private func removeManifests(_ id: UUID) throws {
-+        for url in try manifestURLs(id) { try FileManager.default.removeItem(at: url) }
      }
  
-     private func prepareDirectory() throws {
-@@ -202,6 +235,29 @@ struct AppUpdateProtectionRelocation: Codable, Equatable, Sendable {
-     let path: String
-     let identity: DataPathIdentity
-     let entries: [Entry]
-+    /// Old records written before 1.9.1 decode without this field and mean
-+    /// `.managed`. Only adoption of a v1.9.0 `chflags -R uchg` tree sets it.
-+    var adoptedLegacyLock: Bool? = nil
-+
-+    /// Why AppPorts believes it may revoke the immutable bits listed above.
-+    var origin: AppUpdateProtectionOrigin { adoptedLegacyLock == true ? .adoptedV1_9_0 : .managed }
-+}
-+
-+/// `managed` records name bits AppPorts set itself. `adoptedV1_9_0` records name
-+/// bits v1.9.0 set with `chflags -R uchg` and never recorded; the transfer still
-+/// only ever clears the immutable bit, never other flags.
-+enum AppUpdateProtectionOrigin: Equatable, Sendable {
-+    case managed
-+    case adoptedV1_9_0
-+}
-+
-+/// What the caller knows about the object it is about to move. Kept only for
-+/// logging: locking is AppPorts' own bookkeeping, so a move always clears it.
-+struct AppUpdateProtectionAdoption: Sendable {
-+    /// A local entry AppPorts created still resolves to this exact object.
-+    let managedLocalEntry: URL?
-+    /// The incoming source is provably the same application.
-+    let sameApplicationSource: URL?
- }
- 
- struct AppUpdateProtectionRecordIssue: Identifiable, Sendable {
-@@ -371,6 +427,52 @@ final class AppUpdateProtectionStore {
-         return true
-     }
- 
-+    /// The update lock is AppPorts' own protection, and 1.9.0 wrote it with
-+    /// `chflags -R uchg` without recording anything. Every attempt to tell those
-+    /// bits from a user's own lock ends up blocking ordinary restores, because a
-+    /// bundle that was updated or repaired after 1.9.0 locked it keeps some flags
-+    /// and loses others. So a move clears the im
+     /// Keep ancestors of matches so a search never hides the directory's context.
 ```
 
-**File**: `AppPorts/Services/AppTransferTransaction.swift` (modified, +54/-5)
+**File**: `AppPorts/Views/DataDirsView.swift` (modified, +8/-3)
 ```diff
-@@ -94,6 +94,9 @@ final class AppTransferTransaction {
-             if pending.sourcePath == source.path && pending.destinationPath == destination.path {
-                 if !pending.isSwitchComplete
-                     || (pending.successorActivation == nil && (try? observeActivation(pending)) == true) {
-+                    // A resume would fail on its first manifest read with a raw
-+                    // file error; report the actionable reason instead.
-+                    try AppTransferJournalIntegrity.requireVerifiedManifests(for: pending, store: store)
-                     return try await resume(pending.operationID, progress: progress)
-                 }
+@@ -646,7 +646,7 @@ struct DataDirsView: View {
+                 .buttonStyle(.plain)
+                 .accessibilityLabel("清除搜索".localized)
              }
-@@ -183,7 +186,27 @@ final class AppTransferTransaction {
-         let journal = Journal(record, store: store)
-         do {
-             try checkpoint(.intentSaved, journal)
-+            // Suspend only the protection bits first: a locked tree cannot be
-+            // walked for a baseline, so this must precede every read. The tokens
-+            // for it are already durable in the record.
-             try suspendPreparationProtection(journal)
-+            // With flags suspended, everything that reads the tree happens now.
-+            // The replaced target's baseline in particular must be durable before
-+            // any content moves: a resume cannot tell its authorized contents from
-+            // later writes to the same inode, so it would have to refuse, and
-+            // refusing with a copy already in flight strands both sides.
-+            if existing {
-+                do {
-+                    try store.writeBaseline(try captureBaseline(destination), named: "existing", operationID: id)
-+                } catch {
-+                    // Nothing was copied yet: end this intent instead of leaving a
-+                    // record whose only outcome is the refusal on the next attempt.
-+                    throw Self.failure("无法记录替换目标的初始状态，本次操作尚未开始，未改动任何一方：".localized
-+                        + error.localizedDescription, at: destination)
-+                }
-+                journal.record.hasExistingDestinationBaseline = true
-+                try journal.save()
+-            Text(String(format: "显示 %lld / %lld".localized, Int64(filteredLibraryItems.count), Int64(libraryItems.count)))
++            Text(String(format: "显示 %lld / %lld".localized, Int64(visibleLibraryItemCount), Int64(libraryItems.count)))
+                 .font(.system(size: 11))
+                 .foregroundColor(.secondary)
+                 .fixedSize()
+@@ -708,7 +708,7 @@ struct DataDirsView: View {
+     private var appDataFilterSummary: some View {
+         VStack(alignment: .leading, spacing: 8) {
+             HStack(spacing: 10) {
+-                Text(String(format: "显示 %lld / %lld".localized, Int64(sortedFilteredLibraryItems.count), Int64(libraryItems.count)))
++                Text(String(format: "显示 %lld / %lld".localized, Int64(visibleLibraryItemCount), Int64(libraryItems.count)))
+                     .font(.system(size: 11, weight: .medium))
+                     .foregroundColor(.secondary)
+ 
+@@ -1046,6 +1046,12 @@ struct DataDirsView: View {
+         }
+     }
+ 
++    private var visibleLibraryItemCount: Int {
++        groupedLibraryItems.reduce(0) { count, group in
++            count + DataDirTree.rows(in: group.items).count
++        }
++    }
++
+     private var hasActiveAppDataFilters: Bool {
+         summaryFilter != nil || !selectedPriorityFilters.isEmpty || !selectedStatusFilters.isEmpty || !selectedTypeFilters.isEmpty
+     }
+@@ -1083,7 +1089,6 @@ struct DataDirsView: View {
+             && (selectedStatusFilters.isEmpty || selectedStatusFilters.contains(item.displayedStatus))
+             && (selectedTypeFilters.isEmpty || selectedTypeFilters.contains(item.type))
+             && item.matchesVisibility(showZeroByteDirectories: showZeroByteDirectories,
+-                                      showLockedStructure: showLockedDirectoryStructure,
+                                       showNonMigratableDirectories: showNonMigratableDirectories)
+     }
+ 
+```
+
+**File**: `AppPortsTests/DataDirPresentationTests.swift` (modified, +6/-6)
+```diff
+@@ -12,9 +12,9 @@ struct DataDirPresentationTests {
+                                    type: .containers, priority: .optional, description: "",
+                                    status: status, isMigratable: false)
+             item.sizeIsIncomplete = true
+-            #expect(!item.matchesVisibility(showZeroByteDirectories: true, showLockedStructure: true,
++            #expect(!item.matchesVisibility(showZeroByteDirectories: true,
+                                            showNonMigratableDirectories: false))
+-            #expect(item.matchesVisibility(showZeroByteDirectories: true, showLockedStructure: true,
++            #expect(item.matchesVisibility(showZeroByteDirectories: true,
+                                           showNonMigratableDirectories: true))
+ 
+             var child = item
+@@ -41,7 +41,7 @@ struct DataDirPresentationTests {
+         var item = shortcut()
+         item.applyPathPolicy(.init(role: .systemDirectory, reason: reason, canMigrate: false, mayDiscoverChildren: false))
+         #expect(item.needsRecoveryOrAttention)
+-        #expect(item.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false))
++        #expect(item.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false))
+         #expect(item.sizeMeasurementURL == nil)
+     }
+ 
+@@ -70,7 +70,7 @@ struct DataDirPresentationTests {
+     func shortcutVisibility(showZero: Bool, showStructure: Bool) {
+         let item = shortcut()
+         #expect(!item.matchesVisibility(showZeroByteDirectories: showZero,
+-                                        showLockedStructure: showStructure))
++                                        showNonMigratableDirectories: showStructure))
+     }
+ 
+     @Test("Similar folder names and nested paths remain ordinary existing links",
+@@ -81,7 +81,7 @@ struct DataDirPresentationTests {
+         #expect(!item.isUserDirectoryLink)
+         #expect(item.sizeMeasurementURL == item.linkedDestination)
+         #expect(item.displayedStatus == DataDirStatus.existingSymlink)
+-        #expect(item.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false))
++        #expect(item.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false))
+     }
+ 
+     @Test("Only the matching personal folder target qualifies",
+@@ -126,7 +126,7 @@ struct DataDirPresentationTests {
+             #expect(item.sizeMeasurementURL == item.linkedDestination)
+             #expect(item.displayedStatus == item.status)
+             #expect(item.needsRecoveryOrAttention)
+-            #expect(item.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false))
++            #expect(item.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false))
+         }
+         #expect(managed.canRestore)
+         #expect(linked.canRestore)
+```
+
+**File**: `AppPortsTests/DataDirScannerTests.swift` (modified, +6/-6)
+```diff
+@@ -1223,8 +1223,8 @@ final class DataDirScannerTests: XCTestCase {
+                 XCTAssertEqual(row.sizeBytes, 0)
+                 let measured = await scanner.calculateSize(for: row)
+                 XCTAssertEqual(measured, 0)
+-                XCTAssertFalse(row.matchesVisibility(showZeroByteDirectories: true, showLockedStructure: false))
+-                XCTAssertFalse(row.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: true))
++                XCTAssertFalse(row.matchesVisibility(showZeroByteDirectories: true, showNonMigratableDirectories: false))
++                XCTAssertFalse(row.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: true))
+                 XCTAssertEqual(try String(contentsOf: workspace.homeURL.appendingPathComponent(name + "/payload.txt")), "payload")
+             }
+         }
+@@ -1326,7 +1326,7 @@ final class DataDirScannerTests: XCTestCase {
+             for: AppItem(name: "WeChat.app", path: appURL, status: "本地"))
+         let item = try XCTUnwrap(items.first { $0.path.standardizedFileURL == source.standardizedFileURL })
+         XCTAssertFalse(item.isMigratable)
+-        XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false))
++        XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false))
+     }
+ 
+     func testUnresolvedRetainedMigrationBlocksRemigrationAndRemainsVisible() async throws {
+@@ -1356,7 +1356,7 @@ final class DataDirScannerTests: XCTestCase {
+         let item = try XCTUnwrap(items.first { $0.path.standardizedFileURL == source.standardizedFileURL })
+         XCTAssertFalse(item.isMigratable)
+         XCTAssertEqual(item.pathPolicy?.reason, .retainedOriginal)
+-        XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false))
++        XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false))
+     }
+ 
+     func testCompletedRestoreIsMigratableWithTwoRetainedCopiesUnlessEntryChangedOrRecoveryIsPending() async throws {
+@@ -1405,7 +1405,7 @@ final class DataDirScannerTests: XCTestCase {
+             XCTAssertEqual(scanned.isMigratable, ["restored", "used-after-restore", "cleanup-retry"].contains(state), state)
+             XCTAssertEqual(scanned.recoveryOperationID, restored.operationID, state)
+             XCTAssertNil(scanned.linkedDestination, state)
+-            XCTAssertTrue(scanned.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false), state)
++            XCTAssertTrue(scanned.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false), state)
+             XCTAssertEqual(try store.transfers().count, 2, "Scanning must not delete retained data")
+         }
+     }
+@@ -1452,7 +1452,7 @@ final class DataDirScannerTests: XCTestCase {
+         XCTAssertFalse(item.isMigratable)
+         XCTAssertTrue(item.canRestore)
+         XCTAssertEqual(item.linkedDestination?.standardizedFileURL, target.standardizedFileURL)
+-        XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false))
++        XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false))
+     }
+ 
+     func testWeChatSplitDiscoveryAddsOnlyTwoMembersAndGroupsActionsAtAccount() async throws {
+```
+
+**File**: `AppPortsTests/DataDirTreeTests.swift` (modified, +19/-5)
+```diff
+@@ -180,20 +180,34 @@ final class DataDirTreeTests: XCTestCase {
+         let items = [root, locked, empty, business, managed, unreadable]
+         for zeros in [false, true] {
+             for locks in [false, true] {
+-                let matches = Set(items.filter { $0.matchesVisibility(showZeroByteDirectories: zeros, showLockedStructure: locks) }.map(\.id))
++                let matches = Set(items.filter {
++                    $0.matchesVisibility(showZeroByteDirectories: zeros, showNonMigratableDirectories: false)
++                }.map(\.id))
+                 let tree = DataDirTree.visibleTree(from: items, showZeroByteDirectories: zeros,
+-                                                   showLockedStructure: locks, matchingIDs: matches)
++                                                   showLockedStructure: locks, matchingIDs: matches,
++                                                   showNonMigratableDirectories: false)
+                 let visible = Set(DataDirTree.rows(in: tree).map(\.id))
+-                XCTAssertTrue(visible.isSuperset(of: [business.id, managed.id, unreadable.id]))
++                XCTAssertTrue(visible.isSuperset(of: [business.id, managed.id]))
++                // root 是 business 的祖先：只有“显示锁定目录结构”会把它作为层级补回来。
+                 XCTAssertEqual(visible.contains(root.id), locks)
+                 XCTAssertEqual(visible.contains(empty.id), zeros)
+-                XCTAssertEqual(visible.contains(locked.id), locks)
++                // locked 没有可操作的子项，单靠“锁定结构”不会出现在列表里。
++                XCTAssertFalse(visible.contains(locked.id))
++                // 不支持迁移且读取失败的行，仍然只跟随“显示不支持迁移目录”。
++                XCTAssertFalse(visible.contains(unreadable.id))
+                 // Search preserves only ancestors that survived visibility filtering.
+                 let explicitMatches = matches.intersection([business.id])
+                 let explicitTree = DataDirTree.visibleTree(from: items, showZeroByteDirectories: zeros,
+-                                                           showLockedStructure: locks, matchingIDs: explicitMatches)
++                                                           showLockedStructure: locks, matchingIDs: explicitMatches,
++                                                           showNonMigratableDirectories: false)
+                 XCTAssertEqual(DataDirTree.rows(in: explicitTree).map(\.id), locks ? [root.id, business.id] : [business.id])
+             }
++            // “显示不支持迁移目录”把这一类全部放出，不要求它们有可操作子项。
++            let allTree = DataDirTree.visibleTree(from: items, showZeroByteDirectories: zeros,
++                                                  showLockedStructure: false, matchingIDs: Set(items.map(\.id)),
++                                                  showNonMigratableDirectories: true)
++            let allVisible = Set(DataDirTree.rows(in: allTree).map(\.id))
++            XCTAssertTrue(allVisible.isSuperset(of: [root.id, locked.id, managed.id, unreadable.id]))
+         }
+     }
+ 
+```
+
+**File**: `AppPortsTests/DataPathPolicyTests.swift` (modified, +2/-2)
+```diff
+@@ -61,13 +61,13 @@ final class DataPathPolicyTests: XCTestCase {
+                        DataDirStatus.pendingMount, DataDirStatus.volumeMissing] {
+             item.status = status
+             XCTAssertTrue(item.canRestore, status)
+-            XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showLockedStructure: false), status)
++            XCTAssertTrue(item.matchesVisibility(showZeroByteDirectories: false, showNonMigratableDirectories: false), status)
+         }
+         item.status = DataDirStatus.local
+         XCTAssertFalse(item.canRestore)
+         for zeros in [false, true] {
+             for locked in [false, true] {
+-                XCTAssertEqual(item.matchesVisibility(showZeroByteDirectories: zeros, showLockedStructure: locked), locked)
++                XCTAssertEqual(item.matchesVisibility(showZeroByteDirectories: zeros, showNonMigratableDirectories: locked), locked)
+             }
+         }
+     }
+```
+
+---
+
+### Incident Patch 2: `805fc4ea` (2026-10-20)
+**Commit Message**: fix: stabilize portal startup and resume permission-blocked migrations
+
+**File**: `AppPorts/ContentView.swift` (modified, +3/-3)
+```diff
+@@ -1873,8 +1873,8 @@ struct ContentView: View {
+         operationState.registerCancellation(for: activityToken) { task.cancel() }
+     }
+ 
+-    func linkApp(appToLink: AppItem, destinationURL: URL) throws {
+-        try AppMigrationService().linkApp(appToLink: appToLink, destinationURL: destinationURL)
++    func linkApp(appToLink: AppItem, destinationURL: URL) async throws {
++        try await AppMigrationService().linkAppWhenReady(appToLink: appToLink, destinationURL: destinationURL)
+     }
+     
+     func deleteLink(app: AppItem) throws {
+@@ -2439,7 +2439,7 @@ struct ContentView: View {
+                 )
+                 
+                 do {
+-                    try linkApp(appToLink: tempAppItem, destinationURL: destination)
++                    try await linkApp(appToLink: tempAppItem, destinationURL: destination)
+                     // 锁定外部 app（仅 Sparkle/Electron 有更新器的应用）
+                     if lockExternal && item.app.needsLock {
+                         AppMigrationService().lockExternalApp(at: item.sourcePath)
+```
+
+**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +52/-0)
+```diff
+@@ -808,11 +808,33 @@ struct AppMigrationService {
+         return .same
+     }
+ 
++    /// Foreground actions wait for maintenance, then resume the exact unfinished
++    /// migration with permission to show an administrator prompt.
++    func linkAppWhenReady(appToLink: AppItem, destinationURL: URL) async throws {
++        try await Self.mutationCoordinator.begin()
++        defer { Self.mutationCoordinator.end() }
++        let operationLock = makeOperationLock()
++        guard await operationLock.acquire(timeout: OperationLock.appWaitTimeout) else {
++            throw AppTransferTransaction.failure(operationLock.admissionFailureReason
++                ?? "其他操作正在使用应用记录，请稍后重试。".localized, at: destinationURL)
++        }
++        defer { operationLock.release() }
++        let resumed = try await finishPendingMigration(external: appToLink.path, local: destinationURL)
++        // Resuming may already have installed the requested entry. Do not
++        // replace an entry still owned by its transfer's cleanup journal.
++        if resumed && localPortalKind(at: destinationURL, linkedTo: appToLink.path) != nil { return }
++        try linkAppWhileLocked(appToLink: appToLink, destinationURL: destinationURL)
++    }
++
+     func linkApp(appToLink: AppItem, destinationURL: URL) throws {
+         try Self.mutationCoordinator.beginSynchronously()
+         defer { Self.mutationCoordinator.end() }
+         let operationLock = try acquireOperationLock(at: destinationURL)
+         defer { operationLock.release() }
++        try linkAppWhileLocked(appToLink: appToLink, destinationURL: destinationURL)
++    }
++
++    private func linkAppWhileLocked(appToLink: AppItem, destinationURL: URL) throws {
+         let operationID = AppLogger.shared.makeOperationID(prefix: "app-link")
+         let startedAt = Date()
+         var operationResult = "failed"
+@@ -1047,6 +1069,7 @@ struct AppMigrationService {
+                 ?? "其他操作正在使用应用记录，请稍后重试。".localized, at: app.path)
+         }
+         defer { operationLock.release() }
++        _ = try await finishPendingMigration(external: app.path, local: localDestinationURL, progress: progressHandler)
+         try Self.checkWritePermission(at: localDestinationURL, fileManager: fileManager)
+         let existing = localPortalKind(at: localDestinationURL, linkedTo: app.path)
+         if existing == .folderMirror {
+@@ -1067,6 +1090,28 @@ struct AppMigrationService {
+                              externalSourceRemains: result.externalSourceRemains, transferResult: result)
+     }
+ 
++    /// Caller holds the coordinator and operation lock. Only the exact inverse
++    /// migration is eligible; unrelated/overlapping records stay fail-closed.
++    private func finishPendingMigration(external: URL, local: URL,
++                                        progress: FileCopier.ProgressHandler? = nil) async throws -> Bool {
++        _ = retireUnrecoverableTransfersWhileLocked()
++        var resumed = false
++        for record in try transferStore.inventory().records where record.direction == .migrate
++            && !record.isSwitchComplete && record.phase != .cancelled
++            && record.sourcePath == local.standardizedFileURL.path
++            && record.destinationPath == external.standardizedFileURL.path {
++            try AppTransferJournalIntegrity.requireVerifiedManifests(for: record, store: transferStore)
++            let result = try await transferTransaction().resume(record.operationID, progress: progress)
++            guard result.isSwitchComplete else {
++                throw AppTransferTransaction.failure(result.pendingMessage ?? record.recoverableReason ??
++                    "此位置的上次操作尚未完成。AppPorts 已保留数据并会继续尝试，请根据下面的原因处理后重试。".localized,
++                    at: external)
 +            }
++            resumed = true
++        }
++        return resumed
++    }
++
+     /// A folder marker identifies the entry, but does not authorize deleting
+     /// personal real files later placed beside the managed links and app stubs.
+     private func requireOnlyManagedFolderEntries(at localFolder: URL, externalFolder: URL) throws {
+@@ -2106,6 +2151,13 @@ struct AppMigrationService {
+             defer { stage.cleanup() }
+             // Copy bytes into independent files. Never inherit uchg or hard links from the old portal.
+             try stage.copyContents(from: localURL, snapshot: original)
++            let stagedContents = stageURL.appendingPathComponent("Contents")
++            let stagedMacOS = stagedContents.appendingPathComponent("MacOS")
++            try fileManager.removeItem(at: stagedMacOS.appendingPathComponent("launcher"))
++            try copyNativeLauncher(to: stagedMacOS,
++                                   resourcesDir: stagedContents.appendingPathComponent("Resources"),
++                                   externalURL: externalURL)
++            try stage.recordGeneratedFiles(replacing: ["Contents/MacOS/launcher", "Contents/Resources/real_app_path.txt"])
+             for warning in try PortalPresent
+```
+
+**File**: `AppPorts/Utils/PortalPresentation.swift` (modified, +8/-1)
+```diff
+@@ -3,7 +3,7 @@ import Foundation
+ /// Produces only the display metadata of a macOS portal. Call on a private staging
+ /// bundle, then sign and install the bundle before registering it with the system.
+ enum PortalPresentation {
+-    static let formatVersion = 1
++    static let formatVersion = 3
+     static let versionKey = "AppPortsPortalFormatVersion"
+ 
+     static func needsRefresh(local: [String: Any], external: [String: Any]) -> Bool {
+@@ -150,6 +150,13 @@ enum PortalPresentation {
+         for key in ["SUFeedURL", "SUPublicDSAKeyFile", "SUPublicEDKey", "SUScheduledCheckInterval", "SUAllowsAutomaticUpdates", "ElectronDefaultApp", "electron"] {
+             plist.removeValue(forKey: key)
+         }
++        // The portal runs its own NSApplication delegate, not the target's UI,
++        // scripting, extension or system-service implementation.
++        for key in ["NSPrincipalClass", "NSMainNibFile", "NSMainStoryboardFile", "NSServices",
++                    "NSAppleScriptEnabled", "OSAScriptingDefinition", "NSExtension", "NSExtensionSDK",
++                    "NSSupportsAutomaticTermination", "NSSupportsSuddenTermination"] {
++            plist.removeValue(forKey: key)
++        }
+         plist[versionKey] = formatVersion
+         plist["AppPortsPresentationResources"] = copiedResources.sorted()
+         let output = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
+```
+
+**File**: `AppPortsTests/AppTransferTransactionTests.swift` (modified, +65/-0)
+```diff
+@@ -98,6 +98,71 @@ final class AppTransferTransactionTests: XCTestCase {
+         XCTAssertTrue(recovered.isComplete)
+     }
+ 
++    func testForegroundLinkAndRestoreResumePermissionBlockedMigration() async throws {
++        for restore in [false, true] {
++            let w = try Workspace(); defer { w.cleanup() }
++            let local = w.local.appendingPathComponent("App.app")
++            let external = w.external.appendingPathComponent("App.app")
++            try makeApp(local)
++            do {
++                _ = try await w.service(exchange: { _, _ in throw POSIXError(.EACCES) },
++                    administratorOperation: { _ in throw CancellationError() })
++                    .moveAndLink(appToMove: item(local), destinationURL: external,
++                                 isRunning: false, progressHandler: nil)
++                XCTFail("Expected pending authorization")
++            } catch is CancellationError {}
++            let pending = try XCTUnwrap(w.store.records().first)
++            var prompts = 0
++            let foreground = w.service(exchange: { _, _ in throw POSIXError(.EACCES) },
++                administratorOperation: { request in
++                    prompts += 1
++                    try PrivilegedAppTransfer.perform(request)
++                })
++            if restore {
++                let result = try await foreground.moveBack(app: item(external, status: AppStatus.unlinked),
++                                                          localDestinationURL: local, progressHandler: nil)
++                XCTAssertTrue(result.transferResult.isComplete, result.transferResult.pendingMessage ?? "")
++                XCTAssertEqual(try payload(local), "payload")
++                XCTAssertFalse(FileManager.default.fileExists(atPath: external.path))
++            } else {
++                try await foreground.linkAppWhenReady(appToLink: item(external, status: AppStatus.unlinked),
++                                                     destinationURL: local)
++                XCTAssertEqual(try CodeSigner.resolveAppURL(at: local).path, external.path)
++                XCTAssertEqual(try payload(external), "payload")
++            }
++            XCTAssertEqual(prompts, 1)
++            XCTAssertFalse(try w.store.records().contains { $0.id == pending.id })
++            try assertNoStages(w)
++        }
++    }
++
++    func testForegroundRecoveryDoesNotAdoptReplacedExternalApplication() async throws {
++        let w = try Workspace(); defer { w.cleanup() }
++        let local = w.local.appendingPathComponent("App.app")
++        let external = w.external.appendingPathComponent("App.app")
++        try makeApp(local)
++        do {
++            _ = try await w.service(exchange: { _, _ in throw POSIXError(.EACCES) },
++                administratorOperation: { _ in throw CancellationError() })
++                .moveAndLink(appToMove: item(local), destinationURL: external,
++                             isRunning: false, progressHandler: nil)
++            XCTFail("Expected pending authorization")
++        } catch is CancellationError {}
++        let retained = w.external.appendingPathComponent("Retained.app")
++        try FileManager.default.moveItem(at: external, to: retained)
++        try makeApp(external, payload: "replacement")
++        var prompts = 0
++        do {
++            try await w.service(administratorOperation: { _ in prompts += 1 })
++                .linkAppWhenReady(appToLink: item(external, status: AppStatus.unlinked), destinationURL: local)
++            XCTFail("An unrelated replacement must not be linked over the original")
++        } catch {}
++        XCTAssertEqual(prompts, 0)
++        XCTAssertEqual(try payload(local), "payload")
++        XCTAssertEqual(try payload(retained), "payload")
++        XCTAssertEqual(try payload(external), "replacement")
++    }
++
+     func testAuthorizedExchangeRejectsChangesDuringPasswordPrompt() async throws {
+         for changed in ["source", "destination", "portal", "parent"] {
+             let w = try Workspace(); defer { w.cleanup() }
+```
+
+**File**: `AppPortsTests/PortalPresentationTests.swift` (modified, +27/-0)
+```diff
+@@ -112,10 +112,37 @@ final class PortalPresentationTests: XCTestCase {
+         let external: [String: Any] = ["CFBundleVersion": "42", "CFBundleShortVersionString": "1"]
+         XCTAssertTrue(PortalPresentation.needsRefresh(local: external, external: external))
+         var current = external
++        for oldVersion in 1..<PortalPresentation.formatVersion {
++            current[PortalPresentation.versionKey] = oldVersion
++            XCTAssertTrue(PortalPresentation.needsRefresh(local: current, external: external))
++        }
+         current[PortalPresentation.versionKey] = PortalPresentation.formatVersion
+         XCTAssertFalse(PortalPresentation.needsRefresh(local: current, external: external))
+     }
+ 
++    func testPortalDoesNotInheritTargetApplicationStartupConfiguration() throws {
++        try withFixture { source, destination in
++            let startup: [String: Any] = [
++                "NSPrincipalClass": "IDEApplication", "NSMainNibFile": "MainMenu",
++                "NSMainStoryboardFile": "Main", "NSServices": [["NSPortName": "Xcode"]],
++                "NSAppleScriptEnabled": true, "OSAScriptingDefinition": "Xcode.sdef",
++                "NSExtension": [:], "NSExtensionSDK": [:],
++                "NSSupportsAutomaticTermination": true, "NSSupportsSuddenTermination": true
++            ]
++            var original = startup
++            original["CFBundleIdentifier"] = "org.example.app"
++            original["CFBundleDocumentTypes"] = [["CFBundleTypeName": "Project"]]
++            original["CFBundleURLTypes"] = [["CFBundleURLSchemes": ["example"]]]
++            try writePlist(original, to: source.appendingPathComponent("Info.plist"))
++            _ = try PortalPresentation.write(from: source, to: destination)
++            let portal = try readPlist(destination.appendingPathComponent("Info.plist"))
++            for key in startup.keys { XCTAssertNil(portal[key], key) }
++            XCTAssertNotNil(portal["CFBundleDocumentTypes"])
++            XCTAssertNotNil(portal["CFBundleURLTypes"])
++            XCTAssertEqual(try readPlist(source.appendingPathComponent("Info.plist"))["NSPrincipalClass"] as? String, "IDEApplication")
++        }
++    }
++
+     private func withFixture(_ body: (URL, URL) throws -> Void) throws {
+         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+         defer { try? FileManager.default.removeItem(at: root) }
+```
+
+**File**: `Tools/StubLauncher/StubLauncherSource.swift` (modified, +77/-36)
+```diff
+@@ -1,4 +1,5 @@
+ import Cocoa
++import os
+ 
+ /// AppPorts Stub Portal Native Launcher
+ ///
+@@ -62,56 +63,93 @@ enum DiskMissingStrings {
+ }
+ 
+ final class AppDelegate: NSObject, NSApplicationDelegate {
+-    var realAppPath: String?
++    private let logger = Logger(subsystem: "com.shimoko.AppPorts.StubLauncher", category: "launch")
++    private var canTerminate = false
++    private var receivedOpenRequest = false
++    private var pendingRequests = 0
++    private var failed = false
+ 
+     func readRealAppPath() -> String {
+-        guard let resURL = Bundle.main.resourceURL else {
+-            return ""
+-        }
++        guard let resURL = Bundle.main.resourceURL else { return "" }
+         let pathFile = resURL.appendingPathComponent("real_app_path.txt")
+-        if let str = try? String(contentsOf: pathFile, encoding: .utf8) {
+-            let trimmed = str.trimmingCharacters(in: .whitespacesAndNewlines)
+-            if !trimmed.isEmpty { return trimmed }
+-        }
+-        return ""
++        return (try? String(contentsOf: pathFile, encoding: .utf8))?
++            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+     }
+ 
+-    func applicationDidFinishLaunching(_ notification: Notification) {
+-        realAppPath = readRealAppPath()
+-        guard let path = realAppPath, !path.isEmpty,
+-              FileManager.default.fileExists(atPath: path) else {
+-            showExternalDiskMissing()
+-            NSApp.terminate(nil)
+-            return
++    func start() {
++        // Some launchers start the process without delivering an initial open
++        // event. AppKit can then defer didFinishLaunching until a second click.
++        // Bootstrap from the event loop itself, independently of that event.
++        DispatchQueue.main.async {
++            self.canTerminate = true
++            if !self.receivedOpenRequest { self.openRealApplication(urls: []) }
++            self.terminateIfFinished()
+         }
+-        launchApp(at: path)
+-        NSApp.terminate(nil)
+     }
+ 
+     func application(_ sender: NSApplication, openFiles filenames: [String]) {
+-        realAppPath = readRealAppPath()
+-        guard let realPath = realAppPath, !realPath.isEmpty,
+-              FileManager.default.fileExists(atPath: realPath) else {
++        openRealApplication(urls: filenames.map { URL(fileURLWithPath: $0) }, replyToFiles: true)
++    }
++
++    func application(_ application: NSApplication, open urls: [URL]) {
++        openRealApplication(urls: urls)
++    }
++
++    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
++        // An in-flight launch already activates the real app. Repeated clicks
++        // must not enqueue competing launches while it is starting.
++        if pendingRequests == 0 && !failed { openRealApplication(urls: []) }
++        return false
++    }
++
++    private func openRealApplication(urls: [URL], replyToFiles: Bool = false) {
++        receivedOpenRequest = true
++        logger.info("Opening target; forwarded URLs: \(urls.count)")
++        let path = readRealAppPath()
++        guard !path.isEmpty, FileManager.default.fileExists(atPath: path) else {
++            failed = true
++            logger.error("Target missing: \(path, privacy: .public)")
+             showExternalDiskMissing()
+-            NSApp.reply(toOpenOrPrint: .failure)
+-            NSApp.terminate(nil)
++            if replyToFiles { NSApp.reply(toOpenOrPrint: .failure) }
++            terminateIfFinished()
+             return
+         }
+-        for file in filenames {
+-            let proc = Process()
+-            proc.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+-            proc.arguments = ["-a", realPath, file]
+-            try? proc.run()
++        pendingRequests += 1
++        let configuration = NSWorkspace.OpenConfiguration()
++        configuration.activates = true
++        let completion: (NSRunningApplication?, Error?) -> Void = { application, error in
++            DispatchQueue.main.async {
++                self.pendingRequests -= 1
++                let succeeded = application != nil && error == nil
++                if replyToFiles { NSApp.reply(toOpenOrPrint: succeeded ? .success : .failure) }
++                if !succeeded && !self.failed {
++                    self.failed = true
++                    self.logger.error("Launch failed: \(String(describing: error), privacy: .public)")
++                    let alert = NSAlert()
++                    alert.alertStyle = .warning
++                    let chinese = Locale.preferredLanguages.first?.hasPrefix("zh") == true
++                    alert.messageText = chinese ? "无法打开应用" : "Unable to open application"
++                    alert.informativeText = path + "\n\n" + (error?.localizedDescription ??
++                        (chinese ? "系统未能完成启动，请重试。" : "The system could not complete the launch. Try again."))
++                    alert.runModal()
++                }
++                self.terminateIfFinished()
++            }
+```
+
+---
+
+### Incident Patch 3: `6bc4a582` (2026-10-20)
+**Commit Message**: fix: authorize protected application migration and verified cleanup
+
+**File**: `.agents/notes/implemented/architecture/2026-10-10-verified-transfer-lifecycle.md` (modified, +2/-0)
+```diff
+@@ -35,6 +35,8 @@ Status: implemented
+ 
+ ## Related decisions
+ 
++- root 应用的位置交换与已验证原件清理使用[一次性受限管理员授权](../bug-fix/2026-10-20-root应用迁移授权.md)，事务记账仍由普通用户进程持有。
++
+ - 复制结束后校验与清理的界面反馈见[按真实工作阶段显示进度](../feature/2026-10-14-data-transfer-progress.md)，界面百分比不替代持久化完成事实。
+ - 严格旧还原的根映射、同 ID 重试与私有恢复点见[历史严格还原只映射目标根所有权](../bug-fix/2026-10-02-legacy-volume-restore-ownership.md)。
+ 
+```
+
+**File**: `.agents/notes/implemented/bug-fix/2026-10-20-root应用迁移授权.md` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++# Agent Note: root 所有的应用只授权位置交换和已验证旧副本清理
++
++Status: implemented
++
++## Problem
++
++Xcode 的根目录属于 root、模式为 0755。用户能在 `/Applications` 创建文件，不代表能把这个目录交换到 `.appports-entry-<UUID>/`；跨父目录交换需要移动目录的写权限，`renameatx_np(RENAME_SWAP)` 返回 EACCES。复制和入口准备都已完成才失败，后台恢复重复同样的错误。即使交换成功，root 所有的内部目录仍可能阻止旧副本清理。
++
++## Decision
++
++普通用户进程继续持有操作锁、校验应用、读写 journal 并完成 Dock 等后续步骤。仅在前台迁移的本地交换或原件清理实际返回 EACCES/EPERM，且受阻对象属于 root 时，复用 `DiskUtility.runWithAdministratorPrivileges` 的系统授权框，调用当前 AppPorts 可执行文件的一次性 `--privileged-app-transfer` 入口。启动分流在 SwiftUI、writer 登记、默认设置及登录代理初始化之前完成；不启动管理员 GUI，也不安装特权服务。
++
++授权请求是随机临时目录中的 0600 二进制 plist，目录为 0700，使用后删除。辅助进程要求有效 UID 为 root，以 O_NOFOLLOW 打开请求并核对原调用用户的所有者、普通文件类型、单硬链接、权限和大小上限。它只支持迁移 journal 的入口交换和原件清理，不执行任意命令、不重新签名、不 chown 应用、不写 journal。
++
++密码输入可能很久。交换前辅助进程重新验证源应用、外置候选和入口的原基线、原有有效签名、卷及父目录身份，以及运行状态；对象改变就退出。应用复制 profile 不逐文件哈希，因此授权请求另外使用 SignatureSnapshot 的完整内容指纹绑定密码输入前后的源、候选和入口，避免同长度修改穿过授权边界。清理同样绑定授权前后的保留副本指纹，只接受已提交、签名关联已完成且 deletionStarted 已保存的原件，核对活动外置副本、本地入口、暂存目录、清理身份及原基线，复用 TreeCopySession 的无跟随、可续删清理。权限失败不会降级为无校验 rm；取消授权保留两边副本。
++
++`retryTransfer` 是后台维护路径，不弹授权框。用户主动重试迁移会通过 start/resume 再次获得授权机会；交换完成但清理待授权的事务仍保留原记录和基线。恢复格式与原件位置不变。
++
++## Related decisions
++
++- 部分重叠并保留：[迁移以持久化切换和可重试清理为完成依据](../architecture/2026-10-10-verified-transfer-lifecycle.md)。本修复增加受限授权执行边界，保留其原基线、切换意图和清理记账规则。
++- 部分重叠并保留：[位置变更统一清除旧版更新保护锁](2026-10-17-legacy-update-lock-adoption.md)。授权不接管额外标志，不改变无法恢复记录的收束规则。
++- 其余 ownership、容器挂载、签名修复和数据迁移相关笔记不涉及应用入口的 RENAME_SWAP 授权边界，不修改其决定。
++
++## Alternatives considered
++
++- **递归 chown 本地应用**：可让普通进程完成移动与删除，但持久改变第三方应用所有权，并可能影响内部受保护组件；不采用。
++- **在同一父目录交换**：只读目录的跨父目录限制消失，权限面更小，但仍不能删除 root 所有的内部文件，还要迁移既有 journal 的原件位置；不作为本修复路线。
++- **Finder 删除或先移走本地应用再放入口**：系统提供授权，但两次操作之间本地应用路径缺失，且移到废纸篓不等于释放空间；保留既有原子交换及真实清理。
++- **以管理员启动整个 GUI**：实现简单，但扫描、配置、Dock 和后台代理都获得不必要的权限；只提升一次受限文件操作。
++
++## Consequences
++
++受保护应用的迁移可通过系统密码框继续，不再要求用户改所有者或手改记录。授权可能分别发生在交换和清理，系统通常短时缓存凭据；后台不会反复弹密码框。输入密码期间仍可能出现文件系统竞态，辅助进程沿用现有身份及无跟随校验，并在长校验后、实际交换前重新检查身份，不把管理员权限当成覆盖已变更对象的许可。
++
++新增入口不引入证书或公证要求，采用当前构建的可执行文件；旧安装不会自动获得修复，需要安装新构建。授权边界的完整指纹增加受保护应用的读取开销，只在普通权限已经失败、确需授权时执行。故障注入测试覆盖授权交换、取消、后台不提示、密码框期间同长度内容或路径变更拒绝、原基线清理及冷恢复。自动测试不输入真实管理员密码，也不修改用户已安装的 Xcode。
++
++## Testing
++
++本次本地执行 AppMigrationServiceTests 与 AppTransferTransactionTests 共 128 项通过；最终使用无跟随目录句柄的交换实现另外复验五项授权回归，全部通过。管理员交换使用已打开的父目录和暂存目录句柄，以 fstat/fstatat 核对身份，再执行相对句柄的原子交换，拒绝通过替换暂存目录软链重定向操作。真实系统密码框及 root 所有的 Xcode 迁移没有自动执行，仍需安装新构建后人工确认。
+```
+
+**File**: `AppPorts/Appports.swift` (modified, +0/-1)
+```diff
+@@ -55,7 +55,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
+     }
+ }
+ 
+-@main
+ struct AppMoverApp: App {
+     /// 全局语言管理器
+     @StateObject private var languageManager = LanguageManager.shared
+```
+
+**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +1/-1)
+```diff
+@@ -705,7 +705,7 @@ struct AppMigrationService {
+                 }
+             }, portalMatches: { self.localPortalKind(at: $0, linkedTo: $1) != nil },
+             updateDock: retrying ? dockShortcutRetryUpdater : dockShortcutUpdater,
+-            runningApplications: runningApplications, hooks: transferHooks)
++            runningApplications: runningApplications, hooks: transferHooks, allowsAdministratorPrompt: !retrying)
+     }
+ 
+     private func sameApplicationContainer(_ source: URL, _ destination: URL, folder: Bool) -> Bool {
+```
+
+**File**: `AppPorts/Services/AppTransferTransaction.swift` (modified, +43/-8)
+```diff
+@@ -10,6 +10,8 @@ struct AppTransferHooks {
+     var checkpoint: ((Checkpoint, AppTransferRecord) throws -> Void)?
+     var synchronizeCleanupParent: (URL) throws -> Void = { try DurableFileIO.syncDirectory(at: $0) }
+     var synchronizeStagingParent: (URL) throws -> Void = { try DurableFileIO.syncDirectory(at: $0) }
++    var exchange: (URL, URL) throws -> Void = { try AppTransferTransaction.exchange($0, $1) }
++    var administratorOperation: ((PrivilegedAppTransfer.Request) throws -> Void)?
+ }
+ 
+ /// Executes the application's own location journal. It never signs real code.
+@@ -30,15 +32,18 @@ final class AppTransferTransaction {
+     private let facts: SignatureFactStore
+     private let hooks: AppTransferHooks
+     private let protection: AppUpdateProtectionStore
++    private let allowsAdministratorPrompt: Bool
+ 
+     init(store: AppTransferStore, fileManager: FileManager, facts: SignatureFactStore,
+          buildPortal: @escaping PortalBuilder, portalMatches: @escaping PortalMatcher,
+          updateDock: @escaping AppMigrationService.DockShortcutUpdater,
+-         runningApplications: @escaping () -> [AppRunningState.RunningApplication], hooks: AppTransferHooks) {
++         runningApplications: @escaping () -> [AppRunningState.RunningApplication], hooks: AppTransferHooks,
++         allowsAdministratorPrompt: Bool = true) {
+         self.store = store; self.fileManager = fileManager; self.facts = facts
+         self.buildPortal = buildPortal; self.portalMatches = portalMatches; self.updateDock = updateDock
+         self.runningApplications = runningApplications; self.hooks = hooks
+         self.protection = AppUpdateProtectionStore(transferStore: store)
++        self.allowsAdministratorPrompt = allowsAdministratorPrompt
+     }
+ 
+     /// A later signature/location operation must not strand developer evidence
+@@ -214,7 +219,7 @@ final class AppTransferTransaction {
+             }
              for relative in record.applicationPaths {
                  let url = relative.isEmpty ? source : source.appendingPathComponent(relative)
-                 let valid = try signatureIsValid(at: url)
-@@ -192,10 +215,6 @@ final class AppTransferTransaction {
+-                let valid = try signatureIsValid(at: url)
++                let valid = try Self.signatureIsValid(at: url)
+                 if let relocation = try facts.captureRelocation(from: url, transferStore: store) {
+                     journal.record.signatureRelocations.append(.init(relativePath: relative, relocation: relocation))
                  }
-                 journal.record.signatureChecks[relative] = valid
+@@ -383,7 +388,7 @@ final class AppTransferTransaction {
+         if journal.record.applicationPaths.contains(where: { journal.record.signatureChecks[$0] == nil }) {
+             for relative in journal.record.applicationPaths where journal.record.signatureChecks[relative] == nil {
+                 let url = relative.isEmpty ? source : source.appendingPathComponent(relative)
+-                let valid = try signatureIsValid(at: url)
++                let valid = try Self.signatureIsValid(at: url)
+                 if let relocation = try facts.captureRelocation(from: url, transferStore: store) {
+                     journal.record.signatureRelocations.append(.init(relativePath: relative, relocation: relocation))
+                 }
+@@ -426,7 +431,14 @@ final class AppTransferTransaction {
+                 throw Self.failure("暂存入口已改变，未切换应用。".localized, at: portal)
              }
--            if existing {
--                try store.writeBaseline(try captureBaseline(destination), named: "existing", operationID: id)
--                journal.record.hasExistingDestinationBaseline = true
--            }
-             try journal.save()
-             return try await continueTransfer(journal, progress: progress)
-         } catch { return try handle(error, journal: journal) }
-@@ -253,6 +272,7 @@ final class AppTransferTransaction {
- 
-     func resume(_ id: UUID, progress: FileCopier.ProgressHandler?) async throws -> AppTransferResult {
-         let journal = Journal(try store.record(id), store: store)
-+        try AppTransferJournalIntegrity.requireVerifiedManifests(for: journal.record, store: store)
-         if journal.record.phase == .cancelled { return try reconcileCancelled(journal) }
-         do { return try await continueTransfer(journal, progress: progress) }
-         catch { return try handle(error, journal: journal) }
-@@ -451,6 +471,7 @@ final class AppTransferTransaction {
-     }
- 
-     private func captureProtectionRecovery(for record: AppTransferRecord) throws -> AppTransferProtectionRecovery {
-+        try adoptLegacyLockIfNeeded(for: record)
-         let source = URL(fileURLWithPath: record.sourcePath)
-         try requireIdentity(record.sourceIdentity, at: source)
-         let sourceToken = try protection.captureForExchange(at: source)
-@@ -467,8 +488,36 @@ final class AppTransferTransaction {
-         return recovery
-     }
- 
-+    /// v1.9.0 locked external copies with `chflags -R uchg` and recorded nothing,
-+    /// so 1.9.1 saw those bits as somebody else's and the verified copier failed
-+    /// closed on them. Only a restore needs this: a migration reads the local app,
-+    /// which AppPorts never locks. Record the whole tree's immutable bits first,
-+    /// then clear them through the normal suspension path.
-+    private func adoptLegacyLockIfNeeded(for record: AppTransferRecord) throws {
-+        guard record.direction == .restore else { return }
+             try store.recheckWriterAdmission()
+-            try Self.exchange(source, portal)
++            do { try hooks.exchange(source, portal) }
++            catch {
++                guard mayAuthorize(error, at: source) else { throw error }
++                try authorize(.init(action: .exchange, record: journal.record,
++                    sourceBaseline: store.baseline("source", operationID: journal.record.operationID),
++                    candidateBaseline: store.baseline("candidate", operationID: journal.record.operationID),
++                    portalBaseline: captureBaseline(portal)))
++            }
+         } else {
+             let destination = URL(fileURLWithPath: journal.record.destinationPath)
+             try verifyExistingDestination(journal.record)
+@@ -800,7 +812,14 @@ final class AppTransferTransaction {
+             try checkpoint(.beforeCleanup, journal)
+             try requireActive(journal.record)
+             try requireOldCopyNotRunning(item, record: journal.record)
+-            try remove(baseline, at: url, identity: item.identity, removalID: item.id, partial: true)
++            do { try remove(baseline, at: url, identity: item.identity, removalID: item.id, partial: true) }
++            catch {
++                let retained = try TreeCopySession.retainedRemovalURL(at: url, removalID: item.id) ?? url
++                guard item.role == .source, journal.record.direction == .migrate,
++                      mayAuthorize(error, at: retained) else { throw error }
++                try authorize(.init(action: .remove, record: journal.record, sourceBaseline: baseline,
++                                    cleanupItem: item))
++          
+```
+
+**File**: `AppPorts/Services/PrivilegedAppTransfer.swift` (added, +250/-0)
+```diff
+@@ -0,0 +1,250 @@
++import AppKit
++import Darwin
++import Foundation
++
++/// A one-shot administrator operation, not an elevated GUI or a persistent helper.
++/// The ordinary process keeps its operation lock and owns all journal writes.
++enum PrivilegedAppTransfer {
++    static let argument = "--privileged-app-transfer"
++
++    struct Request: Codable {
++        enum Action: String, Codable { case exchange, remove }
++        let action: Action
++        let record: AppTransferRecord
++        let sourceBaseline: AppTransferBaseline
++        var candidateBaseline: AppTransferBaseline?
++        var portalBaseline: AppTransferBaseline?
++        var cleanupItem: AppTransferCleanupItem?
++        var contentFingerprints: [String: String] = [:]
++
++        func preparedForAuthorization() throws -> Self {
++            var request = self
++            for url in try verificationRoots() {
++                request.contentFingerprints[url.path] = try SignatureSnapshot.fingerprint(of: url)
++            }
++            return request
++        }
++
++        func verificationRoots() throws -> [URL] {
++            guard let portal = record.stagedPortalURL else { throw CocoaError(.fileReadCorruptFile) }
++            if action == .exchange {
++                return [URL(fileURLWithPath: record.sourcePath), URL(fileURLWithPath: record.destinationPath), portal]
++            }
++            guard let item = cleanupItem,
++                  let retained = try TreeCopySession.retainedRemovalURL(at: portal, removalID: item.id) else {
++                throw CocoaError(.fileReadCorruptFile)
++            }
++            return [retained]
++        }
++    }
++
++    static func authorize(_ request: Request) throws {
++        guard let executable = Bundle.main.executableURL else { throw CocoaError(.executableNotLoadable) }
++        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("AppPorts-authorization-" + UUID().uuidString)
++        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false,
++                                               attributes: [.posixPermissions: 0o700])
++        defer { try? FileManager.default.removeItem(at: directory) }
++        let url = directory.appendingPathComponent("request.plist")
++        let encoder = PropertyListEncoder()
++        encoder.outputFormat = .binary
++        let data = try encoder.encode(request)
++        guard FileManager.default.createFile(atPath: url.path, contents: data, attributes: [.posixPermissions: 0o600]) else {
++            throw CocoaError(.fileWriteUnknown)
++        }
++        let result: ShellCommandResult
++        do {
++            result = try DiskUtility.runWithAdministratorPrivileges(executable: executable.path,
++                arguments: [argument, url.path, String(getuid())])
++        } catch DiskUtility.Failure.administratorPromptCancelled {
++            throw CancellationError()
++        }
++        guard result.status == 0 else {
++            throw NSError(domain: "AppPorts.AdministratorTransfer", code: Int(result.status), userInfo: [
++                NSLocalizedDescriptionKey: String(data: result.standardError, encoding: .utf8) ?? ""])
++        }
++    }
++
++    /// Executed before SwiftUI, user defaults, writer registration or login agents initialize.
++    static func runIfRequested() -> Bool {
++        let args = CommandLine.arguments
++        guard args.dropFirst().first == argument else { return false }
++        do {
++            guard geteuid() == 0, args.count == 4, let owner = uid_t(args[3]), owner != 0 else {
++                throw POSIXError(.EPERM)
++            }
++            let fd = open(args[2], O_RDONLY | O_NOFOLLOW)
++            guard fd >= 0 else { throw POSIXError(.EACCES) }
++            let handle = FileHandle(fileDescriptor: fd, closeOnDealloc: true)
++            defer { try? handle.close() }
++            var info = stat()
++            guard fstat(fd, &info) == 0, info.st_mode & S_IFMT == S_IFREG,
++                  info.st_uid == owner, info.st_mode & 0o777 == 0o600, info.st_nlink == 1,
++                  info.st_size > 0, info.st_size <= 256 * 1024 * 1024 else { throw POSIXError(.EPERM) }
++            let request = try PropertyListDecoder().decode(Request.self, from: handle.readToEnd() ?? Data())
++            try perform(request)
++            return true
++        } catch {
++            FileHandle.standardError.write(Data((error.localizedDescription + "\n").utf8))
++            exit(1)
++        }
++    }
++
++    /// Internal for isolated fixtures. The command-line entry above always requires root.
++    static func perform(_ request: Request) throws {
++        let record = request.record
 +        let source = URL(fileURLWithPath: record.sourcePath)
-+        // The root is not a reliable indicator: an app that was updated after
-+        // being locked can have an unlocked root with locked children. Record the
-+        // whole tree whenever anything in it is still locked.
 +        let destination = URL(fileURLWithPath: record.destinationPath)
-+        _ = try protection.adoptLegacyLock(so
++        let parent = source.deletingLastPathComponent()
++        let stage = parent.appendingPathComponent(".appports-entry-" + record.operationID.uuidString)
++        guard record.direction
 ```
 
----
-
-### Incident Patch 2: `1c6eae1f` (2026-10-18)
-**Commit Message**: fix: copy transparently compressed files as their logical content
-
-macOS compresses installed files on its own (`UF_COMPRESSED`), notably App
-Store executables and idle binaries. The verified copier read physical
-extents with SEEK_DATA/SEEK_HOLE, but for a compressed file those describe
-the compressed stream and SEEK_DATA returns ENXIO, so the whole file looked
-like a hole. The copy then held compressed bytes, verification failed, and a
-single such file blocked migrating an entire application — a 572 MB app
-failed over one GPU helper.
-
-`UF_COMPRESSED` is now accepted and such sources skip the extent fast path,
-reading sequentially so the kernel decodes them like any ordinary read. The
-flag itself is not replayed, so the destination holds the logical bytes.
-Every other flag still fails closed. Verified against a real 572 MB app:
-the copied helper's hash matches the original and it stays executable.
-
-**File**: `AppPorts/Utils/FileDataCopyStream.swift` (modified, +8/-1)
+**File**: `AppPortsTests/AppTransferTransactionTests.swift` (modified, +126/-2)
 ```diff
-@@ -20,13 +20,20 @@ struct FileDataCopyStream {
-     private var finished = false
-     private(set) var usesExtentFallback = false
- 
-+    /// A transparently compressed file (UF_COMPRESSED) stores a compressed
-+    /// data stream, and SEEK_DATA/SEEK_HOLE describe those physical extents.
-+    /// Reading them positionally hands back compressed bytes, so the logical
-+    /// content never arrives and verification fails. Such files take the plain
-+    /// sequential path, which decodes on read like any ordinary read(2).
-     init(from source: Int32, to destination: Int32, size: Int64, path: String,
--         extentSeek: @escaping ExtentSeek = { lseek($0, $1, $2) }) {
-+         extentSeek: @escaping ExtentSeek = { lseek($0, $1, $2) },
-+         isCompressed: Bool = false) {
-         self.source = source
-         self.destination = destination
-         self.size = size
-         self.path = path
-         self.extentSeek = extentSeek
-+        usesExtentFallback = isCompressed
-         buffer = [UInt8](repeating: 0, count: max(1, min(Self.bufferByteCount, Int(clamping: size))))
-     }
- 
-```
-
-**File**: `AppPorts/Utils/TreeCopySession.swift` (modified, +16/-4)
-```diff
-@@ -755,6 +755,9 @@ actor TreeCopySession {
-         try assertStable(before, try status(fd), path: path)
-         DataTransferSession.current?.didReadContent(bytes: (kind == .file ? before.st_size : 0) + (resourceFork?.size ?? 0))
-         return TreeCopySnapshot.Entry(path: path, kind: kind, identity: identity(before), mode: before.st_mode & 0o7777,
-+                                      // `UF_COMPRESSED` is storage detail, not content: the
-+                                      // destination is written uncompressed, so replaying it
-+                                      // would both fail to apply and break verification.
-                                       uid: before.st_uid, gid: before.st_gid, flags: before.st_flags & UInt32(UF_HIDDEN | UF_NODUMP),
-                                       birthTime: timestamp(before.st_birthtimespec), modificationTime: timestamp(before.st_mtimespec),
-                                       extendedAttributes: attributes, resourceFork: resourceFork, acl: acl, size: kind == .file ? before.st_size : 0,
-@@ -861,7 +864,12 @@ actor TreeCopySession {
-     nonisolated private static func copyData(from source: Int32, to destination: Int32, size: Int64, path: String,
-                                            extentSeek: @escaping ExtentSeek,
-                                            progress: @Sendable (Int64) async -> Void) async throws {
--        var stream = FileDataCopyStream(from: source, to: destination, size: size, path: path, extentSeek: extentSeek)
-+        // Pass the source's compression state so the stream decodes instead of
-+        // copying physical extents (see FileDataCopyStream.init).
-+        var info = stat()
-+        let compressed = fstat(source, &info) == 0 && info.st_flags & UInt32(UF_COMPRESSED) != 0
-+        var stream = FileDataCopyStream(from: source, to: destination, size: size, path: path,
-+                                        extentSeek: extentSeek, isCompressed: compressed)
-         while let offset = try stream.copyNextChunk() {
-             // Preserve the verified data copier's existing progress behavior:
-             // fallback files yield between chunks; native extents report once
-@@ -1078,9 +1086,13 @@ actor TreeCopySession {
-     nonisolated private static func validateFlags(_ value: stat, path: String) throws {
-         // Validate before opening: opening a dataless item can hydrate it, and
-         // opening an unsupported compression representation can alter flags.
--        // Compressed files fail closed until logical resource-fork handling is
--        // independently verified. Physical compression is not copied blindly.
--        let supported = UInt32(UF_HIDDEN | UF_NODUMP)
-+        // `UF_COMPRESSED` is accepted: macOS compresses installed files on its
-+        // own (App Store executables, idle binaries), and a decmpfs stream is
-+        // decoded by an ordinary read. The data stream below reads such files
-+        // sequentially instead of trusting physical extents, and the flag is not
-+        // replayed, so the copy is stored as its logical bytes. Every other flag
-+        // still fails closed.
-+        let supported = UInt32(UF_HIDDEN | UF_NODUMP | UF_COMPRESSED)
-         guard value.st_flags & ~supported == 0 else { throw TreeCopyError.unsupportedMetadata(path) }
-     }
-     nonisolated private static func contains(_ root: String, _ path: String) -> Bool { path == root || path.hasPrefix(root == "/" ? "/" : root + "/") }
-```
-
----
-
-### Incident Patch 3: `534d9b70` (2026-10-18)
-**Commit Message**: fix: retire unrecoverable transfer journals instead of asking the user
-
-A journal whose manifest is gone, whose external object was replaced, or
-whose attempt already ended can never advance, yet it keeps its paths
-blocked and maintenance retried it on every launch. The first attempt at
-this surfaced a panel asking the user to choose between retry, cancel and
-end — but a committed transfer can neither be cancelled nor safely ended,
-so the panel offered two buttons that could only fail.
-
-Both outcomes are AppPorts' own bookkeeping and neither needs information
-only the user has. Maintenance now retries everything that can still
-advance, then archives the rest to `app-transfers/archived/`, moving only
-the record and its manifests; every application, retained copy and staging
-object stays where it is. A committed transfer is never retired, because
-its remaining work is deleting a copy under its own verified manifest.
-
-`remove` now deletes the record before its manifests: the record is the
-authority, and the old order left records that could never be verified or
-completed again.
-
-**File**: `AppPorts/Services/AppMigrationService.swift` (modified, +114/-5)
-```diff
-@@ -114,6 +114,15 @@ struct AppMigrationService {
-         return operationLock
-     }
- 
-+    /// The object at a path is still the recorded filesystem object. Used after
-+    /// adoption, where reading and rewriting protection facts must not span a
-+    /// replacement or a remount.
-+    private func requireIdentity(_ expected: DataPathIdentity, at url: URL) throws {
-+        guard try expected.matchesFilesystemObject(DataPathIdentity.capture(url)) else {
-+            throw AppTransferTransaction.failure("路径对应的对象或磁盘已改变，已保留内容。".localized, at: url)
-+        }
-+    }
-+
-     private func recheckWriterAdmission() throws {
-         if let writerAdmissionCheck { try writerAdmissionCheck() }
-         else { try transferStore.recheckWriterAdmission() }
-@@ -256,12 +265,16 @@ struct AppMigrationService {
-             throw Exclusion.failure("无法确认真实应用身份，未更改存储位置。".localized)
+@@ -27,10 +27,13 @@ final class AppTransferTransactionTests: XCTestCase {
+                      running: @escaping () -> [AppRunningState.RunningApplication] = { [] },
+                      storeOverride: AppTransferStore? = nil,
+                      synchronizeCleanupParent: @escaping (URL) throws -> Void = { try DurableFileIO.syncDirectory(at: $0) },
+-                     synchronizeStagingParent: @escaping (URL) throws -> Void = { try DurableFileIO.syncDirectory(at: $0) }) -> AppMigrationService {
++                     synchronizeStagingParent: @escaping (URL) throws -> Void = { try DurableFileIO.syncDirectory(at: $0) },
++                     exchange: @escaping (URL, URL) throws -> Void = { try AppTransferTransaction.exchange($0, $1) },
++                     administratorOperation: ((PrivilegedAppTransfer.Request) throws -> Void)? = nil) -> AppMigrationService {
+             AppMigrationService(dockShortcutUpdater: dock, transferStore: storeOverride ?? store, signatureFactStore: facts,
+                                 transferHooks: .init(checkpoint: hook, synchronizeCleanupParent: synchronizeCleanupParent,
+-                                                     synchronizeStagingParent: synchronizeStagingParent),
++                                                     synchronizeStagingParent: synchronizeStagingParent,
++                                                     exchange: exchange, administratorOperation: administratorOperation),
+                                 runningApplications: running)
          }
-         let protection = AppUpdateProtectionStore(transferStore: transferStore)
-+        // The lock is AppPorts' own, and older versions never recorded it. Record
-+        // what is locked here so the relocation can suspend and restore exactly
-+        // those bits; a tree with no lock simply has nothing to record.
-+        let identityBeforeAdoption = try DataPathIdentity.capture(source)
-+        _ = try protection.adoptLegacyLock(source, evidence: .init(
-+            managedLocalEntry: localURLs.sorted(by: { $0.path < $1.path })
-+                .first { localPortalKind(at: $0, linkedTo: source) != nil },
-+            sameApplicationSource: nil))
-+        try requireIdentity(identityBeforeAdoption, at: source)
-         let protectionRelocation = try protection.captureForExchange(at: source)
--        let sourceFlags = try SignatureSnapshot.info(at: source).st_flags
--        if sourceFlags & UInt32(UF_IMMUTABLE) != 0,
--           protectionRelocation?.entries.contains(where: { $0.relativePath.isEmpty }) != true {
--            throw AppTransferTransaction.failure("应用更新保护来源无法确认。".localized, at: source)
--        }
-         let signatureRelocation = try signatureFactStore.captureRelocation(from: source, transferStore: transferStore)
-         var portals: [Exclusion.Journal.Portal] = []
-         var kinds: [URL: LocalPortalKind] = [:]
-@@ -503,6 +516,12 @@ struct AppMigrationService {
-         } else { confirmedReplacement = nil }
-         let mayReplace = externalTargetReplacementReason(for: appToMove, destinationURL: destinationURL) != nil
-             || confirmedReplacement != nil
-+        // Re-migrating over a v1.9.0-locked external copy needs the same adoption
-+        // as a restore: without a provenance record the replacement's copy step
-+        // fails closed on the very lock this app already carries.
-+        if confirmedReplacement != nil {
-+            try adoptLegacyLockOnReplacement(of: appToMove.path, at: destinationURL)
-+        }
-         let kind: LocalPortalKind = portalCreationOverride != nil ? .wholeAppSymlink
-             : appToMove.usesFolderOperation ? .folderMirror : preferredPortalKind(for: appToMove.path)
-         let result = try await transferTransaction().start(app: appToMove, destination: destinationURL, direction: .migrate,
-@@ -515,6 +534,18 @@ struct AppMigrationService {
-         return result
+ 
+@@ -49,6 +52,127 @@ final class AppTransferTransactionTests: XCTestCase {
+         }
      }
  
-+    /// A retained external copy still carries AppPorts' update lock and is about
-+    /// to be replaced by a verified copy of the same application. Record what is
-+    /// locked so the replacement's removal step can proceed.
-+    private func adoptLegacyLockOnReplacement(of sourceURL: URL, at destinationURL: URL) throws {
-+        guard (try? SignatureSnapshot.info(at: destinationURL).st_flags & UInt32(UF_IMMUTABLE)) ?? 0 != 0 else { return }
-+        let protection = AppUpdateProtectionStore(transferStore: transferStore)
-+        let identity = try DataPathIdentity.capture(destinationURL)
-+        _ = try protection.adoptLegacyLock(destinationURL, evidence: .init(managedLocalEntry: nil,
-+            sameApplicationSource: sourceURL))
-+        try requireIdentity(identity, at: destinationURL)
++    func testPermissionDeniedExchangeUsesAuthorizedVerifiedOperation() async throws {
++        let w = try Workspace(); defer { w.cleanup() }
++        let source = w.local.appendingPathComponent("App.app")
++        let destination = w.external.appendingPathComponent("App.app")
++        try makeApp(source)
++        var prompts = 0
++        let result = try await w.service(exchange: { _, _ in throw POSIXError(.EACCES) }, administratorOperation: {
++            prompts += 1
++            try PrivilegedAppTransfer.perform($0)
++        }).moveAndLink(appToMove: item(source), destinationURL: destination, isRunning: false, progressHandler: nil)
++        XCTAssertTrue(result.isComplete, result.pendingMessage ?? "")
++        XCTAssertEqual(prompts, 1)
++        XCTAssertEqual(try payload(destination), "payload")
++        XCTAssertEqual(try CodeSigner.resolveAppURL(at: source).path, destination.path)
++        XCTAssertTrue(try w.store.records().isEmpty)
++        try assertNoStages(w)
 +    }
 +
-     private func needsUpdateProtection(_ app: AppItem) -> Bool {
-         if !app.usesFolderOperation { return needsUchgLock(at: app.path) }
-         return ((try? fileManager.contentsOfDirectory(at: app.path, includingPropertiesForKeys: nil)) ?? [])
-@@ -562,6 +593,84 @@ struct AppMigrationService {
-         return try transferTransaction().cancel(operationID)
-     }
- 
-+    /// What maintenance should do with one journal. A record that can still
-+    /// advance is retried; one whose facts already contradict the disk cannot
-+    /// advance, so it is retired automatically.
-+    enum TransferRetryDisposition: Sendable {
-+        case retry
-+        /// Retrying cannot change the outcome. The caller retires the record
-+        /// itself — it is never handed to the user as a task.
-+        case terminal(String)
++    func testCancelledAuthorizationPreservesBothCopiesAndBackgroundRetryDoesNotPrompt() async throws {
++        let w = try Workspace(); defer { w.cleanup() }
++        let source = w.local.appendingPathComponent("App.app")
++        let destination = w.external.appendingPathComponent("App.app")
++        try makeApp(source)
++        var prompts = 0
++        let service = w.service(exchange: { _, _ in throw POSIXError(.EACCES) }, administratorOperation: { _ in
++            prompts += 1
++            throw CancellationError()
++        })
++        do {
++            _ = try await service.moveAndLink(appToMove: item(source), destinationURL: destination,
++                                            isRunning: false, progressHandler: nil)
++            XCTFail("Expected cancelled authorization")
++        } catch is CancellationError {} catch { XCTFail("Unexpected error: \(error)") }
++        let record = try XCTUnwrap(w.store.records().first)
++        XCTAssertFalse(record.isSwitchComplete)
++        XCTAssertEqual(try payload(source), "payload")
++        XCTAssertEqual(try payload(destination), "payload")
++        do {
++            _ = try await service.retryTransfer(operationID: record.id)
++            XCTFail("Background retry must leave the permission error pending")
++        } catch { XCTAssertEqual((error as NSError).code, Int(EACCES)) }
++        XCTAssertEqual(prompts, 1)
++        let recovered = try await w.service().retryTransfer(operationID: record.id)
++        XCTAssertTrue(recovered.isComplete)
++    }
 +
-+        var isTerminal: Bool {
-+            if case .terminal = self { return true }
-+   
-```
-
-**File**: `AppPorts/Services/OperationMaintenance.swift` (modified, +6/-0)
-```diff
-@@ -43,12 +43,18 @@ actor OperationMaintenance {
-         do {
-             let inventory = try applications.pendingTransferInspection()
-             warnings += inventory.issues.map(\.message)
-+            // Retry everything that can still advance, then close out whatever
-+            // provably cannot. Both are AppPorts' own bookkeeping: a stuck record
-+            // keeps its paths blocked, so leaving it for the user would hand them
-+            // a state they cannot act on and an app they cannot operate.
-             for record in inventory.records {
-+                guard !applications.retryDisposition(for: record).isTerminal else { continue }
-                 do {
-                     let result = try await applications.retryTransfer(operationID: record.operationID)
-                     if let message = result.pendingMessage { warnings.append(message) }
-                 } catch { warnings.append(record.appName + ": " + error.localizedDescription) }
-             }
-+            warnings += applications.retireUnrecoverableTransfers()
-         } catch { warnings.append(error.localizedDescription) }
-         // Signature work acquires its own locks, after data/app locks release.
-         warnings += await CodeSigner().performAutomaticMaintenance()
++    func testAuthorizedExchangeRejectsChangesDuringPasswordPrompt() async throws {
++        for changed in ["source", "destination", "portal", "parent"] {
++            let w = try Workspace(); defer { w.cleanup() }
++            let source = w.local.appendingPathComponent("App.app")
++            let destination = w.external.appendingPathComponent("App.app")
++            try makeApp(source)
++            let service = w.service(exchange: { _, _ in throw POSIXError(.EPERM) }, administratorOperation: { request in
++                switch changed {
++                case "source": try Data("changed".utf8).write(to: source.appendingPathComponent("Contents/Resources/payload"))
++                case "destination": try Data("changed".utf8).write(to: destination.appendingPathComponent("Contents/Resources/payload"))
++                case "
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #86** (2026-10-21): 修正bug，调整UI，引入后台任务、微信拆分与加密卷恢复等多项功能，具体见commit (@trah01)
 - **PR #85** (2026-10-19): feat: warn when restoring a bundle that was already degraded on its volume (@wzh4869)
 - **PR #84** (closed): feat: warn when restoring a bundle that was already degraded on its volume (@wzh4869)
 - **PR #83** (2026-10-19): feat: relax app bundle migration to a product-integrity copy profile (@wzh4869)
 - **PR #76** (2026-10-14): docs: add Agent Notes guide and Codex skill discovery (@wzh4869)
 - **PR #75** (2026-10-14): docs: vendor Agent Notes skill and migrate decision records (@wzh4869)
-- **PR #74** (2026-10-08): docs: resolve GitBook cross-space links and anchors (@wzh4869)
 
 ---
 
@@ -2056,37 +2460,56 @@ completed again.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clear update protection locks on any app location change
+## X. 应用数据): 「锁定目录结构」只补回可操作项的上游祖先
 
 **RULE**:
-When implementing operations in `AppPorts/Models/AppTransferRecord.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/notes/implemented/bug-fix/2026-10-22-locked-structure-shows-actionable-ancestors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66d8f7cd`: clear update protection locks on any app location change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0302b07`: 应用数据): 「锁定目录结构」只补回可操作项的上游祖先. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AppPorts/Models/AppTransferRecord.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/bug-fix/2026-10-22-locked-structure-shows-actionable-ancestors.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-/// Resume verifies against recorded manifests. A journal whose manifest was lost
-/// (v1.9.1 removed manifests before its record) can never be verified again, so
-/// every caller must hear that instead of a raw file error. Reported as one
-/// actionable message; the caller decides whether to retry or end the record.
-enum AppTransferJournalIntegrity {
-    static func missingManifests(for record: AppTransferRecord, store: AppTransferStore) -> Bool {
-        var required = record.hasCandidateBaseline ? ["candidate"] : []
-        if record.hasSourceBaseline { required.append("source") }
-        if record.hasExistingDestinationBaseline { required.append("existing") }
-        for item in record.cleanupItems where !item.completed { required.append(item.baselineName) }
-        // Legacy portals embed their baseline in the record itself, so they never
-        // require a manifest file and must not be reported as missing here.
-        return Set(required).contains { (try? store.baseline($0, operationID: record.operationID)) == nil }
-    }
+# Agent Note: 「锁定目录结构」改为只补回可操作项之上的锁定祖先
 
-    static func requireVerifiedManifests(for record: AppTransferRecord, store: AppTransferStore) throws {
-        guard missingManifests(for: record, st
+Status: implemented
+
+## Problem
+
+应用数据页的两个可见性开关单独勾选时都没有效果，只有同时勾上才会出现锁定行：
+
+```swift
+if isMigrationUnsupported && !showNonMigratableDirectories { return false }  // 第三道门
+if !isMigratable { return showLockedStructure }                              // 第二道门
+```
+
+`isMigrationUnsupported` 是 `!isMigratable` 的子集，而子集之外那些“不能迁移但还能接回/挂载/恢复”的行本来就被 `needsRecoveryOrAttention` 强制显示。于是「显示锁定目录结构」能多显示的内容只剩空集：勾上它，列表纹丝不动，用户只会怀疑开关坏了。
+
+同时两个开关的语义也没有区分开：它们覆盖的行完全重叠，等于同一个过滤器的两道锁。
+
+## Decision
+
+把两个开关拆成两种不同的问题：
+
+- **显示锁定目录结构**（`showLockedStructure`）只在树层生效：补回**可操作项之上的锁定祖先**，用来交代层级。没有可操作子项的锁定目录不会因为打开它而出现。判定在 `DataDirTree.visibleItems`：
+
+  ```swift
+  guard showLockedStructure, !showNonMigratableDirectories else { return base }
+  let prefix = item.path.standardizedFileURL.path + "/"
+  return basePaths.contains { $0.hasPrefix(prefix) }
+  ```
+
+- **显示不支持迁移目录**（`showNonMigratableDirectories`）保持“全量放出”的语义，作用在 `DataDirItem.matchesVisibility` 的单条判断上。
+
+`matchesVisibility` 因此回到两个参数：它只回答“这一条本身该不该出现”，祖先补充交给树层，避免让单条判断依赖兄弟节点。
+
+表头计数改为按最终渲染的行数统计（`visibleLibraryItemCount`），否则补回的祖先行会让“显示 X / 67”和列表对不上。
+
+`DataDirTree.visibleTree` 的 `showNonMigratableDirectories` 默认值改为 `false`：默认只显示可操作内容，需要更多内容由调
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2096,4 +2519,4 @@ enum AppTransferJournalIntegrity {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66d8f7cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0302b07` are properly handled with clean fallback behavior.

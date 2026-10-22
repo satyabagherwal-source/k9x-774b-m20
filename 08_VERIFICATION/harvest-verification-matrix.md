@@ -4403,3 +4403,7 @@
 | `CYCLE-20261022-10G0` | `2026-10-22T19:09:54.432Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3708` | Yes (`868bab57...`) |
 | `CYCLE-20261022-95H1` | `2026-10-22T19:16:14.197Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3709` | Yes (`9b742df0...`) |
 | `CYCLE-20261022-9G1Q` | `2026-10-22T19:16:27.902Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3710` | Yes (`b2cda982...`) |
+| `CYCLE-20261022-HDB7` | `2026-10-22T19:22:37.603Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3711` | Yes (`556ee34f...`) |
+| `CYCLE-20261022-HG64` | `2026-10-22T19:22:41.308Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wzh4869-appports-learnings.md` | Yes (`954d3723...`) |
+| `CYCLE-20261022-HK2Y` | `2026-10-22T19:22:46.378Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3712` | Yes (`1c1b5682...`) |
+| `CYCLE-20261022-HN50` | `2026-10-22T19:22:50.340Z` | `qdrant/qdrant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3713` | Yes (`ad2cb8ed...`) |

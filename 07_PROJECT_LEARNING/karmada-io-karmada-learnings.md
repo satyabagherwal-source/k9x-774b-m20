@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `7cb3c422`  
+> **Source Version**: `86c71b95`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T21:59:34.200Z  
+> **Timestamp**: 2026-10-22T19:22:46.100Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T21:59:33.568Z  
+> **Harvest Timestamp**: 2026-10-22T19:22:46.094Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5728 stars
+- **Stars / Engagement**: 5730 stars
 
 ---
 
@@ -984,14 +984,11 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7950** (2026-10-19): **Removed github workflow for releasing images to SWR**
-  *Symptoms*: **What type of PR is this?**  /kind cleanup  **What this PR does / why we need it**:  This PR removes all workflow related to publishing container images to SWR.  **Which issue(s) this PR fixes**: Fixes # Part of #7890  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: ```release-note Images will no longer be published to the Huawei Cloud SWR registry (swr.ap-southeast-1.myhuaweicloud.com/karmada) starting from release-1.20. Please pull images from DockerHub (docker.io/karmada) instead.  ```  
-  **Post-Mortem & Fix Analysis**:
-  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/7950?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.46%. Comparing base ([`b14c23c`](https://app.codecov.io/gh/karmada-io/karmada/commit/b14c23c6dfa652d0b1b8d4a0dce28043b33e0c0c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`1aee66c`](https://app.codecov.io/gh/karmada-io/karmada/commit/1aee66ce4f1e64a0f4871c25763010280f89d944?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  Approval requirements bypassed by manually added approval.  This pull-request has been approved by:  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/karmada-io/karmada/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["whitewindmills"]} -->
+- **Issue #7963** (2026-10-22): **fix: add ClusterTaintPolicy webhook to chart, init, and operator**
+  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  This PR adds the `clustertaintpolicy.karmada.io` validating webhook to the Helm chart, `karmadactl init`, and `karmada-operator`. The entry is the same as in `artifacts/deploy/webhook-configuration.yaml`.  #6370 added `/validate-clustertaintpolicy` and `--allow-no-execute-taint-policy`, but it added the webhook entry only to `artifacts/deploy`. For the other installers, the API server never calls the webhook. The flag has no effect, and the API server accepts every `NoExecute` taint in a `ClusterTaintPolicy`. Details: https://github.com/karmada-io/karmada/issues/7923#issuecomment-6209948597  **Which issue(s) this PR fixes**:  Fixes #7923  **Special notes for your reviewer**:  This PR depends on #7953, which is on `master`.  Behavior change:  - After the upgrade, `karmada-webhook` denies create and update requests for a `ClusterTaintPolicy` with a `NoExecute` taint, unless the flag is `true`. - Existing policies stay in the API, and the controller continues to use them. - Re-apply of an unchanged `NoExecute` policy without the flag: denied with `spec.taints[0]: Forbidden: Configuring taint with NoExecute effect is not allowed`. - The flag default stays `false`, as the flag help text requires.  Upgrade impact per installer:  - Helm chart: one `helm upgrade` can add the entry and set the flag. - `karmada-operator`: the operator applies the webhook configuration again each time it reconciles a valid
 
-- **Issue #7948** (2026-10-19): **build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.0**
-  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github.com/github/codeql-action/pull/4206">#4206</a></li> <li>The <code>codeql-action/start-proxy</code> step that is used in Code Scanning Default Setup now finds CodeQL releases using the same logic as <code>codeql-action/init</code>. This primarily benefit
+- **Issue #7961** (2026-10-22): **hack: pin command docs generation locale**
+  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  Pins command-line documentation generation to the POSIX `C` locale so kubectl-derived descriptions remain deterministic regardless of the developer's `LC_ALL`, `LC_MESSAGES`, or `LANG` settings.  **Which issue(s) this PR fixes**:  Fixes #7960  **Special notes for your reviewer**:  Validation: - reproduced 20 changed files under `LANG=zh_CN.UTF-8` before the fix - `LANG=zh_CN.UTF-8 hack/verify-command-line-flags.sh` - conflicting Japanese/German/Chinese locale variables leave generated docs clean - `make test` - all `make verify` component checks passed  **Does this PR introduce a user-facing change?**:  ```release-note NONE ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1008,346 +1005,503 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cb3c422` (2026-10-19)
-**Commit Message**: Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduling
+### Incident Patch 1: `f55ed275` (2026-10-22)
+**Commit Message**: Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry
 
-feat: trigger rescheduling on component replica changes
+fix: add ClusterTaintPolicy webhook to chart, init, and operator
 
-**File**: `pkg/scheduler/scheduler_test.go` (modified, +79/-0)
+**File**: `charts/karmada/templates/_karmada_webhook_configuration.tpl` (modified, +14/-0)
 ```diff
-@@ -186,6 +186,7 @@ func TestDoScheduleBinding(t *testing.T) {
- 		expectError      bool
- 		expectedClusters []workv1alpha2.TargetCluster
- 		expectedEvent    string
-+		enableComponents bool
- 	}{
- 		{
- 			name: "binding with changed placement",
-@@ -259,10 +260,49 @@ func TestDoScheduleBinding(t *testing.T) {
- 			},
- 			expectedEvent: "Normal ScheduleBindingSucceed",
- 		},
-+		{
-+			name: "binding with component replicas changed",
-+			binding: &workv1alpha2.ResourceBinding{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "test-binding-components",
-+					Namespace: "default",
-+					Annotations: map[string]string{
-+						util.PolicyPlacementAnnotation: `{"replicaScheduling":{"replicaSchedulingType":"Divided"}}`,
-+					},
-+				},
-+				Spec: workv1alpha2.ResourceBindingSpec{
-+					Components: []workv1alpha2.Component{
-+						{Name: "jobmanager", Replicas: 1},
-+						{Name: "taskmanager", Replicas: 6},
-+					},
-+					Clusters: []workv1alpha2.TargetCluster{{
-+						Name: "cluster1",
-+						Components: []workv1alpha2.TargetComponent{
-+							{Name: "jobmanager", Replicas: 1},
-+							{Name: "taskmanager", Replicas: 4},
-+						},
-+					}},
-+					Placement: &policyv1alpha1.Placement{ReplicaScheduling: &policyv1alpha1.ReplicaSchedulingStrategy{
-+						ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided,
-+					}},
-+				},
-+			},
-+			expectSchedule: true,
-+			expectedClusters: []workv1alpha2.TargetCluster{{
-+				Name: "cluster1",
-+				Components: []workv1alpha2.TargetComponent{
-+					{Name: "jobmanager", Replicas: 1},
-+					{Name: "taskmanager", Replicas: 6},
-+				},
-+			}},
-+			expectedEvent:    "Normal ScheduleBindingSucceed",
-+			enableComponents: true,
-+		},
- 	}
- 
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
-+			defer setFeatureGateDuringTest(t, features.FeatureGate, features.MultiplePodTemplatesScheduling, tt.enableComponents)()
- 			fakeClient := karmadafake.NewClientset(tt.binding)
- 			fakeRecorder := record.NewFakeRecorder(10)
- 			mockAlgorithm := &mockAlgorithm{
-@@ -315,6 +355,7 @@ func TestDoScheduleClusterBinding(t *testing.T) {
- 		expectError      bool
- 		expectedClusters []workv1alpha2.TargetCluster
- 		expectedEvent    string
-+		enableComponents bool
- 	}{
- 		{
- 			name: "cluster binding with changed placement",
-@@ -385,10 +426,48 @@ func TestDoScheduleClusterBinding(t *testing.T) {
- 			},
- 			expectedEvent: "Normal ScheduleBindingSucceed",
- 		},
-+		{
-+			name: "cluster binding with component replicas changed",
-+			binding: &workv1alpha2.ClusterResourceBinding{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name: "test-cluster-binding-components",
-+					Annotations: map[string]string{
-+						util.PolicyPlacementAnnotation: `{"replicaScheduling":{"replicaSchedulingType":"Divided"}}`,
-+					},
-+				},
-+				Spec: workv1alpha2.ResourceBindingSpec{
-+					Components: []workv1alpha2.Component{
-+						{Name: "jobmanager", Replicas: 1},
-+						{Name: "taskmanager", Replicas: 6},
-+					},
-+					Clusters: []workv1alpha2.TargetCluster{{
-+						Name: "cluster1",
-+						Components: []workv1alpha2.TargetComponent{
-+							{Name: "jobmanager", Replicas: 1},
-+							{Name: "taskmanager", Replicas: 4},
-+						},
-+					}},
-+					Placement: &policyv1alpha1.Placement{ReplicaScheduling: &policyv1alpha1.ReplicaSchedulingStrategy{
-+						ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided,
-+					}},
-+				},
-+			},
-+			expectSchedule: true,
-+			expectedClusters: []workv1alpha2.TargetCluster{{
-+				Name: "cluster1",
-+				Components: []workv1alpha2.TargetComponent{
-+					{Name: "jobmanager", Replicas: 1},
-+					{Name: "taskmanager", Replicas: 6},
-+				},
-+			}},
-+			expectedEvent:    "Normal ScheduleBindingSucceed",
-+			enableComponents: true,
-+		},
- 	}
- 
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
-+			defer setFeatureGateDuringTest(t, features.FeatureGate, features.MultiplePodTemplatesScheduling, tt.enableComponents)()
- 			fakeClient := karmadafake.NewClientset(tt.binding)
- 			fakeRecorder := record.NewFakeRecorder(10)
- 			mockAlgorithm := &mockAlgorithm{
+@@ -288,4 +288,18 @@ webhooks:
+     sideEffects: NoneOnDryRun
+     admissionReviewVersions: ["v1"]
+     timeoutSeconds: 3
++  - name: clustertaintpolicy.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["policy.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["clustertaintpolicies"]
++        scope: "Cluster"
++    clientConfig:
++      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-clustertaintpolicy
++      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: [ "v1" ]
++    timeoutSeconds: 3
+ {{- end -}}
 ```
 
-**File**: `pkg/util/binding.go` (modified, +37/-8)
+**File**: `charts/karmada/values.yaml` (modified, +3/-0)
 ```diff
-@@ -34,23 +34,22 @@ func GetBindingClusterNames(spec *workv1alpha2.ResourceBindingSpec) []string {
- 	return clusterNames
- }
+@@ -317,6 +317,9 @@ webhook:
+   priorityClassName: "system-node-critical"
+   ## @param webhook.featureGates A set of key=value pairs that describe feature gates for karmada-webhook
+   featureGates: {}
++  ## To allow NoExecute taints in a ClusterTaintPolicy, set:
++  ##   extraCommandArgs:
++  ##     allow-no-execute-taint-policy: true
+   ## @param webhook.extraCommandArgs extra command args of the karmada-webhook
+   extraCommandArgs: {}
  
--// IsBindingReplicasChanged will check if the sum of replicas is different from the replicas of object
-+// IsBindingReplicasChanged reports whether the desired replicas differ from the scheduled result.
- func IsBindingReplicasChanged(bindingSpec *workv1alpha2.ResourceBindingSpec, strategy *policyv1alpha1.ReplicaSchedulingStrategy) bool {
- 	if strategy == nil {
- 		return false
- 	}
+```
+
+**File**: `operator/pkg/karmadaresource/webhookconfiguration/manifests.go` (modified, +14/-0)
+```diff
+@@ -334,5 +334,19 @@ webhooks:
+     sideEffects: NoneOnDryRun
+     admissionReviewVersions: ["v1"]
+     timeoutSeconds: 3
++  - name: clustertaintpolicy.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["policy.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["clustertaintpolicies"]
++        scope: "Cluster"
++    clientConfig:
++      url: https://{{ .Service }}.{{ .Namespace }}.svc:443/validate-clustertaintpolicy
++      caBundle: {{ .CaBundle }}
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: ["v1"]
++    timeoutSeconds: 3
+ `
+ )
+```
+
+**File**: `operator/pkg/karmadaresource/webhookconfiguration/webhookconfiguration_test.go` (modified, +58/-0)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"strings"
+ 	"testing"
  
--	// For component-based workloads, trigger rescheduling when clusters are empty (e.g., after eviction).
--	// This is a temporary fix to ensure cluster failover works correctly.
--	// Limitation: This only handles the failover scenario where clusters are cleared.
--	// It does not detect component replica changes (e.g., scale up/down) or replica swaps between components.
--	// A complete solution requires changing how scheduling results are stored to support multi-template workloads,
--	// likely by extending TargetCluster to include per-component replica information.
--	// The comprehensive solution is tracked by: https://github.com/karmada-io/karmada/issues/6998
-+	// For component-based workloads, trigger rescheduling when clusters are empty (e.g., after eviction),
-+	// or when the per-component replicas recorded in any target cluster differ from the desired ones
-+	// (e.g., scale up/down, component added/removed).
- 	if features.FeatureGate.Enabled(features.MultiplePodTemplatesScheduling) && len(bindingSpec.Components) > 0 {
- 		if len(bindingSpec.Clusters) == 0 {
- 			return true
++	"github.com/google/go-cmp/cmp"
+ 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
+ 	fakeclientset "k8s.io/client-go/kubernetes/fake"
+ 	coretesting "k8s.io/client-go/testing"
+@@ -128,3 +129,60 @@ func TestValidatingWebhookConfiguration(t *testing.T) {
  		}
-+		if isComponentReplicasChanged(bindingSpec.Components, bindingSpec.Clusters) {
-+			return true
-+		}
  	}
- 
- 	if strategy.ReplicaSchedulingType == policyv1alpha1.ReplicaSchedulingTypeDuplicated {
-@@ -68,6 +67,36 @@ func IsBindingReplicasChanged(bindingSpec *workv1alpha2.ResourceBindingSpec, str
- 	return false
  }
- 
-+// isComponentReplicasChanged checks whether the per-component replicas recorded in target clusters
-+// differ from the desired components. Multi-component workloads are scheduled as a whole, so every
-+// target cluster is expected to hold the full replicas of every component.
-+// Clusters without recorded component results are skipped, because the scheduler only records them for
-+// multi-component workloads that are applicable to multi-template scheduling (see AssignReplicas in
-+// pkg/scheduler/core). Single-component workloads, or results produced before the feature gate was
-+// enabled, carry no component results and still rely on the legacy replica checks.
-+func isComponentReplicasChanged(components []workv1alpha2.Component, clusters []workv1alpha2.TargetCluster) bool {
-+	desired := make(map[string]int32, len(components))
-+	for _, component := range components {
-+		desired[component.Name] = component.Replicas
++
++func TestValidatingWebhookConfigurationClusterTaintPolicy(t *testing.T) {
++	name, namespace := "karmada-demo", "test"
++
++	caTestData := "test-ca-data"
++	caBundle := base64.StdEncoding.EncodeToString([]byte(caTestData))
++
++	fakeClient := fakeclientset.NewClientset()
++	err := validatingWebhookConfiguration(fakeClient, namespace, name, caBundle)
++	if err != nil {
++		t.Fatalf("error creating the validating webhook configuration: %v", err)
 +	}
 +
-+	for _, cluster := range clusters {
-+		if len(cluster.Components) == 0 {
-+			continue
-+		}
-+		if len(cluster.Components) != len(desired) {
-+			return true
-+		}
-+		for _, targetComponent := range cluster.Components {
-+			replicas, ok := desired[targetComponent.Name]
-+			if !ok || replicas != targetComponent.Replicas {
-+				return true
-+			}
++	actions := fakeClient.Actions()
++	if len(actions) != 1 {
++		t.Fatalf("expected 1 action, but got %d", len(actions))
++	}
++
++	createAction, ok := actions[0].(coretesting.CreateAction)
++	if !ok {
++		t.Fatalf("expected CreateAction, but got %T", actions[0])
++	}
++
++	validatingWebhookConfig := createAction.GetObject().(*admissionregistrationv1.ValidatingWebhookConfiguration)
++
++	var got *admissionregistrationv1.ValidatingWebhook
++	for i := range validatingWebhookConfig.Webhooks {
++		if validatingWebhookConfig.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
++			got = &validatingWebhookConfig.Webhooks[i]
++			break
 +		}
 +	}
-+	return false
++	if got == nil {
++		t.Fatalf("validating webhook configuration is missing the clustertaintpolicy.karmada.io webhook")
++	}
++
++	want := &admissionregistrationv1.ValidatingWebhook{
++		Name:         "clustertaintpolicy.karmada.io",
++		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new(fmt.Sprintf("https://%s.%s.svc:443/validate-clustertaintpolicy", util.KarmadaWebhookName(name), namespace)), CABundle: []byte(caTestData)},
++		Rules: []admissionregistrationv1.RuleWithOperations{{
++			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
++			Rule: admissionregistrationv1.Rule{
++				APIGroups:   []string{"policy.karmada.io"},
++				APIVersions: []string{"*"},
++				Resources:   []string{"clustertaintpolicies"},
++				Scope:       new(admissionregistrationv1.ClusterScope),
++			},
++		}},
++		FailurePolicy:           new(admissionregistrationv1.Fail),
++		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
++		TimeoutSeconds:          new(int32(3)),
++		AdmissionReviewVersions: []string{"v1"},
++	}
++	if diff := cmp.Diff(want, got); diff != "" {
++		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
++	}
 +}
-+
- // GetSumOfReplicas will get the sum of replicas in target clusters
- func GetSumOfReplicas(clusters []workv1alpha2.TargetCluster) int32 {
- 	replicasSum := int32(0)
 ```
 
-**File**: `pkg/util/binding_test.go` (modified, +287/-1)
+**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration.go` (modified, +14/-0)
 ```diff
-@@ -178,9 +178,27 @@ func TestIsBindingReplicasChanged(t *testing.T) {
- 			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
- 			expected: true,
- 		},
-+		{
-+			name: "component replicas changed with feature gate disabled",
-+			bindingSpec: &workv1alpha2.ResourceBindingSpec{
-+				Components: []workv1alpha2.Component{
-+					{Name: "jobmanager", Replicas: 1},
-+					{Name: "taskmanager", Replicas: 6},
-+				},
-+				Clusters: []workv1alpha2.TargetCluster{{
-+					Name: ClusterMember1,
-+					Components: []workv1alpha2.TargetComponent{
-+						{Name: "jobmanager", Replicas: 1},
-+						{Name: "taskmanager", Replicas: 4},
-+					},
-+				}},
-+			},
-+			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
-+			expected: false,
-+		},
- 	}
+@@ -345,6 +345,20 @@ webhooks:
+     sideEffects: NoneOnDryRun
+     admissionReviewVersions: ["v1"]
+     timeoutSeconds: 3
++  - name: clustertaintpolicy.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["policy.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["clustertaintpolicies"]
++        scope: "Cluster"
++    clientConfig:
++      url: https://karmada-webhook.%[1]s.svc:443/validate-clustertaintpolicy
++      caBundle: %[2]s
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: ["v1"]
++    timeoutSeconds: 3
+ `, systemNamespace, caBundle)
+ }
  
--	// Component-based workload failover tests require the MultiplePodTemplatesScheduling feature gate.
-+	// Component-based workload tests require the MultiplePodTemplatesScheduling feature gate.
- 	componentTests := []struct {
- 		name        string
- 		bindingSpec *workv1alpha2.ResourceBindingSpec
-@@ -223,6 +241,171 @@ func TestIsBindingReplicasChanged(t *testing.T) {
- 			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDuplicated},
- 			expected: false,
- 		},
-+		{
-+			name: "multi-component scale up should trigger rescheduling",
-+			bindingSpec: &workv1alpha2.ResourceBindingSpec{
-+				Components: []workv1alpha2.Component{
-+					{Name: "jobmanager", Replicas: 1},
-+					{Name: "taskmanager", Replicas: 6},
-+				},
-+				Clusters: []workv1alpha2.TargetCluster{{
-+					Name: ClusterMember1,
-+					Components: []workv1alpha2.TargetComponent{
-+						{Name: "jobmanager", Replicas: 1},
-+						{Name: "taskmanager", Replicas: 4},
-+					},
-+				}},
+```
+
+**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration_test.go` (modified, +45/-0)
+```diff
+@@ -18,9 +18,14 @@ package karmada
+ 
+ import (
+ 	"encoding/base64"
++	"encoding/json"
+ 	"testing"
+ 
++	"github.com/google/go-cmp/cmp"
++	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
+ 	"k8s.io/client-go/kubernetes/fake"
++
++	"github.com/karmada-io/karmada/pkg/karmadactl/cmdinit/utils"
+ )
+ 
+ func Test_createOrUpdateValidatingWebhookConfiguration(t *testing.T) {
+@@ -44,3 +49,43 @@ func Test_createOrUpdateMutatingWebhookConfiguration(t *testing.T) {
+ 		t.Errorf("createOrUpdateMutatingWebhookConfiguration() return = %v, want no error", err)
+ 	}
+ }
++
++func TestValidatingConfigClusterTaintPolicyWebhook(t *testing.T) {
++	cfg := validatingConfig(base64.StdEncoding.EncodeToString([]byte("foo")), "bar")
++	obj := admissionregistrationv1.ValidatingWebhookConfiguration{}
++	if err := json.Unmarshal(utils.StaticYamlToJSONByte(cfg), &obj); err != nil {
++		t.Fatalf("failed to decode validatingConfig() output: %v", err)
++	}
++
++	var got *admissionregistrationv1.ValidatingWebhook
++	for i := range obj.Webhooks {
++		if obj.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
++			got = &obj.Webhooks[i]
++			break
++		}
++	}
++	if got == nil {
++		t.Fatalf("validatingConfig() is missing the clustertaintpolicy.karmada.io webhook")
++	}
++
++	want := &admissionregistrationv1.ValidatingWebhook{
++		Name:         "clustertaintpolicy.karmada.io",
++		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new("https://karmada-webhook.bar.svc:443/validate-clustertaintpolicy"), CABundle: []byte("foo")},
++		Rules: []admissionregistrationv1.RuleWithOperations{{
++			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
++			Rule: admissionregistrationv1.Rule{
++				APIGroups:   []string{"policy.karmada.io"},
++				APIVersions: []string{"*"},
++				Resources:   []string{"clustertaintpolicies"},
++				Scope:       new(admissionregistrationv1.ClusterScope),
 +			},
-+			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
-+			expected: true,
-+		},
-+		{
-+			name: "multi-component scale down should trigger rescheduling",
-+			bindingSpec: &workv1alpha2.ResourceBindingSpec{
-+				Components: []workv1alpha2.Component{
-+					{Name: "jobmanager", Replicas: 1},
-+					{Name: "taskmanager", Replicas: 4},
-+				},
-+				Clusters: []workv1alpha2.TargetCluster{{
-+					Name: ClusterMember1,
-+					Components: []workv1alpha2.TargetComponent{
-+						{Name: "jobmanager", Replicas: 1},
-+						{Name: "taskmanager", Replicas: 6},
-+					},
-+				}},
++		}},
++		FailurePolicy:           new(admissionregistrationv1.Fail),
++		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
++		TimeoutSeconds:          new(int32(3)),
++		AdmissionReviewVersions: []string{"v1"},
++	}
++	if diff := cmp.Diff(want, got); diff != "" {
++		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `d08e26b8` (2026-10-22)
+**Commit Message**: Merge pull request #7961 from Himanshu-singh04/fix/7960-deterministic-command-docs
+
+hack: pin command docs generation locale
+
+**File**: `hack/update-command-line-flags.sh` (modified, +5/-0)
+```diff
+@@ -22,6 +22,11 @@ set -o errexit
+ set -o nounset
+ set -o pipefail
+ 
++# Pin the locale so the generated docs are identical regardless of the
++# developer's environment. kubectl's i18n package translates command
++# descriptions based on LC_ALL/LC_MESSAGES/LANG.
++export LC_ALL=C
++
+ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
+ # shellcheck source=hack/util.sh
+ source "${SCRIPT_ROOT}/hack/util.sh"
+```
+
+---
+
+### Incident Patch 3: `1d148e81` (2026-10-21)
+**Commit Message**: fix: add ClusterTaintPolicy webhook to chart, init, and operator
+
+Only artifacts/deploy registers /validate-clustertaintpolicy. The Helm
+chart, karmadactl init, and karmada-operator do not, so the API server
+never sends ClusterTaintPolicy requests to karmada-webhook. The
+--allow-no-execute-taint-policy gate is never evaluated, and every
+NoExecute taint in a ClusterTaintPolicy is accepted.
+
+Add the same webhook entry to the three installers. With the default
+flag value, karmada-webhook now denies create and update requests for
+a ClusterTaintPolicy with a NoExecute taint. Each installer can set the
+flag through its existing extra-args mechanism.
+
+Signed-off-by: cmontemuino <[REDACTED_EMAIL]>
+
+**File**: `charts/karmada/templates/_karmada_webhook_configuration.tpl` (modified, +14/-0)
+```diff
+@@ -288,4 +288,18 @@ webhooks:
+     sideEffects: NoneOnDryRun
+     admissionReviewVersions: ["v1"]
+     timeoutSeconds: 3
++  - name: clustertaintpolicy.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["policy.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["clustertaintpolicies"]
++        scope: "Cluster"
++    clientConfig:
++      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-clustertaintpolicy
++      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: [ "v1" ]
++    timeoutSeconds: 3
+ {{- end -}}
+```
+
+**File**: `charts/karmada/values.yaml` (modified, +3/-0)
+```diff
+@@ -317,6 +317,9 @@ webhook:
+   priorityClassName: "system-node-critical"
+   ## @param webhook.featureGates A set of key=value pairs that describe feature gates for karmada-webhook
+   featureGates: {}
++  ## To allow NoExecute taints in a ClusterTaintPolicy, set:
++  ##   extraCommandArgs:
++  ##     allow-no-execute-taint-policy: true
+   ## @param webhook.extraCommandArgs extra command args of the karmada-webhook
+   extraCommandArgs: {}
+ 
+```
+
+**File**: `operator/pkg/karmadaresource/webhookconfiguration/manifests.go` (modified, +14/-0)
+```diff
+@@ -334,5 +334,19 @@ webhooks:
+     sideEffects: NoneOnDryRun
+     admissionReviewVersions: ["v1"]
+     timeoutSeconds: 3
++  - name: clustertaintpolicy.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["policy.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["clustertaintpolicies"]
++        scope: "Cluster"
++    clientConfig:
++      url: https://{{ .Service }}.{{ .Namespace }}.svc:443/validate-clustertaintpolicy
++      caBundle: {{ .CaBundle }}
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: ["v1"]
++    timeoutSeconds: 3
+ `
+ )
+```
+
+**File**: `operator/pkg/karmadaresource/webhookconfiguration/webhookconfiguration_test.go` (modified, +58/-0)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"strings"
+ 	"testing"
+ 
++	"github.com/google/go-cmp/cmp"
+ 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
+ 	fakeclientset "k8s.io/client-go/kubernetes/fake"
+ 	coretesting "k8s.io/client-go/testing"
+@@ -128,3 +129,60 @@ func TestValidatingWebhookConfiguration(t *testing.T) {
+ 		}
+ 	}
+ }
++
++func TestValidatingWebhookConfigurationClusterTaintPolicy(t *testing.T) {
++	name, namespace := "karmada-demo", "test"
++
++	caTestData := "test-ca-data"
++	caBundle := base64.StdEncoding.EncodeToString([]byte(caTestData))
++
++	fakeClient := fakeclientset.NewClientset()
++	err := validatingWebhookConfiguration(fakeClient, namespace, name, caBundle)
++	if err != nil {
++		t.Fatalf("error creating the validating webhook configuration: %v", err)
++	}
++
++	actions := fakeClient.Actions()
++	if len(actions) != 1 {
++		t.Fatalf("expected 1 action, but got %d", len(actions))
++	}
++
++	createAction, ok := actions[0].(coretesting.CreateAction)
++	if !ok {
++		t.Fatalf("expected CreateAction, but got %T", actions[0])
++	}
++
++	validatingWebhookConfig := createAction.GetObject().(*admissionregistrationv1.ValidatingWebhookConfiguration)
++
++	var got *admissionregistrationv1.ValidatingWebhook
++	for i := range validatingWebhookConfig.Webhooks {
++		if validatingWebhookConfig.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
++			got = &validatingWebhookConfig.Webhooks[i]
++			break
++		}
++	}
++	if got == nil {
++		t.Fatalf("validating webhook configuration is missing the clustertaintpolicy.karmada.io webhook")
++	}
++
++	want := &admissionregistrationv1.ValidatingWebhook{
++		Name:         "clustertaintpolicy.karmada.io",
++		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new(fmt.Sprintf("https://%s.%s.svc:443/validate-clustertaintpolicy", util.KarmadaWebhookName(name), namespace)), CABundle: []byte(caTestData)},
++		Rules: []admissionregistrationv1.RuleWithOperations{{
++			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
++			Rule: admissionregistrationv1.Rule{
++				APIGroups:   []string{"policy.karmada.io"},
++				APIVersions: []string{"*"},
++				Resources:   []string{"clustertaintpolicies"},
++				Scope:       new(admissionregistrationv1.ClusterScope),
 +			},
-+			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
-+			expected: true,
-+		},
-+		{
-+			name: "mixed multi-component scale should trigger rescheduling",
-+			bindingSpec: &workv1alpha2.ResourceBindingSpec{
-+				Components: []workv1alpha2.Component{
-+					{Name: "jobmanager", Replicas: 2},
-+					{Name: "taskmanager", Replicas: 4},
-+				},
-+				Clusters: []workv1alpha2.TargetCluster{{
-+					Name: ClusterMember1,
-+					Components: []workv1alpha2.TargetComponent{
-+						{Name: "jobmanager", Replicas: 1},
-+						{Name: "taskmanager", Replicas: 6},
-+					},
-+				}},
++		}},
++		FailurePolicy:           new(admissionregistrationv1.Fail),
++		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
++		TimeoutSeconds:          new(int32(3)),
++		AdmissionReviewVersions: []string{"v1"},
++	}
++	if diff := cmp.Diff(want, got); diff != "" {
++		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
++	}
++}
+```
+
+**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration.go` (modified, +14/-0)
+```diff
+@@ -345,6 +345,20 @@ webhooks:
+     sideEffects: NoneOnDryRun
+     admissionReviewVersions: ["v1"]
+     timeoutSeconds: 3
++  - name: clustertaintpolicy.karmada.io
++    rules:
++      - operations: ["CREATE", "UPDATE"]
++        apiGroups: ["policy.karmada.io"]
++        apiVersions: ["*"]
++        resources: ["clustertaintpolicies"]
++        scope: "Cluster"
++    clientConfig:
++      url: https://karmada-webhook.%[1]s.svc:443/validate-clustertaintpolicy
++      caBundle: %[2]s
++    failurePolicy: Fail
++    sideEffects: None
++    admissionReviewVersions: ["v1"]
++    timeoutSeconds: 3
+ `, systemNamespace, caBundle)
+ }
+ 
+```
+
+**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration_test.go` (modified, +45/-0)
+```diff
+@@ -18,9 +18,14 @@ package karmada
+ 
+ import (
+ 	"encoding/base64"
++	"encoding/json"
+ 	"testing"
+ 
++	"github.com/google/go-cmp/cmp"
++	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
+ 	"k8s.io/client-go/kubernetes/fake"
++
++	"github.com/karmada-io/karmada/pkg/karmadactl/cmdinit/utils"
+ )
+ 
+ func Test_createOrUpdateValidatingWebhookConfiguration(t *testing.T) {
+@@ -44,3 +49,43 @@ func Test_createOrUpdateMutatingWebhookConfiguration(t *testing.T) {
+ 		t.Errorf("createOrUpdateMutatingWebhookConfiguration() return = %v, want no error", err)
+ 	}
+ }
++
++func TestValidatingConfigClusterTaintPolicyWebhook(t *testing.T) {
++	cfg := validatingConfig(base64.StdEncoding.EncodeToString([]byte("foo")), "bar")
++	obj := admissionregistrationv1.ValidatingWebhookConfiguration{}
++	if err := json.Unmarshal(utils.StaticYamlToJSONByte(cfg), &obj); err != nil {
++		t.Fatalf("failed to decode validatingConfig() output: %v", err)
++	}
++
++	var got *admissionregistrationv1.ValidatingWebhook
++	for i := range obj.Webhooks {
++		if obj.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
++			got = &obj.Webhooks[i]
++			break
++		}
++	}
++	if got == nil {
++		t.Fatalf("validatingConfig() is missing the clustertaintpolicy.karmada.io webhook")
++	}
++
++	want := &admissionregistrationv1.ValidatingWebhook{
++		Name:         "clustertaintpolicy.karmada.io",
++		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new("https://karmada-webhook.bar.svc:443/validate-clustertaintpolicy"), CABundle: []byte("foo")},
++		Rules: []admissionregistrationv1.RuleWithOperations{{
++			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
++			Rule: admissionregistrationv1.Rule{
++				APIGroups:   []string{"policy.karmada.io"},
++				APIVersions: []string{"*"},
++				Resources:   []string{"clustertaintpolicies"},
++				Scope:       new(admissionregistrationv1.ClusterScope),
 +			},
-+			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
-+			expected: true,
-+		},
-+		{
-+			name: "equal multi-component replicas should not trigger rescheduling",
-+			bindingSpec: &workv1alpha2.ResourceBindingSpec{
-+				Components: []workv1alpha2.Component{
-+					{Name: "jobmanager", Replicas: 1},
-+					{Name: "taskmanager", Replicas: 4},
-+				},
-+				Clusters: []workv1alpha2.TargetCluster{{
-+					Name: ClusterMember1,
-+					Components: []workv1alpha2.TargetComponent{
-+						{Name: "taskmanager", Replicas: 4},
-+						{Name: "jobmanager", Replicas: 1},
-+					},
-+				}},
-+			},
-+			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
-+			expected: false,
-+		},
-+		{
-+			name: "missing scheduled component results should not trigger scale rescheduling",
-+			bindingSpec: &workv1alpha2.ResourceBindingSpec{
-+				Components: []workv1alpha2.Component{
-+					{Name: "jobmanager", Replicas: 1},
-+					{Name: "taskmanager", Replicas: 4},
-+				},
-+				Clusters: []workv1alpha2.TargetCluster{{Name: ClusterMember1}},
-+			},
-+			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
-+			expected: false,
-+		},
-+		{
-+			name: "component name change should trigger rescheduling",
-+			bindingSpec: &workv1alpha2.ResourceBindingSpec{
-+				Components: []workv1alpha2.Component{
-+					{Name: "jobmanager", Replicas: 2},
-+					{Name: "worker", Replicas: 4},
-+				},
-+				Clusters: []workv1alpha2.TargetCluster{{
-+					Name: ClusterMember1,
-+					Components: []workv1alpha2.TargetComponent{
-+						{Name: "jobmanager", Replicas: 1},
-+						{Name: "taskmanager", Replicas: 4},
-+					},
-+				}},
-+			},
-+			strategy: &policyv1alpha1.R
++		}},
++		FailurePolicy:           new(admissionregistrationv1.Fail),
++		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
++		TimeoutSeconds:          new(int32(3)),
++		AdmissionReviewVersions: []string{"v1"},
++	}
++	if diff := cmp.Diff(want, got); diff != "" {
++		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7963** (2026-10-22): fix: add ClusterTaintPolicy webhook to chart, init, and operator (@cmontemuino)
+- **PR #7961** (2026-10-22): hack: pin command docs generation locale (@Himanshu-singh04)
+- **PR #7959** (2026-10-21): build: bump Go to v1.26.10 (@FengyuanYin)
+- **PR #7953** (2026-10-21): feat(chart): add extraCommandArgs to karmada-webhook (@cmontemuino)
 - **PR #7950** (2026-10-19): Removed github workflow for releasing images to SWR (@RainbowMango)
 - **PR #7948** (2026-10-19): build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.0 (@dependabot[bot])
-- **PR #7940** (2026-10-12): build(deps): bump helm/chart-testing-action from 2.8.0 to 2.9.0 (@dependabot[bot])
-- **PR #7939** (2026-10-12): build(deps): bump github/codeql-action/upload-sarif from 4.38.2 to 4.38.3 (@dependabot[bot])
-- **PR #7938** (2026-10-12): build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
-- **PR #7937** (2026-10-12): build(deps): bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
 
 ---
 
@@ -1367,54 +1521,34 @@ feat: trigger rescheduling on component replica changes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduli
+## X. Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry
 
 **RULE**:
-When implementing operations in `pkg/scheduler/scheduler_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `charts/karmada/templates/_karmada_webhook_configuration.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cb3c422`: Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f55ed275`: Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/scheduler/scheduler_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/karmada/templates/_karmada_webhook_configuration.tpl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		enableComponents bool
-		{
-			name: "binding with component replicas changed",
-			binding: &workv1alpha2.ResourceBinding{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "test-binding-components",
-					Namespace: "default",
-					Annotations: map[string]string{
-						util.PolicyPlacementAnnotation: `{"replicaScheduling":{"replicaSchedulingType":"Divided"}}`,
-					},
-				},
-				Spec: workv1alpha2.ResourceBindingSpec{
-					Components: []workv1alpha2.Component{
-						{Name: "jobmanager", Replicas: 1},
-						{Name: "taskmanager", Replicas: 6},
-					},
-					Clusters: []workv1alpha2.TargetCluster{{
-						Name: "cluster1",
-						Components: []workv1alpha2.TargetComponent{
-							{Name: "jobmanager", Replicas: 1},
-							{Name: "taskmanager", Replicas: 4},
-						},
-					}},
-					Placement: &policyv1alpha1.Placement{ReplicaScheduling: &policyv1alpha1.ReplicaSchedulingStrategy{
-						ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided,
-					}},
-				},
-			},
-			expectSchedule: true,
-			expectedClusters: []workv1alpha2.TargetCluster{{
-				Name: "cluster1",
-				Components: []workv1alpha2.TargetComponent{
-					{Name: "jobmanager", Replicas: 1},
-					{Name: "taskmanager", Replic
+  - name: clustertaintpolicy.karmada.io
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["policy.karmada.io"]
+        apiVersions: ["*"]
+        resources: ["clustertaintpolicies"]
+        scope: "Cluster"
+    clientConfig:
+      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-clustertaintpolicy
+      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: [ "v1" ]
+    timeoutSeconds: 3
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1424,4 +1558,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cb3c422` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f55ed275` are properly handled with clean fallback behavior.
