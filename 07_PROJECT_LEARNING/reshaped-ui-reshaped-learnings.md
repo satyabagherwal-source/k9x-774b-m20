@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md`  
 > **Source**: github ([https://github.com/reshaped-ui/reshaped](https://github.com/reshaped-ui/reshaped))  
-> **Source Version**: `6150f4fc`  
+> **Source Version**: `bf8a1e44`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:13:49.909Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-22T20:15:49.891Z  
 > **Learning ID**: `learn-github-reshaped-ui-reshaped`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1421 +12,514 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): reshaped-ui/reshaped
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/reshaped-ui/reshaped](https://github.com/reshaped-ui/reshaped))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:13:49.182Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): reshaped-ui/reshaped
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `reshaped-ui/reshaped`
-- **Description**: Reshaped provides accessible React and Figma components for building beautiful products or starting your own design system
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 2249 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`reshaped-ui/reshaped` is a multi-tier design system architecture built for enterprise React applications. It decouples design primitives, headless layout state, coordinate geometry, and hardware-accelerated CSS mechanics across three monorepo packages:
+1. `reshaped`: High-level accessible React UI component library (compound architecture, CSS modules, design tokens).
+2. `@reshaped/headless`: Logic primitives managing DOM geometry, accessibility attributes (ARIA), and transient interactions.
+3. `@reshaped/utilities`: Pure TypeScript viewport calculations, scrolling physics, coordinate math, and DOM listener optimizations.
+
+```
++---------------------------------------------------------------------------------------+
+|                                    reshaped (UI)                                      |
+|  [ContextMenu]  [Modal]  [Select]  [Autocomplete]  [Flyout]  [Slider]  [Calendar]     |
++-------------------------------------------+-------------------------------------------+
+                                            |
+       +------------------------------------+------------------------------------+
+       | Hook Abstractions & Physics Layer                                       |
+       | - useSingletonHotkeys (Global event dispatcher & Mac/Win normalization) |
+       | - useOnClickOutside (Capture-phase outside click & contextmenu sync)    |
+       | - useDrag (Pointer compensation, coordinate clamping, scroll locking)   |
+       | - useFadeSide (RTL-aware scroll boundary detection via rafThrottle)    |
+       +------------------------------------+------------------------------------+
+                                            |
+       +------------------------------------+------------------------------------+
+       | Headless Geometric Engines & Utilities                                  |
+       | - safeArea.ts (Barycentric coordinate point-in-triangle hit testing)    |
+       | - cooldown.ts (State machine: cold -> warming -> warm -> cooling)       |
+       | - Slider.utilities (Float epsilon precision & input property descriptor)|
+       | - Calendar.utils (Leap year, ISO dates, Tab focus roving indexing)      |
+       +------------------------------------+------------------------------------+
+                                            |
+       +------------------------------------+------------------------------------+
+       | Hardware Compositor & CSS Variable Engine                               |
+       | - Non-inherited CSS Custom Properties (@property)                       |
+       | - GPU Compositor Offloading (transform3d, opacity vs layout/paint)     |
+       +-------------------------------------------------------------------------+
+```
+
+### Critical Subsystem Abstractions:
+- **Geometry & Collision Detection Engine (`safeArea.ts`)**: Implements barycentric coordinates over triangles (`[origin, corner1, corner2]`) to create an invisible triangular safe corridor between cursor origin and floating popover menus, preventing flyouts from prematurely closing when cursors traverse diagonally over dead space.
+- **Global Event Dispatcher & Input Method Engine (`useSingletonHotkeys.tsx`)**: Replaces disparate DOM listeners with a single reference-counted window listener and `HotkeyStore`. Features modifier sorting, keyup normalization for macOS `Cmd` key masking, and early-exit filters for CJK Input Method Editor (IME) composition phases.
+- **Event Phase Coordination (`useOnClickOutside.ts`)**: Bypasses React's synthetic event bubbling phase by operating on native document capture-phase handlers (`{ capture: true }`), resolving race conditions where newly rendered menus receive their own triggers' bubbled events and instantly self-terminate.
+- **Hardware Compositor-Boundary Execution (`@property` + CSS Variables)**: Offloads high-frequency layout updates (modal swipe gestures, scroll thumbs) from React state renders to CSS custom properties marked `@property { inherits: false }`, preventing whole-tree style recalcs and paint invalidation on mobile viewports.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `packages/reshaped/src/components/Calendar/Calendar.utils.ts`
-```
-import type * as T from "./Calendar.types";
-
-const DAYS_IN_WEEK = 7;
-const FIRST_WEEK_DAY = 1;
-
-/**
- * Return the ISO date format without the timezones adjustemnts
- */
-export const getLocalISODate = (args: { date: Date }) => {
-	const { date } = args;
-
-	return [
-		date.getFullYear(),
-		(date.getMonth() + 1).toString().padStart(2, "0"),
-		date.getDate().toString().padStart(2, "0"),
-	].join("-");
-};
-
-const getNormalizedDay = (args: { date: Date; firstWeekDay?: number }) => {
-	const { date, firstWeekDay = FIRST_WEEK_DAY } = args;
-
-	const day = date.getDay();
-
-	return (day - firstWeekDay + DAYS_IN_WEEK) % DAYS_IN_WEEK;
-};
-
-/**
- * Return an array of US weekday names for the calendar
- */
-export const getWeekdayNames = (args: {
-	firstWeekDay?: number;
-	renderWeekDay: T.BaseProps["renderWeekDay"];
-}) => {
-	const { firstWeekDay = FIRST_WEEK_DAY, renderWeekDay } = args;
-	const baseDate = new Date(2021, 1, firstWeekDay); // Starting from Sunday + firstWeekDay
-	const weekdays = [];
-
-	for (let i = firstWeekDay; i < firstWeekDay + DAYS_IN_WEEK; i++) {
-		const weekday = renderWeekDay
-			? renderWeekDay({ weekDay: i, date: baseDate })
-			: baseDate.toLocaleDateString("en-US", { weekday: "short" });
-		weekdays.push(weekday.slice(0, 2));
-		baseDate.setDate(baseDate.getDate() + 1);
-	}
-
-	return weekdays;
-};
-
-/**
- * Return an array of all month names
- */
-export const getMonthNames = (args: { renderMonthLabel: T.BaseProps["renderMonthLabel"] }) => {
-	const { renderMonthLabel } = args;
-
-	return Array.from({ length: 12 }).map((_, i) => {
-		const date = new Date(0, i);
-		return renderMonthLabel
-			? renderMonthLabel({ month: i, date })
-			: date.toLocaleString("default", { month: "short" });
-	});
-};
-
-/**
- * Return an array of weeks based on the month passed to the function
- */
-export const getMonthWeeks = (args: { date: Date; firstWeekDay?: number }): (Date | null)[][] => {
-	const { date, firstWeekDay } = args;
-	const month = date.getMonth();
-	const year = date.getFullYear();
-	const weeks: (Date | null)[][] = [];
-	const currentDate = new Date(year, month, 1);
-
-	// Fill in the days if month starts in the middle of the week
-	const firstDay = getNormalizedDay({ date: currentDate, firstWeekDay });
-	if (firstDay !== 0) {
-		const emptyDates = Array.from({ length: firstDay }).map(() => null);
-		weeks.push(emptyDates);
-	}
-
-	while (month === currentDate.getMonth()) {
-		const day = getNormalizedDay({ date: currentDate, firstWeekDay });
-
-		if (day === 0 || !weeks.length) weeks.push([]);
-
-		weeks[weeks.length - 1].push(new Date(currentDate));
-		currentDate.setDate(currentDate.getDate() + 1);
-	}
-
-	// Fill in the days if month ends in the middle of the week
-	const lastDay = getNormalizedDay({ date: currentDate, firstWeekDay });
-	if (lastDay !== 0) {
-		const emptyDates = Array.from({ length: 7 - lastDay }).map(() => null);
-		weeks[weeks.length - 1].push(...emptyDates);
-	}
-
-	return weeks;
-};
-
-export const getFocusableDates = (rootEl: HTMLElement | null) => {
-	return (rootEl?.querySelectorAll("[data-rs-date]") || []) as unknown as HTMLButtonElement[];
-};
-
-export const changeDate = (date: Date, delta: number) =>
-	new Date(date.getFullYear(), date.getMonth(), date.getDate() + delta);
-
-export const setMonthTo = (date: Date, value: number) => {
-	return new Date(date.getFullYear(), value, 1);
-};
-
-export const setMonthToPrevious = (date: Date) => {
-	return setMonthTo(date, date.getMonth() - 1);
-};
-
-export const setMonthToNext = (date: Date) => {
-	return setMonthTo(date, date.getMonth() + 1);
-};
-
-export const setYearTo = (date: Date, value: number) => {
-	const resultDate = new Date(date);
-
-	resultDate.setFullYear(value);
-	return resultDate;
-};
-
-export const setYearToPrevious = (date: Date) => {
-	return setYearTo(date, date.getFullYear() - 1);
-};
-
-export const setYearToNext = (date: Date) => {
-	return setYearTo(date, date.getFullYear() + 1);
-};
-
-export const applyNavigationBounds = (args: { date: Date; min?: Date; max?: Date }) => {
-	const { date, min, max } = args;
-	const currentMonth = date.getMonth();
-	const currentYear = date.getFullYear();
-	const prevMonthLastDate = new Date(currentYear, currentMonth, 0);
-	const nextMonthFirstDate = setMonthToNext(date);
-	nextMonthFirstDate.setDate(0);
-
-	return {
-		isFirstMonth: min && min > prevMonthLastDate,
-		isLastMonth: max && max < nextMonthFirstDate,
-	};
-};
-
-const isMonthMatch = (date1: Date, date2: Date) => {
-	return date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
-};
-
-/**
- * Decide if date has to be focusable with Tab (only one date should be)
- * 1. If there is a selected value - it's focusable
- * 2. Otherwise, today's date is focusable
- * 3. Otherwise, first non-disabled date is focusable
- */
-export const isDateFocusable = (args: {
-	date: Date;
-	lastFocusedDate?: Date;
-	startValue: Date | null;
-}) => {
-	const { date, startValue, lastFocusedDate } = args;
-	const today = new Date();
-	const isoDate = getLocalISODate({ date });
-	const isoToday = getLocalISODate({ date: today });
-	const isoValueDate = startValue && getLocalISODate({ date: startValue });
-	const isoLastFocusedDate = lastFocusedDate && getLocalISODate({ date: lastFocusedDate });
-
-	if (lastFocusedDate && isMonthMatch(date, lastFocusedDate)) return isoDate === isoLastFocusedDate;
-	if (startValue && isMonthMatch(date, startValue)) return isoDate === isoValueDate;
-	if (isMonthMatch(date, today)) return isoDate === isoToday;
-	return true;
-};
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/components/Flyout/utilities/cooldown.ts`
-```
-class Cooldown {
-	status: "warming" | "warm" | "cooling" | "cold" = "cold";
-
-	timer?: ReturnType<typeof setTimeout>;
-
-	warm = () => {
-		clearTimeout(this.timer);
-
-		if (this.status === "cooling") {
-			this.status = "warm";
-			return;
-		}
-
-		this.status = "warming";
-
-		this.timer = setTimeout(() => {
-			this.status = "warm";
-			this.timer = undefined;
-		}, 100);
-	};
-
-	cool = () => {
-		clearTimeout(this.timer);
-
-		if (this.status === "warming") {
-			this.status = "cold";
-			return;
-		}
-
-		this.status = "cooling";
-
-		this.timer = setTimeout(() => {
-			this.status = "cold";
-			this.timer = undefined;
-		}, 500);
-	};
-}
-
-export default new Cooldown();
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/components/Flyout/utilities/safeArea.ts`
-```
-import type { Coordinates } from "@reshaped/utilities/internal";
-
-type SafePolygonOptions = {
-	contentRef: React.RefObject<HTMLElement | null>;
-	triggerRef: React.RefObject<HTMLElement | null>;
-	position: string | null | undefined;
-	onClose: () => void;
-	origin: Coordinates;
-};
-
-/**
- * Checks if a point is inside a triangle using barycentric coordinates
- */
-function isPointInTriangle(
-	point: Coordinates,
-	triangle: [Coordinates, Coordinates, Coordinates]
-): boolean {
-	const [p1, p2, p3] = triangle;
-
-	const denominator = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
-
-	const a = ((p2.y - p3.y) * (point.x - p3.x) + (p3.x - p2.x) * (point.y - p3.y)) / denominator;
-	const b = ((p3.y - p1.y) * (point.x - p3.x) + (p1.x - p3.x) * (point.y - p3.y)) / denominator;
-	const c = 1 - a - b;
-
-	return a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1;
-}
-
-/**
- * Gets the two closest corners of the content element based on the flyout position
- */
-function getContentCorners(
-	contentRect: DOMRect,
-	position: string | null | undefined
-): [Coordinates, Coordinates] {
-	const corners = {
-		topLeft: { x: contentRect.left, y: contentRect.top },
-		topRight: { x: contentRect.right, y: contentRect.top },
-		bottomLeft: { x: contentRect.left, y: contentRect.bottom },
-		bottomRight: { x: contentRect.right, y: contentRect.bottom },
-	};
-
-	if (position?.startsWith("bottom")) {
-		return [corners.topLeft, corners.topRight];
-	} else if (position?.startsWith("top")) {
-		return [corners.bottomLeft, corners.bottomRight];
-	} else if (position?.startsWith("start")) {
-		return [corners.topRight, corners.bottomRight];
-	} else {
-		return [corners.topLeft, corners.bottomLeft];
-	}
-}
-
-export function createSafeArea(options: SafePolygonOptions): () => void {
-	const { contentRef, triggerRef, position, onClose, origin: passedOrigin } = options;
-
-	if (!contentRef.current) {
-		// If content doesn't exist, just close immediately
-		onClose();
-		return () => {};
-	}
-
-	const contentRect = contentRef.current.getBoundingClientRect();
-	const [corner1, corner2] = getContentCorners(contentRect, position);
-	const origin = { x: passedOrigin.x, y: passedOrigin.y };
-
-	const triangle: [Coordinates, Coordinates, Coordinates] = [origin, corner1, corner2];
-
-	let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-	const cleanup = () => {
-		document.removeEventListener("mousemove", handleMouseMove);
-
-		if (timeoutId) clearTimeout(timeoutId);
-	};
-
-	// Start timeout for 1 second
-	const startTimeout = () => {
-		if (timeoutId) clearTimeout(timeoutId);
-
-		timeoutId = setTimeout(() => {
-			onClose();
-			cleanup();
-		}, 1000);
-	};
-
-	const handleMouseMove = (e: MouseEvent) => {
-		const currentPoint: Coordinates = { x: e.clientX, y: e.clientY };
-
-		if (isPointInTriangle(currentPoint, triangle) && contentRef.current && triggerRef.current) {
-			startTimeout();
-		} else {
-			onClose();
-			cleanup();
-		}
-	};
-
-	startTimeout();
-	document.addEventListener("mousemove", handleMouseMove);
-
-	return cleanup;
-}
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/components/FormControl/FormControl.utilities.ts`
-```
-import type * as T from "./FormControl.types";
-
-export const getCaptionId = (id: string, variant?: T.PrivateCaptionProps["variant"]) =>
-	`${id}-${variant || "caption"}`;
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/components/Slider/Slider.utilities.ts`
-```
-export const getPrecision = (value: number) => {
-	const floatPart = value.toString().split(".")[1];
-	return floatPart?.length || 0;
-};
-
-export const applyStepToValue = (value: number, step: number) => {
-	const isStepFloat = step % 1 !== 0;
-	const result = Math.round(value / step) * step;
-
-	// Handle javascript floats manually with string conversion
-	if (isStepFloat) {
-		const precision = getPrecision(step);
-		return Number(result.toFixed(precision));
-	}
-
-	return result;
-};
-
-export const getDragCoord = ({
-	event,
-	vertical,
-}: {
-	event: MouseEvent | TouchEvent;
-	vertical?: boolean;
-}) => {
-	if (vertical) {
-		if (event instanceof MouseEvent) return event.clientY;
-		return event.changedTouches[0].clientY;
-	}
-
-	if (event instanceof MouseEvent) return event.clientX;
-	return event.changedTouches[0].clientX;
-};
-
-/**
- * Workaround for changing a hidden input value with triggering
- * React input onChange and form onChange handlers
- *
- * Based on https://stackoverflow.com/a/60378508
- */
-export const triggerChangeEvent = (el: HTMLInputElement, value: string) => {
-	const nativeInputValueSetter = Object!.getOwnPropertyDescriptor(
-		window.HTMLInputElement.prototype,
-		"value"
-	)!.set;
-
-	nativeInputValueSetter!.call(el, value);
-	el.dispatchEvent(new Event("change", { bubbles: true }));
-};
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/components/Theme/Theme.utilities.ts`
-```
-export const getRootThemeEl = (scopeEl?: HTMLElement | null): HTMLElement => {
-	if (!scopeEl) return document.documentElement;
-
-	if (
-		scopeEl.hasAttribute("data-rs-root") ||
-		scopeEl === document.documentElement ||
-		!scopeEl.parentElement
-	) {
-		return scopeEl;
-	}
-
-	return getRootThemeEl(scopeEl.parentElement);
-};
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/hooks/_internal/useDrag.ts`
-```
-"use client";
-
-import React from "react";
-import { disableScroll, enableScroll } from "@reshaped/utilities/internal";
-
-import useHandlerRef from "@/hooks/useHandlerRef";
-import useHotkeys from "@/hooks/useHotkeys";
-import useToggle from "@/hooks/useToggle";
-import * as keys from "@/constants/keys";
-
-export type UseDragCallbackArgs = { x: number; y: number; triggerX: number; triggerY: number };
-
-const useDrag = <
-	TriggerElement extends HTMLElement = HTMLButtonElement,
-	ContainerElement extends HTMLElement = HTMLDivElement,
->(
-	cb: (args: UseDragCallbackArgs) => void,
-	options?: {
-		disabled?: boolean;
-		containerRef?: React.RefObject<ContainerElement | null>;
-		orientation?: "horizontal" | "vertical" | "both";
-	}
-) => {
-	const { disabled, containerRef: passedContainerRef, orientation = "both" } = options || {};
-	const cbRef = useHandlerRef(cb);
-	const toggle = useToggle();
-	const triggerRef = React.useRef<TriggerElement>(null);
-	const internalContainerRef = React.useRef<ContainerElement>(null);
-	const containerRef = passedContainerRef || internalContainerRef;
-	const triggerCompensationRef = React.useRef({ x: 0, y: 0 });
-	const isVertical = orientation === "vertical" || orientation === "both";
-	const isHorizontal = orientation === "horizontal" || orientation === "both";
-
-	const handleKeyboard = (x: number, y: number) => {
-		const triggerEl = triggerRef.current;
-
-		if (!triggerEl) return;
-
-		const container = containerRef.current ?? document.body;
-		const containerRect = container.getBoundingClientRect();
-		const triggerRect = triggerEl?.getBoundingClientRect();
-		const nextArgs = { x: 0, y: 0, triggerX: 0, triggerY: 0 };
-
-		if (isVertical) {
-			const relativeY = Math.round(triggerRect.y) - containerRect.y + y;
-			nextArgs.y = Math.max(0, Math.min(relativeY, containerRect.height - triggerRect!.height));
-			nextArgs.triggerY = triggerRect.y - containerRect.y;
-		}
-
-		if (isHorizontal) {
-			const relativeX = Math.round(triggerRect.x) - containerRect.x + x;
-			nextArgs.x = Math.max(0, Math.min(relativeX, containerRect.width - triggerRect!.width));
-			nextArgs.triggerX = triggerRect.x - containerRect.x;
-		}
-
-		cb(nextArgs);
-	};
-
-	useHotkeys<TriggerElement>(
-		{
-			[keys.LEFT]: () => isHorizontal && handleKeyboard(-20, 0),
-			[keys.RIGHT]: () => isHorizontal && handleKeyboard(20, 0),
-			[keys.UP]: () => isVertical && handleKeyboard(0, -20),
-			[keys.DOWN]: () => isVertical && handleKeyboard(0, 20),
-		},
-		[],
-		{
-			ref: triggerRef,
-			preventDefault: true,
-			disabled,
-		}
-	);
-
-	React.useEffect(() => {
-		const triggerEl = triggerRef.current;
-		if (!triggerEl) return;
-		if (!toggle.active) return;
-
-		const handleDrag = (event: MouseEvent | TouchEvent) => {
-			const resolvedEvent = event instanceof MouseEvent ? event : event.changedTouches[0];
-
-			const container = containerRef.current ?? document.body;
-			const containerRect = container.getBoundingClientRect();
-			const triggerRect = triggerEl.getBoundingClientRect();
-
-			const triggerX = resolvedEvent.clientX - containerRect.x;
-			const triggerY = resolvedEvent.clientY - containerRect.y;
-
-			// Calculate position relative to the container
-			const relativeX = triggerX - triggerCompensationRef.current.x;
-			const relativeY = triggerY - triggerCompensationRef.current.y;
-
-			cbRef.current?.({
-				x: isHorizontal
-					? Math.max(0, Math.min(relativeX, containerRect.width - triggerRect.width))
-					: 0,
-				y: isVertical
-					? Math.max(0, Math.min(relativeY, containerRect.height - triggerRect.height))
-					: 0,
-				triggerX: triggerRect.x - containerRect.x,
-				triggerY: triggerRect.y - containerRect.y,
-			});
-		};
-
-		const handleDragEnd = () => {
-			triggerCompensationRef.current = { x: 0, y: 0 };
-			toggle.deactivate();
-			enableScroll();
-		};
-
-		document.addEventListener("touchmove", handleDrag, { passive: true });
-		document.addEventListener("touchend", handleDragEnd, { passive: true });
-		document.addEventListener("mousemove", handleDrag, { passive: true });
-		document.addEventListener("mouseup", handleDragEnd, { passive: true });
-
-		return () => {
-			document.removeEventListener("touchmove", handleDrag);
-			document.removeEventListener("touchend", handleDragEnd);
-			document.removeEventListener("mousemove", handleDrag);
-			document.removeEventListener("mouseup", handleDragEnd);
-		};
-	}, [toggle, isHorizontal, isVertical, containerRef, cbRef]);
-
-	React.useEffect(() => {
-		const triggerEl = triggerRef.current;
-		if (!triggerEl || disabled) return;
-
-		const handleStart = (event: MouseEvent | TouchEvent) => {
-			const resolvedEvent = event instanceof MouseEvent ? event : event.changedTouches[0];
-
-			// Find the coordinate of the event inside the trigger
-			const triggerRect = triggerEl.getBoundingClientRect();
-			triggerCompensationRef.current = {
-				x: resolvedEvent.clientX - triggerRect.x,
-				y: resolvedEvent.clientY - triggerRect.y,
-			};
-
-			toggle.activate();
-			disableScroll();
-		};
-
-		triggerEl.addEventListener("touchstart", handleStart, { passive: true });
-		triggerEl.addEventListener("mousedown", handleStart, { passive: true });
-
-		return () => {
-			triggerEl.removeEventListener("touchstart", handleStart);
-			triggerEl.removeEventListener("mousedown", handleStart);
-		};
-	}, [toggle, disabled]);
-
-	return { ref: triggerRef, containerRef, active: toggle.active };
-};
-
-export default useDrag;
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/hooks/_internal/useFadeSide.ts`
-```
-"use client";
-
-import React from "react";
-import { rafThrottle } from "@reshaped/utilities/internal";
-
-import useIsomorphicLayoutEffect from "@/hooks/useIsomorphicLayoutEffect";
-import useRTL from "@/hooks/useRTL";
-
-const useFadeSide = (
-	scrollableRef: React.RefObject<HTMLElement | null>,
-	options: { disabled?: boolean } = {}
-) => {
-	const { disabled } = options;
-	const [rtl] = useRTL();
-	const [fadeSide, setFadeSide] = React.useState<"start" | "end" | "both" | null>(null);
-
-	const updateFade = React.useCallback(() => {
-		const elScrollable = scrollableRef.current;
-		if (!elScrollable) return;
-
-		const isScrollable = elScrollable.clientWidth < elScrollable.scrollWidth;
-		if (!isScrollable) setFadeSide(null);
-
-		// scrollLeft in RTL starts from 1 instead of 0, so we compare values using this delta
-		const scrollLeft = elScrollable.scrollLeft * (rtl ? -1 : 1);
-		const cutOffStart = scrollLeft > 1;
-		const cutOffEnd = scrollLeft + elScrollable.clientWidth < elScrollable.scrollWidth - 1;
-
-		if (cutOffEnd && cutOffStart) return setFadeSide("both");
-		if (cutOffStart) return setFadeSide("start");
-		if (cutOffEnd) return setFadeSide("end");
-	}, [rtl, scrollableRef]);
-
-	useIsomorphicLayoutEffect(() => {
-		const elScrollable = scrollableRef.current;
-
-		if (!elScrollable) return;
-		if (disabled) return;
-
-		const debouncedUpdate = rafThrottle(updateFade);
-
-		// Use RaF when scroll to have scrollWidth calculated correctly on the first effect
-		// For example: And edge case inside the complex flexbox layout
-		requestAnimationFrame(() => updateFade());
-
-		window.addEventListener("resize", debouncedUpdate);
-		elScrollable.addEventListener("scroll", debouncedUpdate);
-
-		return () => {
-			window.removeEventListener("resize", debouncedUpdate);
-			elScrollable.removeEventListener("scroll", debouncedUpdate);
-		};
-	}, [rtl, disabled]);
-
-	return fadeSide;
-};
-
-export default useFadeSide;
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/hooks/_internal/usePrevious.ts`
-```
-"use client";
-
-import React from "react";
-
-const copy = <T>(value?: T) => {
-	const valueIsDate = value instanceof Date;
-
-	if (valueIsDate) return String(valueIsDate);
-
-	const string = JSON.stringify(value);
-
-	return JSON.parse(string);
-};
-
-const usePrevious = <T>(value?: T, clean = false) => {
-	const ref = React.useRef<T>(clean ? copy<T>(value) : value);
-
-	React.useEffect(() => {
-		ref.current = clean ? copy<T>(value) : value;
-	}, [value, clean]);
-
-	return ref.current;
-};
-
-export default usePrevious;
-
-```
-
-### Core Architecture Module: `packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx`
-```
-"use client";
-
-import React from "react";
-
-/**
- * Types
- */
-type Callback = (e?: KeyboardEvent) => void;
-type PressedMap = Record<string, KeyboardEvent>;
-export type Hotkeys = Record<string, Callback | null>;
-type HotkeyOptions = { preventDefault?: boolean };
-type Context = {
-	isPressed: (key: string) => boolean;
-	addHotkeys: (
-		hotkeys: Hotkeys,
-		ref: React.RefObject<HTMLElement | null>,
-		options?: HotkeyOptions
-	) => (() => void) | undefined;
-};
-
-type HotkeyData = {
-	callback: Callback;
-	ref: React.RefObject<HTMLElement | null>;
-	options: HotkeyOptions;
-};
-
-/**
- * Utilities
- */
-const COMBINATION_DELIMETER = "+";
-const MODIFIER_KEYS = ["meta", "control", "alt", "shift"];
-
-const formatHotkey = (hotkey: string) => {
-	if (hotkey === " ") return hotkey;
-	return hotkey.replace(/\s/g, "").toLowerCase();
-};
-
-// Normalize passed key combinations to turn them into a consistent ids
-const getHotkeyId = (hotkey: string) => {
-	return formatHotkey(hotkey).split(COMBINATION_DELIMETER).sort().join(COMBINATION_DELIMETER);
-};
-
-const getEventKey = (e: KeyboardEvent) => {
-	if (!e.key) return;
-
-	// Having alt pressed modifies e.key value, so relying on e.code for it
-	if (e.altKey && /^(Key|Digit|Numpad)/.test(e.code)) {
-		return e.code.toLowerCase().replace(/^(key|digit|numpad)/, "");
-	}
-
-	return e.key.toLowerCase();
-};
-
-/**
- * Support for `mod` that represents both Mac and Win keyboards
- * We create the hotkeyId again to sort the mod key correctly
- */
-const getPressedIds = (pressedId: string) => {
-	const pressedFormattedKeys = pressedId.split(COMBINATION_DELIMETER);
-	const ids = [pressedId];
-
-	if (pressedFormattedKeys.includes("control")) {
-		ids.push(getHotkeyId(pressedId.replace("control", "mod")));
-	}
-
-	if (pressedFormattedKeys.includes("meta")) {
-		ids.push(getHotkeyId(pressedId.replace("meta", "mod")));
-	}
-
-	return ids;
-};
-
-// Removing the unknown gets highlighted an invalid syntax
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-const walkHotkeys = <T extends unknown>(
-	hotkeys: Record<string, T>,
-	cb: (id: string, hotkeyData: T) => void
-) => {
-	Object.keys(hotkeys).forEach((key) => {
-		key.split(",").forEach((hotkey) => {
-			const data = hotkeys[key];
-			if (!data) return;
-
-			cb(getHotkeyId(hotkey), data);
-		});
-	});
-};
-
-export class HotkeyStore {
-	hotkeyMap: Record<string, Set<HotkeyData>> = {};
-
-	getSize = () => Object.keys(this.hotkeyMap).length;
-
-	hasHandlers = (pressedId: string) => {
-		return getPressedIds(pressedId).some((id) => this.hotkeyMap[id]?.size);
-	};
-
-	bindHotkeys = (
-		hotkeys: Hotkeys,
-		ref: React.RefObject<HTMLElement | null>,
-		options: HotkeyOptions
-	) => {
-		const boundData: Array<{ id: string; data: HotkeyData }> = [];
-
-		walkHotkeys(hotkeys, (id, callback) => {
-			if (!callback) return;
-
-			const data = { callback, ref, options };
-
-			if (!this.hotkeyMap[id]) {
-				this.hotkeyMap[id] = new Set();
-			}
-
-			this.hotkeyMap[id].add(data);
-			boundData.push({ id, data });
-		});
-
-		return () => {
-			boundData.forEach(({ id, data }) => {
-				this.hotkeyMap[id]?.delete(data);
-
-				if (!this.hotkeyMap[id]?.size) {
-					delete this.hotkeyMap[id];
-				}
-			});
-		};
-	};
-
-	handleKeyDown = (pressedMap: PressedMap, e: KeyboardEvent) => {
-		const pressedKeys = Object.keys(pressedMap);
-		if (!pressedKeys.length) return;
-
-		const pressedId = getHotkeyId(pressedKeys.join(COMBINATION_DELIMETER));
-		const eventTarget = e.composedPath()[0] as Node;
-
-		getPressedIds(pressedId).forEach((id) => {
-			const hotkeyData = this.hotkeyMap[id];
-			if (!hotkeyData?.size) return;
-
-			hotkeyData.forEach((data) => {
-				if (
-					data.ref.current &&
-					!(eventTarget === data.ref.current || data.ref.current.contains(eventTarget))
-				) {
-					return;
-				}
-
-				if (data.options.preventDefault) {
-					e.preventDefault();
-				}
-
-				data.callback(e);
-			});
-		});
-	};
-}
-
-const globalHotkeyStore = new HotkeyStore();
-
-/**
- * Components / Hooks
- */
-const HotkeyContext = React.createContext({} as Context);
-
-const HotkeysProvider: React.FC<{ children: React.ReactNode }> = (props) => {
-	const { children } = props;
-	// Ref is the source of truth to keep the map in sync with the native events,
-	// state is mirroring it to re-render the consumers relying on isPressed
-	const pressedMapRef = React.useRef<PressedMap>({});
-	const [, setPressedState] = React.useState<PressedMap>({});
-	// Keyup events don't trigger for regular keys while Meta is pressed on macOS,
-	// so we track the keys pressed during that time to release them manually
-	const metaModifiedKeysRef = React.useRef<string[]>([]);
-	const hooksCountRef = React.useRef(0);
-
-	const setPressedMap = React.useCallback((nextPressedMap: PressedMap) => {
-		pressedMapRef.current = nextPressedMap;
-		setPressedState(nextPressedMap);
-	}, []);
-
-	const addPressedKey = React.useCallback(
-		(e: KeyboardEvent): PressedMap | undefined => {
-			if (e.repeat || hooksCountRef.current === 0) return;
-
-			const eventKey = getEventKey(e);
-			if (!eventKey) return;
-
-			const nextPressedMap = { ...pressedMapRef.current };
-			nextPressedMap[eventKey] = e;
-
-			if (nextPressedMap["meta"]) {
-				if (!MODIFIER_KEYS.includes(eventKey)) {
-					// Keys pressed while Meta was held might have been released already
-					// without us receiving their keyup events, so when the whole pressed combination
-					// doesn't match any hotkey - we treat them as released
-					const staleKeys = metaModifiedKeysRef.current.filter(
-						(key) => key !== eventKey && key in nextPressedMap
-					);
-					const pressedId = getHotkeyId(Object.keys(nextPressedMap).join(COMBINATION_DELIMETER));
-
-					if (staleKeys.length && !globalHotkeyStore.hasHandlers(pressedId)) {
-						staleKeys.forEach((key) => delete nextPressedMap[key]);
-					}
-				}
-
-				metaModifiedKeysRef.current = Object.keys(nextPressedMap).filter(
-					(key) => !MODIFIER_KEYS.includes(key)
-				);
-			}
-
-			setPressedMap(nextPressedMap);
-			return nextPressedMap;
-		},
-		[setPressedMap]
-	);
-
-	const removePressedKey = React.useCallback(
-		(e: KeyboardEvent) => {
-			if (hooksCountRef.current === 0) return;
-
-			const eventKey = getEventKey(e);
-			if (!eventKey) return;
-
-			const nextPressedMap = { ...pressedMapRef.current };
-			delete nextPressedMap[eventKey];
-
-			if (eventKey === "meta") {
-				metaModifiedKeysRef.current.forEach((key) => {
-					delete nextPressedMap[key];
-				});
-				metaModifiedKeysRef.current = [];
-			}
-
-			setPressedMap(nextPressedMap);
-		},
-		[setPressedMap]
-	);
-
-	const isPressed = React.useCallback((hotkey: string) => {
-		const pressedMap = pressedMapRef.current;
-		const keys = formatHotkey(hotkey).split(COMBINATION_DELIMETER);
-
-		return keys.every((key) => {
-			if (key === "mod") return Boolean(pressedMap["meta"] || pressedMap["control"]);
-			return Boolean(pressedMap[key]);
-		});
-	}, []);
-
-	const handleWindowKeyDown = React.useCallback(
-		(e: KeyboardEvent) => {
-			// Browsers trigger keyboard event without passing e.key when you click on autocomplete
-			if (!e.key) return;
-			// Keys handled by an IME are not hotkeys. Safari fires the Enter that confirms
-			// a composition after compositionend, so only keyCode 229 marks it
-			if (e.isComposing || e.keyCode === 229) return;
-
-			const nextPressedMap = addPressedKey(e) ?? pressedMapRef.current;
-			globalHotkeyStore.handleKeyDown(nextPressedMap, e);
-		},
-		[addPressedKey]
-	);
-
-	const handleWindowKeyUp = React.useCallback(
-		(e: KeyboardEvent) => {
-			if (!e.key) return;
-
-			removePressedKey(e);
-		},
-		[removePressedKey]
-	);
-
-	const handleWindowBlur = React.useCallback(() => {
-		setPressedMap({});
-		metaModifiedKeysRef.current = [];
-	}, [setPressedMap]);
-
-	const addHotkeys: Context["addHotkeys"] = React.useCallback((hotkeys, ref, options = {}) => {
-		hooksCountRef.current += 1;
-		const unbindHotkeys = globalHotkeyStore.bindHotkeys(hotkeys, ref, options);
-
-		return () => {
-			hooksCountRef.current -= 1;
-			unbindHotkeys();
-		};
-	}, []);
-
-	React.useEffect(() => {
-		window.addEventListener("keydown", handleWindowKeyDown);
-		window.addEventListener("keyup", handleWindowKeyUp);
-		window.addEventListener("blur", handleWindowBlur);
-
-		return () => {
-			window.removeEventListener("keydown", handleWindowKeyDown);
-			window.removeEventListener("keyup", handleWindowKeyUp);
-			window.removeEventListener("blur", handleWindowBlur);
-		};
-	}, [handleWindowKeyDown, handleWindowKeyUp, handleWindowBlur]);
-
-	return (
-		<HotkeyContext.Provider value={{ addHotkeys, isPressed }}>{children}</HotkeyContext.Provider>
-	);
-};
-
-export const SingletonHotkeysProvider: React.FC<{ children: React.ReactNode }> = (props) => {
-	const { children } = props;
-	// Hotkeys are handled globally, so nested providers rely on the root provider
-	// instead of attaching their own window event listeners
-	const hasParentProvider = Boolean(React.useContext(HotkeyContext).addHotkeys);
-
-	if (hasParentProvider) return <>{children}</>;
-	return <HotkeysProvider>{children}</HotkeysProvider>;
-};
-
-export const useSingletonHotkeys = () => React.useContext(HotkeyContext);
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #676** (2026-10-08): **useHotkeys: ignore keys that belong to an IME composition**
-  *Symptoms*: ## Summary  `handleWindowKeyDown` in `useSingletonHotkeys` now returns early when `e.isComposing` is true or `e.keyCode === 229`, so keys an IME is handling never reach registered hotkeys. With a Japanese, Chinese or Korean IME, the Enter that confirms a conversion no longer makes `Autocomplete` select the highlighted option or call `onEnter`. Escape and arrow keys pressed during a composition are skipped the same way.  The `keyCode` check is for Safari, which fires `compositionend` before the keydown of the confirming Enter, so `isComposing` is already false on that event.  ## Related Issue  Fixes #671  ## Screenshots / Recordings  None, there is no visual change.  ## Notes for Reviewers  - The issue also suggests `e.key === "Process"`. I left it out because the check MDN recommends (`isComposing || keyCode === 229`) already catches the first and last keydown of a composition, where `isComposing` is false. Happy to add it if you prefer. - The guard sits in the shared window handler, so it applies to every `useHotkeys` consumer, not only `Autocomplete`. Skipped keys are also not added to the pressed-key map. - New story `useHotkeys > ignores IME composition` dispatches a composing Enter and a Safari-style Enter (`keyCode: 229`, `isComposing: false`) on `window`, then a normal Enter. On `main` it fails (the hotkey is called twice for the IME keydowns); with the change it passes. - Locally: `vitest --project=storybook` 594 tests passed, `--project=unit` 181 passed, oxlint, oxfm
-
-- **Issue #675** (2026-10-08): **Flyout: freeze content during the hide animation and animate it by default**
-  *Symptoms*: ## Summary  Brings back the Flyout hide animation for every component built on it, using the Suspense "freeze" technique from [A React trick to improve exit animations](https://barvian.me/react-exit-animations).  **New internal `_private/Freeze` component** - While `frozen`, a sibling `<Suspend />` suspends the boundary with no fallback. React keeps the DOM from the last commit and stops committing updates from props, state or context. - React hides suspended DOM with `display: none !important`. Freeze undoes this in a `useInsertionEffect`, the earliest point in the same commit, before paint. - Differences from the article's version:   - **Wrapper element instead of fragment refs:** fragment refs are only in React canary, and the package supports React 18 and 19. A `display: contents` wrapper also stops React from blanking top-level text nodes and doesn't overwrite the children's own inline `display`.   - **Transition safety:** a transition never commits an already-visible boundary falling back, so freezing inside `startTransition` would block that transition forever. If the frozen render doesn't commit within 100ms, Freeze gives up and renders the children normally. Covered by a story that fails without this.  **Flyout** - `Flyout.Content` wraps its children in `<Freeze frozen={!active}>`. `active` is now passed through context, so the freeze happens in the same render as the close. - Removed the forced `disableHideAnimation` from `Select`, `DropdownMenu` (which forced it fo
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `924b7424` (2026-09-07)
-**Commit Message**: Image: render the fallback when loading fails before hydration (#666)
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-image-fallback-before-hydration.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"reshaped": patch
-+---
-+
-+Image: Rendered the fallback when a server rendered image fails to load before React hydrates the page
-```
-
-**File**: `packages/reshaped/src/components/Image/Image.tsx` (modified, +16/-0)
-```diff
-@@ -27,6 +27,8 @@ const Image: React.FC<T.Props> = (props) => {
- 		renderImage,
- 	} = props;
- 	const [status, setStatus] = React.useState("loading");
-+	// Image attributes are merged on top of the root attributes when rendering the image element
-+	const passedImageRef = passedImageAttributes?.ref ?? attributes?.ref;
- 	const mixinStyles = resolveMixin({ radius: borderRadius, width, height, maxWidth, aspectRatio });
- 	const rootClassNames = classNames(
- 		s.root,
-@@ -56,6 +58,19 @@ const Image: React.FC<T.Props> = (props) => {
- 		passedImageAttributes?.onError?.(e);
- 	};
- 
-+	const handleImageRef = React.useCallback(
-+		(el: HTMLImageElement | null) => {
-+			if (typeof passedImageRef === "function") passedImageRef(el);
-+			else if (passedImageRef) passedImageRef.current = el;
-+
-+			// Server rendered images start loading before React hydrates,
-+			// so their error event can fire before the error handler gets attached
-+			if (!el || !src || !el.complete || el.naturalWidth > 0) return;
-+			el.decode().catch(() => setStatus("error"));
-+		},
-+		[passedImageRef, src]
-+	);
-+
- 	React.useEffect(() => {
- 		setStatus("loading");
- 	}, [src]);
-@@ -90,6 +105,7 @@ const Image: React.FC<T.Props> = (props) => {
- 		role: alt ? undefined : "presentation",
- 		onLoad: handleLoad,
- 		onError: handleError,
-+		ref: handleImageRef,
- 		className: outline ? imageClassNames : classNames([imageClassNames, rootClassNames]),
- 		style,
- 	};
-```
-
----
-
-### Incident Patch 2: `469a1b27` (2026-09-06)
-**Commit Message**: fix(Badge): truncate long text and stop dismiss from following the link (#662)
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-badge-dismiss-link.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"reshaped": patch
-+---
-+
-+Badge: Fixed dismiss button following the link when the badge is rendered with the href prop
-```
-
-**File**: `.changeset/fix-badge-truncation.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"reshaped": patch
-+---
-+
-+Badge: Limited the width to 100% of the parent element and truncated the long text with an ellipsis
-```
-
-**File**: `packages/reshaped/src/components/Badge/Badge.module.css` (modified, +14/-0)
-```diff
-@@ -13,6 +13,7 @@
- 	color: var(--rs-color-on-background-neutral);
- 	box-sizing: border-box;
- 	box-shadow: 0 0 0 1px var(--rs-badge-border-color) inset;
-+	max-width: 100%;
- 
- 	/* GPU for container positioning */
- 	backface-visibility: hidden;
-@@ -32,9 +33,20 @@
- 	display: inline-flex;
- 	align-items: center;
- 	gap: var(--rs-badge-gap);
-+	max-width: 100%;
-+	min-width: 0;
-+}
-+
-+.text {
-+	overflow: hidden;
-+	white-space: nowrap;
-+	text-overflow: ellipsis;
-+	min-width: 0;
- }
- 
- .icon {
-+	flex-shrink: 0;
-+
- 	&:first-child {
- 		margin-inline-start: calc(var(--rs-unit-x0-5) * -1);
- 	}
-@@ -49,6 +61,7 @@
- }
- 
- .dismiss {
-+	flex-shrink: 0;
- 	border-radius: var(--rs-radius-small);
- 	transition: var(--rs-duration-fast) var(--rs-easing-standard);
- 	transition-property: opacity;
-@@ -170,6 +183,7 @@
- .container .root {
- 	position: absolute;
- 	z-index: 10;
-+	max-width: none;
- 	inset-inline-end: 0;
- 	transform: translate(50%, var(--rs-badge-translate-y)) scale(1);
- 	user-select: none;
-```
-
-**File**: `packages/reshaped/src/components/Badge/Badge.tsx` (modified, +4/-0)
-```diff
-@@ -49,6 +49,9 @@ const Badge = forwardRef<ActionableRef, T.Props>((props, ref) => {
- 	);
- 
- 	const handleDismiss: ActionableProps["onClick"] = (e) => {
-+		// Prevent the parent Actionable from handling the click,
-+		// including following the link when the badge is rendered as one
-+		e.preventDefault();
- 		e.stopPropagation();
- 		onDismiss?.();
- 	};
-@@ -69,6 +72,7 @@ const Badge = forwardRef<ActionableRef, T.Props>((props, ref) => {
- 					<Text
- 						variant={size === "large" ? "body-2" : "caption-1"}
- 						weight="medium"
-+						className={s.text}
- 						attributes={{
- 							"aria-hidden": hidden ? "true" : undefined,
- 						}}
-```
-
-**File**: `packages/reshaped/src/components/Badge/tests/Badge.stories.tsx` (modified, +63/-0)
-```diff
-@@ -337,6 +337,69 @@ export const href: StoryObj = {
- 	},
- };
- 
-+export const hrefDismissible: StoryObj<{ handleDismiss: ReturnType<typeof fn> }> = {
-+	name: "test: href, onDismiss",
-+	args: {
-+		handleDismiss: fn(),
-+	},
-+	render: (args) => (
-+		<Badge href="#badge-dismiss" onDismiss={args.handleDismiss} dismissAriaLabel="Dismiss">
-+			Badge
-+		</Badge>
-+	),
-+	play: async ({ canvas, args }) => {
-+		const initialHash = window.location.hash;
-+		const dismissTrigger = canvas.getByRole("button", { name: "Dismiss" });
-+
-+		expect(canvas.getByRole("link")).toHaveAttribute("href", "#badge-dismiss");
-+
-+		await userEvent.click(dismissTrigger);
-+
-+		expect(args.handleDismiss).toHaveBeenCalledTimes(1);
-+		// Dismissing the badge shouldn't follow the link
-+		expect(window.location.hash).toBe(initialHash);
-+	},
-+};
-+
-+export const truncation: StoryObj = {
-+	name: "test: truncation",
-+	render: () => (
-+		<Example>
-+			<Example.Item title={["truncation", "text is truncated, badge is not wider than 200px"]}>
-+				<View width="200px" align="start" gap={3} attributes={{ "data-testid": "root" }}>
-+					<Badge attributes={{ "data-testid": "badge" }}>
-+						Badge with a very long text that should get truncated
-+					</Badge>
-+					<Badge icon={IconPlus} endIcon={IconPlus} attributes={{ "data-testid": "badge" }}>
-+						Badge with a very long text that should get truncated
-+					</Badge>
-+					<Badge
-+						onDismiss={() => {}}
-+						dismissAriaLabel="Dismiss"
-+						attributes={{ "data-testid": "badge" }}
-+					>
-+						Badge with a very long text that should get truncated
-+					</Badge>
-+				</View>
-+			</Example.Item>
-+		</Example>
-+	),
-+	play: async ({ canvas }) => {
-+		const badges = canvas.getAllByTestId("badge");
-+
-+		badges.forEach((badge) => {
-+			// Badge is not growing wider than its parent
-+			expect(badge.getBoundingClientRect().width).toBeLessThanOrEqual(200);
-+
-+			// Badge text is rendered on a single line and gets clipped
-+			const text = badge.querySelector("div")!;
-+
-+			expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
-+			expect(getComputedStyle(text).textOverflow).toBe("ellipsis");
-+		});
-+	},
-+};
-+
- export const onClick: StoryObj<{ handleClick: ReturnType<typeof fn> }> = {
- 	name: "onClick",
- 	args: {
-```
-
----
-
-### Incident Patch 3: `69b74133` (2026-09-06)
-**Commit Message**: fix(Accordion): don't replay the expand animation when effects are re-attached (#661)
-
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-accordion-animation-replay.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"reshaped": patch
-+---
-+
-+Accordion: Fixed the expand animation replaying when React re-attaches the effects of a mounted accordion without changing its state, for example when it's moved between its siblings or hidden and shown by a Suspense boundary. Toggling the accordion while it's still animating now continues from the current height instead of jumping, and transitions bubbling up from the content no longer end the animation early.
-```
-
-**File**: `packages/reshaped/src/components/_private/Expandable/Expandable.tsx` (modified, +32/-18)
-```diff
-@@ -12,6 +12,8 @@ const Expandable: React.FC<T.ContentProps> = (props) => {
- 	const { children, active, attributes } = props;
- 	const rootRef = React.useRef<HTMLDivElement>(null);
- 	const mountedRef = React.useRef(false);
-+	const animatedActiveRef = React.useRef(active);
-+	const frameRef = React.useRef<number | null>(null);
- 	const [animatedHeight, setAnimatedHeight] = React.useState<React.CSSProperties["height"] | null>(
- 		active ? "auto" : null
- 	);
-@@ -22,7 +24,7 @@ const Expandable: React.FC<T.ContentProps> = (props) => {
- 	);
- 
- 	const handleTransitionEnd = (e: React.TransitionEvent) => {
--		if (e.propertyName !== "height") return;
-+		if (e.propertyName !== "height" || e.target !== rootRef.current) return;
- 
- 		setAnimatedHeight(active ? "auto" : null);
- 	};
-@@ -35,33 +37,45 @@ const Expandable: React.FC<T.ContentProps> = (props) => {
- 		});
- 	}, []);
- 
-+	// Animating only on the active prop change keeps React from replaying the animation
-+	// when it tears down and sets up the effects of the mounted component again
- 	useIsomorphicLayoutEffect(() => {
- 		const rootEl = rootRef.current;
--		if (!rootEl || !mountedRef.current) return;
-+		const activeChanged = animatedActiveRef.current !== active;
- 
--		if (!checkTransitions()) {
-+		animatedActiveRef.current = active;
-+
-+		if (!rootEl || !activeChanged) return;
-+
-+		if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-+		frameRef.current = null;
-+
-+		const settle = () => {
-+			rootEl.style.height = "";
- 			setAnimatedHeight(active ? "auto" : null);
-+		};
-+
-+		if (!mountedRef.current || !checkTransitions()) {
-+			settle();
- 			return;
- 		}
- 
--		if (active) {
--			rootEl.style.height = "auto";
--
--			requestAnimationFrame(() => {
--				const targetHeight = rootEl.clientHeight;
--				rootEl.style.height = "0";
-+		const currentHeight = rootEl.clientHeight;
- 
--				requestAnimationFrame(() => {
--					setAnimatedHeight(targetHeight);
--				});
--			});
--		} else {
--			rootEl.style.height = `${rootEl.clientHeight}px`;
-+		if (active) rootEl.style.height = "auto";
-+		const targetHeight = active ? rootEl.clientHeight : 0;
- 
--			requestAnimationFrame(() => {
--				setAnimatedHeight(0);
--			});
-+		if (targetHeight === currentHeight) {
-+			settle();
-+			return;
- 		}
-+
-+		rootEl.style.height = `${currentHeight}px`;
-+
-+		frameRef.current = requestAnimationFrame(() => {
-+			frameRef.current = null;
-+			setAnimatedHeight(targetHeight);
-+		});
- 	}, [active]);
- 
- 	return (
-```
-
-#### Recent Merged Pull Requests:
-- **PR #676** (2026-10-08): useHotkeys: ignore keys that belong to an IME composition (@mahirhir)
-- **PR #675** (2026-10-08): Flyout: freeze content during the hide animation and animate it by default (@blvdmitry)
-- **PR #674** (closed): [WIP] Fix esm build (@iamdey)
-- **PR #670** (2026-09-12): Modal: velocity-aware release spring and rubber band for the swipe gesture (@blvdmitry)
-- **PR #669** (2026-09-12): Modal: register the drag offset as a non-inherited property (@blvdmitry)
-- **PR #668** (2026-09-12): ScrollArea: move the thumb with transform instead of inset (@blvdmitry)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Image: render the fallback when loading fails before hydration (#666)
-
+### 1. Capture-Phase Document Subscriptions for Transient Floating Overlays
 **RULE**:
-When implementing operations in `.changeset/fix-image-fallback-before-hydration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in reshaped-ui/reshaped. All inputs crossing module boundaries must be explicitly verified before state persistence.
+Document-level dismissal handlers for context menus and transient overlays MUST attach during the native DOM capture phase (`{ capture: true }`) and MUST NOT rely on bubbling phase checks or `event.defaultPrevented` flags to discriminate ownership between competing menus.
 
 **WHY**:
-Prevents defects observed in production commit `924b7424`: Image: render the fallback when loading fails before hydration (#666). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+When a pointer action initiates a new context menu, React re-renders and attaches document listeners within the same microtask. If document dismissals are bound in the bubble phase, two defects occur:
+1. A newly mounted overlay attaches its bubbling document listener before the opening event finishes bubbling up to `document`, causing the new overlay to immediately close itself.
+2. If `event.defaultPrevented` is used as a workaround to ignore the trigger event, right-clicking *another* menu trigger calls `preventDefault()` on the event, which suppresses the dismissal check and leaves the previously open menu permanently stuck on screen. Capture-phase listeners fire top-down *before* local target handlers, dismissing any stale overlay before the new overlay registers its listeners.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-image-fallback-before-hydration.md`.
+Context menus, cascading dropdowns, popovers, tooltips, and any floating layer dismissed via outside clicks where multiple distinct triggers exist simultaneously in the DOM.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// Verified production-grade fix pattern:
----
-"reshaped": patch
----
+import React from "react";
 
-Image: Rendered the fallback when a server rendered image fails to load before React hydrates the page
+export const useOnClickOutside = (
+  refs: Array<React.RefObject<HTMLElement | null>>,
+  handler: (event: MouseEvent | TouchEvent) => void,
+  disabled: boolean = false
+) => {
+  const handlerRef = React.useRef(handler);
+  handlerRef.current = handler;
+
+  const checkInside = (event: Event): boolean => {
+    const path = event.composedPath();
+    return refs.some((ref) => {
+      const el = ref.current;
+      return el && (path.includes(el) || el.contains(event.target as Node));
+    });
+  };
+
+  React.useEffect(() => {
+    if (disabled) return;
+
+    // Capture phase guarantees the existing active menu closes BEFORE
+    // a competing trigger processes the event and mounts a new menu.
+    const handleContextMenu = (event: MouseEvent) => {
+      if (checkInside(event)) return;
+      handlerRef.current(event);
+    };
+
+    const handleClick = (event: MouseEvent | TouchEvent) => {
+      if (checkInside(event)) return;
+      handlerRef.current(event);
+    };
+
+    document.addEventListener("click", handleClick);
+    document.addEventListener("contextmenu", handleContextMenu, { capture: true });
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+      document.removeEventListener("contextmenu", handleContextMenu, { capture: true });
+    };
+  }, [disabled, ...refs]);
+};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Never swallow dismissals based on defaultPrevented in bubble phase!
+React.useEffect(() => {
+  const handleClick = (e: MouseEvent) => {
+    // BUG: If another trigger calls e.preventDefault() on right-click,
+    // this check aborts, leaving the current menu permanently orphaned.
+    if (e.defaultPrevented) return;
+    if (!containerRef.current?.contains(e.target as Node)) {
+      onClose();
+    }
+  };
+  document.addEventListener("contextmenu", handleClick); // Missing capture!
+  return () => document.removeEventListener("contextmenu", handleClick);
+}, []);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `924b7424` are properly handled with clean fallback behavior.
+Automated integration test using Storybook Test Runner / Vitest Playwright:
+1. Render two sibling context menu triggers: `Trigger A` and `Trigger B`.
+2. Right-click `Trigger A`. Assert `Menu A` is visible.
+3. Without left-clicking, right-click `Trigger B`.
+4. Assert `Menu A` is detached from DOM and `Menu B` is visible.
+5. Right-click `Trigger B` again at a 100px offset. Assert `Menu B` repositioned, `onClose` fired with `{ reason: 'outside-click' }`, and `onOpen` fired.
+
+---
+
+### 2. IME Composition Guard with Safari KeyCode 229 Trap
+**RULE**:
+Global hotkey, shortcut, and keydown handlers MUST abort execution whenever `e.isComposing === true` OR `e.keyCode === 229`.
+
+**WHY**:
+During CJK (Chinese, Japanese, Korean) text input via an Input Method Editor (IME), users hit `Enter`, `Space`, or numeric keys to select ideographic candidates from a floating composition window. Browsers emit standard `keydown` events for these strokes. 
+- In Chromium and Firefox, `event.isComposing` is `true`.
+- In WebKit (Safari), `compositionend` fires *before* the final confirmation `keydown`, meaning `isComposing` is already mutated to `false` when the confirming `Enter` keydown reaches the window. However, Safari sets `e.keyCode = 229` (the standard RFC 229 composite keycode sentinel). 
+Failing to test both flags causes input handlers (such as modal submission, autocomplete selection, or command palettes) to prematurely submit forms or select incomplete phonetic tokens.
+
+**WHEN TO APPLY**:
+All text inputs, autocomplete fields, command palettes (`Cmd+K`), custom hotkey managers, and form submission listeners.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export const handleWindowKeyDown = (e: KeyboardEvent): boolean => {
+  // 1. Browsers trigger synthetic keyboard events without e.key during form autofill
+  if (!e.key) return false;
+
+  // 2. Full-spectrum IME composition guard:
+  // e.isComposing covers modern spec (Blink/Gecko)
+  // e.keyCode === 229 handles WebKit/Safari composition confirmation race conditions
+  if (e.isComposing || e.keyCode === 229) {
+    return false;
+  }
+
+  return true; // Safe to proceed to shortcut dispatcher
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Checking only e.key === "Enter" or relying exclusively on e.isComposing
+const onKeyDown = (e: React.KeyboardEvent) => {
+  // BUG: In Safari, confirming Japanese Kanji conversion sets isComposing=false,
+  // firing Enter down and prematurely closing the modal / picking wrong candidate!
+  if (e.isComposing) return;
+  if (e.key === "Enter") {
+    selectOption();
+  }
+};
+```
+
+**VERIFICATION METHOD**:
+Simulate an IME synthetic sequence via Playwright / Vitest:
+```typescript
+const eventComposing = new KeyboardEvent("keydown", {
+  key: "Enter",
+  code: "Enter",
+  isComposing: true,
+  bubbles: true
+});
+const eventSafariIME = new KeyboardEvent("keydown", {
+  key: "Enter",
+  code: "Enter",
+  keyCode: 229,
+  isComposing: false,
+  bubbles: true
+});
+
+window.dispatchEvent(eventComposing);
+window.dispatchEvent(eventSafariIME);
+// Assert registered hotkey callback count === 0
+```
+
+---
+
+### 3. Non-Inherited Custom Property Containment for Main-Thread Animation Offloading
+**RULE**:
+High-frequency gesture offsets, scroll tracking positions, or drag coordinates written to the DOM as CSS variables MUST be registered using `@property` with `inherits: false`, and animated elements MUST separate static layout properties from transformed compositor layers.
+
+**WHY**:
+When a CSS custom property (e.g., `--rs-drag-y`) is set on a root element during touch/pointer interactions, the browser default behavior is to cascade and inherit that variable across every child DOM node in the subtree. On mobile viewports with complex nested cards, setting a CSS variable on every `requestAnimationFrame` forces style recalculations and repaints over hundreds of nodes on the main thread. Registering `inherits: false` restricts style invalidation exclusively to the root boundary. Furthermore, transitioning static backgrounds (like modal backdrops) via `background-color` triggers full-screen rasterization on every frame; splitting the backdrop into an independent DOM layer and animating `opacity` allows the GPU compositor thread to execute animations at 120 FPS without waking the JavaScript thread.
+
+**WHEN TO APPLY**:
+Touch swipe gestures, sheet drawers, pull-to-refresh, custom scroll area thumbs, and range slider thumbs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```css
+/* packages/reshaped/src/components/Modal/Modal.module.css */
+@property --rs-modal-drag-offset {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.root {
+  transform: translateY(var(--rs-modal-drag-offset));
+  will-change: transform;
+}
+
+/* Backdrop separated into dedicated layer to avoid repainting viewport */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--rs-color-overlay);
+  opacity: var(--rs-backdrop-opacity, 1);
+  will-change: opacity;
+  pointer-events: none;
+}
+```
+
+```typescript
+// DOM Mutation pattern: Single-node write, bypassing React reconciliation
+export const applyModalDragOffset = (element: HTMLElement, offsetPx: number) => {
+  element.style.setProperty("--rs-modal-drag-offset", `${offsetPx}px`);
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Mutating React state during touchmove or driving viewport layout styles
+const [dragY, setDragY] = useState(0);
+
+const onTouchMove = (e: TouchEvent) => {
+  // BUG: Triggers full React reconciliation on every touch coordinate change!
+  setDragY(e.touches[0].clientY);
+};
+
+return (
+  <div style={{ top: `${dragY}px`, backgroundColor: `rgba(0,0,0,${1 - dragY/500})` }}>
+    {/* Entire heavy children tree re-renders and forces GPU rasterization */}
+  </div>
+);
+```
+
+**VERIFICATION METHOD**:
+Execute Chrome DevTools Performance Profiler (or Puppeteer trace inspection):
+1. Assert zero `Layout` and `Update Layer Tree` events during continuous touch-drag gestures.
+2. Verify in CSS Computed Style pane that `--rs-modal-drag-offset` does not invalidate children styles.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Competing Context Menu Deadlock & Self-Termination (BUG-CONTEXTMENU-01)
+- **Context**: `packages/reshaped/src/hooks/useOnClickOutside.ts` & `packages/reshaped/src/components/ContextMenu`
+- **What Was Expected**: Right-clicking an active context menu trigger in a new location should reposition the menu. Right-clicking a *different* context menu trigger should immediately close the first menu and open the second.
+- **What Actually Happened**: Right-clicking a second trigger left the first menu rendered on screen, creating floating phantom overlays. Furthermore, right-clicking the same trigger at a new coordinate caused the menu to stay locked at the old coordinate.
+- **Evidence in Repo**: Commit `4d8b937f`, PR #678, Changeset `.changeset/context-menu-close-on-another-menu.md`.
+- **Root Cause**:
+  1. Commit `1060733` had previously introduced `if (event.defaultPrevented) return;` into `useOnClickOutside` to prevent freshly opened menus from closing themselves when the opening right-click event bubbled to `document`. However, all context menus call `e.preventDefault()` to stop native OS context menus. Thus, clicking another menu trigger tripped `event.defaultPrevented === true`, suppressing the outside-click callback and leaving the old menu open.
+  2. In `FlyoutControlled`, when right-clicking the same trigger, React batched the coordinate update within a single frame where `status` remained `"rendered"`. Because `status` didn't change from `"closed"` to `"rendered"`, the positioning effect was never re-triggered, leaving the flyout stranded at old coordinates.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/reshaped/src/hooks/useOnClickOutside.ts
++++ b/packages/reshaped/src/hooks/useOnClickOutside.ts
+@@ -58,26 +58,25 @@ const useOnClickOutside = (
+ 		if (disabled) return;
+ 
+ 		const handleClick = (event: MouseEvent | TouchEvent) => {
+-			if (event.type === "contextmenu") {
+-				/**
+-				 * Context menu events can be claimed by a handler that opens a menu of its own,
+-				 * which prevents the default browser behavior. Such events open a new flyout
+-				 * instead of dismissing the current one, so they're not outside clicks
+-				 */
+-				if (event.defaultPrevented) return;
+-
+-				isMouseDownInsideRef.current = checkEventInsideRefs(event);
+-			}
+-
+ 			if (isMouseDownInsideRef.current) return;
+ 			handlerRef.current?.(event);
+ 		};
+ 
++		/**
++		 * Capture phase closes the content before another context menu opens on the same event,
++		 * while the content opened by this event subscribes too late to get closed by it.
++		 * Target is checked directly since the context menu key doesn't trigger mousedown
++		 */
++		const handleContextMenu = (event: MouseEvent) => {
++			if (checkEventInsideRefs(event)) return;
++			handlerRef.current?.(event);
++		};
++
+ 		document.addEventListener("click", handleClick);
+-		document.addEventListener("contextmenu", handleClick);
++		document.addEventListener("contextmenu", handleContextMenu, { capture: true });
+ 		return () => {
+ 			document.removeEventListener("click", handleClick);
+-			document.removeEventListener("contextmenu", handleClick);
++			document.removeEventListener("contextmenu", handleContextMenu, { capture: true });
+ 		};
+```
+```diff
+--- a/packages/reshaped/src/components/Flyout/FlyoutControlled.tsx
++++ b/packages/reshaped/src/components/Flyout/FlyoutControlled.tsx
+@@ -370,6 +370,13 @@ const FlyoutControlled: React.FC<T.ControlledProps & T.DefaultProps> = (props) =>
+ 		if (status === "rendered") show();
+ 	}, [status, show]);
+ 
++	// Content can be reopened at new coordinates without closing in between
++	useIsomorphicLayoutEffect(() => {
++		if (!originCoordinates || !isRendered) return;
++		updatePosition();
++		// oxlint-disable-next-line react-hooks/exhaustive-deps
++	}, [originCoordinates?.x, originCoordinates?.y]);
+```
+- **Lesson**: Never use bubbling-phase `defaultPrevented` checks to manage modal lifecycle dismissal. Capture phase allows ancestral listeners to execute prior to consumer actions, cleanly serializing dismissal and mount operations.
+
+---
+
+### Incident 2: IME Composition Premature Form Submission in Safari (BUG-HOTKEYS-02)
+- **Context**: `packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx` & `Autocomplete`
+- **What Was Expected**: Pressing `Enter` to confirm a Japanese, Chinese, or Korean ideogram conversion should commit the characters to the input field and do nothing else.
+- **What Actually Happened**: Hitting `Enter` to confirm conversion in `Autocomplete` immediately triggered the hotkey listener, selecting whatever option was currently highlighted in the dropdown list or submitting the form with partial text.
+- **Evidence in Repo**: Commit `6150f4fc`, PR #676, Issue #671, Changeset `.changeset/hotkeys-ime-composition.md`.
+- **Root Cause**: WebKit (Safari) fires `compositionend` *prior* to emitting the `keydown` event for the confirming `Enter` key stroke. As a consequence, `e.isComposing` has already reverted to `false` when the event hits the window handler. The hotkey engine treated the keydown as a literal `Enter` command.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx
++++ b/packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx
+@@ -216,6 +216,9 @@ const HotkeysProvider: React.FC<{ children: React.ReactNode }> = (props) => {
+ 	const handleWindowKeyDown = React.useCallback(
+ 		(e: KeyboardEvent) => {
+ 			if (!e.key) return;
++			// Keys handled by an IME are not hotkeys. Safari fires the Enter that confirms
++			// a composition after compositionend, so only keyCode 229 marks it
++			if (e.isComposing || e.keyCode === 229) return;
+ 
+ 			const nextPressedMap = addPressedKey(e) ?? pressedMapRef.current;
+ 			globalHotkeyStore.handleKeyDown(nextPressedMap, e);
+```
+- **Lesson**: Cross-browser keyboard handling requires guarding against browser-specific event ordering quirks. Never rely solely on `e.isComposing`; test `e.keyCode === 229` to defend against WebKit's early `compositionend` dispatch.
+
+---
+
+### Incident 3: Frozen Exit State Desynchronization during Flyout Unmount (BUG-FLYOUT-03)
+- **Context**: `packages/reshaped/src/components/Flyout` & `Select`
+- **What Was Expected**: When closing a `Select` or `Autocomplete` flyout with an exit animation, the popover should fade out smoothly displaying its last active state.
+- **What Actually Happened**: When a user selected a value, the component updated its state, causing the animating flyout to abruptly mutate its DOM contents, flicker, or shift layout mid-animation. If closed immediately after opening, the unmount transition failed to trigger, leaving the DOM node permanently mounted. Furthermore, pointer events on exit-animating menus allowed phantom double-clicks.
+- **Evidence in Repo**: PR #675, Commit `d9770c54`, Changeset `.changeset/flyout-frozen-exit-animation.md`.
+- **Root Cause**: The unmount pipeline did not snapshot/freeze the VNode render tree upon initiating the exit phase (`status === "cooling"`), allowing upstream re-renders to mutate child components during the CSS transition window. Additionally, canceling an opening transition did not invoke `transitionend`, hanging the unmount state machine.
+- **Remediation Architecture**:
+  1. Introduced a frozen render boundary: when closing starts, cache `props.children` in a ref and render the frozen cached tree until unmount.
+  2. Applied `pointer-events: none` via CSS when `status !== "entered"` to deactivate pointer collision during exit animations.
+  3. Added an explicit short-circuit in `FlyoutControlled`: closing before the opening transition begins immediately transitions `status` to unmounted without awaiting a non-existent `transitionend` event.
+- **Lesson**: Animated exits in React compound components require snapshotting the render tree and suppressing pointer events until DOM unmounting completes.
+
+---
+
+### Incident 4: Main-Thread Viewport Invalidation via CSS Custom Property Inheritance (BUG-MODAL-04)
+- **Context**: `packages/reshaped/src/components/Modal` & `packages/reshaped/src/components/Overlay`
+- **What Was Expected**: Modal swipe-to-close gestures on mobile devices should track finger movement at a sustained 60–120 FPS.
+- **What Actually Happened**: Significant frame drops, jank, and thermal throttling occurred on iOS Safari and mobile Chrome when dragging bottom-sheet modals.
+- **Evidence in Repo**: PR #667 (`3d94de2`), PR #669 (`9c58807`), Changesets `.changeset/modal-drag-property.md` and `.changeset/overlay-backdrop-compositor.md`.
+- **Root Cause**:
+  1. The drag translation variable `--rs-modal-drag-offset` was implicitly inherited. Updating `--rs-modal-drag-offset` on the root element on every touchmove event forced the CSS engine to recalculate computed styles across all child DOM elements in the modal tree on the main thread.
+  2. The backdrop was rendered on the modal root and animated via `background-color`. Every change in touch offset recomputed color interpolation and triggered a full-viewport paint.
+- **Remediation Architecture**:
+  1. Defined `@property --rs-modal-drag-offset { syntax: '<length>'; inherits: false; initial-value: 0px; }` to isolate style recalculations to the root element.
+  2. Decoupled the backdrop into a dedicated stacking layer (`position: fixed; inset: 0; will-change: opacity;`) transitioning exclusively via `opacity`, delegating the entire gesture composition to the GPU thread.
+- **Lesson**: High-frequency CSS custom properties must be scoped with `inherits: false`, and opacity transitions must be preferred over background-color mutations.
+
+---
+
+### Incident 5: ScrollArea RTL Layout Inversion and Reflow Thrashing (BUG-SCROLL-05)
+- **Context**: `packages/reshaped/src/components/ScrollArea`
+- **What Was Expected**: Custom scrollbar thumb tracks the scroll position accurately in both LTR and RTL reading directions without degrading scroll performance.
+- **What Actually Happened**: Horizontal scrollbar thumbs in RTL layouts detached from the track and moved beyond the visible scroll container. Rapid scrolling caused severe frame hitching.
+- **Evidence in Repo**: PR #668, Commit `3c21d21e`, Changeset `.changeset/scroll-area-thumb-compositor.md`.
+- **Root Cause**:
+  1. Scroll thumb positioning was managed by writing to `style.insetInlineStart` (or `left`/`top`), which forces the browser to execute synchronous layout calculations (reflow) on every scroll tick.
+  2. In RTL mode, browser implementations of `scrollLeft` vary (some return negative coordinates, others return inverted positive values starting at zero). Directly translating `scrollLeft` to `left` caused arithmetic overflow outside the track bounding box.
+- **Remediation Architecture**:
+  1. Replaced `inset` with hardware-accelerated `transform: translate3d(var(--rs-scroll-x), var(--rs-scroll-y), 0)`.
+  2. Bypassed React state by writing the calculated offset directly to the element's CSS custom properties within a `requestAnimationFrame` loop.
+  3. Integrated normalized RTL offsets: `scrollLeft * (rtl ? -1 : 1)` to handle browser coordinate variances.
+- **Lesson**: Never position custom scroll indicators using layout attributes (`top`/`left`/`inset`). Use `transform3d` coupled directly with direct-to-DOM CSS custom property mutations.
+
+---
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+### 1. Micro-Syntax & Token-Level Precision
+- **IEEE 754 Floating-Point Clamping in Range Sliders**:
+  In `Slider.utilities.ts`, step calculation cannot use naive modulo arithmetic (`value % step === 0`) due to floating-point rounding errors (e.g., `0.3 - 0.2 = 0.09999999999999998`).
+  ```typescript
+  export const getPrecision = (value: number) => {
+    const floatPart = value.toString().split(".")[1];
+    return floatPart?.length || 0;
+  };
+
+  export const applyStepToValue = (value: number, step: number) => {
+    const isStepFloat = step % 1 !== 0;
+    const result = Math.round(value / step) * step;
+
+    if (isStepFloat) {
+      const precision = getPrecision(step);
+      // Number(val.toFixed(p)) eliminates precision drift without external big-number libs
+      return Number(result.toFixed(precision));
+    }
+    return result;
+  };
+  ```
+- **React Synthetic Prototype Value Setter Bypass**:
+  When synchronizing React state with a hidden native `<input type="range">`, assigning `el.value = nextVal` fails to trigger React's synthetic `onChange` because React overrides the property setter on `HTMLInputElement.prototype`. Reshaped extracts the original native descriptor:
+  ```typescript
+  export const triggerChangeEvent = (el: HTMLInputElement, value: string) => {
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value"
+    )?.set;
+
+    nativeInputValueSetter?.call(el, value);
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  };
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **DOM Hierarchy Traversal Base Condition Proof**:
+  In `Theme.utilities.ts`, recursive upward DOM traversal to find the root theme boundary (`getRootThemeEl`) must enforce structural termination bounds:
+  ```typescript
+  export const getRootThemeEl = (scopeEl?: HTMLElement | null): HTMLElement => {
+    // 1. Guard against null, undefined, or detached nodes
+    if (!scopeEl) return document.documentElement;
+
+    // 2. Base case: target attribute found OR document boundary reached
+    if (
+      scopeEl.hasAttribute("data-rs-root") ||
+      scopeEl === document.documentElement ||
+      !scopeEl.parentElement // Handles Shadow DOM or unparented DocumentFragments
+    ) {
+      return scopeEl;
+    }
+
+    // 3. Inductive step: strictly moves up the DOM tree, guaranteeing termination
+    return getRootThemeEl(scopeEl.parentElement);
+  };
+  ```
+- **Key Normalization Sorting Proof**:
+  In `useSingletonHotkeys.tsx`, hotkeys can be registered in any arbitrary order (e.g., `"shift+cmd+k"` vs `"cmd+shift+k"`). Naive string matching leads to unbounded state divergence. Normalization sorts key fragments alphabetically:
+  ```typescript
+  const getHotkeyId = (hotkey: string) => {
+    return formatHotkey(hotkey)
+      .split(COMBINATION_DELIMETER) // "+"
+      .sort()                        // Canonical alphabetical sort guarantees bijection
+      .join(COMBINATION_DELIMETER);
+  };
+  ```
+
+### 3. UI & UX Micro-Mechanics
+- **Barycentric Coordinate Triangle Collision (`safeArea.ts`)**:
+  When a user moves the pointer from a trigger element toward a floating flyout, moving diagonally exits the trigger boundary before entering the content boundary. Reshaped constructs an invisible triangle connecting the cursor coordinates with the two closest bounding box vertices of the flyout:
+  ```typescript
+  function isPointInTriangle(
+    point: Coordinates,
+    triangle: [Coordinates, Coordinates, Coordinates]
+  ): boolean {
+    const [p1, p2, p3] = triangle;
+    const denominator = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
+
+    if (denominator === 0) return false; // Guard against collinear points/division by zero
+
+    const a = ((p2.y - p3.y) * (point.x - p3.x) + (p3.x - p2.x) * (point.y - p3.y)) / denominator;
+    const b = ((p3.y - p1.y) * (point.x - p3.x) + (p1.x - p3.x) * (point.y - p3.y)) / denominator;
+    const c = 1 - a - b;
+
+    return a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1;
+  }
+  ```
+- **RTL-Aware Scroll Boundary Math (`useFadeSide.ts`)**:
+  Detecting whether a horizontal scroll container overflows at the start or end requires accounting for RTL mode, where `scrollLeft` is inverted:
+  ```typescript
+  const scrollLeft = elScrollable.scrollLeft * (rtl ? -1 : 1);
+  // Boundary delta > 1 compensates for sub-pixel fractional rounding on high-DPI displays
+  const cutOffStart = scrollLeft > 1;
+  const cutOffEnd = scrollLeft + elScrollable.clientWidth < elScrollable.scrollWidth - 1;
+
+  if (cutOffEnd && cutOffStart) return setFadeSide("both");
+  if (cutOffStart) return setFadeSide("start");
+  if (cutOffEnd) return setFadeSide("end");
+  ```
+
+### 4. Backend & Concurrency Micro-Mechanics (Client-Side Async

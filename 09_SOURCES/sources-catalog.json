@@ -5183,10 +5183,10 @@
     "repository": "reshaped-ui/reshaped",
     "platform": "github",
     "sourceUrl": "https://github.com/reshaped-ui/reshaped",
-    "sourceVersion": "6150f4fc",
+    "sourceVersion": "bf8a1e44",
     "license": "MIT",
-    "contentHash": "b17a76beaba0786a18947846a9aab460d26f805fd542a7ac451016fc50b05e8a",
-    "lastHarvestedAt": "2026-10-19T03:13:50.159Z",
+    "contentHash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
+    "lastHarvestedAt": "2026-10-22T20:15:50.608Z",
     "learningId": "learn-github-reshaped-ui-reshaped"
   },
   "actix-actix-web": {

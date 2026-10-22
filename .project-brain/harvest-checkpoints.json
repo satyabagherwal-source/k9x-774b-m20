@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T19:42:26.564Z",
+  "last_updated": "2026-10-22T20:15:50.621Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7896,14 +7896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-reshaped-ui-reshaped",
-      "content_hash": "b17a76beaba0786a18947846a9aab460d26f805fd542a7ac451016fc50b05e8a",
-      "verified_at": "2026-10-19T03:13:50.172Z",
+      "content_hash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
+      "verified_at": "2026-10-22T20:15:50.620Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:13:50.172Z"
+      "last_updated": "2026-10-22T20:15:50.620Z"
     },
     "actix/actix-web": {
       "repository": "actix/actix-web",

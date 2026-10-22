@@ -4412,3 +4412,4 @@
 | `CYCLE-20261022-6MI2` | `2026-10-22T19:42:15.914Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`dedef40b...`) |
 | `CYCLE-20261022-6NLZ` | `2026-10-22T19:42:17.351Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3716` | Yes (`7b0e8d3d...`) |
 | `CYCLE-20261022-6UPH` | `2026-10-22T19:42:26.549Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3717` | Yes (`27eaace4...`) |
+| `CYCLE-20261022-DT1P` | `2026-10-22T20:15:50.605Z` | `reshaped-ui/reshaped` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3718, Rule 3719, Rule 3720` | Yes (`d9de89ee...`) |

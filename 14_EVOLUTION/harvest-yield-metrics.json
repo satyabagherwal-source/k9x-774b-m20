@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T19:42:26.561Z",
-  "total_cycles_completed": 4389,
-  "total_learnings_persisted": 4389,
-  "total_rules_promoted": 3567,
+  "last_updated": "2026-10-22T20:15:50.617Z",
+  "total_cycles_completed": 4390,
+  "total_learnings_persisted": 4390,
+  "total_rules_promoted": 3570,
   "history": [
-    {
-      "timestamp": "2026-10-21T05:15:30.489Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T05:21:54.282Z",
       "repository": "saltstack/salt",
@@ -1403,6 +1396,13 @@
       "repository": "beclab/Olares",
       "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T20:15:50.617Z",
+      "repository": "reshaped-ui/reshaped",
+      "learningId": "learn-github-reshaped-ui-reshaped",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

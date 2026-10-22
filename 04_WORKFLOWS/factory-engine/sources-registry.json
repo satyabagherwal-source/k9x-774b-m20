@@ -1651,12 +1651,12 @@
     "revisionIdentifier": "d48a7ab5"
   },
   "nirdiamant-rag_techniques": {
-    "name": "NirDiamant/RAG_Techniques",
+    "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
     "sourceType": "github",
     "technology": "Jupyter Notebook",
-    "lastChecked": "2026-10-21T00:55:38.139Z",
-    "lastVerified": "2026-10-21T00:55:38.139Z",
+    "lastChecked": "2026-10-22T20:14:03.933Z",
+    "lastVerified": "2026-10-22T20:14:03.933Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nirdiamant-rag_techniques",
@@ -1665,7 +1665,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "37c1900e"
   },
   "gardener-gardener": {
     "name": "gardener/gardener",
@@ -2708,8 +2709,8 @@
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-22T16:51:45.600Z",
-    "lastVerified": "2026-10-22T16:51:45.600Z",
+    "lastChecked": "2026-10-22T20:14:01.426Z",
+    "lastVerified": "2026-10-22T20:14:01.426Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nexus-xyz-nexus-zkvm",
@@ -3642,8 +3643,8 @@
     "officialUrl": "https://github.com/tach-org/tach",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T22:57:56.333Z",
-    "lastVerified": "2026-10-20T22:57:56.333Z",
+    "lastChecked": "2026-10-22T20:13:51.431Z",
+    "lastVerified": "2026-10-22T20:13:51.431Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tach-org-tach",
@@ -5582,8 +5583,8 @@
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T01:49:29.461Z",
-    "lastVerified": "2026-10-21T01:49:29.461Z",
+    "lastChecked": "2026-10-22T20:13:58.938Z",
+    "lastVerified": "2026-10-22T20:13:58.938Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -7635,22 +7636,21 @@
     "revisionIdentifier": "b59758e5"
   },
   "reshaped-ui-reshaped": {
-    "name": "reshaped",
+    "name": "reshaped-ui/reshaped",
     "officialUrl": "https://github.com/reshaped-ui/reshaped",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-21T02:14:51.823Z",
-    "lastVerified": "2026-10-21T02:14:51.823Z",
+    "lastChecked": "2026-10-22T20:13:54.047Z",
+    "lastVerified": "2026-10-22T20:13:54.047Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-reshaped-ui-reshaped",
-    "contentHash": "b17a76beaba0786a18947846a9aab460d26f805fd542a7ac451016fc50b05e8a",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6150f4fc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -18483,8 +18483,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-22T19:22:45.802Z",
-    "lastVerified": "2026-10-22T19:22:45.802Z",
+    "lastChecked": "2026-10-22T20:14:06.470Z",
+    "lastVerified": "2026-10-22T20:14:06.470Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -20824,12 +20824,12 @@
     "revisionIdentifier": "3b772afa"
   },
   "heckj-swiftui-notes": {
-    "name": "heckj/swiftui-notes",
+    "name": "swiftui-notes",
     "officialUrl": "https://github.com/heckj/swiftui-notes",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-20T01:46:10.664Z",
-    "lastVerified": "2026-10-20T01:46:10.664Z",
+    "lastChecked": "2026-10-22T20:13:56.443Z",
+    "lastVerified": "2026-10-22T20:13:56.443Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-heckj-swiftui-notes",
@@ -20838,7 +20838,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e7884cce"
   },
   "mikeroyal-apple-silicon-guide": {
     "name": "mikeroyal/Apple-Silicon-Guide",
@@ -26524,12 +26525,12 @@
     "revisionIdentifier": "1146b3a2"
   },
   "wooorm-parse-entities": {
-    "name": "wooorm/parse-entities",
+    "name": "parse-entities",
     "officialUrl": "https://github.com/wooorm/parse-entities",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-19T23:47:09.783Z",
-    "lastVerified": "2026-10-19T23:47:09.783Z",
+    "lastChecked": "2026-10-22T20:13:53.958Z",
+    "lastVerified": "2026-10-22T20:13:53.958Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wooorm-parse-entities",
@@ -26538,7 +26539,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "07f0abed"
   },
   "sindresorhus-got": {
     "name": "sindresorhus/got",
@@ -27428,8 +27430,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-22T19:42:29.094Z",
-    "lastVerified": "2026-10-22T19:42:29.094Z",
+    "lastChecked": "2026-10-22T20:15:53.156Z",
+    "lastVerified": "2026-10-22T20:15:53.156Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

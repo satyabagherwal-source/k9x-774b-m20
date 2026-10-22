@@ -4419,3 +4419,4 @@ Every entry in this ledger must capture:
 | `learn-github-primer-react` | `https://github.com/primer/react` | `3a71047a` | Multi-dimensional audit evidence | 2026-10-22T19:42:15.917Z |
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `288bc241` | Multi-dimensional audit evidence | 2026-10-22T19:42:17.354Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `d0a3170d` | Multi-dimensional audit evidence | 2026-10-22T19:42:26.552Z |
+| `learn-github-reshaped-ui-reshaped` | `https://github.com/reshaped-ui/reshaped` | `bf8a1e44` | Multi-dimensional audit evidence | 2026-10-22T20:15:50.608Z |

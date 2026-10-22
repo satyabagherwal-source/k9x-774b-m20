@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-68YX",
-    "timestamp": "2026-10-20T16:50:40.233Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "665d20db3956810dd110375bce45191e478777e2dff0bd81486e970ce10e4958",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-ELL7",
     "timestamp": "2026-10-20T16:57:09.835Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-DT1P",
+    "timestamp": "2026-10-22T20:15:50.605Z",
+    "repository": "reshaped-ui/reshaped",
+    "learningId": "learn-github-reshaped-ui-reshaped",
+    "contentHash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

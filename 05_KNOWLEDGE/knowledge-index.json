@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T19:42:26.492Z",
+  "last_updated": "2026-10-22T20:15:50.552Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40328,14 +40328,29 @@
       "slug": "reshaped-ui-reshaped",
       "platform": "github",
       "source_url": "https://github.com/reshaped-ui/reshaped",
-      "source_version": "6150f4fc",
-      "content_hash": "b17a76beaba0786a18947846a9aab460d26f805fd542a7ac451016fc50b05e8a",
+      "source_version": "bf8a1e44",
+      "content_hash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
       "dossier_path": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
       "promoted_rules": [
         {
           "number": 2058,
           "title": "Image: render the fallback when loading fails before hydration (#666)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3718,
+          "title": "Capture-Phase Document Subscriptions for Transient Floating Overlays",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3719,
+          "title": "IME Composition Guard with Safari KeyCode 229 Trap",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3720,
+          "title": "Non-Inherited Custom Property Containment for Main-Thread Animation Offloading",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40344,7 +40359,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:13:50.105Z",
+      "verified_at": "2026-10-22T20:15:50.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111587,6 +111602,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T19:42:26.475Z"
+    },
+    "rule-3718": {
+      "learning_id": "rule-3718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3718,
+      "title": "Capture-Phase Document Subscriptions for Transient Floating Overlays",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "bf8a1e44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:15:50.541Z"
+    },
+    "rule-3719": {
+      "learning_id": "rule-3719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3719,
+      "title": "IME Composition Guard with Safari KeyCode 229 Trap",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "bf8a1e44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:15:50.541Z"
+    },
+    "rule-3720": {
+      "learning_id": "rule-3720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3720,
+      "title": "Non-Inherited Custom Property Containment for Main-Thread Animation Offloading",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "bf8a1e44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T20:15:50.541Z"
     }
   },
   "aliases": {
