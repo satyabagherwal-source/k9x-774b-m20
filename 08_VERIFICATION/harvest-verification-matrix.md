@@ -4387,3 +4387,4 @@
 | `CYCLE-20261022-MLVW` | `2026-10-22T18:30:42.765Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3693` | Yes (`5da1aa4c...`) |
 | `CYCLE-20261022-VB5N` | `2026-10-22T18:37:28.763Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3694` | Yes (`e8b671d0...`) |
 | `CYCLE-20261022-VGL9` | `2026-10-22T18:37:35.805Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3695` | Yes (`032281ae...`) |
+| `CYCLE-20261022-3OS1` | `2026-10-22T18:43:59.665Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3696` | Yes (`47f1923a...`) |

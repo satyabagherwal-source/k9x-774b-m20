@@ -4394,3 +4394,4 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `24e5e1e7` | Multi-dimensional audit evidence | 2026-10-22T18:30:42.767Z |
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `0117cfef` | Multi-dimensional audit evidence | 2026-10-22T18:37:28.766Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8507b422` | Multi-dimensional audit evidence | 2026-10-22T18:37:35.808Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `7b6f9f39` | Multi-dimensional audit evidence | 2026-10-22T18:43:59.667Z |

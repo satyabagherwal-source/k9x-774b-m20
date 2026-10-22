@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:37:35.735Z",
+  "last_updated": "2026-10-22T18:43:59.634Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32358,8 +32358,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "d274f237",
-      "content_hash": "e738da50bc0ab5eb97f182733cc376f749de4c8c46f82d23888e8218f2fcc1d9",
+      "source_version": "7b6f9f39",
+      "content_hash": "47f1923aeb9b2b2b265638ac1af3a09bf8f2b7d923bbb5ff21a62ed53737c65a",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -32377,6 +32377,11 @@
           "number": 3444,
           "title": "small issues",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3696,
+          "title": "Merge pull request #6687 from meilisearch/better-db-opening",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32384,7 +32389,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:49:53.385Z",
+      "verified_at": "2026-10-22T18:43:59.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111136,6 +111141,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:37:35.717Z"
+    },
+    "rule-3696": {
+      "learning_id": "rule-3696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3696,
+      "title": "Merge pull request #6687 from meilisearch/better-db-opening",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "7b6f9f39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:43:59.628Z"
     }
   },
   "aliases": {

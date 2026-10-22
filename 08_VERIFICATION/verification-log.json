@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-WL6N",
-    "timestamp": "2026-10-20T16:15:09.887Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "289454201c3e2d7f8475b1cdf20eff607a2aa70a98224061424981bda5dfd4f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-WNUK",
     "timestamp": "2026-10-20T16:15:13.340Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "032281aed665b02573e96750c19e4a52f3c3f418819dc3fc07dab144976d9884",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-3OS1",
+    "timestamp": "2026-10-22T18:43:59.665Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "47f1923aeb9b2b2b265638ac1af3a09bf8f2b7d923bbb5ff21a62ed53737c65a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
