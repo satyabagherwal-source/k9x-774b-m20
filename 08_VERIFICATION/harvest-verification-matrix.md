@@ -4438,3 +4438,5 @@
 | `CYCLE-20261022-8YFG` | `2026-10-22T21:08:03.532Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3743` | Yes (`2f48af1e...`) |
 | `CYCLE-20261022-93LF` | `2026-10-22T21:08:10.227Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3744` | Yes (`2d17033b...`) |
 | `CYCLE-20261022-971K` | `2026-10-22T21:08:14.696Z` | `valeriansaliou/sonic` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3745` | Yes (`cb36a507...`) |
+| `CYCLE-20261022-H37S` | `2026-10-22T21:14:22.984Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3746` | Yes (`21721296...`) |
+| `CYCLE-20261022-H9EA` | `2026-10-22T21:14:30.994Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3747` | Yes (`0b6968c6...`) |

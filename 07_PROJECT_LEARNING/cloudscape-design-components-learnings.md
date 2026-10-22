@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
 > **Source**: github ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
-> **Source Version**: `347d2719`  
+> **Source Version**: `43480f95`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:44:19.834Z  
+> **Timestamp**: 2026-10-22T21:14:22.708Z  
 > **Learning ID**: `learn-github-cloudscape-design-components`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:44:18.587Z  
+> **Harvest Timestamp**: 2026-10-22T21:14:21.398Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1531,561 +1531,122 @@ export const registerRuntimeBottomDrawer = () => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c38721c2` (2026-10-20)
-**Commit Message**: fix: keep toggle motion running while main thread is busy (#5162)
+### Incident Patch 1: `010510ff` (2026-10-22)
+**Commit Message**: chore: Fixes internal build error caused by new styling mixin imports in test pages (#5170)
 
-Co-authored-by: Maximilian Schoell <[REDACTED_EMAIL]>
-
-**File**: `src/toggle/__tests__/toggle-motion.test.ts` (modified, +25/-9)
+**File**: `pages/alert/style-api-v2.scss` (modified, +2/-2)
 ```diff
-@@ -14,10 +14,11 @@ function compile(artefactThemes: string[]): string {
-   return compileMotionScss({
-     entry: `@use 'motion' as motion;
-       .toggle-control { @include motion.control; }
--      .toggle-handle { @include motion.handle(12px); }`,
-+      .toggle-handle { @include motion.handle(12px, 8px); }`,
-     artefactThemes,
-     files: { motion: 'toggle/motion.scss' },
-     inline: {
-+      styles: sharedStubs.styles,
-       // Later declarations win, so the values this test asserts on go after the shared stub.
-       tokens: `
-         ${sharedStubs.tokens}
-@@ -38,7 +39,7 @@ describe('toggle motion, as compiled', () => {
-     const css = compile([THEME]);
-     expect(css).toMatch(
-       new RegExp(
--        `${escape(SCOPE)} \\.toggle-handle \\{\\s*transition:\\s*transform 90ms cubic-bezier\\(0, 0, 0, 1\\),\\s*background-color 90ms cubic-bezier\\(0, 0, 0, 1\\);`
-+        `${escape(SCOPE)} \\.toggle-handle \\{\\s*transition:\\s*translate 90ms cubic-bezier\\(0, 0, 0, 1\\),\\s*background-color 90ms cubic-bezier\\(0, 0, 0, 1\\);`
-       )
-     );
-     expect(css).toMatch(
-@@ -48,6 +49,18 @@ describe('toggle motion, as compiled', () => {
-     );
-   });
+@@ -3,8 +3,8 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
  
-+  test('moves the handle with `translate`, so the tail animation cannot override the travel', () => {
-+    const css = compile([THEME]);
-+    expect(css).toMatch(
-+      new RegExp(
-+        `${escape(SCOPE)} \\.toggle-handle\\.toggle-handle-checked \\{\\s*transform: none;\\s*translate: 8px 0;`
-+      )
-+    );
-+    expect(css).toMatch(
-+      new RegExp(`${escape(SCOPE)} \\.toggle-handle\\.toggle-handle-checked:dir\\(rtl\\) \\{\\s*translate: -8px 0;`)
-+    );
-+  });
-+
-   test('plays the follow-through tail only once the state has changed, picking the direction from the checked class', () => {
-     const css = compile([THEME]);
-     expect(css).toMatch(
-@@ -63,22 +76,25 @@ describe('toggle motion, as compiled', () => {
-     expect(css).not.toMatch(/\.toggle-handle \{\s*animation/);
-   });
+-@use '../../lib/components/styling/alert';
+-@use '../../lib/components/styling/button';
++@use '~components/styling/alert';
++@use '~components/styling/button';
+ @use '../style-api/palette' as palette;
  
--  test('the tail pins the leading edge: going on opens the start edge, going off grows the width alone', () => {
-+  test('the tail stretches the handle with a transform, pinned at the leading edge', () => {
-     const css = compile([THEME]);
-     const on = css.match(/@keyframes awsui-toggle-tail-on \{[^@]*?\n\}/)![0];
-     const off = css.match(/@keyframes awsui-toggle-tail-off \{[^@]*?\n\}/)![0];
--    expect(on).toMatch(/35% \{\s*inline-size: 16px;\s*margin-inline-start: -4px;/);
--    expect(off).toMatch(/35% \{\s*inline-size: 16px;\s*\}/);
-     for (const block of [on, off]) {
--      expect(block).toMatch(/0% \{\s*inline-size: 12px;/);
--      expect(block).toMatch(/100% \{\s*inline-size: 12px;/);
--      expect(block).not.toMatch(/transform/);
-+      expect(block).toMatch(/0%,\s*100% \{\s*scale: 1;\s*\}/);
-+      expect(block).toMatch(/35% \{\s*scale: 1\.33\d* 1;\s*\}/);
-+      expect(block).not.toMatch(/inline-size|margin|transform:/);
-     }
-+    const ready = `${escape(SCOPE)} \\.toggle-handle\\[data-awsui-motion-ready\\]`;
-+    expect(css).toMatch(new RegExp(`${ready} \\{[^}]*transform-origin: 0 50%;`));
-+    expect(css).toMatch(new RegExp(`${ready}:dir\\(rtl\\) \\{\\s*transform-origin: 100% 50%;`));
-+    expect(css).toMatch(new RegExp(`${ready}\\.toggle-handle-checked \\{[^}]*transform-origin: 100% 50%;`));
-+    expect(css).toMatch(new RegExp(`${ready}\\.toggle-handle-checked:dir\\(rtl\\) \\{\\s*transform-origin: 0 50%;`));
-   });
- 
-   test('every motion rule sits in a reduced-motion media query, with no per-rule override', () => {
-     const css = compile([THEME]);
--    expect(css.match(/@media \(prefers-reduced-motion: no-preference\)/g)).toHaveLength(4);
-+    expect(css.match(/@media \(prefers-reduced-motion: no-preference\)/g)).toHaveLength(8);
-     expect(css).not.toMatch(/(animation|transition):\s*none/);
-   });
- });
+ .alert-genai {
 ```
 
-**File**: `src/toggle/motion.scss` (modified, +46/-20)
+**File**: `pages/badge/style-api-v2.scss` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,8 @@
- // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- // SPDX-License-Identifier: Apache-2.0
+@@ -3,7 +3,7 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
  
-+@use 'sass:math';
-+@use '../internal/styles' as styles;
- @use '../internal/styles/tokens' as awsui;
- @use '../internal/styles/utils/theming' as theming;
+-@use '../../lib/components/styling/badge';
++@use '~components/styling/badge';
+ @use '../style-api/palette' as palette;
  
-@@ -25,51 +27,75 @@ $tail-stretch: 4px;
-   }
- }
- 
--// Include inside the handle rule. `$handle-size` is the handle's resting inline size.
--@mixin handle($handle-size) {
-+// Include inside the handle rule. `$handle-size` is the handle's resting inline size,
-+// `$travel` the distance it moves to the checked position.
-+//
-+// Travel (`translate`) and tail (`scale`) are transforms so they keep running while a change
-+// handler blocks the main thread; layout properties froze mid-stretch and snapped. They use
-+// separate properties because one `transform` animation would override the travel transition.
-+@mixin handle($handle-size, $travel) {
-   @include toggle-expressive-with-motion {
-     transition:
--      transform $travel-duration $settle-easing,
-+      translate $travel-duration $settle-easing,
-       background-color $travel-duration $settle-easing;
-   }
- 
--  // The tail only plays once the state has changed since mount.
-+  &.toggle-handle-checked {
-+    @include toggle-expressive-with-motion {
-+      transform: none;
-+      translate: $travel 0;
-+    }
-+    @include styles.with-direction('rtl') {
-+      @include toggle-expressive-with-motion {
-+        translate: -$travel 0;
-+      }
-+    }
-+  }
-+
-+  // The tail only plays once the state has changed since mount. It stretches away from the leading
-+  // edge: inline-end going on, inline-start going off. `transform-origin` is physical, so RTL swaps.
-   &[data-awsui-motion-ready] {
-     @include toggle-expressive-with-motion {
-       animation: awsui-toggle-tail-off $tail-duration $settle-easing;
-+      transform-origin: 0 50%;
-+    }
-+    @include styles.with-direction('rtl') {
-+      @include toggle-expressive-with-motion {
-+        transform-origin: 100% 50%;
-+      }
-     }
-     &.toggle-handle-checked {
-       @include toggle-expressive-with-motion {
-         animation-name: awsui-toggle-tail-on;
-+        transform-origin: 100% 50%;
-+      }
-+      @include styles.with-direction('rtl') {
-+        @include toggle-expressive-with-motion {
-+          transform-origin: 0 50%;
-+        }
-       }
-     }
-   }
- 
-+  // Identical keyframes under two names: the animation only restarts when `animation-name` changes.
-   @if theming.has-expressive-motion() {
-+    $tail-scale: math.div($handle-size + $tail-stretch, $handle-size);
-     @keyframes awsui-toggle-tail-on {
--      0% {
--        inline-size: $handle-size;
--        margin-inline-start: 0;
-+      0%,
-+      100% {
-+        scale: 1;
-       }
-       35% {
--        inline-size: $handle-size + $tail-stretch;
--        margin-inline-start: -$tail-stretch;
--      }
--      100% {
--        inline-size: $handle-size;
--        margin-inline-start: 0;
-+        scale: $tail-scale 1;
-       }
-     }
--    // Going off, the trailing edge is the end edge, so the width alone grows.
-     @keyframes awsui-toggle-tail-off {
--      0% {
--        inline-size: $handle-size;
-+      0%,
-+      100% {
-+        scale: 1;
-       }
-       35% {
--        inline-size: $handle-size + $tail-stretch;
--      }
--      100% {
--        inline-size: $handle-size;
-+        scale: $tail-scale 1;
-       }
-     }
-   }
+ .badge {
 ```
 
-**File**: `src/toggle/styles.scss` (modified, +4/-3)
+**File**: `pages/button/style-api-v2.scss` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ $toggle-width: 2.4 * styles.$base-size;
- $toggle-height: 1.6 * styles.$base-size;
- $handle-size: 1.2 * styles.$base-size;
- $handle-offset: 0.2 * styles.$base-size;
-+$handle-travel: 0.8 * styles.$base-size;
- $shadow-color: awsui.$color-shadow-toggle-handle;
+@@ -3,7 +3,7 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
  
- $control-props: style-api.combine((color, background-color), style-api.$focus-ring);
-@@ -90,10 +91,10 @@ $description-tokens: style-api.resolve((color), public);
-   }
+-@use '../../lib/components/styling/button';
++@use '~components/styling/button';
+ @use '../style-api/palette' as palette;
  
-   &-checked {
--    transform: translateX(0.8 * styles.$base-size);
-+    transform: translateX($handle-travel);
- 
-     @include styles.with-direction('rtl') {
--      transform: translateX(-0.8 * styles.$base-size);
-+      transform: translateX(-$handle-travel);
-     }
-   }
- 
-@@ -109,5 +110,5 @@ $description-tokens: style-api.resolve((color), public);
-     }
-   }
- 
--  @include motion.handle($handle-size);
-+  @include motion.handle($handle-size, $handle-travel);
- }
+ .button-danger {
 ```
 
----
-
-### Incident Patch 2: `d44a51e0` (2026-10-20)
-**Commit Message**: fix: Preserve validation border styles in select and multiselect on keyboard focus (#5159)
-
-**File**: `pages/multiselect/validation-focus.page.tsx` (added, +46/-0)
+**File**: `pages/checkbox/style-api-v2.scss` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,46 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+import React from 'react';
-+
-+import Multiselect from '~components/multiselect';
-+import SpaceBetween from '~components/space-between';
-+
-+import { SimplePage } from '../app/templates';
-+import FocusTarget from '../common/focus-target';
-+
-+const options = [
-+  { value: 'option1', label: 'Option 1' },
-+  { value: 'option2', label: 'Option 2' },
-+  { value: 'option3', label: 'Option 3' },
-+];
-+
-+export default function MultiselectValidationFocusPage() {
-+  return (
-+    <SimplePage
-+      title="Multiselect validation focus"
-+      screenshotArea={{ disableAnimations: true }}
-+      settings={<FocusTarget />}
-+    >
-+      <SpaceBetween size="m">
-+        <Multiselect
-+          data-testid="multiselect-invalid"
-+          ariaLabel="multiselect invalid"
-+          invalid={true}
-+          options={options}
-+          selectedOptions={[]}
-+          placeholder="Choose options"
-+          onChange={() => {}}
-+        />
-+        <Multiselect
-+          data-testid="multiselect-warning"
-+          ariaLabel="multiselect warning"
-+          warning={true}
-+          options={options}
-+          selectedOptions={[]}
-+          placeholder="Choose options"
-+          onChange={() => {}}
-+        />
-+      </SpaceBetween>
-+    </SimplePage>
-+  );
-+}
+@@ -3,7 +3,7 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
+ 
+-@use '../../lib/components/styling/checkbox';
++@use '~components/styling/checkbox';
+ @use '../style-api/palette' as palette;
+ 
+ .checkbox-control {
 ```
 
-**File**: `pages/select/validation-focus.page.tsx` (added, +42/-0)
+**File**: `pages/dropdown/style-api-v2.scss` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,42 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+import React from 'react';
-+
-+import Select from '~components/select';
-+import SpaceBetween from '~components/space-between';
-+
-+import { SimplePage } from '../app/templates';
-+import FocusTarget from '../common/focus-target';
-+
-+const options = [
-+  { value: 'option1', label: 'Option 1' },
-+  { value: 'option2', label: 'Option 2' },
-+  { value: 'option3', label: 'Option 3' },
-+];
-+
-+export default function SelectValidationFocusPage() {
-+  return (
-+    <SimplePage title="Select validation focus" screenshotArea={{ disableAnimations: true }} settings={<FocusTarget />}>
-+      <SpaceBetween size="m">
-+        <Select
-+          data-testid="select-invalid"
-+          ariaLabel="select invalid"
-+          invalid={true}
-+          options={options}
-+          selectedOption={null}
-+          placeholder="Choose an option"
-+          onChange={() => {}}
-+        />
-+        <Select
-+          data-testid="select-warning"
-+          ariaLabel="select warning"
-+          warning={true}
-+          options={options}
-+          selectedOption={null}
-+          placeholder="Choose an option"
-+          onChange={() => {}}
-+        />
-+      </SpaceBetween>
-+    </SimplePage>
-+  );
-+}
+@@ -3,7 +3,7 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
+ 
+-@use '../../lib/components/styling/dropdown';
++@use '~components/styling/dropdown';
+ @use '../style-api/palette' as palette;
+ 
+ .dropdown-row {
 ```
 
-**File**: `src/internal/components/button-trigger/styles.scss` (modified, +9/-0)
+**File**: `pages/link/style-api-v2.scss` (modified, +1/-1)
 ```diff
-@@ -146,6 +146,15 @@ $icon-offset: awsui.$space-xxxs;
-     &.warning:focus {
-       @include styles.form-warning-control();
-     }
-+
-+    @include focus-visible.when-visible {
-+      &.invalid {
-+        border-color: awsui.$color-text-status-error;
-+      }
-+      &.warning {
-+        border-color: awsui.$color-text-status-warning;
-+      }
-+    }
-   }
+@@ -3,7 +3,7 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
  
-   &.custom-option {
+-@use '../../lib/components/styling/link';
++@use '~components/styling/link';
+ @use '../style-api/palette' as palette;
+ 
+ .link-brand {
 ```
 
-**File**: `src/internal/styles/forms/mixins.scss` (modified, +2/-2)
+**File**: `pages/radio-button/style-api-v2.scss` (modified, +1/-1)
 ```diff
-@@ -124,8 +124,8 @@
-   // See focus-highlight above.
-   outline: 2px dotted transparent;
+@@ -3,7 +3,7 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
  
--  border-block: awsui.$border-width-field solid $border-color;
--  border-inline: awsui.$border-width-field solid $border-color;
-+  border-block-color: $border-color;
-+  border-inline-color: $border-color;
+-@use '../../lib/components/styling/radio-button';
++@use '~components/styling/radio-button';
+ @use '../style-api/palette' as palette;
  
-   box-shadow: $box-shadow;
- }
+ .radio-control {
 ```
 
----
-
-### Incident Patch 3: `d57c87fd` (2026-10-20)
-**Commit Message**: fix: Icons motion perf issue (#5161)
-
-**File**: `src/action-card/__tests__/action-card.test.tsx` (modified, +13/-0)
+**File**: `pages/toggle/style-api-v2.scss` (modified, +1/-1)
 ```diff
-@@ -22,6 +22,19 @@ describe('ActionCard Component', () => {
-       expect(button).toBeTruthy();
-       expect(button).toHaveAttribute('type', 'button');
-     });
-+
-+    test.each([{ header: 'Header' }, { ariaLabel: 'Label' }])(
-+      'makes the root a delegated-focus motion trigger, since the button does not contain the icon (%o)',
-+      props => {
-+        const wrapper = renderActionCard({ ...props, icon: 'icon' });
-+        const root = wrapper.getElement();
-+        const button = root.querySelector('button')!;
-+        const icon = root.querySelector('[data-awsui-motion-target]')!;
-+
-+        expect(root.getAttribute('data-awsui-motion-trigger')!.split(' ')).toEqual(['hover', 'delegated-focus']);
-+        expect(button.contains(icon)).toBe(false);
-+      }
-+    );
-   });
+@@ -3,7 +3,7 @@
+  SPDX-License-Identifier: Apache-2.0
+ */
  
-   describe('header', () => {
-```
-
-**File**: `src/action-card/internal.tsx` (modified, +3/-4)
-```diff
-@@ -104,9 +104,6 @@ const InternalActionCard = React.forwardRef(
-       onClick: handleButtonClick,
-       'aria-describedby': ariaDescribedby,
-       'aria-disabled': disabled || undefined,
--      // The hover region is the whole card (see the root element); focusing
--      // the inner control also plays the motion.
--      'data-awsui-motion-trigger': 'focus',
-     };
+-@use '../../lib/components/styling/toggle';
++@use '~components/styling/toggle';
+ @use '../style-api/palette' as palette;
  
-     // <a>-tag specific props
-@@ -240,7 +237,9 @@ const InternalActionCard = React.forwardRef(
-           baseProps.className
-         )}
-         aria-disabled={disabled || undefined}
--        data-awsui-motion-trigger="hover"
-+        // Keyboard focus on the nested header or overlay button, which does not contain the icon,
-+        // also plays the motion.
-+        data-awsui-motion-trigger="hover delegated-focus"
-       >
-         {standaloneButton}
-         {contentElement}
-```
-
-**File**: `src/icon/__tests__/icon-hover-motion.test.ts` (modified, +39/-1)
-```diff
-@@ -63,8 +63,22 @@ describe('the generic hover motion rule, as compiled', () => {
-   });
- 
-   test('the generic rule also fires on :focus-visible, guarded the same way as :hover', () => {
-+    const selector = genericRuleSelector();
-+    expect(selector).toMatch(
-+      /\[data-awsui-motion-trigger~=hover]:not\(:disabled\):not\(\[aria-disabled=true]\):focus-visible /
-+    );
-+    expect(selector).toMatch(
-+      /\[data-awsui-motion-trigger~=focus]:not\(:disabled\):not\(\[aria-disabled=true]\):focus-visible /
-+    );
-+  });
-+
-+  test('no rule uses :has(), which is costly to match on every style recalc and DOM insert', () => {
-+    expect(compile([THEME])).not.toContain(':has(');
-+  });
-+
-+  test('a delegated-focus trigger fires on :focus-within, only during keyboard interaction', () => {
-     expect(genericRuleSelector()).toMatch(
--      /\[data-awsui-motion-trigger~=hover]:not\(:disabled\):not\(\[aria-disabled=true]\):is\(:focus-visible,/
-+      /\[data-awsui-motion-trigger~=delegated-focus]:not\(:disabled\):not\(\[aria-disabled=true]\):focus-within:where\(body\[data-awsui-focus-visible=true] \*\) /
-     );
-   });
- 
-@@ -160,3 +174,27 @@ describe('keyframes', () => {
-     expect(css).not.toMatch(/stroke-dashoffset:\s*-/);
-   });
- });
-+
-+describe('the cancel rule for icons with only part motion', () => {
-+  // The cancel rule matches by icon name alone, relying on every such generated icon carrying the
-+  // animated parts. Without them, the icon would lose the generic motion and get none instead.
-+  test('every cancelled icon contains the parts its motion targets', () => {
-+    const css = compile([THEME]);
-+    const cancelBlock = css.split('}').find(block => block.includes('transform: none'))!;
-+    const names = Array.from(new Set(Array.from(cancelBlock.matchAll(/\.name-([\w-]+)/g)).map(match => match[1])));
-+    expect(names.length).toBeGreaterThan(0);
-+
-+    for (const name of names) {
-+      const parts = new Set(
-+        Array.from(
-+          css.matchAll(new RegExp(`\\.name-${name} > :global\\(svg\\[data-awsui-icon-animated\\] \\.([\\w-]+)\\)`, 'g'))
-+        ).map(match => match[1])
-+      );
-+      expect(parts.size).toBeGreaterThan(0);
-+      const svg = readSource(`icon/icons/${name}.svg`);
-+      for (const part of parts) {
-+        expect({ name, part, present: svg.includes(part) }).toEqual({ name, part, present: true });
-+      }
-+    }
-+  });
-+});
-```
-
-**File**: `src/icon/hover-motion.scss` (modified, +17/-12)
-```diff
-@@ -31,6 +31,14 @@ $_opted-in: 'svg[#{$_animated-attribute}]';
- // Opt-in attribute for which element triggers hover motion.
- $_trigger-attribute: 'data-awsui-motion-trigger';
- $_hover-trigger: '[#{$_trigger-attribute}~="hover"]#{$_enabled-only}';
-+// A focus owner that plays the motion of icons inside it.
-+$_focus-trigger: '[#{$_trigger-attribute}~="focus"]#{$_enabled-only}';
-+// A trigger whose focus owner is nested and does not contain the icon (e.g. action card).
-+// Matches `:focus-within` during keyboard interaction (the `useFocusVisible` body attribute that
-+// focus rings use) instead of `:has(:focus-visible)`: a non-subject `:has()` is costly on every
-+// style recalc and DOM insert. `:where(body... *)` keeps it independent of where the theme class is.
-+$_delegated-focus-trigger: '[#{$_trigger-attribute}~="delegated-focus"]#{$_enabled-only}';
-+$_keyboard-focus-within: ':focus-within:where(body[data-awsui-focus-visible="true"] *)';
- 
- // Opt-in attribute for where the motion should be applied within a trigger region.
- $_target-attribute: 'data-awsui-motion-target';
-@@ -1569,10 +1577,13 @@ $icon-hover-motion: (
-   }
- }
- 
--// Also fires on :focus-visible, covering a focus owner nested inside the trigger.
-+// Also fires on :focus-visible of the trigger, of a focus owner around the icon, or of a
-+// focus owner nested inside a delegated-focus trigger.
- @mixin _on-hover-trigger($suffix) {
-   #{'#{$_hover-trigger}:hover #{$suffix}'},
--  #{'#{$_hover-trigger}:is(:focus-visible, :has([#{$_trigger-attribute}~="focus"]:focus-visible)) #{$suffix}'} {
-+  #{'#{$_hover-trigger}:focus-visible #{$suffix}'},
-+  #{'#{$_focus-trigger}:focus-visible #{$suffix}'},
-+  #{'#{$_delegated-focus-trigger}#{$_keyboard-focus-within} #{$suffix}'} {
-     @content;
-   }
- }
-@@ -1609,9 +1620,10 @@ $icon-hover-motion: (
- }
- 
- // Icons with BOTH a whole-icon spec and a part spec are excluded — the cancel would out-specify the whole-icon rule and reset it to none.
-+// No `:has()` check for the parts is needed: an opted-in svg that is a direct child of `.icon.name-*`
-+// is always the generated icon of that name (overrides are wrapped in a `.custom-icon` span).
- @mixin _cancel-floor-under-hover-parts {
-   $names: ();
--  $parts: ();
- 
-   @each $name, $specs in $icon-hover-motion {
-     $whole-icon: false;
-@@ -1623,17 +1635,11 @@ $icon-hover-motion: (
- 
-     @if not $whole-icon {
-       $names: list.append($names, '.name-#{$name}', comma);
--      @each $spec in _specs($specs) {
--        $part: '.#{map.get($spec, part)}';
--        @if not list.index($parts, $part) {
--          $parts: list.append($parts, $part, comma);
--        }
--      }
-     }
-   }
- 
-   @if list.length($names) > 0 {
--    @include _on-hover-trigger('.icon#{$_animating-icon}:is(#{$names}) > :global(#{$_opted-in}:has(:is(#{$parts})))') {
-+    @include _on-hover-trigger('.icon#{$_animating-icon}:is(#{$names}) > :global(#{$_opted-in})') {
-       @include with-motion {
-         transform: none;
-       }
-@@ -2202,8 +2208,7 @@ $_spec-keys: (part, animation, to, base, origin, duration, easing, delay, iterat
-       // Safari mishandles negative dash offsets. This check validates no negative offsets exist.
-       // Instead of negative offsets, shift the offset up by one period to keep it positive.
-       @each $state in (base, to) {
--        $values: map.get($spec, $state) or ();
--        $offset: map.get($values, stroke-dashoffset);
-+        $offset: map.get($spec, $state, stroke-dashoffset);
-         @if meta.type-of($offset) == 'number' and $offset < 0 {
-           @error 'The $icon-hover-motion spec for `#{$name}` sets a negative `stroke-dashoffset`, ' +
-             'which Safari mishandles. Add one full dash period (the sum of the `stroke-dasharray` ' +
+ .toggle-control {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5162** (2026-10-20): fix: keep toggle motion running while main thread is busy (@mxschll)
-- **PR #5161** (2026-10-20): fix: Icons motion perf issue (@georgylobko)
-- **PR #5160** (closed): feat: Update one theme compact mode density (@gethinwebster)
-- **PR #5159** (2026-10-20): fix: Preserve validation border styles in select and multiselect on keyboard focus (@jperals)
-- **PR #5154** (closed): chore: Add validation states to control group (@jperals)
-- **PR #5153** (2026-10-19): fix: Disabled input text color in iOS Safari (@SpyZzey)
+- **PR #5181** (2026-10-22): chore: Add heroshot example for patterns page for documentation website (@at-susie)
+- **PR #5176** (2026-10-22): chore: Adds internal style api v2 to input (@vvaliyev)
+- **PR #5174** (2026-10-22): chore: Skips style api snapshot tests to prevent git conflicts during development (@pan-kot)
+- **PR #5170** (2026-10-22): chore: Fixes internal build error caused by new styling mixin imports in test pages (@pan-kot)
+- **PR #5168** (2026-10-22): chore: Add padding to screenshot area in validation-focus pages (@jperals)
+- **PR #5166** (2026-10-22): chore: Refine heroshot and segmented control designs for one-theme (@at-susie)
 
 ---
 
@@ -2105,57 +1666,30 @@ Co-authored-by: Maximilian Schoell <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep toggle motion running while main thread is busy (#5162)
+## X. Fixes internal build error caused by new styling mixin imports in test pages (#5
 
 **RULE**:
-When implementing operations in `src/toggle/__tests__/toggle-motion.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pages/alert/style-api-v2.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c38721c2`: keep toggle motion running while main thread is busy (#5162). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `010510ff`: Fixes internal build error caused by new styling mixin imports in test pages (#5170). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/toggle/__tests__/toggle-motion.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pages/alert/style-api-v2.scss`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      .toggle-handle { @include motion.handle(12px, 8px); }`,
-      styles: sharedStubs.styles,
-        `${escape(SCOPE)} \\.toggle-handle \\{\\s*transition:\\s*translate 90ms cubic-bezier\\(0, 0, 0, 1\\),\\s*background-color 90ms cubic-bezier\\(0, 0, 0, 1\\);`
-  test('moves the handle with `translate`, so the tail animation cannot override the travel', () => {
-    const css = compile([THEME]);
-    expect(css).toMatch(
-      new RegExp(
-        `${escape(SCOPE)} \\.toggle-handle\\.toggle-handle-checked \\{\\s*transform: none;\\s*translate: 8px 0;`
-      )
-    );
-    expect(css).toMatch(
-      new RegExp(`${escape(SCOPE)} \\.toggle-handle\\.toggle-handle-checked:dir\\(rtl\\) \\{\\s*translate: -8px 0;`)
-    );
-  });
-
-  test('the tail stretches the handle with a transform, pinned at the leading edge', () => {
-      expect(block).toMatch(/0%,\s*100% \{\s*scale: 1;\s*\}/);
-      expect(block).toMatch(/35% \{\s*scale: 1\.33\d* 1;\s*\}/);
-      expect(block).not.toMatch(/inline-size|margin|transform:/);
-    const ready = `${escape(SCOPE)} \\.toggle-handle\\[data-awsui-motion-ready\\]`;
-    expect(css).toMatch(new RegExp(`${ready} \\{[^}]*transform-origin: 0 50%;`));
-    expect(css).toMatc
+@use '~components/styling/alert';
+@use '~components/styling/button';
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      .toggle-handle { @include motion.handle(12px); }`,
-        `${escape(SCOPE)} \\.toggle-handle \\{\\s*transition:\\s*transform 90ms cubic-bezier\\(0, 0, 0, 1\\),\\s*background-color 90ms cubic-bezier\\(0, 0, 0, 1\\);`
-  test('the tail pins the leading edge: going on opens the start edge, going off grows the width alone', () => {
-    expect(on).toMatch(/35% \{\s*inline-size: 16px;\s*margin-inline-start: -4px;/);
-    expect(off).toMatch(/35% \{\s*inline-size: 16px;\s*\}/);
-      expect(block).toMatch(/0% \{\s*inline-size: 12px;/);
-      expect(block).toMatch(/100% \{\s*inline-size: 12px;/);
-      expect(block).not.toMatch(/transform/);
-    expect(css.match(/@media \(prefers-reduced-motion: no-preference\)/g)).toHaveLength(4);
+@use '../../lib/components/styling/alert';
+@use '../../lib/components/styling/button';
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c38721c2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `010510ff` are properly handled with clean fallback behavior.

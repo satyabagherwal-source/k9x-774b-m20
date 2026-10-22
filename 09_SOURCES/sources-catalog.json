@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "4baf23f5",
+    "sourceVersion": "a670afb4",
     "license": "Apache-2.0",
-    "contentHash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
-    "lastHarvestedAt": "2026-10-20T15:04:00.834Z",
+    "contentHash": "0b6968c6fe372ad309dab71bf356d5cd48faa21747e76aad3089df88da9d3b35",
+    "lastHarvestedAt": "2026-10-22T21:14:30.997Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {
@@ -5583,10 +5583,10 @@
     "repository": "cloudscape-design/components",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudscape-design/components",
-    "sourceVersion": "347d2719",
+    "sourceVersion": "43480f95",
     "license": "Apache-2.0",
-    "contentHash": "34b6ba897d2b375d7dc4db8f8c269247008a031159b9ea9fabe1a559fe2a7bd0",
-    "lastHarvestedAt": "2026-10-20T16:44:20.305Z",
+    "contentHash": "217212963e1edc675245221fd7c0b42160871d07d1479fe0464206e30985315b",
+    "lastHarvestedAt": "2026-10-22T21:14:22.987Z",
     "learningId": "learn-github-cloudscape-design-components"
   },
   "async-rs-async-std": {

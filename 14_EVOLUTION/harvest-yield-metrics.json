@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T21:08:14.705Z",
-  "total_cycles_completed": 4415,
-  "total_learnings_persisted": 4415,
-  "total_rules_promoted": 3596,
+  "last_updated": "2026-10-22T21:14:31.001Z",
+  "total_cycles_completed": 4417,
+  "total_learnings_persisted": 4417,
+  "total_rules_promoted": 3598,
   "history": [
-    {
-      "timestamp": "2026-10-21T15:29:13.341Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T15:29:18.110Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T16:19:25.890Z",
       "repository": "Ryder-Sun/Meldwork",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-22T21:08:14.705Z",
       "repository": "valeriansaliou/sonic",
       "learningId": "learn-github-valeriansaliou-sonic",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:14:22.994Z",
+      "repository": "cloudscape-design/components",
+      "learningId": "learn-github-cloudscape-design-components",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T21:14:31.001Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

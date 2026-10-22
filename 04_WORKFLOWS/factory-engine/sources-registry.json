@@ -865,12 +865,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-22T17:45:03.620Z",
-    "lastVerified": "2026-10-22T17:45:03.620Z",
+    "lastChecked": "2026-10-22T21:14:29.138Z",
+    "lastVerified": "2026-10-22T21:14:29.138Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -879,7 +879,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "25dd7ab5"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -2243,8 +2244,8 @@
     "officialUrl": "https://github.com/SeaQL/sea-orm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T01:49:34.449Z",
-    "lastVerified": "2026-10-21T01:49:34.449Z",
+    "lastChecked": "2026-10-22T21:14:31.695Z",
+    "lastVerified": "2026-10-22T21:14:31.695Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seaql-sea-orm",
@@ -4607,8 +4608,8 @@
     "officialUrl": "https://github.com/asciinema/asciinema",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-20T23:49:36.317Z",
-    "lastVerified": "2026-10-20T23:49:36.317Z",
+    "lastChecked": "2026-10-22T21:14:19.058Z",
+    "lastVerified": "2026-10-22T21:14:19.058Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-asciinema-asciinema",
@@ -6606,22 +6607,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonfly",
+    "name": "dragonflyoss/dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T02:40:55.255Z",
-    "lastVerified": "2026-10-21T02:40:55.255Z",
+    "lastChecked": "2026-10-22T21:14:30.592Z",
+    "lastVerified": "2026-10-22T21:14:30.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
+    "contentHash": "0b6968c6fe372ad309dab71bf356d5cd48faa21747e76aad3089df88da9d3b35",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4baf23f5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "docmost-docmost": {
     "name": "docmost/docmost",
@@ -8576,22 +8576,21 @@
     "revisionIdentifier": "7b1b5f7e"
   },
   "cloudscape-design-components": {
-    "name": "components",
+    "name": "cloudscape-design/components",
     "officialUrl": "https://github.com/cloudscape-design/components",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-21T03:11:34.870Z",
-    "lastVerified": "2026-10-21T03:11:34.870Z",
+    "lastChecked": "2026-10-22T21:14:21.398Z",
+    "lastVerified": "2026-10-22T21:14:21.398Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cloudscape-design-components",
-    "contentHash": "34b6ba897d2b375d7dc4db8f8c269247008a031159b9ea9fabe1a559fe2a7bd0",
+    "contentHash": "217212963e1edc675245221fd7c0b42160871d07d1479fe0464206e30985315b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "347d2719"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "salvo-rs-salvo": {
     "name": "salvo",
@@ -18478,8 +18477,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-22T20:45:33.715Z",
-    "lastVerified": "2026-10-22T20:45:33.715Z",
+    "lastChecked": "2026-10-22T21:14:34.087Z",
+    "lastVerified": "2026-10-22T21:14:34.087Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -20978,12 +20977,12 @@
     "revisionIdentifier": "49bf1f37"
   },
   "apple-sample-food-truck": {
-    "name": "apple/sample-food-truck",
+    "name": "sample-food-truck",
     "officialUrl": "https://github.com/apple/sample-food-truck",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-20T02:43:03.302Z",
-    "lastVerified": "2026-10-20T02:43:03.302Z",
+    "lastChecked": "2026-10-22T21:14:24.125Z",
+    "lastVerified": "2026-10-22T21:14:24.125Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-sample-food-truck",
@@ -20992,7 +20991,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3954a769"
   },
   "alyssaxuu-later": {
     "name": "alyssaxuu/later",
@@ -26668,12 +26668,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "digitalbazaar-jsonld.js": {
-    "name": "digitalbazaar/jsonld.js",
+    "name": "jsonld.js",
     "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-20T00:38:05.632Z",
-    "lastVerified": "2026-10-20T00:38:05.632Z",
+    "lastChecked": "2026-10-22T21:14:21.646Z",
+    "lastVerified": "2026-10-22T21:14:21.646Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-digitalbazaar-jsonld-js",
@@ -26682,7 +26682,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7a93609e"
   },
   "rdfjs-n3.js": {
     "name": "rdfjs/N3.js",
@@ -27436,8 +27437,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-22T21:08:17.242Z",
-    "lastVerified": "2026-10-22T21:08:17.242Z",
+    "lastChecked": "2026-10-22T21:14:34.101Z",
+    "lastVerified": "2026-10-22T21:14:34.101Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

@@ -4445,3 +4445,5 @@ Every entry in this ledger must capture:
 | `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `7275bea9` | Multi-dimensional audit evidence | 2026-10-22T21:08:03.535Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `ec52f111` | Multi-dimensional audit evidence | 2026-10-22T21:08:10.231Z |
 | `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `b635a181` | Multi-dimensional audit evidence | 2026-10-22T21:08:14.700Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `43480f95` | Multi-dimensional audit evidence | 2026-10-22T21:14:22.987Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `a670afb4` | Multi-dimensional audit evidence | 2026-10-22T21:14:30.997Z |

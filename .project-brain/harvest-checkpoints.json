@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T21:08:14.709Z",
+  "last_updated": "2026-10-22T21:14:31.004Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5391,14 +5391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflyoss-dragonfly",
-      "content_hash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
-      "verified_at": "2026-10-20T15:04:00.840Z",
+      "content_hash": "0b6968c6fe372ad309dab71bf356d5cd48faa21747e76aad3089df88da9d3b35",
+      "verified_at": "2026-10-22T21:14:31.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:04:00.840Z"
+      "last_updated": "2026-10-22T21:14:31.004Z"
     },
     "sigstore/cosign": {
       "repository": "sigstore/cosign",
@@ -8496,14 +8496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cloudscape-design-components",
-      "content_hash": "34b6ba897d2b375d7dc4db8f8c269247008a031159b9ea9fabe1a559fe2a7bd0",
-      "verified_at": "2026-10-20T16:44:20.313Z",
+      "content_hash": "217212963e1edc675245221fd7c0b42160871d07d1479fe0464206e30985315b",
+      "verified_at": "2026-10-22T21:14:22.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:44:20.313Z"
+      "last_updated": "2026-10-22T21:14:22.997Z"
     },
     "async-rs/async-std": {
       "repository": "async-rs/async-std",

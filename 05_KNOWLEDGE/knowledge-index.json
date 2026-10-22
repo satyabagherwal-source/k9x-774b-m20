@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T21:08:14.647Z",
+  "last_updated": "2026-10-22T21:14:30.954Z",
   "total_verified_learnings": 1069,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6051,8 +6051,8 @@
       "slug": "cloudscape-design-components",
       "platform": "github",
       "source_url": "https://github.com/cloudscape-design/components",
-      "source_version": "347d2719",
-      "content_hash": "34b6ba897d2b375d7dc4db8f8c269247008a031159b9ea9fabe1a559fe2a7bd0",
+      "source_version": "43480f95",
+      "content_hash": "217212963e1edc675245221fd7c0b42160871d07d1479fe0464206e30985315b",
       "dossier_path": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "promoted_rules": [
@@ -6085,6 +6085,11 @@
           "number": 3271,
           "title": "keep toggle motion running while main thread is busy (#5162)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3746,
+          "title": "Fixes internal build error caused by new styling mixin imports in test pages (#5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6092,7 +6097,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:44:20.212Z",
+      "verified_at": "2026-10-22T21:14:22.933Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8620,8 +8625,8 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "4baf23f5",
-      "content_hash": "76b46d3401e97c4ce48936eb0a21f81ee7edf11cc1baf4e44729e26078f737c1",
+      "source_version": "a670afb4",
+      "content_hash": "0b6968c6fe372ad309dab71bf356d5cd48faa21747e76aad3089df88da9d3b35",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
@@ -8634,6 +8639,11 @@
           "number": 3237,
           "title": "scheduler): key seed peer hashring by name and check health concurrently (#5068)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3747,
+          "title": "client): bump client submodule to fd4dde4 (#5079)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8641,7 +8651,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:04:00.783Z",
+      "verified_at": "2026-10-22T21:14:30.945Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112121,6 +112131,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T21:08:14.636Z"
+    },
+    "rule-3746": {
+      "learning_id": "rule-3746",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3746,
+      "title": "Fixes internal build error caused by new styling mixin imports in test pages (#5",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "43480f95",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:14:22.933Z"
+    },
+    "rule-3747": {
+      "learning_id": "rule-3747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3747,
+      "title": "client): bump client submodule to fd4dde4 (#5079)",
+      "source_url": "https://github.com/dragonflyoss/dragonfly",
+      "source_version": "a670afb4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T21:14:30.945Z"
     }
   },
   "aliases": {
