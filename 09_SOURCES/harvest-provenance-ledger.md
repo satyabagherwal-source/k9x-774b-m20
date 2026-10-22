@@ -4386,3 +4386,7 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `1d3897ae` | Multi-dimensional audit evidence | 2026-10-22T18:11:09.532Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `7db3803a` | Multi-dimensional audit evidence | 2026-10-22T18:11:15.145Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `36f2f1ac` | Multi-dimensional audit evidence | 2026-10-22T18:17:49.279Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `9e904639` | Multi-dimensional audit evidence | 2026-10-22T18:24:09.501Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `c55089ea` | Multi-dimensional audit evidence | 2026-10-22T18:24:11.983Z |
+| `learn-github-fission-fission` | `https://github.com/fission/fission` | `b983965d` | Multi-dimensional audit evidence | 2026-10-22T18:24:16.106Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `22a275d2` | Multi-dimensional audit evidence | 2026-10-22T18:24:22.929Z |

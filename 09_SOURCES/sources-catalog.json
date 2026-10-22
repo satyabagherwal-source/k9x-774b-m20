@@ -2273,10 +2273,10 @@
     "repository": "fission/fission",
     "platform": "github",
     "sourceUrl": "https://github.com/fission/fission",
-    "sourceVersion": "a65daf70",
+    "sourceVersion": "b983965d",
     "license": "Apache-2.0",
-    "contentHash": "2e9957b103376e8773d9e2ef7b2788932e40831cd6bb732e1aa4c0621363536c",
-    "lastHarvestedAt": "2026-10-18T21:14:00.781Z",
+    "contentHash": "3e46e18e338815ab4c2329de4de62072d6ab45b1c998b06d3cdd155da43e1e2c",
+    "lastHarvestedAt": "2026-10-22T18:24:16.106Z",
     "learningId": "learn-github-fission-fission"
   },
   "smallstep-cli": {
@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "41ee5e95",
+    "sourceVersion": "9e904639",
     "license": "Apache-2.0",
-    "contentHash": "0ca7951e677ff074049394e68d4552be93381209317217091a837e784cf4e766",
-    "lastHarvestedAt": "2026-10-20T21:33:55.018Z",
+    "contentHash": "cdd5ba1b886baf9fd33ed1f896cc8f523b2ae3840ef64127e72e5e7385ba603c",
+    "lastHarvestedAt": "2026-10-22T18:24:09.501Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "76edc7d4",
+    "sourceVersion": "22a275d2",
     "license": "MIT",
-    "contentHash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
-    "lastHarvestedAt": "2026-10-20T23:31:42.800Z",
+    "contentHash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
+    "lastHarvestedAt": "2026-10-22T18:24:22.929Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -9283,10 +9283,10 @@
     "repository": "ArchiveBox/ArchiveBox",
     "platform": "github",
     "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
-    "sourceVersion": "2162c9bf",
+    "sourceVersion": "c55089ea",
     "license": "MIT",
-    "contentHash": "6e9c40159c70148ba7c938641eb4597bff3fbb9eef6f8ab05ed56fc745676458",
-    "lastHarvestedAt": "2026-10-19T22:19:25.483Z",
+    "contentHash": "4fb5f49350057dfd736c351f85bcdc65d8eb3fc2ef639795911b3ddbae8c7db3",
+    "lastHarvestedAt": "2026-10-22T18:24:11.983Z",
     "learningId": "learn-github-archivebox-archivebox"
   },
   "buriy-python-readability": {

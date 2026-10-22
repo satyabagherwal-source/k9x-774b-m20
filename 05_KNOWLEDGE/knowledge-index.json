@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T18:17:49.217Z",
+  "last_updated": "2026-10-22T18:24:22.877Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10847,14 +10847,19 @@
       "slug": "fission-fission",
       "platform": "github",
       "source_url": "https://github.com/fission/fission",
-      "source_version": "a65daf70",
-      "content_hash": "2e9957b103376e8773d9e2ef7b2788932e40831cd6bb732e1aa4c0621363536c",
+      "source_version": "b983965d",
+      "content_hash": "3e46e18e338815ab4c2329de4de62072d6ab45b1c998b06d3cdd155da43e1e2c",
       "dossier_path": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "promoted_rules": [
         {
           "number": 1709,
           "title": "Remove low-evidence Go patterns; fix --graceperiod defaulting to 0 (#3684)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3691,
+          "title": "deps): bump the github-actions group with 5 updates (#3743)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10863,7 +10868,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:14:00.737Z",
+      "verified_at": "2026-10-22T18:24:16.042Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42017,8 +42022,8 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "41ee5e95",
-      "content_hash": "0ca7951e677ff074049394e68d4552be93381209317217091a837e784cf4e766",
+      "source_version": "9e904639",
+      "content_hash": "cdd5ba1b886baf9fd33ed1f896cc8f523b2ae3840ef64127e72e5e7385ba603c",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
@@ -42031,6 +42036,11 @@
           "number": 3394,
           "title": "Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3689,
+          "title": "Merge pull request #2187 from ump45nose/docs/threads-default-cap",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42038,7 +42048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:33:54.942Z",
+      "verified_at": "2026-10-22T18:24:09.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46839,13 +46849,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "76edc7d4",
-      "content_hash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "22a275d2",
+      "content_hash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -46881,6 +46891,11 @@
           "number": 3438,
           "title": "Merge 'core: read only the requested columns of rows that spill into overflow pa",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 3692,
+          "title": "Merge 'fix Linux panics when opening connections during active reads' from Domen",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46888,7 +46903,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:17:47.697Z",
+      "verified_at": "2026-10-22T18:24:22.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61224,8 +61239,8 @@
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "2162c9bf",
-      "content_hash": "6e9c40159c70148ba7c938641eb4597bff3fbb9eef6f8ab05ed56fc745676458",
+      "source_version": "c55089ea",
+      "content_hash": "4fb5f49350057dfd736c351f85bcdc65d8eb3fc2ef639795911b3ddbae8c7db3",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
@@ -61234,6 +61249,11 @@
           "number": 2850,
           "title": "Use established isolated browser policy in gallery regression",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3690,
+          "title": "isolate live screencast previews by snapshot",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61241,7 +61261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:19:25.414Z",
+      "verified_at": "2026-10-22T18:24:11.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111003,6 +111023,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T18:17:49.198Z"
+    },
+    "rule-3689": {
+      "learning_id": "rule-3689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3689,
+      "title": "Merge pull request #2187 from ump45nose/docs/threads-default-cap",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "9e904639",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:24:09.422Z"
+    },
+    "rule-3690": {
+      "learning_id": "rule-3690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3690,
+      "title": "isolate live screencast previews by snapshot",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "c55089ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:24:11.921Z"
+    },
+    "rule-3691": {
+      "learning_id": "rule-3691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3691,
+      "title": "deps): bump the github-actions group with 5 updates (#3743)",
+      "source_url": "https://github.com/fission/fission",
+      "source_version": "b983965d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:24:16.042Z"
+    },
+    "rule-3692": {
+      "learning_id": "rule-3692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3692,
+      "title": "Merge 'fix Linux panics when opening connections during active reads' from Domen",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "22a275d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T18:24:22.866Z"
     }
   },
   "aliases": {

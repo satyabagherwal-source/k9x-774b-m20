@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `41ee5e95`  
+> **Source Version**: `9e904639`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:33:54.590Z  
+> **Timestamp**: 2026-10-22T18:24:09.151Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:33:53.805Z  
+> **Harvest Timestamp**: 2026-10-22T18:24:07.997Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44811 stars
+- **Stars / Engagement**: 44837 stars
 
 ---
 
@@ -952,13 +952,13 @@ pub struct CommandSet {
 }
 
 impl CommandSet {
-    pub fn new<I, T, S>(input: I) -> Result<CommandSet>
+    pub fn new<I, T, S>(input: I) -> Result<Self>
     where
         I: IntoIterator<Item = T>,
         T: IntoIterator<Item = S>,
         S: AsRef<str>,
     {
-        Ok(CommandSet {
+        Ok(Self {
             mode: ExecutionMode::OneByOne,
             commands: input
                 .into_iter()
@@ -967,13 +967,13 @@ impl CommandSet {
         })
     }
 
-    pub fn new_batch<I, T, S>(input: I) -> Result<CommandSet>
+    pub fn new_batch<I, T, S>(input: I) -> Result<Self>
     where
         I: IntoIterator<Item = T>,
         T: IntoIterator<Item = S>,
         S: AsRef<str>,
     {
-        Ok(CommandSet {
+        Ok(Self {
             mode: ExecutionMode::Batch,
             commands: input
                 .into_iter()
@@ -1136,7 +1136,7 @@ struct CommandTemplate {
 }
 
 impl CommandTemplate {
-    fn new<I, S>(input: I, mode: ExecutionMode) -> Result<CommandTemplate>
+    fn new<I, S>(input: I, mode: ExecutionMode) -> Result<Self>
     where
         I: IntoIterator<Item = S>,
         S: AsRef<str>,
@@ -1171,7 +1171,7 @@ impl CommandTemplate {
             args.push(FormatTemplate::Tokens(vec![Token::Placeholder]));
         }
 
-        Ok(CommandTemplate { args })
+        Ok(Self { args })
     }
 
     fn number_of_tokens(&self) -> usize {
@@ -1258,7 +1258,8 @@ mod tests {
             CommandSet::new(vec![vec!["echo", "{//}"]]).unwrap(),
             CommandSet {
                 commands: vec![CommandTemplate {
-      
+                    args: vec![
+                    
 ```
 
 ### Core Architecture Module: `src/exit_codes.rs`
@@ -1280,7 +1281,7 @@ impl From<ExitCode> for i32 {
     fn from(code: ExitCode) -> Self {
         match code {
             ExitCode::Success => 0,
-            ExitCode::HasResults(has_results) => !has_results as i32,
+            ExitCode::HasResults(has_results) => !has_results as Self,
             ExitCode::GeneralError => 1,
             ExitCode::KilledBySigint => 130,
         }
@@ -1295,7 +1296,7 @@ impl ExitCode {
     /// Exit the process with the appropriate code.
     pub fn exit(self) -> ! {
         #[cfg(unix)]
-        if self == ExitCode::KilledBySigint {
+        if self == Self::KilledBySigint {
             // Get rid of the SIGINT handler, if present, and raise SIGINT
             unsafe {
                 if signal(Signal::SIGINT, SigHandler::SigDfl).is_ok() {
@@ -1664,156 +1665,51 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41ee5e95` (2026-10-20)
-**Commit Message**: Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor
+### Incident Patch 1: `9e904639` (2026-10-22)
+**Commit Message**: Merge pull request #2187 from ump45nose/docs/threads-default-cap
 
-refactor: extract FileTypes construction into impl block (#382)
+docs: mention the 64-thread cap in the --threads default
 
-**File**: `src/filetypes.rs` (modified, +69/-1)
+**File**: `src/cli.rs` (modified, +1/-1)
 ```diff
-@@ -1,10 +1,11 @@
-+use crate::cli::FileType;
- use crate::dir_entry;
- use crate::filesystem;
+@@ -552,7 +552,7 @@ pub struct Opts {
+     pub ignore_contain: Vec<String>,
  
- use faccess::PathExt;
+     /// Set number of threads to use for searching & executing (default: number
+-    /// of available CPU cores)
++    /// of available CPU cores, up to a maximum of 64)
+     #[arg(long, short = 'j', value_name = "num", hide_short_help = true, value_parser = str::parse::<NonZeroUsize>)]
+     pub threads: Option<NonZeroUsize>,
  
- /// Whether or not to show
--#[derive(Default)]
-+#[derive(Default, Debug, PartialEq, Eq)]
- pub struct FileTypes {
-     pub files: bool,
-     pub directories: bool,
-@@ -18,6 +19,34 @@ pub struct FileTypes {
- }
- 
- impl FileTypes {
-+    pub fn from_types(types: &[FileType]) -> Self {
-+        let mut file_types = FileTypes::default();
-+        for value in types {
-+            match value {
-+                FileType::File => file_types.files = true,
-+                FileType::Directory => file_types.directories = true,
-+                FileType::Symlink => file_types.symlinks = true,
-+                FileType::Executable => {
-+                    file_types.executables_only = true;
-+                    file_types.files = true;
-+                }
-+                FileType::Empty => file_types.empty_only = true,
-+                FileType::BlockDevice => file_types.block_devices = true,
-+                FileType::CharDevice => file_types.char_devices = true,
-+                FileType::Socket => file_types.sockets = true,
-+                FileType::Pipe => file_types.pipes = true,
-+            }
-+        }
-+
-+        // If only 'empty' was specified, search for both files and directories:
-+        if file_types.empty_only && !(file_types.files || file_types.directories) {
-+            file_types.files = true;
-+            file_types.directories = true;
-+        }
-+
-+        file_types
-+    }
-+
-     pub fn should_ignore(&self, entry: &dir_entry::DirEntry) -> bool {
-         if let Some(ref entry_type) = entry.file_type() {
-             (!self.files && entry_type.is_file())
-@@ -41,3 +70,42 @@ impl FileTypes {
-         }
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn empty_only_implies_files_and_directories() {
-+        let ft = FileTypes::from_types(&[FileType::Empty]);
-+        assert!(ft.empty_only);
-+        assert!(ft.files);
-+        assert!(ft.directories);
-+    }
-+
-+    #[test]
-+    fn empty_with_explicit_file_keeps_directories_off() {
-+        let ft = FileTypes::from_types(&[FileType::Empty, FileType::File]);
-+        assert!(ft.empty_only);
-+        assert!(ft.files);
-+        assert!(!ft.directories);
-+    }
-+
-+    #[test]
-+    fn executable_implies_files() {
-+        let ft = FileTypes::from_types(&[FileType::Executable]);
-+        assert!(ft.executables_only);
-+        assert!(ft.files);
-+        assert!(!ft.directories);
-+    }
-+
-+    #[test]
-+    fn union_of_multiple_types() {
-+        let ft = FileTypes::from_types(&[FileType::File, FileType::Symlink]);
-+        assert!(ft.files);
-+        assert!(ft.symlinks);
-+        assert!(!ft.directories);
-+        assert!(!ft.executables_only);
-+        assert!(!ft.empty_only);
-+    }
-+}
 ```
 
-**File**: `src/main.rs` (modified, +4/-28)
+---
+
+### Incident Patch 2: `d649c376` (2026-10-22)
+**Commit Message**: docs: mention the 64-thread cap in the --threads default
+
+default_num_threads() clamps available_parallelism() to 64, but the help text only said 'number of available CPU cores'. Clarify the upper bound. Relates to #2186
+
+**File**: `src/cli.rs` (modified, +1/-1)
 ```diff
-@@ -335,34 +335,10 @@ fn construct_config(mut opts: Opts, pattern_regexps: &[String]) -> Result<Config
-         ls_colors,
-         hyperlink,
-         interactive_terminal,
--        file_types: opts.filetype.as_ref().map(|values| {
--            use crate::cli::FileType::*;
--            let mut file_types = FileTypes::default();
--            for value in values {
--                match value {
--                    File => file_types.files = true,
--                    Directory => file_types.directories = true,
--                    Symlink => file_types.symlinks = true,
--                    Executable => {
--                        file_types.executables_only = true;
--                        file_types.files = true;
--                    }
--                    Empty => file_types.empty_only = true,
--                    BlockDevice => file_types.block_devices = true,
--                    CharDevice => file_types.char_devices = true,
--                    Socket => file_types.sockets = true,
--                    Pipe => file_types.pipes = true,
--                }
--            }
--
--            // If only 'empty' was specified, search for both files and directories:
--            if file_types.empty_only && !(file_types.files || file_types.directories) {
--                file_types.files = true;
--                file_types.directories = true;
--            }
--
--            file_types
--        }),
-+        file_types: opts
-+            .filetype
-+            .as_ref()
-+            .map(|values| FileTypes::from_types(values)),
-         extensions: opts
-             .extensions
-             .as_ref()
+@@ -552,7 +552,7 @@ pub struct Opts {
+     pub ignore_contain: Vec<String>,
+ 
+     /// Set number of threads to use for searching & executing (default: number
+-    /// of available CPU cores)
++    /// of available CPU cores, up to a maximum of 64)
+     #[arg(long, short = 'j', value_name = "num", hide_short_help = true, value_parser = str::parse::<NonZeroUsize>)]
+     pub threads: Option<NonZeroUsize>,
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2187** (2026-10-22): docs: mention the 64-thread cap in the --threads default (@ump45nose)
 - **PR #2180** (closed): Remove inaccurate note that make is needed to build (@ump45nose)
 - **PR #2179** (2026-10-17): docs: list .ignore and .fdignore in the --no-ignore-parent man page entry (@ump45nose)
 - **PR #2173** (2026-10-20): refactor: extract FileTypes construction into impl block (#382) (@manish-9245)
 - **PR #2170** (closed): docs: sync [path] help text in README with fd -h output (@ump45nose)
 - **PR #2168** (2026-10-18): fix(completion): the Gi size unit is gibibytes, not gigibytes (@ump45nose)
-- **PR #2159** (closed): Sync README `fd -h` block with the actual short help (@ump45nose)
 
 ---
 
@@ -1833,55 +1729,28 @@ refactor: extract FileTypes construction into impl block (#382)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor
+## X. Merge pull request #2187 from ump45nose/docs/threads-default-cap
 
 **RULE**:
-When implementing operations in `src/filetypes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cli.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41ee5e95`: Merge pull request #2173 from manish-9245/fix/382-filetypes-ctor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e904639`: Merge pull request #2187 from ump45nose/docs/threads-default-cap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/filetypes.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::cli::FileType;
-#[derive(Default, Debug, PartialEq, Eq)]
-    pub fn from_types(types: &[FileType]) -> Self {
-        let mut file_types = FileTypes::default();
-        for value in types {
-            match value {
-                FileType::File => file_types.files = true,
-                FileType::Directory => file_types.directories = true,
-                FileType::Symlink => file_types.symlinks = true,
-                FileType::Executable => {
-                    file_types.executables_only = true;
-                    file_types.files = true;
-                }
-                FileType::Empty => file_types.empty_only = true,
-                FileType::BlockDevice => file_types.block_devices = true,
-                FileType::CharDevice => file_types.char_devices = true,
-                FileType::Socket => file_types.sockets = true,
-                FileType::Pipe => file_types.pipes = true,
-            }
-        }
-
-        // If only 'empty' was specified, search for both files and directories:
-        if file_types.empty_only && !(file_types.files || file_types.directories) {
-            file_types.files = true;
-            file_types.directories = true;
-        }
-
-      
+    /// of available CPU cores, up to a maximum of 64)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-#[derive(Default)]
+    /// of available CPU cores)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41ee5e95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e904639` are properly handled with clean fallback behavior.

@@ -4379,3 +4379,7 @@
 | `CYCLE-20261022-XGM1` | `2026-10-22T18:11:09.529Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3686` | Yes (`ba0bce38...`) |
 | `CYCLE-20261022-XKXY` | `2026-10-22T18:11:15.142Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3687` | Yes (`24692459...`) |
 | `CYCLE-20261022-6124` | `2026-10-22T18:17:49.276Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3688` | Yes (`6e30f340...`) |
+| `CYCLE-20261022-E6FU` | `2026-10-22T18:24:09.498Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3689` | Yes (`cdd5ba1b...`) |
+| `CYCLE-20261022-E8CS` | `2026-10-22T18:24:11.980Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3690` | Yes (`4fb5f493...`) |
+| `CYCLE-20261022-EBJA` | `2026-10-22T18:24:16.102Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3691` | Yes (`3e46e18e...`) |
+| `CYCLE-20261022-EGSU` | `2026-10-22T18:24:22.926Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3692` | Yes (`a44f1dec...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T18:17:49.293Z",
+  "last_updated": "2026-10-22T18:24:22.941Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3546,14 +3546,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fission-fission",
-      "content_hash": "2e9957b103376e8773d9e2ef7b2788932e40831cd6bb732e1aa4c0621363536c",
-      "verified_at": "2026-10-18T21:14:00.785Z",
+      "content_hash": "3e46e18e338815ab4c2329de4de62072d6ab45b1c998b06d3cdd155da43e1e2c",
+      "verified_at": "2026-10-22T18:24:16.117Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:14:00.785Z"
+      "last_updated": "2026-10-22T18:24:16.117Z"
     },
     "smallstep/cli": {
       "repository": "smallstep/cli",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "0ca7951e677ff074049394e68d4552be93381209317217091a837e784cf4e766",
-      "verified_at": "2026-10-20T21:33:55.026Z",
+      "content_hash": "cdd5ba1b886baf9fd33ed1f896cc8f523b2ae3840ef64127e72e5e7385ba603c",
+      "verified_at": "2026-10-22T18:24:09.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:33:55.026Z"
+      "last_updated": "2026-10-22T18:24:09.508Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "2981da427246a9a801827721591472951f11089cc4ebab534248ebd7572e0470",
-      "verified_at": "2026-10-21T01:17:47.760Z",
+      "content_hash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
+      "verified_at": "2026-10-22T18:24:22.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:17:47.760Z"
+      "last_updated": "2026-10-22T18:24:22.941Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "6e9c40159c70148ba7c938641eb4597bff3fbb9eef6f8ab05ed56fc745676458",
-      "verified_at": "2026-10-19T22:19:25.490Z",
+      "content_hash": "4fb5f49350057dfd736c351f85bcdc65d8eb3fc2ef639795911b3ddbae8c7db3",
+      "verified_at": "2026-10-22T18:24:11.990Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:19:25.490Z"
+      "last_updated": "2026-10-22T18:24:11.990Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",
