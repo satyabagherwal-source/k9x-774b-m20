@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "19f456ac",
+    "sourceVersion": "777b3723",
     "license": "Apache-2.0",
-    "contentHash": "4c1bac803e8d00ab313dae186e68310e4f576c23e7ebba3a5903c6535f510bf8",
-    "lastHarvestedAt": "2026-10-20T21:01:39.429Z",
+    "contentHash": "f3394aa9ee3fdd3b2e07d24151baa4005f71f8656b6562cf3078bca82398e711",
+    "lastHarvestedAt": "2026-10-22T15:56:59.618Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "fdd50121",
+    "sourceVersion": "7670fd4a",
     "license": "Apache-2.0",
-    "contentHash": "8d0f240ba0fe7ccd610f70d60673c036039f7906a22a83eadb1d017683074fd1",
-    "lastHarvestedAt": "2026-10-19T06:04:49.207Z",
+    "contentHash": "93aa00b4fb3ff950e70184462901b8b02509ab30939d3fa8fe07b962862922d7",
+    "lastHarvestedAt": "2026-10-22T15:56:54.733Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "30bbe613",
+    "sourceVersion": "e83e08a9",
     "license": "Apache-2.0",
-    "contentHash": "8a82dd74c09ef0b071a0fe3a8297c6f455a83117e2c9d41127a14d4af8d8efd0",
-    "lastHarvestedAt": "2026-10-20T18:58:14.375Z",
+    "contentHash": "e66303c1b25e3a685e16dcc7e4309474d10a36e34b3abfe071b35e6e99750f7c",
+    "lastHarvestedAt": "2026-10-22T15:56:51.663Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-22T15:53:34.846Z",
+  "last_updated": "2026-10-22T15:56:59.569Z",
   "total_verified_learnings": 1068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2094,8 +2094,8 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "19f456ac",
-      "content_hash": "4c1bac803e8d00ab313dae186e68310e4f576c23e7ebba3a5903c6535f510bf8",
+      "source_version": "777b3723",
+      "content_hash": "f3394aa9ee3fdd3b2e07d24151baa4005f71f8656b6562cf3078bca82398e711",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
@@ -2108,6 +2108,11 @@
           "number": 3380,
           "title": "ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3621,
+          "title": "ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2115,7 +2120,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:01:39.359Z",
+      "verified_at": "2026-10-22T15:56:59.557Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3951,8 +3956,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "30bbe613",
-      "content_hash": "8a82dd74c09ef0b071a0fe3a8297c6f455a83117e2c9d41127a14d4af8d8efd0",
+      "source_version": "e83e08a9",
+      "content_hash": "e66303c1b25e3a685e16dcc7e4309474d10a36e34b3abfe071b35e6e99750f7c",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -3970,6 +3975,11 @@
           "number": 3331,
           "title": "format/css): keep wrapped selector indent below a rule comment (#12474)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3619,
+          "title": "format/js): keep parens around an instantiation expression before `!` and herita",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3977,7 +3987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:58:14.295Z",
+      "verified_at": "2026-10-22T15:56:51.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43427,14 +43437,19 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "fdd50121",
-      "content_hash": "8d0f240ba0fe7ccd610f70d60673c036039f7906a22a83eadb1d017683074fd1",
+      "source_version": "7670fd4a",
+      "content_hash": "93aa00b4fb3ff950e70184462901b8b02509ab30939d3fa8fe07b962862922d7",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
         {
           "number": 2219,
           "title": "Address review: fix no-op chart assertions, document enableHA gate, serialize du",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3620,
+          "title": "Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43443,7 +43458,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:04:49.172Z",
+      "verified_at": "2026-10-22T15:56:54.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -109666,6 +109681,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-22T15:53:29.751Z"
+    },
+    "rule-3619": {
+      "learning_id": "rule-3619",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3619,
+      "title": "format/js): keep parens around an instantiation expression before `!` and herita",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "e83e08a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:56:51.542Z"
+    },
+    "rule-3620": {
+      "learning_id": "rule-3620",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3620,
+      "title": "Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "7670fd4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:56:54.666Z"
+    },
+    "rule-3621": {
+      "learning_id": "rule-3621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3621,
+      "title": "ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "777b3723",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-22T15:56:59.557Z"
     }
   },
   "aliases": {

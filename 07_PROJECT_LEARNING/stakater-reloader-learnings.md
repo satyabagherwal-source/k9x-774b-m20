@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source**: github ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
-> **Source Version**: `fdd50121`  
+> **Source Version**: `7670fd4a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:04:49.048Z  
+> **Timestamp**: 2026-10-22T15:56:54.346Z  
 > **Learning ID**: `learn-github-stakater-reloader`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:04:49.043Z  
+> **Harvest Timestamp**: 2026-10-22T15:56:54.340Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling upgrades on Pods with their associated Deployment, StatefulSet, DaemonSet and DeploymentConfig – [✩Star] if you're using it!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10496 stars
+- **Stars / Engagement**: 10508 stars
 
 ---
 
@@ -757,7 +757,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
-	_ "net/http/pprof"
+	"net/http/pprof"
 	"os"
 	"strings"
 	"time"
@@ -982,7 +982,8 @@ func startReloader(cmd *cobra.Command, args []string) {
 		logrus.Warnf("webhook-url is set, will only send webhook, no resources will be reloaded")
 	}
 
-	collectors := metrics.SetupPrometheusEndpoint()
+	mainMux := http.NewServeMux()
+	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
 
 	var controllers []*controller.Controller
 	for _, currentNamespace := range watchNamespaces {
@@ -1029,24 +1030,22 @@ func startReloader(cmd *cobra.Command, args []string) {
 		go startPProfServer()
 	}
 
-	leadership.SetupLivenessEndpoint()
-	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, nil))
+	leadership.SetupLivenessEndpointWithMux(mainMux)
+	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
+}
+
+func newPProfServeMux() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/debug/pprof/", pprof.Index)
+	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
+	return mux
 }
 
 func startPProfServer() {
-	logrus.Infof("Starting pprof server on %s", options.PProfAddr)
-	if err := http.ListenAndServe(options.PProfAddr, nil); err != nil {
-		logrus.Errorf("Failed to start pprof server: %v", err)
-	}
-}
-
-func shouldRunCSIController() bool {
-	if !options.EnableCSIIntegration {
-		logrus.Info("Skipping secretproviderclasspodstatuses controller: EnableCSIIntegration is disabled")
-		return false
-	}
-	if !kube.IsCSIInstalled {
-		logrus.Info("Skipping secretprovid
+	logrus.Infof("Starting pprof server on %s", opt
 ```
 
 ### Core Architecture Module: `internal/pkg/constants/constants.go`
@@ -1201,12 +1200,30 @@ func loadSelectedNamespacesList() []string {
 	return result
 }
 
+// markIgnoredResourcesInitialized marks the flag of an ignored resource type as
+// initialized. No controller is created for an ignored type, so its flag would
+// otherwise never be set and Add/Delete events for the watched type would be
+// dropped forever.
+func markIgnoredResourcesInitialized() {
+	ignoredResources, err := util.GetIgnoredResourcesList()
+	if err != nil {
+		return
+	}
+	if ignoredResources.Contains(string(v1.ResourceConfigMaps)) {
+		configmapControllerInitialized.Store(true)
+	}
+	if ignoredResources.Contains(string(v1.ResourceSecrets)) {
+		secretControllerInitialized.Store(true)
+	}
+}
+
 // NewController for initializing a Controller
 func NewController(client kubernetes.Interface, resource string, namespace string, ignoredNamespaces []string, namespaceLabelSelector string, resourceLabelSelector string, collectors metrics.Collectors) (*Controller, error) {
 	if options.SyncAfterRestart {
 		secretControllerInitialized.Store(true)
 		configmapControllerInitialized.Store(true)
 	}
+	markIgnoredResourcesInitialized()
 
 	c := Controller{
 		client:            client,
@@ -1372,6 +1389,12 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 func (c *Controller) Delete(old interface{}) {
 	c.collectors.RecordEventReceived("delete", c.resource)
 
+	// The informer passes a tombstone when it missed the delete event and only
+	// noticed the object was gone on relist. Unwrap it to get the last known state.
+	if tombstone, ok := old.(cache.DeletedFinalStateUnknown); ok {
+		old = tombstone.Obj
+	}
+
 	if _, ok := old.(*csiv1.SecretProviderClassPodStatus); ok {
 		return
 	}
@@ -1403,39 +1426,7 @@ func (c *Controller) enqueue(item interface{}) {
 	c.collectors.SetQueueDepth(c.queue.Len())
 }
 
-// Run function for controller which handles the queue
-func (c *Controller) Run(threadiness int, stopCh chan struct{}) {
-	defer runtime.HandleCrash()
-
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		c.informer.Run(stopCh)
-	}()
-
-	// Wait for all involved caches to be synced, before processing items from the queue is started
-	if !cache.WaitForCacheSync(stopCh, c.informer.HasSynced) {
-		runtime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
-		c.queue.ShutDown()
-		wg.Wait()
-		return
-	}
-
-	for i := 0; i < threadiness; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			wait.Until(c.runWorker, time.Second, stopCh)
-		}()
-	}
-
-	<-stopCh
-	logrus.Infof("Stopping Controller for %s", c.resource)
-	c.queue.ShutDown() // unblock workers so they drain and exit
-	logrus.Infof("Queue shut down for %s, waiting for goroutines", c.resource)
-	wg.Wait() // block unti
+// 
 ```
 
 ### Core Architecture Module: `internal/pkg/crypto/sha.go`
@@ -1469,13 +1460,11 @@ func GenerateSHA(data string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1239** (2026-10-15): **[BUG] Keys set to null in securityContext not removed in newer version of Helm**
-  *Symptoms*: **Describe the bug** Since newer versions of Helm introduces [changes](https://github.com/helm/helm/pull/31644) to nil value evaluation, the recommended [OpenShift Considerations](https://github.com/stakater/Reloader/blob/master/deployments/kubernetes/chart/reloader/README.md#openshift-considerations) no longer work. The key `runAsUser` will not be removed if set to `null` or `~`.  **To Reproduce** Setup with basic values file:  ``` $ cat Chart.yaml --- apiVersion: v2 name: test-reloader version: 0.0.1 dependencies:   - name: reloader     repository: https://stakater.github.io/stakater-charts     version: 2.2.18  $ cat values.yaml --- reloader:   reloader:     deployment:       securityContext:         runAsUser: null ```  Run helm with version 4.1 and see no `runAsUser` key:  ``` $ podman run --rm -v $PWD:/work:z -w /work alpine/helm:4.1 template . > rendered_4.1.yaml $ grep runAsUser rendered_4.1.yaml $ ```  Run helm with version 4.2 and see `runAsUser` key:  ``` $ podman run --rm -v $PWD:/work:z -w /work alpine/helm:4.2 template . > rendered_4.2.yaml $ grep runAsUser rendered_4.2.yaml         runAsUser: 65534 $ ```  **Expected behavior** `runAsUser` key should not appear in the rendered deployment manifest.  **Screenshots** If applicable, add screenshots to help explain your problem.  **Environment**  - Operator Version: N/A  - Kubernetes/OpenShift Version: N/A  **Additional context** Add any other context about the problem here. 
+- **Issue #1252** (2026-10-22): **fix: isolate metrics port from pprof and expvar handlers (#1251)**
+  *Symptoms*: ## Summary  Fixes #1251.  Reloader previously served HTTP on `http.DefaultServeMux` by passing `nil` to `http.ListenAndServe(constants.DefaultHttpListenAddr, nil)`. Because `reloader.go` imported `net/http/pprof` for its side-effects, `/debug/pprof/*` (and any expvar endpoints) were registered on `http.DefaultServeMux` and exposed unconditionally on the metrics port (`:9090`), even when `--enable-pprof` was false.  Furthermore, `startPProfServer()` also passed `nil` to `http.ListenAndServe(options.PProfAddr, nil)`, which merely created a second listener serving `http.DefaultServeMux` (including `/metrics` and `/live`).  This change: - Replaces the blank `_ "net/http/pprof"` import with an explicit `newPProfServeMux()` helper that registers pprof endpoints (`Index`, `Cmdline`, `Profile`, `Symbol`, `Trace`) exclusively on a dedicated `http.ServeMux` used by `--pprof-addr`. - Uses an explicit `mainMux` for the metrics/liveness listener on `constants.DefaultHttpListenAddr` (`:9090`), registering only `/metrics` and `/live`. - Adds `SetupPrometheusEndpointWithMux` and `SetupLivenessEndpointWithMux` while preserving the existing parameterless functions for backwards compatibility.  ## Test  - Added `TestMainServerMuxEndpoints` and `TestPProfServerMuxEndpoints` in `internal/pkg/cmd/server_mux_test.go`:   - Verifies `/metrics` and `/live` return 200 on `mainMux` and 404 for `/debug/pprof/*` and `/debug/vars`.   - Verifies `/debug/pprof/*` returns 200 on `newPProfServeMux()` and 404 f
 
-- **Issue #1237** (2026-09-30): **chore: add v2 announcement and master feature freeze notice to README**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ## :white_check_mark: Load Test Results (quick)  ## ✅ Load Test Results: ALL TESTS PASSED  > 🚀 **Quick Test** (S1, S4, S6) — Use `/loadtest` for full suite  **3/3 passed** (100%)  | | Scenario | Description | Actions | Errors | |:-:|:--------:|-------------|:-------:|:------:| | ✅ | **S1** | S1: 142 burst updates, each triggers 1 dep... | 142/142 | 0 | | ✅ | **S4** | S4: 143 no-op updates, all should be skipped | 0 | 0 | | ✅ | **S6** | S6: Restart test - 142 updates during restart | 146 | 0 |  📦 **[Download detailed results](../artifacts)**   --- **Artifacts:** [Download](https://github.com/stakater/Reloader/actions/runs/36714818341)
+- **Issue #1251** (2026-10-22): **[BUG] pprof and expvar handlers are always served on the metrics port (:9090), regardless of --enable-pprof**
+  *Symptoms*: **Describe the bug** internal/pkg/cmd/reloader.go imports net/http/pprof for its side effect (_ "net/http/pprof"), which registers /debug/pprof/* on http.DefaultServeMux. The main HTTP server is started with http.ListenAndServe(constants.DefaultHttpListenAddr, nil), i.e. on :9090 with the default mux, so the profiling handlers are always served next to /metrics and /live. /debug/vars (expvar) is served there too.  --enable-pprof / --pprof-addr (added in #980) only start a second listener, also with the default mux (http.ListenAndServe(options.PProfAddr, nil)). So the flag doesn’t control whether profiling is exposed; it only adds another port that serves the same handlers, including /metrics and /live.  **To Reproduce** Deploy Reloader v1.4.17 (also present on master) without --enable-pprof. From any pod in the cluster: curl http://<reloader-pod-ip>:9090/debug/pprof/ and curl http://<reloader-pod-ip>:9090/debug/vars.  **Expected behavior** Profiling and expvar handlers are served only when --enable-pprof is set, and only on --pprof-addr. The metrics port serves /metrics and /live only.  **Screenshots** If applicable, add screenshots to help explain your problem.  **Environment** - Reloader v1.4.17 (Helm chart, default values) - Kubernetes v1.33 (k3s)  **Additional context** Add any other context about the problem here.  **Impact** Port 9090 has no authentication and is usually reachable cluster-wide, because Prometheus scrapes it and the kubelet probes it. Any pod can read me
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1492,530 +1481,442 @@ func GenerateSHA(data string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d1bb7f5` (2026-08-28)
-**Commit Message**: Address review: fix no-op chart assertions, document enableHA gate, serialize durations as strings
+### Incident Patch 1: `7670fd4a` (2026-10-22)
+**Commit Message**: Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port
 
-helm-unittest notContains compares whole array elements, so the prefix
-assertions on the leader election args never matched. Assert the exact
-rendered args instead; notMatchRegex rejects array paths and
-notMatchRegexRaw never fails against a rendered manifest.
+fix: isolate metrics port from pprof and expvar handlers (#1251)
 
-Document the --enable-ha=true gate change in the chart README.
-
-Serialize the leader election timings into the meta-info ConfigMap as
-duration strings rather than raw nanoseconds.
-
-**File**: `deployments/kubernetes/chart/reloader/README.md` (modified, +14/-0)
+**File**: `internal/pkg/cmd/reloader.go` (modified, +17/-5)
 ```diff
-@@ -166,11 +166,25 @@ helm uninstall {{RELEASE_NAME}} -n {{NAMESPACE}}
- ❌ Updates during leader downtime are missed
- ⏳ Potential 15s delay window (default `LeaseDuration`)
- 
-+#### 🗳️ `enableHA` Behavior
-+**When true:**
-+✅ `--enable-ha=true` and the `POD_NAME`/`POD_NAMESPACE` env vars are rendered
-+✅ The `coordination.k8s.io` Lease RBAC is rendered when `reloader.rbac.enabled` is `true`
-+✅ The default pod anti-affinity is rendered unless custom affinity is configured
-+✅ `reloader.deployment.replicas` is honored, and any `reloader.leaderElection.*` timings are passed to the binary
-+
-+**When false:**
-+❌ `reloader.deployment.replicas` is clamped to `1`, whatever value is set
-+❌ `reloader.leaderElection.*` timings are ignored
-+
-+> ⚠️ **Behavior change:** earlier chart versions emitted `--enable-ha=true` whenever `reloader.deployment.replicas > 1`, even with `reloader.enableHA: false`. Every other HA component stayed gated on `enableHA` alone, so the pod rendered without `POD_NAME` and the binary exited with `POD_NAME not set, cannot run in HA mode without POD_NAME set`, leaving it in `CrashLoopBackOff`. The flag is now gated on `enableHA` alone. Raising `replicas` by itself therefore leaves HA off, consistent with the existing replica clamp. Setting `reloader.enableHA: true` is unaffected.
-+
- #### Default Settings
- ⚠️ All flags default to `false` (must be enabled explicitly):
- - `reloadOnCreate`
- - `reloadOnDelete`
- - `syncAfterRestart`
-+- `enableHA`
- 
- ### Deprecation Notice
- - `serviceMonitor` will be removed in future releases in favor of `PodMonitor`
-```
-
-**File**: `deployments/kubernetes/chart/reloader/tests/deployment_test.yaml` (modified, +12/-24)
-```diff
-@@ -159,15 +159,12 @@ tests:
-         leaderElection:
-           leaseDuration: 30s
-     asserts:
--      - contains:
--          path: spec.template.spec.containers[0].args
--          content: "--leader-election-lease-duration=30s"
--      - notContains:
--          path: spec.template.spec.containers[0].args
--          content: "--leader-election-renew-deadline="
--      - notContains:
-+      - equal:
-           path: spec.template.spec.containers[0].args
--          content: "--leader-election-retry-period="
-+          value:
-+            - "--log-level=info"
-+            - "--enable-ha=true"
-+            - "--leader-election-lease-duration=30s"
- 
-   - it: does not set leader election arguments when enableHA is false
-     set:
-@@ -178,30 +175,21 @@ tests:
-           renewDeadline: 20s
-           retryPeriod: 4s
-     asserts:
--      - notContains:
--          path: spec.template.spec.containers[0].args
--          content: "--leader-election-lease-duration=30s"
--      - notContains:
--          path: spec.template.spec.containers[0].args
--          content: "--leader-election-renew-deadline=20s"
--      - notContains:
-+      - equal:
-           path: spec.template.spec.containers[0].args
--          content: "--leader-election-retry-period=4s"
-+          value:
-+            - "--log-level=info"
- 
-   - it: keeps the client-go defaults by not setting leader election arguments when enableHA is true and no timings are configured
-     set:
-       reloader:
-         enableHA: true
-     asserts:
--      - notContains:
--          path: spec.template.spec.containers[0].args
--          content: "--leader-election-lease-duration="
--      - notContains:
--          path: spec.template.spec.containers[0].args
--          content: "--leader-election-renew-deadline="
--      - notContains:
-+      - equal:
-           path: spec.template.spec.containers[0].args
--          content: "--leader-election-retry-period="
-+          value:
-+            - "--log-level=info"
-+            - "--enable-ha=true"
- 
-   - it: template is still valid when leaderElection is null
-     set:
-```
-
-**File**: `pkg/common/common.go` (modified, +9/-10)
-```diff
-@@ -7,7 +7,6 @@ import (
- 	"regexp"
- 	"strconv"
- 	"strings"
--	"time"
- 
- 	"github.com/sirupsen/logrus"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -81,12 +80,12 @@ type ReloaderOptions struct {
- 	SyncAfterRestart bool `json:"syncAfterRestart"`
- 	// EnableHA indicates whether High Availability mode is enabled with leader election
- 	EnableHA bool `json:"enableHA"`
--	// LeaderElectionLeaseDuration is the duration non-leader candidates wait before force acquiring leadership
--	LeaderElectionLeaseDuration time.Duration `json:"leaderElectionLeaseDuration"`
--	// LeaderElectionRenewDeadline is the duration the acting leader retries refreshing leadership before giving up
--	LeaderElectionRenewDeadline time.Duration `json:"leaderElectionRenewDeadline"`
--	// LeaderElectionRetryPeriod is the duration clients wait between attempting acquisition and renewal of leadership
--	LeaderElectionRetryPeriod time.Duration `json:"leaderElectionRetryPeriod"`
-+	// LeaderElectionLeaseDuration is the duration non-leader candidates wait before force acquiring leadership, formatted as a Go duration string
-+	LeaderElectionLeaseDuration string `json:"leaderElectionLeaseDuration"`
-+	// LeaderElectionRenewDeadline is the duration the acting leader retries refreshing leadership before giving up, formatted as a Go duration string
-+	LeaderElectionRenewDeadline string `json:"leaderElectionRenewDeadline"`
-+	// LeaderElectionRetryPeriod is the duration clients wait between attempting acquisition and renewal of leadership, formatted as a Go duration string
-+	LeaderElectionRetryPeriod string `json:"leaderElectionRetryPeriod"`
- 	// EnableCSIIntegration indicates whether CSI integration is enabled to watch SecretProviderClassPodStatus
- 	EnableCSIIntegration bool `json:"enableCSIIntegration"`
- 	// WebhookUrl is the URL to send webhook notifications to instead of performing reloads
-@@ -373,9 +372,9 @@ func GetCommandLineOptions() *ReloaderOptions {
- 	CommandLineOptions.ReloadStrategy = options.ReloadStrategy
- 	CommandLineOptions.SyncAfterRestart = options.SyncAfterRestart
- 	CommandLineOptions.EnableHA = options.EnableHA
--	CommandLineOptions.LeaderElectionLeaseDuration = options.LeaderElectionLeaseDuration
--	CommandLineOptions.LeaderElectionRenewDeadline = options.LeaderElectionRenewDeadline
--	CommandLineOptions.LeaderElectionRetryPeriod = options.LeaderElectionRetryPeriod
-+	CommandLineOptions.LeaderElectionLeaseDuration = options.LeaderElectionLeaseDuration.String()
-+	CommandLineOptions.LeaderElectionRenewDeadline = options.LeaderElectionRenewDeadline.String()
-+	CommandLineOptions.LeaderElectionRetryPeriod = options.LeaderElectionRetryPeriod.String()
- 	CommandLineOptions.EnableCSIIntegration = options.EnableCSIIntegration
- 	CommandLineOptions.WebhookUrl = options.WebhookUrl
- 	CommandLineOptions.ResourcesToIgnore = options.ResourcesToIgnore
-```
-
-**File**: `pkg/common/common_test.go` (modified, +35/-0)
-```diff
-@@ -1,7 +1,9 @@
- package common
- 
- import (
-+	"encoding/json"
- 	"testing"
-+	"time"
- 
- 	"github.com/stakater/Reloader/internal/pkg/options"
- )
-@@ -275,3 +277,36 @@ func TestShouldReload_InvalidRegexAnnotation_SkipsMalformedPattern(t *testing.T)
- 		t.Errorf("Expected the malformed pattern to surface 1 error, got=%d: %v", len(result.Errors), result.Errors)
- 	}
- }
-+
-+func TestGetCommandLineOptions_LeaderElectionTimingsAreDurationStrings(t *testing.T) {
-+	origLease, origRenew, origRetry := options.LeaderElectionLeaseDuration, options.LeaderElectionRenewDeadline, options.LeaderElectionRetryPeriod
-+	defer func() {
-+		options.LeaderElectionLeaseDuration, options.LeaderElectionRenewDeadline, options.LeaderElectionRetryPeriod = origLease, origRenew, origRetry
-+	}()
-+	options.LeaderElectionLeaseDuration = 30 * time.Second
-+	options.LeaderElectionRenewDeadline = 20 * time.Second
-+	options.LeaderElectionRetryPeriod = 4 * time.Second
-+
-+	// the meta-info ConfigMap holds the marshalled options, so the timings must
-+	// read as durations there rather than as raw nanoseconds
-+	encoded, err := json.Marshal(GetCommandLineOptions())
-+	if err != nil {
-+		t.Fatalf("Expected the options to marshal, got err=%v", err)
-+	}
-+
-+	decoded := map[string]any{}
-+	if err := json.Unmarshal(encoded, &decoded); err != nil {
-+		t.Fatalf("Expected the options to unmarshal, got err=%v", err)
-+	}
-+
-+	expected := map[string]string{
-+		"leaderElectionLeaseDuration": "30s",
-+		"leaderElectionRenewDeadline": "20s",
-+		"leaderElectionRetryPeriod":   "4s",
-+	}
-+	for key, want := range expected {
-+		if got := decoded[key]; got != want {
-+			t.Errorf("Expected %s=%q, got=%#v", key, want, got)
-+		}
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `fdd50121` (2026-10-02)
-**Commit Message**: Merge pull request #1220 from kaanisthatyou/fix/resume-timer-cleanup
-
-fix: remove the resume timer before resuming a paused deployment
-
-**File**: `internal/pkg/handler/pause_deployment.go` (modified, +9/-8)
-```diff
-@@ -179,6 +179,15 @@ func CreateResumeTimer(deployment *app.Deployment, clients kube.Clients, namespa
- func ResumeDeployment(deployment *app.Deployment, namespace string, clients kube.Clients) {
- 	deploymentName := deployment.Name
- 
-+	// Remove the timer first: if this attempt fails, a later change to the
-+	// deployment must find no timer, so that HandleMissingTimer retries the resume.
-+	timerKey := getTimerKey(namespace, deploymentName)
-+	if timer, exists := activeTimers[timerKey]; exists {
-+		timer.Stop()
-+		delete(activeTimers, timerKey)
-+		logrus.Debugf("Removed pause timer for deployment '%s' in namespace '%s'", deploymentName, namespace)
-+	}
-+
- 	currentDeployment, err := clients.KubernetesClient.AppsV1().Deployments(namespace).Get(context.TODO(), deploymentName, metav1.GetOptions{})
- 
- 	if err != nil {
-@@ -199,14 +208,6 @@ func ResumeDeployment(deployment *app.Deployment, namespace string, clients kube
- 		return
- 	}
- 
--	// Remove the timer
--	timerKey := getTimerKey(namespace, deploymentName)
--	if timer, exists := activeTimers[timerKey]; exists {
--		timer.Stop()
--		delete(activeTimers, timerKey)
--		logrus.Debugf("Removed pause timer for deployment '%s' in namespace '%s'", deploymentName, namespace)
--	}
--
- 	err = deploymentFuncs.PatchFunc(clients, namespace, currentDeployment, patchtypes.StrategicMergePatchType, resumePatch)
- 
- 	if err != nil {
-```
-
-**File**: `internal/pkg/handler/pause_deployment_test.go` (modified, +99/-0)
-```diff
-@@ -2,6 +2,7 @@ package handler
- 
- import (
- 	"context"
-+	"errors"
+@@ -6,7 +6,7 @@ import (
  	"fmt"
- 	"testing"
+ 	"math"
+ 	"net/http"
+-	_ "net/http/pprof"
++	"net/http/pprof"
+ 	"os"
+ 	"strings"
  	"time"
-@@ -12,6 +13,7 @@ import (
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	testclient "k8s.io/client-go/kubernetes/fake"
-+	clienttesting "k8s.io/client-go/testing"
+@@ -231,7 +231,8 @@ func startReloader(cmd *cobra.Command, args []string) {
+ 		logrus.Warnf("webhook-url is set, will only send webhook, no resources will be reloaded")
+ 	}
  
- 	"github.com/stakater/Reloader/internal/pkg/options"
- 	"github.com/stakater/Reloader/pkg/kube"
-@@ -285,6 +287,103 @@ func TestHandleMissingTimerSimple(t *testing.T) {
+-	collectors := metrics.SetupPrometheusEndpoint()
++	mainMux := http.NewServeMux()
++	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
+ 
+ 	var controllers []*controller.Controller
+ 	for _, currentNamespace := range watchNamespaces {
+@@ -278,13 +279,24 @@ func startReloader(cmd *cobra.Command, args []string) {
+ 		go startPProfServer()
+ 	}
+ 
+-	leadership.SetupLivenessEndpoint()
+-	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, nil))
++	leadership.SetupLivenessEndpointWithMux(mainMux)
++	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
++}
++
++func newPProfServeMux() *http.ServeMux {
++	mux := http.NewServeMux()
++	mux.HandleFunc("/debug/pprof/", pprof.Index)
++	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
++	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
++	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
++	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
++	return mux
+ }
+ 
+ func startPProfServer() {
+ 	logrus.Infof("Starting pprof server on %s", options.PProfAddr)
+-	if err := http.ListenAndServe(options.PProfAddr, nil); err != nil {
++	mux := newPProfServeMux()
++	if err := http.ListenAndServe(options.PProfAddr, mux); err != nil {
+ 		logrus.Errorf("Failed to start pprof server: %v", err)
+ 	}
+ }
+```
+
+**File**: `internal/pkg/cmd/server_mux_test.go` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++package cmd
++
++import (
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++
++	"github.com/stakater/Reloader/internal/pkg/leadership"
++	"github.com/stakater/Reloader/internal/pkg/metrics"
++)
++
++func TestMainServerMuxEndpoints(t *testing.T) {
++	mux := http.NewServeMux()
++	metrics.SetupPrometheusEndpointWithMux(mux)
++	leadership.SetupLivenessEndpointWithMux(mux)
++
++	// Liveness endpoint should be served
++	liveReq := httptest.NewRequest(http.MethodGet, "/live", nil)
++	liveRec := httptest.NewRecorder()
++	mux.ServeHTTP(liveRec, liveReq)
++	assert.Equal(t, http.StatusOK, liveRec.Code)
++	assert.Equal(t, "alive", liveRec.Body.String())
++
++	// Metrics endpoint should be served
++	metricsReq := httptest.NewRequest(http.MethodGet, "/metrics", nil)
++	metricsRec := httptest.NewRecorder()
++	mux.ServeHTTP(metricsRec, metricsReq)
++	assert.Equal(t, http.StatusOK, metricsRec.Code)
++
++	// pprof and expvar endpoints should NOT be served on the main metrics/liveness mux
++	disallowedEndpoints := []string{
++		"/debug/pprof/",
++		"/debug/pprof/cmdline",
++		"/debug/pprof/profile",
++		"/debug/pprof/symbol",
++		"/debug/pprof/trace",
++		"/debug/pprof/goroutine",
++		"/debug/pprof/heap",
++		"/debug/vars",
++	}
++
++	for _, endpoint := range disallowedEndpoints {
++		t.Run(endpoint, func(t *testing.T) {
++			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
++			rec := httptest.NewRecorder()
++			mux.ServeHTTP(rec, req)
++			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on main mux", endpoint)
++		})
++	}
++}
++
++func TestPProfServerMuxEndpoints(t *testing.T) {
++	mux := newPProfServeMux()
++
++	// pprof endpoints should be served on pprof mux
++	allowedEndpoints := []string{
++		"/debug/pprof/",
++		"/debug/pprof/cmdline",
++		"/debug/pprof/goroutine",
++		"/debug/pprof/heap",
++	}
++
++	for _, endpoint := range allowedEndpoints {
++		t.Run(endpoint, func(t *testing.T) {
++			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
++			rec := httptest.NewRecorder()
++			mux.ServeHTTP(rec, req)
++			assert.Equal(t, http.StatusOK, rec.Code, "pprof endpoint %s should be served on pprof mux", endpoint)
++		})
++	}
++
++	// Main metrics and liveness endpoints should NOT be served on the pprof mux
++	disallowedEndpoints := []string{
++		"/metrics",
++		"/live",
++	}
++
++	for _, endpoint := range disallowedEndpoints {
++		t.Run(endpoint, func(t *testing.T) {
++			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
++			rec := httptest.NewRecorder()
++			mux.ServeHTTP(rec, req)
++			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on pprof mux", endpoint)
++		})
++	}
++}
+```
+
+**File**: `internal/pkg/leadership/leadership.go` (modified, +10/-1)
+```diff
+@@ -112,7 +112,16 @@ func stopControllers(stopChannels []chan struct{}) {
+ // enabled and a replica stops leading the liveness probe will fail and the
+ // kubelet will restart the container.
+ func SetupLivenessEndpoint() {
+-	http.HandleFunc("/live", healthz)
++	SetupLivenessEndpointWithMux(http.DefaultServeMux)
++}
++
++// SetupLivenessEndpointWithMux sets up the liveness probe endpoint on the provided ServeMux.
++func SetupLivenessEndpointWithMux(mux *http.ServeMux) {
++	if mux != nil {
++		mux.HandleFunc("/live", healthz)
++	} else {
++		http.HandleFunc("/live", healthz)
++	}
+ }
+ 
+ func healthz(w http.ResponseWriter, req *http.Request) {
+```
+
+**File**: `internal/pkg/metrics/prometheus.go` (modified, +4/-2)
+```diff
+@@ -367,7 +367,9 @@ func NewCollectors() Collectors {
  	}
  }
  
-+func TestResumeDeploymentRecoversAfterFailedGet(t *testing.T) {
-+	deployment := &appsv1.Deployment{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "test-deployment",
-+			Namespace: "default",
-+			Annotations: map[string]string{
-+				options.PauseDeploymentTimeAnnotation: time.Now().Add(-6 * time.Minute).Format(time.RFC3339),
-+				options.PauseDeploymentAnnotation:     "5m",
-+			},
-+		},
-+		Spec: appsv1.DeploymentSpec{
-+			Paused: true,
-+		},
-+	}
-+	fakeClient := testclient.NewClientset(deployment)
-+	clients := kube.Clients{KubernetesClient: fakeClient}
-+
-+	timerKey := getTimerKey("default", deployment.Name)
-+	activeTimers[timerKey] = time.NewTimer(time.Hour)
-+	defer func() {
-+		for key, timer := range activeTimers {
-+			timer.Stop()
-+			delete(activeTimers, key)
-+		}
-+	}()
-+
-+	// The API server is unavailable when the resume timer fires.
-+	failGet := true
-+	fakeClient.PrependReactor("get", "deployments", func(clienttesting.Action) (bool, runtime.Object, error) {
-+		if failGet {
-+			return true, nil, errors.New("apiserver unavailable")
-+		}
-+		return false, nil, nil
-+	})
-+	ResumeDeployment(deployment, "default", clients)
-+
-+	_, timerExists := activeTimers[timerKey]
-+	assert.False(t, timerExists, "Timer should be removed even if the resume fails")
-+
-+	// The next change to the deployment recovers through HandleMissingTimer.
-+	failGet = false
-+	_, err := PauseDeployment(deployment, clients, "default", deployment.Annotations[options.PauseDeploymentAnnotation])
-+	assert.NoError(t, err)
-+
-+	updatedDeployment, err := fakeClient.AppsV1().Deployments("default").Get(context.TODO(), deployment.Name, metav1.GetOptions{})
-+	assert.NoError(t, err)
-+	assert.False(t, updatedDeployment.Spec.Paused, "Deployment should be resumed after the failed attempt")
-+}
-+
-+func TestResumeDeploymentRecoversAfterManualResume(t *testing.T) {
-+	pausedDeployment := &appsv1.Deployment{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "test-deployment",
-+			Namespace: "default",
-+			Annotations: map[string]string{
-+				options.PauseDeploymentTimeAnnotation: time.Now().Add(-6 * time.Minute).Format(time.RFC3339),
-+				options.PauseDeploymentAnnotation:     "5m",
-+			},
-+		},
-+		Spec: appsv1.DeploymentSpec{
-+			Paused: true,
-+		},
-+	}
-+	// The deployment was un-paused by hand before the resume timer fired.
-+	resumedDeployment := pausedDeployment.DeepCopy()
-+	resumedDeployment.Spec.Paused = false
-+	fakeClient := testclient.NewClientset(resumedDeployment)
-+	clients := kube.Clients{KubernetesClient: fakeClient}
-+
-+	timerKey := getTimerKey("default", pausedDeployment.Name)
-+	staleTimer := time.NewTimer(time.Hour)
-+	activeTimers[timerKey] = staleTimer
-+	defer func() {
-+		for key, timer := range activeTimers {
-+			timer.Stop()
-+			delete(activeTimers, key)
-+		}
-+	}()
-+
-+	ResumeDeployment(pausedDeployment, "default", clients)
-+
-+	_, timerExists := activeTimers[timerKey]
-+	assert.False(t, timerExists, "Timer should be removed even if the deployment is no longer paused by reloader")
-+
-+	// The next change pauses the deployment again and must get a fresh resume timer.
-+	_, err := PauseDeployment(resumedDeployment, clients, "default", resumedDeployment.Annotations[options.PauseDeploymentAnnotation])
-+	assert.NoError(t, err)
-+
-+	updatedDeployment, err := fakeClient.AppsV1().Deployments("default").Get(context.TODO(), resumedDeployment.Name, metav1.GetOptions{})
-+	assert.NoError(t, err)
-+	assert.True(t, updatedDeployment.Spec.Paused, "Deployment should be paused by the new change")
-+
-+	timer, timerExists := activeTimers[timerKey]
-+	assert.True(t, timerExists, "A resume timer should exist for the new pause")
-+	assert.NotSame(t, staleTimer, timer, "The resume timer should not be the stale one")
-+}
-+
- func TestPauseDeployment(t *testing.T) {
- 	tests := []struct {
- 		name               string
+-func SetupPrometheusEndpoint() Collectors {
++// SetupPrometheusEndpointWithMux configures metrics collectors and registers the /metrics handler
++// on the provided ServeMux instead of the global DefaultServeMux.
++func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
+ 	collectors := NewCollectors()
+ 
+ 	prometheus.MustRegister(collectors.Reloaded)
+@@ -390,7 +392,7 @@ func SetupPrometheusEndpoint() Collectors {
+ 		prometheus.MustRegister(collectors.ReloadedByNamespace)
+ 	}
+ 
+-	http.Handle("/metrics", promhttp.Handler())
++	mux.Handle("/metrics", promhttp.Handler())
+ 
+ 	return collectors
+ }
 ```
 
 ---
 
-### Incident Patch 3: `02c536f3` (2026-09-25)
-**Commit Message**: chore: enforce PR title prefixes for the master feature freeze
+### Incident Patch 2: `15f37cbe` (2026-10-22)
+**Commit Message**: refactor(metrics): remove unused wrapper and simplify ServeMux handler registration
 
-Add pr-title.yaml: master accepts only fix and chore titles, v2 accepts all conventional types. Failing master PRs get a one time comment pointing to the README.
-Pin the master chart version gate to 2.x so it keeps working once v2 publishes a stable 3.x chart.
-Skip the enterprise dispatch for chart-v releases.
-Enable Renovate semantic commits so its PRs pass the title check.
-
-**File**: `.github/workflows/pr-title.yaml` (added, +52/-0)
+**File**: `internal/pkg/metrics/prometheus.go` (modified, +1/-9)
 ```diff
-@@ -0,0 +1,52 @@
-+name: PR Title
-+
-+# pull_request_target so the comment step also works on fork PRs.
-+# Safe because nothing from the PR is checked out, the title only reaches the shell via env.
-+on:
-+  pull_request_target:
-+    types: [opened, edited, synchronize, reopened]
-+    branches:
-+      - master
-+      - 'v**'
-+
-+permissions:
-+  pull-requests: write
-+
-+jobs:
-+  semantic-prefix:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - name: Check semantic prefix
-+        env:
-+          TITLE: ${{ github.event.pull_request.title }}
-+          BASE: ${{ github.base_ref }}
-+        run: |
-+          # master is in feature freeze, only fixes and chores land there.
-+          if [ "$BASE" = master ]; then
-+            pattern='^(fix|chore)(\([a-z0-9./_-]+\))?: .+'
-+          else
-+            pattern='^(feat|fix|chore|docs|refactor|perf|test|ci|build|revert)(\([a-z0-9./_-]+\))?!?: .+'
-+          fi
-+          if ! printf '%s' "$TITLE" | grep -qE "$pattern"; then
-+            echo "::error::PR title \"$TITLE\" must match $pattern for base branch $BASE"
-+            exit 1
-+          fi
-+
-+      - name: Explain the master freeze
-+        if: failure() && github.base_ref == 'master'
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          PR: ${{ github.event.pull_request.number }}
-+          BODY: |
-+            <!-- pr-title-freeze -->
-+            👋 Thanks for the PR! `master` is in feature freeze and only accepts `fix:` and `chore:` PRs.
-+
-+            - Bug fix or maintenance: rename the title to start with `fix:` or `chore:` (e.g. `fix(chart): ...`).
-+            - New feature: please retarget this PR to the `v2` branch, which is where new development happens.
-+
-+            See [Branches and PR titles](https://github.com/stakater/Reloader/blob/master/README.md#branches-and-pr-titles) for details.
-+        run: |
-+          # Marker keeps it to one comment per PR, however many times the title is edited.
-+          if ! gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate --jq '.[].body' | grep -q 'pr-title-freeze'; then
-+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "$BODY"
-+          fi
+@@ -367,10 +367,6 @@ func NewCollectors() Collectors {
+ 	}
+ }
+ 
+-func SetupPrometheusEndpoint() Collectors {
+-	return SetupPrometheusEndpointWithMux(http.DefaultServeMux)
+-}
+-
+ // SetupPrometheusEndpointWithMux configures metrics collectors and registers the /metrics handler
+ // on the provided ServeMux instead of the global DefaultServeMux.
+ func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
+@@ -396,11 +392,7 @@ func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
+ 		prometheus.MustRegister(collectors.ReloadedByNamespace)
+ 	}
+ 
+-	if mux != nil {
+-		mux.Handle("/metrics", promhttp.Handler())
+-	} else {
+-		http.Handle("/metrics", promhttp.Handler())
+-	}
++	mux.Handle("/metrics", promhttp.Handler())
+ 
+ 	return collectors
+ }
 ```
 
-**File**: `.github/workflows/pull_request-helm.yaml` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ jobs:
-     - name: Get version for chart from helm repo
-       id: chart_eval
-       run: |
--        current_chart_version=$(helm search repo stakater/reloader | tail -n 1 | awk '{print $2}')
-+        current_chart_version=$(helm search repo stakater/reloader --version '^2' | tail -n 1 | awk '{print $2}')
-         echo "CURRENT_CHART_VERSION=$(echo ${current_chart_version})" >> $GITHUB_OUTPUT
- 
-     - name: Get Updated Chart version from Chart.yaml
-```
+---
 
-**File**: `.github/workflows/push-helm-chart.yaml` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ jobs:
-       - name: Get version for chart from helm repo
-         id: chart_eval
-         run: |
--          current_chart_version=$(helm search repo stakater/reloader | tail -n 1 | awk '{print $2}')
-+          current_chart_version=$(helm search repo stakater/reloader --version '^2' | tail -n 1 | awk '{print $2}')
-           echo "CURRENT_CHART_VERSION=$(echo ${current_chart_version})" >> $GITHUB_OUTPUT
- 
-       - name: Get Updated Chart version from Chart.yaml
-```
+### Incident Patch 3: `6304c6d3` (2026-10-21)
+**Commit Message**: fix: isolate metrics port from pprof and expvar handlers (#1251)
 
-**File**: `.github/workflows/reloader-enterprise-published.yml` (modified, +3/-0)
+**File**: `internal/pkg/cmd/reloader.go` (modified, +17/-5)
 ```diff
-@@ -9,6 +9,9 @@ permissions: {}
+@@ -6,7 +6,7 @@ import (
+ 	"fmt"
+ 	"math"
+ 	"net/http"
+-	_ "net/http/pprof"
++	"net/http/pprof"
+ 	"os"
+ 	"strings"
+ 	"time"
+@@ -231,7 +231,8 @@ func startReloader(cmd *cobra.Command, args []string) {
+ 		logrus.Warnf("webhook-url is set, will only send webhook, no resources will be reloaded")
+ 	}
  
- jobs:
-   dispatch:
-+    # Skip chart releases. release-helm-chart.yaml publishes those as GitHub
-+    # releases too, and a chart tag carries no operator source to build.
-+    if: ${{ !startsWith(github.event.release.tag_name, 'chart-v') }}
-     runs-on: ubuntu-latest
-     steps:
-       - name: Trigger target repository workflow
-```
-
-**File**: `CLAUDE.md` (modified, +2/-0)
-```diff
-@@ -215,6 +215,8 @@ The `reloader.stakater.com/search` annotation on a workload pairs with `reloader
+-	collectors := metrics.SetupPrometheusEndpoint()
++	mainMux := http.NewServeMux()
++	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
  
- **Helm chart**: `deployments/kubernetes/chart/reloader/` — install via Helm or `kubectl apply -f deployments/kubernetes/reloader.yaml`.
+ 	var controllers []*controller.Controller
+ 	for _, currentNamespace := range watchNamespaces {
+@@ -278,13 +279,24 @@ func startReloader(cmd *cobra.Command, args []string) {
+ 		go startPProfServer()
+ 	}
  
-+**Branch policy**: `master` is in feature freeze, `pr-title.yaml` only lets `fix:` and `chore:` PR titles through. New features go to `v2`. The master chart stays on 2.x, so its version gate compares against `helm search repo stakater/reloader --version '^2'`, not the newest chart (v2 publishes 3.x to the same repo).
+-	leadership.SetupLivenessEndpoint()
+-	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, nil))
++	leadership.SetupLivenessEndpointWithMux(mainMux)
++	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
++}
 +
- ---
++func newPProfServeMux() *http.ServeMux {
++	mux := http.NewServeMux()
++	mux.HandleFunc("/debug/pprof/", pprof.Index)
++	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
++	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
++	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
++	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
++	return mux
+ }
  
- ## Coding Conventions
+ func startPProfServer() {
+ 	logrus.Infof("Starting pprof server on %s", options.PProfAddr)
+-	if err := http.ListenAndServe(options.PProfAddr, nil); err != nil {
++	mux := newPProfServeMux()
++	if err := http.ListenAndServe(options.PProfAddr, mux); err != nil {
+ 		logrus.Errorf("Failed to start pprof server: %v", err)
+ 	}
+ }
 ```
 
-**File**: `README.md` (modified, +7/-0)
+**File**: `internal/pkg/cmd/server_mux_test.go` (added, +88/-0)
 ```diff
-@@ -493,6 +493,13 @@ Join and talk to us on Slack for discussing Reloader:
- 
- ## Contributing
- 
-+### Branches and PR titles
+@@ -0,0 +1,88 @@
++package cmd
 +
-+- `master` is in feature freeze and only accepts `fix:` and `chore:` PRs.
-+- `v2` is the development branch, new features go there.
++import (
++	"net/http"
++	"net/http/httptest"
++	"testing"
 +
-+PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/), e.g. `fix(chart): correct probe port`. Allowed prefixes on `v2`: `feat`, `fix`, `chore`, `docs`, `refactor`, `perf`, `test`, `ci`, `build`, `revert`.
++	"github.com/stretchr/testify/assert"
 +
- ### Bug Reports & Feature Requests
- 
- Please use the [issue tracker](https://github.com/stakater/Reloader/issues) to report any bugs or file feature requests.
++	"github.com/stakater/Reloader/internal/pkg/leadership"
++	"github.com/stakater/Reloader/internal/pkg/metrics"
++)
++
++func TestMainServerMuxEndpoints(t *testing.T) {
++	mux := http.NewServeMux()
++	metrics.SetupPrometheusEndpointWithMux(mux)
++	leadership.SetupLivenessEndpointWithMux(mux)
++
++	// Liveness endpoint should be served
++	liveReq := httptest.NewRequest(http.MethodGet, "/live", nil)
++	liveRec := httptest.NewRecorder()
++	mux.ServeHTTP(liveRec, liveReq)
++	assert.Equal(t, http.StatusOK, liveRec.Code)
++	assert.Equal(t, "alive", liveRec.Body.String())
++
++	// Metrics endpoint should be served
++	metricsReq := httptest.NewRequest(http.MethodGet, "/metrics", nil)
++	metricsRec := httptest.NewRecorder()
++	mux.ServeHTTP(metricsRec, metricsReq)
++	assert.Equal(t, http.StatusOK, metricsRec.Code)
++
++	// pprof and expvar endpoints should NOT be served on the main metrics/liveness mux
++	disallowedEndpoints := []string{
++		"/debug/pprof/",
++		"/debug/pprof/cmdline",
++		"/debug/pprof/profile",
++		"/debug/pprof/symbol",
++		"/debug/pprof/trace",
++		"/debug/pprof/goroutine",
++		"/debug/pprof/heap",
++		"/debug/vars",
++	}
++
++	for _, endpoint := range disallowedEndpoints {
++		t.Run(endpoint, func(t *testing.T) {
++			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
++			rec := httptest.NewRecorder()
++			mux.ServeHTTP(rec, req)
++			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on main mux", endpoint)
++		})
++	}
++}
++
++func TestPProfServerMuxEndpoints(t *testing.T) {
++	mux := newPProfServeMux()
++
++	// pprof endpoints should be served on pprof mux
++	allowedEndpoints := []string{
++		"/debug/pprof/",
++		"/debug/pprof/cmdline",
++		"/debug/pprof/goroutine",
++		"/debug/pprof/heap",
++	}
++
++	for _, endpoint := range allowedEndpoints {
++		t.Run(endpoint, func(t *testing.T) {
++			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
++			rec := httptest.NewRecorder()
++			mux.ServeHTTP(rec, req)
++			assert.Equal(t, http.StatusOK, rec.Code, "pprof endpoint %s should be served on pprof mux", endpoint)
++		})
++	}
++
++	// Main metrics and liveness endpoints should NOT be served on the pprof mux
++	disallowedEndpoints := []string{
++		"/metrics",
++		"/live",
++	}
++
++	for _, endpoint := range disallowedEndpoints {
++		t.Run(endpoint, func(t *testing.T) {
++			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
++			rec := httptest.NewRecorder()
++			mux.ServeHTTP(rec, req)
++			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on pprof mux", endpoint)
++		})
++	}
++}
 ```
 
-**File**: `renovate.json` (modified, +1/-0)
+**File**: `internal/pkg/leadership/leadership.go` (modified, +10/-1)
 ```diff
-@@ -7,6 +7,7 @@
-     "dependencies"
-   ],
-   "baseBranches": ["master", "v2"],
-+  "semanticCommits": "enabled",
-   "rebaseWhen": "never",
-   "vulnerabilityAlerts": {
-     "enabled": true,
+@@ -112,7 +112,16 @@ func stopControllers(stopChannels []chan struct{}) {
+ // enabled and a replica stops leading the liveness probe will fail and the
+ // kubelet will restart the container.
+ func SetupLivenessEndpoint() {
+-	http.HandleFunc("/live", healthz)
++	SetupLivenessEndpointWithMux(http.DefaultServeMux)
++}
++
++// SetupLivenessEndpointWithMux sets up the liveness probe endpoint on the provided ServeMux.
++func SetupLivenessEndpointWithMux(mux *http.ServeMux) {
++	if mux != nil {
++		mux.HandleFunc("/live", healthz)
++	} else {
++		http.HandleFunc("/live", healthz)
++	}
+ }
+ 
+ func healthz(w http.ResponseWriter, req *http.Request) {
+```
+
+**File**: `internal/pkg/metrics/prometheus.go` (modified, +11/-1)
+```diff
+@@ -368,6 +368,12 @@ func NewCollectors() Collectors {
+ }
+ 
+ func SetupPrometheusEndpoint() Collectors {
++	return SetupPrometheusEndpointWithMux(http.DefaultServeMux)
++}
++
++// SetupPrometheusEndpointWithMux configures metrics collectors and registers the /metrics handler
++// on the provided ServeMux instead of the global DefaultServeMux.
++func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
+ 	collectors := NewCollectors()
+ 
+ 	prometheus.MustRegister(collectors.Reloaded)
+@@ -390,7 +396,11 @@ func SetupPrometheusEndpoint() Collectors {
+ 		prometheus.MustRegister(collectors.ReloadedByNamespace)
+ 	}
+ 
+-	http.Handle("/metrics", promhttp.Handler())
++	if mux != nil {
++		mux.Handle("/metrics", promhttp.Handler())
++	} else {
++		http.Handle("/metrics", promhttp.Handler())
++	}
+ 
+ 	return collectors
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1237** (2026-09-30): chore: add v2 announcement and master feature freeze notice to README (@Felix-Stakater)
-- **PR #1236** (2026-09-30): chore: add v2 announcement and master feature freeze notice to README (@Felix-Stakater)
-- **PR #1235** (2026-09-29): feat(chart): render image fields with tpl (@jm-stakater)
-- **PR #1234** (2026-09-30): chore(chart): render image fields with tpl (@jm-stakater)
-- **PR #1233** (2026-09-29): ci: enforce semantic PR title prefixes (@msafwankarim)
-- **PR #1232** (2026-09-29): chore: enforce PR title prefixes for the master feature freeze (@msafwankarim)
+- **PR #1252** (2026-10-22): fix: isolate metrics port from pprof and expvar handlers (#1251) (@Hrushikesh-ramilla)
+- **PR #1250** (2026-10-21): chore(chart): bump enterprise console and gateway images (@msafwankarim)
+- **PR #1249** (2026-10-21): fix: honour resources-to-ignore in controller initialization check (@NickAnge)
+- **PR #1247** (2026-10-20): docs(chart): mark enterprise operator image as optional (@msafwankarim)
+- **PR #1246** (2026-10-21): fix: unwrap informer tombstones in the delete handler (@RaphaelFakhri)
+- **PR #1243** (2026-10-21): fix: guard the pause resume timers against concurrent access (@RaphaelFakhri)
 
 ---
 
@@ -2035,41 +1936,48 @@ Enable Renovate semantic commits so its PRs pass the title check.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Address review: fix no-op chart assertions, document enableHA gate, serialize du
+## X. Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port
 
 **RULE**:
-When implementing operations in `deployments/kubernetes/chart/reloader/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/pkg/cmd/reloader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d1bb7f5`: Address review: fix no-op chart assertions, document enableHA gate, serialize durations as strings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7670fd4a`: Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/kubernetes/chart/reloader/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pkg/cmd/reloader.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-#### 🗳️ `enableHA` Behavior
-**When true:**
-✅ `--enable-ha=true` and the `POD_NAME`/`POD_NAMESPACE` env vars are rendered
-✅ The `coordination.k8s.io` Lease RBAC is rendered when `reloader.rbac.enabled` is `true`
-✅ The default pod anti-affinity is rendered unless custom affinity is configured
-✅ `reloader.deployment.replicas` is honored, and any `reloader.leaderElection.*` timings are passed to the binary
+	"net/http/pprof"
+	mainMux := http.NewServeMux()
+	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
+	leadership.SetupLivenessEndpointWithMux(mainMux)
+	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
+}
 
-**When false:**
-❌ `reloader.deployment.replicas` is clamped to `1`, whatever value is set
-❌ `reloader.leaderElection.*` timings are ignored
-
-> ⚠️ **Behavior change:** earlier chart versions emitted `--enable-ha=true` whenever `reloader.deployment.replicas > 1`, even with `reloader.enableHA: false`. Every other HA component stayed gated on `enableHA` alone, so the pod rendered without `POD_NAME` and the binary exited with `POD_NAME not set, cannot run in HA mode without POD_NAME set`, leaving it in `CrashLoopBackOff`. The flag is now gated on `enableHA` alone. Raising `replicas` by itself therefore leaves HA off, consistent with the existing replica clamp. Setting `reloader.enableHA: true` is unaffected.
-
-- `enableHA`
+func newPProfServeMux() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/debug/pprof/", pprof.Index)
+	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
+	return mux
+	mux := newPProfServeMux()
+	if err := http.ListenAndServe(options.PProfAddr, mux); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	_ "net/http/pprof"
+	collectors := metrics.SetupPrometheusEndpoint()
+	leadership.SetupLivenessEndpoint()
+	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, nil))
+	if err := http.ListenAndServe(options.PProfAddr, nil); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d1bb7f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7670fd4a` are properly handled with clean fallback behavior.

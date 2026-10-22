@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
-> **Source Version**: `30bbe613`  
+> **Source Version**: `e83e08a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:58:13.949Z  
+> **Timestamp**: 2026-10-22T15:56:51.244Z  
 > **Learning ID**: `learn-github-biomejs-biome`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:58:13.941Z  
+> **Harvest Timestamp**: 2026-10-22T15:56:50.386Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -427,8 +427,12 @@ use biome_css_syntax::keywords::{
     RESOURCE_STATE_PSEUDO_CLASSES, SHADOW_TREE_PSEUDO_ELEMENTS, SHORTHAND_PROPERTIES, SVG_TAGS,
     VENDOR_PREFIXES, VENDOR_SPECIFIC_PSEUDO_ELEMENTS,
 };
-
+use biome_css_syntax::{
+    CssDeclarationWithSemicolon, CssSyntaxKind, CssSyntaxToken, ScssNestingDeclaration,
+};
+use biome_rowan::{AstNode, declare_node_union};
 use biome_string_case::{StrLikeExtension, StrOnlyExtension};
+use std::iter::successors;
 
 pub fn is_css_variable(value: &str) -> bool {
     value.to_ascii_lowercase_cow().starts_with("var(")
@@ -568,6 +572,80 @@ pub fn is_known_type_selector(prop: &str) -> bool {
 /// See https://github.com/css-modules/css-modules for more details.
 pub fn is_css_module_pseudo_class(prop: &str) -> bool {
     CSS_MODULE_PSEUDO_CLASSES.binary_search(&prop).is_ok()
+}
+
+declare_node_union! {
+    /// A statement that sets a property: either a declaration, such as
+    /// `transition: all 1s;`, or an SCSS group of nested properties, such as
+    /// `transition: { duration: 1s; }`.
+    ///
+    /// Declarations in a condition, such as `@supports (transition: all 1s)`,
+    /// aren't statements. They only test for browser support.
+    pub AnyPropertyStatement = CssDeclarationWithSemicolon | ScssNestingDeclaration
+}
+
+impl AnyPropertyStatement {
+    /// Returns the token of the property name, or `None` if the name isn't a
+    /// plain identifier.
+    pub fn name(&self) -> Option<CssSyntaxToken> {
+        let name = match self {
+            Self::CssDeclarationWithSemicolon(statement) => statement
+                .declaration()
+                .ok()?
+                .property()
+                .ok()?
+                .as_css_generic_property()?
+                .name(),
+            Self::ScssNestingDeclaration(group) => group.name(),
+        };
+        name.ok()?.declaration().ok()
+    }
+
+    /// Returns the SCSS group of nested properties whose block contains this
+    /// statement.
+    ///
+    /// Sass emits the properties in an `@if`, `@else`, `@each`, `@for`,
+    /// `@while`, or `@include` block as part of the group around it, so those
+    /// blocks are looked through. Returns `None` if the statement isn't in a
+    /// group, or if a nested rule or any other at-rule, such as `@media`, is
+    /// between them.
+    pub fn group(&self) -> Option<Self> {
+        self.syntax()
+            .ancestors()
+            .skip(1)
+            .find(|ancestor| {
+                !matches!(
+                    ancestor.kind(),
+                    CssSyntaxKind::CSS_DECLARATION_OR_RULE_LIST
+                        | CssSyntaxKind::CSS_DECLARATION_OR_RULE_BLOCK
+                        | CssSyntaxKind::CSS_AT_RULE
+                        | CssSyntaxKind::SCSS_IF_AT_RULE
+                        | CssSyntaxKind::SCSS_ELSE_CLAUSE
+                        | CssSyntaxKind::SCSS_EACH_AT_RULE
+                        | CssSyntaxKind::SCSS_FOR_AT_RULE
+                        | CssSyntaxKind::SCSS_WHILE_AT_RULE
+                        | CssSyntaxKind::SCSS_INCLUDE_AT_RULE
+                )
+            })
+            .and_then(ScssNestingDeclaration::cast)
+            .map(Self::from)
+    }
+}
+
+/// Returns the name Sass emits for the property `name` nested in `group`.
+///
+/// Sass joins the name of a nested property to the names of the groups
+/// around it, so `left-radius` in `border: { top: { left-radius: 1px; } }` sets
+/// `border-top-left-radius`. Returns `None` if the name of a group isn't a
+/// plain identifier, such as an interpolated `#{$side}`.
+pub fn nested_property_name(name: &str, group: AnyPropertyStatement) -> Option<String> {
+    let mut full_name = String::from(name);
+    for group in successors(Some(group), AnyPropertyStatement::group) {
+        let group_name = group.name()?;
+        full_name.insert(0, '-');
+        full_name.insert_str(0, group_name.text_trimmed());
+    }
+    Some(full_name)
 }
 
 ```
@@ -792,17 +870,7 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12479** (2026-10-20): **feat(rowan): add skip_subtree() to preorder_of_kinds() iterator**
-  *Symptoms*: ## Summary this ports the `skip_subtree()` thats available on `preorder()` to the iterator that `preorder_of_kinds()` returns  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
-  **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: 69e9ebd3d4366b45a2a9b3c2d765390c531c749c  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/dyc3/add-skip-subtree-support-to-preordermatching-thr_ayuvmbyr9n?filename=.changeset/thirty-pianos-stand.md&value=---%0A%0A---%0A%0Afeat(rowan)%3A%20add%20skip_subtree()%20to%20preorder_of_kinds()%20iterator%0A)  
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12479?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration</strong><
-
-- **Issue #12474** (2026-10-20): **fix(css_formatter): keep wrapped selector indent below a rule comment**
-  *Symptoms*: ## Summary Fix #12471  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
-  **Post-Mortem & Fix Analysis**:
-  > ### 🦋 Changeset detected  Latest commit: e349049cca7730245fd2ec61c014c88c74c6d92a  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 16 packages</summary>    | Name                          | Type  | | ----------------------------- | ----- | | @biomejs/biome                | Patch | | @biomejs/cli-android-arm64    | Patch | | @biomejs/cli-android-x64      | Patch | | @biomejs/cli-darwin-arm64     | Patch | | @biomejs/cli-darwin-x64       | Patch | | @biomejs/cli-linux-arm64-musl | Patch | | @biomejs/cli-linux-arm64      | Patch | | @biomejs/cli-linux-x64-musl   | Patch | | @biomejs/cli-linux-x64        | Patch | | @biomejs/cli-win32-arm64      | Patch | | @biomejs/cli-win32-x64        | Patch | | @biomejs/runtime              | Patch | | @biomejs/wasm-bundler         | Patch | | @biomejs/wasm-nodejs          | Patch | | @biomejs/wasm-web             | Patch | | @biomejs/backend-jsonrpc      | Patch |  </deta
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/12474?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration</strong><
+- *No recent closed bug issues fetched.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -819,298 +887,943 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e55a750b` (2026-10-20)
-**Commit Message**: fix(format/css): keep wrapped selector indent below a rule comment (#12474)
+### Incident Patch 1: `7d3e8a1e` (2026-10-22)
+**Commit Message**: fix(format/js): keep parens around an instantiation expression before `!` and heritage type arguments (#12540)
 
-**File**: `.changeset/fix-css-commented-selector-indent.md` (added, +13/-0)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/fix-instantiation-expression-non-null.md` (added, +12/-0)
 ```diff
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,12 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed [#12471](https://github.com/biomejs/biome/issues/12471): a comment above a CSS rule no longer removes the indentation of the rule's wrapped selector.
++Fixed the formatter removing the parentheses around an instantiation expression before a non-null assertion or type arguments of a class heritage, which produced code that doesn't parse.
 +
-+```css
-+/* comment */
-+.sidebar-navigation
-+  .sidebar-navigation-item-with-a-long-descriptive-class-name {
-+  color: red;
-+}
++```diff
++- const a = make<T>!;
+++ const a = (make<T>)!;
++- class D extends B<T><T> {}
+++ class D extends (B<T>)<T> {}
 +```
 ```
 
-**File**: `crates/biome_css_formatter/src/css/lists/selector_list.rs` (modified, +3/-3)
+**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_non_null.ts` (added, +11/-0)
 ```diff
-@@ -1,4 +1,4 @@
--use crate::css::selectors::complex_selector::is_left_selector_preceded_by_comment;
-+use crate::css::selectors::complex_selector::has_leading_selector_comment;
- use crate::prelude::*;
- use biome_css_syntax::CssSelectorList;
- 
-@@ -22,14 +22,14 @@ impl FormatRule<CssSelectorList> for FormatCssSelectorList {
-         // parent node can wrap this list in a group and set `should_expand(true)`
-         // to have the separator expand into full line breaks instead of trying to
-         // fit on a single line.
-+        let comments = f.comments().clone();
-         let mut joiner = f.join_with(&separator);
- 
-         for formatted in node.format_separated(",") {
-             let selector = formatted.node()?;
-             let complex_selector = selector.as_css_complex_selector();
-             let is_left_preceded_by_comment = complex_selector
--                .and_then(|selector| selector.left().ok())
--                .is_some_and(|left| is_left_selector_preceded_by_comment(&left));
-+                .is_some_and(|selector| has_leading_selector_comment(selector, &comments));
- 
-             // A leading comment already establishes the list indentation. Adding
-             // another indent would move the selector away from its comment.
+@@ -0,0 +1,11 @@
++// Without the parentheses, `make<T>!` and `extends B<T><T>` don't parse.
++const a = (make<T>)!;
++(make<T>)!.b;
++(make<T>)!();
++y = (make<T>)!.c<U>;
++class D extends (B<T>)<T> {}
++(class E extends (B<T>)<T> {});
++
++// These don't need them.
++class C extends (B<T>) {}
++x = make<T>;
 ```
 
-**File**: `crates/biome_css_formatter/src/css/selectors/complex_selector.rs` (modified, +39/-9)
+**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_non_null.ts.snap` (added, +39/-0)
 ```diff
-@@ -2,8 +2,8 @@ use crate::comments::{CssComments, is_selector_boundary_suppressed};
- use crate::prelude::*;
- use crate::utils::comment_trivia::{FormatCommentGap, has_line_comment};
- use biome_css_syntax::{
--    AnyCssSelector, CssComplexSelector, CssComplexSelectorFields, CssLanguage, CssSyntaxKind,
--    CssSyntaxToken,
-+    AnyCssSelector, CssComplexSelector, CssComplexSelectorFields, CssLanguage, CssRelativeSelector,
-+    CssSyntaxKind, CssSyntaxToken,
- };
- use biome_formatter::comments::SourceComment;
- use biome_formatter::trivia::{format_dangling_comment, should_nestle_adjacent_doc_comments};
-@@ -71,8 +71,8 @@ impl FormatNodeRule<CssComplexSelector> for FormatCssComplexSelector {
-         let combinator = combinator?;
-         let right = right?;
-         let owns_chain_layout = self.layout == SelectorChainLayout::Auto;
--        let is_left_preceded_by_comment = is_left_selector_preceded_by_comment(&left);
-         let comments = f.comments().clone();
-+        let is_left_preceded_by_comment = has_leading_selector_comment(node, &comments);
-         let layout = self.layout.resolve(node, &comments)?;
-         let boundary = SelectorBoundary::new(
-             &combinator,
-@@ -281,12 +281,42 @@ fn format_selector(
-     })
- }
- 
--/// Returns whether the left compound selector starts with an attached comment.
--pub(crate) fn is_left_selector_preceded_by_comment(selector: &AnyCssSelector) -> bool {
--    selector
--        .as_css_compound_selector()
--        .and_then(|compound_selector| compound_selector.syntax().first_token())
--        .is_some_and(|token| token.has_leading_comments())
-+/// Returns whether this complex selector formats a comment before its left
-+/// compound selector.
-+///
-+/// A comment before the first selector of a rule is attached to the rule and
-+/// prints outside the selector, so it doesn't count here:
-+///
-+/// ```css
-+/// /* attached to the rule */
-+/// .a .b {}
-+///
-+/// .a,
-+/// /* formatted by `.c .d` */
-+/// .c .d {}
-+/// ```
-+pub(crate) fn has_leading_selector_comment(
-+    selector: &CssComplexSelector,
-+    comments: &CssComments,
-+) -> bool {
-+    // Leading comments are attached to the outermost node that follows them.
-+    // Inside `:has(/* c */ .a .b)` that node is the enclosing relative
-+    // selector, which prints the comment within its list entry as well.
-+    let is_comment_formatted_with_selector = comments.has_leading_comments(selector.syntax())
-+        || selector
-+            .syntax()
-+            .parent()
-+            .filter(|parent| CssRelativeSelector::can_cast(parent.kind()))
-+            .is_some_and(|parent| comments.has_leading_comments(&parent));
-+
-+    is_comment_formatted_with_selector
-+        && selector
-+            .left()
-+            .ok()
-+            .as_ref()
-+            .and_then(AnyCssSelector::as_css_compound_selector)
-+            .and_then(|left| left.syntax().first_token())
-+            .is_some_and(|token| token.has_leading_comments())
- }
- 
- /// Returns whether the following list separator owns a line comment.
-```
-
-**File**: `crates/biome_css_formatter/tests/specs/css/selectors/leading-comment-wrapped-selector.css` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+/* A comment directly above the rule. */
-+#CybotCookiebotDialog
-+  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+  color: red;
-+}
-+
-+#CybotCookiebotDialog
-+  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection:hover {
-+  color: blue;
-+}
-+
-+/* A comment directly above the rule. */
-+.CybotCookiebotDialog .CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+  color: red;
-+}
-+
-+/* A comment directly above the rule. */
-+div #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection > .fooooooooooo {
-+  color: red;
-+}
-+
-+@media (min-width: 100px) {
-+  /* A comment directly above the rule. */
-+  #CybotCookiebotDialog #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+    color: red;
-+  }
-+}
-```
-
-**File**: `crates/biome_css_formatter/tests/specs/css/selectors/leading-comment-wrapped-selector.css.snap` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,39 @@
 +---
 +source: crates/biome_formatter_test/src/snapshot_builder.rs
-+info: css/selectors/leading-comment-wrapped-selector.css
++info: ts/expression/instantiation_expression_non_null.ts
 +---
 +
 +# Input
 +
-+```css
-+/* A comment directly above the rule. */
-+#CybotCookiebotDialog
-+  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+  color: red;
-+}
++```ts
++// Without the parentheses, `make<T>!` and `extends B<T><T>` don't parse.
++const a = (make<T>)!;
++(make<T>)!.b;
++(make<T>)!();
++y = (make<T>)!.c<U>;
++class D extends (B<T>)<T> {}
++(class E extends (B<T>)<T> {});
 +
-+#CybotCookiebotDialog
-+  #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection:hover {
-+  color: blue;
-+}
-+
-+/* A comment directly above the rule. */
-+.CybotCookiebotDialog .CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+  color: red;
-+}
-+
-+/* A comment directly above the rule. */
-+div #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection > .fooooooooooo {
-+  color: red;
-+}
-+
-+@media (min-width: 100px) {
-+  /* A comment directly above the rule. */
-+  #CybotCookiebotDialog #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+    color: red;
-+  }
-+}
++// These don't need them.
++class C extends (B<T>) {}
++x = make<T>;
 +
 +```
 +
 +
 +# Formatted
 +
++```ts
++// Without the parentheses, `make<T>!` and `extends B<T><T>` don't parse.
++const a = (make<T>)!;
++(make<T>)!.b;
++(make<T>)!();
++y = (make<T>)!.c<U>;
++class D extends (B<T>)<T> {}
++(class E extends (B<T>)<T> {});
++
++// These don't need them.
++class C extends B<T> {}
++x = make<T>;
++
++```
+```
+
+**File**: `crates/biome_js_syntax/src/parentheses/expression.rs` (modified, +15/-5)
+```diff
+@@ -9,9 +9,9 @@ use crate::{
+     JsBigintLiteralExpression, JsBinaryExpression, JsBinaryOperator, JsBooleanLiteralExpression,
+     JsCallExpression, JsClassExpression, JsComputedMemberAssignment, JsComputedMemberExpression,
+     JsComputedMemberName, JsConditionalExpression, JsExpressionStatement, JsExpressionTemplateRoot,
+-    JsForStatement, JsFunctionExpression, JsIdentifierExpression, JsImportCallExpression,
+-    JsImportMetaExpression, JsInExpression, JsInstanceofExpression, JsLogicalExpression,
+-    JsLogicalOperator, JsMetavariable, JsNewExpression, JsNewTargetExpression,
++    JsExtendsClause, JsForStatement, JsFunctionExpression, JsIdentifierExpression,
++    JsImportCallExpression, JsImportMetaExpression, JsInExpression, JsInstanceofExpression,
++    JsLogicalExpression, JsLogicalOperator, JsMetavariable, JsNewExpression, JsNewTargetExpression,
+     JsNullLiteralExpression, JsNumberLiteralExpression, JsObjectExpression,
+     JsParenthesizedExpression, JsPostUpdateExpression, JsPreUpdateExpression, JsPreUpdateOperator,
+     JsRegexLiteralExpression, JsSequenceExpression, JsStaticMemberExpression,
+@@ -715,8 +715,18 @@ impl NeedsParentheses for TsAsExpression {
+ impl NeedsParentheses for TsInstantiationExpression {
+     #[inline]
+     fn needs_parentheses(&self) -> bool {
+-        // `(a<T>)<U>`: `a<T><U>` does not parse
+-        if self.parent::<Self>().is_some() {
++        // `(a<T>)<U>` and `(a<T>)!`: `a<T><U>` and `a<T>!` do not parse
++        if self.parent::<Self>().is_some()
++            || self.parent::<TsNonNullAssertionExpression>().is_some()
++        {
++            return true;
++        }
++
++        // `class A extends (B<T>)<U> {}`: `extends B<T><U>` does not parse
++        if self
++            .parent::<JsExtendsClause>()
++            .is_some_and(|clause| clause.type_arguments().is_some())
++        {
+             return true;
+         }
+ 
+```
+
+---
+
+### Incident Patch 2: `95209076` (2026-10-22)
+**Commit Message**: fix(css): sort properties inside keyframe steps (#12415)
+
+**File**: `.changeset/tricky-coins-end.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@biomejs/biome": patch
++---
++
++Fixed [#12412](https://github.com/biomejs/biome/discussions/12412): [`useSortedProperties`](https://biomejs.dev/assist/actions/use-sorted-properties/) now sorts properties inside `@keyframes` animations in CSS and SCSS.
+```
+
+**File**: `crates/biome_css_analyze/src/assist/source/use_sorted_properties.rs` (modified, +71/-15)
+```diff
+@@ -7,13 +7,16 @@ use biome_analyze::{
+     Ast, FixKind, Rule, RuleDiagnostic, context::RuleContext, declare_source_rule,
+ };
+ use biome_console::markup;
+-use biome_css_factory::make::css_declaration_or_rule_list;
++use biome_css_factory::make::{
++    css_declaration_list, css_declaration_or_at_rule_list, css_declaration_or_rule_list,
++};
+ use biome_css_syntax::{
+     AnyCssDeclarationName, AnyCssDeclarationOrRule, AnyCssProperty, AnyCssRule,
+-    CssDeclarationOrRuleBlock, CssDeclarationOrRuleList, CssDeclarationWithSemicolon,
+-    CssSyntaxKind, CssSyntaxToken, TextRange, keywords::VENDOR_PREFIXES,
++    CssDeclarationBlock, CssDeclarationOrAtRuleBlock, CssDeclarationOrRuleBlock,
++    CssDeclarationWithSemicolon, CssKeyframesItem, CssLanguage, CssSyntaxKind, CssSyntaxToken,
++    TextRange, keywords::VENDOR_PREFIXES,
+ };
+-use biome_rowan::{AstNode, BatchMutationExt, TokenText};
++use biome_rowan::{AstNode, BatchMutationExt, TokenText, declare_node_union};
+ use biome_rule_options::use_sorted_properties::UseSortedPropertiesOptions;
+ use biome_string_case::StrOnlyExtension;
+ use std::{
+@@ -29,6 +32,8 @@ declare_source_rule! {
+     /// Custom properties come first, and nested rules or at-rules such as `@media` come after
+     /// declarations.
+     ///
++    /// Properties inside CSS and SCSS keyframe steps use the same order.
++    ///
+     /// The main groups are:
+     ///
+     /// 1. Custom properties.
+@@ -67,6 +72,15 @@ declare_source_rule! {
+     /// }
+     /// ```
+     ///
++    /// ```css,expect_diff
++    /// @keyframes fade {
++    ///   from {
++    ///     opacity: 0;
++    ///     display: block;
++    ///   }
++    /// }
++    /// ```
++    ///
+     /// ### Valid
+     ///
+     /// ```css
+@@ -97,28 +111,49 @@ declare_source_rule! {
+     }
+ }
+ 
++declare_node_union! {
++    pub AnySortableBlockLike = CssDeclarationOrRuleBlock | CssDeclarationBlock | CssDeclarationOrAtRuleBlock
++}
++
+ pub struct UseSortedPropertiesState {
+     /// The containing node
+-    block: CssDeclarationOrRuleBlock,
++    block: AnySortableBlockLike,
+     /// The items to be sorted in their original order
+     original_properties: Vec<AnyCssDeclarationOrRule>,
+     /// The items in their sorted order, or [None] if sorting would be unsafe or if the rule contains unknown items.
+     sorted_properties: Option<RecessOrderProperties>,
+ }
+ 
+ impl Rule for UseSortedProperties {
+-    type Query = Ast<CssDeclarationOrRuleBlock>;
++    type Query = Ast<AnySortableBlockLike>;
+     type State = UseSortedPropertiesState;
+     type Signals = Option<Self::State>;
+     type Options = UseSortedPropertiesOptions;
+ 
+     fn run(ctx: &RuleContext<Self>) -> Option<Self::State> {
+         let node = ctx.query();
+ 
+-        let original_properties = node
+-            .items()
+-            .into_iter()
+-            .collect::<Vec<AnyCssDeclarationOrRule>>();
++        // Declaration and declaration-or-at-rule blocks also occur in descriptor at-rules
++        // such as @font-face; only sort them when they belong to a keyframe step.
++        if !matches!(node, AnySortableBlockLike::CssDeclarationOrRuleBlock(_)) {
++            CssKeyframesItem::cast(node.syntax().parent()?)?;
++        }
++
++        let original_properties = match node {
++            AnySortableBlockLike::CssDeclarationOrRuleBlock(block) => {
++                block.items().into_iter().collect::<Vec<_>>()
++            }
++            AnySortableBlockLike::CssDeclarationBlock(block) => block
++                .declarations()
++                .into_iter()
++                .map(|declaration| AnyCssDeclarationOrRule::cast(declaration.into_syntax()))
++                .collect::<Option<Vec<_>>>()?,
++            AnySortableBlockLike::CssDeclarationOrAtRuleBlock(block) => block
++                .items()
++                .into_iter()
++                .map(|declaration| AnyCssDeclarationOrRule::cast(declaration.into_syntax()))
++                .collect::<Option<Vec<_>>>()?,
++        };
+ 
+         // Template steps can depend on declarations before enclosing controls or content blocks.
+         // Native keyframe lists do not use the declaration-or-rule list alternative.
+@@ -184,7 +219,26 @@ impl Rule for UseSortedProperties {
+         }
+ 
+         let mut mutation = ctx.root().begin();
+-        mutation.replace_node_discard_trivia(state.block.items(), sorted_properties.as_sorted()?);
++        match &state.block {
++            AnySortableBlockLike::CssDeclarationOrRuleBlock(block) => {
++                mutation.replace_node_discard_trivia(
++                    block.items(),
++                    css_declaration_or_rule_list(sorted_properties.sorted_items()?),
++                );
++            }
++            AnySortableBlockLike::CssDeclarationBlock(block) => {
++                mutation.replace_node_discard_trivia(
++                    block.declarations(),
++                    css_declaration_list(sorted_properties.sorted_items()?),
++                );
++            }
++            AnySortableBlockLike::CssDeclarationOrAtRu
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.css` (added, +77/-0)
+```diff
+@@ -0,0 +1,77 @@
++/* should generate diagnostics */
++@keyframes fade {
++  from {
++    opacity: 0;
++    display: block;
++  }
++  50%, 75% {
++    color: red;
++    /* Keep this comment with display. */
++    display: block;
++  }
++  to {
++    color: red;
++    display: block;
++  }
++}
++
++@-webkit-keyframes fade {
++  to {
++    transform: translateX(10px);
++    opacity: 1;
++  }
++}
++
++@media (prefers-reduced-motion: no-preference) {
++  @keyframes slide {
++    to {
++      transform: translateX(10px);
++      opacity: 1;
++    }
++  }
++}
++
++@keyframes unsafe {
++  from {
++    margin-top: 1px;
++    margin: 0;
++  }
++}
++
++@keyframes unchanged {
++  from {
++    display: block;
++    opacity: 0;
++  }
++  50% {
++    color: red;
++    unknown-property: 0;
++    display: block;
++  }
++  to {
++    color: red;
++    color: blue;
++  }
++}
++
++@font-face {
++  font-style: normal;
++  font-family: example;
++}
++
++@keyframes no-semicolon {
++  to {
++    color: red;
++    display: block
++  }
++}
++
++@keyframes duplicates {
++  to {
++    color: red;
++    color: blue;
++    ;
++    display: block;
++    --alpha: 1;
++  }
++}
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.css.snap` (added, +321/-0)
+```diff
+@@ -0,0 +1,321 @@
++---
++source: crates/biome_css_analyze/tests/spec_tests.rs
++expression: keyframes.css
++---
++# Input
 +```css
-+/* A comment directly above the rule. */
-+#CybotCookiebotDialog
-+	#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+	color: red;
++/* should generate diagnostics */
++@keyframes fade {
++  from {
++    opacity: 0;
++    display: block;
++  }
++  50%, 75% {
++    color: red;
++    /* Keep this comment with display. */
++    display: block;
++  }
++  to {
++    color: red;
++    display: block;
++  }
 +}
 +
-+#CybotCookiebotDialog
-+	#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection:hover {
-+	color: blue;
++@-webkit-keyframes fade {
++  to {
++    transform: translateX(10px);
++    opacity: 1;
++  }
 +}
 +
-+/* A comment directly above the rule. */
-+.CybotCookiebotDialog
-+	.CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+	color: red;
++@media (prefers-reduced-motion: no-preference) {
++  @keyframes slide {
++    to {
++      transform: translateX(10px);
++      opacity: 1;
++    }
++  }
 +}
 +
-+/* A comment directly above the rule. */
-+div
-+	#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection
-+	> .fooooooooooo {
-+	color: red;
++@keyframes unsafe {
++  from {
++    margin-top: 1px;
++    margin: 0;
++  }
 +}
 +
-+@media (min-width: 100px) {
-+	/* A comment directly above the rule. */
-+	#CybotCookiebotDialog
-+		#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowallSelection {
-+		color: red;
-+	}
++@keyframes unchanged {
++  from {
++    display: block;
++    opacity: 0;
++  }
++  50% {
++    color: red;
++    unknown-property: 0;
++    display: block;
++  }
++  to {
++    color: red;
++    color: blue;
++  }
 +}
++
++@font-face {
++  font-style: normal;
++  font-family: example;
++}
++
++@keyframes no-semicolon {
++  to {
++    color: red;
++    display: block
++  }
++}
++
++@keyframes duplicates {
++  to {
++    color: red;
++    color: blue;
++    ;
++    display: block;
++    --alpha: 1;
++  }
++}
++
++```
++
++# Diagnostics
++```
++keyframes.css:3:8 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++    1 │ /* should generate diagnostics */
++    2 │ @keyframes fade {
++  > 3 │   from {
++      │        ^
++  > 4 │     opacity: 0;
++  > 5 │     display: block;
++  > 6 │   }
++      │   ^
++    7 │   50%, 75% {
++    8 │     color: red;
++  
++  i Safe fix: Sort these properties
++  
++     2  2 │   @keyframes fade {
++     3  3 │     from {
++     4    │ - ····opacity:·0;
++     5    │ - ····display:·block;
++        4 │ + ····display:·block;
++        5 │ + ····opacity:·0;
++     6  6 │     }
++     7  7 │     50%, 75% {
++  
++
++```
++
++```
++keyframes.css:7:12 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++     5 │     display: block;
++     6 │   }
++   > 7 │   50%, 75% {
++       │            ^
++   > 8 │     color: red;
++   > 9 │     /* Keep this comment with display. */
++  > 10 │     display: block;
++  > 11 │   }
++       │   ^
++    12 │   to {
++    13 │     color: red;
++  
++  i Safe fix: Sort these properties
++  
++     6  6 │     }
++     7  7 │     50%, 75% {
++     8    │ - ····color:·red;
++     9    │ - ····/*·Keep·this·comment·with·display.·*/
++    10    │ - ····display:·block;
++        8 │ + ····/*·Keep·this·comment·with·display.·*/
++        9 │ + ····display:·block;
++       10 │ + ····color:·red;
++    11 11 │     }
++    12 12 │     to {
++  
++
++```
++
++```
++keyframes.css:12:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++    10 │     display: block;
++    11 │   }
++  > 12 │   to {
++       │      ^
++  > 13 │     color: red;
++  > 14 │     display: block;
++  > 15 │   }
++       │   ^
++    16 │ }
++    17 │ 
++  
++  i Safe fix: Sort these properties
++  
++    11 11 │     }
++    12 12 │     to {
++    13    │ - ····color:·red;
++    14    │ - ····display:·block;
++       13 │ + ····display:·block;
++       14 │ + ····color:·red;
++    15 15 │     }
++    16 16 │   }
++  
++
++```
++
++```
++keyframes.css:19:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++    18 │ @-webkit-keyframes fade {
++  > 19 │   to {
++       │      ^
++  > 20 │     transform: translateX(10px);
++  > 21 │     opacity: 1;
++  > 22 │   }
++       │   ^
++    23 │ }
++    24 │ 
++  
++  i Safe fix: Sort these properties
++  
++    18 18 │   @-webkit-keyframes fade {
++    19 19 │     to {
++    20    │ - ····transform:·translateX(10px);
++    21    │ - ····opacity:·1;
++       20 │ + ····opacity:·1;
++       21 │ + ····transform:·translateX(10px);
++    22 22 │     }
++    23 23 │   }
++  
++
++```
++
++```
++keyframes.css:27:8 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++    25 │ @media (prefers-reduced-motion: no-preference) {
++    26 │   @keyframes slide {
++  > 27 │     to {
++       │        ^
++  > 28 │       transform: translateX(10px);
++  > 29 │       opacity: 1;
++  > 30 │     }
++       │     ^
++    31 │   }
++    32 │ }
++  
++  i Safe fix: Sort these properties
++  
++    26 26 │     @keyframes slide {
++    27 27 │       to {
++    28    │ - ······transform:·translateX(10px);
++    29    │ - ······opacity:·1;
++       28 │ + ······opacity:·1;
++       29 │ + ······transform:·translateX(10px);
++    30 30 │       }
++    31 31 │     }
++  
++
++```
++
++```
++keyframes.css:35:8 assist/source/useSortedProperties ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++    34 │ @keyframes unsafe {
++  > 35 │   from {
++       │        ^
++  > 36 │     margin-top: 1px;
++  > 37 │     margin: 0;
++  > 38 │   }
++       │   ^
++    3
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.scss` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++/* should generate diagnostics */
++@keyframes fade {
++  from {
++    opacity: 0;
++    display: block;
++  }
++  to {
++    color: red;
++    display: block;
++  }
++}
++
++@keyframes no-semicolon {
++  to {
++    color: red;
++    display: block // display comment
++  }
++}
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.scss.snap` (added, +116/-0)
+```diff
+@@ -0,0 +1,116 @@
++---
++source: crates/biome_css_analyze/tests/spec_tests.rs
++expression: keyframes.scss
++---
++# Input
++```css
++/* should generate diagnostics */
++@keyframes fade {
++  from {
++    opacity: 0;
++    display: block;
++  }
++  to {
++    color: red;
++    display: block;
++  }
++}
++
++@keyframes no-semicolon {
++  to {
++    color: red;
++    display: block // display comment
++  }
++}
++
++```
++
++# Diagnostics
++```
++keyframes.scss:3:8 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++    1 │ /* should generate diagnostics */
++    2 │ @keyframes fade {
++  > 3 │   from {
++      │        ^
++  > 4 │     opacity: 0;
++  > 5 │     display: block;
++  > 6 │   }
++      │   ^
++    7 │   to {
++    8 │     color: red;
++  
++  i Safe fix: Sort these properties
++  
++     2  2 │   @keyframes fade {
++     3  3 │     from {
++     4    │ - ····opacity:·0;
++     5    │ - ····display:·block;
++        4 │ + ····display:·block;
++        5 │ + ····opacity:·0;
++     6  6 │     }
++     7  7 │     to {
++  
++
++```
++
++```
++keyframes.scss:7:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++     5 │     display: block;
++     6 │   }
++   > 7 │   to {
++       │      ^
++   > 8 │     color: red;
++   > 9 │     display: block;
++  > 10 │   }
++       │   ^
++    11 │ }
++    12 │ 
++  
++  i Safe fix: Sort these properties
++  
++     6  6 │     }
++     7  7 │     to {
++     8    │ - ····color:·red;
++     9    │ - ····display:·block;
++        8 │ + ····display:·block;
++        9 │ + ····color:·red;
++    10 10 │     }
++    11 11 │   }
++  
++
++```
++
++```
++keyframes.scss:14:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i The properties are not sorted.
++  
++    13 │ @keyframes no-semicolon {
++  > 14 │   to {
++       │      ^
++  > 15 │     color: red;
++  > 16 │     display: block // display comment
++  > 17 │   }
++       │   ^
++    18 │ }
++    19 │ 
++  
++  i Safe fix: Sort these properties
++  
++    13 13 │   @keyframes no-semicolon {
++    14 14 │     to {
++    15    │ - ····color:·red;
++    16    │ - ····display:·block·//·display·comment
++       15 │ + ····display:·block;·//·display·comment
++       16 │ + ····color:·red;
++    17 17 │     }
++    18 18 │   }
++  
 +
 +```
 ```
 
 ---
 
-### Incident Patch 2: `bc7a1b9f` (2026-10-20)
-**Commit Message**: chore(deps): replace actions/attest-build-provenance action with actions/attest v4.2.2 (#11981)
+### Incident Patch 3: `438997f3` (2026-10-22)
+**Commit Message**: fix(format/js): keep parens around an instantiation expression before `+`, `-`, `<` and `>` (#12536)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
+**File**: `.changeset/fix-instantiation-expression-before-operator.md` (added, +12/-0)
 ```diff
-@@ -188,7 +188,7 @@ jobs:
-           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
- 
-       - name: Attest build provenance
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: ./dist/biome-*
- 
-@@ -252,7 +252,7 @@ jobs:
-           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
- 
-       - name: Attest build provenance
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: ./dist/biome-*
- 
+@@ -0,0 +1,12 @@
++---
++"@biomejs/biome": patch
++---
++
++Fixed the formatter removing the parentheses around an instantiation expression before `+`, `-`, `<`, `>`, `>=`, `>>` and `>>>`. TypeScript reads `make<T> + y` as `make < T > +y`, and `make<T> >> y` doesn't parse.
++
++```diff
++- x = make<T> + y;
+++ x = (make<T>) + y;
++- x = make<T> >> y;
+++ x = (make<T>) >> y;
++```
 ```
 
-**File**: `.github/workflows/release_cli.yml` (modified, +2/-2)
+**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_comparison.ts` (added, +6/-0)
 ```diff
-@@ -122,7 +122,7 @@ jobs:
-           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
+@@ -0,0 +1,6 @@
++// Without the parentheses, these don't parse.
++x = (make<T>) < y;
++x = (make<T>) > y;
++x = (make<T>) >= y;
++x = (make<T>) >> y;
++x = (make<T>) >>> y;
+```
+
+**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_comparison.ts.snap` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++---
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: ts/expression/instantiation_expression_before_comparison.ts
++---
++
++# Input
++
++```ts
++// Without the parentheses, these don't parse.
++x = (make<T>) < y;
++x = (make<T>) > y;
++x = (make<T>) >= y;
++x = (make<T>) >> y;
++x = (make<T>) >>> y;
++
++```
++
++
++# Formatted
++
++```ts
++// Without the parentheses, these don't parse.
++x = (make<T>) < y;
++x = (make<T>) > y;
++x = (make<T>) >= y;
++x = (make<T>) >> y;
++x = (make<T>) >>> y;
++
++```
+```
+
+**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_operator.ts` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++// `make<T> + y` reads as `make < T > +y`, so these parentheses must be kept.
++x = (make<T>) + y;
++x = (make<T>) - y;
++x = (a + make<T>) - y;
++x = (typeof make<T>) + y;
++x = (<any>(make<T>)) + y;
++
++// Other operators parse fine after the type arguments.
++x = (make<T>) * y;
++x = (make<T>) <= y;
++x = (make<T>) === y;
++x = y + make<T>;
+```
+
+**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_operator.ts.snap` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++---
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: ts/expression/instantiation_expression_before_operator.ts
++---
++
++# Input
++
++```ts
++// `make<T> + y` reads as `make < T > +y`, so these parentheses must be kept.
++x = (make<T>) + y;
++x = (make<T>) - y;
++x = (a + make<T>) - y;
++x = (typeof make<T>) + y;
++x = (<any>(make<T>)) + y;
++
++// Other operators parse fine after the type arguments.
++x = (make<T>) * y;
++x = (make<T>) <= y;
++x = (make<T>) === y;
++x = y + make<T>;
++
++```
++
++
++# Formatted
++
++```ts
++// `make<T> + y` reads as `make < T > +y`, so these parentheses must be kept.
++x = (make<T>) + y;
++x = (make<T>) - y;
++x = a + (make<T>) - y;
++x = typeof (make<T>) + y;
++x = <any>(make<T>) + y;
++
++// Other operators parse fine after the type arguments.
++x = make<T> * y;
++x = make<T> <= y;
++x = make<T> === y;
++x = y + make<T>;
++
++```
+```
+
+**File**: `crates/biome_js_syntax/src/parentheses/expression.rs` (modified, +37/-0)
+```diff
+@@ -720,6 +720,10 @@ impl NeedsParentheses for TsInstantiationExpression {
+             return true;
+         }
  
-       - name: Attest build provenance
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: ./dist/biome-*
++        if is_followed_by_operator_after_type_arguments(self) {
++            return true;
++        }
++
+         self.parent::<AnyJsMemberExpression>()
+             .is_some_and(|member_expr| {
+                 member_expr
+@@ -729,6 +733,39 @@ impl NeedsParentheses for TsInstantiationExpression {
+     }
+ }
  
-@@ -186,7 +186,7 @@ jobs:
-           cp target/${{ matrix.target }}/release/biome ./dist/biome-${{ matrix.code-target }}
- 
-       - name: Attest build provenance
--        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
-         with:
-           subject-path: ./dist/biome-*
- 
++/// TypeScript reads `a<T> + b` as `a < T > +b` and rejects `a<T> >> b`,
++/// also when `a<T>` only ends the left operand (`(c + a<T>) - b`, `(typeof a<T>) + b`).
++fn is_followed_by_operator_after_type_arguments(node: &TsInstantiationExpression) -> bool {
++    let mut expression = AnyJsExpression::from(node.clone());
++    while let Some(parent) = expression.parent::<AnyJsExpression>() {
++        match &parent {
++            AnyJsExpression::JsBinaryExpression(binary) => {
++                if binary.right().is_ok_and(|right| right == expression) {
++                    expression = parent;
++                    continue;
++                }
++
++                return binary.left().is_ok_and(|left| left == expression)
++                    && matches!(
++                        binary.operator(),
++                        Ok(JsBinaryOperator::Plus
++                            | JsBinaryOperator::Minus
++                            | JsBinaryOperator::LessThan
++                            | JsBinaryOperator::GreaterThan
++                            | JsBinaryOperator::GreaterThanOrEqual
++                            | JsBinaryOperator::RightShift
++                            | JsBinaryOperator::UnsignedRightShift)
++                    );
++            }
++            AnyJsExpression::JsUnaryExpression(_)
++            | AnyJsExpression::TsTypeAssertionExpression(_) => expression = parent,
++            _ => return false,
++        }
++    }
++
++    false
++}
++
+ impl NeedsParentheses for TsNonNullAssertionExpression {
+     #[inline]
+     fn needs_parentheses(&self) -> bool {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12479** (2026-10-20): feat(rowan): add skip_subtree() to preorder_of_kinds() iterator (@dyc3)
-- **PR #12474** (2026-10-20): fix(css_formatter): keep wrapped selector indent below a rule comment (@dyc3)
-- **PR #12468** (2026-10-20): perf(search): use optimized Grit query execution (@dyc3)
-- **PR #12467** (2026-10-19): test(analyze): remove the kind-filtered walk tests (@dyc3)
-- **PR #12463** (2026-10-19): ci: enable unstable releases (@ematipico)
-- **PR #12462** (2026-10-19): perf(lint): fix quadratic time in noUnknownFunction, noShorthandPropertyOverrides and useSingleTopLevelHeading (@dyc3)
+- **PR #12540** (2026-10-22): fix(format/js): keep parens around an instantiation expression before `!` and heritage type arguments (@vidigoat)
+- **PR #12539** (2026-10-22): feat(eslint): allow migration of react/self-closing-comp (@jelly)
+- **PR #12536** (2026-10-22): fix(format/js): keep parens around an instantiation expression before `+`, `-`, `<` and `>` (@vidigoat)
+- **PR #12534** (2026-10-22): feat: improve noIdenticalTestTitle diagnostics (@Netail)
+- **PR #12530** (2026-10-22): fix(noUselessElse): don't treat switch without default as breaking early (@dyc3)
+- **PR #12528** (2026-10-22): fix(lint): check SCSS nested properties by their emitted name in noUnknownProperty (@ff1451)
 
 ---
 
@@ -1130,16 +1843,16 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. format/css): keep wrapped selector indent below a rule comment (#12474)
+## X. format/js): keep parens around an instantiation expression before `!` and herita
 
 **RULE**:
-When implementing operations in `.changeset/fix-css-commented-selector-indent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-instantiation-expression-non-null.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e55a750b`: format/css): keep wrapped selector indent below a rule comment (#12474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d3e8a1e`: format/js): keep parens around an instantiation expression before `!` and heritage type arguments (#12540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-css-commented-selector-indent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-instantiation-expression-non-null.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -1148,14 +1861,13 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 "@biomejs/biome": patch
 ---
 
-Fixed [#12471](https://github.com/biomejs/biome/issues/12471): a comment above a CSS rule no longer removes the indentation of the rule's wrapped selector.
+Fixed the formatter removing the parentheses around an instantiation expression before a non-null assertion or type arguments of a class heritage, which produced code that doesn't parse.
 
-```css
-/* comment */
-.sidebar-navigation
-  .sidebar-navigation-item-with-a-long-descriptive-class-name {
-  color: red;
-}
+```diff
+- const a = make<T>!;
++ const a = (make<T>)!;
+- class D extends B<T><T> {}
++ class D extends (B<T>)<T> {}
 ```
 ```
 
@@ -1166,4 +1878,4 @@ Fixed [#12471](https://github.com/biomejs/biome/issues/12471): a comment above a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e55a750b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d3e8a1e` are properly handled with clean fallback behavior.

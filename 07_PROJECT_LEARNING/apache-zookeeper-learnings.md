@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `19f456ac`  
+> **Source Version**: `777b3723`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:01:39.005Z  
+> **Timestamp**: 2026-10-22T15:56:59.245Z  
 > **Learning ID**: `learn-github-apache-zookeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:01:38.996Z  
+> **Harvest Timestamp**: 2026-10-22T15:56:59.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache ZooKeeper
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12815 stars
+- **Stars / Engagement**: 12818 stars
 
 ---
 
@@ -1800,11 +1800,13 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2476** (2026-10-20): **ZOOKEEPER-5097: Make DataTree snapshot serialization iterative**
+  *Symptoms*: DataTree.serializeNode walked the tree recursively, one frame per znode level, which does not scale to very deep trees. Rewrite it as an iterative pre-order traversal over an explicit heap stack, removing the dependency on tree depth. Traversal order, per-node locking and emitted records are unchanged, so the on-disk snapshot format is identical. Adds a regression test that serializes a very deep chain on a small-stack thread and checks it round-trips.  Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+  **Post-Mortem & Fix Analysis**:
+  > Merged. Thanks @kezhuw @PDavid !
+
 - **Issue #2474** (2026-10-14): **Preserve configured client hostname verification with Netty 4.2**
   *Symptoms*: Netty 4.2 defaults client builders to HTTPS endpoint identification. ZooKeeper’s existing trust-manager/engine policy honors `zookeeper.ssl.hostnameVerification`, but the new builder default rejects a trusted mismatched SAN even when that setting is false.  Clear only the client builder’s endpoint-identification default, leaving the existing configured ZooKeeper verifier and server mutual-TLS policy in control. Extend the existing DNS/IP × FIPS mismatch cases to test both enabled and disabled hostname verification. The call also compiles with the current Netty 4.1.138 pin; this PR does not upgrade Netty.  ### How to reproduce  Run `SSLHostnameVerificationTest#testClientHostnameVerificationWithMismatchNames` with runtime Netty 4.2.19. Before the production fix, all four `hostnameVerification=false` cases fail; the four enabled-policy cases retain rejection. With the fix, all eight pass.  Using a Maven wrapper against this checkout after compiling/installing its source at the normal pin:  ```bash /path/to/mvnw -f pom.xml -pl zookeeper-server -Dnetty.version=4.2.19.Final \   -Dsurefire-forkcount=1 \   -Dtest=SSLHostnameVerificationTest#testClientHostnameVerificationWithMismatchNames \   dependency:properties surefire:test ```  Repeat with `-Dzookeeper.ssl.sslProvider=OPENSSL` for the native provider.  ### Validation  - JDK 25: patched real client/server mismatch matrix passes 8/8 with JDK TLS and 8/8 with Netty tcnative BoringSSL/OpenSSL. Unmodified production-source controls fa
-
-- **Issue #2473** (2026-10-20): **ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal**
-  *Symptoms*: ### Problem  JAAS login, logout and Kerberos ticket renewal are missing from the audit log.  ### Fix  Add `login`, `logout` and `ticketRenewal` events through the existing audit provider, enabled by `zookeeper.audit.enable`. These record local JAAS operations; incoming client and learner SASL authentication failures are outside this patch's scope.  - Events contain `user`, `operation` and `result`. Identity comes from the subject's Kerberos principal or DIGEST username, with configured JAAS identity and OS user as fallbacks. Failed renewals retain the last authenticated identity. - Each failed renewal attempt is audited, including retries. Skipped renewals emit nothing. Re-login also records its JAAS logout; stopping the refresh thread alone does not. - `RuntimeException` and `LinkageError` from the audit logger leave the JAAS result unchanged. Initialization failures are retained so later calls can report the original cause. - Servers validate audit initialization before starting autopurge or server services, including embedded servers. If auditing a failed start also fails, the server keeps its intended exit code. - The logger is fixed per JVM. Disabled client logins leave it uninitialized. An embedded server accepts the selected logger class and rejects a conflicting one.  The audit docs describe this behavior and mark the feature new in 3.10.0.  ### Tests  Tests cover identity selection, event ordering, renewal retries and skips, disabled auditing, logger failures, and co
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1821,558 +1823,178 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `19f456ac` (2026-10-20)
-**Commit Message**: ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal
+### Incident Patch 1: `777b3723` (2026-10-21)
+**Commit Message**: ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client
 
-Reviewers: anmolnar, anmolnar, kezhuw
-Author: ikxeno
-Closes #2473 from ikxeno/ZOOKEEPER-4922
+Reviewers: maoling, kezhuw
+Author: dukelion
+Closes #2398 from dukelion/fix-status-server-jvmflags
 
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/Login.java` (modified, +109/-38)
+**File**: `bin/zkServer.sh` (modified, +1/-1)
 ```diff
-@@ -37,6 +37,9 @@
- import javax.security.auth.login.Configuration;
- import javax.security.auth.login.LoginContext;
- import javax.security.auth.login.LoginException;
-+import org.apache.zookeeper.audit.AuditConstants;
-+import org.apache.zookeeper.audit.AuditEvent.Result;
-+import org.apache.zookeeper.audit.ZKAuditProvider;
- import org.apache.zookeeper.client.ZKClientConfig;
- import org.apache.zookeeper.common.Time;
- import org.apache.zookeeper.common.ZKConfig;
-@@ -81,7 +84,8 @@ public class Login {
- 
-     private LoginContext login = null;
-     private String loginContextName = null;
--    private String principal = null;
-+    private final String principal;
-+    private volatile String auditPrincipal = SYSTEM_USER;
- 
-     // Initialize 'lastLogin' to do a login at first time
-     private long lastLogin = Time.currentElapsedTime() - MIN_TIME_BEFORE_RELOGIN;
-@@ -106,24 +110,11 @@ public class Login {
-     public Login(final String loginContextName, Supplier<CallbackHandler> callbackHandlerSupplier, final ZKConfig zkConfig) throws LoginException {
-         this.zkConfig = zkConfig;
-         this.callbackHandlerSupplier = callbackHandlerSupplier;
-+        principal = readLoginConfiguration(loginContextName);
-         login = login(loginContextName);
-         this.loginContextName = loginContextName;
-         subject = login.getSubject();
-         isKrbTicket = !subject.getPrivateCredentials(KerberosTicket.class).isEmpty();
--        AppConfigurationEntry[] entries = Configuration.getConfiguration().getAppConfigurationEntry(loginContextName);
--        for (AppConfigurationEntry entry : entries) {
--            // there will only be a single entry, so this for() loop will only be iterated through once.
--            if (entry.getOptions().get("useTicketCache") != null) {
--                String val = (String) entry.getOptions().get("useTicketCache");
--                if (val.equals("true")) {
--                    isUsingTicketCache = true;
--                }
--            }
--            if (entry.getOptions().get("principal") != null) {
--                principal = (String) entry.getOptions().get("principal");
--            }
--            break;
--        }
- 
-         if (!isKrbTicket) {
-             // if no TGT, do not bother with ticket management.
-@@ -228,6 +219,7 @@ public void run() {
-                                 Shell.execCommand(cmd, kinitArgs);
-                                 break;
-                             } catch (Exception e) {
-+                                audit(getAuditUser(subject), AuditConstants.OP_TICKET_RENEWAL, Result.FAILURE);
-                                 if (retry > 0) {
-                                     --retry;
-                                     // sleep for 10 seconds
-@@ -330,17 +322,86 @@ public String getLoginContextName() {
-     }
- 
-     private synchronized LoginContext login(final String loginContextName) throws LoginException {
-+        try {
-+            if (loginContextName == null) {
-+                throw new LoginException("loginContext name (JAAS file section header) was null. "
-+                                         + "Please check your java.security.login.auth.config (="
-+                                         + System.getProperty("java.security.login.auth.config")
-+                                         + ") and your "
-+                                         + getLoginContextMessage());
-+            }
-+            LoginContext loginContext = new LoginContext(loginContextName, newCallbackHandler());
-+            loginContext.login();
-+            // Retain the authenticated identity even if a later logout clears the subject.
-+            auditPrincipal = getAuditUser(loginContext.getSubject());
-+            audit(auditPrincipal, AuditConstants.OP_LOGIN, Result.SUCCESS);
-+            LOG.info("{} successfully logged in.", loginContextName);
-+            return loginContext;
-+        } catch (LoginException e) {
-+            audit(auditPrincipal, AuditConstants.OP_LOGIN, Result.FAILURE);
-+            throw e;
-+        }
-+    }
-+
-+    private String readLoginConfiguration(String loginContextName) {
-         if (loginContextName == null) {
--            throw new LoginException("loginContext name (JAAS file section header) was null. "
--                                     + "Please check your java.security.login.auth.config (="
--                                     + System.getProperty("java.security.login.auth.config")
--                                     + ") and your "
--                                     + getLoginContextMessage());
-+            return null;
-+        }
-+        // LoginContext falls back to "other" when the named configuration is absent.
-+        Configuration configuration = Configuration.getConfiguration();
-+        AppConfigurationEntry[] entries = configuration.getAppConfigurationEntry(loginContextName);
-+        if (entries == null) {
-+            entries = configuration.getAppConfigurationEntry("other");
-+        }
-+        if (en
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/audit/AuditConstants.java` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@ private AuditConstants() {
- 
-     static final String OP_START = "serverStart";
-     static final String OP_STOP = "serverStop";
-+    public static final String OP_LOGIN = "login";
-+    public static final String OP_LOGOUT = "logout";
-+    public static final String OP_TICKET_RENEWAL = "ticketRenewal";
-     public static final String OP_CREATE = "create";
-     public static final String OP_DELETE = "delete";
-     public static final String OP_SETDATA = "setData";
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/audit/ZKAuditProvider.java` (modified, +80/-24)
-```diff
-@@ -25,29 +25,60 @@
- import org.slf4j.LoggerFactory;
- 
- public class ZKAuditProvider {
--    static final String AUDIT_ENABLE = "zookeeper.audit.enable";
-+    /**
-+     * System property that enables audit logging.
-+     */
-+    public static final String AUDIT_ENABLE = "zookeeper.audit.enable";
-     static final String AUDIT_IMPL_CLASS = "zookeeper.audit.impl.class";
-     private static final Logger LOG = LoggerFactory.getLogger(ZKAuditProvider.class);
--    // By default audit logging is disabled
--    private static boolean auditEnabled;
--    private static AuditLogger auditLogger;
--
--    static {
--        auditEnabled = Boolean.getBoolean(AUDIT_ENABLE);
--        if (auditEnabled) {
--            //initialise only when audit logging is enabled
--            auditLogger = getAuditLogger();
--            LOG.info("ZooKeeper audit is enabled.");
--        } else {
--            LOG.info("ZooKeeper audit is disabled.");
-+    private static String selectedAuditLoggerClass;
-+
-+    // Parsing server configuration must not initialize the audit logger.
-+    private static class AuditState {
-+        private static final boolean auditEnabled;
-+        private static final AuditLogger auditLogger;
-+        private static final RuntimeException initializationFailure;
-+
-+        static {
-+            String loggerClass = null;
-+            synchronized (ZKAuditProvider.class) {
-+                auditEnabled = Boolean.getBoolean(AUDIT_ENABLE);
-+                if (auditEnabled) {
-+                    loggerClass = System.getProperty(AUDIT_IMPL_CLASS, Slf4jAuditLogger.class.getName());
-+                    selectedAuditLoggerClass = loggerClass;
-+                }
-+            }
-+            AuditLogger logger = null;
-+            RuntimeException failure = null;
-+            if (auditEnabled) {
-+                try {
-+                    logger = getAuditLogger(loggerClass);
-+                    LOG.info("ZooKeeper audit is enabled.");
-+                } catch (RuntimeException | LinkageError e) {
-+                    failure = new IllegalStateException("Couldn't initialize audit logger " + loggerClass, e);
-+                }
-+            } else {
-+                LOG.info("ZooKeeper audit is disabled.");
-+            }
-+            auditLogger = logger;
-+            initializationFailure = failure;
-         }
-     }
- 
--    private static AuditLogger getAuditLogger() {
--        String auditLoggerClass = System.getProperty(AUDIT_IMPL_CLASS);
--        if (auditLoggerClass == null) {
--            auditLoggerClass = Slf4jAuditLogger.class.getName();
-+    /**
-+     * Configures the audit logger class without initializing the logger.
-+     *
-+     * @throws IllegalArgumentException if another audit logger class has already been selected
-+     */
-+    public static synchronized void configureAuditLogger(String loggerClass) {
-+        if (selectedAuditLoggerClass != null && !selectedAuditLoggerClass.equals(loggerClass)) {
-+            throw new IllegalArgumentException("Audit logger is already selected as " + selectedAuditLoggerClass
-+                + "; cannot configure " + loggerClass + ". Set " + AUDIT_IMPL_CLASS + " before using the audit provider.");
-         }
-+        System.setProperty(AUDIT_IMPL_CLASS, loggerClass);
-+    }
-+
-+    private static AuditLogger getAuditLogger(String auditLoggerClass) {
-         try {
-             Constructor<?> clientCxnConstructor = Class.forName(auditLoggerClass)
-                     .getDeclaredConstructor();
-@@ -60,15 +91,29 @@ private static AuditLogger getAuditLogger() {
-     }
- 
-     /**
--     * @return true if audit log is enabled
-+     * Initializes the audit state and reports any logger initialization failure.
-+     *
-+     * @throws IllegalStateException if the audit logger could not be initialized
-+     */
-+    public static void checkAuditState() {
-+        if (AuditState.initializationFailure != null) {
-+            throw AuditState.initializationFailure;
-+        }
-+    }
-+
-+    /**
-+     * @return true if audit logging is configured as enabled
-      */
-     public static boolean isAuditEnabled() {
--        return auditEnabled;
-+        return AuditState.auditEnabled;
-     }
- 
-     public static void log(String user, String operation, String znode, String acl,
-                            String createMode, String session, String ip, Result result) {
--        auditLogger.logAuditEvent(createLogEvent(user, operation, znode, acl, createMode, session, ip, result));
-+        if (isAuditEnabled()) {
-+            checkAuditState();
-+            AuditState.auditLogger.logAuditEvent(createLogEvent(user, operation, znode, acl, createMode, session, ip, result));
-+        }
-     }
- 
-     /**
-@@ -111,15 +156,26 @@ public static void addZKStartStopAuditLog() {
- 
-     /**
-      * Add audit log for server start fail.
-+     * Audit errors must not prevent the server from exiting with its intended code.
-      */
-     public static void addServerStartFailureAuditLog() {
--        if (isAuditEnabled()
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/ZooKeeperServerMain.java` (modified, +2/-0)
-```diff
-@@ -119,6 +119,8 @@ protected void initializeAndRun(String[] args) throws ConfigException, IOExcepti
-      * @throws AdminServerException
-      */
-     public void runFromConfig(ServerConfig config) throws IOException, AdminServerException {
-+        // Validate auditing before starting metrics, transaction storage, or listeners.
-+        ZKAuditProvider.checkAuditState();
-         LOG.info("Starting server");
-         FileTxnSnapLog txnLog = null;
-         try {
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/embedded/ZooKeeperServerEmbeddedImpl.java` (modified, +3/-0)
-```diff
-@@ -10,6 +10,7 @@
- import java.util.concurrent.TimeUnit;
- import java.util.concurrent.TimeoutException;
- import javax.security.sasl.SaslException;
-+import org.apache.zookeeper.audit.ZKAuditProvider;
- import org.apache.zookeeper.server.DatadirCleanupManager;
- import org.apache.zookeeper.server.ExitCode;
- import org.apache.zookeeper.server.ServerConfig;
-@@ -85,6 +86,8 @@ public void start() throws Exception {
- 
-     @Override
-     public void start(long startupTimeout) throws Exception {
-+        // Validate before scheduling purge or starting the server thread.
-+        ZKAuditProvider.checkAuditState();
-         switch (exitHandler) {
-             case EXIT:
-                 ServiceUtils.setSystemExitProcedure(ServiceUtils.SYSTEM_EXIT);
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/quorum/QuorumPeerConfig.java` (modified, +3/-0)
-```diff
-@@ -38,6 +38,7 @@
- import java.util.Map.Entry;
- import java.util.Properties;
- import org.apache.yetus.audience.InterfaceAudience;
-+import org.apache.zookeeper.audit.ZKAuditProvider;
- import org.apache.zookeeper.common.AtomicFileWritingIdiom;
- import org.apache.zookeeper.common.AtomicFileWritingIdiom.OutputStreamStatement;
- import org.apache.zookeeper.common.AtomicFileWritingIdiom.WriterStatement;
-@@ -379,6 +380,8 @@ public void parseProperties(Properties zkProp) throws IOException, ConfigExcepti
-                 multiAddressReachabilityCheckEnabled = parseBoolean(key, value);
-             } else if (key.equals("oraclePath")) {
-                 oraclePath = value;
-+            } else if (key.equals("audit.impl.class")) {
-+                ZKAuditProvider.configureAuditLogger(value);
-             } else {
-                 System.setProperty("zookeeper." + key, value);
-             }
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/quorum/QuorumPeerMain.java` (modified, +4/-0)
-```diff
-@@ -123,6 +123,8 @@ protected void initializeAndRun(String[] args) throws ConfigException, IOExcepti
-         QuorumPeerConfig config = new QuorumPeerConfig();
-         if (args.length == 1) {
-             config.parse(args[0]);
-+            // The purge task can access server data before runFromConfig is called.
-+            ZKAuditProvider.checkAuditState();
-         }
- 
-         // Start and schedule the purge task
-@@ -143,6 +145,8 @@ protected void initializeAndRun(String[] args) throws ConfigException, IOExcepti
-     }
- 
-     public void runFromConfig(QuorumPeerConfig config) throws IOException, AdminServerException {
-+        // Validate auditing before starting metrics, transaction storage, or listeners.
-+        ZKAuditProvider.checkAuditState();
-         try {
-             ManagedUtil.registerLog4jMBeans();
-         } catch (JMException e) {
-```
-
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/LoginAuditConcurrentInitializationTest.java` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.zookeeper;
-+
-+import static org.junit.jupiter.api.Assertions.assertEquals;
-+import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertNotNull;
-+import static org.junit.jupiter.api.Assertions.assertNull;
-+import static org.junit.jupiter.api.Assertions.assertThrows;
-+import static org.junit.jupiter.api.Assertions.assertTrue;
-+import java.nio.file.Path;
-+import java.util.Map;
-+import java.util.Properties;
-+import java.util.concurrent.CountDownLatch;
-+import java.util.concurrent.TimeUnit;
-+import java.util.concurrent.atomic.AtomicReference;
-+import javax.security.auth.login.AppConfigurationEntry;
-+import javax.security.auth.login.Configuration;
-+import org.apache.zookeeper.audit.AuditEvent;
-+import org.apache.zookeeper.audit.AuditLogger;
-+import org.apache.zookeeper.audit.Slf4jAuditLogger;
-+import org.apache.zookeeper.audit.ZKAuditProvider;
-+import org.apache.zookeeper.common.ConfigException;
-+import org.apache.zookeeper.common.ZKConfig;
-+import org.apache.zookeeper.server.auth.DigestLoginModule;
-+import org.apache.zookeeper.server.embedded.ZooKeeperServerEmbedded;
-+import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.api.io.TempDir;
-+
-+// Surefire runs this class in a fresh JVM so audit initialization can be blocked.
-+public class LoginAuditConcurrentInitializationTest extends ZKTestCase {
-+
-+    @TempDir
-+    Path tempDir;
-+
-+    @Test
-+    public void testConfigurationRejectsConflictWhileAuditLoggerInitializes() throws Exception {
-+        Configuration previousConfiguration = Configuration.getConfiguration();
-+        System.setProperty(ZKAuditProvider.AUDIT_ENABLE, "true");
-+        System.setProperty("zookeeper.audit.impl.class", BlockingAuditLogger.class.getName());
-+        AtomicReference<Login> clientLogin = new AtomicReference<>();
-+        AtomicReference<Throwable> clientFailure = new AtomicReference<>();
-+        Configuration.setConfiguration(new Configuration() {
-+            @Override
-+            public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
-+                return new AppConfigurationEntry[]{new AppConfigurationEntry(
-+                    DigestLoginModule.class.getName(), AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
-+                    Map.of("username", "audit-test", "password", "test-password"))};
-+            }
-+        });
-+        Thread client = new Thread(() -> {
-+            try {
-+                clientLogin.set(new Login("Client", () -> callbacks -> { }, new ZKConfig()));
-+            } catch (Throwable e) {
-+                clientFailure.set(e);
-+            }
-+        });
-+        try {
-+            client.start();
-+            assertTrue(BlockingAuditLogger.initializeEntered.await(5, TimeUnit.SECONDS));
-+            Properties config = new Properties();
-+            config.setProperty("audit.enable", "true");
-+            config.setProperty("audit.impl.class", Slf4jAuditLogger.class.getName());
-+            config.setProperty("tickTime", "2000");
-+            ConfigException failure = assertThrows(ConfigException.class, () -> {
-+                try (ZooKeeperServerEmbedded server = ZooKeeperServerEmbedded.builder()
-+                        .baseDir(tempDir).configuration(config).build()) {
-+                    assertNotNull(server);
-+                }
-+            });
-+            assertTrue(failure.getCause() instanceof IllegalArgumentException);
-+            assertTrue(failure.getCause().getMessage().contains(BlockingAuditLogger.class.getName()));
-+            assertTrue(failure.getCause().getMessage().contains(Slf4jAuditLogger.class.getName()));
-+            assertEquals(BlockingAuditLogger.class.getName(), System.getProperty("zookeeper.audit.impl.class"));
-+        } finally {
-+            BlockingAuditLogger.initializeRelease.countDown();
-+            client.join(TimeUnit.SECONDS.toMillis(5));
-+            try {
-+                if (clientLogin.get() != null) {
-+                    clientLogin.get().shutdown();
-+                    clientLogin.get().logout();
-+                }
-+            } finally {
-+                Configurat
+@@ -283,7 +283,7 @@ case $1 in
+     fi
+     echo "Client port found: $clientPort. Client address: $clientPortAddress. Client SSL: $isSSL."
+     STAT=$("$JAVA" "-Dzookeeper.log.dir=$ZOO_LOG_DIR" "-Dzookeeper.log.file=$ZOO_LOG_FILE" \
+-      "${clientflags[@]}" "${flags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
++      "${clientflags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
+       "$clientPortAddress" "$clientPort" srvr "$isSSL" 2>/dev/null |
+       $GREP Mode)
+     if [[ -z $STAT ]]; then
 ```
 
 ---
 
-### Incident Patch 2: `5f770628` (2026-10-20)
-**Commit Message**: ZOOKEEPER-4391: Allow custom JVM heap sizing besides "-Xmx"
+### Incident Patch 2: `9b014bf8` (2026-10-20)
+**Commit Message**: ZOOKEEPER-5097: Make DataTree snapshot serialization iterative
 
-Reviewers: kezhuw
-Author: jprieto-temporal
-Closes #2460 from jprieto-temporal/jprieto/syyxuxtpmnum
+Reviewers: PDavid, kezhuw
+Author: anmolnar
+Closes #2476 from anmolnar/ZOOKEEPER-5097
 
-**File**: `bin/zkEnv.sh` (modified, +8/-2)
+**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/DataTree.java` (modified, +40/-23)
 ```diff
-@@ -136,8 +136,14 @@ export CLASSPATH
+@@ -21,9 +21,11 @@
+ import java.io.EOFException;
+ import java.io.IOException;
+ import java.io.PrintWriter;
++import java.util.ArrayDeque;
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Collections;
++import java.util.Deque;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.LinkedList;
+@@ -1318,29 +1320,44 @@ private void setupQuota() {
+      * @throws IOException
+      */
+     void serializeNode(OutputArchive oa, StringBuilder path) throws IOException {
+-        String pathString = path.toString();
+-        DataNode node = getNode(pathString);
+-        if (node == null) {
+-            return;
+-        }
+-        String[] children;
+-        DataNode nodeCopy;
+-        synchronized (node) {
+-            StatPersisted statCopy = new StatPersisted();
+-            statCopy.copyFrom(node.stat);
+-            //we do not need to make a copy of node.data because the contents
+-            //are never changed
+-            nodeCopy = new DataNode(node.data, node.acl, statCopy);
+-            children = node.getChildren().toArray(new String[0]);
+-        }
+-        serializeNodeData(oa, pathString, nodeCopy);
+-        path.append('/');
+-        int off = path.length();
+-        for (String child : children) {
+-            // Since this is single buffer being reused, we need to truncate the previous bytes of string.
+-            path.delete(off, Integer.MAX_VALUE);
+-            path.append(child);
+-            serializeNode(oa, path);
++        // Iterative, explicit-stack pre-order traversal of the subtree rooted
++        // at `path`. This was previously written as recursion with one frame
++        // per znode level, which does not scale to very deep trees; walking the
++        // tree with a heap-allocated stack removes the dependency on tree depth.
++        //
++        // The traversal order (pre-order, children in the same order as
++        // before), the per-node locking, and the emitted records are unchanged,
++        // so the produced snapshot bytes are identical and the on-disk format is
++        // unchanged. The explicit stack holds at most the unvisited frontier of
++        // the tree (a single entry for a chain), all of which the in-memory
++        // DataTree already holds.
++        Deque<String> pathStack = new ArrayDeque<>();
++        pathStack.push(path.toString());
++        while (!pathStack.isEmpty()) {
++            String pathString = pathStack.pop();
++            DataNode node = getNode(pathString);
++            if (node == null) {
++                continue;
++            }
++            String[] children;
++            DataNode nodeCopy;
++            synchronized (node) {
++                StatPersisted statCopy = new StatPersisted();
++                statCopy.copyFrom(node.stat);
++                //we do not need to make a copy of node.data because the contents
++                //are never changed
++                nodeCopy = new DataNode(node.data, node.acl, statCopy);
++                children = node.getChildren().toArray(new String[0]);
++            }
++            // Called outside the node lock: writeRecord can block and holding
++            // the lock would stall writers (ZOOKEEPER-2201).
++            serializeNodeData(oa, pathString, nodeCopy);
++            // Push children in reverse so that, popped from this LIFO stack,
++            // they are visited in the same order as the previous recursion.
++            String childPathPrefix = pathString + "/";
++            for (int i = children.length - 1; i >= 0; i--) {
++                pathStack.push(childPathPrefix + children[i]);
++            }
+         }
+     }
  
- # default heap for zookeeper server
- ZK_SERVER_HEAP="${ZK_SERVER_HEAP:-1000}"
--export SERVER_JVMFLAGS="-Xmx${ZK_SERVER_HEAP}m $SERVER_JVMFLAGS"
-+if [[ $ZK_SERVER_HEAP != omit ]]; then
-+  SERVER_JVMFLAGS="-Xmx${ZK_SERVER_HEAP}m $SERVER_JVMFLAGS"
-+fi
-+export SERVER_JVMFLAGS
- 
- # default heap for zookeeper client
- ZK_CLIENT_HEAP="${ZK_CLIENT_HEAP:-256}"
--export CLIENT_JVMFLAGS="-Xmx${ZK_CLIENT_HEAP}m $CLIENT_JVMFLAGS"
-+if [[ $ZK_CLIENT_HEAP != omit ]]; then
-+  CLIENT_JVMFLAGS="-Xmx${ZK_CLIENT_HEAP}m $CLIENT_JVMFLAGS"
-+fi
-+export CLIENT_JVMFLAGS
 ```
 
-**File**: `conf/java.env` (added, +31/-0)
+**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/server/DataTreeTest.java` (modified, +41/-0)
 ```diff
-@@ -0,0 +1,31 @@
-+#!/usr/bin/env bash
-+#
-+# Licensed to the Apache Software Foundation (ASF) under one
-+# or more contributor license agreements.  See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership.  The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License.  You may obtain a copy of the License at
-+#
-+#   https://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing,
-+# software distributed under the License is distributed on an
-+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+# KIND, either express or implied.  See the License for the
-+# specific language governing permissions and limitations
-+# under the License.
-+#
-+
-+# ZooKeeper defaults to a 1000 MiB server heap and a 256 MiB client heap.
-+# Set either heap to a positive integer to choose a different size in MiB.
-+# ZK_SERVER_HEAP=1000
-+# ZK_CLIENT_HEAP=256
-+
-+# Set a heap to "omit" to skip ZooKeeper's generated -Xmx option. The matching
-+# JVMFLAGS variable can still provide -Xmx or any other heap-related JVM options.
-+# ZK_SERVER_HEAP=omit
-+# SERVER_JVMFLAGS="-XX:InitialRAMPercentage=25 -XX:MaxRAMPercentage=75"
-+# ZK_CLIENT_HEAP=omit
-+# CLIENT_JVMFLAGS="-XX:MaxRAMPercentage=25"
-```
-
-**File**: `zookeeper-website/app/pages/_docs/docs/_mdx/admin-ops/tools.mdx` (modified, +40/-1)
-```diff
-@@ -56,9 +56,48 @@ See [ZooKeeper CLI](/admin-ops/cli).
+@@ -418,6 +418,47 @@ public void run() {
+         assertTrue(ranTestCase.get(), "Didn't find the expected node");
+     }
  
- ### zkEnv.sh
- 
--Sets environment variables for the ZooKeeper server. Key variables:
-+Sets environment variables for ZooKeeper scripts. Values can be provided in
-+the environment or in `conf/java.env`, whose values take precedence. Key
-+variables:
- 
- - `ZOO_LOG_DIR` — the directory where logs are stored.
-+- `ZK_SERVER_HEAP` — configures the server maximum heap in MiB.
-+- `SERVER_JVMFLAGS` — additional JVM options for the server.
-+- `ZK_CLIENT_HEAP` — configures the client maximum heap in MiB.
-+- `CLIENT_JVMFLAGS` — additional JVM options for clients.
++    /**
++     * Snapshot serialization must not depend on tree depth. This builds a very
++     * deep znode chain and serializes it on a thread with a small (512 KiB)
++     * stack, so the test is independent of the runner's default -Xss, then
++     * checks the result round-trips back to an equivalent tree.
++     */
++    @Test
++    @Timeout(value = 120)
++    public void testSerializeDeepTree() throws Exception {
++        final int depth = 4000;
++        final DataTree tree = new DataTree();
++        final StringBuilder path = new StringBuilder();
++        for (int i = 0; i < depth; i++) {
++            path.append("/a");
++            tree.createNode(path.toString(), new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, -1L, i + 1, i + 1, 1);
++        }
 +
-+Heap settings produce the following JVM options:
++        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
++        final BinaryOutputArchive oa = BinaryOutputArchive.getArchive(baos);
++        final Throwable[] failure = new Throwable[1];
++        final Thread serializer = new Thread(null, () -> {
++            try {
++                tree.serialize(oa, "tree");
++            } catch (Throwable t) {
++                failure[0] = t;
++            }
++        }, "deep-tree-serializer", 512 * 1024L);
++        serializer.start();
++        serializer.join();
 +
-+| Heap setting     | Server result                    | Client result                    |
-+| ---------------- | -------------------------------- | -------------------------------- |
-+| Unset            | `-Xmx1000m`                      | `-Xmx256m`                       |
-+| Positive integer | `-Xmx<number>m`                  | `-Xmx<number>m`                  |
-+| `omit`           | No `-Xmx` generated by ZooKeeper | No `-Xmx` generated by ZooKeeper |
++        assertNull(failure[0], "serialize() must not fail on a deep tree");
 +
-+Unless the heap setting is `omit`, ZooKeeper prepends the generated `-Xmx`
-+option to any options provided in the corresponding `*_JVMFLAGS` variable.
++        // The produced bytes must load back into an equivalent tree.
++        final DataTree restored = new DataTree();
++        final BinaryInputArchive ia =
++            BinaryInputArchive.getArchive(new ByteArrayInputStream(baos.toByteArray()));
++        restored.deserialize(ia, "tree");
++        assertNotNull(restored.getNode(path.toString()),
++            "the deepest node must survive a serialize/deserialize round-trip");
++    }
 +
-+The server and client settings are independent. Setting either heap variable to
-+`omit` skips only the `-Xmx` option ZooKeeper would otherwise generate from the
-+corresponding heap setting. It does not remove or override options in the corresponding
-+`*_JVMFLAGS` variable, including an explicitly supplied `-Xmx` option.
-+
-+Use `omit` when heap-related JVM options should be configured manually. For
-+example, a containerized server can use a percentage of the available memory:
-+
-+```bash
-+ZK_SERVER_HEAP=omit \
-+SERVER_JVMFLAGS="-XX:InitialRAMPercentage=25 -XX:MaxRAMPercentage=75" \
-+./zkServer.sh start
-+```
-+
-+It can also be used to provide an `-Xmx` value directly:
-+
-+```bash
-+ZK_SERVER_HEAP=omit \
-+SERVER_JVMFLAGS="-Xmx2g" \
-+./zkServer.sh start
-+```
- 
- ### zkCleanup.sh
- 
+     @Test
+     @Timeout(value = 60)
+     public void testReconfigACLClearOnDeserialize() throws Exception {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2476** (2026-10-20): ZOOKEEPER-5097: Make DataTree snapshot serialization iterative (@anmolnar)
 - **PR #2474** (closed): Preserve configured client hostname verification with Netty 4.2 (@xiangfu0)
 - **PR #2473** (2026-10-20): ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal (@ikxeno)
 - **PR #2470** (2026-10-05): ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers (addendum) (@meszibalu)
 - **PR #2469** (2026-10-05): ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers… (@meszibalu)
 - **PR #2468** (2026-10-05): ZOOKEEPER-5099: Upgrade jackson-databind to 2.22.3 (@PDavid)
-- **PR #2467** (2026-10-05): ZOOKEEPER-5098: Upgrade netty to 4.1.138 (@PDavid)
 
 ---
 
@@ -2392,65 +2014,28 @@ Closes #2460 from jprieto-temporal/jprieto/syyxuxtpmnum
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal
+## X. ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client
 
 **RULE**:
-When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/Login.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bin/zkServer.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `19f456ac`: ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `777b3723`: ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/Login.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/zkServer.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import org.apache.zookeeper.audit.AuditConstants;
-import org.apache.zookeeper.audit.AuditEvent.Result;
-import org.apache.zookeeper.audit.ZKAuditProvider;
-    private final String principal;
-    private volatile String auditPrincipal = SYSTEM_USER;
-        principal = readLoginConfiguration(loginContextName);
-                                audit(getAuditUser(subject), AuditConstants.OP_TICKET_RENEWAL, Result.FAILURE);
-        try {
-            if (loginContextName == null) {
-                throw new LoginException("loginContext name (JAAS file section header) was null. "
-                                         + "Please check your java.security.login.auth.config (="
-                                         + System.getProperty("java.security.login.auth.config")
-                                         + ") and your "
-                                         + getLoginContextMessage());
-            }
-            LoginContext loginContext = new LoginContext(loginContextName, newCallbackHandler());
-            loginContext.login();
-            // Retain the authenticated identity even if a later logout clears the subject.
-            auditPrincipal = getAuditUser(loginContext.getSub
+      "${clientflags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    private String principal = null;
-        AppConfigurationEntry[] entries = Configuration.getConfiguration().getAppConfigurationEntry(loginContextName);
-        for (AppConfigurationEntry entry : entries) {
-            // there will only be a single entry, so this for() loop will only be iterated through once.
-            if (entry.getOptions().get("useTicketCache") != null) {
-                String val = (String) entry.getOptions().get("useTicketCache");
-                if (val.equals("true")) {
-                    isUsingTicketCache = true;
-                }
-            }
-            if (entry.getOptions().get("principal") != null) {
-                principal = (String) entry.getOptions().get("principal");
-            }
-            break;
-        }
-            throw new LoginException("loginContext name (JAAS file section header) was null. "
-                                     + "Please check your java.security.login.auth.config (="
-                                     + System.getProperty("java.security.login.auth.config")
-                                     + ") and your "
-                                     + getLoginContextMessage());
+      "${clientflags[@]}" "${flags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `19f456ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `777b3723` are properly handled with clean fallback behavior.

@@ -4312,3 +4312,6 @@ Every entry in this ledger must capture:
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `2ca2dae5` | Multi-dimensional audit evidence | 2026-10-22T15:53:27.697Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `e8ee6271` | Multi-dimensional audit evidence | 2026-10-22T15:53:29.824Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `1790bac5` | Multi-dimensional audit evidence | 2026-10-22T15:53:34.904Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `e83e08a9` | Multi-dimensional audit evidence | 2026-10-22T15:56:51.663Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `7670fd4a` | Multi-dimensional audit evidence | 2026-10-22T15:56:54.733Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `777b3723` | Multi-dimensional audit evidence | 2026-10-22T15:56:59.618Z |
