@@ -69,4 +69,21 @@ When an application organizes multi-language translations into multiple independ
    - Arabic must use native question mark (`؟`) and native phrasing.
    - Hebrew must use native QA formatting and reversed flex/grid order.
 
+---
+
+## Pattern 6: Thematic Scope Gating & Candidate Deduplication Protocol
+### The Anti-Pattern
+1. **Inflated Counting via Fake Variants**: Adding fonts that already exist in the library under different spellings or variant suffixes dilutes registry integrity.
+2. **License-Only Selection Trap**: Assuming that because a font has an open-source license (e.g. SIL OFL in `google/fonts`), it belongs in the library. Admitting novelty horror/grunge fonts (`Eater`, `Nosifer`, `Butcherman`, `Creepster`) into an "Old English / Blackletter" site damages semantic topical authority and confuses users looking for historical calligraphy, tattoo lettering, or Fraktur typography.
+
+### The Standard
+1. **Three-Tier Candidate Reconciliation**:
+   - Tier A: Already Present (Deduplicated; preserve existing record).
+   - Tier B: Approved for Publication (Verified SIL OFL / public domain + authentic paleographic anatomy matching site niche).
+   - Tier C: Rejected / Quarantined (Documented with explicit technical rationale: outside thematic scope, commercial proprietary, or missing license provenance).
+2. **Exhaustive Multi-Language Translation Invariant**:
+   - Any newly admitted font must have substyle names, taglines, and descriptions added to `src/i18n/font-translations.ts` across ALL supported languages before building.
+   - Assertions in `verify-font-expansion.mjs` must strictly verify that all registry IDs match public catalog IDs and exist in all translation mappings.
+
+
 
