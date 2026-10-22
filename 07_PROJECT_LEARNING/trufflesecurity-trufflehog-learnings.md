@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `7582042e`  
+> **Source Version**: `c85580b7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:46:03.568Z  
+> **Timestamp**: 2026-10-22T17:38:28.156Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:46:03.168Z  
+> **Harvest Timestamp**: 2026-10-22T17:38:27.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28627 stars
+- **Stars / Engagement**: 28645 stars
 
 ---
 
@@ -1140,180 +1140,580 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7582042e` (2026-10-21)
-**Commit Message**: Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460)
+### Incident Patch 1: `c85580b7` (2026-10-22)
+**Commit Message**: github: check App installation grants before listing comments (#5454)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+GitHub answers some comment listings with a silent partial result when a
+GitHub App installation holds only one of Issues (read) and Pull requests
+(read): /issues leaves out pull requests, and /issues/comments returns only
+the comments the granted permission covers, all with a 200. Listings the
+grants don't cover at all fail with a 403 per repo.
 
-**File**: `go.mod` (modified, +1/-1)
+Read each installation's granted permissions from its access token and use
+them to shape the comment scan:
+
+- Skip a listing the grants can't cover, without calling GitHub, and report
+  a permission error naming what's missing.
+- Run a listing the grants only partly cover, and report one error for each
+  kind of item GitHub will leave out, when a setting asks for it.
+- Take pull request bodies from /pulls when only Pull requests (read) is
+  granted.
+
+Token-authenticated sources, and Apps whose grants can't be read, scan as
+before.
+
+Also stop listing org members' gists under App auth. None of GitHub's gist
+endpoints accept an installation access token, so the listing failed once
+per member; one log line replaces those failures.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `pkg/sources/github/app_client_registry.go` (modified, +16/-0)
 ```diff
-@@ -296,7 +296,7 @@ require (
- 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
- 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
--	github.com/yuin/goldmark v1.7.8 // indirect
-+	github.com/yuin/goldmark v1.7.17 // indirect
- 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -775,8 +775,8 @@ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
- github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
- github.com/yuin/goldmark v1.7.1/go.mod h1:uzxRWxtg69N339t3louHJ7+O03ezfj6PlliRlaOzY1E=
--github.com/yuin/goldmark v1.7.8 h1:iERMLn0/QJeHFhxSt3p6PeN9mGnvIKSpG9YYorDMnic=
--github.com/yuin/goldmark v1.7.8/go.mod h1:uzxRWxtg69N339t3louHJ7+O03ezfj6PlliRlaOzY1E=
-+github.com/yuin/goldmark v1.7.17 h1:p36OVWwRb246iHxA/U4p8OPEpOTESm4n+g+8t0EE5uA=
-+github.com/yuin/goldmark v1.7.17/go.mod h1:ip/1k0VRfGynBgxOz0yCqHrbZXhcjxyuS66Brc7iBKg=
- github.com/yuin/goldmark-emoji v1.0.5 h1:EMVWyCGPlXJfUXBXpuMu+ii3TIaxbVBnEX9uaDC4cIk=
- github.com/yuin/goldmark-emoji v1.0.5/go.mod h1:tTkZEbwu5wkPmgTcitqddVxY9osFZiavD+r4AzQrh1U=
- github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo0=
-```
-
----
-
-### Incident Patch 2: `7ffe9407` (2026-10-21)
-**Commit Message**: Update module golang.org/x/net to v0.60.0 [SECURITY] (#5464)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +7/-7)
-```diff
-@@ -104,11 +104,11 @@ require (
- 	go.uber.org/automaxprocs v1.6.0
- 	go.uber.org/mock v0.6.0
- 	go.uber.org/zap v1.27.0
--	golang.org/x/crypto v0.56.0
--	golang.org/x/net v0.58.0
-+	golang.org/x/crypto v0.57.0
-+	golang.org/x/net v0.60.0
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sync v0.22.0
--	golang.org/x/text v0.41.0
-+	golang.org/x/sync v0.23.0
-+	golang.org/x/text v0.42.0
- 	golang.org/x/time v0.14.0
- 	google.golang.org/api v0.264.0
- 	google.golang.org/protobuf v1.36.11
-@@ -313,9 +313,9 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
--	golang.org/x/mod v0.38.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
-```
-
-**File**: `go.sum` (modified, +14/-14)
-```diff
-@@ -844,8 +844,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
--golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
-@@ -875,8 +875,8 @@ golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzB
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
--golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
--golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -898,8 +898,8 @@ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
- golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-@@ -915,8 +915,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -956,13 +956,13 @@ golang.org/x/sys v0.0.0-20220908164124-27713097b956/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03
-```
-
----
-
-### Incident Patch 3: `87ebf04d` (2026-10-21)
-**Commit Message**: Update module golang.org/x/crypto to v0.56.0 [SECURITY] (#5462)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +2/-4)
-```diff
-@@ -1,8 +1,6 @@
- module github.com/trufflesecurity/trufflehog/v3
+@@ -95,6 +95,22 @@ func (cs *AppInstallationClients) AccessToken(ctx context.Context) (string, erro
+ 	return token.GetToken(), nil
+ }
  
--go 1.25.0
--
--toolchain go1.25.10
-+go 1.26.0
- 
- replace github.com/jpillora/overseer => github.com/trufflesecurity/overseer v1.2.8
- 
-@@ -106,7 +104,7 @@ require (
- 	go.uber.org/automaxprocs v1.6.0
- 	go.uber.org/mock v0.6.0
- 	go.uber.org/zap v1.27.0
--	golang.org/x/crypto v0.55.0
-+	golang.org/x/crypto v0.56.0
- 	golang.org/x/net v0.58.0
- 	golang.org/x/oauth2 v0.36.0
- 	golang.org/x/sync v0.22.0
++// GrantedPermissions returns the permissions the installation grants, as
++// listed on its access token. GitHub sends them with every token it issues,
++// so this costs no API call when a token is already cached, which is the
++// usual case: a repo is cloned with the same token before its comments are
++// scanned. The comment scan reads them to skip, or report as incomplete,
++// listings the installation can't fully cover (see installationGrants).
++func (cs *AppInstallationClients) GrantedPermissions(ctx context.Context) (*github.InstallationPermissions, error) {
++	if _, err := cs.AccessToken(ctx); err != nil {
++		return nil, err
++	}
++
++	cs.tokenMu.RLock()
++	defer cs.tokenMu.RUnlock()
++	return cs.token.GetPermissions(), nil
++}
++
+ func (cs *AppInstallationClients) accessTokenIfValid() *github.InstallationToken {
+ 	if cs.token == nil || cs.token.GetExpiresAt().Before(time.Now()) {
+ 		return nil
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `pkg/sources/github/app_client_registry_test.go` (modified, +31/-0)
 ```diff
-@@ -844,8 +844,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
--golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
-+golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+@@ -53,6 +53,37 @@ func TestAccessTokenForInstallation(t *testing.T) {
+ 		require.NoError(t, err)
+ 	})
+ 
++	t.Run("granted permissions come from the token", func(t *testing.T) {
++		var hits atomic.Int64
++		server := accessTokenServer(func(w http.ResponseWriter, r *http.Request) {
++			hits.Add(1)
++			_ = json.NewEncoder(w).Encode(map[string]interface{}{
++				"token":       "test-token",
++				"expires_at":  "2099-01-01T00:00:00Z",
++				"permissions": map[string]string{"issues": "read", "contents": "read"},
++			})
++		})
++		defer server.Close()
++
++		cs, err := GetAppInstallationClients(t.Context(), server.URL, 12345, string(privKey), 100)
++		require.NoError(t, err)
++
++		perms, err := cs.GrantedPermissions(t.Context())
++		require.NoError(t, err)
++		require.Equal(t, "read", perms.GetIssues())
++		require.Empty(t, perms.GetPullRequests())
++
++		_, err = cs.AccessToken(t.Context())
++		require.NoError(t, err)
++		require.Equal(t, int64(1), hits.Load(), "permissions and clone share one token")
++	})
++
++	t.Run("granted permissions without a token", func(t *testing.T) {
++		cs := &AppInstallationClients{InstallationID: 0}
++		_, err := cs.GrantedPermissions(t.Context())
++		require.Error(t, err)
++	})
++
+ 	t.Run("rate limit", func(t *testing.T) {
+ 		server := accessTokenServer(func(w http.ResponseWriter, r *http.Request) {
+ 			w.Header().Add("X-RateLimit-Remaining", "0")
+```
+
+**File**: `pkg/sources/github/comments_test.go` (modified, +161/-2)
+```diff
+@@ -124,10 +124,17 @@ func seedRepo(gh *fakeGitHub) {
+ 	}
+ }
+ 
++// scanComments runs the REST comment scan with unknown installation grants,
++// as a token-authenticated source would.
+ func scanComments(t *testing.T, s *Source, gh *fakeGitHub, cutoff *time.Time) (*collectingReporter, error) {
++	t.Helper()
++	return scanCommentsWithGrants(t, s, gh, nil, cutoff)
++}
++
++func scanCommentsWithGrants(t *testing.T, s *Source, gh *fakeGitHub, grants *installationGrants, cutoff *time.Time) (*collectingReporter, error) {
+ 	t.Helper()
+ 	reporter := &collectingReporter{}
+-	err := s.processIssueandPRsWithCommentsREST(context.Background(), gh.client, testRepo, reporter, cutoff)
++	err := s.processIssueandPRsWithCommentsREST(context.Background(), gh.client, testRepo, grants, reporter, cutoff)
+ 	return reporter, err
+ }
+ 
+@@ -357,6 +364,158 @@ func TestCommentScan_EachFailedPhaseIsReportedAsItsOwnChunkError(t *testing.T) {
+ 	assert.Empty(t, reporter.links)
+ }
+ 
++// reportedGrantErrors runs reportCommentErrors on err and describes each
++// chunk error it reports as "<prefix>: skip" or "<prefix>: narrow", where
++// prefix names the phase or the content left out. Any reported error that
++// isn't a grants-based permissionError fails the test.
++func reportedGrantErrors(t *testing.T, err error) []string {
++	t.Helper()
++	reporter := &collectingReporter{}
++	require.NoError(t, reportCommentErrors(context.Background(), reporter, err))
++	var got []string
++	for _, reported := range reporter.errs {
++		var permErr *permissionError
++		require.ErrorAs(t, reported, &permErr)
++		prefix, _, _ := strings.Cut(strings.TrimPrefix(reported.Error(), "error scanning comments: "), ": missing")
++		switch {
++		case strings.Contains(permErr.outcome, "skipped"):
++			got = append(got, prefix+": skip")
++		case strings.Contains(permErr.outcome, "left them out"):
++			got = append(got, prefix+": narrow")
++		default:
++			t.Fatalf("unexpected permission error: %v", reported)
++		}
++	}
++	return got
++}
++
++func TestCommentScan_InstallationGrantsShapeTheListings(t *testing.T) {
++	type grant struct{ issues, pullRequests bool }
++	var (
++		neither = grant{}
++		prsOnly = grant{pullRequests: true}
++		issues  = grant{issues: true}
++		both    = grant{issues: true, pullRequests: true}
++	)
++	tests := []struct {
++		name          string
++		issueComments bool
++		prComments    bool
++		grant         grant
++		wantErrs      []string
++		// wantListed names every endpoint the scan requests; the rest must
++		// not be requested.
++		wantListed []string
++	}{
++		{name: "issue comments, nothing granted", issueComments: true, grant: neither,
++			wantErrs: []string{"issues: skip", "issue comments: skip"}},
++		{name: "issue comments, pull requests granted", issueComments: true, grant: prsOnly,
++			wantErrs:   []string{"issues: skip", "issue comments: narrow"},
++			wantListed: []string{"issue comments"}},
++		{name: "issue comments, issues granted", issueComments: true, grant: issues,
++			wantListed: []string{"issues", "issue comments"}},
++		{name: "issue comments, both granted", issueComments: true, grant: both,
++			wantListed: []string{"issues", "issue comments"}},
++
++		{name: "PR comments, nothing granted", prComments: true, grant: neither,
++			wantErrs: []string{"pull requests: skip", "pull request comments: skip"}},
++		{name: "PR comments, pull requests granted", prComments: true, grant: prsOnly,
++			wantListed: []string{"pulls", "pull comments"}},
++		{name: "PR comments, issues granted", prComments: true, grant: issues,
++			wantErrs: []string{"pull requests: skip", "pull request comments: skip"}},
++		{name: "PR comments, both granted", prComments: true, grant: both,
++			wantListed: []string{"pulls", "pull comments"}},
++
++		{name: "both settings, nothing granted", issueComments: true, prComments: true, grant: neither,
++			wantErrs: []string{"issues and pull requests: skip", "issue comments: skip", "pull request comments: skip"}},
++		{name: "both settings, pull requests granted", issueComments: true, prComments: true, grant: prsOnly,
++			wantErrs:   []string{"issues: skip", "issue comments: narrow"},
++			wantListed: []string{"pulls", "issue comments", "pull comments"}},
++		{name: "both settings, issues granted", issueComments: true, prComments: true, grant: issues,
++			wantErrs:   []string{"pull request bodies: narrow", "pull request conversation comments: narrow", "pull request comments: skip"},
++			wantListed: []string{"issues", "issue comments"}},
++		{name: "both settings, both granted", issueComments: true, prComments: true, grant: both,
++			wantListed: []string{"issues", "issue comments", "pull comments"}},
++
++		{name: "comments off, nothing granted", grant: neither},
++		{name: "comments off, pull requests granted", grant: prsOnly},
++		{name: "comments off, issues granted", grant: issues},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			gh := newFakeGitHub(t)
++			seedRepo(gh)
++			s := &Source{includeIssueComments: tt.issueComments, includePRComments: tt.prCom
+```
+
+**File**: `pkg/sources/github/connector_app.go` (modified, +22/-0)
+```diff
+@@ -149,6 +149,28 @@ func (c *appConnector) Clone(ctx context.Context, repoURL string, args ...string
+ 	return git.CloneRepoUsingToken(ctx, token, repoURL, "", "x-access-token", true, args...)
+ }
+ 
++// grantsForRepo returns what the installation that owns repoURL grants, for
++// the permissions the comment scan needs. Installation permissions apply to
++// every repo the installation can see, so repos on one installation share
++// the answer, and the cached token makes it free after the repo's clone.
++func (c *appConnector) grantsForRepo(ctx context.Context, repoURL string) (*installationGrants, error) {
++	installID, _ := c.installationIDForRepo(repoURL)
++	if installID == 0 {
++		return nil, fmt.Errorf("no GitHub App installation resolved for repo %q", repoURL)
++	}
++
++	cs, err := c.clientsForInstallation(installID)
++	if err != nil {
++		return nil, fmt.Errorf("cannot fetch installation clients for installation %d: %w", installID, err)
++	}
++
++	perms, err := cs.GrantedPermissions(ctx)
++	if err != nil {
++		return nil, fmt.Errorf("could not read permissions for installation %d: %w", installID, err)
++	}
++	return newInstallationGrants(installID, perms), nil
++}
++
+ // installationIDForRepo returns the mapped installation ID for repoURL. When no
+ // mapping exists, it falls back to the configured installation and returns false.
+ //
+```
+
+**File**: `pkg/sources/github/github.go` (modified, +123/-26)
+```diff
+@@ -780,12 +780,16 @@ func (s *Source) enumerateWithApp(ctx context.Context, connector *appConnector,
+ 				ctx.Logger().Info("Skipping org member repos and gists: githubApp.installationId is required as a fallback installation to scan members together with scanAllInstallations", "org_members", len(s.memberCache))
+ 				return nil
+ 			}
+-			// TODO: Replace loop below with a call to s.addReposForMembers(ctx, reporter)
++			// Members' gists aren't listed, unlike in addReposForMembers: none
++			// of GitHub's gist endpoints accept an installation access token,
++			// and no app permission changes that, so the listing fails with a
++			// 403 for every member. One line here stands in for those
++			// failures; there's nothing for the customer to grant.
++			if !s.ignoreGists {
++				ctx.Logger().Info("Skipping org member gists: GitHub doesn't allow listing gists with a GitHub App installation token", "org_members", len(s.memberCache))
++			}
+ 			for member := range s.memberCache {
+ 				logger := ctx.Logger().WithValues("member", member)
+-				if err := s.addUserGistsToCache(ctx, member, reporter); err != nil {
+-					logger.Error(err, "error fetching gists by user")
+-				}
+ 				// TODO: Add authenticated user list repo for app token. It does support as per docs but need to test it before we enable it here.
+ 				// docs: https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-the-authenticated-user
+ 				if err := s.getReposByUser(ctx, member, false, reporter); err != nil {
+@@ -1830,12 +1834,30 @@ func (s *Source) scanComments(ctx context.Context, repoPath string, repoInfo rep
+ 			return s.processRepoIssueandPRsWithCommentsGraphql(ctx, graphqlClient, repoInfo, reporter, cutoffTime)
+ 		}
+ 
+-		return s.processIssueandPRsWithCommentsREST(ctx, apiClient, repoInfo, reporter, cutoffTime)
++		return s.processIssueandPRsWithCommentsREST(ctx, apiClient, repoInfo, s.commentGrantsForRepo(ctx, repoPath), reporter, cutoffTime)
+ 	}
+ 
+ 	return nil
+ }
+ 
++// commentGrantsForRepo returns what the GitHub App installation behind
++// repoURL grants, or nil (unknown) when the source doesn't authenticate as an
++// App. A failure to read the grants also gives nil: the listings then run
++// without the precheck, as they would for a token, and any 403 is still
++// classified from its response.
++func (s *Source) commentGrantsForRepo(ctx context.Context, repoURL string) *installationGrants {
++	app, ok := s.connector.(*appConnector)
++	if !ok {
++		return nil
++	}
++	grants, err := app.grantsForRepo(ctx, repoURL)
++	if err != nil {
++		ctx.Logger().V(2).Info("could not read installation permissions, scanning comments without the permission precheck", "error", err)
++		return nil
++	}
++	return grants
++}
++
+ // trimURLAndSplit removes extraneous information from the |url| and splits it into segments.
+ // This is typically 3 segments: host, owner, and name/ID; however, Gists have some edge cases.
+ //
+@@ -2022,10 +2044,18 @@ const (
+ // commentPhase is one listing in a repo's comment scan. run returns how many
+ // chunks it emitted. startLog, when set, is logged at V(2) before the phase
+ // runs.
++//
++// skipped and narrowed carry what the installation's grants cost the phase
++// (see installationGrants). skipped, when set, is why the listing can't
++// succeed; the phase reports it in place of running. narrowed holds one error
++// per kind of item GitHub will leave out of a listing that still runs, each
++// already prefixed with what's missing, and is reported after the run.
+ type commentPhase struct {
+ 	name     string
+ 	startLog string
+ 	run      func() (int, error)
++	skipped  error
++	narrowed []error
+ }
+ 
+ // processIssueandPRsWithCommentsREST scans a repo's issues, pull requests, and
+@@ -2037,61 +2067,123 @@ type commentPhase struct {
+ // so each failed phase is its own ChunkErr (see reportCommentErrors). Chunks
+ // emitted before a failure are kept.
+ //
++// grants, when known, shapes the phases. A mismatch between the comment
++// settings and what the installation grants is a configuration error the
++// customer can fix, so it's always reported: every listing skipped because it
++// can't succeed, and every kind of item GitHub will silently leave out of a
++// listing that does run, gets exactly one permissionError. Items no setting
++// asked for don't count. Skipped listings make no request.
++//
+ // The "Scanning issues" and "Scanning pull requests" V(2) lines are the only
+ // log signal for scans on the unit path, whose comment errors go to the scan
+ // details UI instead of the logs, so they keep their wording. The summary
+ // line at the end records how far each phase got.
+ func (s *Source) processIssueandPRsWithCommentsREST(
+ 	ctx context.Context, apiClient *github.Client, repoInfo repoInfo,
+-	reporter sources.ChunkReporter, cutoffTime *time.Time,
++	grants *installationGrants, reporter sources.ChunkReporter, cutoffTime *time.Time,
+ ) error {
+ 	p := s.commentPager(ctx, apiClient, reporter)
+ 	var since time.Time
+ 	if cutoffT
+```
+
+**File**: `pkg/sources/github/github_test.go` (modified, +56/-0)
+```diff
+@@ -15,6 +15,7 @@ import (
+ 	"slices"
+ 	"strconv"
+ 	"strings"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -1071,6 +1072,61 @@ func TestEnumerateWithAppScanAllInstallationsIncludesConfiguredInstallation(t *t
+ 	assert.True(t, s.filteredRepoCache.Exists("other-org/repo"))
+ }
+ 
++func TestEnumerateWithAppScanUsersListsMemberReposButNotGists(t *testing.T) {
++	privateKey := createPrivateKey()
++
++	var (
++		mu    sync.Mutex
++		paths []string
++	)
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		mu.Lock()
++		paths = append(paths, r.URL.Path)
++		mu.Unlock()
++		w.Header().Set("Content-Type", "application/json")
++
++		switch {
++		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/access_tokens"):
++			_, _ = w.Write([]byte(`{"token":"token","expires_at":"2099-01-01T00:00:00Z"}`))
++		case strings.HasSuffix(r.URL.Path, "/installation/repositories"):
++			_, _ = w.Write([]byte(`{"total_count":0,"repositories":[]}`))
++		case strings.HasSuffix(r.URL.Path, "/app/installations"):
++			_, _ = w.Write([]byte(`[{"id":1337,"account":{"login":"default-org","type":"Organization"}}]`))
++		case strings.HasSuffix(r.URL.Path, "/orgs/default-org/members"):
++			_, _ = w.Write([]byte(`[{"login":"alice"}]`))
++		case strings.HasSuffix(r.URL.Path, "/users/alice/repos"):
++			_, _ = w.Write([]byte(`[]`))
++		default:
++			http.NotFound(w, r)
++		}
++	}))
++	defer server.Close()
++
++	s, conn := createTestSource(&sourcespb.GitHub{
++		Endpoint:  server.URL,
++		ScanUsers: true,
++		Credential: &sourcespb.GitHub_GithubApp{
++			GithubApp: &credentialspb.GitHubApp{
++				PrivateKey:     privateKey,
++				InstallationId: "1337",
++				AppId:          "4141",
++			},
++		},
++	})
++	require.NoError(t, s.Init(context.Background(), "test - github", 0, 1337, false, conn, 1))
++	require.False(t, s.ignoreGists)
++
++	err := s.enumerateWithApp(context.Background(), s.connector.(*appConnector), noopReporter())
++	require.NoError(t, err)
++
++	mu.Lock()
++	defer mu.Unlock()
++	assert.Contains(t, paths, "/api/v3/users/alice/repos")
++	for _, path := range paths {
++		assert.NotContains(t, path, "gists")
++	}
++}
++
+ func TestEnumerateWithAppScanAllInstallationsMapsExplicitReposBeforeMetadataFetch(t *testing.T) {
+ 	privateKey := createPrivateKey()
+ 
+```
+
+**File**: `pkg/sources/github/installation_grants.go` (added, +65/-0)
+```diff
+@@ -0,0 +1,65 @@
++package github
++
++import "github.com/google/go-github/v67/github"
++
++// Permissions the comment listings need, in the form permissionError names
++// them.
++var (
++	issuesRead       = permission{name: "issues", access: "read"}
++	pullRequestsRead = permission{name: "pull_requests", access: "read"}
++)
++
++// installationGrants is what a GitHub App installation grants, for the
++// permissions the comment scan needs. A nil *installationGrants means the
++// grants aren't known (a personal access token, or an App token whose
++// permissions couldn't be read), and every listing runs as if granted; a 403
++// is then classified from its response by asPermissionError.
++//
++// The grants matter beyond outright refusals because GitHub doesn't refuse
++// every listing they only partly cover. Measured against a live installation:
++//   - /issues with Issues (read) but not Pull requests (read) returns the
++//     issues and leaves out the pull requests.
++//   - /issues/comments with only one of the two returns only the comments that
++//     one covers: issue comments with Issues (read), pull request
++//     conversation comments with Pull requests (read).
++//
++// Both answer 200 with no error, so the comment scan reads the grants to skip
++// listings that can't succeed and to report what the others leave out (see
++// processIssueandPRsWithCommentsREST).
++type installationGrants struct {
++	installationID int64
++	issues         bool
++	pullRequests   bool
++}
++
++// newInstallationGrants reads the comment-relevant grants from an access
++// token's permissions. GitHub lists them on every installation token, so a
++// token without any is unexpected; it returns nil (unknown) rather than
++// treating the installation as granting nothing.
++func newInstallationGrants(installationID int64, perms *github.InstallationPermissions) *installationGrants {
++	if perms == nil {
++		return nil
++	}
++	return &installationGrants{
++		installationID: installationID,
++		issues:         grantsRead(perms.GetIssues()),
++		pullRequests:   grantsRead(perms.GetPullRequests()),
++	}
++}
++
++// grantsRead reports whether an installation permission level allows
++// reading. Write access includes read.
++func grantsRead(level string) bool {
++	switch level {
++	case "read", "write", "admin":
++		return true
++	default:
++		return false
++	}
++}
++
++// issuesGranted and pullRequestsGranted report whether the permission is
++// granted, treating unknown grants as granted so listings run as they would
++// without the precheck.
++func (g *installationGrants) issuesGranted() bool       { return g == nil || g.issues }
++func (g *installationGrants) pullRequestsGranted() bool { return g == nil || g.pullRequests }
+```
+
+**File**: `pkg/sources/github/installation_grants_test.go` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++package github
++
++import (
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/google/go-github/v67/github"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++)
++
++func TestNewInstallationGrants(t *testing.T) {
++	tests := []struct {
++		name             string
++		perms            *github.InstallationPermissions
++		wantIssues       bool
++		wantPullRequests bool
++	}{
++		{name: "read grants", perms: &github.InstallationPermissions{Issues: github.String("read"), PullRequests: github.String("read")},
++			wantIssues: true, wantPullRequests: true},
++		{name: "write includes read", perms: &github.InstallationPermissions{Issues: github.String("write")},
++			wantIssues: true},
++		{name: "absent permissions aren't granted", perms: &github.InstallationPermissions{Contents: github.String("read")}},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			g := newInstallationGrants(7, tt.perms)
++
++			require.NotNil(t, g)
++			assert.Equal(t, int64(7), g.installationID)
++			assert.Equal(t, tt.wantIssues, g.issuesGranted())
++			assert.Equal(t, tt.wantPullRequests, g.pullRequestsGranted())
++		})
++	}
++}
++
++func TestNewInstallationGrants_TokenWithoutPermissionsIsUnknown(t *testing.T) {
++	g := newInstallationGrants(7, nil)
++
++	assert.Nil(t, g)
++	assert.True(t, g.issuesGranted(), "unknown grants let listings run")
++	assert.True(t, g.pullRequestsGranted(), "unknown grants let listings run")
++}
++
++func TestCommentGrantsForRepo_ReadsTheRepoInstallation(t *testing.T) {
++	privKey := generateTestPrivateKey(t)
++	var tokenPath string
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		tokenPath = r.URL.Path
++		w.Header().Set("Content-Type", "application/json")
++		_ = json.NewEncoder(w).Encode(map[string]any{
++			"token":       "test-token",
++			"expires_at":  "2099-01-01T00:00:00Z",
++			"permissions": map[string]string{"pull_requests": "read"},
++		})
++	}))
++	defer server.Close()
++	conn := &appConnector{
++		apiEndpoint: server.URL, appID: 12345, appPrivateKey: string(privKey), installationID: 1,
++		repoInstallationMap: map[string]int64{"https://github.com/o/r.git": 777},
++	}
++	s := &Source{connector: conn}
++
++	grants := s.commentGrantsForRepo(context.Background(), "https://github.com/o/r.git")
++
++	assert.Equal(t, "/api/v3/app/installations/777/access_tokens", tokenPath)
++	assert.Equal(t, &installationGrants{installationID: 777, pullRequests: true}, grants)
++}
++
++func TestCommentGrantsForRepo_UnreadableGrantsAreUnknown(t *testing.T) {
++	privKey := generateTestPrivateKey(t)
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++		w.WriteHeader(http.StatusNotFound)
++	}))
++	defer server.Close()
++	s := &Source{connector: &appConnector{apiEndpoint: server.URL, appID: 12345, appPrivateKey: string(privKey), installationID: 1}}
++
++	assert.Nil(t, s.commentGrantsForRepo(context.Background(), "https://github.com/o/r.git"))
++}
++
++func TestCommentGrantsForRepo_UnknownWithoutAppAuth(t *testing.T) {
++	s := &Source{connector: &tokenConnector{}}
++
++	assert.Nil(t, s.commentGrantsForRepo(context.Background(), "https://github.com/o/r.git"))
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1322,7 +1722,7 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 - **PR #5462** (2026-10-21): Update module golang.org/x/crypto to v0.56.0 [SECURITY] (@renovate[bot])
 - **PR #5461** (closed): Update go toolchain directive to v1.26.10 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5460** (2026-10-21): Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (@renovate[bot])
-- **PR #5451** (2026-10-20): Clean up Git source logging for per-source debug (@kashifkhan0771)
+- **PR #5454** (2026-10-22): github: check App installation grants before listing comments (@unsmith)
 
 ---
 
@@ -1342,28 +1742,43 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460)
+## X. github: check App installation grants before listing comments (#5454)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sources/github/app_client_registry.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7582042e`: Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (#5460). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c85580b7`: github: check App installation grants before listing comments (#5454). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/github/app_client_registry.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/yuin/goldmark v1.7.17 // indirect
+// GrantedPermissions returns the permissions the installation grants, as
+// listed on its access token. GitHub sends them with every token it issues,
+// so this costs no API call when a token is already cached, which is the
+// usual case: a repo is cloned with the same token before its comments are
+// scanned. The comment scan reads them to skip, or report as incomplete,
+// listings the installation can't fully cover (see installationGrants).
+func (cs *AppInstallationClients) GrantedPermissions(ctx context.Context) (*github.InstallationPermissions, error) {
+	if _, err := cs.AccessToken(ctx); err != nil {
+		return nil, err
+	}
+
+	cs.tokenMu.RLock()
+	defer cs.tokenMu.RUnlock()
+	return cs.token.GetPermissions(), nil
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/yuin/goldmark v1.7.8 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7582042e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c85580b7` are properly handled with clean fallback behavior.

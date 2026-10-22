@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source**: github ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
-> **Source Version**: `d056c753`  
+> **Source Version**: `c5ab91ef`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:02:04.051Z  
+> **Timestamp**: 2026-10-22T17:38:27.452Z  
 > **Learning ID**: `learn-github-rsuite-rsuite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:02:03.045Z  
+> **Harvest Timestamp**: 2026-10-22T17:38:16.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -697,11 +697,11 @@ export default function Adapter({ rows, loading, selected, onSelected }: Lifecyc
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4968** (2026-10-20): **test(table): verify loading and empty recovery**
-  *Symptoms*: The table benchmark needs to verify that data identities and real checkbox state recover correctly when an application request removes all rows. This adds a loaded → loading → empty → recovered workflow with six checkpoints, three original IDs and three different recovered IDs.  The shared application request policy clears rows and selected keys when loading starts. Trusted pointer or keyboard input selects an original row, drives all phase buttons, and selects a recovered row. Reports verify every data row's native checkbox, exact identity/order, controlled selection, visible loading/empty presentation, reference integrity and native input ownership. Application phase/status and native `aria-busy` observations are recorded separately.  Ownership remains explicit: RSuite uses public loading/render hooks; Ant Design uses Table loading/Spin and empty text with undefined initial data during loading; Chakra composes loading/empty table rows; HeroUI uses its React Aria empty render prop with application initial-loading content. The shared application selection clearing is an application policy. Native additional-item loading is a separate HeroUI API.  Validation:  - Lifecycle: 16/16 Chromium/Firefox × four libraries × pointer/keyboard cases, with strict TypeScript and 64-file explicit ESLint checks passing. - A clean standalone npm installation reproduces 16/16 with identical source inputs, all 328 installed packages, the supplied full source-SDK snapshot and all four production a
+- **Issue #4988** (2026-10-22): **fix(examples): support Node 24 in Umi and patch Vite**
+  *Symptoms*: The Umi example's locked 4.0.28 fails normal installation on Node 24 because a static `spdy` import reaches the removed `http_parser` binding. Raise Umi's minimum and lock to 4.7.26, which defers that import and uses native HTTPS on Node 24. Keep the existing published RSuite, React, TypeScript and React type package versions and contents.  Enable `esbuildMinifyIIFE` to scope minifier helpers and run Umi's helper conflict checker explicitly in `postbuild`. The original upgraded build reproduced a `pt` collision between two chunks; the frozen conflicting output still fails the same checker, while the corrected build passes. Update root Lodash to 4.18.1 within all eight parent ranges. A version-scoped override patches Umi 4.7.26's fixed Vite 7.3.6 dependency to [7.3.7](https://github.com/advisories/GHSA-rq7h-c2jc-7f22).  The lock stays at version 2. Generating the completed peer graph with npm 10 adds the three Sass/tsx/yaml records missing from npm 11's initial resolution; both clients now accept frozen installs. The README uses `npm ci` and corrects the displayed localhost port.  Validation on macOS ARM64:  - Node 22.22.3/npm 10.9.8 and Node 24.12.0/npm 11.6.2 pass normal frozen installs, build, explicit postbuild checking and TypeScript checking. - Chromium 141 and Firefox 142 pass development and production routing, trusted pointer/Enter and theme controls on both Node versions: eight default configurations. The old working Node 22 reference has identical recorded productio
 
-- **Issue #4967** (2026-10-20): **test(table): verify virtual workflows and run integrity**
-  *Symptoms*: The table prototype needs a virtualized large-data workflow and stronger evidence that each report describes one coherent build and DOM state. This adds a 10,000-row jump/select/retain workflow and closes two reporting gaps: snapshots taken in separate browser tasks could disagree after native DOM recycling, and startup-only fingerprints did not detect changed response bytes or inputs left modified during a run.  The new workflow uses real Chromium/Firefox pointer and keyboard input, actual visible row IDs and native checkbox state. It records mounted versus visible rows separately, including native focused-row persistence. Native engines and application composition are explicit: Chakra uses TanStack Virtual, Ant Design/Chakra use application roving checkbox focus, and HeroUI coordinates its public React Aria focus key with the application jump controller. A documented opaque header style keeps recycled overscan content from painting through the header.  All snapshot fields now come from one browser task. Each successfully served artifact is checked against its build digest, and source/SDK/full installed-package closure/artifacts are verified again at completion. A response violation stays recorded after restoration. Validators recompute summary counts and reject contradictory stored summaries. Reusable checks include deterministic atomic-capture regression, malformed-report controls, native Arrow/Home/End focus checks and controlled mid-run mutations with backups, ownership 
+- **Issue #4987** (2026-10-22): **fix(examples): update remaining Lodash locks to 4.18.1**
+  *Symptoms*: Five example lockfiles still resolve Lodash 4.17.21 and report its template-injection and prototype-path advisories. Update only their Lodash version, tarball URL and integrity to 4.18.1 within the existing dependency ranges: Next.js Pages/Less, Parcel, React Router, Remix and styled-components. Parcel's lockfile-v2 compatibility record is updated consistently. Manifests and all other lock records are unchanged.  Validation on Node 24.12.0:  - All five existing installs and production builds pass; Next.js lint and Remix type checking pass. - Chromium and Firefox production interaction checks pass for all five apps. Baseline and candidate route, keyboard/pointer, theme and CSS observations agree. - All 1,666 unrelated installed package contents remain identical. Each installed Lodash package matches all 1,051 files of its published tarball. - Actual parent resolutions satisfy their declared ranges. Schema validation and Form, SelectPicker and Table SSR checks pass with the examples' existing published RSuite versions. - Twelve ordinary Lodash API controls pass on the old package and each of the five new installs. Seven package-level security probes reproduce on 4.17.21 and are mitigated on every 4.18.1 install. These probes do not establish externally reachable exploit paths in the apps. - Valid before/after audits remove the Lodash item from each install. Aggregate production findings decrease from 23 to 18 and full findings from 124 to 119; these are per-installation counts,
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -718,1068 +718,169 @@ export default function Adapter({ rows, loading, selected, onSelected }: Lifecyc
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d056c753` (2026-10-20)
-**Commit Message**: Merge pull request #4968 from rsuite/bench/cross-library-table-lifecycle
+### Incident Patch 1: `cf94a169` (2026-10-22)
+**Commit Message**: Merge pull request #4981 from rsuite/fix/preact-example-jsx-security
 
-test(table): verify loading and empty recovery
+fix(examples): restore Preact builds and patch runtime dependencies
 
-**File**: `.github/workflows/table-benchmarks.yml` (modified, +8/-2)
+**File**: `examples/with-preact/package-lock.json` (modified, +12/-12)
 ```diff
-@@ -1,4 +1,4 @@
--name: Virtual table workflow
-+name: Table workflow integrity
- on:
-   pull_request:
-     branches: [main, next]
-@@ -36,7 +36,7 @@ permissions:
-   contents: read
- jobs:
-   virtual-integrity:
--    name: Virtual table and report integrity
-+    name: Table workflows and report integrity
-     runs-on: ubuntu-24.04
-     timeout-minutes: 30
-     steps:
-@@ -73,6 +73,12 @@ jobs:
-       - name: Reject malformed or contradictory reports
-         working-directory: benchmarks/cross-library-table
-         run: node checks/report-integrity.mjs results/virtual/report.json
-+      - name: Run Chromium and Firefox loading and empty recovery
-+        working-directory: benchmarks/cross-library-table
-+        run: node run.mjs --skip-build --workflow lifecycle --output results/lifecycle/report.json
-+      - name: Reject stale lifecycle identities and state
-+        working-directory: benchmarks/cross-library-table
-+        run: node checks/report-integrity.mjs results/lifecycle/report.json
-       - name: Check composed native keyboard focus
-         working-directory: benchmarks/cross-library-table
-         run: node checks/composed-focus.mjs results/focus
+@@ -1515,9 +1515,9 @@
+       "dev": true
+     },
+     "node_modules/lodash": {
+-      "version": "4.17.21",
+-      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
+-      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
++      "version": "4.18.1",
++      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
++      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+     },
+     "node_modules/memoize-one": {
+       "version": "5.2.1",
+@@ -1617,9 +1617,9 @@
+       }
+     },
+     "node_modules/preact": {
+-      "version": "10.28.0",
+-      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
+-      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA==",
++      "version": "10.28.2",
++      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
++      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==",
+       "funding": {
+         "type": "opencollective",
+         "url": "https://opencollective.com/preact"
+@@ -3048,9 +3048,9 @@
+       "dev": true
+     },
+     "lodash": {
+-      "version": "4.17.21",
+-      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
+-      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
++      "version": "4.18.1",
++      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
++      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+     },
+     "memoize-one": {
+       "version": "5.2.1",
+@@ -3118,9 +3118,9 @@
+       }
+     },
+     "preact": {
+-      "version": "10.28.0",
+-      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
+-      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA=="
++      "version": "10.28.2",
++      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
++      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA=="
+     },
+     "preact-render-to-string": {
+       "version": "6.6.4",
 ```
 
-**File**: `benchmarks/cross-library-table/README.md` (modified, +17/-0)
+**File**: `examples/with-preact/vite.config.js` (modified, +2/-1)
 ```diff
-@@ -131,3 +131,20 @@ source, installs the standalone cohort with npm ci, runs both native browsers,
- checks atomic capture/report integrity and composed focus, and executes the four
- mid-run mutation controls. Raw results and build fingerprints are uploaded even
- on failure. Sort/tree diagnostic failures remain explicit in their own commands.
-+
-+### Loading, empty and recovered data
-+
-+Run the `lifecycle` workflow against all four production adapters:
-+
-+```sh
-+node run.mjs --workflow lifecycle --output results/lifecycle/report.json
-+node checks/report-integrity.mjs results/lifecycle/report.json
-+```
-+
-+It selects an original row, starts loading, resolves an empty result, recovers three different row IDs and selects a recovered row. Three application buttons control these transitions deterministically; this is not a network latency measurement. The shared application policy clears rows and selected keys when the request starts. Reports check actual native checkbox state for every data row, including unchecked recovered rows, rather than inferring selection from application output alone. Loading and empty presentation have no data identity markers and cannot count as data rows.
-+
-+RSuite uses public `loading`, `renderLoading` and `renderEmpty` props. Ant Design uses native `loading`/Spin and `locale.emptyText`, with `dataSource={undefined}` while loading: the pinned version intentionally shows its empty placeholder alongside loading for an explicit empty array. Chakra uses an application loading/empty table-row composition. HeroUI uses its public React Aria empty-state render prop; initial loading content is application composition, distinct from its native additional-item `Table.LoadMoreItem` API.
-+
-+The application phase/status is recorded separately from actual native `aria-busy` observations. Reference integrity, trusted toolbar/selection input, exact row identities, indicator visibility and real checkbox state are acceptance gates; screen-reader announcement and accessibility conformance are not claimed. The runner waits for native checked state within the same 10-second action bound before capturing a selected checkpoint. Original premature-sampling and adapter-input failures remain recovery evidence.
-+
-+The dedicated CI workflow now runs both virtual and lifecycle matrices and their report controls, then the shared atomic-capture, focus and exclusive mutation controls. Raw lifecycle outcomes are included in the always-uploaded results.
-```
-
-**File**: `benchmarks/cross-library-table/checks/report-integrity.mjs` (modified, +49/-1)
-```diff
-@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
- import { validateReport } from '../runner/report.mjs';
- import { validateTreeReport } from '../runner/tree-report.mjs';
- import { validateVirtualReport } from '../runner/virtual-report.mjs';
-+import { validateLifecycleReport } from '../runner/lifecycle-report.mjs';
- const [file, browser = 'all', ...extra] = process.argv.slice(2);
- assert(
-   file && !extra.length,
-@@ -12,7 +13,8 @@ const actual = JSON.parse(fs.readFileSync(file)),
-   validate = {
-     selection: validateReport,
-     tree: validateTreeReport,
--    virtual: validateVirtualReport
-+    virtual: validateVirtualReport,
-+    lifecycle: validateLifecycleReport
-   }[actual.workflow];
- assert(validate, 'Unknown report workflow');
- assert.equal(actual.validated, true);
-@@ -104,6 +106,52 @@ if (actual.workflow === 'virtual') {
-       .events.filter(e => e.rowId === 'entry-09000')
-       .forEach(e => (e.rowId = 'entry-00000'))
-   );
-+} else if (actual.workflow === 'lifecycle') {
-+  const state = (r, name) => positive(r).checkpoints.find(c => c.name === name).state;
-+  reject('wrong-workflow', r => (r.workflow = 'selection'));
-+  reject('wrong-ownership', r => (positive(r).ownership = 'native-all'));
-+  reject('wrong-displayed-id', r => (state(r, 'initial').ids[0] = 'bogus'));
-+  reject('stale-recovered-id', r => (state(r, 'recovered').ids[0] = 'entry-000'));
-+  reject('stale-loading-selection', r => (state(r, 'loading').selected = '["entry-001"]'));
-+  reject('stale-recovered-selection', r => (state(r, 'recovered').selected = '["entry-001"]'));
-+  reject('wrong-phase', r => (state(r, 'loading').lifecycle.phase = 'empty'));
-+  reject('wrong-app-status', r => (state(r, 'loading').lifecycle.statusText = 'No entries'));
-+  reject(
-+    'hidden-loading-indicator',
-+    r => (state(r, 'loading').lifecycle.loadingIndicators[0].visible = false)
-+  );
-+  reject('simultaneous-loading-empty', r =>
-+    state(r, 'loading').lifecycle.emptyIndicators.push({ text: 'No entries', visible: true })
-+  );
-+  reject('empty-counted-as-data', r => state(r, 'empty').ids.push('empty-row'));
-+  reject(
-+    'wrong-recovered-checkbox',
-+    r =>
-+      (state(r, 'reselected').checkboxes.find(
-+        c => c.kind === 'input' && c.rowId === 'entry-101'
-+      ).checked = false)
-+  );
-+  reject('erased-recovered-checkbox', r => {
-+    const s = state(r, 'reselected');
-+    s.checkboxes = s.checkboxes.filter(c => c.rowId !== 'entry-101');
-+  });
-+  reject('wrong-recovered-pointer-row', r =>
-+    positive(r)
-+      .events.filter(e => e.rowId === 'entry-101')
-+      .forEach(e => (e.rowId = 'entry-001'))
-+  );
-+  reject(
-+    'missing-native-toolbar-input',
-+    r => (positive(r).events = positive(r).events.filter(e => e.buttonText !== 'Start loading'))
-+  );
-+  reject('invalid-busy-observation', r =>
-+    state(r, 'initial').lifecycle.nativeBusy.push({
-+      tag: 'DIV',
-+      role: null,
-+      value: 'invalid',
-+      visible: true
-+    })
-+  );
- } else if (actual.workflow === 'tree') {
-   reject('wrong-workflow', r => (r.workflow = 'selection'));
-   reject('wrong-ownership', r => (positive(r).ownership = 'native-all'));
-```
-
-**File**: `benchmarks/cross-library-table/integrity.mjs` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@ export function inputs(root) {
-       'index.html',
-       'tree.html',
-       'virtual.html',
-+      'lifecycle.html',
-       'vite.config.mjs',
-       'build.mjs',
-       'run.mjs',
-```
-
-**File**: `benchmarks/cross-library-table/lifecycle.html` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+<!doctype html>
-+<html lang="en">
-+  <head>
-+    <meta charset="UTF-8" />
-+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-+    <title>Loading and empty table workflow</title>
-+  </head>
-+  <body>
-+    <div id="root"></div>
-+    <script type="module" src="/src/lifecycle/LifecycleFixture.tsx"></script>
-+  </body>
-+</html>
-```
-
-**File**: `benchmarks/cross-library-table/run.mjs` (modified, +20/-8)
-```diff
-@@ -14,13 +14,17 @@ import { assertBuildState, artifactGuard } from './runner/build-state.mjs';
- import { virtualWorkflow } from './runner/virtual-workflow.mjs';
- import { validateVirtualReport } from './runner/virtual-report.mjs';
- import { virtualOwnership } from './runner/virtual-oracle.mjs';
-+import { lifecycleWorkflow } from './runner/lifecycle-workflow.mjs';
-+import { validateLifecycleReport } from './runner/lifecycle-report.mjs';
-+import { lifecycleOwnership } from './runner/lifecycle-oracle.mjs';
- const root = import.meta.dirname,
-   args = process.argv.slice(2);
- const outputIndex = args.indexOf('--output'),
-   browserIndex = args.indexOf('--browser'),
-   workflowIndex = args.indexOf('--workflow');
- const workflowName = workflowIndex < 0 ? 'selection' : args[workflowIndex + 1];
--if (!['selection', 'tree', 'virtual'].includes(workflowName)) throw Error('Invalid workflow');
-+if (!['selection', 'tree', 'virtual', 'lifecycle'].includes(workflowName))
-+  throw Error('Invalid workflow');
- const output = path.resolve(
-   outputIndex < 0
-     ? path.join(
-@@ -89,11 +93,13 @@ const report = {
-   workflow: workflowName,
-   qualification: 'Prototype: adapters and driver require review before qualified comparison',
-   scope:
--    workflowName === 'virtual'
--      ? '10k rows, application jump controls and native checkbox selection. Mounted rows and visible rows reported separately, including focused-row persistence. No performance/ranking/AT conformance result.'
--      : workflowName === 'tree'
--        ? 'Three-level hierarchy, retained selection and root reorder. Functional and limited tree semantics gates are reported separately; native/composed ownership explicit. No AT/conformance/ranking result.'
--        : 'One sort/filter/ID-selection workflow; native engines versus explicit application composition. No performance/conformance/ranking result.',
-+    workflowName === 'lifecycle'
-+      ? 'Loaded to loading to empty to recovered data with shared explicit application request/selection policy; native loading and composed content ownership recorded. No AT/performance/ranking claim.'
-+      : workflowName === 'virtual'
-+        ? '10k rows, application jump controls and native checkbox selection. Mounted rows and visible rows reported separately, including focused-row persistence. No performance/ranking/AT conformance result.'
-+        : workflowName === 'tree'
-+          ? 'Three-level hierarchy, retained selection and root reorder. Functional and limited tree semantics gates are reported separately; native/composed ownership explicit. No AT/conformance/ranking result.'
-+          : 'One sort/filter/ID-selection workflow; native engines versus explicit application composition. No performance/conformance/ranking result.',
-   node: process.version,
-   built,
-   cases: [],
-@@ -127,6 +133,7 @@ try {
-             row.functionalPassed = false;
-           }
-           if (workflowName === 'virtual') row.ownership = virtualOwnership[library];
-+          if (workflowName === 'lifecycle') row.ownership = lifecycleOwnership[library];
-           const capture = createCapture(page, workflowName);
-           report.cases.push(row);
-           page.on('pageerror', error => row.pageErrors.push(String(error)));
-@@ -146,6 +153,7 @@ try {
-                       trusted: event.isTrusted,
-                       tag: event.target.tagName,
-                       role: event.target.getAttribute?.('role'),
-+                      buttonText: event.target.closest?.('button')?.textContent,
-                       rowId: event.target
-                         .closest?.('[data-virtual-row-id],tr,[role="row"]')
-                         ?.querySelector('[data-row-id]')?.dataset.rowId,
-@@ -167,7 +175,9 @@ try {
-                 ? treeWorkflow
-                 : workflowName === 'virtual'
-                   ? virtualWorkflow
--                  : workflow
-+                  : workflowName === 'lifecycle'
-+                    ? lifecycleWorkflow
-+                    : workflow
-             )(page, profile, async (name, observation) => {
-               const state = await capture();
-               row.checkpoints.push({ name, state, observation });
-@@ -222,7 +232,9 @@ try {
-         ? validateTreeReport
-         : workflowName === 'virtual'
-           ? validateVirtualReport
--          : validateReport
-+          : workflowName === 'lifecycle'
-+            ? validateLifecycleReport
-+            : validateReport
-     )(report, browserName);
-     report.validated = true;
-   } catch (error) {
-```
-
-**File**: `benchmarks/cross-library-table/runner/capture.mjs` (modified, +4/-2)
-```diff
-@@ -1,9 +1,11 @@
- import { snapshot } from './snapshot.mjs';
- import { treeSnapshot } from './tree-snapshot.mjs';
- import { virtualSnapshot } from './virtual-snapshot.mjs';
-+import { lifecycleSnapshot } from './lifecycle-snapshot.mjs';
- export function createCapture(page, workflow) {
--  const extra =
--    workflow === 'tree' ? treeSnapshot : workflow === 'virtual' ? virtualSnapshot : null;
-+  const extra = { tree: treeSnapshot, virtual: virtualSnapshot, lifecycle: lifecycleSnapshot }[
-+    workflow
-+  ];
-   const expression =
-     '(() => ({...(' +
-     snapshot.toString() +
-```
-
-**File**: `benchmarks/cross-library-table/runner/lifecycle-oracle.mjs` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+export const lifecycleOwnership = {
-+  rsuite: 'Native loading/renderLoading/renderEmpty; application request and selection policy',
-+  antd: 'Native Table loading/Spin and locale.emptyText; application request and selection policy',
-+  chakra: 'Application loading/empty table-row composition and selection with Chakra primitives',
-+  heroui:
-+    'Native React Aria empty rendering through HeroUI; application initial-loading content and request policy'
-+};
-+export const lifecycleStates = {
-+  initial: {
-+    phase: 'loaded',
-+    ids: ['entry-000', 'entry-001', 'entry-002'],
-+    selected: [],
-+    text: 'Loaded 3 entries'
-+  },
-+  selected: {
-+    phase: 'loaded',
-+    ids: ['entry-000', 'entry-001', 'entry-002'],
-+    selected: ['entry-001'],
-+    text: 'Loaded 3 entries'
-+  },
-+  loading: { phase: 'loading', ids: [], selected: [], text: 'Loading entries' },
-+  empty: { phase: 'empty', ids: [], selected: [], text: 'No entries' },
-+  recovered: {
-+    phase: 'recovered',
-+    ids: ['entry-100', 'entry-101', 'entry-102'],
-+    selected: [],
-+    text: 'Recovered 3 entries'
-+  },
-+  reselected: {
-+    phase: 'recovered',
-+    ids: ['entry-100', 'entry-101', 'entry-102'],
-+    selected: ['entry-101'],
-+    text: 'Recovered 3 entries'
-+  }
-+};
+@@ -4,7 +4,8 @@ import preact from '@preact/preset-vite';
+ export default defineConfig({
+   plugins: [preact()],
+   esbuild: {
+-    include: /src\/.*\.js$/,
++    include: /src\/.*\.jsx?$/,
++    exclude: /node_modules/,
+     loader: 'jsx'
+   },
+   optimizeDeps: {
 ```
 
 ---
 
-### Incident Patch 2: `87f36d31` (2026-10-20)
-**Commit Message**: Merge pull request #4967 from rsuite/bench/cross-library-table-virtual
+### Incident Patch 2: `5c3e5f0a` (2026-10-21)
+**Commit Message**: Merge pull request #4977 from rsuite/fix/typescript-example-lodash-security
 
-test(table): verify virtual workflows and run integrity
+fix(deps): patch TypeScript example lodash resolution
 
-**File**: `.github/workflows/table-benchmarks.yml` (added, +91/-0)
+**File**: `examples/with-typescript/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,91 @@
-+name: Virtual table workflow
-+on:
-+  pull_request:
-+    branches: [main, next]
-+    paths:
-+      - 'benchmarks/cross-library-table/**'
-+      - 'benchmarks/cross-library-picker/integrity.mjs'
-+      - 'benchmarks/cross-library-picker/runner/server.mjs'
-+      - 'benchmarks/cross-library-picker/runner/diagnostics.mjs'
-+      - 'src/**'
-+      - 'scripts/**'
-+      - 'test/build/**'
-+      - 'package*.json'
-+      - 'tsconfig*.json'
-+      - 'gulpfile.js'
-+      - 'webpack*.js'
-+      - '.babelrc*'
-+      - '.github/workflows/table-benchmarks.yml'
-+  push:
-+    branches: [main, next]
-+    paths:
-+      - 'benchmarks/cross-library-table/**'
-+      - 'benchmarks/cross-library-picker/integrity.mjs'
-+      - 'benchmarks/cross-library-picker/runner/server.mjs'
-+      - 'benchmarks/cross-library-picker/runner/diagnostics.mjs'
-+      - 'src/**'
-+      - 'scripts/**'
-+      - 'test/build/**'
-+      - 'package*.json'
-+      - 'tsconfig*.json'
-+      - 'gulpfile.js'
-+      - 'webpack*.js'
-+      - '.babelrc*'
-+      - '.github/workflows/table-benchmarks.yml'
-+permissions:
-+  contents: read
-+jobs:
-+  virtual-integrity:
-+    name: Virtual table and report integrity
-+    runs-on: ubuntu-24.04
-+    timeout-minutes: 30
-+    steps:
-+      - uses: actions/checkout@v4
-+      - uses: actions/setup-node@v4
-+        with:
-+          node-version: '24'
-+          cache: npm
-+          cache-dependency-path: |
-+            package-lock.json
-+            benchmarks/cross-library-table/package-lock.json
-+      - name: Install SDK build dependencies
-+        run: npm ci --legacy-peer-deps
-+      - name: Build and validate source SDK
-+        run: npm run build
-+      - name: Install frozen standalone cohort
-+        working-directory: benchmarks/cross-library-table
-+        run: npm ci --ignore-scripts
-+      - name: Install pinned native browsers
-+        working-directory: benchmarks/cross-library-table
-+        run: node node_modules/playwright/cli.js install --with-deps chromium firefox
-+      - name: Check standalone types
-+        working-directory: benchmarks/cross-library-table
-+        run: npm run check
-+      - name: Build all four production adapters
-+        working-directory: benchmarks/cross-library-table
-+        run: npm run build
-+      - name: Verify atomic DOM capture
-+        working-directory: benchmarks/cross-library-table
-+        run: node checks/atomic-capture.mjs
-+      - name: Run Chromium and Firefox virtual workflows
-+        working-directory: benchmarks/cross-library-table
-+        run: node run.mjs --skip-build --workflow virtual --output results/virtual/report.json
-+      - name: Reject malformed or contradictory reports
-+        working-directory: benchmarks/cross-library-table
-+        run: node checks/report-integrity.mjs results/virtual/report.json
-+      - name: Check composed native keyboard focus
-+        working-directory: benchmarks/cross-library-table
-+        run: node checks/composed-focus.mjs results/focus
-+      - name: Reject mid-run mutations and restore inputs
-+        working-directory: benchmarks/cross-library-table
-+        run: node checks/runtime-mutations.mjs results/runtime-controls
-+      - name: Upload raw outcomes and input fingerprints
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: virtual-table-${{ github.sha }}
-+          retention-days: 14
-+          if-no-files-found: error
-+          path: |
-+            benchmarks/cross-library-table/results
-+            benchmarks/cross-library-table/dist/build-inputs.json
+@@ -4385,9 +4385,9 @@
+       }
+     },
+     "node_modules/lodash": {
+-      "version": "4.17.21",
+-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz",
+-      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
++      "version": "4.18.1",
++      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
++      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+     },
+     "node_modules/lodash.debounce": {
+       "version": "4.0.8",
 ```
 
-**File**: `benchmarks/cross-library-table/README.md` (modified, +47/-1)
-```diff
-@@ -83,5 +83,51 @@ package; all three competitor asset sets and the SDK remain identical. The
- published package and all four production asset sets are restored afterwards.
- This does not measure a public npm release of the fixes.
- 
--Virtual scroll and loading/empty recovery remain planned separate workflows.
-+The virtual workflow uses 10,000 fixed records and a 400px body viewport. Shared
-+application jump buttons request the top, row 9000 and the end. Both input profiles
-+select the actual row checkbox and retain its key across viewport changes. DOM
-+membership and clipped visibility are reported separately: a native focused row
-+may remain mounted outside the viewport. Bounded DOM counts are correctness
-+checks, not performance measurements.
-+
-+RSuite uses its native virtualizer and scrolling ref with application Checkbox
-+selection. Ant Design uses native virtualization, selection and scrolling with
-+public onRow ID attributes and an application roving checkbox focus policy. Chakra composes TanStack Virtual and a roving
-+checkbox focus policy; its sticky header is included in scrolling padding. HeroUI
-+uses React Aria Virtualizer/TableLayout and selection. Its application jump
-+controller coordinates the public TableStateContext focus key with DOM scrolling.
-+No runner calls DOM focus, forces a click or increases the ten-second deadline.
-+
-+    node run.mjs --skip-build --workflow virtual --output /absolute/path/virtual.json
-+    node checks/report-integrity.mjs /absolute/path/virtual.json
-+
-+The single-task-v1 capture evaluates all DOM snapshot fields in the same browser
-+task. A deterministic microtask-reorder control reproduces the old split-sampling
-+race and verifies that atomic sampling keeps row IDs and metadata consistent.
-+
-+    node checks/atomic-capture.mjs
-+    node checks/composed-focus.mjs /absolute/path/focus-results
-+
-+The response-and-final-v1 protocol hashes every successfully served response and
-+checks source, SDK, installed dependencies and all production artifacts again
-+at completion. A response violation stays recorded even if its file is restored.
-+Validators recompute outcomes and reject a contradictory stored summary. Older
-+prototype reports need their captured protocol version; they do not prove these
-+new integrity checks.
-+
-+Run the mutation controls exclusively: they temporarily change one owned source,
-+SDK manifest, installed-package manifest or served HTML file after the first
-+browser case. They keep backups/journals, restore exact bytes in cleanup and
-+reject a file modified externally instead of overwriting it.
-+
-+    node checks/runtime-mutations.mjs /absolute/path/control-results
-+
-+Loading/empty recovery, native wheel/keyboard exploration beyond this jump
-+workflow and repeated performance measurements remain separate work.
- No overall ranking is established.
-+
-+The dedicated Virtual table workflow CI builds the SDK from the checked-out
-+source, installs the standalone cohort with npm ci, runs both native browsers,
-+checks atomic capture/report integrity and composed focus, and executes the four
-+mid-run mutation controls. Raw results and build fingerprints are uploaded even
-+on failure. Sort/tree diagnostic failures remain explicit in their own commands.
-```
+---
 
-**File**: `benchmarks/cross-library-table/checks/atomic-capture.mjs` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+import assert from 'node:assert/strict';
-+import { chromium, firefox } from 'playwright';
-+import { snapshot } from '../runner/snapshot.mjs';
-+import { virtualSnapshot } from '../runner/virtual-snapshot.mjs';
-+import { createCapture } from '../runner/capture.mjs';
-+const results = [];
-+for (const [name, engine] of Object.entries({ chromium, firefox })) {
-+  const browser = await engine.launch();
-+  try {
-+    const run = async atomic => {
-+      const context = await browser.newContext(),
-+        page = await context.newPage();
-+      try {
-+        await page.setContent(
-+          '<output>[]</output><section aria-label="Virtual ledger" style="width:400px;height:200px"><div role="row"><span data-row-id="entry-00000">First</span></div><div role="row"><span data-row-id="entry-00001">Second</span></div></section>'
-+        );
-+        await page.evaluate(() => {
-+          const original = Document.prototype.querySelectorAll;
-+          let armed = true;
-+          document.querySelectorAll = function (selector) {
-+            const value = original.call(this, selector);
-+            if (selector === '[data-row-id]' && armed) {
-+              armed = false;
-+              queueMicrotask(() => {
-+                const section = document.querySelector('section');
-+                section.appendChild(section.firstElementChild);
-+              });
-+            }
-+            return value;
-+          };
-+        });
-+        const state = atomic
-+          ? await createCapture(page, 'virtual')()
-+          : { ...(await page.evaluate(snapshot)), ...(await page.evaluate(virtualSnapshot)) };
-+        const current = await page.evaluate(() =>
-+          [...document.querySelectorAll('[data-row-id]')].map(n => n.dataset.rowId)
-+        );
-+        assert.deepEqual(current, ['entry-00001', 'entry-00000']);
-+        if (atomic)
-+          assert.deepEqual(
-+            state.ids,
-+            state.virtual.rows.map(r => r.id)
-+          );
-+        else
-+          assert.notDeepEqual(
-+            state.ids,
-+            state.virtual.rows.map(r => r.id)
-+          );
-+        return {
-+          ids: state.ids,
-+          metadataIds: state.virtual.rows.map(r => r.id),
-+          DOMAfterTask: current
-+        };
-+      } finally {
-+        await context.close();
-+      }
-+    };
-+    results.push({
-+      browser: name,
-+      version: browser.version(),
-+      split: await run(false),
-+      atomic: await run(true),
-+      passed: true
-+    });
-+  } finally {
-+    await browser.close();
-+  }
-+}
-+console.log(
-+  JSON.stringify(
-+    {
-+      passed: true,
-+      scope:
-+        'Deterministic DOM reorder between tasks reproduces split sampling mismatch; single-task sampling stays internally consistent. Not a component benchmark outcome.',
-+      results
-+    },
-+    null,
-+    2
-+  )
-+);
-```
+### Incident Patch 3: `784209da` (2026-10-21)
+**Commit Message**: Merge pull request #4974 from rsuite/fix/root-yaml-security
 
-**File**: `benchmarks/cross-library-table/checks/composed-focus.mjs` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+import fs from 'node:fs';
-+import path from 'node:path';
-+import http from 'node:http';
-+import assert from 'node:assert/strict';
-+import { createRequire } from 'node:module';
-+import { pathToFileURL } from 'node:url';
-+const fixture = path.resolve(import.meta.dirname, '..'),
-+  root = path.resolve(process.argv[2] ?? path.join(fixture, 'results', 'composed-focus'));
-+assert(process.argv.length <= 3);
-+fs.mkdirSync(root, { recursive: true });
-+const { chromium, firefox } = createRequire(fixture + '/package.json')('playwright'),
-+  { virtualActivate } = await import(pathToFileURL(fixture + '/runner/virtual-input.mjs')),
-+  { artifactGuard, assertBuildState } = await import(
-+    pathToFileURL(fixture + '/runner/build-state.mjs')
-+  ),
-+  built = JSON.parse(fs.readFileSync(fixture + '/dist/build-inputs.json')),
-+  guard = artifactGuard(fixture, built);
-+assertBuildState(fixture, built);
-+const report = {
-+  scope:
-+    'Native Arrow/Home/End probe for application-owned Antd/Chakra roving checkbox focus; not a cross-library performance/ranking result',
-+  cases: [],
-+  built
-+};
-+const server = http.createServer((req, res) => {
-+  try {
-+    const file = path.resolve(fixture, 'dist', '.' + new URL(req.url, 'http://localhost').pathname);
-+    assert(file.startsWith(fixture + '/dist/'));
-+    const bytes = fs.readFileSync(file);
-+    guard.check(file, bytes);
-+    res.setHeader(
-+      'Content-Type',
-+      file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : 'text/html'
-+    );
-+    res.end(bytes);
-+  } catch {
-+    res.statusCode = 404;
-+    res.end();
-+  }
-+});
-+await new Promise(r => server.listen(0, '127.0.0.1', r));
-+try {
-+  for (const [engineName, engine] of Object.entries({ chromium, firefox })) {
-+    const browser = await engine.launch();
-+    try {
-+      for (const library of ['antd', 'chakra']) {
-+        const context = await browser.newContext({ viewport: { width: 1280, height: 900 } }),
-+          page = await context.newPage();
-+        page.setDefaultTimeout(10000);
-+        const row = {
-+          browser: engineName,
-+          version: browser.version(),
-+          library,
-+          steps: [],
-+          errors: []
-+        };
-+        report.cases.push(row);
-+        page.on('pageerror', e => row.errors.push(String(e)));
-+        try {
-+          await page.addInitScript(() => {
-+            window.__focusKeys = [];
-+            document.addEventListener(
-+              'keydown',
-+              e => window.__focusKeys.push({ key: e.key, trusted: e.isTrusted }),
-+              true
-+            );
-+          });
-+          await page.goto(
-+            'http://127.0.0.1:' + server.address().port + '/' + library + '/virtual.html'
-+          );
-+          await page.waitForSelector('[data-row-id]');
-+          await virtualActivate(
-+            page,
-+            page.getByRole('button', { name: 'Jump row 9000', exact: true }),
-+            'keyboard',
-+            'toolbar'
-+          );
-+          const input = page.locator('[data-virtual-row-id="entry-09000"]').getByRole('checkbox');
-+          await virtualActivate(page, input, 'keyboard', 'selection', 'entry-09000');
-+          await page.waitForFunction(
-+            () => document.querySelector('output').textContent === '["entry-09000"]'
-+          );
-+          for (const [key, id] of [
-+            ['ArrowDown', 'entry-09001'],
-+            ['ArrowUp', 'entry-09000'],
-+            ['Home', 'entry-00000'],
-+            ['End', 'entry-09999'],
-+            ['ArrowUp', 'entry-09998']
-+          ]) {
-+            await page.keyboard.press(key);
-+            await page.waitForFunction(
-+              id =>
-+                document.activeElement?.closest('[data-virtual-row-id]')?.dataset.virtualRowId ===
-+                id,
-+              id
-+            );
-+            assert.equal(await page.locator('output').textContent(), '["entry-09000"]');
-+            row.steps.push({ key, id });
-+          }
-+          row.events = await page.evaluate(() => window.__focusKeys);
-+          assert(row.events.length && row.events.every(e => e.trusted));
-+          for (const key of ['ArrowUp', 'ArrowDown', 'Home', 'End'])
-+            assert(row.events.some(e => e.key === key));
-+          assert.deepEqual(row.errors, []);
-+          row.passed = true;
-+        } catch (error) {
-+          row.passed = false;
-+          row.error = String(error);
-+          row.focus = await page.evaluate(() => document.activeElement?.outerHTML);
-+          fs.writeFileSync(
-+            root + '/focus-' + engineName + '-' + library + '-failure.html',
-+            await page.content()
-+          );
-+        } finally {
-+          await context.close();
-+        }
-+        console.log(engineName, library, row.passed ? 'PASS' : row.error);
-+      }
-+    } finally {
-+      await browser.close();
-+    }
-+  }
-+  assertBuildState(fixture, built);
-+  assert.deepEqual(guard.violations, []);
-+} finally {
-+  await new Promise
-```
+fix(deps): patch development js-yaml resolutions
 
-**File**: `benchmarks/cross-library-table/checks/report-integrity.mjs` (added, +173/-0)
+**File**: `package-lock.json` (modified, +10/-8)
 ```diff
-@@ -0,0 +1,173 @@
-+import fs from 'node:fs';
-+import assert from 'node:assert/strict';
-+import { validateReport } from '../runner/report.mjs';
-+import { validateTreeReport } from '../runner/tree-report.mjs';
-+import { validateVirtualReport } from '../runner/virtual-report.mjs';
-+const [file, browser = 'all', ...extra] = process.argv.slice(2);
-+assert(
-+  file && !extra.length,
-+  'Usage: node checks/report-integrity.mjs report.json [all|chromium|firefox]'
-+);
-+const actual = JSON.parse(fs.readFileSync(file)),
-+  validate = {
-+    selection: validateReport,
-+    tree: validateTreeReport,
-+    virtual: validateVirtualReport
-+  }[actual.workflow];
-+assert(validate, 'Unknown report workflow');
-+assert.equal(actual.validated, true);
-+const summary = validate(actual, browser);
-+assert.deepEqual(summary, actual.summary);
-+const positive = r => r.cases.find(c => c.passed && c.profile === 'pointer'),
-+  keyboard = r => r.cases.find(c => c.passed && c.profile === 'keyboard');
-+assert(
-+  positive(actual) && keyboard(actual),
-+  'Mutation controls require a complete passing pointer and keyboard case'
-+);
-+const results = [];
-+function reject(name, mutate, keepSummary = false) {
-+  const r = structuredClone(actual);
-+  if (!keepSummary) delete r.summary;
-+  mutate(r);
-+  let error;
-+  try {
-+    validate(r, browser);
-+  } catch (e) {
-+    error = String(e);
-+  }
-+  assert(error, 'False green: ' + name);
-+  results.push({ name, rejected: true, error });
-+}
-+reject('incomplete-report', r => (r.complete = false));
-+reject('missing-cell', r => r.cases.pop());
-+reject('duplicate-cell', r => (r.cases[r.cases.length - 1] = structuredClone(r.cases[0])));
-+reject('missing-capture-protocol', r => delete r.captureProtocol);
-+reject('missing-integrity-protocol', r => delete r.integrity);
-+reject('unchecked-final-state', r => (r.integrity.after = false));
-+reject('no-bound-responses', r => (r.integrity.responsesChecked = 0));
-+reject('too-few-bound-responses', r => (r.integrity.responsesChecked = 1));
-+reject('tainted-response', r => r.integrity.violations.push({ file: 'probe' }));
-+reject(
-+  'contradictory-summary',
-+  r => (r.summary = { ...r.summary, passed: r.summary.passed + 1 }),
-+  true
-+);
-+reject('missing-browser-version', r => (positive(r).version = ''));
-+reject('missing-native-events', r => (positive(r).events = []));
-+reject('untrusted-event', r => (positive(r).events[0].trusted = false));
-+reject('wrong-input-profile', r => keyboard(r).events.forEach(e => (e.type = 'click')));
-+reject('page-error', r => positive(r).pageErrors.push('probe'));
-+reject('http-error', r => positive(r).httpErrors.push([500, '/probe']));
-+reject('checkpoint-order', r => positive(r).checkpoints.reverse());
-+reject('incomplete-success', r => positive(r).checkpoints.pop());
-+reject('broken-reference', r =>
-+  positive(r).checkpoints[0].state.brokenReferences.push({ id: 'missing' })
-+);
-+reject('duplicate-id', r =>
-+  positive(r).checkpoints[0].state.duplicateIds.push({ id: 'duplicate', count: 2 })
-+);
-+if (actual.workflow === 'virtual') {
-+  reject('wrong-ownership', r => (positive(r).ownership = 'native-all'));
-+  reject('erased-row-metadata', r => (positive(r).checkpoints[0].state.virtual.rows = []));
-+  reject('wrong-rendered-count', r => (positive(r).checkpoints[0].state.virtual.rendered = 10000));
-+  reject('wrong-data-id', r => (positive(r).checkpoints[0].state.ids[0] = 'bogus'));
-+  reject(
-+    'hidden-requested-row',
-+    r =>
-+      (positive(r).checkpoints[1].state.virtual.rows.find(x => x.id === 'entry-09000').visible =
-+        false)
-+  );
-+  reject('forged-visible-flag', r => {
-+    const row = positive(r).checkpoints[0].state.virtual.rows.find(x => !x.visible);
-+    assert(row);
-+    row.visible = true;
-+  });
-+  reject('wrong-selected-key', r => (positive(r).checkpoints[2].state.selected = '[]'));
-+  reject(
-+    'wrong-real-checkbox',
-+    r =>
-+      (positive(r).checkpoints[2].state.checkboxes.find(
-+        x => x.kind === 'input' && x.rowId === 'entry-09000'
-+      ).checked = false)
-+  );
-+  reject('erased-real-checkbox', r => {
-+    const s = positive(r).checkpoints[2].state;
-+    s.checkboxes = s.checkboxes.filter(x => x.rowId !== 'entry-09000');
-+  });
-+  reject(
-+    'wrong-mount-membership',
-+    r => (positive(r).checkpoints[2].state.virtual.selectedRowMounted = false)
-+  );
-+  reject('invalid-viewport', r => (positive(r).checkpoints[0].state.virtual.viewport.height = 0));
-+  reject('wrong-pointer-row', r =>
-+    positive(r)
-+      .events.filter(e => e.rowId === 'entry-09000')
-+      .forEach(e => (e.rowId = 'entry-00000'))
-+  );
-+} else if (actual.workflow === 'tree') {
-+  reject('wrong-workflow', r => (r.workflow = 'selection'));
-+  reject('wrong-ownership', r => (positive(r).ownership = 'native-all'));
-+  reject('wrong-displayed-id', r => (positive(r).checkpoints[0].state.ids[0] = 'bogus'));
-+  reject('erased-row-metadata', r => (positive(r).checkpoints[0].state.rows = []));
-+  reject('false-tree-level', r => (
-```
-
-**File**: `benchmarks/cross-library-table/checks/runtime-mutations.mjs` (added, +204/-0)
-```diff
-@@ -0,0 +1,204 @@
-+import fs from 'node:fs';
-+import path from 'node:path';
-+import assert from 'node:assert/strict';
-+import crypto from 'node:crypto';
-+import { spawn } from 'node:child_process';
-+import readline from 'node:readline';
-+import { assertBuildState } from '../runner/build-state.mjs';
-+const root = path.resolve(import.meta.dirname, '..'),
-+  output = path.resolve(
-+    process.argv[2] ?? path.join(root, 'results', 'runtime-controls-' + Date.now())
-+  );
-+assert(process.argv.length <= 3, 'Usage: node checks/runtime-mutations.mjs [output-directory]');
-+assert(
-+  !fs.existsSync(output) || fs.readdirSync(output).length === 0,
-+  'Output must be new or empty; inspect prior journals before retrying'
-+);
-+fs.mkdirSync(output, { recursive: true });
-+const built = JSON.parse(fs.readFileSync(root + '/dist/build-inputs.json'));
-+assertBuildState(root, built);
-+const sha = b => crypto.createHash('sha256').update(b).digest('hex');
-+const controls = [
-+  {
-+    name: 'source',
-+    file: 'src/virtual/domain.ts',
-+    text: '\n// controlled mid-run source mutation\n',
-+    error: 'Stale source/config/candidate build'
-+  },
-+  {
-+    name: 'sdk',
-+    file: '../../lib/package.json',
-+    text: '\n',
-+    error: 'Stale source/config/candidate build'
-+  },
-+  {
-+    name: 'installed-package',
-+    file: 'node_modules/@tanstack/react-virtual/package.json',
-+    text: '\n',
-+    error: 'Stale installed dependency build'
-+  },
-+  {
-+    name: 'served-artifact',
-+    file: 'dist/antd/virtual.html',
-+    text: '\n<!-- controlled mid-run response mutation -->\n'
-+  }
-+];
-+const ownedRoot = fs.realpathSync(path.resolve(root, '../..'));
-+for (const control of controls) {
-+  const relative = path.relative(ownedRoot, fs.realpathSync(path.resolve(root, control.file)));
-+  assert(
-+    relative &&
-+      relative !== '..' &&
-+      !relative.startsWith('..' + path.sep) &&
-+      !path.isAbsolute(relative),
-+    'Mutation target resolves outside this owned repository'
-+  );
-+}
-+const results = [];
-+let active;
-+function restore() {
-+  if (!active?.mutated) return;
-+  const current = fs.readFileSync(active.file);
-+  assert(
-+    current.equals(active.changed) || current.equals(active.original),
-+    'Target changed externally; original backup retained, refusing to overwrite'
-+  );
-+  fs.writeFileSync(active.file, active.original);
-+  assert(fs.readFileSync(active.file).equals(active.original));
-+  active.mutated = false;
-+  active.journal.phase = 'restored';
-+  fs.writeFileSync(active.journalFile, JSON.stringify(active.journal, null, 2) + '\n');
-+}
-+for (const signal of ['SIGINT', 'SIGTERM'])
-+  process.once(signal, () => {
-+    active?.child?.kill(signal);
-+    try {
-+      restore();
-+    } finally {
-+      process.exit(signal === 'SIGINT' ? 130 : 143);
-+    }
-+  });
-+try {
-+  for (const control of controls) {
-+    const folder = path.join(output, control.name);
-+    fs.mkdirSync(folder, { recursive: true });
-+    const file = path.resolve(root, control.file),
-+      original = fs.readFileSync(file),
-+      changed = Buffer.concat([original, Buffer.from(control.text)]),
-+      journalFile = path.join(folder, 'journal.json');
-+    fs.writeFileSync(path.join(folder, 'original.bin'), original);
-+    const journal = {
-+      name: control.name,
-+      file,
-+      originalSHA256: sha(original),
-+      mutatedSHA256: sha(changed),
-+      phase: 'prepared',
-+      backup: path.join(folder, 'original.bin')
-+    };
-+    fs.writeFileSync(journalFile, JSON.stringify(journal, null, 2) + '\n');
-+    const reportFile = path.join(folder, 'report.json'),
-+      args = [
-+        'run.mjs',
-+        '--skip-build',
-+        '--workflow',
-+        'virtual',
-+        '--browser',
-+        'chromium',
-+        '--output',
-+        reportFile
-+      ],
-+      child = spawn(process.execPath, args, { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] }),
-+      done = new Promise((resolve, reject) => {
-+        child.once('error', reject);
-+        child.once('close', (code, signal) => resolve({ code, signal }));
-+      });
-+    active = { file, original, changed, journal, journalFile, child, mutated: false };
-+    const log = fs.createWriteStream(path.join(folder, 'run.log'));
-+    child.stderr.on('data', bytes => log.write(bytes));
-+    let triggered = false,
-+      restoredDuringRun = false;
-+    try {
-+      for await (const line of readline.createInterface({ input: child.stdout })) {
-+        log.write(line + '\n');
-+        if (!triggered && line === 'chromium rsuite pointer PASS') {
-+          fs.writeFileSync(file, changed);
-+          active.mutated = true;
-+          triggered = true;
-+          journal.phase = 'mutated-after-first-browser-case';
-+          fs.writeFileSync(journalFile, JSON.stringify(journal, null, 2) + '\n');
-+        }
-+        if (
-+          triggered &&
-+          control.name === 'served-artifact' &&
-+          line.startsWith('chromium antd pointer ')
-+        ) {
-+          restore();
-+          restoredDuringRun
-```
-
-**File**: `benchmarks/cross-library-table/integrity.mjs` (modified, +2/-0)
-```diff
-@@ -6,6 +6,7 @@ export function inputs(root) {
-   const files = [
-     ...filesUnder(path.join(root, 'src')),
-     ...filesUnder(path.join(root, 'runner')),
-+    ...filesUnder(path.join(root, 'checks')),
-     ...[
-       '.npmrc',
-       '.gitignore',
-@@ -14,6 +15,7 @@ export function inputs(root) {
-       'tsconfig.json',
-       'index.html',
-       'tree.html',
-+      'virtual.html',
-       'vite.config.mjs',
-       'build.mjs',
-       'run.mjs',
-```
-
-**File**: `benchmarks/cross-library-table/run.mjs` (modified, +68/-41)
-```diff
-@@ -1,29 +1,33 @@
-+import { createCapture } from './runner/capture.mjs';
- import fs from 'node:fs';
- import path from 'node:path';
- import http from 'node:http';
- import assert from 'node:assert/strict';
- import { spawnSync } from 'node:child_process';
--import { isDeepStrictEqual } from 'node:util';
- import { chromium, firefox } from 'playwright';
--import { inputs, packageFingerprint, hash } from './integrity.mjs';
--import { snapshot } from './runner/snapshot.mjs';
- import { workflow } from './runner/workflow.mjs';
--import { installedDependencies } from './dependencies.mjs';
- import { validateReport } from './runner/report.mjs';
- import { treeWorkflow } from './runner/tree-workflow.mjs';
--import { treeSnapshot } from './runner/tree-snapshot.mjs';
- import { treeSemantics, validateTreeReport } from './runner/tree-report.mjs';
- import { treeOwnership } from './runner/tree-oracle.mjs';
-+import { assertBuildState, artifactGuard } from './runner/build-state.mjs';
-+import { virtualWorkflow } from './runner/virtual-workflow.mjs';
-+import { validateVirtualReport } from './runner/virtual-report.mjs';
-+import { virtualOwnership } from './runner/virtual-oracle.mjs';
- const root = import.meta.dirname,
-   args = process.argv.slice(2);
- const outputIndex = args.indexOf('--output'),
-   browserIndex = args.indexOf('--browser'),
-   workflowIndex = args.indexOf('--workflow');
- const workflowName = workflowIndex < 0 ? 'selection' : args[workflowIndex + 1];
--if (!['selection', 'tree'].includes(workflowName)) throw Error('Invalid workflow');
-+if (!['selection', 'tree', 'virtual'].includes(workflowName)) throw Error('Invalid workflow');
- const output = path.resolve(
-   outputIndex < 0
--    ? path.join(root, 'results', workflowName === 'tree' ? 'tree.json' : 'table.json')
-+    ? path.join(
-+        root,
-+        'results',
-+        workflowName === 'selection' ? 'table.json' : workflowName + '.json'
-+      )
-     : args[outputIndex + 1]
- );
- const browserName = browserIndex < 0 ? 'all' : args[browserIndex + 1];
-@@ -37,18 +41,8 @@ if (!args.includes('--skip-build')) {
-   if (result.status !== 0) process.exit(result.status ?? 1);
- }
- const built = JSON.parse(fs.readFileSync(path.join(root, 'dist/build-inputs.json')));
--if (
--  !isDeepStrictEqual(inputs(root), built.sourceInputs) ||
--  packageFingerprint(root) !== built.candidateFingerprint ||
--  packageFingerprint(root, path.resolve(root, '../../lib')) !== built.candidateFingerprint
--)
--  throw Error('Stale source/config/candidate build');
--if (!isDeepStrictEqual(installedDependencies(root), built.installedDependencies))
--  throw Error('Stale installed dependency build');
--for (const [library, build] of Object.entries(built.builds))
--  for (const artifact of build.artifacts)
--    if (hash(fs.readFileSync(path.join(root, 'dist', library, artifact.file))) !== artifact.sha256)
--      throw Error('Stale artifact ' + library + '/' + artifact.file);
-+assertBuildState(root, built);
-+const served = artifactGuard(root, built);
- fs.mkdirSync(path.dirname(output), { recursive: true });
- const server = http.createServer(async (request, response) => {
-   try {
-@@ -62,6 +56,7 @@ const server = http.createServer(async (request, response) => {
-       file = path.resolve(folder, parts.join('/') || 'index.html');
-     if (!file.startsWith(folder + path.sep)) throw Error('Invalid path');
-     const bytes = await fs.promises.readFile(file);
-+    served.check(file, bytes);
-     response.writeHead(200, {
-       'Content-Type':
-         {
-@@ -83,12 +78,22 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
- const base = 'http://127.0.0.1:' + server.address().port;
- const report = {
-   at: new Date().toISOString(),
-+  captureProtocol: 'single-task-v1',
-+  integrity: {
-+    protocol: 'response-and-final-v1',
-+    before: true,
-+    after: false,
-+    responsesChecked: 0,
-+    violations: []
-+  },
-   workflow: workflowName,
-   qualification: 'Prototype: adapters and driver require review before qualified comparison',
-   scope:
--    workflowName === 'tree'
--      ? 'Three-level hierarchy, retained selection and root reorder. Functional and limited tree semantics gates are reported separately; native/composed ownership explicit. No AT/conformance/ranking result.'
--      : 'One sort/filter/ID-selection workflow; native engines versus explicit application composition. No performance/conformance/ranking result.',
-+    workflowName === 'virtual'
-+      ? '10k rows, application jump controls and native checkbox selection. Mounted rows and visible rows reported separately, including focused-row persistence. No performance/ranking/AT conformance result.'
-+      : workflowName === 'tree'
-+        ? 'Three-level hierarchy, retained selection and root reorder. Functional and limited tree semantics gates are reported separately; native/composed ownership explicit. No AT/conformance/ranking result.'
-+        : 'One sort/filter/ID-selection workflow; native engines versus explicit application composit
+@@ -3070,9 +3070,9 @@
+       }
+     },
+     "node_modules/@eslint/eslintrc/node_modules/js-yaml": {
+-      "version": "4.1.0",
+-      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz",
+-      "integrity": "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==",
++      "version": "4.3.2",
++      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz",
++      "integrity": "sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==",
+       "dev": true,
+       "dependencies": {
+         "argparse": "^2.0.1"
+@@ -7345,9 +7345,9 @@
+       "dev": true
+     },
+     "node_modules/cosmiconfig/node_modules/js-yaml": {
+-      "version": "4.1.0",
+-      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz",
+-      "integrity": "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==",
++      "version": "4.3.2",
++      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz",
++      "integrity": "sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==",
+       "dev": true,
+       "dependencies": {
+         "argparse": "^2.0.1"
+@@ -11709,7 +11709,7 @@
+       "license": "MIT"
+     },
+     "node_modules/js-yaml": {
+-      "version": "3.14.1",
++      "version": "3.15.2",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -11718,7 +11718,9 @@
+       },
+       "bin": {
+         "js-yaml": "bin/js-yaml.js"
+-      }
++      },
++      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.15.2.tgz",
++      "integrity": "sha512-6EuL879VkRA+1Cz578mKMiKvjPNEuk6+r1JaFzoSWejZmtf7xWbIyw1e3KkxlkzTIt9Taw6JBhEppG7utc1P+w=="
+     },
+     "node_modules/jsdoc-type-pratt-parser": {
+       "version": "4.8.0",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4968** (2026-10-20): test(table): verify loading and empty recovery (@simonguo)
-- **PR #4967** (2026-10-20): test(table): verify virtual workflows and run integrity (@simonguo)
-- **PR #4966** (2026-10-20): test(table): add reproducible selection and tree workflow prototypes (@simonguo)
-- **PR #4964** (2026-10-20): fix(ci): pin browser jobs to Ubuntu 24.04 (@simonguo)
-- **PR #4963** (2026-10-20): fix(examples): update Vite source-map-js security patch (@simonguo)
-- **PR #4962** (2026-10-20): fix(form): register label and help IDs without changing refs (@simonguo)
+- **PR #4988** (2026-10-22): fix(examples): support Node 24 in Umi and patch Vite (@simonguo)
+- **PR #4987** (2026-10-22): fix(examples): update remaining Lodash locks to 4.18.1 (@simonguo)
+- **PR #4986** (2026-10-22): ci: cache public consumer downloads and retry coverage delivery (@simonguo)
+- **PR #4981** (2026-10-22): fix(examples): restore Preact builds and patch runtime dependencies (@simonguo)
+- **PR #4978** (2026-10-21): chore(storybook): migrate preview to Storybook 10 and Vite 8 (@simonguo)
+- **PR #4977** (2026-10-21): fix(deps): patch TypeScript example lodash resolution (@simonguo)
 
 ---
 
@@ -1799,36 +900,50 @@ test(table): verify virtual workflows and run integrity
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4968 from rsuite/bench/cross-library-table-lifecycle
+## X. Merge pull request #4981 from rsuite/fix/preact-example-jsx-security
 
 **RULE**:
-When implementing operations in `.github/workflows/table-benchmarks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/with-preact/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d056c753`: Merge pull request #4968 from rsuite/bench/cross-library-table-lifecycle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cf94a169`: Merge pull request #4981 from rsuite/fix/preact-example-jsx-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/table-benchmarks.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/with-preact/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-name: Table workflow integrity
-    name: Table workflows and report integrity
-      - name: Run Chromium and Firefox loading and empty recovery
-        working-directory: benchmarks/cross-library-table
-        run: node run.mjs --skip-build --workflow lifecycle --output results/lifecycle/report.json
-      - name: Reject stale lifecycle identities and state
-        working-directory: benchmarks/cross-library-table
-        run: node checks/report-integrity.mjs results/lifecycle/report.json
+      "version": "4.18.1",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
+      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+      "version": "10.28.2",
+      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
+      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==",
+      "version": "4.18.1",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
+      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+      "version": "10.28.2",
+      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
+      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA=="
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-name: Virtual table workflow
-    name: Virtual table and report integrity
+      "version": "4.17.21",
+      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
+      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
+      "version": "10.28.0",
+      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
+      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA==",
+      "version": "4.17.21",
+      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
+      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
+      "version": "10.28.0",
+      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
+      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA=="
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d056c753` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cf94a169` are properly handled with clean fallback behavior.

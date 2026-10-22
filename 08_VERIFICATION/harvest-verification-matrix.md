@@ -4356,3 +4356,6 @@
 | `CYCLE-20261022-J0I5` | `2026-10-22T17:31:55.853Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3665` | Yes (`2584732f...`) |
 | `CYCLE-20261022-J4GX` | `2026-10-22T17:32:00.993Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3666` | Yes (`7f9107d1...`) |
 | `CYCLE-20261022-J5RH` | `2026-10-22T17:32:02.669Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3667` | Yes (`c2deffd6...`) |
+| `CYCLE-20261022-RDVF` | `2026-10-22T17:38:26.427Z` | `go-kratos/kratos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3668` | Yes (`ec1c033c...`) |
+| `CYCLE-20261022-REXL` | `2026-10-22T17:38:27.801Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3669` | Yes (`3653297c...`) |
+| `CYCLE-20261022-RFGE` | `2026-10-22T17:38:28.478Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3670` | Yes (`aad2319a...`) |

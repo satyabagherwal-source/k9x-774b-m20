@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T17:32:02.678Z",
-  "total_cycles_completed": 4333,
-  "total_learnings_persisted": 4333,
-  "total_rules_promoted": 3513,
+  "last_updated": "2026-10-22T17:38:28.491Z",
+  "total_cycles_completed": 4336,
+  "total_learnings_persisted": 4336,
+  "total_rules_promoted": 3516,
   "history": [
-    {
-      "timestamp": "2026-10-21T02:33:40.331Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:33:47.169Z",
-      "repository": "maziyarpanahi/openmed",
-      "learningId": "learn-github-maziyarpanahi-openmed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T02:33:51.907Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T02:33:54.651Z",
       "repository": "databendlabs/databend",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-22T17:32:02.678Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:38:26.434Z",
+      "repository": "go-kratos/kratos",
+      "learningId": "learn-github-go-kratos-kratos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:38:27.812Z",
+      "repository": "rsuite/rsuite",
+      "learningId": "learn-github-rsuite-rsuite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-22T17:38:28.491Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

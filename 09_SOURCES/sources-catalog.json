@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "7582042e",
+    "sourceVersion": "c85580b7",
     "license": "AGPL-3.0",
-    "contentHash": "da24f573c4ce2d19d137a54e7bb1194a37d1232afdf0bd702807479f09c1c3f9",
-    "lastHarvestedAt": "2026-10-21T18:46:03.783Z",
+    "contentHash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
+    "lastHarvestedAt": "2026-10-22T17:38:28.481Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4233,10 +4233,10 @@
     "repository": "rsuite/rsuite",
     "platform": "github",
     "sourceUrl": "https://github.com/rsuite/rsuite",
-    "sourceVersion": "d056c753",
+    "sourceVersion": "c5ab91ef",
     "license": "MIT",
-    "contentHash": "74bfa43810ad9bc3894475169a95f52bad7c066bec2694e59a85be55c6b7f55c",
-    "lastHarvestedAt": "2026-10-21T00:02:04.483Z",
+    "contentHash": "3653297c30c769ecd2d853bba9d36d395a24ab642f0738dbbe7ccbc41731e1fd",
+    "lastHarvestedAt": "2026-10-22T17:38:27.804Z",
     "learningId": "learn-github-rsuite-rsuite"
   },
   "kuberwastaken-claurst": {
@@ -7223,10 +7223,10 @@
     "repository": "go-kratos/kratos",
     "platform": "github",
     "sourceUrl": "https://github.com/go-kratos/kratos",
-    "sourceVersion": "c8c129b5",
+    "sourceVersion": "3f6b3b6c",
     "license": "MIT",
-    "contentHash": "42ca030d90486845aa27975b470b0c1751ff79ccb14d67672ca7ca475f05aba2",
-    "lastHarvestedAt": "2026-10-20T11:33:04.609Z",
+    "contentHash": "ec1c033cccffd799c74c0ed2eaa8d8c802e619040f223ff89bbe6d459dc17405",
+    "lastHarvestedAt": "2026-10-22T17:38:26.430Z",
     "learningId": "learn-github-go-kratos-kratos"
   },
   "tencent-tds-kuiklyui": {

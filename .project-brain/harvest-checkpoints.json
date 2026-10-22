@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T17:32:02.681Z",
+  "last_updated": "2026-10-22T17:38:28.504Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "da24f573c4ce2d19d137a54e7bb1194a37d1232afdf0bd702807479f09c1c3f9",
-      "verified_at": "2026-10-21T18:46:03.791Z",
+      "content_hash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
+      "verified_at": "2026-10-22T17:38:28.503Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:46:03.791Z"
+      "last_updated": "2026-10-22T17:38:28.503Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -6471,14 +6471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rsuite-rsuite",
-      "content_hash": "74bfa43810ad9bc3894475169a95f52bad7c066bec2694e59a85be55c6b7f55c",
-      "verified_at": "2026-10-21T00:02:04.491Z",
+      "content_hash": "3653297c30c769ecd2d853bba9d36d395a24ab642f0738dbbe7ccbc41731e1fd",
+      "verified_at": "2026-10-22T17:38:27.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:02:04.491Z"
+      "last_updated": "2026-10-22T17:38:27.816Z"
     },
     "Kuberwastaken/claurst": {
       "repository": "Kuberwastaken/claurst",
@@ -10881,14 +10881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-go-kratos-kratos",
-      "content_hash": "42ca030d90486845aa27975b470b0c1751ff79ccb14d67672ca7ca475f05aba2",
-      "verified_at": "2026-10-20T11:33:04.615Z",
+      "content_hash": "ec1c033cccffd799c74c0ed2eaa8d8c802e619040f223ff89bbe6d459dc17405",
+      "verified_at": "2026-10-22T17:38:26.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:33:04.615Z"
+      "last_updated": "2026-10-22T17:38:26.437Z"
     },
     "Tencent-TDS/KuiklyUI": {
       "repository": "Tencent-TDS/KuiklyUI",

@@ -4363,3 +4363,6 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f8ad538a` | Multi-dimensional audit evidence | 2026-10-22T17:31:55.855Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `503b816e` | Multi-dimensional audit evidence | 2026-10-22T17:32:00.996Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `51115a16` | Multi-dimensional audit evidence | 2026-10-22T17:32:02.671Z |
+| `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `3f6b3b6c` | Multi-dimensional audit evidence | 2026-10-22T17:38:26.430Z |
+| `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `c5ab91ef` | Multi-dimensional audit evidence | 2026-10-22T17:38:27.804Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `c85580b7` | Multi-dimensional audit evidence | 2026-10-22T17:38:28.481Z |
