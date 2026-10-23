@@ -4490,3 +4490,7 @@
 | `CYCLE-20261023-5RY9` | `2026-10-23T07:21:26.721Z` | `wasm-bindgen/wasm-pack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3803, Rule 3804, Rule 3805` | Yes (`47ea2170...`) |
 | `CYCLE-20261023-683L` | `2026-10-23T07:21:47.649Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3806, Rule 3807` | Yes (`ec30f362...`) |
 | `CYCLE-20261023-7BXU` | `2026-10-23T07:22:39.282Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3808, Rule 3809` | Yes (`9b972291...`) |
+| `CYCLE-20261023-SUEN` | `2026-10-23T07:39:22.991Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3810, Rule 3811, Rule 3812` | Yes (`e9348a6d...`) |
+| `CYCLE-20261023-SWVY` | `2026-10-23T07:39:26.207Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3813, Rule 3814, Rule 3815` | Yes (`346a4eb4...`) |
+| `CYCLE-20261023-T83K` | `2026-10-23T07:39:40.736Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3816, Rule 3817` | Yes (`22fee60f...`) |
+| `CYCLE-20261023-TC4U` | `2026-10-23T07:39:45.966Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3818, Rule 3819, Rule 3820` | Yes (`bc56cf0a...`) |

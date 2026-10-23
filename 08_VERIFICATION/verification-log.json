@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-LRWZ",
-    "timestamp": "2026-10-20T19:50:42.323Z",
-    "repository": "necolas/react-native-web",
-    "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "e421dee75383bc1b2634018ba9de0571f624713f397e0c74dc456d01505511f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-LU7P",
-    "timestamp": "2026-10-20T19:50:45.301Z",
-    "repository": "lucide-icons/lucide",
-    "learningId": "learn-github-lucide-icons-lucide",
-    "contentHash": "b83725966b35ed40f282edb4a76e3efdafb6ab2b22604dcfe9bd516dc9ed071d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-LVXR",
-    "timestamp": "2026-10-20T19:50:47.535Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "1d607326db2685035913a4016a8af77ebf5968fc069cf41783522a5f2cd3fc5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-VZ7Q",
-    "timestamp": "2026-10-20T19:58:38.342Z",
-    "repository": "angular/angular",
-    "learningId": "learn-github-angular-angular",
-    "contentHash": "9c0d24ba4fa53658348057219f3b572c1a7238bae835e2ddc6e8d5a63e96b1a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-W03L",
     "timestamp": "2026-10-20T19:58:39.489Z",
     "repository": "astral-sh/uv",
@@ -7492,6 +7432,66 @@
     "contentHash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-SUEN",
+    "timestamp": "2026-10-23T07:39:22.991Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "e9348a6d51ed86e2b97e3f99b3d0a78a851d59fbefad0030bbec1f35b9555eca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-SWVY",
+    "timestamp": "2026-10-23T07:39:26.207Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "346a4eb42c2ef7d269eac9928be7c93eb2bf3d892d1a708e646da6badcc2567f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-T83K",
+    "timestamp": "2026-10-23T07:39:40.736Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "22fee60f73d170b516281702a724709739354f2704ed62079b8555a66c1167ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-TC4U",
+    "timestamp": "2026-10-23T07:39:45.966Z",
+    "repository": "vitest-dev/vitest",
+    "learningId": "learn-github-vitest-dev-vitest",
+    "contentHash": "bc56cf0ac6fe2bfbb2c945096789b7777c270bc2cc16b93bae5e7d578844cadf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

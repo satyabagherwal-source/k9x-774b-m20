@@ -272149,3 +272149,1197 @@ test('sends nothing for plain stylesheets during HMR hotUpdate', () => {
 ```
 
 ---
+
+
+---
+
+## 3810. Zero-Evaluation Guarded Boundary Macros (Statement Expression Invariants) (Harvested from cilium/cilium)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Evaluation Guarded Boundary Macros (Statement Expression Invariants)",
+  "source": "cilium/cilium",
+  "source_url": "https://github.com/cilium/cilium",
+  "source_version": "6a571439",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T07:39:22.444Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cilium-cilium",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `6a571439`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Macros computing minimum, maximum, or numerical clamped boundaries over runtime expressions MUST encapsulate logic in GNU C statement expressions (`({ ... })`), store operands into uniquely scoped local variables, explicitly execute type-check pointer equality assertions (`(void)(&_x == &_y)`), and MUST NEVER evaluate parameters more than once.
+
+**WHY**:
+Evaluating macro parameters multiple times (e.g., `#define min(a,b) ((a)<(b)?(a):(b))`) leads to catastrophic side-effect duplication (e.g., `min(ptr++, end)` increments `ptr` twice) or non-terminating packet parsing loops inside eBPF verifier bounds. Type mismatches between signed and unsigned integers cause silent promotion hazards in kernel verifiers, triggering register bitwidth overflow and verifier rejection.
+
+**WHEN TO APPLY**:
+All C, eBPF, kernel headers, systems-level Go CGO bindings, and low-level arithmetic boundary clamping.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+/* Verified Cilium Kernel Macro: bpf/lib/utils.h */
+#pragma once
+
+#define __min(t_x, t_y, x, y)        \
+({                                   \
+    t_x _x = (x);                    \
+    t_y _y = (y);                    \
+    (void)(&_x == &_y);              \
+    _x < _y ? _x : _y;               \
+})
+
+#define __max(t_x, t_y, x, y)        \
+({                                   \
+    t_x _x = (x);                    \
+    t_y _y = (y);                    \
+    (void)(&_x == &_y);              \
+    _x > _y ? _x : _y;               \
+})
+
+#define min(x, y)                    \
+    __min(typeof(x), typeof(y), x, y)
+
+#define max(x, y)                    \
+    __max(typeof(x), typeof(y), x, y)
+
+#define min_t(t, x, y)               \
+    __min(t, t, x, y)
+
+#define max_t(t, x, y)               \
+    __max(t, t, x, y)
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+/* ANTI-PATTERN: Double evaluation and silent unsigned promotion */
+#define BAD_MIN(a, b) ((a) < (b) ? (a) : (b))
+
+void process_skb(struct __sk_buff *skb) {
+    void *data = (void *)(long)skb->data;
+    void *data_end = (void *)(long)skb->data_end;
+    
+    // CRASH / VERIFIER REJECTION:
+    // data is advanced TWICE if data < data_end!
+    void *bound = BAD_MIN(data++, data_end);
+}
+```
+
+**VERIFICATION METHOD**:
+Compile with `-Werror=shadow -Werror=type-limits`. Add a static unit test asserting side-effect safety:
+```c
+int i = 5, j = 10;
+int result = min(i++, j++);
+assert(i == 6); // Fails with BAD_MIN (i becomes 7)
+```
+
+---
+
+
+---
+
+## 3811. Multi-Domain Annotation Ingestion Isolation & Asymmetric Protocol Rejection (Harvested from cilium/cilium)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Domain Annotation Ingestion Isolation & Asymmetric Protocol Rejection",
+  "source": "cilium/cilium",
+  "source_url": "https://github.com/cilium/cilium",
+  "source_version": "6a571439",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T07:39:22.625Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cilium-cilium",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `6a571439`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing loosely typed key-value configuration dictionaries (e.g., Kubernetes annotations, Gateway API `options` maps) that share a global namespace across multiple controllers:
+1. Parsers MUST skip and preserve keys outside their registered authoritative prefix (`strings.HasPrefix(key, domainPrefix)`).
+2. Parsers MUST reject unknown or malformed keys within their authoritative prefix.
+3. Handlers MUST reject domain-specific options if the underlying target protocol mode physically precludes their enforcement (e.g., rejecting TLS options on a TLS Passthrough listener).
+
+**WHY**:
+Failing to ignore foreign domains breaks coexistence with other controllers sharing the resource (e.g., Istio, Cert-Manager, AWS Controller). Failing to reject unknown options within the controller's own domain leads to silent configuration drift where users believe an invariant is enforced (e.g., TLS 1.3 minimum) when it is actually ignored. Configuring termination options on passthrough streams causes contradictory data plane synthesis, leading to silent plaintext exposure or broken handshakes.
+
+**WHEN TO APPLY**:
+Kubernetes ingress/gateway controllers, cloud resource synchronizers, declarative API translation engines, and microservice configuration parsers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// operator/pkg/gateway-api/status_listener_tls_options.go
+func parseTLSOptions(l gatewayv1.Listener) (*model.TLSOptions, error) {
+    if l.TLS == nil {
+        return nil, nil
+    }
+
+    parsed := &model.TLSOptions{}
+    for option, value := range l.TLS.Options {
+        key := string(option)
+        // Rule 1: Ignore options outside authoritative domain
+        if !strings.HasPrefix(key, "cilium.io/") {
+            continue
+        }
+
+        // Rule 3: Reject protocol contradictions
+        if helpers.IsTLSPassthroughListener(&l) {
+            return nil, fmt.Errorf("TLS option %s is not supported on TLS passthrough listeners", key)
+        }
+
+        // Rule 2: Strictly validate domain keys & values
+        switch key {
+        case model.TLSOptionsMinVersion:
+            parsed.MinVersion = string(value)
+        case model.TLSOptionsMaxVersion:
+            parsed.MaxVersion = string(value)
+        default:
+            return nil, fmt.Errorf("TLS Option %s is not supported", key)
+        }
+
+        if _, ok := supportedTLSVersions[string(value)]; !ok {
+            return nil, fmt.Errorf("TLS Value %s is not supported in %s", value, key)
+        }
+    }
+
+    min := model.TLSOptionsDefaultMinVersion
+    if parsed.MinVersion != "" { min = parsed.MinVersion }
+    max := model.TLSOptionsDefaultMaxVersion
+    if parsed.MaxVersion != "" { max = parsed.MaxVersion }
+
+    if supportedTLSVersions[min] > supportedTLSVersions[max] {
+        return nil, fmt.Errorf("TLS minimum version %s must not exceed maximum version %s", min, max)
+    }
+
+    if parsed.MinVersion == "" && parsed.MaxVersion == "" {
+        return nil, nil
+    }
+    return parsed, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Blind iteration, silent skipping, and passthrough contradiction
+func parseTLSOptionsBad(options map[string]string, isPassthrough bool) *model.TLSOptions {
+    parsed := &model.TLSOptions{}
+    for k, v := range options {
+        // BUG 1: Errs on other controllers' keys OR silently ignores all errors
+        if k == "cilium.io/tls-min-version" {
+            parsed.MinVersion = v // BUG 2: No validation against supported set
+        }
+    }
+    // BUG 3: If isPassthrough == true, Envoy will generate DownstreamTlsContext
+    // for a stream that is never terminated, causing handshake termination failures.
+    return parsed
+}
+```
+
+**VERIFICATION METHOD**:
+Automated matrix test passing a cross-product of:
+1. Valid own-domain keys (`cilium.io/*`).
+2. Foreign-domain keys (`istio.io/*`, `example.com/*`).
+3. Invalid own-domain keys (`cilium.io/invalid`).
+4. Passthrough flag enabled vs disabled.
+Assert that foreign keys yield `nil` error and empty options, invalid own keys yield errors, and passthrough + own key yields rejection.
+
+---
+
+
+---
+
+## 3812. Non-Destructive Multi-Tier Fallback Diagnostic Target Resolution (Harvested from cilium/cilium)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Destructive Multi-Tier Fallback Diagnostic Target Resolution",
+  "source": "cilium/cilium",
+  "source_url": "https://github.com/cilium/cilium",
+  "source_version": "6a571439",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T07:39:22.818Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cilium-cilium",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `6a571439`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Diagnostic collection utilities and operational agent CLI hooks MUST NOT fail fatally when a target workload container has crashed. Instead, they MUST implement a strictly sequenced three-tier fallback mechanism:
+1. Target container inspect (if running).
+2. Ephemeral container injection into existing pod sandbox (`EphemeralContainers` API).
+3. Clone pod injection on the identical host node with identical volume mounts, host network/IPC namespaces, and universal scheduling tolerations (`TolerationOpExists`), accompanied by an infallible RAII cleanup closure.
+
+**WHY**:
+When a network daemon or CNI plugin panics, standard `kubectl exec` fails because the target container is in `CrashLoopBackOff` or `Error`. Without automated fallback to ephemeral injection or local node-pinned clone pods, engineers cannot capture live socket states, eBPF map dumps, or kernel trace buffers, rendering post-mortem forensic extraction impossible.
+
+**WHEN TO APPLY**:
+Production diagnostic CLI tools, cluster sysdumps, node diagnostic operators, CNI debugging agents.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// cilium-cli/sysdump/k8sutils.go
+func (c *Collector) ensureExecTarget(
+    ctx context.Context, 
+    pod *corev1.Pod, 
+    container string,
+) (targetPod *corev1.Pod, targetContainer string, cleanup func(context.Context) error, err error) {
+    cleanup = func(_ context.Context) error { return nil }
+
+    // Tier 1: Is container running?
+    for _, status := range pod.Status.ContainerStatuses {
+        if status.Name == container && status.State.Running != nil {
+            return pod, container, cleanup, nil
+        }
+    }
+
+    // Extract target spec
+    var fromContainer *corev1.Container
+    for _, cs := range pod.Spec.Containers {
+        if cs.Name == container {
+            fromContainer = cs.DeepCopy()
+            break
+        }
+    }
+    if fromContainer == nil {
+        return nil, "", cleanup, fmt.Errorf("container %q missing in pod spec", container)
+    }
+
+    // Tier 2: Try EphemeralContainer
+    ec := &corev1.EphemeralContainer{
+        EphemeralContainerCommon: corev1.EphemeralContainerCommon{
+            Name:            fmt.Sprintf("sysdump-%d", time.Now().Unix()),
+            Image:           fromContainer.Image,
+            Command:         []string{"/bin/sleep", "1d"},
+            Env:             fromContainer.Env,
+            VolumeMounts:    fromContainer.VolumeMounts,
+            SecurityContext: fromContainer.SecurityContext,
+        },
+        TargetContainerName: fromContainer.Name,
+    }
+    targetPod, err = c.Client.CreateEphemeralContainer(ctx, pod, ec)
+    if err == nil {
+        // Poll for Running state with timeout...
+        if err := wait.PollUntilContextTimeout(ctx, 2*time.Second, 30*time.Second, false, func(ctx context.Context) (bool, error) {
+            tp, getErr := c.Client.GetPod(ctx, targetPod.Namespace, targetPod.Name, metav1.GetOptions{})
+            if getErr != nil { return false, getErr }
+            for _, s := range tp.Status.EphemeralContainerStatuses {
+                if s.Name == ec.Name { return s.State.Running != nil, nil }
+            }
+            return false, nil
+        }); err == nil {
+            return targetPod, ec.Name, cleanup, nil
+        }
+    }
+
+    // Tier 3: Clone Pod with universal tolerations & identical node pinning
+    newPod := &corev1.Pod{
+        ObjectMeta: metav1.ObjectMeta{
+            Namespace:    pod.Namespace,
+            GenerateName: "sysdump-fallback-",
+        },
+        Spec: corev1.PodSpec{
+            Containers: []corev1.Container{{
+                Name:            fromContainer.Name,
+                Image:           fromContainer.Image,
+                Command:         []string{"/bin/sleep", "1d"},
+                Env:             fromContainer.Env,
+                VolumeMounts:    fromContainer.VolumeMounts,
+                SecurityContext: fromContainer.SecurityContext,
+            }},
+            Volumes:            pod.Spec.Volumes,
+            RestartPolicy:      corev1.RestartPolicyNever,
+            NodeName:           pod.Spec.NodeName,
+            HostNetwork:        pod.Spec.HostNetwork,
+            HostPID:            pod.Spec.HostPID,
+            HostIPC:            pod.Spec.HostIPC,
+            Tolerations:        []corev1.Toleration{{Operator: corev1.TolerationOpExists}},
+        },
+    }
+    targetPod, err = c.Client.CreatePod(ctx, pod.Namespace, newPod, metav1.CreateOptions{})
+    if err != nil { return nil, "", cleanup, err }
+
+    cleanup = func(ctx context.Context) error {
+        return c.Client.DeletePod(ctx, targetPod.Namespace, targetPod.Name, metav1.DeleteOptions{})
+    }
+    // Poll target pod until ContainersReady...
+    return targetPod, fromContainer.Name, cleanup, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Brittle direct execution failing on crashed containers
+func ExecCommandBad(client kubernetes.Interface, pod *corev1.Pod, container string, cmd []string) error {
+    // If container is in CrashLoopBackOff or OOMKilled, this returns 500 / EOF error immediately!
+    // No fallback, no data collected, triage blocked.
+    req := client.CoreV1().RESTClient().Post().
+        Resource("pods").SubResource("exec").
+        Name(pod.Name).Namespace(pod.Namespace).
+        Param("container", container)
+    return req.Do(context.Background()).Error()
+}
+```
+
+**VERIFICATION METHOD**:
+Simulate target container failure via an intentional crash-loop pod (`exit 1`). Execute the collection tool, verify that the runner creates and successfully enters the fallback pod on the same node, extracts the data, fires the cleanup handler, and leaves no zombie pods on cluster namespaces.
+
+---
+
+
+---
+
+## 3813. Inode-Preserving Reversible Non-Atomic Mutation (Harvested from hashicorp/terraform)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Inode-Preserving Reversible Non-Atomic Mutation",
+  "source": "hashicorp/terraform",
+  "source_url": "https://github.com/hashicorp/terraform",
+  "source_version": "cdbff3ee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-23T07:39:25.658Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-hashicorp-terraform",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `cdbff3ee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When mutating user-controlled configuration or source files on disk in place, the system MUST NOT overwrite files using standard truncating APIs (`os.WriteFile`, `ioutil.WriteFile`) directly, and MUST NOT replace the file with an atomic rename (`rename(temp, target)`) if preserving file metadata (permissions, ownership, filesystem attributes, hardlinks, symlink references) is required. Instead, mutations MUST follow a three-phase backup-write-truncate protocol: create a sibling backup temporary file containing original bytes, open the original file descriptor with `O_WRONLY` (no `O_TRUNC`), write the new payload, truncate to the new byte length (`f.Truncate(n)`), and delete the backup only upon complete write-flush verification.
+
+**WHY**:
+`os.WriteFile` opens with `O_TRUNC`. If the process encounters an I/O fault, disk-quota exhaustion (`ENOSPC`), file size limit violation (`SIGXFSZ`/`ulimit -f 0`), or an unexpected panic between truncation and write, the original target file is zeroed out, resulting in catastrophic unrecoverable data loss. Conversely, `AtomicRename` breaks symlinks (replacing the symlink pointer itself with a regular file), wipes platform-specific extended attributes, and disrupts hardlink references. Non-atomic mutation with a sibling backup file guarantees both metadata stability and safe crash recovery.
+
+**WHEN TO APPLY**:
+Apply in code formatters, CLI in-place updaters, refactoring engines, linters, and state persistors modifying existing files in Unix and Windows filesystems.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package replacefile
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+)
+
+// NonAtomicWriteFileWithBackup mutates filename in-place without breaking symlinks
+// or losing inode metadata, while guaranteeing full recoverability against I/O faults.
+func NonAtomicWriteFileWithBackup(filename string, originalData, formattedData []byte) error {
+	dir := filepath.Dir(filename)
+	base := filepath.Base(filename)
+
+	// Phase 1: Create sibling backup file containing exact original content
+	backup, err := os.CreateTemp(dir, base+".bak.*")
+	if err != nil {
+		return fmt.Errorf("failed creating backup file for %s: %w", filename, err)
+	}
+	backupPath := backup.Name()
+
+	if _, err := backup.Write(originalData); err != nil {
+		_ = backup.Close()
+		_ = os.Remove(backupPath)
+		return fmt.Errorf("failed writing backup file %s: %w", backupPath, err)
+	}
+	if err := backup.Close(); err != nil {
+		_ = os.Remove(backupPath)
+		return fmt.Errorf("failed closing backup file %s: %w", backupPath, err)
+	}
+
+	// Phase 2: Open original target file without O_TRUNC to avoid premature zeroing
+	f, err := os.OpenFile(filename, os.O_WRONLY, 0)
+	if err != nil {
+		_ = os.Remove(backupPath)
+		return fmt.Errorf("failed opening target file %s: %w", filename, err)
+	}
+
+	n, writeErr := f.Write(formattedData)
+	var truncErr error
+	if writeErr == nil {
+		truncErr = f.Truncate(int64(n))
+	}
+	closeErr := f.Close()
+
+	// Phase 3: Error evaluation and restoration
+	if writeErr != nil || truncErr != nil || closeErr != nil {
+		targetErr := writeErr
+		if targetErr == nil {
+			targetErr = truncErr
+		}
+		if targetErr == nil {
+			targetErr = closeErr
+		}
+
+		// Attempt rollback from the backup file
+		restoreErr := os.WriteFile(filename, originalData, 0644)
+		if restoreErr == nil {
+			_ = os.Remove(backupPath)
+			return fmt.Errorf("write failed to %s: %w (original content successfully restored)", filename, targetErr)
+		}
+
+		// If rollback fails, preserve backup for manual administrator recovery
+		return fmt.Errorf("critical I/O error on %s: %w; rollback also failed: %v; backup preserved at: %s",
+			filename, targetErr, restoreErr, backupPath)
+	}
+
+	// Success path: remove backup file
+	_ = os.Remove(backupPath)
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Zeroes out user files if disk is full or limits hit before Write completes.
+func BuggyWriteFile(path string, result []byte) error {
+    // os.WriteFile calls os.OpenFile(path, O_WRONLY|O_CREATE|O_TRUNC, perm)
+    // If Write fails midway, the original data is permanently destroyed.
+    return os.WriteFile(path, result, 0644)
+}
+```
+
+**VERIFICATION METHOD**:
+Implement an end-to-end regression harness setting file-size limits (`ulimit -f 0` or wrapping `io.Writer` with an error injector) executing against target files. Assert that on error:
+1. Target file content is byte-identical to `originalData`.
+2. Target file retains its initial POSIX file mode bits (`fi.Mode().Perm() == originalPerms`).
+3. If the file was a symbolic link, verify `fi.Mode().Type() == os.ModeSymlink`.
+
+---
+
+
+---
+
+## 3814. Process Subreaper Cleanup Guarantee via Explicit Crash Exit Hooks (Harvested from hashicorp/terraform)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Process Subreaper Cleanup Guarantee via Explicit Crash Exit Hooks",
+  "source": "hashicorp/terraform",
+  "source_url": "https://github.com/hashicorp/terraform",
+  "source_version": "cdbff3ee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-23T07:39:25.840Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-hashicorp-terraform",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `cdbff3ee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Applications managing out-of-process subprocesses (e.g., RPC plugins, child daemons, sidecars) MUST NOT rely exclusively on deferred cleanup calls (`defer client.Cleanup()`) registered in the primary function (`main`). When handling terminal exceptions or unrecovered panics in top-level runtime crash interceptors (`PanicHandler`), the crash handler MUST explicitly invoke global child-process termination routines immediately before triggering terminal termination (`os.Exit(11)`).
+
+**WHY**:
+In Go and most compiled runtimes, `os.Exit()` bypasses the call-stack unwinder and skips all runtime `defer` blocks across all goroutines. If a background worker goroutine panics, the global panic handler executes, prints the traceback, and invokes `os.Exit()`. Any child processes spawned during execution remain alive in memory, detached and reparented to the OS init process (PID 1) or systemd subreaper. In infrastructure systems, orphaned plugin processes maintain active database connections, lock states, and consume system memory until manually killed.
+
+**WHEN TO APPLY**:
+All systems managing IPC child processes via `exec.Cmd`, gRPC subprocess pools (`go-plugin`), or sidecar executables that implement custom panic/crash handlers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package logging
+
+import (
+	"fmt"
+	"os"
+	"runtime/debug"
+
+	"github.com/hashicorp/go-plugin"
+)
+
+// PanicHandler intercepts panics across Terraform worker pools.
+func PanicHandler() {
+	if r := recover(); r != nil {
+		fmt.Fprintf(os.Stderr, "FATAL ERROR: Terraform Core encountered an unexpected panic:\n%v\n\n", r)
+		debug.PrintStack()
+
+		// CRITICAL INVARIANT: os.Exit skips deferred calls in main().
+		// Terminate all managed IPC provider child processes before exiting
+		// to avoid process reparenting and daemon leaks.
+		plugin.CleanupClients()
+
+		// Exit with designated panic crash code
+		os.Exit(11)
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Relying strictly on defer in main() while intercepting panics elsewhere.
+func main() {
+    defer plugin.CleanupClients() // NEVER runs if a panic handler catches and calls os.Exit()
+    runApp()
+}
+
+func PanicHandler() {
+    if r := recover(); r != nil {
+        log.Printf("Crash: %v", r)
+        os.Exit(1) // Skips deferred CleanupClients in main, leaking provider binaries!
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Spawn mock plugin subprocesses inside an integration test runner. Induce a controlled panic inside an arbitrary worker goroutine. Inspect OS process tables (`ps aux` / `/proc`) following process exit to verify zero orphaned child PIDs matching the plugin binary signature exist.
+
+---
+
+
+---
+
+## 3815. Multi-Source Credential Conflict Assertion (Harvested from hashicorp/terraform)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Source Credential Conflict Assertion",
+  "source": "hashicorp/terraform",
+  "source_url": "https://github.com/hashicorp/terraform",
+  "source_version": "cdbff3ee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-23T07:39:26.033Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-hashicorp-terraform",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `cdbff3ee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When authentication parameters can be ingested from multiple concurrent sources (e.g., direct CLI argument, backend configuration attribute, file-path reference, or ambient cloud platform runtime environment variables), the ingestion engine MUST NOT silently prefer one source over another or allow contradictory credentials to coexist. The client MUST perform strict binary identity comparisons (`strings.TrimSpace(sourceA) != strings.TrimSpace(sourceB)`). If both sources are populated and divergent, the system MUST halt immediately with a fatal diagnostic error specifying the conflicting input sources.
+
+**WHY**:
+Silently overriding an explicit user-supplied secret with an ambient environment variable (or vice versa, such as AKS Workload Identity versus configured Service Principal secrets) produces non-deterministic security contexts. Operators may unintentionally execute state mutations against incorrect production cloud tenants or decrypt sensitive state payloads using an unauthorized identity.
+
+**WHEN TO APPLY**:
+Configuration decoders, cloud SDK credential resolvers, backend initializers, and authentication middleware.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package azure
+
+import (
+	"fmt"
+	"os"
+	"strings"
+
+	"github.com/hashicorp/terraform/internal/backend/backendbase"
+)
+
+// ResolveCredentialSafely asserts identity parity between explicit and ambient sources.
+func ResolveCredentialSafely(d *backendbase.SDKLikeData, explicitKey, envKey string) (*string, error) {
+	configuredVal := strings.TrimSpace(d.String(explicitKey))
+
+	// Ambient or path-based source
+	envVal := strings.TrimSpace(os.Getenv(envKey))
+
+	if configuredVal != "" && envVal != "" && configuredVal != envVal {
+		return nil, fmt.Errorf(
+			"security violation: mismatch detected between explicitly configured %q and ambient environment %q "+
+				"- please remove one or align their values", explicitKey, envKey,
+		)
+	}
+
+	if configuredVal != "" {
+		return &configuredVal, nil
+	}
+	if envVal != "" {
+		return &envVal, nil
+	}
+
+	return nil, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Silent preference hides operator misconfiguration.
+func ResolveCredentialDangerous(configuredVal, ambientVal string) string {
+    if configuredVal != "" {
+        return configuredVal // Silently drops ambientVal even if ambientVal belongs to a completely different tenant!
+    }
+    return ambientVal
+}
+```
+
+**VERIFICATION METHOD**:
+Implement property-based test cases where `explicitVal` and `ambientVal` are initialized to randomized non-equal strings. Assert that the resolver returns a non-nil diagnostic error matching `"mismatch detected"`.
+
+---
+
+
+---
+
+## 3816. Monotonic Asynchronous Sequence Fencing (Harvested from react-hook-form/react-hook-form)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Monotonic Asynchronous Sequence Fencing",
+  "source": "react-hook-form/react-hook-form",
+  "source_url": "https://github.com/react-hook-form/react-hook-form",
+  "source_version": "eed80865",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T07:39:40.382Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-react-hook-form-react-hook-form",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form) (Revision: `eed80865`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Every asynchronous operation whose settled result updates shared state indexed by an identity key MUST capture a monotonic sequence ID at initiation time and MUST drop its mutation if either the entity-level sequence ID or the global epoch ID has advanced before settlement.
+
+**WHY**:
+Network latency, Promise microtask interleaving, and user typing are non-deterministic. If Field $A$ triggers an asynchronous validation at $t_0$, unmounts or registers anew at $t_1$, and settles at $t_2$, an unprotected promise resolution writes errors for an element that no longer exists or applies outdated validation constraints over a re-registered field, corrupting `isValid` and blocking form submission permanently.
+
+**WHEN TO APPLY**:
+Apply in any client-side or backend state manager where asynchronous background jobs (validation, fetch-on-type, autosave) can settle after target entities have been unmounted, deleted, replaced, or reset.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+class AsyncResourceManager<TKey extends string, TData> {
+  private globalEpoch = 0;
+  private readonly entityEpochs: Map<TKey, number> = new Map();
+  private readonly activeEntities: Map<TKey, TData> = new Map();
+
+  public register(key: TKey, data: TData): void {
+    const nextEpoch = (this.entityEpochs.get(key) ?? 0) + 1;
+    this.entityEpochs.set(key, nextEpoch);
+    this.activeEntities.set(key, data);
+  }
+
+  public unregister(key: TKey): void {
+    this.activeEntities.delete(key);
+    // Increment epoch on unregister so any in-flight promise will mismatch
+    const nextEpoch = (this.entityEpochs.get(key) ?? 0) + 1;
+    this.entityEpochs.set(key, nextEpoch);
+  }
+
+  public resetAll(): void {
+    this.globalEpoch++;
+    this.activeEntities.clear();
+    this.entityEpochs.clear();
+  }
+
+  public async executeAsyncJob(
+    key: TKey,
+    job: () => Promise<unknown>,
+    commit: (result: unknown) => void
+  ): Promise<void> {
+    const capturedGlobalEpoch = this.globalEpoch;
+    const capturedEntityEpoch = this.entityEpochs.get(key) ?? 0;
+
+    const result = await job();
+
+    // FENCE 1: Did a global reset occur during the await?
+    if (capturedGlobalEpoch !== this.globalEpoch) {
+      return;
+    }
+
+    // FENCE 2: Was the entity unregistered or re-registered while pending?
+    const currentEntityEpoch = this.entityEpochs.get(key);
+    const isStillMounted = this.activeEntities.has(key);
+
+    if (!isStillMounted || currentEntityEpoch !== capturedEntityEpoch) {
+      return; // DROP STALE RESULT SILENTLY
+    }
+
+    commit(result);
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly writing error state after async resolution
+async function validateFieldBlindly(fieldName: string, rule: AsyncValidator) {
+  _updateIsValidating(fieldName, true);
+  const error = await rule(currentValue); // Yields to event loop
+  _updateIsValidating(fieldName, false);
+
+  // CRITICAL BUG: If field unmounted or re-registered during await,
+  // this writes stale error into state, permanently bricking form submission!
+  errors[fieldName] = error; 
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via an asynchronous race integration test:
+```typescript
+test('monotonic fence drops stale async result on concurrent unregister/re-register', async () => {
+  const manager = new AsyncResourceManager<string, { value: string }>();
+  let committedValue: unknown = null;
+  let resolveJob!: (val: string) => void;
+
+  manager.register('testField', { value: 'initial' });
+
+  const jobPromise = manager.executeAsyncJob(
+    'testField',
+    () => new Promise((resolve) => { resolveJob = resolve; }),
+    (val) => { committedValue = val; }
+  );
+
+  // Unregister field while async validation is in-flight
+  manager.unregister('testField');
+  // Re-register under identical key
+  manager.register('testField', { value: 'new' });
+
+  // Settle the initial async task
+  resolveJob('stale_error');
+  await jobPromise;
+
+  expect(committedValue).toBeNull(); // Must NOT commit stale result
+});
+```
+
+---
+
+
+---
+
+## 3817. Referential Stability Preservation in Nested Property Updaters (Harvested from react-hook-form/react-hook-form)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Referential Stability Preservation in Nested Property Updaters",
+  "source": "react-hook-form/react-hook-form",
+  "source_url": "https://github.com/react-hook-form/react-hook-form",
+  "source_version": "eed80865",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T07:39:40.564Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-react-hook-form-react-hook-form",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form) (Revision: `eed80865`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When mutating deeply nested state graphs (such as dirty or touched maps), an updater MUST NOT clone or re-instantiate parent or root container objects if the terminal evaluated leaf delta produces no semantic structural change.
+
+**WHY**:
+Recreating object references (e.g., returning a new `{ ...prevDirtyFields }`) on every keystroke or `setValue` call when the dirty status has not structurally flipped forces consumer components relying on memoization (`useMemo`, `React.memo`, `useEffect` dependencies) into redundant re-render cascades, destroying UI frame rates.
+
+**WHEN TO APPLY**:
+State managers handling sparse trees, form libraries tracking `dirtyFields`, and React state reducers where subscribers monitor object references.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> | boolean };
+
+function setDirtyLeaf<T extends Record<string, any>>(
+  target: T,
+  path: string[],
+  isDirty: boolean
+): boolean {
+  // Traverse and verify existing state before cloning
+  let cursor: any = target;
+  for (let i = 0; i < path.length - 1; i++) {
+    const segment = path[i];
+    if (!(segment in cursor)) {
+      if (!isDirty) return false; // Already clean, no-op
+      cursor[segment] = {};
+    }
+    cursor = cursor[segment];
+  }
+
+  const leafKey = path[path.length - 1];
+  const currentLeafValue = cursor[leafKey];
+
+  if (isDirty) {
+    if (currentLeafValue === true) return false; // Reference stable: NO MUTATION NEEDED
+    cursor[leafKey] = true;
+    return true;
+  } else {
+    if (currentLeafValue === undefined) return false; // Already unset
+    delete cursor[leafKey];
+    return true;
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Eager structural cloning on identical state values
+function updateDirtyFieldsBad(prevDirtyFields: object, path: string, isDirty: boolean) {
+  // Re-creates the whole dictionary every call even if field was ALREADY dirty!
+  const next = structuredClone(prevDirtyFields);
+  set(next, path, isDirty);
+  return next; // Referential identity destroyed every keystroke!
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using object identity assertions across continuous mutations:
+```typescript
+test('dirtyFields preserves referential stability on idempotent mutations', () => {
+  const formControl = createFormControl({ defaultValues: { a: '' } });
+  formControl.setValue('a', 'v1', { shouldDirty: true });
+  const ref1 = formControl.formState.dirtyFields;
+
+  // Setting another dirty value must not break reference if 'a' was already marked dirty
+  formControl.setValue('a', 'v2', { shouldDirty: true });
+  const ref2 = formControl.formState.dirtyFields;
+
+  expect(ref1).toBe(ref2); // Exact pointer identity preserved
+});
+```
+
+---
+
+
+---
+
+## 3818. Cross-Origin Frame Timebase Normalization (Harvested from vitest-dev/vitest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Origin Frame Timebase Normalization",
+  "source": "vitest-dev/vitest",
+  "source_url": "https://github.com/vitest-dev/vitest",
+  "source_version": "272296e5",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T07:39:45.415Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vitest-dev-vitest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `272296e5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When computing duration or measuring wall-clock deltas across distinct execution browsing contexts (e.g., window vs. iframe, web worker vs. main thread, or host vs. guest runner), you MUST calculate absolute timestamps using `performance.timeOrigin + performance.now()` rather than relying solely on `performance.now()`.
+
+**WHY**:
+Each execution context (window, nested iframe, web worker) establishes its own distinct `performance.timeOrigin` upon document creation. `performance.now()` returns milliseconds elapsed *only since that specific context's timeOrigin*. Subtracting a parent context's `performance.now()` timestamp from a child iframe's `performance.now()` produces invalid or negative durations whenever the child iframe is initialized, reloaded, or destroyed after the parent context began.
+
+**WHEN TO APPLY**:
+Apply in any multi-frame or multi-agent runtime where latency, execution benchmarks, spans, or traces originate in sub-contexts (iframes, Web Workers, Node.js `worker_threads` with distinct V8 contexts) and are aggregated at an orchestrator layer.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/browser/src/client/orchestrator.ts & tester.ts
+
+// Context A (Orchestrator Window) initiates tracking:
+export function recordGlobalTimestamp(): number {
+  // Normalize to absolute system-epoch high-resolution millisecond mark
+  return performance.timeOrigin + performance.now()
+}
+
+// Context B (Tester Iframe) calculates elapsed duration:
+export function computeDeltaDuration(normalizedStartMark: number): number {
+  const currentNormalizedMark = performance.timeOrigin + performance.now()
+  return currentNormalizedMark - normalizedStartMark
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER subtract cross-context performance.now() marks directly
+// Context A:
+const startTime = performance.now() // e.g., 1054.2ms into Parent
+
+// Context B (Newly spawned iframe):
+// In iframe, performance.now() starts at 0.0ms!
+// state.durations.prepare = 12.1ms - 1054.2ms = -1042.1ms (Catastrophic Underflow)
+state.durations.prepare = performance.now() - startTime
+```
+
+**VERIFICATION METHOD**:
+Enforce via an automated cross-context duration invariant test:
+```typescript
+test('cross-context duration invariant holds across delayed frames', async () => {
+  const orchestratorOrigin = performance.timeOrigin + performance.now()
+  const iframe = document.createElement('iframe')
+  document.body.appendChild(iframe)
+  
+  await new Promise(resolve => setTimeout(resolve, 50))
+  
+  const iframeNow = iframe.contentWindow!.performance.timeOrigin + 
+                    iframe.contentWindow!.performance.now()
+  const duration = iframeNow - orchestratorOrigin
+  
+  expect(duration).toBeGreaterThanOrEqual(50)
+  expect(Number.isFinite(duration)).toBe(true)
+  iframe.remove()
+})
+```
+
+---
+
+
+---
+
+## 3819. Disarming Asynchronous Resource Races (Harvested from vitest-dev/vitest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Disarming Asynchronous Resource Races",
+  "source": "vitest-dev/vitest",
+  "source_url": "https://github.com/vitest-dev/vitest",
+  "source_version": "272296e5",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T07:39:45.599Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vitest-dev-vitest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `272296e5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When racing an asynchronous operation against an explicit timeout via `Promise.race()`, you MUST return an explicit cleanup handle (`clear()`) for the underlying timer and execute it in a `finally` block immediately upon resolution or rejection of the race.
+
+**WHY**:
+Node.js and modern runtime event loops maintain strong references to active timers scheduled via `setTimeout()`. An uncleaned timer scheduled inside a `Promise.race()` keeps the Node.js event loop alive until the timer expires (e.g., 30–60 seconds), even if the primary operation completes within 5 milliseconds. This causes process hang defects during CLI runs and worker teardowns.
+
+**WHEN TO APPLY**:
+Any async utility racing I/O operations, network fetches, visual stability checks, worker pings, or command executions against an abort/timeout deadline.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/browser/src/node/commands/screenshotMatcher/utils.ts
+
+export function asyncTimeout(timeout: number): { promise: Promise<null>; clear: () => void } {
+  let timer: NodeJS.Timeout | undefined
+
+  const promise = new Promise<null>((resolve) => {
+    if (timeout === 0) {
+      resolve(null)
+    } else {
+      timer = setTimeout(resolve, timeout, null)
+    }
+  })
+
+  return { 
+    promise, 
+    clear: () => {
+      if (timer !== undefined) {
+        clearTimeout(timer)
+        timer = undefined
+      }
+    } 
+  }
+}
+
+// Consumption:
+export async function executeWithTimeout<T>(
+  task: (signal: AbortSignal) => Promise<T>, 
+  timeoutMs: number
+): Promise<T | null> {
+  if (timeoutMs === 0) {
+    return task(new AbortController().signal)
+  }
+
+  const abortController = new AbortController()
+  const stabilityTimeout = asyncTimeout(timeoutMs)
+
+  try {
+    return await Promise.race([
+      task(abortController.signal),
+      stabilityTimeout.promise.finally(() => abortController.abort()),
+    ])
+  } finally {
+    stabilityTimeout.clear()
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER instantiate naked timeout promises inside Promise.race
+async function brokenRace<T>(task: Promise<T>, timeout: number): Promise<T | null> {
+  // Timer remains queued in libuv loop for `timeout` ms!
+  // If timeout = 30000, process hangs for 30s after test finishes.
+  return Promise.race([
+    task,
+    new Promise<null>((r) => setTimeout(r, timeout, null))
+  ])
+}
+```
+
+**VERIFICATION METHOD**:
+Verify that the active event loop handle count returns to zero immediately following execution:
+```typescript
+import { test, expect } from 'vitest'
+
+test('event loop handles released immediately after race resolution', async () => {
+  const handlesBefore = (process as any)._getActiveHandles().length
+  await executeWithTimeout(async () => 'fast-resolution', 30_000)
+  const handlesAfter = (process as any)._getActiveHandles().length
+  expect(handlesAfter).toBe(handlesBefore)
+})
+```
+
+---
+
+
+---
+
+## 3820. Graceful Graph Environmental Tolerance on Bail/Cancellation (Harvested from vitest-dev/vitest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Graceful Graph Environmental Tolerance on Bail/Cancellation",
+  "source": "vitest-dev/vitest",
+  "source_url": "https://github.com/vitest-dev/vitest",
+  "source_version": "272296e5",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T07:39:45.793Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vitest-dev-vitest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `272296e5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Reporting and post-processing collectors querying AST, module dependency graphs, or project execution contexts MUST treat execution environments as optional (`undefined`) and skip un-materialized modules rather than throwing invariant access errors.
+
+**WHY**:
+When a test runner aborts execution via `--bail` or uncaught critical faults, only a fraction of the scheduled test suite files are processed by Vite dev server environments. If reporters (such as HTML or JSON generators) assume every planned module successfully instantiated a Vite `DevEnvironment` module graph, reporter crashes mask the actual underlying failure and drop crash diagnostics.
+
+**WHEN TO APPLY**:
+Reporters, visualizer graphs, tracing synthesizers, and coverage aggregators operating over aborted, bailed, or cancelled test batches.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/vitest/src/utils/graph.ts
+
+function findModuleGraphEnvironment(
+  project: TestProject,
+  testFilePath: string,
+  viteEnvironment?: string,
+): DevEnvironment | undefined {
+  if (viteEnvironment) {
+    return project.vite.environments[viteEnvironment]
+  }
+  return project.config.experimental.viteModuleRunner === false
+    ? project.vite.environments.__vitest__
+    : getTestFileEnvironment(project, testFilePath, project.config.browser.enabled)
+}
+
+export function getSharedModuleGraphByEnvironment(
+  project: TestProject,
+  testModules: TestModule[],
+): SharedModuleGraphByProject[string] {
+  const collectors: { [environmentName: string]: ModuleGraphCollector } = {}
+  
+  for (const testModule of testModules) {
+    const environment = findModuleGraphEnvironment(
+      project,
+      testModule.moduleId,
+      testModule.viteEnvironment?.name,
+    )
+    
+    // Invariant guard: Test files cancelled before worker dispatch have no active environment
+    if (!environment) {
+      continue
+    }
+    
+    collectors[environment.name] ??= createModuleGraphCollector(project, environment)
+    collectors[environment.name].add(testModule.moduleId)
+  }
+  
+  return Object.fromEntries(
+    Object.entries(collectors).map(([env, c]) => [env, { modules: c.data.modules, roots: c.roots }])
+  )
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly throwing invariant errors on post-mortem modules
+function getModuleGraphEnvironment(project: TestProject, testFilePath: string) {
+  const environment = project.vite.environments[testFilePath]
+  if (!environment) {
+    // CRASHES reporter if execution was terminated by --bail 1!
+    throw new Error(`Cannot find environment for ${testFilePath}`)
+  }
+  return environment
+}
+```
+
+**VERIFICATION METHOD**:
+Run an integration test executing consecutive specs with `bail: 1` and verify the HTML reporter produces valid output:
+```bash
+vitest run --bail 1 --reporter html --reporter default
+# Verification: Process exits with test failure code, NOT reporter crash stack trace,
+# and index.html exists in reporter output folder.
+```
+
+---

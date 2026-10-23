@@ -4497,3 +4497,7 @@ Every entry in this ledger must capture:
 | `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `5081ad40` | Multi-dimensional audit evidence | 2026-10-23T07:21:26.723Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `a38718e9` | Multi-dimensional audit evidence | 2026-10-23T07:21:47.651Z |
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `d1ca2412` | Multi-dimensional audit evidence | 2026-10-23T07:22:39.284Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `6a571439` | Multi-dimensional audit evidence | 2026-10-23T07:39:22.995Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `cdbff3ee` | Multi-dimensional audit evidence | 2026-10-23T07:39:26.210Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `eed80865` | Multi-dimensional audit evidence | 2026-10-23T07:39:40.739Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `272296e5` | Multi-dimensional audit evidence | 2026-10-23T07:39:45.970Z |

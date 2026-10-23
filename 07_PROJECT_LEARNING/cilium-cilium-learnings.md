@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `28b8d3eb`  
+> **Source Version**: `6a571439`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:30:27.071Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-23T07:39:22.241Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1804 +12,495 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): cilium/cilium
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:30:26.900Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): cilium/cilium
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `cilium/cilium`
-- **Description**: eBPF-based Networking, Security, and Observability
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25708 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 Core Mission & Problem Space
+`cilium/cilium` operates at the intersection of Linux kernel data-path programming (eBPF/XDP) and cloud-native application orchestration (Kubernetes CNI, Gateway API, Service Mesh). It replaces legacy Linux network routing stacks (`iptables`, `IPVS`, bridge devices) by injecting compiled eBPF bytecode programs directly into kernel hook points:
+* **XDP (eXpress Data Path)**: Early bare-metal packet filtering, L4 load balancing, and DDoS mitigation before socket buffer (`sk_buff`) allocation.
+* **tc (Traffic Control) ingress/egress**: Full L3/L4 packet routing, encapsulation (Geneve, VXLAN), network policy enforcement, SNAT/DNAT, and tunnel encapsulation.
+* **cgroup / Socket Hooks (`sock_ops`, `sock_addr`)**: Socket-layer Layer 4 redirection directly at `connect()`, `sendmsg()`, and `recvmsg()` calls, bypassing the host TCP/IP stack entirely for node-local IPC (Kube-Proxy Replacement / Socket LB).
+* **Envoy Integration & L7 Flow Enforcement**: Transparent user-space redirection via eBPF sockmap / TPROXY into Cilium Envoy instances for L7 policy enforcement (HTTP, gRPC, Kafka) and Gateway API routing.
+
+### 1.2 Architectural Boundaries & Subsystems
+```
+  +-----------------------------------------------------------------------------------------+
+  |                                Kubernetes Control Plane                                 |
+  +-----------------------------------------------------------------------------------------+
+         | CRDs (CiliumNetworkPolicy, CiliumClusterwideNetworkPolicy, Gateway, HTTPRoute)
+         v
+  +-------------------------------------+         +-----------------------------------------+
+  |           cilium-operator           |         |               cilium-agent              |
+  |  - IPAM allocation (Azure, AWS, ENI)|         |  - Hive Modular Architecture Engine     |
+  |  - Gateway API / Ingress Controller |         |  - StateDB (In-Memory MVCC Relational)  |
+  |  - BGP Control Plane Coordinator    |         |  - Identity Allocation & Policy Engine  |
+  |  - Secret Sync & Status Reporting   |<=======>|  - BPF Program Compiler & Loader (LLVM) |
+  +-------------------------------------+  K8s    +-----------------------------------------+
+                                           APIs             |             |
+                                                            | Map Updates | eBPF Bytecode
+                                                            v             v
+  +-----------------------------------------------------------------------------------------+
+  |                                Linux Kernel Data Plane                                  |
+  |  +----------------+     +-------------------+     +------------------+     +---------+  |
+  |  |  Socket Hooks  |     |   tc Ingress/Egr  |     |   XDP Driver     |     | BPF Maps|  |
+  |  | (connect/send) |     |  (L3/L4/Encap)    |     |   (Fast Drop/LB) |     | (Conntrk|  |
+  |  +----------------+     +-------------------+     +------------------+     |  LPM/IP)|  |
+  |          |                        |                         |              +---------+  |
+  +----------|------------------------|-------------------------|---------------------------+
+             v                        v                         v
+     Local App Sockets          Overlay / Wire            Physical NIC
+```
+
+1. **The Agent Control Loop (`daemon/` & `pkg/hive`)**:
+   Built on the Cilium Hive dependency-injection framework. It ingests Kubernetes resources and translates them into low-level network topologies. State synchronization is governed by **StateDB**—an in-memory relational MVCC database running inside the agent that avoids lock contention and eliminates reconciliation race conditions across dozens of concurrent controllers.
+2. **eBPF Program Generation & Engine (`bpf/` & `pkg/bpf`)**:
+   Cilium does not merely update static BPF maps; it compiles customized C header files (`epconfig.h`) containing macro definitions specific to each local container endpoint (identity ID, MAC address, policy flags) and dynamically compiles or tail-calls modular eBPF programs via `cilium-ebpf`.
+3. **Gateway API & Service Mesh Ingress (`operator/pkg/gateway-api/`, `pkg/envoy`)**:
+   Translates upstream Kubernetes Gateway API resources (`Gateway`, `HTTPRoute`, `TLSRoute`) and standard `Ingress` specs into Envoy `CiliumEnvoyConfig` (CEC) CRDs and Envoy Dynamic Downstream/Upstream TLS contexts, with zero-downtime hot-reloads and strict status propagation.
+4. **Endpoint State Machine (`api/v1/models/endpoint_state.go`)**:
+   Maintains strict linear state transitions for every local container:
+   `waiting-for-identity` $\rightarrow$ `waiting-to-regenerate` $\rightarrow$ `regenerating` $\rightarrow$ `ready` (or `restoring` / `disconnecting` / `disconnected` / `invalid`). Invariants prevent packet transmission before identity resolution, closing the security window during pod boot.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `api/v1/models/bgp_route_policy_statement.go`
-```
-// Code generated by go-swagger; DO NOT EDIT.
-
-// Copyright Authors of Cilium
-// SPDX-License-Identifier: Apache-2.0
-
-package models
-
-import (
-	"context"
-	"encoding/json"
-	stderrors "errors"
-	"strconv"
-
-	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag/jsonutils"
-	"github.com/go-openapi/swag/typeutils"
-	"github.com/go-openapi/validate"
-)
-
-// BgpRoutePolicyStatement Single BGP route policy statement
-//
-// swagger:model BgpRoutePolicyStatement
-type BgpRoutePolicyStatement struct {
-
-	// List of BGP standard community values to be added to the matched route
-	AddCommunities []string `json:"add-communities"`
-
-	// List of BGP large community values to be added to the matched route
-	AddLargeCommunities []string `json:"add-large-communities"`
-
-	// Matches any of the provided address families. If empty matches all address families.
-	MatchFamilies []*BgpFamily `json:"match-families"`
-
-	// Matches BGP neighbor IP address with the provided match rules
-	MatchNeighbors *BgpRoutePolicyNeighborMatch `json:"match-neighbors,omitempty"`
-
-	// Matches CIDR prefix with the provided match rules
-	MatchPrefixes *BgpRoutePolicyPrefixMatch `json:"match-prefixes,omitempty"`
-
-	// BGP nexthop action
-	Nexthop *BgpRoutePolicyNexthopAction `json:"nexthop,omitempty"`
-
-	// RIB processing action taken on the matched route
-	// Enum: ["none","accept","reject"]
-	RouteAction string `json:"route-action,omitempty"`
-
-	// BGP local preference value to be set on the matched route
-	SetLocalPreference int64 `json:"set-local-preference,omitempty"`
-}
-
-// Validate validates this bgp route policy statement
-func (m *BgpRoutePolicyStatement) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateMatchFamilies(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateMatchNeighbors(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateMatchPrefixes(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateNexthop(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRouteAction(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) validateMatchFamilies(formats strfmt.Registry) error {
-	if typeutils.IsZero(m.MatchFamilies) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.MatchFamilies); i++ {
-		if typeutils.IsZero(m.MatchFamilies[i]) { // not required
-			continue
-		}
-
-		if m.MatchFamilies[i] != nil {
-			if err := m.MatchFamilies[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("match-families" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("match-families" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) validateMatchNeighbors(formats strfmt.Registry) error {
-	if typeutils.IsZero(m.MatchNeighbors) { // not required
-		return nil
-	}
-
-	if m.MatchNeighbors != nil {
-		if err := m.MatchNeighbors.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("match-neighbors")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("match-neighbors")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) validateMatchPrefixes(formats strfmt.Registry) error {
-	if typeutils.IsZero(m.MatchPrefixes) { // not required
-		return nil
-	}
-
-	if m.MatchPrefixes != nil {
-		if err := m.MatchPrefixes.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("match-prefixes")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("match-prefixes")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) validateNexthop(formats strfmt.Registry) error {
-	if typeutils.IsZero(m.Nexthop) { // not required
-		return nil
-	}
-
-	if m.Nexthop != nil {
-		if err := m.Nexthop.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("nexthop")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("nexthop")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-var bgpRoutePolicyStatementTypeRouteActionPropEnum []any
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["none","accept","reject"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		bgpRoutePolicyStatementTypeRouteActionPropEnum = append(bgpRoutePolicyStatementTypeRouteActionPropEnum, v)
-	}
-}
-
-const (
-
-	// BgpRoutePolicyStatementRouteActionNone captures enum value "none"
-	BgpRoutePolicyStatementRouteActionNone string = "none"
-
-	// BgpRoutePolicyStatementRouteActionAccept captures enum value "accept"
-	BgpRoutePolicyStatementRouteActionAccept string = "accept"
-
-	// BgpRoutePolicyStatementRouteActionReject captures enum value "reject"
-	BgpRoutePolicyStatementRouteActionReject string = "reject"
-)
-
-// prop value enum
-func (m *BgpRoutePolicyStatement) validateRouteActionEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, bgpRoutePolicyStatementTypeRouteActionPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) validateRouteAction(formats strfmt.Registry) error {
-	if typeutils.IsZero(m.RouteAction) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateRouteActionEnum("route-action", "body", m.RouteAction); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this bgp route policy statement based on the context it is used
-func (m *BgpRoutePolicyStatement) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateMatchFamilies(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateMatchNeighbors(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateMatchPrefixes(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateNexthop(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) contextValidateMatchFamilies(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.MatchFamilies); i++ {
-
-		if m.MatchFamilies[i] != nil {
-
-			if typeutils.IsZero(m.MatchFamilies[i]) { // not required
-				return nil
-			}
-
-			if err := m.MatchFamilies[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("match-families" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("match-families" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) contextValidateMatchNeighbors(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.MatchNeighbors != nil {
-
-		if typeutils.IsZero(m.MatchNeighbors) { // not required
-			return nil
-		}
-
-		if err := m.MatchNeighbors.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("match-neighbors")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("match-neighbors")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) contextValidateMatchPrefixes(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.MatchPrefixes != nil {
-
-		if typeutils.IsZero(m.MatchPrefixes) { // not required
-			return nil
-		}
-
-		if err := m.MatchPrefixes.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("match-prefixes")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("match-prefixes")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *BgpRoutePolicyStatement) contextValidateNexthop(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Nexthop != nil {
-
-		if typeutils.IsZero(m.Nexthop) { // not required
-			return nil
-		}
-
-		if err := m.Nexthop.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("nexthop")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("nexthop")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *BgpRoutePolicyStatement) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return jsonutils.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *BgpRoutePolicyStatement) UnmarshalBinary(b []byte) error {
-	var res BgpRoutePolicyStatement
-	if err := jsonutils.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-```
-
-### Core Architecture Module: `api/v1/models/endpoint_state.go`
-```
-// Code generated by go-swagger; DO NOT EDIT.
-
-// Copyright Authors of Cilium
-// SPDX-License-Identifier: Apache-2.0
-
-package models
-
-import (
-	"context"
-	"encoding/json"
-
-	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/validate"
-)
-
-// EndpointState State of endpoint
-//
-// swagger:model EndpointState
-type EndpointState string
-
-func NewEndpointState(value EndpointState) *EndpointState {
-	return &value
-}
-
-// Pointer returns a pointer to a freshly-allocated EndpointState.
-func (m EndpointState) Pointer() *EndpointState {
-	return &m
-}
-
-const (
-
-	// EndpointStateWaitingDashForDashIdentity captures enum value "waiting-for-identity"
-	EndpointStateWaitingDashForDashIdentity EndpointState = "waiting-for-identity"
-
-	// EndpointStateNotDashReady captures enum value "not-ready"
-	EndpointStateNotDashReady EndpointState = "not-ready"
-
-	// EndpointStateWaitingDashToDashRegenerate captures enum value "waiting-to-regenerate"
-	EndpointStateWaitingDashToDashRegenerate EndpointState = "waiting-to-regenerate"
-
-	// EndpointStateRegenerating captures enum value "regenerating"
-	EndpointStateRegenerating EndpointState = "regenerating"
-
-	// EndpointStateRestoring captures enum value "restoring"
-	EndpointStateRestoring EndpointState = "restoring"
-
-	// EndpointStateReady captures enum value "ready"
-	EndpointStateReady EndpointState = "ready"
-
-	// EndpointStateDisconnecting captures enum value "disconnecting"
-	EndpointStateDisconnecting EndpointState = "disconnecting"
-
-	// EndpointStateDisconnected captures enum value "disconnected"
-	EndpointStateDisconnected EndpointState = "disconnected"
-
-	// EndpointStateInvalid captures enum value "invalid"
-	EndpointStateInvalid EndpointState = "invalid"
-)
-
-// for schema
-var endpointStateEnum []any
-
-func init() {
-	var res []EndpointState
-	if err := json.Unmarshal([]byte(`["waiting-for-identity","not-ready","waiting-to-regenerate","regenerating","restoring","ready","disconnecting","disconnected","invalid"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		endpointStateEnum = append(endpointStateEnum, v)
-	}
-}
-
-func (m EndpointState) validateEndpointStateEnum(path, location string, value EndpointState) error {
-	if err := validate.EnumCase(path, location, value, endpointStateEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Validate validates this endpoint state
-func (m EndpointState) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	// value enum
-	if err := m.validateEndpointStateEnum("", "body", m); err != nil {
-		return err
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-// ContextValidate validates this endpoint state based on context it is used
-func (m EndpointState) ContextValidate(_ context.Context, _ strfmt.Registry) error {
-	return nil
-}
-
-```
-
-### Core Architecture Module: `api/v1/models/state_d_b_query.go`
-```
-// Code generated by go-swagger; DO NOT EDIT.
-
-// Copyright Authors of Cilium
-// SPDX-License-Identifier: Apache-2.0
-
-package models
-
-import (
-	"context"
-
-	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag/jsonutils"
-)
-
-// StateDBQuery StateDB query
-//
-// swagger:model StateDBQuery
-type StateDBQuery struct {
-
-	// Index to query against
-	Index string `json:"index,omitempty"`
-
-	// Key to query with. Base64 encoded.
-	Key string `json:"key,omitempty"`
-
-	// LowerBound prefix search or full-matching Get
-	Lowerbound bool `json:"lowerbound,omitempty"`
-
-	// Name of the table to query
-	Table string `json:"table,omitempty"`
-}
-
-// Validate validates this state d b query
-func (m *StateDBQuery) Validate(_ strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this state d b query based on context it is used
-func (m *StateDBQuery) ContextValidate(_ context.Context, _ strfmt.Registry) error {
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *StateDBQuery) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return jsonutils.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *StateDBQuery) UnmarshalBinary(b []byte) error {
-	var res StateDBQuery
-	if err := jsonutils.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-```
-
-### Core Architecture Module: `bpf/lib/ipv4_core.h`
-```
-/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-/* Copyright Authors of Cilium */
-
-#pragma once
-
-union v4addr {
-	__u8 addr[4];
-	__be32 be32;
-};
-
-```
-
-### Core Architecture Module: `bpf/lib/ipv6_core.h`
-```
-/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-/* Copyright Authors of Cilium */
-
-#pragma once
-
-union v6addr {
-	__u8 addr[16];
-	struct {
-		__u32 p1;
-		__u32 p2;
-		__u32 p3;
-		__u32 p4;
-	} p;
-#define p1 p.p1
-#define p2 p.p2
-#define p3 p.p3
-#define p4 p.p4
-	struct {
-		__u64 d1;
-		__u64 d2;
-	} d;
-#define d1 d.d1
-#define d2 d.d2
-} __packed;
-
-static __always_inline void ipv6_addr_copy(union v6addr *dst,
-					   const union v6addr *src)
-{
-	memcpy(dst, src, sizeof(*dst));
-}
-
-static __always_inline void ipv6_addr_copy_unaligned(union v6addr *dst,
-						     const union v6addr *src)
-{
-	dst->d1 = src->d1;
-	dst->d2 = src->d2;
-}
-
-static __always_inline bool ipv6_addr_equals(const union v6addr *a,
-					     const union v6addr *b)
-{
-	if (a->d1 != b->d1)
-		return false;
-	return a->d2 == b->d2;
-}
-
-```
-
-### Core Architecture Module: `bpf/lib/utils.h`
-```
-/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-/* Copyright Authors of Cilium */
-
-#pragma once
-
-#include <bpf/ctx/ctx.h>
-#include <bpf/api.h>
-
-#include "endian.h"
-#include "time.h"
-#include "static_data.h"
-
-#define __min(t_x, t_y, x, y)		\
-({					\
-	t_x _x = (x);			\
-	t_y _y = (y);			\
-	(void)(&_x == &_y);		\
-	_x < _y ? _x : _y;		\
-})
-
-#define __max(t_x, t_y, x, y)		\
-({					\
-	t_x _x = (x);			\
-	t_y _y = (y);			\
-	(void)(&_x == &_y);		\
-	_x > _y ? _x : _y;		\
-})
-
-#define min(x, y)			\
-	__min(typeof(x), typeof(y), x, y)
-
-#define max(x, y)			\
-	__max(typeof(x), typeof(y), x, y)
-
-#define min_t(t, x, y)			\
-	__min(t, t, x, y)
-
-#define max_t(t, x, y)			\
-	__max(t, t, x, y)
-
-/* For use with compile-time constants that don't
- * have side effects on repeated evaluation.
- */
-#define SIMPLE_MIN(x, y) ((x) < (y) ? (x) : (y))
-
-```
-
-### Core Architecture Module: `cilium-cli/cli/utils.go`
-```
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
-
-package cli
-
-import (
-	"fmt"
-	"os"
-)
-
-// fatalf prints the Printf formatted message to stderr and exits the program
-// Note: os.Exit(1) is not recoverable and does not fire defers.
-func fatalf(msg string, args ...any) {
-	fmt.Fprintf(os.Stderr, "\nError: %s\n", fmt.Sprintf(msg, args...))
-	os.Exit(1)
-}
-
-```
-
-### Core Architecture Module: `cilium-cli/internal/utils/exec.go`
-```
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
-
-package utils
-
-import (
-	"fmt"
-	"os/exec"
-	"strings"
-)
-
-type Logger interface {
-	Log(format string, args ...any)
-}
-
-func Exec(l Logger, command string, args ...string) ([]byte, error) {
-	c := exec.Command(command, args...)
-	bytes, err := c.CombinedOutput()
-	if err != nil {
-		cmdStr := fmt.Sprintf("%s %s", command, strings.Join(args, " "))
-		l.Log("❌ Unable to execute %q:", cmdStr)
-		if len(bytes) > 0 {
-			l.Log(" %s", string(bytes))
-		}
-		return []byte{}, fmt.Errorf("unable to execute %q: %w", cmdStr, err)
-	}
-
-	return bytes, err
-}
-
-```
-
-### Core Architecture Module: `cilium-cli/sysdump/k8sutils.go`
-```
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
-
-package sysdump
-
-import (
-	"context"
-	"fmt"
-	"time"
-
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/wait"
-)
-
-// ensureExecTarget ensures, if at all possible, that a target for execution exists. If the
-// selected container is up and running, it uses that. If the container is not (because it has crashed),
-// then either an EphemeralContainer or new Pod will be created.
-// In all cases, a cleanup function will be returned to remove any resources that may be created.
-// This assumes the target image has /bin/sleep
-func (c *Collector) ensureExecTarget(ctx context.Context, pod *corev1.Pod, container string) (targetPod *corev1.Pod, targetContainer string, cleanup func(context.Context) error, err error) {
-	cleanup = func(_ context.Context) error { return nil }
-
-	// case 1: target container is running
-	found := false
-	for _, c := range pod.Status.ContainerStatuses {
-		if c.Name == container {
-			if c.State.Running != nil {
-				return pod, container, cleanup, nil
-			}
-			found = true
-			break
-		}
-	}
-	if !found {
-		return nil, "", cleanup, fmt.Errorf("could not find container %q in pod %q with namespace %q", container, pod.Name, pod.Namespace)
-	}
-
-	// case 2: try to create an EphemeralContainer
-	// This is beta as of k8s 1.23, and may be blocked behind a FeatureGate,
-	// so continue to case 3 if this fails.
-	var fromContainer *corev1.Container
-	for _, cs := range pod.Spec.Containers {
-		if cs.Name == container {
-			fromContainer = cs.DeepCopy()
-			break
-		}
-	}
-	if fromContainer == nil {
-		// impossible, we checked above
-		return nil, "", cleanup, fmt.Errorf("could not find container %s", container)
-	}
-
-	c.logWarn("Container %q for pod %q in namespace %q is not running. Trying EphemeralContainer or separate Pod instead...", container, pod.Name, pod.Namespace)
-	ec := &corev1.EphemeralContainer{
-		EphemeralContainerCommon: corev1.EphemeralContainerCommon{
-			Name:            fmt.Sprintf("sysdump-%d", time.Now().Unix()),
-			Image:           fromContainer.Image,
-			Command:         []string{"/bin/sleep", "1d"},
-			Env:             fromContainer.Env,
-			VolumeMounts:    fromContainer.VolumeMounts,
-			SecurityContext: fromContainer.SecurityContext,
-		},
-		TargetContainerName: fromContainer.Name,
-	}
-
-	targetPod, err = c.Client.CreateEphemeralContainer(ctx, pod, ec)
-	if err == nil {
-		c.logDebug("Created EphemeralContainer %q on pod %q in namespace %q", ec.Name, pod.Name, pod.Namespace)
-
-		// Ephemeral container created, wait for it to enter Running status.
-		err = wait.PollUntilContextTimeout(ctx, 10*time.Second, 30*time.Second, false, func(ctx context.Context) (bool, error) {
-			var err error
-			targetPod, err = c.Client.GetPod(ctx, targetPod.Namespace, targetPod.Name, metav1.GetOptions{})
-			if err != nil {
-				return false, err
-			}
-			for _, status := range targetPod.Status.EphemeralContainerStatuses {
-				if status.Name == ec.Name {
-					return status.State.Running != nil, nil
-				}
-			}
-			return false, nil
-		})
-		if err == nil {
-			return targetPod, ec.Name, cleanup, nil
-		}
-		c.logWarn("EphemeralContainer %q on pod %q in namespace %q never reached Running status (falling back to separate Pod)", ec.Name, targetPod.Name, targetPod.Namespace)
-	} else {
-		c.logDebug("Could not create EphemeralContainer (falling back to separate Pod): %v", err)
-	}
-
-	// case 3: create another Pod on the same node, with as much of the configuration copied over as possible.
-	c.logWarn("Container %q on pod %q in namespace %q is not running. Creating exec Pod.", container, pod.Name, pod.Namespace)
-
-	// Create a copy pod with most of the interesting fields copied over.
-	newPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace:    pod.Namespace,
-			GenerateName: "sysdump-",
-		},
-		Spec: corev1.PodSpec{
-			Containers: []corev1.Container{
-				{
-					Name:            fromContainer.Name,
-					Image:           fromContainer.Image,
-					Command:         []string{"/bin/sleep", "1d"},
-					Env:             fromContainer.Env,
-					VolumeMounts:    fromContainer.VolumeMounts,
-					SecurityContext: fromContainer.SecurityContext,
-				},
-			},
-			Volumes:            pod.Spec.Volumes,
-			RestartPolicy:      corev1.RestartPolicyNever,
-			DNSPolicy:          pod.Spec.DNSPolicy,
-			ServiceAccountName: pod.Spec.ServiceAccountName,
-			NodeName:           pod.Spec.NodeName,
-			HostNetwork:        pod.Spec.HostNetwork,
-			HostPID:            pod.Spec.HostPID,
-			HostIPC:            pod.Spec.HostIPC,
-			SecurityContext:    pod.Spec.SecurityContext,
-			Tolerations: []corev1.Toleration{
-				{
-					Operator: corev1.TolerationOpExists, // Tolerate everything.
-				},
-			},
-		},
-	}
-	targetContainer = fromContainer.Name
-
-	targetPod, err = c.Client.CreatePod(ctx, pod.Namespace, newPod, metav1.CreateOptions{})
-	if err != nil {
-		err = fmt.Errorf("could not create exec pod: %w", err)
-		return
-	}
-	c.logDebug("Created exec pod %q/%q on node %q", targetPod.Namespace, targetPod.Name, targetPod.Spec.NodeName)
-
-	cleanup = func(ctx context.Context) error {
-		c.logDebug("Deleting exec pod %s/%s", targetPod.Namespace, targetPod.Name)
-		return c.Client.DeletePod(ctx, targetPod.Namespace, targetPod.Name, metav1.DeleteOptions{})
-	}
-
-	// Wait up to 2 minutes for pod to be available
-	err = wait.PollUntilContextTimeout(ctx, 10*time.Second, 2*time.Minute, false, func(ctx context.Context) (bool, error) {
-		var err error
-		targetPod, err = c.Client.GetPod(ctx, targetPod.Namespace, targetPod.Name, metav1.GetOptions{})
-		if err != nil {
-			return false, err
-		}
-		for _, condition := range targetPod.Status.Conditions {
-			if condition.Type == corev1.ContainersReady && condition.Status == corev1.ConditionTrue {
-				return true, nil
-			}
-		}
-		return false, nil
-	})
-
-	if err != nil {
-		_ = cleanup(ctx) // best-effort delete
-		return nil, "", func(_ context.Context) error { return nil }, fmt.Errorf("exec pod %q for namespace %q never reached ready status: %w", targetPod.Name, targetPod.Namespace, err)
-	}
-
-	return targetPod, targetContainer, cleanup, nil
-}
-
-```
-
-### Core Architecture Module: `cilium-cli/utils/features/features.go`
-```
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
-
-package features
-
-import (
-	"fmt"
-	"maps"
-	"slices"
-	"strings"
-
-	"github.com/blang/semver/v4"
-	v1 "k8s.io/api/core/v1"
-
-	ciliumdef "github.com/cilium/cilium/pkg/defaults"
-	"github.com/cilium/cilium/pkg/versioncheck"
-)
-
-const (
-	CNIChaining        Feature = "cni-chaining"
-	MonitorAggregation Feature = "monitor-aggregation"
-	L7Proxy            Feature = "l7-proxy"
-	HostFirewall       Feature = "host-firewall"
-	ICMPPolicy         Feature = "icmp-policy"
-	L7PortRanges       Feature = "l7-port-ranges"
-	Tunnel             Feature = "tunnel"
-	TunnelPort         Feature = "tunnel-port"
-	EndpointRoutes     Feature = "endpoint-routes"
-
-	KPR                     Feature = "kpr"
-	KPRSocketLB             Feature = "kpr-socket-lb"
-	KPRSocketLBHostnsOnly   Feature = "kpr-socket-lb-hostns-only"
-	KPRNodePortAcceleration Feature = "kpr-nodeport-acceleration"
-
-	BPFLBExternalClusterIP Feature = "bpf-lb-external-clusterip"
-
-	HostPort Feature = "host-port"
-
-	NodeWithoutCilium Feature = "node-without-cilium"
-
-	HealthChecking Feature = "health-checking"
-
-	EncryptionPod              Feature = "encryption-pod"
-	EncryptionNode             Feature = "encryption-node"
-	EncryptionStrictMode       Feature = "enable-encryption-strict-mode"
-	EncryptionStrictModeEgress Feature = "enable-encryption-strict-mode-egress"
-
-	IPv4 Feature = "ipv4"
-	IPv6 Feature = "ipv6"
-
-	Flavor Feature = "flavor"
-
-	// The following settings control Policy Secrets tests.
-	//
-	// Cilium can be in three states for Policy Secrets:
-	//
-	// * Policy Secrets can be read by the agent from anywhere in the cluster (via either
-	//   direct read or from the configured secret namespace via secret
-	//   synchonrization by the Cilium Operator).
-	// * Policy Secrets can be read by the agent, but only from the configured Secrets
-	//   namespace. This is an advanced use case, and is included for migration purposes.
-	// * Policy Secrets cannot be read.
-
-	// PolicySecretsOnlyFromSecretsNamespace sets if Cilium  will look only
-	// in the configured secrets namespace for Policy Secrets, or if it will look
-	// in the entire cluster.
-	//
-	// If it's `true`, then Cilium will only read Secrets from the configured namespace.
-	//
-	// If it's `false`, then the Cilium agent will be granted Read access to _all_ Secrets
-	// in the cluster.
-	//
-	// This feature replaces the existing `tls.secretsBackend: k8s` one. SecretsBackend
-	// will be removed in a future release.
-	//
-	// This feature has Helm automation to mirror the setting of secretsBackend in the meantime.
-	PolicySecretsOnlyFromSecretsNamespace Feature = "policy-secrets-only-from-secrets-namespace"
-
-	// PolicySecretSync controls whether the Cilium Operator will synchronize Secrets referenced
-	// in Network Policy into the configured Secrets namespace.
-	//
-	// This has important interactions with
-	PolicySecretSync Feature = "enable-policy-secrets-sync"
-	// For connectivity tests, we only care if Secrets can be read from the cluster
-	// _somehow_, whether that is via direct read or secret sync is not important.
-	// So, this feature tracks if we can read Policy secrets _somehow_.
-	PolicySecretsReadable Feature = "policy-secrets-readable"
-
-	CNP  Feature = "cilium-network-policy"
-	CCNP Feature = "cilium-clusterwide-network-policy"
-	KNP  Feature = "k8s-network-policy"
-	KCNP Feature = "k8s-cluster-network-policy"
-
-	// Whether or not CIDR selectors can match node IPs
-	CIDRMatchNodes Feature = "cidr-match-nodes"
-
-	CiliumSpire Feature = "cilium-spire"
-
-	IngressController Feature = "ingress-controller"
-
-	EgressGateway Feature = "enable-egress-gateway"
-	GatewayAPI    Feature = "enable-gateway-api"
-
-	EnableEnvoyConfig Feature = "enable-envoy-config"
-
-	CiliumIPAMMode Feature = "ipam"
-
-	IPsecEnabled                  Feature = "enable-ipsec"
-	ClusterMeshEnableEndpointSync Feature = "clustermesh-enable-endpoint-sync"
-
-	PolicyDefaultLocalCLuster Feature = "policy-default-local-cluster"
-
-	LocalRedirectPolicy Feature = "enable-local-redirect-policy"
-
-	BGPControlPlane Feature = "enable-bgp-control-plane"
-
-	NodeLocalDNS Feature = "node-local-dns"
-
-	Multicast Feature = "multicast-enabled"
-
-	L7LoadBalancer Feature = "loadbalancer-l7"
-
-	RHEL Feature = "rhel"
-
-	ExternalEnvoyProxy Feature = "external-envoy-proxy"
-
-	Ztunnel Feature = "enable-ztunnel"
-
-	DefaultGlobalNamespace Feature = "clustermesh-default-global-namespace"
-
-	SubnetTopology Feature = "subnet-topology"
-)
-
-// Feature is the name of a Cilium Feature (e.g. l7-proxy, cni chaining mode etc)
-type Feature string
-
-// Status describes the status of a Feature. Some features are either
-// turned on or off (c.f. Enabled), while others additionally might include a
-// Mode string which provides more information about in what mode a
-// particular Feature is running ((e.g. when running with CNI chaining,
-// Enabled will be true, and the Mode string will additionally contain the name
-// of the chained CNI).
-type Status struct {
-	Enabled bool
-	Mode    string
-}
-
-func (s Status) String() string {
-	str := "Disabled"
-	if s.Enabled {
-		str = "Enabled"
-	}
-
-	if len(s.Mode) == 0 {
-		return str
-	}
-
-	return fmt.Sprintf("%s:%s", str, s.Mode)
-}
-
-func (s Status) shortString() string {
-	if s.Enabled {
-		return "enabled"
-	}
-	return "disabled"
-}
-
-// Set contains the Status of a collection of Features.
-type Set map[Feature]Status
-
-// MatchRequirements returns true if the Set fs satisfies all the
-// requirements in reqs. Returns true for empty requirements list.
-func (fs Set) MatchRequirements(reqs ...Requirement) (bool, string) {
-	for _, req := range reqs {
-		status := fs[req.Feature]
-		if req.requiresEnabled && (req.enabled != status.Enabled) {
-			return false, fmt.Sprintf("Feature %s is %s", req.Feature, status.shortString())
-		}
-		if req.requiresMode && (req.mode != status.Mode) {
-			return false, fmt.Sprintf("requires Feature %s mode %s, got %s", req.Feature, req.mode, status.Mode)
-		}
-		if req.requireModeIsNot && (req.mode == status.Mode) {
-			return false, fmt.Sprintf("requires Feature %s not equal to %s", req.Feature, req.mode)
-		}
-	}
-
-	return true, ""
-}
-
-// IPFamilies returns the list of enabled IP families.
-func (fs Set) IPFamilies() []IPFamily {
-	var families []IPFamily
-
-	if match, _ := fs.MatchRequirements(RequireEnabled(IPv4)); match {
-		families = append(families, IPFamilyV4)
-	}
-
-	if match, _ := fs.MatchRequirements(RequireEnabled(IPv6)); match {
-		families = append(families, IPFamilyV6)
-	}
-
-	return families
-}
-
-// deriveFeatures derives additional features based on the status of other features
-func (fs Set) DeriveFeatures() error {
-	fs[HostPort] = Status{
-		// HostPort support can either be enabled via KPR, or via CNI chaining with portmap plugin
-		Enabled: (fs[CNIChaining].Enabled && fs[CNIChaining].Mode == "portmap" &&
-			// cilium/cilium#12541: Host firewall doesn't work with portmap CNI chaining
-			!fs[HostFirewall].Enabled) ||
-			fs[KPR].Enabled,
-	}
-
-	return nil
-}
-
-// Requirement defines a test requirement. A given Set may or
-// may not satisfy this requirement
-type Requirement struct {
-	Feature Feature
-
-	requiresEnabled bool
-	enabled         bool
-
-	requiresMode     bool
-	requireModeIsNot bool
-	mode             string
-}
-
-// RequireEnabled constructs a Requirement which expects the
-// Feature to be enabled
-func RequireEnabled(feature Feature) Requirement {
-	return Requirement{
-		Feature:         feature,
-		requiresEnabled: true,
-		enabled:         true,
-	}
-}
-
-// RequireDisabled constructs a Requirement which expects the
-// Feature to be disabled
-func RequireDisabled(feature Feature) Requirement {
-	return Requirement{
-		Feature:         feature,
-		requiresEnabled: true,
-		enabled:         false,
-	}
-}
-
-// RequireMode constructs a Requirement which expects the Feature
-// to be in the given mode
-func RequireMode(feature Feature, mode string) Requirement {
-	return Requirement{
-		Feature:      feature,
-		requiresMode: true,
-		mode:         mode,
-	}
-}
-
-// RequiredModeIsNot constructs a Requirement which expects the Feature to not
-// be in the given mode
-//
-// When evaluating a set of requirements with MatchRequirements,
-// having a RequireMode requirement of the same feature and mode will cause
-// conflicting results.
-func RequireModeIsNot(feature Feature, mode string) Requirement {
-	return Requirement{
-		Feature:          feature,
-		requireModeIsNot: true,
-		mode:             mode,
-	}
-}
-
-// ExtractFromCiliumVersion extracts features based on Cilium version.
-func (fs Set) ExtractFromCiliumVersion(ciliumVersion semver.Version) {
-	fs[L7PortRanges] = ExtractL7PortRanges(ciliumVersion)
-}
-
-func ExtractL7PortRanges(ciliumVersion semver.Version) Status {
-	enabled := versioncheck.MustCompile(">=1.17.0")(ciliumVersion)
-	return Status{
-		Enabled: enabled,
-	}
-}
-
-func ExtractTunnelFeatureFromConfigMap(cm *v1.ConfigMap) (Status, Status) {
-	getTunnelPortFeature := func(tunnelProtocol string) Status {
-		tunnelPort, ok := cm.Data["tunnel-port"]
-		switch {
-		case !ok && tunnelProtocol == "vxlan":
-			tunnelPort = fmt.Sprintf("%d", ciliumdef.TunnelPortVXLAN)
-		case !ok && tunnelProtocol == "geneve":
-			tunnelPort = fmt.Sprintf("%d", ciliumdef.TunnelPortGeneve)
-		}
-		return Status{
-			Enabled: ok,
-			Mode:    tunnelPort,
-		}
-	}
-
-	mode := "tunnel"
-	if v, ok := cm.Data["routing-mode"]; ok {
-		mode = v
-	}
-
-	tunnelProto := "vxlan"
-	if v, ok := cm.Data["tunnel-protocol"]; ok {
-		tunnelProto = v
-	}
-
-	return Status{
-		Enabled: mode != "native",
-		Mode:    tunnelProto,
-	}, getTunnelPortFeature(tunnelProto)
-}
-
-// ExtractFromConfigMap extracts features from the Cilium ConfigMap.
-// Note that there is no rule regarding if the default value is reflected
-// in the ConfigMap or not.
-func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
-	// CNI chaining.
-	// Note: This value might be overwritten by extractFeaturesFromCiliumStatus
-	// if this information is present in `cilium status`
-	mode := "none"
-	if v, ok := cm.Data["cni-chaining-mode"]; ok {
-		mode = v
-	}
-	fs[CNIChaining] = Status{
-		Ena
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49554** (2026-10-22): **[Closed] Superseded by #49555**
-  *Symptoms*: Superseded by #49555.
-
-- **Issue #49546** (2026-10-22): **Prepare for release v1.19.10**
-  *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
-  **Post-Mortem & Fix Analysis**:
-  > /test
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `e085ff3a` (2026-10-22)
-**Commit Message**: ipam/resynctest: add a full resync race test helper
-
-The AWS, Alibaba Cloud and Azure IPAM providers need regression tests
-that pause a full resync after its cloud read and run a cache update
-inside that window. The three can share one helper, and the helper holds
-the delicate part: it bounds every wait, and it tells an update that
-waits for the resync apart from one that deadlocks it.
-
-Add the helper to pkg/ipam/resynctest and pass the instances manager
-and the fetch hook in. The package also holds the ENI attachment check
-for the AWS and Alibaba Cloud tests.
-
-This commit was prepared with AIL:3. I personally checked the diff.
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `pkg/ipam/resynctest/resynctest.go` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+// Package resynctest checks that an IPAM cache update made during a full
-+// cloud API resync survives it.
-+package resynctest
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	ipamTypes "github.com/cilium/cilium/pkg/ipam/types"
-+	"github.com/cilium/cilium/pkg/time"
-+)
-+
-+type resyncer interface {
-+	Resync(ctx context.Context) (time.Time, error)
-+}
-+
-+// RunDuringFullResync runs cloudSetup and then cacheUpdate inside the cloud fetch window of a full resync.
-+// setHook installs the function the fake cloud API calls when the full resync's fetch returns.
-+func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
-+	t.Helper()
-+
-+	// An unguarded cacheUpdate must land within this much of the fetch window for the resync to drop it.
-+	const detectionBudget = 2 * time.Second
-+	// Only a locking regression keeps cloudSetup or cacheUpdate waiting this long.
-+	const progressTimeout = 10 * time.Second
-+
-+	var setupErr error
-+	var setupStalled bool
-+	atCacheUpdate := make(chan struct{})
-+	done := make(chan struct{})
-+	hookReturned := make(chan struct{})
-+
-+	// The resync goroutine runs this hook, so it records what it saw and never calls t itself.
-+	setHook(func() {
-+		defer close(hookReturned)
-+		go func() {
-+			defer close(done)
-+			if setupErr = cloudSetup(); setupErr != nil {
-+				return
-+			}
-+			close(atCacheUpdate)
-+			cacheUpdate()
-+		}()
-+
-+		// Keep the cloud calls out of the budget below, and never wait on a setup that gave up.
-+		select {
-+		case <-atCacheUpdate:
-+		case <-done:
-+			return
-+		case <-time.After(progressTimeout):
-+			setupStalled = true
-+			return
-+		}
-+
-+		// A guarded cacheUpdate waits for resyncLock, so this select always spends the whole budget.
-+		select {
-+		case <-done:
-+		case <-time.After(detectionBudget):
-+		}
-+	})
-+
-+	ctx := t.Context()
-+	resynced := make(chan error, 1)
-+	go func() {
-+		_, err := mngr.Resync(ctx)
-+		resynced <- err
-+	}()
-+
-+	// The hook owns progressTimeout plus the budget, so wait that out before blaming the resync.
-+	select {
-+	case <-hookReturned:
-+	case <-time.After(progressTimeout + detectionBudget + time.Second):
-+		t.Fatalf("the full resync did not reach its cloud fetch hook within %v", progressTimeout)
-+	}
-+	require.False(t, setupStalled, "cloud setup neither reached the cache update nor failed within %v", progressTimeout)
-+
-+	// A cacheUpdate that takes the locks in the wrong order deadlocks the publish after the hook.
-+	select {
-+	case err := <-resynced:
-+		require.NoError(t, err)
-+	case <-time.After(progressTimeout):
-+		t.Fatalf("the full resync did not publish within %v of its fetch window; cacheUpdate holds a lock it needs", progressTimeout)
-+	}
-+
-+	select {
-+	case <-done:
-+	case <-time.After(progressTimeout):
-+		t.Fatalf("cache update still blocked %v after the full resync released resyncLock", progressTimeout)
-+	}
-+
-+	setHook(nil)
-+	require.NoError(t, setupErr)
-+}
-+
-+type eniCache[E any] interface {
-+	resyncer
-+	ForeachInstance(instanceID string, fn ipamTypes.InterfaceIterator)
-+	UpdateENI(instanceID string, eni E)
-+}
-+
-+// ENIUpdate checks that an ENI attached inside the cloud fetch window of a full resync survives it.
-+func ENIUpdate[E any](t *testing.T, mngr eniCache[E], setHook func(func()), instanceID string, attach func() (string, E, error)) {
-+	t.Helper()
-+
-+	before := cachedENIIDs(mngr, instanceID)
-+	require.NotEmpty(t, before)
-+
-+	var eniID string
-+	var eni E
-+	RunDuringFullResync(t, mngr, setHook,
-+		func() (err error) {
-+			eniID, eni, err = attach()
-+			return err
-+		},
-+		func() {
-+			mngr.UpdateENI(instanceID, eni)
-+		})
-+
-+	require.ElementsMatch(t, append(before, eniID), cachedENIIDs(mngr, instanceID))
-+}
-+
-+func cachedENIIDs[E any](mngr eniCache[E], instanceID string) (ids []string) {
-+	mngr.ForeachInstance(instanceID, func(_, ifaceID string, _ ipamTypes.Interface) error {
-+		ids = append(ids, ifaceID)
-+		return nil
-+	})
-+	return ids
-+}
-```
-
----
-
-### Incident Patch 2: `6b7c233b` (2026-10-19)
-**Commit Message**: docs: Add docs-builder-image checker
-
-To ensure that the documentation directory is built against the latest
-copy of the docs-builder dependencies, add a check which updates the
-docs-builder image tag based on the docs-builder dependencies in the git
-tree, and then fail out with a message requiring the user to update the
-docs-builder image if the local tree is out of sync.
-
-This should ensure that renovate docs-builder updates are tested before
-we merge the changes, by virtue of being run from the standard GitHub
-workflow for documentation checks.
-
-Signed-off-by: Joe Stringer <[REDACTED_EMAIL]>
-
-**File**: `Documentation/Makefile` (modified, +2/-0)
-```diff
-@@ -104,6 +104,8 @@ $(HELM_VALUES): FORCE
- 	$(QUIET)$(RM) -- $(TMP_FILE_1) $(TMP_FILE_2) $(TMP_FILE_3)
- 
- check: builder-image api-flaggen update-cmdref update-feature-metrics update-crdlist update-helm-values update-codeowners update-redirects ## Validate command and Helm references, policy examples, and others.
-+	@$(ECHO_CHECK) ./check-docs-builder-image.sh
-+	$(QUIET) ./check-docs-builder-image.sh
- 	@$(ECHO_CHECK) cmdref
- 	$(QUIET) ./check-cmdref.sh
- 	@$(ECHO_CHECK) feature-metrics
-```
-
-**File**: `Documentation/check-docs-builder-image.sh` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+#!/usr/bin/env bash
-+
-+set -o errexit
-+set -o nounset
-+set -o pipefail
-+
-+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+source_dir="$(cd "${script_dir}/.." && pwd)"
-+target_file="${source_dir}/Documentation/Makefile"
-+
-+make -C "${script_dir}" update-docs-builder-image
-+
-+git add --intent-to-add -- "$target_file"
-+if ! git diff --quiet -- "$target_file"; then
-+    git --no-pager diff "$target_file"
-+    echo "HINT: to fix this, run 'make -C Documentation builder-image'"
-+    exit 1
-+fi
-```
-
----
-
-### Incident Patch 3: `76cc4f5d` (2026-10-19)
-**Commit Message**: images: Move docs-builder into images/ directory
-
-The docs-builder image build workflows have created some pain during
-maintenance due to the way that the files have been managed, including:
-
-* docs-builder image tag was calculated from all Documentation/ content.
-  This means that _any_ change to Documentation files would cause the
-  builder to need to be rebuilt.
-* Documentation/Makefile contains the docs-builder image tag, meaning
-  that any time we update the docs-builder tag, it updates the input
-  used to calculate the docs-builder tag. As soon as you make one change
-  to any docs file dependency, the docs-builder update GitHub workflows
-  would always trigger the deployment to rebuild the docs-builder image,
-  even if all changes to the docs-builder have been accounted for.
-* Due to these discrepancies, there has been no way to detect whether
-  the docs-builder needs updating, so the regular Documentation build
-  did not depend on building a docs-builder image with the latest
-  dependencies. This lead to cases where we would review and merge docs
-  dependency updates without actually building the docs using the new
-  dependencies.
-
-Move all of the build infrastructure for cr
-
-**File**: `.gitattributes` (modified, +1/-1)
-```diff
-@@ -4,14 +4,14 @@
- go.sum linguist-generated
- vendor/modules.txt linguist-generated
- examples/kubernetes/connectivity-check/connectivity-*.yaml linguist-generated
-+images/docs-builder/requirements.txt linguist-generated
- pkg/k8s/apis/cilium.io/v2/client/crds/*.yaml linguist-generated
- test/controlplane/**/v1.[0-9][0-9]/*.yaml linguist-generated
- test/controlplane/services/graceful-termination/*.yaml linguist-generated
- Documentation/cmdref/*.md linguist-generated
- Documentation/crdlist.rst linguist-generated
- Documentation/helm-values.rst linguist-generated
- Documentation/codeowners.rst linguist-generated
--Documentation/requirements.txt linguist-generated
- Documentation/_static/* -diff
- *svg -diff
- *excalidraw -diff
-```
-
-**File**: `.github/renovate.json5` (modified, +1/-1)
-```diff
-@@ -848,7 +848,7 @@
-           "make -C Documentation update-requirements"
-         ],
-         "fileFilters": [
--          "Documentation/requirements.txt"
-+          "images/docs-builder/requirements.txt"
-         ],
-         "executionMode": "update"
-       }
-```
-
-**File**: `.github/workflows/build-images-docs-builder-v1.18.yaml` (modified, +4/-5)
-```diff
-@@ -10,8 +10,7 @@ on:
-       - synchronize
-       - reopened
-     paths:
--      - Documentation/Dockerfile
--      - Documentation/requirements.txt
-+      - images/docs-builder/**
- 
- 
- permissions:
-@@ -66,7 +65,7 @@ jobs:
-       - name: Generate image tag for docs-builder
-         id: docs-builder-tag
-         run: |
--          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
-+          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
- 
-       - name: Check if tag for docs-builder already exists
-         id: docs-builder-tag-in-repositories
-@@ -124,8 +123,8 @@ jobs:
-         id: docker-build-docs-builder
-         with:
-           provenance: false
--          context: ./Documentation
--          file: ./Documentation/Dockerfile
-+          context: ./images/docs-builder
-+          file: ./images/docs-builder/Dockerfile
-           push: true
-           tags: |
-             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
-```
-
-**File**: `.github/workflows/build-images-docs-builder-v1.19.yaml` (modified, +4/-5)
-```diff
-@@ -10,8 +10,7 @@ on:
-       - synchronize
-       - reopened
-     paths:
--      - Documentation/Dockerfile
--      - Documentation/requirements.txt
-+      - images/docs-builder/**
- 
- 
- permissions:
-@@ -66,7 +65,7 @@ jobs:
-       - name: Generate image tag for docs-builder
-         id: docs-builder-tag
-         run: |
--          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
-+          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
- 
-       - name: Check if tag for docs-builder already exists
-         id: docs-builder-tag-in-repositories
-@@ -124,8 +123,8 @@ jobs:
-         id: docker-build-docs-builder
-         with:
-           provenance: false
--          context: ./Documentation
--          file: ./Documentation/Dockerfile
-+          context: ./images/docs-builder
-+          file: ./images/docs-builder/Dockerfile
-           push: true
-           tags: |
-             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
-```
-
-**File**: `.github/workflows/build-images-docs-builder-v1.20.yaml` (modified, +4/-5)
-```diff
-@@ -10,8 +10,7 @@ on:
-       - synchronize
-       - reopened
-     paths:
--      - Documentation/Dockerfile
--      - Documentation/requirements.txt
-+      - images/docs-builder/**
- 
- 
- permissions:
-@@ -66,7 +65,7 @@ jobs:
-       - name: Generate image tag for docs-builder
-         id: docs-builder-tag
-         run: |
--          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
-+          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
- 
-       - name: Check if tag for docs-builder already exists
-         id: docs-builder-tag-in-repositories
-@@ -124,8 +123,8 @@ jobs:
-         id: docker-build-docs-builder
-         with:
-           provenance: false
--          context: ./Documentation
--          file: ./Documentation/Dockerfile
-+          context: ./images/docs-builder
-+          file: ./images/docs-builder/Dockerfile
-           push: true
-           tags: |
-             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
-```
-
-**File**: `.github/workflows/build-images-docs-builder.yaml` (modified, +4/-5)
-```diff
-@@ -8,8 +8,7 @@ on:
-       - synchronize
-       - reopened
-     paths:
--      - Documentation/Dockerfile
--      - Documentation/requirements.txt
-+      - images/docs-builder/**
-     branches-ignore:
-       - v1.20
-       - v1.19
-@@ -67,7 +66,7 @@ jobs:
-       - name: Generate image tag for docs-builder
-         id: docs-builder-tag
-         run: |
--          echo tag="$(git ls-tree --full-tree HEAD -- ./Documentation | awk '{ print $3 }')" >> $GITHUB_OUTPUT
-+          echo tag="$(git ls-tree --full-tree HEAD -- ./images/docs-builder | awk '{ print $3 }')" >> $GITHUB_OUTPUT
- 
-       - name: Check if tag for docs-builder already exists
-         id: docs-builder-tag-in-repositories
-@@ -125,8 +124,8 @@ jobs:
-         id: docker-build-docs-builder
-         with:
-           provenance: false
--          context: ./Documentation
--          file: ./Documentation/Dockerfile
-+          context: ./images/docs-builder
-+          file: ./images/docs-builder/Dockerfile
-           push: true
-           tags: |
-             ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }}
-```
-
-**File**: `.github/workflows/documentation.yaml` (modified, +1/-0)
-```diff
-@@ -45,6 +45,7 @@ jobs:
-               - 'cilium-health/cmd/**'
-               - 'daemon/cmd/**'
-               - 'hubble-relay/cmd/**'
-+              - 'images/docs-builder/**'
-               - 'install/kubernetes/**'
-               - 'operator/cmd/**'
-               - 'pkg/metrics/features/**'
-```
-
-**File**: `CODEOWNERS` (modified, +1/-2)
-```diff
-@@ -437,7 +437,6 @@ Makefile* @cilium/build
- /Documentation/contributing/development/reviewers_committers/review_vendor.rst @cilium/vendor
- /Documentation/contributing/testing/scalability.rst @cilium/sig-scalability
- /Documentation/crdlist.rst
--/Documentation/Dockerfile @cilium/docs-structure
- /Documentation/gettingstarted/demo.rst @cilium/docs-structure
- /Documentation/gettingstarted/gettinghelp.rst @cilium/contributing @cilium/docs-structure
- /Documentation/glossary.rst @cilium/docs-structure
-@@ -483,7 +482,6 @@ Makefile* @cilium/build
- /Documentation/operations/troubleshooting_clustermesh.rst @cilium/sig-clustermesh @cilium/docs-structure
- /Documentation/overview/component-overview.rst @cilium/docs-structure
- /Documentation/overview/intro.rst @cilium/docs-structure
--/Documentation/requirements.txt @cilium/docs-structure
- /Documentation/security/http.rst @cilium/sig-policy @cilium/docs-structure
- /Documentation/security/images/cilium_threat_model* @cilium/security-cilium @cilium/docs-structure
- /Documentation/security/network/encryption-ipsec.rst @cilium/ipsec @cilium/docs-structure
-@@ -516,6 +514,7 @@ Makefile* @cilium/build
- /images/builder/install-protoc.sh @cilium/sig-hubble-api
- /images/builder/install-protoplugins.sh @cilium/sig-hubble-api
- /images/builder/update-cilium-builder-image.sh @cilium/github-sec
-+/images/docs-builder @cilium/docs-structure
- /images/hubble-relay @cilium/sig-hubble
- /images/runtime/update-cilium-runtime-image.sh @cilium/github-sec
- /install/kubernetes/ @cilium/helm
-```
-
-#### Recent Merged Pull Requests:
-- **PR #49554** (closed): [Closed] Superseded by #49555 (@abraaoteixeira)
-- **PR #49546** (2026-10-22): Prepare for release v1.19.10 (@cilium-release-bot[bot])
-- **PR #49545** (2026-10-22): Prepare for release v1.18.16 (@cilium-release-bot[bot])
-- **PR #49541** (closed): [v1.20] Backports 2026-10-22 (@aanm)
-- **PR #49538** (closed): daemon: Fix the BPF masquerade auto-disable log message (@aanm)
-- **PR #49537** (2026-10-22): daemon: Warn instead of error for BPF masquerade on upgrades (@pchaigno)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ipam/resynctest: add a full resync race test helper
-
+### 1. Zero-Evaluation Guarded Boundary Macros (Statement Expression Invariants)
 **RULE**:
-When implementing operations in `pkg/ipam/resynctest/resynctest.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+Macros computing minimum, maximum, or numerical clamped boundaries over runtime expressions MUST encapsulate logic in GNU C statement expressions (`({ ... })`), store operands into uniquely scoped local variables, explicitly execute type-check pointer equality assertions (`(void)(&_x == &_y)`), and MUST NEVER evaluate parameters more than once.
 
 **WHY**:
-Prevents defects observed in production commit `e085ff3a`: ipam/resynctest: add a full resync race test helper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Evaluating macro parameters multiple times (e.g., `#define min(a,b) ((a)<(b)?(a):(b))`) leads to catastrophic side-effect duplication (e.g., `min(ptr++, end)` increments `ptr` twice) or non-terminating packet parsing loops inside eBPF verifier bounds. Type mismatches between signed and unsigned integers cause silent promotion hazards in kernel verifiers, triggering register bitwidth overflow and verifier rejection.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ipam/resynctest/resynctest.go`.
+All C, eBPF, kernel headers, systems-level Go CGO bindings, and low-level arithmetic boundary clamping.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+/* Verified Cilium Kernel Macro: bpf/lib/utils.h */
+#pragma once
+
+#define __min(t_x, t_y, x, y)        \
+({                                   \
+    t_x _x = (x);                    \
+    t_y _y = (y);                    \
+    (void)(&_x == &_y);              \
+    _x < _y ? _x : _y;               \
+})
+
+#define __max(t_x, t_y, x, y)        \
+({                                   \
+    t_x _x = (x);                    \
+    t_y _y = (y);                    \
+    (void)(&_x == &_y);              \
+    _x > _y ? _x : _y;               \
+})
+
+#define min(x, y)                    \
+    __min(typeof(x), typeof(y), x, y)
+
+#define max(x, y)                    \
+    __max(typeof(x), typeof(y), x, y)
+
+#define min_t(t, x, y)               \
+    __min(t, t, x, y)
+
+#define max_t(t, x, y)               \
+    __max(t, t, x, y)
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+/* ANTI-PATTERN: Double evaluation and silent unsigned promotion */
+#define BAD_MIN(a, b) ((a) < (b) ? (a) : (b))
+
+void process_skb(struct __sk_buff *skb) {
+    void *data = (void *)(long)skb->data;
+    void *data_end = (void *)(long)skb->data_end;
+    
+    // CRASH / VERIFIER REJECTION:
+    // data is advanced TWICE if data < data_end!
+    void *bound = BAD_MIN(data++, data_end);
+}
+```
+
+**VERIFICATION METHOD**:
+Compile with `-Werror=shadow -Werror=type-limits`. Add a static unit test asserting side-effect safety:
+```c
+int i = 5, j = 10;
+int result = min(i++, j++);
+assert(i == 6); // Fails with BAD_MIN (i becomes 7)
+```
+
+---
+
+### 2. Multi-Domain Annotation Ingestion Isolation & Asymmetric Protocol Rejection
+**RULE**:
+When parsing loosely typed key-value configuration dictionaries (e.g., Kubernetes annotations, Gateway API `options` maps) that share a global namespace across multiple controllers:
+1. Parsers MUST skip and preserve keys outside their registered authoritative prefix (`strings.HasPrefix(key, domainPrefix)`).
+2. Parsers MUST reject unknown or malformed keys within their authoritative prefix.
+3. Handlers MUST reject domain-specific options if the underlying target protocol mode physically precludes their enforcement (e.g., rejecting TLS options on a TLS Passthrough listener).
+
+**WHY**:
+Failing to ignore foreign domains breaks coexistence with other controllers sharing the resource (e.g., Istio, Cert-Manager, AWS Controller). Failing to reject unknown options within the controller's own domain leads to silent configuration drift where users believe an invariant is enforced (e.g., TLS 1.3 minimum) when it is actually ignored. Configuring termination options on passthrough streams causes contradictory data plane synthesis, leading to silent plaintext exposure or broken handshakes.
+
+**WHEN TO APPLY**:
+Kubernetes ingress/gateway controllers, cloud resource synchronizers, declarative API translation engines, and microservice configuration parsers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-// Verified production-grade fix pattern:
-// SPDX-License-Identifier: Apache-2.0
-// Copyright Authors of Cilium
+// operator/pkg/gateway-api/status_listener_tls_options.go
+func parseTLSOptions(l gatewayv1.Listener) (*model.TLSOptions, error) {
+    if l.TLS == nil {
+        return nil, nil
+    }
 
-// Package resynctest checks that an IPAM cache update made during a full
-// cloud API resync survives it.
-package resynctest
+    parsed := &model.TLSOptions{}
+    for option, value := range l.TLS.Options {
+        key := string(option)
+        // Rule 1: Ignore options outside authoritative domain
+        if !strings.HasPrefix(key, "cilium.io/") {
+            continue
+        }
 
-import (
-	"context"
-	"testing"
+        // Rule 3: Reject protocol contradictions
+        if helpers.IsTLSPassthroughListener(&l) {
+            return nil, fmt.Errorf("TLS option %s is not supported on TLS passthrough listeners", key)
+        }
 
-	"github.com/stretchr/testify/require"
+        // Rule 2: Strictly validate domain keys & values
+        switch key {
+        case model.TLSOptionsMinVersion:
+            parsed.MinVersion = string(value)
+        case model.TLSOptionsMaxVersion:
+            parsed.MaxVersion = string(value)
+        default:
+            return nil, fmt.Errorf("TLS Option %s is not supported", key)
+        }
 
-	ipamTypes "github.com/cilium/cilium/pkg/ipam/types"
-	"github.com/cilium/cilium/pkg/time"
-)
+        if _, ok := supportedTLSVersions[string(value)]; !ok {
+            return nil, fmt.Errorf("TLS Value %s is not supported in %s", value, key)
+        }
+    }
 
-type resyncer interface {
-	Resync(ctx context.Context) (time.Time, error)
+    min := model.TLSOptionsDefaultMinVersion
+    if parsed.MinVersion != "" { min = parsed.MinVersion }
+    max := model.TLSOptionsDefaultMaxVersion
+    if parsed.MaxVersion != "" { max = parsed.MaxVersion }
+
+    if supportedTLSVersions[min] > supportedTLSVersions[max] {
+        return nil, fmt.Errorf("TLS minimum version %s must not exceed maximum version %s", min, max)
+    }
+
+    if parsed.MinVersion == "" && parsed.MaxVersion == "" {
+        return nil, nil
+    }
+    return parsed, nil
 }
-
-// RunDuringFullResync runs cloudSetup and then cacheUpdate inside the cloud fetch window of a full resync.
-// setHook installs the function the fake cloud API calls when the full resync's fetch returns.
-func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
-	t.Helper()
-
-	// An unguarded cacheUpdate must land within this much of the fetch window for the resync to drop it.
-	const detectionBudget = 2 * time.Second
-	// Only a locking regression keeps cloudSetup or cacheUpdate waiting this long.
-	const progressTimeout = 10 * time.Second
-
-	var setupErr error
-	var setupStalled bool
-	atCacheUpdate := make(chan struct{})
-	done := make(chan struct{})
-	hookReturned := make(chan struct{})
-
-	// 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Blind iteration, silent skipping, and passthrough contradiction
+func parseTLSOptionsBad(options map[string]string, isPassthrough bool) *model.TLSOptions {
+    parsed := &model.TLSOptions{}
+    for k, v := range options {
+        // BUG 1: Errs on other controllers' keys OR silently ignores all errors
+        if k == "cilium.io/tls-min-version" {
+            parsed.MinVersion = v // BUG 2: No validation against supported set
+        }
+    }
+    // BUG 3: If isPassthrough == true, Envoy will generate DownstreamTlsContext
+    // for a stream that is never terminated, causing handshake termination failures.
+    return parsed
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e085ff3a` are properly handled with clean fallback behavior.
+Automated matrix test passing a cross-product of:
+1. Valid own-domain keys (`cilium.io/*`).
+2. Foreign-domain keys (`istio.io/*`, `example.com/*`).
+3. Invalid own-domain keys (`cilium.io/invalid`).
+4. Passthrough flag enabled vs disabled.
+Assert that foreign keys yield `nil` error and empty options, invalid own keys yield errors, and passthrough + own key yields rejection.
+
+---
+
+### 3. Non-Destructive Multi-Tier Fallback Diagnostic Target Resolution
+**RULE**:
+Diagnostic collection utilities and operational agent CLI hooks MUST NOT fail fatally when a target workload container has crashed. Instead, they MUST implement a strictly sequenced three-tier fallback mechanism:
+1. Target container inspect (if running).
+2. Ephemeral container injection into existing pod sandbox (`EphemeralContainers` API).
+3. Clone pod injection on the identical host node with identical volume mounts, host network/IPC namespaces, and universal scheduling tolerations (`TolerationOpExists`), accompanied by an infallible RAII cleanup closure.
+
+**WHY**:
+When a network daemon or CNI plugin panics, standard `kubectl exec` fails because the target container is in `CrashLoopBackOff` or `Error`. Without automated fallback to ephemeral injection or local node-pinned clone pods, engineers cannot capture live socket states, eBPF map dumps, or kernel trace buffers, rendering post-mortem forensic extraction impossible.
+
+**WHEN TO APPLY**:
+Production diagnostic CLI tools, cluster sysdumps, node diagnostic operators, CNI debugging agents.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// cilium-cli/sysdump/k8sutils.go
+func (c *Collector) ensureExecTarget(
+    ctx context.Context, 
+    pod *corev1.Pod, 
+    container string,
+) (targetPod *corev1.Pod, targetContainer string, cleanup func(context.Context) error, err error) {
+    cleanup = func(_ context.Context) error { return nil }
+
+    // Tier 1: Is container running?
+    for _, status := range pod.Status.ContainerStatuses {
+        if status.Name == container && status.State.Running != nil {
+            return pod, container, cleanup, nil
+        }
+    }
+
+    // Extract target spec
+    var fromContainer *corev1.Container
+    for _, cs := range pod.Spec.Containers {
+        if cs.Name == container {
+            fromContainer = cs.DeepCopy()
+            break
+        }
+    }
+    if fromContainer == nil {
+        return nil, "", cleanup, fmt.Errorf("container %q missing in pod spec", container)
+    }
+
+    // Tier 2: Try EphemeralContainer
+    ec := &corev1.EphemeralContainer{
+        EphemeralContainerCommon: corev1.EphemeralContainerCommon{
+            Name:            fmt.Sprintf("sysdump-%d", time.Now().Unix()),
+            Image:           fromContainer.Image,
+            Command:         []string{"/bin/sleep", "1d"},
+            Env:             fromContainer.Env,
+            VolumeMounts:    fromContainer.VolumeMounts,
+            SecurityContext: fromContainer.SecurityContext,
+        },
+        TargetContainerName: fromContainer.Name,
+    }
+    targetPod, err = c.Client.CreateEphemeralContainer(ctx, pod, ec)
+    if err == nil {
+        // Poll for Running state with timeout...
+        if err := wait.PollUntilContextTimeout(ctx, 2*time.Second, 30*time.Second, false, func(ctx context.Context) (bool, error) {
+            tp, getErr := c.Client.GetPod(ctx, targetPod.Namespace, targetPod.Name, metav1.GetOptions{})
+            if getErr != nil { return false, getErr }
+            for _, s := range tp.Status.EphemeralContainerStatuses {
+                if s.Name == ec.Name { return s.State.Running != nil, nil }
+            }
+            return false, nil
+        }); err == nil {
+            return targetPod, ec.Name, cleanup, nil
+        }
+    }
+
+    // Tier 3: Clone Pod with universal tolerations & identical node pinning
+    newPod := &corev1.Pod{
+        ObjectMeta: metav1.ObjectMeta{
+            Namespace:    pod.Namespace,
+            GenerateName: "sysdump-fallback-",
+        },
+        Spec: corev1.PodSpec{
+            Containers: []corev1.Container{{
+                Name:            fromContainer.Name,
+                Image:           fromContainer.Image,
+                Command:         []string{"/bin/sleep", "1d"},
+                Env:             fromContainer.Env,
+                VolumeMounts:    fromContainer.VolumeMounts,
+                SecurityContext: fromContainer.SecurityContext,
+            }},
+            Volumes:            pod.Spec.Volumes,
+            RestartPolicy:      corev1.RestartPolicyNever,
+            NodeName:           pod.Spec.NodeName,
+            HostNetwork:        pod.Spec.HostNetwork,
+            HostPID:            pod.Spec.HostPID,
+            HostIPC:            pod.Spec.HostIPC,
+            Tolerations:        []corev1.Toleration{{Operator: corev1.TolerationOpExists}},
+        },
+    }
+    targetPod, err = c.Client.CreatePod(ctx, pod.Namespace, newPod, metav1.CreateOptions{})
+    if err != nil { return nil, "", cleanup, err }
+
+    cleanup = func(ctx context.Context) error {
+        return c.Client.DeletePod(ctx, targetPod.Namespace, targetPod.Name, metav1.DeleteOptions{})
+    }
+    // Poll target pod until ContainersReady...
+    return targetPod, fromContainer.Name, cleanup, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Brittle direct execution failing on crashed containers
+func ExecCommandBad(client kubernetes.Interface, pod *corev1.Pod, container string, cmd []string) error {
+    // If container is in CrashLoopBackOff or OOMKilled, this returns 500 / EOF error immediately!
+    // No fallback, no data collected, triage blocked.
+    req := client.CoreV1().RESTClient().Post().
+        Resource("pods").SubResource("exec").
+        Name(pod.Name).Namespace(pod.Namespace).
+        Param("container", container)
+    return req.Do(context.Background()).Error()
+}
+```
+
+**VERIFICATION METHOD**:
+Simulate target container failure via an intentional crash-loop pod (`exit 1`). Execute the collection tool, verify that the runner creates and successfully enters the fallback pod on the same node, extracts the data, fires the cleanup handler, and leaves no zombie pods on cluster namespaces.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Security Policy Enforcement Cloud Load Balancer Deletion via Mandatory Cleartext Listener (BUG-HELM-INSECURE-PORT-01)
+- **Context**: `install/kubernetes/cilium/templates/cilium-ingress-service.yaml`, `validate.yaml`
+- **What Was Expected**: Cilium Ingress Controller operating in shared mode should allow administrators to provision a purely HTTPS/TLS-secured LoadBalancer service without exposing port 80.
+- **What Actually Happened**: The Helm template hardcoded port 80 into the shared `cilium-ingress` `LoadBalancer` Service resource. In enterprise environments governed by CSPM tools (AWS Config, GCP Security Command Center), automated compliance bots detect public-facing port 80 listeners and immediately terminate the cloud load balancer, causing permanent service outages.
+- **Evidence in Repo**: Commit `4f1d1260`, PR #48108, Helm validation files.
+- **Root Cause**: The shared ingress service template unconditionally rendered both port 80 and port 443. Furthermore, introducing toggles without validation could allow users to disable both ports simultaneously, rendering the Kubernetes Service resource invalid (Kubernetes requires at least one port per `ServiceSpec`).
+- **Remediation Code Diff**:
+```diff
+--- a/install/kubernetes/cilium/templates/cilium-ingress-service.yaml
++++ b/install/kubernetes/cilium/templates/cilium-ingress-service.yaml
+@@ -20,18 +20,22 @@ metadata:
+    {{- end }}
+  spec:
+    ports:
++  {{- if .Values.ingressController.service.insecurePortEnabled }}
+    - name: http
+      port: 80
+      protocol: TCP
+      {{- if .Values.ingressController.service.insecureNodePort }}
+      nodePort: {{ .Values.ingressController.service.insecureNodePort }}
+      {{- end }}
++  {{- end }}
++  {{- if .Values.ingressController.service.securePortEnabled }}
+    - name: https
+      port: 443
+      protocol: TCP
+      {{- if .Values.ingressController.service.secureNodePort }}
+      nodePort: {{ .Values.ingressController.service.secureNodePort }}
+      {{- end }}
++  {{- end }}
+--- a/install/kubernetes/cilium/templates/validate.yaml
++++ b/install/kubernetes/cilium/templates/validate.yaml
++{{/* validate ingress controller shared service ports */}}
++{{- if .Values.ingressController.enabled }}
++  {{- if and (not .Values.ingressController.service.insecurePortEnabled) (not .Values.ingressController.service.securePortEnabled) }}
++    {{- fail "ingressController.service.insecurePortEnabled and ingressController.service.securePortEnabled cannot both be false. A Service needs at least one port." }}
++  {{- end }}
++{{- end }}
+```
+- **Lesson**: Declarative manifests providing toggles for infrastructure primitives MUST implement compile-time schema validation (`fail` statements in Helm / OpenAPI validations) to prevent generating invalid Kubernetes specs when all sub-elements are disabled.
+
+---
+
+### Incident 2: Gateway API TLS Protocol Ambiguity & Incompatible Listener Options Injection (BUG-GWAPI-TLS-OPT-02)
+- **Context**: `operator/pkg/gateway-api/status_listener.go`, `status_listener_tls_options.go`
+- **What Was Expected**: Listeners configuring `cilium.io/tls-min-version` and `cilium.io/tls-max-version` must configure Envoy's `DownstreamTlsContext` only when termination occurs. Invalid configurations (min > max, unsupported versions, or TLS options applied to passthrough listeners) must mark the listener condition as `Accepted: False` with `Reason: UnsupportedValue`.
+- **What Actually Happened**: Listeners configured with TLS passthrough (`TLSModePassthrough`) or invalid version strings ("2.0", min 1.3 with max 1.2) were either accepted into reconciliation or passed through into Envoy configurations, generating corrupted xDS configs that Envoy rejected at runtime, stalling the entire ingress control plane.
+- **Evidence in Repo**: Commit `6a571439`, Issue #48102, Conformance test suite `gateway-tls-options`.
+- **Root Cause**: Gateway API listener status calculation failed to validate listener `options` maps before committing the listener to the valid set (`filterOutInvalidListeners`). The parser lacked cross-field range invariant validation (`supportedTLSVersions[min] > supportedTLSVersions[max]`).
+- **Remediation Code Diff**:
+```diff
+--- a/operator/pkg/gateway-api/status_listener.go
++++ b/operator/pkg/gateway-api/status_listener.go
+@@ -648,12 +649,21 @@ func (m *ListenerStatusManager) validateListener(ctx context.Context, l gatewayv
+ 				break
+ 			}
+ 		}
++
+ 		if l.Protocol == gatewayv1.TLSProtocolType && l.TLS.Mode != nil && *l.TLS.Mode == gatewayv1.TLSModeTerminate {
+ 			res.isValid = false
+ 			res.invalidMessages = append(res.invalidMessages, "Using TLSRoute with TLS.mode Terminate is unsupported.")
+ 			res.invalidReason = gatewayv1.ListenerReasonUnsupportedValue
+ 			res.supportedKinds = []gatewayv1.RouteGroupKind{}
+ 		}
++
++		tlsOptions, err := parseTLSOptions(l)
++		res.tlsOptions = tlsOptions
++		if err != nil {
++			res.invalidMessages = append(res.invalidMessages, err.Error())
++			res.invalidReason = gatewayv1.ListenerReasonUnsupportedValue
++			res.isValid = false
++		}
+ 	}
+```
+- **Lesson**: Never translate untyped CRD key-value maps directly into downstream proxy parameters (xDS). Synthesize state through an intermediate validated model layer (`model.TLSOptions`) that enforces cross-field relational constraints prior to listener activation.
+
+---
+
+### Incident 3: 128-bit IPv6 Comparison Verification Hazard in BPF Kernels (BUG-BPF-IPV6-CMP-03)
+- **Context**: `bpf/lib/ipv6_core.h`
+- **What Was Expected**: Two 128-bit IPv6 addresses represented as unions (`union v6addr`) must be evaluated for equality in the data plane with minimum CPU instructions and zero memory alignment traps.
+- **What Actually Happened**: Byte-by-byte memory comparisons (`memcmp(a, b, 16)`) or unaligned 32-bit field comparisons incurred high instruction count overhead and triggered eBPF verifier bounds rejections due to pointer arithmetic tracking failures on older kernel architectures.
+- **Evidence in Repo**: `bpf/lib/ipv6_core.h`, `union v6addr` 64-bit split dual-word optimization.
+- **Root Cause**: The LLVM BPF backend generates suboptimal loop structures when compiling byte-level comparisons. If addresses are copied unaligned on stack frames, 64-bit loads without packed union alignment trigger kernel packet load faults (`LDX` unaligned access on architectures without hardware unaligned access).
+- **Remediation Code Diff**:
+```c
+// bpf/lib/ipv6_core.h
+union v6addr {
+    __u8 addr[16];
+    struct {
+        __u32 p1;
+        __u32 p2;
+        __u32 p3;
+        __u32 p4;
+    } p;
+    struct {
+        __u64 d1;
+        __u64 d2;
+    } d;
+} __packed;
+
+// 64-bit double-word comparison compiles to exactly two BPF JEQ instructions:
+static __always_inline bool ipv6_addr_equals(const union v6addr *a,
+                                             const union v6addr *b)
+{
+    if (a->d.d1 != b->d.d1)
+        return false;
+    return a->d.d2 == b->d.d2;
+}
+```
+- **Lesson**: High-performance kernel data planes must layout wide network identifiers (IPv6, MAC, tunnel IDs) using composite 64-bit integer words inside packed unions, converting multi-byte comparisons into scalar machine-word equality checks.
+
+---
+
+### Incident 4: Non-Recoverable CLI Diagnostic Abort and Defer Masking (BUG-CLI-FATALF-04)
+- **Context**: `cilium-cli/cli/utils.go`, `cilium-cli/internal/utils/exec.go`
+- **What Was Expected**: Command execution failures during cluster triage must return structured errors, flush buffers, execute resource cleanup routines, and allow the parent test harness or CLI runner to report comprehensive state.
+- **What Actually Happened**: Direct calls to `fatalf` invoked `os.Exit(1)` inside subroutines. This immediately halted the runtime process, bypassing all registered `defer` statements (leaving leaked test pods, port-forward sessions, and temporary files on developer machines) and truncating buffered logs destined for `os.Stderr`.
+- **Evidence in Repo**: Code comment in `cilium-cli/cli/utils.go`: `// Note: os.Exit(1) is not recoverable and does not fire defers.` contrasted with structured execution in `internal/utils/exec.go`.
+- **Root Cause**: Mixing application-level logging with process lifecycle management. Helper libraries executing CLI commands executed unconditional process termination rather than bubbling errors up the call stack.
+- **Remediation Code Diff**:
+```diff
+--- a/cilium-cli/cli/utils.go
++++ b/cilium-cli/internal/utils/exec.go
+-// Note: os.Exit(1) is not recoverable and does not fire defers.
+-func fatalf(msg string, args ...any) {
+-	fmt.Fprintf(os.Stderr, "\nError: %s\n", fmt.Sprintf(msg, args...))
+-	os.Exit(1)
+-}
++func Exec(l Logger, command string, args ...string) ([]byte, error) {
++	c := exec.Command(command, args...)
++	bytes, err := c.CombinedOutput()
++	if err != nil {
++		cmdStr := fmt.Sprintf("%s %s", command, strings.Join(args, " "))
++		l.Log("❌ Unable to execute %q:", cmdStr)
++		if len(bytes) > 0 {
++			l.Log(" %s", string(bytes))
++		}
++		return []byte{}, fmt.Errorf("unable to execute %q: %w", cmdStr, err)
++	}
++	return bytes, err
++}
+```
+- **Lesson**: Subsystem utility packages MUST NEVER invoke `os.Exit()`. Errors must be wrapped (`fmt.Errorf("%w")`) and returned to `main()` so the runtime can execute deferred cleanups and flush I/O streams.
+
+---
+
+### Incident 5: State Machine Deadlock during Node Reboot and Endpoint Identity Sync (BUG-EP-RESTORE-05)
+- **Context**: `api/v1/models/endpoint_state.go`
+- **What Was Expected**: When the Cilium agent

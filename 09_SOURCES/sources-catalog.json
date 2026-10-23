@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "a88c81ae",
+    "sourceVersion": "eed80865",
     "license": "MIT",
-    "contentHash": "e40b655715e43aea4827700192404199b2e248db5ea098a54498f0e546397818",
-    "lastHarvestedAt": "2026-10-20T05:29:11.902Z",
+    "contentHash": "22fee60f73d170b516281702a724709739354f2704ed62079b8555a66c1167ff",
+    "lastHarvestedAt": "2026-10-23T07:39:40.739Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "28b8d3eb",
+    "sourceVersion": "6a571439",
     "license": "Apache-2.0",
-    "contentHash": "55960f3f253fd4161cf3a559a59adc9a1f5c73ec6bddcef547be52682bdeae12",
-    "lastHarvestedAt": "2026-10-22T20:30:27.282Z",
+    "contentHash": "e9348a6d51ed86e2b97e3f99b3d0a78a851d59fbefad0030bbec1f35b9555eca",
+    "lastHarvestedAt": "2026-10-23T07:39:22.995Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "79307e8a",
+    "sourceVersion": "cdbff3ee",
     "license": "NOASSERTION",
-    "contentHash": "79c4d2da25ba5425d3c5e285681239cfc8809ea2a558fa941e89f5e787c1cf09",
-    "lastHarvestedAt": "2026-10-20T17:23:03.354Z",
+    "contentHash": "346a4eb42c2ef7d269eac9928be7c93eb2bf3d892d1a708e646da6badcc2567f",
+    "lastHarvestedAt": "2026-10-23T07:39:26.210Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "e1b0d33f",
+    "sourceVersion": "272296e5",
     "license": "MIT",
-    "contentHash": "34f8d8c69242069241e15e4d023793dde6b946de90593187ad2a07c3bcd04ec2",
-    "lastHarvestedAt": "2026-10-20T03:06:49.629Z",
+    "contentHash": "bc56cf0ac6fe2bfbb2c945096789b7777c270bc2cc16b93bae5e7d578844cadf",
+    "lastHarvestedAt": "2026-10-23T07:39:45.970Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

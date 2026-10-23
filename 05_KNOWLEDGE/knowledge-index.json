@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T07:22:39.245Z",
+  "last_updated": "2026-10-23T07:39:45.913Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5668,8 +5668,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "28b8d3eb",
-      "content_hash": "55960f3f253fd4161cf3a559a59adc9a1f5c73ec6bddcef547be52682bdeae12",
+      "source_version": "6a571439",
+      "content_hash": "e9348a6d51ed86e2b97e3f99b3d0a78a851d59fbefad0030bbec1f35b9555eca",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5747,6 +5747,21 @@
           "number": 3724,
           "title": "ipam/resynctest: add a full resync race test helper",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3810,
+          "title": "Zero-Evaluation Guarded Boundary Macros (Statement Expression Invariants)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3811,
+          "title": "Multi-Domain Annotation Ingestion Isolation & Asymmetric Protocol Rejection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3812,
+          "title": "Non-Destructive Multi-Tier Fallback Diagnostic Target Resolution",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5754,7 +5769,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:30:27.241Z",
+      "verified_at": "2026-10-23T07:39:22.926Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13655,8 +13670,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "79307e8a",
-      "content_hash": "79c4d2da25ba5425d3c5e285681239cfc8809ea2a558fa941e89f5e787c1cf09",
+      "source_version": "cdbff3ee",
+      "content_hash": "346a4eb42c2ef7d269eac9928be7c93eb2bf3d892d1a708e646da6badcc2567f",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -13674,6 +13689,21 @@
           "number": 3290,
           "title": "modules: Add diagnostics to `modules` command's JSON output, make errors be disp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3813,
+          "title": "Inode-Preserving Reversible Non-Atomic Mutation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3814,
+          "title": "Process Subreaper Cleanup Guarantee via Explicit Crash Exit Hooks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3815,
+          "title": "Multi-Source Credential Conflict Assertion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13681,7 +13711,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:23:03.303Z",
+      "verified_at": "2026-10-23T07:39:26.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39944,8 +39974,8 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "a88c81ae",
-      "content_hash": "e40b655715e43aea4827700192404199b2e248db5ea098a54498f0e546397818",
+      "source_version": "eed80865",
+      "content_hash": "22fee60f73d170b516281702a724709739354f2704ed62079b8555a66c1167ff",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
@@ -39958,6 +39988,16 @@
           "number": 3079,
           "title": "🐞 fix(form): send a text/plain body for a text/plain content type (#13893)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3816,
+          "title": "Monotonic Asynchronous Sequence Fencing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3817,
+          "title": "Referential Stability Preservation in Nested Property Updaters",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39965,7 +40005,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:29:11.843Z",
+      "verified_at": "2026-10-23T07:39:40.670Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63446,14 +63486,29 @@
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "e1b0d33f",
-      "content_hash": "34f8d8c69242069241e15e4d023793dde6b946de90593187ad2a07c3bcd04ec2",
+      "source_version": "272296e5",
+      "content_hash": "bc56cf0ac6fe2bfbb2c945096789b7777c270bc2cc16b93bae5e7d578844cadf",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "promoted_rules": [
         {
           "number": 3014,
           "title": "run hook cleanups when a later hook fails (#11605)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3818,
+          "title": "Cross-Origin Frame Timebase Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3819,
+          "title": "Disarming Asynchronous Resource Races",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3820,
+          "title": "Graceful Graph Environmental Tolerance on Bail/Cancellation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -63462,7 +63517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:06:49.578Z",
+      "verified_at": "2026-10-23T07:39:45.901Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113422,6 +113477,160 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T07:22:39.239Z"
+    },
+    "rule-3810": {
+      "learning_id": "rule-3810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3810,
+      "title": "Zero-Evaluation Guarded Boundary Macros (Statement Expression Invariants)",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "6a571439",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:22.926Z"
+    },
+    "rule-3811": {
+      "learning_id": "rule-3811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3811,
+      "title": "Multi-Domain Annotation Ingestion Isolation & Asymmetric Protocol Rejection",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "6a571439",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:22.926Z"
+    },
+    "rule-3812": {
+      "learning_id": "rule-3812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3812,
+      "title": "Non-Destructive Multi-Tier Fallback Diagnostic Target Resolution",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "6a571439",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:22.926Z"
+    },
+    "rule-3813": {
+      "learning_id": "rule-3813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3813,
+      "title": "Inode-Preserving Reversible Non-Atomic Mutation",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "cdbff3ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:26.142Z"
+    },
+    "rule-3814": {
+      "learning_id": "rule-3814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3814,
+      "title": "Process Subreaper Cleanup Guarantee via Explicit Crash Exit Hooks",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "cdbff3ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:26.142Z"
+    },
+    "rule-3815": {
+      "learning_id": "rule-3815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3815,
+      "title": "Multi-Source Credential Conflict Assertion",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "cdbff3ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:26.142Z"
+    },
+    "rule-3816": {
+      "learning_id": "rule-3816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3816,
+      "title": "Monotonic Asynchronous Sequence Fencing",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "eed80865",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:40.670Z"
+    },
+    "rule-3817": {
+      "learning_id": "rule-3817",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3817,
+      "title": "Referential Stability Preservation in Nested Property Updaters",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "eed80865",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:40.670Z"
+    },
+    "rule-3818": {
+      "learning_id": "rule-3818",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3818,
+      "title": "Cross-Origin Frame Timebase Normalization",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "272296e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:45.901Z"
+    },
+    "rule-3819": {
+      "learning_id": "rule-3819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3819,
+      "title": "Disarming Asynchronous Resource Races",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "272296e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:45.901Z"
+    },
+    "rule-3820": {
+      "learning_id": "rule-3820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3820,
+      "title": "Graceful Graph Environmental Tolerance on Bail/Cancellation",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "272296e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:39:45.901Z"
     }
   },
   "aliases": {

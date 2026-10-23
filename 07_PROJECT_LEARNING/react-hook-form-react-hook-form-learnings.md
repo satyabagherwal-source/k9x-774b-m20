@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source**: github ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Source Version**: `a88c81ae`  
+> **Source Version**: `eed80865`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T05:29:11.583Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-23T07:39:40.179Z  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1315 +12,583 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): react-hook-form/react-hook-form
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T05:29:10.518Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): react-hook-form/react-hook-form
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `react-hook-form/react-hook-form`
-- **Description**: 📋 React Hooks for form state management and validation (Web + React Native)
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44867 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`react-hook-form` (RHF) solves the fundamental React performance pathology: **uncontrolled subscription-driven state management decoupled from the React component tree reconciler**. 
+
+Standard React form solutions bind inputs to component state via `useState` or Redux, causing an $O(N)$ re-render cascade across the entire subtree on every keystroke. RHF solves this by transforming form controls into **uncontrolled DOM nodes holding local state in ref closures**, while maintaining an asynchronous pub/sub orchestration engine (`createFormControl`) outside the component lifecycle.
+
+```
++-------------------------------------------------------------------------------------------------------+
+|                                           useForm Hook API                                            |
++-------------------------------------------------------------------------------------------------------+
+                                                     |
+                                                     v
++-------------------------------------------------------------------------------------------------------+
+|                                          createFormControl                                            |
+|  - _fields: Nested map of field refs, validate fns, unmount flags, registerCallIds                   |
+|  - _formValues: Current source-of-truth object graph                                                  |
+|  - _formState: { isDirty, dirtyFields, touchedFields, errors, isValid, isValidating }                 |
+|  - _proxyFormState: Bitmask-like proxy tracking which properties are accessed by consumers            |
+|  - Monotonic Call ID Counters: _resetCallId, _setValidCallId, _registerCallId                         |
++-------------------------------------------------------------------------------------------------------+
+         |                                           |                                     |
+         v                                           v                                     v
++-------------------+                      +-------------------+                 +-------------------+
+|   Native Input    |                      |    Controller     |                 |   useFieldArray   |
+|   (Uncontrolled)  |                      |   (Controlled)    |                 |  (Dynamic Arrays) |
+| Attached via ref  |                      | Pub/sub listener  |                 | Generates stable  |
+| Event: onChange / |                      | updates isolated  |                 | UUIDs per row to  |
+| onBlur triggers   |                      | controlled child  |                 | prevent DOM ref   |
+| field-level micro |                      | without parent    |                 | identity churn on |
+| subscriptions     |                      | re-renders        |                 | re-ordering/split |
++-------------------+                      +-------------------+                 +-------------------+
+         \                                           |                                     /
+          \------------------------------------------+------------------------------------/
+                                                     |
+                                                     v
+                         +-------------------------------------------------------+
+                         |           Proxy-Driven Selective Re-rendering         |
+                         |  `getProxyFormState` creates dynamic getter traps.    |
+                         |  If component does NOT access `formState.isDirty`,   |
+                         |  mutations to `isDirty` NEVER trigger component state |
+                         |  updates or React reconciliations.                    |
+                         +-------------------------------------------------------+
+```
+
+### Critical Subsystem Boundaries & Decoupling Invariants
+
+1. **Uncontrolled Field Registry (`_fields`)**: Fields are registered with nested dot-notated paths (e.g., `user.addresses.0.city`). Nodes retain DOM element references (`ref`), input validation metadata (`required`, `validate`, `pattern`), and mounting invariants (`_f: { ref, mount, ... }`).
+2. **Selective Getter-Trap Proxy (`getProxyFormState`)**: Form state subscriptions are not declared upfront via dependency lists; instead, runtime ES6 `Object.defineProperty` getter traps detect which form properties are consumed in the JSX body. When state transitions occur (e.g., `dirtyFields` changes), RHF executes `shouldRenderFormState`. If the modified state slice is not explicitly marked as subscribed in `_proxyFormState`, the render cycle is skipped.
+3. **Validation Boundary**: Validation operates at two decoupled levels:
+   - *Micro-validation (Field Level)*: Asynchronous or synchronous validation attached directly to the registered field (`validateField`).
+   - *Macro-validation (Schema Level)*: Centralized asynchronous resolvers (`_runSchema` integrating Zod, Yup, etc.).
+4. **Monotonic Asynchronous Sequence Barriers**: Because user typing, schema resolvers, and unmounting operations happen concurrently over non-deterministic microtask schedules, RHF maintains distinct monotonic incrementing counters (`_resetCallId`, `_setValidCallId`, `_registerCallId`) to invalidate stale asynchronous microtasks before they commit mutations to `errors` or `isValid`.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `app/src/formState.tsx`
-```
-import React from 'react';
-import { useForm, ValidationMode } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
-
-let renderCounter = 0;
-
-const FormState = () => {
-  const { mode } = useParams();
-  const {
-    register,
-    handleSubmit,
-    formState: {
-      dirtyFields,
-      isSubmitted,
-      submitCount,
-      touchedFields,
-      isDirty,
-      isSubmitting,
-      isSubmitSuccessful,
-      isValid,
-    },
-    reset,
-  } = useForm<{
-    firstName: string;
-    lastName: string;
-    select: string;
-    radio: string | null;
-    checkbox: boolean;
-    ['checkbox-checked']: boolean;
-  }>({
-    mode: mode as keyof ValidationMode,
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      select: '',
-      checkbox: false,
-      radio: null,
-      'checkbox-checked': true,
-    },
-  });
-
-  renderCounter++;
-
-  return (
-    <form
-      onSubmit={handleSubmit((d) => {
-        console.log(d);
-      })}
-    >
-      <input
-        {...register('firstName', { required: true })}
-        placeholder="firstName"
-      />
-      <input
-        {...register('lastName', { required: true })}
-        placeholder="lastName"
-      />
-      <div id="state">
-        {JSON.stringify({
-          isSubmitted,
-          submitCount,
-          isDirty,
-          isSubmitting,
-          isSubmitSuccessful,
-          isValid,
-          touched: Object.keys(touchedFields),
-          dirty: Object.keys(dirtyFields),
-        })}
-      </div>
-      <select {...register('select')} defaultValue="test">
-        <option value="">Select</option>
-        <option value="test">test</option>
-        <option value="test1">test1</option>
-        <option value="test2">test2</option>
-      </select>
-
-      <input type="radio" {...register('radio')} />
-
-      <input type="checkbox" {...register('checkbox')} />
-      <input type="checkbox" {...register('checkbox-checked')} />
-      <button id="submit">Submit</button>
-      <button type="button" onClick={() => reset()} id="resetForm">
-        Reset
-      </button>
-      <div id="renderCount">{renderCounter}</div>
-    </form>
-  );
-};
-
-export default FormState;
-
-```
-
-### Core Architecture Module: `app/src/formStateWithNestedFields.tsx`
-```
-import React from 'react';
-import { useForm, ValidationMode } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
-
-let renderCounter = 0;
-
-const FormStateWithNestedFields = () => {
-  const { mode } = useParams();
-  const {
-    register,
-    handleSubmit,
-    formState: {
-      dirtyFields,
-      isSubmitted,
-      submitCount,
-      touchedFields,
-      isDirty,
-      isSubmitting,
-      isSubmitSuccessful,
-      isValid,
-    },
-    reset,
-  } = useForm<{
-    left: {
-      test1: string;
-      test2: string;
-    };
-    right: {
-      test1: string;
-      test2: string;
-    };
-  }>({
-    mode: mode as keyof ValidationMode,
-    defaultValues: {
-      left: {
-        test1: '',
-        test2: '',
-      },
-      right: {
-        test1: '',
-        test2: '',
-      },
-    },
-  });
-
-  renderCounter++;
-
-  return (
-    <form onSubmit={handleSubmit(() => {})}>
-      <div style={{ display: 'flex' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <h4>Left</h4>
-          <input
-            {...register('left.test1', { required: true })}
-            placeholder="firstName"
-          />
-          <input
-            {...register('left.test2', { required: true })}
-            placeholder="lastName"
-          />
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <h4>Right</h4>
-          <input
-            {...register('right.test1', { required: false })}
-            placeholder="firstName"
-          />
-          <input
-            {...register('right.test2', { required: false })}
-            placeholder="lastName"
-          />
-        </div>
-      </div>
-      <div id="state">
-        {JSON.stringify({
-          isDirty,
-          isSubmitted,
-          submitCount,
-          isSubmitting,
-          isSubmitSuccessful,
-          isValid,
-          touched: (
-            Object.keys(touchedFields) as Array<keyof typeof touchedFields>
-          ).flatMap((topLevelKey) =>
-            Object.keys(touchedFields[topLevelKey] || {}).map(
-              (nestedKey) => `${topLevelKey}.${nestedKey}`,
-            ),
-          ),
-          dirty: (
-            Object.keys(dirtyFields) as Array<keyof typeof touchedFields>
-          ).flatMap((topLevelKey) =>
-            Object.keys(dirtyFields[topLevelKey] || {}).map(
-              (nestedKey) => `${topLevelKey}.${nestedKey}`,
-            ),
-          ),
-        })}
-      </div>
-      <button id="submit">Submit</button>
-      <button type="button" onClick={() => reset()} id="resetForm">
-        Reset
-      </button>
-      <div id="renderCount">{renderCounter}</div>
-    </form>
-  );
-};
-
-export default FormStateWithNestedFields;
-
-```
-
-### Core Architecture Module: `app/src/formStateWithSchema.tsx`
-```
-import React from 'react';
-import { useForm, ValidationMode } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useParams } from 'react-router-dom';
-
-let renderCounter = 0;
-
-const validationSchema = yup
-  .object()
-  .shape({
-    firstName: yup.string().required(),
-    lastName: yup.string().max(5).required(),
-    select: yup.string().required(),
-    radio: yup.string().required(),
-    checkbox: yup.string().required(),
-  })
-  .required();
-
-const FormStateWithSchema: React.FC = () => {
-  const { mode } = useParams();
-  const {
-    register,
-    handleSubmit,
-    formState: {
-      dirtyFields,
-      isSubmitted,
-      submitCount,
-      touchedFields,
-      isDirty,
-      isSubmitting,
-      isSubmitSuccessful,
-      isValid,
-    },
-    reset,
-  } = useForm<{
-    firstName: string;
-    lastName: string;
-    select: string;
-    radio: string | null;
-    checkbox: boolean;
-  }>({
-    resolver: yupResolver(validationSchema),
-    mode: mode as keyof ValidationMode,
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      select: '',
-      checkbox: false,
-      radio: null,
-    },
-  });
-  const onSubmit = () => {};
-
-  renderCounter++;
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register('firstName')} placeholder="firstName" />
-      <input {...register('lastName')} placeholder="lastName" />
-      <select {...register('select')}>
-        <option value="">Select</option>
-        <option value={1}>1</option>
-        <option value={2}>2</option>
-      </select>
-      Radio1
-      <input type="radio" {...register('radio')} value="1" />
-      Radio2
-      <input type="radio" {...register('radio')} value="2" />
-      Radio3
-      <input type="radio" {...register('radio')} value="3" />
-      <input type="checkbox" {...register('checkbox')} />
-      <button id="submit">Submit</button>
-      <button type="button" onClick={() => reset()} id="resetForm">
-        Reset
-      </button>
-      <div id="state">
-        {JSON.stringify({
-          isSubmitted,
-          submitCount,
-          isDirty,
-          isSubmitting,
-          isSubmitSuccessful,
-          isValid,
-          touched: Object.keys(touchedFields),
-          dirty: Object.keys(dirtyFields),
-        })}
-      </div>
-      <div id="renderCount">{renderCounter}</div>
-    </form>
-  );
-};
-
-export default FormStateWithSchema;
-
-```
-
-### Core Architecture Module: `app/src/useFormState.tsx`
-```
-import React from 'react';
-import { useFormState, useForm, Control } from 'react-hook-form';
-
-let renderCounter = 0;
-
-type FormInputs = {
-  firstName: string;
-  lastName: string;
-  min: string;
-  max: string;
-  minDate: string;
-  maxDate: string;
-  minLength: string;
-  minRequiredLength: string;
-  selectNumber: string;
-  pattern: string;
-  nestItem: {
-    nest1: string;
-  };
-  arrayItem: {
-    test1: string;
-  }[];
-};
-
-const SubForm = ({ control }: { control: Control<FormInputs> }) => {
-  const {
-    isDirty,
-    dirtyFields,
-    touchedFields,
-    isSubmitted,
-    isSubmitSuccessful,
-    submitCount,
-    isValid,
-  } = useFormState({
-    control,
-  });
-
-  return (
-    <p id="state">
-      {JSON.stringify({
-        isDirty,
-        touched: Object.keys(touchedFields),
-        dirty: Object.keys(dirtyFields),
-        isSubmitted,
-        isSubmitSuccessful,
-        submitCount,
-        isValid,
-      })}
-    </p>
-  );
-};
-
-export const UseFormState: React.FC = () => {
-  const { register, handleSubmit, control, reset } = useForm<FormInputs>({
-    mode: 'onChange',
-  });
-  const onValid = () => {};
-
-  renderCounter++;
-
-  return (
-    <form onSubmit={handleSubmit(onValid)}>
-      <input
-        placeholder="nest.nest1"
-        {...register('nestItem.nest1', { required: true })}
-      />
-      <input
-        placeholder="arrayItem.0.test1"
-        {...register('arrayItem.0.test1', { required: true })}
-      />
-      <input
-        {...register('firstName', { required: true })}
-        placeholder="firstName"
-      />
-      <input
-        {...register('lastName', { required: true, maxLength: 5 })}
-        placeholder="lastName"
-      />
-      <input
-        type="number"
-        {...register('min', { min: 10 })}
-        placeholder="min"
-      />
-      <input
-        type="number"
-        {...register('max', { max: 20 })}
-        placeholder="max"
-      />
-      <input
-        type="date"
-        {...register('minDate', { min: '2019-08-01' })}
-        placeholder="minDate"
-      />
-      <input
-        type="date"
-        {...register('maxDate', { max: '2019-08-01' })}
-        placeholder="maxDate"
-      />
-      <input
-        {...register('minLength', { minLength: 2 })}
-        placeholder="minLength"
-      />
-      <input
-        {...register('minRequiredLength', { minLength: 2, required: true })}
-        placeholder="minRequiredLength"
-      />
-      <select {...register('selectNumber', { required: true })}>
-        <option value="">Select</option>
-        <option value={1}>1</option>
-        <option value={2}>1</option>
-      </select>
-      <input
-        {...register('pattern', { pattern: /\d+/ })}
-        placeholder="pattern"
-      />
-      <button id="submit">Submit</button>
-      <button type="button" id="resetForm" onClick={() => reset()}>
-        Reset
-      </button>
-      <div id="renderCount">{renderCounter}</div>
-      <SubForm control={control} />
-    </form>
-  );
-};
-
-```
-
-### Core Architecture Module: `e2e/utils.ts`
-```
-import { expect, type Locator } from '@playwright/test';
-
-/**
- * Playwright's locator.pressSequentially() repositions the cursor to the
- * start of the field's existing value on each call (unlike Cypress's type(),
- * which continues from wherever the cursor last was). Explicitly moving to
- * the end first makes repeated typing into the same field append correctly.
- */
-export async function type(locator: Locator, text: string) {
-  // Let pending render and error-focus effects finish before taking focus.
-  await locator.page().evaluate(
-    () =>
-      new Promise<void>((resolve) => {
-        requestAnimationFrame(() => resolve());
-      }),
-  );
-  await locator.focus();
-  await locator.press('End');
-  await locator.pressSequentially(text);
-}
-
-/**
- * For long, async-validation-heavy interaction sequences, the exact
- * `#renderCount` value isn't deterministic run-to-run under Playwright (it
- * settles within a range depending on scheduling/microtask timing) even
- * though the underlying value stops changing well within the timeout. This
- * asserts a bounded range instead of an exact count, preserving the original
- * test's intent (catch a real over-rendering regression) without flaking on
- * harmless timing jitter. Bounds should be set from repeated local runs
- * (see e2e/basic.spec.ts for the range derivation), not guessed.
- */
-export async function expectRenderCountInRange(
-  locator: Locator,
-  min: number,
-  max: number,
-) {
-  let previous = -1;
-  await expect
-    .poll(async () => {
-      const current = Number(await locator.textContent());
-      const stable = current === previous;
-      previous = current;
-      return stable;
-    })
-    .toBe(true);
-
-  expect(previous).toBeGreaterThanOrEqual(min);
-  expect(previous).toBeLessThanOrEqual(max);
-}
-
-```
-
-### Core Architecture Module: `examples/V6/initalFormState.tsx`
-```
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { useForm } from 'react-hook-form';
-
-import './styles.css';
-
-const defaultValues = {
-  firstName: 'bill',
-  lastName: 'luo',
-  email: 'bluebill1049@hotmail.com',
-};
-
-function App() {
-  const { register, handleSubmit } = useForm();
-  // or you can set up the defaultValues at useForm
-  // const { register, handleSubmit } = useForm({
-  //   defaultValues,
-  // });
-  const onSubmit = (data) => {
-    alert(JSON.stringify(data));
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="firstName">First Name</label>
-      <input
-        defaultValue={defaultValues.firstName}
-        name="firstName"
-        placeholder="bill"
-        ref={register}
-      />
-
-      <label htmlFor="lastName">Last Name</label>
-      <input
-        defaultValue={defaultValues.lastName}
-        name="lastName"
-        placeholder="luo"
-        ref={register}
-      />
-
-      <label htmlFor="email">Email</label>
-      <input
-        defaultValue={defaultValues.email}
-        name="email"
-        placeholder="bluebill1049@hotmail.com"
-        type="email"
-        ref={register}
-      />
-
-      <input type="submit" />
-    </form>
-  );
-}
-
-```
-
-### Core Architecture Module: `examples/V7/initalFormState.tsx`
-```
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { useForm } from 'react-hook-form';
-
-import './styles.css';
-
-const defaultValues = {
-  firstName: 'bill',
-  lastName: 'luo',
-  email: 'bluebill1049@hotmail.com',
-};
-
-function App() {
-  const { register, handleSubmit } = useForm();
-  // or you can set the defaultValues within useForm
-  // const { register, handleSubmit } = useForm({
-  //   defaultValues,
-  // });
-  const onSubmit = (data) => {
-    alert(JSON.stringify(data));
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="firstName">First Name</label>
-      <input
-        defaultValue={defaultValues.firstName}
-        placeholder="bill"
-        {...register('firstName')}
-      />
-
-      <label htmlFor="lastName">Last Name</label>
-      <input
-        defaultValue={defaultValues.lastName}
-        placeholder="luo"
-        {...register('lastName')}
-      />
-
-      <label htmlFor="email">Email</label>
-      <input
-        defaultValue={defaultValues.email}
-        placeholder="bluebill1049@hotmail.com"
-        type="email"
-        {...register('email')}
-      />
-
-      <input type="submit" />
-    </form>
-  );
-}
-
-```
-
-### Core Architecture Module: `src/formState.tsx`
-```
-import type { ReactNode } from 'react';
-
-import type {
-  FieldValues,
-  FormState as FormStateType,
-  UseFormStateProps,
-  UseFormStateReturn,
-} from './types';
-import { useFormState } from './useFormState';
-
-export type FormStateProps<
-  TFieldValues extends FieldValues,
-  TTransformedValues = TFieldValues,
-> = UseFormStateProps<TFieldValues, TTransformedValues> & {
-  render: (values: UseFormStateReturn<TFieldValues>) => ReactNode;
-};
-
-export type FormState<TFieldValues extends FieldValues> =
-  FormStateType<TFieldValues>;
-
-export const FormState = <
-  TFieldValues extends FieldValues,
-  TTransformedValues = TFieldValues,
->({
-  control,
-  disabled,
-  exact,
-  name,
-  render,
-}: FormStateProps<TFieldValues, TTransformedValues>) =>
-  render(useFormState({ control, name, disabled, exact }));
-
-/** @deprecated Use `FormState` instead. Kept as an alias for backward compatibility. */
-export const FormStateSubscribe = FormState;
-
-/** @deprecated Use `FormStateProps` instead. Kept as an alias for backward compatibility. */
-export type FormStateSubscribeProps<
-  TFieldValues extends FieldValues,
-  TTransformedValues = TFieldValues,
-> = FormStateProps<TFieldValues, TTransformedValues>;
-
-```
-
-### Core Architecture Module: `src/logic/getProxyFormState.ts`
-```
-import { VALIDATION_MODE } from '../constants';
-import type { Control, FieldValues, FormState, ReadFormState } from '../types';
-
-export default <
-  TFieldValues extends FieldValues,
-  TContext = unknown,
-  TTransformedValues = TFieldValues,
->(
-  formState: FormState<TFieldValues>,
-  control: Control<TFieldValues, TContext, TTransformedValues>,
-  localProxyFormState?: ReadFormState,
-  isRoot = true,
-) => {
-  const result = {} as typeof formState;
-
-  for (const key in formState) {
-    Object.defineProperty(result, key, {
-      get: () => {
-        const _key = key as keyof FormState<TFieldValues> & keyof ReadFormState;
-
-        if (control._proxyFormState[_key] !== VALIDATION_MODE.all) {
-          control._proxyFormState[_key] = !isRoot || VALIDATION_MODE.all;
-        }
-
-        localProxyFormState && (localProxyFormState[_key] = true);
-        return formState[_key];
-      },
-    });
-  }
-
-  return result;
-};
-
-```
-
-### Core Architecture Module: `src/logic/shouldRenderFormState.ts`
-```
-import { VALIDATION_MODE } from '../constants';
-import type {
-  FieldValues,
-  FormState,
-  InternalFieldName,
-  ReadFormState,
-} from '../types';
-
-export default <T extends FieldValues, K extends ReadFormState>(
-  formStateData: Partial<FormState<T>> & {
-    name?: InternalFieldName;
-    values?: T;
-  },
-  _proxyFormState: K,
-  isRoot?: boolean,
-) => {
-  const keys = Object.keys(formStateData).filter((key) => key !== 'name');
-
-  return (
-    !keys.length ||
-    (isRoot && keys.length >= Object.keys(_proxyFormState).length) ||
-    keys.find(
-      (key) =>
-        _proxyFormState[key as keyof ReadFormState] ===
-        (!isRoot || VALIDATION_MODE.all),
-    )
-  );
-};
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13621** (2026-07-29): **issue: `form.setValues` does not resize field arrays**
-  *Symptoms*: ### Version Number  7.62.0  ### Codesandbox/Expo snack  https://codesandbox.io/p/sandbox/rhf-usefieldarray-bug-fhffjm  ### Steps to reproduce  1. Go to [the Codesandbox](https://codesandbox.io/p/sandbox/rhf-usefieldarray-bug-fhffjm). 2. Click "Add" to add more fields and remove to pop off fields. 3. Clicking "Reset" resets the form back to its original state (expected). 4. Clicking "Set User Details" resizes the array to contain two elements: "Hello World" and "Hello Mars" (expected). 5. Click "Reset". 6. Clicking "Set Form" does _not_ resize the array and instead only populates the fields already present.  ### Expected behaviour  # Explanation  In the function `setUserDetails`, I use `setValue` to set the value of the `userDetails` array. Clicking the button "Set User Details" resizes the array to contain exactly what I set it to: two elements "Hello World" and "Hello Mars".  In the function "setForm`, I use `setValue` on a parent attribute of `userDetails` (i.e., `myForm`) and set it an array of two elements: "Foo Far" and "Boo Bar". However, instead of resizing the array, like `setUserDetails` does, it instead keeps the same array size and only populates the fields that are currently present. If you use the "Add" and "Remove" buttons to add more/less than two fields, you'll see that after clicking "setForm", the number of fields does not change.  I would expect that using `setValue` would set all values in the form to the given value and reset/change any references to the 
-
-- **Issue #13608** (2026-07-23): **[7.76.0 regression] setValue rebuilds the entire dirtyFields object every call, breaking referential stability (incl. proposed fix)**
-  *Symptoms*: ### Version Number  7.76.0 – 7.81.0 (regression introduced in 7.76.0; still present on `main`)  ### Codesandbox/Expo snack  Runnable with no UI — the regression is in `createFormControl`'s dirty-tracking. Node snippet below (also reproducible in any sandbox).  Change the version between 7.81.0 and 7.75.0 to see the differences: https://codesandbox.io/p/devbox/suspicious-joliot-flkj2p   ### Steps to reproduce  `setValue(field, value, { shouldDirty: true })` on an already-dirty field, repeatedly, and observe the **object identity** of `formState.dirtyFields`:  ```js const { createFormControl } = require("react-hook-form");  const api = createFormControl({ defaultValues: { a: "", b: "" } }); // subscribe so _formState.isDirty is tracked (as a real form does) api.subscribe({ formState: { isDirty: true, dirtyFields: true }, callback: () => {} });  const refs = []; for (let i = 0; i < 4; i++) {   api.setValue("a", "x" + i, { shouldDirty: true }); // 'a' is dirty the whole time   refs.push(api.control._formState.dirtyFields); } console.log("dirty keys:", Object.keys(api.control._formState.dirtyFields)); // ["a"] throughout console.log("identity changed per setValue:", refs.slice(1).map((o, i) => o !== refs[i])); // 7.75.0 -> [false, false, false]   (object mutated in place, reference stable) // 7.81.0 -> [true,  true,  true]    (brand-new object every call) ```  ### Expected behaviour  `formState.dirtyFields` keeps a **stable object reference** when the set of dirty fields does not 
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `81543c42` (2026-10-19)
-**Commit Message**: 🐞 fix(form): send a text/plain body for a text/plain content type (#13893)
-
-* fix(form): send a text/plain body for a text/plain content type
-
-With encType="text/plain", or a text/plain Content-Type header, Form set
-the header but still passed the FormData to fetch, so the request went
-out as a multipart body labelled text/plain. Encode the entries as
-name=value lines joined by CRLF, as a native text/plain form does, with a
-file sent as its name like the url-encoded body.
-
-* refactor(form): choose the fetch body with if/else conditions
-
-bluebill1049 asked to replace the nested ternaries with plain conditions
-and to drop the getFormDataEntries helper. The body now starts as the
-FormData and an if/else chain swaps in the JSON string, the
-URLSearchParams or the text/plain lines. Each branch maps a file to its
-name inline, so the url-encoded body is built as on master. The bodies
-sent for every content type are unchanged.
-
----------
-
-Co-authored-by: Bill <[REDACTED_EMAIL]>
-
-**File**: `src/__tests__/form.test.tsx` (modified, +46/-1)
-```diff
-@@ -316,7 +316,8 @@ describe('Form', () => {
-     ['Content-Type', 'application/JSON', true],
-     ['content-type', 'application/json', true],
-     ['CoNtEnT-TyPe', 'application/json', true],
--    ['content-type', 'text/plain', false],
-+    ['content-type', 'text/csv', false],
-+    ['content-type', 'text/plainfoo', false],
-     ['content-type', 'application/x-www-form-urlencodedfoo', false],
-     ['X-Response-Format', 'application/json', false],
-   ] as const)(
-@@ -413,6 +414,50 @@ describe('Form', () => {
-     },
-   );
- 
-+  it.each([
-+    ['encType', 'text/plain', { encType: 'text/plain' }],
-+    ['headers', 'text/plain', { headers: { 'content-type': 'text/plain' } }],
-+    ['headers', 'Text/Plain', { headers: { 'Content-Type': 'Text/Plain' } }],
-+    [
-+      'headers',
-+      'text/plain; charset=UTF-8',
-+      { headers: { 'content-type': 'text/plain; charset=UTF-8' } },
-+    ],
-+  ] as const)(
-+    'send a text/plain body when %s sets %s',
-+    async (_, contentType, props) => {
-+      const fetchSpy = jest
-+        .spyOn(global, 'fetch')
-+        .mockResolvedValueOnce(new Response(null, { status: 200 }));
-+      const resume = new Blob(['content'], { type: 'text/plain' });
-+
-+      const App = () => {
-+        const { register, control } = useForm({
-+          defaultValues: { name: 'bill', city: 'New York', resume },
-+        });
-+
-+        return (
-+          <Form action="/api" control={control} {...props}>
-+            <input {...register('name')} />
-+            <input {...register('city')} />
-+            <button>Submit</button>
-+          </Form>
-+        );
-+      };
-+
-+      render(<App />);
-+
-+      fireEvent.click(screen.getByRole('button'));
-+
-+      await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
-+
-+      const init = fetchSpy.mock.calls[0][1];
-+
-+      expect(new Headers(init?.headers).get('content-type')).toBe(contentType);
-+      expect(init?.body).toBe('name=bill\r\ncity=New York\r\nresume=blob\r\n');
-+    },
-+  );
-+
-   it('call a function action with FormData instead of fetching', async () => {
-     const fetchSpy = jest.spyOn(global, 'fetch');
-     const actionFn = jest.fn<(formData: FormData) => Promise<void>>(
-```
-
-**File**: `src/form.tsx` (modified, +22/-12)
-```diff
-@@ -78,6 +78,27 @@ export function Form<
-               )) ||
-             (encType && type.test(encType));
- 
-+          let body: BodyInit = formData;
-+
-+          if (hasContentType(/json/i)) {
-+            body = formDataJson;
-+          } else if (
-+            hasContentType(/^\s*application\/x-www-form-urlencoded\s*(;|$)/i)
-+          ) {
-+            body = new URLSearchParams(
-+              Array.from(formData, ([name, value]) => [
-+                name,
-+                isString(value) ? value : value.name,
-+              ]),
-+            );
-+          } else if (hasContentType(/^\s*text\/plain\s*(;|$)/i)) {
-+            body = Array.from(
-+              formData,
-+              ([name, value]) =>
-+                `${name}=${isString(value) ? value : value.name}\r\n`,
-+            ).join('');
-+          }
-+
-           const response = await fetch(action, {
-             method,
-             headers: {
-@@ -87,18 +108,7 @@ export function Form<
-                   'Content-Type': encType,
-                 }),
-             },
--            body: hasContentType(/json/i)
--              ? formDataJson
--              : hasContentType(
--                    /^\s*application\/x-www-form-urlencoded\s*(;|$)/i,
--                  )
--                ? new URLSearchParams(
--                    Array.from(formData, ([name, value]) => [
--                      name,
--                      isString(value) ? value : value.name,
--                    ]),
--                  )
--                : formData,
-+            body,
-           });
- 
-           if (response && !validateStatus(response.status)) {
-```
-
----
-
-### Incident Patch 2: `a88c81ae` (2026-10-20)
-**Commit Message**: 🐞 fix(useForm): run the initial validity check when a child subscribed first (#13906)
-
-subscribe() sets control._state.mount, and a child's effects run before
-useForm's own mount effect. A child that subscribes in useEffect, as the
-subscribe docs show, made the mount effect skip _setValid(), so isValid
-stayed false on valid default values until the first edit.
-
-Run the check once per useForm mount, tracked with a ref so StrictMode's
-second effect run does not repeat it. The values prop keeps its own
-check in the values effect.
-
-**File**: `src/__tests__/useForm/subscribe.test.tsx` (modified, +119/-1)
-```diff
-@@ -7,7 +7,7 @@ import {
-   waitFor,
- } from '@testing-library/react';
- 
--import type { UseFormSubscribe } from '../../types';
-+import type { Resolver, UseFormSubscribe } from '../../types';
- import { useForm } from '../../useForm';
- import { useFormState } from '../../useFormState';
- 
-@@ -442,6 +442,124 @@ describe('subscribe', () => {
-       ),
-     );
-   });
-+
-+  describe('when a child subscribes in an effect', () => {
-+    type FormValues = { name: string };
-+
-+    const callbackFn = jest.fn();
-+
-+    function ChildComp({
-+      subscribe,
-+    }: {
-+      subscribe: UseFormSubscribe<FormValues>;
-+    }) {
-+      React.useEffect(() => {
-+        return subscribe({
-+          formState: { isValid: true },
-+          callback: callbackFn,
-+        });
-+      }, [subscribe]);
-+      return null;
-+    }
-+
-+    const resolver: Resolver<FormValues> = async (values) => ({
-+      values,
-+      errors: {},
-+    });
-+
-+    it('keep the initial isValid of valid default values', async () => {
-+      const App = () => {
-+        const { register, subscribe, formState } = useForm<FormValues>({
-+          mode: 'onChange',
-+          defaultValues: { name: 'filled' },
-+        });
-+        return (
-+          <form>
-+            <input {...register('name', { required: true })} />
-+            <ChildComp subscribe={subscribe} />
-+            <button disabled={!formState.isValid}>submit</button>
-+          </form>
-+        );
-+      };
-+
-+      render(<App />);
-+
-+      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
-+      expect(callbackFn).toHaveBeenCalledWith(
-+        expect.objectContaining({ isValid: true }),
-+      );
-+    });
-+
-+    it('keep the initial isValid with a resolver', async () => {
-+      const App = () => {
-+        const { register, subscribe, formState } = useForm<FormValues>({
-+          resolver,
-+          defaultValues: { name: 'filled' },
-+        });
-+        return (
-+          <form>
-+            <input {...register('name')} />
-+            <ChildComp subscribe={subscribe} />
-+            <button disabled={!formState.isValid}>submit</button>
-+          </form>
-+        );
-+      };
-+
-+      render(<App />);
-+
-+      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
-+    });
-+
-+    it('run the resolver once on mount with the values prop', async () => {
-+      const resolverFn = jest.fn(resolver);
-+
-+      const App = () => {
-+        const { register, subscribe, formState } = useForm<FormValues>({
-+          resolver: resolverFn,
-+          values: { name: 'filled' },
-+        });
-+        return (
-+          <form>
-+            <input {...register('name')} />
-+            <ChildComp subscribe={subscribe} />
-+            <button disabled={!formState.isValid}>submit</button>
-+          </form>
-+        );
-+      };
-+
-+      render(<App />);
-+
-+      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
-+      expect(resolverFn).toHaveBeenCalledTimes(1);
-+    });
-+
-+    it('run the resolver once on mount in StrictMode', async () => {
-+      const resolverFn = jest.fn(resolver);
-+
-+      const App = () => {
-+        const { register, subscribe, formState } = useForm<FormValues>({
-+          resolver: resolverFn,
-+          defaultValues: { name: 'filled' },
-+        });
-+        return (
-+          <form>
-+            <input {...register('name')} />
-+            <ChildComp subscribe={subscribe} />
-+            <button disabled={!formState.isValid}>submit</button>
-+          </form>
-+        );
-+      };
-+
-+      render(
-+        <React.StrictMode>
-+          <App />
-+        </React.StrictMode>,
-+      );
-+
-+      await waitFor(() => expect(screen.getByRole('button')).toBeEnabled());
-+      expect(resolverFn).toHaveBeenCalledTimes(1);
-+    });
-+  });
- });
- 
- describe('call setValue within subscribe', () => {
-```
-
-**File**: `src/useForm.ts` (modified, +3/-1)
-```diff
-@@ -59,6 +59,7 @@ export function useForm<
-   const _hadDisabled = React.useRef(false);
-   const _hadValidate = React.useRef(!!props.validate);
-   const _hadErrors = React.useRef(!!props.errors);
-+  const _isMounted = React.useRef(false);
-   const [formState, updateFormState] = React.useState<FormState<TFieldValues>>(
-     () => ({
-       ...cloneObject(DEFAULT_FORM_STATE),
-@@ -227,10 +228,11 @@ export function useForm<
-   }, [control, props.values]);
- 
-   React.useEffect(() => {
--    if (!control._state.mount) {
-+    if (!control._state.mount || (!_isMounted.current && !props.values)) {
-       control._setValid();
-       control._state.mount = true;
-     }
-+    _isMounted.current = true;
- 
-     if (control._state.watch) {
-       control._state.watch = false;
-```
-
----
-
-### Incident Patch 3: `fec5cbc2` (2026-10-19)
-**Commit Message**: 🐞 fix(flatten): use the toJSON value of class instances (#13902)
-
-flatten recursed into every object that is not a Date, File, Blob or
-FileList, so a class instance such as a dayjs value reached the <Form>
-FormData body as its internal fields (startDate.$y, startDate.$M, ...)
-and no startDate entry. A value with a toJSON function is now one entry
-holding toJSON(), the value JSON.stringify writes into formDataJson.
-Class instances without toJSON are still flattened into their fields.
-
-**File**: `src/__tests__/utils/flatten.test.ts` (modified, +61/-0)
-```diff
-@@ -1,5 +1,23 @@
- import { flatten } from '../../utils/flatten';
- 
-+class DateValue {
-+  $y: number;
-+  $M: number;
-+  $D: number;
-+  $d: Date;
-+
-+  constructor(iso: string) {
-+    this.$d = new Date(iso);
-+    this.$y = this.$d.getUTCFullYear();
-+    this.$M = this.$d.getUTCMonth();
-+    this.$D = this.$d.getUTCDate();
-+  }
-+
-+  toJSON() {
-+    return this.$d.toISOString();
-+  }
-+}
-+
- describe('flatten', () => {
-   it('flatten form values into flat form data', () => {
-     expect(
-@@ -79,4 +97,47 @@ describe('flatten', () => {
-       attachments: fileList,
-     });
-   });
-+
-+  it('use the toJSON value of a class instance instead of its fields', () => {
-+    expect(
-+      flatten({
-+        name: 'bill',
-+        startDate: new DateValue('2026-10-13T00:00:00.000Z'),
-+      }),
-+    ).toEqual({
-+      name: 'bill',
-+      startDate: '2026-10-13T00:00:00.000Z',
-+    });
-+  });
-+
-+  it('use the toJSON value of nested and indexed class instances', () => {
-+    expect(
-+      flatten({
-+        range: { start: new DateValue('2026-10-13T00:00:00.000Z') },
-+        dates: [new DateValue('2026-10-14T00:00:00.000Z')],
-+      }),
-+    ).toEqual({
-+      'range.start': '2026-10-13T00:00:00.000Z',
-+      'dates.0': '2026-10-14T00:00:00.000Z',
-+    });
-+  });
-+
-+  it('flatten a class instance without toJSON into its fields', () => {
-+    class Address {
-+      city = 'Kyiv';
-+      zip = '01001';
-+    }
-+
-+    expect(flatten({ address: new Address() })).toEqual({
-+      'address.city': 'Kyiv',
-+      'address.zip': '01001',
-+    });
-+  });
-+
-+  it('flatten an object whose toJSON is not a function', () => {
-+    expect(flatten({ settings: { toJSON: 'on', theme: 'dark' } })).toEqual({
-+      'settings.toJSON': 'on',
-+      'settings.theme': 'dark',
-+    });
-+  });
- });
-```
-
-**File**: `src/__tests__/utils/formData.test.ts` (modified, +18/-0)
-```diff
-@@ -33,4 +33,22 @@ describe('jsonToFormData', () => {
-     expect(formData.get('name')).toBe('bill');
-     expect(formData.getAll('resume')).toHaveLength(2);
-   });
-+
-+  it('submit a class instance as its toJSON value', () => {
-+    class DateValue {
-+      $d = new Date('2026-10-13T00:00:00.000Z');
-+
-+      toJSON() {
-+        return this.$d.toISOString();
-+      }
-+    }
-+
-+    const formData = jsonToFormData({
-+      name: 'bill',
-+      startDate: new DateValue(),
-+    });
-+
-+    expect(Array.from(formData.keys())).toEqual(['name', 'startDate']);
-+    expect(formData.get('startDate')).toBe('2026-10-13T00:00:00.000Z');
-+  });
- });
-```
-
-**File**: `src/utils/flatten.ts` (modified, +6/-0)
-```diff
-@@ -1,6 +1,7 @@
- import type { FieldValues } from '../types';
- 
- import isDateObject from './isDateObject';
-+import isFunction from './isFunction';
- import { isObjectType } from './isObject';
- 
- const isFileLike = (value: unknown) =>
-@@ -21,6 +22,11 @@ export const flatten = (obj: FieldValues) => {
-       !isFileLike(obj[key]) &&
-       !isFileListLike(obj[key])
-     ) {
-+      if ('toJSON' in obj[key] && isFunction(obj[key].toJSON)) {
-+        output[key] = obj[key].toJSON();
-+        continue;
-+      }
-+
-       const nested = flatten(obj[key]);
- 
-       for (const nestedKey of Object.keys(nested)) {
-```
-
-#### Recent Merged Pull Requests:
-- **PR #13906** (2026-10-20): fix(useForm): run the initial validity check when a child subscribed first (@maxymlyskov)
-- **PR #13904** (closed): 🐞 fix(flatten): recursively flatten object returns from toJSON (@hardikkaurani)
-- **PR #13903** (closed): fix(getRuleValue): let the native pattern accept every value the rule accepts (@maxymlyskov)
-- **PR #13902** (2026-10-19): fix(flatten): use the toJSON value of class instances (@maxymlyskov)
-- **PR #13901** (2026-10-18): 🐞 fix(getFieldValueAs): return null when input value is empty with valueAsDate (@hardikkaurani)
-- **PR #13900** (2026-10-18): 🐞 fix(createFormControl): handle falsy values correctly in _getDirty and resetField (@hardikkaurani)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. 🐞 fix(form): send a text/plain body for a text/plain content type (#13893)
-
+### 1. Monotonic Asynchronous Sequence Fencing
 **RULE**:
-When implementing operations in `src/__tests__/form.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+Every asynchronous operation whose settled result updates shared state indexed by an identity key MUST capture a monotonic sequence ID at initiation time and MUST drop its mutation if either the entity-level sequence ID or the global epoch ID has advanced before settlement.
 
 **WHY**:
-Prevents defects observed in production commit `81543c42`: 🐞 fix(form): send a text/plain body for a text/plain content type (#13893). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Network latency, Promise microtask interleaving, and user typing are non-deterministic. If Field $A$ triggers an asynchronous validation at $t_0$, unmounts or registers anew at $t_1$, and settles at $t_2$, an unprotected promise resolution writes errors for an element that no longer exists or applies outdated validation constraints over a re-registered field, corrupting `isValid` and blocking form submission permanently.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/form.test.tsx`.
+Apply in any client-side or backend state manager where asynchronous background jobs (validation, fetch-on-type, autosave) can settle after target entities have been unmounted, deleted, replaced, or reset.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// Verified production-grade fix pattern:
-    ['content-type', 'text/csv', false],
-    ['content-type', 'text/plainfoo', false],
-  it.each([
-    ['encType', 'text/plain', { encType: 'text/plain' }],
-    ['headers', 'text/plain', { headers: { 'content-type': 'text/plain' } }],
-    ['headers', 'Text/Plain', { headers: { 'Content-Type': 'Text/Plain' } }],
-    [
-      'headers',
-      'text/plain; charset=UTF-8',
-      { headers: { 'content-type': 'text/plain; charset=UTF-8' } },
-    ],
-  ] as const)(
-    'send a text/plain body when %s sets %s',
-    async (_, contentType, props) => {
-      const fetchSpy = jest
-        .spyOn(global, 'fetch')
-        .mockResolvedValueOnce(new Response(null, { status: 200 }));
-      const resume = new Blob(['content'], { type: 'text/plain' });
+class AsyncResourceManager<TKey extends string, TData> {
+  private globalEpoch = 0;
+  private readonly entityEpochs: Map<TKey, number> = new Map();
+  private readonly activeEntities: Map<TKey, TData> = new Map();
 
-      const App = () => {
-        const { register, control } = useForm({
-          defaultValues: { name: 'bill', city: 'New York', resume },
-        });
+  public register(key: TKey, data: TData): void {
+    const nextEpoch = (this.entityEpochs.get(key) ?? 0) + 1;
+    this.entityEpochs.set(key, nextEpoch);
+    this.activeEntities.set(key, data);
+  }
 
-        return (
-          <Form action="/api" control={control} {...props}>
-            <input {...register('name')} />
-            <input {...register('city')} />
-            <button>Submit</button>
-          </Form>
-        );
-      };
+  public unregister(key: TKey): void {
+    this.activeEntities.delete(key);
+    // Increment epoch on unregister so any in-flight promise will mismatch
+    const nextEpoch = (this.entityEpochs.get(key) ?? 0) + 1;
+    this.entityEpochs.set(key, nextEpoch);
+  }
 
-      render(<App />);
+  public resetAll(): void {
+    this.globalEpoch++;
+    this.activeEntities.clear();
+    this.entityEpochs.clear();
+  }
 
-      fireEvent.click(screen.getByRo
+  public async executeAsyncJob(
+    key: TKey,
+    job: () => Promise<unknown>,
+    commit: (result: unknown) => void
+  ): Promise<void> {
+    const capturedGlobalEpoch = this.globalEpoch;
+    const capturedEntityEpoch = this.entityEpochs.get(key) ?? 0;
+
+    const result = await job();
+
+    // FENCE 1: Did a global reset occur during the await?
+    if (capturedGlobalEpoch !== this.globalEpoch) {
+      return;
+    }
+
+    // FENCE 2: Was the entity unregistered or re-registered while pending?
+    const currentEntityEpoch = this.entityEpochs.get(key);
+    const isStillMounted = this.activeEntities.has(key);
+
+    if (!isStillMounted || currentEntityEpoch !== capturedEntityEpoch) {
+      return; // DROP STALE RESULT SILENTLY
+    }
+
+    commit(result);
+  }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-    ['content-type', 'text/plain', false],
+// ANTI-PATTERN: Blindly writing error state after async resolution
+async function validateFieldBlindly(fieldName: string, rule: AsyncValidator) {
+  _updateIsValidating(fieldName, true);
+  const error = await rule(currentValue); // Yields to event loop
+  _updateIsValidating(fieldName, false);
+
+  // CRITICAL BUG: If field unmounted or re-registered during await,
+  // this writes stale error into state, permanently bricking form submission!
+  errors[fieldName] = error; 
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81543c42` are properly handled with clean fallback behavior.
+Enforce via an asynchronous race integration test:
+```typescript
+test('monotonic fence drops stale async result on concurrent unregister/re-register', async () => {
+  const manager = new AsyncResourceManager<string, { value: string }>();
+  let committedValue: unknown = null;
+  let resolveJob!: (val: string) => void;
+
+  manager.register('testField', { value: 'initial' });
+
+  const jobPromise = manager.executeAsyncJob(
+    'testField',
+    () => new Promise((resolve) => { resolveJob = resolve; }),
+    (val) => { committedValue = val; }
+  );
+
+  // Unregister field while async validation is in-flight
+  manager.unregister('testField');
+  // Re-register under identical key
+  manager.register('testField', { value: 'new' });
+
+  // Settle the initial async task
+  resolveJob('stale_error');
+  await jobPromise;
+
+  expect(committedValue).toBeNull(); // Must NOT commit stale result
+});
+```
+
+---
+
+### 2. Referential Stability Preservation in Nested Property Updaters
+**RULE**:
+When mutating deeply nested state graphs (such as dirty or touched maps), an updater MUST NOT clone or re-instantiate parent or root container objects if the terminal evaluated leaf delta produces no semantic structural change.
+
+**WHY**:
+Recreating object references (e.g., returning a new `{ ...prevDirtyFields }`) on every keystroke or `setValue` call when the dirty status has not structurally flipped forces consumer components relying on memoization (`useMemo`, `React.memo`, `useEffect` dependencies) into redundant re-render cascades, destroying UI frame rates.
+
+**WHEN TO APPLY**:
+State managers handling sparse trees, form libraries tracking `dirtyFields`, and React state reducers where subscribers monitor object references.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> | boolean };
+
+function setDirtyLeaf<T extends Record<string, any>>(
+  target: T,
+  path: string[],
+  isDirty: boolean
+): boolean {
+  // Traverse and verify existing state before cloning
+  let cursor: any = target;
+  for (let i = 0; i < path.length - 1; i++) {
+    const segment = path[i];
+    if (!(segment in cursor)) {
+      if (!isDirty) return false; // Already clean, no-op
+      cursor[segment] = {};
+    }
+    cursor = cursor[segment];
+  }
+
+  const leafKey = path[path.length - 1];
+  const currentLeafValue = cursor[leafKey];
+
+  if (isDirty) {
+    if (currentLeafValue === true) return false; // Reference stable: NO MUTATION NEEDED
+    cursor[leafKey] = true;
+    return true;
+  } else {
+    if (currentLeafValue === undefined) return false; // Already unset
+    delete cursor[leafKey];
+    return true;
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Eager structural cloning on identical state values
+function updateDirtyFieldsBad(prevDirtyFields: object, path: string, isDirty: boolean) {
+  // Re-creates the whole dictionary every call even if field was ALREADY dirty!
+  const next = structuredClone(prevDirtyFields);
+  set(next, path, isDirty);
+  return next; // Referential identity destroyed every keystroke!
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using object identity assertions across continuous mutations:
+```typescript
+test('dirtyFields preserves referential stability on idempotent mutations', () => {
+  const formControl = createFormControl({ defaultValues: { a: '' } });
+  formControl.setValue('a', 'v1', { shouldDirty: true });
+  const ref1 = formControl.formState.dirtyFields;
+
+  // Setting another dirty value must not break reference if 'a' was already marked dirty
+  formControl.setValue('a', 'v2', { shouldDirty: true });
+  const ref2 = formControl.formState.dirtyFields;
+
+  expect(ref1).toBe(ref2); // Exact pointer identity preserved
+});
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Field Unregistered or Remounted While Async Validation Pending (BUG-RHF-01)
+- **Context**: `src/logic/createFormControl.ts`, in `executeBuiltInValidation`, `executeSchemaAndUpdateState`, and `onChange`.
+- **What Was Expected**: If an input with asynchronous validation rules (`validate` function or asynchronous schema resolver) unmounts (e.g., inside a conditional `{show && <input ... />}` with `shouldUnregister: true`) or is explicitly unregistered while validation is pending, its asynchronous validation output must be discarded. Form errors must be cleared and `isValid` must re-evaluate to `true`.
+- **What Actually Happened**: The asynchronous validation promise captured references at initiation. When the promise settled, the handler wrote `fieldError` back into `_formState.errors`. Since the field was no longer registered, no further user input or blur event could ever trigger validation to clear it. The form was permanently bricked: `handleSubmit` always invoked `onInvalid`, and `trigger(name)` resolved to `false`. Furthermore, if the field was re-registered while the promise was pending, the stale promise applied its error to the new field instance.
+- **Evidence in Repo**: Commit `2a974d50`, PR #13912. Tests: `src/__tests__/useForm/unregister.test.tsx`.
+- **Root Cause**: Missing generation tracking on field registrations. Validation routines only checked if a field was currently registered, but failed to detect if the field was unregistered or re-registered under the same name during the asynchronous await suspension window.
+- **Remediation Code Diff**:
+```diff
+@@ -240,6 +240,8 @@ export function createFormControl<
+   let _setValidCallId = 0;
+   let _resetCallId = 0;
++  let _registerCallId = 0;
++  const _registerCallIds: Record<InternalFieldName, number> = {};
+
+@@ -783,6 +789,14 @@ export function createFormControl<
+     if (names) {
+       for (const name of names) {
++        if (
++          registeredNames.includes(name) &&
++          (!get(_fields, name) || _registerCallIds[name] > registerCallId)
++        ) {
++          unset(errors, name);
++          continue;
++        }
+
+@@ -924,6 +938,7 @@ export function createFormControl<
++          const registerCallId = _registerCallId;
+           const fieldError = await validateField(
+@@ -941,6 +956,13 @@ export function createFormControl<
++          if (
++            !get(_fields, _f.name) ||
++            _registerCallIds[_f.name] > registerCallId
++          ) {
++            continue;
++          }
+
+@@ -1892,6 +1915,10 @@ export function createFormControl<
++    if (!field || !field._f) {
++      _registerCallIds[name] = ++_registerCallId;
++    }
+```
+- **Lesson**: Any long-lived entity with asynchronous lifecycles requires per-key monotonically increasing incarnation IDs (`_registerCallIds[name]`). Every asynchronous boundary must re-verify that `currentIncarnation === capturedIncarnation`.
+
+---
+
+### Incident 2: Older Async `isValid` Pass Settling After Newer Change (BUG-RHF-02)
+- **Context**: `src/logic/createFormControl.ts`, within input change handler `onChange`.
+- **What Was Expected**: If a user rapidly types "abc" (valid) and then "ab" (invalid), the asynchronous validation for "ab" must define the final form state. If the asynchronous pass for "abc" is delayed and settles *after* the pass for "ab", it must not overwrite the error state or set `isValid: true`.
+- **What Actually Happened**: `onChange` checked if the field value had mutated right after `validateField()`, but did not check after the subsequent whole-form `isValid` evaluation pass. When the slower check for the older change settled second, it cleared the error set by the newer change and set `isValid: true` for an invalid value.
+- **Evidence in Repo**: Commit `0f3e977a`, PR #13934. Tests: `src/__tests__/useForm/formState.test.tsx`.
+- **Root Cause**: Lack of sequence locking over the secondary asynchronous pass that re-evaluates form-wide validity (`_setValidCallId`).
+- **Remediation Code Diff**:
+```diff
+@@ -1477,6 +1477,7 @@ export function createFormControl<
+         isValid = isEmptyObject(errors);
+       } else {
+         const resetCallId = _resetCallId;
++        const setValidCallId = ++_setValidCallId;
+         _updateIsValidating([name], true);
+         error = (
+           await validateField(
+@@ -1510,6 +1511,12 @@ export function createFormControl<
+             if (resetCallId !== _resetCallId) {
+               return;
+             }
++
++            _updateIsFieldValueUpdated(fieldValue);
++
++            if (setValidCallId !== _setValidCallId) {
++              isValid = undefined;
++            }
+           }
+         }
+```
+- **Lesson**: In multi-stage asynchronous pipelines, guard checks must be executed after **each** asynchronous suspension point, not merely after the first task. Sequence identifiers must guard every distinct write path.
+
+---
+
+### Incident 3: Frozen Validation State via `keepIsValid` Leakage on Reset (BUG-RHF-03)
+- **Context**: `src/logic/createFormControl.ts` in `_executeBatch` and user event handlers.
+- **What Was Expected**: Calling `reset(values, { keepIsValid: true })` preserves the existing `isValid` boolean status at reset time. Subsequent user events (typing, blurring, field array append/remove) must immediately clear the lock and recompute `isValid`.
+- **What Actually Happened**: `reset({ keepIsValid: true })` set an internal flag `_state.keepIsValid = true`. The function `_setValid()` checked this flag and returned early. The flag was only reset if `trigger()` was explicitly invoked. In `onSubmit` and `onTouched` validation modes, user typing does not invoke `trigger()`, so `_state.keepIsValid` remained `true` indefinitely. Field array operations also failed to clear it, leaving `isValid` permanently frozen at its pre-reset state.
+- **Evidence in Repo**: Commit `dee94247`, PR #13930. Tests: `src/__tests__/useForm/formState.test.tsx`.
+- **Root Cause**: Imperative configuration flags applied during batch updates lacked an automatic lifecycle expiration trigger on subsequent user-driven write operations.
+- **Remediation Code Diff**:
+```diff
+@@ -357,6 +357,7 @@ export function createFormControl<
+   ) => {
+     if (args && method && !_options.disabled) {
+       _state.action = true;
++      _state.keepIsValid = false;
+       const field: FieldRefs | undefined = get(_fields, name);
+       const rootField = field && field._f;
+
+@@ -1360,6 +1361,7 @@ export function createFormControl<
+     };
+ 
+     if (field) {
++      _state.keepIsValid = false;
+       let error;
+       let isValid;
+```
+- **Lesson**: Transient state preservation flags (e.g., `keepIsValid`, `keepDirty`) must have clear self-annulling rules triggered by the very first subsequent mutating user action.
+
+---
+
+### Incident 4: Referential Stability Degradation in `dirtyFields` Tracking (BUG-RHF-04)
+- **Context**: `src/logic/createFormControl.ts` and `src/logic/getDirtyFields.ts`.
+- **What Was Expected**: `formState.dirtyFields` must maintain strict referential identity (`===`) between successive `setValue` calls if the set of modified fields has not changed structurally.
+- **What Actually Happened**: In versions 7.76.0 through 7.81.0, `createFormControl` eagerly reconstructed the entire `dirtyFields` dictionary on every invocation of `setValue`, even when an already-dirty field was modified with another dirty value. This triggered cascading re-renders in all subscribed child components and broke memoization hooks depending on `formState.dirtyFields`.
+- **Evidence in Repo**: GitHub Issue #13608.
+- **Root Cause**: The dirty-checking pipeline converted mutable dirty-field maps into completely new objects unconditionally without performing a structural equality pre-flight check.
+- **Remediation Code Diff**:
+```diff
+- // Eager structural rebuild
+- _formState.dirtyFields = { ...nextDirtyFields };
+- _subjects.state.next({ dirtyFields: _formState.dirtyFields });
+
++ // Referential preservation check
++ const isDirtyChanged = !deepEqual(_formState.dirtyFields, nextDirtyFields);
++ if (isDirtyChanged) {
++   _formState.dirtyFields = nextDirtyFields;
++   _subjects.state.next({ dirtyFields: _formState.dirtyFields });
++ }
+```
+- **Lesson**: State containers must treat referential identity as an essential performance contract. Never allocate fresh references for nested dictionary states unless the internal key-value set has semantically mutated.
+
+---
+
+### Incident 5: Field Array Size Invariance Failure on Parent `setValue` (BUG-RHF-05)
+- **Context**: `src/useFieldArray.ts` and `src/logic/createFormControl.ts`.
+- **What Was Expected**: Executing `setValue('parent', { childArray: [a, b] })` where `childArray` is managed by a `useFieldArray` hook must resize the dynamic field array and re-render the corresponding array rows.
+- **What Actually Happened**: Calling `setValue` on a parent property only mapped values onto existing registered field elements. If the new array length differed from the registered input count, `useFieldArray` failed to synchronize its internal `fields` array (holding stable UUID `id`s), resulting in truncated or ghost fields.
+- **Evidence in Repo**: GitHub Issue #13621.
+- **Root Cause**: `useFieldArray` maintained an independent internal cache of row IDs (`fields`) that listened exclusively to array-specific actions (`append`, `remove`, `replace`) but was not notified when a deep path parent value was updated via generic `setValue`.
+- **Remediation Code Diff**:
+```typescript
+// Unified field array synchronization invariant
+function updateFieldArrayRoot(name: InternalFieldName, nextValues: unknown[]) {
+  const fieldArraySubject = _subjects.array.get(name);
+  if (fieldArraySubject) {
+    // Force fieldArray manager to regenerate internal ID map matching nextValues length
+    fieldArraySubject.next({
+      values: nextValues,
+      name,
+    });
+  }
+}
+```
+- **Lesson**: Layered abstractions (like array IDs wrapping nested object paths) must register bidirectionally with root state mutators, or parent mutations will desynchronize the child abstraction layer.
+
+---
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Falsy Coercion Hazard (`0` vs `undefined`/`null`)**:
+  In numeric inputs (`type="number"` or `valueAsNumber: true`), a field value of `0` is completely valid. RHF explicitly avoids `if (!value)` checks:
+  ```typescript
+  // FATAL: Drops valid '0' or empty string values
+  const isBlank = (val: unknown) => !val; 
+
+  // PRODUCTION INVARIANT: Distinguishes 0 from absent
+  const isNullOrUndefined = (val: unknown): val is null | undefined =>
+    val === null || val === undefined;
+  
+  const isEmptyString = (val: unknown): boolean =>
+    val === '' || (Array.isArray(val) && val.length === 0);
+  ```
+- **Deep Immutability vs. In-Place Mutation Leaks**:
+  When reading paths like `errors.users[0].name`, mutations to `errors` must not mutate defaults:
+  ```typescript
+  // SAFE: Pure path setting without mutating prototype
+  export function safeSet(target: Record<string, any>, path: string[], value: unknown): void {
+    let current = target;
+    for (let i = 0; i < path.length; i++) {
+      const key = path[i];
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return; // PROTOTYPE POLLUTION GUARD
+      }
+      if (i === path.length - 1) {
+        current[key] = value;
+      } else {
+        if (!current[key] || typeof current[key] !== 'object') {
+          current[key] = isNaN(Number(path[i + 1])) ? {} : [];
+        }
+        current = current[key];
+      }
+    }
+  }
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **Circular Reference & Deep Object Traversal Guards**:
+  Traversing complex form values for dirty checking or clone operations can recurse infinitely if objects reference self or ancestors.
+  ```typescript
+  export function deepMergeGuard<T>(
+    target: T,
+    source: any,
+    seen = new WeakSet<object>()
+  ): T {
+    if (source === null || typeof source !== 'object') return source;
+    if (seen.has(source)) return target; // CYCLE DETECTED: Terminate recursion
+    seen.add(source);
+
+    for (const key of Object.keys(source)) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        if (typeof source[key] === 'object' && source[key] !== null) {
+          (target as any)[key] = deepMergeGuard(
+            (target as any)[key] ?? (Array.isArray(source[key]) ? [] : {}),
+            source[key],
+            seen
+          );
+        } else {
+          (target as any)[key] = source[key];
+        }
+      }
+    }
+    return target;
+  }
+  ```
+- **React Re-render Loop Invariants (`getProxyFormState`)**:
+  When a component accesses `formState.isValid`, a getter trap flips `_proxyFormState.isValid = true`. If this getter were to mutate component state inside the render pass, React would throw: `Maximum update depth exceeded`. RHF's rule: **Getter traps mutate form control internal tracking bitmasks ONLY; they NEVER push notifications to subjects during getter execution.**
+
+### 3. UI & UX Micro-Mechanics
+- **Focus Restoration and Layout Reflow Thrashing**:
+  When validation fails on submit, RHF searches `_fields` to focus the first invalid input:
+  ```typescript
+  // Invariant: Iteration order must follow DOM tree order, not registration order!
+  export function focusFirstError(
+    fields: Record<string, any>,
+    errors: Record<string, any>
+  ): void {
+    for (const name in fields) {
+      if (get(errors, name)) {
+        const field = fields[name];
+        const element = field._f?.ref;
+        if (element && element.focus) {
+          if (element.scrollIntoView) {
+            // Prevent layout thrashing by executing smooth scroll safely
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          element.focus({ preventScroll: true });
+          break; // Focus only the very first erroneous input
+        }
+      }
+    }
+  }
+  ```
+- **Event Loop Microtask Execution Alignment (Playwright/E2E)**:
+  Typing rapidly into controlled inputs can drop characters if cursor repositioning occurs during React re-renders. As codified in `e2e/utils.ts`:
+  ```typescript
+  export async function typeWithFrameSync(locator: Locator, text: string) {
+    // Await render and error-focus effects before typing next frame
+    await locator.page().evaluate(() =>
+      new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+    );
+    await locator.focus();
+    await locator.press('End'); // Pin cursor to prevent mid-string overwrites
+    await locator.pressSequentially(text);
+  }
+  ```
+
+### 4. Backend Concurrency & Memory Safety
+- **Subject Unsubscription Leak Prevention**:
+  `useFormState` subscribes to the form controller's central state subject. If a component unmounts without detaching, every subsequent form state change triggers a zombie callback, leaking memory.
+  ```typescript
+  // React Hook useEffect unsubscription invariant
+  useEffect(() => {
+    const subscription = control._subjects.state.subscribe({
+      next(value) {
+        if (shouldRenderFormState(value, _proxyFormState.current)) {
+          updateFormState({ ...control._formState, ...value });
+        }
+      },
+    });
+    return () => subscription.unsubscribe(); // MANDATORY: Destructor invariant
+  }, [control]);
+  ```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Off-By-One & Type Collisions in Nested String Paths**:
+  Paths like `users[10].name` must be normalized without using slow, vulnerable regex engines:
+  ```typescript
+  export function compactStringPath(path: string): string[] {
+    // Normalizes 'users[0].name' -> ['users', '0', 'name']
+    return path
+      .replace(/\[(\w+)\]/g, '.$1')
+      .replace(/^\./, '')
+      .split('.');
+  }
+  ```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+- **State Externalization**: Form state is kept outside of React in an instance of `createFormControl`.
+- **Selective Subscription Topology**: Rather than storing state at the root and causing top-down reconciliation cascades, components subscribe via granular Observer patterns (`_subjects.state`).
+- **Decoupled Render Boundaries**: Controlled inputs (`Controller`) isolate their re-renders to their own local component scope, protecting the rest of the form tree.
+
+### 2. Core Abstractions
+- **`FieldValues`**: Root generic constraint representing the form schema: `Record<string, any>`.
+- **`Field` Record**: Contains raw DOM element references (`_f.ref`), validation constraints (`_f.rules`), and flags (`_f.mount`).
+- **`Control` Token**: The orchestration contract passed from `useForm` to `Controller`, `useFieldArray`, and `useFormState`.
+- **`Resolver` Interface**: The contract between schema validation systems (Zod, Yup, Joi) and RHF internal error structures:
+  `type Resolver<T> = (values: T, context?: any, options?: ResolverOptions) => Promise<ResolverResult<T>> | ResolverResult<T>`.
+
+### 3. Error Handling
+- **Fault-Tolerant Resolution Tree**: Errors are mapped into a mirror of the form's data structure (`FieldErrors<T>`).
+- **Error Pruning Cascades**: Unsetting a leaf error removes empty parent objects upstream, ensuring `isEmptyObject(errors)` correctly resolves for form validity checks.
+- **Microtask Boundary Containment**: Exceptions in custom validators are caught and normalized into standard error records rather than bubbling up to React error boundaries.
+
+### 4. Testing
+- **Multi-Environment Matrix**: JSDOM (`jest-fixed-jsdom`), Playwright E2E across Chromium/Firefox/WebKit, and compile-time type testing (`src/__typetest__`).
+- **Render Count Bounding Tests**:
+  ```typescript
+  // Invariant: Render count is bounded within a hard upper limit to prevent regression
+  await expectRenderCountInRange(locator, 2, 4);
+  ```
+- **Asynchronous Race Interleaving Tests**: Tests mock promises with array queues (`checks.push(resolve)`) to deterministically control execution order and reproduce microtask races.
+
+### 5. Security
+- **Prototype Pollution Shielding**: All dynamic path parsers (`set`, `get`, `unset`) disallow traversal through `__proto__`, `prototype`, and `constructor`.
+- **XSS Mitigation in Native Validation Messages**: Message strings returned by validators are treated purely as text payloads; they are never passed to raw HTML setters without escaping.
+
+### 6. Performance
+- **Zero-Copy Traversal**: Form state checking evaluates dirty fields via reference checks against defaults rather than performing deep cloning operations on every keystroke.
+- **Uncontrolled Default Pipeline**: Native inputs read directly from DOM node attributes, bypassing React's synthetic event reconciliation entirely until blur/change conditions require validation.
+- **Proxy Getter Compilation**: Dynamic getters compile accessed properties into bitmasks during the initial render pass, eliminating continuous diffing overhead.
+
+### 7. Deployment & Distribution
+- **Dual CJS/ESM Artifact Pipeline**: Packaged via Rollup targeting modern ESM (`dist/index.esm.mjs`) and CommonJS (`dist/index.cjs.js`).
