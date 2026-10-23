@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:42:34.133Z",
+  "last_updated": "2026-10-23T06:49:58.528Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10579,8 +10579,8 @@
       "slug": "fastapi-fastapi",
       "platform": "github",
       "source_url": "https://github.com/fastapi/fastapi",
-      "source_version": "b2ce629a",
-      "content_hash": "790fc0bb4c745b090effdcc2eaedff91a9e7a5d069ef8a94e9dc1f0d9999ef93",
+      "source_version": "69ddc2ba",
+      "content_hash": "98601ea6e30448df9e2cd3de08e2de09e9ffb431505e507f34d09e9fa3d34953",
       "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
@@ -10653,6 +10653,11 @@
           "number": 3530,
           "title": "Defensive Schema Mutation Isolation during Generator Reflection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3794,
+          "title": "🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10660,7 +10665,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:56:48.818Z",
+      "verified_at": "2026-10-23T06:49:43.518Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50106,8 +50111,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "be55273c",
-      "content_hash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
+      "source_version": "9e052d7c",
+      "content_hash": "99ab27294004ca6d7aa3a0a4c83a8e189d7bc5520108571ddc17623f3d0d6cb0",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -50130,6 +50135,11 @@
           "number": 3524,
           "title": "oci): support custom credential providers (#5502)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3796,
+          "title": "fix!: simplify image layer caching to avoid concurrency issues (#5495)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50137,7 +50147,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:43:03.279Z",
+      "verified_at": "2026-10-23T06:49:54.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58765,8 +58775,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "c133b946",
-      "content_hash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
+      "source_version": "0d546854",
+      "content_hash": "0a48af2bf48e9e30ac5253efcaf6d620fe438de099196d4f4de23878d59837d8",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -58799,6 +58809,11 @@
           "number": 3510,
           "title": "compile): keep the compile workspace root absolute (#6376) (#6387)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3797,
+          "title": "gateway): tolerate non-string \"type\" values in client history (#6306)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58806,7 +58821,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:43:11.869Z",
+      "verified_at": "2026-10-23T06:49:58.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63266,14 +63281,19 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "683c8692",
-      "content_hash": "5443a72eeab964628ca68c0ec9ec4c97d1fcf00a103fc6e9acd9c7443a33317d",
+      "source_version": "d09972b8",
+      "content_hash": "091874c1198f18d51a0c15a33df4dbbed79e5f97df429ebf281deb45e4e5b815",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
         {
           "number": 3004,
           "title": "examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3795,
+          "title": "oxlint.config): enable 'no-debugging-utils', 'no-dom-import', 'no-manual-cleanup",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -63282,7 +63302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:43:02.278Z",
+      "verified_at": "2026-10-23T06:49:47.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113117,6 +113137,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:42:34.124Z"
+    },
+    "rule-3794": {
+      "learning_id": "rule-3794",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3794,
+      "title": "🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598)",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "69ddc2ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:49:43.518Z"
+    },
+    "rule-3795": {
+      "learning_id": "rule-3795",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3795,
+      "title": "oxlint.config): enable 'no-debugging-utils', 'no-dom-import', 'no-manual-cleanup",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "d09972b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:49:47.603Z"
+    },
+    "rule-3796": {
+      "learning_id": "rule-3796",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3796,
+      "title": "fix!: simplify image layer caching to avoid concurrency issues (#5495)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "9e052d7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:49:54.990Z"
+    },
+    "rule-3797": {
+      "learning_id": "rule-3797",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3797,
+      "title": "gateway): tolerate non-string \"type\" values in client history (#6306)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "0d546854",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:49:58.517Z"
     }
   },
   "aliases": {

@@ -4481,3 +4481,7 @@
 | `CYCLE-20261023-JNYW` | `2026-10-23T06:36:15.512Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3791` | Yes (`21d9d299...`) |
 | `CYCLE-20261023-JT93` | `2026-10-23T06:36:22.359Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3792` | Yes (`689785b4...`) |
 | `CYCLE-20261023-RS5A` | `2026-10-23T06:42:34.174Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3793` | Yes (`76a90574...`) |
+| `CYCLE-20261023-0ZHK` | `2026-10-23T06:49:43.592Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3794` | Yes (`98601ea6...`) |
+| `CYCLE-20261023-12N3` | `2026-10-23T06:49:47.679Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3795` | Yes (`091874c1...`) |
+| `CYCLE-20261023-18BX` | `2026-10-23T06:49:55.053Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3796` | Yes (`99ab2729...`) |
+| `CYCLE-20261023-1B1U` | `2026-10-23T06:49:58.578Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3797` | Yes (`0a48af2b...`) |

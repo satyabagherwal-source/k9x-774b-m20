@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
-> **Source Version**: `683c8692`  
+> **Source Version**: `d09972b8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:43:02.129Z  
+> **Timestamp**: 2026-10-23T06:49:47.326Z  
 > **Learning ID**: `learn-github-tanstack-query`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:43:00.981Z  
+> **Harvest Timestamp**: 2026-10-23T06:49:46.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 50463 stars
+- **Stars / Engagement**: 50464 stars
 
 ---
 
@@ -144,7 +144,7 @@ class LifecycleContractConsumer extends LitElement {
           payload: ${query.data?.payload ?? 'none'}
         </div>
         <div data-testid="contract-error">
-          error: ${query.error ? String(query.error) : 'none'}
+          error: ${query.error ? query.error.message : 'none'}
         </div>
       `
     } catch (error) {
@@ -1235,96 +1235,573 @@ export const fetchUser = async ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35d21b2d` (2026-10-20)
-**Commit Message**: fix(examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock so the failing mutation rolls back in 'onError' (#12173)
+### Incident Patch 1: `b923947b` (2026-10-22)
+**Commit Message**: chore(oxlint.config): enable 'no-debugging-utils', 'no-dom-import', 'no-manual-cleanup' and 'no-render-in-lifecycle' from 'eslint-plugin-testing-library' (#12273)
 
-**File**: `examples/angular/optimistic-updates/src/app/interceptor/mock-api.interceptor.ts` (modified, +14/-5)
+**File**: `oxlint.config.ts` (modified, +4/-0)
 ```diff
-@@ -5,8 +5,8 @@
-  * - POST: Adds a new task to sessionStorage.
-  * Simulated responses include a delay to mimic network latency.
-  */
--import { HttpResponse } from '@angular/common/http'
--import { delay, of } from 'rxjs'
-+import { HttpErrorResponse, HttpResponse } from '@angular/common/http'
-+import { delay, of, switchMap, throwError, timer } from 'rxjs'
- import type {
-   HttpEvent,
-   HttpHandlerFn,
-@@ -47,9 +47,18 @@ export const mockInterceptor: HttpInterceptorFn = (
-     }
-   }
-   if (req.url === '/api/tasks-wrong-url') {
--    return respondWith(500, {
--      status: 'error',
--    })
-+    return timer(1000).pipe(
-+      switchMap(() =>
-+        throwError(
-+          () =>
-+            new HttpErrorResponse({
-+              status: 500,
-+              url: req.url,
-+              error: { status: 'error' },
-+            }),
-+        ),
-+      ),
-+    )
-   }
- 
-   return next(req)
+@@ -292,6 +292,10 @@ export default defineConfig({
+         // `toHaveTextContent` matches substrings, so exact `textContent` checks stay as `toBe`
+         'jest-dom/prefer-to-have-text-content': 'off',
+         ...pluginTestingLibrary.configs['flat/dom'].rules,
++        'testing-library/no-debugging-utils': 'error',
++        'testing-library/no-dom-import': 'error',
++        'testing-library/no-manual-cleanup': 'error',
++        'testing-library/no-render-in-lifecycle': 'error',
+         // Tests name the render result `rendered` and query through it
+         'testing-library/prefer-screen-queries': 'off',
+         'vitest/consistent-each-for': [
 ```
 
 ---
 
-### Incident Patch 2: `48b599fa` (2026-10-20)
-**Commit Message**: refactor(examples/angular/optimistic-updates): rename the 'onError' 'context' parameter to 'onMutateResult' and prefix the unused ones (#12174)
+### Incident Patch 2: `0064fe88` (2026-10-22)
+**Commit Message**: test(query-codemods): replace 'async' arrow functions without 'await' with 'Promise.resolve' in the fixtures (#12286)
 
-**File**: `examples/angular/optimistic-updates/src/app/services/tasks.service.ts` (modified, +6/-3)
+**File**: `packages/query-codemods/src/v4/__testfixtures__/default-import.input.tsx` (modified, +4/-4)
 ```diff
-@@ -70,9 +70,12 @@ export class TasksService {
- 
-         return previousTodos
-       },
--      onError: (err, variables, context) => {
--        if (context) {
--          this.#queryClient.setQueryData<Array<string>>(['tasks'], context)
-+      onError: (_err, _variables, onMutateResult) => {
-+        if (onMutateResult) {
-+          this.#queryClient.setQueryData<Array<string>>(
-+            ['tasks'],
-+            onMutateResult,
-+          )
-         }
-       },
-       // Always refetch after error or success:
+@@ -27,10 +27,10 @@ export const Examples = () => {
+   queryClient.getQueryDefaults('todos')
+   queryClient.getQueryState('todos')
+   queryClient.isFetching('todos')
+-  queryClient.setMutationDefaults('todos', { mutationFn: async () => null })
++  queryClient.setMutationDefaults('todos', { mutationFn: () => Promise.resolve(null) })
+   queryClient.setQueriesData('todos', () => null)
+   queryClient.setQueryData('todos', () => null)
+-  queryClient.setQueryDefaults('todos', { queryFn: async () => null })
++  queryClient.setQueryDefaults('todos', { queryFn: () => Promise.resolve(null) })
+   queryClient.cancelQueries('todos')
+   queryClient.fetchInfiniteQuery('todos')
+   queryClient.fetchQuery('todos')
+@@ -48,11 +48,11 @@ export const Examples = () => {
+   useQueryClient().getQueryState('todos')
+   useQueryClient().isFetching('todos')
+   useQueryClient().setMutationDefaults('todos', {
+-    mutationFn: async () => null,
++    mutationFn: () => Promise.resolve(null),
+   })
+   useQueryClient().setQueriesData('todos', () => null)
+   useQueryClient().setQueryData('todos', () => null)
+-  useQueryClient().setQueryDefaults('todos', { queryFn: async () => null })
++  useQueryClient().setQueryDefaults('todos', { queryFn: () => Promise.resolve(null) })
+   useQueryClient().cancelQueries('todos')
+   useQueryClient().fetchInfiniteQuery('todos')
+   useQueryClient().fetchQuery('todos')
+```
+
+**File**: `packages/query-codemods/src/v4/__testfixtures__/default-import.output.tsx` (modified, +4/-4)
+```diff
+@@ -29,10 +29,10 @@ export const Examples = () => {
+   queryClient.getQueryDefaults(['todos'])
+   queryClient.getQueryState(['todos'])
+   queryClient.isFetching(['todos'])
+-  queryClient.setMutationDefaults(['todos'], { mutationFn: async () => null })
++  queryClient.setMutationDefaults(['todos'], { mutationFn: () => Promise.resolve(null) })
+   queryClient.setQueriesData(['todos'], () => null)
+   queryClient.setQueryData(['todos'], () => null)
+-  queryClient.setQueryDefaults(['todos'], { queryFn: async () => null })
++  queryClient.setQueryDefaults(['todos'], { queryFn: () => Promise.resolve(null) })
+   queryClient.cancelQueries(['todos'])
+   queryClient.fetchInfiniteQuery(['todos'])
+   queryClient.fetchQuery(['todos'])
+@@ -50,11 +50,11 @@ export const Examples = () => {
+   useQueryClient().getQueryState(['todos'])
+   useQueryClient().isFetching(['todos'])
+   useQueryClient().setMutationDefaults(['todos'], {
+-    mutationFn: async () => null,
++    mutationFn: () => Promise.resolve(null),
+   })
+   useQueryClient().setQueriesData(['todos'], () => null)
+   useQueryClient().setQueryData(['todos'], () => null)
+-  useQueryClient().setQueryDefaults(['todos'], { queryFn: async () => null })
++  useQueryClient().setQueryDefaults(['todos'], { queryFn: () => Promise.resolve(null) })
+   useQueryClient().cancelQueries(['todos'])
+   useQueryClient().fetchInfiniteQuery(['todos'])
+   useQueryClient().fetchQuery(['todos'])
+```
+
+**File**: `packages/query-codemods/src/v4/__testfixtures__/named-import.input.tsx` (modified, +4/-4)
+```diff
+@@ -27,10 +27,10 @@ export const Examples = () => {
+   queryClient.getQueryDefaults('todos')
+   queryClient.getQueryState('todos')
+   queryClient.isFetching('todos')
+-  queryClient.setMutationDefaults('todos', { mutationFn: async () => null })
++  queryClient.setMutationDefaults('todos', { mutationFn: () => Promise.resolve(null) })
+   queryClient.setQueriesData('todos', () => null)
+   queryClient.setQueryData('todos', () => null)
+-  queryClient.setQueryDefaults('todos', { queryFn: async () => null })
++  queryClient.setQueryDefaults('todos', { queryFn: () => Promise.resolve(null) })
+   queryClient.cancelQueries('todos')
+   queryClient.fetchInfiniteQuery('todos')
+   queryClient.fetchQuery('todos')
+@@ -48,12 +48,12 @@ export const Examples = () => {
+   useRenamedQueryClient().getQueryState('todos')
+   useRenamedQueryClient().isFetching('todos')
+   useRenamedQueryClient().setMutationDefaults('todos', {
+-    mutationFn: async () => null,
++    mutationFn: () => Promise.resolve(null),
+   })
+   useRenamedQueryClient().setQueriesData('todos', () => null)
+   useRenamedQueryClient().setQueryData('todos', () => null)
+   useRenamedQueryClient().setQueryDefaults('todos', {
+-    queryFn: async () => null,
++    queryFn: () => Promise.resolve(null),
+   })
+   useRenamedQueryClient().cancelQueries('todos')
+   useRenamedQueryClient().fetchInfiniteQuery('todos')
+```
+
+**File**: `packages/query-codemods/src/v4/__testfixtures__/named-import.output.tsx` (modified, +4/-4)
+```diff
+@@ -29,10 +29,10 @@ export const Examples = () => {
+   queryClient.getQueryDefaults(['todos'])
+   queryClient.getQueryState(['todos'])
+   queryClient.isFetching(['todos'])
+-  queryClient.setMutationDefaults(['todos'], { mutationFn: async () => null })
++  queryClient.setMutationDefaults(['todos'], { mutationFn: () => Promise.resolve(null) })
+   queryClient.setQueriesData(['todos'], () => null)
+   queryClient.setQueryData(['todos'], () => null)
+-  queryClient.setQueryDefaults(['todos'], { queryFn: async () => null })
++  queryClient.setQueryDefaults(['todos'], { queryFn: () => Promise.resolve(null) })
+   queryClient.cancelQueries(['todos'])
+   queryClient.fetchInfiniteQuery(['todos'])
+   queryClient.fetchQuery(['todos'])
+@@ -50,12 +50,12 @@ export const Examples = () => {
+   useRenamedQueryClient().getQueryState(['todos'])
+   useRenamedQueryClient().isFetching(['todos'])
+   useRenamedQueryClient().setMutationDefaults(['todos'], {
+-    mutationFn: async () => null,
++    mutationFn: () => Promise.resolve(null),
+   })
+   useRenamedQueryClient().setQueriesData(['todos'], () => null)
+   useRenamedQueryClient().setQueryData(['todos'], () => null)
+   useRenamedQueryClient().setQueryDefaults(['todos'], {
+-    queryFn: async () => null,
++    queryFn: () => Promise.resolve(null),
+   })
+   useRenamedQueryClient().cancelQueries(['todos'])
+   useRenamedQueryClient().fetchInfiniteQuery(['todos'])
+```
+
+**File**: `packages/query-codemods/src/v4/__testfixtures__/namespaced-import.input.tsx` (modified, +4/-4)
+```diff
+@@ -17,10 +17,10 @@ export const Examples = () => {
+   queryClient.getQueryDefaults('todos')
+   queryClient.getQueryState('todos')
+   queryClient.isFetching('todos')
+-  queryClient.setMutationDefaults('todos', { mutationFn: async () => null })
++  queryClient.setMutationDefaults('todos', { mutationFn: () => Promise.resolve(null) })
+   queryClient.setQueriesData('todos', () => null)
+   queryClient.setQueryData('todos', () => null)
+-  queryClient.setQueryDefaults('todos', { queryFn: async () => null })
++  queryClient.setQueryDefaults('todos', { queryFn: () => Promise.resolve(null) })
+   queryClient.cancelQueries('todos')
+   queryClient.fetchInfiniteQuery('todos')
+   queryClient.fetchQuery('todos')
+@@ -38,12 +38,12 @@ export const Examples = () => {
+   RQ.useQueryClient().getQueryState('todos')
+   RQ.useQueryClient().isFetching('todos')
+   RQ.useQueryClient().setMutationDefaults('todos', {
+-    mutationFn: async () => null,
++    mutationFn: () => Promise.resolve(null),
+   })
+   RQ.useQueryClient().setQueriesData('todos', () => null)
+   RQ.useQueryClient().setQueryData('todos', () => null)
+   RQ.useQueryClient().setQueryDefaults('todos', {
+-    queryFn: async () => null,
++    queryFn: () => Promise.resolve(null),
+   })
+   RQ.useQueryClient().cancelQueries('todos')
+   RQ.useQueryClient().fetchInfiniteQuery('todos')
+```
+
+**File**: `packages/query-codemods/src/v4/__testfixtures__/namespaced-import.output.tsx` (modified, +4/-4)
+```diff
+@@ -19,10 +19,10 @@ export const Examples = () => {
+   queryClient.getQueryDefaults(['todos'])
+   queryClient.getQueryState(['todos'])
+   queryClient.isFetching(['todos'])
+-  queryClient.setMutationDefaults(['todos'], { mutationFn: async () => null })
++  queryClient.setMutationDefaults(['todos'], { mutationFn: () => Promise.resolve(null) })
+   queryClient.setQueriesData(['todos'], () => null)
+   queryClient.setQueryData(['todos'], () => null)
+-  queryClient.setQueryDefaults(['todos'], { queryFn: async () => null })
++  queryClient.setQueryDefaults(['todos'], { queryFn: () => Promise.resolve(null) })
+   queryClient.cancelQueries(['todos'])
+   queryClient.fetchInfiniteQuery(['todos'])
+   queryClient.fetchQuery(['todos'])
+@@ -40,12 +40,12 @@ export const Examples = () => {
+   RQ.useQueryClient().getQueryState(['todos'])
+   RQ.useQueryClient().isFetching(['todos'])
+   RQ.useQueryClient().setMutationDefaults(['todos'], {
+-    mutationFn: async () => null,
++    mutationFn: () => Promise.resolve(null),
+   })
+   RQ.useQueryClient().setQueriesData(['todos'], () => null)
+   RQ.useQueryClient().setQueryData(['todos'], () => null)
+   RQ.useQueryClient().setQueryDefaults(['todos'], {
+-    queryFn: async () => null,
++    queryFn: () => Promise.resolve(null),
+   })
+   RQ.useQueryClient().cancelQueries(['todos'])
+   RQ.useQueryClient().fetchInfiniteQuery(['todos'])
+```
+
+**File**: `packages/query-codemods/src/v5/remove-overloads/__testfixtures__/bug-reports.input.tsx` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ export function useDetailsContainsIdentifierAsThirdArgument({ groupId }: { group
+ export function useWhatever({ thing }: { thing: string }) {
+   return useQuery(
+     ['some-string', someVar],
+-    async () => 'foo',
++    () => Promise.resolve('foo'),
+     { enabled: Boolean(thing) },
+   );
+ }
+```
+
+**File**: `packages/query-codemods/src/v5/remove-overloads/__testfixtures__/bug-reports.output.tsx` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ export function useDetailsContainsIdentifierAsThirdArgument({ groupId }: { group
+ export function useWhatever({ thing }: { thing: string }) {
+   return useQuery({
+     queryKey: ['some-string', someVar],
+-    queryFn: async () => 'foo',
++    queryFn: () => Promise.resolve('foo'),
+     enabled: Boolean(thing)
+   });
+ }
 ```
 
 ---
 
-### Incident Patch 3: `c87c0eaf` (2026-10-20)
-**Commit Message**: fix(examples/angular/infinite-query-with-max-pages): disable the previous page button while fetching the previous page instead of the next page (#12167)
+### Incident Patch 3: `f5fc7ac9` (2026-10-22)
+**Commit Message**: chore(oxlint.config): enable 'vitest/require-top-level-describe' and move top-level tests and hooks into a 'describe' (#12265)
 
-**File**: `examples/angular/infinite-query-with-max-pages/src/app/components/example.component.ts` (modified, +1/-1)
+**File**: `oxlint.config.ts` (modified, +1/-0)
 ```diff
-@@ -42,7 +42,7 @@ export class ExampleComponent {
-   )
+@@ -329,6 +329,7 @@ export default defineConfig({
+         'vitest/require-hook': 'error',
+         'vitest/require-mock-type-parameters': 'error',
+         'vitest/require-to-throw-message': 'error',
++        'vitest/require-top-level-describe': 'error',
+         'vitest/valid-expect': 'off',
+         'vitest-js/no-conditional-in-test': 'error',
+         'vitest-js/padding-around-after-all-blocks': 'error',
+```
+
+**File**: `packages/angular-query-experimental/src/__tests__/query-options.test-d.ts` (modified, +139/-139)
+```diff
+@@ -69,195 +69,195 @@ describe('queryOptions', () => {
+       InitialDataFunction<string> | string | undefined
+     >()
+   })
+-})
+-
+-it('should work when passed to injectQuery', () => {
+-  const key = queryKey()
+-  const options = queryOptions({
+-    queryKey: key,
+-    queryFn: () => Promise.resolve(5),
+-  })
  
-   readonly previousButtonDisabled = computed(
--    () => !this.#hasPreviousPage() || this.#isFetchingNextPage(),
-+    () => !this.#hasPreviousPage() || this.#isFetchingPreviousPage(),
-   )
-   readonly previousButtonText = computed(() =>
-     this.#isFetchingPreviousPage()
+-  const { data } = injectQuery(() => options)
+-  expectTypeOf(data).toEqualTypeOf<Signal<number | undefined>>()
+-})
++  it('should work when passed to injectQuery', () => {
++    const key = queryKey()
++    const options = queryOptions({
++      queryKey: key,
++      queryFn: () => Promise.resolve(5),
++    })
+ 
+-it('should work when passed to fetchQuery', () => {
+-  const key = queryKey()
+-  const options = queryOptions({
+-    queryKey: key,
+-    queryFn: () => Promise.resolve(5),
++    const { data } = injectQuery(() => options)
++    expectTypeOf(data).toEqualTypeOf<Signal<number | undefined>>()
+   })
+ 
+-  // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+-  const data = new QueryClient().fetchQuery(options)
+-  assertType<Promise<number>>(data)
+-})
++  it('should work when passed to fetchQuery', () => {
++    const key = queryKey()
++    const options = queryOptions({
++      queryKey: key,
++      queryFn: () => Promise.resolve(5),
++    })
+ 
+-it('should work when passed to query', () => {
+-  const options = queryOptions({
+-    queryKey: ['key'],
+-    queryFn: () => Promise.resolve(5),
++    // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
++    const data = new QueryClient().fetchQuery(options)
++    assertType<Promise<number>>(data)
+   })
+ 
+-  const data = new QueryClient().query(options)
+-  assertType<Promise<number>>(data)
+-})
++  it('should work when passed to query', () => {
++    const options = queryOptions({
++      queryKey: ['key'],
++      queryFn: () => Promise.resolve(5),
++    })
+ 
+-it('should work when passed to query with select', () => {
+-  const options = queryOptions({
+-    queryKey: ['key'],
+-    queryFn: () => Promise.resolve(5),
+-    select: (data) => data.toString(),
++    const data = new QueryClient().query(options)
++    assertType<Promise<number>>(data)
+   })
+ 
+-  const data = new QueryClient().query(options)
+-  assertType<Promise<string>>(data)
+-})
++  it('should work when passed to query with select', () => {
++    const options = queryOptions({
++      queryKey: ['key'],
++      queryFn: () => Promise.resolve(5),
++      select: (data) => data.toString(),
++    })
+ 
+-it('should work when passed to query with enabled: false', () => {
+-  const options = queryOptions({
+-    queryKey: ['key'],
+-    queryFn: () => Promise.resolve(5),
+-    enabled: false,
++    const data = new QueryClient().query(options)
++    assertType<Promise<string>>(data)
+   })
+ 
+-  const data = new QueryClient().query(options)
+-  assertType<Promise<number>>(data)
+-})
++  it('should work when passed to query with enabled: false', () => {
++    const options = queryOptions({
++      queryKey: ['key'],
++      queryFn: () => Promise.resolve(5),
++      enabled: false,
++    })
+ 
+-it('should work when passed to query with skipToken', () => {
+-  const options = queryOptions({
+-    queryKey: ['key'],
+-    queryFn: skipToken,
++    const data = new QueryClient().query(options)
++    assertType<Promise<number>>(data)
+   })
+ 
+-  const data = new QueryClient().query(options)
+-  assertType<Promise<unknown>>(data)
+-})
++  it('should work when passed to query with skipToken', () => {
++    const options = queryOptions({
++      queryKey: ['key'],
++      queryFn: skipToken,
++    })
+ 
+-it('should tag the queryKey with the result type of the QueryFn', () => {
+-  const key = queryKey()
+-  const { queryKey: tagged } = queryOptions({
+-    queryKey: key,
+-    queryFn: () => Promise.resolve(5),
++    const data = new QueryClient().query(options)
++    assertType<Promise<unknown>>(data)
+   })
+-  assertType<number>(tagged[dataTagSymbol])
+-})
+ 
+-it('should tag the queryKey even if no promise is returned', () => {
+-  const key = queryKey()
+-  const { queryKey: tagged } = queryOptions({
+-    queryKey: key,
+-    queryFn: () => 5,
++  it('should tag the queryKey with the result type of the QueryFn', () => {
++    const key = queryKey()
++    const { queryKey: tagged } = queryOptions({
++      queryKey: key,
++      queryFn: () => Promise.resolve(5),
++    })
++    assertType<number>(tagged[dataTagSymbol])
+   })
+-  assertType<number>(tagged[dataTagSymbol])
+-})
+ 
+-it('should tag the queryKey with unknown if there is no queryFn', () => {
+-  const key = queryKey()
+-  const { queryKey: tagged } = queryOptions({
+-    queryKey: key,
++  it('should tag the queryKey even if no promise is returned', () => {
++    const key = queryKey()
++    const { queryKey: tagged } = queryOptions({
++      queryKey: key,
++      queryFn: () => 5,
++    })
++    assertType<number>(tagged[dataTagSymbol])
+   })
+ 
+-  assertType<unknown>(tagged[dataTagSymbol])
+-})
++  it('should tag the queryKey with unknown if there is no
+```
+
+**File**: `packages/lit-query/src/__tests__/BaseController.test.ts` (modified, +4/-4)
+```diff
+@@ -16,10 +16,6 @@ import type { ReactiveControllerHost } from 'lit'
+ 
+ const providerTagName = generateElementName()
+ 
+-beforeAll(() => {
+-  customElements.define(providerTagName, QueryClientProvider)
+-})
+-
+ class RecordingController extends BaseController<string> {
+   readonly lifecycle: Array<string> = []
+ 
+@@ -48,6 +44,10 @@ describe('BaseController', () => {
+   let queryClient: QueryClient
+   let container: HTMLElement
+ 
++  beforeAll(() => {
++    customElements.define(providerTagName, QueryClientProvider)
++  })
++
+   beforeEach(() => {
+     vi.useFakeTimers()
+     queryClient = new QueryClient()
+```
+
+**File**: `packages/lit-query/src/__tests__/QueryClientProvider.test.ts` (modified, +4/-4)
+```diff
+@@ -21,14 +21,14 @@ import { generateElementName } from './utils.js'
+ 
+ const tagName = generateElementName()
+ 
+-beforeAll(() => {
+-  customElements.define(tagName, QueryClientProvider)
+-})
+-
+ describe('QueryClientProvider/context', () => {
+   let queryClient: QueryClient
+   let container: HTMLElement
+ 
++  beforeAll(() => {
++    customElements.define(tagName, QueryClientProvider)
++  })
++
+   beforeEach(() => {
+     vi.useFakeTimers()
+     queryClient = new QueryClient()
+```
+
+**File**: `packages/lit-query/src/__tests__/createInfiniteQueryController.test.ts` (modified, +4/-4)
+```diff
+@@ -19,14 +19,14 @@ import type { Mock } from 'vitest'
+ 
+ const providerTagName = generateElementName()
+ 
+-beforeAll(() => {
+-  customElements.define(providerTagName, QueryClientProvider)
+-})
+-
+ describe('createInfiniteQueryController', () => {
+   let queryClient: QueryClient
+   let container: HTMLElement
+ 
++  beforeAll(() => {
++    customElements.define(providerTagName, QueryClientProvider)
++  })
++
+   beforeEach(() => {
+     vi.useFakeTimers()
+     queryClient = new QueryClient()
+```
+
+**File**: `packages/lit-query/src/__tests__/createMutationController.test.ts` (modified, +4/-4)
+```diff
+@@ -17,14 +17,14 @@ import type { MutationResultAccessor } from '../createMutationController.js'
+ 
+ const providerTagName = generateElementName()
+ 
+-beforeAll(() => {
+-  customElements.define(providerTagName, QueryClientProvider)
+-})
+-
+ describe('createMutationController', () => {
+   let queryClient: QueryClient
+   let container: HTMLElement
+ 
++  beforeAll(() => {
++    customElements.define(providerTagName, QueryClientProvider)
++  })
++
+   beforeEach(() => {
+     vi.useFakeTimers()
+     queryClient = new QueryClient()
+```
+
+**File**: `packages/lit-query/src/__tests__/createQueriesController.test.ts` (modified, +4/-4)
+```diff
+@@ -19,14 +19,14 @@ import type { QueryObserverResult, QueryStatus } from '@tanstack/query-core'
+ 
+ const providerTagName = generateElementName()
+ 
+-beforeAll(() => {
+-  customElements.define(providerTagName, QueryClientProvider)
+-})
+-
+ describe('createQueriesController', () => {
+   let queryClient: QueryClient
+   let container: HTMLElement
+ 
++  beforeAll(() => {
++    customElements.define(providerTagName, QueryClientProvider)
++  })
++
+   beforeEach(() => {
+     vi.useFakeTimers()
+     queryClient = new QueryClient()
+```
+
+**File**: `packages/lit-query/src/__tests__/createQueryController.test.ts` (modified, +4/-4)
+```diff
+@@ -17,14 +17,14 @@ import type { QueryResultAccessor } from '../createQueryController.js'
+ 
+ const providerTagName = generateElementName()
+ 
+-beforeAll(() => {
+-  customElements.define(providerTagName, QueryClientProvider)
+-})
+-
+ describe('createQueryController', () => {
+   let queryClient: QueryClient
+   let container: HTMLElement
+ 
++  beforeAll(() => {
++    customElements.define(providerTagName, QueryClientProvider)
++  })
++
+   beforeEach(() => {
+     vi.useFakeTimers()
+     queryClient = new QueryClient()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12174** (2026-10-20): refactor(examples/angular/optimistic-updates): rename the 'onError' 'context' parameter to 'onMutateResult' and prefix the unused ones (@sukvvon)
-- **PR #12173** (2026-10-20): fix(examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock so the failing mutation rolls back in 'onError' (@sukvvon)
-- **PR #12172** (2026-10-20): refactor(examples/angular/basic-persister): use 'output()' instead of '@Output()', remove the unused 'QueryClient', and align the components with the basic example (@sukvvon)
-- **PR #12171** (2026-10-20): refactor(examples/angular/basic-persister): make the 'postId' input required and remove the always-true 'enabled' in 'PostComponent' (@sukvvon)
-- **PR #12169** (2026-10-20): refactor(examples/angular/query-options-from-a-service): read the cached post with the service's 'queryKey' instead of an inline key (@sukvvon)
-- **PR #12168** (2026-10-20): refactor(examples/angular/optimistic-updates): remove the unused 'clearMutation' that created a second add mutation (@sukvvon)
+- **PR #12293** (2026-10-23): test(*): rename the 'queryKey' test helper to 'createKey' since it creates keys for both queries and mutations (@sukvvon)
+- **PR #12292** (2026-10-23): test(lit-query/createQueryController): read 'queryKey' and 'signal' from the 'queryFn' context to avoid shadowing the 'queryKey' helper (@sukvvon)
+- **PR #12291** (2026-10-23): refactor(lit-query/createQueriesController): rename the per-result 'observer' in 'trackResult' to 'resultObserver' to avoid shadowing (@sukvvon)
+- **PR #12290** (2026-10-23): refactor(query-persist-client-core/createPersister): rename the 'filters' option to 'persistFilters' internally to avoid shadowing (@sukvvon)
+- **PR #12289** (2026-10-23): chore(preact-query/utils): disable 'react/exhaustive-deps' for the stable '_instance' to keep the upstream 'useSyncExternalStore' (@sukvvon)
+- **PR #12288** (2026-10-23): docs(preact-query/utils): pin the preact and React 'useSyncExternalStore' source links to the copied commits (@sukvvon)
 
 ---
 
@@ -1344,45 +1821,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock
+## X. oxlint.config): enable 'no-debugging-utils', 'no-dom-import', 'no-manual-cleanup
 
 **RULE**:
-When implementing operations in `examples/angular/optimistic-updates/src/app/interceptor/mock-api.interceptor.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `oxlint.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `35d21b2d`: examples/angular/optimistic-updates): throw an 'HttpErrorResponse' from the mock so the failing mutation rolls back in 'onError' (#12173). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b923947b`: oxlint.config): enable 'no-debugging-utils', 'no-dom-import', 'no-manual-cleanup' and 'no-render-in-lifecycle' from 'eslint-plugin-testing-library' (#12273). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/angular/optimistic-updates/src/app/interceptor/mock-api.interceptor.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `oxlint.config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http'
-import { delay, of, switchMap, throwError, timer } from 'rxjs'
-    return timer(1000).pipe(
-      switchMap(() =>
-        throwError(
-          () =>
-            new HttpErrorResponse({
-              status: 500,
-              url: req.url,
-              error: { status: 'error' },
-            }),
-        ),
-      ),
-    )
+        'testing-library/no-debugging-utils': 'error',
+        'testing-library/no-dom-import': 'error',
+        'testing-library/no-manual-cleanup': 'error',
+        'testing-library/no-render-in-lifecycle': 'error',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import { HttpResponse } from '@angular/common/http'
-import { delay, of } from 'rxjs'
-    return respondWith(500, {
-      status: 'error',
-    })
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `35d21b2d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b923947b` are properly handled with clean fallback behavior.

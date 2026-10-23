@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `c133b946`  
+> **Source Version**: `0d546854`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T03:43:11.711Z  
+> **Timestamp**: 2026-10-23T06:49:58.246Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T03:43:11.707Z  
+> **Harvest Timestamp**: 2026-10-23T06:49:57.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40464 stars
+- **Stars / Engagement**: 40629 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6356** (2026-10-21): **[Bug]: Studio Markdown preview drops viking:// images and lacks internal image navigation**
+  *Symptoms*: ### Issue Origin  Inferred by an AI agent and not observed or reproduced  ### Bug Description  In the Markdown body preview, `rehype-sanitize` uses its default protocol allowlists, which do not include OpenViking's `viking` scheme. Explicit internal image `src` values and internal link `href` values are therefore stripped before the custom Markdown renderers can use them.  The existing `MarkdownImage` component already resolves resource-relative paths and downloads internal images through the authenticated content-download API, but it does not receive `onNavigate`. Consequently, bare internal images that do render cannot open the corresponding resource from the preview.  This is a code-level finding with local component-test coverage using mocked authenticated downloads. End-to-end acceptance against a live authenticated service has not been performed.  ### Steps to Reproduce  1. Place a readable JPEG at `viking://resources/demo/photo.jpg` and a Markdown document at `viking://resources/demo/article.md`. 2. Include the Markdown example below in the document. 3. Open the document body in Studio's resource preview. 4. Check the explicit internal image/link, then click or focus and press Enter on the relative image.  ```markdown ![Explicit internal image](viking://resources/demo/photo.jpg)  ![Relative internal image](./photo.jpg)  [Open image](viking://resources/demo/photo.jpg)  [![Linked image](./photo.jpg)](./target.md) ```  These are suggested live reproduction steps; live aut
+
 - **Issue #6290** (2026-10-20): **[Bug]: Experience application count is always 0 — plugin tool_status stays "running", gateway injection produces no ToolPart**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  ## Summary Experience **application count** (trajectory linkage via `collect_read_experience_uris`) stays **0 forever**, even when sessions clearly contain successful Experience body reads.  Verified locally on OpenViking **0.4.23**: 37 Experiences all return `total: 0`, while session archives show multiple `read`s of `.../memories/experiences/*.md`.  ## Environment - **OS**: macOS (arm64) - **OpenViking server**: 0.4.23 (`uv tool`, `127.0.0.1:1933`) - **Also checked**: 0.5.0 wheel — `collect_read_experience_uris` gating logic unchanged - **Clients**:   - Cursor (memory plugin capture)   - WorkBuddy / CodeBuddy (shared `openviking-transcript.mjs` / fleet adapter)  ### Steps to Reproduce  1. Install OpenViking **0.4.23** + the official memory plugin (Cursor or WorkBuddy). 2. Enable agent evolution / Experience features as usual. 3. In a new agent session, have the model **explicitly read** one Experience file, e.g. via MCP `read` / `CallDynamicTool` → `toolName: "read"` with:    - `uris: ["viking://user/<user>/memories/experiences/<name>.md"]` 4. Continue until the session is **captured and committed** (Stop / sessionEnd commit path). 5. Confirm the committed session `messages` contain a tool part whose `tool_input` includes that Experience URI. 6. Query:    ```http    GET /api/v1/agent-evolution/experiences/trajectories?experience_uri=viking://user/<user>/memories/experiences/<name>.md  ### E
-
-- **Issue #6284** (2026-10-20): **[Bug]: ResponsesProtocol.public_response raises TypeError when the upstream response contains "tools": null**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description    ```    An OpenAI-compatible upstream returned a Responses-API object containing    `"tools": null`. `public_response()` iterates it unconditionally:         if "tools" in value:            value["tools"] = [t for t in value["tools"] if ...]     `"tools" in value` is True for an explicit null, so the list comprehension raises    `TypeError: 'NoneType' object is not iterable`. That becomes    `ToolLoopError("Invalid model tool response")` and surfaces as    `ERROR: Exception in ASGI application`. The failure happens before `finish()`, so no    request_logs row is written and the error is easy to miss.  ```  ### Steps to Reproduce   ```    1. Use the Responses protocol with an upstream that emits "tools": null.    2. Send any request that reaches public_response().    3. Observe a 500/502 instead of the relayed response.  ```   ### Expected Behavior   ```    Null/malformed "tools" is treated as empty, and the response is relayed unchanged.  ```  ### Actual Behavior   ```    TypeError -> ToolLoopError("Invalid model tool response") -> ASGI 500/502;    no request log row is persisted.  ```  ### Minimal Reproducible Example  ```python from openviking_gateway.tool_protocols import ResponsesProtocol     p = ResponsesProtocol.__new__(ResponsesProtocol)    p.identifier = "resp_1"    p.public_response({"tools": None})   # TypeError: 'NoneType' object is not iterable ```  ### Error Logs  ```shell File 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,440 +1495,969 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6545bb2a` (2026-10-21)
-**Commit Message**: fix(compile): keep the compile workspace root absolute (#6376) (#6387)
+### Incident Patch 1: `d9db19ab` (2026-10-21)
+**Commit Message**: fix(gateway): tolerate non-string "type" values in client history (#6306)
 
-Sandbox subprocesses run with the compile workspace as their working directory. When storage.workspace is relative (common in Docker deployments that start the server from the state root), the task credentials path derived from sandbox_cwd resolved against that directory a second time and mkdir failed with ENOENT, so every compile task died in stage=sandbox with an opaque INTERNAL error.
+Motivation: normalize() and several request-side helpers test a client
+supplied "type" with set membership. When a history item or content block
+carries an object there (e.g. an echoed JSON Schema fragment such as
+{"type": {"type": "string"}}), this raises TypeError: unhashable type: 'dict'.
+kernel.enhance() catches it and the request proceeds with
+degradation=memory_store_failure, so recall and capture are skipped for the
+whole turn while the HTTP status stays 200.
 
-Resolve the compile workspace root at CompileSandboxManager construction, the single entry point for compile sandbox workspaces.
+Approach: add protocols.string_type(), which returns the type only when it is
+a string and "" otherwise, and use it at the client-supplied membership checks
+in protocols.py, capture.py, tool_executor.py, tool_protocols/responses.py and
+tool_protocols/anthropic.py. normalize() and the text filter also no longer
+call .strip() on a non-string "text". Behaviour for well-formed input is
+unchanged; a malformed type is treated as "no type". Upstream-generated
+output items are left alone.
 
-Fixes #6376
+Validation: ran `python -m pytest tests/gateway` (820 passed) and
+`ruff check` / `ruff format --check` on openviking_gateway and tests/gateway.
+The new tests/gateway/
 
-Co-authored-by: TINGyu123644 <[REDACTED_EMAIL]>
-
-**File**: `bot/tests/test_compile_execution.py` (modified, +30/-1)
+**File**: `openviking_gateway/capture.py` (modified, +4/-4)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -23,7 +23,7 @@
+ from .capture_store import Document, LeaseLost
+ from .models import Policy
+ from .notices import without_notices
+-from .protocols import clean_text, is_user, text_content, unwrap_client
++from .protocols import clean_text, is_user, string_type, text_content, unwrap_client
+ from .records import RecordKind as K
+ from .tool_protocols import reply_chain
  
- import asyncio
- from collections import Counter
-+from pathlib import Path
- from types import SimpleNamespace
- from unittest.mock import AsyncMock
- 
-@@ -10,8 +11,9 @@
- from vikingbot.compile.models import CompileLimits
- from vikingbot.compile.pipeline_io import JsonModel, ModelCallLimitError
- from vikingbot.compile.plan import Contract, Node, ReviewDecision
-+from vikingbot.compile.sandbox import CompileSandboxManager, _CompileSandbox
- from vikingbot.compile.service import BotCompileService
--from vikingbot.config.schema import Config
-+from vikingbot.config.schema import Config, SessionKey
- from vikingbot.providers.base import LLMResponse, ToolCallRequest
- 
- 
-@@ -104,3 +106,30 @@ async def test_direct_reads_stop_repetition_but_allow_progress(case):
-             await result
-     assert provider.chat.await_count == (len(offsets) + 1 if case == "progress" else 4)
-     assert provider.chat.await_args.kwargs["thinking"] is False
-+
-+
-+def test_compile_workspace_root_is_absolute_for_relative_storage(tmp_path, monkeypatch):
-+    """A relative storage.workspace must not reach sandbox subprocess paths (#6376)."""
-+    state_root = tmp_path / "state"
-+    state_root.mkdir()
-+    monkeypatch.chdir(state_root)
-+    config = Config(storage_workspace="data")
-+    config.ov_server.set_effective_auth_mode("dev")
-+    manager = CompileSandboxManager(
-+        config,
-+        config.bot_data_path / "compile_workspaces" / "task-1",
-+        config.workspace_path,
-+        connection={},
-+    )
-+    expected = (state_root / "data" / "bot" / "compile_workspaces" / "task-1").resolve()
-+    assert manager.workspace == expected
-+
-+    # The credentials path is injected into sandbox shell commands, whose working
-+    # directory is the workspace itself; a relative path would resolve twice.
-+    workspace = manager.get_workspace_path(
-+        SessionKey(type="compile", channel_id="task-1", chat_id="task-1")
-+    )
-+    sandbox = _CompileSandbox(SimpleNamespace(sandbox_cwd=str(workspace)))
-+    config_path = Path(sandbox._config_path)
-+    assert config_path.is_absolute()
-+    assert config_path.is_relative_to(manager.workspace)
+@@ -453,14 +453,14 @@ def capture_messages(messages, chain):
+     for message in messages:
+         if message.get("role") == "tool":
+             results[message.get("tool_call_id")] = message.get("content", "")
+-        if message.get("type") in {"function_call_output", "custom_tool_call_output"}:
++        if string_type(message) in {"function_call_output", "custom_tool_call_output"}:
+             results[message.get("call_id")] = message.get("output", "")
+         for block in message.get("content", []) if isinstance(message.get("content"), list) else []:
+             if isinstance(block, dict) and block.get("type") == "tool_result":
+                 results[block.get("tool_use_id")] = block.get("content", "")
+     output = []
+     for message, anchor in zip(messages, chain, strict=True):
+-        if message.get("role") not in {"user", "assistant"} and message.get("type") not in {
++        if message.get("role") not in {"user", "assistant"} and string_type(message) not in {
+             "function_call",
+             "custom_tool_call",
+         }:
+@@ -473,7 +473,7 @@ def capture_messages(messages, chain):
+         text = clean_text(unwrap_client(text))
+         parts = [{"type": "text", "text": text}] if text else []
+         calls = list(message.get("tool_calls") or [])
+-        if message.get("type") in {"function_call", "custom_tool_call"}:
++        if string_type(message) in {"function_call", "custom_tool_call"}:
+             calls.append(message)
+         calls.extend(
+             b
 ```
 
-**File**: `bot/vikingbot/compile/sandbox.py` (modified, +9/-1)
+**File**: `openviking_gateway/protocols.py` (modified, +16/-8)
 ```diff
-@@ -37,7 +37,15 @@ def __init__(
-         connection: Mapping[str, Any],
+@@ -124,6 +124,12 @@ def pairs(items):
+         return None
+ 
+ 
++def string_type(value: Any) -> str:
++    """A block's ``type`` when it is a string; malformed histories may carry an object."""
++    kind = value.get("type") if isinstance(value, dict) else None
++    return kind if isinstance(kind, str) else ""
++
++
+ def text_content(message: dict) -> str:
+     content = message.get("content", "")
+     if isinstance(content, str):
+@@ -133,7 +139,7 @@ def text_content(message: dict) -> str:
+             x.get("text", "")
+             for x in content
+             if isinstance(x, dict)
+-            and x.get("type") in {"text", "input_text", "output_text"}
++            and string_type(x) in {"text", "input_text", "output_text"}
+             and isinstance(x.get("text", ""), str)
+         )
+     return ""
+@@ -162,10 +168,10 @@ def normalize(value: Any) -> Any:
+             if not (
+                 isinstance(v, dict)
+                 and (
+-                    v.get("type") in {"thinking", "redacted_thinking"}
++                    string_type(v) in {"thinking", "redacted_thinking"}
+                     or (
+-                        v.get("type") in {"text", "input_text", "output_text"}
+-                        and not v.get("text", "").strip()
++                        string_type(v) in {"text", "input_text", "output_text"}
++                        and not (isinstance(v.get("text", ""), str) and v.get("text", "").strip())
+                     )
+                 )
+             )
+@@ -182,7 +188,7 @@ def normalize(value: Any) -> Any:
+             content = out["content"]
+             if isinstance(content, list) and len(content) == 1 and isinstance(content[0], dict):
+                 block = content[0]
+-                if set(block) == {"type", "text"} and block["type"] in {
++                if set(block) == {"type", "text"} and string_type(block) in {
+                     "text",
+                     "input_text",
+                     "output_text",
+@@ -191,7 +197,9 @@ def normalize(value: Any) -> Any:
+             if isinstance(content, str):
+                 content = unwrap_client(content).strip()
+             out["content"] = content
+-        if out.get("type") in {"text", "input_text", "output_text"}:
++        if string_type(out) in {"text", "input_text", "output_text"} and isinstance(
++            out.get("text", ""), str
++        ):
+             out["text"] = unwrap_client(out.get("text", "")).strip()
+         # Responses message items may omit type/status/id when resent by a client.
+         # IDs of opaque items (item_reference, reasoning, calls) remain significant.
+@@ -316,7 +324,7 @@ def client_openviking_tools(body: dict, names) -> bool:
+             continue
+         # Hosted MCP servers (Responses mcp, Anthropic mcp_servers and mcp_toolset) list
+         # no tools, so their name is all there is.
+-        server = definition.get("type") in {"mcp", "mcp_toolset", "url"}
++        server = string_type(definition) in {"mcp", "mcp_toolset", "url"}
+         named_tool = isinstance(definition.get("name"), str) and not server
+         # A tool must be one of OpenViking's, so a connector's authenticate tool is not.
+         if any(
+@@ -436,7 +444,7 @@ def strip_thinking(messages: list[dict]) -> list[dict]:
+             message["content"] = [
+                 b
+                 for b in message["content"]
+-                if b.get("type") not in {"thinking", "redacted_thinking"}
++                if string_type(b) not in {"thinking", "redacted_thinking"}
+             ]
+     return result
+ 
+```
+
+**File**: `openviking_gateway/tool_executor.py` (modified, +2/-1)
+```diff
+@@ -18,6 +18,7 @@
+ from .capture_store import Document
+ from .client import VikingError
+ from .config import MOUNT_PATH
++from .protocols import string_type
+ from .state_store import get_state
+ from .storage import digest
+ from .tool_catalog import PREFIX, TOOL_OVERRIDES
+@@ -57,7 +58,7 @@ def attachments(body, protocol):
+         content = message.get("content", [])
+         if isinstance(content, list):
+             for part in content:
+-                if isinstance(part, dict) and part.get("type") in {"file", "input_file"}:
++                if string_type(part) in {"file", "input_file"}:
+                     output.append(part.get("file", part))
+                 elif isinstance(part, dict) and part.get("type") == "document":
+                     source = part.get("source", {})
+```
+
+**File**: `openviking_gateway/tool_protocols/anthropic.py` (modified, +3/-3)
+```diff
+@@ -6,7 +6,7 @@
+ 
+ import orjson
+ 
+-from ..protocols import strip_thinking, text_content
++from ..protocols import string_type, strip_thinking, text_content
+ from .common import (
+     SUMMARY_HEADROOM,
+     SummaryError,
+@@ -94,7 +94,7 @@ def split_reasoning(output):
+             blocks = [
+                 [position, block]
+                 for position, block in enumerate(content if isinstance(content, list) else [])
+-                if isinstance(block, dict) and block.get("type") in THINKING
++                if string_type(block) in THINKING
+             ]
+             if blocks:
+                 reasoning[index] = {"blocks": blocks}
+@@ -108,7 +108,7 @@ def restore_reasoning(previous, message, value):
+         if (
+             message.get("role") != "assistant"
+             or not isinstance(content, list)
+-            or any(isinstance(b, dict) and b.get("type") in THINKING for b in content)
++            or any(string_type(b) in THINKING for b in content)
+         ):
+             return [message]
+         # Blocks go back where the reply had them, so the client's form must equal it without them.
+```
+
+**File**: `openviking_gateway/tool_protocols/responses.py` (modified, +4/-4)
+```diff
+@@ -6,7 +6,7 @@
+ import uuid
+ 
+ from ..notices import without_recall_notice
+-from ..protocols import text_content
++from ..protocols import string_type, text_content
+ from .common import (
+     PREFIX,
+     SUMMARY_HEADROOM,
+@@ -44,18 +44,18 @@ def enhanced_supported(body):
+ 
+     @staticmethod
+     def is_reply(message):
+-        return message.get("role") == "assistant" or message.get("type") in {
++        return message.get("role") == "assistant" or string_type(message) in {
+             "reasoning",
+             *CLIENT_CALLS,
+         }
+ 
+     @staticmethod
+     def accepts_context(message):
+-        return message.get("role") == "user" or message.get("type") in TOOL_OUTPUTS
++        return message.get("role") == "user" or string_type(message) in TOOL_OUTPUTS
+ 
+     @staticmethod
+     def append_context(message, text):
+-        if message.get("type") in TOOL_OUTPUTS:
++        if string_type(message) in TOOL_OUTPUTS:
+             append_text(message, "output", text, "input_text", joins_strings=True)
+         else:
+             append_text(message, "content", text, "input_text")
+```
+
+**File**: `tests/gateway/test_malformed_types.py` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++"""Histories whose ``type`` is not a string must not abort request processing."""
++
++from openviking_gateway.capture import capture_messages
++from openviking_gateway.protocols import normalize, prefix_chain, strip_thinking, text_content
++from openviking_gateway.tool_protocols import tool_protocol
++
++ODD = {"type": "string"}
++
++
++def malformed():
++    return {
++        "role": "user",
++        "type": ODD,
++        "content": [{"type": ODD, "text": "hello"}, {"type": "text", "text": ODD}],
++    }
++
++
++def test_protocol_helpers_ignore_object_types():
++    message = malformed()
++    assert normalize([message])[0]["type"] == ODD
++    assert len(prefix_chain([message])) == 1
++    assert text_content(message) == ""
++    assert strip_thinking([message])[0]["content"][0]["type"] == ODD
++
++
++def test_capture_and_responses_ignore_object_types():
++    message = malformed()
++    assert capture_messages([message], ["a"]) == capture_messages([message], ["a"])
++    protocol = tool_protocol("responses")
++    assert protocol.accepts_context(message)
++    assert not protocol.is_reply(message)
+```
+
+---
+
+### Incident Patch 2: `c973ad1c` (2026-10-22)
+**Commit Message**: fix(session): respect configured thinking in patch merge and repair budget-exhausted extraction (#6104)
+
+* fix(session): respect configured thinking in patch merge and repair budget-exhausted extraction
+
+PatchMergePolicyOptimizer forced per-call thinking=True for experiences/
+trajectories merges, overriding a deployment's configured thinking=False
+(volcengine backend per-call value takes precedence over its config). The
+single format retry reused the same thinking mode and output cap without
+showing the model its truncated program, so a reasoning-heavy merge that
+consumed the completion budget failed terminally as parse_error after a
+~2h session commit (#6096).
+
+- policy_optimizer: add thinking field (bool | None, default None); None
+  defers to the VLM backend's configured thinking policy, explicit
+  True/False still override.
+- extract_loop: accept thinking: Optional[bool] = None and pass it
+  through verbatim so the backend default applies when unset; callers
+  passing True/False are unchanged.
+- extract_loop: classify a response as budget_exhausted when its
+  finish_reason is 'length' or its completion tokens reach the resolved
+  output cap; the single repair now appends the fa
+
+**File**: `openviking/models/vlm/backends/litellm_vlm.py` (modified, +20/-8)
+```diff
+@@ -473,8 +473,11 @@ def _call() -> Union[str, VLMResponse]:
+             elapsed = time.perf_counter() - t0
+             self._update_token_usage_from_response(response, duration_seconds=elapsed)
+             tracer.info(f"response={response}")
+-            if tools:
+-                return self._build_vlm_response(response, has_tools=True)
++            if tools is not None:
++                result = self._build_vlm_response(response, has_tools=True)
++                if not tools:
++                    result.content = self._clean_response(result.content or "")
++                return result
+             return self._clean_response(self._extract_content_from_response(response))
+ 
+         return _call()
+@@ -505,8 +508,11 @@ async def _call() -> Union[str, VLMResponse]:
+             elapsed = time.perf_counter() - t0
+             self._update_token_usage_from_response(response, duration_seconds=elapsed)
+             tracer.info(f"response={response}")
+-            if tools:
+-                return self._build_vlm_response(response, has_tools=True)
++            if tools is not None:
++                result = self._build_vlm_response(response, has_tools=True)
++                if not tools:
++                    result.content = self._clean_response(result.content or "")
++                return result
+             return self._clean_response(self._extract_content_from_response(response))
+ 
+         return await _call()
+@@ -529,8 +535,11 @@ def _call() -> Union[str, VLMResponse]:
+             response = completion(**kwargs)
+             elapsed = time.perf_counter() - t0
+             self._update_token_usage_from_response(response, duration_seconds=elapsed)
+-            if tools:
+-                return self._build_vlm_response(response, has_tools=True)
++            if tools is not None:
++                result = self._build_vlm_response(response, has_tools=True)
++                if not tools:
++                    result.content = self._clean_response(result.content or "")
++                return result
+             return self._clean_response(self._extract_content_from_response(response))
+ 
+         return _call()
+@@ -553,8 +562,11 @@ async def _call() -> Union[str, VLMResponse]:
+             response = await acompletion(**kwargs)
+             elapsed = time.perf_counter() - t0
+             self._update_token_usage_from_response(response, duration_seconds=elapsed)
+-            if tools:
+-                return self._build_vlm_response(response, has_tools=True)
++            if tools is not None:
++                result = self._build_vlm_response(response, has_tools=True)
++                if not tools:
++                    result.content = self._clean_response(result.content or "")
++                return result
+             return self._clean_response(self._extract_content_from_response(response))
+ 
+         return await _call()
+```
+
+**File**: `openviking/models/vlm/backends/openai_vlm.py` (modified, +4/-1)
+```diff
+@@ -386,7 +386,10 @@ async def _call() -> Union[str, VLMResponse]:
+             elapsed = time.perf_counter() - t0
+             if tools is not None:
+                 self._update_token_usage_from_response(response, duration_seconds=elapsed)
+-                return self._build_vlm_response(response, has_tools=True)
++                result = self._build_vlm_response(response, has_tools=True)
++                if not tools:
++                    result.content = self._clean_response(result.content or "")
++                return result
+             return await self._extract_completion_content_async(response, elapsed)
+ 
+         # 用 tracer.info 打印请求（人类可读格式）
+```
+
+**File**: `openviking/models/vlm/backends/volcengine_vlm.py` (modified, +20/-8)
+```diff
+@@ -231,9 +231,12 @@ def get_completion(
+             raise
+         elapsed = time.perf_counter() - t0
+         self._update_token_usage_from_response(response, duration_seconds=elapsed)
+-        result = self._build_vlm_response(response, has_tools=bool(tools))
+-        if tools:
++        if tools is not None:
++            result = self._build_vlm_response(response, has_tools=True)
++            if not tools:
++                result.content = self._clean_response(result.content or "")
+             return result
++        result = self._build_vlm_response(response, has_tools=False)
+         return self._clean_response(str(result))
+ 
+     @model_error_boundary
+@@ -292,9 +295,12 @@ async def _call() -> Union[str, VLMResponse]:
+                 raise
+             elapsed = time.perf_counter() - t0
+             self._update_token_usage_from_response(response, duration_seconds=elapsed)
+-            result = self._build_vlm_response(response, has_tools=bool(tools))
+-            if tools:
++            if tools is not None:
++                result = self._build_vlm_response(response, has_tools=True)
++                if not tools:
++                    result.content = self._clean_response(result.content or "")
+                 return result
++            result = self._build_vlm_response(response, has_tools=False)
+             content = self._clean_response(str(result))
+             if content:
+                 tracer.info(f"message.content={content}")
+@@ -462,9 +468,12 @@ def get_vision_completion(
+             raise
+         elapsed = time.perf_counter() - t0
+         self._update_token_usage_from_response(response, duration_seconds=elapsed)
+-        result = self._build_vlm_response(response, has_tools=bool(tools))
+-        if tools:
++        if tools is not None:
++            result = self._build_vlm_response(response, has_tools=True)
++            if not tools:
++                result.content = self._clean_response(result.content or "")
+             return result
++        result = self._build_vlm_response(response, has_tools=False)
+         return self._clean_response(str(result))
+ 
+     @model_error_boundary
+@@ -513,7 +522,10 @@ async def get_vision_completion_async(
+             raise
+         elapsed = time.perf_counter() - t0
+         self._update_token_usage_from_response(response, duration_seconds=elapsed)
+-        result = self._build_vlm_response(response, has_tools=bool(tools))
+-        if tools:
++        if tools is not None:
++            result = self._build_vlm_response(response, has_tools=True)
++            if not tools:
++                result.content = self._clean_response(result.content or "")
+             return result
++        result = self._build_vlm_response(response, has_tools=False)
+         return self._clean_response(str(result))
+```
+
+**File**: `openviking/models/vlm/base.py` (modified, +2/-1)
+```diff
+@@ -204,7 +204,8 @@ async def get_media_completion_async(
+             f"VLM provider {self.provider!r} does not support audio/video inputs"
+         )
+ 
+-    def _clean_response(self, content: str) -> str:
++    @staticmethod
++    def _clean_response(content: str) -> str:
+         """Strip reasoning tags (e.g. ``<think>...</think>``) from model output."""
+         return _THINK_TAG_RE.sub("", content).strip()
+ 
+```
+
+**File**: `openviking/session/memory/extract_loop.py` (modified, +59/-6)
+```diff
+@@ -134,7 +134,7 @@ def __init__(
+         ctx: Optional[RequestContext] = None,
+         context_provider: Optional[Any] = None,  # ExtractContextProvider
+         isolation_handler: MemoryIsolationHandler = None,
+-        thinking: bool = False,
++        thinking: Optional[bool] = None,
+         max_output_tokens: Optional[int] = None,
      ):
-         """Snapshot verified connection fields; reject missing non-dev tenant/user identity."""
--        super().__init__(config, sandbox_parent_path, source_workspace_path)
-+        # storage.workspace may be configured as a relative path, which Docker
-+        # deployments commonly rely on by running the server from the state root.
-+        # Sandbox subprocesses use the workspace as their working directory, so a
-+        # relative root makes server-side paths built from sandbox_cwd (task
-+        # credentials, staged skill resources) resolve against that directory and
-+        # fail; keep the compile workspace root absolute.
-+        super().__init__(
-+            config, Path(sandbox_parent_path).expanduser().resolve(), source_workspace_path
-+        )
-         dev = config.ov_server.effective_auth_mode == "dev"
-         if not dev and (not connection.get("account_id") or not connection.get("user_id")):
-             raise ValueError("Compile shell requires the authenticated account and user")
-```
-
----
-
-### Incident Patch 2: `c133b946` (2026-10-21)
-**Commit Message**: fix(storage): 升级后继续隐藏旧版多写元数据 (#6395)
-
-**File**: `crates/ragfs/src/core/internal_names.rs` (modified, +3/-2)
-```diff
-@@ -15,9 +15,10 @@ pub fn is_hidden_runtime_lock_name(name: &str) -> bool {
-     name == PATH_LOCK_FILE || name.starts_with(EXACT_LOCK_FILE_PREFIX)
- }
- 
--/// Returns `true` when `name` is a hidden runtime lock name.
-+/// Returns `true` for runtime locks and metadata left by V1 multi-write storage.
- pub fn is_hidden_internal_name(name: &str) -> bool {
--    is_hidden_runtime_lock_name(name)
-+    // V1 metadata can remain during and after migration; never expose it as user data.
-+    is_hidden_runtime_lock_name(name) || matches!(name, ".redirect.json" | ".sync_log.json")
- }
- 
- /// Returns `true` when a logical path belongs to V2 multi-write internals.
-```
-
-**File**: `crates/ragfs/src/core/mountable.rs` (modified, +13/-0)
-```diff
-@@ -2155,6 +2155,8 @@ mod tests {
-                 make_tree_entry("/c", "c", "c", true),
-                 make_tree_entry("/B", "B", "B", true),
-                 make_tree_entry("/.path.ovlock", ".path.ovlock", ".path.ovlock", false),
-+                make_tree_entry("/.sync_log.json", ".sync_log.json", ".sync_log.json", false),
-+                make_tree_entry("/.redirect.json", ".redirect.json", ".redirect.json", false),
-             ],
-         );
-         mfs.register_plugin(plugin).await;
-@@ -2170,6 +2172,17 @@ mod tests {
- 
-         assert_eq!(names, vec!["B", "c", "A.txt", "b.txt"]);
- 
-+        // Upgrade leftovers remain available for migration, but not to business callers.
-+        let internal_names: Vec<String> = mfs
-+            .read_internal_dir("/sorted")
-+            .await
-+            .unwrap()
-+            .into_iter()
-+            .map(|entry| entry.name)
-+            .collect();
-+        assert!(internal_names.iter().any(|name| name == ".sync_log.json"));
-+        assert!(internal_names.iter().any(|name| name == ".redirect.json"));
+         """
+@@ -147,7 +147,9 @@ def __init__(
+             max_iterations: Maximum number of ReAct iterations (default: 5)
+             ctx: Request context
+             context_provider: ExtractContextProvider - 必须提供（由 provider 加载 schema）
+-            thinking: Whether to explicitly enable model thinking for this extraction loop.
++            thinking: Per-call thinking override for this extraction loop. True/False
++                force the mode for every call; None (default) defers to the VLM
++                backend's configured thinking policy.
+             max_output_tokens: Per-call output cap for the extraction LLM. When None, the
+                 configured vlm.max_tokens is used, falling back to a value large enough for
+                 full memory rewrites so providers do not apply a small server-side default
+@@ -159,7 +161,7 @@ def __init__(
+         self.max_iterations = max_iterations
+         self.ctx = ctx
+         self.context_provider = context_provider
+-        self.thinking = bool(thinking)
++        self.thinking = thinking
+         self.max_output_tokens = max_output_tokens
+         # Resolved in run() via _resolve_effective_max_output_tokens(); default to
+         # the extraction floor so a direct _call_llm() before run() stays safe.
+@@ -402,10 +404,21 @@ async def run(self) -> Tuple[Optional[Any], List[Dict[str, Any]]]:
+             parse_error = self._last_parse_error
+             # Add format error message if parse failed (max 1 retry). This may raise
+             # max_iterations, granting one more attempt after this failure.
++            if failure_kind == "budget_exhausted":
++                # Truncation is not an ordinary format mistake: a same-cap format
++                # retry would only hit the budget again, and replaying the
++                # truncated output just grows the prompt. Fail fast with the
++                # dedicated error recorded by _call_llm().
++                raise RuntimeError(
++                    f"Memory extraction aborted: {parse_error or failure_kind}"
++                )
 +
-         let page: Vec<String> = mfs
-             .read_dir(
-                 "/sorted",
+             if self._format_retry_count == 0:
+                 self._format_retry_count += 1
+                 max_iterations += 1
+-                retry_reason = "refusal_text" if failure_kind == "refusal_text" else "format_retry"
++                retry_reason = (
++                    "refusal_text" if failure_kind == "refusal_text" else "format_retry"
++                )
+                 tracer.info(f"Extended max_iterations to {max_iterations} for {retry_reason}")
+                 self._add_format_error_message(messages)
+ 
+@@ -479,6 +492,25 @@ def _resolve_effective_max_output_tokens(self) -> None:
+             configured if configured is not None else _DEFAULT_EXTRACTION_MAX_OUTPUT_TOKENS
+         )
+ 
++    def _budget_exhausted_error(self, response: Any, content: str) -> str:
++        """Build the dedicated, actionable error for a truncated response.
++
++        Truncation is detected only from the backend's explicit
++        ``finish_reason == "length"``; token counters are never used to infer it.
++        """
++        usage = getattr(response, "usage", None)
++        completion_tokens = usage.get("completion_tokens") if isinstance(usage, dict) else None
++        details = (
++            f"finish_reason='length', output cap={self._effective_max_output_tokens} tokens"
++        )
++        if completion_tokens:
++            details += f", completion_tokens={completion_tokens}"
++        return (
++            "Response was cut off by the output-token budget "
++            f"({details}), response_preview={_preview_text(content)!r}. "
++            "Raise vlm.max_tokens in ov.conf or reduce the memory context before retrying."
++        )
++
+     def _retryable_resolution_issues(self, operations: ResolvedOperations) -> List[Dict[str, Any]]:
+         issues: List[Dict[str, Any]] = []
+         for operation in operations.upsert_operations:
+@@ -1173,8 +1205,11 @@ async def _call_llm(
+         Returns:
+             Tuple of (tool_calls, operations) - one will be None, the other set
+         """
+-        # Call LLM with tools - use tools from strategy
+-        tools = None
++        # Call LLM with tools - use tools from strategy. Pass tools=[] (not None)
++        # when tools are disabled so backends following the OpenAI backend's
++        # `tools is not None` convention still return a VLMResponse carrying
++        # finish_reason and usage instead of a bare string.
++        tools: Optional[List[Dict[str, Any]]] = []
+         tool_choice = None
+         if not self._disable_tools_for_iteration and self._tool_schemas:
+             tools = self._tool_
 ```
 
----
-
-### Incident Patch 3: `feb051c7` (2026-10-21)
-**Commit Message**: fix(bot): translate POSIX compile sandbox commands on Windows (#6372)
-
-* fix(bot): translate POSIX compile sandbox commands on Windows
-
-* fix(bot): address review feedback on Windows Compile shim
-
-**File**: `bot/tests/test_direct_windows_posix.py` (added, +131/-0)
+**File**: `openviking/session/train/components/policy_optimizer.py` (modified, +10/-1)
 ```diff
-@@ -0,0 +1,131 @@
+@@ -51,6 +51,15 @@ class PatchMergePolicyOptimizer:
+     memory_type: str = "experiences"
+     memory_registry: MemoryTypeRegistry | None = None
+     vlm_resolver: VLMResolver | None = None
++    thinking: bool | None = None
++    """Per-call thinking override for the merge extract loop.
++
++    None (default) defers to the VLM backend's configured ``thinking`` policy.
++    True/False force the mode for every merge call, overriding the backend
++    configuration. The optimizer never forces thinking on by itself: forcing
++    ``thinking=True`` for experiences/trajectories merges made reasoning consume
++    the whole completion budget and truncate the emitted program mid-string.
++    """
+ 
+     @tracer(
+         "train.policy_optimizer.patch_merge.plan",
+@@ -183,7 +192,7 @@ async def _run_merge_extract_loop(
+             context_provider=provider,
+             isolation_handler=isolation_handler,
+             max_iterations=1,
+-            thinking=self.memory_type in {"trajectories", "experiences"},
++            thinking=self.thinking,
+         )
+         operations, _ = await orchestrator.run()
+         return operations
+```
+
+**File**: `tests/session/memory/test_extract_loop_budget_recovery.py` (added, +370/-0)
+```diff
+@@ -0,0 +1,370 @@
 +# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
 +# SPDX-License-Identifier: AGPL-3.0
-+"""Regression tests for the Windows POSIX shim used by Compile sandboxes."""
++"""Tests for ExtractLoop truncation handling and thinking passthrough.
 +
-+import asyncio
-+import shlex
++Regression tests for https://github.com/volcengine/issues/6096, reworked after
++review of PR #6104: truncation is detected only from an explicit
++``finish_reason == "length"``, checked before parsing; ``tools=[]`` is passed so
++real backends still return a ``VLMResponse`` with finish_reason and usage on the
++patch-merge path (where ``PatchMergeContextProvider.get_tools() == []``); and
++budget exhaustion is terminal — no cap doubling, no replay of the truncated
++output, and no completion_tokens-based truncation inference.
++"""
++
++from types import SimpleNamespace
++from unittest.mock import AsyncMock, MagicMock, Mock, patch
 +
 +import pytest
-+from vikingbot.compile.sandbox import _CompileSandbox
-+from vikingbot.config.schema import Config
-+from vikingbot.sandbox.backends import direct
++
++from openviking.models.vlm.base import ToolCall, VLMResponse
++from openviking.session.memory.dataclass import MemoryTypeSchema
++from openviking.session.memory.extract_loop import ExtractLoop
++from openviking.session.memory.page_id_map import PageIdMap
++
++_DEFAULT_CAP = 32768
++
++_TRUNCATED_PROGRAM = (
++    "sdk.upsert_preference(\n"
++    '    topic="booking",\n'
++    '    content="""The agent should deduplicate requests because\n'
++)
 +
 +
-+class _FakeProcess:
-+    returncode = 0
++class FakeContextProvider:
++    read_file_contents = {}
 +
-+    async def communicate(self):
-+        return b"ok", b""
++    def get_memory_schemas(self, ctx):
++        return [
++            MemoryTypeSchema(
++                memory_type="preferences",
++                description="Preferences",
++                directory="viking://user/{user_space}/memories/preferences",
++                filename_template="{topic}.md",
++                fields=[],
++            )
++        ]
 +
++    def get_tools(self):
++        # The real patch-merge path returns [] — this is what forced _call_llm
++        # down the tools-less branch under review.
++        return []
 +
-+async def _acl_ok(path, *, directory):
-+    return None
++    def get_extract_context(self):
++        return SimpleNamespace(page_id_map=PageIdMap())
 +
++    def get_output_language(self):
++        return "en"
 +
-+@pytest.fixture
-+def windows_backend(tmp_path, monkeypatch):
-+    """A DirectBackend forced through the Windows code path with a stubbed shell."""
-+    monkeypatch.setattr(direct.os, "name", "nt")
-+    calls = []
++    def instruction(self):
++        return "Extract memory operations."
 +
-+    async def fake_create_subprocess_shell(command, **kwargs):
-+        calls.append((command, kwargs.get("env")))
-+        return _FakeProcess()
-+
-+    monkeypatch.setattr(asyncio, "create_subprocess_shell", fake_create_subprocess_shell)
-+    backend = direct.DirectBackend(Config().sandbox, "test", tmp_path)
-+    backend._running = True
-+    return backend, calls
-+
-+
-+@pytest.mark.asyncio
-+async def test_initialize_handles_posix_quoted_paths(tmp_path, monkeypatch):
-+    workspace = tmp_path / "Anne O'Brien & R&D work"
-+    workspace.mkdir()
-+
-+    class Backend:
-+        sandbox_cwd = str(workspace)
-+
-+        async def execute(self, command, timeout=60, **kwargs):
-+            return await direct._translate_windows_posix(command, self.sandbox_cwd)
-+
-+        async def write_file(self, path, content):
-+            (workspace / path).write_text(content, encoding="utf-8")
-+
-+        @staticmethod
-+        def _ensure_command_succeeded(output, operation):
-+            direct.DirectBackend._ensure_command_succeeded(output, operation)
-+
-+    monkeypatch.setattr(direct, "_restrict_windows_acl", _acl_ok)
-+    sandbox = _CompileSandbox(Backend())
-+    await sandbox.initialize({"url": "http://127.0.0.1:1933"})
-+
-+    credential_dir = workspace / sandbox._directory
-+    assert credential_dir.is_dir()
-+    assert (credential_dir / "ovcli.conf").is_file()
++    async def prefetch(self):
++        return []
 +
 +
-+@pytest.mark.asyncio
-+async def test_initialize_and_execute_use_child_env(windows_backend, monkeypatch):
-+    backend, calls = windows_backend
-+    monkeypatch.setenv("OPENVIKING_URL", "http://host-override")
-+    monkeypatch.setattr(direct, "_restrict_windows_acl", _acl_ok)
-+    sandbox = _CompileSandbox(backend)
-+
-+    await sandbox.initialize({"url": "http://127.0.0.1:1933"})
-+    result = await sandbox.execute('python -c "print(123)"')
-+
-+    assert result == "ok"
-+    command, env = calls[-1]
-+    assert command == 'python -c "print(123)"'
-+    assert "unset" not in command and "OPENVIKING_CLI_CONFIG_FILE=" not in command
-+    assert env["OPENVIKING_CLI_CONFIG_FILE"] == sandbox._config_path
-+    assert "OPENVIKING_URL" not in env
-+
-+
-+@pytest.mark.asyncio
-+async def test_direct_execute_moves_env_prefix_into_child_env(windows_backend):
-+    backend, calls = windows_backend
-+    command = (
-+        "unset OPENVIKING_URL OPENVIKING_API_KEY; "
-+        "export OPENVIKING_CLI_CONFIG_FILE='C:\\work\\ovcli.conf'; "
-+        'python -c "print(123)"'
++def _length_response(
++    completion_tokens: int = _DEFAULT_CAP,
++    finish_reason: str = "length",
++    content: str = _TRUNCATED_PROGRAM,
++) -> VLMResponse:
++    return VLMResponse(
++        content=content,
++        finish_reason=finish_reason,
++        usage={"prompt_tokens": 100, "completion_tokens": completion_tokens},
 +    )
 +
-+    result = await backend.execute(command)
 +
-+    assert result == "ok"
-+    captured, env = calls[-1]
-+    assert captured == 'python -c "print(123)"'
-+    assert env["OPENVIKING_CLI_CONFIG_FILE"] == r"C:\work\ovcli.conf"
-+    assert "OPENVIKING_URL" not in env and "OPENVIKING_API_KEY" not in env
++class ScriptedVLM:
++    """Fake VLM that records per-call kwargs and replays scripted responses."""
++
++    model = "test-model"
++
++    def __init__(self, responses):
++        self.responses = iter(responses)
++        self.calls = []
++
++    async def get_completion_async(self, **kwargs):
++        self.calls.append(kwargs)
++        return next(self.responses)
 +
 +
-+@pytest.mark.asyncio
-+async def test_chmod_only_supports_exact_form(tmp_path, monkeypatch):
-+    target = tmp_path / "ovcli.conf"
-+    target.write_text("{}", encoding="utf-8")
-+    monkeypatch.setattr(direct, "_restrict_windows_acl", _acl_ok)
-+    quoted = shlex.quote(str(target))
++def _user_contents(messages):
++    return [message.get("content", "") for message in messages if message.get("role") == "user"]
 +
-+    result = await direct._translate_windows_posix(f"chmod 600 {quoted}", str(tmp_path))
-+    assert result == "(no output)"
-+    assert await direct._translate_windows_posix(f"chmod 000 {quoted}", str(tmp_path)) is None
-+    assert (
-+        await direct._translate_windows_posix(f"chmod 600 {quoted} {quoted}", str(tmp_path)) is None
++
++def _assistant_contents(messages):
++    return [
++        message.get("content", "") for message in messages if message.get("role") == "assistant"
++    ]
++
++
++def _make_loop(vlm, **kwargs):
++    isolation_handler = Mock()
++    isolation_handler.get_read_scope.return_value = None
++    isolation_handler.fill_identity_fields.side_effect = lambda item, **kwargs: item
++    return ExtractLoop(
++        vlm=vlm,
++        viking_fs=MagicMock(),
++        context_provider=FakeContextProvider(),
++        isolation_handler=isolation_handler,
++        max_iterations=1,
++        **kwargs,
 +    )
-+    assert await direct._translate_windows_posix(f"chmod -R 600 {quoted}", str(tmp_path)) is None
 +
 +
-+@pytest.mark.asyncio
-+async def test_mkdir_rejects_unsupported_flags(tmp_path):
-+    target = shlex.quote(str(tmp_path / "credentials"))
-+
-+    result = await direct._translate_windows_posix(f"mkdir -p {target}", str(tmp_path))
-+    assert result == "(no output)"
-+    assert await direct._translate_windows_posix(f"mkdir -m 755 -- {target}", str(tmp_path)) is None
-+    assert (
-+        await direct._translate_windows_posix(f"mkdir -p {target} && echo ok", str(tmp_path))
-+        is None
++async def _run_loop(loop):
++    config = SimpleNamespace(
++        memory=SimpleNamespace(link_enabled=False, extraction_output_format="python")
 +    )
-+    assert await direct._translate_windows_posix("echo hi", str(tmp_path)) is None
++    with (
++        patch(
++            "openviking.session.memory.extract_loop.get_openviking_config",
++            return_value=config,
++        ),
++        patch(
++            "openviking_cli.utils.config.get_openviking_config",
++            return_value=config,
++        ),
++    ):
++        loop._check_unread_existing_files = _async_return({})
++        loop._validate_patch_operations = _async_return([])
++        loop.finalize_operations = _async_return(None)
++        # Await inside the patch context: run() is a coroutine, so returning it
++        # would let the patches expire before the code under test executes.
++        return await loop.run()
++
++
++def _async_return(value):
++    async def _call(*args, **kwargs):
++        return value
++
++    return _call
++
++
++class TestThinkingPassthrough:
++    @pytest.mark.asyncio
++    @pytest.mark.parametrize("thinking", [None, True, False])
++    async def test_thinking_kwarg_is_forwarded_verbatim(self, thinking):
++        vlm = ScriptedVLM(["sdk.commit()"])
++        loop = _make_loop(vlm, thinking=thinking)
++        await _run_loop(loop)
++
++        assert len(vlm.calls) == 1
++        assert vlm.calls[0]["thinking"] is thinking
++
++
++class TestToolsDisabledStillUsesVLMResponse:
++    @pyt
 ```
 
-**File**: `bot/vikingbot/sandbox/backends/direct.py` (modified, +180/-0)
+**File**: `tests/session/train/test_train_components.py` (modified, +79/-0)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -751,6 +751,85 @@ async def run(self):
+     assert "+merged content" in captured["prefetch_messages"][-1]["content"]
  
- import asyncio
- import os
-+import re
-+import shlex
- import signal
- from pathlib import Path
- from typing import Any
-@@ -12,6 +14,175 @@
- from vikingbot.sandbox.backends import register_backend
- from vikingbot.sandbox.base import SandboxBackend
  
-+# On Windows the shell path uses COMSPEC (cmd.exe), which cannot parse the POSIX
-+# commands Compile runs: `mkdir -m 700 --`, `chmod 600`, and the
-+# `unset ...; export OPENVIKING_CLI_CONFIG_FILE=...;` prefix. The prefix is moved
-+# into a per-invocation child environment for every command; only the fixed
-+# mkdir/chmod forms are executed natively. Every other command still runs through
-+# the shell with that child environment.
-+_ENV_PREFIX = re.compile(
-+    r"^unset\s+([^;]*);\s*export\s+([A-Za-z_][A-Za-z0-9_]*)=(.*?);\s*(.+)$",
-+    re.DOTALL,
-+)
-+_CHMOD_MODE = "600"
-+_MKDIR_RESTRICTED_MODE = "700"
++@pytest.mark.asyncio
++async def test_patch_merge_policy_optimizer_thinking_defaults_to_config_passthrough(
++    monkeypatch,
++):
++    """The optimizer must not force per-call thinking for experiences/trajectories.
 +
-+
-+def _decode_posix_value(raw: str) -> str:
-+    """Decode a single POSIX-quoted shell value emitted by ``shlex.quote``."""
-+    try:
-+        parts = shlex.split(raw, posix=True)
-+    except ValueError:
-+        return raw.strip()
-+    return parts[0] if len(parts) == 1 else raw.strip()
-+
-+
-+def _prepare_windows_shell(command: str) -> tuple[str, dict[str, str] | None]:
-+    """Move the Compile env prefix into a child env; return (command, child_env)."""
-+    match = _ENV_PREFIX.match(command)
-+    if match is None:
-+        return command, None
-+    unset_names, name, raw_value, remaining = match.groups()
-+    child_env = dict(os.environ)
-+    for key in unset_names.split():
-+        child_env.pop(key, None)
-+    child_env[name] = _decode_posix_value(raw_value)
-+    return remaining.strip(), child_env
-+
-+
-+def _has_unquoted_shell_control(command: str) -> bool:
-+    """Return True when a shell control character appears outside quotes."""
-+    quote = ""
-+    index = 0
-+    while index < len(command):
-+        char = command[index]
-+        if not quote:
-+            if char in "'\"":
-+                quote = char
-+            elif char in ";&|<>`":
-+                return True
-+            elif char == "$" and index + 1 < len(command) and command[index + 1] == "(":
-+                return True
-+        elif quote == "'":
-+            if char == "'":
-+                quote = ""
-+        elif char == "\\":
-+            index += 2
-+            continue
-+        elif char == '"':
-+            quote = ""
-+        index += 1
-+    return False
-+
-+
-+def _split_posix_command(command: str) -> list[str] | None:
-+    """Split a POSIX-quoted command while rejecting unquoted shell operators."""
-+    if not command or _has_unquoted_shell_control(command):
-+        return None
-+    try:
-+        tokens = shlex.split(command, posix=True)
-+    except ValueError:
-+        return None
-+    return tokens or None
-+
-+
-+def _resolve_windows_path(target: str, base: str) -> str:
-+    """Resolve a sandbox path against the command working directory."""
-+    return target if os.path.isabs(target) else os.path.join(base, target)
-+
-+
-+async def _restrict_windows_acl(path: str, *, directory: bool) -> str | None:
-+    """Approximate POSIX 0700/0600 with an owner/SYSTEM/Administrators NTFS ACL.
-+
-+    Inherited entries are removed first (for example sandbox helper groups), then
-+    explicit grants are applied. Returns error text on failure, None on success.
++    Regression test for issue #6096: an operator-configured ``thinking=False`` VLM
++    still received ``thinking=True`` on every patch-merge call.
 +    """
-+    user = os.environ.get("USERNAME") or ""
-+    domain = os.environ.get("USERDOMAIN") or ""
-+    principal = f"{domain}\\{user}" if domain and user else user
-+    if not principal:
-+        return "STDERR:\nUSERNAME is not set\nExit code: 1"
-+    suffix = ":(OI)(CI)F" if directory else ":F"
-+    grants = [principal + suffix, "*S-1-5-18" + suffix, "*S-1-5-32-544" + suffix]
-+    arguments = ["icacls", path, "/inheritance:r"]
-+    for grant in grants:
-+        arguments += ["/grant:r", grant]
-+    process = await asyncio.create_subprocess_exec(
-+        *arguments,
-+        stdin=asyncio.subprocess.DEVNULL,
-+        stdout=asyncio.subprocess.PIPE,
-+        stderr=asyncio.subprocess.PIPE,
++    from openviking.session.memory.dataclass import ResolvedOperations
++
++    captured = {}
++
++    class FakeExtractLoop:
++        def __init__(self, **kwargs):
++            captured.update(kwargs)
++
++        async def run(self):
++            return ResolvedOperations(upsert_operations=[], delete_file_contents=[], errors=[]), []
++
++    monkeypatch.setattr(
++        "openviking.session.train.components.policy_optimizer.ExtractLoop",
++        FakeExtractLoop,
 +    )
-+    _stdout, stderr = await process.communicate()
-+    if process.returncode != 0:
-+        detail = stderr.decode("utf-8", errors="replace")
-+        return f"STDERR:\n{detail}Exit code: {process.returncode}"
-+    return None
++
++    policy_set = _experience_set()
++    gradient = _patch_gradient(
++        uri=policy_set.policies[0].uri,
++        before="stale content",
++        after="merged content",
++    )
++    await PatchMergePolicyOptimizer(viking_fs=FakeVikingFS({}), vlm=object()).plan(
++        [gradient],
++        policy_set,
++        PatchMergePolicyOptimizerContext(request_context=fake_request_context()),
++    )
++
++    assert captured["thinking"] is None
 +
 +
-+def _mkdir_operands(tokens: list[str]) -> tuple[list[str], bool] | None:
-+    """Validate ``mkdir`` flags and return (paths, restricted); None if unsupported."""
-+    paths: list[str] = []
-+    restricted = False
-+    index = 1
-+    while index < len(tokens):
-+        token = tokens[index]
-+        if token == "--":
-+            paths.extend(tokens[index + 1 :])
-+            break
-+        if token == "-p":
-+            index += 1
-+            continue
-+        if token == "-m":
-+            if index + 1 >= len(tokens) or tokens[index + 1] != _MKDIR_RESTRICTED_MODE:
-+                return None
-+            restricted = True
-+            index += 2
-+            continue
-+        if token.startswith(
++@pytest.mark.asyncio
++@pytest.mark.parametrize("thinking", [True, False])
++async def test_patch_merge_policy_optimizer_explicit_thinking_is_forwarded(monkeypatch, thinking):
++    from openviking.session.memory.dataclass import ResolvedOperations
++
++    captured = {}
++
++    class FakeExtractLoop:
++        def __init__(self, **kwargs):
++            captured.update(kwargs)
++
++        async def run(self):
++            return ResolvedOperations(upsert_operations=[], delete_file_contents=[], errors=[]), []
++
++    monkeypatch.setattr(
++        "openviking.session.train.components.policy_optimizer.ExtractLoop",
++        FakeExtractLoop,
++    )
++
++    policy_set = _experience_set()
++    gradient = _patch_gradient(
++        uri=policy_set.policies[0].uri,
++        before="stale content",
++        after="merged content",
++    )
++    optimizer = PatchMergePolicyOptimizer(
++        viking_fs=FakeVikingFS({}),
++        vlm=object(),
++        thinking=thinking,
++    )
++    await optimizer.plan(
++        [gradient],
++        policy_set,
++        PatchMergePolicyOptimizerContext(request_context=fake_request_context()),
++    )
++
++    assert captured["thinking"] is thinking
++
++
+ @pytest.mark.asyncio
+ async def test_patch_merge_policy_optimizer_merges_all_patch_gradients_once(monkeypatch):
+     from openviking.session.memory.dataclass import (
+```
+
+---
+
+### Incident Patch 3: `d7b32ac5` (2026-10-22)
+**Commit Message**: fix(claude-plugin): replay pending writes on Stop (#6394)
+
+SessionStart replays at most OPENVIKING_PENDING_REPLAY_LIMIT entries, and
+no other Claude Code hook drained the queue, so the newest deferred writes
+(usually the end of the failed turn) waited for the next session. The Stop
+hook now replays the queue, without consuming retries, before it sends the
+turn's new messages.
+
+**File**: `examples/claude-code-memory-plugin/.claude-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.7.16",
++  "version": "0.7.17",
+   "description": "Long-term semantic memory for Claude Code, powered by OpenViking. Auto-recall relevant memories at session start and capture important information during conversations.",
+   "author": {
+     "name": "OpenViking",
+```
+
+**File**: `examples/claude-code-memory-plugin/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "claude-code-openviking-memory",
+-  "version": "0.7.16",
++  "version": "0.7.17",
+   "description": "OpenViking memory plugin for Claude Code — semantic long-term memory",
+   "type": "module",
+   "scripts": {
+```
+
+**File**: `examples/claude-code-memory-plugin/scripts/auto-capture.mjs` (modified, +8/-0)
+```diff
+@@ -34,6 +34,7 @@ import {
+   makeFetchJSON,
+ } from "./lib/ov-session.mjs";
+ import { maybeDetach, readHookStdin } from "./lib/async-writer.mjs";
++import { replayPending } from "./lib/pending-queue.mjs";
+ import { readJsonState, writeJsonState } from "./lib/state.mjs";
+ import { getEffectivePeerId } from "./lib/workspace-peer.mjs";
+ import { runHookStage } from "./shared/agent-hook-runtime.mjs";
+@@ -317,6 +318,13 @@ async function main({ cfg, input, cwd }) {
+   const health = await fetchJSON("/health");
+   let result;
+   if (health.ok) {
++    // SessionStart replays at most one capped batch, so drain more of the
++    // queue here; older entries go out before this turn's messages.
++    try {
++      await replayPending(fetchJSON, log, { consumeRetries: false });
++    } catch (err) {
++      logError("pending-replay", err);
++    }
+     result = await pushTurnsToOv(ovSessionId, captureTurns, effectivePeer.peerId, cfg);
+   } else if (isRetryableFailure(health)) {
+     logError("health_check", "server unreachable or unhealthy; enqueuing capture");
+```
+
+**File**: `examples/claude-code-memory-plugin/scripts/auto-capture.test.mjs` (modified, +58/-1)
+```diff
+@@ -6,8 +6,9 @@ import { dirname, join } from "node:path";
+ import test from "node:test";
+ import { fileURLToPath } from "node:url";
+ 
+-import { readRequestBody, withMockOpenViking, writeJson } from "../../memory-plugin-shared/testing/support.mjs";
++import { readRequestBody, withMockOpenViking, withPendingDir, writeJson } from "../../memory-plugin-shared/testing/support.mjs";
+ import { extractCaptureTurns } from "./cc-transcript.mjs";
++import { enqueue, listPending } from "./lib/pending-queue.mjs";
+ 
+ const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+ 
+@@ -127,6 +128,62 @@ test("failed non-retryable capture keeps the cursor for a later retry", async ()
+   }
+ });
+ 
++test("Stop replays queued writes before sending the new turns", async () => {
++  const root = await mkdtemp(join(tmpdir(), "ov-cc-capture-replay-"));
++  const transcriptPath = join(root, "transcript.jsonl");
++  const requests = [];
++
++  try {
++    await writeTranscript(transcriptPath);
++    await withPendingDir(async (pendingDir) => {
++      for (let i = 0; i < 20; i++) {
++        await enqueue("addMessage", "cc-old-session", {
++          role: "assistant",
++          parts: [{ type: "text", text: `old ${i}` }],
++        }, { createdAt: 1000 + i });
++      }
++
++      await withMockOpenViking(async (req, res) => {
++        const url = new URL(req.url, "http://127.0.0.1");
++        if (req.method === "GET" && url.pathname === "/health") {
++          writeJson(res, { status: "ok", result: { healthy: true } });
++          return;
++        }
++        if (req.method === "POST" && url.pathname.endsWith("/messages/batch")) {
++          const body = await readRequestBody(req);
++          requests.push({ path: url.pathname, count: body.messages.length });
++          writeJson(res, { status: "ok", result: { added: body.messages.length } });
++          return;
++        }
++        if (req.method === "POST" && url.pathname.endsWith("/messages")) {
++          const body = await readRequestBody(req);
++          requests.push({ path: url.pathname, text: body.parts[0].text });
++          writeJson(res, { status: "ok", result: {} });
++          return;
++        }
++        writeJson(res, { status: "ok", result: {} });
++      }, async (baseUrl) => {
++        await runAutoCapture(
++          { session_id: "capture-replay", transcript_path: transcriptPath, cwd: root },
++          { ...hookEnv(root, baseUrl), OPENVIKING_PENDING_DIR: pendingDir },
++        );
++      });
++
++      assert.deepEqual(await listPending(), []);
++    });
++
++    assert.deepEqual(requests, [
++      ...Array.from({ length: 20 }, (_, i) => ({
++        path: "/api/v1/sessions/cc-old-session/messages",
++        text: `old ${i}`,
++      })),
++      { path: "/api/v1/sessions/cc-capture-replay/messages/batch", count: 2 },
++    ]);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
+ test("threshold commit archives every captured message", async () => {
+   const root = await mkdtemp(join(tmpdir(), "ov-cc-capture-commit-"));
+   const transcriptPath = join(root, "transcript.jsonl");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6395** (2026-10-21): fix(storage): 升级后继续隐藏旧版多写元数据 (@qin-ctx)
-- **PR #6387** (2026-10-21): fix(compile): keep the compile workspace root absolute (#6376) (@TINGyu123644)
-- **PR #6372** (2026-10-21): fix(bot): translate POSIX compile sandbox commands on Windows (@zrwangems)
-- **PR #6365** (2026-10-20): fix(agent-evolution): preserve explicit Experience read attribution (@qin-ptr)
-- **PR #6361** (2026-10-20): fix(ov_cli): trust native CA roots (@sponge225)
-- **PR #6353** (2026-10-20): test(claude-code-plugin): fit recall fixture within the full context budget (@ehz0ah)
+- **PR #6463** (2026-10-23): feat(studio): align filesystem CLI commands and task interactions (@leowld)
+- **PR #6447** (2026-10-22): feat(connector): support oauth refs for document imports (@duyuxuan0518)
+- **PR #6435** (closed): feat(dsh-memory-plugin): add OpenViking console panel (@zrwangems)
+- **PR #6429** (2026-10-22): fix(memory): skip unfixable event resolution retries (@dannyward630)
+- **PR #6424** (2026-10-22): fix(pathlock): 调整 pathlock release 顺序，先执行内存 Registry lease 的移除，再通过 provider 删除 pathlock 文件 (@baojun-zhang)
+- **PR #6421** (2026-10-22): fix(memory): allow omitting optional supersedes field (@rjdotdev)
 
 ---
 
@@ -1948,55 +2477,34 @@ Co-authored-by: TINGyu123644 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compile): keep the compile workspace root absolute (#6376) (#6387)
+## X. gateway): tolerate non-string "type" values in client history (#6306)
 
 **RULE**:
-When implementing operations in `bot/tests/test_compile_execution.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `openviking_gateway/capture.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6545bb2a`: compile): keep the compile workspace root absolute (#6376) (#6387). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9db19ab`: gateway): tolerate non-string "type" values in client history (#6306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `bot/tests/test_compile_execution.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `openviking_gateway/capture.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from pathlib import Path
-from vikingbot.compile.sandbox import CompileSandboxManager, _CompileSandbox
-from vikingbot.config.schema import Config, SessionKey
-
-
-def test_compile_workspace_root_is_absolute_for_relative_storage(tmp_path, monkeypatch):
-    """A relative storage.workspace must not reach sandbox subprocess paths (#6376)."""
-    state_root = tmp_path / "state"
-    state_root.mkdir()
-    monkeypatch.chdir(state_root)
-    config = Config(storage_workspace="data")
-    config.ov_server.set_effective_auth_mode("dev")
-    manager = CompileSandboxManager(
-        config,
-        config.bot_data_path / "compile_workspaces" / "task-1",
-        config.workspace_path,
-        connection={},
-    )
-    expected = (state_root / "data" / "bot" / "compile_workspaces" / "task-1").resolve()
-    assert manager.workspace == expected
-
-    # The credentials path is injected into sandbox shell commands, whose working
-    # directory is the workspace itself; a relative path would resolve twice.
-    workspace = manager.get_workspace_path(
-        SessionKey(type="compile", channel_id="task-1", chat_id="task-1")
-    )
-    sandbox = _CompileSandbox(SimpleNamespace(sandbox_cwd=str(workspace)))
-    co
+from .protocols import clean_text, is_user, string_type, text_content, unwrap_client
+        if string_type(message) in {"function_call_output", "custom_tool_call_output"}:
+        if message.get("role") not in {"user", "assistant"} and string_type(message) not in {
+        if string_type(message) in {"function_call", "custom_tool_call"}:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-from vikingbot.config.schema import Config
+from .protocols import clean_text, is_user, text_content, unwrap_client
+        if message.get("type") in {"function_call_output", "custom_tool_call_output"}:
+        if message.get("role") not in {"user", "assistant"} and message.get("type") not in {
+        if message.get("type") in {"function_call", "custom_tool_call"}:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6545bb2a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9db19ab` are properly handled with clean fallback behavior.

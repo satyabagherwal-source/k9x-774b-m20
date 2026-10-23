@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "c133b946",
+    "sourceVersion": "0d546854",
     "license": "AGPL-3.0",
-    "contentHash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
-    "lastHarvestedAt": "2026-10-21T03:43:11.907Z",
+    "contentHash": "0a48af2bf48e9e30ac5253efcaf6d620fe438de099196d4f4de23878d59837d8",
+    "lastHarvestedAt": "2026-10-23T06:49:58.581Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "be55273c",
+    "sourceVersion": "9e052d7c",
     "license": "Apache-2.0",
-    "contentHash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
-    "lastHarvestedAt": "2026-10-21T04:43:03.341Z",
+    "contentHash": "99ab27294004ca6d7aa3a0a4c83a8e189d7bc5520108571ddc17623f3d0d6cb0",
+    "lastHarvestedAt": "2026-10-23T06:49:55.056Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -6333,10 +6333,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/fastapi/fastapi",
-    "sourceVersion": "b2ce629a",
+    "sourceVersion": "69ddc2ba",
     "license": "MIT",
-    "contentHash": "790fc0bb4c745b090effdcc2eaedff91a9e7a5d069ef8a94e9dc1f0d9999ef93",
-    "lastHarvestedAt": "2026-10-21T04:56:48.901Z",
+    "contentHash": "98601ea6e30448df9e2cd3de08e2de09e9ffb431505e507f34d09e9fa3d34953",
+    "lastHarvestedAt": "2026-10-23T06:49:43.596Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "ataraxy-labs-sem": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "683c8692",
+    "sourceVersion": "d09972b8",
     "license": "MIT",
-    "contentHash": "5443a72eeab964628ca68c0ec9ec4c97d1fcf00a103fc6e9acd9c7443a33317d",
-    "lastHarvestedAt": "2026-10-20T02:43:02.318Z",
+    "contentHash": "091874c1198f18d51a0c15a33df4dbbed79e5f97df429ebf281deb45e4e5b815",
+    "lastHarvestedAt": "2026-10-23T06:49:47.682Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

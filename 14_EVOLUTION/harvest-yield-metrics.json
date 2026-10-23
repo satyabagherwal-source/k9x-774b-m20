@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:42:34.184Z",
-  "total_cycles_completed": 4458,
-  "total_learnings_persisted": 4458,
-  "total_rules_promoted": 3645,
+  "last_updated": "2026-10-23T06:49:58.591Z",
+  "total_cycles_completed": 4462,
+  "total_learnings_persisted": 4462,
+  "total_rules_promoted": 3649,
   "history": [
-    {
-      "timestamp": "2026-10-22T15:22:11.926Z",
-      "repository": "SolaceLabs/solace-agent-mesh",
-      "learningId": "learn-github-solacelabs-solace-agent-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:28:46.927Z",
-      "repository": "sandbox-quantum/switch",
-      "learningId": "learn-github-sandbox-quantum-switch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:28:47.487Z",
-      "repository": "XHToken/Spark-X2.6-4B",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:28:49.824Z",
-      "repository": "InternScience/Sage-A1.5",
-      "learningId": "learn-huggingface-internscience-sage-a1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T15:28:55.855Z",
       "repository": "RecursiveSI/flint",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-23T06:42:34.184Z",
       "repository": "expo/expo",
       "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:49:43.608Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:49:47.687Z",
+      "repository": "TanStack/query",
+      "learningId": "learn-github-tanstack-query",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:49:55.065Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:49:58.591Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

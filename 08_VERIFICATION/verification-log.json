@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-VZW3",
-    "timestamp": "2026-10-20T19:30:39.603Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "fd6e894b66c51428f426fb8c0fe8ad4391a66e18afc93c6c084d210d60c97ae1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-W736",
-    "timestamp": "2026-10-20T19:30:48.930Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "2a3c2b83fa371b689a59f707743903b88bdbae6ba99aae129cd8bcbddac57008",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-402S",
-    "timestamp": "2026-10-20T19:36:53.092Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-47SQ",
-    "timestamp": "2026-10-20T19:37:03.098Z",
-    "repository": "Checkmarx/kics",
-    "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-CAF2",
     "timestamp": "2026-10-20T19:43:19.742Z",
     "repository": "zed-industries/zed",
@@ -7490,6 +7430,66 @@
     "repository": "expo/expo",
     "learningId": "learn-github-expo-expo",
     "contentHash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-0ZHK",
+    "timestamp": "2026-10-23T06:49:43.592Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "98601ea6e30448df9e2cd3de08e2de09e9ffb431505e507f34d09e9fa3d34953",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-12N3",
+    "timestamp": "2026-10-23T06:49:47.679Z",
+    "repository": "TanStack/query",
+    "learningId": "learn-github-tanstack-query",
+    "contentHash": "091874c1198f18d51a0c15a33df4dbbed79e5f97df429ebf281deb45e4e5b815",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-18BX",
+    "timestamp": "2026-10-23T06:49:55.053Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "99ab27294004ca6d7aa3a0a4c83a8e189d7bc5520108571ddc17623f3d0d6cb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-1B1U",
+    "timestamp": "2026-10-23T06:49:58.578Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "0a48af2bf48e9e30ac5253efcaf6d620fe438de099196d4f4de23878d59837d8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

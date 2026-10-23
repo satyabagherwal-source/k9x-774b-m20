@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T06:42:34.187Z",
+  "last_updated": "2026-10-23T06:49:58.595Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
-      "verified_at": "2026-10-21T03:43:11.917Z",
+      "content_hash": "0a48af2bf48e9e30ac5253efcaf6d620fe438de099196d4f4de23878d59837d8",
+      "verified_at": "2026-10-23T06:49:58.595Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:43:11.917Z"
+      "last_updated": "2026-10-23T06:49:58.595Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "790fc0bb4c745b090effdcc2eaedff91a9e7a5d069ef8a94e9dc1f0d9999ef93",
-      "verified_at": "2026-10-21T04:56:48.914Z",
+      "content_hash": "98601ea6e30448df9e2cd3de08e2de09e9ffb431505e507f34d09e9fa3d34953",
+      "verified_at": "2026-10-23T06:49:43.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:56:48.914Z"
+      "last_updated": "2026-10-23T06:49:43.611Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
-      "verified_at": "2026-10-21T04:43:03.349Z",
+      "content_hash": "99ab27294004ca6d7aa3a0a4c83a8e189d7bc5520108571ddc17623f3d0d6cb0",
+      "verified_at": "2026-10-23T06:49:55.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:43:03.349Z"
+      "last_updated": "2026-10-23T06:49:55.068Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "5443a72eeab964628ca68c0ec9ec4c97d1fcf00a103fc6e9acd9c7443a33317d",
-      "verified_at": "2026-10-20T02:43:02.323Z",
+      "content_hash": "091874c1198f18d51a0c15a33df4dbbed79e5f97df429ebf281deb45e4e5b815",
+      "verified_at": "2026-10-23T06:49:47.690Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:43:02.323Z"
+      "last_updated": "2026-10-23T06:49:47.690Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

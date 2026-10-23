@@ -4488,3 +4488,7 @@ Every entry in this ledger must capture:
 | `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `f4967e5c` | Multi-dimensional audit evidence | 2026-10-23T06:36:15.514Z |
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `a9f8ae18` | Multi-dimensional audit evidence | 2026-10-23T06:36:22.361Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `55889d57` | Multi-dimensional audit evidence | 2026-10-23T06:42:34.177Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `69ddc2ba` | Multi-dimensional audit evidence | 2026-10-23T06:49:43.596Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `d09972b8` | Multi-dimensional audit evidence | 2026-10-23T06:49:47.682Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `9e052d7c` | Multi-dimensional audit evidence | 2026-10-23T06:49:55.056Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `0d546854` | Multi-dimensional audit evidence | 2026-10-23T06:49:58.581Z |
