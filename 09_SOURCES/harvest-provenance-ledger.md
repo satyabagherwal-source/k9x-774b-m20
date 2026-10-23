@@ -4528,3 +4528,7 @@ Every entry in this ledger must capture:
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `0118841e` | Multi-dimensional audit evidence | 2026-10-23T09:58:01.654Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `8ce7a3c5` | Multi-dimensional audit evidence | 2026-10-23T09:58:07.316Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4888330a` | Multi-dimensional audit evidence | 2026-10-23T09:58:08.102Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `f574e07d` | Multi-dimensional audit evidence | 2026-10-23T10:09:34.201Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `0e058dc0` | Multi-dimensional audit evidence | 2026-10-23T10:09:36.610Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `c1173a94` | Multi-dimensional audit evidence | 2026-10-23T10:09:38.401Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `68fe0510` | Multi-dimensional audit evidence | 2026-10-23T10:09:48.505Z |

@@ -2733,10 +2733,10 @@
     "repository": "react-navigation/react-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/react-navigation/react-navigation",
-    "sourceVersion": "11e8bd2d",
+    "sourceVersion": "c1173a94",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "ce39cdff3bea627ad0c594122fb15677b3567a7fb5323ff43215bf7c5fb3ae5a",
-    "lastHarvestedAt": "2026-10-18T22:04:18.042Z",
+    "contentHash": "3fa6d6cd51e094e7c494618d55a63b100ace6e30afe4f17fba049365b54b9d62",
+    "lastHarvestedAt": "2026-10-23T10:09:38.401Z",
     "learningId": "learn-github-react-navigation-react-navigation"
   },
   "easegress-io-easegress": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "04fe057b",
+    "sourceVersion": "68fe0510",
     "license": "Apache-2.0",
-    "contentHash": "4f6f195f94fef764b59400f274edcf4ce8d7fe8337a8c9f22837bb830b4b5d18",
-    "lastHarvestedAt": "2026-10-21T05:03:04.084Z",
+    "contentHash": "9a2b6d41b02a04b300c50654b99afa811207827b67d8758013a7717871bc6744",
+    "lastHarvestedAt": "2026-10-23T10:09:48.505Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -5283,10 +5283,10 @@
     "repository": "transact-rs/sqlx",
     "platform": "github",
     "sourceUrl": "https://github.com/transact-rs/sqlx",
-    "sourceVersion": "4161768c",
+    "sourceVersion": "f574e07d",
     "license": "Apache-2.0",
-    "contentHash": "794b270736a38bceaea1ff7a7fabda9834ffdb492a261a9f2cc82d9f578c34df",
-    "lastHarvestedAt": "2026-10-19T03:26:40.613Z",
+    "contentHash": "62148b7bff48adb4a1790d20ad1ebf3a4feed3717ec5f919548ba9ea9bbcb1ff",
+    "lastHarvestedAt": "2026-10-23T10:09:34.201Z",
     "learningId": "learn-github-transact-rs-sqlx"
   },
   "bergside-typeui": {
@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "dc60fc2e",
+    "sourceVersion": "0e058dc0",
     "license": "NOASSERTION",
-    "contentHash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
-    "lastHarvestedAt": "2026-10-20T04:19:35.528Z",
+    "contentHash": "589dfdd78050dd5ee2a30796ac4c58fa6ab2eeec8c8661e989a54cbf662439f5",
+    "lastHarvestedAt": "2026-10-23T10:09:36.610Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {

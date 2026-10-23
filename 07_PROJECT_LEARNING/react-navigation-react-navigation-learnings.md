@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source**: github ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
-> **Source Version**: `11e8bd2d`  
+> **Source Version**: `c1173a94`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:04:17.859Z  
+> **Timestamp**: 2026-10-23T10:09:38.048Z  
 > **Learning ID**: `learn-github-react-navigation-react-navigation`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:04:17.557Z  
+> **Harvest Timestamp**: 2026-10-23T10:09:37.853Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Routing and navigation for React Native and Web apps
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 24510 stars
+- **Stars / Engagement**: 24511 stars
 
 ---
 
@@ -601,231 +601,303 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f6c35d1` (2026-10-13)
-**Commit Message**: fix: restart card animation when StrictMode re-runs effects
+### Incident Patch 1: `c1173a94` (2026-10-21)
+**Commit Message**: ci: perform steps in parallel when possible
 
-React 19 StrictMode re-runs effects of a keyed child that moves to a new
-position. When an existing route was rearranged to the top (e.g. push with
-a matching getId), the cleanup stopped the opening animation but the re-run
-saw stale refs and didn't restart it, leaving the card stuck off-screen.
-
-**File**: `packages/stack/src/views/Stack/Card.tsx` (modified, +7/-0)
+**File**: `.github/workflows/ci.yml` (modified, +14/-11)
 ```diff
-@@ -309,6 +309,13 @@ function Card({
-       animationIdRefForCleanup.current++;
-       gesture.stopAnimation();
+@@ -32,15 +32,21 @@ jobs:
+       - name: Setup
+         uses: ./.github/actions/setup
  
-+      // In development, StrictMode re-runs effects without unmounting,
-+      // e.g. when the card moves to a new position after rearranging.
-+      // The stopped animation didn't reach its value, so reset the state,
-+      // to make sure that `maybeAnimate` restarts it when effects re-run.
-+      isAnimatingRef.current = false;
-+      lastToValueRef.current = undefined;
+-      - name: Lint files
+-        run: pnpm lint
++      - parallel:
++          - name: Lint files
++            run: pnpm lint
+ 
+-      - name: Typecheck files
+-        run: |
+-          pnpm typecheck
+-          pnpm typecheck:standalone:static
+-          pnpm typecheck:standalone:dynamic
+-          pnpm typecheck:declarations
++          - name: Typecheck files
++            run: pnpm typecheck
 +
-       if (animationHandleRef.current) {
-         cancelAnimationFrame(animationHandleRef.current);
-       }
++          - name: Typecheck standalone static config
++            run: pnpm typecheck:standalone:static
++
++          - name: Typecheck standalone dynamic config
++            run: pnpm typecheck:standalone:dynamic
++
++          - name: Typecheck declarations
++            run: pnpm typecheck:declarations
+ 
+   unit-test:
+     runs-on: ubuntu-latest
+@@ -69,9 +75,6 @@ jobs:
+       - name: Build packages in the monorepo
+         run: pnpm lerna run prepack
+ 
+-      - name: Verify types are correct
+-        run: pnpm typecheck
+-
+       - name: Bundle example JavaScript with Metro
+         run: pnpm example exec expo export --platform all
+ 
 ```
 
----
-
-### Incident Patch 2: `e50049a7` (2026-10-13)
-**Commit Message**: feat: support tinted image icons on Android and rendering mode for SF Symbol icons (#13278)
-
-**What**
-
-Uses the Tabs icon coloring API from
-software-mansion/react-native-screens#4209.
-
-- `image` icons: `tinted` now also works on Android in the native bottom
-tab bar. On iOS, the native bottom tab bar sends `imageSource` with
-`renderingMode` instead of `templateSource`. No visual change on iOS.
-- `sfSymbol` icons get `renderingMode?: 'monochrome' | 'multicolor'`,
-used by the native bottom tab bar and `PlatformIcon` (JS tab bar,
-headers, drawer). Unset keeps the current look. The native bar maps
-`multicolor` to react-native-screens' `original`.
-
-native-stack header items don't accept `renderingMode` yet; they follow
-once react-native-screens supports it in Stack.
-
-Stacked on #13168. Needs react-native-screens 4.29.0 (#13282).
-
-**Test plan**
-
-- Native bottom tabs (iOS, Android): image icon with `tinted: true` and
-`false`; SF Symbol with `renderingMode: 'multicolor'`.
-- JS tab bar and header: SF Symbol with `renderingMode: 'multicolor'`
-shows the symbol's own colors.
-
----------
-
-Co-authored-by: Satyajit Sahoo <[REDACTED_EMAIL]>
-
-**File**: `packages/bottom-tabs/src/types.tsx` (modified, +0/-2)
+**File**: `.github/workflows/e2e-android.yml` (modified, +65/-53)
 ```diff
-@@ -506,8 +506,6 @@ export type BottomTabNavigationOptions = {
-    * - on all platforms with `custom` implementation
-    * - on iOS with `native` implementation
-    *
--   * With `native` implementation, `tinted` for `image` can only be disabled on iOS.
--   *
-    * A React element is only supported with `custom` implementation.
-    */
-   tabBarIcon?:
+@@ -53,32 +53,33 @@ jobs:
+           path: android-debug-build/
+           key: android-debug-build-${{ runner.os }}-${{ env.API_LEVEL }}-${{ env.ORG_GRADLE_PROJECT_reactNativeArchitectures }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
+ 
+-      - name: Maximize build space
+-        if: steps.restore-debug-build.outputs.cache-hit != 'true'
+-        uses: AdityaGarg8/remove-unwanted-software@90e01b21170618765a73370fcc3abbd1684a7793
+-        with:
+-          remove-dotnet: 'true'
+-          remove-haskell: 'true'
+-          remove-codeql: 'true'
+-          remove-docker-images: 'true'
+-
+-      - name: Setup JDK
+-        if: steps.restore-debug-build.outputs.cache-hit != 'true'
+-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+-        with:
+-          distribution: ${{ env.JAVA_DISTRIBUTION }}
+-          java-version: ${{ env.JAVA_VERSION }}
+-
+-      - name: Cache Gradle
+-        if: steps.restore-debug-build.outputs.cache-hit != 'true'
+-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+-        with:
+-          path: |
+-            ~/.gradle/caches
+-            ~/.gradle/wrapper
+-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+-          restore-keys: |
+-            gradle-${{ runner.os }}-
++      - parallel:
++          - name: Maximize build space
++            if: steps.restore-debug-build.outputs.cache-hit != 'true'
++            uses: AdityaGarg8/remove-unwanted-software@90e01b21170618765a73370fcc3abbd1684a7793
++            with:
++              remove-dotnet: 'true'
++              remove-haskell: 'true'
++              remove-codeql: 'true'
++              remove-docker-images: 'true'
++
++          - name: Setup JDK
++            if: steps.restore-debug-build.outputs.cache-hit != 'true'
++            uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
++            with:
++              distribution: ${{ env.JAVA_DISTRIBUTION }}
++              java-version: ${{ env.JAVA_VERSION }}
++
++          - name: Cache Gradle
++            if: steps.restore-debug-build.outputs.cache-hit != 'true'
++            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
++            with:
++              path: |
++                ~/.gradle/caches
++                ~/.gradle/wrapper
++              key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
++              restore-keys: |
++                gradle-${{ runner.os }}-
+ 
+       - name: Build Android App
+         if: steps.restore-debug-build.outputs.cache-hit != 'true'
+@@ -126,30 +127,23 @@ jobs:
+       - name: Checkout
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+ 
+-      - name: Setup
+-        uses: ./.github/actions/setup
+-
+-      - name: Install nightly react-native-screens
+-        if: github.event_name == 'schedule'
+-        run: pnpm --recursive update react-native-screens@nightly --no-save
+-
+-      - name: Download debug build artifact
+-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+-        with:
+-          name: android-debug-build
+-          path: android-debug-build
+-
+-      - name: Install AVD dependencies
+-        run: |
+-          sudo apt update
+-          sudo apt-get install -y libpulse0 libgl1 libxkbfile1
+-
+       - name: Setup JDK
+         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+         with:
+           distribution: ${{ env.JAVA_DISTRIBUTION }}
+           java-version: ${{ env.JAVA_VERSION }}
+ 
++      - parallel:
++          - name: Install AVD dependencies
++            run: |
++              sudo apt update
++              sudo apt-get install -y libpulse0 libgl1 libxkbfile1
++
++          - name: Install Android SDK components
++            run: |
++              yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
++              "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install emulator "platform-tools" "system-images;android-${{ env.API_LEVEL }};google_apis;x86_64"
++
+       - name: Setup Android SDK
+         run: |
+           {
+@@ -158,11 +152,6 @@ jobs:
+             echo "$ANDROID_HOME/cmdline-tools/latest/bin"
+           } >> "$GITHUB_PATH"
+ 
+-      - name: Install Android SDK components
+-        run: |
+-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install emulator "platform-tools" "system-images;android-${{ env.API_LEVEL }};google_apis;x86_64"
+-
+       - name: Enable KVM
+         run: |
+           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+@@ -173,22 +162,45 @@ jobs:
+         run: |
+           avdmanager create avd -n "${{ env.AVD_NAME }}" -d "${{ env.EMULATOR_PROFILE }}" -k "system-images;android-${{ env.API_LEVEL }};google_apis;x86_64"
+ 
+-      - name: Sta
 ```
 
-**File**: `packages/bottom-tabs/src/views/BottomTabViewNativeImpl.tsx` (modified, +22/-18)
+**File**: `.github/workflows/e2e-ios.yml` (modified, +75/-64)
 ```diff
-@@ -27,13 +27,13 @@ import {
-   type TextStyle,
- } from 'react-native';
- import {
--  type PlatformIconIOS,
-   type PlatformIconShared,
-   Tabs,
-   type TabsBottomAccessoryEnvironment,
-   type TabSelectedEvent,
-   type TabSelectionRejectedEvent,
-   type TabsScreenIconAndroid,
-+  type TabsScreenIconIOS,
-   type TabsScreenItemStateAppearanceAndroid,
-   type TabsScreenItemStateAppearanceIOS,
- } from 'react-native-screens';
-@@ -64,7 +64,7 @@ type TabSelectionPreventedEvent = {
- };
+@@ -56,41 +56,42 @@ jobs:
+         with:
+           xcode-version: ${{ env.XCODE_VERSION }}
  
- type PlatformIcon = {
--  ios?: PlatformIconIOS | undefined;
-+  ios?: TabsScreenIconIOS | undefined;
-   android?: TabsScreenIconAndroid | undefined;
-   shared?: PlatformIconShared | undefined;
- };
-@@ -857,7 +857,14 @@ function getPlatformIcon(
-   switch (icon.type) {
-     case 'sfSymbol':
-       return {
--        ios: icon,
-+        ios: {
-+          type: 'sfSymbol',
-+          name: icon.name,
-+          renderingMode:
-+            icon.renderingMode === 'multicolor'
-+              ? 'original'
-+              : icon.renderingMode,
-+        },
-         android: undefined,
-         shared: undefined,
-       };
-@@ -887,27 +894,24 @@ function getPlatformIcon(
-           : undefined;
+-      - name: Install build dependencies
+-        if: steps.restore-debug-build.outputs.cache-hit != 'true'
+-        run: brew install ccache
+-
+-      - name: Cache CocoaPods
+-        if: steps.restore-debug-build.outputs.cache-hit != 'true'
+-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+-        with:
+-          path: |
+-            example/ios/Pods
+-            ~/.cocoapods
+-            ~/Library/Caches/CocoaPods
+-          key: ios-pods-${{ runner.os }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
+-          restore-keys: |
+-            ios-pods-${{ runner.os }}-
+-
+-      - name: Cache DerivedData
+-        if: steps.restore-debug-build.outputs.cache-hit != 'true'
+-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+-        with:
+-          path: example/ios/build
+-          key: ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
+-          restore-keys: |
+-            ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+-            ios-deriveddata-${{ runner.os }}-
+-
+-      - name: Cache ccache
+-        if: steps.restore-debug-build.outputs.cache-hit != 'true'
+-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+-        with:
+-          path: ~/.ccache
+-          key: ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
+-          restore-keys: |
+-            ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-
+-            ios-ccache-${{ runner.os }}-
++      - parallel:
++          - name: Install build dependencies
++            if: steps.restore-debug-build.outputs.cache-hit != 'true'
++            run: brew install ccache
++
++          - name: Cache CocoaPods
++            if: steps.restore-debug-build.outputs.cache-hit != 'true'
++            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
++            with:
++              path: |
++                example/ios/Pods
++                ~/.cocoapods
++                ~/Library/Caches/CocoaPods
++              key: ios-pods-${{ runner.os }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
++              restore-keys: |
++                ios-pods-${{ runner.os }}-
++
++          - name: Cache DerivedData
++            if: steps.restore-debug-build.outputs.cache-hit != 'true'
++            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
++            with:
++              path: example/ios/build
++              key: ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
++              restore-keys: |
++                ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-
++                ios-deriveddata-${{ runner.os }}-
++
++          - name: Cache ccache
++            if: steps.restore-debug-build.outputs.cache-hit != 'true'
++            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
++            with:
++              path: ~/.ccache
++              key: ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
++              restore-keys: |
++                ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-
++                ios-ccache-${{ runner.os }}-
  
-       return {
--        ios:
--          icon.tinted === false
--            ? {
--                type: 'imageSource',
--                imageSource: icon.source,
--              }
--            : {
--                type: 'templateSource',
--                templateSource: icon.source,
--              },
-+        ios: {
-+          type: 'imageSource',
-+          imageSource: icon.source,
-+          renderingMode: icon.tinted === false ? 'original' : 'template',
-+        },
-         android:
-           drawableName != null
-             ? {
-                 type: 'drawableResource',
-                 name: drawableName,
-+                tinting: icon.tinted === false ? 'original' : 'tinted',
-               }
--            : undefined,
--        shared: {
--          type: 'imageSource',
--          imageSource: icon.source,
--        },
-+            : {
-+                type: 'imageSource',
-+                imageSource: icon.source,
-+                tinting: icon.tinted === false ? 'original' : 'tinted',
-+              },
-+        shared: undefined,
-       };
-     }
-     default: {
-```
-
-**File**: `packages/elements/src/PlatformIcon.tsx` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ export function PlatformIcon({
-       return (
-         <SFSymbol
-           name={icon.name}
-+          renderingMode={icon.renderingMode}
-           color={color}
-           size={size}
-           style={StyleSheet.flatten(style)}
-```
-
-**File**: `packages/elements/src/types.tsx` (modified, +8/-0)
-```diff
-@@ -47,6 +47,14 @@ type IconSfSymbol = {
-    * Name of the SF Symbol to use as the icon.
-    */
-   name: SFSymbol;
-+  /**
-+   * How to color the symbol.
-+   * - `monochrome`: Single color, using the tint color.
-+   * - `multicolor`: Uses the symbol's built-in multicolor scheme.
-+   *
-+   * Defaults to a single color for system symbols.
-+   */
-+  renderingMode?: 'monochrome' | 'multicolor' | undefined;
- };
+       - name: Set ccache directory
+         if: steps.restore-debug-build.outputs.cache-hit != 'true'
+@@ -151,6 +152,36 @@ jobs:
+       - name: Checkout
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
  
- type IconMaterialSymbol = {
-```
-
-**File**: `packages/native-stack/src/types.tsx` (modified, +3/-1)
-```diff
-@@ -836,7 +836,9 @@ export type NativeStackNavigationOptions = {
-   inactiveBehavior?: 'pause' | 'unmount' | 'none' | undefined;
- };
++      - name: Use appropriate Xcode version
++        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90
++        with:
++          xcode-version: ${{ env.XCODE_VERSION }}
++
++      - name: Boot iOS Simulator
++        id: boot-simulator
++        timeout-minutes: 5
++        run: |
++          DEVICE_ID=$(xcrun simctl list devices available | grep "$SIMULATOR_NAME" | head -n 1 | awk -F "[()]" '{print $2}')
++
++          if [ -z "$DEVICE_ID" ]; then
++            echo "No available simulator found for the criteria."
++            xcrun simctl list devices available
++            exit 1
++          fi
++
++          echo "Booting $SIMULATOR_NAME simulator with DEVICE_ID=$DEVICE_ID..."
++          xcrun simctl boot "$DEVICE_ID" || true
++
++          while ! xcrun simctl list devices | grep "$DEVICE_ID" | grep -q "(Booted)"; do
++            sleep 2
++          done
++
++          echo "Simulator is booted!"
++
++          # Add deep link handler so we don't see a prompt when running tests
++          /usr/libexec/PlistBuddy "$HOME/Library/Developer/CoreSimulator/Devices/${DEVICE_ID}/data/Library/Preferences/com.apple.launchservices.schemeapproval.plist" -c "add com.apple.CoreSimulator.CoreSimulatorBridge-->rne string org.reactnavigation.playground"
++        background: true
++
+       - name: Setup
+         uses: ./.github/actions/setup
  
--type IconIOS = Extract<Icon, { type: 'image' | 'sfSymbol' }>;
-+type IconIOS =
-+  | Extract<Icon, { type: 'image' }>
-+  | Omit<Extract<Icon, { type: 'sfSymbol' }>, 'renderingMode'>;
- 
- type SharedHeaderItem = {
-   /**
-```
-
----
-
-### Incident Patch 3: `09619ecf` (2026-10-06)
-**Commit Message**: docs: fix broken documentation link in native-stack README (#13269)
-
-**File**: `packages/native-stack/README.md` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@
- 
- Stack navigator for React Native using native primitives for navigation. Uses [`react-native-screens`](https://github.com/software-mansion/react-native-screens) under the hood.
- 
--Installation instructions and documentation can be found on the [React Navigation website](https://reactnavigation.org/docs/native-stack-navigator.html).
-+Installation instructions and documentation can be found on the [React Navigation website](https://reactnavigation.org/docs/native-stack-navigator/).
+@@ -167,11 +198,6 @@ jobs
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13305** (2026-10-21): ci: perform steps in parallel when possible (@satya164)
 - **PR #13295** (2026-10-13): cherry picks from main and other updates (@satya164)
 - **PR #13293** (2026-10-13): refactor: reduce re-renders in Material Top Tabs indicator (@satya164)
 - **PR #13292** (2026-10-13): refactor: minimize re-renders in Bottom Tabs (@satya164)
 - **PR #13291** (2026-10-13): refactor: minimize re-renders in Drawer (@satya164)
 - **PR #13290** (2026-10-13): refactor: minimize re-renders in Native Stack (@satya164)
-- **PR #13289** (2026-10-13): refactor: minimize re-renders in SceneView (@satya164)
 
 ---
 
@@ -845,34 +917,51 @@ Co-authored-by: Satyajit Sahoo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. restart card animation when StrictMode re-runs effects
+## X. ci: perform steps in parallel when possible
 
 **RULE**:
-When implementing operations in `packages/stack/src/views/Stack/Card.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f6c35d1`: restart card animation when StrictMode re-runs effects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1173a94`: ci: perform steps in parallel when possible. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/stack/src/views/Stack/Card.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      // In development, StrictMode re-runs effects without unmounting,
-      // e.g. when the card moves to a new position after rearranging.
-      // The stopped animation didn't reach its value, so reset the state,
-      // to make sure that `maybeAnimate` restarts it when effects re-run.
-      isAnimatingRef.current = false;
-      lastToValueRef.current = undefined;
+      - parallel:
+          - name: Lint files
+            run: pnpm lint
+          - name: Typecheck files
+            run: pnpm typecheck
 
+          - name: Typecheck standalone static config
+            run: pnpm typecheck:standalone:static
+
+          - name: Typecheck standalone dynamic config
+            run: pnpm typecheck:standalone:dynamic
+
+          - name: Typecheck declarations
+            run: pnpm typecheck:declarations
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      - name: Lint files
+        run: pnpm lint
+      - name: Typecheck files
+        run: |
+          pnpm typecheck
+          pnpm typecheck:standalone:static
+          pnpm typecheck:standalone:dynamic
+          pnpm typecheck:declarations
+      - name: Verify types are correct
+        run: pnpm typecheck
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f6c35d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1173a94` are properly handled with clean fallback behavior.

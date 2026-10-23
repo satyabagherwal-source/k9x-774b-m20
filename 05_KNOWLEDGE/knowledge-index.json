@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T09:58:08.055Z",
-  "total_verified_learnings": 1073,
+  "last_updated": "2026-10-23T10:09:48.453Z",
+  "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -32262,8 +32262,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "04fe057b",
-      "content_hash": "4f6f195f94fef764b59400f274edcf4ce8d7fe8337a8c9f22837bb830b4b5d18",
+      "source_version": "68fe0510",
+      "content_hash": "9a2b6d41b02a04b300c50654b99afa811207827b67d8758013a7717871bc6744",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -32276,6 +32276,11 @@
           "number": 3269,
           "title": "bootstrap): recheck CDC watermark prerequisites in the 4.0.11 upgrade (#30215) (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3869,
+          "title": "frontend): persist default role selection (#30709)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32283,7 +32288,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:03:04.024Z",
+      "verified_at": "2026-10-23T10:09:48.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40403,14 +40408,19 @@
       "slug": "react-navigation-react-navigation",
       "platform": "github",
       "source_url": "https://github.com/react-navigation/react-navigation",
-      "source_version": "11e8bd2d",
-      "content_hash": "ce39cdff3bea627ad0c594122fb15677b3567a7fb5323ff43215bf7c5fb3ae5a",
+      "source_version": "c1173a94",
+      "content_hash": "3fa6d6cd51e094e7c494618d55a63b100ace6e30afe4f17fba049365b54b9d62",
       "dossier_path": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "promoted_rules": [
         {
           "number": 1759,
           "title": "restart card animation when StrictMode re-runs effects",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3868,
+          "title": "ci: perform steps in parallel when possible",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40419,7 +40429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:04:17.994Z",
+      "verified_at": "2026-10-23T10:09:38.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47063,22 +47073,35 @@
     "learn-github-transact-rs-sqlx": {
       "learning_id": "learn-github-transact-rs-sqlx",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "transact-rs-sqlx",
+      "source": "transact-rs/sqlx",
+      "repository": "transact-rs/sqlx",
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "HEAD",
-      "content_hash": "771e34a5e06e40f0ec913290bd90472737d1fa701257106142fa98e258ec0c31",
+      "source_version": "f574e07d",
+      "content_hash": "62148b7bff48adb4a1790d20ad1ebf3a4feed3717ec5f919548ba9ea9bbcb1ff",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 3866,
+          "title": "macros): tolerate unreadable dotenv with query source (#4371)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.046Z"
+      "verified_at": "2026-10-23T10:09:34.135Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-transformeroptimus-superagi": {
       "learning_id": "learn-github-transformeroptimus-superagi",
@@ -64111,8 +64134,8 @@
       "slug": "faker-js-faker",
       "platform": "github",
       "source_url": "https://github.com/faker-js/faker",
-      "source_version": "dc60fc2e",
-      "content_hash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
+      "source_version": "0e058dc0",
+      "content_hash": "589dfdd78050dd5ee2a30796ac4c58fa6ab2eeec8c8661e989a54cbf662439f5",
       "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "promoted_rules": [
@@ -64125,6 +64148,11 @@
           "number": 3040,
           "title": "Runtime Memory Boundary Hardening for Repetition Primitives",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3867,
+          "title": "deps): update dependency sanitize-html to v2.18.0 [security] (#4164)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64132,7 +64160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:19:35.456Z",
+      "verified_at": "2026-10-23T10:09:36.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114514,6 +114542,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T09:58:08.044Z"
+    },
+    "rule-3866": {
+      "learning_id": "rule-3866",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3866,
+      "title": "macros): tolerate unreadable dotenv with query source (#4371)",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "f574e07d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:09:34.135Z"
+    },
+    "rule-3867": {
+      "learning_id": "rule-3867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3867,
+      "title": "deps): update dependency sanitize-html to v2.18.0 [security] (#4164)",
+      "source_url": "https://github.com/faker-js/faker",
+      "source_version": "0e058dc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:09:36.542Z"
+    },
+    "rule-3868": {
+      "learning_id": "rule-3868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3868,
+      "title": "ci: perform steps in parallel when possible",
+      "source_url": "https://github.com/react-navigation/react-navigation",
+      "source_version": "c1173a94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:09:38.327Z"
+    },
+    "rule-3869": {
+      "learning_id": "rule-3869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3869,
+      "title": "frontend): persist default role selection (#30709)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "68fe0510",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:09:48.442Z"
     }
   },
   "aliases": {

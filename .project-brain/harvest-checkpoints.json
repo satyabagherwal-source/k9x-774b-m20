@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T09:58:08.113Z",
+  "last_updated": "2026-10-23T10:09:48.515Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4236,14 +4236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-navigation-react-navigation",
-      "content_hash": "ce39cdff3bea627ad0c594122fb15677b3567a7fb5323ff43215bf7c5fb3ae5a",
-      "verified_at": "2026-10-18T22:04:18.045Z",
+      "content_hash": "3fa6d6cd51e094e7c494618d55a63b100ace6e30afe4f17fba049365b54b9d62",
+      "verified_at": "2026-10-23T10:09:38.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:04:18.045Z"
+      "last_updated": "2026-10-23T10:09:38.416Z"
     },
     "easegress-io/easegress": {
       "repository": "easegress-io/easegress",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "4f6f195f94fef764b59400f274edcf4ce8d7fe8337a8c9f22837bb830b4b5d18",
-      "verified_at": "2026-10-21T05:03:04.092Z",
+      "content_hash": "9a2b6d41b02a04b300c50654b99afa811207827b67d8758013a7717871bc6744",
+      "verified_at": "2026-10-23T10:09:48.514Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:03:04.092Z"
+      "last_updated": "2026-10-23T10:09:48.514Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -8046,14 +8046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-transact-rs-sqlx",
-      "content_hash": "794b270736a38bceaea1ff7a7fabda9834ffdb492a261a9f2cc82d9f578c34df",
-      "verified_at": "2026-10-19T03:26:40.618Z",
+      "content_hash": "62148b7bff48adb4a1790d20ad1ebf3a4feed3717ec5f919548ba9ea9bbcb1ff",
+      "verified_at": "2026-10-23T10:09:34.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:26:40.618Z"
+      "last_updated": "2026-10-23T10:09:34.214Z"
     },
     "bergside/typeui": {
       "repository": "bergside/typeui",
@@ -15441,14 +15441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-faker-js-faker",
-      "content_hash": "9430eb5b3a4a6d8d947d5f42193bb044990721f3aa5e6e56d5ca1f73bb3a54e4",
-      "verified_at": "2026-10-20T04:19:35.536Z",
+      "content_hash": "589dfdd78050dd5ee2a30796ac4c58fa6ab2eeec8c8661e989a54cbf662439f5",
+      "verified_at": "2026-10-23T10:09:36.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:19:35.536Z"
+      "last_updated": "2026-10-23T10:09:36.623Z"
     },
     "storybookjs/storybook": {
       "repository": "storybookjs/storybook",

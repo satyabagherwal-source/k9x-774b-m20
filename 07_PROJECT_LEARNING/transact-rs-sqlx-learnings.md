@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `4161768c`  
+> **Source Version**: `f574e07d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:26:40.275Z  
+> **Timestamp**: 2026-10-23T10:09:33.834Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:26:40.265Z  
+> **Harvest Timestamp**: 2026-10-23T10:09:32.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17581 stars
+- **Stars / Engagement**: 17591 stars
 
 ---
 
@@ -981,775 +981,244 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4161768c` (2026-10-16)
-**Commit Message**: fix(mysql): harden protocol decoders against malformed packets from hostile servers (#4458)
+### Incident Patch 1: `36f3a5c1` (2026-10-21)
+**Commit Message**: fix(macros): tolerate unreadable dotenv with query source (#4371)
 
-Found during a security review of server-controlled parsing paths (threat model: rogue or MITM MySQL/MariaDB server; handshake parsing is reachable pre-authentication).
+* fix(macros): tolerate unreadable dotenv with query source
 
-### Does your PR solve an issue?
+Ignore dotenv I/O errors only when a query source was established before reading that file. Continue to report parse errors and mid-file I/O failures when the current file established the source.
 
-No tracking issue — reported here directly. This extends the fix pattern of #4176 (truncated `OK` packet) to the rest of the protocol; #4451 documents the same review on the PostgreSQL side.
+Fixes #4348
 
-### The problem
+Developed with AI assistance.
 
-- `recv_packet`'s continuation loop accumulated an unbounded number of `0xFFFFFF`-sized parts: a hostile server streams endless 16 MiB frames and the client OOMs at near-zero bandwidth cost.
-- The result-set column count (a length-encoded u64) fed `HashMap::with_capacity` / `Vec::reserve` directly; a ~10-byte packet claiming 2^40 columns aborts the process.
-- Dozens of decode sites call panicking `bytes::Buf` getters / slice indexing / `advance` on untrusted buffers: truncated ERR packets, every field of `HandshakeV10` (including the attacker-controlled auth-plugin-data length), length-encoded strings claiming more than the remaining bytes, `TextRow` field-count mismatch, `BinaryRow` (
+Signed-off-by: zhanglangning <[REDACTED_EMAIL]>
 
-**File**: `sqlx-mysql/src/connection/auth.rs` (modified, +7/-0)
+* fix(macros): reject partially read dotenv files
+
+Once a dotenv file yields a key/value pair, preserve subsequent I/O errors
+instead of accepting a partial configuration.
+
+Add regression coverage for denied file permissions and changes to ignored
+dotenv paths.
+
+---------
+
+Signed-off-by: zhanglangning <[REDACTED_EMAIL]>
+
+**File**: `sqlx-macros-core/src/query/metadata.rs` (modified, +461/-30)
 ```diff
-@@ -42,6 +42,13 @@ impl AuthPlugin {
-     ) -> Result<bool, Error> {
-         match self {
-             AuthPlugin::CachingSha2Password if packet[0] == 0x01 => {
-+                if packet.len() < 2 {
-+                    return Err(err_protocol!(
-+                        "expected at least 2 bytes in caching_sha2_password authentication packet but got {}",
-+                        packet.len()
-+                    ));
-+                }
-+
-                 match packet[1] {
-                     // fast_auth_success — the server still sends a trailing
-                     // OK_Packet, so yield back to the handshake loop and let
-```
-
-**File**: `sqlx-mysql/src/connection/executor.rs` (modified, +9/-0)
-```diff
-@@ -435,6 +435,15 @@ async fn recv_result_metadata(
-     // the result-set metadata is primarily a listing of each output
-     // column in the result-set
- 
-+    // MySQL (and MariaDB) enforce a hard limit of 4096 columns per result set;
-+    // reject larger claimed counts before they are used to size allocations,
-+    // as a hostile server could otherwise force an arbitrarily large allocation
-+    if num_columns > 4096 {
-+        return Err(err_protocol!(
-+            "result-set metadata claims {num_columns} columns but the maximum supported is 4096"
-+        ));
-+    }
-+
-     let mut column_names = HashMap::with_capacity(num_columns);
- 
-     columns.clear();
-```
-
-**File**: `sqlx-mysql/src/connection/stream.rs` (modified, +15/-0)
-```diff
-@@ -11,6 +11,13 @@ use crate::protocol::response::{EofPacket, ErrPacket, OkPacket, Status};
- use crate::protocol::{Capabilities, Packet};
- use crate::{MySqlConnectOptions, MySqlDatabaseError};
- 
-+/// The maximum total payload that we accept for a single (possibly reassembled)
-+/// packet: 1 GiB, MySQL's own hard maximum for `max_allowed_packet`.
-+///
-+/// Without this cap, a hostile server could stream an unbounded number of
-+/// 16 MiB packet parts and exhaust the client's memory.
-+const MAX_PACKET_PAYLOAD_LEN: usize = 1024 * 1024 * 1024;
-+
- pub struct MySqlStream<S = Box<dyn Socket>> {
-     // Wrapping the socket in `Box` allows us to unsize in-place.
-     pub(crate) socket: BufferedSocket<S>,
-@@ -155,6 +162,14 @@ impl<S: Socket> MySqlStream<S> {
-             while last_read == 0xFF_FF_FF {
-                 let part = self.recv_packet_part().await?;
-                 last_read = part.len();
-+
-+                if final_payload.len() + part.len() > MAX_PACKET_PAYLOAD_LEN {
-+                    return Err(err_protocol!(
-+                        "reassembled packet payload of {} bytes exceeds maximum packet payload of {MAX_PACKET_PAYLOAD_LEN} bytes",
-+                        final_payload.len() + part.len()
-+                    ));
-+                }
-+
-                 final_payload.extend_from_slice(&part);
-             }
-             final_payload.into()
-```
-
-**File**: `sqlx-mysql/src/io/buf.rs` (modified, +55/-0)
-```diff
-@@ -62,6 +62,13 @@ impl MySqlBufExt for Bytes {
-         let size = usize::try_from(size)
-             .map_err(|_| err_protocol!("string length overflows usize: {size}"))?;
- 
-+        if size > self.remaining() {
-+            return Err(err_protocol!(
-+                "length-encoded string declares {size} bytes but only {} bytes remain",
-+                self.remaining()
-+            ));
-+        }
-+
-         self.get_str(size)
-     }
- 
-@@ -70,6 +77,54 @@ impl MySqlBufExt for Bytes {
-         let size = usize::try_from(size)
-             .map_err(|_| err_protocol!("string length overflows usize: {size}"))?;
- 
-+        if size > self.remaining() {
-+            return Err(err_protocol!(
-+                "length-encoded byte string declares {size} bytes but only {} bytes remain",
-+                self.remaining()
-+            ));
-+        }
-+
-         Ok(self.split_to(size))
-     }
+@@ -14,12 +14,21 @@ pub struct Metadata {
+     workspace_root: Arc<Mutex<Option<PathBuf>>>,
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn get_str_lenenc_reads_within_bounds() {
-+        let mut buf = Bytes::from_static(&[3, b'a', b'b', b'c']);
-+
-+        assert_eq!(buf.get_str_lenenc().unwrap(), "abc");
-+        assert!(buf.is_empty());
-+    }
-+
-+    #[test]
-+    fn get_str_lenenc_rejects_oversized_length() {
-+        // 0xfc prefixed length of 0x0100 (256) but only 3 bytes of data
-+        let mut buf = Bytes::from_static(&[0xfc, 0x00, 0x01, b'a', b'b', b'c']);
-+
-+        let err = buf.get_str_lenenc().unwrap_err();
-+
-+        assert!(err.to_string().contains("256 bytes"), "{err}");
-+    }
-+
-+    #[test]
-+    fn get_bytes_lenenc_reads_within_bounds() {
-+        let mut buf = Bytes::from_static(&[3, b'a', b'b', b'c']);
-+
-+        assert_eq!(&*buf.get_bytes_lenenc().unwrap(), b"abc");
-+        assert!(buf.is_empty());
-+    }
-+
-+    #[test]
-+    fn get_bytes_lenenc_rejects_oversized_length() {
-+        // 0xfc prefixed length of 0xffff (65535) but only 1 byte of data
-+        let mut buf = Bytes::from_static(&[0xfc, 0xff, 0xff, b'a']);
-+
-+        let err = buf.get_bytes_lenenc().unwrap_err();
-+
-+        assert!(err.to_string().contains("65535 bytes"), "{err}");
-+    }
+ 
++#[cfg_attr(test, derive(Debug))]
+ pub struct MacrosEnv {
+     pub database_url: Option<String>,
+     pub offline_dir: Option<PathBuf>,
+     pub offline: Option<bool>,
+ }
+ 
++#[derive(thiserror::Error, Debug)]
++#[error("error reading dotenv file {path:?}")]
++struct DotenvError {
++    path: PathBuf,
++    #[source]
++    error: dotenvy::Error,
 +}
-```
-
-**File**: `sqlx-mysql/src/protocol/connect/handshake.rs` (modified, +101/-2)
-```diff
-@@ -29,29 +29,74 @@ pub(crate) struct Handshake {
- 
- impl ProtocolDecode<'_> for Handshake {
-     fn decode_with(mut buf: Bytes, _: ()) -> Result<Self, Error> {
-+        // NOTE: the handshake packet is received before authentication, so a
-+        // hostile server can send anything here; every fixed-width read is
-+        // validated against the remaining buffer to avoid panicking on
-+        // truncated packets
-+        if buf.is_empty() {
-+            return Err(err_protocol!(
-+                "expected protocol version (1 byte) in Handshake packet but got 0 bytes"
-+            ));
-+        }
 +
-         let protocol_version = buf.get_u8(); // int<1>
-         let server_version = buf.get_str_nul()?; // string<NUL>
-+
-+        if buf.remaining() < 13 {
-+            return Err(err_protocol!(
-+                "expected connection id (4 bytes), auth-plugin-data-part-1 (8 bytes) and reserved byte (13 bytes total) in Handshake packet but got {} bytes",
-+                buf.remaining()
-+            ));
-+        }
-+
-         let connection_id = buf.get_u32_le(); // int<4>
-         let auth_plugin_data_1 = buf.get_bytes(8); // string<8>
+ impl Metadata {
+     pub fn env(&self) -> crate::Result<Arc<MacrosEnv>> {
+         let workspace_root = self.workspace_root();
+@@ -98,14 +107,22 @@ fn load_env(
+     config: &Config,
+     builder: &mut MtimeCacheBuilder,
+ ) -> crate::Result<Arc<MacrosEnv>> {
+-    #[derive(thiserror::Error, Debug)]
+-    #[error("error reading dotenv file {path:?}")]
+-    struct DotenvError {
+-        path: PathBuf,
+-        #[source]
+-        error: dotenvy::Error,
+-    }
++    let from_env = MacrosEnv {
++        database_url: crate::env_opt(config.common.database_url_var())?,
++        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?.map(PathBuf::from),
++        offline: crate::env_opt("SQLX_OFFLINE")?.map(|val| is_truthy_bool(&val)),
++    };
  
-         buf.advance(1); // reserved: string<1>
- 
-+        if buf.remaining() < 2 {
-+            return Err(err_protocol!(
-+                "expected capability flags part 1 (2 bytes) in Handshake packet but got {} bytes",
-+                buf.remaining()
-+            ));
-+        }
++    load_env_from_sources(manifest_dir, workspace_root, config, builder, from_env)
++}
 +
-         let capabilities_1 = buf.get_u16_le(); // int<2>
-         let mut capabilities = Capabilities::from_bits_truncate(capabilities_1.into());
- 
-+        if buf.remaining() < 5 {
-+            return Err(err_protocol!(
-+                "expected collation (1 byte), status (2 bytes) and capability flags part 2 (2 bytes) in Handshake packet but got {} bytes",
-+                buf.remaining()
-+            ));
-+        }
-+
-         let collation = buf.get_u8(); // int<1>
-         let status = Status::from_bits_truncate(buf.get_u16_le());
- 
-         let capabilities_2 = buf.get_u16_le(); // int<2>
-         capabilities |= Capabilities::from_bits_truncate(((capabilities_2 as u32) << 16).into());
- 
-+        if buf.is_empty() {
-+            return Err(err_protocol!(
-+                "expected auth-plugin-data length (1 byte) in Handshake packet but got 0 bytes"
-+            ));
-+        }
-+
-         let auth_plugin_data_len = if capabilities.contains(Capabilities::PLUGIN_AUTH) {
-             buf.get_u8()
-         } else {
-             buf.advance(1); // int<1>
-             0
++fn load_env_from_sources(
++    manifest_dir: &Path,
++    workspace_root: &Path,
++    config: &Config,
++    builder: &mut MtimeCacheBuilder,
++    from_env: MacrosEnv,
++) -> crate::Result<Arc<MacrosEnv>> {
+     let mut from_dotenv = MacrosEnv {
+         database_url: None,
+         offline_dir: None,
+@@ -139,43 +156,457 @@ fn load_env(
+                 builder.add_path(dir.to_path_buf());
+                 continue;
+             }
++            Err(dotenvy::Error::Io(_))
++                if has_query_source_without_dotenv(&from_env, &from_dotenv) =>
++            {
++                builder.add_path(path.clone());
++                continue;
++            }
+             Err(e) => {
+                 builder.add_path(path.clone());
+                 return Err(DotenvError { path, error: e }.into());
+             }
          };
  
-+        if buf.remaining() < 10 {
-+            return Err(err_protocol!(
-+                "expected reserved bytes (6 bytes) and reserved bytes or capability flags part 3 (4 bytes) in Handshake packet but got {} bytes",
-+                buf.remaining()
-+            ));
-+        }
-+
-         buf.advance(6); // reserved: string<6>
- 
-         if capabilities.contains(Capabilities::MYSQL) {
-@@ -62,8 +107,18 @@ impl ProtocolDecode<'_> for Handshake {
-         }
- 
-         let auth_plugin_data_2 = if capabilities.contains(Capabilities::SECURE_CONNECTION) {
--            let len = cmp::max(auth_plugin_data_len.saturating_sub(9), 12);
--            let v = buf.get_bytes(len as usize);
-+            let len = cmp::max(auth_plugin_data_len.saturating_sub(9), 12) as usize;
-+
-+            // the attacker-controlled length must fit in the remaining buffer
-+            // *with* the trailing NUL-terminator, i.e. `len + 1` bytes
-+            if buf.remaining() <= len {
-+                return Err(err_protocol!(
-+                    "expected auth-plugin-data-part-2 ({len} bytes) and NUL-terminator in Handshake packet but got {} bytes",
-+                    buf.remaining()
-+                ));
-+            }
-+
-+            let v = buf.get_bytes(len);
-             buf.advance(1); // NUL-terminator
- 
-             v
-@@ -197,3 +252,47 @@ fn test_decode_handshake_mariadb_10_4_7() {
-         &[116, 54, 76, 92, 106, 34, 100, 83, 85, 49, 52, 79, 112, 104, 57, 34, 60, 72, 53, 110,]
-     );
- }
-+
-+#[test]
-+fn test_decode_handshake_truncated_never_panics() {
-+    const MYSQL_8_0_18: &[u8] = b"\n8.0.18\x00\x19\x00\x00\x00\x114aB0c\x06g\x00\xff\xff\xff\x02\x00\xff\xc7\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00tL\x03s\x0f[4\rl4. \x00caching_sha2_password\x00";
-+    const MARIA_DB_10_4_7: &[u8] = b"\n5.5.5-10.4.7-MariaDB-1:10.4.7+maria~bionic\x00\x0b\x00\x00\x00t6L\\j\"dS\x00\xfe\xf7\x08\x02\x00\xff\x81\x15\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00U14Oph9\"<H5n\x00mysql_native_password\x00";
-+
-+    for packet in [MYSQL_8_0_18, MARIA_DB_10_4_7] {
-+        // every strict prefix of a valid handshake is an error, never a panic
-+        for len in 0..packet.len() {
-+            assert!(
-+                Handshake::decode(packet[..len].into()).is_err(),
-+                "expected error for handshake truncated to {len} bytes"
-+            );
-+        }
-+
-+        // and the full packet still decodes
-+        assert!(Handshake::decode(packet.into()).is_ok());
-```
-
-**File**: `sqlx-mysql/src/protocol/response/eof.rs` (modified, +27/-0)
-```diff
-@@ -28,9 +28,36 @@ impl ProtocolDecode<'_, Capabilities> for EofPacket {
-             ));
-         }
- 
-+        if buf.remaining() < 4 {
-+            return Err(err_protocol!(
-+                "expected warnings (2 bytes) and status flags (2 bytes) in EOF_Packet but got {} bytes",
-+                buf.remaining()
-+            ));
-+        }
-+
-         let warnings = buf.get_u16_le();
-         let status = Status::from_bits_truncate(buf.get_u16_le());
- 
-         Ok(Self { status, warnings })
-     }
- }
-+
-+#[test]
-+fn test_decode_eof_packet() {
-+    let p = EofPacket::decode_with(
-+        b"\xfe\x00\x00\x02\x00".as_ref().into(),
-+        Capabilities::empty(),
-+    )
-+    .unwrap();
-+
-+    assert_eq!(p.warnings, 0);
-+    assert!(p.status.contains(Status::SERVER_STATUS_AUTOCOMMIT));
-+}
-+
-+#[test]
-+fn test_decode_eof_packet_truncated() {
-+    // only 2 bytes after the 0xfe header, need 4
-+    let p = EofPacket::decode_with(b"\xfe\x00\x00".as_ref().into(), Capabilities::empty());
-+
-+    assert!(p.is_err());
-+}
-```
-
-**File**: `sqlx-mysql/src/protocol/response/err.rs` (modified, +37/-0)
-```diff
-@@ -25,13 +25,28 @@ impl ProtocolDecode<'_, Capabilities> for ErrPacket {
-             ));
-         }
- 
-+        if buf.remaining() < 2 {
-+            return Err(err_protocol!(
-+                "expected error code (2 bytes) in ERR_Packet but got {} bytes",
-+                buf.remaining()
-+            ));
-+        }
-+
-         let error_code = buf.get_u16_le();
-         let mut sql_state = None;
- 
-         if capabilities.contains(Capabilities::PROTOCOL_41) {
-             // If the next byte is '#' then we have a SQL STATE
-             if buf.starts_with(b"#") {
-                 buf.advance(1);
-+
-+                if buf.remaining() < 5 {
-+                    return Err(err_protocol!(
-+                        "expected SQL state (5 bytes) after '#' marker in ERR_Packet but got {} bytes",
-+                        buf.remaining()
-+                    ));
-+                }
-+
-                 sql_state = Some(buf.get_str(5)?);
-             }
-         }
-@@ -69,3 +84,25 @@ fn test_decode_err_packet_unknown_database() {
-     assert_eq!(p.sql_state.as_deref(), Some("42000"));
-     assert_eq!(&p.error_message, "Unknown database \'unknown\'");
- }
-+
-+#[test]
-+fn test_decode_err_packet_truncated_error_code() {
-+    // only 1 byte of the 2 byte error code is present
-+    const ERR_TRUNCATED_CODE: &[u8] = b"\xff\x84";
-+
-+    let err =
-+        ErrPacket::decode_with(ERR_TRUNCATED_CODE.into(), Capabilities::PROTOCOL_41).unwrap_err();
-+
-+    assert!(err.to_string().contains("expected error code"), "{err}");
-+}
-+
-+#[test]
-+fn test_decode_err_packet_truncated_sql_state() {
-+    // '#' marker but fewer than 5 bytes of SQL state
-+    const ERR_TRUNCATED_STATE: &[u8] = b"\xff\x84\x04#420";
-+
-+    let err =
-+        ErrPacket::decode_with(ERR_TRUNCATED_STATE.into(), Capabilities::PROTOCOL_41).unwrap_err();
-+
-+    assert!(err.to_string().contains("expected SQL state"), "{err}");
-+}
-```
-
-**File**: `sqlx-mysql/src/protocol/statement/row.rs` (modified, +125/-3)
-```diff
-@@ -27,6 +27,14 @@ impl<'de> ProtocolDecode<'de, &'de [MySqlColumn]> for BinaryRow {
-         let offset = buf.len();
- 
-         let null_bitmap_len = (columns.len() + 9) / 8;
-+
-+        if buf.remaining() < null_bitmap_len {
-+            return Err(err_protocol!(
-+                "expected null-bitmap of {null_bitmap_len} bytes in binary row but got {} bytes",
-+                buf.remaining()
-+            ));
-+        }
-+
-         let null_bitmap = buf.get_bytes(null_bitmap_len);
- 
-         let mut values = Vec::with_capacity(columns.len());
-@@ -89,13 +97,31 @@ impl<'de> ProtocolDecode<'de, &'de [MySqlColumn]> for BinaryRow {
-                 | ColumnType::Date
-                 | ColumnType::Datetime => {
-                     // Leave the length byte on the front of the value because decoding uses it.
--                    buf[0] as usize + 1
-+                    usize::from(*buf.first().ok_or(err_protocol!(
-+                        "buffer exhausted when reading data for column {:?}; expected a length byte but no bytes remain in buffer",
-+                        column
-+                    ))?) + 1
-                 }
- 
--                // NOTE: MySQL will never generate NULL types for non-NULL values
--                ColumnType::Null => unreachable!(),
-+                // NOTE: MySQL will never legitimately generate NULL types for non-NULL values,
-+                // but a hostile or broken server can send column type 0x06 (NULL) with the
-+                // null-bit clear; report a protocol error instead of panicking
-+                ColumnType::Null => {
-+                    return Err(err_protocol!(
-+                        "column {:?} has type NULL (0x06) but its null-bit is not set in the binary row",
-+                        column
-+                    ));
-+                }
-             };
- 
-+            if buf.remaining() < size {
-+                return Err(err_protocol!(
-+                    "buffer exhausted when reading data for column {:?}; expected value of {size} bytes but only {} bytes remain in buffer",
-+                    column,
-+                    buf.remaining()
-+                ));
-+            }
-+
-             let offset = offset - buf.len();
- 
-             values.push(Some(offset..(offset + size)));
-@@ -106,3 +132,99 @@ impl<'de> ProtocolDecode<'de, &'de [MySqlColumn]> for BinaryRow {
-         Ok(BinaryRow(Row { values, storage }))
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::ext::ustr::UStr;
-+    use crate::MySqlTypeInfo;
-+    use sqlx_core::column::ColumnOrigin;
-+
-+    fn test_column(name: &str, ty: ColumnType) -> MySqlColumn {
-+        MySqlColumn {
-+            ordinal: 0,
-+            name: UStr::new(name),
-+            type_info: MySqlTypeInfo::binary(ty),
-+            origin: ColumnOrigin::Expression,
-+            flags: None,
-+        }
-+    }
-+
-+    #[test]
-+    fn decodes_simple_row() {
-+        let columns = [
-+            test_column("a", ColumnType::Long),
-+            test_column("b", ColumnType::VarString),
-+        ];
-+
-+        // 0x00 header, 1 byte null-bitmap (both columns non-NULL),
-+        // a = 16909060i32 little-endian, b = "hi"
-+        let row = BinaryRow::decode_with(
-+            Bytes::from_static(&[0x00, 0x00, 0x04, 0x03, 0x02, 0x01, 2, b'h', b'i']),
-+            &columns,
-+        )
-+        .unwrap()
-+        .0;
-+
-+        assert_eq!(row.get(0), Some(&[4, 3, 2, 1][..]));
-+        assert_eq!(row.get(1), Some(&b"hi"[..]));
-+    }
-+
-+    #[test]
-+    fn decodes_null_value() {
-+        let columns = [
-+            test_column("a", ColumnType::Long),
-+            test_column("b", ColumnType::VarString),
-+        ];
-+
-+        // null-bitmap with bit 2 set => the first column is NULL
-+        let row =
-+            BinaryRow::decode_with(Bytes::from_static(&[0x00, 0x04, 2, b'h', b'i']), &columns)
-+                .unwrap()
-+                .0;
-+
-+        assert_eq!(row.get(0), None);
-+        assert_eq!(row.get(1), Some(&b"hi"[..]));
-+    }
-+
-+    #[test]
-+    fn rejects_truncated_null_bitmap() {
-+        // 8 columns require a 2 byte null-bitmap, only 1 byte is provided
-+        let columns: [_; 8] = std::array::from_fn(|_| test_column("a", ColumnType::Long));
-+
-+        let err = BinaryRow::decode_with(Bytes::from_static(&[0x00, 0x00]), &columns).unwrap_err();
-+
-+        assert!(err.to_string().contains("null-bitmap"), "{err}");
-+    }
-+
-+    #[test]
-+    fn rejects_truncated_fixed_width_value() {
-+        // a LongLong value needs 8 bytes, only 3 are provided
-+        let columns = [test_column("a", ColumnType::LongLong)];
-+
-+        let err = BinaryRow::decode_with(Bytes::from_static(&[0x00, 0x00, 1, 2, 3]), &columns)
-+            .unwrap_err();
-+
-+        assert!(err.to_string().contains("value of 8 bytes"), "{err}");
-+    }
-+
-+    #[test]
-+    fn rejects_missing_temporal_length_byte() {
-+        // the column type signals a length byte but the buffer is exhausted
-+        let columns = [test_column("a", ColumnType::D
-```
-
----
-
-### Incident Patch 2: `5d3787ef` (2026-09-10)
-**Commit Message**: fix(pool): prevent num_idle underflow that wedges maintenance in a CPU spin (#4289)
-
-* fix(pool): prevent num_idle underflow that wedges maintenance in a CPU spin
-
-Fixes #3645 - A rare 100% CPU and a hang on shutdown.
-
-I made this fix w/ the assistance of an LLM, but I was looking quite
-carefully to make sure the code changes make sense.
-
-I opted to repro via a stress test - which shows the underflow if you
-run the test without the fix.
-
-Leaving an LLM generated description down below in case you find it
-helpful.
-
----------------------------------------------------------------------
-
-`PoolInner::release` made a returned connection acquirable (push to the
-idle queue + release its semaphore permit) *before* incrementing
-`num_idle`. A concurrent `pop_idle` (via `try_acquire`) could pop that
-connection and run its `num_idle.fetch_sub(1)` in the window before the
-increment landed; if `num_idle` was 0 at that moment the `usize` wrapped
-to `usize::MAX`.
-
-The background maintenance task builds its sweep range from
-`for _ in 0..pool.num_idle()`, and once the idle queue drains the loop
-body is fully synchronous (`try_acquire`/`release` never `.await`). So a
-single bad read of `usize::MAX` ma
-
-**File**: `sqlx-core/src/pool/inner.rs` (modified, +199/-5)
-```diff
-@@ -194,7 +194,14 @@ impl<DB: Database> PoolInner<DB> {
-         permit: AsyncSemaphoreReleaser<'a>,
-     ) -> Result<Floating<DB, Idle<DB>>, AsyncSemaphoreReleaser<'a>> {
-         if let Some(idle) = self.idle_conns.pop() {
--            self.num_idle.fetch_sub(1, Ordering::AcqRel);
-+            // Saturating: never underflow even if a concurrent `release` hasn't yet published
-+            // its increment. An underflow would wrap `num_idle` to `usize::MAX` and wedge the
-+            // maintenance task in a non-yielding spin (see `release` for the full invariant).
-+            let _ = self
-+                .num_idle
-+                .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
-+                    Some(n.saturating_sub(1))
-+                });
-             Ok(Floating::from_idle(idle, (*self).clone(), permit))
-         } else {
-             Err(permit)
-@@ -206,15 +213,21 @@ impl<DB: Database> PoolInner<DB> {
- 
-         let Floating { inner: idle, guard } = floating.into_idle();
- 
-+        // Bump the idle counter *before* the connection becomes acquirable, so a concurrent
-+        // `pop_idle` can never observe a popped connection without a matching increment.
-+        // (Otherwise `num_idle.fetch_sub` can underflow a `usize` to `usize::MAX`, which makes
-+        // the maintenance task's `for _ in 0..num_idle()` loop spin ~forever, pegging a CPU.)
-+        // Over-counting transiently (incremented, not yet pushed) is harmless: `pop_idle`
-+        // simply finds an empty queue and returns the permit without decrementing.
-+        self.num_idle.fetch_add(1, Ordering::AcqRel);
-+
-         if self.idle_conns.push(idle).is_err() {
-             panic!("BUG: connection queue overflow in release()");
-         }
- 
-         // NOTE: we need to make sure we drop the permit *after* we push to the idle queue
-         // don't decrease the size
-         guard.release_permit();
+-        for res in dotenv {
+-            let (name, val) = res.map_err(|e| DotenvError {
+-                path: path.clone(),
+-                error: e,
+-            })?;
 -
--        self.num_idle.fetch_add(1, Ordering::AcqRel);
+-            match &*name {
+-                "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
+-                "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
+-                _ if name == config.common.database_url_var() => {
+-                    from_dotenv.database_url = Some(val)
+-                }
+-                _ => continue,
+-            }
+-        }
++        read_dotenv(&path, dotenv, config, &from_env, &mut from_dotenv)?;
      }
  
-     /// Try to atomically increment the pool size for a new connection.
-@@ -544,8 +557,13 @@ fn spawn_maintenance_tasks<DB: Database>(pool: &Arc<PoolInner<DB>>) {
-                     // Go over all idle connections, check for idleness and lifetime,
-                     // and if we have fewer than min_connections after reaping a connection,
-                     // open a new one immediately. Note that other connections may be popped from
--                    // the queue in the meantime - that's fine, there is no harm in checking more
--                    for _ in 0..pool.num_idle() {
-+                    // the queue in the meantime - that's fine, there is no harm in checking more.
-+                    //
-+                    // Cap the iteration count at `max_connections` so that even a corrupt
-+                    // `num_idle` (e.g. an underflow to `usize::MAX`) can never make this
-+                    // synchronous, non-yielding loop spin unboundedly and starve the runtime.
-+                    let checks = cmp::min(pool.num_idle(), pool.options.max_connections as usize);
-+                    for _ in 0..checks {
-                         if let Some(conn) = pool.try_acquire() {
-                             if is_beyond_idle_timeout(&conn, &pool.options)
-                                 || is_beyond_max_lifetime(&conn, &pool.options)
-@@ -621,3 +639,179 @@ impl<DB: Database> Drop for DecrementSizeGuard<DB> {
-         }
-     }
+     Ok(Arc::new(MacrosEnv {
+         // Make set variables take precedent
+-        database_url: crate::env_opt(config.common.database_url_var())?
+-            .or(from_dotenv.database_url),
+-        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?
+-            .map(PathBuf::from)
+-            .or(from_dotenv.offline_dir),
+-        offline: crate::env_opt("SQLX_OFFLINE")?
+-            .map(|val| is_truthy_bool(&val))
+-            .or(from_dotenv.offline),
++        database_url: from_env.database_url.or(from_dotenv.database_url),
++        offline_dir: from_env.offline_dir.or(from_dotenv.offline_dir),
++        offline: from_env.offline.or(from_dotenv.offline),
+     }))
  }
-+
-+// Uses the in-crate `Any` database with a stub backend so we can drive `PoolInner` internals
-+// directly. (We can't use a real driver here: the only `Database` impls outside this crate
-+// would be a different `sqlx-core` instance via the dev-dependency cycle.)
-+#[cfg(all(test, feature = "any"))]
-+mod underflow_tests {
-+    use super::*;
-+    use crate::any::{
-+        Any, AnyArguments, AnyConnectOptions, AnyConnection, AnyConnectionBackend, AnyQueryResult,
-+        AnyRow, AnyStatement, AnyTypeInfo,
-+    };
-+    use crate::pool::Pool;
-+    use crate::sql_str::SqlStr;
-+    use either::Either;
-+    use futures_core::future::BoxFuture;
-+    use futures_core::stream::BoxStream;
-+    use std::str::FromStr;
-+
-+    /// A backend that constructs but never executes anything. The pool's `release`/`pop_idle`
-+    /// paths only move the opaque connection around — they never call any of these methods.
-+    #[derive(Debug)]
-+    struct StubBackend;
-+
-+    impl AnyConnectionBackend for StubBackend {
-+        fn name(&self) -> &str {
-+            "stub"
-+        }
-+        fn close(self: Box<Self>) -> BoxFuture<'static, crate::Result<()>> {
-+            unimplemented!()
-+        }
-+        fn close_hard(self: Box<Self>) -> BoxFuture<'static, crate::Result<()>> {
-+            unimplemented!()
-+        }
-+        fn ping(&mut self) -> BoxFuture<'_, crate::Result<()>> {
-+            unimplemented!()
-+        }
-+        fn begin(&mut self, _statement: Option<SqlStr>) -> BoxFuture<'_, crate::Result<()>> {
-+            unimplemented!()
-+        }
-+   
-```
-
----
-
-### Incident Patch 3: `f1e94ec3` (2026-09-09)
-**Commit Message**: fix(postgres): roll back a transaction cancelled during BEGIN (#4394)
-
-`PgTransactionManager::begin` raises `transaction_depth` only after the BEGIN
-round trip returns, but `start_rollback` -- which both its own `Rollback`
-drop guard and `Transaction`'s drop guard call -- is a no-op while that depth
-is zero. A future cancelled during the await therefore queues nothing, and the
-session is left inside a transaction.
-
-`Floating::return_to_pool` then validates the connection with `ping()`, which
-for Postgres is a bare `wait_until_ready`: it drains the `ReadyForQuery` but
-never inspects its transaction-status byte, so the connection is judged healthy
-and handed to the next borrower. Their statements run inside the stale
-transaction and hold its locks, and the first error turns the session into
-`idle in transaction (aborted)`, after which every unrelated query on that
-connection fails with 25P02 until `max_lifetime` recycles it.
-
-Claim the depth before the round trip and unwind it if the BEGIN did not take,
-so the drop guards have something to act on. The queued ROLLBACK is written to
-the same buffer as the BEGIN and so is always flushed after it.
-
-Closes #4393. Refs #2054, #2819, #3980.
-
-**File**: `sqlx-postgres/src/transaction.rs` (modified, +8/-1)
-```diff
-@@ -27,11 +27,18 @@ impl TransactionManager for PgTransactionManager {
  
-         let rollback = Rollback::new(conn);
-         rollback.conn.queue_simple_query(statement.as_str())?;
-+        // Claim the depth before the round trip, not after. `start_rollback` -- which both
-+        // this guard and `Transaction`'s own drop guard call -- is a no-op while the depth is
-+        // zero, so a future cancelled during the await below would otherwise leave the server
-+        // in a transaction with nothing queued to end it. `Pool` then hands that connection
-+        // to the next borrower, whose statements silently run inside it. Unwound just below
-+        // if the BEGIN did not take.
-+        rollback.conn.inner.transaction_depth += 1;
-         rollback.conn.wait_until_ready().await?;
-         if !rollback.conn.in_transaction() {
-+            rollback.conn.inner.transaction_depth -= 1;
-             return Err(Error::BeginFailed);
-         }
--        rollback.conn.inner.transaction_depth += 1;
-         rollback.defuse();
- 
-         Ok(())
-```
-
-**File**: `tests/postgres/postgres.rs` (modified, +51/-0)
-```diff
-@@ -2244,3 +2244,54 @@ async fn it_can_recover_from_copy_in_invalid_params() -> anyhow::Result<()> {
-     )
-     .await
- }
++fn read_dotenv(
++    path: &Path,
++    dotenv: impl Iterator<Item = dotenvy::Result<(String, String)>>,
++    config: &Config,
++    from_env: &MacrosEnv,
++    from_dotenv: &mut MacrosEnv,
++) -> crate::Result<()> {
++    let ignore_io_error = has_query_source_without_dotenv(from_env, from_dotenv);
++    let mut read_any_pair = false;
 +
-+// Regression: a future cancelled while `BEGIN`'s round trip is in flight used to leave the
-+// session inside a transaction. `start_rollback` is a no-op while `transaction_depth` is
-+// zero, and the depth was raised only after the await, so neither drop guard queued a
-+// `ROLLBACK` -- and `return_to_pool` validates with a bare `wait_until_ready` that never
-+// looks at the `ReadyForQuery` transaction-status byte, so the connection was handed to the
-+// next borrower with the transaction still open.
-+#[sqlx_macros::test]
-+async fn it_rolls_back_a_transaction_cancelled_during_begin() -> anyhow::Result<()> {
-+    let pool = PgPoolOptions::new()
-+        .max_connections(1)
-+        .min_connections(0)
-+        .connect(&dotenvy::var("DATABASE_URL")?)
-+        .await?;
++    for res in dotenv {
++        let (name, val) = match res {
++            Ok(pair) => pair,
++            Err(dotenvy::Error::Io(_)) if ignore_io_error && !read_any_pair => {
++                break;
++            }
++            Err(error) => {
++                return Err(DotenvError {
++                    path: path.to_path_buf(),
++                    error,
++                }
++                .into());
++            }
++        };
++        read_any_pair = true;
 +
-+    let pid: i32 = sqlx::query_scalar("SELECT pg_backend_pid()")
-+        .fetch_one(&pool)
-+        .await?;
-+
-+    // A plain `BEGIN` answers too quickly to cancel reliably; the sleep widens the same
-+    // round trip so the cancellation lands inside it.
-+    let cancelled = sqlx_core::rt::timeout(
-+        Duration::from_millis(300),
-+        pool.begin_with(AssertSqlSafe("BEGIN; SELECT pg_sleep(2);".to_string())),
-+    )
-+    .await;
-+    assert!(cancelled.is_err(), "the begin should not have completed");
-+
-+    // Outlast the sleep: the queued `ROLLBACK` is only flushed once the abandoned statement
-+    // has answered and the connection is on its way back to the pool.
-+    sqlx_core::rt::sleep(Duration::from_millis(3500)).await;
-+
-+    let mut conn = new::<Postgres>().await?;
-+    let state: Option<String> =
-+        sqlx::query_scalar("SELECT state FROM pg_stat_activity WHERE pid = $1")
-+            .bind(pid)
-+            .fetch_optional(&mut conn)
-+            .await?;
-+
-+    assert_eq!(
-+        state.as_deref(),
-+        Some("idle"),
-+        "connection was returned to the pool still inside a transaction"
-+    );
-+
-+    // and the pooled connection is still usable
-+    let one: i32 = sqlx::query_scalar("SELECT 1").fetch_one(&pool).await?;
-+    assert_eq!(one, 1);
++        match &*name {
++            "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
++            "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
++            _ if name == config.common.database_url_var() => from_dotenv.database_url = Some(val),
++            _ => continue,
++        }
++    }
 +
 +    Ok(())
 +}
++
++fn has_query_source_without_dotenv(from_env: &MacrosEnv, from_dotenv: &MacrosEnv) -> bool {
++    let offline = from_env.offline.or(from_dotenv.offline);
++    let database_url = from_env
++        .database_url
++        .as_deref()
++        .or(from_dotenv.database_url.as_deref());
++
++    offline == Some(true) || database_url.is_some_and(|url| !url.is_empty())
++}
++
+ /// Returns `true` if `val` is `"true"` (
+```
+
+---
+
+### Incident Patch 2: `f574e07d` (2026-10-22)
+**Commit Message**: fix(sqlite): return an error instead of panicking on out-of-range INTEGER PrimitiveDateTime (#4433)
+
+Decoding `time::PrimitiveDateTime` from an INTEGER column called
+`OffsetDateTime::from_unix_timestamp(..).unwrap()`, so any value outside
+`time`'s range (e.g. a millisecond Unix timestamp such as 1700000000000)
+panicked while decoding the row. `OffsetDateTime` and the chrono types
+already return an error here; do the same.
+
+Co-authored-by: breken-ai <[REDACTED_EMAIL]>
+
+**File**: `sqlx-sqlite/src/types/time.rs` (modified, +1/-1)
+```diff
+@@ -165,7 +165,7 @@ fn decode_datetime(value: SqliteValueRef<'_>) -> Result<PrimitiveDateTime, BoxDy
+     let dt = match value.type_info().0 {
+         DataType::Text => decode_datetime_from_text(value.text_borrowed()?),
+         DataType::Int4 | DataType::Integer => {
+-            let parsed = OffsetDateTime::from_unix_timestamp(value.int64()?).unwrap();
++            let parsed = OffsetDateTime::from_unix_timestamp(value.int64()?)?;
+             Some(PrimitiveDateTime::new(parsed.date(), parsed.time()))
+         }
+ 
+```
+
+**File**: `tests/sqlite/types.rs` (modified, +15/-0)
+```diff
+@@ -166,6 +166,21 @@ mod time_tests {
+         "'20:45:31.133'" == time!(20:45:31.133),
+         "'19:44'" == time!(19:44),
+     ));
++
++    // An INTEGER holding a Unix timestamp that is out of range for `time` (for example a
++    // millisecond timestamp) must fail to decode instead of panicking.
++    #[sqlx_macros::test]
++    async fn it_errors_on_out_of_range_integer_primitive_date_time() -> anyhow::Result<()> {
++        let mut conn = new::<Sqlite>().await?;
++
++        let result = sqlx::query_scalar::<_, PrimitiveDateTime>("SELECT 1700000000000")
++            .fetch_one(&mut conn)
++            .await;
++
++        assert!(result.is_err(), "expected a decode error, got {result:?}");
++
++        Ok(())
++    }
+ }
+ 
+ #[cfg(feature = "bstr")]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4474** (closed): breaking: Make the embedded TLS root certs opt in (@markuskobler)
+- **PR #4472** (2026-10-21): doc: add `AI_POLICY.md` (@abonander)
+- **PR #4464** (closed): postgres: send no Close of the unnamed portal before Sync (@airhorns)
 - **PR #4463** (2026-10-15): fix(macros): only report Ambiguous{DateTime,Numeric}Type when preferred crate is Inferred (@rscorer)
 - **PR #4458** (2026-10-16): fix(mysql): harden protocol decoders against malformed packets from hostile servers (@portlandhodl)
-- **PR #4446** (closed): fix(core): don't roll back the enclosing level when a nested begin fails or is cancelled (@CalebFenton)
-- **PR #4444** (closed): feat(postgres, core): `PgConnection::connect_with_socket` and a wasm-safe `Instant` (@iamralch)
-- **PR #4442** (2026-10-03): fix(sqlite): await SQLCipher test connection cleanup before exit (@shuvroroy)
-- **PR #4441** (2026-10-03): fix(mysql): decode MySQL 9 VECTOR columns (type 0xf2) (@anderson-andres-dev)
+- **PR #4455** (closed): fix(pool): bound the `PoolInner::close()` join and idle drain (@daniel-pinder)
 
 ---
 
@@ -1769,34 +1238,90 @@ Closes #4393. Refs #2054, #2819, #3980.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql): harden protocol decoders against malformed packets from hostile servers 
+## X. macros): tolerate unreadable dotenv with query source (#4371)
 
 **RULE**:
-When implementing operations in `sqlx-mysql/src/connection/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-macros-core/src/query/metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4161768c`: mysql): harden protocol decoders against malformed packets from hostile servers (#4458). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36f3a5c1`: macros): tolerate unreadable dotenv with query source (#4371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-mysql/src/connection/auth.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-macros-core/src/query/metadata.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                if packet.len() < 2 {
-                    return Err(err_protocol!(
-                        "expected at least 2 bytes in caching_sha2_password authentication packet but got {}",
-                        packet.len()
-                    ));
-                }
+#[cfg_attr(test, derive(Debug))]
+#[derive(thiserror::Error, Debug)]
+#[error("error reading dotenv file {path:?}")]
+struct DotenvError {
+    path: PathBuf,
+    #[source]
+    error: dotenvy::Error,
+}
 
+    let from_env = MacrosEnv {
+        database_url: crate::env_opt(config.common.database_url_var())?,
+        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?.map(PathBuf::from),
+        offline: crate::env_opt("SQLX_OFFLINE")?.map(|val| is_truthy_bool(&val)),
+    };
+    load_env_from_sources(manifest_dir, workspace_root, config, builder, from_env)
+}
+
+fn load_env_from_sources(
+    manifest_dir: &Path,
+    workspace_root: &Path,
+    config: &Config,
+    builder: &mut MtimeCacheBuilder,
+    from_env: MacrosEnv,
+) -> crate::Result<Arc<MacrosEnv>> {
+            Err(dotenvy::Error::Io(_))
+                if has_query_source_without_dotenv(&from_env, &from_dotenv) =>
+            {
+                builder.add_path(path.clone());
+                continue;
+            }
+        read_dotenv(&path, dotenv, config, &from_env, &mut from_dotenv)?;
+        database_url: from_env.database_url.or(from_dotenv.database_url),
+        offline_dir: from_env.offline_dir.or(from_dotenv.offline_dir),
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    #[derive(thiserror::Error, Debug)]
+    #[error("error reading dotenv file {path:?}")]
+    struct DotenvError {
+        path: PathBuf,
+        #[source]
+        error: dotenvy::Error,
+    }
+        for res in dotenv {
+            let (name, val) = res.map_err(|e| DotenvError {
+                path: path.clone(),
+                error: e,
+            })?;
+
+            match &*name {
+                "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
+                "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
+                _ if name == config.common.database_url_var() => {
+                    from_dotenv.database_url = Some(val)
+                }
+                _ => continue,
+            }
+        }
+        database_url: crate::env_opt(config.common.database_url_var())?
+            .or(from_dotenv.database_url),
+        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?
+            .map(PathBuf::from)
+            .or(from_dotenv.offline_dir),
+        offline: crate::env_opt("SQLX_OFFLINE")?
+            .map(|val| is_truthy_bool(&val))
+            .or(from_dotenv.offline),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4161768c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36f3a5c1` are properly handled with clean fallback behavior.

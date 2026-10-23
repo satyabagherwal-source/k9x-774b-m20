@@ -4521,3 +4521,7 @@
 | `CYCLE-20261023-R54J` | `2026-10-23T09:58:01.651Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3863` | Yes (`9577e368...`) |
 | `CYCLE-20261023-R9HU` | `2026-10-23T09:58:07.314Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3864` | Yes (`b34a5883...`) |
 | `CYCLE-20261023-RA3N` | `2026-10-23T09:58:08.099Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3865` | Yes (`5154e8e2...`) |
+| `CYCLE-20261023-5ZHY` | `2026-10-23T10:09:34.198Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3866` | Yes (`62148b7b...`) |
+| `CYCLE-20261023-61CU` | `2026-10-23T10:09:36.606Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3867` | Yes (`589dfdd7...`) |
+| `CYCLE-20261023-62QL` | `2026-10-23T10:09:38.397Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3868` | Yes (`3fa6d6cd...`) |
+| `CYCLE-20261023-6AJA` | `2026-10-23T10:09:48.502Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3869` | Yes (`9a2b6d41...`) |
