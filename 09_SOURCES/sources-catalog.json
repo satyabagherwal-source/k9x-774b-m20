@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "9e5b606c",
+    "sourceVersion": "1eccd61b",
     "license": "Apache-2.0",
-    "contentHash": "9d02336f5d9ee9c6be4c3668d61cf0fc469e776d1b9a4530fbdfd8a40612bdfe",
-    "lastHarvestedAt": "2026-10-22T20:37:03.456Z",
+    "contentHash": "e4ad6baa48f97533f7c9a148bee4202db742c1ef79ee4a71f44ce1596d8950b7",
+    "lastHarvestedAt": "2026-10-23T05:30:32.046Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "38d782fa",
+    "sourceVersion": "b69afdc2",
     "license": "Apache-2.0",
-    "contentHash": "ce2549b6bc5a8be7310b7a3df24a4a2aed33f54335b7030127a8c63e590ac4ba",
-    "lastHarvestedAt": "2026-10-21T02:33:54.648Z",
+    "contentHash": "a4c80db5a623a17ecd2be956b507d3fed96a1c2857a83b682aa25fcf8046e94e",
+    "lastHarvestedAt": "2026-10-23T05:30:31.032Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "9b99a239",
+    "sourceVersion": "5148abb4",
     "license": "MIT",
-    "contentHash": "3334d71ed6944d4e9f4434d466e54fd7fc033824ad549fcc1f9df397fb647b99",
-    "lastHarvestedAt": "2026-10-20T03:36:22.336Z",
+    "contentHash": "d1f2fc049415177d8829e96184d098ecd6efd466f753e4d40c8d1cb8e1fb0709",
+    "lastHarvestedAt": "2026-10-23T05:33:17.372Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

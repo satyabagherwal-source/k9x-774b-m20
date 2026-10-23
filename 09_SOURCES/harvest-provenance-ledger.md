@@ -4462,3 +4462,6 @@ Every entry in this ledger must capture:
 | `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `470edbc3` | Multi-dimensional audit evidence | 2026-10-22T21:48:01.821Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `88203d25` | Multi-dimensional audit evidence | 2026-10-22T21:48:10.922Z |
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `be1d0f39` | Multi-dimensional audit evidence | 2026-10-23T05:23:49.026Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `b69afdc2` | Multi-dimensional audit evidence | 2026-10-23T05:30:31.032Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1eccd61b` | Multi-dimensional audit evidence | 2026-10-23T05:30:32.046Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `5148abb4` | Multi-dimensional audit evidence | 2026-10-23T05:33:17.372Z |

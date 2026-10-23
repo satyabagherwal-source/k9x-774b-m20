@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MUOB",
-    "timestamp": "2026-10-20T18:27:33.707Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "1f188b09d55710b6dc8368d36119f93fb0bf24c517812d3695bc3a1fd0f83748",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-UNH4",
-    "timestamp": "2026-10-20T18:33:37.624Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "88d67da89eeb4663728e579fd574d7f1866ab997188a427a201a00901c7d0355",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-WRNQ",
-    "timestamp": "2026-10-20T18:35:16.358Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "adbe8f365eaabd637ed6150f49ce66ec3aa063e848114ce4ad37ca8a8ec8ffa1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-716O",
     "timestamp": "2026-10-20T18:43:15.264Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7492,6 +7447,51 @@
     "contentHash": "c0d4ed567140f07a67a4023c03eec0a4874bc7f788bed041287522266e178495",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-74DX",
+    "timestamp": "2026-10-23T05:30:31.029Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "a4c80db5a623a17ecd2be956b507d3fed96a1c2857a83b682aa25fcf8046e94e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-7563",
+    "timestamp": "2026-10-23T05:30:32.043Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "e4ad6baa48f97533f7c9a148bee4202db742c1ef79ee4a71f44ce1596d8950b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-AOQH",
+    "timestamp": "2026-10-23T05:33:17.369Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "d1f2fc049415177d8829e96184d098ecd6efd466f753e4d40c8d1cb8e1fb0709",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

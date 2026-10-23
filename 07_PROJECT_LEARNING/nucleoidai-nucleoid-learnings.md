@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9e5b606c`  
+> **Source Version**: `1eccd61b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:37:03.092Z  
+> **Timestamp**: 2026-10-23T05:30:31.709Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:37:02.775Z  
+> **Harvest Timestamp**: 2026-10-23T05:30:31.488Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -502,6 +502,7 @@ export async function value({
 import * as analyzer from "./analyzer";
 import * as visualizer from "./visualizer";
 import * as Matrix from "./lib/Matrix";
+import * as nucleoid from "./lib/nucleoid";
 import * as terminal from "./lib/terminal";
 import puzzle from "./data/training/3aa6fb7a.json";
 
@@ -520,10 +521,8 @@ const training_input = {
 
 export async function start() {
   const startedAt = performance.now();
-  terminal.header({
-    columns: test_input_matrix[0]?.length ?? 0,
-    rows: test_input_matrix.length,
-  });
+  terminal.header({ version: await nucleoid.version() });
+  terminal.puzzle({ train, testInput: test_input_matrix });
   terminal.section(
     1,
     "Analyze",
@@ -915,254 +914,358 @@ export function enlarge(matrix, rows, cols) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9aa5b696` (2026-10-22)
-**Commit Message**: Add debug output and remove unused core datasets
+### Incident Patch 1: `1eccd61b` (2026-10-22)
+**Commit Message**: Show Nucleoid version in ARC terminal header
 
-Print cropped input and output instance matrices in the analyzer's debug logging to make instance comparisons easier to inspect.
+The header now displays the runtime version reported by `nucleoid --version` instead of the input dimensions. It uses the same NUCLEOID_EXECUTABLE selection as program execution. A shared `execute` helper in lib/nucleoid.ts backs both `run` and the new `version`.
 
-Remove the dataset.core.3.json and dataset.core.4.json files from arc/src/dataset.
+The header content is centered with two blank padding rows above and below. The final summary badge is green for an exact match and red for a mismatch. README is updated to match.
 
-**File**: `arc/src/analyzer.ts` (modified, +3/-0)
+**File**: `arc/README.md` (modified, +8/-4)
 ```diff
-@@ -100,6 +100,9 @@ export async function value({
-     [...declarations, implementation].join("\n\n")
-   );
+@@ -45,10 +45,13 @@ type checking, linting, and offline inspection do not require model calls.
+ The terminal uses light and dark grey styling with a small green `nuc` wordmark
+ from [Nucleoid's avatar](https://avatars.githubusercontent.com/u/87045767?s=96&v=4).
+ The header title is **Nucleoid - Logic Language for World Models 🌱🐋🌍**.
+-The header content sits left of center as one group, with its left inset set to
+-25% of the unused horizontal space. Its first two rows pair the unboxed
++It displays the runtime version reported by the Nucleoid executable's `--version`
++option, using the same `NUCLEOID_EXECUTABLE` selection as program execution.
++Two blank rows pad the header content above and below.
++The header content is centered as one group, with its left inset set to
++50% of the unused horizontal space. Its first two rows pair the unboxed
+ wordmark on the left with the title and `Inspired by Nature` on the right.
+-After a blank line, the workflow and input dimensions share the same text
++After a blank line, the workflow and runtime version share the same text
+ column. Narrow terminals use smaller artwork and stack the header when both
+ columns cannot fit. Artwork is embedded, with
+ no image downloads during a run. Square corners, straight grey borders, light
+@@ -69,7 +72,8 @@ Numbered analysis/visualization stages, boxed declarations and object states,
+ and color-coded ARC grids with row/column coordinates keep the run readable.
+ Wide grids split into column panels rather than dropping cells. The final
+ comparison keeps **Expected** before **Result**, followed by an
+-exact-match/mismatch badge, the unchanged difference score, and elapsed time.
++exact-match badge in green or a mismatch badge in red, the unchanged difference
++score, and elapsed time.
+ Model token usage stays visible underneath the active step, and failures go to
+ standard error with a boxed stack trace.
  
-+  Matrix.toString(Matrix.crop(input_instance_matrix));
-+  console.debug("");
-+  Matrix.toString(Matrix.crop(output_instance_matrix));
-   console.debug("implementation:");
-   console.debug(implementation);
-   console.debug("input_value:");
 ```
 
-**File**: `arc/src/dataset/dataset.core.3.json` (removed, +0/-428)
+**File**: `arc/src/app.ts` (modified, +2/-4)
 ```diff
-@@ -1,428 +0,0 @@
--{
--  "declarations": [
--    "class Obj(x: int, y: int, orientation: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l6747'\n    this.vertex_color = vertex_color\n    this.vertical_segment_color = vertical_segment_color\n    this.horizontal_segment_color = horizontal_segment_color\n    this.marker_color = 0",
--    "if $Obj.vertex_color == 2 and $Obj.vertical_segment_color == 2 and $Obj.horizontal_segment_color == 2:\n    $Obj.tag = 'l6624'\n    $Obj.marker_color = 6"
--  ],
--  "dataset": [
--    {
--      "input_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--        [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
--      ],
--      "output_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 0],
--        [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
--      ],
--      "instances": [
--        {
--          "instance_name": "obj8101",
--          "input_x": 1,
--          "output_x": 1,
--          "input_y": 1,
--          "output_y": 1,
--          "input_orientation": 315,
--          "output_orientation": 315,
--          "input_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
--          ],
--          "output_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
--          ],
--          "implementation": "obj8101 = Obj(x=1, y=1, orientation=315, vertex_color=2, vertical_segment_color=2, horizontal_segment_color=2)",
--          "input_value": {"id":"obj8101","x":1,"y":1,"orientation":315,"tag":"l6747","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":0},
--          "output_value": {"id":"obj8101","x":1,"y":1,"orientation":315,"tag":"l6624","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":6}
--        },
--        {
--          "instance_name": "obj8102",
--          "input_x": 7,
--          "output_x": 7,
--          "input_y": 3,
--          "output_y": 3,
--          "input_orientation": 135,
--          "output_orientation": 135,
--          "input_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
--          ],
--          "output_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
--          ],
--          "implementation": "obj8102 = Obj(x=7, y=3, orientation=135, vertex_color=2, vertical_segment_color=2, horizontal_segment_color=2)",
--          "input_value": {"id":"obj8102","x":7,"y":3,"orientation":135,"tag":"l6747","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":0},
--          "output_value": {"id":"obj8102","x":7,"y":3,"orientation":135,"tag":"l6624","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":6}
--        }
--      ]
--    },
--    {
--      "input_matrix": [
--        [0, 2, 2, 2, 2, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 2, 0, 0, 
+@@ -1,6 +1,7 @@
+ import * as analyzer from "./analyzer";
+ import * as visualizer from "./visualizer";
+ import * as Matrix from "./lib/Matrix";
++import * as nucleoid from "./lib/nucleoid";
+ import * as terminal from "./lib/terminal";
+ import puzzle from "./data/training/3aa6fb7a.json";
+ 
+@@ -19,10 +20,7 @@ const training_input = {
+ 
+ export async function start() {
+   const startedAt = performance.now();
+-  terminal.header({
+-    columns: test_input_matrix[0]?.length ?? 0,
+-    rows: test_input_matrix.length,
+-  });
++  terminal.header({ version: await nucleoid.version() });
+   terminal.puzzle({ train, testInput: test_input_matrix });
+   terminal.section(
+     1,
 ```
 
-**File**: `arc/src/dataset/dataset.core.4.json` (removed, +0/-368)
+**File**: `arc/src/lib/nucleoid.ts` (modified, +40/-26)
 ```diff
-@@ -1,368 +0,0 @@
--{
--  "declarations": [
--    "class Obj(x: int, y: int, orientation: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l6747'\n    this.vertex_color = vertex_color\n    this.vertical_segment_color = vertical_segment_color\n    this.horizontal_segment_color = horizontal_segment_color\n    this.marker_color = 0",
--    "if $Obj.vertex_color == 2 and $Obj.vertical_segment_color == 2 and $Obj.horizontal_segment_color == 2:\n    $Obj.tag = 'l6624'\n    $Obj.marker_color = 7"
--  ],
--  "dataset": [
--    {
--      "input_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 2],
--        [0, 0, 0, 0, 0, 0, 0, 2],
--        [0, 0, 0, 0, 0, 2, 2, 2],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 2, 0, 0, 0, 0, 0],
--        [0, 0, 2, 0, 0, 0, 0, 0],
--        [0, 0, 2, 2, 2, 0, 0, 0]
--      ],
--      "output_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 2],
--        [0, 0, 0, 0, 0, 0, 7, 2],
--        [0, 0, 0, 0, 0, 2, 2, 2],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 2, 0, 0, 0, 0, 0],
--        [0, 0, 2, 7, 0, 0, 0, 0],
--        [0, 0, 2, 2, 2, 0, 0, 0]
--      ],
--      "instances": [
--        {
--          "instance_name": "obj9101",
--          "input_x": 5,
--          "output_x": 5,
--          "input_y": 1,
--          "output_y": 1,
--          "input_orientation": 135,
--          "output_orientation": 135,
--          "input_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 2],
--            [0, 0, 0, 0, 0, 0, 0, 2],
--            [0, 0, 0, 0, 0, 2, 2, 2],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0]
--          ],
--          "output_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 2],
--            [0, 0, 0, 0, 0, 0, 7, 2],
--            [0, 0, 0, 0, 0, 2, 2, 2],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0]
--          ],
--          "implementation": "obj9101 = Obj(x=5, y=1, orientation=135, vertex_color=2, vertical_segment_color=2, horizontal_segment_color=2)",
--          "input_value": {"id":"obj9101","x":5,"y":1,"orientation":135,"tag":"l6747","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":0},
--          "output_value": {"id":"obj9101","x":5,"y":1,"orientation":135,"tag":"l6624","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":7}
--        },
--        {
--          "instance_name": "obj9102",
--          "input_x": 2,
--          "output_x": 2,
--          "input_y": 5,
--          "output_y": 5,
--          "input_orientation": 225,
--          "output_orientation": 225,
--          "input_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 2, 0, 0, 0, 0, 0],
--            [0, 0, 2, 0, 0, 0, 0, 0],
--            [0, 0, 2, 2, 2, 0, 0, 0]
--          ],
--          "output_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 2, 0, 0, 0, 0, 0],
--            [0, 0, 2, 7, 0, 0, 0, 0],
--            [0, 0, 2, 2, 2, 0, 0, 0]
--          ],
--          "implementation": "obj9102 = Obj(x=2, y=5, orientation=225, vertex_color=2, vertical_segment_color=2, horizontal_segment_color=2)",
--          "input_value": {"id":"obj9102","x":2,"y":5,"orientation":225,"tag":"l6747","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":0},
--          "output_value": {"id":"obj9102","x":2,"y":5,"orientation":225,"tag":"l6624","vertex_color":2,"vertical_segment_color":2,"horizontal_segment_color":2,"marker_color":7}
+@@ -3,38 +3,52 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
+ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ 
++async function execute(args) {
++  const executable =
++    process.env.NUCLEOID_EXECUTABLE ??
++    String.raw`C:\Users\canmi\dev\Nucleoid\target\debug\nucleoid.exe`;
++  const stdout = await new Promise((resolve, reject) => {
++    execFile(
++      executable,
++      args,
++      { encoding: "utf8", windowsHide: true },
++      (error, stdout, stderr) => {
++        if (error) {
++          reject(
++            new Error(
++              `Nucleoid execution failed: ${stderr.trim() || error.message}`,
++              { cause: error }
++            )
++          );
++        } else {
++          resolve(stdout);
++        }
++      }
++    );
++  });
++
++  if (typeof stdout !== "string") {
++    throw new Error("Nucleoid returned non-text output");
++  }
++  return stdout;
++}
++
++export async function version() {
++  const stdout = await execute(["--version"]);
++  const match = /^nucleoid\s+(\S+)\s*$/.exec(stdout);
++  if (!match) {
++    throw new Error("Nucleoid returned invalid version output");
++  }
++  return match[1];
++}
++
+ export async function run(source) {
+   const directory = await mkdtemp(join(tmpdir(), "nuc-arc-"));
+ 
+   try {
+     const file = join(directory, "program.nuc");
+     await writeFile(file, source, "utf8");
+-    const executable =
+-      process.env.NUCLEOID_EXECUTABLE ??
+-      String.raw`C:\Users\canmi\dev\Nucleoid\target\debug\nucleoid.exe`;
+-    const stdout = await new Promise((resolve, reject) => {
+-      execFile(
+-        executable,
+-        ["--json", file],
+-        { encoding: "utf8", windowsHide: true },
+-        (error, stdout, stderr) => {
+-          if (error) {
+-            reject(
+-              new Error(
+-                `Nucleoid execution failed: ${stderr.trim() || error.message}`,
+-                { cause: error }
+-              )
+-            );
+-          } else {
+-            resolve(stdout);
+-          }
 -        }
--      ]
--    },
--    {
--      "input_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 2, 0, 0, 0, 0],
--        [0, 0, 0, 0, 2, 0, 2, 2, 2],
--        [0, 0, 2, 2, 2, 0, 0, 0, 2],
--        [0, 0, 0, 0, 0, 0, 0, 0, 2],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 2, 2, 0, 0, 0, 0, 0]
--      ],
--      "output_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 2, 0, 0, 0, 0],
--        [0, 0, 0, 7, 2, 0, 2, 2, 2],
--        [0, 0, 2, 2, 2, 0, 0, 7, 2],
--        [0, 0, 0, 0, 0, 0, 0, 0, 2],
--        [0, 2, 0, 0, 0, 0, 0, 0, 0],
--        [0, 2, 7, 0, 0, 0, 0, 0, 0],
--        [0, 2, 2, 2, 0, 0, 0, 0, 0]
--      ],
--      "instances": [
--        {
--          "instance_name": "obj9201",
--     
+-      );
+-    });
+-
+-    if (typeof stdout !== "string") {
+-      throw new Error("Nucleoid returned non-text output");
+-    }
++    const stdout = await execute(["--json", file]);
+ 
+     try {
+       const result = JSON.parse(stdout);
+```
+
+**File**: `arc/src/lib/terminal.ts` (modified, +6/-6)
+```diff
+@@ -92,7 +92,7 @@ function block(title, lines, write = console.log) {
+   write(`  ${frame(`└${rule}┘`)}`);
+ }
+ 
+-export function header({ columns, rows }) {
++export function header({ version }) {
+   const available = width() - 4;
+   const horizontal = available >= 32;
+   const limit = Math.min(12, available);
+@@ -111,7 +111,7 @@ export function header({ columns, rows }) {
+     ),
+     "",
+     ...wrap("Analyze / Construct / Visualize", textWidth),
+-    ...wrap(`Input ${columns} × ${rows}`, textWidth).map((line) =>
++    ...wrap(`Version ${version}`, textWidth).map((line) =>
+       styleText("gray", line)
+     ),
+   ];
+@@ -125,9 +125,9 @@ export function header({ columns, rows }) {
+     : [...logo, "", ...text];
+   const contentWidth = Math.max(...lines.map((line) => stringWidth(line)));
+   const inset = " ".repeat(
+-    Math.max(0, Math.floor((available - contentWidth) / 4))
++    Math.max(0, Math.floor((available - contentWidth) * 0.5))
+   );
+-  block("", ["", ...lines.map((line) => inset + line), ""]);
++  block("", ["", "", ...lines.map((line) => inset + line), "", ""]);
+   console.log("");
+ }
+ 
+@@ -319,8 +319,8 @@ export function summary(difference, duration) {
+       : `${Math.floor(seconds / 60)}m ${(seconds % 60).toFixed(1)}s`;
+   const status =
+     difference === 0
+-      ? styleText(["bold", "white"], "✓ EXACT MATCH")
+-      : styleText(["bold", "yellow"], "◇ MISMATCH");
++      ? styleText(["bold", "green"], "✓ EXACT MATCH")
++      : styleText(["bold", "red"], "◇ MISMATCH");
+   block("Run complete", [
+     status,
+     "",
+```
+
+---
+
+### Incident Patch 2: `3e9694f8` (2026-10-22)
+**Commit Message**: Add puzzle preview to ARC terminal output
+
+After the header, show training input/output pairs side by side, followed by the test input. Narrow windows wrap complete pairs onto additional rows; oversized pairs fall back to the existing column-split grid panels. The preview never receives the expected test output.
+
+Extract matrix rendering into a shared matrixLines helper reused by grid and the preview, and document the behavior in arc/README.md.
+
+**File**: `arc/README.md` (modified, +6/-0)
+```diff
+@@ -59,6 +59,12 @@ Declaration/implementation code and JSON/object-state content use bright white;
+ panel frames, titles, and matrix colors retain their existing styling.
+ Panels expand up to 120 terminal columns, shrinking to fit narrower windows.
+ 
++Immediately after the header, a puzzle preview shows the training input/output
++pairs side by side, with the test input below. Narrow windows wrap complete
++pairs onto additional rows; oversized pairs use the existing column-split matrix
++panels instead of dropping cells. The opening preview never receives or displays
++the expected test output. The final Expected/Result comparison remains unchanged.
++
+ Numbered analysis/visualization stages, boxed declarations and object states,
+ and color-coded ARC grids with row/column coordinates keep the run readable.
+ Wide grids split into column panels rather than dropping cells. The final
+```
+
+**File**: `arc/src/app.ts` (modified, +1/-0)
+```diff
+@@ -23,6 +23,7 @@ export async function start() {
+     columns: test_input_matrix[0]?.length ?? 0,
+     rows: test_input_matrix.length,
+   });
++  terminal.puzzle({ train, testInput: test_input_matrix });
+   terminal.section(
+     1,
+     "Analyze",
+```
+
+**File**: `arc/src/lib/terminal.ts` (modified, +86/-14)
+```diff
+@@ -196,6 +196,29 @@ function cell(value, colored) {
+   return `\x1b[48;2;${red};${green};${blue}m\x1b[${foreground}m${text}\x1b[0m`;
+ }
+ 
++function matrixLines(matrix, start, end, colored) {
++  if (matrix.length === 0 || start === end) {
++    return [styleText("gray", "(empty)")];
++  }
++  const rowWidth = String(matrix.length - 1).length;
++  const axis =
++    " ".repeat(rowWidth + 2) +
++    Array.from({ length: end - start }, (_, index) =>
++      `${start + index}`.padStart(2).concat(" ")
++    ).join("");
++  return [
++    styleText("gray", axis),
++    ...matrix.map(
++      (row, index) =>
++        styleText("gray", `${String(index).padStart(rowWidth)}  `) +
++        row
++          .slice(start, end)
++          .map((value) => cell(value, colored))
++          .join("")
++    ),
++  ];
++}
++
+ export function grid(title, matrix) {
+   const rows = matrix.length;
+   const columns = Math.max(0, ...matrix.map((row) => row.length));
+@@ -210,28 +233,77 @@ export function grid(title, matrix) {
+   const colored = colors();
+   for (let start = 0; start < columns; start += chunk) {
+     const end = Math.min(columns, start + chunk);
+-    const axis =
+-      " ".repeat(rowWidth + 2) +
+-      Array.from({ length: end - start }, (_, index) =>
+-        `${start + index}`.padStart(2).concat(" ")
+-      ).join("");
+     block(`${title} · ${dimensions}`, [
+       ...(columns > chunk
+         ? [styleText("gray", `Columns ${start}–${end - 1}`), ""]
+         : []),
+-      styleText("gray", axis),
+-      ...matrix.map(
+-        (row, index) =>
+-          styleText("gray", `${String(index).padStart(rowWidth)}  `) +
+-          row
+-            .slice(start, end)
+-            .map((value) => cell(value, colored))
+-            .join("")
+-      ),
++      ...matrixLines(matrix, start, end, colored),
+     ]);
+   }
+ }
+ 
++function sideBySide(panels) {
++  const widths = panels.map((lines) =>
++    Math.max(...lines.map((line) => stringWidth(line)))
++  );
++  const height = Math.max(...panels.map((lines) => lines.length));
++  return Array.from({ length: height }, (_, row) =>
++    panels
++      .map((lines, index) => pad(lines[row] ?? "", widths[index]))
++      .join("  ")
++  );
++}
++
++function previewMatrix(title, matrix, colored) {
++  const columns = Math.max(0, ...matrix.map((row) => row.length));
++  return [
++    styleText("gray", `${title} · ${columns} × ${matrix.length}`),
++    ...matrixLines(matrix, 0, columns, colored),
++  ];
++}
++
++export function puzzle({ train, testInput }) {
++  const available = width() - 4;
++  const colored = colors();
++  let pairs = [];
++  let used = 0;
++  const renderRow = () => {
++    if (pairs.length === 0) {
++      return;
++    }
++    block("Training", sideBySide(pairs));
++    pairs = [];
++    used = 0;
++  };
++
++  if (train.length === 0) {
++    block("Training", [styleText("gray", "(empty)")]);
++  }
++  for (const [index, { input, output }] of train.entries()) {
++    const lines = [
++      styleText(["bold", "white"], `Train ${index + 1}`),
++      ...sideBySide([
++        previewMatrix("Input", input, colored),
++        previewMatrix("Output", output, colored),
++      ]),
++    ];
++    const pairWidth = Math.max(...lines.map((line) => stringWidth(line)));
++    if (pairWidth > available) {
++      renderRow();
++      grid(`Train ${index + 1} · Input`, input);
++      grid(`Train ${index + 1} · Output`, output);
++      continue;
++    }
++    if (pairs.length > 0 && used + 2 + pairWidth > available) {
++      renderRow();
++    }
++    used += (pairs.length > 0 ? 2 : 0) + pairWidth;
++    pairs.push(lines);
++  }
++  renderRow();
++  grid("Test input", testInput);
++}
++
+ export function usage({ prompt_tokens, completion_tokens }) {
+   const message = `↳ Model usage  ${prompt_tokens} input / ${completion_tokens} output tokens`;
+   for (const line of wrap(message, width() - 2)) {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1191,30 +1294,38 @@ Remove the dataset.core.3.json and dataset.core.4.json files from arc/src/datase
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add debug output and remove unused core datasets
+## X. Show Nucleoid version in ARC terminal header
 
 **RULE**:
-When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9aa5b696`: Add debug output and remove unused core datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1eccd61b`: Show Nucleoid version in ARC terminal header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  Matrix.toString(Matrix.crop(input_instance_matrix));
-  console.debug("");
-  Matrix.toString(Matrix.crop(output_instance_matrix));
+It displays the runtime version reported by the Nucleoid executable's `--version`
+option, using the same `NUCLEOID_EXECUTABLE` selection as program execution.
+Two blank rows pad the header content above and below.
+The header content is centered as one group, with its left inset set to
+50% of the unused horizontal space. Its first two rows pair the unboxed
+After a blank line, the workflow and runtime version share the same text
+exact-match badge in green or a mismatch badge in red, the unchanged difference
+score, and elapsed time.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The header content sits left of center as one group, with its left inset set to
+25% of the unused horizontal space. Its first two rows pair the unboxed
+After a blank line, the workflow and input dimensions share the same text
+exact-match/mismatch badge, the unchanged difference score, and elapsed time.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9aa5b696` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1eccd61b` are properly handled with clean fallback behavior.

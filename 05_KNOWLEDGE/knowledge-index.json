@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T05:23:48.982Z",
+  "last_updated": "2026-10-23T05:33:17.316Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7167,8 +7167,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "38d782fa",
-      "content_hash": "ce2549b6bc5a8be7310b7a3df24a4a2aed33f54335b7030127a8c63e590ac4ba",
+      "source_version": "b69afdc2",
+      "content_hash": "a4c80db5a623a17ecd2be956b507d3fed96a1c2857a83b682aa25fcf8046e94e",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -7186,6 +7186,11 @@
           "number": 3491,
           "title": "query): isolate stream batches from source table cache (#20796)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3764,
+          "title": "query): keep constant NULL columns through exchange, spill and merge (#20777)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7193,7 +7198,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:33:54.596Z",
+      "verified_at": "2026-10-23T05:30:30.968Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35964,8 +35969,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "9e5b606c",
-      "content_hash": "9d02336f5d9ee9c6be4c3668d61cf0fc469e776d1b9a4530fbdfd8a40612bdfe",
+      "source_version": "1eccd61b",
+      "content_hash": "e4ad6baa48f97533f7c9a148bee4202db742c1ef79ee4a71f44ce1596d8950b7",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -35998,6 +36003,11 @@
           "number": 3726,
           "title": "Add debug output and remove unused core datasets",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3765,
+          "title": "Show Nucleoid version in ARC terminal header",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36005,7 +36015,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:37:03.383Z",
+      "verified_at": "2026-10-23T05:30:31.981Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48665,13 +48675,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "f92429aa",
-      "content_hash": "1c532e695dfff1226863a2949ef79afdb2d26a6c051d0d0dd4df93ff6b407afa",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "5148abb4",
+      "content_hash": "d1f2fc049415177d8829e96184d098ecd6efd466f753e4d40c8d1cb8e1fb0709",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
@@ -48682,6 +48692,21 @@
           "number": 3215,
           "title": "🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardw",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3766,
+          "title": "Zero-Reference Adoption for Smart Pointers (`sk_make_sp` vs `sk_ref_sp`)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3767,
+          "title": "Thread-Isolated State Registration vs Synchronous UI-Thread Value Reads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3768,
+          "title": "Vulkan Extension Mutexing in Shared Device Contexts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48689,7 +48714,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:16:45.479Z",
+      "verified_at": "2026-10-23T05:33:17.306Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112547,6 +112572,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T05:23:48.972Z"
+    },
+    "rule-3764": {
+      "learning_id": "rule-3764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3764,
+      "title": "query): keep constant NULL columns through exchange, spill and merge (#20777)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "b69afdc2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:30:30.968Z"
+    },
+    "rule-3765": {
+      "learning_id": "rule-3765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3765,
+      "title": "Show Nucleoid version in ARC terminal header",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "1eccd61b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:30:31.981Z"
+    },
+    "rule-3766": {
+      "learning_id": "rule-3766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3766,
+      "title": "Zero-Reference Adoption for Smart Pointers (`sk_make_sp` vs `sk_ref_sp`)",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "5148abb4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:33:17.306Z"
+    },
+    "rule-3767": {
+      "learning_id": "rule-3767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3767,
+      "title": "Thread-Isolated State Registration vs Synchronous UI-Thread Value Reads",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "5148abb4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:33:17.306Z"
+    },
+    "rule-3768": {
+      "learning_id": "rule-3768",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3768,
+      "title": "Vulkan Extension Mutexing in Shared Device Contexts",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "5148abb4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:33:17.306Z"
     }
   },
   "aliases": {
