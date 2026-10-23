@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:49:58.528Z",
+  "last_updated": "2026-10-23T07:06:47.995Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31832,17 +31832,28 @@
       "slug": "mantinedev-mantine",
       "platform": "github",
       "source_url": "https://github.com/mantinedev/mantine",
-      "source_version": "e47e45af",
-      "content_hash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
+      "source_version": "194d6524",
+      "content_hash": "4accf04aa32327580b566a2af8b997d8d0c153f686a77bcaeb00117fcee8a412",
       "dossier_path": "07_PROJECT_LEARNING/mantinedev-mantine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mantinedev-mantine-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 3798,
+          "title": "Dual-Observer Synchronization Invariant for Dynamic Layout Anchors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3799,
+          "title": "Surrogate-Pair Preserving String Truncation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:51:47.650Z",
+      "verified_at": "2026-10-23T07:05:10.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63319,14 +63330,29 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "e736c2df",
-      "content_hash": "627675287c062ed952181029a6ec0356ddd50b4380dd6621575941fd5b9b08ba",
+      "source_version": "1dde7a86",
+      "content_hash": "adc5ec409cee15c81829eb439a040692265f6a7fca1bb9df9c2171e1ac5465e0",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
         {
           "number": 3007,
           "title": "Merge pull request #5265 from preactjs/JoviDeCroock/rerender-queue-throw",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3800,
+          "title": "Invariant Ref Nullability Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3801,
+          "title": "Double-Buffered State Commits in Interleaved Render Loops",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3802,
+          "title": "Orphaned VNode Root Boundary Reset",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -63335,7 +63361,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:49:24.841Z",
+      "verified_at": "2026-10-23T07:06:47.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113193,6 +113219,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:49:58.517Z"
+    },
+    "rule-3798": {
+      "learning_id": "rule-3798",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3798,
+      "title": "Dual-Observer Synchronization Invariant for Dynamic Layout Anchors",
+      "source_url": "https://github.com/mantinedev/mantine",
+      "source_version": "194d6524",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:05:10.243Z"
+    },
+    "rule-3799": {
+      "learning_id": "rule-3799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3799,
+      "title": "Surrogate-Pair Preserving String Truncation Invariant",
+      "source_url": "https://github.com/mantinedev/mantine",
+      "source_version": "194d6524",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:05:10.243Z"
+    },
+    "rule-3800": {
+      "learning_id": "rule-3800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3800,
+      "title": "Invariant Ref Nullability Contract",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "1dde7a86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:06:47.984Z"
+    },
+    "rule-3801": {
+      "learning_id": "rule-3801",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3801,
+      "title": "Double-Buffered State Commits in Interleaved Render Loops",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "1dde7a86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:06:47.984Z"
+    },
+    "rule-3802": {
+      "learning_id": "rule-3802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3802,
+      "title": "Orphaned VNode Root Boundary Reset",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "1dde7a86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:06:47.984Z"
     }
   },
   "aliases": {

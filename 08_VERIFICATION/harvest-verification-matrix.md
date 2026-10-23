@@ -4485,3 +4485,5 @@
 | `CYCLE-20261023-12N3` | `2026-10-23T06:49:47.679Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3795` | Yes (`091874c1...`) |
 | `CYCLE-20261023-18BX` | `2026-10-23T06:49:55.053Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3796` | Yes (`99ab2729...`) |
 | `CYCLE-20261023-1B1U` | `2026-10-23T06:49:58.578Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3797` | Yes (`0a48af2b...`) |
+| `CYCLE-20261023-KUJK` | `2026-10-23T07:05:10.304Z` | `mantinedev/mantine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3798, Rule 3799` | Yes (`4accf04a...`) |
+| `CYCLE-20261023-MXYL` | `2026-10-23T07:06:48.045Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3800, Rule 3801, Rule 3802` | Yes (`adc5ec40...`) |

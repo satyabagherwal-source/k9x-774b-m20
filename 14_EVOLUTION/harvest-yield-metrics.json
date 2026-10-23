@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:49:58.591Z",
-  "total_cycles_completed": 4462,
-  "total_learnings_persisted": 4462,
-  "total_rules_promoted": 3649,
+  "last_updated": "2026-10-23T07:06:48.057Z",
+  "total_cycles_completed": 4464,
+  "total_learnings_persisted": 4464,
+  "total_rules_promoted": 3654,
   "history": [
-    {
-      "timestamp": "2026-10-22T15:28:55.855Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:28:59.933Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T15:29:02.875Z",
       "repository": "nolabs-ai/nono",
@@ -1403,6 +1389,20 @@
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T07:05:10.317Z",
+      "repository": "mantinedev/mantine",
+      "learningId": "learn-github-mantinedev-mantine",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T07:06:48.057Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

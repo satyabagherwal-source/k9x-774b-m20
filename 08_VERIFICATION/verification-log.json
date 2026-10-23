@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-CAF2",
-    "timestamp": "2026-10-20T19:43:19.742Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "d7a14e80d3997bdffc3083fea1b052cf9ae11e4730dff8eac1ed855b8c41043c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-CFT9",
-    "timestamp": "2026-10-20T19:43:26.733Z",
-    "repository": "snyk/driftctl",
-    "learningId": "learn-github-snyk-driftctl",
-    "contentHash": "2f375baa64f5ffbd8aface2d7a0a2c8c7557951d393014f5cdf0817958825998",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-CGQ2",
     "timestamp": "2026-10-20T19:43:27.914Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7492,6 +7462,36 @@
     "contentHash": "0a48af2bf48e9e30ac5253efcaf6d620fe438de099196d4f4de23878d59837d8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-KUJK",
+    "timestamp": "2026-10-23T07:05:10.304Z",
+    "repository": "mantinedev/mantine",
+    "learningId": "learn-github-mantinedev-mantine",
+    "contentHash": "4accf04aa32327580b566a2af8b997d8d0c153f686a77bcaeb00117fcee8a412",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-MXYL",
+    "timestamp": "2026-10-23T07:06:48.045Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "adc5ec409cee15c81829eb439a040692265f6a7fca1bb9df9c2171e1ac5465e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

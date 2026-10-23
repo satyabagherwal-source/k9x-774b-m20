@@ -4492,3 +4492,5 @@ Every entry in this ledger must capture:
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `d09972b8` | Multi-dimensional audit evidence | 2026-10-23T06:49:47.682Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `9e052d7c` | Multi-dimensional audit evidence | 2026-10-23T06:49:55.056Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `0d546854` | Multi-dimensional audit evidence | 2026-10-23T06:49:58.581Z |
+| `learn-github-mantinedev-mantine` | `https://github.com/mantinedev/mantine` | `194d6524` | Multi-dimensional audit evidence | 2026-10-23T07:05:10.307Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `1dde7a86` | Multi-dimensional audit evidence | 2026-10-23T07:06:48.048Z |

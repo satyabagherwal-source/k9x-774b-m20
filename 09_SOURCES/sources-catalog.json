@@ -6383,10 +6383,10 @@
     "repository": "mantinedev/mantine",
     "platform": "github",
     "sourceUrl": "https://github.com/mantinedev/mantine",
-    "sourceVersion": "e47e45af",
+    "sourceVersion": "194d6524",
     "license": "MIT",
-    "contentHash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
-    "lastHarvestedAt": "2026-10-19T05:51:47.701Z",
+    "contentHash": "4accf04aa32327580b566a2af8b997d8d0c153f686a77bcaeb00117fcee8a412",
+    "lastHarvestedAt": "2026-10-23T07:05:10.307Z",
     "learningId": "learn-github-mantinedev-mantine"
   },
   "sentrux-sentrux": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "e736c2df",
+    "sourceVersion": "1dde7a86",
     "license": "MIT",
-    "contentHash": "627675287c062ed952181029a6ec0356ddd50b4380dd6621575941fd5b9b08ba",
-    "lastHarvestedAt": "2026-10-20T02:49:24.893Z",
+    "contentHash": "adc5ec409cee15c81829eb439a040692265f6a7fca1bb9df9c2171e1ac5465e0",
+    "lastHarvestedAt": "2026-10-23T07:06:48.048Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

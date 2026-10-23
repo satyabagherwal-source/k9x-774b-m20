@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T06:49:58.595Z",
+  "last_updated": "2026-10-23T07:06:48.060Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9666,14 +9666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mantinedev-mantine",
-      "content_hash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
-      "verified_at": "2026-10-19T05:51:47.708Z",
+      "content_hash": "4accf04aa32327580b566a2af8b997d8d0c153f686a77bcaeb00117fcee8a412",
+      "verified_at": "2026-10-23T07:05:10.321Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:51:47.708Z"
+      "last_updated": "2026-10-23T07:05:10.331Z"
     },
     "sentrux/sentrux": {
       "repository": "sentrux/sentrux",
@@ -15156,14 +15156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-preactjs-preact",
-      "content_hash": "627675287c062ed952181029a6ec0356ddd50b4380dd6621575941fd5b9b08ba",
-      "verified_at": "2026-10-20T02:49:24.900Z",
+      "content_hash": "adc5ec409cee15c81829eb439a040692265f6a7fca1bb9df9c2171e1ac5465e0",
+      "verified_at": "2026-10-23T07:06:48.060Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:49:24.900Z"
+      "last_updated": "2026-10-23T07:06:48.060Z"
     },
     "alyssaxuu/later": {
       "repository": "alyssaxuu/later",
