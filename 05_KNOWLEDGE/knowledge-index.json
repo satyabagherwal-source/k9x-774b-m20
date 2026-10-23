@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T07:06:47.995Z",
+  "last_updated": "2026-10-23T07:22:39.245Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8198,8 +8198,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "eb582ad9",
-      "content_hash": "2d825c59c4f5ceebc865f9a6efc9a96c6b2dc715729fa4f3820affd45bf9b19d",
+      "source_version": "a38718e9",
+      "content_hash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -8212,6 +8212,16 @@
           "number": 3068,
           "title": "[auto] [ci skip] Generate content",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3806,
+          "title": "Single Source of Truth (SSOT) Markdown Artifact Generation Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3807,
+          "title": "Referential Integrity & Disjunctive Tag Partitioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8219,7 +8229,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:19:10.023Z",
+      "verified_at": "2026-10-23T07:21:47.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48723,8 +48733,8 @@
       "slug": "wasm-bindgen-wasm-pack",
       "platform": "github",
       "source_url": "https://github.com/wasm-bindgen/wasm-pack",
-      "source_version": "3b7e5cb5",
-      "content_hash": "4c2cfa7cb8e47aa490268848d9b9ca62a46e1264b528d3bd7927001adf3557ff",
+      "source_version": "5081ad40",
+      "content_hash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
       "dossier_path": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "promoted_rules": [
@@ -48737,6 +48747,21 @@
           "number": 3141,
           "title": "install): download prebuilt wasm-opt binary on Windows arm64 (#1605)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3803,
+          "title": "Version-Negotiated Toolchain Invocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3804,
+          "title": "Upstream Manifest Discovery Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3805,
+          "title": "Cross-Registry Atomic Release Sequencing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48744,7 +48769,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:09:01.154Z",
+      "verified_at": "2026-10-23T07:21:26.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63378,14 +63403,24 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "9e2b0bac",
-      "content_hash": "903042b6abfa13519a3ed81990817cd9e30d3f29e7c8cbdc3679d27ede79ca79",
+      "source_version": "d1ca2412",
+      "content_hash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
         {
           "number": 3011,
           "title": "Merge pull request #9217 from rapporian/fix/devtools-mcp-custom-hooks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3808,
+          "title": "Sentinel Serialization for Unhydrated Component Props Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3809,
+          "title": "Dev-Server HMR Separation of Pure Stylesheet Assets Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -63394,7 +63429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:55:43.308Z",
+      "verified_at": "2026-10-23T07:22:39.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113289,6 +113324,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T07:06:47.984Z"
+    },
+    "rule-3803": {
+      "learning_id": "rule-3803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3803,
+      "title": "Version-Negotiated Toolchain Invocation",
+      "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+      "source_version": "5081ad40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:21:26.683Z"
+    },
+    "rule-3804": {
+      "learning_id": "rule-3804",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3804,
+      "title": "Upstream Manifest Discovery Invariant",
+      "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+      "source_version": "5081ad40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:21:26.683Z"
+    },
+    "rule-3805": {
+      "learning_id": "rule-3805",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3805,
+      "title": "Cross-Registry Atomic Release Sequencing",
+      "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+      "source_version": "5081ad40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:21:26.683Z"
+    },
+    "rule-3806": {
+      "learning_id": "rule-3806",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3806,
+      "title": "Single Source of Truth (SSOT) Markdown Artifact Generation Contract",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "a38718e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:21:47.603Z"
+    },
+    "rule-3807": {
+      "learning_id": "rule-3807",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3807,
+      "title": "Referential Integrity & Disjunctive Tag Partitioning Invariant",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "a38718e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:21:47.603Z"
+    },
+    "rule-3808": {
+      "learning_id": "rule-3808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3808,
+      "title": "Sentinel Serialization for Unhydrated Component Props Invariant",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "d1ca2412",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:22:39.239Z"
+    },
+    "rule-3809": {
+      "learning_id": "rule-3809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3809,
+      "title": "Dev-Server HMR Separation of Pure Stylesheet Assets Invariant",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "d1ca2412",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T07:22:39.239Z"
     }
   },
   "aliases": {

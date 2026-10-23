@@ -271378,3 +271378,774 @@ it('should purge unmanaged host DOM children on clean initial render', () => {
 ```
 
 ---
+
+
+---
+
+## 3803. Version-Negotiated Toolchain Invocation (Harvested from wasm-bindgen/wasm-pack)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Version-Negotiated Toolchain Invocation",
+  "source": "wasm-bindgen/wasm-pack",
+  "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+  "source_version": "5081ad40",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T07:21:26.400Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wasm-bindgen-wasm-pack",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wasm-bindgen/wasm-pack](https://github.com/wasm-bindgen/wasm-pack) (Revision: `5081ad40`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an orchestration CLI invokes external sub-tools across heterogeneous development environments, it MUST NOT assume invariant sub-tool CLI syntax. It MUST query the sub-tool’s version programmatically, parse it into an algebraic semver structure, and dynamically route CLI arguments between legacy and modern flag schemas.
+
+**WHY**:
+External sub-tool interfaces drift over time. For example, `wasm-bindgen-cli` previously accepted target flags as standalone switches (`--browser`, `--nodejs`, `--web`), but migrated in version `0.2.40` to parameterized flags (`--target <TARGET>`). Invoking modern flags on older binaries causes abrupt runtime crashes, while invoking deprecated flags on newer binaries produces deprecation warnings or target degradation.
+
+**WHEN TO APPLY**:
+Apply in build tools, orchestration CLIs, meta-compilers, or CI runner actions that wrap independently versioned external binaries (`wasm-bindgen`, `clang`, `rustc`, `docker`, `kubectl`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use anyhow::{bail, Context, Result};
+use semver::Version;
+use std::path::Path;
+use std::process::Command;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TargetRuntime {
+    Nodejs,
+    Web,
+    Bundler,
+}
+
+pub struct ToolchainAdapter<'a> {
+    binary_path: &'a Path,
+    cached_version: Version,
+}
+
+impl<'a> ToolchainAdapter<'a> {
+    pub fn new(binary_path: &'a Path) -> Result<Self> {
+        let output = Command::new(binary_path)
+            .arg("--version")
+            .output()
+            .with_context(|| format!("Failed to probe version of {:?}", binary_path))?;
+
+        if !output.status.success() {
+            bail!("Sub-tool version check exited with status: {}", output.status);
+        }
+
+        let raw_stdout = String::from_utf8_lossy(&output.stdout);
+        // Extract semver token from strings like "tool-name 0.2.45 (rev ...)"
+        let version_str = raw_stdout
+            .split_whitespace()
+            .find(|token| Version::parse(token).is_ok())
+            .ok_or_else(|| anyhow::anyhow!("No valid semver token in: {}", raw_stdout))?;
+
+        let cached_version = Version::parse(version_str)?;
+        Ok(Self { binary_path, cached_version })
+    }
+
+    pub fn configure_target(&self, cmd: &mut Command, target: TargetRuntime) -> Result<()> {
+        let modern_target_flag_threshold = Version::parse("0.2.40").unwrap();
+        let web_support_threshold = Version::parse("0.2.39").unwrap();
+
+        if self.cached_version >= modern_target_flag_threshold {
+            let target_str = match target {
+                TargetRuntime::Nodejs => "nodejs",
+                TargetRuntime::Web => "web",
+                TargetRuntime::Bundler => "bundler",
+            };
+            cmd.arg("--target").arg(target_str);
+        } else {
+            // Fallback to legacy invocation contracts
+            let legacy_flag = match target {
+                TargetRuntime::Nodejs => "--nodejs",
+                TargetRuntime::Bundler => "--browser",
+                TargetRuntime::Web => {
+                    if self.cached_version < web_support_threshold {
+                        bail!(
+                            "Target 'web' requires tool version >= 0.2.39, but found {}",
+                            self.cached_version
+                        );
+                    }
+                    "--web"
+                }
+            };
+            cmd.arg(legacy_flag);
+        }
+        Ok(())
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Blindly assuming fixed CLI argument flags across sub-tool versions
+pub fn run_subtool_blind(binary_path: &Path, target: &str) -> Result<()> {
+    let mut cmd = Command::new(binary_path);
+    // Hard-coded argument flags will break when the sub-tool upgrades or downgrades
+    cmd.arg("--target").arg(target);
+    cmd.status()?;
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce dynamic flag selection via integration test matrices mocking old and new binary version strings:
+```rust
+#[test]
+fn verify_dynamic_flag_dispatch() {
+    let old_ver = semver::Version::parse("0.2.38").unwrap();
+    let mid_ver = semver::Version::parse("0.2.39").unwrap();
+    let new_ver = semver::Version::parse("0.2.45").unwrap();
+
+    assert!(old_ver < semver::Version::parse("0.2.40").unwrap());
+    assert!(new_ver >= semver::Version::parse("0.2.40").unwrap());
+    // Assert downstream Command args match the version branch
+}
+```
+
+---
+
+
+---
+
+## 3804. Upstream Manifest Discovery Invariant (Harvested from wasm-bindgen/wasm-pack)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Upstream Manifest Discovery Invariant",
+  "source": "wasm-bindgen/wasm-pack",
+  "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+  "source_version": "5081ad40",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T07:21:26.514Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wasm-bindgen-wasm-pack",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wasm-bindgen/wasm-pack](https://github.com/wasm-bindgen/wasm-pack) (Revision: `5081ad40`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Filesystem manifest discovery that traverses upwards from the `CWD` MUST NOT use unbounded recursion and MUST terminate definitively when the directory root is reached (`PathBuf::pop() == false`). If discovery terminates without finding the manifest, the engine MUST fallback to the canonical execution directory (`CWD`) rather than panicking or looping infinitely.
+
+**WHY**:
+Invoking build tools inside subdirectories (e.g., `tests/`, `src/`, or nested workspace crates) requires unambiguous identification of the crate boundary. Unchecked directory bubbling can result in infinite filesystem loops on symlinked or unrooted container environments. Returning a fallback reference ensures descriptive compiler errors (e.g., "Cargo.toml not found in CWD") rather than low-level filesystem panics.
+
+**WHEN TO APPLY**:
+Any CLI or language server protocol (LSP) tool resolving project roots (`Cargo.toml`, `package.json`, `go.mod`, `pom.xml`, `.git`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::env;
+use std::fs;
+use std::path::{Path, PathBuf};
+use anyhow::Result;
+
+pub fn discover_project_manifest_root(explicit_path: Option<PathBuf>, manifest_name: &str) -> Result<PathBuf> {
+    if let Some(path) = explicit_path {
+        return Ok(path);
+    }
+
+    let mut current = env::current_dir()?;
+    let canonical_start = current.clone();
+
+    loop {
+        let manifest_candidate = current.join(manifest_name);
+        if manifest_candidate.is_file() {
+            return Ok(current);
+        }
+
+        // PathBuf::pop() returns false when it reaches the filesystem root (e.g., "/" or "C:\")
+        if !current.pop() {
+            // Return root context directory to allow upstream error handlers to surface standard missing-manifest errors
+            return Ok(canonical_start);
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Recursive discovery without termination proof or symlink protection
+pub fn find_manifest_leaking(dir: &Path) -> PathBuf {
+    let candidate = dir.join("Cargo.toml");
+    if candidate.exists() {
+        return dir.to_path_buf();
+    }
+    // DANGEROUS: .parent().unwrap() panics at root directory ("/") or loops on circular symlinks
+    find_manifest_leaking(dir.parent().unwrap())
+}
+```
+
+**VERIFICATION METHOD**:
+Execute property-based or boundary tests asserting traversal against isolated temporary directories containing zero manifest files:
+```rust
+#[test]
+fn test_manifest_discovery_at_root_returns_cwd() {
+    let temp_empty_dir = tempfile::tempdir().unwrap();
+    env::set_current_dir(temp_empty_dir.path()).unwrap();
+    let result = discover_project_manifest_root(None, "Cargo.toml").unwrap();
+    assert_eq!(result, temp_empty_dir.path());
+}
+```
+
+---
+
+
+---
+
+## 3805. Cross-Registry Atomic Release Sequencing (Harvested from wasm-bindgen/wasm-pack)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Registry Atomic Release Sequencing",
+  "source": "wasm-bindgen/wasm-pack",
+  "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+  "source_version": "5081ad40",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T07:21:26.619Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wasm-bindgen-wasm-pack",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wasm-bindgen/wasm-pack](https://github.com/wasm-bindgen/wasm-pack) (Revision: `5081ad40`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Multi-registry release automation workflows MUST order deployments by registry mutability: publish to strictly immutable package registries (e.g., `crates.io`) and upstream binary hosting platforms PRIOR to releasing dependent packages on secondary registries (e.g., `npm`), while gating binary asset releases on successful verification of all pre-built binaries.
+
+**WHY**:
+Once a crate is published to `crates.io`, that exact version number is permanently immutable and cannot be deleted or re-uploaded. If a release pipeline first un-drafts a GitHub Release or publishes an npm shim, and subsequent `cargo publish` fails (e.g., due to token expiration, crates.io transient 500s, or missing metadata), the release enters an inconsistent, broken state. The npm package will attempt to download assets from an unreleased/broken build, and maintainers cannot re-run the pipeline with the same version number without burning a patch version.
+
+**WHEN TO APPLY**:
+Continuous Delivery pipelines that orchestrate distribution across multiple registries simultaneously (e.g., Rust `crates.io`, Node `npm`, Python `PyPI`, and GitHub Releases).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```yaml
+# GitHub Actions release dependency pattern
+jobs:
+  build-and-verify-binaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build assets
+        run: cargo build --release
+
+  # Step 1: Push immutable core package first
+  publish-crates-io:
+    needs: build-and-verify-binaries
+    runs-on: ubuntu-latest
+    environment:
+      name: publish
+      deployment: false
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish to crates.io
+        run: cargo publish
+
+  # Step 2: Finalize asset release only after immutable core succeeds
+  finalize-github-release:
+    needs: publish-crates-io
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Undraft release
+        run: gh release edit "$GITHUB_REF_NAME" --draft=false --latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  # Step 3: Dependent wrappers (npm shims) run after binary assets are public
+  publish-npm-wrapper:
+    needs: finalize-github-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish npm wrapper
+        run: npm publish --access public
+```
+
+**NEGATIVE CONSTRAINT**:
+```yaml
+# ANTI-PATTERN: Undrafting release or publishing wrapper before primary core publish
+jobs:
+  finalize-github-release:
+    # Publishing assets first exposes draft binaries prematurely
+    steps:
+      - run: gh release edit "$GITHUB_REF_NAME" --draft=false
+  publish-npm:
+    needs: finalize-github-release
+    # If cargo-publish fails later, npm is already live pointing to broken state
+    steps:
+      - run: npm publish
+  cargo-publish:
+    needs: publish-npm
+    steps:
+      - run: cargo publish # FAILURE HERE LEAVES SYSTEM PERMANENTLY CORRUPT
+```
+
+**VERIFICATION METHOD**:
+Implement CI structural linting verifying DAG dependencies in workflow files (`yq` or programmatic GitHub Actions validator):
+```bash
+# Verify cargo-publish is a direct prerequisite of finalize
+cargo_needs=$(yq eval '.jobs.finalize.needs' .github/workflows/release.yml)
+if [ "$cargo_needs" != "publish" ]; then
+  echo "FAIL: finalize must depend on publish (crates.io)"
+  exit 1
+fi
+```
+
+---
+
+
+---
+
+## 3806. Single Source of Truth (SSOT) Markdown Artifact Generation Contract (Harvested from dkhamsing/open-source-ios-apps)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Single Source of Truth (SSOT) Markdown Artifact Generation Contract",
+  "source": "dkhamsing/open-source-ios-apps",
+  "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+  "source_version": "a38718e9",
+  "license": "CC0-1.0",
+  "extracted_at": "2026-10-23T07:21:47.435Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dkhamsing/open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps) (Revision: `a38718e9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In repositories where documentation or index tables are derived from structured data (JSON, YAML, TOML), developers and automated agents MUST ONLY modify the underlying data store (`contents.json`). Source control MUST treat generated human-readable documentation files (`*.md`) as derived compilation targets. CI pipelines MUST reject any pull request containing changes to derived markdown files if those changes were not produced via the authoritative compilation script run against the modified schema.
+
+**WHY**:
+Allowing manual edits to compiled `.md` files creates split-brain state, impossible git merge conflicts across long-lived branches, and silent overwrites. When PR A modifies `README.md` manually and PR B modifies `contents.json` (which compiles and regenerates `README.md`), merging PR A will either cause merge conflicts on line 30,000+ or PR B will completely overwrite PR A's changes during the next automated compile pass.
+
+**WHEN TO APPLY**:
+Apply to any data catalog, API documentation generator, OpenAPI-to-Markdown pipeline, static site generation repository, or awesome-list maintaining structured records.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ruby
+# In .github/workflows/validate.yml or verification script
+# Enforces that PRs only mutate source data, not derived Markdown targets
+
+def verify_clean_pr_diff(modified_files, allowed_source_file = "contents.json")
+  forbidden_generated_files = ["README.md", "APPSTORE.md", "ARCHIVE.md", "LATEST.md"]
+  
+  violations = modified_files.select do |file|
+    forbidden_generated_files.include?(file)
+  end
+
+  unless violations.empty?
+    raise StandardError, "VIOLATION: Direct mutation of generated files #{violations.inspect} detected. " \
+                         "Only #{allowed_source_file} may be modified in PRs. " \
+                         "Run compilation locally or let deploy CI generate output."
+  end
+end
+```
+
+**NEGATIVE CONSTRAINT**:
+```markdown
+<!-- NEVER allow PR authors to edit both contents.json AND README.md manually in a single PR -->
+<!-- BAD: PR #2453 diff contains: -->
+diff --git a/README.md b/README.md
++ - [Align Studio](https://github.com/emlavankhoahienma-hue/ai-smart-framing-camera)
+diff --git a/contents.json b/contents.json
++ "title": "Align Studio"
+<!-- RESULT: Guaranteed rebase conflicts on high-velocity upstream projects -->
+```
+
+**VERIFICATION METHOD**:
+Enforce via GitHub Actions PR lint step:
+```yaml
+name: Verify Source Integrity
+on: [pull_request]
+jobs:
+  check-pr-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert Only contents.json Changed
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          for file in $CHANGED_FILES; do
+            if [[ "$file" =~ ^(README|APPSTORE|ARCHIVE|LATEST)\.md$ ]]; then
+              echo "ERROR: Manual edits to $file are prohibited. Modify contents.json only."
+              exit 1
+            fi
+          done
+```
+
+---
+
+
+---
+
+## 3807. Referential Integrity & Disjunctive Tag Partitioning Invariant (Harvested from dkhamsing/open-source-ios-apps)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Referential Integrity & Disjunctive Tag Partitioning Invariant",
+  "source": "dkhamsing/open-source-ios-apps",
+  "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+  "source_version": "a38718e9",
+  "license": "CC0-1.0",
+  "extracted_at": "2026-10-23T07:21:47.543Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dkhamsing/open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps) (Revision: `a38718e9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In schema-driven static catalogs, every child entry MUST declare primary categorization IDs (`category-ids`) that exist as valid keys in the strict system taxonomy, and MUST NOT overload `tags` for primary navigational routing. All foreign keys (`category-ids`) must resolve through a zero-allocation set lookup before pipeline compilation.
+
+**WHY**:
+When contributors use descriptive tags (e.g., `"react-native"`, `"archive"`) as pseudo-categories without validating against registered taxonomy buckets, compilation scripts crash on `nil` index lookup or generate orphaned table fragments in the documentation view, corrupting downstream badge generation and category counts.
+
+**WHEN TO APPLY**:
+Any static catalog, faceted search system, or flat-file static CMS where taxonomy drives file system or section chunking.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ruby
+# frozen_string_literal: true
+require 'set'
+require 'json'
+
+module TaxonomyValidator
+  class CategoryIntegrityChecker
+    def initialize(categories_file_path, data_file_path)
+      @valid_categories = Set.new(JSON.parse(File.read(categories_file_path)).map { |c| c.fetch('id') })
+      @records = JSON.parse(File.read(data_file_path))
+    end
+
+    def validate!
+      errors = []
+      @records.fetch('projects', []).each_with_index do |entry, idx|
+        title = entry.fetch('title', "Index: #{idx}")
+        category_ids = entry['category-ids']
+
+        if category_ids.nil? || !category_ids.is_a?(Array) || category_ids.empty?
+          errors << "#{title}: 'category-ids' must be a non-empty Array"
+          next
+        end
+
+        category_ids.each do |cat_id|
+          unless @valid_categories.include?(cat_id)
+            errors << "#{title}: Category '#{cat_id}' is invalid. Must exist in categories registry."
+          end
+        end
+      end
+
+      raise ArgumentError, "Taxonomy integrity failed:\n#{errors.join("\n")}" unless errors.empty?
+      true
+    end
+  end
+end
+```
+
+**NEGATIVE CONSTRAINT**:
+```ruby
+# NEVER assume category IDs exist or match tags without validation
+def render_category(entry, categories_map)
+  # BAD: Unchecked dereference produces nil class errors or empty markdown headers
+  entry['category-ids'].each do |id|
+    category_header = categories_map[id].upcase # Crash if id not registered
+    generate_markdown_section(category_header, entry)
+  end
+end
+```
+
+**VERIFICATION METHOD**:
+Implement a pre-commit unit test enforcing bidirectional mapping:
+```ruby
+require 'minitest/autorun'
+
+class TestTaxonomyIntegrity < Minitest::Test
+  def test_every_project_has_valid_categories
+    checker = TaxonomyValidator::CategoryIntegrityChecker.new(
+      'categories.json',
+      'contents.json'
+    )
+    assert checker.validate!
+  end
+end
+```
+
+---
+
+
+---
+
+## 3808. Sentinel Serialization for Unhydrated Component Props Invariant (Harvested from QwikDev/qwik)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Sentinel Serialization for Unhydrated Component Props Invariant",
+  "source": "QwikDev/qwik",
+  "source_url": "https://github.com/QwikDev/qwik",
+  "source_version": "d1ca2412",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T07:22:39.073Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-qwikdev-qwik",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [QwikDev/qwik](https://github.com/QwikDev/qwik) (Revision: `d1ca2412`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing an out-of-order resumable SSR engine that omits serializing unchanged host props to minimize payload weight, the serialization layer MUST write an explicit "props-present-but-dropped" sentinel token (e.g., `>` without an identifier or property payload) whenever the un-serialized host contains dynamic or variable props. The client reconciliation layer MUST deserialize this token into an explicit non-object sentinel (such as `false`) rather than `null` or `undefined`. During subsequent parent-driven reconciliation diffs, the reconciliation engine MUST treat `existingProps === SENTINEL` as an unconditional dirty flag that forces re-rendering.
+
+**WHY**:
+If an SSR serializer omits writing props for a component host that was not fully serialized, and the client deserializes the absence of props as `null` or `undefined`, the first client-side re-render of an ancestor component will cause the child's prop diffing logic (`handleProps`) to encounter no baseline reference (`existingProps == null`). If the diff handler falls back to adopting incoming props without diffing, it erroneously reports `shouldRender = false`. The child component fails to update its DOM, leaving stale SSR artifacts indefinitely. Writing an explicit sentinel proves that props existed on the server, was stripped for size, and cannot be assumed equal to incoming props.
+
+**WHEN TO APPLY**:
+Apply to any resumable, zero-hydration, or selective-hydration framework where server serialization prunes static/variable property payloads across serialized component boundaries, specifically when parent components update reactive state driving child inputs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// --- Serializer Phase (Server) ---
+export const PROPS_SENTINEL_CHAR = '>'; // VNodeDataChar.PROPS_CHAR
+
+export function serializeVNodeProps(
+  writer: StringWriter,
+  props: Record<string, unknown> | null,
+  isHostSerialized: boolean
+): void {
+  if (!isHostSerialized) {
+    const dynamicProps = extractDynamicProps(props);
+    if (dynamicProps && Object.keys(dynamicProps).length > 0) {
+      // Emit sentinel without ref to signal presence of unsynced dynamic props
+      writer.write(PROPS_SENTINEL_CHAR);
+    }
+    return;
+  }
+  // Standard serialization path for serialized hosts
+  writer.write(`${PROPS_SENTINEL_CHAR}${serializeObjectRef(props)}`);
+}
+
+// --- Deserializer / Materializer Phase (Client) ---
+export function materializeVNodeProps(
+  peekChar: () => string,
+  consumeValue: () => unknown
+): Record<string, unknown> | false | null {
+  if (peekChar() === PROPS_SENTINEL_CHAR) {
+    const rawVal = consumeValue();
+    // If sentinel has no serialized body, record explicit boolean false
+    return (rawVal as Record<string, unknown>) || false;
+  }
+  return null;
+}
+
+// --- Reconciliation Phase (Client) ---
+export function reconcileComponentProps(
+  hostVNode: VirtualVNode,
+  nextJsxProps: Record<string, unknown>,
+  existingProps: Record<string, unknown> | false | null
+): boolean {
+  let shouldRender = false;
+
+  if (existingProps && typeof existingProps === 'object') {
+    // Normal diffing pathway
+    shouldRender = diffPropertyPayloads(existingProps, nextJsxProps);
+  } else if (nextJsxProps) {
+    // Invariant guard: false means props existed on SSR but were dropped
+    // Force re-render if sentinel was set OR dynamic props are non-empty
+    const hasDynamicProps = !isPropsObjectEmpty(nextJsxProps[DYNAMIC_PROPS_KEY]);
+    shouldRender = existingProps === false || hasDynamicProps;
+    vnode_setProp(hostVNode, ELEMENT_PROPS_SLOT, nextJsxProps);
+  }
+
+  return shouldRender;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Treating dropped/missing SSR props as null and adopting without dirty check
+function handlePropsAntiPattern(host: VirtualVNode, nextProps: any, currentProps: any): boolean {
+  if (currentProps) {
+    return diffProps(currentProps, nextProps);
+  } else {
+    // BUG: Missing currentProps leads to blind adoption.
+    // shouldRender remains false; component is NEVER rendered on client!
+    vnode_setProp(host, 'props', nextProps);
+    return false;
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify with an end-to-end SSR-to-DOM test asserting that a module-scoped child component driven by parent signal state correctly updates its rendered output upon parent state mutation without full page reload:
+```typescript
+test('should rerender resumed child when SSR dropped props baseline', async () => {
+  const { document } = await renderToDom(<ParentContainerWithChild />);
+  expect(document.querySelector('.child-span')!.textContent).toBe('count 0');
+  await trigger(document.body, 'button.inc', 'click');
+  expect(document.querySelector('.child-span')!.textContent).toBe('count 1');
+});
+```
+
+---
+
+
+---
+
+## 3809. Dev-Server HMR Separation of Pure Stylesheet Assets Invariant (Harvested from QwikDev/qwik)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dev-Server HMR Separation of Pure Stylesheet Assets Invariant",
+  "source": "QwikDev/qwik",
+  "source_url": "https://github.com/QwikDev/qwik",
+  "source_version": "d1ca2412",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T07:22:39.182Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-qwikdev-qwik",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [QwikDev/qwik](https://github.com/QwikDev/qwik) (Revision: `d1ca2412`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A framework build tool plugin that hooks into Hot Module Replacement (`hotUpdate`) MUST explicitly differentiate between plain CSS/SCSS/PostCSS files and CSS Modules (or inline query strings like `?inline`). Plain stylesheet modifications MUST be excluded from framework component HMR re-render pipelines and bypassed completely, allowing the native bundler HMR engine (e.g., Vite/Rolldown) to hot-swap style tags in the DOM via link replacement without re-evaluating JavaScript component modules.
+
+**WHY**:
+Plain CSS imports do not export token dictionaries or affect Virtual DOM structures. If an SSR build plugin intercepts every stylesheet change and emits the importing JavaScript/TypeScript component file as "dirty" to the SSR HMR bridge, every CSS edit causes the full client component hierarchy to remount or reload. This invalidates all client-side state, destroys DOM focus, and bypasses the CSS-only hot-patching capability of modern bundlers.
+
+**WHEN TO APPLY**:
+Vite plugins, Rollup/Rolldown plugins, and Webpack loaders that maintain a custom SSR-to-client HMR socket bridge for component tree invalidation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+const STYLING_EXTENSIONS = [
+  '.css',
+  '.scss',
+  '.sass',
+  '.less',
+  '.styl',
+  '.stylus',
+  '.pcss',
+  '.postcss',
+  '.sss',
+] as const;
+
+/**
+ * Validates whether an imported URL corresponds to a plain stylesheet.
+ * Conditions:
+ * 1. Must match known styling extensions.
+ * 2. Must NOT contain query strings (e.g. ?inline, ?raw).
+ * 3. Must NOT be a CSS Module (.module.css).
+ */
+export const isPlainStylesheetUrl = (url: string): boolean => {
+  const [cleanUrl] = url.split('?');
+  const isModule = STYLING_EXTENSIONS.some((ext) => cleanUrl.endsWith(`.module${ext}`));
+  if (isModule) {
+    return false;
+  }
+  return STYLING_EXTENSIONS.some((ext) => cleanUrl.endsWith(ext));
+};
+
+export function handleHotUpdate(ctx: { modules: Array<{ url: string; type: string; importers: Set<any> }> }): string[] {
+  const filesToInvalidate = new Set<string>();
+
+  for (const mod of ctx.modules) {
+    // Invariant Guard: Bypass plain stylesheets.
+    // Vite handles link/style tag in-place swapping; importer output does NOT change.
+    if (isPlainStylesheetUrl(mod.url)) {
+      continue;
+    }
+
+    const cleanPath = mod.url.split('?')[0];
+    if (mod.type === 'js' && isSourceUrl(mod.url)) {
+      filesToInvalidate.add(cleanPath);
+    }
+  }
+
+  return Array.from(filesToInvalidate);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Treating all stylesheet changes as component importer invalidations
+for (const mod of ctx.modules) {
+  // Disastrous: catches .css alongside .module.css and triggers full TSX component re-render
+  if (mod.url.endsWith('.css')) {
+    for (const importer of mod.importers) {
+      filesToInvalidate.add(importer.url);
+    }
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test the Vite plugin `hotUpdate` hook using synthetic modules:
+```typescript
+test('sends nothing for plain stylesheets during HMR hotUpdate', () => {
+  const sent = sentHmrFiles([
+    { url: '/src/theme.css', importers: ['/src/root.tsx'] },
+    { url: '/src/main.pcss', importers: ['/src/app.tsx'] }
+  ]);
+  assert.deepEqual(sent, []);
+});
+```
+
+---

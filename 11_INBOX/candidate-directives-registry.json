@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:17:17.098Z",
+  "last_updated": "2026-10-23T07:21:47.658Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2499,6 +2499,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-sveltejs-svelte"
+    },
+    {
+      "id": "CD-683U",
+      "directive_title": "Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "dkhamsing/open-source-ios-apps",
+      "source_commit": "a38718e9",
+      "date_staged": "2026-10-23",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Invalid or missing rule title",
+      "learning_id": "learn-github-dkhamsing-open-source-ios-apps"
     }
   ]
 }

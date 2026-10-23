@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T07:06:48.060Z",
+  "last_updated": "2026-10-23T07:22:39.294Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "2d825c59c4f5ceebc865f9a6efc9a96c6b2dc715729fa4f3820affd45bf9b19d",
-      "verified_at": "2026-10-20T05:19:10.099Z",
+      "content_hash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
+      "verified_at": "2026-10-23T07:21:47.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:19:10.099Z"
+      "last_updated": "2026-10-23T07:21:47.661Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -7296,14 +7296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wasm-bindgen-wasm-pack",
-      "content_hash": "4c2cfa7cb8e47aa490268848d9b9ca62a46e1264b528d3bd7927001adf3557ff",
-      "verified_at": "2026-10-20T11:09:01.242Z",
+      "content_hash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
+      "verified_at": "2026-10-23T07:21:26.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:09:01.242Z"
+      "last_updated": "2026-10-23T07:21:26.733Z"
     },
     "software-mansion/react-native-gesture-handler": {
       "repository": "software-mansion/react-native-gesture-handler",
@@ -15186,14 +15186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qwikdev-qwik",
-      "content_hash": "903042b6abfa13519a3ed81990817cd9e30d3f29e7c8cbdc3679d27ede79ca79",
-      "verified_at": "2026-10-20T02:55:43.377Z",
+      "content_hash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
+      "verified_at": "2026-10-23T07:22:39.294Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:55:43.377Z"
+      "last_updated": "2026-10-23T07:22:39.294Z"
     },
     "TypeWhisper/typewhisper-mac": {
       "repository": "TypeWhisper/typewhisper-mac",

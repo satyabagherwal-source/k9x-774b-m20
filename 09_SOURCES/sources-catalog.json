@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "eb582ad9",
+    "sourceVersion": "a38718e9",
     "license": "CC0-1.0",
-    "contentHash": "2d825c59c4f5ceebc865f9a6efc9a96c6b2dc715729fa4f3820affd45bf9b19d",
-    "lastHarvestedAt": "2026-10-20T05:19:10.091Z",
+    "contentHash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
+    "lastHarvestedAt": "2026-10-23T07:21:47.651Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -4783,10 +4783,10 @@
     "repository": "wasm-bindgen/wasm-pack",
     "platform": "github",
     "sourceUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "sourceVersion": "3b7e5cb5",
+    "sourceVersion": "5081ad40",
     "license": "Apache-2.0",
-    "contentHash": "4c2cfa7cb8e47aa490268848d9b9ca62a46e1264b528d3bd7927001adf3557ff",
-    "lastHarvestedAt": "2026-10-20T11:09:01.235Z",
+    "contentHash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
+    "lastHarvestedAt": "2026-10-23T07:21:26.723Z",
     "learningId": "learn-github-wasm-bindgen-wasm-pack"
   },
   "software-mansion-react-native-gesture-handler": {
@@ -10093,10 +10093,10 @@
     "repository": "QwikDev/qwik",
     "platform": "github",
     "sourceUrl": "https://github.com/QwikDev/qwik",
-    "sourceVersion": "9e2b0bac",
+    "sourceVersion": "d1ca2412",
     "license": "MIT",
-    "contentHash": "903042b6abfa13519a3ed81990817cd9e30d3f29e7c8cbdc3679d27ede79ca79",
-    "lastHarvestedAt": "2026-10-20T02:55:43.369Z",
+    "contentHash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
+    "lastHarvestedAt": "2026-10-23T07:22:39.284Z",
     "learningId": "learn-github-qwikdev-qwik"
   },
   "typewhisper-typewhisper-mac": {

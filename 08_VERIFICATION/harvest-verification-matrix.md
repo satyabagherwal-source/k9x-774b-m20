@@ -4487,3 +4487,6 @@
 | `CYCLE-20261023-1B1U` | `2026-10-23T06:49:58.578Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3797` | Yes (`0a48af2b...`) |
 | `CYCLE-20261023-KUJK` | `2026-10-23T07:05:10.304Z` | `mantinedev/mantine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3798, Rule 3799` | Yes (`4accf04a...`) |
 | `CYCLE-20261023-MXYL` | `2026-10-23T07:06:48.045Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3800, Rule 3801, Rule 3802` | Yes (`adc5ec40...`) |
+| `CYCLE-20261023-5RY9` | `2026-10-23T07:21:26.721Z` | `wasm-bindgen/wasm-pack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3803, Rule 3804, Rule 3805` | Yes (`47ea2170...`) |
+| `CYCLE-20261023-683L` | `2026-10-23T07:21:47.649Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3806, Rule 3807` | Yes (`ec30f362...`) |
+| `CYCLE-20261023-7BXU` | `2026-10-23T07:22:39.282Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3808, Rule 3809` | Yes (`9b972291...`) |

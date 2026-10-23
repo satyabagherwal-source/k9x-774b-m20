@@ -4494,3 +4494,6 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `0d546854` | Multi-dimensional audit evidence | 2026-10-23T06:49:58.581Z |
 | `learn-github-mantinedev-mantine` | `https://github.com/mantinedev/mantine` | `194d6524` | Multi-dimensional audit evidence | 2026-10-23T07:05:10.307Z |
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `1dde7a86` | Multi-dimensional audit evidence | 2026-10-23T07:06:48.048Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `5081ad40` | Multi-dimensional audit evidence | 2026-10-23T07:21:26.723Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `a38718e9` | Multi-dimensional audit evidence | 2026-10-23T07:21:47.651Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `d1ca2412` | Multi-dimensional audit evidence | 2026-10-23T07:22:39.284Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-CGQ2",
-    "timestamp": "2026-10-20T19:43:27.914Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "2c00e102288ea34cfa7cb4c812a6290799fbf82b9c4b953f835770bbbb6af9fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-LO7C",
-    "timestamp": "2026-10-20T19:50:37.512Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "47f039b49ee5d600f35d155d550cdf5895101f733073141f869f5b19acdaedc9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-LOQU",
-    "timestamp": "2026-10-20T19:50:38.214Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "9553d8a4b1348cd723ab2fac532586850bd877730e92e6b03b17ec6c4081a31c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-LRWZ",
     "timestamp": "2026-10-20T19:50:42.323Z",
     "repository": "necolas/react-native-web",
@@ -7492,6 +7447,51 @@
     "contentHash": "adc5ec409cee15c81829eb439a040692265f6a7fca1bb9df9c2171e1ac5465e0",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-5RY9",
+    "timestamp": "2026-10-23T07:21:26.721Z",
+    "repository": "wasm-bindgen/wasm-pack",
+    "learningId": "learn-github-wasm-bindgen-wasm-pack",
+    "contentHash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-683L",
+    "timestamp": "2026-10-23T07:21:47.649Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-7BXU",
+    "timestamp": "2026-10-23T07:22:39.282Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
