@@ -280726,3 +280726,364 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `95251fec` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3907. In-Call Readiness Gate Bypass Invariant (Harvested from ntex-rs/ntex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "In-Call Readiness Gate Bypass Invariant",
+  "source": "ntex-rs/ntex",
+  "source_url": "https://github.com/ntex-rs/ntex",
+  "source_version": "eb2524d0",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T11:45:08.171Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ntex-rs-ntex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `eb2524d0`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an asynchronous system couples request processing with a shared single-owner readiness gate (where only one caller is permitted to drive state-readiness checks while others queue), any nested or internal readiness checks triggered from within the execution of an active service call (`call(...)`) MUST bypass the gate owner and execute immediately if the gate is occupied, registering their suspended wakers in a distinct auxiliary wait-table. Systems MUST NOT block an active call on the gate owner when the gate owner may be waiting for resources allocated or held by that call.
+
+**WHY**:
+If Service `A` starts executing `call()` and internally delegates to Service `B`'s pipeline check while holding an exclusive system resource (e.g., a buffer slot, connection handle, or lock), and Service `B`'s readiness gate is currently locked by a separate caller `C` that is waiting for that exact resource held by `A`, a circular wait dependency occurs. The gate owner cannot finish until the resource is freed, and the call holding the resource cannot proceed because it is waiting for the gate owner. This produces an unrecoverable async deadlock without any thread-level lock contention.
+
+**WHEN TO APPLY**:
+In any actor, pipeline, or RPC framework (Rust, Go, C++, Zig) implementing backpressure readiness (e.g., Tower/Actix/Ntex-style `poll_ready`/`ready`) where calls can pipeline nested service invocations and readiness check authorization is serialized behind a single executor/token.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::cell::{Cell, UnsafeCell};
+use std::task::{Context, Poll, Waker};
+use slab::Slab;
+
+pub struct WaitersRef {
+    cur: Cell<u32>, // u32::MAX = Gate is Free
+    indexes: UnsafeCell<Slab<Option<Waker>>>, // Gate waiters
+    calls: UnsafeCell<Slab<Option<Waker>>>,   // In-call bypass waiters
+    scratch: std::cell::RefCell<Vec<Waker>>,
+}
+
+impl WaitersRef {
+    /// Executes a readiness check initiated from within an active service call.
+    pub fn run_call<F, R>(&self, idx: u32, key: &mut Option<u32>, cx: &mut Context<'_>, f: F) -> Poll<R>
+    where
+        F: FnOnce(&mut Context<'_>) -> Poll<R>,
+    {
+        let cur = self.cur.get();
+        // 1. If gate is unowned (u32::MAX) or current caller already owns it, run normally
+        if cur == u32::MAX || cur == idx {
+            self.remove_call(key);
+            return self.run(idx, cx, f);
+        }
+
+        // 2. Gate is locked by another waiter. Bypass the gate owner to break circular wait:
+        let result = f(cx);
+        if result.is_pending() {
+            let calls = unsafe { &mut *self.calls.get() };
+            if let Some(slot) = key.and_then(|k| calls.get_mut(k as usize)) {
+                if !slot.as_ref().is_some_and(|w| w.will_wake(cx.waker())) {
+                    *slot = Some(cx.waker().clone());
+                }
+            } else {
+                *key = Some(calls.insert(Some(cx.waker().clone())) as u32);
+            }
+        } else {
+            // Completed without waiting on the gate owner. Remove waker and wake pending checks!
+            self.remove_call(key);
+            self.wake_checks();
+        }
+        result
+    }
+
+    fn wake_checks(&self) {
+        let cur = self.cur.get();
+        if cur == u32::MAX {
+            return;
+        }
+        let mut wakers = self.scratch.borrow_mut();
+        wakers.clear();
+
+        // Collect the gate owner
+        let indexes = unsafe { &mut *self.indexes.get() };
+        if let Some(Some(waker)) = indexes.get(cur as usize) {
+            wakers.push(waker.clone());
+        }
+        // Collect call bypass wakers
+        let calls = unsafe { &mut *self.calls.get() };
+        if !calls.is_empty() {
+            wakers.extend(calls.iter_mut().filter_map(|(_, w)| w.take()));
+        }
+
+        for waker in wakers.drain(..) {
+            waker.wake();
+        }
+    }
+
+    fn remove_call(&self, key: &mut Option<u32>) {
+        if let Some(k) = key.take() {
+            let calls = unsafe { &mut *self.calls.get() };
+            if calls.contains(k as usize) {
+                calls.remove(k as usize);
+            }
+        }
+    }
+
+    pub fn run<F, R>(&self, idx: u32, cx: &mut Context<'_>, f: F) -> Poll<R>
+    where
+        F: FnOnce(&mut Context<'_>) -> Poll<R>,
+    {
+        self.cur.set(idx);
+        let res = f(cx);
+        if res.is_ready() {
+            self.cur.set(u32::MAX);
+        }
+        res
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// CRITICAL BUG: Forcing an in-call readiness check to queue behind the pipeline gate owner
+pub fn run_call_buggy<F, R>(&self, idx: u32, cx: &mut Context<'_>, f: F) -> Poll<R>
+where
+    F: FnOnce(&mut Context<'_>) -> Poll<R>,
+{
+    // ANTI-PATTERN: If another task owns the gate (`self.cur != u32::MAX`), queuing
+    // this call behind that gate causes a DEADLOCK if the owner is waiting for a
+    // channel, buffer, or lock held by the outer call!
+    if self.cur.get() != u32::MAX && self.cur.get() != idx {
+        self.queue_waiter(idx, cx.waker());
+        return Poll::Pending;
+    }
+    self.run(idx, cx, f)
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a cyclic dependency integration harness: Spawn Task 1 which executes `call()` on Service A, grabbing a scarce resource (a 1-capacity channel). Inside `call()`, Task 1 invokes `pipeline.ready()`. Concurrently, spawn Task 2 which enters `pipeline.ready()`, acquires the gate lock, but inside its readiness predicate awaits the 1-capacity channel held by Task 1. Assert that Task 1 detects `in_call: true`, bypasses the gate lock, completes readiness, yields the channel, and both tasks resolve in < 100ms without stalling.
+
+---
+
+
+---
+
+## 3908. Guarded RAII Unwind State Reset for Synchronous & Asynchronous Lock Claims (Harvested from ntex-rs/ntex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarded RAII Unwind State Reset for Synchronous & Asynchronous Lock Claims",
+  "source": "ntex-rs/ntex",
+  "source_url": "https://github.com/ntex-rs/ntex",
+  "source_version": "eb2524d0",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T11:45:08.290Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ntex-rs-ntex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `eb2524d0`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Whenever an execution thread or task takes exclusive ownership of a shared state machine flag or lock-free serialization gate (`running.set(true)`), it MUST immediately instantiate a zero-cost RAII Drop Guard. If the user-supplied closure, poll, or future panics/unwinds, the Drop Guard MUST reset the ownership flag and broadcast a notification to all queued waiters. On standard non-panicking execution paths, the guard MUST be explicitly deactivated via `std::mem::forget(guard)`.
+
+**WHY**:
+If arbitrary user code executed within an exclusive gate triggers a panic (or unwinds due to an assertion failure or custom panic payload), and the ownership flag was set directly in the struct, execution leaves the flag permanently set (`running == true`). All other pipeline bindings, connections, or concurrent actors parked waiting for the gate will wait forever. This turns an isolated task panic into a permanent silent starvation failure of the entire worker thread.
+
+**WHEN TO APPLY**:
+Applies to any low-level runtime, event dispatcher, stateful service boundary, or custom synchronization primitive where non-atomic or atomic lock states guard user callbacks and unwinding across stack frames is permitted.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::cell::Cell;
+use std::mem;
+
+pub struct GateController {
+    running: Cell<bool>,
+}
+
+impl GateController {
+    pub fn execute_with_gate<F, R>(&self, f: F) -> R
+    where
+        F: FnOnce() -> R,
+    {
+        let is_initial = !self.running.get();
+        let guard = is_initial.then(|| {
+            self.running.set(true);
+            GateUnwindGuard(self)
+        });
+
+        // Arbitrary user code that might panic
+        let result = f();
+
+        if let Some(guard) = guard {
+            // Success path: dismiss the guard so Drop does not double-fire
+            mem::forget(guard);
+            // Normal post-execution gate teardown
+            self.running.set(false);
+            self.notify_waiters();
+        }
+
+        result
+    }
+
+    fn notify_waiters(&self) {
+        // Broadcast wake to queued tasks
+    }
+}
+
+/// Zero-sized wrapper holding reference to controller
+struct GateUnwindGuard<'a>(&'a GateController);
+
+impl<'a> Drop for GateUnwindGuard<'a> {
+    fn drop(&mut self) {
+        // This ONLY runs if stack unwinds (panic) past `f()` before `mem::forget`
+        self.0.running.set(false);
+        self.0.notify_waiters();
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// CRITICAL DEFECT: Manual flag toggling vulnerable to panic poisoning
+pub fn execute_leaky<F, R>(&self, f: F) -> R
+where
+    F: FnOnce() -> R,
+{
+    self.running.set(true);
+    let result = f(); // <-- IF THIS PANICS: self.running stays true FOREVER.
+    self.running.set(false);
+    self.notify_waiters();
+    result
+}
+```
+
+**VERIFICATION METHOD**:
+Write an automated unit test utilizing `std::panic::catch_unwind(AssertUnwindSafe(...))`. Drive a service whose `ready()` or `call()` implementation panics on the first invocation. Assert that `catch_unwind` catches the panic, and subsequently assert that a second independent pipeline binding calling the same service does NOT hang or return `Poll::Pending`, but successfully acquires the gate and runs to completion.
+
+---
+
+
+---
+
+## 3909. Cooperative Self-Invalidation Spin Ceiling in Event-Loop Poll Cycles (Harvested from ntex-rs/ntex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cooperative Self-Invalidation Spin Ceiling in Event-Loop Poll Cycles",
+  "source": "ntex-rs/ntex",
+  "source_url": "https://github.com/ntex-rs/ntex",
+  "source_version": "eb2524d0",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T11:45:08.401Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ntex-rs-ntex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `eb2524d0`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In event-driven future polling loops where driving a child future may trigger a side-effect that immediately invalidates the parent's cached state (e.g., waking a sibling that changes a generation counter), the loop MUST NOT spin synchronously more than once per poll turn. If the check is invalidated after being re-polled, the loop MUST invoke `cx.waker().wake_by_ref()`, exit the loop, and return `Poll::Pending` to yield execution back to the runtime reactor.
+
+**WHY**:
+Without an explicit yield counter (`restarted = true`), a tight `loop { ... }` in a `Future::poll` implementation will continuously execute if a waker callback modifies the generation counter on every pass. This causes a 100% CPU lockup on the worker thread, starving OS socket reads/writes, timer deadlines, and all other cooperative tasks on the same thread-per-core event loop.
+
+**WHEN TO APPLY**:
+Applies to all async poll loops checking dependency generation stamps, reactive pipelines, cache-validation wrappers, and software transactional memory loops inside Rust futures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::pin::Pin;
+use std::task::{Context, Poll};
+
+pub struct GenerationCheckFuture<C> {
+    check: C,
+    active: bool,
+}
+
+pub trait CheckScope {
+    fn is_current(&self, gen: usize) -> bool;
+    fn generation(&self) -> usize;
+}
+
+pub trait CheckFuture: Future<Output = Result<usize, ()>> {
+    fn scope(&self) -> &dyn CheckScope;
+}
+
+impl<C: CheckFuture + Unpin> Future for GenerationCheckFuture<C> {
+    type Output = Result<(), ()>;
+
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let this = self.get_mut();
+        let mut restarted = false;
+
+        loop {
+            this.active = true;
+            let check = Pin::new(&mut this.check);
+
+            match check.poll(cx) {
+                Poll::Pending => return Poll::Pending,
+                Poll::Ready(Ok(generation)) if !this.check.scope().is_current(generation) => {
+                    // Stale generation detected: state was invalidated during poll.
+                    // If we already looped once in this exact poll pass, WE MUST YIELD.
+                    if restarted {
+                        cx.waker().wake_by_ref();
+                        return Poll::Pending;
+                    }
+                    restarted = true;
+                    // Loop again once to consume the immediate update
+                }
+                Poll::Ready(res) => return Poll::Ready(res.map(|_| ())),
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// CRITICAL BUG: Unbounded spin on invalidation
+loop {
+    match Pin::new(&mut this.check).poll(cx) {
+        Poll::Pending => return Poll::Pending,
+        Poll::Ready(Ok(gen)) if !scope.is_current(gen) => {
+            // ANTI-PATTERN: Loops indefinitely if waking the owner invalidates the check!
+            // Consumes 100% CPU, hangs runtime thread.
+            continue; 
+        }
+        Poll::Ready(res) => return Poll::Ready(res),
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a mock `Wake` type (`NotifyingWaker`) that increments an `AtomicUsize` counter and invokes a cache-invalidating notifier every time `wake_by_ref()` is called. Assert that when the future is polled against this mock, the execution yields with `Poll::Pending` and the iteration counter never exceeds a safety threshold (< 10 cycles), preventing worker freeze.
+
+---

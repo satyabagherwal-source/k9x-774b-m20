@@ -1983,10 +1983,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/tiangolo/fastapi",
-    "sourceVersion": "03002a00",
+    "sourceVersion": "69ddc2ba",
     "license": "MIT",
-    "contentHash": "4b26a9ebe023e01d57404d9894b490d1361cb6528c0edd3d5ecc7911a6a51644",
-    "lastHarvestedAt": "2026-10-20T05:48:12.860Z",
+    "contentHash": "f4eac31f9a2f7c3446faa1ec486de4c8f99a2c793aa5812da0868aa0700a148b",
+    "lastHarvestedAt": "2026-10-23T11:44:03.809Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "pallets-flask": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "7707dabf",
+    "sourceVersion": "eb2524d0",
     "license": "Apache-2.0",
-    "contentHash": "f2e52659c6626a2e1816640781c8d714d16a6ff37fe7a1dbc8fa2701ee29e126",
-    "lastHarvestedAt": "2026-10-20T13:53:38.096Z",
+    "contentHash": "0b18dccdf6109564b5424b965d6a2816ea8e36739e5b0d6d6c270c832b2103cb",
+    "lastHarvestedAt": "2026-10-23T11:45:08.511Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {

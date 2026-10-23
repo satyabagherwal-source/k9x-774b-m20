@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T11:37:54.163Z",
-  "total_cycles_completed": 4530,
-  "total_learnings_persisted": 4530,
-  "total_rules_promoted": 3759,
+  "last_updated": "2026-10-23T11:45:08.519Z",
+  "total_cycles_completed": 4532,
+  "total_learnings_persisted": 4532,
+  "total_rules_promoted": 3763,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:31:55.864Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:32:01.002Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:32:02.678Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:44:03.821Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:45:08.519Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

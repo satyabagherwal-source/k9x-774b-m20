@@ -4560,3 +4560,5 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `ad0a42c8` | Multi-dimensional audit evidence | 2026-10-23T11:37:41.770Z |
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `564d808e` | Multi-dimensional audit evidence | 2026-10-23T11:37:46.074Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `73219848` | Multi-dimensional audit evidence | 2026-10-23T11:37:54.153Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `69ddc2ba` | Multi-dimensional audit evidence | 2026-10-23T11:44:03.809Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `eb2524d0` | Multi-dimensional audit evidence | 2026-10-23T11:45:08.511Z |

@@ -4553,3 +4553,5 @@
 | `CYCLE-20261023-BBEV` | `2026-10-23T11:37:41.767Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3904` | Yes (`0f65d4d6...`) |
 | `CYCLE-20261023-BEQF` | `2026-10-23T11:37:46.071Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3905` | Yes (`da576fef...`) |
 | `CYCLE-20261023-BKYU` | `2026-10-23T11:37:54.150Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3906` | Yes (`ecc23415...`) |
+| `CYCLE-20261023-JI73` | `2026-10-23T11:44:03.807Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3794` | Yes (`f4eac31f...`) |
+| `CYCLE-20261023-KW4A` | `2026-10-23T11:45:08.506Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3907, Rule 3908, Rule 3909` | Yes (`0b18dccd...`) |

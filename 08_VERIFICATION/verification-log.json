@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-GR2E",
-    "timestamp": "2026-10-20T22:06:46.022Z",
-    "repository": "actions/actions-runner-controller",
-    "learningId": "learn-github-actions-actions-runner-controller",
-    "contentHash": "a5439a607bb0d3e4a9631d753b72d80b8def00799cea9b078661531a288c5d15",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-GXET",
-    "timestamp": "2026-10-20T22:06:54.245Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "75a16fe9a83133ad81773dbc7895f0344f43deb0370b72d502e8a45ab9f94520",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-OXKZ",
     "timestamp": "2026-10-20T22:13:07.715Z",
     "repository": "FalkorDB/FalkorDB",
@@ -7492,6 +7462,36 @@
     "contentHash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-JI73",
+    "timestamp": "2026-10-23T11:44:03.807Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "f4eac31f9a2f7c3446faa1ec486de4c8f99a2c793aa5812da0868aa0700a148b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-KW4A",
+    "timestamp": "2026-10-23T11:45:08.506Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "0b18dccdf6109564b5424b965d6a2816ea8e36739e5b0d6d6c270c832b2103cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T11:37:54.167Z",
+  "last_updated": "2026-10-23T11:45:08.521Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "98601ea6e30448df9e2cd3de08e2de09e9ffb431505e507f34d09e9fa3d34953",
-      "verified_at": "2026-10-23T06:49:43.611Z",
+      "content_hash": "f4eac31f9a2f7c3446faa1ec486de4c8f99a2c793aa5812da0868aa0700a148b",
+      "verified_at": "2026-10-23T11:44:03.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:49:43.611Z"
+      "last_updated": "2026-10-23T11:44:03.823Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "f2e52659c6626a2e1816640781c8d714d16a6ff37fe7a1dbc8fa2701ee29e126",
-      "verified_at": "2026-10-20T13:53:38.103Z",
+      "content_hash": "0b18dccdf6109564b5424b965d6a2816ea8e36739e5b0d6d6c270c832b2103cb",
+      "verified_at": "2026-10-23T11:45:08.521Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:53:38.103Z"
+      "last_updated": "2026-10-23T11:45:08.521Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
