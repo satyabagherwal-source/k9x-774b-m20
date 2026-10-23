@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T11:05:34.223Z",
+  "last_updated": "2026-10-23T11:11:56.963Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3075,8 +3075,8 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "dd1acfc3",
-      "content_hash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
+      "source_version": "c015c32a",
+      "content_hash": "58b5006435fd0a308ff4b6641997ac9894af301a3a8a5f9abfabe734976070c7",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
@@ -3119,6 +3119,11 @@
           "number": 3566,
           "title": "core): skip unchanged remote thread resources on a host render (#9969)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3896,
+          "title": "react-mcp): preserve disconnect during failed cleanup (#10037)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3126,7 +3131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:51:31.142Z",
+      "verified_at": "2026-10-23T11:11:43.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31489,8 +31494,8 @@
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "4c5542b9",
-      "content_hash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
+      "source_version": "4dd63b69",
+      "content_hash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "promoted_rules": [
@@ -31508,6 +31513,11 @@
           "number": 2943,
           "title": "Upstream Polymorphic Payload Null-Coalescence Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3898,
+          "title": "Update mongodb/mongodb library for security issues (#541)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31515,7 +31525,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:51:44.357Z",
+      "verified_at": "2026-10-23T11:11:56.954Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63940,8 +63950,8 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "abe41af7",
-      "content_hash": "25844d1afffa68941223a12d11c469b9d7dd41468a452957d6a82f149532ec96",
+      "source_version": "9b55483e",
+      "content_hash": "0c5aba4a5353f2baeefbd264e46fb2f6ec82f3dfc9ddb5413c04277b9461ddea",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
@@ -63964,6 +63974,11 @@
           "number": 3062,
           "title": "webdriverio): isEqual and scrollIntoView on an element that the page rendered ag",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3897,
+          "title": "@wdio/cucumber-framework): report step results in parallel mode as in sequential",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63971,7 +63986,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:03:28.575Z",
+      "verified_at": "2026-10-23T11:11:48.103Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115092,6 +115107,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T11:05:34.213Z"
+    },
+    "rule-3896": {
+      "learning_id": "rule-3896",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3896,
+      "title": "react-mcp): preserve disconnect during failed cleanup (#10037)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "c015c32a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:11:43.661Z"
+    },
+    "rule-3897": {
+      "learning_id": "rule-3897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3897,
+      "title": "@wdio/cucumber-framework): report step results in parallel mode as in sequential",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "9b55483e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:11:48.103Z"
+    },
+    "rule-3898": {
+      "learning_id": "rule-3898",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3898,
+      "title": "Update mongodb/mongodb library for security issues (#541)",
+      "source_url": "https://github.com/LLPhant/LLPhant",
+      "source_version": "4dd63b69",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:11:56.954Z"
     }
   },
   "aliases": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T11:05:34.287Z",
-  "total_cycles_completed": 4519,
-  "total_learnings_persisted": 4519,
-  "total_rules_promoted": 3748,
+  "last_updated": "2026-10-23T11:11:57.011Z",
+  "total_cycles_completed": 4522,
+  "total_learnings_persisted": 4522,
+  "total_rules_promoted": 3751,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:04:54.375Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:12:36.559Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:12:36.716Z",
-      "repository": "herdrdev/herdr",
-      "learningId": "learn-github-herdrdev-herdr",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:19:09.769Z",
       "repository": "scrapy/scrapy",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-23T11:05:34.287Z",
       "repository": "callstack/react-native-paper",
       "learningId": "learn-github-callstack-react-native-paper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:11:43.723Z",
+      "repository": "assistant-ui/assistant-ui",
+      "learningId": "learn-github-assistant-ui-assistant-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:11:48.175Z",
+      "repository": "webdriverio/webdriverio",
+      "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:11:57.011Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

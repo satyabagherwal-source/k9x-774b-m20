@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source**: github ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
-> **Source Version**: `abe41af7`  
+> **Source Version**: `9b55483e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T05:03:28.250Z  
+> **Timestamp**: 2026-10-23T11:11:47.871Z  
 > **Learning ID**: `learn-github-webdriverio-webdriverio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T05:03:27.079Z  
+> **Harvest Timestamp**: 2026-10-23T11:11:47.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next-gen browser and mobile automation test framework for Node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9852 stars
+- **Stars / Engagement**: 9855 stars
 
 ---
 
@@ -353,11 +353,11 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16148** (2026-10-20): **fix(@wdio/cucumber-framework): list the matching step definitions of an ambiguous step**
-  *Symptoms*: ## Proposed changes  Refs #13931. Follow-up of #16107.  Cucumber 13 (v10) sends no message for an `AMBIGUOUS` step. Cucumber 10 (v9) sent `Multiple step definitions match:` and one line per definition. Since v10, users see no list of the definitions, and with the default option they see no reason at all.  The formatter now keeps the `stepDefinition` messages and builds the v9 text again from the `stepDefinitionIds` of the step. A message that Cucumber sends is kept. With no known definition, the #16107 text stays.  | `failAmbiguousDefinitions` | Before | After | |---|---|---| | `true` | failed: `Step "this is ambiguous" matches multiple step definitions. Make the step definitions unique…` | failed: the definition list + `at Feature/Scenario/Step` lines | | `false` (default) | skipped, no reason | skipped, the definition list under "Pending Reasons" |  Spec reporter, `failAmbiguousDefinitions: true` (smoke suite `cucumberFailAmbiguousDefinitions`):  ``` Multiple step definitions match:   this is ambiguous - cucumber/step-definitions/then.js:20   this is ambiguous - cucumber/step-definitions/given.js:89 	at Feature(…/tests/cucumber/test.feature):1:1 	at Scenario(failAmbiguousDefinitions):49:5 	at Step(this is ambiguous):50:9 ```  Other changes:  - The stack-line code is shared with undefined steps. It now also finds a scenario inside a `Rule` and a step from a `Background`. - A regular expression with flags is written once (`/^I do/i`): Cucumber 13 already sends it with its sla
+- **Issue #16202** (2026-10-23): **test(@wdio/cucumber-framework): remove the root folder link with unlinkSync**
+  *Symptoms*: ## Proposed changes  `utils.test.ts` "keeps a folder link under rootDir, e.g. a pnpm package" (from #16073) failed on Node 24.12 and 24.13 with `Error: Path is a directory`, and left the link in the temp folder. Reported in https://github.com/webdriverio/webdriverio/issues/16168#issuecomment-6362091827.  Cause: on these Node versions, `fs.rmSync()` of a link to a folder throws `ERR_FS_EISDIR` (fixed in Node 24.14). The test now removes the link with `fs.unlinkSync()`. Only test code changes.  ## How you tested  | Node | Before | After | |---|---|---| | 24.13.0 | 1 failed (`Path is a directory`), link left in the temp folder | 36 passed, 1 skipped, no link left | | 24.12.0 | 1 failed | 36 passed, 1 skipped | | 24.20.0, 22.22.3 | pass | 36 passed, 1 skipped |  Windows (junction removed with `unlinkSync`): CI.  - [x] Unit tests for the touched package(s) - [ ] Type definition tests (if the public API / command types changed) - [ ] Smoke or e2e (only if the testrunner, launcher, or a real browser path changed)  ## Types of changes  - [ ] Polish (an improvement for an existing feature) - [ ] Bugfix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected) - [ ] Documentation update (improvements to the project's docs) - [ ] Specification changes (updates to WebDriver command specifications) - [x] Internal updates (everything relat
 
-- **Issue #16140** (2026-10-19): **test(e2e): add local mobile web suites for iOS and Android with Appium**
-  *Symptoms*: ## Proposed changes  CI has no iOS or Android job, so #16137 (with Appium XCUITest, an `async` script failed at once) was found by users. This PR adds local mobile web suites with `@wdio/appium-service`:  | Command | Platform | |---|---| | `pnpm run test:ios:local` | iOS Safari on a Simulator (XCUITest) | | `pnpm run test:android:local` | Chrome on an Android emulator (UiAutomator2) |  One spec (`e2e/wdio/mobile/mobileWeb.e2e.ts`) for both:  | Test | Covers | |---|---| | Async `execute`, `isStable()`, protocol `executeAsyncScript()`, `browser.setTimeout()` | Script timeout (#16137, #16138) | | Click on an element below the viewport, after the `scroll` events of the page | #16062 (#16133) | | Tap, `browser.keys()`, `scrollIntoView()`, `browser.scroll()` | Mobile branches of the commands (no `wheel` action, no key `pause` on iOS) |  The scripts are not `test:e2e:*`, so `pnpm run test:e2e` and CI do not run them. Appium starts the Simulator or the emulator. Setup and variables are in CONTRIBUTING ("Mobile e2e Tests (local only)") and `e2e/AGENTS.md`.  Results (iOS 27.0 Simulator, Android 36 emulator, Appium 3.8.0):  | Driver | This PR | Without the fix | |---|---|---| | XCUITest 12.18.3 | 8 pass, 1 skipped | Without #16138: 3 script timeout tests fail (`after 0 ms`). Without #16133: the click test fails. | | XCUITest 12.16.0 (remote debugger 17.5.8) | 8 pass, 1 skipped | Without the Node wait of #16133 (result `{}`): the click test failed in 2 of 3 runs | | UiAutomator2 8.7.0, C
+- **Issue #16186** (2026-10-22): **Fix/v10 p1 bugs 16182 16185**
+  *Symptoms*: ## Proposed changes  Fixes four unrelated P1 bugs found in a v10 bug audit. Each fix is its own commit with a test that fails without it.  - `@wdio/runner`: `autoAssertOnTestEnd: false` was ignored because of `|| true`. It now uses `?? true`. - `@wdio/cli`: `specFileRetriesDelay` also delayed the first attempt of every spec, because first attempts start with `retries = -1`. The delay now applies only to retry attempts (`retries >= 0`) and never in watch mode. - `@wdio/browser-runner`: the `coverage/` directory was deleted on every run, even with coverage disabled. It is now cleaned only when `coverage.enabled` is true. The `clean` docs and JSDoc say so. - `@wdio/cucumber-framework`: generated skip tags were joined with the user's `tags` without parentheses, so `tags: '@a or @b'` still ran skipped scenarios. The user expression is now wrapped.  Fixes #16182 Fixes #16183 Fixes #16184 Fixes #16185  ## How you tested  - `npx vitest run` on `packages/wdio-cli/tests/launcher.test.ts`, `packages/wdio-browser-runner/tests/runner.test.ts`, `packages/wdio-runner/tests/index.test.ts` and `packages/wdio-cucumber-framework/tests/adapter.test.ts`. All pass. - With the `src` changes stashed, the new and changed tests fail, so they catch the original defects. - Not run: typings tests, smoke suites, e2e, and a real browser-runner run. I couldn't build `@wdio/browser-runner` on Windows because its scripts are Unix-only.  - [x] Unit tests for the touched package(s) - [ ] Type definition tests (
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -374,1354 +374,2080 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `456fb11a` (2026-10-19)
-**Commit Message**: fix(webdriverio): isEqual and scrollIntoView on an element that the page rendered again (#16139)
+### Incident Patch 1: `8ca173ed` (2026-10-21)
+**Commit Message**: fix(@wdio/cucumber-framework): report step results in parallel mode as in sequential mode (#16161)
 
-* fix(webdriverio): isEqual and scrollIntoView on an element that the page rendered again
+* refactor(@wdio/cucumber-framework): one step result rule for sequential and parallel runs
 
-isEqual hid every error of its compare script and gave false. For an
-element that the page rendered again, it now looks up both elements once
-(no wait, as the other checks) and compares the elements on the page; an
-element that is gone gives false at once, as before.
+Move the status rules of the formatter's afterTest (undefined, failed,
+ambiguous, the pending reason and the undefined step suffix) and the
+feature stack lines into getStepResult() and getFeatureStack() in
+utils.ts, so the parallel step path can use the same rules.
 
-WebDriver BiDi gives a script the node that the page removed, with no
-error. The scripts of isEqual and scrollIntoView (measure, settle, Web
-API) now throw the stale element error of Classic for an element that is
-not connected or whose document is not the active document, as
-isDisplayed does. scrollIntoView sends a stale element error up without
-the Web API fallback, so the element layer finds the element again and
-scrolls the element on the page.
+No change in the sequential output: the formatter tests and their
+snapshots pass without edits.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* refactor(webdriverio): use withKnownElement in isEqual and scrollIntoView
+* fix(@wdio/cucumber-framework): report undefined, ambiguous and failed steps in parallel mode as in sequential mode
 
-Use the W3C "get a known element" helper of #16136 in place of the copied
-stale checks, so the check is in one place. isEqual checks both elements.
+With parallelMode, the step path only converted the Cucumber status:
 
-Co-Authore
+- an undefined step was reported as passed, with no error
+- an ambiguous step was skipped with no reason, and
+  failAmbiguousDefinitions was ignored for steps
+- a failed step had the whole Cucumber message as error message, so
+  reporters showed `Error: Error: ...` and internal stack lines
 
-**File**: `e2e/wdio/headless/__fixtures__/findElementAgain.html` (modified, +9/-0)
+The parallel step path now uses getStepResult(), as the sequential
+formatter does, and lists the matching step 
+
+**File**: `packages/wdio-cucumber-framework/README.md` (modified, +63/-13)
 ```diff
-@@ -12,6 +12,7 @@
-     <div id="date-host-area"></div>
-     <div id="restore-area"><input id="restore" value="old"></div>
-     <div id="select-area"><select id="select"><option value="a">Alpha</option><option value="b">Beta</option></select></div>
-+    <div id="far-area" style="margin-top: 3000px"><p id="far">far</p></div>
+@@ -15,7 +15,7 @@ Instructions on how to install `WebdriverIO` can be found [here.](https://webdri
  
-     <script>
-         const root = document.querySelector('#host').attachShadow({ mode: 'open' })
-@@ -97,6 +98,14 @@
-             select.replaceWith(select.cloneNode(true))
-         }
+ ## Configuration
  
-+        /**
-+         * replace `#far` (below the viewport) with a new node
-+         */
-+        window.renderFar = () => {
-+            const far = document.querySelector('#far')
-+            far.replaceWith(far.cloneNode(true))
-+        }
-+
-         /**
-          * replace the content of the shadow root of `#host` with new nodes
-          */
-```
-
-**File**: `e2e/wdio/headless/findElementAgain.e2e.ts` (modified, +234/-0)
-```diff
-@@ -12,6 +12,7 @@ interface Fixture {
-     renderDates (): void
-     renderDateHost (): void
-     renderSelect (): void
-+    renderFar (): void
- }
+-Following code shows the default wdio test runner configuration...
++The following code shows a minimal test runner configuration:
  
- const FIXTURE = url.pathToFileURL(path.resolve(__dirname, '__fixtures__', 'findElementAgain.html')).href
-@@ -27,6 +28,7 @@ const renderForm = (text: string) => browser.execute(
- const renderDates = () => browser.execute(() => (window as unknown as Fixture).renderDates())
- const renderDateHost = () => browser.execute(() => (window as unknown as Fixture).renderDateHost())
- const renderSelect = () => browser.execute(() => (window as unknown as Fixture).renderSelect())
-+const renderFar = () => browser.execute(() => (window as unknown as Fixture).renderFar())
- const errorOf = (promise: Promise<unknown>) => promise.then(() => undefined, (e: Error) => e)
- 
- /**
-@@ -233,6 +235,238 @@ describe('finding an element again', () => {
- 
-             expect(await elem.isDisplayed()).toBe(true)
-         })
-+
-+        it('isEqual compares the element that the page rendered again', async () => {
-+            const elem = await $('.item')
-+            await renderItems(['replaced'])
-+
-+            expect(await elem.isEqual(await $('.item'))).toBe(true)
-+        })
-+
-+        it('isEqual of an element that the page removed gives false at once', async () => {
-+            const elem = await $('.item')
-+            const other = await $('#late-area')
-+            await renderItems([])
-+
-+            const start = Date.now()
-+            expect(await elem.isEqual(other)).toBe(false)
-+            expect(Date.now() - start).toBeLessThan(browser.options.waitforTimeout ?? 5000)
-+        })
-+
-+        it('isEqual of a valid element and an element that the page removed gives false', async () => {
-+            const elem = await $('.item')
-+            const other = await $('#late-area')
-+            await renderItems([])
-+
-+            expect(await other.isEqual(elem)).toBe(false)
-+        })
-+
-+        it('isEqual finds again only the stale element: a valid one can match another node now', async () => {
-+            await renderItems(['first', 'second'])
-+            const stale = await $$('.item')[1]
-+            await renderItems(['first', 'second'])
-+            const valid = await $$('.item')[1]
-+            await browser.execute(() => {
-+                const top = document.createElement('li')
-+                top.className = 'item'
-+                document.querySelector('#items')!.prepend(top)
-+            })
-+
-+            // `stale` is found again as the item at index 1 now ("first"), `valid` is still "second"
-+            expect(await stale.isEqual(valid)).toBe(false)
-+        })
-+
-+        it('isEqual compares with an element reference, which has no selector', async () => {
-+            const elem = await $('.item')
-+            await renderItems(['replaced'])
-+
-+            expect(await elem.isEqual(await $(await browser.findElement('css selector', '.item')))).toBe(true)
-+        })
-+
-+        it('isEqual compares an element whose parent the page rendered again', async () => {
-+            const elem = await $('#form').$('.in-form')
-+            await renderForm('replaced')
-+
-+            expect(await elem.isEqual(await $('#form').$('.in-form'))).toBe(true)
-+        })
-+
-+        it('isEqual of an element whose parent the page removed gives false at once', async () => {
-+            const elem = await $('#form').$('.in-form')
-+            const other = await $('#late-area')
-+            await browser.execute(() => document.querySelector('#form')!.remove())
-+
-+            const start = Date.now()
-+            expect(await elem.isEqual(other)).toBe(false)
-+            expect(Date.now() - start).toBeLessThan(browser.options.waitforTimeout ?? 5000)
-+        })
-+    })
-+
-+    /**
-+     * BiDi gives a script the node that the page removed, with no error. A command that runs a
-+     * script on its element checks that the element is still on the page, as `isDisplayed` does
-+     */
-+    describe('a script on an element that the page rendered again', () => {
-+        it('scrollIntoView scrolls the element that the page rendered again', async () => {
-+            const elem = await $('#far')
-+            await renderFar()
-+            await elem.scrollIntoView()
-+
-+            expect(await browser.execute(() => {
-+                const rect = document.querySelector('#far')!.getBoundingClientRect()
-+                return rect.top >= 0 && rect.bottom <= window.innerHeight
-+            })).toBe(true)
-+        })
-+
-+        it('scrollIntoView scrolls an element that the page renders again on each scroll', async () => {
-+            const elem = await $('#far')
-+            await browser.execute(() => window.addEventListener('scroll', () => (window as unknown as Fixture).renderFar()))
-+            await elem.scrollIntoView()
-+
-+            expect(await browser.execute(() => {
-+                const rect = document.querySelector('#far')!.getBoundingClientRect()
-+                return rect.
-```
-
-**File**: `packages/webdriverio/src/commands/element/isEqual.ts` (modified, +68/-8)
-```diff
-@@ -1,9 +1,23 @@
- import { getBrowserObject } from '@wdio/utils'
- 
-+import { findChainAgain } from '../../utils/findChainAgain.js'
-+import { isStaleElementToFindAgain } from '../../utils/index.js'
-+import { withKnownElement } from '../../utils/foreignContext.js'
-+import { StrictSelectorError } from '../../utils/strictSelectorError.js'
-+
- /**
-  *
-  * Return true if the selected element matches with the provided one.
-  *
-+ * :::info
-+ *
-+ * As the other element commands, `isEqual` compares the elements that are on the page now. When the
-+ * page renders an element again (for example a React re-render), the command finds it again with its
-+ * selector, once and without a wait. An element that is gone is not equal. A strict element that
-+ * matches more than once then throws a `StrictSelectorError`, as the other checks do.
-+ *
-+ * :::
-+ *
-  * <example>
-     :isEqual.js
-     it('should detect if an element is clickable', async () => {
-@@ -45,15 +59,61 @@ export async function isEqual (
-     }
- 
-     // browser or webview
--    let result: boolean
-     try {
--        result = await browser.execute(
--            /* istanbul ignore next */
--            function (el1: HTMLElement, el2: HTMLElement) { return el1 === el2 },
--            this as unknown as HTMLElement, el as unknown as HTMLElement)
--    } catch {
--        result = false
-+        return await isSameNode(browser, this, el)
-+    } catch (err) {
-+        if (!isStaleElementToFindAgain(err)) {
-+            return false
-+        }
-+        /**
-+         * The page rendered an element again: compare the elements that are on the page now. Find
-+         * again only a stale element, as a valid one can match another node now. As the other
-+         * checks, look them up once, without a wait: an element that is gone is not equal.
-+         */
-+        const onPage = async (element: WebdriverIO.Element) => (
-+            await isKnown(browser, element) ? element : findChainAgain(element)
-+        )
-+        const lookups = await Promise.allSettled(el === this ? [onPage(this)] : [onPage(this), onPage(el)])
-+        const lookupErrs = lookups.flatMap((lookup) => lookup.status === 'rejected' ? [lookup.reason] : [])
-+        // a strict-mode violation is a real error, as in the middleware, also when the other lookup fails first
-+        const strictErr = lookupErrs.find((lookupErr) => lookupErr instanceof StrictSelectorError)
-+        if (strictErr) {
-+            throw strictErr
-+        }
-+        if (lookupErrs.length) {
-+            return false
-+        }
-+        const [found, otherFound] = lookups.map((lookup) => (lookup as PromiseFulfilledResult<WebdriverIO.Element | undefined>).value)
-+        const other = el === this ? found : otherFound
-+        if (!found?.elementId || !other?.elementId) {
-+            return false
-+        }
-+        return isSameNode(browser, found, other).catch(() => false)
-     }
-+}
- 
--    return result
-+/**
-+ * Whether the element is still on the page; a stale element error gives `false`
-+ */
-+function isKnown (browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, element: WebdriverIO.Element) {
-+    return (browser as WebdriverIO.Browser).execute(withKnownElement(() => true), element as unknown as HTMLElement)
-+        .then(() => true, (err) => {
-+            if (isStaleElementToFindAgain(err)) {
-+                return false
-+            }
-+            throw err
-+        })
-+}
-+
-+/**
-+ * Whether 2 elements are the same node, after the stale check of both
-+ */
-+function isSameNode (browser: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser, el1: WebdriverIO.Element, el2: WebdriverIO.Element) {
-+    return (browser as WebdriverIO.Browser).execute(
-+        withKnownElement(
-+            /* istanbul ignore next */
-+            function isSameElement (el1: HTMLElement, el2: HTMLElement) {
-+                return el1 === el2
-+            }, [0, 1]),
-+        el1 as unknown as HTMLElement, el2 as unknown as HTMLElement)
- }
-```
-
-**File**: `packages/webdriverio/src/commands/element/scrollIntoView.ts` (modified, +89/-58)
-```diff
-@@ -4,6 +4,9 @@ import { getBrowserObject } from '@wdio/utils'
- import type { ChainablePromiseElement, CustomScrollIntoViewOptions, MobileScrollIntoViewOptions } from '../../types.js'
- import { MobileScrollDirection } from '../../types.js'
- import { StrictSelectorError } from '../../utils/strictSelectorError.js'
-+import { isStaleElementToFindAgain } from '../../utils/index.js'
-+import { withKnownElement } from '../../utils/foreignContext.js'
-+import { findChainAgain } from '../../utils/findChainAgain.js'
- 
- const log = logger('webdriverio')
- 
-@@ -99,62 +102,78 @@ export async function scrollIntoView (
-         options = { block: 'end', inline: 'nearest' }
-     }
- 
--    try {
--        /**
--         * by default the WebDriver action scrolls the element just into the
--         * viewport. In order to stay compliant with `Element.scrollIntoView()`
--         * we need to adjust the values a bit.
--         *
--         * Fetch element rect, viewport size, and current scroll in one execute
--         * round-trip instead of three protocol calls.
--         */
--        const measure = async () => browser.execute((elem: HTMLElement) => {
--            const { left, top, width, height } = elem.getBoundingClientRect()
--            // ground truth for "is this actually visible right now", independent of any
--            // window-bounds arithmetic: is the element really the thing painted at its
--            // own center point? This correctly accounts for clipping by a nested scroll
--            // container *and* for occlusion by an unrelated overlapping element (a fixed
--            // header/footer, a sticky toolbar) - things pure geometry against
--            // `window.innerWidth/Height` can't see. Point can legitimately be outside the
--            // current viewport (that's still "not painted", which is the right answer),
--            // so this never throws.
--            //
--            // `(Document|ShadowRoot).elementsFromPoint()` does NOT pierce into an open
--            // shadow root on its own - it stops at the shadow host - so for an element
--            // nested inside one or more shadow roots (the exact scenario this whole
--            // command exists to handle) it would never find it. Recurse into each hit's
--            // own `.shadowRoot.elementsFromPoint()` until the hit stack stops bottoming
--            // out on a shadow host.
--            let isPainted = false
--            try {
--                const cx = left + width / 2
--                const cy = top + height / 2
--                const deepElementsFromPoint = (root: Document | ShadowRoot): Element[] => {
--                    const hits = root.elementsFromPoint(cx, cy)
--                    const topHit = hits[0] as (Element & { shadowRoot?: ShadowRoot | null }) | undefined
--                    return topHit?.shadowRoot ? deepElementsFromPoint(topHit.shadowRoot) : hits
--                }
--                isPainted = deepElementsFromPoint(document).includes(elem)
--            } catch { /* keep isPainted: false */ }
--            return {
--                elemRect: {
--                    x: left + window.scrollX,
--                    y: top + window.scrollY,
--                    width,
--                    height
--                },
--                viewport: {
--                    width: window.innerWidth,
--                    height: window.innerHeight
--                },
--                scroll: {
--                    x: window.scrollX,
--                    y: window.scrollY
--                },
--                isPainted
-+    /**
-+     * by default the WebDriver action scrolls the element just into the
-+     * viewport. In order to stay compliant with `Element.scrollIntoView()`
-+     * we need to adjust the values a bit.
-+     *
-+     * Fetch element rect, viewport size, and current scroll in one execute
-+     * round-trip instead of three protocol calls.
-+     */
-+    const measure = async (element: WebdriverIO.Element = this) => browser.execute(withKnownElement((elem: HTMLElement) => {
-+        const { left, top, width, height } = elem.getBoundingClientRect()
-+        // ground truth for "is this actually visible right now", independent of any
-+        // window-bounds arithmetic: is the element really the thing painted at its
-+        // own center point? This correctly accounts for clipping by a nested scroll
-+        // container *and* for occlusion by an unrelated overlapping element (a fixed
-+        // header/footer, a sticky toolbar) - things pure geometry against
-+        // `window.innerWidth/Height` can't see. Point can legitimately be outside the
-+        // current viewport (that's still "not painted", which is the right answer),
-+        // so this never throws.
-+        //
-+        // `(Document|ShadowRoot).elementsFromPoint()` does NOT pierce into an open
-+        // shadow root on its own - it stops at the shadow host - so for an element
-+        // nested inside one or more shadow roots (the exact scenario this whole
-+     
-```
-
-**File**: `packages/webdriverio/src/utils/findChainAgain.ts` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+import { getWdioKind } from '@wdio/utils'
-+
-+import { canFindAgain, findElementAgain } from './findElementAgain.js'
-+
-+/**
-+ * Find the chain again from the browser, once, without a wait: a stale parent waits for itself,
-+ * and in BiDi finds its removed child. Keeps an element reference. `undefined` when one is gone.
-+ * Not `refetchElement`: it waits for each element (`implicitWait`).
-+ */
-+export async function findChainAgain (element: WebdriverIO.Element): Promise<WebdriverIO.Element | undefined> {
-+    const chain: WebdriverIO.Element[] = []
-+    for (let current = element; getWdioKind(current) === 'element'; current = current.parent as WebdriverIO.Element) {
-+        chain.unshift(current)
-+    }
-+    let parent = chain[0]?.parent as WebdriverIO.Browser | WebdriverIO.Element
-+    for (const item of chain) {
-+        const found = canFindAgain(item) ? await findElementAgain(item, { parent }) : item
-+        if (!found?.elementId) {
-+            return undefined
-+        }
-+        parent = found
-+    }
-+    return parent as WebdriverIO.Element
-+}
-```
-
-**File**: `packages/webdriverio/src/utils/foreignContext.ts` (modified, +8/-6)
-```diff
-@@ -72,19 +72,21 @@ const AsyncFunction = (async () => {}).constructor as FunctionConstructor
-  * as `defaultView` after a reload.
-  *
-  * @param script  a function, or the source of one (not a function body)
-- * @param at      the index of the element argument
-+ * @param at      the index of the element argument, or a list of them
-  * @see https://w3c.github.io/webdriver/#dfn-get-a-known-element
-  */
--export function withKnownElement<T extends Function> (script: T | string, at = 0): T {
-+export function withKnownElement<T extends Function> (script: T | string, at: number | number[] = 0): T {
-     /**
-      * `execute` sends an async function to Classic as an async script
-      */
-     const isAsync = typeof script === 'function' && script.constructor.name === 'AsyncFunction'
-+    const elements = (Array.isArray(at) ? at : [at]).map((index) => `arguments[${index}]`).join(', ')
-     return new (isAsync ? AsyncFunction : Function)(
--        `const el = arguments[${at}]
--        const doc = el && el.ownerDocument
--        if (el && (el.isConnected === false || (doc && !(doc.defaultView && doc.defaultView.document === doc)))) {
--            throw new Error('stale element reference: the element is not attached to the active document')
-+        `for (const el of [${elements}]) {
-+            const doc = el && el.ownerDocument
-+            if (el && (el.isConnected === false || (doc && !(doc.defaultView && doc.defaultView.document === doc)))) {
-+                throw new Error('stale element reference: the element is not attached to the active document')
-+            }
-         }
-         return (${script}).apply(this, arguments)`
-     ) as T
-```
-
-**File**: `packages/webdriverio/tests/commands/element/isEqual.test.ts` (modified, +142/-0)
-```diff
-@@ -2,9 +2,15 @@ import path from 'node:path'
- import { expect, describe, it, beforeAll, afterEach, vi } from 'vitest'
- 
- import { remote } from '../../../src/index.js'
-+import { findElementAgain } from '../../../src/utils/findElementAgain.js'
-+import { StrictSelectorError } from '../../../src/utils/strictSelectorError.js'
- 
- vi.mock('fetch')
- vi.mock('@wdio/logger', () => import(path.join(process.cwd(), '__mocks__', '@wdio/logger')))
-+vi.mock('../../../src/utils/findElementAgain.js', async (importOriginal) => {
-+    const actual = (await importOriginal()) as { findElementAgain: typeof findElementAgain }
-+    return { ...actual, findElementAgain: vi.fn(actual.findElementAgain) }
-+})
- 
- describe('isEqual test', () => {
-     let browser: WebdriverIO.Browser
-@@ -31,6 +37,142 @@ describe('isEqual test', () => {
-             expect(await elem.isEqual(elements[1])).toBe(false)
-         })
- 
-+        /**
-+         * an element that the page rendered again: the script gets the removed node in BiDi, the
-+         * driver throws a stale element error in Classic
-+         */
-+        describe('an element that the page rendered again', () => {
-+            const stale = () => Object.assign(
-+                new Error('stale element reference: element is not attached to the page document'),
-+                { name: 'stale element reference' }
-+            )
-+
-+            afterEach(() => {
-+                vi.mocked(findElementAgain).mockClear()
-+                if (vi.isMockFunction(browser.execute)) {
-+                    (browser.execute as ReturnType<typeof vi.fn>).mockRestore()
-+                }
-+            })
-+
-+            it('the compare script throws a stale element error for an element that is not on the page', async () => {
-+                const execute = vi.spyOn(browser, 'execute')
-+                await elem.isEqual(elem)
-+                const script = execute.mock.calls.map(([fn]) => fn).find((fn) => String(fn).includes('isSameElement')) as unknown as (a: unknown, b: unknown) => boolean
-+                const removed = { isConnected: false, ownerDocument: {} }
-+                const onPage = { isConnected: true, ownerDocument: { defaultView: {} } }
-+                ;(onPage.ownerDocument.defaultView as { document: unknown }).document = onPage.ownerDocument
-+
-+                expect(() => script(removed, onPage)).toThrow('stale element reference')
-+                expect(() => script(onPage, removed)).toThrow('stale element reference')
-+                expect(script(onPage, onPage)).toBe(true)
-+            })
-+
-+            /**
-+             * the page rendered `elements` again: a script that gets one of them throws a stale element error
-+             */
-+            const renderedAgain = (...elements: unknown[]) => vi.spyOn(browser, 'execute').mockImplementation(
-+                (async (_script: unknown, ...args: unknown[]) => {
-+                    if (args.some((arg) => elements.includes(arg))) {
-+                        throw stale()
-+                    }
-+                    return true
-+                }) as never
-+            )
-+
-+            it('finds again only the stale element, without a wait, and compares it with the other one', async () => {
-+                const execute = renderedAgain(elem)
-+                const other = await browser.$('#other')
-+                const found = await browser.$('#found')
-+                vi.mocked(findElementAgain).mockResolvedValueOnce(found)
-+
-+                expect(await elem.isEqual(other)).toBe(true)
-+                expect(findElementAgain).toHaveBeenCalledWith(elem, { parent: browser })
-+                expect(findElementAgain).not.toHaveBeenCalledWith(other, expect.anything())
-+                expect(execute).toHaveBeenLastCalledWith(expect.any(Function), found, other)
-+            })
-+
-+            it('finds a stale element again once when it is compared with itself', async () => {
-+                const execute = renderedAgain(elem)
-+                const found = await browser.$('#found')
-+                vi.mocked(findElementAgain).mockResolvedValueOnce(found)
-+
-+                expect(await elem.isEqual(elem)).toBe(true)
-+                expect(vi.mocked(findElementAgain).mock.calls.filter(([element]) => element === elem)).toHaveLength(1)
-+                expect(execute).toHaveBeenLastCalledWith(expect.any(Function), found, found)
-+            })
-+
-+            it('gives false when an element is not on the page any more', async () => {
-+                const execute = renderedAgain(elem)
-+                const gone = await browser.$('#gone')
-+                gone.elementId = undefined as unknown as string
-+                vi.mocked(findElementAgain).mockResolvedValueOnce(gone)
-+
-+                expect(await elem.isEqual(elem)).toBe(false)
-+                expect(execute).not.toHaveBeenCalledWith(expect.any(Function), gone, expect.anything())
-+            })
-+
-+            it('gives false when the other element is not on the page any more'
-```
-
-**File**: `packages/webdriverio/tests/commands/element/scrollIntoView.test.ts` (modified, +130/-3)
-```diff
-@@ -4,8 +4,13 @@ import { expect, describe, it, vi, beforeAll, beforeEach, afterEach } from 'vite
- 
- import { remote } from '../../../src/index.js'
- import { StrictSelectorError } from '../../../src/utils/strictSelectorError.js'
-+import { findChainAgain } from '../../../src/utils/findChainAgain.js'
- 
- vi.mock('fetch')
-+vi.mock('../../../src/utils/findChainAgain.js', async (importOriginal) => {
-+    const actual = (await importOriginal()) as { findChainAgain: typeof findChainAgain }
-+    return { findChainAgain: vi.fn(actual.findChainAgain) }
-+})
- vi.mock('@wdio/logger', () => import(path.join(process.cwd(), '__mocks__', '@wdio/logger')))
- 
- /**
-@@ -347,6 +352,118 @@ describe('scrollIntoView test', () => {
-             expect(scrollAction.y).toBe(0)
-         })
- 
-+        /**
-+         * BiDi gives a script the node that the page removed, with no error
-+         */
-+        describe('an element that the page rendered again', () => {
-+            const removed = { isConnected: false, ownerDocument: {} } as unknown as HTMLElement
-+            const stale = () => Object.assign(
-+                new Error('stale element reference: element is not attached to the page document'),
-+                { name: 'stale element reference' }
-+            )
-+
-+            it('each script throws a stale element error for an element that is not on the page', async () => {
-+                const execute = vi.spyOn(browser, 'execute')
-+                await elem.scrollIntoView()
-+                const scripts = execute.mock.calls.map(([script]) => script as (...args: unknown[]) => unknown)
-+
-+                expect(scripts.length).toBeGreaterThan(0)
-+                for (const script of scripts) {
-+                    await expect(Promise.resolve().then(() => script(removed, {}))).rejects.toThrow('stale element reference')
-+                }
-+            })
-+
-+            it('sends up a stale element error without the Web API fallback', async () => {
-+                const execute = vi.spyOn(browser, 'execute').mockRejectedValue(stale())
-+
-+                await expect(elem.scrollIntoView()).rejects.toThrow('stale element reference')
-+                const webApiCalls = execute.mock.calls.filter(([script]) => /elem\.scrollIntoView\(/.test(String(script)))
-+                expect(webApiCalls).toEqual([])
-+            })
-+
-+            /**
-+             * after a scroll, the scroll can make the page render the element again (a virtual list)
-+             */
-+            describe('after a scroll', () => {
-+                const painted = {
-+                    elemRect: { x: 15, y: 400, height: 30, width: 50 },
-+                    viewport: { width: 600, height: 800 },
-+                    scroll: { x: 0, y: 0 },
-+                    isPainted: true
-+                }
-+                /**
-+                 * the first measure gives `first`, then a script that gets the old element throws a stale
-+                 * element error, and a measure of another element gives `measured`
-+                 */
-+                const renderedAgainOnScroll = (measured: object, first: object = painted) => vi.spyOn(browser, 'execute')
-+                    .mockResolvedValueOnce(first)
-+                    .mockImplementation((async (_script: unknown, element: unknown) => {
-+                        if (element === elem) {
-+                            throw stale()
-+                        }
-+                        return measured
-+                    }) as never)
-+
-+                afterEach(() => {
-+                    vi.mocked(findChainAgain).mockReset()
-+                    vi.mocked(browser.execute).mockRestore()
-+                })
-+
-+                it('ends without an error when the element that the page rendered again is painted', async () => {
-+                    const found = await browser.$('#found')
-+                    vi.mocked(findChainAgain).mockResolvedValueOnce(found)
-+                    const execute = renderedAgainOnScroll(painted)
-+
-+                    await expect(elem.scrollIntoView()).resolves.toBeUndefined()
-+                    expect(execute).toHaveBeenLastCalledWith(expect.any(Function), found)
-+                })
-+
-+                it('scrolls the element that the page rendered again with the Web API when it is not painted', async () => {
-+                    const found = await browser.$('#found')
-+                    vi.mocked(findChainAgain).mockResolvedValueOnce(found)
-+                    const execute = renderedAgainOnScroll({ ...painted, isPainted: false })
-+
-+                    await expect(elem.scrollIntoView({ block: 'center' })).resolves.toBeUndefined()
-+                    expect(execute).toHaveBeenLastCalledWith(expect.any(Function), found, { block: 'center' })
-+                })
-+
-+                it('sends up the stale element error when the Web API fails on the element that the page rendered again', async () => {
-+                    const found = await browser.$('#found')
-+                    vi
-```
-
----
-
-### Incident Patch 2: `abe41af7` (2026-10-20)
-**Commit Message**: fix(@wdio/cucumber-framework): list the matching step definitions of an ambiguous step (#16148)
-
-* fix(@wdio/cucumber-framework): list the matching step definitions of an ambiguous step
-
-Cucumber 13 sends no message for an AMBIGUOUS step (Cucumber 10 sent
-"Multiple step definitions match:" and one line per definition). The
-formatter now keeps the stepDefinition messages and builds that text
-again from the stepDefinitionIds of the step. A message that Cucumber
-sends is kept; with no known definition, the text of #16107 stays.
-
-Spec reporter, failAmbiguousDefinitions: true, before:
-
-    Step "this is ambiguous" matches multiple step definitions. Make the
-    step definitions unique by removing duplicate or overlapping expressions.
-
-after:
-
-    Multiple step definitions match:
-      this is ambiguous - cucumber/step-definitions/then.js:20
-      this is ambiguous - cucumber/step-definitions/given.js:89
-
-With the default (false), the skipped step now has the same text as
-its error message.
-
-* docs(@wdio/cucumber-framework): what failAmbiguousDefinitions changes
-
-* fix(@wdio/cucumber-framework): feature file location in the stack of an ambiguous step
-
-An ambiguous step now has the same `
-
-**File**: `.agents/skills/verify-webdriverio/features/smoke-testrunner.md` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ Preconditions:
- 
- - **List names.** Run `pnpm run test:smoke:list`. Exit 0 and stdout includes `standaloneTest`. This does not launch WebdriverIO.
- - **Mocha session.** Run `pnpm run test:smoke mochaTestrunner`. Exit 0, stdout contains `All smoke tests passed!`, and the suite assertion requires `passed` 4 and `skippedSpecs` 1. On Windows the suite returns before those counts; do not treat that early return as the count check.
--- **Ambiguous Cucumber step.** Run `pnpm run test:smoke cucumberFailAmbiguousDefinitions`. Exit 0 and `All smoke tests passed!` mean the child run failed as expected and its spec report names the ambiguous step with guidance to remove overlapping definitions.
-+- **Ambiguous Cucumber step.** Run `pnpm run test:smoke cucumberFailAmbiguousDefinitions`. Exit 0 and `All smoke tests passed!` mean the child run failed as expected and its spec report lists the matching step definitions of the ambiguous step.
- - **Standalone client.** Run `pnpm run test:smoke standaloneTest`. Exit 0 and stdout contains `All smoke tests passed!`. The spec expects the mock title `Mock Page Title`.
- - **Plugin.** Run `pnpm run test:smoke customService` or `pnpm run test:smoke customReporterString`. Exit 0 and stdout contains `All smoke tests passed!`.
- - **Watch mode.** Run `pnpm run test:smoke watchMode`. Exit 0 and stdout contains `All smoke tests passed!`. The suite reruns a changed spec in the same WebDriver session, including one failing rerun.
-```
-
-**File**: `packages/create-wdio/src/templates/snippets/cucumber.ejs` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-         dryRun: false,
-         // <boolean> abort the run on first failure
-         failFast: false,
--        // <boolean> report ambiguous step definitions as errors
-+        // <boolean> report an ambiguous step as failed (not skipped), with the matching step definitions
-         failAmbiguousDefinitions: true,
-         // <string[]> Only execute the scenarios with name matching the expression (repeatable).
-         name: [],
-```
-
-**File**: `packages/wdio-cucumber-framework/README.md` (modified, +1/-1)
-```diff
-@@ -186,7 +186,7 @@ Treat undefined definitions as warnings.
+ ```js
+ // wdio.conf.js
+@@ -90,16 +90,15 @@ Example: `[path.join(__dirname, 'step-definitions', 'my-steps.js')]`
  
  <Option type="Boolean" default="false">
  
--Treat ambiguous definitions as errors.
-+Report an ambiguous step (a step that matches more than one step definition) as failed, with the list of the matching step definitions. With `false`, the step is reported as skipped, with the list as its reason. In both cases, the run fails. Exception: without `parallelMode`, the run passes with `ignoreUndefinedDefinitions: true` and `failAmbiguousDefinitions: false`.
+-Fail if there are any undefined or pending steps
++Fail the run on a pending step. An undefined step fails the run also without `strict`, unless [`ignoreUndefinedDefinitions`](#ignoreundefineddefinitions) is `true`.
+ 
+ </Option>
+ 
+ ### tags
+ 
+ <Option type="String" default="">
+ 
+-Only execute the features or scenarios with tags matching the expression. Note that untagged
+-features will still spawn a Selenium session (see issue [webdriverio/webdriverio#1247](https://github.com/webdriverio/webdriverio/issues/1247)).
++Only execute the features or scenarios with tags matching the expression. A feature file with no matching scenario is reported as skipped and starts no browser session.
+ Please see the [Cucumber documentation](https://docs.cucumber.io/cucumber/api/#tag-expressions) for more details.
+ If passing as a command-line argument, compound expressions may need to be enclosed in three sets of double quotes if WebdriverIO is invoked using `npx` on Windows.
+ 
+@@ -109,7 +108,7 @@ E.g.: `npx wdio wdio.config.js --cucumberOpts.tags """@Smoke and not @Pending"""
+ 
+ ### timeout
+ 
+-<Option type="Number" default="30000">
++<Option type="Number" default="60000">
+ 
+ Timeout in milliseconds for step definitions.
+ 
+@@ -125,9 +124,9 @@ Specify the number of times to retry failing test cases.
+ 
+ ### retryTagFilter
+ 
+-<Option type="RegExp">
++<Option type="String">
+ 
+-Only retries the features or scenarios with tags matching the expression (repeatable). This option requires '--retry' to be specified.
++Only retry the scenarios with tags matching the tag expression. Requires [`retry`](#retry).
+ 
+ </Option>
+ 
+@@ -143,7 +142,7 @@ Default language for your feature files
+ 
+ <Option type="String" default="defined">
+ 
+-Run tests in defined / random order
++Run the scenarios in the order of the feature files (`'defined'`) or in a random order (`'random'`). With `'random:<seed>'`, for example `'random:42'`, a random order is the same in each run. With `'random'`, the log shows the seed of the run (`Random order using seed: 42`).
+ 
+ </Option>
+ 
+@@ -152,7 +151,7 @@ Run tests in defined / random order
+ <Option type="string[]">
+ 
+ Name and output file path of formatter to use.
+-WebdriverIO primarily supports only the [Formatters](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md) that writes output to a file.
++WebdriverIO primarily supports only the [Formatters](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md) that writes output to a file. Formatters don't run with [`parallelMode`](#parallelmode).
+ 
+ </Option>
+ 
+@@ -177,7 +176,7 @@ Add cucumber tags to feature or scenario name
+ 
+ <Option type="Boolean" default="false">
+ 
+-Treat undefined definitions as warnings.
++Report an undefined step as pending, with ` (undefined step)` at the end of its title, and do not fail the run for it.
  
  </Option>
  ***Please note that this is a @wdio/cucumber-framework specific option and not recognized by cucumber-js itself***<br/>
-```
-
-**File**: `packages/wdio-cucumber-framework/src/constants.ts` (modified, +3/-0)
-```diff
-@@ -4,6 +4,9 @@ import type { CucumberOptions } from './types.js'
+@@ -191,15 +190,66 @@ Report an ambiguous step (a step that matches more than one step definition) as
+ </Option>
+ ***Please note that this is a @wdio/cucumber-framework specific option and not recognized by cucumber-js itself***<br/>
  
- export const DEFAULT_TIMEOUT = 60000
+-### profile
++### profiles
  
-+// the text of Cucumber 10, which Cucumber 13 no longer sends
-+export const AMBIGUOUS_STEP_MESSAGE = 'Multiple step definitions match:'
+ <Option type="string[]" default="[]">
+ 
+-Specify the profile to use.
++The profiles of the Cucumber configuration file to use.
+ 
+ </Option>
+ ***Kindly take note that only specific values (worldParameters, name, retryTagFilter) are supported within profiles, as `cucumberOpts` takes precedence. Additionally, when using a profile, make sure that the mentioned values are not declared within `cucumberOpts`.***
+ 
++### file
 +
- export const DEFAULT_OPTS: CucumberOptions = {
-     paths: [],
-     backtrace: false,
++<Option type="string | false" default="undefined">
++
++Path of the Cucumber configuration file to load, or `false` to load none. Without it, Cucumber looks for its default configuration files.
++
++</Option>
++
++### dryRun
++
++<Option type="Boolean" default="false">
++
++Run no step and no hook: Cucumber only matches each step with its step definitions, so undefined and ambiguous steps are still reported. The run does not fail.
++
++</Option>
++
++### worldParameters
++
++<Option type="object" default="{}">
++
++Parameters for your World, as `this.parameters`.
++
++</Option>
++
++### scenarioLevelReporter
++
++<Option type="Boolean" default="false">
++
++Report each scenario as one test. Its steps and hooks are not reported.
++
++</Option>
++***Please note that this is a @wdio/cucumber-framework specific option and not recognized by cucumber-js itself***<br/>
++
++### parallelMode
++
++<Option type="'contexts' | 'userContexts'" default="undef
 ```
 
-**File**: `packages/wdio-cucumber-framework/src/cucumberFormatter.ts` (modified, +51/-16)
+**File**: `packages/wdio-cucumber-framework/src/cucumberFormatter.ts` (modified, +15/-72)
 ```diff
 @@ -6,7 +6,7 @@ import path from 'node:path'
  import logger from '@wdio/logger'
  
  import type { Payload } from './types.js'
--import { convertStatus } from './utils.js'
-+import { convertStatus, getAmbiguousStepMessage } from './utils.js'
+-import { convertStatus, getAmbiguousStepMessage } from './utils.js'
++import { getFeatureStack, getStepResult, withAmbiguousMessage } from './utils.js'
  
  const log = logger('CucumberFormatter')
  
-@@ -25,7 +25,8 @@ import type {
+@@ -24,7 +24,6 @@ import type {
+     TestStepStarted,
      TestStepFinished,
      TestStepResult,
-     TestCaseFinished,
--    Hook
-+    Hook,
-+    StepDefinition
+-    TestCaseFinished,
+     Hook,
+     StepDefinition
  } from '@cucumber/messages'
- 
- import {
-@@ -45,6 +46,7 @@ export default class CucumberFormatter extends Formatter {
-     private _hookEvent: Hook[] = []
-     private _scenarios: Pickle[] = []
-     private _testCases: TestCase[] = []
-+    private _stepDefinitions = new Map<string, StepDefinition>()
-     private _currentTestCase?: TestCaseStarted
-     private _currentPickle?: HookParams = {}
-     private _suiteMap: Map<string, string> = new Map()
-@@ -90,8 +92,9 @@ export default class CucumberFormatter extends Formatter {
-             } else if (envelope.testStepStarted) {
-                 this.onTestStepStarted(envelope.testStepStarted)
-             } else if (envelope.testStepFinished) {
--                results.push(envelope.testStepFinished.testStepResult!)
--                this.onTestStepFinished(envelope.testStepFinished)
-+                const testStepFinished = this.withAmbiguousMessage(envelope.testStepFinished)
-+                results.push(testStepFinished.testStepResult!)
-+                this.onTestStepFinished(testStepFinished)
-             } else if (envelope.testCaseFinished) {
-                 /**
-                  * only store result if step isn't retried
-@@ -106,6 +109,8 @@ export default class CucumberFormatter extends Formatter {
-                 this.onTestRunFinished()
-             } else if (envelope.hook) {
-                 this.onHook(envelope.hook)
-+            } else if (envelope.stepDefinition) {
-+                this._stepDefinitions.set(envelope.stepDefinition.id, envelope.stepDefinition)
-             } else {
-                 // do nothing for other envelopes
-             }
-@@ -227,17 +232,7 @@ export default class CucumberFormatter extends Formatter {
-                     'You can ignore this error by setting cucumberOpts.ignoreUndefinedDefinitions as true.'
-                 )
- 
--                err.stack = `${err.message}\n\tat Feature(${uri}):1:1\n`
--                const featChildren = feature.children?.find(c => scenario.astNodeIds && c.scenario?.id === scenario.astNodeIds[0])
--                if (featChildren) {
--                    err.stack += `\tat Scenario(${featChildren.scenario?.name}):${featChildren.scenario?.location?.line}:${featChildren.scenario?.location?.column}\n`
+@@ -223,53 +222,21 @@ export default class CucumberFormatter extends Formatter {
+         step: PickleStep | undefined,
+         result: TestStepResult
+     ) {
+-        let state = convertStatus(result.status)
+-        let error = result.message ? new Error(result.message) : undefined
+         const title = step ? step?.text : this.getTitle(scenario)
+-        let titleSuffix = ''
 -
--                    const featStep = featChildren.scenario?.steps?.find(s => step?.astNodeIds && s.id === step.astNodeIds[0])
--                    if (featStep) {
--                        err.stack += `\tat Step(${featStep.text}):${featStep.location?.line}:${featStep.location?.column}\n`
--                    }
--                }
+-        if (result.status === Status.UNDEFINED) {
+-            if (this.ignoreUndefinedDefinitions) {
+-                /**
+-                 * mark test as pending
+-                 */
+-                state = 'pending'
+-                titleSuffix = ' (undefined step)'
+-            } else {
+-                /**
+-                 * mark test as failed
+-                 */
+-                state = 'fail'
+-                this.failedCount++
 -
-+                err.stack = `${err.message}\n${this.getFeatureStack(uri, feature, scenario, step)}`
-                 error = err
+-                const err = new Error(
+-                    (step ? `Step "${title}" is not defined. ` : `Scenario ${title} has undefined steps. `) +
+-                    'You can ignore this error by setting cucumberOpts.ignoreUndefinedDefinitions as true.'
+-                )
+-
+-                err.stack = `${err.message}\n${this.getFeatureStack(uri, feature, scenario, step)}`
+-                error = err
++        const { state, error, pendingReason, titleSuffix, failed } = getStepResult(
++            result,
++            {
++                title,
++                isStep: Boolean(step),
++                ignoreUndefinedDefinitions: this.ignoreUndefinedDefinitions,
++                failAmbiguousDefinitions: this.failAmbiguousDefinitions,
++                featureStack: () => getFeatureStack(uri, feature, scenario, step),
              }
-         } else if (result.status === Status.FAILED && !(result as unknown as TestCaseFinished).willBeRetried) {
-@@ -255,13 +250,16 @@ export default class CucumberFormatter extends Formatter {
-                 'Make the step definitions unique by removing duplicate or overlapping expressions.'
-             )
-             error = new Error(message.split('\n')[0])
--            error.stack = message
-+            error.stack = `${message}\n${this.getFeatureStack(uri, feature, scenario, step)}`
+-        } else if (result.status === Status.FAILED && !(result as unknown as TestCaseFinished).willBeRetried) {
+-            state = 'fail'
+-            this.failedCount++
+-            error = new Error(result.message?.split('\n')[0])
+-            error.stack = result.message as string
+-        } else if (result.status === Status.AMBIGUOUS && this.failAmbiguousDefinitions) {
+-            state = 'fail'
++        )
++        if (failed) {
+             this.failedCount++
+-            const message = result.message || (
+-                (step
+-                    ? `Step "${title}" matches multiple step definitions. `
+-                    : `Scenario "${title}" contains a step matching multiple step definitions. `) +
+-                'Make the step definitions unique by removing duplicate or overlapping expressions.'
+-            )
+-            error = new Error(message.split('\n')[0])
+-            error.stack = `${message}\n${this.getFeatureStack(uri, feature, scenario, step)}`
          }
  
-+        // reporters show the reason of a skipped test from `pendingReason`, not from its error
-+        const pendingReason = result.status === Status.AMBIGUOUS && state === 'skip' ? result.message : undefined
+-        // reporters show the reason of a skipped test from `pendingReason`, not from its error
+-        const pendingReason = result.status === Status.AMBIGUOUS && state === 'skip' ? result.message : undefined
          const common = {
              title: title,
              state,
-             error,
-+            ...(pendingReason ? { pendingReason } : {}),
-             duration: this._testStart
-                 ? Date.now() - this._testStart.getTime()
-                 : 0,
-@@ -292,6 +290,25 @@ export default class CucumberFormatter extends Formatter {
+@@ -305,25 +272,6 @@ export default class CucumberFormatter extends Formatter {
          this.emit('test:' + state, payload)
      }
  
-+    /**
-+     * stack lines with the location of the scenario and the step in the feature file
-+     */
-+    private getFeatureStack(uri: string, feature: Feature, scenario: Pickle, step?: PickleStep) {
-+        let stack = `\tat Feature(${uri}):1:1\n`
-+        const children = feature.children?.flatMap((child) => child.rule ? child.rule.children : [child]) ?? []
-+        const featScenario = children.find(c => scenario.astNodeIds && c.scenario?.id === scenario.astNodeIds[0])?.scenario
-+        if (featScenario) {
-+            stack += `\tat Scenario(${featScenario.name}):${featScenario.location?.line}:${featScenario.location?.column}\n`
-+
-+            const steps = [...children.flatMap((c) => c.background?
-```
-
-**File**: `packages/wdio-cucumber-framework/src/types.ts` (modified, +5/-1)
-```diff
-@@ -164,7 +164,11 @@ export interface CucumberOptions {
+-    /**
+-     * stack lines with the location of the scenario and the step in the feature file
+-     */
+-    private getFeatureStack(uri: string, feature: Feature, scenario: Pickle, step?: PickleStep) {
+-        let stack = `\tat Feature(${uri}):1:1\n`
+-        const children = feature.children?.flatMap((child) => child.rule ? child.rule.children : [child]) ?? []
+-        const featScenario = children.find(c => scenario.astNodeIds && c.scenario?.id === scenario.astNodeIds[0])?.scenario
+-        if (featScenario) {
+-            stack += `\tat Scenario(${featScenario.name}):${featScenario.location?.line}:${featScenario.location?.column}\n`
+-
+-            const steps = [...children.flatMap((c) => c.background?.steps ?? []), ...(featScenario.steps ?? [])]
+-            const featStep = steps.find(s => step?.astNodeIds && s.id === step.astNodeIds[0])
+-            if (featStep) {
+-                stack += `\tat Step(${featStep.text}):${featStep.location?.line}:${featStep.location?.column}\n`
+-            }
+-        }
+-        return stack
+-    }
+-
+     onGherkinDocument(gherkinDocEvent: GherkinDocument) {
+         this.updateCurrentPickle({
+             uri: gherkinDocEvent.uri,
+@@ -538,17 +486,12 @@ export default class CucumberFormatter extends Formatter {
       */
-     ignoreUndefinedDefinitions?: boolean;
-     /**
--     * Treat ambiguous definitions as errors.
-+     * Report an ambiguous step (a step that matches more than one step definition)
-+     * as failed, with the list of the matching step definitions. With `false`, the
-+     * step is reported as skipped, with the list as its reason. In both cases, the
-+     * run fails. Exception: without `parallelMode`, the run passes with
-+     * `ignoreUndefinedDefinitions: true` and `failAmbiguousDefinitions: false`.
-      *
-      * Please note that this is a @wdio/cucumber-framework specific option
-      * and not recognized by cucumber-js itself.
+     private withAmbiguousMessage(event: TestStepFinished): TestStepFinished {
+         const result = event.testS
 ```
 
-**File**: `packages/wdio-cucumber-framework/src/utils.ts` (modified, +27/-2)
+**File**: `packages/wdio-cucumber-framework/src/index.ts` (modified, +11/-2)
 ```diff
-@@ -11,11 +11,12 @@ import type {
-     Feature,
+@@ -192,6 +192,13 @@ export class CucumberAdapter {
+             this._cucumberOpts.tags = this.generateDynamicSkipTags().concat(this._cucumberOpts.tags || []).join(' and ')
+         }
+ 
++        // One seed for loadSources and the run; Cucumber logs the seed of the run to a discarded stream
++        if (this._cucumberOpts.order === 'random') {
++            const seed = Math.floor(Math.random() * 1000 * 1000)
++            this._cucumberOpts.order = `random:${seed}`
++            log.warn(`Random order using seed: ${seed}`)
++        }
++
+         // Filter the specs according to the tag expression
+         // Some workers would only spawn to then skip the spec (Feature) file
+         // Filtering at this stage can prevent the spawning of a massive number of workers
+@@ -323,8 +330,10 @@ export class CucumberAdapter {
+             return this._runSequential(supportCodeLibrary)
+         }
+ 
+-        // Parse Gherkin documents from filtered specs
+-        const gherkinDocuments = this.getGherkinDocuments([this._specs])
++        // Parse Gherkin documents from filtered specs; a spec `file.feature:12` keeps
++        // its line numbers in `specs` for Cucumber's line filter
++        const featurePaths = [...new Set(this._specs.map((spec) => spec.replace(/(:\d+)+$/, '')))]
++        const gherkinDocuments = this.getGherkinDocuments([featurePaths])
+         const { sources, runtime } = await this._loadRunConfiguration({ cwd: this._cwd })
+ 
+         try {
+```
+
+**File**: `packages/wdio-cucumber-framework/src/parallel.ts` (modified, +127/-112)
+```diff
+@@ -31,6 +31,7 @@
+  * @module parallel
+  */
+ 
++import path from 'node:path'
+ import { createRequire } from 'node:module'
+ import { EventEmitter } from 'node:events'
+ import type { AsyncLocalStorage } from 'node:async_hooks'
+@@ -43,13 +44,15 @@ import type * as messages from '@cucumber/messages'
+ import type { CucumberOptions, ParallelBrowser, ParallelMode, ReporterStep } from './types.js'
+ import {
+     addKeywordToStep,
+-    convertStatus,
+     getFeatureId,
++    getFeatureStack,
+     getRule,
+     getScenarioDescription,
++    getStepResult,
+     getStepType,
+     buildStepPayload,
+     formatMessage,
++    withAmbiguousMessage,
+ } from './utils.js'
+ 
+ const log = logger('@wdio-cucumber-framework:parallel')
+@@ -178,6 +181,12 @@ interface SupportCodeLibrary {
+     readonly stepDefinitions: unknown[]
+ }
+ 
++type EmitSupportCodeMessages = (options: {
++    eventBroadcaster: EventEmitter
++    supportCodeLibrary: SupportCodeLibrary
++    newId: IdGenerator.NewId
++}) => void
++
+ // ============================================================
+ // Load Cucumber internal modules via CJS require
+ // ============================================================
+@@ -188,6 +197,8 @@ let FormatterBuilder: IFormatterBuilder
+ let Executor: IExecutorConstructor
+ let TestCaseRunner: { new (options: INewTestCaseRunnerOptions): TestCaseRunnerInstance }
+ let PickleFilter: new (options: IPickleFilterOptions) => IPickleFilter
++let emitSupportCodeMessages: EmitSupportCodeMessages
++let orderPickles: <T>(items: T[], order: string, logger: { warn(message: string): void }) => void
+ 
+ try {
+     ;({ default: PickleFilter } = require_('@cucumber/cucumber/lib/pickle_filter') as {
+@@ -208,6 +219,14 @@ try {
+ 
+     FormatterBuilder = require_('@cucumber/cucumber/lib/formatter/builder').default as IFormatterBuilder
+ 
++    ;({ emitSupportCodeMessages } = require_('@cucumber/cucumber/lib/api/emit_support_code_messages') as {
++        emitSupportCodeMessages: EmitSupportCodeMessages
++    })
++
++    ;({ orderPickles } = require_('@cucumber/cucumber/lib/filter/order_pickles') as {
++        orderPickles: typeof orderPickles
++    })
++
+     TestCaseRunner = require_('@cucumber/cucumber/lib/runtime/test_case_runner').default as {
+         new (options: INewTestCaseRunnerOptions): TestCaseRunnerInstance
+     }
+@@ -336,15 +355,18 @@ function emitSuiteEvent(
+     cid: string,
+     specs: string[],
+     group: FeatureGroup,
+-    event: 'suite:start' | 'suite:end'
++    event: 'suite:start' | 'suite:end',
++    tagsInTitle?: boolean
+ ) {
+     const doc = group.gherkinDocument
+     const payload = {
+         uid: group.uid,
+-        title: getTitle(doc.feature as messages.Feature),
++        title: getTitle(doc.feature as messages.Feature, tagsInTitle),
+         type: 'feature' as const,
+         file: doc.uri,
+         tags: doc.feature?.tags,
++        // as cucumberFormatter.ts, only the start of a feature has them
++        ...(event === 'suite:start' ? { description: doc.feature?.description, keyword: doc.feature?.keyword } : {}),
+         cid,
+         specs,
+         parentUid: null,
+@@ -377,60 +399,6 @@ function buildScenarioPayload(params: {
+     }
+ }
+ 
+-/**
+- * Report a scenario that never executed (failFast stopped the run).
+- * Mirrors what a TestCaseRunner invoked with `skip: true` would emit:
+- * scenario-level mode pairs test:start with test:skip; step-level mode
+- * opens the scenario suite, reports every step skipped, and closes it.
+- */
+-function emitSkippedScenario(
+-    reporter: EventEmitter,
+-    cid: string,
+-    specs: string[],
+-    cucumberOpts: Required<CucumberOptions>,
+-    group: FeatureGroup,
+-    pickle: messages.Pickle,
+-    scenarioIndex: number
+-): void {
+-    const uri = group.gherkinDocument.uri || ''
+-    const feature = group.gherkinDocument.feature as messages.Feature
+-    const payload = buildScenarioPayload({
+-        cid,
+-        specs,
+-        cucumberOpts,
+-        uri,
+-        feature,
+-        pickle,
+-        scenarioUID: `scenario-${cid}-${scenarioIndex}`,
+-        featureUID: group.uid,
+-    })
+-
+-    if (cucumberOpts.scenarioLevelReporter !== false) {
+-        const skipped = { ...payload, parentUid: group.uid, state: 'skip', duration: 0, passed: true }
+-        reporter.emit('test:start', formatMessage({ payload: { ...payload, parentUid: group.uid } }))
+-        reporter.emit('test:skip', formatMessage({ payload: skipped }))
+-        reporter.emit('test:end', formatMessage({ payload: skipped }))
+-        return
+-    }
+-
+-    reporter.emit('suite:start', formatMessage({ payload: { ...payload, parentUid: group.uid } }))
+-    pickle.steps = addKeywordToStep(pickle.steps as ReporterStep[], feature)
+-    for (const step of pickle.steps || []) {
+-        const stepPayload = buildStepPayload(uri, feature, pickle, step, {
+-            type: 'step',
+-            state: 'skip',
+-            passed: true,
+-            duration: 0,
+-        })
+-        const skippedStep = { ...stepPayload, parentUid: payload.uid }
+-        
+```
+
+**File**: `packages/wdio-cucumber-framework/src/types.ts` (modified, +7/-6)
+```diff
+@@ -122,12 +122,13 @@ export interface CucumberOptions {
+      */
+     retry?: number;
+     /**
+-     * Only retries the features or scenarios with tags matching the expression (repeatable).
+-     * This option requires 'retry' to be specified.
++     * Only retry the scenarios with tags matching the tag expression.
++     * Requires `retry`.
+      */
+     retryTagFilter?: string;
+     /**
+-     * Fail if there are any undefined or pending steps
++     * Fail the run on a pending step. An undefined step fails the run also
++     * without `strict`, unless `ignoreUndefinedDefinitions` is `true`.
+      * @default false
+      */
+     strict?: boolean;
+@@ -146,8 +147,7 @@ export interface CucumberOptions {
+      */
+     timeout?: number;
+     /**
+-     * Enable this to make webdriver.io behave as if scenarios
+-     * and not steps were the tests.
++     * Report each scenario as one test. Its steps and hooks are not reported.
+      * @default false
+      */
+     scenarioLevelReporter?: boolean;
+@@ -157,7 +157,8 @@ export interface CucumberOptions {
+      */
+     tagsInTitle?: boolean;
+     /**
+-     * Treat undefined definitions as warnings.
++     * Report an undefined step as pending, with ` (undefined step)` at the end
++     * of its title, and do not fail the run for it.
+      * Please note that this is a @wdio/cucumber-framework specific option and
+      * not recognized by cucumber-js itself.
+      * @default false
+```
+
+**File**: `packages/wdio-cucumber-framework/src/utils.ts` (modified, +103/-1)
+```diff
+@@ -13,7 +13,8 @@ import type {
      Pickle,
      TestStepResultStatus,
--    FeatureChild
-+    FeatureChild,
-+    StepDefinition
+     FeatureChild,
+-    StepDefinition
++    StepDefinition,
++    TestStepResult
  } from '@cucumber/messages'
  import type { Capabilities } from '@wdio/types'
  import type { ReporterStep, TestHookDefinitionConfig, Payload } from './types.js'
--import { CUCUMBER_HOOK_DEFINITION_TYPES } from './constants.js'
-+import { AMBIGUOUS_STEP_MESSAGE, CUCUMBER_HOOK_DEFINITION_TYPES } from './constants.js'
- const log = logger('@wdio/cucumber-framework:utils')
- 
- function createStepArgument ({ argument }: PickleStep) {
-@@ -102,6 +103,7 @@ export function buildStepPayload(
-         type: string
-         state?: TestStepResultStatus | string | null
-         error?: Error
-+        pendingReason?: string
-         duration?: number
-         title?: string | null
-         passed?: boolean
-@@ -273,3 +275,26 @@ export function convertStatus(status: TestStepResultStatus): 'pass' | 'fail' | '
-     default: return 'fail'
-     }
+@@ -319,3 +320,104 @@ export function getAmbiguousStepMessage(stepDefinitions: readonly StepDefinition
+     })
+     return [AMBIGUOUS_STEP_MESSAGE, ...lines].join('\n')
  }
 +
 +/**
-+ * The error text of an ambiguous step: one line for each matching step definition.
-+ * @param {StepDefinition[]} stepDefinitions - the definitions that match the step
-+ * @returns {string | undefined} - the text, or `undefined` without a definition
++ * Cucumber 13 sends no message for an ambiguous step: give the result the matching step definitions as message.
++ * @param stepDefinitionIds - gives the step definition ids of the step, only for an ambiguous result with no message
++ * @returns the same result when it is not ambiguous, has a message, or no definition is found
 + */
-+export function getAmbiguousStepMessage(stepDefinitions: readonly StepDefinition[]): string | undefined {
-+    if (stepDefinitions.length === 0) {
-+        return undefined
++export function withAmbiguousMessage(
++    result: TestStepResult,
++    stepDefinitionIds: () => readonly string[],
++    stepDefinitions: ReadonlyMap<string, StepDefinition>
++): TestStepResult {
++    if (result.status !== 'AMBIGUOUS' || result.message) {
++        return result
 +    }
-+    const lines = stepDefinitions.map(({ pattern, sourceReference }) => {
-+        // Cucumber sends `pattern.toString()`, with the slashes, for a regular expression with flags
-+        const source = pattern.type === 'REGULAR_EXPRESSION' && !pattern.source.startsWith('/')
-+            ? `/${pattern.source}/`
-+            : pattern.source
-+        if (!sourceReference.uri) {
-+            return `  ${source}`
-+        }
-+        const line = sourceReference.location ? `:${sourceReference.location.line}` : ''
-+        return `  ${source} - ${sourceReference.uri}${line}`
-+    })
-+    return [AMBIGUOUS_STEP_MESSAGE, ...lines].join('\n')
++    const message = getAmbiguousStepMessage(stepDefinitionIds()
++        .map((id) => stepDefinitions.get(id))
++        .filter((definition): definition is StepDefinition => Boolean(definition)))
++    return message ? { ...result, message } : result
 +}
++
++/**
++ * stack lines with the location of the scenario and the step in the feature file
++ */
++export function getFeatureStack(uri: string, feature: Feature, scenario: Pickle, step?: PickleStep): string {
++    let stack = `\tat Feature(${uri}):1:1\n`
++    const children = feature.children?.flatMap((child) => child.rule ? child.rule.children : [child]) ?? []
++    const featScenario = children.find(c => scenario.astNodeIds && c.scenario?.id === scenario.astNodeIds[0])?.scenario
++    if (featScenario) {
++        stack += `\tat Scenario(${featScenario.name}):${featScenario.location?.line}:${featScenario.location?.column}\n`
++
++        const steps = [...children.flatMap((c) => c.background?.steps ?? []), ...(featScenario.steps ?? [])]
++        const featStep = steps.find(s => step?.astNodeIds && s.id === step.astNodeIds[0])
++        if (featStep) {
++            stack += `\tat Step(${featStep.text}):${featStep.location?.line}:${featStep.location?.column}\n`
++        }
++    }
++    return stack
++}
++
++export interface StepResult {
++    state: 'pass' | 'fail' | 'skip' | 'pending'
++    error?: Error
++    pendingReason?: string
++    /** reporters tell an undefined step from a pending one by this suffix */
++    titleSuffix: string
++    /** the result counts as a failure of the run */
++    failed: boolean
++}
++
++/**
++ * The reported state of a step or scenario result, the same in sequential and parallel runs.
++ * @param result - the Cucumber result
++ * @param params.title - the step text, or the scenario title
++ * @param params.isStep - `false` for a scenario that is reported as a test (`scenarioLevelReporter`)
++ * @param params.featureStack - gives the location of the step in the feature file (see `getFeatureStack`), only for the errors that show it
++ */
++export function getStepResult(
++    result: TestStepResult,
++    params: { title: string, isStep: boolean, ignoreUndefinedDefinitions: boolean, failAmbiguousDefinitions: boolean, featureStack: () => string }
++): StepResult {
++    const { title, isStep, featureStack } = params
++    let state = convertStatus(result.status)
++    let error = result.message ? new Error(result.message) : undefined
++    let titleSuffix = ''
++    let failed = false
++
++    if (result.status === 'UNDEFINED') {
++        if (params.ignoreUndefinedDefinitions) {
++            state = 'pending'
++            titleSuffix = ' (undefined step)'
++        } else {
++            state = 'fail'
++            failed = true
++            error = new Error(
++                (isStep ? `Step "${title}" is not defined. ` : `Scenario ${title} has undefined steps. `) +
++                'You can ignore this error by setting cucumberOpts.ignoreUndefinedDefinitions as true.'
++            )
++            error.stack = `${error.message}\n${featureStack()}`
++        }
++    } else if (result.status === 'FAILED') {
++        state = 'fail'
++        failed = true
++        error = new Error(result.message?.split('\n')[0])
++        error.stack = result.message as string
++    } else if (result.status === 'AMBIGUOUS' && params.failAmbiguousDefinitions) {
++        state = 'fail'
++        failed = true
++        const message = result.message || (
++            (isStep
++                ? `Step "${title}" matches multiple step definitions. `
++                : `Scenario "${title}" contains a step matching multiple step definitions. `) +
++            'Make the step definitions unique by removing duplicate or overlapping expressions.'
++        )
++        error = new Error(message.split('\n')[0])
++        error.stack = `${message}\n${featureStack()}`
++    }
++
++    // reporters show the reason of a skip
 ```
 
-**File**: `packages/wdio-cucumber-framework/tests/formatter.test.ts` (modified, +136/-5)
+**File**: `packages/wdio-cucumber-framework/tests/adapter.test.ts` (modified, +47/-0)
 ```diff
-@@ -8,7 +8,7 @@ import {
-     afterEach,
- } from 'vitest'
- import { EventEmitter } from 'node:events'
--import type { TestStepFinished, TestStepStarted } from '@cucumber/messages'
-+import type { StepDefinition, TestStepFinished, TestStepStarted } from '@cucumber/messages'
- import { TestStepResultStatus } from '@cucumber/messages'
- import path from 'node:path'
+@@ -3,6 +3,7 @@ import type { EventEmitter } from 'node:events'
+ import { AsyncLocalStorage } from 'node:async_hooks'
+ import { describe, expect, it, vi, beforeEach, beforeAll } from 'vitest'
  
-@@ -403,7 +403,15 @@ describe('CucumberFormatter', () => {
++import logger from '@wdio/logger'
+ import { executeHooksWithArgs, testFnWrapper } from '@wdio/utils'
+ import * as Cucumber from '@cucumber/cucumber'
+ import type * as Messages from '@cucumber/messages'
+@@ -145,6 +146,33 @@ describe('CucumberAdapter', () => {
+         expect(adapter.hasTests()).toBe(true)
      })
  
-     describe('ambiguous steps', () => {
--        function reportAmbiguity (scenarioLevelReporter: boolean, message?: string, failAmbiguousDefinitions = true) {
-+        const definitions = [
-+            { id: '16', pattern: { source: 'I do something', type: 'CUCUMBER_EXPRESSION' }, sourceReference: { uri: 'features/steps.js', location: { line: 3 } } },
-+            { id: '99', pattern: { source: '^I do', type: 'REGULAR_EXPRESSION' }, sourceReference: { uri: 'features/steps.js', location: { line: 7 } } }
-+        ] as StepDefinition[]
-+        const DEFINITIONS_TEXT = 'Multiple step definitions match:\n  I do something - features/steps.js:3\n  /^I do/ - features/steps.js:7'
-+        // the text before the location lines of the feature file
-+        const stackText = (stack: string) => stack.split('\n\tat ')[0]
++    it('picks the random order seed once and logs it', async () => {
++        const cucumberWarn = vi.spyOn(console, 'warn').mockImplementation(() => {})
++        const warn = vi.spyOn(logger('@wdio/cucumber-framework'), 'warn')
++        try {
++            const adapter = await CucumberAdapter.init!('0-0', { cucumberOpts: { order: 'random' } }, ['packages/wdio-cucumber-framework/tests/fixtures/test_no_tags.feature'], {}, {}, {}, false)
++            const [, seed] = (adapter._cucumberOpts.order as string).split(':')
++            expect(seed).toMatch(/^\d+$/)
++            expect(warn).toHaveBeenCalledWith(`Random order using seed: ${seed}`)
++            // loadSources got the seed, so Cucumber did not pick and log its own
++            expect(cucumberWarn).not.toHaveBeenCalledWith(expect.stringContaining('Random order using seed'))
++        } finally {
++            cucumberWarn.mockRestore()
++            warn.mockRestore()
++        }
++    })
 +
-+        function reportAmbiguity (scenarioLevelReporter: boolean, message?: string, failAmbiguousDefinitions = true, stepDefinitions: StepDefinition[] = []) {
-             const eventBroadcaster = new EventEmitter()
-             const events = new EventEmitter()
-             const counts: number[] = []
-@@ -423,7 +431,15 @@ describe('CucumberFormatter', () => {
-             } as any)
-             loadGherkin(eventBroadcaster)
-             acceptPickle(eventBroadcaster)
--            prepareSuite(eventBroadcaster)
-+            for (const stepDefinition of stepDefinitions) {
-+                eventBroadcaster.emit('envelope', { stepDefinition })
-+            }
-+            eventBroadcaster.emit('envelope', {
-+                testCase: {
-+                    ...testCase,
-+                    testSteps: testCase.testSteps.map((step) => step.id === '26' ? { ...step, stepDefinitionIds: ['16', '99'] } : step)
-+                }
-+            })
-             startSuite(eventBroadcaster)
-             eventBroadcaster.emit('envelope', { testStepStarted })
-             eventBroadcaster.emit('envelope', {
-@@ -434,7 +450,11 @@ describe('CucumberFormatter', () => {
-             })
-             eventBroadcaster.emit('envelope', { testCaseFinished })
-             eventBroadcaster.emit('envelope', { testRunFinished })
--            return { payload: wdioReporter.emit.mock.calls.find(([event]: [string]) => event === 'test:fail')?.[1], counts }
-+            return {
-+                payload: wdioReporter.emit.mock.calls.find(([event]: [string]) => event === 'test:fail')?.[1],
-+                skipPayload: wdioReporter.emit.mock.calls.find(([event]: [string]) => event === 'test:skip')?.[1],
-+                counts
-+            }
-         }
++    it.each(['defined', 'random:7'])('keeps the order %s', async (order) => {
++        const warn = vi.spyOn(logger('@wdio/cucumber-framework'), 'warn')
++        try {
++            const adapter = await CucumberAdapter.init!('0-0', { cucumberOpts: { order } }, ['packages/wdio-cucumber-framework/tests/fixtures/test_no_tags.feature'], {}, {}, {}, false)
++            expect(adapter._cucumberOpts.order).toBe(order)
++            expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('Random order using seed'))
++        } finally {
++            warn.mockRestore()
++        }
++    })
++
+     it('respects user-defined formatOptions', async () => {
  
-         it.each([false, true])('explains a missing Cucumber diagnostic (scenario level: %s)', (scenarioLevelReporter) => {
-@@ -454,7 +474,7 @@ describe('CucumberFormatter', () => {
-             const message = 'Multiple step definitions match:\n  first.js:2\n  second.js:3'
-             const { payload } = reportAmbiguity(false, message)
-             expect(payload.error.message).toBe(message.split('\n')[0])
--            expect(payload.error.stack).toBe(message)
-+            expect(stackText(payload.error.stack)).toBe(message)
+         const formatOptions =  { myFormatter: { MyOption: 'MyValue' } }
+@@ -245,6 +273,25 @@ describe('CucumberAdapter', () => {
+         delete (globalThis as Record<string, unknown>).browser
+     })
+ 
++    it('reads the feature file of a spec with line numbers in parallel mode', async () => {
++        vi.mocked(runParallelCucumber).mockResolvedValue(0)
++        ;(globalThis as Record<string, unknown>).browser = { isBidi: true, __bidiCommandsEnabled: true }
++        const feature = path.join(__dirname, 'fixtures', 'test_no_tags.feature')
++
++        const adapter = await CucumberAdapter.init!(
++            '0-0',
++            { cucumberOpts: { parallelMode: 'contexts' }, cucumberFeaturesWithLineNumbers: [`${feature}:7`] },
++            [feature], {}, {}, {}, false, 'progress'
++        )
++        await adapter.run()
++
++        const [{ specs, gherkinDocuments }] = vi.mocked(runParallelCucumber).mock.calls[0]
++        // the line numbers stay for Cucumber's line filter, the document has the file
++        expect(specs).toEqual([`${feature}:7`])
++        expect(gherkinDocuments.flat().map((doc) => doc.uri)).toEqual([feature])
++        delete (globalThis as Record<string, unknown>).browser
++    })
++
+     it('uses the browser from setBrowser without globalThis.browser', async () => {
+         vi.mocked(runParallelCucumber).mockResolvedValue(0)
+         delete (globalThis as Record<string, unknown>).browser
+```
+
+**File**: `packages/wdio-cucumber-framework/tests/parallel.test.ts` (modified, +285/-3)
+```diff
+@@ -951,6 +951,11 @@ describe('runParallelCucumber', () => {
+ 
+     // ---- failFast summary ----
+ 
++    // a defined step: in skip mode, Cucumber keeps an undefined step failed
++    const failingLibrary = () => mockSupportCodeLibrary({
++        stepDefinitions: [makeStepDefinition('something', async function () { throw new Error('fails on purpose') })],
++    })
++
+     test('failFast in step-level mode reports skipped steps as start, skip, end with one uid', async () => {
+         const browser = mockBrowser({ contexts: ['ctx-0', 'ctx-1'] })
+         const doc = makeFeatureDoc('/test/foo.feature', 'Test', ['s1', 's2', 's3'])
+@@ -962,7 +967,7 @@ describe('runParallelCucumber', () => {
+             cid: '0-0',
+             specs: ['/test/foo.feature'],
+             gherkinDocuments: [doc],
+-            supportCodeLibrary: mockSupportCodeLibrary(),
++            supportCodeLibrary: failingLibrary(),
+             cucumberOpts: defaultCucumberOpts({ maxParallelContexts: 2, failFast: true, scenarioLevelReporter: false }),
          })
  
-         it('preserves the skipped-step policy when failAmbiguousDefinitions is false', () => {
-@@ -463,6 +483,117 @@ describe('CucumberFormatter', () => {
-             expect(wdioReporter.emit).toHaveBeenCalledWith('test:skip', expect.objectContaining({ state: 'skip', error: undefined }))
-             expect(counts).toEqual([0])
+@@ -983,11 +988,11 @@ describe('runParallelCucumber', () => {
+             cid: '0-0',
+             specs: ['/test/foo.feature'],
+             gherkinDocuments: [doc],
+-            supportCodeLibrary: mockSupportCodeLibrary(),
++            supportCodeLibrary: failingLibrary(),
+             cucumberOpts: defaultCucumberOpts({ maxParallelContexts: 2, failFast: true }),
          })
+ 
+-        // 2 scenarios fail (no step defs); scenario 3 is skipped
++        // 2 scenarios fail; scenario 3 is skipped
+         const starts = reporterEvents.filter((e) => e.event === 'test:start')
+         const fails = reporterEvents.filter((e) => e.event === 'test:fail')
+         const skips = reporterEvents.filter((e) => e.event === 'test:skip')
+@@ -1299,6 +1304,48 @@ describe('runParallelCucumber worker pool', () => {
+         eventEmitter = new EventEmitter()
+     })
+ 
++    describe('cucumberOpts.order', () => {
++        const { orderPickles } = createRequire(import.meta.url)('@cucumber/cucumber/lib/filter/order_pickles') as {
++            orderPickles: (items: string[], order: string, logger: { warn(message: string): void }) => void
++        }
++        const bodies = Object.fromEntries(Array.from({ length: 5 }, (_, i) => [`step${i}`, () => {}]))
++        const startOrder = async (order: string, browser = mockBrowser()) => {
++            const titles: string[] = []
++            reporter.on('test:start', (payload: { title: string }) => titles.push(payload.title))
++            const outcome = await run(browser, names(5), bodies, 1, { order })
++            return { titles, ...outcome }
++        }
 +
-+        it('lists the matching definitions in the error (failAmbiguousDefinitions)', () => {
-+            const { payload } = reportAmbiguity(false, undefined, true, definitions)
-+            expect(payload.error.message).toBe('Multiple step definitions match:')
-+            expect(stackText(payload.error.stack)).toBe(DEFINITIONS_TEXT)
++        test('orders the pickles with a seed', async () => {
++            const expected = ['s0', 's1', 's2', 's3', 's4']
++            orderPickles(expected, 'random:7', { warn: () => {} })
++
++            const { titles } = await startOrder('random:7')
++            expect(titles).toEqual(expected)
++            expect(titles).not.toEqual(['s0', 's1', 's2', 's3', 's4'])
 +        })
 +
-+        it('gives the location of the step in the feature file', () => {
-+            const { payload } = reportAmbiguity(false, undefined, true, definitions)
-+            expect(payload.error.stack).toBe(`${DEFINITIONS_TEXT}\n` +
-+                // an absolute uri stays as it is, also on Windows
-+                `\tat Feature(${gherkinDocument.uri}):1:1\n` +
-+                '\tat Scenario(Get size of an element):12:3\n' +
-+                '\tat Step(should the element \'.header-logged-out a\' be 32px wide and 35px high):14:5\n')
++        test('runs the pickles in reverse order', async () => {
++            const { titles } = await startOrder('reverse')
++            expect(titles).toEqual(['s4', 's3', 's2', 's1', 's0'])
 +        })
 +
-+        it('lists the matching definitions on a skipped ambiguous step', () => {
-+            const { payload, skipPayload } = reportAmbiguity(false, undefined, false, definitions)
-+            e
++        test('throws for an unknown order before the run', async () => {
++            const browser = mockBrowser()
++            const { error, titles } = await startOrder('foo', browser)
++            expect(error?.message).toContain('Unrecognized order type')
++            expect(browser.browsingContextCreate).not.toHaveBeenCalled()
++            expect(titles).toEqual([])
++        })
++
++        test('logs the seed of a random order with no seed', async () => {
++            const warn = vi.spyOn(logger('@wdio-cucumber-framework:parallel'), 'warn')
++            await startOrder('random')
++            expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^Random order using seed: \d+$/))
++            warn.mockRestore()
++        })
++    })
++
+     test('never runs more scenarios than maxParallelContexts and keeps live tabs bounded', async () => {
+         let inFlight = 0
+         let maxInFlight = 0
+@@ -1611,4 +1658,239 @@ describe('runParallelCucumber reporter contract and teardown', () => {
+         expect(browser.browsingContextClose).toHaveBeenCalledTimes(browser.browsingContextCreate.mock.calls.length)
+         expect(maxInFlight).toBe(1)
+     })
++
++    test('runs only the scenarios at the line numbers of a spec, as Cucumber does', async () => {
++        const doc = makeFeatureDoc(path.resolve('/test/foo.feature'), 'Test', ['s1', 's2', 's3'])
++        const { result } = await runOrCatch({
++            browser: mockBrowser() as unknown as WebdriverIO.Browser,
++            reporter,
++            eventEmitter,
++            cid: '0-0',
++            specs: [`${doc.uri}:6:9`],
++            gherkinDocuments: [doc],
++            supportCodeLibrary: library(),
++            cucumberOpts: defaultCucumberOpts(),
++        })
++
++       
 ```
 
 ---
 
-### Incident Patch 3: `db5cde00` (2026-10-19)
-**Commit Message**: test(e2e): add local mobile web suites for iOS and Android with Appium (#16140)
+### Incident Patch 2: `0d5767ac` (2026-10-20)
+**Commit Message**: fix: Address gaps in reporters for parallel-mode (#16146)
 
-CI has no iOS or Android job, so #16137 (async scripts failed at once with
-Appium XCUITest) was found only by users. `pnpm run test:ios:local` (iOS
-Safari on a Simulator) and `pnpm run test:android:local` (Chrome on an
-Android emulator) run one spec with `@wdio/appium-service`:
+* perf(@wdio/mocha-framework,@wdio/cucumber-framework): open only the spare windows a parallel run needs
 
-- the script timeout (#16137): an async `execute`, `isStable()`, a protocol
-  `executeAsyncScript`, `browser.setTimeout()`
-- a click below the viewport after the `scroll` events of the page (#16062)
-- a tap, `browser.keys()` (not on iOS: WebDriverAgent types nothing), and
-  `scrollIntoView()` / `browser.scroll()` (Appium has no `wheel` action)
+Each slot prefetched a spare browsing context for its next test whenever
+untaken tests remained, ignoring spares other slots already held. With 4
+slots and 8 tests the run created 11 windows; 3 were closed unused.
 
-They need local platform tools, so they are not `test:e2e:*` scripts.
-Documented in CONTRIBUTING and e2e/AGENTS.md.
+Slots now share one spare pool and open a spare only while the untaken
+tests outnumber the spares already open. Leftover spares (a failed
+allocation or failFast stop) are closed after the slots finish, before
+the run awaits its cleanups.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Real-browser e2e (test:e2e:parallel): 11 -> 9 windows for 9 tests.
 
-**File**: `CONTRIBUTING.md` (modified, +39/-0)
+* docs: Cloud vendor caveats of parallel-mode
+
+* feat(@wdio/reporter,@wdio/runner): let reporters find the test of the current parallel context
+
+Reporters can now call getContextTest() to get the test whose browsing
+context the current code runs in. The runner sets the context id resolver
+once the browser exists. Without parallel mode it returns the current test.
+
+* fix(@wdio/junit-reporter): attach properties and worker logs to the right parallel test
+
+Properties and worker logs went to the test that starte
+
+**File**: `__mocks__/@wdio/reporter.ts` (modified, +15/-3)
 ```diff
-@@ -312,6 +312,45 @@ Every of these test suites are functions that trigger the wdio testrunner progra
+@@ -1,6 +1,8 @@
+ import { vi } from 'vitest'
  
- If you test custom WebDriver commands, you can define your own scenario of mock responses in the [`@wdio/webdriver-mock-service`](https://github.com/webdriverio/webdriverio/blob/main/packages/wdio-webdriver-mock-service/src/index.js#L136-L147).
+ import { EventEmitter } from 'node:events'
++import type { Reporters } from '@wdio/types'
++import type * as ReporterModule from '../../packages/wdio-reporter/src/index'
+ import HookStats from '../../packages/wdio-reporter/src/stats/hook.ts'
+ import RunnerStats from '../../packages/wdio-reporter/src/stats/runner.ts'
+ import SuiteStats from '../../packages/wdio-reporter/src/stats/suite.ts'
+@@ -25,7 +27,7 @@ export default class WDIOReporter extends EventEmitter {
+     retries: number
+     _chalk: Chalk
+     runnerStat?: RunnerStats
+-    constructor (public options: any) {
++    constructor (public options: Partial<Reporters.Options>) {
+         super()
+         this.options = options
+         this.outputStream = { write: vi.fn() }
+@@ -50,10 +52,20 @@ export default class WDIOReporter extends EventEmitter {
+         return true
+     }
  
-+#### Mobile e2e Tests (local only)
-+
-+CI has no iOS or Android job. The suite in [`e2e/wdio/mobile`](https://github.com/webdriverio/webdriverio/tree/main/e2e/wdio/mobile) runs the browser of a mobile device with Appium: iOS Safari on a Simulator, and Chrome on an Android emulator. Run it when you change how WebdriverIO talks to Appium, for example `execute`, the session start, or the mobile commands.
-+
-+You need Appium 3 and a build of this repository. `@wdio/appium-service` starts Appium, and Appium starts the Simulator or the emulator.
-+
-+```sh
-+npm install --global appium@3
-+pnpm run build
-+```
-+
-+**iOS** needs macOS and Xcode with an iOS runtime. The first run builds WebDriverAgent and can take several minutes.
-+
-+```sh
-+appium driver install xcuitest
-+pnpm run test:ios:local
-+```
-+
-+| Variable | Default | Use |
-+|---|---|---|
-+| `IOS_DEVICE_NAME` | `iPhone 17` | Simulator name |
-+| `IOS_PLATFORM_VERSION` | (any) | iOS version, for example `27.0` |
-+| `IOS_UDID` | (any) | A specific Simulator |
-+| `PREBUILT_WDA_PATH` | (none) | A prebuilt `WebDriverAgentRunner-Runner.app`, to skip the build |
-+
-+**Android** needs the Android SDK (`ANDROID_HOME`) and an emulator (AVD) with Chrome, for example a Google Play image. Appium downloads a Chromedriver for the Chrome version of the emulator.
-+
-+```sh
-+appium driver install uiautomator2
-+ANDROID_AVD=<name of your AVD> pnpm run test:android:local
-+```
-+
-+| Variable | Default | Use |
-+|---|---|---|
-+| `ANDROID_AVD` | (none) | The AVD that Appium starts when no device is connected |
-+| `ANDROID_UDID` | (any) | A specific device, for example `emulator-5554` |
-+
-+For both, `APPIUM_COMMAND` (default `appium`) selects another Appium binary. The logs, also the Appium log (`wdio-appium.log`), are in `e2e/wdio/mobile/logs/`.
-+
- #### Testing Type Definitions
+-    write (content: any) {
++    write (content: unknown) {
+         this.outputStream.write(content)
+     }
  
- To make sure that we don't accidentally change the types and cause users' test to break, we run some simple TypeScript checks. You can run all the type definition tests by running:
++    setContextIdResolver (_resolver: () => string | undefined): void {}
++
++    getContextTest (): TestStats | undefined {
++        return undefined
++    }
++
++    getContextId (): string | undefined {
++        return undefined
++    }
++
+     /* istanbul ignore next */
+     onRunnerStart () {}
+     /* istanbul ignore next */
+@@ -81,6 +93,6 @@ export default class WDIOReporter extends EventEmitter {
+     /* istanbul ignore next */
+     onRunnerEnd () {}
+ }
+-const { getBrowserName } = await vi.importActual<typeof import('../../packages/wdio-reporter/src/index')>('../../packages/wdio-reporter/src/index')
++const { getBrowserName } = await vi.importActual<typeof ReporterModule>('../../packages/wdio-reporter/src/index')
+ 
+ export { HookStats, RunnerStats, SuiteStats, TestStats, getBrowserName }
 ```
 
-**File**: `e2e/AGENTS.md` (modified, +8/-0)
+**File**: `packages/wdio-allure-reporter/README.md` (modified, +1/-0)
 ```diff
-@@ -19,6 +19,8 @@ pnpm run test:e2e:session      # @wdio/session (Chrome, Firefox, Electron)
- pnpm run test:e2e:display-server # @wdio/display-server
- pnpm run test:e2e:chromedriver # Chromedriver setup; needs CHROMIUM_130_BINARY (see test-chromedriver.yml)
- pnpm run test:e2e:cloud        # Sauce — needs credentials, main-branch CI
-+pnpm run test:ios:local        # iOS Safari Simulator with Appium — local only, not in CI
-+pnpm run test:android:local    # Android emulator Chrome with Appium — local only, not in CI
- ```
+@@ -382,6 +382,7 @@ As shown in the example above, when this function is called, a screenshot image
  
- `pnpm run test:e2e` runs every `test:e2e:*` script, including cloud. Do not
-@@ -46,6 +48,12 @@ Match that locally. A reporter-only change does not need this folder.
-   not installed and Safari (needs "Allow remote automation"); CI runs all of
-   them. Pick browsers with `WDIO_E2E_BROWSERS=chrome,firefox`.
- - `pnpm run test:typings:e2e` type-checks the testrunner specs in `e2e/wdio`.
-+- `test:ios:local` and `test:android:local` (`e2e/wdio/mobile`) need a global
-+  Appium 3 with the XCUITest or UiAutomator2 driver, and Xcode with an iOS
-+  runtime or the Android SDK with an AVD (see CONTRIBUTING, "Mobile e2e
-+  Tests"). Run them when a change can affect Appium: `execute`, the session
-+  start (`session/`, `utils/scriptTimeout.ts`), mobile commands. They are not
-+  named `test:e2e:*`, so `pnpm run test:e2e` does not run them.
- - Do not commit screenshots (`e2e/screenshot.png`, `e2e/wdio/headless/*.png`).
- - Framework-specific browser-runner scripts are in `e2e/package.json`
-   (`test:browser:react`, …).
+ ### Compatibility
+ - **Allure**: Compatible with Allure Framework 3.x
++- **Parallel mode**: supported with Mocha [`parallelMode`](https://webdriver.io/docs/parallel-tests). `before()` and `after()` fixtures show once per test, as they run once per test. Not supported with Cucumber `parallelMode` yet.
+ 
+ 
+ ## Getting Help
 ```
 
-**File**: `e2e/package.json` (modified, +1/-0)
+**File**: `packages/wdio-allure-reporter/src/reporter.ts` (modified, +149/-15)
 ```diff
-@@ -56,6 +56,7 @@
-     "@vue/compiler-dom": "^3.4.19",
-     "@vue/test-utils": "^2.4.3",
-     "@wdio/ai-service": "workspace:*",
-+    "@wdio/appium-service": "workspace:*",
-     "@wdio/browser-runner": "workspace:*",
-     "@wdio/cli": "workspace:*",
-     "@wdio/config": "workspace:*",
-```
-
-**File**: `e2e/wdio/mobile/mobileWeb.e2e.ts` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+import { createServer } from 'node:http'
-+import { once } from 'node:events'
-+import type { AddressInfo } from 'node:net'
-+import { browser, expect } from '@wdio/globals'
-+
-+const pages: Record<string, string> = {
-+    '/': `<p id="p">text</p>
-+        <button id="b" style="width: 100%; height: 100px" onclick="this.textContent = 'tapped'">tap</button>
-+        <input id="i">`,
-+    /**
-+     * the button is below the viewport: a click must come after the `scroll` events
-+     */
-+    '/far': `<script>
-+            window.scrolls = 0
-+            window.addEventListener('scroll', () => { window.scrolls++ })
-+        </script>
-+        <div style="height: 3000px"></div>
-+        <button id="far" style="width: 100%; height: 100px" onclick="window.scrollsAtClick = window.scrolls">far</button>
-+        <div style="height: 3000px"></div>`
+@@ -31,7 +31,7 @@ import { FileSystemWriter, getEnvironmentLabels, getSuiteLabels, ReporterRuntime
+ import { setGlobalTestRuntime } from 'allure-js-commons/sdk/runtime'
+ 
+ import { WdioTestRuntime } from './WdioTestRuntime.js'
+-import { AllureReportState } from './state.js'
++import { AllureReportState, isOpen } from './state.js'
+ import {
+     absPosix,
+     convertSuiteTagsToLabels,
+@@ -65,6 +65,18 @@ type StepAttachment = { content: string | Buffer; name?: string; type?: string }
+ type StepPayload = { title?: string; attachment?: StepAttachment; status?: AllureStatus }
+ type StepWrapper = { step: StepPayload }
+ 
++type ReportLane = {
++    main: WDIORuntimeMessage[]
++    // after-each/after-all hooks run before test:pass in parallel mode but after test:end in
++    // sequential mode, so they are held back here and replayed after the test's own messages
++    tail: WDIORuntimeMessage[]
++    inTail: boolean
++    console: string
++    suitePath?: string[]
 +}
 +
-+/**
-+ * The browser of a mobile device (iOS Safari or Android Chrome) with Appium.
-+ * Local only, see `wdio.ios.conf.ts` and `wdio.android.conf.ts`.
-+ */
-+describe('mobile web', () => {
-+    const server = createServer((req, res) => res
-+        .writeHead(200, { 'content-type': 'text/html' })
-+        .end(`<meta name="viewport" content="width=device-width">${pages[req.url ?? '/'] ?? ''}`))
-+    let origin: string
++const AFTER_HOOK_PATTERN = /^"after\s+(?:each|all)"\s+hook/i
 +
-+    before(async () => {
-+        server.listen(0, '127.0.0.1')
-+        await once(server, 'listening')
-+        /**
-+         * an Android emulator reaches the host at 10.0.2.2, an iOS Simulator at 127.0.0.1
-+         */
-+        origin = `http://${browser.isAndroid ? '10.0.2.2' : '127.0.0.1'}:${(server.address() as AddressInfo).port}`
-+    })
+ type MaybeUid = { uid?: string }
+ type MaybeFile = { file?: string }
+ type MaybeResult = { result?: unknown }
+@@ -145,6 +157,12 @@ export default class AllureReporter extends WDIOReporter {
+ 
+     private _cukeScenarioActiveByCid = new Map<string, boolean>()
+ 
++    private _laneMode = false
++    // lane config alone is not enough: Mocha falls back to sequential runs without BiDi, and then no context id resolves
++    private _lanesSeen = false
++    private _lanes = new Map<string, ReportLane>()
++    private _closedLaneKeys = new Set<string>()
 +
-+    beforeEach(async () => {
-+        await browser.url(`${origin}/`)
-+    })
+     allureStatesByCid: Map<string, AllureReportState> = new Map()
+ 
+     private static getTimeOrNow(d: unknown): number {
+@@ -207,7 +225,12 @@ export default class AllureReporter extends WDIOReporter {
+             ): boolean {
+                 const str = typeof chunk === 'string' ? chunk : Buffer.from(chunk).toString('utf8')
+                 if (!str.includes('mwebdriver')) {
+-                    self._consoleOutput += str
++                    const lane = self._openLane()
++                    if (!lane) {
++                        if (!self._lanesSeen) { self._consoleOutput += str }
++                    } else if (!lane.inTail) {
++                        lane.console += str
++                    }
+                 }
+                 if (typeof encoding === 'function') {
+                     return self._originalStdoutWrite(chunk, undefined as unknown as BufferEncoding, encoding)
+@@ -224,10 +247,78 @@ export default class AllureReporter extends WDIOReporter {
+         return this.allureStatesByCid.get(cid)!
+     }
+ 
+-    private _pushRuntimeMessage(message: WDIORuntimeMessage): void {
+-        const cid = this._currentCid()
+-        const state = this._ensureState(cid)
+-        state.pushRuntimeMessage(message)
++    private _laneKey(): string | undefined {
++        const key = this._laneMode ? this.getContextId?.() : undefined
++        if (key && !this._lanesSeen) {
++            this._lanesSeen = true
++            this._consoleOutput = ''
++        }
++        return key
++    }
 +
-+    after(() => {
-+        server.close()
-+    })
++    private _lane(): ReportLane | undefined {
++        const key = this._laneKey()
++        return key ? this._lanes.get(key) : undefined
++    }
++
++    private _openLane(key = this._laneKey()): ReportLane | undefined {
++        if (!key || this._closedLaneKeys.has(key)) { return undefined }
++        let lane = this._lanes.get(key)
++        if (!lane) {
++            lane = { main: [], tail: [], inTail: false, console: '' }
++            this._lanes.set(key, lane)
++        }
++        return lane
++    }
++
++    private _pushRuntimeMessage(message: WDIORuntimeMessage, key = this._laneKey()): void {
++        if (!key) {
++            this._ensureState(this._currentCid()).pushRuntimeMessage(message)
++            return
++        }
++        const lane = this._openLane(key)
++        if (lane) { (lane.inTail ? lane.tail : lane.main).push(message) }
++    }
 +
 +    /**
-+     * Appium XCUITest 12 starts with a script timeout of 0 ms (W3C: 30 s), so an
-+     * async script failed at once (https://github.com/webdriverio/webdriverio/issues/16137)
++     * A parallel test's messages are replayed into the shared state in one piece, wrapped in a
++     * suite of their own, so the sequential state never sees two tests interleaved.
 +     */
-+    describe('script timeout', () => {
-+        it('runs an async function that waits', async () => {
-+            expect(await browser.execute(async () => {
-+                await new Promise((resolve) => setTimeout(resolve, 500))
-+                return 1
-+            })).toBe(1)
-+        })
++    private _closeLane(key: string, name: string): void {
++        const lane = this._lanes.get(key)
++        this._lanes.delete(key)
++        this._closedLaneKeys.add(key)
++        if (!lane || (lane.main.length === 0 && lane.tail.length === 0)) { return }
++        const state = this._ensureState(this._currentCid())
++        const messages: WDIORuntimeMessage[] = [
++            { type: 'allure:suite:start', data: { name } },
++            ...lane.main,
++            ...lane.tail,
++            { type: 'allure:suite:end', data: { writeTest: true } },
++        ]
++        messages.forEach((m) => state.pushRuntimeMessage(m))
++    }
 +
-+        it('checks that an element is stable', async () => {
-+            expect(await $('#p').isStable()).toBe(true)
-+        })
++    private _leaveTail(): void {
++        const lane = this._lane()
++        if (lane) { lane.inTail = false }
++    }
 +
-+        it('runs an async script of the protocol', async () => {
-+            expect(await browser.executeAsyncScript('const done = arguments[arguments.length - 1]; setTimeout(() => done(2), 500)', [])).toBe(2)
-+        })
++    private _suitePathOf(test: TestStats | HookStats): string[] | undefined {
++        const
+```
+
+**File**: `packages/wdio-allure-reporter/src/state.ts` (modified, +7/-7)
+```diff
+@@ -26,6 +26,10 @@ const ALL_HOOK_PATTERN = /^"(?:before|after)\s+all"/i
+ const EACH_HOOK_PATTERN = /^"(?:before|after)\s+each"/i
+ const AFTER_ALL_HOOK_PATTERN = /^"after\s+all"/i
+ 
++export function isOpen(messages: WDIORuntimeMessage[], startType: WDIORuntimeMessage['type'], endType: WDIORuntimeMessage['type']): boolean {
++    return findLastIndex(messages, ({ type }) => type === startType) > findLastIndex(messages, ({ type }) => type === endType)
++}
 +
-+        it('stops an async script after the timeout of browser.setTimeout()', async () => {
-+            await browser.setTimeout({ script: 1000 })
-+            try {
-+                await expect(browser.execute(async () => {
-+                    await new Promise((resolve) => setTimeout(resolve, 3000))
-+                    return 1
-+                })).rejects.toThrow(/script/i)
-+            } finally {
-+                await browser.setTimeout({ script: 30_000 })
+ export class AllureReportState {
+     private _scopesStack: string[] = []
+     private _scopeKindsStack: Array<'suite' | 'test'> = []
+@@ -98,15 +102,11 @@ export class AllureReportState {
+     }
+ 
+     get hasPendingTest(): boolean {
+-        const s = findLastIndex(this.messages, ({ type }) => type === 'allure:test:start')
+-        const e = findLastIndex(this.messages, ({ type }) => type === 'allure:test:end')
+-        return s > e
++        return isOpen(this.messages, 'allure:test:start', 'allure:test:end')
+     }
+ 
+     get hasPendingHook(): boolean {
+-        const s = findLastIndex(this.messages, ({ type }) => type === 'allure:hook:start')
+-        const e = findLastIndex(this.messages, ({ type }) => type === 'allure:hook:end')
+-        return s > e
++        return isOpen(this.messages, 'allure:hook:start', 'allure:hook:end')
+     }
+ 
+     get currentFeature(): string | undefined {
+@@ -351,7 +351,7 @@ export class AllureReportState {
+                 continue
+ 
+             case 'allure:suite:end':
+-                await this._endSuite(lastMessage)
++                await this._endSuite(lastMessage || Boolean(message.data?.writeTest))
+                 continue
+ 
+             case 'allure:test:start':
+```
+
+**File**: `packages/wdio-allure-reporter/src/types.ts` (modified, +1/-1)
+```diff
+@@ -202,7 +202,7 @@ export type WDIOSuiteStartMessage = {
+ 
+ export type WDIOSuiteEndMessage = {
+     type: 'allure:suite:end'
+-    data: {}
++    data: { writeTest?: boolean }
+ }
+ 
+ export type WDIOTestStartMessage = {
+```
+
+**File**: `packages/wdio-allure-reporter/tests/mochaParallel.test.ts` (added, +468/-0)
+```diff
+@@ -0,0 +1,468 @@
++import fs from 'node:fs'
++import path from 'node:path'
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
++import { temporaryDirectory } from 'tempy'
++
++import AllureReporter from '../src/reporter.js'
++import { events } from '../src/constants.js'
++import { getResults } from './helpers/wdio-allure-helper.js'
++
++// the shared mock replaces the base class, but the lane key comes from the real resolver
++vi.mock('@wdio/reporter', () => vi.importActual('@wdio/reporter'))
++
++const CID = '0-0'
++const SPEC = '/tmp/user/mocha.spec.js'
++const HOOK_KINDS = ['before all', 'before each', 'after each', 'after all'] as const
++
++type Outcome = 'pass' | 'fail' | 'skip-static' | 'skip-runtime' | 'hook-fail'
++type Mode = 'parallel' | 'sequential'
++type PlannedTest = {
++    id: string
++    title: string
++    suites: string[]
++    outcome: Outcome
++    hooks?: boolean
++    /** sequential Mocha runs a suite's all-hooks once, around all of its tests */
++    noBeforeAll?: boolean
++    noAfterAll?: boolean
++    /** leave the lane open: no pass/fail/end */
++    unfinished?: boolean
++}
++
++const A1: PlannedTest = { id: 'a1', title: 'passes', suites: ['A'], outcome: 'pass' }
++const B1: PlannedTest = { id: 'b1', title: 'fails', suites: ['B'], outcome: 'fail' }
++const E1: PlannedTest = { id: 'e1', title: 'skips at runtime', suites: ['E'], outcome: 'skip-runtime' }
++const F1: PlannedTest = { id: 'f1', title: 'skips statically', suites: ['F'], outcome: 'skip-static', hooks: false }
++const D1: PlannedTest = { id: 'd1', title: 'nested', suites: ['C', 'D'], outcome: 'pass' }
++
++const suiteUids = (tests: PlannedTest[]) => {
++    const uids = new Map<string, string>()
++    const parents = new Map<string, string | null>()
++    for (const test of tests) {
++        test.suites.forEach((title, depth) => {
++            const key = test.suites.slice(0, depth + 1).join('>')
++            if (!uids.has(key)) {
++                uids.set(key, `suite-${CID}-${uids.size + 1}`)
++                parents.set(key, depth === 0 ? null : uids.get(test.suites.slice(0, depth).join('>'))!)
 +            }
 +        })
-+    })
++    }
++    return { uids, parents }
++}
 +
-+    it('taps an element', async () => {
-+        const button = await $('#b')
-+        await button.tap()
-+        await expect(button).toHaveText('tapped')
-+    })
++type Harness = ReturnType<typeof createHarness>
 +
-+    /**
-+     * Appium on iOS scrolls and clicks in one step, so the page got its `scroll`
-+     * events after the click (https://github.com/webdriverio/webdriverio/issues/16062)
-+     */
-+    it('clicks an element below the viewport after the scroll events of the page', async () => {
-+        await browser.url(`${origin}/far`)
-+        await $('#far').click()
-+        expect(await browser.execute(() => (window as unknown as { scrollsAtClick?: number }).scrollsAtClick)).toBeGreaterThan(0)
-+    })
-+
-+    /**
-+     * not on iOS: WebDriverAgent accepts the key actions but types nothing into the
-+     * page (Appium XCUITest 12.16.0 and 12.18.3, iOS 27.0 Simulator)
-+     */
-+    it('types into an input', async function () {
-+        if (browser.isIOS) {
-+            this.skip()
++function createHarness(mode: Mode, tests: PlannedTest[]) {
++    const outputDir = temporaryDirectory()
++    const { uids, parents } = suiteUids(tests)
++    let currentContext: string | undefined
++    const reporter = new AllureReporter({
++        outputDir,
++        addConsoleLogs: true,
++        writeStream: { write: () => true },
++    } as any)
++    if (mode === 'parallel') {
++        reporter.setContextIdResolver(() => currentContext)
++    }
++    const emit = (event: string, payload: Record<string, unknown>) => reporter.emit(event, payload)
++    const inContext = (test: PlannedTest, fn: () => void) => {
++        currentContext = mode === 'parallel' ? `ctx-${test.id}` : undefined
++        try {
++            fn()
++        } finally {
++            currentContext = undefined
 +        }
-+        await $('#i').click()
-+        await browser.keys(['a', 'b'])
-+        await expect($('#i')).toHaveValue('ab')
++    }
++    const leafKey = (test: PlannedTest) => test.suites.join('>')
++    const message = (type: string, test: PlannedTest, uid: string, extra: Record<string, unknown> = {}) => ({
++        type,
++        cid: CID,
++        specs: [SPEC],
++        uid,
++        title: test.title,
++        fullTitle: `${test.suites.join(' ')} ${test.title}`,
++        parent: test.suites.at(-1),
++        file: SPEC,
++        parentUid: uids.get(leafKey(test)),
++        ...(mode === 'parallel' ? { contextId: `ctx-${test.id}` } : {}),
++        ...extra,
++    })
++    const hookMessage = (type: string, kind: string, test: PlannedTest, uid: string, extra: Record<string, unknown> = {}) => ({
++        ...message(type, test, uid, extra),
++        title: `"${kind}" hook for ${test.suites.at(-1)}`,
++        fullTitle: `${test.suites.at(-1)}.${kind} hook`,
++    })
++    const command = (type: 'client:beforeCommand' | 'client:afterCommand', test: PlannedTest, name: string) => ({
++        command: name,
++        params: [],
++        cid: CID,
++        sessionId: 'session',
++        ...(mode === 'parallel' ? { contextId: `ctx-${test.id}` } : {}),
++        ...(type === 'client:afterCommand' ? { result: undefined } : {}),
++    })
++    const suiteMessage = (type: string, key: string) => {
++        const titles = key.split('>')
++        return {
++            type, cid: CID, specs: [SPEC], uid: uids.get(key), title: titles.at(-1), fullTitle: titles.join(' '),
++            parent: '', file: SPEC, parentUid: parents.get(key),
++        }
++    }
++    return { outputDir, reporter, emit, inContext, message, hookMessage, command, suiteMessage, uids, mode }
++}
++
++/** the steps one test emits, in the order its Mocha lifecycle produces them */
++function scriptOf(h: Harness, test: PlannedTest): Array<() => void> {
++    const { emit, message, hookMessage, command } = h
++    const steps: Array<() => void> = []
++    const run = (fn: () => void) => steps.push(() => h.inContext(test, fn))
++   
+```
+
+**File**: `packages/wdio-cucumber-framework/src/parallel.ts` (modified, +37/-40)
+```diff
+@@ -5,7 +5,7 @@
+  * replaces the sequential `runCucumber()` call with parallel execution:
+  *   1. Parse Gherkin feature files to collect all pickles (scenarios)
+  *   2. Run scenarios through a pool of `maxParallelContexts` slots; each
+- *      slot prefetches its next browsing context (window) while a scenario runs
++ *      pool keeps spare browsing contexts (windows) ready while scenarios run
+  *      and closes finished windows in the background (a slot never has more
+  *      than one window close in flight; it awaits the previous close first)
+  *   3. Await all pending window/user-context cleanups before returning
+@@ -1029,8 +1029,9 @@ export async function runParallelCucumber(params: {
+     }
+ 
+     // --- 7. Run scenarios through the slot pool ---
+-    // Each slot owns one live window plus at most one prefetched for its next
+-    // scenario, so window create/close stays off the gap between scenarios.
++    // Each slot owns one live window and at most one closing. The run keeps a
++    // shared pool of spares, never more than the scenarios not yet taken, so
++    // window create/close stays off the gap between scenarios.
+     const runStart = Date.now()
+     const allResults: PromiseSettledResult<ScenarioResult>[] = []
+     const cleanups: Promise<void>[] = []
+@@ -1039,57 +1040,49 @@ export async function runParallelCucumber(params: {
+         runtimeOptions, assembledTestCases, parallelStore, snippetBuilder,
+     }
+     let cursor = beforeAllOk && !runFailure ? 0 : allPickles.length
++    const spares: Promise<ParallelContextAllocation>[] = []
+     let stopped = false
+     let allocationFailed = false
+     let allocationError: unknown
+ 
+     const runSlot = async () => {
+-        let prefetched: Promise<ParallelContextAllocation> | undefined
+         let pendingClose: Promise<void> | undefined
+         // A close failure is reported through `cleanups`; here we only serialize.
+         const closeInBackground = async (allocation: ParallelContextAllocation) => {
+             await pendingClose?.catch(() => {})
+             pendingClose = cleanupAllocation(bidi, allocation)
+             cleanups.push(pendingClose)
+         }
+-        try {
+-            while (!stopped) {
+-                const index = cursor++
+-                if (index >= allPickles.length) { break }
+-                let allocation: ParallelContextAllocation
+-                try {
+-                    allocation = await (prefetched ?? allocateContext(bidi, mode))
+-                } catch (err) {
+-                    prefetched = undefined
+-                    if (!allocationFailed) { allocationFailed = true; allocationError = err }
+-                    stopped = true
+-                    break
+-                }
+-                prefetched = undefined
+-                if (cursor < allPickles.length && !stopped) {
+-                    prefetched = allocateContext(bidi, mode)
+-                    prefetched.catch(() => {})
+-                }
+-                const pickle = allPickles[index]
+-                let result: PromiseSettledResult<ScenarioResult>
+-                try {
+-                    result = {
+-                        status: 'fulfilled',
+-                        value: await runScenario({ pickle, group: pickleToGroup.get(pickle)!, index, allocation }, runParams),
+-                    }
+-                } catch (reason) {
+-                    result = { status: 'rejected', reason }
+-                } finally {
+-                    await closeInBackground(allocation)
+-                }
+-                allResults.push(result)
+-                if (failFast && isFailedResult(result, cucumberOpts)) { stopped = true }
++        while (!stopped) {
++            const index = cursor++
++            if (index >= allPickles.length) { break }
++            let allocation: ParallelContextAllocation
++            try {
++                allocation = await (spares.shift() ?? allocateContext(bidi, mode))
++            } catch (err) {
++                if (!allocationFailed) { allocationFailed = true; allocationError = err }
++                stopped = true
++                break
+             }
+-        } finally {
+-            if (prefetched) {
+-                const unused = await prefetched.catch(() => undefined)
+-                if (unused) { await closeInBackground(unused) }
++            if (!stopped && allPickles.length - cursor > spares.length) {
++                const next = allocateContext(bidi, mode)
++                next.catch(() => {})
++                spares.push(next)
+             }
++            const pickle = allPickles[index]
++            let result: PromiseSettledResult<ScenarioResult>
++            try {
++                result = {
++                    status: 'fulfilled',
++                    value: await runScenario({ pickle, group: pickleToGroup.get(pickle)!, index, allocation }, runParams),
++                }
++            } catch (reason) {
++                result = { status: 'rejected', reason }
++            } finally {
++
+```
+
+**File**: `packages/wdio-cucumber-framework/tests/parallel.test.ts` (modified, +39/-11)
+```diff
+@@ -485,7 +485,7 @@ describe('runParallelCucumber', () => {
+         })
+ 
+         const calls = browser.browsingContextCreate.mock.calls
+-        expect(calls.length).toBeGreaterThanOrEqual(4)
++        expect(calls.length).toBe(4)
+         for (const [params] of calls) {
+             expect(params).toEqual({ type: 'window' })
+         }
+@@ -508,11 +508,8 @@ describe('runParallelCucumber', () => {
+             cucumberOpts: defaultCucumberOpts({ maxParallelContexts: 2 }),
+         })
+ 
+-        // 4 scenarios, 2 slots; prefetched-but-unused tabs may add creates, each is closed
+-        const created = browser.browsingContextCreate.mock.calls.length
+-        expect(created).toBeGreaterThanOrEqual(4)
+-        expect(created).toBeLessThanOrEqual(4 + 2)
+-        expect(browser.browsingContextClose).toHaveBeenCalledTimes(created)
++        expect(browser.browsingContextCreate).toHaveBeenCalledTimes(4)
++        expect(browser.browsingContextClose).toHaveBeenCalledTimes(4)
+     })
+ 
+     test('processes all scenarios when limited by slots', async () => {
+@@ -532,8 +529,7 @@ describe('runParallelCucumber', () => {
+             cucumberOpts: defaultCucumberOpts({ maxParallelContexts: 2 }),
+         })
+ 
+-        // each scenario's tab is closed (plus any unused prefetched tab)
+-        expect(browser.browsingContextClose.mock.calls.length).toBeGreaterThanOrEqual(4)
++        expect(browser.browsingContextClose).toHaveBeenCalledTimes(4)
+     })
+ 
+     // ---- failFast ----
+@@ -1387,11 +1383,43 @@ describe('runParallelCucumber worker pool', () => {
+         }
+     })
+ 
+-    test('cleans up prefetched allocations that no scenario ends up using', async () => {
++    test('creates exactly one tab per scenario, with no spare left over', async () => {
+         const browser = mockBrowser()
+-        await run(browser, names(3), { step0: () => {}, step1: () => {}, step2: () => {} }, 2)
++        const { result } = await run(browser, names(8), Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`step${i}`, () => {}])), 4)
+ 
+-        expect(browser.browsingContextClose).toHaveBeenCalledTimes(browser.browsingContextCreate.mock.calls.length)
++        expect(result).toBe(0)
++        expect(browser.browsingContextCreate).toHaveBeenCalledTimes(8)
++        expect(browser.browsingContextClose).toHaveBeenCalledTimes(8)
++        expect(browser.__parallelContexts.size).toBe(0)
 +    })
 +
-+    /**
-+     * Appium has no `wheel` action
-+     */
-+    describe('scroll', () => {
-+        it('scrolls an element into view', async () => {
-+            await browser.url(`${origin}/far`)
-+            await $('#far').scrollIntoView()
-+            await expect($('#far')).toBeDisplayed({ withinViewport: true })
++    test('cleans up a spare that no scenario ends up using after an allocation failure', async () => {
++        const browser = mockBrowser()
++        let n = 0
++        let failSecond!: (err: Error) => void
++        browser.browsingContextCreate.mockImplementation(async () => {
++            n++
++            if (n === 2) { return new Promise((_, reject) => { failSecond = reject }) }
++            if (n === 3) { failSecond(new Error('slot allocation failed')) }
++            return { context: `ctx-${n}` }
 +        })
++        const { error } = await run(browser, names(3), { step0: () => {}, step1: () => {}, step2: () => {} }, 2)
 +
-+        it('scrolls the page', async () => {
-+            await browser.url(`${origin}/far`)
-+            await browser.scroll(0, 500)
-+            /**
-+             * iOS Safari: in about 1 run of 5, `scrollY` was still 0 directly after the scroll
-+             */
-+            await browser.waitUntil(async () => await browser.execute(() => window.scrollY) > 0, {
-+                timeout: 5000,
-+                timeoutMsg: 'the pag
++        expect(error?.message).toBe('slot allocation failed')
++        expect(browser.browsingContextCreate).toHaveBeenCalledTimes(3)
++        expect(browser.browsingContextClose).toHaveBeenCalledTimes(2)
++        expect(browser.__parallelContexts.size).toBe(0)
++    })
++
++    test('closes a leftover spare when failFast stops the run', async () => {
++        const browser = mockBrowser()
++        await run(browser, names(4), {
++            step0: () => { throw new Error('boom') },
++            step1: () => {}, step2: () => {}, step3: () => {},
++        }, 2, { failFast: true })
++
++        expect(browser.browsingContextCreate).toHaveBeenCalledTimes(4)
++        expect(browser.browsingContextClose).toHaveBeenCalledTimes(4)
+         expect(browser.__parallelContexts.size).toBe(0)
+     })
+ 
 ```
 
-**File**: `e2e/wdio/mobile/wdio.android.conf.ts` (added, +46/-0)
+---
+
+### Incident Patch 3: `c14f4367` (2026-10-23)
+**Commit Message**: fix(@wdio/mocha-framework): send the hook and test events of a sequential run in parallel mode (#16171)
+
+* fix(@wdio/utils): keep the function name of a Mocha hook in its title
+
+Mocha titles a hook after its function (`"before each" hook: login`).
+The WebdriverIO wrapper was called `wrappedHook`, so every hook title had
+`wrappedHook` instead of the name of the user hook, or instead of no name
+for an anonymous hook. It showed in the error of a test that a failed hook
+skipped and in the names of root-level hooks, for example in Allure.
+
+The wrapper now gets the name of the user hook, as it already gets its
+toString().
+
+* fix(@wdio/mocha-framework): send the hook and test events of a sequential run in parallel mode
+
+Parallel mode sent some Mocha events differently from a sequential run:
+
+- test:pass / test:fail / test:pending and test:end came after the
+  afterEach and after hooks. Mocha sends them before afterEach.
+- this.skip() in a before or beforeEach hook gave hook:end with the error
+  "sync skip; aborting execution", so reporters showed a hook failure.
+  It is now a pending hook, as in #14649.
+- The error of a test or hook had no type, expected or actual.
+- A test that a failed 
+
+**File**: `.agents/skills/wdio-v10-migration/SKILL.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+import url from 'node:url'
-+import path from 'node:path'
+@@ -49,6 +49,7 @@ Do not set `strictSelectors: false` unless the user asks to keep the v9 behavior
+ | a custom reporter, or Allure history, that expects the Cucumber feature uid `<file name>:<line>:<column>` | the uid is `<path from rootDir>:<line>:<column>` (`%`, `:` and `#` in the path are `%25`, `%3A` and `%23`); a feature that starts again in a random grouped run has `<uid>#2`. With `scenarioLevelReporter`, Allure history starts again, and again when `rootDir` or the feature path changes: give config files in other folders the same `rootDir`. |
+ | `wdio-cucumberjs-json-reporter` | `@wdio/cucumberjs-json-reporter`, also in the `import` of `attach`. Uninstall the old package. `reporters: ['cucumberjs-json']` stays. Scripts that read the JSON files: check the changes in the guide (ids, hooks, doc strings, statuses, retries). |
+ | `mochaOpts.compilers` | `mochaOpts.require`. A leftover `compilers` list is ignored. |
++| a script or report filter that matches `wrappedHook` in a Mocha hook title | the title has the hook description or function name (`"before each" hook: login for "my test"`), or no name for an anonymous hook (`"before each" hook for "my test"`) |
+ | `this.timeout(ms)` in a Mocha test | keep it. WebdriverIO now follows it (v9 ignored `this.timeout()` inside a test), and `mochaOpts.timeout: 0` turns the timeout off. The `retry` argument does not run a test again after a timeout. For `mochaOpts.parallelMode`, see the guide. |
+ | New in v10, no migration needed | [parallel tests in a spec file](https://webdriver.io/docs/parallel-tests.md) with `mochaOpts.parallelMode` or `cucumberOpts.parallelMode`. |
+ | `multiremotebrowser` | `multiRemoteBrowser` |
+```
+
+**File**: `packages/wdio-allure-reporter/src/reporter.ts` (modified, +34/-5)
+```diff
+@@ -7,6 +7,7 @@ import type {
+     AfterCommandArgs,
+     Argument,
+     BeforeCommandArgs,
++    ContextEnd,
+     HookStats,
+     RunnerStats,
+     SuiteStats,
+@@ -67,12 +68,14 @@ type StepWrapper = { step: StepPayload }
+ 
+ type ReportLane = {
+     main: WDIORuntimeMessage[]
+-    // after-each/after-all hooks run before test:pass in parallel mode but after test:end in
+-    // sequential mode, so they are held back here and replayed after the test's own messages
++    // added for the Mocha framework: a framework that sends the after hooks of a parallel test
++    // before its test:pass gets them held back here and replayed after the test's own messages
+     tail: WDIORuntimeMessage[]
+     inTail: boolean
+     console: string
+     suitePath?: string[]
++    // title of the test after its test:end: the lane stays open for the after hooks that follow
++    endedTitle?: string
+ }
+ 
+ const AFTER_HOOK_PATTERN = /^"after\s+(?:each|all)"\s+hook/i
+@@ -228,7 +231,7 @@ export default class AllureReporter extends WDIOReporter {
+                     const lane = self._openLane()
+                     if (!lane) {
+                         if (!self._lanesSeen) { self._consoleOutput += str }
+-                    } else if (!lane.inTail) {
++                    } else if (!lane.inTail && lane.endedTitle === undefined) {
+                         lane.console += str
+                     }
+                 }
+@@ -277,7 +280,24 @@ export default class AllureReporter extends WDIOReporter {
+             return
+         }
+         const lane = this._openLane(key)
+-        if (lane) { (lane.inTail ? lane.tail : lane.main).push(message) }
++        if (!lane) { return }
++        // after test:end the context runs only the after hooks of its test: their messages
++        // (also the runtime API of a hook with disableMochaHooks) belong to that test, as in a sequential run
++        (lane.inTail ? lane.tail : lane.main).push(message)
++    }
 +
-+const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
++    /**
++     * In parallel mode every suite:end comes after the last test and its hooks, so a lane
++     * that no context:end closed (older framework) closes there, with its after hooks
++     */
++    private _closeEndedLanes(): void {
++        let closed = false
++        for (const [key, lane] of [...this._lanes]) {
++            if (lane.endedTitle === undefined) { continue }
++            this._closeLane(key, lane.endedTitle)
++            closed = true
++        }
++        if (closed) { this._flushIncrementally() }
+     }
+ 
+     /**
+@@ -783,6 +803,7 @@ export default class AllureReporter extends WDIOReporter {
+     }
+ 
+     onSuiteEnd(suite: SuiteStats & { end: Date }): void {
++        this._closeEndedLanes()
+         const isScenario = suite.type === 'scenario'
+         const cid = this._currentCid()
+ 
+@@ -1158,7 +1179,15 @@ export default class AllureReporter extends WDIOReporter {
+     onTestEnd(test: TestStats): void {
+         const key = this._laneKey()
+         if (!key) { return }
+-        this._closeLane(key, test.title)
++        const lane = this._openLane(key)
++        if (lane) { lane.endedTitle = test.title }
++    }
 +
++    // the context runs no more hooks: write its test now, while other tests still run
++    onContextEnd(payload: ContextEnd): void {
++        const lane = this._lanes.get(payload.contextId)
++        if (!lane) { return }
++        this._closeLane(payload.contextId, lane.endedTitle ?? payload.contextId)
+         this._flushIncrementally()
+     }
+ 
+```
+
+**File**: `packages/wdio-allure-reporter/tests/mochaParallel.test.ts` (modified, +110/-7)
+```diff
+@@ -27,6 +27,12 @@ type PlannedTest = {
+     noAfterAll?: boolean
+     /** leave the lane open: no pass/fail/end */
+     unfinished?: boolean
++    /** a framework that sends the after hooks of a parallel test before its test:end, and no context:end */
++    afterHooksBeforeEnd?: boolean
++    afterEachFails?: boolean
++    /** an afterEach that calls the Allure runtime API */
++    afterEachApi?: boolean
++    afterAllFails?: boolean
+ }
+ 
+ const A1: PlannedTest = { id: 'a1', title: 'passes', suites: ['A'], outcome: 'pass' }
+@@ -52,14 +58,15 @@ const suiteUids = (tests: PlannedTest[]) => {
+ 
+ type Harness = ReturnType<typeof createHarness>
+ 
+-function createHarness(mode: Mode, tests: PlannedTest[]) {
++function createHarness(mode: Mode, tests: PlannedTest[], options: Record<string, unknown> = {}) {
+     const outputDir = temporaryDirectory()
+     const { uids, parents } = suiteUids(tests)
+     let currentContext: string | undefined
+     const reporter = new AllureReporter({
+         outputDir,
+         addConsoleLogs: true,
+         writeStream: { write: () => true },
++        ...options,
+     } as any)
+     if (mode === 'parallel') {
+         reporter.setContextIdResolver(() => currentContext)
+@@ -146,6 +153,11 @@ function scriptOf(h: Harness, test: PlannedTest): Array<() => void> {
+         run(() => emit('test:end', message('test:end', test, test.id, { duration: 1, ...extra })))
+     }
+     const start = () => run(() => emit('test:start', message('test:start', test, test.id)))
++    const contextEnd = () => {
++        if (h.mode === 'parallel' && !test.afterHooksBeforeEnd) {
++            run(() => emit('context:end', { type: 'context:end', cid: CID, specs: [SPEC], uid: test.id, contextId: `ctx-${test.id}` }))
++        }
++    }
+     const body = () => {
+         run(() => process.emit(events.startStep as any, `${test.id}-step` as any))
+         run(() => h.reporter.addAttachment({ name: `${test.id}-attachment`, content: `content of ${test.id}`, type: 'text/plain' }))
+@@ -158,32 +170,42 @@ function scriptOf(h: Harness, test: PlannedTest): Array<() => void> {
+ 
+     if (test.outcome === 'skip-static') {
+         finish('test:pending')
++        contextEnd()
+         return steps
+     }
+     if (test.outcome === 'hook-fail') {
+         hook('before all', hookBody('before all'), new Error('before all exploded'))
+         hook('after all', hookBody('after all'))
+         start()
+         finish('test:fail')
++        contextEnd()
+         return steps
+     }
+ 
+     const afterHooks = () => {
+-        hook('after each', hookBody('after each'))
+-        hook('after all', hookBody('after all'))
++        hook('after each', () => {
++            hookBody('after each')()
++            if (test.afterEachApi) {
++                run(() => h.reporter.addAttachment({ name: `${test.id}-ae-attachment`, content: 'from afterEach', type: 'text/plain' }))
++                run(() => process.emit(events.startStep as any, `${test.id}-ae-api-step` as any))
++                run(() => process.emit(events.endStep as any, 'passed' as any))
++            }
++        }, test.afterEachFails ? new Error('after each exploded') : undefined)
++        hook('after all', hookBody('after all'), test.afterAllFails ? new Error('after all exploded') : undefined)
+     }
+     hook('before all', hookBody('before all', true))
+     start()
+     hook('before each', hookBody('before each'))
+     body()
+     if (test.unfinished) { return steps }
+-    if (h.mode === 'parallel') {
++    if (h.mode === 'parallel' && test.afterHooksBeforeEnd) {
+         afterHooks()
+         finish(finishKind)
+     } else {
+         finish(finishKind)
+         afterHooks()
+     }
++    contextEnd()
+     return steps
+ }
+ 
+@@ -194,8 +216,8 @@ function interleave(scripts: Array<Array<() => void>>) {
+     }
+ }
+ 
+-async function play(mode: Mode, tests: PlannedTest[], extra?: (h: Harness) => void | Promise<void>, parallelConfigured = mode === 'parallel') {
+-    const h = createHarness(mode, tests)
++async function play(mode: Mode, tests: PlannedTest[], extra?: (h: Harness) => void | Promise<void>, parallelConfigured = mode === 'parallel', options?: Record<string, unknown>) {
++    const h = createHarness(mode, tests, options)
+     const config = { framework: 'mocha', mochaOpts: parallelConfigured ? { parallelMode: true } : {} }
+     h.emit('runner:start', {
+         cid: CID, specs: [SPEC], capabilities: { browserName: 'chrome' }, config,
+@@ -330,6 +352,68 @@ describe('Mocha parallel mode', () => {
+             expect(stepNames([...befores, ...afters]).filter((name) => name.includes('b1-'))).toEqual([])
+         })
+ 
++        it('reports a failing after all hook after test:end as broken, for each test', async () => {
++            const first: PlannedTest = { id: 'h1', title: 'first', suites: ['H'], outcome: 'pass', afterAllFails: true }
++            const second: PlannedTest = { id: 'h2', title: 'second', suites: ['H'], outcome: 'pass', afterAllFails: true }
++            const played = await play('pa
+```
+
+**File**: `packages/wdio-mocha-framework/src/common.ts` (modified, +29/-22)
+```diff
+@@ -1,7 +1,7 @@
+ import { wrapGlobalTestMethod } from '@wdio/utils'
+ 
+ import { INTERFACES, TEST_INTERFACES, MOCHA_TIMEOUT_MESSAGE } from './constants.js'
+-import type { FormattedMessage, FrameworkMessage, MochaOpts } from './types.js'
++import type { FormattedMessage, FrameworkMessage, MochaError, MochaOpts } from './types.js'
+ 
+ /**
+ * Extracts the mocha UI type following this convention:
+@@ -41,6 +41,32 @@ export function dottedFullTitle(title: string, parent?: TitledNode | null) {
+     return fullTitle
+ }
+ 
 +/**
-+ * Local only: Chrome on an Android emulator with Appium UiAutomator2. Needs the
-+ * Android SDK with an emulator (AVD) that has Chrome, and a global Appium with
-+ * the UiAutomator2 driver (see CONTRIBUTING.md). Run with `pnpm run test:android:local`.
++ * The error of a reporter message, also used by parallel mode
 + */
-+export const config: WebdriverIO.Config = {
-+    specs: [path.join(__dirname, 'mobileWeb.e2e.ts')],
++export function formatError (err: MochaError, testName: string): MochaError {
++    /**
++     * replace "Ensure the done() callback is being called in this test." with a more meaningful message
++     */
++    if (err.message && err.message.includes(MOCHA_TIMEOUT_MESSAGE)) {
++        const replacement = (
++            `The execution in the test "${testName}" took too long. Try to reduce the run time or ` +
++            'increase your timeout for test specs (https://webdriver.io/docs/timeouts).'
++        )
++        err.message = err.message.replace(MOCHA_TIMEOUT_MESSAGE, replacement)
++        err.stack = err.stack?.replace(MOCHA_TIMEOUT_MESSAGE, replacement)
++    }
 +
-+    capabilities: [{
-+        platformName: 'Android',
-+        browserName: 'Chrome',
-+        'appium:automationName': 'UiAutomator2',
-+        /**
-+         * Appium starts this emulator when no device is connected
-+         */
-+        ...(process.env.ANDROID_AVD ? { 'appium:avd': process.env.ANDROID_AVD } : {}),
-+        ...(process.env.ANDROID_UDID ? { 'appium:udid': process.env.ANDROID_UDID } : {}),
-+        'appium:avdLaunchTimeout': 300_000
-+    }],
-+    connectionRetryTimeout: 600_000,
-+    connectionRetryCount: 0,
-+
-+    services: [['appium', {
-+        command: process.env.APPIUM_COMMAND || 'appium',
-+        /**
-+         * download a Chromedriver for the Chrome version of the emulator
-+         */
-+        args: { allowInsecure: 'uiautomator2:chromedriver_autodownload' }
-+    }]],
-+
-+    logLevel: 'info',
-+    framework: 'mocha',
-+    outputDir: path.join(__dirname, 'logs', 'android'),
-+
-+    reporters: ['spec'],
-+
-+    mochaOpts: {
-+        ui: 'bdd',
-+        timeout: 120_000
++    return {
++        name: err.name,
++        message: err.message,
++        stack: err.stack,
++        type: err.type || err.name,
++        expected: err.expected,
++        actual: err.actual
 +    }
 +}
++
+ export function formatMessage (params: FrameworkMessage) {
+     const message: FormattedMessage = {
+         type: params.type
+@@ -67,27 +93,8 @@ export function formatMessage (params: FrameworkMessage) {
+              */
+             message.type = 'hook:end'
+         } else {
+-            /**
+-             * replace "Ensure the done() callback is being called in this test." with a more meaningful message
+-             */
+-            if (params.err && params.err.message && params.err.message.includes(MOCHA_TIMEOUT_MESSAGE)) {
+-                const testName = (payload?.parent?.title ? `${payload.parent.title} ${payload.title}` : payload?.title) || 'unknown test'
+-                const replacement = (
+-                    `The execution in the test "${testName}" took too long. Try to reduce the run time or ` +
+-                    'increase your timeout for test specs (https://webdriver.io/docs/timeouts).'
+-                )
+-                params.err.message = params.err.message.replace(MOCHA_TIMEOUT_MESSAGE, replacement)
+-                params.err.stack = params.err.stack.replace(MOCHA_TIMEOUT_MESSAGE, replacement)
+-            }
+-
+-            message.error = {
+-                name: params.err.name,
+-                message: params.err.message,
+-                stack: params.err.stack,
+-                type: params.err.type || params.err.name,
+-                expected: params.err.expected,
+-                actual: params.err.actual
+-            }
++            const testName = (payload?.parent?.title ? `${payload.parent.title} ${payload.title}` : payload?.title) || 'unknown test'
++            message.error = formatError(params.err, testName)
+ 
+             /**
+              * hook failures are emitted as "test:fail"
 ```
 
-**File**: `e2e/wdio/mobile/wdio.ios.conf.ts` (added, +42/-0)
+**File**: `packages/wdio-mocha-framework/src/index.ts` (modified, +41/-11)
 ```diff
-@@ -0,0 +1,42 @@
-+import url from 'node:url'
-+import path from 'node:path'
-+
-+const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
-+
-+/**
-+ * Local only: iOS Safari on a Simulator with Appium XCUITest. Needs macOS,
-+ * Xcode with an iOS runtime, and a global Appium with the XCUITest driver
-+ * (see CONTRIBUTING.md). Run with `pnpm run test:ios:local`.
-+ */
-+export const config: WebdriverIO.Config = {
-+    specs: [path.join(__dirname, 'mobileWeb.e2e.ts')],
-+
-+    capabilities: [{
-+        platformName: 'iOS',
-+        browserName: 'Safari',
-+        'appium:automationName': 'XCUITest',
-+        'appium:deviceName': process.env.IOS_DEVICE_NAME || 'iPhone 17',
-+        ...(process.env.IOS_PLATFORM_VERSION ? { 'appium:platformVersion': process.env.IOS_PLATFORM_VERSION } : {}),
-+        ...(process.env.IOS_UDID ? { 'appium:udid': process.env.IOS_UDID } : {}),
-+        ...(process.env.PREBUILT_WDA_PATH ? { 'appium:prebuiltWDAPath': process.env.PREBUILT_WDA_PATH, 'appium:usePreinstalledWDA': true } : {}),
-+        /**
-+         * the first session builds WebDriverAgent
-+         */
-+        'appium:wdaLaunchTimeout': 300_000
-+    }],
-+    connectionRetryTimeout: 600_000,
-+    connectionRetryCount: 0,
-+
-+    services: [['appium', { command: process.env.APPIUM_COMMAND || 'appium' }]],
-+
-+    logLevel: 'info',
-+    framework: 'mocha',
-+    outputDir: path.join(__dirname, 'logs', 'ios'),
-+
-+    reporters: ['spec'],
-+
-+    mochaOpts: {
-+        ui: 'bdd',
-+        timeout: 120_000
-+    }
+@@ -28,6 +28,13 @@ interface ParsedConfiguration extends Required<WebdriverIO.Config> {
+     mochaOpts: MochaOptsImport
+ }
+ 
++/** The reporter fields of a root-suite hook in a sequential run (Mocha's setHookTitle) */
++function rootHookMessage(kind: 'before all' | 'after all', tests: { title: string }[] = []) {
++    const test = kind === 'before all' ? tests[0] : tests[tests.length - 1]
++    const title = test ? `"${kind}" hook for "${test.title}"` : `"${kind}" hook in "{root}"`
++    return { title, fullTitle: title, parent: '' }
 +}
++
+ /**
+  * Mocha runner
+  */
+@@ -43,6 +50,8 @@ class MochaAdapter {
+     private _suiteCnt: Map<string, number> = new Map()
+     private _hookCnt: Map<string, number> = new Map()
+     private _testCnt: Map<string, number> = new Map()
++    /** Mocha test and its uid between its test:start and its test:end */
++    private _openTest?: { payload: Record<string, unknown>, uid: string }
+     private _suiteStartDate: number = Date.now()
+ 
+     constructor(
+@@ -182,17 +191,19 @@ class MochaAdapter {
+         }
+ 
+         // Config hooks are surfaced as paired hook:start/hook:end events like
+-        // sequential mode's root-suite hooks (wrapHook), with prepareMessage
+-        // payloads. They run against the session-global context (no tab).
++        // sequential mode's root-suite hooks (wrapHook): prepareMessage payloads
++        // with Mocha's root hook title. They run against the session-global context (no tab).
++        const rootTests = (mocha.suite as unknown as { tests?: { title: string }[] }).tests
+         const beforeSuiteMsg = this.prepareMessage('beforeSuite')
++        const beforeSuiteHook = { ...beforeSuiteMsg, ...rootHookMessage('before all', rootTests) }
+         const beforeSuiteUid = this.getSyncEventIdStart('hook')
+-        this._reporter.emit('hook:start', { ...beforeSuiteMsg, type: 'hook:start', cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
++        this._reporter.emit('hook:start', { ...beforeSuiteHook, type: 'hook:start', cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
+         try {
+             await executeHooksWithArgs('beforeSuite', this._config.beforeSuite as Function, [beforeSuiteMsg])
+-            this._reporter.emit('hook:end', { ...beforeSuiteMsg, type: 'hook:end', state: 'pass', duration: Date.now() - this._suiteStartDate, cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
++            this._reporter.emit('hook:end', { ...beforeSuiteHook, type: 'hook:end', state: 'pass', duration: Date.now() - this._suiteStartDate, cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
+         } catch (err) {
+             log.error(`Error in beforeSuite hook: ${(err as Error).stack?.slice(7) || (err as Error).message}`)
+-            this._reporter.emit('hook:end', { ...beforeSuiteMsg, type: 'hook:end', state: 'fail', duration: Date.now() - this._suiteStartDate, error: { name: (err as Error).name || 'Error', message: (err as Error).message, stack: (err as Error).stack }, cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
++            this._reporter.emit('hook:end', { ...beforeSuiteHook, type: 'hook:end', state: 'fail', duration: Date.now() - this._suiteStartDate, error: { name: (err as Error).name || 'Error', message: (err as Error).message, stack: (err as Error).stack }, cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
+         }
+ 
+         let failures: number
+@@ -207,7 +218,8 @@ class MochaAdapter {
+                     grep: mocha.options?.grep as RegExp | undefined,
+                     invert: mocha.options?.invert,
+                     timeout: this._config.mochaOpts.timeout,
+-                    mode
++                    mode,
++                    failHookAffectedTests: this._config.mochaOpts.failHookAffectedTests
+                 }
+             )
+         } catch (err) {
+@@ -216,14 +228,15 @@ class MochaAdapter {
+         }
+ 
+         const afterSuiteMsg = this.prepareMessage('afterSuite')
++        const afterSuiteHook = { ...afterSuiteMsg, ...rootHookMessage('after all', rootTests) }
+         const afterSuiteStartUid = this.getSyncEventIdStart('hook')
+-        this._reporter.emit('hook:start', { ...afterSuiteMsg, type: 'hook:start', cid: this._cid, specs: this._specs, uid: afterSuiteStartUid })
++        this._reporter.emit('hook:start', { ...afterSuiteHook, type: 'hook:start', cid: this._cid, specs: this._specs, uid: afterSuiteStartUid })
+         try {
+             await executeHooksWithArgs('afterSuite', this._config.afterSuite as Function, [afterSuiteMsg])
+-            this._reporter.emit('hook:end', { ...afterSuiteMsg, type: 'hook:end', state: 'pass', duration: Date.now() - this._suiteStartDate, cid: this._cid, specs: this._specs, uid: this.getSyncEventIdEnd('hook') })
++            this._reporter.emit('hook:end', { ...afterSuiteHook, type: 'hook:end', state: 'pass', duration: Date.now() - this._suiteStartDate, cid: this._cid, specs: this._specs, uid: this.getSyncEventIdEnd('hook') })
+         } catch 
 ```
 
-**File**: `package.json` (modified, +2/-0)
+**File**: `packages/wdio-mocha-framework/src/parallel.ts` (modified, +108/-48)
 ```diff
-@@ -80,6 +80,8 @@
-     "test:e2e:display-server": "cd ./e2e && npx wdio run ./wdio/display-server/wdio.conf.ts && npx wdio run ./wdio/display-server/wdio.runner.conf.ts",
-     "test:e2e:chromedriver": "cd ./e2e && npx wdio run ./wdio/chromedriver/wdio.conf.ts",
-     "test:e2e": "run-s test:e2e:* ",
-+    "test:ios:local": "cd ./e2e && npx wdio run ./wdio/mobile/wdio.ios.conf.ts",
-+    "test:android:local": "cd ./e2e && npx wdio run ./wdio/mobile/wdio.android.conf.ts",
-     "dev": "pnpm -r --filter=@wdio/compiler run build --watch",
-     "watch:docs": "pnpm docs:generate:en && cd website && pnpm i && pnpm exec docusaurus start",
-     "version": "pnpm changelog && git add CHANGELOG.md",
+@@ -18,7 +18,9 @@ import os from 'node:os'
+ import type { AsyncLocalStorage } from 'node:async_hooks'
+ import type { Suite } from 'mocha'
+ import logger from '@wdio/logger'
+-import { dottedFullTitle, type TitledNode } from './common.js'
++import { dottedFullTitle, formatError, type TitledNode } from './common.js'
++import { MOCHA_TIMEOUT_MESSAGE } from './constants.js'
++import type { MochaError } from './types.js'
+ import type { EventEmitter } from 'node:events'
+ 
+ const log = logger('@wdio/mocha-framework:parallel')
+@@ -119,6 +121,8 @@ interface CollectedTest {
+     suiteIndex?: number
+     /** Mocha's resolved timeout for this test (`_timeout`) */
+     timeout?: number
++    /** Mocha's resolved retries for this test (`_retries`): `mochaOpts.retries`, `this.retries(n)` in a describe, `it().retries(n)` */
++    retries?: number
+ }
+ 
+ interface CollectedSuite {
+@@ -198,7 +202,8 @@ function collectAll(suite: Suite, match?: (test: CollectedTest) => boolean): Sui
+                 pending: !!test.pending || !fn,
+                 file: test.file || undefined,
+                 suiteIndex,
+-                timeout: (test as unknown as { _timeout?: number })._timeout
++                timeout: (test as unknown as { _timeout?: number })._timeout,
++                retries: (test as unknown as { _retries?: number })._retries
+             }
+             if (!match || match(collected)) {
+                 tests.push(collected)
+@@ -267,7 +272,23 @@ interface TestMessage {
+     contextId?: string
+     duration?: number
+     passed?: boolean
+-    error?: { name: string; message: string; stack?: string }
++    error?: MochaError
++}
++
++/** The test name that formatError puts in the timeout text, as formatMessage builds it */
++const testNameOf = (test: CollectedTest) => test.parentTitle ? `${test.parentTitle} ${test.title}` : test.title
++
++/** Mocha's own timeout error (Runnable#_timeoutError), so the text is the same as in a sequential run */
++function mochaTimeoutError(ms: number, file?: string) {
++    const err = new Error(`Timeout of ${ms}ms exceeded. ${MOCHA_TIMEOUT_MESSAGE}${file ? ` (${file})` : ''}`)
++    return Object.assign(err, { code: 'ERR_MOCHA_TIMEOUT', timeout: ms, file })
++}
++
++/** Mocha's error for a test that a failed hook skips (`failHookAffectedTests`, runner.js createHookSkipError) */
++function hookSkipError(hookTitle: string, err: Error) {
++    const skipError = new Error(`Test skipped due to failure in hook "${hookTitle}": ${err.message}`)
++    skipError.stack = err.stack
++    return skipError
+ }
+ 
+ function baseMessage(type: string, test: CollectedTest, cid: string, specs: string[], uid: string, contextId?: string) {
+@@ -301,11 +322,7 @@ function emitTestFail(
+     error: Error,
+     contextId: string
+ ) {
+-    const errorPayload = {
+-        name: error.name || 'Error',
+-        message: error.message,
+-        stack: error.stack
+-    }
++    const errorPayload = formatError(error as unknown as MochaError, testNameOf(test))
+     reporter.emit('test:fail', { ...baseMessage('test:fail', test, cid, specs, uid, contextId), duration, error: errorPayload })
+     reporter.emit('test:end', { ...baseMessage('test:end', test, cid, specs, uid, contextId), duration, passed: false, error: errorPayload })
+ }
+@@ -368,17 +385,18 @@ function emitHookEnd(
+     uid: string,
+     contextId: string,
+     duration: number,
+-    error?: Error
++    error?: Error,
++    pending?: boolean
+ ) {
+-    const errorPayload = error ? {
+-        name: error.name || 'Error',
+-        message: error.message,
+-        stack: error.stack
+-    } : undefined
++    const native = nativeHookTitle(kind, hook, test)
++    const errorPayload = error
++        ? formatError(error as unknown as MochaError, hook.parent?.title ? `${hook.parent.title} ${native}` : native)
++        : undefined
+     reporter.emit('hook:end', {
+         ...hookBaseMessage('hook:end', kind, hook, test, cid, specs, uid, contextId),
+         duration,
+-        state: error ? 'fail' : 'pass',
++        // `this.skip()` in a hook: no state and no error, as in a sequential run (#14649)
++        ...(pending ? { pending: true } : { state: error ? 'fail' : 'pass' }),
+         ...(errorPayload ? { error: errorPayload } : {})
+     })
+ }
+@@ -437,13 +455,14 @@ export function isSkipError(err?: unknown): boolean {
+  * function arguments before the user fn runs (filterSpecArgs) — the same
+  * limitation sequential mode has.
+  */
+-function createHookContext(testTitle: string | undefined, parentTitle: string | undefined, timeoutMs: number, fullTitle?: string) {
++function createHookContext(testTitle: string | undefined, parentTitle: string | undefined, timeoutMs: number, fullTitle?: string, file?: string) {
+     const test = testTitle ? { title: testTitle, parent: { title: parentTitle || '' }, state: undefined as 'passed' | 'failed' | undefined } : undefined
+     const resolvedFullTitle = fullTitle ?? `${parentTitle || ''} ${testTitle || ''}`.trim()
+     return {
+         test,
+         currentTest: 
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +3/-0)
+**File**: `packages/wdio-mocha-framework/tests/adapter.test.ts` (modified, +100/-3)
 ```diff
-@@ -246,6 +246,9 @@ importers:
-       '@wdio/ai-service':
-         specifier: workspace:*
-         version: link:../packages/wdio-ai-service
-+      '@wdio/appium-service':
-+        specifier: workspace:*
-+        version: link:../packages/wdio-appium-service
-       '@wdio/browser-runner':
-         specifier: workspace:*
-         version: link:../packages/wdio-browser-runner
+@@ -222,8 +222,11 @@ describe('parallel mode config hooks', () => {
+         // beforeSuite + afterSuite → two start/end pairs
+         expect(hookStarts.length).toBe(2)
+         expect(hookEnds.length).toBe(2)
+-        // prepareMessage payloads, not raw config-hook objects
+-        expect(hookStarts[0][1].title).toBe('first suite')
++        // the titles of the root-suite hooks of a sequential run
++        expect(hookStarts.map((c) => c[1].title)).toEqual(['"before all" hook in "{root}"', '"after all" hook in "{root}"'])
++        expect(hookEnds.map((c) => c[1].title)).toEqual(['"before all" hook in "{root}"', '"after all" hook in "{root}"'])
++        expect(hookStarts[0][1].fullTitle).toBe('"before all" hook in "{root}"')
++        expect(hookStarts[0][1].parent).toBe('')
+         expect(hookStarts[0][1].type).toBe('hook:start')
+         // start/end share a uid; afterSuite end carries duration + state
+         expect(hookStarts[0][1].uid).toBe(hookEnds[0][1].uid)
+@@ -233,6 +236,23 @@ describe('parallel mode config hooks', () => {
+         expect(runParallelTests).toBeCalledTimes(1)
+     })
+ 
++    test('titles beforeSuite/afterSuite with the first and the last test of the root suite, as Mocha does', async () => {
++        // @ts-ignore params not needed for test scenario
++        const adapter = adapterFactory({ mochaOpts: { parallelMode: 'contexts' } })
++        await adapter.init()
++        adapter['_mocha']!.suite = { suites: [{ title: 'first suite' }], tests: [{ title: 'first' }, { title: 'last' }] } as any
++
++        ;(globalThis as any).browser = { isBidi: true, __bidiCommandsEnabled: true }
++        try {
++            await adapter.run()
++        } finally {
++            delete (globalThis as any).browser
++        }
++
++        const hookStarts = wdioReporter.emit.mock.calls.filter((c) => c[0] === 'hook:start')
++        expect(hookStarts.map((c) => c[1].title)).toEqual(['"before all" hook for "first"', '"after all" hook for "last"'])
++    })
++
+     test('beforeSuite hook:end does not leak its duration into the afterSuite payload', async () => {
+         // @ts-ignore params not needed for test scenario
+         const adapter = adapterFactory({ mochaOpts: { parallelMode: 'contexts' } })
+@@ -309,7 +329,7 @@ describe('parallel mode mocha options', () => {
+         expect(runParallelTests).toBeCalledWith(
+             expect.anything(), expect.anything(), expect.anything(), '0-2', ['/foo/bar.test.js'],
+             undefined,
+-            { grep: /beta/, invert: true, timeout: 5000, mode: 'contexts' }
++            { grep: /beta/, invert: true, timeout: 5000, mode: 'contexts', failHookAffectedTests: true }
+         )
+     })
+ 
+@@ -418,6 +438,53 @@ test('emit does not emit anything on root level', () => {
+     expect(wdioReporter.emit).not.toBeCalled()
+ })
+ 
++test('emit ignores a second test:start for the test that is open', () => {
++    // @ts-ignore params not needed for test scenario
++    const adapter = adapterFactory()
++    const t1 = { title: 't1', type: 'test' }
++    const t2 = { title: 't2', type: 'test' }
++
++    // failing beforeEach with failHookAffectedTests: Mocha 11.8+ sends `test` twice (mochajs/mocha#6442)
++    adapter.emit('test:start', t1)
++    adapter.emit('test:start', t1)
++    adapter.emit('test:fail', t1, new Error('hook failed') as any)
++    adapter.emit('test:end', t1)
++    adapter.emit('test:start', t2)
++
++    expect(wdioReporter.emit.mock.calls.map(([type, { uid }]) => [type, uid])).toEqual([
++        ['test:start', 'test-0-0'],
++        ['test:fail', 'test-0-0'],
++        ['test:end', 'test-0-0'],
++        ['test:start', 'test-0-1'],
++    ])
++})
++
++test('emit gives an it.skip its own uid after a test that a failed beforeEach left open', () => {
++    // @ts-ignore params not needed for test scenario
++    const adapter = adapterFactory()
++    const t1 = { title: 't1', type: 'test' }
++    const t2 = { title: 't2', type: 'test' }
++
++    // failHookAffectedTests: false: Mocha sends no `test end` for the test of a failed beforeEach
++    adapter.emit('suite:start', { title: 'A' })
++    adapter.emit('test:start', t1)
++    adapter.emit('hook:start', { title: '"before each" hook', type: 'hook' })
++    adapter.emit('hook:end', { title: '"before each" hook', type: 'hook' }, new Error('hook failed') as any)
++    adapter.emit('suite:end', { title: 'A' })
++    adapter.emit('suite:start', { title: 'B' })
++    adapter.emit('test:pending', t2)
++    adapter.emit('test:end', t2)
++
++    expect(wdioReporter.emit.mock.calls
++        .filter(([type]) => type.startsWith('test:'))
++        .map(([type, { uid }]) => [type, uid])
++    ).toEqual([
++        ['test:start', 'test-00-0'],
++        ['test:pending', 'test-01-0'],
++        ['test:end', 'test-01-0'],
++    ])
++})
++
+ test('emit properly reports to reporter', () => {
+     // @ts-ignore params not needed for test scenario
+     const adapter = adapterFactory()
+@@ -448,6 +515,36 @@ test('emits "before all"-hook errors as hook:end', () => {
+     expect(wdi
+```
+
+**File**: `packages/wdio-mocha-framework/tests/parallel.test.ts` (modified, +192/-1)
+```diff
+@@ -44,7 +44,7 @@ function mockSuite(title: string, opts?: {
+ 
+ // Mocha Hook objects carry their declaring suite and original title; fns here stand in for them
+ function mockHook(title: string, parent: { title: string, tests?: { title: string }[] }, fn: Function = () => {}): any {
+-    return Object.assign((...args: unknown[]) => fn(...args), { title, parent: { tests: [], ...parent } })
++    return Object.assign(function (this: unknown, ...args: unknown[]) { return fn.apply(this, args) }, { title, parent: { tests: [], ...parent } })
+ }
+ 
+ // Helper to build a simplified ParallelBrowser for runParallelTests
+@@ -580,6 +580,197 @@ describe('runParallelTests — hook events and pending', () => {
+     })
+ })
+ 
++// ===========================================================================
++// TESTS: the events of a sequential Mocha run
++// ===========================================================================
++
++describe('runParallelTests — sequential event parity', () => {
++    let reporter: EventEmitter
++    let emittedEvents: any[]
++
++    beforeEach(() => {
++        reporter = new EventEmitter()
++        emittedEvents = []
++        for (const ev of ['test:start', 'test:pass', 'test:fail', 'test:pending', 'test:end', 'hook:start', 'hook:end']) {
++            reporter.on(ev, (p) => emittedEvents.push({ event: ev, payload: p }))
++        }
++    })
++
++    const order = () => emittedEvents.map((e) => e.event.startsWith('hook:') ? `${e.event} ${e.payload.title}` : e.event)
++    const withHooks = (fn?: Function) => mockSuite('root', {
++        tests: [mockTest('t1', fn)],
++        _beforeAll: [mockHook('"before all" hook', { title: 'root' })],
++        _beforeEach: [mockHook('"before each" hook', { title: 'root' })],
++        _afterEach: [mockHook('"after each" hook', { title: 'root' })],
++        _afterAll: [mockHook('"after all" hook', { title: 'root' })],
++    })
++    const hooksAfterResult = (result: string) => [
++        'hook:start "before all" hook for root', 'hook:end "before all" hook for root',
++        'test:start',
++        'hook:start "before each" hook for root', 'hook:end "before each" hook for root',
++        result, 'test:end',
++        'hook:start "after each" hook for root', 'hook:end "after each" hook for root',
++        'hook:start "after all" hook for root', 'hook:end "after all" hook for root',
++    ]
++
++    test('fails at start when a test has Mocha retries from its describe or from it().retries()', async () => {
++        const suite = mockSuite('root', { tests: [mockTest('t1'), { ...mockTest('t2'), _retries: 1 }] })
++        await expect(runParallelTests(suite as Suite, mockBrowser(), reporter, '0-0', ['/spec.js']))
++            .rejects.toThrow('retries is not supported in parallel mode (parallelMode: "contexts"): "t2" has 1 retry')
++        expect(emittedEvents).toEqual([])
++    })
++
++    test('sends context:end after the after hooks of a test, with its uid and context', async () => {
++        reporter.on('context:end', (p) => emittedEvents.push({ event: 'context:end', payload: p }))
++        await runParallelTests(withHooks() as Suite, mockBrowser(), reporter, '0-0', ['/spec.js'])
++
++        expect(order()).toEqual([...hooksAfterResult('test:pass'), 'context:end'])
++        const start = emittedEvents.find((e) => e.event === 'test:start').payload
++        expect(emittedEvents.at(-1).payload).toEqual({
++            type: 'context:end', cid: '0-0', specs: ['/spec.js'], uid: start.uid, contextId: start.contextId,
++        })
++    })
++
++    test.each([
++        ['a static pending test', mockSuite('root', { tests: [{ ...mockTest('t1'), pending: true }] })],
++        ['a test whose before hook fails', mockSuite('root', {
++            tests: [mockTest('t1')],
++            _beforeAll: [mockHook('"before all" hook', { title: 'root' }, () => { throw new Error('boom') })],
++        })],
++    ])('sends context:end for %s', async (_name, suite) => {
++        const ended: string[] = []
++        reporter.on('context:end', (p) => ended.push(p.uid))
++        await runParallelTests(suite as Suite, mockBrowser(), reporter, '0-0', ['/spec.js'])
++        expect(ended).toEqual(['test-0-0-0'])
++    })
++
++    test('sends the result of a passing test before its afterEach and after hooks', async () => {
++        await runParallelTests(withHooks() as Suite, mockBrowser(), reporter, '0-0', ['/spec.js'])
++        expect(order()).toEqual(hooksAfterResult('test:pass'))
++    })
++
++    test('sends the result of a failing test before its afterEach and after hooks', async () => {
++        await runParallelTests(withHooks(() => { throw new Error('boom') }) as Suite, mockBrowser(), reporter, '0-0', ['/spec.js'])
++        expect(order()).toEqual(hooksAfterResult('test:fail'))
++    })
++
++    test('sends the result of a test that calls this.skip() before its afterEach and after hooks', async () => {
++        await runParallelTests(withHooks(function (this: any) { this.skip() }) as Suite, mockBrowser(), reporter, '0-0', ['/s
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16148** (2026-10-20): fix(@wdio/cucumber-framework): list the matching step definitions of an ambiguous step (@plum117)
-- **PR #16140** (2026-10-19): test(e2e): add local mobile web suites for iOS and Android with Appium (@plum117)
-- **PR #16139** (2026-10-19): fix(webdriverio): isEqual and scrollIntoView on an element that the page rendered again (@plum117)
-- **PR #16138** (2026-10-19): fix(webdriverio): set the W3C script timeout when an Appium iOS session starts (@plum117)
-- **PR #16136** (2026-10-18): fix(webdriverio): find a stale element of a BiDi frame or tab again (@plum117)
-- **PR #16135** (2026-10-18): docs: Add parallel tests documentation and framework support- #16134 (@Winify)
+- **PR #16202** (2026-10-23): test(@wdio/cucumber-framework): remove the root folder link with unlinkSync (@plum117)
+- **PR #16186** (2026-10-22): Fix/v10 p1 bugs 16182 16185 (@mccmrunal)
+- **PR #16179** (closed): chore(deps): bump the major-deps-updates-main group with 4 updates (@dependabot[bot])
+- **PR #16176** (2026-10-22): docs(devtools): Node.js 22.19 floor and native app network capture (@vishnuv688)
+- **PR #16172** (2026-10-22): feat(@wdio/reporter): keep the context and the parent uid on parallel test and suite stats (@plum117)
+- **PR #16171** (2026-10-23): fix(@wdio/mocha-framework): send the hook and test events of a sequential run in parallel mode (@plum117)
 
 ---
 
@@ -1741,36 +2467,49 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. webdriverio): isEqual and scrollIntoView on an element that the page rendered ag
+## X. @wdio/cucumber-framework): report step results in parallel mode as in sequential
 
 **RULE**:
-When implementing operations in `e2e/wdio/headless/__fixtures__/findElementAgain.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/wdio-cucumber-framework/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `456fb11a`: webdriverio): isEqual and scrollIntoView on an element that the page rendered again (#16139). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ca173ed`: @wdio/cucumber-framework): report step results in parallel mode as in sequential mode (#16161). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/wdio/headless/__fixtures__/findElementAgain.html`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/wdio-cucumber-framework/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    <div id="far-area" style="margin-top: 3000px"><p id="far">far</p></div>
-        /**
-         * replace `#far` (below the viewport) with a new node
-         */
-        window.renderFar = () => {
-            const far = document.querySelector('#far')
-            far.replaceWith(far.cloneNode(true))
-        }
-
+The following code shows a minimal test runner configuration:
+Fail the run on a pending step. An undefined step fails the run also without `strict`, unless [`ignoreUndefinedDefinitions`](#ignoreundefineddefinitions) is `true`.
+Only execute the features or scenarios with tags matching the expression. A feature file with no matching scenario is reported as skipped and starts no browser session.
+<Option type="Number" default="60000">
+<Option type="String">
+Only retry the scenarios with tags matching the tag expression. Requires [`retry`](#retry).
+Run the scenarios in the order of the feature files (`'defined'`) or in a random order (`'random'`). With `'random:<seed>'`, for example `'random:42'`, a random order is the same in each run. With `'random'`, the log shows the seed of the run (`Random order using seed: 42`).
+WebdriverIO primarily supports only the [Formatters](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md) that writes output to a file. Formatters don't run with [`parallelMode`](#parallelmode).
+Report an undefined step as pending, with ` (undefined step)` at the end of its title, and do not fail the run for it.
+### profiles
+The profiles of the Cucumber c
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Following code shows the default wdio test runner configuration...
+Fail if there are any undefined or pending steps
+Only execute the features or scenarios with tags matching the expression. Note that untagged
+features will still spawn a Selenium session (see issue [webdriverio/webdriverio#1247](https://github.com/webdriverio/webdriverio/issues/1247)).
+<Option type="Number" default="30000">
+<Option type="RegExp">
+Only retries the features or scenarios with tags matching the expression (repeatable). This option requires '--retry' to be specified.
+Run tests in defined / random order
+WebdriverIO primarily supports only the [Formatters](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md) that writes output to a file.
+Treat undefined definitions as warnings.
+### profile
+Specify the profile to use.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `456fb11a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ca173ed` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-ASDW",
-    "timestamp": "2026-10-20T21:34:08.180Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "5fe61dfdfd1a96802da3a7249600ac879a7e1d6526ddf9fb14a42eec4571260e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-JBR4",
-    "timestamp": "2026-10-20T21:40:46.528Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "fcb246e2b1b80a06d1c7b7dbaeb77e17fe2c5de8cb6bd92628947923799bc058",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-JGWU",
-    "timestamp": "2026-10-20T21:40:53.214Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "be307c7fa6b1d62aa2a23c4473be98b0c85805bb621757ef0dad3c9ff9ec2ff1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-JI4Q",
     "timestamp": "2026-10-20T21:40:54.794Z",
     "repository": "google-bert/bert-base-uncased",
@@ -7490,6 +7445,51 @@
     "repository": "callstack/react-native-paper",
     "learningId": "learn-github-callstack-react-native-paper",
     "contentHash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-DX7L",
+    "timestamp": "2026-10-23T11:11:43.713Z",
+    "repository": "assistant-ui/assistant-ui",
+    "learningId": "learn-github-assistant-ui-assistant-ui",
+    "contentHash": "58b5006435fd0a308ff4b6641997ac9894af301a3a8a5f9abfabe734976070c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-E0N7",
+    "timestamp": "2026-10-23T11:11:48.163Z",
+    "repository": "webdriverio/webdriverio",
+    "learningId": "learn-github-webdriverio-webdriverio",
+    "contentHash": "0c5aba4a5353f2baeefbd264e46fb2f6ec82f3dfc9ddb5413c04277b9461ddea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-E7GS",
+    "timestamp": "2026-10-23T11:11:57.004Z",
+    "repository": "LLPhant/LLPhant",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T11:05:34.291Z",
+  "last_updated": "2026-10-23T11:11:57.014Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3066,14 +3066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webdriverio-webdriverio",
-      "content_hash": "25844d1afffa68941223a12d11c469b9d7dd41468a452957d6a82f149532ec96",
-      "verified_at": "2026-10-20T05:03:28.653Z",
+      "content_hash": "0c5aba4a5353f2baeefbd264e46fb2f6ec82f3dfc9ddb5413c04277b9461ddea",
+      "verified_at": "2026-10-23T11:11:48.177Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:03:28.653Z"
+      "last_updated": "2026-10-23T11:11:48.177Z"
     },
     "RubenVerborgh/SPARQL.js": {
       "repository": "RubenVerborgh/SPARQL.js",
@@ -3696,14 +3696,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-assistant-ui-assistant-ui",
-      "content_hash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
-      "verified_at": "2026-10-21T16:51:31.215Z",
+      "content_hash": "58b5006435fd0a308ff4b6641997ac9894af301a3a8a5f9abfabe734976070c7",
+      "verified_at": "2026-10-23T11:11:43.727Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T16:51:31.215Z"
+      "last_updated": "2026-10-23T11:11:43.737Z"
     },
     "ducaale/xh": {
       "repository": "ducaale/xh",
@@ -5421,14 +5421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-llphant-llphant",
-      "content_hash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
-      "verified_at": "2026-10-20T00:51:44.422Z",
+      "content_hash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
+      "verified_at": "2026-10-23T11:11:57.014Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:51:44.422Z"
+      "last_updated": "2026-10-23T11:11:57.014Z"
     },
     "ant-design/pro-components": {
       "repository": "ant-design/pro-components",

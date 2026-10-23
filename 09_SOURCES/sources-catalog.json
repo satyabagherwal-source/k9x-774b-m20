@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "abe41af7",
+    "sourceVersion": "9b55483e",
     "license": "MIT",
-    "contentHash": "25844d1afffa68941223a12d11c469b9d7dd41468a452957d6a82f149532ec96",
-    "lastHarvestedAt": "2026-10-20T05:03:28.647Z",
+    "contentHash": "0c5aba4a5353f2baeefbd264e46fb2f6ec82f3dfc9ddb5413c04277b9461ddea",
+    "lastHarvestedAt": "2026-10-23T11:11:48.166Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "dd1acfc3",
+    "sourceVersion": "c015c32a",
     "license": "MIT",
-    "contentHash": "dd47af10e392d88a9e8b3fea0c8108c58e459df0f0094a0ec8d2780bfad510cd",
-    "lastHarvestedAt": "2026-10-21T16:51:31.204Z",
+    "contentHash": "58b5006435fd0a308ff4b6641997ac9894af301a3a8a5f9abfabe734976070c7",
+    "lastHarvestedAt": "2026-10-23T11:11:43.715Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "4c5542b9",
+    "sourceVersion": "4dd63b69",
     "license": "MIT",
-    "contentHash": "8e5c44fe9f06e21e2ee619ed2d33ac0f91d1d17a8ecb48deb7aff144316f942c",
-    "lastHarvestedAt": "2026-10-20T00:51:44.415Z",
+    "contentHash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
+    "lastHarvestedAt": "2026-10-23T11:11:57.007Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {

@@ -4549,3 +4549,6 @@ Every entry in this ledger must capture:
 | `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `d5fb723a` | Multi-dimensional audit evidence | 2026-10-23T11:05:28.218Z |
 | `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `62a4f53b` | Multi-dimensional audit evidence | 2026-10-23T11:05:30.767Z |
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `eb4fcbeb` | Multi-dimensional audit evidence | 2026-10-23T11:05:34.278Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `c015c32a` | Multi-dimensional audit evidence | 2026-10-23T11:11:43.715Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `9b55483e` | Multi-dimensional audit evidence | 2026-10-23T11:11:48.166Z |
+| `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `4dd63b69` | Multi-dimensional audit evidence | 2026-10-23T11:11:57.007Z |

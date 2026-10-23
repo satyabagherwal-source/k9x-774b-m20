@@ -4542,3 +4542,6 @@
 | `CYCLE-20261023-5VH2` | `2026-10-23T11:05:28.214Z` | `adobe/react-spectrum` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3893` | Yes (`1c545c8b...`) |
 | `CYCLE-20261023-5XFV` | `2026-10-23T11:05:30.763Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3894` | Yes (`e8565361...`) |
 | `CYCLE-20261023-605E` | `2026-10-23T11:05:34.274Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3895` | Yes (`64a95f95...`) |
+| `CYCLE-20261023-DX7L` | `2026-10-23T11:11:43.713Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3896` | Yes (`58b50064...`) |
+| `CYCLE-20261023-E0N7` | `2026-10-23T11:11:48.163Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3897` | Yes (`0c5aba4a...`) |
+| `CYCLE-20261023-E7GS` | `2026-10-23T11:11:57.004Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3898` | Yes (`fc49a4ad...`) |
