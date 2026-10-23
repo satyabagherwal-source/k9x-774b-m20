@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T10:38:41.343Z",
+  "last_updated": "2026-10-23T10:48:13.064Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7460,8 +7460,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "0386b404",
-      "content_hash": "5fcd1f947b9a293fe9058843229c632d202e489ff612be59f4fbda1471ccf42f",
+      "source_version": "0cc4e2a7",
+      "content_hash": "1086d06d80778acf22da41428d32a8e7cb353ba24ef2235759acee3774652cbb",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7619,6 +7619,11 @@
           "number": 3776,
           "title": "frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UN",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3886,
+          "title": "deps: update lock file - notably MiniJinja, Redis and webpki for eMudhra CA remo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7626,7 +7631,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:50:36.682Z",
+      "verified_at": "2026-10-23T10:45:14.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13166,8 +13171,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "1ede807b",
-      "content_hash": "a27607a838d42636f6c5fb19f6650f724bfa351e98ccc0ac01ffcb0d962f92e9",
+      "source_version": "d22e8daf",
+      "content_hash": "abee897c1c8dd0ef0c5a533ee731407706627c412f3c83fbe9c8bcc25cce8df9",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -13195,6 +13200,21 @@
           "number": 3506,
           "title": "tonic-xds): parse RING_HASH lb policy from CDS (gRFC A42) (#2701)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3887,
+          "title": "Typestate-Driven Channel Transition with Atomic CAS Ejection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3888,
+          "title": "Runtime-Injected Deterministic Clock for Async RPC Deadlines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3889,
+          "title": "Reconciling Push-Gauges with Eviction Tombstoning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13202,7 +13222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:24:18.734Z",
+      "verified_at": "2026-10-23T10:48:13.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42241,8 +42261,8 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "952e0ba6",
-      "content_hash": "6ea6411fe87de9b4677ae0e799419d70cc6f2bd805c8ba068c7e3159dd244e2e",
+      "source_version": "b0015350",
+      "content_hash": "b6d65be4d3235107b77f6b2b99a1c24336655c8aa7bb84038584f70e57d9c42d",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
@@ -42262,7 +42282,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:57:22.633Z",
+      "verified_at": "2026-10-23T10:45:12.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63518,8 +63538,8 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "2688cbca",
-      "content_hash": "3da70cb7d23148999bbbbb6a9b0ce46af3a04b52c8584ada472e875d15556101",
+      "source_version": "7726f835",
+      "content_hash": "03f90b75ef2ead823ac9c0471735aac84f7d8d0ba956fc445b69bb90162ba0a5",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
@@ -63542,6 +63562,11 @@
           "number": 3051,
           "title": "transform diagnostics at position zero (#6587)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3885,
+          "title": "include sourcemap comments in chunk hashes (#6509)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63549,7 +63574,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:42:31.524Z",
+      "verified_at": "2026-10-23T10:45:04.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100591,13 +100616,13 @@
       "rule_number": 2926,
       "title": "Update README.md",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "952e0ba6",
+      "source_version": "b0015350",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T16:57:22.633Z"
+      "verified_at": "2026-10-23T10:45:12.368Z"
     },
     "rule-2927": {
       "learning_id": "rule-2927",
@@ -114883,6 +114908,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T10:38:41.332Z"
+    },
+    "rule-3885": {
+      "learning_id": "rule-3885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3885,
+      "title": "include sourcemap comments in chunk hashes (#6509)",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "7726f835",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:45:04.197Z"
+    },
+    "rule-3886": {
+      "learning_id": "rule-3886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3886,
+      "title": "deps: update lock file - notably MiniJinja, Redis and webpki for eMudhra CA remo",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "0cc4e2a7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:45:14.271Z"
+    },
+    "rule-3887": {
+      "learning_id": "rule-3887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3887,
+      "title": "Typestate-Driven Channel Transition with Atomic CAS Ejection",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "d22e8daf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:48:13.053Z"
+    },
+    "rule-3888": {
+      "learning_id": "rule-3888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3888,
+      "title": "Runtime-Injected Deterministic Clock for Async RPC Deadlines",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "d22e8daf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:48:13.053Z"
+    },
+    "rule-3889": {
+      "learning_id": "rule-3889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3889,
+      "title": "Reconciling Push-Gauges with Eviction Tombstoning",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "d22e8daf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:48:13.053Z"
     }
   },
   "aliases": {

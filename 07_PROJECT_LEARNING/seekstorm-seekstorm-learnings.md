@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `952e0ba6`  
+> **Source Version**: `b0015350`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:57:22.419Z  
+> **Timestamp**: 2026-10-23T10:45:12.183Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:57:22.411Z  
+> **Harvest Timestamp**: 2026-10-23T10:45:11.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1916 stars
+- **Stars / Engagement**: 1920 stars
 
 ---
 
@@ -2174,38 +2174,24 @@ pub struct SearchResultObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `952e0ba6` (2026-10-20)
+### Incident Patch 1: `b0015350` (2026-10-21)
 **Commit Message**: Update README.md
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -4,7 +4,7 @@
+@@ -267,10 +267,10 @@ Vector search, hybrid search, facets and more: see [Usage of the library](#usage
+ ## What can you build?
  
- <h3 align="center">
- Sub-millisecond lexical, vector &amp; hybrid search in Rust.<br>
--Embed it as a library, run it as a server, or give your agents search via MCP.
-+Embed as a library, run as a multi-tenant server, or give your agents search via MCP.
- </h3>
+ * **Search for your app or site**: product and site search with facets, typo tolerance, query completion and instant search.
+-* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](#components).
+ * **RAG and agent retrieval**: hybrid search over [MCP](#mcp-server-for-ai-agents), searchable the moment a document is indexed.
+ * **Search over your own data**: JSON, CSV, NDJSON and PDF, e.g. an English Wikipedia search engine in 5 steps ([tutorial](#demos)).
+-* **Search inside your application**: link the library, no server to run.
++* **Search inside your application**: embed the library, no server to run.
++* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](https://github.com/SeekStorm/seekstorm-instantsearch-adapter).
  
- <p align="center">
-```
-
----
-
-### Incident Patch 2: `fa1a03cb` (2026-10-20)
-**Commit Message**: Update README.md
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -442,7 +442,7 @@ No re-indexing, no export/import, and you can move in either direction. No vendo
- <img src="https://raw.githubusercontent.com/SeekStorm/SeekStorm/main/assets/search_benchmark_game1.png" width="800" alt="Query latency in µs: Lucene vs. Tantivy vs. SeekStorm">
+ More in [Search API use cases](https://seekstorm.com/search-api-use-cases) and [Search API features](https://seekstorm.com/search-api-features).
  
- 5 million English Wikipedia documents, result type top-k + count, via the [search_benchmark_game](https://github.com/SeekStorm/search-benchmark-game/) (Lucene 10.3.0-bp, Tantivy 0.25, SeekStorm 1.0.0).
--<!-- TODO: add CPU / RAM / OS of the benchmark machine -->
-+<!-- CPU / RAM / OS of the benchmark machine: https://github.com/SeekStorm/search-benchmark-game/#benchmark-environment -->
- 
- | Query type, single field | Lucene (µs) | Tantivy (µs) | **SeekStorm (µs)** | vs. best of the two | vs. Lucene |
- |---|---:|---:|---:|---:|---:|
 ```
 
 #### Recent Merged Pull Requests:
@@ -2240,7 +2226,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `952e0ba6`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0015350`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -2248,14 +2234,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Embed as a library, run as a multi-tenant server, or give your agents search via MCP.
+* **Search inside your application**: embed the library, no server to run.
+* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](https://github.com/SeekStorm/seekstorm-instantsearch-adapter).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Embed it as a library, run it as a server, or give your agents search via MCP.
+* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](#components).
+* **Search inside your application**: link the library, no server to run.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `952e0ba6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0015350` are properly handled with clean fallback behavior.

@@ -1903,10 +1903,10 @@
     "repository": "rollup/rollup",
     "platform": "github",
     "sourceUrl": "https://github.com/rollup/rollup",
-    "sourceVersion": "2688cbca",
+    "sourceVersion": "7726f835",
     "license": "NOASSERTION",
-    "contentHash": "3da70cb7d23148999bbbbb6a9b0ce46af3a04b52c8584ada472e875d15556101",
-    "lastHarvestedAt": "2026-10-20T04:42:31.587Z",
+    "contentHash": "03f90b75ef2ead823ac9c0471735aac84f7d8d0ba956fc445b69bb90162ba0a5",
+    "lastHarvestedAt": "2026-10-23T10:45:04.263Z",
     "learningId": "learn-github-rollup-rollup"
   },
   "rmax-scrapy-redis": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "0386b404",
+    "sourceVersion": "0cc4e2a7",
     "license": "NOASSERTION",
-    "contentHash": "5fcd1f947b9a293fe9058843229c632d202e489ff612be59f4fbda1471ccf42f",
-    "lastHarvestedAt": "2026-10-23T05:50:36.745Z",
+    "contentHash": "1086d06d80778acf22da41428d32a8e7cb353ba24ef2235759acee3774652cbb",
+    "lastHarvestedAt": "2026-10-23T10:45:14.335Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "952e0ba6",
+    "sourceVersion": "b0015350",
     "license": "Apache-2.0",
-    "contentHash": "6ea6411fe87de9b4677ae0e799419d70cc6f2bd805c8ba068c7e3159dd244e2e",
-    "lastHarvestedAt": "2026-10-20T16:57:22.713Z",
+    "contentHash": "b6d65be4d3235107b77f6b2b99a1c24336655c8aa7bb84038584f70e57d9c42d",
+    "lastHarvestedAt": "2026-10-23T10:45:12.434Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "1ede807b",
+    "sourceVersion": "d22e8daf",
     "license": "MIT",
-    "contentHash": "a27607a838d42636f6c5fb19f6650f724bfa351e98ccc0ac01ffcb0d962f92e9",
-    "lastHarvestedAt": "2026-10-21T03:24:18.806Z",
+    "contentHash": "abee897c1c8dd0ef0c5a533ee731407706627c412f3c83fbe9c8bcc25cce8df9",
+    "lastHarvestedAt": "2026-10-23T10:48:13.119Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {

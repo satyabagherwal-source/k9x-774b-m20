@@ -4532,3 +4532,7 @@
 | `CYCLE-20261023-XOJO` | `2026-10-23T10:31:06.372Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3880` | Yes (`96b3002f...`) |
 | `CYCLE-20261023-XTMP` | `2026-10-23T10:31:12.961Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3881` | Yes (`ff6e722f...`) |
 | `CYCLE-20261023-7FN8` | `2026-10-23T10:38:41.396Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3882, Rule 3883, Rule 3884` | Yes (`45316092...`) |
+| `CYCLE-20261023-FN2C` | `2026-10-23T10:45:04.260Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3885` | Yes (`03f90b75...`) |
+| `CYCLE-20261023-FTDB` | `2026-10-23T10:45:12.431Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`b6d65be4...`) |
+| `CYCLE-20261023-FUU4` | `2026-10-23T10:45:14.332Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3886` | Yes (`1086d06d...`) |
+| `CYCLE-20261023-JOSC` | `2026-10-23T10:48:13.116Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3887, Rule 3888, Rule 3889` | Yes (`abee897c...`) |

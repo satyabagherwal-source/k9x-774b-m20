@@ -4539,3 +4539,7 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `19181848` | Multi-dimensional audit evidence | 2026-10-23T10:31:06.376Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `5c68f754` | Multi-dimensional audit evidence | 2026-10-23T10:31:12.964Z |
 | `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `8c3cbd32` | Multi-dimensional audit evidence | 2026-10-23T10:38:41.399Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `7726f835` | Multi-dimensional audit evidence | 2026-10-23T10:45:04.263Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `b0015350` | Multi-dimensional audit evidence | 2026-10-23T10:45:12.434Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0cc4e2a7` | Multi-dimensional audit evidence | 2026-10-23T10:45:14.335Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `d22e8daf` | Multi-dimensional audit evidence | 2026-10-23T10:48:13.119Z |
