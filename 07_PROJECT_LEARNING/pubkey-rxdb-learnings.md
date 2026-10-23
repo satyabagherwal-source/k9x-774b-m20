@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source**: github ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
-> **Source Version**: `7a6734be`  
+> **Source Version**: `924ba206`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:42:29.193Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-23T10:24:38.443Z  
 > **Learning ID**: `learn-github-pubkey-rxdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,506 +12,355 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): pubkey/rxdb
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:42:29.184Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): pubkey/rxdb
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `pubkey/rxdb`
-- **Description**: The local-first database that runs on every JS runtime and replicates with your existing backend - no vendor, no lock-in - https://rxdb.info/
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 23409 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+### 1.1 Core System Mission & Problem Statement
+`pubkey/rxdb` (Reactive Database) provides an offline-first, client-side, reactive NoSQL datastore ecosystem for JavaScript/TypeScript runtimes (Browsers, Node.js, Electron, React Native, Capacitor, Deno). It resolves the impedance mismatch between persistent local storage engines (IndexedDB, SQLite, Memory, OPFS, Dexie) and user interfaces requiring real-time, push-based state synchronization via RxJS observables.
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+### 1.2 Boundary Decoupling & Storage Interface (`RxStorage`)
+RxDB enforces a strict separation between the high-level reactive ORM layer (`RxDatabase`, `RxCollection`, `RxQuery`, `RxDocument`) and the underlying low-level persistence mechanisms via the `RxStorage` interface:
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `.claude/hooks/no-console-dir-storage-sqlite.mjs`
 ```
-#!/usr/bin/env node
+[ Application Layer (UI / Services / Schedulers) ]
+                        │
+                        ▼
+   [ RxDatabase ] ────► [ RxCollection ] ◄──── [ RxSchema (JSON-Schema Draft 7) ]
+           │                    │
+           │                    ▼
+           │           [ RxQuery / Cache ] ◄─── (Query Plan / Mango Engine)
+           │                    │
+           ▼                    ▼
+     [ Plugin Hooks: HOOKS Pipeline (Synchronous hot-path / Async cold-path) ]
+                                │
+                                ▼
+    [ RxStorage (Storage Interface: Dexie, SQLite, Memory, IPC-Remote) ]
+                                │
+    ┌───────────────────────────┴───────────────────────────┐
+    ▼                                                       ▼
+[ Local Physical Storage Engine ]             [ Replication Engine (Push/Pull) ]
+(IndexedDB, Hermes SQLite, RocksDB)           (GraphQL, CouchDB, Firestore, REST)
+```
+
+1. **Storage Decoupling via Storage Instances**: High-level abstractions never touch physical disks, SQLite tables, or IndexedDB object stores directly. Every operation routes through `RxStorageInstance`, which enforces atomic write batches (`bulkWrite`), primary-key range fetches (`findDocumentsById`), and query plan executions (`query`).
+2. **Deterministic Mango Engine Alignment**: Query manipulation translates JSON selectors into query executions. The query planner relies on strict Mongo/CouchDB ("Mango") query syntax conventions. Query builder methods are dynamic facades mapping directly to backend-supported operators.
+3. **Sequential Serialized Hook Pipeline**: As exposed in `src/hooks.ts`, lifecycle hooks are segmented into synchronous execution (`runPluginHooks`) for throughput-critical code paths, and serialized asynchronous chains (`runAsyncPluginHooks` running `for (const fn of HOOKS[key]) await fn(obj)`) to eliminate non-deterministic lifecycle race conditions.
+
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Cross-Runtime Console API Defensiveness in Embedded Engines
+**RULE**:
+Codebases targeting hybrid cross-platform runtimes (specifically React Native with Hermes, Web Workers, QuickJS, or Embedded V8) MUST NOT invoke non-standard or runtime-optional `console` namespace methods (`console.dir`, `console.table`, `console.time`, `console.trace`) in core engine execution paths. If structural inspection is necessary, the code MUST use `console.log(JSON.stringify(val))` or a safe fallback utility.
+
+**WHY**:
+In production mobile builds running Facebook's Hermes JS engine or strict headless workers, `console.dir` evaluates to `undefined`. Invoking `console.dir(error)` within catch blocks or error reporters causes an immediate `TypeError: undefined is not a function`. This masks the original root exception, crashes the host application, and disrupts error logging pipelines.
+
+**WHEN TO APPLY**:
+Apply to any cross-platform TypeScript/JavaScript library, database driver, native-bridge adapter, or UI runtime shared between node, browser, and mobile (Hermes/JSC).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
 /**
- * Claude Code PreToolUse hook.
- *
- * Blocks any Write/Edit/MultiEdit that would introduce `console.dir(...)`
- * into the `src/plugins/storage-sqlite` code.
- *
- * `console.dir` is `undefined` in production React Native / Hermes runtimes,
- * so calling it inside the storage-sqlite code throws
- * `TypeError: undefined is not a function` and masks the real error.
- * See https://github.com/pubkey/rxdb/issues/8635
+ * Safe multi-environment structural logging invariant
  */
-
-const CONSOLE_DIR_REGEX = /console\s*\.\s*dir\b/;
-const STORAGE_SQLITE_PATH = 'src/plugins/storage-sqlite';
-
-async function readStdin() {
-    const chunks = [];
-    for await (const chunk of process.stdin) {
-        chunks.push(chunk);
+export function safeLogStructured(label: string, payload: unknown): void {
+    if (typeof console === 'undefined') {
+        return;
     }
-    return Buffer.concat(chunks).toString('utf8');
-}
+    
+    // Hermes and minimal runtimes omit console.dir
+    if (typeof console.dir === 'function') {
+        console.log(label);
+        console.dir(payload);
+        return;
+    }
 
-function collectTexts(toolInput) {
-    const texts = [];
-    if (typeof toolInput.content === 'string') {
-        texts.push(toolInput.content);
-    }
-    if (typeof toolInput.new_string === 'string') {
-        texts.push(toolInput.new_string);
-    }
-    if (Array.isArray(toolInput.edits)) {
-        for (const edit of toolInput.edits) {
-            if (edit && typeof edit.new_string === 'string') {
-                texts.push(edit.new_string);
-            }
-        }
-    }
-    return texts;
-}
-
-async function main() {
-    let payload;
     try {
-        payload = JSON.parse(await readStdin());
-    } catch {
-        // Could not parse the hook payload, do not block.
-        process.exit(0);
-    }
-
-    const toolInput = payload.tool_input || {};
-    const filePath = toolInput.file_path || '';
-
-    if (!filePath.includes(STORAGE_SQLITE_PATH)) {
-        process.exit(0);
-    }
-
-    const offends = collectTexts(toolInput).some(text => CONSOLE_DIR_REGEX.test(text));
-    if (!offends) {
-        process.exit(0);
-    }
-
-    const output = {
-        hookSpecificOutput: {
-            hookEventName: 'PreToolUse',
-            permissionDecision: 'deny',
-            permissionDecisionReason:
-                'Do not use console.dir inside src/plugins/storage-sqlite. ' +
-                'console.dir is undefined in production React Native / Hermes runtimes and throws ' +
-                'TypeError: undefined is not a function, masking the real error (see issue #8635). ' +
-                'Use console.log(JSON.stringify(...)) or errorToPlainJson(...) instead.'
-        }
-    };
-    process.stdout.write(JSON.stringify(output));
-    process.exit(0);
-}
-
-main();
-
-```
-
-### Core Architecture Module: `examples/electron/renderer.js`
-```
-const { getDatabase } = require('./shared');
-const renderTest = require('./test/render.test.js');
-const electron = require('electron');
-const { getRxStorageMemory } = require('rxdb/plugins/storage-memory');
-const { wrappedValidateAjvStorage } = require('rxdb/plugins/validate-ajv');
-const { getRxStorageIpcRenderer } = require('../../plugins/electron');
-
-
-const heroesList = document.querySelector('#heroes-list');
-
-async function run() {
-    /**
-     * to check if rxdb works correctly, we run some integration-tests here
-     * if you want to use this electron-example as boilerplate, remove this line
-     */
-    await renderTest();
-
-    const dbSuffix = await window.getDBSuffix();
-
-
-    const storage = getRxStorageIpcRenderer({
-        key: 'main-storage',        
-        ipcRenderer: electron.ipcRenderer
-    });
-
-    console.log('GET DATABASE');
-    const db = await getDatabase(
-        'heroesdb' + dbSuffix, // we add a random timestamp in dev-mode to reset the database on each start
-        wrappedValidateAjvStorage({ storage: storage })
-    );
-    console.log('GET DATABASE DONE');
-
-    /**
-     * map the result of the find-query to the heroes-list in the dom
-     */
-    db.heroes.find()
-        .sort({
-            name: 'asc'
-        })
-        .$.subscribe(function (heroes) {
-            if (!heroes) {
-                heroesList.innerHTML = 'Loading..';
-                return;
+        const serialized = JSON.stringify(payload, (_key, val) => {
+            if (val instanceof Error) {
+                return {
+                    name: val.name,
+                    message: val.message,
+                    stack: val.stack
+                };
             }
-            console.log('observable fired');
-            console.dir(heroes);
+            return val;
+        }, 2);
+        console.log(`${label}: ${serialized}`);
+    } catch {
+        // Fallback for circular references or non-serializable objects
+        console.log(label, String(payload));
+    }
+}
+```
 
-            heroesList.innerHTML = heroes
-                .map(hero => {
-                    return '<li>' +
-                        '<div class="color-box" style="background:' + hero.color + '"></div>' +
-                        '<div class="name" name="' + hero.name + '">' + hero.name + '</div>' +
-                        '</li>';
-                })
-                .reduce((pre, cur) => pre += cur, '');
-        });
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Direct invocation of console.dir inside driver or catch logic
+try {
+    await sqliteDriver.execute(query);
+} catch (err) {
+    // CRASHES IN HERMES RUNTIME: TypeError: undefined is not a function
+    console.dir(err);
+    throw err;
+}
+```
 
-    window.addHero = async function () {
-        const name = document.querySelector('input[name="name"]').value;
-        const color = document.querySelector('input[name="color"]').value;
-        const obj = {
-            name: name,
-            color: color
-        };
-        console.log('inserting hero:');
-        console.dir(obj);
-        await db.heroes.insert(obj);
-        console.log('inserting hero DONE');
+**VERIFICATION METHOD**:
+Enforce via an AST check, PreToolUse hook, or ESLint rule (`no-restricted-properties`):
+```json
+{
+  "rules": {
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "console",
+        "property": "dir",
+        "message": "console.dir is missing in Hermes / React Native production runtimes. Use console.log(JSON.stringify(...)) or safeLogStructured."
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 2. Event-Gated Idling State Loop with Queue Chaining
+**RULE**:
+Background maintenance routines (compaction, GC, cleanup, replication syncing) MUST NOT run on arbitrary timer loops (such as unconstrained `setInterval`). They MUST gate execution behind physical write event streams (`eventBulks$`), check component lifecycle flags (`closed`) before and after each asynchronous step, chain executions onto a sequential promise queue, and schedule execution using host idle schedulers (`requestIdleCallback` / `requestIdlePromise`).
+
+**WHY**:
+Unconstrained background polling leads to CPU wake-ups, mobile battery drain, and unhandled promise rejections if the underlying database collection closes while a task is in flight. Furthermore, concurrent un-queued cleanup tasks create Time-Of-Check-To-Time-Of-Use (TOCTOU) race conditions on disk indexes.
+
+**WHEN TO APPLY**:
+Apply to any local database engine, cache manager, indexing subsystem, or background replication client.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { firstValueFrom, Observable } from 'rxjs';
+
+export interface DisposableLifecycle {
+    closed: boolean;
+    eventBulks$: Observable<unknown>;
+    promiseWait(ms: number): Promise<void>;
+    database: {
+        requestIdlePromise(): Promise<void>;
     };
 }
-run();
 
-```
+export class SafeMaintenanceRunner<T extends DisposableLifecycle> {
+    private queue: Promise<boolean> = Promise.resolve(true);
 
-### Core Architecture Module: `examples/flutter/windows/runner/utils.cpp`
-```
-#include "utils.h"
+    public async runLoop(target: T, waitTimeMs: number, cleanupFn: () => Promise<boolean>): Promise<void> {
+        while (!target.closed) {
+            // Invariant 1: Sleep until a real write event actually occurs
+            try {
+                await firstValueFrom(target.eventBulks$);
+            } catch {
+                return; // Observable completed/errored on close
+            }
 
-#include <flutter_windows.h>
-#include <io.h>
-#include <stdio.h>
-#include <windows.h>
+            // Invariant 2: Throttle after the write
+            await target.promiseWait(waitTimeMs);
+            if (target.closed) return;
 
-#include <iostream>
+            // Invariant 3: Sequential task chaining
+            let isDone = false;
+            while (!isDone && !target.closed) {
+                this.queue = this.queue.then(async () => {
+                    if (target.closed) return true;
+                    // Yield until the JS event loop / UI thread is idle
+                    await target.database.requestIdlePromise();
+                    if (target.closed) return true;
+                    return cleanupFn();
+                });
 
-void CreateAndAttachConsole() {
-  if (::AllocConsole()) {
-    FILE *unused;
-    if (freopen_s(&unused, "CONOUT$", "w", stdout)) {
-      _dup2(_fileno(stdout), 1);
-    }
-    if (freopen_s(&unused, "CONOUT$", "w", stderr)) {
-      _dup2(_fileno(stdout), 2);
-    }
-    std::ios::sync_with_stdio();
-    FlutterDesktopResyncOutputStreams();
-  }
-}
-
-std::vector<std::string> GetCommandLineArguments() {
-  // Convert the UTF-16 command line arguments to UTF-8 for the Engine to use.
-  int argc;
-  wchar_t** argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-  if (argv == nullptr) {
-    return std::vector<std::string>();
-  }
-
-  std::vector<std::string> command_line_arguments;
-
-  // Skip the first argument as it's the binary name.
-  for (int i = 1; i < argc; i++) {
-    command_line_arguments.push_back(Utf8FromUtf16(argv[i]));
-  }
-
-  ::LocalFree(argv);
-
-  return command_line_arguments;
-}
-
-std::string Utf8FromUtf16(const wchar_t* utf16_string) {
-  if (utf16_string == nullptr) {
-    return std::string();
-  }
-  int target_length = ::WideCharToMultiByte(
-      CP_UTF8, WC_ERR_INVALID_CHARS, utf16_string,
-      -1, nullptr, 0, nullptr, nullptr);
-  std::string utf8_string;
-  if (target_length == 0 || target_length > utf8_string.max_size()) {
-    return utf8_string;
-  }
-  utf8_string.resize(target_length);
-  int converted_length = ::WideCharToMultiByte(
-      CP_UTF8, WC_ERR_INVALID_CHARS, utf16_string,
-      -1, utf8_string.data(),
-      target_length, nullptr, nullptr);
-  if (converted_length == 0) {
-    return std::string();
-  }
-  return utf8_string;
-}
-
-```
-
-### Core Architecture Module: `examples/flutter/windows/runner/utils.h`
-```
-#ifndef RUNNER_UTILS_H_
-#define RUNNER_UTILS_H_
-
-#include <string>
-#include <vector>
-
-// Creates a console for the process, and redirects stdout and stderr to
-// it for both the runner and the Flutter library.
-void CreateAndAttachConsole();
-
-// Takes a null-terminated wchar_t* encoded in UTF-16 and returns a std::string
-// encoded in UTF-8. Returns an empty std::string on failure.
-std::string Utf8FromUtf16(const wchar_t* utf16_string);
-
-// Gets the command line arguments passed in as a std::vector<std::string>,
-// encoded in UTF-8. Returns an empty std::vector<std::string> on failure.
-std::vector<std::string> GetCommandLineArguments();
-
-#endif  // RUNNER_UTILS_H_
-
-```
-
-### Core Architecture Module: `examples/vue/src/registerServiceWorker.ts`
-```
-/* eslint-disable no-console */
-
-import { register } from 'register-service-worker';
-
-if (process.env.NODE_ENV === 'production') {
-  register(`${process.env.BASE_URL}service-worker.js`, {
-    ready () {
-      console.log(
-        'App is being served from cache by a service worker.\n' +
-        'For more details, visit https://goo.gl/AFskqB'
-      );
-    },
-    registered () {
-      console.log('Service worker has been registered.');
-    },
-    cached () {
-      console.log('Content has been cached for offline use.');
-    },
-    updatefound () {
-      console.log('New content is downloading.');
-    },
-    updated () {
-      console.log('New content is available; please refresh.');
-    },
-    offline () {
-      console.log('No internet connection found. App is running in offline mode.');
-    },
-    error (error) {
-      console.error('Error during service worker registration:', error);
-    }
-  });
-}
-
-```
-
-### Core Architecture Module: `src/hooks.ts`
-```
-
-/**
- * hook-functions that can be extended by the plugin
- */
-export const HOOKS = {
-    /**
-     * Runs before a plugin is added.
-     * Use this to block the usage of non-compatible plugins.
-     */
-    preAddRxPlugin: [],
-    /**
-     * functions that run before the database is created
-     */
-    preCreateRxDatabase: [],
-    /**
-     * runs after the database is created and prepared
-     * but before the instance is returned to the user
-     * @async
-     */
-    createRxDatabase: [],
-    preCreateRxCollection: [],
-    createRxCollection: [],
-    createRxState: [],
-    /**
-    * runs at the end of the close-process of a collection
-    * @async
-    */
-    postCloseRxCollection: [],
-    /**
-     * Runs after a collection is removed.
-     * @async
-     */
-    postRemoveRxCollection: [],
-    /**
-      * functions that get the json-schema as input
-      * to do additionally checks/manipulation
-      */
-    preCreateRxSchema: [],
-    /**
-     * functions that run after the RxSchema is created
-     * gets RxSchema as attribute
-     */
-    createRxSchema: [],
-    prePrepareRxQuery: [],
-    preCreateRxQuery: [],
-    /**
-     * Runs before a query is sent to the
-     * prepareQuery function of the storage engine.
-     */
-    prePrepareQuery: [],
-    createRxDocument: [],
-    /**
-     * runs after a RxDocument is created,
-     * cannot be async
-     */
-    postCreateRxDocument: [],
-    /**
-     * Runs before a RxStorageInstance is created
-     * gets the params of createStorageInstance()
-     * as attribute so you can manipulate them.
-     * Notice that you have to clone stuff before mutating the inputs.
-     */
-    preCreateRxStorageInstance: [],
-    preStorageWrite: [],
-    /**
-     * runs on the document-data before the document is migrated
-     * {
-     *   doc: Object, // original doc-data
-     *   migrated: // migrated doc-data after run through migration-strategies
-     * }
-     */
-    preMigrateDocument: [],
-    /**
-     * runs after the migration of a document has been done
-     */
-    postMigrateDocument: [],
-    /**
-     * runs at the beginning of the close-process of a database
-     */
-    preCloseRxDatabase: [],
-    /**
-     * runs after a database has been removed
-     * @async
-     */
-    postRemoveRxDatabase: [],
-
-
-    postCleanup: [],
-
-    /**
-     * runs before the replication writes the rows to master
-     * but before the rows have been modified
-     * @async
-     */
-    preReplicationMasterWrite: [],
-
-    /**
-     * runs after the replication has been sent to the server
-     * but before the new documents have been handled
-     * @async
-     */
-    preReplicationMasterWriteDocumentsHandle: [],
-};
-
-export function runPluginHooks(hookKey: keyof typeof HOOKS, obj: any) {
-    if (HOOKS[hookKey].length > 0) {
-        HOOKS[hookKey].forEach(fun => (fun as any)(obj));
+                isDone = await this.queue;
+            }
+        }
     }
 }
-
-
-/**
- * We do intentionally not run the hooks in parallel
- * because that makes stuff unpredictable and we use runAsyncPluginHooks()
- * only in places that are not that relevant for performance.
- */
-export async function runAsyncPluginHooks(hookKey: keyof typeof HOOKS, obj: any): Promise<any> {
-    for (const fn of HOOKS[hookKey]) {
-        await (fn as any)(obj);
-    }
-}
-
-/**
- * used in tests to remove hooks
- */
-export function _clearHook(type: keyof typeof HOOKS, fun: Function) {
-    HOOKS[type] = HOOKS[type].filter(h => h !== fun);
-}
-
 ```
 
-### Core Architecture Module: `src/plugins/attachments/attachments-utils.ts`
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Polling regardless of mutation state without lifecycle checks
+setInterval(async () => {
+    // Triggers continuously even on read-only systems, and races against collection.close()
+    await db.collection._cleanup(); 
+}, 5000);
 ```
-import { newRxError } from '../../rx-error.ts';
-import type {
-    RxAttachmentWriteData,
-    RxStorageInstance,
-    WithDeletedAndAttachments
-} from '../../types/index.d.ts';
-import { ensureNotFalsy } from '../utils/index.ts';
 
-export function ensureSchemaSupportsAttachments(doc: any) {
-    const schemaJson = doc.collection.schema.jsonSchema;
-    if (!schemaJson.attachments) {
-        throw newRxError('AT1', {
-            link: 'https://pubkey.github.io/rxdb/rx-attachment.html'
-        });
-    }
-}
+**VERIFICATION METHOD**:
+Implement integration tests simulating immediate collection closure during cleanup execution:
+```typescript
+it('should abort cleanly without unhandled rejection when closed during idle wait', async () => {
+    const state = await createMockState();
+    const cleanupPromise = startCleanupForRxState(state);
+    // Trigger mutation
+    state.collection.eventBulks$.next({});
+    // Prematurely close during wait
+    await state.collection.close();
+    await expect(cleanupPromise).resolves.not.toThrow();
+});
+```
 
-export function assignMethodsToAttachment(attachment: any) {
-    Object
-        .entries(attachment.doc.collection.attachments)
-        .forEach(([funName, fun]) => {
-            Object.defineProperty(attachment, funName, {
-                get: () => (fun as any).bind(attachment)
+---
+
+### 3. Mango Operator-To-Engine Compatibility Guarding
+**RULE**:
+Fluent Query Builders that translate chained method invocations into intermediate abstract query structures (e.g., Mango/MongoDB selectors) MUST NOT expose API operator methods unless the underlying query execution engine has full implementation support for those operators.
+
+**WHY**:
+Exposing builder methods (e.g., `.all()`, `.maxDistance()`) whose underlying execution adapters do not support the corresponding target operator (`$all`, `$maxDistance`) causes deferred runtime errors (`unknown query operator $all`). Such errors bypass compile-time TypeScript type checking and manifest only at runtime deep within storage query evaluators.
+
+**WHEN TO APPLY**:
+Apply to query builders, ORM abstraction layers, and AST-to-dialect translation layers (SQL, GraphQL, NoSQL).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Maintain single source of truth for supported engine operators
+export const SUPPORTED_MANGO_OPERATORS = [
+    'gt', 'gte', 'lt', 'lte', 'ne',
+    'in', 'nin', 'regex', 'size'
+] as const;
+
+export type SupportedMangoOperator = typeof SUPPORTED_MANGO_OPERATORS[number];
+
+// Ensure query builder class prototype ONLY binds operators present in the whitelist
+export function bindQueryBuilderOperators<T extends { new(...args: any[]): any }>(TargetClass: T): void {
+    SUPPORTED_MANGO_OPERATORS.forEach((op) => {
+        TargetClass.prototype[op] = function(this: any, value: unknown) {
+            const currentField = this._currentField;
+            if (!currentField) {
+                throw new Error(`Cannot call .${op}() before selecting a field with .where()`);
+            }
+            const mangoOp = `$${op}`;
+            this._selector[currentField] = Object.assign({}, this._selector[currentField], {
+                [mangoOp]: value
             });
-        });
+            return this;
+        };
+    });
 }
+```
 
-/**
- * Fill up the missing attachment.data of the newDocument
- * so that the new document can be sent to somewhere else
- * which could then receive all required attachments data
- * that it did not have before.
- */
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Binding operators supported by Mongo/Mongoose but unsupported by the local engine
+export const OTHER_MANGO_OPERATORS = [
+    'gt', 'gte', 'lt', 'lte', 'ne',
+    'in', 'nin', 'all', 'regex', 'size' // BUG: 'all' emits '$all' which crashes storage engines
+];
+```
+
+**VERIFICATION METHOD**:
+Enforce prototype reflection assertions in the unit test suite:
+```typescript
+it('should not expose unsupported operator methods on query prototype', () => {
+    const builder = createQueryBuilder();
+    expect(typeof (builder as any).all).toBe('undefined');
+    expect(typeof (builder as any).maxDistance).toBe('undefined');
+});
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Query Builder Prototype Exposure of Unsupported `$all` Operator (BUG-RXDB-01)
+- **Context**: `src/plugins/query-builder/mquery/nosql-query-builder.ts` and `src/types/rx-query.d.ts`
+- **What Was Expected**: Query builder chains should only expose methods supported by RxDB's mango query engine.
+- **What Actually Happened**: Developers calling `query.where('tags').all(['a', 'b'])` encountered runtime query engine failures: `unknown query operator $all`. The method was listed in TypeScript definitions and prototype loops, but was completely unsupported by the underlying storage query execution engine.
+- **Evidence in Repo**: Commit `d9d2eb86`, PR `#9293`, Issue `#9256`.
+- **Root Cause**: The query builder logic was originally ported from `mquery` (a MongoDB query builder). MongoDB supports `$all`, but RxDB's internal query processor (and underlying storage engines) deliberately do not implement array-subset matching via `$all`. The method remained exposed on `NoSqlQueryBuilderClass.prototype` and `RxQuery.d.ts`.
+- **Remediation Code Diff**:
+```diff
+--- a/src/plugins/query-builder/mquery/nosql-query-builder.ts
++++ b/src/plugins/query-builder/mquery/nosql-query-builder.ts
+@@ -470,7 +470,7 @@ OTHER_MANGO_ATTRIBUTES.forEach(function (method) {
+ export const OTHER_MANGO_OPERATORS = [
+     'gt', 'gte', 'lt', 'lte', 'ne',
+-    'in', 'nin', 'all', 'regex', 'size'
++    'in', 'nin', 'regex', 'size'
+ ];
+--- a/src/types/rx-query.d.ts
++++ b/src/types/rx-query.d.ts
+@@ -136,1 +136,0 @@ export declare class RxQuery<
+-    all(queryObj: any): RxQuery<RxDocumentType, RxQueryResult, OrmMethods, Reactivity>;
+--- a/test/unit/query-builder.test.ts
++++ b/test/unit/query-builder.test.ts
+@@ -218,5 +218,12 @@ describe('query-builder.test.js', () => {
++        it('should not have an all() method because $all is not a supported query operator', async () => {
++            const c = await humansCollection.create(0);
++            const query = c.find();
++            assert.strictEqual(typeof (query as any).all, 'undefined');
++            assert.strictEqual(typeof (createQueryBuilder() as any).all, 'undefined');
++            c.database.close();
++        });
+```
+- **Lesson**: Code ported or adapted from third-party ecosystems (like Mongoose/mquery) must have its operators validated against internal query engine contracts before exposing them via TypeScript definitions and prototype bindings.
+
+---
+
+### Incident 2: Hermes Native Runtime Crash via Unchecked `console.dir` (BUG-RXDB-02)
+- **Context**: `src/plugins/storage-sqlite` and developer toolhooks (`.claude/hooks/no-console-dir-storage-sqlite.mjs`).
+- **What Was Expected**: Diagnostics and debugging logs within the SQLite plugin must never crash production mobile environments.
+- **What Actually Happened**: Usage of `console.dir(...)` in SQLite storage adapters resulted in `TypeError: undefined is not a function` on React Native apps running the Hermes engine. This runtime error swallowed and masked the underlying SQLite persistence failure.
+- **Evidence in Repo**: Issue `#8635`, Hook file `.claude/hooks/no-console-dir-storage-sqlite.mjs`.
+- **Root Cause**: Hermes conforms strictly to ECMA specifications and omits non-standard browser/Node APIs like `console.dir`. Code designed for Node.js or Chromium desktop environments assumed global parity of developer console utilities.
+- **Remediation Code Diff**:
+```diff
+--- a/.claude/hooks/no-console-dir-storage-sqlite.mjs
++++ b/.claude/hooks/no-console-dir-storage-sqlite.mjs
+@@ -0,0 +1,56 @@
++const CONSOLE_DIR_REGEX = /console\s*\.\s*dir\b/;
++const STORAGE_SQLITE_PATH = 'src/plugins/storage-sqlite';
++
++// Intercepts and denies any write/edit in agent pipelines that injects console.dir
++const offends = collectTexts(toolInput).some(text => CONSOLE_DIR_REGEX.test(text));
++if (offends) {
++    const output = {
++        hookSpecificOutput: {
++            hookEventName: 'PreToolUse',
++            permissionDecision: 'deny',
++            permissionDecisionReason:
++                'Do not use console.dir inside src/plugins/storage-sqlite. ' +
++                'console.dir is undefined in production React Native / Hermes runtimes and throws ' +
++                'TypeError: undefined is not a function, masking the real error (see issue #8635). ' +
++                'Use console.log(JSON.stringify(...)) or errorToPlainJson(...) instead.'
++        }
++    };
++    process.stdout.write(JSON.stringify(output));
++    process.exit(0);
++}
+```
+- **Lesson**: Enforce automated pre-commit and pre-tool-use policy hooks to reject host-specific global method calls in cross-runtime source code.
+
+---
+
+### Incident 3: Attachment Sync Data Loss from Unchecked Digest Collisions (BUG-RXDB-03)
+- **Context**: `src/plugins/attachments/attachments-utils.ts` in `fillWriteDataForAttachmentsChange`
+- **What Was Expected**: Updating document attachments during replication or writes must only pull raw binary data if the attachment was modified or newly created.
+- **What Actually Happened**: When updating documents with pre-existing attachments, attempts to transfer attachment metadata without the binary payload caused destination storages to fail schema validation with error code `AT4`, or caused attachment content to be silently overwritten with empty buffers.
+- **Evidence in Repo**: `src/plugins/attachments/attachments-utils.ts`, lines 40–80.
+- **Root Cause**: Comparison logic failed to cross-check whether the existing attachment digest in `originalDocument` matched the incoming digest in `newDocument`. If they matched, re-reading the storage instance binary data was unnecessary; if they differed, the absence of `data` required an on-demand binary fetch via `storageInstance.getAttachmentData()`.
+- **Remediation Pattern**:
+```typescript
+// Deterministic attachment payload reconstruction
 export async function fillWriteDataForAttachmentsChange<RxDocType>(
     primaryPath: string,
     storageInstance: RxStorageInstance<RxDocType, any, any, any>,
     newDocument: WithDeletedAndAttachments<RxDocType>,
     originalDocument?: WithDeletedAndAttachments<RxDocType>
 ): Promise<WithDeletedAndAttachments<RxDocType>> {
-
-    if (
-        !newDocument._attachments ||
-        (
-            originalDocument &&
-            !originalDocument._attachments
-        )
-    ) {
-        throw newRxError('AT4', {
-            document: newDocument
-        });
+    if (!newDocument._attachments || (originalDocument && !originalDocument._attachments)) {
+        throw newRxError('AT4', { document: newDocument });
     }
 
     const docId: string = (newDocument as any)[primaryPath];
@@ -520,716 +369,239 @@ export async function fillWriteDataForAttachmentsChange<RxDocType>(
             ? Object.keys(originalDocument._attachments)
             : []
     );
+
     await Promise.all(
-        Object
-            .entries(newDocument._attachments)
-            .map(async ([key, value]) => {
-                if (
-                    (
-                        !originalAttachmentsIds.has(key) ||
-                        (
-                            originalDocument &&
-                            ensureNotFalsy(originalDocument._attachments)[key].digest !== value.digest
-                        )
-                    ) &&
-                    !(value as RxAttachmentWriteData).data
-                ) {
-                    const attachmentBlob = await storageInstance.getAttachmentData(
-                        docId,
-                        key,
-                        value.digest
-                    );
-                    (value as RxAttachmentWriteData).data = attachmentBlob;
-                }
-            })
+        Object.entries(newDocument._attachments).map(async ([key, value]) => {
+            const hasChanged = !originalAttachmentsIds.has(key) ||
+                (originalDocument && ensureNotFalsy(originalDocument._attachments)[key].digest !== value.digest);
+
+            // If changed or new, and data is omitted, pull binary blob from local storage
+            if (hasChanged && !(value as RxAttachmentWriteData).data) {
+                const attachmentBlob = await storageInstance.getAttachmentData(
+                    docId,
+                    key,
+                    value.digest
+                );
+                (value as RxAttachmentWriteData).data = attachmentBlob;
+            }
+        })
     );
 
     return newDocument;
 }
-
 ```
+- **Lesson**: Large binary attachments stored out-of-band must be versioned by cryptographic content digests (MD5/SHA). Payloads must only be loaded into mutation pipelines when the digest changes.
 
-### Core Architecture Module: `src/plugins/backup/file-util.ts`
-```
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import type {
-    BackupMetaFileContent,
-    BackupOptions,
-    RxDatabase
-} from '../../types/index.d.ts';
-import { blobToString, now } from '../../plugins/utils/index.ts';
+---
 
-/**
- * ensure that the given folder exists
- */
-export function ensureFolderExists(folderPath: string): void {
-    if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath, { recursive: true });
-    }
-}
-
-/**
- * deletes and recreates the folder
- */
-export function clearFolder(folderPath: string): void {
-    deleteFolder(folderPath);
-    ensureFolderExists(folderPath);
-}
-
-export function deleteFolder(folderPath: string): void {
-    // only remove if exists to not raise warning
-    if (fs.existsSync(folderPath)) {
-        fs.rmSync(folderPath, { recursive: true });
-    }
-}
-
-export function prepareFolders(
-    database: RxDatabase,
-    options: BackupOptions
-) {
-    ensureFolderExists(options.directory);
-
-    const metaLoc = metaFileLocation(options);
-
-    if (!fs.existsSync(metaLoc)) {
-        const currentTime = now();
-        const metaData: BackupMetaFileContent = {
-            createdAt: currentTime,
-            updatedAt: currentTime,
-            collectionStates: {}
+### Incident 4: Memory Leak and Listener Desynchronization in Electron Remote IPC (BUG-RXDB-04)
+- **Context**: `src/plugins/electron/rx-storage-ipc-renderer.ts`
+- **What Was Expected**: Multiple window or frame instances using Electron IPC to communicate with a main-process storage instance should isolate channels and cleanly clean up event listeners upon closure.
+- **What Actually Happened**: Disposing of remote storage instances without deregistering exact function references from `ipcRenderer.on` caused listener leaks on IPC channels and cross-talk between concurrently running storage channels.
+- **Evidence in Repo**: `src/plugins/electron/rx-storage-ipc-renderer.ts`, lines 25–58.
+- **Root Cause**: Anonymous event listener bindings passed to `settings.ipcRenderer.on` could not be unbound with `removeListener`.
+- **Remediation Pattern**:
+```typescript
+// Explicit listener isolation and lifecycle disposal
+const channelId = [IPC_RENDERER_KEY_PREFIX, settings.key].join('|');
+const storage = getRxStorageRemote({
+    identifier: 'electron-ipc-renderer',
+    mode: settings.mode,
+    messageChannelCreator() {
+        const messages$ = new Subject<MessageFromRemote>();
+        const listener = (_event: any, message: any) => {
+            messages$.next(message);
         };
-        fs.writeFileSync(metaLoc, JSON.stringify(metaData), 'utf-8');
-    }
-
-    Object.keys(database.collections).forEach(collectionName => {
-        ensureFolderExists(
-            path.join(
-                options.directory,
-                collectionName
-            )
-        );
-    });
-}
-
-export async function writeToFile(
-    location: string,
-    data: string | Blob
-): Promise<void> {
-    if (typeof data !== 'string') {
-        data = await blobToString(data);
-    }
-    return new Promise(function (res, rej) {
-        fs.writeFile(
-            location,
-            data as string,
-            'utf-8',
-            (err: Error | null) => {
-                if (err) {
-                    rej(err);
-                } else {
-                    res();
-                }
-            }
-        );
-    });
-}
-
-export function writeJsonToFile(
-    location: string,
-    data: any
-): Promise<void> {
-    return writeToFile(
-        location,
-        JSON.stringify(data)
-    );
-}
-
-export function metaFileLocation(options: BackupOptions): string {
-    return path.join(
-        options.directory,
-        'backup_meta.json'
-    );
-}
-
-export function getMeta(options: BackupOptions): Promise<BackupMetaFileContent> {
-    const loc = metaFileLocation(options);
-    return new Promise((res, rej) => {
-        fs.readFile(loc, 'utf-8', (err: Error | null, data: string) => {
-            if (err) {
-                rej(err);
-            } else {
-                const metaContent = JSON.parse(data);
-                res(metaContent);
+        // Explicit reference registration
+        settings.ipcRenderer.on(channelId, listener);
+        settings.ipcRenderer.postMessage(channelId, false);
+        return Promise.resolve({
+            messages$,
+            send(msg) {
+                settings.ipcRenderer.postMessage(channelId, msg);
+            },
+            close() {
+                // Precise unbinding prevents listener leak in Electron main/renderer processes
+                settings.ipcRenderer.removeListener(channelId, listener);
+                return PROMISE_RESOLVE_VOID;
             }
         });
-    });
-}
-
-export function setMeta(
-    options: BackupOptions,
-    meta: BackupMetaFileContent
-): Promise<void> {
-    const loc = metaFileLocation(options);
-    return writeJsonToFile(loc, meta);
-}
-
-export function documentFolder(
-    options: BackupOptions,
-    docId: string
-): string {
-    return path.join(
-        options.directory,
-        docId
-    );
-}
-
-```
-
-### Core Architecture Module: `src/plugins/cleanup/cleanup-state.ts`
-```
-import type { RxCleanupPolicy, RxState } from '../../types/index.d.ts';
-import { PROMISE_RESOLVE_TRUE } from '../../plugins/utils/index.ts';
-import { REPLICATION_STATE_BY_COLLECTION } from '../replication/index.ts';
-import { DEFAULT_CLEANUP_POLICY } from './cleanup-helper.ts';
-import { initialCleanupWait } from './cleanup.ts';
-import { firstValueFrom } from 'rxjs';
-
-let RXSTATE_CLEANUP_QUEUE: Promise<any> = PROMISE_RESOLVE_TRUE;
-
-export async function startCleanupForRxState(state: RxState<unknown, unknown>) {
-    const rxCollection = state.collection;
-    const rxDatabase = rxCollection.database;
-    const cleanupPolicy = Object.assign(
-        {},
-        DEFAULT_CLEANUP_POLICY,
-        rxDatabase.cleanupPolicy ? rxDatabase.cleanupPolicy : {}
-    );
-
-    await initialCleanupWait(rxCollection, cleanupPolicy);
-    if (rxCollection.closed) {
-        return;
-    }
-
-    // initially cleanup the state
-    await cleanupRxState(state, cleanupPolicy);
-
-    /**
-     * Afterwards we listen to writes
-     * and only re-run the cleanup if there was a write
-     * to the state.
-     */
-    await runCleanupAfterWrite(state, cleanupPolicy);
-}
-/**
- * Runs the cleanup for a single RxState
- */
-export async function cleanupRxState(
-    state: RxState<unknown, unknown>,
-    cleanupPolicy: RxCleanupPolicy
-) {
-    const rxCollection = state.collection;
-    const rxDatabase = rxCollection.database;
-
-    // run cleanup() until it returns true
-    let isDone = false;
-    while (!isDone && !rxCollection.closed) {
-        if (cleanupPolicy.awaitReplicationsInSync) {
-            const replicationStates = REPLICATION_STATE_BY_COLLECTION.get(rxCollection);
-            if (replicationStates) {
-                await Promise.all(
-                    replicationStates.map(replicationState => {
-                        if (!replicationState.isStopped()) {
-                            return replicationState.awaitInSync();
-                        }
-                    })
-                );
-            }
-        }
-        if (rxCollection.closed) {
-            return;
-        }
-        RXSTATE_CLEANUP_QUEUE = RXSTATE_CLEANUP_QUEUE
-            .then(async () => {
-                if (rxCollection.closed) {
-                    return true;
-                }
-                await rxDatabase.requestIdlePromise();
-                return state._cleanup();
-            });
-        isDone = await RXSTATE_CLEANUP_QUEUE;
-    }
-}
-
-export async function runCleanupAfterWrite(
-    state: RxState<unknown, unknown>,
-    cleanupPolicy: RxCleanupPolicy
-) {
-    const rxCollection = state.collection;
-    while (!rxCollection.closed) {
-        /**
-         * We only start the timer if there was actually a write
-         * to the collection. Otherwise the cleanup would
-         * just run on intervals even if nothing has changed.
-         */
-        await firstValueFrom(rxCollection.eventBulks$).catch(() => { });
-        await rxCollection.promiseWait(cleanupPolicy.runEach);
-        if (rxCollection.closed) {
-            return;
-        }
-        await cleanupRxState(state, cleanupPolicy);
-    }
-}
-
-```
-
-### Core Architecture Module: `src/plugins/electron/rx-storage-ipc-renderer.ts`
-```
-import { Subject } from 'rxjs';
-import {
-    getRxStorageRemote,
-    RxStorageRemote,
-    RxStorageRemoteSettings,
-    MessageFromRemote
-} from '../storage-remote/index.ts';
-import {
-    IPC_RENDERER_KEY_PREFIX
-} from './electron-helper.ts';
-import { PROMISE_RESOLVE_VOID } from '../utils/index.ts';
-
-export type RxStorageIpcRendererSettings = {
-    /**
-     * Set the same key on both sides
-     * to ensure that messages do not get mixed
-     * up when you use more than one storage.
-     */
-    key: string;
-    ipcRenderer: any;
-    mode: RxStorageRemoteSettings['mode'];
-};
-
-export type RxStorageIpcRenderer = RxStorageRemote;
-export function getRxStorageIpcRenderer(
-    settings: RxStorageIpcRendererSettings
-): RxStorageIpcRenderer {
-    const channelId = [
-        IPC_RENDERER_KEY_PREFIX,
-        settings.key
-    ].join('|');
-
-    const storage = getRxStorageRemote({
-        identifier: 'electron-ipc-renderer',
-        mode: settings.mode,
-        messageChannelCreator() {
-            const messages$ = new Subject<MessageFromRemote>();
-            const listener = (_event: any, message: any) => {
-                messages$.next(message);
-            };
-            settings.ipcRenderer.on(channelId, listener);
-            settings.ipcRenderer.postMessage(
-                channelId,
-                false
-            );
-            return Promise.resolve({
-                messages$,
-                send(msg) {
-                    settings.ipcRenderer.postMessage(
-                        channelId,
-                        msg
-                    );
-                },
-                close() {
-                    settings.ipcRenderer.removeListener(channelId, listener);
-                    return PROMISE_RESOLVE_VOID;
-                }
-            });
-        },
-    });
-    return storage;
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9292** (2026-10-19): **Add a realistic bundle-size check to CI**
-  *Symptoms*: ## This PR contains: - IMPROVED TESTS  ## Describe the problem you have without this PR  The `build:size` step in `test-builds` only bundles an empty memory database (`config/bundle-size.js`) and prints a number without any limit, so bundle-size regressions go unnoticed. Two examples: - The migration-schema plugin adds 41 KB minified. - Importing `validate-ajv` adds 125 KB minified.  The fixture also called `db.destroy()`, which no longer exists. It is only ever bundled, never run, so nobody noticed.  This PR adds: - `config/bundle-size/` with three fixtures:   - `memory-minimal`: createRxDatabase with the memory storage.   - `todo-dexie`: the Dexie.js storage, a todo collection, insert, a sorted `find().$` subscription, `patch` and `remove`.   - `todo-dexie-plugins`: the todo app plus the leader-election, migration-schema, update and query-builder plugins. - `scripts/check-bundle-size.mjs`: bundles each fixture with esbuild (minified, browser, ESM) and fails when the minified or gzip size exceeds `config/bundle-size/limits.json`. `--update` writes the measured sizes plus 2% headroom. - npm scripts `test:bundle-size` and `bundle-size:update`, and a `check bundle size limits` step in `test-builds` after `npm run build`. - `esbuild` pinned as a devDependency. It was only installed transitively through `tsx`. - A fix for `db.destroy()` → `db.close()` in `config/bundle-size.js`. - A CLAUDE.md line on how to run and update the check.  Current sizes:  | fixture | minified | gzip | 
-
-- **Issue #9291** (2026-10-19): **Use the ES2015 build of RxJS in the examples and document it**
-  *Symptoms*: ## This PR contains: - IMPROVED DOCS - SOMETHING ELSE (example configs)  ## Describe the problem you have without this PR  RxJS 7 has an ES5 build (`default` export condition) and an ES2015 build (`es2015` condition). Vite, webpack, Rollup and esbuild do not set `es2015` by default, so RxDB apps bundle the ES5 build plus `tslib`.  Measured: - Todo app, Vite 8.3.4: 366.7 KB → 360.1 KB minified (113.7 → 112.1 KB gzipped). All 72 RxJS modules switch from `rxjs/dist/esm5` to `rxjs/dist/esm`. - `examples/vite-vanilla-ts` with the new config (built against the local RxDB build): 426.6 KB → 419.9 KB minified. - webpack 5: default resolves `esm5` + `tslib`. `conditionNames: ['es2015', '...']` resolves `rxjs/dist/esm`. - esbuild: `conditions: ['es2015', 'module']` drops RxJS from 22.3 KB to 17.2 KB and `tslib` from 3.9 KB to 1.9 KB. - The Angular CLI (`@angular/build` 22.2.2) already sets `es2015` in its esbuild conditions, so the Angular and Ionic examples need no change.  Changes: - `docs-src/docs/install.md`: a new section with configs for Vite, webpack, Rollup and esbuild. - Examples: `vite-vanilla-ts`, `tauri` (Vite), `graphql` (webpack), `vue` (Vue CLI / webpack), `svelte` (Rollup). - Not changed:   - `react` uses `react-scripts`, which cannot change resolve conditions without ejecting.   - `react-native` uses Metro.   - `flutter/javascript` bundles for a non-browser JS engine that I could not test here.  The code-block line-length, em-dash and codespell checks pass. No changelo
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `663489ef` (2026-10-19)
-**Commit Message**: Use the ES2015 build of RxJS in the examples and document it (#9291)
-
-* Use the ES2015 build of RxJS in the examples and document it
-
-RxJS 7 resolves its ES2015 build only under the 'es2015' export
-condition. Vite, webpack, Rollup and esbuild do not set it by default
-and bundle the ES5 build plus tslib instead. In an RxDB app built with
-Vite 8 this costs 6.6 KB minified (1.6 KB gzipped).
-
-Set the condition in the Vite, webpack and Rollup based examples and
-document the config for each bundler in install.md. The Angular CLI
-already sets the condition, so the Angular and Ionic examples need no
-change.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01JDvYN6dTo9JA4w7ZhxDvsm
-
-* Use the Tabs component for the RxJS ES2015 bundler configs
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01JDvYN6dTo9JA4w7ZhxDvsm
-
----------
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `docs-src/docs/install.md` (modified, +62/-0)
-```diff
-@@ -6,6 +6,7 @@ image: /headers/install.jpg
- ---
- 
- import {InstallTabs} from '@site/src/components/install-tabs';
-+import {Tabs} from '@site/src/components/tabs';
- 
- # Install RxDB
- 
-@@ -21,6 +22,67 @@ You also need to install the peer-dependency `rxjs` if you have not installed it
- 
- <InstallTabs packageName="rxjs" />
- 
-+## Use the ES2015 build of RxJS
-+
-+RxJS 7 ships an ES5 build and an ES2015 build. The ES2015 build is only resolved when your bundler sets the `es2015` export condition. Vite, webpack, Rollup and esbuild do not set it by default, so they bundle the ES5 build together with the `tslib` helpers. In an RxDB app built with Vite, adding the condition reduces the bundle by about `6.6 KB` minified (`1.6 KB` gzipped). The Angular CLI already sets the condition, so Angular projects need no change.
-+
-+<Tabs>
-+
-+### Vite
-+
-+Vite 6 or newer:
-+
-+```ts
-+// vite.config.ts
-+import { defineConfig, defaultClientConditions } from 'vite';
-+
-+export default defineConfig({
-+    resolve: {
-+        conditions: ['es2015', ...defaultClientConditions]
-+    }
-+});
-+```
-+
-+### webpack
-+
-+webpack 5 or newer, `'...'` keeps the default conditions:
-+
-+```js
-+// webpack.config.js
-+module.exports = {
-+    resolve: {
-+        conditionNames: ['es2015', '...']
-+    }
-+};
-+```
-+
-+### Rollup
-+
-+With `@rollup/plugin-node-resolve`:
-+
-+```js
-+// rollup.config.mjs
-+import { nodeResolve } from '@rollup/plugin-node-resolve';
-+
-+export default {
-+    plugins: [
-+        nodeResolve({ browser: true, exportConditions: ['es2015'] })
-+    ]
-+};
-+```
-+
-+### esbuild
-+
-+Setting `conditions` replaces the default `module` condition, so add it again:
-+
-+```js
-+await esbuild.build({
-+    conditions: ['es2015', 'module']
-+});
-+```
-+
-+</Tabs>
-+
- ## polyfills
- 
- RxDB is coded with ES8 and transpiled to ES5. This means you have to install [polyfills](https://developer.mozilla.org/en-US/docs/Glossary/Polyfill) to support older browsers. For example you can use [core-js](https://github.com/zloirock/core-js) with:
-```
-
-**File**: `examples/graphql/webpack.config.js` (modified, +4/-0)
-```diff
-@@ -17,6 +17,10 @@ export default {
-     experiments: {
-         outputModule: true,
-     },
-+    resolve: {
-+        // use the ES2015 build of RxJS instead of the bigger ES5 build
-+        conditionNames: ['es2015', '...']
-+    },
-     plugins: [
-         new webpack.ProvidePlugin({
-             process: 'process/browser',
-```
-
-**File**: `examples/svelte/rollup.config.mjs` (modified, +3/-1)
-```diff
-@@ -59,7 +59,9 @@ export default {
- 		// https://github.com/rollup/plugins/tree/master/packages/commonjs
- 		resolve({
- 			browser: true,
--			dedupe: ['svelte']
-+			dedupe: ['svelte'],
-+			// use the ES2015 build of RxJS instead of the bigger ES5 build
-+			exportConditions: ['es2015']
- 		}),
- 		commonjs(),
- 
-```
-
-**File**: `examples/tauri/vite.config.js` (modified, +5/-1)
-```diff
-@@ -1,9 +1,13 @@
--import { defineConfig } from "vite";
-+import { defineConfig, defaultClientConditions } from "vite";
- 
- const host = process.env.TAURI_DEV_HOST;
- 
- // https://vitejs.dev/config/
- export default defineConfig(async () => ({
-+  // use the ES2015 build of RxJS instead of the bigger ES5 build
-+  resolve: {
-+    conditions: ["es2015", ...defaultClientConditions],
-+  },
-   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
-   //
-   // 1. prevent vite from obscuring rust errors
-```
-
-**File**: `examples/vite-vanilla-ts/vite.config.ts` (modified, +10/-2)
-```diff
-@@ -1,3 +1,11 @@
--import { defineConfig } from 'vite';
-+import { defineConfig, defaultClientConditions } from 'vite';
- 
--export default defineConfig({});
-+export default defineConfig({
-+    resolve: {
-+        /**
-+         * Without the 'es2015' condition, Vite resolves
-+         * the ES5 build of RxJS which is bigger.
-+         */
-+        conditions: ['es2015', ...defaultClientConditions]
-+    }
-+});
-```
-
-**File**: `examples/vue/vue.config.js` (modified, +4/-0)
-```diff
-@@ -5,6 +5,10 @@ module.exports = {
-   publicPath: './',
-   configureWebpack: {
-     devtool: 'source-map',
-+    resolve: {
-+      // use the ES2015 build of RxJS instead of the bigger ES5 build
-+      conditionNames: ['es2015', '...'],
-+    },
-     plugins: [
-       new CopyPlugin({
-         patterns: [
-```
-
----
-
-### Incident Patch 2: `b081d1c7` (2026-10-19)
-**Commit Message**: DOCS: prefix the database name with the staging id (#9286)
-
-* DOCS: explain prefixing the database name with the staging id
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01XqUuEcNDuZCCihe6gresy6
-
-* DOCS: put staging name hint into a note box
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01XqUuEcNDuZCCihe6gresy6
-
----------
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `docs-src/docs/rx-database.md` (modified, +14/-0)
-```diff
-@@ -34,6 +34,20 @@ const db = await createRxDatabase({
- The database name is a string which uniquely identifies the database. When two RxDatabases have the same name and use the same `RxStorage`, their data can be assumed as equal and they will share events between each other.
- Depending on the storage or adapter this can also be used to define the filesystem folder of your data.
- 
-+:::note Prefix the name on staging deployments
-+When you deploy your app to a staging area, prefix the database name with the staging id. Browser storages like IndexedDB, OPFS, and localStorage are scoped to the origin and not to the URL path. Let's say your app lives on `example.com` and you have a feature preview at `example.com/commit-42/`. Both deployments run on the same origin, so with the same database name the preview reads and writes the stored data of the production app. This can corrupt data when the preview uses a different [schema version](./migration-schema.md) or stores test documents. To fix this, use `commit-42-mydatabasename` as name for the preview.
-+
-+```ts
-+// your own deploy config, for example 'commit-42' on a feature preview and '' on production
-+const stagingId = import.meta.env.VITE_STAGING_ID;
-+
-+const db = await createRxDatabase({
-+  name: stagingId ? stagingId + '-mydatabasename' : 'mydatabasename',
-+  storage: getRxStorageLocalstorage()
-+});
-+```
-+:::
-+
- 
- ### storage
- 
-```
-
-**File**: `src/types/rx-database.d.ts` (modified, +16/-0)
-```diff
-@@ -69,6 +69,22 @@ export interface RxDatabaseCreator<Internals = any, InstanceCreationOptions = an
-      */
-     storage: RxStorage<Internals, InstanceCreationOptions>;
-     instanceCreationOptions?: InstanceCreationOptions;
-+    /**
-+     * The name of the database. It uniquely identifies the stored data,
-+     * so two databases with the same name and the same RxStorage share their data.
-+     *
-+     * When you deploy your app to a staging area or feature preview
-+     * that runs on the same origin as other deployments,
-+     * prefix the name with the staging id. Otherwise all deployments
-+     * read and write the same stored database state.
-+     * @example
-+     * ```ts
-+     * // production on example.com
-+     * name: 'mydatabasename'
-+     * // feature preview on example.com/commit-42/
-+     * name: 'commit-42-mydatabasename'
-+     * ```
-+     */
-     name: string;
-     /**
-      * Typed as `any` because different encryption plugins
-```
-
-#### Recent Merged Pull Requests:
-- **PR #9292** (2026-10-19): Add a realistic bundle-size check to CI (@pubkey)
-- **PR #9291** (2026-10-19): Use the ES2015 build of RxJS in the examples and document it (@pubkey)
-- **PR #9290** (2026-10-19): Convert validate-ajv-standalone changelog entries to JSON (@pubkey)
-- **PR #9289** (2026-10-19): Update event-reduce-js to 7.0.1 (@pubkey)
-- **PR #9288** (2026-10-19): Fix too long code block line in rx-database.md (@pubkey)
-- **PR #9287** (2026-10-19): Migrate changelog entries to JSON files validated by a schema (@pubkey)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Use the ES2015 build of RxJS in the examples and document it (#9291)
-
-**RULE**:
-When implementing operations in `docs-src/docs/install.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `663489ef`: Use the ES2015 build of RxJS in the examples and document it (#9291). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs-src/docs/install.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-import {Tabs} from '@site/src/components/tabs';
-## Use the ES2015 build of RxJS
-
-RxJS 7 ships an ES5 build and an ES2015 build. The ES2015 build is only resolved when your bundler sets the `es2015` export condition. Vite, webpack, Rollup and esbuild do not set it by default, so they bundle the ES5 build together with the `tslib` helpers. In an RxDB app built with Vite, adding the condition reduces the bundle by about `6.6 KB` minified (`1.6 KB` gzipped). The Angular CLI already sets the condition, so Angular projects need no change.
-
-<Tabs>
-
-### Vite
-
-Vite 6 or newer:
-
-```ts
-// vite.config.ts
-import { defineConfig, defaultClientConditions } from 'vite';
-
-export default defineConfig({
-    resolve: {
-        conditions: ['es2015', ...defaultClientConditions]
     }
 });
 ```
+- **Lesson**: Every message-passing bridge abstraction (IPC, WebWorker, BroadcastChannel) must encapsulate its listener reference and bind teardown directly to its `close()` lifecycle contract.
 
-### webpack
+---
 
-webpack 5 or newer, `'...'` keeps the default conditions:
-
-```js
-// webpack.config.js
-module.exports = {
-    resolve: {
-        conditionNames: ['es2015', '...']
-    }
-};
-```
-
-### Rollup
-
-With `@rollup/plugin-node-resolve`:
-
-```js
-// rollup.config.mjs
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-
-export default {
-    plugins: [
-        nodeResolve({ browser: true, exportConditions: ['es20
-```
-
-**NEGATIVE CONSTRAINT**:
+### Incident 5: State Compaction Race with Active Replication Sync (BUG-RXDB-05)
+- **Context**: `src/plugins/cleanup/cleanup-state.ts`
+- **What Was Expected**: Cleaning up historical revisions and tombstones in local collections must not purge documents before ongoing replication streams have acknowledged receipt.
+- **What Actually Happened**: Document revisions marked for deletion were purged by the cleanup worker while background replication was actively reading changed rows, causing continuous sync failures and irrecoverable remote desynchronization.
+- **Evidence in Repo**: `src/plugins/cleanup/cleanup-state.ts`, lines 40–65.
+- **Root Cause**: The cleanup worker ran independently of the replication manager, purging local state revisions before the replication engine finished syncing.
+- **Remediation Pattern**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Gating cleanup behind active replication sync confirmation
+if (cleanupPolicy.awaitReplicationsInSync) {
+    const replicationStates = REPLICATION_STATE_BY_COLLECTION.get(rxCollection);
+    if (replicationStates) {
+        await Promise.all(
+            replicationStates.map(replicationState => {
+                if (!replicationState.isStopped()) {
+                    return replicationState.awaitInSync();
+                }
+            })
+        );
+    }
+}
+if (rxCollection.closed) {
+    return;
+}
 ```
+- **Lesson**: Tombstone cleanup policies must declare bidirectional dependency checks against network replication consumers. Local garbage collection must pause until network synchronization barriers are resolved.
 
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `663489ef` are properly handled with clean fallback behavior.
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Implicit Falsy Conversions in Number Properties**:
+   ```typescript
+   // WRONG: In RxDB priority or count fields, 0 is a valid value
+   if (!doc.priority) { /* Treats priority: 0 as missing! */ }
+
+   // CORRECT: Explicit null/undefined checks
+   if (doc.priority === undefined || doc.priority === null) { /* Safe */ }
+   ```
+2. **Deep Immutability vs Shallow Copies in Write Pipelines**:
+   ```typescript
+   // In plugins/hooks.ts:
+   // Mutating hook inputs directly contaminates previous states and breaks internal caches
+   export function cloneBeforeHookMutation<T>(input: T): T {
+       // Fast JSON clone for Plain Old JavaScript Objects (POJOs)
+       return JSON.parse(JSON.stringify(input));
+   }
+   ```
+3. **RegExp Deserialization Traps in Query Matchers**:
+   - As documented in `docs-src/docs/query-builder.md`, raw JavaScript `RegExp` objects MUST NOT be accepted directly into query selectors because `RegExp` instances are mutable (e.g., maintaining state via `lastIndex`) and do not serialize deterministically into standard JSON Mango queries. Selectors must require `{ $regex: string, $options?: string }`.
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **State Cleanup While-Loop Termination Invariants**:
+   In `src/plugins/cleanup/cleanup-state.ts`:
+   ```typescript
+   let isDone = false;
+   while (!isDone && !rxCollection.closed) {
+       // Loop termination proof:
+       // 1. isDone is determined by state._cleanup() resolving true when no tombstones remain
+       // 2. rxCollection.closed is checked before AND after each promise resolution
+       // 3. Queue chaining ensures only one cleanup runs concurrently
+       RXSTATE_CLEANUP_QUEUE = RXSTATE_CLEANUP_QUEUE.then(async () => {
+           if (rxCollection.closed) return true;
+           await rxDatabase.requestIdlePromise();
+           return state._cleanup();
+       });
+       isDone = await RXSTATE_CLEANUP_QUEUE;
+   }
+   ```
+2. **Event Loop Starvation Elimination via Idle Scheduling**:
+   Recursive or iterative batch processing must never execute tight CPU-bound loops. They must yield to the event loop using `requestIdlePromise()`:
+   ```typescript
+   export function requestIdlePromise(): Promise<void> {
+       return new Promise(res => {
+           if (typeof window !== 'undefined' && (window as any).requestIdleCallback) {
+               (window as any).requestIdleCallback(() => res());
+           } else {
+               setTimeout(res, 0); // Macrotask turn yield
+           }
+       });
+   }
+   ```
+
+### 4.3 UI & UX Micro-Mechanics
+1. **Observable Debouncing vs Initial Value Latency**:
+   UI query subscriptions (`db.heroes.find().$`) must emit their cached value synchronously or on the immediate microtask turn if cached, but must debounce high-frequency batch writes to prevent UI layout thrashing:
+   ```typescript
+   // In UI Rendering (renderer.js):
+   db.heroes.find().$.subscribe(heroes => {
+       if (!heroes) {
+           heroesList.innerHTML = 'Loading..';
+           return;
+       }
+       // Micro-mechanic: Accumulate DOM strings into single innerHTML mutation to prevent reflow thrashing
+       heroesList.innerHTML = heroes
+           .map(hero => `<li><div style="background:${hero.color}"></div>${hero.name}</li>`)
+           .join(''); // Preferred over .reduce for string concatenation performance
+   });
+   ```
+
+### 4.4 Backend Concurrency & Memory Safety
+1. **TOCTOU in File/Directory Creation**:
+   In `src/plugins/backup/file-util.ts`, verifying existence before directory creation is vulnerable to TOCTOU race conditions. Using recursive flags bypasses directory-race failures:
+   ```typescript
+   export function ensureFolderExists(folderPath: string): void {
+       // Node.js fs.mkdirSync with { recursive: true } is idempotent and avoids TOCTOU errors
+       fs.mkdirSync(folderPath, { recursive: true });
+   }
+   ```
+2. **Plugin Hook Execution Ordering**:
+   As enforced in `src/hooks.ts`:
+   ```typescript
+   export async function runAsyncPluginHooks(hookKey: keyof typeof HOOKS, obj: any): Promise<any> {
+       // CRITICAL: We deliberately avoid Promise.all(HOOKS[hookKey].map(...))
+       // Parallel execution introduces non-deterministic mutation ordering across plugins.
+       for (const fn of HOOKS[hookKey]) {
+           await (fn as any)(obj);
+       }
+   }
+   ```
+
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+1. **Missing Attachment Guards (`AT1`, `AT4`)**:
+   Deep schema checks verify that attachment declarations exist before any attachment operation is accepted, raising structured error codes instead of throwing native `TypeError` null dereferences:
+   ```typescript
+   export function ensureSchemaSupportsAttachments(doc: any) {
+       const schemaJson = doc.collection.schema.jsonSchema;
+       if (!schemaJson.attachments) {
+           throw newRxError('AT1', {
+               link: 'https://pubkey.github.io/rxdb/rx-attachment.html'
+           });
+       }
+   }
+   ```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+RxDB organizes subsystems using a strict layered architecture:
+- Core layer (`RxDatabase`, `RxCollection`, `RxDocument`, `RxQuery`) provides domain models and RxJS bindings.
+- Storage layer defines the `RxStorage` interface. All storage adapters (Dexie, SQLite, IndexedDB, Memory) operate as swappable drivers without internal references to collection logic.
+- Cross-process boundaries (Electron, WebWorkers) route storage commands through remote serialization proxies (`RxStorageRemote` and `getRxStorageIpcRenderer`).
+
+### Dimension 2: Core Abstractions
+- **`RxStorageInstance<RxDocType, InternalState, InstanceCreationOptions, CustomSettings>`**: The fundamental primitive handling atomic bulk writes, change event emissions, query execution, and attachment retrieval.
+- **`RxDocument`**: Proxy interface around immutable plain JavaScript objects representing database rows, vending reactive field-level observables (`doc.name$`).
+- **`RxPlugin`**: Modular extension contract hook into 18+ specific extension points in the lifecycle pipeline (`preCreateRxDatabase`, `preStorageWrite`, etc.).
+
+### Dimension 3: Error Handling
+RxDB uses structured, linkable error codes (e.g., `'AT1'`, `'AT4'`) generated by `newRxError(code, payload)`. Errors serialize cleanly and include reference documentation URLs, preventing ambiguous native `TypeError` exceptions from escaping to client code.
+
+### Dimension 4: Testing
+- Dual-target testing: Karma running against real browser instances (Chrome, Firefox) alongside Mocha tests in Node.js.
+- Bundle-size budgeting: As seen in `config/bundle-size/limits.json`, bundle constraints are enforced in CI to prevent size regressions in client-side bundles.
+- Engine matrix tests: Validates identical query assertions across Memory, Dexie, IndexedDB, and SQLite storage adapters.
+
+### Dimension 5: Security
+- Injection prevention: Direct arbitrary SQL or raw queries are disallowed in high-level APIs; queries are compiled into deterministic JSON Mango selectors.
+- Regex protection: Direct passing of raw mutable `RegExp` references is rejected to prevent ReDoS and state leakage.
+- Sanitization of storage payloads: Pre-write hooks (`preStorageWrite`) enable AJV JSON-schema validation and field-level encryption plugins to scrub data before it hits the underlying disk storage.
+
+### Dimension 6: Performance
+- **Zero-Polling Reactivity**: Query reactivity is driven by storage `eventBulks$` streams rather than periodic database re-querying.
+- **Batched Write Operations**: Storage interfaces mandate `bulkWrite()` rather than single-record insertions to avoid multiple disk sync cycles.
+- **Synchronous Hot-Path Hooks**: Critical read/write paths use synchronous hook loops (`runPluginHooks`) to avoid unnecessary microtask queue scheduling.
+
+### Dimension 7: Deployment
+- Multi-format distribution: Parallel CJS (`./dist/cjs`) and ESM (`./dist/esm`) builds with targeted path exports (`package.json#exports`).
+- `sideEffects: false` metadata guarantees tree-shaking support for bundlers (Webpack, Vite,

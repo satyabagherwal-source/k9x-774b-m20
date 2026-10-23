@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T10:09:48.515Z",
+  "last_updated": "2026-10-23T10:24:39.178Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "3fd2d9d243d8862f452efc0a5b29585da0a844a1ec6daded7204793680b73025",
-      "verified_at": "2026-10-20T06:42:29.391Z",
+      "content_hash": "52ff3f1d2600fb79f8ce835fe7e02817721a72d2532ce5f55f8ecf74eed1e21b",
+      "verified_at": "2026-10-23T10:24:39.177Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:42:29.391Z"
+      "last_updated": "2026-10-23T10:24:39.177Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "d2ce7b1d1b6707cfa49b77f1a588bb4c03b7ea35f5b8bde5f2da923a06e8246f",
-      "verified_at": "2026-10-21T03:18:04.065Z",
+      "content_hash": "2a46901ee6bec79a042e0849fa01aa9c1ea845bf0e2b9eec2d9d51a539031ccd",
+      "verified_at": "2026-10-23T10:24:11.347Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:18:04.065Z"
+      "last_updated": "2026-10-23T10:24:11.347Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -10476,14 +10476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-angular-angular",
-      "content_hash": "db35bfa1cfb635c43dcee1bd90d8d0c05e2925396d5dac890b0ff65a53c1e263",
-      "verified_at": "2026-10-21T15:29:01.530Z",
+      "content_hash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
+      "verified_at": "2026-10-23T10:23:09.072Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:29:01.530Z"
+      "last_updated": "2026-10-23T10:23:09.072Z"
     },
     "devspace-sh/devspace": {
       "repository": "devspace-sh/devspace",

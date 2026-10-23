@@ -4525,3 +4525,6 @@
 | `CYCLE-20261023-61CU` | `2026-10-23T10:09:36.606Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3867` | Yes (`589dfdd7...`) |
 | `CYCLE-20261023-62QL` | `2026-10-23T10:09:38.397Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3868` | Yes (`3fa6d6cd...`) |
 | `CYCLE-20261023-6AJA` | `2026-10-23T10:09:48.502Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3869` | Yes (`9a2b6d41...`) |
+| `CYCLE-20261023-NG8X` | `2026-10-23T10:23:09.057Z` | `angular/angular` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3870, Rule 3871, Rule 3872` | Yes (`c43c07db...`) |
+| `CYCLE-20261023-OSAQ` | `2026-10-23T10:24:11.330Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3873, Rule 3874, Rule 3875` | Yes (`2a46901e...`) |
+| `CYCLE-20261023-PDRT` | `2026-10-23T10:24:39.161Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3876, Rule 3877, Rule 3878` | Yes (`52ff3f1d...`) |

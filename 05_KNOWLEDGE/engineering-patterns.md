@@ -277768,3 +277768,875 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `68fe0510` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3870. Zero-Receiver Object-Context Decoupling via `this: void` (Harvested from angular/angular)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Receiver Object-Context Decoupling via `this: void`",
+  "source": "angular/angular",
+  "source_url": "https://github.com/angular/angular",
+  "source_version": "970bbc7c",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T10:23:08.538Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-angular-angular",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [angular/angular](https://github.com/angular/angular) (Revision: `970bbc7c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Public interface methods designed or expected to be destructured at consumption sites (e.g., parameter destructing in callbacks `({valueOf, stateOf}) => ...`) MUST explicitly type the receiver parameter as `this: void`. Classes implementing these contracts MUST either bind the members in their constructor or assign them as lexical arrow-function properties.
+
+**WHY**:
+Standard TypeScript interface methods implicitly type `this` to the interface instance. When linters (`@typescript-eslint/unbound-method`, Oxlint) inspect destructured usage, they flag unbound method extractions as critical memory-safety / execution hazards. Furthermore, if an implementation relies on `this` without explicit rebinding, destructured invocations silently dereference `undefined`, leading to runtime crashes (`TypeError: Cannot read properties of undefined`). Enforcing `this: void` in the contract guarantees receiver-agnostic callability both at compile-time and runtime.
+
+**WHEN TO APPLY**:
+Apply to all context objects, visitor arguments, builder interfaces, and state helpers passed into functional user callbacks, predicates, or pipeline transformers across TypeScript libraries.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Definition Contract
+export interface RootFieldContext<TValue> {
+  readonly fieldTree: ReadonlyFieldTree<TValue>;
+  valueOf<PValue>(this: void, p: SchemaPath<PValue, SchemaPathRules>): PValue;
+  stateOf<PValue>(
+    this: void,
+    p: SchemaPath<PValue, SchemaPathRules>,
+  ): [PValue] extends [any] ? ReadonlyFieldState<PValue> : never;
+  fieldTreeOf<PModel>(
+    this: void,
+    p: SchemaPathTree<PModel>,
+  ): [PModel] extends [any] ? ReadonlyFieldTree<PModel> : never;
+}
+
+// Runtime Implementation
+export class FieldNodeContext<TValue> implements RootFieldContext<TValue> {
+  readonly fieldTree: ReadonlyFieldTree<TValue>;
+
+  constructor(private readonly node: InternalNode<TValue>) {
+    this.fieldTree = node.fieldTree;
+    // Explicit lexical binding to honor 'this: void'
+    this.stateOf = this.stateOf.bind(this);
+    this.fieldTreeOf = this.fieldTreeOf.bind(this);
+  }
+
+  // Defined as arrow function: no dynamic receiver
+  readonly valueOf = <PValue>(p: SchemaPath<PValue, SchemaPathRules>): PValue => {
+    return this.node.resolveValue(p);
+  };
+
+  stateOf<PValue>(
+    this: FieldNodeContext<TValue>,
+    p: SchemaPath<PValue, SchemaPathRules>,
+  ): [PValue] extends [any] ? ReadonlyFieldState<PValue> : never {
+    return this.node.resolveState(p) as any;
+  }
+
+  fieldTreeOf<PModel>(
+    this: FieldNodeContext<TValue>,
+    p: SchemaPathTree<PModel>,
+  ): [PModel] extends [any] ? ReadonlyFieldTree<PModel> : never {
+    return this.node.resolveTree(p) as any;
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Receiver-dependent interface methods expected to be destructured
+export interface RootFieldContext<TValue> {
+  // Linter flags destructured use: ({valueOf}) => valueOf(p)
+  // Runtime crashes if implemented as standard prototype method
+  valueOf<PValue>(p: SchemaPath<PValue, SchemaPathRules>): PValue;
+  stateOf<PValue>(p: SchemaPath<PValue, SchemaPathRules>): ReadonlyFieldState<PValue>;
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce ESLint/Oxlint rules `@typescript-eslint/unbound-method` with `strict: true`. Write a unit test verifying destructured invocations:
+```typescript
+it('must allow destructured method execution without receiver context', () => {
+  const ctx: RootFieldContext<MyModel> = new FieldNodeContext(internalNodeMock);
+  const {valueOf, stateOf, fieldTreeOf} = ctx;
+  expect(() => valueOf(pathMock)).not.toThrow();
+  expect(() => stateOf(pathMock)).not.toThrow();
+  expect(() => fieldTreeOf(pathTreeMock)).not.toThrow();
+});
+```
+
+---
+
+
+---
+
+## 3871. Mutation-Resistant Forward-Iterator for Synchronous Event Dispatches (Harvested from angular/angular)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mutation-Resistant Forward-Iterator for Synchronous Event Dispatches",
+  "source": "angular/angular",
+  "source_url": "https://github.com/angular/angular",
+  "source_version": "970bbc7c",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T10:23:08.710Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-angular-angular",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [angular/angular](https://github.com/angular/angular) (Revision: `970bbc7c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Event dispatch loops MUST NOT iterate directly over a mutable subscriber collection when subscriber invocation can synchronously mutate the subscriber list (via unsubscription, addition, or disposal). The dispatcher MUST either iterate over a snapshot copy (`Array.from(listeners)` / `listeners.slice()`) or freeze indices to ensure index-shifting does not skip remaining subscribers.
+
+**WHY**:
+If `listeners` is an `Array` and listener `0` unsubscribes during its callback execution, it splices itself out of `listeners`. Elements at index `1..n` shift down to index `0..n-1`. The naive loop increment (`i++`) advances to index `1`, which now points to the element originally at index `2`. Consequently, the original element at index `1` is completely skipped. In Angular, this caused synchronous `take(1)` subscriptions to swallow events intended for sibling directives and template bindings.
+
+**WHEN TO APPLY**:
+Any event hub, reactive subject, hook system, or callback registry across JavaScript/TypeScript, Go, Rust, or Python where listener callbacks execute synchronously.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export class SafeEventEmitter<T> {
+  private listeners: Array<(value: T) => void> = [];
+
+  subscribe(fn: (value: T) => void): () => void {
+    this.listeners.push(fn);
+    let unsubscribed = false;
+    return () => {
+      if (unsubscribed) return;
+      unsubscribed = true;
+      const index = this.listeners.indexOf(fn);
+      if (index !== -1) {
+        this.listeners.splice(index, 1);
+      }
+    };
+  }
+
+  emit(value: T): void {
+    // CRITICAL: Snapshot listener collection to shield iteration from synchronous re-entrancy / splice
+    const snapshot = this.listeners.slice();
+    for (let i = 0; i < snapshot.length; i++) {
+      snapshot[i](value);
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Iterating over live collection susceptible to array index shift
+export class BuggyEventEmitter<T> {
+  private listeners: Array<(value: T) => void> = [];
+
+  emit(value: T): void {
+    // If listeners[0] invokes unsubscribe() -> listeners.splice(0, 1)
+    // In next iteration: i becomes 1, but original listeners[1] has slid to index 0!
+    // listeners[1] is skipped without execution.
+    for (let i = 0; i < this.listeners.length; i++) {
+      this.listeners[i](value);
+    }
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Test with synchronous self-unsubscribing listeners:
+```typescript
+it('should dispatch to subsequent listeners when an earlier listener unsubscribes synchronously', () => {
+  const emitter = new SafeEventEmitter<string>();
+  const audit: string[] = [];
+
+  const unsub1 = emitter.subscribe((val) => {
+    audit.push(`first:${val}`);
+    unsub1();
+  });
+  emitter.subscribe((val) => {
+    audit.push(`second:${val}`);
+  });
+
+  emitter.emit('ping');
+  expect(audit).toEqual(['first:ping', 'second:ping']);
+});
+```
+
+---
+
+
+---
+
+## 3872. Separation of Syntactic Dependency Intent from Compiler Fallback Emission (Harvested from angular/angular)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Separation of Syntactic Dependency Intent from Compiler Fallback Emission",
+  "source": "angular/angular",
+  "source_url": "https://github.com/angular/angular",
+  "source_version": "970bbc7c",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T10:23:08.894Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-angular-angular",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [angular/angular](https://github.com/angular/angular) (Revision: `970bbc7c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Compilers and AST preprocessors tracking optimization candidates (such as lazy-loaded or deferred blocks) MUST maintain separate classification sets for:
+1. `SourceReferencedNames`: References explicitly introduced in author code.
+2. `CompilerEmittedNames`: Names injected or forced into static scopes by fallback optimization decisions.
+Compiler diagnostic passes checking for invalid source-level eager imports MUST evaluate against `SourceReferencedNames`, NEVER against the unified `CompilerEmittedNames` set.
+
+**WHY**:
+When a component author explicitly declares a dependency in a lazy block (`deferredImports`), but the compiler's fallback logic determines that the dependency must also be emitted as an eager dependency (e.g. usage outside a block, or missing from an allow-list), adding that symbol to a global `eagerlyBoundNames` set conflates source intent with compiler emit decisions. If the diagnostic checker uses the unified set, it misdiagnoses the file as containing an illegal eager source reference (diagnostic `NG8014`), causing false compile errors and divergence between single-file preprocessors (`ngp`) and full-program compilers (`ngtsc`).
+
+**WHEN TO APPLY**:
+Code analysis tools, tree-shakers, multi-stage transpilers, and AST analyzers tracking symbol visibility, dynamic chunk separation, and module scoping.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Differentiate source references from fallback emitted references
+const deferredOnlyNames = new Set<string>();
+const eagerlyBoundNames = new Set<string>();
+const eagerlyReferencedNames = new Set<string>(); // Author source references only
+
+for (const decl of declarations) {
+  const local = decl.localName;
+  if (!local) continue;
+
+  if (filteredDeclarations.includes(decl)) {
+    // Compiler fallback requires static emission
+    eagerlyBoundNames.add(local);
+    // Only author code references trigger diagnostics
+    if (!decl.isExplicitlyDeferred) {
+      eagerlyReferencedNames.add(local);
+    }
+    continue;
+  }
+}
+
+// In diagnostic emission:
+const canDefer = decl.bindings.every(
+  (binding) =>
+    binding.isType ||
+    ((deferredOnlyNames.has(binding.local) || explicitlyDeferredNames.has(binding.local)) &&
+      !eagerlyReferencedNames.has(binding.local) &&
+      !binding.valueReferenced)
+);
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Single set conflating compiler-emitted fallbacks with user source code references
+const eagerlyBoundNames = new Set<string>();
+for (const decl of declarations) {
+  if (filteredDeclarations.includes(decl)) {
+    eagerlyBoundNames.add(decl.localName); // Erases distinction between user intent and compiler fallback
+  }
+}
+// Diagnostic pass incorrectly flags author whose only reference was in deferredImports!
+const canDefer = decl.bindings.every(b => !eagerlyBoundNames.has(b.local));
+```
+
+**VERIFICATION METHOD**:
+Ensure integration tests run local compilation preprocessors against `ngtsc` known golden failures, asserting zero divergence on explicit `deferredImports` fallback cases.
+
+---
+
+
+---
+
+## 3873. Verification of Hardware Bus Master Address Spaces for DMA Buffers (Harvested from embassy-rs/embassy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Verification of Hardware Bus Master Address Spaces for DMA Buffers",
+  "source": "embassy-rs/embassy",
+  "source_url": "https://github.com/embassy-rs/embassy",
+  "source_version": "992efbfa",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T10:24:10.804Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-embassy-rs-embassy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `992efbfa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before arming any bus master hardware DMA engine with a pointer, the runtime driver MUST validate that the physical memory range of the target buffer resides completely inside the accessible RAM address space (`slice_in_ram`). If any segment falls outside RAM (e.g., Flash `.rodata`), the driver MUST route the transfer through a RAM-backed bounce buffer.
+
+**WHY**:
+Hardware DMA engines (such as Nordic Semiconductor EasyDMA or STM32 DMA controllers) route memory transfers through internal crossbar buses directly to SRAM. Memory-mapped flash memory controllers cannot service bus-mastered read/write requests from peripheral DMA engines in the same manner as the CPU core. Supplying a pointer to `.rodata` (Flash) to an EasyDMA pointer register results in an immediate `HardFault`, a silent transfer abort, or bus parity errors that compromise firmware reliability.
+
+**WHEN TO APPLY**:
+Apply in all bare-metal drivers, HAL implementations, or kernel drivers where hardware DMA engines directly read or write user-provided slices across non-unified bus matrices.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+const SRAM_LOWER: usize = 0x2000_0000;
+const SRAM_UPPER: usize = 0x3000_0000;
+const BOUNCE_LEN: usize = 256;
+
+#[inline(always)]
+pub fn slice_in_ram<T>(slice: *const [T]) -> bool {
+    if slice.is_empty() {
+        return true;
+    }
+    let ptr = slice as *const T as usize;
+    let size = slice.len().checked_mul(core::mem::size_of::<T>())
+        .expect("Buffer length overflow");
+    
+    ptr >= SRAM_LOWER && (ptr.checked_add(size).map_or(false, |end| end <= SRAM_UPPER))
+}
+
+pub fn transfer_dma_safe(data: &[u8], max_chunk: usize, mut dma_send: impl FnMut(&[u8])) {
+    if slice_in_ram(data) {
+        for chunk in data.chunks(max_chunk) {
+            dma_send(chunk);
+        }
+    } else {
+        let mut bounce = [0u8; BOUNCE_LEN];
+        let chunk_size = max_chunk.min(BOUNCE_LEN);
+        for chunk in data.chunks(chunk_size) {
+            bounce[..chunk.len()].copy_from_slice(chunk);
+            dma_send(&bounce[..chunk.len()]);
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER pass arbitrary application slices directly to hardware DMA registers
+pub unsafe fn unsafe_dma_start(data: &[u8]) {
+    // BUG: If data is a string literal or const table in Flash (e.g., 0x0000_1000 on nRF),
+    // EasyDMA will trigger an unrecoverable hardware exception or transmit zeroed frames.
+    pac::UARTE0.txd.ptr.write(|w| w.ptr().bits(data.as_ptr() as u32));
+    pac::UARTE0.txd.maxcnt.write(|w| w.maxcnt().bits(data.len() as u32));
+    pac::UARTE0.tasks_starttx.write(|w| w.bits(1));
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce validation via unit and integration tests executing under emulation (QEMU/Renode) or on physical test-farm hardware:
+```rust
+#[test]
+fn test_slice_in_ram_rejection() {
+    static CONST_FLASH_BUF: [u8; 64] = [0xAA; 64];
+    assert!(!slice_in_ram(&CONST_FLASH_BUF));
+    
+    let stack_buf = [0u8; 64];
+    assert!(slice_in_ram(&stack_buf));
+}
+```
+
+---
+
+
+---
+
+## 3874. Immediate Reactor Wakeup Registration Invariant (Harvested from embassy-rs/embassy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Immediate Reactor Wakeup Registration Invariant",
+  "source": "embassy-rs/embassy",
+  "source_url": "https://github.com/embassy-rs/embassy",
+  "source_version": "992efbfa",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T10:24:10.975Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-embassy-rs-embassy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `992efbfa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When registering an asynchronous waker with an underlying event source, if the underlying resource's poll operation reports that readiness conditions are already met (`Poll::Ready`), the driver MUST invoke `waker.wake_by_ref()` immediately prior to exiting the registration block.
+
+**WHY**:
+Level-triggered and edge-triggered file descriptor pollers (or ring-buffer poll loops) only generate notifications when transitioning between states. If an asynchronous driver queries the readiness of an external queue or descriptor during waker registration and that resource is already readable/writable, no future edge event will be emitted. Failing to wake the runner causes the task to sleep indefinitely, hanging the state machine.
+
+**WHEN TO APPLY**:
+Apply in all async runtime adapters, network drivers (e.g., TUN/TAP, socket wrappers), and IPC bridges that decouple readiness detection from the executor poll cycle.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use core::task::{Context, Poll, Waker};
+
+pub trait DriverResource {
+    fn poll_readable(&mut self, cx: &mut Context<'_>) -> Poll<()>;
+}
+
+pub struct TunTapDriver<R: DriverResource> {
+    device: R,
+}
+
+impl<R: DriverResource> TunTapDriver<R> {
+    pub fn register_waker(&mut self, waker: &Waker) -> Result<(), ()> {
+        let mut cx = Context::from_waker(waker);
+        // INVARIANT: If already readable, immediately wake the waker to prevent lost event deadlock
+        if self.device.poll_readable(&mut cx).is_ready() {
+            waker.wake_by_ref();
+        }
+        Ok(())
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER ignore the synchronous return state of poll_readable during waker binding
+impl<R: DriverResource> TunTapDriver<R> {
+    pub fn buggy_register_waker(&mut self, waker: &Waker) -> Result<(), ()> {
+        let mut cx = Context::from_waker(waker);
+        // ANTI-PATTERN: If the device was already readable, readiness was consumed,
+        // but no notification will fire to reschedule the sleeping task!
+        let _ = self.device.poll_readable(&mut cx);
+        Ok(())
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a mock resource harness where `poll_readable` returns `Poll::Ready(())`:
+```rust
+struct MockReadyDevice;
+impl DriverResource for MockReadyDevice {
+    fn poll_readable(&mut self, _cx: &mut Context<'_>) -> Poll<()> {
+        Poll::Ready(())
+    }
+}
+
+#[test]
+fn test_waker_woken_when_already_ready() {
+    let mut dev = TunTapDriver { device: MockReadyDevice };
+    let flag = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let flag_clone = flag.clone();
+    let waker = waker_from_fn(move || flag_clone.store(true, std::sync::atomic::Ordering::SeqCst));
+    
+    dev.register_waker(&waker).unwrap();
+    assert!(flag.load(std::sync::atomic::Ordering::SeqCst), "Waker MUST be triggered if poll was Ready");
+}
+```
+
+---
+
+
+---
+
+## 3875. Coprocessor Redundancy and Security Initialization Invariant (Harvested from embassy-rs/embassy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Coprocessor Redundancy and Security Initialization Invariant",
+  "source": "embassy-rs/embassy",
+  "source_url": "https://github.com/embassy-rs/embassy",
+  "source_version": "992efbfa",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T10:24:11.160Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-embassy-rs-embassy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [embassy-rs/embassy](https://github.com/embassy-rs/embassy) (Revision: `992efbfa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Low-level initialization routines (`__pre_init`) on microcontrollers featuring redundancy coprocessors (RCP) or security sub-engines MUST interrogate the coprocessor hardware status registers before issuing configuration writes. If the coprocessor's state is invalid (e.g., missing salt or uninitialized canary), the firmware MUST initialize it and signal core synchronization primitives before resuming normal instruction execution. Writing to an already valid salt register MUST be actively guarded against to prevent security coprocessor hardware faults.
+
+**WHY**:
+Modern multi-core secure microcontrollers (such as RP2350 with Arm Cortex-M33 and RCP) execute coprocessor instructions that fault immediately if the RCP coprocessor is unmapped in the Coprocessor Access Control Register (`CPACR`) or if its operational salt has not been initialized. When a hardware debugger (e.g., `probe-rs`, OpenOCD) resets and halts execution or jumps directly to RAM, the BootROM initialization logic is bypassed. Secondary cores (`PROC1`) stalled in BootROM awaiting salt synchronization will deadlock or crash when woken unless primary core initialization sets the salts and signals an event (`sev`). Re-writing an already valid salt also triggers a hardware fault.
+
+**WHEN TO APPLY**:
+Hardware startup code, crt0 replacement hooks, and BootROM bypass vectors on security-hardened or dual-core platforms (RP2350, Cortex-M33, TrustZone systems).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[cfg(feature = "rp235x")]
+core::arch::global_asm!(
+    ".section .pre_init, \"ax\"",
+    ".global __pre_init",
+    ".thumb_func",
+    "__pre_init:",
+    // Step 1: Enable full access to Coprocessor 7 (RCP) in CPACR
+    "ldr r0, =0xe000ed88",
+    "ldr r1, [r0]",
+    "orr r1, r1, #0xc000",
+    "str r1, [r0]",
+    "dsb",
+    "isb",
+
+    // Step 2: Check canary status; sets N flag if salt is valid
+    "mrc p7, #1, apsr_nzcv, c0, c0, #0",
+    "bmi .L_rcp_salt_already_valid",
+
+    // Step 3: Salt invalid -> Initialize core 0 & core 1 salts
+    "mcrr p7, #8, r0, r0, c0",
+    "mcrr p7, #8, r0, r0, c1",
+
+    // Step 4: Broadcast event to wake secondary core waiting on salt
+    "sev",
+
+    ".L_rcp_salt_already_valid:",
+    "bx lr"
+);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER write RCP salts blindly without verifying validity register
+core::arch::global_asm!(
+    "__broken_pre_init:",
+    // ANTI-PATTERN: If BootROM already initialized the salt,
+    // this unconditional write causes an immediate non-maskable RCP hardware fault!
+    "mcrr p7, #8, r0, r0, c0",
+    "bx lr"
+);
+```
+
+**VERIFICATION METHOD**:
+Static analysis check in CI verifying that assembly routines calling `mcrr p7` are guarded by `mrc p7, #1, apsr_nzcv` and branch on condition `bmi`:
+```bash
+# Verify no unguarded salt writes exist in disassembly
+arm-none-eabi-objdump -d target/thumbv8m.main-none-eabihf/release/app | grep -B 2 -A 2 "mcrr\tp7"
+```
+
+---
+
+
+---
+
+## 3876. Cross-Runtime Console API Defensiveness in Embedded Engines (Harvested from pubkey/rxdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Runtime Console API Defensiveness in Embedded Engines",
+  "source": "pubkey/rxdb",
+  "source_url": "https://github.com/pubkey/rxdb",
+  "source_version": "924ba206",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T10:24:38.639Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pubkey-rxdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pubkey/rxdb](https://github.com/pubkey/rxdb) (Revision: `924ba206`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Codebases targeting hybrid cross-platform runtimes (specifically React Native with Hermes, Web Workers, QuickJS, or Embedded V8) MUST NOT invoke non-standard or runtime-optional `console` namespace methods (`console.dir`, `console.table`, `console.time`, `console.trace`) in core engine execution paths. If structural inspection is necessary, the code MUST use `console.log(JSON.stringify(val))` or a safe fallback utility.
+
+**WHY**:
+In production mobile builds running Facebook's Hermes JS engine or strict headless workers, `console.dir` evaluates to `undefined`. Invoking `console.dir(error)` within catch blocks or error reporters causes an immediate `TypeError: undefined is not a function`. This masks the original root exception, crashes the host application, and disrupts error logging pipelines.
+
+**WHEN TO APPLY**:
+Apply to any cross-platform TypeScript/JavaScript library, database driver, native-bridge adapter, or UI runtime shared between node, browser, and mobile (Hermes/JSC).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Safe multi-environment structural logging invariant
+ */
+export function safeLogStructured(label: string, payload: unknown): void {
+    if (typeof console === 'undefined') {
+        return;
+    }
+    
+    // Hermes and minimal runtimes omit console.dir
+    if (typeof console.dir === 'function') {
+        console.log(label);
+        console.dir(payload);
+        return;
+    }
+
+    try {
+        const serialized = JSON.stringify(payload, (_key, val) => {
+            if (val instanceof Error) {
+                return {
+                    name: val.name,
+                    message: val.message,
+                    stack: val.stack
+                };
+            }
+            return val;
+        }, 2);
+        console.log(`${label}: ${serialized}`);
+    } catch {
+        // Fallback for circular references or non-serializable objects
+        console.log(label, String(payload));
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Direct invocation of console.dir inside driver or catch logic
+try {
+    await sqliteDriver.execute(query);
+} catch (err) {
+    // CRASHES IN HERMES RUNTIME: TypeError: undefined is not a function
+    console.dir(err);
+    throw err;
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via an AST check, PreToolUse hook, or ESLint rule (`no-restricted-properties`):
+```json
+{
+  "rules": {
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "console",
+        "property": "dir",
+        "message": "console.dir is missing in Hermes / React Native production runtimes. Use console.log(JSON.stringify(...)) or safeLogStructured."
+      }
+    ]
+  }
+}
+```
+
+---
+
+
+---
+
+## 3877. Event-Gated Idling State Loop with Queue Chaining (Harvested from pubkey/rxdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Event-Gated Idling State Loop with Queue Chaining",
+  "source": "pubkey/rxdb",
+  "source_url": "https://github.com/pubkey/rxdb",
+  "source_version": "924ba206",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T10:24:38.810Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pubkey-rxdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pubkey/rxdb](https://github.com/pubkey/rxdb) (Revision: `924ba206`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Background maintenance routines (compaction, GC, cleanup, replication syncing) MUST NOT run on arbitrary timer loops (such as unconstrained `setInterval`). They MUST gate execution behind physical write event streams (`eventBulks$`), check component lifecycle flags (`closed`) before and after each asynchronous step, chain executions onto a sequential promise queue, and schedule execution using host idle schedulers (`requestIdleCallback` / `requestIdlePromise`).
+
+**WHY**:
+Unconstrained background polling leads to CPU wake-ups, mobile battery drain, and unhandled promise rejections if the underlying database collection closes while a task is in flight. Furthermore, concurrent un-queued cleanup tasks create Time-Of-Check-To-Time-Of-Use (TOCTOU) race conditions on disk indexes.
+
+**WHEN TO APPLY**:
+Apply to any local database engine, cache manager, indexing subsystem, or background replication client.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { firstValueFrom, Observable } from 'rxjs';
+
+export interface DisposableLifecycle {
+    closed: boolean;
+    eventBulks$: Observable<unknown>;
+    promiseWait(ms: number): Promise<void>;
+    database: {
+        requestIdlePromise(): Promise<void>;
+    };
+}
+
+export class SafeMaintenanceRunner<T extends DisposableLifecycle> {
+    private queue: Promise<boolean> = Promise.resolve(true);
+
+    public async runLoop(target: T, waitTimeMs: number, cleanupFn: () => Promise<boolean>): Promise<void> {
+        while (!target.closed) {
+            // Invariant 1: Sleep until a real write event actually occurs
+            try {
+                await firstValueFrom(target.eventBulks$);
+            } catch {
+                return; // Observable completed/errored on close
+            }
+
+            // Invariant 2: Throttle after the write
+            await target.promiseWait(waitTimeMs);
+            if (target.closed) return;
+
+            // Invariant 3: Sequential task chaining
+            let isDone = false;
+            while (!isDone && !target.closed) {
+                this.queue = this.queue.then(async () => {
+                    if (target.closed) return true;
+                    // Yield until the JS event loop / UI thread is idle
+                    await target.database.requestIdlePromise();
+                    if (target.closed) return true;
+                    return cleanupFn();
+                });
+
+                isDone = await this.queue;
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Polling regardless of mutation state without lifecycle checks
+setInterval(async () => {
+    // Triggers continuously even on read-only systems, and races against collection.close()
+    await db.collection._cleanup(); 
+}, 5000);
+```
+
+**VERIFICATION METHOD**:
+Implement integration tests simulating immediate collection closure during cleanup execution:
+```typescript
+it('should abort cleanly without unhandled rejection when closed during idle wait', async () => {
+    const state = await createMockState();
+    const cleanupPromise = startCleanupForRxState(state);
+    // Trigger mutation
+    state.collection.eventBulks$.next({});
+    // Prematurely close during wait
+    await state.collection.close();
+    await expect(cleanupPromise).resolves.not.toThrow();
+});
+```
+
+---
+
+
+---
+
+## 3878. Mango Operator-To-Engine Compatibility Guarding (Harvested from pubkey/rxdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mango Operator-To-Engine Compatibility Guarding",
+  "source": "pubkey/rxdb",
+  "source_url": "https://github.com/pubkey/rxdb",
+  "source_version": "924ba206",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T10:24:38.994Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pubkey-rxdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pubkey/rxdb](https://github.com/pubkey/rxdb) (Revision: `924ba206`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Fluent Query Builders that translate chained method invocations into intermediate abstract query structures (e.g., Mango/MongoDB selectors) MUST NOT expose API operator methods unless the underlying query execution engine has full implementation support for those operators.
+
+**WHY**:
+Exposing builder methods (e.g., `.all()`, `.maxDistance()`) whose underlying execution adapters do not support the corresponding target operator (`$all`, `$maxDistance`) causes deferred runtime errors (`unknown query operator $all`). Such errors bypass compile-time TypeScript type checking and manifest only at runtime deep within storage query evaluators.
+
+**WHEN TO APPLY**:
+Apply to query builders, ORM abstraction layers, and AST-to-dialect translation layers (SQL, GraphQL, NoSQL).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Maintain single source of truth for supported engine operators
+export const SUPPORTED_MANGO_OPERATORS = [
+    'gt', 'gte', 'lt', 'lte', 'ne',
+    'in', 'nin', 'regex', 'size'
+] as const;
+
+export type SupportedMangoOperator = typeof SUPPORTED_MANGO_OPERATORS[number];
+
+// Ensure query builder class prototype ONLY binds operators present in the whitelist
+export function bindQueryBuilderOperators<T extends { new(...args: any[]): any }>(TargetClass: T): void {
+    SUPPORTED_MANGO_OPERATORS.forEach((op) => {
+        TargetClass.prototype[op] = function(this: any, value: unknown) {
+            const currentField = this._currentField;
+            if (!currentField) {
+                throw new Error(`Cannot call .${op}() before selecting a field with .where()`);
+            }
+            const mangoOp = `$${op}`;
+            this._selector[currentField] = Object.assign({}, this._selector[currentField], {
+                [mangoOp]: value
+            });
+            return this;
+        };
+    });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Binding operators supported by Mongo/Mongoose but unsupported by the local engine
+export const OTHER_MANGO_OPERATORS = [
+    'gt', 'gte', 'lt', 'lte', 'ne',
+    'in', 'nin', 'all', 'regex', 'size' // BUG: 'all' emits '$all' which crashes storage engines
+];
+```
+
+**VERIFICATION METHOD**:
+Enforce prototype reflection assertions in the unit test suite:
+```typescript
+it('should not expose unsupported operator methods on query prototype', () => {
+    const builder = createQueryBuilder();
+    expect(typeof (builder as any).all).toBe('undefined');
+    expect(typeof (builder as any).maxDistance).toBe('undefined');
+});
+```
+
+---

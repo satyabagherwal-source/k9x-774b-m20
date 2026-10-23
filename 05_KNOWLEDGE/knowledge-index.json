@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T10:09:48.453Z",
+  "last_updated": "2026-10-23T10:24:39.108Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1754,8 +1754,8 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "d0b33ad2",
-      "content_hash": "db35bfa1cfb635c43dcee1bd90d8d0c05e2925396d5dac890b0ff65a53c1e263",
+      "source_version": "970bbc7c",
+      "content_hash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [
@@ -1803,6 +1803,21 @@
           "number": 3551,
           "title": "test(compiler-cli): add golden test for built-in *Constructor DI parameter types",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3870,
+          "title": "Zero-Receiver Object-Context Decoupling via `this: void`",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3871,
+          "title": "Mutation-Resistant Forward-Iterator for Synchronous Event Dispatches",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3872,
+          "title": "Separation of Syntactic Dependency Intent from Compiler Fallback Emission",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1810,7 +1825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:29:01.446Z",
+      "verified_at": "2026-10-23T10:23:08.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9381,8 +9396,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "7915b85a",
-      "content_hash": "d2ce7b1d1b6707cfa49b77f1a588bb4c03b7ea35f5b8bde5f2da923a06e8246f",
+      "source_version": "992efbfa",
+      "content_hash": "2a46901ee6bec79a042e0849fa01aa9c1ea845bf0e2b9eec2d9d51a539031ccd",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -9400,6 +9415,21 @@
           "number": 3503,
           "title": "nrf/tests: increase rng timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3873,
+          "title": "Verification of Hardware Bus Master Address Spaces for DMA Buffers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3874,
+          "title": "Immediate Reactor Wakeup Registration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3875,
+          "title": "Coprocessor Redundancy and Security Initialization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9407,7 +9437,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:18:03.985Z",
+      "verified_at": "2026-10-23T10:24:11.263Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39468,14 +39498,29 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "7a6734be",
-      "content_hash": "3fd2d9d243d8862f452efc0a5b29585da0a844a1ec6daded7204793680b73025",
+      "source_version": "924ba206",
+      "content_hash": "52ff3f1d2600fb79f8ce835fe7e02817721a72d2532ce5f55f8ecf74eed1e21b",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
         {
           "number": 1764,
           "title": "incrementalModify() writing the unchanged document when the modifier throws (#92",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3876,
+          "title": "Cross-Runtime Console API Defensiveness in Embedded Engines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3877,
+          "title": "Event-Gated Idling State Loop with Queue Chaining",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3878,
+          "title": "Mango Operator-To-Engine Compatibility Guarding",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39484,7 +39529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:42:29.293Z",
+      "verified_at": "2026-10-23T10:24:39.097Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114598,6 +114643,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T10:09:48.442Z"
+    },
+    "rule-3870": {
+      "learning_id": "rule-3870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3870,
+      "title": "Zero-Receiver Object-Context Decoupling via `this: void`",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "970bbc7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:23:08.994Z"
+    },
+    "rule-3871": {
+      "learning_id": "rule-3871",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3871,
+      "title": "Mutation-Resistant Forward-Iterator for Synchronous Event Dispatches",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "970bbc7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:23:08.994Z"
+    },
+    "rule-3872": {
+      "learning_id": "rule-3872",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3872,
+      "title": "Separation of Syntactic Dependency Intent from Compiler Fallback Emission",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "970bbc7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:23:08.994Z"
+    },
+    "rule-3873": {
+      "learning_id": "rule-3873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3873,
+      "title": "Verification of Hardware Bus Master Address Spaces for DMA Buffers",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "992efbfa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:24:11.263Z"
+    },
+    "rule-3874": {
+      "learning_id": "rule-3874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3874,
+      "title": "Immediate Reactor Wakeup Registration Invariant",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "992efbfa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:24:11.263Z"
+    },
+    "rule-3875": {
+      "learning_id": "rule-3875",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3875,
+      "title": "Coprocessor Redundancy and Security Initialization Invariant",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "992efbfa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:24:11.263Z"
+    },
+    "rule-3876": {
+      "learning_id": "rule-3876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3876,
+      "title": "Cross-Runtime Console API Defensiveness in Embedded Engines",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "924ba206",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:24:39.097Z"
+    },
+    "rule-3877": {
+      "learning_id": "rule-3877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3877,
+      "title": "Event-Gated Idling State Loop with Queue Chaining",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "924ba206",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:24:39.097Z"
+    },
+    "rule-3878": {
+      "learning_id": "rule-3878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3878,
+      "title": "Mango Operator-To-Engine Compatibility Guarding",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "924ba206",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:24:39.097Z"
     }
   },
   "aliases": {

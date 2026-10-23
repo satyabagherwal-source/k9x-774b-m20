@@ -4532,3 +4532,6 @@ Every entry in this ledger must capture:
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `0e058dc0` | Multi-dimensional audit evidence | 2026-10-23T10:09:36.610Z |
 | `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `c1173a94` | Multi-dimensional audit evidence | 2026-10-23T10:09:38.401Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `68fe0510` | Multi-dimensional audit evidence | 2026-10-23T10:09:48.505Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `970bbc7c` | Multi-dimensional audit evidence | 2026-10-23T10:23:09.060Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `992efbfa` | Multi-dimensional audit evidence | 2026-10-23T10:24:11.333Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `924ba206` | Multi-dimensional audit evidence | 2026-10-23T10:24:39.164Z |

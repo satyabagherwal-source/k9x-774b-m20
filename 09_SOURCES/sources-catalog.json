@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "7a6734be",
+    "sourceVersion": "924ba206",
     "license": "Apache-2.0",
-    "contentHash": "3fd2d9d243d8862f452efc0a5b29585da0a844a1ec6daded7204793680b73025",
-    "lastHarvestedAt": "2026-10-20T06:42:29.382Z",
+    "contentHash": "52ff3f1d2600fb79f8ce835fe7e02817721a72d2532ce5f55f8ecf74eed1e21b",
+    "lastHarvestedAt": "2026-10-23T10:24:39.164Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "7915b85a",
+    "sourceVersion": "992efbfa",
     "license": "Apache-2.0",
-    "contentHash": "d2ce7b1d1b6707cfa49b77f1a588bb4c03b7ea35f5b8bde5f2da923a06e8246f",
-    "lastHarvestedAt": "2026-10-21T03:18:04.056Z",
+    "contentHash": "2a46901ee6bec79a042e0849fa01aa9c1ea845bf0e2b9eec2d9d51a539031ccd",
+    "lastHarvestedAt": "2026-10-23T10:24:11.333Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -6943,10 +6943,10 @@
     "repository": "angular/angular",
     "platform": "github",
     "sourceUrl": "https://github.com/angular/angular",
-    "sourceVersion": "d0b33ad2",
+    "sourceVersion": "970bbc7c",
     "license": "MIT",
-    "contentHash": "db35bfa1cfb635c43dcee1bd90d8d0c05e2925396d5dac890b0ff65a53c1e263",
-    "lastHarvestedAt": "2026-10-21T15:29:01.517Z",
+    "contentHash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
+    "lastHarvestedAt": "2026-10-23T10:23:09.060Z",
     "learningId": "learn-github-angular-angular"
   },
   "devspace-sh-devspace": {

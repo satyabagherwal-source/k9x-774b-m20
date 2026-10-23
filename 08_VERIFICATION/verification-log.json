@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-50PU",
-    "timestamp": "2026-10-20T21:01:39.426Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "4c1bac803e8d00ab313dae186e68310e4f576c23e7ebba3a5903c6535f510bf8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-D43B",
-    "timestamp": "2026-10-20T21:07:57.047Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "6d466de483b0bcd9329721d68f6acf00ac705a0a4c3ed4381794591e4d1f523a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-D5OF",
-    "timestamp": "2026-10-20T21:07:59.103Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "b648c15c3bb7c43d7635fe1d852fd123606b71f5606afbaf48258c3887933498",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-DEMO",
     "timestamp": "2026-10-20T21:08:10.704Z",
     "repository": "citusdata/citus",
@@ -7492,6 +7447,51 @@
     "contentHash": "9a2b6d41b02a04b300c50654b99afa811207827b67d8758013a7717871bc6744",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-NG8X",
+    "timestamp": "2026-10-23T10:23:09.057Z",
+    "repository": "angular/angular",
+    "learningId": "learn-github-angular-angular",
+    "contentHash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-OSAQ",
+    "timestamp": "2026-10-23T10:24:11.330Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "2a46901ee6bec79a042e0849fa01aa9c1ea845bf0e2b9eec2d9d51a539031ccd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-PDRT",
+    "timestamp": "2026-10-23T10:24:39.161Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "52ff3f1d2600fb79f8ce835fe7e02817721a72d2532ce5f55f8ecf74eed1e21b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

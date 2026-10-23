@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T10:09:48.510Z",
-  "total_cycles_completed": 4502,
-  "total_learnings_persisted": 4502,
-  "total_rules_promoted": 3721,
+  "last_updated": "2026-10-23T10:24:39.174Z",
+  "total_cycles_completed": 4505,
+  "total_learnings_persisted": 4505,
+  "total_rules_promoted": 3730,
   "history": [
-    {
-      "timestamp": "2026-10-22T16:26:16.595Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:32:17.447Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:32:21.254Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T16:32:30.425Z",
       "repository": "ydb-platform/ydb",
@@ -1403,6 +1382,27 @@
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:23:09.068Z",
+      "repository": "angular/angular",
+      "learningId": "learn-github-angular-angular",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:24:11.343Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:24:39.174Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
