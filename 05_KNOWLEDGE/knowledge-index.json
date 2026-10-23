@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T11:18:09.637Z",
+  "last_updated": "2026-10-23T11:24:38.194Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6582,8 +6582,8 @@
       "slug": "cosscom-coss",
       "platform": "github",
       "source_url": "https://github.com/cosscom/coss",
-      "source_version": "0150de94",
-      "content_hash": "41d8ea38d93e7540bc54a42aeb986464475b356513839c32bda5101f62f4e704",
+      "source_version": "f2ec86f7",
+      "content_hash": "7ba9197dab8f10aeb7a0fc82b901171d4c9dcdc2d8b6bf7a8014c24fdd799a93",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-coss-learnings.md",
       "promoted_rules": [
@@ -6606,6 +6606,11 @@
           "number": 3570,
           "title": "Merge pull request #157 from cosscom/mobile-parity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3901,
+          "title": "Regenerate the SDKs for main's API (SMS, template rendering, test webhook events",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6613,7 +6618,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:01:19.737Z",
+      "verified_at": "2026-10-23T11:24:38.183Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115187,6 +115192,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T11:18:09.631Z"
+    },
+    "rule-3901": {
+      "learning_id": "rule-3901",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3901,
+      "title": "Regenerate the SDKs for main's API (SMS, template rendering, test webhook events",
+      "source_url": "https://github.com/cosscom/coss",
+      "source_version": "f2ec86f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:24:38.183Z"
     }
   },
   "aliases": {

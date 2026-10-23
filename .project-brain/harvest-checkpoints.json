@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T11:18:09.678Z",
+  "last_updated": "2026-10-23T11:24:38.262Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3846,14 +3846,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-coss",
-      "content_hash": "41d8ea38d93e7540bc54a42aeb986464475b356513839c32bda5101f62f4e704",
-      "verified_at": "2026-10-21T18:01:19.811Z",
+      "content_hash": "7ba9197dab8f10aeb7a0fc82b901171d4c9dcdc2d8b6bf7a8014c24fdd799a93",
+      "verified_at": "2026-10-23T11:24:38.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:01:19.811Z"
+      "last_updated": "2026-10-23T11:24:38.262Z"
     },
     "sharkdp/bat": {
       "repository": "sharkdp/bat",

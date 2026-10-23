@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
-> **Source Version**: `0150de94`  
+> **Source Version**: `f2ec86f7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:01:19.472Z  
+> **Timestamp**: 2026-10-23T11:24:37.914Z  
 > **Learning ID**: `learn-github-cosscom-coss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:01:16.957Z  
+> **Harvest Timestamp**: 2026-10-23T11:24:36.401Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1847,13 +1847,13 @@ export function createWebhookListenerRoutes(deps: {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #157** (2026-10-21): **iOS app: catch up with the dashboard's pages**
-  *Symptoms*: ## Summary  The iOS companion app was missing every dashboard page shipped since its last update. It now has all of them, each read-only with a button to the same page on coss.com unless noted:  - **Organization:** dedicated IPs, SMS senders (numbers, carrier registrations, countries), settings (general, single sign-on, directory sync), billing plans, and DMARC reports as a domain tab. The domain screen moves to `domains/[domainId]/index.tsx`. - **Environment:** templates and their versions, content storage, SMS suppressions, broadcasts, contacts and their properties, audiences, segments, topics, marketing settings, risk rate limits, calibration and settings, and the Hooks portal settings. - **Broadcast actions:** pause, resume and cancel work from the app. They mirror the dashboard's `changeBroadcastAction`: `broadcast:send`, refused while the organization is suspended, the same `@coss/email` call and the same audit event. - **Content storage fix:** emails whose content was discarded now say "Content not stored" instead of showing "(no subject)" and "No content". An email's overview links the template it was rendered from.  ### How it's built - Each area has its own wire types (`packages/companion/src/<area>.ts`, re-exported from `index.ts`), a `wire.ts` next to its routes, hooks in `apps/mobile/src/lib/queries-<area>.ts`, badge labels in `status-<area>.ts`, and its own test file. - `queries.ts` now exports its helpers. The environment one is renamed `apiEnvironmentPath`, be
+- **Issue #160** (2026-10-22): **Docs and tools for coding agents: Markdown API reference, .md pages, key flow, Claude Code plugin**
+  *Symptoms*: ## Summary  Someone pointing a coding agent at coss.com should get everything it needs, with a person only approving a key.  **The API reference as text.** Each operation's Markdown is now rendered from the OpenAPI document (`apps/site/src/lib/operation-markdown.ts`): the full URL, path/query/header parameters, request body fields (types, required, limits, nested objects), responses with an example, every error, and samples for TypeScript, HTTP and the six generated SDKs. Before, `/llms.txt`, `/llms-full.txt` and "Copy Markdown" had only each operation's description, printed twice. `/llms-full.txt` keeps one short entry per operation that links its full page.  **Every docs page as Markdown at `<page>.md`** (`/docs/index.md` for the home), prerendered and cached like the pages (`next.config.ts` rewrites to `src/app/docs/md`). HTML pages link it as `rel="alternate" type="text/markdown"`. No `Accept` negotiation on purpose: CloudFront caches by URL.  **Telling agents how to start.** `/llms.txt` and `/llms-full.txt` open with a brief (`AGENT_BRIEF`): read the `.md` pages, get a development key with `npx coss-cli init` (and when the user has to run it themselves), never ask for a live key, `{ data, error }`, `verifyWebhook`, `coss listen`. The index links every page's `.md`, operations as `METHOD /path` (70 KB → 45 KB). The landing page's prompt now points at `npx coss-cli init`, the quickstart mentions it, and a new `/docs/agents` page ties it together.  **Packaged instructions.*
 
-- **Issue #156** (2026-10-21): **Email: Domain Connect template is single-instance**
-  *Symptoms*: ## Summary  Drops `multiInstance` from the Domain Connect template (`packages/email/domain-connect/coss.com.email.json`), following the Domain Connect maintainers' review of the upstream PR (Domain-Connect/Templates#2434).  `multiInstance` was added so that applying `tracking` after `dkim` + `mail_from` wouldn't remove the earlier records at providers that keep applied-template state. The maintainers point out that applies are additive per group: groups not in an apply are never removed. Without the flag, such a provider replaces a re-applied group's own records (e.g. stale DKIM CNAMEs after a domain is re-added with new tokens) instead of keeping both, and the template takes the upstream fast track (it now passes `dc-template-linter -merge-or-fail`).  - The test that modelled a stateful provider now models it as the spec describes: later groups are added, a re-applied group replaces its records unless the template is `multiInstance`. It fails with the flag back on. - `packages/email/AGENTS.md`: the reason, and that the `version` rule applies once the template is merged upstream (until then the open PR is updated in place; version 1 has never been merged or onboarded).  No production effect until a DNS provider onboards the template.  ## Testing  - `bun run --cwd packages/email test domain-connect`: 22 pass (and the re-apply test fails with `multiInstance: true` restored). - `bun run lint`, `bun run typecheck`, `bun run build`, tests: green, except a local-only `packages/risk
+- **Issue #159** (2026-10-22): **iOS app: spend, budgets and API key owners**
+  *Symptoms*: ## Summary  The iOS app was missing the dashboard's Spend pages and the spend management changes to API keys (2f2c9824). This brings it up to date.  - **Spend** (`/[org]/spend`, every member, as on the dashboard): billing readers see this month's total split into organization and personal keys, the spend limit, spend per day, and the breakdown by member / project / environment / API key with each row's budget meter and "Paused" badge, plus the "N budgets are used up" warning. Other members see "Your spend": their personal keys' total, budget, remaining, per-day chart and by-key list. - **Budgets** (`/[org]/spend/budgets`, billing readers): members, projects and key budgets, read-only with a link to coss.com. - **API keys**: owner (Organization / You / member, "Left" for former members), "Paused" when a budget of the key, its owner or its project is used up, and whether "Personal keys for members" is on. - **Organization screen**: a Spend link, and the dashboard layout's banner when the member's own personal keys are over budget (`OrganizationResponse.budget_paused`). - **Push**: "Budget used up" now opens Spend instead of Billing (added to the app's allow-list). Older TestFlight builds don't know the path, so tapping it there just opens the app.  To keep both sides showing the same numbers, the Spend pages' row/label/daily/budget-status logic moved from the dashboard pages into `apps/web/src/lib/spend.ts`; the dashboard pages and the mobile API's mapping (`api/mobile/v1/orgs/
   **Post-Mortem & Fix Analysis**:
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6610">ENG-6610</a></p>
+  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6711">ENG-6711</a></p>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1870,689 +1870,268 @@ export function createWebhookListenerRoutes(deps: {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0150de94` (2026-10-21)
-**Commit Message**: Merge pull request #157 from cosscom/mobile-parity
+### Incident Patch 1: `9584ac78` (2026-10-21)
+**Commit Message**: Regenerate the SDKs for main's API (SMS, template rendering, test webhook events, storage settings)
 
-iOS app: catch up with the dashboard's pages
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `AGENTS.md` (modified, +1/-1)
+**File**: `sdks/dotnet/.fern/metadata.json` (modified, +1/-1)
 ```diff
-@@ -32,7 +32,7 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
- | `apps/api` | `@coss/api` | Hono on Bun public API (:3001): `/v1/*`, `/openapi.json`, `/health`. Commits its OpenAPI document as `openapi.json`. |
- | `apps/site` | `@coss/site` | coss.com (:3002): placeholder landing page, Shipyard's landing page and docs at `/shipyard`, kloq's pages at `/kloq` (landing page, demo, tools, comparisons, docs, shadcn registry) + Fumadocs docs at `/docs` (guides, Twoslash-checked SDK docs, API reference generated from `apps/api/openapi.json`). See `apps/site/AGENTS.md`. |
- | `apps/portal` | `@coss/portal` | The Hooks portal (:3003) on its own domain (production: `portal.cosshooks.com`, Cloudflare → ALB, `PORTAL_HOST` in `infra/aws/routing.ts`): customers' users manage one application's endpoints and see its deliveries, signed in by a session the customer's backend creates (token in the URL fragment, never a cookie). See `apps/portal/AGENTS.md`. |
--| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains, members, billing, audit log; environment: emails, received, suppressions, tracking, risk with rules and lists, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
-+| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing and plans, audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
- | `apps/smtp` | `@coss/smtp` | Bun SMTP relay (`smtp.coss.com`; locally :2465 implicit TLS, :2587 STARTTLS) on `smtp-server`: username `coss`, an API key as the password; each message becomes a `POST /v1/emails` request (`@coss/email/smtp`) stored through the same email service, rate limits and quotas. Behind an NLB; terminates TLS itself (exported ACM certificate). See `apps/smtp/AGENTS.md`. |
- | `apps/worker` | `@coss/worker` | Bun background worker: email dispatch (pg-boss), scheduled sends, broadcast fan-out, webhook deliveries, domain re-checks, dedicated IP pools, stale-claim/unclaimed sweeps, data retention purges, organization deletions, SES events and received emails from SQS (`EMAIL_PROVIDER=ses`). `scripts/ses-bootstrap.ts`. Safe to run several. |
- | `packages/db` | `@coss/db` | Drizzle schema (generated Better Auth tables + domain tables), pg client, TypeIDs, migrations, test guard; `./jobs` (pg-boss); `./idempotency` (`withIdempotencyKey`, request hashes); `./partitions` (daily range partitions: create ahead, drop expired). |
+@@ -10,7 +10,7 @@
+     "user-agent": "coss-dotnet/{version}",
+     "enable-forward-compatible-enums": true
+   },
+-  "originGitCommit": "22f1393886309f16341682ab6a08490f9064c8e4",
++  "originGitCommit": "d0301a609489f8f501c6bcadf209b524c230247e",
+   "originGitCommitIsDirty": true,
+   "invokedBy": "manual",
+   "requestedVersion": "0.1.0",
 ```
 
-**File**: `apps/mobile/AGENTS.md` (modified, +20/-10)
+**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Billing/UsageTest.cs` (modified, +6/-0)
 ```diff
-@@ -1,15 +1,19 @@
- # AGENTS.md — `apps/mobile` (coss.com for iOS)
- 
- Expo (SDK 57, React Native 0.86, Expo Router) companion app for the dashboard. Organization:
--projects, reputation, domains (DNS records), members, billing and invoices, the audit log.
--Environment: activity, sent and received emails, sent and received SMS, suppressions, open/click
--tracking, risk assessments, rules and lists, Hooks (applications, endpoints, messages, event
--types), API keys, webhook endpoints and deliveries, logs, log drains. A few changes, each mirroring a dashboard
--action (same checks, same audit event): retrying a webhook delivery, recovering an endpoint's
--failed deliveries, enabling or disabling an endpoint, canceling or rescheduling a scheduled email
--and reporting a risk assessment's outcome (also from the review queue); everything else is
--read-only (with a link to the same page on coss.com). It talks only to the
--dashboard's `/api/mobile/v1/*` (never the public API: it holds no API key).
-+projects, reputation, domains (DNS records, DMARC reports), dedicated IPs, SMS senders (numbers,
-+carrier registrations, countries), members, settings (general, single sign-on, directory sync),
-+billing, plans and invoices, the audit log. Environment: activity, sent and received emails,
-+templates and their versions, suppressions, open/click tracking, content storage, sent and
-+received SMS, SMS suppressions, broadcasts, contacts (and their properties), audiences, segments,
-+topics, marketing settings, risk assessments, rules, lists, rate limits, calibration and settings,
-+Hooks (applications, endpoints, messages, event types, portal settings), API keys, webhook
-+endpoints and deliveries, logs, log drains. A few changes, each mirroring a dashboard action (same
-+checks, same audit event): retrying a webhook delivery, recovering an endpoint's failed
-+deliveries, enabling or disabling an endpoint, canceling or rescheduling a scheduled email,
-+pausing, resuming or canceling a broadcast, and reporting a risk assessment's outcome (also from
-+the review queue); everything else is read-only (with a link to the same page on coss.com). It
-+talks only to the dashboard's `/api/mobile/v1/*` (never the public API: it holds no API key).
- 
- ## Expo has changed — do not trust your training data
- 
-@@ -87,7 +91,13 @@ Mac, and `APNS_*` set for the worker (it prints them without).
- ## Conventions
- 
- - Wire types come from `@coss/companion`, imported **type-only** (Metro never bundles it). Change
--  the dashboard handlers and the type together.
-+  the dashboard handlers and the type together. Newer areas keep their types in a file of their
-+  own (`packages/companion/src/<area>.ts`, re-exported by `export type *` — which silently drops a
-+  name two files both export, so keep names unique), their mapping in a `wire.ts` next to their
-+  routes, their hooks in `src/lib/queries-<area>.ts` (on the helpers `src/lib/queries.ts`
-+  exports) and their badge labels in `src/lib/status-<area>.ts`.
-+- A page the app shows needs a `read_*` flag in `OrganizationResponse["can"]` (the dashboard
-+  page's read permission) for the environment or organization screen's link to it.
- - `src/app/` holds routes only (Expo Router); everything else lives in `src/lib` and
-   `src/components`. Relative imports (no path aliases).
- - Routes mirror the dashboard's paths (`/[org]/projects/[project]/[env]/…`, `/[org]/settings/…`),
+@@ -21,6 +21,9 @@ public async Task MockServerTest_1()
+                   "meter": "email.recipients",
+                   "dimension": "dimension",
+                   "environment_id": "environment_id",
++                  "project_id": "project_id",
++                  "api_key_id": "api_key_id",
++                  "user_id": "user_id",
+                   "start": "2024-01-15T09:30:00.000Z",
+                   "end": "2024-01-15T09:30:00.000Z",
+                   "quantity": 1000000
+@@ -30,6 +33,9 @@ public async Task MockServerTest_1()
+                   "meter": "email.recipients",
+                   "dimension": "dimension",
+                   "environment_id": "environment_id",
++                  "project_id": "project_id",
++                  "api_key_id": "api_key_id",
++                  "user_id": "user_id",
+                   "start": "2024-01-15T09:30:00.000Z",
+                   "end": "2024-01-15T09:30:00.000Z",
+                   "quantity": 1000000
 ```
 
-**File**: `apps/mobile/src/app/(app)/[org]/dedicated-ips.tsx` (added, +179/-0)
+**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/Broadcasts/ListEmailsTest.cs` (modified, +14/-3)
 ```diff
-@@ -0,0 +1,179 @@
-+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-+import { Network } from "lucide-react-native";
-+import { StyleSheet, View } from "react-native";
-+import { Alert } from "../../../components/alert";
-+import { Badge, StatusDot } from "../../../components/badge";
-+import { Button } from "../../../components/button";
-+import { EmptyState } from "../../../components/empty";
-+import { Panel, Ruled } from "../../../components/panel";
-+import { ErrorState, Loading, PageIntro, Screen } from "../../../components/screen";
-+import { Stat, StatGrid } from "../../../components/stat";
-+import { Text } from "../../../components/text";
-+import { WebButton } from "../../../components/web-button";
-+import { formatCount } from "../../../lib/format";
-+import { useDedicatedIps } from "../../../lib/queries-sms-senders";
-+import { DEDICATED_IP_STATUS } from "../../../lib/status-sms-senders";
-+import { colors } from "../../../lib/theme";
-+import { openOnWeb } from "../../../lib/web";
-+
-+// Copy from apps/web/src/app/[orgSlug]/dedicated-ips/page.tsx. Read-only: the add-on is managed on
-+// coss.com's billing page.
-+
-+// The dashboard's `formatDate` (apps/web/src/lib/billing-format.ts).
-+const DATE = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" });
-+
-+export default function DedicatedIpsScreen() {
-+  const { org } = useLocalSearchParams<{ org: string }>();
-+  const router = useRouter();
-+  const query = useDedicatedIps(org);
-+  if (query.isPending) return <Loading />;
-+  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
-+  const pool = query.data;
-+  const status = DEDICATED_IP_STATUS[pool.status];
-+  const billingPath = `/${org}/settings/billing`;
-+
-+  return (
-+    <Screen onRefresh={() => query.refetch()} refreshing={query.isRefetching} title="Dedicated IPs">
-+      <Stack.Screen options={{ headerRight: () => <WebButton path={`/${org}/dedicated-ips`} /> }} />
-+      <PageIntro
-+        description="Your own sending IPs, so no other sender's reputation affects yours. SES leases, scales and warms them up automatically."
-+        meta={
-+          status ? (
-+            <Badge variant="outline">
-+              <StatusDot label={status.label} tone={status.tone} />
-+            </Badge>
-+          ) : null
-+        }
-+        title="Dedicated IPs"
-+      />
-+
-+      {pool.status === "not_enabled" ? (
-+        <Panel>
-+          <EmptyState
-+            action={
-+              pool.can_read_billing ? (
-+                <Button
-+                  onPress={() => openOnWeb(billingPath)}
-+                  size="sm"
-+                  title="Add on the billing page"
-+                />
-+              ) : null
-+            }
-+            description={`${pool.add_on.monthly_price} per month on the ${pool.add_on.plans.join(
-+              " and ",
-+            )} plans, plus usage for email sent through them. Best for steady volume: the first IP is assigned once you send a few hundred emails a day.`}
-+            icon={Network}
-+            title="Dedicated IPs aren't on your plan"
-+          />
-+        </Panel>
-+      ) : (
-+        <>
-+          {status ? (
-+            <Alert
-+              description={`${status.detail}${pool.message ? ` ${pool.message}` : ""}`}
-+              tone={pool.status === "waiting" ? "warning" : "info"}
-+            />
-+          ) : null}
-+          <StatGrid>
-+            <Stat label="IPs" value={String(pool.ips.length)} />
-+            <Stat
-+              detail={
-+                pool.dedicated_share === null
-+                  ? `shown from ${formatCount(pool.ready_min_deliveries)} deliveries`
-+                  : "of deliveries, last 7 days"
+@@ -110,7 +110,11 @@ public async Task MockServerTest_1()
+                     "version": 1000000,
+                     "locale": "locale"
+                   },
+-                  "broadcast_id": "broadcast_id"
++                  "broadcast_id": "broadcast_id",
++                  "content_storage": {
++                    "mode": "store",
++                    "discarded_at": "2024-01-15T09:30:00.000Z"
++                  }
+                 },
+                 {
+                   "object": "email",
+@@ -206,7 +210,11 @@ public async Task MockServerTest_1()
+                     "version": 1000000,
+                     "locale": "locale"
+                   },
+-                  "broadcast_id": "broadcast_id"
++                  "broadcast_id": "broadcast_id",
++                  "content_storage": {
++                    "mode": "store",
++                    "discarded_at": "2024-01-15T09:30:00.000Z"
++                  }
+                 }
+               ],
+               "has_more": true
+@@ -295,7 +303,10 @@ public async Task MockServerTest_2()
+                     "click_count": 0
+                   },
+                   "created_at": "2026-10-10T12:00:00.000Z",
+-                  "sent_at": "2026-10-10T12:00:01.000Z"
++                  "sent_at": "2026-10-10T12:00:01.000Z",
++                  "content_storage": {
++                    "mode": "store"
++                  }
+                 }
+               ],
+               "has_more": true
+```
+
+**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/CancelTest.cs` (modified, +9/-2)
+```diff
+@@ -107,7 +107,11 @@ public async Task MockServerTest_1()
+                 "version": 1000000,
+                 "locale": "locale"
+               },
+-              "broadcast_id": "broadcast_id"
++              "broadcast_id": "broadcast_id",
++              "content_storage": {
++                "mode": "store",
++                "discarded_at": "2024-01-15T09:30:00.000Z"
 +              }
-+              label="From your IPs"
-+              value={
-+                pool.dedicated_share === null ? "—" : `${Math.round(pool.dedicated_share * 100)}%`
+             }
+             """;
+ 
+@@ -189,7 +193,10 @@ public async Task MockServerTest_2()
+                 "click_count": 0
+               },
+               "created_at": "2026-10-10T12:00:00.000Z",
+-              "sent_at": "2026-10-10T12:00:01.000Z"
++              "sent_at": "2026-10-10T12:00:01.000Z",
++              "content_storage": {
++                "mode": "store"
 +              }
-+            />
-+            <Stat
-+              label="Delivered, last 7 days"
-+              value={formatCount(pool.ips.reduce((total, ip) => total + ip.delivered_7d, 0))}
-+            />
-+            <Stat
-+              label="Ready since"
-+              value={pool.ready_at ? DATE.format(new Date(pool.ready_at)) : "—"}
-+            />
-+          </StatGrid>
-+          <Panel
-+            description="SES adds IPs as your volume grows and removes them when it drops. Only live emails use them."
-+            title="IP addresses"
-+          >
-+            {pool.ips.length ? (
-+              <View>
-+                <View style={[styles.ip, styles.head]}>
-+                  <Text muted style={styles.fill} variant="small">
-+                    IP
-+                  </Text>
-+                  <Text muted variant="small">
-+                    Delivered, last 7 days
-+                  </Text>
-+                </View>
-+                <Ruled>
-+                  {pool.ips.map((ip) => (
-+                    <View key={ip.ip} style={styles.ip}>
-+                      <Text sel
+             }
+             """;
+ 
 ```
 
-**File**: `apps/mobile/src/app/(app)/[org]/domains/[domainId]/dmarc/[reportId].tsx` (added, +138/-0)
+**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/GetBatchTest.cs` (modified, +14/-3)
 ```diff
-@@ -0,0 +1,138 @@
-+import type { MobileDmarcRecord } from "@coss/companion";
-+import { Stack, useLocalSearchParams } from "expo-router";
-+import { StyleSheet, View } from "react-native";
-+import { Badge, StatusDot } from "../../../../../../components/badge";
-+import { Panel, Ruled, SpecItem, SpecList } from "../../../../../../components/panel";
-+import { ErrorState, Loading, PageIntro, Screen } from "../../../../../../components/screen";
-+import { Text } from "../../../../../../components/text";
-+import { WebButton } from "../../../../../../components/web-button";
-+import { formatCount, formatDateTime } from "../../../../../../lib/format";
-+import { useDmarcReport } from "../../../../../../lib/queries-organization-settings";
-+import { dmarcResultTone } from "../../../../../../lib/status-organization-settings";
-+
-+// Copy from the dashboard's DMARC report page
-+// (apps/web/src/app/[orgSlug]/domains/[domainId]/dmarc/[reportId]/page.tsx).
-+
-+function Row({ record }: { record: MobileDmarcRecord }) {
-+  return (
-+    <View style={styles.row}>
-+      <View style={styles.line}>
-+        <Text selectable style={styles.flex} variant="mono">
-+          {record.source_ip}
-+        </Text>
-+        {record.via_coss ? <Badge variant="outline">coss.com</Badge> : null}
-+        <Text variant="mono">{formatCount(record.count)}</Text>
-+      </View>
-+      <Text selectable variant="mono">
-+        {record.header_from}
-+      </Text>
-+      {record.envelope_from ? (
-+        <Text muted selectable variant="mono">
-+          {record.envelope_from}
-+        </Text>
-+      ) : null}
-+      <View style={styles.results}>
-+        <Text muted variant="small">
-+          DKIM
-+        </Text>
-+        <StatusDot label={record.dkim} tone={dmarcResultTone(record.dkim)} />
-+        <Text muted variant="small">
-+          SPF
-+        </Text>
-+        <StatusDot label={record.spf} tone={dmarcResultTone(record.spf)} />
-+        <Text muted variant="small">
-+          Applied
-+        </Text>
-+        <Text variant="small">{record.disposition}</Text>
-+      </View>
-+      {record.reasons.map((reason) => (
-+        <Text key={reason.type} muted variant="small">
-+          {reason.type}
-+          {reason.comment ? `: ${reason.comment}` : ""}
-+        </Text>
-+      ))}
-+    </View>
-+  );
-+}
-+
-+export default function DmarcReportScreen() {
-+  const { org, domainId, reportId } = useLocalSearchParams<{
-+    org: string;
-+    domainId: string;
-+    reportId: string;
-+  }>();
-+  const query = useDmarcReport(org, domainId, reportId);
-+  if (query.isPending) return <Loading />;
-+  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
-+  const { domain, report } = query.data;
-+  const title = `Report from ${report.reporter}`;
-+  return (
-+    <Screen onRefresh={() => query.refetch()} refreshing={query.isRefetching} title={title}>
-+      <Stack.Screen
-+        options={{
-+          headerRight: () => <WebButton path={`/${org}/domains/${domain.id}/dmarc/${report.id}`} />,
-+        }}
-+      />
-+      <PageIntro
-+        description={`What ${report.reporter} saw of mail claiming to be from ${domain.name} between ${formatDateTime(report.period_start)} and ${formatDateTime(report.period_end)}.`}
-+        meta={report.truncated ? <Badge variant="warning">Truncated to 10,000 rows</Badge> : null}
-+        title={title}
-+      />
-+      <Panel title="Details">
-+        <SpecList>
-+          <SpecItem label="Reporter">{report.reporter}</SpecItem>
-+          {report.reporter_email ? (
-+            <SpecItem label="Contact" mono>
-+              {report.reporter_email}
-+            </SpecItem>
-+          ) : null}
-+          <SpecItem label="Report ID" mono>
-+            {report.report_id}
-+          </SpecItem>
-+          <SpecItem label="Messages" mono>
-+            {formatCount(report.messages)}
-+          </SpecItem>
-+          <SpecItem label="Passed DMARC" mono>
-+            {formatCount(report.passing)}
-+          </SpecItem>
-+          <SpecItem label="Policy seen" mono>
-+            {report.policy_seen}
-+          </SpecItem>
-+          <SpecItem label="Received" mono>
-+            {formatDateTime(report.received_at)}
-+          </SpecItem>
-+        </SpecList>
-+      </Panel>
-+      <Panel
-+        footer={
-+          report.records.length < report.record_count
-+            ? `Showing the first ${formatCount(report.records.length)}. Open the report on coss.com for every row.`
-+            : undefined
-+        }
-+        title={`${formatCount(report.record_count)} rows`}
-+      >
-+        <Ruled>
-+          {report.records.map((record, index) => (
-+            // Rows have no id of their own; their position is stable.
-+            // biome-ignore lint/suspicious/noArrayIndexKey: rows are ordered as reported
-+            <Row key={index} record={record} />
-+          ))}
-+        </Ruled>
-+      </Panel>
-+    </Screen>
-+  );
-+}
-+
-+const styles = StyleSheet.create({
-+  flex: { flex: 1 },
-+  row: { gap: 4, paddin
+@@ -111,7 +111,11 @@ public async Task MockServerTest_1()
+                     "version": 1000000,
+                     "locale": "locale"
+                   },
+-                  "broadcast_id": "broadcast_id"
++                  "broadcast_id": "broadcast_id",
++                  "content_storage": {
++                    "mode": "store",
++                    "discarded_at": "2024-01-15T09:30:00.000Z"
++                  }
+                 },
+                 {
+                   "object": "email",
+@@ -207,7 +211,11 @@ public async Task MockServerTest_1()
+                     "version": 1000000,
+                     "locale": "locale"
+                   },
+-                  "broadcast_id": "broadcast_id"
++                  "broadcast_id": "broadcast_id",
++                  "content_storage": {
++                    "mode": "store",
++                    "discarded_at": "2024-01-15T09:30:00.000Z"
++                  }
+                 }
+               ],
+               "created_at": "2024-01-15T09:30:00.000Z"
+@@ -291,7 +299,10 @@ public async Task MockServerTest_2()
+                     "click_count": 0
+                   },
+                   "created_at": "2026-10-10T12:00:00.000Z",
+-                  "batch_id": "batch_01k8d0n6x5f3w2e1r9t7y4u6i8"
++                  "batch_id": "batch_01k8d0n6x5f3w2e1r9t7y4u6i8",
++                  "content_storage": {
++                    "mode": "store"
++                  }
+                 }
+               ],
+               "created_at": "2026-10-10T12:00:00.000Z"
 ```
 
-**File**: `apps/mobile/src/app/(app)/[org]/domains/[domainId]/dmarc/index.tsx` (added, +341/-0)
+**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/GetTest.cs` (modified, +9/-2)
 ```diff
-@@ -0,0 +1,341 @@
-+import type { DmarcOverviewResponse } from "@coss/companion";
-+import { RETENTION_DAYS } from "@coss/retention";
-+import { Stack, useLocalSearchParams } from "expo-router";
-+import { FileChartColumn } from "lucide-react-native";
-+import { StyleSheet, View } from "react-native";
-+import { Alert } from "../../../../../../components/alert";
-+import { Badge, StatusDot } from "../../../../../../components/badge";
-+import { DomainTabs } from "../../../../../../components/domain-tabs";
-+import { EmptyState } from "../../../../../../components/empty";
-+import { PagedPanel } from "../../../../../../components/paged";
-+import {
-+  ListRow,
-+  Panel,
-+  PanelBody,
-+  Ruled,
-+  SpecItem,
-+  SpecList,
-+} from "../../../../../../components/panel";
-+import { ErrorState, Loading, PageIntro, Screen } from "../../../../../../components/screen";
-+import { Stat, StatGrid } from "../../../../../../components/stat";
-+import { Text } from "../../../../../../components/text";
-+import { WebButton } from "../../../../../../components/web-button";
-+import { formatAgo, formatCount, formatDateTime } from "../../../../../../lib/format";
-+import { useDmarc, useDmarcReports } from "../../../../../../lib/queries-organization-settings";
-+import { DOMAIN_STATUS } from "../../../../../../lib/status";
-+import {
-+  DMARC_NEXT_TITLE,
-+  DMARC_STAGE_INDEX,
-+  DMARC_STEPS,
-+  dmarcRate,
-+  dmarcRateTone,
-+} from "../../../../../../lib/status-organization-settings";
-+import { colors, radius } from "../../../../../../lib/theme";
-+
-+// Copy from the dashboard's DMARC page (apps/web/src/app/[orgSlug]/domains/[domainId]/dmarc/page.tsx)
-+// and apps/web/src/lib/dmarc-status.ts. The page's daily chart is left out: the stats and sources
-+// carry the same numbers.
-+
-+type Dmarc = DmarcOverviewResponse;
-+
-+/** Whether receivers fully reject the domain's failing mail: the end of the path. */
-+function dmarcComplete(dmarc: Dmarc): boolean {
-+  return dmarc.policy === "reject" && !dmarc.partial;
-+}
-+
-+function noNextStep(dmarc: Dmarc): string {
-+  const domainName = dmarc.domain.name;
-+  if (dmarcComplete(dmarc)) {
-+    const whose = dmarc.inherited_from ? ` (through ${dmarc.inherited_from}'s record)` : "";
-+    return dmarc.reporting
-+      ? `${domainName} rejects mail that fails DMARC${whose}, the strongest protection against spoofing. coss.com keeps reading the reports and tells owners and admins if its own mail starts failing.`
-+      : `${domainName} rejects mail that fails DMARC${whose}, the strongest protection against spoofing.`;
-+  }
-+  if (dmarc.report_address === null) {
-+    return "This coss.com deployment doesn't receive email, so it can't read DMARC reports or tell when a stricter policy is safe for this domain.";
-+  }
-+  return "There is nothing to change in this domain's DMARC record right now.";
-+}
-+
-+function nextDescription(dmarc: Dmarc, next: NonNullable<Dmarc["next"]>): string {
-+  if (next.kind === "publish") {
-+    return "Start by monitoring: p=none changes nothing about delivery, but mailbox providers start sending reports about every source that sends as this domain.";
-+  }
-+  if (next.kind === "add_reporting") {
-+    return "Your record doesn't send aggregate reports to coss.com yet. This keeps your policy and your other report addresses, and adds coss.com's.";
-+  }
-+  if (next.kind === "complete_rollout") {
-+    return "Your record applies its policy to only part of the mail (pct or t=y). RFC 9989 removed pct; once the checks below pass, apply it in full.";
-+  }
-+  return next.policy === "quarantine"
-+    ? "With quarantine, mailbox providers move mail that fails DMARC to spam. Publish it once every check below passes."
-+    : `With reject, mailbox providers refuse mail that fails DMARC. Quarantine first runs for ${dmarc.days_at_quarantine} days to make sure none of your own mail is caught.`;
-+}
-+
-+function Stepper({ dmarc }: { dmarc: Dmarc }) {
-+  const current = DMARC_STAGE_INDEX[dmarc.stage];
-+  const complete = dmarcComplete(dmarc);
-+  return (
-+    <View style={styles.steps}>
-+      {DMARC_STEPS.map((step, index) => {
-+        const done = index < current || (index === current && index === 3 && complete);
-+        const active = index === current && !done;
-+        return (
-+          <View key={step.label} style={[styles.step, active && styles.stepActive]}>
-+            <StatusDot
-+              label={`${index + 1}. ${step.label}`}
-+              muted={!done && !active}
-+              tone={done ? "success" : active ? "info" : "neutral"}
-+            />
-+            <Text muted variant="small">
-+              {step.detail}
-+            </Text>
-+          </View>
+@@ -107,7 +107,11 @@ public async Task MockServerTest_1()
+                 "version": 1000000,
+                 "locale": "locale"
+               },
+-              "broadcast_id": "broadcast_id"
++              "broadcast_id": "broadcast_id",
++              "content_storage": {
++                "mode": "store",
++                "discarded_at": "2024-01-15T09:30:00.000Z"
++              }
+             }
+             """;
+ 
+@@ -184,7 +188,10 @@ public async Task MockServerTest_2()
+                 "click_count": 0
+               },
+               "created_at": "2026-10-10T12:00:00.000Z",
+-              "sent_at": "2026-10-10T12:00:01.000Z"
++              "sent_at": "2026-10-10T12:00:01.000Z",
++              "content_storage": {
++                "mode": "store"
++              }
+             }
+             """;
+ 
+```
+
+**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/ListTest.cs` (modified, +14/-3)
+```diff
+@@ -89,7 +89,11 @@ public async Task MockServerTest_1()
+                     "version": 1000000,
+                     "locale": "locale"
+                   },
+-                  "broadcast_id": "broadcast_id"
++                  "broadcast_id": "broadcast_id",
++                  "content_storage": {
++                    "mode": "store",
++                    "discarded_at": "2024-01-15T09:30:00.000Z"
++                  }
+                 },
+                 {
+                   "object": "email",
+@@ -164,7 +168,11 @@ public async Task MockServerTest_1()
+                     "version": 1000000,
+                     "locale": "locale"
+                   },
+-                  "broadcast_id": "broadcast_id"
++                  "broadcast_id": "broadcast_id",
++                  "content_storage": {
++                    "mode": "store",
++                    "discarded_at": "2024-01-15T09:30:00.000Z"
++                  }
+                 }
+               ],
+               "has_more": true
+@@ -235,7 +243,10 @@ public async Task MockServerTest_2()
+                   },
+                   "created_at": "2026-10-10T12:00:00.000Z",
+                   "sent_at": "2026-10-10T12:00:01.000Z",
+-                  "broadcast_id": "broadcast_id"
++                  "broadcast_id": "broadcast_id",
++                  "content_storage": {
++                    "mode": "store"
++                  }
+                 }
+               ],
+               "has_more": false
+```
+
+**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/Received/GetTest.cs` (modified, +4/-3)
+```diff
+@@ -1,4 +1,3 @@
+-using Coss.Email;
+ using Coss.Test.Unit.MockServer;
+ using Coss.Test.Utils;
+ using NUnit.Framework;
+@@ -104,7 +103,9 @@ public async Task MockServerTest_1()
+                     .WithBody(mockResponse)
+             );
+ 
+-        var response = await Client.Email.Received.GetAsync(new GetReceivedRequest { Id = "id" });
++        var response = await Client.Email.Received.GetAsync(
++            new Coss.Email.GetReceivedRequest { Id = "id" }
 +        );
-+      })}
-+    </View>
-+  );
-+}
-+
-+function NextStep({ dmarc }: { dmarc: Dmarc }) {
-+  const { next } = dmarc;
-+  if (!next) return <Text variant="small">{noNextStep(dmarc)}</Text>;
-+  const [tone, label] =
-+    next.kind === "tighten" || next.kind === "complete_rollout"
-+      ? dmarc.ready
-+        ? (["success", "Ready"] as const
-```
-
-**File**: `apps/mobile/src/app/(app)/[org]/domains/[domainId]/index.tsx` (renamed, +11/-9)
-```diff
-@@ -1,15 +1,16 @@
- import type { DnsRecord } from "@coss/companion";
- import { Stack, useLocalSearchParams } from "expo-router";
- import { StyleSheet, View } from "react-native";
--import { Alert } from "../../../../components/alert";
--import { Badge, StatusDot } from "../../../../components/badge";
--import { Panel, Ruled, SpecItem, SpecList } from "../../../../components/panel";
--import { ErrorState, Loading, PageIntro, Screen } from "../../../../components/screen";
--import { Text } from "../../../../components/text";
--import { WebButton } from "../../../../components/web-button";
--import { formatDateTime } from "../../../../lib/format";
--import { useDomain } from "../../../../lib/queries";
--import { DOMAIN_STATUS, RECORD_STATUS, TRACKING_STATUS } from "../../../../lib/status";
-+import { Alert } from "../../../../../components/alert";
-+import { Badge, StatusDot } from "../../../../../components/badge";
-+import { DomainTabs } from "../../../../../components/domain-tabs";
-+import { Panel, Ruled, SpecItem, SpecList } from "../../../../../components/panel";
-+import { ErrorState, Loading, PageIntro, Screen } from "../../../../../components/screen";
-+import { Text } from "../../../../../components/text";
-+import { WebButton } from "../../../../../components/web-button";
-+import { formatDateTime } from "../../../../../lib/format";
-+import { useDomain } from "../../../../../lib/queries";
-+import { DOMAIN_STATUS, RECORD_STATUS, TRACKING_STATUS } from "../../../../../lib/status";
+         JsonAssert.AreEqual(response, mockResponse);
+     }
  
- // Copied from the dashboard's domain page (apps/web/src/app/[orgSlug]/domains/[domainId]).
- const STATUS_HELP: Record<string, string> = {
-@@ -108,6 +109,7 @@ export default function DomainScreen() {
-         }
-         title={domain.name}
-       />
-+      <DomainTabs domainId={domain.id} org={org} value="overview" />
-       <Panel description="Add these at your DNS provider." title="DNS records">
-         <Ruled>
-           {domain.records.map((record) => (
-```
-
-**File**: `apps/mobile/src/app/(app)/[org]/index.tsx` (modified, +23/-1)
-```diff
-@@ -1,6 +1,17 @@
- import type { BillingAlerts, OrganizationResponse } from "@coss/companion";
- import { type Href, router, useLocalSearchParams } from "expo-router";
--import { CreditCard, Folder, FolderPlus, Gauge, Globe, History, Users } from "lucide-react-native";
-+import {
-+  CreditCard,
-+  Folder,
-+  FolderPlus,
-+  Gauge,
-+  Globe,
-+  History,
-+  MessageSquare,
-+  Network,
-+  Settings,
-+  Users,
-+} from "lucide-react-native";
- import { useEffect } from "react";
- import { StyleSheet, View } from "react-native";
- import { Alert } from "../../../components/alert";
-@@ -199,7 +210,18 @@ export default function OrganizationScreen() {
-             <Ruled>
-               {[
-                 query.data.can.read_domain && { label: "Domains", path: "domains", icon: Globe },
-+                query.data.can.read_domain && {
-+                  label: "Dedicated IPs",
-+                  path: "dedicated-ips",
-+                  icon: Network,
-+                },
-+                query.data.can.read_sms_sender && {
-+                  label: "SMS",
-+                  path: "sms",
-+                  icon: MessageSquare,
-+                },
-                 { label: "Members", path: "members", icon: Users },
-+                { label: "Settings", path: "settings", icon: Settings },
-                 query.data.can.read_billing && {
-                   label: "Billing",
-                   path: "settings/billing",
-```
-
-**File**: `apps/mobile/src/app/(app)/[org]/projects/[project]/[env]/audiences/[audienceId].tsx` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+import { Stack, useLocalSearchParams } from "expo-router";
-+import { UsersRound } from "lucide-react-native";
-+import { Badge, StatusDot } from "../../../../../../../components/badge";
-+import { PagedPanel } from "../../../../../../../components/paged";
-+import { ListRow } from "../../../../../../../components/panel";
-+import { ErrorState, Loading, PageIntro, Screen } from "../../../../../../../components/screen";
-+import { WebButton } from "../../../../../../../components/web-button";
-+import { formatCount } from "../../../../../../../lib/format";
-+import { useAudience } from "../../../../../../../lib/queries-contacts";
-+import { CONTACT_STATUS } from "../../../../../../../lib/status-contacts";
-+import { type EnvironmentParams, environmentPath } from "../../../../../../../lib/web";
-+
-+// Copy from the dashboard's audiences/[audienceId]/page.tsx.
-+export default function AudienceScreen() {
-+  const { audienceId, ...params } = useLocalSearchParams<
-+    EnvironmentParams & { audienceId: string }
-+  >();
-+  const query = useAudience(params, audienceId);
-+
-+  if (query.isPending) return <Loading />;
-+  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
-+  const first = query.data.pages[0];
-+  if (!first) return <Loading />;
-+  const { audience } = first;
-+  const members = query.data.pages.flatMap((page) => page.members.data);
-+
-+  return (
-+    <Screen
-+      onRefresh={() => void query.refetch()}
-+      refreshing={query.isRefetching && !query.isFetchingNextPage}
-+      title={audience.name}
-+    >
-+      <Stack.Screen
-+        options={{
-+          headerRight: () => (
-+            <WebButton path={`${environmentPath(params)}/audiences/${audience.id}`} />
-+          ),
-+        }}
-+      />
-+      <PageIntro
-+        description={`${formatCount(audience.contact_count)} ${audience.contact_count === 1 ? "contact" : "contacts"}.`}
-+        title={audience.name}
-+      />
-+      <PagedPanel
-+        empty={{ icon: UsersRound, title: "No contacts in this audience yet." }}
-+        items={members}
-+        query={query}
-+        render={(contact) => {
-+          const [tone, label] = CONTACT_STATUS[contact.status];
-+          return (
-+            <ListRow
-+              href={{
-+                pathname: "/[org]/projects/[project]/[env]/contacts/[contactId]",
-+                params: { ...params, contactId: contact.id },
-+              }}
-+              key={contact.id}
-+              title={contact.email}
-+              trailing={
-+                <Badge variant="outline">
-+                  <StatusDot label={label} tone={tone} />
-+                </Badge>
-+              }
-+            />
-+          );
-+        }}
-+        title="Members"
-+      />
-+    </Screen>
-+  );
-+}
-```
-
----
-
-### Incident Patch 2: `0975e1aa` (2026-10-21)
-**Commit Message**: Merge pull request #156 from cosscom/domain-connect-single-instance
-
-Email: Domain Connect template is single-instance
-
-**File**: `packages/email/AGENTS.md` (modified, +5/-3)
-```diff
-@@ -129,12 +129,14 @@ Sending (SES, suppressions, tracking, unsubscribe, scheduled and batch sends, at
-   only and always signed (`DOMAIN_CONNECT_PRIVATE_KEY`; providers check `sig` against the TXT records at
-   `<DOMAIN_CONNECT_KEY_ID>.coss.com`). `domain-connect/coss.com.email.json` is the contract with every DNS provider
-   (submitted to github.com/Domain-Connect/Templates; providers onboard it one by one, and until then discovery's
--  template check is a 404 and no button shows): change it only with a new `version`, the conformance test in
-+  template check is a 404 and no button shows): once merged there, change it only with a new `version` (providers
-+  import a version once; until then the open PR is updated in place), the conformance test in
-   `test/domain-connect.test.ts` (the template applied must equal `expectedRecords` + the tracking CNAME) and a PR
-   upstream. Groups: `dkim`, `mail_from`, `dmarc` (only when the domain has no DMARC record and inherits none, asked of DNS
-   each time, never from the stored check — a `p=none` subdomain record would weaken an enforced parent), `tracking` (fixed target `track.cosslinks.com`);
--  only groups with unverified records are applied, so the template is `multiInstance` (providers that keep
--  applied-template state would otherwise remove an earlier application's records on the next one). Never put receiving MX records in it (they'd take over the
-+  only groups with unverified records are applied, and applies are additive per group, so the template is not
-+  `multiInstance` (a provider that keeps applied-template state then replaces a re-applied group's records, e.g.
-+  stale DKIM CNAMEs, instead of keeping both). Never put receiving MX records in it (they'd take over the
-   domain's mail). Discovery reads the customer's `_domainconnect` TXT record and fetches the URL it names, so it
-   goes only through `publicHttpGetter` (https, public addresses pinned with `publicAddressLookup` from
-   `@coss/webhooks`, no redirects, 16 KB, 3 s) and fails closed (`null`, never throws). The dashboard caches
-```
-
-**File**: `packages/email/domain-connect/coss.com.email.json` (modified, +0/-1)
-```diff
-@@ -11,7 +11,6 @@
-   "syncPubKeyDomain": "coss.com",
-   "syncRedirectDomain": "coss.com",
-   "hostRequired": false,
--  "multiInstance": true,
-   "records": [
-     {
-       "groupId": "dkim",
-```
-
-**File**: `packages/email/test/domain-connect.test.ts` (modified, +21/-11)
-```diff
-@@ -346,23 +346,33 @@ describe("the template", () => {
-     expect(written).toEqual(expected);
-   });
+@@ -192,7 +193,7 @@ public async Task MockServerTest_2()
+             );
  
--  test("keeps an earlier application's records when later groups are applied", async () => {
--    // A provider that keeps applied-template state removes the previous instance on re-apply
--    // unless the template is multiInstance (spec, "Apply, Re-apply, and Multi-Instance").
--    const domain = domainOf("example.com");
--    const records = withStatus(recordsOf(domain), "missing");
-+  test("re-applying a group replaces its records and keeps the other groups'", async () => {
-+    // A provider that keeps applied-template state adds groups applied later to the instance,
-+    // and on re-applying one removes that group's previous records on the same host, unless the
-+    // template is multiInstance (spec, "Apply, Re-apply, and Multi-Instance").
-     const tracking: DomainConnectTracking = {
-       hostname: "links.example.com",
-       status: "pending",
-       record: { value: "track.cosslinks.com", status: "missing" },
-     };
--    const instances: ReturnType<typeof applyTemplate>[] = [];
--    for (const groups of [["dkim", "mail_from"], ["tracking"]] as DomainConnectGroup[][]) {
--      if (!DOMAIN_CONNECT_TEMPLATE.multiInstance) instances.length = 0;
-+    const applied = new Map<DomainConnectGroup, ReturnType<typeof applyTemplate>[]>();
-+    const apply = (domain: DomainConnectDomain, groups: DomainConnectGroup[]) => {
-+      const records = withStatus(recordsOf(domain), "missing");
-       const variables = domainConnectVariables({ domain, records, tracking }, groups);
--      instances.push(applyTemplate({ zone: "example.com", host: "" }, groups, variables));
--    }
--    expect(instances.flat().map((record) => record.name)).toEqual([
-+      for (const group of groups) {
-+        const { multiInstance } = DOMAIN_CONNECT_TEMPLATE as { multiInstance?: boolean };
-+        const previous = multiInstance ? (applied.get(group) ?? []) : [];
-+        const written = applyTemplate({ zone: "example.com", host: "" }, [group], variables);
-+        applied.set(group, [...previous, written]);
-+      }
-+    };
-+    apply(domainOf("example.com"), ["dkim", "mail_from"]);
-+    apply(domainOf("example.com"), ["tracking"]);
-+    // The domain was deleted and added again: SES issued new DKIM tokens.
-+    const readded = domainOf("example.com", { dkimTokens: ["dddd4444", "eeee5555", "ffff6666"] });
-+    apply(readded, ["dkim"]);
-+    const records = withStatus(recordsOf(readded), "missing");
-+    expect([...applied.values()].flat(2).map((record) => record.name)).toEqual([
-       ...records.filter((record) => record.purpose !== "dmarc").map((record) => record.name),
-       "links.example.com",
-     ]);
+         var response = await Client.Email.Received.GetAsync(
+-            new GetReceivedRequest { Id = "rcvd_01k7c8m4q2f3e9v6t5r1n0p8yz" }
++            new Coss.Email.GetReceivedRequest { Id = "rcvd_01k7c8m4q2f3e9v6t5r1n0p8yz" }
+         );
+         JsonAssert.AreEqual(response, mockResponse);
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #160** (2026-10-22): Docs and tools for coding agents: Markdown API reference, .md pages, key flow, Claude Code plugin (@pumfleet)
+- **PR #159** (2026-10-22): iOS app: spend, budgets and API key owners (@pumfleet)
+- **PR #158** (2026-10-21): SDKs for Python, Go, Ruby, PHP, Java and .NET, generated from openapi.json (@pumfleet)
 - **PR #157** (2026-10-21): iOS app: catch up with the dashboard's pages (@pumfleet)
 - **PR #156** (2026-10-21): Email: Domain Connect template is single-instance (@pumfleet)
 - **PR #155** (2026-10-19): Import from Resend, SendGrid and Postmark (@pumfleet)
-- **PR #154** (2026-10-19): Production: send SMS through Twilio (@pumfleet)
-- **PR #153** (2026-10-19): Spend management: personal API keys, attributed spend and budgets (@pumfleet)
-- **PR #152** (2026-10-19): SMS: MCP tools, CLI, docs, legal pages, the iOS app and agent docs (@pumfleet)
 
 ---
 
@@ -2572,28 +2151,28 @@ Email: Domain Connect template is single-instance
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #157 from cosscom/mobile-parity
+## X. Regenerate the SDKs for main's API (SMS, template rendering, test webhook events
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdks/dotnet/.fern/metadata.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0150de94`: Merge pull request #157 from cosscom/mobile-parity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9584ac78`: Regenerate the SDKs for main's API (SMS, template rendering, test webhook events, storage settings). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/dotnet/.fern/metadata.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing and plans, audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
+  "originGitCommit": "d0301a609489f8f501c6bcadf209b524c230247e",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains, members, billing, audit log; environment: emails, received, suppressions, tracking, risk with rules and lists, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
+  "originGitCommit": "22f1393886309f16341682ab6a08490f9064c8e4",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0150de94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9584ac78` are properly handled with clean fallback behavior.

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-RFPW",
-    "timestamp": "2026-10-20T21:47:04.916Z",
-    "repository": "google/electra-base-discriminator",
-    "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "424fb282f4a615ea56e349dbb061cd66f6ebd0d98d6a12f93fb97fbc78e8e048",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-RNHA",
     "timestamp": "2026-10-20T21:47:14.974Z",
     "repository": "temporalio/temporal",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-UIUE",
+    "timestamp": "2026-10-23T11:24:38.246Z",
+    "repository": "cosscom/coss",
+    "learningId": "learn-github-cosscom-coss",
+    "contentHash": "7ba9197dab8f10aeb7a0fc82b901171d4c9dcdc2d8b6bf7a8014c24fdd799a93",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

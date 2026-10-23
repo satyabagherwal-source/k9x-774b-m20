@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T11:18:09.675Z",
-  "total_cycles_completed": 4524,
-  "total_learnings_persisted": 4524,
-  "total_rules_promoted": 3753,
+  "last_updated": "2026-10-23T11:24:38.259Z",
+  "total_cycles_completed": 4525,
+  "total_learnings_persisted": 4525,
+  "total_rules_promoted": 3754,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:25:32.420Z",
-      "repository": "mui/base-ui",
-      "learningId": "learn-github-mui-base-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:25:43.116Z",
       "repository": "zeromicro/go-zero",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-23T11:18:09.675Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:24:38.259Z",
+      "repository": "cosscom/coss",
+      "learningId": "learn-github-cosscom-coss",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

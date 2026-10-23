@@ -4554,3 +4554,4 @@ Every entry in this ledger must capture:
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `4dd63b69` | Multi-dimensional audit evidence | 2026-10-23T11:11:57.007Z |
 | `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `c95f4998` | Multi-dimensional audit evidence | 2026-10-23T11:17:53.273Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d42ea86b` | Multi-dimensional audit evidence | 2026-10-23T11:18:09.669Z |
+| `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `f2ec86f7` | Multi-dimensional audit evidence | 2026-10-23T11:24:38.249Z |

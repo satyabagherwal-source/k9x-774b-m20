@@ -2473,10 +2473,10 @@
     "repository": "cosscom/coss",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/coss",
-    "sourceVersion": "0150de94",
+    "sourceVersion": "f2ec86f7",
     "license": "AGPL-3.0",
-    "contentHash": "41d8ea38d93e7540bc54a42aeb986464475b356513839c32bda5101f62f4e704",
-    "lastHarvestedAt": "2026-10-21T18:01:19.799Z",
+    "contentHash": "7ba9197dab8f10aeb7a0fc82b901171d4c9dcdc2d8b6bf7a8014c24fdd799a93",
+    "lastHarvestedAt": "2026-10-23T11:24:38.249Z",
     "learningId": "learn-github-cosscom-coss"
   },
   "sharkdp-bat": {

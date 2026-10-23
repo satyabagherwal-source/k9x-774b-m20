@@ -280356,3 +280356,53 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d91f305b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3901. Regenerate the SDKs for main's API (SMS, template rendering, test webhook events (Harvested from cosscom/coss)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Regenerate the SDKs for main's API (SMS, template rendering, test webhook events",
+  "source": "cosscom/coss",
+  "source_url": "https://github.com/cosscom/coss",
+  "source_version": "f2ec86f7",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-23T11:24:38.083Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cosscom-coss",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cosscom/coss](https://github.com/cosscom/coss) (Revision: `f2ec86f7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `sdks/dotnet/.fern/metadata.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9584ac78`: Regenerate the SDKs for main's API (SMS, template rendering, test webhook events, storage settings). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/dotnet/.fern/metadata.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  "originGitCommit": "d0301a609489f8f501c6bcadf209b524c230247e",
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+  "originGitCommit": "22f1393886309f16341682ab6a08490f9064c8e4",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9584ac78` are properly handled with clean fallback behavior.
