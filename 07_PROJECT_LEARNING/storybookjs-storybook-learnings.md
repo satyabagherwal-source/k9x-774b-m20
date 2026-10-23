@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source**: github ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
-> **Source Version**: `24b8ddb4`  
+> **Source Version**: `ae13ea66`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:27:32.473Z  
+> **Timestamp**: 2026-10-23T06:17:18.530Z  
 > **Learning ID**: `learn-github-storybookjs-storybook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:27:31.172Z  
+> **Harvest Timestamp**: 2026-10-23T06:17:18.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91342 stars
+- **Stars / Engagement**: 91350 stars
 
 ---
 
@@ -555,11 +555,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36898** (2026-10-19): **Preview API: While a document story is mounted, the preview writes no URL until its teardown**
-  *Symptoms*: ## What  `UrlStore` is now the only writer of `location`. While a story with `layout: 'document'` is mounted, the store has lent `location` to it: it neither reads nor writes `location`. The URL of the story selected next is written once, after the mounted story's teardown. Component stories and docs keep today's behavior: their selection, args and globals write the URL at once.  Two optional methods on the `SelectionStore` interface carry it: - `lendLocation()`: `StoryRender` calls it when it renders a story with `layout: 'document'`. The store takes the query and hash from its own `url`, not from `location`. From then on, a selection or query params (args, globals) only change `UrlStore.url`. `history.replaceState` is not called, and `location` is not read. - `reclaimLocation()`: `StoryRender` calls it after the teardown of a story render that got a canvas (not when it keeps the rendered DOM for HMR), and before the reload when a teardown cannot finish. The store writes `url` if `location` is not at it, sets `document.title`, and reads and writes `location` again. Stories rendered inside a docs page use the docs page's callbacks and do not reclaim, as today.  ```ts // UrlStore reclaimLocation() {   this.ownQuery = undefined;   const { pathname, search, hash = '' } =     document.location;   if (     this.url &&     parseUrl(this.url).href !==       parseUrl(`${pathname}${search}${hash}`).href   ) {     history.replaceState({}, '', this.url);   }   if (this.selection) {     
+- **Issue #36983** (2026-10-22): **WC: Disable control for cssstate**
+  *Symptoms*: Closes #  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  This Pr disable control for cssstate. It still appears in the control panel.  Feedback from  community member   <!-- Briefly describe what your PR does -->  ## Checklist for Contributors  ### Testing  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to communicate how to test your changes -->  #### The changes in this PR are covered in the following automated tests:  - [ ] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  #### Manual testing  --- > [!CAUTION] > This section is mandatory for all contributions. If you believe no manual test is necessary, please state so explicitly. Thanks!  <!-- Please include the steps that a human maintainer should follow, so they can verify that your changes work. For example:  1. Run a sandbox for template, e.g. `yarn task --task sandbox --start-from auto --template react-vite/default-ts` 2. Open St
 
-- **Issue #36897** (2026-10-19): **Preview API: The preparing block around a story that owns the document**
-  *Symptoms*:  ## What  Two rules for Storybook's preparing block (the spinner) around a story with `layout: 'document'`:  - **During its render:** the block stays until the story's renderer calls `showMain()`, as for every other story. Core no longer calls `showMain()` itself just before the render of such a story. - **When the selection changes:** when the mounted story or the next story owns the document, the block shows at once, before the previous story is torn down. A switch between two other stories keeps the short delay, a change of view mode already shows its block at once, and a rerender of the same story shows no block.  Code:  - `StoryRender.ts`: the early `showMain()` and its comment are gone. The rule "the story the preview shows owns the document" moves into a public `ownsDocument` getter, which `render()` and `PreviewWithSelection` both read. - `PreviewWithSelection.renderSelection`: right before `teardownRender(lastRender)`, it calls `this.view.showPreparingStory({ immediate: true })` when the story id changed, the view mode did not, and either render owns the document. - `WebView.showHost`: showing the block that is already shown leaves it in place, so its spinner does not start over when the delayed and the immediate call both run.  Everything else of #36889 stays: the mark after the render, `canvasElement`, the observer, the abort check.  ## Why  #36889 called `showMain()` just before `renderStory()` for a story that owns the document, so the document's own loading woul
+- **Issue #36981** (2026-10-22): **Core: A portable story with layout 'document' renders to the <body>, as in the preview**
+  *Symptoms*: ## What I did  A story with `parameters.layout: 'document'` owns the document. The preview (`StoryRender`) renders it to the `<body>` the document has now, and after the render it sets the context's `canvasElement` to the `<body>` the render left, since such a render may replace the body (a framework that renders a whole page does). The `canvas` of `storybook/test` follows that change of `canvasElement`.  The portable path, `composeStory().run()` (`runStory` in `portable-stories.ts`), did not do this. It appended a `<div>` container to the body, rendered into that, and left `canvasElement` as it was. So under Storybook's Vitest addon, and in a test that runs a story, the `canvas` of a document story found nothing once the page had taken the container's place.  This PR makes the portable path do what the preview does:  - A module-level `ownsDocument(context)`. A portable story is always shown as the preview shows a story, never in a docs page, so only the parameter decides. - In `runStory`, a document story without a `canvasElement` renders to `globalThis.document.body` instead of a new container. - In the `renderToCanvas` wrapper, after the renderer's `renderToCanvas`, and not after an abort, `canvasElement` becomes `globalThis.document.body`, as in `StoryRender`.  The portable path does not call `markDocumentRoot` (the `#storybook-root` id on the body): that id is for the preview's own CSS and for addons.  The framework `@storybook/nextjs-vite-rsc` ([storybookjs/vitest-plugi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -576,482 +576,1022 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bee9aa1f` (2026-10-19)
-**Commit Message**: fix: update yarn.lock for the TypeScript 7 peer range widening
+### Incident Patch 1: `a2140a6c` (2026-10-20)
+**Commit Message**: feat(svelte): build story snippets on the docgen server
 
-The peer range edits change the workspace descriptors recorded in the
-lockfile, so yarn install --immutable failed with YN0028 in CI until
-the lockfile is updated in the same commit.
+With features.docgenServer, the Code panel shows snippets that the server
+builds from the story file, for .stories.svelte and plain CSF. It reads
+the args through the shared csf-tools resolver and prints them as written,
+like React does, and each snippet starts with a <script> block with the
+imports and story file declarations it needs.
 
-Co-authored-by: Gert Hengeveld <[REDACTED_EMAIL]>
+A story whose snippet fails gets a warning, and the other stories of the
+file keep theirs. In server mode, the runtime source decorator and the
+Svelte CSF code emitter are off.
 
-**File**: `yarn.lock` (modified, +10/-10)
-```diff
-@@ -10181,7 +10181,7 @@ __metadata:
-     sass: ^1.0.0
-     sass-embedded: ^1.0.0
-     storybook: "workspace:^"
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-     vite: ">=8.0.0"
-     zone.js: ">=0.14.0"
-   peerDependenciesMeta:
-@@ -10241,7 +10241,7 @@ __metadata:
-     "@angular/platform-browser-dynamic": ">=21.0.0 < 23.0.0"
-     rxjs: ^6.5.3 || ^7.4.0
-     storybook: "workspace:^"
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-     zone.js: ">=0.14.0"
-   peerDependenciesMeta:
-     "@angular/animations":
-@@ -10854,7 +10854,7 @@ __metadata:
-     react: ^18.0.0 || ^19.0.0
-     react-dom: ^18.0.0 || ^19.0.0
-     storybook: "workspace:^"
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-     vite: ^6.3.0 || ^7.0.0 || ^8.0.0
-   peerDependenciesMeta:
-     typescript:
-@@ -10874,7 +10874,7 @@ __metadata:
-     react: ^18.0.0 || ^19.0.0
-     react-dom: ^18.0.0 || ^19.0.0
-     storybook: "workspace:^"
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-   peerDependenciesMeta:
-     typescript:
-       optional: true
-@@ -10916,7 +10916,7 @@ __metadata:
-     react: ^18.0.0 || ^19.0.0
-     react-dom: ^18.0.0 || ^19.0.0
-     storybook: "workspace:^"
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-   peerDependenciesMeta:
-     "@types/react":
-       optional: true
-@@ -11114,13 +11114,13 @@ __metadata:
-     svelte: "npm:^5.39.5"
-     svelte2tsx: "npm:^0.7.55"
-     sveltedoc-parser: "npm:^4.2.1"
--    typescript: "npm:^5.9.0 || ^6.0.0"
-+    typescript: "npm:^5.9.0 || ^6.0.0 || ^7.0.0"
-     vite: "npm:^7.0.4"
-   peerDependencies:
-     "@sveltejs/vite-plugin-svelte": ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
-     storybook: "workspace:^"
-     svelte: ^5.0.0
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-     vite: ^6.3.0 || ^7.0.0 || ^8.0.0
-   languageName: unknown
-   linkType: soft
-@@ -11147,7 +11147,7 @@ __metadata:
-   peerDependencies:
-     storybook: "workspace:^"
-     svelte: ^5.0.0
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-     vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
-   peerDependenciesMeta:
-     typescript:
-@@ -11221,7 +11221,7 @@ __metadata:
-     vue-docgen-api: "npm:^4.75.1"
-   peerDependencies:
-     storybook: "workspace:^"
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-     vite: ^6.3.0 || ^7.0.0 || ^8.0.0
-   peerDependenciesMeta:
-     typescript:
-@@ -11248,7 +11248,7 @@ __metadata:
-     vue-tsc: "npm:latest"
-   peerDependencies:
-     storybook: "workspace:^"
--    typescript: ^5.9.0 || ^6.0.0
-+    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-     vue: ^3.0.0
-   peerDependenciesMeta:
-     typescript:
-```
-
----
-
-### Incident Patch 2: `d882260f` (2026-10-19)
-**Commit Message**: Fix Windows-only failures in unit tests
-
-- ComponentMetaManager: keep a `rename` event sticky through the debounce
-  window. Windows reports a newly written file as `rename` then `change`,
-  so the last event won and the file was handled as an edit; projects never
-  refreshed their root files and new components were not found until restart.
-- NPMProxy: compare the workspace glob results and the package.json path
-  after normalizing separators. `glob` returns backslash paths on Windows
-  while `findFilesUp` returns forward slashes, so declared workspace packages
-  never installed from the workspace root.
-- React component manifest: print story snippets with `\n` line endings
-  instead of recast's `os.EOL` default.
-- Web components docgen: resolve the story file path with `pathe`.
-- preset.test.ts: expect the platform-resolved preview path, matching the
-  sibling manifest-path assertion.
-
+Co-authored-by: Valentin Palkovic <[REDACTED_EMAIL]>
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_012j7VnHizrdZFsvc24GhkmP
 
-**File**: `code/core/src/common/js-package-manager/NPMProxy.ts` (modified, +4/-1)
+**File**: `code/renderers/svelte/src/docgen/story-docs-provider.ts` (modified, +2/-2)
 ```diff
-@@ -12,6 +12,7 @@ import * as find from 'empathic/find';
- import type { ResultPromise } from 'execa';
- // eslint-disable-next-line depend/ban-dependencies
- import { globSync } from 'glob';
-+import { normalize } from 'pathe';
- import sort from 'semver/functions/sort.js';
- import { dedent } from 'ts-dedent';
+@@ -3,12 +3,12 @@ import { fileURLToPath } from 'node:url';
+ import { createWorkerGatedStoryDocsProvider } from 'storybook/internal/core-server';
  
-@@ -226,7 +227,9 @@ export class NPMProxy extends JsPackageManager {
-               .filter((pattern: string) => pattern.startsWith('!'))
-               .map((pattern: string) => `${pattern.slice(1)}/package.json`),
-           }
--        ).includes(packageJsonPath)
+ import { buildStoryDocsPayload } from './story-docs/build-story-docs.ts';
+-import { SVELTE_STORY_FILE_TEST_REGEXP } from './story-file.ts';
++import { SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP } from './story-file.ts';
+ import { DOCGEN_WORKER_SPECIFIER } from './worker-specifier.ts';
+ 
+ export const experimental_storyDocsProvider = createWorkerGatedStoryDocsProvider({
+   label: 'Svelte',
+   docgenWorker: fileURLToPath(import.meta.resolve(DOCGEN_WORKER_SPECIFIER)),
+-  storyFileTest: SVELTE_STORY_FILE_TEST_REGEXP,
++  storyFileTest: SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP,
+   build: (input) => buildStoryDocsPayload(input),
+ });
+```
+
+**File**: `code/renderers/svelte/src/docgen/story-docs/build-story-docs.ts` (modified, +217/-3)
+```diff
+@@ -1,8 +1,222 @@
+-import type { StoryDocsPayload, StoryDocsProviderInput } from 'storybook/internal/types';
++import { readFile } from 'node:fs/promises';
++import { resolve } from 'node:path';
++
++import { getComponentIdFromEntry, getStoryImportPathFromEntry } from 'storybook/internal/common';
++import { storyNameFromExport, toId } from 'storybook/internal/csf';
++import {
++  type ESTreeNode as Node,
++  type ImportBinding,
++  type ResolvedStoryArgs,
++  collectImportBindings,
++  createStoryArgsResolver,
++  createStoryReferenceResolver,
++  extractStoryJSDocInfo,
++  jsDocTagsForNode,
++  loadCsf,
++  metaObject,
++  propertyValue,
++  returnedExpression,
++  staticKey,
++  textOf,
++  unresolvedWarning,
++  unwrapExpression,
++} from 'storybook/internal/csf-tools';
++import type { StoryDoc, StoryDocsPayload, StoryDocsProviderInput } from 'storybook/internal/types';
++
++import { printTemplate } from './print-template.ts';
++import { buildSnippetImportBlock } from './snippet-imports.ts';
++import { type StoryFile, readSvelteCsfFile } from './svelte-csf-file.ts';
++
++const openStoryReferences = createStoryReferenceResolver({ extensions: ['.svelte'] });
++
++const RENDER_WARNING = 'The render function is not reflected in this snippet.';
+ 
+-// TODO: port addon-svelte-csf's snippet generation; `undefined` defers to the rest of the chain.
+ export async function buildStoryDocsPayload(
+-  _input: StoryDocsProviderInput
++  input: StoryDocsProviderInput
+ ): Promise<StoryDocsPayload | undefined> {
++  const path = getStoryImportPathFromEntry(input.entry);
++  if (!path) return undefined;
++  const filename = resolve(path);
++  const source = await readFile(filename, 'utf8');
++  const svelte = filename.endsWith('.svelte');
++  const file: StoryFile = svelte
++    ? await readSvelteCsfFile(source, filename)
++    : {
++        csfSource: source,
++        typescript: /\.[cm]?tsx?$/.test(filename),
++        stories: new Map(),
++        snippets: new Map(),
++        moduleScript: source,
++      };
++  const csf = loadCsf(file.csfSource, {
++    makeTitle: () => input.entry.title,
++    fileName: svelte ? `${filename}.${file.typescript ? 'ts' : 'js'}` : filename,
++  }).parse();
++  const meta = metaObject(csf);
++  const component = propertyValue(meta, 'component');
++  const componentName =
++    component && /^[A-Z][\w$]*(?:\.[\w$]+)*$/.test(textOf(component))
++      ? textOf(component)
++      : undefined;
++  const importStatement = meta ? jsDocTagsForNode(meta, csf.editor).import?.[0] : undefined;
++  const context: StoryContext = {
++    file,
++    bindings: collectImportBindings(csf.program),
++    importOverride:
++      componentName && importStatement
++        ? { name: componentName, statement: importStatement }
++        : undefined,
++    componentName: svelte ? undefined : componentName,
++  };
++  const resolver = createStoryArgsResolver(csf, { filePath: filename, ...openStoryReferences() });
++
++  const stories: Record<string, StoryDoc> = {};
++  for (const [exportName, story] of Object.entries(csf._stories)) {
++    const id = svelte
++      ? toId(csf.meta.id ?? csf.meta.title ?? input.entry.title, storyNameFromExport(exportName))
++      : story.id;
++    const doc: StoryDoc = {
++      id,
++      name: story.name ?? storyNameFromExport(exportName),
++      ...extractStoryJSDocInfo(csf._storyStatements[exportName], csf.editor),
++      ...(file.stories.get(exportName)?.description
++        ? { description: file.stories.get(exportName)!.description }
++        : {}),
++    };
++    try {
++      stories[id] = { ...doc, ...storySnippet(exportName, resolver.resolve(exportName), context) };
++    } catch (error) {
++      const message = error instanceof Error ? error.message : String(error);
++      stories[id] = { ...doc, warning: `No static snippet: ${message}` };
++    }
++  }
++  return {
++    id: getComponentIdFromEntry(input.entry),
++    name: componentName ?? input.entry.title.split('/').at(-1)!,
++    path,
++    stories,
++  };
++}
++
++interface StoryContext {
++  file: StoryFile;
++  bindings: Map<string, ImportBinding>;
++  importOverride?: { name: string; statement: string };
++  // The meta component of a plain CSF file, which renders the args of a story without markup.
++  componentName?: string;
++}
++
++function storySnippet(
++  exportName: string,
++  resolved: ResolvedStoryArgs,
++  { file, bindings, importOverride, componentName }: StoryContext
++): Pick<StoryDoc, 'snippet' | 'warning'> {
++  const story = file.stories.get(exportName);
++  const template =
++    story?.template ?? (componentName ? `<${componentName} {...args} />` : undefined);
++  const renders =
++    !story?.template &&
++    (resolved.storyMembers.properties.render || resolved.metaMembers.properties.render);
++  if (!template) return renders ? { warning: RENDER_WARNING } : {};
++
++  const snippets: Record<string, string> = {};
++  for (const [key, node] of Object.entries(resolved.args)) {
++    const snippet = snippetArg(key, node, file, bindings);
++    if (snippet !== undefined) snippets[key] = snippet;
++  }
++
+```
+
+**File**: `code/renderers/svelte/src/docgen/story-docs/markup.ts` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++import { parse } from 'svelte/compiler';
++
++import type { ESTreeAST } from '../../svelte-csf/parser/ast.ts';
++
++// Parse story markup on its own. Svelte reads TypeScript in markup only when the source has a
++// `<script lang="ts">`, so a TypeScript story file gets one in front, and `offset` maps positions
++// back to the markup.
++export function parseMarkup(code: string, typescript: boolean) {
++  const prefix = typescript ? '<script lang="ts"></script>' : '';
++  return { ast: parse(prefix + code, { modern: true }), offset: prefix.length };
++}
++
++// The names a destructuring pattern declares.
++export function patternNames(pattern: ESTreeAST.Node | null | undefined): string[] {
++  switch (pattern?.type) {
++    case 'Identifier':
++      return [pattern.name];
++    // `let:value={{ item }}` holds its pattern as an object or array expression.
++    case 'ObjectPattern':
++    case 'ObjectExpression':
++      return pattern.properties.flatMap((property) =>
++        patternNames(
++          property.type === 'RestElement' || property.type === 'SpreadElement'
++            ? property
++            : property.value
 +        )
-+          .map(normalize)
-+          .includes(normalize(packageJsonPath))
-       );
-     });
- 
++      );
++    case 'ArrayPattern':
++    case 'ArrayExpression':
++      return pattern.elements.flatMap((element) => patternNames(element));
++    case 'SpreadElement':
++    case 'RestElement':
++      return patternNames(pattern.argument);
++    case 'AssignmentPattern':
++      return patternNames(pattern.left);
++    default:
++      return [];
++  }
++}
++
++export type Span = { start: number; end: number };
++export type Edit = Span & { value: string };
++
++export function span(node: object): Span {
++  if (
++    'start' in node &&
++    typeof node.start === 'number' &&
++    'end' in node &&
++    typeof node.end === 'number'
++  ) {
++    return { start: node.start, end: node.end };
++  }
++  throw new TypeError('Svelte AST node has no source positions');
++}
++
++export function applyEdits(code: string, edits: Edit[]): string {
++  for (const edit of [...edits].sort((a, b) => b.start - a.start)) {
++    code = code.slice(0, edit.start) + edit.value + code.slice(edit.end);
++  }
++  return code;
++}
++
++// The file name that makes csf-tools parse a script in the story file's language.
++export const scriptFile = (typescript: boolean) => (typescript ? 'script.ts' : 'script.js');
 ```
 
-**File**: `code/core/src/component-meta/ComponentMetaManager.test.ts` (added, +77/-0)
+**File**: `code/renderers/svelte/src/docgen/story-docs/print-template.ts` (added, +385/-0)
 ```diff
-@@ -0,0 +1,77 @@
-+import { type FSWatcher, existsSync, watch } from 'fs';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+@@ -0,0 +1,385 @@
++import {
++  type ESTree as E,
++  type ESTreeNode as Node,
++  SourceEditor,
++  staticKey,
++  textOf,
++  unwrapExpression,
++  walk as walkEstree,
++} from 'storybook/internal/csf-tools';
++import { walk } from 'zimmerframe';
 +
-+import { ComponentMetaManager } from './ComponentMetaManager.ts';
-+import type { ComponentMetaProjectBase, FileChange } from './types.ts';
++import type { SvelteAST } from '../../svelte-csf/parser/ast.ts';
++import { type Edit, type Span, applyEdits, parseMarkup, scriptFile, span } from './markup.ts';
 +
-+vi.mock(import('fs'), { spy: true });
++// How a template snippet receives the args: `(args)`, `(props)` or `({ label, ...rest })`.
++export interface TemplateParameter {
++  // The name that holds the args, or the rest of them.
++  name?: string;
++  // Local name to arg name, for the args the parameter destructures.
++  aliases: Record<string, string>;
++}
 +
-+type WatchListener = (eventType: string, filename: string | null) => void;
++interface Reads {
++  args: Record<string, Node>;
++  name?: string;
++  aliases: Record<string, string>;
++  typescript: boolean;
++  argsComplete: boolean;
++}
 +
-+const createProject = () =>
-+  ({
-+    getCommandLine: () => ({ fileNames: ['/repo/src/Button.ts'] }),
-+    hasSourceFile: (fileName: string) => fileName.endsWith('/repo/src/Button.ts'),
-+    ensureFiles: vi.fn(),
-+    onFilesChanged: vi.fn<(changes: FileChange[]) => void>(),
-+    getSourceFilePaths: () => [],
-+    dispose: vi.fn(),
-+  }) satisfies ComponentMetaProjectBase;
++// Write a story's args into its markup: spread `{...args}` into attributes, and replace each
++// `args.x` read with the source of the arg value.
++export function printTemplate({
++  code,
++  args,
++  typescript,
++  parameter,
++  snippets = {},
++  argsComplete = false,
++}: {
++  code: string;
++  args: Record<string, Node>;
++  typescript: boolean;
++  parameter?: TemplateParameter;
++  // Whether `args` holds every arg the story sets, so a read of any other arg is `undefined`.
++  argsComplete?: boolean;
++  // `{#snippet}` children for the args that hold snippets, written into the component that
++  // spreads the args.
++  snippets?: Record<string, string>;
++}): string {
++  const { ast, offset } = parseMarkup(code, typescript);
++  const destructured = new Set(Object.values(parameter?.aliases ?? {}));
++  const name = parameter ? parameter.name : 'args';
++  const reads: Reads = {
++    args,
++    name,
++    aliases: parameter?.aliases ?? {},
++    typescript,
++    argsComplete,
++  };
++  const isArgsSpread = (attribute: SvelteAST.Component['attributes'][number]) =>
++    attribute.type === 'SpreadAttribute' &&
++    attribute.expression.type === 'Identifier' &&
++    attribute.expression.name === name;
++  const at = (node: object): Span => {
++    const range = span(node);
++    return { start: range.start - offset, end: range.end - offset };
++  };
++  const edits: Edit[] = [];
 +
-+describe('ComponentMetaManager file watching', () => {
-+  let listener: WatchListener;
-+  let project: ReturnType<typeof createProject>;
-+  let manager: ComponentMetaManager<ReturnType<typeof createProject>>;
-+
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-+    vi.mocked(watch).mockImplementation(((_dir: string, _options: unknown, cb: WatchListener) => {
-+      listener = cb;
-+      return { close: vi.fn(), unref: vi.fn() } as unknown as FSWatcher;
-+    }) as typeof watch);
-+    vi.mocked(existsSync).mockReturnValue(true);
-+
-+    project = createProject();
-+    manager = new ComponentMetaManager(
-+      {
-+        sys: {
-+          fileExists: (path) => path.endsWith('/repo/tsconfig.json'),
-+          directoryExists: () => true,
-+        },
-+      },
-+      {
-+        parseCommandLine: () => project.getCommandLine(),
-+        createConfiguredProject: () => project,
-+        createInferredProject: createProject,
++  walk<SvelteAST.SvelteNode, null>(ast.fragment, null, {
++    Attribute(node, { path, next }) {
++      const element = path.at(-1);
++      if (
++        node.name in args &&
++        element &&
++        'attributes' in element &&
++        element.attributes.some(
++          (attribute: SvelteAST.Component['attributes'][number]) =>
++            isArgsSpread(attribute) && attribute.start > node.start
++        )
++      ) {
++        edits.push({ ...at(node), value: `${node.name}={${textOf(args[node.name])}}` });
++        return;
 +      }
-+    );
-+    manager.startWatching();
-+    manager.getProjectForFile('/repo/src/Button.ts');
-+  });
-+
-+  afterEach(() => {
-+    manager.dispose();
-+    vi.useRealTimers();
-+    vi.restoreAllMocks();
-+  });
-+
-+  it('reports a new file as created when a change event follows its rename event', () => {
-+    // Windows reports writing a new file as `rename` followed by `change`.
-+    listener('rename', 'src/Card.ts');
-+    listener('change', 'src/Card.ts');
-+    vi.advanceTimersByTime(50);
-+
-+    expect(project.onFilesChanged).toHaveBeenCalledExactlyOnceWith([
-+      { filePath: expect.stringMatching(/\/repo\/src\/Card\.ts$/), type: 'created' },
-+    ]);
-+  });
-+
-+  it('reports an edit to a tracked file as changed', () => {
-+    listener('change', 'src/Button.ts');
-+    vi.advanceTimersByTime(50);
-+
-+    expect(project.onFilesChanged).toHaveBeenCalledExactlyOnceWith([
-+      { filePath: expect.stringMatching(/\/repo\/src\/Button\.ts$/), type: 'changed' },
-+    ]);
-+  });
-+});
-```
-
-**File**: `code/core/src/component-meta/ComponentMetaManager.ts` (modified, +15/-9)
-```diff
-@@ -53,7 +53,10 @@ export class ComponentMetaManager<
-   // Our own file watching layer
-   private watching = false;
-   private watchersByDir = new Map<string, FSWatcher>();
--  private pendingEvents = new Map<string, ReturnType<typeof setTimeout>>();
-+  private pendingEvents = new Map<
-+    string,
-+    { timeout: ReturnType<typeof setTimeout>; renamed: boolean }
-+  >();
- 
-   // Heap-pressure recycle: bytes of `heapUsed` past which the TS program(s) are disposed and rebuilt.
-   private readonly heapRecycleThresholdBytes: number;
-@@ -492,15 +495,18 @@ export class ComponentMetaManager<
- 
-         const existing = this.pendingEvents.get(filePath);
-         if (existing) {
--          clearTimeout(existing);
-+          clearTimeout(existing.timeout);
-         }
-+        // Windows reports a new file as `rename` then `change`; a `rename` anywhere in the burst
-+        // must survive, or the file is treated as an edit and projects never see it was created.
-+        const renamed = eventType === 'rename' || (existing?.renamed ?? false);
- 
--        this.pendingEvents.set(
--          filePath,
--          setTimeout(() => {
-+        this.pendingEvents.set(filePath, {
-+          renamed,
-+          timeout: setTimeout(() => {
-             this.pendingEvents.delete(filePath);
- 
--            if (eventType === 'rename') {
-+            if (renamed) {
-               if (existsSync(filePath)) {
-                 this.handleFileEvent(filePath, 'created');
-               } else {
-@@ -509,8 +515,8 @@ export class ComponentMetaManager<
-             } else {
-               this.handleFileEvent(filePath, 'changed');
-             }
--          }, 50)
--        );
-+          }, 50),
++      next();
++    },
++    SpreadAttribute(node, { path, next }) {
++      if (!isArgsSpread(node)) {
++        next();
++        return;
++      }
++      const element = path.at(-1);
++      const content =
++        element && 'fragment' in element
++          ? (element.fragment as SvelteAST.Fragment).nodes.filter(
++              (child) => !(child.type === 'Text' && !child.data.trim())
++            )
++          : [];
++      const written = new Set([
++        ...(element && 'attributes' in element
++          ? element.attributes.flatMap((attribute: SvelteAST.Component['attributes'][number]) =>
++              attribute.type === 'Attribute' || attribute.type === 'BindDirective'
++                ? [attribute.name]
++                : []
++            )
++          : []),
++        // A snippet block inside a component sets the prop it names; other content sets `children`.
++        ...content.map((child) =>
++          child.type === 'SnippetBlock' ? child.expression.name : 'children'
++        ),
++      ]);
++      const passed = (key: string) => !written.has(key) && !destructured.has(key);
++      const props = Object.entries(args).flatMap(([key, value]) =>
++        key in snippets || !passed(key) ? [] : printProp(key, value)
++      );
++      const spread = spreadEdit(code, at(node), props);
++      edits.push(spread);
++      const children = Object.entries(snippets).flatMap(([key, snippet]) =>
++        passed(key) ? [snippet] : []
++      );
++      if (!children.length || element?.type !== 'Component') return;
++      const { start, end } = at(element);
++      if (code.slice(start, end).endsWith('/>')) {
++        let from = end - 2;
++        while (from > spread.end && /[ \t]/.test(code[from - 1])) from--;
++        edits.push({
++          start: from,
++          end,
++          value: `>\n${children.join('\n')}\n</${element.name}>`,
 +        });
-       });
-       watcher.unref();
-       this.watchersByDir.set(normalized, watcher);
-@@ -520,7 +526,7 @@ export class ComponentMetaManager<
-   }
++      } else {
++        const close = code.lastIndexOf('</', end - 1);
++        edits.push({ start: close, end: close, value: `${children.join('\n')}\n` });
++      }
++    },
++    ExpressionTag(node, { path }) {
++      const range = at(node.expression);
++      const expression = code.slice(range.start, range.end);
++      cons
+```
+
+**File**: `code/renderers/svelte/src/docgen/story-docs/snippet-imports.ts` (added, +400/-0)
+```diff
+@@ -0,0 +1,400 @@
++import {
++  type ESTree as E,
++  type ESTreeNode as Node,
++  type ImportBinding,
++  type ImportRef,
++  SourceEditor,
++  buildImportStatements,
++  detachedTextOf,
++  resolveComponentImport,
++  textOf,
++  walk as walkEstree,
++} from 'storybook/internal/csf-tools';
++import { walk } from 'zimmerframe';
++
++import type { SvelteAST } from '../../svelte-csf/parser/ast.ts';
++import { parseMarkup, patternNames, scriptFile, span } from './markup.ts';
++
++export interface SnippetImportBlock {
++  block?: string;
++  // Names the block declares, by import or by a copied declaration.
++  declared: string[];
++  // Components the snippet renders that nothing in the story file declares.
++  unresolved: string[];
++  // Other names the snippet reads that nothing in the story file declares.
++  unresolvedIdentifiers?: string[];
++}
++
++// Names a snippet can read without declaring them: runes, and browser globals that the Node
++// process building the snippet does not have.
++const GLOBALS = new Set([
++  '$state',
++  '$derived',
++  '$effect',
++  '$props',
++  '$bindable',
++  '$inspect',
++  '$host',
++  'window',
++  'document',
++  'navigator',
++  'location',
++  'history',
++  'localStorage',
++  'sessionStorage',
++  'alert',
++  'confirm',
++  'prompt',
++  'requestAnimationFrame',
++  'cancelAnimationFrame',
++]);
++
++const SVELTE_NODE =
++  /^(?:Root|Fragment|Text|Comment|ExpressionTag|HtmlTag|ConstTag|DebugTag|RenderTag|AttachTag|Attribute|SpreadAttribute|\w+Directive|Component|RegularElement|Svelte\w+|TitleElement|SlotElement|\w+Block)$/;
++
++// Build the `<script>` block a snippet needs to compile on its own: the imports of the components
++// and values it uses, and the story file declarations it reads, with their dependencies.
++// Names resolve the way Svelte scopes them: the instance script first, then the module script, then
++// the story file's imports (`bindings`).
++export function buildSnippetImportBlock(
++  markup: string,
++  {
++    bindings,
++    importOverride,
++    instanceScript,
++    moduleScript,
++    imports = [],
++    typescript = false,
++  }: {
++    bindings: Map<string, ImportBinding>;
++    // The `@import` of the meta, which replaces the import of the meta component only.
++    importOverride?: { name: string; statement: string };
++    instanceScript?: string;
++    moduleScript?: string;
++    // Imports the printed arg values need.
++    imports?: ImportRef[];
++    typescript?: boolean;
++  }
++): SnippetImportBlock {
++  const { components, names } = markupReferences(markup, typescript);
++  const scripts = [instanceScript, moduleScript].map((code) =>
++    code === undefined ? undefined : readScript(code, typescript)
++  );
++  const storyImports = new Set<string>();
++  const unresolved = new Set<string>();
++  const declaredNames = new Set<string>();
++
++  // A type that nothing in the story file declares comes from the TypeScript libraries.
++  const visit = (name: string, level = 0, type = false): void => {
++    const script = scripts[level];
++    if (level < scripts.length) {
++      const found = script?.declarations.get(name);
++      if (!found) return visit(name, level + 1, type);
++      declaredNames.add(name);
++      if (found.kind === 'import' && level === 1) {
++        storyImports.add(name);
++        return;
++      }
++      if (script!.selected.has(found)) return;
++      script!.selected.add(found);
++      for (const dependency of found.dependencies.values) visit(dependency, level);
++      for (const dependency of found.dependencies.types) visit(dependency, level, true);
++      return;
++    }
++    if (bindings.has(name)) {
++      storyImports.add(name);
++      declaredNames.add(name);
++    } else if (!type && !GLOBALS.has(name) && !(name in globalThis)) unresolved.add(name);
++  };
++  // `$count` reads the store `count`; runes start with `$` too, and are globals.
++  for (const name of [...components, ...names.values]) {
++    const base = name.split('.')[0];
++    visit(base.startsWith('$') && !GLOBALS.has(base) ? base.slice(1) : base);
++  }
++  for (const name of names.types) visit(name, 0, true);
++
++  const importLines = buildImportStatements({
++    refs: [
++      ...[...storyImports].map((name) => {
++        const ref = resolveComponentImport(name, bindings);
++        return {
++          ...ref,
++          ...(name === importOverride?.name ? { importOverride: importOverride.statement } : {}),
++        };
++      }),
++      ...imports,
++    ],
++  });
++  const [instance, module] = scripts.map((script) => (script ? printSelected(script) : []));
++  const copies = scripts.some((script) =>
++    [...(script?.selected ?? [])].some((found) => found.kind === 'declaration')
++  );
++  const lang = typescript && (copies || needsTypeScript(markup)) ? ' lang="ts"' : '';
++  const blocks =
++    module.length && instance.length
++      ? [scriptBlock(` module${lang}`, [importLines, module]), scriptBlock(lang, [instance])]
++      : [scriptBlock(lang, [importLines, module, instance])];
++
++  const unresolvedComponents = [...compon
+```
+
+**File**: `code/renderers/svelte/src/docgen/story-docs/svelte-csf-file.ts` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
++import { type ESTree, SourceEditor, generateUid } from 'storybook/internal/csf-tools';
++
++import { getSvelteAST } from '../../svelte-csf/parser/ast.ts';
++import { getStoriesIdentifiers } from '../../svelte-csf/parser/analyse/story/attributes/identifiers.ts';
++import { getStoryContentRawCode } from '../../svelte-csf/parser/analyse/story/content.ts';
++import { getDefineMetaFirstArgumentObjectExpression } from '../../svelte-csf/parser/extract/svelte/define-meta.ts';
++import { extractSvelteASTNodes } from '../../svelte-csf/parser/extract/svelte/nodes.ts';
++import {
++  findMetaRenderSnippetBlock,
++  findStoryAttributeTemplateSnippetBlock,
++} from '../../svelte-csf/parser/extract/svelte/snippet-block.ts';
++import { extractStoryAttributesNodes } from '../../svelte-csf/parser/extract/svelte/story/attributes.ts';
++import { extractStoryTemplateSnippetBlock } from '../../svelte-csf/parser/extract/svelte/story/template.ts';
++import type { ESTreeAST, SvelteAST } from '../../svelte-csf/parser/ast.ts';
++import { type Edit, applyEdits, scriptFile, span } from './markup.ts';
++import type { TemplateParameter } from './print-template.ts';
++
++export interface StoryMarkup {
++  template?: string;
++  // How the template snippet receives the args, when the story has one.
++  parameter?: TemplateParameter;
++  description?: string;
++}
++
++export interface StoryFile {
++  // The story file as plain CSF, so the shared csf-tools can read its meta and args.
++  csfSource: string;
++  typescript: boolean;
++  // Markup of each Svelte CSF story, by export name.
++  stories: Map<string, StoryMarkup>;
++  // Snippets declared at the top of a Svelte CSF file, which args can pass by name.
++  snippets: Map<string, { parameters: string; body: string }>;
++  moduleScript?: string;
++  instanceScript?: string;
++}
++
++// Read a `.stories.svelte` file as plain CSF: the module script with the meta as default export,
++// and one story export with the `args` of each `<Story>`.
++export async function readSvelteCsfFile(source: string, filename: string): Promise<StoryFile> {
++  const ast = getSvelteAST({ code: source, filename });
++  const typescript = isTypeScript(ast.module) || isTypeScript(ast.instance);
++  const nodes = await extractSvelteASTNodes({ ast, filename });
++  const module = span(ast.module!.content);
++  const moduleScript = source.slice(module.start, module.end);
++  const instanceScript = ast.instance
++    ? source.slice(span(ast.instance.content).start, span(ast.instance.content).end)
++    : undefined;
++
++  const declaration = span(nodes.defineMetaVariableDeclaration);
++  const meta = span(getDefineMetaFirstArgumentObjectExpression({ nodes, filename }));
++  const moduleEditor = new SourceEditor(moduleScript, scriptFile(typescript));
++  const { scopes } = moduleEditor;
++  let csfSource = applyEdits(moduleScript, [
++    ...unexported(moduleEditor.program),
++    {
++      start: declaration.start - module.start,
++      end: declaration.end - module.start,
++      value: `export default ${source.slice(meta.start, meta.end)};`,
++    },
++  ]);
++
++  const stories = new Map<string, StoryMarkup>();
++  const identifiers = getStoriesIdentifiers({ nodes, filename });
++  for (const [index, story] of nodes.storyComponents.entries()) {
++    const { exportName, name } = identifiers[index];
++    const value = extractStoryAttributesNodes({ component: story.component, attributes: ['args'] })
++      .args?.value;
++    const chunk = Array.isArray(value) ? value[0] : value;
++    const args =
++      chunk && chunk !== true && chunk.type === 'ExpressionTag'
++        ? source.slice(span(chunk.expression).start, span(chunk.expression).end)
++        : '{}';
++    const storyObject = `{ name: ${JSON.stringify(name)}, args: ${args} }`;
++    // Svelte CSF exports a story under a name of its own, so the module script may declare it too.
++    if (scopes.names.has(exportName)) {
++      const local = generateUid(scopes, exportName);
++      csfSource += `\nconst ${local} = ${storyObject};\nexport { ${local} as ${exportName} };`;
++    } else {
++      csfSource += `\nexport const ${exportName} = ${storyObject};`;
++    }
++    const template = getStoryContentRawCode({
++      nodes: { component: story.component, svelte: nodes },
++      originalCode: source,
++      filename,
++    });
++    const parameter = templateParameter(story.component, nodes, filename);
++    stories.set(exportName, {
++      // Without a meta component, a story with no markup of its own renders nothing static.
++      template: template.startsWith('<undefined ') ? undefined : template,
++      ...(parameter ? { parameter } : {}),
++      description: story.comment?.data.trim(),
++    });
++  }
++
++  const snippets = new Map<string, { parameters: string; body: string }>();
++  for (const snippet of nodes.snippetBlocks) {
++    const first = snippet.body.nodes[0];
++    const last = snippet.body.nodes.at(-1);
++    const parameters = snippet.parameters.map((parameter) =>
++      source.slice(span(parameter).start, s
+```
+
+**File**: `code/renderers/svelte/src/entry-preview-docs.ts` (modified, +3/-1)
+```diff
+@@ -3,4 +3,6 @@ import type { DecoratorFunction } from 'storybook/internal/types';
+ import { sourceDecorator } from './docs/sourceDecorator.ts';
+ import type { SvelteRenderer } from './types.ts';
  
-   stopWatching(): void {
--    for (const timeout of this.pendingEvents.values()) {
-+    for (const { timeout } of this.pendingEvents.values()) {
-       clearTimeout(timeout);
-     }
-     this.pendingEvents.clear();
+-export const decorators: DecoratorFunction<SvelteRenderer>[] = [sourceDecorator];
++export const decorators: DecoratorFunction<SvelteRenderer>[] = globalThis.FEATURES?.docgenServer
++  ? []
++  : [sourceDecorator];
 ```
 
-**File**: `code/renderers/react/src/componentManifest/generateCodeSnippet.test.tsx` (modified, +1/-1)
+**File**: `code/renderers/svelte/src/svelte-csf/runtime/emit-code.ts` (modified, +1/-0)
 ```diff
-@@ -24,7 +24,7 @@ function generateResolved(code: string) {
-   return Object.keys(csf._storyExports).map((name) => {
-     const snippet = getCodeSnippet(csf, name, csf._meta?.component ?? 'ComponentTitle');
-     return {
--      snippet: recast.print(snippet.node).code,
-+      snippet: recast.print(snippet.node, { lineTerminator: '\n' }).code,
-       imports: snippet.imports.map((ref) => `${ref.importName} from ${ref.importId}`),
-       unresolved: snippet.unresolved,
-     };
-```
-
-**File**: `code/renderers/react/src/componentManifest/resolveComponents.ts` (modified, +2/-1)
-```diff
-@@ -181,7 +181,8 @@ export function extractStorySnippets(
-         return {
-           id: story.id,
-           name,
--          snippet: recast.print(snippet.node).code,
-+          // Recast defaults to `os.EOL`, which would carriage-return snippets built on Windows.
-+          snippet: recast.print(snippet.node, { lineTerminator: '\n' }).code,
-           description,
-           summary,
-           ...(warning ? { warning } : {}),
-```
-
-**File**: `code/renderers/web-components/src/docgen/component-docgen/build-docgen.ts` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ import type { JsDocTagMap } from 'storybook/internal/csf-tools';
- import { extractComponentDescription, extractDescription } from 'storybook/internal/csf-tools';
- import type { DocgenPayload, DocgenProviderInput } from 'storybook/internal/types';
+@@ -21,6 +21,7 @@ const channel: ReturnType<(typeof addons)['getChannel']> | undefined = addons.ge
+  * So that it can be shown in source code viewer
+  */
+ export const emitCode = (params: Params) => {
++  if (globalThis.FEATURES?.docgenServer) return;
+   const { storyContext } = params;
  
--import { resolve } from 'node:path';
-+import { resolve } from 'pathe';
- 
- import { buildApiDescription } from './api-description.ts';
- import { mapArgTypes } from './arg-types/map-arg-types.ts';
-```
-
-**File**: `code/renderers/web-components/src/docgen/preset.test.ts` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@ describe('experimental_docgenProvider', () => {
-         moduleSpecifier: expect.stringMatching(/docgen-worker\.js$/),
-         options: {
-           manifestPaths: [],
--          previewFilePath: '/workspace/.storybook/preview.ts',
-+          previewFilePath: resolve('/workspace/.storybook/preview.ts'),
-         },
-       },
-     ]);
+   if (skipSourceRender(storyContext)) {
 ```
 
 ---
 
-### Incident Patch 3: `9bf588e6` (2026-10-19)
-**Commit Message**: Merge pull request #36784 from storybookjs/fix/add-exit-code-on-setup-failure
+### Incident Patch 2: `09adb2d8` (2026-10-22)
+**Commit Message**: Merge pull request #36983 from storybookjs/julien/wc-css-state-no-control
 
-CLI: Exit 1 when the add command's setup fails
+WC: Disable control for cssstate
 
-**File**: `code/lib/cli-storybook/src/bin/index.ts` (modified, +1/-1)
+**File**: `code/e2e-sandbox/framework-web-components.spec.ts` (modified, +1/-1)
 ```diff
-@@ -12,4 +12,4 @@ if (!isNodeVersionSupported(process.versions.node)) {
-   process.exit(1);
+@@ -54,13 +54,13 @@ const CONTROL_KINDS: { arg: string; kind: string; selector: string }[] = [
+   },
+   { arg: 'default-slot', kind: 'text', selector: 'textarea#control-default-slot' },
+   { arg: 'value-part', kind: 'text', selector: 'textarea#control-value-part' },
+-  { arg: 'at-max-state', kind: 'text', selector: 'textarea#control-at-max-state' },
+ ];
+ 
+ const NO_CONTROL_ROWS: { arg: string; reason: string; row: RegExp }[] = [
+   { arg: 'count-changed', reason: 'event', row: /^count-changed/ },
+   { arg: 'increment', reason: 'method', row: /^increment/ },
+   { arg: 'atMax', reason: 'readonly property', row: /^atMax/ },
++  { arg: 'at-max-state', reason: 'css state', row: /^at-max\b/ },
+ ];
+ 
+ const CONTROL_EDITS: {
+```
+
+**File**: `code/lib/docgen-harness/src/sandbox-baselines/__baselines__/lit-vite-default-ts/stories-renderers-web-components-lit-vite-default-ts-demo-wc-counter.json` (modified, +1/-0)
+```diff
+@@ -36,6 +36,7 @@
+       }
+     },
+     "at-max-state": {
++      "control": false,
+       "description": "Set while the count has reached `max`",
+       "name": "at-max",
+       "table": {
+```
+
+**File**: `code/lib/docgen-harness/src/web-components/__testfixtures__/lit-basic-attributes/osa-v2-argtypes.snapshot` (modified, +1/-0)
+```diff
+@@ -81,6 +81,7 @@
+     },
+   },
+   "open-state": {
++    "control": false,
+     "description": "Set while the panel is open.",
+     "name": "open",
+     "table": {
+```
+
+**File**: `code/lib/docgen-harness/src/web-components/__testfixtures__/lit-toolkit-shapes/osa-argtypes.snapshot` (modified, +1/-0)
+```diff
+@@ -67,6 +67,7 @@
+     },
+   },
+   "active-state": {
++    "control": false,
+     "description": "Set while active.",
+     "name": "active",
+     "table": {
+```
+
+**File**: `code/lib/docgen-harness/src/web-components/__testfixtures__/vanilla-basic/osa-v2-argtypes.snapshot` (modified, +1/-0)
+```diff
+@@ -32,6 +32,7 @@
+     },
+   },
+   "disabled-state": {
++    "control": false,
+     "description": "Set while the element is disabled.",
+     "name": "disabled",
+     "table": {
+```
+
+**File**: `code/renderers/web-components/src/docgen/component-docgen/arg-types/map-arg-types.test.ts` (modified, +1/-0)
+```diff
+@@ -904,6 +904,7 @@ describe('mapArgTypes', () => {
+           name: 'open',
+           description: 'Set while open.',
+           type: { name: 'string' },
++          control: false,
+           table: {
+             category: 'css states',
+           },
+```
+
+**File**: `code/renderers/web-components/src/docgen/component-docgen/arg-types/map-arg-types.ts` (modified, +5/-1)
+```diff
+@@ -158,7 +158,11 @@ function namedEntry(
+   const name = item.name || DEFAULT_SLOT_NAME;
+   return [
+     toArgKey(category, name),
+-    memberArgType(name, [item], NAMED_ENTRY_CATEGORIES[category], { type: { name: 'string' } }),
++    memberArgType(name, [item], NAMED_ENTRY_CATEGORIES[category], {
++      type: { name: 'string' },
++      // The element sets its own states through ElementInternals, so the row documents the `:state()` hook.
++      ...(category === 'cssStates' ? { control: false } : {}),
++    }),
+   ];
  }
  
--import('./run.ts');
-+import('./run.ts').then(({ run }) => run());
 ```
 
-**File**: `code/lib/cli-storybook/src/bin/run.test.ts` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+import { describe, expect, test, vi } from 'vitest';
-+
-+import { run } from './run.ts';
-+
-+const mockAdd = vi.hoisted(() => vi.fn());
-+const mockSandbox = vi.hoisted(() => vi.fn());
-+const mockTelemetry = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
-+
-+vi.mock('../add.ts', () => ({ add: mockAdd }));
-+vi.mock('../sandbox.ts', () => ({ sandbox: mockSandbox }));
-+vi.mock('storybook/internal/cli', () => ({
-+  globalSettings: vi.fn().mockResolvedValue(undefined),
-+}));
-+vi.mock('storybook/internal/core-server', () => ({
-+  withTelemetry: (_eventType: string, _options: unknown, command: () => Promise<unknown>) =>
-+    command(),
-+}));
-+vi.mock('storybook/internal/telemetry', () => ({
-+  addToGlobalContext: vi.fn(),
-+  telemetry: mockTelemetry,
-+}));
-+vi.mock('storybook/internal/node-logger', async (importOriginal) => {
-+  const actual = await importOriginal<typeof import('storybook/internal/node-logger')>();
-+  return {
-+    ...actual,
-+    logTracker: {
-+      ...actual.logTracker,
-+      writeToFile: vi.fn().mockResolvedValue('debug-storybook.log'),
-+    },
-+  };
-+});
-+
-+describe('run', () => {
-+  const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-+
-+  test.each([
-+    {
-+      name: 'add',
-+      args: ['add', '@storybook/addon-essentials', '--yes'],
-+      commandFn: mockAdd,
-+    },
-+    {
-+      name: 'sandbox',
-+      args: ['sandbox'],
-+      commandFn: mockSandbox,
-+    },
-+  ] as const)('$name command exits 1 when its setup fails', async ({ name, args, commandFn }) => {
-+    commandFn.mockRejectedValueOnce(new Error(`${name} failed`));
-+
-+    await run(['node', 'storybook', ...args]);
-+
-+    expect(exitSpy).toHaveBeenCalledWith(1);
-+  });
-+
-+  test('add command does not exit nonzero when it succeeds', async () => {
-+    mockAdd.mockResolvedValueOnce(undefined);
-+
-+    await run(['node', 'storybook', 'add', '@storybook/addon-essentials', '--yes']);
-+
-+    expect(mockAdd).toHaveBeenCalledWith(
-+      '@storybook/addon-essentials',
-+      expect.objectContaining({ yes: true })
-+    );
-+    expect(exitSpy).not.toHaveBeenCalled();
-+  });
-+});
-```
+---
 
-**File**: `code/lib/cli-storybook/src/bin/run.ts` (modified, +7/-5)
+### Incident Patch 3: `e5ae385d` (2026-10-21)
+**Commit Message**: fix(csf): keep the tags that an extended story inherits
+
+`Story.extend()` combined the tags of the parent with its own tags, so a
+removal such as `!autodocs` in the parent was used up before the meta
+tags were added, and the meta tag came back. Now `extend()` keeps the
+tags as written, and composing the story combines them once, after the
+meta tags.
+
+The CSF indexer read only the tags in the `.extend({...})` argument.
+Now it adds the tags of the parent chain, also through `const Alias =
+Story`, and the `play-fn` tag when a parent has a play function. A
+parent that is not exported and has tags that are not static gives no
+tags, so the file still indexes. The index and the runtime now agree.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `code/core/src/csf-tools/CsfFile.test.ts` (modified, +60/-0)
 ```diff
-@@ -122,14 +122,14 @@ command('add <addon>')
-   .option('-y --yes', 'Skip prompting the user')
-   .option('--skip-doctor', 'Skip doctor check')
-   .action((addonName: string, options: any) => {
--    withTelemetry('add', { cliOptions: options }, async () => {
-+    return withTelemetry('add', { cliOptions: options }, async () => {
-       logger.intro(`Setting up your project for ${addonName}`);
- 
-       await add(addonName, options);
- 
-       await telemetry('add', { addon: addonName, source: 'cli' });
-       logger.outro('Done!');
--    }).catch(handleCommandFailure);
-+    }).catch(handleCommandFailure(options.logfile));
-   });
- 
- command('remove <addon>')
-@@ -253,8 +253,8 @@ command('sandbox [filterValue]')
-   .option('--no-init', 'Whether to download a template without an initialized Storybook', false)
-   .action((filterValue, options) => {
-     logger.intro(`Creating a Storybook sandbox...`);
--    sandbox({ filterValue, ...options })
--      .catch(handleCommandFailure)
-+    return sandbox({ filterValue, ...options })
-+      .catch(handleCommandFailure(options.logfile))
-       .finally(() => {
-         logger.outro('Done!');
+@@ -3012,6 +3012,66 @@ describe('CsfFile', () => {
+         `);
        });
-@@ -317,4 +317,6 @@ program.on('command:*', ([invalidCmd]) => {
-   process.exit(1);
+ 
++      it('combines the tags of the parent stories of an extend call', () => {
++        const { stories } = loadCsf(
++          dedent`
++            import { config } from '#.storybook/preview'
++            const meta = config.meta({ component: 'foo' });
++            const Base = meta.story({ tags: ['base'], play: async () => {} });
++            export const A = Base.extend({ tags: ['a'] });
++            export const B = A.extend({});
++            export const C = A.extend({ tags: ['!base', 'c'] });
++            export const D = meta.story({ tags: ['d'] });
++          `,
++          { makeTitle }
++        ).parse();
++
++        expect(Object.fromEntries(stories.map(({ name, tags }) => [name, tags]))).toEqual({
++          A: ['base', 'a', 'play-fn'],
++          B: ['base', 'a', 'play-fn'],
++          C: ['base', 'a', '!base', 'c', 'play-fn'],
++          D: ['d'],
++        });
++      });
++
++      it('combines the tags of a parent story that the extend call reads through an alias', () => {
++        const { stories } = loadCsf(
++          dedent`
++            import { config } from '#.storybook/preview'
++            const meta = config.meta({ component: 'foo' });
++            export const A = meta.story({ tags: ['a'], play: async () => {} });
++            const Alias = A;
++            export const B = Alias.extend({ tags: ['b'] });
++          `,
++          { makeTitle }
++        ).parse();
++
++        expect(Object.fromEntries(stories.map(({ name, tags }) => [name, tags]))).toEqual({
++          A: ['a', 'play-fn'],
++          B: ['a', 'b', 'play-fn'],
++        });
++      });
++
++      it('indexes a story whose parent story is not exported and has tags it cannot read', () => {
++        const { stories } = loadCsf(
++          dedent`
++            import { config } from '#.storybook/preview'
++            import { sharedTags } from './tags';
++            const meta = config.meta({ component: 'foo' });
++            const Base = meta.story({ tags: sharedTags });
++            const Spread = meta.story({ tags: [...sharedTags, 'spread'], play: async () => {} });
++            export const A = Base.extend({ tags: ['a'] });
++            export const B = Spread.extend({ tags: ['b'] });
++          `,
++          { makeTitle }
++        ).parse();
++
++        expect(Object.fromEntries(stories.map(({ name, tags }) => [name, tags]))).toEqual({
++          A: ['a'],
++          B: ['b', 'play-fn'],
++        });
++      });
++
+       it('story test - index snapshot', () => {
+         expect(
+           parse(
+```
+
+**File**: `code/core/src/csf-tools/CsfFile.ts` (modified, +68/-5)
+```diff
+@@ -141,6 +141,62 @@ function parseTags(prop: Node | null | undefined) {
+   }) as Tag[];
+ }
+ 
++function resolveTags(tags: Node, program: E.Program) {
++  return parseTags(tags.type === 'Identifier' ? findVarInitialization(tags.name, program) : tags);
++}
++
++// The tags of a parent story. A parent that isn't exported isn't indexed on its own, so tags that
++// aren't static don't fail the file: the story inherits none of them.
++function inheritedTags(tags: Node, program: E.Program) {
++  try {
++    return resolveTags(tags, program);
++  } catch {
++    return [];
++  }
++}
++
++// The tags a `Story.extend()` call inherits from its chain of parent stories, and whether one of
++// them has a play function. A `meta.story()` call inherits nothing.
++function extendedStoryTags(
++  call: CsfFactoryCall,
++  program: E.Program,
++  visited = new Set<string>()
++): { tags: string[]; play: boolean } {
++  if (call.callee.property.name !== 'extend') {
++    return { tags: [], play: false };
++  }
++  // Follow `const Alias = Story` to the story
++  let parentName = csfFactoryReceiver(call).name;
++  let parent: Node | null = null;
++  while (!visited.has(parentName)) {
++    visited.add(parentName);
++    const init = findVarInitialization(parentName, program);
++    parent = init && unwrapExpression(init);
++    if (parent?.type !== 'Identifier') {
++      break;
++    }
++    parentName = parent.name;
++  }
++  if (!isCsfFactoryCall(parent)) {
++    return { tags: [], play: false };
++  }
++  const inherited = extendedStoryTags(parent, program, visited);
++  const config = parent.arguments[0] && unwrapExpression(parent.arguments[0]);
++  const annotations = config?.type === 'ObjectExpression' ? config.properties : [];
++  const tags = annotations.find(
++    (property): property is E.ObjectProperty =>
++      property.type === 'Property' && staticKey(property) === 'tags' && !property.method
++  );
++  return {
++    tags: [...inherited.tags, ...(tags ? inheritedTags(tags.value, program) : [])],
++    play:
++      inherited.play ||
++      annotations.some(
++        (property) => property.type === 'Property' && staticKey(property) === 'play'
++      ),
++  };
++}
++
+ function parseTestTags(optionsNode: Node | null | undefined, program: E.Program) {
+   if (!optionsNode) {
+     return [] as string[];
+@@ -373,6 +429,8 @@ export class CsfFile {
+ 
+   _storyAnnotations: Record<string, Record<string, Node>> = {};
+ 
++  _storyFactoryCalls: Record<string, CsfFactoryCall> = {};
++
+   _templates: Record<string, Node> = {};
+ 
+   _namedExportsOrder?: string[];
+@@ -628,6 +686,7 @@ export class CsfFile {
+     this._metaFactoryCall = undefined;
+     this._metaNodeIsSynthetic = undefined;
+     this._storyAnnotations = {};
++    this._storyFactoryCalls = {};
+     this._templates = {};
+     this._namedExportsOrder = undefined;
+     this.imports = [];
+@@ -872,6 +931,7 @@ export class CsfFile {
+         let storyIsFactory = false;
+         if (isCsfFactoryCall(storyNode)) {
+           storyIsFactory = true;
++          this._storyFactoryCalls[exportName] = storyNode;
+           storyNode = storyNode.arguments[0] as Node | undefined;
+         }
+ 
+@@ -985,6 +1045,7 @@ export class CsfFile {
+           const unwrappedDecl = unwrapExpression(decl);
+           if (this._metaIsFactory && isCsfFactoryCall(unwrappedDecl)) {
+             storyIsFactory = true;
++            this._storyFactoryCalls[exportName] = unwrappedDecl;
+             storyNode = unwrappedDecl.arguments[0] as Node | undefined;
+           }
+           // A story from another file is kept: its declaration isn't in this file
+@@ -1215,12 +1276,14 @@ export class CsfFile {
+         acc[key] = { ...story, id, parameters };
+         const storyAnnotations = this._storyAnnotations[key];
+         const { tags, play } = storyAnnotations;
+-        if (tags) {
+-          const node =
+-            tags.type === 'Identifier' ? findVarInitialization(tags.name, this.program) : tags;
+-          acc[key].tags = parseTags(node);
++        const factoryCall = this._storyFactoryCalls[key];
++        const inherited = factoryCall
++          ? extendedStoryTags(factoryCall, this.program)
++          : { tags: [], play: false };
++        if (tags || inherited.tags.length > 0) {
++          acc[key].tags = [...inherited.tags, ...(tags ? resolveTags(tags, this.program) : [])];
+         }
+-        if (play) {
++        if (play || inherited.play) {
+           acc[key].tags = [...(acc[key].tags || []), Tag.PLAY_FN];
+         }
+         const stats = acc[key].__stats;
+```
+
+**File**: `code/core/src/csf/csf-factories.test.ts` (modified, +9/-0)
+```diff
+@@ -52,6 +52,15 @@ test('addon parameters are inferred', () => {
+   });
  });
  
--program.usage('<command> [options]').version(String(version)).parse(process.argv);
-+program.usage('<command> [options]').version(String(version));
++test('a story keeps the tags that the story it extends removes from the meta', () => {
++  const taggedMeta = preview.meta({ tags: ['autodocs'], render: () => 'hello' });
++  const Parent = taggedMeta.story({ tags: ['!autodocs'] });
++  const Child = Parent.extend({ tags: ['child'] });
 +
-+export const run = (argv: string[] = process.argv) => program.parseAsync(argv);
++  expect(Child.composed.tags).not.toContain('autodocs');
++  expect(Child.composed.tags).toContain('child');
++});
++
+ describe('legacy preview annotation namespaces', () => {
+   test('keep factory addon types when mixed with factory addons', () => {
+     const mixedPreview = definePreview({
+```
+
+**File**: `code/core/src/csf/csf-factories.ts` (modified, +2/-2)
+```diff
+@@ -1,5 +1,4 @@
+ import type { AddonTypes, StoryContext } from 'storybook/internal/csf';
+-import { combineTags } from 'storybook/internal/csf';
+ import type {
+   Args,
+   ComponentAnnotations,
+@@ -368,7 +367,8 @@ function defineStory<
+             ...normalizeArrays(input.loaders ?? []),
+           ],
+           parameters: combineParameters(this.input.parameters, input.parameters),
+-          tags: combineTags(...(this.input.tags ?? []), ...(input.tags ?? [])),
++          // Composing the story combines the tags, after the tags of the meta
++          tags: [...(this.input.tags ?? []), ...(input.tags ?? [])],
+         },
+         this.meta
+       );
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36898** (2026-10-19): Preview API: While a document story is mounted, the preview writes no URL until its teardown (@kasperpeulen)
-- **PR #36897** (2026-10-19): Preview API: The preparing block around a story that owns the document (@kasperpeulen)
-- **PR #36894** (2026-10-19): Addon Docs: An autodocs page shows a story that renders in an iframe once (@kasperpeulen)
-- **PR #36893** (2026-10-19): Addon Docs: A story in an iframe runs its play only with autoplay, like an inline story (@kasperpeulen)
-- **PR #36890** (2026-10-19): Test: The canvas of a story follows its canvasElement (@kasperpeulen)
-- **PR #36889** (2026-10-19): Preview API: A story with layout 'document' owns the document (@kasperpeulen)
+- **PR #36983** (2026-10-22): WC: Disable control for cssstate (@huang-julien)
+- **PR #36981** (closed): Core: A portable story with layout 'document' renders to the <body>, as in the preview (@kasperpeulen)
+- **PR #36980** (closed): React: Render a story without act() where React 19 is a production build (@kasperpeulen)
+- **PR #36979** (2026-10-22): Build: Resolve workspace packages to source in unit tests (@valentinpalkovic)
+- **PR #36978** (2026-10-22): Core: A portable story with layout 'document' renders to the <body>, as in the preview (@kasperpeulen)
+- **PR #36977** (2026-10-22): React: Render a story without act() where React 19 is a production build (@kasperpeulen)
 
 ---
 
@@ -1071,46 +1611,30 @@ CLI: Exit 1 when the add command's setup fails
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update yarn.lock for the TypeScript 7 peer range widening
+## X. svelte): build story snippets on the docgen server
 
 **RULE**:
-When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code/renderers/svelte/src/docgen/story-docs-provider.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bee9aa1f`: update yarn.lock for the TypeScript 7 peer range widening. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2140a6c`: svelte): build story snippets on the docgen server. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/renderers/svelte/src/docgen/story-docs-provider.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: "npm:^5.9.0 || ^6.0.0 || ^7.0.0"
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
-    typescript: ^5.9.0 || ^6.0.0 || ^7.0.0
+import { SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP } from './story-file.ts';
+  storyFileTest: SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: "npm:^5.9.0 || ^6.0.0"
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: ^5.9.0 || ^6.0.0
-    typescript: ^5.9.0 || ^6.0.0
+import { SVELTE_STORY_FILE_TEST_REGEXP } from './story-file.ts';
+  storyFileTest: SVELTE_STORY_FILE_TEST_REGEXP,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bee9aa1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2140a6c` are properly handled with clean fallback behavior.

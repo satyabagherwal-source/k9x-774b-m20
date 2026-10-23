@@ -4471,3 +4471,6 @@
 | `CYCLE-20261023-L4KR` | `2026-10-23T06:09:24.075Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3780` | Yes (`fdc8bbe8...`) |
 | `CYCLE-20261023-L4MJ` | `2026-10-23T06:09:24.139Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3781` | Yes (`93023a13...`) |
 | `CYCLE-20261023-MIOP` | `2026-10-23T06:10:29.017Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3782, Rule 3783, Rule 3784` | Yes (`a4f7e21a...`) |
+| `CYCLE-20261023-V9K1` | `2026-10-23T06:17:17.089Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md` | Yes (`11acc216...`) |
+| `CYCLE-20261023-VAXS` | `2026-10-23T06:17:18.880Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3785` | Yes (`65b027df...`) |
+| `CYCLE-20261023-VEHL` | `2026-10-23T06:17:23.481Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3786` | Yes (`6a28ee09...`) |

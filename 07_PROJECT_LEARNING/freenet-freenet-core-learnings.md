@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `0ca03385`  
+> **Source Version**: `c55c2450`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:15:44.128Z  
+> **Timestamp**: 2026-10-23T06:17:23.149Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:15:44.121Z  
+> **Harvest Timestamp**: 2026-10-23T06:17:22.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5965** (2026-10-23): **feat(transport): add QUIC socket plumbing behind DemuxSocket**
+  *Symptoms*: ## Problem  The QUIC endpoint (#5940, step c of the rollout plan) will share the node's UDP socket with the current transport. The demux from #5961 currently counts and drops QUIC-shaped datagrams, and three pieces are missing before a quinn endpoint can sit on it:  - A way to hand QUIC datagrams to quinn without a second reader of the UDP socket. - A non-blocking send, plus egress-cap admission that quinn can poll. quinn's `UdpPoller` and `try_send` need these, and today's `send_to_blocking` thread-sleeps on `WouldBlock`. - A correct health signal. Since #5961 the listener's `RecvErrorTracker` counts only current-transport datagrams as successful reads, so a node receiving mostly QUIC traffic could build an unclassified-error run with nothing resetting it, and the listener exit force-exits the node.  ## Approach  No quinn dependency. Nothing in production turns the QUIC ingress on, so behaviour is unchanged except for the health signal.  - **QUIC ingress on `DemuxSocket`.** An optional bounded queue (1024 datagrams, about 1.5 MiB, registered in `declared_cache_ceiling`) receives QUIC-class datagrams. It is fed with `try_reserve` only, so the listener never waits. A datagram is forwarded only if its source address is in an allow-set. Without that, a quinn endpoint would answer an unknown sender, which tells a prober the port speaks QUIC. Drops are counted by reason in `transport_snapshot`. The listener stays the only reader of the UDP socket. - **Classified receive and health
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/39887511962) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
+  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/39886258223)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/39886258223)
+
 - **Issue #5964** (2026-10-22): **feat(transport): make total-bandwidth-limit a node-wide egress cap**
   *Symptoms*: ## Problem  `total-bandwidth-limit` is not a cap on what a node sends: - it only divides a per-connection pacing rate, and `min-bandwidth-per-connection` raises every connection's rate whatever the total, so 50 connections at the 1 MB/s minimum exceed any total below 50 MB/s; - handshakes, ACKs, keepalives, Pongs, short messages and retransmissions are never metered at all.  Decision 3 of the QUIC rollout (#5940) makes this setting a node-wide cap on everything the node sends on its socket. The cap covers both transports, so it lives in the socket wrapper added in #5961.  ## Approach  When `total-bandwidth-limit` is set, `DemuxSocket` owns one `EgressCap` (`transport/egress_cap.rs`) and charges every datagram it sends. `EgressCap` is a token bucket held in one atomic: rate `R` is the total, and burst `B` is the larger of 25 ms at `R` and 4 datagrams. Without the setting, nothing is built and each send costs one `Option` check. Uncapped nodes keep their existing pacing path unchanged.  - **Stream fragments are the only sends that wait.** Admission for each fragment goes cwnd check, then the per-connection bucket, then the node-wide bucket. The two bucket takes happen back to back with no await before the send. If either bucket is short, nothing is kept: the per-connection bytes are given back, and the task sleeps the deficit with random jitter (`deficit × U[1.0, 1.4) + U[0, 2 ms)`, via `GlobalRng`) and starts again from the cwnd check. Nothing is reserved while waiting, so a w
-
-- **Issue #5963** (2026-10-22): **fix(transport): stop malformed peer packets from panicking the receive path**
-  *Symptoms*: ## Problem  Two places in the UDP transport's receive path could panic on bytes a peer controls:  1. `internal_sym_decryption` (`transport/packet_data.rs`) sliced the nonce, ciphertext and tag out of a received packet by its received length without checking it. Its only guard was a `debug_assert!` on the length of the whole fixed-size receive buffer, which is always large enough. A datagram with the symmetric type byte (`0x02`) and fewer than 29 bytes (type byte + 12-byte nonce + 16-byte tag) panicked on a slice index instead of failing to decrypt. 2. `PeerConnection::recv` decoded every successfully decrypted packet with `SymmetricMessage::deser(..).unwrap()`. Decryption only shows the sender holds the session key; the plaintext can still fail to decode, for example a payload variant added by a newer compatible release. The unwrap then panicked the connection's receive task.  ## Approach  1. Check the received length before slicing and return the same error as any other packet that does not decrypt; the receive path already drops those. The intro path (`TransportSecretKey::decrypt`) already checks its length. 2. Drop a decrypted packet that does not decode, with a debug log. It is not counted as a decryption failure, so a peer on a newer release cannot get its connection closed this way.  Reviewers checked the other places that parse received bytes before and after decryption (intro handling, stream fragment parsing, receipt tracking) and found them already bounded.  ## Test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,167 +1762,769 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be519b42` (2026-10-22)
-**Commit Message**: fix(transport): stop malformed peer packets from panicking the receive path (#5963)
+### Incident Patch 1: `c55c2450` (2026-10-23)
+**Commit Message**: feat(transport): add QUIC socket plumbing behind DemuxSocket (#5965)
 
-**File**: `crates/core/src/transport/packet_data.rs` (modified, +33/-1)
+**File**: `.claude/rules/transport.md` (modified, +35/-6)
 ```diff
-@@ -155,7 +155,13 @@ fn internal_sym_decryption<const N: usize>(
-     size: usize,
-     inbound_sym_key: &Aes128Gcm,
- ) -> Result<([u8; N], usize), aes_gcm::Error> {
--    debug_assert!(data.len() >= PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE);
-+    // `size` is the received length; `data` is the whole fixed-size buffer, so
-+    // only `size` says whether the type byte, nonce and tag are all present.
-+    // Slicing by `size` below would panic on a shorter packet. `size` above
-+    // `data.len()` cannot come from `from_buf`; that half is defensive.
-+    if size < PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE || size > data.len() {
-+        return Err(aes_gcm::Error);
-+    }
+@@ -127,8 +127,15 @@ while it waits, and is charged only at its send. Gaps that reach LONG_WAIT
+ upstream stream for relayed streams, and the rest): egress_long_waits_<cause>, egress_streams_abandoned_<cause>.
+ Each has its own rate-limited WARN with one line per cause seen since the last, each with its count and remedy; the
+ per-stream abandonment line is at debug. The
+-cap counts UDP payload, not IP/UDP headers. A quinn endpoint will need a poll-based admission (poll_ready
+-+ try_admit over try_take's predicate); not built yet.
++cap counts UDP payload, not IP/UDP headers.
++EgressCap::poll_admit is the poll form for a sender that is polled (a quinn
++UdpPoller, #5940): Ready exactly when try_take would succeed at that instant
++(one shared predicate, `admits`), else Pending with a timer on the cap's
++TimeSource at the refill time, kept in the caller's AdmissionWaiter. It takes
++nothing; the sender is charged at its send (Socket::try_send_to charges like
++send_to). The cap is built on RealTime even in simulation, because the
++listener and its connections run on RealTime there: a VirtualTime cap would
++compute deficits on another clock than its waiters sleep and time out on.
+ Tests assert on per-cap EgressCap::stats(), never the global counters.
+ ```
  
-     // Check packet type (first byte should be PACKET_TYPE_SYMMETRIC)
-     if data[0] != PACKET_TYPE_SYMMETRIC {
-@@ -367,6 +373,32 @@ mod tests {
-         test_decryption(encrypted_packet, &cipher, unencrypted_packet);
-     }
+@@ -279,7 +286,9 @@ TTL, and early evictions are counted in `stray_intro_failures_evicted`) and CONN
+ joiner dial-queue waits (`dial_queue_wait_<label>`, coarse buckets around the
+ 3 s punch window) and inbound datagrams by first byte (`demux_<label>`, one per
+ `DemuxClass`: `legacy` passes through, `quic` and `other` are counted and
+-dropped; see "Socket Abstraction Rules") and outbound datagrams by how the
++dropped or, for `quic`, queued for the QUIC ingress; each `quic` one is also
++counted once by what happened to it, `quic_ingress_<label>`, one per
++`QuicIngressOutcome`; see "Socket Abstraction Rules") and outbound datagrams by how the
+ node-wide egress cap paced them (`egress_<label>`, one per `EgressDecision`,
+ plus `egress_bytes`, `egress_bytes_waited`, `egress_wait_us_sum` / `_max`,
+ `egress_long_waits_<cause>`, `egress_streams_abandoned_<cause>`, `egress_debt_hwm_bytes`,
+@@ -604,9 +613,29 @@ update this section.
+ (the UDP transport's own type bytes) pass through unchanged, a byte with a
+ `0xC0` bit set is QUIC-shaped, anything else (including an empty datagram) is
+ other. QUIC-shaped and other datagrams are counted (`demux_<label>`) and
+-dropped until a QUIC endpoint exists on the same port (#5940). The QUIC rule
+-is exact only with QUIC bit greasing (RFC 9287) disabled. Tests that inject a
+-hand-written socket straight into the listener bypass the wrapper.
++dropped. The QUIC rule is exact only with QUIC bit greasing (RFC 9287)
++disabled. Tests that inject a hand-written socket straight into the listener
++bypass the wrapper.
++
++For a QUIC endpoint on the same port (#5940), `enable_quic_ingress` gives the
++wrapper a bounded queue (`QUIC_INGRESS_QUEUE_DATAGRAMS`, a declared byte
++budget `QUIC_INGRESS_QUEUE_BYTES` in `declared_cache_ceiling`) of QUIC-class
++datagrams with their source. The listener stays the ONLY reader of the UDP
++socket and fills the queue with `try_reserve`, never a waiting send, so a slow
++endpoint costs dropped QUIC datagrams and never stalls the listener. Only
++sources on the allow-set (`allow_quic_source`, normalized addresses) are
++queued; the rest are dropped, so a prober gets no QUIC reply. Each QUIC-class
++datagram is counted as `quic_ingress_forwarded`, `_not_allowed`,
++`_queue_full` or `_no_ingress` (no ingress enabled or its receiver gone;
++every node today, since only tests enable it).
++
++Socket-health signal: the listener reads through `Socket::recv_classified`,
++which `DemuxSocket` answers with `Datagram` for a legacy datagram and
++`Diverted` for one it consumed. The listener calls
++`RecvErrorTracker::on_success` for both, so any datagram the socket delivered
++resets the unclassified-error run that would end the listener. Do not move the
++QUIC read onto a second reader of the socket; the ingress queue exists so
++there is one.
  
-+    /// A symmetric-type packet too short to hold the type byte, nonce and tag
-+    /// is rejected with an error at every length, rather than panicking while
-+    /// slicing out the tag. A packet of exactly that length (an empty payload)
-+    /// is the shortest that can decrypt, and it still does.
-+    #[test]
-+    fn short_symmetric_packets_are_rejected_without_panicking() {
-+        let cipher = Aes128Gcm::new(&[7u8; 16].into());
-+        let min = PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE;
-+        for len in 0..min {
-+            let mut buf = vec![0xAAu8; len];
-+            if let Some(first) = buf.first_mut() {
-+                *first = PACKET_TYPE_SYMMETRIC;
-+            }
-+            let packet = PacketData::<UnknownEncryption, MAX_PACKET_SIZE>::from_buf(&buf);
-+            assert!(packet.try_decrypt_sym(&cipher).is_err(), "length {len}");
-+        }
-+
-+        let empty = PacketData::<_, MAX_PACKET_SIZE>::from_buf_plain([]).encrypt_symmetric(&cipher);
-+        assert_eq!(empty.data().len(), min);
-+        let received = PacketData::<UnknownEncryption, MAX_PACKET_SIZE>::from_buf(empty.data());
-+        let decrypted = received
-+            .try_decrypt_sym(&cipher)
-+            .expect("an empty payload decrypts");
-+        assert!(decrypted.data().is_empty());
-+    }
-+
-     // Test detection of packet corruption
-     #[test]
-     fn test_encryption_decryption_corrupted() {
+ The same wrapper charges outbound datagrams to the node-wide egress cap (see
+ "Node-wide egress cap" above). A new send site needs nothing to be charged;
 ```
 
-**File**: `crates/core/src/transport/peer_connection.rs` (modified, +33/-1)
+**File**: `crates/core/src/contract/executor.rs` (modified, +9/-0)
 ```diff
-@@ -218,6 +218,9 @@ pub struct PeerConnection<S = super::UdpSocket, T: TimeSource = RealTime> {
-         FuturesUnordered<JoinHandle<(InboundStreamResult, Arc<inbound_budget::LegacyStreamToken>)>>,
-     outbound_stream_futures: FuturesUnordered<JoinHandle<OutboundStreamResult>>,
-     failure_count: usize,
-+    /// Packets that decrypted but did not decode, over this connection's life.
-+    /// The first one is logged at WARN so it is visible in release builds.
-+    undecodable_count: u64,
-     /// First failure time as nanoseconds since time_source epoch
-     first_failure_time_nanos: Option<u64>,
-     /// Last packet report time as nanoseconds since time_source epoch
-@@ -1042,6 +1045,7 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-             inbound_stream_futures: FuturesUnordered::new(),
-             outbound_stream_futures: FuturesUnordered::new(),
-             failure_count: 0,
-+            undecodable_count: 0,
-             first_failure_time_nanos: None,
-             last_packet_report_time_nanos: now_nanos,
-             last_rate_update_nanos: None,
-@@ -1334,7 +1338,35 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
-                     );
-                     self.last_inbound_nanos
-                         .store(self.last_received_nanos, std::sync::atomic::Ordering::Release);
--                    let msg = SymmetricMessage::deser(decrypted.data()).unwrap();
-+                    // The remote holds the session key, but it can still send
-+                    // bytes this node cannot decode: a payload variant from a
-+                    // newer release, or a faulty or hostile peer. Drop such a
-+                    // packet. It is not a decryption failure, so it does not
-+                    // count toward closing the connection.
-+                    let msg = match SymmetricMessage::deser(decrypted.data()) {
-+                        Ok(msg) => msg,
-+                        Err(error) => {
-+                            self.undecodable_count += 1;
-+                            if self.undecodable_count == 1 {
-+                                tracing::warn!(
-+                                    peer_addr = %self.remote_conn.remote_addr,
-+                                    remote_version = ?self.remote_conn.remote_protoc_version,
-+                                    error = %error,
-+                                    payload_len = decrypted.data().len(),
-+                                    "Dropping authenticated packet that does not decode; later ones on this connection log at debug"
-+                                );
-+                            } else {
-+                                tracing::debug!(
-+                                    peer_addr = %self.remote_conn.remote_addr,
-+                                    error = %error,
-+                                    payload_len = decrypted.data().len(),
-+                                    undecodable_count = self.undecodable_count,
-+                                    "Dropping authenticated packet that does not decode"
-+                                );
-+                            }
+@@ -1663,6 +1663,9 @@ pub(crate) fn declared_cache_ceiling_terms(
+     // `declared_caches_plus_hosting_budget_leave_room_for_the_runtime` in
+     // `ring::hosting::cache`) never see.
+     let parked = crate::contract::delegate_park::parked_budget_for(memory_limit);
++    // The transport's QUIC ingress queue (#5940): one per node, flat, since it
++    // holds at most a fixed number of datagrams of at most one MTU each.
++    let quic_ingress = crate::transport::demux::QUIC_INGRESS_QUEUE_BYTES;
+ 
+     vec![
+         // The pool multiplication IS #5268's defect 3.
+@@ -1695,6 +1698,7 @@ pub(crate) fn declared_cache_ceiling_terms(
+         // staleness.
+         ("page_cache_size_for", page_cache),
+         ("parked_budget_for", parked),
++        ("QUIC_INGRESS_QUEUE_BYTES", quic_ingress),
+     ]
+ }
+ 
+@@ -2153,6 +2157,7 @@ mod tests {
+             "interest_delta_budget_for",
+             "page_cache_size_for",
+             "parked_budget_for",
++            "QUIC_INGRESS_QUEUE_BYTES",
+         ] {
+             assert!(
+                 labels.contains(&required),
+@@ -2266,6 +2271,10 @@ mod tests {
+                 "parked_budget_for",
+                 crate::contract::delegate_park::parked_budget_for(ONE_GIB),
+             ),
++            (
++                "QUIC_INGRESS_QUEUE_BYTES",
++                crate::transport::demux::QUIC_INGRESS_QUEUE_BYTES,
++            ),
+         ] {
+             assert_eq!(
+                 value(&terms, label),
+```
+
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +24/-0)
+```diff
+@@ -2882,6 +2882,22 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
+                 "demux_other".into(),
+                 serde_json::json!(snapshot.demux_other),
+             );
++            m.insert(
++                "quic_ingress_forwarded".into(),
++                serde_json::json!(snapshot.quic_ingress_forwarded),
++            );
++            m.insert(
++                "quic_ingress_not_allowed".into(),
++                serde_json::json!(snapshot.quic_ingress_not_allowed),
++            );
++            m.insert(
++                "quic_ingress_queue_full".into(),
++                serde_json::json!(snapshot.quic_ingress_queue_full),
++            );
++            m.insert(
++                "quic_ingress_no_ingress".into(),
++                serde_json::json!(snapshot.quic_ingress_no_ingress),
++            );
+             m.insert(
+                 "egress_immediate".into(),
+                 serde_json::json!(snapshot.egress_immediate),
+@@ -6608,6 +6624,10 @@ mod tests {
+             demux_legacy: 19,
+             demux_quic: 20,
+             demux_other: 21,
++            quic_ingress_forwarded: 46,
++            quic_ingress_not_allowed: 47,
++            quic_ingress_queue_full: 48,
++            quic_ingress_no_ingress: 49,
+             egress_immediate: 22,
+             egress_waited: 23,
+             egress_unpaced: 25,
+@@ -6649,6 +6669,10 @@ mod tests {
+             ("demux_legacy", 19),
+             ("demux_quic", 20),
+             ("demux_other", 21),
++            ("quic_ingress_forwarded", 46),
++            ("quic_ingress_not_allowed", 47),
++            ("quic_ingress_queue_full", 48),
++            ("quic_ingress_no_ingress", 49),
+             ("egress_immediate", 22),
+             ("egress_waited", 23),
+             ("egress_unpaced", 25),
+```
+
+**File**: `crates/core/src/transport.rs` (modified, +124/-6)
+```diff
+@@ -8,6 +8,7 @@
+ 
+ use std::sync::Mutex;
+ use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
++use std::task::{Context, Poll};
+ use std::{borrow::Cow, io, net::SocketAddr};
+ 
+ use futures::Future;
+@@ -596,6 +597,60 @@ pub trait Socket: Sized + Send + Sync + 'static {
+         drop(take);
+         self.send_to(buf, target)
+     }
++
++    /// Send a datagram without waiting: when the socket cannot take it now,
++    /// return `WouldBlock` instead of sleeping or awaiting. For a sender that
++    /// must never block, such as a QUIC endpoint's driver (#5940). Charged
++    /// like [`Self::send_to`] once sent; a datagram that was not sent is not
++    /// charged.
++    ///
++    /// The default returns `Unsupported`; the UDP sockets, the in-memory
++    /// sockets and [`DemuxSocket`] implement it.
++    #[doc(hidden)]
++    fn try_send_to(&self, _buf: &[u8], _target: SocketAddr) -> io::Result<usize> {
++        Err(io::Error::from(io::ErrorKind::Unsupported))
++    }
++
++    /// Poll whether the socket can take a send now. `Ready` means a
++    /// [`Self::try_send_to`] may succeed (it can still return `WouldBlock`);
++    /// `Pending` arms `cx`'s waker for when the socket becomes writable.
++    ///
++    /// The default is always ready, which is right for sockets that never
++    /// return `WouldBlock`.
++    #[doc(hidden)]
++    fn poll_send_ready(&self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
++        Poll::Ready(Ok(()))
++    }
++
++    /// Read one datagram, saying whether it is for the caller
++    /// ([`SocketRead::Datagram`]) or was consumed by the socket
++    /// ([`SocketRead::Diverted`]: [`DemuxSocket`] counted it and dropped it
++    /// or passed it to its QUIC ingress). The listener reads through this so
++    /// it sees every datagram the socket received, of any class, for its
++    /// socket-health signal.
++    ///
++    /// Cancellation-safe when [`Self::recv_from`] is: the default is one
++    /// `recv_from`.
++    #[doc(hidden)]
++    fn recv_classified(
++        &self,
++        buf: &mut [u8],
++    ) -> impl Future<Output = io::Result<SocketRead>> + Send {
++        async move {
++            let (len, from) = self.recv_from(buf).await?;
++            Ok(SocketRead::Datagram(len, from))
++        }
++    }
++}
++
++/// What one [`Socket::recv_classified`] read produced.
++#[doc(hidden)]
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum SocketRead {
++    /// A datagram for the caller: its length in the buffer and its source.
++    Datagram(usize, SocketAddr),
++    /// The socket received a datagram and consumed it itself.
++    Diverted,
+ }
+ 
+ /// Normalize an IPv4-mapped IPv6 address (`::ffff:x.x.x.x`) to plain IPv4.
+@@ -751,6 +806,28 @@ impl Socket for UdpSocket {
+         let local_is_ipv6 = self.local_addr().map(|a| a.is_ipv6()).unwrap_or(false);
+         send_to_blocking_mapped(self, buf, target, local_is_ipv6)
+     }
++
++    fn try_send_to(&self, buf: &[u8], target: SocketAddr) -> io::Result<usize> {
++        let local_is_ipv6 = self.local_addr().map(|a| a.is_ipv6()).unwrap_or(false);
++        try_send_to_mapped(self, buf, target, local_is_ipv6)
++    }
++
++    fn poll_send_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
++        UdpSocket::poll_send_ready(self, cx)
++    }
++}
++
++/// One non-blocking send, metered like `send_to` when it succeeds. Returns
++/// `WouldBlock` when the kernel send buffer is full.
++fn try_send_to_mapped(
++    sock: &UdpSocket,
++    buf: &[u8],
++    target: SocketAddr,
++    local_is_ipv6: bool,
++) -> io::Result<usize> {
++    let sent = sock.try_send_to(buf, map_addr_for_send(local_is_ipv6, target))?;
++    metrics::TRANSPORT_METRICS.record_packet_sent(target, sent as u64);
++    Ok(sent)
+ }
+ 
+ /// Blocking send shared by the `Socket` impls.
+@@ -765,16 +842,12 @@ fn send_to_blocking_mapped(
+     target: SocketAddr,
+     local_is_ipv6: bool,
+ ) -> io::Result<usize> {
+-    let mapped_target = map_addr_for_send(local_is_ipv6, target);
+     let mut backoff_us = 1u64; // Start at 1μs
+     const MAX_BACKOFF_US: u64 = 1000; // Cap at 1ms
+ 
+     loop {
+-        match sock.try_send_to(buf, mapped_target) {
+-            Ok(n) => {
+-                metrics::TRANSPORT_METRICS.record_packet_sent(target, n as u64);
+-                return Ok(n);
+-            }
++        match try_send_to_mapped(sock, buf, target, local_is_ipv6) {
++            Ok(n) => return Ok(n),
+             Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
+                 // Kernel buffer full - exponential backoff
+                 std::thread::sleep(std::time::Duration::from_micros(backoff_us));
+@@ -853,6 +926,14 @@ impl Socket for UdpTransportSocket {
+         // Same as the `UdpSocket` impl, minus the per-call getsockname.
+         send_to_blocking_mapped(&self.sock, buf, target, self.is_ipv6)
+     }
++
++    fn try_send_to(&self, buf: &[u8], target: SocketAddr) -> io::Result<usize> {
++        try_send_to_mapped(&self.sock, buf, target, self.is_ipv6)
++    }
++
++    fn poll_send_ready(&self, c
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +63/-4)
+```diff
+@@ -30,7 +30,7 @@ use tracing::{Instrument, span};
+ use version_cmp::PROTOC_VERSION;
+ 
+ use super::{
+-    Socket, TransportError, UdpError, UdpErrorKind,
++    Socket, SocketRead, TransportError, UdpError, UdpErrorKind,
+     congestion_control::{CongestionControl, CongestionControlConfig},
+     crypto::{TransportKeypair, TransportPublicKey},
+     demux::DemuxSocket,
+@@ -229,6 +229,11 @@ async fn bind_udp_listener<S: Socket>(
+     // set (which is when `global_bandwidth` is), so a node without it pays
+     // nothing. The cap uses the same clock kind as the listener built below
+     // (`RealTime`); waiters sleep on their own connection's time source.
++    // That holds in simulation too: the listener and its connections run on
++    // `RealTime` there, so a cap on the network's `VirtualTime` would compute
++    // deficits on one clock for stream senders that sleep and time out on
++    // another. A sender on `VirtualTime` (the QUIC endpoint, #5940) must use
++    // the cap only once the cap and its other waiters share that clock.
+     let egress_cap = config.global_bandwidth.as_ref().and_then(|manager| {
+         super::egress_cap::EgressCap::from_total_limit(manager.total_limit(), RealTime::new())
+     });
+@@ -1529,9 +1534,17 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+         'outer: loop {
+             // DST: Use deterministic_select! for fair but deterministic branch ordering
+             crate::deterministic_select! {
+-                recv_result = self.socket_listener.recv_from(&mut buf) => {
++                recv_result = self.socket_listener.recv_classified(&mut buf) => {
+                     match recv_result {
+-                        Ok((size, remote_addr)) => {
++                        // The socket received a datagram that is not for this
++                        // listener (`DemuxSocket` counted it and dropped it or
++                        // queued it for the QUIC ingress). It is still a
++                        // successful read, so it is evidence the socket works.
++                        Ok(SocketRead::Diverted) => {
++                            recv_errors.on_success();
 +                            continue;
 +                        }
-+                    };
-                     let SymmetricMessage {
-                         packet_id,
-                         confirm_receipt,
++                        Ok(SocketRead::Datagram(size, remote_addr)) => {
+                             recv_errors.on_success();
+                             if let Some(time_nanos) = outdated_peer.get(&remote_addr) {
+                                 let now_nanos = self.time_source.now_nanos();
+@@ -6323,6 +6336,16 @@ pub mod mock_transport {
+         bool,
+         OutboundConnectionHandler<ScriptedRecvSocket, VirtualTime>,
+     ) {
++        run_scripted_listener_on(script, |socket| socket).await
++    }
++
++    /// [`run_scripted_listener`] over the scripted socket as wrapped by
++    /// `wrap`, e.g. in the `DemuxSocket` the transport binds.
++    #[cfg(test)]
++    async fn run_scripted_listener_on<S: Socket>(
++        script: Vec<RecvStep>,
++        wrap: impl FnOnce(ScriptedRecvSocket) -> S,
++    ) -> (bool, OutboundConnectionHandler<S, VirtualTime>) {
+         let time = VirtualTime::new();
+         let progress = Arc::new(ScriptProgress::default());
+         let socket = ScriptedRecvSocket {
+@@ -6333,7 +6356,7 @@ pub mod mock_transport {
+         let addr: SocketAddr = (Ipv4Addr::LOCALHOST, 47_300).into();
+         let (handler, _new_connections) =
+             OutboundConnectionHandler::<_, VirtualTime>::config_listener_with_virtual_time(
+-                Arc::new(socket),
++                Arc::new(wrap(socket)),
+                 TransportKeypair::new(),
+                 false,
+                 addr,
+@@ -6396,6 +6419,42 @@ pub mod mock_transport {
+         );
+     }
+ 
++    /// The socket-health signal counts every datagram the socket delivered,
++    /// not only those the listener handles: through the `DemuxSocket` the
++    /// transport binds, a QUIC-class datagram (dropped, since no QUIC
++    /// ingress is enabled) between two unclassified error runs resets the
++    /// run as a legacy datagram does. Without the reset the run holds 1000
++    /// errors over 100 s and the listener exits.
++    #[tokio::test]
++    async fn listener_quic_datagram_through_demux_resets_recv_error_run() {
++        let from: SocketAddr = (Ipv4Addr::LOCALHOST, 47_303).into();
++        let script = unclassified_errors(700)
++            .chain([RecvStep::Packet(from, vec![0xC3, 0, 0, 0])])
++            .chain(unclassified_errors(400))
++            .collect();
++        let (survived, _) =
++            run_scripted_listener_on(script, |socket| DemuxSocket::wrap(socket, None)).await;
++        assert!(
++            survived,
++            "the QUIC-class datagram between the two error runs must reset the run"
++        );
++    }
++
++    /// Control for the test above: through the same `DemuxSocket`, 1100
++    /// unclassified errors with no datagram between them still end the
++    /// listener.
++    #[tokio::test]
++    async fn listener_through_demux_exits_on_persi
 ```
 
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests.rs` (modified, +32/-0)
+**File**: `crates/core/src/transport/demux.rs` (modified, +431/-41)
 ```diff
-@@ -2744,3 +2744,35 @@ async fn an_out_of_order_legacy_stream_completes_within_its_charge() {
-         Some(&data[..])
-     );
+@@ -6,14 +6,27 @@
+ //! the fixed bit or the long-header bit set in its first byte. The two sets
+ //! of first bytes do not overlap, so the first byte alone says which protocol
+ //! a datagram belongs to.
++//!
++//! QUIC-class datagrams go to an optional QUIC ingress queue, which a QUIC
++//! endpoint reads (#5940), and only from source addresses on the ingress
++//! allow-set. Everything else that is not legacy is counted and dropped.
+ 
+ use std::io;
+ use std::net::SocketAddr;
++use std::sync::OnceLock;
++#[cfg(test)]
++use std::sync::atomic::AtomicU64;
++use std::sync::atomic::{AtomicU32, Ordering};
++use std::task::{Context, Poll};
++
++use dashmap::DashSet;
++use tokio::sync::mpsc;
+ 
+-use super::Socket;
+ use super::crypto::{PACKET_TYPE_INTRO, PACKET_TYPE_SYMMETRIC};
+ use super::egress_cap::{EgressCap, EgressTake};
+-use super::metrics::{DemuxClass, TRANSPORT_METRICS};
++use super::metrics::{DemuxClass, QuicIngressOutcome, TRANSPORT_METRICS};
++use super::packet_data::MAX_RECV_PACKET_SIZE;
++use super::{Socket, SocketRead, normalize_mapped_addr};
+ 
+ /// Bits of a QUIC packet's first byte of which at least one is always set.
+ ///
+@@ -32,6 +45,36 @@ const QUIC_FIRST_BYTE_MASK: u8 = 0xC0;
+ /// with a deep inbox.
+ const DROPS_BETWEEN_YIELDS: u32 = 64;
+ 
++/// How many datagrams the QUIC ingress queue holds before it drops.
++pub(crate) const QUIC_INGRESS_QUEUE_DATAGRAMS: usize = 1024;
++
++/// The most memory the QUIC ingress queue can hold: every slot holding a
++/// datagram of the largest size the listener receives (its read buffer is
++/// `MAX_RECV_PACKET_SIZE`, so no read is longer), plus the slot itself.
++/// The bound assumes that buffer: a caller reading into a larger one could
++/// queue longer datagrams. One queue per node, and only while a QUIC ingress
++/// is enabled. The allow-set is not counted here; its size is up to the
++/// caller. Declared in `contract::executor::declared_cache_ceiling`, which
++/// only tests read.
++#[cfg_attr(not(test), allow(dead_code))]
++pub(crate) const QUIC_INGRESS_QUEUE_BYTES: usize =
++    QUIC_INGRESS_QUEUE_DATAGRAMS * (MAX_RECV_PACKET_SIZE + std::mem::size_of::<QuicDatagram>());
++
++/// A QUIC-class datagram passed to the QUIC ingress: its bytes and its source
++/// address (IPv4-mapped IPv6 addresses already normalized to IPv4).
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub(crate) struct QuicDatagram {
++    pub bytes: Vec<u8>,
++    pub from: SocketAddr,
++}
++
++/// The QUIC ingress of one [`DemuxSocket`]: the queue's sending half and the
++/// source addresses allowed to reach it.
++struct QuicIngress {
++    queue: mpsc::Sender<QuicDatagram>,
++    allowed: DashSet<SocketAddr>,
++}
++
+ /// Classify a datagram by its first byte. An empty datagram is
+ /// [`DemuxClass::Other`].
+ pub(crate) fn classify(packet: &[u8]) -> DemuxClass {
+@@ -50,9 +93,9 @@ pub(crate) fn classify(packet: &[u8]) -> DemuxClass {
+ /// to construct it.
+ ///
+ /// It exists so a QUIC endpoint can use the same UDP port as the UDP
+-/// transport (#5940). Until that endpoint exists, QUIC-shaped datagrams are
+-/// dropped here and counted as `demux_quic`; datagrams that are neither are
+-/// dropped and counted as `demux_other`. Legacy datagrams are returned
++/// transport (#5940). QUIC-shaped datagrams are counted as `demux_quic` and
++/// dropped, or queued for the QUIC ingress when one is enabled (see below);
++/// datagrams that are neither are dropped and counted as `demux_other`. Legacy datagrams are returned
+ /// unchanged, and are counted as `demux_legacy` so the ratio is visible.
+ ///
+ /// It wraps the socket below the [`Socket`] trait, so every implementation of
+@@ -63,13 +106,43 @@ pub(crate) fn classify(packet: &[u8]) -> DemuxClass {
+ /// cap, when `total-bandwidth-limit` is set (see `transport::egress_cap`):
+ /// every datagram the transport sends goes through this socket.
+ ///
++/// # QUIC ingress
++///
++/// [`Self::enable_quic_ingress`] gives the socket a bounded queue of
++/// QUIC-class datagrams for a QUIC endpoint. The listener stays the only
++/// reader of the UDP socket and fills the queue with `try_reserve`, so a slow
++/// or stopped endpoint costs dropped QUIC datagrams and never stalls the
++/// listener. A datagram is queued only if its source address is on the
++/// allow-set ([`Self::allow_quic_source`]); the rest are dropped as before,
++/// so a prober sending QUIC Initials gets no answer that says the port
++/// speaks QUIC. Each QUIC-class datagram is counted once by what happened to
++/// it (`quic_ingress_<label>`, see [`QuicIngressOutcome`]). Without an
++/// ingress every one is `no_ingress`, which is every node today.
++///
+ /// [`create_connection_handler`]: super::create_connection_handler
+ pub struct DemuxSocket<S> {
+     inner: S,
+     egress: Option<EgressCap>,
++    quic: OnceLock<QuicIngress>,
++    /// Datagrams consumed here since the last legacy one, for the yield in
++    /// `recv_classified`. Only the listener reads, so relaxed is enough.
++    diverted_in_a_row: AtomicU32,
++    #[cfg(test)]
++    qui
+```
+
+**File**: `crates/core/src/transport/egress_cap.rs` (modified, +100/-7)
+```diff
+@@ -67,10 +67,13 @@
+ //! [`TimeSource`] the cap was built with, with saturating operations.
+ 
+ use std::fmt;
++use std::future::Future;
+ use std::mem::ManuallyDrop;
++use std::pin::Pin;
+ #[cfg(test)]
+ use std::sync::atomic::AtomicU64;
+ use std::sync::atomic::{AtomicI64, Ordering};
++use std::task::{Context, Poll};
+ use std::time::Duration;
+ 
+ use super::Socket;
+@@ -213,6 +216,10 @@ pub struct EgressCap {
+     burst_ns: i64,
+     debt_limit_ns: i64,
+     clock: Box<dyn Fn() -> u64 + Send + Sync>,
++    /// `TimeSource::sleep_until` of the same time source as `clock`, for
++    /// [`Self::poll_admit`]'s wakeups.
++    #[cfg_attr(not(test), allow(dead_code))]
++    sleep_until: Box<dyn Fn(u64) -> SleepFuture + Send + Sync>,
+     /// Time (ns, on `clock`) at which the bucket level is zero.
+     empty_at_ns: AtomicI64,
+     /// When the long-wait warning was last logged (ns, on `clock`).
+@@ -236,6 +243,34 @@ impl fmt::Debug for EgressCap {
+     }
+ }
+ 
++type SleepFuture = Pin<Box<dyn Future<Output = ()> + Send>>;
++
++/// The wakeup a sender polling [`EgressCap::poll_admit`] keeps between
++/// polls: one timer on the cap's time source and the time it fires at.
++/// Owned by the sender, so the cap holds nothing per waiter.
++#[derive(Default)]
++// Used by the QUIC endpoint (#5940); only tests use it until then.
++#[cfg_attr(not(test), allow(dead_code))]
++pub(crate) struct AdmissionWaiter {
++    timer: Option<(u64, SleepFuture)>,
++}
++
++impl AdmissionWaiter {
++    /// When the armed timer fires (ns on the cap's clock), if one is armed.
++    #[cfg(test)]
++    pub(crate) fn wake_at_ns(&self) -> Option<u64> {
++        self.timer.as_ref().map(|(at, _)| *at)
++    }
++}
++
++impl fmt::Debug for AdmissionWaiter {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        f.debug_struct("AdmissionWaiter")
++            .field("wake_at_ns", &self.timer.as_ref().map(|(at, _)| *at))
++            .finish()
++    }
++}
++
+ /// Bytes a paced sender took from the bucket for a datagram it is about to
+ /// send. Pass it to [`Socket::send_to_paced`], which returns what the
+ /// datagram did not use; dropping it instead (the send failed or was
+@@ -259,13 +294,16 @@ impl EgressCap {
+         let burst_bytes = burst_bytes.max(MIN_BURST_PACKETS * MAX_PACKET_SIZE as u64);
+         let burst_ns = Self::nanos_for(rate, burst_bytes);
+         let debt_limit_ns = i64::try_from(DEBT_LIMIT.as_nanos()).unwrap_or(i64::MAX);
++        let sleeper = time_source.clone();
++        let sleep_until = Box::new(move |deadline_ns| sleeper.sleep_until(deadline_ns));
+         let clock = Box::new(move || time_source.now_nanos());
+         let now = i64::try_from(clock()).unwrap_or(i64::MAX);
+         Self {
+             rate_bytes_per_sec: rate,
+             burst_ns,
+             debt_limit_ns,
+             clock,
++            sleep_until,
+             empty_at_ns: AtomicI64::new(now.saturating_sub(burst_ns)),
+             last_long_wait_warn_ns: AtomicI64::new(i64::MIN),
+             last_abandon_warn_ns: AtomicI64::new(i64::MIN),
+@@ -325,6 +363,19 @@ impl EgressCap {
+         empty_at.max(now.saturating_sub(self.burst_ns))
+     }
+ 
++    /// The admission predicate shared by [`Self::try_take`] and
++    /// [`Self::poll_admit`]: a take of `cost` at `now` is admitted when the
++    /// bucket holds the whole amount. `Ok` is `empty_at_ns` after the take;
++    /// `Err` is the deficit in nanoseconds at the rate.
++    fn admits(&self, empty_at: i64, now: i64, cost: i64) -> Result<i64, i64> {
++        let after = self.refilled(empty_at, now).saturating_add(cost);
++        if after <= now {
++            Ok(after)
++        } else {
++            Err(after - now)
++        }
++    }
++
+     /// Apply `f(empty_at_ns, now)` atomically. `f` returns the new value, or
+     /// `None` to leave it unchanged. Returns the value before, the value
+     /// after and `now`.
+@@ -392,16 +443,12 @@ impl EgressCap {
+         waited: Duration,
+     ) -> Result<EgressTake<'_>, Duration> {
+         let cost = self.cost_ns(bytes as u64);
+-        let (old, _, now) = self.update(|empty_at, now| {
+-            let after = self.refilled(empty_at, now).saturating_add(cost);
+-            (after <= now).then_some(after)
+-        });
++        let (old, _, now) = self.update(|empty_at, now| self.admits(empty_at, now, cost).ok());
+         // The same predicate on the value the last attempt saw.
+-        let after = self.refilled(old, now).saturating_add(cost);
+-        if after > now {
++        if let Err(deficit) = self.admits(old, now, cost) {
+             #[cfg(test)]
+             self.stats.refusals.fetch_add(1, Ordering::Relaxed);
+-            return Err(Duration::from_nanos((after - now) as u64));
++            return Err(Duration::from_nanos(deficit as u64));
+         }
+         Ok(EgressTake {
+             cap: self,
+@@ -410,6 +457,52 @@ impl EgressCap {
+         })
+     }
+ 
++    /// Poll form of the admission check, for a sender that is polled rather
++    /// than one that can sleep and retry
+```
+
+**File**: `crates/core/src/transport/egress_cap/tests.rs` (modified, +119/-0)
+```diff
+@@ -804,3 +804,122 @@ fn a_warn_window_does_not_tear_under_concurrent_adds() {
+     }
+     assert_eq!(total, THREADS * EACH);
  }
 +
-+/// A packet that decrypts under the session key but whose plaintext does not
-+/// decode as a `SymmetricMessage` (for example a payload variant from a newer
-+/// release) is dropped. `recv()` keeps running, delivers the next valid
-+/// message, and does not count the dropped packet as a decryption failure.
-+#[tokio::test(start_paused = true)]
-+async fn undecodable_authenticated_packet_is_dropped_not_fatal() {
-+    let mut e = single(CAPABLE);
-+    // Three bytes cannot hold the leading `u32` packet id, so this fails to
-+    // decode whatever the payload layout is. A payload variant from a newer
-+    // release fails later in decoding but takes the same error arm.
-+    let undecodable =
-+        PacketData::<_, { crate::transport::packet_data::MAX_PACKET_SIZE }>::from_buf_plain([
-+            0xFF, 0xFF, 0xFF,
-+        ])
-+        .encrypt_symmetric(&e.inbound_key);
-+    assert!(SymmetricMessage::deser(&[0xFF, 0xFF, 0xFF]).is_err());
-+    e.inbound
-+        .send(PacketData::<UnknownEncryption>::from_buf(
-+            undecodable.data(),
-+        ))
-+        .await
-+        .expect("deliver");
-+    e.deliver(0, short(b"after"), vec![]).await;
++/// Counts how often it is woken.
++#[derive(Default)]
++struct CountingWaker(std::sync::atomic::AtomicUsize);
 +
++impl std::task::Wake for CountingWaker {
++    fn wake(self: std::sync::Arc<Self>) {
++        self.0.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
++    }
++}
++
++fn counting_waker() -> (std::task::Waker, std::sync::Arc<CountingWaker>) {
++    let counter = std::sync::Arc::new(CountingWaker::default());
++    (std::task::Waker::from(counter.clone()), counter)
++}
++
++fn woken(counter: &CountingWaker) -> usize {
++    counter.0.load(std::sync::atomic::Ordering::SeqCst)
++}
++
++/// With the bucket empty, a datagram's admission is `Pending` until the
++/// rate has made up exactly its deficit: still `Pending` 1 ns before, with
++/// the waker not yet woken, and `Ready` at the deficit, after the cap's
++/// timer woke the waker. Polling takes nothing.
++#[test]
++fn poll_admit_is_pending_until_the_deficit_and_ready_at_it() {
++    let (cap, time) = cap_at(RATE);
++    cap.charge_unpaced(BURST as usize);
++    assert_eq!(cap.level_bytes(), 0);
++    // 1 200 bytes at 1 MB/s.
++    let deficit = Duration::from_micros(1_200);
++    assert_eq!(cap.try_take(PACKET, Duration::ZERO).unwrap_err(), deficit);
++
++    let (waker, counter) = counting_waker();
++    let mut cx = Context::from_waker(&waker);
++    let mut waiter = AdmissionWaiter::default();
++    assert!(cap.poll_admit(PACKET, &mut waiter, &mut cx).is_pending());
++    let start = time.now_nanos();
++    assert_eq!(waiter.wake_at_ns(), Some(start + deficit.as_nanos() as u64));
++
++    time.advance(deficit - Duration::from_nanos(1));
 +    assert_eq!(
-+        e.pump(Duration::from_millis(10)).await.as_deref(),
-+        Some(&b"after"[..])
++        woken(&counter),
++        0,
++        "the timer must not fire before the deficit"
 +    );
-+    assert_eq!(e.conn.failure_count, 0);
-+    assert_eq!(e.conn.undecodable_count, 1);
++    assert!(cap.poll_admit(PACKET, &mut waiter, &mut cx).is_pending());
++    assert_eq!(
++        waiter.wake_at_ns(),
++        Some(start + deficit.as_nanos() as u64),
++        "a poll that needs the same wakeup keeps the armed timer"
++    );
++
++    time.advance(Duration::from_nanos(1));
++    assert_eq!(woken(&counter), 1, "the timer fires at the deficit");
++    assert!(cap.poll_admit(PACKET, &mut waiter, &mut cx).is_ready());
++    assert_eq!(
++        waiter.wake_at_ns(),
++        None,
++        "a Ready poll leaves no timer armed"
++    );
++    assert_eq!(cap.level_bytes(), PACKET as i64, "polling took nothing");
++    cap.try_take(PACKET, Duration::ZERO)
++        .expect("try_take agrees with the Ready poll")
++        .sent(PACKET);
++}
++
++/// `poll_admit` and `try_take` decide alike at the same instant, over random
++/// sequences of unpaced charges, paced takes, refills and datagram sizes,
++/// and a `Pending` poll arms its wakeup exactly at `try_take`'s deficit.
++#[test]
++fn poll_admit_and_try_take_agree_at_the_same_instant() {
++    let (waker, _) = counting_waker();
++    let mut cx = Context::from_waker(&waker);
++    let (mut admitted, mut refused) = (0u32, 0u32);
++    for seed in 0..32u64 {
++        GlobalRng::scoped_seed(seed, || {
++            let (cap, time) = cap_at(RATE);
++            for _ in 0..500 {
++                match GlobalRng::random_range(0..4u32) {
++                    0 => cap.charge_unpaced(GlobalRng::random_range(1..4 * PACKET)),
++                    1 => {
++                        if let Ok(take) = cap.try_take(PACKET, Duration::ZERO) {
++                            take.sent(GlobalRng::random_range(1..=PACKET));
++                        }
++                    }
++                    _ => {
++                        time.advance(Duration::from_nanos(GlobalRng::random_range(0..3_000_000)));
++                    }
++                }
++                let bytes = GlobalRng::random_range(1..=2 * PACKET);
++                let mut waiter = AdmissionWaiter::default();
++                let polled = cap.poll_admit(bytes, &mut waiter, &mut cx);
++                let wake_at = waiter.wake_at_ns();
++                match cap.try_take(bytes, Duration::ZERO) {
++                    Ok(take) => {
++                        assert!(polled.is_ready(), "seed {seed}: try_take admitted {bytes}");
++                        admitted += 1;
++                        drop(take);
++                    }
++                    Err(deficit) => {
++                        assert!(polled.is_pending(), "seed {seed}: try_take refused {bytes}");
++                        assert_eq!(
++                            wake_at,
++                            Some(time.now_nanos() + deficit.as_nanos() as u64),
++                            "seed {seed}: the wakeup is at try_take's deficit"
++                        );
++                        refused += 1;
++                    }
++                }
++            }
++        });
++    }
++    // Both branches must have been exercised, or the agreement is vacuous.
++    assert!(
++        admitted > 1_000 && refused > 1_000,
++        "admitted {admitted}, refused {refused}"
++    );
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5965** (2026-10-23): feat(transport): add QUIC socket plumbing behind DemuxSocket (@sanity)
 - **PR #5964** (2026-10-22): feat(transport): make total-bandwidth-limit a node-wide egress cap (@sanity)
 - **PR #5963** (2026-10-22): fix(transport): stop malformed peer packets from panicking the receive path (@sanity)
 - **PR #5962** (2026-10-21): test: give the dial-queue-wait test addresses no other test dials (@sanity)
 - **PR #5961** (2026-10-22): feat(transport): demultiplex inbound packets by first byte (@sanity)
 - **PR #5960** (2026-10-21): fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test) (@sanity)
-- **PR #5959** (2026-10-21): refactor(transport): hide the UDP transport's own errors behind TransportError::Udp (@sanity)
 
 ---
 
@@ -1939,49 +2544,51 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): stop malformed peer packets from panicking the receive path (#5963)
+## X. transport): add QUIC socket plumbing behind DemuxSocket (#5965)
 
 **RULE**:
-When implementing operations in `crates/core/src/transport/packet_data.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be519b42`: transport): stop malformed peer packets from panicking the receive path (#5963). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c55c2450`: transport): add QUIC socket plumbing behind DemuxSocket (#5965). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/packet_data.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // `size` is the received length; `data` is the whole fixed-size buffer, so
-    // only `size` says whether the type byte, nonce and tag are all present.
-    // Slicing by `size` below would panic on a shorter packet. `size` above
-    // `data.len()` cannot come from `from_buf`; that half is defensive.
-    if size < PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE || size > data.len() {
-        return Err(aes_gcm::Error);
-    }
-    /// A symmetric-type packet too short to hold the type byte, nonce and tag
-    /// is rejected with an error at every length, rather than panicking while
-    /// slicing out the tag. A packet of exactly that length (an empty payload)
-    /// is the shortest that can decrypt, and it still does.
-    #[test]
-    fn short_symmetric_packets_are_rejected_without_panicking() {
-        let cipher = Aes128Gcm::new(&[7u8; 16].into());
-        let min = PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE;
-        for len in 0..min {
-            let mut buf = vec![0xAAu8; len];
-            if let Some(first) = buf.first_mut() {
-                *first = PACKET_TYPE_SYMMETRIC;
-            }
-            let packet = PacketData::<UnknownEncryption, MAX_PACKET_SIZE>::from_buf(&buf);
-  
+cap counts UDP payload, not IP/UDP headers.
+EgressCap::poll_admit is the poll form for a sender that is polled (a quinn
+UdpPoller, #5940): Ready exactly when try_take would succeed at that instant
+(one shared predicate, `admits`), else Pending with a timer on the cap's
+TimeSource at the refill time, kept in the caller's AdmissionWaiter. It takes
+nothing; the sender is charged at its send (Socket::try_send_to charges like
+send_to). The cap is built on RealTime even in simulation, because the
+listener and its connections run on RealTime there: a VirtualTime cap would
+compute deficits on another clock than its waiters sleep and time out on.
+dropped or, for `quic`, queued for the QUIC ingress; each `quic` one is also
+counted once by what happened to it, `quic_ingress_<label>`, one per
+`QuicIngressOutcome`; see "Socket Abstraction Rules") and outbound datagrams by how the
+dropped. The QUIC rule is exact only with QUIC bit greasing (RFC 9287)
+disabled. Tests that inject a hand-written socket straight into the listener
+bypass the wrapper.
+
+For a QUIC endpoint on the same port (#5940), `enable_quic_ingress` gives the
+wrapper a bounded queue (`QUIC_INGRESS_QUEUE_DATAGRAMS`, a declared byte
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    debug_assert!(data.len() >= PACKET_TYPE_SIZE + NONCE_SIZE + TAG_SIZE);
+cap counts UDP payload, not IP/UDP headers. A quinn endpoint will need a poll-based admission (poll_ready
++ try_admit over try_take's predicate); not built yet.
+dropped; see "Socket Abstraction Rules") and outbound datagrams by how the
+dropped until a QUIC endpoint exists on the same port (#5940). The QUIC rule
+is exact only with QUIC bit greasing (RFC 9287) disabled. Tests that inject a
+hand-written socket straight into the listener bypass the wrapper.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be519b42` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c55c2450` are properly handled with clean fallback behavior.

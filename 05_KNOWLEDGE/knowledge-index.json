@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:10:28.963Z",
+  "last_updated": "2026-10-23T06:17:23.432Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11266,8 +11266,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "0ca03385",
-      "content_hash": "41b8cf7ee5fb689c35dbed0728051289cd4f651a523bc006a076b44ff31e34d7",
+      "source_version": "c55c2450",
+      "content_hash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -11335,6 +11335,11 @@
           "number": 3631,
           "title": "transport): stop malformed peer packets from panicking the receive path (#5963)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3786,
+          "title": "transport): add QUIC socket plumbing behind DemuxSocket (#5965)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11342,7 +11347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:15:44.565Z",
+      "verified_at": "2026-10-23T06:17:23.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44261,14 +44266,19 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "24b8ddb4",
-      "content_hash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
+      "source_version": "ae13ea66",
+      "content_hash": "65b027dff6ef6c4590d1b358554a69f10cc3a3e165fe16b665194f5a290e8110",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
         {
           "number": 3041,
           "title": "update yarn.lock for the TypeScript 7 peer range widening",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3785,
+          "title": "svelte): build story snippets on the docgen server",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44277,7 +44287,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:27:32.673Z",
+      "verified_at": "2026-10-23T06:17:18.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62932,8 +62942,8 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "40bb0848",
-      "content_hash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
+      "source_version": "356c8766",
+      "content_hash": "11acc216e0affde97dc30f9265515404a712b463f64c936cfaa5c8c249235e85",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
@@ -62948,7 +62958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:09:31.558Z",
+      "verified_at": "2026-10-23T06:17:17.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112946,6 +112956,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:10:28.951Z"
+    },
+    "rule-3785": {
+      "learning_id": "rule-3785",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3785,
+      "title": "svelte): build story snippets on the docgen server",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "ae13ea66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:17:18.819Z"
+    },
+    "rule-3786": {
+      "learning_id": "rule-3786",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3786,
+      "title": "transport): add QUIC socket plumbing behind DemuxSocket (#5965)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "c55c2450",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:17:23.421Z"
     }
   },
   "aliases": {

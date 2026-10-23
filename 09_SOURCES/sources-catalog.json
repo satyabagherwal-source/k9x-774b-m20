@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "0ca03385",
+    "sourceVersion": "c55c2450",
     "license": "NOASSERTION",
-    "contentHash": "41b8cf7ee5fb689c35dbed0728051289cd4f651a523bc006a076b44ff31e34d7",
-    "lastHarvestedAt": "2026-10-22T16:15:44.652Z",
+    "contentHash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
+    "lastHarvestedAt": "2026-10-23T06:17:23.485Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -9963,10 +9963,10 @@
     "repository": "sveltejs/svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/sveltejs/svelte",
-    "sourceVersion": "40bb0848",
+    "sourceVersion": "356c8766",
     "license": "MIT",
-    "contentHash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
-    "lastHarvestedAt": "2026-10-20T02:09:31.629Z",
+    "contentHash": "11acc216e0affde97dc30f9265515404a712b463f64c936cfaa5c8c249235e85",
+    "lastHarvestedAt": "2026-10-23T06:17:17.093Z",
     "learningId": "learn-github-sveltejs-svelte"
   },
   "solidjs-solid": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "24b8ddb4",
+    "sourceVersion": "ae13ea66",
     "license": "MIT",
-    "contentHash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
-    "lastHarvestedAt": "2026-10-20T04:27:32.737Z",
+    "contentHash": "65b027dff6ef6c4590d1b358554a69f10cc3a3e165fe16b665194f5a290e8110",
+    "lastHarvestedAt": "2026-10-23T06:17:18.883Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {

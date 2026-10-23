@@ -4478,3 +4478,6 @@ Every entry in this ledger must capture:
 | `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `d4ccd8a7` | Multi-dimensional audit evidence | 2026-10-23T06:09:24.078Z |
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `e912cdb1` | Multi-dimensional audit evidence | 2026-10-23T06:09:24.142Z |
 | `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `8dc19751` | Multi-dimensional audit evidence | 2026-10-23T06:10:29.020Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `356c8766` | Multi-dimensional audit evidence | 2026-10-23T06:17:17.093Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `ae13ea66` | Multi-dimensional audit evidence | 2026-10-23T06:17:18.883Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c55c2450` | Multi-dimensional audit evidence | 2026-10-23T06:17:23.485Z |

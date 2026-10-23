@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T06:10:29.034Z",
+  "last_updated": "2026-10-23T06:17:23.499Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "41b8cf7ee5fb689c35dbed0728051289cd4f651a523bc006a076b44ff31e34d7",
-      "verified_at": "2026-10-22T16:15:44.660Z",
+      "content_hash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
+      "verified_at": "2026-10-23T06:17:23.499Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:15:44.660Z"
+      "last_updated": "2026-10-23T06:17:23.499Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "8610cd34f7e42cfe60ca1e1c87d094c049dd48d34e89558eaa47f73763da8b59",
-      "verified_at": "2026-10-20T02:09:31.635Z",
+      "content_hash": "11acc216e0affde97dc30f9265515404a712b463f64c936cfaa5c8c249235e85",
+      "verified_at": "2026-10-23T06:17:17.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T02:09:31.635Z"
+      "last_updated": "2026-10-23T06:17:17.102Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "ccc4f81102d5e70d3d81bfccd6df9620f1ca37575363c19d45c65357c3361060",
-      "verified_at": "2026-10-20T04:27:32.743Z",
+      "content_hash": "65b027dff6ef6c4590d1b358554a69f10cc3a3e165fe16b665194f5a290e8110",
+      "verified_at": "2026-10-23T06:17:18.894Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:27:32.743Z"
+      "last_updated": "2026-10-23T06:17:18.894Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

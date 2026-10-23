@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-22T20:22:07.236Z",
+  "last_updated": "2026-10-23T06:17:17.098Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2488,6 +2488,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-V9KA",
+      "directive_title": "add security policy section to AGENTS.md (#19067)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sveltejs/svelte",
+      "source_commit": "356c8766",
+      "date_staged": "2026-10-23",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-sveltejs-svelte"
     }
   ]
 }

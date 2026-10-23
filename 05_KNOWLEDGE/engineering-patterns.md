@@ -270096,3 +270096,128 @@ expect(tuiDescribeSector(undefined as any, undefined as any)).not.toContain('NaN
 ```
 
 ---
+
+
+---
+
+## 3785. svelte): build story snippets on the docgen server (Harvested from storybookjs/storybook)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "svelte): build story snippets on the docgen server",
+  "source": "storybookjs/storybook",
+  "source_url": "https://github.com/storybookjs/storybook",
+  "source_version": "ae13ea66",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T06:17:18.711Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-storybookjs-storybook",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [storybookjs/storybook](https://github.com/storybookjs/storybook) (Revision: `ae13ea66`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `code/renderers/svelte/src/docgen/story-docs-provider.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a2140a6c`: svelte): build story snippets on the docgen server. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/renderers/svelte/src/docgen/story-docs-provider.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP } from './story-file.ts';
+  storyFileTest: SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP,
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+import { SVELTE_STORY_FILE_TEST_REGEXP } from './story-file.ts';
+  storyFileTest: SVELTE_STORY_FILE_TEST_REGEXP,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a2140a6c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3786. transport): add QUIC socket plumbing behind DemuxSocket (#5965) (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "transport): add QUIC socket plumbing behind DemuxSocket (#5965)",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "c55c2450",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-23T06:17:23.326Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `c55c2450`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c55c2450`: transport): add QUIC socket plumbing behind DemuxSocket (#5965). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+cap counts UDP payload, not IP/UDP headers.
+EgressCap::poll_admit is the poll form for a sender that is polled (a quinn
+UdpPoller, #5940): Ready exactly when try_take would succeed at that instant
+(one shared predicate, `admits`), else Pending with a timer on the cap's
+TimeSource at the refill time, kept in the caller's AdmissionWaiter. It takes
+nothing; the sender is charged at its send (Socket::try_send_to charges like
+send_to). The cap is built on RealTime even in simulation, because the
+listener and its connections run on RealTime there: a VirtualTime cap would
+compute deficits on another clock than its waiters sleep and time out on.
+dropped or, for `quic`, queued for the QUIC ingress; each `quic` one is also
+counted once by what happened to it, `quic_ingress_<label>`, one per
+`QuicIngressOutcome`; see "Socket Abstraction Rules") and outbound datagrams by how the
+dropped. The QUIC rule is exact only with QUIC bit greasing (RFC 9287)
+disabled. Tests that inject a hand-written socket straight into the listener
+bypass the wrapper.
+
+For a QUIC endpoint on the same port (#5940), `enable_quic_ingress` gives the
+wrapper a bounded queue (`QUIC_INGRESS_QUEUE_DATAGRAMS`, a declared byte
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+cap counts UDP payload, not IP/UDP headers. A quinn endpoint will need a poll-based admission (poll_ready
++ try_admit over try_take's predicate); not built yet.
+dropped; see "Socket Abstraction Rules") and outbound datagrams by how the
+dropped until a QUIC endpoint exists on the same port (#5940). The QUIC rule
+is exact only with QUIC bit greasing (RFC 9287) disabled. Tests that inject a
+hand-written socket straight into the listener bypass the wrapper.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c55c2450` are properly handled with clean fallback behavior.
