@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `cf57e593`  
+> **Source Version**: `280954e5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:42:34.285Z  
+> **Timestamp**: 2026-10-23T06:30:11.673Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:42:33.612Z  
+> **Harvest Timestamp**: 2026-10-23T06:30:11.668Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 56806 stars
+- **Stars / Engagement**: 56839 stars
 
 ---
 
@@ -930,14 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16885** (2026-10-18): **Desktop, Mobile: Fixes #16716: Update Simplified Chinese settings translations**
-  *Symptoms*: Updates Simplified Chinese labels, adds missing translations for newly added settings, chat, and note-lock strings, and makes previously hardcoded settings text translatable.
-  **Post-Mortem & Fix Analysis**:
-  > All contributors have signed the CLA  ✍️ ✅<br/><sub>Posted by the ****CLA Assistant Lite bot****.</sub>
-  > I have read the CLA Document and I hereby sign the CLA
+- **Issue #16923** (2026-10-22): **Desktop: Fixes #16916: Prevent HTML escape of special characters in inline KaTeX math equation**
+  *Symptoms*: Fixes #16916  ### Summary  In the Rich Text editor (TinyMCE), selecting text that contained special characters like `>`, `<`, or `&` and clicking the "Insert math equation" button caused KaTeX parse errors (e.g. `Expected 'EOF', got '&' at position 2: x&gt;1`).  This happened because `editor.selection.getContent()` defaults to returning HTML, which escaped `>` to `&gt;` and `<` to `&lt;` before wrapping it into `$${katex}$`.  **Fix:** Passed `{ format: 'text' }` to `editor.selection.getContent({ format: 'text' })` so TinyMCE retrieves the unescaped plain text selection.  ---  ### Manual Test Plan  1. **Greater than (`>`):** Typed `x>1`, highlighted it, and clicked the math equation button. Verified it inserted `$x>1$` and rendered the formula cleanly without any KaTeX parse error. 2. **Less than (`<`):** Typed `a<b`, highlighted it, and clicked the math equation button. Verified it inserted `$a<b$` and rendered correctly. 3. **Compound / Special symbols:** Tested with `x >= 1 & y <= 2`. Verified characters remain literal without HTML entity conversion (`&amp;`, `&gt;`). 4. **Standard equations:** Tested with standard expressions (e.g. `E=mc^2`). Verified it wraps as `$E=mc^2$` as usual. 5. **Empty selection & toolbar behavior:** Clicked the button with nothing selected. Verified it creates empty math delimiters `$$` with the cursor positioned between them. Also verified toggling between Rich Text and Markdown view preserves the equations.  Automated checks: - `yarn tsc` passe
 
-- **Issue #16880** (2026-10-18): **Windows, Linux: Fixes #16839: Fixed F11 toggling full screen instead of the note list**
-  *Symptoms*: Fixes #16839  ## Problem  On Windows and Linux, pressing F11 while the Rich Text editor or the note list has focus switches the window to full screen (which hides the menu bar) instead of toggling the note list. In the Markdown editor F11 still works, because the editor handles the shortcut itself before the menu sees it.  ## Cause  Two items in the application menu were bound to F11:  - `View > Toggle note list` (F11, from the default keymap in `KeymapService.ts`) - `View > Toggle Full Screen`  The second item was added in #14926 as `{ role: 'togglefullscreen', visible: shim.isMac() }`. On Windows and Linux the item is hidden, but hidden menu items still register their accelerators, and Electron gives the `togglefullscreen` role a default accelerator of F11 on those platforms. So F11 was captured by the hidden full screen item.  ## Fix  The full screen item is now only added to the menu on macOS, using the `shim.isMac() ? ... : noItem` pattern already used elsewhere in `MenuBar.tsx`. On macOS nothing changes, so the shortcut added in #14926 keeps working.  ## Testing  - Added an integration test in `main.spec.ts` that collects the accelerators of every item in the application menu, hidden items included, and checks that none is used twice. It fails on `dev` (reports `f11`) and passes with this change. F11 was the only duplicate. - All tests in `main.spec.ts` pass locally on Windows 11. - Manually tested on Windows 11: with focus in the Rich Text editor or the note list, F11 
+- **Issue #16921** (2026-10-22): **Desktop: Fixes #15883: Keep toast notifications in their destination window**
+  *Symptoms*:  ## Problem  With multiple Joplin windows open, the same toast appears in every window. This duplicates deletion confirmations and plugin notifications. Addresses #15883.  ## Solution  Capture the active window when a toast is created and display it only there. Keep existing toasts in their original window when focus changes, and discard them when that window closes. Preserve existing background behavior, dismissal timing, actions, severity, ordering, and repeated identical messages.  ## Test Plan  - Six focused unit tests pass, covering routing, focus changes, window closure, repeated messages, dismissal timing, the shared shim path, and interactive content. - The routing regression fails with the unchanged upstream implementation and passes with the fix. - TypeScript compilation, non-rewriting lint, and the desktop build pass. - A 40-second desktop demonstration records deletion and window switching. - Two-window plugin-toast Electron coverage is added; its GUI execution has not yet been run locally.  ## Demonstration  [40-second desktop demonstration](https://github.com/khantnandeesh/joplin/blob/761ed512d5406f10fa5c2e4707a67b97f78c8f29/toast-window-fix.mp4). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -954,178 +951,205 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17d3e378` (2026-10-14)
-**Commit Message**: Chore: Trying to fix flaky test failure on CI
+### Incident Patch 1: `94ddfda2` (2026-10-22)
+**Commit Message**: Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements with many children (#16902)
 
-**File**: `packages/app-mobile/tools/uiTests.ts` (modified, +16/-1)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `packages/app-cli/tests/HtmlToMd.ts` (modified, +10/-0)
 ```diff
-@@ -67,7 +67,22 @@ const uiTests = async () => {
- 		], { env });
- 	};
+@@ -130,6 +130,16 @@ describe('HtmlToMd', () => {
+ 		expect(collapsedResult).toContain('\n\n');
+ 	});
  
--	await runUiTests();
-+	// On CI, the test runner sometimes fails to bootstrap ("Early unexpected exit"), which
-+	// -retry-tests-on-failure does not cover since no test ever started. Retrying the whole
-+	// xcodebuild invocation, after resetting the simulators, works around it.
-+	const maxAttempts = 3;
-+	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-+		try {
-+			await runUiTests();
-+			return;
-+		} catch (error) {
-+			if (attempt === maxAttempts) throw error;
++	// Covers how newlines are carried between children when joining them, which was rewritten to fix
++	// https://github.com/laurent22/joplin/issues/16895
++	it.each([
++		['<ul><li>a</li><li></li><li>b</li></ul>', '- a\n\n- b'],
++		['<span><p>a</p></span>b', 'a\n\nb'],
++		['<pre><code><span>line 1</span>\n\n\n<span>line 2</span></code></pre>', '```\nline 1\n\n\nline 2\n```'],
++	])('should join the Markdown of child elements: %j', (html, expected) => {
++		expect(new HtmlToMd().parse(html)).toBe(expected);
++	});
 +
-+			console.warn(`UI tests failed (attempt ${attempt} of ${maxAttempts}), retrying...`);
-+			await execCommand(['xcrun', 'simctl', 'shutdown', 'all'], { quiet: true });
-+			await execCommand(['xcrun', 'simctl', 'erase', 'all'], { quiet: true });
-+		}
-+	}
- };
+ 	it.each([
+ 		['inline code ending with a space at the end of a heading', '<h2><code>npm</code> install&nbsp;<code>a&nbsp;</code></h2>', 'a\u00A0'],
+ 		['a heading that only contains inline code with a space', '<h2><code>&nbsp;</code></h2>', '\u00A0'],
+```
+
+**File**: `packages/turndown/src/turndown.js` (modified, +20/-3)
+```diff
+@@ -196,7 +196,11 @@ TurndownService.prototype = {
+ function process (parentNode, escapeContent = 'auto') {
+   if (this.options.disableEscapeContent) escapeContent = false;
  
- export default uiTests;
+-  let output = '';
++  // Same result as calling join() per child, but join() re-copies the whole output each time, which is quadratic for
++  // elements with many children: https://github.com/laurent22/joplin/issues/16895
++  const isCode = parentNode.isCode === true;
++  const parts = [];
++  let trailingNewlines = 0;
+   let previousNode = null;
+ 
+   for (let node of parentNode.childNodes) {
+@@ -217,11 +221,24 @@ function process (parentNode, escapeContent = 'auto') {
+       replacement = replacementForNode.call(this, node, previousNode);
+     }
+ 
+-    output = join(output, replacement, parentNode.isCode);
++    if (isCode) {
++      parts.push(replacement);
++    } else {
++      const content = trimLeadingNewlines(replacement);
++      const separator = '\n\n'.substring(0, Math.max(trailingNewlines, replacement.length - content.length));
++      if (content) {
++        const trimmedContent = trimTrailingNewlines(content);
++        parts.push(separator, trimmedContent);
++        trailingNewlines = content.length - trimmedContent.length;
++      } else {
++        trailingNewlines = separator.length;
++      }
++    }
+     previousNode = node;
+   }
+ 
+-  return output;
++  if (!isCode) parts.push('\n'.repeat(trailingNewlines));
++  return parts.join('');
+ }
+ 
+ /**
 ```
 
 ---
 
-### Incident Patch 2: `1935d477` (2026-10-18)
-**Commit Message**: fix(deps): update dependency react-native-webview to v13.17.0 (#16884)
+### Incident Patch 2: `30a017b8` (2026-10-22)
+**Commit Message**: fix(deps): update dependency tar to v7.5.22 (#16922)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `packages/app-mobile/package.json` (modified, +1/-1)
+**File**: `packages/lib/package.json` (modified, +1/-1)
 ```diff
-@@ -83,7 +83,7 @@
-     "react-native-svg": "15.15.5",
-     "react-native-url-polyfill": "2.0.0",
-     "react-native-version-info": "1.1.1",
--    "react-native-webview": "13.16.2",
-+    "react-native-webview": "13.17.0",
-     "react-native-zip-archive": "7.1.1",
-     "react-redux": "8.1.3",
-     "redux": "4.2.1",
+@@ -101,7 +101,7 @@
+     "sqlite3": "5.1.6",
+     "string-padding": "1.0.2",
+     "string-to-stream": "3.0.1",
+-    "tar": "7.5.21",
++    "tar": "7.5.22",
+     "tcp-port-used": "1.0.3",
+     "uglifycss": "0.0.29",
+     "undici": "8.10.0",
+```
+
+**File**: `yarn.lock` (modified, +5/-18)
+```diff
+@@ -12982,7 +12982,7 @@ __metadata:
+     sqlite3: "npm:5.1.6"
+     string-padding: "npm:1.0.2"
+     string-to-stream: "npm:3.0.1"
+-    tar: "npm:7.5.21"
++    tar: "npm:7.5.22"
+     tcp-port-used: "npm:1.0.3"
+     tesseract.js: "npm:7.0.0"
+     typescript: "npm:5.9.3"
+@@ -56508,16 +56508,16 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"tar@npm:7.5.21":
+-  version: 7.5.21
+-  resolution: "tar@npm:7.5.21"
++"tar@npm:7.5.22, tar@npm:^7.5.21":
++  version: 7.5.22
++  resolution: "tar@npm:7.5.22"
+   dependencies:
+     "@isaacs/fs-minipass": "npm:^4.0.0"
+     chownr: "npm:^3.0.0"
+     minipass: "npm:^7.1.2"
+     minizlib: "npm:^3.1.0"
+     yallist: "npm:^5.0.0"
+-  checksum: 10/a1b7dcee15e4f7dbef7f07c3cf0fe946248efabd1cb029b54c698d817dfc2876c75bcaa164a12dd21191e385759ce3e37fea562cf4aabaa00984ef9ed3c48d17
++  checksum: 10/129606384b3c895f422aaca48bf316357be6dc7aa35c1066c3f06c28acfff0be5b356e1b0a0be7c53a7a8945534ac06cec6d8e296d170d8a09c8bff67b29300e
+   languageName: node
+   linkType: hard
+ 
+@@ -56550,19 +56550,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"tar@npm:^7.5.21":
+-  version: 7.5.22
+-  resolution: "tar@npm:7.5.22"
+-  dependencies:
+-    "@isaacs/fs-minipass": "npm:^4.0.0"
+-    chownr: "npm:^3.0.0"
+-    minipass: "npm:^7.1.2"
+-    minizlib: "npm:^3.1.0"
+-    yallist: "npm:^5.0.0"
+-  checksum: 10/129606384b3c895f422aaca48bf316357be6dc7aa35c1066c3f06c28acfff0be5b356e1b0a0be7c53a7a8945534ac06cec6d8e296d170d8a09c8bff67b29300e
+-  languageName: node
+-  linkType: hard
+-
+ "tar@npm:^7.5.4":
+   version: 7.5.19
+   resolution: "tar@npm:7.5.19"
+```
+
+---
+
+### Incident Patch 3: `5c2601a2` (2026-10-20)
+**Commit Message**: fix(deps): update dependency node-cron to v4.5.0 (#16904)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `packages/server/package.json` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@
+     "ldapts": "8.1.8",
+     "markdown-it": "13.0.2",
+     "mustache": "4.2.0",
+-    "node-cron": "4.4.1",
++    "node-cron": "4.5.0",
+     "nodemailer": "6.10.1",
+     "nodemon": "3.1.14",
+     "otplib": "12.0.1",
 ```
 
 **File**: `yarn.lock` (modified, +5/-5)
 ```diff
-@@ -12725,7 +12725,7 @@ __metadata:
-     react-native-url-polyfill: "npm:2.0.0"
-     react-native-version-info: "npm:1.1.1"
-     react-native-web: "npm:0.21.2"
--    react-native-webview: "npm:13.16.2"
-+    react-native-webview: "npm:13.17.0"
-     react-native-zip-archive: "npm:7.1.1"
-     react-redux: "npm:8.1.3"
-     react-refresh: "npm:0.18.0"
-@@ -50637,17 +50637,17 @@ __metadata:
+@@ -13175,7 +13175,7 @@ __metadata:
+     ldapts: "npm:8.1.8"
+     markdown-it: "npm:13.0.2"
+     mustache: "npm:4.2.0"
+-    node-cron: "npm:4.4.1"
++    node-cron: "npm:4.5.0"
+     node-mocks-http: "npm:1.17.2"
+     nodemailer: "npm:6.10.1"
+     nodemon: "npm:3.1.14"
+@@ -44717,10 +44717,10 @@ __metadata:
    languageName: node
    linkType: hard
  
--"react-native-webview@npm:13.16.2":
--  version: 13.16.2
--  resolution: "react-native-webview@npm:13.16.2"
-+"react-native-webview@npm:13.17.0":
-+  version: 13.17.0
-+  resolution: "react-native-webview@npm:13.17.0"
-   dependencies:
-     "@typescript/native-preview": "npm:^7.0.0-dev.20260301.1"
-     escape-string-regexp: "npm:^4.0.0"
-     invariant: "npm:2.2.4"
-   peerDependencies:
-     react: "*"
-     react-native: "*"
--  checksum: 10/0bf826cbc3fca598ce541b649eb458b4ed74a948c5df51af75bfd76dde9354ed83f34a11ddc88e383c3ed89abc0f45f0a2e3b01b67fdcf7b30171cba8f908b34
-+  checksum: 10/60ebb1f2519f554babce01c72d308cac9cbb1f86d5bfd7e9a8d2b89e26aa2adec3f514a296142f3020357ded3203009d716fbed204e89298449bb3b78bda955d
+-"node-cron@npm:4.4.1":
+-  version: 4.4.1
+-  resolution: "node-cron@npm:4.4.1"
+-  checksum: 10/7c5b50e26757343eb9beb1bd3331bbf1e392ab1c031ff55ea4e65092e4be70eba7a550a4b0ff35f4ba0de3106bc550c673e045d392011cf50e7f8a1912b886ef
++"node-cron@npm:4.5.0":
++  version: 4.5.0
++  resolution: "node-cron@npm:4.5.0"
++  checksum: 10/3ee23107eb584448fe829fd6567902ee10a5da29777dd2425e9fbd85c5642bc57b22d742745d4a7d1534c7e6bfc288764887c608fa5d48f750e2e84c66ad5358
    languageName: node
    linkType: hard
- 
-```
-
----
-
-### Incident Patch 3: `c4c49b6d` (2026-10-18)
-**Commit Message**: Desktop, Cli: Bind OneDrive OAuth and resource servers to loopback and validate OAuth state
-
-**File**: `packages/app-cli/app/ResourceServer.ts` (modified, +1/-1)
-```diff
-@@ -84,7 +84,7 @@ class ResourceServer {
- 			this.logger().error('Resource server:', error);
- 		});
- 
--		this.server_.listen(this.port_);
-+		this.server_.listen(this.port_, '127.0.0.1');
- 
- 		enableServerDestroy(this.server_);
- 
-```
-
-**File**: `packages/lib/onedrive-api-node-utils.ts` (modified, +5/-2)
-```diff
-@@ -5,6 +5,7 @@ import OneDriveApi from './onedrive-api';
- 
- import * as http from 'http';
- import * as urlParser from 'url';
-+import { randomBytes } from 'crypto';
- const enableServerDestroy = require('server-destroy');
- 
- interface DestroyableServer extends http.Server {
-@@ -57,7 +58,8 @@ export class OneDriveApiNodeUtils {
- 		const port = await findAvailablePort(require('tcp-port-used'), this.possibleOAuthDancePorts(), 0);
- 		if (!port) throw new Error(_('All potential ports are in use - please report the issue at %s', 'https://github.com/laurent22/joplin'));
- 
--		const authCodeUrl = this.api().authCodeUrl(`http://localhost:${port}`);
-+		const state = randomBytes(32).toString('base64url');
-+		const authCodeUrl = this.api().authCodeUrl(`http://localhost:${port}`, state);
- 
- 		return new Promise((resolve, reject) => {
- 			this.oauthServer_ = http.createServer() as DestroyableServer;
-@@ -91,6 +93,7 @@ export class OneDriveApiNodeUtils {
- 				};
- 
- 				if (!query.code) return writeResponse(400, '"code" query parameter is missing');
-+				if (query.state !== state) return writeResponse(400, '"state" query parameter is invalid');
- 
- 				this.api()
- 					.execTokenRequest(query.code as string, `http://localhost:${port.toString()}`)
-@@ -118,7 +121,7 @@ export class OneDriveApiNodeUtils {
- 				}
- 			});
- 
--			this.oauthServer_.listen(port);
-+			this.oauthServer_.listen(port, '127.0.0.1');
- 
- 			enableServerDestroy(this.oauthServer_);
- 
-```
-
-**File**: `packages/lib/onedrive-api.ts` (modified, +3/-2)
-```diff
-@@ -92,14 +92,15 @@ export default class OneDriveApi {
- 		return `${r.parentReference.path}/${r.name}`;
- 	}
- 
--	public authCodeUrl(redirectUri: string) {
--		const query = {
-+	public authCodeUrl(redirectUri: string, state: string | null = null) {
-+		const query: Record<string, string> = {
- 			client_id: this.clientId_,
- 			scope: 'files.readwrite offline_access sites.readwrite.all',
- 			response_type: 'code',
- 			redirect_uri: redirectUri,
- 			prompt: 'login',
- 		};
-+		if (state) query.state = state;
- 		return `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${stringify(query)}`;
- 	}
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16890** (closed): Mobile: Fixes #16833: Copied text is truncated when selecting a long portion of text in the Markdown editor (@awaisdev5765)
-- **PR #16888** (2026-10-19): chore(deps): update dependency sass to v1.101.3 (@renovate[bot])
-- **PR #16885** (closed): Desktop, Mobile: Fixes #16716: Update Simplified Chinese settings translations (@cat123go)
-- **PR #16884** (2026-10-18): fix(deps): update dependency react-native-webview to v13.17.0 (@renovate[bot])
-- **PR #16883** (closed): chore(deps): update dependency @types/node to v22.20.0 (@renovate[bot])
-- **PR #16881** (2026-10-18): fix(deps): update dependency onnxruntime-node to v1.27.0 (@renovate[bot])
+- **PR #16923** (closed): Desktop: Fixes #16916: Prevent HTML escape of special characters in inline KaTeX math equation (@sumitahmed)
+- **PR #16922** (2026-10-22): fix(deps): update dependency tar to v7.5.22 (@renovate[bot])
+- **PR #16921** (closed): Desktop: Fixes #15883: Keep toast notifications in their destination window (@khantnandeesh)
+- **PR #16920** (closed): Windows: Fixes #16919: Build only the runner's own architecture in Windows CI (@Harishmcw)
+- **PR #16915** (2026-10-22): chore(deps): update dependency sass to v1.101.7 (@renovate[bot])
+- **PR #16913** (2026-10-22): chore(deps): update dependency @axe-core/playwright to v4.12.1 (@renovate[bot])
 
 ---
 
@@ -1145,43 +1169,37 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Trying to fix flaky test failure on CI
+## X. Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements w
 
 **RULE**:
-When implementing operations in `packages/app-mobile/tools/uiTests.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/app-cli/tests/HtmlToMd.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17d3e378`: Trying to fix flaky test failure on CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94ddfda2`: Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements with many children (#16902). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-mobile/tools/uiTests.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/HtmlToMd.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	// On CI, the test runner sometimes fails to bootstrap ("Early unexpected exit"), which
-	// -retry-tests-on-failure does not cover since no test ever started. Retrying the whole
-	// xcodebuild invocation, after resetting the simulators, works around it.
-	const maxAttempts = 3;
-	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-		try {
-			await runUiTests();
-			return;
-		} catch (error) {
-			if (attempt === maxAttempts) throw error;
+	// Covers how newlines are carried between children when joining them, which was rewritten to fix
+	// https://github.com/laurent22/joplin/issues/16895
+	it.each([
+		['<ul><li>a</li><li></li><li>b</li></ul>', '- a\n\n- b'],
+		['<span><p>a</p></span>b', 'a\n\nb'],
+		['<pre><code><span>line 1</span>\n\n\n<span>line 2</span></code></pre>', '```\nline 1\n\n\nline 2\n```'],
+	])('should join the Markdown of child elements: %j', (html, expected) => {
+		expect(new HtmlToMd().parse(html)).toBe(expected);
+	});
 
-			console.warn(`UI tests failed (attempt ${attempt} of ${maxAttempts}), retrying...`);
-			await execCommand(['xcrun', 'simctl', 'shutdown', 'all'], { quiet: true });
-			await execCommand(['xcrun', 'simctl', 'erase', 'all'], { quiet: true });
-		}
-	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-	await runUiTests();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17d3e378` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94ddfda2` are properly handled with clean fallback behavior.

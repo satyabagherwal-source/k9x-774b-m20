@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "2ed18896",
+    "sourceVersion": "9376c568",
     "license": "Apache-2.0",
-    "contentHash": "2d05eea0d5cf6abaacf2aa4d819c0398b4a118d0651987addd2ad9f56f2a0910",
-    "lastHarvestedAt": "2026-10-18T21:14:05.434Z",
+    "contentHash": "33b4a2ba4b0c58bbcc5e2ddb133db2291f22854634af8bc70aed77cfdebfcc71",
+    "lastHarvestedAt": "2026-10-23T06:30:19.409Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "467f7ac3",
+    "sourceVersion": "a976df38",
     "license": "MIT",
-    "contentHash": "92b0da01be530b57994d5c512d90f6ca6366eedde09ba4e419d8398dcb671e2c",
-    "lastHarvestedAt": "2026-10-20T02:21:53.647Z",
+    "contentHash": "d78d0fd7472f799d996775ad4fd1c85fa4685994b716931195f7f48801e04f7d",
+    "lastHarvestedAt": "2026-10-23T06:30:10.617Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "cf57e593",
+    "sourceVersion": "280954e5",
     "license": "NOASSERTION",
-    "contentHash": "9e776325450f983f7a4dd1cf3b5d7c66b106d64fe7ad88215e1b2942a6737f8f",
-    "lastHarvestedAt": "2026-10-20T04:42:34.585Z",
+    "contentHash": "48eff3e3f8470357f6d69255b39357f75bb0756f90859596f66e3c0ccb74af66",
+    "lastHarvestedAt": "2026-10-23T06:30:11.968Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {

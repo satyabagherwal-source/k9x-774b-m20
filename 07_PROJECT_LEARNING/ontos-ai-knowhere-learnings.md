@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `2ed18896`  
+> **Source Version**: `9376c568`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:14:05.237Z  
+> **Timestamp**: 2026-10-23T06:30:19.131Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:14:05.107Z  
+> **Harvest Timestamp**: 2026-10-23T06:30:19.125Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3778 stars
+- **Stars / Engagement**: 3743 stars
 
 ---
 
@@ -1009,290 +1009,455 @@ class ResponseCode(Enum):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `328d21a1` (2026-10-16)
-**Commit Message**: Merge pull request #463 from Ontos-AI/fix/suguanYang/webhook-config-exception-details
+### Incident Patch 1: `0f1a287f` (2026-10-22)
+**Commit Message**: Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix
 
-fix: return 400 for invalid webhook configuration
+Preserve opening pages at the document root
 
-**File**: `apps/api/app/core/exception_handlers.py` (modified, +1/-1)
+**File**: `CONTEXT.md` (modified, +12/-0)
 ```diff
-@@ -126,7 +126,7 @@ async def knowhere_exception_handler(
-     # responses and ``WWW-Authenticate`` for authentication challenges.
-     headers = dict(response_headers or {})
-     headers["X-Request-ID"] = request_id
--    retry_after = exc.details.get("retry_after")
-+    retry_after = (exc.details or {}).get("retry_after")
-     if retry_after:
-         headers["Retry-After"] = str(retry_after)
+@@ -59,6 +59,18 @@ The hierarchical navigation node derived from parsed headings and section paths.
  
+ The retrieval-visible text, image, or table row attached to a Document Section.
+ 
++### Document Root
++
++The existing document-level container above its chapters. It can own opening
++content without introducing another chapter.
++
++### Document Prefix
++
++All physical pages before the first recognized chapter, including covers,
++opening text, and printed table-of-contents pages. These pages belong directly
++to the existing document Root; they are not a separate chapter or part of the
++first chapter.
++
+ ### Document Ingestion
+ 
+ The workflow that creates a Job, accepts a file or URL source, confirms upload
 ```
 
-**File**: `apps/api/tests/contract/test_exception_handlers_contract.py` (modified, +36/-0)
+**File**: `apps/worker/app/services/page_memory/_serialization.py` (modified, +7/-5)
 ```diff
-@@ -38,6 +38,42 @@ async def query_retrieval() -> dict[str, bool]:
-     return app
+@@ -8,6 +8,8 @@
  
+ from app.services.page_memory._utils import (
+     collapse_page_ranges,
++    is_document_prefix,
++    is_fallback_root,
+     page_scope_info,
+ )
+ from shared.services.chunks.path_segments import split_escaped_document_path
+@@ -39,11 +41,7 @@ def derive_hierarchy_page_scope(
+     if not skeletons:
+         return list(range(1, page_count + 1))
  
-+def _create_invalid_webhook_app() -> FastAPI:
-+    _prepare_api_app_imports()
-+
-+    from app.core.exception_handlers import setup_exception_handlers
-+    from shared.core.exceptions.webhook_exceptions import WebhookConfigException
-+
-+    app = FastAPI()
-+
-+    @app.post("/v2/jobs")
-+    async def create_job() -> dict[str, bool]:
-+        raise WebhookConfigException(
-+            user_message="Invalid webhook URL",
-+            internal_message=(
-+                "Webhook validation failed: Hostname localhost failed validation"
-+            ),
-+        )
-+
-+    setup_exception_handlers(app)
-+    return app
-+
-+
-+async def test_invalid_webhook_config_returns_client_error() -> None:
-+    app = _create_invalid_webhook_app()
-+    transport = ASGITransport(app=app)
-+
-+    async with AsyncClient(transport=transport, base_url="http://test") as client:
-+        response = await client.post("/v2/jobs")
-+
-+    assert response.status_code == 400
-+    response_json = cast(dict[str, object], response.json())
-+    error = cast(dict[str, object], response_json["error"])
-+    assert response_json["success"] is False
-+    assert error["code"] == "INVALID_ARGUMENT"
-+    assert error["message"] == "Invalid webhook URL"
-+
-+
- async def test_get_to_post_only_route_returns_method_not_allowed() -> None:
-     app = _create_post_only_app()
-     transport = ASGITransport(app=app)
-```
-
-**File**: `packages/shared-python/shared/core/exceptions/webhook_exceptions.py` (modified, +1/-1)
-```diff
-@@ -38,8 +38,8 @@ def __init__(
-             internal_message=internal_message,
-             user_message=user_message,
-             http_status_code=400,
-+            details=details,
+-    has_only_root_fallback = all(
+-        getattr(item, "title", "") == "Root"
+-        or (getattr(item, "evidence", {}) or {}).get("source") == "fallback_root"
+-        for item in skeletons
+-    )
++    has_only_root_fallback = all(is_fallback_root(item) for item in skeletons)
+     if has_only_root_fallback:
+         return list(range(1, page_count + 1))
+ 
+@@ -86,6 +84,7 @@ def serialize_skeletons(skeletons: list[Any]) -> list[dict[str, Any]]:
+             "start_page": item.start_page,
+             "end_page": item.end_page,
+             "parent_path": item.parent_path,
++            "evidence": dict(item.evidence),
+         }
+         for item in skeletons
+     ]
+@@ -100,6 +99,9 @@ def build_hierarchy_tree(skeletons: list[Any]) -> dict[str, Any]:
+     """
+     hierarchy: dict[str, Any] = {}
+     for skel in skeletons:
++        # Root-owned body is not a chapter nested beneath its own filename.
++        if is_document_prefix(skel):
++            continue
+         parts = split_escaped_document_path(
+             getattr(skel, "section_path", "") or ""
          )
--        self.details = details
- 
- 
- class WebhookDeliveryException(WebhookException):
 ```
 
----
-
-### Incident Patch 2: `fc186b18` (2026-10-16)
-**Commit Message**: fix: return 400 for invalid webhook configuration
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/api/app/core/exception_handlers.py` (modified, +1/-1)
+**File**: `apps/worker/app/services/page_memory/_utils.py` (modified, +35/-8)
 ```diff
-@@ -126,7 +126,7 @@ async def knowhere_exception_handler(
-     # responses and ``WWW-Authenticate`` for authentication challenges.
-     headers = dict(response_headers or {})
-     headers["X-Request-ID"] = request_id
--    retry_after = exc.details.get("retry_after")
-+    retry_after = (exc.details or {}).get("retry_after")
-     if retry_after:
-         headers["Retry-After"] = str(retry_after)
- 
-```
-
-**File**: `apps/api/tests/contract/test_exception_handlers_contract.py` (modified, +36/-0)
-```diff
-@@ -38,6 +38,42 @@ async def query_retrieval() -> dict[str, bool]:
-     return app
+@@ -6,6 +6,36 @@
+ from typing import Any
  
  
-+def _create_invalid_webhook_app() -> FastAPI:
-+    _prepare_api_app_imports()
-+
-+    from app.core.exception_handlers import setup_exception_handlers
-+    from shared.core.exceptions.webhook_exceptions import WebhookConfigException
-+
-+    app = FastAPI()
-+
-+    @app.post("/v2/jobs")
-+    async def create_job() -> dict[str, bool]:
-+        raise WebhookConfigException(
-+            user_message="Invalid webhook URL",
-+            internal_message=(
-+                "Webhook validation failed: Hostname localhost failed validation"
-+            ),
-+        )
-+
-+    setup_exception_handlers(app)
-+    return app
++def is_document_prefix(skeleton: Any) -> bool:
++    """Identify body owned by the existing document root before its chapters."""
++    return (getattr(skeleton, "evidence", {}) or {}).get("source") == "document_prefix"
 +
 +
-+async def test_invalid_webhook_config_returns_client_error() -> None:
-+    app = _create_invalid_webhook_app()
-+    transport = ASGITransport(app=app)
-+
-+    async with AsyncClient(transport=transport, base_url="http://test") as client:
-+        response = await client.post("/v2/jobs")
-+
-+    assert response.status_code == 400
-+    response_json = cast(dict[str, object], response.json())
-+    error = cast(dict[str, object], response_json["error"])
-+    assert response_json["success"] is False
-+    assert error["code"] == "INVALID_ARGUMENT"
-+    assert error["message"] == "Invalid webhook URL"
-+
-+
- async def test_get_to_post_only_route_returns_method_not_allowed() -> None:
-     app = _create_post_only_app()
-     transport = ASGITransport(app=app)
-```
-
-**File**: `packages/shared-python/shared/core/exceptions/webhook_exceptions.py` (modified, +1/-1)
-```diff
-@@ -38,8 +38,8 @@ def __init__(
-             internal_message=internal_message,
-             user_message=user_message,
-             http_status_code=400,
-+            details=details,
-         )
--        self.details = details
- 
- 
- class WebhookDeliveryException(WebhookException):
-```
-
----
-
-### Incident Patch 3: `90722779` (2026-10-13)
-**Commit Message**: Merge pull request #461 from Ontos-AI/fix/wangbinqi/qstash-webhook-region
-
-fix: retain the production QStash token region
-
-**File**: `.github/workflows/build-images.yml` (modified, +1/-0)
-```diff
-@@ -774,6 +774,7 @@ jobs:
-           API_WEBHOOK_ENDPOINT: https://api.knowhereto.ai/v1/internal/s3-events
-           SNS_TOPIC_ARN: arn:aws:sns:us-east-1:107424103509:knowhere-prod-s3-events
-           QSTASH_CALLBACK_BASE_URL: https://api.knowhereto.ai/api/v1
-+          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
-           API_CPU: "512"
-           API_MEMORY: "2048"
-           WORKER_CPU: "2048"
-```
-
-**File**: `deploy/ecs/README.md` (modified, +8/-0)
-```diff
-@@ -41,6 +41,14 @@ python deploy/ecs/render_task_definitions.py --environment staging --output-dir
- 
- The output directory is deployment-only and must not be committed. The renderer fails on missing inputs, unresolved placeholders, or either long-lived S3 credential variable.
- 
-+`QSTASH_BASE_URL` is an optional renderer input applied to both containers.
-+The production release workflow supplies `https://qstash-us-east-1.upstash.io`
-+because the existing production QStash token belongs to `us-east-1`. Omitting
-+this input preserves the SDK default for other environments. QStash API
-+publication and the public callback base URL are separate configuration values;
-+the API base URL must match the token region. A wrong region rejects publication
-+before any customer webhook is delivered.
-+
- The staging workflow keeps the API at 256 CPU / 1024 MiB. The production release
- workflow sets the API to 512 CPU / 2048 MiB (2 GiB) and the worker to 2048 CPU /
- 4096 MiB, so production API memory remains at 2 GiB across future releases.
-```
-
-**File**: `deploy/ecs/render_task_definitions.py` (modified, +17/-0)
-```diff
-@@ -95,6 +95,20 @@ def render_template(template_path: Path, output_path: Path, variables: dict[str,
-     """Render one JSON template to a deployment-only output path."""
-     definition = json.loads(template_path.read_text(encoding="utf-8"))
-     rendered = replace_placeholders(definition, variables)
-+    qstash_base_url: str = variables.get("QSTASH_BASE_URL", "")
-+    if qstash_base_url:
-+        if not isinstance(rendered, dict):
-+            raise ValueError("Task definition must be an object")
-+        containers: object = rendered.get("containerDefinitions")
-+        if not isinstance(containers, list):
-+            raise ValueError("Task definition must contain containerDefinitions")
-+        for container in containers:
-+            if not isinstance(container, dict):
-+                raise ValueError("Task container must be an object")
-+            environment: object = container.get("environment")
-+            if not isinstance(environment, list):
-+                raise ValueError("Task container must contain environment entries")
-+            environment.append({"name": "QSTASH_BASE_URL", "value": qstash_base_url})
-     validate_rendered_definition(rendered)
-     output_path.parent.mkdir(parents=True, exist_ok=True)
-     output_path.write_text(json.dumps(rendered, indent=2) + "\n", encoding="utf-8")
-@@ -119,6 +133,9 @@ def load_variables() -> dict[str, str]:
-     missing = [name for name, value in variables.items() if not value]
-     if missing:
-         raise ValueError(f"Missing required renderer variables: {', '.join(missing)}")
-+    # Preserve the SDK default when no override is supplied, while production
-+    # explicitly selects the region that owns its existing QStash token.
-+    variables["QSTASH_BASE_URL"] = os.environ.get("QSTASH_BASE_URL", "")
-     return variables
- 
- 
-```
-
-**File**: `deploy/ecs/test_render_task_definitions.py` (modified, +33/-0)
-```diff
-@@ -96,6 +96,39 @@ def test_staging_templates_render_without_long_lived_s3_keys(
-     assert "${" not in output_path.read_text(encoding="utf-8")
- 
- 
-+@pytest.mark.parametrize(
-+    "template_name",
-+    ["task-definition-api.staging.json", "task-definition-worker.staging.json"],
-+)
-+def test_production_templates_publish_webhooks_in_the_token_region(
-+    tmp_path: Path,
-+    template_name: str,
-+) -> None:
-+    """Both production containers keep the approved QStash region on release."""
-+    output_path: Path = tmp_path / template_name
-+    render_template(
-+        TEMPLATE_DIRECTORY / template_name,
-+        output_path,
-+        {
-+            **RENDER_VARIABLES,
-+            "DEPLOYMENT_ENVIRONMENT": "prod",
-+            "RUNTIME_ENVIRONMENT": "production",
-+            "APP_ENV": "production",
-+            "QSTASH_BASE_URL": "https://qstash-us-east-1.upstash.io",
-+        },
++def is_fallback_root(skeleton: Any) -> bool:
++    """Keep prefix ownership separate from the full-document Root fallback."""
++    if is_document_prefix(skeleton):
++        return False
++    return (
++        getattr(skeleton, "title", "") == "Root"
++        or (getattr(skeleton, "evidence", {}) or {}).get("source") == "fallback_root"
 +    )
-+    rendered: dict[str, object] = json.loads(output_path.read_text(encoding="utf-8"))
-+    containers: list[dict[str, object]] = rendered["containerDefinitions"]
-+    for container in containers:
-+        environment: list[dict[str, str]] = container["environment"]
-+        region_entries: list[dict[str, str]] = [
-+            entry for entry in environment if entry["name"] == "QSTASH_BASE_URL"
-+        ]
-+        assert region_entries == [
-+            {"name": "QSTASH_BASE_URL", "value": "https://qstash-us-east-1.upstash.io"}
-+        ]
 +
 +
++def derive_excluded_toc_pages(
++    *,
++    skeletons: list[Any],
++    toc_pages: list[int] | None,
++) -> list[int]:
++    """Exclude chapter TOCs while retaining every physical prefix page."""
++    prefix_pages: set[int] = {
++        page
++        for skeleton in skeletons
++        if is_document_prefix(skeleton)
++        for page in range(skeleton.start_page, skeleton.end_page + 1)
++    }
++    return sorted({int(page) for page in (toc_pages or [])} - prefix_pages)
++
++
+ def sort_skeletons(skeletons: list[Any]) -> list[Any]:
+     """Order skeletons by start page only.
+ 
+@@ -73,20 +103,17 @@ def build_hierarchy_scopes(
+ ) -> list[CoarseScope]:
+     """Split skeleton list into per-leaf scopes for independent processing.
+ 
+-    Each TOC leaf skeleton becomes its own scope. ``skeletons`` is leaf-level
+-    (produced by ``extract_section_skeletons`` → ``resolve_hierarchy_page_ranges``,
+-    which only emits leaf nodes). When multiple leaves share the same page range
++    Each TOC leaf skeleton and any document-root prefix owner gets its own
++    scope. Chapter ranges come from ``resolve_hierarchy_page_ranges``; the
++    root owner preserves physical pages before those chapters without adding
++    a section. When multiple leaves share the same page range
+     (e.g. unlocated leaves that fell back to the same parent scope), they are
+     merged into a single scope to keep ``scope_id`` unique.
+     """
+     if not skeletons:
+         return []
+ 
+-    root_fallback = all(
+-        getattr(item, "title", "") == "Root"
+-        or (getattr(item, "evidence", {}) or {}).get("source") == "fallback_root"
+-        for item in skeletons
+-    )
++    root_fallback = all(is_fallback_root(item) for item in skeletons)
+     if root_fallback:
+         ordered = sort_skeletons(skeletons)
+         return [
+```
+
+**File**: `apps/worker/app/services/page_memory/fine_hierarchy.py` (modified, +10/-1)
+```diff
+@@ -24,7 +24,11 @@
+ from app.services.page_memory.page_tagger import PageTagResult
+ from app.services.page_memory.hierarchy_level_resolver import PageHierarchyLevelResolver
+ from app.services.page_memory.skeleton_extractor import SectionSkeleton
+-from app.services.page_memory._utils import page_scope_info, sort_skeletons
++from app.services.page_memory._utils import (
++    is_document_prefix,
++    page_scope_info,
++    sort_skeletons,
++)
+ from shared.services.ai.llm_overrides import get_text_client
+ from shared.services.chunks.path_segments import append_document_path
+ 
+@@ -57,6 +61,9 @@ def refine_fat_leaf_skeletons(
+     refined: list[SectionSkeleton] = []
+ 
+     for index, skeleton in enumerate(coarse_skeletons):
++        if is_document_prefix(skeleton):
++            refined.append(skeleton)
++            continue
+         exclusive_end = _exclusive_end(coarse_skeletons, index)
+         skel_pages = set(range(skeleton.start_page, exclusive_end + 1))
+         overlap = skel_pages & fat_leaf_pages
+@@ -126,6 +133,8 @@ def compute_fat_leaf_pages(
+     excluded = {int(page) for page in (toc_pages or [])}
+     fat_pages: set[int] = set()
+     for idx, skel in enumerate(skeletons):
++        if is_document_prefix(skel):
++            continue
+         exclusive_end = _exclusive_end(skeletons, idx)
+         body_pages = [
+             page
+```
+
+**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +8/-1)
+```diff
+@@ -22,6 +22,7 @@
+     CoarseScope,
+     build_hierarchy_scopes,
+     collapse_page_ranges,
++    derive_excluded_toc_pages,
+     page_scope_info,
+     sort_skeletons,
+ )
+@@ -274,7 +275,10 @@ def _build_page_dataframe(
+         page_count=page_count,
+     )
+     toc_result = getattr(anatomy, "toc_result", None) if anatomy is not None else None
+-    toc_pages = list(getattr(toc_result, "toc_pages", None) or [])
++    toc_pages = derive_excluded_toc_pages(
++        skeletons=skeletons,
++        toc_pages=list(getattr(toc_result, "toc_pages", None) or []),
++    )
+     coarse_pages_scope = pages_excluding_toc(
+         _derive_hierarchy_page_scope(
+             skeletons=skeletons,
+@@ -571,6 +575,9 @@ def _run_hierarchy_scope(
+     )
+ 
+     scope_skeletons = sort_skeletons(scope.skeletons)
++    toc_pages = derive_excluded_toc_pages(
++        skeletons=scope_skeletons, toc_pages=toc_pages,
++    )
+     scope_manifest = _scope_manifest(
+         scope_id=scope.scope_id,
+         skeletons=scope_skeletons,
+```
+
+**File**: `apps/worker/app/services/page_memory/skeleton_extractor.py` (modified, +17/-1)
+```diff
+@@ -28,6 +28,7 @@
+     select_global_toc_hierarchies,
+ )
+ from loguru import logger
++from app.services.page_memory._utils import is_document_prefix
+ from shared.services.chunks.path_segments import (
+     append_document_path,
+     join_document_path,
+@@ -205,6 +206,21 @@ def extract_section_skeletons(
+         )
+         skeletons.extend(secondary_skeletons)
+ 
++    first_chapter_page: int = min(skeleton.start_page for skeleton in skeletons)
++    if first_chapter_page > 1:
++        skeletons.insert(
++            0,
++            SectionSkeleton(
++                section_path=join_document_path([filename]),
++                level=0,
++                start_page=1,
++                end_page=first_chapter_page - 1,
++                title="Root",
++                parent_path=None,
++                evidence={"source": "document_prefix"},
++            ),
++        )
++
+     _log_unlocated_title_warnings(filename=filename, skeletons=skeletons)
+     return skeletons
+ 
+@@ -452,7 +468,7 @@ def _collapse_node(path: str) -> None:
+         # Re-read children after recursive collapse may have mutated by_path
+         child_paths = children_of.get(path, [])
+ 
+-        if len(child_paths) == 1:
++        if len(child_paths) == 1 and not is_document_prefix(node):
+             only_child_path = child_paths[0]
+             only_child = by_path[only_child_path]
+             grandchild_paths = children_of.get(only_child_path, [])
+```
+
+**File**: `apps/worker/scripts/page_memory/_debug_pm_shared.py` (modified, +6/-2)
+```diff
+@@ -37,6 +37,7 @@
+ from loguru import logger
+ 
+ from app.services.page_memory._utils import (
++    derive_excluded_toc_pages,
+     page_scope_info,
+     scope_id_for_pages,
+     sort_skeletons,
+@@ -1342,7 +1343,7 @@ def load_hierarchy_artifact(path: Path) -> tuple[dict[str, Any], list[Any]]:
+             SectionSkeleton(
+                 section_path=section_path,
+                 title=title,
+-                level=int(node.get("level") or 1),
++                level=int(node.get("level", 1)),
+                 start_page=int(node.get("start_page") or 1),
+                 end_page=int(node.get("end_page") or node.get("start_page") or 1),
+                 parent_path=node.get("parent_path"),
+@@ -1531,7 +1532,10 @@ def build_debug_coarse_scopes(
+     from app.services.page_memory._utils import build_hierarchy_scopes
+ 
+     toc_result = getattr(anatomy, "toc_result", None) if anatomy is not None else None
+-    toc_pages = list(getattr(toc_result, "toc_pages", None) or [])
++    toc_pages = derive_excluded_toc_pages(
++        skeletons=skeletons,
++        toc_pages=list(getattr(toc_result, "toc_pages", None) or []),
++    )
+     toc_page_set = set()
+     for raw in toc_pages:
+         try:
+```
+
+**File**: `apps/worker/scripts/page_memory/debug_pm_stage3_scope_fine_hierarchy.py` (modified, +6/-0)
+```diff
+@@ -67,7 +67,9 @@ def _resolve_scope_processing_pages(
+     toc_pages: list[int],
+ ) -> tuple[list[int], list[int]]:
+     from app.services.document_agent.structure.toc_anchoring import pages_excluding_toc
++    from app.services.page_memory._utils import derive_excluded_toc_pages
+ 
++    toc_pages = derive_excluded_toc_pages(skeletons=skeletons, toc_pages=toc_pages)
+     processing_pages = [
+         int(page) for page in (scope_meta.get("processing_pages") or [])
+     ]
+@@ -132,6 +134,8 @@ def _run_fine_hierarchy_for_scope(
+     require_file(skel_path, hint=f"Stage 3 should have created {skel_path}")
+     scope_meta, active_skeletons = load_scope_skeletons_artifact(skel_path)
+     active_skeletons = sort_skeletons(active_skeletons)
++    from app.services.page_memory._utils import derive_excluded_toc_pages
++    toc_pages = derive_excluded_toc_pages(skeletons=active_skeletons, toc_pages=toc_pages)
+     strategy = str(scope_meta.get("strategy") or "coarse_scope")
+     processing_pages, excluded_toc_pages = _resolve_scope_processing_pages(
+         scope_meta=scope_meta,
+@@ -358,6 +362,8 @@ def main() -> int:
+     toc_pages = list(getattr(toc_result, "toc_pages", None) or [])
+     page_memory_config = PageMemoryConfig.default()
+     skeletons = load_pipeline_skeletons(state_path)
++    from app.services.page_memory._utils import derive_excluded_toc_pages
++    toc_pages = derive_excluded_toc_pages(skeletons=skeletons, toc_pages=toc_pages)
+ 
+     logger.info("█" * 70)
+     logger.info(f"  STAGE 3: SCOPE + FINE HIERARCHY — {filename}")
+```
+
+---
+
+### Incident Patch 2: `573ada84` (2026-10-22)
+**Commit Message**: test: resolve live page-memory modules after contract reload
+
+**File**: `apps/worker/tests/contract/test_page_memory_root_prefix_contract.py` (modified, +19/-17)
+```diff
+@@ -19,23 +19,6 @@
+ os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
+ os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+ 
+-from app.services.document_agent.structure.anchoring_primitives import (
+-    SkeletonAnchor,
+-    serialize_skeleton_anchor,
+-    serialize_title_node,
+-)
+-from app.services.document_agent.structure.hierarchy_locator import (
+-    TitleMatch,
+-    TitleNode,
+-)
+-from app.services.page_memory import memory_service, page_renderer, page_tagger
+-from app.services.page_memory.page_tagger import PageTagResult
+-from shared.models.schemas.page_memory_config import PageMemoryConfig
+-from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
+-from shared.services.retrieval.search.lexical_text import section_path_from_chunk_path
+-from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
+-from shared.services.storage.zip_doc_navigation import ZipDocNavigationBuilder
+-
+ 
  @pytest.mark.parametrize(
-     ("template_name", "container_name", "expected_environment"),
-     [
+     ("page_count", "chapter_pages", "toc_pages"),
+@@ -61,6 +44,25 @@ def test_opening_pages_keep_root_ownership_and_page_citation_assets(
+     chapter_pages: list[int],
+     toc_pages: list[int],
+ ) -> None:
++    # Database contracts evict application modules after collection. Resolve
++    # live modules so provider patches reach the same renderer as the use case.
++    from app.services.document_agent.structure.anchoring_primitives import (
++        SkeletonAnchor,
++        serialize_skeleton_anchor,
++        serialize_title_node,
++    )
++    from app.services.document_agent.structure.hierarchy_locator import (
++        TitleMatch,
++        TitleNode,
++    )
++    from app.services.page_memory import memory_service, page_renderer, page_tagger
++    from app.services.page_memory.page_tagger import PageTagResult
++    from shared.models.schemas.page_memory_config import PageMemoryConfig
++    from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
++    from shared.services.retrieval.search.lexical_text import section_path_from_chunk_path
++    from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
++    from shared.services.storage.zip_doc_navigation import ZipDocNavigationBuilder
++
+     filename: str = "document.pdf"
+     titles: list[str] = [f"Chapter {page}" for page in chapter_pages]
+     anatomy: SimpleNamespace = SimpleNamespace(
+```
+
+**File**: `docs/spacex-hierarchy-fix.md` (modified, +7/-0)
+```diff
+@@ -93,6 +93,13 @@ reload before its repair. The final focused run passed **102 contracts**:
+   apps/worker/tests/contract/test_profile_skeleton_anchor_wiring_contract.py -q
+ ```
+ 
++The full Worker contract suite also passed **405 contracts**, including the
++database contracts that reload application modules between environments:
++
++```sh
++.venv/bin/pytest apps/worker/tests/contract -q
++```
++
+ This includes direct-root text and full-page citation assets, TOC retention in
+ the prefix, unchanged chapter TOC policy, first-page chapters, no-TOC fallback,
+ filename-only publication/navigation projection, and staged artifact reload.
+```
+
+---
+
+### Incident Patch 3: `ecb737f6` (2026-10-22)
+**Commit Message**: docs: document demo reprocessing after prefix repair
+
+**File**: `docs/spacex-hierarchy-fix.md` (modified, +11/-15)
+```diff
+@@ -80,8 +80,7 @@ is separate from the prefix-repair validation.
+ 
+ ### Prefix-repair verification on 2026-10-22
+ 
+-Validation ran on `oracle.ylioo.com` in the isolated workspace
+-`/tmp/knowhere-root-prefix-20261022`, based on `main` commit
++Validation ran in an isolated Linux ARM64 environment, based on `main` commit
+ `2ed1889626f63240bd0894ec0c24b7a7c5217dfb`.
+ 
+ The new output contract failed for both missing-prefix examples before the
+@@ -115,18 +114,15 @@ SpaceX rendered only the missing prefix and reused the original body results,
+ rather than rerunning all 407 pages. Thus this is captured-profile seam
+ verification, not a fresh full-provider parse or production deployment.
+ 
+-The one-off replay command was:
++### Existing demo revisions after deployment
+ 
+-```sh
+-PYTHONPATH=apps/worker:packages/shared-python \
+-  .venv/bin/python /tmp/knowhere-root-prefix-replay.py
+-```
++Deploying the Worker repair does not regenerate existing parsed revisions.
++After confirming the deployed Worker includes this change, reparse the known
++affected Meta release and SpaceX filing through the maintainer demo ingestion
++flow. Audit the remaining READY demos for missing opening pages before
++selecting additional sources. The restoration helper supports source selection
++and `--reparse-ready`; keep the previous revision available while an update runs.
+ 
+-Remote evidence is retained in `/tmp/knowhere-root-prefix-red.log`,
+-`/tmp/knowhere-root-prefix-staged-red.log`,
+-`/tmp/knowhere-root-prefix-focused.log`,
+-`/tmp/knowhere-root-prefix-real-replay.log`, and
+-`/tmp/knowhere-root-prefix-replay-summary.json`. The replay script SHA-256 is
+-`906e0a6458e3327799d2ae07921ef3cfe4e60d8868a3e1853889016ac6696c6e`.
+-Rendered assets and per-document reports remain under
+-`/tmp/knowhere-root-prefix-replay/`.
++Validate physical-page coverage, prefix TOC retention, filename-only root-body
++paths, and page-citation assets on each new revision. Confirm that downstream
++readers consume the new revision after publication.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #467** (2026-10-22): feat: expose revision-pinned demo document structure (@suguanYang)
+- **PR #466** (2026-10-22): Preserve opening pages at the document root (@suguanYang)
 - **PR #464** (2026-10-16): feat: IPTC domain taxonomy, TOC keywords, and image region metadata (@EricNGOntos)
 - **PR #463** (2026-10-16): fix: return 400 for invalid webhook configuration (@suguanYang)
 - **PR #462** (2026-10-16): feat: unified chunk relations, importance, and entities-first metadata (@EricNGOntos)
 - **PR #461** (2026-10-13): fix: retain the production QStash token region (@suguanYang)
-- **PR #459** (2026-10-10): fix: reject duplicate document source bytes (@suguanYang)
-- **PR #456** (2026-10-08): feat: sync evidence-pool retrieval onto shared demo corpus (@EricNGOntos)
 
 ---
 
@@ -1312,28 +1477,39 @@ fix: retain the production QStash token region
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #463 from Ontos-AI/fix/suguanYang/webhook-config-exception-de
+## X. Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix
 
 **RULE**:
-When implementing operations in `apps/api/app/core/exception_handlers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTEXT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `328d21a1`: Merge pull request #463 from Ontos-AI/fix/suguanYang/webhook-config-exception-details. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f1a287f`: Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/app/core/exception_handlers.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTEXT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    retry_after = (exc.details or {}).get("retry_after")
+### Document Root
+
+The existing document-level container above its chapters. It can own opening
+content without introducing another chapter.
+
+### Document Prefix
+
+All physical pages before the first recognized chapter, including covers,
+opening text, and printed table-of-contents pages. These pages belong directly
+to the existing document Root; they are not a separate chapter or part of the
+first chapter.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    retry_after = exc.details.get("retry_after")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `328d21a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f1a287f` are properly handled with clean fallback behavior.

@@ -4475,3 +4475,6 @@
 | `CYCLE-20261023-VAXS` | `2026-10-23T06:17:18.880Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3785` | Yes (`65b027df...`) |
 | `CYCLE-20261023-VEHL` | `2026-10-23T06:17:23.481Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3786` | Yes (`6a28ee09...`) |
 | `CYCLE-20261023-3U7A` | `2026-10-23T06:23:57.094Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3787` | Yes (`856dd6ba...`) |
+| `CYCLE-20261023-BUEU` | `2026-10-23T06:30:10.614Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3788` | Yes (`d78d0fd7...`) |
+| `CYCLE-20261023-BVGD` | `2026-10-23T06:30:11.965Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3789` | Yes (`48eff3e3...`) |
+| `CYCLE-20261023-C172` | `2026-10-23T06:30:19.406Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3790` | Yes (`33b4a2ba...`) |

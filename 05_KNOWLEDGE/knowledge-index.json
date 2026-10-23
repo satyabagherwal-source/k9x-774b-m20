@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:23:57.043Z",
+  "last_updated": "2026-10-23T06:30:19.364Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30592,14 +30592,19 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "cf57e593",
-      "content_hash": "9e776325450f983f7a4dd1cf3b5d7c66b106d64fe7ad88215e1b2942a6737f8f",
+      "source_version": "280954e5",
+      "content_hash": "48eff3e3f8470357f6d69255b39357f75bb0756f90859596f66e3c0ccb74af66",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
         {
           "number": 3052,
           "title": "Trying to fix flaky test failure on CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3789,
+          "title": "Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements w",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30608,7 +30613,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:42:34.522Z",
+      "verified_at": "2026-10-23T06:30:11.899Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36780,14 +36785,19 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "2ed18896",
-      "content_hash": "2d05eea0d5cf6abaacf2aa4d819c0398b4a118d0651987addd2ad9f56f2a0910",
+      "source_version": "9376c568",
+      "content_hash": "33b4a2ba4b0c58bbcc5e2ddb133db2291f22854634af8bc70aed77cfdebfcc71",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
         {
           "number": 1711,
           "title": "Merge pull request #463 from Ontos-AI/fix/suguanYang/webhook-config-exception-de",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3790,
+          "title": "Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36796,7 +36806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:14:05.390Z",
+      "verified_at": "2026-10-23T06:30:19.355Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63013,14 +63023,19 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "467f7ac3",
-      "content_hash": "92b0da01be530b57994d5c512d90f6ca6366eedde09ba4e419d8398dcb671e2c",
+      "source_version": "a976df38",
+      "content_hash": "d78d0fd7472f799d996775ad4fd1c85fa4685994b716931195f7f48801e04f7d",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
         {
           "number": 2994,
           "title": "optimizer): skip patches dir hash for nub lockfile (#23761)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3788,
+          "title": "optimizer): skip patches dir check for yarn.lock fallback (#23725)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -63029,7 +63044,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:21:53.571Z",
+      "verified_at": "2026-10-23T06:30:10.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113003,6 +113018,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:23:57.032Z"
+    },
+    "rule-3788": {
+      "learning_id": "rule-3788",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3788,
+      "title": "optimizer): skip patches dir check for yarn.lock fallback (#23725)",
+      "source_url": "https://github.com/vitejs/vite",
+      "source_version": "a976df38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:30:10.562Z"
+    },
+    "rule-3789": {
+      "learning_id": "rule-3789",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3789,
+      "title": "Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements w",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "280954e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:30:11.899Z"
+    },
+    "rule-3790": {
+      "learning_id": "rule-3790",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3790,
+      "title": "Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "9376c568",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:30:19.356Z"
     }
   },
   "aliases": {

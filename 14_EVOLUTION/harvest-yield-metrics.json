@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:23:57.107Z",
-  "total_cycles_completed": 4452,
-  "total_learnings_persisted": 4452,
-  "total_rules_promoted": 3639,
+  "last_updated": "2026-10-23T06:30:19.417Z",
+  "total_cycles_completed": 4455,
+  "total_learnings_persisted": 4455,
+  "total_rules_promoted": 3642,
   "history": [
-    {
-      "timestamp": "2026-10-21T19:05:39.434Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T19:05:45.257Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T19:05:50.762Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T19:12:14.577Z",
       "repository": "pamburus/hl",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-23T06:23:57.107Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:30:10.625Z",
+      "repository": "vitejs/vite",
+      "learningId": "learn-github-vitejs-vite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:30:11.972Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:30:19.417Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

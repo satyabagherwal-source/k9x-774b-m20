@@ -4482,3 +4482,6 @@ Every entry in this ledger must capture:
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `ae13ea66` | Multi-dimensional audit evidence | 2026-10-23T06:17:18.883Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c55c2450` | Multi-dimensional audit evidence | 2026-10-23T06:17:23.485Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `33429e62` | Multi-dimensional audit evidence | 2026-10-23T06:23:57.097Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `a976df38` | Multi-dimensional audit evidence | 2026-10-23T06:30:10.617Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `280954e5` | Multi-dimensional audit evidence | 2026-10-23T06:30:11.968Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `9376c568` | Multi-dimensional audit evidence | 2026-10-23T06:30:19.409Z |
