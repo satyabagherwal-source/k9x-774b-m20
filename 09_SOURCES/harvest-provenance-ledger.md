@@ -4465,3 +4465,5 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `b69afdc2` | Multi-dimensional audit evidence | 2026-10-23T05:30:31.032Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1eccd61b` | Multi-dimensional audit evidence | 2026-10-23T05:30:32.046Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `5148abb4` | Multi-dimensional audit evidence | 2026-10-23T05:33:17.372Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `733b7419` | Multi-dimensional audit evidence | 2026-10-23T05:41:36.949Z |
+| `learn-github-ng-zorro-ng-zorro-antd` | `https://github.com/NG-ZORRO/ng-zorro-antd` | `049d4de8` | Multi-dimensional audit evidence | 2026-10-23T05:44:01.766Z |

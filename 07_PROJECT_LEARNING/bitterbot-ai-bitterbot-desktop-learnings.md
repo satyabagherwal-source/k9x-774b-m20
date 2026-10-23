@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `8ce5fc8b`  
+> **Source Version**: `733b7419`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:35:37.182Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-23T05:41:36.427Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,2677 +12,456 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): Bitterbot-AI/bitterbot-desktop
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:35:36.461Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): Bitterbot-AI/bitterbot-desktop
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `Bitterbot-AI/bitterbot-desktop`
-- **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2477 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+```
+                              ┌──────────────────────────────────────────────┐
+                              │           Tauri / Web Control UI             │
+                              │   (React 19, Zustand, Sonner, Tailwind CSS)  │
+                              └──────────────────────┬───────────────────────┘
+                                                     │ JSON-RPC / WebSocket
+                                                     ▼
+┌────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ BITTERBOT GATEWAY DAEMON (Node.js / TypeScript ESM)                                                │
+│                                                                                                    │
+│  ┌────────────────────────┐  ┌────────────────────────┐  ┌──────────────────────────────────────┐  │
+│  │     Channel Router     │  │  Memory Search Manager │  │        Compute Awareness Layer       │  │
+│  │  (Discord, Slack, Tg,  │  │ (FTS5 + SQLite-Vector) │  │  (Worker Provenance & Egress Filter) │  │
+│  │   WhatsApp, Signal)    │  │                        │  │                                      │  │
+│  └───────────┬────────────┘  └───────────┬────────────┘  └──────────────────┬───────────────────┘  │
+│              │                           │                                  │                      │
+│              ▼                           ▼                                  ▼                      │
+│  ┌────────────────────────┐  ┌────────────────────────┐  ┌──────────────────────────────────────┐  │
+│  │ Multi-Agent Workspace  │  │  Dream / Consolidation │  │     Soapbox P2P / Coordinator IPC    │  │
+│  │  (Genome, Protocols,   │  │   (Working Memory Sync │  │   (Local GPU Operator, Private/      │  │
+│  │    Working Memory)     │  │    & Episode Sinks)    │  │    Collective Worker Topologies)     │  │
+│  └────────────────────────┘  └────────────────────────┘  └──────────────────────────────────────┘  │
+└──────────────────────────────────────────┬─────────────────────────────────────────────────────────┘
+                                           │ stdio / IPC (Sandboxed Worker)
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ ISOLATED SUBPROCESS WORKER (Node.js isolated environment)                                          │
+│  - Virtualized `Date` (Deterministic wall-clock, real perf_hooks)                                   │
+│  - Sandboxed `fetch` (Broker routing via stdio; zero API credentials in worker memory)              │
+│  - SQLite Transaction Engine (Atomic write-sync & backfill progress validation)                    │
+└────────────────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+Bitterbot-Desktop provides a sovereign, local-first personal AI operating system featuring persistent cognitive memory, dreaming (asynchronous offline memory consolidation), multi-channel chat routing, and a cryptographically settled peer-to-peer compute/agent economy.
+
+### Core Subsystems and Architecture Boundaries
+
+1. **Gateway Daemon & Process Boundary**: The host runs a long-lived Node.js daemon (ESM) acting as the local coordinator. The user interface connects over authenticated WebSockets or same-origin HTTP handoffs. Subprocess isolation guarantees that un-sandboxed agent code cannot access system credentials directly.
+2. **Cognitive Memory Subsystem (`src/memory/`)**: Built atop SQLite using full-text search (FTS5) and vector extensions. It manages chunked message ingestion, session transcripts, hierarchical memory distillation (`GENOME.md` -> `PROTOCOLS.md` -> `MEMORY.md`), and episodic compute feedback loops.
+3. **Compute Awareness & Egress Governance (`src/compute/awareness/`)**: Enforces strict data-loss prevention (DLP). Every piece of contextual data is stamped with a governance class (`personal`, `confidential`, `normal`). Data can only be routed to compute nodes whose trust rank satisfies the class ceiling.
+4. **Economic & Settlement Boundary (`x402`, Base Layer 2, Stripe Onramp)**: Implements agent wallet balances, HTTP 402 Payment Required negotiations with automatic USDC micropayment settlement on Base, and offloaded credential validation.
+5. **Secure Isolated Worker Boundary (`benchmarks/longmemeval-v2/worker.ts`)**: Completely strips runtime environment variables (`OPENAI_API_KEY`, etc.), denies arbitrary network access, overrides `fetch` to proxy through a secure host broker via standard input/output (stdio) IPC, and virtualizes the `Date` object to prevent temporal leakage during evaluation traces.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md, Dockerfile.
-- Evaluated system abstractions and modular contracts.
+### 1. Provenance-Based Trust Derivation Rule
 
-### Core Architecture Module: `benchmarks/arc-agi-3/actions/close-scorecard.ts`
-```
-#!/usr/bin/env -S node --import=tsx
+**RULE**:
+Security boundaries, egress policies, and trust levels MUST NOT be inferred from user-controlled, mutable string identifiers (such as names, tags, or IDs). Trust MUST be dynamically evaluated at runtime from immutable cryptographic identity, execution topology, or verifiable worker ownership.
+
+**WHY**:
+Relying on nominal conventions (e.g., matching a pool name against `"local"`) creates severe vulnerability and fragility. If an administrative pool is named `"private"` or a remote, untrusted peer connects to a pool renamed `"local"`, governance mechanisms either leak confidential inputs off-premises or unnecessarily demote local resources.
+
+**WHEN TO APPLY**:
+Apply to any distributed compute, microservice broker, RPC dispatcher, or multi-tenant system where data classification levels dictate hardware placement or payload egress.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
 /**
- * actions/close-scorecard.ts
- *
- * Closes the current scorecard (or one passed via --card), prints the
- * returned URL, clears config.currentCardId.
- *
- * Usage:
- *   node --import=tsx actions/close-scorecard.ts [--card CARD_ID]
+ * Evaluates whether a compute pool is truly local.
+ * Requires:
+ * 1. Active members exist.
+ * 2. Every single member ID is strictly contained in the set of machine-owned workers.
  */
-
-import { parseArgs } from "node:util";
-import { ArcClient } from "../src/arc-client.js";
-import { readConfig, updateScorecardClose, writeConfig } from "../src/state.js";
-
-async function main(): Promise<void> {
-  const { values } = parseArgs({
-    options: { card: { type: "string", default: "" } },
-    strict: false,
-  });
-  const cfg = readConfig();
-  const cardId = values.card || cfg.currentCardId;
-  if (!cardId) {
-    console.error("No card_id (set --card or open one first via open-scorecard.ts).");
-    process.exit(2);
-  }
-  const client = new ArcClient();
-  const summary = await client.closeScorecard(cardId);
-  updateScorecardClose(cardId, new Date().toISOString(), summary.scorecard_url);
-  if (cfg.currentCardId === cardId) {
-    cfg.currentCardId = undefined;
-    writeConfig(cfg);
-  }
-  console.log(`Closed scorecard ${cardId}`);
-  if (summary.scorecard_url) {
-    console.log(`  URL: ${summary.scorecard_url}`);
-  }
-  if (summary.score !== undefined) {
-    console.log(`  Score: ${summary.score}`);
-  }
-  console.log(`  Runs: ${summary.runs.length}`);
+export interface ComputeWorkerReference {
+  readonly id: string;
 }
 
-main().catch((err) => {
-  console.error("close-scorecard failed:", err);
-  process.exit(1);
-});
-
-```
-
-### Core Architecture Module: `benchmarks/arc-agi-3/actions/get-scorecard.ts`
-```
-#!/usr/bin/env -S node --import=tsx
-/**
- * actions/get-scorecard.ts
- *
- * Fetches the current scorecard's state (or one passed via --card,
- * optionally scoped to --game).
- *
- * Usage:
- *   node --import=tsx actions/get-scorecard.ts [--card CARD_ID] [--game GAME_ID]
- */
-
-import { parseArgs } from "node:util";
-import { ArcClient } from "../src/arc-client.js";
-import { readConfig } from "../src/state.js";
-
-async function main(): Promise<void> {
-  const { values } = parseArgs({
-    options: {
-      card: { type: "string", default: "" },
-      game: { type: "string", default: "" },
-    },
-    strict: false,
-  });
-  const cfg = readConfig();
-  const cardId = values.card || cfg.currentCardId;
-  if (!cardId) {
-    console.error("No card_id (set --card or open one first via open-scorecard.ts).");
-    process.exit(2);
+export function isPoolPhysicallyLocal(
+  members: readonly ComputeWorkerReference[],
+  localWorkerIds: ReadonlySet<string> | null,
+): boolean {
+  if (!localWorkerIds || members.length === 0) {
+    return false;
   }
-  const client = new ArcClient();
-  const summary = await client.getScorecard(cardId, values.game || undefined);
-  console.log(JSON.stringify(summary, null, 2));
+  return members.every((worker) => localWorkerIds.has(worker.id));
 }
 
-main().catch((err) => {
-  console.error("get-scorecard failed:", err);
-  process.exit(1);
-});
-
+export function resolveEffectivePoolTrust(
+  poolId: string,
+  members: readonly ComputeWorkerReference[],
+  localWorkerIds: ReadonlySet<string> | null,
+  configuredTrustResolver: (id: string) => "trusted" | "untrusted",
+): "local" | "trusted" | "untrusted" {
+  if (isPoolPhysicallyLocal(members, localWorkerIds)) {
+    return "local";
+  }
+  // Fall back to explicit administrative configuration; never allow config to assert "local".
+  return configuredTrustResolver(poolId);
+}
 ```
 
-### Core Architecture Module: `benchmarks/arc-agi-3/actions/open-scorecard.ts`
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Inferring hardware boundaries and security clearance from pool identifiers
+export function resolvePoolTrustInsecure(poolName: string): "local" | "untrusted" {
+  // CRITICAL HAZARD: A foreign worker joining a pool called "local" 
+  // will receive confidential payloads!
+  if (poolName.toLowerCase() === "local") {
+    return "local";
+  }
+  return "untrusted";
+}
 ```
-#!/usr/bin/env -S node --import=tsx
-/**
- * actions/open-scorecard.ts
- *
- * Opens a new scorecard and stores `card_id` in config.json.
- *
- * Usage:
- *   node --import=tsx actions/open-scorecard.ts [--tags TAG[,TAG...]] [--source-url URL] [--opaque JSON]
- */
 
-import { parseArgs } from "node:util";
-import { ArcClient } from "../src/arc-client.js";
-import { appendScorecard, readConfig, writeConfig } from "../src/state.js";
+**VERIFICATION METHOD**:
+Enforce through unit test assertions proving:
+1. An empty node list evaluates to `"untrusted"`.
+2. A pool named `"local"` with an unknown member evaluates to `"untrusted"`.
+3. A pool named `"private"` whose members all exist in `localWorkerIds` evaluates to `"local"`.
 
-async function main(): Promise<void> {
-  const { values } = parseArgs({
-    options: {
-      tags: { type: "string", default: "" },
-      "source-url": { type: "string", default: "" },
-      opaque: { type: "string", default: "" },
-    },
-    strict: false,
-  });
-  const tags = (values.tags ?? "")
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
-  let opaqueObj: Record<string, unknown> | undefined;
-  if (values.opaque) {
-    try {
-      opaqueObj = JSON.parse(values.opaque) as Record<string, unknown>;
-    } catch {
-      console.error("--opaque must be valid JSON");
-      process.exit(2);
+---
+
+### 2. Multi-Purpose Singleton Re-Attachment Rule
+
+**RULE**:
+When an object instance is shared or cached across different consumers and call contexts, dynamic subscriptions, event sinks, and hooks MUST NOT be registered only within the initial constructor or creation branch. Shared cached instances MUST re-verify and re-attach all requisite hooks on EVERY access or retrieval.
+
+**WHY**:
+If the initial factory call initializes the instance for an auxiliary or restricted context (e.g., a lightweight status check, health check, or diagnostic probe), guarded initialization blocks will be bypassed. Subsequent requests requiring fully wired subsystems hit the uninitialized cache entry, silently dropping events, metrics, or memory updates for the rest of the application lifecycle.
+
+**WHEN TO APPLY**:
+Apply to all caching mechanisms (memoized singletons, connection managers, service registries) that expose reactive sinks, event listeners, or hooks tied to global lifecycle states.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export class ManagedServiceRegistry<TContext, TConfig> {
+  private static instanceCache = new Map<string, ManagedServiceRegistry<any, any>>();
+  private activeSink: ((event: unknown) => Promise<void>) | null = null;
+  private isClosed = false;
+
+  public static getOrCreate(key: string, config: TConfig, purpose?: string): ManagedServiceRegistry<any, any> {
+    let instance = this.instanceCache.get(key);
+    if (!instance) {
+      instance = new ManagedServiceRegistry(config);
+      this.instanceCache.set(key, instance);
+    }
+    // INVARIANT: Re-verify subscriptions on both fresh instantiations AND cache hits
+    instance.ensureActiveSubscriptions(config);
+    return instance;
+  }
+
+  private constructor(private readonly config: TConfig) {}
+
+  public ensureActiveSubscriptions(config: TConfig): void {
+    if (this.isClosed) return;
+
+    if (!GlobalEventHub.hasRegisteredSink()) {
+      this.activeSink = async (event: unknown) => {
+        await this.handleEvent(event);
+      };
+      GlobalEventHub.registerSink(this.activeSink);
     }
   }
-  const client = new ArcClient();
-  const cardId = await client.openScorecard({
-    tags,
-    source_url: values["source-url"] || undefined,
-    opaque: opaqueObj,
-  });
-  const cfg = readConfig();
-  cfg.currentCardId = cardId;
-  writeConfig(cfg);
-  appendScorecard({
-    card_id: cardId,
-    opened_at: new Date().toISOString(),
-    tags,
-  });
-  console.log(`Opened scorecard ${cardId} with tags [${tags.join(", ")}].`);
-  console.log("Stored as config.currentCardId.");
-}
 
-main().catch((err) => {
-  console.error("open-scorecard failed:", err);
-  process.exit(1);
-});
-
-```
-
-### Core Architecture Module: `benchmarks/arc-agi-3/src/state.ts`
-```
-/**
- * Filesystem state I/O for the ARC-AGI-3 agent.
- *
- * Matches the Anthropic partner-template convention:
- *   <root>/
- *     config.json          // API config + current scorecard
- *     games.json           // cached list of available games
- *     sessions.json        // active game sessions
- *     scorecards.json      // scorecard history
- *     games/<game-id>/
- *       game.json          // metadata + state
- *       frames/frame_NNNN.json
- *       frames/summary.json
- *       scripts/           // Claude-written analysis scripts
- *     notes/<topic>.md     // cross-game scratchpad (Claude's notes)
- *
- * `<root>` defaults to the package's own directory but is overridable
- * via `--root` flag or `ARC_AGENT_ROOT` env so multiple parallel runs
- * (e.g. ablation cells) don't collide on shared files.
- */
-
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import type { FrameResponse, GameSummary, ScorecardSummary } from "./types.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-/** Default state root: the package directory containing actions/, helpers/, etc. */
-export function defaultStateRoot(): string {
-  // benchmarks/arc-agi-3/src → benchmarks/arc-agi-3
-  return process.env.ARC_AGENT_ROOT ?? path.resolve(__dirname, "..");
-}
-
-export interface AgentConfig {
-  apiBaseUrl: string;
-  apiKey?: string;
-  currentCardId?: string;
-  /** Optional model spec for Claude Code SDK; informational only. */
-  model?: string;
-}
-
-export interface ActiveSession {
-  game_id: string;
-  guid: string;
-  started_at: string;
-  card_id: string;
-  last_state: string;
-  levels_completed: number;
-  actions_submitted: number;
-}
-
-const DEFAULT_CONFIG: AgentConfig = {
-  apiBaseUrl: "https://three.arcprize.org",
-};
-
-/** Read JSON file or return fallback (and write fallback as a side effect). */
-function readJson<T>(filepath: string, fallback: T): T {
-  try {
-    if (!fs.existsSync(filepath)) {
-      fs.mkdirSync(path.dirname(filepath), { recursive: true });
-      fs.writeFileSync(filepath, JSON.stringify(fallback, null, 2), "utf8");
-      return fallback;
-    }
-    return JSON.parse(fs.readFileSync(filepath, "utf8")) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(filepath: string, data: unknown): void {
-  fs.mkdirSync(path.dirname(filepath), { recursive: true });
-  fs.writeFileSync(filepath, JSON.stringify(data, null, 2), "utf8");
-}
-
-// ─── config.json ────────────────────────────────────────────────
-
-export function configPath(root: string = defaultStateRoot()): string {
-  return path.join(root, "config.json");
-}
-
-export function readConfig(root: string = defaultStateRoot()): AgentConfig {
-  return readJson<AgentConfig>(configPath(root), { ...DEFAULT_CONFIG });
-}
-
-export function writeConfig(cfg: AgentConfig, root: string = defaultStateRoot()): void {
-  writeJson(configPath(root), cfg);
-}
-
-// ─── games.json ─────────────────────────────────────────────────
-
-export function gamesJsonPath(root: string = defaultStateRoot()): string {
-  return path.join(root, "games.json");
-}
-
-export function cacheGames(games: GameSummary[], root: string = defaultStateRoot()): void {
-  writeJson(gamesJsonPath(root), { fetched_at: new Date().toISOString(), games });
-}
-
-export function readCachedGames(root: string = defaultStateRoot()): {
-  fetched_at?: string;
-  games: GameSummary[];
-} {
-  return readJson(gamesJsonPath(root), { games: [] as GameSummary[] });
-}
-
-// ─── sessions.json ──────────────────────────────────────────────
-
-export function sessionsPath(root: string = defaultStateRoot()): string {
-  return path.join(root, "sessions.json");
-}
-
-export function readSessions(root: string = defaultStateRoot()): Record<string, ActiveSession> {
-  return readJson<Record<string, ActiveSession>>(sessionsPath(root), {});
-}
-
-export function upsertSession(session: ActiveSession, root: string = defaultStateRoot()): void {
-  const sessions = readSessions(root);
-  sessions[session.game_id] = session;
-  writeJson(sessionsPath(root), sessions);
-}
-
-export function getCurrentSession(
-  gameId: string,
-  root: string = defaultStateRoot(),
-): ActiveSession | null {
-  const sessions = readSessions(root);
-  return sessions[gameId] ?? null;
-}
-
-// ─── scorecards.json ────────────────────────────────────────────
-
-export interface StoredScorecard {
-  card_id: string;
-  opened_at: string;
-  closed_at?: string;
-  tags: string[];
-  scorecard_url?: string;
-}
-
-export function scorecardsPath(root: string = defaultStateRoot()): string {
-  return path.join(root, "scorecards.json");
-}
-
-export function readScorecards(root: string = defaultStateRoot()): StoredScorecard[] {
-  return readJson<StoredScorecard[]>(scorecardsPath(root), []);
-}
-
-export function appendScorecard(card: StoredScorecard, root: string = defaultStateRoot()): void {
-  const cards = readScorecards(root);
-  cards.push(card);
-  writeJson(scorecardsPath(root), cards);
-}
-
-export function updateScorecardClose(
-  cardId: string,
-  closedAt: string,
-  scorecardUrl: string | undefined,
-  root: string = defaultStateRoot(),
-): void {
-  const cards = readScorecards(root);
-  for (const c of cards) {
-    if (c.card_id === cardId) {
-      c.closed_at = closedAt;
-      if (scorecardUrl) c.scorecard_url = scorecardUrl;
+  public async close(): Promise<void> {
+    this.isClosed = true;
+    if (this.activeSink) {
+      GlobalEventHub.unregisterSink(this.activeSink);
+      this.activeSink = null;
     }
   }
-  writeJson(scorecardsPath(root), cards);
-}
 
-// ─── per-game state ─────────────────────────────────────────────
-
-export function gameDir(gameId: string, root: string = defaultStateRoot()): string {
-  return path.join(root, "games", gameId);
-}
-
-export function gameMetaPath(gameId: string, root: string = defaultStateRoot()): string {
-  return path.join(gameDir(gameId, root), "game.json");
-}
-
-export interface GameMeta {
-  game_id: string;
-  title?: string;
-  created_at: string;
-  last_card_id?: string;
-  last_guid?: string;
-  win_levels?: number;
-  levels_completed?: number;
-  frame_count: number;
-}
-
-export function readGameMeta(gameId: string, root: string = defaultStateRoot()): GameMeta {
-  return readJson<GameMeta>(gameMetaPath(gameId, root), {
-    game_id: gameId,
-    created_at: new Date().toISOString(),
-    frame_count: 0,
-  });
-}
-
-export function writeGameMeta(meta: GameMeta, root: string = defaultStateRoot()): void {
-  writeJson(gameMetaPath(meta.game_id, root), meta);
-}
-
-export function framePath(
-  gameId: string,
-  frameIndex: number,
-  root: string = defaultStateRoot(),
-): string {
-  const padded = String(frameIndex).padStart(4, "0");
-  return path.join(gameDir(gameId, root), "frames", `frame_${padded}.json`);
-}
-
-export interface StoredFrame {
-  index: number;
-  timestamp: string;
-  action_input: FrameResponse["action_input"];
-  caption?: string;
-  state: FrameResponse["state"];
-  levels_completed: number;
-  win_levels: number;
-  available_actions: number[];
-  frame: FrameResponse["frame"]; // last frame only — multi-frame trimmed for storage size
-  pixel_changes_from_prev?: number;
-}
-
-export function writeFrame(
-  gameId: string,
-  index: number,
-  stored: StoredFrame,
-  root: string = defaultStateRoot(),
-): void {
-  writeJson(framePath(gameId, index, root), stored);
-}
-
-export function readFrame(
-  gameId: string,
-  index: number,
-  root: string = defaultStateRoot(),
-): StoredFrame | null {
-  const p = framePath(gameId, index, root);
-  if (!fs.existsSync(p)) return null;
-  try {
-    return JSON.parse(fs.readFileSync(p, "utf8")) as StoredFrame;
-  } catch {
-    return null;
+  private async handleEvent(event: unknown): Promise<void> {
+    // Process event payload...
   }
 }
+```
 
-export function listFrameFiles(gameId: string, root: string = defaultStateRoot()): string[] {
-  const dir = path.join(gameDir(gameId, root), "frames");
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((f) => /^frame_\d+\.json$/.test(f))
-    .map((f) => path.join(dir, f))
-    .toSorted();
-}
-
-/**
- * Compute pixel changes between two `frame` arrays (last-frame only).
- * Returns -1 if shapes differ (resize) or either is missing.
- */
-export function pixelChanges(
-  prev: FrameResponse["frame"] | undefined,
-  next: FrameResponse["frame"],
-): number {
-  if (!prev || prev.length === 0 || next.length === 0) return -1;
-  const prevGrid = prev.at(-1);
-  const nextGrid = next.at(-1);
-  if (!prevGrid || !nextGrid) return -1;
-  if (prevGrid.length !== nextGrid.length) return -1;
-  let count = 0;
-  for (let r = 0; r < prevGrid.length; r++) {
-    const a = prevGrid[r]!;
-    const b = nextGrid[r]!;
-    if (a.length !== b.length) return -1;
-    for (let c = 0; c < a.length; c++) {
-      if (a[c] !== b[c]) count++;
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Gating event sink registration behind the first caller's invocation purpose
+export function getService(config: Config, purpose?: string): Service {
+  let instance = CACHE.get(config.id);
+  if (!instance) {
+    instance = new Service(config);
+    // SILENT DEFECT: If initial caller has purpose: "probe", 
+    // the event sink is NEVER wired for subsequent callers!
+    if (purpose === undefined) {
+      registerGlobalSink(instance.sink);
     }
+    CACHE.set(config.id, instance);
   }
-  return count;
+  return instance;
 }
-
-/**
- * Persist a FrameResponse into the per-game state. Returns the next
- * frame index so the caller can compose multi-step traces.
- */
-export function persistFrameResponse(opts: {
-  gameId: string;
-  response: FrameResponse;
-  caption?: string;
-  prevFrame?: FrameResponse["frame"];
-  root?: string;
-}): { index: number; meta: GameMeta } {
-  const root = opts.root ?? defaultStateRoot();
-  const meta = readGameMeta(opts.gameId, root);
-  const index = meta.frame_count;
-  const pixelDelta = opts.prevFrame ? pixelChanges(opts.prevFrame, opts.response.frame) : -1;
-  const stored: StoredFrame = {
-    index,
-    timestamp: new Date().toISOString(),
-    action_input: opts.response.action_input,
-    caption: opts.caption,
-    state: opts.response.state,
-    levels_completed: opts.response.levels_completed,
-    win_levels: opts.response.win_levels,
-    available_actions: opts.response.available_actions,
-    frame: [opts.response.frame.at(-1) ?? []],
-    pixel_changes_from_prev: pixelDelta >= 0 ? pixelDelta : undefined,
-  };
-  writeFrame(opts.gameId, index, stored, root);
-  const next: GameMeta = {
-    ...meta,
-    game_id: opts.gameId,
-    last_guid: opts.response.guid,
-    win_levels: opts.response.win_levels,
-    levels_completed: opts.response.levels_completed,
-    frame_count: index + 1,
-  };
-  writeGameMeta(next, root);
-  return { index, meta: next };
-}
-
 ```
 
-### Core Architecture Module: `benchmarks/longmemeval-v2/core.py`
+**VERIFICATION METHOD**:
+Implement a sequence integration test:
+1. Initialize the service with `{ purpose: "probe" }`. Verify the global sink is attached.
+2. Manually clear global sinks (simulating mid-run teardown or missed setup).
+3. Call the getter again with default arguments `{ purpose: undefined }`.
+4. Assert that the returned instance has restored the global sink registration.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Nominal vs Provenance Trust Defect in Compute Pools (BUG-COMPUTE-TRUST-01)
+- **Context**: `src/compute/awareness/backend.ts` and `src/compute/awareness/egress.ts`
+- **What Was Expected**: The owner’s local GPU worker (assigned to pool `"private"`) should be marked with `"local"` trust, permitting local embedding calculation for all governance classes (`personal`, `confidential`, `normal`).
+- **What Actually Happened**: The compute awareness engine checked for string identity (`poolId === "local"`). The local GPU operator default pool was named `"private"`. As a result, the owner's own hardware was marked `"untrusted"`, dropping personal and confidential embeddings and blocking local execution.
+- **Evidence in Repo**: Commit `733b7419`, PR #308, `src/compute/awareness/backend.test.ts`.
+- **Root Cause**: Trust levels were tightly coupled to pool naming strings instead of evaluating physical worker node containment against the host's actual worker IDs (`localWorkerIds`).
+- **Remediation Code Diff**:
+```typescript
+// src/compute/awareness/backend.ts
+-const LOCAL_POOL_IDS = new Set(["local"]);
+-export function defaultPoolTrust(poolId: string): ComputePool["trust"] {
+-  return LOCAL_POOL_IDS.has(poolId) ? "local" : "untrusted";
+-}
++export function defaultPoolTrust(_poolId: string): ComputePool["trust"] {
++  return "untrusted";
++}
++export function poolServedLocally(
++  members: readonly Pick<ComputeWorker, "id">[],
++  localWorkerIds: ReadonlySet<string> | null,
++): boolean {
++  return (
++    localWorkerIds !== null && members.length > 0 && members.every((w) => localWorkerIds.has(w.id))
++  );
++}
 ```
-"""Reproducible state, credential-free worker IPC and bounded API accounting."""
-from __future__ import annotations
-import hashlib
-import json
-import os
-from pathlib import Path
-import shutil
-import subprocess
-import time
-import urllib.request
-import urllib.error
-import uuid
-import selectors
-import sqlite3
-import fcntl
+- **Lesson**: Hardware trust must be derived from verified physical execution topology. Security boundaries must never rely on identifiers or configuration keys that can be renamed.
 
-HERE = Path(__file__).resolve().parent
-REPO = HERE.parent.parent
-PINS = json.loads((HERE / "pins.json").read_text())
-def digest(value):
-    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",",":")).encode()).hexdigest()
-def sha(path):
-    with Path(path).open("rb") as f:
-        return hashlib.file_digest(f, "sha256").hexdigest()
-def atomic(path, value):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with tmp.open("w") as f:
-        json.dump(value, f, indent=2)
-        f.flush()
-        os.fsync(f.fileno())
-    tmp.replace(path)
-def event(path, **value):
-    with Path(path).open("a") as f:
-        f.write(json.dumps({"wall_time":time.time(), **value}) + "\n")
-        f.flush()
-        os.fsync(f.fileno())
-def credentials(path):
-    # Never source repository shell code or log values; only approved model keys.
-    result = {}
-    for line in Path(path).read_text().splitlines():
-        key, sep, value = line.strip().removeprefix("export ").partition("=")
-        if sep and key in {"OPENAI_API_KEY","ANTHROPIC_API_KEY","OPENROUTER_API_KEY","OPENROUTER_KEY"}:
-            result[key] = value.strip().strip("'").strip('"')
-    return result
+---
 
-class TransientAPIError(RuntimeError):
-    pass
-
-class Broker:
-    def __init__(self, root, config, keys):
-        self.root, self.config, self.keys = Path(root), config, keys
-        self.root.mkdir(parents=True, exist_ok=True)
-        self.budget_lock = (self.root/"budget.lock").open("a")
-        fcntl.flock(self.budget_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        self.ledger = self.root / "api-ledger.json"
-        self.database = sqlite3.connect(self.root/"accounting.sqlite")
-        self.database.execute("CREATE TABLE IF NOT EXISTS requests (id TEXT PRIMARY KEY, charged REAL NOT NULL, payload TEXT NOT NULL)")
-        if self.database.execute("SELECT count(*) FROM requests").fetchone()[0] == 0 and self.ledger.exists():
-            for index, row in enumerate(json.loads(self.ledger.read_text())):
-                row.setdefault("id","legacy-"+str(index))
-                self.database.execute("INSERT INTO requests VALUES (?,?,?)",(row["id"],row.get("cost_usd",row["reserved_usd"]),json.dumps(row)))
-            self.database.commit()
-        self.charged = self.database.execute("SELECT COALESCE(sum(charged),0) FROM requests").fetchone()[0]
-        self.stage = "initialization"
-        self.case = None
-        self.failed = False
-    def close(self):
-        self.database.close()
-        self.budget_lock.close()
-    @property
-    def entries(self):
-        return [json.loads(row[0]) for row in self.database.execute("SELECT payload FROM requests ORDER BY rowid")]
-    def save_request(self, row):
-        self.database.execute("INSERT INTO requests VALUES (?,?,?) ON CONFLICT(id) DO UPDATE SET charged=excluded.charged,payload=excluded.payload",
-            (row["id"],row.get("cost_usd",row["reserved_usd"]),json.dumps(row)))
-        self.database.commit()
-    def call(self, kind, body):
-        if self.failed:
-            raise RuntimeError("API circuit is open after an unrecovered failure; no call dispatched")
-        policy=self.config.get("retry_policy",{})
-        attempts=policy.get("max_attempts",1)
-        if not isinstance(attempts,int) or not 1<=attempts<=3:
-            raise RuntimeError("Retry attempts must be between one and three")
-        for attempt in range(1,attempts+1):
-            try:
-                return self._call_once(kind,body,attempt=attempt)
-            except TransientAPIError:
-                if attempt==attempts:
-                    self.failed=True
-                    raise
-                time.sleep(min(30,policy.get("backoff_seconds",2)*2**(attempt-1)))
-            except Exception:
-                self.failed=True
-                raise
-    def _call_once(self, kind, body, *, attempt):
-        spec = self.config["models"][kind]
-        body = dict(body)
-        if kind == "embedding":
-            if set(body) != {"model","input"} or body["model"] != spec["model"]:
-                raise RuntimeError("Unexpected embedding request")
-        elif kind == "dream":
-            if set(body) != {"messages"}:
-                raise RuntimeError("Unexpected dream request")
-            body.update(model=spec["model"], max_tokens=6144, temperature=0)
-        else:
-            if body.get("model") != spec["model"]:
-                raise RuntimeError("Unexpected evaluator model")
-        if kind == "reader" and spec.get("transport") == "openrouter":
-            from protocol import openrouter_body
-            body = openrouter_body(body, spec)
-        raw = json.dumps(body).encode()
-        output_limit = body.get("max_completion_tokens", body.get("max_tokens", 0))
-        # UTF-8 bytes + message overhead is a conservative upper bound for text BPE.
-        # Vision reader reservations use the endpoint context maximum instead.
-        input_bound = max(len(raw) + 4096, spec.get("input_reservation_tokens", 0))
-        reserve = (input_bound * spec["input_per_million"] + output_limit * spec["output_per_million"]) / 1e6
-        used = self.charged
-        if used + reserve > self.config["budget_usd"]:
-            self.failed = True
-            raise RuntimeError("API budget exhausted before request; no call dispatched")
-        row = {"id":uuid.uuid4().hex,"kind":kind,"stage":self.stage,"case":self.case,
-               "model":spec["model"],"request_sha256":hashlib.sha256(raw).hexdigest(),
-               "reserved_usd":reserve,"status":"inflight","started_at":time.time(),"attempt":attempt}
-        self.charged += reserve
-        self.save_request(row)
-        start = time.perf_counter()
-        try:
-            key = self.keys.get(spec["key_env"], os.environ.get(spec["key_env"],""))
-            if not key:
-                raise RuntimeError("Missing credential variable " + spec["key_env"])
-            suffix = "/embeddings" if kind == "embedding" else "/chat/completions"
-            req = urllib.request.Request(spec["base_url"].rstrip("/") + suffix, data=raw,
-                    headers={"Content-Type":"application/json","Authorization":"Bearer "+key})
-            with urllib.request.urlopen(req, timeout=spec.get("timeout",600)) as response:
-                payload = json.load(response)
-                row["request_id"] = response.headers.get("x-request-id")
-            usage = payload.get("usage")
-            if not isinstance(usage,dict) or "prompt_tokens" not in usage:
-                raise RuntimeError("Endpoint omitted usage; reserved charge retained")
-            if kind != "embedding" and "completion_tokens" not in usage:
-                raise RuntimeError("Endpoint omitted completion usage")
-            row["usage"] = usage
-            row["served_model"] = payload.get("model")
-            row["served_provider"] = payload.get("provider")
-            row["response_id"] = payload.get("id")
-            row["cost_usd"] = (usage["prompt_tokens"] * spec["input_per_million"] +
-                              usage.get("completion_tokens",0) * spec["output_per_million"]) / 1e6
-            if row["cost_usd"] > reserve:
-                raise RuntimeError("Endpoint exceeded conservative reservation; stop run")
-            row["status"] = "success"
-            return payload
-        except Exception as exc:
-            row["status"] = "error"
-            row["error"] = type(exc).__name__ # no response body or credential-bearing URL
-            transient=isinstance(exc,(TimeoutError,ConnectionResetError))
-            if isinstance(exc,urllib.error.HTTPError):
-                row["http_status"]=exc.code
-                transient=exc.code in {429,500,502,503,504,520}
-            elif isinstance(exc,urllib.error.URLError):
-                transient=isinstance(exc.reason,(TimeoutError,ConnectionResetError))
-            row["retryable"]=transient
-            error_type=TransientAPIError if transient else RuntimeError
-            raise error_type("API request failed: " + type(exc).__name__) from None
-        finally:
-            row["seconds"] = time.perf_counter()-start
-            self.charged += row.get("cost_usd",reserve)-reserve
-            self.save_request(row)
-
-def resolve_node(value):
-    """Resolve the configured Node binary: a path, or a command name looked up on PATH."""
-    if os.sep not in value:
-        found = shutil.which(value)
-        if found is None:
-            raise FileNotFoundError(f"node binary {value!r} not found on PATH")
-        value = found
-    return Path(value).expanduser().resolve(strict=True)
-
-class Worker:
-    def __init__(self, profile, cfg, broker, now):
-        self.profile, self.broker = Path(profile).resolve(), broker
-        self.profile.mkdir(parents=True,exist_ok=True)
-        for name in ["home","state","tmp","workspace","agent"]:
-            (self.profile/name).mkdir(exist_ok=True)
-        atomic(self.profile/"empty-config.json",{})
-        node = resolve_node(cfg["node"])
-        env = {"PATH":str(node.parent)+":/usr/bin:/bin","HOME":str(self.profile/"home"),
-               "BITTERBOT_HOME":str(self.profile/"home"),"BITTERBOT_STATE_DIR":str(self.profile/"state"),
-               "BITTERBOT_CONFIG_PATH":str(self.profile/"empty-config.json"),
-               "BITTERBOT_OAUTH_DIR":str(self.profile/"oauth"),"TMPDIR":str(self.profile/"tmp"),
-               "XDG_CONFIG_HOME":str(self.profile/"home"),"XDG_CACHE_HOME":str(self.profile/"home"),
-               "TZ":"UTC","NODE_ENV":"production","BITTERBOT_LOG_LEVEL":"debug"}
-        allowed = ["/usr","/lib","/lib64","/etc/ld.so.cache","/etc/ssl","/dev/urandom",
-                   str(node.p
+### Incident 2: SemVer Pre-Release Tag Stripping Update Lock (BUG-CLI-SEMVER-02)
+- **Context**: `src/cli/update-cli/tarball.ts` and `src/cli/update-cli/tarball.test.ts`
+- **What Was Expected**: When running `bitterbot update` on the stable release channel from a pre-release build (e.g., `1.10.1-beta.2`), the CLI updater should recognize stable `1.10.1` as newer and upgrade the binary.
+- **What Actually Happened**: The update engine relied on `compareSemverStrings()`, which stripped pre-release labels before comparing. `1.10.1-beta.2` compared equal to `1.10.1`, causing the updater to skip the upgrade with `status: "skipped", reason: "up-to-date"`, leaving users stuck on pre-release builds.
+- **Evidence in Repo**: Commit `733b7419`, lines 309–335 of `tarball.ts`.
+- **Root Cause**: Semver comparison logic stripped suffixes instead of prioritizing release versions over pre-release versions with identical major/minor/patch triples.
+- **Remediation Code Diff**:
+```typescript
+// src/cli/update-cli/tarball.ts
++const PRERELEASE_RE = /^v?\d+\.\d+\.\d+-/;
++
++export function releaseOrder(from: string, target: string): number | null {
++  const cmp = compareSemverStrings(from, target);
++  if (cmp !== 0) {
++    return cmp;
++  }
++  const fromPre = PRERELEASE_RE.test(from);
++  const targetPre = PRERELEASE_RE.test(target);
++  if (fromPre !== targetPre) {
++    return fromPre ? -1 : 1; // Pre-release is older than stable of the same triple
++  }
++  if (!fromPre) {
++    return 0;
++  }
++  const a = from.replace(/^v/, "");
++  const b = target.replace(/^v/, "");
++  return a === b ? 0 : a.localeCompare(b, "en", { numeric: true }) < 0 ? -1 : 1;
++}
+...
+-  const cmp = compareSemverStrings(ctx.fromVersion, target);
++  const cmp = releaseOrder(ctx.fromVersion, target);
 ```
+- **Lesson**: Never strip pre-release metadata during upgrade evaluations. Explicitly define ordering rules: a stable version is strictly newer than any pre-release version of that same numeric version.
 
-### Core Architecture Module: `benchmarks/longmemeval-v2/diagnostics/score_pilot.py`
+---
+
+### Incident 3: Gateway Purpose-Gated Cache Miss on Compute Sinks (BUG-MEM-SINKS-03)
+- **Context**: `src/memory/manager.ts` and `src/memory/manager.compute-episodes.test.ts`
+- **What Was Expected**: Completed background compute jobs must be captured by memory episode sinks and recorded in SQLite as searchable memory chunks.
+- **What Actually Happened**: Two jobs completed, but zero memory chunks were written. The memory manager was created early during daemon startup by a health-check/hormonal status probe (`purpose: "status"`). Sinks were only registered when `params.purpose === undefined`. The instance was cached in `INDEX_CACHE`, so all subsequent requests reused the cached manager, leaving sinks unregistered for the lifetime of the process.
+- **Evidence in Repo**: Commit `3e824c99`, PR #292.
+- **Root Cause**: Conditional initialization anti-pattern. Event registration was tied to caller parameters during initial instantiation instead of verifying registration invariants on every cache hit.
+- **Remediation Code Diff**:
+```typescript
+// src/memory/manager.ts
+     const existing = INDEX_CACHE.get(key);
+     if (existing) {
++      existing.ensureComputeSinks(cfg);
+       return existing;
+     }
+...
+-      if (
+-        params.purpose === undefined &&
+-        cfg.compute?.enabled !== false &&
+-        !getComputeEpisodeSink()
+-      ) {
+-        manager.episodeSink = (episode) => manager.writeComputeEpisodeChunk(episode);
+-        registerComputeEpisodeSink(manager.episodeSink);
+-      }
++      manager.ensureComputeSinks(cfg);
+...
++  ensureComputeSinks(cfg: Pick<BitterbotConfig, "compute">): void {
++    if (this.closed || cfg.compute?.enabled === false) {
++      return;
++    }
++    if (!getComputeEpisodeSink()) {
++      this.episodeSink = (episode) => this.writeComputeEpisodeChunk(episode);
++      registerComputeEpisodeSink(this.episodeSink);
++    }
++    if (cfg.compute?.awareness?.nudges !== false && !getComputeNudgeSink()) {
++      this.nudgeSink = (nudge) =>
++        this.hormonalManager?.stimulate(
++          nudge.kind === "success" ? "compute_success" : "compute_setback",
++        );
++      registerComputeNudgeSink(this.nudgeSink);
++    }
++  }
 ```
-"""Post-capacity diagnostic scoring; shares the pilot's cumulative authorized ledger."""
-import sys
-from pathlib import Path
-BASE=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(BASE))
-import json,os,time,fcntl,subprocess,uuid,traceback,argparse
-from core import *
-from run import make_memory_class, snapshot_hashes
-import protocol
+- **Lesson**: Do not couple shared instance setup to the first caller's access parameters. Ensure shared cached instances re-check subscription wiring on every retrieval.
 
-ROOT=BASE/".runtime/capacity-pilot"
-OUT=ROOT/"accuracy"
-DATA=BASE/".runtime/data"
-UPSTREAM=Path("/tmp/bitterbot-lme-v2-upstream")
-def status(value,**kwargs):atomic(OUT/"status.json",{"status":value,"wall_time":time.time(),**kwargs})
-def main():
-    parser=argparse.ArgumentParser()
-    parser.add_argument("--domain",choices=["web","enterprise"])
-    args=parser.parse_args()
-    OUT.mkdir(parents=True,exist_ok=True)
-    lock=(OUT/"run.lock").open("a");fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-    pilot=json.loads((ROOT/"manifest.json").read_text())
-    cfg=dict(pilot["config"]);cfg["models"]=dict(cfg["models"])
-    extra=json.loads((BASE/"openrouter-run.example.json").read_text())
-    for role in ("reader","judge"):cfg["models"][role]=extra["models"][role]
-    cfg["budget_usd"]=json.loads((BASE/"capacity-pilot.json").read_text())["budget_usd"]
-    identity={"pilot_manifest_sha256":sha(ROOT/"manifest.json"),"config":cfg,
-              "evaluator_source_sha256":sha(__file__),"protocol_sha256":sha(BASE/"protocol.py"),
-              "pins":PINS,"scope":"two diagnostic questions; not a full official score",
-              "limitation":"Hosted reader weight revision is not attested; BF16 provider pinned."}
-    if (OUT/"manifest.json").exists() and json.loads((OUT/"manifest.json").read_text())!=identity:
-        raise RuntimeError("Diagnostic identity drift")
-    atomic(OUT/"manifest.json",identity)
-    status("preparing official screenshots")
-    # Pinned release downloads and official extraction; no replacement images.
-    from prepare import download
-    expected={}
-    for line in (DATA/"checksums.sha256").read_text().splitlines():
-        value,name=line.split(maxsplit=1);expected[name.lstrip("*")]=value
-    for name,value in expected.items():
-        if name.startswith(("question_screenshots/","trajectory_screenshots/")):
-            file=download(DATA,name,PINS["dataset"]["revision"])
-            if sha(file)!=value:raise RuntimeError("Screenshot checksum mismatch")
-    archives={
-        "trajectory_screenshots/enterprise_screenshots_base.tar.gz":"5c4a67ae0856aa1ede9b040e7da7c7a2d0b76fdd6344ef87380bcdf9f4b6d7a3",
-        "trajectory_screenshots/web_screenshots.tar.gz":"68699c6842412e09a6f89d3c05c5ae8813275918002b52d82dec43ab24dd01fb"}
-    for name,value in archives.items():
-        status("downloading official screenshot archives",archive=name)
-        file=download(DATA,name,PINS["dataset"]["revision"])
-        if sha(file)!=value:raise RuntimeError("Pinned archive checksum mismatch")
-    atomic(OUT/"screenshot-hashes.json",archives)
-    subprocess.run([sys.executable,str(UPSTREAM/"data/prepare_data.py"),"--data-root",str(DATA),"--mode","copy"],check=True)
-    for name,value in PINS["dataset"]["sha256"].items():
-        if sha(DATA/name)!=value:raise RuntimeError("Dataset hash mismatch")
-    status("waiting for capacity controller to release the shared budget")
-    # No concurrent spender: the capacity controller holds this lock until it stops.
-    with (ROOT/"budget.lock").open("a") as guard:
-        while True:
-            try:fcntl.flock(guard,fcntl.LOCK_EX|fcntl.LOCK_NB);break
-            except BlockingIOError:time.sleep(30)
-        fcntl.flock(guard,fcntl.LOCK_UN)
-    keys=credentials(REPO/".env")
-    keys.update(credentials(Path("/mnt/d/Bitterbot/bitterbot-desktop/.env")))
-    broker=Broker(ROOT,cfg,keys)
-    try:
-        h=protocol.load(UPSTREAM)
-        from data.public_data import materialize_runtime_questions
-        from transformers import AutoProcessor
-        h.MEMORY_CONTEXT_PROCESSOR_LOCAL.processor=AutoProcessor.from_pretrained(
-            "Qwen/Qwen3.5-9B",revision=PINS["reader_processor_revision"])
-        histories=json.loads((DATA/"haystacks/lme_v2_medium.json").read_text())
-        results=[]
-        for domain,selected in pilot["selection"].items():
-            if args.domain and domain!=args.domain:continue
-            matches=sorted(qid for qid,history in histories.items() if history==selected["history"])
-            if not matches:raise RuntimeError("No question matches selected history")
-            qid=matches[0] # deterministic choice before reading any answer labels
-            case=OUT/domain;case.mkdir(exist_ok=True)
-            directory=ROOT/"histories"/selected["history_sha256"]
-            latest=directory/"latest.json"
-            if not latest.exists():
-                results.append({"domain":domain,"question_id":qid,"status":"blocked","reason":"No committed history"})
-                continue
-            checkpoint=directory/json.loads(latest.read_text())["generation"]
-            saved=json.loads((checkpoint/"checkpoint.json").read_text())
-            if saved["count"]!=len(selected["history"]):
-                results.append({"domain":domain,"question_id":qid,"status":"blocked",
-                                "reason":"History incomplete","ingested":saved["count"],"required":len(selected["history"])})
-                continue
-            if saved["history"]!=selected["history"] or snapshot_hashes(checkpoint/"profile")!=saved["sha256"]:
-                raise RuntimeError("Checkpoint identity/integrity mismatch")
-            if (case/"failed.json").exists():raise RuntimeError("Recorded diagnostic failure; inspect before explicit retry")
-            if (case/"record.json").exists():
-                results.append(json.loads((case/"record.json").read_text()));continue
-            status("scoring",domain=domain,question_id=qid)
-            broker.case="diagnostic-"+qid;broker.failed=False
-            try:
-                q=materialize_runtime_questions(data_root=DATA,domain=domain,question_ids=[qid],limit=None,output_path=case/"evaluator-question.json")[0]
-                if not (case/"prompt.json").exists():
-                    text,image=h.get_question_components(q["question"])
-                    item={"index":0,"stream_index":0,"question_item":q,"question_id":qid,
-                          "query_invocation_id":uuid.uuid4().hex,"question_type":q["question_type"],
-                          "category":h.category_from_question_type(q["question_type"]),"eval_function":q["eval_function"],
-                          "eval_name":h.eval_name(q["eval_function"]),"question_text":text,"question_image":image,"answer_gold":q["answer"]}
-                    broker.stage="diagnostic-retrieval"
-                    memory=make_memory_class(h,checkpoint,OUT/"query-profiles",cfg,broker,
-                                             ingestion_time(len(selected["history"])),DATA/"screenshots")
-                    row=h.build_prompt_row(item,haystack_ids=selected["history"],memory=memory,
-                                          system_prompt=h.get_system_prompt(domain),memory_context_max_tokens=200000)
-                    atomic(case/"prompt.json",row)
-                row=json.loads((case/"prompt.json").read_text())
-                if not (case/"reader.json").exists():
-                    broker.stage="diagnostic-reader"
-                    response=broker.call("reader",protocol.wire_body(h.build_reader_request(protocol.reader_args(cfg["models"]["reader"]),row["messages"])))
-                    served=response.get("provider")
-                    if served and "deepinfra" not in served.lower():raise RuntimeError("Unexpected reader provider")
-                    obj=protocol.objectify(response)
-                    raw=h.extract_text_from_response_message(obj.choices[0].message)
-                    if not raw:raise RuntimeError("Empty reader response")
-                    answer=h.extract_boxed_answer(raw)
-                    atomic(case/"reader.json",{"response_raw":raw,"response_parsed_boxed":answer,
-                          "is_unknown":h.is_unknown(answer),"usage":h.extract_usage_dict(obj),"served_provider":served})
-                row.update(json.loads((case/"reader.json").read_text()))
-                broker.stage="diagnostic-evaluation"
-                score,_,_=protocol.judge(h,row,broker)
-                row.update(domain=domain,status="scored",score_bool=bool(score),score=1.0 if score else 0.0,
-                           timestamp_utc=h.utc_now_iso(),diagnostic_only=True,reader_revision_verified=False)
-                row.pop("messages",None)
-                atomic(case/"record.json",row);results.append(row)
-            except BaseException as exc:
-                atomic(case/"failed.json",{"error":str(exc),"stage":broker.stage})
-                raise
-        previous=json.loads((OUT/"results.json").read_text())["results"] if (OUT/"results.json").exists() else []
-        merged={r["domain"]:r for r in previous}
-        merged.update({r["domain"]:r for r in results})
-        results=list(merged.values())
-        atomic(OUT/"results.json",{"results":results,"cumulative_pilot_usd":broker.charged,"official_score":None})
-        lines=["# Diagnostic accuracy results","","This is a tiny selected sample, not an overall benchmark score.",
-               "The official prompts and scoring functions were used; hosted Qwen weight revision remains unverified.",""]
-        for r in results:
-            lines.append(f"- {r['domain']} / {r['question_id']}: "+("correct" if r.get("score_bool") else "incorrect") if r["status"]=="scored" else f"- {r['domain']}: blocked — {r['reason']}")
-            if r["status"]=="scored":lines.append("  Reader answer: "+str(r["response_parsed_boxed"]))
-        (OUT/"report.md").write_text("\n".join(lines)+"\n")
-        status("completed" if all(r["status"]=="scored" for r in results) else "blocked by incomplete histories",
-               cumulative_pilot_usd=broker.charged,scored=sum(r["status"]=="scored" for r in results))
- 
-```
+---
 
-### Core Architecture Module: `benchmarks/longmemeval-v2/worker.ts`
-```
-// This process has no API credentials, evaluator files, personal HOME or network.
-import fs from "node:fs";
-import path from "node:path";
-import readline from "node:readline";
-import { DatabaseSync } from "node:sqlite";
-import type { BitterbotConfig } from "../../src/config/types.js";
-
-type Json = Record<string, unknown>;
-const send = (value: unknown) => process.stdout.write(JSON.stringify(value) + "\n");
-console.log = (...args: unknown[]) => console.error(...args);
-let now = Date.parse("2025-01-01T00:00:00Z");
-const NativeDate = Date;
-// Only wall-clock semantics are virtualized. perf_hooks/timers retain real elapsed time.
-globalThis.Date = new Proxy(NativeDate, {
-  construct(target, args) {
-    return Reflect.construct(target, args.length ? args : [now]);
-  },
-  apply() {
-    return new NativeDate(now).toString();
-  },
-  get(target, key) {
-    return key === "now" ? () => now : Reflect.get(target, key);
-  },
-});
-let apiId = 0;
-const pending = new Map<number, { resolve: (v: Json) => void; reject: (e: Error) => void }>();
-function api(kind: string, body: Json): Promise<Json> {
-  const id = ++apiId;
-  send({ type: "api", id, kind, body });
-  return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
-}
-globalThis.fetch = async (input, init) => {
-  const url = String(input);
-  if (url !== "https://benchmark.invalid/v1/embeddings" || init?.method !== "POST") {
-    throw new Error("Benchmark denied unexpected fetch: " + url.split("?")[0]);
-  }
-  const body = JSON.parse(String(init.body)) as Json;
-  const payload = await api("embedding", body);
-  return new Response(JSON.stringify(payload), {
-    status: 200,
-    headers: { "content-type": "application/json" },
-  });
-};
-let manager: import("../../src/memory/manager.js").MemoryIndexManager;
-let profile: string;
-let config: Json;
-let sessionCount = 0;
-let managerConfig: BitterbotConfig;
-const agentId = "lme-isolated";
-function health() {
-  const db = new DatabaseSync(path.join(profile, "memory.sqlite"), { readOnly: true });
-  try {
-    const pendingRow = db
-      .prepare(
-        "SELECT count(*) AS n FROM chunks WHERE (model = 'pending' OR embedding IS NULL OR length(embedding) = 0 OR embedding = '[]') AND text IS NOT NULL AND length(trim(text)) > 0 AND (lifecycle_state IS NULL OR lifecycle_state <> 'forgotten')",
-      )
-      .get();
-    if (Number(pendingRow?.n) !== 0)
-      throw new Error("Incomplete embeddings: " + String(pendingRow?.n));
-    return { chunks: db.prepare("SELECT count(*) AS n FROM chunks").get()?.n };
-  } finally {
-    db.close();
+### Incident 4: Inbound vs Outbound Smart Wallet Network Disparity on Base (BUG-WALLET-X402-04)
+- **Context**: Coinbase CDP Smart Wallet integration, Issue #54 (`pay_for_resource` & `send_usdc`).
+- **What Was Expected**: An agent wallet configured on Base should parse HTTP 402 responses, sign EIP-712/USDC permit headers, and execute outbound transfers via `send_usdc`.
+- **What Actually Happened**: The wallet received USDC transfers on Base successfully, but calling `send_usdc` failed immediately with: `Failed to send USDC: Unsupported network for smart wallets: base`. Furthermore, HTTP 402 flows returned raw response bodies without signing.
+- **Evidence in Repo**: Issue #54, closed 2026-06-07.
+- **Root Cause**: Asymmetry between account address compatibility and CDP SDK contract deployment bindings. The receiving address was standard EVM-compatible, but the smart wallet bundler/paymaster abstraction within the SDK lacked active address configurations for Base mainnet smart contracts.
+- **Remediation Pattern**:
+```typescript
+// Enforce network-to-wallet validation before accepting funding or dispatching payments
+export function validateSmartWalletNetworkSupport(network: string, isSmartWallet: boolean): void {
+  const SMART_WALLET_SUPPORTED_NETWORKS = new Set(["base", "base-sepolia", "ethereum"]);
+  if (isSmartWallet && !SMART_WALLET_SUPPORTED_NETWORKS.has(network.toLowerCase())) {
+    throw new Error(`Unsupported network for smart wallets: ${network}. Switch to standard EOA or Base.`);
   }
 }
-async function drainEmbeddings() {
-  const backfill = manager as unknown as {
-    backfillPendingEmbeddings(opts?: {
-      limit?: number;
-    }): Promise<{ embedded: number; remaining: number }>;
-  };
-  for (;;) {
-    const result = await backfill.backfillPendingEmbeddings({ limit: 200 });
-    if (result.remaining === 0) return;
-    if (result.embedded === 0) throw new Error("Embedding backfill made no progress");
-  }
-}
-async function handle(request: Json): Promise<unknown> {
-  if (request.op === "init") {
-    profile = String(request.profile);
-    config = request.config as Json;
-    now = Number(request.now);
-    const workspace = path.join(profile, "workspace");
-    fs.mkdirSync(workspace, { recursive: true });
-    const complete = async (prompt: string) => {
-      const result = await api("dream", { messages: [{ role: "user", content: prompt }] });
-      const choices = result.choices as Array<{ message: { content: string } }>;
-      const content = choices?.[0]?.message?.content;
-      if (!content) throw new Error("Empty dream completion");
-      return content;
-    };
-    const cfg: BitterbotConfig = {
-      agents: {
-        defaults: {
-          workspace,
-          model: { primary: "openai/" + String(config.dreamModel) },
-          memorySearch: {
-            enabled: true,
-            provider: "openai",
-            model: String(config.embeddingModel),
-            fallback: "none",
-            remote: {
-              baseUrl: "https://benchmark.invalid/v1",
-              apiKey: "broker",
-              batch: { enabled: false },
-            },
-            sources: ["memory", "sessions"],
-            experimental: { sessionMemory: true },
-            store: { path: path.join(profile, "memory.sqlite"), vector: { enabled: true } },
-            sync: { intervalMinutes: 0, onSearch: false, onSessionStart: false, watch: false },
-            query: {
-              maxResults: Number(config.maxResults),
-              minScore: 0,
-              hybrid: {
-                enabled: true,
-                mergeStrategy: "rrf",
-                vectorWeight: 0.7,
-                textWeight: 0.3,
-                candidateMultiplier: 5,
-              },
-            },
-            cache: { enabled: true },
-            chunking: { tokens: 384, overlap: 48 },
-          },
-        },
-        list: [{ id: agentId, default: true, workspace, agentDir: path.join(profile, "agent") }],
-      },
-      memory: {
-        consolidation: { enabled: true, intervalMinutes: 0 },
-        dream: {
-          enabled: true,
-          intervalMinutes: 0,
-          synthesisMode: "llm",
-          model: "openai/" + String(config.dreamModel),
-          synthesisModel: "openai/" + String(config.dreamModel),
-          llmCall: complete,
-          synthesisLlmCall: complete,
-          maxLlmCallsPerCycle: Number(config.dreamCalls),
-          adaptiveInterval: { enabled: false },
-        },
-        emotional: { enabled: true, hormonal: { enabled: true } },
-        curiosity: { enabled: true, autoResearch: { enabled: false } },
-        digest: { enabled: false },
-        healthSweep: { enabled: false },
-        dreamBrief: { enabled: false },
-      },
-      skills: { skillSeekers: { trending: { enabled: false } }, evolution: { enabled: false } },
-    };
-    managerConfig = cfg;
-    const { MemoryIndexManager } = await import("../../src/memory/manager.js");
-    const created = await MemoryIndexManager.get({ cfg, agentId });
-    if (!created) throw new Error("Memory manager unavailable");
-    manager = created;
-    return { ready: true };
-  }
-  now = Number(request.now);
+```
+- **Lesson**: Validate upstream SDK capabilities across all lifecycle operations (creation, deposit, payment signing, and outbound gas-sponsored dispatch). Never assume outbound support matches inbound address compatibility.
+
+---
+
+### Incident 5: Container Volume Shadowing of P2P Orchestrator Binary (BUG-DOCKER-ORCH-05)
+- **Context**: `Dockerfile` lines 38–54 (`orchestrator/Cargo.toml` & `BITTERBOT_ORCHESTRATOR_INSTALL_DIR`).
+- **What Was Expected**: Docker containers built and published to registries should run the Rust P2P orchestrator binary out of the box.
+- **What Actually Happened**: Docker images v1.0.0 through v1.4.0 crashed on boot with: `could not read orchestrator version: ENOENT`.
+- **Evidence in Repo**: `Dockerfile` comments and history: `"postinstall reads the orchestrator version from this manifest. Copying it only with COPY . . (after install) is why images v1.0.0-v1.4.0 shipped without the P2P binary"`.
+- **Root Cause**: Two-phase failure: (1) `orchestrator/Cargo.toml` was excluded from early `COPY` layers, causing the post-install script to fail to detect the orchestrator version. (2) The binary was installed into `~/.bitterbot/bin`, but the runtime mounted a host volume over `/home/node/.bitterbot`, shadowing the installed binary.
+- **Remediation Code Diff**:
+```dockerfile
+# Dockerfile
+ COPY extensions/x/package.json ./extensions/x/
+ COPY scripts ./scripts
++# postinstall reads the orchestrator version from this manifest. Copying it
++# only with `COPY . .` (after install) is why images v1.0.0-v1.4.0 shipped
++# without the P2P binary (`could not read orchestrator version: ENOENT`).
++COPY orchestrator/Cargo.toml ./orchestrator/
++
++# postinstall fetches the orchestrator binary. Point it INSIDE the image at the
++# repo-relative path the resolver probes, not the default ~/.bitterbot/bin:
++# HOME is /root during build but the runtime user is `node`, and compose mounts
++# the host config dir over /home/node/.bitterbot, which would shadow anything
++# placed there.
++ENV BITTERBOT_ORCHESTRATOR_INSTALL_DIR=/app/orchestrator/target/release
+ RUN pnpm install --frozen-lockfile
+```
+- **Lesson**: Never place pre-compiled application binaries inside paths intended for host volume mounts. Explicitly isolate installation binaries into static container directories (`/app/...`).
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+* **Deterministic Locale-Insensitive SemVer Matching**: In `src/cli/update-cli/tarball.ts`, `a.localeCompare(b, "en", { numeric: true })` ensures string comparison operates identically regardless of host system locale settings (e.g., Turkish 'i' sorting issues).
+* **Deterministic Seeded Pseudorandom Generation**: In `benchmarks/longmemeval-v2/worker.ts`, `Math.random` is overridden using 32-bit bitwise unsigned integer arithmetic:
+  ```typescript
   let seed = (Number(config.seed) ^ Math.floor(now / 1000)) >>> 0;
   Math.random = () => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 4294967296;
   };
-  if (!Number.isFinite(now)) throw new Error("Explicit historical timestamp required");
-  if (request.op === "ingest") {
-    if (sessionCount > 0) {
-      await manager.close();
-      const { MemoryIndexManager } = await import("../../src/memory/manager.js");
-      const reopened = await MemoryIndexManager.get({ cfg: managerConfig, agentId });
-      if (!reopened) throw new Error("Failed to reopen memory manager");
-      manager = reopened;
-    }
-    const trajectory = request.trajectory as {
-      id: string;
-      goal: string;
-      outcome: string;
-      start_url: string;
-      states: Json[];
-    };
-    if (!/^[a-zA-Z0-9_-]+$/.test(trajectory.id)) throw new Error("Invalid trajectory ID");
-    const dir = path.join(profile, "state", "agents", agentId, "sessions");
-    fs.mkdirSync(dir, { recursive: true });
-    const stamp = new Date(now).toISOString();
-    const records: Json[] = [
-      {
-        type: "session",
-        version: 3,
-        id: trajectory.id,
-        timestamp: stamp,
-        cwd: path.join(profile, "workspace"),
-      },
-    ];
-    records.push({
-      type: "message",
-      timestamp: stamp,
-      message: {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              trajectory: trajectory.id,
-              goal: trajectory.goal,
-              start_url: trajectory.start_url,
-            }),
-          },
-        ],
-      },
-    });
-    for (const state of trajectory.states) {
-      records.push({
-        type: "message",
-        timestamp: stamp,
-        message: {
-          role: "assistant",
-          content: [
-            { type: "text", text: JSON.stringify({ trajectory: trajectory.id, ...state }) },
-          ],
-        },
-      });
-    }
-    records.push({
-      type: "message",
-      timestamp: stamp,
-      message: {
-        role: "assistant",
-        content: [{ type: "text", text: JSON.stringify({ outcome: trajectory.outcome }) }],
-      },
-    });
-    const target = path.join(dir, trajectory.id + ".jsonl");
-    fs.writeFileSync(target, records.map((x) => JSON.stringify(x)).join("\n") + "\n", {
-      flag: "wx",
-    });
-    fs.utimesSync(target, now / 1000, now / 1000);
-    await manager.sync({ reason: "longmemeval-v2-transcript" });
-    await manager.probeVectorAvailability();
-    const status = manager.status();
-    if (status.fallback || !status.vector?.available || !status.fts?.available)
-      throw new Error(
-        "Memory backend degraded: " +
-          JSON.stringify({ vector: status.vector, fts: status.fts, fallback: status.fallback }),
-      );
-    sessionCount++;
-    return { sessionCount, ...health() };
-  }
-  if (request.op === "health") {
-    return manager.status();
-  }
-  if (request.op === "consolidate") {
-    const result = await manager.consolidate();
-    if (!result) throw new Error("Consolidation did not run");
-    return { result, ...health() };
-  }
-  if (request.op === "dream") {
-    const result = await manager.dream();
-    if (!result || result.cycle.error || result.cycle.completedAt === null) {
-      throw new Error("Dream incomplete: " + JSON.stringify(result?.cycle));
-    }
-    const { readWorkingMemoryProvenance } =
-      await import("../../src/memory/working-memory-snapshots.js");
-    const provenance = await readWorkingMemoryProvenance(path.join(profile, "workspace"));
-    if (
-      provenance.some(
-        (record) => record.trigger === result.cycle.cycleId && record.wasHeuristicFallback,
-      )
-    ) {
-      throw new Error("Production working-memory synthesis used heuristic fallback");
-    }
-    // Watchers are disabled; a normal manager r
-```
+  ```
+  `>>> 0` forces evaluation to an unsigned 32-bit integer, and `Math.imul` prevents floating-point precision loss across different V8 versions.
+* **Strict Temporal Virtualization**: Wall-clock evaluation leakages are blocked by wrapping native `Date` in an ES Proxy that virtualizes `construct`, `apply`, and property access (`Date.now()`), while leaving low-level timers (`performance.now()`) untouched to allow accurate profiler operation:
+  ```typescript
+  globalThis.Date = new Proxy(NativeDate, {
+    construct(target, args) {
+      return Reflect.construct(target, args.length ? args : [now]);
+    },
+    apply() {
+      return new NativeDate(now).toString();
+    },
+    get(target, key) {
+      return key === "now" ? () => now : Reflect.get(target, key);
+    },
+  });
+  ```
 
-### Core Architecture Module: `desktop/renderer/src/App.tsx`
-```
-import { useCallback, useEffect, useState } from "react";
-import { FirstRun } from "./components/first-run/FirstRun";
-import { AppShell } from "./components/layout/AppShell";
-import { SetupWizard } from "./components/setup/SetupWizard";
-import { Toaster } from "./components/ui/sonner";
-import { initDeepLinkJoin } from "./lib/deep-link";
-import { fetchSessionToken, persistGatewayCredentials } from "./lib/gateway-origin";
-import { isSetupPath } from "./lib/setup-route";
-import {
-  readStoredGatewayToken,
-  readStoredGatewayUrl,
-  useGatewayStore,
-} from "./stores/gateway-store";
-
-export function App() {
-  // PLAN-56 Phase 4: `<basePath>/setup` is browser-first onboarding, with its
-  // own connection (a one-time setup token, wizard scope only).
-  if (typeof window !== "undefined" && isSetupPath(window.location.pathname)) {
-    return (
-      <>
-        <SetupWizard />
-        <Toaster richColors position="top-right" />
-      </>
-    );
+### 2. Infinite Loop & Recursion Guards
+* **Progress-Asserted Infinite Draining Loops**: In `worker.ts`, embedding backfill processing uses an infinite drain loop protected by an explicit progress assertion:
+  ```typescript
+  async function drainEmbeddings() {
+    for (;;) {
+      const result = await backfill.backfillPendingEmbeddings({ limit: 200 });
+      if (result.remaining === 0) return;
+      // TERMINATION INVARIANT: Zero progress with remaining work indicates a stuck embedding engine
+      if (result.embedded === 0) throw new Error("Embedding backfill made no progress");
+    }
   }
-  return <ControlApp />;
-}
+  ```
+* **Non-Blocking Lock Acquisition with Exponential Sleep**: In `benchmarks/longmemeval-v2/diagnostics/score_pilot.py`, cross-process locking uses `fcntl.flock` with `LOCK_NB`. It catches `BlockingIOError` and yields via sleep rather than spinning synchronously and saturating the CPU:
+  ```python
+  with (ROOT/"budget.lock").open("a") as guard:
+      while True:
+          try:
+              fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+              break
+          except BlockingIOError:
+              time.sleep(30)
+      fcntl.flock(guard, fcntl.LOCK_UN)
+  ```
 
-function ControlApp() {
-  const connect = useGatewayStore((s) => s.connect);
-
-  // Decide at boot whether we already have a token. A stored one (from a prior
-  // FirstRun) wins; otherwise ask the gateway that served this page via the
-  // same-origin handoff endpoint, which replaces the old build-time
-  // VITE_GATEWAY_TOKEN define. Only when both come up empty do we render
-  // <FirstRun>, so we never flash a "Disconnected" badge at a new user.
-  // `undefined` means "still deciding" and renders nothing.
+### 3. UI & UX Micro-Mechanics
+* **Tri-State Booting Guards Against Flash-of-Unauthenticated-Content (FOUC)**: In `desktop/renderer/src/App.tsx`, authentication state uses `boolean | undefined`:
+  ```typescript
   const [hasCredentials, setHasCredentials] = useState<boolean | undefined>(() =>
     readStoredGatewayToken() !== null ? true : undefined,
   );
-
-  useEffect(() => {
-    if (hasCredentials !== undefined) return;
-    let cancelled = false;
-    void (async () => {
-      const token = await fetchSessionToken();
-      if (cancelled) return;
-      if (token) {
-        persistGatewayCredentials({ url: readStoredGatewayUrl(), token });
-        setHasCredentials(true);
-      } else {
-        setHasCredentials(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [hasCredentials]);
-
-  useEffect(() => {
-    if (hasCredentials !== true) return;
-    const url = readStoredGatewayUrl();
-    connect(url);
-  }, [connect, hasCredentials]);
-
-  // bitterbot:// deep links (Tauri shell only; no-op in the browser).
-  // Registered at app boot so a cold-start link (the app was LAUNCHED by
-  // the guest page's "Open in Bitterbot") is picked up too.
-  useEffect(() => {
-    void initDeepLinkJoin();
-  }, []);
-
-  const handleFirstRunComplete = useCallback(() => {
-    setHasCredentials(true);
-  }, []);
-
-  // Still asking the gateway for a token: render nothing rather than flashing
-  // FirstRun at a user who is about to be connected automatically.
-  if (hasCredentials === undefined) {
-    return null;
-  }
-
-  if (!hasCredentials) {
-    return (
-      <>
-        <FirstRun onComplete={handleFirstRunComplete} />
-        <Toaster richColors position="top-right" />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <AppShell />
-      <Toaster richColors position="top-right" />
-    </>
-  );
-}
-
-```
-
-### Core Architecture Module: `desktop/renderer/src/components/agents/AgentsView.tsx`
-```
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
-import { describeError } from "../../lib/describe-error";
-import { cn } from "../../lib/utils";
-import { useAgentsStore, type AgentEntry, type AgentFile } from "../../stores/agents-store";
-import { useGatewayStore } from "../../stores/gateway-store";
-
-function AgentFilePanel({
-  file,
-  agentId,
-  onSave,
-}: {
-  file: AgentFile;
-  agentId: string;
-  onSave: (agentId: string, name: string, content: string) => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(file.content ?? "");
-
-  return (
-    <div className="rounded-lg border border-border/10 bg-muted/20 overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2 bg-muted/30">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-foreground">{file.name}</span>
-          {file.missing && (
-            <span className="text-badge px-1 py-0.5 rounded bg-warning/10 text-warning">
-              missing
-            </span>
-          )}
-          {file.size != null && (
-            <span className="text-badge text-muted-foreground">
-              {file.size < 1024 ? `${file.size}B` : `${(file.size / 1024).toFixed(1)}KB`}
-            </span>
-          )}
-        </div>
-        <div className="flex gap-1">
-          {editing ? (
-            <>
-              <button
-                onClick={() => {
-                  onSave(agentId, file.name, draft);
-                  setEditing(false);
-                }}
-                className="px-2 py-0.5 text-xs rounded bg-brand/20 text-brand hover:bg-brand/40"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => {
-                  setDraft(file.content ?? "");
-                  setEditing(false);
-                }}
-                className="px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground hover:bg-muted/90"
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => {
-                setDraft(file.content ?? "");
-                setEditing(true);
-              }}
-              className="px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground hover:bg-muted/90"
-            >
-              Edit
-            </button>
-          )}
-        </div>
-      </div>
-      {editing ? (
-        <textarea
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          className="w-full p-3 text-xs font-mono bg-transparent border-0 focus:outline-none resize-none min-h-[120px]"
-          rows={8}
-        />
-      ) : file.content ? (
-        <pre className="p-3 text-xs font-mono text-foreground/80 whitespace-pre-wrap max-h-[200px] overflow-y-auto">
-          {file.content}
-        </pre>
-      ) : (
-        <div className="p-3 text-xs text-muted-foreground italic">
-          {file.missing ? "File does not exist yet" : "No content"}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const GENOME_FILES = new Set(["GENOME.md"]);
-const PROTOCOL_FILES = new Set(["PROTOCOLS.md", "TOOLS.md", "HEARTBEAT.md"]);
-const MEMORY_FILES = new Set(["MEMORY.md", "memory/MEMORY.md"]);
-
-function FilesSections({
-  files,
-  agentId,
-  onSaveFile,
-}: {
-  files: AgentFile[];
-  agentId: string;
-  onSaveFile: (agentId: string, name: string, content: string) => void;
-}) {
-  const genome = files.filter((f) => GENOME_FILES.has(f.name));
-  const protocols = files.filter((f) => PROTOCOL_FILES.has(f.name));
-  const memory = files.filter((f) => MEMORY_FILES.has(f.name));
-  const known = new Set([...GENOME_FILES, ...PROTOCOL_FILES, ...MEMORY_FILES]);
-  const other = files.filter((f) => !known.has(f.name));
-
-  return (
-    <div className="space-y-5">
-      {genome.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-brand uppercase tracking-wider px-1 mb-2">
-            Core identity (read-mostly)
-          </h4>
-          <p className="text-badge text-muted-foreground px-1 mb-2">
-            Safety rules, temperament baselines and core values. This file anchors who your agent is
-            — everything it learns is constrained by it, and nothing the agent does rewrites it.
-          </p>
-          <div className="space-y-2">
-            {genome.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {memory.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-brand-cyan uppercase tracking-wider px-1 mb-2">
-            Working memory (agent-maintained)
-          </h4>
-          <p className="text-badge text-muted-foreground px-1 mb-2">
-            Rewritten by the agent during its maintenance cycles: its self-notes, what it knows
-            about you, what it's working on, and open questions it wants to chase.
-          </p>
-          <div className="space-y-2">
-            {memory.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {protocols.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-foreground/70 uppercase tracking-wider px-1 mb-2">
-            Operating procedures
-          </h4>
-          <p className="text-badge text-muted-foreground px-1 mb-2">
-            Runtime behavior, memory conventions, safety rules, tools config. These govern what the
-            agent does, not who it is.
-          </p>
-          <div className="space-y-2">
-            {protocols.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {other.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold text-foreground/50 uppercase tracking-wider px-1 mb-2">
-            Other
-          </h4>
-          <div className="space-y-2">
-            {other.map((file) => (
-              <AgentFilePanel key={file.name} file={file} agentId={agentId} onSave={onSaveFile} />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function AgentDetail({
-  agent,
-  files,
-  filesLoading,
-  onSaveFile,
-}: {
-  agent: AgentEntry;
-  files: AgentFile[];
-  filesLoading: boolean;
-  onSaveFile: (agentId: string, name: string, content: string) => void;
-}) {
-  return (
-    <div className="space-y-4">
-      <div className="rounded-xl border border-border/20 bg-card/60 backdrop-blur-sm p-4">
-        <div className="flex items-center gap-3 mb-3">
-          {agent.avatar && <span className="text-2xl">{agent.avatar}</span>}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">{agent.name ?? agent.id}</h3>
-            <p className="text-xs text-muted-foreground font-mono">{agent.id}</p>
-          </div>
-          {agent.isDefault && (
-            <span className="text-xs px-2 py-0.5 rounded bg-brand/10 text-brand">default</span>
-          )}
-        </div>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          {agent.workspace && (
-            <div>
-              <span className="text-muted-foreground">Workspace: </span>
-              <span className="text-foreground font-mono">{agent.workspace}</span>
-            </div>
-          )}
-          {agent.model && (
-            <div>
-              <span className="text-muted-foreground">Model: </span>
-              <span className="text-foreground">{agent.model}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {filesLoading ? (
-        <div className="p-4 text-sm text-muted-foreground text-center">Loading files…</div>
-      ) : (
-        <FilesSections files={files} agentId={agent.id} onSaveFile={onSaveFile} />
-      )}
-    </div>
-  );
-}
-
-export function AgentsView() {
-  const gwStatus = useGatewayStore((s) => s.status);
-  const request = useGatewayStore((s) => s.request);
-  const agents = useAgentsStore((s) => s.agents);
-  const selectedAgentId = useAgentsStore((s) => s.selectedAgentId);
-  const files = useAgentsStore((s) => s.files);
-  const filesLoading = useAgentsStore((s) => s.filesLoading);
-  const loading = useAgentsStore((s) => s.loading);
-  const setAgents = useAgentsStore((s) => s.setAgents);
-  const setSelectedAgentId = useAgentsStore((s) => s.setSelectedAgentId);
-  const setFiles = useAgentsStore((s) => s.setFiles);
-  const setFilesLoading = useAgentsStore((s) => s.setFilesLoading);
-  const setLoading = useAgentsStore((s) => s.setLoading);
-  const setError = useAgentsStore((s) => s.setError);
-
-  const refresh = useCallback(async () => {
-    if (gwStatus !== "connected") return;
-    setLoading(true);
-    try {
-      const res = (await request("agents.list", {})) as {
-        agents?: AgentEntry[];
-      };
-      if (res?.agents) {
-        setAgents(res.agents);
-        if (!selectedAgentId && res.agents.length > 0) {
-          setSelectedAgentId(res.agents[0].id);
-        }
-      }
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load agents");
-    } finally {
-      setLoading(false);
-    }
-  }, [gwStatus, request, setAgents, setSelectedAgentId, selectedAgentId, setLoading, setError]);
-
-  // Load files when agent selection changes
-  const loadFiles = useCallback(async () => {
-    if (gwStatus !== "connected" || !selectedAgentId) return;
-    setFilesLoading(true);
-    try {
-      const listRes = (await request("agents.files.list", {
-        agentId: selectedAgentId,
-      })) as { files?: AgentFile[] };
-      const fileList = listRes?.files ?? [];
-
-      // Load content for each file
-      const withContent = await Promise.all(
-        fileList.map(async (f) => {
-          if (f.missing) return f;
-          try {
-            const getRes = (await request("agents.files.get", {
-      
-```
-
-### Core Architecture Module: `desktop/renderer/src/components/channels/ChannelSetupDrawer.tsx`
-```
-import { CheckCircle2, Loader2, QrCode, XCircle } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useGatewayStore } from "../../stores/gateway-store";
-import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { CHANNEL_SETUP_DESCRIPTORS } from "./channel-setup-fields";
-import { QrPairingDialog } from "./QrPairingDialog";
-
-interface ChannelSetupDrawerProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  channelId: string;
-  label: string;
-  accountId?: string;
-  onSaved?: () => void;
-}
-
-type ProbeState = { ok: boolean; error?: string } | null;
-
-/**
- * Guided credential setup for a channel: per-channel fields with help copy,
- * validate-before-save (channels.validate probes the draft live without
- * persisting), then channels.configure writes + hot-restarts the account.
- */
-export function ChannelSetupDrawer({
-  open,
-  onOpenChange,
-  channelId,
-  label,
-  accountId,
-  onSaved,
-}: ChannelSetupDrawerProps) {
-  const request = useGatewayStore((s) => s.request);
-  const descriptor = CHANNEL_SETUP_DESCRIPTORS[channelId];
-
-  const [values, setValues] = useState<Record<string, string>>({});
-  const [validating, setValidating] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [probe, setProbe] = useState<ProbeState>(null);
-  const [qrOpen, setQrOpen] = useState(false);
-
+  if (hasCredentials === undefined) return null; // Avoids rendering disconnected/login states prematurely
+  ```
+* **Immediate In-Memory Credential Scrubbing**: In `desktop/renderer/src/components/channels/ChannelSetupDrawer.tsx`, credentials and secrets are scrubbed from component memory the instant the modal closes:
+  ```typescript
   const handleOpenChange = (next: boolean) => {
     if (!next) {
-      // Secrets never linger after the dialog closes.
-      setValues({});
+      setValues({}); // Drops plaintext tokens immediately
       setProbe(null);
       setValidating(false);
       setSaving(false);
     }
     onOpenChange(next);
   };
+  ```
 
-  const buildInput = () => {
-    const input: Record<string, string> = {};
-    for (const [key, value] of Object.entries(values)) {
-      if (value.trim()) input[key] = value.trim();
-    }
-    return input;
-  };
-
-  const requiredFilled = (descriptor?.fields ?? [])
-    .filter((f) => !f.optional)
-    .every((f) => Boolean(values[f.key]?.trim()));
-  const hasAnyInput = Object.values(values).some((v) => v.trim());
-
-  const handleValidate = async () => {
-    setValidating(true);
-    setProbe(null);
-    try {
-      const res = await request<{
-        result?: { ok?: boolean; error?: string | null };
-        probed?: boolean;
-        note?: string;
-      }>(
-        "channels.validate",
-        { channel: channelId, accountId, input: buildInput() },
-        {
-          timeoutMs: 30_000,
-        },
-      );
-      const ok = res?.result?.ok === true;
-      setProbe({
-        ok,
-        error: ok ? (res?.note ?? undefined) : (res?.result?.error ?? "Validation failed."),
-      });
-    } catch (err) {
-      setProbe({ ok: false, error: err instanceof Error ? err.message : String(err) });
-    } finally {
-      setValidating(false);
-    }
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const res = await request<{
-        ok?: boolean;
-        runtime?: string;
-        probe?: { ok?: boolean; error?: string };
-      }>(
-        "channels.configure",
-        { channel: channelId, accountId, input: buildInput() },
-        {
-          timeoutMs: 30_000,
-        },
-      );
-      // Make sure the account is enabled so saving is sufficient to go live.
-      try {
-        await request("channels.update", { channel: channelId, accountId, enabled: true });
-      } catch {
-        // Older gateway without channels.update; configure already restarted it.
-      }
-      const probeOk = res?.probe ? res.probe.ok === true : true;
-      if (probeOk) {
-        toast.success(`${label} configured`, {
-          description: "Credentials saved and the channel restarted - no gateway restart.",
-        });
-      } else {
-        toast.warning(`${label} saved, but the probe failed`, {
-          description: res?.probe?.error ?? "Check the credentials.",
-        });
-      }
-      onSaved?.();
-      handleOpenChange(false);
-    } catch {
-      // Central toast reports the failure; keep the dialog open for retry.
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <>
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-[440px]">
-          <DialogHeader>
-            <DialogTitle>Set up {label}</DialogTitle>
-            <DialogDescription>
-              {descriptor?.docsHint ??
-                "Credentials are sent to your gateway, verified live, and applied without a restart."}
-            </DialogDescription>
-          </DialogHeader>
-
-          {!descriptor ? (
-            <p className="text-sm text-muted-foreground">
-              Guided setup is not available for this channel yet. Use the Config tab or the CLI
-              wizard (<span className="font-mono">bitterbot onboard</span>).
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {descriptor.fields.map((field) => (
-                <div key={field.key} className="space-y-1">
-                  <Label htmlFor={`setup-${channelId}-${field.key}`}>
-                    {field.label}
-                    {field.optional && (
-                      <span className="text-muted-foreground font-normal"> (optional)</span>
-                    )}
-                  </Label>
-                  <Input
-                    id={`setup-${channelId}-${field.key}`}
-                    type={field.sensitive ? "password" : "text"}
-                    autoComplete="off"
-                    placeholder={field.placeholder}
-                    value={values[field.key] ?? ""}
-                    onChange={(e) => {
-                      setValues((prev) => ({ ...prev, [field.key]: e.target.value }));
-                      setProbe(null);
-                    }}
-                  />
-                  {field.help && <p className="text-xs text-muted-foreground">{field.help}</p>}
-                </div>
-              ))}
-
-              {descriptor.qrLogin && (
-                <Button variant="outline" className="w-full" onClick={() => setQrOpen(true)}>
-                  <QrCode className="h-4 w-4 mr-2" /> Link device via QR
-                </Button>
-              )}
-
-              {probe && (
-                <div
-                  className={`flex items-start gap-2 text-sm rounded-md border p-2 ${
-                    probe.ok ? "border-success/30 text-success" : "border-danger/30 text-danger"
-                  }`}
-                >
-                  {probe.ok ? (
-                    <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  ) : (
-                    <XCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  )}
-                  <span>{probe.ok ? (probe.error ?? "Connected.") : probe.error}</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {descriptor && descriptor.fields.length > 0 && (
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => void handleValidate()}
-                disabled={!hasAnyInput || validating || saving}
-              >
-                {validating && <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />}
-                Validate
-              </Button>
-              <Button onClick={() => void handleSave()} disabled={!requiredFilled || saving}>
-                {saving && <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />}
-                Save &amp; Enable
-              </Button>
-            </DialogFooter>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <QrPairingDialog
-        open={qrOpen}
-        onOpenChange={setQrOpen}
-        channelId={channelId}
-        label={label}
-        accountId={accountId}
-        onLinked={onSaved}
-      />
-    </>
-  );
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54** (2026-06-07): **Wallet: x402 payment signing fails + send_usdc 'Unsupported network' on Base**
-  *Symptoms*: ## Summary  Two wallet bugs discovered during first real-money testing of the economic layer:  ### Bug 1: x402 Payment Signing Fails (402 not resolved)  **Steps to reproduce:** 1. Fund wallet with USDC on Base 2. Enable x402 in config: `tools.wallet.x402.enabled: true` 3. Hit an x402 paywall (e.g. `https://agentsvc.io/api/v1/proxy/exchange-rates`) 4. Call `pay_for_resource` with the resource URL and amount  **Expected:** Wallet signs the USDC payment, attaches X-Payment header, receives content **Actual:** Tool returns the raw 402 response body without completing payment signing  The 402 response includes valid payment details: ```json {   "scheme": "exact",   "network": "base",    "maxAmountRequired": "1000",   "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",   "payTo": "0xC33336EB299d97aa76E61337906A677552878818" } ```  Likely cause: The x402 client library is not properly parsing the 402 response to extract payment params, or the Coinbase facilitator URL is not configured/reachable.  ### Bug 2: send_usdc fails with "Unsupported network for smart wallets: base"  **Steps to reproduce:** 1. Wallet on Base with USDC balance 2. Call `send_usdc` with a valid address and amount  **Expected:** USDC transfer completes on Base **Actual:** Error: `Failed to send USDC: Unsupported network for smart wallets: base`  Note: The wallet successfully *received* USDC on Base (from Kraken), so the address works. Only outbound sends fail.  Likely cause: Coinbase CDP SDK version issue — th
-
-- **Issue #14** (2026-04-23): **Wallet funding via Stripe onramp is currently broken**
-  *Symptoms*: Heads-up: the "Fund wallet" flow that uses the Stripe Crypto Onramp is not working in the current build. Anyone trying to top up their agent wallet through that path will hit an error when a session is requested.  ## Why  The desktop client at `src/services/hosted-onramp.ts` posts to our hosted onramp service at `onramp.bitterbot.ai`, which is expected to return a `clientSecret` + `publishableKey` that the Stripe Crypto Onramp widget in the wallet view then consumes. The hosted service lives in a separate repo (`bitterbot_funding_onramp`, a Hono app deployable to Cloudflare Workers or Railway, wrapping the Stripe Crypto Onramp API) and is not yet deployed. Every `/session` POST currently fails upstream.  ## Goal  Make agent-wallet funding as seamless and friction-free as possible. A user should be able to fund in a few clicks, without touching a Stripe dashboard or managing their own API keys.  ## Plan  The hosted onramp service is being deployed this week. It is already implemented end to end (rate-limited, network-gated for `base` and `base-sepolia`, validates wallet address format, separates test and live keys) and just needs DNS, secrets, and the healthcheck wired up on the hosting provider. ETA: a few days.  ## Workaround in the meantime  Users who need to fund now can configure their own Stripe Crypto Onramp keys. Run:  ``` pnpm bitterbot doctor-wallet ```  and follow the prompts, or edit the wallet config directly. The client in `src/services/stripe-onramp.ts` will fal
-  **Post-Mortem & Fix Analysis**:
-  > Deployed and live at `https://onramp.bitterbot.ai`.  **Smoke tests:** - `GET /` returns `{"ok":true,"service":"bitterbot-funding-onramp"}` - `POST /session` with `{"walletAddress":"0x...","network":"base"}` returns a valid Stripe `clientSecret` + `publishableKey` - `POST /session` with any other network is rejected with 400  **Summary of what changed:** - Onramp repo pushed to [`Bitterbot-AI/bitterbot-funding-onramp`](https://github.com/Bitterbot-AI/bitterbot-funding-onramp) - Deployed to Railway with the live Stripe Crypto Onramp keys held server-side - `onramp.bitterbot.ai` CNAME + TXT verification wired up in Cloudflare DNS, TLS cert issued - Service is now **live-only** (`network: "base"`). The previous plan for a testnet path was dropped, wallet-funding code is a maintainer-only surface so there is no contributor-testing use case to justify it - Desktop client in `src/services/hosted-onramp.ts` still targets `onramp.bitterbot.ai/session` unchanged; it will now get a successful res
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `3a7276ff` (2026-10-22)
-**Commit Message**: fix(compute): register the Soapbox backend so the agent's compute surface is live (#291)
-
-* fix(compute): register the Soapbox backend so the agent's compute surface is live
-
-PLAN-57 shipped the compute tool, prompt section, watcher, delivery ledger
-and paid-funding rail behind a backend seam, but nothing in production ever
-called registerComputeBackend, registerComputeRuntime or
-startComputeWatcher. In a stock 1.10.0 install the whole agent-facing
-surface was dormant, contrary to docs/tools/compute.md, and the signer-side
-approval-token check the docs promise did not exist.
-
-- New src/compute/soapbox-backend.ts: a secret-free ComputeBackend over the
-  coordinator HTTP API (snapshot with a 5 s cache, jobs, job, result,
-  submit, cancel, quote, fund, pauseWorker). Paid submissions are addressed
-  to the lowest-id online operator advertising paid_usdc, or refused.
-- fund() is the signer: it verifies and consumes the approval token itself,
-  re-reads the quote, refuses on a changed hash or amount, funds through
-  createSoapboxWallet's gated path, then refreshes the coordinator's
-  payment state. Operator-role backends refuse to fund at all.
-- attachComputeAwareness registers the backe
-
-**File**: `docs/tools/compute.md` (modified, +10/-3)
-```diff
-@@ -22,8 +22,12 @@ Two conditions, both required:
- 
- - `compute.enabled` is not `false` (default: on).
- - A compute backend is loaded. The Soapbox compute plugin registers one when
--  it starts. Without a backend there is no tool and no prompt section, so a
--  node with no pool spends no tokens on compute awareness.
-+  it starts in pilot, participant or local-operator mode (anything with a
-+  coordinator client). Setup-only mode, the default on a fresh install before
-+  a role is chosen, registers nothing. Without a backend there is no tool and
-+  no prompt section, so a node with no pool spends no tokens on compute
-+  awareness. Operator-role nodes get a read-only backend: the agent can see
-+  jobs and workers but never submits paid work or funds a job from them.
- 
- Turn the whole surface off with:
- 
-@@ -247,7 +251,10 @@ chunk, so on a large index expect the same time a first index took.
- Paid compute is off by default (`compute.paid.enabled: false`). When the
- owner turns it on, and the coordinator reports paid work as available to
- this node (the invite flag), an owner turn may submit `mode: paid_usdc` with
--`max_cost_usdc`. The coordinator accepts the job and parks it at
-+`max_cost_usdc`. The Soapbox backend addresses the job to the online,
-+unpaused operator with the lowest id that advertises `paid_usdc`, and refuses
-+when there is none; the owner sees that operator as the payee on the quote
-+before anything is funded. The coordinator accepts the job and parks it at
- `awaiting_payment` with a quote: an exact amount, a payee and a hash over
- both. The tool then does two things and stops:
- 
-```
-
-**File**: `src/compute/soapbox-backend.test.ts` (added, +462/-0)
-```diff
-@@ -0,0 +1,462 @@
-+import { afterEach, beforeEach, describe, expect, it } from "vitest";
-+import type { SoapboxJob, SoapboxPaymentQuote, SoapboxStatus } from "../infra/soapbox-client.js";
-+import { getComputeBackend, resetComputeBackendForTest } from "./awareness/backend.js";
-+import {
-+  computeQuoteHash,
-+  mintComputeApprovalToken,
-+  resetComputePaymentForTest,
-+} from "./awareness/payment.js";
-+import { getComputeRuntime, resetComputeRuntimeForTest } from "./awareness/runtime.js";
-+import {
-+  attachComputeAwareness,
-+  createSoapboxComputeBackend,
-+  type SoapboxBackendClient,
-+} from "./soapbox-backend.js";
-+
-+type Call = { method: string; path: string; body?: unknown };
-+
-+function fakeClient(opts: {
-+  status?: () => SoapboxStatus;
-+  routes?: Record<string, (body?: unknown) => unknown>;
-+}) {
-+  const calls: Call[] = [];
-+  const client: SoapboxBackendClient = {
-+    async status() {
-+      calls.push({ method: "GET", path: "/v1/status" });
-+      const s = opts.status;
-+      if (!s) throw new Error("fetch failed");
-+      return s();
-+    },
-+    async request<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
-+      calls.push({ method, path, body });
-+      const route = opts.routes?.[`${method} ${path}`];
-+      if (!route) throw new Error("Soapbox: HTTP 404 not found");
-+      return route(body) as T;
-+    },
-+  };
-+  return { client, calls };
-+}
-+
-+const payment: SoapboxPaymentQuote = {
-+  chain_id: 84532,
-+  token: "0xusdc",
-+  escrow: "0xescrow",
-+  key: "k1",
-+  buyer: "0xbuyer",
-+  operator: "0xOperatorAddr",
-+  amount_microusdc: 250_000,
-+  expires: 1_900_000_000,
-+};
-+
-+function job(over: Partial<SoapboxJob> = {}): SoapboxJob {
-+  return {
-+    id: "job-1",
-+    owner: "buyer",
-+    status: "succeeded",
-+    attempts: 1,
-+    spec: { mode: { kind: "private", pool_id: "lab" }, workload: { kind: "sha256", texts: ["a"] } },
-+    result: { digests: ["ab"] },
-+    receipt: { verification: "recomputed" },
-+    error: null,
-+    ...over,
-+  };
-+}
-+
-+const status = (): SoapboxStatus => ({
-+  enabled: true,
-+  api_version: 1,
-+  settlement: "usdc_escrow",
-+  principal: { id: "buyer", roles: ["submitter"], pools: ["lab"], projects: [] },
-+  nodes: [
-+    {
-+      id: "gpu-b",
-+      online: true,
-+      operator_paused: false,
-+      offer: {
-+        cpu_threads: 1,
-+        memory_mib: 2048,
-+        gpu_observed: true,
-+        modes: ["private", "paid_usdc"],
-+        paused: false,
-+        pools: ["lab"],
-+      },
-+    },
-+    {
-+      id: "gpu-a",
-+      online: true,
-+      operator_paused: false,
-+      offer: {
-+        cpu_threads: 1,
-+        memory_mib: 2048,
-+        gpu_observed: true,
-+        modes: ["paid_usdc"],
-+        paused: false,
-+      },
-+    },
-+    {
-+      id: "gpu-paused",
-+      online: true,
-+      operator_paused: true,
-+      offer: {
-+        cpu_threads: 1,
-+        memory_mib: 1,
-+        gpu_observed: true,
-+        modes: ["paid_usdc"],
-+        paused: false,
-+      },
-+    },
-+  ],
-+  jobs: [job()],
-+});
-+
-+describe("createSoapboxComputeBackend", () => {
-+  afterEach(() => {
-+    resetComputePaymentForTest();
-+  });
-+
-+  it("caches the snapshot for the TTL and marks it unreachable on failure", async () => {
-+    let t = 1_000;
-+    let fail = false;
-+    const { client, calls } = fakeClient({
-+      status: () => {
-+        if (fail) throw new Error("ECONNREFUSED");
-+        return status();
-+      },
-+    });
-+    const backend = createSoapboxComputeBackend({ client, now: () => t, snapshotTtlMs: 5_000 });
-+    const first = await backend.snapshot();
-+    expect(first.reachable).toBe(true);
-+    expect(first.pools.map((p) => p.id)).toContain("lab");
-+    t += 1_000;
-+    await backend.snapshot();
-+    expect(calls.filter((c) => c.path === "/v1/status")).toHaveLength(1);
-+    t += 10_000;
-+    fail = true;
-+    const stale = await backend.snapshot();
-+    expect(stale.reachable).toBe(false);
-+    expect(stale.pools.map((p) => p.id)).toContain("lab");
-+    expect(calls.filter((c) => c.path === "/v1/status")).toHaveLength(2);
-+  });
-+
-+  it("maps jobs, a single job, its result and a missing job", async () => {
-+    const { client } = fakeClient({
-+      status,
-+      routes: {
-+        "GET /v1/jobs": () => [job(), job({ id: "job-2", status: "running" })],
-+        "GET /v1/jobs/job-1": () => job(),
-+      },
-+    });
-+    const backend = createSoapboxComputeBackend({ client });
-+    const jobs = await backend.jobs({ status: "running" });
-+    expect(jobs.map((j) => j.id)).toEqual(["job-2"]);
-+    expect((await backend.jobs({ limit: 1 }))?.length).toBe(1);
-+    const one = await backend.job("job-1");
-+    expect(one?.workload).toBe("sha256");
-+    expect(one?.scope).toBe("lab");
-+    const result = await backend.result("job-1");
-+    expect(result).toMatchObject({ id: "job-1", status: "succeeded", verification: "recomputed" });
-+    expect(result?.result).toEqual({ digests: ["ab"] });
-+    expect(await backend.job("nope")).toBeNull();
-```
-
-**File**: `src/compute/soapbox-backend.ts` (added, +370/-0)
-```diff
-@@ -0,0 +1,370 @@
-+/**
-+ * PLAN-57 follow-up: the Soapbox compute backend adapter.
-+ *
-+ * `ComputeBackend` is the seam the agent's `compute` tool, the prompt
-+ * section, the watcher and the paid-funding rail all talk to. Until this
-+ * file existed nothing in production registered one, so the whole
-+ * agent-facing compute surface stayed dormant in a stock install. The Soapbox
-+ * plugin now attaches this adapter in every mode that has a coordinator
-+ * client (pilot, participant, mesh-operator); setup-only mode registers
-+ * nothing, which keeps the zero-cost invariant.
-+ *
-+ * The adapter is a thin, secret-free mapping over the coordinator's HTTP API.
-+ * Snapshots are cached for a few seconds because the tool must never poll.
-+ * `fund()` is the signer: it verifies and consumes the approval token itself,
-+ * trusting nothing upstream, re-reads the quote from the coordinator and
-+ * refuses when it no longer matches the approved hash.
-+ */
-+import type { BitterbotConfig } from "../config/config.js";
-+import { resolveMainSessionKey } from "../config/sessions/main-session.js";
-+import type { WalletConfig } from "../config/types.wallet.js";
-+import type {
-+  SoapboxClient,
-+  SoapboxJob,
-+  SoapboxPaymentQuote,
-+  SoapboxStatus,
-+} from "../infra/soapbox-client.js";
-+import { createSubsystemLogger } from "../logging/subsystem.js";
-+import type { BitterbotPluginApi } from "../plugins/types.js";
-+import { fundApprovedSoapboxQuote } from "../services/soapbox-wallet.js";
-+import {
-+  COMPUTE_MAX_INPUTS,
-+  type ComputeBackend,
-+  type ComputeFundRequest,
-+  type ComputeFundResult,
-+  type ComputeJobSummary,
-+  type ComputeQuote,
-+  type ComputeResult,
-+  type ComputeSnapshot,
-+  type ComputeSubmitRequest,
-+  type ComputeSubmitResult,
-+  registerComputeBackend,
-+  snapshotFromSoapboxStatus,
-+  summariseSoapboxJob,
-+} from "./awareness/backend.js";
-+import { ComputeDeliveryStore } from "./awareness/deliveries.js";
-+import { resolvePoolTrust } from "./awareness/egress.js";
-+import { computeQuoteHash, toMicroUsdc, verifyComputeApprovalToken } from "./awareness/payment.js";
-+import { registerComputeRuntime } from "./awareness/runtime.js";
-+import { type ComputeWatcher, startComputeWatcher } from "./awareness/watcher.js";
-+
-+const log = createSubsystemLogger("compute/soapbox-backend");
-+
-+/** The slice of the coordinator client the adapter needs; tests pass a fake. */
-+export type SoapboxBackendClient = Pick<SoapboxClient, "status" | "request">;
-+
-+export type SoapboxFunder = (
-+  quote: SoapboxPaymentQuote,
-+) => Promise<{ status: string; txHash: string | null }>;
-+
-+export type SoapboxComputeBackendOptions = {
-+  client: SoapboxBackendClient;
-+  config?: Pick<BitterbotConfig, "compute">;
-+  /** Operators run no buyer wallet; `fund()` refuses for them. */
-+  role?: "buyer" | "operator";
-+  mainWallet?: WalletConfig;
-+  /** Overrides the wallet-backed funder (tests). */
-+  funder?: SoapboxFunder;
-+  now?: () => number;
-+  /** How long a status read serves `snapshot()` before the next read. */
-+  snapshotTtlMs?: number;
-+};
-+
-+export const SOAPBOX_SNAPSHOT_TTL_MS = 5_000;
-+const DEFAULT_RESOURCES = {
-+  sha256: { cpu_threads: 1, memory_mib: 256, require_gpu: false },
-+  embeddings: { cpu_threads: 1, memory_mib: 1024, require_gpu: true },
-+} as const;
-+
-+function isNotFound(err: unknown): boolean {
-+  return /\b(404|not found)\b/i.test(err instanceof Error ? err.message : String(err));
-+}
-+
-+function quoteFromPayment(jobId: string, payment: SoapboxPaymentQuote): ComputeQuote {
-+  const amountUsdc = payment.amount_microusdc / 1_000_000;
-+  const network = `eip155:${payment.chain_id}`;
-+  return {
-+    jobId,
-+    amountUsdc,
-+    payee: payment.operator,
-+    network,
-+    expiresAt: payment.expires * 1000,
-+    quoteHash: computeQuoteHash({ jobId, amountUsdc, payee: payment.operator, network }),
-+  };
-+}
-+
-+export function createSoapboxComputeBackend(opts: SoapboxComputeBackendOptions): ComputeBackend {
-+  const now = opts.now ?? (() => Date.now());
-+  const ttl = opts.snapshotTtlMs ?? SOAPBOX_SNAPSHOT_TTL_MS;
-+  const poolTrust = (poolId: string) => resolvePoolTrust(opts.config, poolId);
-+  let cached: { at: number; snapshot: ComputeSnapshot; status: SoapboxStatus | null } | null = null;
-+  let inflight: Promise<ComputeSnapshot> | null = null;
-+  const fundings = new Map<string, Promise<ComputeFundResult>>();
-+
-+  const readStatus = async (): Promise<ComputeSnapshot> => {
-+    try {
-+      const status = await opts.client.status();
-+      const snapshot = snapshotFromSoapboxStatus(status, {
-+        now: now(),
-+        poolTrust,
-+        reachable: true,
-+      });
-+      cached = { at: now(), snapshot, status };
-+      return snapshot;
-+    } catch (err) {
-+      // Keep the last good view but mark it unreachable; an empty, unreachable
-+      // snapshot when there was never a good one.
-+      const base =
-+        cached?.snapshot ??
-+        snapshotFromSoapboxStatus({ enabled: true }, { now: now(), poolTrust, r
-```
-
-**File**: `src/compute/soapbox-plugin-operator.ts` (modified, +3/-0)
-```diff
-@@ -4,6 +4,7 @@ import { createSoapboxHandlers } from "../gateway/server-methods/soapbox.js";
- import { SoapboxClient } from "../infra/soapbox-client.js";
- import type { BitterbotPluginApi } from "../plugins/types.js";
- import { LocalOperatorService } from "../services/soapbox-local-operator.js";
-+import { attachComputeAwareness } from "./soapbox-backend.js";
- 
- export function registerLocalOperator(api: BitterbotPluginApi, directory: string) {
-   const binary = api.pluginConfig?.binary;
-@@ -29,6 +30,8 @@ export function registerLocalOperator(api: BitterbotPluginApi, directory: string
-       respond(true, { enabled: true, local_operator: true, nodes: [], jobs: [] });
-     }
-   });
-+  // PLAN-57: a read-only compute view for the agent; operators never fund.
-+  attachComputeAwareness(api, { client, role: "operator" });
-   const service = new LocalOperatorService(directory, binary, (message) =>
-     api.logger.warn(message),
-   );
-```
-
-**File**: `src/compute/soapbox-plugin-participant.ts` (modified, +3/-0)
-```diff
-@@ -9,6 +9,7 @@ import {
-   verifySoapboxConnection,
- } from "../infra/soapbox-connection.js";
- import type { BitterbotPluginApi } from "../plugins/types.js";
-+import { attachComputeAwareness } from "./soapbox-backend.js";
- 
- export function registerParticipant(api: BitterbotPluginApi, directory: string) {
-   const connection = parseSoapboxConnection(
-@@ -24,6 +25,8 @@ export function registerParticipant(api: BitterbotPluginApi, directory: string)
-     createSoapboxHandlers(api.config.tools?.wallet, { client, role: connection.role }),
-   ))
-     api.registerGatewayMethod(name, handler);
-+  // PLAN-57: buyers get the full agent surface; operators a read-only view.
-+  attachComputeAwareness(api, { client, role: connection.role });
-   if (connection.role === "buyer") return;
-   const binary = api.pluginConfig?.binary;
-   if (typeof binary !== "string" || !path.isAbsolute(binary))
-```
-
-**File**: `src/compute/soapbox-plugin.ts` (modified, +5/-0)
-```diff
-@@ -6,8 +6,10 @@ import { resolveStateDir, resolveConfigPath } from "../config/paths.js";
- import { createSoapboxSetupHandlers } from "../gateway/server-methods/soapbox-setup.js";
- import { createSoapboxHandlers } from "../gateway/server-methods/soapbox.js";
- import { resolveBitterbotPackageRootSync } from "../infra/bitterbot-root.js";
-+import { soapboxClientFromEnv } from "../infra/soapbox-client.js";
- import type { BitterbotPluginApi } from "../plugins/types.js";
- import { SoapboxSetup } from "../services/soapbox-setup.js";
-+import { attachComputeAwareness } from "./soapbox-backend.js";
- import { registerLocalOperator } from "./soapbox-plugin-operator.js";
- import { registerParticipant } from "./soapbox-plugin-participant.js";
- import SOAPBOX_SETUP_RELEASE from "./soapbox-runtime-release.json" with { type: "json" };
-@@ -79,6 +81,9 @@ export function registerSoapboxPlugin(api: BitterbotPluginApi) {
-   for (const [name, handler] of Object.entries(createSoapboxHandlers(api.config.tools?.wallet)))
-     api.registerGatewayMethod(name, handler);
- 
-+  // PLAN-57: the agent's compute surface exists only once a backend is registered.
-+  const client = soapboxClientFromEnv();
-+  if (client) attachComputeAwareness(api, { client, role: "buyer" });
-   let child: ChildProcess | undefined;
-   let timer: ReturnType<typeof setTimeout> | undefined;
-   let stopping = false;
-```
-
-**File**: `src/services/soapbox-wallet.ts` (modified, +15/-0)
-```diff
-@@ -89,6 +89,21 @@ export async function createSoapboxWallet(
-   };
- }
- 
-+/**
-+ * The one funding entry point for an owner-approved Compute quote outside the
-+ * Control UI RPC. Callers hand over the exact quote the owner reviewed; the
-+ * wallet re-asserts it, runs the shared spend gate and records the approval.
-+ * PLAN-47 I4 keeps every value-moving call inside this file, so the compute
-+ * backend's signer calls this instead of touching the wallet directly.
-+ */
-+export async function fundApprovedSoapboxQuote(
-+  mainWallet: WalletConfig | undefined,
-+  quote: SoapboxPaymentQuote,
-+): Promise<{ status: string; txHash: string | null }> {
-+  const wallet = await createSoapboxWallet(mainWallet, quote);
-+  return wallet.fundSoapbox!(quote);
-+}
-+
- export type SoapboxWalletAuthentication = {
-   apiKeyId: string;
-   apiKeySecret: string;
-```
-
----
-
-### Incident Patch 2: `56c68a0f` (2026-10-21)
-**Commit Message**: fix(web-fetch): decode x402 v2 PAYMENT-REQUIRED and price USDC offers safely (#286) (#289)
-
-* web_fetch: decode x402 v2 PAYMENT-REQUIRED header and surface price_usdc on 402
-
-* fix(web-fetch): only price x402 offers as USDC when the asset is USDC
-
-Follow-up to the PAYMENT-REQUIRED decoding from #286. The first pass
-divided whatever `accepts[].amount` it found by 1e6 and called the
-result `price_usdc`, so a server quoting in another token, or USDC on a
-chain the wallet does not pay on, produced a confident wrong dollar
-figure that the payments skill fed into its budget check.
-
-- `summarizeX402Offer` picks the first priced offer and derives
-  `price_usdc` only when `asset` is the USDC contract on Base or Base
-  Sepolia; the offer itself (amount, asset, network, scheme, payTo) is
-  surfaced as `x402_offer` so the agent can see what it is being asked
-  to pay with.
-- Atomic units are formatted with BigInt, not float division.
-- The wallet-payments skill no longer tells the agent to divide raw
-  amounts by a million itself; without `price_usdc` or a legacy header
-  the price is treated as unclear.
-- Unit tests for the summarizer and tool-level tests for a v2 header,
-  a non-USDC asset a
-
-**File**: `skills/wallet-payments/SKILL.md` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ Sends and payments are held for the owner's approval unless a standing spend gra
- 
- When `web_fetch` returns a 402 Payment Required response, follow this workflow exactly:
- 
--1. **Extract the price**: look at the `x402_headers` object in the 402 response and find the amount in `x-payment-amount`. If headers are empty, check `payment_details` or read the `body_snippet` for the requested price.
-+1. **Extract the price**: if the 402 result has `price_usdc`, use it. The tool derives it from the x402 `accepts[]` offer only when the asset is USDC; `x402_offer` names the asset, network and amount in atomic units. Otherwise look at `x402_headers` for `x-payment-amount`. Do not convert raw `amount` or `maxAmountRequired` values from `payment_required`, `payment_details` or the `body_snippet` yourself: they are atomic units (`10000` is 0.01 USDC) and easy to misread, so treat the price as unclear.
- 2. **Handle unclear prices**: if you cannot confidently determine the price, DO NOT GUESS. Ask: "This resource requires payment, but the price isn't clear. Would you like me to proceed, and what is your maximum budget?"
- 3. **Check balance and rules**: call `get_balance` (token="USDC"). If the cost exceeds your spending limits, ask the user for permission.
- 4. **Inform the user**: state the cost and your intent briefly (for example "This endpoint requires a 0.15 USDC micropayment. I have the funds and am purchasing it now.").
-```
-
-**File**: `src/agents/tools/web-fetch.ts` (modified, +71/-0)
-```diff
-@@ -499,6 +499,55 @@ async function maybeFetchFirecrawlWebFetchPayload(
-   return payload;
- }
- 
-+/** USDC contracts the wallet pays with; only these amounts are shown as a USDC price. */
-+const X402_USDC_ASSETS = new Set([
-+  "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", // USDC on Base
-+  "0x036cbd53842c5426634e7929541ec2318f3dcf7e", // USDC on Base Sepolia
-+]);
-+
-+/** Atomic USDC (6 decimals) to a decimal string without float rounding: 10000 -> "0.01". */
-+function formatAtomicUsdc(atomic: string): string {
-+  const value = BigInt(atomic);
-+  const whole = value / 1_000_000n;
-+  const fraction = (value % 1_000_000n).toString().padStart(6, "0").replace(/0+$/, "");
-+  return fraction ? `${whole}.${fraction}` : whole.toString();
-+}
-+
-+export type X402Offer = {
-+  amount: string;
-+  asset?: string;
-+  network?: string;
-+  scheme?: string;
-+  payTo?: string;
-+};
-+
-+/**
-+ * Pick the first priced entry from an x402 `accepts[]` list (v2 `amount`, v1
-+ * `maxAmountRequired`, both atomic units). `price_usdc` is derived only when
-+ * the offer's asset is a USDC contract the wallet can pay with; any other asset
-+ * is surfaced raw so the agent never labels a foreign token amount as dollars.
-+ */
-+export function summarizeX402Offer(
-+  requirements: Record<string, unknown> | undefined,
-+): { offer: X402Offer; priceUsdc?: string } | undefined {
-+  const accepts = Array.isArray(requirements?.accepts)
-+    ? (requirements.accepts as Array<Record<string, unknown>>)
-+    : [];
-+  for (const entry of accepts) {
-+    if (!entry || typeof entry !== "object") continue;
-+    const raw = entry.amount ?? entry.maxAmountRequired;
-+    const amount = typeof raw === "string" ? raw : typeof raw === "number" ? String(raw) : "";
-+    if (!/^\d+$/.test(amount)) continue;
-+    const offer: X402Offer = { amount };
-+    for (const key of ["asset", "network", "scheme", "payTo"] as const) {
-+      if (typeof entry[key] === "string") offer[key] = entry[key] as string;
-+    }
-+    const isUsdc = offer.asset !== undefined && X402_USDC_ASSETS.has(offer.asset.toLowerCase());
-+    return { offer, priceUsdc: isUsdc ? formatAtomicUsdc(amount) : undefined };
-+  }
-+  return undefined;
-+}
-+
- async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string, unknown>> {
-   const cacheKey = normalizeCacheKey(
-     `fetch:${params.url}:${params.extractMode}:${params.maxChars}`,
-@@ -587,6 +636,25 @@ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string
-         } catch {
-           // Not JSON — that's fine, include as snippet
-         }
-+        // x402 v2 servers send requirements as a base64 JSON `PAYMENT-REQUIRED`
-+        // header (v1 servers put the same shape in the body). Decode it, and
-+        // surface the first priced offer. A USDC price is derived only for USDC
-+        // assets (atomic units, 6 decimals) so the agent does not have to guess.
-+        let paymentRequired: Record<string, unknown> | undefined;
-+        const paymentRequiredHeader = res.headers.get("payment-required");
-+        if (paymentRequiredHeader) {
-+          try {
-+            const decoded = JSON.parse(
-+              Buffer.from(paymentRequiredHeader, "base64").toString("utf8"),
-+            );
-+            if (decoded && typeof decoded === "object") {
-+              paymentRequired = decoded as Record<string, unknown>;
-+            }
-+          } catch {
-+            // Malformed header — ignore, body/snippet still available
-+          }
-+        }
-+        const x402Offer = summarizeX402Offer(paymentRequired ?? bodyPaymentDetails);
- 
-         return {
-           url: params.url,
-@@ -603,6 +671,9 @@ async function runWebFetch(params: WebFetchRuntimeParams): Promise<Record<string
-             "x-payment-address": paymentAddress,
-           },
-           payment_details: bodyPaymentDetails,
-+          ...(paymentRequired ? { payment_required: paymentRequired } : {}),
-+          ...(x402Offer ? { x402_offer: x402Offer.offer } : {}),
-+          ...(x402Offer?.priceUsdc ? { price_usdc: x402Offer.priceUsdc } : {}),
-           body_snippet: bodyText.substring(0, 1000),
-           fetchedAt: new Date().toISOString(),
-           tookMs: Date.now() - start,
-```
-
-**File**: `src/agents/tools/web-fetch.x402-v2.test.ts` (added, +150/-0)
-```diff
-@@ -0,0 +1,150 @@
-+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-+import * as ssrf from "../../infra/net/ssrf.js";
-+import { summarizeX402Offer } from "./web-fetch.js";
-+import { createWebFetchTool } from "./web-tools.js";
-+
-+vi.mock("./web-fetch-utils.js", async () => {
-+  const actual =
-+    await vi.importActual<typeof import("./web-fetch-utils.js")>("./web-fetch-utils.js");
-+  return { ...actual, extractReadableContent: vi.fn() };
-+});
-+
-+const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-+const lookupMock = vi.fn();
-+const resolvePinnedHostname = ssrf.resolvePinnedHostname;
-+const baseToolConfig = {
-+  config: { tools: { web: { fetch: { cacheTtlMinutes: 0, firecrawl: { enabled: false } } } } },
-+} as const;
-+
-+function paymentRequiredHeader(accepts: Array<Record<string, unknown>>): string {
-+  return Buffer.from(JSON.stringify({ x402Version: 2, accepts })).toString("base64");
-+}
-+
-+describe("summarizeX402Offer", () => {
-+  it("prices a USDC offer from atomic units without float rounding", () => {
-+    expect(
-+      summarizeX402Offer({
-+        accepts: [{ amount: "10000", asset: USDC_BASE, network: "eip155:8453" }],
-+      }),
-+    ).toEqual({
-+      offer: { amount: "10000", asset: USDC_BASE, network: "eip155:8453" },
-+      priceUsdc: "0.01",
-+    });
-+    expect(
-+      summarizeX402Offer({ accepts: [{ amount: "1234567", asset: USDC_BASE }] })?.priceUsdc,
-+    ).toBe("1.234567");
-+    expect(
-+      summarizeX402Offer({ accepts: [{ amount: "3000000", asset: USDC_BASE }] })?.priceUsdc,
-+    ).toBe("3");
-+  });
-+
-+  it("accepts the v1 maxAmountRequired name and a lower-case asset", () => {
-+    const summary = summarizeX402Offer({
-+      accepts: [{ maxAmountRequired: "150000", asset: USDC_BASE.toLowerCase() }],
-+    });
-+    expect(summary?.priceUsdc).toBe("0.15");
-+  });
-+
-+  it("surfaces a non-USDC offer raw and never labels it as dollars", () => {
-+    const summary = summarizeX402Offer({
-+      accepts: [
-+        {
-+          amount: "10000",
-+          asset: "0x4200000000000000000000000000000000000006",
-+          network: "eip155:8453",
-+        },
-+      ],
-+    });
-+    expect(summary?.offer.amount).toBe("10000");
-+    expect(summary?.priceUsdc).toBeUndefined();
-+    expect(summarizeX402Offer({ accepts: [{ amount: "10000" }] })?.priceUsdc).toBeUndefined();
-+  });
-+
-+  it("skips unpriced entries and tolerates garbage", () => {
-+    expect(summarizeX402Offer({ accepts: [{ amount: "1e6" }, { amount: "-5" }] })).toBeUndefined();
-+    expect(summarizeX402Offer({ accepts: "nope" })).toBeUndefined();
-+    expect(summarizeX402Offer(undefined)).toBeUndefined();
-+    expect(
-+      summarizeX402Offer({ accepts: [null, { amount: "abc" }, { amount: "7", asset: USDC_BASE }] })
-+        ?.priceUsdc,
-+    ).toBe("0.000007");
-+  });
-+});
-+
-+describe("web_fetch x402 v2 402 responses", () => {
-+  const priorFetch = global.fetch;
-+
-+  beforeEach(() => {
-+    lookupMock.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);
-+    vi.spyOn(ssrf, "resolvePinnedHostname").mockImplementation((hostname) =>
-+      resolvePinnedHostname(hostname, lookupMock),
-+    );
-+  });
-+
-+  afterEach(() => {
-+    // @ts-expect-error restore
-+    global.fetch = priorFetch;
-+    lookupMock.mockReset();
-+    vi.restoreAllMocks();
-+  });
-+
-+  it("decodes the PAYMENT-REQUIRED header and reports price_usdc", async () => {
-+    const response = new Response("Payment required", {
-+      status: 402,
-+      headers: {
-+        "content-type": "text/plain",
-+        "payment-required": paymentRequiredHeader([
-+          {
-+            scheme: "exact",
-+            network: "eip155:8453",
-+            amount: "10000",
-+            asset: USDC_BASE,
-+            payTo: "0xabc",
-+          },
-+        ]),
-+      },
-+    });
-+    // @ts-expect-error mock fetch
-+    global.fetch = vi.fn().mockResolvedValue(response);
-+
-+    const tool = createWebFetchTool(baseToolConfig);
-+    const result = await tool?.execute?.("call", { url: "https://example.com/paid" });
-+    const details = result?.details as Record<string, unknown>;
-+
-+    expect(details.status).toBe(402);
-+    expect(details.price_usdc).toBe("0.01");
-+    expect(details.x402_offer).toEqual({
-+      amount: "10000",
-+      asset: USDC_BASE,
-+      network: "eip155:8453",
-+      scheme: "exact",
-+      payTo: "0xabc",
-+    });
-+    expect((details.payment_required as { x402Version: number }).x402Version).toBe(2);
-+    expect((details.x402_headers as Record<string, string>)["x-payment-amount"]).toBe("");
-+  });
-+
-+  it("ignores a malformed header and keeps the legacy fields", async () => {
-+    const response = new Response(
-+      JSON.stringify({ accepts: [{ maxAmountRequired: "250000", asset: USDC_BASE }] }),
-+      {
-+        status: 402,
-+        headers: {
-+          "content-type": "application/json",
-+          "payment-required": "%%not-base64-json%%",
-+          "x-payment-amount": "0.25",
-+        },
-+      },
-+    );
-+    // @ts-
-```
-
----
-
-### Incident Patch 3: `91f039a3` (2026-10-21)
-**Commit Message**: docs(compute): point the Soapbox install guide at the stable 1.10.0 release (#288)
-
-The guide linked a v1.10.0-beta.1 release that was never cut, so the
-install section led to a 404. Compute shipped in the stable v1.10.0
-release, so the section now uses the standard installers and update
-path, and keeps the explicit-version pin for any future beta build.
-
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `docs/network/soapbox-compute-mesh.md` (modified, +2/-2)
-```diff
-@@ -194,8 +194,8 @@ See [the public-release review](soapbox-public-release-audit.md) for secret-scan
- 
- ## Integrated public beta
- 
--The integrated beta uses the normal signed app archives, with an explicit beta
--version pin. Compute is on by default; only Linux x64 includes the pinned NVIDIA
-+Compute ships in the normal signed app archives from v1.10.0 onward; a beta
-+build, when published, uses an explicit version pin. Compute is on by default; only Linux x64 includes the pinned NVIDIA
- operator archive. It is verified during packaging and again before preparation.
- The packaged plugin finds that archive without an overlay or source checkout.
- Base Sepolia and mainnet wallets remain separate. Follow the
-```
-
-**File**: `docs/network/soapbox.md` (modified, +23/-23)
-```diff
-@@ -1,7 +1,7 @@
- ---
--summary: "Set up Compute buyers and GPU operators in the integrated public beta"
-+summary: "Set up Compute buyers and GPU operators in the integrated release"
- read_when:
--  - Installing the Compute beta or setting up a buyer or GPU operator
-+  - Installing Compute or setting up a buyer or GPU operator
- title: "Soapbox Compute"
- ---
- 
-@@ -16,48 +16,48 @@ Mainnet settlement and paid P2P batches are not available in this beta.
- Opening Compute does not start a worker or fund a job. Operator activation,
- peer access and each payment require deliberate actions in the UI.
- 
--## Install the integrated public beta
-+## Install Compute
- 
--Use [Bitterbot v1.10.0-beta.1](https://github.com/Bitterbot-AI/bitterbot-desktop/releases/tag/v1.10.0-beta.1).
--This release includes the gateway, Control UI and signed orchestrator 0.2.4.
--Linux x64 also includes the checksum-pinned Soapbox runtime required by the
--operator wizard. Node is bundled; a separate source checkout is unnecessary.
--The older Soapbox rc4/rc5/rc6 overlays are for their recorded Bitterbot versions
--and must not be installed over this integrated release.
-+Compute ships in [Bitterbot v1.10.0](https://github.com/Bitterbot-AI/bitterbot-desktop/releases/tag/v1.10.0)
-+and every later stable release. Each release includes the gateway, Control UI
-+and signed orchestrator 0.2.4. Linux x64 also includes the checksum-pinned
-+Soapbox runtime required by the operator wizard. Node is bundled; a separate
-+source checkout is unnecessary. The older Soapbox rc4/rc5/rc6 overlays are for
-+their recorded Bitterbot versions and must not be installed over an integrated
-+release.
- 
--The beta is an explicit installation. It does not replace the stable GitHub
--release or npm latest. The native Tauri installer is not part of this release.
-+Existing installs upgrade with `bitterbot update` or the in-app update; the
-+previous app version is retained for rollback. The native Tauri installer is
-+not part of this release.
- 
- ### Windows with WSL2
- 
--Download **install.ps1** from the beta release. In PowerShell, from the download
--folder, run:
-+In PowerShell, run:
- 
- ```powershell
--.\install.ps1 -Version 1.10.0-beta.1
-+irm https://raw.githubusercontent.com/Bitterbot-AI/bitterbot-desktop/main/scripts/install.ps1 | iex
- ```
- 
- The installer uses your default WSL2 distribution; use `-Distro Ubuntu` to select
- one. It checks for WSL2 and explains missing prerequisites. It does not install
- WSL, GPU drivers or Docker for you. An existing native Windows gateway is
--reported separately; the installer does not stop its scheduled task.
-+reported separately; the installer does not stop its scheduled task. To pin a
-+release, download **install.ps1** from that release and pass `-Version 1.10.0`.
- 
- ### Linux or macOS
- 
--Download **install.sh** from the same beta release, then run:
--
- ```bash
--bash install.sh --version 1.10.0-beta.1 --require-signature
-+curl -fsSL https://github.com/Bitterbot-AI/bitterbot-desktop/releases/latest/download/install.sh | bash
- ```
- 
- The installer verifies the release signature and archive checksum, installs the
- bundled runtime and offers onboarding. Existing users are offered a gateway
- switch; the previous app version is retained. `--no-switch` (Windows:
--`-NoSwitch`) leaves an existing gateway running. Normal updates continue to
--select stable releases; install a subsequent beta by its explicit version.
--
--Once connected to the gateway's Control UI, all Compute buyer/operator setup
--below is available in the UI. There is no separate Compute testnet window.
-+`-NoSwitch`) leaves an existing gateway running. To pin a release, download
-+**install.sh** from that release and run
-+`bash install.sh --version 1.10.0 --require-signature`. Normal updates select
-+stable releases only; a beta build, when one is published, is installed by its
-+explicit `X.Y.Z-beta.N` version and never replaces latest.
- 
- ## Choose how to use Compute
- 
-```
-
-#### Recent Merged Pull Requests:
-- **PR #291** (2026-10-22): fix(compute): register the Soapbox backend so the agent's compute surface is live (@VGIL77)
-- **PR #290** (2026-10-22): chore(main): release 1.10.1 (@github-actions[bot])
-- **PR #289** (2026-10-21): fix(web-fetch): decode x402 v2 PAYMENT-REQUIRED and price USDC offers safely (#286) (@VGIL77)
-- **PR #288** (2026-10-21): docs(compute): point the Soapbox install guide at the stable 1.10.0 release (@VGIL77)
-- **PR #286** (closed): web_fetch: decode x402 v2 PAYMENT-REQUIRED header and surface price_usdc on 402 (@SCDOLAB)
-- **PR #285** (2026-10-21): feat(compute): Soapbox compute mesh, buyer setup, isolated GPU operators and P2P pools (#271) (@VGIL77)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. compute): register the Soapbox backend so the agent's compute surface is live (#
-
-**RULE**:
-When implementing operations in `docs/tools/compute.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `3a7276ff`: compute): register the Soapbox backend so the agent's compute surface is live (#291). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tools/compute.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-  it starts in pilot, participant or local-operator mode (anything with a
-  coordinator client). Setup-only mode, the default on a fresh install before
-  a role is chosen, registers nothing. Without a backend there is no tool and
-  no prompt section, so a node with no pool spends no tokens on compute
-  awareness. Operator-role nodes get a read-only backend: the agent can see
-  jobs and workers but never submits paid work or funds a job from them.
-`max_cost_usdc`. The Soapbox backend addresses the job to the online,
-unpaused operator with the lowest id that advertises `paid_usdc`, and refuses
-when there is none; the owner sees that operator as the payee on the quote
-before anything is funded. The coordinator accepts the job and parks it at
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-  it starts. Without a backend there is no tool and no prompt section, so a
-  node with no pool spends no tokens on compute awareness.
-`max_cost_usdc`. The coordinator accepts the job and parks it at
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a7276ff` are properly handled with clean fallback behavior.
+### 4. Backend Concurrency & Memory Safety
+* **Atomic POSIX File Write-and-Rename Invariant**: In `benchmarks/longmemeval-v2/core.py`, file writes use a `.tmp` suffix followed by `f.flush()`, `os.fsync()`, and `tmp.replace(path)`:
+  ```python
+  def atomic(path, value):
+      path = Path(path)
+      path.parent.mkdir(parents=True, exist_ok=True)
+      tmp = path.with_suffix(path.suffix + ".tmp")
+      with tmp.open("w") as f:
+          json.dump(value, f, indent=2)
+          f.flush()
+          os.fsync(f.fileno())
+      tmp.replace(path)
+  ```
+  This prevents reader processes from observing half-written JSON data if a process crashes mid-write.
+* **Process-Isolated Broker Accounting**: API balance management uses file locking (`fcntl.flock(..., LOCK_EX |

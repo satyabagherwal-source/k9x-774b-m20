@@ -4458,3 +4458,5 @@
 | `CYCLE-20261023-74DX` | `2026-10-23T05:30:31.029Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3764` | Yes (`a4c80db5...`) |
 | `CYCLE-20261023-7563` | `2026-10-23T05:30:32.043Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3765` | Yes (`e4ad6baa...`) |
 | `CYCLE-20261023-AOQH` | `2026-10-23T05:33:17.369Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3766, Rule 3767, Rule 3768` | Yes (`d1f2fc04...`) |
+| `CYCLE-20261023-LE7M` | `2026-10-23T05:41:36.946Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3769, Rule 3770` | Yes (`13cb556f...`) |
+| `CYCLE-20261023-OHYB` | `2026-10-23T05:44:01.763Z` | `NG-ZORRO/ng-zorro-antd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3771, Rule 3772, Rule 3773` | Yes (`e90161ac...`) |

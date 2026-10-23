@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T05:33:17.316Z",
+  "last_updated": "2026-10-23T05:44:01.708Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4084,8 +4084,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "8ce5fc8b",
-      "content_hash": "fb6b2150f5b5a0225e41e1e0c64a59b918621afdca308a83be111013b3b9ccac",
+      "source_version": "733b7419",
+      "content_hash": "13cb556f57eac3ff2a6bda42d0b457142fd73f84e18ea49ad2845b6fb9af01f1",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4138,6 +4138,16 @@
           "number": 3608,
           "title": "compute): register the Soapbox backend so the agent's compute surface is live (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3769,
+          "title": "Provenance-Based Trust Derivation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3770,
+          "title": "Multi-Purpose Singleton Re-Attachment Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4145,7 +4155,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:35:37.492Z",
+      "verified_at": "2026-10-23T05:41:36.885Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35480,14 +35490,29 @@
       "slug": "ng-zorro-ng-zorro-antd",
       "platform": "github",
       "source_url": "https://github.com/NG-ZORRO/ng-zorro-antd",
-      "source_version": "d8b3d05b",
-      "content_hash": "6bb408d96afe1f3e50b46bb05a4b179bdba58f3d52b3ead59e41b8f112bef18c",
+      "source_version": "049d4de8",
+      "content_hash": "e90161ac8c6f3fd9d3a976f4a5cb329ca3537e21dbdab58aed41ca8e7f71aa7f",
       "dossier_path": "07_PROJECT_LEARNING/ng-zorro-ng-zorro-antd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ng-zorro-ng-zorro-antd-learnings.md",
       "promoted_rules": [
         {
           "number": 2137,
           "title": "module:select): prevent dropdown option overflow (#9849) (#9957)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3771,
+          "title": "Unified Subscription Disposal via Native Injection Context",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3772,
+          "title": "Guarded SSR-Safe Bounding Client Rect Metric Extraction",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3773,
+          "title": "Symmetrical Zero-Dimension Division Shielding in Continuous UI Controllers",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35496,7 +35521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:40:18.379Z",
+      "verified_at": "2026-10-23T05:44:01.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112642,6 +112667,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T05:33:17.306Z"
+    },
+    "rule-3769": {
+      "learning_id": "rule-3769",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3769,
+      "title": "Provenance-Based Trust Derivation Rule",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "733b7419",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:41:36.885Z"
+    },
+    "rule-3770": {
+      "learning_id": "rule-3770",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3770,
+      "title": "Multi-Purpose Singleton Re-Attachment Rule",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "733b7419",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:41:36.885Z"
+    },
+    "rule-3771": {
+      "learning_id": "rule-3771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3771,
+      "title": "Unified Subscription Disposal via Native Injection Context",
+      "source_url": "https://github.com/NG-ZORRO/ng-zorro-antd",
+      "source_version": "049d4de8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:44:01.697Z"
+    },
+    "rule-3772": {
+      "learning_id": "rule-3772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3772,
+      "title": "Guarded SSR-Safe Bounding Client Rect Metric Extraction",
+      "source_url": "https://github.com/NG-ZORRO/ng-zorro-antd",
+      "source_version": "049d4de8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:44:01.697Z"
+    },
+    "rule-3773": {
+      "learning_id": "rule-3773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3773,
+      "title": "Symmetrical Zero-Dimension Division Shielding in Continuous UI Controllers",
+      "source_url": "https://github.com/NG-ZORRO/ng-zorro-antd",
+      "source_version": "049d4de8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:44:01.697Z"
     }
   },
   "aliases": {

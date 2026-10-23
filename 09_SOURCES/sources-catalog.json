@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "8ce5fc8b",
+    "sourceVersion": "733b7419",
     "license": "MIT",
-    "contentHash": "fb6b2150f5b5a0225e41e1e0c64a59b918621afdca308a83be111013b3b9ccac",
-    "lastHarvestedAt": "2026-10-22T15:35:37.561Z",
+    "contentHash": "13cb556f57eac3ff2a6bda42d0b457142fd73f84e18ea49ad2845b6fb9af01f1",
+    "lastHarvestedAt": "2026-10-23T05:41:36.949Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -5833,10 +5833,10 @@
     "repository": "NG-ZORRO/ng-zorro-antd",
     "platform": "github",
     "sourceUrl": "https://github.com/NG-ZORRO/ng-zorro-antd",
-    "sourceVersion": "d8b3d05b",
+    "sourceVersion": "049d4de8",
     "license": "MIT",
-    "contentHash": "6bb408d96afe1f3e50b46bb05a4b179bdba58f3d52b3ead59e41b8f112bef18c",
-    "lastHarvestedAt": "2026-10-19T04:40:18.433Z",
+    "contentHash": "e90161ac8c6f3fd9d3a976f4a5cb329ca3537e21dbdab58aed41ca8e7f71aa7f",
+    "lastHarvestedAt": "2026-10-23T05:44:01.766Z",
     "learningId": "learn-github-ng-zorro-ng-zorro-antd"
   },
   "cloudwego-volo": {

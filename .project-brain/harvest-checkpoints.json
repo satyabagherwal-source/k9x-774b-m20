@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T05:33:17.385Z",
+  "last_updated": "2026-10-23T05:44:01.779Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "fb6b2150f5b5a0225e41e1e0c64a59b918621afdca308a83be111013b3b9ccac",
-      "verified_at": "2026-10-22T15:35:37.572Z",
+      "content_hash": "13cb556f57eac3ff2a6bda42d0b457142fd73f84e18ea49ad2845b6fb9af01f1",
+      "verified_at": "2026-10-23T05:41:36.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:35:37.572Z"
+      "last_updated": "2026-10-23T05:41:36.961Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -8871,14 +8871,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ng-zorro-ng-zorro-antd",
-      "content_hash": "6bb408d96afe1f3e50b46bb05a4b179bdba58f3d52b3ead59e41b8f112bef18c",
-      "verified_at": "2026-10-19T04:40:18.438Z",
+      "content_hash": "e90161ac8c6f3fd9d3a976f4a5cb329ca3537e21dbdab58aed41ca8e7f71aa7f",
+      "verified_at": "2026-10-23T05:44:01.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:40:18.438Z"
+      "last_updated": "2026-10-23T05:44:01.779Z"
     },
     "cloudwego/volo": {
       "repository": "cloudwego/volo",

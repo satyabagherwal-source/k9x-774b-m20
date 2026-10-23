@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-716O",
-    "timestamp": "2026-10-20T18:43:15.264Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-73EV",
-    "timestamp": "2026-10-20T18:43:18.151Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "919eb769d2b27a288b62087dcb427912e9cefc417d0692300c7e4b7e500cd441",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-78Z5",
     "timestamp": "2026-10-20T18:43:25.361Z",
     "repository": "bridgecrewio/checkov",
@@ -7490,6 +7460,36 @@
     "repository": "wcandillon/react-native-skia",
     "learningId": "learn-github-wcandillon-react-native-skia",
     "contentHash": "d1f2fc049415177d8829e96184d098ecd6efd466f753e4d40c8d1cb8e1fb0709",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-LE7M",
+    "timestamp": "2026-10-23T05:41:36.946Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "13cb556f57eac3ff2a6bda42d0b457142fd73f84e18ea49ad2845b6fb9af01f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-OHYB",
+    "timestamp": "2026-10-23T05:44:01.763Z",
+    "repository": "NG-ZORRO/ng-zorro-antd",
+    "learningId": "learn-github-ng-zorro-ng-zorro-antd",
+    "contentHash": "e90161ac8c6f3fd9d3a976f4a5cb329ca3537e21dbdab58aed41ca8e7f71aa7f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
