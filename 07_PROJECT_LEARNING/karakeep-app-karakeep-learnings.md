@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source**: github ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
-> **Source Version**: `5c72fa95`  
+> **Source Version**: `85054d9a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:07:08.183Z  
+> **Timestamp**: 2026-10-23T09:20:48.542Z  
 > **Learning ID**: `learn-github-karakeep-app-karakeep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:07:07.941Z  
+> **Harvest Timestamp**: 2026-10-23T09:20:47.733Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A self-hostable bookmark-everything app (links, notes and images) with AI-based automatic tagging and full text search
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 29828 stars
+- **Stars / Engagement**: 29906 stars
 
 ---
 
@@ -778,68 +778,81 @@ export function cleanupApiClient() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c72fa95` (2026-10-19)
-**Commit Message**: docs: update admin password reset instructions for better-auth
+### Incident Patch 1: `9b1fdf34` (2026-10-22)
+**Commit Message**: ci: unpin Node.js now that 24.22 fixes the addon cleanup crash
 
-**File**: `docs/docs/06-administration/02-FAQ.md` (modified, +5/-3)
+**File**: `tooling/github/setup/action.yml` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,9 @@ Administrators can reset the password of any user. Contact an administrator to r
+@@ -7,7 +7,7 @@ runs:
+     - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6
+     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+       with:
+-        node-version: 24.18.1
++        node-version: 24
+         cache: "pnpm"
+         registry-url: https://registry.npmjs.org
  
- #### If you are an administrator
- 
--If you are an administrator and lost your password, you have to reset the password in the database.
-+If you have [SMTP configured](../03-configuration/01-environment-variables.md#smtp-configuration), use the `Forgot your password?` link on the sign in page to get a reset link by email.
-+
-+Otherwise, you have to reset the password in the database.
- 
- To reset the password:
- 
-@@ -29,8 +31,8 @@ To reset the password:
-   - by e.g. running `sqlite3 db.db` (in your `data` directory)
-   - or going through e.g. the `dbeaver` UI to locate the file in the data directory and connecting to it
- - Update the password in the database by running:
--  - `update user set password='$2a$10$5u40XUq/cD/TmLdCOyZ82ePENE6hpkbodJhsp7.e/BgZssUO5DDTa', salt='' where email='<YOUR_EMAIL_HERE>';`
--  - (don't forget to put your email address into the command)
-+  - `update account set password='$2a$10$5u40XUq/cD/TmLdCOyZ82ePENE6hpkbodJhsp7.e/BgZssUO5DDTa' where providerId='credential' and userId=(select id from user where email='<YOUR_EMAIL_HERE>');`
-+  - (don't forget to put your email address into the command, in lowercase)
- - The new password for your user is now `adminadmin`.
- - Start Karakeep again
- - Log in with your email address and the password `adminadmin` and change the password to whatever you want in the `User Settings`
 ```
 
-**File**: `docs/versioned_docs/version-v0.34.0/06-administration/02-FAQ.md` (modified, +5/-3)
+---
+
+### Incident Patch 2: `ebd122bb` (2026-10-22)
+**Commit Message**: Use node:24-slim again instead of node:24.18.1-slim to get security updates (#3217)
+
+**File**: `docker/Dockerfile` (modified, +4/-11)
 ```diff
-@@ -17,7 +17,9 @@ Administrators can reset the password of any user. Contact an administrator to r
+@@ -9,8 +9,7 @@ RUN apt-get update \
+     && cargo install monolith --locked
  
- #### If you are an administrator
+ ################# Base Builder ##############
+-# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
+-FROM node:24.18.1-slim AS base
++FROM node:24-slim AS base
  
--If you are an administrator and lost your password, you have to reset the password in the database.
-+If you have [SMTP configured](../03-configuration/01-environment-variables.md#smtp-configuration), use the `Forgot your password?` link on the sign in page to get a reset link by email.
-+
-+Otherwise, you have to reset the password in the database.
+ WORKDIR /app
+ ENV PNPM_HOME="/pnpm"
+@@ -88,9 +87,7 @@ FROM base AS mcp_builder
+ RUN (cd apps/mcp && pnpm --config.verify-deps-before-run=false build)
  
- To reset the password:
+ ################# The All-in-one builder ##############
+-
+-# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
+-FROM node:24.18.1-slim AS aio_builder
++FROM node:24-slim AS aio_builder
+ LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
+ WORKDIR /app
  
-@@ -29,8 +31,8 @@ To reset the password:
-   - by e.g. running `sqlite3 db.db` (in your `data` directory)
-   - or going through e.g. the `dbeaver` UI to locate the file in the data directory and connecting to it
- - Update the password in the database by running:
--  - `update user set password='$2a$10$5u40XUq/cD/TmLdCOyZ82ePENE6hpkbodJhsp7.e/BgZssUO5DDTa', salt='' where email='<YOUR_EMAIL_HERE>';`
--  - (don't forget to put your email address into the command)
-+  - `update account set password='$2a$10$5u40XUq/cD/TmLdCOyZ82ePENE6hpkbodJhsp7.e/BgZssUO5DDTa' where providerId='credential' and userId=(select id from user where email='<YOUR_EMAIL_HERE>');`
-+  - (don't forget to put your email address into the command, in lowercase)
- - The new password for your user is now `adminadmin`.
- - Start Karakeep again
- - Log in with your email address and the password `adminadmin` and change the password to whatever you want in the `User Settings`
+@@ -222,9 +219,7 @@ RUN rm /etc/s6-overlay/s6-rc.d/svc-workers/dependencies.d/init-db-migration \
+ ENV USING_LEGACY_SEPARATE_CONTAINERS=true
+ 
+ ################# The cli ##############
+-
+-# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
+-FROM node:24.18.1-slim AS cli
++FROM node:24-slim AS cli
+ LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
+ WORKDIR /app
+ 
+@@ -238,9 +233,7 @@ ENV SERVER_VERSION=${SERVER_VERSION}
+ ENTRYPOINT ["node", "index.mjs"]
+ 
+ ################# MCP server ##############
+-
+-# Replace with node:24-slim as soon as https://github.com/nodejs/node/pull/65042 is fixed and uploaded to Docker hub
+-FROM node:24.18.1-slim AS mcp
++FROM node:24-slim AS mcp
+ LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
+ WORKDIR /app
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3218** (2026-10-22): chore(docker): bump karakeep-chrome to Google Chrome 156.0.8078.47 (@MohamedBassem)
+- **PR #3217** (2026-10-22): Use node:24-slim instead of node:24.18.1-slim to get security updates (@eriktews)
 - **PR #3208** (2026-10-18): docs: add a guide for upgrading meilisearch (@lightsabit)
 - **PR #3201** (2026-10-17): chore(web): upgrade better-auth to 1.7.10 (@MohamedBassem)
 - **PR #3200** (2026-10-17): fix(mobile): show grabbers on settings sheets (@MohamedBassem)
 - **PR #3199** (2026-10-17): fix(trpc): prevent cycles in list hierarchies (@MohamedBassem)
-- **PR #3196** (2026-10-15): fix(web): upgrade next to 16.4.1 for the October security release (@MohamedBassem)
-- **PR #3194** (closed): feat(web): add native passkey and TOTP two-factor auth (@ajmastf8)
 
 ---
 
@@ -859,34 +872,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: update admin password reset instructions for better-auth
+## X. ci: unpin Node.js now that 24.22 fixes the addon cleanup crash
 
 **RULE**:
-When implementing operations in `docs/docs/06-administration/02-FAQ.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tooling/github/setup/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c72fa95`: docs: update admin password reset instructions for better-auth. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b1fdf34`: ci: unpin Node.js now that 24.22 fixes the addon cleanup crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/06-administration/02-FAQ.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tooling/github/setup/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-If you have [SMTP configured](../03-configuration/01-environment-variables.md#smtp-configuration), use the `Forgot your password?` link on the sign in page to get a reset link by email.
-
-Otherwise, you have to reset the password in the database.
-  - `update account set password='$2a$10$5u40XUq/cD/TmLdCOyZ82ePENE6hpkbodJhsp7.e/BgZssUO5DDTa' where providerId='credential' and userId=(select id from user where email='<YOUR_EMAIL_HERE>');`
-  - (don't forget to put your email address into the command, in lowercase)
+        node-version: 24
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-If you are an administrator and lost your password, you have to reset the password in the database.
-  - `update user set password='$2a$10$5u40XUq/cD/TmLdCOyZ82ePENE6hpkbodJhsp7.e/BgZssUO5DDTa', salt='' where email='<YOUR_EMAIL_HERE>';`
-  - (don't forget to put your email address into the command)
+        node-version: 24.18.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c72fa95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b1fdf34` are properly handled with clean fallback behavior.

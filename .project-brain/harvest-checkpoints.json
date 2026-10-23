@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T08:59:45.506Z",
+  "last_updated": "2026-10-23T09:20:54.226Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "479cb9e0d28b8257e7946e46a22a3463c37a618c72b0d8229566b3e5d4d113d4",
-      "verified_at": "2026-10-20T06:07:08.522Z",
+      "content_hash": "48892469082366e816eb36a80ed29bf0b3d94b214160cd063cb8cf129adf3af8",
+      "verified_at": "2026-10-23T09:20:48.751Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:07:08.522Z"
+      "last_updated": "2026-10-23T09:20:48.751Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
-      "verified_at": "2026-10-22T17:38:28.503Z",
+      "content_hash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
+      "verified_at": "2026-10-23T09:20:54.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:38:28.503Z"
+      "last_updated": "2026-10-23T09:20:54.225Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -7416,14 +7416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infracost-infracost",
-      "content_hash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
-      "verified_at": "2026-10-19T02:18:28.125Z",
+      "content_hash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
+      "verified_at": "2026-10-23T09:20:52.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:18:28.125Z"
+      "last_updated": "2026-10-23T09:20:52.099Z"
     },
     "apache/shardingsphere": {
       "repository": "apache/shardingsphere",
@@ -15884,6 +15884,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-23T05:23:49.037Z"
+    },
+    "MiniMaxAI/MiniMax-M3.1-Flash": {
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "content_hash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
+      "verified_at": "2026-10-23T09:20:47.325Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-23T09:20:47.325Z"
     }
   },
   "repos": {

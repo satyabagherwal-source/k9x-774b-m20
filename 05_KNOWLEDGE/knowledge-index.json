@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T08:59:45.426Z",
-  "total_verified_learnings": 1072,
+  "last_updated": "2026-10-23T09:20:54.184Z",
+  "total_verified_learnings": 1073,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -27460,14 +27460,19 @@
       "slug": "infracost-infracost",
       "platform": "github",
       "source_url": "https://github.com/infracost/infracost",
-      "source_version": "8854f1ed",
-      "content_hash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
+      "source_version": "98c9711f",
+      "content_hash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
       "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "promoted_rules": [
         {
           "number": 2017,
           "title": "deps): bump Go to 1.25.12 to patch CVE-2026-39822 (#3597)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3850,
+          "title": "build with Go 1.26.10 and Alpine 3.24 (#3634)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27476,7 +27481,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:18:28.092Z",
+      "verified_at": "2026-10-23T09:20:52.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28894,8 +28899,8 @@
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "5c72fa95",
-      "content_hash": "479cb9e0d28b8257e7946e46a22a3463c37a618c72b0d8229566b3e5d4d113d4",
+      "source_version": "85054d9a",
+      "content_hash": "48892469082366e816eb36a80ed29bf0b3d94b214160cd063cb8cf129adf3af8",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "promoted_rules": [
@@ -28908,6 +28913,11 @@
           "number": 3091,
           "title": "docs: update admin password reset instructions for better-auth",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3849,
+          "title": "ci: unpin Node.js now that 24.22 fixes the addon cleanup crash",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28915,7 +28925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:07:08.456Z",
+      "verified_at": "2026-10-23T09:20:48.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47247,8 +47257,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "c85580b7",
-      "content_hash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
+      "source_version": "d6ea4a52",
+      "content_hash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -47291,6 +47301,11 @@
           "number": 3670,
           "title": "github: check App installation grants before listing comments (#5454)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3851,
+          "title": "Clean up Filesystem source logging for per-source debug (#5465)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47298,7 +47313,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:38:28.418Z",
+      "verified_at": "2026-10-23T09:20:54.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114106,6 +114121,133 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T08:54:55.009Z"
+    },
+    "learn-huggingface-minimaxai-minimax-m3-1-flash": {
+      "learning_id": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "slug": "hf-minimaxai-minimax-m3.1-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "content_hash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
+      "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3846,
+          "title": "Sparse Attention Block Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3847,
+          "title": "MoE Routing Bias Load-Balancing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3848,
+          "title": "Partial Rotary Embedding Dimension Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-23T09:20:47.279Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3846": {
+      "learning_id": "rule-3846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3846,
+      "title": "Sparse Attention Block Alignment Invariant",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:20:47.279Z"
+    },
+    "rule-3847": {
+      "learning_id": "rule-3847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3847,
+      "title": "MoE Routing Bias Load-Balancing Invariant",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:20:47.279Z"
+    },
+    "rule-3848": {
+      "learning_id": "rule-3848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3848,
+      "title": "Partial Rotary Embedding Dimension Alignment",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:20:47.279Z"
+    },
+    "rule-3849": {
+      "learning_id": "rule-3849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3849,
+      "title": "ci: unpin Node.js now that 24.22 fixes the addon cleanup crash",
+      "source_url": "https://github.com/karakeep-app/karakeep",
+      "source_version": "85054d9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:20:48.705Z"
+    },
+    "rule-3850": {
+      "learning_id": "rule-3850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3850,
+      "title": "build with Go 1.26.10 and Alpine 3.24 (#3634)",
+      "source_url": "https://github.com/infracost/infracost",
+      "source_version": "98c9711f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:20:52.058Z"
+    },
+    "rule-3851": {
+      "learning_id": "rule-3851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3851,
+      "title": "Clean up Filesystem source logging for per-source debug (#5465)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "d6ea4a52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:20:54.177Z"
     }
   },
   "aliases": {

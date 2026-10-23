@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T08:59:45.502Z",
-  "total_cycles_completed": 4484,
-  "total_learnings_persisted": 4484,
-  "total_rules_promoted": 3697,
+  "last_updated": "2026-10-23T09:20:54.223Z",
+  "total_cycles_completed": 4488,
+  "total_learnings_persisted": 4488,
+  "total_rules_promoted": 3703,
   "history": [
-    {
-      "timestamp": "2026-10-22T15:56:59.628Z",
-      "repository": "apache/zookeeper",
-      "learningId": "learn-github-apache-zookeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:03:26.992Z",
-      "repository": "facebook/folly",
-      "learningId": "learn-github-facebook-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:03:31.691Z",
-      "repository": "bitnami/sealed-secrets",
-      "learningId": "learn-github-bitnami-sealed-secrets",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:09:57.307Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T16:10:00.333Z",
       "repository": "chakra-ui/zag",
@@ -1403,6 +1375,34 @@
       "repository": "cosscom/ui",
       "learningId": "learn-github-cosscom-ui",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:20:47.323Z",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:20:48.749Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:20:52.097Z",
+      "repository": "infracost/infracost",
+      "learningId": "learn-github-infracost-infracost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:20:54.223Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

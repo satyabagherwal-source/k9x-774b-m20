@@ -2951,12 +2951,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "karakeep-app-karakeep": {
-    "name": "karakeep-app/karakeep",
+    "name": "karakeep",
     "officialUrl": "https://github.com/karakeep-app/karakeep",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T06:07:07.941Z",
-    "lastVerified": "2026-10-20T06:07:07.941Z",
+    "lastChecked": "2026-10-23T09:20:43.663Z",
+    "lastVerified": "2026-10-23T09:20:43.663Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karakeep-app-karakeep",
@@ -2965,7 +2965,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5c72fa95"
   },
   "maotoumao-musicfree": {
     "name": "MusicFree",
@@ -5094,8 +5095,8 @@
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-21T04:35:09.419Z",
-    "lastVerified": "2026-10-21T04:35:09.419Z",
+    "lastChecked": "2026-10-23T09:20:51.128Z",
+    "lastVerified": "2026-10-23T09:20:51.128Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vasu-devs-justhireme",
@@ -7613,8 +7614,8 @@
     "officialUrl": "https://github.com/tokio-rs/console",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T02:40:47.716Z",
-    "lastVerified": "2026-10-21T02:40:47.716Z",
+    "lastChecked": "2026-10-23T09:20:38.630Z",
+    "lastVerified": "2026-10-23T09:20:38.630Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-console",
@@ -9176,22 +9177,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "infracost-infracost": {
-    "name": "infracost",
+    "name": "infracost/infracost",
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-21T05:34:18.441Z",
-    "lastVerified": "2026-10-21T05:34:18.441Z",
+    "lastChecked": "2026-10-23T09:20:50.989Z",
+    "lastVerified": "2026-10-23T09:20:50.989Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
-    "contentHash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
+    "contentHash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8854f1ed"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cloudwego-volo": {
     "name": "volo",
@@ -18505,8 +18505,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-23T07:59:44.573Z",
-    "lastVerified": "2026-10-23T07:59:44.573Z",
+    "lastChecked": "2026-10-23T09:20:53.603Z",
+    "lastVerified": "2026-10-23T09:20:53.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -22309,22 +22309,21 @@
     "revisionIdentifier": "ca4d588f"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-22T21:08:06.976Z",
-    "lastVerified": "2026-10-22T21:08:06.976Z",
+    "lastChecked": "2026-10-23T09:20:53.033Z",
+    "lastVerified": "2026-10-23T09:20:53.033Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
+    "contentHash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c85580b7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tursodatabase-limbo": {
     "name": "tursodatabase/turso",
@@ -27219,12 +27218,12 @@
     "revisionIdentifier": "6049cc0b"
   },
   "jestjs-jest": {
-    "name": "jestjs/jest",
+    "name": "jest",
     "officialUrl": "https://github.com/jestjs/jest",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-20T03:46:46.037Z",
-    "lastVerified": "2026-10-20T03:46:46.037Z",
+    "lastChecked": "2026-10-23T09:20:41.271Z",
+    "lastVerified": "2026-10-23T09:20:41.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jestjs-jest",
@@ -27233,7 +27232,8 @@
     "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "61050e93"
   },
   "avajs-ava": {
     "name": "avajs/ava",
@@ -27450,8 +27450,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-23T08:59:48.039Z",
-    "lastVerified": "2026-10-23T08:59:48.039Z",
+    "lastChecked": "2026-10-23T09:20:56.748Z",
+    "lastVerified": "2026-10-23T09:20:56.748Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -28291,6 +28291,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 15,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-minimaxai-minimax-m3.1-flash": {
+    "name": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-23T09:20:36.195Z",
+    "lastVerified": "2026-10-23T09:20:36.195Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

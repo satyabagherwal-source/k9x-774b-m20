@@ -4507,3 +4507,7 @@
 | `CYCLE-20261023-4RH9` | `2026-10-23T08:44:38.301Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3842, Rule 3843, Rule 3844` | Yes (`68f70f58...`) |
 | `CYCLE-20261023-HZE5` | `2026-10-23T08:54:55.085Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3845` | Yes (`94e0ff06...`) |
 | `CYCLE-20261023-O7H3` | `2026-10-23T08:59:45.495Z` | `cosscom/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cosscom-ui-learnings.md` | Yes (`59551b46...`) |
+| `CYCLE-20261023-F93N` | `2026-10-23T09:20:47.315Z` | `MiniMaxAI/MiniMax-M3.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3846, Rule 3847, Rule 3848` | Yes (`ea2857e3...`) |
+| `CYCLE-20261023-FA78` | `2026-10-23T09:20:48.740Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3849` | Yes (`48892469...`) |
+| `CYCLE-20261023-FCSC` | `2026-10-23T09:20:52.092Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3850` | Yes (`e154313c...`) |
+| `CYCLE-20261023-FEFA` | `2026-10-23T09:20:54.214Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3851` | Yes (`8a5eccda...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source**: github ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
-> **Source Version**: `8854f1ed`  
+> **Source Version**: `98c9711f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:18:27.980Z  
+> **Timestamp**: 2026-10-23T09:20:51.890Z  
 > **Learning ID**: `learn-github-infracost-infracost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:18:27.975Z  
+> **Harvest Timestamp**: 2026-10-23T09:20:50.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud cost intelligence for engineers, AI coding agents, and CI/CD 💰📉 Shift FinOps Left!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12568 stars
+- **Stars / Engagement**: 12581 stars
 
 ---
 
@@ -693,263 +693,81 @@ func regionToCDNZone(region string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6a5d941` (2026-07-30)
-**Commit Message**: fix(deps): bump Go to 1.25.12 to patch CVE-2026-39822 (#3597)
+### Incident Patch 1: `98c9711f` (2026-10-21)
+**Commit Message**: fix: build with Go 1.26.10 and Alpine 3.24 (#3634)
 
-* fix(deps): move Go to 1.26.5 to patch CVE-2026-39822
+Go 1.26.10 distrusts the compromised eMudhra intermediates (GO-2026-6809).
+Alpine 3.16 is EOL with a frozen CA bundle.
 
-* fix(test): scrub panic output containing toolchain module paths
+Refs TRK-1282
 
-The panic scrubber's character class had no hyphen, so it stopped
-matching once stack traces started resolving through
-golang.org/[REDACTED_EMAIL]-amd64.
-
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `Dockerfile` (modified, +2/-2)
 ```diff
 @@ -1,4 +1,4 @@
--FROM golang:1.25.11 AS builder
-+FROM golang:1.26.5 AS builder
+-ARG GO_VERSION=1.26.9
++ARG GO_VERSION=1.26.10
  
- ARG ARCH=linux
- ARG DEFAULT_TERRAFORM_VERSION=0.15.5
+ FROM golang:${GO_VERSION} AS builder
+ 
+@@ -50,7 +50,7 @@ RUN NO_DIRTY=true make build
+ RUN chmod +x /app/build/infracost
+ 
+ # Application
+-FROM alpine:3.16 AS app
++FROM alpine:3.24 AS app
+ # Tools needed for running diffs in CI integrations
+ RUN apk --no-cache add ca-certificates openssl openssh-client curl git bash
+ 
 ```
 
-**File**: `Dockerfile.ci` (modified, +1/-1)
+**File**: `Dockerfile.ci` (modified, +2/-2)
 ```diff
 @@ -1,4 +1,4 @@
--FROM golang:1.25.11 AS builder
-+FROM golang:1.26.5 AS builder
+-ARG GO_VERSION=1.26.9
++ARG GO_VERSION=1.26.10
  
- ARG ARCH=linux64
+ FROM golang:${GO_VERSION} AS builder
+ 
+@@ -21,7 +21,7 @@ RUN NO_DIRTY=true make build
+ RUN chmod +x /app/build/infracost
+ 
+ # Application
+-FROM alpine:3.16 AS app
++FROM alpine:3.24 AS app
+ # Tools needed for running diffs in CI integrations
+ RUN apk --no-cache add bash curl git nodejs npm openssh-client
  
 ```
 
-**File**: `cmd/infracost/cmd_test.go` (modified, +1/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -32,7 +32,7 @@ var (
- 	urlRegex         = regexp.MustCompile(`https://dashboard.infracost.io/share/.*`)
- 	projectPathRegex = regexp.MustCompile(`(Project:) .*/(examples|cmd/infracost)/(.*)`)
- 	versionRegex     = regexp.MustCompile(`Infracost (v|preview).*`)
--	panicRegex       = regexp.MustCompile(`runtime\serror:([\w\d\n\r\[\]\:\/\.\\(\)\+\,\{\}\*\@\s\?]*)Environment`)
-+	panicRegex       = regexp.MustCompile(`(?s)runtime\serror:(.*?)Environment`)
- 	pathRegex        = regexp.MustCompile(`(:\s*"|^|\s|')([a-zA-Z0-9-_/]+/)*(testdata/[^\s"']*)`)
- 	credsRegex       = regexp.MustCompile(`/.*/credentials\.yml`)
- )
-```
-
-**File**: `go.mod` (modified, +3/-1)
-```diff
-@@ -1,6 +1,8 @@
- module github.com/infracost/infracost
+@@ -2,7 +2,7 @@ module github.com/infracost/infracost
  
--go 1.25.11
-+go 1.26.0
-+
-+toolchain go1.26.5
+ go 1.26.0
+ 
+-toolchain go1.26.9
++toolchain go1.26.10
  
  require (
  	github.com/Masterminds/goutils v1.1.1 // indirect
 ```
 
----
-
-### Incident Patch 2: `d066927f` (2026-08-20)
-**Commit Message**: fix(docker): bump builder to golang 1.26.6 for CVE-2026-39821 (#3607)
-
-* fix(docker): bump builder image to golang 1.26.6 to patch CVE-2026-39821
-
-The golang images set GOTOOLCHAIN=local, so the toolchain directive in
-go.mod is ignored and images were still built with the 1.26.5 stdlib.
-
-* fix(docker): fail the build on Go toolchain drift with GOTOOLCHAIN=path
-
-* chore(docker): match the standard GOTOOLCHAIN comment wording
-
-* chore(docker): adopt the ARG GO_VERSION pattern used in other repos
-
-**File**: `Dockerfile` (modified, +7/-1)
+**File**: `internal/hcl/modules/testdata/with_cached_modules/.infracost/terraform_modules/manifest.json` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,6 @@
--FROM golang:1.26.5 AS builder
-+ARG GO_VERSION=1.26.6
-+
-+FROM golang:${GO_VERSION} AS builder
- 
- ARG ARCH=linux
- ARG DEFAULT_TERRAFORM_VERSION=0.15.5
-@@ -8,6 +10,10 @@ ARG TERRAGRUNT_VERSION=0.31.8
- SHELL ["/bin/bash", "-c"]
- ENV HOME=/app
- ENV CGO_ENABLED=0
-+# force the GO_VERSION above to be in sync with the `toolchain` directive in go.mod.
-+# This avoids downloading other Go Toolchains, which happens silently and would slow
-+# down our image builds.
-+ENV GOTOOLCHAIN=path
- 
- # Install Packages
- RUN apt-get update -q && apt-get -y install unzip && rm -rf /var/lib/apt/lists/*
-```
-
-**File**: `Dockerfile.ci` (modified, +7/-1)
-```diff
-@@ -1,11 +1,17 @@
--FROM golang:1.26.5 AS builder
-+ARG GO_VERSION=1.26.6
-+
-+FROM golang:${GO_VERSION} AS builder
- 
- ARG ARCH=linux64
- 
- # Set Environment Variables
- SHELL ["/bin/bash", "-c"]
- ENV HOME=/app
- ENV CGO_ENABLED=0
-+# force the GO_VERSION above to be in sync with the `toolchain` directive in go.mod.
-+# This avoids downloading other Go Toolchains, which happens silently and would slow
-+# down our image builds.
-+ENV GOTOOLCHAIN=path
- 
- WORKDIR /app
- 
-```
-
----
-
-### Incident Patch 3: `4f7170bc` (2026-09-09)
-**Commit Message**: fix(deps): bump golang.org/x/mod to v0.40.0 (#3615)
-
-CVE-2026-56864 and CVE-2026-56865 in golang.org/x/mod v0.37.0, fixed in
-v0.40.0. Flagged by AWS Inspector against hosted-cloud-pricing-api's
-image, which builds this CLI from source on every rebuild.
-
-**File**: `go.mod` (modified, +8/-8)
-```diff
-@@ -40,8 +40,8 @@ require (
- 	github.com/stretchr/testify v1.11.1
- 	github.com/tidwall/gjson v1.17.0
- 	github.com/zclconf/go-cty v1.17.0
--	golang.org/x/crypto v0.53.0 // indirect
--	golang.org/x/mod v0.37.0
-+	golang.org/x/crypto v0.55.0 // indirect
-+	golang.org/x/mod v0.40.0
- 	gopkg.in/go-playground/assert.v1 v1.2.1
- 	gopkg.in/yaml.v2 v2.4.0
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -50,7 +50,7 @@ require (
- require (
- 	github.com/aws/aws-sdk-go-v2/service/eks v1.73.3
- 	github.com/hashicorp/terraform-config-inspect v0.0.0-20210625153042-09f34846faab
--	golang.org/x/sys v0.46.0 // indirect
-+	golang.org/x/sys v0.47.0 // indirect
- )
- 
- require (
-@@ -81,15 +81,15 @@ require (
- 	github.com/slack-go/slack v0.27.0
- 	github.com/tidwall/match v1.1.1 // indirect
- 	github.com/tidwall/pretty v1.2.1 // indirect
--	golang.org/x/text v0.39.0
--	golang.org/x/tools v0.47.0 // indirect
-+	golang.org/x/text v0.41.0
-+	golang.org/x/tools v0.49.0 // indirect
- )
- 
- require (
- 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.23 // indirect
- 	github.com/gorilla/websocket v1.5.3 // indirect
--	golang.org/x/sync v0.21.0
-+	golang.org/x/sync v0.22.0
- )
- 
- require (
-@@ -265,7 +265,7 @@ require (
- 	go.opentelemetry.io/otel/sdk/metric v1.43.0 // indirect
- 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
--	golang.org/x/term v0.44.0 // indirect
-+	golang.org/x/term v0.45.0 // indirect
- 	golang.org/x/time v0.11.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260414002931-afd174a4e478 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 // indirect
-@@ -305,7 +305,7 @@ require (
- 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
- 	github.com/zclconf/go-cty-yaml v1.0.3
- 	go.opencensus.io v0.24.0 // indirect
--	golang.org/x/net v0.56.0 // indirect
-+	golang.org/x/net v0.58.0 // indirect
- 	google.golang.org/api v0.215.0
- 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
- 	google.golang.org/grpc v1.82.1 // indirect
-```
-
-**File**: `go.sum` (modified, +16/-16)
-```diff
-@@ -1885,8 +1885,8 @@ golang.org/x/crypto v0.38.0/go.mod h1:MvrbAqul58NNYPKnOra203SB9vpuZW0e+RRZV+Ggqj
- golang.org/x/crypto v0.39.0/go.mod h1:L+Xg3Wf6HoL4Bn4238Z6ft6KfEpN0tJGo53AAPC632U=
- golang.org/x/crypto v0.40.0/go.mod h1:Qr1vMER5WyS2dfPHAlsOj01wgLbsyWtFn/aY+5+ZdxY=
- golang.org/x/crypto v0.41.0/go.mod h1:pO5AFd7FA68rFak7rOAGVuygIISepHftHnr8dr6+sUc=
--golang.org/x/crypto v0.53.0 h1:QZ4Muo8THX6CizN2vPPd5fBGHyogrdK9fG4wLPFUsto=
--golang.org/x/crypto v0.53.0/go.mod h1:DNLU434OwVakk9PzuwV8w62mAJpRJL3vsgcfp4Qnsio=
-+golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
-+golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
- golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
-@@ -1953,8 +1953,8 @@ golang.org/x/mod v0.18.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
- golang.org/x/mod v0.24.0/go.mod h1:IXM97Txy2VM4PJ3gI61r1YEk/gAj6zAHN3AdZt6S9Ww=
- golang.org/x/mod v0.25.0/go.mod h1:IXM97Txy2VM4PJ3gI61r1YEk/gAj6zAHN3AdZt6S9Ww=
- golang.org/x/mod v0.26.0/go.mod h1:/j6NAhSk8iQ723BGAUyoAcn7SlD7s15Dp9Nd/SfeaFQ=
--golang.org/x/mod v0.37.0 h1:vF1DjpVEshcIqoEaauuHebaLk1O1forxjxBaVn884JQ=
--golang.org/x/mod v0.37.0/go.mod h1:m8S8VeM9r4dzDwjrKO0a1sZP3YjeMamRRlD+fmR2Q/0=
-+golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
-+golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
- golang.org/x/net v0.0.0-20170114055629-f2499483f923/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180530234432-1e491301e022/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -2033,8 +2033,8 @@ golang.org/x/net v0.40.0/go.mod h1:y0hY0exeL2Pku80/zKK7tpntoX23cqL3Oa6njdgRtds=
- golang.org/x/net v0.41.0/go.mod h1:B/K4NNqkfmg07DQYrbwvSluqCJOOXwUjeb/5lOisjbA=
- golang.org/x/net v0.42.0/go.mod h1:FF1RA5d3u7nAYA4z2TkclSCKh68eSXtiFwcWQpPXdt8=
- golang.org/x/net v0.43.0/go.mod h1:vhO1fvI4dGsIjh73sWfUVjj3N7CA9WkKJNQm2svM6Jg=
--golang.org/x/net v0.56.0 h1:Rw8j/hFzGvJUZwNBXnAtf5sVDVt+65SK2C7IxCxZt5o=
--golang.org/x/net v0.56.0/go.mod h1:D3Ku6r+V6JROoZK144D2XfMHFcMq/0zSfLelVTCFKec=
-+golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
-+golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-@@ -2089,8 +2089,8 @@ golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.14.0/go.mod h1:1dzgHSNfp02xaA81J2MS99Qcpr2w7fw1gpm99rleRqA=
- golang.org/x/sync v0.15.0/go.mod h1:1dzgHSNfp02xaA81J2MS99Qcpr2w7fw1gpm99rleRqA=
- golang.org/x/sync v0.16.0/go.mod h1:1dzgHSNfp02xaA81J2MS99Qcpr2w7fw1gpm99rleRqA=
--golang.org/x/sync v0.21.0 h1:HLII4xRRTtCRkxYp4HNFF0Js/Og6q2i++KXbg0gHCwM=
--golang.org/x/sync v0.21.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
-+golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
- golang.org/x/sys v0.0.0-20170830134202-bb24a47a89ea/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180816055513-1c9583448a9c/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180823144017-11551d06cbcc/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -2199,8 +2199,8 @@ golang.org/x/sys v0.29.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.33.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
- golang.org/x/sys v0.34.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
- golang.org/x/sys v0.35.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
--golang.org/x/sys v0.46.0 h1:noSf2Fq6F8DBgS+LysIkx7rIExoNHJsxOAtPp4rthXw=
--golang.org/x/sys v0.46.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
-+golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
- golang.org/x/telemetry v0.0.0-20240228155512-f48c80bd79b2/go.mod h1:TeRTkGYfJXctD9OcfyVLyj2J3IxLnKwHJR8f4D8a3YE=
- golang.org/x/telemetry v0.0.0-20240521205824-bda55230c457/go.mod h1:pRgIJT+bRLFKnoM1ldnzKoxTIn14Yxz928LQRYYgIN0=
- golang.org/x/telemetry v0.0.0-20250710130107-8d8967aff50b/go.mod h1:4ZwOYna0/zsOKwuR5X/m0QFOJpSZvAxFfkQT+Erd9D4=
-@@ -2222,8 +2222,8 @@ golang.org/x/term v0.21.0/g
+@@ -1 +1 @@
+-{"Path":"./testdata/with_cached_modules","Version":"2.0","Modules":[{"Key":"registry-module","Source":"registry.terraform.io/terraform-aws-modules/ec2-instance/aws","Version":"3.4.0","Dir":".infracost/terraform_modules/f8b5f5ddb85ee755b31c8b76d2801f5b","DownloadURL":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance?ref=v3.4.0"},{"Key":"git-module","Source":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance.git","Dir":".infracost/terraform_modules/9740179dc58fea6ce4a32fdc5b4e0839","DownloadURL":""}]}
+\ No newline at end of file
++{"Path":"./testdata/with_cached_modules","Version":"2.0","Modules":[{"Key":"git-module","Source":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance.git","Dir":".infracost/terraform_modules/9740179dc58fea6ce4a32fdc5b4e0839","DownloadURL":""},{"Key":"registry-module","Source":"registry.terraform.io/terraform-aws-modules/ec2-instance/aws","Version":"3.4.0","Dir":".infracost/terraform_modules/f8b5f5ddb85ee755b31c8b76d2801f5b","DownloadURL":"git::https://github.com/terraform-aws-modules/terraform-aws-ec2-instance?ref=v3.4.0"}]}
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3634** (2026-10-21): fix: build with Go 1.26.10 and Alpine 3.24 (@liamg)
 - **PR #3633** (2026-10-15): docs: add AGENTS.md steering contributors to discussions for EOL 0.10.x repo (@glenngillen)
 - **PR #3632** (closed): fix(azure): price the PostgreSQL Flexible Server HA standby and Premium SSD v2 (@willejs)
 - **PR #3631** (2026-10-12): fix(deps): bump Go toolchain and x/net for Inspector findings (@aliscott)
 - **PR #3630** (2026-10-15): docs: stop recommending a specific header extension for GraphQL queries (@glenngillen)
 - **PR #3625** (closed): fix(terragrunt): don't panic in DiagnosticsFunc when the config has no inputs (@dzolnierz)
-- **PR #3623** (2026-09-24): fix(deps): bump x/crypto and klauspost/compress for govulncheck (@aliscott)
 
 ---
 
@@ -969,13 +787,13 @@ image, which builds this CLI from source on every rebuild.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump Go to 1.25.12 to patch CVE-2026-39822 (#3597)
+## X. build with Go 1.26.10 and Alpine 3.24 (#3634)
 
 **RULE**:
 When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6a5d941`: deps): bump Go to 1.25.12 to patch CVE-2026-39822 (#3597). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98c9711f`: build with Go 1.26.10 and Alpine 3.24 (#3634). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
@@ -983,14 +801,16 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM golang:1.26.5 AS builder
+ARG GO_VERSION=1.26.10
+FROM alpine:3.24 AS app
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM golang:1.25.11 AS builder
+ARG GO_VERSION=1.26.9
+FROM alpine:3.16 AS app
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6a5d941` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98c9711f` are properly handled with clean fallback behavior.

@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "5c72fa95",
+    "sourceVersion": "85054d9a",
     "license": "AGPL-3.0",
-    "contentHash": "479cb9e0d28b8257e7946e46a22a3463c37a618c72b0d8229566b3e5d4d113d4",
-    "lastHarvestedAt": "2026-10-20T06:07:08.515Z",
+    "contentHash": "48892469082366e816eb36a80ed29bf0b3d94b214160cd063cb8cf129adf3af8",
+    "lastHarvestedAt": "2026-10-23T09:20:48.742Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "c85580b7",
+    "sourceVersion": "d6ea4a52",
     "license": "AGPL-3.0",
-    "contentHash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
-    "lastHarvestedAt": "2026-10-22T17:38:28.481Z",
+    "contentHash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
+    "lastHarvestedAt": "2026-10-23T09:20:54.217Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4863,10 +4863,10 @@
     "repository": "infracost/infracost",
     "platform": "github",
     "sourceUrl": "https://github.com/infracost/infracost",
-    "sourceVersion": "8854f1ed",
+    "sourceVersion": "98c9711f",
     "license": "Apache-2.0",
-    "contentHash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
-    "lastHarvestedAt": "2026-10-19T02:18:28.122Z",
+    "contentHash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
+    "lastHarvestedAt": "2026-10-23T09:20:52.094Z",
     "learningId": "learn-github-infracost-infracost"
   },
   "apache-shardingsphere": {
@@ -10568,5 +10568,15 @@
     "contentHash": "c0d4ed567140f07a67a4023c03eec0a4874bc7f788bed041287522266e178495",
     "lastHarvestedAt": "2026-10-23T05:23:49.026Z",
     "learningId": "learn-github-gauthierpiarrette-highball"
+  },
+  "hf-minimaxai-minimax-m3.1-flash": {
+    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+    "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
+    "license": "Open-Source",
+    "contentHash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
+    "lastHarvestedAt": "2026-10-23T09:20:47.317Z",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   }
 }

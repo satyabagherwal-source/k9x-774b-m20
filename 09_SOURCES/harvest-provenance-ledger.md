@@ -4514,3 +4514,7 @@ Every entry in this ledger must capture:
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ff25faef` | Multi-dimensional audit evidence | 2026-10-23T08:44:38.303Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `8bd6e534` | Multi-dimensional audit evidence | 2026-10-23T08:54:55.088Z |
 | `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `3d8ca28e` | Multi-dimensional audit evidence | 2026-10-23T08:59:45.498Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-23T09:20:47.317Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `85054d9a` | Multi-dimensional audit evidence | 2026-10-23T09:20:48.742Z |
+| `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `98c9711f` | Multi-dimensional audit evidence | 2026-10-23T09:20:52.094Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `d6ea4a52` | Multi-dimensional audit evidence | 2026-10-23T09:20:54.217Z |

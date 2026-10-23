@@ -4404,3 +4404,7 @@ https://huggingface.co/unsloth/flint-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-10-23T05:23:39.415Z] ---
 # [MOBILE-CROSS-PLATFORM] gauthierpiarrette/highball (1268 score) - Run Windows games on Apple Silicon — free, open source, with an open compatibili
 https://github.com/gauthierpiarrette/highball
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-23T09:20:33.203Z] ---
+# [HUGGINGFACE-AI-MODELS] MiniMaxAI/MiniMax-M3.1-Flash (1907 score) - Verified Hugging Face Model: MiniMaxAI/MiniMax-M3.1-Flash (155 likes, 357 downlo
+https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-6VR6",
-    "timestamp": "2026-10-20T20:35:06.690Z",
-    "repository": "assistant-ui/assistant-ui",
-    "learningId": "learn-github-assistant-ui-assistant-ui",
-    "contentHash": "63d05d42c96633030ca2da1b7e5cb85132865b09c06e5b67f5266a893812a706",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-6X58",
-    "timestamp": "2026-10-20T20:35:08.492Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "cd93f034601aba1d976ccf850dc7c6bd18d4077c79680e5fe77582dce835fd79",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-6XZM",
-    "timestamp": "2026-10-20T20:35:09.586Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "2862f9d9c756f841890d6cafb13ee434f7f5aa7c83ea3a5ace2f00f2fa9847c5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-7344",
-    "timestamp": "2026-10-20T20:35:16.228Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "216400fcadd8e9065f3cc64321398935eb7c0dd2b171ac65ceb42983da8b42a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-76Z4",
     "timestamp": "2026-10-20T20:35:21.232Z",
     "repository": "rqlite/rqlite",
@@ -7492,6 +7432,66 @@
     "contentHash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-F93N",
+    "timestamp": "2026-10-23T09:20:47.315Z",
+    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-FA78",
+    "timestamp": "2026-10-23T09:20:48.740Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "48892469082366e816eb36a80ed29bf0b3d94b214160cd063cb8cf129adf3af8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-FCSC",
+    "timestamp": "2026-10-23T09:20:52.092Z",
+    "repository": "infracost/infracost",
+    "learningId": "learn-github-infracost-infracost",
+    "contentHash": "e154313c511c7ae09c42959905bf2e3258027cedce60a7f45a6a95dc76ff70d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-FEFA",
+    "timestamp": "2026-10-23T09:20:54.214Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

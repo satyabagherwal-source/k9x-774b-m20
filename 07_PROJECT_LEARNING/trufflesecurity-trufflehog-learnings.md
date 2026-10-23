@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `c85580b7`  
+> **Source Version**: `d6ea4a52`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:38:28.156Z  
+> **Timestamp**: 2026-10-23T09:20:54.011Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:38:27.407Z  
+> **Harvest Timestamp**: 2026-10-23T09:20:53.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28645 stars
+- **Stars / Engagement**: 28668 stars
 
 ---
 
@@ -1140,589 +1140,302 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c85580b7` (2026-10-22)
-**Commit Message**: github: check App installation grants before listing comments (#5454)
+### Incident Patch 1: `d6ea4a52` (2026-10-23)
+**Commit Message**: Clean up Filesystem source logging for per-source debug (#5465)
 
-GitHub answers some comment listings with a silent partial result when a
-GitHub App installation holds only one of Issues (read) and Pull requests
-(read): /issues leaves out pull requests, and /issues/comments returns only
-the comments the granted permission covers, all with a 200. Listings the
-grants don't cover at all fail with a 403 per repo.
+Log through the call's context everywhere and drop the stored logger.
+Add the root path with context.WithValues under root_path, so it no
+longer clashes with the per-item path field.
 
-Read each installation's granted permissions from its access token and use
-them to shape the comment scan:
+Move the shared symlink/dir/file dispatch of Chunks and ChunkUnit into
+one scanRootPath helper, so both scan and log a root path the same way.
 
-- Skip a listing the grants can't cover, without calling GitHub, and report
-  a permission error naming what's missing.
-- Run a listing the grants only partly cover, and report one error for each
-  kind of item GitHub will leave out, when a setting asks for it.
-- Take pull request bodies from /pulls when only Pull requests (read) is
-  granted.
+Move lines to the levels in the source logging rules: V(1) init line
+with the config choices, V(2) per root path with duration, V(3) per
+directory and file, V(4) for skips with a reason, V(5) for symlink
+resolution and per-file timing. Add V(4) lines for skips that were
+silent before: path filter, non-regular entries, symlinks not followed,
+and directories already scanned before the resume point. Remove the
+"Entry found is a ..." lines, which the new lines cover.
 
-Token-authenticated sources, and Apps whose grants can't be read, scan as
-before.
+Add a debug logging test with logtest.DebugContext that checks every
+line has source_name and job_id, no line has the test secret, and no
+debug lines show with debug off.
 
-Also stop listing org members' gists under App auth. None of GitHub's gist
-endpoints accept an installation access token, so the listing failed once
-per member; one log line replaces those failures.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `pkg/sources/github/app_client_registry.go` (modified, +16/-0)
+**File**: `pkg/sources/filesystem/filesystem.go` (modified, +103/-92)
 ```diff
-@@ -95,6 +95,22 @@ func (cs *AppInstallationClients) AccessToken(ctx context.Context) (string, erro
- 	return token.GetToken(), nil
- }
+@@ -7,9 +7,9 @@ import (
+ 	"path/filepath"
+ 	"slices"
+ 	"strings"
++	"time"
  
-+// GrantedPermissions returns the permissions the installation grants, as
-+// listed on its access token. GitHub sends them with every token it issues,
-+// so this costs no API call when a token is already cached, which is the
-+// usual case: a repo is cloned with the same token before its comments are
-+// scanned. The comment scan reads them to skip, or report as incomplete,
-+// listings the installation can't fully cover (see installationGrants).
-+func (cs *AppInstallationClients) GrantedPermissions(ctx context.Context) (*github.InstallationPermissions, error) {
-+	if _, err := cs.AccessToken(ctx); err != nil {
-+		return nil, err
-+	}
-+
-+	cs.tokenMu.RLock()
-+	defer cs.tokenMu.RUnlock()
-+	return cs.token.GetPermissions(), nil
-+}
-+
- func (cs *AppInstallationClients) accessTokenIfValid() *github.InstallationToken {
- 	if cs.token == nil || cs.token.GetExpiresAt().Before(time.Now()) {
- 		return nil
-```
-
-**File**: `pkg/sources/github/app_client_registry_test.go` (modified, +31/-0)
-```diff
-@@ -53,6 +53,37 @@ func TestAccessTokenForInstallation(t *testing.T) {
- 		require.NoError(t, err)
- 	})
+ 	"github.com/go-errors/errors"
+-	"github.com/go-logr/logr"
+ 	"golang.org/x/sync/errgroup"
+ 	"google.golang.org/protobuf/proto"
+ 	"google.golang.org/protobuf/types/known/anypb"
+@@ -33,7 +33,6 @@ type Source struct {
+ 	concurrency  int
+ 	verify       bool
+ 	paths        []string
+-	log          logr.Logger
+ 	filter       *common.Filter
+ 	skipBinaries bool
+ 	sources.Progress
+@@ -67,8 +66,6 @@ func (s *Source) JobID() sources.JobID {
  
-+	t.Run("granted permissions come from the token", func(t *testing.T) {
-+		var hits atomic.Int64
-+		server := accessTokenServer(func(w http.ResponseWriter, r *http.Request) {
-+			hits.Add(1)
-+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
-+				"token":       "test-token",
-+				"expires_at":  "2099-01-01T00:00:00Z",
-+				"permissions": map[string]string{"issues": "read", "contents": "read"},
-+			})
-+		})
-+		defer server.Close()
-+
-+		cs, err := GetAppInstallationClients(t.Context(), server.URL, 12345, string(privKey), 100)
-+		require.NoError(t, err)
-+
-+		perms, err := cs.GrantedPermissions(t.Context())
-+		require.NoError(t, err)
-+		require.Equal(t, "read", perms.GetIssues())
-+		require.Empty(t, perms.GetPullRequests())
-+
-+		_, err = cs.AccessToken(t.Context())
-+		require.NoError(t, err)
-+		require.Equal(t, int64(1), hits.Load(), "permissions and clone share one token")
-+	})
-+
-+	t.Run("granted permissions without a token", func(t *testing.T) {
-+		cs := &AppInstallationClients{InstallationID: 0}
-+		_, err := cs.GrantedPermissions(t.Context())
-+		require.Error(t, err)
-+	})
-+
- 	t.Run("rate limit", func(t *testing.T) {
- 		server := accessTokenServer(func(w http.ResponseWriter, r *http.Request) {
- 			w.Header().Add("X-RateLimit-Remaining", "0")
-```
-
-**File**: `pkg/sources/github/comments_test.go` (modified, +161/-2)
-```diff
-@@ -124,10 +124,17 @@ func seedRepo(gh *fakeGitHub) {
+ // Init returns an initialized Filesystem source.
+ func (s *Source) Init(aCtx trContext.Context, name string, jobId sources.JobID, sourceId sources.SourceID, verify bool, connection *anypb.Any, concurrency int) error {
+-	s.log = aCtx.Logger()
+-
+ 	s.concurrency = concurrency
+ 	s.name = name
+ 	s.sourceId = sourceId
+@@ -91,6 +88,14 @@ func (s *Source) Init(aCtx trContext.Context, name string, jobId sources.JobID,
+ 	if err != nil {
+ 		return err
  	}
- }
- 
-+// scanComments runs the REST comment scan with unknown installation grants,
-+// as a token-authenticated source would.
- func scanComments(t *testing.T, s *Source, gh *fakeGitHub, cutoff *time.Time) (*collectingReporter, error) {
-+	t.Helper()
-+	return scanCommentsWithGrants(t, s, gh, nil, cutoff)
-+}
 +
-+func scanCommentsWithGrants(t *testing.T, s *Source, gh *fakeGitHub, grants *installationGrants, cutoff *time.Time) (*collectingReporter, error) {
- 	t.Helper()
- 	reporter := &collectingReporter{}
--	err := s.processIssueandPRsWithCommentsREST(context.Background(), gh.client, testRepo, reporter, cutoff)
-+	err := s.processIssueandPRsWithCommentsREST(context.Background(), gh.client, testRepo, grants, reporter, cutoff)
- 	return reporter, err
- }
- 
-@@ -357,6 +364,158 @@ func TestCommentScan_EachFailedPhaseIsReportedAsItsOwnChunkError(t *testing.T) {
- 	assert.Empty(t, reporter.links)
- }
- 
-+// reportedGrantErrors runs reportCommentErrors on err and describes each
-+// chunk error it reports as "<prefix>: skip" or "<prefix>: narrow", where
-+// prefix names the phase or the content left out. Any reported error that
-+// isn't a grants-based permissionError fails the test.
-+func reportedGrantErrors(t *testing.T, err error) []string {
-+	t.Helper()
-+	reporter := &collectingReporter{}
-+	require.NoError(t, reportCommentErrors(context.Background(), reporter, err))
-+	var got []string
-+	for _, reported := range reporter.errs {
-+		var permErr *permissionError
-+		require.ErrorAs(t, reported, &permErr)
-+		prefix, _, _ := strings.Cut(strings.TrimPrefix(reported.Error(), "error scanning comments: "), ": missing")
-+		switch {
-+		case strings.Contains(permErr.outcome, "skipped"):
-+			got = append(got, prefix+": skip")
-+		case strings.Contains(permErr.outcome, "left them out"):
-+			got = append(got, prefix+": narrow")
-+		default:
-+			t.Fatalf("unexpected permission error: %v", reported)
-+		}
-+	}
-+	return got
-+}
-+
-+func TestCommentScan_InstallationGrantsShapeTheListings(t *testing.T) {
-+	type grant struct{ issues, pullRequests bool }
-+	var (
-+		neither = grant{}
-+		prsOnly = grant{pullRequests: true}
-+		issues  = grant{issues: true}
-+		both    = grant{issues: true, pullRequests: true}
++	aCtx.Logger().V(1).Info("filesystem source initialized",
++		"path_count", len(s.paths),
++		"skip_binaries", s.skipBinaries,
++		"max_symlink_depth", s.maxSymlinkDepth,
++		"include_paths_file", conn.IncludePathsFile,
++		"exclude_paths_file", conn.ExcludePathsFile,
 +	)
-+	tests := []struct {
-+		name          string
-+		issueComments bool
-+		prComments    bool
-+		grant         grant
-+		wantErrs      []string
-+		// wantListed names every endpoint the scan requests; the rest must
-+		// not be requested.
-+		wantListed []string
-+	}{
-+		{name: "issue comments, nothing granted", issueComments: true, grant: neither,
-+			wantErrs: []string{"issues: skip", "issue comments: skip"}},
-+		{name: "issue comments, pull requests granted", issueComments: true, grant: prsOnly,
-+			wantErrs:   []string{"issues: skip", "issue comments: narrow"},
-+			wantListed: []string{"issue comments"}},
-+		{name: "issue comments, issues granted", issueComments: true, grant: issues,
-+			wantListed: []string{"issues", "issue comments"}},
-+		{name: "issue comments, both granted", issueComments: true, grant: both,
-+			wantListed: []string{"issues", "issue comments"}},
-+
-+		{name: "PR comments, nothing granted", prComments: true, grant: neither,
-+			wantErrs: []string{"pull requests: skip", "pull request comments: skip"}},
-+		{name: "PR comments, pull requests granted", prComments: true, grant: prsOnly,
-+			wantListed: []string{"pulls", "pull comments"}},
-+		{name: "PR comments, issues granted", prComments: true, grant: issues,
-+			wantErrs: []string{"pull requests: skip", "pull request comments: skip"}},
-+		{name: "PR comments, both granted", prComments: true, grant: both,
-+			wantListed: []string{"pulls", "pull comments"}},
-+
-+		{name: "both settings, nothing granted", issueComments: true, prComments: true, grant: neither,
-+			wantErrs: []string{"issues and pull requests: skip", "issue comments: skip", "pull request comments: skip"}},
-+		{name: "both settings, pull requests granted", issueComments: true, prComments: true, grant: prsOnly,
-+			wantErrs:   []string{"issues: skip", "issue comments: narrow"},
-+			wantListed: []string{"pulls", "issue comments", "pull comments"}},
-+		{name: "both settings, issues granted", issueComments: true, prComments: true, grant: issues,
-+			wantErrs:   []string{"pull request bodies: narrow", "pull request conversation comments: narrow", "pull request comments: skip"},
-+			wantListed: []string{"issues", "issue comments"}},
-+		{name: "both settings, both granted", issueComments: true, prComments: true, grant: both,
-+			wantListed: []string{"issues", "issue comments", "pull comments"}},
-+
-+		{name: "comments off, nothing granted", grant: neither},
-+		{name: "comments off, pull requests granted", grant: prsOnly},
-+		{name: "comments off, issues granted", grant: issues},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			gh := newFakeGitHub(t)
-+			seedRepo(gh)
-+			s := &Source{includeIssueComments: tt.issueComments, includePRComments: tt.prCom
-```
-
-**File**: `pkg/sources/github/connector_app.go` (modified, +22/-0)
-```diff
-@@ -149,6 +149,28 @@ func (c *appConnector) Clone(ctx context.Context, repoURL string, args ...string
- 	return git.CloneRepoUsingToken(ctx, token, repoURL, "", "x-access-token", true, args...)
+ 	return nil
  }
  
-+// grantsForRepo returns what the installation that owns repoURL grants, for
-+// the permissions the comment scan needs. Installation permissions apply to
-+// every repo the installation can see, so repos on one installation share
-+// the answer, and the cached token makes it free after the repo's clone.
-+func (c *appConnector) grantsForRepo(ctx context.Context, repoURL string) (*installationGrants, error) {
-+	installID, _ := c.installationIDForRepo(repoURL)
-+	if installID == 0 {
-+		return nil, fmt.Errorf("no GitHub App installation resolved for repo %q", repoURL)
-+	}
-+
-+	cs, err := c.clientsForInstallation(installID)
-+	if err != nil {
-+		return nil, fmt.Errorf("cannot fetch installation clients for installation %d: %w", installID, err)
-+	}
-+
-+	perms, err := cs.GrantedPermissions(ctx)
-+	if err != nil {
-+		return nil, fmt.Errorf("could not read permissions for installation %d: %w", installID, err)
-+	}
-+	return newInstallationGrants(installID, perms), nil
-+}
-+
- // installationIDForRepo returns the mapped installation ID for repoURL. When no
- // mapping exists, it falls back to the configured installation and returns false.
- //
-```
-
-**File**: `pkg/sources/github/github.go` (modified, +123/-26)
-```diff
-@@ -780,12 +780,16 @@ func (s *Source) enumerateWithApp(ctx context.Context, connector *appConnector,
- 				ctx.Logger().Info("Skipping org member repos and gists: githubApp.installationId is required as a fallback installation to scan members together with scanAllInstallations", "org_members", len(s.memberCache))
- 				return nil
- 			}
--			// TODO: Replace loop below with a call to s.addReposForMembers(ctx, reporter)
-+			// Members' gists aren't listed, unlike in addReposForMembers: none
-+			// of GitHub's gist endpoints accept an installation access token,
-+			// and no app permission changes that, so the listing fails with a
-+			// 403 for every member. One line here stands in for those
-+			// failures; there's nothing for the customer to grant.
-+			if !s.ignoreGists {
-+				ctx.Logger().Info("Skipping org member gists: GitHub doesn't allow listing gists with a GitHub App installation token", "org_members", len(s.memberCache))
-+			}
- 			for member := range s.memberCache {
- 				logger := ctx.Logger().WithValues("member", member)
--				if err := s.addUserGistsToCache(ctx, member, reporter); err != nil {
--					logger.Error(err, "error fetching gists by user")
--				}
- 				// TODO: Add authenticated user list repo for app token. It does support as per docs but need to test it before we enable it here.
- 				// docs: https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-the-authenticated-user
- 				if err := s.getReposByUser(ctx, member, false, reporter); err != nil {
-@@ -1830,12 +1834,30 @@ func (s *Source) scanComments(ctx context.Context, repoPath string, repoInfo rep
- 			return s.processRepoIssueandPRsWithCommentsGraphql(ctx, graphqlClient, repoInfo, reporter, cutoffTime)
+@@ -114,47 +119,63 @@ func (s *Source) canFollowSymlinks() bool {
+ // Chunks emits chunks of bytes over a channel.
+ func (s *Source) Chunks(ctx trContext.Context, chunksChan chan *sources.Chunk, _ ...sources.ChunkingTarget) error {
+ 	for i, rootPath := range s.paths {
+-		logger := ctx.Logger().WithValues("path", rootPath)
+ 		if common.IsDone(ctx) {
+ 			return nil
+ 		}
+ 		s.SetProgressComplete(i, len(s.paths), fmt.Sprintf("Path: %s", rootPath), s.GetProgress().EncodedResumeInfo)
+ 
+-		cleanPath := filepath.Clean(rootPath)
+-		fileInfo, err := os.Lstat(cleanPath)
++		// root_path is kept apart from path, which the lines below use for the item being scanned.
++		pathCtx := trContext.WithValues(ctx, "root_path", rootPath)
++		fileInfo, err := os.Lstat(filepath.Clean(rootPath))
+ 		if err != nil {
+-			logger.Error(err, "unable to get file info")
++			pathCtx.Logger().Error(err, "unable to get file info")
+ 			continue
  		}
  
--		return s.processIssueandPRsWithCommentsREST(ctx, apiClient, repoInfo, reporter, cutoffTime)
-+		return s.processIssueandPRsWithCommentsREST(ctx, apiClient, repoInfo, s.commentGrantsForRepo(ctx, repoPath), reporter, cutoffTime)
+-		if fileInfo.Mode()&os.ModeSymlink != 0 {
+-			// if the root path is a symlink we scan the symlink
+-			ctx.Logger().V(5).Info("Root path is a symlink", "path", cleanPath)
+-			initialDepth := 0
+-			err = s.scanSymlink(ctx, chunksChan, rootPath, initialDepth, cleanPath)
+-			s.ClearEncodedResumeInfoFor(rootPath)
+-		} else if fileInfo.IsDir() {
+-			ctx.Logger().V(5).Info("Root path is a dir", "path", cleanPath)
+-			initialDepth := 0
+-			err = s.scanDir(ctx, chunksChan, rootPath, initialDepth, cleanPath)
+-			s.ClearEncodedResumeInfoFor(rootPath)
+-		} else {
+-			if !fileInfo.Mode().IsRegular() {
+-				logger.Info("skipping non-regular file", "path", cleanPath)
+-				continue
+-			}
+-			ctx.Logger().V(5).Info("Root path is a file", "path", cleanPath)
+-			err = s.scanFile(ctx, chunksChan, cleanPath)
+-		}
+-
+-		if err != nil && !errors.Is(err, io.EOF) {
+-			logger.Error(err, "error scanning filesystem")
++		if err := s.scanRootPath(pathCtx, chunksChan, rootPath, fileInfo); err != nil && !errors.Is(err, io.EOF) {
++			pathCtx.Logger().Error(err, "error scanning filesystem")
+ 		}
  	}
  
  	return nil
  }
  
-+// commentGrantsForRepo returns what the GitHub App installation behind
-+// repoURL grants, or nil (unknown) when the source doesn't authenticate as an
-+// App. A failure to read the grants also gives nil: the listings then run
-+// without the precheck, as they would for a token, and any 403 is still
-+// classified from its response.
-+func (s *Source) commentGrantsForRepo(ctx context.Context, repoURL string) *installationGrants {
-+	app, ok := s.connector.(*appConnector)
-+	if !ok {
++// scanRootPath scans one configured path, which can be a symlink, a directory, or a file.
++// It is shared by Chunks and ChunkUnit so both scan and log a root path the same way.
++func (s *Source) scanRootPath(
++	ctx trContext.Context,
++	chunksChan chan *sources.Chunk,
++	rootPath string,
++	fileInfo os.FileInfo,
++) error {
++	cleanPath := filepath.Clean(rootPath)
++	initialDepth := 0
++	start := time.Now()
++
++	var err error
++	switch {
++	case fileInfo.Mode()&os.ModeSymlink != 0:
++		ctx.Logger().V(2).Info("scanning path", "type", "symlink")
++		err = s.scanSymlink(ctx, chunksChan, rootPath, initialDepth, cleanPath)
++		s.ClearEncodedResumeInfoFor(rootPath)
++	case fileInfo.IsDir():
++		ctx.Logger().V(2).Info("scanning path", "type", "dir")
++		err = s.scanDir(ctx, chunksChan, rootPath, initialDepth, cleanPath)
++		s.ClearEncodedResumeInfoFor(rootPath)
++	case !fileInfo.Mode().IsRegular():
++		// The user asked for this path, so tell them it was not scanned.
++		ctx.Logger().Info("skipping file", "reason", "not a regular file")
 +		return nil
++	default:
++		ctx.Logger().V(2).Info("scanning path", "type", "file")
++		// TODO: Finer grain error tracking of individual chunks (in the case of archives).
++		err = s.scanFile(ctx, chunksChan, cleanPath)
 +	}
-+	grants, err := app.grantsForRepo(ctx, repoURL)
-+	if err != nil {
-+		ctx.Logger().V(2).Info("could not read installation permissions, scanning comments without the permission precheck", "error", err)
-+		return nil
-+	}
-+	return grants
++
++	ctx.Logger().V(2).Info("finished scanning path", "duration", time.Since(start).String())
++	return err
 +}
 +
- // trimURLAndSplit removes extraneous information from the |url| and splits it into segments.
- // This is typically 3 segments: host, owner, and name/ID; however, Gists have some edge cases.
- //
-@@ -2022,10 +2044,18 @@ const (
- // commentPhase is one listing in a repo's comment scan. run returns how many
- // chunks it emitted. startLog, when set, is logged at V(2) before the phase
- // runs.
-+//
-+// skipped and narrowed carry what the installation's grants cost the phase
-+// (see installationGrants). skipped, when set, is why the listing can't
-+// succeed; the phase reports it in place of running. narrowed holds one error
-+// per kind of item GitHub will leave out of a listing that still runs, each
-+// already prefixed with what's missing, and is reported after the run.
- type commentPhase struct {
- 	name     string
- 	startLog string
- 	run      func() (int, error)
-+	skipped  error
-+	narrowed []error
- }
- 
- // processIssueandPRsWithCommentsREST scans a repo's issues, pull requests, and
-@@ -2037,61 +2067,123 @@ type commentPhase struct {
- // so each failed phase is its own ChunkErr (see reportCommentErrors). Chunks
- // emitted before a failure are kept.
- //
-+// grants, when known, shapes the phases. A mismatch between the comment
-+// settings and what the installation grants is a configuration error the
-+// customer can fix, so it's always reported: every listing skipped because it
-+// can't succeed, and every kind of item GitHub will silently leave out of a
-+// listing that does run, gets exactly one permissionError. Items no setting
-+// asked for don't count. Skipped listings make no request.
-+//
- // The "Scanning issues" and "Scanning pull requests" V(2) lines are the only
- // log signal for scans on the unit path, whose comment errors go to the scan
- // details UI instead of the logs, so they keep their wording. The summary
- // line at the end records how far each phase got.
- func (s *Source) processIssueandPRsWithCommentsREST(
- 	ctx context.Context, apiClient *github.Client, repoInfo repoInfo,
--	reporter sources.ChunkReporter, cutoffTime *time.Time,
-+	grants *installationGrants, reporter sources.ChunkReporter, cutoffTime *time.Time,
+ func (s *Source) scanSymlink(
+ 	ctx trContext.Context,
+ 	chunksChan chan *sources.Chunk,
+@@ -163,8 +184,8 @@ func (s *Source) scanSymlink(
+ 	path string,
  ) error {
- 	p := s.commentPager(ctx, apiClient, reporter)
- 	var since time.Time
- 	if cutoffT
+ 	if !s.canFollowSymlinks() {
+-		// If the file or directory is a symlink but the followSymlinks is disable ignore the path
+-		ctx.Logger().V(2).Info("skipping, following symlinks is not
 ```
 
-**File**: `pkg/sources/github/github_test.go` (modified, +56/-0)
+**File**: `pkg/sources/filesystem/filesystem_test.go` (modified, +94/-1)
 ```diff
-@@ -15,6 +15,7 @@ import (
- 	"slices"
- 	"strconv"
- 	"strings"
-+	"sync"
- 	"testing"
+@@ -11,13 +11,18 @@ import (
  	"time"
  
-@@ -1071,6 +1072,61 @@ func TestEnumerateWithAppScanAllInstallationsIncludesConfiguredInstallation(t *t
- 	assert.True(t, s.filteredRepoCache.Exists("other-org/repo"))
- }
+ 	"github.com/go-logr/logr"
++	"github.com/go-logr/zapr"
+ 	"github.com/google/go-cmp/cmp"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zapcore"
++	"go.uber.org/zap/zaptest/observer"
+ 	"google.golang.org/protobuf/testing/protocmp"
+ 	"google.golang.org/protobuf/types/known/anypb"
  
-+func TestEnumerateWithAppScanUsersListsMemberReposButNotGists(t *testing.T) {
-+	privateKey := createPrivateKey()
+ 	trContext "github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+@@ -438,7 +443,6 @@ func TestSkipBinaries(t *testing.T) {
+ 	source := &Source{
+ 		paths:        []string{textFile, binaryFile}, // Test individual files
+ 		skipBinaries: true,
+-		log:          logr.Discard(),
+ 	}
+ 
+ 	chunks := make(chan *sources.Chunk, 10)
+@@ -888,3 +892,92 @@ func createTempDir(dir string, contents ...string) (string, func(), error) {
+ 	}
+ 	return tmpdir, func() { _ = os.RemoveAll(tmpdir) }, nil
+ }
 +
-+	var (
-+		mu    sync.Mutex
-+		paths []string
-+	)
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		mu.Lock()
-+		paths = append(paths, r.URL.Path)
-+		mu.Unlock()
-+		w.Header().Set("Content-Type", "application/json")
++func TestSource_DebugLogging(t *testing.T) {
++	const testSecret = "TESTSECRET-do-not-log-1234567890"
 +
-+		switch {
-+		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/access_tokens"):
-+			_, _ = w.Write([]byte(`{"token":"token","expires_at":"2099-01-01T00:00:00Z"}`))
-+		case strings.HasSuffix(r.URL.Path, "/installation/repositories"):
-+			_, _ = w.Write([]byte(`{"total_count":0,"repositories":[]}`))
-+		case strings.HasSuffix(r.URL.Path, "/app/installations"):
-+			_, _ = w.Write([]byte(`[{"id":1337,"account":{"login":"default-org","type":"Organization"}}]`))
-+		case strings.HasSuffix(r.URL.Path, "/orgs/default-org/members"):
-+			_, _ = w.Write([]byte(`[{"login":"alice"}]`))
-+		case strings.HasSuffix(r.URL.Path, "/users/alice/repos"):
-+			_, _ = w.Write([]byte(`[]`))
-+		default:
-+			http.NotFound(w, r)
-+		}
-+	}))
-+	defer server.Close()
++	// One file of each kind the source logs about: scanned, binary, excluded by filter, and a symlink.
++	dir := t.TempDir()
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "config.txt"), []byte("password = "+testSecret), 0644))
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "app.exe"), []byte{0x4D, 0x5A, 0x90, 0x00}, 0644))
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "excluded.txt"), []byte("password = "+testSecret), 0644))
++	require.NoError(t, os.Symlink(filepath.Join(dir, "config.txt"), filepath.Join(dir, "link.txt")))
 +
-+	s, conn := createTestSource(&sourcespb.GitHub{
-+		Endpoint:  server.URL,
-+		ScanUsers: true,
-+		Credential: &sourcespb.GitHub_GithubApp{
-+			GithubApp: &credentialspb.GitHubApp{
-+				PrivateKey:     privateKey,
-+				InstallationId: "1337",
-+				AppId:          "4141",
-+			},
-+		},
++	excludeFile := filepath.Join(t.TempDir(), "exclude.txt")
++	require.NoError(t, os.WriteFile(excludeFile, []byte("excluded\\.txt$\n"), 0644))
++
++	conn, err := anypb.New(&sourcespb.Filesystem{
++		Paths:            []string{dir},
++		SkipBinaries:     true,
++		ExcludePathsFile: excludeFile,
 +	})
-+	require.NoError(t, s.Init(context.Background(), "test - github", 0, 1337, false, conn, 1))
-+	require.False(t, s.ignoreGists)
-+
-+	err := s.enumerateWithApp(context.Background(), s.connector.(*appConnector), noopReporter())
 +	require.NoError(t, err)
 +
-+	mu.Lock()
-+	defer mu.Unlock()
-+	assert.Contains(t, paths, "/api/v3/users/alice/repos")
-+	for _, path := range paths {
-+		assert.NotContains(t, path, "gists")
++	// run the source with both Chunks and ChunkUnit, draining chunks the way the engine does
++	runSource := func(ctx trContext.Context) {
++		s := Source{}
++		require.NoError(t, s.Init(ctx, "test debug logging", 1, 1, false, conn, 1))
++
++		chunksCh := make(chan *sources.Chunk, 64)
++		go func() {
++			for range chunksCh {
++			}
++		}()
++		require.NoError(t, s.Chunks(ctx, chunksCh))
++		close(chunksCh)
++
++		reporter := sourcestest.TestReporter{}
++		require.NoError(t, s.ChunkUnit(ctx, sources.CommonSourceUnit{ID: dir}, &reporter))
++		require.Empty(t, reporter.ChunkErrs)
 +	}
-+}
 +
- func TestEnumerateWithAppScanAllInstallationsMapsExplicitReposBeforeMetadataFetch(t *testing.T) {
- 	privateKey := createPrivateKey()
- 
-```
-
-**File**: `pkg/sources/github/installation_grants.go` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+package github
++	t.Run("debug on", func(t *testing.T) {
++		ctx, logs := logtest.DebugContext()
++		ctx = trContext.WithValues(ctx, "source_name", "test debug logging", "job_id", 1)
++		runSource(ctx)
 +
-+import "github.com/google/go-github/v67/github"
++		// lines from each level show up
++		for _, msg := range []string{
++			"filesystem source initialized", // V(1)
++			"scanning path",                 // V(2)
++			"finished scanning path",        // V(2)
++			"scanning directory",            // V(3)
++			"scanning file",                 // V(3)
++			"finished scanning file",        // V(5)
++		} {
++			assert.NotZero(t, logs.FilterMessage(msg).Len(), "missing log line %q", msg)
++		}
 +
-+// Permissions the comment listings need, in the form permissionError names
-+// them.
-+var (
-+	issuesRead       = permission{name: "issues", access: "read"}
-+	pullRequestsRead = permission{name: "pull_requests", access: "read"}
-+)
++		// every skip says why, at V(4)
++		var reasons []string
++		for _, entry := range logs.FilterMessage("skipping file").All() {
++			reasons = append(reasons, fmt.Sprint(entry.ContextMap()["reason"]))
++		}
++		for _, entry := range logs.FilterMessage("skipping symlink").All() {
++			reasons = append(reasons, fmt.Sprint(entry.ContextMap()["reason"]))
++		}
++		assert.Contains(t, reasons, "binary files are skipped")
++		assert.Contains(t, reasons, "excluded by path filter")
++		assert.Contains(t, reasons, "following symlinks is not enabled")
 +
-+// installationGrants is what a GitHub App installation grants, for the
-+// permissions the comment scan needs. A nil *installationGrants means the
-+// grants aren't known (a personal access token, or an App token whose
-+// permissions couldn't be read), and every listing runs as if granted; a 403
-+// is then classified from its response by asPermissionError.
-+//
-+// The grants matter beyond outright refusals because GitHub doesn't refuse
-+// every listing they only partly cover. Measured against a live installation:
-+//   - /issues with Issues (read) but not Pull requests (read) returns the
-+//     issues and leaves out the pull requests.
-+//   - /issues/comments with only one of the two returns only the comments that
-+//     one covers: issue comments with Issues (read), pull request
-+//     conversation comments with Pull requests (read).
-+//
-+// Both answer 200 with no error, so the comment scan reads the grants to skip
-+// listings that can't succeed and to report what the others leave out (see
-+// processIssueandPRsWithCommentsREST).
-+type installationGrants struct {
-+	installationID int64
-+	issues         bool
-+	pullRequests   bool
-+}
++		// every line came from the context logger, so it carries the source fields,
++		// and none of them contain the secret
++		for _, entry := range logs.All() {
++			fields := entry.ContextMap()
++			assert.Contains(t, fields, "source_name", "line %q", entry.Message)
++			assert.Contains(t, fields, "job_id", "line %q", entry.Message)
++			assert.NotContains(t, entry.Message, testSecret)
++			assert.NotContains(t, fmt.Sprint(fields), testSecret)
++		}
++	})
 +
-+// newInstallationGrants reads the comment-relevant grants from an access
-+// token's permissions. GitHub lists them on every installation token, so a
-+// token without any is unexpected; it returns nil (unknown) rather than
-+// treating the installation as granting nothing.
-+func newInstallationGrants(installationID int64, perms *github.InstallationPermissions) *installationGrants {
-+	if perms == nil {
-+		return nil
-+	}
-+	return &installationGrants{
-+		installationID: installationID,
-+		issues:         grantsRead(perms.GetIssues()),
-+		pullRequests:   grantsRead(perms.GetPullRequests()),
-+	}
-+}
++	t.Run("debug off", func(t *testing.T) {
++		core, logs := observer.New(zapcore.InfoLevel)
++		ctx := trContext.WithLogger(trContext.Background(), zapr.NewLogger(zap.New(core)))
++		runSource(ctx)
 +
-+// grantsRead reports whether an installation permission level allows
-+// reading. Write access includes read.
-+func grantsRead(level string) bool {
-+	switch level {
-+	case "read", "write", "admin":
-+		return true
-+	default:
-+		return false
-+	}
-+}
-+
-+// issuesGranted and pullRequestsGranted report whether the permission is
-+// granted, treating unknown grants as granted so listings run as they would
-+// without the precheck.
-+func (g *installationGrants) issuesGranted() bool       { return g == nil || g.issues }
-+func (g *installationGrants) pullRequestsGranted() bool { return g == nil || g.pullRequests }
-```
-
-**File**: `pkg/sources/github/installation_grants_test.go` (added, +89/-0)
-```diff
-@@ -0,0 +1,89 @@
-+package github
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/google/go-github/v67/github"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+)
-+
-+func TestNewInstallationGrants(t *testing.T) {
-+	tests := []struct {
-+		name             string
-+		perms            *github.InstallationPermissions
-+		wantIssues       bool
-+		wantPullRequests bool
-+	}{
-+		{name: "read grants", perms: &github.InstallationPermissions{Issues: github.String("read"), PullRequests: github.String("read")},
-+			wantIssues: true, wantPullRequests: true},
-+		{name: "write includes read", perms: &github.InstallationPermissions{Issues: github.String("write")},
-+			wantIssues: true},
-+		{name: "absent permissions aren't granted", perms: &github.InstallationPermissions{Contents: github.String("read")}},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			g := newInstallationGrants(7, tt.perms)
-+
-+			require.NotNil(t, g)
-+			assert.Equal(t, int64(7), g.installationID)
-+			assert.Equal(t, tt.wantIssues, g.issuesGranted())
-+			assert.Equal(t, tt.wantPullRequests, g.pullRequestsGranted())
-+		})
-+	}
-+}
-+
-+func TestNewInstallationGrants_TokenWithoutPermissionsIsUnknown(t *testing.T) {
-+	g := newInstallationGrants(7, nil)
-+
-+	assert.Nil(t, g)
-+	assert.True(t, g.issuesGranted(), "unknown grants let listings run")
-+	assert.True(t, g.pullRequestsGranted(), "unknown grants let listings run")
-+}
-+
-+func TestCommentGrantsForRepo_ReadsTheRepoInstallation(t *testing.T) {
-+	privKey := generateTestPrivateKey(t)
-+	var tokenPath string
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		tokenPath = r.URL.Path
-+		w.Header().Set("Content-Type", "application/json")
-+		_ = json.NewEncoder(w).Encode(map[string]any{
-+			"token":       "test-token",
-+			"expires_at":  "2099-01-01T00:00:00Z",
-+			"permissions": map[string]string{"pull_requests": "read"},
-+		})
-+	}))
-+	defer server.Close()
-+	conn := &appConnector{
-+		apiEndpoint: server.URL, appID: 12345, appPrivateKey: string(privKey), installationID: 1,
-+		repoInstallationMap: map[string]int64{"https://github.com/o/r.git": 777},
-+	}
-+	s := &Source{connector: conn}
-+
-+	grants := s.commentGrantsForRepo(context.Background(), "https://github.com/o/r.git")
-+
-+	assert.Equal(t, "/api/v3/app/installations/777/access_tokens", tokenPath)
-+	assert.Equal(t, &installationGrants{installationID: 777, pullRequests: true}, grants)
-+}
-+
-+func TestCommentGrantsForRepo_UnreadableGrantsAreUnknown(t *testing.T) {
-+	privKey := generateTestPrivateKey(t)
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+		w.WriteHeader(http.StatusNotFound)
-+	}))
-+	defer server.Close()
-+	s := &Source{connector: &appConnector{apiEndpoint: server.URL, appID: 12345, appPrivateKey: string(privKey), installationID: 1}}
-+
-+	assert.Nil(t, s.commentGrantsForRepo(context.Background(), "https://github.com/o/r.git"))
-+}
-+
-+func TestCommentGrantsForRepo_UnknownWithoutAppAuth(t *testing.T) {
-+	s := &Source{connector: &tokenConnector{}}
-+
-+	assert.Nil(t, s.commentGrantsForRepo(context.Background(), "https://github.com/o/r.git"))
++		assert.Zero(t, logs.FilterMessage("scanning file").Len())
++		assert.Zero(t, logs.FilterMessage("skipping file").Len())
++		assert.Zero(t, logs.FilterMessage("finished scanning file").Len())
++	})
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5465** (2026-10-23): Clean up Filesystem source logging for per-source debug (@kashifkhan0771)
 - **PR #5464** (2026-10-21): Update module golang.org/x/net to v0.60.0 [SECURITY] (@renovate[bot])
 - **PR #5463** (closed): Update module golang.org/x/mod to v0.40.0 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5462** (2026-10-21): Update module golang.org/x/crypto to v0.56.0 [SECURITY] (@renovate[bot])
 - **PR #5461** (closed): Update go toolchain directive to v1.26.10 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5460** (2026-10-21): Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (@renovate[bot])
-- **PR #5454** (2026-10-22): github: check App installation grants before listing comments (@unsmith)
 
 ---
 
@@ -1742,43 +1455,88 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. github: check App installation grants before listing comments (#5454)
+## X. Clean up Filesystem source logging for per-source debug (#5465)
 
 **RULE**:
-When implementing operations in `pkg/sources/github/app_client_registry.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sources/filesystem/filesystem.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c85580b7`: github: check App installation grants before listing comments (#5454). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d6ea4a52`: Clean up Filesystem source logging for per-source debug (#5465). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/github/app_client_registry.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/filesystem/filesystem.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// GrantedPermissions returns the permissions the installation grants, as
-// listed on its access token. GitHub sends them with every token it issues,
-// so this costs no API call when a token is already cached, which is the
-// usual case: a repo is cloned with the same token before its comments are
-// scanned. The comment scan reads them to skip, or report as incomplete,
-// listings the installation can't fully cover (see installationGrants).
-func (cs *AppInstallationClients) GrantedPermissions(ctx context.Context) (*github.InstallationPermissions, error) {
-	if _, err := cs.AccessToken(ctx); err != nil {
-		return nil, err
-	}
+	"time"
 
-	cs.tokenMu.RLock()
-	defer cs.tokenMu.RUnlock()
-	return cs.token.GetPermissions(), nil
-}
+	aCtx.Logger().V(1).Info("filesystem source initialized",
+		"path_count", len(s.paths),
+		"skip_binaries", s.skipBinaries,
+		"max_symlink_depth", s.maxSymlinkDepth,
+		"include_paths_file", conn.IncludePathsFile,
+		"exclude_paths_file", conn.ExcludePathsFile,
+	)
+		// root_path is kept apart from path, which the lines below use for the item being scanned.
+		pathCtx := trContext.WithValues(ctx, "root_path", rootPath)
+		fileInfo, err := os.Lstat(filepath.Clean(rootPath))
+			pathCtx.Logger().Error(err, "unable to get file info")
+		if err := s.scanRootPath(pathCtx, chunksChan, rootPath, fileInfo); err != nil && !errors.Is(err, io.EOF) {
+			pathCtx.Logger().Error(err, "error scanning filesystem")
+// scanRootPath scans one configured path, which can be a symlink, a directory, or a file.
+// It is shared by Chunks and ChunkUnit so both scan and log a root path the same way.
+func (s *Source) scanRootPath(
+	ctx trContext.Context,
+	chunksChan chan *sources.Chunk,
+	rootPath string,
+	fileInfo os.FileInfo,
+) error {
+	cleanPath := filepath.Clean(rootPath)
+	initialDepth := 0
+	start := time.Now()
 
+	var err error
+	switch {
+	case fileInfo.Mode()&os.ModeSymlink != 0:
+		ctx.Logger().V(2).Info("s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	"github.com/go-logr/logr"
+	log          logr.Logger
+	s.log = aCtx.Logger()
+
+		logger := ctx.Logger().WithValues("path", rootPath)
+		cleanPath := filepath.Clean(rootPath)
+		fileInfo, err := os.Lstat(cleanPath)
+			logger.Error(err, "unable to get file info")
+		if fileInfo.Mode()&os.ModeSymlink != 0 {
+			// if the root path is a symlink we scan the symlink
+			ctx.Logger().V(5).Info("Root path is a symlink", "path", cleanPath)
+			initialDepth := 0
+			err = s.scanSymlink(ctx, chunksChan, rootPath, initialDepth, cleanPath)
+			s.ClearEncodedResumeInfoFor(rootPath)
+		} else if fileInfo.IsDir() {
+			ctx.Logger().V(5).Info("Root path is a dir", "path", cleanPath)
+			initialDepth := 0
+			err = s.scanDir(ctx, chunksChan, rootPath, initialDepth, cleanPath)
+			s.ClearEncodedResumeInfoFor(rootPath)
+		} else {
+			if !fileInfo.Mode().IsRegular() {
+				logger.Info("skipping non-regular file", "path", cleanPath)
+				continue
+			}
+			ctx.Logger().V(5).Info("Root path is a file", "path", cleanPath)
+			err = s.scanFile(ctx, chunksChan, cleanPath)
+		}
+
+		if err != nil && !errors.Is(err, io.EOF) {
+			logger.Error(err, "error scanning filesystem")
+		// If the file or directory is a symlink but the followS
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c85580b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d6ea4a52` are properly handled with clean fallback behavior.
