@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `a2e5070d`  
+> **Source Version**: `33429e62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T03:18:14.442Z  
+> **Timestamp**: 2026-10-23T06:23:56.765Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T03:18:14.435Z  
+> **Harvest Timestamp**: 2026-10-23T06:23:55.141Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -537,8 +537,8 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 - **Issue #20438** (2026-10-20): **[Regression] Range query returns 0 rows when a CLOSED partition is included (5.10.16 vs 6.4.5)**
   *Symptoms*: ### CrateDB version  6.4.5 (also reproduced on 6.2.8; works as expected on 5.10.16)  ### CrateDB setup information  Number of nodes: 3  Node configuration: - 1 node with stage=bigeye - 2 nodes with stage=hot - Heap size: 5 GB per node  CRATE_HEAP_SIZE: 5g (each node) CRATE_JAVA_OPTS: Not specified  Test table configuration: - 1 primary shard - 0 replicas - Daily partitioning using a generated TIMESTAMP column  The issue was also reproduced using a newly created minimal test table without custom shard allocation settings.  The full crate.yml configuration can be provided if required.  ### Problem description  <html> <body> <!--StartFragment--><html><head></head><body><h3><span>Description</span></h3><p><span>We found a regression in CrateDB 6.x when querying a partitioned table containing CLOSED partitions.</span></p><p><span>In CrateDB 5.10.16, range queries spanning both OPEN and CLOSED partitions correctly return records from OPEN partitions.</span></p><p><span>However, in CrateDB 6.2.8 and 6.4.5, the same queries return 0 records, even when matching records exist in OPEN partitions.</span></p><p><span>This behavior was reproduced using a newly created test table.</span></p><h3><span>Steps to Reproduce</span></h3><p><strong><span>1. Create a partitioned table</span></strong></p><pre><code><span>CREATE TABLE IF NOT EXISTS doc.test_closed_partition (     ts TIMESTAMP WITHOUT TIME ZONE,     pdate TIMESTAMP WITHOUT TIME ZONE         GENERATED ALWAYS AS date_trunc('day', ts) ) P
 
-- **Issue #20414** (2026-10-20): **Failing query with left join inside cross join**
-  *Symptoms*: Originally found by @matriv while reviewing a PR. This was failing with `optimizer_eliminate_cross_join` enabled and disabled.  However, with https://github.com/crate/crate/pull/20305 merged, the query below fails only when `optimizer_eliminate_cross_join` is disabled.  ### CrateDB version  6.4.6  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description  The query below fails instead of returning expected results.  ### Steps to Reproduce  ```sql CREATE TABLE t1 (a INT, x INT); CREATE TABLE t2 (b INT, y INT); CREATE TABLE t3 (z INT); CREATE TABLE t4 (id INT);  INSERT INTO t1 (a, x) VALUES (1, 1); INSERT INTO t2 (b, y) VALUES (1, 1), (1, 2); INSERT INTO t3 (z) VALUES (1); INSERT INTO t4 (id) VALUES (1);  REFRESH TABLE t1, t2, t3, t4;  SELECT t1.x, t2.y, t3.z, t4.id FROM t1 LEFT JOIN t2 ON t1.a = t2.b CROSS JOIN t3 JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id; ```  ### Actual Result  ``` SQLParseException[Couldn't create execution plan from logical plan because of: Index 1 out of bounds for length 1: Eval[x, y, z, id] (rows=unknown)   └ HashJoin[INNER | ((z = id) AND (a = b))] (rows=unknown)     ├ HashJoin[INNER | (x = z)] (rows=unknown)     │  ├ HashJoin[INNER | (x = y)] (rows=unknown)     │  │  ├ Collect[doc.t1 | [x, a] | true] (rows=unknown)     │  │  └ Collect[doc.t2 | [y, b] | true] (rows=unknown)     │  └ Collect[doc.t3 | [z] | true] (rows=unknown)     └ Collect[doc.t4 | [id] | true] (
+- **Issue #20424** (2026-10-21): **Unable to remove dropped table from publication**
+  *Symptoms*: ### CrateDB version  6.4.6  ### CrateDB setup information  Standard setup  ### Problem description  If a subscription was created by listing tables explicitly, and one of the tables was dropped, it is not possible to remove it from the publication.  ### Steps to Reproduce  ```sql CREATE TABLE doc.t1 (a INTEGER); CREATE TABLE doc.t2 (a INTEGER);  CREATE PUBLICATION t_tables FOR TABLE doc.t1, doc.t2;  DROP TABLE t2;  SELECT * FROM pg_publication_tables; -- still shows t1 and t2  ALTER PUBLICATION t_tables DROP TABLE doc.t2; ```  ### Actual Result  ``` io.crate.exceptions.RelationUnknown: Relation 'doc.t2' unknown 	at io.crate.replication.logical.analyze.LogicalReplicationAnalyzer.lambda$analyze$1(LogicalReplicationAnalyzer.java:126) 	at io.crate.common.collections.Lists.map(Lists.java:206) 	at io.crate.replication.logical.analyze.LogicalReplicationAnalyzer.analyze(LogicalReplicationAnalyzer.java:121) 	at io.crate.analyze.Analyzer$AnalyzerDispatcher.visitAlterPublication(Analyzer.java:748) 	at io.crate.analyze.Analyzer$AnalyzerDispatcher.visitAlterPublication(Analyzer.java:275) 	at io.crate.sql.tree.AlterPublication.accept(AlterPublication.java:61) 	at io.crate.analyze.Analyzer.analyze(Analyzer.java:257) 	at io.crate.session.Session.analyze(Session.java:379) 	at io.crate.session.Session.parse(Session.java:355) 	at io.crate.rest.action.SqlHttpHandler.executeSimpleRequest(SqlHttpHandler.java:246) 	at io.crate.rest.action.SqlHttpHandler.handleSQLRequest(SqlHttpHandler.java:227) 	at
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -555,373 +555,641 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2e5070d` (2026-10-17)
-**Commit Message**: Push down inner join conditions that reference only one side
+### Incident Patch 1: `f98376b9` (2026-10-15)
+**Commit Message**: Fix stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl
 
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +10/-0)
+**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +6/-0)
 ```diff
-@@ -133,3 +133,13 @@ Fixes
- - Fixed an issue where double quotes and backslashes in array elements (e.g.
-   ``TEXT[]``) weren't escaped when sent over the PostgreSQL wire protocol in
-   text format. This caused clients to parse the elements incorrectly.
+@@ -143,3 +143,9 @@ Fixes
+     JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
+ 
+   A query like this used to fail with ``Index 1 out of bounds for length 1``.
 +
-+- Fixed an issue that caused inner join queries to fail when a join condition
-+  referenced multiple tables that are all on one side of the join, e.g.::
++- Fixed an issue causing :ref:`CREATE SUBSCRIPTION<sql-create-subscription>` to
++  get stuck if :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` was
++  used together with  ``sslmode`` set to ``prefer`` or ``required`` and
++  subscriber cluster didn't trust publisher cluster's certificate.
 +
-+    SELECT t1.x, t2.y, t3.z
-+    FROM t1
-+    JOIN t2 ON t1.a = t2.b
-+    JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
-+
-+  A query like this used to fail with ``Index 1 out of bounds for length 1``.
 ```
 
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +10/-0)
+**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +6/-0)
 ```diff
-@@ -138,3 +138,13 @@ Fixes
- - Fixed an issue where double quotes and backslashes in array elements (e.g.
-   ``TEXT[]``) weren't escaped when sent over the PostgreSQL wire protocol in
-   text format. This caused clients to parse the elements incorrectly.
+@@ -148,3 +148,9 @@ Fixes
+     JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
+ 
+   A query like this used to fail with ``Index 1 out of bounds for length 1``.
 +
-+- Fixed an issue that caused inner join queries to fail when a join condition
-+  referenced multiple tables that are all on one side of the join, e.g.::
++- Fixed an issue causing :ref:`CREATE SUBSCRIPTION<sql-create-subscription>` to
++  get stuck if :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` was
++  used together with  ``sslmode`` set to ``prefer`` or ``required`` and
++  subscriber cluster didn't trust publisher cluster's certificate.
 +
-+    SELECT t1.x, t2.y, t3.z
-+    FROM t1
-+    JOIN t2 ON t1.a = t2.b
-+    JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
-+
-+  A query like this used to fail with ``Index 1 out of bounds for length 1``.
 ```
 
-**File**: `server/src/main/java/io/crate/planner/operators/LogicalPlanner.java` (modified, +69/-2)
+**File**: `server/src/main/java/io/crate/protocols/postgres/PgClient.java` (modified, +14/-0)
 ```diff
-@@ -21,8 +21,10 @@
- 
- package io.crate.planner.operators;
- 
-+import java.util.ArrayList;
- import java.util.Collection;
- import java.util.Collections;
-+import java.util.HashSet;
- import java.util.Iterator;
- import java.util.LinkedHashSet;
- import java.util.List;
-@@ -38,6 +40,7 @@
- import org.elasticsearch.Version;
- import org.elasticsearch.cluster.ClusterState;
- import org.elasticsearch.cluster.metadata.Metadata;
-+import org.jspecify.annotations.Nullable;
- 
- import io.crate.analyze.AnalyzedInsertStatement;
- import io.crate.analyze.AnalyzedStatement;
-@@ -53,6 +56,7 @@
- import io.crate.analyze.relations.AnalyzedRelationVisitor;
- import io.crate.analyze.relations.AnalyzedView;
- import io.crate.analyze.relations.DocTableRelation;
-+import io.crate.analyze.relations.QuerySplitter;
- import io.crate.analyze.relations.TableFunctionRelation;
- import io.crate.analyze.relations.TableRelation;
- import io.crate.analyze.relations.UnionSelect;
-@@ -392,14 +396,14 @@ public LogicalPlan visitJoinRelation(JoinRelation joinRelation, List<Symbol> out
- 
-             var correlatedSubQueries = CorrelatedSubQueries.of(joinCondition);
-             if (correlatedSubQueries.correlatedSubQueries().isEmpty()) {
--                return new JoinPlan(
-+                return createJoinPlan(
-                     joinRelation.left().accept(this, lhsOutputs),
-                     joinRelation.right().accept(this, rhsOutputs),
-                     joinRelation.joinType(),
-                     joinCondition
-                 );
-             } else {
--                LogicalPlan source = new JoinPlan(
-+                LogicalPlan source = createJoinPlan(
-                     joinRelation.left().accept(this, lhsOutputs),
-                     joinRelation.right().accept(this, rhsOutputs),
-                     joinRelation.joinType(),
-@@ -412,6 +416,69 @@ public LogicalPlan visitJoinRelation(JoinRelation joinRelation, List<Symbol> out
-             }
+@@ -334,6 +334,20 @@ public Handler(ConnectionProfile profile,
+             this.result = result;
          }
  
-+        /// For inner joins, conditions which reference relations of only one side of the join
-+        /// are moved to that side as a [Filter].
-+        private static LogicalPlan createJoinPlan(LogicalPlan lhs,
-+                                                  LogicalPlan rhs,
-+                                                  JoinType joinType,
-+                                                  @Nullable Symbol joinCondition) {
-+            if (joinType != JoinType.INNER) {
-+                return new JoinPlan(lhs, rhs, joinType, joinCondition);
-+            }
-+            var split = splitJoinCondition(joinCondition, lhs.relationNames(), rhs.relationNames());
-+            return new JoinPlan(
-+                Filter.create(lhs, split.left()),
-+                Filter.create(rhs, split.right()),
-+                split.remaining() == null ? JoinType.CROSS : JoinType.INNER,
-+                split.remaining()
++        @Override
++        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
++            result.completeExceptionally(cause);
++            ctx.fireExceptionCaught(cause);
++        }
++
++        @Override
++        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
++            result.completeExceptionally(
++                new ConnectTransportException(node, "connection closed before switching to transport protocol")
 +            );
++            ctx.fireChannelInactive();
 +        }
 +
-+        /// @param remaining conditions referencing both sides, and non-deterministic conditions without any relation.
-+        ///                  `null` if there are none.
-+        /// @param left      conditions referencing only relations of the left side. `null` if there are none.
-+        /// @param right     conditions referencing only relations of the right side. `null` if there are none.
-+        private record SplitJoinCondition(@Nullable Symbol remaining, @Nullable Symbol left, @Nullable Symbol right) {
-+        }
-+
-+        /// Splits a join condition into the conditions that reference relations of only one side of the join,
-+        /// and the remaining conditions.
-+        /// Deterministic conditions without any relation are assigned to the left side.
-+        /// Non-deterministic conditions without any relation remain in the join condition.
-+        private static SplitJoinCondition splitJoinCondition(@Nullable Symbol condition,
-+                                                             Collection<RelationName> leftRelations,
-+                                                             Collection<RelationName> rightRelations) {
-+            if (condition == null) {
-+                return new SplitJoinCondition(null, null, null);
-+            }
-+            
-+            Set<RelationName> lhsRelations = new HashSet<>(leftRelations);
-+            Set<RelationName> rhsRelations = new HashSet<>(rightRelations);
-+            List<Symbol> lhsConditions = new ArrayList<>();
-+            List<Symbol> rhsConditions = new ArrayList<>();
-+            List<Symbol> remainingConditions = new ArrayList<>();
-+
-+            for (var entry : QuerySplitter.split(condition).entrySet()) {
-+                Set<RelationName> relations = entry.getKey();
-+                Symbol part = entry.getValue();
-+                if (relations.isEmpty() && !part.isDeterministic()) {
-+                    remainingConditions.add(part);
-+                } else if (lhsRelations.containsAll(relations)) {
-+                    lhsConditions.add(part);
-+                } else 
+         @Override
+         public boolean acceptInboundMessage(Object msg) throws Exception {
+             return true;
 ```
 
-**File**: `server/src/test/java/io/crate/integrationtests/JoinIntegrationTest.java` (modified, +24/-20)
+**File**: `server/src/test/java/io/crate/protocols/postgres/PgClientTest.java` (modified, +85/-70)
 ```diff
-@@ -1609,10 +1609,8 @@ public void test_eliminate_cross_joins_and_reorder_tables() throws Exception {
-     @UseHashJoins(1)
-     @UseRandomizedSchema(random = false)
-     @UseRandomizedOptimizerRules(0)
--    public void test_cross_join_elimination_keeps_condition_between_both_sides_of_outer_join() throws Exception {
-+    public void test_join_condition_referencing_multiple_tables_on_one_side_of_join() throws Exception {
-         // See: https://github.com/crate/crate/issues/20414
--        execute("SET optimizer_eliminate_cross_join = TRUE;");
--
-         execute("CREATE TABLE t1 (a INT, x INT)");
-         execute("CREATE TABLE t2 (b INT, y INT)");
-         execute("CREATE TABLE t3 (z INT)");
-@@ -1631,23 +1629,29 @@ public void test_cross_join_elimination_keeps_condition_between_both_sides_of_ou
-             JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
-             """;
+@@ -22,6 +22,7 @@
+ package io.crate.protocols.postgres;
  
--        execute("EXPLAIN (COSTS FALSE) " + stmt);
--        assertThat(response).hasLines(
--            "Eval[x, y, z, id]",
--            "  └ HashJoin[INNER | (z = id)]",
--            "    ├ HashJoin[INNER | (x = z)]",
--            "    │  ├ Filter[(x = y)]",
--            "    │  │  └ HashJoin[LEFT | (a = b)]",
--            "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
--            "    │  │    └ Collect[doc.t2 | [y, b] | true]",
--            "    │  └ Collect[doc.t3 | [z] | true]",
--            "    └ Collect[doc.t4 | [id] | true]"
--        );
--
--        execute(stmt);
--        assertThat(response).hasRowsInAnyOrder(
--            "1| 1| 1| 1"
--        );
-+        for (String eliminateCrossJoin : new String[] {"TRUE", "FALSE"}) {
-+            try (var session = sqlExecutor.newSession()) {
-+                execute("SET optimizer_eliminate_cross_join = " + eliminateCrossJoin, session);
+ import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ import static org.mockito.ArgumentMatchers.any;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.when;
+@@ -30,6 +31,7 @@
+ import java.util.List;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.TimeUnit;
+ 
+ import org.elasticsearch.Version;
+@@ -45,13 +47,13 @@
+ import org.elasticsearch.transport.TransportService;
+ import org.elasticsearch.transport.netty4.Netty4Transport;
+ import org.junit.After;
++import org.junit.Before;
+ import org.junit.Test;
+ import org.mockito.Answers;
+ 
+ import com.carrotsearch.randomizedtesting.annotations.Repeat;
+ 
+ import io.crate.auth.AlwaysOKAuthentication;
+-import io.crate.auth.Authentication;
+ import io.crate.metadata.settings.session.SessionSettingRegistry;
+ import io.crate.netty.NettyBootstrap;
+ import io.crate.protocols.ssl.SslContextProvider;
+@@ -65,15 +67,23 @@
+ public class PgClientTest extends CrateDummyClusterServiceUnitTest {
+ 
+     private List<LifecycleComponent> toClose = new ArrayList<>();
++    private NettyBootstrap nettyBootstrap;
+     private PgClient pgClient;
+ 
++    @Before
++    public void init() {
++        nettyBootstrap = new NettyBootstrap(Settings.EMPTY);
++        nettyBootstrap.start();
++        toClose.add(nettyBootstrap);
++    }
 +
-+                execute("EXPLAIN (COSTS FALSE) " + stmt, session);
-+                assertThat(response).hasLines(
-+                    "Eval[x, y, z, id]",
-+                    "  └ HashJoin[INNER | (z = id)]",
-+                    "    ├ HashJoin[INNER | (x = z)]",
-+                    "    │  ├ Filter[(x = y)]",
-+                    "    │  │  └ HashJoin[LEFT | (a = b)]",
-+                    "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
-+                    "    │  │    └ Collect[doc.t2 | [y, b] | true]",
-+                    "    │  └ Collect[doc.t3 | [z] | true]",
-+                    "    └ Collect[doc.t4 | [id] | true]"
-+                );
-+
-+                execute(stmt, session);
-+                assertThat(response).hasRowsInAnyOrder(
-+                    "1| 1| 1| 1"
-+                );
-+            }
-+        }
+     @After
+     public void stop() throws Exception {
+         for (var lifecycleComponent : toClose.reversed()) {
+             lifecycleComponent.close();
+         }
+         assertBusy(() -> {
+-            assertThat(pgClient.nettyBootstrap.workerIsShutdown()).isTrue();
++            assertThat(nettyBootstrap.workerIsShutdown()).isTrue();
+         });
      }
  
-     /**
-```
-
-**File**: `server/src/test/java/io/crate/planner/operators/JoinTest.java` (modified, +203/-0)
-```diff
-@@ -1912,4 +1912,207 @@ public void test_eliminate_cross_join_keeps_non_deterministic_filter_in_subquery
-             "  └ Collect[doc.t3 | [z] | true]"
-         );
-     }
+@@ -85,64 +95,93 @@ public void test_pg_client_can_connect_to_postgres_netty() throws Exception {
+         var serverNodeSettings = Settings.builder()
+             .put("node.name", "server")
+             .build();
+-        var clientSettings = Settings.builder()
+-            .put("node.name", "client")
+-            .build();
+-        var nettyBootstrap = new NettyBootstrap(Settings.EMPTY);
+-        nettyBootstrap.start();
+-        toClose.add(nettyBootstrap);
+-        var pageCacheRecycler = PageCacheRecycler.NON_RECYCLING_INSTANCE;
+-        var networkService = new NetworkService(List.of());
+-        var namedWriteableRegistry = new NamedWriteableRegistry(List.of());
+-        var circuitBreakerService = new NoneCircuitBreakerService();
+-        Authentication authentication = new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER));
+-        var sslContextProvider = new SslContextProvider(serverNodeSettings);
+-        var serverTransport = new Netty4Transport(
+-            serverNodeSettings,
++        TransportAddress serverAddress = startPostgresNetty(serverNodeSettings);
++        pgClient = pgClient(serverAddress, Settings.EMPTY);
 +
-+    @Test
-+    public void test_join_condition_referencing_one_side_is_pushed_below_join() {
-+        String stmt = """
-+            SELECT t1.x, t2.y, t3.z, t4.id
-+            FROM t1
-+            LEFT JOIN t2 ON t1.a = t2.b
-+            CROSS JOIN t3
-+            JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
-+            """;
-+        String[] expectedPlan = {
-+            "Eval[x, y, z, id]",
-+            "  └ HashJoin[INNER | (z = id)]",
-+            "    ├ HashJoin[INNER | (x = z)]",
-+            "    │  ├ Filter[(x = y)]",
-+            "    │  │  └ HashJoin[LEFT | (a = b)]",
-+            "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
-+            "    │  │    └ Collect[doc.t2 | [y, b] | true]",
-+            "    │  └ Collect[doc.t3 | [z] | true]",
-+            "    └ Collect[doc.t4 | [id] | true]"
-+        };
 +
-+        LogicalPlan plan = e.logicalPlan(stmt);
-+        assertThat(plan).hasOperators(expectedPlan);
++        CompletableFuture<Connection> connect = pgClient.ensureConnected();
++        Connection connection = connect.get(10, TimeUnit.SECONDS);
++        assertThat(connection.getNode().getAddress()).isEqualTo(serverAddress);
 +
-+        e.getSessionSettings().excludedOptimizerRules().add(EliminateCrossJoin.class);
++        // Must be able to call ensureConnected again
++        CompletableFuture<Connection> conn2 = pgClient.ensureConnected();
++        CompletableFuture<Connection> conn3 = pgClient.ensureConnected();
 +
-+        plan = e.logicalPlan(stmt);
-+        assertThat(plan).hasOperators(expectedPlan);
++        conn2.get(10, TimeUnit.SECONDS);
++        conn3.get(10, TimeUnit.SECONDS);
++
++        assertThat(connect).isSameAs(conn2);
++        assertThat(conn2).isSameAs(conn3);
++        connection.close();
++
++        // if a connection failed, calling ensureConnected again should return a new connection
++        connect.obtrudeException(new IllegalStateException("test"));
++        CompletableFuture<Connection> conn4 = pgClient.ensureConnected();
++        assertThat(conn4).isNotEqualTo(conn3);
++        connection = conn4.get(10, TimeUnit.SECONDS);
++
++        pgClient.close();
++        assertThat(connection.isClosed()).as("pgClient.close must close connection").isTrue();
 +    }
 +
 +    @Test
-+    public void test_join_condition_referencing_one_side_is_pushed_below_join_without_cross_join() {
-+        // Without a cross join, EliminateCrossJoin doesn't apply
-+        LogicalPlan plan = e.logicalPlan("""
-+            SELECT t1.x, t2.y, t3.z
-+            FROM t1
-+            JOIN t2 ON t1.a = t2.b
-+            JOIN t3 ON t1.x = t2.y AND t1.x = t3.z
-+            """);
++    public void test_connect_fails_if_ssl_is_required_but_server_does_not_support_it() throws Exception {
++        TransportAddress serverAddress = startPostgresNetty(Settings.builder().put("node.name", "server").build());
++        pgClient = pgClient(serverAddress, Settings.builder().put("sslmode", "require").build());
 +
-+        assertThat(plan).hasOperators(
-+            "Eval[x, y, z]",
-+            "  └ HashJoin[INNER | (x = z)]",
-+            "    ├ HashJoin[INNER | ((a = b) AND (x = y))]",
-+            "    │  ├ Collect[doc.t1 | [x, a] | true]",
-+            "    │  └ Collect[doc.t2 | [y, b] | true]",
-+            "    └ Collect[doc.t3 | [z] | true]"
-+        );
++        CompletableFuture<Connection> connect = pgClient.ensureConnected();
++        assertThatThrownBy(() -> connect.get(10, TimeUnit.SECONDS))
++            .isExactlyInstanceOf(ExecutionException.class)
++            .hasMessageContaining("SSL required but not supported");
++        pgClient.close();
 +    }
 +
-+    @Test
-+    public void test_join_condition_referencing_one_side_is_pushed_above_right_join() {
-+        String stmt = """
-+            SELECT t1.x, t2.y, t3.z, t4.id
-+            FROM t1
-+            RIGHT JOIN t2 ON t1.a = t2.b
-+            CROSS JOIN t3
-+            JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
-+            """;
-+        String[] expectedPlan = {
-+            "HashJoin[INNER | (z = id)]",
-+            "  ├ HashJoin[INNER | (x = z)]",
-+            "  │  ├ Eval[x, y]",
-+            "  │  │  └ Filter[(x = y)]",
-+            "  │  │    └ HashJoin[LEFT | (a = b)]",
-+            "  │  │      ├ Collect[doc.t2 | [y, b] | true]",
-+            "  │  │      └ Collect[doc.t1 | [x, a] | true]",
-+            "  │  └ Collect[doc.t3 | [z] | true]",
-+            "  └ Collect[doc.t4 | [id] | true]"
-+        };
-+
-+        LogicalPlan plan = e.logicalPlan(stmt);
-+        assertThat(plan).hasOperators(expectedPlan);
-+
-+        e.getSessionSettings().excludedOptimizerRules().add(EliminateCrossJoin.class);
-+
-+        plan = e.logicalPlan(stmt);
-+        assertThat(plan).hasOperators(expectedPlan);
-+    }
-+
-+    @Test
-+    public void test_join_condition_referencing_one_side_is_pushed_above_full_join() {
-+        String stmt = """
-+            SELECT t1.x, t2.y, t3.z, t4.id
-+            FROM t1
-+            FULL JOIN t2 ON t1.a = t2.b
-+            CROSS JOIN t3
-+            JOIN t4 ON t1.x = t2.y AND t1.x = t3.z AND t3.z = t4.id
-+            """;
-+        String[] expectedPlan = {
-+            "Eval[x, y, z, id]",
-+            "  └ HashJoin[INNER | (z = id)]",
-+            "    ├ HashJoin[INNER | (x = z)]",
-+            "    │  ├ Filter[(x = y)]",
-+            "    │  │  └ NestedLoopJoin[FULL | (a = b)]",
-+            "    │  │    ├ Collect[doc.t1 | [x, a] | true]",
-+            "    │  │    └ Collect[doc.t2 | [y, b] | true]",
-+            "    │  └ Collect[doc.t3 | [z] | true]",
-+            "    └ Collect[doc.t4 | [id] | true]"
-+        };
-+
-+        LogicalPlan plan = e.logicalPlan(stmt);
-+        assertThat(plan).hasOperators(expectedPlan);
-+
-+        e.getSessionSettings().excludedOptimizerRules().add(EliminateCrossJoin.class);
-+
-+        plan = e.logicalPlan(stmt);
-+        assertThat(plan).hasOperators(expectedPlan);
-+    }
-+
-+    @Test
-+    public void test_join_condition_without_relations_is_pushed_down() {
-+        // A parameter is used, because constant expressions are normalized away by the analyzer
-+        LogicalPlan plan = e.logicalPlan("""
-+            SELECT t1.x, t2.y
-+            FROM t1
-+            JOIN t2 ON t1.x = t2.y AND $1::int = 1
-+            """);
-+
-+        assertThat(plan).hasOperators(
-+            "HashJoin[INNER | (x = y)]",
-+            "  ├ Collect[doc.t1 | [x] | ($1 = 1)]",
-+            "  └ Collect[doc.t2 | [y] | true]"
-+        );
-+    }
-+
-+    @Test
-+    public void test_inner_join_becomes_cross_join_if_all_conditions_are_pushed_
++    private Netty4Transport newTransport(Settings settings) {
++        return new Netty4Transport(
++            settings,
+             Version.CURRENT,
+             THREAD_POOL,
+-          
 ```
 
 ---
 
-### Incident Patch 2: `2517f2b3` (2026-10-20)
-**Commit Message**: Skip publish test reports for GitHub actions for forks
+### Incident Patch 2: `c94472df` (2026-09-23)
+**Commit Message**: Extend DataType class docs with implementation requirements
 
-**File**: `.github/workflows/main.yml` (modified, +3/-0)
+**File**: `server/src/main/java/io/crate/types/DataType.java` (modified, +11/-0)
 ```diff
-@@ -75,6 +75,9 @@ jobs:
-       - name: Publish Test Report
-         if: needs.changes.outputs.java == 'true' && (success() || failure())
-         uses: ScalableCapital/action-surefire-report@1e92f48016e566e4eed2d81560edbfe0f524cfb7 #v2.0.3
-+        with:
-+          # GITHUB_TOKEN is read-only for PRs from forks, so the step fails with 403
-+          skip_publishing: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+@@ -50,6 +50,17 @@
+ import io.crate.sql.tree.Expression;
+ import io.crate.statistics.ColumnStatsSupport;
  
-   forbiddenApis:
-     name: forbiddenApis
++/// Represents a type supported in CrateDB, either in-memory only or also for persistence (via [#storageSupport()]
++///
++/// A full data type implementation needs an implementation of this class and some extensions in:
++/// - [io.crate.types.DataTypes]
++/// - [io.crate.expression.symbol.LiteralValueFormatter] if the DataType uses a new value type
++/// - [io.crate.protocols.postgres.types.PGTypes] and a [io.crate.protocols.types.PGType] implementation if necessary
++/// - [io.crate.server.xcontent.ServerXContentExtension] for outgoing HTTP streaming
++/// - [io.crate.execution.engine.sort.LuceneSort] if [#sortSupport()] returns [Sort#SORT_FIELD] and [io.crate.expression.reference.doc.lucene.NullSentinelValues]
++/// - `DataTypeTesting.getDataGenerator`
++/// - A test case extending `DataTypeTestCase`
++/// - `SQLTransportExecutor` - `toJdbcCompatObject` and `executeAndConvertResult`
+ public abstract class DataType<T> implements Comparable<DataType<?>>, Writeable, Comparator<T>, Accountable {
+ 
+     /**
+```
+
+---
+
+### Incident Patch 3: `e943e65e` (2026-10-20)
+**Commit Message**: Add UUID to `PRIMITIVE_TYPES` list
+
+In order to match the documentation and gives it a bit more test
+coverage as well as adding support for max/min aggregations
+
+**File**: `extensions/functions/src/main/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregation.java` (modified, +0/-1)
+```diff
+@@ -113,7 +113,6 @@ public static void register(Functions.Builder builder) {
+         for (var supportedType : DataTypes.PRIMITIVE_TYPES) {
+             register(builder, supportedType);
+         }
+-        register(builder, UUIDType.INSTANCE);
+     }
+ 
+     private final Signature signature;
+```
+
+**File**: `extensions/functions/src/test/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregationTest.java` (modified, +1/-2)
+```diff
+@@ -41,7 +41,6 @@
+ import com.carrotsearch.randomizedtesting.generators.RandomPicks;
+ 
+ import io.crate.Streamer;
+-import io.crate.common.collections.Lists;
+ import io.crate.data.breaker.RamAccounting;
+ import io.crate.execution.engine.aggregation.AggregationFunction;
+ import io.crate.execution.engine.aggregation.impl.HyperLogLogPlusPlus;
+@@ -174,7 +173,7 @@ public void test_without_precision_long() throws Exception {
+ 
+     @Test
+     public void test_random_type_random_values() throws Exception {
+-        var validTypes = Lists.concat(DataTypes.PRIMITIVE_TYPES, UUIDType.INSTANCE).stream()
++        var validTypes = DataTypes.PRIMITIVE_TYPES.stream()
+             .filter(x -> x.storageSupport() != null)
+             .collect(Collectors.toList());
+         var type = RandomPicks.randomFrom(RandomizedContext.current().getRandom(), validTypes);
+```
+
+**File**: `server/src/main/java/io/crate/types/DataTypes.java` (modified, +5/-1)
+```diff
+@@ -105,6 +105,9 @@ public final class DataTypes {
+     public static final RegclassType REGCLASS = RegclassType.INSTANCE;
+     public static final RegtypeType REGTYPE = RegtypeType.INSTANCE;
+ 
++
++    /// non-collection types as documented in docs/general/ddl/data-types.rst
++    /// Types listed here _must_ implement a accurate [DataType#compare(Object, Object)]
+     public static final List<DataType<?>> PRIMITIVE_TYPES = List.of(
+         BYTE,
+         BOOLEAN,
+@@ -119,7 +122,8 @@ public final class DataTypes {
+         LONG,
+         TIMESTAMPZ,
+         TIMESTAMP,
+-        DATE
++        DATE,
++        UUIDType.INSTANCE
+     );
+ 
+     private static final Set<Integer> PRIMITIVE_TYPE_IDS =
+```
+
+**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/MaximumAggregationTest.java` (modified, +24/-44)
+```diff
+@@ -26,15 +26,16 @@
+ 
+ import java.math.BigDecimal;
+ import java.util.List;
++import java.util.function.Supplier;
+ 
+-import org.joda.time.Period;
+ import org.junit.Test;
+ 
+ import io.crate.exceptions.UnsupportedFunctionException;
+ import io.crate.metadata.FunctionType;
+ import io.crate.metadata.functions.Signature;
+ import io.crate.metadata.functions.Signature.Feature;
+ import io.crate.operation.aggregation.AggregationTestCase;
++import io.crate.testing.DataTypeTesting;
+ import io.crate.types.DataType;
+ import io.crate.types.DataTypes;
+ import io.crate.types.NumericType;
+@@ -151,22 +152,31 @@ public void testNumeric() throws Exception {
+         }
+     }
+ 
+-    @Test
+-    public void testDouble() throws Exception {
+-        Object result = executeAggregation(DataTypes.DOUBLE, new Object[][]{{0.8d}, {0.3d}});
+-        assertThat(result).isEqualTo(0.8d);
+-    }
+-
+-    @Test
+-    public void testFloat() throws Exception {
+-        Object result = executeAggregation(DataTypes.FLOAT, new Object[][]{{0.8f}, {0.3f}});
+-        assertThat(result).isEqualTo(0.8f);
++    private <T> void assert_max_on_primitive_type(DataType<T> type) throws Exception {
++        Supplier<T> dataGenerator = DataTypeTesting.getDataGenerator(type);
++        T val1 = dataGenerator.get();
++        T val2;
++        do {
++            val2 = dataGenerator.get();
++        } while (type.compare(val1, val2) == 0);
++
++        Object[][] data = new Object[][] {
++            { val1 },
++            { val2 }
++        };
++        Object result = executeAggregation(type, data);
++        if (type.compare(val1, val2) > 0) {
++            assertThat(result).isEqualTo(val1);
++        } else {
++            assertThat(result).isEqualTo(val2);
++        }
+     }
+ 
+     @Test
+-    public void testInteger() throws Exception {
+-        Object result = executeAggregation(DataTypes.INTEGER, new Object[][]{{8}, {3}});
+-        assertThat(result).isEqualTo(8);
++    public void test_max_on_primitive_types() throws Exception {
++        for (var type : DataTypes.PRIMITIVE_TYPES) {
++            assert_max_on_primitive_type(type);
++        }
+     }
+ 
+     @Test
+@@ -204,41 +214,11 @@ public void test_aggregate_min_long() throws Exception {
+         assertThat(result).isEqualTo((Long.MIN_VALUE + 1));
+     }
+ 
+-    @Test
+-    public void testLong() throws Exception {
+-        Object result = executeAggregation(DataTypes.LONG, new Object[][]{{8L}, {3L}});
+-
+-        assertThat(result).isEqualTo(8L);
+-    }
+-
+-    @Test
+-    public void testShort() throws Exception {
+-        Object result = executeAggregation(DataTypes.SHORT, new Object[][]{{(short) 8}, {(short) 3}});
+-
+-        assertThat(result).isEqualTo((short) 8);
+-    }
+-
+     @Test
+     public void test_max_with_byte_argument_type() throws Exception {
+         assertThat(executeAggregation(DataTypes.BYTE, new Object[][]{{(byte) 1}, {(byte) 0}})).isEqualTo(((byte) 1));
+     }
+ 
+-    @Test
+-    public void testString() throws Exception {
+-        Object result = executeAggregation(DataTypes.STRING, new Object[][]{{"Youri"}, {"Ruben"}});
+-
+-        assertThat(result).isEqualTo("Youri");
+-    }
+-
+-    @Test
+-    public void test_max_on_interval() throws Exception {
+-        Object result = executeAggregation(DataTypes.INTERVAL, new Object[][] {
+-            { new Period(3, 2, 5, 7, 4, 30, 0, 0) },
+-            { new Period(3, 2, 5, 7, 5, 50, 0, 0) }
+-        });
+-        assertThat(result).isEqualTo(new Period(3, 2, 5, 7, 5, 50, 0, 0));
+-    }
+-
+     @Test
+     public void testUnsupportedType() throws Exception {
+         assertThatThrownBy(() -> executeAggregation(DataTypes.UNTYPED_OBJECT, new Object[][]{{new Object()}}))
+```
+
+**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/MinimumAggregationTest.java` (modified, +24/-41)
+```diff
+@@ -26,15 +26,16 @@
+ 
+ import java.math.BigDecimal;
+ import java.util.List;
++import java.util.function.Supplier;
+ 
+-import org.joda.time.Period;
+ import org.junit.Test;
+ 
+ import io.crate.exceptions.UnsupportedFunctionException;
+ import io.crate.metadata.FunctionType;
+ import io.crate.metadata.functions.Signature;
+ import io.crate.metadata.functions.Signature.Feature;
+ import io.crate.operation.aggregation.AggregationTestCase;
++import io.crate.testing.DataTypeTesting;
+ import io.crate.types.DataType;
+ import io.crate.types.DataTypes;
+ import io.crate.types.NumericType;
+@@ -152,16 +153,31 @@ public void testNumeric() throws Exception {
+         }
+     }
+ 
+-    @Test
+-    public void testDouble() throws Exception {
+-        Object result = executeAggregation(DataTypes.DOUBLE, new Object[][]{{0.8d}, {0.3d}});
+-        assertThat(result).isEqualTo(0.3d);
++    private <T> void assert_min_on_primitive_type(DataType<T> type) throws Exception {
++        Supplier<T> dataGenerator = DataTypeTesting.getDataGenerator(type);
++        T val1 = dataGenerator.get();
++        T val2;
++        do {
++            val2 = dataGenerator.get();
++        } while (type.compare(val1, val2) == 0);
++
++        Object[][] data = new Object[][] {
++            { val1 },
++            { val2 }
++        };
++        Object result = executeAggregation(type, data);
++        if (type.compare(val1, val2) < 0) {
++            assertThat(result).isEqualTo(val1);
++        } else {
++            assertThat(result).isEqualTo(val2);
++        }
+     }
+ 
+     @Test
+-    public void testFloat() throws Exception {
+-        Object result = executeAggregation(DataTypes.FLOAT, new Object[][]{{0.8f}, {0.3f}});
+-        assertThat(result).isEqualTo(0.3f);
++    public void test_min_on_primitive_types() throws Exception {
++        for (var type : DataTypes.PRIMITIVE_TYPES) {
++            assert_min_on_primitive_type(type);
++        }
+     }
+ 
+     @Test
+@@ -176,44 +192,11 @@ public void test_aggregate_float_zero() throws Exception {
+         assertThat(result).isEqualTo((0.0f));
+     }
+ 
+-    @Test
+-    public void testInteger() throws Exception {
+-        Object result = executeAggregation(DataTypes.INTEGER, new Object[][]{{8}, {3}});
+-        assertThat(result).isEqualTo(3);
+-    }
+-
+-    @Test
+-    public void testLong() throws Exception {
+-        Object result = executeAggregation(DataTypes.LONG, new Object[][]{{8L}, {3L}});
+-        assertThat(result).isEqualTo(3L);
+-    }
+-
+-    @Test
+-    public void testShort() throws Exception {
+-        Object result = executeAggregation(DataTypes.SHORT, new Object[][]{{(short) 8}, {(short) 3}});
+-        assertThat(result).isEqualTo((short) 3);
+-    }
+-
+     @Test
+     public void test_min_with_byte_argument_type() throws Exception {
+         assertThat(executeAggregation(DataTypes.BYTE, new Object[][]{{(byte) 1}, {(byte) 0}})).isEqualTo(((byte) 0));
+     }
+ 
+-    @Test
+-    public void testString() throws Exception {
+-        Object result = executeAggregation(DataTypes.STRING, new Object[][]{{"Youri"}, {"Ruben"}});
+-        assertThat(result).isEqualTo("Ruben");
+-    }
+-
+-    @Test
+-    public void test_min_on_interval() throws Exception {
+-        Object result = executeAggregation(DataTypes.INTERVAL, new Object[][] {
+-            { new Period(3, 2, 5, 7, 4, 30, 0, 0) },
+-            { new Period(3, 2, 5, 7, 5, 50, 0, 0) }
+-        });
+-        assertThat(result).isEqualTo(new Period(3, 2, 5, 7, 4, 30, 0, 0));
+-    }
+-
+     @Test
+     public void testUnsupportedType() throws Exception {
+         assertThatThrownBy(() -> executeAggregation(DataTypes.UNTYPED_OBJECT, new Object[][]{{new Object()}}))
+```
+
+**File**: `server/src/test/java/io/crate/expression/operator/CmpOperatorTest.java` (modified, +8/-0)
+```diff
+@@ -55,6 +55,8 @@ public void testLte() {
+         assertEvaluateNull("null <= 1");
+         assertEvaluateNull("null <= 'abc'");
+         assertEvaluateNull("null <= null");
++        assertNormalize("uuid <= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_<="));
++        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid <= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(false));
+     }
+ 
+     @Test
+@@ -77,6 +79,8 @@ public void testLt() {
+         assertEvaluateNull("null < 1");
+         assertEvaluateNull("null < name", Literal.of("foo"));
+         assertEvaluateNull("null < null");
++        assertNormalize("uuid < 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_<"));
++        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid < 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(false));
+     }
+ 
+     @Test
+@@ -96,6 +100,8 @@ public void testGte() {
+         assertEvaluateNull("null >= 1");
+         assertEvaluateNull("null >= 'abc'");
+         assertEvaluateNull("null >= null");
++        assertNormalize("uuid >= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_>="));
++        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid >= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(true));
+     }
+ 
+     @Test
+@@ -112,6 +118,8 @@ public void testGt() {
+         assertEvaluateNull("null > 1");
+         assertEvaluateNull("name > null", Literal.of("foo"));
+         assertEvaluateNull("null > null");
++        assertNormalize("uuid > 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_>"));
++        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid > 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(true));
+     }
+ 
+     @Test
+```
+
+**File**: `server/src/test/java/io/crate/expression/symbol/LiteralTest.java` (modified, +2/-13)
+```diff
+@@ -26,15 +26,14 @@
+ import java.util.List;
+ 
+ import org.elasticsearch.test.ESTestCase;
+-import org.joda.time.Period;
+ import org.junit.Test;
+ import org.locationtech.spatial4j.shape.Point;
+ 
+ import io.crate.expression.scalar.cast.CastMode;
+ import io.crate.expression.scalar.cast.ImplicitCastFunction;
+ import io.crate.testing.Asserts;
++import io.crate.testing.DataTypeTesting;
+ import io.crate.types.ArrayType;
+-import io.crate.types.BooleanType;
+ import io.crate.types.DataType;
+ import io.crate.types.DataTypes;
+ 
+@@ -44,17 +43,7 @@ public class LiteralTest extends ESTestCase {
+     public void testNestedArrayLiteral() throws Exception {
+         for (DataType<?> type : DataTypes.PRIMITIVE_TYPES) {
+             DataType<?> nestedType = new ArrayType<>(new ArrayType<>(type));
+-            Object value;
+-
+-            if (type.id() == BooleanType.ID) {
+-                value = true;
+-            } else if (type.id() == DataTypes.IP.id()) {
+-                value = type.sanitizeValue("123.34.243.23");
+-            } else if (type.id() == DataTypes.INTERVAL.id()) {
+-                value = type.sanitizeValue(new Period().withSeconds(100));
+-            } else {
+-                value = type.implicitCast("0");
+-            }
++            Object value = DataTypeTesting.getDataGenerator(type).get();
+             var nestedValue = List.of(List.of(value));
+             Literal<?> nestedLiteral = Literal.ofUnchecked(nestedType, nestedValue);
+             assertThat(nestedLiteral.valueType()).isEqualTo(nestedType);
+```
+
+**File**: `server/src/test/java/io/crate/lucene/CommonQueryBuilderTest.java` (modified, +42/-0)
+```diff
+@@ -71,6 +71,7 @@
+ import io.crate.types.DataType;
+ import io.crate.types.DataTypes;
+ import io.crate.types.FloatVectorType;
++import io.crate.types.IpType;
+ import io.crate.types.ObjectType;
+ 
+ public class CommonQueryBuilderTest extends LuceneQueryBuilderTest {
+@@ -1002,6 +1003,47 @@ public void test_all_eq_query_for_all_types() throws Exception {
+         }
+     }
+ 
++    private <T> void assert_cmp_op_matches_type_compare_for_primitive_type(DataType<T> type) throws Exception {
++        String typeDefinition = SqlFormatter.formatSql(type.toColumnType(null));
++        QueryTester.Builder builder = new QueryTester.Builder(
++            THREAD_POOL,
++            clusterService,
++            Version.CURRENT,
++            "create table tbl (x " + typeDefinition + ")");
++        try (QueryTester tester = builder.build()) {
++            var dataGenerator = DataTypeTesting.getDataGenerator(type);
++            T val1 = dataGenerator.get();
++            T val2;
++            do {
++                val2 = dataGenerator.get();
++            } while (type.compare(val1, val2) == 0);
++
++            builder.indexValues("x", val1);
++            builder.indexValues("x", val2);
++
++            String query = type.compare(val1, val2) > 0
++                ? "x < ?"
++                : "x > ?";
++            assertThat(tester.runQuery("x", query, val1))
++                .as("range query for `" + type.getName() + "` must match second value")
++                .containsExactly(val2);
++        }
++    }
++
++    @Test
++    public void test_cmp_op_matches_type_compare_for_all_primitive_types() throws Exception {
++        for (DataType<?> type : DataTypes.PRIMITIVE_TYPES) {
++            if (type.storageSupport() == null) {
++                continue;
++            }
++            if (type.id() == IpType.ID) {
++                // TODO: type.compareTo & rangeQuery have different semantics(?)
++                continue;
++            }
++            assert_cmp_op_matches_type_compare_for_primitive_type(type);
++        }
++    }
++
+     @Test
+     public void test_all_eq_query_for_all_types_with_columnstore_false() throws Exception {
+         for (DataType<?> type : DataTypeTesting.getStorableTypesExceptArrays(random())) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20456** (2026-10-20): Push down inner join conditions that reference only one side (backport #20430) (@mergify[bot])
-- **PR #20455** (2026-10-20): Push down inner join conditions that reference only one side (backport #20430) (@mergify[bot])
-- **PR #20454** (2026-10-20): Skip publishing test reports for GitHub actions for forks (@matriv)
-- **PR #20452** (2026-10-20): Avoid list->array copy to resolve concrete indices for tables (@mfussenegger)
-- **PR #20449** (2026-10-20): Fix partition narrowing if closed partitions are hit (backport #20440) (@mergify[bot])
-- **PR #20448** (2026-10-20): Fix partition narrowing if closed partitions are hit (backport #20440) (@mergify[bot])
+- **PR #20465** (2026-10-21): Remove dropped tables from explicit publications (backport #20427) (@mergify[bot])
+- **PR #20464** (2026-10-21): Remove dropped tables from explicit publications (backport #20427) (@mergify[bot])
+- **PR #20462** (2026-10-21): Fix stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl (backport #20420) (@mergify[bot])
+- **PR #20461** (2026-10-21): Fix stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl (backport #20420) (@mergify[bot])
+- **PR #20459** (2026-10-21): Update JVM flags to account for JDK27 changes (@mfussenegger)
+- **PR #20457** (2026-10-21): Move the JSON type out of the primitive type section (@mfussenegger)
 
 ---
 
@@ -941,13 +1209,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Push down inner join conditions that reference only one side
+## X. stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl
 
 **RULE**:
 When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2e5070d`: Push down inner join conditions that reference only one side. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f98376b9`: stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
@@ -956,15 +1224,11 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```java
 // Verified production-grade fix pattern:
 
-- Fixed an issue that caused inner join queries to fail when a join condition
-  referenced multiple tables that are all on one side of the join, e.g.::
+- Fixed an issue causing :ref:`CREATE SUBSCRIPTION<sql-create-subscription>` to
+  get stuck if :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` was
+  used together with  ``sslmode`` set to ``prefer`` or ``required`` and
+  subscriber cluster didn't trust publisher cluster's certificate.
 
-    SELECT t1.x, t2.y, t3.z
-    FROM t1
-    JOIN t2 ON t1.a = t2.b
-    JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
-
-  A query like this used to fail with ``Index 1 out of bounds for length 1``.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -974,4 +1238,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2e5070d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f98376b9` are properly handled with clean fallback behavior.

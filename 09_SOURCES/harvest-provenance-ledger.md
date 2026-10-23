@@ -4481,3 +4481,4 @@ Every entry in this ledger must capture:
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `356c8766` | Multi-dimensional audit evidence | 2026-10-23T06:17:17.093Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `ae13ea66` | Multi-dimensional audit evidence | 2026-10-23T06:17:18.883Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c55c2450` | Multi-dimensional audit evidence | 2026-10-23T06:17:23.485Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `33429e62` | Multi-dimensional audit evidence | 2026-10-23T06:23:57.097Z |

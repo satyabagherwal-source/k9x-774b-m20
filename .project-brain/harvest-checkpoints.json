@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T06:17:23.499Z",
+  "last_updated": "2026-10-23T06:23:57.111Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "f16e5801f878966f95558d0624ac2f67c01519647cc75a78d49b9e06b45d686c",
-      "verified_at": "2026-10-21T03:18:14.864Z",
+      "content_hash": "856dd6ba26c9e90a66819dc8a05f6be6dd2f52913223f5f2600b1a27ac6e7f21",
+      "verified_at": "2026-10-23T06:23:57.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:18:14.864Z"
+      "last_updated": "2026-10-23T06:23:57.110Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",

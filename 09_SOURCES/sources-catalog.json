@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "a2e5070d",
+    "sourceVersion": "33429e62",
     "license": "Apache-2.0",
-    "contentHash": "f16e5801f878966f95558d0624ac2f67c01519647cc75a78d49b9e06b45d686c",
-    "lastHarvestedAt": "2026-10-21T03:18:14.856Z",
+    "contentHash": "856dd6ba26c9e90a66819dc8a05f6be6dd2f52913223f5f2600b1a27ac6e7f21",
+    "lastHarvestedAt": "2026-10-23T06:23:57.097Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {

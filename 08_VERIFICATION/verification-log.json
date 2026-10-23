@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MR9S",
-    "timestamp": "2026-10-20T19:23:28.528Z",
-    "repository": "cosscom/ui",
-    "learningId": "learn-github-cosscom-ui",
-    "contentHash": "84b36417ad8ecf91e4b5daa560d9608bdf2f0674511c547cd981f0af341e991e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MU8N",
     "timestamp": "2026-10-20T19:23:32.375Z",
     "repository": "oxc-project/oxc",
@@ -7490,6 +7475,21 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-3U7A",
+    "timestamp": "2026-10-23T06:23:57.094Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "856dd6ba26c9e90a66819dc8a05f6be6dd2f52913223f5f2600b1a27ac6e7f21",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

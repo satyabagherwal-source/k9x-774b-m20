@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:17:23.432Z",
+  "last_updated": "2026-10-23T06:23:57.043Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6621,8 +6621,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "a2e5070d",
-      "content_hash": "f16e5801f878966f95558d0624ac2f67c01519647cc75a78d49b9e06b45d686c",
+      "source_version": "33429e62",
+      "content_hash": "856dd6ba26c9e90a66819dc8a05f6be6dd2f52913223f5f2600b1a27ac6e7f21",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -6650,6 +6650,11 @@
           "number": 3504,
           "title": "Push down inner join conditions that reference only one side",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3787,
+          "title": "stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6657,7 +6662,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:18:14.779Z",
+      "verified_at": "2026-10-23T06:23:57.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112984,6 +112989,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:17:23.421Z"
+    },
+    "rule-3787": {
+      "learning_id": "rule-3787",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3787,
+      "title": "stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "33429e62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:23:57.032Z"
     }
   },
   "aliases": {

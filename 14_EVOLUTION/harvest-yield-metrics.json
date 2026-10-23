@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:17:23.495Z",
-  "total_cycles_completed": 4451,
-  "total_learnings_persisted": 4451,
-  "total_rules_promoted": 3638,
+  "last_updated": "2026-10-23T06:23:57.107Z",
+  "total_cycles_completed": 4452,
+  "total_learnings_persisted": 4452,
+  "total_rules_promoted": 3639,
   "history": [
-    {
-      "timestamp": "2026-10-21T18:59:13.145Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T19:05:39.434Z",
       "repository": "agent-of-empires/agent-of-empires",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-23T06:17:23.495Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:23:57.107Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
