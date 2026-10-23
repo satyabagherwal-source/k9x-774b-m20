@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MLCQ",
-    "timestamp": "2026-10-20T18:27:21.626Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "31840917bd1619ff4fe0c85b586721e1eb815b7b3122ffe8b4726691a36bb713",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MUOB",
     "timestamp": "2026-10-20T18:27:33.707Z",
     "repository": "meshery/meshery",
@@ -7490,6 +7475,21 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "d87a5a0f1d8d5d54dbd1f84654fc6be41528ae925976470b4de37d39ef465512",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-YI74",
+    "timestamp": "2026-10-23T05:23:49.024Z",
+    "repository": "gauthierpiarrette/highball",
+    "learningId": "learn-github-gauthierpiarrette-highball",
+    "contentHash": "c0d4ed567140f07a67a4023c03eec0a4874bc7f788bed041287522266e178495",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

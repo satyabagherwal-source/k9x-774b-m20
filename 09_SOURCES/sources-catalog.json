@@ -10558,5 +10558,15 @@
     "contentHash": "e5303460f8da6d7fb543f6560c0142877cc13066a5cb55195c2025bcb3c286a6",
     "lastHarvestedAt": "2026-10-22T21:47:59.901Z",
     "learningId": "learn-huggingface-unsloth-flint-gguf"
+  },
+  "gauthierpiarrette-highball": {
+    "repository": "gauthierpiarrette/highball",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gauthierpiarrette/highball",
+    "sourceVersion": "be1d0f39",
+    "license": "GPL-3.0",
+    "contentHash": "c0d4ed567140f07a67a4023c03eec0a4874bc7f788bed041287522266e178495",
+    "lastHarvestedAt": "2026-10-23T05:23:49.026Z",
+    "learningId": "learn-github-gauthierpiarrette-highball"
   }
 }

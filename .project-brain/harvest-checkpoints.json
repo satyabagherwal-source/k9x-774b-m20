@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-22T21:48:10.931Z",
+  "last_updated": "2026-10-23T05:23:49.037Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15869,6 +15869,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-22T21:47:59.911Z"
+    },
+    "gauthierpiarrette/highball": {
+      "repository": "gauthierpiarrette/highball",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gauthierpiarrette-highball",
+      "content_hash": "c0d4ed567140f07a67a4023c03eec0a4874bc7f788bed041287522266e178495",
+      "verified_at": "2026-10-23T05:23:49.037Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-23T05:23:49.037Z"
     }
   },
   "repos": {

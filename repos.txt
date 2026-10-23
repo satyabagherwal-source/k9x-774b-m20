@@ -4400,3 +4400,7 @@ https://huggingface.co/Comfy-Org/Z-Image-Turbo
 # --- Automatically Discovered by AI Scout Engine [2026-10-22T21:47:47.850Z] ---
 # [HUGGINGFACE-AI-MODELS] unsloth/flint-GGUF (3460 score) - Verified Hugging Face Model: unsloth/flint-GGUF (146 likes, 7401 downloads)
 https://huggingface.co/unsloth/flint-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-23T05:23:39.415Z] ---
+# [MOBILE-CROSS-PLATFORM] gauthierpiarrette/highball (1268 score) - Run Windows games on Apple Silicon — free, open source, with an open compatibili
+https://github.com/gauthierpiarrette/highball

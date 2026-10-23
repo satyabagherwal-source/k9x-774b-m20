@@ -4461,3 +4461,4 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `e87b6eef` | Multi-dimensional audit evidence | 2026-10-22T21:48:00.862Z |
 | `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `470edbc3` | Multi-dimensional audit evidence | 2026-10-22T21:48:01.821Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `88203d25` | Multi-dimensional audit evidence | 2026-10-22T21:48:10.922Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `be1d0f39` | Multi-dimensional audit evidence | 2026-10-23T05:23:49.026Z |

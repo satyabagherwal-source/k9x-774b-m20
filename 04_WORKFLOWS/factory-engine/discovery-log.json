@@ -18457,5 +18457,20 @@
     "downloads": 7401,
     "qualityScore": 3460,
     "discoveredAt": "2026-10-22T21:45:39.647Z"
+  },
+  {
+    "name": "highball",
+    "fullName": "gauthierpiarrette/highball",
+    "url": "https://github.com/gauthierpiarrette/highball",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.",
+    "stars": 1807,
+    "forks": 75,
+    "openIssues": 46,
+    "language": "Swift",
+    "qualityScore": 1268,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-23T05:21:35.418Z"
   }
 ]
