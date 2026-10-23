@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T09:20:54.223Z",
-  "total_cycles_completed": 4488,
-  "total_learnings_persisted": 4488,
-  "total_rules_promoted": 3703,
+  "last_updated": "2026-10-23T09:38:25.372Z",
+  "total_cycles_completed": 4493,
+  "total_learnings_persisted": 4493,
+  "total_rules_promoted": 3709,
   "history": [
-    {
-      "timestamp": "2026-10-22T16:10:00.333Z",
-      "repository": "chakra-ui/zag",
-      "learningId": "learn-github-chakra-ui-zag",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:10:02.413Z",
-      "repository": "RevenueCat/purchases-ios",
-      "learningId": "learn-github-revenuecat-purchases-ios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:10:03.912Z",
-      "repository": "actions/actions-runner-controller",
-      "learningId": "learn-github-actions-actions-runner-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:10:10.069Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:15:34.347Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T16:15:40.735Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1403,6 +1368,41 @@
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:35:42.640Z",
+      "repository": "avajs/ava",
+      "learningId": "learn-github-avajs-ava",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:35:46.182Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:35:52.787Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:35:54.429Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:38:25.372Z",
+      "repository": "vuetifyjs/vuetify",
+      "learningId": "learn-github-vuetifyjs-vuetify",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

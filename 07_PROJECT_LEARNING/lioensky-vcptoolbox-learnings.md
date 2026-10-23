@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `6385f214`  
+> **Source Version**: `214941a2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T04:43:06.676Z  
+> **Timestamp**: 2026-10-23T09:35:52.558Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T04:43:06.668Z  
+> **Harvest Timestamp**: 2026-10-23T09:35:51.663Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2385 stars
+- **Stars / Engagement**: 2394 stars
 
 ---
 
@@ -1785,11 +1785,13 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #508** (2026-10-20): **fix(admin): 修复语义模型路由器预览未代理到主进程及提示框不可见**
-  *Symptoms*: - 在本地 admin 路由挂载前，将语义路由预览接口反向代理到主进程；独立管理进程缺少 semanticModelRouter/RAG 运行态。 - 删除 .message-popup 中重复的 position: relative，避免覆盖 position: fixed 导致全局提示框不可见。
+- **Issue #535** (2026-10-23): **build(vexus-lite): 更新 win32-x64 原生预编译二进制产物 (同步 #531-#534)**
+  *Symptoms*: ## 变更概述 随着 PR #531（载荷流式写出）、#532（冷加载防惊群 DCL 锁）、#533（几何与建图向量工作区交接）及 #534（serde_json 开启 float_roundtrip 消除浮点末位漂移）合入主线，特此更新匹配主线最新架构的 win32-x64-msvc 原生预编译二进制。  ## 验证 - 通过 `tdbNativeAcceptance.test.js` 与 `nativeGreenLane.test.js` 集成回归测试； - 真实环境已完成在线加载与验证，运行稳定。 
 
-- **Issue #507** (2026-10-20): **fix: restore legacy geometry fallback and update maintenance route mock**
-  *Symptoms*: Restores the legacy `intrinsicResidual` local fallback in `_geometryConfig()`, preserving AGS section precedence and deep-copy isolation, as specified by the existing design document and regression test (#506).  Updates the maintenance route fixture with `tagMemoEngine.scheduleMatrixRebuildForNewTags` for consistency apply. Keeps `requestActiveFullTraining` for the explicit full-training route (#505).  Validation on upstream main d9f61c0d: `node --test tests/unifiedGeometryScheduling.test.js tests/adminRagMaintenanceRoutes.test.js` 11 passed, 0 failed. `git diff --check` passed.  Fixes #505 Fixes #506 
+- **Issue #534** (2026-10-23): **fix(rust-vexus-lite): 打开 serde_json 的 float_roundtrip，冷加载的图资产与刚建好的逐位相同**
+  *Symptoms*: ## 改了什么  - `Cargo.toml` 里给 serde_json 加上 `float_roundtrip` 特性（附两行注释说明用途）。特性不记在 `Cargo.lock` 里，锁文件不变，`--locked` 照常可用。 - 新增 1 个单元测试 `memo_artifact_builder::cold_restore_float_tests`。  ## 为什么  #521 审计时说过：同一资产签名下，热态和冷态的行为必须一致。现在这一点做不到逐位一致。  - 建图发布的是内存里的图，同时把同一张图写成 JSON 存进 SQLite。重启后，或驻留资产被换掉后，第一次查询从这份文本解码。 - serde_json 默认的浮点解析不保证往返：有效数字超过 15 位（或 10 的幂次超过 22）时要舍入两次以上，结果可能差最后一位。计算出来的 f64 写成最短文本多半有 16–17 位有效数字，其中约 11% 读回后差最后一位。 - 所以冷加载得到的边权、入流量、锚增益和来源质量，有一部分与刚建好时差最后一位，查询的中间量和分数也跟着变（最终的有序结果不变）。  开了 `float_roundtrip`，serde_json 改为正确舍入，读回的就是写出时的那个 f64，冷加载的资产与刚建好的逐位相同。  ## 结果变化  **不变的**： - 配置最多 3 位有效数字（例如 0.35、0.015），两种解析结果相同，所以配置哈希、几何签名和资产签名都不变。 - 写出不受影响，载荷字节和校验和不变；几何预计算和建图的输出不变。  **会在最后一位上变的**，都是有效数字 16 位以上的数，现在读到的就是写出时的值： - 冷加载后的图资产（本 PR 要改的就是这个）； - SQLite 里 EPA 缓存的 `coverage`（每条查询读，`baselineCoverage` 可能差 1 ulp）； - 进程内先写成 JSON 再解析的分数：ANN 结果交给河网读出、河网输出解析回来再返回 JS； - 调用方 JSON 里的长浮点（候选分数、补充查询权重、BM25 和时间分数），以及外部重排序 API 响应里的分数。  ## 验证  - **编译和单元测试**：分支基于当前 main（`d1b40c8`，已含 #531、#532），rustc 1.89.0，原 `Cargo.lock`。`cargo build --release --locked` 无警告，`cargo test --release --locked` 共 137 个全部通过（原有 136 个加新增 1 个）。 - **新测试**：在小合成库上建图，清掉驻留资产后从 SQLite 冷加载，逐位比较全部浮点（边权、`maxInbound`、入流量、锚增益、来源质量）和 CSR 结构。不开这个特性时它失败：1,961 个浮点里有 64 个不同。 - **生产入口对拍**：合成库（3072 维；1 万 Tag，以及 1 万 Tag、10 万文件；全是合成数据，不含任何真实日记），经 `GeometryTask`、`run_build`、`MemoPipelineTask`、`run_native` 跑完整流程；每档先跑 320 条查询，再丢掉驻留资产把同样 320 条重跑一遍（第一条触发冷加载）。和之前的 PR 一样，两边都固定了 HashMap 遍历顺序，并单线程建金字塔索引，这两处不在本 PR 里。    | 比较 | 1 万 Tag、5 千文件 | 1 万 Tag、10 
+  **Post-Mortem & Fix Analysis**:
+  > 都抓到本地分支来编译实测了，正常来说没啥问题。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,401 +1808,146 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6385f214` (2026-10-20)
-**Commit Message**: 新增mossgen
+### Incident Patch 1: `9da10426` (2026-10-23)
+**Commit Message**: fix(rust-vexus-lite): 打开 serde_json 的 float_roundtrip，冷加载的图资产与刚建好的逐位相同
 
-**File**: `Plugin/ComfyUIGen/moss文生图.json` (added, +589/-0)
+serde_json 默认的浮点解析不保证往返：有效数字超过 15 位的 f64 写成最短文本后，
+约 11% 读回时差最后一位。图资产冷加载时边权、入流量、锚增益和来源质量因此与刚建好时
+不同，同一资产签名下热态和冷态的查询分数在末位上不一致（有序结果不变）。
+
+- Cargo.toml 给 serde_json 加上 float_roundtrip，读回的就是写出时的 f64；
+  特性不进 Cargo.lock，写出、配置哈希和资产签名都不变。
+- 新增 1 个测试：建图后清掉驻留资产再冷加载，逐位比较全部浮点和 CSR 结构。
+
+**File**: `rust-vexus-lite/Cargo.toml` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,589 @@
-+{
-+  "id": "577ff5b8-789b-44bd-850c-b191411e9e75",
-+  "revision": 0,
-+  "last_node_id": 12,
-+  "last_link_id": 13,
-+  "nodes": [
-+    {
-+      "id": 2,
-+      "type": "UNETLoader",
-+      "pos": [
-+        176.90764084504917,
-+        -908.0649728009181
-+      ],
-+      "size": [
-+        270,
-+        82
-+      ],
-+      "flags": {},
-+      "order": 0,
-+      "mode": 0,
-+      "inputs": [],
-+      "outputs": [
-+        {
-+          "name": "MODEL",
-+          "type": "MODEL",
-+          "links": [
-+            12
-+          ]
-+        }
-+      ],
-+      "properties": {
-+        "Node name for S&R": "UNETLoader"
-+      },
-+      "widgets_values": [
-+        "moss_image_sft_int8_convrot.safetensors",
-+        "default"
-+      ],
-+      "widgets_values_named": {
-+        "unet_name": "moss_image_sft_int8_convrot.safetensors",
-+        "weight_dtype": "default"
-+      }
-+    },
-+    {
-+      "id": 3,
-+      "type": "CLIPLoader",
-+      "pos": [
-+        159.87085709260742,
-+        -745.1505606152492
-+      ],
-+      "size": [
-+        270,
-+        106
-+      ],
-+      "flags": {},
-+      "order": 1,
-+      "mode": 0,
-+      "inputs": [],
-+      "outputs": [
-+        {
-+          "name": "CLIP",
-+          "type": "CLIP",
-+          "links": [
-+            5,
-+            7
-+          ]
-+        }
-+      ],
-+      "properties": {
-+        "Node name for S&R": "CLIPLoader"
-+      },
-+      "widgets_values": [
-+        "qwen3.5_9b_w4a8_gptq.safetensors",
-+        "stable_diffusion",
-+        "default"
-+      ],
-+      "widgets_values_named": {
-+        "clip_name": "qwen3.5_9b_w4a8_gptq.safetensors",
-+        "type": "stable_diffusion",
-+        "device": "default"
-+      }
-+    },
-+    {
-+      "id": 4,
-+      "type": "VAELoader",
-+      "pos": [
-+        138.57485709260772,
-+        -535.3849524914705
-+      ],
-+      "size": [
-+        270,
-+        58
-+      ],
-+      "flags": {},
-+      "order": 2,
-+      "mode": 0,
-+      "inputs": [],
-+      "outputs": [
-+        {
-+          "name": "VAE",
-+          "type": "VAE",
-+          "links": [
-+            2,
-+            10
-+          ]
-+        }
-+      ],
-+      "properties": {
-+        "Node name for S&R": "VAELoader"
-+      },
-+      "widgets_values": [
-+        "flux2-vae.safetensors"
-+      ],
-+      "widgets_values_named": {
-+        "vae_name": "flux2-vae.safetensors"
-+      }
-+    },
-+    {
-+      "id": 5,
-+      "type": "VAEDecode",
-+      "pos": [
-+        1003.239681463945,
-+        -743.0209931103664
-+      ],
-+      "size": [
-+        140,
-+        46
-+      ],
-+      "flags": {},
-+      "order": 9,
-+      "mode": 0,
-+      "inputs": [
-+        {
-+          "name": "samples",
-+          "type": "LATENT",
-+          "link": 9
-+        },
-+        {
-+          "name": "vae",
-+          "type": "VAE",
-+          "link": 10
-+        }
-+      ],
-+      "outputs": [
-+        {
-+          "name": "IMAGE",
-+          "type": "IMAGE",
-+          "links": [
-+            11
-+          ]
-+        }
-+      ],
-+      "properties": {
-+        "Node name for S&R": "VAEDecode"
-+      }
-+    },
-+    {
-+      "id": 6,
-+      "type": "VAEEncode",
-+      "pos": [
-+        613.5228164737109,
-+        -951.7217768628078
-+      ],
-+      "size": [
-+        140,
-+        46
-+      ],
-+      "flags": {},
-+      "order": 7,
-+      "mode": 0,
-+      "inputs": [
-+        {
-+          "name": "pixels",
-+          "type": "IMAGE",
-+          "link": 1
-+        },
-+        {
-+          "name": "vae",
-+          "type": "VAE",
-+          "link": 2
-+        }
-+      ],
-+      "outputs": [
-+        {
-+          "name": "LATENT",
-+          "type": "LATENT",
-+          "links": [
-+            3
-+          ]
-+        }
-+      ],
-+      "properties": {
-+        "Node name for S&R": "VAEEncode"
-+      }
-+    },
-+    {
-+      "id": 7,
-+      "type": "EmptyImage",
-+      "pos": [
-+        213.11085709260763,
-+        -1134.867384986587
-+      ],
-+      "size": [
-+        270,
-+        130
-+      ],
-+      "flags": {},
-+      "order": 3,
-+      "mode": 0,
-+      "inputs": [],
-+      "outputs": [
-+        {
-+          "name": "IMAGE",
-+          "type": "IMAGE",
-+          "links": [
-+            1
-+          ]
-+        }
-+      ],
-+      "properties": {
-+        "Node name for S&R": "EmptyImage"
-+      },
-+      "widgets_values": [
-+        896,
-+        1344,
-+        1,
-+        0
-+      ],
-+      "widgets_values_named": {
-+        "width": 896,
-+        "height": 1344,
-+        "batch_size": 1,
-+        "color": 0
-+      }
-+    },
-+    {
-+      "id": 8,
-+      "type": "KSampler",
-+      "pos": [
-+        1018.583681463945,
-+        -428.32419828004464
-+      ],
-+      "size": [
-+        270,
-+        474
-+      ],
-+      "flags": {},
-+      "order": 8,
-+      "mode": 0,
-+      "inputs": [
-+        {
-+          "name": "model",
-+          "type": "MODEL",
-+          "link": 13
-+        },
-+        {
-+          "name": "positive",
-+          "type": "CONDITIONING",
+@@ -19,7 +19,9 @@ bincode = "1.3"
+ reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+ dotenvy = "0.15"
+ serde = { version = "1.0", features = ["derive"] }
+-serde_json = "1.0"
++# float_roundtrip: parse floats back to the bits they were written with, so an
++# artifact restored from its stored payload matches the one the build published.
++serde_json = { version = "1.0", features = ["float_roundtrip"] }
+ base64 = "0.21"
+ sha2 = "0.10"
+ regex = "1.13.1"
+```
+
+**File**: `rust-vexus-lite/src/memo_artifact_builder.rs` (modified, +80/-0)
+```diff
+@@ -1318,6 +1318,86 @@ mod fact_dependency_tests {
+ }
+ 
+ 
++#[cfg(test)]
++mod cold_restore_float_tests {
++    use super::*;
++    use crate::storage::{SqliteStorageEngine, StorageOptions, WriteReceipt};
 +
++    /// Every float a cold load reads from the payload, labelled by where it is.
++    fn float_bits(artifact: &NativeArtifact) -> Vec<(String, u64)> {
++        let mut out: Vec<(String, u64)> = artifact.weights.iter().enumerate()
++            .map(|(cursor, weight)| (format!("weight[{cursor}]"), weight.to_bits())).collect();
++        out.push(("maxInbound".into(), artifact.max_inbound.to_bits()));
++        for (name, map) in [("inbound", &artifact.inbound), ("anchorGain", &artifact.anchor_gain)] {
++            let mut entries: Vec<_> = map.iter().collect();
++            entries.sort_unstable_by_key(|(id, _)| **id);
++            out.extend(entries.into_iter().map(|(id, value)| (format!("{name}[{id}]"), value.to_bits())));
++        }
++        let mut edges: Vec<_> = artifact.provenance.iter().collect();
++        edges.sort_unstable_by_key(|(edge, _)| **edge);
++        for ((source, target), rows) in edges {
++            out.extend(rows.iter().map(|(file_id, mass)| (format!("provenance[{source}:{target}][{file_id}]"), mass.to_bits())));
++        }
++        out
++    }
++
++    /// The payload stores edge weights, inbound masses, anchor gains and
++    /// provenance masses as JSON text. A cold load must read back the bits the
++    /// build published, so that a restored graph answers exactly like the
++    /// freshly built one; serde_json needs `float_roundtrip` for that (without
++    /// it about one float in nine comes back one unit in the last place off).
++    #[test]
++    fn restored_artifact_has_published_float_bits() {
++        let root = std::env::temp_dir().join(format!(
++            "kbm-artifact-floats-{}-{}", std::process::id(), now_ms()
++        ));
++        std::fs::create_dir_all(&root).unwrap();
++        let db = root.join("test.sqlite").to_string_lossy().into_owned();
++        let (storage, _) = SqliteStorageEngine::open_and_init(&db, StorageOptions::default()).unwrap();
++        storage.submit_write(|tx| {
++            for id in 1..=40_i64 {
++                let vector: Vec<u8> = (0..4_i64)
++                    .flat_map(|axis| (((id * 7 + axis * 3) as f32) * 0.37).sin().to_le_bytes())
++                    .collect();
++                tx.execute("INSERT INTO tags(id,name,vector) VALUES (?1,?2,?3)",
++                    params![id, format!("t{id}"), vector]).map_err(|error| error.to_string())?;
++            }
++            for file_id in 1..=60_i64 {
++                tx.execute("INSERT INTO files(id,path,diary_name,checksum,mtime,size) VALUES (?1,?2,'test','h',1,1)",
++                    params![file_id, format!("f{file_id}.txt")]).map_err(|error| error.to_string())?;
++                for position in 1..=5_i64 {
++                    tx.execute("INSERT INTO file_tags VALUES (?1,?2,?3)",
++                        params![file_id, (file_id * 3 + position * position) % 40 + 1, position])
++                        .map_err(|error| error.to_string())?;
++                }
++            }
++            Ok(WriteReceipt { operation: "fixture".into(), database_generation: 0, facts_changed: true })
++        }).unwrap();
++        let runtime = MemoRuntime::new();
++        let built = run_build(4, &runtime, &db, r#"{"modelSig":"test","effectiveConfig":{}}"#).unwrap();
++        let load = || with_registered_read_transaction(&db, |connection| {
++            crate::rivermemo_topology_v3::load_artifact_with_connection(&runtime, connection, &built.artifact_sig)
++        });
++        let published = load().unwrap();
++        runtime.clear().unwrap();
++        let restored = load().unwrap();
++        assert!(!Arc::ptr_eq(&published, &restored), "the second load must decode the stored payload");
++        assert_eq!(published.node_ids, restored.node_ids);
++        assert_eq!(published.row_offsets, restored.row_offsets);
++        assert_eq!(published.targets, restored.targets);
++        let (expected, actual) = (float_bits(&published), float_bits(&restored));
++        assert!(published.weights.len() >= 200 && expected.len() >= 1000);
++        assert_eq!(expected.iter().map(|(label, _)| label).collect::<Vec<_>>(),
++            actual.iter().map(|(label, _)| label).collect::<Vec<_>>());
++        let differing: Vec<&str> = expected.iter().zip(&actual)
++            .filter(|(left, right)| left.1 != right.1).map(|(left, _)| left.0.as_str()).collect();
++        assert!(differing.is_empty(), "{} of {} floats changed bits on a cold load, e.g. {:?}",
++            differing.len(), expected.len(), &differing[..differing.len().min(4)]);
++        storage.shutdown().unwrap();
++        std::fs::remove_dir_all(root).unwrap();
++    }
++}
++
+ #[cfg(test)]
+ mod bounded_workspace_tests {
+     use super::*;
 ```
 
-**File**: `Plugin/ComfyUIGen/workflows/MossGen.json` (added, +116/-0)
-```diff
-@@ -0,0 +1,116 @@
-+{
-+  "displayName": "Moss 文生图",
-+  "description": "由 moss文生图 原始工作流转换。模型及特殊采样参数固定：50 步、CFG 3、Euler、sgm_uniform、denoise 1；跳过 single layer 22，生效区间 0–0.5。正面提示词使用用户原文，负面提示词保持为空。",
-+  "version": "1.0",
-+  "defaults": {
-+    "defaultWidth": 896,
-+    "defaultHeight": 1344,
-+    "defaultBatchSize": 1
-+  },
-+  "workflow": {
-+    "2": {
-+      "inputs": {
-+        "unet_name": "moss_image_sft_int8_convrot.safetensors",
-+        "weight_dtype": "default"
-+      },
-+      "class_type": "UNETLoader",
-+      "_meta": { "title": "加载 Moss UNet（保持原样）" }
-+    },
-+    "3": {
-+      "inputs": {
-+        "clip_name": "qwen3.5_9b_w4a8_gptq.safetensors",
-+        "type": "stable_diffusion",
-+        "device": "default"
-+      },
-+      "class_type": "CLIPLoader",
-+      "_meta": { "title": "加载 Moss 文本编码器（保持原样）" }
-+    },
-+    "4": {
-+      "inputs": {
-+        "vae_name": "flux2-vae.safetensors"
-+      },
-+      "class_type": "VAELoader",
-+      "_meta": { "title": "加载 Flux2 VAE（保持原样）" }
-+    },
-+    "5": {
-+      "inputs": {
-+        "samples": ["8", 0],
-+        "vae": ["4", 0]
-+      },
-+      "class_type": "VAEDecode",
-+      "_meta": { "title": "VAE 解码" }
-+    },
-+    "6": {
-+      "inputs": {
-+        "pixels": ["7", 0],
-+        "vae": ["4", 0]
-+      },
-+      "class_type": "VAEEncode",
-+      "_meta": { "title": "空白图像 VAE 编码（保持原样）" }
-+    },
-+    "7": {
-+      "inputs": {
-+        "width": "{{WIDTH}}",
-+        "height": "{{HEIGHT}}",
-+        "batch_size": "{{BATCH_SIZE}}",
-+        "color": 0
-+      },
-+      "class_type": "EmptyImage",
-+      "_meta": { "title": "空白图像" }
-+    },
-+    "8": {
-+      "inputs": {
-+        "seed": "{{SEED}}",
-+        "steps": 50,
-+        "cfg": 3,
-+        "sampler_name": "euler",
-+        "scheduler": "sgm_uniform",
-+        "denoise": 1,
-+        "model": ["12", 0],
-+        "positive": ["9", 0],
-+        "negative": ["10", 0],
-+        "latent_image": ["6", 0]
-+      },
-+      "class_type": "KSampler",
-+      "_meta": { "title": "Moss 采样（步数、CFG、采样设置保持原样）" }
-+    },
-+    "9": {
-+      "inputs": {
-+        "text": "{{USER_PROMPT}}",
-+        "clip": ["3", 0]
-+      },
-+      "class_type": "CLIPTextEncode",
-+      "_meta": { "title": "用户提示词（不追加质量词或 LoRA token）" }
-+    },
-+    "10": {
-+      "inputs": {
-+        "text": "",
-+        "clip": ["3", 0]
-+      },
-+      "class_type": "CLIPTextEncode",
-+      "_meta": { "title": "空负面提示词（保持原样）" }
-+    },
-+    "11": {
-+      "inputs": {
-+        "filename_prefix": "ComfyUI",
-+        "format": "png",
-+        "format.bit_depth": "8-bit",
-+        "format.input_color_space": "sRGB",
-+        "images": ["5", 0]
-+      },
-+      "class_type": "SaveImageAdvanced",
-+      "_meta": { "title": "保存图像（保持原样）" }
-+    },
-+    "12": {
-+      "inputs": {
-+        "double_layers": "",
-+        "single_layers": "22",
-+        "start_percent": 0,
-+        "end_percent": 0.5,
-+        "model": ["2", 0]
-+      },
-+      "class_type": "SkipLayerGuidanceDiTSimple",
-+      "_meta": { "title": "Moss 跳过层引导（保持原样）" }
-+    }
-+  }
-+}
-\ No newline at end of file
-```
+---
+
+### Incident Patch 2: `214941a2` (2026-10-23)
+**Commit Message**: Merge pull request #535 from infinite-vector/build/prebuilt-vexus-lite-531-534
+
+build(vexus-lite): 更新 win32-x64 原生预编译二进制产物 (同步 #531-#534)
+
+
+
+---
+
+### Incident Patch 3: `42e408b7` (2026-10-23)
+**Commit Message**: build(vexus-lite): 更新 win32-x64 原生预编译二进制产物 (同步 #531-#534)
+
+
 
 #### Recent Merged Pull Requests:
-- **PR #508** (2026-10-20): fix(admin): 修复语义模型路由器预览未代理到主进程及提示框不可见 (@MrSeven590)
-- **PR #507** (2026-10-20): fix: restore legacy geometry fallback and update maintenance route mock (@Cimo-Yu)
-- **PR #504** (2026-10-18): feat(kbm): Rust 单 SQL 运行时、TDB 索引与管理面板统一 (@lioensky)
-- **PR #503** (2026-10-18): fix(LinuxLogMonitor): prevent watchdog timeout from terminating host … (@joker74581)
-- **PR #502** (2026-10-17): test(jev): 修复 JEV 生态/红队/压测套件可选插件 t.skip 守卫与策略文件沙盒隔离 (@Cimo-Yu)
-- **PR #499** (2026-10-16): fix(deps): 恢复插件商店插件 YoutubeFetch 所需的宿主 Python 依赖 (#495) (@Cimo-Yu)
+- **PR #535** (2026-10-23): build(vexus-lite): 更新 win32-x64 原生预编译二进制产物 (同步 #531-#534) (@infinite-vector)
+- **PR #534** (2026-10-23): fix(rust-vexus-lite): 打开 serde_json 的 float_roundtrip，冷加载的图资产与刚建好的逐位相同 (@CI-IISATO)
+- **PR #533** (2026-10-23): perf(rust-vexus-lite): 几何与建图共用同快照向量工作区 (@CI-IISATO)
+- **PR #532** (2026-10-23): perf(rust-vexus-lite): 冷加载不再复制 CSR 数组，同时冷加载只解码一次，结果不变 (@CI-IISATO)
+- **PR #531** (2026-10-23): perf(rust-vexus-lite): 建图载荷直接流式写出，不再先建 JSON 树，字节不变 (@CI-IISATO)
+- **PR #530** (2026-10-23): test(tdb): 优雅跳过未构建的 native validation 测试产物并消除跨平台硬编码 (@infinite-vector)
 
 ---
 
@@ -2220,89 +1967,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in moss文生图.json
+## X. rust-vexus-lite): 打开 serde_json 的 float_roundtrip，冷加载的图资产与刚建好的逐位相同
 
 **RULE**:
-When implementing operations in `Plugin/ComfyUIGen/moss文生图.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust-vexus-lite/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6385f214`: 新增mossgen. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9da10426`: rust-vexus-lite): 打开 serde_json 的 float_roundtrip，冷加载的图资产与刚建好的逐位相同. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ComfyUIGen/moss文生图.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-{
-  "id": "577ff5b8-789b-44bd-850c-b191411e9e75",
-  "revision": 0,
-  "last_node_id": 12,
-  "last_link_id": 13,
-  "nodes": [
-    {
-      "id": 2,
-      "type": "UNETLoader",
-      "pos": [
-        176.90764084504917,
-        -908.0649728009181
-      ],
-      "size": [
-        270,
-        82
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            12
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UNETLoader"
-      },
-      "widgets_values": [
-        "moss_image_sft_int8_convrot.safetensors",
-        "default"
-      ],
-      "widgets_values_named": {
-        "unet_name": "moss_image_sft_int8_convrot.safetensors",
-        "weight_dtype": "default"
-      }
-    },
-    {
-      "id": 3,
-      "type": "CLIPLoader",
-      "pos": [
-        159.87085709260742,
-        -745.1505606152492
-      ],
-      "size": [
-        270,
-        106
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
+# float_roundtrip: parse floats back to the bits they were written with, so an
+# artifact restored from its stored payload matches the one the build published.
+serde_json = { version = "1.0", features = ["float_roundtrip"] }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+serde_json = "1.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6385f214` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9da10426` are properly handled with clean fallback behavior.

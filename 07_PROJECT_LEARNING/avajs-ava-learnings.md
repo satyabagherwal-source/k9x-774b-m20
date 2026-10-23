@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source**: github ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
-> **Source Version**: `12029815`  
+> **Source Version**: `054054b0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:53:28.943Z  
+> **Timestamp**: 2026-10-23T09:35:42.524Z  
 > **Learning ID**: `learn-github-avajs-ava`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:53:27.861Z  
+> **Harvest Timestamp**: 2026-10-23T09:35:40.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Node.js test runner that lets you develop with confidence 🚀
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 20825 stars
+- **Stars / Engagement**: 20823 stars
 
 ---
 
@@ -1275,414 +1275,189 @@ export function set(newOptions) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3049907` (2026-04-26)
-**Commit Message**: Full ESM internals; bias away from CJS; require @ava/typescript@7
+### Incident Patch 1: `054054b0` (2026-10-22)
+**Commit Message**: v8.1.1
 
-Breaking changes:
-
-- Removes support for `ava.config.cjs` files
-- Always uses `import()` to load test files and extra modules through the `require` configuration
-- No longer includes `.cjs` extension in the defaults (so will not find `test.cjs` files without explicit configuration)
-- Removes the object-form `extensions` configuration, you can now only provide an array of file extensions
-- Only compatible with `@ava/typescript` v7
-
-Fixes #3349
-
----------
-
-Co-authored-by: Mark Wubben <[REDACTED_EMAIL]>
-
-**File**: `docs/06-configuration.md` (modified, +15/-80)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -42,7 +42,7 @@ Arguments passed to the CLI will always take precedence over the CLI options con
- 
- ## Options
- 
--- `files`: an array of glob patterns to select test files. Files with an underscore prefix are ignored. By default only selects files with `cjs`, `mjs` & `js` extensions, even if the pattern matches other files. Specify `extensions` to allow other file extensions
-+- `files`: an array of glob patterns to select test files. Files with an underscore prefix are ignored. By default only selects files with `mjs` & `js` extensions, even if the pattern matches other files. Specify `extensions` to allow other file extensions
- - `watchMode`: See the [watch mode recipe for details](https://github.com/avajs/ava/blob/main/docs/recipes/watch-mode.md)
- - `match`: not typically useful in the `package.json` configuration, but equivalent to [specifying `--match` on the CLI](./05-command-line.md#running-tests-with-matching-titles)
- - `cache`: defaults to `true` to cache compiled files under `node_modules/.cache/ava`. If `false`, files are cached in a temporary directory instead
-@@ -55,7 +55,7 @@ Arguments passed to the CLI will always take precedence over the CLI options con
- - `tap`: if `true`, enables the [TAP reporter](./05-command-line.md#tap-reporter)
- - `verbose`: if `true`, enables verbose output (though there currently non-verbose output is not supported)
- - `snapshotDir`: specifies a fixed location for storing snapshot files. Use this if your snapshots are ending up in the wrong location
--- `extensions`: extensions of test files. Setting this overrides the default `["cjs", "mjs", "js"]` value, so make sure to include those extensions in the list. [Experimentally you can configure how files are loaded](#configuring-module-formats)
-+- `extensions`: extensions of test files. Setting this overrides the default `["mjs", "js"]` value, so make sure to include those extensions in the list.
- - `require`: [extra modules to load before test files](#requiring-extra-modules)
- - `timeout`: Timeouts in AVA behave differently than in other test frameworks. AVA resets a timer after each test, forcing tests to quit if no new test results were received within the specified timeout. This can be used to handle stalled tests. See our [timeout documentation](./07-test-timeouts.md) for more options.
- - `nodeArguments`: Configure Node.js arguments used to launch worker processes.
-@@ -68,18 +68,18 @@ Provide the `typescript` option (and install [`@ava/typescript`](https://github.
- 
- ## Using `ava.config.*` files
- 
--Rather than specifying the configuration in the `package.json` file you can use `ava.config.js`, `ava.config.cjs` or `ava.config.mjs` files.
-+Rather than specifying the configuration in the `package.json` file you can use an `ava.config.js` file. If your project does not already treat `.js` files as ES modules, use `ava.config.mjs` instead.
- 
- To use these files:
- 
- 1. Your `package.json` must not contain an `ava` property (or, if it does, it must be an empty object)
--2. You must only have one `ava.config.*` file in any directory, so don't mix `ava.config.js` *and* `ava.config.cjs` files
-+2. You must only have one `ava.config.*` file in any directory, so don't mix `ava.config.js` *and* `ava.config.mjs` files
- 
- AVA searches your file system for `ava.config.*` files. First, when you run AVA, it finds the closest `package.json`. Starting in that directory it recursively checks the parent directories until it either reaches the file system root or encounters a `.git` file or directory. The first `ava.config.*` file found is selected. This allows you to use a single configuration file in a monorepo setup.
- 
- ### `ava.config.js`
- 
--AVA follows Node.js' behavior, so if you've set `"type": "module"` you must use ESM, and otherwise you must use CommonJS.
-+Prefer `ava.config.js` when your project already treats `.js` files as ES modules, for example through `"type": "module"` in `package.json`.
- 
- The default export can either be a plain object or a factory function which returns a plain object. You can export or return a promise for a plain object:
- 
-@@ -113,44 +113,10 @@ export default ({projectDir}) => {
- };
- ```
- 
--### `ava.config.cjs`
--
--For `ava.config.cjs` files you must assign `module.exports`. ["Module scope"](https://nodejs.org/docs/latest-v12.x/api/modules.html#modules_the_module_scope) is available. You can `require()` dependencies.
--
--The module export can either be a plain object or a factory function which returns a plain object. You can export or return a promise for a plain object:
--
--```js
--module.exports = {
--	require: ['./_my-test-helper.js']
--};
--```
--
--```js
--module.exports = () => {
--	return {
--		require: ['./_my-test-helper.js']
--	};
--};
--```
--
--The factory function is called with an object containing a `projectDir` property, which you could use to change the returned configuration:
--
--```js
--module.exports = ({projectDir}) => {
--	if (projectDir === '/Users/username/projects/my-project') {
--		return {
--
-```
-
-**File**: `docs/08-common-pitfalls.md` (modified, +2/-2)
-```diff
-@@ -91,7 +91,7 @@ It is best practice to make sure your code exits cleanly. We've also seen occurr
- 
- For these reasons we're not providing an option to disable this timeout behavior. However, it is possible to register a callback for when AVA has completed the test run without uncaught exceptions or unhandled rejections. From inside this callback you can do whatever you need to do, including calling `process.exit()`.
- 
--Create a `_force-exit.mjs` file:
-+Create a `_force-exit.js` file:
- 
- ```js
- import process from 'node:process';
-@@ -108,7 +108,7 @@ Load it for all test files through AVA's `require` option:
- 
- ```js
- export default {
--	require: ['./_force-exit.mjs'],
-+	require: ['./_force-exit.js'],
- };
- ```
- 
-```
-
-**File**: `docs/recipes/babel.md` (modified, +2/-16)
-```diff
-@@ -2,20 +2,6 @@
- 
- Translations: [Français](https://github.com/avajs/ava-docs/blob/main/fr_FR/docs/recipes/babel.md)
- 
--You can enable Babel support by installing [`@babel/register`](https://babeljs.io/docs/en/babel-register) and `@babel/core`, and then in AVA's configuration requiring `@babel/register`:
-+AVA is ESM-only. [`@babel/register`](https://babeljs.io/docs/en/babel-register) only hooks legacy `require()` loading, so this setup is no longer supported.
- 
--**`package.json`:**
--
--```json
--{
--	"ava": {
--		"require": [
--			"@babel/register"
--		]
--	}
--}
--```
--
--`@babel/register` is compatible with CommonJS only. It intercepts `require()` calls and compiles files on the fly. This will compile source, helper and test files.
--
--For more information visit the [Babel documentation](https://babeljs.io/docs/en/babel-register).
-+If you need Babel, precompile your files before running AVA or use an ESM-capable loader configured through [`nodeArguments`](../06-configuration.md#node-arguments).
-```
-
-**File**: `docs/recipes/debugging-with-vscode.md` (modified, +3/-3)
-```diff
-@@ -26,7 +26,7 @@ Alternatively you can create a launch configuration, which makes it easier to de
-     "type": "node",
-     "request": "launch",
-     "name": "Debug AVA test file",
--    "program": "${workspaceFolder}/node_modules/ava/entrypoints/cli.mjs",
-+    "program": "${workspaceFolder}/node_modules/ava/entrypoints/cli.js",
-     "args": [
-       "${file}"
-     ],
-@@ -56,7 +56,7 @@ Assuming the names of your test files are unique you could try the following con
-   "type": "node",
-   "request": "launch",
-   "name": "Debug AVA test file",
--  "program": "${workspaceFolder}/node_modules/ava/entrypoints/cli.mjs",
-+  "program": "${workspaceFolder}/node_modules/ava/entrypoints/cli.js",
-   "args": [
-     "build/**/${fileBasenameNoExtension}.*"
-   ],
-@@ -103,7 +103,7 @@ Or, if you're using a launch configuration, add the `--serial` argument:
-   "type": "node",
-   "request": "launch",
-   "name": "Debug AVA test file",
--  "program": "${workspaceFolder}/node_modules/ava/entrypoints/cli.mjs",
-+  "program": "${workspaceFolder}/node_modules/ava/entrypoints/cli.js",
-   "args": [
-     "--serial",
-     "${file}"
-```
-
-**File**: `docs/recipes/puppeteer.md` (modified, +3/-3)
-```diff
-@@ -15,7 +15,7 @@ The first step is setting up a helper to configure the environment:
- ```js
- import puppeteer from 'puppeteer';
- 
--module.exports = async (t, run) => {
-+export default async (t, run) => {
- 	const browser = await puppeteer.launch();
- 	const page = await browser.newPage();
- 	try {
-@@ -24,7 +24,7 @@ module.exports = async (t, run) => {
- 		await page.close();
- 		await browser.close();
- 	}
--}
-+};
- ```
- 
- ## Usage example
-@@ -33,7 +33,7 @@ module.exports = async (t, run) => {
- 
- ```js
- import test from 'ava';
--import withPage from './_withPage';
-+import withPage from './_withPage.js';
- 
- const url = 'https://google.com';
- 
-```
-
-**File**: `docs/recipes/typescript.md` (modified, +2/-20)
-```diff
-@@ -37,9 +37,7 @@ There are two components to a setup like this:
- 
- ```json
- "ava": {
--	"extensions": {
--		"ts": "module"
--	},
-+	"extensions": ["ts"],
- 	"nodeArguments": [
- 		"--import=tsimp"
- 	]
-@@ -50,7 +48,7 @@ There are two components to a setup like this:
- 
- [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/avajs/ava/tree/main/examples/typescript-basic?file=source%2Ftest.ts&terminal=test&view=editor)
- 
--Create a `test.ts` file. ESM syntax works best, even if you're targeting CommonJS.
-+Create a `test.ts` file using ESM syntax.
- 
- ```ts
- import test from 'ava';
-@@ -62,22 +60,6 @@ test('fn() returns foo', t => {
- });
- ```
- 
--You can use CommonJS syntax as well:
--
--```ts
--const test = require('ava');
--```
--
--This works whether `esModuleInterop` is enabled or not.
--
--`import … = require()` syntax is less elegant. It's best like this:
--
--```ts
--import ava = require('ava')
--
--const test = ava.default;
--```
--
- ## Using [macros](../01-writing-tests.md#reusing-test-logic-through-macros)
- 
- Macros can receive additional arguments. AVA can infer these to ensure you're using the macro correctly:
-```
-
-**File**: `docs/recipes/vue.md` (modified, +3/-54)
-```diff
-@@ -13,62 +13,11 @@ Translations: [Français](https://github.com/avajs/ava-docs/blob/main/fr_FR/docs
- - Optional: [babel-plugin-webpack-alias-7](https://github.com/shortminds/babel-plugin-webpack-alias-7) if you want to use [webpack aliases](https://webpack.js.org/configuration/resolve/#resolve-alias) or use them in your source files
- 	- `npm i --save-dev babel-plugin-webpack-alias-7`
- 
--## Setup
-+## Status
- 
--The first step is setting up a helper to configure the environment to transpile `.vue` files and run in a browser like environment.
-+This recipe relied on legacy `require()` hooks. AVA is ESM-only, so this setup is no longer supported.
- 
--**`package.json`:**
--
--```json
--{
--	"ava": {
--		"require": [
--			"./test/_setup.js"
--		]
--	}
--}
--```
--
--```js
--// ./test/_setup.cjs
--
--// Set up JSDom.
--const jsdomGlobal = require('jsdom-global');
--jsdomGlobal();
--
--// Fix the Date object, see <https://github.com/vuejs/vue-test-utils/issues/936#issuecomment-415386167>.
--window.Date = Date
--
--// Setup browser environment
--const hooks = require('require-extension-hooks');
--const Vue = require('vue');
--
--// Setup Vue.js to remove production tip
--Vue.config.productionTip = false;
--
--// Setup vue files to be processed by `require-extension-hooks-vue`
--hooks('vue').plugin('vue').push();
--// Setup vue and js files to be processed by `require-extension-hooks-babel`
--hooks(['vue', 'js']).exclude(({filename}) => filename.match(/\/node_modules\//)).plugin('babel').push();
--```
--
--**Note:** If you are using _babel-plugin-webpack-alias-7_, you must also exclude your webpack file - e.g. `filename.includes(/\/node_modules\//) || filename.includes('webpack.config.test.js')`
--
--## Sample snapshot test
--
--```js
--const test = require('ava');
--const Vue = require('vue');
--const Component = require('component.vue');
--
--test('renders', t => {
--	const vm = new Vue(Component).$mount();
--	const tree = {
--		$el: vm.$el.outerHTML
--	};
--	t.snapshot(tree);
--});
--```
-+Precompile your Vue components before running AVA, or use tooling that provides an ESM loader for `.vue` files.
- 
- ## Coverage reporting
- 
-```
-
-**File**: `docs/recipes/watch-mode.md` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ Afterwards you can use the `r` command to run the matched tests again, or `a` co
- 
- AVA tracks which source files your test files depend on. If you change such a dependency only the test file that depends on it will be rerun. AVA will rerun all tests if it cannot determine which test file depends on the changed source file.
- 
--Dependency tracking works for `require()` and `import` syntax, as supported by [@vercel/nft](https://github.com/vercel/nft). `import()` is supported but dynamic paths such as `import(myVariable)` are not.
-+Dependency tracking works for static `import` syntax, as supported by [@vercel/nft](https://github.com/vercel/nft). `import()` is supported but dynamic paths such as `import(myVariable)` are not.
- 
- Files accessed using the `fs` module are not tracked.
- 
+@@ -1,6 +1,6 @@
+ {
+ 	"name": "ava",
+-	"version": "8.1.0",
++	"version": "8.1.1",
+ 	"description": "Node.js test runner that lets you develop with confidence.",
+ 	"license": "MIT",
+ 	"repository": "github:avajs/ava",
 ```
 
 ---
 
-### Incident Patch 2: `7c1b3a7a` (2026-02-27)
-**Commit Message**: Yet more release fixes (#3419)
+### Incident Patch 2: `51d68b37` (2026-10-22)
+**Commit Message**: Update dependencies (#3500)
 
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
+**File**: `package.json` (modified, +5/-5)
 ```diff
-@@ -158,7 +158,7 @@ jobs:
-                 input: {
-                   branch: { repositoryNameWithOwner: $repo, branchName: "main" },
-                   message: { headline: $headline },
--                  parentCommitId: $parentSha,
-+                  expectedHeadOid: $parentSha,
-                   fileChanges: {
-                     additions: [
-                       { path: "package.json", contents: ($pkgContent | @base64) },
+@@ -29,12 +29,12 @@
+ 	"devEngines": {
+ 		"runtime": {
+ 			"name": "node",
+-			"version": "^26.11.1",
++			"version": "^26.12.1",
+ 			"onFail": "download"
+ 		},
+ 		"packageManager": {
+ 			"name": "pnpm",
+-			"version": "^12",
++			"version": "^12.15.0",
+ 			"onFail": "download"
+ 		}
+ 	},
+@@ -100,7 +100,7 @@
+ 		"concordance": "^5.0.4",
+ 		"currently-unhandled": "^0.4.1",
+ 		"debug": "^4.4.3",
+-		"emittery": "^2.1.0",
++		"emittery": "^2.2.0",
+ 		"figures": "^6.1.0",
+ 		"globby": "^16.2.4",
+ 		"ignore-by-default": "^2.1.0",
+@@ -114,7 +114,7 @@
+ 		"package-config": "^5.0.0",
+ 		"picomatch": "^4.0.7",
+ 		"plur": "^6.0.0",
+-		"pretty-ms": "^9.3.1",
++		"pretty-ms": "^10.0.0",
+ 		"resolve-cwd": "^3.0.0",
+ 		"slash": "^5.1.0",
+ 		"stack-utils": "^2.0.6",
+@@ -131,7 +131,7 @@
+ 		"ansi-escapes": "^7.3.0",
+ 		"c8": "^12.0.0",
+ 		"eslint-plugin-ava": "^18.0.0",
+-		"execa": "^10.1.0",
++		"execa": "^10.2.0",
+ 		"expect": "^30.5.2",
+ 		"sinon": "^22.1.0",
+ 		"tap": "^21.8.0",
 ```
 
----
-
-### Incident Patch 3: `31f37880` (2026-02-27)
-**Commit Message**: More release fixes (#3418)
-
-**File**: `.github/workflows/release.yml` (modified, +15/-17)
+**File**: `pnpm-lock.yaml` (modified, +382/-381)
 ```diff
-@@ -153,25 +153,23 @@ jobs:
-             --rawfile pkgContent package.json \
-             --rawfile lockContent package-lock.json \
-             '{
--              branch: { repositoryNameWithOwner: $repo, branchName: "main" },
--              message: { headline: $headline },
--              parentCommitId: $parentSha,
--              fileChanges: {
--                additions: [
--                  { path: "package.json", contents: ($pkgContent | @base64) },
--                  { path: "package-lock.json", contents: ($lockContent | @base64) }
--                ]
-+              query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }",
-+              variables: {
-+                input: {
-+                  branch: { repositoryNameWithOwner: $repo, branchName: "main" },
-+                  message: { headline: $headline },
-+                  parentCommitId: $parentSha,
-+                  fileChanges: {
-+                    additions: [
-+                      { path: "package.json", contents: ($pkgContent | @base64) },
-+                      { path: "package-lock.json", contents: ($lockContent | @base64) }
-+                    ]
-+                  }
-+                }
-               }
--            }' > /tmp/commit-input.json
-+            }' > /tmp/request.json
+@@ -7,153 +7,153 @@ importers:
+     configDependencies: {}
+     packageManagerDependencies:
+       pnpm:
+-        specifier: ^12
+-        version: 12.11.2
++        specifier: ^12.15.0
++        version: 12.15.0
  
--          COMMIT_SHA=$(gh api graphql \
--            -f query='
--              mutation($input: CreateCommitOnBranchInput!) {
--                createCommitOnBranch(input: $input) {
--                  commit { oid }
--                }
--              }' \
--            --field input:json=@/tmp/commit-input.json \
-+          COMMIT_SHA=$(gh api graphql --input /tmp/request.json \
-             --jq '.data.createCommitOnBranch.commit.oid')
+ packages:
  
-           echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+-  '@pnpm/exe.android-arm64@12.11.2':
+-    resolution: {integrity: sha512-owLw13OfPkEoY+hLBNeeG+dCFhywr7q2d/EHPz4mNL2RhKnv8gNwMARkjkiDQu234aItVwFNDeGnmQXm+ikkAg==}
++  '@pnpm/exe.android-arm64@12.15.0':
++    resolution: {integrity: sha512-eVCqmscY70LGvgRzu3mi8IBWBFGix+a6mNZoWmXxESsBdeiKEF9xQSuaeel10yn+zI7TXy2jlI63vFLzETk+aQ==}
+     cpu: [arm64]
+     os: [android]
+ 
+-  '@pnpm/exe.android-x64@12.11.2':
+-    resolution: {integrity: sha512-GYPkVebl4iokOA/4MPSpGoUVfFlsth7uqOCe1XiaiM23LAdvUOMJBObqHJijr89ZqjwHm9pO6vO45GRwJ2U2qA==}
++  '@pnpm/exe.android-x64@12.15.0':
++    resolution: {integrity: sha512-Gx/WbkFcdUFUg8g8AShezcS9EiQxfYvdAm2hfKLO8sfJmJvKOCt5fzlgHWDzmGhoclibgW+tUGZ/KF4F4wOTCA==}
+     cpu: [x64]
+     os: [android]
+ 
+-  '@pnpm/exe.darwin-arm64@12.11.2':
+-    resolution: {integrity: sha512-n9M4On66y8FDxUAKgMO1FXt0qihyG4e+56p3/F0uo8Bx9KplW8BwKVnXigzCJ8aNM6sVVPkOE6M9XXbeVIxnZA==}
++  '@pnpm/exe.darwin-arm64@12.15.0':
++    resolution: {integrity: sha512-N0ZykiDWCvqSBJvt71j7cSoBR993FqvYZFtmpCtqvW3pguiI+NAgraLPA5OTwu5mV+/d8hYpVcPktJA3xFDLtA==}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@pnpm/exe.darwin-x64@12.11.2':
+-    resolution: {integrity: sha512-oSW7n3sBT0c0cyk4kj10T2Y6Mpm+OFEiCAWozgX039tdoI6yqJF1uaFD3sw7ugLdu6VV3+uY0pa1TUZIPdxDWA==}
++  '@pnpm/exe.darwin-x64@12.15.0':
++    resolution: {integrity: sha512-7Ntr2HlBUxzwWOg7NwDxCbRW/3vXuqKO+hcXm+w3SBi9rrHY53li1wLqWVT7Gjxd+lVEHM1QJZo6WJEGFU8C6A==}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@pnpm/exe.freebsd-x64@12.11.2':
+-    resolution: {integrity: sha512-qbzc3KoDpa/Lkf8vs3jnDe6dUUbso+6eLIyssYFMiliLpYNxn8dirk11YoNnOQcdHVB50v5RFls1Yid6ttT5pg==}
++  '@pnpm/exe.freebsd-x64@12.15.0':
++    resolution: {integrity: sha512-btOiyL7fL7W4uQGH0aqFai2TNC3IoKcZ7gNHBVbEFZt2dWrnrD0SufL3iGs3fLlmb4OtuU35uf4Zpr9V9Jh9mA==}
+     cpu: [x64]
+     os: [freebsd]
+ 
+-  '@pnpm/exe.linux-arm64-musl@12.11.2':
+-    resolution: {integrity: sha512-uMEYDwKRktGwANubQ+kYCwmhNwg3Ik6qK89ahsbQ5cP30R/5FVJb/T99vr9XRUBC/A7mZI6eeT92oyVas9ACyg==}
++  '@pnpm/exe.linux-arm64-musl@12.15.0':
++    resolution: {integrity: sha512-pNC38k+O+90FOjbPNSnw0E7apq1PKTmz3fFe1amn+lys/U5kL++uzir8bRiho8ONcyA3d9EU7wdqcY0DKkj+JA==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [musl]
+ 
+-  '@pnpm/exe.linux-arm64@12.11.2':
+-    resolution: {integrity: sha512-6e8ZAQUwFXAWHHHv5FesWqf/kEK04wuitBv5f/gxzkC0DiBfaixr+f+6JQede8SF4Ji5LcMwVFJbzAtffpWxEg==}
++  '@pnpm/exe.linux-arm64@12.15.0':
++    resolution: {integrity: sha512-qML/8aCXslh8td/w4U+HJNqUcZ2+m6EfTbWScIzZRmyPsRFN+xB4LP1U/hymxc1iSJiKtG56HJx2fvUErWFIGw==}
+     cpu: [arm64]
+     os: [linux]
+     libc: [glibc]
+ 
+-  '@pnpm/exe.linux-ppc64@12.11.2':
+-    resolution: {integrity: sha512-Ui8A4nepkVupx2VpuFfysEluMvWK6gTB5rgVts7Ss/+8dj0RD28x3F/seNeH/zSypgC6yKdV6qsKVQh/uffTuQ==}
++  '@pnpm/exe.linux-ppc64@12.15.0':
++    resolution: {integrity: sha512-tjRDUUl7RCJ6T/6eoNPxOqkwU4Mzi5RtTXmSAxujyz37OTwwsMU7Ps087Zk4gHcUvRSeyF40ZFsew3vtE+nmUA==}
+     cpu: [ppc64]
+     os: [linux]
+     libc: [glibc]
+ 
+-  '@pnpm/exe.linux-riscv64@12.11.2':
+-    resolution: {integrity: sha512-i1yLdQ5bu+wjQ+srtFoJAaY2gN/+oXHFdjul4llCeoDxHE0rTIG3R41NhHfCjyFPW4+CpbBT58933CL9sMOCnA==}
++  '@pnpm/exe.linux-riscv64@12.15.0':
++    resolution: {integrity: sha512-bF1uBWEfbwaeryz6lIiaJ8AWD082otZfvzGX5l+6LZRpRwUEpJHUsJrORaYP5/cNMv5ZR2p6TvvcJcQzwtDzmw==}
+     cpu: [riscv64]
+     os: [linux]
+     libc: [glibc]
+ 
+-  '@pnpm/exe.linux-s390x@12.11.2':
+-    resolution: {integrity: sha512-YS1/lhPjjTsN4QL50VaFZKRa3Uc/bDnhE8eKbJMFvuX06UuFS5YaiDg04APoZdfVSGqTfX27QAg7rfLMSWaqxA==}
++  '@pnpm/exe.linux-s390x@12.15.0':
++    resolution: {integrity: sha512-zKMhIzsexYMToeLmqV5jPsvV/f9vwsJb2kUH2NFYzalbxImeBrlA4kL7GwF8gD4pagV6jYYcJb8RjbZIdjHptg==}
+     cpu: [s390x]
+     os: [linux]
+     libc: [glibc]
+ 
+-  '@pnpm/exe.linux-x64-musl@12.11.2':
+-    resolution: {integrity: sha512-7eIxQR05fvJxCujUSKp5KTtehJ7QqrgqP/HD1+BcB/SaV2Be4XI1PEHiOgA1zxsiMIeMvTF6E4G4dYHrFjeXRg==}
++  '@pnpm/exe.linux-x64-musl@12.15.0':
++    resolution: {integrity: sha512-A9J0Jg0Rdx+qQU4qXtwyST5tto9IOu1zi4fDk35nbc6DWahggbcKtFvZPKFwL2qgUXGXOX//hXv6z/sp6emO8A==}
+     cpu: [x64]
+     os: [linux]
+     libc: [musl]
+ 
+-  '@pnpm/exe.linux-x64@12.11.2':
+-    resolution: {integrity: sha512-FK7QKe24AYgppJwO3mpooYptduuvIGqKJPi5ac7MdnWkjUy46JBfYhCW0grnkWKC8YOf0x+vGviuQqJEj3SpQQ==}
++  '@pnpm/exe.linux-x64@12.15.0':
++    resolution: {integrity: sha512-yc+QlZR+9+nr29J4fRzhMoapgxTBDndq/+peyoq1XUufnQFnfbXUMFudDIKzHi545linGqmOmXfn0NoufNgcOg==}
+     cpu: [x64]
+     os: [linux]
+     libc: [glibc]
+ 
+-  '@pnpm/exe.win32-arm64@12.11.2':
+-    resolution: {integrity: sha512-PCTjVDdJb6VvraZxrEeFv6EqEA0hhIsAySx28e95J2Tqpi88hLpgOXgNqV0vpxq9A+b8GLQfyk/D+1UlJPv/YQ==}
++  '@pnpm/exe.win32-arm64@12.15.0':
++    resolution: {integrity: sha512-fPXZxuY1VclkOga9bc53qNCXcegfeoBR8+Ue+AospDwKzuGGSHll0oDxkL
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3500** (2026-10-22): Update dependencies (@novemberborn)
 - **PR #3497** (2026-10-18): Update release process docs to account for staged publishing (@novemberborn)
 - **PR #3496** (2026-10-15): Update tooling, dependencies, formatting and CI workflows (@novemberborn)
 - **PR #3493** (closed): fix: upgrade tar to 7.5.19 (CVE-2026-59873) (@anupamme)
 - **PR #3477** (closed): Improve invalid worker argument reporting (@wangxpych)
 - **PR #3474** (closed): probe (@harshaaaaw)
-- **PR #3472** (closed): fix: detect synchronous throws of falsy values in t.throwsAsync() (@tsushanth)
 
 ---
 
@@ -1702,41 +1477,28 @@ Co-authored-by: Mark Wubben <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Full ESM internals; bias away from CJS; require @ava/typescript@7
+## X. Empirical Invariant Guard in package.json
 
 **RULE**:
-When implementing operations in `docs/06-configuration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3049907`: Full ESM internals; bias away from CJS; require @ava/typescript@7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `054054b0`: v8.1.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/06-configuration.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-- `files`: an array of glob patterns to select test files. Files with an underscore prefix are ignored. By default only selects files with `mjs` & `js` extensions, even if the pattern matches other files. Specify `extensions` to allow other file extensions
-- `extensions`: extensions of test files. Setting this overrides the default `["mjs", "js"]` value, so make sure to include those extensions in the list.
-Rather than specifying the configuration in the `package.json` file you can use an `ava.config.js` file. If your project does not already treat `.js` files as ES modules, use `ava.config.mjs` instead.
-2. You must only have one `ava.config.*` file in any directory, so don't mix `ava.config.js` *and* `ava.config.mjs` files
-Prefer `ava.config.js` when your project already treats `.js` files as ES modules, for example through `"type": "module"` in `package.json`.
+	"version": "8.1.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-- `files`: an array of glob patterns to select test files. Files with an underscore prefix are ignored. By default only selects files with `cjs`, `mjs` & `js` extensions, even if the pattern matches other files. Specify `extensions` to allow other file extensions
-- `extensions`: extensions of test files. Setting this overrides the default `["cjs", "mjs", "js"]` value, so make sure to include those extensions in the list. [Experimentally you can configure how files are loaded](#configuring-module-formats)
-Rather than specifying the configuration in the `package.json` file you can use `ava.config.js`, `ava.config.cjs` or `ava.config.mjs` files.
-2. You must only have one `ava.config.*` file in any directory, so don't mix `ava.config.js` *and* `ava.config.cjs` files
-AVA follows Node.js' behavior, so if you've set `"type": "module"` you must use ESM, and otherwise you must use CommonJS.
-### `ava.config.cjs`
-
-For `ava.config.cjs` files you must assign `module.exports`. ["Module scope"](https://nodejs.org/docs/latest-v12.x/api/modules.html#modules_the_module_scope) is available. You can `require()` dependencies.
-
-The module export can either be a plain object or a factory function which r
+	"version": "8.1.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3049907` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `054054b0` are properly handled with clean fallback behavior.

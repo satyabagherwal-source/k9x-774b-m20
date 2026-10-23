@@ -4511,3 +4511,8 @@
 | `CYCLE-20261023-FA78` | `2026-10-23T09:20:48.740Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3849` | Yes (`48892469...`) |
 | `CYCLE-20261023-FCSC` | `2026-10-23T09:20:52.092Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3850` | Yes (`e154313c...`) |
 | `CYCLE-20261023-FEFA` | `2026-10-23T09:20:54.214Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3851` | Yes (`8a5eccda...`) |
+| `CYCLE-20261023-YFXL` | `2026-10-23T09:35:42.633Z` | `avajs/ava` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/avajs-ava-learnings.md` | Yes (`a7b20b81...`) |
+| `CYCLE-20261023-YINX` | `2026-10-23T09:35:46.173Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3852` | Yes (`c9bd8c57...`) |
+| `CYCLE-20261023-YNRE` | `2026-10-23T09:35:52.778Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3853` | Yes (`b2db8fc0...`) |
+| `CYCLE-20261023-YP13` | `2026-10-23T09:35:54.423Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3854` | Yes (`745485bf...`) |
+| `CYCLE-20261023-1XHV` | `2026-10-23T09:38:25.363Z` | `vuetifyjs/vuetify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3855, Rule 3856, Rule 3857` | Yes (`0e71db79...`) |

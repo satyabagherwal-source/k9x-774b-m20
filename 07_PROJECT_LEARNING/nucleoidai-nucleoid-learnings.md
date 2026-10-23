@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `1eccd61b`  
+> **Source Version**: `da33acfc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T05:30:31.709Z  
+> **Timestamp**: 2026-10-23T09:35:54.205Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T05:30:31.488Z  
+> **Harvest Timestamp**: 2026-10-23T09:35:53.713Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -504,12 +504,14 @@ import * as visualizer from "./visualizer";
 import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
 import * as terminal from "./lib/terminal";
-import puzzle from "./data/training/3aa6fb7a.json";
+import puzzle from "./data/training/0ca9ddb6.json";
+// Completed:
+// 3aa6fb7a
 
 const {
   train,
   test: [{ input: test_input_matrix, output: test_output_matrix }],
-} = puzzle; // 0ca9ddb6.json
+} = puzzle;
 
 const training_input = {
   dataset: train.map(({ input, output }) => ({
@@ -914,358 +916,199 @@ export function enlarge(matrix, rows, cols) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1eccd61b` (2026-10-22)
-**Commit Message**: Show Nucleoid version in ARC terminal header
+### Incident Patch 1: `da33acfc` (2026-10-23)
+**Commit Message**: Add cross ARC dataset for task 0ca9ddb6
 
-The header now displays the runtime version reported by `nucleoid --version` instead of the input dimensions. It uses the same NUCLEOID_EXECUTABLE selection as program execution. A shared `execute` helper in lib/nucleoid.ts backs both `run` and the new `version`.
+Add arc/src/dataset/dataset.cross.1.json, annotating the three training pairs of 0ca9ddb6 with ten point instances. Color-1 points gain orthogonal color-7 neighbors, color-2 points gain diagonal color-4 neighbors, and color-6/8 points stay unchanged. Declarative rules introduce marker_color and tag the geometry. Masks keep the full 9x9 canvas, and held-out data is excluded. Document the dataset in arc/README.md.
 
-The header content is centered with two blank padding rows above and below. The final summary badge is green for an exact match and red for a mismatch. README is updated to match.
-
-**File**: `arc/README.md` (modified, +8/-4)
+**File**: `arc/README.md` (modified, +13/-0)
 ```diff
-@@ -45,10 +45,13 @@ type checking, linting, and offline inspection do not require model calls.
- The terminal uses light and dark grey styling with a small green `nuc` wordmark
- from [Nucleoid's avatar](https://avatars.githubusercontent.com/u/87045767?s=96&v=4).
- The header title is **Nucleoid - Logic Language for World Models 🌱🐋🌍**.
--The header content sits left of center as one group, with its left inset set to
--25% of the unused horizontal space. Its first two rows pair the unboxed
-+It displays the runtime version reported by the Nucleoid executable's `--version`
-+option, using the same `NUCLEOID_EXECUTABLE` selection as program execution.
-+Two blank rows pad the header content above and below.
-+The header content is centered as one group, with its left inset set to
-+50% of the unused horizontal space. Its first two rows pair the unboxed
- wordmark on the left with the title and `Inspired by Nature` on the right.
--After a blank line, the workflow and input dimensions share the same text
-+After a blank line, the workflow and runtime version share the same text
- column. Narrow terminals use smaller artwork and stack the header when both
- columns cannot fit. Artwork is embedded, with
- no image downloads during a run. Square corners, straight grey borders, light
-@@ -69,7 +72,8 @@ Numbered analysis/visualization stages, boxed declarations and object states,
- and color-coded ARC grids with row/column coordinates keep the run readable.
- Wide grids split into column panels rather than dropping cells. The final
- comparison keeps **Expected** before **Result**, followed by an
--exact-match/mismatch badge, the unchanged difference score, and elapsed time.
-+exact-match badge in green or a mismatch badge in red, the unchanged difference
-+score, and elapsed time.
- Model token usage stays visible underneath the active step, and failures go to
- standard error with a boxed stack trace.
+@@ -97,6 +97,19 @@ unreadable files, or malformed JSON fail explicitly; JSON errors name the file.
+ Instance `implementation` snippets use named constructor arguments whose names
+ match the parameters in their class declarations.
  
++`dataset.cross.1.json` annotates only the three training pairs from
++`src\data\training\0ca9ddb6.json`, with ten point instances in total.
++Color-1 points gain color-7 orthogonal neighbors; color-2 points gain color-4
++diagonal neighbors. Color-6 and color-8 points remain unchanged.
++The declarative rules introduce `marker_color`, which is absent before the
++rules run. Tags identify the geometry: `l1707` is an orthogonal cross,
++`l2404` is a diagonal cross, and `l7544` remains a single point.
++Every instance mask retains the complete 9 by 9 canvas. The x/y metadata
++records each mask's nonzero bounding-box origin; native snapshot coordinates
++remain anchored to the input point. Orientation is 0 in both states because
++the patterns are symmetric. Held-out inputs and outputs are not included.
++The dataset is discovered automatically by `document()`.
++
+ ## ARC proposal agent
+ 
+ Use [arc-purposal](../.github/agents/arc-purposal.agent.md) and its
 ```
 
-**File**: `arc/src/app.ts` (modified, +2/-4)
+**File**: `arc/src/dataset/dataset.cross.1.json` (added, +427/-0)
 ```diff
-@@ -1,6 +1,7 @@
- import * as analyzer from "./analyzer";
- import * as visualizer from "./visualizer";
- import * as Matrix from "./lib/Matrix";
-+import * as nucleoid from "./lib/nucleoid";
- import * as terminal from "./lib/terminal";
- import puzzle from "./data/training/3aa6fb7a.json";
- 
-@@ -19,10 +20,7 @@ const training_input = {
- 
- export async function start() {
-   const startedAt = performance.now();
--  terminal.header({
--    columns: test_input_matrix[0]?.length ?? 0,
--    rows: test_input_matrix.length,
--  });
-+  terminal.header({ version: await nucleoid.version() });
-   terminal.puzzle({ train, testInput: test_input_matrix });
-   terminal.section(
-     1,
-```
-
-**File**: `arc/src/lib/nucleoid.ts` (modified, +40/-26)
-```diff
-@@ -3,38 +3,52 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
- import { tmpdir } from "node:os";
- import { join } from "node:path";
- 
-+async function execute(args) {
-+  const executable =
-+    process.env.NUCLEOID_EXECUTABLE ??
-+    String.raw`C:\Users\canmi\dev\Nucleoid\target\debug\nucleoid.exe`;
-+  const stdout = await new Promise((resolve, reject) => {
-+    execFile(
-+      executable,
-+      args,
-+      { encoding: "utf8", windowsHide: true },
-+      (error, stdout, stderr) => {
-+        if (error) {
-+          reject(
-+            new Error(
-+              `Nucleoid execution failed: ${stderr.trim() || error.message}`,
-+              { cause: error }
-+            )
-+          );
-+        } else {
-+          resolve(stdout);
+@@ -0,0 +1,427 @@
++{
++  "declarations": [
++    "class Obj(x: int, y: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
++    "if $Obj.vertex_color == 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7",
++    "if $Obj.vertex_color == 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4"
++  ],
++  "dataset": [
++    {
++      "input_matrix": [
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 2, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 1, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0]
++      ],
++      "output_matrix": [
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 4, 0, 4, 0, 0, 0, 0, 0],
++        [0, 0, 2, 0, 0, 0, 0, 0, 0],
++        [0, 4, 0, 4, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 7, 0, 0],
++        [0, 0, 0, 0, 0, 7, 1, 7, 0],
++        [0, 0, 0, 0, 0, 0, 7, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj0",
++          "input_x": 2,
++          "output_x": 1,
++          "input_y": 3,
++          "output_y": 2,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 2, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 4, 0, 4, 0, 0, 0, 0, 0],
++            [0, 0, 2, 0, 0, 0, 0, 0, 0],
++            [0, 4, 0, 4, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0]
++          ],
++          "implementation": "obj0 = Obj(x=2, y=3, orientation=0, vertex_color=2)",
++          "input_value": {"id":"obj0","x":2,"y":3,"orientation":0,"tag":"l7544","vertex_color":2},
++          "output_value": {"id":"obj0","x":2,"y":3,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
++        },
++        {
++          "instance_name": "obj1",
++          "input_x": 6,
++          "output_x": 5,
++          "input_y": 6,
++          "output_y": 5,
++          "input_orientation": 0,
++          "output_orientation": 0,
++          "input_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 1, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0]
++          ],
++          "output_instance_matrix": [
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0],
++            [0, 0, 0, 0, 0, 0, 7, 0, 0],
++            [0, 0, 0, 0, 0, 7, 1, 7, 0],
++            [0, 0, 0, 0, 0, 0, 7, 0, 0],
++            [0, 0, 0, 0, 0, 0, 0, 0, 0]
++          ],
++          "implementation": "obj1 = Obj(x=6, y=6, orientation=0, vertex_color=1)",
++          "input_value": {"id":"obj1","x":6,"y":6,"orientation":0,"tag":"l7544","vertex_color":1},
++          "output_value": {"id":"obj1","x":6,"y":6,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
 +        }
-+      }
-+    );
-+  });
-+
-+  if (typeof stdout !== "string") {
-+    throw new Error("Nucleoid returned non-text output");
-+  }
-+  return stdout;
-+}
-+
-+export async function version() {
-+  const stdout = await execute(["--version"]);
-+  const match = /^nucleoid\s+(\S+)\s*$/.exec(stdout);
-+  if (!match) {
-+    throw new Error("Nucleoid returned invalid version output");
-+  }
-+  return match[1];
-+}
-+
- export async function run(source) {
-   const directory = await mkdtemp(join(tmpdir(), "nuc-arc-"));
- 
-   try {
-     const file = join(directory, "program.nuc");
-     await writeFile(file, source, "utf8");
--    const executable =
--      process.env.NUCLEOID_EXECUTABLE ??
--      String.raw`C:\Users\canmi\dev\Nucleoid\target\debug\nucleoid.exe`;
--    const stdout = await new Promise((resolve, reject) => {
--      execFile(
--        executable,
--        ["--json", file],
--        { encoding: "utf8", windowsHide: true },
--        (error, stdout, stderr) => {
--          if (error) {
--            reject(
--              new Error(
--                `Nucleoid execution failed: ${stderr.trim() || error.message}`,
--                { cause: error }
--              )
--            );
--          } else {
--            resolve(stdout);
--          }
--        }
--      );
--    });
--
--    if (typeof stdout !== "string") {
--      throw new Error("Nucleoid returned non-text output");
--    }
-+    const stdout = await execute(["--json", file]);
- 
-     try {
-       const result = JSON.parse(stdout);
-```
-
-**File**: `arc/src/lib/terminal.ts` (modified, +6/-6)
-```diff
-@@ -92,7 +92,7 @@ function block(title, lines, write = console.log) {
-   write(`  ${frame(`└${rule}┘`)}`);
- }
- 
--export function header({ columns, rows }) {
-+export function header({ version }) {
-   const available = width() - 4;
-   const horizontal = available >= 32;
-   const limit = Math.min(12, available);
-@@ -111,7 +111,7 @@ export function header({ columns, rows }) {
-     ),
-     "",
-     ...wrap("Analyze / Construct / Visualize", textWidth),
--    ...wrap(`Input ${columns} × ${rows}`, textWidth).map((line) =>
-+    ...wrap(`Version ${version}`, textWidth).map((line) =>
-       styleText("gray", line)
-     ),
-   ];
-@@ -125,9 +125,9 @@ export function header({ columns, rows }) {
-     : [...logo, "", ...text];
-   const contentWidth = Math.max(...lines.map((line) => stringWidth(line)));
-   const inset = " ".repeat(
--    Math.max(0, Math.floor((available - contentWidth) / 4))
-+    Math.max(0, Math.floor((available - contentWidth) * 0.5))
-   );
--  block("", ["", ...lines.map((line) => inset + line), ""]);
-+  block("", ["", "", ...lines.map((line) => inset + line), "", ""]);
-   console.log("");
- }
- 
-@@ -319,8 +319,8 @@ export function summary(difference, duration) {
-       : `${Math.floor(seconds / 60)}m ${(seconds % 60).toFixed(1)}s`;
-   const status =
-     difference === 0
--      ? styleText(["bold", "white"], "✓ EXACT MATCH")
--      : styleText(["bold", "yellow"], "◇ MISMATCH");
-+      ? styleText(["bold", "green"], "✓ EXACT MATCH")
-+      : styleText(["bold", "red"], "◇ MISMATCH");
-   block("Run complete", [
-     status,
-     "",
++      ]
++    },
++    {
++      "input_matrix": [
++        [0, 0, 0, 8, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 2, 0, 0],
++        [0, 0, 1, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 1, 0, 0],
++        [0, 2, 0, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 0, 0, 0]
++      ],
++      "output_matrix": [
++        [0, 0, 0, 8, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 4, 0, 4, 0],
++        [0, 0, 7, 0, 0, 0, 2, 0, 0],
++        [0, 7, 1, 7, 0, 4, 0, 4, 0],
++        [0, 0, 7, 0, 0, 0, 0, 0, 0],
++        [0, 0, 0, 0, 0, 0, 7, 0, 0],
++        [4, 0, 4, 0, 0, 7, 1, 7, 0],
++        [0, 2, 0, 0, 0, 0, 7, 0, 0],
++        [4, 0, 4, 0, 0, 0, 0, 0, 0]
++      ],
++      "instances": [
++        {
++          "instance_name": "obj2",
++          "input_x": 3,
++          "output_x": 3,
++          "input_y": 0,
++          "output_y": 0,
++          "input_orientation": 0,
++          "out
 ```
 
 ---
 
-### Incident Patch 2: `3e9694f8` (2026-10-22)
-**Commit Message**: Add puzzle preview to ARC terminal output
+### Incident Patch 2: `1f713284` (2026-10-23)
+**Commit Message**: Switch ARC app to next training puzzle
 
-After the header, show training input/output pairs side by side, followed by the test input. Narrow windows wrap complete pairs onto additional rows; oversized pairs fall back to the existing column-split grid panels. The preview never receives the expected test output.
+Load puzzle 0ca9ddb6 in the ARC app and mark 3aa6fb7a as completed.
 
-Extract matrix rendering into a shared matrixLines helper reused by grid and the preview, and document the behavior in arc/README.md.
-
-**File**: `arc/README.md` (modified, +6/-0)
+**File**: `arc/src/app.ts` (modified, +4/-2)
 ```diff
-@@ -59,6 +59,12 @@ Declaration/implementation code and JSON/object-state content use bright white;
- panel frames, titles, and matrix colors retain their existing styling.
- Panels expand up to 120 terminal columns, shrinking to fit narrower windows.
+@@ -3,12 +3,14 @@ import * as visualizer from "./visualizer";
+ import * as Matrix from "./lib/Matrix";
+ import * as nucleoid from "./lib/nucleoid";
+ import * as terminal from "./lib/terminal";
+-import puzzle from "./data/training/3aa6fb7a.json";
++import puzzle from "./data/training/0ca9ddb6.json";
++// Completed:
++// 3aa6fb7a
  
-+Immediately after the header, a puzzle preview shows the training input/output
-+pairs side by side, with the test input below. Narrow windows wrap complete
-+pairs onto additional rows; oversized pairs use the existing column-split matrix
-+panels instead of dropping cells. The opening preview never receives or displays
-+the expected test output. The final Expected/Result comparison remains unchanged.
-+
- Numbered analysis/visualization stages, boxed declarations and object states,
- and color-coded ARC grids with row/column coordinates keep the run readable.
- Wide grids split into column panels rather than dropping cells. The final
-```
-
-**File**: `arc/src/app.ts` (modified, +1/-0)
-```diff
-@@ -23,6 +23,7 @@ export async function start() {
-     columns: test_input_matrix[0]?.length ?? 0,
-     rows: test_input_matrix.length,
-   });
-+  terminal.puzzle({ train, testInput: test_input_matrix });
-   terminal.section(
-     1,
-     "Analyze",
-```
-
-**File**: `arc/src/lib/terminal.ts` (modified, +86/-14)
-```diff
-@@ -196,6 +196,29 @@ function cell(value, colored) {
-   return `\x1b[48;2;${red};${green};${blue}m\x1b[${foreground}m${text}\x1b[0m`;
- }
+ const {
+   train,
+   test: [{ input: test_input_matrix, output: test_output_matrix }],
+-} = puzzle; // 0ca9ddb6.json
++} = puzzle;
  
-+function matrixLines(matrix, start, end, colored) {
-+  if (matrix.length === 0 || start === end) {
-+    return [styleText("gray", "(empty)")];
-+  }
-+  const rowWidth = String(matrix.length - 1).length;
-+  const axis =
-+    " ".repeat(rowWidth + 2) +
-+    Array.from({ length: end - start }, (_, index) =>
-+      `${start + index}`.padStart(2).concat(" ")
-+    ).join("");
-+  return [
-+    styleText("gray", axis),
-+    ...matrix.map(
-+      (row, index) =>
-+        styleText("gray", `${String(index).padStart(rowWidth)}  `) +
-+        row
-+          .slice(start, end)
-+          .map((value) => cell(value, colored))
-+          .join("")
-+    ),
-+  ];
-+}
-+
- export function grid(title, matrix) {
-   const rows = matrix.length;
-   const columns = Math.max(0, ...matrix.map((row) => row.length));
-@@ -210,28 +233,77 @@ export function grid(title, matrix) {
-   const colored = colors();
-   for (let start = 0; start < columns; start += chunk) {
-     const end = Math.min(columns, start + chunk);
--    const axis =
--      " ".repeat(rowWidth + 2) +
--      Array.from({ length: end - start }, (_, index) =>
--        `${start + index}`.padStart(2).concat(" ")
--      ).join("");
-     block(`${title} · ${dimensions}`, [
-       ...(columns > chunk
-         ? [styleText("gray", `Columns ${start}–${end - 1}`), ""]
-         : []),
--      styleText("gray", axis),
--      ...matrix.map(
--        (row, index) =>
--          styleText("gray", `${String(index).padStart(rowWidth)}  `) +
--          row
--            .slice(start, end)
--            .map((value) => cell(value, colored))
--            .join("")
--      ),
-+      ...matrixLines(matrix, start, end, colored),
-     ]);
-   }
- }
- 
-+function sideBySide(panels) {
-+  const widths = panels.map((lines) =>
-+    Math.max(...lines.map((line) => stringWidth(line)))
-+  );
-+  const height = Math.max(...panels.map((lines) => lines.length));
-+  return Array.from({ length: height }, (_, row) =>
-+    panels
-+      .map((lines, index) => pad(lines[row] ?? "", widths[index]))
-+      .join("  ")
-+  );
-+}
-+
-+function previewMatrix(title, matrix, colored) {
-+  const columns = Math.max(0, ...matrix.map((row) => row.length));
-+  return [
-+    styleText("gray", `${title} · ${columns} × ${matrix.length}`),
-+    ...matrixLines(matrix, 0, columns, colored),
-+  ];
-+}
-+
-+export function puzzle({ train, testInput }) {
-+  const available = width() - 4;
-+  const colored = colors();
-+  let pairs = [];
-+  let used = 0;
-+  const renderRow = () => {
-+    if (pairs.length === 0) {
-+      return;
-+    }
-+    block("Training", sideBySide(pairs));
-+    pairs = [];
-+    used = 0;
-+  };
-+
-+  if (train.length === 0) {
-+    block("Training", [styleText("gray", "(empty)")]);
-+  }
-+  for (const [index, { input, output }] of train.entries()) {
-+    const lines = [
-+      styleText(["bold", "white"], `Train ${index + 1}`),
-+      ...sideBySide([
-+        previewMatrix("Input", input, colored),
-+        previewMatrix("Output", output, colored),
-+      ]),
-+    ];
-+    const pairWidth = Math.max(...lines.map((line) => stringWidth(line)));
-+    if (pairWidth > available) {
-+      renderRow();
-+      grid(`Train ${index + 1} · Input`, input);
-+      grid(`Train ${index + 1} · Output`, output);
-+      continue;
-+    }
-+    if (pairs.length > 0 && used + 2 + pairWidth > available) {
-+      renderRow();
-+    }
-+    used += (pairs.length > 0 ? 2 : 0) + pairWidth;
-+    pairs.push(lines);
-+  }
-+  renderRow();
-+  grid("Test input", testInput);
-+}
-+
- export function usage({ prompt_tokens, completion_tokens }) {
-   const message = `↳ Model usage  ${prompt_tokens} input / ${completion_tokens} output tokens`;
-   for (const line of wrap(message, width() - 2)) {
+ const training_input = {
+   dataset: train.map(({ input, output }) => ({
 ```
 
 #### Recent Merged Pull Requests:
@@ -1294,13 +1137,13 @@ Extract matrix rendering into a shared matrixLines helper reused by grid and the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show Nucleoid version in ARC terminal header
+## X. Add cross ARC dataset for task 0ca9ddb6
 
 **RULE**:
 When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1eccd61b`: Show Nucleoid version in ARC terminal header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da33acfc`: Add cross ARC dataset for task 0ca9ddb6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
@@ -1308,24 +1151,26 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-It displays the runtime version reported by the Nucleoid executable's `--version`
-option, using the same `NUCLEOID_EXECUTABLE` selection as program execution.
-Two blank rows pad the header content above and below.
-The header content is centered as one group, with its left inset set to
-50% of the unused horizontal space. Its first two rows pair the unboxed
-After a blank line, the workflow and runtime version share the same text
-exact-match badge in green or a mismatch badge in red, the unchanged difference
-score, and elapsed time.
+`dataset.cross.1.json` annotates only the three training pairs from
+`src\data\training\0ca9ddb6.json`, with ten point instances in total.
+Color-1 points gain color-7 orthogonal neighbors; color-2 points gain color-4
+diagonal neighbors. Color-6 and color-8 points remain unchanged.
+The declarative rules introduce `marker_color`, which is absent before the
+rules run. Tags identify the geometry: `l1707` is an orthogonal cross,
+`l2404` is a diagonal cross, and `l7544` remains a single point.
+Every instance mask retains the complete 9 by 9 canvas. The x/y metadata
+records each mask's nonzero bounding-box origin; native snapshot coordinates
+remain anchored to the input point. Orientation is 0 in both states because
+the patterns are symmetric. Held-out inputs and outputs are not included.
+The dataset is discovered automatically by `document()`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-The header content sits left of center as one group, with its left inset set to
-25% of the unused horizontal space. Its first two rows pair the unboxed
-After a blank line, the workflow and input dimensions share the same text
-exact-match/mismatch badge, the unchanged difference score, and elapsed time.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1eccd61b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da33acfc` are properly handled with clean fallback behavior.

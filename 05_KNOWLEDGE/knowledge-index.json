@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T09:20:54.184Z",
+  "last_updated": "2026-10-23T09:38:25.333Z",
   "total_verified_learnings": 1073,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9586,8 +9586,8 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "5b52a415",
-      "content_hash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
+      "source_version": "bd202f84",
+      "content_hash": "c9bd8c578ab78ff0b64a34a4cfd1b3488b3e58a61df1b4afc73653858c190993",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
@@ -9620,6 +9620,11 @@
           "number": 3312,
           "title": "Non-Interactive CLI Fail-Fast and Fallback Principle",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3852,
+          "title": "cli: fix WorkspaceRoot looping forever on a .git file (#2620)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9627,7 +9632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:14:25.251Z",
+      "verified_at": "2026-10-23T09:35:46.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31265,14 +31270,19 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "6385f214",
-      "content_hash": "5f9cb8aab1593bc52590e95f2577c6ac5beea9f4de1cde84680fa5169efd3bf6",
+      "source_version": "214941a2",
+      "content_hash": "b2db8fc0601dec6150d1ccc0b43b1a58bbe0a4823b763dbfab73e5e8ae30329e",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
         {
           "number": 1785,
           "title": "Merge pull request #503 from joker74581/fix/linux-log-monitor-watchdog-exit",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3853,
+          "title": "rust-vexus-lite): 打开 serde_json 的 float_roundtrip，冷加载的图资产与刚建好的逐位相同",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -31281,7 +31291,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:43:06.765Z",
+      "verified_at": "2026-10-23T09:35:52.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36190,8 +36200,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "1eccd61b",
-      "content_hash": "e4ad6baa48f97533f7c9a148bee4202db742c1ef79ee4a71f44ce1596d8950b7",
+      "source_version": "da33acfc",
+      "content_hash": "745485bfb79286a50b02deec0033f9d98a604442f2318362a2b80733019e77d8",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -36229,6 +36239,11 @@
           "number": 3765,
           "title": "Show Nucleoid version in ARC terminal header",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3854,
+          "title": "Add cross ARC dataset for task 0ca9ddb6",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36236,7 +36251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:30:31.981Z",
+      "verified_at": "2026-10-23T09:35:54.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48720,8 +48735,8 @@
       "slug": "vuetifyjs-vuetify",
       "platform": "github",
       "source_url": "https://github.com/vuetifyjs/vuetify",
-      "source_version": "4647fede",
-      "content_hash": "da2caaebd5c189fd82e0fc6ad0df80e202cf1db5fdd303afe8fbc6980e2345a0",
+      "source_version": "3cce6390",
+      "content_hash": "0e71db7991ed5131b5a7f60181f9610e4145826c16bd97ad23c447d6b8bcc0c1",
       "dossier_path": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "promoted_rules": [
@@ -48754,6 +48769,21 @@
           "number": 3539,
           "title": "docs(api): fix missing `<td>` around markup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3855,
+          "title": "Invariant Coordinate Space Nominal Typing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3856,
+          "title": "Guarded Feature Flag Propagation Across Responsive Viewports",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3857,
+          "title": "Circular Import Sanitization via Internal Barrel Leaf Decomposition",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48761,7 +48791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:54:43.930Z",
+      "verified_at": "2026-10-23T09:38:25.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63941,8 +63971,8 @@
       "slug": "avajs-ava",
       "platform": "github",
       "source_url": "https://github.com/avajs/ava",
-      "source_version": "12029815",
-      "content_hash": "c704317e5cf2fbee4c2c39195234973ab50aa8b783689586033e751dc20f465f",
+      "source_version": "054054b0",
+      "content_hash": "a7b20b8146326f1b14c91680cae31e5f38917ac1dcf6d24a8a0aa7faf1048a40",
       "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "promoted_rules": [
@@ -63957,7 +63987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:53:29.244Z",
+      "verified_at": "2026-10-23T09:35:42.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114248,6 +114278,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T09:20:54.177Z"
+    },
+    "rule-3852": {
+      "learning_id": "rule-3852",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3852,
+      "title": "cli: fix WorkspaceRoot looping forever on a .git file (#2620)",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "bd202f84",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:35:46.135Z"
+    },
+    "rule-3853": {
+      "learning_id": "rule-3853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3853,
+      "title": "rust-vexus-lite): 打开 serde_json 的 float_roundtrip，冷加载的图资产与刚建好的逐位相同",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "214941a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:35:52.741Z"
+    },
+    "rule-3854": {
+      "learning_id": "rule-3854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3854,
+      "title": "Add cross ARC dataset for task 0ca9ddb6",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "da33acfc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:35:54.388Z"
+    },
+    "rule-3855": {
+      "learning_id": "rule-3855",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3855,
+      "title": "Invariant Coordinate Space Nominal Typing",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "3cce6390",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:38:25.327Z"
+    },
+    "rule-3856": {
+      "learning_id": "rule-3856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3856,
+      "title": "Guarded Feature Flag Propagation Across Responsive Viewports",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "3cce6390",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:38:25.327Z"
+    },
+    "rule-3857": {
+      "learning_id": "rule-3857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3857,
+      "title": "Circular Import Sanitization via Internal Barrel Leaf Decomposition",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "3cce6390",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:38:25.327Z"
     }
   },
   "aliases": {

@@ -4518,3 +4518,8 @@ Every entry in this ledger must capture:
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `85054d9a` | Multi-dimensional audit evidence | 2026-10-23T09:20:48.742Z |
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `98c9711f` | Multi-dimensional audit evidence | 2026-10-23T09:20:52.094Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `d6ea4a52` | Multi-dimensional audit evidence | 2026-10-23T09:20:54.217Z |
+| `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `054054b0` | Multi-dimensional audit evidence | 2026-10-23T09:35:42.635Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `bd202f84` | Multi-dimensional audit evidence | 2026-10-23T09:35:46.175Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `214941a2` | Multi-dimensional audit evidence | 2026-10-23T09:35:52.780Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `da33acfc` | Multi-dimensional audit evidence | 2026-10-23T09:35:54.426Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `3cce6390` | Multi-dimensional audit evidence | 2026-10-23T09:38:25.365Z |

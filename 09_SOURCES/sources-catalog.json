@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "1eccd61b",
+    "sourceVersion": "da33acfc",
     "license": "Apache-2.0",
-    "contentHash": "e4ad6baa48f97533f7c9a148bee4202db742c1ef79ee4a71f44ce1596d8950b7",
-    "lastHarvestedAt": "2026-10-23T05:30:32.046Z",
+    "contentHash": "745485bfb79286a50b02deec0033f9d98a604442f2318362a2b80733019e77d8",
+    "lastHarvestedAt": "2026-10-23T09:35:54.426Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "6385f214",
+    "sourceVersion": "214941a2",
     "license": "NOASSERTION",
-    "contentHash": "5f9cb8aab1593bc52590e95f2577c6ac5beea9f4de1cde84680fa5169efd3bf6",
-    "lastHarvestedAt": "2026-10-21T04:43:06.840Z",
+    "contentHash": "b2db8fc0601dec6150d1ccc0b43b1a58bbe0a4823b763dbfab73e5e8ae30329e",
+    "lastHarvestedAt": "2026-10-23T09:35:52.780Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "5b52a415",
+    "sourceVersion": "bd202f84",
     "license": "MPL-2.0",
-    "contentHash": "b8955aaa409725faca9138c0d06771d6c3bf25e41046ef4069061a79603abba0",
-    "lastHarvestedAt": "2026-10-20T18:14:25.317Z",
+    "contentHash": "c9bd8c578ab78ff0b64a34a4cfd1b3488b3e58a61df1b4afc73653858c190993",
+    "lastHarvestedAt": "2026-10-23T09:35:46.175Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -6723,10 +6723,10 @@
     "repository": "vuetifyjs/vuetify",
     "platform": "github",
     "sourceUrl": "https://github.com/vuetifyjs/vuetify",
-    "sourceVersion": "4647fede",
+    "sourceVersion": "3cce6390",
     "license": "NOASSERTION",
-    "contentHash": "da2caaebd5c189fd82e0fc6ad0df80e202cf1db5fdd303afe8fbc6980e2345a0",
-    "lastHarvestedAt": "2026-10-21T05:54:44.002Z",
+    "contentHash": "0e71db7991ed5131b5a7f60181f9610e4145826c16bd97ad23c447d6b8bcc0c1",
+    "lastHarvestedAt": "2026-10-23T09:38:25.365Z",
     "learningId": "learn-github-vuetifyjs-vuetify"
   },
   "pauljuliusmartinez-jless": {
@@ -10223,10 +10223,10 @@
     "repository": "avajs/ava",
     "platform": "github",
     "sourceUrl": "https://github.com/avajs/ava",
-    "sourceVersion": "12029815",
+    "sourceVersion": "054054b0",
     "license": "MIT",
-    "contentHash": "c704317e5cf2fbee4c2c39195234973ab50aa8b783689586033e751dc20f465f",
-    "lastHarvestedAt": "2026-10-20T03:53:29.324Z",
+    "contentHash": "a7b20b8146326f1b14c91680cae31e5f38917ac1dcf6d24a8a0aa7faf1048a40",
+    "lastHarvestedAt": "2026-10-23T09:35:42.635Z",
     "learningId": "learn-github-avajs-ava"
   },
   "maxrave-dev-kotlin-footguns": {
