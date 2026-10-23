@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "3cef243d",
+    "sourceVersion": "8003be3b",
     "license": "NOASSERTION",
-    "contentHash": "970159d939f4708cfdd9325d39ab199f450a7e0c3ab231393eea72d0ad4171dd",
-    "lastHarvestedAt": "2026-10-20T05:43:05.662Z",
+    "contentHash": "65a757438bd702430c92ceb78d61c2ccb72b0d17271054ffc97eef8bdb253c4e",
+    "lastHarvestedAt": "2026-10-23T08:23:29.470Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "050a12e9",
+    "sourceVersion": "214f243f",
     "license": "Apache-2.0",
-    "contentHash": "f2a7724e385313cf5124df21e8be1e278871231c0402891380ccc0609faaf8cd",
-    "lastHarvestedAt": "2026-10-21T04:16:04.644Z",
+    "contentHash": "6f72ceb8985df38328d07f18a286c38db4dea8a9265559e5fd1028d2bb8cda06",
+    "lastHarvestedAt": "2026-10-23T08:26:36.562Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "2dfeb529",
+    "sourceVersion": "e87e613e",
     "license": "Apache-2.0",
-    "contentHash": "88ae601050e590be002e1156c1583ea42e321263b893c461de32f048ebbb44e6",
-    "lastHarvestedAt": "2026-10-21T05:15:26.466Z",
+    "contentHash": "bd1cf5c1ffb7885ec77421db46e82b0458e15768ba9cea7e3849b7204b7a6eff",
+    "lastHarvestedAt": "2026-10-23T08:22:52.010Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

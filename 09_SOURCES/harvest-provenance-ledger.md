@@ -4503,3 +4503,6 @@ Every entry in this ledger must capture:
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `272296e5` | Multi-dimensional audit evidence | 2026-10-23T07:39:45.970Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `7cb38827` | Multi-dimensional audit evidence | 2026-10-23T08:03:59.739Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `0231990f` | Multi-dimensional audit evidence | 2026-10-23T08:10:06.939Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e87e613e` | Multi-dimensional audit evidence | 2026-10-23T08:22:52.010Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `8003be3b` | Multi-dimensional audit evidence | 2026-10-23T08:23:29.470Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `214f243f` | Multi-dimensional audit evidence | 2026-10-23T08:26:36.562Z |

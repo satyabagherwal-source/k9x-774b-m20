@@ -4496,3 +4496,6 @@
 | `CYCLE-20261023-TC4U` | `2026-10-23T07:39:45.966Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3818, Rule 3819, Rule 3820` | Yes (`bc56cf0a...`) |
 | `CYCLE-20261023-OHVC` | `2026-10-23T08:03:59.736Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3821, Rule 3822, Rule 3823` | Yes (`d9480a24...`) |
 | `CYCLE-20261023-WD7C` | `2026-10-23T08:10:06.936Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3824, Rule 3825, Rule 3826` | Yes (`cebb8d30...`) |
+| `CYCLE-20261023-CRJB` | `2026-10-23T08:22:52.007Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3827, Rule 3828, Rule 3829` | Yes (`bd1cf5c1...`) |
+| `CYCLE-20261023-DKFV` | `2026-10-23T08:23:29.467Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3830, Rule 3831, Rule 3832` | Yes (`65a75743...`) |
+| `CYCLE-20261023-HKSV` | `2026-10-23T08:26:36.559Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3833, Rule 3834, Rule 3835` | Yes (`6f72ceb8...`) |

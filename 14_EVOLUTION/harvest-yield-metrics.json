@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T08:10:06.948Z",
-  "total_cycles_completed": 4473,
-  "total_learnings_persisted": 4473,
-  "total_rules_promoted": 3678,
+  "last_updated": "2026-10-23T08:26:36.572Z",
+  "total_cycles_completed": 4476,
+  "total_learnings_persisted": 4476,
+  "total_rules_promoted": 3687,
   "history": [
-    {
-      "timestamp": "2026-10-22T15:42:08.583Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:42:14.690Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:46:44.665Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T15:46:53.099Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-23T08:10:06.948Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:22:52.019Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:23:29.478Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:26:36.572Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

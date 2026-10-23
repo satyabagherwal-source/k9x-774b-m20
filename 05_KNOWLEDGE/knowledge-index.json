@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T08:10:06.883Z",
+  "last_updated": "2026-10-23T08:26:36.507Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32245,8 +32245,8 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "3cef243d",
-      "content_hash": "970159d939f4708cfdd9325d39ab199f450a7e0c3ab231393eea72d0ad4171dd",
+      "source_version": "8003be3b",
+      "content_hash": "65a757438bd702430c92ceb78d61c2ccb72b0d17271054ffc97eef8bdb253c4e",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
@@ -32259,6 +32259,21 @@
           "number": 3081,
           "title": "test(e2e): add pw.ensureDemoPlugin fixture, dedupe demo plugin URL (#38918)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3830,
+          "title": "Invariant Termination of Paginated Remote State Loops",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3831,
+          "title": "Two-Phase Asymmetric Fault-Tolerant Hook Dispatch",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3832,
+          "title": "Asynchronous Resource Watcher Concurrency with Safe Park/Restart",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32266,7 +32281,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:43:05.600Z",
+      "verified_at": "2026-10-23T08:23:29.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39401,8 +39416,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "2dfeb529",
-      "content_hash": "88ae601050e590be002e1156c1583ea42e321263b893c461de32f048ebbb44e6",
+      "source_version": "e87e613e",
+      "content_hash": "bd1cf5c1ffb7885ec77421db46e82b0458e15768ba9cea7e3849b7204b7a6eff",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -39430,6 +39445,21 @@
           "number": 3532,
           "title": "`pulumi org audit-log` filter params and switch to V2 API (#24665)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3827,
+          "title": "Invariant Keying by Object Identity Over Qualified Name in Multi-Tenant Analyzers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3828,
+          "title": "Dual-Channel Token Refresh with Concurrent Lock Double-Checking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3829,
+          "title": "Middle-Out Context-Preserving String Truncation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39437,7 +39467,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:15:26.421Z",
+      "verified_at": "2026-10-23T08:22:51.945Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49344,8 +49374,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "050a12e9",
-      "content_hash": "f2a7724e385313cf5124df21e8be1e278871231c0402891380ccc0609faaf8cd",
+      "source_version": "214f243f",
+      "content_hash": "6f72ceb8985df38328d07f18a286c38db4dea8a9265559e5fd1028d2bb8cda06",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -49373,6 +49403,21 @@
           "number": 3517,
           "title": "test(server): serialize pdf_worker env-mutating tests to fix a flake (#1743)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3833,
+          "title": "The Unix Thread Allocation Invariant Under `panic = \"abort\"`",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3834,
+          "title": "Sentence-Aware Sliding Window Chunk Contiguity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3835,
+          "title": "Length-Aware Tensor Microbatching Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49380,7 +49425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:16:04.570Z",
+      "verified_at": "2026-10-23T08:26:36.496Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113745,6 +113790,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T08:10:06.873Z"
+    },
+    "rule-3827": {
+      "learning_id": "rule-3827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3827,
+      "title": "Invariant Keying by Object Identity Over Qualified Name in Multi-Tenant Analyzers",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "e87e613e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:22:51.945Z"
+    },
+    "rule-3828": {
+      "learning_id": "rule-3828",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3828,
+      "title": "Dual-Channel Token Refresh with Concurrent Lock Double-Checking",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "e87e613e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:22:51.945Z"
+    },
+    "rule-3829": {
+      "learning_id": "rule-3829",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3829,
+      "title": "Middle-Out Context-Preserving String Truncation",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "e87e613e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:22:51.945Z"
+    },
+    "rule-3830": {
+      "learning_id": "rule-3830",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3830,
+      "title": "Invariant Termination of Paginated Remote State Loops",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "8003be3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:23:29.402Z"
+    },
+    "rule-3831": {
+      "learning_id": "rule-3831",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3831,
+      "title": "Two-Phase Asymmetric Fault-Tolerant Hook Dispatch",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "8003be3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:23:29.402Z"
+    },
+    "rule-3832": {
+      "learning_id": "rule-3832",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3832,
+      "title": "Asynchronous Resource Watcher Concurrency with Safe Park/Restart",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "8003be3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:23:29.402Z"
+    },
+    "rule-3833": {
+      "learning_id": "rule-3833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3833,
+      "title": "The Unix Thread Allocation Invariant Under `panic = \"abort\"`",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "214f243f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:26:36.496Z"
+    },
+    "rule-3834": {
+      "learning_id": "rule-3834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3834,
+      "title": "Sentence-Aware Sliding Window Chunk Contiguity Invariant",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "214f243f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:26:36.496Z"
+    },
+    "rule-3835": {
+      "learning_id": "rule-3835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3835,
+      "title": "Length-Aware Tensor Microbatching Invariant",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "214f243f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:26:36.496Z"
     }
   },
   "aliases": {
