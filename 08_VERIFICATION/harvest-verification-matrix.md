@@ -4505,3 +4505,5 @@
 | `CYCLE-20261023-1FYH` | `2026-10-23T08:42:03.401Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3838, Rule 3839, Rule 3840` | Yes (`ad9cdf77...`) |
 | `CYCLE-20261023-4ML5` | `2026-10-23T08:44:31.961Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3841` | Yes (`17d76fe9...`) |
 | `CYCLE-20261023-4RH9` | `2026-10-23T08:44:38.301Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3842, Rule 3843, Rule 3844` | Yes (`68f70f58...`) |
+| `CYCLE-20261023-HZE5` | `2026-10-23T08:54:55.085Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3845` | Yes (`94e0ff06...`) |
+| `CYCLE-20261023-O7H3` | `2026-10-23T08:59:45.495Z` | `cosscom/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cosscom-ui-learnings.md` | Yes (`59551b46...`) |

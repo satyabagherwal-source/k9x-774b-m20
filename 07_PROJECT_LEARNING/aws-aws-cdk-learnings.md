@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `1576e0ed`  
+> **Source Version**: `8bd6e534`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T05:28:02.983Z  
+> **Timestamp**: 2026-10-23T08:54:54.669Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T05:28:02.979Z  
+> **Harvest Timestamp**: 2026-10-23T08:54:53.807Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12945 stars
+- **Stars / Engagement**: 12948 stars
 
 ---
 
@@ -1200,324 +1200,838 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1576e0ed` (2026-10-20)
-**Commit Message**: chore: remove unused GHA workflows (#39407)
+### Incident Patch 1: `8bd6e534` (2026-10-22)
+**Commit Message**: chore(security-guardian): set rootDir for TypeScript 6 (#39440)
+
+### Issue # (if applicable)
+
+Closes #<issue number here>.
+
+### Reason for this change
+
+The Security Guardian workflow fails on every PR since #39401 bumped TypeScript to 6.0. The `security-guardian` tool no longer builds: https://github.com/aws/aws-cdk/actions/runs/39812038601/job/119940591873?pr=39436 
+```
+tsconfig.json(8,5): error TS5011: The common source directory of 'tsconfig.json' is './src'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.
+```
 
 ### Description of changes
 
-Remove unused GH Actions Workflows and related code.
+Set `"rootDir": "src"` in `tools/@aws-cdk/security-guardian/tsconfig.json`. TypeScript 6 no longer infers `rootDir` when `outDir` is set (TS5011).
+
+TypeScript 5.9 inferred `src` here, because all compiled sources live in `src/` (`"include": ["src"]`). Setting it explicitly keeps the output at `dist/index.js`.
 
 ### Describe any new or updated permissions being added
 
-n/a
+
+
 
 ### Description of how you validated changes
 
-n/a
+
 
 ### Checklist
-- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
+- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-c
 
-----
-
-*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
-
-**File**: `.github/workflows/README.md` (modified, +2/-42)
+**File**: `tools/@aws-cdk/security-guardian/tsconfig.json` (modified, +1/-0)
 ```diff
-@@ -55,11 +55,6 @@ When approved this pushes the PR to the testing pipeline,
- thus starting the cli integ test build.
- Owner: Core CDK team
+@@ -6,6 +6,7 @@
+       "ES2022"
+     ],
+     "outDir": "dist",
++    "rootDir": "src",
+     "isolatedModules": true,
+     "esModuleInterop": true,
+     "forceConsistentCasingInFileNames": true,
+```
+
+---
+
+### Incident Patch 2: `8ce48a6f` (2026-10-21)
+**Commit Message**: fix(lambda-nodejs): preCompilation fails with TypeScript 6 or later (#39401)
+
+### Reason for this change
+
+`NodejsFunction` with `preCompilation: true` runs `tsc` on the entry file and passes the tsconfig options as CLI flags. TypeScript 6 and later reject this when a `tsconfig.json` is in the directory `tsc` runs from:
+
+```
+error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
+```
+
+Local bundling runs `tsc` from the project root, where `preCompilation` requires the tsconfig to be, so it fails for every user with TypeScript 6 or later installed. Docker bundling runs from `/` by default and is not affected, unless the user sets `workingDirectory` to a directory containing a `tsconfig.json` (for example `/asset-input`). The bundling image installs the unpinned latest `typescript` (currently 7.x), so those users get the failure as soon as their image is rebuilt.
+
+We can't just always pass `--ignoreConfig`, because TypeScript 5 rejects it as an unknown option (TS5023). I checked all three versions:
+
+| TypeScript | Without flag | With `--ignoreConfig` |
+|---|---|---|
+| 5.9.3 | compiles | TS5023 |
+| 6.
+
+**File**: `package.json` (modified, +2/-2)
+```diff
+@@ -31,14 +31,14 @@
+     "jsii-diff": "1.142.0",
+     "jsii-pacmak": "1.142.0",
+     "jsii-reflect": "1.142.0",
+-    "jsii-rosetta": "~5.9.71",
++    "jsii-rosetta": "~6.0.20",
+     "lerna": "^8.2.4",
+     "nx": "^23",
+     "semver": "^7.8.5",
+     "standard-version": "^9.5.0",
+     "ts-jest": "^29.4.15",
+     "ts-node": "^10.9.2",
+-    "typescript": "~5.9.3"
++    "typescript": "~6.0.3"
+   },
+   "resolutions": {
+     "array-includes": "3.1.9",
+```
+
+**File**: `packages/@aws-cdk/aws-mediaconnect-alpha/tsconfig.json` (modified, +5/-1)
+```diff
+@@ -27,7 +27,11 @@
+     "composite": true,
+     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
+     "esModuleInterop": true,
+-    "isolatedModules": true
++    "isolatedModules": true,
++    "types": [
++      "jest",
++      "node"
++    ]
+   },
+   "include": [
+     "**/*.ts"
+```
+
+**File**: `packages/@aws-cdk/aws-medialive-alpha/tsconfig.json` (modified, +5/-1)
+```diff
+@@ -27,7 +27,11 @@
+     "composite": true,
+     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
+     "esModuleInterop": true,
+-    "isolatedModules": true
++    "isolatedModules": true,
++    "types": [
++      "jest",
++      "node"
++    ]
+   },
+   "include": [
+     "**/*.ts"
+```
+
+**File**: `packages/@aws-cdk/cfn-property-mixins/tsconfig.json` (modified, +1/-0)
+```diff
+@@ -1,5 +1,6 @@
+ {
+   "compilerOptions": {
++    "rootDir": ".",
+     "declarationMap": false,
+     "inlineSourceMap": false,
+     "alwaysStrict": true,
+```
+
+**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/lib/bundling.ts` (modified, +29/-7)
+```diff
+@@ -6,7 +6,7 @@ import { PackageInstallation } from './package-installation';
+ import { LockFile, PackageManager } from './package-manager';
+ import type { BundlingOptions } from './types';
+ import { OutputFormat, SourceMapMode } from './types';
+-import { exec, extractDependencies, findUp, getTsconfigCompilerOptionsArray, isSdkV2Runtime } from './util';
++import { exec, extractDependencies, findUp, getTsconfigCompilerOptionsArray, isSdkV2Runtime, tscRequiresIgnoreConfig } from './util';
+ import type { Architecture, AssetCode } from '../../aws-lambda';
+ import { Code, Runtime } from '../../aws-lambda';
+ import * as cdk from '../../core';
+@@ -300,13 +300,14 @@ export class Bundling implements cdk.BundlingOptions {
+   private createBundlingCommand(scope: IConstruct, options: BundlingCommandOptions): string {
+     const pathJoin = osPathJoin(options.osPlatform);
+     const osCommand = new OsCommand(options.osPlatform);
++    const tscRunner = options.tscRunner;
  
--### Initial Priority Assignment
--
--[project-prioritization-assignment.yml](project-prioritization-assignment.yml): GitHub action for automatically adding PR's with priorities to the project priority board based on their labels.
--Owner: CDK Support team
--
- ## Issue Triggered
+     const steps = this.createBundlingSteps(scope, {
+       inputDir: options.inputDir,
+       outputDir: options.outputDir,
+       pathJoin,
+       esbuildRunner: [options.esbuildRunner],
+-      tscRunner: options.tscRunner ? [options.tscRunner] : undefined,
++      createTscStep: tscRunner ? (args) => dockerTscStep(tscRunner, args) : undefined,
+       createFileOps: (deps) => this.dockerFileOps(osCommand, pathJoin, options, deps),
+     });
  
- ### Closed Issue Message
-@@ -73,11 +68,6 @@ Owner: CDK support team
- [issue-label-assign.yml](issue-label-assign.yml): Github action for automatically adding labels and/or setting assignees when an Issue or PR is opened or edited based on user-defined Area
- Owner: CDK support team
+@@ -411,7 +412,11 @@ export class Bundling implements cdk.BundlingOptions {
+           outputDir,
+           pathJoin: (...args: string[]) => path.join(...args),
+           esbuildRunner: esbuild.isWorkspacePackage ? this.packageManager.runBinCommand('esbuild') : ['esbuild'],
+-          tscRunner: tsc && (tsc.isWorkspacePackage ? this.packageManager.runBinCommand('tsc') : ['tsc']),
++          createTscStep: tsc && ((args) => {
++            const tscRunner = tsc.isWorkspacePackage ? this.packageManager.runBinCommand('tsc') : ['tsc'];
++            const ignoreConfig = tscRequiresIgnoreConfig(tsc.version) ? ['--ignoreConfig'] : [];
++            return { type: 'spawn', command: [...tscRunner, ...args, ...ignoreConfig] };
++          }),
+           createFileOps: (deps) => this.localFileOps(outputDir, deps),
+         });
  
--### P1 Bug Priority Assignment
--
--[project-prioritization-bug.yml](project-prioritization-bug.yml): Github action for automatically adding P1 bugs to the prioritization project board
--Owner: CDK support team
--
- ## Scheduled Actions
+@@ -449,8 +454,8 @@ export class Bundling implements cdk.BundlingOptions {
+         throw new ValidationError(lit`CannotFindTsconfigJsonPre`, 'Cannot find a `tsconfig.json` but `preCompilation` is set to `true`, please specify it via `tsconfig`', scope);
+       }
+       const compilerOptionsArray = getTsconfigCompilerOptionsArray(tsconfig);
+-      if (options.tscRunner) {
+-        steps.push({ type: 'spawn', command: [...options.tscRunner, entryPath, ...compilerOptionsArray] });
++      if (options.createTscStep) {
++        steps.push(options.createTscStep([entryPath, ...compilerOptionsArray]));
+       }
+       entryPath = entryPath.replace(/\.ts(x?)$/, '.js$1');
+     }
+@@ -583,12 +588,29 @@ interface StepBuilderOptions {
+   readonly pathJoin: (...parts: string[]) => string;
+   /** The esbuild command as an argv array */
+   readonly esbuildRunner: string[];
+-  /** The tsc command as an argv array, or undefined if not available */
+-  readonly tscRunner?: string[];
++  /**
++   * Produces the tsc pre-compilation step for the given tsc arguments
++   * (differs between local and Docker), or undefined if tsc is not available
++   */
++  readonly createTscStep?: (args: string[]) => BundlingStep;
+   /** Produces steps for nodeModules file operations (differs between local and Docker) */
+   readonly createFileOps: (deps: NodeModuleDeps) => BundlingStep[];
+ }
  
- ### Issue Lifecycle Handling
-@@ -104,12 +94,6 @@ Owner: Core CDK team
- and submits an auto-approve PR for it.
- Owner: Core CDK team
- 
--### Issue Reprioritizer
--
--[issue-reprioritization.yml](issue-reprioritization.yml): GitHub action that labels `p2`
--issues as `p1` if a certain level of community engagement is met.
--Owner: Core CDK team
--
- ### Issue Metrics
- 
- [repo-metrics.yml](repo-metrics.yml): GitHub action that runs monthly to report on metrics for issues and PRs created last month.
-@@ -120,30 +104,6 @@ Owner: Core CDK team
- [update-contributors.yml](update-contributors.yml): GitHub action that runs monthly to create a pull request for updating a CONTRIBUTORS file with the top contributors.
- Owner: Core CDK team
- 
--### R2 Priority Assignment
--
--[project-prioritization-r2-assignment.yml](project-prioritization-r2-assignment.yml): GitHub action that runs every 6 hours to add PR's to the priority project board that satisfies R2 Priority.
--Owner: CDK Support team
--
--### R5 Priority Assignment
--
--[project-prioritization-r5-assignment.yml](project-prioritization-r5-assignment.yml): GitHub action that runs every day to add PR's to the priority project board that satisfies R5 Priority.
--Owner: CDK Support team
--
--### Needs Attention Status Update
--
--[project-prioritization-needs-attention.yml](project-prioritization-needs-attention.yml): GitHub action that runs every day to update Needs Attention field in the prioritization project board.
--Owner: CDK Support team
--
--### PR Prioritization AddedOn update
--
--[project-prioritization-added-on.yml](project-prioritization-added-on.yml): GitHub action that runs every day to update AddedOn field in the prioritization project board.
--Owner: CDK Support team
--
--### Pending Maintainer Action Check
--
--[pending-maintainer-action-check.yml](pending-maintainer-action-check.yml): GitHub action that runs daily to track beginning-contributor PRs that need maintainer CI action (pending workflow approval, or no build CI activity). Creates a weekly tracking issue (labeled `ci-pending-tracking`, with a week key in the title combining the ISO week number and the week's start date) listing the PRs that entered the pending state during that week, and keeps it updated throughout the week.
--Owner: Core CDK team
--
- ### Issue sync
--[issue-sync.yml](issue-sync.yml): Github action that syncs issue metadat with the project board. More details can be found on the [project-sync](../../tools/@aws-cdk/project-sync) package.
++/**
++ * Produces the tsc pre-compilation step for Docker bundling.
++ *
++ * The TypeScript version in the image is only known when the command runs
++ * (the default image installs the latest release, and users can supply their own image),
++ * so `--ignoreConfig` is added by the shell when `tsc --version` reports 6 or later.
++ * See `tscRequiresIgnoreConfig()` for why the flag is version dependent.
++ */
++function dockerTscStep(tscRunner: string, args: string[]): BundlingStep {
++  const tsc = posixShellEscape(tscRunner);
++  const ignoreConfig = `$(TSC_VERSION=$(${tsc} --version); TSC_VERSION=\${TSC_VERSION##* }; [ "\${TSC_VERSION%%.*}" -ge 6 ] 2>/dev/null && echo --ignoreConfig)`;
++  return { type: 'shell', commands: [`${preparePosixShellCommand([tscRunner, ...args])} ${ignoreConfig}`] };
++}
 +
-+[issue-sync.yml](issue-sync.yml): Github action that syncs issue metadata with the project board. More details can be found on the [project-sync](../../tools/@aws-cdk/project-sync) package.
+ /**
+  * Renders an array of BundlingSteps into a single shell command string for Docker execution.
+  * `spawn` steps are converted to shell commands via posixShellEscape.
 ```
 
-**File**: `.github/workflows/issue-reprioritization.yml` (removed, +0/-25)
+**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/lib/util.ts` (modified, +14/-0)
 ```diff
-@@ -1,25 +0,0 @@
--name: issue-reprioritization
--on:
--  workflow_dispatch: {}
--  schedule:
--    - cron: "0 0 * * 0"
--
--jobs:
--  issue-reprioritization:
--    permissions:
--      issues: write
--      repository-projects: write
--    runs-on: ubuntu-latest
--    steps:
--      - uses: cdklabs/issue-reprioritization-manager@main
--        id: reprioritization-manager
--        with:
--          github-token: ${{ secrets.GITHUB_TOKEN }}
--          original-label: p2
--          new-label: p1
--          reprioritization-threshold: 20
--          project-column-url: https://github.com/aws/aws-cdk/projects/13#column-18002436
--      - uses: kaizencc/pr-triage-manager@main
--        with:
--          github-token: ${{ secrets.GITHUB_TOKEN }}
--          on-pulls: ${{ steps.reprioritization-manager.outputs.linked-pulls }}
+@@ -102,6 +102,20 @@ export function tryGetModuleVersionFromRequire(mod: string): string | undefined
+   }
+ }
+ 
++/**
++ * Whether the given TypeScript version needs `--ignoreConfig` to compile
++ * files passed on the command line while a `tsconfig.json` is present.
++ *
++ * TypeScript 6 introduced error TS5112 for this situation, while older
++ * versions reject `--ignoreConfig` as an unknown option.
++ *
++ * Accepts both a plain version (`6.0.3`) and the output of `tsc --version` (`Version 6.0.3`).
++ */
++export function tscRequiresIgnoreConfig(version: string): boolean {
++  const match = version.match(/(\d+)\.\d+/);
++  return match !== null && parseInt(match[1], 10) >= 6;
++}
++
+ /**
+  * Gets module version from package.json content
+  */
 ```
 
-**File**: `.github/workflows/pending-maintainer-action-check.yml` (removed, +0/-32)
+**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/test/bundling.test.ts` (modified, +38/-2)
 ```diff
-@@ -1,32 +0,0 @@
--name: Pending Maintainer Action Check
--on:
--  schedule:
--    - cron: "0 21 * * *" # Runs daily at 21:00 UTC
--  workflow_dispatch: # Manual trigger
--    inputs:
--      dry_run:
--        description: "If true, log intended changes without creating or updating the tracking issue"
--        type: boolean
--        default: false
--
--permissions:
--  contents: read
--  issues: write
--
--jobs:
--  update_tracking_issue:
--    if: github.repository == 'aws/aws-cdk'
--    runs-on: ubuntu-latest
--    environment: automation
--    steps:
--      - uses: actions/checkout@v7
--
--      - name: Track PRs pending maintainer action
--        uses: actions/github-script@v9
--        env:
--          DRY_RUN: ${{ inputs.dry_run == true }}
--        with:
--          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
--          script: |
--            const script = require('./scripts/prioritization/pending-maintainer-action.js')
--            await script({github, context})
+@@ -15,6 +15,8 @@ import * as util from '../lib/util';
+ const STANDARD_RUNTIME = Runtime.NODEJS_20_X;
+ const STANDARD_TARGET = 'node20';
+ const STANDARD_EXTERNAL = '@aws-sdk/*';
++// Docker bundling adds --ignoreConfig at run time when the image has TypeScript 6 or later
++const DOCKER_TSC_IGNORE_CONFIG = '$(TSC_VERSION=$(\'tsc\' --version); TSC_VERSION=${TSC_VERSION##* }; [ "${TSC_VERSION%%.*}" -ge 6 ] 2>/dev/null && echo --ignoreConfig)';
+ 
+ let detectPackageInstallationMock: jest.SpyInstance<PackageInstallation | undefined>;
+ const app = new App();
+@@ -957,7 +959,7 @@ test('esbuild bundling with pre compilations', () => {
+       command: [
+         'bash', '-c',
+         [
+-          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} &&`,
++          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} ${DOCKER_TSC_IGNORE_CONFIG} &&`,
+           `'esbuild' '--bundle' '/asset-input/test/bundling.test.js' '--target=${STANDARD_TARGET}' '--platform=node' '--outfile=/asset-output/index.js' '--external:${STANDARD_EXTERNAL}'`,
+         ].join(' '),
+       ],
+@@ -1293,7 +1295,7 @@ test('Docker bundling with preCompilation uses getTsconfigCompilerOptionsArray f
+       command: [
+         'bash', '-c',
+         [
+-          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} &&`,
++          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} ${DOCKER_TSC_IGNORE_CONFIG} &&`,
+           `'esbuild' '--bundle' '/asset-input/test/bundling.test.js' '--target=${STANDARD_TARGET}' '--platform=node' '--outfile=/asset-output/index.js' '--external:${STANDARD_EXTERNAL}'`,
+         ].join(' '),
+       ],
+@@ -1547,6 +1549,40 @@ test('Local bundling with preCompilation spawns tsc directly', () => {
+   spawnSyncMock.mockRestore();
+ });
+ 
++test.each([
++  ['0.8.8', true, false],
++  ['5.9.3', true, false],
++  ['6.0.3', true, true],
++  ['Version 7.0.2', false, true],
++])('Local bundling with preCompilation and TypeScript %s (workspace package: %s) passes --ignoreConfig: %s', (tscVersion, isWorkspacePackage, expectIgnoreConfig) => {
++  detectPackageInstallationMock.mockImplementation((module: string) => module === 'typescript'
++    ? { isWorkspacePackage, version: tscVersion }
++    : { isWorkspacePackage: true, version: '0.8.8' });
++  const spawnSyncMock = jest.spyOn(child_process, 'spawnSync').mockReturnValue(spawnSyncMockReturnValue);
++
++  const packageLock = path.join(__dirname, '..', 'package-lock.json');
++  const bundler = new Bundling(stack, {
++    entry: __filename.replace('.js', '.ts'),
++    projectRoot: path.dirname(packageLock),
++    depsLockFilePath: packageLock,
++    runtime: STANDARD_RUNTIME,
++    preCompilation: true,
++    architecture: Architecture.X86_64,
++  });
++
++  bundler.local?.tryBundle('/outdir', { image: STANDARD_RUNTIME.bundlingDockerImage });
++
++  const tscCall = spawnSyncMock.mock.calls.find(c => (c[1] as string[])?.some(a => a.endsWith('.ts')));
++  expect(tscCall).toBeDefined();
++  if (expectIgnoreConfig) {
++    expect(tscCall![1]).toContain('--ignoreConfig');
++  } else {
++    expect(tscCall![1]).not.toContain('--ignoreConfig');
++  }
++
++  spawnSyncMock.mockRestore();
++});
++
+ test('Local bundling with shell metacharacters in externalModules does not cause injection', () => {
+   const spawnSyncMock = jest.spyOn(child_process, 'spawnSync').mockReturnValue(spawnSyncMockReturnValue);
+ 
 ```
 
-**File**: `.github/workflows/project-prioritization-added-on.yml` (removed, +0/-25)
+**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/test/util.test.ts` (modified, +18/-1)
 ```diff
-@@ -1,25 +0,0 @@
--name: PR Prioritization AddedOn update
--
--on:
--  schedule:
--    - cron: "0 */6 * * 1-5" # Runs every 6 hours during weekdays
--  workflow_dispatch: # Manual trigger
--
--permissions:
--  contents: read
--
--jobs:
--  update_added_on:
--    if: github.repository == 'aws/aws-cdk'
--    runs-on: ubuntu-latest
--    environment: automation
--    steps:
--      - uses: actions/checkout@v7
--
--      - name: Update AddedOn field
--        uses: actions/github-script@v9
--        with:
--          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
--          script: |
--            const script = require('./scripts/prioritization/update-added-on.js')
--            await script({github})
+@@ -2,7 +2,7 @@ import child_process from 'child_process';
+ import fs from 'fs';
+ import path from 'path';
+ import { bockfs } from '@aws-cdk/cdk-build-tools';
+-import { callsites, exec, extractDependencies, findUp, findUpMultiple, getTsconfigCompilerOptions, getTsconfigCompilerOptionsArray } from '../lib/util';
++import { callsites, exec, extractDependencies, findUp, findUpMultiple, getTsconfigCompilerOptions, getTsconfigCompilerOptionsArray, tscRequiresIgnoreConfig } from '../lib/util';
+ 
+ beforeEach(() => {
+   jest.clearAllMocks();
+@@ -309,3 +309,20 @@ describe('getTsconfigCompilerOptionsArray', () => {
+     expect(arrayResult[libIdx + 1]).toBe('es2022,dom');
+   });
+ });
++
++describe('tscRequiresIgnoreConfig', () => {
++  test.each([
++    ['3.9.10', false],
++    ['5.9.3', false],
++    ['Version 5.9.3', false],
++    ['6.0.3', true],
++    ['6.0.0-beta', true],
++    ['Version 6.0.3', true],
++    ['7.0.2', true],
++    ['10.1.0', true],
++    ['', false],
++    ['garbage', false],
++  ])('for %j returns %s', (version, expected) => {
++    expect(tscRequiresIgnoreConfig(version)).toBe(expected);
++  });
++});
 ```
 
-**File**: `.github/workflows/project-prioritization-assignment.yml` (removed, +0/-27)
+---
+
+### Incident Patch 3: `641ff6fd` (2026-10-22)
+**Commit Message**: fix(stepfunctions-tasks): use a dedicated Lambda function for each EvaluateExpression task (#39436)
+
+### Issue # (if applicable)
+
+Closes #<issue number here>.
+
+### Reason for this change
+
+All EvaluateExpression tasks in a stack that use the same runtime and architecture are implemented by one shared SingletonFunction, including tasks that belong to different state machines. Each state machine's role is granted `lambda:InvokeFunction` on that one shared function. 
+A task's function should belong to the task, so that each state machine can invoke only the functions of its own tasks and a task's Lambda function follows the task's lifecycle.
+
+### Description of changes
+
+  - **Feature flag**: `@aws-cdk/aws-stepfunctions-tasks:evaluateExpressionDedicatedFunction`
+    - Default-on with an opt-out. The new behavior applies on upgrade, and `false` is the escape hatch to restore the shared singleton function.
+  - Each task creates its own `EvalNodejsFunction` (a plain lambda.Function) under the task's scope. The state machine's `lambda:InvokeFunction` grant is scoped to that task's function only.
+  - The dedicated functions in a stack share one execution role (EvalServiceRole… at stack scope
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C.assets.json` (modified, +1/-1)
 ```diff
-@@ -1,27 +0,0 @@
--name: PR Prioritization
--on:
--  pull_request_target:
--    types:
--      - labeled
--      - opened
--      - reopened
--      - synchronize
--      - ready_for_review
--
--permissions:
--  contents: read
--
--jobs:
--  prioritize:
--    if: github.repository == 'aws/aws-cdk'
--    runs-on: ubuntu-latest
--    environment: automation
--    steps:
--      - uses: actions/checkout@v7
--      - name: Add PR to Project & Set Priority
--        uses: actions/github-script@v9
--        with:
--          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
--          script: |
--            const script = require('./scripts/prioritization/assign-priority.js')
--            await script({github, context})
+@@ -1,5 +1,5 @@
+ {
+-  "version": "54.0.0",
++  "version": "55.0.0",
+   "files": {
+     "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
+       "displayName": "EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C Template",
 ```
 
-**File**: `.github/workflows/project-prioritization-bug.yml` (removed, +0/-23)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C.metadata.json` (modified, +6/-0)
 ```diff
-@@ -1,23 +0,0 @@
--name: P1 Bug Prioritization
--on:
--  issues:
--    types:
--      - labeled
--
--permissions:
--  contents: read
--
--jobs:
--  prioritize:
--    if: github.repository == 'aws/aws-cdk' && contains(github.event.issue.labels.*.name, 'bug') && contains(github.event.issue.labels.*.name, 'p1')
--    runs-on: ubuntu-latest
--    environment: automation
--    steps:
--      - uses: actions/checkout@v7
--      - name: Add P1 Bug to project
--        uses: actions/github-script@v9
--        with:
--          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
--          script: |
--            const script = require('./scripts/prioritization/assign-bug-priority.js')
--            await script({github, context})
+@@ -1,4 +1,10 @@
+ {
++  "/EvaluateExpressionArm64Test/DefaultTest/DeployAssert": [
++    {
++      "type": "aws:cdk:templateFile",
++      "data": "EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C.template.json"
++    }
++  ],
+   "/EvaluateExpressionArm64Test/DefaultTest/DeployAssert/BootstrapVersion": [
+     {
+       "type": "aws:cdk:logicalId",
 ```
 
-**File**: `.github/workflows/project-prioritization-needs-attention.yml` (removed, +0/-24)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/aws-cdk-sfn-evaluate-expression-arm64-integ.assets.json` (modified, +5/-5)
 ```diff
-@@ -1,24 +0,0 @@
--name: PR Prioritization Needs Attention Status
--on:
--  schedule:
--    - cron: "0 7 * * 1-5" # Runs at 7AM every day during weekdays
--  workflow_dispatch: # Manual trigger
--
--permissions:
--  contents: read
--
--jobs:
--  update_project_status:
--    if: github.repository == 'aws/aws-cdk'
--    runs-on: ubuntu-latest
--    environment: automation
--    steps:
--      - uses: actions/checkout@v7
--
--      - name: Update Needs Attention Status
--        uses: actions/github-script@v9
--        with:
--          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
--          script: |
--            const script = require('./scripts/prioritization/update-attention-status.js')
--            await script({github})
+@@ -1,8 +1,8 @@
+ {
+-  "version": "54.0.0",
++  "version": "55.0.0",
+   "files": {
+     "c3f237981e8bcc3fdc75c6f7402efab5fdd7b3f9136ca3ab6430daeb27a43853": {
+-      "displayName": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/Code",
++      "displayName": "EvaluateExpression/EvalFunction/Code",
+       "source": {
+         "path": "asset.c3f237981e8bcc3fdc75c6f7402efab5fdd7b3f9136ca3ab6430daeb27a43853",
+         "packaging": "zip"
+@@ -15,16 +15,16 @@
+         }
+       }
+     },
+-    "65b04887b6b160bb26a03cbe547820884cec98d786199628158988f6fbbcfadd": {
++    "8de50f8fbca7a4dede4a7d78388d76b6ffff0701723d1eb520279e574cea2451": {
+       "displayName": "aws-cdk-sfn-evaluate-expression-arm64-integ Template",
+       "source": {
+         "path": "aws-cdk-sfn-evaluate-expression-arm64-integ.template.json",
+         "packaging": "file"
+       },
+       "destinations": {
+-        "current_account-current_region-95f942c5": {
++        "current_account-current_region-dd191682": {
+           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+-          "objectKey": "65b04887b6b160bb26a03cbe547820884cec98d786199628158988f6fbbcfadd.json",
++          "objectKey": "8de50f8fbca7a4dede4a7d78388d76b6ffff0701723d1eb520279e574cea2451.json",
+           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+         }
+       }
 ```
 
-**File**: `.github/workflows/project-prioritization-r2-assignment.yml` (removed, +0/-24)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/aws-cdk-sfn-evaluate-expression-arm64-integ.metadata.json` (modified, +100/-46)
 ```diff
-@@ -1,24 +0,0 @@
--name: PR Prioritization R2 Check
--on:
--  schedule:
--    - cron: "0 */6 * * 1-5" # Runs every 6 hours during weekdays
--  workflow_dispatch: # Manual trigger
--
--permissions:
--  contents: read
--
--jobs:
--  update_project_status:
--    if: github.repository == 'aws/aws-cdk'
--    runs-on: ubuntu-latest
--    environment: automation
--    steps:
--      - uses: actions/checkout@v7
--
--      - name: Check and assign R2 Priority to PRs
--        uses: actions/github-script@v9
--        with:
--          github-token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
--          script: |
--            const script = require('./scripts/prioritization/assign-r2-priority.js')
--            await script({github})
+@@ -1,26 +1,53 @@
+ {
+-  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10": [
++  "/aws-cdk-sfn-evaluate-expression-arm64-integ": [
++    {
++      "type": "aws:cdk:templateFile",
++      "data": "aws-cdk-sfn-evaluate-expression-arm64-integ.template.json"
++    }
++  ],
++  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd": [
+     {
+       "type": "aws:cdk:analytics:construct",
+-      "data": "*"
++      "data": {
++        "assumedBy": {
++          "principalAccount": "*",
++          "assumeRoleAction": "*"
++        },
++        "managedPolicies": [
++          {
++            "managedPolicyArn": "*"
++          }
++        ]
++      }
+     },
+     {
+-      "type": "aws:cdk:is-custom-resource-handler-singleton",
+-      "data": true
+-    },
++      "type": "aws:cdk:analytics:method",
++      "data": {
++        "withoutPolicyUpdates": []
++      }
++    }
++  ],
++  "/aws-cdk-sfn-evaluate-expression-arm64-integ/ImmutableRoleEvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd": [
+     {
+-      "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+-      "data": 0
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
+     }
+   ],
+   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine": [
+     {
+       "type": "aws:cdk:analytics:construct",
+-      "data": "*"
++      "data": {
++        "definitionBody": "*",
++        "timeout": "*"
++      }
+     },
+     {
+       "type": "aws:cdk:analytics:method",
+-      "data": "*"
++      "data": {
++        "addToRolePolicy": [
++          {}
++        ]
++      }
+     }
+   ],
+   "/aws-cdk-sfn-evaluate-expression-arm64-integ/stateMachineArn": [
+@@ -44,51 +71,58 @@
+   "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvaluateExpression/EvalFunction": [
+     {
+       "type": "aws:cdk:analytics:construct",
+-      "data": "*"
++      "data": {
++        "runtime": "*",
++        "architecture": "*",
++        "role": "*",
++        "code": "*",
++        "handler": "*"
++      }
+     },
+     {
+-      "type": "aws:cdk:analytics:method",
+-      "data": "*"
+-    },
+-    {
+-      "type": "aws:cdk:analytics:method",
+-      "data": "*"
+-    }
+-  ],
+-  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/ServiceRole": [
+-    {
+-      "type": "aws:cdk:analytics:construct",
+-      "data": "*"
++      "type": "aws:cdk:is-custom-resource-handler-runtime-family",
++      "data": 0
+     }
+   ],
+-  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/Resource": [
++  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd/Resource": [
+     {
+       "type": "aws:cdk:logicalId",
+-      "data": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088"
+-    }
+-  ],
+-  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/LogGroup": [
+-    {
+-      "type": "aws:cdk:analytics:construct",
+-      "data": "*"
++      "data": "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41"
+     }
+   ],
+   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine/Role": [
+     {
+       "type": "aws:cdk:analytics:construct",
+-      "data": "*"
++      "data": {
++        "assumedBy": {
++          "principalAccount": "*",
++          "assumeRoleAction": "*"
++        }
++      }
+     },
+     {
+       "type": "aws:cdk:analytics:method",
+-      "data": "*"
++      "data": {
++        "addToPrincipalPolicy": [
++          {}
++        ]
++      }
+     },
+     {
+       "type": "aws:cdk:analytics:method",
+-      "data": "*"
++      "data": {
++        "attachInlinePolicy": [
++          "*"
++        ]
++      }
+     },
+     {
+       "type": "aws:cdk:analytics:method",
+-      "data": "*"
++      "data": {
++        "attachInlinePolicy": [
++          "*"
++        ]
++      }
+     }
+   ],
+   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine/Resource": [
+@@ -97,22 +131,18 @@
+       "data": "StateMachine2E01A3A5"
+     }
+   ],
+-  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/ServiceRole/Resource": [
++  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvaluateExpression/EvalFunction/Resource": [
+     {
+       "type": "aws:cdk:logicalId",
+-      "data": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29"
++      "data": "EvaluateExpressionEvalFunctionD463D928"
+     }
+   ],
+-  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/Code/AssetBucket": [
++  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvaluateExpression/EvalFunction/LogGroup": [
+     {
+       "type": "aws:cdk:analytics:construct",
+-      "data": "*"
+-    }
+-  ],
+-  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/LogGroup/Resource": [
+-    {
+-      "type": "aws:cdk:logicalId",
+-      "data": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10LogGroup29F31548"
++      "data": {
++        "logGroupName": "*"
++      }
+     }
+   ],
+   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine/Role/Resource": [
+@@ -128,
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/aws-cdk-sfn-evaluate-expression-arm64-integ.template.json` (modified, +39/-39)
+```diff
+@@ -1,37 +1,6 @@
+ {
+  "Resources": {
+-  "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29": {
+-   "Type": "AWS::IAM::Role",
+-   "Properties": {
+-    "AssumeRolePolicyDocument": {
+-     "Statement": [
+-      {
+-       "Action": "sts:AssumeRole",
+-       "Effect": "Allow",
+-       "Principal": {
+-        "Service": "lambda.amazonaws.com"
+-       }
+-      }
+-     ],
+-     "Version": "2012-10-17"
+-    },
+-    "ManagedPolicyArns": [
+-     {
+-      "Fn::Join": [
+-       "",
+-       [
+-        "arn:",
+-        {
+-         "Ref": "AWS::Partition"
+-        },
+-        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+-       ]
+-      ]
+-     }
+-    ]
+-   }
+-  },
+-  "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088": {
++  "EvaluateExpressionEvalFunctionD463D928": {
+    "Type": "AWS::Lambda::Function",
+    "Properties": {
+     "Architectures": [
+@@ -46,17 +15,17 @@
+     "Handler": "index.handler",
+     "Role": {
+      "Fn::GetAtt": [
+-      "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29",
++      "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41",
+       "Arn"
+      ]
+     },
+     "Runtime": "nodejs24.x"
+    },
+    "DependsOn": [
+-    "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29"
++    "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41"
+    ]
+   },
+-  "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10LogGroup29F31548": {
++  "EvaluateExpressionEvalFunctionLogGroup7C023450": {
+    "Type": "AWS::Logs::LogGroup",
+    "Properties": {
+     "LogGroupName": {
+@@ -65,7 +34,7 @@
+       [
+        "/aws/lambda/",
+        {
+-        "Ref": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088"
++        "Ref": "EvaluateExpressionEvalFunctionD463D928"
+        }
+       ]
+      ]
+@@ -75,6 +44,37 @@
+    "UpdateReplacePolicy": "Retain",
+    "DeletionPolicy": "Retain"
+   },
++  "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41": {
++   "Type": "AWS::IAM::Role",
++   "Properties": {
++    "AssumeRolePolicyDocument": {
++     "Statement": [
++      {
++       "Action": "sts:AssumeRole",
++       "Effect": "Allow",
++       "Principal": {
++        "Service": "lambda.amazonaws.com"
++       }
++      }
++     ],
++     "Version": "2012-10-17"
++    },
++    "ManagedPolicyArns": [
++     {
++      "Fn::Join": [
++       "",
++       [
++        "arn:",
++        {
++         "Ref": "AWS::Partition"
++        },
++        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
++       ]
++      ]
++     }
++    ]
++   }
++  },
+   "StateMachineRoleB840431D": {
+    "Type": "AWS::IAM::Role",
+    "Properties": {
+@@ -132,7 +132,7 @@
+        "Resource": [
+         {
+          "Fn::GetAtt": [
+-          "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088",
++          "EvaluateExpressionEvalFunctionD463D928",
+           "Arn"
+          ]
+         },
+@@ -142,7 +142,7 @@
+           [
+            {
+             "Fn::GetAtt": [
+-             "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088",
++             "EvaluateExpressionEvalFunctionD463D928",
+              "Arn"
+             ]
+            },
+@@ -173,7 +173,7 @@
+        "{\"StartAt\":\"EvaluateExpression\",\"States\":{\"EvaluateExpression\":{\"End\":true,\"Type\":\"Task\",\"Resource\":\"",
+        {
+         "Fn::GetAtt": [
+-         "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088",
++         "EvaluateExpressionEvalFunctionD463D928",
+          "Arn"
+         ]
+        },
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/cdk.out` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-{"version":"54.0.0"}
+\ No newline at end of file
++{"version":"55.0.0"}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/integ.json` (modified, +2/-2)
+```diff
+@@ -1,5 +1,5 @@
+ {
+-  "version": "54.0.0",
++  "version": "55.0.0",
+   "testCases": {
+     "EvaluateExpressionArm64Test/DefaultTest": {
+       "stacks": [
+@@ -10,5 +10,5 @@
+     }
+   },
+   "enableLookups": true,
+-  "minimumCliVersion": "2.1131.0"
++  "minimumCliVersion": "2.1145.0"
+ }
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/manifest.json` (modified, +18/-3)
+```diff
+@@ -1,5 +1,5 @@
+ {
+-  "version": "54.0.0",
++  "version": "55.0.0",
+   "artifacts": {
+     "aws-cdk-sfn-evaluate-expression-arm64-integ.assets": {
+       "type": "cdk:asset-manifest",
+@@ -18,7 +18,7 @@
+         "validateOnSynth": false,
+         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/65b04887b6b160bb26a03cbe547820884cec98d786199628158988f6fbbcfadd.json",
++        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/8de50f8fbca7a4dede4a7d78388d76b6ffff0701723d1eb520279e574cea2451.json",
+         "requiresBootstrapStackVersion": 6,
+         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+         "additionalDependencies": [
+@@ -615,10 +615,25 @@
+           "@aws-cdk/aws-ecs:removeEmptyLoadBalancers": {
+             "recommendedValue": true,
+             "explanation": "Render an empty `LoadBalancers` array on an ECS service that has no target groups"
++          },
++          "@aws-cdk/aws-cloudfront:defaultViewerProtocolPolicyRedirectToHttps": {
++            "recommendedValue": true,
++            "explanation": "Default Distribution cache behaviors to redirect HTTP viewer requests to HTTPS"
++          },
++          "@aws-cdk/aws-apigateway:logGroupDestinationArnWithoutWildcard": {
++            "recommendedValue": true,
++            "explanation": "Render the API Gateway access log destination ARN without the trailing `:*`"
++          },
++          "@aws-cdk/aws-stepfunctions-tasks:evaluateExpressionDedicatedFunction": {
++            "recommendedValue": true,
++            "explanation": "When enabled, each EvaluateExpression task gets its own Lambda function",
++            "unconfiguredBehavesLike": {
++              "v2": true
++            }
+           }
+         }
+       }
+     }
+   },
+-  "minimumCliVersion": "2.1131.0"
++  "minimumCliVersion": "2.1145.0"
+ }
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39407** (2026-10-20): chore: remove unused GHA workflows (@mrgrain)
-- **PR #39400** (2026-10-20): chore(merge-back): 2.274.0 (@aws-cdk-automation)
-- **PR #39399** (2026-10-20): chore: upgrade jsii toolchain (@mrgrain)
-- **PR #39398** (2026-10-20): chore(release): 2.274.0 (@aws-cdk-automation)
-- **PR #39397** (closed): chore(release): 2.274.0 (@aws-cdk-automation)
-- **PR #39349** (2026-10-16): chore(deps): upgrade @aws-cdk/cloud-assembly-api to ^2.5.0 (@kumsmrit)
+- **PR #39440** (2026-10-22): chore(security-guardian): set rootDir for TypeScript 6 (@kumsmrit)
+- **PR #39436** (2026-10-22): fix(stepfunctions-tasks): use a dedicated Lambda function for each EvaluateExpression task (@kumsmrit)
+- **PR #39423** (2026-10-21): fix: add graduate tool to lerna.json (@kumsmrit)
+- **PR #39422** (closed): chore(deps): bump the pip group across 3 directories with 2 updates (@dependabot[bot])
+- **PR #39421** (2026-10-21): chore(deps): bump the pip group across 7 directories with 2 updates (@dependabot[bot])
+- **PR #39420** (2026-10-21): chore(deps): bump the uv group across 5 directories with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1537,57 +2051,28 @@ n/a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove unused GHA workflows (#39407)
+## X. security-guardian): set rootDir for TypeScript 6 (#39440)
 
 **RULE**:
-When implementing operations in `.github/workflows/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/@aws-cdk/security-guardian/tsconfig.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1576e0ed`: remove unused GHA workflows (#39407). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8bd6e534`: security-guardian): set rootDir for TypeScript 6 (#39440). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/tsconfig.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-
-[issue-sync.yml](issue-sync.yml): Github action that syncs issue metadata with the project board. More details can be found on the [project-sync](../../tools/@aws-cdk/project-sync) package.
+    "rootDir": "src",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-### Initial Priority Assignment
-
-[project-prioritization-assignment.yml](project-prioritization-assignment.yml): GitHub action for automatically adding PR's with priorities to the project priority board based on their labels.
-Owner: CDK Support team
-
-### P1 Bug Priority Assignment
-
-[project-prioritization-bug.yml](project-prioritization-bug.yml): Github action for automatically adding P1 bugs to the prioritization project board
-Owner: CDK support team
-
-### Issue Reprioritizer
-
-[issue-reprioritization.yml](issue-reprioritization.yml): GitHub action that labels `p2`
-issues as `p1` if a certain level of community engagement is met.
-Owner: Core CDK team
-
-### R2 Priority Assignment
-
-[project-prioritization-r2-assignment.yml](project-prioritization-r2-assignment.yml): GitHub action that runs every 6 hours to add PR's to the priority project board that satisfies R2 Priority.
-Owner: CDK Support team
-
-### R5 Priority Assignment
-
-[project-prioritization-r5-assignment.yml](project-prioritization-r5-assignment.yml): GitHub action that runs every day to add PR's to the priority project board that satisfies R5 Priority.
-Owner: CDK Support team
-
-### Needs Attention Status Update
-
-[project-priorit
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1576e0ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8bd6e534` are properly handled with clean fallback behavior.

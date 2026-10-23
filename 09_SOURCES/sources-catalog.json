@@ -1333,10 +1333,10 @@
     "repository": "cosscom/ui",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/ui",
-    "sourceVersion": "81bfb811",
+    "sourceVersion": "3d8ca28e",
     "license": "AGPL-3.0",
-    "contentHash": "4348344d49897eea3372747401f04f34f17e0e1256eabb049a0b7c5665e19f72",
-    "lastHarvestedAt": "2026-10-21T05:40:25.086Z",
+    "contentHash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
+    "lastHarvestedAt": "2026-10-23T08:59:45.498Z",
     "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "1576e0ed",
+    "sourceVersion": "8bd6e534",
     "license": "Apache-2.0",
-    "contentHash": "0a8b9d123a86f18980f9bf64f0d6fc094bdf0a69d85fcb19313ce48285caa4ef",
-    "lastHarvestedAt": "2026-10-21T05:28:03.247Z",
+    "contentHash": "94e0ff0653b720bab70c908b02568f1983ca740b77930844cbbf9751481cf46f",
+    "lastHarvestedAt": "2026-10-23T08:54:55.088Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

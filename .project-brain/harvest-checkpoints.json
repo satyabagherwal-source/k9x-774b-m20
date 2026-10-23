@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T08:44:38.313Z",
+  "last_updated": "2026-10-23T08:59:45.506Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2082,14 +2082,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-ui",
-      "content_hash": "4348344d49897eea3372747401f04f34f17e0e1256eabb049a0b7c5665e19f72",
-      "verified_at": "2026-10-21T05:40:25.092Z",
+      "content_hash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
+      "verified_at": "2026-10-23T08:59:45.505Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:40:25.092Z"
+      "last_updated": "2026-10-23T08:59:45.505Z"
     },
     "Ebony-Vinyl/dsh-our-free-model": {
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "0a8b9d123a86f18980f9bf64f0d6fc094bdf0a69d85fcb19313ce48285caa4ef",
-      "verified_at": "2026-10-21T05:28:03.257Z",
+      "content_hash": "94e0ff0653b720bab70c908b02568f1983ca740b77930844cbbf9751481cf46f",
+      "verified_at": "2026-10-23T08:54:55.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:28:03.257Z"
+      "last_updated": "2026-10-23T08:54:55.102Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",

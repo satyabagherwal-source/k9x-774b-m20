@@ -4512,3 +4512,5 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `a1a30f35` | Multi-dimensional audit evidence | 2026-10-23T08:42:03.404Z |
 | `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `cc5b3964` | Multi-dimensional audit evidence | 2026-10-23T08:44:31.963Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ff25faef` | Multi-dimensional audit evidence | 2026-10-23T08:44:38.303Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `8bd6e534` | Multi-dimensional audit evidence | 2026-10-23T08:54:55.088Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `3d8ca28e` | Multi-dimensional audit evidence | 2026-10-23T08:59:45.498Z |

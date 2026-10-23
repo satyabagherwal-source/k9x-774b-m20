@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-ui-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/ui](https://github.com/cosscom/ui))  
-> **Source Version**: `81bfb811`  
+> **Source Version**: `3d8ca28e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T05:40:24.868Z  
+> **Timestamp**: 2026-10-23T08:59:45.265Z  
 > **Learning ID**: `learn-github-cosscom-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/ui](https://github.com/cosscom/ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T05:40:23.668Z  
+> **Harvest Timestamp**: 2026-10-23T08:54:42.219Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: coss.com/ui is the official design system of Cal.com
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10735 stars
+- **Stars / Engagement**: 10743 stars
 
 ---
 
@@ -1067,17 +1067,17 @@ export function useScrollHide(threshold = DEFAULT_SCROLL_THRESHOLD) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #909** (2026-10-22): **fix(composer): show the default cursor when the composer is disabled**
+  *Symptoms*: ## Summary  Adds `data-disabled:cursor-default` to the `Composer` frame. When the editor is disabled, the frame (which carries `data-disabled`) and the `ComposerInput` inside it now show the default cursor instead of `cursor-text`. The input has no cursor class of its own, so it inherits from the frame and doesn't need its own `in-data-disabled:` class.  This brings the primitive in line with the Cal.com copy (calcom/cal#11657).  The change is in `apps/ui/registry/default/ui/composer.tsx`. `packages/ui/src/components/composer.tsx` and `apps/ui/public/r/composer.json` were regenerated with `registry:build` and `ui:sync`.  Link to Devin session: https://app.devin.ai/sessions/87b5bf9269a0401ca28d4c648910b2a4 Open in Devin Desktop: https://app.devin.ai/desktop/session/87b5bf9269a0401ca28d4c648910b2a4?variant=devin Requested by: @pasqualevitiello
+  **Post-Mortem & Fix Analysis**:
+  > <!-- devin-pr-monitoring-controls --> I'll fix CI failures and address comments from users with write access. I'll skip comments containing "(aside)".  - [ ] Disable automatic comment, CI, and merge conflict monitoring 
+  > [vc]: #qLFRhJOCO9VdI66Bz8S2tJxNo36D6X4WZ0XHa5VlMD4=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS1vcmlnaW4iLCJwcm9qZWN0SWQiOiJwcmpfejBkeFJ2WWM5cWtmU25SUEpoaHhPcGR4ZXJtVSIsInJvb3REaXJlY3RvcnkiOiJhcHBzL29yaWdpbiIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiIifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS1vcmlnaW4vRGpaVVBnYWh4MVM2aFRxeEJpRUpjSGpMWUdRRCIsInByZXZpZXdVcmwiOiIiLCJuZXh0Q29tbWl0U3RhdHVzIjoiU0tJUFBFRCJ9LHsibmFtZSI6ImNvc3MtY29tLXVpIiwicHJvamVjdElkIjoicHJqX1lWQ1Q2aUZYaGJLTGpQdG5INWtVU1hQOTQ5N3giLCJyb290RGlyZWN0b3J5IjoiYXBwcy91aSIsImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1jb20tdWkvQVVwQUN0bXRpV05mRm5lZ2Mya05KdVhiMUZvMSIsInByZXZpZXdVcmwiOiJjb3NzLWNvbS11aS1naXQtZGV2aW4tMTc5MjY1NTQ1MC1jb21wb3Nlci1kaXNhYmxlZC1jdXJzb3ItY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20t
+
 - **Issue #908** (2026-10-20): **chore(ui): remove aria-label attributes from autocomplete and combobox**
   *Symptoms*: Removes the hard-coded `aria-label` attributes from the built-in trigger, clear, and chip-remove buttons in `Autocomplete` and `Combobox`.  - `AutocompleteInput`: trigger ("Show options") and clear ("Clear selection") - `ComboboxInput`: trigger ("Show options") and clear ("Clear selection") - `ComboboxChipRemove`: "Remove"  Updated in the registry source, the synced `packages/ui` copies, and the `autocomplete.json` / `combobox.json` registry outputs.  Made with [Cursor](https://cursor.com)
   **Post-Mortem & Fix Analysis**:
   > [vc]: #x4XHdivsBTYIkr1DZw9wuH3WQ6EinRqpv260EVyXUds=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpL0dzSzh0SDVhRzE5ZWdMWHFTcUZZWmQ1bTdubW0iLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tdWktZ2l0LWNob3JlLXJlbW92ZS1hdXRvY29tcGxldGUtY29tYm9ib3gtYS0yNThmODQtY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LWNob3JlLXJlbW92ZS1hdXRvY29tcGxldGUtY29tYm9ib3gtYS0yNThmODQtY2FsLnZlcmNlbC5hcHAifX0seyJuYW1lIjoiY29zcy1leGFtcGxlcy1jYWxjb20iLCJwcm9qZWN0SWQiOiJwcmpfdk5ZTjkwZjVsQ2JLanAzZXdSeklzYllVbWx3TSIsInJvb3REaXJlY3RvcnkiOiJhcHBzL2V4YW1wbGVzL2NhbGNvbSIsImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1leGFtcGxlcy1jYWxjb20vNWdzZzFKeW55MTk1c3hGeHdwR05kWFFIZXdDayIsInByZXZpZXdVcmwiOiJjb3NzLWV4
   > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6542">ENG-6542</a></p>
-
-- **Issue #906** (2026-10-20): **feat(segmented-control): animated selection indicator like Tabs**
-  *Symptoms*: ## Summary  Segmented controls now slide a pill between items, matching TabsList.  - **New `@coss/segmented-control-indicator`**: a `SegmentedControlIndicator` client component rendered as the last child of the segmented root. It tracks the direct child with `data-checked`, `aria-current="page"`, or `data-pressed` and animates over 200 ms ease-in-out (none with reduced motion). It's hidden when nothing is active. - **`segmented-control` lib**: `state` variants now only set the active text colour; the pill surface is a shared `segmentedControlIndicatorSurfaceClassName`, also used by the Tabs indicator. - **Particles**: radio group (7–9) and navigation (1–3) render the indicator; navigation particles now track the clicked link so the demo animates. - **Docs**: segmented control page and coss skill reference updated.  Breaking for custom compositions: the item recipe no longer paints the active background, so they must render `<SegmentedControlIndicator />`.  ## Demo  https://github.com/user-attachments/assets/4d431290-4ff1-48bc-b872-42452e1c2ee8  ## Testing  - `registry:validate-deps`, `registry:build`, `ui:sync`, and `tsc` pass. - Browser-checked in light/dark at 1280px and 390px: pill aligns exactly with the active item, slides on click and arrow keys, matches the Tabs pill, and Tabs are unchanged; no console errors.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #PXMKypijPhkg7vjGWP3LEO58EDB08SEjBG91LcdmuGQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS1vcmlnaW4iLCJwcm9qZWN0SWQiOiJwcmpfejBkeFJ2WWM5cWtmU25SUEpoaHhPcGR4ZXJtVSIsInJvb3REaXJlY3RvcnkiOiJhcHBzL29yaWdpbiIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiIifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS1vcmlnaW4vOGNWVGpWUE5MeFlVSFFnZ1hpUmZjazhwZ1g0NiIsInByZXZpZXdVcmwiOiIiLCJuZXh0Q29tbWl0U3RhdHVzIjoiU0tJUFBFRCJ9LHsibmFtZSI6ImNvc3MtZXhhbXBsZXMtY2FsY29tIiwicHJvamVjdElkIjoicHJqX3ZOWU45MGY1bENiS2pwM2V3UnpJc2JZVW1sd00iLCJyb290RGlyZWN0b3J5IjoiYXBwcy9leGFtcGxlcy9jYWxjb20iLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtZXhhbXBsZXMtY2FsY29tL0dNNGEyNno4M1dTNnUyaWV3SkhDOUNMRnRwcFoiLCJwcmV2aWV3VXJsIjoiY29zcy1leGFtcGxlcy1jYWxjb20tZ2l0LWFjdGluZy1hcy1hLW1haW4tY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJs
-  > Deployment failed for project [coss-examples-calcom](https://vercel.com/cal/coss-examples-calcom) with the following error: ~~~ You don't have permission to create a Preview Deployment for this Vercel project: coss-examples-calcom. ~~~ View Documentation: https://vercel.com/docs/accounts/team-members-and-roles
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1607,12 +1607,12 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #909** (2026-10-22): fix(composer): show the default cursor when the composer is disabled (@pasqualevitiello)
 - **PR #908** (2026-10-20): chore(ui): remove aria-label attributes from autocomplete and combobox (@pasqualevitiello)
+- **PR #907** (2026-10-21): refactor(segmented-control): ship as a render-prop component (@pasqualevitiello)
 - **PR #906** (2026-10-20): feat(segmented-control): animated selection indicator like Tabs (@uixmat)
 - **PR #904** (2026-10-19): feat(avatar): AvatarGroup with clipped separation and inherited sizing (@pasqualevitiello)
 - **PR #903** (closed): feat(agent): approval cards, response feedback, and error recovery (@pasqualevitiello)
-- **PR #902** (closed): feat(agent): add action bar, history, and conversation menu (@pasqualevitiello)
-- **PR #901** (closed): feat(agent): turn content: status, reasoning, tool activity, result list and AgentTurn (@pasqualevitiello)
 
 ---
 

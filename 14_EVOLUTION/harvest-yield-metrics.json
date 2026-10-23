@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T08:44:38.310Z",
-  "total_cycles_completed": 4482,
-  "total_learnings_persisted": 4482,
-  "total_rules_promoted": 3696,
+  "last_updated": "2026-10-23T08:59:45.502Z",
+  "total_cycles_completed": 4484,
+  "total_learnings_persisted": 4484,
+  "total_rules_promoted": 3697,
   "history": [
-    {
-      "timestamp": "2026-10-22T15:56:51.723Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:56:54.742Z",
-      "repository": "stakater/Reloader",
-      "learningId": "learn-github-stakater-reloader",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T15:56:59.628Z",
       "repository": "apache/zookeeper",
@@ -1403,6 +1389,20 @@
       "repository": "kucherenko/jscpd",
       "learningId": "learn-github-kucherenko-jscpd",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:54:55.098Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:59:45.502Z",
+      "repository": "cosscom/ui",
+      "learningId": "learn-github-cosscom-ui",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-YXUV",
-    "timestamp": "2026-10-20T20:28:56.167Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ZA8D",
-    "timestamp": "2026-10-20T20:29:12.205Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "41296ff1be9d1083132651cb236af854077378d60deac3563c3b17cb9cfa72dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-6VR6",
     "timestamp": "2026-10-20T20:35:06.690Z",
     "repository": "assistant-ui/assistant-ui",
@@ -7492,6 +7462,36 @@
     "contentHash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-HZE5",
+    "timestamp": "2026-10-23T08:54:55.085Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "94e0ff0653b720bab70c908b02568f1983ca740b77930844cbbf9751481cf46f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-O7H3",
+    "timestamp": "2026-10-23T08:59:45.495Z",
+    "repository": "cosscom/ui",
+    "learningId": "learn-github-cosscom-ui",
+    "contentHash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
