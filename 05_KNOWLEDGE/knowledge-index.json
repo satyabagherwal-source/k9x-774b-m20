@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T08:26:36.507Z",
+  "last_updated": "2026-10-23T08:44:38.248Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27627,8 +27627,8 @@
       "slug": "ionic-team-ionic-framework",
       "platform": "github",
       "source_url": "https://github.com/ionic-team/ionic-framework",
-      "source_version": "584d9731",
-      "content_hash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
+      "source_version": "cc5b3964",
+      "content_hash": "17d76fe9ccb83f3c2dc138d9720bb2b52a4f5177edab21f4b55b7396e10129c0",
       "dossier_path": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "promoted_rules": [
@@ -27651,6 +27651,11 @@
           "number": 3537,
           "title": "docs(backdrop): clarify that visible only controls the default background (#3159",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3841,
+          "title": "menu): allow menus inside split pane main content to open (#31586)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27658,7 +27663,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:34:15.090Z",
+      "verified_at": "2026-10-23T08:44:31.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30216,8 +30221,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "2177d563",
-      "content_hash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
+      "source_version": "ff25faef",
+      "content_hash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -30245,6 +30250,21 @@
           "number": 3153,
           "title": "Bidirectional Order-Independent Snippet Fingerprinting with Line-Ending Normalization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3842,
+          "title": "Rolling Hash Precomputed Power Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3843,
+          "title": "Polyglot Disjoint Span Non-Overlap Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3844,
+          "title": "Canonical Line-Ending Agnostic Content Fingerprinting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30252,7 +30272,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:27:42.015Z",
+      "verified_at": "2026-10-23T08:44:38.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33725,14 +33745,19 @@
       "slug": "milvus-io-bootcamp",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/bootcamp",
-      "source_version": "14cefc46",
-      "content_hash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
+      "source_version": "b2be8cc8",
+      "content_hash": "404baa39d91372344a1e649d486a292035f31f578a333541537443c44e4254d4",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md",
       "promoted_rules": [
         {
           "number": 1765,
           "title": "Markdown rendering in Search with Jev notebooks (#1594)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3837,
+          "title": "docs: remove outdated DSPy notebook and fix Dify authentication (#1596)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -33741,7 +33766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:10:22.374Z",
+      "verified_at": "2026-10-23T08:39:42.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35358,14 +35383,19 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "251d8fcd",
-      "content_hash": "af24adcf6ab84bb133a833906b610cacfa660b7cbf3f096488c527732f69a9dd",
+      "source_version": "fa5d076b",
+      "content_hash": "3f041b07ba2187c6e313c70933bbc5893c9e02f3062539aaf1cb78e7b50f868d",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
         {
           "number": 1722,
           "title": "h5): clear download timeout after completion (#19532)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3836,
+          "title": "h5): handle clipboard copy failures and clean up temporary textareas (#19548)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35374,7 +35404,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:54:34.763Z",
+      "verified_at": "2026-10-23T08:39:39.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41650,8 +41680,8 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "44528283",
-      "content_hash": "c61720a095cb472f19b71aa591f4195bf4d82c3ad75db7dc74024c59f69d6c85",
+      "source_version": "03d8a981",
+      "content_hash": "9edec428ee4dd10ac3359db633b3786216f391649cdaecbf8fe892d6480d7e54",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
@@ -41671,7 +41701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:21:54.209Z",
+      "verified_at": "2026-10-23T08:39:33.148Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42946,8 +42976,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "0433f847",
-      "content_hash": "5f64aa0c38a3563c6bfb71310f63355622a5b6fddccc6bd012ba19aed99e8c18",
+      "source_version": "a1a30f35",
+      "content_hash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -42985,6 +43015,21 @@
           "number": 3737,
           "title": "Move bundle metadata types into a dependency-free package (#5180)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3838,
+          "title": "Robust Semicolon-Delimited URI Path & Parameter Sanitization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3839,
+          "title": "Mandatory Whitespace and Newline Trimming on Cryptographic I/O Inputs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3840,
+          "title": "Verification Metadata Precedence Over Command-Line Defaults in Self-Describing Bundles",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42992,7 +43037,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:52:02.361Z",
+      "verified_at": "2026-10-23T08:42:03.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113916,6 +113961,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T08:26:36.496Z"
+    },
+    "rule-3836": {
+      "learning_id": "rule-3836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3836,
+      "title": "h5): handle clipboard copy failures and clean up temporary textareas (#19548)",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "fa5d076b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:39:39.768Z"
+    },
+    "rule-3837": {
+      "learning_id": "rule-3837",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3837,
+      "title": "docs: remove outdated DSPy notebook and fix Dify authentication (#1596)",
+      "source_url": "https://github.com/milvus-io/bootcamp",
+      "source_version": "b2be8cc8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:39:42.542Z"
+    },
+    "rule-3838": {
+      "learning_id": "rule-3838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3838,
+      "title": "Robust Semicolon-Delimited URI Path & Parameter Sanitization",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "a1a30f35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:42:03.363Z"
+    },
+    "rule-3839": {
+      "learning_id": "rule-3839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3839,
+      "title": "Mandatory Whitespace and Newline Trimming on Cryptographic I/O Inputs",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "a1a30f35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:42:03.363Z"
+    },
+    "rule-3840": {
+      "learning_id": "rule-3840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3840,
+      "title": "Verification Metadata Precedence Over Command-Line Defaults in Self-Describing Bundles",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "a1a30f35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:42:03.364Z"
+    },
+    "rule-3841": {
+      "learning_id": "rule-3841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3841,
+      "title": "menu): allow menus inside split pane main content to open (#31586)",
+      "source_url": "https://github.com/ionic-team/ionic-framework",
+      "source_version": "cc5b3964",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:44:31.918Z"
+    },
+    "rule-3842": {
+      "learning_id": "rule-3842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3842,
+      "title": "Rolling Hash Precomputed Power Invariant",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "ff25faef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:44:38.242Z"
+    },
+    "rule-3843": {
+      "learning_id": "rule-3843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3843,
+      "title": "Polyglot Disjoint Span Non-Overlap Invariant",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "ff25faef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:44:38.242Z"
+    },
+    "rule-3844": {
+      "learning_id": "rule-3844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3844,
+      "title": "Canonical Line-Ending Agnostic Content Fingerprinting",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "ff25faef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T08:44:38.242Z"
     }
   },
   "aliases": {

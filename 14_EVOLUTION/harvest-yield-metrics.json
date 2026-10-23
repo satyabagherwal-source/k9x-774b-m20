@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T08:26:36.572Z",
-  "total_cycles_completed": 4476,
-  "total_learnings_persisted": 4476,
-  "total_rules_promoted": 3687,
+  "last_updated": "2026-10-23T08:44:38.310Z",
+  "total_cycles_completed": 4482,
+  "total_learnings_persisted": 4482,
+  "total_rules_promoted": 3696,
   "history": [
-    {
-      "timestamp": "2026-10-22T15:46:53.099Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:47:01.716Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:53:23.542Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:53:27.706Z",
-      "repository": "duongductrong/Snapzy",
-      "learningId": "learn-github-duongductrong-snapzy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:53:29.834Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:53:34.909Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T15:56:51.723Z",
       "repository": "biomejs/biome",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-23T08:26:36.572Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:39:33.193Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:39:39.827Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:39:42.589Z",
+      "repository": "milvus-io/bootcamp",
+      "learningId": "learn-github-milvus-io-bootcamp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:42:03.410Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:44:31.971Z",
+      "repository": "ionic-team/ionic-framework",
+      "learningId": "learn-github-ionic-team-ionic-framework",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:44:38.310Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

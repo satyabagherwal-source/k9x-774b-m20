@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-6QNX",
-    "timestamp": "2026-10-20T20:07:00.477Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-G19V",
-    "timestamp": "2026-10-20T20:14:14.131Z",
-    "repository": "sxyazi/yazi",
-    "learningId": "learn-github-sxyazi-yazi",
-    "contentHash": "b7aa4329e8329e8a7641653850f53c3f9f0c0e7acdbd292f424df53c8e519c47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-G6N3",
-    "timestamp": "2026-10-20T20:14:21.087Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "1f7c05fd69f6f8c131cc3c3a6f72970df7558ef41eba609896d655a20e8f6cb4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-G75G",
-    "timestamp": "2026-10-20T20:14:21.748Z",
-    "repository": "Tencent-TDS/KuiklyUI",
-    "learningId": "learn-github-tencent-tds-kuiklyui",
-    "contentHash": "18456a56b9de338489048fdc083b8427ed2764ea5280fb2f5983346806751e69",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-NQQD",
-    "timestamp": "2026-10-20T20:20:13.717Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "e5b0adae2f6f3f82c2476c597358f7b4cf2708482cdf077a087764389bd5c993",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-O3IF",
-    "timestamp": "2026-10-20T20:20:30.279Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "dda7b975cfa09254de0fabb2820417c680262575f5e02662c195018a84539c38",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-YXUV",
     "timestamp": "2026-10-20T20:28:56.167Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -7490,6 +7400,96 @@
     "repository": "xerj-org/xerj",
     "learningId": "learn-github-xerj-org-xerj",
     "contentHash": "6f72ceb8985df38328d07f18a286c38db4dea8a9265559e5fd1028d2bb8cda06",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-Y81V",
+    "timestamp": "2026-10-23T08:39:33.187Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "9edec428ee4dd10ac3359db633b3786216f391649cdaecbf8fe892d6480d7e54",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-YD60",
+    "timestamp": "2026-10-23T08:39:39.816Z",
+    "repository": "NervJS/taro",
+    "learningId": "learn-github-nervjs-taro",
+    "contentHash": "3f041b07ba2187c6e313c70933bbc5893c9e02f3062539aaf1cb78e7b50f868d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-YFAS",
+    "timestamp": "2026-10-23T08:39:42.580Z",
+    "repository": "milvus-io/bootcamp",
+    "learningId": "learn-github-milvus-io-bootcamp",
+    "contentHash": "404baa39d91372344a1e649d486a292035f31f578a333541537443c44e4254d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-1FYH",
+    "timestamp": "2026-10-23T08:42:03.401Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-4ML5",
+    "timestamp": "2026-10-23T08:44:31.961Z",
+    "repository": "ionic-team/ionic-framework",
+    "learningId": "learn-github-ionic-team-ionic-framework",
+    "contentHash": "17d76fe9ccb83f3c2dc138d9720bb2b52a4f5177edab21f4b55b7396e10129c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-4RH9",
+    "timestamp": "2026-10-23T08:44:38.301Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

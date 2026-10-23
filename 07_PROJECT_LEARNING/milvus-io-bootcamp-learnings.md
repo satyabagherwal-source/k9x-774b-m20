@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/bootcamp](https://github.com/milvus-io/bootcamp))  
-> **Source Version**: `14cefc46`  
+> **Source Version**: `b2be8cc8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:10:22.271Z  
+> **Timestamp**: 2026-10-23T08:39:42.358Z  
 > **Learning ID**: `learn-github-milvus-io-bootcamp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-bootcamp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/bootcamp](https://github.com/milvus-io/bootcamp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:10:21.899Z  
+> **Harvest Timestamp**: 2026-10-23T08:39:11.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -595,933 +595,115 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14cefc46` (2026-09-24)
-**Commit Message**: Fix Markdown rendering in Search with Jev notebooks (#1594)
-
-* Fix Markdown line breaks in Search with Jev notebooks
+### Incident Patch 1: `b2be8cc8` (2026-10-21)
+**Commit Message**: docs: remove outdated DSPy notebook and fix Dify authentication (#1596)
 
 Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
 
-* Clarify tutorial setup and terminal search status
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-* Focus Jev tutorials on workflows and observed results
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-**File**: `bootcamp/RAG/search_with_jev/README.md` (modified, +3/-3)
+**File**: `integration/dify_with_milvus.md` (modified, +2/-2)
 ```diff
-@@ -26,9 +26,9 @@ Start with [reranking search results](https://github.com/milvus-io/bootcamp/blob
+@@ -41,12 +41,12 @@ Edit the `.env` file with the following Milvus configuration:
+ ```
+ VECTOR_STORE=milvus
+ MILVUS_URI=http://host.docker.internal:19530
+-MILVUS_TOKEN=
++MILVUS_TOKEN=root:Milvus
+ ```
  
- [Milvus Model](https://github.com/milvus-io/milvus-model) provides an application-side `JevRerankFunction`: pass a query and candidate document texts, and receive scored results with their original indices, sorted by relevance. Use those indices to reorder the records returned by Milvus.
+ > **Note**: 
+ > - The `MILVUS_URI` uses `host.docker.internal:19530` which allows Docker containers to access Milvus running on the host machine through Docker's internal network.
+-> - `MILVUS_TOKEN` can be left empty for local Milvus deployments.
++> - Dify's Docker Compose configuration enables Milvus authentication by default. Set `MILVUS_TOKEN` to `username:password`; `root:Milvus` uses the initial credentials. If you have changed the credentials, replace this value accordingly.
  
--The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Check that your installed package includes this integration before importing it; a merged change does not establish availability in a published package.
-+The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Use a package version that includes this integration.
+ ### Start the Docker Containers
  
--The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The notebooks use that API directly and do not require the Milvus Model wrapper. Neither approach adds a Jev model to the Milvus server.
-+The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The tutorials demonstrate direct API calls from Python application code.
- 
- ## Run a notebook
- 
-@@ -58,4 +58,4 @@ Keep exact constraints such as tenant access and software versions in applicatio
- | [DeepSearcher](https://github.com/zilliztech/deep-searcher) | Iterative search over private knowledge | [Experiment runner](https://github.com/zilliztech/deep-searcher/blob/master/evaluation/jev_stopping/run_full100.py) · [Search-stopping evaluation](https://github.com/zilliztech/deep-searcher/blob/master/evaluation/jev_stopping/README.md) (standalone experiment) |
- | [GPTCache](https://github.com/zilliztech/GPTCache) | Reuse answers to compatible requests | [Jev implementation](https://github.com/zilliztech/GPTCache/blob/main/gptcache/similarity_evaluation/jev.py) · [Evaluation](https://github.com/zilliztech/GPTCache/blob/main/examples/benchmark/reuse_compatibility/README.md) |
- 
--These links lead to implementation code and task-specific evaluation records. DeepSearcher's link is a standalone stopping experiment, not a default search-agent feature. The studies use different datasets and evaluation methods; consult each report before comparing results.
-+These links lead to implementation code and task-specific evaluation records. DeepSearcher's link provides a standalone stopping experiment. The studies use different datasets and evaluation methods; consult each report before comparing results.
 ```
 
-**File**: `bootcamp/RAG/search_with_jev/check_search_guardrails.ipynb` (modified, +55/-12)
+**File**: `integration/milvus_and_DSPy.ipynb` (removed, +0/-491)
 ```diff
-@@ -5,7 +5,16 @@
-    "id": "e372c7d7-2ec4-4149-bccc-3dec59106019",
-    "metadata": {},
-    "source": [
--    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/check_search_guardrails.ipynb)[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/check_search_guardrails.ipynb)# Screen retrieved passages with JevFlag text that attempts to redirect an assistant rather than provide evidence. This is a supplemental signal: model screening does not replace application permissions or guarantee protection against prompt injection.## PreparationRun locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-+    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/check_search_guardrails.ipynb)\n",
-+    "[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/check_search_guardrails.ipynb)\n",
-+    "\n",
-+    "# Screen retrieved passages with Jev\n",
-+    "\n",
-+    "Flag text that attempts to redirect an assistant rather than provide evidence. This is a supplemental signal: model screening does not replace application permissions or guarantee protection against prompt injection.\n",
-+    "\n",
-+    "## Preparation\n",
-+    "\n",
-+    "Run locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-    ]
-   },
-   {
-@@ -31,7 +40,11 @@
-    "id": "832151d8-b228-4445-ac49-30ea63855370",
-    "metadata": {},
-    "source": [
--    "> In Colab, restart the runtime after installing dependencies if needed.Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop the tutorial rather than produce fabricated scores."
-+    "> In Colab, restart the runtime after installing dependencies if needed.\n",
-+    "\n",
-+    "Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey) and a TypeSafe key from the [TypeSafe console](https://console.typesafe.ai/). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.\n",
-+    "\n",
-+    "The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop execution with an error."
-    ]
-   },
-   {
-@@ -79,7 +92,9 @@
-    "id": "9330566a-2500-4f89-ba99-d86050c56498",
-    "metadata": {},
-    "source": [
--    "### Call JevThis helper sends independent questions in one request and validates the returned answers."
-+    "### Call Jev\n",
-+    "\n",
-+    "This helper sends independent questions in one request and validates the returned answers."
-    ]
-   },
-   {
-@@ -149,7 +164,9 @@
-    "id": "9cae493b-b8a4-444f-a012-bb554b5d3257",
-    "metadata": {},
-    "source": [
--    "## Prepare a small corpusAll names and records below are synthetic teaching examples."
-+    "## Prepare a small corpus\n",
-+    "\n",
-+    "All names and records below are synthetic teaching examples."
-    ]
-   },
-   {
-@@ -199,7 +216,15 @@
-    "id": "95c8ea2b-b18f-452d-be3c-e0a24266a8e5",
-    "metadata": {},
-    "source": [
--    "## Connect to MilvusFor `MilvusClient`:- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).- Set `MILVUS_URI` to a server endpoint such as `http://localhost:19530` for [Milvus on Docker or Kubernetes](https://milvus.io/docs/quickstart.md).- For [Zilliz Cloud](https://zilliz.com/cloud), set `MILVUS_URI` to the public endpoint and `MILVUS_TOKEN` to your API key.Each run uses its own collection name. Cleanup removes only that collection."
-+    "## Connect to Milvus\n",
-+    "\n",
-+    "For `MilvusClient`:\n",
-+    "\n",
-+    "- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).\n",
-+    "- Set `MILVUS_URI` to a server endpoint such a
-```
-
-**File**: `bootcamp/RAG/search_with_jev/curate_search_data.ipynb` (modified, +56/-13)
-```diff
-@@ -5,7 +5,16 @@
-    "id": "f47c2eda-b94e-4b97-8346-5c1c14913ced",
-    "metadata": {},
-    "source": [
--    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/curate_search_data.ipynb)[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/curate_search_data.ipynb)# Curate documents before indexing with JevJudge whether incoming documents contain substantive operational guidance. Use the accepted IDs to build a filtered Milvus index; review uncertain documents instead of silently publishing them.## PreparationRun locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-+    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/curate_search_data.ipynb)\n",
-+    "[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/curate_search_data.ipynb)\n",
-+    "\n",
-+    "# Curate documents before indexing with Jev\n",
-+    "\n",
-+    "Judge whether incoming documents contain substantive operational guidance. Use the accepted IDs to build a filtered Milvus index; review uncertain documents instead of silently publishing them.\n",
-+    "\n",
-+    "## Preparation\n",
-+    "\n",
-+    "Run locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-    ]
-   },
-   {
-@@ -31,7 +40,11 @@
-    "id": "ac468eaf-a52f-4bee-ae0d-c87d628365cb",
-    "metadata": {},
-    "source": [
--    "> In Colab, restart the runtime after installing dependencies if needed.Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop the tutorial rather than produce fabricated scores."
-+    "> In Colab, restart the runtime after installing dependencies if needed.\n",
-+    "\n",
-+    "Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey) and a TypeSafe key from the [TypeSafe console](https://console.typesafe.ai/). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.\n",
-+    "\n",
-+    "The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop execution with an error."
-    ]
-   },
-   {
-@@ -79,7 +92,9 @@
-    "id": "0da05cfc-8525-4e12-a539-775b644e9e80",
-    "metadata": {},
-    "source": [
--    "### Call JevThis helper sends independent questions in one request and validates the returned answers."
-+    "### Call Jev\n",
-+    "\n",
-+    "This helper sends independent questions in one request and validates the returned answers."
-    ]
-   },
-   {
-@@ -149,7 +164,9 @@
-    "id": "245d85ea-7808-4617-9268-b3cc18d7a312",
-    "metadata": {},
-    "source": [
--    "## Prepare a small corpusAll names and records below are synthetic teaching examples."
-+    "## Prepare a small corpus\n",
-+    "\n",
-+    "All names and records below are synthetic teaching examples."
-    ]
-   },
-   {
-@@ -217,7 +234,9 @@
-    "id": "e68ccd5b-02af-4921-aa93-a8e0905e0c10",
-    "metadata": {},
-    "source": [
--    "## Judge incoming documentsBuild a knowledge base for current technical procedures and troubleshooting fixes. Billing content is outside this particular scope; it is not inherently low quality. Obsolete procedures are unsuitable for current-version guidance but may belong in a historical archive. All seven incoming records are judged before embedding or indexing; there is no initial vector search. Scores are editorial aids and the thresholds are illustrative."
-+    "## Judge incoming documents\n",
-+    "\n",
-+    "Build a knowledge base for current technical procedures and troubleshooting fixes. Billing content is outside this particular scope; it is not inherently low quality. Obsolete procedures are unsuitable for current-version guidance but may belong in a historical archive. All seven 
-```
-
-**File**: `bootcamp/RAG/search_with_jev/decide_search_stopping.ipynb` (modified, +75/-18)
-```diff
-@@ -5,7 +5,16 @@
-    "id": "d90f02ce-8bf1-4b79-9b30-2978224b437c",
-    "metadata": {},
-    "source": [
--    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/decide_search_stopping.ipynb)[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/decide_search_stopping.ipynb)# Decide when to stop searching with JevBuild a bounded search loop: Gemini Flash generates each query from the question and evidence collected so far, Milvus retrieves passages, and Jev decides whether the evidence is sufficient. Gemini writes an answer only after the stop gate passes. Compare a direct question, a two-hop question, and a question the corpus cannot answer.## PreparationRun locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-+    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/decide_search_stopping.ipynb)\n",
-+    "[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/decide_search_stopping.ipynb)\n",
-+    "\n",
-+    "# Decide when to stop searching with Jev\n",
-+    "\n",
-+    "Build a bounded search loop: Gemini Flash generates each query from the question and evidence collected so far, Milvus retrieves passages, and Jev decides whether the evidence is sufficient. Gemini writes an answer only after the stop gate passes. Compare a direct question, a two-hop question, and a question the corpus cannot answer.\n",
-+    "\n",
-+    "## Preparation\n",
-+    "\n",
-+    "Run locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-    ]
-   },
-   {
-@@ -31,7 +40,11 @@
-    "id": "2310bb53-b550-4963-afef-ae01aeea1a5c",
-    "metadata": {},
-    "source": [
--    "> In Colab, restart the runtime after installing dependencies if needed.Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). Gemini receives synthetic documents and queries for embedding, and the question, search history and accumulated evidence for query/answer generation; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop the tutorial rather than produce fabricated scores."
-+    "> In Colab, restart the runtime after installing dependencies if needed.\n",
-+    "\n",
-+    "Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey) and a TypeSafe key from the [TypeSafe console](https://console.typesafe.ai/). Gemini receives synthetic documents and queries for embedding, and the question, search history and accumulated evidence for query/answer generation; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.\n",
-+    "\n",
-+    "The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop execution with an error."
-    ]
-   },
-   {
-@@ -79,7 +92,9 @@
-    "id": "8da53bb5-23e6-40a2-a681-3927a3ca7854",
-    "metadata": {},
-    "source": [
--    "### Call JevThis helper sends independent questions in one request and validates the returned answers."
-+    "### Call Jev\n",
-+    "\n",
-+    "This helper sends independent questions in one request and validates the returned answers."
-    ]
-   },
-   {
-@@ -149,7 +164,9 @@
-    "id": "ab91198b-ecfa-452a-bad6-fccae7d55ff4",
-    "metadata": {},
-    "source": [
--    "## Prepare a small corpusAll names and records below are synthetic teaching examples."
-+    "## Prepare a small corpus\n",
-+    "\n",
-+    "All names and records below are synthetic teaching examples."
-    ]
-   },
-   {
-@@ -181,7 +198,15 @@
-    "id": "7c1496de-c3ce-41df-a754-efdd2e5e4d30",
-    "metadata": {},
-    "source": [
--    "## Connect to MilvusFor `MilvusClient`:- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).- Set `MILVUS_URI` to a server endpoint such as `http://localhost:19530` for [Milvus on Docker or Kubernetes](https://milvus.io/docs/quickstart.md).- For [Zilliz 
-```
-
-**File**: `bootcamp/RAG/search_with_jev/evaluation_with_jev.ipynb` (modified, +62/-13)
-```diff
-@@ -5,7 +5,16 @@
-    "id": "010253d3-c133-4661-8594-88b818f14cc9",
-    "metadata": {},
-    "source": [
--    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/evaluation_with_jev.ipynb)[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/evaluation_with_jev.ipynb)# Evaluate search evidence with JevUse Jev as a judge after retrieval: assess passage relevance, evidence sufficiency and whether a proposed answer is supported. Compare a few judgments with hand-written labels to illustrate judge validation, not to claim benchmark quality.## PreparationRun locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-+    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/evaluation_with_jev.ipynb)\n",
-+    "[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/evaluation_with_jev.ipynb)\n",
-+    "\n",
-+    "# Evaluate search evidence with Jev\n",
-+    "\n",
-+    "Use Jev as a judge after retrieval: assess passage relevance, evidence sufficiency and whether a proposed answer is supported. Compare a few judgments with hand-written labels to illustrate judge validation, not to claim benchmark quality.\n",
-+    "\n",
-+    "## Preparation\n",
-+    "\n",
-+    "Run locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-    ]
-   },
-   {
-@@ -31,7 +40,11 @@
-    "id": "96d3940b-bbf3-42d2-a25c-deacc1ef9e36",
-    "metadata": {},
-    "source": [
--    "> In Colab, restart the runtime after installing dependencies if needed.Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop the tutorial rather than produce fabricated scores."
-+    "> In Colab, restart the runtime after installing dependencies if needed.\n",
-+    "\n",
-+    "Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey) and a TypeSafe key from the [TypeSafe console](https://console.typesafe.ai/). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.\n",
-+    "\n",
-+    "The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop execution with an error."
-    ]
-   },
-   {
-@@ -79,7 +92,9 @@
-    "id": "4759dd0b-5911-4e80-877f-0a44f93c997d",
-    "metadata": {},
-    "source": [
--    "### Call JevThis helper sends independent questions in one request and validates the returned answers."
-+    "### Call Jev\n",
-+    "\n",
-+    "This helper sends independent questions in one request and validates the returned answers."
-    ]
-   },
-   {
-@@ -149,7 +164,9 @@
-    "id": "47abfd19-896f-44e7-b877-b59fc59e2235",
-    "metadata": {},
-    "source": [
--    "## Prepare a small corpusAll names and records below are synthetic teaching examples."
-+    "## Prepare a small corpus\n",
-+    "\n",
-+    "All names and records below are synthetic teaching examples."
-    ]
-   },
-   {
-@@ -217,7 +234,15 @@
-    "id": "dc927fbd-94c1-49ff-9611-700ae469ece3",
-    "metadata": {},
-    "source": [
--    "## Connect to MilvusFor `MilvusClient`:- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).- Set `MILVUS_URI` to a server endpoint such as `http://localhost:19530` for [Milvus on Docker or Kubernetes](https://milvus.io/docs/quickstart.md).- For [Zilliz Cloud](https://zilliz.com/cloud), set `MILVUS_URI` to the public endpoint and `MILVUS_TOKEN` to your API key.Each run uses its own collection name. Cleanup removes only that collection."
-+    "## Connect to Milvus\n",
-+    "\n",
-+    "For `MilvusClient`:\n",
-+    "\n",
-+    "- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).\n",
-+    "- Set `MILVUS_URI`
-```
-
-**File**: `bootcamp/RAG/search_with_jev/filter_search_context.ipynb` (modified, +65/-14)
-```diff
-@@ -5,7 +5,16 @@
-    "id": "00564030-a5d7-478b-96ac-83833a18e92a",
-    "metadata": {},
-    "source": [
--    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/filter_search_context.ipynb)[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/filter_search_context.ipynb)# Filter retrieved context with JevKeep passages that provide evidence for the current question before building a generation prompt. No answer-generation call is needed to inspect the filtering step.## PreparationRun locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-+    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/filter_search_context.ipynb)\n",
-+    "[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/filter_search_context.ipynb)\n",
-+    "\n",
-+    "# Filter retrieved context with Jev\n",
-+    "\n",
-+    "Keep passages that provide evidence for the current question before building a generation prompt. \n",
-+    "\n",
-+    "## Preparation\n",
-+    "\n",
-+    "Run locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-    ]
-   },
-   {
-@@ -31,7 +40,11 @@
-    "id": "21ddfd8d-bc1a-44e0-b296-a16a1542834e",
-    "metadata": {},
-    "source": [
--    "> In Colab, restart the runtime after installing dependencies if needed.Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop the tutorial rather than produce fabricated scores."
-+    "> In Colab, restart the runtime after installing dependencies if needed.\n",
-+    "\n",
-+    "Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey) and a TypeSafe key from the [TypeSafe console](https://console.typesafe.ai/). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.\n",
-+    "\n",
-+    "The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop execution with an error."
-    ]
-   },
-   {
-@@ -79,7 +92,9 @@
-    "id": "98fb7518-c043-44cc-9820-9487df6e9cbe",
-    "metadata": {},
-    "source": [
--    "### Call JevThis helper sends independent questions in one request and validates the returned answers."
-+    "### Call Jev\n",
-+    "\n",
-+    "This helper sends independent questions in one request and validates the returned answers."
-    ]
-   },
-   {
-@@ -149,7 +164,9 @@
-    "id": "1cca19a8-610a-4b19-95da-fc7c3edd4b3b",
-    "metadata": {},
-    "source": [
--    "## Prepare a small corpusAll names and records below are synthetic teaching examples."
-+    "## Prepare a small corpus\n",
-+    "\n",
-+    "All names and records below are synthetic teaching examples."
-    ]
-   },
-   {
-@@ -217,7 +234,15 @@
-    "id": "9d0cef25-bdef-43be-a411-77b02d16fd5d",
-    "metadata": {},
-    "source": [
--    "## Connect to MilvusFor `MilvusClient`:- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).- Set `MILVUS_URI` to a server endpoint such as `http://localhost:19530` for [Milvus on Docker or Kubernetes](https://milvus.io/docs/quickstart.md).- For [Zilliz Cloud](https://zilliz.com/cloud), set `MILVUS_URI` to the public endpoint and `MILVUS_TOKEN` to your API key.Each run uses its own collection name. Cleanup removes only that collection."
-+    "## Connect to Milvus\n",
-+    "\n",
-+    "For `MilvusClient`:\n",
-+    "\n",
-+    "- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).\n",
-+    "- Set `MILVUS_URI` to a server endpoint such as `http://localhost:19530` for [Milvus on Docker or Kubernetes](https://milvus.io/docs/quickstart.md).\n",
-+    "- For [Zilliz Cloud](https://zilliz.com/cloud), set `MILVUS_URI` to
-```
-
-**File**: `bootcamp/RAG/search_with_jev/rerank_graph_relations.ipynb` (modified, +67/-14)
-```diff
-@@ -5,7 +5,16 @@
-    "id": "0a2ca38b-73d4-46f7-9757-a5754b66faea",
-    "metadata": {},
-    "source": [
--    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_graph_relations.ipynb)[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_graph_relations.ipynb)# Rerank graph relations with JevRetrieve relationship records from Milvus, score both direct evidence and useful bridge relations, and carry the relationship order into the source-document order.## PreparationRun locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-+    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_graph_relations.ipynb)\n",
-+    "[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_graph_relations.ipynb)\n",
-+    "\n",
-+    "# Rerank graph relations with Jev\n",
-+    "\n",
-+    "Retrieve relationship records from Milvus, score both direct evidence and useful bridge relations, and carry the relationship order into the source-document order.\n",
-+    "\n",
-+    "## Preparation\n",
-+    "\n",
-+    "Run locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-    ]
-   },
-   {
-@@ -31,7 +40,11 @@
-    "id": "a8ffad3f-918d-4f9c-bd21-6a0235c8b153",
-    "metadata": {},
-    "source": [
--    "> In Colab, restart the runtime after installing dependencies if needed.Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop the tutorial rather than produce fabricated scores."
-+    "> In Colab, restart the runtime after installing dependencies if needed.\n",
-+    "\n",
-+    "Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey) and a TypeSafe key from the [TypeSafe console](https://console.typesafe.ai/). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.\n",
-+    "\n",
-+    "The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop execution with an error."
-    ]
-   },
-   {
-@@ -79,7 +92,9 @@
-    "id": "f45f85bd-0b29-490d-afbf-c9b58508afc0",
-    "metadata": {},
-    "source": [
--    "### Call JevThis helper sends independent questions in one request and validates the returned answers."
-+    "### Call Jev\n",
-+    "\n",
-+    "This helper sends independent questions in one request and validates the returned answers."
-    ]
-   },
-   {
-@@ -149,7 +164,9 @@
-    "id": "bd94b4b8-dab2-4a56-93f2-9bad9799b227",
-    "metadata": {},
-    "source": [
--    "## Prepare a small corpusAll names and records below are synthetic teaching examples."
-+    "## Prepare a small corpus\n",
-+    "\n",
-+    "All names and records below are synthetic teaching examples."
-    ]
-   },
-   {
-@@ -186,7 +203,15 @@
-    "id": "23c57888-baef-4090-8850-af2b4147ce92",
-    "metadata": {},
-    "source": [
--    "## Connect to MilvusFor `MilvusClient`:- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).- Set `MILVUS_URI` to a server endpoint such as `http://localhost:19530` for [Milvus on Docker or Kubernetes](https://milvus.io/docs/quickstart.md).- For [Zilliz Cloud](https://zilliz.com/cloud), set `MILVUS_URI` to the public endpoint and `MILVUS_TOKEN` to your API key.Each run uses its own collection name. Cleanup removes only that collection."
-+    "## Connect to Milvus\n",
-+    "\n",
-+    "For `MilvusClient`:\n",
-+    "\n",
-+    "- Use a local file such as `./search_with_jev.db` for [Milvus Lite](https://milvus.io/docs/milvus_lite.md).\n",
-+    "- Set `MILVUS_URI` to a server endpoint such as `http://localhost:19530` for [Milvus on Docker or Kubernetes](https://milvus.io/docs/quickstart.md).\n",
-+    "- F
-```
-
-**File**: `bootcamp/RAG/search_with_jev/rerank_search_results.ipynb` (modified, +69/-14)
-```diff
-@@ -5,7 +5,16 @@
-    "id": "19882ba8-f6f5-46ee-bbe6-9ccd327d3b02",
-    "metadata": {},
-    "source": [
--    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_search_results.ipynb)[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_search_results.ipynb)# Rerank search results with JevA coding agent needs a past fix, but its memories contain several similar failures. Retrieve a shortlist with Milvus, then use Jev to prioritize evidence that answers the current question. Start with a small installation example to show business preferences, then compare retrieval and reranking on eight coding memories. This is a runnable teaching example, not a quality benchmark.## PreparationRun locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-+    "[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_search_results.ipynb)\n",
-+    "[![View on GitHub](https://img.shields.io/badge/View_on-GitHub-181717?logo=github)](https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/search_with_jev/rerank_search_results.ipynb)\n",
-+    "\n",
-+    "# Rerank search results with Jev\n",
-+    "\n",
-+    "A coding agent needs a past fix, but its memories contain several similar failures. Retrieve a shortlist with Milvus, then use Jev to prioritize evidence that answers the current question. Start with a small installation example to show business preferences, then compare retrieval and reranking on eight coding memories. This is a runnable teaching example, not a quality benchmark.\n",
-+    "\n",
-+    "## Preparation\n",
-+    "\n",
-+    "Run locally from this directory with `uv sync --python 3.12` and `uv run jupyter lab`, or install the notebook dependencies in Colab:"
-    ]
-   },
-   {
-@@ -31,7 +40,11 @@
-    "id": "c0a8dcba-b66a-4ac8-965f-9682b3ef86d4",
-    "metadata": {},
-    "source": [
--    "> In Colab, restart the runtime after installing dependencies if needed.Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop the tutorial rather than produce fabricated scores."
-+    "> In Colab, restart the runtime after installing dependencies if needed.\n",
-+    "\n",
-+    "Set `GEMINI_API_KEY` and `TYPESAFE_API_KEY` in your environment or enter them privately below. A `GOOGLE_API_KEY` is also accepted for Gemini. Obtain a Gemini key from [Google AI Studio](https://aistudio.google.com/apikey) and a TypeSafe key from the [TypeSafe console](https://console.typesafe.ai/). Gemini embeds the synthetic documents and queries; TypeSafe receives the sample evidence and judgment questions. Both services require API access and may consume credits.\n",
-+    "\n",
-+    "The helper batches independent questions into one request. IDs map responses back to code; the instructions explicitly identify each field being judged. HTTP failures stop execution with an error."
-    ]
-   },
-   {
-@@ -79,7 +92,9 @@
-    "id": "e6112d39-9346-485a-8e85-586b6f71d8ed",
-    "metadata": {},
-    "source": [
--    "### Call JevThis helper sends independent questions in one request and validates the returned answers."
-+    "### Call Jev\n",
-+    "\n",
-+    "This helper sends independent questions in one request and validates the returned answers."
-    ]
-   },
-   {
-@@ -149,7 +164,9 @@
-    "id": "f3a8e8b5-4547-443f-9ff5-ad1eae3eb9a9",
-    "metadata": {},
-    "source": [
--    "## Prepare a small corpusAll records are short synthetic teaching examples. The installation documents mix audiences and versions. The eight Markdown-style memories describe several database incidents, including an unresolved investigation, an effective fix, and its verification. Keeping the corpus small makes every ranking decision inspectable."
-+    "## Prepare a small corpus\n",
-+    "\n",
-+    "All records are short synthetic teaching examples. The installation documents mix audiences and versions. The eight Markdown-style memories describe several database incidents, including an unresolved investigation, an effective fix, and its verification. Keeping the corpus small makes every ranking decision inspectable."
-    ]
-   },
-   {
-@@ -198,7 +215,15 @
-```
-
----
-
-### Incident Patch 2: `7b186cb0` (2026-09-08)
-**Commit Message**: Add EverOS integration guide for Milvus (#1591)
-
-* Add EverOS integration guide for Milvus
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-* Refresh EverOS provider configuration
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-* Polish EverOS guide introduction and conclusion
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-**File**: `integration/everos_with_milvus.md` (added, +595/-0)
-```diff
-@@ -0,0 +1,595 @@
-+# Build Long-Term Agent Memory with EverOS and Milvus
-+
-+[EverOS](https://github.com/EverMind-AI/EverOS) is a Markdown-first memory system for AI agents. It extracts durable memories from conversations, keeps Markdown as the source of truth, and builds a searchable derived index.
-+
-+In this tutorial, we will build a project assistant that remembers release decisions across separate conversations. We will add conversations about the Project Atlas launch alongside unrelated conversations about other projects. EverOS will use an LLM to extract the memories, while [Milvus](https://milvus.io/) stores the BM25 and vector indexes used for hybrid search.
-+
-+```text
-+Conversations
-+      |
-+      v
-+EverOS + LLM ------> Markdown memory files
-+      |
-+      | embedding model
-+      v
-+Milvus ------> BM25 + vector hybrid search
-+```
-+
-+The LLM and embedding model have different responsibilities. The LLM turns a conversation into structured memories. The embedding model converts those memories and later search queries into vectors. The basic hybrid search in this tutorial does not require a reranking model.
-+
-+## Prerequisites
-+
-+You need:
-+
-+- Python 3.12 or later
-+- [`uv`](https://docs.astral.sh/uv/)
-+- A running [Milvus Server](https://milvus.io/docs/install-overview.md)
-+- An [OpenAI API key](https://platform.openai.com/api-keys)
-+
-+This tutorial connects to Milvus Server at `http://localhost:19530`. EverOS also supports [Zilliz Cloud](https://zilliz.com/cloud) through the same URI and token settings. Its Milvus backend expects a remote endpoint and does not accept a Milvus Lite file path.
-+
-+## Install EverOS
-+
-+Create a local project and install EverOS with its optional Milvus dependencies:
-+
-+```shell
-+mkdir everos-milvus-demo
-+cd everos-milvus-demo
-+
-+uv init --bare --python 3.12
-+uv add "everos[milvus]"
-+```
-+
-+The command intentionally does not pin a version, so a new installation resolves the latest compatible EverOS release.
-+
-+Initialize a separate memory root for the tutorial:
-+
-+```shell
-+export EVEROS_ROOT="$PWD/everos-data"
-+uv run everos init --root "$EVEROS_ROOT"
-+```
-+
-+EverOS creates `everos.toml` and `ome.toml` under this directory. It will also write the extracted memories here.
-+
-+## Configure OpenAI and Milvus
-+
-+Set the OpenAI API key and configure EverOS through environment variables:
-+
-+```shell
-+export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
-+export MILVUS_URI="http://localhost:19530"
-+
-+export EVEROS_INDEX__BACKEND="milvus"
-+export EVEROS_MILVUS__URI="$MILVUS_URI"
-+export EVEROS_MILVUS__COLLECTION_PREFIX="everos_bootcamp"
-+
-+export EVEROS_LLM__MODEL="gpt-5.4-mini"
-+export EVEROS_LLM__API_KEY="$OPENAI_API_KEY"
-+export EVEROS_LLM__BASE_URL="https://api.openai.com/v1"
-+
-+export EVEROS_EMBEDDING__MODEL="text-embedding-3-small"
-+export EVEROS_EMBEDDING__API_KEY="$OPENAI_API_KEY"
-+export EVEROS_EMBEDDING__BASE_URL="https://api.openai.com/v1"
-+export EVEROS_EMBEDDING__DIMENSIONS="1024"
-+
-+export EVEROS_MEMORIZE__MODE="chat"
-+```
-+
-+EverOS uses OpenAI for both memory extraction and embeddings. `text-embedding-3-small` returns `1536` dimensions by default, but EverOS forwards the configured `dimensions` value to OpenAI. This tutorial requests `1024` dimensions to match the Milvus schemas managed by EverOS.
-+
-+The `chat` memory mode keeps this example focused on user memories. EverOS manages the Milvus collections and their schemas, so you do not need to create them yourself.
-+
-+## Start EverOS
-+
-+Start the EverOS HTTP server:
-+
-+```shell
-+uv run everos server start --root "$EVEROS_ROOT"
-+```
-+
-+Keep this terminal open. EverOS connects to Milvus and creates seven derived-index collections with the configured prefix during startup.
-+
-+Open another terminal in the same project directory and check the service:
-+
-+```shell
-+curl http://127.0.0.1:8000/health
-+```
-+
-+Reference output:
-+
-+```json
-+{
-+  "status": "ok",
-+  "version": "1.3.0",
-+  "capabilities": {
-+    "llm": true,
-+    "embed": true,
-+    "rerank": false,
-+    "multimodal_llm": false,
-+    "parser": true
-+  },
-+  "cascade": {
-+    "healthy": true,
-+    "pending": 0
-+  }
-+}
-+```
-+
-+The response contains additional health fields. The important values for this tutorial are `status: "ok"`, `llm: true`, `embed: true`, and `cascade.healthy: true`.
-+
-+## Add project conversations
-+
-+The following Python program sends ten independent conversations to EverOS. Atlas has separate launch and rollback discussions. Eight conversations about other projects provide distractors so that the later search has to identify the correct project memories.
-+
-+Save the following code as `add_memories.py`:
-+
-+```python
-+import json
-+import time
-+from urllib.request import Request, urlopen
-+
-+
-+API_URL = "http://127.0.0.1:8000/api/v2/memory"
-+NOW = int(time.time() * 1000)
-+
-+conversations = [
-+    (
-+        "atlas-release",
-+        [
-+            {
-+                "sender_id": "maya",
-+                "sender_name": "Maya",
-+                "role": "
-```
-
----
-
-### Incident Patch 3: `075884f2` (2026-08-31)
-**Commit Message**: Replace MemPalace notebook with a CLI-based Milvus guide (#1590)
-
-* Replace MemPalace notebook with CLI guide
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-* Add reference outputs to MemPalace guide
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-* Refine MemPalace guide details
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
-
-**File**: `integration/mempalace_with_milvus.ipynb` (removed, +0/-617)
-```diff
-@@ -1,617 +0,0 @@
+@@ -1,491 +0,0 @@
 -{
 - "cells": [
 -  {
--   "cell_type": "markdown",
--   "id": "fdf9a28f-c72c-4680-b348-2ee33ed1127a",
 -   "metadata": {},
+-   "cell_type": "markdown",
 -   "source": [
--    "<a href=\"https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/integration/mempalace_with_milvus.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>   <a href=\"https://github.com/milvus-io/bootcamp/blob/master/integration/mempalace_with_milvus.ipynb\" target=\"_blank\">\n",
+-    "<a href=\"https://colab.research.google.com/github/milvus-io/bootcamp/blob/master/integration/milvus_and_DSPy.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>   <a href=\"https://github.com/milvus-io/bootcamp/blob/master/integration/milvus_and_DSPy.ipynb\" target=\"_blank\">\n",
 -    "    <img src=\"https://img.shields.io/badge/View%20on%20GitHub-555555?style=flat&logo=github&logoColor=white\" alt=\"GitHub Repository\"/>\n",
--    "</a>\n",
--    "\n",
--    "# MemPalace with Milvus\n",
--    "\n",
--    "[MemPalace](https://github.com/MemPalace/mempalace) is a memory layer for coding agents and long-running development workflows. It can mine and search project memories, conversation notes, and other \"drawers\" that help an agent keep useful context across sessions.\n",
--    "\n",
--    "In this tutorial, we will configure MemPalace to use [Milvus](https://milvus.io/) as its storage backend. The notebook uses Milvus Lite by default, so it can run locally or in Google Colab without a separate Milvus server. The same MemPalace configuration can also point to Milvus server or Zilliz Cloud for shared or production deployments.\n",
--    "\n",
--    "## Prerequisites\n",
--    "\n",
--    "Install MemPalace with its optional Milvus dependencies from PyPI.\n"
--   ]
--  },
--  {
--   "cell_type": "code",
--   "execution_count": 1,
--   "id": "4e100df7-4388-47be-8f57-031063a4b240",
--   "metadata": {
--    "execution": {
--     "iopub.execute_input": "2026-07-23T08:43:02.669594Z",
--     "iopub.status.busy": "2026-07-23T08:43:02.669186Z",
--     "iopub.status.idle": "2026-07-23T08:43:04.005846Z",
--     "shell.execute_reply": "2026-07-23T08:43:04.003242Z"
--    }
--   },
--   "outputs": [],
--   "source": [
--    "%%capture\n",
--    "! pip install --upgrade \"mempalace[milvus]==3.6.0\""
--   ]
--  },
--  {
--   "cell_type": "markdown",
--   "id": "aaf1bae6-5026-4844-9a67-483fb8eaf64e",
--   "metadata": {},
--   "source": [
--    "\n",
--    "> If you are using Google Colab, to enable dependencies just installed, you may need to **restart the runtime** (click on the \"Runtime\" menu at the top of the screen, and select \"Restart session\" from the dropdown menu).\n",
--    "\n",
--    "This tutorial uses MemPalace's local embedding model, so you do not need an external model API key. The first run may download a small ONNX embedding model.\n",
--    "\n",
--    "## Configure MemPalace to use Milvus\n",
--    "\n",
--    "MemPalace can work with a real project directory through its CLI, but a notebook is easier to run when it creates a temporary palace directory and inserts a small set of example memories. We set the backend to `milvus`, force CPU embeddings, and keep the demo inside a temporary folder.\n"
--   ]
--  },
--  {
--   "cell_type": "code",
--   "execution_count": 2,
--   "id": "8b3840b2-b54b-48ae-909a-af5996240cd6",
--   "metadata": {
--    "execution": {
--     "iopub.execute_input": "2026-07-23T08:43:04.011377Z",
--     "iopub.status.busy": "2026-07-23T08:43:04.010943Z",
--     "iopub.status.idle": "2026-07-23T08:43:04.025606Z",
--     "shell.execute_reply": "2026-07-23T08:43:04.023885Z"
--    }
--   },
--   "outputs": [
--    {
--     "name": "stdout",
--     "output_type": "stream",
--     "text": [
--      "Palace directory: /tmp/mempalace_milvus_demo_k5scv8e9/palace\n"
--     ]
--    }
+-    "</a>"
 -   ],
--   "source": [
--    "import os\n",
--    "import tempfile\n",
--    "from pathlib import Path\n",
--    "\n",
--    "os.environ[\"MEMPALACE_BACKEND\"] = \"milvus\"\n",
--    "os.environ[\"MEMPALACE_EMBEDDING_MODEL\"] = \"minilm\"\n",
--    "os.environ[\"MEMPALACE_EMBEDDING_DEVICE\"] = \"cpu\"\n",
--    "os.environ[\"MEMPALACE_EMBEDDING_THREADS\"] = \"2\"\n",
--    "\n",
--    "work_dir = Path(tempfile.mkdtemp(prefix=\"mempalace_milvus_demo_\"))\n",
--    "palace_dir = work_dir / \"palace\"\n",
--    "palace_dir.mkdir(parents=True, exist_ok=True)\n",
--    "\n",
--    "print(f\"Palace directory: {palace_dir}\")"
--   ]
+-   "id": "cc9c54a108f3efae"
 -  },
 -  {
 -   "cell_type": "markdown",
--   "id": "f6b6e7b3-edf1-4e0b-878a-facb34e9126e",
--   "metadata": {},
 -   "source": [
+-    "# DSPy"
+-   ],
+-   "metadata": {
+-    "collapsed": false
+-   },
+-   "id": "bc01e334dd3737d7"
+-  },
+-  {
+-   "cell_type": "markdown",
+-   "source": [
+-    "## What is DSPy\n",
+-    "DSPy, introduced by the Stanford NLP Group, stands as a groundbreaking programmatic framework designed to optimize prompts and weights within language models, particularly valuable in scenarios where large language models (LLMs) are integrated across multiple stages of a pipeline. Unlike conventional prompting engineering techniques reliant on manual crafting and tweaking, DSPy adopts a learning-based approach. By assimilating query-answer examples, DSPy generates optimized prompts dynamically, tailored to specific tasks. This innovative methodology enables the seamless reassembly of entire pipelines, eliminating the need for continuous manual prompt adjustments. DSPy's Pythonic syntax offers various composable and declarative modules, simplifying the instruction of LLMs. "
+-   ],
+-   "metadata": {
+-    "collapsed": false
+-   },
+-   "id": "e4b458b822516ee1"
+-  },
+-  {
+-   "cell_type": "markdown",
+-   "source": [
+-    "## Benefits of using DSPy\n",
+-    "- Programming Approach: DSPy provides a systematic programming approach for LM pipeline development by abstracting pipelines as text transformation graphs instead of just prompting the LLMs. Its declarative modules enable structured design and optimization, replacing the trial-and-error method of traditional prompt templates.\n",
+-    "- Performance Improvement: DSPy demonstrates significant performance gains over existing methods. Through case studies, it outperforms standard prompting and expert-created demonstrations, showcasing its versatility and effectiveness even when compiled to smaller LM models.\n",
+-    "-  Modularized Abstraction: DSPy effectively abstracts intricate aspects of LM pipeline development, such as decomposition, fine-tuning, and model selection. With DSPy, a concise program can seamlessly translate into instructions for various models, such as GPT-4, Llama2-13b, or T5-base, streamlining development and enhancing performance."
+-   ],
+-   "metadata": {
+-    "collapsed": false
+-   },
+-   "id": "ae494766be2e5081"
+-  },
+-  {
+-   "cell_type": "markdown",
+-   "source": [
+-    "## Modules\n",
+-    "There are numerous components that contribute to constructing an LLM pipeline. Here, we'll describe some key components to provide a high-level understanding of how DSPy operates.\n",
 -    "\n",
--    "When no remote Milvus URI is configured, the MemPalace Milvus backend creates a local Milvus Lite database at `<palace>/milvus.db`.\n",
+-    "<img src=\"../pics/DSPy_milvus.png\" alt=\"DSPy Milvus\" width=\"700\">\n",
 -    "\n",
--    "> As for the argument of `MilvusClient` used by the backend:\n",
--    "> - Setting the `uri` as a local file, e.g. `./milvus.db`, is the most convenient method, as it automatically utilizes [Milvus Lite](https://milvus.io/docs/milvus_lite.md) to store all data in this file.\n",
--    "> - If you have large scale of data, you can set up a more performant Milvus server on [Docker or Kubernetes](https://milvus.io/docs/quickstart.md). In this setup, please use the server uri, e.g. `http://localhost:19530`, as your `uri`.\n",
--    "> - If you 
-```
-
-**File**: `integration/mempalace_with_milvus.md` (added, +340/-0)
-```diff
-@@ -0,0 +1,340 @@
-+# MemPalace with Milvus
-+
-+[MemPalace](https://github.com/MemPalace/mempalace) is a memory layer for coding agents and long-running development workflows. It organizes project knowledge into wings, rooms, and drawers, then makes the original content searchable across sessions.
-+
-+In this tutorial, we will use the MemPalace CLI to mine a real subset of the public [Milvus documentation](https://github.com/milvus-io/milvus-docs) and store it in [Milvus](https://milvus.io/). The corpus contains documentation about analyzers, tokenizers, and token filters. These closely related pages provide enough distractors to make the retrieval examples meaningful.
-+
-+The example uses Milvus Lite, so it runs locally without Docker or a separate database server. The same MemPalace configuration can also point to Milvus server or Zilliz Cloud for shared deployments.
-+
-+## Prerequisites
-+
-+Install MemPalace with its optional Milvus dependencies from PyPI. The command intentionally does not pin a version, so a new installation resolves the latest available release.
-+
-+```shell
-+uv tool install "mempalace[milvus]"
-+```
-+
-+You also need Git to download the documentation corpus.
-+
-+This tutorial uses MemPalace's local MiniLM embedding model, so it does not require an external model API key. The first mining or search command may download a small ONNX embedding model.
-+
-+## Configure the workspace
-+
-+Create a workspace with separate directories for the documentation and the palace:
-+
-+```shell
-+mkdir -p mempalace-milvus-demo
-+cd mempalace-milvus-demo
-+
-+export PALACE_DIR="$PWD/palace"
-+export DOCS_REPO="$PWD/milvus-docs"
-+export PROJECT_DIR="$PWD/milvus-analyzer-docs"
-+export MEMPALACE_EMBEDDING_MODEL="minilm"
-+export MEMPALACE_EMBEDDING_DEVICE="cpu"
-+export MEMPALACE_EMBEDDING_THREADS="2"
-+```
-+
-+We pass `--backend milvus` to the MemPalace commands below. Because no remote Milvus URI is configured, MemPalace creates a local Milvus Lite database at `$PALACE_DIR/milvus.db`.
-+
-+> As for the argument of `MilvusClient` used by the backend:
-+>
-+> - Setting the `uri` to a local path, such as `./milvus.db`, is the most convenient option. It automatically uses [Milvus Lite](https://milvus.io/docs/milvus_lite.md) to store data locally.
-+> - For a larger deployment, you can use a [Milvus server](https://milvus.io/docs/quickstart.md) and set the URI to its endpoint, such as `http://localhost:19530`.
-+> - To use [Zilliz Cloud](https://zilliz.com/cloud), set the URI and token to the cluster's [Public Endpoint and API key](https://docs.zilliz.com/docs/on-zilliz-cloud-console#free-cluster-details).
-+
-+## Download the Milvus documentation corpus
-+
-+The Milvus documentation repository is much larger than this example needs. Use Git sparse checkout to download only the Analyzer documentation directory from the `v3.0.x` branch:
-+
-+```shell
-+git clone \
-+  --depth 1 \
-+  --filter=blob:none \
-+  --sparse \
-+  --branch v3.0.x \
-+  https://github.com/milvus-io/milvus-docs.git \
-+  "$DOCS_REPO"
-+
-+git -C "$DOCS_REPO" sparse-checkout set \
-+  site/en/userGuide/schema/analyzer
-+
-+cp -R \
-+  "$DOCS_REPO/site/en/userGuide/schema/analyzer" \
-+  "$PROJECT_DIR"
-+```
-+
-+At the time of writing, this directory contains 31 Markdown pages. They include general Analyzer guides and three groups of closely related pages:
-+
-+```text
-+milvus-analyzer-docs/
-+├── analyzer/       # Built-in language analyzers
-+├── filter/         # Token filters
-+├── tokenizer/      # Tokenizers
-+└── *.md            # Analyzer overviews and selection guides
-+```
-+
-+Confirm the number of source pages:
-+
-+```shell
-+find "$PROJECT_DIR" -type f -name "*.md" | wc -l
-+```
-+
-+Reference output:
-+
-+```text
-+31
-+```
-+
-+The exact count may change as the Milvus documentation branch is updated.
-+
-+## Define the MemPalace rooms
-+
-+MemPalace can detect rooms during `mempalace init`, but its initialization flow also performs project-wide heuristic entity classification and writes the accepted results to an entity registry. That classification step is not needed to define this documentation corpus, so we provide the small taxonomy directly. During mining, MemPalace may still attach deterministic heuristic entity metadata and build internal hallway links; those associations do not decide which room receives a file or change the room-scoped searches below.
-+
-+Create `$PROJECT_DIR/mempalace.yaml` with the following content:
-+
-+```yaml
-+wing: milvus_analyzer_docs
-+rooms:
-+  - name: analyzer
-+    description: Built-in language analyzers and analyzer selection guides
-+    keywords:
-+      - analyzer
-+  - name: filter
-+    description: Token filters used in analyzer pipelines
-+    keywords:
-+      - filter
-+  - name: tokenizer
-+    description: Tokenizers and language identification
-+    keywords:
-+      - tokenizer
-+  - name: general
-+    description: Analyzer documentation that does not fit another room
-+    keywords: []
-+```
-+
-+The wing represents the whole documentation corpus. A room represen
+-    "Signature: Signatures in DSPy serve as declarative specifications, outlining the input/output behavior of modules, guiding the language model in task execution.\n",
+-    "Module: DSPy modules serve as fundamental components for programs leveraging language models (LMs). They abstract various prompting techniques, such as chain of thought or ReAct, and are adaptable to handle any DSPy Signature. With learnable parameters and the ability to process inputs and produce outputs, these modules can be combined to form larger programs, drawing inspiration from NN modules in PyTorch but tailored for LM applications.\n",
+-    "Optimizer: Optimizers in DSPy fine-tune the parameters of DSPy programs, such as prompts and LLM weights, to maximize specified metrics like accuracy, enhancing program efficiency."
+-   ],
+-   "metadata": {
+-    "collapsed": false
+-   },
+-   "id": "14291bf6c82872a5"
+-  },
+-  {
+-   "cell_type": "markdown",
+-   "source": [
+-    "## Why Milvus in DSPy\n",
+-    "DSPy is a powerful programming framework that boosts RAG applications. Such application needs to retrieve useful information to enhance answer quality, which needs vector database. Milvus is a well-known open-source vector database to improve performance and scalability. With MilvusRM, a retriever module in DSPy, integrating Milvus becomes seamless. Now, developers can easily define and optimize RAG programs using DSPy, taking advantage of Milvus' strong vector search capabilities. This collaboration makes RAG applications more efficient and scalable, combining DSPy's programming capabilities with Milvus' search features."
+-   ],
+-   "metadata": {
+-    "collapsed": false
+-   },
+-   "id": "cf1b6e2753f1684
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1596** (2026-10-21): docs: remove outdated DSPy notebook and fix Dify authentication (@zc277584121)
+- **PR #1595** (2026-10-21): Update Haystack notebooks for milvus-haystack 0.1.0 (@zc277584121)
 - **PR #1594** (2026-09-24): Fix Markdown rendering in Search with Jev notebooks (@zc277584121)
 - **PR #1593** (2026-09-23): Improve Search with Jev tutorials with realistic workflows and visible decisions (@zc277584121)
 - **PR #1592** (2026-09-22): Add Jev and Milvus search cookbook (@zc277584121)
 - **PR #1591** (2026-09-08): Add EverOS integration guide for Milvus (@zc277584121)
-- **PR #1590** (2026-08-31): Replace MemPalace notebook with a CLI-based Milvus guide (@zc277584121)
-- **PR #1589** (2026-08-24): Update Basic Memory Milvus installation (@zc277584121)
 
 ---
 
@@ -1541,32 +723,30 @@ Signed-off-by: Cheney Zhang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Markdown rendering in Search with Jev notebooks (#1594)
+## X. docs: remove outdated DSPy notebook and fix Dify authentication (#1596)
 
 **RULE**:
-When implementing operations in `bootcamp/RAG/search_with_jev/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/bootcamp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration/dify_with_milvus.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/bootcamp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14cefc46`: Markdown rendering in Search with Jev notebooks (#1594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2be8cc8`: docs: remove outdated DSPy notebook and fix Dify authentication (#1596). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `bootcamp/RAG/search_with_jev/README.md`.
+Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/dify_with_milvus.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```jupyter notebook
 // Verified production-grade fix pattern:
-The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Use a package version that includes this integration.
-The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The tutorials demonstrate direct API calls from Python application code.
-These links lead to implementation code and task-specific evaluation records. DeepSearcher's link provides a standalone stopping experiment. The studies use different datasets and evaluation methods; consult each report before comparing results.
+MILVUS_TOKEN=root:Milvus
+> - Dify's Docker Compose configuration enables Milvus authentication by default. Set `MILVUS_TOKEN` to `username:password`; `root:Milvus` uses the initial credentials. If you have changed the credentials, replace this value accordingly.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```jupyter notebook
 // Anti-pattern to NEVER write (induced failure mode):
-The [Jev integration](https://github.com/milvus-io/milvus-model/pull/90) has been merged. See the [implementation and constructor options](https://github.com/milvus-io/milvus-model/blob/main/src/pymilvus/model/reranker/jev.py) for the current API. It accepts `TYPESAFE_API_KEY` and defaults to `jev-latest`. Check that your installed package includes this integration before importing it; a merged change does not establish availability in a published package.
-The current wrapper uses a claim-and-evidence relevance prompt. Check that this criterion fits your task. For custom judgments such as memory compatibility, stopping or routing, follow the linked tutorials using the TypeSafe API directly. The notebooks use that API directly and do not require the Milvus Model wrapper. Neither approach adds a Jev model to the Milvus server.
-These links lead to implementation code and task-specific evaluation records. DeepSearcher's link is a standalone stopping experiment, not a default search-agent feature. The studies use different datasets and evaluation methods; consult each report before comparing results.
+MILVUS_TOKEN=
+> - `MILVUS_TOKEN` can be left empty for local Milvus deployments.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14cefc46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2be8cc8` are properly handled with clean fallback behavior.

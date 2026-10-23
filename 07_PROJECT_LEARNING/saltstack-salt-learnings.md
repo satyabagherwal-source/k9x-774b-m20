@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `44528283`  
+> **Source Version**: `03d8a981`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T05:21:53.950Z  
+> **Timestamp**: 2026-10-23T08:39:33.069Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T05:21:53.820Z  
+> **Harvest Timestamp**: 2026-10-23T08:39:07.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15720 stars
+- **Stars / Engagement**: 15721 stars
 
 ---
 
@@ -1955,13 +1955,15 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #70361** (2026-10-07): **[Bug]: win_pki cannot import root CA certificate without DNS names.**
-  *Symptoms*: ### What happened?  Trying to import a Root CA certificate into a Windows machine:  ``` ----------           ID: install_root_ca     Function: win_pki.import_cert         Name: salt://cacert/root_ca.crt       Result: False      Comment: An exception occurred in this state: Traceback (most recent call last):                 File "C:\Program Files\Salt Project\Salt\Lib\site-packages\salt\state.py", line 2485, in call                   ret = self.states[cdata["full"]](                       *cdata["args"], **cdata["kwargs"]                   )                 File "C:\Program Files\Salt Project\Salt\Lib\site-packages\salt\loader\lazy.py", line 177, in __call__                   ret = self.loader.run(run_func, *args, **kwargs)                 File "C:\Program Files\Salt Project\Salt\Lib\site-packages\salt\loader\lazy.py", line 1490, in run                   return self._last_context.run(self._run_as, _func_or_method, *args, **kwargs)                          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                 File "C:\Program Files\Salt Project\Salt\Lib\site-packages\salt\loader\lazy.py", line 1505, in _run_as                   ret = _func_or_method(*args, **kwargs)                 File "C:\Program Files\Salt Project\Salt\Lib\site-packages\salt\loader\lazy.py", line 1541, in wrapper                   return f(*args, **kwargs)                 File "C:\Program Files\Salt Project\Salt\Lib\site-packages\salt\states\win_pki.py", line 89, in import_ce
+- **Issue #70456** (2026-10-23): **[Bug]: 47818**
+  *Symptoms*: ### What happened?  47818  ### Type of salt install  Official deb  ### Major version  3006.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  debian-11  ### salt --versions-report output  ```shell 3006.x ```
   **Post-Mortem & Fix Analysis**:
-  > Nevermind. Cert seems to have no CN.
+  > Closing as part of a backlog cleanup — this issue was filed without a Salt versions-report, so there's no explicit version attached to compare against.  **If you (or anyone else) can still reproduce this on 3008.3 or later, please comment with:**  - A fresh reproduction - The output of `salt --versions-report`  and the issue will be reopened. The original reporter can also reopen directly.
 
-- **Issue #70300** (2026-09-30): **[Bug]: file.serialize dataset_pillar corrupts files**
-  *Symptoms*: ### What happened?  On 3008.2, files created with [file.serialize](https://docs.saltproject.io/en/3008/ref/states/all/salt.states.file.html#salt.states.file.serialize) using `dataset_pillar` contain asterisks instead of actual values. Works as expected on 3006.x.  To reproduce, create a pillar dict containing string values. ``` test:   config:     foo: bar ```  Then create a test file using `file.serialize`. ``` /tmp/testconf:   file.serialize:     - dataset_pillar: test:config     - formatter: yaml ```  The test file contains `foo: '**********'` instead of `foo: 'bar'` as expected. Replacing  `dataset_pillar` with `dataset` + `pillar.get` works around the bug. ```     - dataset: {{ salt['pillar.get']('test:config') }} ```  Please fix `dataset_pillar` so that values are unmasked in files created by file.serialize. Thank you!  ### Type of salt install  Official rpm  ### Major version  3008.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  rhel-10  ### salt --versions-report output  ```shell Salt Version:           Salt: 3008.2   Python Version:         Python: 3.14.6 (main, Jun 11 2026, 02:19:05) [GCC 11.2.0]   Dependency Versions:           cffi: 2.0.0       cherrypy: 18.10.0   cryptography: 48.0.0       dateutil: 2.9.0.post0      docker-py: Not Installed          gitdb: 4.0.12      gitpython: 3.1.50         Jinja2: 3.1.6        libgit2: Not Installed   looseversion: 1.3
+- **Issue #70455** (2026-10-23): **[Bug]: 47816**
+  *Symptoms*: ### What happened?  47816  ### Type of salt install  Official deb  ### Major version  3006.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  debian-11  ### salt --versions-report output  ```shell 3006.x ```
+  **Post-Mortem & Fix Analysis**:
+  > Closing as part of a backlog cleanup — this issue was filed without a Salt versions-report, so there's no explicit version attached to compare against.  **If you (or anyone else) can still reproduce this on 3008.3 or later, please comment with:**  - A fresh reproduction - The output of `salt --versions-report`  and the issue will be reopened. The original reporter can also reopen directly.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1978,40 +1980,225 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44528283` (2026-10-21)
-**Commit Message**: Point the etcd_cache docs at the etcd v3 cache (#70351)
+### Incident Patch 1: `6e7e758c` (2026-10-21)
+**Commit Message**: Potassium cleanup: fix lint + docs — drop unused ssh/wrapper imports, remove deleted-module doc stubs
 
-The etcd_cache docstring still said salt has no etcd v3 cache support,
-but salt.cache.etcd3_cache now provides it. Say that this module uses
-the etcd v2 API, point to etcd3_cache for v3, and note that etcd 3.4
-disabled the v2 API by default and etcd 3.6 removed the option to
-enable it.
-
-**File**: `salt/cache/etcd_cache.py` (modified, +4/-3)
+**File**: `doc/ref/internals/aggregation.rst` (modified, +0/-1)
 ```diff
-@@ -19,9 +19,10 @@
+@@ -4,4 +4,3 @@ salt.aggregation
  
- .. note::
+ .. automodule:: salt.utils.aggregation
+     :members:
+-    :noindex: salt.utils.odict.OrderedDict
+```
+
+**File**: `doc/ref/modules/all/index.rst` (modified, +0/-2)
+```diff
+@@ -238,7 +238,6 @@ execution modules
+     useradd
+     vagrant
+     virtualenv_mod
+-    vsphere
+     webutil
+     win_appx
+     win_auditpol
+@@ -280,7 +279,6 @@ execution modules
+     win_wua
+     win_wusa
+     winrepo
+-    x509
+     x509_v2
+     xfs
+     xml
+```
+
+**File**: `doc/ref/modules/all/salt.modules.vsphere.rst` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-salt.modules.vsphere
+-====================
+-
+-.. automodule:: salt.modules.vsphere
+-    :members:
+```
+
+**File**: `doc/ref/modules/all/salt.modules.x509.rst` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-salt.modules.x509
+-=================
+-
+-.. automodule:: salt.modules.x509
+-    :members:
+```
+
+**File**: `doc/ref/states/all/index.rst` (modified, +0/-1)
+```diff
+@@ -140,5 +140,4 @@ state modules
+     win_wua
+     win_wusa
+     winrepo
+-    x509
+     x509_v2
+```
+
+**File**: `doc/ref/states/all/salt.states.x509.rst` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-salt.states.x509
+-================
+-
+-.. automodule:: salt.states.x509
+-    :members:
+```
+
+**File**: `doc/topics/proxyminion/index.rst` (modified, +0/-1)
+```diff
+@@ -933,6 +933,5 @@ For more information please refer to class `SSHConnection`_.
+     ssh
+     beacon
+     state
+-    ../tutorials/esxi_proxy_minion
  
--    While etcd API v3 has been implemented in other places within salt,
--    etcd_cache does not support it at this time due to fundamental differences in
--    how the versions are designed and v3 not being compatible with the cache API.
-+    This module uses the etcd v2 API. For the etcd v3 API, use
-+    :mod:`salt.cache.etcd3_cache <salt.cache.etcd3_cache>` (``cache: etcd3``)
-+    instead. etcd 3.4 and later disable the v2 API by default, and etcd 3.6
-+    removed the option to enable it.
- 
- Optionally, depending on the Etcd agent configuration, the following values
- could be set in the master config. These are the defaults:
+ .. _SSHConnection: https://github.com/saltstack/salt/blob/b8271c7512da7e048019ee26422be9e7d6b795ab/salt/utils/vt_helper.py#L28
+```
+
+**File**: `doc/topics/tutorials/esxi_proxy_minion.rst` (removed, +0/-525)
+```diff
+@@ -1,525 +0,0 @@
+-.. _tutorial-esxi-proxy:
+-
+-=================
+-ESXi Proxy Minion
+-=================
+-
+-.. versionadded:: 2015.8.4
+-
+-.. note::
+-
+-    This tutorial assumes basic knowledge of Salt. To get up to speed, check
+-    out the :ref:`Salt Walkthrough <tutorial-salt-walk-through>`.
+-
+-    This tutorial also assumes a basic understanding of Salt Proxy Minions. If
+-    you're unfamiliar with Salt's Proxy Minion system, please read the
+-    :ref:`Salt Proxy Minion <proxy-minion>` documentation and the
+-    :ref:`Salt Proxy Minion End-to-End Example <proxy-minion-end-to-end-example>`
+-    tutorial.
+-
+-    The third assumption that this tutorial makes is that you also have a
+-    basic understanding of ESXi hosts. You can learn more about ESXi hosts on
+-    `VMware's various resources`_.
+-
+-.. _VMware's various resources: https://www.vmware.com/products/esxi-and-esx.html
+-
+-Salt's ESXi Proxy Minion allows a VMware ESXi host to be treated as an individual
+-Salt Minion, without installing a Salt Minion on the ESXi host.
+-
+-Since an ESXi host may not necessarily run on an OS capable of hosting a Python
+-stack, the ESXi host can't run a regular Salt Minion directly. Therefore, Salt's
+-Proxy Minion functionality enables you to designate another machine to host a
+-proxy process that "proxies" communication from the Salt Master to the ESXi host.
+-The master does not know or care that the ESXi target is not a "real" Salt Minion.
+-
+-More in-depth conceptual reading on Proxy Minions can be found in the
+-:ref:`Proxy Minion <proxy-minion>` section of Salt's documentation.
+-
+-Salt's ESXi Proxy Minion was added in the 2015.8.4 release of Salt.
+-
+-.. note::
+-
+-    Be aware that some functionality for the ESXi Proxy Minion may depend on the
+-    type of license attached the ESXi host(s).
+-
+-    For example, certain services are only available to manipulate service state
+-    or policies with a VMware vSphere Enterprise or Enterprise Plus license, while
+-    others are available with a Standard license. The ``ntpd`` service is restricted
+-    to an Enterprise Plus license, while ``ssh`` is available via the Standard
+-    license.
+-
+-    Please see the `vSphere Comparison`_ page for more information.
+-
+-.. _vSphere Comparison: https://www.vmware.com/products/vsphere.html#compare
+-
+-
+-Dependencies
+-============
+-
+-Manipulation of the ESXi host via a Proxy Minion requires the machine running
+-the Proxy Minion process to have the ESXCLI package (and all of its dependencies)
+-and the pyVmomi Python Library to be installed.
+-
+-ESXi Password
+--------------
+-
+-The ESXi Proxy Minion uses VMware's API to perform tasks on the host as if it was
+-a regular Salt Minion. In order to access the API that is already running on the
+-ESXi host, the ESXi host must have a username and password that is used to log
+-into the host. The username is usually ``root``. Before Salt can access the ESXi
+-host via VMware's API, a default password *must* be set on the host.
+-
+-pyVmomi
+--------
+-
+-The pyVmomi Python library must be installed on the machine that is running the
+-proxy process. pyVmomi can be installed via pip:
+-
+-.. code-block:: bash
+-
+-    pip install pyVmomi
+-
+-.. note::
+-
+-    Version 6.0 of pyVmomi has some problems with SSL error handling on certain
+-    versions of Python. If using version 6.0 of pyVmomi, the machine that you
+-    are running the proxy minion process from must have either Python 2.6,
+-    Python 2.7.9, or newer. This is due to an upstream dependency in pyVmomi 6.0
+-    that is not supported in Python version 2.7 to 2.7.8. If the
+-    version of Python running the proxy process is not in the supported range, you
+-    will need to install an earlier version of pyVmomi. See `Issue #29537`_ for
+-    more information.
+-
+-.. _Issue #29537: https://github.com/saltstack/salt/issues/29537
+-
+-Based on the note above, to install an earlier version of pyVmomi than the
+-version currently listed in PyPi, run the following:
+-
+-.. code-block:: bash
+-
+-    pip install pyVmomi==5.5.0.2014.1.1
+-
+-The 5.5.0.2014.1.1 is a known stable version that the original ESXi Proxy Minion
+-was developed against.
+-
+-ESXCLI
+-------
+-
+-Currently, about a third of the functions used for the ESXi Proxy Minion require
+-the ESXCLI package be installed on the machine running the Proxy Minion process.
+-
+-The ESXCLI package is also referred to as the VMware vSphere CLI, or vCLI. See
+-the `VMware vSphere documentation`_ for vCLI package installation instructions.
+-
+-.. _VMware vSphere documentation: https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration.html
+-
+-Once all of the required dependencies are in place and the vCLI package is
+-installed, you can check to see if you can connect to your ESXi host by running
+-the following command:
+-
+-.. code-block:: bash
+-
+-    esxcli -s <host-location> -u <username> -p <password> system syslog config get
+-
+-If the connection was successful, ESXCLI wa
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #70427** (2026-10-18): tests/stress: fix mworkerqueue DEALER-handshake race in churn + liveness tests (@dwoz)
-- **PR #70419** (closed): Match overlay fstab entries by mountpoint (#66912) (@charzl)
-- **PR #70409** (closed): Silence the stdlib crypt DeprecationWarning on import (@charzl)
-- **PR #70389** (closed): Bump the all-pip-updates group across 3 directories with 62 updates (@dependabot[bot])
-- **PR #70388** (closed): Bump the all-pip-updates group across 3 directories with 57 updates (@dependabot[bot])
-- **PR #70386** (closed): Bump the all-pip-updates group across 3 directories with 63 updates (@dependabot[bot])
+- **PR #70511** (closed): charlie_codex (@charzl)
+- **PR #70510** (closed): Make pillar_mask_output a default-off feature flag with a single repr switch (@charzl)
+- **PR #70466** (2026-10-22): 3008.3-1: fix pip/certifi for the eMudhra/emSign CA incident (@twangboy)
+- **PR #70462** (closed): Apply black formatting to test_minion.py (@twangboy)
+- **PR #70460** (2026-10-21): Skip brew functional tests on macOS Intel (@twangboy)
+- **PR #70457** (2026-10-23): Merge forward 3008.x into master (@dwoz)
 
 ---
 
@@ -2025,39 +2212,3 @@ enable it.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Point the etcd_cache docs at the etcd v3 cache (#70351)
-
-**RULE**:
-When implementing operations in `salt/cache/etcd_cache.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `44528283`: Point the etcd_cache docs at the etcd v3 cache (#70351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `salt/cache/etcd_cache.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-    This module uses the etcd v2 API. For the etcd v3 API, use
-    :mod:`salt.cache.etcd3_cache <salt.cache.etcd3_cache>` (``cache: etcd3``)
-    instead. etcd 3.4 and later disable the v2 API by default, and etcd 3.6
-    removed the option to enable it.
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Anti-pattern to NEVER write (induced failure mode):
-    While etcd API v3 has been implemented in other places within salt,
-    etcd_cache does not support it at this time due to fundamental differences in
-    how the versions are designed and v3 not being compatible with the cache API.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44528283` are properly handled with clean fallback behavior.

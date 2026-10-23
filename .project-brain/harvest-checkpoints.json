@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T08:26:36.576Z",
+  "last_updated": "2026-10-23T08:44:38.313Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3726,14 +3726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nervjs-taro",
-      "content_hash": "af24adcf6ab84bb133a833906b610cacfa660b7cbf3f096488c527732f69a9dd",
-      "verified_at": "2026-10-20T05:54:34.866Z",
+      "content_hash": "3f041b07ba2187c6e313c70933bbc5893c9e02f3062539aaf1cb78e7b50f868d",
+      "verified_at": "2026-10-23T08:39:39.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:54:34.866Z"
+      "last_updated": "2026-10-23T08:39:39.830Z"
     },
     "kubeedge/kubeedge": {
       "repository": "kubeedge/kubeedge",
@@ -4356,14 +4356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-bootcamp",
-      "content_hash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
-      "verified_at": "2026-10-18T22:10:22.409Z",
+      "content_hash": "404baa39d91372344a1e649d486a292035f31f578a333541537443c44e4254d4",
+      "verified_at": "2026-10-23T08:39:42.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:10:22.409Z"
+      "last_updated": "2026-10-23T08:39:42.591Z"
     },
     "watchexec/watchexec": {
       "repository": "watchexec/watchexec",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "5f64aa0c38a3563c6bfb71310f63355622a5b6fddccc6bd012ba19aed99e8c18",
-      "verified_at": "2026-10-22T20:52:02.440Z",
+      "content_hash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
+      "verified_at": "2026-10-23T08:42:03.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:52:02.440Z"
+      "last_updated": "2026-10-23T08:42:03.413Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "c61720a095cb472f19b71aa591f4195bf4d82c3ad75db7dc74024c59f69d6c85",
-      "verified_at": "2026-10-21T05:21:54.285Z",
+      "content_hash": "9edec428ee4dd10ac3359db633b3786216f391649cdaecbf8fe892d6480d7e54",
+      "verified_at": "2026-10-23T08:39:33.195Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:21:54.285Z"
+      "last_updated": "2026-10-23T08:39:33.195Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
-      "verified_at": "2026-10-21T02:27:42.118Z",
+      "content_hash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
+      "verified_at": "2026-10-23T08:44:38.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:27:42.118Z"
+      "last_updated": "2026-10-23T08:44:38.312Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -10026,14 +10026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ionic-team-ionic-framework",
-      "content_hash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
-      "verified_at": "2026-10-21T05:34:15.194Z",
+      "content_hash": "17d76fe9ccb83f3c2dc138d9720bb2b52a4f5177edab21f4b55b7396e10129c0",
+      "verified_at": "2026-10-23T08:44:31.975Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:34:15.194Z"
+      "last_updated": "2026-10-23T08:44:31.975Z"
     },
     "lysine-dev/okio": {
       "repository": "lysine-dev/okio",

@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "251d8fcd",
+    "sourceVersion": "fa5d076b",
     "license": "NOASSERTION",
-    "contentHash": "af24adcf6ab84bb133a833906b610cacfa660b7cbf3f096488c527732f69a9dd",
-    "lastHarvestedAt": "2026-10-20T05:54:34.856Z",
+    "contentHash": "3f041b07ba2187c6e313c70933bbc5893c9e02f3062539aaf1cb78e7b50f868d",
+    "lastHarvestedAt": "2026-10-23T08:39:39.820Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -2813,10 +2813,10 @@
     "repository": "milvus-io/bootcamp",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/bootcamp",
-    "sourceVersion": "14cefc46",
+    "sourceVersion": "b2be8cc8",
     "license": "Apache-2.0",
-    "contentHash": "4ea21a2ef3c13c5e3385667ef54fa8614356b21eef28f7203bfadc1b4bf10e3b",
-    "lastHarvestedAt": "2026-10-18T22:10:22.403Z",
+    "contentHash": "404baa39d91372344a1e649d486a292035f31f578a333541537443c44e4254d4",
+    "lastHarvestedAt": "2026-10-23T08:39:42.582Z",
     "learningId": "learn-github-milvus-io-bootcamp"
   },
   "watchexec-watchexec": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "0433f847",
+    "sourceVersion": "a1a30f35",
     "license": "Apache-2.0",
-    "contentHash": "5f64aa0c38a3563c6bfb71310f63355622a5b6fddccc6bd012ba19aed99e8c18",
-    "lastHarvestedAt": "2026-10-22T20:52:02.427Z",
+    "contentHash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
+    "lastHarvestedAt": "2026-10-23T08:42:03.404Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "44528283",
+    "sourceVersion": "03d8a981",
     "license": "Apache-2.0",
-    "contentHash": "c61720a095cb472f19b71aa591f4195bf4d82c3ad75db7dc74024c59f69d6c85",
-    "lastHarvestedAt": "2026-10-21T05:21:54.273Z",
+    "contentHash": "9edec428ee4dd10ac3359db633b3786216f391649cdaecbf8fe892d6480d7e54",
+    "lastHarvestedAt": "2026-10-23T08:39:33.189Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "2177d563",
+    "sourceVersion": "ff25faef",
     "license": "MIT",
-    "contentHash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
-    "lastHarvestedAt": "2026-10-21T02:27:42.110Z",
+    "contentHash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
+    "lastHarvestedAt": "2026-10-23T08:44:38.303Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -6643,10 +6643,10 @@
     "repository": "ionic-team/ionic-framework",
     "platform": "github",
     "sourceUrl": "https://github.com/ionic-team/ionic-framework",
-    "sourceVersion": "584d9731",
+    "sourceVersion": "cc5b3964",
     "license": "MIT",
-    "contentHash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
-    "lastHarvestedAt": "2026-10-21T05:34:15.165Z",
+    "contentHash": "17d76fe9ccb83f3c2dc138d9720bb2b52a4f5177edab21f4b55b7396e10129c0",
+    "lastHarvestedAt": "2026-10-23T08:44:31.963Z",
     "learningId": "learn-github-ionic-team-ionic-framework"
   },
   "lysine-dev-okio": {

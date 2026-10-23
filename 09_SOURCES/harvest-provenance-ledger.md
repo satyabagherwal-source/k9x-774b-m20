@@ -4506,3 +4506,9 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e87e613e` | Multi-dimensional audit evidence | 2026-10-23T08:22:52.010Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `8003be3b` | Multi-dimensional audit evidence | 2026-10-23T08:23:29.470Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `214f243f` | Multi-dimensional audit evidence | 2026-10-23T08:26:36.562Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `03d8a981` | Multi-dimensional audit evidence | 2026-10-23T08:39:33.189Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `fa5d076b` | Multi-dimensional audit evidence | 2026-10-23T08:39:39.820Z |
+| `learn-github-milvus-io-bootcamp` | `https://github.com/milvus-io/bootcamp` | `b2be8cc8` | Multi-dimensional audit evidence | 2026-10-23T08:39:42.582Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `a1a30f35` | Multi-dimensional audit evidence | 2026-10-23T08:42:03.404Z |
+| `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `cc5b3964` | Multi-dimensional audit evidence | 2026-10-23T08:44:31.963Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ff25faef` | Multi-dimensional audit evidence | 2026-10-23T08:44:38.303Z |

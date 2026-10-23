@@ -4499,3 +4499,9 @@
 | `CYCLE-20261023-CRJB` | `2026-10-23T08:22:52.007Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3827, Rule 3828, Rule 3829` | Yes (`bd1cf5c1...`) |
 | `CYCLE-20261023-DKFV` | `2026-10-23T08:23:29.467Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3830, Rule 3831, Rule 3832` | Yes (`65a75743...`) |
 | `CYCLE-20261023-HKSV` | `2026-10-23T08:26:36.559Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3833, Rule 3834, Rule 3835` | Yes (`6f72ceb8...`) |
+| `CYCLE-20261023-Y81V` | `2026-10-23T08:39:33.187Z` | `saltstack/salt` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/saltstack-salt-learnings.md` | Yes (`9edec428...`) |
+| `CYCLE-20261023-YD60` | `2026-10-23T08:39:39.816Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3836` | Yes (`3f041b07...`) |
+| `CYCLE-20261023-YFAS` | `2026-10-23T08:39:42.580Z` | `milvus-io/bootcamp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3837` | Yes (`404baa39...`) |
+| `CYCLE-20261023-1FYH` | `2026-10-23T08:42:03.401Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3838, Rule 3839, Rule 3840` | Yes (`ad9cdf77...`) |
+| `CYCLE-20261023-4ML5` | `2026-10-23T08:44:31.961Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3841` | Yes (`17d76fe9...`) |
+| `CYCLE-20261023-4RH9` | `2026-10-23T08:44:38.301Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3842, Rule 3843, Rule 3844` | Yes (`68f70f58...`) |
