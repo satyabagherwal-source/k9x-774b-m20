@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `928c4ef9`  
+> **Source Version**: `5c68f754`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T05:15:30.275Z  
+> **Timestamp**: 2026-10-23T10:31:12.621Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T05:15:30.270Z  
+> **Harvest Timestamp**: 2026-10-23T10:31:10.337Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2025 stars
+- **Stars / Engagement**: 2036 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1597** (2026-10-19): **[Bug]: X-Agent-ID is ignored on the streamable-http transport, so memory author falls back to MCP_AGENT_ID**
-  *Symptoms*: **What happens**  `X-Agent-ID` is only read in `web/api/mcp.py` (L259-263), which is the Web API path. When the service runs in streamable-http mode (`MCP_STREAMABLE_HTTP_MODE=1`), `ServerRunManager.run_streamable_http` creates a `StreamableHTTPSessionManager` that never inspects request headers. Any client relying on the header is silently attributed to the `MCP_AGENT_ID` env var instead.  **Evidence**  Two consecutive writes on the same server:  | record | how it was written | `metadata.agent_id` | |---|---|---| | id 82179 | header `X-Agent-ID: tpol`, no argument | `zero` | | id 82180 | explicit `agent_id` argument | `tpol` |  **Expected**  Precedence should be: explicit `agent_id` argument > `X-Agent-ID` header > `MCP_AGENT_ID` > metadata > unset — on every write path (`memory_store`, `evolve_memory`, harvest `auto_commit`).  **Root cause**  There is no per-request bridge from HTTP headers down to the tool-call path in the streamable transport.  **Proposed fix**  An ASGI middleware around the session manager reads `X-Agent-ID` into a `contextvars.ContextVar` and resets it in `finally`; a single `resolve_agent_id()` helper implements the precedence chain and is called by all three write paths. The header remains attribution-only and grants no permission.  **Tests**  Integration tests against a real streamable transport, with no transport mock: two concurrent clients with different headers and 20 interleaved writes (zero crossing); header without argument; no header falling 
+- **Issue #1628** (2026-10-21): **cli: memory migrate still stops at migration 008 on a pre-v8.7 database**
+  *Symptoms*: ## What happens  #1626 fixed #1622 for the service: `SqliteVecMemoryStorage.initialize()` now creates the `metadata` table before it runs the schema migrations. The `memory migrate` command does not go through `initialize()`, so on a sqlite-vec database from before v8.7.0 it still fails the same way: migration 008 stops with `no such table: metadata`, and nothing after it applies.  ## Why  `memory migrate` (`cli/main.py:411`) opens the file with a plain `sqlite3.connect(db_path)` (`:429`) and calls `MigrationRunner.run_pending(conn)` directly (`:431`). `run_pending()` (`storage/migration_runner.py:211`) creates its own registry table (`_ensure_registry_table`, `:37`) but not `metadata`, where it keeps `schema_version`. Credit to @Clannad47, who pointed this out in the #1626 description.  ## Suggested fix  Create `metadata` inside `MigrationRunner` itself, next to `_ensure_registry_table()` and with the same definition the storage uses (`CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)`). Then every caller of `run_pending()` is covered, the CLI and `initialize()` alike, and the separate guard from #1626 becomes redundant but harmless. Keep the `--dry-run` path read-only: with `dry_run=True` nothing may be created.  ## For whoever picks this up  - The test goes in `tests/storage/`, next to `test_1622_legacy_metadata_table.py`, whose pre-v8.7 database setup you can reuse. Drive it through the real code path: build that database under `temp_db_path`
 
-- **Issue #1564** (2026-10-17): **[delta-sync] purge of tombstone row breaks later intentional re-create (known gap from #1562)**
-  *Symptoms*: ## Context Split out from #1562 (fix for #1522) as a known, bounded gap.  ## Problem `store.py:92` `purge_deleted()` removes the tombstone row, and `_recreate_of_for()` then returns `None` without checking the delete still present in `sync_events`. A later **intentional re-create** emits `recreate_of=""`, so the origin records it live while peers keep it dead — a convergence gap.  ## Root cause The `recreate_of`-by-`event_id` model references a physical row that purge can delete. The canonical fix is an OR-Set/DVV dot-ledger (see RFC, forthcoming) where liveness does not depend on the tombstone row existing.  ## Scope Edge case: requires purge to run between a delete and a later re-create of the same key. Direct sync-path (the #1522 symptom) is fixed in #1562.  ## Acceptance Either: (a) `_recreate_of_for()` consults the recorded delete in `sync_events` even when the tombstone row is purged, or (b) resolved structurally by the DVV redesign.
+- **Issue #1622** (2026-10-21): **storage: a pre-v8.7 sqlite-vec database never finishes its schema upgrade, so search returns nothing**
+  *Symptoms*: ## What happens  A sqlite-vec database created before v8.7.0, and not opened by any version since, does not upgrade when a current release opens it. The service starts and `count` is right, but semantic search and tag search fail:  ``` Schema migration warning: Migration 008_add_graph_table failed: no such table: metadata Failed to retrieve memories: no such column: m.embedding_pending Failed to search by tags: no such column: embedding_pending ```  The data is intact, but every search comes back empty, and the only sign in the log is a warning.  ## Why  `SqliteVecMemoryStorage.initialize()` in `storage/mixins/migrations.py` has two paths. For a new database, `_apply_pragmas_and_create_tables` creates the `metadata` table (`:395`) before the schema migrations run (`:515`). For an existing database, the branch starting at `:119` calls `_run_schema_migrations` (`:333`) without creating it. `MigrationRunner` keeps `schema_version` in `metadata`, so on a database that predates the table, the first pending migration fails, the runner stops, and everything after it (017 adds `embedding_pending`) never applies.  The table has been created since v8.7.0 (66152de5, 2025-10-26), so this hits only databases from before that, and only when they skip every version in between. In practice that means installs left untouched for a year, and anyone migrating off ChromaDB with v7.6.0 (tag `chromadb-legacy-final`, see #1621).  ## Reproduced  1. Install v7.6.0 from the tag in a throwaway venv, cr
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,75 +2932,765 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `928c4ef9` (2026-10-21)
-**Commit Message**: fix(hermes): report an existing installation in --dry-run (#1611) (#1619)
+### Incident Patch 1: `2601f088` (2026-10-21)
+**Commit Message**: fix(quarantine): bound the on-store belief check and let it run in background (#1633)
 
-With the server already registered, plan() returns no actions, so the
-dry-run loop printed nothing and returned 0 before the branch that reports
-the existing installation. Running --dry-run against an installed profile
-produced no output at all, which is indistinguishable from a hung script.
+* fix(quarantine): bound the on-store belief check and let it run in background
 
-The fix prints the registration and the port in that case. The test asserts
-the message, and fails without it (captured output is empty).
+The on-store NLI check compared the new memory against up to 20 active beliefs,
+one LLM call each, with no time limit, no configurable cap and no log line:
+measured 27 s per write on an instance with 625 eligible beliefs (issue #1630).
 
-Co-authored-by: Claudio Filho <[REDACTED_EMAIL]>
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+- MCP_NLI_ON_STORE_BUDGET_S (default 2 s) caps the total time of the check. The
+  budget is fail-open: on expiry the check stops and the write proceeds. 2 s is
+  the smallest value that still allows one real LLM comparison (~1.3 s measured
+  here); with 1 s the check compares nothing and silently becomes a no-op.
+- MCP_QUARANTINE_MAX_BELIEFS (default 20) caps how many beliefs are compared.
+- A truncated check logs a WARNING naming the variable, so the cost is visible
+  even where INFO is suppressed (Claude Desktop JSON mode).
+- MCP_NLI_ON_STORE_ASYNC schedules both on-store checks (contradictions and
+  beliefs) in the background: the write returns at baseline latency and the
+  result goes to the log instead of the response.
 
-**File**: `changelog.d/hermes-install-dryrun.fixed.md` (added, +1/-0)
+Measured on a snapshot of the production corpus (29,357 memo
+
+**File**: `changelog.d/1633.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- **hermes:** `--dry-run` on an already-installed profile now prints that the server is registered instead of exiting 0 with no output. `plan()` returns no actions for an installed server, so the dry-run returned before the branch that reports it — success and a hung script looked identical.
++- Bound the on-store belief check with `MCP_NLI_ON_STORE_BUDGET_S` (2 s default) and `MCP_QUARANTINE_MAX_BELIEFS`, log truncated checks as WARNING, and add the opt-in `MCP_NLI_ON_STORE_ASYNC` mode (#1630).
 ```
 
-**File**: `scripts/hermes/install.py` (modified, +2/-0)
+**File**: `src/mcp_memory_service/consolidation/quarantine.py` (modified, +231/-19)
 ```diff
-@@ -445,6 +445,8 @@ def main(argv: list[str] | None = None) -> int:
-     for action in actions:
-         print(action.render())
-     if args.dry_run:
-+        if not actions:
-+            print(f"{SERVER_NAME} is already registered on :{port}/mcp; nothing to do")
-         return 0
+@@ -1,8 +1,10 @@
+ """Memory quarantine — holds memories that contradict active beliefs."""
  
-     if not actions:
-```
-
-**File**: `tests/hermes/test_install.py` (modified, +18/-0)
-```diff
-@@ -215,6 +215,24 @@ def test_dry_run_writes_nothing(tmp_path):
-     assert list(profile.rglob("*")) == []
++import asyncio
+ import json
+ import logging
+ import os
++import time
+ from datetime import datetime, timezone
+ from typing import Optional, List
  
+@@ -19,6 +21,20 @@
+ # config needs MCP_NLI_BACKEND=cascade or a lowered gate to quarantine on store.
+ DEFAULT_QUARANTINE_NLI_THRESHOLD = 0.7
  
-+def test_dry_run_reports_when_already_installed(tmp_path, capsys, monkeypatch):
-+    """--dry-run on an installed profile must say so, not exit silently.
++# Orçamento total do check de crenças no caminho de escrita (issue #1630).
++# Sem teto, uma gravação com N crenças elegíveis custa N chamadas de LLM
++# sequenciais: medido 27 s com 20 crenças e ~1,2 s por chamada. O orçamento é
++# fail-open — ao estourar, a verificação para e a gravação segue normalmente.
++# 2 s é o menor valor que ainda permite UMA comparação real com o LLM medido
++# (~1,3 s); com 1 s o check não compara nada e a feature vira no-op silencioso.
++DEFAULT_ON_STORE_BUDGET_S = 2.0
++DEFAULT_ON_STORE_MAX_BELIEFS = 20
 +
-+    `plan()` returns no actions when the server is already registered, so the
-+    dry-run loop printed nothing and returned 0 before the branch that reports
-+    the existing installation. Success and a hung script looked identical.
++# Quantas verificações de background podem rodar ao mesmo tempo (modo assíncrono).
++# O excesso é descartado com WARNING: sem teto, uma rajada de gravações vira uma
++# rajada de chamadas de LLM.
++DEFAULT_BACKGROUND_CONCURRENCY = 2
++
+ # Backends already warned about below (one warning per backend per process).
+ _gate_warned_backends: set = set()
+ 
+@@ -37,6 +53,29 @@ def _quarantine_nli_threshold() -> float:
+     )
+ 
+ 
++def _on_store_budget_s() -> float:
++    """Orçamento total (segundos) do check de crenças no caminho de escrita.
++
++    Lido a cada chamada, como o gate, para que configuração de runtime e testes
++    tenham efeito sem reiniciar. Valor fora da faixa cai no default com erro
++    registrado, e não desabilita a verificação em silêncio.
 +    """
-+    instalar = _mod()
-+    profile = tmp_path / "profile"
-+    profile.mkdir()
-+    monkeypatch.setattr(instalar, "mcp_is_registered", lambda port: True)
-+
-+    rc = instalar.main(["--hermes-home", str(profile), "--dry-run", "--port", "8000"])
-+
-+    assert rc == 0
-+    assert "already registered" in capsys.readouterr().out
++    from ..config import safe_get_float_env
++    return safe_get_float_env(
++        "MCP_NLI_ON_STORE_BUDGET_S", DEFAULT_ON_STORE_BUDGET_S,
++        min_value=0.0, max_value=120.0,
++    )
 +
 +
- def test_uninstall_failure_returns_nonzero(tmp_path, monkeypatch):
-     instalar = _mod()
-     profile = tmp_path / "profile"
++def _on_store_max_beliefs() -> int:
++    """Quantas crenças, no máximo, o check compara por gravação."""
++    from ..config import safe_get_int_env
++    return safe_get_int_env(
++        "MCP_QUARANTINE_MAX_BELIEFS", DEFAULT_ON_STORE_MAX_BELIEFS,
++        min_value=0, max_value=1000,
++    )
++
++
+ def _warn_if_gate_unreachable(classifier, threshold: float) -> None:
+     """Emit one warning per process if no contradiction could ever meet the gate.
+ 
+@@ -137,33 +176,102 @@ async def check_beliefs_on_store(storage, belief_service, content: str, content_
+     """Check if new memory contradicts any active belief.
+ 
+     Called from the on_store path (MCP_NLI_ON_STORE=true).
++
++    O custo é limitado por dois tetos, ambos configuráveis: o número de crenças
++    comparadas (MCP_QUARANTINE_MAX_BELIEFS) e o tempo total do check
++    (MCP_NLI_ON_STORE_BUDGET_S, default 1 s). O orçamento é fail-open: ao
++    estourar, a verificação para e a gravação segue — sem exceção. Uma linha
++    INFO por execução registra duração, comparações e motivo da parada, para
++    que o custo deixe de ser invisível (issue #1630).
+     """
+     from ..reasoning.nli import NLIClassifier
+ 
+-    beliefs = await belief_service.get_beliefs(status="active", min_confidence=0.35)
+-    if not beliefs:
+-        return None
++    started = time.monotonic()
++    budget = _on_store_budget_s()
++    max_beliefs = _on_store_max_beliefs()
++    beliefs: list = []
++    compared = 0
++    stop_reason = "no-beliefs"
+ 
+-    classifier = NLIClassifier(backend="auto")
+-    threshold = _quarantine_nli_threshold()
+-    _warn_if_gate_unreachable(classifier, threshold)
++    try:
++        beliefs = await belief_service.get_beliefs(status="active", min_confidence=0.35)
++        if not beliefs:
++            return None
+ 
+-    for belief in beliefs[:20]:
+-        result = await classifier.classify(belief["content"], content)
+-        if result.label == "contradiction" and result.confidence >= threshold:
+-            q_result = await quarantine_memory(
+-                storage, content_hash, belief["belief_hash"],
+-                reason=f"Contradicts belief: {belief['content'][:100]}",
+-            )
++        classifier = NLIClassifier(backend="auto")
++        threshold = _quarantine_nli_threshold()
++        _warn_if_gate_unreachable(classifier, threshold)
++        # Distingue "olhou tudo" de "parou pelo teto de contagem" (Greptile, #1633).
++        stop_reason = "max-beliefs" if len(beliefs) > max_beliefs else "completed"
+ 
+-            contradiction_count = await _count_quarantined_for_belief(storage, belief["belief_hash"])
+-            if contradiction_count >= CONTRADICTION_THRESHOLD:
+-                await belief_service.challenge_belief(belief["belief_hash"])
+-                logger.info(f"Belief {belief['belief_hash'][:8]} challenged after {contradiction_count} contradictions")
++        for belief in beliefs[:max_beliefs]:
++            remaining = budget - (time.monotonic() - started)
++            if remaining <= 0:
++                stop_reason = "budget"
++                break
+ 
+-            return q_result
++            
+```
+
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +24/-0)
+```diff
+@@ -315,6 +315,30 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
+ 
+         # Phase 3: NLI contradiction check on store (opt-in, single memories only)
+         nli_on_store = os.environ.get("MCP_NLI_ON_STORE", "false").lower() == "true"
++
++        # Modo assíncrono (MCP_NLI_ON_STORE_ASYNC, issue #1630): a escrita não
++        # espera o LLM. As duas verificações abaixo rodam em background e o
++        # resultado vai para o log, não para esta resposta.
++        if (
++            nli_on_store
++            and result.get("success")
++            and "memory" in result
++            and os.environ.get("MCP_NLI_ON_STORE_ASYNC", "").strip().lower() in {"true", "1", "yes"}
++        ):
++            try:
++                from ...consolidation.quarantine import schedule_on_store_checks
++
++                agendado = schedule_on_store_checks(
++                    server.storage, content, result["memory"]["content_hash"]
++                )
++                if agendado:
++                    message += "\n(contradiction checks scheduled in the background)"
++                else:
++                    message += "\n(contradiction checks skipped: background capacity is full)"
++                nli_on_store = False
++            except Exception as e:
++                logger.debug("Could not schedule background NLI checks: %s", _sanitize_log_value(e))
++
+         if nli_on_store and result.get("success") and "memory" in result:
+             try:
+                 from ...reasoning.nli import detect_contradictions_nli
+```
+
+**File**: `tests/consolidation/test_quarantine_on_store_budget.py` (added, +319/-0)
+```diff
+@@ -0,0 +1,319 @@
++"""Orçamento de tempo no NLI on-store (issue #1630).
++
++Medido em 21/out: com `MCP_NLI_ON_STORE=true` uma gravação levava ~27 s porque o
++loop comparava até 20 crenças, uma chamada de LLM por crença, sem teto de tempo,
++sem teto configurável e sem uma linha de log.
++
++Estes testes falham no código anterior e passam com o orçamento:
++
++- o tempo total do check respeita `MCP_NLI_ON_STORE_BUDGET_S` (default 1 s);
++- o número de crenças comparadas respeita `MCP_QUARANTINE_MAX_BELIEFS`;
++- estourar o orçamento não levanta exceção (fail-open: a gravação continua);
++- uma linha INFO registra duração, crenças comparadas e motivo da parada;
++- uma contradição encontrada dentro do orçamento continua quarentenando.
++"""
++
++import asyncio
++import time
++
++import pytest
++
++from mcp_memory_service.consolidation import quarantine as quarantine_mod
++from mcp_memory_service.consolidation.quarantine import check_beliefs_on_store
++from mcp_memory_service.reasoning.nli import NLIResult
++
++
++class _FakeBeliefs:
++    def __init__(self, beliefs):
++        self._b = beliefs
++
++    async def get_beliefs(self, status="active", min_confidence=0.35):
++        return [b for b in self._b if b.get("status", "active") == status]
++
++    async def challenge_belief(self, belief_hash):
++        return {"belief_hash": belief_hash, "new_status": "disputed"}
++
++
++class _FakeStorage:
++    def __init__(self):
++        self.updates = []
++
++    async def update_memory_metadata(self, content_hash, updates, preserve_timestamps=True):
++        self.updates.append((content_hash, updates))
++        return (True, "ok")
++
++    async def search_by_tag(self, tags, time_start=None):
++        return []
++
++
++class _CountingClassifier:
++    """Classificador falso que conta chamadas e simula a latência do LLM."""
++
++    backend = "cascade"
++
++    def __init__(self, delay=0.2, label="neutral", confidence=0.3):
++        self.delay = delay
++        self.label = label
++        self.confidence = confidence
++        self.calls = 0
++
++    async def classify(self, premise, hypothesis):
++        self.calls += 1
++        await asyncio.sleep(self.delay)
++        return NLIResult(label=self.label, confidence=self.confidence)
++
++    def max_achievable_confidence(self):
++        return 0.95
++
++
++def _beliefs(n):
++    return [
++        {
++            "belief_hash": f"b{i}",
++            "content": f"crença número {i}",
++            "confidence": 0.9,
++            "status": "active",
++        }
++        for i in range(n)
++    ]
++
++
++def _patch_classifier(classifier):
++    from unittest.mock import patch
++
++    return patch("mcp_memory_service.reasoning.nli.NLIClassifier", return_value=classifier)
++
++
++class TestBudget:
++    @pytest.mark.asyncio
++    async def test_total_time_respects_default_budget(self, monkeypatch):
++        monkeypatch.delenv("MCP_NLI_ON_STORE_BUDGET_S", raising=False)
++        monkeypatch.delenv("MCP_QUARANTINE_MAX_BELIEFS", raising=False)
++        clf = _CountingClassifier(delay=0.2)
++
++        started = time.monotonic()
++        with _patch_classifier(clf):
++            result = await check_beliefs_on_store(
++                _FakeStorage(), _FakeBeliefs(_beliefs(20)), "texto novo", "h1"
++            )
++        elapsed = time.monotonic() - started
++
++        assert result is None
++        assert elapsed < 2.8, f"check levou {elapsed:.2f}s; o default é 2 s de orçamento"
++        assert clf.calls < 20, f"comparou {clf.calls} crenças; deveria parar pelo orçamento"
++        assert clf.calls >= 1, "com 2 s de orçamento ao menos uma comparação precisa acontecer"
++
++    @pytest.mark.asyncio
++    async def test_budget_zero_compares_nothing(self, monkeypatch):
++        monkeypatch.setenv("MCP_NLI_ON_STORE_BUDGET_S", "0")
++        clf = _CountingClassifier(delay=0.2)
++
++        started = time.monotonic()
++        with _patch_classifier(clf):
++            result = await check_beliefs_on_store(
++                _FakeStorage(), _FakeBeliefs(_beliefs(5)), "texto novo", "h1"
++            )
++        elapsed = time.monotonic() - started
++
++        assert result is None
++        assert clf.calls == 0
++        assert elapsed < 0.3
++
++    @pytest.mark.asyncio
++    async def test_max_beliefs_is_configurable(self, monkeypatch):
++        monkeypatch.setenv("MCP_NLI_ON_STORE_BUDGET_S", "30")
++        monkeypatch.setenv("MCP_QUARANTINE_MAX_BELIEFS", "3")
++        clf = _CountingClassifier(delay=0.01)
++
++        with _patch_classifier(clf):
++            await check_beliefs_on_store(
++                _FakeStorage(), _FakeBeliefs(_beliefs(20)), "texto novo", "h1"
++            )
++
++        assert clf.calls == 3
++
++    @pytest.mark.asyncio
++    async def test_timeout_does_not_raise_and_respects_the_budget(self, monkeypatch):
++        """Classificador mais lento que o orçamento: para no prazo e não quebra a gravação."""
++        monkeypatch.setenv("MCP_NLI_ON_STORE_BUDGET_S", "0.2")
++        clf = _CountingClassifier(delay=5.0)
++
++        started = time.monotonic()
++   
+```
+
+---
+
+### Incident Patch 2: `d75db7bf` (2026-10-23)
+**Commit Message**: fix(security): refresh TLS trust stores after eMudhra compromise (#1659)
+
+* fix(security): refresh independent TLS trust stores after eMudhra compromise
+
+* fix(ci): bootstrap pip across older runner versions
+
+* fix(ci): build Docker images for all copied inputs
+
+---------
+
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yml` (modified, +53/-5)
+```diff
+@@ -27,6 +27,7 @@ jobs:
+     outputs:
+       code: ${{ steps.classify.outputs.code }}
+       milvus: ${{ steps.classify.outputs.milvus }}
++      docker: ${{ steps.classify.outputs.docker }}
+     steps:
+     # fetch-depth: 2 so the PR merge commit has its base parent: HEAD^1..HEAD is
+     # exactly what the PR changes.
+@@ -56,16 +57,45 @@ jobs:
+         changed=$(git diff --name-only HEAD^1 HEAD)
+         code=true
+         milvus=true
++        docker=true
+         if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+           if is_docs_only "$changed"; then
+             code=false
+           fi
+           if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -qE '^(src/mcp_memory_service/(storage|models|utils|consolidation|reasoning|config)|src/mcp_memory_service/compat\.py$|tests/storage/|tests/conftest\.py$|pyproject\.toml$|\.github/workflows/ci\.yml$)'; then
+             milvus=false
+           fi
++          if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -qE '^(src/|tools/docker/|scripts/|run_server\.py$|\.dockerignore$|README\.md$|pyproject(-lite)?\.toml$|uv\.lock$|\.github/workflows/(ci|release)\.yml$)'; then
++            docker=false
++          fi
+         fi
+         echo "code=$code" | tee -a "$GITHUB_OUTPUT"
+         echo "milvus=$milvus" | tee -a "$GITHUB_OUTPUT"
++        echo "docker=$docker" | tee -a "$GITHUB_OUTPUT"
++
++  docker-builds:
++    runs-on: ubuntu-latest
++    name: Docker Build (${{ matrix.image }})
++    timeout-minutes: 30
++    needs: changes
++    if: ${{ !cancelled() && needs.changes.outputs.docker != 'false' }}
++    strategy:
++      fail-fast: false
++      matrix:
++        include:
++          - image: standard
++            dockerfile: tools/docker/Dockerfile
++          - image: slim
++            dockerfile: tools/docker/Dockerfile.slim
++    steps:
++    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++    # Build-time trust checks must pass before a release can publish either image.
++    # Raw Docker matches release.yml and needs no registry credentials or push.
++    - name: Build image and run its trust checks
++      run: |
++        docker build --pull --platform linux/amd64 \
++          --build-arg SKIP_MODEL_DOWNLOAD=true \
++          --file "${{ matrix.dockerfile }}" .
+ 
+   version-drift-check:
+     runs-on: ubuntu-latest
+@@ -142,7 +172,11 @@ jobs:
+     # tests/ci/test_check_tests_prove_fix.sh runs pytest inside a stub repo and
+     # the script it covers passes --timeout, hence the two packages.
+     - name: Install pytest for the prove-fix shell test
+-      run: python3 -m pip install --quiet pytest pytest-timeout
++      run: |
++        sudo apt-get update
++        sudo apt-get install -y --only-upgrade ca-certificates
++        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
++        python3 -m pip install --quiet pytest pytest-timeout
+     - name: Run the shell test suites
+       run: |
+         status=0
+@@ -206,7 +240,10 @@ jobs:
+     # Installs from uv.lock, like `test`: see there.
+     - name: Install dependencies
+       run: |
+-        python3 -m pip install --quiet "uv==0.12.24"
++        sudo apt-get update
++        sudo apt-get install -y --only-upgrade ca-certificates
++        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
++        python3 -m pip install --quiet "uv==0.13.4"
+         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
+         export UV_PROJECT_ENVIRONMENT="$HOME/venv"
+         python3 -m uv sync --frozen --python python3 --extra dev --extra sqlite
+@@ -252,7 +289,10 @@ jobs:
+     # no pip in it, and nothing in the suite runs pip.
+     - name: Install dependencies
+       run: |
+-        python3 -m pip install --quiet "uv==0.12.24"
++        sudo apt-get update
++        sudo apt-get install -y --only-upgrade ca-certificates
++        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
++        python3 -m pip install --quiet "uv==0.13.4"
+         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
+         export UV_PROJECT_ENVIRONMENT="$HOME/venv"
+         python3 -m uv sync --frozen --python python3 --extra dev --extra sqlite
+@@ -317,10 +357,14 @@ jobs:
+     # database, so the #143 guard never fires. See issue #301.
+     - name: Install dependencies (with ml + nli extras)
+       run: |
+-        python3 -m pip install --quiet "uv==0.12.24"
++        sudo apt-get update
++        sudo apt-get install -y --only-upgrade ca-certificates
++        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
++        python3 -m pip install --quiet "uv==0.13.4"
+         python3 -m uv venv --seed --python python3 "$HOME/venv"
+         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
+         export UV_PYTHON="$HOME/venv/bin/python"
++        python3 -m uv pip install --upgrade "pip>=26.2.2"
+         # CPU wheels only. The default index serves the CUDA build on Linux,
+         # which is an order of magnitude larger and useless on this runner —
+         # tools
+```
+
+**File**: `.github/workflows/cleanup-images.yml` (modified, +5/-1)
+```diff
+@@ -63,7 +63,11 @@ jobs:
+ 
+       - name: Install deps
+         if: env.SKIP_DOCKER_CLEANUP != 'true'
+-        run: python3 -m pip install --upgrade pip requests python-dateutil
++        run: |
++          sudo apt-get update
++          sudo apt-get install -y --only-upgrade ca-certificates
++          python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
++          python3 -m pip install --upgrade requests python-dateutil
+ 
+       - name: Create cleanup script
+         if: env.SKIP_DOCKER_CLEANUP != 'true'
+```
+
+**File**: `.github/workflows/codeql.yml` (modified, +3/-1)
+```diff
+@@ -41,7 +41,9 @@ jobs:
+     # false positives on the storage and web layers.
+     - name: Install dependencies
+       run: |
+-        python -m pip install --upgrade pip
++        sudo apt-get update
++        sudo apt-get install -y --only-upgrade ca-certificates
++        python scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
+         pip install -e ".[sqlite]"
+     
+     # Create results directory for SARIF export
+```
+
+**File**: `.github/workflows/release.yml` (modified, +6/-2)
+```diff
+@@ -41,7 +41,9 @@ jobs:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - name: Install package + test deps
+         run: |
+-          python3 -m pip install --upgrade pip
++          sudo apt-get update
++          sudo apt-get install -y --only-upgrade ca-certificates
++          python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
+           python3 -m pip install -e ".[sqlite]" pytest pytest-asyncio
+       - name: Run unit tests
+         run: python3 -m pytest -m unit -q
+@@ -54,7 +56,9 @@ jobs:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - name: Install build tooling
+         run: |
+-          python3 -m pip install --upgrade pip
++          sudo apt-get update
++          sudo apt-get install -y --only-upgrade ca-certificates
++          python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
+           python3 -m pip install build hatchling twine
+ 
+       # --- Main package (with PyTorch) ---
+```
+
+**File**: `changelog.d/1659.fixed.md` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++- **Refresh independent TLS trust stores after the eMudhra CA compromise.**
++  CI and Docker bootstrap now require pip 26.2.2 and uv 0.13.4 or newer. The lite
++  package and hand-curated Docker dependencies require certifi 2026.10.19, matching
++  the main package. Docker builds reject the affected root certificates before
++  bootstrapping pip and after installing application dependencies; CI builds both
++  standard and slim images. Existing installations must also update their package
++  managers, operating system certificates, and any custom trust bundles.
+```
+
+**File**: `docs/security-emudhra-ca-trust.md` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++# eMudhra certificate trust update
++
++Eight eMudhra intermediate CA keys were compromised in October 2026. Clients
++using older trust stores can accept forged HTTPS certificates. This is a trust
++store incident; it does not establish that this project's source or credentials
++were compromised.
++
++Update each independent trust store used by your installation:
++
++- `certifi>=2026.10.19` for application clients that use certifi.
++- `pip>=26.2.2` and `uv>=0.13.4` for the package managers' bundled trust stores.
++- The operating system's security update for `ca-certificates`, and any custom
++  bundles selected with `SSL_CERT_FILE`, `SSL_CERT_DIR`, or `PIP_CERT`.
++
++Updating the application or certifi alone does not update pip, uv, or the operating
++system. Bootstrap these updates through a trust store you have already updated;
++an old package manager can still trust the compromised chains during its own
++upgrade. Do not disable certificate validation to install the updates.
++
++Rebuild Docker images with `--pull --no-cache` to refresh the base image and system
++certificates. The maintained Dockerfiles check system trust before bootstrapping
++pip, and check application, pip, and system trust after installing dependencies.
++The build fails if an affected root remains trusted.
++
++See the [incident report and certificate-chain tests](https://emudhra.we-have-a-problem.com/),
++the [uv advisory](https://github.com/astral-sh/uv/security/advisories/GHSA-hq85-5cpj-mr62),
++the [certifi advisory](https://github.com/certifi/python-certifi/security/advisories/GHSA-6q48-6c7w-9gw2),
++and the [pip release notes](https://pip.pypa.io/en/stable/news/).
+```
+
+**File**: `pyproject-lite.toml` (modified, +1/-0)
+```diff
+@@ -41,6 +41,7 @@ maintainers = [
+ ]
+ license = { text = "Apache-2.0" }
+ dependencies = [
++    "certifi>=2026.10.19",
+     "tokenizers==0.20.3",
+     "mcp>=1.19.0,<2.0.0",
+     "python-dotenv>=1.0.0",
+```
+
+**File**: `scripts/ci/bootstrap_pip.py` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++#!/usr/bin/env python3
++"""Upgrade pip through a checked CA file using flags supported by the old pip."""
++
++import argparse
++import re
++import subprocess
++import sys
++from importlib import metadata
++from pathlib import Path
++
++from verify_tls_trust import inspect_bundle
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--cert", required=True, type=Path, metavar="PEM")
++    args = parser.parse_args(argv)
++    try:
++        _, rejected = inspect_bundle(args.cert)
++        if rejected:
++            raise ValueError(f"CA bundle trusts {', '.join(sorted(rejected))}")
++        version = metadata.version("pip")
++        if not re.fullmatch(r"\d+(?:\.\d+)*", version):
++            raise ValueError("cannot determine a numeric installed pip version")
++        installed = tuple(int(part) for part in version.split("."))
++        command = [sys.executable, "-m", "pip", "install", "--upgrade"]
++        # pip <24.2 uses only the supplied CA file by default. Later pip unions
++        # system and vendored roots unless legacy-certs disables that behavior.
++        if (24, 2) <= installed < (26, 2, 2):
++            command.append("--use-deprecated=legacy-certs")
++        command.extend(["--cert", str(args.cert), "pip>=26.2.2"])
++        return subprocess.run(command, check=False).returncode
++    except (OSError, UnicodeError, ValueError, metadata.PackageNotFoundError) as exc:
++        message = re.sub(r"[\x00-\x1f\x7f]", "", str(exc))
++        print(f"FAIL bootstrap pip: {message}", file=sys.stderr)
++        return 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+```
+
+---
+
+### Incident Patch 3: `d8eb805d` (2026-10-22)
+**Commit Message**: fix(health): report sync_failing when Cloudflare is unreachable (#1638)
+
+* fix(health): report sync_failing when Cloudflare is unreachable
+
+The hybrid health check reported cloudflare_sync="syncing" whenever the
+background sync loop was alive, even when every Cloudflare call failed.
+It now requires sync_stats['cloudflare_available'] for "syncing", reports
+"sync_failing" otherwise, and exposes cloudflare_available and
+consecutive_failures alongside the status.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01JUoZ7FkoUzG12PkSg34EQ9
+
+* docs(changelog): add fragment for #1638
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01JUoZ7FkoUzG12PkSg34EQ9
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/1638.fixed.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++- **The hybrid health check said `syncing` while every Cloudflare call failed (#1638).**
++  It reported `cloudflare_sync: syncing` whenever the background sync loop was alive, so a
++  container with broken DNS synced nothing for 16 days without the health check noticing.
++  It now reports `sync_failing` when the sync service reports Cloudflare unreachable, and
++  exposes `cloudflare_available` and `consecutive_failures` next to the status.
+```
+
+**File**: `src/mcp_memory_service/utils/health_check.py` (modified, +12/-2)
+```diff
+@@ -322,18 +322,28 @@ async def check_health(self, storage: Any) -> Tuple[bool, str, Dict[str, Any]]:
+             # Collect SQLite statistics through the locked executor (primary storage)
+             stats = await _run_locked(primary_storage, _collect_hybrid_sqlite_stats, primary_storage.conn)
+ 
+-            # Check secondary (Cloudflare) status (non-SQLite operation, done outside closure)
++            # Check secondary (Cloudflare) status (non-SQLite operation, done outside closure).
++            # A running sync loop is not proof that Cloudflare calls succeed,
++            # so "syncing" also requires the service to report Cloudflare reachable.
+             cloudflare_status = "not_configured"
++            sync_detail = {}
+             if hasattr(storage, 'secondary') and storage.secondary:
+                 sync_service = getattr(storage, 'sync_service', None)
+                 if sync_service and getattr(sync_service, 'is_running', False):
+-                    cloudflare_status = "syncing"
++                    sync_stats = getattr(sync_service, 'sync_stats', None) or {}
++                    cloudflare_available = bool(sync_stats.get('cloudflare_available', False))
++                    sync_detail = {
++                        "cloudflare_available": cloudflare_available,
++                        "consecutive_failures": getattr(sync_service, 'consecutive_failures', 0),
++                    }
++                    cloudflare_status = "syncing" if cloudflare_available else "sync_failing"
+                 else:
+                     cloudflare_status = "configured"
+ 
+             # Add non-SQLite metadata to stats
+             stats["database_path"] = getattr(primary_storage, 'db_path', SQLITE_VEC_PATH)
+             stats["cloudflare_sync"] = cloudflare_status
++            stats.update(sync_detail)
+ 
+             memory_count = stats["total_memories"]
+             message = f"Hybrid storage validation successful ({memory_count} memories, Cloudflare: {cloudflare_status})"
+```
+
+**File**: `tests/test_health_check_hybrid_sync.py` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++"""Tests for the hybrid health check's Cloudflare sync status."""
++
++import sqlite3
++from types import SimpleNamespace
++
++import pytest
++
++from mcp_memory_service.utils.health_check import HybridHealthChecker
++
++
++def _storage(secondary=True, sync_service=None):
++    conn = sqlite3.connect(":memory:")
++    conn.execute("CREATE TABLE memories (id INTEGER PRIMARY KEY, deleted_at REAL)")
++    return SimpleNamespace(
++        primary=SimpleNamespace(conn=conn, db_path=":memory:"),
++        secondary=object() if secondary else None,
++        sync_service=sync_service,
++    )
++
++
++def _sync_service(is_running, cloudflare_available, consecutive_failures=0):
++    return SimpleNamespace(
++        is_running=is_running,
++        sync_stats={"cloudflare_available": cloudflare_available},
++        consecutive_failures=consecutive_failures,
++    )
++
++
++async def _cloudflare_stats(storage):
++    ok, message, stats = await HybridHealthChecker().check_health(storage)
++    assert ok, message
++    return stats
++
++
++async def test_syncing_when_running_and_cloudflare_available():
++    stats = await _cloudflare_stats(_storage(sync_service=_sync_service(True, True)))
++    assert stats["cloudflare_sync"] == "syncing"
++    assert stats["cloudflare_available"] is True
++    assert stats["consecutive_failures"] == 0
++
++
++async def test_sync_failing_when_running_and_cloudflare_unavailable():
++    stats = await _cloudflare_stats(_storage(sync_service=_sync_service(True, False, 3)))
++    assert stats["cloudflare_sync"] == "sync_failing"
++    assert stats["cloudflare_available"] is False
++    assert stats["consecutive_failures"] == 3
++
++
++async def test_configured_when_sync_service_not_running():
++    stats = await _cloudflare_stats(_storage(sync_service=_sync_service(False, True)))
++    assert stats["cloudflare_sync"] == "configured"
++    assert "cloudflare_available" not in stats
++
++
++async def test_not_configured_without_secondary():
++    stats = await _cloudflare_stats(_storage(secondary=False))
++    assert stats["cloudflare_sync"] == "not_configured"
++    assert "cloudflare_available" not in stats
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1619** (2026-10-21): fix(hermes): report an existing installation in --dry-run (#1611) (@filhocf)
-- **PR #1615** (2026-10-21): chore(sync): parameterise logging in storage/sync/orchestrator.py (#1146) (@filhocf)
-- **PR #1612** (2026-10-20): docs(storage): document that re-store drops tombstone regardless of retention (@guamiao)
-- **PR #1611** (2026-10-20): feat(hermes): connector installer — register, verify the effect, uninstall surgically (#1610) (@filhocf)
-- **PR #1608** (2026-10-20): fix(ci): require assignment on closing issues (@dailyun)
-- **PR #1607** (2026-10-20): fix(mcp): apply the per-caller rate limit to the FastMCP entry point (#1606) (@abuhasanrumi)
+- **PR #1660** (2026-10-23): chore(release): v12.3.1 (@doobidoo)
+- **PR #1659** (2026-10-23): fix(security): refresh TLS trust stores after eMudhra compromise (@doobidoo)
+- **PR #1658** (2026-10-23): chore(release): v12.3.0 (@doobidoo)
+- **PR #1651** (2026-10-23): fix(storage): accept agent_id in Milvus search_memories (@andrunio)
+- **PR #1649** (2026-10-23): ci: run Tests + Coverage and ML extras with pytest-xdist (@doobidoo)
+- **PR #1648** (2026-10-22): feat(codex): report memory load and save status through systemMessage (@dodoshell)
 
 ---
 
@@ -3020,21 +3710,21 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hermes): report an existing installation in --dry-run (#1611) (#1619)
+## X. quarantine): bound the on-store belief check and let it run in background (#1633
 
 **RULE**:
-When implementing operations in `changelog.d/hermes-install-dryrun.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1633.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `928c4ef9`: hermes): report an existing installation in --dry-run (#1611) (#1619). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2601f088`: quarantine): bound the on-store belief check and let it run in background (#1633). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/hermes-install-dryrun.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1633.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **hermes:** `--dry-run` on an already-installed profile now prints that the server is registered instead of exiting 0 with no output. `plan()` returns no actions for an installed server, so the dry-run returned before the branch that reports it — success and a hung script looked identical.
+- Bound the on-store belief check with `MCP_NLI_ON_STORE_BUDGET_S` (2 s default) and `MCP_QUARANTINE_MAX_BELIEFS`, log truncated checks as WARNING, and add the opt-in `MCP_NLI_ON_STORE_ASYNC` mode (#1630).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3044,4 +3734,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `928c4ef9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2601f088` are properly handled with clean fallback behavior.

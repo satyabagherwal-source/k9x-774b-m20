@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source**: github ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
-> **Source Version**: `4c395a6d`  
+> **Source Version**: `cd712d44`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:49:31.802Z  
+> **Timestamp**: 2026-10-23T10:31:05.169Z  
 > **Learning ID**: `learn-github-streetwriters-notesnook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:49:25.843Z  
+> **Harvest Timestamp**: 2026-10-23T10:31:03.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully open source & end-to-end encrypted note taking alternative to Evernote.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14802 stars
+- **Stars / Engagement**: 14818 stars
 
 ---
 
@@ -754,11 +754,11 @@ function setDockMenuOnMacOs() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10544** (2026-10-20): **mobile: show last backup and next backup timestamps in Settings > Backups**
-  *Symptoms*: Supersedes #10212 (moved to `origin` so preview workflows run). Original work by @kashaf-ansari-dev — commit authorship is preserved.  ## Description Display the last backup timestamp under "Backup now" and "Backup now with attachments", and the next scheduled backup time under the corresponding automatic backup rows. Adds a getNextBackupTime helper to BackupService, reusing the same reminder-interval logic as checkBackupRequired.  Closes #9843  ## Type of Change - [ ] Bug fix - [x] Feature  ## Visuals - [x] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [x] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed  <img width="720" height="1600" alt="WhatsApp Image 2026-08-07 at 12 59 26 PM" src="https://github.com/user-attachments/assets/80254ab1-36ce-45b0-bfdc-3eca46f3ec20" />  
+- **Issue #10568** (2026-10-21): **editor: encode url before validating and saving in link popup**
+  *Symptoms*: ## Description Replaces `linkifyjs` validation in `LinkPopup` with the standard `new URL()` parser. This allows URLs with double quotes (e.g., `https://example.com/?a=1&b="2"`) to be automatically sanitized and percent-encoded via `url.href` rather than incorrectly rejected with "Please enter a valid URL", while ensuring malformed URLs still throw and trigger the validation error.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [x] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
 
-- **Issue #10541** (2026-10-16): **core: fix stream/iterate stopping early when dateCreated is null**
-  *Symptoms*: ## Description `stream()` and `iterate()` page with `(dateCreated, id) > (last…)`. When the last row of a page has a NULL `dateCreated`, the comparison is NULL and the loop ends, so backup export and the migrator silently skip the remaining items. Items only get a NULL `dateCreated` via `put()` (sync/backup import of old data), and only trigger this when a table has at least one page's worth of them, so this is mostly defensive.  Fix: sort and compare on `IFNULL(dateCreated, 0)`. No perf change (there's no index on `dateCreated`; same query plan, 50k rows ~600ms before and after).  ### QA steps Normal data never has a missing `dateCreated`, so this needs a hand-edited backup.  1. Create an unencrypted backup of an account with more than 100 notes. 2. Unzip the `.nnbackupz`, remove the `dateCreated` field from 100+ notes in the JSON files, and zip it again. 3. Restore that backup on a fresh install / account. 4. Export a new backup. 5. Verify every note is present in the export.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [x] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why  ## Platform - [x] Web - [x] Mobile - [x] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
+- **Issue #10561** (2026-10-21): **core: fix data encrypted with the wrong key after a password change**
+  *Symptoms*: ## Description After a password change, sync could fail on every device with `ciphertext cannot be decrypted using that key`. On legacy accounts (no DEK), a sync, a lazily created key or a user fetch that overlapped the change left the device with the new master key but a stored user without the DEK, so items were pushed encrypted with the new master key as version 0.  - The user is stored before the master key is derived, and a stored user is never replaced by one with an older `revision`. - Keys are created and replaced through the new server endpoints, and the device stores the user the server returns instead of merging locally. - Keys of a password change that failed midway are committed or discarded on the next login. - Mobile no longer swallows key derivation errors.  ## Type of Change - [x] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [x] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [x] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### QA steps The bug is a race and can't be reproduced by hand; it's covered by `__tests__/user-keys.test.ts` and `__e2e__/user-keys.test.ts`. Regression checks: 1. Web: Settings → Authentication → Change password. Change it, then add and edit a note and let it sync. 2. Log in on a second device with the new password and confirm all notes, attac
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -775,402 +775,1383 @@ function setDockMenuOnMacOs() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c395a6d` (2026-10-20)
-**Commit Message**: core: fix orphan search highlight closing tags in saved notes (#10516)
+### Incident Patch 1: `a90f418d` (2026-10-20)
+**Commit Message**: core: fix data encrypted with the wrong key after a password change
+
+A sync, key creation or user fetch that overlapped a password change could
+leave the new master key in place while the stored user had no DEK, so
+legacy accounts pushed items encrypted with the new master key as version 0.
+
+- store the user before deriving the master key, and never replace a
+  stored user with an older revision
+- create and replace keys through the new server endpoints and store the
+  user the server returns
+- commit or discard the keys of a password change that failed midway when
+  logging in
 
 Signed-off-by: Abdullah Atta <[REDACTED_EMAIL]>
 
-**File**: `packages/core/src/content-types/__tests__/tiptap.test.js` (modified, +8/-0)
+**File**: `packages/core/__e2e__/user-keys.test.ts` (added, +261/-0)
 ```diff
-@@ -57,6 +57,14 @@ test("remove attachments with particular hash", async () => {
-   expect(result).not.toContain(`d3eab72e94e3cd35`);
- });
- 
-+test("search result tags are removed along with their closing tags", async () => {
-+  const tiptap = new Tiptap(
-+    `<p>hello <nn-search-result>wor</nn-search-result>ld</p><p><nn-search-result><b>bold</b></nn-search-result></p>`
-+  );
-+  const result = await tiptap.postProcess(async () => undefined);
-+  expect(result.data).toBe(`<p>hello world</p><p><b>bold</b></p>`);
+@@ -0,0 +1,261 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
++
++Copyright (C) 2023 Streetwriters (Private) Limited
++
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++import { test, expect, vi, afterEach } from "vitest";
++import { databaseTest } from "../__tests__/utils/index.ts";
++import { KeyManager } from "../src/api/key-manager.js";
++import http from "../src/utils/http.js";
++import { EVENTS } from "../src/common.js";
++import { login, USER } from "./utils.js";
++
++const NEW_PASSWORD = `${USER.password}-new`;
++
++afterEach(() => {
++  vi.restoreAllMocks();
 +});
 +
- const HTMLS = {
-   tables: `<table style="border-collapse: collapse; width: 811px;" border="1"><tbody><tr><td style="width: 81.375px;">Goal</td><td style="width: 708.625px;">To introduce various features of the app to the user and to convert a user on trial or basic plan to upgrade.</td></tr><tr><td style="width: 81.375px;">Frequency</td><td style="width: 708.625px;">1/week or 2/week</td></tr><tr><td style="width: 81.375px;">Types</td><td style="width: 708.625px;">Feature intro, upgrade promo, one time emails</td></tr><tr><td style="width: 81.375px;"></td><td style="width: 708.625px;"></td></tr></tbody></table><h2>Emails</h2><h3>Feature intro</h3><p>Features:</p><ol style="list-style-type: decimal;"><li>Web clipper on mobile</li><li>Pin any note to notification</li><li>Take notes from notifications</li><li>App lock</li><li>Importer</li><li>Encrypted attachments</li><li>Session history &amp; automatic backups</li><li>Note publishing</li><li>Note exports</li><li>Collapsible headers</li></ol><h3>Promos</h3><ol style="list-style-type: decimal;"><li>Trial about to end</li><li>Trial ending (with option to request an extension)</li><li>Try free for 14 days</li></ol><h3>One time</h3><ol style="list-style-type: decimal;"><li>End-of-month progress report</li><li>What's coming/roadmap</li><li>What we are working on</li><li>Join the community</li></ol>`,
-   tables2: `<h1>Note 8/6/22, 10:48 AM</h1>
-```
-
-**File**: `packages/core/src/utils/html-rewriter.ts` (modified, +9/-2)
-```diff
-@@ -34,6 +34,7 @@ export class HTMLRewriter {
-   private transformed = "";
-   private currentTag: string | null = null;
-   private ignoreIndex: number | null = null;
-+  private skippedTags: boolean[] = [];
-   private parser: Parser;
- 
-   constructor(
-@@ -50,6 +51,7 @@ export class HTMLRewriter {
-       {
-         onreset: () => {
-           this.transformed = "";
-+          this.skippedTags = [];
-         },
-         oncomment: () => this.write("<!--"),
-         oncommentend: () => this.write("-->"),
-@@ -70,13 +72,16 @@ export class HTMLRewriter {
-             if (result === false) {
-               this.ignoreIndex = 0;
-               return;
--            } else if (result === null) return;
--            else if (result) {
-+            } else if (result === null) {
-+              this.skippedTags.push(true);
-+              return;
-+            } else if (result) {
-               name = result.name;
-               attr = result.attr;
-             }
-           }
- 
-+          this.skippedTags.push(false);
-           this.write(`<${name}`);
-           if (attr) {
-             for (const key in attr) {
-@@ -97,6 +102,8 @@ export class HTMLRewriter {
-             return;
-           }
- 
-+          if (this.skippedTags.pop()) return;
++async function changePassword(db: any) {
++  await db.user.changePassword(USER.password, NEW_PASSWORD);
++}
 +
-           if (!isImplied) this.closeTag();
- 
-           this.write(isImplied ? "/>" : `</${name}>`);
-```
-
----
-
-### Incident Patch 2: `a02c43fe` (2026-10-20)
-**Commit Message**: Merge pull request #10469 from streetwriters/perf/prebuilt-native-libs
-
-Perf/prebuilt native libs
-
-**File**: `.gitattributes` (modified, +3/-1)
-```diff
-@@ -1 +1,3 @@
--* text=auto eol=lf
-\ No newline at end of file
-+* text=auto eol=lf
-+*.aar filter=lfs diff=lfs merge=lfs -text
-+apps/mobile/ios/.prebuilt-xcframeworks/*.zip filter=lfs diff=lfs merge=lfs -text
-```
-
-**File**: `.github/workflows/android.e2e.yml` (modified, +2/-0)
-```diff
-@@ -11,6 +11,8 @@ jobs:
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v5
-+        with:
-+          lfs: true
- 
-       - name: Enable KVM
-         run: |
-```
-
-**File**: `.github/workflows/android.preview.build.yml` (modified, +5/-1)
-```diff
-@@ -33,6 +33,7 @@ jobs:
-         uses: actions/checkout@v5
-         with:
-           ref: ${{ github.event.pull_request.head.sha }}
-+          lfs: true
- 
-       - name: Setup Node
-         uses: ./.github/actions/setup-node-with-cache
-@@ -72,10 +73,13 @@ jobs:
-           cd apps/mobile
-           npx tsc --noEmit
- 
-+      - name: Pull Git LFS files
-+        run: git lfs pull
++async function restorePassword(db: any) {
++  await db.user.changePassword(NEW_PASSWORD, USER.password);
++}
 +
-       - name: Build arm64-v8a apk
-         run: |
-           cd apps/mobile/android
--          ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a -PstagingReleaseBuild=true -PprBuildNumber=${{ steps.build-number.outputs.timestamp }}
-+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a -PstagingReleaseBuild=true -PprBuildNumber=${{ steps.build-number.outputs.timestamp }}
++async function collectNotes(db: any) {
++  const chunks: any[] = [];
++  for await (const chunk of db.syncer.sync.collector.collect(100))
++    if (chunk.type === "note") chunks.push(chunk);
++  return chunks;
++}
++
++// what another device does when it receives these items
++async function receive(db: any, chunks: any[]) {
++  await db.user.fetchUser();
++  const keys = await db.user.getDataEncryptionKeys();
++  for (const chunk of chunks)
++    await db.syncer.sync.processChunk(chunk, keys, { type: "full" });
++}
++
++function deferred() {
++  let resolve!: () => void;
++  const promise = new Promise<void>((r) => (resolve = r));
++  return { promise, resolve };
++}
++
++function keyVersions(chunks: any[]) {
++  return chunks.flatMap((c) => c.items.map((i: any) => i.keyVersion));
++}
++
++async function unwrapDataEncryptionKey(db: any) {
++  return await new KeyManager(db).unwrapKey(
++    (
++      await db.user.getUser()
++    ).dataEncryptionKey,
++    await db.user.getMasterKey()
++  );
++}
++
++async function storeKeysNewerThanMasterKey(db: any) {
++  const user = await db.user.getUser();
++  // e.g. the app was closed right after a password change stored the user
++  await db.user.setUser({
++    ...user,
++    revision: user.revision + 1,
++    dataEncryptionKey: await new KeyManager(db).wrapKey(
++      await db.crypto().generateRandomKey(),
++      await db.storage().generateCryptoKey(NEW_PASSWORD, user.salt)
++    )
++  });
++}
++
++test(
++  "sync during a password change fails instead of using the wrong key",
++  () =>
++    databaseTest().then(async (db) => {
++      await login(db);
++      await db.notes.add({ title: "note" });
++      const sessionExpired = vi.fn();
++      db.eventManager.subscribe(EVENTS.userSessionExpired, sessionExpired);
++      let collectDuringChange!: Promise<unknown>;
++      const storage = db.storage();
++      const derive = storage.deriveCryptoKey.bind(storage);
++      // the new user is already stored but the master key is still the old one
++      vi.spyOn(storage, "deriveCryptoKey").mockImplementationOnce(
++        async (credentials) => {
++          collectDuringChange = collectNotes(db).catch((e) => e);
++          await collectDuringChange;
++          await derive(credentials);
++        }
++      );
++
++      await changePassword(db);
++      try {
++        expect(await collectDuringChange).toBeInstanceOf(Error);
++        expect(sessionExpired).not.toHaveBeenCalled();
++        const pushed = await collectNotes(db);
++        expect(keyVersions(pushed)).toStrictEqual([1]);
++        await expect(receive(db, pushed)).resolves.toBeUndefined();
++      } finally {
++        await restorePassword(db);
++      }
++    }),
++  60000
++);
++
++test(
++  "keys newer than the master key expire the session",
++  () =>
++    databaseTest().then(async (db) => {
++      await login(db);
++      const sessionExpired = vi.fn();
++      db.eventManager.subscribe(EVENTS.userSessionExpired, sessionExpired);
++      await storeKeysNewerThanMasterKey(db);
++
++      await expect(db.user.getDataEncryptionKeys()).rejects.toThrow();
++      expect(sessionExpired).toHaveBeenCalled();
++    }),
++  30000
++);
++
++test(
++  "keys newer than the master key don't expire the session while another tab changes the master key",
++  () =>
++    databaseTest().then(async (db) => {
++      await login(db);
++      const sessionExpired = vi.fn();
++      db.eventManager.subscribe(EVENTS.userSessionExpired, sessionExpired);
++      await storeKeysNewerThanMasterKey(db);
++      await db.kv().write("masterKeyChangeStartedAt", Date.now());
++
++      await expect(db.user.getDataEncryptionKeys()).rejects.toThrow();
+
+```
+
+**File**: `packages/core/__tests__/password-change.test.ts` (modified, +12/-2)
+```diff
+@@ -31,16 +31,26 @@ const FULL_USER: any = {
+   subscription: { appId: 0, cancelURL: null, expiry: 0, productId: null, provider: "none", start: 0, plan: "free", status: "trial", updateURL: null, googlePurchaseToken: null }
+ };
  
-       - name: Stage build artifact
-         run: |
-```
-
-**File**: `.github/workflows/android.publish.internal.yml` (modified, +2/-0)
-```diff
-@@ -14,6 +14,8 @@ jobs:
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v5
-+        with:
-+          lfs: true
- 
-       - name: Setup Node
-         uses: ./.github/actions/setup-node-with-cache
-```
-
-**File**: `.github/workflows/android.publish.yml` (modified, +2/-0)
-```diff
-@@ -14,6 +14,8 @@ jobs:
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v5
-+        with:
-+          lfs: true
- 
-       - name: Setup Node
-         uses: ./.github/actions/setup-node-with-cache
-```
-
-**File**: `.github/workflows/ios.preview.build.yml` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ jobs:
-       - name: Setup Xcode
-         uses: maxim-lobanov/setup-xcode@v1
-         with:
--          xcode-version: "26.1.1"
-+          xcode-version: "26.6"
- 
-       - name: Setup iOS Platform
-         run: |
-```
-
-**File**: `.github/workflows/ios.preview.publish.yml` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ jobs:
-       - name: Setup Xcode
-         uses: maxim-lobanov/setup-xcode@v1
-         with:
--          xcode-version: "26.1.1"
-+          xcode-version: "26.6"
- 
-       - name: Download build artifact
-         uses: actions/download-artifact@v4
-```
-
-**File**: `.husky/post-checkout` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+#!/bin/sh
-+command -v git-lfs >/dev/null 2>&1 || { printf >&2 "\n%s\n\n" "This repository is configured for Git LFS but 'git-lfs' was not found on your path. If you no longer wish to use Git LFS, remove this hook by deleting the 'post-checkout' file in the hooks directory (set by 'core.hookspath'; usually '.git/hooks')."; exit 2; }
-+git lfs post-checkout "$@"
-```
-
----
-
-### Incident Patch 3: `db6c374f` (2026-10-20)
-**Commit Message**: Merge pull request #10530 from streetwriters/fix-natural-title-sorting
-
-Fix natural title sorting
-
-**File**: `apps/desktop/src/api/sqlite-kysely.ts` (modified, +3/-0)
-```diff
-@@ -58,6 +58,9 @@ class SQLite {
-     this.sqlite = require("better-sqlite3-multiple-ciphers")(
-       this.filePath
-     ).unsafeMode(true);
-+    this.sqlite.function("natural_key", (str: string | null) =>
-+      str ? str.replace(/\d+/g, (n) => n.padStart(10, "0")) : ""
-+    );
+-vi.mock("../src/utils/http.js", () => ({
++// the password change responds with the user and its rewrapped keys
++const server: { db?: any } = {};
++vi.mock("../src/utils/http.js", async (importOriginal) => ({
++  ...(await importOriginal<typeof import("../src/utils/http.js")>()),
+   default: {
+     get: vi.fn().mockResolvedValue(undefined),
+     post: vi.fn().mockResolvedValue(undefined),
+-    patch: { json: vi.fn().mockResolvedValue(undefined) },
++    patch: {
++      json: vi.fn(async (url: string, body: any) => {
++        if (!url.includes("/users/password/")) return;
++        const user = await server.db.user.getUser();
++        return { ...user, ...body.userKeys, revision: (user.revision ?? 0) + 1 };
++      })
++    },
+     delete: vi.fn().mockResolvedValue(undefined)
    }
+ }));
  
-   /**
+ async function setupLoggedInUser(db: any, password: string = "oldpassword") {
++  server.db = db;
+   const salt = randomBytes(16).toString("base64");
+   const user = { ...FULL_USER, salt };
+   await db.user.setUser(user);
 ```
 
-**File**: `apps/mobile/patches/react-native-quick-sqlite+8.2.7.patch` (modified, +31/-4)
+**File**: `packages/core/__tests__/user-keys.test.ts` (added, +401/-0)
 ```diff
-@@ -109746,25 +109746,52 @@ diff --git a/node_modules/react-native-quick-sqlite/cpp/sqliteBridge.cpp b/node_
- index 9ffe010..4a6f18f 100644
- --- a/node_modules/react-native-quick-sqlite/cpp/sqliteBridge.cpp
- +++ b/node_modules/react-native-quick-sqlite/cpp/sqliteBridge.cpp
--@@ -20,6 +20,9 @@
-+@@ -20,6 +20,36 @@
-  using namespace std;
-  using namespace facebook;
-  
- +extern "C" int sqlite3Fts5BetterTrigramInit(sqlite3 *db);
- +extern "C" int sqlite3Fts5HtmlInit(sqlite3 *db);
-++
-++static void sqliteNaturalKeyFunc(sqlite3_context *context, int argc, sqlite3_value **argv) {
-++  if (argc == 0 || sqlite3_value_type(argv[0]) == SQLITE_NULL) {
-++    sqlite3_result_null(context);
-++    return;
-++  }
-++  const unsigned char *text = sqlite3_value_text(argv[0]);
-++  if (!text) {
-++    sqlite3_result_text(context, "", 0, SQLITE_STATIC);
-++    return;
-++  }
-++  string result;
-++  const char *p = reinterpret_cast<const char*>(text);
-++  while (*p) {
-++    if (*p >= '0' && *p <= '9') {
-++      const char *start = p;
-++      while (*p >= '0' && *p <= '9') p++;
-++      size_t len = p - start;
-++      if (len < 10) result.append(10 - len, '0');
-++      result.append(start, len);
-++    } else {
-++      result.push_back(*p);
-++      p++;
-++    }
-++  }
-++  sqlite3_result_text(context, result.c_str(), static_cast<int>(result.length()), SQLITE_TRANSIENT);
-++}
- +
-  map<string, sqlite3 *> dbMap = map<string, sqlite3 *>();
-  
-  bool folder_exists(const std::string &foldername)
--@@ -90,12 +93,18 @@ SQLiteOPResult sqliteOpenDb(string const dbName, string const docPath)
-+@@ -90,12 +120,18 @@ SQLiteOPResult sqliteOpenDb(string const dbName, string const docPath)
-    int exit = 0;
-    exit = sqlite3_open_v2(dbPath.c_str(), &db, sqlOpenFlags, nullptr);
-  
- +  if (exit == SQLITE_OK)
- +  {
--+    
- +      sqlite3Fts5BetterTrigramInit(db);
- +      sqlite3Fts5HtmlInit(db);
-++      sqlite3_create_function(db, "natural_key", 1, SQLITE_UTF8, nullptr, sqliteNaturalKeyFunc, nullptr, nullptr);
- +  }
- +
-    if (exit != SQLITE_OK)
-@@ -109778,7 +109805,7 @@ index 9ffe010..4a6f18f 100644
-    }
-    else
-    {
--@@ -103,9 +112,8 @@ SQLiteOPResult sqliteOpenDb(string const dbName, string const docPath)
-+@@ -103,9 +139,8 @@ SQLiteOPResult sqliteOpenDb(string const dbName, string const docPath)
-    }
-  
-    return SQLiteOPResult{
+@@ -0,0 +1,401 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
++
++Copyright (C) 2023 Streetwriters (Private) Limited
++
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++// Server states that only a failure produces (keys left pending by a password
++// change, a missing key, a session that wasn't revoked). The rest is covered
++// against a real server in __e2e__/user-keys.test.ts.
++import { test, expect, vi } from "vitest";
++import { databaseTest } from "./utils/index.ts";
++import { KeyManager } from "../src/api/key-manager.js";
++import { randomBytes } from "../src/utils/random.js";
++
++// in-memory fake API server holding the user document
++const server: any = { user: undefined, hooks: {} };
++const KEY_IDS = [
++  "attachmentsKey",
++  "monographPasswordsKey",
++  "dataEncryptionKey",
++  "legacyDataEncryptionKey",
++  "inboxKeys"
++];
++vi.mock("../src/utils/http.js", async (importOriginal) => {
++  const original = await importOriginal<
++    typeof import("../src/utils/http.js")
++  >();
++  const conflict = (code: string) =>
++    new original.RequestError({ code, description: code, data: undefined });
++  const keysChanged = () => conflict("keys_changed");
++  const user = () => JSON.parse(JSON.stringify(server.user));
++  return {
++    ...original,
++    default: {
++      get: vi.fn(async (url: string) => {
++        if (server.hooks.get) return server.hooks.get(url);
++        if (url.endsWith("/users")) return user();
++      }),
++      post: Object.assign(
++        vi.fn(async (url: string) => server.hooks.post?.(url)),
++        {
++          json: vi.fn(async (url: string, body: any) => {
++            const pending = url.match(
++              /\/users\/keys\/pending\/(commit|discard)/
++            );
++            if (pending) {
++              if (
++                Number(new URL(url).searchParams.get("revision")) !==
++                server.user.revision
++              )
++                throw keysChanged();
++              if (pending[1] === "commit") {
++                server.hooks.onCommitPendingKeys?.();
++                Object.assign(server.user, server.user.pendingKeys);
++              } else server.hooks.onDiscardPendingKeys?.();
++              delete server.user.pendingKeys;
++              server.user.revision++;
++              return user();
++            }
++            if (!url.includes("/users/keys")) return;
++            await server.hooks.beforeKeysCreate?.(body);
++            const revision = new URL(url).searchParams.get("revision");
++            if (revision !== null && +revision < server.masterKeyRevision)
++              throw conflict("password_changed");
++            for (const id in body) {
++              if (server.user[id]) continue;
++              server.user[id] = body[id];
++              server.user.revision++;
++            }
++            return user();
++          })
++        }
++      ),
++      patch: {
++        json: vi.fn(async (url: string, body: any) => {
++          if (!url.includes("/users/password/")) return;
++          server.hooks.beforePasswordPatch?.(body);
++          if (
++            (body.revision !== undefined &&
++              body.revision !== server.user.revision) ||
++            KEY_IDS.some((id) => server.user[id] && !body.userKeys[id])
++          )
++            throw keysChanged();
++          Object.assign(server.user, body.userKeys);
++          server.masterKeyRevision = ++server.user.revision;
++          return user();
++        })
++      },
++      delete: vi.fn().mockResolvedValue(undefined)
++    }
++  };
++});
++
++const SUBSCRIPTION = {
++  appId: 0,
++  cancelURL: null,
++  expiry: 0,
++  productId: null,
++  provider: "none",
++  start: 0,
++  plan: "free",
++  status: "trial",
++  updateURL: null,
++  googlePurchaseToken: null
++};
++
++// A pre-DEK ("legacy") account: data is encrypted directly with the master key.
++async function setupLegacyUser(db: any) {
++  server.hooks = {};
++  server.masterKeyRevision = 0;
++  const salt = randomBytes(16).toString("base64");
++  const user: any = {
++    id: "user",
++    email: "test@example.com",
++    isEmailConfirmed: true,
++    salt,
++    mfa: { isEnabled: false },
++    subscription: SUBSCRIPTION,
++    revision: 0
++  };
++  await db.storage().deriveCryptoKey({ password: "old", salt });
++  await db.kv().write("token", {
++    access_token: "fake-token",
++    t: Date.now(),
++    expires_in: 3600,
++    scope: "notesnook.sync offline_access IdentityServe
 ```
 
-**File**: `apps/web/src/common/sqlite/sqlite.worker.ts` (modified, +18/-1)
+**File**: `packages/core/src/api/user-manager.ts` (modified, +336/-147)
 ```diff
-@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  
- import type { SQLiteAPI, SQLiteCompatibleType } from "./sqlite-types";
--import { Factory, SQLITE_ROW, SQLiteError } from "./sqlite-api";
-+import { Factory, SQLITE_ROW, SQLITE_UTF8, SQLiteError } from "./sqlite-api";
- import { expose, transfer } from "comlink";
- import type { RunMode } from "./type";
- import { QueryResult } from "@streetwriters/kysely";
-@@ -77,6 +77,23 @@ class _SQLiteWorker {
-       undefined,
-       `multipleciphers-${this.vfs.name}`
-     );
+-import { User } from "../types.js";
+-import http from "../utils/http.js";
++import { User, UserKeys } from "../types.js";
++import http, { RequestError } from "../utils/http.js";
+ import constants from "../utils/constants.js";
+ import TokenManager from "./token-manager.js";
+ import { EV, EVENTS } from "../common.js";
+@@ -44,9 +44,32 @@ const ENDPOINTS = {
+   revoke: "/connect/revocation",
+   recoverAccount: "/account/recover",
+   resetUser: "/users/reset",
++  userKeys: "/users/keys",
++  commitPendingKeys: "/users/keys/pending/commit",
++  discardPendingKeys: "/users/keys/pending/discard",
++  inboxKeys: "/users/keys/inbox",
+   activateTrial: "/subscriptions/trial"
+ };
+ 
++const MASTER_KEY_CHANGE_TIMEOUT = 30 * 1000;
 +
-+    this.sqlite.create_function(
-+      this.db,
-+      "natural_key",
-+      1,
-+      SQLITE_UTF8,
-+      0,
-+      (context: number, values: Uint32Array) => {
-+        const val =
-+          values && values.length > 0 ? this.sqlite.value(values[0]) : null;
-+        const natural =
-+          typeof val === "string"
-+            ? val.replace(/\d+/g, (n) => n.padStart(10, "0"))
-+            : val;
-+        this.sqlite.result(context, natural as SQLiteCompatibleType);
-+      }
-+    );
++function revisionQuery(revision?: number) {
++  return revision === undefined ? "" : `?revision=${revision}`;
++}
++
++/**
++ * Any one of the keys, to check which master key wrapped them.
++ */
++function anyWrappedKey(keys?: UserKeys) {
++  return (
++    keys?.dataEncryptionKey ||
++    keys?.legacyDataEncryptionKey ||
++    keys?.attachmentsKey ||
++    keys?.monographPasswordsKey ||
++    keys?.inboxKeys?.private
++  );
++}
++
+ class UserManager {
+   private tokenManager: TokenManager;
+   private keyManager: KeyManager;
+@@ -89,20 +112,19 @@ class UserManager {
+       })
+     );
+ 
+-    const user = await this.fetchUser();
++    // stored by setMasterKey, so a failed signup stores nothing
++    const user = await this.getRemoteUser();
+     if (!user) throw new Error("Failed to fetch user after signup.");
+ 
+     await this.db.setLastSynced(0);
+     await this.db.syncer.devices.register();
+ 
+-    await this.db.storage().deriveCryptoKey({
+-      password,
+-      salt: user.salt
+-    });
+-
+-    const masterKey = await this.getMasterKey();
+-    if (!masterKey) throw new Error("User encryption key not generated.");
+-    await this.updateUser({
++    // the keys are added before the master key is set so that the master key
++    // is never used without a data encryption key
++    const masterKey = await this.db
++      .storage()
++      .generateCryptoKey(password, user.salt);
++    const keys: UserKeys = {
+       dataEncryptionKey: await this.keyManager.wrapKey(
+         await this.db.crypto().generateRandomKey(),
+         masterKey
+@@ -115,9 +137,11 @@ class UserManager {
+         await this.db.crypto().generateRandomKey(),
+         masterKey
+       )
+-    });
++    };
++    const updatedUser = await this.addUserKeys(keys, user.revision);
++    await this.setMasterKey(updatedUser, { password });
+ 
+-    this.db.eventManager.publish(EVENTS.userLoggedIn, user);
++    this.db.eventManager.publish(EVENTS.userLoggedIn, updatedUser);
    }
  
-   /**
+   async authenticateEmail(email: string) {
+@@ -209,25 +233,16 @@ class UserManager {
+           })
+       );
+ 
+-      const user = await this.fetchUser();
++      // stored by setMasterKey, so a failed login stores nothing
++      const user = await this.getRemoteUser();
+       if (!user) throw new Error("Failed to fetch user.");
+ 
+       if (!sessionExpired) {
+         await this.db.setLastSynced(0);
+         await this.db.syncer.devices.register();
+       }
+ 
+-      if (usesFallback) {
+-        await this.db.storage().deriveCryptoKeyFallback({
+-          password,
+-          salt: user.salt
+-        });
+-      } else {
+-        await this.db.storage().deriveCryptoKey({
+-          password,
+-          salt: user.salt
+-        });
+-      }
++      await this.setMasterKey(user, { password, usesFallback });
+       this.db.eventManager.publish(EVENTS.userLoggedIn, user);
+     } catch (e) {
+       await this.tokenManager.saveToken(token);
+@@ -278,13 +293,47 @@ class UserManager {
+   }
+ 
+   setUser(user: User) {
+-    return this.db.kv().write("user", user);
++    return this.db.kv().writeUser(user);
+   }
+ 
+   getUser() {
+     return this.db.kv().read("user");
+   }
+ 
++  /**
++   * Stores the user before changing the master key, so the stored keys are
++   * never older than the master key: in between, unwrapping them fails
++   * instead of data getting encrypted with the wrong key.
++   */
++  private async setMasterKey(
++    user: User,
++    credentials: { password: string; usesFallback?: boolean }
++  ) {
++    // resolved before anything is stored so that a failed commit leaves
++    // this device as it was
++    const resolvedUser = user.pendingKeys
++      ? (await this.resolvePendingKeys(user, credentials)) || user
++      : user;
++
++    await this.db.kv().write("masterKeyChangeStartedAt", Date.now());
++    try {
++      await this.setUser(resolvedUser);
++      this.keyManager.clearCache();
++      const key = { password: credentials.password, salt: resolvedUser.salt };
++      if (credentials.usesFallback)
++        await this.db.storage().deriveCryptoKeyFallback(key);
++      else await this.db.storage().deriveCryptoKey(key);
++
++      // stored after 
 ```
 
-**File**: `packages/core/__tests__/notes.test.ts` (modified, +35/-0)
+**File**: `packages/core/src/database/kv.ts` (modified, +36/-0)
 ```diff
-@@ -785,6 +785,41 @@ for (const group of groups) {
+@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
++import { sql } from "@streetwriters/kysely";
+ import { LazyDatabaseAccessor, RawDatabaseSchema } from "./index.js";
+ import { Token } from "../api/token-manager.js";
+ import { User } from "../types.js";
+@@ -30,6 +31,11 @@ interface KV {
+   deviceId: string;
+   lastBackupTime: number;
+   fullOfflineMode: boolean;
++  masterKeyChangeStartedAt: number;
++  /**
++   * Revision of the user when the current master key was set.
++   */
++  masterKeyRevision: number;
+ }
+ 
+ export const KEYS: (keyof KV)[] = [
+@@ -75,6 +81,36 @@ export class KVStorage {
+     );
+   }
+ 
++  /**
++   * Writes the user unless the stored user (of the same account) has a newer
++   * revision, so a user fetched before a change to its keys can never replace
++   * the changed user.
++   */
++  async writeUser(user: User) {
++    await this.db.then((db) =>
++      db
++        .insertInto("kv")
++        .values({
++          key: "user",
++          value: JSON.stringify(user),
++          dateModified: Date.now()
++        })
++        .onConflict((oc) =>
++          oc
++            .column("key")
++            .doUpdateSet({
++              value: sql`excluded.value`,
++              dateModified: sql`excluded.dateModified`
++            })
++            .where(
++              sql<boolean>`json_extract(kv.value, '$.id') is not json_extract(excluded.value, '$.id')
++                or coalesce(json_extract(kv.value, '$.revision'), -1) <= coalesce(json_extract(excluded.value, '$.revision'), -1)`
++            )
++        )
++        .execute()
++    );
++  }
++
+   async delete<T extends keyof KV>(key: T) {
+     await this.db.then((db) =>
+       db.deleteFrom("kv").where("key", "==", key).execute()
+```
+
+**File**: `packages/core/src/types.ts` (modified, +19/-0)
+```diff
+@@ -640,6 +640,14 @@ export type User = {
+   inboxKeys?: { public: string; private: Cipher<"base64"> };
+   dataEncryptionKey?: Cipher<"base64">;
+   legacyDataEncryptionKey?: Cipher<"base64">;
++  /**
++   * Incremented by the server on every change to the user's keys.
++   */
++  revision?: number;
++  /**
++   * Keys of a password change that is in progress or failed midway.
++   */
++  pendingKeys?: UserKeys;
+ 
+   marketingConsent?: boolean;
+   storageUsed?: number;
+@@ -666,6 +674,17 @@ export type User = {
+   };
+ };
+ 
++export type UserKeys = Partial<
++  Pick<
++    User,
++    | "attachmentsKey"
++    | "monographPasswordsKey"
++    | "inboxKeys"
++    | "dataEncryptionKey"
++    | "legacyDataEncryptionKey"
++  >
++>;
++
+ export type Profile = {
+   fullName?: string;
+   profilePicture?: string;
+```
+
+**File**: `packages/core/src/utils/http.ts` (modified, +13/-0)
+```diff
+@@ -61,9 +61,22 @@ post.json = function (url: string, data: JsonRequestBody, token?: string) {
+   );
+ };
+ 
++const put = {
++  json(url: string, data: JsonRequestBody, token?: string) {
++    return bodyRequest(
++      url,
++      transformJson(data),
++      token,
++      "PUT",
++      "application/json"
++    );
++  }
++};
++
+ export default {
+   get,
+   post,
++  put,
+   delete: deleteRequest,
+   patch
+ };
+```
+
+---
+
+### Incident Patch 2: `4ca562ac` (2026-10-22)
+**Commit Message**: web: prevent undefined selection crash on keyboard navigation in virtualized tree (#10385)
+
+Signed-off-by: Mohd Sultan <[REDACTED_EMAIL]>
+
+**File**: `apps/web/src/components/virtualized-tree/index.tsx` (modified, +4/-4)
+```diff
+@@ -163,12 +163,12 @@ export function VirtualizedTree<T>(props: TreeViewProps<T>) {
+     length: nodes.length,
+     reset: () => deselectAll?.(),
+     deselect: (index) => {
+-      const id = nodes[index].id;
++      const id = nodes[index]?.id;
+       if (!id) return;
+       onDeselect?.(id);
+     },
+     select: (index, toggleable) => {
+-      const id = nodes[index].id;
++      const id = nodes[index]?.id;
+       if (!id) return;
+       if (toggleable && isSelected?.(id)) onDeselect?.(id);
+       else onSelect?.(id);
+@@ -181,7 +181,7 @@ export function VirtualizedTree<T>(props: TreeViewProps<T>) {
+       bulkSelect?.(ids);
+     },
+     focusItemAt: (index) => {
+-      const id = nodes[index].id;
++      const id = nodes[index]?.id;
+       if (!id || !list.current) return;
+ 
+       waitForElement(list.current, index, `id_${id}`, (element) =>
+@@ -190,7 +190,7 @@ export function VirtualizedTree<T>(props: TreeViewProps<T>) {
+     },
+     skip: () => false,
+     open: (index) => {
+-      const id = nodes[index].id;
++      const id = nodes[index]?.id;
+       if (!id || !list.current) return;
+ 
+       waitForElement(list.current, index, `id_${id}`, (element) =>
+```
+
+**File**: `apps/web/src/hooks/use-keyboard-list-navigation.ts` (modified, +18/-6)
+```diff
+@@ -68,12 +68,12 @@ export function useKeyboardListNavigation(
+   }, [reset]);
+ 
+   const openActiveItem = useCallback(() => {
+-    if (!open) return false;
++    if (!open || cursor.current < 0 || cursor.current >= length) return false;
+     resetSelection();
+     open(cursor.current);
+     select(cursor.current);
+     return true;
+-  }, [open, resetSelection, select]);
++  }, [open, resetSelection, select, length]);
+ 
+   const onMouseUp = useCallback(
+     (e: MouseEvent, itemIndex: number) => {
+@@ -136,10 +136,16 @@ export function useKeyboardListNavigation(
+         "Shift-ArrowUp": () => {
+           if (anchor.current === -1) {
+             anchor.current = cursor.current;
+-            select(anchor.current);
++            if (anchor.current >= 0 && anchor.current < length) {
++              select(anchor.current);
++            }
+           }
+ 
+-          if (direction() === DIRECTION.DOWN) {
++          if (
++            direction() === DIRECTION.DOWN &&
++            cursor.current >= 0 &&
++            cursor.current < length
++          ) {
+             deselect(cursor.current);
+           }
+ 
+@@ -158,10 +164,16 @@ export function useKeyboardListNavigation(
+         "Shift-ArrowDown": () => {
+           if (anchor.current === -1) {
+             anchor.current = cursor.current;
+-            select(anchor.current);
++            if (anchor.current >= 0 && anchor.current < length) {
++              select(anchor.current);
++            }
+           }
+ 
+-          if (direction() === DIRECTION.UP) {
++          if (
++            direction() === DIRECTION.UP &&
++            cursor.current >= 0 &&
++            cursor.current < length
++          ) {
+             deselect(cursor.current);
+           }
+ 
+```
+
+---
+
+### Incident Patch 3: `6218f5a0` (2026-10-21)
+**Commit Message**: Merge pull request #10561 from streetwriters/core/fix-legacy-key-after-password-change
+
+core: fix data encrypted with the wrong key after a password change
+
+**File**: `apps/mobile/app/common/database/encryption.ts` (modified, +4/-0)
+```diff
+@@ -279,6 +279,8 @@ export async function deriveCryptoKeyFallback(data: SerializedKey) {
+     MMKV.setMap(USER_KEY_CIPHER, userKeyCipher);
+   } catch (e) {
+     DatabaseLogger.error(e);
++    // the caller must know that the master key wasn't changed
++    throw e;
    }
  }
  
-+test("natural sorting of numbered note titles", () =>
-+  databaseTest().then(async (db) => {
-+    const titles = [
-+      "Lesson 10",
-+      "Lesson 1",
-+      "Lesson 2",
-+      "10. Intro",
-+      "1. Intro",
-+      "2. Intro"
-+    ];
-+    for (const title of titles) {
-+      await db.notes.add({ title });
-+    }
-+
-+    const asc = await db.notes.all.grouped({
-+      groupBy: "none",
-+      sortBy: "title",
-+      sortDirection: "asc"
-+    });
-+    const ascTitles: string[] = [];
-+    for (let i = 0; i < asc.length; i++) {
-+      const item = await asc.item(i);
-+      if (item.item) ascTitles.push(item.item.title);
-+    }
-+
-+    expect(ascTitles).toEqual([
-+      "1. Intro",
-+      "2. Intro",
-+      "10. Intro",
-+      "Lesson 1",
-+      "Lesson 2",
-+      "Lesson 10"
-+    ]);
-+  }));
-+
- test("get archived notes", () =>
-   noteTest().then(async ({ db, id }) => {
-     await db.notes.archive(true, id);
+@@ -306,6 +308,8 @@ export async function deriveCryptoKey(data: SerializedKey) {
+     MMKV.setMap(USER_KEY_CIPHER, userKeyCipher);
+   } catch (e) {
+     DatabaseLogger.error(e);
++    // the caller must know that the master key wasn't changed
++    throw e;
+   }
+ }
+ 
 ```
 
-**File**: `packages/core/__tests__/utils/index.ts` (modified, +3/-0)
+**File**: `packages/core/__e2e__/user-keys.test.ts` (added, +261/-0)
 ```diff
-@@ -52,6 +52,9 @@ function databaseTest(type: "memory" | "persistent" = "memory") {
-   const betterSqliteDb = BetterSQLite3(
-     type === "persistent" ? dbPath : ":memory:"
-   ).unsafeMode(true);
-+  betterSqliteDb.function("natural_key", (str: string | null) =>
-+    str ? str.replace(/\d+/g, (n) => n.padStart(10, "0")) : ""
+@@ -0,0 +1,261 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
++
++Copyright (C) 2023 Streetwriters (Private) Limited
++
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++import { test, expect, vi, afterEach } from "vitest";
++import { databaseTest } from "../__tests__/utils/index.ts";
++import { KeyManager } from "../src/api/key-manager.js";
++import http from "../src/utils/http.js";
++import { EVENTS } from "../src/common.js";
++import { login, USER } from "./utils.js";
++
++const NEW_PASSWORD = `${USER.password}-new`;
++
++afterEach(() => {
++  vi.restoreAllMocks();
++});
++
++async function changePassword(db: any) {
++  await db.user.changePassword(USER.password, NEW_PASSWORD);
++}
++
++async function restorePassword(db: any) {
++  await db.user.changePassword(NEW_PASSWORD, USER.password);
++}
++
++async function collectNotes(db: any) {
++  const chunks: any[] = [];
++  for await (const chunk of db.syncer.sync.collector.collect(100))
++    if (chunk.type === "note") chunks.push(chunk);
++  return chunks;
++}
++
++// what another device does when it receives these items
++async function receive(db: any, chunks: any[]) {
++  await db.user.fetchUser();
++  const keys = await db.user.getDataEncryptionKeys();
++  for (const chunk of chunks)
++    await db.syncer.sync.processChunk(chunk, keys, { type: "full" });
++}
++
++function deferred() {
++  let resolve!: () => void;
++  const promise = new Promise<void>((r) => (resolve = r));
++  return { promise, resolve };
++}
++
++function keyVersions(chunks: any[]) {
++  return chunks.flatMap((c) => c.items.map((i: any) => i.keyVersion));
++}
++
++async function unwrapDataEncryptionKey(db: any) {
++  return await new KeyManager(db).unwrapKey(
++    (
++      await db.user.getUser()
++    ).dataEncryptionKey,
++    await db.user.getMasterKey()
 +  );
-   db.setup({
-     storage: new NodeStorageInterface(),
-     eventsource: EventSource,
++}
++
++async function storeKeysNewerThanMasterKey(db: any) {
++  const user = await db.user.getUser();
++  // e.g. the app was closed right after a password change stored the user
++  await db.user.setUser({
++    ...user,
++    revision: user.revision + 1,
++    dataEncryptionKey: await new KeyManager(db).wrapKey(
++      await db.crypto().generateRandomKey(),
++      await db.storage().generateCryptoKey(NEW_PASSWORD, user.salt)
++    )
++  });
++}
++
++test(
++  "sync during a password change fails instead of using the wrong key",
++  () =>
++    databaseTest().then(async (db) => {
++      await login(db);
++      await db.notes.add({ title: "note" });
++      const sessionExpired = vi.fn();
++      db.eventManager.subscribe(EVENTS.userSessionExpired, sessionExpired);
++      let collectDuringChange!: Promise<unknown>;
++      const storage = db.storage();
++      const derive = storage.deriveCryptoKey.bind(storage);
++      // the new user is already stored but the master key is still the old one
++      vi.spyOn(storage, "deriveCryptoKey").mockImplementationOnce(
++        async (credentials) => {
++          collectDuringChange = collectNotes(db).catch((e) => e);
++          await collectDuringChange;
++          await derive(credentials);
++        }
++      );
++
++      await changePassword(db);
++      try {
++        expect(await collectDuringChange).toBeInstanceOf(Error);
++        expect(sessionExpired).not.toHaveBeenCalled();
++        const pushed = await collectNotes(db);
++        expect(keyVersions(pushed)).toStrictEqual([1]);
++        await expect(receive(db, pushed)).resolves.toBeUndefined();
++      } finally {
++        await restorePassword(db);
++      }
++    }),
++  60000
++);
++
++test(
++  "keys newer than the master key expire the session",
++  () =>
++    databaseTest().then(async (db) => {
++      await login(db);
++      const sessionExpired = vi.fn();
++      db.eventManager.subscribe(EVENTS.userSessionExpired, sessionExpired);
++      await storeKeysNewerThanMasterKey(db);
++
++      await expect(db.user.getDataEncryptionKeys()).rejects.toThrow();
++      expect(sessionExpired).toHaveBeenCalled();
++    }),
++  30000
++);
++
++test(
++  "keys newer than the master key don't expire the session while another tab changes the master key",
++  () =>
++    databaseTest().then(async (db) => {
++      await login(db);
++      const sessionExpired = vi.fn();
++      db.eventManager.subscribe(EVENTS.userSessionExpired, sessionExpired);
++      await storeKeysNewerThanMasterKey(db);
++      await db.kv().write("masterKeyChangeStartedAt", Date.now());
++
++      await expect(db.user.getDataEncryptionKeys()).rejects.toThrow();
+
 ```
 
-**File**: `packages/core/src/database/sql-collection.ts` (modified, +1/-1)
+**File**: `packages/core/__tests__/password-change.test.ts` (modified, +12/-2)
 ```diff
-@@ -643,7 +643,7 @@ export class FilteredSelector<T extends Item> {
-           qb = qb.orderBy(
-             options.sortBy !== "title"
-               ? sql`substring(ltrim(title, ' \u00a0\r\n\t\v'), 1, 1) COLLATE NOCASE`
--              : sql`ltrim(title, ' \u00a0\r\n\t\v') COLLATE NOCASE`,
-+              : sql`natural_key(ltrim(title, ' \u00a0\r\n\t\v')) COLLATE NOCASE`,
-             options.sortDirection
-           );
-         } else {
+@@ -31,16 +31,26 @@ const FULL_USER: any = {
+   subscription: { appId: 0, cancelURL: null, expiry: 0, productId: null, provider: "none", start: 0, plan: "free", status: "trial", updateURL: null, googlePurchaseToken: null }
+ };
+ 
+-vi.mock("../src/utils/http.js", () => ({
++// the password change responds with the user and its rewrapped keys
++const server: { db?: any } = {};
++vi.mock("../src/utils/http.js", async (importOriginal) => ({
++  ...(await importOriginal<typeof import("../src/utils/http.js")>()),
+   default: {
+     get: vi.fn().mockResolvedValue(undefined),
+     post: vi.fn().mockResolvedValue(undefined),
+-    patch: { json: vi.fn().mockResolvedValue(undefined) },
++    patch: {
++      json: vi.fn(async (url: string, body: any) => {
++        if (!url.includes("/users/password/")) return;
++        const user = await server.db.user.getUser();
++        return { ...user, ...body.userKeys, revision: (user.revision ?? 0) + 1 };
++      })
++    },
+     delete: vi.fn().mockResolvedValue(undefined)
+   }
+ }));
+ 
+ async function setupLoggedInUser(db: any, password: string = "oldpassword") {
++  server.db = db;
+   const salt = randomBytes(16).toString("base64");
+   const user = { ...FULL_USER, salt };
+   await db.user.setUser(user);
+```
+
+**File**: `packages/core/__tests__/user-keys.test.ts` (added, +401/-0)
+```diff
+@@ -0,0 +1,401 @@
++/*
++This file is part of the Notesnook project (https://notesnook.com/)
++
++Copyright (C) 2023 Streetwriters (Private) Limited
++
++This program is free software: you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation, either version 3 of the License, or
++(at your option) any later version.
++
++This program is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with this program.  If not, see <http://www.gnu.org/licenses/>.
++*/
++
++// Server states that only a failure produces (keys left pending by a password
++// change, a missing key, a session that wasn't revoked). The rest is covered
++// against a real server in __e2e__/user-keys.test.ts.
++import { test, expect, vi } from "vitest";
++import { databaseTest } from "./utils/index.ts";
++import { KeyManager } from "../src/api/key-manager.js";
++import { randomBytes } from "../src/utils/random.js";
++
++// in-memory fake API server holding the user document
++const server: any = { user: undefined, hooks: {} };
++const KEY_IDS = [
++  "attachmentsKey",
++  "monographPasswordsKey",
++  "dataEncryptionKey",
++  "legacyDataEncryptionKey",
++  "inboxKeys"
++];
++vi.mock("../src/utils/http.js", async (importOriginal) => {
++  const original = await importOriginal<
++    typeof import("../src/utils/http.js")
++  >();
++  const conflict = (code: string) =>
++    new original.RequestError({ code, description: code, data: undefined });
++  const keysChanged = () => conflict("keys_changed");
++  const user = () => JSON.parse(JSON.stringify(server.user));
++  return {
++    ...original,
++    default: {
++      get: vi.fn(async (url: string) => {
++        if (server.hooks.get) return server.hooks.get(url);
++        if (url.endsWith("/users")) return user();
++      }),
++      post: Object.assign(
++        vi.fn(async (url: string) => server.hooks.post?.(url)),
++        {
++          json: vi.fn(async (url: string, body: any) => {
++            const pending = url.match(
++              /\/users\/keys\/pending\/(commit|discard)/
++            );
++            if (pending) {
++              if (
++                Number(new URL(url).searchParams.get("revision")) !==
++                server.user.revision
++              )
++                throw keysChanged();
++              if (pending[1] === "commit") {
++                server.hooks.onCommitPendingKeys?.();
++                Object.assign(server.user, server.user.pendingKeys);
++              } else server.hooks.onDiscardPendingKeys?.();
++              delete server.user.pendingKeys;
++              server.user.revision++;
++              return user();
++            }
++            if (!url.includes("/users/keys")) return;
++            await server.hooks.beforeKeysCreate?.(body);
++            const revision = new URL(url).searchParams.get("revision");
++            if (revision !== null && +revision < server.masterKeyRevision)
++              throw conflict("password_changed");
++            for (const id in body) {
++              if (server.user[id]) continue;
++              server.user[id] = body[id];
++              server.user.revision++;
++            }
++            return user();
++          })
++        }
++      ),
++      patch: {
++        json: vi.fn(async (url: string, body: any) => {
++          if (!url.includes("/users/password/")) return;
++          server.hooks.beforePasswordPatch?.(body);
++          if (
++            (body.revision !== undefined &&
++              body.revision !== server.user.revision) ||
++            KEY_IDS.some((id) => server.user[id] && !body.userKeys[id])
++          )
++            throw keysChanged();
++          Object.assign(server.user, body.userKeys);
++          server.masterKeyRevision = ++server.user.revision;
++          return user();
++        })
++      },
++      delete: vi.fn().mockResolvedValue(undefined)
++    }
++  };
++});
++
++const SUBSCRIPTION = {
++  appId: 0,
++  cancelURL: null,
++  expiry: 0,
++  productId: null,
++  provider: "none",
++  start: 0,
++  plan: "free",
++  status: "trial",
++  updateURL: null,
++  googlePurchaseToken: null
++};
++
++// A pre-DEK ("legacy") account: data is encrypted directly with the master key.
++async function setupLegacyUser(db: any) {
++  server.hooks = {};
++  server.masterKeyRevision = 0;
++  const salt = randomBytes(16).toString("base64");
++  const user: any = {
++    id: "user",
++    email: "test@example.com",
++    isEmailConfirmed: true,
++    salt,
++    mfa: { isEnabled: false },
++    subscription: SUBSCRIPTION,
++    revision: 0
++  };
++  await db.storage().deriveCryptoKey({ password: "old", salt });
++  await db.kv().write("token", {
++    access_token: "fake-token",
++    t: Date.now(),
++    expires_in: 3600,
++    scope: "notesnook.sync offline_access IdentityServe
+```
+
+**File**: `packages/core/src/api/user-manager.ts` (modified, +336/-147)
+```diff
+@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+-import { User } from "../types.js";
+-import http from "../utils/http.js";
++import { User, UserKeys } from "../types.js";
++import http, { RequestError } from "../utils/http.js";
+ import constants from "../utils/constants.js";
+ import TokenManager from "./token-manager.js";
+ import { EV, EVENTS } from "../common.js";
+@@ -44,9 +44,32 @@ const ENDPOINTS = {
+   revoke: "/connect/revocation",
+   recoverAccount: "/account/recover",
+   resetUser: "/users/reset",
++  userKeys: "/users/keys",
++  commitPendingKeys: "/users/keys/pending/commit",
++  discardPendingKeys: "/users/keys/pending/discard",
++  inboxKeys: "/users/keys/inbox",
+   activateTrial: "/subscriptions/trial"
+ };
+ 
++const MASTER_KEY_CHANGE_TIMEOUT = 30 * 1000;
++
++function revisionQuery(revision?: number) {
++  return revision === undefined ? "" : `?revision=${revision}`;
++}
++
++/**
++ * Any one of the keys, to check which master key wrapped them.
++ */
++function anyWrappedKey(keys?: UserKeys) {
++  return (
++    keys?.dataEncryptionKey ||
++    keys?.legacyDataEncryptionKey ||
++    keys?.attachmentsKey ||
++    keys?.monographPasswordsKey ||
++    keys?.inboxKeys?.private
++  );
++}
++
+ class UserManager {
+   private tokenManager: TokenManager;
+   private keyManager: KeyManager;
+@@ -89,20 +112,19 @@ class UserManager {
+       })
+     );
+ 
+-    const user = await this.fetchUser();
++    // stored by setMasterKey, so a failed signup stores nothing
++    const user = await this.getRemoteUser();
+     if (!user) throw new Error("Failed to fetch user after signup.");
+ 
+     await this.db.setLastSynced(0);
+     await this.db.syncer.devices.register();
+ 
+-    await this.db.storage().deriveCryptoKey({
+-      password,
+-      salt: user.salt
+-    });
+-
+-    const masterKey = await this.getMasterKey();
+-    if (!masterKey) throw new Error("User encryption key not generated.");
+-    await this.updateUser({
++    // the keys are added before the master key is set so that the master key
++    // is never used without a data encryption key
++    const masterKey = await this.db
++      .storage()
++      .generateCryptoKey(password, user.salt);
++    const keys: UserKeys = {
+       dataEncryptionKey: await this.keyManager.wrapKey(
+         await this.db.crypto().generateRandomKey(),
+         masterKey
+@@ -115,9 +137,11 @@ class UserManager {
+         await this.db.crypto().generateRandomKey(),
+         masterKey
+       )
+-    });
++    };
++    const updatedUser = await this.addUserKeys(keys, user.revision);
++    await this.setMasterKey(updatedUser, { password });
+ 
+-    this.db.eventManager.publish(EVENTS.userLoggedIn, user);
++    this.db.eventManager.publish(EVENTS.userLoggedIn, updatedUser);
+   }
+ 
+   async authenticateEmail(email: string) {
+@@ -209,25 +233,16 @@ class UserManager {
+           })
+       );
+ 
+-      const user = await this.fetchUser();
++      // stored by setMasterKey, so a failed login stores nothing
++      const user = await this.getRemoteUser();
+       if (!user) throw new Error("Failed to fetch user.");
+ 
+       if (!sessionExpired) {
+         await this.db.setLastSynced(0);
+         await this.db.syncer.devices.register();
+       }
+ 
+-      if (usesFallback) {
+-        await this.db.storage().deriveCryptoKeyFallback({
+-          password,
+-          salt: user.salt
+-        });
+-      } else {
+-        await this.db.storage().deriveCryptoKey({
+-          password,
+-          salt: user.salt
+-        });
+-      }
++      await this.setMasterKey(user, { password, usesFallback });
+       this.db.eventManager.publish(EVENTS.userLoggedIn, user);
+     } catch (e) {
+       await this.tokenManager.saveToken(token);
+@@ -278,13 +293,47 @@ class UserManager {
+   }
+ 
+   setUser(user: User) {
+-    return this.db.kv().write("user", user);
++    return this.db.kv().writeUser(user);
+   }
+ 
+   getUser() {
+     return this.db.kv().read("user");
+   }
+ 
++  /**
++   * Stores the user before changing the master key, so the stored keys are
++   * never older than the master key: in between, unwrapping them fails
++   * instead of data getting encrypted with the wrong key.
++   */
++  private async setMasterKey(
++    user: User,
++    credentials: { password: string; usesFallback?: boolean }
++  ) {
++    // resolved before anything is stored so that a failed commit leaves
++    // this device as it was
++    const resolvedUser = user.pendingKeys
++      ? (await this.resolvePendingKeys(user, credentials)) || user
++      : user;
++
++    await this.db.kv().write("masterKeyChangeStartedAt", Date.now());
++    try {
++      await this.setUser(resolvedUser);
++      this.keyManager.clearCache();
++      const key = { password: credentials.password, salt: resolvedUser.salt };
++      if (credentials.usesFallback)
++        await this.db.storage().deriveCryptoKeyFallback(key);
++      else await this.db.storage().deriveCryptoKey(key);
++
++      // stored after 
+```
+
+**File**: `packages/core/src/database/kv.ts` (modified, +36/-0)
+```diff
+@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
++import { sql } from "@streetwriters/kysely";
+ import { LazyDatabaseAccessor, RawDatabaseSchema } from "./index.js";
+ import { Token } from "../api/token-manager.js";
+ import { User } from "../types.js";
+@@ -31,6 +32,11 @@ interface KV {
+   lastBackupTime: number;
+   lastFullBackupTime: number;
+   fullOfflineMode: boolean;
++  masterKeyChangeStartedAt: number;
++  /**
++   * Revision of the user when the current master key was set.
++   */
++  masterKeyRevision: number;
+ }
+ 
+ export const KEYS: (keyof KV)[] = [
+@@ -77,6 +83,36 @@ export class KVStorage {
+     );
+   }
+ 
++  /**
++   * Writes the user unless the stored user (of the same account) has a newer
++   * revision, so a user fetched before a change to its keys can never replace
++   * the changed user.
++   */
++  async writeUser(user: User) {
++    await this.db.then((db) =>
++      db
++        .insertInto("kv")
++        .values({
++          key: "user",
++          value: JSON.stringify(user),
++          dateModified: Date.now()
++        })
++        .onConflict((oc) =>
++          oc
++            .column("key")
++            .doUpdateSet({
++              value: sql`excluded.value`,
++              dateModified: sql`excluded.dateModified`
++            })
++            .where(
++              sql<boolean>`json_extract(kv.value, '$.id') is not json_extract(excluded.value, '$.id')
++                or coalesce(json_extract(kv.value, '$.revision'), -1) <= coalesce(json_extract(excluded.value, '$.revision'), -1)`
++            )
++        )
++        .execute()
++    );
++  }
++
+   async delete<T extends keyof KV>(key: T) {
+     await this.db.then((db) =>
+       db.deleteFrom("kv").where("key", "==", key).execute()
+```
+
+**File**: `packages/core/src/types.ts` (modified, +19/-0)
+```diff
+@@ -640,6 +640,14 @@ export type User = {
+   inboxKeys?: { public: string; private: Cipher<"base64"> };
+   dataEncryptionKey?: Cipher<"base64">;
+   legacyDataEncryptionKey?: Cipher<"base64">;
++  /**
++   * Incremented by the server on every change to the user's keys.
++   */
++  revision?: number;
++  /**
++   * Keys of a password change that is in progress or failed midway.
++   */
++  pendingKeys?: UserKeys;
+ 
+   marketingConsent?: boolean;
+   storageUsed?: number;
+@@ -666,6 +674,17 @@ export type User = {
+   };
+ };
+ 
++export type UserKeys = Partial<
++  Pick<
++    User,
++    | "attachmentsKey"
++    | "monographPasswordsKey"
++    | "inboxKeys"
++    | "dataEncryptionKey"
++    | "legacyDataEncryptionKey"
++  >
++>;
++
+ export type Profile = {
+   fullName?: string;
+   profilePicture?: string;
+```
+
+**File**: `packages/core/src/utils/http.ts` (modified, +13/-0)
+```diff
+@@ -61,9 +61,22 @@ post.json = function (url: string, data: JsonRequestBody, token?: string) {
+   );
+ };
+ 
++const put = {
++  json(url: string, data: JsonRequestBody, token?: string) {
++    return bodyRequest(
++      url,
++      transformJson(data),
++      token,
++      "PUT",
++      "application/json"
++    );
++  }
++};
++
+ export default {
+   get,
+   post,
++  put,
+   delete: deleteRequest,
+   patch
+ };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10568** (2026-10-21): editor: encode url before validating and saving in link popup (@kashaf-ansari-dev)
+- **PR #10561** (2026-10-21): core: fix data encrypted with the wrong key after a password change (@thecodrr)
+- **PR #10560** (2026-10-21): mobile: release v3.4.15 (@ammarahm-ed)
+- **PR #10559** (2026-10-22): web: bump version to 3.4.10 (@01zulfi)
 - **PR #10544** (2026-10-20): mobile: show last backup and next backup timestamps in Settings > Backups (@thecodrr)
 - **PR #10541** (2026-10-16): core: fix stream/iterate stopping early when dateCreated is null (@thecodrr)
-- **PR #10540** (2026-10-17): core: fix token refresh race between TokenManager instances (@thecodrr)
-- **PR #10539** (2026-10-16): core: fix sync merge overwriting local edits made during the merge (@thecodrr)
-- **PR #10538** (2026-10-18): core: fix trash list order and headers past one batch (@thecodrr)
-- **PR #10533** (2026-10-16): core: fix rejected sync chunks being marked as synced (@thecodrr)
 
 ---
 
@@ -1190,28 +2171,54 @@ Fix natural title sorting
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core: fix orphan search highlight closing tags in saved notes (#10516)
+## X. core: fix data encrypted with the wrong key after a password change
 
 **RULE**:
-When implementing operations in `packages/core/src/content-types/__tests__/tiptap.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/__e2e__/user-keys.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c395a6d`: core: fix orphan search highlight closing tags in saved notes (#10516). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a90f418d`: core: fix data encrypted with the wrong key after a password change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/src/content-types/__tests__/tiptap.test.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/__e2e__/user-keys.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-test("search result tags are removed along with their closing tags", async () => {
-  const tiptap = new Tiptap(
-    `<p>hello <nn-search-result>wor</nn-search-result>ld</p><p><nn-search-result><b>bold</b></nn-search-result></p>`
-  );
-  const result = await tiptap.postProcess(async () => undefined);
-  expect(result.data).toBe(`<p>hello world</p><p><b>bold</b></p>`);
+/*
+This file is part of the Notesnook project (https://notesnook.com/)
+
+Copyright (C) 2023 Streetwriters (Private) Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+import { test, expect, vi, afterEach } from "vitest";
+import { databaseTest } from "../__tests__/utils/index.ts";
+import { KeyManager } from "../src/api/key-manager.js";
+import http from "../src/utils/http.js";
+import { EVENTS } from "../src/common.js";
+import { login, USER } from "./utils.js";
+
+const NEW_PASSWORD = `${USER.password}-new`;
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
+async function changePassword(db: any) {
+  await db.user.changePasswor
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1221,4 +2228,4 @@ test("search result tags are removed along with their closing tags", async () =>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c395a6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a90f418d` are properly handled with clean fallback behavior.

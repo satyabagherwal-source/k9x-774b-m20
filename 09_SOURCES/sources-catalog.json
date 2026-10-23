@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "1715b17f",
+    "sourceVersion": "8c3cbd32",
     "license": "MIT",
-    "contentHash": "a89ec4f7f1770c96124a136bd31f2e93a9fac341cdca18e12c6cf2e31c1211c0",
-    "lastHarvestedAt": "2026-10-20T04:36:09.833Z",
+    "contentHash": "45316092831289580398738bf873284a93d126c6096ed3d46dab00edf79e9ad2",
+    "lastHarvestedAt": "2026-10-23T10:38:41.399Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -2833,10 +2833,10 @@
     "repository": "streetwriters/notesnook",
     "platform": "github",
     "sourceUrl": "https://github.com/streetwriters/notesnook",
-    "sourceVersion": "4c395a6d",
+    "sourceVersion": "cd712d44",
     "license": "GPL-3.0",
-    "contentHash": "cbf2313cb297c169cd19cabd722d0c94a90744cb8351cef95ea7e902335d5863",
-    "lastHarvestedAt": "2026-10-20T06:49:32.188Z",
+    "contentHash": "90e4bf2cc9b8114ca45c9c9a3dffa0ef80022c2aaba45fa2f6bdcce8566672c4",
+    "lastHarvestedAt": "2026-10-23T10:31:05.538Z",
     "learningId": "learn-github-streetwriters-notesnook"
   },
   "kgateway-dev-kgateway": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "928c4ef9",
+    "sourceVersion": "5c68f754",
     "license": "Apache-2.0",
-    "contentHash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
-    "lastHarvestedAt": "2026-10-21T05:15:30.482Z",
+    "contentHash": "ff6e722f077ff8ed14f91e452aa18004997cf199901102c432280f722f459c85",
+    "lastHarvestedAt": "2026-10-23T10:31:12.964Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "a54f70ea",
+    "sourceVersion": "19181848",
     "license": "Apache-2.0",
-    "contentHash": "a7d29b8b2ae09a892d882314c1eb029067a4eaf7f74c4e2aba4f8b87b44a3e27",
-    "lastHarvestedAt": "2026-10-21T15:22:40.145Z",
+    "contentHash": "96b3002ffd02d76a5e17aaadf440781d59030d140db031dde9af8087d2a6575b",
+    "lastHarvestedAt": "2026-10-23T10:31:06.376Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {

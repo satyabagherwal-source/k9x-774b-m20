@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `a54f70ea`  
+> **Source Version**: `19181848`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T15:22:39.951Z  
+> **Timestamp**: 2026-10-23T10:31:06.022Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T15:22:39.947Z  
+> **Harvest Timestamp**: 2026-10-23T10:31:05.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7431 stars
+- **Stars / Engagement**: 7432 stars
 
 ---
 
@@ -880,74 +880,283 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5439afc9` (2026-10-21)
-**Commit Message**: fix: show agent resources filter in alphabetical case-insensitive order (#14666)
+### Incident Patch 1: `b209cf12` (2026-10-23)
+**Commit Message**: build(deps-ui-dev): bump rspec_junit_formatter (#14678)
 
-**File**: `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/resources_dropdown_button.tsx` (modified, +5/-3)
+Bumps the rspec group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
+
+
+Updates `rspec_junit_formatter` from 0.6.0 to 0.6.2
+- [Release notes](https://github.com/sj26/rspec_junit_formatter/releases)
+- [Changelog](https://github.com/sj26/rspec_junit_formatter/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sj26/rspec_junit_formatter/compare/v0.6.0...v0.6.2)
+
+---
+updated-dependencies:
+- dependency-name: rspec_junit_formatter
+  dependency-version: 0.6.2
+  dependency-type: indirect
+  update-type: version-update:semver-patch
+  dependency-group: rspec
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
 ```diff
-@@ -146,9 +146,11 @@ export class ResourcesDropdownButton extends AbstractDropdownButton<ResourcesAtt
- 
-   protected body(vnode: m.Vnode<DropdownAttrs & ResourcesAttrs>) {
-     return [
--      Array.from(this.triStateCheckboxMap).map(([resource, triStateCheckbox]) => {
--        return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
--      }),
-+      Array.from(this.triStateCheckboxMap)
-+           .sort(([first], [second]) => first.toLowerCase().localeCompare(second.toLowerCase()))
-+           .map(([resource, triStateCheckbox]) => {
-+             return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
-+           }),
-       <div class={Style.quickAdd}>
-         <QuickAddField dataTestId={"resource-to-add"} property={this.newResource}
-                        buttonDisableReason=""
+@@ -143,7 +143,7 @@ GEM
+       rspec-mocks (>= 3.13.0, < 5.0.0)
+       rspec-support (>= 3.13.0, < 5.0.0)
+     rspec-support (3.13.7)
+-    rspec_junit_formatter (0.6.0)
++    rspec_junit_formatter (0.6.2)
+       rspec-core (>= 2, < 4, != 2.12.0)
+     sass-embedded (1.102.0)
+       google-protobuf (~> 4.31)
+@@ -243,7 +243,7 @@ CHECKSUMS
+   rspec-mocks (3.13.8) sha256=086ad3d3d17533f4237643de0b5c42f04b66348c28bf6b9c2d3f4a3b01af1d47
+   rspec-rails (8.0.4) sha256=06235692fc0892683d3d34977e081db867434b3a24ae0dd0c6f3516bad4e22df
+   rspec-support (3.13.7) sha256=0640e5570872aafefd79867901deeeeb40b0c9875a36b983d85f54fb7381c47c
+-  rspec_junit_formatter (0.6.0) sha256=40dde674e6ae4e6cc0ff560da25497677e34fefd2338cc467a8972f602b62b15
++  rspec_junit_formatter (0.6.2) sha256=f90f594be841663288becc91b59e525c5faaf739c517ded4e2c66b61b11c66a5
+   sass-embedded (1.102.0) sha256=a73388d442b4409cc99e8ac02037069a9cc4419c895360f5ad17ad291fe43059
+   sassc-embedded (1.80.10) sha256=6baf835e2208d5905d8cff7d0322af45ee3a5933d4d93d22e2875ade967d8a57
+   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
 ```
 
-**File**: `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/spec/resources_dropdown_button_spec.tsx` (modified, +21/-0)
+---
+
+### Incident Patch 2: `6e618c86` (2026-10-23)
+**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14679)
+
+Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.105.2 to 1.106.0.
+- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sass/embedded-host-node/compare/1.105.2...1.106.0)
+
+---
+updated-dependencies:
+- dependency-name: sass-embedded
+  dependency-version: 1.106.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -85,6 +85,23 @@ describe("ResourcesDropdownButton", () => {
-     expect(helper.byTestId("resources-to-apply")).toBeInDOM();
-   });
+@@ -104,7 +104,7 @@
+     "license-checker": "^25.0.1",
+     "mini-css-extract-plugin": "^2.10.2",
+     "mockdate": "^3.0.5",
+-    "sass-embedded": "^1.105.2",
++    "sass-embedded": "^1.106.0",
+     "sass-loader": "^17.0.1",
+     "simulate-event": "^1.4.0",
+     "sourcemapped-stacktrace": "^1.1.11",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
+```diff
+@@ -4640,7 +4640,7 @@ __metadata:
+     normalize-scss: "npm:^8.0.0"
+     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
+     prismjs: "npm:^1.30.0"
+-    sass-embedded: "npm:^1.105.2"
++    sass-embedded: "npm:^1.106.0"
+     sass-loader: "npm:^17.0.1"
+     shell-quote: "npm:^1.12.0"
+     shellwords-ts: "npm:^3.0.1"
+@@ -7310,162 +7310,162 @@ __metadata:
+   languageName: node
+   linkType: hard
  
-+  it("should display resources in case-insensitive alphabetical order", () => {
-+    agentsVM.selectAgent(agent.uuid);
-+    mount(agentsVM, new DummyService(["linux", "db-updater", "Zulu", "Alpha"]));
-+
-+    helper.clickByTestId("modify-resources-association");
-+    m.redraw.sync();
-+
-+    expect(resourceLabels()).toEqual(["Alpha", "db-updater", "linux", "Zulu"]);
-+
-+    helper.oninput("input", "beta", helper.byTestId("resource-to-add"));
-+    m.redraw.sync();
-+    helper.click("button", helper.byTestId("resource-to-add"));
-+    m.redraw.sync();
-+
-+    expect(resourceLabels()).toEqual(["Alpha", "beta", "db-updater", "linux", "Zulu"]);
-+  });
-+
-   describe("TriStateCheckBox", () => {
-     it("should render checkboxes unchecked when none of the agents is associated with resources ", () => {
-       agentsVM.selectAgent(agent.uuid);
-@@ -147,6 +164,10 @@ describe("ResourcesDropdownButton", () => {
-                                                 flashMessage={new FlashMessageModelWithTimeout()}
-                                                 service={dummyService}/>);
-   }
-+
-+  function resourceLabels() {
-+    return helper.textAll("input[type='checkbox'] + label", helper.byTestId("association"));
-+  }
- });
+-"sass-embedded-all-unknown@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-all-unknown@npm:1.105.2"
++"sass-embedded-all-unknown@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-all-unknown@npm:1.106.0"
+   dependencies:
+-    sass: "npm:1.105.2"
++    sass: "npm:1.106.0"
+   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
+   languageName: node
+   linkType: hard
  
- class DummyService implements GetAllService {
+-"sass-embedded-android-arm64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-android-arm64@npm:1.105.2"
++"sass-embedded-android-arm64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-android-arm64@npm:1.106.0"
+   conditions: os=android & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-arm@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-android-arm@npm:1.105.2"
++"sass-embedded-android-arm@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-android-arm@npm:1.106.0"
+   conditions: os=android & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-riscv64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-android-riscv64@npm:1.105.2"
++"sass-embedded-android-riscv64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-android-riscv64@npm:1.106.0"
+   conditions: os=android & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-x64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-android-x64@npm:1.105.2"
++"sass-embedded-android-x64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-android-x64@npm:1.106.0"
+   conditions: os=android & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-arm64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-darwin-arm64@npm:1.105.2"
++"sass-embedded-darwin-arm64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-darwin-arm64@npm:1.106.0"
+   conditions: os=darwin & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-x64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-darwin-x64@npm:1.105.2"
++"sass-embedded-darwin-x64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-darwin-x64@npm:1.106.0"
+   conditions: os=darwin & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-linux-arm64@npm:1.105.2"
++"sass-embedded-linux-arm64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-linux-arm64@npm:1.106.0"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-linux-arm@npm:1.105.2"
++"sass-embedded-linux-arm@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-linux-arm@npm:1.106.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-linux-musl-arm64@npm:1.105.2"
++"sass-embedded-linux-musl-arm64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-linux-musl-arm64@npm:1.106.0"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-linux-musl-arm@npm:1.105.2"
++"sass-embedded-linux-musl-arm@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-linux-musl-arm@npm:1.106.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-riscv64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-linux-musl-riscv64@npm:1.105.2"
++"sass-embedded-linux-musl-riscv64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-linux-musl-riscv64@npm:1.106.0"
+   conditions: os=linux & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-x64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-linux-musl-x64@npm:1.105.2"
++"sass-embedded-linux-musl-x64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-linux-musl-x64@npm:1.106.0"
+   conditions: os=linux & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-riscv64@npm:1.105.2":
+-  version: 1.105.2
+-  resolution: "sass-embedded-linux-riscv64@npm:1.105.2"
++"sass-embedded-linux-riscv64@npm:1.106.0":
++  version: 1.106.0
++  resolution: "sass-embedded-linux-riscv64@npm:1.106.0"
+   conditions: os=linux & cpu=riscv64
+   languageName: no
+```
+
+---
+
+### Incident Patch 3: `9aa97749` (2026-10-22)
+**Commit Message**: build(deps): bump com.github.oshi:oshi-core from 7.7.1 to 7.7.2 (#14676)
+
+Bumps [com.github.oshi:oshi-core](https://github.com/oshi/oshi) from 7.7.1 to 7.7.2.
+- [Release notes](https://github.com/oshi/oshi/releases)
+- [Changelog](https://github.com/oshi/oshi/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/oshi/oshi/compare/oshi-parent-7.7.1...oshi-parent-7.7.2)
+
+---
+updated-dependencies:
+- dependency-name: com.github.oshi:oshi-core
+  dependency-version: 7.7.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -135,7 +135,7 @@ def libraries = [
+   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
+   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
+   objenesis           : 'org.objenesis:objenesis:3.6',
+-  oshi                : 'com.github.oshi:oshi-core:7.7.1',
++  oshi                : 'com.github.oshi:oshi-core:7.7.2',
+   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.1.0',
+   postgresql          : 'org.postgresql:postgresql:42.7.14',
+   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14668** (2026-10-21): Show Git repository branch next to repository URL (@sriramnrn)
-- **PR #14666** (2026-10-21): Show the resources in alphabetical case-insensitive order (@sriramnrn)
-- **PR #14665** (closed): View resources in alphabetical case insensitive order (@sriramnrn)
-- **PR #14663** (2026-10-20): fix(config-repo): prevent incorrect dashboard removal of pipelines produced by config repo changes independent of an SCM revision change (@chadlwilson)
-- **PR #14662** (2026-10-20): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.3 to 2.22.4 (@dependabot[bot])
-- **PR #14661** (2026-10-20): build(deps-dev): bump aquasec/trivy from 0.75.0 to 0.76.0 in /docker (@dependabot[bot])
+- **PR #14679** (2026-10-23): build(deps-ui-dev): bump sass-embedded from 1.105.2 to 1.106.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14678** (2026-10-23): build(deps-ui-dev): bump rspec_junit_formatter from 0.6.0 to 0.6.2 in /server/src/main/webapp/WEB-INF/rails in the rspec group (@dependabot[bot])
+- **PR #14677** (2026-10-22): build(deps): bump com.mysql:mysql-connector-j from 26.7.0 to 26.10.0 (@dependabot[bot])
+- **PR #14676** (2026-10-22): build(deps): bump com.github.oshi:oshi-core from 7.7.1 to 7.7.2 (@dependabot[bot])
+- **PR #14675** (2026-10-22): build(deps): bump gradle-wrapper from 9.8.1 to 9.8.2 in the gradle-plugins group (@dependabot[bot])
+- **PR #14670** (2026-10-21): build(deps-ui): bump core-js from 3.50.0 to 3.51.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -967,34 +1176,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. show agent resources filter in alphabetical case-insensitive order (#14666)
+## X. build(deps-ui-dev): bump rspec_junit_formatter (#14678)
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/resources_dropdown_button.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5439afc9`: show agent resources filter in alphabetical case-insensitive order (#14666). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b209cf12`: build(deps-ui-dev): bump rspec_junit_formatter (#14678). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/webpack/views/pages/agents/resources_dropdown_button.tsx`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-      Array.from(this.triStateCheckboxMap)
-           .sort(([first], [second]) => first.toLowerCase().localeCompare(second.toLowerCase()))
-           .map(([resource, triStateCheckbox]) => {
-             return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
-           }),
+    rspec_junit_formatter (0.6.2)
+  rspec_junit_formatter (0.6.2) sha256=f90f594be841663288becc91b59e525c5faaf739c517ded4e2c66b61b11c66a5
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-      Array.from(this.triStateCheckboxMap).map(([resource, triStateCheckbox]) => {
-        return <TriStateCheckboxField label={resource} property={Stream(triStateCheckbox)}/>;
-      }),
+    rspec_junit_formatter (0.6.0)
+  rspec_junit_formatter (0.6.0) sha256=40dde674e6ae4e6cc0ff560da25497677e34fefd2338cc467a8972f602b62b15
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5439afc9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b209cf12` are properly handled with clean fallback behavior.

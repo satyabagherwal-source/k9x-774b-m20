@@ -4535,3 +4535,7 @@ Every entry in this ledger must capture:
 | `learn-github-angular-angular` | `https://github.com/angular/angular` | `970bbc7c` | Multi-dimensional audit evidence | 2026-10-23T10:23:09.060Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `992efbfa` | Multi-dimensional audit evidence | 2026-10-23T10:24:11.333Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `924ba206` | Multi-dimensional audit evidence | 2026-10-23T10:24:39.164Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `cd712d44` | Multi-dimensional audit evidence | 2026-10-23T10:31:05.538Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `19181848` | Multi-dimensional audit evidence | 2026-10-23T10:31:06.376Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `5c68f754` | Multi-dimensional audit evidence | 2026-10-23T10:31:12.964Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `8c3cbd32` | Multi-dimensional audit evidence | 2026-10-23T10:38:41.399Z |

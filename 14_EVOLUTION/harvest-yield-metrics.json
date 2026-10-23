@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T10:24:39.174Z",
-  "total_cycles_completed": 4505,
-  "total_learnings_persisted": 4505,
-  "total_rules_promoted": 3730,
+  "last_updated": "2026-10-23T10:38:41.409Z",
+  "total_cycles_completed": 4509,
+  "total_learnings_persisted": 4509,
+  "total_rules_promoted": 3736,
   "history": [
-    {
-      "timestamp": "2026-10-22T16:32:30.425Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:38:41.703Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:38:47.367Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:45:08.585Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T16:45:16.669Z",
       "repository": "gardener/gardener",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-23T10:24:39.174Z",
       "repository": "pubkey/rxdb",
       "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:31:05.548Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:31:06.380Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:31:12.974Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:38:41.409Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

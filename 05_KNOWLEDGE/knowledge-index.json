@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T10:24:39.108Z",
+  "last_updated": "2026-10-23T10:38:41.343Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8553,8 +8553,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "928c4ef9",
-      "content_hash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
+      "source_version": "5c68f754",
+      "content_hash": "ff6e722f077ff8ed14f91e452aa18004997cf199901102c432280f722f459c85",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -8582,6 +8582,11 @@
           "number": 3533,
           "title": "hermes): report an existing installation in --dry-run (#1611) (#1619)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3881,
+          "title": "quarantine): bound the on-store belief check and let it run in background (#1633",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8589,7 +8594,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:15:30.442Z",
+      "verified_at": "2026-10-23T10:31:12.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12379,8 +12384,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "a54f70ea",
-      "content_hash": "a7d29b8b2ae09a892d882314c1eb029067a4eaf7f74c4e2aba4f8b87b44a3e27",
+      "source_version": "19181848",
+      "content_hash": "96b3002ffd02d76a5e17aaadf440781d59030d140db031dde9af8087d2a6575b",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -12398,6 +12403,11 @@
           "number": 3549,
           "title": "show agent resources filter in alphabetical case-insensitive order (#14666)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3880,
+          "title": "build(deps-ui-dev): bump rspec_junit_formatter (#14678)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12405,7 +12415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:22:40.107Z",
+      "verified_at": "2026-10-23T10:31:06.313Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44693,8 +44703,8 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "4c395a6d",
-      "content_hash": "cbf2313cb297c169cd19cabd722d0c94a90744cb8351cef95ea7e902335d5863",
+      "source_version": "cd712d44",
+      "content_hash": "90e4bf2cc9b8114ca45c9c9a3dffa0ef80022c2aaba45fa2f6bdcce8566672c4",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
@@ -44707,6 +44717,11 @@
           "number": 3101,
           "title": "core: fix orphan search highlight closing tags in saved notes (#10516)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3879,
+          "title": "core: fix data encrypted with the wrong key after a password change",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44714,7 +44729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:49:32.117Z",
+      "verified_at": "2026-10-23T10:31:05.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63440,8 +63455,8 @@
       "slug": "webpack-webpack",
       "platform": "github",
       "source_url": "https://github.com/webpack/webpack",
-      "source_version": "1715b17f",
-      "content_hash": "a89ec4f7f1770c96124a136bd31f2e93a9fac341cdca18e12c6cf2e31c1211c0",
+      "source_version": "8c3cbd32",
+      "content_hash": "45316092831289580398738bf873284a93d126c6096ed3d46dab00edf79e9ad2",
       "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "promoted_rules": [
@@ -63464,6 +63479,21 @@
           "number": 3046,
           "title": "css): build a piece's text once for a run of dead-rule cuts (#22809)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3882,
+          "title": "Zero-Allocation Backing Store Preservation for Transient Array Pooling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3883,
+          "title": "Guarded Static Constant-Folding Against Dynamic Prototype Mutations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3884,
+          "title": "Lexical Identifier Collision Prevention in Code-Generated Function Wrappers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63471,7 +63501,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:36:09.763Z",
+      "verified_at": "2026-10-23T10:38:41.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114769,6 +114799,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T10:24:39.097Z"
+    },
+    "rule-3879": {
+      "learning_id": "rule-3879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3879,
+      "title": "core: fix data encrypted with the wrong key after a password change",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "cd712d44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:31:05.473Z"
+    },
+    "rule-3880": {
+      "learning_id": "rule-3880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3880,
+      "title": "build(deps-ui-dev): bump rspec_junit_formatter (#14678)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "19181848",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:31:06.313Z"
+    },
+    "rule-3881": {
+      "learning_id": "rule-3881",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3881,
+      "title": "quarantine): bound the on-store belief check and let it run in background (#1633",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "5c68f754",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:31:12.898Z"
+    },
+    "rule-3882": {
+      "learning_id": "rule-3882",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3882,
+      "title": "Zero-Allocation Backing Store Preservation for Transient Array Pooling",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "8c3cbd32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:38:41.332Z"
+    },
+    "rule-3883": {
+      "learning_id": "rule-3883",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3883,
+      "title": "Guarded Static Constant-Folding Against Dynamic Prototype Mutations",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "8c3cbd32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:38:41.332Z"
+    },
+    "rule-3884": {
+      "learning_id": "rule-3884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3884,
+      "title": "Lexical Identifier Collision Prevention in Code-Generated Function Wrappers",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "8c3cbd32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:38:41.332Z"
     }
   },
   "aliases": {

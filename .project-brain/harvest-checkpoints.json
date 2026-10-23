@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T10:24:39.178Z",
+  "last_updated": "2026-10-23T10:38:41.413Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "a89ec4f7f1770c96124a136bd31f2e93a9fac341cdca18e12c6cf2e31c1211c0",
-      "verified_at": "2026-10-20T04:36:09.840Z",
+      "content_hash": "45316092831289580398738bf873284a93d126c6096ed3d46dab00edf79e9ad2",
+      "verified_at": "2026-10-23T10:38:41.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:36:09.840Z"
+      "last_updated": "2026-10-23T10:38:41.412Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -4386,14 +4386,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-streetwriters-notesnook",
-      "content_hash": "cbf2313cb297c169cd19cabd722d0c94a90744cb8351cef95ea7e902335d5863",
-      "verified_at": "2026-10-20T06:49:32.195Z",
+      "content_hash": "90e4bf2cc9b8114ca45c9c9a3dffa0ef80022c2aaba45fa2f6bdcce8566672c4",
+      "verified_at": "2026-10-23T10:31:05.551Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:49:32.195Z"
+      "last_updated": "2026-10-23T10:31:05.551Z"
     },
     "kgateway-dev/kgateway": {
       "repository": "kgateway-dev/kgateway",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
-      "verified_at": "2026-10-21T05:15:30.491Z",
+      "content_hash": "ff6e722f077ff8ed14f91e452aa18004997cf199901102c432280f722f459c85",
+      "verified_at": "2026-10-23T10:31:12.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:15:30.491Z"
+      "last_updated": "2026-10-23T10:31:12.977Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "a7d29b8b2ae09a892d882314c1eb029067a4eaf7f74c4e2aba4f8b87b44a3e27",
-      "verified_at": "2026-10-21T15:22:40.152Z",
+      "content_hash": "96b3002ffd02d76a5e17aaadf440781d59030d140db031dde9af8087d2a6575b",
+      "verified_at": "2026-10-23T10:31:06.384Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:22:40.152Z"
+      "last_updated": "2026-10-23T10:31:06.384Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
