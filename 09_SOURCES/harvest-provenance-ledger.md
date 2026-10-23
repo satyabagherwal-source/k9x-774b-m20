@@ -4475,3 +4475,6 @@ Every entry in this ledger must capture:
 | `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `4c4c5e52` | Multi-dimensional audit evidence | 2026-10-23T06:02:50.232Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `bbee89c5` | Multi-dimensional audit evidence | 2026-10-23T06:02:53.966Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `38c2563a` | Multi-dimensional audit evidence | 2026-10-23T06:02:55.125Z |
+| `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `d4ccd8a7` | Multi-dimensional audit evidence | 2026-10-23T06:09:24.078Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `e912cdb1` | Multi-dimensional audit evidence | 2026-10-23T06:09:24.142Z |
+| `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `8dc19751` | Multi-dimensional audit evidence | 2026-10-23T06:10:29.020Z |

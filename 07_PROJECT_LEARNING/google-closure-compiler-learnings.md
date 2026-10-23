@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source**: github ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
-> **Source Version**: `ff925ed5`  
+> **Source Version**: `e912cdb1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:03:18.046Z  
+> **Timestamp**: 2026-10-23T06:09:23.778Z  
 > **Learning ID**: `learn-github-google-closure-compiler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:03:16.881Z  
+> **Harvest Timestamp**: 2026-10-23T06:09:22.072Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A JavaScript checker and optimizer.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7693 stars
+- **Stars / Engagement**: 7697 stars
 
 ---
 
@@ -2461,320 +2461,546 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0ac8bfe` (2026-10-19)
-**Commit Message**: Fix NullPointerException in InlineObjectLiterals when encountering unreferenced variables in a scope.
+### Incident Patch 1: `404b4687` (2026-10-22)
+**Commit Message**: Allow extending conformance requirements to append to the root rule's error message.
 
-PiperOrigin-RevId: 1002484822
+PiperOrigin-RevId: 1005063226
 
-**File**: `src/com/google/javascript/jscomp/InlineObjectLiterals.java` (modified, +6/-0)
+**File**: `src/com/google/javascript/jscomp/CheckConformance.java` (modified, +5/-0)
 ```diff
-@@ -81,6 +81,12 @@ public void afterExitScope(NodeTraversal t, ReferenceMap referenceMap) {
-         }
+@@ -296,6 +296,7 @@ private static boolean validateBehaviorSettingOfConfigs(
+   private static final ImmutableSet<String> EXTENDABLE_FIELDS =
+       ImmutableSet.of(
+           "config_file",
++          "error_message",
+           "extends",
+           "only_apply_to",
+           "only_apply_to_regexp",
+@@ -521,6 +522,10 @@ private static void mergeExtendingRequirementIntoExtended(
+         .addAllAllowlistEntry(extendingRequirement.getAllowlistEntryList())
+         .addAllValue(extendingRequirement.getValueList())
+         .addAllConfigFile(extendingRequirement.getConfigFileList());
++    if (extendingRequirement.hasErrorMessage() && extendedRequirement.hasErrorMessage()) {
++      extendedRequirement.setErrorMessage(
++          extendedRequirement.getErrorMessage() + " " + extendingRequirement.getErrorMessage());
++    }
+   }
  
-         ReferenceCollection referenceInfo = referenceMap.getReferences(v);
-+        // ReferenceMap only creates collections for variables that have references.
-+        // A variable declared in a scope (e.g. unreferenced catch parameter or block-scoped
-+        // function declaration) without references will return null.
-+        if (referenceInfo == null) {
-+          continue;
-+        }
- 
-         if (isInlinableObject(referenceInfo.references)) {
-           // Skiplist the object itself, as well as any other values
+   /**
 ```
 
-**File**: `test/com/google/javascript/jscomp/InlineObjectLiteralsTest.java` (modified, +111/-0)
+**File**: `src/com/google/javascript/jscomp/conformance/conformance.proto` (modified, +8/-7)
 ```diff
-@@ -941,6 +941,117 @@ public void testObjectSpread_readingFromOverwrittenProp() {
+@@ -60,9 +60,10 @@ message ConformanceConfig {
+ // A specification of code requirements
+ // NEXT ID: 20
+ message Requirement {
+-  // Required: The message to report when a requirement is violated. This should
+-  // reference a document describing the reasoning for the requirement
+-  // and contacts.
++  // Required on root rules: The message to report when a requirement is
++  // violated. This should reference a document describing the reasoning for the
++  // requirement and contacts. If specified on a rule that extends another rule,
++  // it is appended to the extended rule's error_message separated by a space.
+   optional string error_message = 1;
+ 
+   // Optional: A list of google3-relative path prefixes that are exempt from the
+@@ -240,10 +241,10 @@ message Requirement {
+   // through 'extends'. An example of ID is 'closure:innerHtml'.
+   optional string rule_id = 9;
+ 
+-  // Allows extending allowlists/whitelists of rules with the specified rule_id.
+-  // If this field is specified then all fields except allowlist/whitelist,
+-  // allowlist_regexp/whitelist_regexp, only_apply_to and only_apply_to_regexp
+-  // are ignored.
++  // Allows extending allowlists/whitelists and error_message of rules with the
++  // specified rule_id. If this field is specified then all fields except
++  // allowlist/whitelist, allowlist_regexp/whitelist_regexp, only_apply_to,
++  // only_apply_to_regexp, and error_message are ignored.
+   optional string extends = 10;
+ 
+   // Whether to report possible violations when type information is not exact.
+```
+
+**File**: `test/com/google/javascript/jscomp/CheckConformanceTest.java` (modified, +77/-0)
+```diff
+@@ -3056,6 +3056,67 @@ public void testSimpleExtends_withAllowlistRegexp() {
          """);
    }
  
 +  @Test
-+  public void testUnreferencedVariableInScope_googModule() {
-+    test(
++  public void testSimpleExtends_withErrorMessage() {
++    baseConfiguration =
 +        """
-+        goog.module('my.mod');
-+        function local() {
-+          var a = {x: 1};
-+          f(a.x);
++        requirement: {
++          rule_id: "gws:goog.Promise.X"
++          type: BANNED_NAME
++          error_message: "Prefer using native Promise equivalents. See go/gws-js-conformance#goog-promise"
++          value: "goog.Promise.all"
 +        }
++        """;
++    extendingConfiguration =
++        """
++        requirement: {
++          extends: 'gws:goog.Promise.X'
++          error_message: "Contact gws-team@ for questions."
++        }
++        """;
++
++    testWarning(
++        """
++        goog.Promise.all();
 +        """,
-+        """
-+        goog.module('my.mod');
-+        function local() {
-+          var JSCompiler_object_inline_x_0 = 1;
-+          f(JSCompiler_object_inline_x_0);
-+        }
-+        """);
++        CheckConformance.CONFORMANCE_VIOLATION,
++        "Violation: Prefer using native Promise equivalents. See go/gws-js-conformance#goog-promise"
++            + " Contact gws-team@ for questions.");
 +  }
 +
 +  @Test
-+  public void testUnreferencedVariableInCatch() {
-+    testLocal(
++  public void testSimpleExtends_missingRootErrorMessage_reportsInvalidRequirementSpec() {
++    allowSourcelessWarnings();
++    baseConfiguration =
 +        """
-+        try {
-+          var a = {x: 1};
-+          f(a.x);
-+        } catch (e) {
++        requirement: {
++          rule_id: "gws:goog.Promise.X"
++          type: BANNED_NAME
++          value: "goog.Promise.all"
 +        }
++        """;
++    extendingConfiguration =
++        """
++        requirement: {
++          extends: 'gws:goog.Promise.X'
++          error_message: "Contact gws-team@ for questions."
++        }
++        """;
++
++    testError(
++        """
++        goog.Promise.all();
 +        """,
++        CheckConformance.INVALID_REQUIREMENT_SPEC,
 +        """
-+        try {
-+          var JSCompiler_object_inline_x_0 = 1;
-+          f(JSCompiler_object_inline_x_0);
-+        } catch (e) {
-+        }
++        Invalid requirement. Reason: missing message
++        Requirement spec:
++        type: BANNED_NAME
++        value: "goog.Promise.all"
++        rule_id: "gws:goog.Promise.X"
 +        """);
-+  }
-+
-+  @Test
-+  public void testUnreferencedVariableInScope() {
-+    testLocal(
-+        """
-+        var a = {x: 1};
-+        var unused;
-+        f(a.x);
-+        """,
-+        """
-+        var JSCompiler_object_inline_x_0 = 1;
-+        var unused;
-+        f(JSCompiler_object_inline_x_0);
-+        """);
-+  }
-+
-+  @Test
-+  public void testUnreferencedVariableInDeadCode() {
-+    testLocal(
-+        """
-+        var a = {x: 1};
-+        f(a.x);
-+        return;
-+        var dead = {y: 2};
-+        """,
-+        """
-+        var JSCompiler_object_inline_x_0 = 1;
-+        f(JSCompiler_object_inline_x_0);
-+        return;
-+        var JSCompiler_object_inline_y_1 = 2;
-+        """);
-+  }
-+
-+  @Test
-+  public void testIssue132728074() {
-+    testSame(
-+        """
-+        (() => {
-+          for (;;) {
-+            try {
-+              break;
-+            } catch (a) {
-+              {
-+                function a() {}
-+              }
-+            }
-+          }
-+        });
-+        """);
-+  }
-+
-+  @Test
-+  public void testIssue132728074_minimized() {
-+    testSame(
-+        """
-+        try {} catch (a) {
-+          {
-+            function a() {}
-+          }
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testIssue546730364() {
-+    testSame(
-+        """
-+        var x;
-+        {
-+          function x() {}
-+        }
-+        """);
-+  }
-+
-   private static final String LOCAL_PREFIX = "function local(){";
-   private static final String LOCAL_POSTFIX = "}";
- 
-```
-
----
-
-### Incident Patch 2: `82999f74` (2026-10-19)
-**Commit Message**: Fix NullPointerException in ClosureRewriteModule during static analysis and untyped compilation runs.
-
-PiperOrigin-RevId: 1002446097
-
-**File**: `src/com/google/javascript/jscomp/ClosureRewriteModule.java` (modified, +4/-2)
-```diff
-@@ -1385,7 +1385,9 @@ private void updateGoogRequireDynamicCallInAwait(Node call) {
- 
-     // `module$exports$a$b$c`
-     Node exportedNamespaceNameNode =
--        this.astFactory.createQName(this.globalTypedScope, exportedNamespace).srcrefTree(call);
-+        this.astFactory
-+            .createQNameUsingJSTypeInfo(this.globalTypedScope, exportedNamespace)
-+            .srcrefTree(call);
-     exportedNamespaceNameNode.setJSType(rewriteState.getGoogModuleNamespaceType(namespaceId));
-     exportedNamespaceNameNode.setOriginalName(namespaceId);
- 
-@@ -1684,7 +1686,7 @@ private void maybeUpdateExportNameRef(NodeTraversal t, Node n) {
-     if (currentScript.declareLegacyNamespace) {
-       Node legacyQname =
-           this.astFactory
--              .createQName(this.globalTypedScope, currentScript.namespaceId)
-+              .createQNameUsingJSTypeInfo(this.globalTypedScope, currentScript.namespaceId)
-               .srcrefTree(n);
-       legacyQname.setJSType(n.getJSType());
-       n.replaceWith(legacyQname);
-```
-
-**File**: `test/com/google/javascript/jscomp/ClosureRewriteModuleTest.java` (modified, +79/-0)
-```diff
-@@ -4369,4 +4369,83 @@ async function f() {
-             }
-             """));
-   }
-+
-+  @Test
-+  public void testUntypedLegacyNamespace_referenceToExports_normalized() {
-+    enableNormalize();
-+    runTypeCheck = false;
-+    disableTypeInfoValidation();
-+    test(
-+        """
-+        goog.module('a.b.c');
-+        goog.module.declareLegacyNamespace();
-+        exports = class {};
-+        function useExports() {
-+          return exports;
-+        }
-+        """,
-+        """
-+        goog.provide('a.b.c');
-+        /** @const */
-+        a.b.c = class {};
-+        function module$contents$a$b$c_useExports() {
-+          return a.b.c;
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testUntypedLegacyNamespace_referenceToExportProperty_normalized() {
-+    enableNormalize();
-+    runTypeCheck = false;
-+    disableTypeInfoValidation();
-+    test(
-+        """
-+        goog.module('a.b.c');
-+        goog.module.declareLegacyNamespace();
-+        exports.Foo = class {};
-+        function useExports() {
-+          return exports.Foo;
-+        }
-+        """,
-+        """
-+        goog.provide('a.b.c');
-+        /** @const */
-+        a.b.c.Foo = class {};
-+        function module$contents$a$b$c_useExports() {
-+          return a.b.c.Foo;
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testUntypedGoogRequireDynamicInAwait_legacyNamespace_normalized() {
-+    enableNormalize();
-+    runTypeCheck = false;
-+    disableTypeInfoValidation();
-+    test(
-+        srcs(
-+            """
-+            goog.module('a.b.c');
-+            goog.module.declareLegacyNamespace();
-+            exports = class {};
-+            """,
-+            """
-+            async function f() {
-+              const {Foo} = await goog.requireDynamic('a.b.c');
-+            }
-+            """),
-+        expected(
-+            """
-+            goog.provide('a.b.c');
-+            /** @const */
-+            a.b.c = class {};
-+            """,
-+            """
-+            async function f() {
-+              await goog.importHandler_('sG5M4c');
-+              const {Foo} = a.b.c;
-+            }
-+            """));
-+  }
- }
-```
-
----
-
-### Incident Patch 3: `9954c6da` (2026-10-17)
-**Commit Message**: Add regression tests verifying that JSCompiler_renameProperty is synthesized in VarCheck.
-
-PiperOrigin-RevId: 1001581012
-
-**File**: `test/com/google/javascript/jscomp/VarCheckTest.java` (modified, +28/-0)
-```diff
-@@ -28,6 +28,7 @@
- import com.google.javascript.jscomp.NodeTraversal.AbstractPostOrderCallback;
- import com.google.javascript.jscomp.testing.JSChunkGraphBuilder;
- import com.google.javascript.jscomp.testing.TestExternsBuilder;
-+import com.google.javascript.rhino.IR;
- import com.google.javascript.rhino.Node;
- import com.google.javascript.rhino.StaticSourceFile.SourceKind;
- import org.jspecify.annotations.Nullable;
-@@ -724,6 +725,33 @@ public void testNoCreateVarsForLabels() {
-     checkSynthesizedExtern(srcs("x:var y"), VAR_CHECK_EXTERNS);
-   }
- 
-+  @Test
-+  public void testJSCompiler_renamePropertyInRequiredSymbols() {
-+    assertThat(VarCheck.REQUIRED_SYMBOLS).contains("JSCompiler_renameProperty");
-+  }
-+
-+  @Test
-+  public void testJSCompiler_renamePropertySynthesizedExtern() {
-+    checkSynthesizedExtern(srcs(""), VAR_CHECK_EXTERNS);
-+    assertThat(VAR_CHECK_EXTERNS).contains("var JSCompiler_renameProperty;\n");
-+  }
-+
-+  @Test
-+  public void testJSCompiler_renamePropertySynthesizedExternAllowsLaterPasses() {
-+    Compiler compiler = createAndInitializeCompiler(externs(""), srcs("var placeholder = 1;"));
-+    compiler.parseInputs();
-+    Node externs = compiler.getExternsRoot();
-+    Node root = compiler.getJsRoot();
-+    new VarCheck(compiler, /* validityCheck= */ false).process(externs, root);
-+    // Simulate a pass like ClosureOptimizePrimitives or DartSuperAccessorsPass adding a call
-+    // to JSCompiler_renameProperty without an explicit extern declaration.
-+    Node syntheticCall =
-+        IR.exprResult(IR.call(IR.name("JSCompiler_renameProperty"), IR.string("foo")));
-+    root.getFirstChild().addChildToBack(syntheticCall);
-+    // ValidityCheck runs VarCheck with validityCheck = true, which must pass without throwing.
-+    new VarCheck(compiler, /* validityCheck= */ true).process(externs, root);
 +  }
 +
    @Test
-   public void testVariableInNormalCodeUsedInExterns1() {
-     checkSynthesizedExtern(
+   public void testRequirementHasBothRuleIdAndExtends_reportsInvalidRequirementSpec() {
+     allowSourcelessWarnings();
+@@ -3710,6 +3771,22 @@ public void testMergeRequirementsAllowlist() {
+     assertThat(requirement.getAllowlistEntryCount()).isEqualTo(2);
+   }
+ 
++  @Test
++  public void testMergeRequirementsErrorMessage() {
++    Compiler compiler = createCompiler();
++    ConformanceConfig.Builder builder = ConformanceConfig.newBuilder();
++    builder.addRequirementBuilder().setRuleId("a").setErrorMessage("Root message.");
++    builder.addRequirementBuilder().setExtends("a").setErrorMessage("Project message.");
++    CheckConformance checkConformance = new CheckConformance(compiler);
++    List<Requirement> requirements =
++        checkConformance.mergeRequirements(
++            compiler,
++            ImmutableList.of(builder.build()),
++            /* isLibraryLevelConformanceReportingMode= */ false);
++    assertThat(requirements).hasSize(1);
++    assertThat(requirements.get(0).getErrorMessage()).isEqualTo("Root message. Project message.");
++  }
++
+   @Test
+   public void testMergeRequirementsWhitelist_findsDuplicates() {
+     Compiler compiler = createCompiler();
+```
+
+---
+
+### Incident Patch 2: `bf3df97a` (2026-10-21)
+**Commit Message**: Fixed transpilation of this, arguments, new.target and super.prop inside arrow functions in an async function's parameter list
+
+PiperOrigin-RevId: 1004266374
+
+**File**: `src/com/google/javascript/jscomp/RewriteAsyncFunctions.java` (modified, +24/-13)
+```diff
+@@ -232,16 +232,28 @@ public LexicalContext getContextForNode(NodeTraversal t, Node n) {
+         // e.g. `() => something`
+         // function someFunc(callback = () => something) {}
+         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
+-        return new FunctionContext(functionContext, n, uniqueId);
++        return new FunctionContext(getAsyncContextForParameterList(), n, uniqueId);
+       } else {
+         return this;
+       }
+     }
+ 
++    /**
++     * Returns the async context that `this`, `arguments`, `new.target`, and `super` refer to in
++     * this parameter list, or null if they should be left unchanged.
++     *
++     * <p>When the function owning this parameter list is itself the async context, the parameter
++     * list stays on the outer function and is not moved into the generator body, so references here
++     * (including inside nested arrow functions) must not be aliased.
++     */
++    private @Nullable FunctionContext getAsyncContextForParameterList() {
++      FunctionContext asyncContext = functionContext.asyncThisAndArgumentsContext;
++      return asyncContext == functionContext ? null : asyncContext;
++    }
++
+     @Override
+     public void visit(NodeTraversal t, Node n) {
+-      if (functionContext.asyncThisAndArgumentsContext != null
+-          && functionContext.asyncThisAndArgumentsContext != functionContext) {
++      if (getAsyncContextForParameterList() != null) {
+         // e.g.
+         // async function outer(outerT = this) {
+         //   // `this` in outer parameter list must remain unchanged
+@@ -285,26 +297,25 @@ private final class FunctionContext extends LexicalContext {
+       }
+     }
+ 
+-    FunctionContext(FunctionContext outer, Node contextRootNode, String uniqueId) {
++    // outerAsyncContext is the async context that `this`, `arguments`, etc. refer to at the point
++    // where this function is defined, or null if there is none.
++    FunctionContext(
++        @Nullable FunctionContext outerAsyncContext, Node contextRootNode, String uniqueId) {
+       super(contextRootNode, uniqueId);
+       checkState(contextRootNode.isFunction(), contextRootNode);
+       if (contextRootNode.isAsyncFunction()) {
+         if (contextRootNode.isArrowFunction()) {
+-          // An async arrow function context points to outer.asyncThisAndArgumentsContext
++          // An async arrow function context points to outerAsyncContext
+           // if non-null, otherwise to itself.
+-          asyncThisAndArgumentsContext =
+-              outer.asyncThisAndArgumentsContext == null
+-                  ? this
+-                  : outer.asyncThisAndArgumentsContext;
++          asyncThisAndArgumentsContext = outerAsyncContext == null ? this : outerAsyncContext;
+         } else {
+           // An async non-arrow function context always points to itself
+           asyncThisAndArgumentsContext = this;
+         }
+       } else {
+         if (contextRootNode.isArrowFunction()) {
+-          // A non-async arrow function context always points to
+-          // outer.asyncThisAndArgumentsContext
+-          asyncThisAndArgumentsContext = outer.asyncThisAndArgumentsContext;
++          // A non-async arrow function context always points to outerAsyncContext
++          asyncThisAndArgumentsContext = outerAsyncContext;
+         } else {
+           // A non-async, non-arrow function has no async context.
+           asyncThisAndArgumentsContext = null;
+@@ -318,7 +329,7 @@ public LexicalContext getContextForNode(NodeTraversal t, Node n) {
+         return this;
+       } else if (n.isFunction()) {
+         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
+-        return new FunctionContext(this, n, uniqueId);
++        return new FunctionContext(asyncThisAndArgumentsContext, n, uniqueId);
+       } else if (n.isParamList()) {
+         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
+         return new ParameterListContext(this, n, uniqueId);
+```
+
+**File**: `test/com/google/javascript/jscomp/RewriteAsyncFunctionsTest.java` (modified, +84/-20)
+```diff
+@@ -968,8 +968,6 @@ class A {
+ 
+   @Test
+   public void testDefaultParamArrowUsingThisArgumentsNewTarget() {
+-    // TODO(b/572972833): Default-param arrow functions rewrite this/arguments/new.target to
+-    // out-of-scope body temporaries.
+     test(
+         """
+         async function f(a = () => this, b = () => arguments, c = () => new.target) {
+@@ -978,26 +976,22 @@ async function f(a = () => this, b = () => arguments, c = () => new.target) {
+         """,
+         """
+         function f(a = () => {
+-          return ASYNC_THIS$1;
++          return this;
+         }, b = () => {
+-          return ASYNC_ARGUMENTS$1;
++          return arguments;
+         }, c = () => {
+-          return ASYNC_NEW_TARGET$1;
++          return new.target;
+         }) {
+-          const ASYNC_THIS$1 = this;
+-          const ASYNC_ARGUMENTS$1 = arguments;
+-          const ASYNC_NEW_TARGET$1 = new.target;
+-          return (0,$jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
+-            return a();
+-          });
++          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(
++              function* () {
++                return a();
++              });
+         }
+         """);
+   }
+ 
+   @Test
+   public void testDefaultParamArrowUsingSuperProp() {
+-    // TODO(b/572972833): Default-param arrow functions rewrite super.prop to out-of-scope body
+-    // temporaries.
+     test(
+         """
+         class A {
+@@ -1019,16 +1013,86 @@ class A {
+         }
+         class B extends A {
+           m(a = () => {
+-            return ASYNC_SUPER_GET$7$prop().call(ASYNC_THIS$3);
++            return super.prop();
+           }) {
+-            const ASYNC_THIS$3 = this;
+-            const ASYNC_SUPER_GET$7$prop = () => {
+-              return super.prop;
++            return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(
++                function* () {
++                  return a();
++                });
++          }
++        }
++        """);
++  }
++
++  @Test
++  public void testDefaultParamAsyncArrowUsingThis() {
++    test(
++        """
++        async function f(a = async () => this) {
++          return a();
++        }
++        """,
++        """
++        function f(a = () => {
++          const ASYNC_THIS$3 = this;
++          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
++            return ASYNC_THIS$3;
++          });
++        }) {
++          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
++            return a();
++          });
++        }
++        """);
++  }
++
++  @Test
++  public void testDefaultParamArrowInNestedAsyncArrowUsingThis() {
++    test(
++        """
++        async function f() {
++          const g = async (a = () => this) => a();
++          return g();
++        }
++        """,
++        """
++        function f() {
++          const ASYNC_THIS$1 = this;
++          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
++            const g = (a = () => {
++              return ASYNC_THIS$1;
++            }) => {
++              return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
++                return a();
++              });
+             };
+-            return (0,$jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
+-              return a();
+-            });
++            return g();
++          });
++        }
++        """);
++  }
++
++  @Test
++  public void testDefaultParamArrowInNonAsyncFunctionInAsyncFunction() {
++    test(
++        """
++        async function f() {
++          function g(a = () => this) {
++            return a();
+           }
++          return g();
++        }
++        """,
++        """
++        function f() {
++          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
++            function g(a = () => {
++              return this;
++            }) {
++              return a();
++            }
++            return g();
++          });
+         }
+         """);
+   }
+```
+
+---
+
+### Incident Patch 3: `33b2e8ed` (2026-10-21)
+**Commit Message**: Fix inverted line number ternary in VerboseMessageFormatter.
+
+Fix inverted line number condition in `VerboseMessageFormatter` so line numbers
+are formatted when present.
+
+PiperOrigin-RevId: 1004027076
+
+**File**: `src/com/google/javascript/jscomp/VerboseMessageFormatter.java` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ private String format(JSError message) {
+         "%s at %s line %s %s",
+         description,
+         (Strings.isNullOrEmpty(sourceName) ? "(unknown source)" : sourceName),
+-        ((lineNumber < 0) ? String.valueOf(lineNumber) : "(unknown line)"),
++        ((lineNumber < 0) ? "(unknown line)" : String.valueOf(lineNumber)),
+         ((lineSource != null) ? ":\n\n" + lineSource : "."));
+   }
+ }
+```
+
+**File**: `test/com/google/javascript/jscomp/VerboseMessageFormatterTest.java` (added, +157/-0)
+```diff
+@@ -0,0 +1,157 @@
++/*
++ * Copyright 2026 The Closure Compiler Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package com.google.javascript.jscomp;
++
++import static com.google.common.truth.Truth.assertThat;
++
++import com.google.debugging.sourcemap.proto.Mapping.OriginalMapping;
++import java.util.Objects;
++import org.jspecify.annotations.Nullable;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.junit.runners.JUnit4;
++
++@RunWith(JUnit4.class)
++public final class VerboseMessageFormatterTest {
++  private static final DiagnosticType FOO_TYPE =
++      DiagnosticType.error("TEST_FOO", "error description here");
++
++  @Test
++  public void testFormatError_validLineNumber() {
++    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
++    JSError error = JSError.make("test.js", 10, 5, FOO_TYPE);
++
++    String formatted = formatter.formatError(error);
++
++    assertThat(formatted).contains("line 10");
++    assertThat(formatted).doesNotContain("(unknown line)");
++    assertThat(formatted).isEqualTo("ERROR: error description here at test.js line 10 .");
++  }
++
++  @Test
++  public void testFormatError_unknownLineNumber() {
++    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
++    JSError error = JSError.make("test.js", -1, -1, FOO_TYPE);
++
++    String formatted = formatter.formatError(error);
++
++    assertThat(formatted).contains("line (unknown line)");
++    assertThat(formatted).doesNotContain("-1");
++    assertThat(formatted)
++        .isEqualTo("ERROR: error description here at test.js line (unknown line) .");
++  }
++
++  @Test
++  public void testFormatError_unknownSourceName() {
++    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
++    JSError error = JSError.make(null, 10, 5, FOO_TYPE);
++
++    String formatted = formatter.formatError(error);
++
++    assertThat(formatted).contains("(unknown source)");
++    assertThat(formatted).contains("line 10");
++    assertThat(formatted).isEqualTo("ERROR: error description here at (unknown source) line 10 .");
++  }
++
++  @Test
++  public void testFormatError_unknownSourceAndLineNumber() {
++    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
++    JSError error = JSError.make(null, -1, -1, FOO_TYPE);
++
++    String formatted = formatter.formatError(error);
++
++    assertThat(formatted).contains("(unknown source)");
++    assertThat(formatted).contains("line (unknown line)");
++    assertThat(formatted)
++        .isEqualTo("ERROR: error description here at (unknown source) line (unknown line) .");
++  }
++
++  @Test
++  public void testFormatError_withSourceRegion() {
++    SourceExcerptProvider provider =
++        new SourceExcerptProvider() {
++          @Override
++          public @Nullable String getSourceLine(String sourceName, int lineNumber) {
++            return null;
++          }
++
++          @Override
++          public @Nullable Region getSourceLines(String sourceName, int lineNumber, int length) {
++            return null;
++          }
++
++          @Override
++          public @Nullable Region getSourceRegion(String sourceName, int lineNumber) {
++            if (Objects.equals(sourceName, "test.js") && lineNumber == 10) {
++              return new SimpleRegion(10, 10, "const x = 1;");
++            }
++            return null;
++          }
++
++          @Override
++          public @Nullable OriginalMapping getSourceMapping(
++              String sourceName, int lineNumber, int columnNumber) {
++            return null;
++          }
++        };
++
++    VerboseMessageFormatter formatter = new VerboseMessageFormatter(provider);
++    JSError error = JSError.make("test.js", 10, 0, FOO_TYPE);
++
++    String formatted = formatter.formatError(error);
++
++    assertThat(formatted)
++        .isEqualTo("ERROR: error description here at test.js line 10 :\n\nconst x = 1;");
++  }
++
++  @Test
++  public void testFormatWarning_validLineNumber() {
++    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
++    DiagnosticType warningType = DiagnosticType.warning("TEST_WARN", "warning description here");
++    JSError warning = JSError.make("test.js", 42, 0, warningType);
++
++    String formatted = formatter.formatWarning(warning);
++
++    assertThat(formatted).startsWith("WARNING: ");
++    assertThat(formatted).contains("line 42");
++    assertThat(formatted).isEqualTo("WARNING: warning d
 ```
 
 #### Recent Merged Pull Requests:
@@ -2803,26 +3029,25 @@ PiperOrigin-RevId: 1001581012
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NullPointerException in InlineObjectLiterals when encountering unreferenced vari
+## X. Allow extending conformance requirements to append to the root rule's error mess
 
 **RULE**:
-When implementing operations in `src/com/google/javascript/jscomp/InlineObjectLiterals.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/com/google/javascript/jscomp/CheckConformance.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0ac8bfe`: NullPointerException in InlineObjectLiterals when encountering unreferenced variables in a scope.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `404b4687`: Allow extending conformance requirements to append to the root rule's error message.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/InlineObjectLiterals.java`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/CheckConformance.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        // ReferenceMap only creates collections for variables that have references.
-        // A variable declared in a scope (e.g. unreferenced catch parameter or block-scoped
-        // function declaration) without references will return null.
-        if (referenceInfo == null) {
-          continue;
-        }
+          "error_message",
+    if (extendingRequirement.hasErrorMessage() && extendedRequirement.hasErrorMessage()) {
+      extendedRequirement.setErrorMessage(
+          extendedRequirement.getErrorMessage() + " " + extendingRequirement.getErrorMessage());
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2832,4 +3057,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0ac8bfe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `404b4687` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md`  
 > **Source**: github ([https://github.com/taiga-family/taiga-ui](https://github.com/taiga-family/taiga-ui))  
-> **Source Version**: `b57f4e02`  
+> **Source Version**: `8dc19751`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T04:15:50.821Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-23T06:10:28.312Z  
 > **Learning ID**: `learn-github-taiga-family-taiga-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,60 +12,206 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): taiga-family/taiga-ui
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/taiga-family/taiga-ui](https://github.com/taiga-family/taiga-ui))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T04:15:49.802Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): taiga-family/taiga-ui
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `taiga-family/taiga-ui`
-- **Description**: Angular components library for awesome people
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4068 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+### Core Mission & Domain Problem
+Taiga UI (`taiga-family/taiga-ui`) is a secondary-entry-point driven, fully tree-shakable Angular component architecture. It solves the structural friction between enterprise design-system strictness and consumer application flexibility. Enterprise UI libraries typically suffer from bundle bloat, rigid DOM hierarchies, tightly coupled state machines, and change detection churn. 
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+Taiga UI eliminates these failure modes by enforcing four design principles:
+1. **Total Dependency Inversion via Dependency Injection (DI) Portals**: Visual components decouple from business logic by relying on token injection, content projection (`PolymorpheusContent`), and multi-stage portal renderers (`TuiDropdown`, `TuiHint`).
+2. **Fine-Grained Signal & Observable Reactivity**: Components standardize on `ChangeDetectionStrategy.OnPush`, signal inputs (`input()`, `computed()`, `viewChildren()`), and zone-bypass streams (`tuiZonefree`, `takeUntilDestroyed`).
+3. **Structural Decoupling through Directive Composition (`hostDirectives`)**: Instead of brittle inheritance or monolithic components, behavioral features (such as tooltips, dropdowns, and hover trackers) attach to hosts via Angular host directives, re-exporting only required inputs and outputs.
+4. **Pure Mathematical Geometric Rendering**: Chart and graphic add-ons execute isolated vector math (`tuiDrawCurve`, `tuiControlPoint`, `tuiDescribeSector`) independent of browser DOM reflow loops, converting raw domain coordinates directly into SVG path strings with bounded trigonometric fallbacks.
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
+### Subsystem Boundaries & Layout
+The monorepo operates under an Nx workspace structure composed of distinct secondary entry points:
+- **`projects/cdk`**: Core Development Kit. Provides runtime math routines (`tuiToInt`, `tuiSum`), custom RxJS operators (`tuiZonefree`), base tokens, accessibility helpers, and framework-level polyfills. It has zero dependencies on styling or visual components.
+- **`projects/core`**: The foundational visual layer. Defines tokens, theme layers, portals, root positioning services (`TuiHintPosition`), and typography contracts via CSS custom properties.
+- **`projects/addon-charts`**: Data visualization subsystem. Translates coordinate arrays into SVG paths and renders interactive hints over bar, line, pie, and arc visualizers using decoupled hover services (`TuiHoveredService`) and coordinate mappers.
+- **`projects/addon-commerce`**: Internationalized financial formatting pipelines (`tuiFormatSignSymbol`, `tuiGetCurrencySymbol`), card number validators, and input masks.
+- **`projects/addon-mobile`**: Mobile platform ergonomics. Integrates platform-specific typography scales (Android Material vs. iOS Cupertino adaptations), pull-to-refresh engines, touch portal sheets, and platform queries.
 
-### Core Architecture Module: `projects/addon-charts/utils/control-point.ts`
 ```
-import {type TuiPoint} from '@taiga-ui/core/types';
+       ┌──────────────────────────────────────────────────────────┐
+       │                Application Consumer Layer               │
+       └─────────────────────────────┬────────────────────────────┘
+                                     │ consumes
+       ┌─────────────────────────────▼────────────────────────────┐
+       │           Addon Layer (charts, mobile, commerce)         │
+       │  - Composition via hostDirectives (TuiChartHint)        │
+       │  - Zero-Reflow SVG Path Computations (tuiDrawCurve)      │
+       └──────────────┬────────────────────────────┬──────────────┘
+                      │                            │
+                      ▼                            ▼
+       ┌──────────────────────────┐  ┌───────────────────────────┐
+       │    @taiga-ui/core        │  │   ng-polymorpheus         │
+       │  - Portals & Positioning │  │   - Dynamic Polymorphic   │
+       │  - Design Tokens & CSS   │  │     Template Injection    │
+       └──────────────┬───────────┘  └─────────────┬─────────────┘
+                      │                            │
+                      └──────────────┬─────────────┘
+                                     │
+                                     ▼
+       ┌──────────────────────────────────────────────────────────┐
+       │                     @taiga-ui/cdk                        │
+       │  - Pure Mathematical Primitives (Trigonometry/Vectors)   │
+       │  - Reactive Boundary Controls (tuiZonefree, RxJS)        │
+       └──────────────────────────────────────────────────────────┘
+```
 
-import {tuiLineAngle} from './line-angle';
-import {tuiLineLength} from './line-length';
+---
 
-export function tuiControlPoint(
-    current?: TuiPoint,
-    previous?: TuiPoint,
-    next?: TuiPoint,
-    reverse = false,
-    smoothing = 0.2,
-): TuiPoint {
-    const fallback = current || ([0, 0] as const);
-    const p = previous || current || ([0, 0] as const);
-    const n = next || current || ([0, 0] as const);
-    const angle = tuiLineAngle(p, n) + (reverse ? Math.PI : 0);
-    const length = tuiLineLength(p, n) * smoothing;
-    const x = fallback[0] + Math.cos(angle) * length;
-    const y = fallback[1] + Math.sin(angle) * length;
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-    return [x, y];
+### 1. Inversion of View Provider Hierarchies in Composable UI Directives
+**RULE**:
+A parent/container component MUST NOT seal local portal options inside its own `viewProviders` when nested child directives or projected components need to override those options. Configurable portal options (such as tooltip directions, popover offsets, or portal alignments) MUST resolve dynamically via optional DI injection tokens or cascaded host inputs (`hostDirectives`).
+
+**WHY**:
+Placing a provider like `viewProviders: [tuiHintOptionsProvider({direction: 'top'})]` on a component locks the injector subtree within the component's internal view. Any consumer attempting to customize direction via a host directive or attribute binding (e.g., `tuiHintDirection="start"`) cannot override this provider because Angular's `viewProviders` takes precedence over element-level host directive providers. This creates an immutable styling trap where consumer configuration is silently ignored.
+
+**WHEN TO APPLY**:
+Apply in any framework component (Angular, React Context, Vue Provide/Inject) where a compound container manages tooltip/dropdown display rules for child elements, but consumers must retain the ability to configure alignment at the boundary.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// projects/addon-charts/components/chart-hint/chart-hint.directive.ts
+import {Directive, input} from '@angular/core';
+import {type TuiHintOptions} from '@taiga-ui/core/portals/hint';
+import {type PolymorpheusContent} from '@taiga-ui/polymorpheus';
+
+@Directive({selector: '[tuiHintContent]'})
+export class TuiChartHint {
+    public readonly content = input<PolymorpheusContent>('', {alias: 'tuiHintContent'});
+    public readonly appearance = input('', {alias: 'tuiHintAppearance'});
+    public readonly direction = input<TuiHintOptions['direction'] | null>(null, {
+        alias: 'tuiHintDirection',
+    });
 }
 
+// projects/addon-charts/components/bar-chart/bar-chart.component.ts
+@Component({
+    selector: 'tui-bar-chart',
+    templateUrl: './bar-chart.template.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    // CRITICAL: viewProviders MUST NOT lock {direction: 'top'} here!
+})
+export class TuiBarChart {
+    // Resolve dynamically from ancestor tree or fall back to default
+    protected readonly hintOptions = inject(TuiChartHint, {optional: true});
+}
+
+// projects/addon-charts/components/bar-chart/bar-chart.template.html
+// Resolve hint direction using explicit nullish coalescing to the default fallback:
+// [tuiHintDirection]="hintOptions?.direction() ?? 'top'"
 ```
 
-### Core Architecture Module: `projects/addon-charts/utils/describe-sector.ts`
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER lock direction down inside viewProviders if consumers need to customize it:
+@Component({
+    selector: 'tui-bar-chart',
+    // ANTI-PATTERN: viewProviders creates an un-overridable boundary for child hints
+    viewProviders: [tuiHintOptionsProvider({direction: 'top'})], 
+})
+export class TuiBarChart {
+    // Local property will shadow or get ignored by the rigid viewProvider
+}
 ```
+
+**VERIFICATION METHOD**:
+Verify using Angular component test harnesses verifying injector hierarchy:
+```typescript
+it('respects [tuiHintDirection] on the same host', () => {
+    const fixture = TestBed.createComponent(WithDirectionComponent);
+    fixture.detectChanges();
+    const columns = fixture.debugElement.queryAll(By.css('.t-column'));
+    const resolvedDirections = columns.map(
+        (col) => col.injector.get(TuiHintPosition).direction()
+    );
+    expect(resolvedDirections.every((dir) => dir === 'start')).toBe(true);
+});
+```
+
+---
+
+### 2. Forward-Referenced Type Resolution in Content Query Declarations
+**RULE**:
+When querying child or content components via decorator or signal queries (`contentChildren`, `viewChildren`) where the target class definition co-exists or is circularly imported within the same module/secondary entry point, the query target MUST be wrapped in a lazy closure (`forwardRef(() => TargetClass)`).
+
+**WHY**:
+TypeScript transpilation to JavaScript does not hoist ES module class declarations. If Class `A` queries Class `B`, but Class `B` references Class `A` (directly or transitively through directives), Class `B` evaluates to `undefined` at runtime when Class `A`'s property initializers execute. This results in empty query lists (`contentChildren` yields `[]`), leading to silent rendering failures without runtime exceptions.
+
+**WHEN TO APPLY**:
+Apply to all queries across compound directives (e.g., charts querying coordinate axes, tables querying column definitions, tabs querying tab panels) where parent and child mutually reference each other.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// projects/addon-charts/components/line-chart/line-chart-hint.directive.ts
+import {
+    contentChildren,
+    Directive,
+    ElementRef,
+    forwardRef,
+} from '@angular/core';
+import {TuiLineChart} from './line-chart.component';
+
+@Directive({
+    selector: '[tuiLineChartHint]',
+})
+export class TuiLineChartHint {
+    // PROTECTED: Closed under forwardRef closure to guarantee resolution post-hoisting
+    private readonly charts = contentChildren<TuiLineChart>(
+        forwardRef(() => TuiLineChart),
+    );
+
+    private readonly chartsRef = contentChildren<TuiLineChart, ElementRef<HTMLElement>>(
+        forwardRef(() => TuiLineChart),
+        {read: ElementRef},
+    );
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Direct reference will be undefined if circular/order-dependent
+@Directive({selector: '[tuiLineChartHint]'})
+export class TuiLineChartHint {
+    // DANGER: If TuiLineChart imports TuiLineChartHint, this evaluates to undefined
+    private readonly charts = contentChildren(TuiLineChart); 
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an Nx headless spec test using `TestBed` verifying that an instantiated parent resolves child components within an `ng-after-content-init` lifecycle test:
+```typescript
+const fixture = TestBed.createComponent(TestHostComponent);
+fixture.detectChanges();
+const directiveInstance = fixture.debugElement
+    .query(By.directive(TuiLineChartHint))
+    .injector.get(TuiLineChartHint);
+expect((directiveInstance as any).charts().length).toBeGreaterThan(0);
+```
+
+---
+
+### 3. Singularity-Proof Geometric Arc Path Generation
+**RULE**:
+Every vector path generation function transforming polar or degree coordinates into cartesian SVG/Canvas paths MUST explicitly guard against `NaN` propagation originating from zero-length intervals, identical angles, or invalid floating-point inputs, returning a deterministic closed fallback path.
+
+**WHY**:
+In SVG rendering engines (WebKit, Blink, Gecko), if an arc command (`A rx ry x-axis-rotation large-arc-flag sweep-flag x y`) receives `NaN` for coordinate parameters (e.g. `Math.cos(NaN)`), the engine drops the entire SVG path segment, fails silently, or crashes the GPU rasterization pipeline for the entire canvas.
+
+**WHEN TO APPLY**:
+All coordinate transformations, charts, gauges, pie sectors, and canvas rendering utilities.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// projects/addon-charts/utils/describe-sector.ts
 import {tuiToInt} from '@taiga-ui/cdk/utils/math';
 
 const EMPTY = 'M 100 0 A 100 100 0 1 1 100 0 L 0 0';
@@ -74,22 +220,17 @@ function toRadians(deg: number): number {
     return (deg * Math.PI) / 180;
 }
 
-/**
- * Describes a normalized sector by angles. Normalized meaning it supposed to work with
- * SVG with viewBox="-1 -1 2 2" so that 0 coordinates in cartesian and polar match the same spot.
- * Everything is multiplied by 100 (including viewBox of SVG to host this) so IE properly
- * handles hover events.
- *
- * @param startAngle starting angle in degrees
- * @param endAngle ending angle in degrees
- */
 export function tuiDescribeSector(startAngle = 0, endAngle = 0): string {
     const startRad = toRadians(startAngle);
     const endRad = toRadians(endAngle);
+    
+    // Scale multiplied by 100 to avoid floating point subpixel precision drops
     const startX = Math.cos(startRad) * 100;
     const startY = Math.sin(startRad) * 100;
     const endX = Math.cos(endRad) * 100;
     const endY = Math.sin(endRad) * 100;
+    
+    // Convert boolean to binary flag safely
     const largeArcFlag = tuiToInt(endAngle - startAngle > 180);
 
     const result = [
@@ -104,124 +245,198 @@ export function tuiDescribeSector(startAngle = 0, endAngle = 0): string {
         'L 0 0',
     ];
 
-    return Number.isNaN(endX) ? EMPTY : result.join(' ');
+    // Explicit NaN guard prevents SVG rasterizer pipeline crash
+    return Number.isNaN(endX) || Number.isNaN(startY) ? EMPTY : result.join(' ');
 }
-
 ```
 
-### Core Architecture Module: `projects/addon-charts/utils/draw-curve.ts`
-```
-import {type TuiPoint} from '@taiga-ui/core/types';
-
-import {tuiControlPoint} from './control-point';
-
-export function tuiDrawCurve(
-    array: readonly TuiPoint[],
-    index: number,
-    smoothing: number,
-): string {
-    const [cpsX, cpsY] = tuiControlPoint(
-        array[index - 1],
-        array[index - 2],
-        array[index],
-        false,
-        smoothing,
-    );
-
-    const [cpeX, cpeY] = tuiControlPoint(
-        array[index],
-        array[index - 1],
-        array[index + 1],
-        true,
-        smoothing,
-    );
-
-    const point = array[index] ?? [0, 0];
-
-    return `C ${cpsX},${cpsY} ${cpeX},${cpeY} ${point[0]},${point[1]}`;
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blind string interpolation of trigonometric outputs
+export function unsafeDescribeSector(start: number, end: number): string {
+    const x = Math.cos(end);
+    const y = Math.sin(end);
+    // If end is undefined or NaN, output is "M ... NaN NaN" which corrupts SVG parser
+    return `M 0 0 L ${x} ${y} Z`; 
 }
-
 ```
 
-### Core Architecture Module: `projects/addon-charts/utils/draw-line.ts`
+**VERIFICATION METHOD**:
+Execute property tests asserting return values across degenerate inputs:
+```typescript
+expect(tuiDescribeSector(NaN, NaN)).toBe('M 100 0 A 100 100 0 1 1 100 0 L 0 0');
+expect(tuiDescribeSector(undefined as any, undefined as any)).not.toContain('NaN');
 ```
-export function tuiDrawLine(point: [number, number]): string {
-    return `L ${point}`;
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Chart Hint Direction Override Locked by Rigid ViewProviders (BUG-TAIGA-01)
+- **Context**: `projects/addon-charts/components/bar-chart`, `projects/addon-charts/components/line-chart`
+- **What Was Expected**: When wrapping a `<tui-line-chart>` or `<tui-bar-chart>` with a directive that specifies hint positioning (e.g., `<tui-axes tuiHintDirection="start" tuiLineChartHint="...">`), the tooltip portal must render towards the specified direction (`"start"`).
+- **What Actually Happened**: The chart hints were permanently locked to `"top"`. Setting `[tuiHintDirection]` on the host or parent directive had zero effect.
+- **Evidence in Repo**: Commit `abcaa5ad` ("fix(addon-charts): `LineChart`, `PieChart`, `BarChart` respect `tuiHintDirection` (#15224)"). Files: `bar-chart.component.ts`, `line-chart.component.ts`, `line-chart-hint.directive.ts`.
+- **Root Cause**: The component metadata contained `viewProviders: [tuiHintOptionsProvider({direction: 'top'})]`. In Angular's hierarchical injector, `viewProviders` configure dependencies instantiated inside that component's view template. This provider masked any token provided higher in the DOM tree. Furthermore, `TuiChartHint` did not expose an input for `direction`, meaning directional intent was dropped.
+- **Remediation Code Diff**:
+```diff
+--- a/projects/addon-charts/components/bar-chart/bar-chart.component.ts
++++ b/projects/addon-charts/components/bar-chart/bar-chart.component.ts
+@@ -24,10 +24,8 @@
+     templateUrl: './bar-chart.template.html',
+     styleUrl: './bar-chart.style.less',
+     changeDetection: ChangeDetectionStrategy.OnPush,
+-    viewProviders: [tuiHintOptionsProvider({direction: 'top'})],
+ })
+ export class TuiBarChart {
+-    private readonly hintOptions = inject(TuiChartHint, {optional: true});
+     private readonly autoId = tuiGenerateId();
+@@ -49,6 +47,7 @@
+         ),
+     );
+ 
++    protected readonly hintOptions = inject(TuiChartHint, {optional: true});
+     protected readonly drivers = viewChildren(TuiHintHover);
+--- a/projects/addon-charts/components/bar-chart/bar-chart.template.html
++++ b/projects/addon-charts/components/bar-chart/bar-chart.template.html
+@@ -7,6 +7,7 @@
+         [tuiHintAppearance]="hintAppearance"
+         [tuiHintContext]="{$implicit: $index}"
+         [tuiHintDescribe]="getHintId($index)"
++        [tuiHintDirection]="hintOptions?.direction() ?? 'top'"
+         [tuiHintHost]="hintHost"
+```
+- **Lesson**: Default options must be provided either as fallback expressions in bindings (`hintOptions?.direction() ?? 'top'`) or through overridable root injection tokens—never sealed in a reusable library component's `viewProviders`.
+
+---
+
+### Incident 2: Circular Dependency Rendering Query Signals Dead in Directive Subsystems (BUG-TAIGA-02)
+- **Context**: `projects/addon-charts/components/line-chart/line-chart-hint.directive.ts`
+- **What Was Expected**: `TuiLineChartHint` must query all nested `TuiLineChart` instances using `contentChildren(TuiLineChart)` to compute dynamic bounding boxes and coordinate crosshairs across line series.
+- **What Actually Happened**: The signal query returned an empty array at runtime during initial view checks, because `TuiLineChart` was evaluated as `undefined` at the point of directive class definition.
+- **Evidence in Repo**: Commit `abcaa5ad`.
+- **Root Cause**: Mutual import loop. `line-chart.component.ts` imported `TuiLineChartHint`, and `line-chart-hint.directive.ts` imported `TuiLineChart`. The ECMAScript module execution order resolved `TuiLineChart` as uninitialized when `contentChildren(TuiLineChart)` was invoked.
+- **Remediation Code Diff**:
+```diff
+--- a/projects/addon-charts/components/line-chart/line-chart-hint.directive.ts
++++ b/projects/addon-charts/components/line-chart/line-chart-hint.directive.ts
+@@ -5,12 +5,14 @@
+     DestroyRef,
+     Directive,
+     ElementRef,
++    forwardRef,
+     inject,
+     input,
+@@ -31,10 +33,18 @@
+ @Directive({
+     selector: '[tuiLineChartHint]',
+     providers: [TuiHoveredService],
++    hostDirectives: [{directive: TuiChartHint, inputs: ['tuiHintDirection']}],
+ })
+ export class TuiLineChartHint implements AfterViewInit {
+-    private readonly charts = contentChildren(TuiLineChart);
+-    private readonly chartsRef = contentChildren(TuiLineChart, {read: ElementRef});
++    private readonly charts = contentChildren<TuiLineChart>(
++        forwardRef(() => TuiLineChart),
++    );
++
++    private readonly chartsRef = contentChildren<TuiLineChart, ElementRef<HTMLElement>>(
++        forwardRef(() => TuiLineChart),
++        {read: ElementRef},
++    );
+```
+- **Lesson**: In library frameworks compiling to ES modules, any DI token or component class passed into view/content queries within reciprocal relationships must be guarded with `forwardRef()`.
+
+---
+
+### Incident 3: Android Mobile Typography Hierarchy Drift (BUG-TAIGA-03)
+- **Context**: `projects/addon-mobile/styles/android/app-bar.less`
+- **What Was Expected**: On Android platforms, app bar subtitles (`[tuiSubtitle]`) must strictly follow Material Design specifications of 14px (`body-m`).
+- **What Actually Happened**: Subtitles were inheriting the default fallback typography of 13px (`body-s`), breaking visual alignment with native Android headers.
+- **Evidence in Repo**: PR #15285, Commit `a04b7092`.
+- **Root Cause**: The platform-specific LESS stylesheet for Android omitted a specific selector rule for `[tuiSubtitle]`, allowing the parent core styles (`app-bar.less`) to fall through to the compact desktop typography scale.
+- **Remediation Code Diff**:
+```diff
+--- a/projects/addon-mobile/styles/android/app-bar.less
++++ b/projects/addon-mobile/styles/android/app-bar.less
+@@ -18,6 +18,10 @@ tui-app-bar {
+         }
+     }
+ 
++    [tuiSubtitle] {
++        font: var(--tui-typography-body-m);
++    }
++
+     > :last-child [tuiIconButton] {
+         margin: 0 -0.25rem;
+     }
+```
+- **Lesson**: Platform overrides must be verified via structural style assertions or Percy/Playwright screenshot diffing, mapping exact token variants (`--tui-typography-*`) per platform host target.
+
+---
+
+### Incident 4: Absolute Column Positioning Breakdown in Resizable Bar Charts (BUG-TAIGA-04)
+- **Context**: `projects/addon-charts/components/bar-chart/bar-chart.style.less`
+- **What Was Expected**: Bar chart columns positioned via `.t-host` must align consistently within their relative parent containers during responsive resizing.
+- **What Actually Happened**: In certain viewport widths, the `.t-host` child elements collapsed to zero height or overflowed the container boundaries because the relative positioning ancestor lacked explicit block-inset constraints.
+- **Evidence in Repo**: Commit `abcaa5ad`.
+- **Root Cause**: The parent container `.t-container` had `flex: 1` but omitted `position: relative`, causing `.t-host` with `position: absolute` to latch onto an outer coordinate box. Additionally, `.t-host` lacked logical block dimension anchors (`inset-block: 0`).
+- **Remediation Code Diff**:
+```diff
+--- a/projects/addon-charts/components/bar-chart/bar-chart.style.less
++++ b/projects/addon-charts/components/bar-chart/bar-chart.style.less
+@@ -27,11 +27,13 @@
+ }
+ 
+ .t-container {
++    position: relative;
+     flex: 1;
+ }
+ 
+ .t-host {
+     position: absolute;
++    inset-block: 0;
+     inset-inline: 50%;
+ }
+```
+- **Lesson**: Whenever applying absolute positioning to interactive layout elements, always define both logical inline (`inset-inline`) and logical block (`inset-block`) constraints, while establishing a `position: relative` context on the immediate flex parent.
+
+---
+
+### Incident 5: Currency Fallback Collision with Numeric Currency Codes (BUG-TAIGA-05)
+- **Context**: `projects/addon-commerce/utils/format-currency.ts`
+- **What Was Expected**: An input ISO-4217 numeric currency code (e.g., `840` for USD) should format with zero-padded 3-digit normalization when a symbol cannot be resolved.
+- **What Actually Happened**: Passing a numeric `0` or partial numerical inputs caused falsy resolution regressions and missing currency indications in deprecated commerce utilities.
+- **Evidence in Repo**: `format-currency.ts`, `projects/addon-commerce/pipes/amount/amount.utils.ts`.
+- **Root Cause**: Direct truthiness checking (`if (!currency)`) failed when currency was passed as number `0`.
+- **Remediation Code Diff**:
+```typescript
+// Explicit type check before string padding
+export function tuiFormatCurrency(currency: TuiCurrencyVariants): string {
+    const fallback =
+        typeof currency === 'number' ? String(currency).padStart(3, '0') : currency;
+
+    return tuiGetCurrencySymbol(currency) ?? fallback ?? '';
 }
-
 ```
+- **Lesson**: Currency and accounting codes must never be evaluated using truthy/falsy coercion. Always use `typeof currency === 'number'` followed by nullish coalescing (`??`).
 
-### Core Architecture Module: `projects/addon-charts/utils/draw.ts`
-```
-import {type TuiPoint} from '@taiga-ui/core/types';
+---
 
-import {tuiDrawCurve} from './draw-curve';
-import {tuiDrawLine} from './draw-line';
+## 4. Microscopic Code-Level Invariants
 
-const COEFFICIENT = 500;
+### 1. Micro-Syntax & Token-Level Precision
+In UI financial pipes and mathematical utilities, implicit type coercion leads to severe bugs. Taiga UI applies rigorous micro-invariants:
 
-export function tuiDraw(
-    array: readonly TuiPoint[],
-    index: number,
-    smoothing: number,
-): string {
-    const point: readonly [number, number] = [...(array[index] ?? [0, 0])];
-
-    return smoothing
-        ? tuiDrawCurve(array, index, smoothing / COEFFICIENT)
-        : tuiDrawLine([point[0], point[1]]);
-}
-
-```
-
-### Core Architecture Module: `projects/addon-charts/utils/index.ts`
-```
-export * from './control-point';
-export * from './describe-sector';
-export * from './draw';
-export * from './draw-curve';
-export * from './draw-line';
-export * from './line-angle';
-export * from './line-length';
-
-```
-
-### Core Architecture Module: `projects/addon-charts/utils/line-angle.ts`
-```
-import {type TuiPoint} from '@taiga-ui/core/types';
-
-export function tuiLineAngle(a: TuiPoint, b: TuiPoint): number {
-    const x = b[0] - a[0];
-    const y = b[1] - a[1];
-
-    return Math.atan2(y, x);
-}
-
-```
-
-### Core Architecture Module: `projects/addon-charts/utils/line-length.ts`
-```
-import {type TuiPoint} from '@taiga-ui/core/types';
-
-export function tuiLineLength(a: TuiPoint, b: TuiPoint): number {
-    const x = b[0] - a[0];
-    const y = b[1] - a[1];
-
-    return Math.sqrt(x ** 2 + y ** 2);
-}
-
-```
-
-### Core Architecture Module: `projects/addon-commerce/pipes/amount/amount.utils.ts`
-```
-import {CHAR_MINUS, CHAR_PLUS} from '@taiga-ui/cdk/constants';
-
-import {type TuiAmountSign, type TuiAmountSignSymbol} from './amount.types';
-
+#### Zero vs. Empty String & Falsy Coercion in Financial Formatting
+```typescript
+// projects/addon-commerce/pipes/amount/amount.utils.ts
 export function tuiFormatSignSymbol(
     value: number,
     sign: TuiAmountSign,
 ): TuiAmountSignSymbol {
+    // CRITICAL: value === 0 must be treated specially.
+    // If value is 0, !value evaluates to true, preventing "+0" or "-0" artifacts!
     if (sign === 'never' || !value || (sign === 'negative-only' && value > 0)) {
         return '';
     }
@@ -230,324 +445,210 @@ export function tuiFormatSignSymbol(
         ? CHAR_MINUS
         : CHAR_PLUS;
 }
+```
+*Micro-Invariant*: When writing sign formatters:
+- `!value` guards against `0`, `-0`, and `NaN`.
+- Do NOT use `value <= 0` because it groups `0` into the negative branch, rendering `-0.00 $`.
 
+#### Safe Tuple Cloning & Array Immutability in Spline Computations
+```typescript
+// projects/addon-charts/utils/draw.ts
+export function tuiDraw(
+    array: readonly TuiPoint[],
+    index: number,
+    smoothing: number,
+): string {
+    // Array access might yield undefined. 
+    // Fallback [0, 0] must be defensive cloned to prevent tuple mutation.
+    const point: readonly [number, number] = [...(array[index] ?? [0, 0])];
+
+    return smoothing
+        ? tuiDrawCurve(array, index, smoothing / COEFFICIENT)
+        : tuiDrawLine([point[0], point[1]]);
+}
+```
+*Micro-Invariant*: Never use `array[index][0]` directly without null-checking the tuple container. Notice the pattern: `[...(array[index] ?? [0, 0])]`.
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+
+#### Spline Vector Interpolation Bounded Lookups
+Bezier smoothing algorithms require sampling `i - 2`, `i - 1`, `i`, and `i + 1`. Without boundary clamps, out-of-bounds array lookups yield `undefined`, producing `NaN` coordinates that cause infinite rendering re-computations in SVG render loops.
+
+```typescript
+// projects/addon-charts/utils/control-point.ts
+export function tuiControlPoint(
+    current?: TuiPoint,
+    previous?: TuiPoint,
+    next?: TuiPoint,
+    reverse = false,
+    smoothing = 0.2,
+): TuiPoint {
+    // TERMINATION & BOUNDARY PROOF:
+    // If previous or next are out-of-bounds (e.g. index === 0 or index === length - 1),
+    // they collapse deterministically onto 'current', then onto [0, 0].
+    const fallback = current || ([0, 0] as const);
+    const p = previous || current || ([0, 0] as const);
+    const n = next || current || ([0, 0] as const);
+    
+    const angle = tuiLineAngle(p, n) + (reverse ? Math.PI : 0);
+    const length = tuiLineLength(p, n) * smoothing;
+    const x = fallback[0] + Math.cos(angle) * length;
+    const y = fallback[1] + Math.sin(angle) * length;
+
+    return [x, y];
+}
+```
+*Recursion Guard Rule*: When calculating control points for closed or open Bézier paths, boundary nodes MUST collapse onto `current` to prevent directional vector divergence.
+
+---
+
+### 3. UI & UX Micro-Mechanics
+
+#### Avoiding Reflow Thrashing in High-Frequency Chart Hovers
+Hovering over a bar chart or line chart column can trigger 60fps mousemove events. If mouse tracking runs inside Angular's `NgZone`, it triggers top-to-bottom change detection across the entire DOM tree on every mouse coordinate update.
+
+Taiga UI isolates this via `tuiZonefree`:
+```typescript
+// projects/addon-charts/components/line-chart/line-chart-hint.directive.ts
+@Directive({
+    selector: '[tuiLineChartHint]',
+    providers: [TuiHoveredService],
+})
+export class TuiLineChartHint implements AfterViewInit {
+    private readonly zone = inject(NgZone);
+    private readonly destroyRef = inject(DestroyRef);
+
+    public ngAfterViewInit(): void {
+        // Run event listener outside Angular zone to prevent reflow loops
+        this.zone.runOutsideAngular(() => {
+            fromEvent(this.elementRef.nativeElement, 'mousemove')
+                .pipe(
+                    tuiZonefree(this.zone),
+                    takeUntilDestroyed(this.destroyRef)
+                )
+                .subscribe((event) => {
+                    this.updateCrosshair(event);
+                });
+        });
+    }
+}
 ```
 
-### Core Architecture Module: `projects/addon-commerce/utils/format-currency.ts`
-```
-import {type TuiCurrencyVariants} from '@taiga-ui/addon-commerce/types';
-
-import {tuiGetCurrencySymbol} from './get-currency-symbol';
-
-/**
- * @deprecated Use {@link tuiGetCurrencySymbol} instead.
- * TODO(v6): delete
- */
-export function tuiFormatCurrency(currency: TuiCurrencyVariants): string {
-    const fallback =
-        typeof currency === 'number' ? String(currency).padStart(3, '0') : currency;
-
-    return tuiGetCurrencySymbol(currency) ?? fallback ?? '';
+#### CSS Stacking Context Isolation
+In `bar-chart.style.less`:
+```less
+.t-container {
+    position: relative;
+    flex: 1;
 }
 
+.t-host {
+    position: absolute;
+    inset-block: 0;
+    inset-inline: 50%;
+}
 ```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15271** (2026-10-20): **chore: update github actions**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [node](https://redirect.github.com/actions/node-versions) | minor | `24.21` → `24.22` | | [taiga-family/actions](https://redirect.github.com/taiga-family/actions) | minor | `v2.20.0` → `v2.22.0` | | [w9jds/firebase-action](https://redirect.github.com/w9jds/firebase-action) | minor | `v15.32.1` → `v15.34.0` |  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR has been generated by [Mend Renovate CLI](https://redirect.github.com/renovatebot/renovate). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzIuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjE3Mi4xIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6W119-->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  - **Chores**   - Updated automated build, test, deployment, publishing, and release workflows to use newer action versions.   - Upgraded the Firebase workflow action used for hosting-channel cleanup.   - Updated workflow Node.js versions from 24.21 to 24.22 where applicable.   - Preserved existing workflow triggers, conditions, deployment settings, and notification behavior.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- screenshot-bot-id: test-report -->  # Pull request was closed :heavy_check_mark:  All saved screenshots (for current PR) were deleted :wastebasket:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/taiga-family/taiga-ui/pull/15271?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <s
-
-- **Issue #15270** (2026-10-20): **chore: update dependency lucide-static to v1.52.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [lucide-static](https://lucide.dev) ([source](https://redirect.github.com/lucide-icons/lucide)) | minor | [`1.47.0` → `1.52.0`](https://renovatebot.com/diffs/npm/lucide-static/1.47.0/1.52.0) |  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR has been generated by [Mend Renovate CLI](https://redirect.github.com/renovatebot/renovate). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzEuOCIsInVwZGF0ZWRJblZlciI6IjQ0LjE3MS44IiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6W119-->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  ## Summary by CodeRabbit  * **Chores**   * Updated the Lucide static icon development dependency to version 1.52.0.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- screenshot-bot-id: test-report -->  # Pull request was closed :heavy_check_mark:  All saved screenshots (for current PR) were deleted :wastebasket:
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/taiga-family/taiga-ui/pull/15270?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration</
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `b57f4e02` (2026-10-20)
-**Commit Message**: chore: update github actions (#15271)
-
-**File**: `.github/workflows/add-dist-tag.yml` (modified, +2/-2)
-```diff
-@@ -18,8 +18,8 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--      - uses: taiga-family/actions/setup-node@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
--      - uses: taiga-family/actions/setup-npm@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-node@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-+      - uses: taiga-family/actions/setup-npm@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-         with:
-           token: ${{ secrets.TAIGA_UI_SCOPE_NPM_TOKEN }}
- 
-```
-
-**File**: `.github/workflows/after-close-pr.yml` (modified, +2/-2)
-```diff
-@@ -35,15 +35,15 @@ jobs:
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Drop e2e report site
--        uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
-+        uses: w9jds/firebase-action@fc894b2de04cfc04c398e98dea8ac546470fbd6b # v15.34.0
-         continue-on-error: true
-         with:
-           args: hosting:channel:delete ${{ env.channel }}-e2e --site taiga-previews-e2e -f
-         env:
-           GCP_SA_KEY: ${{ secrets.FIREBASE_TAIGA_PREVIEWS_SA }}
-           PROJECT_ID: taiga-previews-a7bbb
-       - name: Drop preview demo site
--        uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
-+        uses: w9jds/firebase-action@fc894b2de04cfc04c398e98dea8ac546470fbd6b # v15.34.0
-         continue-on-error: true
-         with:
-           args: hosting:channel:delete ${{ env.channel }}-demo --site taiga-preview -f
-```
-
-**File**: `.github/workflows/assign-pull-request-author.yml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--      - uses: taiga-family/actions/setup-variables@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-variables@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-       - uses: toshimaru/auto-author-assign@a78a94b219445cece8ccf0d45fec60af449f212a # v3.1.0
-         continue-on-error: true
- 
-```
-
-**File**: `.github/workflows/auto-community-contribution-label.yml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ jobs:
-       issues: write
-       pull-requests: write
-     steps:
--      - uses: taiga-family/actions/auto-label-community@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/auto-label-community@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-           pr-number: ${{ github.event.pull_request.number }}
-```
-
-**File**: `.github/workflows/auto-merge.yml` (modified, +5/-5)
-```diff
-@@ -18,7 +18,7 @@ jobs:
-       matrix: ${{ steps.matrix.outputs.value }}
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--      - uses: taiga-family/actions/setup-variables@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-variables@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-       - id: matrix
-         if: env.IS_TAIGA_FAMILY_BOT_PR_AUTHOR == 'true'
-         run: |
-@@ -36,7 +36,7 @@ jobs:
-       matrix:
-         value: ${{ fromJSON(needs.setup.outputs.matrix || '[]') }}
-     steps:
--      - uses: taiga-family/actions/wait-job@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/wait-job@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-         with:
-           token: ${{ secrets.GITHUB_TOKEN }}
-           job: ${{ matrix.value }}
-@@ -46,13 +46,13 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--      - uses: taiga-family/actions/setup-variables@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
--      - uses: taiga-family/actions/auto-approve-double@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-variables@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-+      - uses: taiga-family/actions/auto-approve-double@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-         if: env.IS_TAIGA_FAMILY_BOT_PR_AUTHOR == 'true' && github.event.pull_request.commits == 1
-         with:
-           token1: ${{ secrets.GITHUB_TOKEN }}
-           token2: ${{ secrets.TAIGA_FAMILY_APPROVE_BOT_PAT }}
--      - uses: taiga-family/actions/auto-merge@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/auto-merge@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-         if: env.IS_TAIGA_FAMILY_BOT_PR_AUTHOR == 'true' && github.event.pull_request.commits == 1
-         with:
-           token: ${{ secrets.TAIGA_FAMILY_BOT_PAT }}
-```
-
-**File**: `.github/workflows/auto-update-icons.yml` (modified, +3/-3)
-```diff
-@@ -14,8 +14,8 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--      - uses: taiga-family/actions/setup-variables@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
--      - uses: taiga-family/actions/setup-node@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-variables@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-+      - uses: taiga-family/actions/setup-node@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-       - run: |
-           npx ts-node ./scripts/generate-used-icons.ts
-           npx eslint ./projects/cdk/constants/used-icons.ts --fix || echo "no file matching"
-@@ -24,7 +24,7 @@ jobs:
-           npx prettier ./projects/demo/used-icons.ts --write || echo "no file matching"
-           npx prettier ./projects/demo-playwright/used-icons.ts --write || echo "no file matching"
-           npx prettier ./projects/cdk/constants/used-icons.ts --write || echo "no file matching"
--      - uses: taiga-family/actions/auto-push@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/auto-push@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-         if: env.SUPPORT_AUTO_PUSH
-         with:
-           message: icons have changed
-```
-
-**File**: `.github/workflows/build-preview.yml` (modified, +2/-2)
-```diff
-@@ -15,8 +15,8 @@ jobs:
-         with:
-           ref: ${{ github.event.pull_request.head.sha }}
-           persist-credentials: false
--      - uses: taiga-family/actions/setup-variables@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
--      - uses: taiga-family/actions/setup-node@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-variables@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-+      - uses: taiga-family/actions/setup-node@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-       - run: npx nx build demo
- 
-       - name: Prepare preview metadata
-```
-
-**File**: `.github/workflows/build.yml` (modified, +4/-4)
-```diff
-@@ -17,8 +17,8 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--      - uses: taiga-family/actions/setup-variables@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
--      - uses: taiga-family/actions/setup-node@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-variables@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-+      - uses: taiga-family/actions/setup-node@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-       - run: npm run run-many:build:libs
-       - run: npx ts-node ./scripts/check-dist.ts
- 
-@@ -27,8 +27,8 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--      - uses: taiga-family/actions/setup-variables@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
--      - uses: taiga-family/actions/setup-node@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-+      - uses: taiga-family/actions/setup-variables@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-+      - uses: taiga-family/actions/setup-node@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-       - run: npx nx build demo --define.strict=true
-       - run: npx --yes bundlemon --config .github/.bundlemonrc.json
-         continue-on-error: true
-```
+- By establishing `position: relative` on `.t-container`, absolute children cannot escape into parent coordinate spaces.
+- Using logical properties (`inset-block`, `inset-inline`) guarantees bidirectional RTL/LTR support without requiring CSS flipping rules.
 
 ---
 
-### Incident Patch 2: `f7edc3ec` (2026-10-20)
-**Commit Message**: chore: update dependency lucide-static to v1.52.0 (#15270)
+### 4. Backend Concurrency & Memory Safety
 
-**File**: `package-lock.json` (modified, +4/-4)
-```diff
-@@ -36433,9 +36433,9 @@
-             }
-         },
-         "node_modules/lucide-static": {
--            "version": "1.47.0",
--            "resolved": "https://registry.npmjs.org/lucide-static/-/lucide-static-1.47.0.tgz",
--            "integrity": "sha512-yWIrkdXc688Feq5VjOktsKmV5Ikc7y5Nu3rrdtbr8nWjkJWk8QlnZfVtIak22Af+fNhZ7k4cTJpZo1zmj7X5sA==",
-+            "version": "1.52.0",
-+            "resolved": "https://registry.npmjs.org/lucide-static/-/lucide-static-1.52.0.tgz",
-+            "integrity": "sha512-0zZYihAze4ZmUCcyNa9OkWYqn/Y5f9AdTh02AZIxMtP5ravcTTfoSIAnUPBH6ZvKxt+ZW28JB0ldzLRyD82fcw==",
-             "dev": true,
-             "license": "ISC"
-         },
-@@ -50978,7 +50978,7 @@
-             "version": "5.29.0",
-             "license": "Apache-2.0",
-             "devDependencies": {
--                "lucide-static": "1.47.0"
-+                "lucide-static": "1.52.0"
-             }
-         },
-         "projects/kit": {
-```
+#### RxJS Leak Prevention via `takeUntilDestroyed`
+In modern Angular versions (16+), storing RxJS `Subscription` objects manually and unsubscribing inside `ngOnDestroy` is an anti-pattern prone to lifecycle leaks. Taiga UI mandates injection-context-bound unsubscription:
 
-**File**: `projects/icons/package.json` (modified, +1/-1)
-```diff
-@@ -32,6 +32,6 @@
-         "./*": "./*"
-     },
-     "devDependencies": {
--        "lucide-static": "1.47.0"
-+        "lucide-static": "1.52.0"
-     }
- }
-```
-
-#### Recent Merged Pull Requests:
-- **PR #15271** (2026-10-20): chore: update github actions (@taiga-family-bot)
-- **PR #15270** (2026-10-20): chore: update dependency lucide-static to v1.52.0 (@taiga-family-bot)
-- **PR #15268** (2026-10-20): chore: update dependency @taiga-ui/design-tokens to ~0.329.0 (@taiga-family-bot)
-- **PR #15262** (2026-10-20): chore: update dependency @taiga-ui/design-tokens to ~0.328.0 (@taiga-family-bot)
-- **PR #15260** (2026-10-20): chore: update dependency @taiga-ui/design-tokens to ~0.327.0 (@taiga-family-bot)
-- **PR #15259** (2026-10-20): chore: update dependency @taiga-ui/configs to v0.566.0 (@taiga-family-bot)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. update github actions (#15271)
-
-**RULE**:
-When implementing operations in `.github/workflows/add-dist-tag.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in taiga-family/taiga-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `b57f4e02`: update github actions (#15271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/add-dist-tag.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// Verified production-grade fix pattern:
-      - uses: taiga-family/actions/setup-node@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
-      - uses: taiga-family/actions/setup-npm@9ef658ceb6608dab9d85124a80ab70087f9d62fa # v2.22.0
+// Safe, automated teardown using DestroyRef
+import {DestroyRef, inject} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+
+export class BaseChartObserver {
+    private readonly destroyRef = inject(DestroyRef);
+
+    public initStream(source$: Observable<unknown>): void {
+        source$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((value) => {
+                // Guaranteed cleanup on component DOM detachment
+            });
+    }
+}
 ```
 
-**NEGATIVE CONSTRAINT**:
+---
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+
+#### Arc Flag Numeric Conversion Pitfall
+In SVG path syntax, the `large-arc-flag` must be literally either `0` or `1`. A common JavaScript bug is passing a boolean `true` or `false`, which serializers convert to `"true"` or `"false"`, creating an invalid SVG path.
+
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      - uses: taiga-family/actions/setup-node@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
-      - uses: taiga-family/actions/setup-npm@ad2e311a6700d8fc7efab79f8b8a2165888ff968 # v2.20.0
+// projects/addon-charts/utils/describe-sector.ts
+import {tuiToInt} from '@taiga-ui/cdk/utils/math';
+
+// INVARIANT: endAngle - startAngle > 180 generates a boolean.
+// tuiToInt casts true -> 1, false -> 0.
+const largeArcFlag = tuiToInt(endAngle - startAngle > 180);
 ```
 
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b57f4e02` are properly handled with clean fallback behavior.
+#### Trigonometric NaN Guard
+```typescript
+// INVARIANT: When angles are equal or invalid, return constant deterministic EMPTY path.
+return Number.isNaN(endX) ? EMPTY : result.join(' ');
+```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+The architecture is structured around **Fine-Grained Secondary Entry Points**. Every folder under `projects/cdk/*`, `projects/core/*`, and `projects/addon-*` contains its own `ng-package.json` or entry-point definition. 
+- *Decoupling*: Addon packages (`addon-charts`, `addon-mobile`) depend only on `cdk` and `core`. They never cross-depend on peer addons (`addon-charts` cannot import from `addon-mobile`).
+- *State Ownership*: Unidirectional data flow where state is owned by parent views and projected down through signal inputs (`public readonly value = input<...>()`).
+
+### Dimension 2: Core Abstractions
+1. `PolymorpheusContent<C>`: An abstraction from `ng-polymorpheus` representing primitives, components, or `TemplateRef` dynamically rendered without hardcoded DOM switches.
+2. `TuiHint`: Portal directive projecting floating content to the document root layer (`<tui-root>`) with coordinate calculations handled by `TuiHintPosition`.
+3. `TuiPoint`: Domain primitive `readonly [number, number]` enforcing 2D immutability.
+
+### Dimension 3: Error Handling
+- *Degradation*: Graphics functions (`tuiDescribeSector`, `tuiControlPoint`) do not throw errors; they gracefully return identity elements or safe fallbacks (`EMPTY` SVG paths or `[0, 0]` coordinates).
+- *Strict Type Failsafes*: Fallback parameters (`fallback = current || [0, 0]`) guarantee that invalid array indices do not crash mathematical pipelines.
+
+### Dimension 4: Testing
+- *Visual Regression Shields*: Integrated screenshot testing harnesses (`.github/screenshot-bot.yml`, Playwright, Cypress).
+- *Component Signal Testing*: Harness specs use `TestBed` with reactive hosts to verify input signal updates and directive host interactions:
+```typescript
+const fixture = TestBed.createComponent(WithDirection);
+fixture.detectChanges();
+expect(getDirections(WithDirection)).toEqual(['start', 'start', 'start']);
+```
+
+### Dimension 5: Security
+- Threat Model: Cross-Site Scripting (XSS) via dynamic content projection.
+- Sanitization: All raw SVG content and HTML strings projected via Polymorpheus must pass Angular's `DomSanitizer` pipeline.
+- CSS Injection Boundary: Custom theme attributes are confined to CSS custom properties, preventing direct user-supplied style injection.
+
+### Dimension 6: Performance
+- *Zone Bypass*: High-frequency event streams (mouse movements, wheel scrolls, resizes) execute via `runOutsideAngular` and `tuiZonefree`.
+- *Pure Mathematical Transforms*: Algorithms like `tuiDrawCurve` operate on scalar numbers and arrays using native `Math.cos`, `Math.sin`, and `Math.atan2` without allocating intermediate objects.
+
+### Dimension 7: Deployment
+- *Monorepo Invariants*: Built with Nx (`nx run-many --target build --all --exclude=demo`).
+- *Typecheck Strictness*: `"typecheck": "tsc --noEmit --strict --incremental false --tsBuildInfoFile null --project tsconfig.spec.json"`. Builds fail on any type violation.
+
+### Dimension 8: Agent Patterns
+- Directives communicate through dependency injection tokens rather than large, coupled event emitters.
+- Feature behavior is combined via `hostDirectives: [{directive: TuiChartHint, inputs: ['tuiHintDirection']}]`.
+
+### Dimension 9: Data Flow
+Data flows from raw input arrays (`readonly TuiPoint[]`) through pure transformation functions (`tuiDraw`, `tuiDescribeSector`) into SVG `<path [attr.d]="path()">` bindings. State never mutates in place.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern

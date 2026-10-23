@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:02:55.075Z",
+  "last_updated": "2026-10-23T06:10:28.963Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45168,8 +45168,8 @@
       "slug": "taiga-family-taiga-ui",
       "platform": "github",
       "source_url": "https://github.com/taiga-family/taiga-ui",
-      "source_version": "b57f4e02",
-      "content_hash": "50725806aa837dabcecec624893f7f0b76eee0c73adde65124b46c6acd165ba2",
+      "source_version": "8dc19751",
+      "content_hash": "a4f7e21a6de5e1dae723820df546048703bfec9376b07e470ba18e76079ac044",
       "dossier_path": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "promoted_rules": [
@@ -45197,6 +45197,21 @@
           "number": 3516,
           "title": "update github actions (#15271)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3782,
+          "title": "Inversion of View Provider Hierarchies in Composable UI Directives",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3783,
+          "title": "Forward-Referenced Type Resolution in Content Query Declarations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3784,
+          "title": "Singularity-Proof Geometric Arc Path Generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45204,7 +45219,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:15:51.193Z",
+      "verified_at": "2026-10-23T06:10:28.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56719,8 +56734,8 @@
       "slug": "iliyami-macsai",
       "platform": "github",
       "source_url": "https://github.com/iliyami/MacSai",
-      "source_version": "6bd8f7ea",
-      "content_hash": "42ecc369d69eb31367b9e2038fc53ac469be7e61d3ce17085c6fd9b689131a8a",
+      "source_version": "d4ccd8a7",
+      "content_hash": "fdc8bbe824435691ad48c51cf83c479717b8c94d4c5baa04fd906ca75e4cddf7",
       "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "promoted_rules": [
@@ -56733,6 +56748,11 @@
           "number": 3036,
           "title": "Add Project Junk finder for regenerable build folders (fixes #221) (#231)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3780,
+          "title": "Match malware against Apple's on-disk XProtect signatures (#239)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56740,7 +56760,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:15:49.762Z",
+      "verified_at": "2026-10-23T06:09:24.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62874,14 +62894,19 @@
       "slug": "google-closure-compiler",
       "platform": "github",
       "source_url": "https://github.com/google/closure-compiler",
-      "source_version": "ff925ed5",
-      "content_hash": "7ab6aa29de90b49272b87a2a0a1d2f5cbf944b3df406759846837b5e1ebfca07",
+      "source_version": "e912cdb1",
+      "content_hash": "93023a13b050f8cbca566742f88d838349afa1c57030ab92af96075b14cf1c32",
       "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "promoted_rules": [
         {
           "number": 2983,
           "title": "NullPointerException in InlineObjectLiterals when encountering unreferenced vari",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3781,
+          "title": "Allow extending conformance requirements to append to the root rule's error mess",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -62890,7 +62915,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:03:18.251Z",
+      "verified_at": "2026-10-23T06:09:24.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112851,6 +112876,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:02:50.129Z"
+    },
+    "rule-3780": {
+      "learning_id": "rule-3780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3780,
+      "title": "Match malware against Apple's on-disk XProtect signatures (#239)",
+      "source_url": "https://github.com/iliyami/MacSai",
+      "source_version": "d4ccd8a7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:09:24.010Z"
+    },
+    "rule-3781": {
+      "learning_id": "rule-3781",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3781,
+      "title": "Allow extending conformance requirements to append to the root rule's error mess",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "e912cdb1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:09:24.074Z"
+    },
+    "rule-3782": {
+      "learning_id": "rule-3782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3782,
+      "title": "Inversion of View Provider Hierarchies in Composable UI Directives",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "8dc19751",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:10:28.951Z"
+    },
+    "rule-3783": {
+      "learning_id": "rule-3783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3783,
+      "title": "Forward-Referenced Type Resolution in Content Query Declarations",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "8dc19751",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:10:28.951Z"
+    },
+    "rule-3784": {
+      "learning_id": "rule-3784",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3784,
+      "title": "Singularity-Proof Geometric Arc Path Generation",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "8dc19751",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:10:28.951Z"
     }
   },
   "aliases": {

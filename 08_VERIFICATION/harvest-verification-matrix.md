@@ -4468,3 +4468,6 @@
 | `CYCLE-20261023-COOL` | `2026-10-23T06:02:50.229Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3779` | Yes (`51d0bec1...`) |
 | `CYCLE-20261023-CRKB` | `2026-10-23T06:02:53.963Z` | `react/react-native` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/react-react-native-learnings.md` | Yes (`a04b5269...`) |
 | `CYCLE-20261023-CSGI` | `2026-10-23T06:02:55.122Z` | `clastix/kamaji` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clastix-kamaji-learnings.md` | Yes (`291421d5...`) |
+| `CYCLE-20261023-L4KR` | `2026-10-23T06:09:24.075Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3780` | Yes (`fdc8bbe8...`) |
+| `CYCLE-20261023-L4MJ` | `2026-10-23T06:09:24.139Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3781` | Yes (`93023a13...`) |
+| `CYCLE-20261023-MIOP` | `2026-10-23T06:10:29.017Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3782, Rule 3783, Rule 3784` | Yes (`a4f7e21a...`) |

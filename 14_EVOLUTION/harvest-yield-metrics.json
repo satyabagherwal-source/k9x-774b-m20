@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:02:55.128Z",
-  "total_cycles_completed": 4445,
-  "total_learnings_persisted": 4445,
-  "total_rules_promoted": 3631,
+  "last_updated": "2026-10-23T06:10:29.030Z",
+  "total_cycles_completed": 4448,
+  "total_learnings_persisted": 4448,
+  "total_rules_promoted": 3636,
   "history": [
-    {
-      "timestamp": "2026-10-21T18:39:52.058Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T18:46:00.804Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T18:46:03.789Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T18:46:09.114Z",
       "repository": "dathere/qsv",
@@ -1403,6 +1382,27 @@
       "repository": "clastix/kamaji",
       "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:09:24.089Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:09:24.152Z",
+      "repository": "google/closure-compiler",
+      "learningId": "learn-github-google-closure-compiler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:10:29.030Z",
+      "repository": "taiga-family/taiga-ui",
+      "learningId": "learn-github-taiga-family-taiga-ui",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

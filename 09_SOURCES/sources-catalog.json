@@ -1303,10 +1303,10 @@
     "repository": "iliyami/MacSai",
     "platform": "github",
     "sourceUrl": "https://github.com/iliyami/MacSai",
-    "sourceVersion": "6bd8f7ea",
+    "sourceVersion": "d4ccd8a7",
     "license": "BSD-3-Clause",
-    "contentHash": "42ecc369d69eb31367b9e2038fc53ac469be7e61d3ce17085c6fd9b689131a8a",
-    "lastHarvestedAt": "2026-10-20T04:15:49.834Z",
+    "contentHash": "fdc8bbe824435691ad48c51cf83c479717b8c94d4c5baa04fd906ca75e4cddf7",
+    "lastHarvestedAt": "2026-10-23T06:09:24.078Z",
     "learningId": "learn-github-iliyami-macsai"
   },
   "duty1g-x64dbg-mcp-server": {
@@ -6033,10 +6033,10 @@
     "repository": "taiga-family/taiga-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/taiga-family/taiga-ui",
-    "sourceVersion": "b57f4e02",
+    "sourceVersion": "8dc19751",
     "license": "Apache-2.0",
-    "contentHash": "50725806aa837dabcecec624893f7f0b76eee0c73adde65124b46c6acd165ba2",
-    "lastHarvestedAt": "2026-10-21T04:15:51.267Z",
+    "contentHash": "a4f7e21a6de5e1dae723820df546048703bfec9376b07e470ba18e76079ac044",
+    "lastHarvestedAt": "2026-10-23T06:10:29.020Z",
     "learningId": "learn-github-taiga-family-taiga-ui"
   },
   "u-root-u-root": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "ff925ed5",
+    "sourceVersion": "e912cdb1",
     "license": "Apache-2.0",
-    "contentHash": "7ab6aa29de90b49272b87a2a0a1d2f5cbf944b3df406759846837b5e1ebfca07",
-    "lastHarvestedAt": "2026-10-20T02:03:18.310Z",
+    "contentHash": "93023a13b050f8cbca566742f88d838349afa1c57030ab92af96075b14cf1c32",
+    "lastHarvestedAt": "2026-10-23T06:09:24.142Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {
