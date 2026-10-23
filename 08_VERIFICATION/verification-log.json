@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-8D9K",
-    "timestamp": "2026-10-20T22:00:14.888Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "c0c7fb7cc289676c15f41ff6a15c20064db350b0d157b4fb9f4901890035eb03",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-8DRF",
-    "timestamp": "2026-10-20T22:00:15.531Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "fccf83f81d9e25cc5c0526a6c0838f0cb1563eb6c810ded89aa6c4856bdf04b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-GKRE",
-    "timestamp": "2026-10-20T22:06:37.850Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "fe6ba8693fd3013c4be4379e1e13eaa2c88743cb71509cbc971ea9d9dcbb8143",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-GR2E",
     "timestamp": "2026-10-20T22:06:46.022Z",
     "repository": "actions/actions-runner-controller",
@@ -7490,6 +7445,51 @@
     "repository": "pixeltable/pixeltable",
     "learningId": "learn-github-pixeltable-pixeltable",
     "contentHash": "91749168966195231178b09477c8096a7a3ee79cddab6964afae924e33d95e71",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-BBEV",
+    "timestamp": "2026-10-23T11:37:41.767Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "0f65d4d6bf1486288f380059138312bda470ece2de148b5005be76b4b65d8bd5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-BEQF",
+    "timestamp": "2026-10-23T11:37:46.071Z",
+    "repository": "openreplay/openreplay",
+    "learningId": "learn-github-openreplay-openreplay",
+    "contentHash": "da576fefb5ec209e15464843774bc91c713209c7b9f4a98dfdfbf880d3283cf0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-BKYU",
+    "timestamp": "2026-10-23T11:37:54.150Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

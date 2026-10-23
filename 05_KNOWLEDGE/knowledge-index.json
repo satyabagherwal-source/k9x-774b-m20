@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T11:30:55.129Z",
+  "last_updated": "2026-10-23T11:37:54.092Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36433,8 +36433,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "e027ac32",
-      "content_hash": "373ff328d988f47e7ec12d9c856897ccdaa29665876fa4c1db4acc9678189e97",
+      "source_version": "ad0a42c8",
+      "content_hash": "0f65d4d6bf1486288f380059138312bda470ece2de148b5005be76b4b65d8bd5",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -36467,6 +36467,11 @@
           "number": 3515,
           "title": "ci: Pin third-party action to SHAs (#1554)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3904,
+          "title": "cutile): retain source origins for generated code and host checks (#1602)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36474,7 +36479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:09:31.950Z",
+      "verified_at": "2026-10-23T11:37:41.669Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37536,8 +37541,8 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "47b15100",
-      "content_hash": "f312cd4c2f12141cbc9e5822ba19986995a0eca6141ec8a2584a61bb8aaa3e65",
+      "source_version": "564d808e",
+      "content_hash": "da576fefb5ec209e15464843774bc91c713209c7b9f4a98dfdfbf880d3283cf0",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
@@ -37560,6 +37565,11 @@
           "number": 3137,
           "title": "Dynamic Moving-Window Time Ingestion Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3905,
+          "title": "ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37567,7 +37577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:35:14.473Z",
+      "verified_at": "2026-10-23T11:37:45.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41168,8 +41178,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "c1be76ab",
-      "content_hash": "ed2a21476f2aeb2da738c474e0cc608c2571e8a6e6f4df4cda0522d86d85bdd2",
+      "source_version": "73219848",
+      "content_hash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -41192,6 +41202,11 @@
           "number": 3550,
           "title": "meta): do not serialize secret store private key in MetaOpts (#27586)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3906,
+          "title": "frontend): return an error for leftover subquery expressions instead of panickin",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41199,7 +41214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:22:45.757Z",
+      "verified_at": "2026-10-23T11:37:54.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115244,6 +115259,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T11:30:55.123Z"
+    },
+    "rule-3904": {
+      "learning_id": "rule-3904",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3904,
+      "title": "cutile): retain source origins for generated code and host checks (#1602)",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "ad0a42c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:37:41.669Z"
+    },
+    "rule-3905": {
+      "learning_id": "rule-3905",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3905,
+      "title": "ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038)",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "564d808e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:37:45.993Z"
+    },
+    "rule-3906": {
+      "learning_id": "rule-3906",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3906,
+      "title": "frontend): return an error for leftover subquery expressions instead of panickin",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "73219848",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:37:54.074Z"
     }
   },
   "aliases": {

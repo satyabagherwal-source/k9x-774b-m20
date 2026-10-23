@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T11:30:55.188Z",
-  "total_cycles_completed": 4527,
-  "total_learnings_persisted": 4527,
-  "total_rules_promoted": 3756,
+  "last_updated": "2026-10-23T11:37:54.163Z",
+  "total_cycles_completed": 4530,
+  "total_learnings_persisted": 4530,
+  "total_rules_promoted": 3759,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:25:45.393Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:31:47.501Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:31:54.192Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:31:55.864Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-23T11:30:55.188Z",
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:37:41.775Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:37:46.084Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:37:54.163Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

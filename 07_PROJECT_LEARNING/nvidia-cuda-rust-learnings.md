@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `e027ac32`  
+> **Source Version**: `ad0a42c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T04:09:31.547Z  
+> **Timestamp**: 2026-10-23T11:37:41.300Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T04:09:31.537Z  
+> **Harvest Timestamp**: 2026-10-23T11:37:39.715Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3756 stars
+- **Stars / Engagement**: 3779 stars
 
 ---
 
@@ -2145,11 +2145,11 @@ impl<T> DeviceBuffer<T> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1612** (2026-10-22): **DivHint::from_ptr loses pointer alignment at 0x80000000 in 0.2.0/0.3.0 (fixed in 0.3.1)**
+  *Symptoms*: `DivHint::from_ptr` in published `cutile-compiler` 0.2.0 and 0.3.0 can return a negative pointer-divisibility hint for an aligned address whose low 32 bits equal `0x8000_0000`. This drops an otherwise valid alignment assumption and can inhibit memory-access optimizations.  **Already fixed:** [NVlabs/cutile-rs#244](https://github.com/NVlabs/cutile-rs/pull/244), merged August 27, 2026, computes alignment from the full `u64` address. The first published version containing the fix is **0.3.1**. This report records the affected versions and verification; it is not an outstanding defect in current `main`.  ### Cause  The affected implementation casts the pointer to `i32` before computing its lowest set bit. At this boundary, `val & val.wrapping_neg()` yields `i32::MIN`, and `.min(16)` preserves the negative result. The entry generator's `div > 1` check then skips the pointer alignment assumption. The conservative omission also produces a different specialization from other equally aligned addresses.  ### Minimal arithmetic reproducer  This reproduces the old arithmetic with a synthetic address. It does not allocate or dereference memory and requires no CUDA or dependencies.  Save as `repro.rs`, then run `rustc repro.rs -o repro && ./repro`:  ```rust fn from_ptr(ptr: u64) -> i32 {     let val = ptr as i32;     let raw = if val == 0 { 16 } else { val & val.wrapping_neg() };     raw.min(16) }  fn main() {     let ptr = 0x0000_0000_8000_0000_u64;     assert_eq!(ptr % 16, 0);     assert
+
 - **Issue #1556** (2026-10-20): **fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it**
   *Symptoms*: ## What this adds  A `.tilelib` written by `cargo oxide tilelib` now loads on the CUDA 13.5 assembler.  ```text before: 13.5 tileiras rejects the implementation descriptor: "concrete shape cache rank (1) does not match symbolic shape rank (0)" after:  the descriptor parses, and a Tile C++ kernel calls the three exports through the library ```  ## What we fixed  - The 13.5 assembler keeps a full-rank symbolic shape on `preview$fragment`, one integer expression per dimension. The compiler trunk switched on 2026-09-08 to holding only the dynamic dimensions, and the writer produced that trunk form for every version. - The fragment type now encodes per version: full rank below 13.6, dynamic-only from 13.6 on. Nothing else in the descriptors changes.  <details> <summary>Implementation</summary>  - `oxide-tilebc`'s type table carries the bytecode version, and the fragment arm branches on it. - The 13.5 golden in the writer tests now holds a one-element symbolic tuple.  </details>  ## Verification  Checked at `514be3a18`:  - ✅ oxide-tilebc 15 unit tests, clippy with warnings as errors, rustdoc. - ✅ CUDA 13.5.40 release toolkit, RTX 5090: `cargo oxide tilelib tilelib_relu --arch sm_120` builds the library, its disassembler reads both descriptors, and `cpp/tile_caller.cu` passes 3 of 3 through it. - ✅ The 13.6 development build still reads the dynamic-only form: the same library built at 13.6 passes 3 of 3 there too.  ## Caveats  - The version switch keys on 13.6 because that is where 
-
-- **Issue #1510** (2026-10-19): **fix(cargo-oxide): pin release-like codegen in Cargo profiles**
-  *Symptoms*: ## What this adds  Release-like `cargo oxide` routes used to force `opt-level=3`, `debug-assertions=off` and (with `--debug-assertions`) `overflow-checks=off` through `CARGO_ENCODED_RUSTFLAGS`. Cargo hashes rustflags into every crate's fingerprint, while `cargo oxide test -- --release` added none, so the first switch between build and test in each direction rebuilt the whole dependency graph and left two copies of every artifact. The pins now travel in the Cargo profile (`CARGO_PROFILE_RELEASE_*`, `CARGO_PROFILE_DEV_*`, and `--config profile.<name>.*` for a selected custom profile), which Cargo compares by value, so both commands share every compiled crate.  ```text cargo oxide test -- --release        # compiles the dependency graph (72 crates) cargo oxide build -- --release  Before: Compiling cuda-core ... 72 crates recompiled, 13 s, second artifact set After:  1 crate recompiled (the application), 71 reused, 0.4 s, PTX unchanged ```  ```bash cargo oxide build -- --release                 # pins via CARGO_PROFILE_RELEASE_* cargo oxide build -- --profile release-lto     # pins via --config profile.release-lto.* ```  ## What we fixed  - Build and `test -- --release` passthrough commands hand rustc the same `CARGO_ENCODED_RUSTFLAGS`; the pins move to Cargo profile settings at the single site every release-like route uses (example build/run/pipeline/debug, emit-ltoir, tilelib, interop device crates, sanitize host binary, passthrough build). - `overflow-checks=off` is pinned exp
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2166,114 +2166,368 @@ impl<T> DeviceBuffer<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e027ac32` (2026-10-20)
-**Commit Message**: ci: Pin third-party action to SHAs (#1554)
+### Incident Patch 1: `9718b438` (2026-10-22)
+**Commit Message**: fix(cutile): retain source origins for generated code and host checks (#1602)
 
-## Summary
+Preserve source locations and inline caller chains for const-generic arrays,
+generated reduction bodies, and checks relocated to the host. Keep deduplicated
+check origins private to the compiler and render them through the existing
+diagnostic API.
 
-Pinned the third-party actions to commit SHAs.
-Closes #1550 
+Part of #1475. The remaining frontend items and debugger/backend fixes remain
+tracked separately; this does not close the full source-location audit.
 
-## Checklist
+Validated with the CPU/assembler suites, source-location regressions, live
+CUDA-GDB tests, GPU host-check enforcement, host/Tile semver checks, and all
+25 active CI checks on 825de3e38f6472d3c47a3d00602af8648a2eeb16.
 
-- [x] All commits signed off (`git commit -s`)
+Signed-off-by: Melih Elibol <[REDACTED_EMAIL]>
 
-Signed-off-by: Jacob Wujciak-Jens <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/clippy.yml` (modified, +1/-1)
+**File**: `cutile-rs/CHANGELOG.md` (modified, +8/-0)
 ```diff
-@@ -19,7 +19,7 @@ jobs:
-         uses: actions/checkout@v4
+@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
  
-       - name: Install CUDA toolkit
--        uses: Jimver/cuda-toolkit@v0.2.35
-+        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
-         id: cuda-toolkit
-         with:
-           cuda: "13.1.1"
-```
-
-**File**: `.github/workflows/cutile-rs.yml` (modified, +2/-2)
-```diff
-@@ -55,7 +55,7 @@ jobs:
-       - uses: actions/checkout@v7
-         with:
-           fetch-depth: 0
--      - uses: dorny/paths-filter@v3
-+      - uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad  # v3.0.4
-         id: changes
-         with:
-           filters: |
-@@ -208,7 +208,7 @@ jobs:
+ ## [Unreleased]
  
-       # Prebuilt binary instead of `cargo install` (which compiled the tool
-       # from source on every run).
--      - uses: taiki-e/install-action@9114bf4d891761788c546334fd37538eae1bf8b3 # v2.87.16
-+      - uses: taiki-e/install-action@9114bf4d891761788c546334fd37538eae1bf8b3  # v2.87.16
-         with:
-           tool: cargo-semver-checks
++### Fixed
++
++- Const-generic array bindings retain their function or method signature as
++  their source origin, and generated reduction bodies retain the reduction
++  call's location and inline chain.
++- Failed host launch checks report their original accesses and inline callers,
++  retaining distinct origins when equivalent predicates share one comparison.
++
+ ### Changed
+ 
+ - cuTile Rust now lives in the [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust)
+```
+
+**File**: `cutile-rs/cutile-book/guide/debugging-and-profiling.md` (modified, +9/-0)
+```diff
+@@ -230,6 +230,15 @@ when inlined, including across modules. Core operations are attributed to
+ the user's call site. Multiple generated instructions can still map to one
+ Rust line; this is not a one-to-one mapping, especially with optimization.
+ 
++Generated const-generic array bindings use the containing function or method's
++signature as their source origin. Generated reduction bodies use the reduction
++call's location, including its inline caller chain.
++
++Checks moved to the host launcher report the original access and its inline
++callers when validation fails, including in builds without device debug info.
++If several accesses share one launch check, its diagnostic retains each
++distinct source origin while the predicate is evaluated only once.
++
+ ## Profiling
+ 
+ Use NVIDIA **Nsight Compute** (`ncu`, reports opened with `ncu-ui`) for
+```
+
+**File**: `cutile-rs/cutile-compiler/src/compile_api.rs` (modified, +1/-1)
+```diff
+@@ -302,7 +302,7 @@ impl<F: Fn() -> crate::ast::Module> KernelCompiler<F> {
+             hoisted: compiler.check_stats.hoisted.get(),
+             in_place: compiler.check_stats.in_place.get(),
+         };
+-        let launch_checks = compiler.launch_checks.borrow().clone();
++        let launch_checks = compiler.launch_checks();
+         Ok(CompileArtifacts {
+             module,
+             bytecode_version: self.bytecode_version,
+```
+
+**File**: `cutile-rs/cutile-compiler/src/compiler/_function.rs` (modified, +21/-10)
+```diff
+@@ -9,6 +9,7 @@
+ //! the old CUDATileFunctionCompiler.
+ 
+ use super::_module::CUDATileModules;
++use super::launch_checks::LaunchChecks;
+ use crate::ast::{SourceLocation, SpanBase};
+ use crate::bounds::Bounds;
+ use crate::error::{JITError, SpannedJITError};
+@@ -72,7 +73,7 @@ pub struct CUDATileFunctionCompiler<'m> {
+     /// (`Resolution::Launch`). Interior-mutable because compile passes take
+     /// `&self`; merged into the `Validator` in [`Self::get_validator`] and run
+     /// once per launch by the host `validate_launch`.
+-    pub(crate) launch_checks: RefCell<Vec<cuda_async::predicate::LaunchCheck>>,
++    launch_checks: RefCell<LaunchChecks>,
+     pub(crate) gpu_name: String,
+     pub(crate) target_capabilities: Option<cutile_ir::capabilities::TargetCapabilities>,
+     pub(crate) optimization_hints: OptimizationHints,
+@@ -187,6 +188,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         a_axis: usize,
+         b_tensor: &str,
+         b_axis: usize,
++        span: &proc_macro2::Span,
+     ) -> bool {
+         use cuda_async::predicate::{Atom, Predicate, Term};
+         // Resolve both tensor names to param indices; if either is not a
+@@ -212,6 +214,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         self.lower_obligation(
+             predicate,
+             format!("dim({a_tensor}, {a_axis}) == dim({b_tensor}, {b_axis})"),
++            span,
+         )
+     }
+ 
+@@ -238,6 +241,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         b_tensor: &str,
+         b_axis: usize,
+         tile: i32,
++        span: &proc_macro2::Span,
+     ) -> bool {
+         use crate::passes::obligation::{resolve, Obligation, Resolution};
+         use cuda_async::predicate::{Atom, Predicate, Term};
+@@ -296,6 +300,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+             format!(
+                 "ceil(dim({a_tensor}, {a_axis})/{tile}) <= ceil(dim({b_tensor}, {b_axis})/{tile})"
+             ),
++            span,
+         )
+     }
+ 
+@@ -315,25 +320,28 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         &self,
+         predicate: cuda_async::predicate::Predicate,
+         cause: impl Into<String>,
++        span: &proc_macro2::Span,
+     ) -> bool {
+         use crate::passes::obligation::{resolve, Obligation, Resolution};
+         let obligation = Obligation::new(predicate, cause);
+         match resolve(&obligation, &self.assumptions) {
+             Resolution::Jit => true,
+             Resolution::Launch(check) => {
+-                // Canonical predicates make duplicate detection exact. Two
+-                // obligations reducing to the same host compare (e.g. a shared
+-                // `Dim`'s divisibility, once per binding) cost one check.
+-                let mut checks = self.launch_checks.borrow_mut();
+-                if !checks.iter().any(|c| c.predicate == check.predicate) {
+-                    checks.push(check);
+-                }
++                self.launch_checks
++                    .borrow_mut()
++                    .insert(check, &self.ir_location(span));
+                 true
+             }
+             Resolution::Device => false,
+         }
+     }
+ 
++    /// Export checks with their source origins rendered in the existing host
++    /// diagnostic field. Structured origins remain internal to the compiler.
++    pub(crate) fn launch_checks(&self) -> Vec<cuda_async::predicate::LaunchCheck> {
++        self.launch_checks.borrow().to_host_checks()
++    }
++
+     /// The kernel-visible extent of `partition`'s axis `axis`, taken from the
+     /// *declared* parameter shape.
+     ///
+@@ -660,7 +668,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+             assumptions,
+             param_index,
+             param_is_mutable,
+-            launch_checks: RefCell::new(Vec::new()),
++            launch_checks: RefCell::new(LaunchChecks::default()),
+             gpu_name,
+             target_capabilities: None,
+             optimization_hints,
+@@ -1177,6 +1185,9 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+ 
+         // Add arrays as variables.
+         for (key, value) in generic_vars.ordered_inst_array() {
++            // Binding materialization has no expression in the source. Use
++            // the user signature, not the generated ABI wrapper's span.
++            let _source = self.push_opaque_call_site(&self._function.sig.span());
+             let arr_expr = syn::parse2::<syn::Expr>(format!("{value:?}").parse().unwrap()).unwrap();
+             let arr_ty =
+                 syn::parse2::<syn::Type>(format!("[i32;{}]", value.len()).parse().unwrap())
+@@ -1253,7 +1264,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         let mut validator = self.validator.clone();
+         // Surface the launch checks hoisted during compilation so the host runs
+         // them at launch.
+-        validator.launch_checks = self.launch_checks.borrow().clone();
++        validator.launch_checks = self.launch_checks();
+         validator
+     }
  
 ```
 
-**File**: `.github/workflows/docs.yml` (modified, +1/-1)
+**File**: `cutile-rs/cutile-compiler/src/compiler/checks/goals.rs` (modified, +6/-2)
 ```diff
-@@ -50,7 +50,7 @@ jobs:
-       - name: Install CUDA toolkit
-         # `cargo doc --workspace` compiles cuda-bindings' build-time bindgen,
-         # which needs `cuda.h`. Same toolkit pin as the unit-tests job.
--        uses: Jimver/cuda-toolkit@v0.2.35
-+        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
-         id: cuda-toolkit
-         with:
-           cuda: "13.1.1"
-```
-
-**File**: `.github/workflows/examples-compile.yml` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@ jobs:
-       # Needed for cuda.h and curand.h: bindgen runs in the shared
-       # cuda-bindings build script. Same setup as unit-tests.yml / clippy.yml.
-       - name: Install CUDA toolkit
--        uses: Jimver/cuda-toolkit@v0.2.35
-+        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
-         id: cuda-toolkit
-         with:
-           cuda: "13.1.1"
-```
-
-**File**: `.github/workflows/unit-tests.yml` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ jobs:
+@@ -173,6 +173,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         &self,
+         goals: &AxisGoals<'_>,
+         partition: &TileRustValue,
++        span: &Span,
+     ) -> bool {
+         if let (Some(origin), Some(target)) = (
+             goals.index.partition_axis_origin.as_ref(),
+@@ -192,6 +193,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                     target,
+                     goals.extent_axis,
+                     goals.tile,
++                    span,
+                 )
+             {
+                 return true;
+@@ -238,6 +240,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         &self,
+         goals: &AxisGoals<'_>,
+         partition: &TileRustValue,
++        span: &Span,
+     ) -> bool {
+         use cuda_async::predicate::{Atom, Predicate, Term};
+         let Some(term) = goals.index.term.as_ref() else {
+@@ -275,7 +278,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+             "num_tile_blocks({k}) <= ceil(extent({tensor}, {})/{})",
+             goals.extent_axis, goals.tile
+         );
+-        self.lower_obligation(le, cause)
++        self.lower_obligation(le, cause, span)
+     }
  
-       - name: Install CUDA toolkit
-         if: matrix.needs_cuda
--        uses: Jimver/cuda-toolkit@v0.2.35
-+        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
-         id: cuda-toolkit
-         with:
-           cuda: "13.1.1"
+     /// The entailment/launch rung for a constant zero coordinate against a
+@@ -300,6 +303,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+         &self,
+         goals: &AxisGoals<'_>,
+         partition: &TileRustValue,
++        span: &Span,
+     ) -> bool {
+         use cuda_async::predicate::{Predicate, Term};
+         if goals.static_extent.is_some() {
+@@ -322,7 +326,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+             "partition access on axis {} of `{tensor}` requires a non-empty extent",
+             goals.extent_axis
+         );
+-        self.lower_obligation(predicate, cause)
++        self.lower_obligation(predicate, cause, span)
+     }
+ 
+     /// The runtime scalar holding the extent for a goal whose static
 ```
 
-**File**: `cutile-rs/.github/actions/setup/action.yml` (modified, +1/-1)
+**File**: `cutile-rs/cutile-compiler/src/compiler/checks/mod.rs` (modified, +20/-4)
 ```diff
-@@ -68,7 +68,7 @@ runs:
-     # the workflow at startup. Dependabot keeps the version comment current.
-     - name: Restore the Rust build cache
-       if: inputs.cache == 'true'
--      uses: swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
-+      uses: swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6  # v2.9.2
-       with:
-         # One cache per job: the CUDA image differs per lane and bindgen output
-         # with it, so artifacts are not interchangeable across lanes.
+@@ -170,7 +170,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                 // Rung 1/3: axis provenance — a same-view iterand, or a
+                 // foreign iterand whose axis a declared root-dimension
+                 // equality relates to this one.
+-                if self.discharge_by_axis_provenance(&axis_goals, &partition_value) {
++                if self.discharge_by_axis_provenance(
++                    &axis_goals,
++                    &partition_value,
++                    &call_expr.span(),
++                ) {
+                     self.count_discharged();
+                     continue;
+                 }
+@@ -195,7 +199,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                 // grid-bounded by the execution model; the residual
+                 // grid-vs-tile-count claim moves to a launch check
+                 // (goals.rs, discharge_by_block_id_axiom).
+-                if self.discharge_by_block_id_axiom(&axis_goals, &partition_value) {
++                if self.discharge_by_block_id_axiom(
++                    &axis_goals,
++                    &partition_value,
++                    &call_expr.span(),
++                ) {
+                     self.count_discharged();
+                     continue;
+                 }
+@@ -208,7 +216,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+             // undischarged checks are compile errors rather than device
+             // placements.
+             if self.check_opts.relocate_to_launch
+-                && self.hoist_zero_coordinate_nonempty_extent(&axis_goals, &partition_value)
++                && self.hoist_zero_coordinate_nonempty_extent(
++                    &axis_goals,
++                    &partition_value,
++                    &call_expr.span(),
++                )
+             {
+                 self.count_discharged();
+                 continue;
+@@ -346,7 +358,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+             }
+             // Rung 3/4: a constant `[0, 0]` coordinate against a dynamic
+             // extent reduces to `extent > 0`, a launch-known predicate.
+-            if self.hoist_zero_coordinate_nonempty_extent(&axis_goals, &partition) {
++            if self.hoist_zero_coordinate_nonempty_extent(
++                &axis_goals,
++                &partition,
++                &call_expr.span(),
++            ) {
+                 self.count_discharged();
+                 continue;
+             }
+```
+
+**File**: `cutile-rs/cutile-compiler/src/compiler/compile_expression.rs` (modified, +10/-4)
+```diff
+@@ -1018,7 +1018,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                 "`with_bounds` bound {axis}: the partitioned extent must be divisible by the tile \
+                  extent {tile_dim}, or the declared bound undercounts the tiles on axis {axis}"
+             );
+-            if self.lower_obligation(divisibility, cause) {
++            if self.lower_obligation(divisibility, cause, span) {
+                 return Ok(());
+             }
+         }
+@@ -1056,8 +1056,8 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                         (c - 1) * tile_dim,
+                         c * tile_dim
+                     );
+-                    if self.lower_obligation(above, cause.clone())
+-                        && self.lower_obligation(not_above, cause)
++                    if self.lower_obligation(above, cause.clone(), span)
++                        && self.lower_obligation(not_above, cause, span)
+                     {
+                         return Ok(());
+                     }
+@@ -1357,7 +1357,13 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                     }
+                 }
+                 if let (Some(receiver_name), Some(other_name)) = (&receiver_name, &other_name) {
+-                    if self.resolve_dim_eq(receiver_name, axis, other_name, axis) {
++                    if self.resolve_dim_eq(
++                        receiver_name,
++                        axis,
++                        other_name,
++                        axis,
++                        &method_call.span(),
++                    ) {
+                         self.check_stats
+                             .discharged
+                             .set(self.check_stats.discharged.get() + 1);
+```
+
+**File**: `cutile-rs/cutile-compiler/src/compiler/compile_inline.rs` (modified, +2/-0)
+```diff
+@@ -196,6 +196,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+             }
+             // Add function call CGAs arrays as variables.
+             for (key, value) in call_generic_vars.ordered_inst_array() {
++                let _source = self.push_opaque_call_site(&fn_item.sig.span());
+                 let arr_expr = syn::parse2::<Expr>(format!("{value:?}").parse().unwrap()).unwrap();
+                 let arr_ty =
+                     syn::parse2::<Type>(format!("[i32;{}]", value.len()).parse().unwrap()).unwrap();
+@@ -433,6 +434,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
+                 call_variables.vars.insert(key.to_string(), tr_val);
+             }
+             for (key, value) in call_generic_vars.ordered_inst_array() {
++                let _source = self.push_opaque_call_site(&impl_method.sig.span());
+                 let arr_expr = syn::parse2::<Expr>(format!("{value:?}").parse().unwrap()).unwrap();
+                 let arr_ty =
+                     syn::parse2::<Type>(format!("[i32;{}]", value.len()).parse().unwrap()).unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1556** (2026-10-20): fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it (@nihalpasham)
-- **PR #1555** (2026-10-20): docs(cuda-oxide): take the tile-library chapter out of the book until the toolkit ships (@nihalpasham)
-- **PR #1554** (2026-10-20): ci: Pin third-party action to SHAs (@assignUser)
-- **PR #1553** (2026-10-19): feat(cutile): add NVFP4 MoE batch-size benchmark (@elibol)
-- **PR #1551** (2026-10-19): docs(book): show how an inline request reaches the GPU (@nihalpasham)
-- **PR #1549** (2026-10-19): test(drop_glue): keep destructor MIR with -Zinline-mir=no, not #[inline(never)] (@nihalpasham)
+- **PR #1617** (2026-10-23): docs(cuda-oxide): update remaining nightly references and doctor check for 1.99.1 (@nihalpasham)
+- **PR #1616** (2026-10-23): chore(cuda-oxide): update flake.lock for 1.99.1, scaffold config, and clean up docs (@nihalpasham)
+- **PR #1615** (2026-10-23): chore(cute-rs): sync shared host crate versions to v0.5.0 in lockfiles (@nihalpasham)
+- **PR #1614** (2026-10-22): chore: prepare shared host and Tile crates for v0.5.0 (@elibol)
+- **PR #1609** (2026-10-23): cuda-oxide: move SIMT toolchain pin to stable 1.99.1 (@nihalpasham)
+- **PR #1602** (2026-10-22): fix(cutile): retain source origins for generated code and host checks (@elibol)
 
 ---
 
@@ -2293,28 +2547,35 @@ Signed-off-by: Jacob Wujciak-Jens <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Pin third-party action to SHAs (#1554)
+## X. cutile): retain source origins for generated code and host checks (#1602)
 
 **RULE**:
-When implementing operations in `.github/workflows/clippy.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cutile-rs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e027ac32`: ci: Pin third-party action to SHAs (#1554). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9718b438`: cutile): retain source origins for generated code and host checks (#1602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/clippy.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: Jimver/cuda-toolkit@3d45d157f327c09c04b50ee6ccdea2d9d017ec76  # v0.2.35
+### Fixed
+
+- Const-generic array bindings retain their function or method signature as
+  their source origin, and generated reduction bodies retain the reduction
+  call's location and inline chain.
+- Failed host launch checks report their original accesses and inline callers,
+  retaining distinct origins when equivalent predicates share one comparison.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: Jimver/cuda-toolkit@v0.2.35
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e027ac32` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9718b438` are properly handled with clean fallback behavior.

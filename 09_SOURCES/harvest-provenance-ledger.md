@@ -4557,3 +4557,6 @@ Every entry in this ledger must capture:
 | `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `f2ec86f7` | Multi-dimensional audit evidence | 2026-10-23T11:24:38.249Z |
 | `learn-github-wix-react-native-navigation` | `https://github.com/wix/react-native-navigation` | `3cd6bfea` | Multi-dimensional audit evidence | 2026-10-23T11:30:49.372Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `8edc2431` | Multi-dimensional audit evidence | 2026-10-23T11:30:55.180Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `ad0a42c8` | Multi-dimensional audit evidence | 2026-10-23T11:37:41.770Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `564d808e` | Multi-dimensional audit evidence | 2026-10-23T11:37:46.074Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `73219848` | Multi-dimensional audit evidence | 2026-10-23T11:37:54.153Z |

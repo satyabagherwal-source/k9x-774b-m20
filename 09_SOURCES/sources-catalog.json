@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "47b15100",
+    "sourceVersion": "564d808e",
     "license": "NOASSERTION",
-    "contentHash": "f312cd4c2f12141cbc9e5822ba19986995a0eca6141ec8a2584a61bb8aaa3e65",
-    "lastHarvestedAt": "2026-10-20T10:35:14.538Z",
+    "contentHash": "da576fefb5ec209e15464843774bc91c713209c7b9f4a98dfdfbf880d3283cf0",
+    "lastHarvestedAt": "2026-10-23T11:37:46.074Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "c1be76ab",
+    "sourceVersion": "73219848",
     "license": "Apache-2.0",
-    "contentHash": "ed2a21476f2aeb2da738c474e0cc608c2571e8a6e6f4df4cda0522d86d85bdd2",
-    "lastHarvestedAt": "2026-10-21T15:22:45.791Z",
+    "contentHash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
+    "lastHarvestedAt": "2026-10-23T11:37:54.153Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "e027ac32",
+    "sourceVersion": "ad0a42c8",
     "license": "Apache-2.0",
-    "contentHash": "373ff328d988f47e7ec12d9c856897ccdaa29665876fa4c1db4acc9678189e97",
-    "lastHarvestedAt": "2026-10-21T04:09:32.038Z",
+    "contentHash": "0f65d4d6bf1486288f380059138312bda470ece2de148b5005be76b4b65d8bd5",
+    "lastHarvestedAt": "2026-10-23T11:37:41.770Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

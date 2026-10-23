@@ -4550,3 +4550,6 @@
 | `CYCLE-20261023-UIUE` | `2026-10-23T11:24:38.246Z` | `cosscom/coss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3901` | Yes (`7ba9197d...`) |
 | `CYCLE-20261023-2H7D` | `2026-10-23T11:30:49.369Z` | `wix/react-native-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3902` | Yes (`943d6e99...`) |
 | `CYCLE-20261023-2LOQ` | `2026-10-23T11:30:55.178Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3903` | Yes (`91749168...`) |
+| `CYCLE-20261023-BBEV` | `2026-10-23T11:37:41.767Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3904` | Yes (`0f65d4d6...`) |
+| `CYCLE-20261023-BEQF` | `2026-10-23T11:37:46.071Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3905` | Yes (`da576fef...`) |
+| `CYCLE-20261023-BKYU` | `2026-10-23T11:37:54.150Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3906` | Yes (`ecc23415...`) |
